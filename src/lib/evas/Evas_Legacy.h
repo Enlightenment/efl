@@ -1557,6 +1557,10 @@ EAPI void evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a);
 EAPI void evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
 /**
+ * @}
+ */
+
+/**
  *
  * Move the given Evas object to the given location inside its canvas' viewport.
  *
@@ -1775,7 +1779,7 @@ EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
  * Accepted values are zero or positive values. Some users might use this hint
  * as a boolean, but some might consider it as a proportion, see documentation
  * of possible users, which in Evas are the @ref Evas_Object_Box "box" and @ref
- * Evas_Object_Table "table" smart objects.
+ * Evas_Object_Table_Group "table" smart objects.
  *
  * This is not a size enforcement in any way, it's just a hint that should be
  * used whenever appropriate.
@@ -1803,7 +1807,7 @@ EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, do
  * up to the alignment space on the final scene composition.
  *
  * See documentation of possible users: in Evas, they are the @ref
- * Evas_Object_Box "box" and @ref Evas_Object_Table "table" smart objects.
+ * Evas_Object_Box "box" and @ref Evas_Object_Table_Group "table" smart objects.
  *
  * For the horizontal component, 0.0 means to the left, 1.0 means to the right.
  * Analogously, for the vertical component, 0.0 to the top, 1.0 means to the
@@ -2305,6 +2309,7 @@ EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, 
  *
  * The object may be an evas object, an elementary object or window, or an
  * evas 3D / VG object.
+ * @ingroup Evas_Object_Group
  */
 EAPI Evas *evas_object_evas_get(const Eo *obj);
 
@@ -2329,7 +2334,7 @@ EAPI Evas *evas_object_evas_get(const Eo *obj);
  *
  * @return The list of objects that are over the given position in @c e.
  *
- * @ingroup Efl_Canvas
+ * @ingroup Evas_Canvas
  */
  EAPI Eina_List *evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects);
 
@@ -2356,6 +2361,7 @@ EAPI Evas *evas_object_evas_get(const Eo *obj);
  *
  * @return The Evas object that is over all other objects at the given
  * position.
+ * @ingroup Evas_Canvas
  */
  EAPI Evas_Object* evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects);
 
@@ -2374,6 +2380,7 @@ EAPI Evas *evas_object_evas_get(const Eo *obj);
  * objects
  *
  * @return List of objects
+ * @ingroup Evas_Canvas
  */
 EAPI Eina_List *evas_objects_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT;
 
@@ -2407,9 +2414,6 @@ EAPI Eina_List *evas_objects_in_rectangle_get(const Eo *obj, int x, int y, int w
  * @ingroup Evas_Canvas
  */
 EAPI Evas_Object *evas_object_top_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT;
-/**
- * @}
- */
 
 /**
  * @ingroup Evas_Object_Group_Events
@@ -3534,10 +3538,10 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  */
 
 /**
- * @defgroup Evas_Object_Vg Vector Graphics Object
+ * @defgroup Evas_Object_Vg_Group Vector Graphics Object
  * @ingroup Evas
  *
- * @ref Evas_Object_Vg is the scene graph for managing vector graphics objects.
+ * @ref Evas_Object_Vg_Group is the scene graph for managing vector graphics objects.
  * User can create shape objects as well as fill objects and give them to the
  * Evas_Object_Vg for drawing on the screen as well as managing the lifecycle
  * of the objects, enabling reuse of shape objects.
@@ -6303,7 +6307,7 @@ EAPI void evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) E
  */
 
 /**
- * @addtogroup Evas_Object_Text
+ * @addtogroup Evas_Object_Text_Group
  *
  * @{
  */
@@ -6316,7 +6320,7 @@ EAPI void evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) E
  * success.
  *
  * Text objects are for simple, single line text elements. If you want
- * more elaborated text blocks, see @ref Evas_Object_Textblock.
+ * more elaborated text blocks, see @ref Evas_Object_Textblock_Group.
  *
  * @see evas_object_text_font_source_set()
  * @see evas_object_text_font_set()
@@ -6450,7 +6454,7 @@ EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_
 #include "canvas/evas_textblock_legacy.h"
 
 /**
- * @ingroup Evas_Object_Grid
+ * @ingroup Evas_Object_Grid_Group
  *
  * @{
  */
@@ -6559,7 +6563,7 @@ EAPI void evas_object_textgrid_font_get(const Eo *obj, const char **font_name, E
  */
 
 /**
- * @ingroup Evas_Object_Line
+ * @addtogroup Evas_Object_Line_Group
  *
  * @{
  */
@@ -7232,7 +7236,7 @@ EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *
  */
 
 /**
- * @addtogroup Evas_Object_Table
+ * @addtogroup Evas_Object_Table_Group
  *
  * @{
  */
@@ -7279,7 +7283,7 @@ EAPI Eina_Bool evas_object_table_mirrored_get(const Eo *obj);
  */
 
 /**
- * @addtogroup Evas_Object_Grid
+ * @addtogroup Evas_Object_Grid_Group
  *
  * @{
  */
@@ -8368,6 +8372,7 @@ EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
  * @return The value of @c enabled as passed to evas_object_map_enable_set().
  *
  * @see evas_object_map_enable_set
+ * @ingroup Evas_Object_Group
  */
 EAPI Eina_Bool evas_object_map_enable_get(const Evas_Object *obj);
 

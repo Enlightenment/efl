@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Mapbuf_Group Mapbu
+ * @defgroup Elm_Mapbuf_Group Mapbuf
  * @ingroup Elementary
  *
  * @image html mapbuf_inheritance_tree.png

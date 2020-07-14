@@ -44,6 +44,11 @@ typedef struct _Evas_Version
    int revision;  /**< git revision (0 if a proper release or the git revision number Evas is built from) */
 } Evas_Version;
 
+/**
+ * Evas Version Information
+ * @ingroup Evas_Main_Group
+ */
+
 EAPI extern Evas_Version * evas_version;
 
 /**
@@ -1784,11 +1789,11 @@ EAPI Eina_Bool                     evas_object_image_extension_can_load_fast_get
  */
 
 /**
- * @defgroup Evas_Object_Text Text Object Functions
+ * @defgroup Evas_Object_Text_Group Text Object Functions
  *
  * Functions that operate on single line, single style text objects.
  *
- * For multiline and multiple style text, see @ref Evas_Object_Textblock.
+ * For multiline and multiple style text, see @ref Evas_Object_Textblock_Group.
  *
  * See some @ref Example_Evas_Text "examples" on this group of functions.
  *
@@ -1824,7 +1829,7 @@ EAPI Eina_Bool                     evas_object_image_extension_can_load_fast_get
  */
 
 /**
- * @defgroup Evas_Object_Textgrid Textgrid Object Functions
+ * @defgroup Evas_Object_Textgrid_Group Textgrid Object Functions
  *
  * Textgrid objects manage chunks of text as a 2D grid of cells, each of
  * which contains a single unicode character with color and style
@@ -1868,7 +1873,7 @@ struct _Evas_Textgrid_Cell
  */
 
 /**
- * @defgroup Evas_Line_Group Line Object Functions
+ * @defgroup Evas_Object_Line_Group Line Object Functions
  *
  * Functions used to deal with evas line objects.
  *
@@ -1907,7 +1912,7 @@ struct _Evas_Textgrid_Cell
  * Evas_Object_Group and the extensions defined in @ref
  * Evas_Smart_Object_Group. There are a couple of existent smart
  * objects in Evas itself (see @ref Evas_Object_Box, @ref
- * Evas_Object_Table and @ref Evas_Smart_Object_Clipped).
+ * Evas_Object_Table_Group and @ref Evas_Smart_Object_Clipped).
  *
  * See also some @ref Example_Evas_Smart_Objects "examples" of this
  * group of functions.
@@ -2889,7 +2894,7 @@ EAPI const Evas_Object_Box_Api *evas_object_box_smart_class_get(void) EINA_CONST
  */
 
 /**
- * @defgroup Evas_Object_Table Table Smart Object.
+ * @defgroup Evas_Object_Table_Group Table Smart Object.
  *
  * Convenience smart object that packs children using a tabular
  * layout using children size hints to define their size and
@@ -2904,7 +2909,7 @@ EAPI const Evas_Object_Box_Api *evas_object_box_smart_class_get(void) EINA_CONST
  */
 
 /**
- * @defgroup Evas_Object_Grid Grid Smart Object.
+ * @defgroup Evas_Object_Grid_Group Grid Smart Object.
  *
  * Convenience smart object that packs children under a regular grid
  * layout, using their virtual grid location and size to determine

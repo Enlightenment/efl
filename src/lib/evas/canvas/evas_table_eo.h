@@ -17,7 +17,7 @@ typedef Eo Evas_Table;
  * See @ref evas_obj_table_homogeneous_get for an explanation of the function
  * of each one.
  *
- * @ingroup Evas_Object_Table
+ * @ingroup Evas_Object_Table_Group
  */
 typedef enum
 {

@@ -135,13 +135,13 @@
     type on Evas -- the rectangle.
    @li @ref Evas_Object_Polygon, to learn how to create polygon elements
     on the canvas.
-   @li @ref Evas_Line_Group, to learn how to create line elements on the
+   @li @ref Evas_Object_Line_Group, to learn how to create line elements on the
     canvas.
    @li @ref Evas_Object_Image, to learn about image objects, over which
     Evas can do a plethora of operations.
-   @li @ref Evas_Object_Text, to learn how to create textual elements on
+   @li @ref Evas_Object_Text_Group, to learn how to create textual elements on
     the canvas.
-   @li @ref Evas_Object_Textblock, to learn how to create multiline
+   @li @ref Evas_Object_Textblock_Group, to learn how to create multiline
     textual elements on the canvas.
 
    @li @ref Evas_Smart_Object_Group and @ref Evas_Smart_Group, to define

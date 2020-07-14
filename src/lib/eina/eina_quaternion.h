@@ -18,6 +18,13 @@
 #ifndef EINA_QUATERNION_H_
 #define EINA_QUATERNION_H_
 
+/**
+ * @defgroup Eina_Quaternion_Group Quaternion
+ * @ingroup Eina_Containers_Group
+ *
+ * @{
+ */
+
 typedef struct _Eina_Quaternion_F16p16 Eina_Quaternion_F16p16;
 typedef struct _Eina_Quaternion Eina_Quaternion;
 typedef struct _Eina_Point_3D Eina_Point_3D;
@@ -266,4 +273,7 @@ EAPI void eina_quaternion_transform(Eina_Quaternion *out, const Eina_Quaternion 
  */
 EAPI double eina_quaternion_angle_plains(Eina_Quaternion *a, Eina_Quaternion *b);
 
+/**
+ * @}
+ */
 #endif

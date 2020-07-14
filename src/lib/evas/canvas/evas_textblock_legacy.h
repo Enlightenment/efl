@@ -1,8 +1,8 @@
 /**
- * @defgroup Evas_Object_Textblock Textblock Object Functions
+ * @defgroup Evas_Object_Textblock_Group Textblock Object Functions
  *
  * Functions used to create and manipulate textblock objects. Unlike
- * @ref Evas_Object_Text, these handle complex text, doing multiple
+ * @ref Evas_Object_Text_Group, these handle complex text, doing multiple
  * styles and multiline text based on HTML-like tags. Of these extra
  * features will be heavier on memory and processing cost.
  *
@@ -656,7 +656,7 @@ EAPI Eina_Bool evas_textblock_cursor_word_end(Evas_Textblock_Cursor *obj);
  */
 
 /**
- * @addtogroup Evas_Object_Textblock
+ * @addtogroup Evas_Object_Textblock_Group
  *
  * @{
  */

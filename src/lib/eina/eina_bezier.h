@@ -20,6 +20,13 @@
 #define EINA_BEZIER_H
 
 /**
+ * @defgroup Eina_Bezier_Group Bezier Curve
+ * @ingroup Eina_Tools_Group
+ *
+ * @{
+ */
+
+/**
  * Floating point cubic bezier curve
  */
 typedef struct _Eina_Bezier Eina_Bezier;
@@ -181,5 +188,9 @@ EAPI void eina_bezier_bounds_get(const Eina_Bezier *b, double *x, double *y, dou
  * @since 1.17
  */
 EAPI void eina_bezier_on_interval(Eina_Bezier *b, double t0, double t1, Eina_Bezier *result);
+
+/**
+ * @}
+ */
 
 #endif // EINA_BEZIER_H
