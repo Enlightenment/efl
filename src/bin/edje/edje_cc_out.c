@@ -3509,7 +3509,7 @@ _data_image_h_size_compare_cb(const void *data1, const void *data2)
 }
 
 static void
-_data_image_sets_size_set()
+_data_image_sets_size_set(void)
 {
    Evas *evas;
    Edje_Image_Directory_Set *set;
@@ -4029,11 +4029,12 @@ free_group:
              if (de->entry && eina_hash_find(images_in_use, de->entry))
                continue;
 
+             printf("Warning: Image '%s' not used\n", de->entry);
              INF("Image '%s' in resource 'edje/image/%i' will not be included as it is unused.",
                  de->entry, de->id);
 
-             /* so as not to write the unused images, moved last image in the
-                list to unused image position and check it */
+             // so as not to write the unused images, moved last image in the
+             // list to unused image position and check it
              free((void *)de->entry);
              de->entry = NULL;
              de_last = edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1;
@@ -4042,8 +4043,8 @@ free_group:
              images_unused_list = eina_list_append(images_unused_list, iui);
              iui->new_id = i;
              de_last->id = i;
-             memcpy(de, de_last, sizeof (Edje_Image_Directory_Entry));
-             --i; /* need to check a moved image on this index */
+             memcpy(de, de_last, sizeof(Edje_Image_Directory_Entry));
+             --i; // need to check a moved image on this index
              edje_file->image_dir->entries_count--;
              img = realloc(edje_file->image_dir->entries,
                            sizeof (Edje_Image_Directory_Entry) * edje_file->image_dir->entries_count);
@@ -4057,6 +4058,17 @@ free_group:
              if (set->name && eina_hash_find(images_in_use, set->name))
                continue;
 
+             printf("Warning: Image set '%s' not used\n", set->name);
+             EINA_LIST_FOREACH(set->entries, l, set_e)
+               {
+                  printf("  Contains '%s' size %ix%i -> %ix%i\n",
+                         set_e->name,
+                         set_e->size.min.w, set_e->size.min.h,
+                         set_e->size.max.w, set_e->size.max.h);
+               }
+/* No need to redo id's - we will warn of unused images - fix in src
+ * Also .. this is broken and messes up id's ... so easyer - complain
+ * to develoepr to clean up the theme...
              INF("Set '%s' will not be included as it is unused.", set->name);
 
              free((void *)set->name);
@@ -4078,6 +4090,7 @@ free_group:
              set_realloc = realloc(edje_file->image_dir->sets,
                                    sizeof(Edje_Image_Directory_Set) * edje_file->image_dir->sets_count);
              edje_file->image_dir->sets = set_realloc;
+ */
           }
 
         /* update image id in parts */
