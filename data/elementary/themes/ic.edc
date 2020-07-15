@@ -177,6 +177,12 @@ I160("i-folder", "efm-folder")
 I160("i-home", "efm-home")
 I160("i-temp", "efm-temp")
 
+I160("i-gear", "gear")
+I160("i-termprompt", "termprompt")
+I160("i-warning", "warning")
+I160("i-warning-red", "warning-red")
+I160("i-camera", "camera")
+
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
 I160("i-system", "system")

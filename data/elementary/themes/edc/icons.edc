@@ -28,6 +28,12 @@
    ICON("dialog-ask", "i-unknown")
    ICON("unknown", "i-unknown")
    ICON("emblem-symbolic-link", "i-unknown")
+
+   ICON("screenshot", "i-camera")
+   ICON("dialog-warning", "i-warning")
+   ICON("dialog-error", "i-warning-red")
+   ICON("preferences-applications", "i-termprompt")
+   ICON("preferences-system", "i-gear")
 #undef ICON
 
 // mono color default fg color icons
