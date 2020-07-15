@@ -15,6 +15,11 @@ typedef Eo Evas_Vg_Node;
 #endif
 
 /**
+ * @defgroup Evas_Vg_Node_Group
+ * @ingroup Evas_Object_Vg_Group
+ */
+
+/**
  * @brief Sets the transformation matrix to be used for this node object.
  *
  * @note Pass @c null to cancel the applied transformation.

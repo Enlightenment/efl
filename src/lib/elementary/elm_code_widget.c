@@ -311,7 +311,7 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 static void
 _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
-   Evas_Coord oy, oh;
+   Evas_Coord ox, oy, ow, oh;
    Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
 
    elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
@@ -327,9 +327,9 @@ _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd
 
    evas_object_smart_calculate(pd->scroller);
    evas_object_smart_calculate(pd->gridbox);
-   evas_object_geometry_get(widget, NULL, &oy, NULL, &oh);
+   evas_object_geometry_get(widget, &ox, &oy, &ow, &oh);
 
-   if ((cy < oy) || (cy > (oy + oh - ch)))
+   if ((cx < ox) || (cx > (ox + ow)) || (cy < oy) || (cy > (oy + oh - ch)))
      evas_object_hide(pd->cursor_rect);
    else
      {
@@ -1198,7 +1198,6 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_MOUSE);
    _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
 
-
    elm_code_widget_selection_end(widget, row, col);
 }
 
@@ -1526,6 +1525,18 @@ _elm_code_widget_tab_at_cursor_insert(Elm_Code_Widget *widget)
      }
 }
 
+static void
+_elm_code_widget_scroll_newline(Elm_Code_Widget *widget)
+{
+   Elm_Code_Widget_Data *pd;
+   Evas_Coord x, y, w, h;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_scroller_region_get(pd->scroller, &x, &y, &w, &h);
+   elm_scroller_region_show(pd->scroller, 0, y, w, h);
+}
+
 void
 _elm_code_widget_newline(Elm_Code_Widget *widget)
 {
@@ -1575,6 +1586,8 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
    _elm_code_widget_undo_change_add(widget, change);
    _elm_code_widget_change_free(change);
    free(text);
+
+   _elm_code_widget_scroll_newline(widget);
 }
 
 static void

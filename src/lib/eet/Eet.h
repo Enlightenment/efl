@@ -179,7 +179,6 @@ typedef struct _Eet_Version
    int revision; /** < svn revision (0 if a proper release or the svn revision number Eet is built from) */
 } Eet_Version;
 
-EAPI extern Eet_Version *eet_version;
 
 /**
  * @defgroup Eet_Group Top level functions
@@ -188,6 +187,11 @@ EAPI extern Eet_Version *eet_version;
  *
  * @{
  */
+
+/**
+ * Eet Version Information
+ */
+EAPI extern Eet_Version *eet_version;
 
 /**
  * @enum _Eet_Error
@@ -4539,6 +4543,7 @@ eet_node_struct_child_new(const char *parent,
                           Eet_Node *child);
 
 /**
+ * @ingroup Eet_Node_Group
  * @brief Gets a node's child nodes.
  * @param node The node
  * @return The first child node which contains a pointer to the
@@ -4549,6 +4554,7 @@ EAPI Eet_Node *
 eet_node_children_get(Eet_Node *node);
 
 /**
+ * @ingroup Eet_Node_Group
  * @brief Gets the next node in a list of nodes.
  * @param node The node
  * @return A node which contains a pointer to the
@@ -4559,6 +4565,7 @@ EAPI Eet_Node *
 eet_node_next_get(Eet_Node *node);
 
 /**
+ * @ingroup Eet_Node_Group
  * @brief Gets the parent node of a node.
  * @param node The node
  * @return The parent node of @p node
@@ -4624,6 +4631,7 @@ eet_node_dump(Eet_Node *n,
               void *dumpdata);
 
 /**
+ * @ingroup Eet_Node_Group
  * @brief Returns the type of a node.
  * @param node The node
  * @return The node's type (EET_T_$TYPE)
@@ -4633,6 +4641,7 @@ EAPI int
 eet_node_type_get(Eet_Node *node);
 
 /**
+ * @ingroup Eet_Node_Group
  * @brief Returns the node's data.
  * @param node The node
  * @return The data contained in the node
@@ -4770,6 +4779,10 @@ struct _Eet_Node_Walk
    Eet_Node_Walk_Simple_Callback       simple;
 };
 
+/**
+ * @ingroup Eet_Node_Group
+ * Walks trees of #Eet_Node
+ */
 EAPI void *
 eet_node_walk(void *parent,
               const char *name,

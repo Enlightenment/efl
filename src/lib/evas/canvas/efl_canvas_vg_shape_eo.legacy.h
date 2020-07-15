@@ -14,6 +14,11 @@ typedef Eo Evas_Vg_Shape;
 #endif
 
 /**
+ * @defgroup Evas_Vg_Shape_Group
+ * @ingroup Evas_Object_Vg_Group
+ */
+
+/**
  * @brief Fill of the shape object.
  *
  * @param[in] obj The object.

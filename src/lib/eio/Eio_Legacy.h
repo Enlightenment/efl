@@ -14,7 +14,11 @@ extern "C" {
         int revision; /**< Revision number */
      } Eio_Version;
 
-   EAPI extern Eio_Version *eio_version;
+/**
+ * Eio Version Information
+ * @ingroup Eio
+ */
+EAPI extern Eio_Version *eio_version;
 
 /**
  * @file
