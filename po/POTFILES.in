@@ -495,12 +495,14 @@ src/modules/evas/image_loaders/pmaps/evas_image_load_pmaps.c
 src/modules/evas/image_loaders/generic/evas_image_load_generic.c
 src/modules/evas/image_loaders/gif/evas_image_load_gif.c
 src/modules/evas/image_loaders/tgv/evas_image_load_tgv.c
+src/modules/evas/image_loaders/avif/evas_image_load_avif.c
 src/modules/evas/image_savers/jpeg/evas_image_save_jpeg.c
 src/modules/evas/image_savers/png/evas_image_save_png.c
 src/modules/evas/image_savers/tiff/evas_image_save_tiff.c
 src/modules/evas/image_savers/eet/evas_image_save_eet.c
 src/modules/evas/image_savers/webp/evas_image_save_webp.c
 src/modules/evas/image_savers/tgv/evas_image_save_tgv.c
+src/modules/evas/image_savers/avif/evas_image_save_avif.c
 src/modules/evas/vg_loaders/json/evas_vg_load_json.c
 src/modules/evas/vg_loaders/eet/evas_vg_load_eet.c
 src/modules/evas/vg_loaders/svg/evas_vg_load_svg.c
