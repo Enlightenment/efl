@@ -182,6 +182,10 @@ I160("i-termprompt", "termprompt")
 I160("i-warning", "warning")
 I160("i-warning-red", "warning-red")
 I160("i-camera", "camera")
+I160("i-paint", "paint")
+I160("i-desks", "desks")
+I160("i-window", "window")
+I160("i-system-run", "system-run")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
