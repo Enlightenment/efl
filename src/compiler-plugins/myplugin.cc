@@ -175,6 +175,9 @@ static unsigned int eo_execute(void)
 #if 1
         //FIXME we need here:
         //add another argument "pd - <my_class>_pd_offset + <providing_class>_pd_offset" (TODO check if these are mixins)
+        /*
+         * Create function declaration
+         */
         vec<tree> argument_types;
         unsigned int i = 0;
         argument_types.create(10);
@@ -187,14 +190,21 @@ static unsigned int eo_execute(void)
              } else {
                argument_types[i + 1] = argument;
              }
+             fprintf(stderr, "COPY\n");
           }
-        tree pd_type = argument_types[0]; //FIXME fill the second argument to contain the pd argument
+
+        tree pd_type = void_type_node;//the pd argument is interpreted as void pointer here.
         argument_types[1] = pd_type;
         tree result = DECL_RESULT(c.called_api_decl);
         if (!result)
           result = void_type_node;
-        tree implementation_function_types = build_function_type_array(result, i + 1, argument_types.address()); //CRASH
+        fprintf(stderr, "----> %d\n", i);
+        tree implementation_function_types = build_function_type_array(result, i + 1, argument_types.address());
         tree implementation_function_declaration = build_fn_decl(TREE_STRING_POINTER(replacement_candidate), implementation_function_types);
+
+        /**
+         * Create function call
+         */
         vec<tree> new_arguments;
         new_arguments.create(gimple_call_num_args(stmt) + 1);
         new_arguments[0] = gimple_call_arg(stmt, 0);
@@ -203,8 +213,13 @@ static unsigned int eo_execute(void)
         for (unsigned int i = 1; i < gimple_call_num_args(stmt); ++i)
           {
              new_arguments[i + 1] = gimple_call_arg(stmt, i);
+             fprintf(stderr, "COPY2\n");
           }
+
         gcall *new_call = gimple_build_call_vec(implementation_function_declaration, new_arguments);
+        const greturn *ret = as_a <const greturn *> (stmt);
+        tree return_val = gimple_return_retval(ret);
+        gimple_return_set_retval(as_a<greturn *>(new_call), return_val);
         gsi_replace(&gsi, new_call, true);
 #endif
       }
