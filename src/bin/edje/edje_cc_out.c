@@ -4014,7 +4014,7 @@ free_group:
    if (edje_file->image_dir && !is_lua)
      {
         Edje_Image_Directory_Entry *de, *de_last, *img;
-        Edje_Image_Directory_Set *set, *set_last, *set_realloc;
+        Edje_Image_Directory_Set *set;
         Edje_Image_Directory_Set_Entry *set_e;
         Eina_List *images_unused_list = NULL;
         unsigned int i;
