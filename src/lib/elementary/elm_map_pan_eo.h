@@ -19,6 +19,6 @@ typedef Eo Elm_Map_Pan;
  */
 #define ELM_MAP_PAN_CLASS elm_map_pan_class_get()
 
-EWAPI const Efl_Class *elm_map_pan_class_get(void);
+EWAPI const Efl_Class *elm_map_pan_class_get(void) EINA_CONST;
 
 #endif

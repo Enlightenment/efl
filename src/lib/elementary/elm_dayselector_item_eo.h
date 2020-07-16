@@ -19,6 +19,6 @@ typedef Eo Elm_Dayselector_Item;
  */
 #define ELM_DAYSELECTOR_ITEM_CLASS elm_dayselector_item_class_get()
 
-EWAPI const Efl_Class *elm_dayselector_item_class_get(void);
+EWAPI const Efl_Class *elm_dayselector_item_class_get(void) EINA_CONST;
 
 #endif

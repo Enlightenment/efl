@@ -19,7 +19,7 @@ typedef Eo Elm_Diskselector_Item;
  */
 #define ELM_DISKSELECTOR_ITEM_CLASS elm_diskselector_item_class_get()
 
-EWAPI const Efl_Class *elm_diskselector_item_class_get(void);
+EWAPI const Efl_Class *elm_diskselector_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the item before @c item in diskselector.

@@ -19,7 +19,7 @@ typedef Eo Elm_Conformant;
  */
 #define ELM_CONFORMANT_CLASS elm_conformant_class_get()
 
-EWAPI const Efl_Class *elm_conformant_class_get(void);
+EWAPI const Efl_Class *elm_conformant_class_get(void) EINA_CONST;
 
 EWAPI extern const Efl_Event_Description _ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_ON;
 

@@ -19,7 +19,7 @@ typedef Eo Evas_Canvas;
  */
 #define EVAS_CANVAS_CLASS evas_canvas_class_get()
 
-EWAPI const Efl_Class *evas_canvas_class_get(void);
+EWAPI const Efl_Class *evas_canvas_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the image cache.

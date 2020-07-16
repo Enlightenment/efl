@@ -19,7 +19,7 @@ typedef Eo Elm_Flipselector;
  */
 #define ELM_FLIPSELECTOR_CLASS elm_flipselector_class_get()
 
-EWAPI const Efl_Class *elm_flipselector_class_get(void);
+EWAPI const Efl_Class *elm_flipselector_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the internal list of items in a given flip selector widget.

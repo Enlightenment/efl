@@ -19,7 +19,7 @@ typedef Eo Evas_Box;
  */
 #define EVAS_BOX_CLASS evas_box_class_get()
 
-EWAPI const Efl_Class *evas_box_class_get(void);
+EWAPI const Efl_Class *evas_box_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the alignment of the whole bounding box of contents, for a given

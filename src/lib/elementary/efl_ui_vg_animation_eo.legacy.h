@@ -521,7 +521,7 @@ EAPI int elm_animation_view_max_frame_get(const Elm_Animation_View *obj);
  */
 #define EFL_UI_VG_ANIMATION_LEGACY_CLASS efl_ui_vg_animation_legacy_class_get()
 
-EWAPI const Efl_Class *efl_ui_vg_animation_legacy_class_get(void);
+EWAPI const Efl_Class *efl_ui_vg_animation_legacy_class_get(void) EINA_CONST;
 #endif /* EFL_BETA_API_SUPPORT */
 
 #endif

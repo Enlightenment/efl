@@ -27,7 +27,7 @@ typedef Eo Elm_Gengrid_Item;
  */
 #define ELM_GENGRID_ITEM_CLASS elm_gengrid_item_class_get()
 
-EWAPI const Efl_Class *elm_gengrid_item_class_get(void);
+EWAPI const Efl_Class *elm_gengrid_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the previous item in a gengrid widget's internal list of items,

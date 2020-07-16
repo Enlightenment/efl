@@ -19,7 +19,7 @@ typedef Eo Elm_Slider_Part_Indicator;
  */
 #define ELM_SLIDER_PART_INDICATOR_CLASS elm_slider_part_indicator_class_get()
 
-EWAPI const Efl_Class *elm_slider_part_indicator_class_get(void);
+EWAPI const Efl_Class *elm_slider_part_indicator_class_get(void) EINA_CONST;
 
 /**
  * @brief Set/Get the visible mode of indicator.

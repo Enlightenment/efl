@@ -47,7 +47,7 @@ typedef enum
  */
 #define ELM_TOOLBAR_CLASS elm_toolbar_class_get()
 
-EWAPI const Efl_Class *elm_toolbar_class_get(void);
+EWAPI const Efl_Class *elm_toolbar_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the selected item in the widget.

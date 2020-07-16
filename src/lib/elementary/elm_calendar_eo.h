@@ -128,7 +128,7 @@ typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;
  */
 #define ELM_CALENDAR_CLASS elm_calendar_class_get()
 
-EWAPI const Efl_Class *elm_calendar_class_get(void);
+EWAPI const Efl_Class *elm_calendar_class_get(void) EINA_CONST;
 
 /**
  * @brief The first day of week to use on calendar widgets'.

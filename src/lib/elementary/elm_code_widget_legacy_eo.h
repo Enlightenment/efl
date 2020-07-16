@@ -19,6 +19,6 @@ typedef Eo Elm_Code_Widget_Legacy;
  */
 #define ELM_CODE_WIDGET_LEGACY_CLASS elm_code_widget_legacy_class_get()
 
-EWAPI const Efl_Class *elm_code_widget_legacy_class_get(void);
+EWAPI const Efl_Class *elm_code_widget_legacy_class_get(void) EINA_CONST;
 
 #endif

@@ -81,6 +81,6 @@ struct _Elm_Combobox_Data
 
 #define ELM_COMBOBOX_CLASS elm_combobox_class_get()
 
-EWAPI const Efl_Class *elm_combobox_class_get(void);
+EWAPI const Efl_Class *elm_combobox_class_get(void) EINA_CONST;
 
 #endif

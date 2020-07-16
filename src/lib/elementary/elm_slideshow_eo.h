@@ -19,7 +19,7 @@ typedef Eo Elm_Slideshow;
  */
 #define ELM_SLIDESHOW_CLASS elm_slideshow_class_get()
 
-EWAPI const Efl_Class *elm_slideshow_class_get(void);
+EWAPI const Efl_Class *elm_slideshow_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the number of items to cache, on a given slideshow widget, after

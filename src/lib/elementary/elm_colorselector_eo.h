@@ -37,7 +37,7 @@ typedef enum
  */
 #define ELM_COLORSELECTOR_CLASS elm_colorselector_class_get()
 
-EWAPI const Efl_Class *elm_colorselector_class_get(void);
+EWAPI const Efl_Class *elm_colorselector_class_get(void) EINA_CONST;
 
 /**
  * @brief Set color to colorselector.

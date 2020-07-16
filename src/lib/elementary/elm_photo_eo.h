@@ -19,6 +19,6 @@ typedef Eo Elm_Photo;
  */
 #define ELM_PHOTO_CLASS elm_photo_class_get()
 
-EWAPI const Efl_Class *elm_photo_class_get(void);
+EWAPI const Efl_Class *elm_photo_class_get(void) EINA_CONST;
 
 #endif

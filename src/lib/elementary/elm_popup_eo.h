@@ -49,7 +49,7 @@ typedef enum
  */
 #define ELM_POPUP_CLASS elm_popup_class_get()
 
-EWAPI const Efl_Class *elm_popup_class_get(void);
+EWAPI const Efl_Class *elm_popup_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the alignment of the popup object.

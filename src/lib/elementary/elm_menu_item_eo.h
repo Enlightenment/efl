@@ -19,7 +19,7 @@ typedef Eo Elm_Menu_Item;
  */
 #define ELM_MENU_ITEM_CLASS elm_menu_item_class_get()
 
-EWAPI const Efl_Class *elm_menu_item_class_get(void);
+EWAPI const Efl_Class *elm_menu_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the icon of a menu item to the standard icon with the given name.

@@ -19,7 +19,7 @@ typedef Eo Elm_Index;
  */
 #define ELM_INDEX_CLASS elm_index_class_get()
 
-EWAPI const Efl_Class *elm_index_class_get(void);
+EWAPI const Efl_Class *elm_index_class_get(void) EINA_CONST;
 
 /**
  * @brief Enable or disable auto hiding feature for a given index widget.

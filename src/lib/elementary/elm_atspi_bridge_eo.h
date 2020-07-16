@@ -19,7 +19,7 @@ typedef Eo Elm_Atspi_Bridge;
  */
 #define ELM_ATSPI_BRIDGE_CLASS elm_atspi_bridge_class_get()
 
-EWAPI const Efl_Class *elm_atspi_bridge_class_get(void);
+EWAPI const Efl_Class *elm_atspi_bridge_class_get(void) EINA_CONST;
 
 /**
  * @brief Indicate if connection with AT-SPI2 bus has been established.

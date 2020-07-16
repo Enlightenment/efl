@@ -19,7 +19,7 @@ typedef Eo Elm_Menu;
  */
 #define ELM_MENU_CLASS elm_menu_class_get()
 
-EWAPI const Efl_Class *elm_menu_class_get(void);
+EWAPI const Efl_Class *elm_menu_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the selected item in the widget.

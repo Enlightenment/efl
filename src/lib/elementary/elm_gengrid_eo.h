@@ -29,7 +29,7 @@ typedef enum
  */
 #define ELM_GENGRID_CLASS elm_gengrid_class_get()
 
-EWAPI const Efl_Class *elm_gengrid_class_get(void);
+EWAPI const Efl_Class *elm_gengrid_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the items grid's alignment within a given gengrid widget.

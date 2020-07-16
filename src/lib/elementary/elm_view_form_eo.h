@@ -19,7 +19,7 @@ typedef Eo Elm_View_Form;
  */
 #define ELM_VIEW_FORM_CLASS elm_view_form_class_get()
 
-EWAPI const Efl_Class *elm_view_form_class_get(void);
+EWAPI const Efl_Class *elm_view_form_class_get(void) EINA_CONST;
 
 /**
  * @brief Set model

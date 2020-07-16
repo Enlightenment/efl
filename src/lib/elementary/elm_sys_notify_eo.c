@@ -11,12 +11,14 @@ Elm_Sys_Notify *_elm_sys_notify_singleton_get(void);
 
 EOAPI Elm_Sys_Notify * elm_obj_sys_notify_singleton_get(void)
 {
-   elm_sys_notify_class_get();
+   const Efl_Class *klass = elm_sys_notify_class_get();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, NULL);
    return _elm_sys_notify_singleton_get();
 }
 EOAPI Elm_Sys_Notify * elm_sys_notify_singleton_get(void)
 {
-   elm_sys_notify_class_get();
+   const Efl_Class *klass = elm_sys_notify_class_get();
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, NULL);
    return _elm_sys_notify_singleton_get();
 }
 

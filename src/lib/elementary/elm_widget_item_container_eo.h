@@ -15,7 +15,7 @@ typedef Eo Elm_Widget_Item_Container;
 #endif
 #define ELM_WIDGET_ITEM_CONTAINER_INTERFACE elm_widget_item_container_interface_get()
 
-EWAPI const Efl_Class *elm_widget_item_container_interface_get(void);
+EWAPI const Efl_Class *elm_widget_item_container_interface_get(void) EINA_CONST;
 
 /**
  * @brief Get the focused widget item.

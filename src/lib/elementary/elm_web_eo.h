@@ -19,7 +19,7 @@ typedef Eo Elm_Web;
  */
 #define ELM_WEB_CLASS elm_web_class_get()
 
-EWAPI const Efl_Class *elm_web_class_get(void);
+EWAPI const Efl_Class *elm_web_class_get(void) EINA_CONST;
 
 /**
  * @brief Sets whether to highlight the matched marks.

@@ -52,7 +52,7 @@ typedef struct _Opaque Opaque;
  */
 #define STRUCT_CLASS struct_class_get()
 
-EWAPI const Efl_Class *struct_class_get(void);
+EWAPI const Efl_Class *struct_class_get(void) EINA_CONST;
 
 /**
  * @brief Foo docs. This is @c monospace. This is alone-standing $.

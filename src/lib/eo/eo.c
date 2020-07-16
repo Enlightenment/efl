@@ -2487,11 +2487,11 @@ efl_object_init(void)
                    EINA_LOG_STATE_INIT);
 
    /* bootstrap EFL_CLASS_CLASS */
-   (void) EFL_CLASS_CLASS;
+   const Eo *efl_klass = EFL_CLASS_CLASS;
    /* bootstrap EFL_OBJECT_CLASS */
-   (void) EFL_OBJECT_CLASS;
+   const Eo *efl_object = EFL_OBJECT_CLASS;
 
-   return EINA_TRUE;
+   return efl_klass && efl_object;
 }
 
 EAPI Eina_Bool

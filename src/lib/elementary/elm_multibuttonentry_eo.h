@@ -19,7 +19,7 @@ typedef Eo Elm_Multibuttonentry;
  */
 #define ELM_MULTIBUTTONENTRY_CLASS elm_multibuttonentry_class_get()
 
-EWAPI const Efl_Class *elm_multibuttonentry_class_get(void);
+EWAPI const Efl_Class *elm_multibuttonentry_class_get(void) EINA_CONST;
 
 /**
  * @brief Control if the multibuttonentry is to be editable or not.

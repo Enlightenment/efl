@@ -31,7 +31,7 @@ typedef enum
  */
 #define ELM_PANEL_CLASS elm_panel_class_get()
 
-EWAPI const Efl_Class *elm_panel_class_get(void);
+EWAPI const Efl_Class *elm_panel_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the orientation of the panel

@@ -21,7 +21,7 @@ typedef Eo Function_As_Argument;
  */
 #define FUNCTION_AS_ARGUMENT_CLASS function_as_argument_class_get()
 
-EWAPI const Efl_Class *function_as_argument_class_get(void);
+EWAPI const Efl_Class *function_as_argument_class_get(void) EINA_CONST;
 
 EOAPI void function_as_argument_set_cb(Eo *obj, void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
 

@@ -19,7 +19,7 @@ typedef Eo Evas_Grid;
  */
 #define EVAS_GRID_CLASS evas_grid_class_get()
 
-EWAPI const Efl_Class *evas_grid_class_get(void);
+EWAPI const Efl_Class *evas_grid_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the virtual resolution for the grid

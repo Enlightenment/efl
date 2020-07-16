@@ -49,7 +49,7 @@ typedef struct _Elm_Toolbar_Item_State
  */
 #define ELM_TOOLBAR_ITEM_CLASS elm_toolbar_item_class_get()
 
-EWAPI const Efl_Class *elm_toolbar_item_class_get(void);
+EWAPI const Efl_Class *elm_toolbar_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the item before this one in the widget's list of items.

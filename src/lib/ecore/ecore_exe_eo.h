@@ -80,7 +80,7 @@ typedef enum
  */
 #define ECORE_EXE_CLASS ecore_exe_class_get()
 
-EWAPI const Efl_Class *ecore_exe_class_get(void);
+EWAPI const Efl_Class *ecore_exe_class_get(void) EINA_CONST;
 
 /**
  * @brief Controls the command that's executed. FIXME: May need a split/rename.

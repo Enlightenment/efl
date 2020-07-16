@@ -99,7 +99,7 @@ typedef struct _Opaque Opaque;
  */
 #define EO_DOCS_CLASS eo_docs_class_get()
 
-EWAPI const Efl_Class *eo_docs_class_get(void);
+EWAPI const Efl_Class *eo_docs_class_get(void) EINA_CONST;
 
 /**
  * @brief Method documentation.

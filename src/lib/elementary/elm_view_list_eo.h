@@ -19,7 +19,7 @@ typedef Eo Elm_View_List;
  */
 #define ELM_VIEW_LIST_CLASS elm_view_list_class_get()
 
-EWAPI const Efl_Class *elm_view_list_class_get(void);
+EWAPI const Efl_Class *elm_view_list_class_get(void) EINA_CONST;
 
 /**
  * @brief Constructor wrapper

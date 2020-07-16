@@ -19,7 +19,7 @@ typedef Eo Elm_Index_Item;
  */
 #define ELM_INDEX_ITEM_CLASS elm_index_item_class_get()
 
-EWAPI const Efl_Class *elm_index_item_class_get(void);
+EWAPI const Efl_Class *elm_index_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the selected state of an item.

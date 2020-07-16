@@ -26,7 +26,7 @@ typedef Eo Efl_Ui_Bg_Legacy;
  */
 #define EFL_UI_BG_LEGACY_CLASS efl_ui_bg_legacy_class_get()
 
-EWAPI const Efl_Class *efl_ui_bg_legacy_class_get(void);
+EWAPI const Efl_Class *efl_ui_bg_legacy_class_get(void) EINA_CONST;
 #endif /* EFL_BETA_API_SUPPORT */
 
 #endif

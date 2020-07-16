@@ -38,7 +38,7 @@ typedef enum
  */
 #define ELM_ACTIONSLIDER_CLASS elm_actionslider_class_get()
 
-EWAPI const Efl_Class *elm_actionslider_class_get(void);
+EWAPI const Efl_Class *elm_actionslider_class_get(void) EINA_CONST;
 
 /**
  * @brief Actionslider position indicator

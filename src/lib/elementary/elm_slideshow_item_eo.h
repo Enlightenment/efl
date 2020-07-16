@@ -19,7 +19,7 @@ typedef Eo Elm_Slideshow_Item;
  */
 #define ELM_SLIDESHOW_ITEM_CLASS elm_slideshow_item_class_get()
 
-EWAPI const Efl_Class *elm_slideshow_item_class_get(void);
+EWAPI const Efl_Class *elm_slideshow_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Display a given slideshow widget's item, programmatically.

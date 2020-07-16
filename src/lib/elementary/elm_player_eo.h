@@ -19,7 +19,7 @@ typedef Eo Elm_Player;
  */
 #define ELM_PLAYER_CLASS elm_player_class_get()
 
-EWAPI const Efl_Class *elm_player_class_get(void);
+EWAPI const Efl_Class *elm_player_class_get(void) EINA_CONST;
 
 EWAPI extern const Efl_Event_Description _ELM_PLAYER_EVENT_FORWARD_CLICKED;
 
