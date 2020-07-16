@@ -44,7 +44,9 @@ _on_delete(Ecore_Evas *ee EINA_UNUSED)
 static void
 _on_text_change(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 {
-   printf("text: %s\n", edje_object_part_text_unescaped_get(obj, part));
+   char *str = edje_object_part_text_unescaped_get(obj, part);
+   printf("text: %s\n", str);
+   free(str);
 }
 
 static void
