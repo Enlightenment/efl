@@ -172,7 +172,7 @@ static unsigned int eo_execute(void)
 
         //Create a new call to the found replacement candidate
 
-#if 0
+#if 1
         //FIXME we need here:
         //add another argument "pd - <my_class>_pd_offset + <providing_class>_pd_offset" (TODO check if these are mixins)
         vec<tree> argument_types;
@@ -188,7 +188,8 @@ static unsigned int eo_execute(void)
                argument_types[i + 1] = argument;
              }
           }
-        argument_types[1] = argument_types[0]; //FIXME fill the second argument to contain the pd argument
+        tree pd_type = argument_types[0]; //FIXME fill the second argument to contain the pd argument
+        argument_types[1] = pd_type;
         tree result = DECL_RESULT(c.called_api_decl);
         if (!result)
           result = void_type_node;
@@ -197,7 +198,8 @@ static unsigned int eo_execute(void)
         vec<tree> new_arguments;
         new_arguments.create(gimple_call_num_args(stmt) + 1);
         new_arguments[0] = gimple_call_arg(stmt, 0);
-        new_arguments[1] = new_arguments[0]; //FIXME create calls to second argument of cfun pd + and -
+        tree pd_value = new_arguments[0]; //FIXME create calls to second argument of cfun pd + and -
+        new_arguments[1] = pd_value;
         for (unsigned int i = 1; i < gimple_call_num_args(stmt); ++i)
           {
              new_arguments[i + 1] = gimple_call_arg(stmt, i);
