@@ -196,6 +196,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, json);
 #endif
 
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
+EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, avif);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, bmp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, dds);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, eet);
@@ -222,6 +223,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(vg_saver, svg);
 #endif
 
 #if !EVAS_MODULE_NO_IMAGE_SAVERS
+EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, avif);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, png);
@@ -287,6 +289,9 @@ static const struct {
 #endif
 #endif
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
+#ifdef EVAS_STATIC_BUILD_AVIF
+  EVAS_EINA_STATIC_MODULE_USE(image_loader, avif),
+#endif
 #ifdef EVAS_STATIC_BUILD_BMP
   EVAS_EINA_STATIC_MODULE_USE(image_loader, bmp),
 #endif
@@ -351,6 +356,9 @@ static const struct {
 #endif
 #endif
 #if !EVAS_MODULE_NO_IMAGE_SAVERS
+#ifdef EVAS_STATIC_BUILD_AVIF
+  EVAS_EINA_STATIC_MODULE_USE(image_saver, avif),
+#endif
 #ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_saver, eet),
 #endif

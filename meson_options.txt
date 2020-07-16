@@ -190,13 +190,13 @@ option('evas-loaders-disabler',
   type : 'array',
   description : 'List of modular image/vector loaders to disable in efl',
   choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'rsvg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm', 'json'],
-  value : ['rsvg']
+  value : ['rsvg', 'avif']
 )
 
 option('ecore-imf-loaders-disabler',
   type : 'array',
   description : 'List of input methods to disable in efl',
-  choices : ['xim', 'ibus', 'scim'],
+  choices : ['', 'xim', 'ibus', 'scim'],
   value : ['scim']
 )
 
@@ -286,7 +286,7 @@ option('nls',
 
 option('bindings',
   type : 'array',
-  choices : ['lua', 'cxx', 'mono'],
+  choices : ['', 'lua', 'cxx', 'mono'],
   value : ['cxx'],
   description : 'Which auto-generated language bindings for efl to enable',
 )
