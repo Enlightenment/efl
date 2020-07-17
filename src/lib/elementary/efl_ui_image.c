@@ -1001,14 +1001,6 @@ _efl_ui_image_efl_file_unload(Eo *obj, Efl_Ui_Image_Data *sd)
    _efl_ui_image_file_set_do(obj);
    efl_file_unload(sd->img);
    efl_file_unload(efl_super(obj, MY_CLASS));
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
-     _prev_img_del(sd);
-   else
-     {
-        evas_object_hide(sd->img);
-        sd->preload_status = EFL_UI_IMAGE_PRELOADING;
-        evas_object_image_preload(sd->img, EINA_FALSE);
-     }
 
    efl_canvas_group_change(obj);
 }
