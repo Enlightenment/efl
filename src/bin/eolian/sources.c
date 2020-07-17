@@ -504,7 +504,7 @@ _emit_class_function(Eina_Strbuf *buf, const Eolian_Function *fid, const char *r
 static void
 _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf,
-          const Eolian_Implement *impl, Eina_Hash *refh)
+          const Eolian_Implement *impl, Eina_Hash *refh, Eina_Bool internal)
 {
    Eina_Bool is_empty = eolian_implement_is_empty(impl, ftype);
    Eina_Bool is_auto = eolian_implement_is_auto(impl, ftype);
@@ -927,6 +927,51 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    if (impl_same_class && eolian_function_is_static(fid))
      _emit_class_function(buf, fid, rtpn, params_full, ocnamel, func_suffix, params, eolian_function_full_c_name_get(fid, ftype));
 
+   if (internal && !eolian_function_is_static(fid) && !eolian_implement_is_pure_virtual(impl, ftype) && !is_empty)
+     {
+        /* T _class_name[_orig_class]_func_name_suffix */
+        eina_strbuf_append(buf, "EAPI ");
+        eina_strbuf_append(buf, rtpn);
+        if (rtpn[strlen(rtpn) - 1] != '*')
+          eina_strbuf_append_char(buf, ' ');
+        eina_strbuf_append(buf, "_NEVA_USE_ME_internal_");
+        eina_strbuf_append(buf, cnamel);
+        if (!impl_same_class)
+          eina_strbuf_append_printf(buf, "_%s", ocnamel);
+        eina_strbuf_append_char(buf, '_');
+        eina_strbuf_append(buf, eolian_function_name_get(fid));
+        eina_strbuf_append(buf, func_suffix);
+        /* ([const ]Eo *obj, Data_Type *pd, impl_full_params); */
+        eina_strbuf_append_char(buf, '(');
+        if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid))
+          eina_strbuf_append(buf, "const ");
+        eina_strbuf_append(buf, "Eo *obj, ");
+        eina_strbuf_append(buf, eolian_class_c_data_type_get(cl));
+        eina_strbuf_append(buf, " *pd");
+        eina_strbuf_append(buf, eina_strbuf_string_get(params_full_imp));
+        if (eina_strbuf_length_get(params_full_imp) == 0 && eolian_function_is_static(fid))
+          eina_strbuf_append(buf, "void");
+        eina_strbuf_append(buf, ") {\n");
+        if (rtp)
+          eina_strbuf_append(buf, "   return ");
+        else
+          eina_strbuf_append(buf, "   ");
+        eina_strbuf_append(buf, "_");
+        eina_strbuf_append(buf, cnamel);
+        if (!impl_same_class)
+          eina_strbuf_append_printf(buf, "_%s", ocnamel);
+        eina_strbuf_append_char(buf, '_');
+        eina_strbuf_append(buf, eolian_function_name_get(fid));
+        eina_strbuf_append(buf, func_suffix);
+        eina_strbuf_append(buf, "(obj, pd");
+        if (eina_strbuf_length_get(params) > 0)
+          eina_strbuf_append(buf, ", ");
+        eina_strbuf_append_buffer(buf, params);
+        /* params here */
+        eina_strbuf_append(buf, ");\n");
+        eina_strbuf_append(buf, "}\n\n");
+     }
+
    free(cname);
    free(cnamel);
    free(ocnamel);
@@ -1137,10 +1182,8 @@ _is_function_type_compatible(const Eolian_Function_Type t1, const Eolian_Functio
  *
  */
 static void
-_gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_Class *impl_klass, const Eolian_Implement *impl, Eina_Strbuf *buf)
+_gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_Class *impl_klass, const Eolian_Implement *impl, const Eolian_Function_Type ftype, const Eolian_Function *fid, Eina_Strbuf *buf)
 {
-   Eolian_Function_Type ftype;
-   const Eolian_Function *fid = eolian_implement_function_get(impl, &ftype);
    const Eolian_Class *next_implemen_class = NULL;
    const Eolian_Class *definition_class = eolian_function_class_get(fid);
    char *impl_name;
@@ -1183,7 +1226,7 @@ _gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_
      prefix = "_set";
 
    eina_strbuf_append_printf(buf, "COMPILER_PLUGIN_REGISTER_NEXT(\"%s\", \"%s\", ", eolian_function_full_c_name_get(fid, ftype), class_name);
-   eina_strbuf_append_printf(buf, "\"_%s", impl_name);
+   eina_strbuf_append_printf(buf, "\"_NEVA_USE_ME_internal_%s", impl_name);
    if (definition_class != next_implemen_class)
      eina_strbuf_append_printf(buf, "_%s", defi_name);
    eina_strbuf_append_printf(buf, "_%s%s\"", eolian_function_name_get(fid), prefix);
@@ -1281,18 +1324,19 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         {
            Eolian_Function_Type ftype = EOLIAN_UNRESOLVED;
            const Eolian_Function *fid = eolian_implement_function_get(imp, &ftype);
+           Eina_Bool internal_redirection = EINA_TRUE; //eolian_function_class_get(fid) != cl;
            switch (ftype)
              {
               case EOLIAN_PROP_GET:
               case EOLIAN_PROP_SET:
-                _gen_func(cl, fid, ftype, buf, imp, refh);
+                _gen_func(cl, fid, ftype, buf, imp, refh, internal_redirection);
                 break;
               case EOLIAN_PROPERTY:
-                _gen_func(cl, fid, EOLIAN_PROP_SET, buf, imp, refh);
-                _gen_func(cl, fid, EOLIAN_PROP_GET, buf, imp, refh);
+                _gen_func(cl, fid, EOLIAN_PROP_SET, buf, imp, refh, internal_redirection);
+                _gen_func(cl, fid, EOLIAN_PROP_GET, buf, imp, refh, internal_redirection);
                 break;
               default:
-                _gen_func(cl, fid, EOLIAN_METHOD, buf, imp, refh);
+                _gen_func(cl, fid, EOLIAN_METHOD, buf, imp, refh, internal_redirection);
              }
         }
       eina_iterator_free(itr);
@@ -1391,7 +1435,15 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         if (eolian_function_is_static(fid)) continue;
         if (icl == cl) continue;
 
-        _gen_next_super_implementation_registering(call_chain, cl, imp, buf);
+        if (ftype == EOLIAN_PROPERTY)
+          {
+             _gen_next_super_implementation_registering(call_chain, cl, imp, EOLIAN_PROP_SET, fid, buf);
+             _gen_next_super_implementation_registering(call_chain, cl, imp, EOLIAN_PROP_GET, fid, buf);
+          }
+        else
+          {
+             _gen_next_super_implementation_registering(call_chain, cl, imp, ftype, fid, buf);
+          }
      }
    eina_iterator_free(itr);
 

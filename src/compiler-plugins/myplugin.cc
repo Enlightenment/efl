@@ -35,7 +35,6 @@ static void super2_add(gimple_stmt_iterator *gsi)
 	int frequency;
 	basic_block bb;
 
-
 	stmt = gimple_build_call(super2_function_decl, 0);
 	super2_func = as_a_gcall(stmt);
 	gsi_insert_after(gsi, super2_func, GSI_CONTINUE_LINKING);
@@ -45,7 +44,7 @@ static void super2_add(gimple_stmt_iterator *gsi)
 	node = cgraph_get_create_node(super2_function_decl);
 	gcc_assert(node);
 	frequency = compute_call_stmt_bb_frequency(current_function_decl, bb);
-	cgraph_create_edge(cgraph_get_node(current_function_decl), node,
+	cgraph_create_edge(cgraph_node::get(current_function_decl), node,
 			super2_func, bb->count, frequency);
 }
 
@@ -55,13 +54,16 @@ struct Caller {
   const char *klass;
   tree klass_decl;
   tree called_api_decl;
+  tree klass_call;
+  gimple efl_super_call;
+  gimple class_get_call;
 };
 
 typedef struct _Fetch_Result {
   bool valid;
   const char *api_name;
   tree api;
-  const_gimple first_argument;
+  gimple first_argument;
 } Fetch_Result;
 
 static Fetch_Result
@@ -105,6 +107,7 @@ static Caller fetch_efl_super_class(const_gimple stmt)
    if (!first.valid) return ret;
    ret.called_api = IDENTIFIER_POINTER(DECL_NAME(called_api_tree));
    ret.called_api_decl = called_api_tree;
+   ret.efl_super_call = first.first_argument;
    if (!!strncmp(first.api_name, "efl_super", 9)) return ret;
 
    //copy the name we have inside efl_super
@@ -112,16 +115,53 @@ static Caller fetch_efl_super_class(const_gimple stmt)
    if (!argument_efl_super.valid) return ret;
    ret.klass = argument_efl_super.api_name;
    ret.klass_decl = argument_efl_super.api;
+   ret.klass_call = gimple_call_arg(first.first_argument, 0);
+   ret.class_get_call = argument_efl_super.first_argument;
 
    ret.valid = true;
 
    return ret;
 }
 
+struct Registered_Api{
+  bool valid;
+  tree replacement_candidate;
+  tree provider_of_replacement_candidate;
+};
+
+static Registered_Api
+fetch_replacement_api(tree klass_decl, const char* called_api)
+{
+   Registered_Api result = {false, 0, 0};
+   for (tree attribute = DECL_ATTRIBUTES(klass_decl); attribute != NULL_TREE; attribute = TREE_CHAIN(attribute))
+     {
+        tree attribute_name = TREE_PURPOSE(attribute);
+        if (!attribute_name)
+          {
+             fprintf(stderr, "Error, expected name\n");
+             continue;
+          }
+        if (!!strncmp(IDENTIFIER_POINTER(attribute_name), "register_next", strlen("register_next")))
+          continue;
+         //this here assumes a special tree_list structure
+        tree attribute_arguments = TREE_VALUE(attribute);
+        tree call = TREE_VALUE(attribute_arguments);
+        tree providing_class = TREE_VALUE(TREE_CHAIN(attribute_arguments));
+        tree implementation = TREE_VALUE(TREE_CHAIN(TREE_CHAIN(attribute_arguments)));
+        if (!!strncmp(TREE_STRING_POINTER(call), called_api, strlen(called_api))) continue;
+        result.provider_of_replacement_candidate = providing_class;
+        result.replacement_candidate = implementation;
+        result.valid = true;
+        break;
+     }
+   return result;
+}
+
 static unsigned int eo_execute(void)
 {
   basic_block bb, entry_bb;
   gimple_stmt_iterator gsi;
+  unsigned int length = 0;
 
   //fprintf(stderr, "Function %s eval\n", get_name(cfun->decl));
 
@@ -131,47 +171,32 @@ static unsigned int eo_execute(void)
   gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
   entry_bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
 
+  for (tree argument = DECL_ARGUMENTS(cfun->decl); argument; argument = DECL_CHAIN(argument))
+    {
+       length ++;
+    }
+  if (length < 2) return 0; //not considering functions that are invalid here
+
   FOR_EACH_BB_FN(bb, cfun) {
-    const_gimple stmt;
+    gimple stmt;
     for (gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi))
       {
         stmt = gsi_stmt(gsi);
+
         if (!stmt || !is_gimple_call(stmt)) continue;
 
         struct Caller c = fetch_efl_super_class(stmt);
-        tree replacement_candidate = NULL;
-        tree provider_of_replacement_candidate = NULL;
 
         if (!c.klass)
           continue;
 
-        for (tree attribute = DECL_ATTRIBUTES(c.klass_decl); attribute != NULL_TREE; attribute = TREE_CHAIN(attribute))
-          {
-             tree attribute_name = TREE_PURPOSE(attribute);
-             if (!attribute_name)
-               {
-                  fprintf(stderr, "Error, expected name\n");
-                  continue;
-               }
-             if (!!strncmp(IDENTIFIER_POINTER(attribute_name), "register_next", strlen("register_next")))
-               continue;
+        Registered_Api api = fetch_replacement_api(c.klass_decl, c.called_api);
 
-             //this here assumes a special tree_list structure
-             tree attribute_arguments = TREE_VALUE(attribute);
-             tree call = TREE_VALUE(attribute_arguments);
-             tree providing_class = TREE_VALUE(TREE_CHAIN(attribute_arguments));
-             tree implementation = TREE_VALUE(TREE_CHAIN(TREE_CHAIN(attribute_arguments)));
+        if (!api.valid) continue;
 
-             if (!!strncmp(TREE_STRING_POINTER(call), c.called_api, strlen(c.called_api))) continue;
-
-             provider_of_replacement_candidate = providing_class;
-             replacement_candidate = implementation;
-          }
-        if (!replacement_candidate) continue;
-        fprintf(stderr, "Replace! %s %s\n", c.called_api, TREE_STRING_POINTER(replacement_candidate));
+        fprintf(stderr, "Replace! %s %s\n", c.called_api, TREE_STRING_POINTER(api.replacement_candidate));
 
         //Create a new call to the found replacement candidate
-
 #if 1
         //FIXME we need here:
         //add another argument "pd - <my_class>_pd_offset + <providing_class>_pd_offset" (TODO check if these are mixins)
@@ -183,14 +208,9 @@ static unsigned int eo_execute(void)
         argument_types.create(10);
         for (tree argument = DECL_ARGUMENTS(c.called_api_decl); argument; argument = TREE_CHAIN(argument), i++)
           {
-             if (!argument_types.space(i + 1))
-               argument_types.safe_grow(i + 1);
-             if (i == 0) {
-               argument_types[i] = argument;
-             } else {
-               argument_types[i + 1] = argument;
-             }
-             fprintf(stderr, "COPY\n");
+             argument_types.safe_push(argument);
+             if (i == 0)
+               argument_types.safe_push(void_type_node);
           }
 
         tree pd_type = void_type_node;//the pd argument is interpreted as void pointer here.
@@ -198,47 +218,45 @@ static unsigned int eo_execute(void)
         tree result = DECL_RESULT(c.called_api_decl);
         if (!result)
           result = void_type_node;
-        fprintf(stderr, "----> %d\n", i);
-        tree implementation_function_types = build_function_type_array(result, i + 1, argument_types.address());
-        tree implementation_function_declaration = build_fn_decl(TREE_STRING_POINTER(replacement_candidate), implementation_function_types);
-
+        tree implementation_function_types = build_function_type_array(result, i + 1, &argument_types.address()[0]);
+        tree implementation_function_declaration = build_fn_decl(TREE_STRING_POINTER(api.replacement_candidate), implementation_function_types);
         /**
          * Create function call
          */
         vec<tree> new_arguments;
         new_arguments.create(gimple_call_num_args(stmt) + 1);
-        new_arguments[0] = gimple_call_arg(stmt, 0);
-        tree pd_value = new_arguments[0]; //FIXME create calls to second argument of cfun pd + and -
-        new_arguments[1] = pd_value;
+        new_arguments.safe_push(DECL_ARGUMENTS(cfun->decl));
+
+        tree field1 = build_decl(UNKNOWN_LOCATION, VAR_DECL, get_identifier("efl_object_pd_offset"), integer_type_node); //FIXME wrong field
+        DECL_EXTERNAL(field1) = 1;
+        TREE_PUBLIC(field1) = 1;
+        tree field2 = build_decl(UNKNOWN_LOCATION, VAR_DECL, get_identifier("efl_loop_consumer_pd_offset"), integer_type_node); //FIXME wrong field
+        DECL_EXTERNAL(field2) = 1;
+        TREE_PUBLIC(field2) = 1;
+        tree tmp1 = build2(MINUS_EXPR, integer_type_node, DECL_CHAIN(DECL_ARGUMENTS(cfun->decl)), field1);
+        tree tmp2 = build2(PLUS_EXPR, integer_type_node, tmp1, field2);
+        new_arguments.safe_push(tmp2);
         for (unsigned int i = 1; i < gimple_call_num_args(stmt); ++i)
           {
-             new_arguments[i + 1] = gimple_call_arg(stmt, i);
-             fprintf(stderr, "COPY2\n");
+             new_arguments.safe_push(gimple_call_arg(stmt, i));
           }
 
         gcall *new_call = gimple_build_call_vec(implementation_function_declaration, new_arguments);
+
         const greturn *ret = as_a <const greturn *> (stmt);
         tree return_val = gimple_return_retval(ret);
         gimple_return_set_retval(as_a<greturn *>(new_call), return_val);
+
         gsi_replace(&gsi, new_call, true);
+
+        auto removal = gsi_for_stmt(c.efl_super_call);
+        gsi_remove(&removal, false);
+        removal = gsi_for_stmt(c.class_get_call);
+        gsi_remove(&removal, false);
 #endif
       }
     }
   return 0;
-}
-
-static void super2_start_unit(void *gcc_data __unused,
-				 void *user_data __unused)
-{
-	/* void efl_super2(void) */
-	tree fntype = build_function_type_list(void_type_node, NULL_TREE);
-	super2_function_decl = build_fn_decl(super2_function, fntype);
-	DECL_ASSEMBLER_NAME(super2_function_decl); /* for LTO */
-	TREE_PUBLIC(super2_function_decl) = 1;
-	TREE_USED(super2_function_decl) = 1;
-	DECL_EXTERNAL(super2_function_decl) = 1;
-	DECL_ARTIFICIAL(super2_function_decl) = 1;
-	DECL_PRESERVE_P(super2_function_decl) = 1;
 }
 
 static tree
@@ -287,7 +305,6 @@ __visible int plugin_init(struct plugin_name_args *plugin_info,
   PASS_INFO(eo, "cfg", 1, PASS_POS_INSERT_AFTER);
 
   /* Register to be called before processing a translation unit */
-  register_callback(plugin_name, PLUGIN_START_UNIT, &super2_start_unit, NULL);
   register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, NULL, &eo_pass_info);
   register_callback (plugin_name, PLUGIN_ATTRIBUTES, register_next_hop_attribute, NULL);
   return 0;
