@@ -13,7 +13,7 @@ if [ "$TRAVIS_CPU_ARCH" = "s390x" ] ; then
 else
   sudo apt-get install -y luajit libluajit-5.1-dev
 fi
-sudo pip3 install meson
+sudo pip3 install meson==0.54.3
 
 travis_time_finish "bionic-deps"
 travis_fold end "bionic-deps"

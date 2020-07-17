@@ -1223,7 +1223,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
    ADD_TEST(NULL, "Text", "Label Colors", test_label_colors);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
-   ADD_TEST(NULL, "Text", "Label Variation Sequnece", test_label_variation_sequence);
+   ADD_TEST(NULL, "Text", "Label Variation Sequence", test_label_variation_sequence);
    ADD_TEST_EO(NULL, "Text", "Efl.Ui.Textpath", test_ui_textpath);
    ADD_TEST_EO(NULL, "Text", "Efl.Canvas.Textblock style", test_canvas_textblock);
 
