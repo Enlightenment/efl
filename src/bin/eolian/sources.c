@@ -930,7 +930,6 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    if (internal && !eolian_function_is_static(fid) && !eolian_implement_is_pure_virtual(impl, ftype) && !is_empty)
      {
         /* T _class_name[_orig_class]_func_name_suffix */
-        eina_strbuf_append(buf, "EAPI ");
         eina_strbuf_append(buf, rtpn);
         if (rtpn[strlen(rtpn) - 1] != '*')
           eina_strbuf_append_char(buf, ' ');
@@ -1182,14 +1181,15 @@ _is_function_type_compatible(const Eolian_Function_Type t1, const Eolian_Functio
  *
  */
 static void
-_gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_Class *impl_klass, const Eolian_Implement *impl, const Eolian_Function_Type ftype, const Eolian_Function *fid, Eina_Strbuf *buf)
+_gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_Class *current, const Eolian_Implement *impl, const Eolian_Function_Type ftype, const Eolian_Function *fid, Eina_Strbuf *buf)
 {
    const Eolian_Class *next_implemen_class = NULL;
    const Eolian_Class *definition_class = eolian_function_class_get(fid);
    char *impl_name;
    char *defi_name;
+   char *current_name;
 
-   if (eolian_class_type_get(impl_klass) == EOLIAN_CLASS_MIXIN)
+   if (eolian_class_type_get(current) == EOLIAN_CLASS_MIXIN)
      {
         //mixins cannot fast forward to a fixed implementation, so we cannot register there anything sane
         return;
@@ -1213,6 +1213,7 @@ _gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_
 
    if (!next_implemen_class) return;
 
+   eo_gen_class_names_get(current, NULL, NULL, &current_name);
    eo_gen_class_names_get(next_implemen_class, NULL, NULL, &impl_name);
    eo_gen_class_names_get(definition_class, NULL, NULL, &defi_name);
 
@@ -1225,7 +1226,12 @@ _gen_next_super_implementation_registering(Eina_Array *call_chain, const Eolian_
    else if (ftype == EOLIAN_PROP_SET)
      prefix = "_set";
 
-   eina_strbuf_append_printf(buf, "COMPILER_PLUGIN_REGISTER_NEXT(\"%s\", \"%s\", ", eolian_function_full_c_name_get(fid, ftype), class_name);
+   eina_strbuf_append_printf(buf, "COMPILER_PLUGIN_REGISTER_NEXT(\"%s\", ", eolian_function_full_c_name_get(fid, ftype));
+   eina_strbuf_append_printf(buf, "\"%s_pd_offset\", ", current_name);
+   if (eolian_class_type_get(next_implemen_class) == EOLIAN_CLASS_MIXIN)
+     eina_strbuf_append_printf(buf, "\"%s_%s_pd_offset\", ", current_name, class_name);
+   else
+     eina_strbuf_append_printf(buf, "\"%s_pd_offset\", ", class_name);
    eina_strbuf_append_printf(buf, "\"_NEVA_USE_ME_internal_%s", impl_name);
    if (definition_class != next_implemen_class)
      eina_strbuf_append_printf(buf, "_%s", defi_name);
@@ -1356,7 +1362,7 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
              {
                 Eolian_Class *called = eina_array_data_get(call_chain, i);
                 if (eolian_class_type_get(called) != EOLIAN_CLASS_MIXIN)
-                  break;
+                  continue;
                 eina_strbuf_append_printf(name, "unsigned int %s_%s_pd_offset = -1;\n", eolian_class_c_name_get(cl), eolian_class_c_name_get(called));
                 eina_strbuf_tolower(name);
                 eina_strbuf_append_buffer(buf, name);
@@ -1417,9 +1423,9 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    /* create macro for COMPILER_PLUGIN_REGISTER_NEXT */
    eina_strbuf_append(buf, "#ifdef COMPILER_PLUGIN_REGISTER_NEXT_SUPPORT\n");
-   eina_strbuf_append(buf, "   #define COMPILER_PLUGIN_REGISTER_NEXT(a, b, c, d) __attribute__((register_next(a, b, c, d)))\n");
+   eina_strbuf_append(buf, "   #define COMPILER_PLUGIN_REGISTER_NEXT(a, b, c, d, e) __attribute__((register_next(a, b, c, d)))\n");
    eina_strbuf_append(buf, "#else\n");
-   eina_strbuf_append(buf, "   #define COMPILER_PLUGIN_REGISTER_NEXT(a, b, c, d) /* NOP */\n");
+   eina_strbuf_append(buf, "   #define COMPILER_PLUGIN_REGISTER_NEXT(a, b, c, d, e) /* NOP */\n");
    eina_strbuf_append(buf, "#endif\n");
 
 

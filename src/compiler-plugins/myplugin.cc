@@ -125,8 +125,12 @@ static Caller fetch_efl_super_class(const_gimple stmt)
 
 struct Registered_Api{
   bool valid;
+  tree call;
+  tree pd_minus_field;
+  tree pd_plus_field;
   tree replacement_candidate;
-  tree provider_of_replacement_candidate;
+
+  bool is_mixin;
 };
 
 static Registered_Api
@@ -145,12 +149,12 @@ fetch_replacement_api(tree klass_decl, const char* called_api)
           continue;
          //this here assumes a special tree_list structure
         tree attribute_arguments = TREE_VALUE(attribute);
-        tree call = TREE_VALUE(attribute_arguments);
-        tree providing_class = TREE_VALUE(TREE_CHAIN(attribute_arguments));
-        tree implementation = TREE_VALUE(TREE_CHAIN(TREE_CHAIN(attribute_arguments)));
-        if (!!strncmp(TREE_STRING_POINTER(call), called_api, strlen(called_api))) continue;
-        result.provider_of_replacement_candidate = providing_class;
-        result.replacement_candidate = implementation;
+        result.call =                  TREE_VALUE(attribute_arguments);
+        result.pd_minus_field =        TREE_VALUE(TREE_CHAIN(attribute_arguments));
+        result.pd_plus_field =         TREE_VALUE(TREE_CHAIN(TREE_CHAIN(attribute_arguments)));
+        result.replacement_candidate = TREE_VALUE(TREE_CHAIN(TREE_CHAIN(TREE_CHAIN(attribute_arguments))));
+        //result.is_mixin = !!(TREE_VALUE(TREE_CHAIN(TREE_CHAIN(TREE_CHAIN(TREE_CHAIN(attribute_arguments))))));
+        if (!!strncmp(TREE_STRING_POINTER(result.call), called_api, strlen(called_api))) continue;
         result.valid = true;
         break;
      }
@@ -171,6 +175,7 @@ static unsigned int eo_execute(void)
   gcc_assert(single_succ_p(ENTRY_BLOCK_PTR_FOR_FN(cfun)));
   entry_bb = single_succ(ENTRY_BLOCK_PTR_FOR_FN(cfun));
 
+  //FIXME this is jerky but we are checking if args are more than 2, if so we might be a eo op, and thats fine
   for (tree argument = DECL_ARGUMENTS(cfun->decl); argument; argument = DECL_CHAIN(argument))
     {
        length ++;
@@ -197,9 +202,6 @@ static unsigned int eo_execute(void)
         fprintf(stderr, "Replace! %s %s\n", c.called_api, TREE_STRING_POINTER(api.replacement_candidate));
 
         //Create a new call to the found replacement candidate
-#if 1
-        //FIXME we need here:
-        //add another argument "pd - <my_class>_pd_offset + <providing_class>_pd_offset" (TODO check if these are mixins)
         /*
          * Create function declaration
          */
@@ -227,10 +229,10 @@ static unsigned int eo_execute(void)
         new_arguments.create(gimple_call_num_args(stmt) + 1);
         new_arguments.safe_push(DECL_ARGUMENTS(cfun->decl));
 
-        tree field1 = build_decl(UNKNOWN_LOCATION, VAR_DECL, get_identifier("efl_object_pd_offset"), integer_type_node); //FIXME wrong field
+        tree field1 = build_decl(UNKNOWN_LOCATION, VAR_DECL, get_identifier(TREE_STRING_POINTER(api.pd_minus_field)), integer_type_node);
         DECL_EXTERNAL(field1) = 1;
         TREE_PUBLIC(field1) = 1;
-        tree field2 = build_decl(UNKNOWN_LOCATION, VAR_DECL, get_identifier("efl_loop_consumer_pd_offset"), integer_type_node); //FIXME wrong field
+        tree field2 = build_decl(UNKNOWN_LOCATION, VAR_DECL, get_identifier(TREE_STRING_POINTER(api.pd_plus_field)), integer_type_node);
         DECL_EXTERNAL(field2) = 1;
         TREE_PUBLIC(field2) = 1;
         tree tmp1 = build2(MINUS_EXPR, integer_type_node, DECL_CHAIN(DECL_ARGUMENTS(cfun->decl)), field1);
@@ -253,7 +255,7 @@ static unsigned int eo_execute(void)
         gsi_remove(&removal, false);
         removal = gsi_for_stmt(c.class_get_call);
         gsi_remove(&removal, false);
-#endif
+
       }
     }
   return 0;
