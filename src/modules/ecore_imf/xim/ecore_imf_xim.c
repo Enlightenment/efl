@@ -1128,32 +1128,9 @@ _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
 
         if (imf_context_data->use_preedit == EINA_TRUE)
           {
-             if (im_info->supports_cursor)
-               {
-                  // kinput2 DOES do this...
-                  XFontSet fs;
-                  char **missing_charset_list;
-                  int missing_charset_count;
-                  char *def_string;
-
-                  im_style |= XIMPreeditPosition;
-                  im_style |= XIMStatusNothing;
-                  fs = XCreateFontSet(ecore_x_display_get(),
-                                      "fixed",
-                                      &missing_charset_list,
-                                      &missing_charset_count,
-                                      &def_string);
-                  preedit_attr = XVaCreateNestedList(0,
-                                                     XNSpotLocation, &spot,
-                                                     XNFontSet, fs,
-                                                     NULL);
-               }
-             else
-               {
-                  im_style |= XIMPreeditCallbacks;
-                  im_style |= XIMStatusNothing;
-                  preedit_attr = _ecore_imf_xim_preedit_callback_set(ctx);
-               }
+             im_style |= XIMPreeditCallbacks;
+             im_style |= XIMStatusNothing;
+             preedit_attr = _ecore_imf_xim_preedit_callback_set(ctx);
              name = XNPreeditAttributes;
           }
         else
