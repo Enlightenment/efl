@@ -4992,7 +4992,8 @@ _elm_x_io_err(void *data EINA_UNUSED)
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
      evas_object_smart_callback_call(obj, "ioerr", NULL);
-   elm_exit();
+   fprintf(stderr, "X I/O Error - fatal. Exiting\n");
+   exit(101);
 }
 #endif
 
