@@ -27,43 +27,35 @@ _realized_set(Elm_Widget_Item_Static_Focus *f)
 }
 
 static void
-_list_realized_cb(void *data, const Efl_Event *ev)
+_list_realized_cb(Eo *obj)
 {
-   if (ev->info != data) return;
+   _realized_set(obj);
 
-   _realized_set(data);
-
-   if (!elm_object_item_disabled_get(data) &&
-       elm_genlist_item_type_get(data) != ELM_GENLIST_ITEM_GROUP)
-     efl_ui_focus_object_setup_order(data);
+   if (!elm_object_item_disabled_get(obj) &&
+       elm_genlist_item_type_get(obj) != ELM_GENLIST_ITEM_GROUP)
+     efl_ui_focus_object_setup_order(obj);
 }
 
 static void
-_grid_realized_cb(void *data, const Efl_Event *ev)
+_grid_realized_cb(Eo *obj)
 {
    const Elm_Gen_Item_Class *itc;
    Eina_Bool is_group = EINA_FALSE;
 
-   if (ev->info != data) return;
+   _realized_set(obj);
 
-   _realized_set(data);
-
-   itc = elm_gengrid_item_item_class_get(data);
+   itc = elm_gengrid_item_item_class_get(obj);
 
    is_group = (itc && itc->item_style && !strcmp(itc->item_style, "group_index"));
 
-   if (!elm_object_item_disabled_get(data) && !is_group)
-     {
-        efl_ui_focus_object_setup_order(data);
-     }
+   if (!elm_object_item_disabled_get(obj) && !is_group)
+     efl_ui_focus_object_setup_order(obj);
 }
 
 static void
-_unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_unrealized_cb(Eo *obj)
 {
-   Elm_Widget_Item_Static_Focus_Data *pd = efl_data_scope_get(data, MY_CLASS);
-
-   if (ev->info != data) return;
+   Elm_Widget_Item_Static_Focus_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
    if (pd) /* if the obect is dead pd is NULL */
      {
@@ -145,15 +137,10 @@ _elm_widget_item_static_focus_efl_object_constructor(Eo *obj, Elm_Widget_Item_St
    Eo *ret = efl_constructor(efl_super(obj, MY_CLASS));
 
    if (efl_isa(wpd->widget, ELM_GENLIST_CLASS))
-     {
-        efl_event_callback_add(wpd->widget, ELM_GENLIST_EVENT_REALIZED, _list_realized_cb, obj);
-        efl_event_callback_add(wpd->widget, ELM_GENLIST_EVENT_UNREALIZED, _unrealized_cb, obj);
-     }
+     wpd->func.realized = _list_realized_cb;
    else
-     {
-        efl_event_callback_add(wpd->widget, ELM_GENGRID_EVENT_REALIZED, _grid_realized_cb, obj);
-        efl_event_callback_add(wpd->widget, ELM_GENGRID_EVENT_UNREALIZED, _unrealized_cb, obj);
-     }
+     wpd->func.realized = _grid_realized_cb;
+   wpd->func.unrealized = _unrealized_cb;
    return ret;
 }
 
@@ -161,17 +148,8 @@ EOLIAN static void
 _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
-   if (efl_isa(wpd->widget, ELM_GENLIST_CLASS))
-     {
-        efl_event_callback_del(wpd->widget, ELM_GENLIST_EVENT_REALIZED, _list_realized_cb, obj);
-        efl_event_callback_del(wpd->widget, ELM_GENLIST_EVENT_UNREALIZED, _unrealized_cb, obj);
-     }
-   else
-     {
-        efl_event_callback_del(wpd->widget, ELM_GENGRID_EVENT_REALIZED, _grid_realized_cb, obj);
-        efl_event_callback_del(wpd->widget, ELM_GENGRID_EVENT_UNREALIZED, _unrealized_cb, obj);
-     }
-
+   wpd->func.realized = NULL;
+   wpd->func.unrealized = NULL;
    if (pd->adapter)
      efl_del(pd->adapter);
 

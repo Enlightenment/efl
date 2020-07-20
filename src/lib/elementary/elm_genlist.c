@@ -716,7 +716,10 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    elm_wdg_item_track_cancel(EO_OBJ(it));
 
    if (!calc)
-     efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_UNREALIZED, EO_OBJ(it));
+     {
+        if (it->base->func.unrealized) it->base->func.unrealized(EO_OBJ(it));
+        efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_UNREALIZED, EO_OBJ(it));
+     }
 
    _item_unrealize(it);
 
@@ -2053,6 +2056,7 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
 
           }
 
+        if (it->base->func.realized) it->base->func.realized(EO_OBJ(it));
         efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_REALIZED, EO_OBJ(it));
      }
 

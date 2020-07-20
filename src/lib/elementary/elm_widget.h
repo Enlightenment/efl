@@ -585,6 +585,11 @@ struct _Elm_Widget_Item_Data
    Eina_Hash                     *labels;
    Evas_Object                   *track_obj;
 
+   struct {
+      void (*realized)            (Eo *obj);
+      void (*unrealized)          (Eo *obj);
+   } func;
+
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;
    Eina_Bool                      on_translate : 1;

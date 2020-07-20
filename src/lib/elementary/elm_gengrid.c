@@ -1264,7 +1264,10 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    elm_wdg_item_track_cancel(EO_OBJ(it));
 
    if (!calc)
-     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
+     {
+        if (it->base->func.unrealized) it->base->func.unrealized(EO_OBJ(it));
+        efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
+     }
 
    it->unrealize_cb(it);
 
@@ -1973,6 +1976,7 @@ _item_place(Elm_Gen_Item *it,
         if (!was_realized)
           {
              _elm_gengrid_item_index_update(it);
+             if (it->base->func.realized) it->base->func.realized(EO_OBJ(it));
              efl_event_callback_legacy_call
                (WIDGET(it), ELM_GENGRID_EVENT_REALIZED, EO_OBJ(it));
              _flush_focus_on_realization(WIDGET(it), it);
@@ -2179,6 +2183,7 @@ _group_item_place(Elm_Gengrid_Pan_Data *psd)
              if (!was_realized)
                {
                   _elm_gengrid_item_index_update(it);
+                  if (it->base->func.realized) it->base->func.realized(EO_OBJ(it));
                   efl_event_callback_legacy_call
                     (WIDGET(it), ELM_GENGRID_EVENT_REALIZED, EO_OBJ(it));
                   _flush_focus_on_realization(WIDGET(it), it);
