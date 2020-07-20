@@ -28,18 +28,17 @@ group { name: "elm/border/base/default";
          new m_show = get_int(show_menu);
          new s_hide = get_int(hide_shadow);
 
-         if ((m_show) && (s_hide)) {
-            set_state(PART:"elm.swallow.menu", "visible", 0.0);
-         } else {
-            set_state(PART:"elm.swallow.menu", "default", 0.0);
-         }
-
          if (s_hide) {
             set_state(PART:"shadow_clip", "hidden", 0.0);
             set_state(PART:"shadow_base", "hidden", 0.0);
          } else {
             set_state(PART:"shadow_clip", "default", 0.0);
             set_state(PART:"shadow_base", "default", 0.0);
+         }
+         if ((m_show)/* && (s_hide)*/) {
+            set_state(PART:"elm.swallow.menu", "visible", 0.0);
+         } else {
+            set_state(PART:"elm.swallow.menu", "default", 0.0);
          }
       }
 
@@ -150,7 +149,8 @@ group { name: "elm/border/base/default";
             fixed: 1 1;
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -1;
-min:  0 40;
+// debug...
+//min:  0 40;
          }
          desc { "visible"; inherit: "default";
             // GGGG
