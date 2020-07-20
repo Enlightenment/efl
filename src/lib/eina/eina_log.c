@@ -2052,6 +2052,14 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d,
    vfprintf(stderr, fmt, args);
    putc('\n', stderr);
    DISPLAY_BACKTRACE(stderr, level);
+# ifdef _WIN32
+   /*
+    * NOTE: when using mintty-base terminals (like MSYS2, or cygwin one),
+    * stderr is not flushed, so we force flush in this case.
+    */
+   if (!_eina_log_win32_is_console)
+     fflush(stderr);
+# endif
 #else
    (void) d;
    (void) level;
