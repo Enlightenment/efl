@@ -23,6 +23,6 @@ typedef Eo Edje_Edit;
  */
 #define EDJE_EDIT_CLASS edje_edit_class_get()
 
-EWAPI const Efl_Class *edje_edit_class_get(void);
+EWAPI const Efl_Class *edje_edit_class_get(void) EINA_CONST;
 
 #endif

@@ -37,7 +37,7 @@ typedef enum
  */
 #define ELM_CTXPOPUP_CLASS elm_ctxpopup_class_get()
 
-EWAPI const Efl_Class *elm_ctxpopup_class_get(void);
+EWAPI const Efl_Class *elm_ctxpopup_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the selected item in the widget.

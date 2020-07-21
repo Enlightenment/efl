@@ -19,6 +19,6 @@ typedef Eo Evas_Image;
  */
 #define EVAS_IMAGE_CLASS evas_image_class_get()
 
-EWAPI const Efl_Class *evas_image_class_get(void);
+EWAPI const Efl_Class *evas_image_class_get(void) EINA_CONST;
 
 #endif

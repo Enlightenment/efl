@@ -225,7 +225,7 @@ eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
    eina_strbuf_append_printf(buf, "#define %s %s()\n\n", mname, gname);
    eina_stringshare_del(mname);
 
-   eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s(void);\n", gname);
+   eina_strbuf_append_printf(buf, "EWAPI const Efl_Class *%s(void) EINA_CONST;\n", gname);
    eina_stringshare_del(gname);
 
    /* method section */

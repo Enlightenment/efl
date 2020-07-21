@@ -19,7 +19,7 @@ typedef Eo Elm_Grid;
  */
 #define ELM_GRID_CLASS elm_grid_class_get()
 
-EWAPI const Efl_Class *elm_grid_class_get(void);
+EWAPI const Efl_Class *elm_grid_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the virtual size of the grid

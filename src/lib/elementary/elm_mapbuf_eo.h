@@ -19,7 +19,7 @@ typedef Eo Elm_Mapbuf;
  */
 #define ELM_MAPBUF_CLASS elm_mapbuf_class_get()
 
-EWAPI const Efl_Class *elm_mapbuf_class_get(void);
+EWAPI const Efl_Class *elm_mapbuf_class_get(void) EINA_CONST;
 
 /**
  * @brief Set or unset auto flag for map rendering.

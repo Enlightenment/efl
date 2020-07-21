@@ -19,7 +19,7 @@ typedef Eo Elm_Notify;
  */
 #define ELM_NOTIFY_CLASS elm_notify_class_get()
 
-EWAPI const Efl_Class *elm_notify_class_get(void);
+EWAPI const Efl_Class *elm_notify_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the alignment of the notify object

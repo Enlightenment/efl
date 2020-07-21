@@ -19,7 +19,7 @@ typedef Eo Elm_Hoversel_Item;
  */
 #define ELM_HOVERSEL_ITEM_CLASS elm_hoversel_item_class_get()
 
-EWAPI const Efl_Class *elm_hoversel_item_class_get(void);
+EWAPI const Efl_Class *elm_hoversel_item_class_get(void) EINA_CONST;
 
 /**
  * @brief This controls the icon for the given hoversel item.

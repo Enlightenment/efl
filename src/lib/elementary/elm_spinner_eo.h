@@ -19,7 +19,7 @@ typedef Eo Elm_Spinner;
  */
 #define ELM_SPINNER_CLASS elm_spinner_class_get()
 
-EWAPI const Efl_Class *elm_spinner_class_get(void);
+EWAPI const Efl_Class *elm_spinner_class_get(void) EINA_CONST;
 
 /**
  * @brief Control whether the spinner should wrap when it reaches its minimum

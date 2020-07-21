@@ -19,7 +19,7 @@ typedef Eo Elm_Inwin;
  */
 #define ELM_INWIN_CLASS elm_inwin_class_get()
 
-EWAPI const Efl_Class *elm_inwin_class_get(void);
+EWAPI const Efl_Class *elm_inwin_class_get(void) EINA_CONST;
 
 /**
  * @brief Activates an inwin object, ensuring its visibility

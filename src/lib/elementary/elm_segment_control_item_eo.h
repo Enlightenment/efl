@@ -19,7 +19,7 @@ typedef Eo Elm_Segment_Control_Item;
  */
 #define ELM_SEGMENT_CONTROL_ITEM_CLASS elm_segment_control_item_class_get()
 
-EWAPI const Efl_Class *elm_segment_control_item_class_get(void);
+EWAPI const Efl_Class *elm_segment_control_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the index of an item.

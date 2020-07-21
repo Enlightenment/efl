@@ -19,7 +19,7 @@ typedef Eo Elm_Genlist;
  */
 #define ELM_GENLIST_CLASS elm_genlist_class_get()
 
-EWAPI const Efl_Class *elm_genlist_class_get(void);
+EWAPI const Efl_Class *elm_genlist_class_get(void) EINA_CONST;
 
 /**
  * @brief Enable/disable homogeneous mode.

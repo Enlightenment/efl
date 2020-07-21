@@ -69,7 +69,7 @@ typedef enum
  */
 #define ELM_MAP_CLASS elm_map_class_get()
 
-EWAPI const Efl_Class *elm_map_class_get(void);
+EWAPI const Efl_Class *elm_map_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the minimum zoom of the source.

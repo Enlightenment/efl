@@ -118,7 +118,7 @@ typedef enum
  */
 #define ELM_GLVIEW_CLASS elm_glview_class_get()
 
-EWAPI const Efl_Class *elm_glview_class_get(void);
+EWAPI const Efl_Class *elm_glview_class_get(void) EINA_CONST;
 
 /**
  * @brief Constructor with context version number.

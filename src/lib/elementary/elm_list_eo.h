@@ -19,7 +19,7 @@ typedef Eo Elm_List;
  */
 #define ELM_LIST_CLASS elm_list_class_get()
 
-EWAPI const Efl_Class *elm_list_class_get(void);
+EWAPI const Efl_Class *elm_list_class_get(void) EINA_CONST;
 
 /**
  * @brief Control horizontal mode on the list object.

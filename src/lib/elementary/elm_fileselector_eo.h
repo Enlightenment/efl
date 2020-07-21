@@ -19,7 +19,7 @@ typedef Eo Elm_Fileselector;
  */
 #define ELM_FILESELECTOR_CLASS elm_fileselector_class_get()
 
-EWAPI const Efl_Class *elm_fileselector_class_get(void);
+EWAPI const Efl_Class *elm_fileselector_class_get(void) EINA_CONST;
 
 /**
  * @brief Enable/disable the "ok" and "cancel" buttons on a given file selector

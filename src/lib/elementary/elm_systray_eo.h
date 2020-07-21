@@ -47,7 +47,7 @@ typedef enum
  */
 #define ELM_SYSTRAY_CLASS elm_systray_class_get()
 
-EWAPI const Efl_Class *elm_systray_class_get(void);
+EWAPI const Efl_Class *elm_systray_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the id of the Status Notifier Item.

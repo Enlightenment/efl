@@ -19,7 +19,7 @@ typedef Eo Elm_Segment_Control;
  */
 #define ELM_SEGMENT_CONTROL_CLASS elm_segment_control_class_get()
 
-EWAPI const Efl_Class *elm_segment_control_class_get(void);
+EWAPI const Efl_Class *elm_segment_control_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the Segment items count from segment control.

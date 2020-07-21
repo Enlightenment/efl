@@ -19,7 +19,7 @@ typedef Eo Elm_Naviframe_Item;
  */
 #define ELM_NAVIFRAME_ITEM_CLASS elm_naviframe_item_class_get()
 
-EWAPI const Efl_Class *elm_naviframe_item_class_get(void);
+EWAPI const Efl_Class *elm_naviframe_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Pop the top item and delete the items between the top and the above

@@ -19,7 +19,7 @@ typedef Eo Elm_Pan;
  */
 #define ELM_PAN_CLASS elm_pan_class_get()
 
-EWAPI const Efl_Class *elm_pan_class_get(void);
+EWAPI const Efl_Class *elm_pan_class_get(void) EINA_CONST;
 
 /**
  * @brief Position

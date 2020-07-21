@@ -19,7 +19,7 @@ typedef Eo Elm_Prefs;
  */
 #define ELM_PREFS_CLASS elm_prefs_class_get()
 
-EWAPI const Efl_Class *elm_prefs_class_get(void);
+EWAPI const Efl_Class *elm_prefs_class_get(void) EINA_CONST;
 
 /**
  * @brief Set user data for a given prefs widget

@@ -19,7 +19,7 @@ typedef Eo Elm_Color_Item;
  */
 #define ELM_COLOR_ITEM_CLASS elm_color_item_class_get()
 
-EWAPI const Efl_Class *elm_color_item_class_get(void);
+EWAPI const Efl_Class *elm_color_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set Palette item's color.

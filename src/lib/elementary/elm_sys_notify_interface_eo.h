@@ -32,7 +32,7 @@ typedef enum
  */
 #define ELM_SYS_NOTIFY_INTERFACE_INTERFACE elm_sys_notify_interface_interface_get()
 
-EWAPI const Efl_Class *elm_sys_notify_interface_interface_get(void);
+EWAPI const Efl_Class *elm_sys_notify_interface_interface_get(void) EINA_CONST;
 
 /**
  * @brief Causes a notification to be forcefully closed and removed from the

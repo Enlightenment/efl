@@ -19,7 +19,7 @@ typedef Eo Elm_Naviframe;
  */
 #define ELM_NAVIFRAME_CLASS elm_naviframe_class_get()
 
-EWAPI const Efl_Class *elm_naviframe_class_get(void);
+EWAPI const Efl_Class *elm_naviframe_class_get(void) EINA_CONST;
 
 /**
  * @brief Control the event enabled when pushing/popping items

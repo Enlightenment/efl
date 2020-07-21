@@ -19,7 +19,7 @@ typedef Eo Elm_Thumb;
  */
 #define ELM_THUMB_CLASS elm_thumb_class_get()
 
-EWAPI const Efl_Class *elm_thumb_class_get(void);
+EWAPI const Efl_Class *elm_thumb_class_get(void) EINA_CONST;
 
 EWAPI extern const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_ERROR;
 

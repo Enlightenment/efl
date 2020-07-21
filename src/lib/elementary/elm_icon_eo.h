@@ -19,7 +19,7 @@ typedef Eo Elm_Icon;
  */
 #define ELM_ICON_CLASS elm_icon_class_get()
 
-EWAPI const Efl_Class *elm_icon_class_get(void);
+EWAPI const Efl_Class *elm_icon_class_get(void) EINA_CONST;
 
 EWAPI extern const Efl_Event_Description _ELM_ICON_EVENT_THUMB_DONE;
 

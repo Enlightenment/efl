@@ -19,7 +19,7 @@ typedef Eo Elm_Scroller;
  */
 #define ELM_SCROLLER_CLASS elm_scroller_class_get()
 
-EWAPI const Efl_Class *elm_scroller_class_get(void);
+EWAPI const Efl_Class *elm_scroller_class_get(void) EINA_CONST;
 
 /**
  * @brief Set custom theme elements for the scroller

@@ -31,7 +31,7 @@ typedef enum
  */
 #define ELM_LABEL_CLASS elm_label_class_get()
 
-EWAPI const Efl_Class *elm_label_class_get(void);
+EWAPI const Efl_Class *elm_label_class_get(void) EINA_CONST;
 
 /**
  * @brief Control wrap width of the label

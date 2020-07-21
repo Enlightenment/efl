@@ -53,7 +53,7 @@ typedef enum
  */
 #define ELM_INTERFACE_FILESELECTOR_INTERFACE elm_interface_fileselector_interface_get()
 
-EWAPI const Efl_Class *elm_interface_fileselector_interface_get(void);
+EWAPI const Efl_Class *elm_interface_fileselector_interface_get(void) EINA_CONST;
 
 /**
  * @brief Enable/disable folder-only view for a given file selector widget

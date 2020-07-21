@@ -21,6 +21,6 @@ typedef Eo Elm_Widget_Item_Static_Focus;
  */
 #define ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS elm_widget_item_static_focus_class_get()
 
-EWAPI const Efl_Class *elm_widget_item_static_focus_class_get(void);
+EWAPI const Efl_Class *elm_widget_item_static_focus_class_get(void) EINA_CONST;
 
 #endif

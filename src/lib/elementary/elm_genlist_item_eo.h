@@ -27,7 +27,7 @@ typedef Eo Elm_Genlist_Item;
  */
 #define ELM_GENLIST_ITEM_CLASS elm_genlist_item_class_get()
 
-EWAPI const Efl_Class *elm_genlist_item_class_get(void);
+EWAPI const Efl_Class *elm_genlist_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the previous item in a genlist widget's internal list of items,

@@ -40,7 +40,7 @@ typedef enum
  */
 #define ELM_BUBBLE_CLASS elm_bubble_class_get()
 
-EWAPI const Efl_Class *elm_bubble_class_get(void);
+EWAPI const Efl_Class *elm_bubble_class_get(void) EINA_CONST;
 
 /**
  * @brief The corner of the bubble
