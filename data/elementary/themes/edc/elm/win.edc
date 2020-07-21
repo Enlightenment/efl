@@ -2,19 +2,22 @@ group { name: "elm/win/base/default";
    data.item: "version" "119";
    parts {
       rect { "client_clip"; nomouse; }
+// nothing seems to use this swallow...
       swallow { "elm.swallow.menu";
          clip_to: "client_clip";
          desc { "default";
             rel2.relative: 1 0;
-            link.base: "elm,action,hide" "elm";
             align: 0.5 0.0;
             hid;
+            link.base: "elm,action,hide" "elm";
+            min: 0 80;
          }
          desc { "visible";
             inherit: "default";
-            link.base: "elm,action,show_menu" "elm";
+            align: 0.5 0.0;
             fixed: 0 1;
             vis;
+            link.base: "elm,action,show_menu" "elm";
          }
       }
       swallow { "elm.swallow.contents";
