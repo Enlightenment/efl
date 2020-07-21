@@ -1,7 +1,6 @@
 edc_files = [
   'test.edc',
   'test_external.edc',
-  'test_focus_style.edc',
   'test_masking.edc',
   'test_tab_pager.edc',
   'test_tooltip.edc',
