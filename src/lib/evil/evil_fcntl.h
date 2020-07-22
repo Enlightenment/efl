@@ -4,6 +4,19 @@
 
 # include <sys/types.h>
 
+#if _MSC_VER
+# define _CRT_DECLARE_NONSTDC_NAMES 1
+# include <fcntl.h>
+# undef _CRT_DECLARE_NONSTDC_NAMES
+#endif
+
+/**
+ * @def O_ACCMODE
+ * O_ACCMODE is an AND mask to extract file access modes.
+ */
+#ifdef _MSC_VER
+# define O_ACCMODE 3
+#endif
 
 /**
  * @def FD_CLOEXEC
