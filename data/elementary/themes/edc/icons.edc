@@ -38,6 +38,20 @@
    ICON("preferences-desktop-theme", "i-paint")
    ICON("preferences-desktop", "i-desks")
    ICON("preferences-system-windows", "i-window")
+   ICON("preferences-desktop-environments", "i-desktop-pc")
+   ICON("preferences-applications-screen-lock",  "i-padlock-lock")
+   ICON("preferences-applications-screen-unlock", "i-padlock-unlock")
+   ICON("preferences-applications-personal", "i-gear-person")
+   ICON("preferences-applications-ibar", "i-gear-dots")
+   ICON("preferences-applications-restart", "i-gear-restart")
+   ICON("preferences-applications-startup", "i-gear-start")
+   ICON("preferences-desktop-default-applications", "i-gear-empty")
+   ICON("preferences-desktop-wallpaper", "i-picture-landscape")
+   ICON("preferences-desktop-font", "i-font")
+   ICON("preferences-transitions", "i-transition")
+   ICON("preferences-scale", "i-scaling")
+   ICON("preferences-composite", "i-compositor")
+   ICON("preferences-look", "i-palette")
 #undef ICON
 
 // mono color default fg color icons
@@ -135,15 +149,10 @@
          } \
       } \
    }
-   ICON("preferences-desktop-environments",       "icon_preferences-desktop-environments.png")
-   ICON("preferences-applications-screen-lock",   "icon_preferences-applications-screen-lock.png")
-   ICON("preferences-applications-screen-unlock", "icon_preferences-applications-screen-unlock.png")
-   ICON("preferences-applications-personal",      "icon_preferences-applications-personal.png")
    ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
    ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
    ICON("preferences-variables",                  "icon_preferences-variables.png")
    ICON("preferences-interaction",                "icon_preferences-interaction.png")
-   ICON("preferences-composite",                  "icon_preferences-composite.png")
 
    ICON("enlightenment/wallpaper_stretch",          "icon_wallpaper_stretch.png")
    ICON("enlightenment/wallpaper_center",           "icon_wallpaper_center.png")
