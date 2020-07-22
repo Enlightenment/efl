@@ -77,7 +77,7 @@
    ICON("preferences-desktop-color","icon_colors.png",64)                     // "enlightenment/colors"
 //   ICON("preferences-desktop-font","icon_fonts.png",64)                       // "enlightenment/fonts"
 //   ICON("preferences-desktop-screensaver","icon_screensaver.png",64)          // "enlightenment/screensaver"
-   ICON("preferences-desktop-display","icon_screen_setup.png",64)             // "enlightenment/screen_setup"
+//   ICON("preferences-desktop-display","icon_screen_setup.png",64)             // "enlightenment/screen_setup"
    ICON("preferences-desktop-keyboard","icon_keyboard.png",64)                // "enlightenment/keys"
    ICON("preferences-desktop-keyboard-shortcuts","icon_keys.png",64)          // "enlightenment/keys"
    ICON("preferences-desktop-pointer","icon_mouse.png",64)             // *** // "enlightenment/mouse"

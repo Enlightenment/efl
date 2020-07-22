@@ -52,6 +52,7 @@
    ICON("preferences-scale", "i-scaling")
    ICON("preferences-composite", "i-compositor")
    ICON("preferences-look", "i-palette")
+   ICON("preferences-desktop-display", "i-screen")
    ICON("preferences-system-lock-screen", "i-screen-lock")
    ICON("preferences-desktop-screensaver", "i-screen")
    ICON("preferences-system-screen-resolution", "i-screen-resolution")
