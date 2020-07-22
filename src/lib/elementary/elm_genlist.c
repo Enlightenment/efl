@@ -717,8 +717,8 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
 
    if (!calc)
      {
-        if (it->base->func.unrealized) it->base->func.unrealized(EO_OBJ(it));
         efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_UNREALIZED, EO_OBJ(it));
+        if (it->base->func.unrealized) it->base->func.unrealized(EO_OBJ(it));
      }
 
    _item_unrealize(it);
@@ -1669,7 +1669,8 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    efl_wref_del(it->base->view, &it->base->view);
    VIEW(it) = NULL;
    evas_object_hide(itc->base_view);
-   evas_object_move(itc->base_view, -9999, -9999);
+// lower eocalloverhead - no need to do this
+//   evas_object_move(itc->base_view, -9999, -9999);
 
    _item_cache_clean(sd);
 
@@ -2056,8 +2057,8 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
 
           }
 
-        if (it->base->func.realized) it->base->func.realized(EO_OBJ(it));
         efl_event_callback_legacy_call(WIDGET(it), ELM_GENLIST_EVENT_REALIZED, EO_OBJ(it));
+        if (it->base->func.realized) it->base->func.realized(EO_OBJ(it));
      }
 
    //Send a signal so that an item changes its style according to its expand depth
