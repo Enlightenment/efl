@@ -76,7 +76,7 @@
 //   ICON("preferences-desktop-wallpaper","icon_wallpaper.png",64)              // "enlightenment/background"
    ICON("preferences-desktop-color","icon_colors.png",64)                     // "enlightenment/colors"
 //   ICON("preferences-desktop-font","icon_fonts.png",64)                       // "enlightenment/fonts"
-   ICON("preferences-desktop-screensaver","icon_screensaver.png",64)          // "enlightenment/screensaver"
+//   ICON("preferences-desktop-screensaver","icon_screensaver.png",64)          // "enlightenment/screensaver"
    ICON("preferences-desktop-display","icon_screen_setup.png",64)             // "enlightenment/screen_setup"
    ICON("preferences-desktop-keyboard","icon_keyboard.png",64)                // "enlightenment/keys"
    ICON("preferences-desktop-keyboard-shortcuts","icon_keys.png",64)          // "enlightenment/keys"
@@ -120,7 +120,7 @@
    ICON("preferences-engine","icon_engine.png",64)               // *** // "enlightenment/engine"
    ICON("preferences-dialogs","icon_dummy.png",64)               // *** // "enlightenment/dialogs"
    ICON("preferences-imc","icon_imc.png",64)                     // *** // "enlightenment/imc"
-   ICON("preferences-system-lock-screen","icon_desklock.png",64) // *** // "enlightenment/desklock"
+//   ICON("preferences-system-lock-screen","icon_desklock.png",64) // *** // "enlightenment/desklock"
    ICON("preferences-icon-theme","icon_icon_theme.png",64)       // *** // "enlightenment/icon_theme"
 //   ICON("preferences-transitions","icon_transitions.png",64)     // *** // "enlightenment/transitions"
    ICON("preferences-desktop-edge-bindings","icon_shelf_right.png",64)  // *** // "enlightenment/edges"
@@ -156,8 +156,8 @@
 //   ICON("preferences-system","icon_configuration.png",64)                             // "enlightenment/configuration" "enlightenment/settings"
 //   ICON("preferences-system-windows","icon_windows.png",64)                           // "enlightenment/windows" "enlightenment/showhide"
    ICON("preferences-system-performance","icon_performance.png",64)                   // "enlightenment/performance"
-   ICON("preferences-system-power-management","icon_power_management.png",64)         // "enlightenment/power_management"
-   ICON("preferences-system-screen-resolution","icon_screen_resolution.png",64)// *** // "enlightenment/screen_resolution"
+//   ICON("preferences-system-power-management","icon_power_management.png",64)         // "enlightenment/power_management"
+//   ICON("preferences-system-screen-resolution","icon_screen_resolution.png",64)// *** // "enlightenment/screen_resolution"
    ICON("preferences-illume","icon_illume.png",64)
 //   ICON("system-file-manager","icon_efm_folder.png",64)                               // "enlightenment/fileman"
    //Standard Module Category Icons 

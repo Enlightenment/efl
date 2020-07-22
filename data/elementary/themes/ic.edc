@@ -187,6 +187,10 @@ I160("i-transition", "transition")
 I160("i-scaling", "scaling")
 I160("i-compositor", "compositor")
 I160("i-palette", "palette")
+I160("i-screen", "screen")
+I160("i-screen-lock", "screen-lock")
+I160("i-screen-resolution", "screen-resolution")
+I160("i-screen-bulb", "screen-bulb")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

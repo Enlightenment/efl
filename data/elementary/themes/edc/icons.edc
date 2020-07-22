@@ -52,6 +52,10 @@
    ICON("preferences-scale", "i-scaling")
    ICON("preferences-composite", "i-compositor")
    ICON("preferences-look", "i-palette")
+   ICON("preferences-system-lock-screen", "i-screen-lock")
+   ICON("preferences-desktop-screensaver", "i-screen")
+   ICON("preferences-system-screen-resolution", "i-screen-resolution")
+   ICON("preferences-system-power-management", "i-screen-bulb")
 #undef ICON
 
 // mono color default fg color icons
