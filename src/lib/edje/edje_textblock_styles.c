@@ -1,4 +1,5 @@
 #include "edje_private.h"
+#include <ctype.h>
 
 void _edje_textblock_style_update(Edje *ed, Edje_Style *stl);
 
@@ -194,6 +195,57 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
      }
 }
 
+static void
+_edje_textblock_tag_update(Eina_Strbuf *style, const char *key, const char *new_tag)
+{
+   char *ptr = strstr(eina_strbuf_string_get(style), key);
+   char *last = NULL;
+
+   while (ptr != NULL)
+     {
+        last = ptr;
+        ptr = strstr(ptr + 1, key);
+     }
+
+   if (last)
+     {
+        char *tok = strdup(last);
+        int cnt = 0;
+        while (*tok && !isspace(*tok))
+          {
+             tok++;
+             cnt++;
+          }
+        if (*tok) *tok = 0;
+        tok -= cnt;
+
+        eina_strbuf_replace_last(style, tok, new_tag);
+        free(tok);
+     }
+   else
+     {
+        eina_strbuf_append(style, " ");
+        eina_strbuf_append(style, new_tag);
+     }
+}
+
+static void
+_edje_textblock_font_tag_update(Eina_Strbuf *style, const char *new_value)
+{
+   const char *font_key = "font=";
+   char new_font[256] = {0,};
+   snprintf(new_font, sizeof(new_font), "%s%s", font_key, new_value);
+   _edje_textblock_tag_update(style, font_key, new_font);
+}
+
+static void
+_edje_textblock_font_size_tag_update(Eina_Strbuf *style, double new_value)
+{
+   const char *font_size_key = "font_size=";
+   char new_font_size[32] = {0,};
+   snprintf(new_font_size, sizeof(new_font_size), "%s%.1f", font_size_key, new_value);
+   _edje_textblock_tag_update(style, font_size_key, new_font_size);
+}
 
 /* Update the given evas_style
  *
@@ -269,11 +321,7 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
              double new_size = _edje_text_size_calc(tag->font_size, tc);
              if (!EINA_DBL_EQ(tag->font_size, new_size))
                {
-                  char buffer[32];
-
-                  snprintf(buffer, sizeof(buffer), "%.1f", new_size);
-                  eina_strbuf_append(txt, " font_size=");
-                  eina_strbuf_append(txt, buffer);
+                  _edje_textblock_font_size_tag_update(txt, new_size);
                }
           }
         /* Add font name last to save evas from multiple loads */
@@ -282,10 +330,8 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
              const char *f;
              char *sfont = NULL;
 
-             eina_strbuf_append(txt, " font=");
-
              f = _edje_text_font_get(tag->font, tc->font, &sfont);
-             eina_strbuf_append_escaped(txt, f);
+             _edje_textblock_font_tag_update(txt, f);
 
              if (sfont) free(sfont);
           }
