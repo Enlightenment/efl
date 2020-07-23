@@ -50,19 +50,9 @@ I060("i-border", "border")
 I060("i-sendto", "sendto")
 // lock double
 // exclam
-// apps
-// everything
-// screenshot
-// camera
 // folder
-// desktop
-// windows
-// enlightenment
-// spanner
-// system
 // more
 // pager
-// send to
 // chat
 // clock
 // delete
@@ -101,7 +91,6 @@ I060("i-sendto", "sendto")
 // stretch
 // tile
 // fit inside
-// warning
 // keyboard
 // mouse
 // touch
@@ -133,10 +122,8 @@ I060("i-sendto", "sendto")
 // op ask
 // op copy
 // op move
-// rocket
 // kbd+mouse
-// palette
-// font
+// palette/colors
 // top
 // bottom
 // left
@@ -186,6 +173,24 @@ I160("i-paint", "paint")
 I160("i-desks", "desks")
 I160("i-window", "window")
 I160("i-system-run", "system-run")
+I160("i-desktop-pc", "desktop-pc")
+I160("i-padlock-lock", "padlock-lock")
+I160("i-padlock-unlock", "padlock-unlock")
+I160("i-gear-person", "gear-person")
+I160("i-gear-restart", "gear-restart")
+I160("i-gear-empty", "gear-empty")
+I160("i-gear-start", "gear-start")
+I160("i-gear-dots", "gear-dots")
+I160("i-picture-landscape", "picture-landscape")
+I160("i-font", "font")
+I160("i-transition", "transition")
+I160("i-scaling", "scaling")
+I160("i-compositor", "compositor")
+I160("i-palette", "palette")
+I160("i-screen", "screen")
+I160("i-screen-lock", "screen-lock")
+I160("i-screen-resolution", "screen-resolution")
+I160("i-screen-bulb", "screen-bulb")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
