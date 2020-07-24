@@ -4645,6 +4645,12 @@ eng_gfx_filter_supports(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
    return EVAS_FILTER_SUPPORT_CPU;
 }
 
+static void
+eng_font_glyphs_gc_collect(void *data EINA_UNUSED, float ratio EINA_UNUSED, int *texture_size EINA_UNUSED, int *atlas_size EINA_UNUSED, Eina_Bool only_when_requested EINA_UNUSED)
+{
+   return;
+}
+
 static Eina_Bool
 eng_gfx_filter_process(void *data EINA_UNUSED, Evas_Filter_Command *cmd)
 {
@@ -4851,6 +4857,7 @@ static Evas_Func func =
      eng_gfx_filter_supports,
      eng_gfx_filter_process,
    /* FUTURE software generic calls go here */
+     eng_font_glyphs_gc_collect,
      0 // sizeof (Info)
 };
 

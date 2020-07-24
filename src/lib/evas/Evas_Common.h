@@ -385,6 +385,12 @@ typedef Efl_Text_Bidirectional_Type Evas_BiDi_Direction;
 #define EVAS_BIDI_DIRECTION_RTL     EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
 #define EVAS_BIDI_DIRECTION_INHERIT EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
 
+typedef enum _Evas_Font_Data_Cache
+{
+   EVAS_FONT_DATA_CACHE_TEXTURE = 0x01,/**< Texture caching (in case of accelerated rendering) */
+} Evas_Font_Data_Cache; /**< font caching options, used for evas_font_data_cache_set()/evas_font_data_cache_get()*/
+
+
 /**
  * How the mouse pointer should be handled by Evas.
  *
@@ -3369,6 +3375,33 @@ EAPI const Eina_List        *evas_font_path_global_list(void) EINA_WARN_UNUSED_R
  * @since 1.14
  */
 EAPI void                    evas_font_reinit(void);
+
+/**
+ * @}
+ */
+
+#define EVAS_FONT_DATA_CACHE_TEXTURE 0x01
+
+/**
+ * Set the limit in bytes for memory allocated by font glyphs in evas.
+ * @param[in] options for caching.
+ * @param[in] bytes cache size in bytes, pass negative value to ignore the limit.
+ *
+ * @since 1.24
+ */
+EAPI void                    evas_font_data_cache_set(Evas_Font_Data_Cache options, int byte);
+
+/**
+ * @}
+ */
+
+/**
+ * Get the limit in bytes for memory allocated by font glyphs in evas.
+ * @param[in] options for caching.
+ * @return Returns font allocated memory cache limit, if value is negative this means no limit.
+ * @since 1.24
+ */
+EAPI int    evas_font_data_cache_get(Evas_Font_Data_Cache options);
 
 /**
  * @}

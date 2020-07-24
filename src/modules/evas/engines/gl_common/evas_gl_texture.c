@@ -1565,6 +1565,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
    if (tex->references != 0) return;
    if (tex->fglyph)
      {
+        tex->gc->font_glyph_textures_size -= tex->w * tex->h * 4;
         tex->gc->font_glyph_textures = eina_list_remove(tex->gc->font_glyph_textures, tex);
         tex->fglyph->ext_dat = NULL;
         tex->fglyph->ext_dat_free = NULL;
@@ -1575,6 +1576,10 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
         tex->pt->allocations = eina_list_remove(tex->pt->allocations, tex->apt);
         if (tex->apt) eina_rectangle_pool_release(tex->apt);
         tex->apt = NULL;
+        if (tex->fglyph && (tex->pt->references == 1))
+          {
+            tex->gc->font_glyph_atlas_size -= tex->pt->w * tex->pt->h * 4;
+          }
         pt_unref(tex->pt);
         tex->pt = NULL;
      }

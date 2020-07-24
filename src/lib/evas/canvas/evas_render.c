@@ -3713,6 +3713,11 @@ evas_render_updates_internal(Evas *eo_e,
      }
    eina_evlog("-render_phase8", eo_e, 0.0, NULL);
 
+   if (evas_font_data_cache_get(EVAS_FONT_DATA_CACHE_TEXTURE) == 0)
+      ENFN->font_glyphs_gc_collect(ENC, 1.0f, NULL, NULL, EINA_TRUE);
+   else
+      ENFN->font_glyphs_gc_collect(ENC, 0.33f, NULL, NULL, EINA_TRUE);
+
    eina_evlog("+render_clear", eo_e, 0.0, NULL);
    if (!do_async && rendering)
      {

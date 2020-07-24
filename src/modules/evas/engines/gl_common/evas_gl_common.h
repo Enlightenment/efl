@@ -368,6 +368,9 @@ struct _Evas_Engine_GL_Context
    Eina_List     *font_glyph_images;
    Evas_GL_Image *def_surface;
    RGBA_Image    *font_surface;
+   int            font_glyph_textures_size;
+   int            font_glyph_atlas_size;
+   Eina_Bool      font_glyph_gc_requested    :1;
 
 #ifdef GL_GLES
    // FIXME: hack. expose egl display to gl core for egl image sec extn.

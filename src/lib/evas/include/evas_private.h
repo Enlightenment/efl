@@ -1103,6 +1103,8 @@ struct _Evas_Func
    Evas_Filter_Support (*gfx_filter_supports) (void *engine, Evas_Filter_Command *cmd);
    Eina_Bool (*gfx_filter_process)       (void *engine, Evas_Filter_Command *cmd);
 
+   void (*font_glyphs_gc_collect)   (void *engine, float ratio, int *texture_size, int *atlas_size, Eina_Bool only_when_requested);
+
    unsigned int info_size;
 };
 
