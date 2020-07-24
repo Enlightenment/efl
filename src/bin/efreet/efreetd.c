@@ -32,7 +32,7 @@ int
 main(int argc, char *argv[])
 {
    char path[PATH_MAX + 128], buf[PATH_MAX];
-   FILE *log;
+   FILE *logf;
    int fd;
    const char *log_file_dir = NULL;
    const char *hostname_str = NULL;
@@ -69,9 +69,9 @@ main(int argc, char *argv[])
         ERR("Can't create log file '%s'\b", path);
         goto tmp_error;
      }
-   log = fdopen(fd, "wb");
-   if (!log) goto tmp_error;
-   eina_log_print_cb_set(eina_log_print_cb_file, log);
+   logf = fdopen(fd, "wb");
+   if (!logf) goto tmp_error;
+   eina_log_print_cb_set(eina_log_print_cb_file, logf);
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
    if (efreetd_log_dom < 0)
      {
