@@ -21,6 +21,7 @@
 
 int efreetd_log_dom = -1;
 Eina_Mempool *efreetd_mp_stat = NULL;
+FILE *efreetd_log_file = NULL;
 
 void
 quit(void)
@@ -72,6 +73,7 @@ main(int argc, char *argv[])
    logf = fdopen(fd, "wb");
    if (!logf) goto tmp_error;
    eina_log_print_cb_set(eina_log_print_cb_file, logf);
+   efreetd_log_file = logf;
    efreetd_log_dom = eina_log_domain_register("efreetd", EFREETD_DEFAULT_LOG_COLOR);
    if (efreetd_log_dom < 0)
      {

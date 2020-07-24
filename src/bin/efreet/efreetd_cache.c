@@ -19,6 +19,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+extern FILE *efreetd_log_file;
+
 static Eina_Hash *icon_change_monitors = NULL;
 static Eina_Hash *icon_change_monitors_mon = NULL;
 static Eina_Hash *desktop_change_monitors = NULL;
@@ -376,10 +378,13 @@ icon_cache_update_cache_cb(void *data EINA_UNUSED)
    if (icon_flush)
      eina_strbuf_append(file, " -f");
    icon_flush = EINA_FALSE;
-   icon_cache_exe =
-      ecore_exe_pipe_run(eina_strbuf_string_get(file), ECORE_EXE_PIPE_READ |
-                                                       ECORE_EXE_PIPE_READ_LINE_BUFFERED,
-                                                       NULL);
+   fprintf(efreetd_log_file, "[%09.3f] Run:\n  %s\n", ecore_time_get(),
+           eina_strbuf_string_get(file));
+   fflush(efreetd_log_file);
+   icon_cache_exe = ecore_exe_pipe_run
+     (eina_strbuf_string_get(file),
+      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED,
+      NULL);
 
    eina_strbuf_free(file);
 
@@ -424,10 +429,13 @@ desktop_cache_update_cache_cb(void *data EINA_UNUSED)
           }
      }
    INF("Run desktop cache creation: %s", eina_strbuf_string_get(file));
+   fprintf(efreetd_log_file, "[%09.3f] Run:\n  %s\n", ecore_time_get(),
+           eina_strbuf_string_get(file));
+   fflush(efreetd_log_file);
    desktop_cache_exe = ecore_exe_pipe_run
-     (eina_strbuf_string_get(file), ECORE_EXE_PIPE_READ |
-                                    ECORE_EXE_PIPE_READ_LINE_BUFFERED,
-                                    NULL);
+     (eina_strbuf_string_get(file),
+      ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED,
+      NULL);
 
    eina_strbuf_free(file);
 
@@ -802,6 +810,8 @@ cache_exe_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         Eina_Bool update = EINA_FALSE;
 
+        fprintf(efreetd_log_file, "[%09.3f] Data desktop_cache_create\n", ecore_time_get());
+        fflush(efreetd_log_file);
         if ((ev->lines) && (*ev->lines->line == 'c')) update = EINA_TRUE;
         if (!desktop_exists)
           send_signal_desktop_cache_build();
@@ -812,11 +822,15 @@ cache_exe_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      {
         Eina_Bool update = EINA_FALSE;
 
+        fprintf(efreetd_log_file, "[%09.3f] Data icon_cache_create\n", ecore_time_get());
+        fflush(efreetd_log_file);
         if ((ev->lines) && (*ev->lines->line == 'c')) update = EINA_TRUE;
         send_signal_icon_cache_update(update);
      }
    else if (ev->exe == mime_cache_exe)
      {
+        fprintf(efreetd_log_file, "[%09.3f] Data mime_cache_create\n", ecore_time_get());
+        fflush(efreetd_log_file);
         // XXX: ZZZ: handle stdout here from cache updater... if needed
      }
    return ECORE_CALLBACK_RENEW;
@@ -829,16 +843,22 @@ cache_exe_del_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
    if (ev->exe == desktop_cache_exe)
      {
+        fprintf(efreetd_log_file, "[%09.3f] Exit desktop_cache_create\n", ecore_time_get());
+        fflush(efreetd_log_file);
         desktop_cache_exe = NULL;
         if (desktop_queue) cache_desktop_update();
      }
    else if (ev->exe == icon_cache_exe)
      {
+        fprintf(efreetd_log_file, "[%09.3f] Exit icon_cache_create\n", ecore_time_get());
+        fflush(efreetd_log_file);
         icon_cache_exe = NULL;
         if (icon_queue) cache_icon_update(EINA_FALSE);
      }
    else if (ev->exe == mime_cache_exe)
      {
+        fprintf(efreetd_log_file, "[%09.3f] Exit mime_cache_create\n", ecore_time_get());
+        fflush(efreetd_log_file);
         mime_cache_exe = NULL;
         send_signal_mime_cache_build();
      }
