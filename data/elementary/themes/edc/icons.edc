@@ -56,7 +56,15 @@
    ICON("preferences-system-lock-screen", "i-screen-lock")
    ICON("preferences-desktop-screensaver", "i-screen")
    ICON("preferences-system-screen-resolution", "i-screen-resolution")
-   ICON("preferences-system-power-management", "i-screen-bulb")
+   ICON("preferences-system-power-management", "i-bulb") // this is wrong but it works for backlight settings - FIXME
+   ICON("preferences-desktop-edge-bindings", "i-screen-edges")
+   ICON("preferences-desktop-keyboard-shortcuts", "i-key")
+   ICON("preferences-desktop-swipe-bindings", "i-gesture")
+   ICON("preferences-desktop-mouse", "i-mouse")
+   ICON("preferences-desktop-keyboard", "i-keyboard")
+//   ICON("preferences-desktop-signal-bindings", "i-")
+//   ICON("preferences-behavior", "i-")
+   ICON("preferences-interaction", "i-fingerprint") // pretty bad for touch icon - FIXME
 #undef ICON
 
 // mono color default fg color icons
@@ -157,7 +165,6 @@
    ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
    ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
    ICON("preferences-variables",                  "icon_preferences-variables.png")
-   ICON("preferences-interaction",                "icon_preferences-interaction.png")
 
    ICON("enlightenment/wallpaper_stretch",          "icon_wallpaper_stretch.png")
    ICON("enlightenment/wallpaper_center",           "icon_wallpaper_center.png")
