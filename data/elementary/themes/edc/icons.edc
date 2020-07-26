@@ -63,7 +63,7 @@
    ICON("preferences-desktop-mouse", "i-mouse")
    ICON("preferences-desktop-keyboard", "i-keyboard")
 //   ICON("preferences-desktop-signal-bindings", "i-")
-//   ICON("preferences-behavior", "i-")
+   ICON("preferences-behavior", "i-input")
    ICON("preferences-interaction", "i-fingerprint") // pretty bad for touch icon - FIXME
 #undef ICON
 

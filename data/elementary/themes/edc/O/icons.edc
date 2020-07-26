@@ -131,7 +131,7 @@
    ICON("preferences-menus","icon_menus.png",64)                 // *** // "enlightenment/menus"
    ICON("preferences-menu-settings","icon_menu_settings.png",64) // *** // "enlightenment/menu_settings"
    ICON("preferences-advanced","icon_advanced.png",64)           // *** // "enlightenment/advanced"
-   ICON("preferences-behavior","icon_behavior.png",64)           // *** // "enlightenment/behavior"
+//   ICON("preferences-behavior","icon_behavior.png",64)           // *** // "enlightenment/behavior"
 //   ICON("preferences-look","icon_look.png",64)                   // *** // "enlightenment/look"
    ICON("preferences-utils","icon_gadget.png",64)                // *** // "enlightenment/utils"
    ICON("preferences-extensions","icon_extensions.png",64)       // *** // "enlightenment/extensions"

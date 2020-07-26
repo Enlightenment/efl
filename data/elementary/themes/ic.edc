@@ -197,6 +197,7 @@ I160("i-gesture", "gesture")
 I160("i-fingerprint", "fingerprint")
 I160("i-mouse", "mouse")
 I160("i-keyboard", "keyboard")
+I160("i-input", "input")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
