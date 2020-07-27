@@ -8,16 +8,16 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   id="svg2"
-   width="80"
-   height="80"
-   viewBox="0 0 80 80"
-   sodipodi:docname="screen.svg"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/desktop-pc-040.png"
+   inkscape:export-ydpi="48"
    inkscape:export-xdpi="48"
-   inkscape:export-ydpi="48">
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/screen-040.png"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="screen.svg"
+   viewBox="0 0 80 80"
+   height="80"
+   width="80"
+   id="svg2"
+   version="1.1">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -33,141 +33,126 @@
   <defs
      id="defs6">
     <linearGradient
-       inkscape:collect="always"
-       id="linearGradient854">
+       id="linearGradient854"
+       inkscape:collect="always">
       <stop
-         style="stop-color:#000000;stop-opacity:0.25"
+         id="stop850"
          offset="0"
-         id="stop850" />
+         style="stop-color:#000000;stop-opacity:0.25" />
       <stop
-         style="stop-color:#040404;stop-opacity:0"
+         id="stop852"
          offset="1"
-         id="stop852" />
+         style="stop-color:#040404;stop-opacity:0" />
     </linearGradient>
     <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient854"
+       gradientTransform="matrix(1.6666666,0,0,1,-26.666666,5)"
+       gradientUnits="userSpaceOnUse"
+       y2="54"
+       x2="40"
+       y1="50"
+       x1="40"
        id="linearGradient856"
-       x1="40"
-       y1="50"
-       x2="40"
-       y2="54"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.6666666,0,0,1,-26.666666,4)" />
-    <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient854"
-       id="linearGradient860"
-       gradientUnits="userSpaceOnUse"
-       x1="40"
-       y1="50"
-       x2="40"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="matrix(1.6666666,0,0,0.25,-26.666666,-77.5)"
        y2="54"
-       gradientTransform="matrix(1.6666666,0,0,0.25,-26.666666,-76.5)" />
-    <filter
-       inkscape:collect="always"
-       style="color-interpolation-filters:sRGB"
-       id="filter943"
-       x="-0.04"
-       width="1.08"
-       y="-0.06"
-       height="1.12">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1"
-         id="feGaussianBlur945" />
-    </filter>
+       x2="40"
+       y1="50"
+       x1="40"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient860"
+       xlink:href="#linearGradient854"
+       inkscape:collect="always" />
     <mask
-       maskUnits="userSpaceOnUse"
-       id="mask947">
+       id="mask947"
+       maskUnits="userSpaceOnUse">
       <rect
-         style="opacity:1;fill:#a0a0a0;fill-opacity:1;stroke-width:3.96122;stroke-linecap:round;stroke-linejoin:round"
-         id="rect949"
-         width="60"
-         height="40"
+         y="5"
          x="10"
-         y="5" />
+         height="40"
+         width="60"
+         id="rect949"
+         style="opacity:1;fill:#a0a0a0;fill-opacity:1;stroke-width:3.96122;stroke-linecap:round;stroke-linejoin:round" />
     </mask>
   </defs>
   <sodipodi:namedview
-     inkscape:document-rotation="0"
-     pagecolor="#404040"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1354"
-     inkscape:window-height="1372"
-     id="namedview4"
-     showgrid="true"
-     inkscape:zoom="8.1375"
-     inkscape:cx="40"
-     inkscape:cy="39.631336"
-     inkscape:window-x="1206"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="g10"
-     showguides="false"
-     inkscape:snap-bbox="true"
-     inkscape:bbox-nodes="true"
+     inkscape:bbox-paths="true"
+     inkscape:snap-nodes="true"
      inkscape:snap-others="false"
-     inkscape:snap-nodes="false">
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox="true"
+     showguides="false"
+     inkscape:current-layer="g10"
+     inkscape:window-maximized="1"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="40"
+     inkscape:cx="40"
+     inkscape:zoom="10.4625"
+     showgrid="true"
+     id="namedview4"
+     inkscape:window-height="1017"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#404040"
+     inkscape:document-rotation="0">
     <inkscape:grid
-       type="xygrid"
-       id="grid837" />
+       id="grid837"
+       type="xygrid" />
   </sodipodi:namedview>
   <g
-     inkscape:groupmode="layer"
+     id="g10"
      inkscape:label="Image"
-     id="g10">
+     inkscape:groupmode="layer">
     <rect
-       y="16"
-       x="12"
-       height="36"
-       width="56"
+       style="opacity:1;fill:#202020;fill-opacity:1;stroke-width:3.80615;stroke-linecap:round;stroke-linejoin:round"
        id="rect838"
-       style="opacity:1;fill:#202020;fill-opacity:1;stroke-width:3.63052;stroke-linecap:round;stroke-linejoin:round" />
+       width="60"
+       height="36.929558"
+       x="10"
+       y="13" />
     <rect
-       style="fill:#a0a0a0;fill-opacity:1;stroke-width:4.92367;stroke-linecap:round;stroke-linejoin:round"
-       id="rect840"
-       width="10"
+       y="55"
+       x="35"
        height="10"
-       x="35"
-       y="54" />
+       width="10"
+       id="rect840"
+       style="fill:#a0a0a0;fill-opacity:1;stroke-width:4.92367;stroke-linecap:round;stroke-linejoin:round" />
     <rect
-       style="fill:#a0a0a0;fill-opacity:1;stroke-width:4.47215;stroke-linecap:round;stroke-linejoin:round"
-       id="rect842"
-       width="25"
-       height="2"
+       y="65"
        x="28"
-       y="64" />
+       height="2"
+       width="25"
+       id="rect842"
+       style="fill:#a0a0a0;fill-opacity:1;stroke-width:4.47215;stroke-linecap:round;stroke-linejoin:round" />
     <rect
-       style="fill:url(#linearGradient856);fill-opacity:1;stroke-width:5.16398;stroke-linecap:round;stroke-linejoin:round"
-       id="rect848"
-       width="10"
+       y="55"
+       x="35"
        height="4"
-       x="35"
-       y="54" />
-    <rect
-       y="-64"
-       x="35"
-       height="1"
        width="10"
-       id="rect858"
+       id="rect848"
+       style="fill:url(#linearGradient856);fill-opacity:1;stroke-width:5.16398;stroke-linecap:round;stroke-linejoin:round" />
+    <rect
+       transform="scale(1,-1)"
        style="fill:url(#linearGradient860);fill-opacity:1;stroke-width:2.58199;stroke-linecap:round;stroke-linejoin:round"
-       transform="scale(1,-1)" />
-    <path
-       d="M 10,5 V 45 H 70 V 5 Z m 2,2 H 68 V 43 H 12 Z"
-       style="opacity:0.5;fill:#000000;fill-opacity:1;stroke-width:3.96122;stroke-linecap:round;stroke-linejoin:round;filter:url(#filter943)"
-       id="path873"
-       mask="url(#mask947)"
-       transform="translate(0,9)" />
-    <path
-       id="rect866"
-       style="fill:#a0a0a0;fill-opacity:1;stroke-width:3.96122;stroke-linecap:round;stroke-linejoin:round"
-       d="M 10,14 V 54 H 70 V 14 Z m 2,2 H 68 V 52 H 12 Z" />
+       id="rect858"
+       width="10"
+       height="1"
+       x="35"
+       y="-65" />
+    <rect
+       style="fill:#a0a0a0;fill-opacity:1;stroke-width:11.0314;stroke-linecap:round;stroke-linejoin:round"
+       id="rect847"
+       width="60"
+       height="5.0704441"
+       x="10"
+       y="49.929558" />
   </g>
 </svg>
