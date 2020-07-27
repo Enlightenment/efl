@@ -543,6 +543,124 @@ test_textblock_fit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(app->win);
 }
 
+/*** Text Memory Configuration **************************************************************/
+enum BUTTON_MEM{
+   BUTTON_MEM_SET_TEXT         = 0,
+   BUTTON_MEM_APPLY_MEM        = 1,
+   BUTTON_MEM_APPLY_FONT_SIZE  = 2,
+   BUTTON_MEM_ALL              = BUTTON_MEM_APPLY_FONT_SIZE+1,
+};
+
+char* BUTTON_MEM_STR[BUTTON_MEM_ALL] ={
+   "Load Emojis Text",
+   "Memory Limit(MB)",
+   "Font Size"
+};
+
+char *content = "<align=center>😀😁😂🤣😃😄😅😆😉😊😋😎😍😘😗😙😚☺🙂🤗🤔😐😑😶🙄😏😣😥😮🤐😯😪😫😴😌🤓😛😜😝🤤😒😓😔😕🙃🤑😲☹🙁😖😞😟😤😢😭😦😧😨😩😬😰😱😳😵😡😠😇🤠🤡🤥😷🤒🤕🤢🤧☻😈👿👹👺💀☠👻👽👾🤖💩😺😸😹😻😼😽🙀😿😾🙈🙉🙊👦👧👨👩👵👶👼👨‍⚕️👩‍⚕️👨‍🎓👩‍🎓👨‍🏫👩‍🏫👨‍⚖👩‍⚖👨‍🌾👩‍🌾👨‍🍳👩‍🍳👨‍🔧👩‍🔧👨‍🏭👩‍🏭👨‍💼👩‍💼👨‍🔬👩‍🔬👨‍💻👩‍💻👨‍🎤👩‍🎤👨‍🎨👩‍🎨👨‍✈️👩‍✈️👨‍🚀👩‍🚀👨‍🚒👩‍🚒👮‍♂️👮‍♀️🕵️‍♂️🕵️‍♀️💂‍♂️💂‍♀️👷‍♂️👷‍♀️👳‍♂️👳‍♀️👱‍♂️👱‍♀️🎅🤶👸🤴👰🤵🤰👲🙍‍♂️🙍‍♀️🙎‍♂️🙎‍♀️🙅‍♂️🙅‍♀️🙆‍♂️🙆‍♀️💁‍♂️💁‍♀️🙋‍♂️🙋‍♀️🙇‍♂️🙇‍♀️🤦‍♂️🤦‍♀️🤷‍♂️🤷‍♀️💆‍♂️💆‍♀️💇‍♂️💇‍♀️🚶‍♂️🚶‍♀️🏃‍♂️🏃‍♀️💃🕺👯‍♂️👯‍♀️🕴🗣👤👥👫👬👭💏💑👪👨‍👩‍👧👨‍👩‍👧‍👦👨‍👩‍👦‍👦👨‍👩‍👧‍👧👨‍👦👨‍👦‍👦👨‍👧👨‍👧‍👦👨‍👧‍👧👩‍👦👩‍👦‍👦👩‍👧👩‍👧‍👦👩‍👧‍👧💪🤳👈👉☝️👆🖕👇✌🤞🖖🤘👊🖐✋👌👍👎✊👊🤛🤜🤚👋👏✍👐🙌🙏🤝💅👂👃👣👀👁👅👄💋💘❤💓💔💕💖💗💙💚💛💜🖤💝💞💟❣💌💤💢💣💥💦💨💫💬🗨🗯💭🕳👓🕶👔👕👖👗👘👙👚👛👜👝🛍🎒👞👟👠👡👢👑👒🎩🎓⛑📿💄💍💎🐵🐒🦍🐶🐕🐩🐺🦊🐱🐈🦁🐯🐅🐆🐴🐎🦌🦄🐮🐂🐃🐄🐷🐖🐗🐽🐏🐑🐐🐪🐫🐘🦏🐭🐁🐀🐹🐰🐇🐿🦇🐻🐨🐼🐾🦃🐔🐓🐣🐤🐥🐦🐧🕊🦅🦆🦉🐸🐊🐢🦎🐍🐲🐉🐳🐋🐬🐟🐠🐡🦈🐙🐚🦀🦐🦑🦋🐌🐛🐜🐝🐞🕷🕸🦂💐🌸💮🏵🌹🥀🌺🌻🌼🌷⚘🌱🌲🌳🌴🌵🌾🌿☘🍀🍁🍂🍃🍇🍈🍉🍊🍋🍌🍍🍎🍏🍐🍑🍒🍓🍅🥝🥑🍆🥔🥕🌽🌶🥒🍄🥜🌰🍞🥐🥖🥞🧀🍖🍗🥓🍔🍟🍕🌭🌮🌯🥙🥚🍳🥘🍲🥗🍿🍱🍘🍙🍚🍛🍜🍝🍠🍢🍣🍤🍥🍡🍦🍧🍨🍩🍪🎂🍰🍫🍬🍭🍮🍯🍼🥛☕🍵🍶🍾🍷🍸🍹🍺🍻🥂🍽🍴🥄🔪🏺🎃🎄🎆🎇✨🎈🎉🎊🎋🎍🎎🎏🎐🎑🎀🎁🎗🎟🎫🎖🏆🏅🥇🥈🥉⚽️⚾️🏀🏐🏈🏉🎾🎱🎳🏏🏑🏒🏓🏸🥊🥋🥅🎯⛳🏌️‍♂️🏌️‍♀️⛸🎣🎽🎿⛷🏂🏄‍♂️🏄‍♀️🏇🏊‍♂️🏊‍♀️⛹️‍♂️⛹️‍♀️🏋️‍♂️🏋️‍♀️🚴‍♂️🚴‍♀️🚵‍♂️🚵‍♀️🏎🏍🤸‍♂️🤸‍♀️🤼‍♂️🤼‍♀️🤽‍♂️🤽‍♀️🤾‍♂️🤾‍♀️🤺🤹‍♂️🤹‍♀️🎮🕹🎲♠️♥️♦️♣️🃏🀄🎴🌍🌎🌏🌐🗺🏔⛰🌋🗻🏕🏖🏜🏝🏞🏟🏛🏗🏘🏙🏚🏠🏡🏢🏣🏤🏥🏦🏨🏩🏪🏫🏬🏭🏯🏰💒🗼🗽⛪🕌🕍⛩🕋⛲⛺🌁🌃🌄🌅🌆🌇🌉⛼♨️🌌🎠🎡🎢💈🎪🎭🖼🎨🎰🚂🚃🚄🚅🚆🚇🚈🚉🚊🚝🚞🚋🚌🚍🚎🚐🚑🚒🚓🚔🚕🚖🚗🚘🚙🚚🚛⛟🚜🚲🛴🛵🚏🛣🛤⛽🚨🚥🚦🚧🛑⚓⛵🚣‍♂️🚣‍♀️🛶🚤🛳⛴🛥🚢✈🛩🛫🛬💺🚁🚟🚠🚡🚀🛰🛎🚪🛌🛏🛋🚽🚿🛀🛁⌛⏳⌚⏰⏱⏲🕰🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦🌑🌒🌓🌔🌕🌖🌗🌘🌙🌚🌛🌜🌡☀️🌝🌞⭐🌟🌠☁️⛅⛈🌤🌥🌦🌧🌨🌩🌪🌫🌬🌀🌈🌂☂️☔⛱⚡❄☃️⛄☄🔥💧🌊🔇🔈🔉🔊📢📣📯🔔🔕🎼🎵🎶🎙🎚🎛🎤🎧📻🎷🎸🎹🎺🎻🥁📱📲☎️📞📟📠🔋🔌💻🖥🖨⌨🖱🖲💽💾💿📀🎥🎞📽🎬📺📷📸📹📼🔍🔎🔬🔭📡🕯💡🔦🏮📔📕📖📗📘📙📚📓📒📃📜📄📰🗞📑🔖🏷💰💴💵💶💷💸💳💱💲✉📧📨📩📤📥📦📫📪📬📭📮🗳✏✒🖋🖊🖌🖍📝💼📁📂🗂📅📆🗒🗓📇📈📉📊📋📌📍📎🖇📏📐✂️🗃🗄🗑🔒🔓🔏🔐🔑🗝🔨⛏⚒🛠🗡⚔🔫🏹🛡🔧🔩⚙🗜⚗⚖🔗⛓💉💊🚬⚰⚱🗿🛢🔮🔮🏧🚮🚰♿🚹🚺🚻🚼🚾🛂🛃🛄🛅⚠️🚸⛔🚫🚳🚭🚯🚱🚷📵🔞☢☣⬆️↗️➡️↘️⬇️↙️⬅️↖️↕️↔️↩↪⤴️⤵️🔃🔄🔙🔚🔛🔜🔝🛐⚛🕉✡☸☯️☦☮🕎🔯♈♉♊♋♌♍♎♏♐♑♒♓⛎🔀🔁🔂▶️⏩⏭⏯◀️⏪⏮🔼⏫🔽⏬⏸⏹⏺⏏🎦🔅🔆📶📳📴♻️📛⚜🔰🔱⭕✅☑✔✖❌❎➕♀️♂️⚕➖➗➰➿〽✳✴❇⁉️❓❔❕❗〰🔟💯🔠🔡🔢🔣🔤🅰️🆎️🅱️🆑️🆒️🆓️ℹ🆔️Ⓜ️🆕️🆖️🅾️🆗️🅿️🆘️🆙️🆚️🈁🈂🈷🈶🈯🉐🈹🈚🈲🉑🈸🈴🈳㊗㊙🈺🈵▫️◻◼◽◾⬛⬜🔶️🔷️🔸️🔹️🔺️🔻💠🔘🔲🔳⚪⚫🔴🔵🏁🚩🏴🏳🏳️‍🌈⚀⚁⚂⚃⚄⚅⛾♾🇦🇨🇦🇩🇦🇪🇦🇫🇦🇬🇦🇮🇦🇱🇦🇲🇦🇴🇦🇶🇦🇷🇦🇸🇦🇹🇦🇺🇦🇼🇦🇽🇦🇿🇧🇦🇧🇧🇧🇩🇧🇪🇧🇫🇧🇬🇧🇭🇧🇮🇧🇯🇧🇱🇧🇲🇧🇳🇧🇴🇧🇶🇧🇷🇧🇸🇧🇹🇧🇼🇧🇾🇧🇿🇨🇦🇨🇨🇨🇩🇨🇫🇨🇬🇨🇭🇨🇮🇨🇰🇨🇱🇨🇲🇨🇳🇨🇴🇨🇷🇨🇺🇨🇻🇨🇼🇨🇽🇨🇾🇨🇿🇩🇪🇩🇯🇩🇰🇩🇲🇩🇴🇩🇿🇪🇨🇪🇪🇪🇬🇪🇭🇪🇷🇪🇸🇪🇹🇪🇺🇫🇮🇫🇯🇫🇰🇫🇲🇫🇴🇫🇷🇬🇦🇬🇧🇬🇩🇬🇪🇬🇫🇬🇬🇬🇭🇬🇮🇬🇱🇬🇲🇬🇳🇬🇵🇬🇶🇬🇷🇬🇸🇬🇹🇬🇺🇬🇼🇬🇾🇭🇰🇭🇲🇭🇳🇭🇷🇭🇹🇭🇺🇮🇨🇮🇩🇮🇪🇮🇱🇮🇲🇮🇳🇮🇴🇮🇶🇮🇷🇮🇸🇮🇹🇯🇪🇯🇲🇯🇴🇯🇵🇰🇪🇰🇬🇰🇭🇰🇮🇰🇲🇰🇳🇰🇵🇰🇷🇰🇼🇰🇾🇰🇿🇱🇦🇱🇧🇱🇨🇱🇮🇱🇰🇱🇷🇱🇸🇱🇹🇱🇺🇱🇻🇱🇾🇲🇦🇲🇨🇲🇩🇲🇪🇲🇬🇲🇭🇲🇰🇲🇱🇲🇲🇲🇳🇲🇴🇲🇵🇲🇶🇲🇷🇲🇸🇲🇹🇲🇺🇲🇻🇲🇼🇲🇽🇲🇾🇲🇿🇳🇦🇳🇨🇳🇪🇳🇫🇳🇬🇳🇮🇳🇱🇳🇴🇳🇵🇳🇷🇳🇺🇳🇿🇴🇲🇵🇦🇵🇪🇵🇫🇵🇬🇵🇭🇵🇰🇵🇱🇵🇲🇵🇳🇵🇷🇵🇸🇵🇹🇵🇼🇵🇾🇶🇦🇷🇪🇷🇴🇷🇸🇷🇺🇷🇼🇸🇦🇸🇧🇸🇨🇸🇩🇸🇪🇸🇬🇸🇭🇸🇮🇸🇰🇸🇱🇸🇲🇸🇳🇸🇴🇸🇷🇸🇸🇸🇹🇸🇻🇸🇽🇸🇾🇸🇿🇹🇦🇹🇨🇹🇩🇹🇫🇹🇬🇹🇭🇹🇯🇹🇰🇹🇱🇹🇲🇹🇳🇹🇴🇹🇷🇹🇹🇹🇻🇹🇼🇹🇿🇺🇦🇺🇬🇺🇳🇺🇸🇺🇾🇺🇿🇻🇦🇻🇨🇻🇪🇻🇬🇻🇮🇻🇳🇻🇺🇼🇫🇼🇸🇽🇰🇾🇪🇾🇹🇿🇦🇿🇲🇿🇼</align>";
+
+typedef struct _APP_MEM
+{
+   Evas_Object *win, *box, *main_entry;
+   Eo *btn[BUTTON_MEM_ALL];
+   Eo *entry[BUTTON_MEM_ALL];
+} APP_MEM;
+APP_MEM *app_mem;
+
+static void _btn_clicked_mem(void *data EINA_UNUSED, Eo *obj, void *eventInfo EINA_UNUSED){
+   if (obj == app_mem->btn[BUTTON_MEM_SET_TEXT])
+     {
+        elm_object_text_set(app_mem->main_entry, content);
+     }
+   else if (obj == app_mem->btn[BUTTON_MEM_APPLY_MEM])
+     {
+        int size = atoi(elm_object_text_get(app_mem->entry[BUTTON_MEM_APPLY_MEM]));
+        if (size > 0 && size < 4000)
+          {
+            evas_font_data_cache_set(EVAS_FONT_DATA_CACHE_TEXTURE, size * 1024 * 1024);
+          }
+        else
+          {
+             elm_object_text_set(app_mem->entry[BUTTON_MEM_APPLY_MEM], "NAN");
+          }
+     }
+   else if (obj == app_mem->btn[BUTTON_MEM_APPLY_FONT_SIZE])
+     {
+        int font_size = atoi(elm_object_text_get(app_mem->entry[BUTTON_MEM_APPLY_FONT_SIZE]));
+        if (font_size > 0 && font_size < 1000)
+          {
+            char sfont_size[256] = {0};
+            sprintf(sfont_size,"DEFAULT='font_size=%i'", font_size);
+            elm_entry_text_style_user_push(app_mem->main_entry, sfont_size);
+          }
+        else
+          {
+             elm_object_text_set(app_mem->entry[BUTTON_MEM_APPLY_FONT_SIZE], "NAN");
+          }
+     }
+}
+
+void
+test_text_memory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+  app_mem = calloc(sizeof(APP), 1);
+
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+
+   app_mem->win = elm_win_util_standard_add("Main", "App");
+   elm_win_autodel_set(app_mem->win, EINA_TRUE);
+
+   app_mem->box = elm_box_add(app_mem->win);
+   app_mem->main_entry = elm_entry_add(app_mem->box);
+
+   evas_object_size_hint_weight_set(app_mem->box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(app_mem->box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   app_mem->btn[BUTTON_MEM_SET_TEXT] = elm_button_add(app_mem->box);
+   evas_object_smart_callback_add(app_mem->btn[BUTTON_MEM_SET_TEXT], "clicked", _btn_clicked_mem, NULL);
+   elm_object_text_set(app_mem->btn[BUTTON_MEM_SET_TEXT], BUTTON_MEM_STR[BUTTON_MEM_SET_TEXT]);
+   evas_object_size_hint_align_set(app_mem->btn[BUTTON_MEM_SET_TEXT], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(app_mem->box, app_mem->btn[BUTTON_MEM_SET_TEXT]);
+   evas_object_show(app_mem->btn[BUTTON_MEM_SET_TEXT]);
+
+   elm_entry_scrollable_set(app_mem->main_entry, EINA_TRUE);
+   evas_object_show(app_mem->main_entry);
+   evas_object_show(app_mem->box);
+
+   elm_box_pack_end(app_mem->box, app_mem->main_entry);
+   evas_object_smart_callback_add(app_mem->btn[BUTTON_MEM_SET_TEXT], "clicked", _btn_clicked_mem, NULL);
+   evas_object_show(app_mem->btn[BUTTON_MEM_SET_TEXT]);
+
+   elm_win_resize_object_add(app_mem->win, app_mem->box);
+   evas_object_resize(app_mem->win, 320, 320);
+
+   elm_entry_text_style_user_push(app_mem->main_entry, "DEFAULT='font_size=20'");
+
+   for(int i = BUTTON_MEM_APPLY_MEM ; i < BUTTON_MEM_ALL ; i++)
+     {
+        app_mem->btn[i] = elm_button_add(app_mem->box);
+        app_mem->entry[i] = elm_entry_add(app_mem->box);
+        evas_object_smart_callback_add(app_mem->btn[i], "clicked", _btn_clicked_mem, NULL);
+        elm_object_text_set(app_mem->btn[i], BUTTON_MEM_STR[i]);
+        elm_box_pack_end(app_mem->box, app_mem->btn[i]);
+        elm_box_pack_end(app_mem->box, app_mem->entry[i]);
+
+        evas_object_size_hint_align_set(app_mem->btn[i], EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_align_set(app_mem->entry[i], EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+        evas_object_show(app_mem->btn[i]);
+        evas_object_show(app_mem->entry[i]);
+     }
+
+   elm_object_text_set(app_mem->entry[BUTTON_MEM_APPLY_MEM],"Texture limit in MB");
+   elm_object_text_set(app_mem->entry[BUTTON_MEM_APPLY_FONT_SIZE],"20");
+
+   evas_object_size_hint_weight_set(app_mem->main_entry, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(app_mem->main_entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   evas_object_show(app_mem->win);
+}
+
 /*** Label Wrap **************************************************************/
 void
 test_label_wrap(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)

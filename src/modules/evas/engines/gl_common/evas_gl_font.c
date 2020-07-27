@@ -218,13 +218,37 @@ void
 evas_gl_font_image_draw(void *gc, void *gl_image, int dx, int dy, int dw, int dh, int smooth)
 {
    Evas_GL_Image *im = (Evas_GL_Image *)gl_image;
+   Evas_Engine_GL_Context *gl_context = gc;
+   Eina_Bool is_cached = EINA_FALSE;
+   Eina_Bool is_new_atlas = EINA_FALSE;
 
    if (!im || !im->fglyph) return;
 
-   evas_gl_common_image_draw((Evas_Engine_GL_Context *)gc,
+   is_cached = (im->tex != NULL) && (im->tex->pt != NULL);
+
+   evas_gl_common_image_draw(gl_context,
                              im, 0, 0,
                              (unsigned int)im->fglyph->glyph_out->bitmap.width,
                              (unsigned int)im->fglyph->glyph_out->bitmap.rows,
                              dx, dy, dw, dh,
                              smooth);
+
+   // Move latest used glyph image to the back, because GC will start freeing from the beginning
+   gl_context->font_glyph_images = eina_list_remove(gl_context->font_glyph_images, im);
+   gl_context->font_glyph_images = eina_list_append(gl_context->font_glyph_images, im);
+
+   if (!is_cached)
+     {
+        gl_context->font_glyph_textures_size += im->w * im->h * 4;
+     }
+
+   is_new_atlas = (!is_cached) && (im->tex != NULL) && (im->tex->pt) && (im->tex->pt->references == 1);
+   if (is_new_atlas)
+     {
+        int size = (im->tex->pt->w * im->tex->pt->h * 4);
+        gl_context->font_glyph_atlas_size += size;
+        if ((evas_font_data_cache_get(EVAS_FONT_DATA_CACHE_TEXTURE) >= 0) &&
+            (evas_font_data_cache_get(EVAS_FONT_DATA_CACHE_TEXTURE) * 0.95 < gl_context->font_glyph_atlas_size))
+          gl_context->font_glyph_gc_requested = EINA_TRUE;
+     }
 }

@@ -13,7 +13,8 @@ LK(lock_font_draw); // for freetype2 API calls
 LK(lock_bidi); // for evas bidi internal usage.
 LK(lock_ot); // for evas bidi internal usage.
 
-int _evas_font_log_dom_global = -1;
+int             _evas_font_log_dom_global = -1;
+int             _evas_font_texture_cache = -1;
 
 EAPI void
 evas_common_font_init(void)
@@ -852,6 +853,25 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 
 //   eina_hash_direct_add(fi->glyphs, &fg->index, fg);
    return fg;
+}
+
+EAPI void
+evas_font_data_cache_set(Evas_Font_Data_Cache options, int bytes)
+{
+   if ((options & EVAS_FONT_DATA_CACHE_TEXTURE) == EVAS_FONT_DATA_CACHE_TEXTURE)
+     {
+        _evas_font_texture_cache = bytes;
+        //FIXME No direct free happend until next render call
+     }
+}
+
+EAPI int
+evas_font_data_cache_get(Evas_Font_Data_Cache options)
+{
+   if ((options & EVAS_FONT_DATA_CACHE_TEXTURE) == EVAS_FONT_DATA_CACHE_TEXTURE)
+     return _evas_font_texture_cache;
+   else
+     return -1;
 }
 
 EAPI Eina_Bool

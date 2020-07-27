@@ -12,6 +12,8 @@
 #include "efreetd.h"
 #include "efreetd_cache.h"
 
+extern FILE *efreetd_log_file;
+
 static int init = 0;
 static Ecore_Ipc_Server *ipc = NULL;
 static Ecore_Event_Handler *hnd_add = NULL;
@@ -47,6 +49,8 @@ _broadcast(Ecore_Ipc_Server *svr, int major, int minor, void *data, int size)
 
    EINA_LIST_FOREACH(ipc_clients, l, cl)
      {
+        fprintf(efreetd_log_file, "[%09.3f] Client broadcast %i.%i\n", ecore_time_get(), major, minor);
+        fflush(efreetd_log_file);
         ecore_ipc_client_send(cl, major, minor, 0, 0, 0, data, size);
      }
 }
@@ -117,6 +121,9 @@ _cb_client_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         quit_timer_start = NULL;
      }
    clients++;
+   fprintf(efreetd_log_file, "[%09.3f] Add client (count=%i)\n", ecore_time_get(),
+           clients);
+   fflush(efreetd_log_file);
    return ECORE_CALLBACK_DONE;
 }
 
@@ -125,6 +132,9 @@ _cb_client_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    IPC_HEAD(Del);
    clients--;
+   fprintf(efreetd_log_file, "[%09.3f] Del client (count=%i)\n", ecore_time_get(),
+           clients);
+   fflush(efreetd_log_file);
    if (clients == 0)
      {
         if (quit_timer) ecore_timer_del(quit_timer);
@@ -141,6 +151,8 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    IPC_HEAD(Data);
    if (e->major == 1) // register lang
      { // input: str -> lang
+        fprintf(efreetd_log_file, "[%09.3f] Client register lang\n", ecore_time_get());
+        fflush(efreetd_log_file);
         if ((s = _parse_str(e->data, e->size)))
           {
              setenv("LANG", s, 1);
@@ -152,6 +164,8 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if (e->major == 2) // add desktop dirs
      { // input: array of str -> dirs
+        fprintf(efreetd_log_file, "[%09.3f] Client add desktop dirs\n", ecore_time_get());
+        fflush(efreetd_log_file);
         strs = _parse_strs(e->data, e->size);
         EINA_LIST_FREE(strs, s)
           {
@@ -161,6 +175,8 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if (e->major == 3) // build desktop cache
      { // input: str -> lang
+        fprintf(efreetd_log_file, "[%09.3f] Client update desktop cache\n", ecore_time_get());
+        fflush(efreetd_log_file);
         if ((s = _parse_str(e->data, e->size)))
           {
              setenv("LANG", s, 1);
@@ -170,6 +186,8 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if (e->major == 4) // add icon dirs
      { // input: array of str -> dirs
+        fprintf(efreetd_log_file, "[%09.3f] Client add icon dirs\n", ecore_time_get());
+        fflush(efreetd_log_file);
         strs = _parse_strs(e->data, e->size);
         EINA_LIST_FREE(strs, s)
           {
@@ -179,6 +197,8 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      }
    else if (e->major == 5) // add icon exts
      { // input: array of str -> exts
+        fprintf(efreetd_log_file, "[%09.3f] Client add icon exts\n", ecore_time_get());
+        fflush(efreetd_log_file);
         strs = _parse_strs(e->data, e->size);
         EINA_LIST_FREE(strs, s)
           {

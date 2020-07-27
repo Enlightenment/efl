@@ -3023,6 +3023,42 @@ eng_gfx_filter_process(void *engine, Evas_Filter_Command *cmd)
      return pfunc.gfx_filter_process(&re->software, cmd);
 }
 
+static void
+eng_font_glyphs_gc_collect(void *data EINA_UNUSED, float ratio EINA_UNUSED, int *texture_size EINA_UNUSED, int *atlas_size EINA_UNUSED, Eina_Bool only_when_requested EINA_UNUSED)
+{
+   Evas_Engine_GL_Context *gl_context;
+   gl_context = gl_generic_context_find(data, 1);
+
+   if ((only_when_requested && gl_context->font_glyph_gc_requested) || (!only_when_requested))
+     {
+        if (ratio > 0.0)
+          {
+             int requested_size = ratio * gl_context->font_glyph_textures_size;
+
+             Eina_List *l;
+             Eina_List *ll;
+             Evas_GL_Image *im;
+             EINA_LIST_FOREACH_SAFE(gl_context->font_glyph_images, l, ll, im)
+               {
+                  int size = im->w * im->h * 4;
+                  gl_context->font_glyph_textures_size -= size;
+                  requested_size -= size;
+                  if ((im->tex != NULL) && (im->tex->pt) && (im->tex->pt->references == 1))
+                    {
+                       gl_context->font_glyph_atlas_size -= im->tex->pt->w * im->tex->pt->h * 4;
+                    }
+                  evas_gl_common_image_free(im);
+                  if (requested_size <= 0)
+                    break;
+               }
+          }
+
+         gl_context->font_glyph_gc_requested = EINA_FALSE;
+     }
+   if (texture_size) *texture_size = gl_context->font_glyph_textures_size;
+   if (atlas_size) *atlas_size = gl_context->font_glyph_atlas_size;
+}
+
 //------------------------------------------------//
 
 static int
@@ -3178,6 +3214,7 @@ module_open(Evas_Module *em)
    ORD(ector_surface_cache_drop);
    ORD(gfx_filter_supports);
    ORD(gfx_filter_process);
+   ORD(font_glyphs_gc_collect);
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

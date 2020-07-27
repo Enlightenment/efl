@@ -691,6 +691,7 @@ struct _RGBA_Draw_Context
          void *(*gl_image_new) (void *gc, RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace);
          void  (*gl_image_free) (void *image);
          void  (*gl_image_draw) (void *gc, void *im, int dx, int dy, int dw, int dh, int smooth);
+         void  (*gl_garbage_collector) (void *gc, float ratio, int *texture_size, int *atlas_size);
       } func;
       void *data;
    } font_ext;
