@@ -203,6 +203,13 @@ I160("i-mouse-right", "mouse-right")
 I160("i-mouse-middle", "mouse-middle")
 I160("i-mouse-wheel", "mouse-wheel")
 I160("i-mouse-extra", "mouse-extra")
+I160("i-window-focus", "window-focus")
+I160("i-window-geometry", "window-geometry")
+I160("i-window-remember", "window-remember")
+I160("i-window-process", "window-process")
+I160("i-window-winlist", "window-winlist")
+I160("i-menus", "menus")
+I160("i-menus-settings", "menus-settings")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

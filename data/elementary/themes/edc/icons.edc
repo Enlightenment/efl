@@ -70,6 +70,13 @@
 //   ICON("preferences-desktop-signal-bindings", "i-")
    ICON("preferences-behavior", "i-input")
    ICON("preferences-interaction", "i-fingerprint") // pretty bad for touch icon - FIXME
+   ICON("preferences-focus", "i-window-focus")
+   ICON("preferences-window-geometry", "i-window-geometry")
+   ICON("preferences-desktop-window-remember", "i-window-remember")
+   ICON("preferences-window-process", "i-window-process")
+   ICON("preferences-winlist", "i-window-winlist")
+   ICON("preferences-menus", "i-menus")
+   ICON("preferences-menu-settings", "i-menus-settings")
 #undef ICON
 
 // mono color default fg color icons
