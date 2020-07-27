@@ -3349,6 +3349,7 @@ evas_render_updates_internal(Evas *eo_e,
    for (i = 0; i < e->restack_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->restack_objects, i);
+        if (!obj->private_data) continue;
         if (_evas_render_object_is_mask(obj))
           _evas_mask_redraw_set(e, obj);
         obj->func->render_pre(obj->object, obj, obj->private_data);
@@ -3414,6 +3415,7 @@ evas_render_updates_internal(Evas *eo_e,
 
         obj = ent->obj;
         eo_obj = obj->object;
+        if (!obj->private_data) continue;
         if (UNLIKELY(
                      (!obj->is_smart) &&
                      (!obj->clip.clipees) &&
@@ -3700,6 +3702,7 @@ evas_render_updates_internal(Evas *eo_e,
 
         obj = ent->obj;
         eo_obj = obj->object;
+        if (!obj->private_data) continue;
         obj->pre_render_done = EINA_FALSE;
         RD(0, "    OBJ %s changed:%i do_draw:%i\n", RDNAME(obj), obj->changed, do_draw);
         if ((clean_them) || (obj->changed && do_draw))
@@ -3760,6 +3763,7 @@ evas_render_updates_internal(Evas *eo_e,
      {
         obj = eina_array_data_get(&e->render_objects, i);
         eo_obj = obj->object;
+        if (!obj->private_data) continue;
         obj->pre_render_done = EINA_FALSE;
         if ((obj->changed) && (do_draw))
           {
