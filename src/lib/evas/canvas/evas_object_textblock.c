@@ -17001,7 +17001,7 @@ _efl_canvas_textblock_efl_text_style_text_gfx_filter_set(Eo *obj EINA_UNUSED, Ef
 static const char *
 _efl_canvas_textblock_efl_text_style_text_gfx_filter_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
-   return _FMT(gfx_filter)?_FMT(gfx_filter->name):NULL;
+   return _FMT_INFO(gfx_filter_name)?_FMT_INFO(gfx_filter_name):NULL;
 }
 
 static void
