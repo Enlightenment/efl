@@ -603,7 +603,7 @@ static void _btn_clicked_mem(void *data EINA_UNUSED, Eo *obj, void *eventInfo EI
 void
 test_text_memory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-  app_mem = calloc(sizeof(APP), 1);
+   app_mem = calloc(sizeof(APP_MEM), 1);
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 

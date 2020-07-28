@@ -96,7 +96,7 @@ elif [ "$TRAVIS_OS_NAME" = "osx" ]; then
   zlib_vers=$(grep ZLIB_VERSION /usr/include/zlib.h|head -n1|awk '{print $3}'|cut -d'"' -f2)
   sed -iE "s/REPLACE_THIS/$zlib_vers/" .ci/zlib.pc
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig:$(pwd)/.ci"
-  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Dgstreamer=false
+  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Dgstreamer=false -Dbuild-tests=false
 else # Native Ubuntu Linux Travis builds (non-docker)
   OPTS=" -Decore-imf-loaders-disabler=scim,ibus"
 

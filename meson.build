@@ -582,6 +582,10 @@ subdir(join_paths('data'))
 if get_option('build-tests')
   check = dependency('check')
 
+  if (check.version() == '0.15.1')
+    error('There is a bug in check@0.15.1 which does not allow efl to be compiled with it. Please downgrade / upgrade or disable tests')
+  endif
+
   test_env = environment()
   test_env.set('EFL_RUN_IN_TREE', '1')
 

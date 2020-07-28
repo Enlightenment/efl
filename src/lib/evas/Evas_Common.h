@@ -3380,8 +3380,6 @@ EAPI void                    evas_font_reinit(void);
  * @}
  */
 
-#define EVAS_FONT_DATA_CACHE_TEXTURE 0x01
-
 /**
  * Set the limit in bytes for memory allocated by font glyphs in evas.
  * @param[in] options for caching.
