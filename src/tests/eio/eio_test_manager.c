@@ -323,6 +323,8 @@ EFL_START_TEST(efl_io_test_instantiated)
 {
    Efl_Io_Manager *manager;
 
+   efl_object_init();
+
    ck_assert_int_eq(eio_shutdown(), 0);
    ecore_init();
    fail_if(efl_provider_find(efl_main_loop_get(), EFL_IO_MANAGER_CLASS) != NULL);
@@ -332,6 +334,8 @@ EFL_START_TEST(efl_io_test_instantiated)
    manager = efl_provider_find(efl_main_loop_get(), EFL_IO_MANAGER_CLASS);
    fail_if(manager == NULL);
    fail_if(!efl_isa(manager, EFL_IO_MANAGER_CLASS));
+
+   efl_object_shutdown();
 }
 EFL_END_TEST
 
