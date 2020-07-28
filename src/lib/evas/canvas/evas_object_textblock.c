@@ -7613,8 +7613,6 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
    c->obs_infos = NULL;
    c->hyphen_ti = NULL;
    c->handle_obstacles = EINA_FALSE;
-   c->w = w;
-   c->h = h;
    c->style_pad.r = c->style_pad.l = c->style_pad.t = c->style_pad.b = 0;
    c->vertical_ellipsis = EINA_FALSE;
    c->ellip_prev_it = NULL;
