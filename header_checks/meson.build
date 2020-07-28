@@ -88,6 +88,7 @@ function_checks = [
   ['getxattr', ['sys/types.h', 'sys/xattr.h']],
   ['iconv', ['iconv.h']],
   ['listxattr', ['sys/types.h', 'sys/xattr.h']],
+  ['localtime_r', ['time.h']],
   ['malloc_info', ['malloc.h']],
   ['malloc_usable_size', ['malloc.h']],
   ['mkdirat', ['sys/stat.h']],

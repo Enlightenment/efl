@@ -61,6 +61,19 @@ int evil_gettimeofday(struct timeval *tv, struct timezone *tz)
    return res;
 }
 
+EVIL_API struct tm *
+evil_localtime_r(const time_t * time, struct tm * result)
+{
+   struct tm* _result = localtime(time);
+
+   if (_result)
+     {
+        *result = *_result;
+        return result;
+     }
+   return NULL;
+}
+
 /*
  * strptime
  * based on http://cvsweb.netbsd.org/bsdweb.cgi/src/lib/libc/time/strptime.c?rev=HEAD
@@ -468,8 +481,15 @@ strptime(const char *buf, const char *fmt, struct tm *tm)
               }
               else
                 {
+                   TIME_ZONE_INFORMATION zone_info;
+                   GetTimeZoneInformation(&zone_info);
+                   const char timezone_table[3] = {
+                       zone_info.StandardName,
+                       zone_info.DaylightName,
+                       NULL,
+                   };
                    ep = find_string(bp, &i,
-                                    (const char * const *)tzname,
+                                    (const char * const *)timezone_table,
                                     NULL, 2);
                    if (ep != NULL)
                      {
