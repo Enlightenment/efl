@@ -11,19 +11,14 @@ static int      _evil_init_count = 0;
 
 extern LONGLONG _evil_time_freq;
 extern LONGLONG _evil_time_count;
-extern long     _evil_time_second;
 
 extern DWORD    _evil_tls_index;
-
-long _evil_systemtime_to_time(SYSTEMTIME st);
 
 int
 evil_init(void)
 {
-   SYSTEMTIME    st;
    LARGE_INTEGER freq;
    LARGE_INTEGER count;
-   WORD          second = 59;
 
    if (++_evil_init_count != 1)
      return _evil_init_count;
@@ -39,30 +34,11 @@ evil_init(void)
         }
    }
 
-   if (!QueryPerformanceFrequency(&freq))
-       return 0;
+   QueryPerformanceFrequency(&freq);
 
    _evil_time_freq = freq.QuadPart;
 
-   /* be sure that second + 1 != 0 */
-   while (second == 59)
-     {
-        GetSystemTime(&st);
-        second = st.wSecond;
-     }
-
-   /* retrieve the tick corresponding to the time we retrieve above */
-   while (1)
-     {
-        GetSystemTime(&st);
-        QueryPerformanceCounter(&count);
-        if (st.wSecond == second + 1)
-          break;
-     }
-
-   _evil_time_second = _evil_systemtime_to_time(st);
-   if (_evil_time_second < 0)
-     return --_evil_init_count;
+   QueryPerformanceCounter(&count);
 
    _evil_time_count = count.QuadPart;
 

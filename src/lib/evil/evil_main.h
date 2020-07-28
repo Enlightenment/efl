@@ -93,9 +93,8 @@
  * @brief Initialize the Evil library.
  *
  * This function initializes the Evil library. It must be called before
- * using evil_time_get(), gettimeofday() or pipe(). It returns  0 on
- * failure, otherwise it returns the number of times it has already been
- * called.
+ * using evil_time_get() or pipe(). It returns  0 on failure, otherwise it
+ * returns the number of times it has already been called.
  *
  * When Evil is not used anymore, call evil_shutdown() to shut down
  * the Evil library.
