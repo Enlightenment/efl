@@ -15,6 +15,8 @@ group { name: "e/modules/start/main";
          description { state: "default" 0.0;
             image.normal: "i-arrow-u";
             color: 160 160 160 255;
+            rel1.relative: (5/40) (5/40);
+            rel2.relative: (35/40) (35/40);
          }
          description { state: "down" 0.0;
             inherit: "default" 0.0;
