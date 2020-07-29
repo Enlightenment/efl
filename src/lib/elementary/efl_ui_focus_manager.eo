@@ -96,6 +96,15 @@ interface Efl.Ui.Focus.Manager {
                    over the border objects.]]
             }
         }
+        @property border_elements_changed {
+            [[Return $true if the border elements have changed since the last invocation of @.border_elements.get]]
+            get {
+
+            }
+            values {
+              changed : bool; [[$true if there was a change, $false if not]]
+            }
+        }
         @property viewport_elements {
             [[Elements that are at the border of the viewport
 

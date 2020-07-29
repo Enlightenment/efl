@@ -70,6 +70,7 @@ class @beta Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus
         Efl.Ui.Focus.Manager.manager_focus {get; set;}
         Efl.Ui.Focus.Manager.redirect {set; get;}
         Efl.Ui.Focus.Manager.border_elements {get;}
+        Efl.Ui.Focus.Manager.border_elements_changed {get;}
         Efl.Ui.Focus.Manager.viewport_elements {get;}
         Efl.Ui.Focus.Manager.root {set; get;}
         Efl.Ui.Focus.Manager.request_subchild;
