@@ -7613,8 +7613,6 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
    c->obs_infos = NULL;
    c->hyphen_ti = NULL;
    c->handle_obstacles = EINA_FALSE;
-   c->w = w;
-   c->h = h;
    c->style_pad.r = c->style_pad.l = c->style_pad.t = c->style_pad.b = 0;
    c->vertical_ellipsis = EINA_FALSE;
    c->ellip_prev_it = NULL;
@@ -17003,7 +17001,7 @@ _efl_canvas_textblock_efl_text_style_text_gfx_filter_set(Eo *obj EINA_UNUSED, Ef
 static const char *
 _efl_canvas_textblock_efl_text_style_text_gfx_filter_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Textblock_Data *o EINA_UNUSED)
 {
-   return _FMT(gfx_filter)?_FMT(gfx_filter->name):NULL;
+   return _FMT_INFO(gfx_filter_name)?_FMT_INFO(gfx_filter_name):NULL;
 }
 
 static void

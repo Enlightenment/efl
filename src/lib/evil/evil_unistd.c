@@ -17,34 +17,6 @@
 
 LONGLONG _evil_time_freq;
 LONGLONG _evil_time_count;
-long     _evil_time_second;
-
-
-long _evil_systemtime_to_time(SYSTEMTIME st);
-
-long
-_evil_systemtime_to_time(SYSTEMTIME st)
-{
-   int days[] = {
-     -1, 30, 58, 89, 119, 150, 180, 211, 242, 272, 303, 333, 364
-   };
-   int day;
-   time_t t;
-
-   st.wYear -= 1900;
-   if ((st.wYear < 70) || (st.wYear > 138))
-     return -1;
-
-   day = st.wDay + days[st.wMonth - 1];
-
-  if (!(st.wYear & 3) && (st.wMonth > 2) )
-    day++;
-
-  t = ((st.wYear - 70) * 365 + ((st.wYear - 1) >> 2) - 17 + day) * 24 + st.wHour;
-  t = (t * 60 + st.wMinute) * 60 + st.wSecond;
-
-  return (long)t;
-}
 
 /*
  * Time related functions
@@ -58,7 +30,7 @@ evil_time_get(void)
 
    QueryPerformanceCounter(&count);
 
-   return (double)_evil_time_second + (double)(count.QuadPart - _evil_time_count)/ (double)_evil_time_freq;
+   return (double)(count.QuadPart - _evil_time_count)/ (double)_evil_time_freq;
 }
 
 

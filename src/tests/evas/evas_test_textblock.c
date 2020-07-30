@@ -5020,6 +5020,9 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert(size1.w < size2.w);
    ck_assert(size1.h < size2.h);
 
+   efl_text_gfx_filter_set(txt, "code");
+   ck_assert_str_eq(efl_text_gfx_filter_get(txt), "code");
+   
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
 EFL_END_TEST
