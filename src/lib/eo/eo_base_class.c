@@ -237,9 +237,9 @@ _efl_invalidate(_Eo_Object *obj)
 
    id = _eo_obj_id_get(obj);
 
-   efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
-
    pd = efl_data_scope_get(id, EFL_OBJECT_CLASS);
+   if (pd->event_cb_EFL_EVENT_INVALIDATE)
+     efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
 
    efl_invalidate(id);
 
@@ -1575,7 +1575,8 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    _eo_callbacks_sorted_insert(pd, cb);
    _special_event_count_inc(obj, pd, &(cb->items.item));
 
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
+   if (pd->event_cb_EFL_EVENT_CALLBACK_ADD)
+     efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
    return EINA_TRUE;
 
@@ -1601,8 +1602,8 @@ _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
      pd->need_cleaning = EINA_TRUE;
    else
      _eo_callback_remove(obj, pd, cb);
-
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
+   if (pd->event_cb_EFL_EVENT_CALLBACK_DEL)
+     efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
 }
 
 EOLIAN static Eina_Bool
@@ -1729,7 +1730,8 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    ev_array[i].priority = 0;
    ev_array[i].func = NULL;
    ev_array[i].user_data = NULL;
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, ev_array);
+   if (pd->event_cb_EFL_EVENT_CALLBACK_ADD)
+     efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, ev_array);
 
    return EINA_TRUE;
 
