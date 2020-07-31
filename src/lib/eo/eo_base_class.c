@@ -90,6 +90,7 @@ struct _Efl_Object_Data
    Eina_Bool                  need_cleaning : 1;
 
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
+   Eina_Bool                  single_priority : 1;
 };
 
 typedef enum
@@ -1477,19 +1478,9 @@ _eo_callback_search_sorted_near(const Efl_Object_Data *pd, const Eo_Callback_Des
    return middle;
 }
 
-static void
-_eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
+static inline void
+_eo_callbacks_array_bump(Efl_Object_Data *pd)
 {
-   Eo_Callback_Description **itr;
-   unsigned int length, j;
-   Efl_Event_Callback_Frame *frame;
-
-   // Do a dichotomic searh
-   j = _eo_callback_search_sorted_near(pd, cb);
-   // Adjust for both case of length == 0 and when priority is equal.
-   while ((j < pd->callbacks_count) &&
-          (pd->callbacks[j]->priority >= cb->priority)) j++;
-
    // Increase the callbacks storage by 16 entries at a time
    if (_eo_nostep_alloc || (pd->callbacks_count & 0xF) == 0x0)
      {
@@ -1503,14 +1494,38 @@ _eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
         if (EINA_UNLIKELY(!tmp)) return;
         pd->callbacks = tmp;
      }
+}
 
-   // FIXME: Potential improvement, merge single callback description of the same priority
-   // into an array when possible
-   itr = pd->callbacks + j;
-   length = pd->callbacks_count - j;
-   if (length > 0) memmove(itr + 1, itr,
-                           length * sizeof(Eo_Callback_Description *));
-   *itr = cb;
+static void
+_eo_callbacks_sorted_insert(Efl_Object_Data *pd, Eo_Callback_Description *cb)
+{
+   Eo_Callback_Description **itr;
+   unsigned int length, j;
+   Efl_Event_Callback_Frame *frame;
+
+   if (pd->single_priority && cb->priority == 0)
+     {
+        _eo_callbacks_array_bump(pd);
+        pd->callbacks[pd->callbacks_count] = cb;
+     }
+   else
+     {
+       pd->single_priority = EINA_FALSE;
+       // Do a dichotomic searh
+       j = _eo_callback_search_sorted_near(pd, cb);
+       // Adjust for both case of length == 0 and when priority is equal.
+       while ((j < pd->callbacks_count) &&
+              (pd->callbacks[j]->priority >= cb->priority)) j++;
+        _eo_callbacks_array_bump(pd);
+       // FIXME: Potential improvement, merge single callback description of the same priority
+       // into an array when possible
+       itr = pd->callbacks + j;
+       length = pd->callbacks_count - j;
+       if (length > 0) memmove(itr + 1, itr,
+                               length * sizeof(Eo_Callback_Description *));
+       *itr = cb;
+
+     }
 
    pd->callbacks_count++;
 
@@ -2679,6 +2694,8 @@ EOLIAN static Eo *
 _efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
 {
    DBG("%p - %s.", obj, efl_class_name_get(obj));
+
+   pd->single_priority = EINA_TRUE;
 
    _eo_condtor_done(obj);
 
