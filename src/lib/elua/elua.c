@@ -76,6 +76,53 @@ _ffi_loader(lua_State *L)
    lua_call(L, 2, 1);
    return 1;
 }
+
+#if LUA_VERSION_NUM < 502
+/* adapted from lua 5.2 source */
+static const char *
+_push_next_template(lua_State *L, const char *path)
+{
+   while (*path == *LUA_PATHSEP) ++path;
+   if (!*path)
+     return NULL;
+   const char *l = strchr(path, *LUA_PATHSEP);
+   if (!l)
+     l = path + strlen(path);
+   lua_pushlstring(L, path, l - path);
+   return l;
+}
+
+static int
+_elua_searchpath(lua_State *L)
+{
+   const char *name = luaL_checkstring(L, 1);
+   const char *path = luaL_checkstring(L, 2);
+   const char *sep  = luaL_optstring(L, 3, ".");
+   const char *dsep = luaL_optstring(L, 4, LUA_DIRSEP);
+   luaL_Buffer msg;
+   luaL_buffinit(L, &msg);
+   if (*sep)
+     name = luaL_gsub(L, name, sep, dsep);
+   while ((path = _push_next_template(L, path)))
+     {
+        const char *fname = luaL_gsub(L, lua_tostring(L, -1), LUA_PATH_MARK, name);
+        lua_remove(L, -2);
+        FILE *rf = fopen(fname, "r");
+        if (rf)
+          {
+             fclose(rf);
+             return 1; /* found */
+          }
+        lua_pushfstring(L, "\n\tno file " LUA_QS, fname);
+        lua_remove(L, -2);
+        luaL_addvalue(&msg);
+     }
+   luaL_pushresult(&msg);
+   lua_pushnil(L);
+   lua_insert(L, -2);
+   return 2; /* nil plus error message */
+}
+#endif
 #endif
 
 EAPI Elua_State *
@@ -92,6 +139,16 @@ elua_state_new(const char *progname)
 #ifdef ENABLE_LUA_OLD
    /* search for cffi-lua early, and pass it through as ffi */
    lua_getglobal(L, "package");
+#if LUA_VERSION_NUM < 502
+   /* lua 5.1 does not have package.searchpath, we rely on having that */
+   lua_getfield(L, -1, "searchpath");
+   if (lua_isnil(L, -1))
+     {
+        lua_pushcfunction(L, _elua_searchpath);
+        lua_setfield(L, -3, "searchpath");
+     }
+   lua_pop(L, 1);
+#endif
    lua_getfield(L, -1, "preload");
    lua_getfield(L, -2, "searchers");
    if (lua_isnil(L, -1))
