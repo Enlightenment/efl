@@ -5,8 +5,16 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
-#include <fnmatch.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
+
+#ifdef _WIN32
+# include <evil_private.h>
+#endif
+
+#include <Eina.h>
 
 #include <Ecore.h>
 #include <Ecore_File.h>
@@ -747,9 +755,10 @@ efreet_mime_special_check(const char *file)
 
           if (S_ISCHR(s.st_mode))
             return _mime_inode_chardevice;
-
+#ifndef _MSC_VER
           if (S_ISBLK(s.st_mode))
             return _mime_inode_blockdevice;
+#endif
 
 #ifndef _WIN32
           if (S_ISSOCK(s.st_mode))

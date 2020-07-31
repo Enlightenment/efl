@@ -1221,14 +1221,20 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
           info->type = EINA_FILE_DIR;
         else if (S_ISCHR(buf.st_mode))
           info->type = EINA_FILE_CHR;
+#ifndef _MSC_VER
         else if (S_ISBLK(buf.st_mode))
           info->type = EINA_FILE_BLK;
+#endif
         else if (S_ISFIFO(buf.st_mode))
           info->type = EINA_FILE_FIFO;
+#ifndef _MSC_VER
         else if (S_ISLNK(buf.st_mode))
           info->type = EINA_FILE_LNK;
+#endif
+#ifndef _MSC_VER
         else if (S_ISSOCK(buf.st_mode))
           info->type = EINA_FILE_SOCK;
+#endif
         else
           info->type = EINA_FILE_UNKNOWN;
      }
