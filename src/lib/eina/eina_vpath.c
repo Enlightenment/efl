@@ -230,11 +230,11 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
           }
         // ~username/ <- homedir of user "username"
         else
-#ifndef HAVE_GETPWENT
-          ERR("User fetching is disabled on this system\nThe string was: %s", path);
-          return 0;
-#else
           {
+#ifndef HAVE_GETPWENT
+             ERR("User fetching is disabled on this system\nThe string was: %s", path);
+             return 0;
+#else
              const char *p;
              char *name;
 
@@ -249,8 +249,8 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
              if (!_fetch_user_homedir(&home, name, path))
                return 0;
              path = p;
-           }
 #endif
+           }
          if (home)
            {
               return snprintf(str, size, "%s%s", home, path);
