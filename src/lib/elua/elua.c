@@ -2,10 +2,6 @@
 #include <Ecore_File.h>
 #include "elua_private.h"
 
-#ifdef ENABLE_LUA_OLD
-#  include <cffi-lua.h>
-#endif
-
 static Eina_Prefix *_elua_pfx = NULL;
 
 static int _elua_init_counter = 0;
@@ -70,6 +66,18 @@ elua_shutdown(void)
    return _elua_init_counter;
 }
 
+#ifdef ENABLE_LUA_OLD
+static int
+_ffi_loader(lua_State *L)
+{
+   lua_pushvalue(L, lua_upvalueindex(1));
+   lua_pushliteral(L, "cffi");
+   lua_pushvalue(L, lua_upvalueindex(2));
+   lua_call(L, 2, 1);
+   return 1;
+}
+#endif
+
 EAPI Elua_State *
 elua_state_new(const char *progname)
 {
@@ -82,12 +90,35 @@ elua_state_new(const char *progname)
    if (progname) ret->progname = eina_stringshare_add(progname);
    luaL_openlibs(L);
 #ifdef ENABLE_LUA_OLD
-   /* make sure to inject cffi-lua to preload so that the system gets it */
+   /* search for cffi-lua early, and pass it through as ffi */
    lua_getglobal(L, "package");
    lua_getfield(L, -1, "preload");
-   lua_pushcfunction(L, luaopen_cffi);
-   lua_setfield(L, -2, "ffi");
-   lua_pop(L, 2);
+   lua_getfield(L, -2, "searchers");
+   if (lua_isnil(L, -1))
+     {
+        lua_pop(L, 1);
+        lua_getfield(L, -2, "loaders");
+     }
+   if (lua_isnil(L, -1))
+     {
+        ERR("could not find a module searcher");
+        goto err;
+     }
+   lua_rawgeti(L, -1, 3);
+   lua_pushliteral(L, "cffi");
+   if (lua_pcall(L, 1, 2, 0))
+     {
+        ERR("could not find the cffi module");
+        goto err;
+     }
+   if (!lua_isfunction(L, -2))
+     {
+        ERR("could not find the cffi module: %s", lua_tostring(L, -2));
+        goto err;
+     }
+   lua_pushcclosure(L, _ffi_loader, 2);
+   lua_setfield(L, -3, "ffi");
+   lua_pop(L, 3);
 #endif
    /* on 64-bit, split the state pointer into two and reconstruct later */
    size_t retn = (size_t)ret;
@@ -105,6 +136,11 @@ elua_state_new(const char *progname)
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr1");
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr2");
    return ret;
+err:
+   lua_close(L);
+   eina_stringshare_del(ret->progname);
+   free(ret);
+   return NULL;
 }
 
 EAPI void
