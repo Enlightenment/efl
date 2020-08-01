@@ -6,7 +6,7 @@ if get_option('opengl') != 'none'
   engine_deps += [gl_deps]
 endif
 
-engine_include_dir += include_directories(join_paths('..', '..', '..', 'evas', 'engines', 'drm'))
+engine_include_dir += include_directories(join_paths('..', '..', '..', 'evas', 'engines', 'gl_drm'))
 
 shared_module(mod_full_name, engine_src,
   include_directories : config_dir + [engine_include_dir],
