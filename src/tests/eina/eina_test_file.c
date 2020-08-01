@@ -874,6 +874,7 @@ EFL_START_TEST(eina_test_file_unlink)
 {
    int fd;
    Eina_Tmpstr *test_file_path;
+   Eina_File* test_file;
    const char *tmpfile = "eina_file_test_XXXXXX";
 
    /*If file was not opened as 'eina'*/
@@ -884,8 +885,12 @@ EFL_START_TEST(eina_test_file_unlink)
    /*If file was opened as 'eina'*/
    fd = create_file_not_empty(tmpfile, &test_file_path, EINA_TRUE);
    fail_if(fd != 0);
-   fail_if(!eina_file_open(test_file_path, EINA_FALSE));
+
+   test_file = eina_file_open(test_file_path, EINA_FALSE);
+   fail_if(!test_file);
    fail_if(!eina_file_unlink(test_file_path));
+
+   eina_file_close(test_file);
 
 }
 EFL_END_TEST
