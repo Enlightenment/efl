@@ -88,7 +88,13 @@ error:
 static void
 _internal_resources_destroy(void *eng_data, EVGL_Resource *rsc)
 {
-   if ((!eng_data) || (!rsc)) return;
+   if (!rsc) return;
+
+   if (!eng_data)
+     {
+        free(rsc);
+        return;
+     }
 
    if (rsc->context)
      evgl_engine->funcs->context_destroy(eng_data, rsc->context);
