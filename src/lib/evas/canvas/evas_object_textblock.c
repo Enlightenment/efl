@@ -7668,10 +7668,6 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
      {
         c->fmt = _layout_format_push(c, o->main_fmt, NULL);
      }
-   if (!c->fmt)
-     {
-        return EINA_FALSE;
-     }
 
    c->paragraphs = o->paragraphs;
 

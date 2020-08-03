@@ -9,7 +9,6 @@
 #define MY_DATA(o, p) Efl_Ui_Focus_Manager_Sub_Data *p = efl_data_scope_get(o, MY_CLASS);
 typedef struct {
     Efl_Ui_Focus_Manager *manager;//the manager where current_border is currently registered
-    Eina_Bool self_dirty;
     Eina_List *current_border; //the current set of widgets which is registered as borders
 } Efl_Ui_Focus_Manager_Sub_Data;
 
@@ -94,7 +93,6 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    eina_list_free(pd->current_border);
    pd->current_border = selection;
-   pd->self_dirty = EINA_FALSE;
 }
 
 static void
@@ -116,7 +114,7 @@ _parent_manager_pre_flush(void *data, const Efl_Event *ev EINA_UNUSED)
 {
     MY_DATA(data, pd);
 
-    if (!pd->self_dirty) return; //we are not interested
+    if (!efl_ui_focus_manager_border_elements_changed_get(data)) return;
 
     _border_flush(data, pd);
 }
@@ -150,14 +148,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(parent_manager,
     {EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, _redirect_changed_cb},
     {EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, _freeze_changed_cb}
 );
-
-static void
-_self_manager_dirty(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
-{
-    MY_DATA(data, pd);
-
-    pd->self_dirty = EINA_TRUE;
-}
 
 static void
 _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
@@ -217,7 +207,6 @@ _manager_change(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
-    {EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, _self_manager_dirty},
     {EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_PARENT_CHANGED, _logical_manager_change},
     {EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_change}
 );
@@ -227,8 +216,6 @@ _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_S
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_callback_array_add(obj, self_manager(), obj);
-
-   pd->self_dirty = EINA_TRUE;
 
    return obj;
 }

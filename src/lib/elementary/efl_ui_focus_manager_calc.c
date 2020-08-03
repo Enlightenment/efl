@@ -85,6 +85,7 @@ typedef struct {
     int freeze;
 
     Node *root;
+    Eina_Bool border_elements_changed;
 } Efl_Ui_Focus_Manager_Calc_Data;
 
 static Eina_Mempool *_node_mempool;
@@ -247,7 +248,6 @@ node_item_free(Node *item)
    Eina_List *l;
    Eo *obj = item->manager;
    FOCUS_DATA(obj);
-   Eina_Bool dirty_added = EINA_FALSE;
 
    /*cleanup graph parts*/
 
@@ -264,7 +264,7 @@ node_item_free(Node *item)
                   if (partner->type != NODE_TYPE_ONLY_LOGICAL) \
                     { \
                        dirty_add(obj, pd, partner); \
-                       dirty_added = EINA_TRUE; \
+                       pd->border_elements_changed = EINA_TRUE; \
                     } \
                }
 
@@ -278,7 +278,7 @@ node_item_free(Node *item)
      }
 
    //the unregistering of a item should ever result in atleast a coords_dirty call
-   if (dirty_added)
+   if (pd->border_elements_changed)
      efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
 
    /*cleanup manager householdings*/
@@ -475,7 +475,9 @@ dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty)
    pd->dirty = eina_list_append(pd->dirty, dirty);
    dirty->on_list = EINA_TRUE;
 
-   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
+   if (!pd->border_elements_changed)
+     efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
+   pd->border_elements_changed = EINA_TRUE;
 }
 
 
@@ -924,6 +926,7 @@ _efl_ui_focus_manager_calc_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_
    pd->node_hash = eina_hash_pointer_new(_free_node);
 
    pd->graph_ctx.offset_focusable = offsetof(Node, focusable);
+   pd->border_elements_changed = EINA_TRUE;
 
    return obj;
 }
@@ -1110,8 +1113,17 @@ _elements_iterator_new(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 EOLIAN static Eina_Iterator*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
+   pd->border_elements_changed = EINA_FALSE;
    return (Eina_Iterator*) _elements_iterator_new(obj, pd);
 }
+
+
+EOLIAN static Eina_Bool
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_changed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+   return pd->border_elements_changed;
+}
+
 
 EOLIAN static Eina_Iterator*
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_viewport_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Eina_Rect viewport)

@@ -2,10 +2,6 @@
 #include <Ecore_File.h>
 #include "elua_private.h"
 
-#ifdef ENABLE_LUA_OLD
-#  include <cffi-lua.h>
-#endif
-
 static Eina_Prefix *_elua_pfx = NULL;
 
 static int _elua_init_counter = 0;
@@ -70,6 +66,65 @@ elua_shutdown(void)
    return _elua_init_counter;
 }
 
+#ifdef ENABLE_LUA_OLD
+static int
+_ffi_loader(lua_State *L)
+{
+   lua_pushvalue(L, lua_upvalueindex(1));
+   lua_pushliteral(L, "cffi");
+   lua_pushvalue(L, lua_upvalueindex(2));
+   lua_call(L, 2, 1);
+   return 1;
+}
+
+#if LUA_VERSION_NUM < 502
+/* adapted from lua 5.2 source */
+static const char *
+_push_next_template(lua_State *L, const char *path)
+{
+   while (*path == *LUA_PATHSEP) ++path;
+   if (!*path)
+     return NULL;
+   const char *l = strchr(path, *LUA_PATHSEP);
+   if (!l)
+     l = path + strlen(path);
+   lua_pushlstring(L, path, l - path);
+   return l;
+}
+
+static int
+_elua_searchpath(lua_State *L)
+{
+   const char *name = luaL_checkstring(L, 1);
+   const char *path = luaL_checkstring(L, 2);
+   const char *sep  = luaL_optstring(L, 3, ".");
+   const char *dsep = luaL_optstring(L, 4, LUA_DIRSEP);
+   luaL_Buffer msg;
+   luaL_buffinit(L, &msg);
+   if (*sep)
+     name = luaL_gsub(L, name, sep, dsep);
+   while ((path = _push_next_template(L, path)))
+     {
+        const char *fname = luaL_gsub(L, lua_tostring(L, -1), LUA_PATH_MARK, name);
+        lua_remove(L, -2);
+        FILE *rf = fopen(fname, "r");
+        if (rf)
+          {
+             fclose(rf);
+             return 1; /* found */
+          }
+        lua_pushfstring(L, "\n\tno file " LUA_QS, fname);
+        lua_remove(L, -2);
+        luaL_addvalue(&msg);
+     }
+   luaL_pushresult(&msg);
+   lua_pushnil(L);
+   lua_insert(L, -2);
+   return 2; /* nil plus error message */
+}
+#endif
+#endif
+
 EAPI Elua_State *
 elua_state_new(const char *progname)
 {
@@ -82,12 +137,45 @@ elua_state_new(const char *progname)
    if (progname) ret->progname = eina_stringshare_add(progname);
    luaL_openlibs(L);
 #ifdef ENABLE_LUA_OLD
-   /* make sure to inject cffi-lua to preload so that the system gets it */
+   /* search for cffi-lua early, and pass it through as ffi */
    lua_getglobal(L, "package");
+#if LUA_VERSION_NUM < 502
+   /* lua 5.1 does not have package.searchpath, we rely on having that */
+   lua_getfield(L, -1, "searchpath");
+   if (lua_isnil(L, -1))
+     {
+        lua_pushcfunction(L, _elua_searchpath);
+        lua_setfield(L, -3, "searchpath");
+     }
+   lua_pop(L, 1);
+#endif
    lua_getfield(L, -1, "preload");
-   lua_pushcfunction(L, luaopen_cffi);
-   lua_setfield(L, -2, "ffi");
-   lua_pop(L, 2);
+   lua_getfield(L, -2, "searchers");
+   if (lua_isnil(L, -1))
+     {
+        lua_pop(L, 1);
+        lua_getfield(L, -2, "loaders");
+     }
+   if (lua_isnil(L, -1))
+     {
+        ERR("could not find a module searcher");
+        goto err;
+     }
+   lua_rawgeti(L, -1, 3);
+   lua_pushliteral(L, "cffi");
+   if (lua_pcall(L, 1, 2, 0))
+     {
+        ERR("could not find the cffi module");
+        goto err;
+     }
+   if (!lua_isfunction(L, -2))
+     {
+        ERR("could not find the cffi module: %s", lua_tostring(L, -2));
+        goto err;
+     }
+   lua_pushcclosure(L, _ffi_loader, 2);
+   lua_setfield(L, -3, "ffi");
+   lua_pop(L, 3);
 #endif
    /* on 64-bit, split the state pointer into two and reconstruct later */
    size_t retn = (size_t)ret;
@@ -105,6 +193,11 @@ elua_state_new(const char *progname)
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr1");
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr2");
    return ret;
+err:
+   lua_close(L);
+   eina_stringshare_del(ret->progname);
+   free(ret);
+   return NULL;
 }
 
 EAPI void

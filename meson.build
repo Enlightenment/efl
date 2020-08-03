@@ -285,15 +285,7 @@ if get_option('lua-interpreter') == 'lua'
     error('Lua not found')
   endif
   if have_elua
-    luaver_min = cc.compute_int('LUA_VERSION_NUM - 500',
-      prefix: '#include <lua.h>', dependencies: lua
-    )
-    lua_ffi = dependency('cffi-lua-5.@0@'.format(luaver_min), required: false)
-    if not lua_ffi.found()
-      error('Elua with interpreter is experimental, disable it or install cffi-lua...')
-    else
-      message('Using experimental Elua with interpreter support...')
-    endif
+    message('Using experimental Elua with interpreter support...')
   endif
 else
   lua = dependency(get_option('lua-interpreter'))

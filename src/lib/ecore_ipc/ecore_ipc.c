@@ -1851,7 +1851,7 @@ ecore_ipc_server_data_process(Ecore_Ipc_Server *svr, void *data, int size, Eina_
                   offset += (s + msg.size);
                   if ((svr->buf_size == offset) && (svr->buf))
                     {
-                       if (svr->buf) free(svr->buf);
+                       free(svr->buf);
                        svr->buf = NULL;
                        svr->buf_size = 0;
                        return ECORE_CALLBACK_CANCEL;
