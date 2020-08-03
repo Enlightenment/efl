@@ -2103,7 +2103,7 @@ case EDJE_PART_TYPE_##Short:                               \
    tmp = (Edje_Part_Description_##Type *)parent;           \
    new = calloc(1, sizeof (Edje_Part_Description_##Type)); \
    new->Spec = tmp->Spec;                                  \
-   d = &new->common;                                       \
+   To = &new->common;                                      \
    break;                                                  \
 }
 
