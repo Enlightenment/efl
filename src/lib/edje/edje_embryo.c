@@ -2102,6 +2102,7 @@ case EDJE_PART_TYPE_##Short:                               \
    Edje_Part_Description_##Type * new;                     \
    tmp = (Edje_Part_Description_##Type *)parent;           \
    new = calloc(1, sizeof (Edje_Part_Description_##Type)); \
+   if (!new) break;                                        \
    new->Spec = tmp->Spec;                                  \
    To = &new->common;                                      \
    break;                                                  \
