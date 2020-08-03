@@ -3,8 +3,6 @@ group { name: "e/modules/start/main";
    parts {
       part { name: "arrow_base"; type: RECT;
          description { state: "default" 0.0;
-            rel1.offset: 0 1;
-            rel2.offset: -1 0;
             color: 255 255 255 255;
          }
          description { state: "active" 0.0;
@@ -17,8 +15,8 @@ group { name: "e/modules/start/main";
          description { state: "default" 0.0;
             image.normal: "i-arrow-u";
             color: 160 160 160 255;
-            rel1.relative: (4/40) (4/40);
-            rel2.relative: (36/40) (36/40);
+            rel1.relative: (5/40) (5/40);
+            rel2.relative: (35/40) (35/40);
          }
          description { state: "down" 0.0;
             inherit: "default" 0.0;
