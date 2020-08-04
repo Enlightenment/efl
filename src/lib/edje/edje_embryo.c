@@ -2089,6 +2089,11 @@ _edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
    if (!(parent = _edje_part_description_find(ed, rp, name, val, EINA_TRUE)))
      return 0;
 
+   rp->custom = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
+   if (!rp->custom) return 0;
+
+   memset(rp->custom, 0, sizeof (Edje_Real_Part_State));
+
    /* now create the custom state */
    switch (rp->part->type)
      {
@@ -2123,16 +2128,12 @@ case EDJE_PART_TYPE_##Short:                               \
         ALLOC_COPY_DESC(VECTOR, Vector, d, vg);
      }
 
-   if (!d) return 0;
-
-   rp->custom = eina_mempool_malloc(_edje_real_part_state_mp, sizeof (Edje_Real_Part_State));
-   if (!rp->custom)
+   if (!d)
      {
-        free(d);
+        eina_mempool_free(_edje_real_part_state_mp, rp->custom);
+        rp->custom = NULL;
         return 0;
      }
-
-   memset(rp->custom, 0, sizeof (Edje_Real_Part_State));
 
    *d = *parent;
 
