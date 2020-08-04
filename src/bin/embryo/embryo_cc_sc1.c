@@ -1203,10 +1203,8 @@ declloc(int fstatic)
 	     if (numdim > 0 && dim[numdim - 1] == 0)
 		error(52);	/* only last dimension may be variable length */
 	     size = needsub(&idxtag[numdim]);	/* get size; size==0 for "var[]" */
-#if INT_MAX < CELL_MAX
-	     if (size > INT_MAX)
+	     if ((unsigned long long)size * sizeof(cell) > MIN(INT_MAX, CELL_MAX))
 		error(105);	/* overflow, exceeding capacity */
-#endif
 	     dim[numdim++] = (int)size;
 	  }			/* while */
 	if (ident == iARRAY || fstatic)
@@ -1237,6 +1235,9 @@ declloc(int fstatic)
 	  }
 	else
 	  {
+         if (((unsigned long long)declared + (unsigned long long)size) * sizeof(cell) >
+             MIN(INT_MAX, CELL_MAX))
+            error(105);
 	     declared += (int)size;	/* variables are put on stack,
 					 * adjust "declared" */
 	     sym =
