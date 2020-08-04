@@ -2849,6 +2849,7 @@ _item_move_cb(void *data, double pos)
    double frame = pos;
    Evas_Coord xx1, yy1, xx2, yy2;
    double dx, dy;
+   Eina_Bool ret = EINA_TRUE;
 
    switch (sd->reorder.tween_mode)
      {
@@ -2910,10 +2911,11 @@ _item_move_cb(void *data, double pos)
         efl_event_callback_legacy_call
           (sd->obj, ELM_GENGRID_EVENT_MOVED, EO_OBJ(sd->reorder.it1));
         sd->reorder.running = EINA_FALSE;
+        ret = EINA_FALSE;
      }
    _elm_widget_focus_highlight_start(sd->obj);
 
-   return EINA_TRUE;
+   return ret;
 }
 
 static void
