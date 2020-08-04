@@ -37,13 +37,42 @@ _elput_sd_init(void)
      }
    if (!_libsystemd)
      {
-        _libsystemd = eina_module_new("libelogind-shared.so.0");
-        if (_libsystemd)
+        const char *s = getenv("EFL_ELOGIND_LIB");
+
+        if (s)
           {
-             if (!eina_module_load(_libsystemd))
+             _libsystemd = eina_module_new(s);
+             if (_libsystemd)
                {
-                  eina_module_free(_libsystemd);
-                  _libsystemd = NULL;
+                  if (!eina_module_load(_libsystemd))
+                    {
+                       eina_module_free(_libsystemd);
+                       _libsystemd = NULL;
+                    }
+               }
+          }
+        if (!_libsystemd)
+          {
+             _libsystemd = eina_module_new("libelogind-shared.so.0");
+             if (_libsystemd)
+               {
+                  if (!eina_module_load(_libsystemd))
+                    {
+                       eina_module_free(_libsystemd);
+                       _libsystemd = NULL;
+                    }
+               }
+          }
+        if (!_libsystemd)
+          {
+             _libsystemd = eina_module_new("libelogind.so.0");
+             if (_libsystemd)
+               {
+                  if (!eina_module_load(_libsystemd))
+                    {
+                       eina_module_free(_libsystemd);
+                       _libsystemd = NULL;
+                    }
                }
           }
      }
@@ -52,7 +81,7 @@ _elput_sd_init(void)
         _libsystemd_broken = EINA_TRUE;
         return;
      }
-   // sd_session_get_vt == newere in systemd 207
+   // sd_session_get_vt == newer in systemd 207
    _elput_sd_session_get_vt =
      eina_module_symbol_get(_libsystemd, "sd_session_get_vt");
    // sd_session_get_tty == older api in ssystemd 198
