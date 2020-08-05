@@ -3436,7 +3436,7 @@ _instr2cmd_transform(Evas_Filter_Context *ctx,
    INSTR_PARAM_CHECK(src);
    INSTR_PARAM_CHECK(dst);
 
-   if (!strcasecmp(op, "vflip"))
+   if (op && !strcasecmp(op, "vflip"))
      flags = EVAS_FILTER_TRANSFORM_VFLIP;
    else
      {
