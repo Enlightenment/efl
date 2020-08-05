@@ -520,6 +520,7 @@ _access_highlight_next_get(Evas_Object *obj, Elm_Focus_Direction dir)
         if (ho)
           {
              Elm_Access_Info *info = _elm_access_info_get(ho);
+             EINA_SAFETY_ON_NULL_RETURN_VAL(info, ret);
              if (type == ELM_ACCESS_ACTION_HIGHLIGHT_NEXT && info->next)
                target = info->next;
              else if (type == ELM_ACCESS_ACTION_HIGHLIGHT_PREV && info->prev)
