@@ -210,6 +210,9 @@ I160("i-window-process", "window-process")
 I160("i-window-winlist", "window-winlist")
 I160("i-menus", "menus")
 I160("i-menus-settings", "menus-settings")
+I160("i-lang", "lang")
+I160("i-lang-lock", "lang-lock")
+I160("i-keyboard-hand", "keyboard-hand")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

@@ -77,6 +77,9 @@
    ICON("preferences-winlist", "i-window-winlist")
    ICON("preferences-menus", "i-menus")
    ICON("preferences-menu-settings", "i-menus-settings")
+   ICON("preferences-desktop-locale", "i-lang")
+   ICON("preferences-desklock-locale", "i-lang-lock")
+   ICON("preferences-imc", "i-keyboard-hand")
 #undef ICON
 
 // mono color default fg color icons
@@ -174,7 +177,7 @@
          } \
       } \
    }
-   ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
+//   ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
    ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
    ICON("preferences-variables",                  "icon_preferences-variables.png")
 
