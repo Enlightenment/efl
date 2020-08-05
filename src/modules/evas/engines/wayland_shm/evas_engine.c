@@ -243,6 +243,8 @@ eng_image_native_set(void *engine EINA_UNUSED, void *image, void *native)
                                                NULL, 1,
                                                EVAS_COLORSPACE_ARGB8888);
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(im2, im);
+
    if (im->native.data)
       {
          if (im->native.func.free)
