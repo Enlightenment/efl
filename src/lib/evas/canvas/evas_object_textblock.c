@@ -578,8 +578,6 @@ static void evas_object_textblock_coords_recalc(Evas_Object *eo_obj,
                                                 void *type_private_data);
 static void _canvas_text_format_changed(Eo *eo_obj, Efl_Canvas_Textblock_Data *o);
 
-static void _evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur,
-                                                   Eina_Bool emit_change);
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -8754,15 +8752,35 @@ _evas_object_textblock_text_markup_set(Eo *eo_obj, Efl_Canvas_Textblock_Data *o,
      }
    _nodes_clear(eo_obj);
 
-   Efl_Text_Cursor_Handle *co = o->cursor;
-   co->node = _evas_textblock_node_text_new();
+   if (o->cursor->pos != 0)
+   {
+      o->cursor->changed = EINA_TRUE;
+      o->cursor->pos = 0;
+   }
+
    o->text_nodes = _NODE_TEXT(eina_inlist_append(
             EINA_INLIST_GET(o->text_nodes),
-            EINA_INLIST_GET(co->node)));
-
-   evas_textblock_cursor_paragraph_first(o->cursor);
+            EINA_INLIST_GET(_evas_textblock_node_text_new())));
+   o->cursor->node = o->text_nodes;
 
    evas_object_textblock_text_markup_prepend(o->cursor, text);
+
+   Eina_List *l;
+   Efl_Text_Cursor_Handle *cur;
+   EINA_LIST_FOREACH(o->cursors, l, cur)
+     {
+        cur->node = o->text_nodes;
+        if (cur->pos != 0)
+          {
+             cur->pos = 0;
+             cur->changed = EINA_TRUE;
+          }
+     }
+   _cursor_emit_if_changed(o->cursor);
+   EINA_LIST_FOREACH(o->cursors, l, cur)
+     {
+        _cursor_emit_if_changed(cur);
+     }
 
    /*If there was no text markup_prepend will not call change function
      So we will call it inside markup_set*/
@@ -8771,26 +8789,6 @@ _evas_object_textblock_text_markup_set(Eo *eo_obj, Efl_Canvas_Textblock_Data *o,
         efl_event_callback_call(eo_obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, NULL);
         _evas_textblock_changed(o, eo_obj);
      }
-
-   efl_event_freeze(eo_obj);
-   /* Point all the cursors to the starrt */
-     {
-        Eina_List *l;
-        Efl_Text_Cursor_Handle *cur;
-
-        /*update all cursors positions first, without emitting change*/
-        EINA_LIST_FOREACH(o->cursors, l, cur)
-          {
-             _evas_textblock_cursor_paragraph_first(cur, EINA_FALSE);
-          }
-        /*emitting change event for all cursors, after all of them are ready*/
-        EINA_LIST_FOREACH(o->cursors, l, cur)
-          {
-             _evas_textblock_cursor_object_changed(cur);
-          }
-
-     }
-   efl_event_thaw(eo_obj);
 
     o->markup_text = text;
 }
@@ -10039,8 +10037,8 @@ found:
    _evas_textblock_changed(o, eo_obj);
 }
 
-static void
-_evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur, Eina_Bool emit_change)
+EAPI void
+evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur)
 {
    if (!cur) return;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
@@ -10048,14 +10046,7 @@ _evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur, Eina_Bool em
    Efl_Canvas_Textblock_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
    cur->node = o->text_nodes;
    cur->pos = 0;
-   if (emit_change)
-     _evas_textblock_cursor_object_changed(cur);
-}
-
-EAPI void
-evas_textblock_cursor_paragraph_first(Efl_Text_Cursor_Handle *cur)
-{
-   _evas_textblock_cursor_paragraph_first(cur, EINA_TRUE);
+   _evas_textblock_cursor_object_changed(cur);
 }
 
 EAPI void

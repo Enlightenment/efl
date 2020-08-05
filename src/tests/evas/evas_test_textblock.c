@@ -4847,6 +4847,26 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_canvas_textblock_cursor_change)
+{
+   START_EFL_CANVAS_TEXTBLOCK_TEST();
+   (void) cur_obj;
+   int changed_emit1 = 0;
+   int changed_emit2 = 0;
+   Efl_Object *cur1, *cur2;
+   cur1 = efl_canvas_textblock_cursor_create(txt);
+   cur2 = efl_canvas_textblock_cursor_create(txt);
+   efl_text_set(txt, "Hello World");
+   efl_text_cursor_object_position_set(cur1, 0);
+   efl_text_cursor_object_position_set(cur2, 1);
+   efl_event_callback_add(cur1, EFL_TEXT_CURSOR_OBJECT_EVENT_CHANGED, _increment_int_changed, &changed_emit1);
+   efl_event_callback_add(cur2, EFL_TEXT_CURSOR_OBJECT_EVENT_CHANGED, _increment_int_changed, &changed_emit2);
+   efl_text_set(txt, "");
+   ck_assert_int_eq(changed_emit1, 0);
+   ck_assert_int_eq(changed_emit2, 1);
+}
+EFL_END_TEST
+
 
 EFL_START_TEST(efl_canvas_textblock_markup)
 {
@@ -5143,6 +5163,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_canvas_textblock_simple);
    tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_textblock_cursor);
+   tcase_add_test(tc, efl_canvas_textblock_cursor_change);
    tcase_add_test(tc, efl_canvas_textblock_markup);
    tcase_add_test(tc, efl_canvas_textblock_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
