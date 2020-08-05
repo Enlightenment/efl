@@ -6292,6 +6292,7 @@ _edje_edit_state_alloc(int type, Edje *ed)
    Edje_Part_Description_Common *pd = NULL;
 
    ce = eina_hash_find(ed->file->collection, ed->group);
+   if (!ce) return NULL;
 
    switch (type)
      {
