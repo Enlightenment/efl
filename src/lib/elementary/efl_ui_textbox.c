@@ -99,6 +99,7 @@ struct _Efl_Ui_Textbox_Data
    Eina_Bool                             text_changed : 1;
    Eina_Bool                             calc_force : 1;
    Eina_Bool                             cursor_update : 1;
+   Eina_Bool                             color_is_set : 1;
 };
 
 struct _Anchor
@@ -1607,13 +1608,18 @@ _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd)
      }
 
    // color
-   if (disabled)
-     colorcode = efl_layout_group_data_get(wd->resize_obj, "style.color_disabled");
-   if (!colorcode)
-     colorcode = efl_layout_group_data_get(wd->resize_obj, "style.color");
-   if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
+   if (!sd->color_is_set)
      {
-        efl_text_color_set(sd->text_obj, r, g, b, a);
+        // If user set color by him self, we will not change it back even if
+        // control become disabled.
+        if (disabled)
+          colorcode = efl_layout_group_data_get(wd->resize_obj, "style.color_disabled");
+        if (!colorcode)
+          colorcode = efl_layout_group_data_get(wd->resize_obj, "style.color");
+        if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
+          {
+             efl_text_color_set(sd->text_obj, r, g, b, a);
+          }
      }
 
    // Guide Text
@@ -1811,6 +1817,12 @@ _efl_ui_textbox_efl_text_format_password_set(Eo *obj, Efl_Ui_Textbox_Data *sd, E
      }
 }
 
+EOLIAN static void
+_efl_ui_textbox_efl_text_style_text_color_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+   pd->color_is_set = EINA_TRUE;
+   efl_text_color_set(pd->text_obj, r, g, b, a);
+}
 static void
 _efl_ui_textbox_calc_force(Eo *obj, Efl_Ui_Textbox_Data *sd)
 {

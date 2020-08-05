@@ -300,6 +300,29 @@ EFL_START_TEST(text_editable)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_on_startup)
+{
+   Eo *txt, *win;
+   win = win_add();
+   unsigned char r,g,b,a;
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+               efl_text_color_set(efl_added, 0, 255, 0, 255),
+               efl_text_font_size_set(efl_added, 50),
+               efl_text_font_family_set(efl_added, "Arial"));
+
+   ck_assert_int_eq(efl_text_font_size_get(txt), 50);
+   ck_assert_str_eq(efl_text_font_family_get(txt), "Arial");
+   efl_text_color_get(txt, &r, &g, &b, &a);
+   ck_assert_int_eq(r, 0);
+   ck_assert_int_eq(g, 255);
+   ck_assert_int_eq(b, 0);
+   ck_assert_int_eq(a, 255);
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(text_multiline_selection)
 {
    Eo *txt, *win;
@@ -473,4 +496,5 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_multiline_selection);
    tcase_add_test(tc, text_singleline_cursor_movement);
    tcase_add_test(tc, text_multiline_singleline_cursor_pos);
+   tcase_add_test(tc, text_on_startup);
 }

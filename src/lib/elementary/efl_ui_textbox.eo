@@ -112,6 +112,7 @@ class Efl.Ui.Textbox extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
       Efl.Ui.Widget.disabled {set;}
       Efl.Text_Format.password {set;}
       Efl.Text_Format.multiline {set;}
+      Efl.Text_Style.text_color { set; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Text.access_text { get; }
