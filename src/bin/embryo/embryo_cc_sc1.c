@@ -266,7 +266,7 @@ sc_compile(int argc, char *argv[])
    void               *inpfmark;
    char                lcl_ctrlchar;
    int                 lcl_packstr, lcl_needsemicolon, lcl_tabsize;
-   Eina_Tmpstr        *outfname;
+   Eina_Tmpstr        *outfname = NULL;
 
    /* set global variables to their initial value */
    binf = NULL;
@@ -398,8 +398,11 @@ sc_compile(int argc, char *argv[])
      }				/* if */
    if (outf)
       sc_closeasm(outf);
-   unlink(outfname);
-   eina_tmpstr_del(outfname);
+   if (outfname)
+     {
+        unlink(outfname);
+        eina_tmpstr_del(outfname);
+     }
    if (binf)
       sc_closebin(binf, errnum != 0);
 
