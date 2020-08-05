@@ -13362,7 +13362,7 @@ _edje_generate_source_of_style(Edje *ed, const char *name, Eina_Strbuf *buf)
 }
 
 static Eina_Bool
-_edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Strbuf *buf)
+_edje_generate_source_of_program(Evas_Object *obj, const char *prog, Eina_Strbuf *buf)
 {
    Eina_List *l, *ll;
    const char *s;
@@ -13371,15 +13371,13 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    Eina_Bool ret = EINA_TRUE;
    Eina_Bool no_transition = EINA_FALSE;
    const char *api_name, *api_description;
-   Edje_Program *epr;
    int tweenmode = 0;
 
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EED_OR_RETURN(EINA_FALSE);
+   GET_EPR_OR_RETURN(EINA_FALSE);
 
-   epr = _edje_program_get_byname(obj, program);
-
-   BUF_APPENDF(I3 "program { name: \"%s\";\n", program);
+   BUF_APPENDF(I3 "program { name: \"%s\";\n", prog);
 
    /* Signal */
    s = eina_stringshare_add(epr->signal);
@@ -13415,7 +13413,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
         if (epr->state)
           {
              BUF_APPENDF(I4 "action: STATE_SET \"%s\" %.2f;\n", epr->state,
-                         edje_edit_program_value_get(obj, program));
+                         edje_edit_program_value_get(obj, prog));
           }
         break;
 
