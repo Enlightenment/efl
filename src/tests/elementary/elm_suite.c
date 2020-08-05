@@ -22,7 +22,9 @@ static const Efl_Test_Case etc[] = {
   { "elm_actionslider", elm_test_actionslider},
   { "elm_box", elm_test_box},
   { "elm_table", elm_test_table},
+#ifdef HAVE_ETHUMB
   { "elm_thumb", elm_test_thumb},
+#endif
   { "elm_menu", elm_test_menu},
   { "elm_photocam", elm_test_photocam},
   { "elm_win", elm_test_win},

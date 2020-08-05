@@ -72,7 +72,9 @@
 #include <Efreet.h>
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
+#ifdef HAVE_ETHUMB
 #include <Ethumb_Client.h>
+#endif
 
 #ifdef ELM_EMAP
 #include <EMap.h>
@@ -225,7 +227,9 @@ ELM_API extern Elm_Version *elm_version;
 #include <elm_table.h>
 #include <elm_textpath.h>
 #include <elm_theme.h>
+#ifdef HAVE_ETHUMB
 #include <elm_thumb.h>
+#endif
 #include <elm_toolbar.h>
 #include <elm_transit.h>
 /* this is actually elm_video */

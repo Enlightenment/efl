@@ -844,7 +844,6 @@ elementary_src = files([
   'elm_sys_notify_dbus.c',
   'elm_table.c',
   'elm_theme.c',
-  'elm_thumb.c',
   'elm_toolbar.c',
   'elm_transit.c',
   'elm_util.c',
@@ -953,10 +952,16 @@ elementary_src = files([
   'efl_ui_spotlight_animation_manager.c',
 ])
 
-elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, eio, buildsystem]
+elementary_deps = [emile, eo, efl, edje, emotion, ecore_imf, ecore_con, eldbus, efreet, eio, buildsystem]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,
-                       edje, eldbus, efreet, ethumb_client, efl]
+                       edje, eldbus, efreet, efl]
 elementary_ext_deps = [atspi, dl, intl, buildsystem_simple]
+
+if get_option('ethumb')
+  elementary_src += files('elm_thumb.c')
+  elementary_deps += [ethumb, ethumb_client]
+  elementary_pub_deps += ethumb_client
+endif
 elm_options = configuration_data()
 
 config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.build_root())

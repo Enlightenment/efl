@@ -877,7 +877,9 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photocam Icon", test_photocam_icon);
    ADD_TEST_EO(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
+#ifdef HAVE_ETHUMB
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
+#endif
    ADD_TEST(NULL, "Images", "Image", test_image);
    ADD_TEST(NULL, "Images", "Image Scale Type", test_image_scale_type);
    ADD_TEST(NULL, "Images", "Image Align", test_image_swallow_align);

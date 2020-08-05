@@ -34,11 +34,14 @@ edje_external_elementary = [
   'elm_slider.c',
   'elm_slideshow.c',
   'elm_spinner.c',
-  'elm_thumb.c',
   'elm_toolbar.c',
   'elm_video.c',
   'elm_web.c'
 ]
+
+if get_option('ethumb')
+  edje_external_elementary += ['elm_thumb.c']
+endif
 
 ecore_systemd_mod = shared_module('elementary',
     edje_external_elementary,

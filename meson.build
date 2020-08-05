@@ -345,9 +345,9 @@ subprojects = [
   ['ephysics'         ,['physics']           , false,  true, false,  false,  false,     false,  true, ['eina', 'efl', 'eo'], []],
   ['edje'             ,[]                    , false,  true,  true,  false,   true,      true,  true, ['evas', 'eo', 'efl', lua_pc_name], []],
   ['emotion'          ,[]                    ,  true,  true, false,  false,   true,      true,  true, ['eina', 'efl', 'eo'], []],
-  ['ethumb'           ,[]                    ,  true,  true,  true,  false,  false,     false,  true, ['eina', 'efl', 'eo'], []],
-  ['ethumb_client'    ,[]                    , false,  true,  true,  false,  false,      true,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
-  ['elementary'       ,[]                    ,  true,  true,  true,   true,   true,      true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
+  ['ethumb'           ,['ethumb']            ,  true,  true,  true,  false,  false,     false,  true, ['eina', 'efl', 'eo'], []],
+  ['ethumb_client'    ,['ethumb']            , false,  true,  true,  false,  false,      true,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
+  ['elementary'       ,[]                    ,  true,  true,  true,   true,   true,      true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio'], ['atspi']],
   ['efl_canvas_wl'    ,['wl']                , false,  true,  true,  false,  false,     false,  true, ['eina', 'efl', 'eo', 'evas', 'ecore'], []],
   ['elua'             ,['elua']              , false,  true,  true,  false,   true,     false, false, ['eina', lua_pc_name], []],
   ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false,  false,  false,     false, false, ['eina'], []],
@@ -375,12 +375,15 @@ efl_one_include_dirs = []
 efl_one_sub_dirs = []
 tmp_empty = declare_dependency()
 
+efl_config_h = configuration_data()
+
 foreach package : subprojects
   package_name = package[0]
   package_version_name = '-'.join(package_name.split('_')) + '-' + version_major
   automatic_pkgfile = true
   if package[1].length() == 0 or get_option(package[1][0])
     config_h.set('HAVE_' + package_name.to_upper().underscorify(), '1')
+    efl_config_h.set('HAVE_' + package_name.to_upper().underscorify(), '1')
 
     dir_package_include = join_paths(dir_include, package_version_name)
     dir_package_modules = join_paths(dir_lib, package_name, 'modules')
@@ -628,7 +631,6 @@ endif
 # Configure files
 #
 
-efl_config_h = configuration_data()
 efl_config_h.set('EFL_VERSION_MAJOR', version_major)
 efl_config_h.set('EFL_VERSION_MINOR', version_minor)
 efl_config_h.set('EFL_VERSION_MICRO', version_micro)

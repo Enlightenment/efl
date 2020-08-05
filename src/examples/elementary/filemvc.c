@@ -22,7 +22,9 @@ struct _Efl_Model_Test_Filemvc_Data
    Eo *treeview;
    Eo *formview;
    Eo *treemodel;
+#ifdef HAVE_ETHUMB
    Evas_Object *thumb;
+#endif
    char imagedefault_path[256];
 };
 typedef struct _Efl_Model_Test_Filemvc_Data Efl_Model_Test_Filemvc_Data;
@@ -49,7 +51,9 @@ _list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Efl_Model_Test_Filemvc_Data *priv = data;
    Eo *child = event->info;
+#ifdef HAVE_ETHUMB
   ethumb_client_file_free(elm_thumb_ethumb_client_get());
+#endif
 
    printf("LIST selected model\n");
    elm_view_form_model_set(priv->formview, child);
@@ -89,6 +93,7 @@ _label_init(Evas_Object *win, Evas_Object *box, const char *text)
 }
 
 
+#ifdef HAVE_ETHUMB
 static void
 _thumb_error_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -97,6 +102,7 @@ _thumb_error_cb(void *data, Evas_Object *o EINA_UNUSED, void *event_info EINA_UN
    elm_thumb_file_set(priv->thumb, priv->imagedefault_path, NULL);
    elm_thumb_reload(priv->thumb);
 }
+#endif
 
 EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
@@ -177,6 +183,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_view_form_widget_add(priv.formview, "path", entry);
 
    /* Thumb widget */
+#ifdef HAVE_ETHUMB
    elm_need_ethumb();
    priv.thumb = elm_thumb_add(win);
    _widget_init(priv.thumb);
@@ -185,6 +192,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_view_form_widget_add(priv.formview, "path", priv.thumb);
    evas_object_smart_callback_add(priv.thumb, "generate,error", _thumb_error_cb, &priv);
    evas_object_smart_callback_add(priv.thumb, "load,error", _thumb_error_cb, &priv);
+#endif
 
    //showall
    evas_object_resize(win, 800, 400);

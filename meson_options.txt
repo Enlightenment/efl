@@ -58,6 +58,12 @@ option('physics',
   description : 'Physics engine (bullet) in efl'
 )
 
+option('ethumb',
+  type : 'boolean',
+  value : true,
+  description : 'Library and service for thumbnail generation and caching'
+)
+
 option('eeze',
   type : 'boolean',
   value : true,

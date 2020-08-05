@@ -14,4 +14,6 @@
 #define EFL_VERSION_MICRO @EFL_VERSION_MICRO@
 #define EFL_BUILD_ID "@EFL_BUILD_ID@"
 
+#mesondefine HAVE_ETHUMB
+
 #endif

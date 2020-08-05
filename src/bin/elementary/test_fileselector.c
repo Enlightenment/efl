@@ -549,7 +549,9 @@ test_fileselector(void *data       EINA_UNUSED,
     */
    setlocale(LC_ALL, "");
 
+#ifdef HAVE_ETHUMB
    elm_need_ethumb();
+#endif
    elm_need_efreet();
 
    win = elm_win_util_standard_add("fileselector", "File Selector");

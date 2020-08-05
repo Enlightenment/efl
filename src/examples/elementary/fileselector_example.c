@@ -113,7 +113,9 @@ elm_main(int    argc EINA_UNUSED,
     */
    setlocale(LC_ALL, "");
 
+#ifdef HAVE_ETHUMB
    elm_need_ethumb(); /* let's have thumbnails of images on grid view */
+#endif
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    win = elm_win_util_standard_add("fileselector", "File Selector Example");

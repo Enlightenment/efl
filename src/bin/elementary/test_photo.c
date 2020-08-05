@@ -42,7 +42,9 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
         "wood_01.jpg"
      };
 
+#ifdef HAVE_ETHUMB
    elm_need_ethumb();
+#endif
 
    win = elm_win_util_standard_add("photo", "Photo");
    elm_win_autodel_set(win, EINA_TRUE);

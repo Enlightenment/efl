@@ -25,6 +25,7 @@ struct _Elm_Icon_Data
    Evas_Object          *obj; // the object itself
    const char           *stdicon;
 
+#ifdef HAVE_ETHUMB
    struct
    {
       struct
@@ -41,7 +42,7 @@ struct _Elm_Icon_Data
 
       Eina_Bool            retry : 1;
    } thumb;
-
+#endif
    struct
    {
       int       requested_size;

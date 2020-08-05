@@ -38,7 +38,6 @@ elementary_suite_src = [
   'elm_test_actionslider.c',
   'elm_test_box.c',
   'elm_test_table.c',
-  'elm_test_thumb.c',
   'elm_test_menu.c',
   'elm_test_photocam.c',
   'elm_test_win.c',
@@ -106,6 +105,10 @@ elementary_suite_src = [
   'elm_test_widget_focus.c',
   'elm_test_widget_basics.c'
 ]
+
+if get_option('ethumb')
+  elementary_suite_src += ['elm_test_thumb.c']
+endif
 
 elementary_suite = executable('elementary_suite',
   elementary_suite_src,

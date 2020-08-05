@@ -31,7 +31,9 @@ DEFINE_TYPE(segment_control)
 DEFINE_TYPE(slider)
 DEFINE_TYPE(slideshow)
 DEFINE_TYPE(spinner)
+#ifdef HAVE_ETHUMB
 DEFINE_TYPE(thumb)
+#endif
 DEFINE_TYPE(toolbar)
 DEFINE_TYPE(video)
 DEFINE_TYPE(web)
