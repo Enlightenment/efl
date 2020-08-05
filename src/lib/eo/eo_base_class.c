@@ -38,6 +38,7 @@ struct _Efl_Event_Forwarder
 
 struct _Efl_Event_Callback_Frame
 {
+   const Efl_Event_Description    *desc;
    Efl_Event_Callback_Frame *next;
    unsigned int              idx;
    unsigned int              inserted_before;
@@ -64,8 +65,6 @@ struct _Efl_Object_Data
    Eo                        *parent;
 
    Efl_Object_Extension      *ext;
-
-   Eina_Inlist               *current;
 
    Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
@@ -2052,11 +2051,12 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                      Eina_Bool legacy_compare)
 {
    Eo_Callback_Description **cb;
-   Eo_Current_Callback_Description *lookup, saved;
+   Efl_Event_Callback_Frame *restart_lookup = NULL; //a pointer to a frame, which is high up the stack, which we use to restore
    Efl_Event ev;
    unsigned int idx;
    Eina_Bool callback_already_stopped, ret;
    Efl_Event_Callback_Frame frame = {
+      .desc = desc,
       .next = NULL,
       .idx = 0,
       .inserted_before = 0,
@@ -2086,7 +2086,6 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
    EVENT_STACK_PUSH(pd, &frame);
 
-   lookup = NULL;
    callback_already_stopped = pd->callback_stopped;
    pd->callback_stopped = EINA_FALSE;
    ret = EINA_TRUE;
@@ -2126,9 +2125,6 @@ restart_back:
                            (event_freeze_count || pd->event_freeze_count))
                           continue;
 
-                       // Handle nested restart of walking list
-                       if (lookup) lookup->current = idx - 1;
-
                        it->func((void *) (*cb)->func_data, &ev);
                        /* Abort callback calling if the func says so. */
                        if (pd->callback_stopped)
@@ -2136,10 +2132,6 @@ restart_back:
                             ret = EINA_FALSE;
                             goto end;
                          }
-                       // We have actually walked this list during a nested call
-                       if (lookup &&
-                           lookup->current == 0)
-                         goto end;
                     }
                }
              else
@@ -2150,9 +2142,6 @@ restart_back:
                       (event_freeze_count || pd->event_freeze_count))
                     continue;
 
-                  // Handle nested restart of walking list
-                  if (lookup) lookup->current = idx - 1;
-
                   (*cb)->items.item.func((void *) (*cb)->func_data, &ev);
                   /* Abort callback calling if the func says so. */
                   if (pd->callback_stopped)
@@ -2160,23 +2149,18 @@ restart_back:
                        ret = EINA_FALSE;
                        goto end;
                     }
-                  // We have actually walked this list during a nested call
-                  if (lookup &&
-                      lookup->current == 0)
-                    goto end;
                }
           }
+        //copy back the idx that might have changed due to restarts, (theoretically only needed with restarts, condition made everything slower)
+        idx = frame.idx;
+        //adjust to event subscriptions that have been added in a event callback
         idx += frame.inserted_before;
         frame.inserted_before = 0;
      }
 
 end:
    // Handling restarting list walking complete exit.
-   if (lookup) lookup->current = 0;
-   if (lookup == &saved)
-     {
-        pd->current = eina_inlist_remove(pd->current, EINA_INLIST_GET(lookup));
-     }
+   if (restart_lookup) restart_lookup->idx = 0;
 
    EVENT_STACK_POP(pd);
 
@@ -2186,26 +2170,22 @@ end:
 
    return ret;
 restart:
-   EINA_INLIST_FOREACH(pd->current, lookup)
+   restart_lookup = frame.next;
+   while (restart_lookup)
      {
-        if (lookup->desc == desc) break;
+        if (restart_lookup->desc == desc) break;
+        restart_lookup = restart_lookup->next;
      }
 
-   // This is the first event to trigger it, so register it here
-   if (!lookup)
-     {
-        // This following trick get us a zero allocation list
-        saved.desc = desc;
-        saved.current = 0;
-        lookup = &saved;
-        // Ideally there will most of the time be only one item in this list
-        // But just to speed up things, prepend so we find it fast at the end
-        // of this function
-        pd->current = eina_inlist_prepend(pd->current, EINA_INLIST_GET(lookup));
-     }
+   if (restart_lookup) {
+     idx = restart_lookup->idx - 1;
+   } else {
+     idx = 0;
+   }
 
-   if (!lookup->current) lookup->current = pd->callbacks_count;
-   idx = lookup->current;
+   if (!idx)
+     idx = pd->callbacks_count;
+
    goto restart_back;
 }
 
