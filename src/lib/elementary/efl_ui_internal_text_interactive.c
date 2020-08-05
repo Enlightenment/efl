@@ -1375,9 +1375,9 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!strcmp(ev->keyname, "a")))
+   else if ((super) && (!strcmp(ev->key, "a")))
 #else
-   else if ((control) && (!strcmp(ev->keyname, "a")))
+   else if ((control) && (!strcmp(ev->key, "a")))
 #endif
      {
         _compose_seq_reset(en);
@@ -1393,9 +1393,9 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
           }
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!strcmp(ev->keyname, "z")))
+   else if ((super) && (!strcmp(ev->key, "z")))
 #else
-   else if ((control) && (!strcmp(ev->keyname, "z")))
+   else if ((control) && (!strcmp(ev->key, "z")))
 #endif
      {
         _compose_seq_reset(en);
@@ -1412,9 +1412,9 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!shift) && (!strcmp(ev->keyname, "y")))
+   else if ((super) && (!shift) && (!strcmp(ev->key, "y")))
 #else
-   else if ((control) && (!shift) && (!strcmp(ev->keyname, "y")))
+   else if ((control) && (!shift) && (!strcmp(ev->key, "y")))
 #endif
      {
         _compose_seq_reset(en);

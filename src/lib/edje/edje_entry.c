@@ -1737,13 +1737,6 @@ _compose_seq_reset(Entry *en)
    en->composing = EINA_FALSE;
 }
 
-#define KEYCODE_A 65
-#define KEYCODE_C 67
-#define KEYCODE_V 86
-#define KEYCODE_X 88
-#define KEYCODE_Y 89
-#define KEYCODE_Z 90
-
 static void
 _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
@@ -2085,9 +2078,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!shift) && (!strcmp(ev->keyname, "v")))
+   else if ((super) && (!shift) && (!strcmp(ev->key, "v")))
 #else
-   else if ((control) && (!shift) && (!strcmp(ev->keyname, "v")))
+   else if ((control) && (!shift) && (!strcmp(ev->key, "v")))
 #endif
      {
         _compose_seq_reset(en);
@@ -2096,9 +2089,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!strcmp(ev->keyname, "a") || ev->keycode == KEYCODE_A))
+   else if ((super) && (!strcmp(ev->key, "a")))
 #else
-   else if ((control) && (!strcmp(ev->keyname, "a") || ev->keycode == KEYCODE_A))
+   else if ((control) && (!strcmp(ev->key, "a")))
 #endif
      {
         _compose_seq_reset(en);
@@ -2114,9 +2107,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           }
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (((!shift) && (!strcmp(ev->keyname, "c") || ev->keycode == KEYCODE_C)) || !strcmp(ev->key, "Insert")))
+   else if ((super) && (((!shift) && !strcmp(ev->key, "c")) || !strcmp(ev->key, "Insert")))
 #else
-   else if ((control) && (((!shift) && (!strcmp(ev->keyname, "c") || ev->keycode == KEYCODE_C)) || !strcmp(ev->key, "Insert")))
+   else if ((control) && (((!shift) && !strcmp(ev->key, "c")) || !strcmp(ev->key, "Insert")))
 #endif
      {
         _compose_seq_reset(en);
@@ -2124,9 +2117,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!shift) && (((!strcmp(ev->keyname, "x") || ev->keycode == KEYCODE_X) || (!strcmp(ev->keyname, "m")))))
+   else if ((super) && (!shift) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
 #else
-   else if ((control) && (!shift) && (((!strcmp(ev->keyname, "x") || ev->keycode == KEYCODE_X) || (!strcmp(ev->keyname, "m")))))
+   else if ((control) && (!shift) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
 #endif
      {
         _compose_seq_reset(en);
@@ -2134,9 +2127,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!strcmp(ev->keyname, "z") || ev->keycode == KEYCODE_Z))
+   else if ((super) && (!strcmp(ev->key, "z")))
 #else
-   else if ((control) && (!strcmp(ev->keyname, "z") || ev->keycode == KEYCODE_Z))
+   else if ((control) && (!strcmp(ev->key, "z")))
 #endif
      {
         _compose_seq_reset(en);
@@ -2153,9 +2146,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!shift) && (!strcmp(ev->keyname, "y")  || ev->keycode == KEYCODE_Y))
+   else if ((super) && (!shift) && (!strcmp(ev->key, "y")))
 #else
-   else if ((control) && (!shift) && (!strcmp(ev->keyname, "y") || ev->keycode == KEYCODE_Y))
+   else if ((control) && (!shift) && (!strcmp(ev->key, "y")))
 #endif
      {
         _compose_seq_reset(en);
