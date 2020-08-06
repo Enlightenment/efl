@@ -1196,79 +1196,82 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                        free(sel);
                        an->sel = eina_list_remove_list(an->sel, an->sel);
                     }
-                  Evas_Textblock_Rectangle *r, *r_last;
+                  if (range)
+                    {
+                       Evas_Textblock_Rectangle *r, *r_last;
 
-                  r = range->data;
-                  r_last = eina_list_last_data_get(range);
-                  if (r->y != r_last->y)
-                    {
-                       /* For multiple range */
-                       r->h = r->y + r_last->y + r_last->h;
-                    }
-                  /* For vertically layout entry */
-                  if (_is_anchors_outside_viewport(y, r->y, r->h, vy, tvh))
-                    {
-                       EINA_LIST_FREE(range, r)
-                         free(r);
-                       continue;
-                    }
-                  else
-                    {
-                       /* XXX: Should consider for horizontal entry but has
-                        * very minimal usage. Probably we should get the min x
-                        * and max w for range and then decide whether it is in
-                        * the viewport or not. Unnecessary calculation for this
-                        * minimal usage. Please test with large number of anchors
-                        * after implementing it, if its needed to be.
-                        */
-                    }
-                  for (ll = range; ll; ll = eina_list_next(ll))
-                    {
-                       Evas_Object *ob;
-
-                       sel = calloc(1, sizeof(Sel));
-                       if (!sel)
+                       r = range->data;
+                       r_last = eina_list_last_data_get(range);
+                       if (r->y != r_last->y)
                          {
-                            ERR("Running very low on memory");
-                            break;
+                            /* For multiple range */
+                            r->h = r->y + r_last->y + r_last->h;
                          }
-                       an->sel = eina_list_append(an->sel, sel);
-                       if (en->rp->part->source5)
+                       /* For vertically layout entry */
+                       if (_is_anchors_outside_viewport(y, r->y, r->h, vy, tvh))
                          {
-                            ob = edje_object_add(ed->base.evas);
-                            edje_object_file_set(ob, ed->path, en->rp->part->source5);
-                            evas_object_smart_member_add(ob, smart);
-                            evas_object_stack_below(ob, o);
-                            evas_object_clip_set(ob, clip);
-                            evas_object_pass_events_set(ob, EINA_TRUE);
-                            sel->obj_bg = ob;
-                            _edje_subobj_register(ed, sel->obj_bg);
+                            EINA_LIST_FREE(range, r)
+                              free(r);
+                            continue;
                          }
-
-                       if (en->rp->part->source6)
+                       else
                          {
-                            ob = edje_object_add(ed->base.evas);
-                            edje_object_file_set(ob, ed->path, en->rp->part->source6);
+                            /* XXX: Should consider for horizontal entry but has
+                             * very minimal usage. Probably we should get the min x
+                             * and max w for range and then decide whether it is in
+                             * the viewport or not. Unnecessary calculation for this
+                             * minimal usage. Please test with large number of anchors
+                             * after implementing it, if its needed to be.
+                             */
+                         }
+                       for (ll = range; ll; ll = eina_list_next(ll))
+                         {
+                            Evas_Object *ob;
+
+                            sel = calloc(1, sizeof(Sel));
+                            if (!sel)
+                              {
+                                 ERR("Running very low on memory");
+                                 break;
+                              }
+                            an->sel = eina_list_append(an->sel, sel);
+                            if (en->rp->part->source5)
+                              {
+                                 ob = edje_object_add(ed->base.evas);
+                                 edje_object_file_set(ob, ed->path, en->rp->part->source5);
+                                 evas_object_smart_member_add(ob, smart);
+                                 evas_object_stack_below(ob, o);
+                                 evas_object_clip_set(ob, clip);
+                                 evas_object_pass_events_set(ob, EINA_TRUE);
+                                 sel->obj_bg = ob;
+                                 _edje_subobj_register(ed, sel->obj_bg);
+                              }
+
+                            if (en->rp->part->source6)
+                              {
+                                 ob = edje_object_add(ed->base.evas);
+                                 edje_object_file_set(ob, ed->path, en->rp->part->source6);
+                                 evas_object_smart_member_add(ob, smart);
+                                 evas_object_stack_above(ob, o);
+                                 evas_object_clip_set(ob, clip);
+                                 evas_object_pass_events_set(ob, EINA_TRUE);
+                                 sel->obj_fg = ob;
+                                 _edje_subobj_register(ed, sel->obj_fg);
+                              }
+
+                            ob = evas_object_rectangle_add(ed->base.evas);
+                            evas_object_color_set(ob, 0, 0, 0, 0);
                             evas_object_smart_member_add(ob, smart);
                             evas_object_stack_above(ob, o);
                             evas_object_clip_set(ob, clip);
-                            evas_object_pass_events_set(ob, EINA_TRUE);
-                            sel->obj_fg = ob;
-                            _edje_subobj_register(ed, sel->obj_fg);
+                            evas_object_repeat_events_set(ob, EINA_TRUE);
+                            evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_DOWN, _edje_anchor_mouse_down_cb, an);
+                            evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_UP, _edje_anchor_mouse_up_cb, an);
+                            evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_MOVE, _edje_anchor_mouse_move_cb, an);
+                            evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_IN, _edje_anchor_mouse_in_cb, an);
+                            evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_OUT, _edje_anchor_mouse_out_cb, an);
+                            sel->obj = ob;
                          }
-
-                       ob = evas_object_rectangle_add(ed->base.evas);
-                       evas_object_color_set(ob, 0, 0, 0, 0);
-                       evas_object_smart_member_add(ob, smart);
-                       evas_object_stack_above(ob, o);
-                       evas_object_clip_set(ob, clip);
-                       evas_object_repeat_events_set(ob, EINA_TRUE);
-                       evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_DOWN, _edje_anchor_mouse_down_cb, an);
-                       evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_UP, _edje_anchor_mouse_up_cb, an);
-                       evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_MOVE, _edje_anchor_mouse_move_cb, an);
-                       evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_IN, _edje_anchor_mouse_in_cb, an);
-                       evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_OUT, _edje_anchor_mouse_out_cb, an);
-                       sel->obj = ob;
                     }
                }
 
