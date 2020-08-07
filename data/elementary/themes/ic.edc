@@ -213,6 +213,11 @@ I160("i-menus-settings", "menus-settings")
 I160("i-lang", "lang")
 I160("i-lang-lock", "lang-lock")
 I160("i-keyboard-hand", "keyboard-hand")
+I160("i-rocket", "rocket")
+I160("i-tacho", "tacho")
+I160("i-signal-bindings", "signal-bindings")
+I160("i-folder-search", "folder-search")
+I160("i-spanner", "spanner")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

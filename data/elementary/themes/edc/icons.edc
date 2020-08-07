@@ -67,7 +67,7 @@
    ICON("preferences-desktop-mouse-wheel", "i-mouse-wheel")
    ICON("preferences-desktop-mouse-extra", "i-mouse-extra")
    ICON("preferences-desktop-keyboard", "i-keyboard")
-//   ICON("preferences-desktop-signal-bindings", "i-")
+   ICON("preferences-desktop-signal-bindings", "i-signal-bindings")
    ICON("preferences-behavior", "i-input")
    ICON("preferences-interaction", "i-fingerprint") // pretty bad for touch icon - FIXME
    ICON("preferences-focus", "i-window-focus")
@@ -80,6 +80,10 @@
    ICON("preferences-desktop-locale", "i-lang")
    ICON("preferences-desklock-locale", "i-lang-lock")
    ICON("preferences-imc", "i-keyboard-hand")
+   ICON("preferences-advanced", "i-rocket")
+   ICON("preferences-system-performance", "i-tacho")
+   ICON("preferences-directories", "i-folder-search")
+   ICON("preferences-panel", "i-spanner")
 #undef ICON
 
 // mono color default fg color icons
@@ -178,7 +182,7 @@
       } \
    }
 //   ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
-   ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
+//   ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
    ICON("preferences-variables",                  "icon_preferences-variables.png")
 
    ICON("enlightenment/wallpaper_stretch",          "icon_wallpaper_stretch.png")
