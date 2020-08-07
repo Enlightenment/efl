@@ -65,6 +65,9 @@ ecore_wl2_subsurface_new(Ecore_Wl2_Window *window)
         goto sub_surf_err;
      }
 
+   /* A sub-surface is initially in the synchronized mode. */
+   subsurf->sync = EINA_TRUE;
+
    window->subsurfs =
      eina_inlist_append(window->subsurfs, EINA_INLIST_GET(subsurf));
 
