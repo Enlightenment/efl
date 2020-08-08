@@ -84,6 +84,25 @@
    ICON("preferences-system-performance", "i-tacho")
    ICON("preferences-directories", "i-folder-search")
    ICON("preferences-panel", "i-spanner")
+   ICON("preferences-cpu-speed", "i-cpu-speed")
+   ICON("preferences-variables", "i-env-var")
+   ICON("preferences-profiles", "i-face")
+   ICON("preferences-extensions", "i-puzzle")
+   ICON("preferences-plugin", "i-modules")
+   ICON("preferences-desktop-shelf", "i-shelf")
+   ICON("preferences-desktop-mixer", "i-speaker")
+   ICON("preferences-notification", "i-notification")
+   ICON("preferences-pager", "i-pager")
+   ICON("preferences-network", "i-network")
+   ICON("preferences-file-icons", "i-file")
+   ICON("modules-launcher", "i-gear-start")
+   ICON("everything-launch", "i-gear-start")
+   ICON("enlightenment/wallpaper_stretch", "i-fill-stretch")
+   ICON("enlightenment/wallpaper_center", "i-fill-center")
+   ICON("enlightenment/wallpaper_tile", "i-fill-tile")
+   ICON("enlightenment/wallpaper_scale_aspect_in", "i-fill-within")
+   ICON("enlightenment/wallpaper_scale_aspect_out", "i-fill-fill")
+   ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
 #undef ICON
 
 // mono color default fg color icons
@@ -181,14 +200,5 @@
          } \
       } \
    }
-//   ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
-//   ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
-   ICON("preferences-variables",                  "icon_preferences-variables.png")
 
-   ICON("enlightenment/wallpaper_stretch",          "icon_wallpaper_stretch.png")
-   ICON("enlightenment/wallpaper_center",           "icon_wallpaper_center.png")
-   ICON("enlightenment/wallpaper_tile",             "icon_wallpaper_tile.png")
-   ICON("enlightenment/wallpaper_scale_aspect_in",  "icon_wallpaper_within.png")
-   ICON("enlightenment/wallpaper_scale_aspect_out", "icon_wallpaper_fill.png")
-   ICON("enlightenment/wallpaper_pan",              "icon_wallpaper_pan.png")
 #undef ICON
