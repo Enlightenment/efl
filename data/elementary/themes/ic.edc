@@ -48,6 +48,8 @@ I060("i-skip-taskbar", "skip-taskbar")
 I060("i-skip-winlist", "skip-winlist")
 I060("i-border", "border")
 I060("i-sendto", "sendto")
+I060("i-minus", "minus")
+I060("i-plus", "plus")
 // lock double
 // exclam
 // folder

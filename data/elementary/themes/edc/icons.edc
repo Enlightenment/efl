@@ -95,6 +95,7 @@
    ICON("preferences-pager", "i-pager")
    ICON("preferences-network", "i-network")
    ICON("preferences-file-icons", "i-file")
+   ICON("preferences-preferences", "i-gear")
    ICON("modules-launcher", "i-gear-start")
    ICON("everything-launch", "i-gear-start")
    ICON("enlightenment/wallpaper_stretch", "i-fill-stretch")
@@ -103,6 +104,7 @@
    ICON("enlightenment/wallpaper_scale_aspect_in", "i-fill-within")
    ICON("enlightenment/wallpaper_scale_aspect_out", "i-fill-fill")
    ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
+   ICON("bookmark-new", "i-favorite")
 #undef ICON
 
 // mono color default fg color icons
@@ -129,6 +131,12 @@
    ICON("application-exit", "i-system-logout")
    ICON("enlightenment", "i-enlightenment")
    ICON("help-about", "i-enlightenment")
+   ICON("go-up", "i-arrow-u")
+   ICON("go-down", "i-arrow-d")
+   ICON("go-next", "i-arrow-l")
+   ICON("go-previous", "i-arrow-r")
+   ICON("list-add", "i-plus")
+   ICON("list-remove", "i-minus")
 #undef ICON
 
 // mono border action icons

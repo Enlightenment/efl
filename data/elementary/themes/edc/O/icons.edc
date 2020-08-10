@@ -35,13 +35,6 @@
     * 3. Try to follow the naming convention
     */
    //Standard Action Icons
-   ICON("list-add","icon_add.png",64)                              // "widget/add"
-   ICON("list-remove","icon_del.png",64)                           // "widget/del"
-   ICON("go-up","icon_up_arrow.png",64)                            // "widget/up_arrow" "widget/up_dir"
-   ICON("go-down","icon_down_arrow.png",64)                        // "widget/down_arrow"
-   ICON("go-next","icon_right_arrow.png",64)                       // "widget/new_dialog"
-   ICON("go-previous","icon_left_arrow.png",64)                    // none
-   ICON("bookmark-new","icon_add_fav.png",64)                      // "widget/add_fav"
    ICON("edit-swap","icon_swap.png",64)                     // *** // "widget/swap"
    ICON("edit-copy","icon_efm_copy.png",16)                        // EFMBUTTON("copy"
    ICON("edit-cut","icon_efm_cut.png",16)                          // EFMBUTTON("cut"
@@ -102,7 +95,6 @@
    ICON("preferences-screen-vflip","icon_screen_vflip.png",64)   // *** // "enlightenment/screen_vflip"
    ICON("preferences-screen-hflip","icon_screen_hflip.png",64)   // *** // "enlightenment/screen_hflip"
    ICON("preferences-applications-add","icon_applications_new.png",64)         // *** // "enlightenment/add_application"
-   ICON("preferences-preferences","icon_config.png",64)                             // "enlightenment/configuration" "enlightenment/settings"
    ICON("preferences-illume","icon_illume.png",64)
    //Standard Module Category Icons 
    ICON("modules-utils","icon_gadget.png",64)
