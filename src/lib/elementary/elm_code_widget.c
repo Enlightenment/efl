@@ -2121,7 +2121,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    if (!newline && viewport)
      {
         /* Where possible render additional lines to the viewport. */
-        _elm_code_widget_fill_range(widget, pd, first_row, last_row + 64 < (unsigned int) h ? last_row + 64 : last_row, NULL);
+        _elm_code_widget_fill_range(widget, pd, first_row, last_row + 64, NULL);
         return;
      }
 
