@@ -2146,7 +2146,9 @@ restart_back:
 
 end:
    // Handling restarting list walking complete exit.
-   if (restart_lookup) restart_lookup->idx = 0;
+   // This must be 1, we copy back the frame idx at the end of the for loop.
+   // The next iteration then decrements the idx by 1 which results in the effective running idx of that frame beeing 0
+   if (restart_lookup) restart_lookup->idx = 1;
 
    EVENT_STACK_POP(pd);
 

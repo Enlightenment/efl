@@ -74,6 +74,22 @@ _restart_3_cb(void *data, const Efl_Event *event)
    called++;
 }
 
+static void
+_restart_3_no_stop_cb(void *data, const Efl_Event *event)
+{
+   fprintf(stderr, "restart 3 no stop inside: %i\n", inside);
+   fprintf(stderr, "restart 3 no stop exit inside: %i (%i)\n", inside, called);
+
+   if (!inside)
+     {
+        inside = EINA_TRUE;
+        efl_event_callback_call(event->object, event->desc, data);
+        inside = EINA_FALSE;
+     }
+
+   called++;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -219,8 +235,21 @@ main(int argc, char *argv[])
    efl_event_callback_legacy_call(obj, EV_RESTART, NULL);
    fail_if(inside);
    fail_if(called != 3);
-
    efl_unref(obj);
+
+   pd = NULL;
+   inside = EINA_FALSE;
+   called = 0;
+
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
+   efl_event_callback_add(obj, EV_RESTART, _restart_3_no_stop_cb, NULL);
+   efl_event_callback_add(obj, EV_RESTART, _null_cb, NULL);
+   efl_event_callback_add(obj, EV_RESTART, _restart_3_no_stop_cb, NULL);
+   efl_event_callback_call(obj, EV_RESTART, NULL);
+   fail_if(inside);
+   fail_if(called != 2);
+
+
    efl_object_shutdown();
    return 0;
 }
