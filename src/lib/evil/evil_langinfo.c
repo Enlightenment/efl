@@ -19,7 +19,7 @@ replace(char *prev, char *value)
    return strdup (value);
 }
 
-char *
+EVIL_API char *
 nl_langinfo(nl_item index)
 {
    static char *result = NULL;

@@ -38,7 +38,7 @@ struct timezone
  *
  * @since 1.25
  */
-EAPI int evil_gettimeofday(struct timeval *tv, struct timezone *tz);
+EVIL_API int evil_gettimeofday(struct timeval *tv, struct timezone *tz);
 #ifndef HAVE_GETTIMEOFDAY
 # define HAVE_GETTIMEOFDAY 1
 #endif
@@ -61,7 +61,7 @@ EAPI int evil_gettimeofday(struct timeval *tv, struct timezone *tz);
  *
  * Supported OS: Windows XP.
  */
-EAPI char *strptime(const char *buf, const char *fmt, struct tm *tm);
+EVIL_API char *strptime(const char *buf, const char *fmt, struct tm *tm);
 
 
 /**

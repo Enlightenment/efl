@@ -1,6 +1,7 @@
 #ifndef __EVIL_STDLIB_H__
 #define __EVIL_STDLIB_H__
 
+#include "evil_api.h"
 
 /**
  * @file evil_stdlib.h
@@ -40,7 +41,7 @@
  *
  * Supported OS: Windows XP.
  */
-EAPI int setenv(const char *name,
+EVIL_API int setenv(const char *name,
                 const char *value,
                 int         overwrite);
 
@@ -59,7 +60,7 @@ EAPI int setenv(const char *name,
  *
  * Supported OS: Windows XP.
  */
-EAPI int unsetenv(const char *name);
+EVIL_API int unsetenv(const char *name);
 
 
 /*
@@ -96,7 +97,7 @@ EAPI int unsetenv(const char *name);
  *
  * Supported OS: Windows XP.
  */
-EAPI char *realpath(const char *file_name, char *resolved_name);
+EVIL_API char *realpath(const char *file_name, char *resolved_name);
 #ifndef HAVE_REALPATH
 # define HAVE_REALPATH 1
 #endif

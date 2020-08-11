@@ -26,19 +26,8 @@ extern "C" {
 #include <sys/stat.h> /* for mkdir in evil_macro_wrapper */
 
 
-#ifdef EAPI
-# undef EAPI
-#endif
+#include <evil_api.h>
 
-#ifdef EFL_BUILD
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI __declspec(dllimport)
-#endif
 
 #ifndef PATH_MAX
 # define PATH_MAX MAX_PATH
@@ -60,9 +49,6 @@ extern "C" {
 #define sigsetjmp(Env, Save) setjmp(Env)
 
 #include "evil_macro_wrapper.h"
-
-#undef EAPI
-#define EAPI
 
 #ifdef __cplusplus
 }

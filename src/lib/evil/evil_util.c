@@ -15,7 +15,7 @@ DWORD _evil_tls_index;
 /* static void _evil_error_display(const char *fct, LONG res); */
 static void _evil_last_error_display(const char *fct);
 
-wchar_t *
+EVIL_API wchar_t *
 evil_char_to_wchar(const char *text)
 {
    wchar_t *wtext;
@@ -44,7 +44,7 @@ evil_char_to_wchar(const char *text)
    return wtext;
 }
 
-char *
+EVIL_API char *
 evil_wchar_to_char(const wchar_t *text)
 {
    char  *atext;
@@ -74,7 +74,7 @@ evil_wchar_to_char(const wchar_t *text)
    return atext;
 }
 
-char *
+EVIL_API char *
 evil_utf16_to_utf8(const wchar_t *text16)
 {
    char  *text8;
@@ -107,7 +107,7 @@ evil_utf16_to_utf8(const wchar_t *text16)
    return text8;
 }
 
-wchar_t *
+EVIL_API wchar_t *
 evil_utf8_to_utf16(const char *text)
 {
    wchar_t *text16;
@@ -135,7 +135,7 @@ evil_utf8_to_utf16(const char *text)
    return text16;
 }
 
-const char *
+EVIL_API const char *
 evil_format_message(long err)
 {
    char *buf;
@@ -174,7 +174,7 @@ evil_format_message(long err)
    return (const char *)buf;
 }
 
-const char *
+EVIL_API const char *
 evil_last_error_get(void)
 {
    DWORD  err;
@@ -189,7 +189,7 @@ _evil_last_error_display(const char *fct)
    fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, evil_last_error_get());
 }
 
-int
+EVIL_API int
 evil_path_is_absolute(const char *path)
 {
    size_t length;
