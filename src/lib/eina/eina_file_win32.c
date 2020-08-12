@@ -104,7 +104,7 @@ _eina_file_win32_is_dir(const char *dir)
    attr = GetFileAttributes(dir);
 #endif
 
-   if (attr == 0xFFFFFFFF)
+   if (attr == INVALID_FILE_ATTRIBUTES)
      return EINA_FALSE;
 
    if (!(attr & FILE_ATTRIBUTE_DIRECTORY))
