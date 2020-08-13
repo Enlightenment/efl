@@ -1122,6 +1122,7 @@ evas_common_image_set_alpha_sparse(Image_Entry *ie)
    if (!ie->flags.alpha) return;
 
    s = evas_cache_image_pixels(ie);
+   if (!s) return;
    se = s + (ie->w * ie->h);
    while (s < se)
      {

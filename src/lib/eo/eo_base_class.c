@@ -38,6 +38,7 @@ struct _Efl_Event_Forwarder
 
 struct _Efl_Event_Callback_Frame
 {
+   const Efl_Event_Description    *desc;
    Efl_Event_Callback_Frame *next;
    unsigned int              idx;
    unsigned int              inserted_before;
@@ -64,8 +65,6 @@ struct _Efl_Object_Data
    Eo                        *parent;
 
    Efl_Object_Extension      *ext;
-
-   Eina_Inlist               *current;
 
    Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
@@ -238,9 +237,9 @@ _efl_invalidate(_Eo_Object *obj)
 
    id = _eo_obj_id_get(obj);
 
-   efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
-
    pd = efl_data_scope_get(id, EFL_OBJECT_CLASS);
+   if (pd->event_cb_EFL_EVENT_INVALIDATE)
+     efl_event_callback_call(id, EFL_EVENT_INVALIDATE, NULL);
 
    efl_invalidate(id);
 
@@ -1576,7 +1575,8 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    _eo_callbacks_sorted_insert(pd, cb);
    _special_event_count_inc(obj, pd, &(cb->items.item));
 
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
+   if (pd->event_cb_EFL_EVENT_CALLBACK_ADD)
+     efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
 
    return EINA_TRUE;
 
@@ -1602,8 +1602,8 @@ _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
      pd->need_cleaning = EINA_TRUE;
    else
      _eo_callback_remove(obj, pd, cb);
-
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
+   if (pd->event_cb_EFL_EVENT_CALLBACK_DEL)
+     efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
 }
 
 EOLIAN static Eina_Bool
@@ -1730,7 +1730,8 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    ev_array[i].priority = 0;
    ev_array[i].func = NULL;
    ev_array[i].user_data = NULL;
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, ev_array);
+   if (pd->event_cb_EFL_EVENT_CALLBACK_ADD)
+     efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, ev_array);
 
    return EINA_TRUE;
 
@@ -2035,11 +2036,12 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
                      Eina_Bool legacy_compare)
 {
    Eo_Callback_Description **cb;
-   Eo_Current_Callback_Description *lookup, saved;
+   Efl_Event_Callback_Frame *restart_lookup = NULL; //a pointer to a frame, which is high up the stack, which we use to restore
    Efl_Event ev;
    unsigned int idx;
    Eina_Bool callback_already_stopped, ret;
    Efl_Event_Callback_Frame frame = {
+      .desc = desc,
       .next = NULL,
       .idx = 0,
       .inserted_before = 0,
@@ -2069,7 +2071,6 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
    EVENT_STACK_PUSH(pd, &frame);
 
-   lookup = NULL;
    callback_already_stopped = pd->callback_stopped;
    pd->callback_stopped = EINA_FALSE;
    ret = EINA_TRUE;
@@ -2109,9 +2110,6 @@ restart_back:
                            (event_freeze_count || pd->event_freeze_count))
                           continue;
 
-                       // Handle nested restart of walking list
-                       if (lookup) lookup->current = idx - 1;
-
                        it->func((void *) (*cb)->func_data, &ev);
                        /* Abort callback calling if the func says so. */
                        if (pd->callback_stopped)
@@ -2119,10 +2117,6 @@ restart_back:
                             ret = EINA_FALSE;
                             goto end;
                          }
-                       // We have actually walked this list during a nested call
-                       if (lookup &&
-                           lookup->current == 0)
-                         goto end;
                     }
                }
              else
@@ -2133,9 +2127,6 @@ restart_back:
                       (event_freeze_count || pd->event_freeze_count))
                     continue;
 
-                  // Handle nested restart of walking list
-                  if (lookup) lookup->current = idx - 1;
-
                   (*cb)->items.item.func((void *) (*cb)->func_data, &ev);
                   /* Abort callback calling if the func says so. */
                   if (pd->callback_stopped)
@@ -2143,23 +2134,21 @@ restart_back:
                        ret = EINA_FALSE;
                        goto end;
                     }
-                  // We have actually walked this list during a nested call
-                  if (lookup &&
-                      lookup->current == 0)
-                    goto end;
                }
           }
-        idx += frame.inserted_before;
+        /*
+         * copy back the idx that might have changed due to restarts, (theoretically only needed with restarts, condition made everything slower)
+         * additionally adjust to event subscriptions that have been added in a event callback
+         */
+        idx = frame.idx + frame.inserted_before;
         frame.inserted_before = 0;
      }
 
 end:
    // Handling restarting list walking complete exit.
-   if (lookup) lookup->current = 0;
-   if (lookup == &saved)
-     {
-        pd->current = eina_inlist_remove(pd->current, EINA_INLIST_GET(lookup));
-     }
+   // This must be 1, we copy back the frame idx at the end of the for loop.
+   // The next iteration then decrements the idx by 1 which results in the effective running idx of that frame beeing 0
+   if (restart_lookup) restart_lookup->idx = 1;
 
    EVENT_STACK_POP(pd);
 
@@ -2169,26 +2158,22 @@ end:
 
    return ret;
 restart:
-   EINA_INLIST_FOREACH(pd->current, lookup)
+   // Search for the next frame that has the same event description
+   for (restart_lookup = frame.next; restart_lookup; restart_lookup = restart_lookup->next)
      {
-        if (lookup->desc == desc) break;
+        if (restart_lookup->desc == desc) break;
      }
 
-   // This is the first event to trigger it, so register it here
-   if (!lookup)
-     {
-        // This following trick get us a zero allocation list
-        saved.desc = desc;
-        saved.current = 0;
-        lookup = &saved;
-        // Ideally there will most of the time be only one item in this list
-        // But just to speed up things, prepend so we find it fast at the end
-        // of this function
-        pd->current = eina_inlist_prepend(pd->current, EINA_INLIST_GET(lookup));
-     }
+   // Ensure that the idx is the next from the previous run, minimum number 0
+   if (restart_lookup) {
+     idx = restart_lookup->idx - 1;
+   } else {
+     idx = 0;
+   }
+   // If this is 0, then we are restarting
+   if (!idx)
+     idx = pd->callbacks_count;
 
-   if (!lookup->current) lookup->current = pd->callbacks_count;
-   idx = lookup->current;
    goto restart_back;
 }
 

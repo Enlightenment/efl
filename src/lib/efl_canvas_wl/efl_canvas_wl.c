@@ -4170,6 +4170,7 @@ static void
 comp_render_pre_proxied(Eo *o, Evas *e, void *event_info)
 {
    Comp_Surface *cs = evas_object_data_get(o, "comp_surface");
+   EINA_SAFETY_ON_NULL_RETURN(cs);
    Comp_Buffer *buffer = cs->buffer[!cs->render_queue];
 
    //fprintf(stderr, "PROXY RENDER_PRE %d\n", buffer ? wl_resource_get_id(buffer->res) : -1);

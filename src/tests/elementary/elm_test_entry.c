@@ -622,7 +622,7 @@ EFL_START_TEST(elm_entry_keycode)
    Evas *e = evas_object_evas_get(entry);
    elm_object_focus_set(entry, EINA_TRUE);
    evas_key_modifier_on(e, "Control");
-   evas_event_feed_key_down_with_keycode(e, "", "", "", "", time(NULL), NULL, 65);
+   evas_event_feed_key_down_with_keycode(e, "", "a", "", "", time(NULL), NULL, 38);
    ecore_main_loop_iterate();
    evas_event_feed_key_down(e, "BackSpace", "BackSpace", "\b", "\b", time(NULL), NULL);
    ck_assert_str_eq(elm_object_text_get(entry), "");

@@ -266,7 +266,7 @@ sc_compile(int argc, char *argv[])
    void               *inpfmark;
    char                lcl_ctrlchar;
    int                 lcl_packstr, lcl_needsemicolon, lcl_tabsize;
-   Eina_Tmpstr        *outfname;
+   Eina_Tmpstr        *outfname = NULL;
 
    /* set global variables to their initial value */
    binf = NULL;
@@ -398,8 +398,11 @@ sc_compile(int argc, char *argv[])
      }				/* if */
    if (outf)
       sc_closeasm(outf);
-   unlink(outfname);
-   eina_tmpstr_del(outfname);
+   if (outfname)
+     {
+        unlink(outfname);
+        eina_tmpstr_del(outfname);
+     }
    if (binf)
       sc_closebin(binf, errnum != 0);
 
@@ -1203,10 +1206,8 @@ declloc(int fstatic)
 	     if (numdim > 0 && dim[numdim - 1] == 0)
 		error(52);	/* only last dimension may be variable length */
 	     size = needsub(&idxtag[numdim]);	/* get size; size==0 for "var[]" */
-#if INT_MAX < CELL_MAX
-	     if (size > INT_MAX)
+	     if ((unsigned long long)size * sizeof(cell) > MIN(INT_MAX, CELL_MAX))
 		error(105);	/* overflow, exceeding capacity */
-#endif
 	     dim[numdim++] = (int)size;
 	  }			/* while */
 	if (ident == iARRAY || fstatic)
@@ -1237,6 +1238,9 @@ declloc(int fstatic)
 	  }
 	else
 	  {
+         if (((unsigned long long)declared + (unsigned long long)size) * sizeof(cell) >
+             MIN(INT_MAX, CELL_MAX))
+            error(105);
 	     declared += (int)size;	/* variables are put on stack,
 					 * adjust "declared" */
 	     sym =

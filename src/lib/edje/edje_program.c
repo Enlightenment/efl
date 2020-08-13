@@ -1350,7 +1350,7 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
    if (dev) seat = efl_input_device_seat_get(dev);
    if (seat)
      {
-        sname = strdup(efl_name_get(seat));
+        sname = eina_strdup(efl_name_get(seat));
         mdata = _edje_signal_data_setup(NULL, NULL, sname, free);
      }
    /* keep sending old style signals for legacy compatibility, but provide */

@@ -484,7 +484,7 @@ _joystick_register(const char* syspath)
    mapper = _joystick_mapping_info_get(syspath);
    if (!mapper)
      {
-        ERR("Unsupported joystick.");
+        WRN("Unsupported joystick.");
         goto register_failed;
      }
 

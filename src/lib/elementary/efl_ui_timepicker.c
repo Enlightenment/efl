@@ -90,14 +90,14 @@ _field_changed_cb(void *data, const Efl_Event *ev)
    if (ev->object == pd->hour)
      {
         pd->cur_time[TIMEPICKER_HOUR] = efl_ui_range_value_get(pd->hour);
-        if (!pd->is_24hour && !strcmp(efl_text_get(pd->ampm), "PM"))
+        if (!pd->is_24hour && eina_streq(efl_text_get(pd->ampm), "PM"))
           pd->cur_time[TIMEPICKER_HOUR] += 12;
      }
    else if (ev->object == pd->min)
      pd->cur_time[TIMEPICKER_MIN] = efl_ui_range_value_get(pd->min);
    else
      {
-        if (!strcmp(efl_text_get(pd->ampm), "PM"))
+        if (eina_streq(efl_text_get(pd->ampm), "PM"))
           {
              efl_text_set(pd->ampm, "AM");
              pd->cur_time[TIMEPICKER_HOUR] -= 12;

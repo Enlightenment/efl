@@ -1811,17 +1811,6 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 
              _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_KEYBOARD);
              _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
-
-             if (pd->selection && pd->selection->start_line == pd->selection->end_line)
-               {
-                  if ((pd->selection->end_col == pd->selection->start_col && !backwards) ||
-                      (pd->selection->end_col > pd->selection->start_col))
-                    elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col+1);
-               }
-             else if (pd->selection && pd->selection->end_line > pd->selection->start_line)
-               {
-                    elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col+1);
-               }
           }
         else
           elm_code_widget_selection_clear(widget);
@@ -1853,6 +1842,20 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
 
              elm_code_widget_selection_end(widget, pd->cursor_line, pd->cursor_col - (adjust?1:0));
              _elm_code_widget_selection_in_progress_set(widget, EINA_FALSE);
+
+             if (pd->selection)
+               {
+                  if (pd->selection->end_line < pd->selection->start_line)
+                    {
+                       elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col);
+                    }
+                  else if ((pd->selection->end_col == pd->selection->start_col && !backwards) ||
+                           (pd->selection->end_col > pd->selection->start_col) ||
+                           (pd->selection->end_line > pd->selection->start_line))
+                    {
+                       elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col+1);
+                    }
+               }
           }
      }
 
@@ -2121,7 +2124,7 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    if (!newline && viewport)
      {
         /* Where possible render additional lines to the viewport. */
-        _elm_code_widget_fill_range(widget, pd, first_row, last_row + 64 < (unsigned int) h ? last_row + 64 : last_row, NULL);
+        _elm_code_widget_fill_range(widget, pd, first_row, last_row + 64, NULL);
         return;
      }
 
