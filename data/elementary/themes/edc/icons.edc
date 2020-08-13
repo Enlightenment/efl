@@ -67,7 +67,7 @@
    ICON("preferences-desktop-mouse-wheel", "i-mouse-wheel")
    ICON("preferences-desktop-mouse-extra", "i-mouse-extra")
    ICON("preferences-desktop-keyboard", "i-keyboard")
-//   ICON("preferences-desktop-signal-bindings", "i-")
+   ICON("preferences-desktop-signal-bindings", "i-signal-bindings")
    ICON("preferences-behavior", "i-input")
    ICON("preferences-interaction", "i-fingerprint") // pretty bad for touch icon - FIXME
    ICON("preferences-focus", "i-window-focus")
@@ -77,6 +77,34 @@
    ICON("preferences-winlist", "i-window-winlist")
    ICON("preferences-menus", "i-menus")
    ICON("preferences-menu-settings", "i-menus-settings")
+   ICON("preferences-desktop-locale", "i-lang")
+   ICON("preferences-desklock-locale", "i-lang-lock")
+   ICON("preferences-imc", "i-keyboard-hand")
+   ICON("preferences-advanced", "i-rocket")
+   ICON("preferences-system-performance", "i-tacho")
+   ICON("preferences-directories", "i-folder-search")
+   ICON("preferences-panel", "i-spanner")
+   ICON("preferences-cpu-speed", "i-cpu-speed")
+   ICON("preferences-variables", "i-env-var")
+   ICON("preferences-profiles", "i-face")
+   ICON("preferences-extensions", "i-puzzle")
+   ICON("preferences-plugin", "i-modules")
+   ICON("preferences-desktop-shelf", "i-shelf")
+   ICON("preferences-desktop-mixer", "i-speaker")
+   ICON("preferences-notification", "i-notification")
+   ICON("preferences-pager", "i-pager")
+   ICON("preferences-network", "i-network")
+   ICON("preferences-file-icons", "i-file")
+   ICON("preferences-preferences", "i-gear")
+   ICON("modules-launcher", "i-gear-start")
+   ICON("everything-launch", "i-gear-start")
+   ICON("enlightenment/wallpaper_stretch", "i-fill-stretch")
+   ICON("enlightenment/wallpaper_center", "i-fill-center")
+   ICON("enlightenment/wallpaper_tile", "i-fill-tile")
+   ICON("enlightenment/wallpaper_scale_aspect_in", "i-fill-within")
+   ICON("enlightenment/wallpaper_scale_aspect_out", "i-fill-fill")
+   ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
+   ICON("bookmark-new", "i-favorite")
 #undef ICON
 
 // mono color default fg color icons
@@ -103,6 +131,12 @@
    ICON("application-exit", "i-system-logout")
    ICON("enlightenment", "i-enlightenment")
    ICON("help-about", "i-enlightenment")
+   ICON("go-up", "i-arrow-u")
+   ICON("go-down", "i-arrow-d")
+   ICON("go-next", "i-arrow-l")
+   ICON("go-previous", "i-arrow-r")
+   ICON("list-add", "i-plus")
+   ICON("list-remove", "i-minus")
 #undef ICON
 
 // mono border action icons
@@ -174,14 +208,5 @@
          } \
       } \
    }
-   ICON("preferences-desklock-locale",            "icon_preferences-desklock-locale.png")
-   ICON("preferences-desktop-signal-bindings",    "icon_preferences-desktop-signal-bindings.png")
-   ICON("preferences-variables",                  "icon_preferences-variables.png")
 
-   ICON("enlightenment/wallpaper_stretch",          "icon_wallpaper_stretch.png")
-   ICON("enlightenment/wallpaper_center",           "icon_wallpaper_center.png")
-   ICON("enlightenment/wallpaper_tile",             "icon_wallpaper_tile.png")
-   ICON("enlightenment/wallpaper_scale_aspect_in",  "icon_wallpaper_within.png")
-   ICON("enlightenment/wallpaper_scale_aspect_out", "icon_wallpaper_fill.png")
-   ICON("enlightenment/wallpaper_pan",              "icon_wallpaper_pan.png")
 #undef ICON
