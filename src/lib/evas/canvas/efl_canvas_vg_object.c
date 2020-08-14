@@ -1045,6 +1045,17 @@ Eina_Bool _efl_canvas_vg_object_efl_gfx_frame_controller_sector_get(const Eo *ob
    return EINA_TRUE;
 }
 
+EOLIAN static Eina_Iterator *
+_efl_canvas_vg_object_efl_gfx_frame_controller_sector_list_get(const Eo *obj EINA_UNUSED,
+                                                               Efl_Canvas_Vg_Object_Data *pd)
+{
+   if (!pd->vg_entry) return EINA_FALSE;
+
+   Eina_Inarray* markers = evas_cache_vg_anim_sector_list_get(pd->vg_entry);
+   if (!markers) return NULL;
+   return eina_inarray_iterator_new(markers);
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_gfx_frame_controller_frame_set(Eo *eo_obj,
                                                          Efl_Canvas_Vg_Object_Data *pd,

@@ -103,7 +103,6 @@ typedef enum _Evas_Filter_Support           Evas_Filter_Support;
 
 typedef struct _Vg_File_Data                   Vg_File_Data;
 typedef struct _Vg_File_Anim_Data              Vg_File_Anim_Data;
-typedef struct _Vg_File_Anim_Data_Marker       Vg_File_Anim_Data_Marker;
 
 /* General types - used for script type chceking */
 #define OPAQUE_TYPE(type) struct __##type { int a; }; \
@@ -1113,19 +1112,12 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
 
-struct _Vg_File_Anim_Data_Marker
-{
-   Eina_Stringshare *name;
-   int               startframe;
-   int               endframe;
-};
-
 struct _Vg_File_Anim_Data
 {
    unsigned int frame_num;            //current frame number
    unsigned int frame_cnt;            //total frame count
    float        duration;             //animation duration
-   Eina_Inarray *markers;             //array of Vg_File_Anim_Data_Marker
+   Eina_Inarray *markers;             //array of Efl_Gfx_Frame_Sector_Data
 };
 
 struct _Vg_File_Data

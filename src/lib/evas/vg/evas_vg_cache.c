@@ -432,8 +432,8 @@ evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, 
    if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
    if (!name) return EINA_FALSE;
 
-   Vg_File_Anim_Data_Marker *marker;
-   Vg_File_Anim_Data_Marker new_marker;
+   Efl_Gfx_Frame_Sector_Data *marker;
+   Efl_Gfx_Frame_Sector_Data new_marker;
    int i = 0;
 
    EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
@@ -463,7 +463,7 @@ evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, 
    if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
    if (!name) return EINA_FALSE;
 
-   Vg_File_Anim_Data_Marker *marker;
+   Efl_Gfx_Frame_Sector_Data *marker;
    EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
      {
         if (!strcmp(marker->name, name))

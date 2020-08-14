@@ -8,6 +8,14 @@ enum @beta Efl.Gfx.Frame_Controller_Loop_Hint {
    pingpong = 2    [[Ping-pong bouncing loop: 1->2->3->2->1->2->3->1]]
 }
 
+struct @beta Efl.Gfx.Frame_Sector_Data
+{
+   [[ The infomation of sector for playing section. ]]
+   name: string;
+   startframe: int;
+   endframe: int;
+}
+
 interface @beta Efl.Gfx.Frame_Controller
 {
    [[Efl frame controller of frame based animated object interface.]]
@@ -115,6 +123,14 @@ interface @beta Efl.Gfx.Frame_Controller
          values {
             startframe: int; [[ The start frame of sector ]]
             endframe: int; [[ The end frame of sector ]]
+         }
+      }
+      @property sector_list {
+         [[ The list of sectors for playing section. ]]
+         get {
+         }
+        values {
+             list: iterator<Efl.Gfx.Frame_Sector_Data> @move; [[Iterator to list]]
          }
       }
    }
