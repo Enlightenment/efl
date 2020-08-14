@@ -154,7 +154,7 @@ static Ecore_Thread *drm_thread = NULL;
 static Eina_Spinlock tick_queue_lock;
 static int           tick_queue_count = 0;
 static Eina_Bool     tick_skip = EINA_FALSE;
-static Eina_Bool     threaded_vsync = EINA_FALSE;
+static Eina_Bool     threaded_vsync = EINA_TRUE;
 static Ecore_Timer  *fail_timer = NULL;
 static Ecore_Timer  *fallback_timer = NULL;
 
@@ -907,6 +907,7 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
         struct stat st;
 
         if (getenv("ECORE_VSYNC_THREAD")) threaded_vsync = EINA_TRUE;
+        if (getenv("ECORE_VSYNC_NO_THREAD")) threaded_vsync = EINA_FALSE;
         home = eina_environment_home_get();
         if (!home) eina_environment_tmp_get();
         snprintf(buf, sizeof(buf), "%s/.ecore-no-vsync", home);
