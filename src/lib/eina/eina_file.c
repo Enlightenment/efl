@@ -21,6 +21,10 @@
 # include "config.h"
 #endif
 
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
@@ -1252,6 +1256,47 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
    return 0;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// this below is funky avoiding opendir to avoid heap allocations thus
+// getdents and all the os specific stuff as this is intendedf for use
+// between fork and exec normally ... this is important
+#if defined(__FreeBSD__)
+# define do_getdents(fd, buf, size) getdents(fd, buf, size)
+typedef struct
+{
+   ino_t          d_ino;
+   off_t          d_off;
+   unsigned short d_reclen;
+   unsigned char  d_type;
+   unsigned char  ____pad0;
+   unsigned short d_namlen;
+   unsigned short ____pad1;
+   char           d_name[4096];
+} Dirent;
+#elif defined(__OpenBSD__)
+# define do_getdents(fd, buf, size) getdents(fd, buf, size)
+typedef struct
+{
+   __ino_t        d_ino;
+   __off_t        d_off;
+   unsigned short d_reclen;
+   unsigned char  d_type;
+   unsigned char  d_namlen;
+   unsigned char  ____pad[4];
+   char           d_name[4096];
+} Dirent;
+#elif defined(__linux__)
+# define do_getdents(fd, buf, size) getdents64(fd, buf, size)
+typedef struct
+{
+   ino64_t        d_ino;
+   off64_t        d_off;
+   unsigned short d_reclen;
+   unsigned char  d_type;
+   char           d_name[4096];
+} Dirent;
+#endif
+
 EAPI void
 eina_file_close_from(int fd, int *except_fd)
 {
@@ -1259,62 +1304,171 @@ eina_file_close_from(int fd, int *except_fd)
    // XXX: what do to here? anything?
 #else
 #ifdef HAVE_DIRENT_H
+//# if 0
+# if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__linux__)
+   int dirfd;
+   Dirent *d;
+   char buf[4096];
+   int *closes = NULL;
+   int num_closes = 0, i, j, clo, num;
+   const char *fname;
+   ssize_t pos, ret;
+   Eina_Bool do_read;
+
+   dirfd = open("/proc/self/fd", O_RDONLY | O_DIRECTORY);
+   if (dirfd < 0) dirfd = open("/dev/fd", O_RDONLY | O_DIRECTORY);
+   if (dirfd >= 0)
+     {
+        // count # of closes - the dir list should/will not change as its
+        // the fd's we have open so we can read it twice with no changes
+        // to it
+        do_read = EINA_TRUE;
+        for (;;)
+          {
+skip:
+             if (do_read)
+               {
+                  pos = 0;
+                  ret = do_getdents(dirfd, buf, sizeof(buf));
+                  if (ret <= 0) break;
+                  do_read = EINA_FALSE;
+               }
+             d = (Dirent *)(buf + pos);
+             fname = d->d_name;
+             pos += d->d_reclen;
+             if (pos >= ret) do_read = EINA_TRUE;
+             if (!((fname[0] >= '0') && (fname[0] <= '9'))) continue;
+             num = atoi(fname);
+             if (num < fd) continue;
+             if (except_fd)
+               {
+                  for (j = 0; except_fd[j] >= 0; j++)
+                    {
+                       if (except_fd[j] == num) goto skip;
+                    }
+               }
+             num_closes++;
+          }
+        // alloc closes list and walk again to fill it - on stack to avoid
+        // heap allocs
+        closes = alloca(num_closes * sizeof(int));
+        if ((closes) && (num_closes > 0))
+          {
+             clo = 0;
+             lseek(dirfd, 0, SEEK_SET);
+             do_read = EINA_TRUE;
+             for (;;)
+               {
+skip2:
+                  if (do_read)
+                    {
+                       pos = 0;
+                       ret = do_getdents(dirfd, buf, sizeof(buf));
+                       if (ret <= 0) break;
+                       do_read = EINA_FALSE;
+                    }
+                  d = (Dirent *)(buf + pos);
+                  fname = d->d_name;
+                  pos += d->d_reclen;
+                  if (pos >= ret) do_read = EINA_TRUE;
+                  if (!((fname[0] >= '0') && (fname[0] <= '9'))) continue;
+                  num = atoi(fname);
+                  if (num < fd) continue;
+                  if (except_fd)
+                    {
+                       for (j = 0; except_fd[j] >= 0; j++)
+                         {
+                            if (except_fd[j] == num) goto skip2;
+                         }
+                    }
+                  if (clo < num_closes) closes[clo] = num;
+                  clo++;
+               }
+          }
+        close(dirfd);
+        // now go close all those fd's - some may be invalide like the dir
+        // reading fd above... that's ok.
+        for (i = 0; i < num_closes; i++)
+          {
+             close(closes[i]);
+          }
+        return;
+     }
+# else
    DIR *dir;
+   int *closes = NULL;
+   int num_closes = 0, i, j, clo, num;
+   struct dirent *dp;
+   const char *fname;
 
    dir = opendir("/proc/self/fd");
    if (!dir) dir = opendir("/dev/fd");
    if (dir)
      {
-        struct dirent *dp;
-        const char *fname;
-        int *closes = NULL;
-        int num_closes = 0, i;
-
+        // count # of closes - the dir list should/will not change as its
+        // the fd's we have open so we can read it twice with no changes
+        // to it
         for (;;)
           {
 skip:
-             dp = readdir(dir);
-             if (!dp) break;
+             if (!(dp = readdir(dir))) break;
              fname = dp->d_name;
-
-             if ((fname[0] >= '0') && (fname[0] <= '9'))
+             if (!((fname[0] >= '0') && (fname[0] <= '9'))) continue;
+             num = atoi(fname);
+             if (num < fd) continue;
+             if (except_fd)
                {
-                  int num = atoi(fname);
-                  if (num >= fd)
+                  for (j = 0; except_fd[j] >= 0; j++)
                     {
-                       if (except_fd)
+                       if (except_fd[j] == num) goto skip;
+                    }
+               }
+             num_closes++;
+          }
+        // alloc closes list and walk again to fill it - on stack to avoid
+        // heap allocs
+        closes = alloca(num_closes * sizeof(int));
+        if ((closes) && (num_closes > 0))
+          {
+             clo = 0;
+             seekdir(dir, 0);
+             for (;;)
+               {
+skip2:
+                  if (!(dp = readdir(dir))) break;
+                  fname = dp->d_name;
+                  if (!((fname[0] >= '0') && (fname[0] <= '9'))) continue;
+                  num = atoi(fname);
+                  if (num < fd) continue;
+                  if (except_fd)
+                    {
+                       for (j = 0; except_fd[j] >= 0; j++)
                          {
-                            int j;
-
-                            for (j = 0; except_fd[j] >= 0; j++)
-                              {
-                                 if (except_fd[j] == num) goto skip;
-                              }
-                         }
-                       num_closes++;
-                       int *tmp = realloc(closes, num_closes * sizeof(int));
-                       if (!tmp) num_closes--;
-                       else
-                         {
-                            closes = tmp;
-                            closes[num_closes - 1] = num;
+                            if (except_fd[j] == num) goto skip2;
                          }
                     }
+                  if (clo < num_closes) closes[clo] = num;
+                  clo++;
                }
           }
         closedir(dir);
-        for (i = 0; i < num_closes; i++) close(closes[i]);
-        free(closes);
+        // now go close all those fd's - some may be invalide like the dir
+        // reading fd above... that's ok.
+        for (i = 0; i < num_closes; i++)
+          {
+             close(closes[i]);
+          }
         return;
      }
+# endif
 #endif
-   int i, max = 1024;
+   int max = 1024;
 
-# ifdef HAVE_SYS_RESOURCE_H
+#ifdef HAVE_SYS_RESOURCE_H
    struct rlimit lim;
    if (getrlimit(RLIMIT_NOFILE, &lim) < 0) return;
    max = lim.rlim_max;
-# endif
+#endif
    for (i = fd; i < max;)
      {
         if (except_fd)
@@ -1323,11 +1477,11 @@ skip:
 
              for (j = 0; except_fd[j] >= 0; j++)
                {
-                  if (except_fd[j] == i) goto skip2;
+                  if (except_fd[j] == i) goto skip3;
                }
           }
         close(i);
-skip2:
+skip3:
         i++;
      }
 #endif

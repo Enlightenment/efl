@@ -218,6 +218,13 @@ _impl_ecore_exe_run_priority_get(void)
    return run_pri;
 }
 
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
+# include <dlfcn.h>
+static char ***_dl_environ;
+#else
+extern char **environ;
+#endif
+
 Eo *
 _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
@@ -294,7 +301,29 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
       else if (pid == 0) /* child */
       {
 #ifdef HAVE_SYSTEMD
-         unsetenv("NOTIFY_SOCKET");
+         char **env = NULL, **e;
+
+# if defined (__FreeBSD__) || defined (__OpenBSD__)
+         _dl_environ = dlsym(NULL, "environ");
+         env = *_dl_environ;
+# else
+         env = environ;
+# endif
+         // find NOTIFY_SOCKET env var and remove it without any heap work
+         if (env)
+           {
+              Eina_Bool shuffle = EINA_FALSE;
+
+              for (e = env; *e; e++)
+                {
+                   if (!shuffle)
+                     {
+                        if (!strncmp(e[0], "NOTIFY_SOCKET=", 14))
+                          shuffle = EINA_TRUE;
+                     }
+                   if (shuffle) e[0] = e[1];
+                }
+           }
 #endif
          if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
          {
