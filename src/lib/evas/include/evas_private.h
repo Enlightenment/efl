@@ -1128,6 +1128,8 @@ struct _Vg_File_Data
    Vg_File_Anim_Data *anim_data;           //only when animation supported.
    int ref;
    int w, h;                               //default size
+   int minw, minh;
+   double bl, bt, br, bb;
    Eina_List         *vp_list;             //Value providers.
 
    void           *loader_data;            //loader specific local data
@@ -1136,6 +1138,7 @@ struct _Vg_File_Data
    Eina_Bool       preserve_aspect : 1;    //Used in SVG
 
    Eina_Bool       shareable: 1;
+   Eina_Bool       is_wrap: 1;
 };
 
 struct _Evas_Vg_Load_Func

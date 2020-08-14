@@ -18,7 +18,7 @@ _get_key_val(void *key)
 }
 
 static void
-_construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer, int depth EINA_UNUSED)
+_construct_drawable_nodes(Vg_File_Data *vfd, Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer, int depth EINA_UNUSED)
 {
    if (!parent) return;
 
@@ -85,6 +85,21 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 
         const float *data = node->mPath.ptPtr;
         if (!data) continue;
+
+
+        for (unsigned int i = 0; i<node->mPath.ptCount; i++)
+        {
+           if (i%2 == 0)
+             {
+                if (vfd->bl > data[i]) vfd->bl = data[i];
+                if (vfd->br < data[i]) vfd->br = data[i];
+             }
+           else
+             {
+                if (vfd->bt > data[i]) vfd->bt = data[i];
+                if (vfd->bb < data[i]) vfd->bb = data[i];
+             }
+        }
 
         if (node->keypath) efl_key_data_set(shape, "_lot_node_name", node->keypath);
         efl_gfx_entity_visible_set(shape, EINA_TRUE);
@@ -400,7 +415,7 @@ _reset_vg_tree(Efl_VG *node)
 }
 
 static void
-_update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int depth EINA_UNUSED)
+_update_vg_tree(Vg_File_Data *vfd, Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int depth EINA_UNUSED)
 {
    if (!layer->mVisible) return;
 
@@ -435,7 +450,7 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
         for (int i = 0; i < depth; i++) printf("    ");
         printf("%s (%p) matte:%d => %p %s\n", efl_class_name_get(efl_class_get(ctree)), ctree, matte_mode, ptree, clayer->keypath);
 #endif
-        _update_vg_tree(ctree, clayer, depth+1);
+        _update_vg_tree(vfd, ctree, clayer, depth+1);
 
         if (matte_mode != 0)
           {
@@ -484,9 +499,10 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
           ptree = _construct_masks(mtarget, mlayer->mMaskList.ptr, mlayer->mMaskList.size, depth + 1);
      }
 
+   efl_key_data_set(root, "_lot_node_size", &layer->mNodeList.size);
    //Construct drawable nodes.
    if (layer->mNodeList.size > 0)
-     _construct_drawable_nodes(root, layer, depth);
+     _construct_drawable_nodes(vfd, root, layer, depth);
 
 }
 #endif
@@ -590,9 +606,20 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
    if (vfd->vp_list) _value_provider_override(vfd);
 
    unsigned int frame_num = (vfd->anim_data) ? vfd->anim_data->frame_num : 0;
+
+   //This Calculates Bound Size using Raw Data
+   vfd->bl = 100000;
+   vfd->bt = 100000;
+   vfd->br = -1;
+   vfd->bb = -1;
+
+   int lot_render_w, lot_render_h;
+   lot_render_w = vfd->is_wrap?vfd->w:vfd->view_box.w;
+   lot_render_h = vfd->is_wrap?vfd->h:vfd->view_box.h;
+
    const LOTLayerNode *tree =
       lottie_animation_render_tree(lot_anim, frame_num,
-                                   vfd->view_box.w, vfd->view_box.h);
+                                   lot_render_w, lot_render_h);
    //Root node
    Efl_Canvas_Vg_Container *root = vfd->root;
    if (!root)
@@ -609,7 +636,11 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
    printf("%s (%p)\n", efl_class_name_get(efl_class_get(vfd->root)), vfd->root);
 #endif
 
-   _update_vg_tree(root, tree, 1);
+   _update_vg_tree(vfd, root, tree, 1);
+
+   vfd->minw = (int)(vfd->br - vfd->bl);
+   vfd->minh = (int)(vfd->bb - vfd->bt);
+
 #else
    return EINA_FALSE;
 #endif
