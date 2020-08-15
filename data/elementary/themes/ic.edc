@@ -67,6 +67,9 @@ I060("i-shelf-rc", "shelf-rc")
 I060("i-shelf-rb", "shelf-rb")
 I060("i-refresh", "refresh")
 I060("i-rename", "rename")
+I060("i-sort", "sort")
+I060("i-win-nest", "win-nest")
+I060("i-stick-man", "stick-man")
 // lock double
 // exclam
 // folder
@@ -256,6 +259,8 @@ I160("i-fill-stretch", "fill-stretch")
 I160("i-fill-fill", "fill-fill")
 I160("i-fill-within", "fill-within")
 I160("i-fill-pan", "fill-pan")
+I160("i-shield-up", "shield-up")
+I160("i-toolbar", "toolbar")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

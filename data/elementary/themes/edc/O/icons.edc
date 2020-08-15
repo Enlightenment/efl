@@ -37,12 +37,9 @@
    //Standard Action Icons
    ICON("edit-swap","icon_swap.png",64)                     // *** // "widget/swap"
    ICON("edit-select-all","icon_efm_select.png",16)                // EFMBUTTON("select"
-   ICON("view-sort","icon_efm_sort.png",16)                 // *** // EFMBUTTON("sort",
-   ICON("view-order","icon_efm_sort.png",16)                // *** // EFMBUTTON("ordering"
    ICON("view-hidden-files","icon_efm_view.png",16)         // *** // EFMBUTTON("hidden_files"
    ICON("window-close","icon_close.png",64)                        // "widget/close"
    ICON("dialog-ok-apply","icon_check.png",64)                     // "enlightenment/check"
-   ICON("view-inherit","icon_dummy.png",64)                 // *** // EFMBUTTON("inherit"
    //Standard Application Icons
    ICON("preferences-desktop-color","icon_colors.png",64)                     // "enlightenment/colors"
    ICON("preferences-desktop-pointer","icon_mouse.png",64)             // *** // "enlightenment/mouse"
@@ -60,7 +57,6 @@
    ICON("preferences-engine","icon_engine.png",64)               // *** // "enlightenment/engine"
    ICON("preferences-dialogs","icon_dummy.png",64)               // *** // "enlightenment/dialogs"
    ICON("preferences-icon-theme","icon_icon_theme.png",64)       // *** // "enlightenment/icon_theme"
-   ICON("preferences-toolbar","icon_toolbar.png",64)             // *** // "enlightenment/toolbar"
    ICON("preferences-startup","icon_startup.png",64)             // *** // "enlightenment/startup"
    ICON("preferences-utils","icon_gadget.png",64)                // *** // "enlightenment/utils"
    ICON("preferences-screen-normal","icon_screen_normal.png",64) // *** // "enlightenment/screen_normal"

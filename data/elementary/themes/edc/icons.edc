@@ -108,6 +108,8 @@
    ICON("document-properties", "i-file-properties")
    ICON("document-new", "i-file")
    ICON("folder-new", "i-folder")
+   ICON("security-high", "i-shield-up")
+   ICON("preferences-toolbar", "i-toolbar")
 #undef ICON
 
 // mono color default fg color icons
@@ -149,6 +151,10 @@
    ICON("transform-move", "i-move")
    ICON("transform-scale", "i-resize")
    ICON("add", "i-plus")
+   ICON("view-order", "i-sort")
+   ICON("view-sort", "i-sort")
+   ICON("view-inherit", "i-win-nest")
+   ICON("access", "i-stick-man")
 
    ICON("preferences-position-top-left", "i-shelf-tl")
    ICON("preferences-position-top", "i-shelf-tc")
