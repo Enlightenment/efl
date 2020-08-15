@@ -94,7 +94,7 @@ eina_iterator_shutdown(void)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI void
+EINA_API void
 eina_iterator_free(Eina_Iterator *iterator)
 {
    if (!iterator)
@@ -105,7 +105,7 @@ eina_iterator_free(Eina_Iterator *iterator)
    iterator->free(iterator);
 }
 
-EAPI void *
+EINA_API void *
 eina_iterator_container_get(Eina_Iterator *iterator)
 {
    EINA_MAGIC_CHECK_ITERATOR(iterator);
@@ -114,7 +114,7 @@ eina_iterator_container_get(Eina_Iterator *iterator)
    return iterator->get_container(iterator);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
    if (!iterator)
@@ -126,7 +126,7 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
    return iterator->next(iterator, data);
 }
 
-EAPI void
+EINA_API void
 eina_iterator_foreach(Eina_Iterator *iterator,
                       Eina_Each_Cb cb,
                       const void *fdata)
@@ -155,7 +155,7 @@ on_exit:
    (void) eina_iterator_unlock(iterator);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_iterator_lock(Eina_Iterator *iterator)
 {
    EINA_MAGIC_CHECK_ITERATOR(iterator);
@@ -166,7 +166,7 @@ eina_iterator_lock(Eina_Iterator *iterator)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_iterator_unlock(Eina_Iterator *iterator)
 {
    EINA_MAGIC_CHECK_ITERATOR(iterator);
@@ -210,7 +210,7 @@ eina_carray_iterator_free(Eina_Iterator_CArray *it)
   free(it);
 }
 
-EAPI Eina_Iterator*
+EINA_API Eina_Iterator*
 eina_carray_iterator_new(void** array)
 {
    Eina_Iterator_CArray *it;
@@ -268,7 +268,7 @@ eina_carray_length_iterator_free(Eina_Iterator_CArray_Length *it)
    free(it);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_carray_length_iterator_new(void** array, unsigned int step, unsigned int length)
 {
    Eina_Iterator_CArray_Length *it;
@@ -336,7 +336,7 @@ eina_multi_iterator_free(Eina_Multi_Iterator *it)
    free(it);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_multi_iterator_internal_new(Eina_Iterator *itc, ...)
 {
    Eina_Multi_Iterator *it;
@@ -404,7 +404,7 @@ eina_iterator_filter_free(Eina_Iterator_Filter *it)
    free(it);
 }
 
-EAPI Eina_Iterator*
+EINA_API Eina_Iterator*
 eina_iterator_filter_new(Eina_Iterator *iterator, Eina_Each_Cb filter, Eina_Free_Cb free_cb, void *data)
 {
    Eina_Iterator_Filter *it;
@@ -465,7 +465,7 @@ eina_iterator_process_free(Eina_Iterator_Processor *it)
    free(it);
 }
 
-EAPI Eina_Iterator*
+EINA_API Eina_Iterator*
 eina_iterator_processed_new(Eina_Iterator *iterator, Eina_Process_Cb process, Eina_Free_Cb free_cb, void *data)
 {
    Eina_Iterator_Processor *it;

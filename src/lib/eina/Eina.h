@@ -278,8 +278,6 @@ extern "C" {
 #include <eina_vpath.h>
 #include <eina_abstract_content.h>
 
-#undef EAPI
-#define EAPI
 
 #ifdef __cplusplus
 }

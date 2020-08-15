@@ -375,7 +375,7 @@ if sys_windows == true
 endif
 
 eina_lib = library('eina', eina_src,
-  c_args : package_c_args,
+  c_args : [package_c_args, '-DEINA_BUILD'],
   include_directories : config_dir,
   dependencies: eina_ext_deps + [eina_deps, evil],
   install: true,

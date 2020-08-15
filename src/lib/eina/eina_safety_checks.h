@@ -87,7 +87,7 @@
 #include "eina_config.h"
 #include "eina_error.h"
 
-EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
+EINA_API extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 
 #ifdef EINA_SAFETY_CHECKS
 
@@ -104,7 +104,7 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
  * @since 1.17
  * @internal
  */
-EAPI void _eina_safety_error(const char *file, const char *func, int line, const char *str);
+EINA_API void _eina_safety_error(const char *file, const char *func, int line, const char *str);
 #  define EINA_SAFETY_ERROR(msg) _eina_safety_error(__FILE__, __func__, __LINE__, msg)
 # else
 #  define EINA_SAFETY_ERROR(msg) EINA_LOG_ERR("%s", msg)

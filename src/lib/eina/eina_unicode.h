@@ -36,9 +36,9 @@ typedef uint32_t Eina_Unicode;
 /**
  * @brief Same as the standard strlen just with Eina_Unicode instead of char.
  */
-EAPI extern const Eina_Unicode *EINA_UNICODE_EMPTY_STRING;
+EINA_API extern const Eina_Unicode *EINA_UNICODE_EMPTY_STRING;
 
-EAPI size_t        eina_unicode_strlen(const Eina_Unicode *ustr) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+EINA_API size_t        eina_unicode_strlen(const Eina_Unicode *ustr) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Returns the length of a Eina_Unicode string, up to a limit.
@@ -51,7 +51,7 @@ EAPI size_t        eina_unicode_strlen(const Eina_Unicode *ustr) EINA_ARG_NONNUL
  * @param[in] n Max length to search
  * @return Number of characters or n.
  */
-EAPI size_t        eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+EINA_API size_t        eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Same as the standard strdup just with Eina_Unicode instead of char.
@@ -59,7 +59,7 @@ EAPI size_t        eina_unicode_strnlen(const Eina_Unicode *ustr, int n) EINA_AR
  * @param[in] text The text to duplicate.
  * @return The duplicated string.
  */
-EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Same as strdup but cuts on the given size. Assumes n < len
@@ -74,7 +74,7 @@ EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSE
  *
  * @since 1.1.0
  */
-EAPI Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Same as the standard strcmp just with Eina_Unicode instead of char.
@@ -83,7 +83,7 @@ EAPI Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA
  * @param[in] b The text to be compared.
  * @return An integer value indicating the ordinal relation of @p a to @p b.
  */
-EAPI int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+EINA_API int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 /**
  * @brief Same as the standard strcpy just with Eina_Unicode instead of char.
@@ -92,7 +92,7 @@ EAPI int           eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode
  * @param[in] source The text to copy from.
  * @return @p dest is returned.
  */
-EAPI Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source) EINA_ARG_NONNULL(1, 2);
+EINA_API Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Same as the standard strstr just with Eina_Unicode instead of char.
@@ -102,7 +102,7 @@ EAPI Eina_Unicode *eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *s
  * @return The substring of @p haystack which starts with @p needle
  *         when @p needle is founded in @p haystack, or NULL is returned.
  */
-EAPI Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+EINA_API Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
 /**
  * @brief Same as the standard strncpy just with Eina_Unicode instead of char.
@@ -112,7 +112,7 @@ EAPI Eina_Unicode *eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_
  * @param[in] n Maximum number of characters to be copied from @p source.
  * @return @p dest is returned.
  */
-EAPI Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n) EINA_ARG_NONNULL(1, 2);
+EINA_API Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @see eina_str_escape()
@@ -120,7 +120,7 @@ EAPI Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *
  * @param[in] str The string to escape.
  * @return The escaped string.
  */
-EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /* UTF-8 Handling */
 
@@ -157,7 +157,7 @@ static inline Eina_Unicode eina_unicode_utf8_next_get(const char *buf, int *iind
  *
  * @since 1.1.0
  */
-EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2) EINA_DEPRECATED;
+EINA_API Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2) EINA_DEPRECATED;
 
 /**
  * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
@@ -174,7 +174,7 @@ EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_
  *
  * @since 1.1.0
  */
-EAPI Eina_Unicode eina_unicode_utf8_get_prev(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
+EINA_API Eina_Unicode eina_unicode_utf8_get_prev(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Returns the number of unicode characters in the string. That is,
@@ -186,7 +186,7 @@ EAPI Eina_Unicode eina_unicode_utf8_get_prev(const char *buf, int *iindex) EINA_
  *
  * @since 1.1.0
  */
-EAPI int eina_unicode_utf8_get_len(const char *buf) EINA_ARG_NONNULL(1);
+EINA_API int eina_unicode_utf8_get_len(const char *buf) EINA_ARG_NONNULL(1);
 
 /**
  * Converts a utf-8 string to a newly allocated Eina_Unicode string.
@@ -197,7 +197,7 @@ EAPI int eina_unicode_utf8_get_len(const char *buf) EINA_ARG_NONNULL(1);
  *
  * @since 1.1.0
  */
-EAPI Eina_Unicode *eina_unicode_utf8_to_unicode(const char *utf, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Unicode *eina_unicode_utf8_to_unicode(const char *utf, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * Converts an Eina_Unicode string to a newly allocated utf-8 substring at given length.
@@ -209,7 +209,7 @@ EAPI Eina_Unicode *eina_unicode_utf8_to_unicode(const char *utf, int *_len) EINA
  *
  * @since 1.17
  */
-EAPI char * eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API char * eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * Converts an Eina_Unicode string to a newly allocated utf-8 string.
@@ -220,7 +220,7 @@ EAPI char * eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen
  *
  * @since 1.1.0
  */
-EAPI char * eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API char * eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 #include "eina_inline_unicode.x"
 

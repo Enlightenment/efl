@@ -103,7 +103,7 @@ typedef void (*Eina_TLS_Delete_Cb)(void *ptr);
  * @brief A type definition for warning that a function was called from
  *        somewhere other than the EFL main loop.
  */
-EAPI extern Eina_Error EINA_ERROR_NOT_MAIN_LOOP;
+EINA_API extern Eina_Error EINA_ERROR_NOT_MAIN_LOOP;
 
 /**
  * @brief Initializes a new #Eina_Lock.
@@ -208,7 +208,7 @@ static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
  *
  * @since 1.19
  */
-EAPI void eina_lock_debug(const Eina_Lock *mutex);
+EINA_API void eina_lock_debug(const Eina_Lock *mutex);
 
 /**
  * @brief Initializes a new condition variable.

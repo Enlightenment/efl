@@ -264,7 +264,7 @@ struct _Eina_File_Line
  * @param[in] data The data to pass to the callback
  * @return #EINA_TRUE on success, otherwise #EINA_FALSE
  */
-EAPI Eina_Bool eina_file_dir_list(const char           *dir,
+EINA_API Eina_Bool eina_file_dir_list(const char           *dir,
                                   Eina_Bool             recursive,
                                   Eina_File_Dir_List_Cb cb,
                                   void                 *data) EINA_ARG_NONNULL(1, 3);
@@ -280,7 +280,7 @@ EAPI Eina_Bool eina_file_dir_list(const char           *dir,
  * @return An array of the parts of the path to split
  *
  */
-EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Gets an iterator to list the content of a directory.
@@ -300,7 +300,7 @@ EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG
  *
  * @see eina_file_direct_ls()
  */
-EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Gets an iterator to list the content of a directory, with direct
@@ -327,7 +327,7 @@ EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_A
  *
  * @see eina_file_direct_ls()
  */
-EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Uses information provided by #Eina_Iterator of eina_file_stat_ls() or eina_file_direct_ls()
@@ -345,7 +345,7 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  *
  * @since 1.2
  */
-EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
+EINA_API int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Close all file descriptors that are open at or above the given fd
@@ -362,7 +362,7 @@ EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Sta
  *
  * @since 1.24
  */
-EAPI void eina_file_close_from(int fd, int *except_fd);
+EINA_API void eina_file_close_from(int fd, int *except_fd);
 
 /**
  * @brief Generates and creates a uniquely named temporary file from a template name.
@@ -393,7 +393,7 @@ EAPI void eina_file_close_from(int fd, int *except_fd);
  * @see eina_file_mkdtemp()
  * @since 1.8
  */
-EAPI int eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path) EINA_ARG_NONNULL(1);
+EINA_API int eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Generates and creates a uniquely named temporary directory from a template name.
@@ -417,7 +417,7 @@ EAPI int eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path) EINA_AR
  * @see eina_file_mkstemp()
  * @since 1.8
  */
-EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path) EINA_ARG_NONNULL(1,2);
+EINA_API Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path) EINA_ARG_NONNULL(1,2);
 
 /**
  * @brief Gets an iterator to list the content of a directory, with direct
@@ -446,7 +446,7 @@ EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path) E
  *
  * @see eina_file_ls()
  */
-EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Sanitizes the file path.
@@ -460,7 +460,7 @@ EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT
  *
  * @since 1.1
  */
-EAPI char *eina_file_path_sanitize(const char *path);
+EINA_API char *eina_file_path_sanitize(const char *path);
 
 /**
  * @typedef Eina_File_Copy_Progress
@@ -497,7 +497,7 @@ typedef enum {
  *
  * @note During the progress it may call back @p cb with the progress summary.
  */
-EAPI Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+EINA_API Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Eina_File_Copy_Progress cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Gets a read-only handler to a file.
@@ -512,7 +512,7 @@ EAPI Eina_Bool eina_file_copy(const char *src, const char *dst, Eina_File_Copy_F
  *
  * @since 1.1
  */
-EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+EINA_API Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
 /**
  * @brief Creates a virtual file from a memory pointer.
@@ -525,7 +525,7 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
  *
  * @since 1.8
  */
-EAPI Eina_File *
+EINA_API Eina_File *
 eina_file_virtualize(const char *virtual_name, const void *data, unsigned long long length, Eina_Bool copy) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
@@ -536,7 +536,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
  *
  * @since 1.8
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_virtual(Eina_File *file) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
@@ -549,7 +549,7 @@ eina_file_virtual(Eina_File *file) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
  *
  * @since 1.8
  */
-EAPI Eina_Bool eina_file_refresh(Eina_File *file);
+EINA_API Eina_Bool eina_file_refresh(Eina_File *file);
 
 /**
  * @brief Duplicates a read-only handler of a previously open file.
@@ -561,7 +561,7 @@ EAPI Eina_Bool eina_file_refresh(Eina_File *file);
  *
  * @since 1.8
  */
-EAPI Eina_File * eina_file_dup(const Eina_File *file);
+EINA_API Eina_File * eina_file_dup(const Eina_File *file);
 
 /**
  * @brief Unrefs the file handler.
@@ -571,7 +571,7 @@ EAPI Eina_File * eina_file_dup(const Eina_File *file);
  *
  * @since 1.1
  */
-EAPI void eina_file_close(Eina_File *file);
+EINA_API void eina_file_close(Eina_File *file);
 
 /**
  * @brief Gets the file size at open time.
@@ -581,7 +581,7 @@ EAPI void eina_file_close(Eina_File *file);
  *
  * @since 1.1
  */
-EAPI size_t eina_file_size_get(const Eina_File *file);
+EINA_API size_t eina_file_size_get(const Eina_File *file);
 
 /**
  * @brief Gets the last modification time of an open file.
@@ -591,7 +591,7 @@ EAPI size_t eina_file_size_get(const Eina_File *file);
  *
  * @since 1.1
  */
-EAPI time_t eina_file_mtime_get(const Eina_File *file);
+EINA_API time_t eina_file_mtime_get(const Eina_File *file);
 
 /**
  * @brief Gets the filename of an open file.
@@ -601,7 +601,7 @@ EAPI time_t eina_file_mtime_get(const Eina_File *file);
  *
  * @since 1.1
  */
-EAPI const char *eina_file_filename_get(const Eina_File *file);
+EINA_API const char *eina_file_filename_get(const Eina_File *file);
 
 /**
  * @brief Gets the extended attribute of an open file.
@@ -614,7 +614,7 @@ EAPI const char *eina_file_filename_get(const Eina_File *file);
  *
  * @since 1.2
  */
-EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file);
+EINA_API Eina_Iterator *eina_file_xattr_get(Eina_File *file);
 
 /**
  * @brief Gets the extended attribute of an open file.
@@ -628,7 +628,7 @@ EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file);
  *
  * @since 1.2
  */
-EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file);
+EINA_API Eina_Iterator *eina_file_xattr_value_get(Eina_File *file);
 
 /**
  * @brief Maps all the files to a buffer.
@@ -640,7 +640,7 @@ EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file);
  *
  * @since 1.1
  */
-EAPI void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
+EINA_API void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
 
 /**
  * @brief Maps a part of the file.
@@ -656,7 +656,7 @@ EAPI void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
  *
  * @since 1.1
  */
-EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
+EINA_API void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
                              unsigned long int offset, unsigned long int length);
 
 /**
@@ -667,7 +667,7 @@ EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
  *
  * @since 1.1
  */
-EAPI void eina_file_map_free(Eina_File *file, void *map);
+EINA_API void eina_file_map_free(Eina_File *file, void *map);
 
 /**
  * @brief Asks the OS to populate or otherwise pages of memory in file mapping.
@@ -683,7 +683,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  *
  * @since 1.8
  */
-EAPI void
+EINA_API void
 eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map,
                        unsigned long int offset, unsigned long int length);
 
@@ -698,7 +698,7 @@ eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map
  *
  * @since 1.3
  */
-EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
+EINA_API Eina_Iterator *eina_file_map_lines(Eina_File *file);
 
 /**
  * @brief Tells whether there has been an IO error during the life of a mmaped file.
@@ -709,7 +709,7 @@ EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
  *
  * @since 1.2
  */
-EAPI Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
+EINA_API Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
 
 /**
  * @brief Joins two paths of known length.
@@ -768,7 +768,7 @@ static inline size_t eina_file_path_join(char *dst,
  *
  * @since 1.19
  */
-EAPI Eina_Bool eina_file_unlink(const char *pathname);
+EINA_API Eina_Bool eina_file_unlink(const char *pathname);
 
 /**
  * @brief Make sure a file descriptor will be closed on exec.
@@ -781,7 +781,7 @@ EAPI Eina_Bool eina_file_unlink(const char *pathname);
  *
  * @since 1.20
  */
-EAPI Eina_Bool eina_file_close_on_exec(int fd, Eina_Bool on);
+EINA_API Eina_Bool eina_file_close_on_exec(int fd, Eina_Bool on);
 
 #include "eina_inline_file.x"
 
@@ -796,26 +796,26 @@ typedef unsigned int Eina_Statgen;
  * @brief Force the stat generation counter to tick over so any following i/o does real i/o and stat calls
  * @since 1.23
  */
-EAPI void         eina_file_statgen_next(void);
+EINA_API void         eina_file_statgen_next(void);
 
 /**
  * @brief Get the current stat generation counter value
  * @return 0 if you should always do stat calls and compare, or some other value that changes like a generation counter
  * @since 1.23
  */
-EAPI Eina_Statgen eina_file_statgen_get(void);
+EINA_API Eina_Statgen eina_file_statgen_get(void);
 
 /**
  * @brief Enable stat generation count optimiziing to only stat/do file i/o between generation counts changing
  * @since 1.23
  */
-EAPI void         eina_file_statgen_enable(void);
+EINA_API void         eina_file_statgen_enable(void);
 
 /**
  * @brief Disable stat generation count optimiziing to only stat/do file i/o between generation counts changing
  * @since 1.23
  */
-EAPI void         eina_file_statgen_disable(void);
+EINA_API void         eina_file_statgen_disable(void);
 
 /**
  * @}

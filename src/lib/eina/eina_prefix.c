@@ -464,7 +464,7 @@ _common_prefix_find(const char *bin, const char *lib, const char *data, const ch
  *============================================================================*/
 
 
-EAPI Eina_Prefix *
+EINA_API Eina_Prefix *
 eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                 const char *sharedir, const char *magicsharefile,
                 const char *pkg_bin, const char *pkg_lib,
@@ -750,7 +750,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
    return pfx;
 }
 
-EAPI void
+EINA_API void
 eina_prefix_free(Eina_Prefix *pfx)
 {
    EINA_SAFETY_ON_NULL_RETURN(pfx);
@@ -764,35 +764,35 @@ eina_prefix_free(Eina_Prefix *pfx)
    free(pfx);
 }
 
-EAPI const char *
+EINA_API const char *
 eina_prefix_get(Eina_Prefix *pfx)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_prefix_bin_get(Eina_Prefix *pfx)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_bin;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_prefix_lib_get(Eina_Prefix *pfx)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_lib;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_prefix_data_get(Eina_Prefix *pfx)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");
    return pfx->prefix_path_data;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_prefix_locale_get(Eina_Prefix *pfx)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pfx, "");

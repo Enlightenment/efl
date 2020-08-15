@@ -33,6 +33,7 @@ struct _Evas_Font_OT_Info
 # endif
 
 #include "evas_font.h"
+#include "Evas.h"
 
 EAPI int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index);

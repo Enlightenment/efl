@@ -165,7 +165,7 @@ _ppc_cpu_features(Eina_Cpu_Features *features)
 /* FIXME the features checks should be called when this function is called?
  * or make it static by doing eina_cpu_init() and return a local var
  */
-EAPI Eina_Cpu_Features eina_cpu_features = 0;
+EINA_API Eina_Cpu_Features eina_cpu_features = 0;
 
 Eina_Bool
 eina_cpu_init(void)
@@ -192,7 +192,7 @@ eina_cpu_shutdown(void)
  *
  * @return
  */
-EAPI Eina_Cpu_Features eina_cpu_features_get(void)
+EINA_API Eina_Cpu_Features eina_cpu_features_get(void)
 {
    return eina_cpu_features;
 }
@@ -302,13 +302,13 @@ _eina_page_size(void)
      }
 }
 
-EAPI int eina_cpu_page_size(void)
+EINA_API int eina_cpu_page_size(void)
 {
    if (_page_size == 0) _eina_page_size();
    return _page_size;
 }
 
-EAPI int eina_cpu_count(void)
+EINA_API int eina_cpu_count(void)
 {
    return _cpu_count;
 }

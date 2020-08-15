@@ -34,8 +34,8 @@
 
 /* Maybe I'm too tired, but this is the only thing that actually worked. */
 const Eina_Unicode _EINA_UNICODE_EMPTY_STRING[1] = {0};
-EAPI const Eina_Unicode *EINA_UNICODE_EMPTY_STRING = _EINA_UNICODE_EMPTY_STRING;
-EAPI int
+EINA_API const Eina_Unicode *EINA_UNICODE_EMPTY_STRING = _EINA_UNICODE_EMPTY_STRING;
+EINA_API int
 eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(a, -1);
@@ -51,7 +51,7 @@ eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b)
       return 1;
 }
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source)
 {
    Eina_Unicode *ret = dest;
@@ -65,7 +65,7 @@ eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source)
    return ret;
 }
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n)
 {
    Eina_Unicode *ret = dest;
@@ -80,7 +80,7 @@ eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n)
    return ret;
 }
 
-EAPI size_t
+EINA_API size_t
 eina_unicode_strlen(const Eina_Unicode *ustr)
 {
    const Eina_Unicode *end;
@@ -92,7 +92,7 @@ eina_unicode_strlen(const Eina_Unicode *ustr)
    return end - ustr;
 }
 
-EAPI size_t
+EINA_API size_t
 eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
 {
    const Eina_Unicode *end;
@@ -108,7 +108,7 @@ eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
 
 
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_strndup(const Eina_Unicode *text, size_t n)
 {
    Eina_Unicode *ustr;
@@ -124,7 +124,7 @@ eina_unicode_strndup(const Eina_Unicode *text, size_t n)
    return ustr;
 }
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_strdup(const Eina_Unicode *text)
 {
    size_t len;
@@ -135,7 +135,7 @@ eina_unicode_strdup(const Eina_Unicode *text)
    return eina_unicode_strndup(text, len);
 }
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle)
 {
    const Eina_Unicode *i, *j;
@@ -158,7 +158,7 @@ eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle)
    return NULL;
 }
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_escape(const Eina_Unicode *str)
 {
    Eina_Unicode *s2, *d;
@@ -190,7 +190,7 @@ eina_unicode_escape(const Eina_Unicode *str)
 /* The replacement range that will be used for bad utf8 chars. */
 #define ERROR_REPLACEMENT_END   0xDCFF
 
-EAPI Eina_Unicode
+EINA_API Eina_Unicode
 _eina_unicode_utf8_next_get(int ind,
                             unsigned char d,
                             const char *buf,
@@ -292,7 +292,7 @@ error:
    return ERROR_REPLACEMENT_BASE | d;
 }
 
-EAPI Eina_Unicode
+EINA_API Eina_Unicode
 eina_unicode_utf8_get_prev(const char *buf, int *iindex)
 {
    int r, ind;
@@ -319,7 +319,7 @@ eina_unicode_utf8_get_prev(const char *buf, int *iindex)
    return r;
 }
 
-EAPI int
+EINA_API int
 eina_unicode_utf8_get_len(const char *buf)
 {
    /* returns the number of utf8 characters (not bytes) in the string */
@@ -333,7 +333,7 @@ eina_unicode_utf8_get_len(const char *buf)
    return len;
 }
 
-EAPI Eina_Unicode *
+EINA_API Eina_Unicode *
 eina_unicode_utf8_to_unicode(const char *utf, int *_len)
 {
    /* FIXME: Should optimize! */
@@ -357,7 +357,7 @@ eina_unicode_utf8_to_unicode(const char *utf, int *_len)
    return buf;
 }
 
-EAPI char *
+EINA_API char *
 eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len)
 {
    char *buf, *buf2;
@@ -440,7 +440,7 @@ eina_unicode_unicode_to_utf8_range(const Eina_Unicode *uni, int ulen, int *_len)
    return buf2;
 }
 
-EAPI char *
+EINA_API char *
 eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
 {
    int len = eina_unicode_strlen(uni);

@@ -113,7 +113,7 @@ typedef Eina_Bool Eina_Success_Flag;
  *
  * @deprecated since 1.19, same as @c ENOMEM from @c errno.h
  */
-EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY EINA_DEPRECATED; /* use ENOMEM */
+EINA_API extern Eina_Error EINA_ERROR_OUT_OF_MEMORY EINA_DEPRECATED; /* use ENOMEM */
 
 /**
  * @brief Registers a new error type.
@@ -131,7 +131,7 @@ EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY EINA_DEPRECATED; /* use ENOMEM *
  *
  * @see eina_error_msg_static_register()
  */
-EAPI Eina_Error  eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Error  eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Registers a new error type, statically allocated message.
@@ -150,7 +150,7 @@ EAPI Eina_Error  eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1) EI
  *
  * @see eina_error_msg_register()
  */
-EAPI Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Changes the message of an already registered message.
@@ -171,7 +171,7 @@ EAPI Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNUL
  *
  * @see eina_error_msg_register()
  */
-EAPI Eina_Bool   eina_error_msg_modify(Eina_Error  error,
+EINA_API Eina_Bool   eina_error_msg_modify(Eina_Error  error,
                                        const char *msg) EINA_ARG_NONNULL(2);
 
 /**
@@ -183,7 +183,7 @@ EAPI Eina_Bool   eina_error_msg_modify(Eina_Error  error,
  *
  * @note This function is thread safe @since 1.10, but slower to use.
  */
-EAPI Eina_Error  eina_error_get(void);
+EINA_API Eina_Error  eina_error_get(void);
 
 /**
  * @brief Sets the last error.
@@ -197,7 +197,7 @@ EAPI Eina_Error  eina_error_get(void);
  *
  * @note This function is thread safe @since 1.10, but slower to use.
  */
-EAPI void        eina_error_set(Eina_Error err);
+EINA_API void        eina_error_set(Eina_Error err);
 
 /**
  * @brief Returns the description of the given error number.
@@ -208,7 +208,7 @@ EAPI void        eina_error_set(Eina_Error err);
  * @return The description of the error
  *
  */
-EAPI const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
+EINA_API const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
 
 /**
  * @brief Finds the #Eina_Error corresponding to a message string.
@@ -223,7 +223,7 @@ EAPI const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
  *       eina_error_msg_static_register() or modified with
  *       eina_error_msg_modify().
  */
-EAPI Eina_Error  eina_error_find(const char *msg) EINA_ARG_NONNULL(1) EINA_PURE;
+EINA_API Eina_Error  eina_error_find(const char *msg) EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @}

@@ -148,13 +148,13 @@ void      pass_through_shutdown(void);
  * @cond LOCAL
  */
 
-EAPI Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
+EINA_API Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE = 0;
 
 /**
  * @endcond
  */
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_mempool_register(Eina_Mempool_Backend *be)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(be, 0);
@@ -162,7 +162,7 @@ eina_mempool_register(Eina_Mempool_Backend *be)
    return eina_hash_add(_backends, be->name, be);
 }
 
-EAPI void
+EINA_API void
 eina_mempool_unregister(Eina_Mempool_Backend *be)
 {
    EINA_SAFETY_ON_NULL_RETURN(be);
@@ -259,7 +259,7 @@ eina_mempool_shutdown(void)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI Eina_Mempool *
+EINA_API Eina_Mempool *
 eina_mempool_add(const char *name,
                  const char *context,
                  const char *options,
@@ -282,7 +282,7 @@ eina_mempool_add(const char *name,
    return mp;
 }
 
-EAPI void eina_mempool_del(Eina_Mempool *mp)
+EINA_API void eina_mempool_del(Eina_Mempool *mp)
 {
    EINA_SAFETY_ON_NULL_RETURN(mp);
    EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
@@ -292,7 +292,7 @@ EAPI void eina_mempool_del(Eina_Mempool *mp)
    free(mp);
 }
 
-EAPI void eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data)
+EINA_API void eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(mp);
    EINA_SAFETY_ON_NULL_RETURN(mp->backend2);
@@ -301,7 +301,7 @@ EAPI void eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void 
    mp->backend2->repack(mp->backend_data, cb, data);
 }
 
-EAPI void eina_mempool_gc(Eina_Mempool *mp)
+EINA_API void eina_mempool_gc(Eina_Mempool *mp)
 {
    EINA_SAFETY_ON_NULL_RETURN(mp);
    EINA_SAFETY_ON_NULL_RETURN(mp->backend.garbage_collect);
@@ -309,7 +309,7 @@ EAPI void eina_mempool_gc(Eina_Mempool *mp)
    mp->backend.garbage_collect(mp->backend_data);
 }
 
-EAPI void eina_mempool_statistics(Eina_Mempool *mp)
+EINA_API void eina_mempool_statistics(Eina_Mempool *mp)
 {
    EINA_SAFETY_ON_NULL_RETURN(mp);
    EINA_SAFETY_ON_NULL_RETURN(mp->backend.statistics);

@@ -252,7 +252,7 @@ struct _Eina_Inarray
  *
  * @since 1.2
  */
-EAPI Eina_Inarray *eina_inarray_new(unsigned int member_size,
+EINA_API Eina_Inarray *eina_inarray_new(unsigned int member_size,
                                     unsigned int step) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -264,7 +264,7 @@ EAPI Eina_Inarray *eina_inarray_new(unsigned int member_size,
  *
  * @since 1.2
  */
-EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
+EINA_API void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Initializes an inline array.
@@ -284,7 +284,7 @@ EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * @since 1.2
  */
-EAPI void eina_inarray_step_set(Eina_Inarray *array,
+EINA_API void eina_inarray_step_set(Eina_Inarray *array,
                                 unsigned int sizeof_eina_inarray,
                                 unsigned int member_size,
                                 unsigned int step) EINA_ARG_NONNULL(1);
@@ -296,7 +296,7 @@ EAPI void eina_inarray_step_set(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
+EINA_API void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Copies the data as the last member of the array.
@@ -312,7 +312,7 @@ EAPI void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * @since 1.2
  */
-EAPI int eina_inarray_push(Eina_Inarray *array,
+EINA_API int eina_inarray_push(Eina_Inarray *array,
                            const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -326,7 +326,7 @@ EAPI int eina_inarray_push(Eina_Inarray *array,
  *
  * @since 1.8
  */
-EAPI void *eina_inarray_grow(Eina_Inarray *array, unsigned int size);
+EINA_API void *eina_inarray_grow(Eina_Inarray *array, unsigned int size);
 
 /**
  * @brief Copies the data to the array at a position found by the comparison function.
@@ -349,7 +349,7 @@ EAPI void *eina_inarray_grow(Eina_Inarray *array, unsigned int size);
  *
  * @since 1.2
  */
-EAPI int eina_inarray_insert(Eina_Inarray *array,
+EINA_API int eina_inarray_insert(Eina_Inarray *array,
                              const void *data,
                              Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -375,7 +375,7 @@ EAPI int eina_inarray_insert(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI int eina_inarray_insert_sorted(Eina_Inarray *array,
+EINA_API int eina_inarray_insert_sorted(Eina_Inarray *array,
                                     const void *data,
                                     Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -394,7 +394,7 @@ EAPI int eina_inarray_insert_sorted(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI int eina_inarray_remove(Eina_Inarray *array,
+EINA_API int eina_inarray_remove(Eina_Inarray *array,
                              const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -407,7 +407,7 @@ EAPI int eina_inarray_remove(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI void *eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
+EINA_API void *eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Gets the member at the given position.
@@ -422,7 +422,7 @@ EAPI void *eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * @since 1.2
  */
-EAPI void *eina_inarray_nth(const Eina_Inarray *array,
+EINA_API void *eina_inarray_nth(const Eina_Inarray *array,
                             unsigned int position) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -447,7 +447,7 @@ EAPI void *eina_inarray_nth(const Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
+EINA_API Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
                                       unsigned int position,
                                       const void *data) EINA_ARG_NONNULL(1, 3);
 
@@ -477,7 +477,7 @@ EAPI Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI void *eina_inarray_alloc_at(Eina_Inarray *array,
+EINA_API void *eina_inarray_alloc_at(Eina_Inarray *array,
                                  unsigned int position,
                                  unsigned int member_count) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -497,7 +497,7 @@ EAPI void *eina_inarray_alloc_at(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI Eina_Bool eina_inarray_replace_at(Eina_Inarray *array,
+EINA_API Eina_Bool eina_inarray_replace_at(Eina_Inarray *array,
                                        unsigned int position,
                                        const void *data) EINA_ARG_NONNULL(1, 3);
 
@@ -516,7 +516,7 @@ EAPI Eina_Bool eina_inarray_replace_at(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI Eina_Bool eina_inarray_remove_at(Eina_Inarray *array,
+EINA_API Eina_Bool eina_inarray_remove_at(Eina_Inarray *array,
                                       unsigned int position) EINA_ARG_NONNULL(1);
 
 /**
@@ -531,7 +531,7 @@ EAPI Eina_Bool eina_inarray_remove_at(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI void eina_inarray_reverse(Eina_Inarray *array) EINA_ARG_NONNULL(1);
+EINA_API void eina_inarray_reverse(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Applies a quick sort to the array.
@@ -547,7 +547,7 @@ EAPI void eina_inarray_reverse(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * @since 1.2
  */
-EAPI void eina_inarray_sort(Eina_Inarray *array,
+EINA_API void eina_inarray_sort(Eina_Inarray *array,
                             Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -565,7 +565,7 @@ EAPI void eina_inarray_sort(Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI int eina_inarray_search(const Eina_Inarray *array,
+EINA_API int eina_inarray_search(const Eina_Inarray *array,
                              const void *data,
                              Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -584,7 +584,7 @@ EAPI int eina_inarray_search(const Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI int eina_inarray_search_sorted(const Eina_Inarray *array,
+EINA_API int eina_inarray_search_sorted(const Eina_Inarray *array,
                                     const void *data,
                                     Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -607,7 +607,7 @@ EAPI int eina_inarray_search_sorted(const Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI Eina_Bool eina_inarray_foreach(const Eina_Inarray *array,
+EINA_API Eina_Bool eina_inarray_foreach(const Eina_Inarray *array,
                                     Eina_Each_Cb function,
                                     const void *user_data) EINA_ARG_NONNULL(1, 2);
 
@@ -623,7 +623,7 @@ EAPI Eina_Bool eina_inarray_foreach(const Eina_Inarray *array,
  *
  * @since 1.2
  */
-EAPI int eina_inarray_foreach_remove(Eina_Inarray *array,
+EINA_API int eina_inarray_foreach_remove(Eina_Inarray *array,
                                      Eina_Each_Cb match,
                                      const void *user_data) EINA_ARG_NONNULL(1, 2);
 
@@ -636,7 +636,7 @@ EAPI int eina_inarray_foreach_remove(Eina_Inarray *array,
  *
  * @since 1.10
  */
-EAPI Eina_Bool eina_inarray_resize(Eina_Inarray *array, unsigned int new_size);
+EINA_API Eina_Bool eina_inarray_resize(Eina_Inarray *array, unsigned int new_size);
 
 /**
  * @brief Counts the number of members in an array.
@@ -646,7 +646,7 @@ EAPI Eina_Bool eina_inarray_resize(Eina_Inarray *array, unsigned int new_size);
  *
  * @since 1.2
  */
-EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Returns a new iterator associated to an array.
@@ -665,7 +665,7 @@ EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL
  *
  * @since 1.2
  */
-EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EINA_API Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Returns a new reversed iterator associated to an array.
@@ -686,7 +686,7 @@ EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MA
  *
  * @since 1.2
  */
-EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EINA_API Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Returns a new accessor associated to an array.
@@ -701,7 +701,7 @@ EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array
  *
  * @since 1.2
  */
-EAPI Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EINA_API Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @def EINA_INARRAY_FOREACH

@@ -191,7 +191,7 @@ eina_array_accessor_clone(const Eina_Accessor_Array *it)
 }
 
 /* used from eina_inline_array.x, thus a needed symbol */
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_array_grow(Eina_Array *array)
 {
    void **tmp;
@@ -272,7 +272,7 @@ eina_array_shutdown(void)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eina_Array *
+EINA_API Eina_Array *
 eina_array_new(unsigned int step)
 {
    Eina_Array *array;
@@ -291,7 +291,7 @@ eina_array_new(unsigned int step)
    return array;
 }
 
-EAPI void
+EINA_API void
 eina_array_free(Eina_Array *array)
 {
    if (!array) return;
@@ -301,7 +301,7 @@ eina_array_free(Eina_Array *array)
    MAGIC_FREE(array);
 }
 
-EAPI void
+EINA_API void
 eina_array_step_set(Eina_Array *array,
 		    unsigned int sizeof_eina_array,
 		    unsigned int step)
@@ -326,7 +326,7 @@ eina_array_step_set(Eina_Array *array,
    EINA_MAGIC_SET(array, EINA_MAGIC_ARRAY);
 }
 
-EAPI void
+EINA_API void
 eina_array_flush(Eina_Array *array)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
@@ -342,7 +342,7 @@ eina_array_flush(Eina_Array *array)
    array->data = NULL;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
                                                        void *gdata),
                   void *gdata)
@@ -390,7 +390,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
    return EINA_TRUE;
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_array_iterator_new(const Eina_Array *array)
 {
    Eina_Iterator_Array *it;
@@ -415,7 +415,7 @@ eina_array_iterator_new(const Eina_Array *array)
    return &it->iterator;
 }
 
-EAPI Eina_Accessor *
+EINA_API Eina_Accessor *
 eina_array_accessor_new(const Eina_Array *array)
 {
    Eina_Accessor_Array *ac;

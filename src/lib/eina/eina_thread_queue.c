@@ -397,7 +397,7 @@ eina_thread_queue_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI Eina_Thread_Queue *
+EINA_API Eina_Thread_Queue *
 eina_thread_queue_new(void)
 {
    Eina_Thread_Queue *thq;
@@ -423,7 +423,7 @@ eina_thread_queue_new(void)
    return thq;
 }
 
-EAPI void
+EINA_API void
 eina_thread_queue_free(Eina_Thread_Queue *thq)
 {
    if (!thq) return;
@@ -437,7 +437,7 @@ eina_thread_queue_free(Eina_Thread_Queue *thq)
    free(thq);
 }
 
-EAPI void *
+EINA_API void *
 eina_thread_queue_send(Eina_Thread_Queue *thq, int size, void **allocref)
 {
    Eina_Thread_Queue_Msg *msg;
@@ -457,7 +457,7 @@ eina_thread_queue_send(Eina_Thread_Queue *thq, int size, void **allocref)
    return msg;
 }
 
-EAPI void
+EINA_API void
 eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref)
 {
    _eina_thread_queue_msg_alloc_done(allocref);
@@ -483,7 +483,7 @@ eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref)
      }
 }
 
-EAPI void *
+EINA_API void *
 eina_thread_queue_wait(Eina_Thread_Queue *thq, void **allocref)
 {
    Eina_Thread_Queue_Msg *msg;
@@ -504,13 +504,13 @@ eina_thread_queue_wait(Eina_Thread_Queue *thq, void **allocref)
    return msg;
 }
 
-EAPI void
+EINA_API void
 eina_thread_queue_wait_done(Eina_Thread_Queue *thq EINA_UNUSED, void *allocref)
 {
    _eina_thread_queue_msg_fetch_done(allocref);
 }
 
-EAPI void *
+EINA_API void *
 eina_thread_queue_poll(Eina_Thread_Queue *thq, void **allocref)
 {
    Eina_Thread_Queue_Msg *msg;
@@ -534,7 +534,7 @@ eina_thread_queue_poll(Eina_Thread_Queue *thq, void **allocref)
    return msg;
 }
 
-EAPI int
+EINA_API int
 eina_thread_queue_pending_get(const Eina_Thread_Queue *thq)
 {
    int pending;
@@ -549,25 +549,25 @@ eina_thread_queue_pending_get(const Eina_Thread_Queue *thq)
    return pending;
 }
 
-EAPI void
+EINA_API void
 eina_thread_queue_parent_set(Eina_Thread_Queue *thq, Eina_Thread_Queue *thq_parent)
 {
    thq->parent = thq_parent;
 }
 
-EAPI Eina_Thread_Queue *
+EINA_API Eina_Thread_Queue *
 eina_thread_queue_parent_get(const Eina_Thread_Queue *thq)
 {
    return thq->parent;
 }
 
-EAPI void
+EINA_API void
 eina_thread_queue_fd_set(Eina_Thread_Queue *thq, int fd)
 {
    thq->fd = fd;
 }
 
-EAPI int
+EINA_API int
 eina_thread_queue_fd_get(const Eina_Thread_Queue *thq)
 {
    return thq->fd;

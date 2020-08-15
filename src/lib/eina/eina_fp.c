@@ -423,7 +423,7 @@ static const Eina_F32p32 eina_trigo[MAX_PREC] =
    0x0000000000653d02, 0x0000000000000000
 };
 
-EAPI Eina_F32p32
+EINA_API Eina_F32p32
 eina_f32p32_cos(Eina_F32p32 a)
 {
    Eina_F32p32 F32P32_2PI;
@@ -471,7 +471,7 @@ eina_f32p32_cos(Eina_F32p32 a)
    return result;
 }
 
-EAPI Eina_F32p32
+EINA_API Eina_F32p32
 eina_f32p32_sin(Eina_F32p32 a)
 {
    Eina_F32p32 F32P32_PI2;

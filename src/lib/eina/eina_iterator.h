@@ -203,7 +203,7 @@ struct _Eina_Iterator
  *
  * This function frees @p iterator if it is not @c NULL;
  */
-EAPI void      eina_iterator_free(Eina_Iterator *iterator);
+EINA_API void      eina_iterator_free(Eina_Iterator *iterator);
 
 
 /**
@@ -215,7 +215,7 @@ EAPI void      eina_iterator_free(Eina_Iterator *iterator);
  * This function returns the container which created @p iterator. If
  * @p iterator is @c NULL, this function returns @c NULL.
  */
-EAPI void     *eina_iterator_container_get(Eina_Iterator *iterator) EINA_ARG_NONNULL(1) EINA_PURE;
+EINA_API void     *eina_iterator_container_get(Eina_Iterator *iterator) EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Returns the value of the current element and go to the next one.
@@ -229,7 +229,7 @@ EAPI void     *eina_iterator_container_get(Eina_Iterator *iterator) EINA_ARG_NON
  * iterator is @c NULL or if a problem occurred, #EINA_FALSE is
  * returned, otherwise #EINA_TRUE is returned.
  */
-EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
+EINA_API Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
                                   void         **data) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 
@@ -247,7 +247,7 @@ EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
  * the iteration stops at that point, if @p cb returns #EINA_TRUE
  * the iteration continues.
  */
-EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
+EINA_API void eina_iterator_foreach(Eina_Iterator *iterator,
                                 Eina_Each_Cb   callback,
                                 const void    *fdata) EINA_ARG_NONNULL(2);
 
@@ -266,7 +266,7 @@ EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
  *
  * @warning None of the existing eina data structures are lockable.
  */
-EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
+EINA_API Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Unlocks the container of the iterator.
@@ -282,7 +282,7 @@ EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
  *
  * @warning None of the existing eina data structures are lockable.
  */
-EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
+EINA_API Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Creates an Eina_Iterator that iterates through a
@@ -299,7 +299,7 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
  *
  * @since 1.18
  */
-EAPI Eina_Iterator *eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Iterator *eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Creates an Eina_Iterator that iterates through a
@@ -315,7 +315,7 @@ EAPI Eina_Iterator *eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) E
  *
  * @since 1.22
  */
-EAPI Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int step, unsigned int length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int step, unsigned int length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @def EINA_C_ARRAY_ITERATOR_NEW
@@ -347,7 +347,7 @@ EAPI Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int s
  *
  * @since 1.19
  */
-EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_Cb filter, Eina_Free_Cb free_cb, void *data) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_Cb filter, Eina_Free_Cb free_cb, void *data) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Creates an Eina_Iterator that iterates through a series
@@ -363,7 +363,7 @@ EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_
  *
  * @since 1.22
  */
-EAPI Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 
 /**
@@ -381,7 +381,7 @@ EAPI Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EIN
  *
  * @since 1.24
  */
-EAPI Eina_Iterator* eina_iterator_processed_new(Eina_Iterator *iterator, Eina_Process_Cb process, Eina_Free_Cb free_cb, void *fdata) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Iterator* eina_iterator_processed_new(Eina_Iterator *iterator, Eina_Process_Cb process, Eina_Free_Cb free_cb, void *fdata) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @def eina_multi_iterator_new

@@ -98,7 +98,7 @@ typedef const char * Eina_Vpath;
  * @since 1.21
  *
  */
-EAPI char *eina_vpath_resolve(Eina_Vpath path);
+EINA_API char *eina_vpath_resolve(Eina_Vpath path);
 
 /**
  * Translate a virtual path into a normal path, and print it into str.
@@ -113,6 +113,6 @@ EAPI char *eina_vpath_resolve(Eina_Vpath path);
  * @since 1.21
  *
  */
-EAPI int eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...);
+EINA_API int eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...);
 #endif
 #endif

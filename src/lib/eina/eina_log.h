@@ -230,7 +230,7 @@
  * EINA_LOG_DOMAIN_GLOBAL is the general purpose log domain to be
  * used, it is always registered and available everywhere.
  */
-EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
+EINA_API extern int EINA_LOG_DOMAIN_GLOBAL;
 
 #ifndef EINA_LOG_DOMAIN_DEFAULT
 
@@ -441,7 +441,7 @@ struct _Eina_Log_Domain
  * The main thread is considered the thread where the first
  * eina_init() was called.
  */
-EAPI void eina_log_threads_enable(void);
+EINA_API void eina_log_threads_enable(void);
 
 
 /**
@@ -504,7 +504,7 @@ typedef enum _Eina_Log_State
  *       This means you're safe from other calls but you should never
  *       call eina_log_print(), directly or indirectly.
  */
-EAPI void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
+EINA_API void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
 
 
 /**
@@ -519,7 +519,7 @@ EAPI void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNU
  *
  * @see eina_log_level_get()
  */
-EAPI void eina_log_level_set(int level);
+EINA_API void eina_log_level_set(int level);
 
 /**
  * @brief Gets the default log level.
@@ -528,7 +528,7 @@ EAPI void eina_log_level_set(int level);
  *
  * @see eina_log_level_set()
  */
-EAPI int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
+EINA_API int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Determines if a given @p level should be logged.
@@ -553,7 +553,7 @@ static inline Eina_Bool eina_log_level_check(int level);
  * @return #EINA_TRUE if the current thread is the one that called
  * eina_log_threads_init(), otherwise #EINA_FALSE.
  */
-EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
 
 
 /**
@@ -565,7 +565,7 @@ EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UN
  *
  * @see eina_log_color_disable_get()
  */
-EAPI void               eina_log_color_disable_set(Eina_Bool disabled);
+EINA_API void               eina_log_color_disable_set(Eina_Bool disabled);
 
 /**
  * @brief Determines if color logging is enabled or disabled.
@@ -574,7 +574,7 @@ EAPI void               eina_log_color_disable_set(Eina_Bool disabled);
  *
  * @see eina_log_color_disable_set()
  */
-EAPI Eina_Bool          eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Bool          eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Sets if originating file name logging should be disabled.
@@ -585,7 +585,7 @@ EAPI Eina_Bool          eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT
  *
  * @see eina_log_file_disable_get()
  */
-EAPI void               eina_log_file_disable_set(Eina_Bool disabled);
+EINA_API void               eina_log_file_disable_set(Eina_Bool disabled);
 
 /**
  * @brief Gets if originating file name logging should be disabled.
@@ -594,7 +594,7 @@ EAPI void               eina_log_file_disable_set(Eina_Bool disabled);
  *
  * @see eina_log_file_disable_set()
  */
-EAPI Eina_Bool          eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Bool          eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Sets if originating function name logging should be disabled.
@@ -606,7 +606,7 @@ EAPI Eina_Bool          eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
  *
  * @see eina_log_function_disable_get()
  */
-EAPI void               eina_log_function_disable_set(Eina_Bool disabled);
+EINA_API void               eina_log_function_disable_set(Eina_Bool disabled);
 
 /**
  * @brief Gets if originating function name logging should be disabled.
@@ -615,7 +615,7 @@ EAPI void               eina_log_function_disable_set(Eina_Bool disabled);
  *
  * @see eina_log_function_disable_set()
  */
-EAPI Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Sets if critical messages should abort the program.
@@ -630,7 +630,7 @@ EAPI Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RES
  * @see eina_log_abort_on_critical_get()
  * @see eina_log_abort_on_critical_level_set()
  */
-EAPI void               eina_log_abort_on_critical_set(Eina_Bool abort_on_critical);
+EINA_API void               eina_log_abort_on_critical_set(Eina_Bool abort_on_critical);
 
 /**
  * @brief Gets if critical messages should abort the program.
@@ -642,7 +642,7 @@ EAPI void               eina_log_abort_on_critical_set(Eina_Bool abort_on_critic
  * @see eina_log_abort_on_critical_set()
  * @see eina_log_abort_on_critical_level_set()
  */
-EAPI Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Sets level that triggers abort if abort-on-critical is set.
@@ -657,7 +657,7 @@ EAPI Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RE
  * @see eina_log_abort_on_critical_level_get()
  * @see eina_log_abort_on_critical_get()
  */
-EAPI void               eina_log_abort_on_critical_level_set(int critical_level);
+EINA_API void               eina_log_abort_on_critical_level_set(int critical_level);
 
 /**
  * @brief Gets level that triggers abort if abort-on-critical is set.
@@ -669,7 +669,7 @@ EAPI void               eina_log_abort_on_critical_level_set(int critical_level)
  * @see eina_log_abort_on_critical_level_set()
  * @see eina_log_abort_on_critical_get()
  */
-EAPI int                eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESULT;
+EINA_API int                eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESULT;
 
 
 /**
@@ -684,7 +684,7 @@ EAPI int                eina_log_abort_on_critical_level_get(void) EINA_WARN_UNU
  *        registration.
  * @param[in] level Level to use to limit eina_log_print() for given domain.
  */
-EAPI void               eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
+EINA_API void               eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Gets the domain level given its name.
@@ -704,7 +704,7 @@ EAPI void               eina_log_domain_level_set(const char *domain_name, int l
  * @see eina_log_domain_level_set()
  * @see eina_log_domain_registered_level_get()
  */
-EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EINA_API int                eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Gets the domain level given its identifier.
@@ -717,7 +717,7 @@ EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_
  * @return #EINA_TRUE if level should be printed, #EINA_FALSE if not.
  *         (domain's level is greater or equal @a level).
  */
-EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
+EINA_API int                eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Sets the domain level given its identifier.
@@ -729,7 +729,7 @@ EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WA
  * @param[in] level Level to use to limit eina_log_print() for given domain.
  * @since 1.10
  */
-EAPI void                eina_log_domain_registered_level_set(int domain, int level);
+EINA_API void                eina_log_domain_registered_level_set(int domain, int level);
 
 static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
 
@@ -746,7 +746,7 @@ static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
  *
  * @note MT: Safe to call from any thread.
  */
-EAPI int  eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
+EINA_API int  eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Forgets about a logging domain registered by eina_log_domain_register()
@@ -756,7 +756,7 @@ EAPI int  eina_log_domain_register(const char *name, const char *color) EINA_ARG
  *
  * @note MT: Safe to call from any thread.
  */
-EAPI void eina_log_domain_unregister(int domain);
+EINA_API void eina_log_domain_unregister(int domain);
 
 /*
  * Logging functions.
@@ -785,7 +785,7 @@ EAPI void eina_log_domain_unregister(int domain);
  * @note MT: This function may be called from different threads if
  *       eina_log_threads_enable() was called before.
  */
-EAPI void eina_log_print(int            domain,
+EINA_API void eina_log_print(int            domain,
                          Eina_Log_Level level,
                          const char    *file,
                          const char    *function,
@@ -818,7 +818,7 @@ EAPI void eina_log_print(int            domain,
  *
  * @see eina_log_print()
  */
-EAPI void eina_log_vprint(int            domain,
+EINA_API void eina_log_vprint(int            domain,
                           Eina_Log_Level level,
                           const char    *file,
                           const char    *fnc,
@@ -856,7 +856,7 @@ EAPI void eina_log_vprint(int            domain,
  * @note MT: Threads different from main thread will have thread id
  *       appended to domain name.
  */
-EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
+EINA_API void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
                                    Eina_Log_Level         level,
                                    const char            *file,
                                    const char            *fnc,
@@ -898,7 +898,7 @@ EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
  * @note MT: Threads different from main thread will have thread id
  *       appended to domain name.
  */
-EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
+EINA_API void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
                                    Eina_Log_Level         level,
                                    const char            *file,
                                    const char            *fnc,
@@ -925,7 +925,7 @@ EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
  * @note MT: Threads different from main thread will have thread id
  *       appended to domain name.
  */
-EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
+EINA_API void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  Eina_Log_Level         level,
                                  const char            *file,
                                  const char            *fnc,
@@ -954,7 +954,7 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
  *
  * @since 1.8
  */
-EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
+EINA_API void eina_log_print_cb_journald(const Eina_Log_Domain *d,
 				     Eina_Log_Level level,
 				     const char *file,
 				     const char *fnc,
@@ -975,13 +975,13 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
  *
  * @since 1.7
  */
-EAPI void eina_log_console_color_set(FILE *fp,
+EINA_API void eina_log_console_color_set(FILE *fp,
                                      const char *color) EINA_ARG_NONNULL(1, 2);
 
 /** String that indicates the log system is initializing. */
-EAPI extern const char *_eina_log_state_init;
+extern EINA_API const char *_eina_log_state_init;
 /** String that indicates the log system is shutting down. */
-EAPI extern const char *_eina_log_state_shutdown;
+extern EINA_API const char *_eina_log_state_shutdown;
 /**
  * @def EINA_LOG_STATE_INIT
  * String that indicates the log system is initializing
@@ -1006,7 +1006,7 @@ EAPI extern const char *_eina_log_state_shutdown;
  * @note The phase name should be available for all the life of the timing.
  * @since 1.8
  */
-EAPI void eina_log_timing(int domain,
+EINA_API void eina_log_timing(int domain,
                           Eina_Log_State state,
                           const char *phase) EINA_ARG_NONNULL(1, 3);
 
