@@ -32,6 +32,7 @@ I060("i-resize", "resize")
 I060("i-fullscreen", "fullscreen")
 I060("i-kill", "kill")
 I060("i-lock", "lock")
+I060("i-lock-double", "lock-double")
 I060("i-unlock", "unlock")
 I060("i-check", "check")
 I060("i-radio", "radio")
@@ -70,6 +71,7 @@ I060("i-rename", "rename")
 I060("i-sort", "sort")
 I060("i-win-nest", "win-nest")
 I060("i-stick-man", "stick-man")
+I060("i-wifi", "wifi")
 // lock double
 // exclam
 // folder

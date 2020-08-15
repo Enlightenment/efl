@@ -10,15 +10,15 @@ group { name: "e/modules/connman/main";
    images.image: "wifi-4.png" COMP;
    images.image: "wifi-5.png" COMP;
 
-   images.image: "bt_base.png" COMP;
-   images.image: "bt_sig_1.png" COMP;
-   images.image: "bt_sig_2.png" COMP;
+   images.image: "bt-1.png" COMP;
+   images.image: "bt-2.png" COMP;
+   images.image: "bt-base.png" COMP;
 
-   images.image: "cell_base.png" COMP;
-   images.image: "cell_sig_1.png" COMP;
-   images.image: "cell_sig_2.png" COMP;
-   images.image: "cell_sig_3.png" COMP;
-   images.image: "cell_sig_4.png" COMP;
+   images.image: "cell-1.png" COMP;
+   images.image: "cell-2.png" COMP;
+   images.image: "cell-3.png" COMP;
+   images.image: "cell-4.png" COMP;
+   images.image: "cell-base.png" COMP;
    parts {
       part { name: "exclam_base"; mouse_events: 0;
          scale: 1;
@@ -56,8 +56,7 @@ group { name: "e/modules/connman/main";
          scale: 1;
          clip_to: "clip_eth";
          description { state: "default" 0.0;
-            rel1.to: "eth-base";
-            rel2.to: "eth-base";
+            rel.to: "eth-base";
             image.normal: "eth-top.png";
             color: 160 160 160 128;
          }
@@ -74,10 +73,6 @@ group { name: "e/modules/connman/main";
       part { name: "wifi-base"; mouse_events: 0;
          clip_to: "clip_wifi";
          description { state: "default" 0.0;
-            min: 14 10;
-            aspect: (140/100) (140/100); aspect_preference: BOTH;
-            rel1.relative: (10/160) (30/160);
-            rel2.relative: (150/160) (130/160);
             image.normal: "wifi-1.png";
             color: 160 160 160 255;
          }
@@ -93,8 +88,7 @@ group { name: "e/modules/connman/main";
       part { name: "wifi"; mouse_events: 0;
          clip_to: "clip_wifi";
          description { state: "default" 0.0;
-            rel1.to: "wifi-base";
-            rel2.to: "wifi-base";
+            rel.to: "wifi-base";
             image.normal: "wifi-1.png";
             color: 0 0 0 0;
          }
@@ -123,21 +117,21 @@ group { name: "e/modules/connman/main";
       part { name: "bt_base"; mouse_events: 0;
          clip_to: "clip_bt";
          description { state: "default" 0.0;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            image.normal: "bt_base.png";
+            image.normal: "bt-base.png";
+            color: 160 160 160 255;
          }
       }
       part { name: "bt_1"; mouse_events: 0;
          clip_to: "clip_bt";
          description { state: "default" 0.0;
-            rel1.to: "bt_base";
-            rel2.to: "bt_base";
-            image.normal: "bt_sig_1.png";
+            rel.to: "bt_base";
+            image.normal: "bt-1.png";
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 160 160 160 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -148,14 +142,14 @@ group { name: "e/modules/connman/main";
       part { name: "bt_2"; mouse_events: 0;
          clip_to: "clip_bt";
          description { state: "default" 0.0;
-            rel1.to: "bt_base";
-            rel2.to: "bt_base";
-            image.normal: "bt_sig_2.png";
+            rel.to: "bt_base";
+            image.normal: "bt-2.png";
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 160 160 160 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -167,21 +161,21 @@ group { name: "e/modules/connman/main";
       part { name: "cell_base"; mouse_events: 0;
          clip_to: "clip_cell";
          description { state: "default" 0.0;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            image.normal: "cell_base.png";
+            image.normal: "cell-base.png";
+            color: 160 160 160 255;
          }
       }
       part { name: "cell_1"; mouse_events: 0;
          clip_to: "clip_cell";
          description { state: "default" 0.0;
-            rel1.to: "cell_base";
-            rel2.to: "cell_base";
-            image.normal: "cell_sig_1.png";
+            rel.to: "cell_base";
+            image.normal: "cell-1.png";
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 160 160 160 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -192,14 +186,14 @@ group { name: "e/modules/connman/main";
       part { name: "cell_2"; mouse_events: 0;
          clip_to: "clip_cell";
          description { state: "default" 0.0;
-            rel1.to: "cell_base";
-            rel2.to: "cell_base";
-            image.normal: "cell_sig_2.png";
+            rel.to: "cell_base";
+            image.normal: "cell-2.png";
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 160 160 160 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -210,14 +204,14 @@ group { name: "e/modules/connman/main";
       part { name: "cell_3"; mouse_events: 0;
          clip_to: "clip_cell";
          description { state: "default" 0.0;
-            rel1.to: "cell_base";
-            rel2.to: "cell_base";
-            image.normal: "cell_sig_3.png";
+            rel.to: "cell_base";
+            image.normal: "cell-3.png";
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 160 160 160 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -228,14 +222,14 @@ group { name: "e/modules/connman/main";
       part { name: "cell_4"; mouse_events: 0;
          clip_to: "clip_cell";
          description { state: "default" 0.0;
-            rel1.to: "cell_base";
-            rel2.to: "cell_base";
-            image.normal: "cell_sig_4.png";
+            rel.to: "cell_base";
+            image.normal: "cell-4.png";
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 160 160 160 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -579,61 +573,56 @@ group { name: "e/modules/connman/icon/cellular";
 }
 
 group { name: "e/modules/connman/end";
-   images.image: "glow_lock_locked.png" COMP;
-   images.image: "glow_lock_unlocked.png" COMP;
-   images.image: "glow_lock_double.png" COMP;
    parts {
       part { name: "base"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "glow_lock_locked.png";
+            image.normal: "i-unlock";
             aspect: 1.0 1.0; aspect_preference: BOTH;
+            color: 160 160 160 255;
             visible: 0;
          }
          description { state: "none" 0.0;
             inherit: "default" 0.0;
-            image.normal: "glow_lock_unlocked.png";
+            image.normal: "i-unlock";
+            color: 160 160 160 255;
             visible: 1;
          }
          description { state: "wep" 0.0;
             inherit: "default" 0.0;
-            image.normal: "glow_lock_locked.png";
+            image.normal: "i-lock";
+            color: 160 160 160 255;
             visible: 1;
          }
          description { state: "psk" 0.0;
             inherit: "default" 0.0;
-            image.normal: "glow_lock_double.png";
+            image.normal: "i-lock-double";
+            color: 160 160 160 255;
             visible: 1;
          }
       }
    }
    programs {
-      program {
-         signal: "e,security,off"; source: "e";
+      program { signal: "e,security,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,security,none"; source: "e";
+      program { signal: "e,security,none"; source: "e";
          action: STATE_SET "none" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,security,wep"; source: "e";
+      program { signal: "e,security,wep"; source: "e";
          action: STATE_SET "wep" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,security,psk"; source: "e";
+      program { signal: "e,security,psk"; source: "e";
          action: STATE_SET "psk" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,security,ieee8021x"; source: "e";
+      program { signal: "e,security,ieee8021x"; source: "e";
          action: STATE_SET "psk" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,security,wps"; source: "e";
+      program { signal: "e,security,wps"; source: "e";
          action: STATE_SET "wep" 0.0;
          target: "base";
       }
