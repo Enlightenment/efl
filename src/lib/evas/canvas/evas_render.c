@@ -1,5 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
+#include <Ecore.h>
 #include <math.h>
 #include <assert.h>
 
@@ -2745,7 +2746,16 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
 void
 evas_render_rendering_wait(Evas_Public_Data *evas)
 {
-   while (evas->rendering) evas_async_events_process_blocking();
+   double t0 = ecore_time_get();
+   while (evas->rendering)
+     {
+        evas_async_events_process_blocking();
+        if ((ecore_time_get() - t0) > 0.2)
+          {
+             ERR("timeout waiting for async rendering");
+             break;
+          }
+     }
 }
 
 /*
@@ -3894,6 +3904,10 @@ evas_render_wakeup(Evas *eo_e)
      }
    eina_spinlock_release(&(evas->render.lock));
 
+   /* post rendering */
+   _rendering_evases = eina_list_remove_list(_rendering_evases, evas->rendering);
+   evas->rendering = NULL;
+
    /* flush redraws */
    if (haveup)
      {
@@ -3940,10 +3954,6 @@ evas_render_wakeup(Evas *eo_e)
           job->func(job->data);
         free(job);
      }
-
-   /* post rendering */
-   _rendering_evases = eina_list_remove_list(_rendering_evases, evas->rendering);
-   evas->rendering = NULL;
 
    post.updated_area = ret_updates;
    _cb_always_call(eo_e, evas, EVAS_CALLBACK_RENDER_POST, &post);
