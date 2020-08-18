@@ -5436,6 +5436,27 @@ skip:
 
         script = evas_common_language_script_type_get(str, script_len);
 
+        /* FIXME Workaround for Burmese Vowel E Rendering, caused by bug in Harfbuzz
+           breaking text run will fix the visual issue.
+        */
+        if (script == EVAS_SCRIPT_MYANMAR && script_len > 1)
+          {
+             int i;
+             for (i = 0 ; i < script_len - 1; i++)
+               {
+                  if (str[i] == 0x200C)
+                    {
+                       if (str[i+1] == 0x1031)
+                         {
+                            cur_len += script_len;
+                            script_len = i + 1;
+                            cur_len -= script_len;
+                            break;
+                         }
+                    }
+               }
+          }
+
         Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
         while (script_len > 0)
           {
