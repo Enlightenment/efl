@@ -5012,11 +5012,16 @@ EFL_START_TEST(efl_canvas_textblock_style)
    const char *style;
    Eina_Size2D size1, size2;
 
+   int changed_emit = 0;
+   efl_event_callback_add(txt, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED, _increment_int_changed, &changed_emit);
+
    efl_text_password_set(txt, EINA_FALSE);
    efl_text_underline_type_set(txt, EFL_TEXT_STYLE_UNDERLINE_TYPE_DOUBLE);
    efl_text_font_weight_set(txt, EFL_TEXT_FONT_WEIGHT_EXTRABOLD);
    efl_text_font_slant_set(txt, EFL_TEXT_FONT_SLANT_OBLIQUE);
    efl_text_tab_stops_set(txt, 20);
+
+   ck_assert_int_eq(changed_emit, 4);
 
    efl_canvas_textblock_style_apply(txt, "color=#90E135");
 
@@ -5037,6 +5042,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
    style = efl_canvas_textblock_all_styles_get(txt);
    fail_if(!strstr(style, "password=on"));
 
+   changed_emit = 0;
    efl_canvas_textblock_style_apply(txt, "font_width=ultracondensed");
    ck_assert_int_eq(efl_text_font_width_get(txt), EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
 
@@ -5081,6 +5087,13 @@ EFL_START_TEST(efl_canvas_textblock_style)
    ck_assert_int_eq(b, 0x6C);
    ck_assert_int_eq(a, 0xFF);
 
+   ck_assert_int_eq(changed_emit, 12);
+
+   //check if multiple attribute set, called only once
+   changed_emit = 0;
+   efl_canvas_textblock_style_apply(txt, style);
+   ck_assert_int_eq(changed_emit, 1);
+
    // Style Apply taking 
    efl_text_set(txt,"A");
    efl_canvas_textblock_style_apply(txt,"font_size=2");
@@ -5092,7 +5105,7 @@ EFL_START_TEST(efl_canvas_textblock_style)
 
    efl_text_gfx_filter_set(txt, "code");
    ck_assert_str_eq(efl_text_gfx_filter_get(txt), "code");
-   
+
    END_EFL_CANVAS_TEXTBLOCK_TEST();
 }
 EFL_END_TEST
