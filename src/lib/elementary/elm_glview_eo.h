@@ -26,7 +26,7 @@ typedef Eo Elm_Glview;
  *
  * See @ref elm_obj_glview_mode_set See elm_opengl_page
  *
- * @ingroup Elm_GLView
+ * @ingroup Elm_Glview_Group
  */
 typedef enum
 {

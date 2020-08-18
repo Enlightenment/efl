@@ -448,7 +448,7 @@ EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
  *
  * @see elm_win_wm_rotation_preferred_rotation_get()
  *
- * ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  * @since 1.9
  */
 EAPI void                  elm_win_wm_rotation_preferred_rotation_set(Evas_Object *obj, int rotation);
@@ -1893,7 +1893,7 @@ EAPI Eina_Bool elm_win_move_resize_start(Evas_Object *obj, Elm_Win_Move_Resize_M
  *
  * @param[in] animate The enabled value for the highlight animation.
  *
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  */
 EAPI void elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate);
 
@@ -1902,7 +1902,7 @@ EAPI void elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate);
  *
  * @return The enabled value for the highlight animation.
  *
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  */
 EAPI Eina_Bool elm_win_focus_highlight_animate_get(const Elm_Win *obj);
 
@@ -1914,7 +1914,7 @@ EAPI Eina_Bool elm_win_focus_highlight_animate_get(const Elm_Win *obj);
  *
  * @param[in] enabled The enabled value for the highlight.
  *
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  */
 EAPI void elm_win_focus_highlight_enabled_set(Elm_Win *obj, Eina_Bool enabled);
 
@@ -1923,7 +1923,7 @@ EAPI void elm_win_focus_highlight_enabled_set(Elm_Win *obj, Eina_Bool enabled);
  *
  * @return The enabled value for the highlight.
  *
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  */
 EAPI Eina_Bool elm_win_focus_highlight_enabled_get(const Elm_Win *obj);
 
@@ -1935,7 +1935,7 @@ EAPI Eina_Bool elm_win_focus_highlight_enabled_get(const Elm_Win *obj);
  *
  * @param[in] style The style or @c null if none.
  *
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  */
 EAPI Eina_Bool elm_win_focus_highlight_style_set(Elm_Win *obj, const char *style);
 
@@ -1944,6 +1944,6 @@ EAPI Eina_Bool elm_win_focus_highlight_style_set(Elm_Win *obj, const char *style
  *
  * @return The style or @c null if none.
  *
- * @ingroup Elm_Win
+ * @ingroup Elm_Win_Group
  */
 EAPI const char *elm_win_focus_highlight_style_get(const Elm_Win *obj);

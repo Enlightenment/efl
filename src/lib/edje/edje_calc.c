@@ -491,6 +491,25 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *state_name
 }
 
 static int
+_edje_image_set_fill(Edje_Real_Part_Set **eps,
+                     Edje_Image_Directory_Set_Entry *entry,
+                     Edje_Image_Directory_Set *set,
+                     int id)
+{
+   if (eps)
+     {
+        if (!*eps) *eps = calloc(1, sizeof(Edje_Real_Part_Set));
+        if (*eps)
+          {
+             (*eps)->entry = entry;
+             (*eps)->set = set;
+             (*eps)->id = id;
+          }
+     }
+   return entry->id;
+}
+
+static int
 _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
                  Edje_Part_Description_Image *st, Edje_Part_Image_Id *imid)
 {
@@ -517,9 +536,7 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
                {
                   if (((*eps)->entry->size.min.h <= h) &&
                       (h <= (*eps)->entry->size.max.h))
-                    {
-                       return (*eps)->entry->id;
-                    }
+                    return (*eps)->entry->id;
                }
           }
      }
@@ -530,46 +547,24 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps,
      evas_image_max_size_get(evas_object_evas_get(obj), &maxw, &maxh);
    EINA_LIST_FOREACH(set->entries, l, entry)
      {
+        // skip images b
+        if ((entry->size.w > 0) && (entry->size.h > 0) &&
+            ((w > entry->size.w) || (h > entry->size.h)))
+          continue;
         // skip images that exceed max size
         if ((maxw > 0) && (maxh > 0) &&
-            (entry->size.w > 0) && (entry->size.h > 0) &&
-            ((w > entry->size.w) || (h > entry->size.h)))
+            ((entry->size.w > maxw) || (entry->size.h > maxh)))
           continue;
         if ((entry->size.min.w <= w) && (w <= entry->size.max.w))
           {
              if ((entry->size.min.h <= h) && (h <= entry->size.max.h))
-               {
-                  if (eps)
-                    {
-                       if (!*eps) *eps = calloc(1, sizeof(Edje_Real_Part_Set));
-                       if (*eps)
-                         {
-                            (*eps)->entry = entry;
-                            (*eps)->set = set;
-                            (*eps)->id = id;
-                         }
-                    }
-                  return entry->id;
-               }
+               return _edje_image_set_fill(eps, entry, set, id);
           }
      }
-
+   // nothing found so pick first - which shouldbe smallest
    entry = eina_list_data_get(set->entries);
    if (entry)
-     {
-        if (eps)
-          {
-             if (!*eps)
-               *eps = calloc(1, sizeof (Edje_Real_Part_Set));
-             if (*eps)
-               {
-                  (*eps)->entry = entry;
-                  (*eps)->set = set;
-                  (*eps)->id = id;
-               }
-          }
-        return entry->id;
-     }
+     return _edje_image_set_fill(eps, entry, set, id);
 
    return -1;
 }
