@@ -70,6 +70,43 @@ do \
 } \
 while (0)
 
+
+typedef struct _Escape_Value Escape_Value;
+
+struct _Escape_Value
+{
+   char *escape;
+   char *value;
+};
+
+#define ESCAPE_VALUE(e,v) {e,v}
+
+static const Escape_Value escape_strings[] = {
+   ESCAPE_VALUE("&Aacute;", "\xc3\x81"),
+   ESCAPE_VALUE("&Acirc;", "\xc3\x82"),
+   ESCAPE_VALUE("&Aelig;", "\xc3\x86"),
+   ESCAPE_VALUE("&Otilde;", "\xc3\x95"),
+   ESCAPE_VALUE("&Ouml;", "\xc3\x96"),
+   ESCAPE_VALUE("&Thorn;", "\xc3\x9e"),
+   ESCAPE_VALUE("&Uacute;", "\xc3\x9a"),
+   ESCAPE_VALUE("&Ucirc;", "\xc3\x9b"),
+   ESCAPE_VALUE("&rArr;", "\xe2\x87\x92"),
+   ESCAPE_VALUE("&reg;", "\xc2\xae"),
+   ESCAPE_VALUE("&rho;", "\xce\xa1"),
+   ESCAPE_VALUE("&sigma;", "\xce\xa3"),
+   ESCAPE_VALUE("&sum;", "\xe2\x88\x91"),
+   ESCAPE_VALUE("&sup1;", "\xc2\xb9"),
+   ESCAPE_VALUE("&ucirc;", "\xc3\xbb"),
+   ESCAPE_VALUE("&ugrave;", "\xc3\xb9"),
+   ESCAPE_VALUE("&uml;", "\xc2\xa8"),
+   ESCAPE_VALUE("&yen;", "\xc2\xa5"),
+   ESCAPE_VALUE("&yuml;", "\xc3\xbf"),
+   ESCAPE_VALUE("<tab/>", "\t"),
+   ESCAPE_VALUE("<br/>", "\n"),
+   ESCAPE_VALUE("<ps/>", "\xe2\x80\xa9"),    //0x2029
+   ESCAPE_VALUE("&#xfffc;", "\xef\xbf\xbc"), //0xFFFC
+};
+
 EFL_START_TEST(evas_textblock_simple)
 {
    START_TB_TEST();
@@ -3195,7 +3232,7 @@ EFL_START_TEST(evas_textblock_text_getters)
         tmp = evas_textblock_text_markup_to_utf8(tb, "a&nbsp;");
         fail_if(strcmp(tmp, "a\xC2\xA0"));
         tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
-        fail_if(strcmp(tmp2, "a\xC2\xA0"));
+        fail_if(strcmp(tmp2, "a&nbsp;"));
         free(tmp2);
         free(tmp);
 
@@ -3238,7 +3275,7 @@ EFL_START_TEST(evas_textblock_text_getters)
         tmp = evas_textblock_text_markup_to_utf8(NULL, "a&nbsp;");
         fail_if(strcmp(tmp, "a\xC2\xA0"));
         tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
-        fail_if(strcmp(tmp2, "a\xC2\xA0"));
+        fail_if(strcmp(tmp2, "a&nbsp;"));
         free(tmp2);
         free(tmp);
 
@@ -4469,6 +4506,19 @@ do \
 } \
 while (0)
 
+EFL_START_TEST(evas_textblock_utf8_to_markup)
+{
+   size_t len = sizeof(escape_strings) / sizeof(Escape_Value);
+   char * mkup_txt;
+   for(size_t i = 0 ; i < len ; i++)
+     {
+       mkup_txt = evas_textblock_text_utf8_to_markup(NULL, escape_strings[i].value);
+       fail_if(strcmp(escape_strings[i].escape, mkup_txt));
+       free(mkup_txt);
+     }
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_canvas_textblock_simple)
 {
    START_EFL_CANVAS_TEXTBLOCK_TEST();
@@ -5160,6 +5210,7 @@ void evas_test_textblock(TCase *tc)
 #endif
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
+   tcase_add_test(tc, evas_textblock_utf8_to_markup);
    tcase_add_test(tc, efl_canvas_textblock_simple);
    tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_textblock_cursor);

@@ -8570,7 +8570,8 @@ _escaped_char_match(const char *s, int *adv)
    int n_ret = _escaped_value_search(s, list, len);
    if (n_ret != -1)
      {
-        *adv = (int) list[n_ret]->value_len;
+        if (adv)
+          *adv = (int) list[n_ret]->value_len;
         return list[n_ret]->escape;
      }
    else
@@ -8579,7 +8580,8 @@ _escaped_char_match(const char *s, int *adv)
         n_ret = _escaped_value_search(s, list, len);
         if (n_ret != -1)
           {
-             *adv = (int)list[n_ret]->value_len;
+             if (adv)
+               *adv = (int)list[n_ret]->value_len;
              return list[n_ret]->escape;
           }
      }
@@ -8996,6 +8998,7 @@ static void
 _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
 {
    int ch, pos = 0, pos2 = 0;
+   const char * replacement;
 
    for (;;)
      {
@@ -9007,23 +9010,21 @@ _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
            eina_strbuf_append(sbuf, "<br/>");
         else if (ch == _TAB)
            eina_strbuf_append(sbuf, "<tab/>");
-        else if (ch == '<')
-           eina_strbuf_append(sbuf, "&lt;");
-        else if (ch == '>')
-           eina_strbuf_append(sbuf, "&gt;");
-        else if (ch == '&')
-           eina_strbuf_append(sbuf, "&amp;");
-        else if (ch == '"')
-           eina_strbuf_append(sbuf, "&quot;");
-        else if (ch == '\'')
-           eina_strbuf_append(sbuf, "&apos;");
-        else if (ch == _PARAGRAPH_SEPARATOR)
-           eina_strbuf_append(sbuf, "<ps/>");
         else if (ch == _REPLACEMENT_CHAR)
            eina_strbuf_append(sbuf, "&#xfffc;");
-        else if (ch != '\r')
+        else if (ch == _PARAGRAPH_SEPARATOR)
+           eina_strbuf_append(sbuf, "<ps/>");
+        else
           {
-             eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
+             replacement = _escaped_char_match(text + pos, NULL);
+             if (replacement)
+               {
+                  eina_strbuf_append(sbuf, replacement);
+               }
+             else if (ch != '\r')
+               {
+                  eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
+               }
           }
      }
 }
