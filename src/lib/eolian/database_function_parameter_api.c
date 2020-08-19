@@ -5,56 +5,56 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eolian_Parameter_Direction
+EOLIAN_API Eolian_Parameter_Direction
 eolian_parameter_direction_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EOLIAN_PARAMETER_UNKNOWN);
    return param->param_dir;
 }
 
-EAPI const Eolian_Type *
+EOLIAN_API const Eolian_Type *
 eolian_parameter_type_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
    return param->type;
 }
 
-EAPI const Eolian_Expression *
+EOLIAN_API const Eolian_Expression *
 eolian_parameter_default_value_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
    return param->value;
 }
 
-EAPI const Eolian_Documentation *
+EOLIAN_API const Eolian_Documentation *
 eolian_parameter_documentation_get(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, NULL);
    return param->doc;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_parameter_is_optional(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->optional;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_parameter_is_move(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->move;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_parameter_is_by_ref(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->by_ref;
 }
 
-EAPI Eina_Stringshare *
+EOLIAN_API Eina_Stringshare *
 eolian_parameter_c_type_get(const Eolian_Function_Parameter *param_desc,
                             Eina_Bool as_return)
 {

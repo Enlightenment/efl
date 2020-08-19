@@ -10,7 +10,7 @@ _hashlist_free(void *ptr)
    eina_list_free((Eina_List *)ptr);
 }
 
-EAPI Eina_Hash *
+EOLIAN_API Eina_Hash *
 eolian_aux_state_class_children_find(const Eolian_State *state)
 {
    if (!state)
@@ -105,7 +105,7 @@ _callables_find(const Eolian_Class *cl, Eina_List **funcs,
    return total;
 }
 
-EAPI size_t
+EOLIAN_API size_t
 eolian_aux_class_callables_get(const Eolian_Class *klass,
                                Eina_List **funcs, Eina_List **events,
                                size_t *ownfuncs, size_t *ownevs)
@@ -178,7 +178,7 @@ _all_impls_find(Eina_List **l, const Eolian_Class *cl,
      _all_impls_find(l, icl, func, got, children);
 }
 
-EAPI Eina_List *
+EOLIAN_API Eina_List *
 eolian_aux_function_all_implements_get(const Eolian_Function *func,
                                        Eina_Hash *class_children)
 {
@@ -239,7 +239,7 @@ _parent_impl_find(const char *fulln, const Eolian_Class *cl)
    return NULL;
 }
 
-EAPI const Eolian_Implement *
+EOLIAN_API const Eolian_Implement *
 eolian_aux_implement_parent_get(const Eolian_Implement *impl)
 {
    return _parent_impl_find(eolian_implement_name_get(impl),
@@ -262,7 +262,7 @@ _parent_documentation_find(const Eolian_Implement *impl,
    return pdoc;
 }
 
-EAPI const Eolian_Documentation *
+EOLIAN_API const Eolian_Documentation *
 eolian_aux_implement_documentation_get(const Eolian_Implement *impl,
                                     Eolian_Function_Type ftype)
 {
@@ -286,7 +286,7 @@ eolian_aux_implement_documentation_get(const Eolian_Implement *impl,
    return _parent_documentation_find(impl, ftype);
 }
 
-EAPI const Eolian_Documentation *
+EOLIAN_API const Eolian_Documentation *
 eolian_aux_implement_documentation_fallback_get(const Eolian_Implement *impl)
 {
    Eina_Bool ig = eolian_implement_is_prop_get(impl),

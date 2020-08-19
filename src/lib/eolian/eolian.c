@@ -9,7 +9,7 @@ static int _eolian_init_counter = 0;
 int _eolian_log_dom = -1;
 Eina_Prefix *_eolian_prefix = NULL;
 
-EAPI int eolian_init(void)
+EOLIAN_API int eolian_init(void)
 {
    const char *log_dom = "eolian";
    if (_eolian_init_counter > 0) return ++_eolian_init_counter;
@@ -40,7 +40,7 @@ EAPI int eolian_init(void)
    return ++_eolian_init_counter;
 }
 
-EAPI int eolian_shutdown(void)
+EOLIAN_API int eolian_shutdown(void)
 {
    if (_eolian_init_counter <= 0)
      {
@@ -68,7 +68,7 @@ EAPI int eolian_shutdown(void)
    return _eolian_init_counter;
 }
 
-EAPI unsigned short eolian_file_format_version_get(void)
+EOLIAN_API unsigned short eolian_file_format_version_get(void)
 {
    return EOLIAN_FILE_FORMAT_VERSION;
 }

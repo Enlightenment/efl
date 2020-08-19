@@ -18,49 +18,49 @@ database_object_add(Eolian_Unit *unit, const Eolian_Object *obj)
                  ((Eina_List *)eina_hash_find(unit->state->staging.objects_f, obj->file), obj));
 }
 
-EAPI Eolian_Object_Type
+EOLIAN_API Eolian_Object_Type
 eolian_object_type_get(const Eolian_Object *obj)
 {
    if (!obj) return EOLIAN_OBJECT_UNKNOWN;
    return obj->type;
 }
 
-EAPI const Eolian_Unit *
+EOLIAN_API const Eolian_Unit *
 eolian_object_unit_get(const Eolian_Object *obj)
 {
    if (!obj) return NULL;
    return obj->unit;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_object_file_get(const Eolian_Object *obj)
 {
    if (!obj) return NULL;
    return obj->file;
 }
 
-EAPI int
+EOLIAN_API int
 eolian_object_line_get(const Eolian_Object *obj)
 {
    if (!obj) return 0;
    return obj->line;
 }
 
-EAPI int
+EOLIAN_API int
 eolian_object_column_get(const Eolian_Object *obj)
 {
    if (!obj) return 0;
    return obj->column;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_object_name_get(const Eolian_Object *obj)
 {
    if (!obj) return NULL;
    return obj->name;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_object_c_name_get(const Eolian_Object *obj)
 {
    if (!obj) return NULL;
@@ -95,7 +95,7 @@ _nmsp_container_get(Eina_Iterator *it EINA_UNUSED)
    return NULL;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_object_short_name_get(const Eolian_Object *obj)
 {
    if (!obj || !obj->name) return NULL;
@@ -105,7 +105,7 @@ eolian_object_short_name_get(const Eolian_Object *obj)
    return obj->name;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_object_namespaces_get(const Eolian_Object *obj)
 {
    if (!obj || !obj->name || !strchr(obj->name, '.')) return NULL;
@@ -126,7 +126,7 @@ eolian_object_namespaces_get(const Eolian_Object *obj)
    return &it->itr;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_object_is_beta(const Eolian_Object *obj)
 {
    if (!obj) return EINA_FALSE;
@@ -143,28 +143,28 @@ void database_doc_del(Eolian_Documentation *doc)
    free(doc);
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_documentation_summary_get(const Eolian_Documentation *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
    return doc->summary;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_documentation_description_get(const Eolian_Documentation *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
    return doc->description;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_documentation_since_get(const Eolian_Documentation *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
    return doc->since;
 }
 
-EAPI Eina_List *
+EOLIAN_API Eina_List *
 eolian_documentation_string_split(const char *doc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(doc, NULL);
@@ -259,7 +259,7 @@ _get_ref_token(const char *doc, const char **doc_end)
    return EOLIAN_DOC_TOKEN_REF;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_documentation_tokenize(const char *doc, Eolian_Doc_Token *ret)
 {
    /* token is used for statekeeping, so force it */
@@ -393,7 +393,7 @@ mloop:
    return ret->text_end;
 }
 
-EAPI void
+EOLIAN_API void
 eolian_doc_token_init(Eolian_Doc_Token *tok)
 {
    if (!tok)
@@ -402,14 +402,14 @@ eolian_doc_token_init(Eolian_Doc_Token *tok)
    tok->text = tok->text_end = NULL;
 }
 
-EAPI Eolian_Doc_Token_Type
+EOLIAN_API Eolian_Doc_Token_Type
 eolian_doc_token_type_get(const Eolian_Doc_Token *tok)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tok, EOLIAN_DOC_TOKEN_UNKNOWN);
    return tok->type;
 }
 
-EAPI char *
+EOLIAN_API char *
 eolian_doc_token_text_get(const Eolian_Doc_Token *tok)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tok, NULL);
@@ -574,7 +574,7 @@ database_doc_token_ref_resolve(const Eolian_Doc_Token *tok,
    return EOLIAN_OBJECT_FUNCTION;
 }
 
-EAPI Eolian_Object_Type
+EOLIAN_API Eolian_Object_Type
 eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_State *state,
                              const Eolian_Object **data, const Eolian_Object **data2)
 {
@@ -704,7 +704,7 @@ _default_error_cb(const Eolian_Object *obj, const char *msg, void *data EINA_UNU
      _eolian_log(msg);
 }
 
-EAPI Eolian_State *
+EOLIAN_API Eolian_State *
 eolian_state_new(void)
 {
    Eolian_State *state = calloc(1, sizeof(Eolian_State));
@@ -733,7 +733,7 @@ eolian_state_new(void)
    return state;
 }
 
-EAPI void
+EOLIAN_API void
 eolian_state_free(Eolian_State *state)
 {
    if (!state)
@@ -750,7 +750,7 @@ eolian_state_free(Eolian_State *state)
    free(state);
 }
 
-EAPI Eolian_Panic_Cb
+EOLIAN_API Eolian_Panic_Cb
 eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb)
 {
    Eolian_Panic_Cb old_cb = state->panic;
@@ -758,7 +758,7 @@ eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb)
    return old_cb;
 }
 
-EAPI Eolian_Error_Cb
+EOLIAN_API Eolian_Error_Cb
 eolian_state_error_cb_set(Eolian_State *state, Eolian_Error_Cb cb)
 {
    Eolian_Error_Cb old_cb = state->error;
@@ -766,7 +766,7 @@ eolian_state_error_cb_set(Eolian_State *state, Eolian_Error_Cb cb)
    return old_cb;
 }
 
-EAPI void *
+EOLIAN_API void *
 eolian_state_error_data_set(Eolian_State *state, void *data)
 {
    void *old_data = state->error_data;
@@ -822,7 +822,7 @@ _scan_cb(const char *name, const char *path, void *data)
      eina_hash_add(fh, name, newpath);
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_state_directory_add(Eolian_State *state, const char *dir)
 {
    if (!dir || !state) return EINA_FALSE;
@@ -830,7 +830,7 @@ eolian_state_directory_add(Eolian_State *state, const char *dir)
    return eina_file_dir_list(dir, EINA_TRUE, _scan_cb, &sst) && sst.succ;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_state_system_directory_add(Eolian_State *state)
 {
    Eina_Bool ret;
@@ -842,28 +842,28 @@ eolian_state_system_directory_add(Eolian_State *state)
    return ret;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_eot_files_get(const Eolian_State *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_key_new(state->filenames_eot);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_eo_files_get(const Eolian_State *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_key_new(state->filenames_eo);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_eot_file_paths_get(const Eolian_State *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_data_new(state->filenames_eot);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_eo_file_paths_get(const Eolian_State *state)
 {
    if (!state) return NULL;
@@ -1074,7 +1074,7 @@ _merge_staging(Eolian_State *state)
    _state_clean(state);
 }
 
-EAPI const Eolian_Unit *
+EOLIAN_API const Eolian_Unit *
 eolian_state_file_parse(Eolian_State *state, const char *filename)
 {
    if (!state)
@@ -1093,7 +1093,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filename)
    return ret;
 }
 
-EAPI const Eolian_Unit *
+EOLIAN_API const Eolian_Unit *
 eolian_state_file_path_parse(Eolian_State *state, const char *filepath)
 {
    const Eolian_Unit *unit;
@@ -1146,7 +1146,7 @@ static Eina_Bool _tfile_parse(const Eina_Hash *hash EINA_UNUSED, const void *key
    return pd->ret;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_state_all_eot_files_parse(Eolian_State *state)
 {
    Parse_Data pd = { state, EINA_TRUE };
@@ -1177,7 +1177,7 @@ static Eina_Bool _file_parse(const Eina_Hash *hash EINA_UNUSED, const void *key 
    return pd->ret;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_state_all_eo_files_parse(Eolian_State *state)
 {
    Parse_Data pd = { state, EINA_TRUE };
@@ -1196,13 +1196,13 @@ eolian_state_all_eo_files_parse(Eolian_State *state)
    return pd.ret;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_state_check(const Eolian_State *state)
 {
    return database_check(state);
 }
 
-EAPI const Eolian_Unit *
+EOLIAN_API const Eolian_Unit *
 eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1212,14 +1212,14 @@ eolian_state_unit_by_file_get(const Eolian_State *state, const char *file_name)
    return unit;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_units_get(const Eolian_State *state)
 {
    if (!state) return NULL;
    return eina_hash_iterator_data_new(state->main.units);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1230,7 +1230,7 @@ eolian_state_objects_by_file_get(const Eolian_State *state, const char *file_nam
    return eina_list_iterator_new(l);
 }
 
-EAPI const Eolian_Class *
+EOLIAN_API const Eolian_Class *
 eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1240,7 +1240,7 @@ eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name)
    return cl;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1251,7 +1251,7 @@ eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_n
    return eina_list_iterator_new(l);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_errors_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1262,7 +1262,7 @@ eolian_state_errors_by_file_get(const Eolian_State *state, const char *file_name
    return eina_list_iterator_new(l);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1273,7 +1273,7 @@ eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_nam
    return eina_list_iterator_new(l);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_structs_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1284,7 +1284,7 @@ eolian_state_structs_by_file_get(const Eolian_State *state, const char *file_nam
    return eina_list_iterator_new(l);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1295,28 +1295,28 @@ eolian_state_enums_by_file_get(const Eolian_State *state, const char *file_name)
    return eina_list_iterator_new(l);
 }
 
-EAPI const Eolian_State *
+EOLIAN_API const Eolian_State *
 eolian_unit_state_get(const Eolian_Unit *unit)
 {
    if (!unit) return NULL;
    return unit->state;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_children_get(const Eolian_Unit *unit)
 {
    if (!unit) return NULL;
    return eina_hash_iterator_data_new(unit->children);
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_unit_file_get(const Eolian_Unit *unit)
 {
    if (!unit) return NULL;
    return unit->file;
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_unit_file_path_get(const Eolian_Unit *unit)
 {
    if (!unit || !unit->file) return NULL;
@@ -1326,14 +1326,14 @@ eolian_unit_file_path_get(const Eolian_Unit *unit)
      : unit->state->filenames_eot, unit->file);
 }
 
-EAPI unsigned short
+EOLIAN_API unsigned short
 eolian_unit_version_get(const Eolian_Unit *unit)
 {
    if (!unit) return 0;
    return unit->version;
 }
 
-EAPI const Eolian_Object *
+EOLIAN_API const Eolian_Object *
 eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
@@ -1343,12 +1343,12 @@ eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name)
    return o;
 }
 
-EAPI Eina_Iterator *eolian_unit_objects_get(const Eolian_Unit *unit)
+EOLIAN_API Eina_Iterator *eolian_unit_objects_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->objects) : NULL);
 }
 
-EAPI const Eolian_Class *
+EOLIAN_API const Eolian_Class *
 eolian_unit_class_by_name_get(const Eolian_Unit *unit, const char *class_name)
 {
    if (!unit) return NULL;
@@ -1358,13 +1358,13 @@ eolian_unit_class_by_name_get(const Eolian_Unit *unit, const char *class_name)
    return cl;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_classes_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->classes) : NULL);
 }
 
-EAPI const Eolian_Constant *
+EOLIAN_API const Eolian_Constant *
 eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
@@ -1374,7 +1374,7 @@ eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name)
    return v;
 }
 
-EAPI const Eolian_Error *
+EOLIAN_API const Eolian_Error *
 eolian_unit_error_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
@@ -1384,19 +1384,19 @@ eolian_unit_error_by_name_get(const Eolian_Unit *unit, const char *name)
    return v;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_constants_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->constants) : NULL);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_errors_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->errors) : NULL);
 }
 
-EAPI const Eolian_Typedecl *
+EOLIAN_API const Eolian_Typedecl *
 eolian_unit_alias_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
@@ -1407,7 +1407,7 @@ eolian_unit_alias_by_name_get(const Eolian_Unit *unit, const char *name)
    return tp;
 }
 
-EAPI const Eolian_Typedecl *
+EOLIAN_API const Eolian_Typedecl *
 eolian_unit_struct_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
@@ -1418,7 +1418,7 @@ eolian_unit_struct_by_name_get(const Eolian_Unit *unit, const char *name)
    return tp;
 }
 
-EAPI const Eolian_Typedecl *
+EOLIAN_API const Eolian_Typedecl *
 eolian_unit_enum_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
@@ -1429,39 +1429,39 @@ eolian_unit_enum_by_name_get(const Eolian_Unit *unit, const char *name)
    return tp;
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_aliases_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->aliases) : NULL);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_structs_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->structs) : NULL);
 }
 
-EAPI Eina_Iterator *
+EOLIAN_API Eina_Iterator *
 eolian_unit_enums_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->enums) : NULL);
 }
 
-EAPI const char *
+EOLIAN_API const char *
 eolian_error_message_get(const Eolian_Error *err)
 {
    if (!err) return NULL;
    return err->msg;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_error_is_extern(const Eolian_Error *err)
 {
    if (!err) return EINA_FALSE;
    return err->is_extern;
 }
 
-EAPI const Eolian_Documentation *
+EOLIAN_API const Eolian_Documentation *
 eolian_error_documentation_get(const Eolian_Error *err)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(err, NULL);
