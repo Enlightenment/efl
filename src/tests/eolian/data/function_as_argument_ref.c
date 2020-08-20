@@ -1,11 +1,11 @@
 
 void _function_as_argument_set_cb(Eo *obj, Function_As_Argument_Data *pd, void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
 
-EOAPI EFL_VOID_FUNC_BODYV(function_as_argument_set_cb, EFL_FUNC_CALL(cb_data, cb, cb_free_cb), void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV(function_as_argument_set_cb, EFL_FUNC_CALL(cb_data, cb, cb_free_cb), void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
 
 char *_function_as_argument_call_cb(Eo *obj, Function_As_Argument_Data *pd, int a, double b);
 
-EOAPI EFL_FUNC_BODYV(function_as_argument_call_cb, char *, NULL, EFL_FUNC_CALL(a, b), int a, double b);
+EAPI EAPI_WEAK EFL_FUNC_BODYV(function_as_argument_call_cb, char *, NULL, EFL_FUNC_CALL(a, b), int a, double b);
 
 static Eina_Bool
 _function_as_argument_class_initializer(Efl_Class *klass)

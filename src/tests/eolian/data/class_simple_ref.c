@@ -17,7 +17,7 @@ __eolian_class_simple_a_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE /* true */, EFL_FUNC_CALL(value), int value);
+EAPI EAPI_WEAK EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE /* true */, EFL_FUNC_CALL(value), int value);
 
 int _class_simple_a_get(const Eo *obj, Evas_Simple_Data *pd);
 
@@ -29,7 +29,7 @@ __eolian_class_simple_a_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(efl_canvas_object_simple_a_get, int, 100);
+EAPI EAPI_WEAK EFL_FUNC_BODY_CONST(efl_canvas_object_simple_a_get, int, 100);
 
 char *_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, char *b, double *c, int *d);
 
@@ -39,7 +39,7 @@ static char *__eolian_class_simple_foo(Eo *obj, Evas_Simple_Data *pd, int a, cha
    return _class_simple_foo(obj, pd, a, b, c, d);
 }
 
-EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_foo, char *, NULL /* null */, EFL_FUNC_CALL(a, b, c, d), int a, char *b, double *c, int *d);
+EAPI EAPI_WEAK EFL_FUNC_BODYV(efl_canvas_object_simple_foo, char *, NULL /* null */, EFL_FUNC_CALL(a, b, c, d), int a, char *b, double *c, int *d);
 
 static Eina_Bool
 _class_simple_class_initializer(Efl_Class *klass)

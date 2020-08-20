@@ -1,5 +1,10 @@
 #include <stdlib.h>
-#include <unistd.h>
+#ifndef _WIN32
+# include <unistd.h>
+#else
+# include <evil_private.h>
+#endif
+#include <getopt.h>
 
 #include "main.h"
 #include "types.h"
@@ -7,6 +12,7 @@
 #include "sources.h"
 
 int _eolian_gen_log_dom = -1;
+char* _eolian_api_symbol;
 
 enum
 {
@@ -44,6 +50,7 @@ _print_usage(const char *progn, FILE *outf)
                  "  -o type:name  specify a particular output filename\n"
                  "  -h            print this message and exit\n"
                  "  -v            print version and exit\n"
+                 "  -e api symbol string to be used for import/export symbol"
                  "\n"
                  "Available types:\n"
                  "  h: C header file (.eo.h/.eot.h)\n"
@@ -494,6 +501,7 @@ main(int argc, char **argv)
      NULL, NULL, NULL, NULL, NULL, NULL
    };
    char *basen = NULL;
+   _eolian_api_symbol = strdup("EAPI");
    Eina_List *includes = NULL;
 
    eina_init();
@@ -514,7 +522,7 @@ main(int argc, char **argv)
    int gen_what = 0;
    Eina_Bool scan_system = EINA_TRUE;
 
-   for (int opt; (opt = getopt(argc, argv, "SI:g:o:hv")) != -1;)
+   for (int opt; (opt = getopt(argc, argv, "SI:g:o:hve:")) != -1;)
      switch (opt)
        {
         case 0:
@@ -525,6 +533,10 @@ main(int argc, char **argv)
         case 'I':
           /* just a pointer to argv contents, so it persists */
           includes = eina_list_append(includes, optarg);
+          break;
+        case 'e':
+          free(_eolian_api_symbol);
+          _eolian_api_symbol = strdup(optarg);
           break;
         case 'g':
           for (const char *wstr = optarg; *wstr; ++wstr)

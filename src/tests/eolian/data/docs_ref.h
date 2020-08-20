@@ -99,7 +99,7 @@ typedef struct _Opaque Opaque;
  */
 #define EO_DOCS_CLASS eo_docs_class_get()
 
-EWAPI const Efl_Class *eo_docs_class_get(void) EINA_CONST;
+EAPI EAPI_WEAK const Efl_Class *eo_docs_class_get(void) EINA_CONST;
 
 /**
  * @brief Method documentation.
@@ -115,7 +115,7 @@ EWAPI const Efl_Class *eo_docs_class_get(void) EINA_CONST;
  *
  * @ingroup Eo_Docs
  */
-EOAPI int eo_docs_meth(Eo *obj, int a, float *b, long *c);
+EAPI EAPI_WEAK int eo_docs_meth(Eo *obj, int a, float *b, long *c);
 
 /**
  * @brief Property common documentation.
@@ -129,7 +129,7 @@ EOAPI int eo_docs_meth(Eo *obj, int a, float *b, long *c);
  *
  * @ingroup Eo_Docs
  */
-EOAPI void eo_docs_prop_set(Eo *obj, int val);
+EAPI EAPI_WEAK void eo_docs_prop_set(Eo *obj, int val);
 
 /**
  * @brief Property common documentation.
@@ -144,9 +144,9 @@ EOAPI void eo_docs_prop_set(Eo *obj, int val);
  *
  * @ingroup Eo_Docs
  */
-EOAPI int eo_docs_prop_get(const Eo *obj);
+EAPI EAPI_WEAK int eo_docs_prop_get(const Eo *obj);
 
-EOAPI void eo_docs_no_doc_meth(Eo *obj);
+EAPI EAPI_WEAK void eo_docs_no_doc_meth(Eo *obj);
 
 /** No description supplied.
  *
@@ -154,9 +154,9 @@ EOAPI void eo_docs_no_doc_meth(Eo *obj);
  *
  * @ingroup Eo_Docs
  */
-EOAPI void eo_docs_doc_with_empty_doc(Eo *obj);
+EAPI EAPI_WEAK void eo_docs_doc_with_empty_doc(Eo *obj);
 
-EWAPI extern const Efl_Event_Description _EO_DOCS_EVENT_CLICKED;
+EAPI EAPI_WEAK extern const Efl_Event_Description _EO_DOCS_EVENT_CLICKED;
 
 /** Event docs.
  *
