@@ -40,6 +40,10 @@
 #endif
 #include <fcntl.h>
 
+#if defined(__linux__)
+# include <sys/syscall.h>
+#endif
+
 #ifdef HAVE_SYS_RESOURCE_H
 # include <sys/resource.h>
 #endif
@@ -1286,7 +1290,10 @@ typedef struct
    char           d_name[4096];
 } Dirent;
 #elif defined(__linux__)
-# define do_getdents(fd, buf, size) getdents64(fd, buf, size)
+# define do_getdents(fd, buf, size) syscall(SYS_getdents64, fd, buf, size)
+// getdents64 added un glibc 2.30 ... so use raw syscall - will work
+// from some linux 2.4 on... so ... i think that's ok. :)
+//# define do_getdents(fd, buf, size) getdents64(fd, buf, size)
 typedef struct
 {
    ino64_t        d_ino;
