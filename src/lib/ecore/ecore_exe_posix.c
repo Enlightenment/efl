@@ -300,6 +300,45 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
       }
       else if (pid == 0) /* child */
       {
+         sigset_t newset;
+
+         sigemptyset(&newset);
+         sigaddset(&newset, SIGPIPE);
+         sigaddset(&newset, SIGALRM);
+         sigaddset(&newset, SIGCHLD);
+         sigaddset(&newset, SIGUSR1);
+         sigaddset(&newset, SIGUSR2);
+         sigaddset(&newset, SIGHUP);
+         sigaddset(&newset, SIGQUIT);
+         sigaddset(&newset, SIGINT);
+         sigaddset(&newset, SIGTERM);
+         sigaddset(&newset, SIGBUS);
+         sigaddset(&newset, SIGCONT);
+         sigaddset(&newset, SIGWINCH);
+#ifdef SIGEMT
+         sigaddset(&newset, SIGEMT);
+#endif
+#ifdef SIGIO
+         sigaddset(&newset, SIGIO);
+#endif
+#ifdef SIGTSTP
+         sigaddset(&newset, SIGTSTP);
+#endif
+#ifdef SIGTTIN
+         sigaddset(&newset, SIGTTIN);
+#endif
+#ifdef SIGTTOU
+         sigaddset(&newset, SIGTTOU);
+#endif
+#ifdef SIGVTALRM
+         sigaddset(&newset, SIGVTALRM);
+#endif
+#ifdef SIGPWR
+         sigaddset(&newset, SIGPWR);
+#endif
+         // block all those nasty signals we don't want messing with things
+         // in signal handlers while we go from fork to exec in the child
+         pthread_sigmask(SIG_BLOCK, &newset, NULL);
 #ifdef HAVE_SYSTEMD
          char **env = NULL, **e;
 
@@ -326,16 +365,16 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
            }
 #endif
          if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
-         {
+           {
 #ifdef PRIO_PROCESS
-            if ((run_pri >= -20) && (run_pri <= 19))
-              setpriority(PRIO_PROCESS, 0, run_pri);
+              if ((run_pri >= -20) && (run_pri <= 19))
+                setpriority(PRIO_PROCESS, 0, run_pri);
 #else
 #warning "Your OS/libc does not provide PRIO_PROCESS (and possibly setpriority())"
 #warning "This is a POSIX-1.2001 standard and it is highly encouraged that you"
 #warning "Have support for this"
 #endif
-         }
+           }
          if (ok && (flags & ECORE_EXE_ISOLATE_IO))
            {
               int devnull;

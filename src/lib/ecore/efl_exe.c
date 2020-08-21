@@ -467,6 +467,45 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      }
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.
+   sigset_t newset;
+
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+   sigaddset(&newset, SIGBUS);
+   sigaddset(&newset, SIGCONT);
+   sigaddset(&newset, SIGWINCH);
+# ifdef SIGEMT
+   sigaddset(&newset, SIGEMT);
+# endif
+# ifdef SIGIO
+   sigaddset(&newset, SIGIO);
+# endif
+# ifdef SIGTSTP
+   sigaddset(&newset, SIGTSTP);
+# endif
+# ifdef SIGTTIN
+   sigaddset(&newset, SIGTTIN);
+# endif
+# ifdef SIGTTOU
+   sigaddset(&newset, SIGTTOU);
+# endif
+# ifdef SIGVTALRM
+   sigaddset(&newset, SIGVTALRM);
+# endif
+# ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+# endif
+   // block all those nasty signals we don't want messing with things
+   // in signal handlers while we go from fork to exec in the child
+   pthread_sigmask(SIG_BLOCK, &newset, NULL);
 
    if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[1]);
    if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[0]);
@@ -523,7 +562,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
         close(devnull);
      }
 
-   if (!tdl) exit(1);
+   if (!tdl) _exit(1);
 
    // clear systemd notify socket... only relevant for systemd world,
    // otherwise shouldn't be trouble
@@ -599,8 +638,8 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
    // we couldn't exec... uh oh. HAAAAAAAALP!
    if ((errno == EACCES)  || (errno == EINVAL) || (errno == ELOOP) ||
        (errno == ENOEXEC) || (errno == ENOMEM))
-     exit(126);
-   exit(127);
+     _exit(126);
+   _exit(127);
    return EINA_FALSE;
 #endif
 }
