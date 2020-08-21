@@ -1315,6 +1315,9 @@ eina_file_close_from(int fd, int *except_fd)
    ssize_t pos, ret;
    Eina_Bool do_read;
 
+   // note - this api is EXPECTED to be called in between a fork() and exec()
+   // when no threads are running. if you use this outside that context then
+   // it may not work as intended and may miss some fd's etc.
    dirfd = open("/proc/self/fd", O_RDONLY | O_DIRECTORY);
    if (dirfd < 0) dirfd = open("/dev/fd", O_RDONLY | O_DIRECTORY);
    if (dirfd >= 0)
@@ -1384,6 +1387,11 @@ skip2:
                   if (clo < num_closes) closes[clo] = num;
                   clo++;
                }
+             // in case we somehow don't fill up all of closes in 2nd pass
+             // (this shouldn't happen as no threads are running and we
+             // do nothing to modify the fd set between 2st and 2nd pass).
+             // set rest num_closes to clo so we don't close invalid values
+             num_closes = clo;
           }
         close(dirfd);
         // now go close all those fd's - some may be invalide like the dir
