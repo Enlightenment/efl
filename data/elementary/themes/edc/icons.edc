@@ -102,7 +102,6 @@
    ICON("enlightenment/wallpaper_scale_aspect_in", "i-fill-within")
    ICON("enlightenment/wallpaper_scale_aspect_out", "i-fill-fill")
    ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
-   ICON("bookmark-new", "i-favorite")
    ICON("configure", "i-gear")
    ICON("document-open", "i-folder-open")
    ICON("document-properties", "i-file-properties")
@@ -110,6 +109,7 @@
    ICON("folder-new", "i-folder")
    ICON("security-high", "i-shield-up")
    ICON("preferences-toolbar", "i-toolbar")
+   ICON("network-website", "i-globe")
 #undef ICON
 
 // mono color default fg color icons
@@ -148,6 +148,8 @@
    ICON("edit-copy", "i-copy")
    ICON("edit-cut", "i-cut")
    ICON("edit-paste", "i-paste")
+   ICON("edit-swap", "i-swap")
+   ICON("edit-select-all", "i-select-all")
    ICON("transform-move", "i-move")
    ICON("transform-scale", "i-resize")
    ICON("add", "i-plus")
@@ -155,6 +157,13 @@
    ICON("view-sort", "i-sort")
    ICON("view-inherit", "i-win-nest")
    ICON("access", "i-stick-man")
+   ICON("window-close", "i-close")
+   ICON("bookmark-new", "i-bookmark-new")
+   ICON("view-hidden-files", "i-view-hidden-files")
+   ICON("dialog-ok-apply", "i-check")
+   ICON("media-eject", "i-eject")
+   ICON("start-here", "i-enlightenment")
+   ICON("everything-clipboard", "i-paste")
 
    ICON("preferences-position-top-left", "i-shelf-tl")
    ICON("preferences-position-top", "i-shelf-tc")

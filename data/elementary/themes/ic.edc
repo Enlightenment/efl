@@ -38,7 +38,9 @@ I060("i-check", "check")
 I060("i-radio", "radio")
 I060("i-copy", "copy")
 I060("i-cut", "cut")
+I060("i-swap", "swap")
 I060("i-paste", "paste")
+I060("i-select-all", "select-all")
 I060("i-properties", "properties")
 I060("i-stacking", "stacking")
 I060("i-stacking-top", "stacking-top")
@@ -72,6 +74,9 @@ I060("i-sort", "sort")
 I060("i-win-nest", "win-nest")
 I060("i-stick-man", "stick-man")
 I060("i-wifi", "wifi")
+I060("i-bookmark-new", "bookmark-new")
+I060("i-view-hidden-files", "view-hidden-files")
+I060("i-eject", "eject")
 // exclam
 // more
 // chat
@@ -225,6 +230,7 @@ I160("i-fill-within", "fill-within")
 I160("i-fill-pan", "fill-pan")
 I160("i-shield-up", "shield-up")
 I160("i-toolbar", "toolbar")
+I160("i-globe", "globe")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
@@ -265,12 +271,6 @@ I160("i-unknown", "unknown")
       }                                               \
    }
 # define ICONMIME(NAME, FILE, SIZE) ICON("mimetypes/"NAME, FILE, SIZE)
-   ICON("bookmark-new","icon_add_fav.png",64)                      // "widget/add_fav"
-   ICON("edit-swap","icon_swap.png",64)                     // *** // "widget/swap"
-   ICON("edit-select-all","icon_efm_select.png",16)                // EFMBUTTON("select"
-   ICON("view-hidden-files","icon_efm_view.png",16)         // *** // EFMBUTTON("hidden_files"
-   ICON("window-close","icon_close.png",64)                        // "widget/close"
-   ICON("dialog-ok-apply","icon_check.png",64)                     // "enlightenment/check"
    ICON("preferences-desktop-color","icon_colors.png",64)                     // "enlightenment/colors"
    ICON("preferences-desktop-pointer","icon_mouse.png",64)             // *** // "enlightenment/mouse"
    ICON("preferences-desktop-shelf-bottom-desk","icon_shelf_bottom_desk.png",64)// *** // "enlightenment/shelf_bottom_desk"
@@ -302,10 +302,7 @@ I160("i-unknown", "unknown")
    ICON("modules-system","icon_gadget.png",64)
    ICON("modules-look","icon_look.png",64)
    ICON("modules-core","logo_white_128.png",64)
-   ICON("start-here","logo_white_128.png",128)                     // "enlightenment/e"
    ICON("network-website","icon_globe.png",64)                     // "enlightenment/website"
-   ICON("media-eject","icon_efm_eject.png", 64)
-   ICON("everything-clipboard","icon_evry_clipboard.png", 256)
 
    ICONMIME("inode/chardevice","icon_efm_file.png",128)
    ICONMIME("inode/blockdevice","icon_efm_file.png",128)
