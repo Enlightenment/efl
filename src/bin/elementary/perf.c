@@ -203,7 +203,7 @@ _spincpu_up_idler(void *data EINA_UNUSED)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-EAPI int
+int
 elm_main(int argc, char **argv)
 {
    int i, j;
