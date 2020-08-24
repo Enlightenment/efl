@@ -357,8 +357,10 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
    return EINA_FALSE;
 #else
    Eo *loop;
-   Efl_Task_Data *tdl, *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   Efl_Task_Data *tdl = NULL, *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   Eina_Iterator *itr = NULL, *itr2 = NULL;
    const char *cmd;
+   char **newenv, **env = NULL, **e;
    int devnull;
    int pipe_stdin[2];
    int pipe_stdout[2];
@@ -428,9 +430,17 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      }
 
    _ecore_signal_pid_lock();
+   // get these before the fork to avoid heap malloc deadlocks
+   loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   if (loop) tdl = efl_data_scope_get(loop, EFL_TASK_CLASS);
+   if (pd->env) itr = efl_core_env_content_get(pd->env);
+   if (pd->env) itr2 = efl_core_env_content_get(pd->env);
    pd->pid = fork();
+
    if (pd->pid != 0)
      {
+        if (itr) eina_iterator_free(itr);
+        if (itr2) eina_iterator_free(itr2);
         // parent process is here inside this if block
         if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[0]);
         if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[1]);
@@ -457,6 +467,45 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      }
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.
+   sigset_t newset;
+
+   sigemptyset(&newset);
+   sigaddset(&newset, SIGPIPE);
+   sigaddset(&newset, SIGALRM);
+   sigaddset(&newset, SIGCHLD);
+   sigaddset(&newset, SIGUSR1);
+   sigaddset(&newset, SIGUSR2);
+   sigaddset(&newset, SIGHUP);
+   sigaddset(&newset, SIGQUIT);
+   sigaddset(&newset, SIGINT);
+   sigaddset(&newset, SIGTERM);
+   sigaddset(&newset, SIGBUS);
+   sigaddset(&newset, SIGCONT);
+   sigaddset(&newset, SIGWINCH);
+# ifdef SIGEMT
+   sigaddset(&newset, SIGEMT);
+# endif
+# ifdef SIGIO
+   sigaddset(&newset, SIGIO);
+# endif
+# ifdef SIGTSTP
+   sigaddset(&newset, SIGTSTP);
+# endif
+# ifdef SIGTTIN
+   sigaddset(&newset, SIGTTIN);
+# endif
+# ifdef SIGTTOU
+   sigaddset(&newset, SIGTTOU);
+# endif
+# ifdef SIGVTALRM
+   sigaddset(&newset, SIGVTALRM);
+# endif
+# ifdef SIGPWR
+   sigaddset(&newset, SIGPWR);
+# endif
+   // block all those nasty signals we don't want messing with things
+   // in signal handlers while we go from fork to exec in the child
+   pthread_sigmask(SIG_BLOCK, &newset, NULL);
 
    if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[1]);
    if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[0]);
@@ -513,65 +562,84 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
         close(devnull);
      }
 
-   if (!(loop = efl_provider_find(obj, EFL_LOOP_CLASS))) exit(1);
-
-   if (!(tdl = efl_data_scope_get(loop, EFL_TASK_CLASS))) exit(1);
+   if (!tdl) _exit(1);
 
    // clear systemd notify socket... only relevant for systemd world,
    // otherwise shouldn't be trouble
-   putenv("NOTIFY_SOCKET=");
+# if defined (__FreeBSD__) || defined (__OpenBSD__)
+   _dl_environ = dlsym(NULL, "environ");
+   if (_dl_environ) env = *_dl_environ;
+# else
+   env = environ;
+# endif
+   if (env)
+     {
+        Eina_Bool shuffle = EINA_FALSE;
+
+        for (e = env; *e; e++)
+          {
+             if (!shuffle)
+               {
+                  if (!strncmp(e[0], "NOTIFY_SOCKET=", 14))
+                    shuffle = EINA_TRUE;
+               }
+             if (shuffle) e[0] = e[1];
+          }
+     }
 
    // actually setenv the env object (clear what was there before so it is
    // the only env there)
    if (pd->env)
      {
-        Eina_Iterator *itr;
         const char *key;
+        int count = 0, i = 0;
 
-# ifdef HAVE_CLEARENV
-        clearenv();
-# else
-#  if defined (__FreeBSD__) || defined (__OpenBSD__)
-        _dl_environ = dlsym(NULL, "environ");
-        if (_dl_environ) *_dl_environ = NULL;
-        else ERR("Can't find envrion symbol");
-#  else
-        environ = NULL;
-#  endif
-# endif
-        itr = efl_core_env_content_get(pd->env);
-
+        // use 2nd throw-away itr to count
+        EINA_ITERATOR_FOREACH(itr2, key)
+          {
+             count++;
+          }
+        // object which we don't free (sitting in hash table in env obj)
+        newenv = alloca(sizeof(char *) * (count + 1));
+        // use 2st iter to walk and fill new env
         EINA_ITERATOR_FOREACH(itr, key)
           {
-             setenv(key, efl_core_env_get(pd->env, key) , 1);
+             newenv[i] = (char *)efl_core_env_get(pd->env, key);
+             i++;
           }
-       efl_unref(pd->env);
-       pd->env = NULL;
+        // yes - we dont free itr or itr2 - we're going to exec below or exit
+        // also put newenv array on stack pointign to the strings in the env
+# if defined (__FreeBSD__) || defined (__OpenBSD__)
+        if (_dl_environ) *_dl_environ = newenv;
+        else ERR("Can't find envrion symbol");
+# else
+        environ = newenv;
+# endif
      }
 
    // close all fd's other than the first 3 (0, 1, 2) and exited write fd
    int except[2] = { 0, -1 };
    except[0] = pd->fd.exited_write;
    eina_file_close_from(3, except);
-#ifdef HAVE_PRCTL
+# ifdef HAVE_PRCTL
    if ((pd->flags & EFL_EXE_FLAGS_TERM_WITH_PARENT))
      {
         prctl(PR_SET_PDEATHSIG, SIGTERM);
      }
-#elif defined(HAVE_PROCCTL)
+# elif defined(HAVE_PROCCTL)
    if ((pd->flags & EFL_EXE_FLAGS_TERM_WITH_PARENT))
      {
         int sig = SIGTERM;
         procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
      }
-#endif
+# endif
    // actually execute!
    _exec(cmd, pd->flags, td->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
    if ((errno == EACCES)  || (errno == EINVAL) || (errno == ELOOP) ||
        (errno == ENOEXEC) || (errno == ENOMEM))
-     exit(126);
-   exit(127);
+     _exit(126);
+   _exit(127);
    return EINA_FALSE;
 #endif
 }

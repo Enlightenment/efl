@@ -610,6 +610,27 @@ EFL_START_TEST(elm_entry_test_text_class)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_test_burmese)
+{
+   Evas_Object *win, *textblock;
+   Evas_Textblock_Style *style;
+   int w;
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   textblock = evas_object_textblock_add(win);
+
+   style = evas_textblock_style_new();
+   evas_textblock_style_set(style, "DEFAULT='font=arial font_size=20 color=red'");
+   evas_object_textblock_style_set(textblock, style);
+   evas_textblock_style_free(style);
+   style = NULL;
+
+   evas_object_textblock_text_markup_set(textblock, "\u1006\u200C\u1031\u200C\u1031\u200C\u1031");
+   evas_object_textblock_size_native_get(textblock, &w, NULL);
+   ck_assert_int_ne(w, 0);
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_entry_keycode)
 {
    Evas_Object *win, *entry;
@@ -651,5 +672,6 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_magnifier);
    tcase_add_test(tc, elm_entry_file_get_set);
    tcase_add_test(tc, elm_entry_test_text_class);
+   tcase_add_test(tc, elm_entry_test_burmese);
    tcase_add_test(tc, elm_entry_keycode);
 }

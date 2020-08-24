@@ -1489,11 +1489,15 @@ _style_string_split(const char *str, char* part1, char* part2)
    *temp = 0;
 }
 
-#define FORMAT_SHADOW_SET(evas, efl) {fmt->style = evas; if (set_default) _FMT_INFO(effect) = efl;}
+#define FORMAT_SHADOW_SET(evas, efl) { \
+   if (fmt->style != evas) { fmt->style = evas; changed = EINA_TRUE; } \
+   if (set_default && (_FMT_INFO(effect) != efl)) {_FMT_INFO(effect) = efl; changed = EINA_TRUE;}}
 
-void
+Eina_Bool
 _format_shadow_set(Evas_Object_Textblock_Format *fmt, char *str, Eina_Bool set_default, Efl_Canvas_Textblock_Data *o)
 {
+   Eina_Bool changed = EINA_FALSE;
+
    if (!strcmp(str, "shadow"))
      FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW)
    else if (!strcmp(str, "outline"))
@@ -1514,13 +1518,22 @@ _format_shadow_set(Evas_Object_Textblock_Format *fmt, char *str, Eina_Bool set_d
      FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_FAR_SOFT_SHADOW, EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW)
    else   /*off none plain */
      FORMAT_SHADOW_SET(EVAS_TEXT_STYLE_PLAIN, EFL_TEXT_STYLE_EFFECT_TYPE_NONE)
+
+   return changed;
 }
 
-#define FORMAT_SHADOW_DIRECTION_SET(direction) {EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_##direction); if (set_default) _FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_##direction;}
+#define FORMAT_SHADOW_DIRECTION_SET(direction) { \
+  unsigned char temp = fmt->style; \
+  EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_##direction); \
+  changed = (fmt->style != temp); \
+  if (set_default && (_FMT_INFO(shadow_direction) != EFL_TEXT_STYLE_SHADOW_DIRECTION_##direction)) \
+     {_FMT_INFO(shadow_direction) = EFL_TEXT_STYLE_SHADOW_DIRECTION_##direction; changed = EINA_TRUE;}}
 
-void
+Eina_Bool
 _format_shadow_direction_set(Evas_Object_Textblock_Format *fmt, char *str, Eina_Bool set_default, Efl_Canvas_Textblock_Data *o)
 {
+   Eina_Bool changed = EINA_FALSE;
+
    if (!strcmp(str, "bottom_right"))
      FORMAT_SHADOW_DIRECTION_SET(BOTTOM_RIGHT)
    else if (!strcmp(str, "bottom"))
@@ -1539,6 +1552,8 @@ _format_shadow_direction_set(Evas_Object_Textblock_Format *fmt, char *str, Eina_
      FORMAT_SHADOW_DIRECTION_SET(RIGHT)
    else
      FORMAT_SHADOW_DIRECTION_SET(BOTTOM_RIGHT)
+
+   return changed;
 }
 
 /**
@@ -3169,10 +3184,10 @@ _default_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, 
         *part2 = 0;
 
         _style_string_split(param, part1, part2);
-        _format_shadow_set(fmt, part1, EINA_TRUE, o);
+        changed = _format_shadow_set(fmt, part1, EINA_TRUE, o);
 
         if (*part2)
-          _format_shadow_direction_set(fmt, part2, EINA_TRUE, o);
+          changed = _format_shadow_direction_set(fmt, part2, EINA_TRUE, o) || changed;
      }
    else
      {
@@ -5420,6 +5435,27 @@ skip:
         cur_len -= script_len;
 
         script = evas_common_language_script_type_get(str, script_len);
+
+        /* FIXME Workaround for Burmese Vowel E Rendering, caused by bug in Harfbuzz
+           breaking text run will fix the visual issue.
+        */
+        if (script == EVAS_SCRIPT_MYANMAR && script_len > 1)
+          {
+             int i;
+             for (i = 0 ; i < script_len - 1; i++)
+               {
+                  if (str[i] == 0x200C)
+                    {
+                       if (str[i+1] == 0x1031)
+                         {
+                            cur_len += script_len;
+                            script_len = i + 1;
+                            cur_len -= script_len;
+                            break;
+                         }
+                    }
+               }
+          }
 
         Evas_Object_Protected_Data *obj = efl_data_scope_get(c->obj, EFL_CANVAS_OBJECT_CLASS);
         while (script_len > 0)
@@ -8570,7 +8606,8 @@ _escaped_char_match(const char *s, int *adv)
    int n_ret = _escaped_value_search(s, list, len);
    if (n_ret != -1)
      {
-        *adv = (int) list[n_ret]->value_len;
+        if (adv)
+          *adv = (int) list[n_ret]->value_len;
         return list[n_ret]->escape;
      }
    else
@@ -8579,7 +8616,8 @@ _escaped_char_match(const char *s, int *adv)
         n_ret = _escaped_value_search(s, list, len);
         if (n_ret != -1)
           {
-             *adv = (int)list[n_ret]->value_len;
+             if (adv)
+               *adv = (int)list[n_ret]->value_len;
              return list[n_ret]->escape;
           }
      }
@@ -8996,6 +9034,7 @@ static void
 _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
 {
    int ch, pos = 0, pos2 = 0;
+   const char * replacement;
 
    for (;;)
      {
@@ -9007,23 +9046,21 @@ _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
            eina_strbuf_append(sbuf, "<br/>");
         else if (ch == _TAB)
            eina_strbuf_append(sbuf, "<tab/>");
-        else if (ch == '<')
-           eina_strbuf_append(sbuf, "&lt;");
-        else if (ch == '>')
-           eina_strbuf_append(sbuf, "&gt;");
-        else if (ch == '&')
-           eina_strbuf_append(sbuf, "&amp;");
-        else if (ch == '"')
-           eina_strbuf_append(sbuf, "&quot;");
-        else if (ch == '\'')
-           eina_strbuf_append(sbuf, "&apos;");
-        else if (ch == _PARAGRAPH_SEPARATOR)
-           eina_strbuf_append(sbuf, "<ps/>");
         else if (ch == _REPLACEMENT_CHAR)
            eina_strbuf_append(sbuf, "&#xfffc;");
-        else if (ch != '\r')
+        else if (ch == _PARAGRAPH_SEPARATOR)
+           eina_strbuf_append(sbuf, "<ps/>");
+        else
           {
-             eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
+             replacement = _escaped_char_match(text + pos, NULL);
+             if (replacement)
+               {
+                  eina_strbuf_append(sbuf, replacement);
+               }
+             else if (ch != '\r')
+               {
+                  eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
+               }
           }
      }
 }

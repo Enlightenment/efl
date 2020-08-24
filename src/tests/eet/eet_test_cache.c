@@ -3,7 +3,11 @@
 #endif
 
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef _WIN32
+# include <io.h> /* close(), unlink() */
+#else
+# include <unistd.h> /* close(), unlink() */
+#endif
 
 #include <Eina.h>
 #include <Eet.h>
@@ -46,16 +50,14 @@ _open_close_worker(void *path, Eina_Thread tid EINA_UNUSED)
 
 EFL_START_TEST(eet_test_cache_concurrency)
 {
-   char *file;
    const char *buffer = "test data";
    Eet_File *ef;
    void *thread_ret;
    unsigned int n;
    Eina_Thread thread;
+   Eina_Tmpstr *tmpfile = NULL;
    Eina_Bool r;
    int tmpfd;
-
-   file = strdup("/tmp/eet_suite_testXXXXXX");
 
    eina_threads_init();
 
@@ -63,16 +65,18 @@ EFL_START_TEST(eet_test_cache_concurrency)
    eina_condition_new(&open_worker_cond, &open_worker_mutex);
 
    /* create a file to test with */
-   fail_if(-1 == (tmpfd = mkstemp(file)));
+   /* tmpfile will be created in temporary directory (with eina_environment_tmp) */
+   tmpfd = eina_file_mkstemp("eet_suite_testXXXXXX", &tmpfile);
+   fail_if(-1 == tmpfd);
    fail_if(!!close(tmpfd));
-   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   ef = eet_open(tmpfile, EET_FILE_MODE_WRITE);
    fail_if(!ef);
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
 
    eina_lock_take(&open_worker_mutex);
    /* start a thread that repeatedly opens and closes a file */
    open_worker_stop = 0;
-   r = eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _open_close_worker, file);
+   r = eina_thread_create(&thread, EINA_THREAD_NORMAL, -1, _open_close_worker, tmpfile);
    fail_unless(r);
 
    eina_condition_wait(&open_worker_cond);
@@ -91,9 +95,10 @@ EFL_START_TEST(eet_test_cache_concurrency)
 
    eet_close(ef);
 
-   fail_if(unlink(file) != 0);
+   fail_if(unlink(tmpfile) != 0);
 
    eina_threads_shutdown();
+   eina_tmpstr_del(tmpfile);
 }
 EFL_END_TEST
 

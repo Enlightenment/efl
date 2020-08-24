@@ -218,6 +218,13 @@ _impl_ecore_exe_run_priority_get(void)
    return run_pri;
 }
 
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
+# include <dlfcn.h>
+static char ***_dl_environ;
+#else
+extern char **environ;
+#endif
+
 Eo *
 _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
@@ -293,20 +300,81 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
       }
       else if (pid == 0) /* child */
       {
+         sigset_t newset;
+
+         sigemptyset(&newset);
+         sigaddset(&newset, SIGPIPE);
+         sigaddset(&newset, SIGALRM);
+         sigaddset(&newset, SIGCHLD);
+         sigaddset(&newset, SIGUSR1);
+         sigaddset(&newset, SIGUSR2);
+         sigaddset(&newset, SIGHUP);
+         sigaddset(&newset, SIGQUIT);
+         sigaddset(&newset, SIGINT);
+         sigaddset(&newset, SIGTERM);
+         sigaddset(&newset, SIGBUS);
+         sigaddset(&newset, SIGCONT);
+         sigaddset(&newset, SIGWINCH);
+#ifdef SIGEMT
+         sigaddset(&newset, SIGEMT);
+#endif
+#ifdef SIGIO
+         sigaddset(&newset, SIGIO);
+#endif
+#ifdef SIGTSTP
+         sigaddset(&newset, SIGTSTP);
+#endif
+#ifdef SIGTTIN
+         sigaddset(&newset, SIGTTIN);
+#endif
+#ifdef SIGTTOU
+         sigaddset(&newset, SIGTTOU);
+#endif
+#ifdef SIGVTALRM
+         sigaddset(&newset, SIGVTALRM);
+#endif
+#ifdef SIGPWR
+         sigaddset(&newset, SIGPWR);
+#endif
+         // block all those nasty signals we don't want messing with things
+         // in signal handlers while we go from fork to exec in the child
+         pthread_sigmask(SIG_BLOCK, &newset, NULL);
 #ifdef HAVE_SYSTEMD
-         unsetenv("NOTIFY_SOCKET");
+         char **env = NULL, **e;
+
+# if defined (__FreeBSD__) || defined (__OpenBSD__)
+         _dl_environ = dlsym(NULL, "environ");
+         env = *_dl_environ;
+# else
+         env = environ;
+# endif
+         // find NOTIFY_SOCKET env var and remove it without any heap work
+         if (env)
+           {
+              Eina_Bool shuffle = EINA_FALSE;
+
+              for (e = env; *e; e++)
+                {
+                   if (!shuffle)
+                     {
+                        if (!strncmp(e[0], "NOTIFY_SOCKET=", 14))
+                          shuffle = EINA_TRUE;
+                     }
+                   if (shuffle) e[0] = e[1];
+                }
+           }
 #endif
          if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
-         {
+           {
 #ifdef PRIO_PROCESS
-            if ((run_pri >= -20) && (run_pri <= 19))
-              setpriority(PRIO_PROCESS, 0, run_pri);
+              if ((run_pri >= -20) && (run_pri <= 19))
+                setpriority(PRIO_PROCESS, 0, run_pri);
 #else
 #warning "Your OS/libc does not provide PRIO_PROCESS (and possibly setpriority())"
 #warning "This is a POSIX-1.2001 standard and it is highly encouraged that you"
 #warning "Have support for this"
 #endif
-         }
+           }
          if (ok && (flags & ECORE_EXE_ISOLATE_IO))
            {
               int devnull;

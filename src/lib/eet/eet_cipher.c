@@ -185,21 +185,19 @@ on_error:
 
 # else /* ifdef HAVE_GNUTLS */
    /* Openssl private declarations */
-   FILE *fp;
    EVP_PKEY *pkey = NULL;
    X509 *cert = NULL;
 
    if (!emile_cipher_init()) return NULL;
 
    /* Load the X509 certificate in memory. */
-   fp = fopen(certificate_file, "rb");
-   if (!fp)
-     return NULL;
-
-   cert = PEM_read_X509(fp, NULL, NULL, NULL);
-   fclose(fp);
-   if (!cert)
-     goto on_error;
+   {
+      BIO* cert_bio = BIO_new_file(certificate_file, "rb");
+      cert = PEM_read_bio_X509(cert_bio, NULL, NULL, NULL);
+      BIO_free(cert_bio);
+      if (!cert)
+        goto on_error;
+   }
 
    /* Check the presence of the public key. Just in case. */
    pkey = X509_get_pubkey(cert);
@@ -207,14 +205,13 @@ on_error:
      goto on_error;
 
    /* Load the private key in memory. */
-   fp = fopen(private_key_file, "rb");
-   if (!fp)
-     goto on_error;
-
-   pkey = PEM_read_PrivateKey(fp, NULL, cb, NULL);
-   fclose(fp);
-   if (!pkey)
-     goto on_error;
+   {
+      BIO* private_key_bio = BIO_new_file(private_key_file, "rb");
+      pkey = PEM_read_bio_PrivateKey(private_key_bio, NULL, cb, NULL);
+      BIO_free(private_key_bio);
+      if (!pkey)
+        goto on_error;
+   }
 
    /* Load the certificate and the private key in Eet_Key structure */
    key = malloc(sizeof(Eet_Key));
