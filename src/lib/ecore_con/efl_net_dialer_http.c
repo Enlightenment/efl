@@ -1674,7 +1674,7 @@ _efl_net_dialer_http_efl_io_writer_write(Eo *o, Efl_Net_Dialer_Http_Data *pd, Ei
                                  CURL_CSELECT_OUT, &pd->cm->running);
    if (rm != CURLM_OK)
      {
-        err = _curlcode_to_eina_error(rm);
+        err = _curlmcode_to_eina_error(rm);
         ERR("dialer=%p could not trigger socket=" SOCKET_FMT " (fdhandler=%p) action: %s",
             o, pd->fd, pd->fdhandler, eina_error_msg_get(err));
         goto error;
