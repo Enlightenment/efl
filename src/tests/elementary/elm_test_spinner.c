@@ -65,11 +65,11 @@ EFL_START_TEST(elm_spinner_focus_next_object)
 
    elm_object_focus_set(spinner, EINA_TRUE);
 
-   elm_object_focus_next_object_set(spinner, btn, EFL_UI_FOCUS_DIRECTION_UP);
-   o = elm_object_focus_next_object_get(spinner, EFL_UI_FOCUS_DIRECTION_UP);
+   elm_object_focus_next_object_set(spinner, btn, ELM_FOCUS_UP);
+   o = elm_object_focus_next_object_get(spinner, ELM_FOCUS_UP);
    ck_assert_ptr_eq(o, btn);
 
-   elm_object_focus_next(win, EFL_UI_FOCUS_DIRECTION_UP);
+   elm_object_focus_next(win, ELM_FOCUS_UP);
    ck_assert_ptr_eq(elm_object_focused_object_get(win), btn);
 }
 EFL_END_TEST
