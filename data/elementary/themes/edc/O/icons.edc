@@ -34,13 +34,6 @@
     * 2. Search for a name in kde (oxygen) and gnome (tango - human) icon set OR
     * 3. Try to follow the naming convention
     */
-   //Standard Action Icons
-   ICON("edit-swap","icon_swap.png",64)                     // *** // "widget/swap"
-   ICON("edit-select-all","icon_efm_select.png",16)                // EFMBUTTON("select"
-   ICON("view-hidden-files","icon_efm_view.png",16)         // *** // EFMBUTTON("hidden_files"
-   ICON("window-close","icon_close.png",64)                        // "widget/close"
-   ICON("dialog-ok-apply","icon_check.png",64)                     // "enlightenment/check"
-   //Standard Application Icons
    ICON("preferences-desktop-color","icon_colors.png",64)                     // "enlightenment/colors"
    ICON("preferences-desktop-pointer","icon_mouse.png",64)             // *** // "enlightenment/mouse"
    ICON("preferences-desktop-shelf-bottom-desk","icon_shelf_bottom_desk.png",64)// *** // "enlightenment/shelf_bottom_desk"
@@ -67,22 +60,12 @@
    ICON("preferences-screen-hflip","icon_screen_hflip.png",64)   // *** // "enlightenment/screen_hflip"
    ICON("preferences-applications-add","icon_applications_new.png",64)         // *** // "enlightenment/add_application"
    ICON("preferences-illume","icon_illume.png",64)
-   //Standard Module Category Icons 
    ICON("modules-utils","icon_gadget.png",64)
    ICON("modules-system","icon_gadget.png",64)
    ICON("modules-look","icon_look.png",64)
    ICON("modules-core","logo_white_128.png",64)
    ICON("modules-mobile","icon_globe.png",64)
    ICON("modules-settings","icon_config.png",64)
-   //Standard Place Icons
-   ICON("start-here","logo_white_128.png",128)                     // "enlightenment/e"
-   ICON("network-website","icon_globe.png",64)                     // "enlightenment/website"
-   //Standard Device Icons
-   ICON("media-eject","icon_efm_eject.png", 64)
-   /* End of FreeDesktop.Org icons */
-   //E Specific icons
-   ICON("everything-clipboard","icon_evry_clipboard.png", 256)
-   //EFM Mime icons
    ICONMIME("inode/chardevice","icon_efm_file.png",128)
    ICONMIME("inode/blockdevice","icon_efm_file.png",128)
    ICONMIME("inode/directory-locked","icon_efm_file.png",128)
