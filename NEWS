@@ -1,6 +1,55 @@
 ==========
-EFL 1.24.0
+EFL 1.25.0
 ==========
+
+Changes since 1.24.0:
+---------------------
+
+Features:
+
+   * ecore-drm2: Add support for using page_flip_handler2
+   * ecore-drm2: Add API function to return default depth
+
+Fixes:
+
+   * ecore_evas: only define these eina errors once
+   * exactness: remove no longer needed _evas_new()
+   * edje - don't set font sizes less than 1
+   * ecore_evas_x - fix maximize/unmaximize request corner case
+   * exactness_player: do not test for delay_ms
+   * evas + gl - fix callback-to-app-changes-state issue with pixel data
+   * canvas render: don't apply mask if the objects in the map.
+   * evas_object_textblock: fix to free style properly by edje's style_user_pop
+   * evas_vg_shape: return NULL in evas_vg_shape_add when the parent of shape is NULL
+   * efl_ui_image: fix to call "clicked" smart callback when there is no img
+   * ecore-x - ensure we fully look at all xkb events and refresh all binds
+   * evas_vg_container: return NULL in evas_vg_container_add when the parent of container is NULL
+   * ecore thread - feedback threads should not be background threads...
+   * ecore_evas_wayland_common: keep the backword compatibility for wayland dnd handler
+   * edje: fix animation memory leak.
+   * canvas vg: fix dangling vector containers.
+   * evas vg: clean up dangling instances
+   * canvas vg: fix vector file data memory leak.
+   * evas - csd and wl csd - fix alpha zeroing to avoid framespace junk
+   * efl gfx_path: fix memory leak.
+   * evas - genetic update regions smart merge - merge v adjacent regions
+   * efreet - handle runtime relocation right with default XDG_DATA_DIRS
+   * efl_ui_image: fixed elm_image_preload_disabled_set api is not working when it is called before file set
+   * elm_image: keep backword compatibility for elm_image_file_set API when setting url file set twice
+   * efreetd - cache - add more statinfo work around 0 mtime distros
+   * elm_code: on newline ensure line number visible. (T2798)
+   * elm_code: cursor visbility fix.
+   * edje - fix edje_cc mis-re-iding images in image sets
+   * efl_ui_image: remove the unnecessary code in efl_file_unload
+   * win - x io errors really just have to exit, so call the iorr cb + exit
+   * evas - render - dont crash is private data is null
+   * eina vpath - fix windows ~username handling to only error when used
+   * efl ui image - fix scal to fill - broken with non-rect src images
+   * embryo: fix a integer(cell) overflow problem
+   * elput - support libelogind.so.0 as well as libelogind-shared.so.0
+   * edje - calce - really respect max image size for img sets
+   * ecore - don't do anything with heap between fork and exec
+   * evas - fix deadlock with sw async rendering calling cbs in post flush
 
 Changes since 1.23.0:
 ---------------------
