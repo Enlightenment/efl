@@ -1268,6 +1268,7 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
 # define do_getdents(fd, buf, size) getdents(fd, buf, size)
 typedef struct
 {
+#if __FreeBSD__ > 11
    ino_t          d_ino;
    off_t          d_off;
    unsigned short d_reclen;
@@ -1276,6 +1277,13 @@ typedef struct
    unsigned short d_namlen;
    unsigned short ____pad1;
    char           d_name[4096];
+#else
+   __uint32_t     d_fileno;
+   __uint16_t     d_reclen;
+   __uint8_t      d_type;
+   __uint8_t      d_namlen;
+   char           d_name[4096];
+#endif
 } Dirent;
 #elif defined(__OpenBSD__)
 # define do_getdents(fd, buf, size) getdents(fd, buf, size)
