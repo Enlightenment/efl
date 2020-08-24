@@ -137,7 +137,7 @@ _event_pointer_cb(void *data, const Efl_Event *event)
              Eina_Position2D pos = efl_input_pointer_position_get(evp);
              Efl_Pointer_Flags flags = efl_input_pointer_button_flags_get(evp);
              Exactness_Action_Multi_Event t = { tool, b, pos.x, pos.y, rad, radx, rady, pres, ang,
-                  fx, fy, flags };
+                  fx, fy, (Evas_Button_Flags)flags };
              if (n_evas >= 0) _add_to_list(evt, n_evas, timestamp, &t, sizeof(t));
              break;
           }
