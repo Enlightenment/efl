@@ -75,9 +75,9 @@ EFL_START_TEST(efl_config_eoapi)
    CONFIG_CHKD(scroll_thumbscroll_acceleration_threshold, 0);
    CONFIG_CHKD(scroll_thumbscroll_acceleration_time_limit, 0);
    CONFIG_CHKD(scroll_thumbscroll_acceleration_weight, 0);
-   CONFIG_CHKE(focus_autoscroll_mode, EFL_UI_FOCUS_AUTOSCROLL_MODE_NONE, "none");
+   CONFIG_CHKE(focus_autoscroll_mode, ELM_FOCUS_AUTOSCROLL_MODE_NONE, "none");
    CONFIG_CHKD(longpress_timeout, 0);
-   CONFIG_CHKE(softcursor_mode, EFL_UI_SOFTCURSOR_MODE_ON, "on");
+   CONFIG_CHKE(softcursor_mode, ELM_SOFTCURSOR_MODE_ON, "on");
    CONFIG_CHKD(tooltip_delay, 0);
    CONFIG_CHKB(cursor_engine_only, 0);
    CONFIG_CHKD(scale, 0);
@@ -103,7 +103,7 @@ EFL_START_TEST(efl_config_eoapi)
    CONFIG_CHKB(focus_highlight_enabled, !old);
    CONFIG_CHKB(focus_highlight_animate, 0);
    CONFIG_CHKB(focus_highlight_clip_disabled, !old);
-   CONFIG_CHKE(focus_move_policy, EFL_UI_FOCUS_MOVE_POLICY_MOVE_IN, "in");
+   CONFIG_CHKE(focus_move_policy, ELM_FOCUS_MOVE_POLICY_IN, "in");
    CONFIG_CHKB(item_select_on_focus_disabled, !old);
    CONFIG_CHKB(first_item_focus_on_first_focusin, 0);
    CONFIG_CHKB(mirrored, 0);
