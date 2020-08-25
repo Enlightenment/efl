@@ -702,7 +702,8 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
         else
           {
              efl_ui_focus_util_focus(obj);
-             efl_ui_focus_manager_move(elm_widget_top_get(obj), dir);
+             efl_ui_focus_manager_move(elm_widget_top_get(obj),
+                                       (Efl_Ui_Focus_Direction)dir);
           }
      }
 
