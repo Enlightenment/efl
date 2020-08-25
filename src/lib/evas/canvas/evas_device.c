@@ -38,7 +38,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 {
    Eina_List *l;
    Evas_Device *dev, *def, *old_parent;
-   Evas_Device_Class old_class;
+   Efl_Input_Device_Type old_class;
 
    if (e->cleanup) return NULL;
    old_class = efl_input_device_type_get(old_dev);
@@ -47,7 +47,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 
    EINA_LIST_FOREACH(e->devices, l, dev)
      {
-        if ((Evas_Device_Class)efl_input_device_type_get(dev) != old_class)
+        if (efl_input_device_type_get(dev) != old_class)
           continue;
 
         def = dev;
@@ -59,9 +59,9 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
    if (!def)
      {
         const char *class_str;
-        if (old_class == EVAS_DEVICE_CLASS_SEAT)
+        if (old_class == EFL_INPUT_DEVICE_TYPE_SEAT)
           class_str = "seat";
-        else if (old_class == EVAS_DEVICE_CLASS_KEYBOARD)
+        else if (old_class == EFL_INPUT_DEVICE_TYPE_KEYBOARD)
           class_str = "keyboard";
         else
           class_str = "mouse";
@@ -194,7 +194,7 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    dev = efl_add_ref(EFL_INPUT_DEVICE_CLASS, parent_dev ?: eo_e,
                      efl_name_set(efl_added, name),
                      efl_comment_set(efl_added, desc),
-                     efl_input_device_type_set(efl_added, clas),
+                     efl_input_device_type_set(efl_added, (Efl_Input_Device_Type)clas),
                      efl_input_device_source_set(efl_added, emulation_dev),
                      efl_input_device_evas_set(efl_added, eo_e),
                      efl_input_device_subclass_set(efl_added, sub_clas));
@@ -364,10 +364,10 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
    if ((Evas_Device_Class)klass == clas)
      return;
 
-   if (_is_pointer(klass))
+   if (_is_pointer((Evas_Device_Class)klass))
      _evas_pointer_data_remove(edata, dev, EINA_FALSE);
 
-   efl_input_device_type_set(dev, clas);
+   efl_input_device_type_set(dev, (Efl_Input_Device_Type)clas);
 
    if (_is_pointer(clas))
      _evas_pointer_data_add(edata, dev);
@@ -378,7 +378,7 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
 EAPI Evas_Device_Class
 evas_device_class_get(const Evas_Device *dev)
 {
-   return efl_input_device_type_get(dev);
+   return (Evas_Device_Class)efl_input_device_type_get(dev);
 }
 
 EAPI void
@@ -498,7 +498,7 @@ _evas_canvas_efl_canvas_scene_pointer_position_get(const Eo *eo_e, Evas_Public_D
    EINA_SAFETY_ON_NULL_RETURN_VAL(it, EINA_FALSE);
 
    EINA_ITERATOR_FOREACH(it, child)
-     if (_is_pointer(efl_input_device_type_get(child)))
+     if (_is_pointer((Evas_Device_Class)efl_input_device_type_get(child)))
        break;
    if (child)
      *pos = efl_input_pointer_position_get(child);
