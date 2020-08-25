@@ -629,7 +629,7 @@ _edje_part_focus_set(Edje *ed, const char *seat_name, Edje_Real_Part *rp)
    else /* Use default seat name */
      {
         e = evas_object_evas_get(ed->obj);
-        seat = evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_SEAT);
+        seat = evas_default_device_get(e, EVAS_DEVICE_CLASS_SEAT);
         sname = eina_stringshare_ref(_edje_seat_name_get(ed, seat));
      }
 
@@ -1017,7 +1017,7 @@ low_mem_current:
               Evas *e;
 
               e = evas_object_evas_get(ed->obj);
-              seat = evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_SEAT);
+              seat = evas_default_device_get(e, EVAS_DEVICE_CLASS_SEAT);
            }
         if (!pr->targets)
           {
