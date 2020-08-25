@@ -365,7 +365,7 @@ _ecore_evas_cursor_add(Ecore_Evas *ee, Efl_Input_Device *dev)
    cursor = calloc(1, sizeof(Ecore_Evas_Cursor));
    EINA_SAFETY_ON_NULL_RETURN(cursor);
    eina_hash_add(ee->prop.cursors, &seat, cursor);
-   if (seat != evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT)) return;
+   if (seat != evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT)) return;
    if (ee->prop.cursor_cache.object)
      {
         ecore_evas_object_cursor_device_set(ee, dev,
@@ -396,7 +396,7 @@ _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
      {
         if (_is_pointer(event->info))
           _ecore_evas_cursor_add(ee, event->info);
-        else if (event->info == evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT))
+        else if (event->info == evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT))
           {
              if (ee->prop.focused)
                _ecore_evas_focus_device_set(ee, event->info, 1);
@@ -1728,7 +1728,7 @@ _ecore_evas_default_cursor_image_get(Ecore_Evas *ee)
    Efl_Input_Device *pointer;
    Ecore_Evas_Cursor *cursor;
 
-   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+   pointer = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN_VAL(cursor, NULL);
    return cursor->object;
@@ -1740,7 +1740,7 @@ _ecore_evas_default_cursor_hide(Ecore_Evas *ee)
    Efl_Input_Device *pointer;
    Ecore_Evas_Cursor *cursor;
 
-   pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+   pointer = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
    EINA_SAFETY_ON_NULL_RETURN(cursor);
    if (cursor->object)
@@ -1759,7 +1759,7 @@ _ecore_evas_object_cursor_device_set(Ecore_Evas *ee, Efl_Input_Device *pointer,
 
    ECORE_EVAS_CHECK(ee);
 
-   dpointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+   dpointer = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    if (pointer)
      {
         if (efl_input_device_type_get(pointer) != EFL_INPUT_DEVICE_TYPE_SEAT)
@@ -1888,7 +1888,7 @@ ecore_evas_cursor_device_get(const Ecore_Evas *ee, Efl_Input_Device *pointer,
           }
      }
    else
-     pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+     pointer = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    if (pointer)
      {
         cursor = eina_hash_find(ee->prop.cursors, &pointer);
@@ -1935,7 +1935,7 @@ ecore_evas_cursor_device_unset(Ecore_Evas *ee, Efl_Input_Device *pointer)
           }
      }
    else
-     pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+     pointer = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    if (pointer)
      cursor = eina_hash_find(ee->prop.cursors, &pointer);
    if (!cursor) return NULL;
@@ -1977,7 +1977,7 @@ ecore_evas_focus_device_get(const Ecore_Evas *ee, Efl_Input_Device *seat)
 {
    ECORE_EVAS_CHECK(ee, EINA_FALSE);
    if (!seat)
-     seat = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+     seat = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    return eina_list_data_find(ee->prop.focused_by, seat) ? EINA_TRUE : EINA_FALSE;
 }
 
@@ -1988,7 +1988,7 @@ _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
    Eina_Bool present;
 
    if (!seat)
-     seat = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+     seat = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    if ((!on) && (!seat)) return;
 
    if (seat && (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT))
@@ -2864,7 +2864,7 @@ ecore_evas_pointer_device_xy_get(const Ecore_Evas *ee,
           }
      }
    if ((!pointer) ||
-       (pointer == evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT)))
+       (pointer == evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT)))
      ecore_evas_pointer_xy_get(ee, x, y);
    else
      {
@@ -3580,7 +3580,7 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
      }
    else
      {
-        pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
+        pointer = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_MOUSE);
         seat = efl_input_device_seat_get(pointer);
      }
    if (efl_input_device_type_get(seat) != EFL_INPUT_DEVICE_TYPE_SEAT)
@@ -4850,7 +4850,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
    if (info->dev) ev->device = efl_ref(info->dev);
-   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_MOUSE));
+   else ev->device = efl_ref(evas_default_device_get(e, EVAS_DEVICE_CLASS_MOUSE));
    efl_input_pointer_finalize(evt);
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
@@ -4912,7 +4912,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
    ev->pressure = info->multi.pressure;
    ev->angle = info->multi.angle - ee->rotation;
    if (info->dev) ev->device = efl_ref(info->dev);
-   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_MOUSE));
+   else ev->device = efl_ref(evas_default_device_get(e, EVAS_DEVICE_CLASS_MOUSE));
    efl_input_pointer_finalize(evt);
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
@@ -4947,7 +4947,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
    ev->wheel.z = info->z;
    ev->wheel.horizontal = !!info->direction;
    if (info->dev) ev->device = efl_ref(info->dev);
-   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_MOUSE));
+   else ev->device = efl_ref(evas_default_device_get(e, EVAS_DEVICE_CLASS_MOUSE));
    efl_input_pointer_finalize(evt);
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
@@ -4977,7 +4977,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
    ev->timestamp = info->timestamp;
    _pointer_position_set(ev, ee, info->x, info->y, info->x, info->y);
    if (info->dev) ev->device = efl_ref(info->dev);
-   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_MOUSE));
+   else ev->device = efl_ref(evas_default_device_get(e, EVAS_DEVICE_CLASS_MOUSE));
    efl_input_pointer_finalize(evt);
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
@@ -5107,7 +5107,7 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
      }
    _pointer_position_set(ev, ee, x, y, x, y);
    if (info->dev) ev->device = efl_ref(info->dev);
-   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_MOUSE));
+   else ev->device = efl_ref(evas_default_device_get(e, EVAS_DEVICE_CLASS_MOUSE));
    efl_input_pointer_finalize(evt);
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
@@ -5146,7 +5146,7 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
    ev->data = info->data;
    ev->event_flags = 0;
    if (info->dev) ev->device = efl_ref(info->dev);
-   else ev->device = efl_ref(evas_default_device_get(e, EFL_INPUT_DEVICE_TYPE_KEYBOARD));
+   else ev->device = efl_ref(evas_default_device_get(e, EVAS_DEVICE_CLASS_KEYBOARD));
 
    if (down)
      efl_event_callback_legacy_call(e, EFL_EVENT_KEY_DOWN, evt);
@@ -5198,8 +5198,7 @@ _ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
    Eina_List *present;
 
    if (!mouse)
-     mouse = evas_default_device_get(ee->evas,
-                                     EFL_INPUT_DEVICE_TYPE_MOUSE);;
+     mouse = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_MOUSE);
 
    EINA_SAFETY_ON_NULL_RETURN(mouse);
    present = eina_list_data_find_list(ee->mice_in, mouse);
@@ -5226,7 +5225,7 @@ EAPI Eina_Bool
 _ecore_evas_mouse_in_check(Ecore_Evas *ee, Efl_Input_Device *mouse)
 {
    if (!mouse)
-     mouse = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
+     mouse = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_MOUSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(mouse, EINA_FALSE);
    return eina_list_data_find(ee->mice_in, mouse) ? EINA_TRUE : EINA_FALSE;
 }
