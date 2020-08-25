@@ -322,7 +322,7 @@ _efl_canvas_proxy_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (ENFN->image_data_map(ENC, &o->engine_data, &slice, &s, x, y, w, h, cspace, mode, plane))
+   if (ENFN->image_data_map(ENC, &o->engine_data, &slice, &s, x, y, w, h, (Evas_Colorspace)cspace, mode, plane))
      {
         DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
             eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(slice));
