@@ -1981,7 +1981,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 
   // The handling for legacy is different due to elm_object_next set
   if (elm_widget_is_legacy(obj))
-    elm_object_focus_next(obj, focus_dir);
+    elm_object_focus_next(obj, (Elm_Focus_Direction)focus_dir);
   else
     {
        Efl_Ui_Widget *o;
@@ -5609,7 +5609,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    else if ((engine) && (!strncmp(engine, "shot:", 5)))
      _shot_init(sd);
 
-   sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
+   sd->kbdmode = EFL_UI_WIN_KEYBOARD_MODE_UNKNOWN;
    sd->legacy.indmode = ELM_WIN_INDICATOR_UNKNOWN;
    sd->indimode = EFL_UI_WIN_INDICATOR_MODE_OFF;
 
@@ -9562,7 +9562,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    return elm_legacy_add(klass, parent,
                          efl_ui_win_name_set(efl_added, name),
-                         efl_ui_win_type_set(efl_added, type));
+                         efl_ui_win_type_set(efl_added, (Efl_Ui_Win_Type)type));
 }
 
 
@@ -9609,13 +9609,13 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
 EAPI void
 elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
 {
-   efl_ui_win_keyboard_mode_set(obj, mode);
+   efl_ui_win_keyboard_mode_set(obj, (Efl_Ui_Win_Keyboard_Mode)mode);
 }
 
 EAPI Elm_Win_Keyboard_Mode
 elm_win_keyboard_mode_get(const Evas_Object *obj)
 {
-   return efl_ui_win_keyboard_mode_get(obj);
+   return (Elm_Win_Keyboard_Mode)efl_ui_win_keyboard_mode_get(obj);
 }
 
 EAPI void
@@ -9812,7 +9812,7 @@ elm_win_center(Evas_Object *obj, Eina_Bool h, Eina_Bool v)
 EAPI Eina_Bool
 elm_win_move_resize_start(Evas_Object *obj, Elm_Win_Move_Resize_Mode mode)
 {
-   return efl_ui_win_move_resize_start(obj, mode);
+   return efl_ui_win_move_resize_start(obj, (Efl_Ui_Win_Move_Resize_Mode)mode);
 }
 
 EAPI void
