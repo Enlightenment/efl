@@ -2858,7 +2858,7 @@ _efl_ui_layout_base_efl_part_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA
      {
       case EFL_CANVAS_LAYOUT_PART_TYPE_BOX:
       case EFL_CANVAS_LAYOUT_PART_TYPE_TABLE:
-        return _efl_ui_layout_pack_proxy_get((Eo *) obj, type, part);
+        return _efl_ui_layout_pack_proxy_get((Eo *) obj, (Edje_Part_Type)type, part);
       case EFL_CANVAS_LAYOUT_PART_TYPE_TEXT:
       case EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK:
         return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, part);
