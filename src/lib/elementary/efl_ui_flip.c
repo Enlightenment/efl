@@ -1962,13 +1962,13 @@ _efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Efl_Ui_Flip_M
 {
    if (sd->next_state == front) return;
 
-   _internal_elm_flip_go_to(obj, sd, front, mode);
+   _internal_elm_flip_go_to(obj, sd, front, (Elm_Flip_Mode)mode);
 }
 
 EOLIAN static void
 _efl_ui_flip_go(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Flip_Mode mode)
 {
-   _internal_elm_flip_go_to(obj, sd, !sd->state, mode);
+   _internal_elm_flip_go_to(obj, sd, !sd->state, (Elm_Flip_Mode)mode);
 }
 
 static void
