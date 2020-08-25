@@ -2610,7 +2610,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_set(Eo *obj, Efl_Ui_Image_Zoomable_
 {
    double tz;
    if (sd->mode == (Elm_Photocam_Zoom_Mode)mode) return;
-   sd->mode = mode;
+   sd->mode = (Elm_Photocam_Zoom_Mode)mode;
 
    tz = sd->zoom;
    sd->zoom = 0.0;
@@ -2620,7 +2620,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_set(Eo *obj, Efl_Ui_Image_Zoomable_
 EOLIAN static Efl_Ui_Zoom_Mode
 _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   return sd->mode;
+   return (Efl_Ui_Zoom_Mode)sd->mode;
 }
 
 EOLIAN static Eina_Size2D
@@ -3395,13 +3395,13 @@ elm_photocam_zoom_get(const Evas_Object *obj)
 EAPI void
 elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
 {
-   efl_ui_zoom_mode_set(obj, mode);
+   efl_ui_zoom_mode_set(obj, (Efl_Ui_Zoom_Mode)mode);
 }
 
 EAPI Elm_Photocam_Zoom_Mode
 elm_photocam_zoom_mode_get(const Evas_Object *obj)
 {
-   return efl_ui_zoom_mode_get(obj);
+   return (Elm_Photocam_Zoom_Mode)efl_ui_zoom_mode_get(obj);
 }
 
 EAPI Evas_Load_Error
