@@ -71,7 +71,7 @@ _mime_type_to_elm_sel_format(const char *mime_type)
 static int
 _default_seat(const Eo *obj)
 {
-   return evas_device_seat_id_get(evas_default_device_get(evas_object_evas_get(obj), EFL_INPUT_DEVICE_TYPE_SEAT));
+   return evas_device_seat_id_get(evas_default_device_get(evas_object_evas_get(obj), EVAS_DEVICE_CLASS_SEAT));
 }
 
 EAPI Eina_Bool
