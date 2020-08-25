@@ -1642,7 +1642,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    ev->cur.y = pdata->seat->y;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->touch_id = 0;
    ev->action = EFL_POINTER_ACTION_DOWN;
    ev->value_flags |= value_flags;
@@ -1913,7 +1913,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    ev->cur.y = pdata->seat->y;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->touch_id = 0;
    ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
@@ -2048,7 +2048,7 @@ _canvas_event_feed_mouse_updown(Eo *eo_e, int b, Evas_Button_Flags flags,
    else
      ev->action = down ? EFL_POINTER_ACTION_DOWN : EFL_POINTER_ACTION_UP;
    ev->button = b;
-   ev->button_flags = flags;
+   ev->button_flags = (Efl_Pointer_Flags)flags;
    ev->radius = 1;
    ev->radius_x = 1;
    ev->radius_y = 1;
@@ -2135,7 +2135,7 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
 
    ev->action = EFL_POINTER_ACTION_CANCEL;
    ev->value_flags |= value_flags;
-   ev->event_flags = flags;
+   ev->event_flags = (Efl_Input_Flags)flags;
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
      {
         if ((point->state == EVAS_TOUCH_POINT_DOWN) ||
@@ -2212,7 +2212,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    ev->cur.y = pdata->seat->y;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->action = EFL_POINTER_ACTION_WHEEL;
    ev->value_flags |= value_flags;
 
@@ -2342,7 +2342,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    evt = ev->eo;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->pressed_buttons = pdata->button;
    ev->touch_id = 0;
    ev->value_flags |= value_flags;
@@ -2795,7 +2795,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    ev->cur.y = pdata->seat->y;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
@@ -2901,7 +2901,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
    ev->cur.y = pdata->seat->y;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
@@ -3025,7 +3025,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    ev->action = EFL_POINTER_ACTION_DOWN;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
@@ -3131,7 +3131,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    ev->action = EFL_POINTER_ACTION_UP;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
 
@@ -3211,7 +3211,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
    ev->radius = rad;
    ev->radius_x = radx;
    ev->radius_y = rady;
-   ev->button_flags = flags;
+   ev->button_flags = (Efl_Pointer_Flags)flags;
    ev->timestamp = timestamp;
    ev->data = (void *) data;
    ev->device = efl_ref(_evas_event_legacy_device_get(eo_e, EINA_TRUE));
@@ -3311,7 +3311,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    evt = ev->eo;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->action = EFL_POINTER_ACTION_MOVE;
    ev->value_flags |= value_flags;
    if (ev->device) efl_ref(ev->device);
@@ -3501,7 +3501,7 @@ _canvas_event_feed_key_down_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev
    evt = ev->eo;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    if (ev->device) efl_ref(ev->device);
 
    if (e->grabs)
@@ -3594,7 +3594,7 @@ _canvas_event_feed_key_up_internal(Evas_Public_Data *e, Efl_Input_Key_Data *ev)
    evt = ev->eo;
    ev->modifiers = &(e->modifiers);
    ev->locks = &(e->locks);
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    if (ev->device) efl_ref(ev->device);
 
    if (e->grabs)
@@ -3761,7 +3761,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
    ev->hold = !!hold;
    ev->data = (void *) data;
    ev->timestamp = timestamp;
-   ev->event_flags = e->default_event_flags;
+   ev->event_flags = (Efl_Input_Flags)e->default_event_flags;
    ev->device = efl_ref(_evas_event_legacy_device_get(eo_e, EINA_TRUE));
 
    pdata = _evas_pointer_data_by_device_get(e, ev->device);
