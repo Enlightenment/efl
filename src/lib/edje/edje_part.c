@@ -155,7 +155,7 @@ _efl_canvas_layout_part_efl_ui_drag_drag_size_get(const Eo *obj EINA_UNUSED, Efl
 EOLIAN static Efl_Ui_Drag_Dir
 _efl_canvas_layout_part_efl_ui_drag_drag_dir_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Layout_Part_Data *pd)
 {
-   return _edje_object_part_drag_dir_get(pd->ed, pd->part);
+   return (Efl_Ui_Drag_Dir)_edje_object_part_drag_dir_get(pd->ed, pd->part);
 }
 
 EOLIAN static Eina_Bool

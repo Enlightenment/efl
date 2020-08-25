@@ -221,7 +221,7 @@ EAPI double edje_object_scale_get(const Edje_Object *obj)
 EAPI Edje_Drag_Dir
 edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
 {
-   return efl_ui_drag_dir_get(efl_part(obj, part));
+   return (Edje_Drag_Dir)efl_ui_drag_dir_get(efl_part(obj, part));
 }
 
 EAPI Eina_Bool
