@@ -1518,11 +1518,15 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image, Eina_Rw_Slice *slice
         void *src_data;
         int dst_stride, dst_len, dst_offset = 0;
 
-        cs_func = efl_draw_convert_func_get(ie->space, cspace, &can_region);
+        cs_func = efl_draw_convert_func_get((Efl_Gfx_Colorspace)ie->space,
+                                            (Efl_Gfx_Colorspace)cspace,
+                                            &can_region);
         if (!cs_func) return EINA_FALSE;
 
         // make sure we can convert back, if map for writing
-        if (to_write && !efl_draw_convert_func_get(cspace, ie->space, NULL))
+        if (to_write && !efl_draw_convert_func_get((Efl_Gfx_Colorspace)cspace,
+                                                   (Efl_Gfx_Colorspace)ie->space,
+                                                   NULL))
           return EINA_FALSE;
 
         if (can_region)
@@ -1554,7 +1558,10 @@ eng_image_data_map(void *engdata EINA_UNUSED, void **image, Eina_Rw_Slice *slice
         data = malloc(dst_len);
         if (!data) return EINA_FALSE;
 
-        if (!cs_func(data, src_data, rw, rh, src_stride, dst_stride, ie->flags.alpha, ie->space, cspace))
+        if (!cs_func(data, src_data, rw, rh, src_stride, dst_stride,
+                     ie->flags.alpha,
+                     (Efl_Gfx_Colorspace)ie->space,
+                     (Efl_Gfx_Colorspace)cspace))
           {
              ERR("color conversion failed");
              free(data);
@@ -1656,19 +1663,25 @@ _image_data_commit(RGBA_Image *im, RGBA_Image_Data_Map *map)
         Cspace_Convert_Func cs_func;
         Eina_Bool can_region;
 
-        cs_func = efl_draw_convert_func_get(map->cspace, ie->space, &can_region);
+        cs_func = efl_draw_convert_func_get((Efl_Gfx_Colorspace)map->cspace,
+                                            (Efl_Gfx_Colorspace)ie->space,
+                                            &can_region);
         EINA_SAFETY_ON_NULL_RETURN(cs_func);
 
         DBG("unmap commit: convert func (%p)", cs_func);
         if (can_region)
           {
              cs_func(dst, map->slice.mem, map->rw, map->rh, map->stride, dst_stride,
-                     ie->flags.alpha, map->cspace, ie->space);
+                     ie->flags.alpha,
+                     (Efl_Gfx_Colorspace)map->cspace,
+                     (Efl_Gfx_Colorspace)ie->space);
           }
         else
           {
              cs_func(dst, map->baseptr, ie->w, ie->h, map->stride, dst_stride,
-                     ie->flags.alpha, map->cspace, ie->space);
+                     ie->flags.alpha,
+                     (Efl_Gfx_Colorspace)map->cspace,
+                     (Efl_Gfx_Colorspace)ie->space);
           }
      }
 }
@@ -1722,15 +1735,15 @@ eng_image_data_maps_get(void *engdata EINA_UNUSED, const void *image, const Eina
 }
 
 static inline Eina_Bool
-_is_yuv(Efl_Gfx_Colorspace cspace)
+_is_yuv(Evas_Colorspace cspace)
 {
    switch (cspace)
      {
-      case EFL_GFX_COLORSPACE_YCBCR422P601_PL:
-      case EFL_GFX_COLORSPACE_YCBCR422P709_PL:
-      case EFL_GFX_COLORSPACE_YCBCR422601_PL:
-      case EFL_GFX_COLORSPACE_YCBCR420NV12601_PL:
-      case EFL_GFX_COLORSPACE_YCBCR420TM12601_PL:
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
         return EINA_TRUE;
 
       default:
@@ -4391,8 +4404,9 @@ eng_ector_buffer_new(void *data, Evas *evas, int width, int height,
      }
 
    // alloc buffer
-   ie = evas_cache_image_copied_data(evas_common_image_cache_get(), width, height,
-                                     NULL, EINA_TRUE, cspace);
+   ie = evas_cache_image_copied_data(evas_common_image_cache_get(),
+                                     width, height, NULL, EINA_TRUE,
+                                     (Evas_Colorspace)cspace);
    if (!ie) return NULL;
    pixels = ((RGBA_Image *) ie)->image.data;
    memset(pixels, 0, width * height * pxs);
