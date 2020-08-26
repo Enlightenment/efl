@@ -46,6 +46,22 @@
 #define mkdir(dirname, mode) evil_mkdir(dirname, mode)
 
 /*
+ * evil_time.h
+ */
+
+/**
+ * @def gettimeofday(tv, tz)
+ *
+ * Wrapper around evil_gettimeofday().
+ *
+ * @since 1.25
+ */
+#ifndef _GETTIMEOFDAY_DEFINED
+# define _GETTIMEOFDAY_DEFINED
+# define gettimeofday(tv, tz) evil_gettimeofday(tv, tz)
+#endif
+
+/*
  * evil_unistd.h
  */
 

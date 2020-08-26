@@ -194,7 +194,7 @@ EAPI int dlclose(void* handle);
  */
 EAPI void *dlsym(void* handle, const char* symbol);
 #ifndef HAVE_DLSYM
-#define HAVE_DLSYM 1
+# define HAVE_DLSYM 1
 #endif
 #ifdef _GNU_SOURCE
 
@@ -223,7 +223,7 @@ EAPI void *dlsym(void* handle, const char* symbol);
  */
 EAPI int dladdr (const void *addr, Dl_info *info);
 #ifndef HAVE_DLADDR
-#define HAVE_DLADDR 1
+# define HAVE_DLADDR 1
 #endif
 #endif /* _GNU_SOURCE */
 
