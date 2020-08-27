@@ -14,7 +14,6 @@
    ICON("system-file-manager", "i-folder")
    ICON("folder", "i-folder")
    ICON("folder-image", "i-folder")
-   ICON("inode/directory", "i-folder")
    ICON("user-home", "i-home")
    ICON("user-desktop", "i-desktop")
    ICON("user-temp", "i-temp")
@@ -222,6 +221,7 @@
 // mime icons
 #define ICON(_NAME, _ICON) \
    group { name: "e/icons/fileman/mime/"_NAME; \
+      alias: "e/icons/mimetypes/"_NAME; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
             description { state: "default" 0.0; \
@@ -231,7 +231,23 @@
          } \
       } \
    }
+   ICON("inode/file", "i-file2")
    ICON("inode/directory", "i-folder")
+   ICON("inode/directory-locked", "i-folder-locked")
+   ICON("inode/chardevice", "i-device-char")
+   ICON("inode/blockdevice", "i-device-block")
+   ICON("inode/fifo", "i-device-pipe")
+   ICON("inode/socket", "i-device-socket")
+   ICON("inode/symlink", "i-symlink")
+
+   ICON("application/octet-stream", "i-file2")
+
+   ICON("text/plain", "i-efm-txt")
+   ICON("text/x-csrc", "i-efm-c")
+   ICON("text/x-chdr", "i-efm-h")
+   ICON("text/x-c++src", "i-efm-cpp")
+   ICON("text/x-c++hdr", "i-efm-hpp")
+   ICON("application/x-shellscript", "i-efm-sh")
 #undef ICON
 
 /////////////////////////////////////////////////////////////////////////////
