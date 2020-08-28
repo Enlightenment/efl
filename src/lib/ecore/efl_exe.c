@@ -435,39 +435,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
    if (loop) tdl = efl_data_scope_get(loop, EFL_TASK_CLASS);
    if (pd->env) itr = efl_core_env_content_get(pd->env);
    if (pd->env) itr2 = efl_core_env_content_get(pd->env);
-   pd->pid = fork();
-
-   if (pd->pid != 0)
-     {
-        if (itr) eina_iterator_free(itr);
-        if (itr2) eina_iterator_free(itr2);
-        // parent process is here inside this if block
-        if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[0]);
-        if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[1]);
-        // fork failed... close up and clean and release locks
-        if (pd->pid == -1)
-          {
-             _close_fds(pd);
-             _ecore_signal_pid_unlock();
-             return EINA_FALSE;
-          }
-        // register this pid in the core sigchild/pid exit code watcher
-        _ecore_signal_pid_register(pd->pid, pd->fd.exited_write);
-        pd->exit_handler =
-          efl_add(EFL_LOOP_HANDLER_CLASS, obj,
-                  efl_loop_handler_fd_set(efl_added, pd->fd.exited_read),
-                  efl_event_callback_add(efl_added,
-                                         EFL_LOOP_HANDLER_EVENT_READ,
-                                         _cb_exe_exit_read, obj),
-                  efl_loop_handler_active_set(efl_added,
-                                              EFL_LOOP_HANDLER_FLAGS_READ));
-        _ecore_signal_pid_unlock();
-        pd->run = EINA_TRUE;
-        return EINA_TRUE;
-     }
-   // this code is in the child here, and is temporary setup until we
-   // exec() the child to replace everything.
-   sigset_t newset;
+   sigset_t newset, oldset;
 
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
@@ -505,7 +473,47 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 # endif
    // block all those nasty signals we don't want messing with things
    // in signal handlers while we go from fork to exec in the child
-   pthread_sigmask(SIG_BLOCK, &newset, NULL);
+   pthread_sigmask(SIG_BLOCK, &newset, &oldset);
+   pd->pid = fork();
+
+   if (pd->pid != 0)
+     {
+        pthread_sigmask(SIG_SETMASK, &oldset, NULL);
+        if (itr) eina_iterator_free(itr);
+        if (itr2) eina_iterator_free(itr2);
+        // parent process is here inside this if block
+        if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[0]);
+        if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[1]);
+        // fork failed... close up and clean and release locks
+        if (pd->pid == -1)
+          {
+             _close_fds(pd);
+             _ecore_signal_pid_unlock();
+             return EINA_FALSE;
+          }
+        // register this pid in the core sigchild/pid exit code watcher
+        _ecore_signal_pid_register(pd->pid, pd->fd.exited_write);
+        pd->exit_handler =
+          efl_add(EFL_LOOP_HANDLER_CLASS, obj,
+                  efl_loop_handler_fd_set(efl_added, pd->fd.exited_read),
+                  efl_event_callback_add(efl_added,
+                                         EFL_LOOP_HANDLER_EVENT_READ,
+                                         _cb_exe_exit_read, obj),
+                  efl_loop_handler_active_set(efl_added,
+                                              EFL_LOOP_HANDLER_FLAGS_READ));
+        _ecore_signal_pid_unlock();
+        pd->run = EINA_TRUE;
+        return EINA_TRUE;
+     }
+   struct sigaction sa;
+   int sig;
+
+   sa.sa_handler = SIG_DFL;
+   sa.sa_flags = 0;
+   sigemptyset(&sa.sa_mask);
+   for (sig = 0; sig < 32; sig++) sigaction(sig, &sa, NULL);
+   // this code is in the child here, and is temporary setup until we
+   // exec() the child to replace everything.
 
    if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[1]);
    if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[0]);
@@ -633,6 +641,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
         procctl(P_PID, 0, PROC_PDEATHSIG_CTL, &sig);
      }
 # endif
+   pthread_sigmask(SIG_SETMASK, &oldset, NULL);
    // actually execute!
    _exec(cmd, pd->flags, td->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
