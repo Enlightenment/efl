@@ -64,32 +64,20 @@ group { name: "e/fileman/default/list/variable";
             offscale;
          }
       }
-      part { name: "icon"; type: SPACER;
+      part { name: "icon"; type: RECT;
          description { state: "default" 0.0;
-            aspect: 1.0 1.0; aspect_preference: BOTH;
             rel.to: "icon0";
          }
          description { state: "start" 0.0;
             inherit: "default" 0.0;
-            max: 0 0;
+            max: 99999 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
          }
       }
-      part { name: "shadow"; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel.to: "icon_base";
-            WIN_SHADOW_SMALL;
-            visible: 0;
-         }
-         description { state: "start" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
       part { name: "icon_base"; type: RECT; mouse_events: 0;
+         clip_to: "icon";
          description { state: "default" 0.0;
             color: 48 48 48 255;
             rel.to: "e.swallow.icon";
@@ -101,10 +89,27 @@ group { name: "e/fileman/default/list/variable";
          }
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
+         clip_to: "icon";
          description { state: "default" 0.0;
-            rel1.to: "icon";
-            rel2.to: "icon";
+            rel.to: "icon0";
             fixed: 1 1;
+         }
+      }
+      part { name: "icon_over"; type: RECT; mouse_events: 0;
+         clip_to: "icon";
+         description { state: "default" 0.0;
+            color: 51 153 255 255;
+            rel.to: "e.swallow.icon";
+            visible: 0;
+         }
+         description { state: "start" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 0;
+            visible: 0;
          }
       }
       part { name: "vol"; mouse_events: 0;
@@ -220,20 +225,21 @@ group { name: "e/fileman/default/list/variable";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
-         target: "shadow";
+         target: "icon_over";
          after: "gen";
       }
       program { signal: "e,action,thumb,gen,alpha"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
-         target: "shadow";
+         target: "icon_over";
          after: "gen";
       }
       program { name: "gen";
          action: STATE_SET "visible" 0.0;
-         transition: SPRING 0.4 1.7 5;
+         transition: DECELERATE 0.2;
          target: "icon";
+         target: "icon_over";
       }
       program { signal: "e,state,ask"; source: "e";
          action: STATE_SET "ask" 0.0;
@@ -364,38 +370,27 @@ group { name: "e/fileman/default/icon/fixed";
       part { name: "icon0"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 4 4;
+            rel1.offset: 16 4;
             rel2.relative: 1.0 -1.2;
-            rel2.offset: -5 -5;
+            rel2.offset: -17 -5;
             rel2.to_y: "label0";
             offscale;
          }
       }
-      part { name: "icon"; type: SPACER;
+      part { name: "icon"; type: RECT;
          description { state: "default" 0.0;
-            aspect: 1.0 1.0; aspect_preference: BOTH;
             rel.to: "icon0";
          }
          description { state: "start" 0.0;
             inherit: "default" 0.0;
-            max: 0 0;
+            max: 99999 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
          }
       }
-      part { name: "icon_shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel.to: "icon_base";
-            WIN_SHADOW_SMALL;
-            visible: 0;
-         }
-         description { state: "start" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
       part { name: "icon_base"; type: RECT; mouse_events: 0;
+         clip_to: "icon";
          description { state: "default" 0.0;
             color: 48 48 48 255;
             rel.to: "e.swallow.icon";
@@ -407,8 +402,26 @@ group { name: "e/fileman/default/icon/fixed";
          }
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
+         clip_to: "icon";
          description { state: "default" 0.0;
-            rel.to: "icon";
+            rel.to: "icon0";
+         }
+      }
+      part { name: "icon_over"; type: RECT; mouse_events: 0;
+         clip_to: "icon";
+         description { state: "default" 0.0;
+            color: 51 153 255 255;
+            rel.to: "e.swallow.icon";
+            visible: 0;
+         }
+         description { state: "start" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 0;
+            visible: 0;
          }
       }
       part { name: "vol"; mouse_events: 0;
@@ -530,20 +543,21 @@ group { name: "e/fileman/default/icon/fixed";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
-         target: "icon_shadow";
+         target: "icon_over";
          after: "gen";
       }
       program { signal: "e,action,thumb,gen,alpha"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
          target: "icon_base";
-         target: "icon_shadow";
+         target: "icon_over";
          after: "gen";
       }
       program { name: "gen";
          action: STATE_SET "visible" 0.0;
-         transition: SPRING 0.4 1.7 5;
+         transition: DECELERATE 0.2;
          target: "icon";
+         target: "icon_over";
       }
       program { signal: "e,state,ask"; source: "e";
          action: STATE_SET "ask" 0.0;
@@ -639,31 +653,25 @@ group { name: "e/fileman/default/scrollframe";
       part { name: "e.swallow.bg"; type: SWALLOW; insert_before: "e.swallow.content";
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "e.swallow.overlay"; type: SWALLOW;
          insert_after: "e.swallow.content";
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "e.box.operations"; type: BOX;
-//      part { name: "e.box.operations"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "bg";
             rel1.offset: -8 -8;
-            rel1.to: "bg";
             rel1.relative: 1.0 1.0;
             rel2.offset: -8 -8;
-            rel2.to: "bg";
             align: 1.0 1.0;
             offscale;
-//            min: 50 50;
-//            color: 255 128 0 128;
             box { layout: "vertical";
                padding: 0 0;
                align: 1.0 1.0;
@@ -687,21 +695,19 @@ group { name: "e/fileman/default/window/main";
       }
       part { name: "e.swallow.favorites"; type: SWALLOW;
          description { state: "default" 0.0;
+            rel.to: "region";
             align: 0.0 1.0;
             rel1.offset: 0 0;
-            rel1.to: "region";
             rel2.offset: -1 -1;
             rel2.relative: 0.0 1.0;
-            rel2.to: "region";
             fixed: 1 0;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
+            rel.to: "region";
             rel1.offset: 0 0;
-            rel1.to: "region";
             rel2.offset: -1 -1;
-            rel2.to: "region";
             align: 1.0 1.0;
          }
          description { state: "fav" 0.0;
@@ -756,40 +762,33 @@ group { name: "e/fileman/default/window/main";
       }
    }
    programs {
-      program {
-         signal: "e,favorites,enabled"; source: "e";
+      program { signal: "e,favorites,enabled"; source: "e";
          action: STATE_SET "fav" 0.0;
          target: "e.swallow.content";
       }
-      program {
-         signal: "e,favorites,disabled"; source: "e";
+      program { signal: "e,favorites,disabled"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.content";
       }
-      program {
-         signal: "e,toolbar,left"; source: "e";
+      program { signal: "e,toolbar,left"; source: "e";
          action: STATE_SET "tb_left" 0.0;
          target: "region";
       }
-      program {
-         signal: "e,toolbar,right"; source: "e";
+      program { signal: "e,toolbar,right"; source: "e";
          action: STATE_SET "tb_right" 0.0;
          target: "region";
       }
-      program {
-         signal: "e,toolbar,top"; source: "e";
+      program { signal: "e,toolbar,top"; source: "e";
          action: STATE_SET "tb_top" 0.0;
          target: "e.swallow.toolbar";
          target: "region";
       }
-      program {
-         signal: "e,toolbar,bottom"; source: "e";
+      program { signal: "e,toolbar,bottom"; source: "e";
          action: STATE_SET "tb_bottom" 0.0;
          target: "e.swallow.toolbar";
          target: "region";
       }
-      program {
-         signal: "e,toolbar,disabled"; source: "e";
+      program { signal: "e,toolbar,disabled"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.toolbar";
          target: "region";
@@ -963,10 +962,9 @@ group { name: "e/fileman/default/overlay";
          clip_to: "typebuf_clip";
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "e.text.typebuf_label";
             rel1.offset: -8 -8;
-            rel1.to: "e.text.typebuf_label";
             rel2.offset: 7 7;
-            rel2.to: "e.text.typebuf_label";
             color: 0 0 0 192;
             offscale;
          }
@@ -1035,10 +1033,9 @@ group { name: "e/fileman/default/list/drop_in";
       }
       part { name: "pat"; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 1 1;
             rel2.offset: -2 -2;
-            rel2.to: "base";
             image.normal: "diagonal_stripes.png";
             color: 51 153 255 25;
             TILED_PATTERN(240, 240)
@@ -1113,20 +1110,17 @@ group { name: "e/fileman/default/list/drop_in";
          target: "arrow1";
          after: "drop1";
       }
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "base";
          target: "pat";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "arrow0";
          target: "arrow1";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "pat";
@@ -1215,19 +1209,16 @@ group { name: "e/fileman/default/list/drop_between";
          target: "arrow1";
          after: "drop1";
       }
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "arrow0";
          target: "arrow1";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -1249,10 +1240,9 @@ group { name: "e/fileman/default/rubberband";
       }
       part { name: "pat"; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 1 1;
             rel2.offset: -2 -2;
-            rel2.to: "base";
             image.normal: "diagonal_stripes.png";
             color: 51 153 255 25;
             TILED_PATTERN(240, 240)
@@ -1497,12 +1487,14 @@ group { name: "e/modules/efm_navigation/main";
          }
       }
       part { name: "e.swallow.pathbar"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             align: 0.0 0.5;
             rel1.to_x: "base";
             rel1.relative: 1.0 0.0;
             rel1.offset: 3 4;
             rel2.offset: -4 -4;
+            offscale;
          }
       }
 
@@ -1510,8 +1502,7 @@ group { name: "e/modules/efm_navigation/main";
       part { name: _NAME"_icon"; \
          scale: 1; \
          description { state: "default" 0.0; \
-            rel1.to: _REL; \
-            rel2.to: _REL; \
+            rel.to: _REL; \
             image.normal: "i-"_ICON; \
             min: 15 15; \
             max: 15 15; \
@@ -1523,18 +1514,15 @@ group { name: "e/modules/efm_navigation/main";
             color: 255 255 255 255; \
          } \
       } \
-      program { \
-         signal: "mouse,down,1*"; source: _REL; \
+      program { signal: "mouse,down,1*"; source: _REL; \
          action: STATE_SET "active" 0.0; \
          target: _NAME"_icon"; \
       } \
-      program { \
-         signal: "mouse,up,1*"; source: _REL; \
+      program { signal: "mouse,up,1*"; source: _REL; \
          action: STATE_SET "default" 0.0; \
          target: _NAME"_icon"; \
       } \
-      program { \
-         signal: "mouse,clicked,1*"; source: _REL; \
+      program { signal: "mouse,clicked,1*"; source: _REL; \
          action: SIGNAL_EMIT "e,action,"_ACTION",click" ""; \
       } \
 
@@ -1579,9 +1567,8 @@ group { name: "e/modules/efm_navigation/main";
       }
       part { name: "reload"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "parent";
+            rel.to: "parent";
             rel1.relative: 1.0 0.0;
-            rel2.to: "parent";
             align: 0.0 0.5;
             color: 0 0 0 0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
@@ -1590,9 +1577,8 @@ group { name: "e/modules/efm_navigation/main";
       }
       part { name: "favorite"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "reload";
+            rel.to: "reload";
             rel1.relative: 1.0 0.0;
-            rel2.to: "reload";
             align: 0.0 0.5;
             color: 0 0 0 0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
@@ -1611,6 +1597,7 @@ group { name: "e/modules/efm_navigation/pathbar_button";
             rel1.offset: 6 6;
             rel2.offset: -7 -7;
             color: 160 160 160 255;
+            offscale;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1644,18 +1631,15 @@ group { name: "e/modules/efm_navigation/pathbar_button";
       }
    }
    programs {
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "e,action,click" "";
       }
-      program {
-         signal: "e,state,selected"; source: "e";
+      program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "e.text.label";
          target: "bar";
       }
-      program {
-         signal: "e,state,default"; source: "e";
+      program { signal: "e,state,default"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
          target: "bar";
@@ -1747,20 +1731,17 @@ group { name: "e/modules/efm_navigation/pathbar_scrollframe";
       }
    }
    programs {
-      program {
-         signal: "e,action,show,hbar"; source: "e";
+      program { signal: "e,action,show,hbar"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "arrow_clipper";
          target: "arrow_clipper";
       }
-      program {
-         signal: "e,action,hide,hbar"; source: "e";
+      program { signal: "e,action,hide,hbar"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "arrow_clipper";
          target: "arrow_clipper";
       }
-      program {
-         signal: "mouse,down,1*"; source: "arrow1_ev";
+      program { signal: "mouse,down,1*"; source: "arrow1_ev";
          action: SIGNAL_EMIT "e,action,prev" "e";
          after: "arrow1_repeat";
       }
@@ -1769,24 +1750,20 @@ group { name: "e/modules/efm_navigation/pathbar_scrollframe";
          in: 0.3 0.0;
          after: "arrow1_repeat";
       }
-      program {
-         signal: "mouse,up,1"; source: "arrow1_ev";
+      program { signal: "mouse,up,1"; source: "arrow1_ev";
          action: ACTION_STOP;
          target: "arrow1_repeat";
       }
-      program {
-         signal: "mouse,down,1*"; source: "arrow1_ev";
+      program { signal: "mouse,down,1*"; source: "arrow1_ev";
          action: STATE_SET "clicked" 0.0;
          target: "arrow1";
       }
 
-      program {
-         signal: "mouse,up,1"; source: "arrow1_ev";
+      program { signal: "mouse,up,1"; source: "arrow1_ev";
          action: STATE_SET "default" 0.0;
          target: "arrow1";
       }
-      program {
-         signal: "mouse,down,1*"; source: "arrow2_ev";
+      program { signal: "mouse,down,1*"; source: "arrow2_ev";
          action: SIGNAL_EMIT "e,action,next" "e";
          after: "arrow2_repeat";
       }
@@ -1795,18 +1772,15 @@ group { name: "e/modules/efm_navigation/pathbar_scrollframe";
          in: 0.3 0.0;
          after: "arrow2_repeat";
       }
-      program {
-         signal: "mouse,up,1"; source: "arrow2_ev";
+      program { signal: "mouse,up,1"; source: "arrow2_ev";
          action: ACTION_STOP;
          target: "arrow2_repeat";
       }
-      program {
-         signal: "mouse,down,1*"; source: "arrow2_ev";
+      program { signal: "mouse,down,1*"; source: "arrow2_ev";
          action: STATE_SET "clicked" 0.0;
          target: "arrow2";
       }
-      program {
-         signal: "mouse,up,1"; source: "arrow2_ev";
+      program { signal: "mouse,up,1"; source: "arrow2_ev";
          action: STATE_SET "default" 0.0;
          target: "arrow2";
       }
