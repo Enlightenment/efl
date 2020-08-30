@@ -863,6 +863,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    struct stat           st;
    Image_Timestamp       tstamp;
    Evas_Image_Load_Opts  tlo;
+   Eina_Bool             skip = lo->skip_head;
 
    if (!file)
      {
@@ -884,7 +885,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    size += key_length;
    size += _evas_cache_image_loadopts_append(hkey + size, &lo);
    tlo = *lo;
-   tlo.skip_head = lo->skip_head;
+   tlo.skip_head = skip;
 
    /* find image by key in active hash */
    SLKL(engine_lock);
