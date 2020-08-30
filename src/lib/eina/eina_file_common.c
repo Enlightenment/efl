@@ -99,7 +99,7 @@ EAPI void
 eina_file_statgen_enable(void)
 {
    eina_spinlock_take(&_eina_statgen_lock);
-   if (_eina_statgen != 0) _eina_statgen = 1;
+   if (_eina_statgen == 0) _eina_statgen = 1;
    eina_spinlock_release(&_eina_statgen_lock);
 }
 
