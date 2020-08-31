@@ -109,7 +109,7 @@ main(int argc, char *argv[])
    if (argc - args > 1)
      {
         eeze_disk_mount_point_set(disk, mount_point);
-        if (eina_str_has_extension(dev, "iso"))
+        if (eina_str_has_extension(dev, ".iso"))
           {
              int f;
              f = eeze_disk_mountopts_get(disk);
