@@ -50,6 +50,9 @@ Fixes:
    * edje - calce - really respect max image size for img sets
    * ecore - don't do anything with heap between fork and exec
    * evas - fix deadlock with sw async rendering calling cbs in post flush
+   * ecore con - curl - fix error map to map right enum
+   * eina - statgen (stat generation) - fix enable api to actually enable
+   * evas - image cache - fix loading with skip head on to load changed files
 
 Changes since 1.23.0:
 ---------------------
