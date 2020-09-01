@@ -1721,7 +1721,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    mro = eina_list_remove(mro, NULL);
    mro = eina_list_prepend(mro, klass);
    if ((desc->type == EFL_CLASS_TYPE_MIXIN) && (desc->data_size > 0))
-     mixins = eina_list_prepend(mixins, klass);
+     {
+        mixins = eina_list_prepend(mixins, klass);
+     }
 
    /* Copy the extensions and free the list */
      {
@@ -1751,7 +1753,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
 
    size_t extn_data_off = klass->data_offset;
    if (klass->desc->type != EFL_CLASS_TYPE_MIXIN)
+     {
       extn_data_off += EO_ALIGN_SIZE(klass->desc->data_size);
+     }
 
    /* Feed the mixins data offsets and free the mixins list. */
      {

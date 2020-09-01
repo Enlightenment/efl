@@ -6647,7 +6647,9 @@ _layout_par(Ctxt *c)
 
    it = _ITEM(eina_list_data_get(c->par->logical_items));
    if (c->line_no == 0 || c->o->multiline)
-     _layout_line_new(c, it->format);
+     {
+        _layout_line_new(c, it->format);
+     }
    /* We walk on our own because we want to be able to add items from
     * inside the list and then walk them on the next iteration. */
 
