@@ -3736,6 +3736,13 @@ EFL_START_TEST(evas_textblock_style)
    evas_object_textblock_style_insets_get(tb, &l, &r, &t, &b);
    fail_if((l != 0) || (r != 4) || (t != 0) || (b != 4));
 
+   /* Size with style padding */
+   evas_object_textblock_size_formatted_get(tb, &w, &h);
+   evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+   /* It is non-sense if the following condition is true. */
+   fail_if((w + l + r == nw) && (h == nh + t + b));
+
    /* Mixed style padding */
    evas_object_textblock_text_markup_set(tb,
          "<style=far_shadow>Test</><style=far_soft_shadow>Test</>");

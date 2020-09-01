@@ -311,7 +311,6 @@ struct _Evas_Object_Textblock_Text_Item
 {
    Evas_Object_Textblock_Item       parent;  /**< Textblock item. */
    Evas_Text_Props                  text_props;  /**< Props for this item. */
-   Evas_Coord                       x_adjustment; /**< Used to indicate by how much we adjusted sizes */
    Text_Item_Filter                *gfx_filter;
 };
 
@@ -4963,7 +4962,7 @@ loop_advance:
         /* c->o->style_pad.r is already included in the line width, so it's
          * not used in this calculation. . */
         c->ln->x = c->marginl + c->o->style_pad.l +
-           ((c->w - c->ln->w - c->o->style_pad.l -
+           ((c->w - c->ln->w - c->o->style_pad.l - c->o->style_pad.r -
              c->marginl - c->marginr) * _layout_line_align_get(c));
      }
    else
@@ -4979,8 +4978,7 @@ loop_advance:
 
    /* Calculate new max width */
      {
-        Evas_Coord new_wmax = c->ln->w +
-           c->marginl + c->marginr - (c->o->style_pad.l + c->o->style_pad.r);
+        Evas_Coord new_wmax = c->ln->w + c->marginl + c->marginr;
         if (new_wmax > c->par->last_fw)
            c->par->last_fw = new_wmax;
         if (new_wmax > c->wmax)
@@ -5199,9 +5197,8 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
           {
              evas_filter_program_padding_get(pgm, &pad, NULL);
 
-             ti->x_adjustment = pad.r + pad.l;
-             ti->parent.w = tw + ti->x_adjustment; // FIXME: why add l+r here,
-             ti->parent.h = th;                    // but not t+b here?
+             ti->parent.w = tw;                    // Don't add style pad here
+             ti->parent.h = th;                    // Don't add style pad here
              ti->parent.adv = advw;
              ti->parent.x = 0;
              return;
@@ -5270,9 +5267,8 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    shx2 += shad_sz;
    if (shx1 < minx) minx = shx1;
    if (shx2 > maxx) maxx = shx2;
-   ti->x_adjustment = maxx - minx;
 
-   ti->parent.w = tw + ti->x_adjustment;
+   ti->parent.w = tw;
    ti->parent.h = th;
    ti->parent.adv = advw;
    ti->parent.x = 0;
@@ -6275,7 +6271,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 
    save_cx = c->x;
    temp_w = c->w;
-   ellip_w = ellip_ti->parent.w - ellip_ti->x_adjustment;
+   ellip_w = ellip_ti->parent.w;
 #ifdef BIDI_SUPPORT
    // XXX: with RTL considerations in mind, we need to take max(adv, w) as the
    // line may be reordered in a way that the item placement will cause the
@@ -6725,10 +6721,6 @@ _layout_par(Ctxt *c)
         /* Check if we need to wrap, i.e the text is bigger than the width,
            or we already found a wrap point. */
         itw = it->w;
-        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-          {
-             itw -= _ITEM_TEXT(it)->x_adjustment;
-          }
 
         if ((c->w >= 0) &&
               (obs ||
@@ -7571,7 +7563,8 @@ _layout_visual(Ctxt *c)
       if (last_vis_par)
         {
            c->hmax = last_vis_par->y + last_vis_par->h +
-              _layout_last_line_max_descent_adjust_calc(c, last_vis_par);
+              _layout_last_line_max_descent_adjust_calc(c, last_vis_par) -
+              c->style_pad.t - c->style_pad.b;
         }
    }
 
@@ -7596,7 +7589,7 @@ _layout_done(Ctxt *c, Evas_Coord *w_ret, Evas_Coord *h_ret)
    /* Vertically align the textblock */
    if ((c->o->valign > 0.0) && (c->h > c->hmax))
      {
-        Evas_Coord adjustment = (c->h - c->hmax) * c->o->valign;
+        Evas_Coord adjustment = (c->h - c->hmax - c->style_pad.t - c->style_pad.b) * c->o->valign;
         Evas_Object_Textblock_Paragraph *par;
         EINA_INLIST_FOREACH(c->paragraphs, par)
           {
@@ -7768,10 +7761,11 @@ _relayout(const Evas_Object *eo_obj)
    if ((o->paragraphs) && (!EINA_INLIST_GET(o->paragraphs)->next) &&
        (o->paragraphs->lines) && (!EINA_INLIST_GET(o->paragraphs->lines)->next))
      {
-        if (obj->cur->geometry.h < o->formatted.h)
+        if (obj->cur->geometry.h < o->formatted.h + o->style_pad.t + o->style_pad.b)
           {
-             LYDBG("ZZ: 1 line only... lasth == formatted h (%i)\n", o->formatted.h);
-             o->formatted.oneline_h = o->formatted.h;
+             LYDBG("ZZ: 1 line only... lasth == formatted h + style_pad.t + style_pad.b(%i)\n",
+                   o->formatted.h + o->style_pad.t + o->style_pad.b);
+             o->formatted.oneline_h = o->formatted.h + o->style_pad.t + o->style_pad.b;
           }
      }
    o->changed = 0;
@@ -13467,7 +13461,7 @@ _evas_textblock_cursor_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_
    if (o->paragraphs)
      {
         Evas_Object_Textblock_Line *first_line = o->paragraphs->lines;
-        if (y >= o->paragraphs->y + o->formatted.h)
+        if (y >= o->paragraphs->y + o->formatted.h + o->style_pad.t + o->style_pad.b)
           {
              /* If we are after the last paragraph, use the last position in the
               * text. */
@@ -13541,7 +13535,7 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
                }
           }
      }
-   else if (o->paragraphs && (y >= o->paragraphs->y + o->formatted.h))
+   else if (o->paragraphs && (y >= o->paragraphs->y + o->formatted.h + o->style_pad.t + o->style_pad.b))
      {
         int line_no = 0;
         /* If we are after the last paragraph, use the last position in the
@@ -17633,9 +17627,9 @@ _text_layout_async_done(void *todo, Ecore_Thread *thread EINA_UNUSED)
    if ((c->o->paragraphs) && (!EINA_INLIST_GET(c->o->paragraphs)->next) &&
        (c->o->paragraphs->lines) && (!EINA_INLIST_GET(c->o->paragraphs->lines)->next))
      {
-        if (c->evas_o->cur->geometry.h < c->o->formatted.h)
+        if (c->evas_o->cur->geometry.h < c->o->formatted.h + c->o->style_pad.t + c->o->style_pad.b)
           {
-             c->o->formatted.oneline_h = c->o->formatted.h;
+             c->o->formatted.oneline_h = c->o->formatted.h + c->o->style_pad.t + c->o->style_pad.b;
           }
      }
    c->o->changed = 0;
@@ -17652,7 +17646,9 @@ _text_layout_async_done(void *todo, Ecore_Thread *thread EINA_UNUSED)
    evas_object_change(c->obj, c->evas_o);
    free(c);
 
-   _resolve_async(td, o->formatted.w, o->formatted.h);
+   _resolve_async(td,
+                  o->formatted.w + o->style_pad.l + o->style_pad.r,
+                  o->formatted.h + o->style_pad.t + o->style_pad.b);
 
    o->layout_th = NULL;
    o->layout_jobs--;
@@ -17699,7 +17695,9 @@ _efl_canvas_textblock_async_layout(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Textblock_
    evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
    if (o->formatted.valid)
      {
-        _resolve_async(ctx, o->formatted.w, o->formatted.w);
+        _resolve_async(ctx,
+                       o->formatted.w + o->style_pad.l + o->style_pad.r,
+                       o->formatted.h + o->style_pad.t + o->style_pad.b);
         return f;
      }
 
