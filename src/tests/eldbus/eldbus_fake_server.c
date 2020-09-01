@@ -179,7 +179,6 @@ _fake_server_name_request_cb(void *data EINA_UNUSED,
    if (ELDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER != reply)
      {
         const char *errcode = "Unknown reply";
-        char errmsg[512];
         switch (reply)
           {
            case ELDBUS_NAME_REQUEST_REPLY_IN_QUEUE:
@@ -194,9 +193,8 @@ _fake_server_name_request_cb(void *data EINA_UNUSED,
              break;
            default: break;
           }
-        snprintf(errmsg, sizeof(errmsg), "Failed to start fake server: %s (%u)",
+        ck_abort_msg( "Failed to start fake server: %s (%u)",
                  errcode, reply);
-        ck_abort_msg(errmsg);
      }
 
    ecore_main_loop_quit();
