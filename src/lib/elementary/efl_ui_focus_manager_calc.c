@@ -160,20 +160,25 @@ _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
           efl_class_name_get(pd->root->focusable), root);
 }
 
+
 static void
 border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list)
 {
    Node *partner;
    Eina_List *lnode;
    Border *border;
+   Efl_Ui_Focus_Direction complement;
 
    EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
+   complement = efl_ui_focus_util_direction_complement(direction);
+   //this is basically a nop. The complement of 2D will *always* be 2D
+   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(complement));
 
    border = &DIRECTION_ACCESS(node, direction);
 
    EINA_LIST_FREE(border->one_direction, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(direction));
+        Border *b = &DIRECTION_ACCESS(partner, complement);
         b->cleanup_nodes = eina_list_remove(b->cleanup_nodes, node);
      }
 
@@ -181,7 +186,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FOREACH(border->one_direction, lnode, partner)
      {
-        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(direction));
+        Border *comp_border = &DIRECTION_ACCESS(partner, complement);
 
         comp_border->cleanup_nodes = eina_list_append(comp_border->cleanup_nodes, node);
      }
@@ -192,14 +197,18 @@ border_onedirection_cleanup(Node *node, Efl_Ui_Focus_Direction direction)
 {
    Node *partner;
    Border *border;
+   Efl_Ui_Focus_Direction complement;
 
    EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
+   complement = efl_ui_focus_util_direction_complement(direction);
+   //this is basically a nop. The complement of 2D will *always* be 2D
+   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(complement));
 
    border = &DIRECTION_ACCESS(node, direction);
 
    EINA_LIST_FREE(border->cleanup_nodes, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(direction));
+        Border *b = &DIRECTION_ACCESS(partner, complement);
         b->one_direction = eina_list_remove(b->one_direction, node);
      }
 }
