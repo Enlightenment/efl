@@ -66,8 +66,4 @@
    ICON("modules-core","logo_white_128.png",64)
    ICON("modules-mobile","icon_globe.png",64)
    ICON("modules-settings","icon_config.png",64)
-   ICONMIME("inode/chardevice","icon_efm_file.png",128)
-   ICONMIME("inode/blockdevice","icon_efm_file.png",128)
-   ICONMIME("inode/directory-locked","icon_efm_file.png",128)
-   ICONMIME("inode/fifo","icon_efm_file.png",128)
-   ICONMIME("inode/socket","icon_efm_file.png",128)
+

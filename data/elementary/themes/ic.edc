@@ -152,8 +152,21 @@ I160("i-drive-hdd", "efm-drive-hdd")
 I160("i-drive-usb-media", "efm-drive-usb-media")
 I160("i-favorite", "efm-favorite")
 I160("i-folder", "efm-folder")
+I160("i-folder-locked", "efm-folder-locked")
 I160("i-home", "efm-home")
 I160("i-temp", "efm-temp")
+I160("i-device-char", "efm-device-char")
+I160("i-device-block", "efm-device-block")
+I160("i-device-pipe", "efm-device-pipe")
+I160("i-device-socket", "efm-device-socket")
+I160("i-symlink", "efm-symlink")
+I160("i-file2", "efm-file2")
+I160("i-efm-txt", "efm-txt")
+I160("i-efm-c", "efm-c")
+I160("i-efm-h", "efm-h")
+I160("i-efm-cpp", "efm-cpp")
+I160("i-efm-hpp", "efm-hpp")
+I160("i-efm-sh", "efm-sh")
 
 I160("i-folder-open", "folder-open")
 I160("i-file-properties", "file-properties")
@@ -304,12 +317,6 @@ I160("i-unknown", "unknown")
    ICON("modules-core","logo_white_128.png",64)
    ICON("network-website","icon_globe.png",64)                     // "enlightenment/website"
 
-   ICONMIME("inode/chardevice","icon_efm_file.png",128)
-   ICONMIME("inode/blockdevice","icon_efm_file.png",128)
-   ICONMIME("inode/directory-locked","icon_efm_file.png",128)
-   ICONMIME("inode/directory","icon_efm_folder.png",128)
-   ICONMIME("inode/fifo","icon_efm_file.png",128)
-   ICONMIME("inode/socket","icon_efm_file.png",128)
 
 #define EFM_MIME_ICON(_NAME, _IMAGE, _ASPMIN, _ASPMAX, _STRING, _SIZE, _VALIGN) \
    group { name: "e/icons/fileman/mime/"_NAME; \
@@ -483,10 +490,6 @@ I160("i-unknown", "unknown")
 
 //Code//
 
-   EFM_MIME_ICON("text/x-csrc","efm_generic_icon_content_code.png", (114/88), (114/88), ".C", 240, 0.3);
-   EFM_MIME_ICON("text/x-chdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".H", 240, 0.3);
-   EFM_MIME_ICON("text/x-c++hdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".HH", 240, 0.3);
-   EFM_MIME_ICON("text/x-c++src","efm_generic_icon_content_code.png", (114/88), (114/88), ".C++", 240, 0.3);
    EFM_MIME_ICON("text/x-csharp","efm_generic_icon_content_code.png", (114/88), (114/88), ".C#", 240, 0.3);
    EFM_MIME_ICON("application/x-awk","efm_generic_icon_content_code.png", (114/88), (114/88), ".AWK", 240, 0.3);
    EFM_MIME_ICON("text/x-hdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".HPP", 240, 0.3);
@@ -499,7 +502,6 @@ I160("i-unknown", "unknown")
 //Text//   
 
    EFM_MIME_ICON("text/x-patch","efm_generic_icon_content_text.png", (114/126), (114/126), ".PATCH", 240, 0.5);
-   EFM_MIME_ICON("text/plain","efm_generic_icon_content_text.png", (114/126), (114/126), ".TXT", 240, 0.5);
    EFM_MIME_ICON("text/x-log","efm_generic_icon_content_text.png",  (114/126), (114/126), ".LOG", 240, 0.5);
    EFM_MIME_ICON("application/x-md5","efm_generic_icon_content_text.png",  (114/126), (114/126), ".MD5", 240, 0.5);
    EFM_MIME_ICON("text/x-makefile","efm_generic_icon_content_text.png",  (114/126), (114/126), ".MK", 240, 0.5);
@@ -667,10 +669,6 @@ I160("i-unknown", "unknown")
       } \
    }
 
-//Script//
-   
-   EFM_MIME_ICON_SIMPLE("application/x-shellscript","efm_generic_icon_content_script.png", (114/126), (114/126), 240, 0.5);
-
 //Executable//
 
    EFM_MIME_ICON_SIMPLE("application/x-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
@@ -689,10 +687,6 @@ I160("i-unknown", "unknown")
 
    EFM_MIME_ICON_SIMPLE("application/x-trash","efm_generic_icon_content_trash.png", (114/142), (114/142), 240, 0.5);
 
-//Octet-Stream//
-   
-   EFM_MIME_ICON_SIMPLE("application/octet-stream","efm_generic_icon_content_text.png",(114/126), (114/126), 240, 0.5);
-
 //Install//
 
    EFM_MIME_ICON_SIMPLE("application/x-install-instructions","efm_generic_icon_content_install.png",(114/149), (114/149), 240, 0.5);
@@ -700,14 +694,6 @@ I160("i-unknown", "unknown")
 //Cache//
 
    EFM_MIME_ICON_SIMPLE("chemical/x-cache","efm_generic_icon_content_db.png", (114/128), (114/128), 240, 0.5);
-
-//Inode//
-   
-   EFM_MIME_ICON_SIMPLE("inode/chardevice","efm_generic_icon_content_inode_char.png", (114/77), (114/77), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/blockdevice","efm_generic_icon_content_inode_block.png", (81/114), (81/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/fifo","efm_generic_icon_content_inode_fifo.png", (87/114), (87/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/socket","efm_generic_icon_content_inode_socket.png", (114/114), (114/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/file","efm_generic_icon_content_inode_file.png", (83/114), (83/114), 240, 0.5);
 
 #undefine EFM_MIME_ICON
 #undefine EFM_MIME_ICON_SIMPLE
