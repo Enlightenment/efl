@@ -4,7 +4,8 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013-2016 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2013-2019 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2018 Wu Yongwei <wuyongwei at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -30,9 +31,9 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 29, for
- * Unicode 9.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
+ * This library has been updated according to Revision 35, for
+ * Unicode 12.0.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-35.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -72,4 +73,4 @@ void set_wordbreaks_utf32(
 }
 #endif
 
-#endif
+#endif /* WORDBREAK_H */
