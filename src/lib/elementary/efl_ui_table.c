@@ -640,28 +640,6 @@ _efl_ui_table_item_iterator_free(Table_Item_Iterator *it)
    free(it);
 }
 
-static inline Eina_Iterator *
-_efl_ui_table_item_iterator_create(Eo *obj, Eina_Inlist *list)
-{
-   Table_Item_Iterator *it;
-
-   it = calloc(1, sizeof(*it));
-   if (!it) return NULL;
-
-   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
-
-   it->object = obj;
-   it->cur = list;
-
-   it->iterator.version = EINA_ITERATOR_VERSION;
-   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_ui_table_item_iterator_next);
-   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
-     _efl_ui_table_item_iterator_get_container);
-   it->iterator.free = FUNC_ITERATOR_FREE(_efl_ui_table_item_iterator_free);
-
-   return &it->iterator;
-}
-
 EOLIAN static Eina_Iterator *
 _efl_ui_table_efl_container_content_iterate(Eo *obj, Efl_Ui_Table_Data *pd)
 {

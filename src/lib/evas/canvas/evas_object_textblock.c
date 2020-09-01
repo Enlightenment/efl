@@ -8475,50 +8475,6 @@ evas_object_textblock_replace_char_get(const Efl_Canvas_Textblock *obj)
 
 /**
  * @internal
- * Advance p_buff to point after the end of the string. It's used with the
- * @ref escaped_strings[] variable.
- *
- * @param p_buff the pointer to the current string.
- */
-static inline void
-_escaped_advance_after_end_of_string(const char **p_buf)
-{
-   while (**p_buf != 0) (*p_buf)++;
-   (*p_buf)++;
-}
-
-/**
- * @internal
- * Advance p_buff to point after the end of the string. It's used with the
- * @ref escaped_strings[] variable. Also chec if matches.
- * FIXME: doc.
- *
- * @param p_buff the pointer to the current string.
- */
-static inline int
-_escaped_is_eq_and_advance(const char *s, const char *s_end,
-      const char **p_m, const char *m_end)
-{
-   Eina_Bool reached_end;
-   for (;((s < s_end) && (*p_m < m_end)); s++, (*p_m)++)
-     {
-        if (*s != **p_m)
-          {
-             _escaped_advance_after_end_of_string(p_m);
-             return 0;
-          }
-     }
-
-   reached_end = !**p_m;
-   if (*p_m < m_end)
-     _escaped_advance_after_end_of_string(p_m);
-
-   return ((s == s_end) && reached_end);
-}
-
-
-/**
- * @internal
  *
  * @param s the escape string to search for its index
  * @param s_len length of s string
