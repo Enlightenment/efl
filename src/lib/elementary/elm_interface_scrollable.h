@@ -74,7 +74,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
 
    Elm_Scroller_Policy           hbar_flags, vbar_flags;
    Elm_Scroller_Single_Direction one_direction_at_a_time;
-   Elm_Scroller_Movement_Block     block;
+   Efl_Ui_Layout_Orientation     block;
 
    struct
    {

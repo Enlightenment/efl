@@ -132,13 +132,13 @@ evas_vg_gradient_stop_get(Evas_Vg_Gradient *obj, const Evas_Vg_Gradient_Stop **c
 EAPI void
 evas_vg_gradient_spread_set(Evas_Vg_Gradient *obj, Evas_Vg_Gradient_Spread s)
 {
-   efl_gfx_gradient_spread_set(obj, s);
+   efl_gfx_gradient_spread_set(obj, (Efl_Gfx_Gradient_Spread)s);
 }
 
 EAPI Evas_Vg_Gradient_Spread
 evas_vg_gradient_spread_get(Evas_Vg_Gradient *obj)
 {
-   return efl_gfx_gradient_spread_get(obj);
+   return (Evas_Vg_Gradient_Spread)efl_gfx_gradient_spread_get(obj);
 }
 
 #include "efl_canvas_vg_gradient.eo.c"

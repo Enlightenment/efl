@@ -121,7 +121,7 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
    #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
    MAPPING()
    #undef MAP
-   dir = efl_ui_focus_util_direction_complement(dir);
+   dir = (Elm_Focus_Direction)efl_ui_focus_util_direction_complement((Efl_Ui_Focus_Direction)dir);
    #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) next_pd->legacy_focus.field = obj;
    MAPPING()
    #undef MAP
@@ -247,7 +247,7 @@ elm_object_focus_next(Evas_Object        *obj,
         if (!legacy_target)
           {
              Eina_Array *old_chain = _focus_parent_chain_gen(logical);
-             Eina_Array *new_chain = _focus_parent_chain_gen(efl_ui_focus_manager_request_move(top, dir, NULL, EINA_FALSE));
+             Eina_Array *new_chain = _focus_parent_chain_gen(efl_ui_focus_manager_request_move(top, (Efl_Ui_Focus_Direction)dir, NULL, EINA_FALSE));
 
              //first pop off all elements that are the same
              while (eina_array_count(new_chain) > 0 && eina_array_count(old_chain) > 0 &&
@@ -286,7 +286,7 @@ elm_object_focus_next(Evas_Object        *obj,
      }
 
    if (!legacy_focus_move)
-     o = efl_ui_focus_manager_move(top, dir);
+     o = efl_ui_focus_manager_move(top, (Efl_Ui_Focus_Direction)dir);
    if (!o)
      {
         if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_NEXT || (Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
@@ -294,7 +294,7 @@ elm_object_focus_next(Evas_Object        *obj,
              Efl_Ui_Focus_Object *root;
 
              root = efl_ui_focus_manager_root_get(top);
-             efl_ui_focus_manager_setup_on_first_touch(top, dir, root);
+             efl_ui_focus_manager_setup_on_first_touch(top, (Efl_Ui_Focus_Direction)dir, root);
           }
      }
 }
@@ -310,7 +310,7 @@ elm_object_focus_next_object_get(const Evas_Object  *obj,
    MAPPING()
    #undef MAP
 
-   return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(top), dir, NULL, EINA_FALSE);
+   return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(top), (Efl_Ui_Focus_Direction)dir, NULL, EINA_FALSE);
 }
 
 EAPI Elm_Object_Item *

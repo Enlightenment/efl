@@ -2605,6 +2605,9 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient elm_orient)
    EINA_SAFETY_ON_FALSE_RETURN(elm_orient >= 0 && elm_orient < 8);
    sd->image_orient = elm_orient;
    efl_gfx_image_orientation_set(obj, efl_orient[elm_orient]);
+
+   // to keep behavior compatibility, update inlined image orientation
+   if (sd->img) efl_gfx_image_orientation_set(sd->img,  efl_orient[elm_orient]);
 }
 
 EAPI Elm_Image_Orient

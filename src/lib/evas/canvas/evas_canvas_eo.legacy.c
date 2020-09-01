@@ -14,7 +14,7 @@ evas_image_cache_get(const Evas_Canvas *obj)
 EAPI void
 evas_event_default_flags_set(Evas_Canvas *obj, Evas_Event_Flags flags)
 {
-   evas_canvas_event_default_flags_set(obj, (Efl_Input_Flags)flags);
+   evas_canvas_event_default_flags_set(obj, flags);
 }
 
 EAPI Evas_Event_Flags

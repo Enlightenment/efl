@@ -43,7 +43,7 @@ EFL_END_TEST
 
 EFL_START_TEST(elm_slider_in_scroller)
 {
-   Evas_Object *win, *slider, *box, *scroller, *fslider;
+   Evas_Object *win, *slider, *box, *scroller, *fslider = NULL;
    Evas *e;
 
    win = win_add(NULL, "slider", ELM_WIN_BASIC);

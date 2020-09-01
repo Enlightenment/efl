@@ -753,7 +753,7 @@ _ecore_evas_extn_cb_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
    Extn *extn;
    Evas_Device *dev;
 
-   dev = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT);
+   dev = evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT);
    if (ecore_evas_focus_device_get(ee, dev)) return;
    ee->prop.focused_by = eina_list_append(ee->prop.focused_by, dev);
    extn = bdata->data;
@@ -770,7 +770,7 @@ _ecore_evas_extn_cb_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
    Extn *extn;
 
    ee->prop.focused_by = eina_list_remove(ee->prop.focused_by,
-                                          evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT));
+                                          evas_default_device_get(ee->evas, EVAS_DEVICE_CLASS_SEAT));
    extn = bdata->data;
    if (!extn) return;
    if (!extn->ipc.server) return;

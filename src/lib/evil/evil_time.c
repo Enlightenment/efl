@@ -10,6 +10,58 @@
 #include "evil_private.h"
 
 /*
+ * gettimeofday
+ * based on https://github.com/Alexpux/mingw-w64/blob/master/mingw-w64-crt/misc/gettimeofday.c
+ * public domain
+ */
+
+#define FILETIME_1970 116444736000000000ull /* seconds between 1/1/1601 and 1/1/1970 */
+
+int evil_gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+   int res = 0;
+   union
+   {
+      unsigned long long ns100; /* time since 1 Jan 1601 in 100ns units */
+      FILETIME ft;
+   } _now;
+   TIME_ZONE_INFORMATION time_zone_information;
+   DWORD tzi;
+
+   if (tz != NULL)
+     {
+        tzi = GetTimeZoneInformation(&time_zone_information);
+        if (tzi != TIME_ZONE_ID_INVALID)
+          {
+             tz->tz_minuteswest = time_zone_information.Bias;
+             if (tzi == TIME_ZONE_ID_DAYLIGHT)
+               tz->tz_dsttime = 1;
+             else
+               tz->tz_dsttime = 0;
+          }
+        else
+          {
+             tz->tz_minuteswest = 0;
+             tz->tz_dsttime = 0;
+          }
+     }
+
+   if (tv != NULL)
+     {
+#if _WIN32_WINNT < 0x0602
+        GetSystemTimeAsFileTime(&_now.ft);
+#else
+        GetSystemTimePreciseAsFileTime(&_now.ft);
+#endif
+        _now.ns100 -= FILETIME_1970;	/* 100 nano-seconds since 1-1-1970 */
+        tv->tv_sec = _now.ns100 / 10000000ull;	/* seconds since 1-1-1970 */
+        tv->tv_usec = (long) (_now.ns100 % 10000000ull) /10; /* nanoseconds */
+     }
+
+   return res;
+}
+
+/*
  * strptime
  * based on http://cvsweb.netbsd.org/bsdweb.cgi/src/lib/libc/time/strptime.c?rev=HEAD
  * BSD licence

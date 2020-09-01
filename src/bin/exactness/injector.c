@@ -150,7 +150,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_KEY_UP:
            {
               Exactness_Action_Key_Down_Up *t = data;
-              int len = 2*sizeof(int) + 4;
+              int len = 2*sizeof(int) + 4 + 1;
               len += t->keyname ? strlen(t->keyname) : 0;
               len += t->key ? strlen(t->key) : 0;
               len += t->string ? strlen(t->string) : 0;
@@ -180,7 +180,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_EFL_EVENT:
            {
               Exactness_Action_Efl_Event *t = data;
-              int len = 0;
+              int len = 2;
               len += t->wdg_name ? strlen(t->wdg_name) : 0;
               len += t->event_name ? strlen(t->event_name) : 0;
               char *buf = malloc(len), *tmp = buf;
@@ -194,7 +194,7 @@ _feed_event(Exactness_Action_Type type, unsigned int n_evas, void *data)
       case EXACTNESS_ACTION_CLICK_ON:
            {
               Exactness_Action_Click_On *t = data;
-              int len = 0;
+              int len = 1;
               len += t->wdg_name ? strlen(t->wdg_name) : 0;
               char *buf = malloc(len), *tmp = buf;
               DBG("%s %s\n", __func__, "Click On");

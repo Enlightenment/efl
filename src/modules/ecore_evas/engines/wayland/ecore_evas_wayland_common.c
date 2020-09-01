@@ -2427,7 +2427,7 @@ _reeval_seat(unsigned int *seat, Ecore_Evas *ee)
      {
         *seat =
           evas_device_seat_id_get(evas_default_device_get
-                                  (ee->evas, EFL_INPUT_DEVICE_TYPE_SEAT));
+                                  (ee->evas, EVAS_DEVICE_CLASS_SEAT));
      }
 }
 

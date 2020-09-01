@@ -59,7 +59,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
            COORD_DUP(e);
            e->data = ev->data;
            e->timestamp = ev->timestamp;
-           e->event_flags = ev->event_flags;
+           e->event_flags = (Evas_Event_Flags)ev->event_flags;
            e->dev = ev->device;
            e->event_src = ev->source;
            e->modifiers = ev->modifiers;
@@ -78,7 +78,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
            COORD_DUP(e);
            e->data = ev->data;
            e->timestamp = ev->timestamp;
-           e->event_flags = ev->event_flags;
+           e->event_flags = (Evas_Event_Flags)ev->event_flags;
            e->dev = ev->device;
            e->event_src = ev->source;
            e->modifiers = ev->modifiers;
@@ -101,9 +101,9 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              e->canvas.y = ev->cur.y;
              COORD_DUP(e);
              e->data = ev->data;
-             e->flags = ev->button_flags;
+             e->flags = (Evas_Button_Flags)ev->button_flags;
              e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
+             e->event_flags = (Evas_Event_Flags)ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
              e->modifiers = ev->modifiers;
@@ -128,9 +128,9 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              e->canvas.y = ev->cur.y;
              COORD_DUP(e);
              e->data = ev->data;
-             e->flags = ev->button_flags;
+             e->flags = (Evas_Button_Flags)ev->button_flags;
              e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
+             e->event_flags = (Evas_Event_Flags)ev->event_flags;
              e->dev = ev->device;
              e->modifiers = ev->modifiers;
              e->locks = ev->locks;
@@ -152,9 +152,9 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              e->canvas.y = ev->cur.y;
              COORD_DUP(e);
              e->data = ev->data;
-             e->flags = ev->button_flags;
+             e->flags = (Evas_Button_Flags)ev->button_flags;
              e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
+             e->event_flags = (Evas_Event_Flags)ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
              e->modifiers = ev->modifiers;
@@ -179,9 +179,9 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              e->canvas.y = ev->cur.y;
              COORD_DUP(e);
              e->data = ev->data;
-             e->flags = ev->button_flags;
+             e->flags = (Evas_Button_Flags)ev->button_flags;
              e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
+             e->event_flags = (Evas_Event_Flags)ev->event_flags;
              e->dev = ev->device;
              e->modifiers = ev->modifiers;
              e->locks = ev->locks;
@@ -207,7 +207,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              COORD_DUP_PREV(e);
              e->data = ev->data;
              e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
+             e->event_flags = (Evas_Event_Flags)ev->event_flags;
              e->dev = ev->device;
              e->event_src = ev->source;
              e->modifiers = ev->modifiers;
@@ -233,7 +233,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
              COORD_DUP_CUR(e);
              e->data = ev->data;
              e->timestamp = ev->timestamp;
-             e->event_flags = ev->event_flags;
+             e->event_flags = (Evas_Event_Flags)ev->event_flags;
              e->dev = ev->device;
              e->modifiers = ev->modifiers;
              e->locks = ev->locks;
@@ -253,7 +253,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
            COORD_DUP(e);
            e->data = ev->data;
            e->timestamp = ev->timestamp;
-           e->event_flags = ev->event_flags;
+           e->event_flags = (Evas_Event_Flags)ev->event_flags;
            e->dev = ev->device;
            e->modifiers = ev->modifiers;
            e->locks = ev->locks;
@@ -362,7 +362,7 @@ efl_input_key_legacy_info_fill(Efl_Input_Key *evt, Evas_Event_Flags **pflags)
         e->data = ev->data;
         e->modifiers = ev->modifiers;
         e->locks = ev->locks;
-        e->event_flags = ev->event_flags;
+        e->event_flags = (Evas_Event_Flags)ev->event_flags;
         e->dev = ev->device;
         if (pflags) *pflags = &e->event_flags;
         ev->legacy = e;
@@ -380,7 +380,7 @@ efl_input_key_legacy_info_fill(Efl_Input_Key *evt, Evas_Event_Flags **pflags)
         e->data = ev->data;
         e->modifiers = ev->modifiers;
         e->locks = ev->locks;
-        e->event_flags = ev->event_flags;
+        e->event_flags = (Evas_Event_Flags)ev->event_flags;
         e->dev = ev->device;
         if (pflags) *pflags = &e->event_flags;
         ev->legacy = e;
@@ -400,7 +400,7 @@ efl_input_hold_legacy_info_fill(Efl_Input_Hold *evt, Evas_Event_Flags **pflags)
    e->timestamp = ev->timestamp;
    e->dev = ev->device;
    e->hold = ev->hold;
-   e->event_flags = ev->event_flags;
+   e->event_flags = (Evas_Event_Flags)ev->event_flags;
    if (pflags) *pflags = &e->event_flags;
    ev->legacy = e;
 

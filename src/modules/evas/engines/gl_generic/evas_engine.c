@@ -2467,7 +2467,8 @@ eng_ector_buffer_new(void *engine, Evas *evas, int w, int h,
 
         // alloc buffer
         ie = evas_cache_image_copied_data(evas_common_image_cache_get(), w, h,
-                                          NULL, EINA_TRUE, cspace);
+                                          NULL, EINA_TRUE,
+                                          (Evas_Colorspace)cspace);
         if (!ie) return NULL;
         pixels = ((RGBA_Image *) ie)->image.data;
         memset(pixels, 0, w * h * pxs);
@@ -2758,15 +2759,15 @@ eng_image_data_maps_get(void *engine EINA_UNUSED, const void *image, const Eina_
 }
 
 static inline Eina_Bool
-_is_yuv(Efl_Gfx_Colorspace cspace)
+_is_yuv(Evas_Colorspace cspace)
 {
    switch (cspace)
      {
-      case EFL_GFX_COLORSPACE_YCBCR422P601_PL:
-      case EFL_GFX_COLORSPACE_YCBCR422P709_PL:
-      case EFL_GFX_COLORSPACE_YCBCR422601_PL:
-      case EFL_GFX_COLORSPACE_YCBCR420NV12601_PL:
-      case EFL_GFX_COLORSPACE_YCBCR420TM12601_PL:
+      case EVAS_COLORSPACE_YCBCR422P601_PL:
+      case EVAS_COLORSPACE_YCBCR422P709_PL:
+      case EVAS_COLORSPACE_YCBCR422601_PL:
+      case EVAS_COLORSPACE_YCBCR420NV12601_PL:
+      case EVAS_COLORSPACE_YCBCR420TM12601_PL:
         return EINA_TRUE;
 
       default:

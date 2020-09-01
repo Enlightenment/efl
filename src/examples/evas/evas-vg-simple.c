@@ -310,7 +310,7 @@ _1_basic_shape_test()
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
   evas_vg_node_origin_set(shape, 50, 50);
-  evas_vg_shape_stroke_cap_set(shape, EFL_GFX_CAP_ROUND);
+  evas_vg_shape_stroke_cap_set(shape, EVAS_VG_CAP_ROUND);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   new_shape = evas_vg_shape_add(container);
@@ -318,7 +318,7 @@ _1_basic_shape_test()
   evas_vg_shape_stroke_color_set(new_shape, 0, 100, 0, 100);
   evas_vg_shape_append_line_to(new_shape, 100, 50);
   evas_vg_node_origin_set(new_shape, 200, 50);
-  evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_SQUARE);
+  evas_vg_shape_stroke_cap_set(new_shape, EVAS_VG_CAP_SQUARE);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   new_shape = evas_vg_shape_add(container);
@@ -326,8 +326,8 @@ _1_basic_shape_test()
   evas_vg_shape_stroke_color_set(new_shape, 0, 0, 255, 255);
   evas_vg_shape_append_line_to(new_shape, 50, 50);
   evas_vg_node_origin_set(new_shape, 350, 50);
-  evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_ROUND);
-  evas_vg_shape_stroke_join_set(new_shape, EFL_GFX_JOIN_ROUND);
+  evas_vg_shape_stroke_cap_set(new_shape, EVAS_VG_CAP_ROUND);
+  evas_vg_shape_stroke_join_set(new_shape, EVAS_VG_JOIN_ROUND);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   // Rect
@@ -378,7 +378,7 @@ _1_basic_shape_test()
   shape = evas_vg_shape_add(container);
   evas_vg_shape_append_arc(shape, 0, 0, 100, 100, 45, -200);
   evas_vg_shape_append_line_to(shape, 50, 50);
-  evas_vg_shape_stroke_cap_set(shape, EFL_GFX_CAP_ROUND);
+  evas_vg_shape_stroke_cap_set(shape, EVAS_VG_CAP_ROUND);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
   evas_vg_node_origin_set(shape, 50, 450);

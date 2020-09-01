@@ -13,10 +13,16 @@
 
 #include <time.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* gettimeofday */
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#if defined (HAVE_CLOCK_GETTIME)
+#if defined(_WIN32)
+static LONGLONG _ecore_time_freq;
+#elif defined (HAVE_CLOCK_GETTIME)
 static clockid_t _ecore_time_clock_id;
 static Eina_Bool _ecore_time_got_clock_id = EINA_FALSE;
 #elif defined(__APPLE__) && defined(__MACH__)
@@ -26,7 +32,12 @@ static double _ecore_time_clock_conversion = 1e-9;
 EAPI double
 ecore_time_get(void)
 {
-#if defined (HAVE_CLOCK_GETTIME)
+#ifdef _WIN32
+   LARGE_INTEGER count;
+
+   QueryPerformanceCounter(&count);
+   return (double)count.QuadPart/ (double)_ecore_time_freq;
+#elif defined (HAVE_CLOCK_GETTIME)
    struct timespec t;
 
    if (EINA_UNLIKELY(!_ecore_time_got_clock_id))
@@ -39,8 +50,6 @@ ecore_time_get(void)
      }
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
-#elif defined(_WIN32)
-   return evil_time_get();
 #elif defined(__APPLE__) && defined(__MACH__)
    return _ecore_time_clock_conversion * (double)mach_absolute_time();
 #else
@@ -82,7 +91,12 @@ ecore_loop_time_set(double t)
 void
 _ecore_time_init(void)
 {
-#if defined(HAVE_CLOCK_GETTIME)
+#if defined(_WIN32)
+   LARGE_INTEGER freq;
+
+   QueryPerformanceFrequency(&freq);
+   _ecore_time_freq = freq.QuadPart;
+#elif defined(HAVE_CLOCK_GETTIME)
    struct timespec t;
 
    if (_ecore_time_got_clock_id) return;
@@ -103,18 +117,16 @@ _ecore_time_init(void)
    else
      CRI("Cannot get a valid clock_gettime() clock id! Fallback to unix time");
 #else
-# ifndef _WIN32
-#  if defined(__APPLE__) && defined(__MACH__)
+# if defined(__APPLE__) && defined(__MACH__)
    mach_timebase_info_data_t info;
    kern_return_t err = mach_timebase_info(&info);
    if (err == 0)
      _ecore_time_clock_conversion = 1e-9 * (double)info.numer / (double)info.denom;
    else
      WRN("Unable to get timebase info. Fallback to nanoseconds");
-#  else
-#   warning "Your platform isn't supported yet"
+# else
+#  warning "Your platform isn't supported yet"
    CRI("Platform does not support clock_gettime. Fallback to unix time");
-#  endif
 # endif
 #endif
    ecore_loop_time_set(ecore_time_get());

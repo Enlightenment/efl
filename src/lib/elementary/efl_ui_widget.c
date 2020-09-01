@@ -1088,7 +1088,7 @@ _propagate_event_legacy(Eo *parent, const Efl_Event *event, Eo *obj, Elm_Event_C
        ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))
      {
         if (prev_flags != *event_flags)
-          efl_input_event_flags_set(event->info, *event_flags);
+          efl_input_event_flags_set(event->info, (Efl_Input_Flags)*event_flags);
         return EINA_TRUE;
      }
 
@@ -3171,7 +3171,7 @@ elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
 EOLIAN static Efl_Ui_Focus_Move_Policy
 _efl_ui_widget_focus_move_policy_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
-   return sd->focus_move_policy;
+   return (Efl_Ui_Focus_Move_Policy)sd->focus_move_policy;
 }
 
 /**
@@ -3187,7 +3187,7 @@ EOLIAN static void
 _efl_ui_widget_focus_move_policy_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Move_Policy policy)
 {
    if (sd->focus_move_policy == (Elm_Focus_Move_Policy)policy) return;
-   sd->focus_move_policy = policy;
+   sd->focus_move_policy = (Elm_Focus_Move_Policy)policy;
 }
 
 /**
@@ -3221,7 +3221,8 @@ _efl_ui_widget_focus_move_policy_automatic_set(Eo *obj, Elm_Widget_Smart_Data *s
 
         if (automatic)
           {
-             efl_ui_widget_focus_move_policy_set(obj, elm_config_focus_move_policy_get());
+             efl_ui_widget_focus_move_policy_set
+               (obj, (Efl_Ui_Focus_Move_Policy)elm_config_focus_move_policy_get());
           }
      }
 }

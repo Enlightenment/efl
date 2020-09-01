@@ -63,10 +63,10 @@ typedef unsigned long long    DATA64;
  * https://unicode.org/ivd/
  * https://www.freetype.org/freetype2/docs/reference/ft2-glyph_variants.html
 */
-#define VAR_SEQ(x) GENERIC_VARIATION_SEQUENCES(x) | IDEOGRAPHICS_VARIATION_SEQUENCES(x) | MANGOLIAN_VARIATION_SEQUENCES(x)
-#define GENERIC_VARIATION_SEQUENCES(x) (x>=0xFE00 && x<=0xFE0F) ? x : 0
-#define IDEOGRAPHICS_VARIATION_SEQUENCES(x) (x>=0xE0100 && x<=0xE01EF) ? x : 0
-#define MANGOLIAN_VARIATION_SEQUENCES(x) (x>=0x180B && x<=0x180D) ? x : 0
+#define VAR_SEQ(x) (GENERIC_VARIATION_SEQUENCES(x) | IDEOGRAPHICS_VARIATION_SEQUENCES(x) | MANGOLIAN_VARIATION_SEQUENCES(x))
+#define GENERIC_VARIATION_SEQUENCES(x) ((x>=0xFE00 && x<=0xFE0F) ? x : 0)
+#define IDEOGRAPHICS_VARIATION_SEQUENCES(x) ((x>=0xE0100 && x<=0xE01EF) ? x : 0)
+#define MANGOLIAN_VARIATION_SEQUENCES(x) ((x>=0x180B && x<=0x180D) ? x : 0)
 /**
  * http://unicode.org/emoji/charts/emoji-variants.html
 */

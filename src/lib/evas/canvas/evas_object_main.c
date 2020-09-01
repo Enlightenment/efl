@@ -1623,11 +1623,11 @@ _efl_canvas_object_efl_gfx_hint_hint_aspect_get(const Eo *eo_obj EINA_UNUSED, Ev
 {
    if ((!obj->size_hints) || obj->delete_me)
      {
-        if (aspect) *aspect = EVAS_ASPECT_CONTROL_NONE;
+        if (aspect) *aspect = EFL_GFX_HINT_ASPECT_NONE;
         if (sz) *sz = EINA_SIZE2D(0, 0);
         return;
      }
-   if (aspect) *aspect = obj->size_hints->aspect.mode;
+   if (aspect) *aspect = (Efl_Gfx_Hint_Aspect)obj->size_hints->aspect.mode;
    if (sz)
      {
         sz->w = obj->size_hints->aspect.size.w;
@@ -1651,7 +1651,7 @@ _efl_canvas_object_efl_gfx_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Protecte
    if ((obj->size_hints->aspect.mode == (Evas_Aspect_Control)aspect) &&
        (obj->size_hints->aspect.size.w == sz.w) &&
        (obj->size_hints->aspect.size.h == sz.h)) return;
-   obj->size_hints->aspect.mode = aspect;
+   obj->size_hints->aspect.mode = (Evas_Aspect_Control)aspect;
    obj->size_hints->aspect.size = sz;
 
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
@@ -2580,14 +2580,14 @@ evas_object_static_clip_get(const Evas_Object *eo_obj)
 EAPI void
 evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_hint_aspect_set(obj, aspect, EINA_SIZE2D(w, h));
+   efl_gfx_hint_aspect_set(obj, (Efl_Gfx_Hint_Aspect)aspect, EINA_SIZE2D(w, h));
 }
 
 EAPI void
 evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
 {
    Eina_Size2D sz = { 0, 0 };
-   efl_gfx_hint_aspect_get(obj, (Efl_Gfx_Hint_Aspect*)aspect, &sz);
+   efl_gfx_hint_aspect_get(obj, (Efl_Gfx_Hint_Aspect *)aspect, &sz);
    if (w) *w = sz.w;
    if (h) *h = sz.h;
 }

@@ -2280,7 +2280,7 @@ _efl_ui_internal_text_interactive_efl_input_text_entity_input_content_type_get(c
    (void)en;
 #endif
 
-   return ELM_INPUT_HINT_NONE;
+   return EFL_INPUT_TEXT_CONTENT_TYPE_NONE;
 }
 
 

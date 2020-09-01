@@ -700,14 +700,14 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
         // note: we release all planes at once
         if (o->engine_data)
           ENFN->image_free(ENC, o->engine_data);
-        o->engine_data = ENFN->image_new_from_copied_data(ENC, w, h, NULL, o->cur->has_alpha, cspace);
+        o->engine_data = ENFN->image_new_from_copied_data(ENC, w, h, NULL, o->cur->has_alpha, (Evas_Colorspace)cspace);
      }
    else
      {
         o->buffer_data_set = EINA_TRUE;
         o->engine_data = ENFN->image_data_slice_add(ENC, o->engine_data,
                                                     slice, copy, w, h, stride,
-                                                    cspace, plane, o->cur->has_alpha);
+                                                    (Evas_Colorspace)cspace, plane, o->cur->has_alpha);
      }
 
    if (!o->engine_data)
@@ -735,7 +735,7 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
         {
            cur->f = NULL;
            cur->key = NULL;
-           cur->cspace = cspace;
+           cur->cspace = (Evas_Colorspace)cspace;
            cur->image.w = w;
            cur->image.h = h;
            cur->image.stride = int_stride;
@@ -843,7 +843,7 @@ _efl_canvas_image_efl_gfx_buffer_buffer_map(Eo *eo_obj, void *_pd EINA_UNUSED,
         goto end;
      }
 
-   if (ENFN->image_data_map(ENC, &o->engine_data, &slice, &s, x, y, w, h, cspace, mode, plane))
+   if (ENFN->image_data_map(ENC, &o->engine_data, &slice, &s, x, y, w, h, (Evas_Colorspace)cspace, mode, plane))
      {
         DBG("map(%p, %d,%d %dx%d plane:%d) -> " EINA_SLICE_FMT,
             eo_obj, x, y, w, h, plane, EINA_SLICE_PRINT(slice));

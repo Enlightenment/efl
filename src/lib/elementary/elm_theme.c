@@ -911,7 +911,7 @@ elm_theme_name_available_list_new(void)
         snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes/%s", home, file);
         if ((!ecore_file_is_dir(buf)) && (ecore_file_size(buf) > 0))
           {
-             if (eina_str_has_extension(file, "edj"))
+             if (eina_str_has_extension(file, ".edj"))
                {
                   th = strdup(file);
                   s = strrchr(th, '.');
@@ -929,7 +929,7 @@ elm_theme_name_available_list_new(void)
         snprintf(buf, sizeof(buf), "%s/themes/%s", _elm_data_dir, file);
         if ((!ecore_file_is_dir(buf)) && (ecore_file_size(buf) > 0))
           {
-             if (eina_str_has_extension(file, "edj"))
+             if (eina_str_has_extension(file, ".edj"))
                {
                   int dupp;
 

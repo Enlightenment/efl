@@ -289,56 +289,64 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
       pid_t pid = 0;
       volatile int vfork_exec_errno = 0;
 
+      sigset_t newset, oldset;
+
+      sigemptyset(&newset);
+      sigaddset(&newset, SIGPIPE);
+      sigaddset(&newset, SIGALRM);
+      sigaddset(&newset, SIGCHLD);
+      sigaddset(&newset, SIGUSR1);
+      sigaddset(&newset, SIGUSR2);
+      sigaddset(&newset, SIGHUP);
+      sigaddset(&newset, SIGQUIT);
+      sigaddset(&newset, SIGINT);
+      sigaddset(&newset, SIGTERM);
+      sigaddset(&newset, SIGBUS);
+      sigaddset(&newset, SIGCONT);
+      sigaddset(&newset, SIGWINCH);
+#ifdef SIGEMT
+      sigaddset(&newset, SIGEMT);
+#endif
+#ifdef SIGIO
+      sigaddset(&newset, SIGIO);
+#endif
+#ifdef SIGTSTP
+      sigaddset(&newset, SIGTSTP);
+#endif
+#ifdef SIGTTIN
+      sigaddset(&newset, SIGTTIN);
+#endif
+#ifdef SIGTTOU
+      sigaddset(&newset, SIGTTOU);
+#endif
+#ifdef SIGVTALRM
+      sigaddset(&newset, SIGVTALRM);
+#endif
+#ifdef SIGPWR
+      sigaddset(&newset, SIGPWR);
+#endif
+      // block all those nasty signals we don't want messing with things
+      // in signal handlers while we go from fork to exec in the child
+      pthread_sigmask(SIG_BLOCK, &newset, &oldset);
       /* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
       /* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
       pid = fork();
 
       if (pid == -1)
       {
+         pthread_sigmask(SIG_SETMASK, &oldset, NULL);
          ERR("Failed to fork process");
          pid = 0;
       }
       else if (pid == 0) /* child */
       {
-         sigset_t newset;
+         struct sigaction sa;
+         int sig;
 
-         sigemptyset(&newset);
-         sigaddset(&newset, SIGPIPE);
-         sigaddset(&newset, SIGALRM);
-         sigaddset(&newset, SIGCHLD);
-         sigaddset(&newset, SIGUSR1);
-         sigaddset(&newset, SIGUSR2);
-         sigaddset(&newset, SIGHUP);
-         sigaddset(&newset, SIGQUIT);
-         sigaddset(&newset, SIGINT);
-         sigaddset(&newset, SIGTERM);
-         sigaddset(&newset, SIGBUS);
-         sigaddset(&newset, SIGCONT);
-         sigaddset(&newset, SIGWINCH);
-#ifdef SIGEMT
-         sigaddset(&newset, SIGEMT);
-#endif
-#ifdef SIGIO
-         sigaddset(&newset, SIGIO);
-#endif
-#ifdef SIGTSTP
-         sigaddset(&newset, SIGTSTP);
-#endif
-#ifdef SIGTTIN
-         sigaddset(&newset, SIGTTIN);
-#endif
-#ifdef SIGTTOU
-         sigaddset(&newset, SIGTTOU);
-#endif
-#ifdef SIGVTALRM
-         sigaddset(&newset, SIGVTALRM);
-#endif
-#ifdef SIGPWR
-         sigaddset(&newset, SIGPWR);
-#endif
-         // block all those nasty signals we don't want messing with things
-         // in signal handlers while we go from fork to exec in the child
-         pthread_sigmask(SIG_BLOCK, &newset, NULL);
+         sa.sa_handler = SIG_DFL;
+         sa.sa_flags = 0;
+         sigemptyset(&sa.sa_mask);
+         for (sig = 0; sig < 32; sig++) sigaction(sig, &sa, NULL);
 #ifdef HAVE_SYSTEMD
          char **env = NULL, **e;
 
@@ -439,13 +447,15 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
                 except[0] = statusPipe[1];
                 eina_file_close_from(3, except);
                 /* Run the actual command. */
-                 _ecore_exe_exec_it(exe_cmd, flags); /* no return */
+                pthread_sigmask(SIG_SETMASK, &oldset, NULL);
+                _ecore_exe_exec_it(exe_cmd, flags); /* no return */
              }
          }
          _exit(-1);
       }
       else   /* parent */
       {
+         pthread_sigmask(SIG_SETMASK, &oldset, NULL);
          /* Close the unused pipes. */
           E_NO_ERRNO(result, close(statusPipe[1]), ok);
 

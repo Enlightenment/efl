@@ -16,6 +16,33 @@
  * @{
  */
 
+#ifdef _MSC_VER
+struct timezone
+{
+  int tz_minuteswest; /* of Greenwich */
+  int tz_dsttime;     /* type of dst correction to apply */
+};
+#endif
+
+/**
+ * @brief Get time and timezone.
+ *
+ * @param tv A pointer that contains two sockets.
+ * @param tz A pointer that contains two sockets.
+ * @return 0 on success, -1 otherwise.
+ *
+ * This function gets the time and timezone. @p tv and @p tz can be
+ * @c NULL. It calls GetSystemTimePreciseAsFileTime() on Windows 8or
+ * above if _WIN32_WINNT is correctly defined. It returns 0 on
+ * success, -1 otherwise.
+ *
+ * @since 1.25
+ */
+EAPI int evil_gettimeofday(struct timeval *tv, struct timezone *tz);
+#ifndef HAVE_GETTIMEOFDAY
+# define HAVE_GETTIMEOFDAY 1
+#endif
+
 
 /**
  * @brief Convert a string representation of time to a time tm structure .

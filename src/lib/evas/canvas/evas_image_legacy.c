@@ -512,14 +512,14 @@ EAPI void
 evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint)
 {
    EVAS_IMAGE_API(obj);
-   return efl_gfx_image_content_hint_set(obj, hint);
+   efl_gfx_image_content_hint_set(obj, (Efl_Gfx_Image_Content_Hint)hint);
 }
 
 EAPI Evas_Image_Content_Hint
 evas_object_image_content_hint_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_CONTENT_HINT_NONE);
-   return efl_gfx_image_content_hint_get(obj);
+   return (Evas_Image_Content_Hint)efl_gfx_image_content_hint_get(obj);
 }
 
 EAPI void

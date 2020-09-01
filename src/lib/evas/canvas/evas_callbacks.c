@@ -193,7 +193,8 @@ _eo_evas_object_cb(void *data, const Efl_Event *event)
    if (event_flags) evflags = *event_flags;
    info->func.object_cb(info->data, evas, event->object, event_info);
    if (event_flags && (evflags != *event_flags))
-     efl_input_event_flags_set(efl_event_info, *event_flags);
+     efl_input_event_flags_set(efl_event_info,
+                               (Efl_Input_Flags)*event_flags);
 }
 
 static void
@@ -403,7 +404,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
 
    if ((type == EVAS_CALLBACK_MOUSE_DOWN) || (type == EVAS_CALLBACK_MOUSE_UP))
      {
-        flags = efl_input_pointer_button_flags_get(event_info);
+        flags = (Evas_Button_Flags)efl_input_pointer_button_flags_get(event_info);
         if (flags & CLICK_MASK)
           {
              if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
@@ -432,7 +433,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
              e->current_event = EVAS_CALLBACK_MULTI_DOWN;
              efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_DOWN, event_info);
           }
-        efl_input_pointer_button_flags_set(event_info, flags);
+        efl_input_pointer_button_flags_set(event_info, (Efl_Pointer_Flags) flags);
      }
    else if (type == EVAS_CALLBACK_MOUSE_UP)
      {
@@ -441,7 +442,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
              e->current_event = EVAS_CALLBACK_MULTI_UP;
              efl_event_callback_call(eo_obj, EFL_EVENT_FINGER_UP, event_info);
           }
-        efl_input_pointer_button_flags_set(event_info, flags);
+        efl_input_pointer_button_flags_set(event_info, (Efl_Pointer_Flags)flags);
      }
    else if (type == EVAS_CALLBACK_MOUSE_MOVE)
      {

@@ -1698,14 +1698,14 @@ elm_object_focus_move_policy_set(Evas_Object *obj,
                                  Elm_Focus_Move_Policy policy)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   efl_ui_widget_focus_move_policy_set(obj, policy);
+   efl_ui_widget_focus_move_policy_set(obj, (Efl_Ui_Focus_Move_Policy)policy);
 }
 
 EAPI Elm_Focus_Move_Policy
 elm_object_focus_move_policy_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return efl_ui_widget_focus_move_policy_get(obj);
+   return (Elm_Focus_Move_Policy)efl_ui_widget_focus_move_policy_get(obj);
 }
 
 EAPI Eina_Bool

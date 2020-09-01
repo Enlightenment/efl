@@ -4460,6 +4460,7 @@ _elm_config_reload(void)
    unsigned char ppassword_show_last;
    double ppassword_show_last_timeout;
    int pweek_start, pweekend_start, pweekend_len, pyear_min, pyear_max;
+   Eina_List *pfont_overlays;
 
 #define STO(x) if (_elm_config->x) p##x = eina_stringshare_add(_elm_config->x)
    STO(theme);
@@ -4478,6 +4479,7 @@ _elm_config_reload(void)
    STO(weekend_len);
    STO(year_min);
    STO(year_max);
+   STO(font_overlays);
 #undef STO
 
    is_mirrored = _elm_config->is_mirrored;
@@ -4512,6 +4514,7 @@ _elm_config_reload(void)
        || CMP(theme)
        || CMP(modules)
        || CMP(icon_theme)
+       || CMP(font_overlays)
       )
      _elm_rescale();
 #undef DBL_CMP

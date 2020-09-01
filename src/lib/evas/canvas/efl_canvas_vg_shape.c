@@ -303,26 +303,26 @@ evas_vg_shape_stroke_dash_set(Evas_Vg_Shape *obj, const Evas_Vg_Dash *dash, unsi
 EAPI Evas_Vg_Cap
 evas_vg_shape_stroke_cap_get(Evas_Vg_Shape *obj)
 {
-   return efl_gfx_shape_stroke_cap_get(obj);
+   return (Evas_Vg_Cap)efl_gfx_shape_stroke_cap_get(obj);
 }
 
 EAPI void
 evas_vg_shape_stroke_cap_set(Evas_Vg_Shape *obj, Evas_Vg_Cap c)
 {
-   efl_gfx_shape_stroke_cap_set(obj, c);
+   efl_gfx_shape_stroke_cap_set(obj, (Efl_Gfx_Cap)c);
    efl_canvas_vg_node_change(obj);
 }
 
 EAPI Evas_Vg_Join
 evas_vg_shape_stroke_join_get(Evas_Vg_Shape *obj)
 {
-   return efl_gfx_shape_stroke_join_get(obj);
+   return (Evas_Vg_Join)efl_gfx_shape_stroke_join_get(obj);
 }
 
 EAPI void
 evas_vg_shape_stroke_join_set(Evas_Vg_Shape *obj, Evas_Vg_Join j)
 {
-   efl_gfx_shape_stroke_join_set(obj, j);
+   efl_gfx_shape_stroke_join_set(obj, (Efl_Gfx_Join)j);
    efl_canvas_vg_node_change(obj);
 }
 

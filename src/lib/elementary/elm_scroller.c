@@ -1214,10 +1214,10 @@ elm_scroller_movement_block_set(Evas_Object *obj,
    Efl_Ui_Layout_Orientation mode = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
 
    // legacy -> eo
-   if (block == ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
-     mode = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
-   else if (block == ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
-     mode = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
+   if (block & ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
+     mode |= EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
+   if (block & ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
+     mode |= EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    elm_interface_scrollable_movement_block_set(obj, mode);
 }
@@ -1226,18 +1226,20 @@ EAPI Elm_Scroller_Movement_Block
 elm_scroller_movement_block_get(const Evas_Object *obj)
 {
    Efl_Ui_Layout_Orientation mode;
+   Elm_Scroller_Movement_Block mode2 = 0;
 
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
 
    mode = elm_interface_scrollable_movement_block_get(obj);
 
    // eo -> legacy
-   if (mode == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-     return ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL;
-   else if (mode == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-     return ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL;
+   if (mode & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
+     mode2 |= ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL;
+   else if (mode & EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     mode2 |= ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL;
 
-   return ELM_SCROLLER_MOVEMENT_NO_BLOCK;
+   if (mode2 == 0) return ELM_SCROLLER_MOVEMENT_NO_BLOCK;
+   return mode2;
 }
 
 EAPI void
