@@ -28,9 +28,9 @@ EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent);
  *
  * Set the file that will be used as thumbnail @b source.
  *
- * The file can be an image or a video (in that case, acceptable
- * extensions are: avi, mp4, ogv, mov, mpg and wmv). To start the
- * video animation, use the function elm_thumb_animate().
+ * The file can be an image or a video (in that case extension will e used
+ * to guess if it is a video or not). To start the video animation, use the
+ * function elm_thumb_animate().
  *
  * @see elm_thumb_file_get()
  * @see elm_thumb_reload()
