@@ -234,7 +234,7 @@ main(int argc, char **argv EINA_UNUSED)
 
    if (efl_model_children_count_get(root))
      eina_future_then(efl_model_children_slice_get(root, 0, efl_model_children_count_get(root)),
-                      _slice, (uintptr_t) 0);
+                      _slice, NULL);
 
    ecore_main_loop_begin();
    efl_del(root);
