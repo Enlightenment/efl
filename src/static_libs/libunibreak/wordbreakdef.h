@@ -4,8 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013-2019 Tom Hacohen <tom at stosb dot com>
- * Copyright (C) 2018 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2013-16 Tom Hacohen <tom at stosb dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -31,9 +30,9 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 35, for
- * Unicode 12.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-35.html>
+ * This library has been updated according to Revision 29, for
+ * Unicode 9.0.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -52,7 +51,7 @@
 
 /**
  * Word break classes.  This is a direct mapping of Table 3 of Unicode
- * Standard Annex 29, Revision 35.
+ * Standard Annex 29, Revision 23.
  */
 enum WordBreakClass
 {
@@ -74,7 +73,10 @@ enum WordBreakClass
     WBP_MidNum,
     WBP_Numeric,
     WBP_ExtendNumLet,
-    WBP_WSegSpace,
+    WBP_E_Base,
+    WBP_E_Modifier,
+    WBP_Glue_After_Zwj,
+    WBP_E_Base_GAZ,
     WBP_Any
 };
 
@@ -84,7 +86,7 @@ enum WordBreakClass
  */
 struct WordBreakProperties
 {
-    utf32_t start;              /**< Start codepoint */
-    utf32_t end;                /**< End codepoint, inclusive */
+    utf32_t start;              /**< Starting coding point */
+    utf32_t end;                /**< End coding point */
     enum WordBreakClass prop;   /**< The word breaking property */
 };

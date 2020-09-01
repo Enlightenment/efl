@@ -1054,10 +1054,6 @@ EFL_START_TEST(evas_textblock_cursor)
    pos = evas_textblock_cursor_pos_get(cur);
    
    ck_assert_int_eq(pos, 0);
-   evas_object_textblock_text_markup_set(tb, "&#x1f3f3;&#xfe0f;&#x200d;&#x1f308;");
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_cluster_next(cur);
-   ck_assert_int_eq(4, evas_textblock_cursor_pos_get(cur));
 
    END_TB_TEST();
 }

@@ -2,7 +2,7 @@
  * Grapheme breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2016-2019 Andreas Röver <roever at users dot sf dot net>
+ * Copyright (C) 2016 Andreas Röver <roever at users dot sf dot net>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -28,10 +28,6 @@
  * Unicode 9.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
  *
- * This library has been updated according to Revision 35, for
- * Unicode 12.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-35.html>
- *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
  */
@@ -49,15 +45,13 @@
 
 /**
  * Word break classes.  This is a direct mapping of Table 2 of Unicode
- * Standard Annex 29.
+ * Standard Annex 29
  */
 enum GraphemeBreakClass
 {
     GBP_CR,
     GBP_LF,
     GBP_Control,
-    GBP_Virama,
-    GBP_LinkingConsonant,
     GBP_Extend,
     GBP_ZWJ,
     GBP_Regional_Indicator,
@@ -68,6 +62,10 @@ enum GraphemeBreakClass
     GBP_T,
     GBP_LV,
     GBP_LVT,
+    GBP_E_Base,
+    GBP_E_Modifier,
+    GBP_Glue_After_Zwj,
+    GBP_E_Base_GAZ,
     GBP_Other,
     GBP_Undefined
 };
@@ -78,7 +76,7 @@ enum GraphemeBreakClass
  */
 struct GraphemeBreakProperties
 {
-    utf32_t start;                /**< Start codepoint */
-    utf32_t end;                  /**< End codepoint, inclusive */
+    utf32_t start;                /**< Starting coding point */
+    utf32_t end;                  /**< End coding point, including */
     enum GraphemeBreakClass prop; /**< The grapheme breaking property */
 };

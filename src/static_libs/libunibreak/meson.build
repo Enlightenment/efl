@@ -15,8 +15,6 @@ libunibreak_src = [
   'graphemebreak.c',
   'graphemebreak.h',
   'graphemebreakdef.h',
-  'emojidef.h',
-  'emojidef.c',
 ]
 
 libunibreak_lib = static_library('libunibreak',
