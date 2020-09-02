@@ -426,7 +426,7 @@ EFL_START_TEST(eina_file_map_new_test)
 
    unlink(test_file_path);
    unlink(test_file2_path);
-   rmdir(test_dirname);
+   fail_if(rmdir(test_dirname) != 0);
 
    free(test_file_path);
    free(test_file2_path);
