@@ -234,7 +234,6 @@ endif
 if meson.is_cross_build()
   elementary_codegen_exe = [find_program('elementary_codegen', native: true)]
 else
-  env = find_program('env', native: true)
   elementary_codegen_exe = [env, asan_option, 'EFL_RUN_IN_TREE=1', elementary_codegen.full_path()]
 endif
 
@@ -260,7 +259,6 @@ if meson.is_cross_build()
   elm_prefs_cc_path = _elm_prefs_cc.path()
   elm_prefs_cc_exe = [_elm_prefs_cc]
 else
-  env = find_program('env', native: true)
   elm_prefs_cc_exe = [env, asan_option, 'EFL_RUN_IN_TREE=1', elm_prefs_cc.full_path()]
 endif
 
