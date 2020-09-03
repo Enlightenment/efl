@@ -2160,23 +2160,17 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
              parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
              node = method(loader, parent, attrs, attrs_length);
           }
+        eina_array_push(loader->stack, node);
 
         if (node->type == SVG_NODE_DEFS)
-          {
-             loader->doc->node.doc.defs = node;
-             loader->def = node;
-          }
-        else
-          {
-             eina_array_push(loader->stack, node);
-          }
+        {
+          loader->doc->node.doc.defs = node;
+          loader->def = node;
+        }
      }
    else if ((method = _find_graphics_factory(tag_name)))
      {
-        if (eina_array_count(loader->stack) > 0)
-          parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
-        else
-          parent = loader->doc;
+        parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
         node = method(loader, parent, attrs, attrs_length);
      }
    else if ((gradient_method = _find_gradient_factory(tag_name)))
