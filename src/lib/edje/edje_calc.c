@@ -4761,7 +4761,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
      }
    if (!ed->calc_only)
      {
-        Evas_Object *mo;
+        Evas_Object *mo = NULL;
 
         /* Common move, resize and color_set for all part. */
         switch (ep->part->type)
@@ -4945,12 +4945,17 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
                   if (ep->part->type == EDJE_PART_TYPE_GROUP)
                     vis = evas_object_visible_get(ed->obj);
-                  efl_gfx_entity_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
-                  efl_gfx_entity_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
-                  efl_gfx_entity_visible_set(ep->typedata.swallow->swallowed_object, vis);
+                  if (ep->typedata.swallow)
+                    efl_gfx_entity_position_set(ep->typedata.swallow->swallowed_object, EINA_POSITION2D(ed->x + pf->final.x, ed->y + pf->final.y));
+                  if (ep->typedata.swallow)
+                    efl_gfx_entity_size_set(ep->typedata.swallow->swallowed_object, EINA_SIZE2D(pf->final.w,  pf->final.h));
+                  if (ep->typedata.swallow)
+                    efl_gfx_entity_visible_set(ep->typedata.swallow->swallowed_object, vis);
                }
-             else evas_object_hide(ep->typedata.swallow->swallowed_object);
-             mo = ep->typedata.swallow->swallowed_object;
+             else if (ep->typedata.swallow)
+               evas_object_hide(ep->typedata.swallow->swallowed_object);
+             if (ep->typedata.swallow)
+               mo = ep->typedata.swallow->swallowed_object;
           }
         else mo = ep->object;
         if (ep->part->type != EDJE_PART_TYPE_SPACER)
