@@ -15,7 +15,7 @@ typedef Eo Evas_Vg_Node;
 #endif
 
 /**
- * @defgroup Evas_Vg_Node_Group
+ * @defgroup Evas_Vg_Node_Group Vector Graphics Node Functions
  * @ingroup Evas_Object_Vg_Group
  */
 

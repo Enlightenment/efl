@@ -14,7 +14,7 @@ typedef Eo Evas_Vg_Shape;
 #endif
 
 /**
- * @defgroup Evas_Vg_Shape_Group
+ * @defgroup Evas_Vg_Shape_Group Vector Graphics Shape Functions
  * @ingroup Evas_Object_Vg_Group
  */
 
