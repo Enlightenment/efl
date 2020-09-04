@@ -1,6 +1,6 @@
 #include "ecore_drm2_private.h"
 
-#define FLIP_TIMEOUT 0.05
+#define FLIP_TIMEOUT 1.0
 
 static Eina_Bool
 _fb2_create(Ecore_Drm2_Fb *fb)
