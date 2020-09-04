@@ -387,7 +387,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
 
 static double _ecore_x_vsync_wakeup_time = 0.0;
 
-EAPI double _ecore_x_vxync_wakeup_time_get(void)
+EAPI double _ecore_x_vsync_wakeup_time_get(void)
 {
    return _ecore_x_vsync_wakeup_time;
 }
