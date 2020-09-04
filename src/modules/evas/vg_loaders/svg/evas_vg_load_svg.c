@@ -2112,9 +2112,18 @@ _find_gradient_factory(const char  *name)
    return NULL;
 }
 
+static Svg_Node*
+_get_parent_node_from_loader(Evas_SVG_Loader *loader)
+{
+   if (eina_array_count(loader->stack) > 0)
+     return eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
+   else
+     return loader->doc;
+}
+
 static void
 _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
-                                 const char *content, unsigned int length)
+                                 const char *content, unsigned int length, Eina_Bool empty)
 {
    const char *attrs = NULL;
    int attrs_length = 0;
@@ -2157,20 +2166,21 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
           }
         else
           {
-             parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
+             parent = _get_parent_node_from_loader(loader);
              node = method(loader, parent, attrs, attrs_length);
           }
-        eina_array_push(loader->stack, node);
 
         if (node->type == SVG_NODE_DEFS)
-        {
-          loader->doc->node.doc.defs = node;
-          loader->def = node;
-        }
+          {
+             loader->doc->node.doc.defs = node;
+             loader->def = node;
+             if (!empty) eina_array_push(loader->stack, node);
+          }
+        else eina_array_push(loader->stack, node);
      }
    else if ((method = _find_graphics_factory(tag_name)))
      {
-        parent = eina_array_data_get(loader->stack, eina_array_count(loader->stack) - 1);
+        parent = _get_parent_node_from_loader(loader);
         node = method(loader, parent, attrs, attrs_length);
      }
    else if ((gradient_method = _find_gradient_factory(tag_name)))
@@ -2250,10 +2260,10 @@ _evas_svg_loader_parser(void *data, Eina_Simple_XML_Type type,
    switch (type)
      {
       case EINA_SIMPLE_XML_OPEN:
-         _evas_svg_loader_xml_open_parser(loader, content, length);
+         _evas_svg_loader_xml_open_parser(loader, content, length, EINA_FALSE);
          break;
       case EINA_SIMPLE_XML_OPEN_EMPTY:
-         _evas_svg_loader_xml_open_parser(loader, content, length);
+         _evas_svg_loader_xml_open_parser(loader, content, length, EINA_TRUE);
          break;
       case EINA_SIMPLE_XML_CLOSE:
          _evas_svg_loader_xml_close_parser(loader, content, length);
