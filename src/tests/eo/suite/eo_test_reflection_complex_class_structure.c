@@ -90,7 +90,7 @@ __eolian_complex_interface_i_test_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(complex_interface_i_test_set, EFL_FUNC_CALL(i), int i);
+EFL_VOID_FUNC_BODYV(complex_interface_i_test_set, EFL_FUNC_CALL(i), int i);
 
 static Eina_Value
 __eolian_complex_interface_i_test_get_reflect(const Eo *obj)
@@ -99,7 +99,7 @@ __eolian_complex_interface_i_test_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(complex_interface_i_test_get, int, 0);
+EFL_FUNC_BODY_CONST(complex_interface_i_test_get, int, 0);
 
 static Eina_Bool
 _complex_interface_class_initializer(Efl_Class *klass)
@@ -157,7 +157,7 @@ __eolian_complex_mixin_m_test_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(complex_mixin_m_test_set, EFL_FUNC_CALL(i), int i);
+EFL_VOID_FUNC_BODYV(complex_mixin_m_test_set, EFL_FUNC_CALL(i), int i);
 
 
 static Eina_Value
@@ -167,7 +167,7 @@ __eolian_complex_mixin_m_test_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(complex_mixin_m_test_get, int, 0);
+EFL_FUNC_BODY_CONST(complex_mixin_m_test_get, int, 0);
 
 static Eina_Bool
 _complex_mixin_class_initializer(Efl_Class *klass)

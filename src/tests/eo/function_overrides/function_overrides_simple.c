@@ -51,10 +51,10 @@ _class_print2(Efl_Class *klass, void *class_data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
-EAPI EFL_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EAPI EFL_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
-EAPI EFL_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
+EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
+EFL_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
+EFL_FUNC_BODY_CONST(simple_class_print, Eina_Bool, EINA_FALSE);
+EFL_FUNC_BODY_CONST(simple_class_print2, Eina_Bool, EINA_FALSE);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)

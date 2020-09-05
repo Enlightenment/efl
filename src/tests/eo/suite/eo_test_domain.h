@@ -6,9 +6,9 @@ typedef struct
    int a;
 } Domain_Public_Data;
 
-EAPI void domain_a_set(Eo *obj, int a);
-EAPI int  domain_a_get(Eo *obj);
-EAPI void domain_recursive(Eo *obj, int n);
+void domain_a_set(Eo *obj, int a);
+int  domain_a_get(Eo *obj);
+void domain_recursive(Eo *obj, int n);
 
 extern const Efl_Event_Description _EV_DOMAIN_A_CHANGED;
 #define EV_DOMAIN_A_CHANGED (&(_EV_DOMAIN_A_CHANGED))

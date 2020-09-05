@@ -16,7 +16,7 @@ _prot_print(Eo *obj, void *class_data EINA_UNUSED)
    printf("%s %d\n", __func__, pd->protected_x1);
 }
 
-EAPI EFL_VOID_FUNC_BODY(inherit_prot_print);
+EFL_VOID_FUNC_BODY(inherit_prot_print);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)

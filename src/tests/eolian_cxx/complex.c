@@ -9,6 +9,9 @@
 struct Complex_Data {};
 typedef struct Complex_Data Complex_Data;
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "complex.eo.h"
 
 EOLIAN static void

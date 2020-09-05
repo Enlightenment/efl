@@ -22,6 +22,9 @@
 #include <map>
 
 #define GENERIC_BETA
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include <generic.eo.hh>
 #include <generic.eo.impl.hh>
 #include <name1_name2_type_generation.eo.hh>
