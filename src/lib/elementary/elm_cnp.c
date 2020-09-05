@@ -53,11 +53,11 @@ _elm_sel_format_to_mime_type(Elm_Sel_Format format)
 
 typedef struct {
   const unsigned char image_sequence[16];
-  size_t image_sequence_len;
+  const size_t image_sequence_len;
   const char *mimetype;
 } Mimetype_Content_Matcher;
 
-Mimetype_Content_Matcher matchers[] = {
+static const Mimetype_Content_Matcher matchers[] = {
   {{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}, 8, "image/png"},
   {{0xFF, 0xD8}, 2, "image/jpeg"},
   {{0x42, 0x4D}, 2, "image/x-ms-bmp"},
