@@ -7100,7 +7100,7 @@ EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord 
  */
 
 /**
- * @addtogroup Evas_Object_Box
+ * @addtogroup Evas_Object_Box_Group
  *
  * @{
  */
