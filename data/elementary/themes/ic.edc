@@ -167,6 +167,9 @@ I160("i-efm-h", "efm-h")
 I160("i-efm-cpp", "efm-cpp")
 I160("i-efm-hpp", "efm-hpp")
 I160("i-efm-sh", "efm-sh")
+I160("i-efm-zip", "efm-zip")
+I160("i-efm-exe", "efm-exe")
+I160("i-efm-trash", "efm-trash")
 
 I160("i-folder-open", "folder-open")
 I160("i-file-properties", "file-properties")
@@ -747,18 +750,5 @@ I160("i-unknown", "unknown")
       }                                               \
    }
 
-//   MIMEICON("inode/directory","icon_efm_folder.png", 128);
-
    MIMEICON("application/x-deb","icon_mime_deb.png", 128);
-   MIMEICON("application/x-bzip","icon_mime_package.png", 128);
-   MIMEICON("application/zip","icon_mime_package.png", 128);
-   MIMEICON("application/x-gzip","icon_mime_package.png", 128);
-   MIMEICON("application/x-bzip-compressed-tar","icon_mime_package.png", 128);
-   MIMEICON("application/x-bzip2-compressed-tar","icon_mime_package.png",128);
-   MIMEICON("application/x-compressed-tar","icon_mime_package.png",128);
-   MIMEICON("application/x-tar","icon_mime_package.png", 128);
-   MIMEICON("application/x-rar","icon_mime_package.png", 128);
-
-   MIMEICON("application/x-7z-compressed","icon_mime_package.png", 128);
-   MIMEICON("application/vnd.ms-cab-compressed","icon_mime_package.png", 128);
 #endif

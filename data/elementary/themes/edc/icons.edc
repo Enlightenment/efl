@@ -240,14 +240,35 @@
    ICON("inode/socket", "i-device-socket")
    ICON("inode/symlink", "i-symlink")
 
+   ICON("application/x-raw-disk-image", "i-drive-cd")
+
    ICON("application/octet-stream", "i-file2")
+
+   ICON("application/x-trash", "i-efm-trash")
 
    ICON("text/plain", "i-efm-txt")
    ICON("text/x-csrc", "i-efm-c")
    ICON("text/x-chdr", "i-efm-h")
    ICON("text/x-c++src", "i-efm-cpp")
    ICON("text/x-c++hdr", "i-efm-hpp")
+
    ICON("application/x-shellscript", "i-efm-sh")
+   ICON("application/x-executable", "i-efm-exe")
+   ICON("application/x-ms-dos-executable", "i-efm-exe")
+
+   ICON("application/zip", "i-efm-zip")
+   ICON("application/x-rar", "i-efm-zip")
+   ICON("application/x-gzip", "i-efm-zip")
+   ICON("application/x-bzip", "i-efm-zip")
+   ICON("application/x-7z-compressed", "i-efm-zip")
+   ICON("application/x-xz-compressed", "i-efm-zip")
+   ICON("application/x-tar", "i-efm-zip")
+   ICON("application/x-compressed-tar", "i-efm-zip")
+   ICON("application/x-bzip-compressed-tar", "i-efm-zip")
+   ICON("application/x-bzip2-compressed-tar", "i-efm-zip")
+   ICON("application/x-7z-compressed-tar", "i-efm-zip")
+   ICON("application/x-xz-compressed-tar", "i-efm-zip")
+   ICON("application/vnd.ms-cab-compressed", "i-efm-zip")
 #undef ICON
 
 /////////////////////////////////////////////////////////////////////////////

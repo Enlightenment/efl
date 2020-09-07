@@ -353,23 +353,14 @@
       } \
    }
 
-//Executable//
-
-   EFM_MIME_ICON_SIMPLE("application/x-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("application/x-ms-dos-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
-
 //Libraries//
 
    EFM_MIME_ICON_SIMPLE("application/x-sharedlib","efm_generic_icon_content_lib.png", (114/114), (114/114), 240, 0.5);
    EFM_MIME_ICON_SIMPLE("application/x-shared-library-la","efm_generic_icon_content_lib.png", (114/114), (114/114), 240, 0.5);
 
 //Unknown//
-   
+
    EFM_MIME_ICON_SIMPLE("application/x-object","efm_generic_icon_content_unknown.png", (100/154), (100/154), 240, 0.5);
-
-//Trash//
-
-   EFM_MIME_ICON_SIMPLE("application/x-trash","efm_generic_icon_content_trash.png", (114/142), (114/142), 240, 0.5);
 
 //Install//
 
@@ -431,19 +422,6 @@
       }                                               \
    }
 
-//   MIMEICON("inode/directory","icon_efm_folder.png", 128);
-
    MIMEICON("application/x-deb","icon_mime_deb.png", 128);
-   MIMEICON("application/x-bzip","icon_mime_package.png", 128);
-   MIMEICON("application/zip","icon_mime_package.png", 128);
-   MIMEICON("application/x-gzip","icon_mime_package.png", 128);
-   MIMEICON("application/x-bzip-compressed-tar","icon_mime_package.png", 128);
-   MIMEICON("application/x-bzip2-compressed-tar","icon_mime_package.png",128);
-   MIMEICON("application/x-compressed-tar","icon_mime_package.png",128);
-   MIMEICON("application/x-tar","icon_mime_package.png", 128);
-   MIMEICON("application/x-rar","icon_mime_package.png", 128);
-
-   MIMEICON("application/x-7z-compressed","icon_mime_package.png", 128);
-   MIMEICON("application/vnd.ms-cab-compressed","icon_mime_package.png", 128);
 
 
