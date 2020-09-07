@@ -16,7 +16,7 @@ typedef Eo Elm_Genlist_Item;
 /**
  * Elementary genlist item class
  *
- * @defgroup Elm_Genlist_Item_Group
+ * @defgroup Elm_Genlist_Item_Group Genlist Item
  * @ingroup Elm_Genlist_Group
  */
 

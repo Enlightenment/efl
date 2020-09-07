@@ -85,9 +85,16 @@ _icon_thumb_display(Elm_Icon_Data *sd)
         int prefix_size;
         const char **ext, *ptr;
         static const char *extensions[] =
-        {
-           ".avi", ".mp4", ".ogv", ".mov", ".mpg", ".wmv", NULL
-        };
+          {
+             ".asf", ".avi", ".bdm", ".bdmv", ".clpi", ".cpi", ".dv", ".fla",
+             ".flv", ".m1v", ".m2t", ".m2v", ".m4v", ".mkv", ".mov", ".mp2",
+             ".mp2ts", ".mp4", ".mpe", ".mpeg", ".mpg", ".mpl", ".mpls", ".mts",
+             ".mxf", ".nut", ".nuv", ".ogg", ".ogm", ".ogv", ".qt", ".rm", ".rmj",
+             ".rmm", ".rms", ".rmvb", ".rmx", ".rv", ".swf", ".ts", ".weba",
+             ".webm", ".wmv", ".3g2", ".3gp", ".3gp2", ".3gpp", ".3gpp2", ".3p2",
+             ".264",
+             NULL
+          };
 
         prefix_size = eina_stringshare_strlen(sd->thumb.file.path) - 4;
         if (prefix_size >= 0)

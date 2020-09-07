@@ -126,6 +126,8 @@ if sys_sun
   add_global_arguments('-D_POSIX_PTHREAD_SEMANTICS', language: 'c')
 endif
 
+env = find_program('env', native: true)
+
 config_h = configuration_data()
 config_h.set_quoted('MODULE_ARCH', version_name)
 config_h.set_quoted('PACKAGE', meson.project_name())

@@ -62,43 +62,6 @@
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
-/** @cond internal */
-/*
- * In the range [-pi pi]
- * (4/pi)*x - ((4/(pi*pi))*x*abs(x))
- * http://www.devmaster.net/forums/showthread.php?t=5784
- */
-#define EXTRA_PRECISION
-static inline double
-  _sin(double x)
-{
-   const double B = 4/M_PI;
-   const double C = -4/(M_PI*M_PI);
-
-   double y = (B * x) + (C * x * fabs(x));
-
-#ifdef EXTRA_PRECISION
-   //  const float Q = 0.775;
-   const double P = 0.225;
-
-   y = P * (y * fabs(y) - y) + y; // Q * y + P * y * abs(y)
-#endif
-   return y;
-}
-
-static inline double
-_cos(double x)
-{
-   x += M_PI_2;
-
-   if (x > M_PI)   // Original x > pi/2
-     {
-        x -= 2 * M_PI;   // Wrap: cos(x) = cos(x - 2 pi)
-     }
-
-   return _sin(x);
-}
-/** @endcond */
 
 /*============================================================================*
  *                                   API                                      *

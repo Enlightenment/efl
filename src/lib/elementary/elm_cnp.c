@@ -51,6 +51,47 @@ _elm_sel_format_to_mime_type(Elm_Sel_Format format)
    return ret;
 }
 
+typedef struct {
+  const unsigned char image_sequence[16];
+  const size_t image_sequence_len;
+  const char *mimetype;
+} Mimetype_Content_Matcher;
+
+static const Mimetype_Content_Matcher matchers[] = {
+  {{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}, 8, "image/png"},
+  {{0xFF, 0xD8}, 2, "image/jpeg"},
+  {{0x42, 0x4D}, 2, "image/x-ms-bmp"},
+  {{0x47, 0x49, 0x46, 0x38, 0x37, 0x61}, 6, "image/gif"},
+  {{0x47, 0x49, 0x46, 0x38, 0x39, 0x61}, 6, "image/gif"},
+  {{0x49, 0x49, 0x2A, 00}, 4, "image/tiff"},
+  {{0x49, 0x4D, 0x00, 0x2A}, 4, "image/tiff"},
+  {{0},0, NULL}
+};
+
+static inline Eina_Array*
+_elm_sel_from_content_to_mime_type(const void *buf, size_t buflen)
+{
+   Eina_Array *ret = eina_array_new(10);
+
+   for (int i = 0; matchers[i].mimetype && eina_array_count(ret) == 0; ++i)
+     {
+        if (matchers[i].image_sequence_len >= buflen) continue;
+        for (size_t j = 0; j < matchers[i].image_sequence_len; ++j)
+          {
+             if (((const unsigned  char*)buf)[j] == matchers[i].image_sequence[j])
+               {
+                  eina_array_push(ret, matchers[i].mimetype);
+                  break;
+               }
+          }
+     }
+
+   if (eina_array_count(ret) != 1)
+     ERR("Specified mime type is not available");
+
+   return ret;
+}
+
 static inline Elm_Sel_Format
 _mime_type_to_elm_sel_format(const char *mime_type)
 {
@@ -100,7 +141,16 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
 
-   tmp = _elm_sel_format_to_mime_type(format);
+   if (format == ELM_SEL_FORMAT_IMAGE)
+     {
+        tmp = _elm_sel_from_content_to_mime_type(buf, buflen);
+     }
+   else
+     {
+        tmp = _elm_sel_format_to_mime_type(format);
+     }
+
+
    if (eina_array_count(tmp) != 1)
      {
         ERR("You cannot specify more than one format when setting selection");

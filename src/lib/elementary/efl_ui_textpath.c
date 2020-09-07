@@ -85,12 +85,6 @@ _rad_to_deg(double rad)
    return 180 * rad / M_PI;
 }
 
-static inline double
-_deg_to_rad(double angle)
-{
-   return angle / 180 * M_PI;
-}
-
 static void
 _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
               int w1, int cmp, Evas_Map *map, Eina_Bezier bezier,

@@ -643,7 +643,7 @@ ecore_file_can_exec(const char *file)
    h = CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL,
                   OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
    if (h == INVALID_HANDLE_VALUE)
-     return EINA_FALSE;
+     goto test_bat;
 
    if (!GetFileSizeEx(h, &sz))
      goto close_h;
@@ -697,16 +697,16 @@ ecore_file_can_exec(const char *file)
     */
    if ((characteristics & 0x0002) && !(characteristics & 0x2000))
      return EINA_TRUE;
-
+ unmap_view:
+   UnmapViewOfFile(base);
+ close_h:
+   CloseHandle(h);
+ test_bat:
    /*
     * a .bat file, considered as an executable, is only a text file,
     * so we rely on the extension. Not the best but we cannot do more.
     */
    return eina_str_has_extension(file, ".bat");
- unmap_view:
-   UnmapViewOfFile(base);
- close_h:
-   CloseHandle(h);
 #else
    if (!access(file, X_OK)) return EINA_TRUE;
 #endif

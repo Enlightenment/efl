@@ -355,6 +355,10 @@ class Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
            size after wrapping text according to the size restrictions of the
            object.
 
+           The formatted width and height do not include padding size.
+           To get the total size of text with style, you need to query padding size
+           from @.style_insets.
+
            For example a text block containing the text:
            "You shall not pass!" with no margins or padding and assuming
            a monospace font and a size of 7x10 char widths (for simplicity)
@@ -377,6 +381,10 @@ class Efl.Canvas.Textblock extends Efl.Canvas.Object implements Efl.Text,
            placed on an infinite canvas, while @.size_formatted gives the
            size after wrapping text according to the size restrictions of the
            object.
+
+           The native width and height do not include padding size.
+           To get the total size of text with style, you need to query padding size
+           from @.style_insets.
 
            For example a text block containing the text:
            "You shall not pass!" with no margins or padding and assuming

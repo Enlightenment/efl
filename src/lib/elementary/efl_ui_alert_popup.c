@@ -61,7 +61,7 @@ const char *
 _efl_ui_alert_popup_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Alert_Popup_Data *pd, const char *part)
 {
    if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
-      return EINA_FALSE;
+      return NULL;
    if (eina_streq(part, "efl.text.title"))
      {
         if (pd->title_text)

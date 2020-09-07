@@ -1714,7 +1714,7 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eina_List *ll;
 
    char *dir_path = NULL;
-   char mo_path[PATH_MAX];
+   char mo_path[PATH_MAX] = {0};
    char moid_str[50];
    Eina_File *f = NULL;
    void *m = NULL;

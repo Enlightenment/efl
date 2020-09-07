@@ -15,7 +15,7 @@ typedef Eo Elm_Gengrid_Item;
 #endif
 
 /**
- * @defgroup Elm_Gengrid_Item_Group
+ * @defgroup Elm_Gengrid_Item_Group Gengrid Item
  * @ingroup Elm_Gengrid_Group
  */
 

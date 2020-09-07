@@ -53,6 +53,13 @@ typedef uint32_t uint32;
 typedef uint64_t uint64;
 typedef std::pair<uint64, uint64> uint128;
 
+// Hash function for a byte array.
+uint128 CityHash128(const char *s, size_t len);
+
+// Hash function for a byte array.  For convenience, a 128-bit seed is also
+// hashed into the result.
+uint128 CityHash128WithSeed(const char *s, size_t len, uint128 seed);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -70,13 +77,6 @@ uint64 CityHash64WithSeed(const char *buf, size_t len, uint64 seed);
 // hashed into the result.
 uint64 CityHash64WithSeeds(const char *buf, size_t len,
                            uint64 seed0, uint64 seed1);
-
-// Hash function for a byte array.
-uint128 CityHash128(const char *s, size_t len);
-
-// Hash function for a byte array.  For convenience, a 128-bit seed is also
-// hashed into the result.
-uint128 CityHash128WithSeed(const char *s, size_t len, uint128 seed);
 
 // Hash 128 input bits down to 64 bits of output.
 // This is intended to be a reasonably good hash function.

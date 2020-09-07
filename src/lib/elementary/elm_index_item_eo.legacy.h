@@ -15,7 +15,7 @@ typedef Eo Elm_Index_Item;
 #endif
 
 /**
- * @defgroup Elm_Index_Item_Group
+ * @defgroup Elm_Index_Item_Group Index Item
  * @ingroup Elm_Index_Group
  */
 

@@ -16,7 +16,7 @@ typedef Eo Elm_Gengrid_Item;
 /**
  * Elementary gengrid item class
  *
- * @defgroup Elm_Gengrid_Item_Group
+ * @defgroup Elm_Gengrid_Item_Group Gengrid Item
  * @ingroup Elm_Gengrid_Group
  */
 

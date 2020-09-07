@@ -3426,7 +3426,7 @@ static const char *
 _efl_ui_textbox_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *pd,
       const char *part)
 {
-   if (!part) return EINA_FALSE;
+   if (!part) return NULL;
 
    if (!strcmp("efl.text_guide", part))
      {
