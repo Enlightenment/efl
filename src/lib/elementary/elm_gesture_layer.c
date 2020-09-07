@@ -614,8 +614,10 @@ _state_report(Gesture_Info *gesture,
                                         * send ptr to user
                                         * callback */
      {
+        Eina_Inlist *itr;
         Func_Data *cb_info;
-        EINA_INLIST_FOREACH(gesture->cbs[gesture->state], cb_info)
+        /* elm_gesture_layer_cb_del can be called in Elm_Gesture_Event_Cb cb */
+        EINA_INLIST_FOREACH_SAFE(gesture->cbs[gesture->state], itr, cb_info)
            flags |= cb_info->cb(cb_info->user_data, info);
      }
 
