@@ -349,7 +349,7 @@ _eio_file_internal_xattr(const char *path,
   return &async->ls.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr(const char *path,
                Eio_Filter_Cb filter_cb,
                Eio_Main_Cb main_cb,
@@ -374,7 +374,7 @@ _eio_file_xattr(const char *path,
    return _eio_file_internal_xattr(path, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_get(const char *path,
 		   const char *attribute,
 		   Eio_Done_Data_Cb done_cb,
@@ -397,7 +397,7 @@ eio_file_xattr_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_string_get(const char *path,
 			  const char *attribute,
 			  Eio_Done_String_Cb done_cb,
@@ -420,7 +420,7 @@ eio_file_xattr_string_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_double_get(const char *path,
 			  const char *attribute,
 			  Eio_Done_Double_Cb done_cb,
@@ -443,7 +443,7 @@ eio_file_xattr_double_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_int_get(const char *path,
 		       const char *attribute,
 		       Eio_Done_Int_Cb done_cb,
@@ -466,7 +466,7 @@ eio_file_xattr_int_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_set(const char *path,
                    const char *attribute,
                    const char *xattr_data,
@@ -496,7 +496,7 @@ eio_file_xattr_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_string_set(const char *path,
 			  const char *attribute,
 			  const char *xattr_string,
@@ -531,7 +531,7 @@ eio_file_xattr_string_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_double_set(const char *path,
 			  const char *attribute,
 			  double xattr_double,
@@ -556,7 +556,7 @@ eio_file_xattr_double_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_xattr_int_set(const char *path,
 		       const char *attribute,
 		       int xattr_int,

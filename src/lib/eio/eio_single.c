@@ -418,7 +418,7 @@ eio_file_container_set(Eio_File *common, void *container)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_direct_stat(const char *path,
 		     Eio_Stat_Cb done_cb,
 		     Eio_Error_Cb error_cb,
@@ -450,7 +450,7 @@ eio_file_direct_stat(const char *path,
    return &s->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_direct_lstat(const char *path,
 		      Eio_Stat_Cb done_cb,
 		      Eio_Error_Cb error_cb,
@@ -480,7 +480,7 @@ eio_file_direct_lstat(const char *path,
    return &s->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_unlink(const char *path,
 		Eio_Done_Cb done_cb,
 		Eio_Error_Cb error_cb,
@@ -509,7 +509,7 @@ eio_file_unlink(const char *path,
    return &l->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_mkdir(const char *path,
 	       mode_t mode,
 	       Eio_Done_Cb done_cb,
@@ -540,7 +540,7 @@ eio_file_mkdir(const char *path,
    return &r->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_chmod(const char *path,
 	       mode_t mode,
 	       Eio_Done_Cb done_cb,
@@ -571,7 +571,7 @@ eio_file_chmod(const char *path,
    return &r->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_chown(const char *path,
 	       const char *user,
 	       const char *group,

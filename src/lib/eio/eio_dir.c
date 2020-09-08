@@ -845,7 +845,7 @@ _eio_dir_stat_error(void *data, Ecore_Thread *thread EINA_UNUSED)
  *============================================================================*/
 
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_dir_copy(const char *source,
              const char *dest,
              Eio_Filter_Direct_Cb filter_cb,
@@ -886,7 +886,7 @@ eio_dir_copy(const char *source,
    return &copy->progress.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_dir_move(const char *source,
              const char *dest,
              Eio_Filter_Direct_Cb filter_cb,
@@ -927,7 +927,7 @@ eio_dir_move(const char *source,
    return &move->progress.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_dir_unlink(const char *path,
                Eio_Filter_Direct_Cb filter_cb,
                Eio_Progress_Cb progress_cb,
@@ -1014,7 +1014,7 @@ _eio_dir_stat_internal_ls(const char *dir,
    return &async->ls.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_dir_stat_ls(const char *dir,
                 Eio_Filter_Direct_Cb filter_cb,
                 Eio_Main_Direct_Cb main_cb,
@@ -1082,7 +1082,7 @@ _eio_dir_direct_internal_ls(const char *dir,
    return &async->ls.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_dir_direct_ls(const char *dir,
 		  Eio_Filter_Dir_Cb filter_cb,
 		  Eio_Main_Direct_Cb main_cb,

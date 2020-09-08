@@ -1,6 +1,8 @@
 /* This include has been added to support Eo in Eio */
 #include <Eo.h>
 
+#include <eio_api.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
