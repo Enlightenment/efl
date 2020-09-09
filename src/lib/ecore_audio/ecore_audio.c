@@ -27,7 +27,7 @@ Ecore_Audio_Lib_Sndfile *ecore_audio_sndfile_lib = NULL;
 
 /* externally accessible functions */
 
-EAPI int
+ECORE_AUDIO_API int
 ecore_audio_init(void)
 {
 
@@ -60,7 +60,7 @@ ecore_audio_init(void)
    return _ecore_audio_init_count;
 }
 
-EAPI int
+ECORE_AUDIO_API int
 ecore_audio_shutdown(void)
 {
    DBG("Ecore_Audio shutdown");
@@ -263,13 +263,13 @@ ecore_audio_sndfile_lib_unload(void)
 #endif /* HAVE_SNDFILE */
 
 
-EAPI const char*
+ECORE_AUDIO_API const char*
 ecore_audio_obj_name_get(const Efl_Object* obj)
 {
    return efl_name_get(obj);
 }
 
-EAPI void
+ECORE_AUDIO_API void
 ecore_audio_obj_name_set(Efl_Object* obj, const char *name)
 {
    efl_name_set(obj, name);
