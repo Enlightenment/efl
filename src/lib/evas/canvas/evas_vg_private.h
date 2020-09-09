@@ -154,7 +154,7 @@ void                        efl_canvas_vg_container_blend_buffer_clear(Efl_VG *o
 static inline void
 efl_canvas_vg_object_change(Efl_Canvas_Vg_Object_Data *vd)
 {
-   if (!vd || vd->changed) return;
+   if (!vd || (vd->changed && vd->obj->changed)) return;
    vd->changed = EINA_TRUE;
    evas_object_change(vd->obj->object, vd->obj);
 }
