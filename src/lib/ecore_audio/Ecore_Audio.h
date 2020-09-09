@@ -4,30 +4,32 @@
 #include <Eina.h>
 #include <Eo.h>
 
-#ifdef EAPI
-#undef EAPI
+#ifdef ECORE_AUDIO_API
+#error ECORE_AUDIO_API should not be already defined
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
+# ifndef ECORE_AUDIO_STATIC
+#  ifdef ECORE_AUDIO_BUILD
+#   define ECORE_AUDIO_API __declspec(dllexport)
 #  else
-#   define EAPI
+#   define ECORE_AUDIO_API __declspec(dllimport)
 #  endif
 # else
-#  define EAPI __declspec(dllimport)
+#  define ECORE_AUDIO_API
+# endif
+# define ECORE_AUDIO_API_WEAK
+#elif __GNUC__
+# if __GNUC__ >= 4
+#  define ECORE_AUDIO_API __attribute__ ((visibility("default")))
+#  define ECORE_AUDIO_API_WEAK __attribute__ ((weak))
+# else
+#  define ECORE_AUDIO_API
+#  define ECORE_AUDIO_API_WEAK
 # endif
 #else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
+# define ECORE_AUDIO_API
+# define ECORE_AUDIO_API_WEAK
 #endif
 
 /**
@@ -176,7 +178,7 @@ typedef struct _Ecore_Audio_Vio Ecore_Audio_Vio;
  * When Ecore_Audio is not used anymore, call ecore_audio_shutdown()
  * to shut down the Ecore_Audio library.
  */
-EAPI int                 ecore_audio_init(void);
+ECORE_AUDIO_API int                 ecore_audio_init(void);
 
 /**
  * @brief Shuts down the Ecore_Audio library.
@@ -190,7 +192,7 @@ EAPI int                 ecore_audio_init(void);
  * been called the same number of times than ecore_audio_init(). In that case
  * it shuts down all the services it uses.
  */
-EAPI int                 ecore_audio_shutdown(void);
+ECORE_AUDIO_API int                 ecore_audio_shutdown(void);
 
 //Legacy compatibility code
 
@@ -200,14 +202,14 @@ EAPI int                 ecore_audio_shutdown(void);
  * @since 1.8
  *
  */
-EAPI const char*         ecore_audio_obj_name_get(const Efl_Object* obj);
+ECORE_AUDIO_API const char*         ecore_audio_obj_name_get(const Efl_Object* obj);
 /**
  * @brief Name of the object
  *
  * @since 1.8
  *
  */
-EAPI void                ecore_audio_obj_name_set(Efl_Object* obj, const char *name);
+ECORE_AUDIO_API void                ecore_audio_obj_name_set(Efl_Object* obj, const char *name);
 
 #include <ecore_audio_obj.h>
 #include <ecore_audio_obj_in.h>
@@ -229,8 +231,5 @@ EAPI void                ecore_audio_obj_name_set(Efl_Object* obj, const char *n
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
