@@ -1381,6 +1381,13 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
      if (rect_tags[i].sz - 1 == sz && !strncmp(rect_tags[i].tag, key, sz))
        {
           *((double*) (array + rect_tags[i].offset)) = _to_double(loader->svg_parse, value, rect_tags[i].type);
+
+          //Case if only rx or ry is declared
+          if (!strncmp(rect_tags[i].tag, "rx", sz)) rect->has_rx = EINA_TRUE;
+          if (!strncmp(rect_tags[i].tag, "ry", sz)) rect->has_ry = EINA_TRUE;
+
+          if (!EINA_DBL_EQ(rect->rx, 0) && EINA_DBL_EQ(rect->ry, 0) && rect->has_rx && !rect->has_ry) rect->ry = rect->rx;
+          if (!EINA_DBL_EQ(rect->ry, 0) && EINA_DBL_EQ(rect->rx, 0) && !rect->has_rx && rect->has_ry) rect->rx = rect->ry;
           return EINA_TRUE;
        }
 
@@ -1397,8 +1404,6 @@ _attr_parse_rect_node(void *data, const char *key, const char *value)
         _parse_style_attr(loader, key, value);
      }
 
-   if (!EINA_DBL_EQ(rect->rx, 0) && EINA_DBL_EQ(rect->ry, 0)) rect->ry = rect->rx;
-   if (!EINA_DBL_EQ(rect->ry, 0) && EINA_DBL_EQ(rect->rx, 0)) rect->rx = rect->ry;
 
    return EINA_TRUE;
 }
@@ -1407,6 +1412,10 @@ static Svg_Node *
 _create_rect_node(Evas_SVG_Loader *loader, Svg_Node *parent, const char *buf, unsigned buflen)
 {
    loader->svg_parse->node = _create_node(parent, SVG_NODE_RECT);
+
+   if (loader->svg_parse->node) {
+        loader->svg_parse->node->node.rect.has_rx = loader->svg_parse->node->node.rect.has_ry = EINA_FALSE;
+   }
 
    eina_simple_xml_attributes_parse(buf, buflen,
                                     _attr_parse_rect_node, loader);
@@ -1601,6 +1610,8 @@ _copy_attribute(Svg_Node *to, Svg_Node *from)
            to->node.rect.h = from->node.rect.h;
            to->node.rect.rx = from->node.rect.rx;
            to->node.rect.ry = from->node.rect.ry;
+           to->node.rect.has_rx = from->node.rect.has_rx;
+           to->node.rect.has_ry = from->node.rect.has_ry;
            break;
         case SVG_NODE_LINE:
            to->node.line.x1 = from->node.line.x1;
