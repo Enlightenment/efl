@@ -126,6 +126,8 @@ struct _Svg_Rect_Node
    double h;
    double rx;
    double ry;
+   Eina_Bool has_rx;
+   Eina_Bool has_ry;
 };
 
 struct _Svg_Line_Node
