@@ -469,7 +469,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
              int px, py, pw, ph, pstride;
              void *ppixels = NULL;
              ector_buffer_size_get(ector, &pw, &ph);
-             ector_buffer_pixels_get(ector, &ppixels, &px, &ph, &pstride);
+             ector_buffer_pixels_get(ector, &ppixels, &pw, &ph, &pstride);
              Efl_Gfx_Colorspace pcspace = ector_buffer_cspace_get(ector);
              ector_surface_reference_point_get(ector, &px, &py);
 
