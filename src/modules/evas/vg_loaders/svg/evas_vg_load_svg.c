@@ -1091,6 +1091,24 @@ _create_switch_node(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node *parent EINA_U
    return NULL;
 }
 
+static Svg_Node *
+_create_mask_node(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
+{
+   Svg_Node *node = _create_node(NULL, SVG_NODE_UNKNOWN);
+
+   node->display = EINA_FALSE;
+   return node;
+}
+
+static Svg_Node *
+_create_clipPath_node(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node *parent EINA_UNUSED, const char *buf EINA_UNUSED, unsigned buflen EINA_UNUSED)
+{
+   Svg_Node *node = _create_node(NULL, SVG_NODE_UNKNOWN);
+
+   node->display = EINA_FALSE;
+   return node;
+}
+
 static Eina_Bool
 _attr_parse_path_node(void *data, const char *key, const char *value)
 {
@@ -1714,7 +1732,9 @@ static const struct {
   TAG_DEF(defs),
   TAG_DEF(g),
   TAG_DEF(svg),
-  TAG_DEF(switch)
+  TAG_DEF(switch),
+  TAG_DEF(mask),
+  TAG_DEF(clipPath)
 };
 
 #define FIND_FACTORY(Short_Name, Tags_Array)                            \
@@ -2239,7 +2259,9 @@ static const struct {
 } pop_array[] = {
   POP_TAG(g),
   POP_TAG(svg),
-  POP_TAG(defs)
+  POP_TAG(defs),
+  POP_TAG(mask),
+  POP_TAG(clipPath)
 };
 
 static void
