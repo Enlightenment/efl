@@ -2649,7 +2649,7 @@ EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get(void) EINA_CONS
  */
 
 /**
- * @defgroup Evas_Object_Box Box Smart Object
+ * @defgroup Evas_Object_Box_Group Box Smart Object
  *
  * A box is a convenience smart object that packs children inside it
  * in @b sequence, using a layouting function specified by the
@@ -2673,7 +2673,7 @@ EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get(void) EINA_CONS
  *
  * Smart class extension, providing extra box object requirements.
  *
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 typedef struct _Evas_Object_Box_Api Evas_Object_Box_Api;
 
@@ -2682,7 +2682,7 @@ typedef struct _Evas_Object_Box_Api Evas_Object_Box_Api;
  *
  * Smart object instance data, providing box object requirements.
  *
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 typedef struct _Evas_Object_Box_Data Evas_Object_Box_Data;
 
@@ -2708,7 +2708,7 @@ typedef struct _Evas_Object_Box_Data Evas_Object_Box_Data;
  * a name string. Their values are open to any data. See the API on
  * option properties for more details.
  *
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 typedef struct _Evas_Object_Box_Option Evas_Object_Box_Option;
 
@@ -2721,7 +2721,7 @@ typedef struct _Evas_Object_Box_Option Evas_Object_Box_Option;
  * passed any custom data one could have set to a given box layouting
  * function, with evas_object_box_layout_set().
  *
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *priv, void *user_data);
 
@@ -2731,7 +2731,7 @@ typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *pri
  * Current version for Evas box object smart class, a value that goes
  * to _Evas_Object_Box_Api::version.
  *
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 #define EVAS_OBJECT_BOX_API_VERSION 1
 
@@ -2744,7 +2744,7 @@ typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *pri
  * evas_object_box_layout_set().
  *
  * @extends Evas_Smart_Class
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 struct _Evas_Object_Box_Api
 {
@@ -2780,7 +2780,7 @@ struct _Evas_Object_Box_Api
  * @see EVAS_OBJECT_BOX_API_INIT_NULL
  * @see EVAS_OBJECT_BOX_API_INIT_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 #define EVAS_OBJECT_BOX_API_INIT(smart_class_init) {smart_class_init, EVAS_OBJECT_BOX_API_VERSION, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
@@ -2792,7 +2792,7 @@ struct _Evas_Object_Box_Api
  * @see EVAS_OBJECT_BOX_API_INIT_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 #define EVAS_OBJECT_BOX_API_INIT_NULL    EVAS_OBJECT_BOX_API_INIT(EVAS_SMART_CLASS_INIT_NULL)
 
@@ -2809,7 +2809,7 @@ struct _Evas_Object_Box_Api
  * @see EVAS_OBJECT_BOX_API_INIT_NULL
  * @see EVAS_OBJECT_BOX_API_INIT_NAME_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 #define EVAS_OBJECT_BOX_API_INIT_VERSION EVAS_OBJECT_BOX_API_INIT(EVAS_SMART_CLASS_INIT_VERSION)
 
@@ -2830,7 +2830,7 @@ struct _Evas_Object_Box_Api
  * @see EVAS_OBJECT_BOX_API_INIT_NULL
  * @see EVAS_OBJECT_BOX_API_INIT_VERSION
  * @see EVAS_OBJECT_BOX_API_INIT
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 #define EVAS_OBJECT_BOX_API_INIT_NAME_VERSION(name) EVAS_OBJECT_BOX_API_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
@@ -2843,7 +2843,7 @@ struct _Evas_Object_Box_Api
  * #Evas_Object_Box_Data to fit its own needs.
  *
  * @extends Evas_Object_Smart_Clipped_Data
- * @ingroup Evas_Object_Box
+ * @ingroup Evas_Object_Box_Group
  */
 struct _Evas_Object_Box_Data
 {

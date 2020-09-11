@@ -53,6 +53,10 @@ Fixes:
    * ecore con - curl - fix error map to map right enum
    * eina - statgen (stat generation) - fix enable api to actually enable
    * evas - image cache - fix loading with skip head on to load changed files
+   * evas_textblock: remove style padding from native width and formatted height
+   * elm icon/thumb - fix handling of a wider range of video extns
+   * edje - calc - handle swallow disappearing mid-calc due to callabcks
+   * ecore drm - increase timeout for flips from 0.05 to 2.0 sec
 
 Changes since 1.23.0:
 ---------------------
