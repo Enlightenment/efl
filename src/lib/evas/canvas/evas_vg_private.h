@@ -55,6 +55,7 @@ struct _Efl_Canvas_Vg_Object_Data
    void                      *ckeys[2];  //cache keys for first, last frames if animation
 
    Eina_Bool                  changed : 1;
+   Eina_Bool                  sync_render : 1;
 };
 
 struct _Efl_Canvas_Vg_Node_Data
