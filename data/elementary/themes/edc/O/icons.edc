@@ -60,10 +60,5 @@
    ICON("preferences-screen-hflip","icon_screen_hflip.png",64)   // *** // "enlightenment/screen_hflip"
    ICON("preferences-applications-add","icon_applications_new.png",64)         // *** // "enlightenment/add_application"
    ICON("preferences-illume","icon_illume.png",64)
-   ICON("modules-utils","icon_gadget.png",64)
-   ICON("modules-system","icon_gadget.png",64)
-   ICON("modules-look","icon_look.png",64)
-   ICON("modules-core","logo_white_128.png",64)
-   ICON("modules-mobile","icon_globe.png",64)
-   ICON("modules-settings","icon_config.png",64)
+
 
