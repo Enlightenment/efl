@@ -858,7 +858,7 @@ _evas_common_text_props_cluster_move(const Evas_Text_Props *props, int pos,
    return pos;
 }
 
-EAPI int
+EVAS_API int
 evas_common_text_props_cluster_next(const Evas_Text_Props *props, int pos)
 {
    Eina_Bool right;
@@ -867,7 +867,7 @@ evas_common_text_props_cluster_next(const Evas_Text_Props *props, int pos)
    return _evas_common_text_props_cluster_move(props, pos, right);
 }
 
-EAPI int
+EVAS_API int
 evas_common_text_props_cluster_prev(const Evas_Text_Props *props, int pos)
 {
    Eina_Bool right;
@@ -877,7 +877,7 @@ evas_common_text_props_cluster_prev(const Evas_Text_Props *props, int pos)
 }
 
 /* Returns the index of the logical char in the props. */
-EAPI int
+EVAS_API int
 evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
 {
 #ifdef OT_SUPPORT
@@ -973,7 +973,7 @@ evas_common_text_props_index_find(const Evas_Text_Props *props, int _cutoff)
 /* Won't work in the middle of ligatures, assumes cutoff < len.
  * Also won't work in the middle of indic words, should handle that in a
  * smart way. */
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_text_props_split(Evas_Text_Props *base,
       Evas_Text_Props *ext, int _cutoff)
 {
@@ -1027,7 +1027,7 @@ evas_common_text_props_split(Evas_Text_Props *base,
 }
 
 /* Won't work in the middle of ligatures */
-EAPI void
+EVAS_API void
 evas_common_text_props_merge(Evas_Text_Props *item1,
       const Evas_Text_Props *item2)
 {
@@ -1222,7 +1222,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
 }
 #endif
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
       Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
       size_t par_pos, int len, Evas_Text_Props_Mode mode, const char *lang)

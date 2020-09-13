@@ -4,7 +4,7 @@
 #include "Evas.h"
 #include "evas_common_types.h"
 
-EAPI void evas_common_cpu_end_opt(void);
+EVAS_API void evas_common_cpu_end_opt(void);
 
 #include "config.h"
 #include "evas_blend_ops.h"

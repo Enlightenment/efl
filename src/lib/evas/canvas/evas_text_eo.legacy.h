@@ -39,7 +39,7 @@ typedef Eo Evas_Text;
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_shadow_color_set(Evas_Text *obj, int r, int g, int b, int a);
+EVAS_API void evas_object_text_shadow_color_set(Evas_Text *obj, int r, int g, int b, int a);
 
 /**
  * @brief Controls the shadow color for the given text object.
@@ -69,7 +69,7 @@ EAPI void evas_object_text_shadow_color_set(Evas_Text *obj, int r, int g, int b,
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_shadow_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
+EVAS_API void evas_object_text_shadow_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Controls the ellipsis that should be used for the text object.
@@ -87,7 +87,7 @@ EAPI void evas_object_text_shadow_color_get(const Evas_Text *obj, int *r, int *g
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_ellipsis_set(Evas_Text *obj, double ellipsis);
+EVAS_API void evas_object_text_ellipsis_set(Evas_Text *obj, double ellipsis);
 
 /**
  * @brief Controls the ellipsis that should be used for the text object.
@@ -106,7 +106,7 @@ EAPI void evas_object_text_ellipsis_set(Evas_Text *obj, double ellipsis);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI double evas_object_text_ellipsis_get(const Evas_Text *obj);
+EVAS_API double evas_object_text_ellipsis_get(const Evas_Text *obj);
 
 /**
  * @brief Sets the BiDi delimiters used in the textblock.
@@ -122,7 +122,7 @@ EAPI double evas_object_text_ellipsis_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_bidi_delimiters_set(Evas_Text *obj, const char *delim);
+EVAS_API void evas_object_text_bidi_delimiters_set(Evas_Text *obj, const char *delim);
 
 /**
  * @brief Sets the BiDi delimiters used in the textblock.
@@ -139,7 +139,7 @@ EAPI void evas_object_text_bidi_delimiters_set(Evas_Text *obj, const char *delim
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI const char *evas_object_text_bidi_delimiters_get(const Evas_Text *obj);
+EVAS_API const char *evas_object_text_bidi_delimiters_get(const Evas_Text *obj);
 
 /**
  * @brief Controls the outline color for the given text object.
@@ -158,7 +158,7 @@ EAPI const char *evas_object_text_bidi_delimiters_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_outline_color_set(Evas_Text *obj, int r, int g, int b, int a);
+EVAS_API void evas_object_text_outline_color_set(Evas_Text *obj, int r, int g, int b, int a);
 
 /**
  * @brief Controls the outline color for the given text object.
@@ -177,7 +177,7 @@ EAPI void evas_object_text_outline_color_set(Evas_Text *obj, int r, int g, int b
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_outline_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
+EVAS_API void evas_object_text_outline_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Sets the 'glow 2' color for the given text object.
@@ -195,7 +195,7 @@ EAPI void evas_object_text_outline_color_get(const Evas_Text *obj, int *r, int *
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_glow2_color_set(Evas_Text *obj, int r, int g, int b, int a);
+EVAS_API void evas_object_text_glow2_color_set(Evas_Text *obj, int r, int g, int b, int a);
 
 /**
  * @brief Sets the 'glow 2' color for the given text object.
@@ -213,7 +213,7 @@ EAPI void evas_object_text_glow2_color_set(Evas_Text *obj, int r, int g, int b, 
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_glow2_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
+EVAS_API void evas_object_text_glow2_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Controls the style to apply on the given text object.
@@ -230,7 +230,7 @@ EAPI void evas_object_text_glow2_color_get(const Evas_Text *obj, int *r, int *g,
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_style_set(Evas_Text *obj, Evas_Text_Style_Type style);
+EVAS_API void evas_object_text_style_set(Evas_Text *obj, Evas_Text_Style_Type style);
 
 /**
  * @brief Controls the style to apply on the given text object.
@@ -248,7 +248,7 @@ EAPI void evas_object_text_style_set(Evas_Text *obj, Evas_Text_Style_Type style)
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI Evas_Text_Style_Type evas_object_text_style_get(const Evas_Text *obj);
+EVAS_API Evas_Text_Style_Type evas_object_text_style_get(const Evas_Text *obj);
 
 /**
  * @brief Sets the glow color for the given text object.
@@ -269,7 +269,7 @@ EAPI Evas_Text_Style_Type evas_object_text_style_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_glow_color_set(Evas_Text *obj, int r, int g, int b, int a);
+EVAS_API void evas_object_text_glow_color_set(Evas_Text *obj, int r, int g, int b, int a);
 
 /**
  * @brief Sets the glow color for the given text object.
@@ -290,7 +290,7 @@ EAPI void evas_object_text_glow_color_set(Evas_Text *obj, int r, int g, int b, i
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_glow_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
+EVAS_API void evas_object_text_glow_color_get(const Evas_Text *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Maximal descent property
@@ -301,7 +301,7 @@ EAPI void evas_object_text_glow_color_get(const Evas_Text *obj, int *r, int *g, 
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_max_descent_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_max_descent_get(const Evas_Text *obj);
 
 /**
  * @brief Gets the text style pad of a text object.
@@ -314,7 +314,7 @@ EAPI int evas_object_text_max_descent_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI void evas_object_text_style_pad_get(const Evas_Text *obj, int *l, int *r, int *t, int *b);
+EVAS_API void evas_object_text_style_pad_get(const Evas_Text *obj, int *l, int *r, int *t, int *b);
 
 /**
  * @brief Retrieves the direction of the text currently being displayed in the
@@ -326,7 +326,7 @@ EAPI void evas_object_text_style_pad_get(const Evas_Text *obj, int *l, int *r, i
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI Efl_Text_Bidirectional_Type evas_object_text_direction_get(const Evas_Text *obj);
+EVAS_API Efl_Text_Bidirectional_Type evas_object_text_direction_get(const Evas_Text *obj);
 
 /**
  * @brief Ascent property
@@ -337,7 +337,7 @@ EAPI Efl_Text_Bidirectional_Type evas_object_text_direction_get(const Evas_Text 
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_ascent_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_ascent_get(const Evas_Text *obj);
 
 /**
  * @brief Horizontal advance property
@@ -348,7 +348,7 @@ EAPI int evas_object_text_ascent_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_horiz_advance_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_horiz_advance_get(const Evas_Text *obj);
 
 /**
  * @brief Inset property
@@ -359,7 +359,7 @@ EAPI int evas_object_text_horiz_advance_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_inset_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_inset_get(const Evas_Text *obj);
 
 /**
  * @brief Maximal ascent property
@@ -370,7 +370,7 @@ EAPI int evas_object_text_inset_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_max_ascent_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_max_ascent_get(const Evas_Text *obj);
 
 /**
  * @brief Vertical advance property
@@ -381,7 +381,7 @@ EAPI int evas_object_text_max_ascent_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_vert_advance_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_vert_advance_get(const Evas_Text *obj);
 
 /**
  * @brief descent property
@@ -392,7 +392,7 @@ EAPI int evas_object_text_vert_advance_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_descent_get(const Evas_Text *obj);
+EVAS_API int evas_object_text_descent_get(const Evas_Text *obj);
 
 /**
  * @brief Returns the logical position of the last char in the text up to the
@@ -409,7 +409,7 @@ EAPI int evas_object_text_descent_get(const Evas_Text *obj);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_last_up_to_pos(const Evas_Text *obj, int x, int y);
+EVAS_API int evas_object_text_last_up_to_pos(const Evas_Text *obj, int x, int y);
 
 /**
  * @brief Get character coordinates
@@ -426,7 +426,7 @@ EAPI int evas_object_text_last_up_to_pos(const Evas_Text *obj, int x, int y);
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI int evas_object_text_char_coords_get(const Evas_Text *obj, int x, int y, int *cx, int *cy, int *cw, int *ch);
+EVAS_API int evas_object_text_char_coords_get(const Evas_Text *obj, int x, int y, int *cx, int *cy, int *cw, int *ch);
 
 /**
  * @brief Retrieve position and dimension information of a character within a
@@ -450,6 +450,6 @@ EAPI int evas_object_text_char_coords_get(const Evas_Text *obj, int x, int y, in
  *
  * @ingroup Evas_Object_Text_Group
  */
-EAPI Eina_Bool evas_object_text_char_pos_get(const Evas_Text *obj, int pos, int *cx, int *cy, int *cw, int *ch);
+EVAS_API Eina_Bool evas_object_text_char_pos_get(const Evas_Text *obj, int pos, int *cx, int *cy, int *cw, int *ch);
 
 #endif

@@ -244,7 +244,7 @@ _evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
    free(m);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_map_coords_get(const Evas_Map *m, double x, double y,
                     double *mx, double *my, int grab)
 {
@@ -512,7 +512,7 @@ _evas_object_map_enable_set(Eo *eo_obj, Evas_Object_Protected_Data *obj,
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_map_enable_set(Eo *eo_obj, Eina_Bool enabled)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -520,7 +520,7 @@ evas_object_map_enable_set(Eo *eo_obj, Eina_Bool enabled)
    _evas_object_map_enable_set(eo_obj, obj, enabled);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_map_enable_get(const Eo *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
@@ -528,7 +528,7 @@ evas_object_map_enable_get(const Eo *eo_obj)
    return obj->map->cur.usemap;
 }
 
-EAPI void
+EVAS_API void
 evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -645,7 +645,7 @@ evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
    _evas_map_calc_map_geometry(eo_obj);
 }
 
-EAPI const Evas_Map *
+EVAS_API const Evas_Map *
 evas_object_map_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN((Eo *) eo_obj, NULL);
@@ -654,7 +654,7 @@ evas_object_map_get(const Evas_Object *eo_obj)
    return obj->map->cur.map;
 }
 
-EAPI Evas_Map *
+EVAS_API Evas_Map *
 evas_map_new(int count)
 {
    if ((count <= 0) || (count % 4 != 0))
@@ -666,7 +666,7 @@ evas_map_new(int count)
    return _evas_map_new(count, EINA_FALSE);
 }
 
-EAPI void
+EVAS_API void
 evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -676,7 +676,7 @@ evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled)
    m->smooth = enabled;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_map_smooth_get(const Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -686,7 +686,7 @@ evas_map_smooth_get(const Evas_Map *m)
    return m->smooth;
 }
 
-EAPI void
+EVAS_API void
 evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -696,7 +696,7 @@ evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled)
    m->alpha = enabled;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_map_alpha_get(const Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -706,7 +706,7 @@ evas_map_alpha_get(const Evas_Map *m)
    return m->alpha;
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_object_move_sync_set(Evas_Map *m, Eina_Bool enabled)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -721,7 +721,7 @@ evas_map_util_object_move_sync_set(Evas_Map *m, Eina_Bool enabled)
    m->move_sync.enabled = !!enabled;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_map_util_object_move_sync_get(const Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -731,7 +731,7 @@ evas_map_util_object_move_sync_get(const Evas_Map *m)
    return m->move_sync.enabled;
 }
 
-EAPI Evas_Map *
+EVAS_API Evas_Map *
 evas_map_dup(const Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -741,14 +741,14 @@ evas_map_dup(const Evas_Map *m)
    return _evas_map_dup(m);
 }
 
-EAPI void
+EVAS_API void
 evas_map_free(Evas_Map *m)
 {
    if (!m) return;
    _evas_map_free(NULL, m);
 }
 
-EAPI int
+EVAS_API int
 evas_map_count_get(const Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -762,7 +762,7 @@ evas_map_count_get(const Evas_Map *m)
    Rotation center position will be flickered by rounding problem.
    Now fixed in EO APIs.
  */
-EAPI void
+EVAS_API void
 evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -772,7 +772,7 @@ evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_
    _map_point_coord_set(m, idx, x, y, z);
 }
 
-EAPI void
+EVAS_API void
 evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
    double dx, dy, dz;
@@ -783,7 +783,7 @@ evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *
    if (z) *z = lround(dz);
 }
 
-EAPI void
+EVAS_API void
 evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -798,7 +798,7 @@ evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
    p->v = v;
 }
 
-EAPI void
+EVAS_API void
 evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -818,7 +818,7 @@ evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
    if (v) *v = 0.0;
 }
 
-EAPI void
+EVAS_API void
 evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -835,7 +835,7 @@ evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
    p->a = a;
 }
 
-EAPI void
+EVAS_API void
 evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int *a)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -859,7 +859,7 @@ error:
    if (a) *a = 255;
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *eo_obj, Evas_Coord z)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -881,7 +881,7 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *e
                                   obj->cur->geometry.w, obj->cur->geometry.h, z);
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -903,7 +903,7 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj
                                   obj->cur->geometry.w, obj->cur->geometry.h, 0);
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord z)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -918,7 +918,7 @@ evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coor
    _evas_map_util_points_populate(m, x, y, w, h, z);
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -964,7 +964,7 @@ _map_util_rotate(Evas_Map *m, double degrees, double cx, double cy)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -997,7 +997,7 @@ _map_util_zoom(Evas_Map *m, double zoomx, double zoomy, double cx, double cy)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
@@ -1073,7 +1073,7 @@ _map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
      }
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
                         Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
 {
@@ -1125,7 +1125,7 @@ _map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
      }
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
                           double qw, double cx, double cy, double cz)
 {
@@ -1211,7 +1211,7 @@ _map_util_3d_lighting(Evas_Map *m,
      }
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_3d_lighting(Evas_Map *m,
                           Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
                           int lr, int lg, int lb, int ar, int ag, int ab)
@@ -1259,7 +1259,7 @@ _map_util_3d_perspective(Evas_Map *m, double px, double py, double z0, double fo
      }
 }
 
-EAPI void
+EVAS_API void
 evas_map_util_3d_perspective(Evas_Map *m,
                              Evas_Coord px, Evas_Coord py,
                              Evas_Coord z0, Evas_Coord foc)
@@ -1271,7 +1271,7 @@ evas_map_util_3d_perspective(Evas_Map *m,
    _map_util_3d_perspective(m, (double) px, (double) py, (double) z0, (double) foc);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_map_util_clockwise_get(Evas_Map *m)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);

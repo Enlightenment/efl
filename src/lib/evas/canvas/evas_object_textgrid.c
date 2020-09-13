@@ -868,7 +868,7 @@ _evas_textgrid_efl_gfx_entity_scale_set(Evas_Object *eo_obj, Evas_Textgrid_Data 
 
 /*********************  API *********************/
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_textgrid_add(Evas *e)
 {
    e = evas_find(e);
@@ -1474,13 +1474,13 @@ _evas_textgrid_efl_object_dbg_info_get(Eo *eo_obj, Evas_Textgrid_Data *o EINA_UN
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_textgrid_font_source_set(Eo *obj, const char *font_source)
 {
    efl_text_font_source_set((Eo *) obj, font_source);
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_object_textgrid_font_source_get(const Eo *obj)
 {
    const char *font_source = NULL;
@@ -1488,14 +1488,14 @@ evas_object_textgrid_font_source_get(const Eo *obj)
    return font_source;
 }
 
-EAPI void
+EVAS_API void
 evas_object_textgrid_font_set(Eo *obj, const char *font_name, Evas_Font_Size font_size)
 {
    efl_text_font_family_set((Eo *) obj, font_name);
    efl_text_font_size_set((Eo *) obj, font_size);
 }
 
-EAPI void
+EVAS_API void
 evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_Size *font_size)
 {
    if (font_name) *font_name = efl_text_font_family_get((Eo *) obj);

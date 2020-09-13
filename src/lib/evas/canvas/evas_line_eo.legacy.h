@@ -27,7 +27,7 @@ typedef Eo Evas_Line;
  *
  * @ingroup Evas_Object_Line_Group
  */
-EAPI void evas_object_line_xy_set(Evas_Line *obj, int x1, int y1, int x2, int y2);
+EVAS_API void evas_object_line_xy_set(Evas_Line *obj, int x1, int y1, int x2, int y2);
 
 /**
  * @brief Retrieves the coordinates of the end points of the given evas line
@@ -41,6 +41,6 @@ EAPI void evas_object_line_xy_set(Evas_Line *obj, int x1, int y1, int x2, int y2
  *
  * @ingroup Evas_Object_Line_Group
  */
-EAPI void evas_object_line_xy_get(const Evas_Line *obj, int *x1, int *y1, int *x2, int *y2);
+EVAS_API void evas_object_line_xy_get(const Evas_Line *obj, int *x1, int *y1, int *x2, int *y2);
 
 #endif

@@ -235,7 +235,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth_c(RGBA_Image *src, RGBA_Image *dst,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
                                              RGBA_Draw_Context *dc,
                                              int src_region_x, int src_region_y,
@@ -267,7 +267,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
                                                    cb);
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_rgba_smooth_draw(RGBA_Image *src, RGBA_Image *dst, int dst_clip_x, int dst_clip_y, int dst_clip_w, int dst_clip_h, DATA32 mul_col, int render_op, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
 #ifdef BUILD_MMX
@@ -304,7 +304,7 @@ evas_common_scale_rgba_smooth_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
         mask_ie, mask_x, mask_y);
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
 						const Eina_Rectangle *clip,
 						RGBA_Image *src, RGBA_Image *dst,

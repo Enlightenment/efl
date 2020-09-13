@@ -16,7 +16,7 @@ LK(lock_ot); // for evas bidi internal usage.
 int             _evas_font_log_dom_global = -1;
 int             _evas_font_texture_cache = -1;
 
-EAPI void
+EVAS_API void
 evas_common_font_init(void)
 {
    int error;
@@ -57,7 +57,7 @@ evas_common_font_init(void)
    LKI(lock_ot);
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_shutdown(void)
 {
    if (initialised < 1) return;
@@ -77,7 +77,7 @@ evas_common_font_shutdown(void)
    eina_log_domain_unregister(_evas_font_log_dom_global);
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_font_all_unload(void)
 {
    evas_common_font_all_clear();
@@ -99,7 +99,7 @@ evas_common_font_freetype_face_get(RGBA_Font *font)
    return fi->src->ft.face;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_instance_ascent_get(RGBA_Font_Int *fi)
 {
    int val;
@@ -133,7 +133,7 @@ evas_common_font_instance_ascent_get(RGBA_Font_Int *fi)
 //   return ret;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_instance_descent_get(RGBA_Font_Int *fi)
 {
    int val;
@@ -162,7 +162,7 @@ evas_common_font_instance_descent_get(RGBA_Font_Int *fi)
 //   return ret;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_instance_max_ascent_get(RGBA_Font_Int *fi)
 {
    int val, dv;
@@ -197,7 +197,7 @@ evas_common_font_instance_max_ascent_get(RGBA_Font_Int *fi)
    return ret;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_instance_max_descent_get(RGBA_Font_Int *fi)
 {
    int val, dv;
@@ -232,35 +232,35 @@ evas_common_font_instance_max_descent_get(RGBA_Font_Int *fi)
    return ret;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_ascent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
    return evas_common_font_instance_ascent_get(fn->fonts->data);
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_descent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
    return evas_common_font_instance_descent_get(fn->fonts->data);
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_max_ascent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
    return evas_common_font_instance_max_ascent_get(fn->fonts->data);
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_max_descent_get(RGBA_Font *fn)
 {
 //   evas_common_font_size_use(fn);
    return evas_common_font_instance_max_descent_get(fn->fonts->data);
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_get_line_advance(RGBA_Font *fn)
 {
    int val;
@@ -297,7 +297,7 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
 //   return ret;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_instance_underline_position_get(RGBA_Font_Int *fi)
 {
    int position = 0;
@@ -325,7 +325,7 @@ end:
    return position;
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_instance_underline_thickness_get(RGBA_Font_Int *fi)
 {
    int thickness = 0;
@@ -752,7 +752,7 @@ static void evas_font_glyph_load(RGBA_Font_Glyph *fg)
    return;
 }
 
-EAPI RGBA_Font_Glyph *
+EVAS_API RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 {
    RGBA_Font_Glyph *fg;
@@ -855,7 +855,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    return fg;
 }
 
-EAPI void
+EVAS_API void
 evas_font_data_cache_set(Evas_Font_Data_Cache options, int bytes)
 {
    if ((options & EVAS_FONT_DATA_CACHE_TEXTURE) == EVAS_FONT_DATA_CACHE_TEXTURE)
@@ -865,7 +865,7 @@ evas_font_data_cache_set(Evas_Font_Data_Cache options, int bytes)
      }
 }
 
-EAPI int
+EVAS_API int
 evas_font_data_cache_get(Evas_Font_Data_Cache options)
 {
    if ((options & EVAS_FONT_DATA_CACHE_TEXTURE) == EVAS_FONT_DATA_CACHE_TEXTURE)
@@ -874,7 +874,7 @@ evas_font_data_cache_get(Evas_Font_Data_Cache options)
      return -1;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
 {
    int size;
@@ -981,7 +981,7 @@ struct _Font_Char_Index
    Eina_Unicode gl;
 };
 
-EAPI FT_UInt
+EVAS_API FT_UInt
 evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl, Eina_Unicode variation_sequence)
 {
    static const unsigned short mapfix[] =
@@ -1120,7 +1120,7 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl, Eina_Unicode vari
  *
  */
 
-EAPI int
+EVAS_API int
 evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl, Eina_Unicode variation_sequence, uint32_t evas_font_search_options)
 {
    Eina_List *l;

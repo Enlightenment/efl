@@ -459,7 +459,7 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    evas_object_clip_across_check(eo_obj, obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_clip_unset(Evas_Object *eo_obj)
 {
    efl_canvas_object_clipper_set(eo_obj, NULL);
@@ -502,7 +502,7 @@ _efl_canvas_object_clipper_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool
      }
 }
 
-EAPI const Eina_List *
+EVAS_API const Eina_List *
 evas_object_clipees_get(const Evas_Object *eo_obj)
 {
    const Evas_Object_Protected_Data *tmp;
@@ -519,7 +519,7 @@ evas_object_clipees_get(const Evas_Object *eo_obj)
    return answer;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_clipees_has(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);

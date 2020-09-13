@@ -400,7 +400,7 @@ _efl_canvas_event_grabber_freeze_when_visible_get(const Eo *eo_obj EINA_UNUSED, 
    return pd->freeze;
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_event_grabber_add(Evas *eo_e)
 {
    eo_e = evas_find(eo_e);

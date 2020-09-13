@@ -35,10 +35,10 @@ struct _Evas_Font_OT_Info
 #include "evas_font.h"
 #include "Evas.h"
 
-EAPI int
+EVAS_API int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index);
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
       Evas_Text_Props *props, int len, Evas_Text_Props_Mode mode, const char *lang);
 #endif

@@ -219,7 +219,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
 /* This is a legacy-only compatibility function.
  * Made public for other parts of EFL (elm, ecore_evas).
  */
-EWAPI Eina_Bool
+EVAS_API EVAS_API_WEAK Eina_Bool
 _evas_object_intercept_call(Evas_Object *eo_obj, Evas_Object_Intercept_Cb_Type cb_type,
                             int internal, ...)
 {
@@ -256,7 +256,7 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
 /* public calls */
 
 #define EVAS_OBJECT_INTERCEPT_CALLBACK_DEFINE(Up_Type, Lower_Type)      \
-  EAPI void                                                             \
+  EVAS_API void                                                             \
   evas_object_intercept_##Lower_Type##_callback_add(Evas_Object *eo_obj,\
                                                     Evas_Object_Intercept_##Up_Type##_Cb func, const void *data) \
   {                                                                     \
@@ -271,7 +271,7 @@ _evas_object_intercept_call_evas(Evas_Object_Protected_Data *obj,
      obj->interceptors->Lower_Type.data = (void *)data;                 \
   }                                                                     \
                                                                         \
-  EAPI void *                                                           \
+  EVAS_API void *                                                           \
   evas_object_intercept_##Lower_Type##_callback_del(Evas_Object *eo_obj,\
                                                     Evas_Object_Intercept_##Up_Type##_Cb func) \
   {                                                                     \

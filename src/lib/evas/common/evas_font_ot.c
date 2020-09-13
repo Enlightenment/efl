@@ -122,7 +122,7 @@ _evas_script_to_harfbuzz[] =
 
 #ifdef OT_SUPPORT
 /* FIXME: doc. returns #items */
-EAPI int
+EVAS_API int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index)
 {
    int i;
@@ -264,7 +264,7 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Pro
      }
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
                                         Evas_Text_Props *props, int len,
                                         Evas_Text_Props_Mode mode,

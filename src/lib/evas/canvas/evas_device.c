@@ -137,7 +137,7 @@ _evas_canvas_efl_canvas_scene_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Dat
    return NULL;
 }
 
-EAPI Evas_Device *
+EVAS_API Evas_Device *
 evas_device_get(Evas *eo_e, const char *name)
 {
    return efl_canvas_scene_device_get(eo_e, name);
@@ -167,13 +167,13 @@ _evas_canvas_efl_canvas_scene_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data 
    return NULL;
 }
 
-EAPI Evas_Device *
+EVAS_API Evas_Device *
 evas_device_get_by_seat_id(Evas *eo_e, unsigned int id)
 {
    return efl_canvas_scene_seat_get(eo_e, id);
 }
 
-EAPI Evas_Device *
+EVAS_API Evas_Device *
 evas_device_add(Evas *eo_e)
 {
    return evas_device_add_full(eo_e, NULL, NULL, NULL, NULL,
@@ -181,7 +181,7 @@ evas_device_add(Evas *eo_e)
                                EVAS_DEVICE_SUBCLASS_NONE);
 }
 
-EAPI Evas_Device *
+EVAS_API Evas_Device *
 evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
                      Evas_Device *parent_dev, Evas_Device *emulation_dev,
                      Evas_Device_Class clas, Evas_Device_Subclass sub_clas)
@@ -263,7 +263,7 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    return dev;
 }
 
-EAPI void
+EVAS_API void
 evas_device_del(Evas_Device *dev)
 {
    if (!efl_invalidated_get(dev))
@@ -271,7 +271,7 @@ evas_device_del(Evas_Device *dev)
    efl_unref(dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_push(Evas *eo_e, Evas_Device *dev)
 {
    Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
@@ -285,7 +285,7 @@ evas_device_push(Evas *eo_e, Evas_Device *dev)
    eina_array_push(e->cur_device, dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_pop(Evas *eo_e)
 {
    Evas_Device *dev;
@@ -296,7 +296,7 @@ evas_device_pop(Evas *eo_e)
    if (dev) efl_unref(dev);
 }
 
-EAPI const Eina_List *
+EVAS_API const Eina_List *
 evas_device_list(Evas *eo_e, const Evas_Device *dev)
 {
    if (dev) return efl_input_device_children_get(dev);
@@ -305,33 +305,33 @@ evas_device_list(Evas *eo_e, const Evas_Device *dev)
    return e ? e->devices : NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_device_name_set(Evas_Device *dev, const char *name)
 {
    efl_name_set(dev, name);
    evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_device_name_get(const Evas_Device *dev)
 {
    return efl_name_get(dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_description_set(Evas_Device *dev, const char *desc)
 {
    efl_comment_set(dev, desc);
    evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_device_description_get(const Evas_Device *dev)
 {
    return efl_comment_get(dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_parent_set(Evas_Device *dev EINA_UNUSED, Evas_Device *parent EINA_UNUSED)
 {
    // Note: This function should be deprecated. parent_set doesn't make sense
@@ -340,7 +340,7 @@ evas_device_parent_set(Evas_Device *dev EINA_UNUSED, Evas_Device *parent EINA_UN
    ERR("It is not advised and possible anymore to changed the parent of an Evas_Device.");
 }
 
-EAPI const Evas_Device *
+EVAS_API const Evas_Device *
 evas_device_parent_get(const Evas_Device *dev)
 {
    Eo *parent = efl_parent_get(dev);
@@ -351,7 +351,7 @@ evas_device_parent_get(const Evas_Device *dev)
    return parent;
 }
 
-EAPI void
+EVAS_API void
 evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
 {
    EINA_SAFETY_ON_TRUE_RETURN(efl_finalized_get(dev));
@@ -375,45 +375,45 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
    evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
-EAPI Evas_Device_Class
+EVAS_API Evas_Device_Class
 evas_device_class_get(const Evas_Device *dev)
 {
    return (Evas_Device_Class)efl_input_device_type_get(dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_subclass_set(Evas_Device *dev, Evas_Device_Subclass clas)
 {
    efl_input_device_subclass_set(dev, clas);
    evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
-EAPI Evas_Device_Subclass
+EVAS_API Evas_Device_Subclass
 evas_device_subclass_get(const Evas_Device *dev)
 {
    return efl_input_device_subclass_get(dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_emulation_source_set(Evas_Device *dev, Evas_Device *src)
 {
    efl_input_device_source_set(dev, src);
    evas_event_callback_call(efl_input_device_evas_get(dev), EVAS_CALLBACK_DEVICE_CHANGED, dev);
 }
 
-EAPI const Evas_Device *
+EVAS_API const Evas_Device *
 evas_device_emulation_source_get(const Evas_Device *dev)
 {
    return efl_input_device_source_get(dev);
 }
 
-EAPI void
+EVAS_API void
 evas_device_seat_id_set(Evas_Device *dev, unsigned int id)
 {
    efl_input_device_seat_id_set(dev, id);
 }
 
-EAPI unsigned int
+EVAS_API unsigned int
 evas_device_seat_id_get(const Evas_Device *dev)
 {
    return efl_input_device_seat_id_get(dev);

@@ -74,7 +74,7 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
    e = evas_find(e);
@@ -507,13 +507,13 @@ evas_object_polygon_was_inside(Evas_Object *eo_obj EINA_UNUSED,
    return 1;
 }
 
-EAPI void
+EVAS_API void
 evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    efl_canvas_polygon_point_add(obj, EINA_POSITION2D(x, y));
 }
 
-EAPI void
+EVAS_API void
 evas_object_polygon_points_clear(Evas_Object *obj)
 {
    efl_canvas_polygon_points_clear(obj);

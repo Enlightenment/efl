@@ -37,7 +37,7 @@ _evas_thread_queue_fence(void *data)
    eina_lock_release(&f->lock);
 }
 
-EAPI void
+EVAS_API void
 evas_thread_queue_wait(void)
 {
    struct fence_stuff f;
@@ -103,13 +103,13 @@ out:
    eina_lock_release(&evas_thread_queue_lock);
 }
 
-EAPI void
+EVAS_API void
 evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data)
 {
    evas_thread_queue_append(cb, data, EINA_FALSE);
 }
 
-EAPI void
+EVAS_API void
 evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data)
 {
    evas_thread_queue_append(cb, data, EINA_TRUE);

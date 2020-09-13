@@ -16,7 +16,7 @@
  * @param[in] run_let the current run len, i.e "search limit".
  * @return length of the run found.
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script EINA_UNUSED, const Eina_Unicode *text, int run_len)
 {
    RGBA_Font_Int *fi = NULL;
@@ -170,7 +170,7 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
  * @param[out] kerning the kerning calculated.
  * @return FALSE on error, TRUE on success.
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
 			       int *kerning)
 {
@@ -235,7 +235,7 @@ evas_common_font_query_kerning(RGBA_Font_Int *fi, FT_UInt left, FT_UInt right,
  * @param text_props the string object.
  * @return the calculated inset.
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_inset(RGBA_Font *fn EINA_UNUSED, const Evas_Text_Props *text_props)
 {
    if (!text_props->len) return 0;
@@ -254,7 +254,7 @@ evas_common_font_query_inset(RGBA_Font *fn EINA_UNUSED, const Evas_Text_Props *t
  *
  * @see evas_common_font_query_inset()
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_right_inset(RGBA_Font *fn EINA_UNUSED, const Evas_Text_Props *text_props)
 {
    const Evas_Font_Glyph_Info *gli;
@@ -287,7 +287,7 @@ evas_common_font_query_right_inset(RGBA_Font *fn EINA_UNUSED, const Evas_Text_Pr
  * @param[out] ascent the calculated ascent
  * @param[out] descent the calculated descent
  */
-EAPI void
+EVAS_API void
 evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_props, int *ascent, int *descent)
 {
    int asc = 0, desc = 0;
@@ -328,7 +328,7 @@ evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_p
  * @param[out] w the calculated width
  * @param[out] h the calculated height
  */
-EAPI void
+EVAS_API void
 evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, int *w, int *h)
 {
    Evas_Coord ret_w = 0;
@@ -392,7 +392,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, in
  * @param[out] h_adv the calculated horizontal advance.
  * @param[out] v_adv the calculated vertical advance.
  */
-EAPI void
+EVAS_API void
 evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props, int *h_adv, int *v_adv)
 {
    Evas_Coord ret_adv = 0;
@@ -441,7 +441,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props,
  *
  * @see evas_common_font_query_pen_coords()
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    int asc, desc;
@@ -577,7 +577,7 @@ end:
  *
  * @see evas_common_font_query_char_coords()
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    int asc, desc;
@@ -702,7 +702,7 @@ end:
  * @param[out] ch the calculated height - CAN BE NULL
  * @return the position found, -1 on failure.
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    int asc, desc;
@@ -815,7 +815,7 @@ end:
  * @param width_offset the additional width only for allowing glyph's.
  * @return the position found, -1 on failure.
  */
-EAPI int
+EVAS_API int
 evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y, int width_offset)
 {
    int asc, desc;

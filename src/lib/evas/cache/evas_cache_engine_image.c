@@ -137,28 +137,28 @@ _evas_cache_engine_image_dealloc(Evas_Cache_Engine_Image *cache,
      }
 }
 
-EAPI int
+EVAS_API int
 evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
    return cache->usage;
 }
 
-EAPI int
+EVAS_API int
 evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
    return cache->limit;
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit)
 {
    assert(cache != NULL);
    cache->limit = limit;
 }
 
-EAPI Evas_Cache_Engine_Image *
+EVAS_API Evas_Cache_Engine_Image *
 evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb,
                              Evas_Cache_Image *parent)
 {
@@ -185,7 +185,7 @@ evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb,
    return new;
 }
 
-EAPI Evas_Cache_Engine_Image *
+EVAS_API Evas_Cache_Engine_Image *
 evas_cache_engine_image_dup(const Evas_Cache_Engine_Image_Func *cb,
                             Evas_Cache_Engine_Image *brother)
 {
@@ -236,7 +236,7 @@ _evas_cache_engine_image_free_cb(EINA_UNUSED const Eina_Hash *hash,
    return EINA_TRUE;
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_image_flush(Evas_Cache_Engine_Image *cache)
 {
    assert(cache != NULL);
@@ -250,7 +250,7 @@ evas_cache_engine_image_flush(Evas_Cache_Engine_Image *cache)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
 {
    Engine_Image_Entry *eim;
@@ -288,7 +288,7 @@ evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache)
    free(cache);
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache,
                                 const char *file, const char *key,
                                 Evas_Image_Load_Opts *lo, void *data,
@@ -357,7 +357,7 @@ on_error:
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_image_drop(Engine_Image_Entry *eim)
 {
    Evas_Cache_Engine_Image *cache;
@@ -383,7 +383,7 @@ evas_cache_engine_image_drop(Engine_Image_Entry *eim)
      }
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_dirty(Engine_Image_Entry *eim,
                               unsigned int x, unsigned int y,
                               unsigned int w, unsigned int h)
@@ -466,7 +466,7 @@ on_error:
    return NULL;
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data)
 {
    Evas_Cache_Engine_Image *cache;
@@ -517,7 +517,7 @@ on_error:
    return NULL;
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache,
                                     unsigned int w, unsigned int h,
                                     DATA32 *image_data, int alpha,
@@ -531,7 +531,7 @@ evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache,
    return _evas_cache_engine_image_push_dirty(cache, im, engine_data);
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache,
                              unsigned int w, unsigned int h,
                              DATA32 *image_data, int alpha,
@@ -544,7 +544,7 @@ evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache,
    return _evas_cache_engine_image_push_dirty(cache, im, engine_data);
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_size_set(Engine_Image_Entry *eim,
                                  unsigned int w, unsigned int h)
 {
@@ -596,7 +596,7 @@ on_error:
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_image_load_data(Engine_Image_Entry *eim)
 {
    Evas_Cache_Engine_Image *cache;
@@ -621,7 +621,7 @@ evas_cache_engine_image_load_data(Engine_Image_Entry *eim)
    eim->flags.loaded = 1;
 }
 
-EAPI Engine_Image_Entry *
+EVAS_API Engine_Image_Entry *
 evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache,
                                void *engine_data)
 {
@@ -650,7 +650,7 @@ on_error:
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_image_colorspace(Engine_Image_Entry *eim,
                                    Evas_Colorspace cspace, void *engine_data)
 {
@@ -665,7 +665,7 @@ evas_cache_engine_image_colorspace(Engine_Image_Entry *eim,
      cache->func.debug("cosntructor-colorspace-engine", eim);
 }
 
-EAPI void
+EVAS_API void
 evas_cache_engine_parent_not_needed(Engine_Image_Entry *eim)
 {
    assert(eim);
