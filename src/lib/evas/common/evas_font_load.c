@@ -123,7 +123,7 @@ evas_common_font_load_shutdown(void)
    fonts_src = NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_dpi_set(int dpi_h, int dpi_v)
 {
    if (dpi_v <= 0) dpi_v = dpi_h;
@@ -131,7 +131,7 @@ evas_common_font_dpi_set(int dpi_h, int dpi_v)
    font_dpi_v = dpi_v;
 }
 
-EAPI RGBA_Font_Source *
+EVAS_API RGBA_Font_Source *
 evas_common_font_source_memory_load(const char *name, const void *data, int data_size)
 {
    int error;
@@ -174,7 +174,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    return fs;
 }
 
-EAPI RGBA_Font_Source *
+EVAS_API RGBA_Font_Source *
 evas_common_font_source_load(const char *name)
 {
    RGBA_Font_Source *fs;
@@ -228,7 +228,7 @@ evas_common_font_source_reload(RGBA_Font_Source *fs)
     evas_common_font_source_load_complete(fs);
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_source_load_complete(RGBA_Font_Source *fs)
 {
    int error;
@@ -254,7 +254,7 @@ evas_common_font_source_load_complete(RGBA_Font_Source *fs)
    return error;
 }
 
-EAPI RGBA_Font_Source *
+EVAS_API RGBA_Font_Source *
 evas_common_font_source_find(const char *name)
 {
    RGBA_Font_Source *fs;
@@ -269,7 +269,7 @@ evas_common_font_source_find(const char *name)
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_source_free(RGBA_Font_Source *fs)
 {
    fs->references--;
@@ -278,7 +278,7 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
    eina_hash_del(fonts_src, fs->name, fs);
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_size_use(RGBA_Font *fn)
 {
    RGBA_Font_Int *fi;
@@ -324,7 +324,7 @@ _evas_common_font_int_cache_init(RGBA_Font_Int *fi)
    LKI(fi->ft_mutex);
 }
 
-EAPI RGBA_Font_Int *
+EVAS_API RGBA_Font_Int *
 evas_common_font_int_memory_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font_Int *fi;
@@ -367,7 +367,7 @@ _file_path_is_file_helper(const char *path)
    return 0;
 }
 
-EAPI RGBA_Font_Int *
+EVAS_API RGBA_Font_Int *
 evas_common_font_int_load(const char *name, int size,
                           Font_Rend_Flags wanted_rend,
 						  Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
@@ -396,7 +396,7 @@ evas_common_font_int_load(const char *name, int size,
    return fi;
 }
 
-EAPI RGBA_Font_Int *
+EVAS_API RGBA_Font_Int *
 evas_common_font_int_load_init(RGBA_Font_Int *fi)
 {
    fi->ft.size = NULL;
@@ -405,7 +405,7 @@ evas_common_font_int_load_init(RGBA_Font_Int *fi)
    return fi;
 }
 
-EAPI RGBA_Font_Int *
+EVAS_API RGBA_Font_Int *
 evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 {
    int val, dv;
@@ -546,7 +546,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    return fi;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_memory_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font *fn;
@@ -580,7 +580,7 @@ evas_common_font_memory_load(const char *source, const char *name, int size, con
 // fn->(fi, fi, fi, ...)
 //   fi->fs
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_load(const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font *fn;
@@ -622,7 +622,7 @@ evas_common_font_load(const char *name, int size, Font_Rend_Flags wanted_rend, E
    return fn;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_add(RGBA_Font *fn, const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font_Int *fi;
@@ -644,7 +644,7 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size, Font_Rend_Flags 
    return NULL;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_memory_add(RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font_Int *fi;
@@ -667,7 +667,7 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *source, const char *name,
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_int_unref(RGBA_Font_Int *fi)
 {
    fi->references--;
@@ -679,7 +679,7 @@ evas_common_font_int_unref(RGBA_Font_Int *fi)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_free(RGBA_Font *fn)
 {
    Eina_List *l;
@@ -701,7 +701,7 @@ evas_common_font_free(RGBA_Font *fn)
    free(fn);
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
 {
    Eina_List *l;
@@ -717,7 +717,7 @@ evas_common_font_hinting_set(RGBA_Font *fn, Font_Hint_Flags hinting)
      }
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_hinting_available(Font_Hint_Flags hinting)
 {
    switch (hinting)
@@ -751,7 +751,7 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
    return EINA_FALSE;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_memory_hinting_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font *fn;
@@ -761,7 +761,7 @@ evas_common_font_memory_hinting_load(const char *source, const char *name, int s
    return fn;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_hinting_load(const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    RGBA_Font *fn;
@@ -771,7 +771,7 @@ evas_common_font_hinting_load(const char *name, int size, Font_Hint_Flags hintin
    return fn;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_hinting_add(RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    fn = evas_common_font_add(fn, name, size, wanted_rend, bitmap_scalable);
@@ -779,7 +779,7 @@ evas_common_font_hinting_add(RGBA_Font *fn, const char *name, int size, Font_Hin
    return fn;
 }
 
-EAPI RGBA_Font *
+EVAS_API RGBA_Font *
 evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
 {
    fn = evas_common_font_memory_add(fn, source, name, size, data, data_size,
@@ -820,7 +820,7 @@ _evas_common_font_all_clear_cb(const Eina_Hash *hash EINA_UNUSED, const void *ke
    return 1;
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_all_clear(void)
 {
    eina_hash_foreach(fonts, _evas_common_font_all_clear_cb, NULL);
@@ -896,20 +896,20 @@ evas_common_font_int_reload(RGBA_Font_Int *fi)
  * we then check if the cache_useage size is larger than allowed
  * !If the cache is NOT too large we dont delete font_int
  * !If the cache is too large we really delete font_int */
-EAPI void
+EVAS_API void
 evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir)
 {
    font_cache_usage += dir * (sizeof(RGBA_Font) + fi->usage +
                               sizeof(FT_FaceRec) + 16384); /* fudge values */
 }
 
-EAPI int
+EVAS_API int
 evas_common_font_cache_get(void)
 {
    return font_cache;
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_cache_set(int size)
 {
    font_cache = size;
@@ -917,7 +917,7 @@ evas_common_font_cache_set(int size)
    evas_common_font_int_use_trim();
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_flush(void)
 {
    if (font_cache_usage < font_cache) return;
@@ -934,7 +934,7 @@ evas_common_font_flush(void)
 /* We run this when the cache gets larger than allowed size
  * We check cache size each time a fi->references goes to 0
  * PERFORMS: Find font_int(s) with references == 0 and delete them */
-EAPI void
+EVAS_API void
 evas_common_font_flush_last(void)
 {
    RGBA_Font_Int *fi = NULL;
@@ -945,7 +945,7 @@ evas_common_font_flush_last(void)
    eina_hash_del(fonts, fi, fi);
 }
 
-EAPI RGBA_Font_Int *
+EVAS_API RGBA_Font_Int *
 evas_common_font_int_find(const char *name, int size,
                           Font_Rend_Flags wanted_rend,
 						  Efl_Text_Font_Bitmap_Scalable bitmap_scalable)
@@ -1026,7 +1026,7 @@ _cb_hash_font_ext(const Eina_Hash *hash EINA_UNUSED,
    return EINA_TRUE;
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_ext_clear(void)
 {
    eina_hash_foreach(fonts, _cb_hash_font_ext, NULL);

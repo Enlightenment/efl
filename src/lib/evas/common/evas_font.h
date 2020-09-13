@@ -22,31 +22,7 @@ typedef unsigned long long    DATA64;
 
 #include "evas_text_utils.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <evas_api.h>
 
 #define LK(x)  Eina_Lock x
 #define LKI(x) eina_lock_new(&(x))
@@ -377,76 +353,76 @@ struct _RGBA_Font_Glyph
 
 /* main */
 
-EAPI void              evas_common_font_init                 (void);
-EAPI void              evas_common_font_shutdown             (void);
-EAPI void              evas_common_font_font_all_unload      (void);
+EVAS_API void              evas_common_font_init                 (void);
+EVAS_API void              evas_common_font_shutdown             (void);
+EVAS_API void              evas_common_font_font_all_unload      (void);
 
-EAPI int               evas_common_font_ascent_get           (RGBA_Font *fn);
-EAPI int               evas_common_font_descent_get          (RGBA_Font *fn);
-EAPI int               evas_common_font_max_ascent_get       (RGBA_Font *fn);
-EAPI int               evas_common_font_max_descent_get      (RGBA_Font *fn);
-EAPI int               evas_common_font_instance_ascent_get           (RGBA_Font_Int *fi);
-EAPI int               evas_common_font_instance_descent_get          (RGBA_Font_Int *fi);
-EAPI int               evas_common_font_instance_max_ascent_get       (RGBA_Font_Int *fi);
-EAPI int               evas_common_font_instance_max_descent_get      (RGBA_Font_Int *fi);
-EAPI int               evas_common_font_instance_underline_position_get       (RGBA_Font_Int *fi);
-EAPI int               evas_common_font_instance_underline_thickness_get      (RGBA_Font_Int *fi);
-EAPI int               evas_common_font_get_line_advance     (RGBA_Font *fn);
-void *evas_common_font_freetype_face_get(RGBA_Font *font); /* XXX: Not EAPI on purpose. Not ment to be used in modules. */
+EVAS_API int               evas_common_font_ascent_get           (RGBA_Font *fn);
+EVAS_API int               evas_common_font_descent_get          (RGBA_Font *fn);
+EVAS_API int               evas_common_font_max_ascent_get       (RGBA_Font *fn);
+EVAS_API int               evas_common_font_max_descent_get      (RGBA_Font *fn);
+EVAS_API int               evas_common_font_instance_ascent_get           (RGBA_Font_Int *fi);
+EVAS_API int               evas_common_font_instance_descent_get          (RGBA_Font_Int *fi);
+EVAS_API int               evas_common_font_instance_max_ascent_get       (RGBA_Font_Int *fi);
+EVAS_API int               evas_common_font_instance_max_descent_get      (RGBA_Font_Int *fi);
+EVAS_API int               evas_common_font_instance_underline_position_get       (RGBA_Font_Int *fi);
+EVAS_API int               evas_common_font_instance_underline_thickness_get      (RGBA_Font_Int *fi);
+EVAS_API int               evas_common_font_get_line_advance     (RGBA_Font *fn);
+void *evas_common_font_freetype_face_get(RGBA_Font *font); /* XXX: Not EVAS_API on purpose. Not ment to be used in modules. */
 
-EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
-EAPI Eina_Bool         evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg);
-EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, Eina_Unicode gl, Eina_Unicode variation_sequence);
+EVAS_API RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
+EVAS_API Eina_Bool         evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg);
+EVAS_API FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, Eina_Unicode gl, Eina_Unicode variation_sequence);
 
 /* load */
-EAPI void              evas_common_font_dpi_set              (int dpi_h, int dpi_v);
-EAPI RGBA_Font_Source *evas_common_font_source_memory_load   (const char *name, const void *data, int data_size);
-EAPI RGBA_Font_Source *evas_common_font_source_load          (const char *name);
-EAPI int               evas_common_font_source_load_complete (RGBA_Font_Source *fs);
-EAPI RGBA_Font_Source *evas_common_font_source_find          (const char *name);
-EAPI void              evas_common_font_source_free          (RGBA_Font_Source *fs);
-EAPI void              evas_common_font_size_use             (RGBA_Font *fn);
-EAPI RGBA_Font_Int    *evas_common_font_int_load             (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font_Int    *evas_common_font_int_load_init        (RGBA_Font_Int *fn);
-EAPI RGBA_Font_Int    *evas_common_font_int_load_complete    (RGBA_Font_Int *fi);
-EAPI RGBA_Font        *evas_common_font_memory_load          (const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font        *evas_common_font_load                 (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font        *evas_common_font_add                  (RGBA_Font *fn, const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font        *evas_common_font_memory_add           (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI void              evas_common_font_free                 (RGBA_Font *fn);
-EAPI void              evas_common_font_int_unref            (RGBA_Font_Int *fi);
-EAPI void              evas_common_font_hinting_set          (RGBA_Font *fn, Font_Hint_Flags hinting);
-EAPI Eina_Bool         evas_common_hinting_available         (Font_Hint_Flags hinting);
-EAPI RGBA_Font        *evas_common_font_memory_hinting_load  (const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font        *evas_common_font_hinting_load         (const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font        *evas_common_font_hinting_add          (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI RGBA_Font        *evas_common_font_memory_hinting_add   (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI void              evas_common_font_int_modify_cache_by  (RGBA_Font_Int *fi, int dir);
-EAPI int               evas_common_font_cache_get            (void);
-EAPI void              evas_common_font_cache_set            (int size);
-EAPI void              evas_common_font_flush                (void);
-EAPI void              evas_common_font_flush_last           (void);
-EAPI RGBA_Font_Int    *evas_common_font_int_find             (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
-EAPI void              evas_common_font_all_clear            (void);
-EAPI void              evas_common_font_ext_clear            (void);
+EVAS_API void              evas_common_font_dpi_set              (int dpi_h, int dpi_v);
+EVAS_API RGBA_Font_Source *evas_common_font_source_memory_load   (const char *name, const void *data, int data_size);
+EVAS_API RGBA_Font_Source *evas_common_font_source_load          (const char *name);
+EVAS_API int               evas_common_font_source_load_complete (RGBA_Font_Source *fs);
+EVAS_API RGBA_Font_Source *evas_common_font_source_find          (const char *name);
+EVAS_API void              evas_common_font_source_free          (RGBA_Font_Source *fs);
+EVAS_API void              evas_common_font_size_use             (RGBA_Font *fn);
+EVAS_API RGBA_Font_Int    *evas_common_font_int_load             (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font_Int    *evas_common_font_int_load_init        (RGBA_Font_Int *fn);
+EVAS_API RGBA_Font_Int    *evas_common_font_int_load_complete    (RGBA_Font_Int *fi);
+EVAS_API RGBA_Font        *evas_common_font_memory_load          (const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font        *evas_common_font_load                 (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font        *evas_common_font_add                  (RGBA_Font *fn, const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font        *evas_common_font_memory_add           (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API void              evas_common_font_free                 (RGBA_Font *fn);
+EVAS_API void              evas_common_font_int_unref            (RGBA_Font_Int *fi);
+EVAS_API void              evas_common_font_hinting_set          (RGBA_Font *fn, Font_Hint_Flags hinting);
+EVAS_API Eina_Bool         evas_common_hinting_available         (Font_Hint_Flags hinting);
+EVAS_API RGBA_Font        *evas_common_font_memory_hinting_load  (const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font        *evas_common_font_hinting_load         (const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font        *evas_common_font_hinting_add          (RGBA_Font *fn, const char *name, int size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API RGBA_Font        *evas_common_font_memory_hinting_add   (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API void              evas_common_font_int_modify_cache_by  (RGBA_Font_Int *fi, int dir);
+EVAS_API int               evas_common_font_cache_get            (void);
+EVAS_API void              evas_common_font_cache_set            (int size);
+EVAS_API void              evas_common_font_flush                (void);
+EVAS_API void              evas_common_font_flush_last           (void);
+EVAS_API RGBA_Font_Int    *evas_common_font_int_find             (const char *name, int size, Font_Rend_Flags wanted_rend, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
+EVAS_API void              evas_common_font_all_clear            (void);
+EVAS_API void              evas_common_font_ext_clear            (void);
 
 /* query */
 
-EAPI int               evas_common_font_query_kerning        (RGBA_Font_Int* fi, FT_UInt left, FT_UInt right, int* kerning);
-EAPI void              evas_common_font_query_size           (RGBA_Font *fn, const Evas_Text_Props *intl_props, int *w, int *h);
-EAPI int               evas_common_font_query_inset          (RGBA_Font *fn, const Evas_Text_Props *text_props);
-EAPI int               evas_common_font_query_right_inset    (RGBA_Font *fn, const Evas_Text_Props *text_props);
-EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const Evas_Text_Props *intl_props, int *h_adv, int *v_adv);
-EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_pen_coords     (RGBA_Font *fn, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
-EAPI int               evas_common_font_query_char_at_coords (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y, int width_offset);
-EAPI int               evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
-EAPI void              evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_props, int *ascent, int *descent);
+EVAS_API int               evas_common_font_query_kerning        (RGBA_Font_Int* fi, FT_UInt left, FT_UInt right, int* kerning);
+EVAS_API void              evas_common_font_query_size           (RGBA_Font *fn, const Evas_Text_Props *intl_props, int *w, int *h);
+EVAS_API int               evas_common_font_query_inset          (RGBA_Font *fn, const Evas_Text_Props *text_props);
+EVAS_API int               evas_common_font_query_right_inset    (RGBA_Font *fn, const Evas_Text_Props *text_props);
+EVAS_API void              evas_common_font_query_advance        (RGBA_Font *fn, const Evas_Text_Props *intl_props, int *h_adv, int *v_adv);
+EVAS_API int               evas_common_font_query_char_coords    (RGBA_Font *fn, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+EVAS_API int               evas_common_font_query_pen_coords     (RGBA_Font *fn, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
+EVAS_API int               evas_common_font_query_char_at_coords (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
+EVAS_API int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y, int width_offset);
+EVAS_API int               evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
+EVAS_API void              evas_common_font_ascent_descent_get(RGBA_Font *fn, const Evas_Text_Props *text_props, int *ascent, int *descent);
 
-EAPI void             *evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode, int pitch_data, int w, int h, int *size_ret);
-EAPI DATA8            *evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret);
-EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl, Eina_Unicode variation_sequence, uint32_t evas_font_search_options);
+EVAS_API void             *evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode, int pitch_data, int w, int h, int *size_ret);
+EVAS_API DATA8            *evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret);
+EVAS_API int               evas_common_font_glyph_search         (RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl, Eina_Unicode variation_sequence, uint32_t evas_font_search_options);
 
 void evas_common_font_load_init(void);
 void evas_common_font_load_shutdown(void);
@@ -469,8 +445,5 @@ Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
 const char *evas_font_lang_normalize(const char *lang);
 void * evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size, Efl_Text_Font_Bitmap_Scalable bitmap_scalable);
 void evas_font_load_hinting_set(void *font, int hinting);
-
-#undef EAPI
-#define EAPI
 
 #endif /* _EVAS_FONT_H */

@@ -1,6 +1,6 @@
 #include "evas_common_private.h"
 
-EAPI Generic_Cache*
+EVAS_API Generic_Cache*
 generic_cache_new(void *user_data, Generic_Cache_Free func)
 {
    Generic_Cache *cache;
@@ -11,7 +11,7 @@ generic_cache_new(void *user_data, Generic_Cache_Free func)
    return cache;
 }
 
-EAPI void
+EVAS_API void
 generic_cache_destroy(Generic_Cache *cache)
 {
    Generic_Cache_Entry *entry;
@@ -27,7 +27,7 @@ generic_cache_destroy(Generic_Cache *cache)
      }
 }
 
-EAPI void
+EVAS_API void
 generic_cache_dump(Generic_Cache *cache)
 {
    Generic_Cache_Entry *entry;
@@ -42,7 +42,7 @@ generic_cache_dump(Generic_Cache *cache)
      }
 }
 
-EAPI void
+EVAS_API void
 generic_cache_data_set(Generic_Cache *cache, void *key, void *surface)
 {
    Generic_Cache_Entry *entry = NULL;
@@ -67,7 +67,7 @@ generic_cache_data_set(Generic_Cache *cache, void *key, void *surface)
    }
 }
 
-EAPI void *
+EVAS_API void *
 generic_cache_data_get(Generic_Cache *cache, void *key)
 {
    Generic_Cache_Entry *entry = NULL, *lru_data;
@@ -92,7 +92,7 @@ generic_cache_data_get(Generic_Cache *cache, void *key)
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 generic_cache_data_drop(Generic_Cache *cache, void *key)
 {
    Generic_Cache_Entry *entry = NULL;

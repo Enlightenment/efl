@@ -19,7 +19,7 @@ typedef Eo Evas_Canvas;
  */
 #define EVAS_CANVAS_CLASS evas_canvas_class_get()
 
-EWAPI const Efl_Class *evas_canvas_class_get(void) EINA_CONST;
+EVAS_API EVAS_API_WEAK const Efl_Class *evas_canvas_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the image cache.
@@ -31,7 +31,7 @@ EWAPI const Efl_Class *evas_canvas_class_get(void) EINA_CONST;
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_image_cache_set(Eo *obj, int size);
+EVAS_API EVAS_API_WEAK void evas_canvas_image_cache_set(Eo *obj, int size);
 
 /**
  * @brief Get the image cache.
@@ -44,7 +44,7 @@ EOAPI void evas_canvas_image_cache_set(Eo *obj, int size);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_image_cache_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK int evas_canvas_image_cache_get(const Eo *obj);
 
 /**
  * @brief Set the default set of flags an event begins with
@@ -60,7 +60,7 @@ EOAPI int evas_canvas_image_cache_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_event_default_flags_set(Eo *obj, Evas_Event_Flags flags);
+EVAS_API EVAS_API_WEAK void evas_canvas_event_default_flags_set(Eo *obj, Evas_Event_Flags flags);
 
 /**
  * @brief Get the default set of flags an event begins with
@@ -75,7 +75,7 @@ EOAPI void evas_canvas_event_default_flags_set(Eo *obj, Evas_Event_Flags flags);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Evas_Event_Flags evas_canvas_event_default_flags_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK Evas_Event_Flags evas_canvas_event_default_flags_get(const Eo *obj);
 
 /**
  * @brief Changes the size of font cache of the given evas.
@@ -85,7 +85,7 @@ EOAPI Evas_Event_Flags evas_canvas_event_default_flags_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_font_cache_set(Eo *obj, int size);
+EVAS_API EVAS_API_WEAK void evas_canvas_font_cache_set(Eo *obj, int size);
 
 /**
  * @brief Get the size of font cache of the given evas in bytes.
@@ -96,7 +96,7 @@ EOAPI void evas_canvas_font_cache_set(Eo *obj, int size);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_font_cache_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK int evas_canvas_font_cache_get(const Eo *obj);
 
 /**
  * @brief Attaches a specific pointer to the evas for fetching later.
@@ -106,7 +106,7 @@ EOAPI int evas_canvas_font_cache_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_data_attach_set(Eo *obj, void *data);
+EVAS_API EVAS_API_WEAK void evas_canvas_data_attach_set(Eo *obj, void *data);
 
 /**
  * @brief Returns the pointer attached by @ref evas_canvas_data_attach_set.
@@ -117,7 +117,7 @@ EOAPI void evas_canvas_data_attach_set(Eo *obj, void *data);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void *evas_canvas_data_attach_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK void *evas_canvas_data_attach_get(const Eo *obj);
 
 /**
  * @brief Retrieve the object focused by the default seat.
@@ -143,7 +143,7 @@ EOAPI void *evas_canvas_data_attach_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Efl_Canvas_Object *evas_canvas_focus_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Efl_Canvas_Object *evas_canvas_focus_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Return the focused object by a given seat.
@@ -159,7 +159,7 @@ EOAPI Efl_Canvas_Object *evas_canvas_focus_get(const Eo *obj) EINA_WARN_UNUSED_R
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Efl_Canvas_Object *evas_canvas_seat_focus_get(const Eo *obj, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK Efl_Canvas_Object *evas_canvas_seat_focus_get(const Eo *obj, Evas_Device *seat);
 
 /**
  * @brief Get the highest (stacked) Evas object on the canvas @c e.
@@ -179,7 +179,7 @@ EOAPI Efl_Canvas_Object *evas_canvas_seat_focus_get(const Eo *obj, Evas_Device *
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Efl_Canvas_Object *evas_canvas_object_top_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Efl_Canvas_Object *evas_canvas_object_top_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief This function returns the current known default pointer coordinates.
@@ -193,7 +193,7 @@ EOAPI Efl_Canvas_Object *evas_canvas_object_top_get(const Eo *obj) EINA_WARN_UNU
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_pointer_canvas_xy_by_device_get(const Eo *obj, Evas_Device *dev, int *x, int *y);
+EVAS_API EVAS_API_WEAK void evas_canvas_pointer_canvas_xy_by_device_get(const Eo *obj, Evas_Device *dev, int *x, int *y);
 
 /**
  * @brief This function returns the current known default pointer coordinates
@@ -209,7 +209,7 @@ EOAPI void evas_canvas_pointer_canvas_xy_by_device_get(const Eo *obj, Evas_Devic
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_pointer_canvas_xy_get(const Eo *obj, int *x, int *y);
+EVAS_API EVAS_API_WEAK void evas_canvas_pointer_canvas_xy_get(const Eo *obj, int *x, int *y);
 
 /**
  * @brief Get the number of mouse or multi presses currently active.
@@ -222,7 +222,7 @@ EOAPI void evas_canvas_pointer_canvas_xy_get(const Eo *obj, int *x, int *y);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_event_down_count_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK int evas_canvas_event_down_count_get(const Eo *obj);
 
 /**
  * @brief This gets the internal counter that counts the number of smart
@@ -244,7 +244,7 @@ EOAPI int evas_canvas_event_down_count_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_smart_objects_calculate_count_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK int evas_canvas_smart_objects_calculate_count_get(const Eo *obj);
 
 /**
  * @brief Get the focus state for the default seat.
@@ -255,7 +255,7 @@ EOAPI int evas_canvas_smart_objects_calculate_count_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_Bool evas_canvas_focus_state_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_canvas_focus_state_get(const Eo *obj);
 
 /**
  * @brief Get the focus state by a given seat.
@@ -268,7 +268,7 @@ EOAPI Eina_Bool evas_canvas_focus_state_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_Bool evas_canvas_seat_focus_state_get(const Eo *obj, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_canvas_seat_focus_state_get(const Eo *obj, Evas_Device *seat);
 
 /**
  * @brief Get the changed marker for the canvas.
@@ -281,7 +281,7 @@ EOAPI Eina_Bool evas_canvas_seat_focus_state_get(const Eo *obj, Evas_Device *sea
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_Bool evas_canvas_changed_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_canvas_changed_get(const Eo *obj);
 
 /**
  * @brief This function returns the current known pointer coordinates.
@@ -295,7 +295,7 @@ EOAPI Eina_Bool evas_canvas_changed_get(const Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_pointer_output_xy_by_device_get(const Eo *obj, Evas_Device *dev, int *x, int *y);
+EVAS_API EVAS_API_WEAK void evas_canvas_pointer_output_xy_by_device_get(const Eo *obj, Evas_Device *dev, int *x, int *y);
 
 /**
  * @brief This function returns the current known default pointer coordinates.
@@ -311,7 +311,7 @@ EOAPI void evas_canvas_pointer_output_xy_by_device_get(const Eo *obj, Evas_Devic
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_pointer_output_xy_get(const Eo *obj, int *x, int *y);
+EVAS_API EVAS_API_WEAK void evas_canvas_pointer_output_xy_get(const Eo *obj, int *x, int *y);
 
 /**
  * @brief Get the lowest (stacked) Evas object on the canvas @c e.
@@ -331,7 +331,7 @@ EOAPI void evas_canvas_pointer_output_xy_get(const Eo *obj, int *x, int *y);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Efl_Canvas_Object *evas_canvas_object_bottom_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Efl_Canvas_Object *evas_canvas_object_bottom_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Returns a bitmask with the mouse buttons currently pressed, set to 1.
@@ -343,7 +343,7 @@ EOAPI Efl_Canvas_Object *evas_canvas_object_bottom_get(const Eo *obj) EINA_WARN_
  *
  * @ingroup Evas_Canvas
  */
-EOAPI unsigned int evas_canvas_pointer_button_down_mask_by_device_get(const Eo *obj, Evas_Device *dev);
+EVAS_API EVAS_API_WEAK unsigned int evas_canvas_pointer_button_down_mask_by_device_get(const Eo *obj, Evas_Device *dev);
 
 /**
  * @brief Returns a bitmask with the default mouse buttons currently pressed,
@@ -369,7 +369,7 @@ EOAPI unsigned int evas_canvas_pointer_button_down_mask_by_device_get(const Eo *
  *
  * @ingroup Evas_Canvas
  */
-EOAPI unsigned int evas_canvas_pointer_button_down_mask_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK unsigned int evas_canvas_pointer_button_down_mask_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Retrieve a list of Evas objects lying over a given position in a
@@ -389,7 +389,7 @@ EOAPI unsigned int evas_canvas_pointer_button_down_mask_get(const Eo *obj) EINA_
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_List *evas_canvas_tree_objects_at_xy_get(Eo *obj, Efl_Canvas_Object *stop, int x, int y) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Eina_List *evas_canvas_tree_objects_at_xy_get(Eo *obj, Efl_Canvas_Object *stop, int x, int y) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Enables or turns on programmatically the lock key with name
@@ -407,7 +407,7 @@ EOAPI Eina_List *evas_canvas_tree_objects_at_xy_get(Eo *obj, Efl_Canvas_Object *
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_lock_on(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_lock_on(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Enables or turns on programmatically the lock key with name
@@ -429,7 +429,7 @@ EOAPI void evas_canvas_key_lock_on(Eo *obj, const char *keyname) EINA_ARG_NONNUL
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_seat_key_lock_on(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_key_lock_on(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Disables or turns off programmatically the lock key with name
@@ -450,7 +450,7 @@ EOAPI void evas_canvas_seat_key_lock_on(Eo *obj, const char *keyname, Evas_Devic
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_seat_key_lock_off(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_key_lock_off(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Adds the @c keyname key to the current list of modifier keys.
@@ -476,7 +476,7 @@ EOAPI void evas_canvas_seat_key_lock_off(Eo *obj, const char *keyname, Evas_Devi
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_modifier_add(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_modifier_add(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Disables or turns off programmatically the modifier key with name
@@ -492,7 +492,7 @@ EOAPI void evas_canvas_key_modifier_add(Eo *obj, const char *keyname) EINA_ARG_N
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_modifier_off(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_modifier_off(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Render the given Evas canvas asynchronously.
@@ -517,13 +517,13 @@ EOAPI void evas_canvas_key_modifier_off(Eo *obj, const char *keyname) EINA_ARG_N
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_Bool evas_canvas_render_async(Eo *obj);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_canvas_render_async(Eo *obj);
 
 /** Inform the evas that it lost the focus from the default seat.
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_focus_out(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_focus_out(Eo *obj);
 
 /**
  * @brief Update the canvas internal objects but not triggering immediate
@@ -536,7 +536,7 @@ EOAPI void evas_canvas_focus_out(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_norender(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_norender(Eo *obj);
 
 /**
  * @brief Pop the nochange flag down 1.
@@ -550,7 +550,7 @@ EOAPI void evas_canvas_norender(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_nochange_pop(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_nochange_pop(Eo *obj);
 
 /**
  * @brief Disables or turns off programmatically the lock key with name
@@ -567,7 +567,7 @@ EOAPI void evas_canvas_nochange_pop(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_lock_off(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_lock_off(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Push the nochange flag up 1
@@ -581,13 +581,13 @@ EOAPI void evas_canvas_key_lock_off(Eo *obj, const char *keyname) EINA_ARG_NONNU
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_nochange_push(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_nochange_push(Eo *obj);
 
 /** Force the given evas and associated engine to flush its font cache.
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_font_cache_flush(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_font_cache_flush(Eo *obj);
 
 /**
  * @brief Enables or turns on programmatically the modifier key with name
@@ -605,7 +605,7 @@ EOAPI void evas_canvas_font_cache_flush(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_modifier_on(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_modifier_on(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Enables or turns on programmatically the modifier key with name
@@ -627,7 +627,7 @@ EOAPI void evas_canvas_key_modifier_on(Eo *obj, const char *keyname) EINA_ARG_NO
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_seat_key_modifier_on(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_key_modifier_on(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Disables or turns off programmatically the modifier key with name
@@ -647,7 +647,7 @@ EOAPI void evas_canvas_seat_key_modifier_on(Eo *obj, const char *keyname, Evas_D
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_seat_key_modifier_off(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_key_modifier_off(Eo *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief List of available font descriptions known or found by this evas.
@@ -663,7 +663,7 @@ EOAPI void evas_canvas_seat_key_modifier_off(Eo *obj, const char *keyname, Evas_
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_List *evas_canvas_font_available_list(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Eina_List *evas_canvas_font_available_list(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Retrieves the object on the given evas with the given name.
@@ -681,7 +681,7 @@ EOAPI Eina_List *evas_canvas_font_available_list(const Eo *obj) EINA_WARN_UNUSED
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Efl_Canvas_Object *evas_canvas_object_name_find(const Eo *obj, const char *name) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Efl_Canvas_Object *evas_canvas_object_name_find(const Eo *obj, const char *name) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Appends a font path to the list of font paths used by the given evas.
@@ -691,13 +691,13 @@ EOAPI Efl_Canvas_Object *evas_canvas_object_name_find(const Eo *obj, const char 
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_font_path_append(Eo *obj, const char *path) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_font_path_append(Eo *obj, const char *path) EINA_ARG_NONNULL(2);
 
 /** Removes all font paths loaded into memory for the given evas.
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_font_path_clear(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_font_path_clear(Eo *obj);
 
 /**
  * @brief This function returns the nth touch point's coordinates.
@@ -712,7 +712,7 @@ EOAPI void evas_canvas_font_path_clear(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, double *x, double *y);
+EVAS_API EVAS_API_WEAK void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, double *x, double *y);
 
 /**
  * @brief Removes the @c keyname key from the current list of lock keys on
@@ -723,7 +723,7 @@ EOAPI void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, doub
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_lock_del(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_lock_del(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Add a damage rectangle.
@@ -742,13 +742,13 @@ EOAPI void evas_canvas_key_lock_del(Eo *obj, const char *keyname) EINA_ARG_NONNU
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_damage_rectangle_add(Eo *obj, int x, int y, int w, int h);
+EVAS_API EVAS_API_WEAK void evas_canvas_damage_rectangle_add(Eo *obj, int x, int y, int w, int h);
 
 /** Sync evas canvas
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_sync(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_sync(Eo *obj);
 
 /**
  * @brief Retrieves the list of font paths used by the given evas.
@@ -759,7 +759,7 @@ EOAPI void evas_canvas_sync(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI const Eina_List *evas_canvas_font_path_list(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK const Eina_List *evas_canvas_font_path_list(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Reload the image cache.
@@ -769,7 +769,7 @@ EOAPI const Eina_List *evas_canvas_font_path_list(const Eo *obj) EINA_WARN_UNUSE
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_image_cache_reload(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_image_cache_reload(Eo *obj);
 
 /**
  * @brief Convert/scale a canvas coordinate into output screen coordinates.
@@ -786,7 +786,7 @@ EOAPI void evas_canvas_image_cache_reload(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_coord_world_x_to_screen(const Eo *obj, int x) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK int evas_canvas_coord_world_x_to_screen(const Eo *obj, int x) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Force immediate renderization of the given Evas canvas.
@@ -810,7 +810,7 @@ EOAPI int evas_canvas_coord_world_x_to_screen(const Eo *obj, int x) EINA_WARN_UN
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Eina_List *evas_canvas_render_updates(Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Eina_List *evas_canvas_render_updates(Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Flush the image cache of the canvas.
@@ -820,7 +820,7 @@ EOAPI Eina_List *evas_canvas_render_updates(Eo *obj) EINA_WARN_UNUSED_RESULT;
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_image_cache_flush(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_image_cache_flush(Eo *obj);
 
 /**
  * @brief Convert/scale an output screen coordinate into canvas coordinates.
@@ -837,7 +837,7 @@ EOAPI void evas_canvas_image_cache_flush(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_coord_screen_y_to_world(const Eo *obj, int y) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK int evas_canvas_coord_screen_y_to_world(const Eo *obj, int y) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Removes the @c keyname key from the current list of modifier keys on
@@ -850,13 +850,13 @@ EOAPI int evas_canvas_coord_screen_y_to_world(const Eo *obj, int y) EINA_WARN_UN
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_modifier_del(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_modifier_del(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /** Inform to the evas that it got the focus from the default seat.
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_focus_in(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_focus_in(Eo *obj);
 
 /**
  * @brief Inform to the evas that it got the focus from a given seat.
@@ -868,7 +868,7 @@ EOAPI void evas_canvas_focus_in(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_seat_focus_in(Eo *obj, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_focus_in(Eo *obj, Evas_Device *seat);
 
 /**
  * @brief Inform to the evas that it lost the focus from a given seat.
@@ -880,7 +880,7 @@ EOAPI void evas_canvas_seat_focus_in(Eo *obj, Evas_Device *seat);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_seat_focus_out(Eo *obj, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_focus_out(Eo *obj, Evas_Device *seat);
 
 /**
  * @brief Add an "obscured region" to an Evas canvas.
@@ -921,7 +921,7 @@ EOAPI void evas_canvas_seat_focus_out(Eo *obj, Evas_Device *seat);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_obscured_rectangle_add(Eo *obj, int x, int y, int w, int h);
+EVAS_API EVAS_API_WEAK void evas_canvas_obscured_rectangle_add(Eo *obj, int x, int y, int w, int h);
 
 /**
  * @brief Make the canvas discard as much data as possible used by the engine
@@ -936,13 +936,13 @@ EOAPI void evas_canvas_obscured_rectangle_add(Eo *obj, int x, int y, int w, int 
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_render_dump(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_render_dump(Eo *obj);
 
 /** Force renderization of the given canvas.
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_render(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_render(Eo *obj);
 
 /**
  * @brief Prepends a font path to the list of font paths used by the given
@@ -953,7 +953,7 @@ EOAPI void evas_canvas_render(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_font_path_prepend(Eo *obj, const char *path) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_font_path_prepend(Eo *obj, const char *path) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Remove all "obscured regions" from an Evas canvas.
@@ -973,7 +973,7 @@ EOAPI void evas_canvas_font_path_prepend(Eo *obj, const char *path) EINA_ARG_NON
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_obscured_clear(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_obscured_clear(Eo *obj);
 
 /**
  * @brief Convert/scale an output screen coordinate into canvas coordinates.
@@ -990,7 +990,7 @@ EOAPI void evas_canvas_obscured_clear(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_coord_screen_x_to_world(const Eo *obj, int x) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK int evas_canvas_coord_screen_x_to_world(const Eo *obj, int x) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Adds the @c keyname key to the current list of lock keys.
@@ -1016,7 +1016,7 @@ EOAPI int evas_canvas_coord_screen_x_to_world(const Eo *obj, int x) EINA_WARN_UN
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_key_lock_add(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK void evas_canvas_key_lock_add(Eo *obj, const char *keyname) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Make the canvas discard internally cached data used for rendering.
@@ -1028,7 +1028,7 @@ EOAPI void evas_canvas_key_lock_add(Eo *obj, const char *keyname) EINA_ARG_NONNU
  *
  * @ingroup Evas_Canvas
  */
-EOAPI void evas_canvas_render_idle_flush(Eo *obj);
+EVAS_API EVAS_API_WEAK void evas_canvas_render_idle_flush(Eo *obj);
 
 /**
  * @brief Return the default device of a given type.
@@ -1044,7 +1044,7 @@ EOAPI void evas_canvas_render_idle_flush(Eo *obj);
  *
  * @ingroup Evas_Canvas
  */
-EOAPI Evas_Device *evas_canvas_default_device_get(const Eo *obj, Evas_Device_Class type);
+EVAS_API EVAS_API_WEAK Evas_Device *evas_canvas_default_device_get(const Eo *obj, Evas_Device_Class type);
 
 /**
  * @brief Convert/scale a canvas coordinate into output screen coordinates.
@@ -1061,6 +1061,6 @@ EOAPI Evas_Device *evas_canvas_default_device_get(const Eo *obj, Evas_Device_Cla
  *
  * @ingroup Evas_Canvas
  */
-EOAPI int evas_canvas_coord_world_y_to_screen(const Eo *obj, int y) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK int evas_canvas_coord_world_y_to_screen(const Eo *obj, int y) EINA_WARN_UNUSED_RESULT;
 
 #endif

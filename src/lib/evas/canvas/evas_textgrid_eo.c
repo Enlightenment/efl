@@ -1,43 +1,43 @@
 
 void _evas_textgrid_supported_font_styles_set(Eo *obj, Evas_Textgrid_Data *pd, Evas_Textgrid_Font_Style styles);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_textgrid_supported_font_styles_set, EFL_FUNC_CALL(styles), Evas_Textgrid_Font_Style styles);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_textgrid_supported_font_styles_set, EFL_FUNC_CALL(styles), Evas_Textgrid_Font_Style styles);
 
 Evas_Textgrid_Font_Style _evas_textgrid_supported_font_styles_get(const Eo *obj, Evas_Textgrid_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_textgrid_supported_font_styles_get, Evas_Textgrid_Font_Style, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_textgrid_supported_font_styles_get, Evas_Textgrid_Font_Style, 0);
 
 void _evas_textgrid_grid_size_set(Eo *obj, Evas_Textgrid_Data *pd, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_textgrid_grid_size_set, EFL_FUNC_CALL(w, h), int w, int h);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_textgrid_grid_size_set, EFL_FUNC_CALL(w, h), int w, int h);
 
 void _evas_textgrid_grid_size_get(const Eo *obj, Evas_Textgrid_Data *pd, int *w, int *h);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_textgrid_grid_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_textgrid_grid_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
 
 void _evas_textgrid_cell_size_get(const Eo *obj, Evas_Textgrid_Data *pd, int *width, int *height);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_textgrid_cell_size_get, EFL_FUNC_CALL(width, height), int *width, int *height);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_textgrid_cell_size_get, EFL_FUNC_CALL(width, height), int *width, int *height);
 
 void _evas_textgrid_update_add(Eo *obj, Evas_Textgrid_Data *pd, int x, int y, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_textgrid_update_add, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_textgrid_update_add, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
 
 void _evas_textgrid_cellrow_set(Eo *obj, Evas_Textgrid_Data *pd, int y, const Evas_Textgrid_Cell *row);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_textgrid_cellrow_set, EFL_FUNC_CALL(y, row), int y, const Evas_Textgrid_Cell *row);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_textgrid_cellrow_set, EFL_FUNC_CALL(y, row), int y, const Evas_Textgrid_Cell *row);
 
 Evas_Textgrid_Cell *_evas_textgrid_cellrow_get(const Eo *obj, Evas_Textgrid_Data *pd, int y);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_obj_textgrid_cellrow_get, Evas_Textgrid_Cell *, NULL, EFL_FUNC_CALL(y), int y);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_obj_textgrid_cellrow_get, Evas_Textgrid_Cell *, NULL, EFL_FUNC_CALL(y), int y);
 
 void _evas_textgrid_palette_set(Eo *obj, Evas_Textgrid_Data *pd, Evas_Textgrid_Palette pal, int idx, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_textgrid_palette_set, EFL_FUNC_CALL(pal, idx, r, g, b, a), Evas_Textgrid_Palette pal, int idx, int r, int g, int b, int a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_textgrid_palette_set, EFL_FUNC_CALL(pal, idx, r, g, b, a), Evas_Textgrid_Palette pal, int idx, int r, int g, int b, int a);
 
 void _evas_textgrid_palette_get(const Eo *obj, Evas_Textgrid_Data *pd, Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_textgrid_palette_get, EFL_FUNC_CALL(pal, idx, r, g, b, a), Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_textgrid_palette_get, EFL_FUNC_CALL(pal, idx, r, g, b, a), Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a);
 
 Efl_Object *_evas_textgrid_efl_object_constructor(Eo *obj, Evas_Textgrid_Data *pd);
 

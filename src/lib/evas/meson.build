@@ -81,6 +81,7 @@ foreach eo_file : pub_legacy_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EVAS_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -95,6 +96,7 @@ foreach eo_file : pub_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EVAS_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -113,6 +115,7 @@ foreach eo_file : pub_eo_types_files
     command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EVAS_API',
                            '-ghd', '@INPUT@'])
 endforeach
 
@@ -207,7 +210,7 @@ endif
 evas_link = [ ]
 evas_pub_deps = [eina, ecore, ector, emile]
 
-if cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
+if  cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
   evas_opt = static_library('evas_opt',
     sources: [evas_src_opt, pub_eo_file_target, priv_eo_file_target],
     include_directories:
@@ -297,7 +300,7 @@ evas_lib = library('evas',
     dependencies: [evas_deps, evas_ext_deps],
     link_with: evas_link,
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEVAS_BUILD'],
     version : meson.project_version()
 )
 

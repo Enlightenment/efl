@@ -171,13 +171,13 @@ evas_async_events_shutdown(void)
    return _init_evas_event;
 }
 
-EAPI int
+EVAS_API int
 evas_async_events_fd_get(void)
 {
    return -1;
 }
 
-EAPI int
+EVAS_API int
 evas_async_events_process(void)
 {
    int count = 0;
@@ -207,7 +207,7 @@ _evas_async_events_fd_blocking_set(Eina_Bool blocking)
 #endif
 }
 
-EAPI int
+EVAS_API int
 evas_async_events_process_blocking(void)
 {
    int ret;
@@ -224,7 +224,7 @@ evas_async_events_process_blocking(void)
    return ret;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func)
 {
    Evas_Event_Async *ev;
@@ -295,7 +295,7 @@ _evas_thread_main_loop_lock(void *target EINA_UNUSED,
    free(call);
 }
 
-EAPI int
+EVAS_API int
 evas_thread_main_loop_begin(void)
 {
    Evas_Safe_Call *order;
@@ -334,7 +334,7 @@ evas_thread_main_loop_begin(void)
    return _thread_loop;
 }
 
-EAPI int
+EVAS_API int
 evas_thread_main_loop_end(void)
 {
    int current_id;

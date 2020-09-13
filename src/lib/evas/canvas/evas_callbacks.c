@@ -474,14 +474,14 @@ nothing_here:
    _evas_unwalk(e);
 }
 
-EAPI void
+EVAS_API void
 evas_object_event_callback_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
    evas_object_event_callback_priority_add(eo_obj, type,
                                            EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
 }
 
-EAPI void
+EVAS_API void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
    Evas_Object_Protected_Data *obj;
@@ -509,7 +509,7 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
       eina_inlist_append(obj->callbacks, EINA_INLIST_GET(cb_info));
 }
 
-EAPI void *
+EVAS_API void *
 evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func)
 {
    Evas_Object_Protected_Data *obj;
@@ -539,7 +539,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
    Evas_Object_Protected_Data *obj;
@@ -569,7 +569,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_event_callback_add(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
    evas_event_callback_priority_add(eo_e, type, EVAS_CALLBACK_PRIORITY_DEFAULT,
@@ -594,7 +594,7 @@ _deferred_callbacks_process(Evas *eo_e, Evas_Public_Data *e)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
    Evas_Public_Data *e;
@@ -630,7 +630,7 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
      }
 }
 
-EAPI void *
+EVAS_API void *
 evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
    Evas_Public_Data *e;
@@ -674,7 +674,7 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
    Evas_Public_Data *e;
@@ -718,7 +718,7 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const void *data)
 {
    Evas_Public_Data *e;
@@ -747,7 +747,7 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
    e->post_events = eina_list_prepend(e->post_events, pc);
 }
 
-EAPI void
+EVAS_API void
 evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
 {
    Evas_Public_Data *e;
@@ -768,7 +768,7 @@ evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_post_event_callback_remove_full(Evas *eo_e, Evas_Object_Event_Post_Cb func, const void *data)
 {
    Evas_Public_Data *e;

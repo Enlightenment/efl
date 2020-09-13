@@ -881,7 +881,7 @@ evas_object_was_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eva
 }
 /* routines apps will call */
 
-EAPI void
+EVAS_API void
 evas_object_ref(Evas_Object *eo_obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -895,7 +895,7 @@ evas_object_ref(Evas_Object *eo_obj)
    obj->ref++;
 }
 
-EAPI void
+EVAS_API void
 evas_object_unref(Evas_Object *eo_obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -912,7 +912,7 @@ evas_object_unref(Evas_Object *eo_obj)
 
 }
 
-EAPI int
+EVAS_API int
 evas_object_ref_get(const Evas_Object *eo_obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -924,7 +924,7 @@ evas_object_ref_get(const Evas_Object *eo_obj)
    return obj->ref;
 }
 
-EAPI void
+EVAS_API void
 evas_object_del(Evas_Object *obj)
 {
    Evas_Object_Protected_Data *pd;
@@ -1158,7 +1158,7 @@ _efl_canvas_object_efl_gfx_entity_geometry_set(Eo *obj, Evas_Object_Protected_Da
    efl_gfx_entity_size_set(obj, EINA_SIZE2D(r.w,  r.h));
 }
 
-EAPI void
+EVAS_API void
 evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -1167,7 +1167,7 @@ evas_object_geometry_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas_C
    efl_gfx_entity_geometry_set(eo_obj, EINA_RECT(x, y, w, h));
 }
 
-EAPI void
+EVAS_API void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    efl_gfx_entity_position_set(obj, EINA_POSITION2D(x, y));
@@ -1232,7 +1232,7 @@ _efl_canvas_object_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Object_Protected
    evas_object_inform_call_move(eo_obj, obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    efl_gfx_entity_size_set((Evas_Object *)obj, EINA_SIZE2D(w,  h));
@@ -1331,7 +1331,7 @@ _efl_canvas_object_efl_gfx_entity_geometry_get(const Eo *eo_obj EINA_UNUSED, Eva
    return (Eina_Rect) obj->cur->geometry;
 }
 
-EAPI void
+EVAS_API void
 evas_object_geometry_get(const Evas_Object *eo_obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Eina_Rect r = efl_gfx_entity_geometry_get(eo_obj);
@@ -1382,7 +1382,7 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
 }
 
 /* Legacy only */
-EAPI Evas_Display_Mode
+EVAS_API Evas_Display_Mode
 evas_object_size_hint_display_mode_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
@@ -1392,7 +1392,7 @@ evas_object_size_hint_display_mode_get(const Evas_Object *eo_obj)
 }
 
 /* Legacy only */
-EAPI void
+EVAS_API void
 evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
@@ -1556,7 +1556,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_set(Eo *eo_obj, Evas_Object_Protec
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_request_get(const Eo *eo_obj, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
@@ -1572,7 +1572,7 @@ evas_object_size_hint_request_get(const Eo *eo_obj, Evas_Coord *w, Evas_Coord *h
    if (h) *h = obj->size_hints->request.h;
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_request_set(Eo *eo_obj, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
@@ -1810,7 +1810,7 @@ _efl_canvas_object_efl_gfx_hint_hint_fill_set(Eo *eo_obj, Evas_Object_Protected_
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_show(Evas_Object *eo_obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -1819,14 +1819,14 @@ evas_object_show(Evas_Object *eo_obj)
    efl_gfx_entity_visible_set(eo_obj, EINA_TRUE);
 }
 
-EAPI void
+EVAS_API void
 evas_object_hide(Evas_Object *eo_obj)
 {
    if (!eo_obj) return;
    efl_gfx_entity_visible_set(eo_obj, EINA_FALSE);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_visible_get(const Evas_Object *obj)
 {
    return efl_gfx_entity_visible_get((Evas_Object *)obj);
@@ -2020,7 +2020,7 @@ _efl_canvas_object_efl_gfx_entity_visible_get(const Eo *eo_obj EINA_UNUSED,
    return obj->cur->visible;
 }
 
-EAPI void
+EVAS_API void
 evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    efl_gfx_color_set((Evas_Object *)obj, r, g, b, a);
@@ -2067,7 +2067,7 @@ _efl_canvas_object_efl_gfx_color_color_set(Eo *eo_obj, Evas_Object_Protected_Dat
    evas_object_change(eo_obj, obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    efl_gfx_color_get((Evas_Object *)obj, r, g, b, a);
@@ -2160,7 +2160,7 @@ _efl_canvas_object_render_op_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_D
    _render_op_set(obj, _gfx_to_evas_render_op(rop));
 }
 
-EAPI void
+EVAS_API void
 evas_object_render_op_set(Evas_Object *eo_obj, Evas_Render_Op render_op)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -2173,7 +2173,7 @@ _efl_canvas_object_render_op_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Prote
    return _evas_to_gfx_render_op(obj->cur->render_op);
 }
 
-EAPI Evas_Render_Op
+EVAS_API Evas_Render_Op
 evas_object_render_op_get(const Evas_Object *eo_obj)
 {
    return _gfx_to_evas_render_op(efl_canvas_object_render_op_get(eo_obj));
@@ -2533,7 +2533,7 @@ _efl_canvas_object_legacy_ctor(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    obj->legacy.ctor = EINA_TRUE;
 }
 
-EAPI Eo *
+EVAS_API Eo *
 evas_find(const Eo *obj)
 {
    if (efl_isa(obj, EVAS_CANVAS_CLASS))
@@ -2554,7 +2554,7 @@ _efl_canvas_object_event_animation_cancel(Eo *eo_obj)
 
 /* legacy */
 
-EAPI const char *
+EVAS_API const char *
 evas_object_type_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
@@ -2562,7 +2562,7 @@ evas_object_type_get(const Evas_Object *eo_obj)
    return obj->type;
 }
 
-EAPI void
+EVAS_API void
 evas_object_static_clip_set(Evas_Object *eo_obj, Eina_Bool is_static_clip)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
@@ -2570,20 +2570,20 @@ evas_object_static_clip_set(Evas_Object *eo_obj, Eina_Bool is_static_clip)
    obj->is_static_clip = is_static_clip;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_static_clip_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
    return obj->is_static_clip;
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_aspect_set(Evas_Object *obj, Evas_Aspect_Control aspect, Evas_Coord w, Evas_Coord h)
 {
    efl_gfx_hint_aspect_set(obj, (Efl_Gfx_Hint_Aspect)aspect, EINA_SIZE2D(w, h));
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
 {
    Eina_Size2D sz = { 0, 0 };
@@ -2592,13 +2592,13 @@ evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *as
    if (h) *h = sz.h;
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(w, h));
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    Eina_Size2D sz;
@@ -2607,13 +2607,13 @@ evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
    if (h) *h = sz.h;
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_min_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(w, h));
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    Eina_Size2D sz;
@@ -2622,43 +2622,43 @@ evas_object_size_hint_min_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord 
    if (h) *h = sz.h;
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_padding_set(Evas_Object *obj, Evas_Coord l, Evas_Coord r, Evas_Coord t, Evas_Coord b)
 {
    efl_gfx_hint_margin_set(obj, l, r, t, b);
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_padding_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {
    efl_gfx_hint_margin_get(obj, l, r, t, b);
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y)
 {
    efl_gfx_hint_weight_set(obj, x, y);
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, double *y)
 {
    efl_gfx_hint_weight_get(obj, x, y);
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_align_set(Evas_Object *obj, double x, double y)
 {
    efl_gfx_hint_align_set(obj, x, y);
 }
 
-EAPI void
+EVAS_API void
 evas_object_size_hint_align_get(const Evas_Object *obj, double *x, double *y)
 {
    efl_gfx_hint_align_get(obj, x, y);
 }
 
-EAPI Evas *
+EVAS_API Evas *
 evas_object_evas_get(const Eo *eo_obj)
 {
    if (efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS))
@@ -2671,19 +2671,19 @@ evas_object_evas_get(const Eo *eo_obj)
    return efl_provider_find((Eo *) eo_obj, EVAS_CANVAS_CLASS);
 }
 
-EAPI void
+EVAS_API void
 evas_object_scale_set(Evas_Object *obj, double scale)
 {
    efl_gfx_entity_scale_set(obj, scale);
 }
 
-EAPI double
+EVAS_API double
 evas_object_scale_get(const Evas_Object *obj)
 {
    return efl_gfx_entity_scale_get(obj);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_pointer_inside_by_device_get(const Evas_Object *eo_obj, Efl_Input_Device *dev)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, EINA_FALSE);
@@ -2692,7 +2692,7 @@ evas_object_pointer_inside_by_device_get(const Evas_Object *eo_obj, Efl_Input_De
    return efl_canvas_pointer_inside_get(eo_obj, dev);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y)
 {
    Eina_Position2D pos = EINA_POSITION2D(x, y);
@@ -2700,19 +2700,19 @@ evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y)
    return efl_canvas_object_coords_inside_get(eo_obj, pos);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_pointer_inside_get(const Evas_Object *eo_obj)
 {
    return evas_object_pointer_inside_by_device_get(eo_obj, NULL);
 }
 
-EAPI void
+EVAS_API void
 evas_object_is_frame_object_set(Efl_Canvas_Object *obj, Eina_Bool is_frame)
 {
    efl_canvas_object_is_frame_object_set(obj, is_frame);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_is_frame_object_get(const Efl_Canvas_Object *obj)
 {
    return efl_canvas_object_is_frame_object_get(obj);
@@ -2721,10 +2721,10 @@ evas_object_is_frame_object_get(const Efl_Canvas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_is_frame_object_set, EFL_FUNC_CALL(is_frame), Eina_Bool is_frame);
-EOAPI EFL_FUNC_BODY_CONST(efl_canvas_object_is_frame_object_get, Eina_Bool, 0);
-EOAPI EFL_VOID_FUNC_BODY(efl_canvas_object_legacy_ctor)
-EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_type_set, EFL_FUNC_CALL(type), const char *type)
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_canvas_object_is_frame_object_set, EFL_FUNC_CALL(is_frame), Eina_Bool is_frame);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(efl_canvas_object_is_frame_object_get, Eina_Bool, 0);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(efl_canvas_object_legacy_ctor)
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_canvas_object_type_set, EFL_FUNC_CALL(type), const char *type)
 
 #define EFL_CANVAS_OBJECT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_object_efl_object_dbg_info_get), \

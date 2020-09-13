@@ -21,7 +21,7 @@ struct _Evas_Image_Legacy_Pixels_Entry
    void  *image;
 };
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_image_add(Evas *eo_e)
 {
    eo_e = evas_find(eo_e);
@@ -31,7 +31,7 @@ evas_object_image_add(Evas *eo_e)
                  efl_canvas_object_legacy_ctor(efl_added));
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_image_filled_add(Evas *eo_e)
 {
    eo_e = evas_find(eo_e);
@@ -40,7 +40,7 @@ evas_object_image_filled_add(Evas *eo_e)
                  efl_canvas_object_legacy_ctor(efl_added));
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *format EINA_UNUSED, char *key)
 {
    Eina_File *f;
@@ -53,7 +53,7 @@ evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *f
    eina_file_close(f); // close matching open OK
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_fill_set(Evas_Object *obj,
                            Evas_Coord x, Evas_Coord y,
                            Evas_Coord w, Evas_Coord h)
@@ -62,7 +62,7 @@ evas_object_image_fill_set(Evas_Object *obj,
    _evas_image_fill_set(obj, efl_data_scope_get(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS), x, y, w, h);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -70,21 +70,21 @@ evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
    else _evas_image_load_async_start(eo_obj);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_filled_get(const Evas_Object *eo_obj)
 {
    EVAS_IMAGE_API(eo_obj, EINA_FALSE);
    return efl_gfx_fill_auto_get(eo_obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_filled_set(Evas_Object *eo_obj, Eina_Bool value)
 {
    EVAS_IMAGE_API(eo_obj);
    efl_gfx_fill_auto_set(eo_obj, value);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_fill_get(const Evas_Object *obj,
                            Evas_Coord *x, Evas_Coord *y,
                            Evas_Coord *w, Evas_Coord *h)
@@ -99,63 +99,63 @@ evas_object_image_fill_get(const Evas_Object *obj,
    if (h) *h = r.h;
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool alpha)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_buffer_alpha_set(obj, alpha);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_alpha_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return efl_gfx_buffer_alpha_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_image_border_insets_set(obj, l, r, t, b);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_image_border_insets_get(obj, l, r, t, b);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_border_scale_set(Evas_Object *obj, double scale)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_image_border_insets_scale_set(obj, scale);
 }
 
-EAPI double
+EVAS_API double
 evas_object_image_border_scale_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0.0);
    return efl_gfx_image_border_insets_scale_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_image_center_fill_mode_set(obj, (Efl_Gfx_Center_Fill_Mode) fill);
 }
 
-EAPI Evas_Border_Fill_Mode
+EVAS_API Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_BORDER_FILL_NONE);
    return (Evas_Border_Fill_Mode) efl_gfx_image_center_fill_mode_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Eina_Size2D sz;
@@ -165,14 +165,14 @@ evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = sz.h;
 }
 
-EAPI Evas_Colorspace
+EVAS_API Evas_Colorspace
 evas_object_image_colorspace_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_COLORSPACE_ARGB8888);
    return (Evas_Colorspace) efl_gfx_buffer_colorspace_get(obj);
 }
 
-EAPI int
+EVAS_API int
 evas_object_image_stride_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);
@@ -180,7 +180,7 @@ evas_object_image_stride_get(const Evas_Object *obj)
    return o->cur->image.stride;
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 {
    Eina_Rect r;
@@ -190,35 +190,35 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
    efl_gfx_buffer_update_add(obj, &r);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    EVAS_IMAGE_API(obj);
    efl_file_simple_load(obj, file, key);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
    EVAS_IMAGE_API(obj);
    efl_file_simple_get(obj, file, key);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key)
 {
    EVAS_IMAGE_API(obj);
    efl_file_simple_mmap_load(obj, f, key);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_mmap_get(const Evas_Object *obj, const Eina_File **f, const char **key)
 {
    EVAS_IMAGE_API(obj);
    efl_file_simple_mmap_get(obj, f, key);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_save(const Evas_Object *obj, const char *file, const char *key, const char *flags)
 {
    char *encoding = NULL;
@@ -256,168 +256,168 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
    return ret;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_animated_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_animated_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_animated_frame_set(obj, frame_index);
 }
 
-EAPI int
+EVAS_API int
 evas_object_image_animated_frame_get(Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);
    return _evas_image_animated_frame_get(obj);
 }
 
-EAPI int
+EVAS_API int
 evas_object_image_animated_frame_count_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);
    return _evas_image_animated_frame_count_get(obj);
 }
 
-EAPI Evas_Image_Animated_Loop_Hint
+EVAS_API Evas_Image_Animated_Loop_Hint
 evas_object_image_animated_loop_type_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_ANIMATED_HINT_NONE);
    return (Evas_Image_Animated_Loop_Hint) _evas_image_animated_loop_type_get(obj);
 }
 
-EAPI int
+EVAS_API int
 evas_object_image_animated_loop_count_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0);
    return _evas_image_animated_loop_count_get(obj);
 }
 
-EAPI double
+EVAS_API double
 evas_object_image_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num)
 {
    EVAS_IMAGE_API(obj, 0.0);
    return _evas_image_animated_frame_duration_get(obj, start_frame, frame_num);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_size_set(obj, w, h);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_size_get(const Evas_Object *obj, int *w, int *h)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_size_get(obj, w, h);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_dpi_set(obj, dpi);
 }
 
-EAPI double
+EVAS_API double
 evas_object_image_load_dpi_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0.0);
    return _evas_image_load_dpi_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_region_set(Evas_Object *obj, int x, int y, int w, int h)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_region_set(obj, x, y, w, h);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_region_get(obj, x, y, w, h);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_region_support_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_load_region_support_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_orientation_set(Evas_Object *obj, Eina_Bool enable)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_orientation_set(obj, enable);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_load_orientation_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_load_orientation_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_scale_down_set(obj, scale_down);
 }
 
-EAPI int
+EVAS_API int
 evas_object_image_load_scale_down_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 1);
    return _evas_image_load_scale_down_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_load_head_skip_set(Evas_Object *obj, Eina_Bool skip)
 {
    EVAS_IMAGE_API(obj);
    _evas_image_load_head_skip_set(obj, skip);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_load_head_skip_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return _evas_image_load_head_skip_get(obj);
 }
 
-EAPI Evas_Load_Error
+EVAS_API Evas_Load_Error
 evas_object_image_load_error_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_LOAD_ERROR_GENERIC);
    return _efl_gfx_image_load_error_to_evas_load_error(efl_gfx_image_load_error_get(obj));
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth_scale)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_image_smooth_scale_set(obj, smooth_scale);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_smooth_scale_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
    return efl_gfx_image_smooth_scale_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient)
 {
    EVAS_IMAGE_API(obj);
@@ -426,7 +426,7 @@ evas_object_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient)
    _evas_image_orientation_set(obj, o, orient);
 }
 
-EAPI Evas_Image_Orient
+EVAS_API Evas_Image_Orient
 evas_object_image_orient_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_ORIENT_NONE);
@@ -436,7 +436,7 @@ evas_object_image_orient_get(const Evas_Object *obj)
    return o->cur->orient;
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_snapshot_set(Evas_Object *eo, Eina_Bool s)
 {
    EVAS_IMAGE_API(eo);
@@ -450,7 +450,7 @@ evas_object_image_snapshot_set(Evas_Object *eo, Eina_Bool s)
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_snapshot_get(const Evas_Object *eo)
 {
    EVAS_IMAGE_API(eo, EINA_FALSE);
@@ -459,84 +459,84 @@ evas_object_image_snapshot_get(const Evas_Object *eo)
    return obj->cur->snapshot;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_source_set(Evas_Object *eo, Evas_Object *src)
 {
    EVAS_IMAGE_API(eo, EINA_FALSE);
    return _evas_image_proxy_source_set(eo, src);
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_image_source_get(const Evas_Object *eo)
 {
    EVAS_IMAGE_API(eo, NULL);
    return _evas_image_proxy_source_get(eo);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_source_unset(Evas_Object *eo_obj)
 {
    EVAS_IMAGE_API(eo_obj, EINA_FALSE);
    return _evas_image_proxy_source_set(eo_obj, NULL);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_source_clip_set(Evas_Object *eo, Eina_Bool source_clip)
 {
    EVAS_IMAGE_API(eo);
    _evas_image_proxy_source_clip_set(eo, source_clip);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_source_clip_get(const Evas_Object *eo)
 {
    EVAS_IMAGE_API(eo, EINA_FALSE);
    return _evas_image_proxy_source_clip_get(eo);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_source_events_set(Evas_Object *eo, Eina_Bool repeat)
 {
    EVAS_IMAGE_API(eo);
    _evas_image_proxy_source_events_set(eo, repeat);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_source_events_get(const Evas_Object *eo)
 {
    EVAS_IMAGE_API(eo, EINA_FALSE);
    return _evas_image_proxy_source_events_get(eo);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint)
 {
    EVAS_IMAGE_API(obj);
    efl_gfx_image_content_hint_set(obj, (Efl_Gfx_Image_Content_Hint)hint);
 }
 
-EAPI Evas_Image_Content_Hint
+EVAS_API Evas_Image_Content_Hint
 evas_object_image_content_hint_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_CONTENT_HINT_NONE);
    return (Evas_Image_Content_Hint)efl_gfx_image_content_hint_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
 {
    EVAS_IMAGE_API(obj);
    return efl_gfx_image_scale_hint_set(obj, (Efl_Gfx_Image_Scale_Hint) hint);
 }
 
-EAPI Evas_Image_Scale_Hint
+EVAS_API Evas_Image_Scale_Hint
 evas_object_image_scale_hint_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_IMAGE_SCALE_HINT_NONE);
    return (Evas_Image_Scale_Hint) efl_gfx_image_scale_hint_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *surf)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -553,14 +553,14 @@ evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *s
      }
 }
 
-EAPI Evas_Native_Surface *
+EVAS_API Evas_Native_Surface *
 evas_object_image_native_surface_get(const Evas_Object *eo_obj)
 {
    EVAS_IMAGE_API(eo_obj, NULL);
    return _evas_image_native_surface_get(eo_obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_pixels_get_callback_set(Eo *eo_obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -577,7 +577,7 @@ evas_object_image_pixels_get_callback_set(Eo *eo_obj, Evas_Object_Image_Pixels_G
    EINA_COW_PIXEL_WRITE_END(o, pixi_write);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_pixels_dirty_set(Eo *eo_obj, Eina_Bool dirty)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -596,7 +596,7 @@ evas_object_image_pixels_dirty_set(Eo *eo_obj, Eina_Bool dirty)
    evas_object_change(eo_obj, obj);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_pixels_dirty_get(const Eo *eo_obj)
 {
    EVAS_IMAGE_API(eo_obj, EINA_FALSE);
@@ -606,7 +606,7 @@ evas_object_image_pixels_dirty_get(const Eo *eo_obj)
    return (o->dirty_pixels ? 1 : 0);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_data_set(Eo *eo_obj, void *data)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -713,7 +713,7 @@ _image_to_free_del_cb(void *data)
    free(px_entry);
 }
 
-EAPI void*
+EVAS_API void*
 evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
 {
    EVAS_IMAGE_API(eo_obj, NULL);
@@ -795,7 +795,7 @@ error:
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_data_copy_set(Eo *eo_obj, void *data)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -843,7 +843,7 @@ evas_object_image_data_copy_set(Eo *eo_obj, void *data)
 }
 
 /* Evas_Object equivalent: pixels_set(null, w, h, cspace) to (re)allocate an image */
-EAPI void
+EVAS_API void
 evas_object_image_size_set(Evas_Object *eo_obj, int w, int h)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -908,7 +908,7 @@ evas_object_image_size_set(Evas_Object *eo_obj, int w, int h)
 }
 
 /* Evas_Object equivalent: pixels_set(null, w, h, cspace) to (re)allocate an image */
-EAPI void
+EVAS_API void
 evas_object_image_colorspace_set(Evas_Object *eo_obj, Evas_Colorspace cspace)
 {
    EVAS_IMAGE_API(eo_obj);
@@ -929,7 +929,7 @@ evas_object_image_colorspace_set(Evas_Object *eo_obj, Evas_Colorspace cspace)
 
 /* old video surfaces */
 
-EAPI void
+EVAS_API void
 evas_object_image_video_surface_set(Evas_Object *eo_obj, Evas_Video_Surface *surf)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj);
@@ -990,7 +990,7 @@ evas_object_image_video_surface_set(Evas_Object *eo_obj, Evas_Video_Surface *sur
      }
 }
 
-EAPI const Evas_Video_Surface*
+EVAS_API const Evas_Video_Surface*
 evas_object_image_video_surface_get(const Evas_Object *eo_obj)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj, NULL);
@@ -999,7 +999,7 @@ evas_object_image_video_surface_get(const Evas_Object *eo_obj)
    return (!o->video_surface ? NULL : &o->pixels->video);
 }
 
-EAPI void
+EVAS_API void
 evas_object_image_video_surface_caps_set(Evas_Object *eo_obj, unsigned int caps)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj);
@@ -1018,7 +1018,7 @@ evas_object_image_video_surface_caps_set(Evas_Object *eo_obj, unsigned int caps)
    EINA_COW_PIXEL_WRITE_END(o, pixi_write)
 }
 
-EAPI unsigned int
+EVAS_API unsigned int
 evas_object_image_video_surface_caps_get(const Evas_Object *eo_obj)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj, 0);
@@ -1032,7 +1032,7 @@ evas_object_image_video_surface_caps_get(const Evas_Object *eo_obj)
 }
 
 /* deprecated */
-EAPI void
+EVAS_API void
 evas_object_image_fill_spread_set(Evas_Object *obj EINA_UNUSED, Evas_Fill_Spread spread)
 {
    /* not implemented! */
@@ -1041,14 +1041,14 @@ evas_object_image_fill_spread_set(Evas_Object *obj EINA_UNUSED, Evas_Fill_Spread
 }
 
 /* deprecated */
-EAPI Evas_Fill_Spread
+EVAS_API Evas_Fill_Spread
 evas_object_image_fill_spread_get(const Evas_Object *obj EINA_UNUSED)
 {
    return EFL_GFX_FILL_REPEAT;
 }
 
 /* deprecated */
-EAPI void
+EVAS_API void
 evas_object_image_source_visible_set(Evas_Object *eo, Eina_Bool visible)
 {
    /* FIXME: I'd love to remove this feature and replace by no_render.
@@ -1085,7 +1085,7 @@ evas_object_image_source_visible_set(Evas_Object *eo, Eina_Bool visible)
 }
 
 /* deprecated */
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_source_visible_get(const Evas_Object *eo)
 {
    /* FIXME: see evas_object_image_source_visible_set */
@@ -1106,7 +1106,7 @@ evas_object_image_source_visible_get(const Evas_Object *eo)
 }
 
 /* deprecated */
-EAPI void*
+EVAS_API void*
 evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj, NULL);
@@ -1147,7 +1147,7 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
 }
 
 /* deprecated */
-EAPI void
+EVAS_API void
 evas_object_image_reload(Evas_Object *eo_obj)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj);
@@ -1185,7 +1185,7 @@ evas_object_image_reload(Evas_Object *eo_obj)
 }
 
 /* deprecated */
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *pixels)
 {
    EVAS_IMAGE_LEGACY_API(eo_obj, EINA_FALSE);
@@ -1262,7 +1262,7 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_image_max_size_get(Eo *eo_e, int *w, int *h)
 {
    Eina_Size2D size;
@@ -1278,7 +1278,7 @@ evas_image_max_size_get(Eo *eo_e, int *w, int *h)
 }
 
 /* deprecated */
-EAPI void
+EVAS_API void
 evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool ismask EINA_UNUSED)
 {
    WRN("This function is not implemented, has never been and never will be.");

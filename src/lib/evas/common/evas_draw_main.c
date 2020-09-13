@@ -2,7 +2,7 @@
 #include "evas_convert_main.h"
 #include "evas_private.h"
 
-EAPI Cutout_Rects *
+EVAS_API Cutout_Rects *
 evas_common_draw_context_cutouts_new(void)
 {
    Cutout_Rects *rects;
@@ -28,7 +28,7 @@ evas_common_draw_context_cutouts_dup(Cutout_Rects *rects2, const Cutout_Rects *r
    else rects2->rects = NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 {
    if (!rects) return;
@@ -36,7 +36,7 @@ evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
    rects->last_add.w = 0;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_cutouts_real_free(Cutout_Rects* rects)
 {
    if (!rects) return;
@@ -44,7 +44,7 @@ evas_common_draw_context_cutouts_real_free(Cutout_Rects* rects)
    free(rects);
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_cutouts_del(Cutout_Rects* rects, int idx)
 {
    if ((idx >= 0) && (idx < rects->active))
@@ -122,7 +122,7 @@ _evas_common_draw_context_find(void)
    return dc;
 }
 
-EAPI void
+EVAS_API void
 evas_common_init(void)
 {
    if (_init_count++) return;
@@ -143,7 +143,7 @@ evas_common_init(void)
    evas_common_tilebuf_init();
 }
 
-EAPI void
+EVAS_API void
 evas_common_shutdown(void)
 {
    if (--_init_count) return;
@@ -162,12 +162,12 @@ evas_common_shutdown(void)
 //   SLKD(_ctx_spares_lock);
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_init(void)
 {
 }
 
-EAPI RGBA_Draw_Context *
+EVAS_API RGBA_Draw_Context *
 evas_common_draw_context_new(void)
 {
    RGBA_Draw_Context *dc;
@@ -177,7 +177,7 @@ evas_common_draw_context_new(void)
    return dc;
 }
 
-EAPI RGBA_Draw_Context *
+EVAS_API RGBA_Draw_Context *
 evas_common_draw_context_dup(RGBA_Draw_Context *dc)
 {
    RGBA_Draw_Context *dc2 = _evas_common_draw_context_find();
@@ -195,20 +195,20 @@ evas_common_draw_context_dup(RGBA_Draw_Context *dc)
    return dc2;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_free(RGBA_Draw_Context *dc)
 {
    if (!dc) return;
    _evas_common_draw_context_stash(dc);
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_clear_cutouts(RGBA_Draw_Context *dc)
 {
    evas_common_draw_context_cutouts_free(&dc->cutout);
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_font_ext_set(RGBA_Draw_Context *dc,
                                       void *data,
                                       void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg),
@@ -227,7 +227,7 @@ evas_common_draw_context_font_ext_set(RGBA_Draw_Context *dc,
    dc->font_ext.func.gl_image_draw = gl_image_draw;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    if (dc->clip.use)
@@ -239,7 +239,7 @@ evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, i
      evas_common_draw_context_set_clip(dc, x, y, w, h);
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    dc->clip.use = 1;
@@ -249,13 +249,13 @@ evas_common_draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, in
    dc->clip.h = h;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_unset_clip(RGBA_Draw_Context *dc)
 {
    dc->clip.use = 0;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 {
    R_VAL(&(dc->col.col)) = (DATA8)r;
@@ -280,7 +280,7 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
 
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 {
    dc->mul.use = 1;
@@ -290,14 +290,14 @@ evas_common_draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int
    A_VAL(&(dc->mul.col)) = (DATA8)a;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
 {
    dc->mul.use = 0;
 }
 
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
 //   if (dc->cutout.rects > 512) return;
@@ -643,7 +643,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects *res, int idx, Cutout_Rect *s
 #undef R_NEW
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_target_set(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    dc->cutout_target.x = x;
@@ -668,7 +668,7 @@ _srt_x(const void *d1, const void *d2)
    return r1->x - r2->x;
 }
 
-EAPI Cutout_Rects *
+EVAS_API Cutout_Rects *
 evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc, Cutout_Rects *reuse)
 {
    Cutout_Rects        *res = NULL;
@@ -833,14 +833,14 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc, Cutout_Rects *reus
    return res;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_apply_clear_cutouts(Cutout_Rects *rects)
 {
    evas_common_draw_context_apply_clean_cutouts(rects);
    free(rects);
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_apply_clean_cutouts(Cutout_Rects *rects)
 {
    free(rects->rects);
@@ -850,19 +850,19 @@ evas_common_draw_context_apply_clean_cutouts(Cutout_Rects *rects)
    rects->last_add.w = 0;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_set_anti_alias(RGBA_Draw_Context *dc , unsigned char aa)
 {
    dc->anti_alias = !!aa;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_set_color_interpolation(RGBA_Draw_Context *dc, int color_space)
 {
    dc->interpolation.color_space = color_space;
 }
 
-EAPI void
+EVAS_API void
 evas_common_draw_context_set_render_op(RGBA_Draw_Context *dc , int op)
 {
    dc->render_op = op;

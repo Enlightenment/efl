@@ -1536,13 +1536,13 @@ _canvas_event_thaw_eval_internal(Eo *eo_e, Evas_Public_Data *e)
                                         e->last_timestamp, NULL);
 }
 
-EAPI void
+EVAS_API void
 evas_event_freeze(Evas *eo_e)
 {
    efl_event_freeze(eo_e);
 }
 
-EAPI void
+EVAS_API void
 evas_event_thaw(Evas *eo_e)
 {
    efl_event_thaw(eo_e);
@@ -1581,13 +1581,13 @@ _evas_canvas_efl_object_event_thaw(Eo *eo_e, Evas_Public_Data *e)
      }
 }
 
-EAPI int
+EVAS_API int
 evas_event_freeze_get(const Evas *eo_e)
 {
    return efl_event_freeze_count_get(eo_e);
 }
 
-EAPI void
+EVAS_API void
 evas_event_thaw_eval(Evas *eo_e)
 {
    if (!evas_event_freeze_get(eo_e))
@@ -2082,14 +2082,14 @@ _canvas_event_feed_mouse_updown_legacy(Eo *eo_e, int b, Evas_Button_Flags flags,
    _canvas_event_feed_mouse_updown(eo_e, b, flags, timestamp, data, down, NULL, EINA_FALSE);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_down(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    _canvas_event_feed_mouse_updown_legacy(eo_e, b, flags, timestamp, data, 1);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_up(Eo *eo_e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -2155,7 +2155,7 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
    *ev = save;
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -2253,7 +2253,7 @@ _canvas_event_feed_mouse_wheel_internal(Eo *eo_e, Efl_Input_Pointer_Data *pe)
    _evas_unwalk(e);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -2731,7 +2731,7 @@ _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int
    efl_unref(evt);
 }
 
-EAPI void
+EVAS_API void
 evas_event_input_mouse_move(Eo *eo_e, int x, int y, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -2739,7 +2739,7 @@ evas_event_input_mouse_move(Eo *eo_e, int x, int y, unsigned int timestamp, cons
    _canvas_event_feed_mouse_move_legacy(eo_e, e, x - e->framespace.x, y - e->framespace.y, timestamp, data);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_move(Eo *eo_e, int x, int y, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -2972,14 +2972,14 @@ _canvas_event_feed_mouse_inout_legacy(Eo *eo_e, unsigned int timestamp,
    efl_unref(evt);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_in(Eo *eo_e, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    _canvas_event_feed_mouse_inout_legacy(eo_e, timestamp, data, EINA_TRUE);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_mouse_out(Eo *eo_e, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3236,7 +3236,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
    efl_unref(evt);
 }
 
-EAPI void
+EVAS_API void
 evas_event_input_multi_down(Eo *eo_e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3247,7 +3247,7 @@ evas_event_input_multi_down(Eo *eo_e, int d, int x, int y, double rad, double ra
                                      fx, fy, flags, timestamp, data, EFL_POINTER_ACTION_DOWN);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_multi_down(Eo *eo_e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3256,7 +3256,7 @@ evas_event_feed_multi_down(Eo *eo_e, int d, int x, int y, double rad, double rad
                                      fx, fy, flags, timestamp, data, EFL_POINTER_ACTION_DOWN);
 }
 
-EAPI void
+EVAS_API void
 evas_event_input_multi_up(Eo *eo_e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3267,7 +3267,7 @@ evas_event_input_multi_up(Eo *eo_e, int d, int x, int y, double rad, double radx
                                      fx, fy, flags, timestamp, data, EFL_POINTER_ACTION_UP);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_multi_up(Eo *eo_e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3415,7 +3415,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    if (ev->device) efl_unref(ev->device);
 }
 
-EAPI void
+EVAS_API void
 evas_event_input_multi_move(Eo *eo_e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3426,7 +3426,7 @@ evas_event_input_multi_move(Eo *eo_e, int d, int x, int y, double rad, double ra
                                      EFL_POINTER_ACTION_MOVE);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_multi_move(Eo *eo_e, int d, int x, int y, double rad, double radx, double rady, double pres, double ang, double fx, double fy, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3702,7 +3702,7 @@ _canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
    efl_unref(evt);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_key_down(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3711,7 +3711,7 @@ evas_event_feed_key_down(Eo *eo_e, const char *keyname, const char *key, const c
                                  compose, timestamp, data, 0, 1);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_key_up(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3720,7 +3720,7 @@ evas_event_feed_key_up(Eo *eo_e, const char *keyname, const char *key, const cha
                                  compose, timestamp, data, 0, 0);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_key_down_with_keycode(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3729,7 +3729,7 @@ evas_event_feed_key_down_with_keycode(Eo *eo_e, const char *keyname, const char 
                                  compose, timestamp, data, keycode, 1);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_key_up_with_keycode(Eo *eo_e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data, unsigned int keycode)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -3738,7 +3738,7 @@ evas_event_feed_key_up_with_keycode(Eo *eo_e, const char *keyname, const char *k
                                  compose, timestamp, data, keycode, 0);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *data)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
@@ -3840,7 +3840,7 @@ _canvas_event_feed_axis_update_internal(Evas_Public_Data *e, Efl_Input_Pointer_D
    if (ev->device) efl_unref(ev->device);
 }
 
-EAPI void
+EVAS_API void
 evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int toolid, int naxis, const Evas_Axis *axes, const void *data)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
@@ -4004,7 +4004,7 @@ _efl_canvas_object_efl_object_event_thaw(Eo *obj, Evas_Object_Protected_Data *pd
    efl_event_thaw(efl_super(obj, EFL_CANVAS_OBJECT_CLASS));
 }
 
-EAPI void
+EVAS_API void
 evas_object_freeze_events_set(Eo *eo_obj, Eina_Bool freeze)
 {
    Evas_Object_Protected_Data *pd = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
@@ -4022,7 +4022,7 @@ evas_object_freeze_events_set(Eo *eo_obj, Eina_Bool freeze)
        efl_event_thaw(eo_obj);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED)
 {
    return (efl_event_freeze_count_get(eo_obj) > 0);
@@ -4235,7 +4235,7 @@ _efl_canvas_object_efl_canvas_pointer_pointer_inside_get(const Eo *eo_obj,
    return EINA_FALSE;
 }
 
-EAPI void
+EVAS_API void
 evas_event_refeed_event(Eo *eo_e, void *event_copy, Evas_Callback_Type event_type)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));

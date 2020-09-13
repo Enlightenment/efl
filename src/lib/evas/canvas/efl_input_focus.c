@@ -97,7 +97,7 @@ _efl_input_focus_efl_duplicate_duplicate(const Eo *obj, Efl_Input_Focus_Data *pd
 }
 
 
-EOAPI Eo*
+EVAS_API EVAS_API_WEAK Eo*
 efl_input_focus_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Focus_Data *ev;

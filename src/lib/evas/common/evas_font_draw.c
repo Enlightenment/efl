@@ -15,7 +15,7 @@ struct _Evas_Glyph
    FT_UInt idx;
 };
 
-EAPI void
+EVAS_API void
 evas_common_font_draw_init(void)
 {
 }
@@ -80,7 +80,7 @@ _evas_font_image_draw(void *context, void *surface, void *image, RGBA_Font_Glyph
  * and then for kerning we have to switch the order of the kerning query (as the prev
  * is on the right, and not on the left).
  */
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                            Evas_Glyph_Array *glyphs, RGBA_Gfx_Func func EINA_UNUSED, int ext_x, int ext_y, int ext_w,
                            int ext_h, int im_w, int im_h EINA_UNUSED)
@@ -209,7 +209,7 @@ evas_common_font_fonts_unref(Evas_Font_Array *array)
    free(array);
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
@@ -301,7 +301,7 @@ error:
    eina_inarray_free(glyphs);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs, Evas_Common_Font_Draw_Cb cb)
 {
    int ext_x, ext_y, ext_w, ext_h;
@@ -375,14 +375,14 @@ evas_common_font_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, E
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, Evas_Glyph_Array *glyphs)
 {
    evas_common_font_draw_cb(dst, dc, x, y, glyphs,
                             evas_common_font_rgba_draw);
 }
 
-EAPI void
+EVAS_API void
 evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, RGBA_Gfx_Func func,
                          RGBA_Image *dst, RGBA_Draw_Context *dc,
                          int x, int y, const Evas_Text_Props *text_props)
@@ -421,7 +421,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
      }
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_font_draw_prepare_cutout(Cutout_Rects **reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func)
 {
    int im_w, im_h;
@@ -445,7 +445,7 @@ evas_common_font_draw_prepare_cutout(Cutout_Rects **reuse, RGBA_Image *dst, RGBA
 
 // this draws a compressed font glyph and decompresses on the fly as it
 // draws, saving memory bandwidth and providing speedups
-EAPI void
+EVAS_API void
 evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
                             RGBA_Draw_Context *dc,
                             RGBA_Image *dst_image, int dst_pitch,

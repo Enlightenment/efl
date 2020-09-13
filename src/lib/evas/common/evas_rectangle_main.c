@@ -4,12 +4,12 @@
 
 static void rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
-EAPI void
+EVAS_API void
 evas_common_rectangle_init(void)
 {
 }
 
-EAPI void
+EVAS_API void
 evas_common_rectangle_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, Evas_Common_Rectangle_Draw_Cb cb)
 {
    Cutout_Rect  *r;
@@ -48,13 +48,13 @@ evas_common_rectangle_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
 
-EAPI void
+EVAS_API void
 evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    evas_common_rectangle_draw_cb(dst, dc, x, y, w, h, rectangle_draw_internal);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_rectangle_draw_prepare(Cutout_Rects **reuse, const RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    if ((w <= 0) || (h <= 0)) return EINA_FALSE;
@@ -74,7 +74,7 @@ evas_common_rectangle_draw_prepare(Cutout_Rects **reuse, const RGBA_Image *dst, 
    return EINA_TRUE;
 }
 
-EAPI void
+EVAS_API void
 evas_common_rectangle_draw_do(const Cutout_Rects *reuse,
                               const Eina_Rectangle *clip,
                               RGBA_Image *dst, RGBA_Draw_Context *dc,
@@ -167,7 +167,7 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_rectangle_rgba_draw(RGBA_Image *dst, DATA32 color, int render_op, int x, int y, int w, int h, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    RGBA_Gfx_Func func;

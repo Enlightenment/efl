@@ -132,7 +132,7 @@ _smart_clipper_get(Evas_Smart_Data *o)
 }
 
 /* public funcs */
-EAPI void
+EVAS_API void
 evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
@@ -145,14 +145,14 @@ evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
      }
 }
 
-EAPI void *
+EVAS_API void *
 evas_object_smart_data_get(const Evas_Object *eo_obj)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
    return o->data;
 }
 
-EAPI const void *
+EVAS_API const void *
 evas_object_smart_interface_get(const Evas_Object *eo_obj,
                                 const char *name)
 {
@@ -176,7 +176,7 @@ evas_object_smart_interface_get(const Evas_Object *eo_obj,
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
                                      const Evas_Smart_Interface *iface)
 {
@@ -199,14 +199,14 @@ evas_object_smart_interface_data_get(const Evas_Object *eo_obj,
    return NULL;
 }
 
-EAPI Evas_Smart*
+EVAS_API Evas_Smart*
 evas_object_smart_smart_get(const Efl_Canvas_Group *eo_obj)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj, NULL);
    return obj->smart.smart;
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_member_add(Evas_Object *eo_obj, Evas_Object *smart_obj)
 {
    efl_canvas_group_member_add(smart_obj, eo_obj);
@@ -340,7 +340,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
      efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED, eo_obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_member_del(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj;
@@ -426,7 +426,7 @@ _efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *sd, Evas_O
    evas_object_mapped_clip_across_mark(eo_obj, obj);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_smart_type_check(const Evas_Object *eo_obj, const char *type)
 {
    const Evas_Smart_Class *sc;
@@ -455,7 +455,7 @@ evas_object_smart_type_check(const Evas_Object *eo_obj, const char *type)
    return type_check;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_smart_type_check_ptr(const Eo *eo_obj, const char* type)
 {
    Efl_Class *klass;
@@ -484,7 +484,7 @@ evas_object_smart_type_check_ptr(const Eo *eo_obj, const char* type)
    return type_check;
 }
 
-EAPI void
+EVAS_API void
 evas_smart_legacy_type_register(const char *type, const Efl_Class *klass)
 {
    eina_hash_set(_evas_smart_class_names_hash_table, type, klass);
@@ -555,7 +555,7 @@ _efl_canvas_group_group_member_is(const Eo *eo_obj, Evas_Smart_Data *pd EINA_UNU
    return (sub->smart.parent == eo_obj);
 }
 
-EAPI Eina_List*
+EVAS_API Eina_List*
 evas_object_smart_members_get(const Evas_Object *eo_obj)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
@@ -698,7 +698,7 @@ _evas_smart_class_ifaces_private_data_alloc(Evas_Object *eo_obj,
      }
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 {
    Evas_Object *eo_obj;
@@ -786,7 +786,7 @@ _evas_object_smart_move_relative_internal(Evas_Smart_Data *o, Evas_Coord dx, Eva
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord dy)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
@@ -1036,7 +1036,7 @@ evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s)
    if (s->smart_class->add) s->smart_class->add(eo_obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_callback_add(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func, const void *data)
 {
    evas_object_smart_callback_priority_add(eo_obj, event,
@@ -1072,7 +1072,7 @@ _smart_cb_check(Evas_Smart_Data *o, const char *event)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
@@ -1093,7 +1093,7 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
    efl_event_callback_priority_add(eo_obj, eo_desc, priority, _eo_evas_smart_cb, cb_info);
 }
 
-EAPI void *
+EVAS_API void *
 evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func)
 {
    _eo_evas_smart_cb_info *info;
@@ -1120,7 +1120,7 @@ evas_object_smart_callback_del(Evas_Object *eo_obj, const char *event, Evas_Smar
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas_Smart_Cb func, const void *data)
 {
    _eo_evas_smart_cb_info *info;
@@ -1147,7 +1147,7 @@ evas_object_smart_callback_del_full(Evas_Object *eo_obj, const char *event, Evas
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *event_info)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
@@ -1186,7 +1186,7 @@ _evas_object_smart_callback_call_internal(Evas_Object *eo_obj, const Efl_Event_D
    efl_event_callback_legacy_call(eo_obj, eo_desc, NULL);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_smart_callbacks_descriptions_set(Eo *eo_obj, const Evas_Smart_Cb_Description *descriptions)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, EINA_FALSE);
@@ -1213,7 +1213,7 @@ evas_object_smart_callbacks_descriptions_set(Eo *eo_obj, const Evas_Smart_Cb_Des
    return EINA_TRUE;
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_callbacks_descriptions_get(const Eo *eo_obj, const Evas_Smart_Cb_Description ***class_descriptions, unsigned int *class_count, const Evas_Smart_Cb_Description ***instance_descriptions, unsigned int *instance_count)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
@@ -1232,7 +1232,7 @@ evas_object_smart_callbacks_descriptions_get(const Eo *eo_obj, const Evas_Smart_
      *instance_count = o->callbacks_descriptions.size;
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_callback_description_find(const Eo *eo_obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description)
 {
    EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
@@ -2008,9 +2008,9 @@ _efl_canvas_group_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Sma
      }
    return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
 }
-EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_add)
-EOAPI EFL_VOID_FUNC_BODY(efl_canvas_group_del)
-EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), Eina_Bool enable)
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(efl_canvas_group_add)
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(efl_canvas_group_del)
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), Eina_Bool enable)
 
 #define EFL_CANVAS_GROUP_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_add, _efl_canvas_group_group_add), \

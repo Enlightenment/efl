@@ -35,7 +35,7 @@ efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output)
      e->engine.func->output_info_setup(output->info);
 }
 
-EAPI Efl_Canvas_Output *
+EVAS_API Efl_Canvas_Output *
 efl_canvas_output_add(Evas *canvas)
 {
    Efl_Canvas_Output *r;
@@ -67,7 +67,7 @@ efl_canvas_output_add(Evas *canvas)
    return r;
 }
 
-EAPI void
+EVAS_API void
 efl_canvas_output_del(Efl_Canvas_Output *output)
 {
    if (output->canvas)
@@ -93,7 +93,7 @@ efl_canvas_output_del(Efl_Canvas_Output *output)
    free(output);
 }
 
-EAPI void
+EVAS_API void
 efl_canvas_output_view_set(Efl_Canvas_Output *output,
                            Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
@@ -117,7 +117,7 @@ efl_canvas_output_view_set(Efl_Canvas_Output *output,
    // XXX: tell evas to add damage if viewport loc/size changed
 }
 
-EAPI void
+EVAS_API void
 efl_canvas_output_view_get(Efl_Canvas_Output *output,
                            Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -127,7 +127,7 @@ efl_canvas_output_view_get(Efl_Canvas_Output *output,
    if (h) *h = output->geometry.h;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
                                   Evas_Engine_Info *info)
 {
@@ -165,7 +165,7 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
    return !!output->output;
 }
 
-EAPI Evas_Engine_Info*
+EVAS_API Evas_Engine_Info*
 efl_canvas_output_engine_info_get(Efl_Canvas_Output *output)
 {
    Evas_Engine_Info *info = output->info;
@@ -176,14 +176,14 @@ efl_canvas_output_engine_info_get(Efl_Canvas_Output *output)
    return output->info;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 efl_canvas_output_lock(Efl_Canvas_Output *output)
 {
    output->lock++;
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 efl_canvas_output_unlock(Efl_Canvas_Output *output)
 {
    return !!(--output->lock);
