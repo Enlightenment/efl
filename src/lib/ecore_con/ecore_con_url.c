@@ -49,7 +49,6 @@ ecore_con_url_init(void)
    if (!ecore_con_init()) goto ecore_con_init_failed;
    if (!emile_init()) goto emile_init_failed;
    if (!emile_cipher_init()) goto emile_cipher_init_failed;
-   _c_init();
    ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
    ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
    ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
@@ -79,7 +78,6 @@ ecore_con_url_shutdown(void)
                           ECORE_CON_EVENT_URL_COMPLETE,
                           ECORE_CON_EVENT_URL_PROGRESS);
 
-   _c_shutdown();
    emile_shutdown(); /* no emile_cipher_shutdown(), handled here */
    ecore_con_shutdown();
    ecore_shutdown();
