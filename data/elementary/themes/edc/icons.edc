@@ -11,6 +11,13 @@
       } \
    }
    ICON("modules-files", "i-folder")
+   ICON("modules-settings", "i-gear")
+   ICON("modules-system", "i-computer")
+   ICON("modules-look", "i-palette")
+   ICON("modules-mobile", "i-mobile")
+   ICON("modules-utils", "i-tools")
+   ICON("modules-core", "i-atom")
+
    ICON("system-file-manager", "i-folder")
    ICON("folder", "i-folder")
    ICON("folder-image", "i-folder")
