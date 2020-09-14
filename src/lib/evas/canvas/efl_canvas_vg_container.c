@@ -192,6 +192,14 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
                              ptransform, ctransform, p_opacity, c_a, comp, comp_method);
      }
 
+   //If the container has transparency, it internally alpha blends with ector buffer.
+   //So ector buffer must be created synchronously.
+   if (c_a < 255 && vg_pd && vg_pd->object)
+     {
+        Efl_Canvas_Vg_Object_Data *od = efl_data_scope_get(vg_pd->object, EFL_CANVAS_VG_OBJECT_CLASS);
+        od->sync_render = EINA_TRUE;
+     }
+
    EINA_LIST_FOREACH(pd->children, l, child)
      {
         //Don't need to update composite nodes.

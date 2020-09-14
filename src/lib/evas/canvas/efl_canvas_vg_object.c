@@ -389,6 +389,8 @@ _efl_canvas_vg_object_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Da
    pd->obj = obj;
    pd->root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
 
+   pd->sync_render = EINA_FALSE;
+
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
 
    return eo_obj;
@@ -536,6 +538,8 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
 
    //ector begin - end for drawing composite images.
    _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, 255, NULL, 0);
+
+   if (pd->sync_render) do_async = EINA_FALSE;
 
    //Actual content drawing
    if (!ENFN->ector_begin(engine, buffer, context, ector, x, y, do_async))
