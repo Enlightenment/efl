@@ -653,6 +653,28 @@ EFL_START_TEST(elm_entry_keycode)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_textnodes_with_no_format)
+{
+   Evas_Object *win, *entry;
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   entry = elm_entry_add(win);
+   evas_object_show(entry);
+
+   elm_entry_entry_set(entry, "<br/><br/>");
+   Evas_Object *tb = elm_entry_textblock_get(entry);
+   Evas_Textblock_Cursor *c1 = evas_object_textblock_cursor_new(tb);
+   Evas_Textblock_Cursor *c2 = evas_object_textblock_cursor_new(tb);
+   evas_textblock_cursor_char_next(c2);
+   evas_textblock_cursor_range_delete(c1, c2);
+   elm_entry_cursor_pos_set(entry, 0);
+   ck_assert(elm_entry_cursor_down(entry));
+
+   evas_object_del(entry);
+   evas_object_del(win);
+}
+EFL_END_TEST
+
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_legacy_type_check);
@@ -674,4 +696,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_test_text_class);
    tcase_add_test(tc, elm_entry_test_burmese);
    tcase_add_test(tc, elm_entry_keycode);
+   tcase_add_test(tc, elm_entry_textnodes_with_no_format);
 }
