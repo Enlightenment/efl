@@ -57,6 +57,7 @@ Fixes:
    * elm icon/thumb - fix handling of a wider range of video extns
    * edje - calc - handle swallow disappearing mid-calc due to callabcks
    * ecore drm - increase timeout for flips from 0.05 to 2.0 sec
+   * docs: Correct the mismatched group name in Evas.
 
 Changes since 1.23.0:
 ---------------------
