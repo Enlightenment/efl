@@ -7,16 +7,16 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:export-ydpi="48"
-   inkscape:export-xdpi="48"
-   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/speaker-040.png"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="speaker.svg"
-   viewBox="0 0 80 80"
-   height="80"
-   width="80"
+   version="1.1"
    id="svg2"
-   version="1.1">
+   width="80"
+   height="80"
+   viewBox="0 0 80 80"
+   sodipodi:docname="speaker.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/speaker-040.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -32,101 +32,86 @@
   <defs
      id="defs6">
     <rect
-       id="rect878"
-       height="30"
-       width="40"
+       x="20"
        y="20"
-       x="20" />
-    <rect
-       id="rect872"
-       height="30"
        width="40"
+       height="30"
+       id="rect878" />
+    <rect
+       x="20"
        y="50"
-       x="20" />
-    <rect
-       id="rect864"
-       height="30"
        width="40"
-       y="20"
-       x="20" />
-    <rect
-       id="rect858"
        height="30"
-       width="40"
-       y="20"
-       x="20" />
+       id="rect872" />
     <rect
-       id="rect852"
-       height="30"
-       width="40"
+       x="20"
        y="20"
-       x="20" />
+       width="40"
+       height="30"
+       id="rect864" />
+    <rect
+       x="20"
+       y="20"
+       width="40"
+       height="30"
+       id="rect858" />
+    <rect
+       x="20"
+       y="20"
+       width="40"
+       height="30"
+       id="rect852" />
   </defs>
   <sodipodi:namedview
-     borderlayer="true"
-     inkscape:snap-nodes="true"
-     inkscape:snap-others="false"
-     inkscape:bbox-nodes="true"
-     inkscape:snap-bbox="true"
-     showguides="false"
-     inkscape:current-layer="g10"
-     inkscape:window-maximized="1"
-     inkscape:window-y="0"
-     inkscape:window-x="0"
-     inkscape:cy="40.032949"
-     inkscape:cx="40"
-     inkscape:zoom="15.175"
-     showgrid="true"
-     id="namedview4"
-     inkscape:window-height="1377"
-     inkscape:window-width="2560"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0"
-     guidetolerance="10"
-     gridtolerance="10"
-     objecttolerance="10"
-     borderopacity="1"
-     bordercolor="#666666"
+     inkscape:document-rotation="0"
      pagecolor="#404040"
-     inkscape:document-rotation="0">
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview4"
+     showgrid="true"
+     inkscape:zoom="10.4625"
+     inkscape:cx="40"
+     inkscape:cy="40"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g10"
+     showguides="false"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-others="false"
+     inkscape:snap-nodes="true"
+     borderlayer="true">
     <inkscape:grid
-       id="grid837"
-       type="xygrid" />
+       type="xygrid"
+       id="grid837" />
   </sodipodi:namedview>
   <g
-     id="g10"
+     inkscape:groupmode="layer"
      inkscape:label="Image"
-     inkscape:groupmode="layer">
+     id="g10">
     <circle
-       style="opacity:1;fill:#202020;fill-opacity:1;stroke:none;stroke-width:0.208333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       r="26"
+       cy="40"
+       cx="40"
        id="path4138"
-       cx="40"
-       cy="40"
-       r="30" />
-    <path
-       id="path26847"
-       d="M 40,40 60,60 40,69 20,60 Z"
-       style="opacity:1;fill:#262626;fill-opacity:1;stroke:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <path
-       sodipodi:nodetypes="ccccc"
-       style="opacity:1;fill:#2c2c2c;fill-opacity:1;stroke:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 40,40 50,65 40,69 30,65 Z"
-       id="path26851" />
+       style="opacity:1;fill:#202020;fill-opacity:1;stroke:none;stroke-width:0.180555;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <circle
-       style="opacity:1;fill:#303030;fill-opacity:1;stroke:none;stroke-width:0.208333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       r="10"
+       cy="40"
+       cx="40"
        id="path4207"
-       cx="40"
-       cy="40"
-       r="10" />
+       style="opacity:1;fill:#303030;fill-opacity:1;stroke:none;stroke-width:0.208333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
-       style="opacity:1;fill:#303030;fill-opacity:1;stroke:none;stroke-width:0.208333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path4228"
        d="M 40.000001,10 A 30.000001,30.000001 0 0 0 10,39.999999 30.000001,30.000001 0 0 0 40.000001,70 30.000001,30.000001 0 0 0 69.999999,39.999999 30.000001,30.000001 0 0 0 40.000001,10 Z m 0,6.666666 A 23.333334,23.333332 0 0 1 63.333334,39.999999 23.333334,23.333332 0 0 1 40.000001,63.333333 23.333334,23.333332 0 0 1 16.666667,39.999999 23.333334,23.333332 0 0 1 40.000001,16.666666 Z"
-       id="path4228" />
-    <circle
-       r="2"
-       cy="34"
-       cx="40"
-       id="circle26849"
-       style="opacity:1;fill:#ffffff;fill-opacity:0.05;stroke:none;stroke-width:0.0416666;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:1;fill:#303030;fill-opacity:1;stroke:none;stroke-width:0.208333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
