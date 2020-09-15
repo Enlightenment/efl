@@ -36,7 +36,7 @@ typedef struct _Ecore_Con_Reply Ecore_Con_Reply;
  *
  * @ingroup (null)_Group
  */
-EAPI void ecore_con_eet(Ecore_Con_Eet_Base *obj, const char *name, Eet_Data_Descriptor *edd);
+ECORE_CON_API void ecore_con_eet(Ecore_Con_Eet_Base *obj, const char *name, Eet_Data_Descriptor *edd);
 
 
 

@@ -151,22 +151,22 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Client_Upgrade, ecore_con_event_client
 #undef GENERIC_ALLOC_FREE_HEADER
 
 /* shared */
-EAPI int ECORE_CON_EVENT_SERVER_DEL = 0;
-EAPI int ECORE_CON_EVENT_SERVER_ERROR = 0;
+ECORE_CON_API int ECORE_CON_EVENT_SERVER_DEL = 0;
+ECORE_CON_API int ECORE_CON_EVENT_SERVER_ERROR = 0;
 /* ecore_con_server_add() */
-EAPI int ECORE_CON_EVENT_CLIENT_ADD = 0;
-EAPI int ECORE_CON_EVENT_CLIENT_DEL = 0;
+ECORE_CON_API int ECORE_CON_EVENT_CLIENT_ADD = 0;
+ECORE_CON_API int ECORE_CON_EVENT_CLIENT_DEL = 0;
 /* ecore_con_server_connect() */
-EAPI int ECORE_CON_EVENT_SERVER_ADD = 0;
-EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
-EAPI int ECORE_CON_EVENT_SERVER_WRITE = 0;
-EAPI int ECORE_CON_EVENT_PROXY_BIND = 0; /* we're not supporting proxy bind, keep only for ABI */
-EAPI int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
+ECORE_CON_API int ECORE_CON_EVENT_SERVER_ADD = 0;
+ECORE_CON_API int ECORE_CON_EVENT_SERVER_DATA = 0;
+ECORE_CON_API int ECORE_CON_EVENT_SERVER_WRITE = 0;
+ECORE_CON_API int ECORE_CON_EVENT_PROXY_BIND = 0; /* we're not supporting proxy bind, keep only for ABI */
+ECORE_CON_API int ECORE_CON_EVENT_SERVER_UPGRADE = 0;
 /* for each client from ECORE_CON_EVENT_CLIENT_ADD */
-EAPI int ECORE_CON_EVENT_CLIENT_DATA = 0;
-EAPI int ECORE_CON_EVENT_CLIENT_WRITE = 0;
-EAPI int ECORE_CON_EVENT_CLIENT_ERROR = 0;
-EAPI int ECORE_CON_EVENT_CLIENT_UPGRADE = 0;
+ECORE_CON_API int ECORE_CON_EVENT_CLIENT_DATA = 0;
+ECORE_CON_API int ECORE_CON_EVENT_CLIENT_WRITE = 0;
+ECORE_CON_API int ECORE_CON_EVENT_CLIENT_ERROR = 0;
+ECORE_CON_API int ECORE_CON_EVENT_CLIENT_UPGRADE = 0;
 
 static Eina_List *_servers = NULL;
 static Eina_List *_ecore_con_lookups = NULL;
@@ -664,7 +664,7 @@ ecore_con_client_add(Ecore_Con_Server *svr, Eo *socket)
    return cl;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
 {
    Eina_Error err;
@@ -686,28 +686,28 @@ ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
    return slice.len;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_client_connected_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl, EINA_FALSE);
    return !efl_io_closer_closed_get(cl->socket);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl);
    efl_io_buffered_stream_timeout_inactivity_set(cl->socket, timeout);
 }
 
-EAPI double
+ECORE_CON_API double
 ecore_con_client_timeout_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl, -1.0);
    return efl_io_buffered_stream_timeout_inactivity_get(cl->socket);
 }
 
-EAPI void *
+ECORE_CON_API void *
 ecore_con_client_del(Ecore_Con_Client *cl)
 {
    const void *data;
@@ -720,7 +720,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
    return (void *)data;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_client_data_set(Ecore_Con_Client *cl,
                           const void *data)
 {
@@ -728,42 +728,42 @@ ecore_con_client_data_set(Ecore_Con_Client *cl,
    cl->data = data;
 }
 
-EAPI void *
+ECORE_CON_API void *
 ecore_con_client_data_get(Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, NULL);
    return (void *)cl->data;
 }
 
-EAPI const char *
+ECORE_CON_API const char *
 ecore_con_client_ip_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, NULL);
    return cl->ip;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_client_port_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, -1);
    return cl->port;
 }
 
-EAPI Ecore_Con_Server *
+ECORE_CON_API Ecore_Con_Server *
 ecore_con_client_server_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, NULL);
    return cl->svr;
 }
 
-EAPI double
+ECORE_CON_API double
 ecore_con_client_uptime_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, 0.0);
    return ecore_time_get() - cl->start_time;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_client_flush(Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl);
@@ -782,7 +782,7 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
    efl_net_socket_tcp_cork_set(inner_socket, EINA_TRUE);
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_client_fd_get(const Ecore_Con_Client *cl)
 {
    ECORE_CON_CLIENT_CHECK_RETURN(cl, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
@@ -896,7 +896,7 @@ _ecore_con_server_job_schedule(Ecore_Con_Server *svr, Eo *loop,
    eina_future_then(efl_loop_job(loop), cb, svr, &svr->ssl.job);
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type compl_type)
 {
    Ecore_Con_Server *svr;
@@ -1692,7 +1692,7 @@ _ecore_con_server_server_ssl_job(void *data, const Eina_Value v,
  * using ecore_con_server_add()
  */
 
-EAPI Ecore_Con_Server *
+ECORE_CON_API Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type compl_type,
                      const char *name,
                      int port,
@@ -2161,7 +2161,7 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
  * example server using ecore_con_server_connect().
  */
 
-EAPI Ecore_Con_Server *
+ECORE_CON_API Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type compl_type,
                          const char *name,
                          int port,
@@ -2256,14 +2256,14 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    return NULL;
 }
 
-EAPI const char *
+ECORE_CON_API const char *
 ecore_con_server_name_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, NULL);
    return svr->name;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
                                   int client_limit,
                                   char reject_excess_clients)
@@ -2273,14 +2273,14 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
    efl_net_server_clients_limit_set(svr->server, client_limit, reject_excess_clients);
 }
 
-EAPI const Eina_List *
+ECORE_CON_API const Eina_List *
 ecore_con_server_clients_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, NULL);
    return svr->clients;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr);
@@ -2291,14 +2291,14 @@ ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout)
    efl_io_buffered_stream_timeout_inactivity_set(svr->dialer, timeout);
 }
 
-EAPI double
+ECORE_CON_API double
 ecore_con_server_timeout_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, -1.0);
    return svr->timeout;
 }
 
-EAPI void *
+ECORE_CON_API void *
 ecore_con_server_del(Ecore_Con_Server *svr)
 {
    const void *data;
@@ -2311,14 +2311,14 @@ ecore_con_server_del(Ecore_Con_Server *svr)
    return (void *)data;
 }
 
-EAPI void *
+ECORE_CON_API void *
 ecore_con_server_data_get(Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, NULL);
    return (void *)svr->data;
 }
 
-EAPI void *
+ECORE_CON_API void *
 ecore_con_server_data_set(Ecore_Con_Server *svr,
                           void *data)
 {
@@ -2330,7 +2330,7 @@ ecore_con_server_data_set(Ecore_Con_Server *svr,
    return (void *)old;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_server_connected_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, EINA_FALSE);
@@ -2343,14 +2343,14 @@ ecore_con_server_connected_get(const Ecore_Con_Server *svr)
    return EINA_TRUE;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_server_port_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, -1);
    return svr->port;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
 {
    Eina_Error err;
@@ -2394,21 +2394,21 @@ ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
    return slice.len;
 }
 
-EAPI const char *
+ECORE_CON_API const char *
 ecore_con_server_ip_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, NULL);
    return svr->ip;
 }
 
-EAPI double
+ECORE_CON_API double
 ecore_con_server_uptime_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, 0.0);
    return ecore_time_get() - svr->start_time;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr);
@@ -2431,7 +2431,7 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
    efl_net_socket_tcp_cork_set(inner_dialer, EINA_TRUE);
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_server_fd_get(const Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
@@ -2464,7 +2464,7 @@ ecore_con_server_fd_get(const Ecore_Con_Server *svr)
    return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr, const char *cert)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, EINA_FALSE);
@@ -2479,7 +2479,7 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr, const char *cert)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr, const char *privkey)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, EINA_FALSE);
@@ -2494,7 +2494,7 @@ ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr, const char *privkey)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const char *crl)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, EINA_FALSE);
@@ -2509,7 +2509,7 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const char *crl)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *cafile)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, EINA_FALSE);
@@ -2524,7 +2524,7 @@ ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *cafile)
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_ssl_server_verify(Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr);
@@ -2544,7 +2544,7 @@ ecore_con_ssl_server_verify(Ecore_Con_Server *svr)
    svr->ssl.verify = EINA_TRUE;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr);
@@ -2565,7 +2565,7 @@ ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr)
    svr->ssl.verify_basic = EINA_TRUE;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr);
@@ -2579,14 +2579,14 @@ ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name)
    eina_stringshare_replace(&svr->ssl.verify_name, name);
 }
 
-EAPI const char *
+ECORE_CON_API const char *
 ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr)
 {
    ECORE_CON_SERVER_CHECK_RETURN(svr, NULL);
    return svr->ssl.verify_name ? svr->ssl.verify_name : svr->name;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type compl_type)
 {
    double start;
@@ -2674,7 +2674,7 @@ _ecore_con_lookup_done_cb(void *data, const char *host, const char *port EINA_UN
  *  - doesn't return a handle to cancel (likely to access memory after free)
  *  - doesn't report errors
  */
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
 {
    Ecore_Con_Lookup_Ctx *ctx;

@@ -19,6 +19,6 @@ typedef Eo Ecore_Con_Eet_Client_Obj;
  */
 #define ECORE_CON_EET_CLIENT_OBJ_CLASS ecore_con_eet_client_obj_class_get()
 
-EWAPI const Efl_Class *ecore_con_eet_client_obj_class_get(void) EINA_CONST;
+ECORE_CON_API ECORE_CON_API_WEAK const Efl_Class *ecore_con_eet_client_obj_class_get(void) EINA_CONST;
 
 #endif
