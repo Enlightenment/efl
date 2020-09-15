@@ -498,6 +498,7 @@ _node_style_free(Svg_Style_Property *style)
    eina_stringshare_del(style->fill.paint.url);
    _svg_style_gradient_free(style->stroke.paint.gradient);
    eina_stringshare_del(style->stroke.paint.url);
+   if (style->stroke.dash) free(style->stroke.dash);
    free(style);
 }
 
@@ -770,6 +771,8 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    efl_gfx_shape_stroke_cap_set(vg, style->stroke.cap);
    efl_gfx_shape_stroke_join_set(vg, style->stroke.join);
    efl_gfx_shape_stroke_scale_set(vg, style->stroke.scale);
+   if (style->stroke.dash && style->stroke.dash_count > 0)
+     efl_gfx_shape_stroke_dash_set(vg, style->stroke.dash, style->stroke.dash_count);
 
    // if stroke property is NULL then do nothing
    if (style->stroke.paint.none)
