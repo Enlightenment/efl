@@ -16,7 +16,9 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
-#include <Efreet_Mime.h>
+#ifdef HAVE_EFREET
+# include <Efreet_Mime.h>
+#endif
 #include "eio_private.h"
 
 /*============================================================================*
@@ -317,7 +319,9 @@ eio_init(void)
 
    eio_monitor_init();
 
+#ifdef HAVE_EFREET
    efreet_mime_init();
+#endif
 
    io_manager = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
    efl_provider_register(efl_main_loop_get(), EFL_IO_MANAGER_CLASS, io_manager);
@@ -371,7 +375,9 @@ eio_shutdown(void)
           CRI("We couldn't terminate in less than 30s some pending IO. This can led to some crash.");
      }
 
+#ifdef HAVE_EFREET
    efreet_mime_shutdown();
+#endif
 
    eio_monitor_shutdown();
 

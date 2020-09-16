@@ -2111,6 +2111,7 @@ _icon_standard_set(Evas_Object *obj, const char *name)
    return EINA_FALSE;
 }
 
+#ifdef HAVE_EFREET
 static Eina_Bool
 _icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
 {
@@ -2158,6 +2159,7 @@ _icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
      }
    return EINA_FALSE;
 }
+#endif
 
 static inline int
 _icon_size_min_get(Evas_Object *image)
@@ -2200,6 +2202,7 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
    if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
      {
         ret = _icon_standard_set(obj, name);
+#ifdef HAVE_EFREET
         if (ret && fdo) *fdo = EINA_FALSE;
         if (!ret)
           {
@@ -2211,6 +2214,7 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
      {
         ret = _icon_freedesktop_set(obj, name, _icon_size_min_get(obj));
         if (ret && fdo) *fdo = EINA_TRUE;
+#endif
      }
 
    if (ret)

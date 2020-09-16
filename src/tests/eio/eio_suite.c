@@ -7,7 +7,9 @@
 #include "eio_suite.h"
 #include "../efl_check.h"
 #include <Eio.h>
-#include <Efreet.h>
+#ifdef HAVE_EFREET
+# include <Efreet.h>
+#endif
 
 EFL_START_TEST(eio_init_test)
 {
@@ -52,7 +54,9 @@ main(int argc, char **argv)
 {
    int failed_count;
 
+#ifdef HAVE_EFREET
    efreet_cache_disable();
+#endif
    if (!_efl_test_option_disp(argc, argv, etc))
      return 0;
 

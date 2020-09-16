@@ -15,5 +15,6 @@
 #define EFL_BUILD_ID "@EFL_BUILD_ID@"
 
 #mesondefine HAVE_ETHUMB
+#mesondefine HAVE_EFREET
 
 #endif

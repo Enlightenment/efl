@@ -3,9 +3,13 @@ edje_deps = [
   eet, evas, ecore_evas,
   ecore_file, ecore_input,
   ecore_imf, ecore_imf_evas,
-  embryo, efreet, eio, intl,
+  embryo, eio, intl,
   buildsystem
 ]
+
+if get_option('efreet')
+  edje_deps += efreet
+endif
 
 edje_pub_deps = [evas, eo, efl]
 edje_ext_deps = [m, lua, buildsystem_simple]

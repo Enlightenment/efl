@@ -710,7 +710,14 @@ _grid_item_create(Grid *g,
    evas_object_pass_events_set(gi->img, EINA_TRUE);
    evas_object_stack_below(gi->img, g->wsd->sep_maps_overlays);
 
-   snprintf(buf, sizeof(buf), "%s" CACHE_TILE_ROOT, efreet_cache_home_get(),
+   char cache_dir[30];
+#ifdef HAVE_EFREET
+   snprintf(cache_dir, 30, "%s", efreet_cache_home_get());
+#else
+   snprintf(cache_dir, 30, "%s/.cache", eina_environment_home_get());
+#endif
+
+   snprintf(buf, sizeof(buf), "%s" CACHE_TILE_ROOT, cache_dir,
             g->wsd->id, g->zoom, x);
 
    snprintf(buf2, sizeof(buf2), CACHE_TILE_PATH, buf, y);
@@ -3212,8 +3219,14 @@ _prepare_download()
 {
    char fname[PATH_MAX];
 
-   snprintf(fname, sizeof(fname), "%s" CACHE_NAME_ROOT,
-            efreet_cache_home_get());
+   char cache_dir[30];
+#ifdef HAVE_EFREET
+   snprintf(cache_dir, 30, "%s", efreet_cache_home_get());
+#else
+   snprintf(cache_dir, 30, "%s/.cache", eina_environment_home_get());
+#endif
+
+   snprintf(fname, sizeof(fname), "%s" CACHE_NAME_ROOT, cache_dir);
    if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
    return strdup(fname);
 }
@@ -4256,7 +4269,14 @@ _elm_map_efl_canvas_group_group_del(Eo *obj, Elm_Map_Data *sd)
    {
       char buf[4096];
 
-      snprintf(buf, sizeof(buf), "%s" CACHE_ROOT, efreet_cache_home_get());
+
+      char cache_dir[30];
+#ifdef HAVE_EFREET
+      snprintf(cache_dir, 30, "%s", efreet_cache_home_get());
+#else
+      snprintf(cache_dir, 30, "%s/.cache", eina_environment_home_get());
+#endif
+      snprintf(buf, sizeof(buf), "%s" CACHE_ROOT, cache_dir);
       ecore_file_recursive_rm(buf);
    }
 
@@ -4651,8 +4671,14 @@ _elm_map_route_add(Eo *obj, Elm_Map_Data *sd, Elm_Map_Route_Type type, Elm_Map_R
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_route, NULL);
 
    {
+      char cache_dir[30];
+#ifdef HAVE_EFREET
+      snprintf(cache_dir, 30, "%s", efreet_cache_home_get());
+#else
+      snprintf(cache_dir, 30, "%s/.cache", eina_environment_home_get());
+#endif
       snprintf(fname, sizeof(fname), "%s" CACHE_ROUTE_ROOT,
-               efreet_cache_home_get());
+               cache_dir);
       if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
    }
 

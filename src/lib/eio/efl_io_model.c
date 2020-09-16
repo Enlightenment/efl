@@ -10,7 +10,9 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Eo.h>
-#include <Efreet_Mime.h>
+#ifdef HAVE_EFREET
+# include <Efreet_Mime.h>
+#endif
 
 #include "Eio.h"
 
@@ -478,7 +480,9 @@ _eio_build_mime_now(Eo *model, void *data, const Eina_Value v)
         return eina_future_as_value(efl_future_then(model, f));
      }
 
+#ifdef HAVE_EFREET
    pd->mime_type = efreet_mime_type_get(pd->path);
+#endif
 
    efl_model_properties_changed(model, "mime_type");
    delayed_one = EINA_TRUE;

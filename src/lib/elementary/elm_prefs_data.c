@@ -347,10 +347,17 @@ elm_prefs_data_new(const char *data_file,
    if (mode == EET_FILE_MODE_READ)
      prefs_data->autosave = EINA_FALSE;
 
+   char config_dir[30];
+#ifdef HAVE_EFREET
+   snprintf(config_dir, 30, "%s", efreet_config_home_get());
+#else
+   snprintf(config_dir, 30, "%s/.config", eina_environment_home_get());
+#endif
+
    if (data_file) prefs_data->data_file = eina_stringshare_add(data_file);
    else
      prefs_data->data_file = eina_stringshare_printf
-     ("%s/%s", efreet_config_home_get(), _elm_appname);
+     ("%s/%s", config_dir, _elm_appname);
 
    prefs_data->key = eina_stringshare_add(key ? key : "main");
 

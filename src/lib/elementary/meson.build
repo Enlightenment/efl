@@ -952,9 +952,13 @@ elementary_src = files([
   'efl_ui_spotlight_animation_manager.c',
 ])
 
-elementary_deps = [emile, eo, efl, edje, emotion, ecore_imf, ecore_con, eldbus, efreet, eio, buildsystem]
+elementary_deps = [emile, eo, efl, edje, emotion, ecore_imf, ecore_con, eldbus, eio, buildsystem]
 elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_input, ecore_imf, ecore_con,
-                       edje, eldbus, efreet, efl]
+                       edje, eldbus, efl]
+if get_option('efreet')
+  elementary_deps += efreet
+  elementary_pub_deps += efreet
+endif
 elementary_ext_deps = [atspi, dl, intl, buildsystem_simple]
 
 if get_option('ethumb')
@@ -973,7 +977,9 @@ if sys_windows == false
   elm_options.set('ELM_UNIX', '1')
 endif
 
-elm_options.set('ELM_EFREET', '1')
+if get_option('efreet')
+  elm_options.set('ELM_EFREET', '1')
+endif
 
 if config_h.has('HAVE_ALLOCA_H')
   elm_options.set('ELM_ALLOCA_H', '1')

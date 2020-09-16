@@ -5,7 +5,9 @@
 #include "edje_suite.h"
 #include "../efl_check.h"
 #include <Ecore_Evas.h>
-#include <Efreet.h>
+#ifdef HAVE_EFREET
+# include <Efreet.h>
+#endif
 #include <Ecore.h>
 
 static const Efl_Test_Case etc[] = {
@@ -74,7 +76,9 @@ main(int argc, char **argv)
    putenv("EFL_RUN_IN_TREE=1");
 #endif
    ecore_app_no_system_modules();
+#ifdef HAVE_EFREET
    efreet_cache_disable();
+#endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
                                            "Edje", etc, SUITE_INIT_FN(edje), SUITE_SHUTDOWN_FN(edje));

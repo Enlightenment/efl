@@ -64,7 +64,10 @@ elif sys_bsd == true
   eio_src += files(['eio_monitor_kevent.c'])
 endif
 
-eio_deps = [ecore, ecore_file, eet, eo, eina, efl, emile, efreet]
+eio_deps = [ecore, ecore_file, eet, eo, eina, efl, emile]
+if get_option('efreet')
+  eio_deps += efreet
+endif
 eio_pub_deps = [eina, eet]
 eio_ext_deps = [m]
 

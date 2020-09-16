@@ -410,7 +410,14 @@ _edje_extract_mo_files(Edje_File *edf)
    unsigned int i;
    int len;
 
-   cache_path = efreet_cache_home_get();
+   char cache_dir[30];
+#ifdef HAVE_EFREET
+   snprintf(cache_dir, 30, "%s", efreet_cache_home_get());
+#else
+   snprintf(cache_dir, 30, "%s/.cache", eina_environment_home_get());
+#endif
+
+   cache_path = cache_dir;
 
    t = eina_file_mtime_get(edf->f);
    sz = eina_file_size_get(edf->f);

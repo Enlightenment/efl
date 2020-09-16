@@ -15,10 +15,15 @@ eio_suite_src = [
   'eio_suite.h'
 ]
 
+eio_test_deps = []
+if get_option('efreet')
+  eio_test_deps += efreet
+endif
+
 eio_suite = executable('eio_suite',
   eio_suite_src,
   include_directories : [config_dir],
-  dependencies: [eo, ecore, eina, ecore_file, eio, check, efreet],
+  dependencies: [eo, ecore, eina, ecore_file, eio, check] + eio_test_deps,
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']

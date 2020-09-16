@@ -1577,6 +1577,7 @@ _theme_sel(void            *data EINA_UNUSED,
    printf("not implemented\n");
    }*/
 
+#ifdef ELM_EFREET
 static void
 _icon_preview_icon_add(const char *icon, const char *theme)
 {
@@ -1594,6 +1595,7 @@ _icon_preview_icon_add(const char *icon, const char *theme)
    if (strcmp(theme, ELM_CONFIG_ICON_THEME_ELEMENTARY))
      elm_image_file_set(ic, efreet_icon_path_find(theme, icon, 48), NULL);
 }
+#endif
 
 
 static void
@@ -1611,8 +1613,10 @@ _icon_preview_update(Evas_Object *win)
    const char *theme = evas_object_data_get(win, "icon_theme");
 
    elm_box_clear(icon_preview_frame);
+#ifdef ELM_EFREET
    for (example_icon = example_icons; !!*example_icon; example_icon++)
      _icon_preview_icon_add(*example_icon, theme);
+#endif
 }
 
 static void
@@ -1672,15 +1676,18 @@ _icon_theme_sel(void *data, Evas_Object *obj,
 static Eina_Bool
 _icon_theme_valid(const char *theme)
 {
-   const char *icon_path;
+   const char *icon_path = NULL;
 
+#ifdef ELM_EFREET
    icon_path = efreet_icon_path_find(theme, "folder", 48);
+#endif
    return !!icon_path;
 }
 
 static int
 _icon_theme_list_sort(const void *data1, const void *data2)
 {
+#ifdef ELM_EFREET
    const Efreet_Icon_Theme *t1, *t2;
 
    t1 = data1;
@@ -1690,6 +1697,9 @@ _icon_theme_list_sort(const void *data1, const void *data2)
    if (!t2->name.name) return -1;
 
    return strcmp(t1->name.name, t2->name.name);
+#else
+   return 0;
+#endif
 }
 
 static void
@@ -2391,7 +2401,9 @@ _status_config_icons(Evas_Object *win,
 {
    Evas_Object *tb, *rc, *sp, *ck, *li, *bx, *ic, *pd, *fr, *bt;
    Eina_List *list, *l;
+#ifdef ELM_EFREET
    const Efreet_Icon_Theme *th;
+#endif
    Elm_Object_Item *list_it, *def_it = NULL;
 
    tb = elm_table_add(win);
@@ -2435,6 +2447,7 @@ _status_config_icons(Evas_Object *win,
 
    evas_object_data_set(win, "icon_theme", elm_config_icon_theme_get());
 
+#ifdef ELM_EFREET
    list = efreet_icon_theme_list_get();
    list = eina_list_sort(list, eina_list_count(list), _icon_theme_list_sort);
    EINA_LIST_FOREACH(list, l, th)
@@ -2452,6 +2465,8 @@ _status_config_icons(Evas_Object *win,
         if (!strcmp(elm_config_icon_theme_get(), th->name.internal))
           elm_list_item_selected_set(list_it, EINA_TRUE);
      }
+#endif
+
    if (!elm_list_selected_items_get(li))
      elm_list_item_selected_set(def_it, EINA_TRUE);
 

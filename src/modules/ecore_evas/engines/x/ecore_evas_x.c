@@ -13,7 +13,9 @@
 
 #include <Ecore_X.h>
 #include <Ecore_X_Atoms.h>
-#include <Efreet.h>
+#ifdef HAVE_EFREET
+# include <Efreet.h>
+#endif
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 # include <Evas_Engine_Software_X11.h>
@@ -3865,6 +3867,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
    EINA_SAFETY_ON_NULL_GOTO(ev->data, err);
    if (eina_streq(mime_type, "text/uri-list"))
      {
+#ifdef HAVE_EFREET
         Ecore_X_Selection_Data_Files *files = ev->data;
         Efreet_Uri *uri;
         Eina_Strbuf *strbuf;
@@ -3889,6 +3892,7 @@ _deliver_content(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Evas_S
           }
         result = _create_delivery_content(eina_strbuf_length_get(strbuf) + 1, eina_strbuf_string_get(strbuf), mime_type);
         eina_strbuf_free(strbuf);
+#endif
      }
    else if (eina_str_has_prefix(mime_type,"text"))
      {

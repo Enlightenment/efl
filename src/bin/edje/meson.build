@@ -5,10 +5,14 @@ edje_bin_deps = [
   lua, eet, evas,
   ecore_file, ecore_input,
   ecore_imf, ecore_imf_evas,
-  embryo, efreet, eio,
+  embryo, eio,
   edje, ecore_evas,
   intl,
 ]
+
+if get_option('efreet')
+  edje_bin_deps += efreet
+endif
 
 edje_cc_src = [
   'edje_multisense_convert.h',

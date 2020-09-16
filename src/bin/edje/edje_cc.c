@@ -151,7 +151,9 @@ main(int argc, char **argv)
    setlocale(LC_NUMERIC, "C");
 
    ecore_app_no_system_modules();
+#ifdef HAVE_EFREET
    efreet_cache_disable();
+#endif
 
    if (!eina_init())
      return -1;

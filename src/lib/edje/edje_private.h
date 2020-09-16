@@ -53,7 +53,9 @@
 # include <Ecore_IMF_Evas.h>
 #endif
 #include <Embryo.h>
-#include <Efreet.h>
+#ifdef HAVE_EFREET
+# include <Efreet.h>
+#endif
 
 #ifdef HAVE_EIO
 # include <Eio.h>

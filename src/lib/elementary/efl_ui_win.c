@@ -4676,6 +4676,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
           }
         if (((!sd->icon_name) || (!set)) && _elm_appname)
           {
+#ifdef HAVE_EFREET
              Efreet_Desktop *d;
              d = efreet_util_desktop_exec_find(_elm_appname);
              if (d)
@@ -4686,6 +4687,7 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
                     efl_ui_image_icon_set(sd->icon, d->icon);
                   efreet_desktop_free(d);
                }
+#endif
           }
         efl_access_object_access_type_set(sd->icon, EFL_ACCESS_TYPE_DISABLED);
      }

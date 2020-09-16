@@ -702,6 +702,7 @@ ELM_API Eina_Bool
 elm_need_efreet(void)
 {
    if (_elm_need_efreet) return EINA_TRUE;
+#ifdef HAVE_EFREET
    if (!efreet_init()) return EINA_FALSE;
    if (!efreet_mime_init())
      {
@@ -729,6 +730,7 @@ elm_need_efreet(void)
           }
      }
     */
+#endif
    return EINA_TRUE;
 }
 
@@ -737,9 +739,11 @@ _elm_unneed_efreet(void)
 {
    if (!_elm_need_efreet) return;
    _elm_need_efreet = EINA_FALSE;
+#ifdef HAVE_EFREET
    efreet_trash_shutdown();
    efreet_mime_shutdown();
    efreet_shutdown();
+#endif
 }
 
 ELM_API void

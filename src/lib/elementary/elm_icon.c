@@ -271,9 +271,9 @@ _icon_thumb_apply_cb(void *data,
 
    return ECORE_CALLBACK_RENEW;
 }
-
 #endif
 
+#ifdef HAVE_EFREET
 static Eina_Bool
 _icon_freedesktop_set(Evas_Object *obj,
                       const char *theme,
@@ -298,6 +298,7 @@ _icon_freedesktop_set(Evas_Object *obj,
      }
    return EINA_FALSE;
 }
+#endif
 
 static void
 _edje_signal_callback(void *data,
@@ -439,6 +440,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
    if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
      {
         ret = _icon_standard_set(obj, name);
+#ifdef HAVE_EFREET
         if (ret && fdo) *fdo = EINA_FALSE;
 
         if (!ret)
@@ -451,6 +453,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
      {
         ret = _icon_freedesktop_set(obj, NULL, name, _icon_size_min_get(obj));
         if (ret && fdo) *fdo = EINA_TRUE;
+#endif
      }
 
    if (ret)

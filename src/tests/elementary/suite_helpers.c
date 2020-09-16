@@ -327,7 +327,9 @@ suite_setup(Eina_Bool legacy)
 
    main_pid = getpid();
    ecore_app_no_system_modules();
+#ifdef HAVE_EFREET
    efreet_cache_disable();
+#endif
 
    if (legacy)
      failed_count = _efl_suite_build_and_run(0, NULL,

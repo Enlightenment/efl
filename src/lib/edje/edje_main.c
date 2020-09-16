@@ -75,11 +75,13 @@ edje_init(void)
         goto shutdown_eet;
      }
 
+#ifdef HAVE_EFREET
    if (!efreet_init())
      {
         ERR("Efreet init failed");
         goto shutdown_evas;
      }
+#endif
 
    _edje_scale = FROM_DOUBLE(1.0);
    _edje_global_obj = efl_add(EDJE_GLOBAL_CLASS, efl_main_loop_get());
@@ -123,8 +125,15 @@ edje_init(void)
 
    _edje_language = eina_stringshare_add(getenv("LANGUAGE"));
 
+   char cache_dir[PATH_MAX];
+#ifdef HAVE_EFREET
+   snprintf(cache_dir, PATH_MAX, "%s", efreet_cache_home_get());
+#else
+   snprintf(cache_dir, PATH_MAX, "%s/.cache", eina_environment_home_get());
+#endif
+
    str = eina_strbuf_new();
-   eina_strbuf_append_printf(str, "%s/edje", efreet_cache_home_get());
+   eina_strbuf_append_printf(str, "%s/edje", cache_dir);
    _edje_cache_path = eina_stringshare_add(eina_strbuf_string_get(str));
    eina_strbuf_free(str);
 
@@ -161,8 +170,10 @@ shutdown_all:
         _edje_global_obj = NULL;
      }
 shutdown_efreet:
+#ifdef HAVE_EFREET
    efreet_shutdown();
 shutdown_evas:
+#endif
    evas_shutdown();
 shutdown_eet:
    eet_shutdown();
@@ -236,7 +247,9 @@ _edje_shutdown_core(void)
    _edje_ephysics_clear();
 #endif
 
+#ifdef HAVE_EFREET
    efreet_shutdown();
+#endif
    ecore_shutdown();
    evas_shutdown();
    eet_shutdown();

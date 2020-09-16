@@ -15,9 +15,14 @@ edje_suite_src = [
   'efl_test_layout3.c',
 ]
 
+edje_test_deps = []
+if get_option('efreet')
+  edje_test_deps += efreet
+endif
+
 edje_suite = executable('edje_suite',
   edje_suite_src, themes,
-  dependencies: [check, eina, ecore_evas, edje, efreet],
+  dependencies: [check, eina, ecore_evas, edje] + edje_test_deps,
   include_directories : config_dir,
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',

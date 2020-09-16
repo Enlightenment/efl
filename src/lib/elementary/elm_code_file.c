@@ -132,7 +132,9 @@ ELM_API Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
    ret = elm_code_file_new(code);
    file = eina_file_open(path, EINA_FALSE);
    ret->file = file;
+#ifdef HAVE_EFREET
    ret->mime = efreet_mime_type_get(path);
+#endif
    lastindex = 1;
 
    ret->map = eina_file_map_all(file, EINA_FILE_POPULATE);

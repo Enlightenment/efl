@@ -106,6 +106,12 @@ option('build-tests',
   description : 'Compile tests'
 )
 
+option('efreet',
+  type : 'boolean',
+  value : true,
+  description : 'Enable efreet library',
+)
+
 option('crypto',
   type : 'combo',
   choices : ['gnutls', 'openssl'],
