@@ -45,8 +45,9 @@ evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, Outbuf_Depth depth, 
    if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
-	memset(buf->dest, 0, h * buf->dest_row_bytes);
-	buf->priv.back_buf =
+        memset(buf->dest, 0, h * buf->dest_row_bytes);
+        if (buf->priv.back_buf) evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
+        buf->priv.back_buf =
           (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
                                                w, h, buf->dest,
                                                1, EVAS_COLORSPACE_ARGB8888);
@@ -54,6 +55,7 @@ evas_buffer_outbuf_buf_update_fb(Outbuf *buf, int w, int h, Outbuf_Depth depth, 
    else if ((buf->depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
+        if (buf->priv.back_buf) evas_cache_image_drop(&buf->priv.back_buf->cache_entry);
         buf->priv.back_buf =
           (RGBA_Image *) evas_cache_image_data(evas_common_image_cache_get(),
                                                w, h, buf->dest,
