@@ -904,10 +904,6 @@ extern Eina_Bool _config_profile_lock;
 
 extern Eina_FreeQ *postponed_fq;
 
-# ifdef HAVE_ELEMENTARY_WL2
-extern Ecore_Wl2_Display *_elm_wl_display;
-# endif
-
 # ifdef ENABLE_NLS
 /* Our gettext wrapper, used to disable translation of elm if the app
  * is not translated. */

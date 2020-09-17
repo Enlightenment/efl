@@ -42,10 +42,6 @@ static Eio_Monitor *_eio_profile_monitor = NULL;
 
 Eina_Hash *_elm_key_bindings = NULL;
 
-#ifdef HAVE_ELEMENTARY_WL2
-Ecore_Wl2_Display *_elm_wl_display = NULL;
-#endif
-
 const char *_elm_engines[] = {
    "software_x11",
    "fb",
@@ -4318,12 +4314,6 @@ _elm_config_sub_shutdown(void)
 {
    ecore_event_type_flush(ELM_EVENT_CONFIG_ALL_CHANGED);
 
-#ifdef HAVE_ELEMENTARY_COCOA
-   ecore_cocoa_shutdown();
-#endif
-#ifdef HAVE_ELEMENTARY_WIN32
-   ecore_win32_shutdown();
-#endif
    ELM_SAFE_FREE(_eio_config_monitor, eio_monitor_del);
    ELM_SAFE_FREE(_eio_profile_monitor, eio_monitor_del);
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
@@ -4414,12 +4404,6 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 void
 _elm_config_sub_init(void)
 {
-#ifdef HAVE_ELEMENTARY_COCOA
-   ecore_cocoa_init();
-#endif
-#ifdef HAVE_ELEMENTARY_WIN32
-   ecore_win32_init();
-#endif
    char buf[PATH_MAX];
    int ok = 0;
 
