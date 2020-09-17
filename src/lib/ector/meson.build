@@ -46,6 +46,7 @@ foreach eo_file : pub_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ECTOR_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -76,6 +77,7 @@ foreach eo_file : pub_eo_types_files
     command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ECTOR_API',
                            '-ghd', '@INPUT@'])
 endforeach
 
@@ -89,7 +91,7 @@ ector_ext_deps += ector_opt_lib_dep
 
 ector_lib = library('ector',
     ector_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECTOR_BUILD'],
     dependencies: ector_pub_deps + ector_ext_deps + ector_deps,
     include_directories : config_dir,
     install: true,
