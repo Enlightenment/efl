@@ -19,7 +19,15 @@ static const Efl_Canvas_Vg_Interpolation interpolation_identity = {
 static void
 _node_change(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd)
 {
-   if (!nd || nd->flags != EFL_GFX_CHANGE_FLAG_NONE) return;
+   if (!nd) return;
+   if (nd->flags != EFL_GFX_CHANGE_FLAG_NONE)
+     {
+       if ((nd->vd && nd->vd->obj) &&
+           (!nd->vd->obj || !nd->vd->obj->changed))
+         efl_canvas_vg_object_change(nd->vd);
+
+       return;
+     }
    nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
    Eo *p = obj;
