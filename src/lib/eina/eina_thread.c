@@ -66,7 +66,10 @@ _eina_thread_create(Eina_Thread *t, int affinity, void *(*func)(void *data), voi
    sigset_t oldset, newset;
 #endif
 
-   pthread_attr_init(&attr);
+   if (pthread_attr_init(&attr) != 0)
+     {
+        return EINA_FALSE;
+     }
    if (affinity >= 0)
      {
 #ifdef EINA_HAVE_PTHREAD_AFFINITY
