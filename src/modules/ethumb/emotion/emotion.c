@@ -319,8 +319,9 @@ _frame_grab(void *data)
 
 	pixels = ecore_evas_buffer_pixels_get(ee);
 	snprintf(buf, sizeof(buf), "images/%d", _plugin->frnum);
-	eet_data_image_write(_plugin->ef, buf, pixels, _plugin->w, _plugin->h,
-			     0, compress, quality, quality);
+        if (!eet_data_image_write(_plugin->ef, buf, pixels, _plugin->w, _plugin->h,
+                                  0, compress, quality, quality))
+           return EINA_TRUE;
 	_plugin->frnum++;
      }
 
