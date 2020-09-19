@@ -183,6 +183,8 @@ _ec_op_new(struct _Ethumbd_Child *ec)
    r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
+   if ((idx < 0) || (idx >= NETHUMBS))
+     return 0;
 
    DBG("ethumbd new(). idx = %d", idx);
 
