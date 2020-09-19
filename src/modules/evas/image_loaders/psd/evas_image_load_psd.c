@@ -61,7 +61,7 @@ static Eina_Bool get_compressed_channels_length(PSD_Header *Head,
 static int
 read_ushort(const unsigned char *map, size_t length, size_t *position, unsigned short *ret)
 {
-   if (*position + 2 > length) return 0;
+   if (((*position) + 2) > length) return 0;
    // FIXME: need to check order
    *ret = (map[(*position) + 0] << 8) | map[(*position) + 1];
    *position += 2;
@@ -71,7 +71,7 @@ read_ushort(const unsigned char *map, size_t length, size_t *position, unsigned 
 static int
 read_uint(const unsigned char *map, size_t length, size_t *position, unsigned int *ret)
 {
-   if (*position + 4 > length) return 0;
+   if (((*position) + 4) > length) return 0;
    // FIXME: need to check order
    *ret = ARGB_JOIN(map[(*position) + 0], map[(*position) + 1], map[(*position) + 2], map[(*position) + 3]);
    *position += 4;
@@ -81,14 +81,14 @@ read_uint(const unsigned char *map, size_t length, size_t *position, unsigned in
 static int
 read_block(const unsigned char *map, size_t length, size_t *position, void *target, size_t size)
 {
-   if (*position + size > length) return 0;
+   if (((*position) + size) > length) return 0;
    memcpy(target, map + *position, size);
    *position += size;
    return 1;
 }
 
 // Internal function used to get the Psd header from the current file.
-Eina_Bool
+static Eina_Bool
 psd_get_header(PSD_Header *header, const unsigned char *map, size_t length, size_t *position)
 {
    unsigned short tmp;
@@ -114,7 +114,7 @@ psd_get_header(PSD_Header *header, const unsigned char *map, size_t length, size
 
 
 // Internal function used to check if the HEADER is a valid Psd header.
-Eina_Bool
+static Eina_Bool
 is_psd(PSD_Header *header)
 {
    if (strncmp((char*)header->signature, "8BPS", 4))
@@ -238,7 +238,7 @@ read_compressed_channel(const unsigned char *map, size_t length, size_t *positio
 }
 
 
-Eina_Bool
+static Eina_Bool
 psd_get_data(PSD_Header *head,
              const unsigned char *map, size_t length, size_t *position,
 	     unsigned char *buffer, Eina_Bool compressed,
@@ -492,7 +492,7 @@ psd_get_data(PSD_Header *head,
 }
 
 
-Eina_Bool
+static Eina_Bool
 get_single_channel(PSD_Header *head,
 		   const unsigned char *map, size_t length, size_t *position,
 		   unsigned char *buffer,
@@ -552,7 +552,7 @@ get_single_channel(PSD_Header *head,
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 read_psd_grey(void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
@@ -566,15 +566,19 @@ read_psd_grey(void *pixels, PSD_Header *head, const unsigned char *map, size_t l
    CHECK_RET(read_uint(map, length, position, &color_mode));
    // Skip over the 'color mode data section'
    *position += color_mode;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_uint(map, length, position, &resource_size));
    // Read the 'image resources section'
    *position += resource_size;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_uint(map, length, position, &misc_info));
    *position += misc_info;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_ushort(map, length, position, &compressed));
+   if (compressed != 0) compressed = EINA_TRUE;
 
    head->channel_num = head->channels;
    // Temporary to read only one channel...some greyscale .psd files have 2.
@@ -602,7 +606,7 @@ read_psd_grey(void *pixels, PSD_Header *head, const unsigned char *map, size_t l
 }
 
 
-Eina_Bool
+static Eina_Bool
 read_psd_indexed(void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
@@ -624,15 +628,19 @@ read_psd_indexed(void *pixels, PSD_Header *head, const unsigned char *map, size_
    */
    // Skip over the 'color mode data section'
    *position += color_mode;
+   if ((*position) >= length) return EINA_FALSE;
 
    // Read the 'image resources section'
    CHECK_RET(read_uint(map, length, position, &resource_size));
    *position += resource_size;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_uint(map, length, position, &misc_info));
    *position += misc_info;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_ushort(map, length, position, &compressed));
+   if (compressed != 0) compressed = EINA_TRUE;
 
    if (head->channels != 1 || head->depth != 8)
      {
@@ -648,7 +656,7 @@ read_psd_indexed(void *pixels, PSD_Header *head, const unsigned char *map, size_
 #undef CHECK_RET
 }
 
-Eina_Bool
+static Eina_Bool
 read_psd_rgb(void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
@@ -660,15 +668,19 @@ read_psd_rgb(void *pixels, PSD_Header *head, const unsigned char *map, size_t le
    CHECK_RET(read_uint(map, length, position, &color_mode));
    // Skip over the 'color mode data section'
    *position += color_mode;
+   if ((*position) >= length) return EINA_FALSE;
 
    // Read the 'image resources section'
    CHECK_RET(read_uint(map, length, position, &resource_size));
    *position += resource_size;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_uint(map, length, position, &misc_info));
    *position += misc_info;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_ushort(map, length, position, &compressed));
+   if (compressed != 0) compressed = EINA_TRUE;
 
    head->channel_num = head->channels;
 
@@ -690,7 +702,7 @@ read_psd_rgb(void *pixels, PSD_Header *head, const unsigned char *map, size_t le
 #undef CHECK_RET
 }
 
-Eina_Bool
+static Eina_Bool
 read_psd_cmyk(Emile_Image_Property *prop, void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info, size, j, data_size;
@@ -707,15 +719,19 @@ read_psd_cmyk(Emile_Image_Property *prop, void *pixels, PSD_Header *head, const 
    CHECK_RET(read_uint(map, length, position, &color_mode));
    // Skip over the 'color mode data section'
    *position += color_mode;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_uint(map, length, position, &resource_size));
    // Read the 'image resources section'
    *position += resource_size;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_uint(map, length, position, &misc_info));
    *position += misc_info;
+   if ((*position) >= length) return EINA_FALSE;
 
    CHECK_RET(read_ushort(map, length, position, &compressed));
+   if (compressed != 0) compressed = EINA_TRUE;
 
    switch (head->channels)
      {
