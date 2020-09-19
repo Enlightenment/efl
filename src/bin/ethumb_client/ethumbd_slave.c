@@ -119,6 +119,11 @@ _ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
 	*str = NULL;
 	return 0;
      }
+   if ((size < 0) || (size >= PATH_MAX))
+     {
+	*str = NULL;
+	return 0;
+     }
 
    if (!size)
      {
