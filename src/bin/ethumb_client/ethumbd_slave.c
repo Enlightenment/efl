@@ -667,6 +667,8 @@ _ec_op_setup(struct _Ethumbd_Child *ec)
    r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
+   if ((idx < 0) || (idx >= NETHUMBS))
+     return 0;
 
    r = _ec_read_safe(stdin, &type, sizeof(type));
    if (!r)
