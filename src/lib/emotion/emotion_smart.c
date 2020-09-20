@@ -233,7 +233,7 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
 
 
 
-EAPI Evas_Object *
+EMOTION_API Evas_Object *
 emotion_object_add(Evas *evas)
 {
    evas = evas_find(evas);
@@ -251,7 +251,7 @@ _efl_canvas_video_efl_object_constructor(Eo *obj, Efl_Canvas_Video_Data *pd EINA
    return obj;
 }
 
-EAPI Evas_Object *
+EMOTION_API Evas_Object *
 emotion_object_image_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
@@ -346,7 +346,7 @@ _efl_canvas_video_engine_set(Eo *obj, Efl_Canvas_Video_Data *pd, const char *eng
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
    return efl_file_simple_load(obj, file, NULL);
@@ -439,7 +439,7 @@ _efl_canvas_video_efl_file_load(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
    return 0;
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_file_get(const Evas_Object *obj)
 {
    return efl_file_get(obj);
@@ -574,7 +574,7 @@ _efl_canvas_video_aspect_border_apply(Evas_Object *obj, Efl_Canvas_Video_Data *s
    _emotion_aspect_borders_apply(obj, sd, w, h, iw, ih);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
    Efl_Canvas_Video_Data *sd;
@@ -591,7 +591,7 @@ emotion_object_border_set(Evas_Object *obj, int l, int r, int t, int b)
    _efl_canvas_video_aspect_border_apply(obj, sd, w, h);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    Efl_Canvas_Video_Data *sd;
@@ -603,7 +603,7 @@ emotion_object_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b
    *b = -sd->crop.b;
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    Efl_Canvas_Video_Data *sd;
@@ -612,7 +612,7 @@ emotion_object_bg_color_set(Evas_Object *obj, int r, int g, int b, int a)
    evas_object_color_set(sd->bg, r, g, b, a);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Efl_Canvas_Video_Data *sd;
@@ -621,7 +621,7 @@ emotion_object_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int 
    evas_object_color_get(sd->bg, r, g, b, a);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a)
 {
    Efl_Canvas_Video_Data *sd;
@@ -635,7 +635,7 @@ emotion_object_keep_aspect_set(Evas_Object *obj, Emotion_Aspect a)
    _efl_canvas_video_aspect_border_apply(obj, sd, w, h);
 }
 
-EAPI Emotion_Aspect
+EMOTION_API Emotion_Aspect
 emotion_object_keep_aspect_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -644,7 +644,7 @@ emotion_object_keep_aspect_get(const Evas_Object *obj)
    return sd->aspect;
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
    /* avoid calling playback_position_set(0) for legacy */
@@ -705,7 +705,7 @@ _efl_canvas_video_efl_player_paused_set(Eo *obj, Efl_Canvas_Video_Data *sd, Eina
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_play_get(const Evas_Object *obj)
 {
    return efl_player_playing_get(obj) && !efl_player_paused_get(obj);
@@ -726,7 +726,7 @@ _efl_canvas_video_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vi
    return sd->pause;
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_position_set(Evas_Object *obj, double sec)
 {
    efl_player_playback_position_set(obj, sec);
@@ -751,7 +751,7 @@ _efl_canvas_video_efl_player_playback_position_set(Eo *obj, Efl_Canvas_Video_Dat
    sd->job = ecore_job_add(_pos_set_job, obj);
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_position_get(const Evas_Object *obj)
 {
    return efl_player_playback_position_get(obj);
@@ -765,7 +765,7 @@ _efl_canvas_video_efl_player_playback_position_get(const Eo *obj EINA_UNUSED, Ef
    return sd->pos;
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_buffer_size_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -775,13 +775,13 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
    return emotion_engine_instance_buffer_size_get(sd->engine_instance);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_seekable_get(const Evas_Object *obj)
 {
    return efl_playable_seekable_get(obj);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_video_handled_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -791,7 +791,7 @@ emotion_object_video_handled_get(const Evas_Object *obj)
    return emotion_engine_instance_video_handled(sd->engine_instance);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_audio_handled_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -801,13 +801,13 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
    return emotion_engine_instance_audio_handled(sd->engine_instance);
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_play_length_get(const Evas_Object *obj)
 {
    return efl_playable_length_get(obj);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_size_get(const Evas_Object *obj, int *iw, int *ih)
 {
    Eina_Size2D sz;
@@ -824,7 +824,7 @@ _efl_canvas_video_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA
    return EINA_SIZE2D(sd->video.w, sd->video.h);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
 {
    efl_gfx_image_smooth_scale_set(obj, smooth);
@@ -836,7 +836,7 @@ _efl_canvas_video_efl_gfx_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas
    evas_object_image_smooth_scale_set(sd->obj, smooth);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_smooth_scale_get(const Evas_Object *obj)
 {
    return efl_gfx_image_smooth_scale_get(obj);
@@ -848,7 +848,7 @@ _efl_canvas_video_efl_gfx_image_smooth_scale_get(const Eo *obj EINA_UNUSED, Efl_
    return evas_object_image_smooth_scale_get(sd->obj);
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_ratio_get(const Evas_Object *obj)
 {
    return efl_gfx_image_ratio_get(obj);
@@ -864,7 +864,7 @@ _efl_canvas_video_efl_gfx_image_ratio_get(const Eo *obj EINA_UNUSED, Efl_Canvas_
 /*
  * Send a control event to the DVD.
  */
-EAPI void
+EMOTION_API void
 emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 {
    Efl_Canvas_Video_Data *sd;
@@ -874,7 +874,7 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
    emotion_engine_instance_event_feed(sd->engine_instance, ev);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 {
    efl_audio_control_volume_set(obj, vol);
@@ -888,7 +888,7 @@ _efl_canvas_video_efl_audio_control_volume_set(Eo *obj EINA_UNUSED, Efl_Canvas_V
    emotion_engine_instance_audio_channel_volume_set(sd->engine_instance, vol);
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_audio_volume_get(const Evas_Object *obj)
 {
    return efl_audio_control_volume_get(obj);
@@ -901,7 +901,7 @@ _efl_canvas_video_efl_audio_control_volume_get(const Eo *obj EINA_UNUSED, Efl_Ca
    return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    efl_audio_control_mute_set(obj, mute);
@@ -915,7 +915,7 @@ _efl_canvas_video_efl_audio_control_mute_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vid
    emotion_engine_instance_audio_channel_mute_set(sd->engine_instance, mute);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_audio_mute_get(const Evas_Object *obj)
 {
    return efl_audio_control_mute_get(obj);
@@ -928,7 +928,7 @@ _efl_canvas_video_efl_audio_control_mute_get(const Eo *obj EINA_UNUSED, Efl_Canv
    return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_audio_channel_count(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -938,7 +938,7 @@ emotion_object_audio_channel_count(const Evas_Object *obj)
    return emotion_engine_instance_audio_channel_count(sd->engine_instance);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
 {
    Efl_Canvas_Video_Data *sd;
@@ -948,7 +948,7 @@ emotion_object_audio_channel_name_get(const Evas_Object *obj, int channel)
    return emotion_engine_instance_audio_channel_name_get(sd->engine_instance, channel);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_audio_channel_set(Evas_Object *obj, int channel)
 {
    Efl_Canvas_Video_Data *sd;
@@ -959,7 +959,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
    emotion_engine_instance_audio_channel_set(sd->engine_instance, channel);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_audio_channel_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -969,7 +969,7 @@ emotion_object_audio_channel_get(const Evas_Object *obj)
    return emotion_engine_instance_audio_channel_get(sd->engine_instance);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Efl_Canvas_Video_Data *sd;
@@ -980,7 +980,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
    emotion_engine_instance_video_channel_mute_set(sd->engine_instance, mute);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_video_mute_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -990,7 +990,7 @@ emotion_object_video_mute_get(const Evas_Object *obj)
    return emotion_engine_instance_video_channel_mute_get(sd->engine_instance);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1002,7 +1002,7 @@ emotion_object_video_subtitle_file_set(Evas_Object *obj, const char *filepath)
    emotion_engine_instance_video_subtitle_file_set(sd->engine_instance, filepath);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_video_subtitle_file_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1012,7 +1012,7 @@ emotion_object_video_subtitle_file_get(const Evas_Object *obj)
    return emotion_engine_instance_video_subtitle_file_get(sd->engine_instance);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_video_channel_count(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1022,7 +1022,7 @@ emotion_object_video_channel_count(const Evas_Object *obj)
    return emotion_engine_instance_video_channel_count(sd->engine_instance);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1032,7 +1032,7 @@ emotion_object_video_channel_name_get(const Evas_Object *obj, int channel)
    return emotion_engine_instance_video_channel_name_get(sd->engine_instance, channel);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_video_channel_set(Evas_Object *obj, int channel)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1043,7 +1043,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
    emotion_engine_instance_video_channel_set(sd->engine_instance, channel);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_video_channel_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1053,7 +1053,7 @@ emotion_object_video_channel_get(const Evas_Object *obj)
    return emotion_engine_instance_video_channel_get(sd->engine_instance);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1064,7 +1064,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
    emotion_engine_instance_spu_channel_mute_set(sd->engine_instance, mute);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_spu_mute_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1074,7 +1074,7 @@ emotion_object_spu_mute_get(const Evas_Object *obj)
    return emotion_engine_instance_spu_channel_mute_get(sd->engine_instance);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_spu_channel_count(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1084,7 +1084,7 @@ emotion_object_spu_channel_count(const Evas_Object *obj)
    return emotion_engine_instance_spu_channel_count(sd->engine_instance);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1094,7 +1094,7 @@ emotion_object_spu_channel_name_get(const Evas_Object *obj, int channel)
    return emotion_engine_instance_spu_channel_name_get(sd->engine_instance, channel);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_spu_channel_set(Evas_Object *obj, int channel)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1105,7 +1105,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
    emotion_engine_instance_spu_channel_set(sd->engine_instance, channel);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_spu_channel_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1115,7 +1115,7 @@ emotion_object_spu_channel_get(const Evas_Object *obj)
    return emotion_engine_instance_spu_channel_get(sd->engine_instance);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_chapter_count(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1125,7 +1125,7 @@ emotion_object_chapter_count(const Evas_Object *obj)
    return emotion_engine_instance_chapter_count(sd->engine_instance);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_chapter_set(Evas_Object *obj, int chapter)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1136,7 +1136,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
    emotion_engine_instance_chapter_set(sd->engine_instance, chapter);
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_chapter_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1146,7 +1146,7 @@ emotion_object_chapter_get(const Evas_Object *obj)
    return emotion_engine_instance_chapter_get(sd->engine_instance);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1156,7 +1156,7 @@ emotion_object_chapter_name_get(const Evas_Object *obj, int chapter)
    return emotion_engine_instance_chapter_name_get(sd->engine_instance, chapter);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_play_speed_set(Evas_Object *obj, double speed)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1167,7 +1167,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
    emotion_engine_instance_speed_set(sd->engine_instance, speed);
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_play_speed_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1177,7 +1177,7 @@ emotion_object_play_speed_get(const Evas_Object *obj)
    return emotion_engine_instance_speed_get(sd->engine_instance);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_eject(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1187,7 +1187,7 @@ emotion_object_eject(Evas_Object *obj)
    emotion_engine_instance_eject(sd->engine_instance);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_title_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1196,7 +1196,7 @@ emotion_object_title_get(const Evas_Object *obj)
    return sd->title;
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_progress_info_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1205,7 +1205,7 @@ emotion_object_progress_info_get(const Evas_Object *obj)
    return sd->progress.info;
 }
 
-EAPI double
+EMOTION_API double
 emotion_object_progress_status_get(const Evas_Object *obj)
 {
    return efl_player_playback_progress_get(obj);
@@ -1239,7 +1239,7 @@ _efl_canvas_video_efl_playable_seekable_get(const Eo *obj EINA_UNUSED, Efl_Canva
    return emotion_engine_instance_seekable(sd->engine_instance);
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_ref_file_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1248,7 +1248,7 @@ emotion_object_ref_file_get(const Evas_Object *obj)
    return sd->ref.file;
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_ref_num_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1257,7 +1257,7 @@ emotion_object_ref_num_get(const Evas_Object *obj)
    return sd->ref.num;
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_spu_button_count_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1266,7 +1266,7 @@ emotion_object_spu_button_count_get(const Evas_Object *obj)
    return sd->spu.button_num;
 }
 
-EAPI int
+EMOTION_API int
 emotion_object_spu_button_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1275,7 +1275,7 @@ emotion_object_spu_button_get(const Evas_Object *obj)
    return sd->spu.button;
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1315,7 +1315,7 @@ emotion_object_meta_info_get(const Evas_Object *obj, Emotion_Meta_Info meta)
 }
 
 
-EAPI Evas_Object *
+EMOTION_API Evas_Object *
 emotion_file_meta_artwork_get(const Evas_Object *obj, const char *path, Emotion_Artwork_Info type)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1334,7 +1334,7 @@ emotion_file_meta_artwork_get(const Evas_Object *obj, const char *path, Emotion_
    return result;
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1345,7 +1345,7 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
    emotion_engine_instance_vis_set(sd->engine_instance, visualization);
 }
 
-EAPI Emotion_Vis
+EMOTION_API Emotion_Vis
 emotion_object_vis_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1355,7 +1355,7 @@ emotion_object_vis_get(const Evas_Object *obj)
    return emotion_engine_instance_vis_get(sd->engine_instance);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1365,7 +1365,7 @@ emotion_object_vis_supported(const Evas_Object *obj, Emotion_Vis visualization)
    return emotion_engine_instance_vis_supported(sd->engine_instance, visualization);
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1375,7 +1375,7 @@ emotion_object_priority_set(Evas_Object *obj, Eina_Bool priority)
    emotion_engine_instance_priority_set(sd->engine_instance, priority);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_priority_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1415,7 +1415,7 @@ _eio_load_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 }
 #endif
 
-EAPI void
+EMOTION_API void
 emotion_object_last_position_load(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1486,7 +1486,7 @@ _eio_save_xattr_error(void *data, Eio_File *handler, int err EINA_UNUSED)
 }
 #endif
 
-EAPI void
+EMOTION_API void
 emotion_object_last_position_save(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1525,7 +1525,7 @@ emotion_object_last_position_save(Evas_Object *obj)
 #endif
 }
 
-EAPI void
+EMOTION_API void
 emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1547,7 +1547,7 @@ emotion_object_suspend_set(Evas_Object *obj, Emotion_Suspend state)
    sd->state = state;
 }
 
-EAPI Emotion_Suspend
+EMOTION_API Emotion_Suspend
 emotion_object_suspend_get(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1560,7 +1560,7 @@ emotion_object_suspend_get(Evas_Object *obj)
 /* Utility calls for modules */
 /*****************************/
 
-EAPI void *
+EMOTION_API void *
 _emotion_video_get(const Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1587,7 +1587,7 @@ _emotion_frame_anim(void *data)
    return EINA_FALSE;
 }
 
-EAPI void
+EMOTION_API void
 _emotion_frame_new(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1597,7 +1597,7 @@ _emotion_frame_new(Evas_Object *obj)
      sd->anim = ecore_evas_animator_add(obj, _emotion_frame_anim, obj);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1620,7 +1620,7 @@ _emotion_video_pos_update(Evas_Object *obj, double pos, double len)
      }
 }
 
-EAPI void
+EMOTION_API void
 _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1653,7 +1653,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
      }
 }
 
-EAPI void
+EMOTION_API void
 _emotion_image_reset(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1662,7 +1662,7 @@ _emotion_image_reset(Evas_Object *obj)
    _emotion_image_data_zero(sd->obj);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_decode_stop(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1675,7 +1675,7 @@ _emotion_decode_stop(Evas_Object *obj)
      }
 }
 
-EAPI void
+EMOTION_API void
 _emotion_open_done(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1696,14 +1696,14 @@ _emotion_open_done(Evas_Object *obj)
    evas_object_smart_callback_call(obj, "open_done", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_playback_started(Evas_Object *obj)
 {
    efl_event_callback_call(obj, EFL_CANVAS_VIDEO_EVENT_PLAYBACK_START, NULL);
    evas_object_smart_callback_call(obj, "playback_started", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_playback_finished(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1713,14 +1713,14 @@ _emotion_playback_finished(Evas_Object *obj)
    evas_object_smart_callback_call(obj, "playback_finished", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_audio_level_change(Evas_Object *obj)
 {
    efl_event_callback_call(obj, EFL_CANVAS_VIDEO_EVENT_VOLUME_CHANGE, NULL);
    evas_object_smart_callback_call(obj, "audio_level_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_channels_change(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1730,7 +1730,7 @@ _emotion_channels_change(Evas_Object *obj)
    evas_object_smart_callback_call(obj, "channels_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_title_set(Evas_Object *obj, char *title)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1741,7 +1741,7 @@ _emotion_title_set(Evas_Object *obj, char *title)
    evas_object_smart_callback_call(obj, "title_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_progress_set(Evas_Object *obj, char *info, double st)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1753,7 +1753,7 @@ _emotion_progress_set(Evas_Object *obj, char *info, double st)
    evas_object_smart_callback_call(obj, "progress_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1765,7 +1765,7 @@ _emotion_file_ref_set(Evas_Object *obj, const char *file, int num)
    evas_object_smart_callback_call(obj, "ref_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_spu_button_num_set(Evas_Object *obj, int num)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1776,7 +1776,7 @@ _emotion_spu_button_num_set(Evas_Object *obj, int num)
    evas_object_smart_callback_call(obj, "button_num_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_spu_button_set(Evas_Object *obj, int button)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1787,7 +1787,7 @@ _emotion_spu_button_set(Evas_Object *obj, int button)
    evas_object_smart_callback_call(obj, "button_change", NULL);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_seek_done(Evas_Object *obj)
 {
    Efl_Canvas_Video_Data *sd;
@@ -1800,7 +1800,7 @@ _emotion_seek_done(Evas_Object *obj)
      }
 }
 
-EAPI void
+EMOTION_API void
 _emotion_frame_refill(Evas_Object *obj, double w, double h)
 {
    Efl_Canvas_Video_Data *sd;

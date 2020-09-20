@@ -3,31 +3,7 @@
 
 #include "Emotion.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <emotion_api.h>
 
 #define META_TRACK_TITLE 1
 #define META_TRACK_ARTIST 2
@@ -132,38 +108,35 @@ struct _Emotion_Engine
    void       *   (*meta_artwork_get)(void *ef, Evas_Object *img, const char *path, Emotion_Artwork_Info type);
 };
 
-EAPI void *_emotion_video_get(const Evas_Object *obj);
-EAPI void  _emotion_frame_new(Evas_Object *obj);
-EAPI void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
-EAPI void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
-EAPI void  _emotion_frame_refill(Evas_Object *obj, double w, double h);
-EAPI void  _emotion_decode_stop(Evas_Object *obj);
-EAPI void  _emotion_open_done(Evas_Object *obj);
-EAPI void  _emotion_playback_started(Evas_Object *obj);
-EAPI void  _emotion_playback_finished(Evas_Object *obj);
-EAPI void  _emotion_audio_level_change(Evas_Object *obj);
-EAPI void  _emotion_channels_change(Evas_Object *obj);
-EAPI void  _emotion_title_set(Evas_Object *obj, char *title);
-EAPI void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
-EAPI void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
-EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
-EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
-EAPI void  _emotion_seek_done(Evas_Object *obj);
-EAPI void  _emotion_image_reset(Evas_Object *obj);
+EMOTION_API void *_emotion_video_get(const Evas_Object *obj);
+EMOTION_API void  _emotion_frame_new(Evas_Object *obj);
+EMOTION_API void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
+EMOTION_API void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
+EMOTION_API void  _emotion_frame_refill(Evas_Object *obj, double w, double h);
+EMOTION_API void  _emotion_decode_stop(Evas_Object *obj);
+EMOTION_API void  _emotion_open_done(Evas_Object *obj);
+EMOTION_API void  _emotion_playback_started(Evas_Object *obj);
+EMOTION_API void  _emotion_playback_finished(Evas_Object *obj);
+EMOTION_API void  _emotion_audio_level_change(Evas_Object *obj);
+EMOTION_API void  _emotion_channels_change(Evas_Object *obj);
+EMOTION_API void  _emotion_title_set(Evas_Object *obj, char *title);
+EMOTION_API void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
+EMOTION_API void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
+EMOTION_API void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
+EMOTION_API void  _emotion_spu_button_set(Evas_Object *obj, int button);
+EMOTION_API void  _emotion_seek_done(Evas_Object *obj);
+EMOTION_API void  _emotion_image_reset(Evas_Object *obj);
 
-EAPI void _emotion_pending_object_ref(void);
-EAPI void _emotion_pending_object_unref(void);
+EMOTION_API void _emotion_pending_object_ref(void);
+EMOTION_API void _emotion_pending_object_unref(void);
 
-EAPI void _emotion_pending_ecore_begin(void);
-EAPI void _emotion_pending_ecore_end(void);
+EMOTION_API void _emotion_pending_ecore_begin(void);
+EMOTION_API void _emotion_pending_ecore_end(void);
 
 
-EAPI const char *emotion_webcam_custom_get(const char *device);
+EMOTION_API const char *emotion_webcam_custom_get(const char *device);
 
-EAPI Eina_Bool _emotion_module_register(const Emotion_Engine *api);
-EAPI Eina_Bool _emotion_module_unregister(const Emotion_Engine *api);
-
-#undef EAPI
-#define EAPI
+EMOTION_API Eina_Bool _emotion_module_register(const Emotion_Engine *api);
+EMOTION_API Eina_Bool _emotion_module_unregister(const Emotion_Engine *api);
 
 #endif
