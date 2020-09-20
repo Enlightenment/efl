@@ -1,7 +1,7 @@
 #include "eldbus_private.h"
 #include "eldbus_private_types.h"
 
-EAPI void
+ELDBUS_API void
 eldbus_message_iter_dict_iterate(Eldbus_Message_Iter *array, const char *signature, Eldbus_Dict_Cb_Get cb, const void *data)
 {
    Eldbus_Message_Iter *entry;

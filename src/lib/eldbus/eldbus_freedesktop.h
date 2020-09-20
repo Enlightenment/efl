@@ -27,7 +27,7 @@
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_name_request(Eldbus_Connection *conn, const char *bus, unsigned int flags, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending *eldbus_name_request(Eldbus_Connection *conn, const char *bus, unsigned int flags, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 /* Replies to releasing a name */
 #define ELDBUS_NAME_RELEASE_REPLY_RELEASED     1    /**< Service was released from the given name */
@@ -43,7 +43,7 @@ EAPI Eldbus_Pending *eldbus_name_request(Eldbus_Connection *conn, const char *bu
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_name_release(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending *eldbus_name_release(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Send a "GetNameOwner" method call in proxy.
@@ -54,7 +54,7 @@ EAPI Eldbus_Pending *eldbus_name_release(Eldbus_Connection *conn, const char *bu
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_name_owner_get(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending *eldbus_name_owner_get(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Send a "NameHasOwner" method call in proxy.
@@ -65,7 +65,7 @@ EAPI Eldbus_Pending *eldbus_name_owner_get(Eldbus_Connection *conn, const char *
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_name_owner_has(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data);
+ELDBUS_API Eldbus_Pending *eldbus_name_owner_has(Eldbus_Connection *conn, const char *bus, Eldbus_Message_Cb cb, const void *cb_data);
 
 /**
  * Send a "ListNames" method call in proxy.
@@ -75,7 +75,7 @@ EAPI Eldbus_Pending *eldbus_name_owner_has(Eldbus_Connection *conn, const char *
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_names_list(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+ELDBUS_API Eldbus_Pending *eldbus_names_list(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /**
  * Send a "ListActivatableNames" method call in proxy.
@@ -85,7 +85,7 @@ EAPI Eldbus_Pending *eldbus_names_list(Eldbus_Connection *conn, Eldbus_Message_C
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_names_activatable_list(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+ELDBUS_API Eldbus_Pending *eldbus_names_activatable_list(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /**
  * Send a "Hello" method call in proxy.
@@ -95,7 +95,7 @@ EAPI Eldbus_Pending *eldbus_names_activatable_list(Eldbus_Connection *conn, Eldb
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending *eldbus_hello(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+ELDBUS_API Eldbus_Pending *eldbus_hello(Eldbus_Connection *conn, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /* Replies to service starts */
 #define ELDBUS_NAME_START_REPLY_SUCCESS         1 /**< Service was auto started */
@@ -111,7 +111,7 @@ EAPI Eldbus_Pending *eldbus_hello(Eldbus_Connection *conn, Eldbus_Message_Cb cb,
  * @param cb_data Data passed to callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_name_start(Eldbus_Connection *conn, const char *bus, unsigned int flags, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_name_start(Eldbus_Connection *conn, const char *bus, unsigned int flags, Eldbus_Message_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @typedef Eldbus_Name_Owner_Changed_Cb
@@ -135,7 +135,7 @@ typedef void (*Eldbus_Name_Owner_Changed_Cb)(void *data, const char *bus, const 
  * @param cb_data context data
  * @param allow_initial_call allow call callback with actual id of the bus
  */
-EAPI void                  eldbus_name_owner_changed_callback_add(Eldbus_Connection *conn, const char *bus, Eldbus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call) EINA_ARG_NONNULL(1, 2, 3);
+ELDBUS_API void                  eldbus_name_owner_changed_callback_add(Eldbus_Connection *conn, const char *bus, Eldbus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call) EINA_ARG_NONNULL(1, 2, 3);
 /**
  * Remove callback added with eldbus_name_owner_changed_callback_add().
  *
@@ -144,7 +144,7 @@ EAPI void                  eldbus_name_owner_changed_callback_add(Eldbus_Connect
  * @param cb callback
  * @param cb_data context data
  */
-EAPI void                  eldbus_name_owner_changed_callback_del(Eldbus_Connection *conn, const char *bus, Eldbus_Name_Owner_Changed_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2, 3);
+ELDBUS_API void                  eldbus_name_owner_changed_callback_del(Eldbus_Connection *conn, const char *bus, Eldbus_Name_Owner_Changed_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @defgroup Eldbus_FDO_Peer org.freedesktop.DBus.Peer
@@ -160,7 +160,7 @@ EAPI void                  eldbus_name_owner_changed_callback_del(Eldbus_Connect
  * @param data Data passed to the callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_object_peer_ping(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_object_peer_ping(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Call the method "GetMachineId" on the eldbus object.
@@ -170,7 +170,7 @@ EAPI Eldbus_Pending        *eldbus_object_peer_ping(Eldbus_Object *obj, Eldbus_M
  * @param data Data passed to the callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_object_peer_machine_id_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_object_peer_machine_id_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @}
@@ -190,7 +190,7 @@ EAPI Eldbus_Pending        *eldbus_object_peer_machine_id_get(Eldbus_Object *obj
  * @param data Data passed to the callback.
  * @return The Eldbus_Pending corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_object_introspect(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_object_introspect(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 /**
  * @}
  */
@@ -213,7 +213,7 @@ EAPI Eldbus_Pending        *eldbus_object_introspect(Eldbus_Object *obj, Eldbus_
  * You should listen for a ELDBUS_PROXY_EVENT_PROPERTY_LOADED
  * to know when properties finish to load.
  */
-EAPI Eina_Bool eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable) EINA_ARG_NONNULL(1);
+ELDBUS_API Eina_Bool eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable) EINA_ARG_NONNULL(1);
 
 /**
  * Get a property.
@@ -224,7 +224,7 @@ EAPI Eina_Bool eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool en
  * @param data Data to be passed to the callback.
  * @return Eldbus_Pending object corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_proxy_property_get(Eldbus_Proxy *proxy, const char *name, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+ELDBUS_API Eldbus_Pending        *eldbus_proxy_property_get(Eldbus_Proxy *proxy, const char *name, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * Set a property.
@@ -237,7 +237,7 @@ EAPI Eldbus_Pending        *eldbus_proxy_property_get(Eldbus_Proxy *proxy, const
  * @param data Data to be passed to the callback.
  * @return Eldbus_Pending object corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const void *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
+ELDBUS_API Eldbus_Pending        *eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const void *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
 
 /**
  * Set a property with a Eina_Value.
@@ -252,7 +252,7 @@ EAPI Eldbus_Pending        *eldbus_proxy_property_set(Eldbus_Proxy *proxy, const
  *
  * @since 1.17
  */
-EAPI Eldbus_Pending        *eldbus_proxy_property_value_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const Eina_Value *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
+ELDBUS_API Eldbus_Pending        *eldbus_proxy_property_value_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const Eina_Value *value, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2, 3, 4);
 
 /**
  * Get all properties.
@@ -262,7 +262,7 @@ EAPI Eldbus_Pending        *eldbus_proxy_property_value_set(Eldbus_Proxy *proxy,
  * @param data Data to be passed to the callback.
  * @return Eldbus_Pending object corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Register a callback on "PropertiesChanged" signal.
@@ -272,7 +272,7 @@ EAPI Eldbus_Pending        *eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, E
  * @param data Data to be passed to the callback.
  * @return Eldbus_Signal_Handler object representing a listener for "PropertiesChanged" signal.
  */
-EAPI Eldbus_Signal_Handler *eldbus_proxy_properties_changed_callback_add(Eldbus_Proxy *proxy, Eldbus_Signal_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Signal_Handler *eldbus_proxy_properties_changed_callback_add(Eldbus_Proxy *proxy, Eldbus_Signal_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Return the cached value of property.
@@ -285,7 +285,7 @@ EAPI Eldbus_Signal_Handler *eldbus_proxy_properties_changed_callback_add(Eldbus_
  * @param name The property name to get.
  * @return Cached value of property.
  */
-EAPI Eina_Value           *eldbus_proxy_property_local_get(Eldbus_Proxy *proxy, const char *name) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eina_Value           *eldbus_proxy_property_local_get(Eldbus_Proxy *proxy, const char *name) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Get all cached properties.
@@ -297,7 +297,7 @@ EAPI Eina_Value           *eldbus_proxy_property_local_get(Eldbus_Proxy *proxy, 
  * @param proxy The proxy object on which to do the query.
  * @return A Eina_Hash with all cached properties
  */
-EAPI const Eina_Hash      *eldbus_proxy_property_local_get_all(Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1);
+ELDBUS_API const Eina_Hash      *eldbus_proxy_property_local_get_all(Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1);
 
 /**
  * @}
@@ -317,7 +317,7 @@ EAPI const Eina_Hash      *eldbus_proxy_property_local_get_all(Eldbus_Proxy *pro
  *
  * @return A Eldbus_Pending object corresponding to the message sent.
  */
-EAPI Eldbus_Pending        *eldbus_object_managed_objects_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_object_managed_objects_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Register a callback on "InterfacesAdded" signal.
@@ -327,7 +327,7 @@ EAPI Eldbus_Pending        *eldbus_object_managed_objects_get(Eldbus_Object *obj
  * @param cb_data Data to be passed to the callback.
  * @return Eldbus_Signal_Handler object representing a listener for "InterfacesAdded" signal.
  */
-EAPI Eldbus_Signal_Handler *eldbus_object_manager_interfaces_added(Eldbus_Object *obj, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+ELDBUS_API Eldbus_Signal_Handler *eldbus_object_manager_interfaces_added(Eldbus_Object *obj, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /**
  * Register a callback on "InterfacesRemoved" signal.
@@ -337,7 +337,7 @@ EAPI Eldbus_Signal_Handler *eldbus_object_manager_interfaces_added(Eldbus_Object
  * @param cb_data Data to be passed to the callback.
  * @return Eldbus_Signal_Handler object representing a listener for "InterfacesRemoved" signal.
  */
-EAPI Eldbus_Signal_Handler *eldbus_object_manager_interfaces_removed(Eldbus_Object *obj, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
+ELDBUS_API Eldbus_Signal_Handler *eldbus_object_manager_interfaces_removed(Eldbus_Object *obj, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1);
 
 /**
  * @}

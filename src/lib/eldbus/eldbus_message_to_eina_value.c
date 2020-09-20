@@ -449,7 +449,7 @@ end:
    return value_st;
 }
 
-EAPI Eina_Value *
+ELDBUS_API Eina_Value *
 eldbus_message_to_eina_value(const Eldbus_Message *msg)
 {
    Eldbus_Message_Iter *iter;
@@ -459,7 +459,7 @@ eldbus_message_to_eina_value(const Eldbus_Message *msg)
    return _message_iter_struct_to_eina_value(iter);
 }
 
-EAPI Eina_Value *
+ELDBUS_API Eina_Value *
 eldbus_message_iter_struct_like_to_eina_value(const Eldbus_Message_Iter *iter)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(iter, NULL);
