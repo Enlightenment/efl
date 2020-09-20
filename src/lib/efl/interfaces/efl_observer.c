@@ -257,7 +257,7 @@ _efl_observable_iterator_tuple_new(Eo *obj, Efl_Observable_Data *pd)
    return &it->iterator;
 }
 
-EAPI void
+EFL_API void
 efl_observable_tuple_free(Efl_Observable_Tuple *tuple)
 {
    //key is not owned
