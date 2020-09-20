@@ -140,7 +140,7 @@ emotion_modules_shutdown(void)
    _emotion_modules_loaded = EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 _emotion_module_register(const Emotion_Engine *api)
 {
    Emotion_Engine_Registry_Entry *re;
@@ -171,7 +171,7 @@ _emotion_module_register(const Emotion_Engine *api)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 _emotion_module_unregister(const Emotion_Engine *api)
 {
    Eina_List *n;

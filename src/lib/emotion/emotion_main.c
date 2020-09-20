@@ -20,7 +20,7 @@
 static Emotion_Version _version = { VMAJ, VMIN, VMIC, VREV };
 static int emotion_pending_objects = 0;
 static Eina_Lock emotion_pending_lock;
-EAPI Emotion_Version *emotion_version = &_version;
+EMOTION_API Emotion_Version *emotion_version = &_version;
 
 Eina_Prefix *_emotion_pfx = NULL;
 int _emotion_log_domain = -1;
@@ -115,14 +115,14 @@ _emotion_object_extension_can_play_generic_get(const void *data EINA_UNUSED, con
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_extension_may_play_fast_get(const char *file)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    return _emotion_object_extension_can_play_generic_get(NULL, file);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_object_extension_may_play_get(const char *file)
 {
    const char *tmp;
@@ -138,7 +138,7 @@ emotion_object_extension_may_play_get(const char *file)
 
 static int _emotion_init_count = 0;
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_init(void)
 {
    char buffer[PATH_MAX];
@@ -196,7 +196,7 @@ emotion_init(void)
 
 static int emotion_pendig_events = 0;
 
-EAPI void
+EMOTION_API void
 _emotion_pending_ecore_begin(void)
 {
    eina_lock_take(&emotion_pending_lock);
@@ -204,7 +204,7 @@ _emotion_pending_ecore_begin(void)
    eina_lock_release(&emotion_pending_lock);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_pending_ecore_end(void)
 {
    eina_lock_take(&emotion_pending_lock);
@@ -212,7 +212,7 @@ _emotion_pending_ecore_end(void)
    eina_lock_release(&emotion_pending_lock);
 }
 
-EAPI Eina_Bool
+EMOTION_API Eina_Bool
 emotion_shutdown(void)
 {
    double start;
@@ -272,7 +272,7 @@ emotion_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI void
+EMOTION_API void
 _emotion_pending_object_ref(void)
 {
    eina_lock_take(&emotion_pending_lock);
@@ -280,7 +280,7 @@ _emotion_pending_object_ref(void)
    eina_lock_release(&emotion_pending_lock);
 }
 
-EAPI void
+EMOTION_API void
 _emotion_pending_object_unref(void)
 {
    eina_lock_take(&emotion_pending_lock);

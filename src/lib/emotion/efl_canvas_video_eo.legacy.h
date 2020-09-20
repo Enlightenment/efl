@@ -29,7 +29,7 @@ typedef Eo Efl_Canvas_Video;
  *
  * @ingroup (null)_Group
  */
-EAPI void emotion_object_module_option_set(Efl_Canvas_Video *obj, const char *opt, const char *val);
+EMOTION_API void emotion_object_module_option_set(Efl_Canvas_Video *obj, const char *opt, const char *val);
 
 /**
  * @brief Initializes an emotion object with the specified module.
@@ -55,6 +55,6 @@ EAPI void emotion_object_module_option_set(Efl_Canvas_Video *obj, const char *op
  *
  * @ingroup (null)_Group
  */
-EAPI Eina_Bool emotion_object_init(Efl_Canvas_Video *obj, const char *module_filename);
+EMOTION_API Eina_Bool emotion_object_init(Efl_Canvas_Video *obj, const char *module_filename);
 
 #endif

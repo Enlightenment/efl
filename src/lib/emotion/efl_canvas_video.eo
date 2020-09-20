@@ -92,14 +92,14 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
 }
 
 /* FIXME: Need to be added:
-EAPI double       emotion_object_buffer_size_get       (const Evas_Object *obj);
-EAPI const char  *emotion_object_progress_info_get     (const Evas_Object *obj);
+EMOTION_API double       emotion_object_buffer_size_get       (const Evas_Object *obj);
+EMOTION_API const char  *emotion_object_progress_info_get     (const Evas_Object *obj);
 
 Everything starting from (needs to be added):
-EAPI int          emotion_object_audio_channel_count   (const Evas_Object *obj);
+EMOTION_API int          emotion_object_audio_channel_count   (const Evas_Object *obj);
 
 Should this be part of player or emotion object?
-EAPI void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
+EMOTION_API void         emotion_object_event_simple_send     (Evas_Object *obj, Emotion_Event ev);
 
 Deliberations:
 Should this really implement the image interface?
