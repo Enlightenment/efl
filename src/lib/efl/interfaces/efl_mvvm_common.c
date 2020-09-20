@@ -5,17 +5,17 @@
 #include "Efl.h"
 #include "Efl_MVVM_Common.h"
 
-EAPI Eina_Error EFL_MODEL_ERROR_UNKNOWN = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_NOT_SUPPORTED = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_NOT_FOUND = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_READ_ONLY = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_INIT_FAILED = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
-EAPI Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_UNKNOWN = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_NOT_SUPPORTED = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_NOT_FOUND = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_READ_ONLY = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_INIT_FAILED = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
+EFL_API Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT = 0;
 
-EAPI Eina_Error EFL_FACTORY_ERROR_NOT_SUPPORTED = 0;
-EAPI Eina_Error EFL_PROPERTY_ERROR_INVALID_KEY = 0;
+EFL_API Eina_Error EFL_FACTORY_ERROR_NOT_SUPPORTED = 0;
+EFL_API Eina_Error EFL_PROPERTY_ERROR_INVALID_KEY = 0;
 
 static const char EFL_MODEL_ERROR_UNKNOWN_STR[]           = "Unknown Error";
 static const char EFL_MODEL_ERROR_NOT_SUPPORTED_STR[]     = "Operation not supported";
@@ -31,7 +31,7 @@ static const char EFL_FACTORY_ERROR_NOT_SUPPORTED_STR[]   = "Operation not suppo
 static const char EFL_PROPERTY_ERROR_INVALID_KEY_STR[]    = "Incorrect key provided";
 
 
-EAPI int
+EFL_API int
 efl_model_init(void)
 {
 #define _ERROR(Name) EFL_MODEL_ERROR_##Name = eina_error_msg_static_register(EFL_MODEL_ERROR_##Name##_STR);
@@ -57,7 +57,7 @@ efl_model_init(void)
 
 #undef _ERROR
 
-EAPI void
+EFL_API void
 _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 {
    Efl_Model_Property_Event ev = { 0 };
@@ -84,7 +84,7 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
    eina_array_free(properties);
 }
 
-EAPI void
+EFL_API void
 efl_model_property_invalidated_notify(Efl_Model *model, const char *property)
 {
    Eina_Array *invalidated_properties = eina_array_new(1);
@@ -112,7 +112,7 @@ struct _Efl_Model_Value_Struct_Desc
    Eina_Value_Struct_Member members[];
 };
 
-EAPI Eina_Value_Struct_Desc *
+EFL_API Eina_Value_Struct_Desc *
 efl_model_value_struct_description_new(unsigned int member_count, Efl_Model_Value_Struct_Member_Setup_Cb setup_cb, void *data)
 {
    Efl_Model_Value_Struct_Desc *desc;
@@ -152,7 +152,7 @@ efl_model_value_struct_description_new(unsigned int member_count, Efl_Model_Valu
    return &desc->base;
 }
 
-EAPI void
+EFL_API void
 efl_model_value_struct_description_free(Eina_Value_Struct_Desc *desc)
 {
    size_t i;
