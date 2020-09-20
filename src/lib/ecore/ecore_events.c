@@ -9,7 +9,7 @@
 
 static Ecore_Event_Message_Handler *_event_msg_handler = NULL;
 
-EAPI Ecore_Event_Handler *
+ECORE_API Ecore_Event_Handler *
 ecore_event_handler_add(int                    type,
                         Ecore_Event_Handler_Cb func,
                         const void            *data)
@@ -18,7 +18,7 @@ ecore_event_handler_add(int                    type,
                                           type, func, (void *)data);
 }
 
-EAPI Ecore_Event_Handler *
+ECORE_API Ecore_Event_Handler *
 ecore_event_handler_prepend(int                    type,
                         Ecore_Event_Handler_Cb func,
                         const void            *data)
@@ -27,20 +27,20 @@ ecore_event_handler_prepend(int                    type,
                                           type, func, (void *)data);
 }
 
-EAPI void *
+ECORE_API void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
    return ecore_event_message_handler_del(_event_msg_handler,
                                           event_handler);
 }
 
-EAPI void *
+ECORE_API void *
 ecore_event_handler_data_get(Ecore_Event_Handler *eh)
 {
    return ecore_event_message_handler_data_get(_event_msg_handler, eh);
 }
 
-EAPI void *
+ECORE_API void *
 ecore_event_handler_data_set(Ecore_Event_Handler *eh,
                              const void          *data)
 {
@@ -48,7 +48,7 @@ ecore_event_handler_data_set(Ecore_Event_Handler *eh,
                                                (void *)data);
 }
 
-EAPI Ecore_Event *
+ECORE_API Ecore_Event *
 ecore_event_add(int          type,
                 void        *ev,
                 Ecore_End_Cb func_free,
@@ -66,7 +66,7 @@ ecore_event_add(int          type,
    return (Ecore_Event *)msg;
 }
 
-EAPI void *
+ECORE_API void *
 ecore_event_del(Ecore_Event *event)
 {
    void *data = NULL;
@@ -76,13 +76,13 @@ ecore_event_del(Ecore_Event *event)
    return data;
 }
 
-EAPI int
+ECORE_API int
 ecore_event_type_new(void)
 {
    return ecore_event_message_handler_type_new(_event_msg_handler);
 }
 
-EAPI Ecore_Event_Filter *
+ECORE_API Ecore_Event_Filter *
 ecore_event_filter_add(Ecore_Data_Cb   func_start,
                        Ecore_Filter_Cb func_filter,
                        Ecore_End_Cb    func_end,
@@ -93,19 +93,19 @@ ecore_event_filter_add(Ecore_Data_Cb   func_start,
                                                  func_end, (void *)data);
 }
 
-EAPI void *
+ECORE_API void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
 {
    return ecore_event_message_handler_filter_del(_event_msg_handler, ef);
 }
 
-EAPI int
+ECORE_API int
 ecore_event_current_type_get(void)
 {
    return ecore_event_message_handler_current_type_get(_event_msg_handler);
 }
 
-EAPI void *
+ECORE_API void *
 ecore_event_current_event_get(void)
 {
    return ecore_event_message_handler_current_event_get(_event_msg_handler);
@@ -192,7 +192,7 @@ _ecore_event_signal_realtime_new(void)
    return calloc(1, sizeof(Ecore_Event_Signal_Realtime));
 }
 
-EAPI void
+ECORE_API void
 ecore_event_type_flush_internal(int type, ...)
 {
    va_list args;

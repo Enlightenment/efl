@@ -211,7 +211,7 @@ _ecore_poller_cb_timer(void *data EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
-EAPI void
+ECORE_API void
 ecore_poller_poll_interval_set(Ecore_Poller_Type type EINA_UNUSED,
                                double            poll_time)
 {
@@ -227,14 +227,14 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type EINA_UNUSED,
    _ecore_poller_next_tick_eval();
 }
 
-EAPI double
+ECORE_API double
 ecore_poller_poll_interval_get(Ecore_Poller_Type type EINA_UNUSED)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    return poll_interval;
 }
 
-EAPI Ecore_Poller *
+ECORE_API Ecore_Poller *
 ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
                  int               interval,
                  Ecore_Task_Cb     func,
@@ -278,7 +278,7 @@ ecore_poller_add(Ecore_Poller_Type type EINA_UNUSED,
    return poller;
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
 {
    int ibit;
@@ -310,7 +310,7 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
    return EINA_TRUE;
 }
 
-EAPI int
+ECORE_API int
 ecore_poller_poller_interval_get(const Ecore_Poller *poller)
 {
    int ibit, interval = 1;
@@ -328,7 +328,7 @@ ecore_poller_poller_interval_get(const Ecore_Poller *poller)
    return interval;
 }
 
-EAPI void *
+ECORE_API void *
 ecore_poller_del(Ecore_Poller *poller)
 {
    void *data;

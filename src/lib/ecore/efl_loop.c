@@ -33,7 +33,7 @@ GENERIC_ALLOC_SIZE_DECLARE(Efl_Loop_Promise_Simple_Data);
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
 
-EAPI Eo *
+ECORE_API Eo *
 efl_main_loop_get(void)
 {
    return efl_app_main_get();
@@ -97,7 +97,7 @@ _efl_loop_time_get(const Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
    return pd->loop_time;
 }
 
-EAPI void
+ECORE_API void
 efl_exit(int exit_code)
 {
    Eina_Value v = EINA_VALUE_EMPTY;
@@ -107,7 +107,7 @@ efl_exit(int exit_code)
    efl_loop_quit(efl_main_loop_get(), v);
 }
 
-EAPI int
+ECORE_API int
 efl_loop_exit_code_process(Eina_Value *value)
 {
    Eina_Value def = EINA_VALUE_EMPTY;
@@ -359,7 +359,7 @@ _efl_loop_arguments_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *de
 // It doesn't make sense to send those argument to any other mainloop
 // As it also doesn't make sense to allow anyone to override this, so
 // should be internal for sure, not even protected.
-EAPI void
+ECORE_API void
 ecore_loop_arguments_send(int argc, const char **argv)
 {
    Eina_Array *arga, *cml;
@@ -633,9 +633,9 @@ _efl_loop_message_process(Eo *obj, Efl_Loop_Data *pd)
    return EINA_TRUE;
 }
 
-EOAPI EFL_FUNC_BODY(efl_loop_message_process, Eina_Bool, 0);
+ECORE_API ECORE_API_WEAK EFL_FUNC_BODY(efl_loop_message_process, Eina_Bool, 0);
 
-EWAPI void
+ECORE_API ECORE_API_WEAK void
 efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
                       const char *flavor, const char *build_id)
 {
@@ -667,7 +667,7 @@ EFL_SCHEDULER_ARRAY_DEFINE(loop_scheduler,
                            EFL_LOOP_EVENT_IDLE_ENTER,
                            EFL_LOOP_EVENT_IDLE);
 
-EAPI Eina_Future_Scheduler *
+ECORE_API Eina_Future_Scheduler *
 efl_loop_future_scheduler_get(const Eo *obj)
 {
    Efl_Loop *loop;

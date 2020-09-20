@@ -24,7 +24,7 @@ typedef Eo Efl_Loop_Timer;
  *
  * @ingroup Ecore_Timer_Group
  */
-EAPI void ecore_timer_interval_set(Efl_Loop_Timer *obj, double in);
+ECORE_API void ecore_timer_interval_set(Efl_Loop_Timer *obj, double in);
 
 /**
  * @brief Interval the timer ticks on.
@@ -35,7 +35,7 @@ EAPI void ecore_timer_interval_set(Efl_Loop_Timer *obj, double in);
  *
  * @ingroup Ecore_Timer_Group
  */
-EAPI double ecore_timer_interval_get(const Efl_Loop_Timer *obj);
+ECORE_API double ecore_timer_interval_get(const Efl_Loop_Timer *obj);
 
 /**
  * @brief Pending time regarding a timer.
@@ -46,7 +46,7 @@ EAPI double ecore_timer_interval_get(const Efl_Loop_Timer *obj);
  *
  * @ingroup Ecore_Timer_Group
  */
-EAPI double ecore_timer_pending_get(const Efl_Loop_Timer *obj);
+ECORE_API double ecore_timer_pending_get(const Efl_Loop_Timer *obj);
 
 /**
  * @brief Resets a timer to its full interval. This effectively makes the timer
@@ -61,7 +61,7 @@ EAPI double ecore_timer_pending_get(const Efl_Loop_Timer *obj);
  *
  * @ingroup Ecore_Timer_Group
  */
-EAPI void ecore_timer_reset(Efl_Loop_Timer *obj);
+ECORE_API void ecore_timer_reset(Efl_Loop_Timer *obj);
 
 /** This effectively resets a timer but based on the time when this iteration
  * of the main loop started.
@@ -70,7 +70,7 @@ EAPI void ecore_timer_reset(Efl_Loop_Timer *obj);
  *
  * @ingroup Ecore_Timer_Group
  */
-EAPI void ecore_timer_loop_reset(Efl_Loop_Timer *obj);
+ECORE_API void ecore_timer_loop_reset(Efl_Loop_Timer *obj);
 
 /**
  * @brief Adds a delay to the next occurrence of a timer. This doesn't affect
@@ -81,6 +81,6 @@ EAPI void ecore_timer_loop_reset(Efl_Loop_Timer *obj);
  *
  * @ingroup Ecore_Timer_Group
  */
-EAPI void ecore_timer_delay(Efl_Loop_Timer *obj, double add);
+ECORE_API void ecore_timer_delay(Efl_Loop_Timer *obj, double add);
 
 #endif

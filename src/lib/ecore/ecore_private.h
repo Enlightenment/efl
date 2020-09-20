@@ -2,38 +2,13 @@
 #define _ECORE_PRIVATE_H
 
 #include <assert.h>
+#include <ecore_api.h>
 
 #include "ecore_internal.h"
 
 #include "ecore_exe_eo.h"
 #include "ecore_event_message.eo.h"
 #include "ecore_event_message_handler.eo.h"
-
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
 
 extern int _ecore_log_dom;
 #ifdef  _ECORE_DEFAULT_LOG_DOM
@@ -222,7 +197,7 @@ typedef struct _Ecore_Evas_Object_Animator_Interface
    void *(*del)(Ecore_Animator *animator);
 } Ecore_Evas_Object_Animator_Interface;
 
-EAPI void ecore_evas_object_animator_init(Ecore_Evas_Object_Animator_Interface *iface);
+ECORE_API void ecore_evas_object_animator_init(Ecore_Evas_Object_Animator_Interface *iface);
 
 #define EVAS_FRAME_QUEUING        1 /* for test */
 
@@ -247,6 +222,12 @@ EAPI void ecore_evas_object_animator_init(Ecore_Evas_Object_Animator_Interface *
 typedef unsigned int Ecore_Magic;
 #define ECORE_MAGIC               Ecore_Magic __magic
 
+ECORE_API void
+_ecore_magic_fail(const void *d,
+                  Ecore_Magic m,
+                  Ecore_Magic req_m,
+                  const char *fname EINA_UNUSED);
+
 #define ECORE_MAGIC_SET(d, m)      (d)->__magic = (m)
 #define ECORE_MAGIC_CHECK(d, m)    ((d) && ((d)->__magic == (m)))
 #define ECORE_MAGIC_FAIL(d, m, fn) _ecore_magic_fail((d), (d) ? (d)->__magic : 0, (m), (fn));
@@ -261,7 +242,7 @@ typedef unsigned int Ecore_Magic;
 #undef IF_FN_DEL
 #define IF_FN_DEL(_fn, ptr)        if (ptr) { _fn(ptr); ptr = NULL; }
 
-EAPI void
+ECORE_API void
 ecore_print_warning(const char *function,
                     const char *sparam);
 
@@ -282,7 +263,7 @@ ecore_print_warning(const char *function,
        return;                                    \
     }
 
-EAPI void _ecore_magic_fail(const void *d,
+ECORE_API void _ecore_magic_fail(const void *d,
                             Ecore_Magic m,
                             Ecore_Magic req_m,
                             const char *fname);
@@ -556,8 +537,5 @@ extern Efl_Version _app_efl_version;
 #define ECORE_EVAS_INTERNAL
 
 #define EFL_LOOP_DATA efl_data_scope_get(efl_main_loop_get(), EFL_LOOP_CLASS)
-
-#undef EAPI
-#define EAPI
 
 #endif
