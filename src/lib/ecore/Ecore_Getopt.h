@@ -3,32 +3,7 @@
 
 #include <stdio.h>
 #include <Eina.h>
-
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_api.h>
 
 /**
  * @ingroup Ecore
@@ -1025,7 +1000,7 @@ struct _Ecore_Getopt
  *
  * @see ecore_getopt_help_category()
  */
-EAPI void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
+ECORE_API void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
 
 /**
  * Shows help for a single category (along with program usage and description).
@@ -1038,7 +1013,7 @@ EAPI void       ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
  *
  * @see ecore_getopt_help()
  */
-EAPI Eina_Bool  ecore_getopt_help_category(FILE *fp, const Ecore_Getopt *info, const char *category);
+ECORE_API Eina_Bool  ecore_getopt_help_category(FILE *fp, const Ecore_Getopt *info, const char *category);
 
 /**
  * Checks parser for duplicate entries, print them out.
@@ -1046,7 +1021,7 @@ EAPI Eina_Bool  ecore_getopt_help_category(FILE *fp, const Ecore_Getopt *info, c
  * @return @c EINA_TRUE if there are duplicates, @c EINA_FALSE otherwise.
  * @param parser The parser to be checked.
  */
-EAPI Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
+ECORE_API Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
 
 /**
  * Parses command line parameters.
@@ -1110,7 +1085,7 @@ EAPI Eina_Bool  ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
  *
  * @see ecore_getopt_parse_positional()
  */
-EAPI int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv);
+ECORE_API int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv);
 
 /**
  * Parses command line positional parameters.
@@ -1163,7 +1138,7 @@ EAPI int        ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Valu
  *         last positional argument is of action @c
  *         ECORE_GETOPT_ACTION_APPEND then it will be the same as @a argc.
  */
-EAPI int        ecore_getopt_parse_positional(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int start);
+ECORE_API int        ecore_getopt_parse_positional(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int start);
 
 
 /**
@@ -1172,7 +1147,7 @@ EAPI int        ecore_getopt_parse_positional(const Ecore_Getopt *parser, Ecore_
  * @param list Pointer to list to be freed.
  * @return always @c NULL, so you can easily make your list head @c NULL.
  */
-EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
+ECORE_API Eina_List *ecore_getopt_list_free(Eina_List *list);
 
 /**
  * Helper ecore_getopt callback to parse geometry (x:y:w:h).
@@ -1189,7 +1164,7 @@ EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
-EAPI Eina_Bool  ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
+ECORE_API Eina_Bool  ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
 /**
  * Helper ecore_getopt callback to parse geometry size (WxH).
@@ -1205,7 +1180,7 @@ EAPI Eina_Bool  ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser,
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
-EAPI Eina_Bool  ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
+ECORE_API Eina_Bool  ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
 #ifdef __cplusplus
 }
@@ -1214,8 +1189,5 @@ EAPI Eina_Bool  ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, con
 /**
  * @}
  */
-
-#undef EAPI
-#define EAPI
 
 #endif /* _ECORE_GETOPT_H */

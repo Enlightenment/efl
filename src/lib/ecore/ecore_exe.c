@@ -33,26 +33,26 @@ struct _ecore_exe_dead_exe
    char *cmd;
 };
 
-EAPI int ECORE_EXE_EVENT_ADD = 0;
-EAPI int ECORE_EXE_EVENT_DEL = 0;
-EAPI int ECORE_EXE_EVENT_DATA = 0;
-EAPI int ECORE_EXE_EVENT_ERROR = 0;
+ECORE_API int ECORE_EXE_EVENT_ADD = 0;
+ECORE_API int ECORE_EXE_EVENT_DEL = 0;
+ECORE_API int ECORE_EXE_EVENT_DATA = 0;
+ECORE_API int ECORE_EXE_EVENT_ERROR = 0;
 
-EAPI void
+ECORE_API void
 ecore_exe_run_priority_set(int pri)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    _impl_ecore_exe_run_priority_set(pri);
 }
 
-EAPI int
+ECORE_API int
 ecore_exe_run_priority_get(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    return _impl_ecore_exe_run_priority_get();
 }
 
-EAPI Ecore_Exe *
+ECORE_API Ecore_Exe *
 ecore_exe_run(const char *exe_cmd,
               const void *data)
 {
@@ -60,7 +60,7 @@ ecore_exe_run(const char *exe_cmd,
    return ecore_exe_pipe_run(exe_cmd, 0, data);
 }
 
-EAPI Ecore_Exe *
+ECORE_API Ecore_Exe *
 ecore_exe_pipe_run(const char      *exe_cmd,
                    Ecore_Exe_Flags  flags,
                    const void      *data)
@@ -101,7 +101,7 @@ _ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    return _impl_ecore_exe_efl_object_finalize(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_callback_pre_free_set(Ecore_Exe   *obj,
                                 Ecore_Exe_Cb func)
 {
@@ -111,7 +111,7 @@ ecore_exe_callback_pre_free_set(Ecore_Exe   *obj,
    exe->pre_free_cb = func;
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_exe_send(Ecore_Exe  *obj,
                const void *data,
                int         size)
@@ -130,7 +130,7 @@ ecore_exe_send(Ecore_Exe  *obj,
    return _impl_ecore_exe_send(obj, exe, data, size);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_close_stdin(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -139,7 +139,7 @@ ecore_exe_close_stdin(Ecore_Exe *obj)
    exe->close_stdin = 1;
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_auto_limits_set(Ecore_Exe *obj,
                           int        start_bytes,
                           int        end_bytes,
@@ -153,7 +153,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *obj,
                                    start_lines, end_lines);
 }
 
-EAPI Ecore_Exe_Event_Data *
+ECORE_API Ecore_Exe_Event_Data *
 ecore_exe_event_data_get(Ecore_Exe      *obj,
                          Ecore_Exe_Flags flags)
 {
@@ -163,7 +163,7 @@ ecore_exe_event_data_get(Ecore_Exe      *obj,
    return _impl_ecore_exe_event_data_get(obj, exe, flags);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_tag_set(Ecore_Exe  *obj,
                   const char *tag)
 {
@@ -175,7 +175,7 @@ ecore_exe_tag_set(Ecore_Exe  *obj,
    else exe->tag = NULL;
 }
 
-EAPI const char *
+ECORE_API const char *
 ecore_exe_tag_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -184,7 +184,7 @@ ecore_exe_tag_get(const Ecore_Exe *obj)
    return exe->tag;
 }
 
-EAPI void *
+ECORE_API void *
 ecore_exe_free(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -202,7 +202,7 @@ _ecore_exe_efl_object_destructor(Eo *obj, Ecore_Exe_Data *exe)
    _impl_ecore_exe_efl_object_destructor(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 {
    if (!e) return;
@@ -211,7 +211,7 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
    free(e);
 }
 
-EAPI pid_t
+ECORE_API pid_t
 ecore_exe_pid_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
@@ -220,7 +220,7 @@ ecore_exe_pid_get(const Ecore_Exe *obj)
    return exe->pid;
 }
 
-EAPI const char *
+ECORE_API const char *
 ecore_exe_cmd_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -229,7 +229,7 @@ ecore_exe_cmd_get(const Ecore_Exe *obj)
    return ret;
 }
 
-EAPI void *
+ECORE_API void *
 ecore_exe_data_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -238,7 +238,7 @@ ecore_exe_data_get(const Ecore_Exe *obj)
    return exe->data;
 }
 
-EAPI void *
+ECORE_API void *
 ecore_exe_data_set(Ecore_Exe *obj,
                    void      *data)
 {
@@ -251,7 +251,7 @@ ecore_exe_data_set(Ecore_Exe *obj,
    return ret;
 }
 
-EAPI Ecore_Exe_Flags
+ECORE_API Ecore_Exe_Flags
 ecore_exe_flags_get(const Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
@@ -260,13 +260,13 @@ ecore_exe_flags_get(const Ecore_Exe *obj)
    return exe->flags;
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_pause(Ecore_Exe *obj)
 {
    efl_control_suspend_set(obj, EINA_TRUE);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_continue(Ecore_Exe *obj)
 {
    efl_control_suspend_set(obj, EINA_FALSE);
@@ -280,7 +280,7 @@ _ecore_exe_efl_control_suspend_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *exe, Ein
    else _impl_ecore_exe_continue(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_interrupt(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -289,7 +289,7 @@ ecore_exe_interrupt(Ecore_Exe *obj)
    _impl_ecore_exe_interrupt(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_quit(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -298,7 +298,7 @@ ecore_exe_quit(Ecore_Exe *obj)
    _impl_ecore_exe_quit(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_terminate(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -307,7 +307,7 @@ ecore_exe_terminate(Ecore_Exe *obj)
    _impl_ecore_exe_terminate(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_kill(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -316,7 +316,7 @@ ecore_exe_kill(Ecore_Exe *obj)
    _impl_ecore_exe_kill(obj, exe);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_signal(Ecore_Exe *obj,
                  int        num)
 {
@@ -326,7 +326,7 @@ ecore_exe_signal(Ecore_Exe *obj,
    _impl_ecore_exe_signal(obj, exe, num);
 }
 
-EAPI void
+ECORE_API void
 ecore_exe_hup(Ecore_Exe *obj)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;

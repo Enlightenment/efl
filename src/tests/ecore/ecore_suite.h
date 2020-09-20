@@ -25,4 +25,7 @@ void ecore_test_ecore_args(TCase *tc);
 void ecore_test_ecore_pipe(TCase *tc);
 void ecore_test_ecore_evas_selection(TCase *tc);
 
+#define ECORETEST_API
+#define ECORETEST_API_WEAK
+
 #endif /* _ECORE_SUITE_H */

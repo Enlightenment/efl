@@ -810,7 +810,7 @@ _ecore_getopt_help_prepare(const Ecore_Getopt *parser)
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_API void
 ecore_getopt_help(FILE               *fp,
                   const Ecore_Getopt *parser)
 {
@@ -822,7 +822,7 @@ ecore_getopt_help(FILE               *fp,
    _ecore_getopt_help_options(fp, parser);
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_getopt_help_category(FILE               *fp,
                            const Ecore_Getopt *parser,
                            const char         *category)
@@ -1977,7 +1977,7 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
    return NULL;
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
@@ -2028,7 +2028,7 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
    return NULL;
 }
 
-EAPI int
+ECORE_API int
 ecore_getopt_parse(const Ecore_Getopt *parser,
                    Ecore_Getopt_Value *values,
                    int                 argc,
@@ -2092,7 +2092,7 @@ error:
    return -1;
 }
 
-EAPI int
+ECORE_API int
 ecore_getopt_parse_positional(const Ecore_Getopt *parser,
                               Ecore_Getopt_Value *values,
                               int argc,
@@ -2159,7 +2159,7 @@ error:
    return -1;
 }
 
-EAPI Eina_List *
+ECORE_API Eina_List *
 ecore_getopt_list_free(Eina_List *list)
 {
    void *data;
@@ -2169,7 +2169,7 @@ ecore_getopt_list_free(Eina_List *list)
    return NULL;
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser EINA_UNUSED,
                                      const Ecore_Getopt_Desc *desc EINA_UNUSED,
                                      const char              *str,
@@ -2187,7 +2187,7 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser EINA_UNUSED
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_getopt_callback_size_parse(const Ecore_Getopt      *parser EINA_UNUSED,
                                  const Ecore_Getopt_Desc *desc EINA_UNUSED,
                                  const char              *str,

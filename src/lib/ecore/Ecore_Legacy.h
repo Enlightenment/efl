@@ -38,7 +38,7 @@ typedef struct _Ecore_Poller Ecore_Poller;
  * @c 0 it will be deleted automatically making any references/handles for it
  * invalid.
  */
-EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_Task_Cb func, const void *data);
 
 /**
  * @brief Deletes the specified poller from the timer list.
@@ -49,7 +49,7 @@ EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_
  * @note @a poller must be a valid handle. If the poller function has already
  * returned @c 0, the handle is no longer valid (and does not need to be deleted).
  */
-EAPI void *ecore_poller_del(Ecore_Poller *poller);
+ECORE_API void *ecore_poller_del(Ecore_Poller *poller);
 
 /**
  * @brief Sets the time(in seconds) between ticks for the given poller type.
@@ -59,7 +59,7 @@ EAPI void *ecore_poller_del(Ecore_Poller *poller);
  * This will adjust the time between ticks of the given timer type defined by
  * @p type to the time period defined by @p poll_time.
  */
-EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
+ECORE_API void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
 
 /**
  * @brief Gets the time(in seconds) between ticks for the given poller type.
@@ -68,7 +68,7 @@ EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_tim
  *
  * This will get the time between ticks of the specified poller timer.
  */
-EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+ECORE_API double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
 
 /**
  * @brief Polling interval rate of the poller.
@@ -77,14 +77,14 @@ EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
  *
  * @return @c true on success, @c false on failure.
  */
-EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *obj, int interval);
+ECORE_API Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *obj, int interval);
 
 /**
  * @brief Polling interval rate of the poller.
  *
  * @return The tick interval; must be a power of 2 and <= 32768.
  */
-EAPI int ecore_poller_poller_interval_get(const Ecore_Poller *obj);
+ECORE_API int ecore_poller_poller_interval_get(const Ecore_Poller *obj);
 
 /**
  * @}
@@ -125,7 +125,7 @@ typedef struct _Ecore_Animator Ecore_Animator;
  * @note The default @p frametime value is 1/30th of a second.
  *
  */
-EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
 
 /**
  * @brief Adds an animator that runs for a limited time.
@@ -157,7 +157,7 @@ EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
  *
  * @since 1.1.0
  */
-EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data);
+ECORE_API Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data);
 
 /**
  * @brief Deletes the specified animator from the animator list.
@@ -172,7 +172,7 @@ EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_
  * is invalid and should not be used again. It will not get called again after
  * deletion.
  */
-EAPI void *ecore_animator_del(Ecore_Animator *animator);
+ECORE_API void *ecore_animator_del(Ecore_Animator *animator);
 
 /**
  * @brief Suspends the specified animator.
@@ -188,7 +188,7 @@ EAPI void *ecore_animator_del(Ecore_Animator *animator);
  * will increase as if the animator hadn't been frozen and the animator may
  * have it's execution halted if @p runtime elapsed.
  */
-EAPI void ecore_animator_freeze(Ecore_Animator *animator);
+ECORE_API void ecore_animator_freeze(Ecore_Animator *animator);
 
 /**
  * @brief Restores execution of the specified animator.
@@ -198,7 +198,7 @@ EAPI void ecore_animator_freeze(Ecore_Animator *animator);
  * The specified @p animator will be put back in the set of animators that are
  * executed during main loop.
  */
-EAPI void ecore_animator_thaw(Ecore_Animator *animator);
+ECORE_API void ecore_animator_thaw(Ecore_Animator *animator);
 
 /**
  * @}
@@ -228,7 +228,7 @@ EAPI void ecore_animator_thaw(Ecore_Animator *animator);
  * @c 0 it will be deleted automatically making any references/handles for it
  * invalid.
  */
-EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
 
 /**
  * Creates a timer to call the given function in the given period of time.
@@ -242,7 +242,7 @@ EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *dat
  * ecore_loop_time_get() not ecore_time_get() as ecore_timer_add() uses. See
  * ecore_timer_add() for more details.
  */
-EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data);
 
 /**
  * Deletes the specified timer from the timer list.
@@ -253,7 +253,7 @@ EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void
  * Note: @p timer must be a valid handle. If the timer function has already
  * returned @c 0, the handle is no longer valid (and does not need to be delete).
  */
-EAPI void *ecore_timer_del(Ecore_Timer *timer);
+ECORE_API void *ecore_timer_del(Ecore_Timer *timer);
 
 /**
  * Pauses a running timer.
@@ -269,7 +269,7 @@ EAPI void *ecore_timer_del(Ecore_Timer *timer);
  *
  * @see ecore_timer_thaw()
  */
-EAPI void ecore_timer_freeze(Ecore_Timer *timer);
+ECORE_API void ecore_timer_freeze(Ecore_Timer *timer);
 
 /**
  * @brief Return whether the timer is freezing.
@@ -278,7 +278,7 @@ EAPI void ecore_timer_freeze(Ecore_Timer *timer);
  *
  * @see ecore_timer_freeze(), ecore_timer_thaw()
  */
-EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
+ECORE_API Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
 
 /**
  * @brief Resumes a frozen (paused) timer.
@@ -293,7 +293,7 @@ EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
  *
  * @see ecore_timer_freeze()
  */
-EAPI void ecore_timer_thaw(Ecore_Timer *timer);
+ECORE_API void ecore_timer_thaw(Ecore_Timer *timer);
 
 #include "efl_loop_timer_eo.legacy.h"
 
@@ -321,7 +321,7 @@ EAPI void ecore_timer_thaw(Ecore_Timer *timer);
  *
  * Idlers are useful for progressively processing data without blocking.
  */
-EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
 
 /**
  * Deletes an idler callback from the list to be executed.
@@ -329,7 +329,7 @@ EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
  * @return The data pointer passed to the idler callback on success, @c NULL
  *         otherwise.
  */
-EAPI void *ecore_idler_del(Ecore_Idler *idler);
+ECORE_API void *ecore_idler_del(Ecore_Idler *idler);
 
 /**
  * Adds an idle enterer handler.
@@ -341,7 +341,7 @@ EAPI void *ecore_idler_del(Ecore_Idler *idler);
  * idle state, as long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
  * (or @c ECORE_CALLBACK_CANCEL) deletes the idle enterer.
  */
-EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Idle_Enterer *ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data);
 
 /**
  * Adds an idle enterer handler at the start of the list so it gets called earlier than others.
@@ -353,7 +353,7 @@ EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(Ecore_Task_Cb func, const void *
  * idle state, as long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
  * (or @c ECORE_CALLBACK_CANCEL) deletes the idle enterer.
  */
-EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Idle_Enterer *ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data);
 
 /**
  * Deletes an idle enterer callback.
@@ -361,7 +361,7 @@ EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(Ecore_Task_Cb func, const
  * @return  The data pointer passed to the idler enterer callback on success.
  *          @c NULL otherwise.
  */
-EAPI void *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
+ECORE_API void *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
 /**
  * Adds an idle exiter handler.
@@ -372,7 +372,7 @@ EAPI void *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
  * idle state, as long as it returns @c 1 (or @c ECORE_CALLBACK_RENEW). A return of @c 0
  * (or @c ECORE_CALLBACK_CANCEL) deletes the idle exiter.
  */
-EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data);
 
 /**
  * Deletes an idle exiter handler from the list to be run on exiting idle state.
@@ -380,7 +380,7 @@ EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *da
  * @return The data pointer that was being being passed to the handler if
  *         successful. @c NULL otherwise.
  */
-EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
+ECORE_API void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
 /**
  * @}
@@ -412,22 +412,22 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  *          added to the queue.
  * @note    Once the job has been executed, the job handle is invalid.
  */
-EAPI Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
+ECORE_API Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
 
 /**
  * Deletes a queued job that has not yet been executed.
  * @param   obj  Handle of the job to delete.
  * @return  The data pointer that was to be passed to the job.
  */
-EAPI void *ecore_job_del(Ecore_Job *obj);
+ECORE_API void *ecore_job_del(Ecore_Job *obj);
 
 /**
  * @}
  */
 
 #ifdef EFL_BETA_API_SUPPORT
-EAPI Ecore_Animator *ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data);
-EAPI Ecore_Animator *ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data);
+ECORE_API Ecore_Animator *ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data);
+ECORE_API Ecore_Animator *ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data);
 #endif /* EFL_BETA_API_SUPPORT */
 
 #endif

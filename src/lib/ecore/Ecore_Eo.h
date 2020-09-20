@@ -45,9 +45,9 @@
 /* To be deprecated at some point */
 
 /** Please use efl_provider_register instead. */
-EAPI Eina_Bool efl_loop_register(Efl_Loop *obj, const Efl_Class *klass, const Efl_Object *provider);
+ECORE_API Eina_Bool efl_loop_register(Efl_Loop *obj, const Efl_Class *klass, const Efl_Object *provider);
 /** Please use efl_provider_unregister instead. */
-EAPI Eina_Bool efl_loop_unregister(Efl_Loop *obj, const Efl_Class *klass, const Efl_Object *provider);
+ECORE_API Eina_Bool efl_loop_unregister(Efl_Loop *obj, const Efl_Class *klass, const Efl_Object *provider);
 
 /**
  * @brief Quits the main loop once all the events currently on the queue have
@@ -59,9 +59,9 @@ EAPI Eina_Bool efl_loop_unregister(Efl_Loop *obj, const Efl_Class *klass, const 
  *
  * @ingroup Efl_Loop
  */
-EAPI void efl_exit(int exit_code);
+ECORE_API void efl_exit(int exit_code);
 
-EAPI int efl_loop_exit_code_process(Eina_Value *value);
+ECORE_API int efl_loop_exit_code_process(Eina_Value *value);
 
 #include "efl_loop_consumer.eo.h"
 
@@ -71,7 +71,7 @@ EAPI int efl_loop_exit_code_process(Eina_Value *value);
  * @param[in] obj An object which is either a loop or a loop consumer
  * @return The current loop's future scheduler.
  */
-EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(const Eo *obj);
+ECORE_API Eina_Future_Scheduler *efl_loop_future_scheduler_get(const Eo *obj);
 
 #include "efl_loop_fd.eo.h"
 #include "efl_loop_handler.eo.h"
@@ -86,7 +86,7 @@ EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(const Eo *obj);
 #include "efl_cubic_bezier_interpolator.eo.h"
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
-EAPI Eo *efl_main_loop_get(void);
+ECORE_API Eo *efl_main_loop_get(void);
 
 /**
  * @}

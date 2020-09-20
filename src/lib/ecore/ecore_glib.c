@@ -286,7 +286,7 @@ _ecore_glib_shutdown(void)
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_main_loop_glib_integrate(void)
 {
 #ifdef HAVE_GLIB
@@ -310,7 +310,7 @@ ecore_main_loop_glib_integrate(void)
 
 Eina_Bool _ecore_glib_always_integrate = 1;
 
-EAPI void
+ECORE_API void
 ecore_main_loop_glib_always_integrate_disable(void)
 {
    _ecore_glib_always_integrate = 0;

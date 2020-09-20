@@ -2,34 +2,10 @@
 #ifndef _ECORE_INTERNAL_H
 #define _ECORE_INTERNAL_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
+#include <ecore_api.h>
 
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
-
-EAPI void ecore_loop_arguments_send(int argc, const char **argv);
-EAPI Eina_Bool efl_loop_message_process(Eo *obj);
+ECORE_API void ecore_loop_arguments_send(int argc, const char **argv);
+ECORE_API Eina_Bool efl_loop_message_process(Eo *obj);
 
 static inline Eina_Value
 efl_model_list_value_get(Eina_List *childrens,
@@ -161,8 +137,5 @@ _efl_future_all_repack(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Val
    eina_value_flush(&r);
    return eina_value_error_init(EFL_MODEL_ERROR_UNKNOWN);
 }
-
-#undef EAPI
-#define EAPI
 
 #endif
