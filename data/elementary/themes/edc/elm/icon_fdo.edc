@@ -77,11 +77,8 @@
 
 ////  places  /////////////////////////////////////////////////////////////////
 #define CTX "places"
-ICO1(CTX, "user-home", 128)
 ICO1(CTX, "user-bookmarks", 128)
 ICO2(CTX, "user-desktop")
-ICO1(CTX, "user-trash", 128)
-ICO2(CTX, "folder")
 ICO2(CTX, "folder-drag-accept") /* spec have this icon in the Status category */
 ICO2(CTX, "folder-remote")
 ICO2(CTX, "folder-open") /* */
@@ -371,16 +368,10 @@ ICO1(CTX, "non-starred", 128) /* */
 // TODO accessories-text-editor
 // TODO multimedia-volume-control
 // TODO help-browser
-ICO1(CTX, "preferences-color", 64) /* */
-ICO1(CTX, "preferences-profile", 64) /* Elm specific */
 // TODO preferences-desktop-accessibility
-ICO1(CTX, "preferences-desktop-display", 64) /* */
-ICO1(CTX, "preferences-desktop-font", 64)
 ICO1(CTX, "preferences-desktop-keyboard", 64)
 ICO1(CTX, "preferences-desktop-locale", 64)
-ICO1(CTX, "preferences-desktop-multimedia", 64)
 ICO1(CTX, "preferences-desktop-screensaver", 64)
-ICO1(CTX, "preferences-desktop-theme", 64)
 ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO system-software-install
 // TODO system-software-update

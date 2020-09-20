@@ -10,21 +10,7 @@
    images.image: File COMP; parts { part { name: "base"; \
    description { aspect: 1.0 1.0; aspect_preference: BOTH; \
    image.normal: File; } } } }
-IC("home",        "toolbar/home",        "icon_home.png",        16, 0);
-IC("close",       "toolbar/close",       "icon_close.png",       16, 0);
-IC("apps",        "toolbar/apps",        "icon_apps.png",        16, 0);
-IC("arrow_up",    "toolbar/arrow_up",    "icon_arrow_up.png",    16, 0);
-IC("arrow_down",  "toolbar/arrow_down",  "icon_arrow_down.png",  16, 0);
-IC("arrow_left",  "toolbar/arrow_left",  "icon_arrow_left.png",  16, 0);
-IC("arrow_right", "toolbar/arrow_right", "icon_arrow_right.png", 16, 0);
-IC("chat",        "toolbar/chat",        "icon_chat.png",        16, 0);
-IC("clock",       "toolbar/clock",       "icon_clock.png",       16, 0);
-IC("delete",      "toolbar/delete",      "icon_delete.png",      16, 0);
-IC("edit",        "toolbar/edit",        "icon_edit.png",        16, 0);
-IC("refresh",     "toolbar/refresh",     "icon_refresh.png",     16, 0);
-IC("file",        "toolbar/file",        "icon_file.png",        16, 0);
 IC("no_photo",    "photo/no_photo",      "icon_head.png",        16, 0);
-IC("search",      "toolbar/search",      "icon_search.png",      16, 0);
 #undef IC
 
 #define IC(Name, File, Min, Max) \
@@ -32,44 +18,6 @@ IC("search",      "toolbar/search",      "icon_search.png",      16, 0);
    images.image: File COMP; parts { part { name: "base"; \
    description { aspect: 1.0 1.0; aspect_preference: BOTH; \
    image.normal: File; } } } }
-
-IC("toolbar/more_menu",    "icon_arrow_down.png", 16, 0);
-IC("toolbar/folder",       "icon_folder.png",     16, 0);
-
-IC("arrow-up",             "icon_arrow_up.png",         16, 0);
-IC("arrow-down",           "icon_arrow_down.png",       16, 0);
-IC("arrow-left",           "icon_arrow_left.png",       16, 0);
-IC("arrow-right",          "icon_arrow_right.png",      16, 0);
-IC("arrow-up-left",        "icon_arrow_up_left.png",    16, 0);
-IC("arrow-up-right",       "icon_arrow_up_right.png",   16, 0);
-IC("arrow-down-left",      "icon_arrow_down_left.png",  16, 0);
-IC("arrow-down-right",     "icon_arrow_down_right.png", 16, 0);
-
-IC("arrow_up_left",        "icon_arrow_up_left.png",    16, 0);
-IC("arrow_up_right",       "icon_arrow_up_right.png",   16, 0);
-IC("arrow_down_left",      "icon_arrow_down_left.png",  16, 0);
-IC("arrow_down_right",     "icon_arrow_down_right.png", 16, 0);
-
-IC("document-edit",        "icon_edit.png",        16, 0)
-IC("dialog-info",          "icon_info.png",        16, 0)
-IC("dialog-close",         "icon_close.png",       16, 0)
-IC("application-chat",     "icon_chat.png",        16, 0) /* */
-IC("application-clock",    "icon_clock.png",       16, 0) /* */
-
-IC("menu/home",            "icon_home.png",        16, 0);
-IC("menu/close",           "icon_close.png",       16, 0);
-IC("menu/apps",            "icon_apps.png",        16, 0);
-IC("menu/arrow_up",        "icon_arrow_up.png",    16, 0);
-IC("menu/arrow_down",      "icon_arrow_down.png",  16, 0);
-IC("menu/arrow_left",      "icon_arrow_left.png",  16, 0);
-IC("menu/arrow_right",     "icon_arrow_right.png", 16, 0);
-IC("menu/chat",            "icon_chat.png",        16, 0);
-IC("menu/clock",           "icon_clock.png",       16, 0);
-IC("menu/delete",          "icon_delete.png",      16, 0);
-IC("menu/edit",            "icon_edit.png",        16, 0);
-IC("menu/refresh",         "icon_refresh.png",     16, 0);
-IC("menu/folder",          "icon_folder.png",      16, 0);
-IC("menu/file",            "icon_file.png",        16, 0);
 
 IC("media_player/forward", "icon_forward.png", 16, 0);
 IC("media_player/info",    "icon_info.png",    16, 0);
