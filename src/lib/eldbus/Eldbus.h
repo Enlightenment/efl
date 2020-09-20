@@ -83,31 +83,7 @@
 #ifdef EFL_BETA_API_SUPPORT
 #include <Efl.h>
 #endif
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <eldbus_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,20 +120,20 @@ typedef struct _Eldbus_Version
    int revision; /**< git revision (0 if a proper release or the git revision number Eldbus is built from) */
 } Eldbus_Version;
 
-EAPI extern const Eldbus_Version * eldbus_version; /**< Global Eldbus_Version object */
+ELDBUS_API extern const Eldbus_Version * eldbus_version; /**< Global Eldbus_Version object */
 
 /**
  * @brief Initialize eldbus.
  *
  * @return 1 or greater on success, 0 otherwise
  */
-EAPI int eldbus_init(void);
+ELDBUS_API int eldbus_init(void);
 /**
  * @brief Shutdown eldbus.
  *
  * @return 0 if e_dbus shuts down, greater than 0 otherwise.
  */
-EAPI int eldbus_shutdown(void);
+ELDBUS_API int eldbus_shutdown(void);
 
 /**
  * @typedef Eldbus_Free_Cb
@@ -257,8 +233,5 @@ typedef struct _Eldbus_Object Eldbus_Object;
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

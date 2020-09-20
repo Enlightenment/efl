@@ -69,7 +69,7 @@ typedef struct _Eldbus_Timeout_Data
 } Eldbus_Timeout_Data;
 
 static const Eldbus_Version _version = {VMAJ, VMIN, VMIC, VREV};
-EAPI const Eldbus_Version * eldbus_version = &_version;
+ELDBUS_API const Eldbus_Version * eldbus_version = &_version;
 
 static int _eldbus_init_count = 0;
 int _eldbus_log_dom = -1;
@@ -124,7 +124,7 @@ _eldbus_fork_reset()
    address_connections = NULL;
 }
 
-EAPI int
+ELDBUS_API int
 eldbus_init(void)
 {
    if (_eldbus_init_count++ > 0)
@@ -242,7 +242,7 @@ print_live_connection(Eldbus_Connection *conn)
      }
 }
 
-EAPI int
+ELDBUS_API int
 eldbus_shutdown(void)
 {
    if (_eldbus_init_count <= 0)
@@ -1091,14 +1091,14 @@ _connection_get(Eldbus_Connection_Type type, const char *address, Eina_Bool shar
    return conn;
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_private_connection_get(Eldbus_Connection_Type type)
 {
    DBG("Getting private connection with type %d", type);
    return _connection_get(type, NULL, EINA_FALSE);
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_connection_get(Eldbus_Connection_Type type)
 {
    Eldbus_Connection *conn;
@@ -1129,7 +1129,7 @@ eldbus_connection_get(Eldbus_Connection_Type type)
    return conn;
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_address_connection_get(const char *address)
 {
    Eldbus_Connection *conn = NULL;
@@ -1160,14 +1160,14 @@ eldbus_address_connection_get(const char *address)
    return conn;
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_private_address_connection_get(const char *address)
 {
    DBG("Getting private connection with address %s", address);
    return _connection_get(ELDBUS_CONNECTION_TYPE_ADDRESS, address, EINA_FALSE);
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_connection_ref(Eldbus_Connection *conn)
 {
    ELDBUS_CONNECTION_CHECK_RETVAL(conn, NULL);
@@ -1302,7 +1302,7 @@ _eldbus_connection_free(Eldbus_Connection *conn)
    free(conn);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_connection_unref(Eldbus_Connection *conn)
 {
    ELDBUS_CONNECTION_CHECK(conn);
@@ -1312,7 +1312,7 @@ eldbus_connection_unref(Eldbus_Connection *conn)
    _eldbus_connection_free(conn);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_connection_free_cb_add(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_CONNECTION_CHECK(conn);
@@ -1320,7 +1320,7 @@ eldbus_connection_free_cb_add(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const 
    conn->cbs_free = eldbus_cbs_free_add(conn->cbs_free, cb, data);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_connection_free_cb_del(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_CONNECTION_CHECK(conn);
@@ -1328,7 +1328,7 @@ eldbus_connection_free_cb_del(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const 
    conn->cbs_free = eldbus_cbs_free_del(conn->cbs_free, cb, data);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_connection_data_set(Eldbus_Connection *conn, const char *key, const void *data)
 {
    ELDBUS_CONNECTION_CHECK(conn);
@@ -1337,7 +1337,7 @@ eldbus_connection_data_set(Eldbus_Connection *conn, const char *key, const void 
    eldbus_data_set(&(conn->data), key, data);
 }
 
-EAPI void *
+ELDBUS_API void *
 eldbus_connection_data_get(const Eldbus_Connection *conn, const char *key)
 {
    ELDBUS_CONNECTION_CHECK_RETVAL(conn, NULL);
@@ -1345,7 +1345,7 @@ eldbus_connection_data_get(const Eldbus_Connection *conn, const char *key)
    return eldbus_data_get(&(((Eldbus_Connection *)conn)->data), key);
 }
 
-EAPI void *
+ELDBUS_API void *
 eldbus_connection_data_del(Eldbus_Connection *conn, const char *key)
 {
    ELDBUS_CONNECTION_CHECK_RETVAL(conn, NULL);
@@ -1393,7 +1393,7 @@ dispach_name_owner_cb(void *context)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_name_owner_changed_callback_add(Eldbus_Connection *conn, const char *bus, Eldbus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call)
 {
    Eldbus_Connection_Name *cn;
@@ -1428,7 +1428,7 @@ cleanup:
    eldbus_connection_name_gc(conn, cn);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_name_owner_changed_callback_del(Eldbus_Connection *conn, const char *bus, Eldbus_Name_Owner_Changed_Cb cb, const void *cb_data)
 {
    Eldbus_Connection_Name *cn;
@@ -1473,7 +1473,7 @@ eldbus_name_owner_changed_callback_del(Eldbus_Connection *conn, const char *bus,
    eldbus_connection_name_gc(conn, cn);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_connection_event_callback_add(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data)
 {
    Eldbus_Connection_Context_Event *ce;
@@ -1500,7 +1500,7 @@ _eldbus_connection_context_event_cb_del(Eldbus_Connection_Context_Event *ce, Eld
    free(ctx);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_connection_event_callback_del(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data)
 {
    Eldbus_Connection_Context_Event *ce;

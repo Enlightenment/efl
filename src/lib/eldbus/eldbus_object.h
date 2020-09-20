@@ -16,7 +16,7 @@
  * @param path object path of this object
  * @return The corresponding Eldbus_Object.
  */
-EAPI Eldbus_Object *eldbus_object_get(Eldbus_Connection *conn, const char *bus, const char *path) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
+ELDBUS_API Eldbus_Object *eldbus_object_get(Eldbus_Connection *conn, const char *bus, const char *path) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Increase object reference.
@@ -24,7 +24,7 @@ EAPI Eldbus_Object *eldbus_object_get(Eldbus_Connection *conn, const char *bus, 
  * @param obj An Eldbus_Object.
  * @return The same Eldbus_Object with an increased refcount.
  */
-EAPI Eldbus_Object *eldbus_object_ref(Eldbus_Object *obj) EINA_ARG_NONNULL(1);
+ELDBUS_API Eldbus_Object *eldbus_object_ref(Eldbus_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Decrease object reference.
@@ -32,7 +32,7 @@ EAPI Eldbus_Object *eldbus_object_ref(Eldbus_Object *obj) EINA_ARG_NONNULL(1);
  *
  * @param obj An Eldbus_Object.
  */
-EAPI void          eldbus_object_unref(Eldbus_Object *obj) EINA_ARG_NONNULL(1);
+ELDBUS_API void          eldbus_object_unref(Eldbus_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Add a callback function to be called when object will be freed.
@@ -41,7 +41,7 @@ EAPI void          eldbus_object_unref(Eldbus_Object *obj) EINA_ARG_NONNULL(1);
  * @param cb callback that will be executed
  * @param data passed to callback
  */
-EAPI void          eldbus_object_free_cb_add(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API void          eldbus_object_free_cb_add(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Remove callback registered in eldbus_object_free_cb_add().
@@ -50,7 +50,7 @@ EAPI void          eldbus_object_free_cb_add(Eldbus_Object *obj, Eldbus_Free_Cb 
  * @param cb Callback that was registered.
  * @param data Data that was passed to callback.
  */
-EAPI void          eldbus_object_free_cb_del(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API void          eldbus_object_free_cb_del(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @typedef Eldbus_Object_Event_Type
@@ -133,7 +133,7 @@ typedef void (*Eldbus_Object_Event_Cb)(void *data, Eldbus_Object *obj, void *eve
  * @param cb The callback to call.
  * @param cb_data The data to pass to the callback.
  */
-EAPI void                  eldbus_object_event_callback_add(Eldbus_Object *obj, Eldbus_Object_Event_Type type, Eldbus_Object_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+ELDBUS_API void                  eldbus_object_event_callback_add(Eldbus_Object *obj, Eldbus_Object_Event_Type type, Eldbus_Object_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @brief Remove callback registered in eldbus_object_event_callback_add().
@@ -143,7 +143,7 @@ EAPI void                  eldbus_object_event_callback_add(Eldbus_Object *obj, 
  * @param cb The callback to call.
  * @param cb_data The data to pass to the callback.
  */
-EAPI void                  eldbus_object_event_callback_del(Eldbus_Object *obj, Eldbus_Object_Event_Type type, Eldbus_Object_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+ELDBUS_API void                  eldbus_object_event_callback_del(Eldbus_Object *obj, Eldbus_Object_Event_Type type, Eldbus_Object_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * Get the Eldbus_Connection object associated with a Eldbus_Object.
@@ -151,7 +151,7 @@ EAPI void                  eldbus_object_event_callback_del(Eldbus_Object *obj, 
  * @param obj The Eldbus_Object.
  * @return The corresponding Eldbus_Connection object.
  */
-EAPI Eldbus_Connection     *eldbus_object_connection_get(const Eldbus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+ELDBUS_API Eldbus_Connection     *eldbus_object_connection_get(const Eldbus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Get the name associated with a Eldbus_Object.
@@ -159,7 +159,7 @@ EAPI Eldbus_Connection     *eldbus_object_connection_get(const Eldbus_Object *ob
  * @param obj The Eldbus_Object.
  * @return A string corresponding to the Eldbus_Object name.
  */
-EAPI const char           *eldbus_object_bus_name_get(const Eldbus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+ELDBUS_API const char           *eldbus_object_bus_name_get(const Eldbus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Get the path associated with a Eldbus_Object.
@@ -167,7 +167,7 @@ EAPI const char           *eldbus_object_bus_name_get(const Eldbus_Object *obj) 
  * @param obj The Eldbus_Object.
  * @return A string corresponding to the Eldbus_Object path.
  */
-EAPI const char           *eldbus_object_path_get(const Eldbus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+ELDBUS_API const char           *eldbus_object_path_get(const Eldbus_Object *obj) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Send a message.
@@ -181,7 +181,7 @@ EAPI const char           *eldbus_object_path_get(const Eldbus_Object *obj) EINA
  * ELDBUS_TIMEOUT_INFINITE for no timeout
  * @return A Eldbus_Pending object.
  */
-EAPI Eldbus_Pending        *eldbus_object_send(Eldbus_Object *obj, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
+ELDBUS_API Eldbus_Pending        *eldbus_object_send(Eldbus_Object *obj, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Add a signal handler.
@@ -193,7 +193,7 @@ EAPI Eldbus_Pending        *eldbus_object_send(Eldbus_Object *obj, Eldbus_Messag
  * @param cb_data data that will be passed to callback
  * @return A listener to the desired signal.
  */
-EAPI Eldbus_Signal_Handler *eldbus_object_signal_handler_add(Eldbus_Object *obj, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 4);
+ELDBUS_API Eldbus_Signal_Handler *eldbus_object_signal_handler_add(Eldbus_Object *obj, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 4);
 
 /**
  * @brief Call a dbus method on the Eldbus_Object.
@@ -204,7 +204,7 @@ EAPI Eldbus_Signal_Handler *eldbus_object_signal_handler_add(Eldbus_Object *obj,
  *
  * @return a new Eldbus_Message, free with eldbus_message_unref()
  */
-EAPI Eldbus_Message *eldbus_object_method_call_new(Eldbus_Object *obj, const char *interface, const char *member) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
+ELDBUS_API Eldbus_Message *eldbus_object_method_call_new(Eldbus_Object *obj, const char *interface, const char *member) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @}
