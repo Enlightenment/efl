@@ -1726,7 +1726,7 @@ _config_system_load(void)
      {
         Eina_Tmpstr* tmp;
         ERR("System loading config failed! Check your setup! Falling back to compile time defaults");
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_file_mkstemp("/tmp/elementary_configXXXXXX", &tmp), NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_file_mkstemp("elementary_configXXXXXX", &tmp), NULL);
         ef = eet_open(tmp, EET_FILE_MODE_WRITE);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(eet_data_undump(ef, "config", embedded_config, strlen(embedded_config)-1, EINA_FALSE), NULL);
         eet_close(ef);
