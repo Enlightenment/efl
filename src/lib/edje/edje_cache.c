@@ -329,6 +329,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
         free(data);
      }
 
+#ifdef HAVE_LUA
    snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", id);
    data = eet_read(edf->ef, buf, &size);
 
@@ -337,6 +338,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
         _edje_lua2_script_load(edc, data, size);
         free(data);
      }
+#endif
 
    ce->ref = edc;
 

@@ -265,7 +265,9 @@ static void       st_collections_group_inherit(void);
 static void       st_collections_group_program_source(void);
 static void       st_collections_group_part_remove(void);
 static void       st_collections_group_program_remove(void);
+#ifdef HAVE_LUA
 static void       st_collections_group_lua_script_only(void);
+#endif
 static void       st_collections_group_script_recursion(void);
 static void       st_collections_group_alias(void);
 static void       st_collections_group_min(void);
@@ -281,7 +283,9 @@ static void       st_collections_group_limits_vertical(void);
 static void       st_collections_group_limits_horizontal(void);
 
 static void       ob_collections_group_script(void);
+#ifdef HAVE_LUA
 static void       ob_collections_group_lua_script(void);
+#endif
 
 static void       st_collections_group_parts_alias(void);
 
@@ -674,7 +678,9 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.target_group", st_collections_group_target_group},   /* dup */
    {"collections.group.part_remove", st_collections_group_part_remove},
    {"collections.group.program_remove", st_collections_group_program_remove},
+#ifdef HAVE_LUA
    {"collections.group.lua_script_only", st_collections_group_lua_script_only},
+#endif
    {"collections.group.script_recursion", st_collections_group_script_recursion},
    {"collections.group.alias", st_collections_group_alias},
    {"collections.group.min", st_collections_group_min},
@@ -1371,7 +1377,9 @@ New_Object_Handler object_handlers[] =
    {"collections.group.data", NULL},
    {"collections.group.limits", NULL},
    {"collections.group.script", ob_collections_group_script},
+#ifdef HAVE_LUA
    {"collections.group.lua_script", ob_collections_group_lua_script},
+#endif
    {"collections.group.externals", NULL},   /* dup */
    {"collections.group.set", ob_images_set},   /* dup */
    {"collections.group.set.image", ob_images_set_image},   /* dup */
@@ -4851,7 +4859,9 @@ st_collections_group_inherit(void)
    pc->prop.min.h = pc2->prop.min.h;
    pc->prop.orientation = pc2->prop.orientation;
 
+#ifdef HAVE_LUA
    pc->lua_script_only = pc2->lua_script_only;
+#endif
    pc->use_custom_seat_names = pc2->use_custom_seat_names;
 
    pcp = (Edje_Part_Collection_Parser *)pc;
@@ -5034,6 +5044,7 @@ st_collections_group_inherit(void)
         Defaults: off
     @endproperty
  */
+#ifdef HAVE_LUA
 static void
 st_collections_group_lua_script_only(void)
 {
@@ -5044,6 +5055,7 @@ st_collections_group_lua_script_only(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->lua_script_only = parse_bool(0);
 }
+#endif
 
 /**
     @page edcref

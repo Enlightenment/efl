@@ -793,7 +793,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    if (collect)
      part_match = eina_hash_string_superfast_new(NULL);
 
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+#endif
 
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */
@@ -837,12 +839,14 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
         ed->groups = eina_list_append(ed->groups, ed);
 
+#ifdef HAVE_LUA
         if (ed->collection->lua_script_only)
           {
              ed->load_error = EDJE_LOAD_ERROR_NONE;
              _edje_lua_script_only_init(ed);
           }
         else
+#endif
           {
              unsigned int i;
 
@@ -2071,7 +2075,9 @@ _edje_file_del(Edje *ed)
         ed->seats_count = 0;
      }
 
+#ifdef HAVE_LUA
    if (ed->L) _edje_lua2_script_shutdown(ed);
+#endif
    while (ed->subobjs)
      _edje_subobj_unregister(ed, ed->subobjs->data);
    if (ed->table_parts) free(ed->table_parts);
@@ -2370,7 +2376,9 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    ec->patterns.table_programs_size = 0;
 
    if (ec->script) embryo_program_free(ec->script);
+#ifdef HAVE_LUA
    _edje_lua2_script_unload(ec);
+#endif
 
    if (ec->limits.parts) free(ec->limits.parts);
 

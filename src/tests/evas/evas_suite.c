@@ -17,7 +17,9 @@ static const Efl_Test_Case etc[] = {
   { "Object Text", evas_test_text },
   { "Callbacks", evas_test_callbacks },
   { "Render Engines", evas_test_render_engines },
+#if HAVE_LUA
   { "Filters", evas_test_filters },
+#endif
   { "Images", evas_test_image_object },
   { "Images", evas_test_image_object2 },
   { "Masking", evas_test_mask },

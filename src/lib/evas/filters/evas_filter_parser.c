@@ -2,6 +2,7 @@
 
 #include <stdarg.h>
 
+#ifdef HAVE_LUA
 // Lua breaks API all the time
 #ifdef ENABLE_LUA_OLD
 // For 5.2 --> 5.1 compatibility
@@ -13,6 +14,7 @@
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
+#endif
 
 #define FILTERS_LEGACY_COMPAT
 
@@ -242,15 +244,17 @@ static struct
    { "stretch_xy", EVAS_FILTER_FILL_MODE_STRETCH_XY }
 };
 
+#ifdef HAVE_LUA
 static const char *_lua_buffer_meta = "buffer";
 static const char *_lua_color_meta = "color";
 #define _lua_methods_table "__methods"
 #define _lua_register_func "__register"
 #define _lua_errfunc_name "__backtrace"
 
-static Evas_Filter_Fill_Mode _fill_mode_get(Evas_Filter_Instruction *instr);
 static Eina_Bool _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr);
 static int _lua_backtrace(lua_State *L);
+#endif
+static Evas_Filter_Fill_Mode _fill_mode_get(Evas_Filter_Instruction *instr);
 
 typedef enum
 {
@@ -293,7 +297,9 @@ struct _Instruction_Param
       Buffer *buf;
       struct {
          void *data;
+#ifdef HAVE_LUA
          Eina_Bool (*func)(lua_State *L, int i, Evas_Filter_Program *, Evas_Filter_Instruction *, Instruction_Param *);
+#endif
       } special;
    } value;
    Eina_Bool set : 1;
@@ -308,7 +314,9 @@ struct _Evas_Filter_Instruction
    int /*Evas_Filter_Mode*/ type;
    Eina_Inlist /* Instruction_Param */ *params;
    int return_count;
+#ifdef HAVE_LUA
    Eina_Bool (* parse_run) (lua_State *L, Evas_Filter_Program *, Evas_Filter_Instruction *);
+#endif
    struct
    {
       int (* update) (Evas_Filter_Program *, Evas_Filter_Instruction *, int *, int *, int *, int *);
@@ -328,8 +336,10 @@ struct _Evas_Filter_Program
    } pad;
    Efl_Canvas_Filter_State state;
    Eina_Inlist *data; // Evas_Filter_Data_Binding
+#ifdef HAVE_LUA
    lua_State *L;
    int       lua_func;
+#endif
    int       last_bufid;
    Eina_Bool valid : 1;
    Eina_Bool padding_calc : 1; // Padding has been calculated
@@ -382,7 +392,9 @@ _instruction_param_addv(Evas_Filter_Instruction *instr, const char *name,
         param->value.c = va_arg(args, DATA32);
         break;
       case VT_SPECIAL:
+#ifdef HAVE_LUA
         param->value.special.func = va_arg(args, typeof(param->value.special.func));
+#endif
         param->value.special.data = va_arg(args, void *);
         break;
       case VT_NONE:
@@ -616,6 +628,7 @@ _buffer_get(Evas_Filter_Program *pgm, const char *name)
    return NULL;
 }
 
+#ifdef HAVE_LUA
 static Eina_Bool
 _lua_buffer_push(lua_State *L, Buffer *buf)
 {
@@ -721,6 +734,7 @@ _lua_implicit_metatable_drop(lua_State *L, const char *name)
      }
    return ret;
 }
+#endif
 
 // End of all lua metamethods and stuff
 
@@ -787,7 +801,9 @@ _buffer_add(Evas_Filter_Program *pgm, const char *name, Eina_Bool alpha,
    buf->h = pgm->state.h;
 
    pgm->buffers = eina_inlist_append(pgm->buffers, EINA_INLIST_GET(buf));
+#ifdef HAVE_LUA
    _lua_buffer_push(pgm->L, buf);
+#endif
 
    return buf;
 }
@@ -803,6 +819,7 @@ _buffer_del(Buffer *buf)
 
 static const int this_is_not_a_cat = 42;
 
+#ifdef HAVE_LUA
 static Evas_Filter_Program *
 _lua_program_get(lua_State *L)
 {
@@ -813,6 +830,7 @@ _lua_program_get(lua_State *L)
    lua_pop(L, 1);
    return pgm;
 }
+#endif
 
 /* Instruction definitions */
 
@@ -850,6 +868,7 @@ _lua_program_get(lua_State *L)
   @since 1.10
  */
 
+#ifdef HAVE_LUA
 static Eina_Bool
 _buffer_instruction_parse_run(lua_State *L,
                               Evas_Filter_Program *pgm,
@@ -915,6 +934,7 @@ _lua_buffer_new(lua_State *L)
 
    return instr->return_count;
 }
+#endif
 
 static int
 _blend_padding_update(Evas_Filter_Program *pgm EINA_UNUSED,
@@ -1212,6 +1232,7 @@ _bump_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *ins
    return EINA_TRUE;
 }
 
+#ifdef HAVE_LUA
 static Eina_Bool
 _lua_curve_points_func(lua_State *L, int i, Evas_Filter_Program *pgm EINA_UNUSED,
                        Evas_Filter_Instruction *instr, Instruction_Param *param)
@@ -1344,6 +1365,7 @@ _lua_curve_points_func(lua_State *L, int i, Evas_Filter_Program *pgm EINA_UNUSED
 
    return EINA_TRUE;
 }
+#endif
 
 /**
   @page evasfiltersref
@@ -1404,7 +1426,9 @@ _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
 
    // TODO: Allow passing an array of 256 values as points.
    // It could be easily computed from another function in the script.
+#ifdef HAVE_LUA
    _instruction_param_seq_add(instr, "points", VT_SPECIAL, _lua_curve_points_func, NULL);
+#endif
    if (instr->params)
      {
         last = instr->params->last;
@@ -1934,8 +1958,10 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
 
    if (!pgm) return;
 
+#ifdef HAVE_LUA
    if (pgm->L)
      lua_close(pgm->L);
+#endif
 
    EINA_INLIST_FREE(pgm->buffers, buf)
      {
@@ -1954,6 +1980,7 @@ evas_filter_program_del(Evas_Filter_Program *pgm)
 }
 
 // [-1, +1, e] -- converts the top of the stack to a valid 'color' object
+#ifdef HAVE_LUA
 static Eina_Bool
 _lua_convert_color(lua_State *L)
 {
@@ -2102,6 +2129,7 @@ fail:
    ERR("Invalid value for parameter %s", param->name);
    return luaL_error(L, "Invalid value for parameter %s", param->name);
 }
+#endif
 
 static Instruction_Param *
 _parameter_get_by_id(Evas_Filter_Instruction *instr, int id)
@@ -2119,6 +2147,7 @@ _parameter_get_by_id(Evas_Filter_Instruction *instr, int id)
    return NULL;
 }
 
+#ifdef HAVE_LUA
 static Eina_Bool
 _lua_instruction_run(lua_State *L, Evas_Filter_Instruction *instr)
 {
@@ -2389,6 +2418,7 @@ _lua_import_class(lua_State *L, const char *name, char **code)
      }
    return EINA_TRUE;
 }
+#endif
 
 static void
 _filter_program_buffers_set(Evas_Filter_Program *pgm)
@@ -2426,6 +2456,7 @@ _filter_program_buffers_set(Evas_Filter_Program *pgm)
      }
 }
 
+#ifdef HAVE_LUA
 static inline void
 _lua_class_create(lua_State *L, const char *name,
                   const luaL_Reg *meta, const luaL_Reg *methods)
@@ -2596,6 +2627,7 @@ _lua_backtrace(lua_State *L)
    lua_call(L, 2, 1);  /* call debug.traceback */
    return 1;
 }
+#endif
 
 #ifdef FILTERS_LEGACY_COMPAT
 // This function is here to avoid breaking the ABI too much.
@@ -2722,6 +2754,7 @@ _legacy_strdup(const char *str)
 static Eina_Bool
 _filter_program_state_set(Evas_Filter_Program *pgm)
 {
+#ifdef HAVE_LUA
    lua_State *L = pgm->L;
 
    // TODO:
@@ -2820,13 +2853,18 @@ _filter_program_state_set(Evas_Filter_Program *pgm)
 #undef JOINC
 #undef SETFIELD
 #undef SETCOLOR
+#else
+   return EINA_FALSE;
+#endif
 }
 
 static Eina_Bool
 _filter_program_reset(Evas_Filter_Program *pgm)
 {
    Evas_Filter_Instruction *instr;
+#ifdef HAVE_LUA
    lua_State *L = pgm->L;
+#endif
    Eina_Inlist *il;
    Buffer *buf;
 
@@ -2840,8 +2878,10 @@ _filter_program_reset(Evas_Filter_Program *pgm)
    // Clear out buffers
    EINA_INLIST_FOREACH_SAFE(pgm->buffers, il, buf)
      {
+#ifdef HAVE_LUA
         lua_pushnil(L);
         lua_setglobal(L, buf->name);
+#endif
         pgm->buffers = eina_inlist_remove(pgm->buffers, EINA_INLIST_GET(buf));
         _buffer_del(buf);
      }
@@ -2858,8 +2898,9 @@ _filter_program_reset(Evas_Filter_Program *pgm)
 EVAS_API Eina_Bool
 evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 {
+   Eina_Bool ok = EINA_FALSE;
+#ifdef HAVE_LUA
    lua_State *L;
-   Eina_Bool ok;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pgm, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
@@ -2913,6 +2954,7 @@ evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
    pgm->valid = ok;
    pgm->padding_calc = EINA_FALSE;
    pgm->changed = EINA_FALSE;
+#endif
 
    return ok;
 }
@@ -3628,6 +3670,7 @@ evas_filter_context_program_use(void *engine, void *output,
      {
         pgm->changed = EINA_FALSE;
         _filter_program_reset(pgm);
+#ifdef HAVE_LUA
         lua_getglobal(pgm->L, _lua_errfunc_name);
         lua_rawgeti(pgm->L, LUA_REGISTRYINDEX, pgm->lua_func);
         success = !lua_pcall(pgm->L, 0, LUA_MULTRET, -2);
@@ -3637,6 +3680,10 @@ evas_filter_context_program_use(void *engine, void *output,
              ERR("Lua execution failed: %s", msg);
              goto end;
           }
+#else
+        ERR("Lua execution failed: Lua was disabled in this build.");
+        goto end;
+#endif
      }
 
    // Create or update all buffers
@@ -3668,6 +3715,8 @@ end:
 void
 evas_filter_parser_shutdown(void)
 {
+#ifdef HAVE_LUA
    free(_lua_color_code);
    _lua_color_code = NULL;
+#endif
 }

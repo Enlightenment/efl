@@ -31,9 +31,11 @@
 
 #include <fcntl.h>
 
+#ifdef HAVE_LUA
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
+#endif
 #include <setjmp.h>
 
 // auto_unref
@@ -1123,7 +1125,9 @@ struct _Edje_Part_Collection
    } patterns;
    /* *** *** */
 
+#ifdef HAVE_LUA
    unsigned char    lua_script_only;
+#endif
    unsigned char    broadcast_signal;
    unsigned char    physics_enabled; /* will be 1 if a body is declared */
    unsigned char    script_recursion; /* permits unsafe Embryo->EDC->Embryo scripting */
@@ -1585,12 +1589,16 @@ struct _Edje
    double                duration_scale;
    double                paused_at;
    Eina_Hash            *user_defined;
+#ifdef HAVE_LUA
    lua_State            *L;
    Eina_Inlist          *lua_objs;
+#endif
 
    Eina_Inlist          *messages;
 
+#ifdef HAVE_LUA
    int                   lua_ref;
+#endif
    int                   processing_messages;
    int                   references;
 
@@ -2718,6 +2726,7 @@ void _edje_embryo_globals_init(Edje *ed);
    if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
       *___cptr = (int)val; } }
 
+#ifdef HAVE_LUA
 extern jmp_buf _edje_lua_panic_jmp;
 #define _edje_lua_panic_here() setjmp(_edje_lua_panic_jmp)
 
@@ -2744,6 +2753,7 @@ void _edje_lua_script_only_hide(Edje *ed);
 void _edje_lua_script_only_move(Edje *ed);
 void _edje_lua_script_only_resize(Edje *ed);
 void _edje_lua_script_only_message(Edje *ed, Edje_Message *em);
+#endif
 
 void _edje_entry_init(Edje *ed);
 void _edje_entry_shutdown(Edje *ed);
@@ -2868,6 +2878,7 @@ void edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *da
 EDJE_API void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
 EDJE_API void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 
+#ifdef HAVE_LUA
 void _edje_lua2_error_full(const char *file, const char *fnc, int line, lua_State *L, int err_code);
 #define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __func__, __LINE__, L, err_code)
 void _edje_lua2_script_init(Edje *ed);
@@ -2882,6 +2893,7 @@ void _edje_lua2_script_func_move(Edje *ed);
 void _edje_lua2_script_func_resize(Edje *ed);
 void _edje_lua2_script_func_message(Edje *ed, Edje_Message *em);
 void _edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src);
+#endif
 
 const char *edje_string_get(const Edje_String *es);
 const char *edje_string_id_get(const Edje_String *es);

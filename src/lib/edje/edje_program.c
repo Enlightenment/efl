@@ -1538,8 +1538,10 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
    _edje_ref(ed);
    _edje_util_freeze(ed);
 
+#ifdef HAVE_LUA
    if (ed->collection && ed->L)
      _edje_lua2_script_func_signal(ed, sig, src);
+#endif
 
    if (ed->collection)
      {

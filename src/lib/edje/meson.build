@@ -124,9 +124,6 @@ edje_src = files([
   'edje_entry.c',
   'edje_external.c',
   'edje_load.c',
-  'edje_lua.c',
-  'edje_lua2.c',
-  'edje_lua_script_only.c',
   'edje_main.c',
   'edje_match.c',
   'edje_message_queue.c',
@@ -151,6 +148,14 @@ edje_src = files([
   'edje_part_text.c',
   'edje_part_invalid.c'
 ])
+
+if get_option('lua-interpreter') != 'none'
+  edje_src += files([
+    'edje_lua.c',
+    'edje_lua2.c',
+    'edje_lua_script_only.c',
+  ])
+endif
 
 edje_lib = library('edje',
     edje_src, pub_eo_file_target, priv_eo_file_target,

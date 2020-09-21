@@ -23,8 +23,10 @@
 #include "edje_convert.h"
 #include "edje_multisense_convert.h"
 
+#ifdef HAVE_LUA
 #include <lua.h>
 #include <lauxlib.h>
+#endif
 
 typedef struct _External_Lookup External_Lookup;
 typedef struct _Part_Lookup     Part_Lookup;
@@ -105,6 +107,7 @@ struct _Code_Lookup
    Eina_Bool set;
 };
 
+#ifdef HAVE_LUA
 typedef struct _Script_Lua_Writer Script_Lua_Writer;
 
 struct _Script_Lua_Writer
@@ -112,6 +115,7 @@ struct _Script_Lua_Writer
    char *buf;
    int   size;
 };
+#endif
 
 typedef struct _Script_Write    Script_Write;
 typedef struct _Head_Write      Head_Write;
@@ -2438,6 +2442,7 @@ data_write_scripts(Eet_File *ef)
      }
 }
 
+#ifdef HAVE_LUA
 #ifdef LUA_BINARY
 static int
 _edje_lua_script_writer(lua_State *L EINA_UNUSED, const void *chunk_buf, size_t chunk_size, void *_data)
@@ -2637,6 +2642,7 @@ data_write_lua_scripts(Eet_File *ef)
           }
      }
 }
+#endif
 
 static void
 data_thread_source(void *data, Ecore_Thread *thread EINA_UNUSED)
@@ -2871,8 +2877,10 @@ data_write(void)
    INF("groups: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_scripts(ef);
    INF("scripts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+#ifdef HAVE_LUA
    data_write_lua_scripts(ef);
    INF("lua scripts: %3.5f", ecore_time_get() - t); t = ecore_time_get();
+#endif
 
    if (!no_save)
      {
@@ -3795,8 +3803,10 @@ data_process_lookups(void)
         unsigned int count = 0;
         unsigned int i;
 
+#ifdef HAVE_LUA
         if (pc->lua_script_only)
           is_lua = EINA_TRUE;
+#endif
 #define PROGRAM_ID_SET(Type, Pc, It, Count)            \
   for (It = 0; It < Pc->programs.Type ## _count; ++It) \
     {                                                  \

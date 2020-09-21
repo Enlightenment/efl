@@ -166,7 +166,9 @@ _efl_canvas_layout_efl_canvas_group_group_del(Eo *obj, Edje *ed)
    _edje_block_violate(ed);
    ed->delete_me = 1;
    _edje_edjes = eina_inlist_remove(_edje_edjes, EINA_INLIST_GET(ed));
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+#endif
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */
    if ((ed->collection) && (ed->collection->physics_enabled) && (ed->world))
@@ -200,11 +202,13 @@ _efl_canvas_layout_efl_gfx_entity_position_set(Eo *obj, Edje *ed, Eina_Position2
    ed->y = pos.y;
 //   evas_object_move(ed->clipper, ed->x, ed->y);
 
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_move(ed);
         return;
      }
+#endif
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -314,11 +318,13 @@ _efl_canvas_layout_efl_gfx_entity_size_set(Eo *obj, Edje *ed, Eina_Size2D sz)
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = EINA_TRUE;
 #endif
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_resize(ed);
         goto super;
      }
+#endif
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = EINA_TRUE;
    _edje_recalc_do(ed);
@@ -335,11 +341,13 @@ _edje_object_show(Eo *obj, Edje *ed)
    Edje *edg;
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_show(ed);
         return;
      }
+#endif
    if (eina_list_count(ed->groups) > 1)
      {
         EINA_LIST_FOREACH(ed->groups, l, edg)
@@ -362,11 +370,13 @@ _edje_object_hide(Eo *obj, Edje *ed)
    Edje *edg;
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed))
      {
         _edje_lua_script_only_hide(ed);
         return;
      }
+#endif
    EINA_LIST_FOREACH(ed->groups, l, edg)
      if (edg != ed) evas_object_hide(edg->obj);
    _edje_emit(ed, "hide", NULL);
@@ -406,7 +416,9 @@ EOLIAN static void
 _efl_canvas_layout_efl_file_unload(Eo *obj, Edje *ed)
 {
    efl_file_unload(efl_super(obj, MY_CLASS));
+#ifdef HAVE_LUA
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+#endif
 #ifdef HAVE_EPHYSICS
    /* clear physics world  / shutdown ephysics */
    if ((ed->collection) && (ed->collection->physics_enabled) && (ed->world))

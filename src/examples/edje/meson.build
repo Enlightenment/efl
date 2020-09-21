@@ -28,7 +28,6 @@ edc_files = [
   'external_elm_panes.edc',
   'external_emotion_elm.edc',
   'focus.edc',
-  'lua_script.edc',
   'messages_echo.edc',
   'multiseat.edc',
   'multiseat_custom_names.edc',
@@ -36,7 +35,6 @@ edc_files = [
   'perspective.edc',
   'signals-messages.edc',
   'signalsBubble.edc',
-  'sigtest.edc',
   'svg.edc',
   'swallow.edc',
   'table.edc',
@@ -46,6 +44,13 @@ edc_files = [
   'multisense.edc',
   'center_zoom.edc',
 ]
+
+if get_option('lua-interpreter') != 'none'
+  edc_files += [
+    'lua_script.edc',
+    'sigtest.edc',
+  ]
+endif
 
 if (get_option('physics'))
   edc_files += [

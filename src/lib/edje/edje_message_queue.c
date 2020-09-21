@@ -840,11 +840,13 @@ _edje_message_process(Edje_Message *em)
      }
    /* now this message is destined for the script message handler fn */
    if (!(em->edje->collection)) return;
+#ifdef HAVE_LUA
    if (em->edje->L)
      {
         _edje_lua_script_only_message(em->edje, em);
         return;
      }
+#endif
    fn = embryo_program_function_find(em->edje->collection->script, "message");
    if (fn == EMBRYO_FUNCTION_NONE) return;
    /* reset the engine */
