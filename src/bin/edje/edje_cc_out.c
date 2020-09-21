@@ -116,7 +116,9 @@ struct _Script_Lua_Writer
 typedef struct _Script_Write    Script_Write;
 typedef struct _Head_Write      Head_Write;
 typedef struct _Fonts_Write     Fonts_Write;
+#ifndef EMILE_HEADER_ONLY
 typedef struct _Image_Write     Image_Write;
+#endif
 typedef struct _Sound_Write     Sound_Write;
 typedef struct _Mo_Write        Mo_Write;
 typedef struct _Vibration_Write Vibration_Write;
@@ -148,20 +150,26 @@ struct _Fonts_Write
    char      *errstr;
 };
 
+#ifndef EMILE_HEADER_ONLY
 struct _Image_Write
 {
    Eet_File                   *ef;
    Edje_Image_Directory_Entry *img;
    Evas_Object                *im;
+#ifndef EMILE_HEADER_ONLY
    Emile_Image_Property        prop;
+#endif
    Eina_File                  *f;
+#ifndef EMILE_HEADER_ONLY
    Emile_Image                *emi;
+#endif
    int                         w, h;
    int                         alpha;
    unsigned int               *data;
    char                       *path;
    char                       *errstr;
 };
+#endif
 
 struct _Sound_Write
 {
@@ -242,7 +250,9 @@ static int image_num;
 static Ecore_Evas *buffer_ee;
 static int cur_image_entry;
 
+#ifndef EMILE_HEADER_ONLY
 static void data_write_images(void);
+#endif
 
 void
 error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
@@ -268,7 +278,11 @@ thread_end(Eina_Bool img)
    if (threads)
      {
         if ((pending_image_threads + pending_threads) < (int)max_open_files - 2)
+#ifndef EMILE_HEADER_ONLY
           data_write_images();
+#else
+        {}
+#endif
      }
    if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
 }
@@ -1080,6 +1094,7 @@ show_err:
      file, file_out, errmsg, hint);
 }
 
+#ifndef EMILE_HEADER_ONLY
 static void
 data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
@@ -1215,7 +1230,9 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
           }
      }
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static void
 data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
@@ -1231,7 +1248,9 @@ data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    free(iw);
    thread_end(1);
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static void
 data_image_preload_done(void *data, Evas *e EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
@@ -1248,7 +1267,9 @@ data_image_preload_done(void *data, Evas *e EINA_UNUSED, Evas_Object *o, void *e
         data_thread_image_end(iw, NULL);
      }
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static void
 tgv_file_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
@@ -1261,7 +1282,9 @@ tgv_file_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
    len = eina_file_size_get(iw->f);
    eet_write_cipher(iw->ef, buf, iw->data, len, EINA_FALSE /*!no_comp*/, NULL);
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static void
 tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
@@ -1273,13 +1296,17 @@ tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
         free(iw->errstr);
      }
    free(iw->path);
+#ifndef EMILE_HEADER_ONLY
    emile_image_close(iw->emi);
+#endif
    eina_file_map_free(iw->f, iw->data);
    eina_file_close(iw->f);
    free(iw);
    thread_end(1);
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static Eina_Bool
 tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img)
 {
@@ -1368,6 +1395,7 @@ on_error:
    eina_file_close(f);
    return EINA_FALSE;
 }
+#endif
 
 static void
 data_write_vectors(Eet_File *ef, int *vector_num)
@@ -1475,6 +1503,7 @@ data_image_sets_init(void)
      }
 }
 
+#ifndef EMILE_HEADER_ONLY
 static void
 data_write_images(void)
 {
@@ -1496,7 +1525,7 @@ data_write_images(void)
         Eina_List *ll;
         char *s;
         int load_err = EVAS_LOAD_ERROR_NONE;
-        Image_Write *iw;
+        Image_Write *iw = NULL;
 
         img = &edje_file->image_dir->entries[cur_image_entry];
         if ((img->source_type >= EDJE_IMAGE_SOURCE_TYPE_USER) || !img->entry)
@@ -1508,6 +1537,7 @@ data_write_images(void)
              ext = strrchr(img->entry, '.');
              if (ext && !strcasecmp(ext, ".tgv"))
                {
+#ifndef EMILE_HEADER_ONLY
                   if (tgv_file_check_and_add(cur_ef, img))
                     {
                        DBG("Directly copying data from TGV file into EDJ");
@@ -1515,13 +1545,17 @@ data_write_images(void)
                     }
                   else
                     ERR("Source '%s' has incompatible ETC format.", img->entry);
+#endif
                }
           }
 
+        im = evas_object_image_add(evas);
+#ifndef EMILE_HEADER_ONLY
         iw = calloc(1, sizeof(Image_Write));
         iw->ef = cur_ef;
         iw->img = img;
-        iw->im = im = evas_object_image_add(evas);
+        iw->im = im;
+#endif
         if (threads)
           evas_object_event_callback_add(im,
                                          EVAS_CALLBACK_IMAGE_PRELOADED,
@@ -1589,6 +1623,7 @@ data_write_images(void)
           }
      }
 }
+#endif
 
 static void
 data_thread_sounds(void *data, Ecore_Thread *thread EINA_UNUSED)
@@ -2883,7 +2918,9 @@ data_write(void)
              data_thread_authors_end(ef, NULL);
           }
      }
+#ifndef EMILE_HEADER_ONLY
    data_write_images();
+#endif
    data_image_sets_init();
    INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads--;

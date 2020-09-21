@@ -63,7 +63,9 @@ extern "C" {
  *
  * @since 1.14
  */
+#ifdef EMILE_HEADER_ONLY
 EMILE_API int emile_init(void);
+#endif
 
 /**
  * Shut down the Emile library
@@ -76,7 +78,9 @@ EMILE_API int emile_init(void);
  * @return The new init count.
  * @since 1.14
  */
+#ifdef EMILE_HEADER_ONLY
 EMILE_API int emile_shutdown(void);
+#endif
 
 /**
  * @}

@@ -59,7 +59,7 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
 {
    unsigned int list_index = index / EFL_UI_EXACT_MODEL_CONTENT;
    static Eina_Binbuf *z = NULL;
-   Eina_Binbuf *cbuf;
+   Eina_Binbuf *cbuf = NULL;
    Eina_Binbuf *tbuf;
    Eina_List *l = NULL;
    unsigned int i;
@@ -69,7 +69,9 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
    if (!tbuf) return compressed;
 
+#ifndef EMILE_HEADER_ONLY
    cbuf = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
+#endif
    eina_binbuf_free(tbuf);
    if (!cbuf) return compressed;
 
@@ -96,7 +98,9 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
                   return compressed;
                }
 
+#ifndef EMILE_HEADER_ONLY
              z = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
+#endif
 
              eina_binbuf_free(tbuf);
              free(zmem);
@@ -139,7 +143,9 @@ _efl_ui_exact_model_buffer_expand(unsigned int list_index, unsigned int *buffer,
 
    // Found -> expand in buffer
    tmp = eina_binbuf_manage_new((unsigned char*) buffer, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
+#ifndef EMILE_HEADER_ONLY
    emile_expand(eina_list_data_get(l), tmp, EMILE_LZ4);
+#endif
    eina_binbuf_free(tmp);
 
    return buffer;

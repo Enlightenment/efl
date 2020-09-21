@@ -14,6 +14,7 @@ struct _Evas_Loader_Internal
    Eina_Rectangle region;
 };
 
+#ifndef EMILE_HEADER_ONLY
 static void *
 evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
                               Evas_Image_Load_Opts *opts,
@@ -57,8 +58,9 @@ evas_image_load_file_open_tgv(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
 
    return loader;
 }
+#endif
 
-
+#ifndef EMILE_HEADER_ONLY
 static void
 evas_image_load_file_close_tgv(void *loader_data)
 {
@@ -67,7 +69,9 @@ evas_image_load_file_close_tgv(void *loader_data)
    emile_image_close(loader->image);
    free(loader);
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static Eina_Bool
 evas_image_load_file_head_tgv(void *loader_data,
                               Emile_Image_Property *prop,
@@ -84,7 +88,9 @@ evas_image_load_file_head_tgv(void *loader_data,
 
    return ret;
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 Eina_Bool
 evas_image_load_file_data_tgv(void *loader_data,
                               Emile_Image_Property *prop,
@@ -102,7 +108,9 @@ evas_image_load_file_data_tgv(void *loader_data,
    *error = image_error;
    return ret;
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 Evas_Image_Load_Func evas_image_load_tgv_func =
 {
   EVAS_IMAGE_LOAD_VERSION,
@@ -115,12 +123,15 @@ Evas_Image_Load_Func evas_image_load_tgv_func =
   EINA_TRUE,
   EINA_FALSE
 };
+#endif
 
 static int
 module_open(Evas_Module *em)
 {
+#ifndef EMILE_HEADER_ONLY
    if (!em) return 0;
    em->functions = (void *)(&evas_image_load_tgv_func);
+#endif
    return 1;
 }
 

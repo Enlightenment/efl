@@ -1,6 +1,8 @@
 eet_deps = [rg_etc]
-eet_pub_deps = [eina, emile, efl]
-eet_ext_deps = [crypto, jpeg, m, rg_etc_simple]
+eet_pub_deps = [eina, efl]
+eet_ext_deps = [rg_etc_simple, crypto, jpeg, m]
+
+eet_pub_deps += [emile]
 
 eet_header_src = [
   'Eet.h'

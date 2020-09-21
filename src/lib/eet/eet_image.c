@@ -157,12 +157,16 @@ eet_jpeg_membuf_dst(j_compress_ptr cinfo,
 
 /*---*/
 
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_jpeg_header_decode(const void   *data,
                                   int           size,
                                   unsigned int *w,
                                   unsigned int *h,
                                   const Eet_Colorspace **cspaces);
+#endif
+
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_jpeg_rgb_decode(const void   *data,
                                int           size,
@@ -172,6 +176,9 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int  w,
                                unsigned int  h,
                                Eet_Colorspace cspace);
+#endif
+
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
@@ -181,6 +188,8 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
                                  unsigned int  w,
                                  unsigned int  h,
                                  Eet_Colorspace cspace);
+#endif
+
 static void *
 eet_data_image_lossless_convert(int         *size,
                                 const void  *data,
@@ -324,6 +333,7 @@ _eet_image_jpeg_emit_message_cb(j_common_ptr cinfo,
    */
 }
 
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_jpeg_header_decode(const void   *data,
                                   int           size,
@@ -366,7 +376,9 @@ eet_data_image_jpeg_header_decode(const void   *data,
 
    return r;
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_jpeg_rgb_decode(const void   *data,
                                int           size,
@@ -379,7 +391,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
 {
    Emile_Image_Load_Opts opts;
    Emile_Image_Property prop;
-   Emile_Image *image;
+   Emile_Image *image = NULL;
    Eina_Binbuf *bin;
    Emile_Image_Load_Error error;
    int r = 0;
@@ -421,7 +433,9 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
 
    return r;
 }
+#endif
 
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
@@ -506,6 +520,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
 
    return r;
 }
+#endif
 
 // FIXME: Importing two functions from evas here: premul & unpremul
 static void
@@ -551,6 +566,7 @@ _eet_argb_unpremul(unsigned int *data, unsigned int len)
      }
 }
 
+#ifndef EMILE_HEADER_ONLY
 static int
 eet_data_image_etc2_decode(const void *data,
                            unsigned int length,
@@ -648,6 +664,7 @@ eet_data_image_etc2_decode(const void *data,
    eina_binbuf_free(bin);
    return 0;
 }
+#endif
 
 static void *
 eet_data_image_lossless_convert(int         *size,
@@ -693,7 +710,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
 
    {
       Eina_Binbuf *in;
-      Eina_Binbuf *out;
+      Eina_Binbuf *out = NULL;
       unsigned char *result;
       int *bigend_data = NULL;
       int header[8];
@@ -716,7 +733,9 @@ eet_data_image_lossless_compressed_convert(int         *size,
            return NULL;
         }
 
+#ifndef EMILE_HEADER_ONLY
       out = emile_compress(in, eet_2_emile_compressor(compression), compression);
+#endif
 
       if (!out || (eina_binbuf_length_get(out) > eina_binbuf_length_get(in)))
         {
@@ -1032,6 +1051,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
                     }
 
                   in = eina_binbuf_manage_new(buffer, block_count * etc_block_size, EINA_TRUE);
+#ifndef EMILE_HEADER_ONLY
                   if (compress)
                     {
                        Eina_Binbuf *out;
@@ -1040,6 +1060,7 @@ eet_data_image_etc1_compressed_convert(int         *size,
                        eina_binbuf_free(in);
                        in = out;
                     }
+#endif
 
                   if (eina_binbuf_length_get(in) > 0)
                     {
@@ -1745,7 +1766,7 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
         unsigned int iw = 0, ih = 0;
         unsigned const char *dt;
         int sz1, sz2;
-        int ok;
+        int ok = 0;
 
         sz1 = header[1];
         sz2 = header[2];
@@ -1753,7 +1774,9 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
           goto on_error;
         dt = data;
         dt += 12;
+#ifndef EMILE_HEADER_ONLY
         ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih, cspaces);
+#endif
         if (ok)
           {
              if (w)
@@ -1817,9 +1840,11 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
    else
      {
         unsigned int iw = 0, ih = 0;
-        int ok;
+        int ok = 0;
 
+#ifndef EMILE_HEADER_ONLY
         ok = eet_data_image_jpeg_header_decode(data, size, &iw, &ih, cspaces);
+#endif
         if (ok)
           {
              if (w)
@@ -1842,7 +1867,7 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
 
              if (cspaces && *cspaces)
                {
-                  if ((*cspaces)[0] == EMILE_COLORSPACE_GRY8)
+                  if ((*cspaces)[0] == EET_COLORSPACE_GRY8)
                     *cspaces = _eet_gry8_alpha_colorspace;
                }
 
@@ -1978,8 +2003,8 @@ _eet_data_image_decode_inside(const void   *data,
         else
           {
              Eina_Binbuf *in;
-             Eina_Binbuf *out;
-             Eina_Bool expanded;
+             Eina_Binbuf *out = NULL;
+             Eina_Bool expanded = EINA_FALSE;
 
              in = eina_binbuf_manage_new((const unsigned char *) body, size - 8 * sizeof (int), EINA_TRUE);
              if (!in) return 0;
@@ -1987,7 +2012,9 @@ _eet_data_image_decode_inside(const void   *data,
              if ((src_h == h) && (src_w == w) && (row_stride == src_w * 4))
                {
                   out = eina_binbuf_manage_new((void*) d, w * h * 4, EINA_TRUE);
+#ifndef EMILE_HEADER_ONLY
                   expanded = emile_expand(in, out, eet_2_emile_compressor(comp));
+#endif
                   eina_binbuf_free(in);
                   eina_binbuf_free(out);
                   if (!expanded) return 0;
@@ -1996,9 +2023,11 @@ _eet_data_image_decode_inside(const void   *data,
                {
                   /* FIXME: This could create a huge alloc. So
                      compressed data and tile could not always work.*/
+#ifndef EMILE_HEADER_ONLY
                   out = emile_decompress(in,
                                          eet_2_emile_compressor(comp),
                                          w * h * 4);
+#endif
                   eina_binbuf_free(in);
                   if (!out) return 0;
 
@@ -2033,6 +2062,7 @@ _eet_data_image_decode_inside(const void   *data,
              dt = data;
              dt += 12;
 
+#ifndef EMILE_HEADER_ONLY
              if (eet_data_image_jpeg_rgb_decode(dt, sz1, src_x, src_y, d, w, h,
                                                 cspace))
                {
@@ -2041,19 +2071,29 @@ _eet_data_image_decode_inside(const void   *data,
                                                         d, w, h, cspace))
                     return 0;
                }
+#endif
           }
+#ifndef EMILE_HEADER_ONLY
         else if (!eet_data_image_jpeg_rgb_decode(data, size, src_x, src_y, d, w,
                                                  h, cspace))
           return 0;
+#else
+        else
+          return 0;
+#endif
      }
    else if ((lossy == EET_IMAGE_ETC1) ||
             (lossy == EET_IMAGE_ETC2_RGB) ||
             (lossy == EET_IMAGE_ETC2_RGBA) ||
             (lossy == EET_IMAGE_ETC1_ALPHA))
      {
+#ifndef EMILE_HEADER_ONLY
         return eet_data_image_etc2_decode(data, size, d,
                                           src_x, src_y, src_w, src_h,
                                           alpha, cspace, lossy);
+#else
+        return 0;
+#endif
      }
    else
      abort();

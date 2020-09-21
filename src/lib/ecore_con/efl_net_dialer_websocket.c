@@ -1024,13 +1024,13 @@ static void
 _efl_net_dialer_websocket_key_add(Efl_Net_Dialer_Websocket_Data *pd)
 {
    Eina_Binbuf *binbuf_key;
-   Eina_Strbuf *strbuf_key_base64;
+   Eina_Strbuf *strbuf_key_base64 = NULL;
    uint8_t key[16];
    const Eina_Slice guid_slice = EINA_SLICE_STR_LITERAL("258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
    Eina_Slice ro_slice;
    Eina_Rw_Slice rw_slice;
    uint8_t sha1hash[20];
-   Eina_Bool ret;
+   Eina_Bool ret = EINA_FALSE;
    size_t i;
 
     for (i = 0; i < sizeof(key); i++)
@@ -1039,7 +1039,9 @@ _efl_net_dialer_websocket_key_add(Efl_Net_Dialer_Websocket_Data *pd)
     binbuf_key = eina_binbuf_manage_new(key, sizeof(key), EINA_TRUE);
     EINA_SAFETY_ON_NULL_RETURN(binbuf_key);
 
+#ifndef EMILE_HEADER_ONLY
     strbuf_key_base64 = emile_base64_encode(binbuf_key);
+#endif
     eina_binbuf_free(binbuf_key);
 
     EINA_SAFETY_ON_NULL_RETURN(strbuf_key_base64);
@@ -1055,7 +1057,9 @@ _efl_net_dialer_websocket_key_add(Efl_Net_Dialer_Websocket_Data *pd)
     binbuf_key = eina_binbuf_manage_new(ro_slice.mem, ro_slice.len, EINA_TRUE);
     EINA_SAFETY_ON_NULL_GOTO(binbuf_key, free_strbuf);
     /* 2) sha1(base64(random(16)) + guid) */
+#ifndef EMILE_HEADER_ONLY
     ret = emile_binbuf_sha1(binbuf_key, sha1hash);
+#endif
     eina_binbuf_free(binbuf_key);
     eina_strbuf_free(strbuf_key_base64);
 
@@ -1065,7 +1069,9 @@ _efl_net_dialer_websocket_key_add(Efl_Net_Dialer_Websocket_Data *pd)
     binbuf_key = eina_binbuf_manage_new(sha1hash, sizeof(sha1hash), EINA_TRUE);
     EINA_SAFETY_ON_NULL_RETURN(binbuf_key);
 
+#ifndef EMILE_HEADER_ONLY
     strbuf_key_base64 = emile_base64_encode(binbuf_key);
+#endif
     eina_binbuf_free(binbuf_key);
     EINA_SAFETY_ON_NULL_RETURN(strbuf_key_base64);
 

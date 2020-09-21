@@ -184,6 +184,7 @@ EFL_START_TEST(eet_test_image_normal)
                                  0, 100, 1);
    fail_if(result == 0);
 
+#ifndef EMILE_HEADER_ONLY
    data = eet_data_image_read(ef,
                               EET_TEST_FILE_IMAGE "2",
                               &w,
@@ -215,6 +216,7 @@ EFL_START_TEST(eet_test_image_normal)
    fail_if(alpha != test_noalpha.alpha);
    fail_if(compress != 9);
    fail_if(lossy != 0);
+#endif
 
    eet_close(ef);
 
@@ -281,6 +283,7 @@ EFL_START_TEST(eet_test_image_normal)
    fail_if(data[0] != test_noalpha.color[0]);
    free(data);
 
+#ifndef EMILE_HEADER_ONLY
    data = eet_data_image_read(ef,
                               EET_TEST_FILE_IMAGE "1",
                               &w,
@@ -421,6 +424,7 @@ EFL_START_TEST(eet_test_image_normal)
    fail_if(alpha != test_alpha.alpha);
    fail_if(lossy != 1);
    free(data);
+#endif
 
    eet_close(ef);
 

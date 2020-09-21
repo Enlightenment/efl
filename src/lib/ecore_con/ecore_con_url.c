@@ -47,16 +47,20 @@ ecore_con_url_init(void)
    if (++_init_count > 1) return _init_count;
    if (!ecore_init()) goto ecore_init_failed;
    if (!ecore_con_init()) goto ecore_con_init_failed;
+#ifndef EMILE_HEADER_ONLY
    if (!emile_init()) goto emile_init_failed;
    if (!emile_cipher_init()) goto emile_cipher_init_failed;
+#endif
    ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
    ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
    ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
    return _init_count;
 
+#ifndef EMILE_HEADER_ONLY
  emile_cipher_init_failed:
    emile_shutdown();
  emile_init_failed:
+#endif
    ecore_con_shutdown();
  ecore_con_init_failed:
    ecore_shutdown();
@@ -78,7 +82,9 @@ ecore_con_url_shutdown(void)
                           ECORE_CON_EVENT_URL_COMPLETE,
                           ECORE_CON_EVENT_URL_PROGRESS);
 
+#ifndef EMILE_HEADER_ONLY
    emile_shutdown(); /* no emile_cipher_shutdown(), handled here */
+#endif
    ecore_con_shutdown();
    ecore_shutdown();
    return 0;

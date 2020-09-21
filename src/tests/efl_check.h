@@ -1,6 +1,8 @@
 #ifndef EFL_CHECK_H
 #define EFL_CHECK_H
 
+#define PEI fprintf(stderr, "== " __FILE__ ":%d %s\n", __LINE__, __func__); fflush(stderr);
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif

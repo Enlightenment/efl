@@ -51,10 +51,12 @@ EFL_START_TEST(eet_test_cipher_decipher_simple)
    ef = eet_open(file, EET_FILE_MODE_READ);
    fail_if(!ef);
 
+#ifndef EMILE_HEADER_ONLY
    test = eet_read_cipher(ef, "keys/tests", &size, key_bad);
 
    if (size == (int)strlen(buffer) + 1)
      fail_if(memcmp(test, buffer, strlen(buffer) + 1) == 0);
+#endif
 
    eet_close(ef);
 

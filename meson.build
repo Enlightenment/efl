@@ -311,8 +311,8 @@ subprojects = [
   ['eolian'           ,[]                    , false,  true,  true,  false,   true,     false, false, ['eina'], []],
   ['eo'               ,[]                    , false,  true, false,   true,   true,     false,  true, ['eina'], []],
   ['efl'              ,[]                    , false,  true, false,  false,   true,     false,  true, ['eo'], []],
-  ['emile'            ,[]                    , false,  true, false,  false,   true,      true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
-  ['eet'              ,[]                    , false,  true,  true,  false,   true,      true,  true, ['eina', 'emile', 'efl'], []],
+  ['emile'            ,['emile']             , false,  true, false,  false,   true,      true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
+  ['eet'              ,[]                    , false,  true,  true,  false,   true,      true,  true, ['eina', 'efl'], ['rg_etc']],
   ['ecore'            ,[]                    , false,  true, false,  false,  false,     false,  true, ['eina', 'eo', 'efl'], ['buildsystem']],
   ['eldbus'           ,[]                    , false,  true,  true,  false,   true,      true,  true, ['eina', 'eo', 'efl'], []],
   ['ecore'            ,[]                    ,  true, false, false,  false,   true,      true,  true, ['eina', 'eo', 'efl'], []], #ecores modules depend on eldbus
@@ -355,6 +355,10 @@ subprojects = [
   ['exactness'        ,[]                    , false,  false,  true, false,  false,     false, false, ['eina, evas, eet'], []],
 ]
 
+if not get_option('emile')
+  config_h.set('EMILE_HEADER_ONLY', 1)
+endif
+
 # We generate Efl_Config.h and config.h later, they will be available here
 config_dir += include_directories('.')
 
@@ -365,6 +369,7 @@ subdir(join_paths(local_module, 'eina'))
 # List of dependency objects that might be disabled due to configurations
 # If they are enabled, the object gets overwritten by the library file.
 ecore_audio = declare_dependency()
+emile = declare_dependency(include_directories : include_directories('src/lib/emile'))
 
 test_dirs = []
 example_dirs = []
@@ -374,6 +379,7 @@ efl_one_eo_deps = []
 efl_one_include_dirs = []
 efl_one_sub_dirs = []
 tmp_empty = declare_dependency()
+lz4 = tmp_empty
 
 efl_config_h = configuration_data()
 

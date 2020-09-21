@@ -273,11 +273,13 @@ _efl_net_ssl_context_efl_object_finalize(Eo *o, Efl_Net_Ssl_Context_Data *pd)
    o = efl_finalize(efl_super(o, MY_CLASS));
    if (!o) return NULL;
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init())
      {
         ERR("could not initialize cipher subsystem.");
         return NULL;
      }
+#endif
 
    if (pd->is_dialer)
      {

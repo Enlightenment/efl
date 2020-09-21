@@ -1144,7 +1144,7 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
 {
    Evas_Native_Surface *ns = native;
    RGBA_Image *im = image;
-   Image_Entry *ie = image, *ie2;
+   Image_Entry *ie = image, *ie2 = NULL;
 
    if (!im)
      {

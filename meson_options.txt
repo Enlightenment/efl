@@ -112,6 +112,12 @@ option('efreet',
   description : 'Enable efreet library',
 )
 
+option('emile',
+  type : 'boolean',
+  value : true,
+  description : 'Enable Emile'
+)
+
 option('crypto',
   type : 'combo',
   choices : ['gnutls', 'openssl'],

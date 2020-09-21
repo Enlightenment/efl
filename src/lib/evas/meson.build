@@ -52,9 +52,11 @@ evas_vg_loaders_file = [
 evas_vg_savers_file = ['eet', 'svg']
 
 rel_evas_modules = join_paths('..', '..', '..', 'modules', 'evas', 'engines', 'software_generic')
-evas_deps = [eo, eet, eina, efl, emile, ector, ecore, draw, buildsystem]
+evas_deps = [eo, eet, eina, efl, ector, ecore, draw, buildsystem]
 evas_ext_deps = [vg_common, draw_simple]
 evas_ext_none_static_deps = [buildsystem_simple, intl, m, valgrind, libunibreak, lua]
+
+evas_deps += emile
 
 pub_eo_file_target = []
 priv_eo_files = []
@@ -208,7 +210,11 @@ if get_option('opengl') != 'none'
 endif
 
 evas_link = [ ]
-evas_pub_deps = [eina, ecore, ector, emile]
+evas_pub_deps = [eina, ecore, ector]
+evas_pub_deps += emile
+
+evas_opt_deps = []
+evas_opt_deps += emile
 
 if  cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
   evas_opt = static_library('evas_opt',
@@ -218,7 +224,7 @@ if  cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
       evas_include_directories +
       [vg_common_inc_dir],
     c_args: native_arch_opt_c_args,
-    dependencies: [eina, eo, ector, emile, evas_deps, evas_ext_none_static_deps],
+    dependencies: [eina, eo, ector, evas_deps, evas_ext_none_static_deps, evas_opt_deps],
   )
   evas_link += [ evas_opt ]
 endif
@@ -280,7 +286,7 @@ foreach loader : evas_vg_savers_file
     file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'vg_savers', loader, 'evas_vg_save_'+loader+'.c')
     evas_static_list += [declare_dependency(
       sources: file,
-      dependencies: [eo, ector, emile, freetype, eet],
+      dependencies: [eo, ector, freetype, eet, evas_opt_deps],
     )]
     config_h.set('EVAS_STATIC_BUILD_VG_'+loader.to_upper(), '1')
   endif
@@ -313,7 +319,7 @@ evas = declare_dependency(
 
 evas_bin = declare_dependency(
    link_with : [evas_lib],
-   dependencies : [eina, ecore, ector, emile],
+   dependencies : [eina, ecore, ector, evas_opt_deps],
    include_directories : evas_include_directories
 )
 

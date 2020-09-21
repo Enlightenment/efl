@@ -30,9 +30,13 @@ efreet_src = files([
   'efreet_trash.c'
 ])
 
-efreet_deps = [eet, ecore, ecore_con, ecore_file, eo, efl, eina, emile, ecore_ipc, buildsystem]
+efreet_deps = [eet, ecore, ecore_con, ecore_file, eo, efl, eina, ecore_ipc, buildsystem]
 efreet_pub_deps = [eina, eo, efl]
 efreet_ext_deps = [buildsystem_simple, intl, m]
+
+if get_option('emile')
+  efreet_deps += emile
+endif
 
 package_c_args += ['-DDATA_DIR="'+dir_data+'"']
 

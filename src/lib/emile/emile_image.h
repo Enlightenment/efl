@@ -259,7 +259,9 @@ EMILE_API Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf * source, Emile_I
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API Emile_Image *emile_image_tgv_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+#endif
 
 
 /**
@@ -273,7 +275,9 @@ EMILE_API Emile_Image *emile_image_tgv_file_open(Eina_File * source, Emile_Image
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+#endif
 
 /**
  * Open a JPEG image from file.
@@ -286,7 +290,9 @@ EMILE_API Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf * source, Emile_
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API Emile_Image *emile_image_jpeg_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+#endif
 
 /**
  * Read the header of an image to fill Emile_Image_Property.
@@ -299,7 +305,9 @@ EMILE_API Emile_Image *emile_image_jpeg_file_open(Eina_File * source, Emile_Imag
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, Emile_Image_Load_Error * error);
+#endif
 
 /**
  * Read the pixels from an image file.
@@ -313,7 +321,9 @@ EMILE_API Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property *
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error * error);
+#endif
 
 /**
  * Register a callback for emile to ask what to do during the processing of an image
@@ -323,7 +333,9 @@ EMILE_API Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property *
  * @param action The action this callback is triggered on.
  * @since 1.19
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API void emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data);
+#endif
 
 /**
  * Close an opened image handler.
@@ -332,7 +344,9 @@ EMILE_API void emile_image_callback_set(Emile_Image *image, Emile_Action_Cb call
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API void emile_image_close(Emile_Image * source);
+#endif
 
 /**
  * Convert an error code related to an image handler into a meaningful string.
@@ -343,7 +357,9 @@ EMILE_API void emile_image_close(Emile_Image * source);
  *
  * @since 1.14
  */
+#ifndef EMILE_HEADER_ONLY
 EMILE_API const char *emile_load_error_str(Emile_Image * source, Emile_Image_Load_Error error);
+#endif
 
 /**
  * @}

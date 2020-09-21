@@ -88,7 +88,9 @@ eet_identity_open(const char               *certificate_file,
    gnutls_datum_t load_file = { NULL, 0 };
    char pass[1024];
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return NULL;
+#endif
 
    /* Init */
    if (!(key = malloc(sizeof(Eet_Key))))
@@ -188,7 +190,9 @@ on_error:
    EVP_PKEY *pkey = NULL;
    X509 *cert = NULL;
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return NULL;
+#endif
 
    /* Load the X509 certificate in memory. */
    {
@@ -243,7 +247,9 @@ on_error:
 EET_API void
 eet_identity_close(Eet_Key *key)
 {
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return ;
+#endif
 
 #ifdef HAVE_SIGNATURE
    if (!key || (key->references > 0))
@@ -287,7 +293,9 @@ eet_identity_print(Eet_Key *key,
    if (!key)
      return;
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return ;
+#endif
 
    if (key->private_key)
      {
@@ -360,7 +368,9 @@ on_error:
    if (!key)
      return;
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return ;
+#endif
 
    rsa = EVP_PKEY_get1_RSA(key->private_key);
    if (rsa)
@@ -485,7 +495,9 @@ eet_identity_sign(FILE    *fp,
    if (!fp || !key || !key->certificate || !key->private_key)
      return EET_ERROR_BAD_OBJECT;
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return EET_ERROR_NOT_IMPLEMENTED;
+#endif
 
    /* Get the file size. */
    fd = fileno(fp);
@@ -665,7 +677,9 @@ eet_identity_check(const void   *data_base,
    if (signature_length < sizeof(int) * 3)
      return NULL;
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return NULL;
+#endif
 
    /* Get the header */
    memcpy(&magic,    header, sizeof(int));
@@ -841,7 +855,9 @@ eet_identity_certificate_print(const unsigned char *certificate,
         return;
      }
 
+#ifndef EMILE_HEADER_ONLY
    if (!emile_cipher_init()) return ;
+#endif
 
 # ifdef HAVE_GNUTLS
    gnutls_datum_t datum;
@@ -905,11 +921,13 @@ eet_cipher(const void   *data,
            void        **result,
            unsigned int *result_length)
 {
-   Eina_Binbuf *out;
+   Eina_Binbuf *out = NULL;
    Eina_Binbuf *in;
 
    in = eina_binbuf_manage_new(data, size, EINA_TRUE);
+#ifndef EMILE_HEADER_ONLY
    out = emile_binbuf_cipher(EMILE_AES256_CBC, in, key, length);
+#endif
 
    if (result_length) *result_length = out ? eina_binbuf_length_get(out) : 0;
    if (result) *result = out ? eina_binbuf_string_steal(out) : NULL;
@@ -931,7 +949,9 @@ eet_decipher(const void   *data,
    Eina_Binbuf *in;
 
    in = eina_binbuf_manage_new(data, size, EINA_TRUE);
+#ifndef EMILE_HEADER_ONLY
    out = emile_binbuf_decipher(EMILE_AES256_CBC, in, key, length);
+#endif
 
    if (result_length) *result_length = out ? eina_binbuf_length_get(out) : 0;
    if (result) *result = out ? eina_binbuf_string_steal(out) : NULL;
