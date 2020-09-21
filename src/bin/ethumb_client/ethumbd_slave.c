@@ -119,6 +119,11 @@ _ec_pipe_str_read(struct _Ethumbd_Child *ec EINA_UNUSED, char **str)
 	*str = NULL;
 	return 0;
      }
+   if ((size < 0) || (size >= PATH_MAX))
+     {
+	*str = NULL;
+	return 0;
+     }
 
    if (!size)
      {
@@ -178,6 +183,8 @@ _ec_op_new(struct _Ethumbd_Child *ec)
    r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
      return 0;
+   if ((idx < 0) || (idx >= NETHUMBS))
+     return 0;
 
    DBG("ethumbd new(). idx = %d", idx);
 
@@ -193,6 +200,8 @@ _ec_op_del(struct _Ethumbd_Child *ec)
 
    r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
+     return 0;
+   if ((idx < 0) || (idx >= NETHUMBS))
      return 0;
 
    DBG("ethumbd del(). idx = %d", idx);
@@ -244,6 +253,8 @@ _ec_op_generate(struct _Ethumbd_Child *ec)
 
    r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
+     return 0;
+   if ((idx < 0) || (idx >= NETHUMBS))
      return 0;
 
    r = _ec_pipe_str_read(ec, &path);
@@ -666,6 +677,8 @@ _ec_op_setup(struct _Ethumbd_Child *ec)
 
    r = _ec_read_safe(stdin, &idx, sizeof(idx));
    if (!r)
+     return 0;
+   if ((idx < 0) || (idx >= NETHUMBS))
      return 0;
 
    r = _ec_read_safe(stdin, &type, sizeof(type));

@@ -109,8 +109,8 @@ static void
 eina_bench_convert_dtoa(int request)
 {
    char tmp[128];
-   long long m;
-   long e;
+   long long m = 0;
+   long e = 0;
    double r;
    int i;
 

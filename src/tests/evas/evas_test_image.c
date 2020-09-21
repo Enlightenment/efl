@@ -643,8 +643,18 @@ _file_to_memory(const char *filename, char **result)
 
    fseek(f, 0, SEEK_END);
    size = ftell(f);
+   if (size <= 0)
+     {
+        fclose(f);
+        return -1;
+     }
    fseek(f, 0, SEEK_SET);
    *result = (char *)malloc(size + 1);
+   if (*result == NULL)
+     {
+        fclose(f);
+        return -1;
+     }
    if ((size_t)size != fread(*result, sizeof(char), size, f))
      {
         free(*result);

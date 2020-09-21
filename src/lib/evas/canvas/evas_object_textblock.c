@@ -11055,6 +11055,9 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl_Canvas_Textblock_Data *o,
    size_t pos = 0;
    int orig_end;
 
+   if ((start == 0) && (end == 0))
+     return EINA_FALSE;
+
    itr = n->format_node;
    if (!itr || (itr->text_node != n)) return EINA_FALSE;
 

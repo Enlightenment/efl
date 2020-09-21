@@ -1013,7 +1013,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    sizes = memory.mem;
    //count = efl_model_children_count_get(parent);
    limit = conf.range.end_id - conf.range.start_id;
-   ITEM_BASE_SIZE_FROM_MODEL(parent, item_base);
+   if (!ITEM_BASE_SIZE_FROM_MODEL(parent, item_base)) return result;
 
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE

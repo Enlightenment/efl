@@ -826,8 +826,8 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         close(pd->fd.out);
         close(pd->ctrl.in);
         close(pd->ctrl.out);
-        close(thdat->fd.in);
-        close(thdat->fd.out);
+        if (thdat->fd.in >= 0) close(thdat->fd.in);
+        if (thdat->fd.out >= 0) close(thdat->fd.out);
         close(thdat->ctrl.in);
         close(thdat->ctrl.out);
         free(thdat);

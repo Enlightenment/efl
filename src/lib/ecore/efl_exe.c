@@ -537,13 +537,14 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      {
         // hide stdin
         devnull = open("/dev/null", O_RDONLY);
-        dup2(devnull, STDIN_FILENO);
+        if (devnull < 0) _exit(1);
+        if (dup2(devnull, STDIN_FILENO) < 0) _exit(1);
         close(devnull);
      }
    else if ((td->flags & EFL_TASK_FLAGS_USE_STDIN))
      {
         // hook up stdin to the pipe going to the parent
-        dup2(pipe_stdin[0], STDIN_FILENO);
+        if (dup2(pipe_stdin[0], STDIN_FILENO) < 0) _exit(1);
         close(pipe_stdin[0]);
      }
 
@@ -552,13 +553,14 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      {
         // hide stdout
         devnull = open("/dev/null", O_WRONLY);
-        dup2(devnull, STDOUT_FILENO);
+        if (devnull < 0) _exit(1);
+        if (dup2(devnull, STDOUT_FILENO) < 0) _exit(1);
         close(devnull);
      }
    else if ((td->flags & EFL_TASK_FLAGS_USE_STDOUT))
      {
         // hook up stdout to the pipe going to the parent
-        dup2(pipe_stdout[1], STDOUT_FILENO);
+        if (dup2(pipe_stdout[1], STDOUT_FILENO) < 0) _exit(1);
         close(pipe_stdout[1]);
      }
 
@@ -566,7 +568,8 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      {
         // hide stderr
         devnull = open("/dev/null", O_WRONLY);
-        dup2(devnull, STDERR_FILENO);
+        if (devnull < 0) _exit(1);
+        if (dup2(devnull, STDERR_FILENO) < 0) _exit(1);
         close(devnull);
      }
 

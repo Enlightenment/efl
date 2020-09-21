@@ -259,8 +259,6 @@ static struct {
 
 _PARSE_TAG(Efl_Gfx_Fill_Rule, fill_rule, fill_rule_tags, EFL_GFX_FILL_RULE_WINDING);
 
-#if 0
-// unused at the moment
 /* parse the dash pattern used during stroking a path.
  * Value:   none | <dasharray> | inherit
  * Initial:    none
@@ -269,7 +267,8 @@ _PARSE_TAG(Efl_Gfx_Fill_Rule, fill_rule, fill_rule_tags, EFL_GFX_FILL_RULE_WINDI
 static inline void
 _parse_dash_array(const char *str, Efl_Gfx_Dash** dash, int *length)
 {
-   double tmp[30];
+   // It is assumed that the length of the dasharray string is 255 or less.
+   double tmp[255];
    char *end = NULL;
    int leni, gapi, count = 0, index = 0;
 
@@ -291,20 +290,21 @@ _parse_dash_array(const char *str, Efl_Gfx_Dash** dash, int *length)
              gapi = (2 * index + 1) % count;
              (*dash)[index].length = tmp[leni];
              (*dash)[index].gap = tmp[gapi];
+             index++;
           }
      }
    else
      { // even case
         *length = count/2;
         *dash = calloc(*length, sizeof(Efl_Gfx_Dash));
-        while (index < count)
+        while (index < *length)
           {
              (*dash)[index].length = tmp[2 * index];
              (*dash)[index].gap = tmp[2 * index + 1];
+             index++;
           }
      }
 }
-#endif
 
 static Eina_Stringshare *
  _id_from_url(const char *url)
@@ -865,6 +865,13 @@ _handle_stroke_opacity_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node,
 }
 
 static void
+_handle_stroke_dasharray_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
+{
+   node->style->stroke.flags |= SVG_STROKE_FLAGS_DASH;
+   _parse_dash_array(value, &node->style->stroke.dash, &node->style->stroke.dash_count);
+}
+
+static void
 _handle_stroke_width_attr(Evas_SVG_Loader *loader, Svg_Node* node, const char *value)
 {
    node->style->stroke.flags |= SVG_STROKE_FLAGS_WIDTH;
@@ -942,6 +949,7 @@ static const struct {
   STYLE_DEF(stroke-linejoin, stroke_linejoin),
   STYLE_DEF(stroke-linecap, stroke_linecap),
   STYLE_DEF(stroke-opacity, stroke_opacity),
+  STYLE_DEF(stroke-dasharray, stroke_dasharray),
   STYLE_DEF(transform, transform),
   STYLE_DEF(display, display)
 };
@@ -2366,6 +2374,22 @@ _inherit_style(Svg_Style_Property *child, Svg_Style_Property *parent)
    if (!(child->stroke.flags & SVG_STROKE_FLAGS_JOIN))
      {
         child->stroke.join = parent->stroke.join;
+     }
+   if (!(child->stroke.flags & SVG_STROKE_FLAGS_DASH))
+     {
+        int i = 0;
+        int count = parent->stroke.dash_count;
+        if (count > 0)
+          {
+             if (child->stroke.dash) free(child->stroke.dash);
+             child->stroke.dash = calloc(count, sizeof(Efl_Gfx_Dash));
+             child->stroke.dash_count = count;
+             for (i = 0; i < count; i++)
+               {
+                  child->stroke.dash[i].length = parent->stroke.dash[i].length;
+                  child->stroke.dash[i].gap = parent->stroke.dash[i].gap;
+               }
+          }
      }
 }
 

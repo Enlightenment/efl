@@ -21,6 +21,7 @@ static int (*_elput_sd_session_get_vt) (const char *session, unsigned *vtnr) = N
 static int (*_elput_sd_session_get_tty) (const char *session, char **display) = NULL;
 static int (*_elput_sd_pid_get_session) (pid_t pid, char **session) = NULL;
 static int (*_elput_sd_session_get_seat) (const char *session, char **seat) = NULL;
+static int (*_elput_sd_seat_can_tty) (const char *seat) = NULL;
 
 void
 _elput_sd_init(void)
@@ -91,14 +92,17 @@ _elput_sd_init(void)
      eina_module_symbol_get(_libsystemd, "sd_pid_get_session");
    _elput_sd_session_get_seat =
      eina_module_symbol_get(_libsystemd, "sd_session_get_seat");
+   _elput_sd_seat_can_tty =
+     eina_module_symbol_get(_libsystemd, "sd_seat_can_tty");
    if (((!_elput_sd_session_get_vt) && (!_elput_sd_session_get_tty)) ||
        (!_elput_sd_pid_get_session) ||
-       (!_elput_sd_session_get_seat))
+       (!_elput_sd_session_get_seat) || (!_elput_sd_seat_can_tty))
      {
         _elput_sd_session_get_vt = NULL;
         _elput_sd_session_get_tty = NULL;
         _elput_sd_pid_get_session = NULL;
         _elput_sd_session_get_seat = NULL;
+       _elput_sd_seat_can_tty = NULL;
         eina_module_free(_libsystemd);
         _libsystemd = NULL;
         _libsystemd_broken = EINA_TRUE;
@@ -631,7 +635,7 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
         goto seat_err;
      }
 
-   if ((seat) && (!strcmp(seat, "seat0")))
+   if ((seat) && (_elput_sd_seat_can_tty(seat)))
      {
         if (!_logind_session_vt_get(em->sid, &em->vt_num))
           {
