@@ -1235,7 +1235,7 @@ _number_count(char cmd)
 }
 
 static void
-process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count, double *cur_x, double *cur_y)
+process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count, double *cur_x, double *cur_y, double *start_x, double *start_y)
 {
    int i;
    switch (cmd)
@@ -1282,6 +1282,8 @@ process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count
            _efl_gfx_path_append_move_to(obj, pd, arr[0], arr[1]);
            *cur_x = arr[0];
            *cur_y = arr[1];
+           *start_x = arr[0];
+           *start_y = arr[1];
            break;
         }
       case 'l':
@@ -1342,6 +1344,8 @@ process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count
       case 'Z':
         {
            _efl_gfx_path_append_close(obj, pd);
+           *cur_x = *start_x;
+           *cur_y = *start_y;
            break;
         }
       case 'a':
@@ -1420,6 +1424,7 @@ _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd,
    double from_arr[7], to_arr[7];
    int from_count=0, to_count=0;
    double cur_x=0, cur_y=0;
+   double start_x=0, start_y=0;
    char from_cmd= 0, to_cmd = 0;
    char *cur_locale;
 
@@ -1458,7 +1463,7 @@ _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd,
                        from_arr[i] = interpolate(from_arr[i], to_arr[i], pos);
                     }
                }
-            process_command(obj, pd, from_cmd, from_arr, from_count, &cur_x, &cur_y);
+            process_command(obj, pd, from_cmd, from_arr, from_count, &cur_x, &cur_y, &start_x, &start_y);
           }
         else
           {
@@ -1479,6 +1484,7 @@ _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
    double number_array[7];
    int number_count = 0;
    double cur_x=0, cur_y=0;
+   double start_x=0, start_y=0;
    char cmd= 0;
    char *path = (char *) svg_path_data;
    Eina_Bool arc = EINA_FALSE;
@@ -1500,7 +1506,7 @@ _efl_gfx_path_append_svg_path(Eo *obj, Efl_Gfx_Path_Data *pd,
              //printf("Error parsing command\n");
              goto error;
           }
-        process_command(obj, pd, cmd, number_array, number_count, &cur_x, &cur_y);
+        process_command(obj, pd, cmd, number_array, number_count, &cur_x, &cur_y, &start_x, &start_y);
         if ((!arc) && ((cmd == 'a') || (cmd == 'A') ||
             (cmd == 'e') || (cmd == 'E')))
           arc = EINA_TRUE;
