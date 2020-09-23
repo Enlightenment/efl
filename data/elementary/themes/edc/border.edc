@@ -132,6 +132,19 @@ group { name: "e/widgets/border/default/border";
    images.image: "screen_circular_shadow.png" COMP;
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         new text[128];
+         new ncpu, cpu, mem;
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            ncpu = getarg(2);
+            cpu = getarg(3) / ncpu;
+            mem = getarg(4);
+            snprintf(text, 128, "%i%% %i.%iM", cpu, mem / 1024, (mem % 1024) / 100)
+            set_text(PART:"e.procstats.text", text);
+         }
+      }
+   }
    parts {
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
@@ -655,7 +668,41 @@ group { name: "e/widgets/border/default/border";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
-
+     part { name: "procstats";
+         type: RECT;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            rel1.to: "e.swallow.volume";
+            rel1.relative: 1.0 0.0;
+            rel2.to: "e.swallow.volume";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: 0.0 -1;
+            color:  128 128 128 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+         }
+     }
+     part { name: "e.procstats.text"; type: TEXT;
+         scale: 1.0;
+         description { state: "default" 0.0;
+            rel1.to: "procstats";
+            rel1.relative: 1.0 0.0;
+            rel2.to: "procstats";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: 0.0 -1;
+            visible: 1;
+            text {
+               size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "menu_item";
+               align: 0.0 0.5;
+             }
+         }
+         description { state: "hidden";
+            visible: 0;
+         }
+      }
    }
    programs {
       program {
@@ -790,6 +837,16 @@ group { name: "e/widgets/border/default/border";
          target: "shadow";
          target: "client_clip";
       }
+      program {
+         signal: "e,state,procstats,on"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.procstats.text";
+      }
+      program {
+         signal: "e,state,procstats,off"; source: "e";
+         action: STATE_SET "hidden" 0.0;
+         target: "e.procstats.text";
+      }
 //      program {
 //         signal: "e,action,maximize"; source: "e";
 //      }
@@ -865,6 +922,7 @@ group { name: "e/widgets/border/sparkle/border";
    inherit: "e/widgets/border/default/border";
    images.image: "vgrad_med_lighter_sparkle.png" COMP;
    images.image: "vgrad_med_dark_sparkle.png" COMP;
+
    script {
       public in_x, in_y, locked = 0;
    }
@@ -955,7 +1013,7 @@ group { name: "e/widgets/border/sparkle/border";
    programs {
       program { name: "in";
          signal: "mouse,in"; source: "events";
-         
+
          script {
             new mx, my;
 
