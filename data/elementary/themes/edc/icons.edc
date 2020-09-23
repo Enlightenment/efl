@@ -369,6 +369,29 @@ ICON("user-home", "i-home")
 ICON("user-trash", "i-trash")
 
 ICON("dialog-info", "i-info")
+
+ICON("media_player/info", "i-info")
+ICON("media_player/info/default", "i-info")
+ICON("media_player/prev", "i-media-prev")
+ICON("media_player/prev/default", "i-media-prev")
+ICON("media_player/next", "i-media-next")
+ICON("media_player/next/default", "i-media-next")
+ICON("media_player/rewind", "i-media-rw")
+ICON("media_player/rewind/default", "i-media-rw")
+ICON("media_player/forward", "i-media-ff")
+ICON("media_player/forward/default", "i-media-ff")
+ICON("media_player/play", "i-media-play")
+ICON("media_player/play/default", "i-media-play")
+ICON("media_player/pause", "i-media-pause")
+ICON("media_player/pause/default", "i-media-pause")
+ICON("media_player/stop", "i-media-stop")
+ICON("media_player/stop/default", "i-media-stop")
+ICON("media_player/eject", "i-media-eject")
+ICON("media_player/eject/default", "i-media-eject")
+ICON("media_player/volume", "i-media-volume")
+ICON("media_player/volume/default", "i-media-volume")
+ICON("media_player/mute", "i-media-mute")
+ICON("media_player/mute/default", "i-media-mute")
 #undef ICON
 
 // regular icons
@@ -388,7 +411,9 @@ ICON("file", "i-file")
 ICON("clock", "i-clock")
 ICON("apps", "i-termprompt")
 ICON("chat", "i-lang-blank")
-ICON("edit", "i-edit")
+ICON("no_photo", "i-head")
+
+ICON("photo/no_photo", "i-head")
 
 ICON("toolbar/folder", "i-folder")
 ICON("toolbar/file", "i-file")
@@ -415,5 +440,4 @@ ICON("application-chat", "i-lang-blank")
 ICON("application-clock", "i-clock")
 
 ICON("document-edit", "i-edit")
-
 #undef ICON

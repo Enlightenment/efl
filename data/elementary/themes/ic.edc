@@ -86,6 +86,16 @@ I060("i-trash", "trash")
 I060("i-search", "search")
 I060("i-hamburger-menu", "hamburger-menu")
 I060("i-info", "info")
+I060("i-media-rw", "media-rw")
+I060("i-media-ff", "media-ff")
+I060("i-media-play", "media-play")
+I060("i-media-pause", "media-pause")
+I060("i-media-stop", "media-stop")
+I060("i-media-eject", "media-eject")
+I060("i-media-volume", "media-volume")
+I060("i-media-mute", "media-mute")
+I060("i-media-next", "media-next")
+I060("i-media-prev", "media-prev")
 // exclam
 // more
 // chat
@@ -272,6 +282,7 @@ I160("i-gradient", "gradient")
 I160("i-engine", "engine")
 I160("i-clock", "clock")
 I160("i-edit", "edit")
+I160("i-head", "head")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
