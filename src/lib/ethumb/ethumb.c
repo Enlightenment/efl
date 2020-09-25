@@ -256,8 +256,6 @@ ethumb_init(void)
    _plugins_ext = eina_hash_string_small_new(NULL);
    EINA_SAFETY_ON_NULL_GOTO(_plugins_ext, error_plugins_ext);
 
-   evas_init();
-   ecore_init();
    ecore_evas_init();
    edje_init();
 
@@ -285,6 +283,8 @@ ethumb_init(void)
    return ++initcount;
 
  error_plugins_ext:
+   edje_shutdown();
+   ecore_evas_shutdown();
    eina_prefix_free(_pfx);
    _pfx = NULL;
 
@@ -312,10 +312,8 @@ ethumb_shutdown(void)
         eina_stringshare_del(_home_thumb_dir);
         eina_stringshare_del(_thumb_category_normal);
         eina_stringshare_del(_thumb_category_large);
-        evas_shutdown();
-        ecore_shutdown();
-        ecore_evas_shutdown();
         edje_shutdown();
+        ecore_evas_shutdown();
         eina_prefix_free(_pfx);
         _pfx = NULL;
         eina_log_domain_unregister(_log_dom);
