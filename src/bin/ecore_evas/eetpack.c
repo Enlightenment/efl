@@ -274,9 +274,7 @@ main(int argc, char **argv)
 
         return -1;
      }
-   eina_init();
    eet_init();
-   evas_init();
    ecore_evas_init();
 
    scratch_canvas_init();
@@ -285,8 +283,6 @@ main(int argc, char **argv)
    if (ef) eet_close(ef);
 
    ecore_evas_shutdown();
-   evas_shutdown();
    eet_shutdown();
-   eina_shutdown();
    return 0;
 }

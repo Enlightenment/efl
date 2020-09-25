@@ -128,7 +128,6 @@ main(int argc, char *argv[])
    eina_init();
    _log_dom = eina_log_domain_register(argv[0], EINA_COLOR_CYAN);
 
-   ecore_init();
    ecore_evas_init();
 
    arg_index = ecore_getopt_parse(&optdesc, values, argc, argv);
@@ -211,7 +210,8 @@ main(int argc, char *argv[])
  end:
    if (flags) eina_strbuf_free(flags);
    ecore_evas_shutdown();
-   ecore_shutdown();
+   eina_log_domain_unregister(_log_dom);
+   eina_shutdown();
 
    return r;
 }

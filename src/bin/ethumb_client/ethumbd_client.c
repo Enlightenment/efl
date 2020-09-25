@@ -246,7 +246,6 @@ main(int argc, char *argv[])
    int i, ret = 0;
 
    ethumb_client_init();
-   ecore_init();
 
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_PTR_CAST(opts.geometry),
@@ -323,7 +322,6 @@ main(int argc, char *argv[])
 	eina_stringshare_del(opts.frame.group);
 	eina_stringshare_del(opts.frame.swallow);
      }
-   ecore_shutdown();
    ethumb_client_shutdown();
 
    return ret;

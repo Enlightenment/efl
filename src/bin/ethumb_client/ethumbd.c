@@ -1755,8 +1755,6 @@ main(int argc, char *argv[])
 
    memset(&ed, 0, sizeof(ed));
    ecore_init();
-   eina_init();
-
    ethumb_init();
 
    if (_log_domain < 0)
@@ -1861,7 +1859,6 @@ main(int argc, char *argv[])
 
    if (_pfx) eina_prefix_free(_pfx);
    ethumb_shutdown();
-   eina_shutdown();
    ecore_shutdown();
    return exit_value;
 }
