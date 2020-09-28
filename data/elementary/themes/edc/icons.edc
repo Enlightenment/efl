@@ -440,4 +440,15 @@ ICON("application-chat", "i-lang-blank")
 ICON("application-clock", "i-clock")
 
 ICON("document-edit", "i-edit")
+
+ICON("user-desktop", "i-computer")
+ICON("user-bookmarks", "i-bookmark")
+
+ICON("start-here", "i-here")
+
+ICON("network-server", "i-server")
+ICON("network-workgroup", "i-server-group")
+
+ICON("inode-directory", "i-folder")
+
 #undef ICON

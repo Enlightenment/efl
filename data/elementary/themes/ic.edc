@@ -283,6 +283,10 @@ I160("i-engine", "engine")
 I160("i-clock", "clock")
 I160("i-edit", "edit")
 I160("i-head", "head")
+I160("i-bookmark", "bookmark")
+I160("i-here", "here")
+I160("i-server", "server")
+I160("i-server-group", "server-group")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
