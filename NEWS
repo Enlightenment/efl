@@ -1,6 +1,20 @@
 ==========
-EFL 1.24.3
+EFL 1.24.4
 ==========
+
+Changes since 1.24.3:
+---------------------
+
+Fixes:
+
+   * efreetd - cache - add more statinfo work around 0 mtime distros
+   * edje - fix edje_cc mis-re-iding images in image sets
+   * evas - render - dont crash is private data is null
+   * eina vpath - fix windows ~username handling to only error when used
+   * efl ui image - fix scal to fill - broken with non-rect src images
+   * edje - calce - really respect max image size for img sets
+   * evas - fix deadlock with sw async rendering calling cbs in post flush
+   * ecore - don't do anything with heap between fork and exec
 
 Changes since 1.24.2:
 ---------------------
