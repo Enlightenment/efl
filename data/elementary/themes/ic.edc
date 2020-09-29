@@ -287,6 +287,10 @@ I160("i-bookmark", "bookmark")
 I160("i-here", "here")
 I160("i-server", "server")
 I160("i-server-group", "server-group")
+I160("i-folder-dropin", "folder-dropin")
+I160("i-folder-world", "folder-world")
+I160("i-folder-home", "folder-home")
+I160("i-folder-download", "folder-download")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

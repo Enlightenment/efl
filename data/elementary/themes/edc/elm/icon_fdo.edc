@@ -77,11 +77,6 @@
 
 ////  places  /////////////////////////////////////////////////////////////////
 #define CTX "places"
-ICO2(CTX, "folder-drag-accept") /* spec have this icon in the Status category */
-ICO2(CTX, "folder-remote")
-ICO2(CTX, "folder-open") /* */
-ICO2(CTX, "folder-home") /* */
-ICO2(CTX, "folder-download") /* */
 ICO2(CTX, "folder-recent") /* */
 ICO2(CTX, "folder-documents") /* */
 ICO2(CTX, "folder-pictures") /* */

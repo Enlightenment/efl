@@ -451,4 +451,10 @@ ICON("network-workgroup", "i-server-group")
 
 ICON("inode-directory", "i-folder")
 
+ICON("folder-drag-accept", "i-folder-dropin")
+ICON("folder-remote", "i-folder-world")
+ICON("folder-open", "i-folder-open")
+ICON("folder-home", "i-folder-home")
+ICON("folder-download", "i-folder-download")
+
 #undef ICON
