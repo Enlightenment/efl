@@ -627,22 +627,24 @@ EAPI Eina_Bool
 efreet_file_cache_fill(const char *file, Efreet_Cache_Check *check)
 {
    struct stat st;
-   ssize_t size = 0;
-   char link[PATH_MAX];
 
    memset(check, 0, sizeof(Efreet_Cache_Check));
-#ifndef _WIN32
+#ifdef _WIN32
+   if (stat(file, &st) != 0) return EINA_FALSE;
+#else
+   ssize_t size = 0;
+
    if (lstat(file, &st) != 0) return EINA_FALSE;
    if (S_ISLNK(st.st_mode))
      {
+        char link[PATH_MAX];
+
         size = readlink(file, link, sizeof(link));
         if ((size > 0) && ((size_t)size >= sizeof(link))) return EINA_FALSE;
         if (stat(file, &st) != 0) return EINA_FALSE;
      }
    if (size > 0) sha1((unsigned char *)link, size, check->link_sha1);
-   else
 #endif
-     memset(check->link_sha1, 0, sizeof(check->link_sha1));
    check->uid    = st.st_uid;
    check->gid    = st.st_gid;
    check->size   = st.st_size;
