@@ -111,6 +111,12 @@ __efl_internal_init(void)
    efl_model_init();
 }
 
+EAPI void
+__efl_internal_appear(void)
+{
+/* work-around bug in linkers where --as-needed strips all the libaries only having weak symbols */
+}
+
 static Eina_Value
 _efl_ui_view_factory_item_created(Eo *factory, void *data EINA_UNUSED, const Eina_Value v)
 {

@@ -343,7 +343,8 @@ efl_config_string_get(const Efl_Config *obj, const char *name)
 
 /* work-around bug in gcc --as-needed link optimization */
 EAPI void __efl_internal_init(void);
-
+/* work-around bug in linkers where --as-needed strips all the libaries only having weak symbols */
+EAPI void __efl_internal_appear(void);
 #if defined ( __cplusplus )
 }
 #endif
