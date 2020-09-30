@@ -1219,7 +1219,7 @@ _delivery(void *data, const Eina_Value value EINA_UNUSED, const Eina_Future *dea
      }
    if (mime_type)
      {
-        edata->clipboard.delivery(ee, 0, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER, mime_type, &slice);
+        edata->clipboard.delivery(ee, 1, ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER, mime_type, &slice);
         EINA_SAFETY_ON_FALSE_GOTO(ecore_win32_clipboard_set((Ecore_Win32_Window *)ee->prop.window, slice.mem, slice.len, mime_type), end);
      }
    else
@@ -1234,18 +1234,21 @@ end:
 static Eina_Bool
 _ecore_evas_win32_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Selection_Buffer selection, Eina_Array *available_types, Ecore_Evas_Selection_Internal_Delivery delivery, Ecore_Evas_Selection_Internal_Cancel cancel)
 {
+   Ecore_Evas_Engine_Data_Win32 *edata = ee->engine.data;
+
    if (selection != ECORE_EVAS_SELECTION_BUFFER_COPY_AND_PASTE_BUFFER)
      return EINA_FALSE;
 
    if (!delivery && !cancel)
      {
+        edata->clipboard.delivery = NULL;
+        edata->clipboard.cancel = NULL;
+        eina_array_clean(edata->clipboard.available_types);
         ecore_win32_clipboard_clear((Ecore_Win32_Window *)ee->prop.window);
         return EINA_TRUE;
      }
    else
      {
-        Ecore_Evas_Engine_Data_Win32 *edata = ee->engine.data;
-
         if (edata->clipboard.cancel)
           {
              edata->clipboard.cancel(ee, seat, selection);
