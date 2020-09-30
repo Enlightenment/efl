@@ -86,6 +86,9 @@
 #ifdef EAPI_WEAK
 # undef EAPI_WEAK
 #endif
+#ifdef EOAPI
+# undef EOAPI
+#endif
 
 #ifdef _WIN32
 # ifdef EFL_BUILD
@@ -114,7 +117,7 @@
 #endif
 
 #define EWAPI EAPI EAPI_WEAK
-
+#define EOAPI EAPI
 
 /* allow usage from c++ */
 #ifdef __cplusplus
