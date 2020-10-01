@@ -230,15 +230,19 @@ param in edje programs
 # else
 #  define EAPI __declspec(dllimport)
 # endif
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
+#  define EAPI_WEAK
 # endif
 #endif
 
