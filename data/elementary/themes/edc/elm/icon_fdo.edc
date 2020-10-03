@@ -24,7 +24,6 @@
  * 
  */
 
-
 // Single FDO icon
 #define ICO1(Cat, Name, Size)                                     \
    group { name: "elm/icon/"##Name##"/default";                   \
@@ -36,7 +35,6 @@
                image.normal: ##Cat##"/"##Size##"/"##Name##".png"; \
                aspect: 1.0 1.0; aspect_preference: BOTH;          \
    }  }  }  }
-
 
 // FDO icon with small and normal source (16 and 128px)
 #define ICO2(Cat, Name)                                         \
@@ -61,7 +59,6 @@
                aspect: 1.0 1.0; aspect_preference: BOTH;        \
    }  }  }  }
 
-
 // Flag icon
 #define FLAG(Cat, Name)                                     \
    group { name: "elm/icon/"##Name##"/default";             \
@@ -73,18 +70,6 @@
                image.normal: ##Cat##"/128/"##Name##".png";  \
                aspect_preference: SOURCE;                   \
    }  }  }  }
-
-
-////  places  /////////////////////////////////////////////////////////////////
-#define CTX "places"
-ICO2(CTX, "folder-recent") /* */
-ICO2(CTX, "folder-documents") /* */
-ICO2(CTX, "folder-pictures") /* */
-ICO2(CTX, "folder-music") /* */
-ICO2(CTX, "folder-videos") /* */
-ICO2(CTX, "folder-visiting") /* spec have this icon in the Status category */
-#undef CTX
-
 
 ////  emblems  ////////////////////////////////////////////////////////////////
 #define CTX "emblems"
@@ -103,7 +88,6 @@ ICO1(CTX, "emblem-system", 96)
 ICO1(CTX, "emblem-synchronized", 96)
 ICO1(CTX, "emblem-synchronizing", 96) /* */
 #undef CTX
-
 
 ////  actions  ////////////////////////////////////////////////////////////////
 #define CTX "actions"
@@ -236,9 +220,7 @@ ICO1(CTX, "zoom-original", 128)
 ICO1(CTX, "zoom-fit", 128) /* */
 ICO1(CTX, "zoom-fill", 128) /* */
 ICO1(CTX, "zoom-fit-best", 128)
-
 #undef CTX
-
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
@@ -343,12 +325,10 @@ ICO1(CTX, "non-starred", 128) /* */
 // folder-drag-accept /* in the Places category */
 #undef CTX
 
-
 ////  animations  /////////////////////////////////////////////////////////////
 #define CTX "animations"
 // TODO process-working
 #undef CTX
-
 
 ////  applications  ///////////////////////////////////////////////////////////
 #define CTX "apps"
@@ -369,7 +349,6 @@ ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO utilities-terminal
 ICO1(CTX, "system-file-manager", 64)
 #undef CTX
-
 
 ////  categories  /////////////////////////////////////////////////////////////
 #define CTX "categories"
@@ -393,7 +372,6 @@ ICO1(CTX, "preferences-other", 128)
 // TODO preferences-system-network
 // TODO system-help
 #undef CTX
-
 
 ////  devices  ////////////////////////////////////////////////////////////////
 #define CTX "devices"
@@ -443,7 +421,6 @@ ICO1(CTX, "network-wired", 128)
 ICO1(CTX, "network-wireless", 128)
 #undef CTX
 
-
 ////  emotions  ///////////////////////////////////////////////////////////////
 #define CTX "emotions"
 // TODO face-angel
@@ -468,7 +445,6 @@ ICO1(CTX, "network-wireless", 128)
 // TODO face-wink
 // TODO face-worried
 #undef CTX
-
 
 ////  international  //////////////////////////////////////////////////////////
 // Country flags, ISO 3166-1 alpha-2 country code (flag-aa)
@@ -570,4 +546,3 @@ FLAG(CTX, "flag-za")
 #undef ICO1
 #undef ICO2
 #undef FLAG
-

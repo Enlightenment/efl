@@ -456,5 +456,11 @@ ICON("folder-remote", "i-folder-world")
 ICON("folder-open", "i-folder-open")
 ICON("folder-home", "i-folder-home")
 ICON("folder-download", "i-folder-download")
+ICON("folder-recent", "i-folder-recent")
+ICON("folder-documents", "i-folder-documents")
+ICON("folder-pictures", "i-folder-pictures")
+ICON("folder-music", "i-folder-music")
+ICON("folder-videos", "i-folder-videos")
+ICON("folder-visiting", "i-folder-visiting")
 
 #undef ICON

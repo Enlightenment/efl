@@ -291,6 +291,12 @@ I160("i-folder-dropin", "folder-dropin")
 I160("i-folder-world", "folder-world")
 I160("i-folder-home", "folder-home")
 I160("i-folder-download", "folder-download")
+I160("i-folder-recent", "folder-recent")
+I160("i-folder-documents", "folder-documents")
+I160("i-folder-pictures", "folder-pictures")
+I160("i-folder-music", "folder-music")
+I160("i-folder-videos", "folder-videos")
+I160("i-folder-visiting", "folder-visiting")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
