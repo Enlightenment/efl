@@ -6,24 +6,7 @@
 #include "Ecore.h"
 #include <Eo.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-#  define EAPI __declspec(dllexport)
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif /* ! _WIN32 */
-
+#include "efl_mono_api.h"
 
 #include "efl_mono_model_internal.eo.h"
 #include "efl_mono_model_internal_child.eo.h"
