@@ -24,6 +24,7 @@ foreach eo_file : eo_files + private_eo_files
     command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
+                           '-e', 'EFL_MONO_TEST_API',
                            '-gch', '@INPUT@'])
 endforeach
 

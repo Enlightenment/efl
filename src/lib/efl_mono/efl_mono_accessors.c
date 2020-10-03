@@ -18,23 +18,7 @@
 
 #include "Eina.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-#  define EAPI __declspec(dllexport)
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif /* ! _WIN32 */
+#include "efl_mono_api.h"
 
 // This just a wrapper around carray acessors for pinned managed data
 // It uses the free callback to unpin the managed data so it can be
@@ -70,7 +54,7 @@ static void eina_mono_owned_carray_free_cb(Eina_Mono_Owned_Accessor* accessor)
    free(accessor);
 }
 
-EAPI Eina_Accessor *eina_mono_owned_carray_length_accessor_new(void** array, unsigned int step, unsigned int length, Eina_Free_Cb free_cb, void *handle)
+EFL_MONO_API Eina_Accessor *eina_mono_owned_carray_length_accessor_new(void** array, unsigned int step, unsigned int length, Eina_Free_Cb free_cb, void *handle)
 {
    Eina_Mono_Owned_Accessor *accessor = calloc(1, sizeof(Eina_Mono_Owned_Accessor));
    if (!accessor) return NULL;

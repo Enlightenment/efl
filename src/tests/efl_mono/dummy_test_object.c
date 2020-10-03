@@ -3986,11 +3986,11 @@ int _dummy_test_object_call_callback(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data
 // Global var used due to the current issue of calling methods from the GC thread
 static Eina_Bool _free_called = EINA_FALSE;
 
-EAPI Eina_Bool free_called_get() {
+EFL_MONO_TEST_API Eina_Bool free_called_get() {
    return _free_called;
 }
 
-EAPI void free_called_set(Eina_Bool b) {
+EFL_MONO_TEST_API void free_called_set(Eina_Bool b) {
    _free_called = b;
 }
 

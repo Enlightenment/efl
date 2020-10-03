@@ -76,6 +76,7 @@ foreach eo_file : mono_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EFL_MONO_API',
                            '-gchd', '@INPUT@'])
   # mono_eo_c_files += join_paths(meson.current_build_dir(), eo_file + '.c')
 endforeach
@@ -90,6 +91,7 @@ efl_mono_lib = library('eflcustomexportsmono',
     install : true,
     include_directories : config_dir + [include_directories(join_paths('.'))],
     dependencies : [eo, eina, ecore],
+    c_args : ['-DEFL_MONO_BUILD'],
     version : meson.project_version()
 )
 
