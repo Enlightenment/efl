@@ -418,8 +418,6 @@ elm_main(int    argc EINA_UNUSED,
    Eina_Bool bounce;
    double h, v;
 
-   srand(time(NULL));
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "images");
 

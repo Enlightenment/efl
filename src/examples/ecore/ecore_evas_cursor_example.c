@@ -154,7 +154,6 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
    Ecore_Timer *t;
    const char *driver;
 
-   srand(time(NULL));
    if (!ecore_evas_init())
      {
         fprintf(stderr, "Could not init the Ecore Evas\n");

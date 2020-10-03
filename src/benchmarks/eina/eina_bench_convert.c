@@ -38,8 +38,6 @@ eina_bench_convert_itoa_10(int request)
    char tmp[128];
    int i;
 
-   srand(time(NULL));
-
    for (i = 0; i < request; ++i)
      {
         eina_convert_itoa(rand(), tmp);
@@ -51,8 +49,6 @@ eina_bench_convert_itoa_16(int request)
 {
    char tmp[128];
    int i;
-
-   srand(time(NULL));
 
    for (i = 0; i < request; ++i)
      {
@@ -66,8 +62,6 @@ eina_bench_convert_snprintf_10(int request)
    char tmp[128];
    int i;
 
-   srand(time(NULL));
-
    for (i = 0; i < request; ++i)
      {
         snprintf(tmp, 128, "%i", rand());
@@ -79,8 +73,6 @@ eina_bench_convert_snprintf_x(int request)
 {
    char tmp[128];
    int i;
-
-   srand(time(NULL));
 
    for (i = 0; i < request; ++i)
      {
@@ -94,8 +86,6 @@ eina_bench_convert_snprintf_a(int request)
    char tmp[128];
    double r;
    int i;
-
-   srand(time(NULL));
 
    for (i = 0; i < request; ++i)
      {
@@ -114,8 +104,6 @@ eina_bench_convert_dtoa(int request)
    double r;
    int i;
 
-   srand(time(NULL));
-
    for (i = 0; i < request; ++i)
      {
         r = 10000 * (rand() / ((double)RAND_MAX + 1));
@@ -132,8 +120,6 @@ eina_bench_convert_gstrtod(int request)
    char tmp[128];
    double r;
    int i;
-
-   srand(time(NULL));
 
    for (i = 0; i < request; ++i)
      {

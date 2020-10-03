@@ -812,7 +812,6 @@ EFL_START_TEST(efl_test_promise_future_race)
      2.0, 1.0, 0.5, 0.1, 4.5, 2.3, 5.6, 1.0, 0.5, 0.3
    };
 
-   srand(time(NULL));
    fail_if(!ecore_init());
    for (i = 0; i < len - 1; i++)
      {

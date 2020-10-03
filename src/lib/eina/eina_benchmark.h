@@ -170,8 +170,6 @@
  *   char tmp[128];
  *   int i;
  *
- *   srand(time(NULL));
- *
  *   for (i = 0; i < request; ++i)
  *     eina_convert_itoa(rand(), tmp);
  * }
@@ -181,8 +179,6 @@
  * {
  *   char tmp[128];
  *   int i;
- *
- *   srand(time(NULL));
  *
  *   for (i = 0; i < request; ++i)
  *     eina_convert_xtoa(rand(), tmp);
@@ -202,8 +198,6 @@
  *   Eina_Array_Iterator it;
  *   int *data;
  *   int i;
- *
- *   srand(time(NULL));
  *
  *   array = eina_array_new(64);
  *
@@ -227,8 +221,6 @@
  *   Eina_List *l = NULL;
  *   int *data;
  *   int i;
- *
- *   srand(time(NULL));
  *
  *   for (i = 0; i < request; ++i)
  *     {

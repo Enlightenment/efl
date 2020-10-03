@@ -39,8 +39,6 @@ edje_init(void)
    if (++_edje_init_count != 1)
      return _edje_init_count;
 
-   srand(time(NULL));
-
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_init(), --_edje_init_count);
 
    _edje_default_log_dom = eina_log_domain_register

@@ -173,8 +173,6 @@ EINA_TEST_START(eina_stringshare_collision)
    char buffer[50];
    int i;
 
-   srand(time(NULL));
-
    ea = eina_array_new(256);
    fail_if(!ea);
 

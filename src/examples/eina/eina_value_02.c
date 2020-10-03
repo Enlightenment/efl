@@ -85,7 +85,6 @@ int main(int argc, char **argv)
 
    eina_init();
    value_init();
-   srand(time(NULL));
 
    v1 = eina_value_struct_new(V1_DESC);
    v2 = eina_value_struct_new(V2_DESC);

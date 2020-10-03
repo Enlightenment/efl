@@ -317,8 +317,6 @@ main(void)
    Evas_Object *last, *o;
    int i;
 
-   srand(time(NULL));
-
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 

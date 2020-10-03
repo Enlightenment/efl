@@ -53,8 +53,6 @@ eina_bench_stringshare_job(int request)
         tmp = eina_stringshare_add(build);
      }
 
-   srand(time(NULL));
-
    for (j = 0; j < 200; ++j)
       for (i = 0; i < request; ++i)
         {
@@ -87,8 +85,6 @@ eina_bench_stringchunk_job(int request)
         g_string_chunk_insert_const(chunk, build);
      }
 
-   srand(time(NULL));
-
    for (j = 0; j < 200; ++j)
       for (i = 0; i < request; ++i)
         {
@@ -116,8 +112,6 @@ eina_bench_evas_job(int request)
         eina_convert_xtoa(i, build + 7);
         tmp = evas_stringshare_add(build);
      }
-
-   srand(time(NULL));
 
    for (j = 0; j < 200; ++j)
       for (i = 0; i < request; ++i)
@@ -148,8 +142,6 @@ eina_bench_ecore_job(int request)
         eina_convert_xtoa(i, build + 7);
         //tmp = ecore_string_instance(build);
      }
-
-   srand(time(NULL));
 
    for (j = 0; j < 200; ++j)
       for (i = 0; i < request; ++i)

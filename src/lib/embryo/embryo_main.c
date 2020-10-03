@@ -25,8 +25,6 @@ embryo_init(void)
    if (++_embryo_init_count != 1)
      return _embryo_init_count;
 
-   srand(time(NULL));
-
    if (!eina_init())
      return --_embryo_init_count;
 
