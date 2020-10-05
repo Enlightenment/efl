@@ -614,9 +614,7 @@ main(int argc, char **argv)
 
    ecore_app_no_system_modules();
 
-   ecore_init();
    eina_init();
-   edje_init();
 
    _log_dom = eina_log_domain_register
        ("edje_external_inspector", EINA_COLOR_YELLOW);
@@ -627,6 +625,8 @@ main(int argc, char **argv)
         ret = 1;
         goto error_log;
      }
+
+   edje_init();
 
    arg_index = ecore_getopt_parse(&optdesc, values, argc, argv);
    if (arg_index < 0)
@@ -670,10 +670,9 @@ main(int argc, char **argv)
    free(module_patterns_str);
 
 error_getopt:
+   edje_shutdown();
    eina_log_domain_unregister(_log_dom);
 error_log:
-   edje_shutdown();
-   ecore_shutdown();
    eina_shutdown();
 
    return ret;

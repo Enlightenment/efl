@@ -226,8 +226,6 @@ main(void)
    unsigned int pixels[(WIDTH / 4) * (HEIGHT / 4)];
    Evas_Textblock_Style *st;
 
-   srand(time(NULL));
-
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 

@@ -254,7 +254,6 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(ops,
 int
 main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
-   eina_init();
    ecore_init();
 
    my_argc = argc;
@@ -271,7 +270,6 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    ecore_main_loop_begin();
 
    ecore_shutdown();
-   eina_shutdown();
 
    return 0;
 }

@@ -133,6 +133,19 @@ group { name: "e/widgets/border/default/border";
 
    images.image: "win_shad_flat.png" COMP;
    data.item: "shadow" "1";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         new text[128];
+         new ncpu, cpu, mem;
+         if ((type == MSG_INT_SET) && (id == 1)) {
+            ncpu = getarg(2);
+            cpu = getarg(3) / ncpu;
+            mem = getarg(4);
+            snprintf(text, 128, "%i%% %i.%iM", cpu, mem / 1024, (mem % 1024) / 100)
+            set_text(PART:"e.procstats.text", text);
+         }
+      }
+   }
    parts {
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
@@ -564,6 +577,44 @@ group { name: "e/widgets/border/default/border";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
+     part { name: "procstats";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            rel1.to: "e.swallow.volume";
+            rel1.relative: 1.0 0.0;
+            rel2.to: "e.swallow.volume";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: 0.0 -1;
+            color:  128 128 128 0;
+            align: 0.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+         }
+     }
+     part { name: "e.procstats.text"; type: TEXT;
+         scale: 1.0;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "procstats";
+            rel1.relative: 2.0 0.0;
+            rel2.to: "procstats";
+            rel2.relative: 2.0 1.0;
+            rel2.offset: 0.0 -1;
+            visible: 1;
+            text {
+               size: 9;
+               font: FNBD;
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "menu_item";
+               align: 0.0 0.5;
+             }
+         }
+         description { state: "hidden";
+            visible: 0;
+         }
+      }
    }
    programs {
       program {
@@ -659,6 +710,16 @@ group { name: "e/widgets/border/default/border";
          target: "shadow_base";
          target: "client_clip";
       }
+      program {
+         signal: "e,state,procstats,on"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.procstats.text";
+      }
+      program {
+         signal: "e,state,procstats,off"; source: "e";
+         action: STATE_SET "hidden" 0.0;
+         target: "e.procstats.text";
+      }
 //      program {
 //         signal: "e,action,maximize"; source: "e";
 //      }
@@ -724,6 +785,194 @@ group { name: "e/widgets/border/default/border";
          action: STATE_SET "default" 0.0;
          target: "min1";
          target: "min2";
+      }
+   }
+}
+
+group { name: "e/widgets/border/sparkle/border";
+   inherit: "e/widgets/border/default/border";
+   images.image: "vgrad_med_lighter_sparkle.png" COMP;
+   images.image: "vgrad_med_dark_sparkle.png" COMP;
+
+   script {
+      public in_x, in_y, locked = 0;
+   }
+   parts {
+      part { name: "top";
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med_lighter_sparkle.png";
+            visible: 0;
+         }
+         description { state: "focused" 0.0;
+            image.normal: "vgrad_med_dark_sparkle.png";
+            visible: 0;
+         }
+      }
+      part { name: "proxy"; type: PROXY; mouse_events: 0;
+         insert_after: "top";
+         description { state: "default";
+            source: "top";
+            proxy.source_clip: 0;
+            proxy.source_visible: 0;
+            rel1.to: "top";
+            rel2.to: "top";
+            fill.smooth: 0;
+            TILED_HORIZ(120)
+         }
+      }
+      part { name: "bevel";
+         description { state: "default" 0.0;
+            rel1.to: "proxy";
+            rel2.to: "proxy";
+         }
+      }
+      part { name: "e.text.title";
+         effect: GLOW;
+         description { state: "default" 0.0;
+            color3: 255 255 255 222;
+         }
+      }
+      part { name: "title2";
+         effect: OUTLINE_SHADOW;
+         description { state: "focused" 0.0;
+            color3: 0 0 0 255;
+         }
+      }
+      part { "clip1";
+         desc { "default";
+            rel1.to: "";
+            rel1.offset: -9999 -9999;
+            rel2.to: "";
+            rel2.offset: 9999 9999;
+         }
+      }
+      part { "clip2";
+         desc { "default";
+            rel1.to: "";
+            rel1.offset: -9999 -9999;
+            rel2.to: "";
+            rel2.offset: 9999 9999;
+         }
+         desc { "focused";
+            rel1.to: "";
+            rel1.offset: -9999 -9999;
+            rel2.to: "";
+            rel2.offset: 9999 9999;
+         }
+      }
+      part { name: "e.event.icon";
+         description { state: "default" 0.0;
+            rel1.to: "proxy";
+         }
+      }
+      part { name: "e.event.close";
+         description { state: "default" 0.0;
+            rel2.to: "proxy";
+         }
+      }
+      part { name: "shine";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "events"; type: RECT; repeat_events: 1;
+        description { state: "default";
+           color: 0 0 0 0;
+        }
+      }
+   }
+   programs {
+      program { name: "in";
+         signal: "mouse,in"; source: "events";
+
+         script {
+            new mx, my;
+
+            get_mouse(mx, my);
+            set_int(in_x, mx);
+            set_int(in_y, my);
+         }
+      }
+      program { name: "out";
+         signal: "mouse,out"; source: "events";
+         action: STATE_SET "default" 0.0;
+         target: "proxy";
+         transition: LINEAR 0.2;
+      }
+      program { name: "anim";
+         signal: "mouse,move"; source: "events";
+         script {
+            new mx, my;
+
+            if (get_int(locked) != 1) {
+               get_mouse(mx, my);
+               custom_state(PART:"proxy", "default", 0.0);
+               set_state_val(PART:"proxy", STATE_REL1_OFFSET, get_int(in_x) - mx, 0);
+               set_state_val(PART:"proxy", STATE_REL2_OFFSET, get_int(in_x) - mx, 0);
+               set_state(PART:"proxy", "custom", 0.0);
+            }
+         }
+      }
+      program { name: "lock";
+         after: "out";
+         script {
+            set_int(locked, 1);
+            set_int(in_x, 0);
+            set_int(in_y, 0);
+         }
+      }
+      program { name: "unlock";
+         script {
+            set_int(locked, 0);
+         }
+      }
+      program {
+         signal: "mouse,down,1"; source: "e.event.resize.tr";
+         after: "lock";
+      }
+      program {
+         signal: "mouse,down,1"; source: "e.event.resize.t";
+         after: "lock";
+      }
+      program {
+         signal: "mouse,down,1"; source: "e.event.resize.tl";
+         after: "lock";
+      }
+      program {
+         signal: "mouse,down,1"; source: "e.event.resize.br";
+         after: "lock";
+      }
+      program {
+         signal: "mouse,down,1"; source: "e.event.resize.b";
+         after: "lock";
+      }
+      program {
+         signal: "mouse,down,1"; source: "e.event.resize.bl";
+         after: "lock";
+      }
+      program {
+         signal: "mouse,up,1"; source: "e.event.resize.tr";
+         after: "unlock";
+      }
+      program {
+         signal: "mouse,up,1"; source: "e.event.resize.t";
+         after: "unlock";
+      }
+      program {
+         signal: "mouse,up,1"; source: "e.event.resize.tl";
+         after: "unlock";
+      }
+      program {
+         signal: "mouse,up,1"; source: "e.event.resize.br";
+         after: "unlock";
+      }
+      program {
+         signal: "mouse,up,1"; source: "e.event.resize.b";
+         after: "unlock";
+      }
+      program {
+         signal: "mouse,up,1"; source: "e.event.resize.bl";
+         after: "unlock";
       }
    }
 }

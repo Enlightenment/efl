@@ -4170,8 +4170,6 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    // FIXME: Tile Provider is better to provide tile size!
    priv->tsize = DEFAULT_TILE_SIZE;
 
-   srand(time(NULL));
-
    priv->id = ((int)getpid() << 16) | id_num;
    id_num++;
    _grid_all_create(priv);

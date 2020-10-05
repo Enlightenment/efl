@@ -50,8 +50,6 @@ eina_bench_sort_eina(int request)
 
    eina_init();
 
-   srand(time(NULL));
-
    for (i = 0; i < request; ++i)
      {
         char buffer[10];
@@ -78,8 +76,6 @@ eina_bench_sort_evas(int request)
    Evas_List *list = NULL;
    int i;
 
-   srand(time(NULL));
-
    for (i = 0; i < request; ++i)
      {
         char buffer[10];
@@ -104,8 +100,6 @@ eina_bench_sort_glist(int request)
 {
    GList *list = NULL;
    int i;
-
-   srand(time(NULL));
 
    for (i = 0; i < request; ++i)
      {

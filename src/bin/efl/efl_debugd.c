@@ -663,11 +663,11 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    ecore_app_no_system_modules();
 
    eina_init();
+   _log_dom = eina_log_domain_register("efl_debugd", EINA_COLOR_CYAN);
    ecore_init();
    ecore_con_init();
 
    _retval = EXIT_SUCCESS;
-   _log_dom = eina_log_domain_register("efl_debugd", EINA_COLOR_CYAN);
 
    _string_to_opcode_hash = eina_hash_string_superfast_new(NULL);
    _opcode_register("Daemon/opcode_register", EINA_DEBUG_OPCODE_REGISTER, _opcode_register_cb);
@@ -683,6 +683,7 @@ main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    ecore_con_shutdown();
    ecore_shutdown();
+   eina_log_domain_unregister(_log_dom);
    eina_shutdown();
 
    return _retval;

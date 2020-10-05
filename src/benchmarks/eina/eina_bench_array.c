@@ -67,8 +67,6 @@ eina_bench_array_4evas_render_inline(int request)
    unsigned int i;
    unsigned int j;
 
-   srand(time(NULL));
-
    eina_init();
 
    array = eina_array_new(64);
@@ -132,8 +130,6 @@ eina_bench_array_4evas_render_iterator(int request)
    Eina_Iterator *it;
    unsigned int i;
    unsigned int j;
-
-   srand(time(NULL));
 
    eina_init();
 

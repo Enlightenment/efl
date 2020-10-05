@@ -457,6 +457,8 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
    DATA32 coltab[16], col;
    DATA16 mtab[16], v;
 
+   if (!dst) return;
+
    // FIXME: Use dw, dh for scaling glyphs...
    (void) dw;
    (void) dh;

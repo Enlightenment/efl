@@ -30,6 +30,14 @@
 # include <unistd.h>
 #endif
 
+#ifndef _WIN32
+# ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+# endif
+# include <sys/stat.h>
+# include <fcntl.h>
+#endif
+
 #ifdef HAVE_MCHECK_H
 # ifdef HAVE_MTRACE
 #  define MT 1
@@ -283,7 +291,20 @@ eina_init(void)
    if (EINA_LIKELY(_eina_main_count > 0))
       return ++_eina_main_count;
 
-   srand(time(NULL));
+#ifdef _WIN32
+#else
+   int fd = open("/dev/urandom", O_RDONLY);
+   if (fd >= 0)
+     {
+        unsigned int val;
+
+        if (read(fd, &val, sizeof(val)) == sizeof(val)) srand(val);
+        else srand(time(NULL));
+        close(fd);
+     }
+   else
+#endif
+     srand(time(NULL));
    while (eina_seed == 0)
      eina_seed = rand();
 

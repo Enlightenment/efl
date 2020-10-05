@@ -256,7 +256,6 @@ _edje_multisense_encode_to_ogg_vorbis(char *snd_path, double quality, SF_INFO sf
    vorbis_analysis_init(&vd, &vi);
    vorbis_block_init(&vd, &vb);
 
-   srand(time(NULL));
    ogg_stream_init(&os, rand());
 
    ogg_packet header;

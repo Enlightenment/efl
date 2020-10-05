@@ -678,8 +678,6 @@ main(void)
    unsigned int count;
    Eina_Bool ret;
 
-   srand(time(NULL));
-
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 

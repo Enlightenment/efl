@@ -270,11 +270,7 @@ EFL_START_TEST(eina_test_hash_int32_fuzze)
    Eina_Hash *hash;
    unsigned int *r, *array;
    unsigned int i;
-   unsigned int seed;
    unsigned int num_loops = 10000;
-
-   seed = time(NULL);
-   srand(seed);
 
    hash = eina_hash_int32_new(NULL);
 
@@ -312,8 +308,6 @@ EFL_START_TEST(eina_test_hash_int64_fuzze)
    uint64_t i;
    uint64_t num_loops = 10000;
 
-   srand(time(NULL));
-
    hash = eina_hash_int64_new(NULL);
 
    array = malloc(sizeof(int64_t) * num_loops);
@@ -347,12 +341,8 @@ EFL_START_TEST(eina_test_hash_string_fuzze)
 {
    Eina_Hash *hash;
    unsigned int i;
-   unsigned int seed;
    char *array;
    unsigned int num_loops = 100;
-
-   seed = time(NULL);
-   srand(seed);
 
    hash = eina_hash_string_superfast_new(NULL);
 

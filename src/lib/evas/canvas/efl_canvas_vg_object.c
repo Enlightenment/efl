@@ -384,6 +384,7 @@ _efl_canvas_vg_object_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Da
    obj->func = &object_func;
    obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
+   obj->is_vg_object = EINA_TRUE;
 
    /* default root node */
    pd->obj = obj;
@@ -1196,6 +1197,13 @@ EAPI Evas_Object_Vg_Fill_Mode
 evas_object_vg_fill_mode_get(const Evas_Object *obj)
 {
    return _efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(efl_canvas_vg_object_fill_mode_get(obj));
+}
+
+Eina_Bool
+evas_object_vg_changed_get(Evas_Object_Protected_Data *obj)
+{
+   Efl_Canvas_Vg_Object_Data *pd = obj->private_data;
+   return pd->changed;
 }
 
 #include "efl_canvas_vg_object.eo.c"

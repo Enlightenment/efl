@@ -824,6 +824,7 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   events_filter_enabled : 1;
    Eina_Bool                   is_pointer_inside_legacy : 1;
    Eina_Bool                   is_filter_object : 1;
+   Eina_Bool                   is_vg_object : 1;
 };
 
 struct _Evas_Data_Node
@@ -1246,6 +1247,7 @@ void evas_call_smarts_calculate(Evas *e);
 void evas_object_smart_bounding_box_update(Evas_Object_Protected_Data *obj);
 void evas_object_smart_need_bounding_box_update(Evas_Smart_Data *o, Evas_Object_Protected_Data *obj);
 Eina_Bool evas_object_smart_changed_get(Evas_Object_Protected_Data *obj);
+Eina_Bool evas_object_vg_changed_get(Evas_Object_Protected_Data *obj);
 void evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s);
 void _evas_post_event_callback_call_real(Evas *e, Evas_Public_Data* e_pd, int min_event_id);
 #define _evas_post_event_callback_call(e, pd, id) do { \

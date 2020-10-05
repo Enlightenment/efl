@@ -1096,8 +1096,6 @@ test_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 
         evas_object_event_callback_add(map, EVAS_CALLBACK_DEL, _del_map, NULL);
 
-        srand(time(NULL));
-
         tile_srcs = elm_map_sources_get(map, ELM_MAP_SOURCE_TYPE_TILE);
         route_srcs = elm_map_sources_get(map, ELM_MAP_SOURCE_TYPE_ROUTE);
         name_srcs = elm_map_sources_get(map, ELM_MAP_SOURCE_TYPE_NAME);

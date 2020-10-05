@@ -1392,7 +1392,10 @@ evas_object_smart_changed_get(Evas_Object_Protected_Data *obj)
         if (has_map)
           {
              if ((obj->need_surface_clear && obj->changed && !obj->is_smart) ||
-                 ((obj->changed_pchange) && (obj->changed_map)))
+                 ((obj->changed_pchange) && (obj->changed_map)) ||
+                 /* A condition for a rare case which has obj->changed is FALSE,
+                    but Efl_Canvas_Vg_Object_Data.changed is TRUE. */
+                 (obj->is_vg_object && evas_object_vg_changed_get(obj)))
                return EINA_TRUE;
           }
      }
