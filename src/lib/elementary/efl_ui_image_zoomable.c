@@ -2080,6 +2080,38 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret
    evas_object_image_file_set(sd->img, NULL, NULL);
    evas_object_image_load_scale_down_set(sd->img, 0);
    _photocam_image_file_set(sd->img, sd);
+
+   //Check whether image size is bigger than maxium texture
+   evas_object_image_size_get(sd->img, &w, &h);
+   int maxw = 0, maxh = 0;
+   evas_image_max_size_get(evas_object_evas_get(sd->img), &maxw, &maxh);
+
+   /* Image is too large than system support,
+      This case it won't be available,
+      Alternatively, reduce size by half and make it visible at least.
+      Btw, is this the best solution for this?... */
+   if (maxw > 0 && maxh > 0)
+     {
+        int w2 = w;
+        int h2 = h;
+
+        if (w2 > maxw || h2 > maxh)
+          {
+             //Scale down by half
+             int scale_down = 1;
+
+             while (w2 > maxw || h2 > maxh)
+               {
+                  w2 /= 2;
+                  h2 /= 2;
+                  scale_down *= 2;
+               }
+
+             //This might not work at some format...
+             evas_object_image_load_scale_down_set(sd->img, scale_down);
+          }
+     }
+
    err = evas_object_image_load_error_get(sd->img);
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -2087,8 +2119,6 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret
         if (ret) *ret = err;
         return err;
      }
-   evas_object_image_size_get(sd->img, &w, &h);
-
    sd->do_region = evas_object_image_region_support_get(sd->img);
    sd->size.imw = w;
    sd->size.imh = h;
