@@ -202,7 +202,7 @@ eina_src = files([
 if sys_windows == true
   eina_src += files('eina_file_win32.c')
 else
-  eina_src += files('eina_file.c')
+  eina_src += files('eina_file_posix.c')
 endif
 
 eina_config = configuration_data()
