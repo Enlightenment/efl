@@ -652,7 +652,6 @@ group { name: "elm/button/base/colorselector/right/default";
 
 group { name: "elm/button/base/media_player/prev/default";
    alias: "elm/button/base/media_player/prev/flush";
-   images.image: "icon_prev_mono.png" COMP;
    parts {
       rect { "base";
          desc { "default";
@@ -667,9 +666,9 @@ group { name: "elm/button/base/media_player/prev/default";
       image { "ic"; nomouse;
          scale: 1;
          desc { "default";
-            min: 24 24;
-            max: 24 24;
-            image.normal: "icon_prev_mono.png";
+            min: 15 15;
+            max: 15 15;
+            image.normal: "i-media-prev";
             color: 160 160 160 255;
          }
          desc { "selected";
@@ -709,23 +708,22 @@ group { name: "elm/button/base/media_player/prev/default";
 group { name: "elm/button/base/media_player/"_name"/default"; \
    alias: "elm/button/base/media_player/"_name"/flush"; \
    inherit: "elm/button/base/media_player/prev/default"; \
-   images.image: _icon COMP; \
    parts { image { "ic"; \
       desc { "default"; image.normal: _icon; } \
       desc { "selected"; image.normal: _icon; } \
    } } \
 }
 
-MEDIABUTTON("rewind", "icon_rewind_mono.png")
-MEDIABUTTON("play", "icon_play_mono.png")
-MEDIABUTTON("pause", "icon_pause_mono.png")
-MEDIABUTTON("forward", "icon_forward_mono.png")
-MEDIABUTTON("next", "icon_next_mono.png")
-MEDIABUTTON("info", "icon_info_mono.png")
-MEDIABUTTON("stop", "icon_stop_mono.png")
-MEDIABUTTON("eject", "icon_eject_mono.png")
-MEDIABUTTON("volume", "icon_volume_mono.png")
-MEDIABUTTON("mute", "icon_mute_mono.png")
+MEDIABUTTON("rewind", "i-media-rw")
+MEDIABUTTON("play", "i-media-play")
+MEDIABUTTON("pause", "i-media-pause")
+MEDIABUTTON("forward", "i-media-ff")
+MEDIABUTTON("next", "i-media-next")
+MEDIABUTTON("info", "i-info")
+MEDIABUTTON("stop", "i-media-stop")
+MEDIABUTTON("eject", "i-media-eject")
+MEDIABUTTON("volume", "i-media-volume")
+MEDIABUTTON("mute", "i-media-mute")
 
 group { name: "elm/button/base/hoversel_vertical_entry/default";
    alias: "elm/button/base/hoversel_vertical_entry/entry";

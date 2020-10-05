@@ -39,10 +39,6 @@ group { name: "e/modules/music-control/popup";
    skip_namespace_validation: 1;
 #endif
    min: 160 160;
-   images.image: "icon_prev_mono.png" COMP;
-   images.image: "icon_next_mono.png" COMP;
-   images.image: "icon_pause_mono.png" COMP;
-   images.image: "icon_play_mono.png" COMP;
    styles {
       style { name: "music_control_metadata_style";
          base: "font="FN" font_size=10 align=left text_class=tb_plain color=#eee";
@@ -137,38 +133,38 @@ group { name: "e/modules/music-control/popup";
          scale: 1;
          description { state: "default" 0;
             fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
+            min: 15 15;
+            max: 15 15;
             align: 0.5 1.0;
-            image.normal: "icon_pause_mono.png";
+            image.normal: "i-media-pause";
          }
          description { state: "play" 0.0;
             inherit: "default" 0.0;
-            image.normal: "icon_play_mono.png";
+            image.normal: "i-media-play";
          }
       }
       part { name: "previous_btn";
          scale: 1;
          description { state: "default" 0;
             fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
+            min: 15 15;
+            max: 15 15;
             rel.to: "play_btn";
-            rel1.relative: -1.0 0.0;
-            rel2.relative: 0.0  1.0;
-            image.normal: "icon_prev_mono.png";
+            rel1.relative: -2.0 0.0;
+            rel2.relative: -1.0  1.0;
+            image.normal: "i-media-prev";
          }
       }
       part { name: "next_btn";
          scale: 1;
          description { state: "default" 0;
             fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
+            min: 15 15;
+            max: 15 15;
             rel.to: "play_btn";
-            rel1.relative: 1.0 0.0;
-            rel2.relative: 2.0 1.0;
-            image.normal: "icon_next_mono.png";
+            rel1.relative: 2.0 0.0;
+            rel2.relative: 3.0 1.0;
+            image.normal: "i-media-next";
          }
       }
    }
