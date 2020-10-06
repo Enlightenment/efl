@@ -514,11 +514,11 @@ ecore_file_mv(const char *src, const char *dst)
                }
           }
 #ifdef _WIN32
-          if (errno == EEXIST)
-            {
-               struct _stat s;
-               _stat(dst, &s);
-               if (_S_IFREG & s.st_mode)
+        if (errno == ENOENT)
+          {
+             struct _stat s;
+             _stat(dst, &s);
+             if (_S_IFREG & s.st_mode)
                {
                   ecore_file_unlink(dst);
                   if (rename(src, dst))
@@ -526,7 +526,7 @@ ecore_file_mv(const char *src, const char *dst)
                        return EINA_TRUE;
                     }
                }
-            }
+          }
 #endif
         goto FAIL;
      }
