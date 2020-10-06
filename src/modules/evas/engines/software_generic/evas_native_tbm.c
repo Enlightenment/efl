@@ -70,7 +70,7 @@ static int (*sym_tbm_surface_map) (tbm_surface_h surface, int opt, tbm_surface_i
 static int (*sym_tbm_surface_unmap) (tbm_surface_h surface) = NULL;
 static int (*sym_tbm_surface_get_info) (tbm_surface_h surface, tbm_surface_info_s *info) = NULL;
 
-EAPI int
+EMODAPI int
 _evas_native_tbm_init(void)
 {
    if (tbm_lib)
@@ -118,7 +118,7 @@ _evas_native_tbm_init(void)
    return tbm_ref;
 }
 
-EAPI void
+EMODAPI void
 _evas_native_tbm_shutdown(void)
 {
    if (tbm_ref > 0)
@@ -262,7 +262,7 @@ _native_free_cb(void *image)
    _evas_native_tbm_shutdown();
 }
 
-EAPI int
+EMODAPI int
 _evas_native_tbm_surface_stride_get(void *data EINA_UNUSED, void *native)
 {
    Evas_Native_Surface *ns = native;
@@ -285,7 +285,7 @@ _evas_native_tbm_surface_stride_get(void *data EINA_UNUSED, void *native)
    return stride;
  }
 
-EAPI void *
+EMODAPI void *
 _evas_native_tbm_surface_image_set(void *data EINA_UNUSED, void *image, void *native)
 {
    Evas_Native_Surface *ns = native;

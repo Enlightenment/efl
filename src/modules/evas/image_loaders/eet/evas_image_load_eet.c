@@ -1,5 +1,5 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"  /* so that EAPI in Eet.h is correctly defined */
+# include "config.h"  /* so that EMODAPI in Eet.h is correctly defined */
 #endif
 
 #include <Eet.h>

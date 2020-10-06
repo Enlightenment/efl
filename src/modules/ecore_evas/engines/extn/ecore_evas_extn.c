@@ -1,26 +1,22 @@
 #include "ecore_evas_extn_engine.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI
-# endif /* ! DLL_EXPORT */
+#  define EMODAPI
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
+#   define EMODAPI __attribute__ ((visibility("default")))
 #  endif
-# else
-#  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
+#endif
 
 #define NBUF 2
 
@@ -1184,7 +1180,7 @@ _ipc_server_data(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI Evas_Object *
+EMODAPI Evas_Object *
 ecore_evas_extn_plug_new_internal(Ecore_Evas *ee_target)
 {
    Evas_Object *o;
@@ -2118,7 +2114,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL //fn_last_tick_get
 };
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_extn_socket_new_internal(int w, int h)
 {
    Evas_Engine_Info_Buffer *einfo;
@@ -2325,13 +2321,13 @@ _ecore_evas_extn_interface_new(void)
    return iface;
 }
 
-EAPI void
+EMODAPI void
 ecore_evas_extn_socket_events_block_set_internal(Ecore_Evas *ee, Eina_Bool events_block)
 {
    ee->events_block = events_block;
 }
 
-EAPI Eina_Bool
+EMODAPI Eina_Bool
 ecore_evas_extn_socket_events_block_get_internal(Ecore_Evas *ee)
 {
    return ee->events_block;

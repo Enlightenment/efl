@@ -19,6 +19,6 @@ typedef Eo Elm_Web_None;
  */
 #define ELM_WEB_NONE_CLASS elm_web_none_class_get()
 
-EWAPI const Efl_Class *elm_web_none_class_get(void) EINA_CONST;
+EMODAPI EMODAPI_WEAK const Efl_Class *elm_web_none_class_get(void) EINA_CONST;
 
 #endif

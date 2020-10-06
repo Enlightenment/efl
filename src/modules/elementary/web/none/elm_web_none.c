@@ -309,24 +309,24 @@ _elm_web_none_elm_web_inwin_mode_get(const Eo *obj EINA_UNUSED, Elm_Web_None_Dat
    return EINA_FALSE;
 }
 
-EAPI void
+EMODAPI void
 ewm_window_features_ref(Elm_Web_Window_Features *wf EINA_UNUSED)
 {
 }
 
-EAPI void
+EMODAPI void
 ewm_window_features_unref(Elm_Web_Window_Features *wf EINA_UNUSED)
 {
 }
 
-EAPI Eina_Bool
+EMODAPI Eina_Bool
 ewm_window_features_property_get(const Elm_Web_Window_Features *wf EINA_UNUSED,
                                  Elm_Web_Window_Feature_Flag flag EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
-EAPI void
+EMODAPI void
 ewm_window_features_region_get(const Elm_Web_Window_Features *wf EINA_UNUSED,
                                Evas_Coord *x,
                                Evas_Coord *y,
@@ -339,12 +339,12 @@ ewm_window_features_region_get(const Elm_Web_Window_Features *wf EINA_UNUSED,
    if (h) *h = 0;
 }
 
-EAPI void
+EMODAPI void
 ewm_unneed_web(void)
 {
 }
 
-EAPI Eina_Bool
+EMODAPI Eina_Bool
 ewm_need_web(void)
 {
    if (_none_log_dom == -1)
@@ -352,7 +352,7 @@ ewm_need_web(void)
    return EINA_TRUE;
 }
 
-EAPI const Efl_Class *
+EMODAPI const Efl_Class *
 ewm_class_get(void)
 {
    return elm_web_none_class_get();
