@@ -267,7 +267,7 @@ elm_prefs_page_common_unpack(Evas_Object *it,
      elm_box_unpack(obj, it);
 }
 
-EAPI int
+EMODAPI int
 elm_modapi_init(void *m EINA_UNUSED)
 {
    _elm_prefs_log_dom = eina_log_domain_register
@@ -279,7 +279,7 @@ elm_modapi_init(void *m EINA_UNUSED)
    return 1; // succeed always
 }
 
-EAPI int
+EMODAPI int
 elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    elm_prefs_item_iface_unregister(_elm_prefs_item_widgets);

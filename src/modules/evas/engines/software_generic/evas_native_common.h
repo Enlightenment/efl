@@ -1,29 +1,24 @@
 #ifndef _EVAS_NATIVE_COMMON_H
 #define _EVAS_NATIVE_COMMON_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI __declspec(dllimport)
+#  define EMODAPI
 # endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
+#   define EMODAPI __attribute__ ((visibility("default")))
+#   define EMODAPI_WEAK __attribute__ ((weak))
 #  else
-#   define EAPI
+#   define EMODAPI
+#   define EMODAPI_WEAK
 #  endif
 # else
-#  define EAPI
+#  define EMODAPI
+#  define EMODAPI_WEAK
 # endif
 #endif
 
@@ -109,10 +104,10 @@ struct _Native
    } ns_data; /**< Choose one union data according to your surface in Evas Engine. */
 };
 
-EAPI void *_evas_native_tbm_surface_image_set(void *data, void *image, void *native);
-EAPI int _evas_native_tbm_surface_stride_get(void *data, void *native);
-EAPI int _evas_native_tbm_init(void);
-EAPI void _evas_native_tbm_shutdown(void);
+EMODAPI void *_evas_native_tbm_surface_image_set(void *data, void *image, void *native);
+EMODAPI int _evas_native_tbm_surface_stride_get(void *data, void *native);
+EMODAPI int _evas_native_tbm_init(void);
+EMODAPI void _evas_native_tbm_shutdown(void);
 
 void *_evas_native_dmabuf_surface_image_set(void *image, void *native);
 

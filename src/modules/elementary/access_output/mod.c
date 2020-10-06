@@ -4,10 +4,6 @@
 
 #include "Elementary.h"
 
-#ifndef EFL_BUILD
-# define EFL_BUILD
-#endif
-#undef ELM_MODULE_HELPER_H
 #include "elm_module_helper.h"
 
 /* to enable this module
@@ -44,7 +40,7 @@ _exe_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 // module api funcs needed
-EAPI int
+EMODAPI int
 elm_modapi_init(void *m EINA_UNUSED)
 {
    exe_exit_handler =
@@ -53,7 +49,7 @@ elm_modapi_init(void *m EINA_UNUSED)
    return 1; // succeed always
 }
 
-EAPI int
+EMODAPI int
 elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    if (exe_exit_handler)
@@ -65,7 +61,7 @@ elm_modapi_shutdown(void *m EINA_UNUSED)
 }
 
 // module fucns for the specific module type
-EAPI void
+EMODAPI void
 out_read(const char *txt)
 {
    if (!tmpf)
@@ -80,7 +76,7 @@ out_read(const char *txt)
    if (write(tmpfd, txt, strlen(txt)) < 0) perror("write to tmpfile (espeak)");
 }
 
-EAPI void
+EMODAPI void
 out_read_done(void)
 {
    char buf[PATH_MAX];
@@ -103,7 +99,7 @@ out_read_done(void)
      }
 }
 
-EAPI void
+EMODAPI void
 out_cancel(void)
 {
    if (espeak)
@@ -121,7 +117,7 @@ out_cancel(void)
      }
 }
 
-EAPI void
+EMODAPI void
 out_done_callback_set(void (*func) (void *data), const void *data)
 {
    cb_func = func;

@@ -24,27 +24,23 @@
 static int _ecore_evas_vnc_server_log_dom;
 static unsigned int _available_seat = 1;
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI
-# endif /* ! DLL_EXPORT */
+#  define EMODAPI
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
+#   define EMODAPI __attribute__ ((visibility("default")))
 #  endif
-# else
-#  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
+#endif
 
 #ifdef WRN
 #undef WRN
@@ -732,7 +728,7 @@ _ecore_evas_vnc_server_del(void *data, const Efl_Event *ev EINA_UNUSED)
    free(server);
 }
 
-EAPI Evas_Object *
+EMODAPI Evas_Object *
 ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
                           Ecore_Evas_Vnc_Client_Accept_Cb accept_cb,
                           Ecore_Evas_Vnc_Client_Disconnected_Cb disc_cb,
@@ -834,7 +830,7 @@ ecore_evas_vnc_server_new(Ecore_Evas *ee, int port, const char *addr,
    return NULL;
 }
 
-EAPI Eina_Bool
+EMODAPI Eina_Bool
 ecore_evas_vnc_server_pointer_xy_get(const Evas_Object *snapshot,
                                      const Evas_Device *pointer,
                                      Evas_Coord *x, Evas_Coord *y)

@@ -20,27 +20,24 @@
 #include <Ecore_Evas.h>
 #include "ecore_evas_private.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI
-# endif /* ! DLL_EXPORT */
+#  define EMODAPI
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
+#   define EMODAPI __attribute__ ((visibility("default")))
 #  endif
-# else
-#  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
+#endif
+
 /*
  * SDL only handle one window at a time. That's by definition, there is nothing wrong here.
  *
@@ -631,7 +628,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    return NULL;
 }
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_sdl_new_internal(const char* name, int w, int h, int fullscreen,
                             int hwsurface, int noframe, int alpha)
 {
@@ -645,7 +642,7 @@ ecore_evas_sdl_new_internal(const char* name, int w, int h, int fullscreen,
    return ee;
 }
 
-EAPI Ecore_Evas*
+EMODAPI Ecore_Evas*
 ecore_evas_sdl16_new_internal(const char* name EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED, int fullscreen EINA_UNUSED, int hwsurface EINA_UNUSED, int noframe EINA_UNUSED, int alpha EINA_UNUSED)
 {
    ERR("OUCH !");
@@ -653,7 +650,7 @@ ecore_evas_sdl16_new_internal(const char* name EINA_UNUSED, int w EINA_UNUSED, i
 }
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_gl_sdl_new_internal(const char* name, int w, int h, int fullscreen, int noframe)
 {
    Ecore_Evas          *ee;

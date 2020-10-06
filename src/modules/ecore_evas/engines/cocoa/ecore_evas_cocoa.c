@@ -14,18 +14,22 @@
 #include "ecore_evas_private.h"
 #include "ecore_evas_cocoa.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  define EAPI __attribute__ ((visibility("default")))
+#ifdef _WIN32
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI
+#  define EMODAPI
 # endif
 #else
-# define EAPI
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EMODAPI __attribute__ ((visibility("default")))
+#  endif
+# endif
+#endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
 #endif
 
 static int                      _ecore_evas_init_count = 0;
@@ -651,7 +655,7 @@ _ecore_evas_cocoa_window_get(const Ecore_Evas *ee)
    return (Ecore_Cocoa_Window *)(ee->prop.window);
 }
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int y, int w, int h)
 {
    Ecore_Evas *ee;

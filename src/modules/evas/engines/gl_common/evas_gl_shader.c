@@ -700,7 +700,7 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
    return 1;
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_shaders_flush(Evas_GL_Shared *shared)
 {
 

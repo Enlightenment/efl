@@ -3,29 +3,25 @@
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
-#ifdef EAPI
-# undef EAPI
+#ifdef EMODAPI
+# undef EMODAPI
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI __declspec(dllimport)
+#  define EMODAPI
 # endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
+#   define EMODAPI __attribute__ ((visibility("default")))
 #  else
-#   define EAPI
+#   define EMODAPI
 #  endif
 # else
-#  define EAPI
+#  define EMODAPI
 # endif
 #endif
 
@@ -43,11 +39,11 @@ typedef struct _EVGL_Cap            EVGL_Cap;
 typedef struct _EVGL_Surface_Cap    EVGL_Surface_Cap;
 typedef struct _EVGL_Surface_Format EVGL_Surface_Format;
 
-EAPI void         evgl_engine_shutdown(void *eng_data);
-EAPI void        *evgl_native_surface_buffer_get(EVGL_Surface *sfc, Eina_Bool *is_egl_image);
-EAPI int          evgl_native_surface_yinvert_get(EVGL_Surface *sfc);
-EAPI void        *evgl_current_native_context_get(EVGL_Context *ctx);
-EAPI void         evas_gl_common_context_restore_set(Eina_Bool);
+EMODAPI void         evgl_engine_shutdown(void *eng_data);
+EMODAPI void        *evgl_native_surface_buffer_get(EVGL_Surface *sfc, Eina_Bool *is_egl_image);
+EMODAPI int          evgl_native_surface_yinvert_get(EVGL_Surface *sfc);
+EMODAPI void        *evgl_current_native_context_get(EVGL_Context *ctx);
+EMODAPI void         evas_gl_common_context_restore_set(Eina_Bool);
 
 typedef void (*EVGL_Engine_Call)(void *eng_data);
 typedef void *(*EVGL_Native_Surface_Call)(void *sfc, Eina_Bool *is_egl_image);
@@ -88,8 +84,5 @@ void         evgl_direct_partial_info_set(int pres);
 void         evgl_direct_partial_info_clear(void);
 void         evgl_direct_partial_render_start(void);
 void         evgl_direct_partial_render_end(void);
-
-#undef EAPI
-#define EAPI
 
 #endif //_EVAS_GL_CORE_H
