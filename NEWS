@@ -1,6 +1,14 @@
 ==========
-EFL 1.25.0
+EFL 1.25.1
 ==========
+
+Changes since 1.25.0:
+---------------------
+
+Fixes:
+
+   * evas: sw font draw - protect against null pointer access
+   * efreet - windows - still call stat but skip lstat/readlink
 
 Changes since 1.24.0:
 ---------------------
