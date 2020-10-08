@@ -4,7 +4,8 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013-2016 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2013-2019 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2018 Wu Yongwei <wuyongwei at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -30,9 +31,9 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 29, for
- * Unicode 9.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
+ * This library has been updated according to Revision 35, for
+ * Unicode 12.0.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-35.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -53,8 +54,7 @@
 #include "unibreakdef.h"
 #include "wordbreak.h"
 #include "wordbreakdata.c"
-
-#define ARRAY_LEN(x) (sizeof(x) / sizeof(x[0]))
+#include "emojidef.h"
 
 /**
  * Initializes the wordbreak internals.  It currently does nothing, but
@@ -215,30 +215,12 @@ static void set_wordbreaks(
 #if __has_attribute(fallthrough)
            __attribute__((fallthrough));
 #endif
-           /* Fall off */
+            /* Fall through */
 
         case WBP_Newline:
             /* WB3a,3b */
             set_brks_to(s, brks, posLast, posCur, len,
                         WORDBREAK_BREAK, get_next_char);
-            wbcSeqStart = wbcCur;
-            posLast = posCur;
-            break;
-
-        case WBP_E_Base_GAZ:
-        case WBP_Glue_After_Zwj:
-            /* WB3c */
-            if (wbcLast == WBP_ZWJ)
-            {
-               set_brks_to(s, brks, posLast, posCur, len,
-                       WORDBREAK_NOBREAK, get_next_char);
-            }
-            /* No rule found, reset */
-            else
-            {
-                set_brks_to(s, brks, posLast, posCur, len,
-                            WORDBREAK_BREAK, get_next_char);
-            }
             wbcSeqStart = wbcCur;
             posLast = posCur;
             break;
@@ -260,8 +242,10 @@ static void set_wordbreaks(
             {
                 /* It's surely not the first */
                 brks[posCur - 1] = WORDBREAK_NOBREAK;
-                /* WB3c precedes 4, so no intervening Extend chars allowed. */
-                if (wbcSeqStart != WBP_ZWJ)
+                /* WB3c and WB3d precede 4, so no intervening Extend
+                 * chars allowed. */
+                if (wbcCur != WBP_ZWJ && wbcSeqStart != WBP_ZWJ &&
+                    wbcSeqStart != WBP_WSegSpace)
                 {
                     /* "inherit" the previous class. */
                     wbcCur = wbcLast;
@@ -334,7 +318,8 @@ static void set_wordbreaks(
 #if __has_attribute(fallthrough)
            __attribute__((fallthrough));
 #endif
-           /* No break on purpose */
+            /* Fall through */
+
         case WBP_MidNumLet:
             if (((wbcLast == WBP_ALetter) ||
                         (wbcLast == WBP_Hebrew_Letter)) || /* WB6,7 */
@@ -421,32 +406,6 @@ static void set_wordbreaks(
             posLast = posCur;
             break;
 
-        case WBP_E_Base:
-            /* No rule found, reset */
-            set_brks_to(s, brks, posLast, posCur, len,
-                    WORDBREAK_BREAK, get_next_char);
-            wbcSeqStart = wbcCur;
-            posLast = posCur;
-            break;
-
-        case WBP_E_Modifier:
-            /* WB14 */
-            if ((wbcLast == WBP_E_Base) ||
-                (wbcLast == WBP_E_Base_GAZ))
-            {
-                set_brks_to(s, brks, posLast, posCur, len,
-                            WORDBREAK_NOBREAK, get_next_char);
-            }
-            /* No rule found, reset */
-            else
-            {
-                set_brks_to(s, brks, posLast, posCur, len,
-                            WORDBREAK_BREAK, get_next_char);
-            }
-            wbcSeqStart = wbcCur;
-            posLast = posCur;
-            break;
-
         case WBP_Regional_Indicator:
             /* WB15,16 */
             if ((wbcSeqStart == WBP_Regional_Indicator) &&
@@ -481,7 +440,32 @@ static void set_wordbreaks(
             }
             break;
 
+        case WBP_WSegSpace:
+            if (wbcLast == WBP_WSegSpace) /* WB3d */
+            {
+                set_brks_to(s, brks, posLast, posCur, len,
+                            WORDBREAK_NOBREAK, get_next_char);
+                posLast = posCur;
+                break;
+            }
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
+#if __has_attribute(fallthrough)
+           __attribute__((fallthrough));
+#endif
+            /* Fall through */
+
         case WBP_Any:
+            /* Check for rule WB3c */
+            if (wbcLast == WBP_ZWJ && ub_is_extended_pictographic(ch))
+            {
+                set_brks_to(s, brks, posLast, posCur, len,
+                            WORDBREAK_NOBREAK, get_next_char);
+                posLast = posCur;
+                break;
+            }
+
             /* Allow breaks and reset */
             set_brks_to(s, brks, posLast, posCur, len,
                         WORDBREAK_BREAK, get_next_char);

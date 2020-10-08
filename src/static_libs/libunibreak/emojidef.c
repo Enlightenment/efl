@@ -1,10 +1,7 @@
-/* vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
-
 /*
- * Break processing in a Unicode sequence.  Designed to be used in a
- * generic text renderer.
+ * Emoji-related routine and data.
  *
- * Copyright (C) 2015-2019 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2018 Andreas Röver <roever at users dot sf dot net>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -25,32 +22,40 @@
  */
 
 /**
- * @file    unibreakbase.h
+ * @file    emojidef.c
  *
- * Header file for common definitions in the libunibreak library.
+ * Emoji-related routine and data that are used internally.
  *
- * @author  Wu Yongwei
+ * @author  Andreas Röver
  */
 
-#ifndef UNIBREAKBASE_H
-#define UNIBREAKBASE_H
+#include "emojidef.h"
+#include "emojidata.c"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+/**
+ * Finds out if a codepoint is extended pictographic.
+ *
+ * @param[in] ch  character to check
+ * @return        \c true if the codepoint is extended pictographic;
+ *                \c false otherwise
+ */
+bool ub_is_extended_pictographic(utf32_t ch)
+{
+    int min = 0;
+    int max = ARRAY_LEN(ep_prop) - 1;
+    int mid;
 
-#define UNIBREAK_VERSION   0x0402	/**< Version of the libunibreak */
-extern const int unibreak_version;
+    do
+    {
+        mid = (min + max) / 2;
 
-#ifndef UNIBREAK_UTF_TYPES_DEFINED
-#define UNIBREAK_UTF_TYPES_DEFINED
-typedef unsigned char   utf8_t;     /**< Type for UTF-8 data points */
-typedef unsigned short  utf16_t;    /**< Type for UTF-16 data points */
-typedef unsigned int    utf32_t;    /**< Type for UTF-32 data points */
-#endif
+        if (ch < ep_prop[mid].start)
+            max = mid - 1;
+        else if (ch > ep_prop[mid].end)
+            min = mid + 1;
+        else
+            return true;
+    } while (min <= max);
 
-#ifdef __cplusplus
+    return false;
 }
-#endif
-
-#endif /* UNIBREAKBASE_H */

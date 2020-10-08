@@ -4,7 +4,7 @@
  * Line breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2008-2016 Wu Yongwei <wuyongwei at gmail dot com>
+ * Copyright (C) 2008-2019 Wu Yongwei <wuyongwei at gmail dot com>
  * Copyright (C) 2013 Petr Filipsky <philodej at gmail dot com>
  *
  * This software is provided 'as-is', without any express or implied
@@ -31,9 +31,9 @@
  * Unicode 5.0.0:
  *      <URL:http://www.unicode.org/reports/tr14/tr14-19.html>
  *
- * This library has been updated according to Revision 37, for
- * Unicode 9.0.0:
- *      <URL:http://www.unicode.org/reports/tr14/tr14-37.html>
+ * This library has been updated according to Revision 43, for
+ * Unicode 12.0.0:
+ *      <URL:http://www.unicode.org/reports/tr14/tr14-43.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -80,7 +80,9 @@ enum BreakAction
 
 /**
  * Break action pair table.  This is a direct mapping of Table 2 of
- * Unicode Standard Annex 14, Revision 37, except the "CB" part.
+ * Unicode Standard Annex 14, Revision 37, except for ZWJ (manually
+ * adjusted after special processing as per LB8a of Revision 41) and CB
+ * (manually added as per LB20).
  */
 static enum BreakAction baTable[LBP_CB][LBP_CB] = {
     {   /* OP */
@@ -270,17 +272,17 @@ static enum BreakAction baTable[LBP_CB][LBP_CB] = {
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* ZWJ */
-        DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
-        PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        IND_BRK, DIR_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
+        IND_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, PRH_BRK,
+        PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK, IND_BRK,
+        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK, IND_BRK, IND_BRK, IND_BRK, DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
     {   /* CB */
         DIR_BRK, PRH_BRK, PRH_BRK, IND_BRK, IND_BRK, DIR_BRK, PRH_BRK,
         PRH_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
         DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, PRH_BRK,
         CMI_BRK, PRH_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK,
-        DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK, DIR_BRK },
+        DIR_BRK, DIR_BRK, DIR_BRK, IND_BRK, DIR_BRK },
 };
 
 /**
@@ -288,8 +290,9 @@ static enum BreakAction baTable[LBP_CB][LBP_CB] = {
  */
 struct LineBreakPropertiesIndex
 {
-    utf32_t end;                          /**< End coding point */
-    const struct LineBreakProperties *lbp;/**< Pointer to line breaking properties */
+    utf32_t end;                           /**< End codepoint */
+    const struct LineBreakProperties *lbp; /**< Pointer to line breaking
+                                                properties */
 };
 
 /**
@@ -335,7 +338,7 @@ static __inline int ends_with(const char *str, const char *suffix,
  * Initializes the second-level index to the line breaking properties.
  * If it is not called, the performance of #get_char_lb_class_lang (and
  * thus the main functionality) can be pretty bad, especially for big
- * code points like those of Chinese.
+ * codepoints like those of Chinese.
  */
 void init_linebreak(void)
 {
@@ -612,12 +615,18 @@ static int get_lb_result_lookup(
         break;
     }
 
+    /* Special processing due to rule LB8a */
+    if (lbpCtx->fLb8aZwj)
+    {
+        brk = LINEBREAK_NOBREAK;
+    }
+
     /* Special processing due to rule LB21a */
     if (lbpCtx->fLb21aHebrew &&
         (lbpCtx->lbcCur == LBP_HY || lbpCtx->lbcCur == LBP_BA))
     {
         brk = LINEBREAK_NOBREAK;
-        lbpCtx->fLb21aHebrew = 0;
+        lbpCtx->fLb21aHebrew = false;
     }
     else
     {
@@ -663,17 +672,21 @@ void lb_init_break_context(
     lbpCtx->lbcCur = resolve_lb_class(
                         get_char_lb_class_lang(ch, lbpCtx->lbpLang),
                         lbpCtx->lang);
-    lbpCtx->fLb21aHebrew = 0;
+    lbpCtx->fLb8aZwj =
+        (get_char_lb_class_lang(ch, lbpCtx->lbpLang) == LBP_ZWJ);
+    lbpCtx->fLb10LeadSpace =
+        (get_char_lb_class_lang(ch, lbpCtx->lbpLang) == LBP_SP);
+    lbpCtx->fLb21aHebrew = false;
     lbpCtx->cLb30aRI = 0;
     treat_first_char(lbpCtx);
 }
 
 /**
- * Updates LineBreakingContext for the next code point and returns
+ * Updates LineBreakingContext for the next codepoint and returns
  * the detected break.
  *
  * @param[in,out] lbpCtx  pointer to the line breaking context
- * @param[in]     ch      Unicode code point
+ * @param[in]     ch      Unicode codepoint
  * @return                break result, one of #LINEBREAK_MUSTBREAK,
  *                        #LINEBREAK_ALLOWBREAK, and #LINEBREAK_NOBREAK
  * @post                  the line breaking context is updated
@@ -700,6 +713,25 @@ int lb_process_next_char(
     default:
         break;
     }
+
+    /* Special processing due to rule LB8a */
+    if (lbpCtx->lbcNew == LBP_ZWJ)
+    {
+        lbpCtx->fLb8aZwj = true;
+    }
+    else
+    {
+        lbpCtx->fLb8aZwj = false;
+    }
+
+    /* Special processing due to rule LB10 */
+    if (lbpCtx->fLb10LeadSpace)
+    {
+        if (lbpCtx->lbcNew == LBP_CM || lbpCtx->lbcNew == LBP_ZWJ)
+            brk = LINEBREAK_ALLOWBREAK;
+        lbpCtx->fLb10LeadSpace = false;
+    }
+
     return brk;
 }
 
