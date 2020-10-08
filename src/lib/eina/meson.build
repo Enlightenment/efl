@@ -369,6 +369,11 @@ eina_ext_deps += [iconv]
 execinfo = cc.find_library('execinfo', required: false)
 eina_ext_deps += [execinfo]
 
+if sys_windows == true
+   bcrypt = cc.find_library('bcrypt', required: true)
+   eina_ext_deps += [bcrypt]
+endif
+
 eina_lib = library('eina', eina_src,
   c_args : package_c_args,
   include_directories : config_dir,
