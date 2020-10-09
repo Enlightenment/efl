@@ -119,6 +119,7 @@ group { name: "elm/check/base/default";
             max: 15 15;
             visible: 0;
             color: 160 160 160 255;
+            fixed: 1 1;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
