@@ -28,6 +28,7 @@ EFL_START_TEST(elua_api)
     cargv[0] = arg1;
     cargv[1] = arg2;
     char *spath = NULL;
+    Eina_Tmpstr *tmpf = NULL;
 
     st = elua_state_new("test");
     fail_if(!st);
