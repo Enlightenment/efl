@@ -937,7 +937,7 @@ _efl_ui_image_efl_file_load(Eo *obj, Efl_Ui_Image_Data *sd)
    _async_cancel(sd);
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if ((sd->img) && (sd->preload_status == EFL_UI_IMAGE_PRELOADING) && (!sd->edje))
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
