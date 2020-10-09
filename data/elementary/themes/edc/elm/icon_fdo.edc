@@ -193,22 +193,11 @@ ICO1(CTX, "view-list-compact", 128) /* */
 ICO1(CTX, "view-list-details", 128) /* */
 ICO1(CTX, "view-list-icons", 128) /* */
 
-ICO1(CTX, "view-fullscreen", 128)
-ICO1(CTX, "view-refresh", 128)
 ICO1(CTX, "view-restore", 128)
 ICO1(CTX, "view-sort-ascending", 128)
 ICO1(CTX, "view-sort-descending", 128)
-ICO1(CTX, "view-close", 128) /* */
 
-ICO1(CTX, "window-close", 128)
 ICO1(CTX, "window-new", 128)
-
-ICO1(CTX, "system-run", 128)
-ICO1(CTX, "system-shutdown", 128)
-ICO1(CTX, "system-reboot", 128)
-ICO1(CTX, "system-lock-screen", 128)
-ICO1(CTX, "system-log-out", 128)
-ICO1(CTX, "system-search", 128)
 
 ICO1(CTX, "help-about", 128)
 ICO1(CTX, "help-contents", 128)
@@ -375,8 +364,6 @@ ICO1(CTX, "preferences-other", 128)
 
 ////  devices  ////////////////////////////////////////////////////////////////
 #define CTX "devices"
-ICO1(CTX, "audio-card", 128)
-ICO1(CTX, "audio-input-microphone", 128)
 ICO1(CTX, "battery", 128)
 ICO1(CTX, "camera", 128)
 ICO1(CTX, "camera-photo", 128)
