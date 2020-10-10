@@ -1,6 +1,7 @@
 #ifndef _EINA_CXX_SUITE_H
 #define _EINA_CXX_SUITE_H
 
+#ifdef __cplusplus
 #include <cassert>
 #include <algorithm>
 
@@ -18,5 +19,8 @@ void eina_test_thread(TCase* tc);
 void eina_test_optional(TCase* tc);
 void eina_test_value(TCase* tc);
 void eina_test_log(TCase* tc);
+#endif
+#define EINA_CXX_TEST_API
+#define EINA_CXX_TEST_API_WEAK
 
 #endif /* _EINA_CXX_SUITE_H */

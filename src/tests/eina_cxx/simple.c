@@ -8,6 +8,8 @@
 
 #include <stdlib.h>
 
+#include "eina_cxx_suite.h"
+
 #include "eina_simple.eo.h"
 
 #define MY_CLASS EINA_SIMPLE_CLASS
