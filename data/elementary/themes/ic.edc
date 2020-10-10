@@ -96,69 +96,16 @@ I060("i-media-volume", "media-volume")
 I060("i-media-mute", "media-mute")
 I060("i-media-next", "media-next")
 I060("i-media-prev", "media-prev")
-// exclam
-// more
-// chat
-// clock
-// eject
-// ff
-// rw
-// next
-// prev
-// stop
-// play
-// pause
-// head
-// info
-// mute
-// sound/volume
-// search
-// pair
-// unpair
-// auto lock
-// no lock
-// auto connect
-// manual connect
-// connect
-// disconnect
-// trust
-// untrust
-// pair
-// unpair
-// more
-// cancel
-// upload
-// download
-// up+download
-// battery
-// power
-// network
-// ethernet
-// temp
-// tile float
-// tile h
-// tile v
-// package
-// bug
-// enhance
-// pri low
-// pri med
-// pri hi
-// hand
-// pointer
-// ban
-// screen
-// op ask
-// op copy
-// op move
-// kbd+mouse
-// moon
-// paintbrush
-// chip
-// mic
-// bright bulb
-// phone
-// cleanup
+I060("i-media-record", "media-record")
+I060("i-zoom-in", "zoom-in")
+I060("i-zoom-out", "zoom-out")
+I060("i-zoom-reset", "zoom-reset")
+I060("i-zoom-fit", "zoom-fit")
+I060("i-zoom-fill", "zoom-fill")
+I060("i-zoom-fit-best", "zoom-fit-best")
+I060("i-view-reset", "view-reset")
+I060("i-view-sort-ascending", "view-sort-ascending")
+I060("i-view-sort-descending", "view-sort-descending")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)
