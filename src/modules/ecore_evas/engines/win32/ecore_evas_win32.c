@@ -54,6 +54,8 @@
 
 #define ECORE_EVAS_EVENT_COUNT 11
 
+#define EE_SZ(sz_) (ee->sz_ == 0) ? 1 : (ee->sz_)
+
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
@@ -374,13 +376,13 @@ _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_U
 
         if (ECORE_EVAS_PORTRAIT(ee))
           {
-             evas_output_size_set(ee->evas, ee->w, ee->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+            evas_output_size_set(ee->evas, EE_SZ(w), EE_SZ(h));
+            evas_output_viewport_set(ee->evas, 0, 0, EE_SZ(w), EE_SZ(h));
           }
         else
           {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+             evas_output_size_set(ee->evas, EE_SZ(h), EE_SZ(w));
+             evas_output_viewport_set(ee->evas, 0, 0, EE_SZ(h), EE_SZ(w));
           }
         if (ee->prop.avoid_damage)
           {
@@ -603,13 +605,13 @@ _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int heigh
                                        x, y, width, height);
         if (ECORE_EVAS_PORTRAIT(ee))
           {
-             evas_output_size_set(ee->evas, ee->w, ee->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+             evas_output_size_set(ee->evas, EE_SZ(w), EE_SZ(h));
+             evas_output_viewport_set(ee->evas, 0, 0, EE_SZ(w), EE_SZ(h));
           }
         else
           {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+             evas_output_size_set(ee->evas, EE_SZ(h), EE_SZ(w));
+             evas_output_viewport_set(ee->evas, 0, 0, EE_SZ(h), EE_SZ(w));
           }
         if (ee->prop.avoid_damage)
           {
@@ -668,13 +670,13 @@ _ecore_evas_win32_rotation_set_internal(Ecore_Evas *ee, int rotation)
                                        h, w);
              if (ECORE_EVAS_PORTRAIT(ee))
                {
-                  evas_output_size_set(ee->evas, ee->w, ee->h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+                  evas_output_size_set(ee->evas, EE_SZ(w), EE_SZ(h));
+                  evas_output_viewport_set(ee->evas, 0, 0, EE_SZ(w), EE_SZ(h));
                }
              else
                {
-                  evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+                  evas_output_size_set(ee->evas, EE_SZ(h), EE_SZ(w));
+                  evas_output_viewport_set(ee->evas, 0, 0, EE_SZ(h), EE_SZ(w));
                }
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
           }
