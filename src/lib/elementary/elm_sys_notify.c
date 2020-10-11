@@ -16,8 +16,8 @@
 #define MY_CLASS_NAME        "Elm_Sys_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_sys_notify"
 
-EAPI int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = 0;
-EAPI int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED      = 0;
+ELM_API int ELM_EVENT_SYS_NOTIFY_NOTIFICATION_CLOSED = 0;
+ELM_API int ELM_EVENT_SYS_NOTIFY_ACTION_INVOKED      = 0;
 
 typedef const Efl_Class *(*Class_Get_Func)(void);
 
@@ -228,7 +228,7 @@ _elm_unneed_sys_notify(void)
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_sys_notify(void)
 {
    Elm_Sys_Notify_Server servers = ELM_SYS_NOTIFY_SERVER_NONE;
@@ -266,7 +266,7 @@ elm_need_sys_notify(void)
    return elm_sys_notify_servers_set(manager, servers);
 }
 
-EAPI void
+ELM_API void
 elm_sys_notify_send(unsigned int            replaces_id,
                     const char             *icon,
                     const char             *summary,
@@ -279,7 +279,7 @@ elm_sys_notify_send(unsigned int            replaces_id,
    elm_obj_sys_notify_interface_send(_singleton, replaces_id, icon, summary, body, urgency, timeout, cb, cb_data);
 }
 
-EAPI void
+ELM_API void
 elm_sys_notify_close(unsigned int id)
 {
    elm_obj_sys_notify_interface_close(_singleton, id);

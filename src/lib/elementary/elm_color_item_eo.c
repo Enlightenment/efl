@@ -1,11 +1,11 @@
 
 void _elm_color_item_color_set(Eo *obj, Elm_Color_Item_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_color_item_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_color_item_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _elm_color_item_color_get(const Eo *obj, Elm_Color_Item_Data *pd, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_color_item_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_color_item_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 void _elm_color_item_selected_set(Eo *obj, Elm_Color_Item_Data *pd, Eina_Bool selected);
 
@@ -25,7 +25,7 @@ __eolian_elm_color_item_selected_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_color_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_color_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
 
 Eina_Bool _elm_color_item_selected_get(const Eo *obj, Elm_Color_Item_Data *pd);
 
@@ -37,7 +37,7 @@ __eolian_elm_color_item_selected_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_color_item_selected_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_color_item_selected_get, Eina_Bool, 0);
 
 Efl_Object *_elm_color_item_efl_object_constructor(Eo *obj, Elm_Color_Item_Data *pd);
 

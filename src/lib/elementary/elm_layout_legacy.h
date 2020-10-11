@@ -40,7 +40,7 @@ typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Descript
  *
  * @ingroup Elm_Layout
  */
-EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
 /**
  * @brief Set the edje group from the elementary theme that will be used as
@@ -57,7 +57,7 @@ EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, const char *style);
+ELM_API Eina_Bool elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, const char *style);
 
 /**
  * @brief Get the edje data from the given layout.
@@ -72,7 +72,7 @@ EAPI Eina_Bool elm_layout_theme_set(Evas_Object *obj, const char *klass, const c
  *
  * @return The edje data string.
  */
-EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
+ELM_API const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
 
 /**
  * @brief Eval sizing.
@@ -93,7 +93,7 @@ EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_sizing_eval(Evas_Object *obj);
+ELM_API void elm_layout_sizing_eval(Evas_Object *obj);
 
 /**
  * @brief Request sizing reevaluation, restricted to current width and/or
@@ -111,7 +111,7 @@ EAPI void elm_layout_sizing_eval(Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_sizing_restricted_eval(Evas_Object *obj, Eina_Bool width, Eina_Bool height);
+ELM_API void elm_layout_sizing_restricted_eval(Evas_Object *obj, Eina_Bool width, Eina_Bool height);
 
 /**
  * @brief Add a callback for a (Edje) signal emitted by a layout widget's
@@ -129,7 +129,7 @@ EAPI void elm_layout_sizing_restricted_eval(Evas_Object *obj, Eina_Bool width, E
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+ELM_API void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
  * @brief Remove a signal-triggered callback from a given layout widget.
@@ -150,7 +150,7 @@ EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission,
  *
  * @ingroup Elm_Layout
  */
-EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+ELM_API void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * @brief Send a (Edje) signal to a given layout widget's underlying Edje
@@ -165,7 +165,7 @@ EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+ELM_API void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
 /**
  * @brief Get the edje layout
@@ -185,7 +185,7 @@ EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const c
  *
  * @ingroup Elm_Layout
  */
-EAPI Efl_Canvas_Object *elm_layout_edje_get(const Evas_Object *obj);
+ELM_API Efl_Canvas_Object *elm_layout_edje_get(const Evas_Object *obj);
 
 /**
  * Get the list of swallow parts of a given container widget
@@ -198,7 +198,7 @@ EAPI Efl_Canvas_Object *elm_layout_edje_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_List                   *elm_layout_content_swallow_list_get(const Evas_Object *obj);
+ELM_API Eina_List                   *elm_layout_content_swallow_list_get(const Evas_Object *obj);
 
 /**
  * Set the layout content.
@@ -225,7 +225,7 @@ EAPI Eina_List                   *elm_layout_content_swallow_list_get(const Evas
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool                    elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+ELM_API Eina_Bool                    elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
 
 /**
  * Get the child object in the given content part.
@@ -237,7 +237,7 @@ EAPI Eina_Bool                    elm_layout_content_set(Evas_Object *obj, const
  *
  * @ingroup Elm_Layout
  */
-EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj, const char *swallow);
+ELM_API Evas_Object                 *elm_layout_content_get(const Evas_Object *obj, const char *swallow);
 
 /**
  * Unset the layout content.
@@ -250,7 +250,7 @@ EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj,
  *
  * @ingroup Elm_Layout
  */
-EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
+ELM_API Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
 
 /**
  * Set the file that will be used as layout
@@ -262,7 +262,7 @@ EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, con
  * @param[in] file The path to file (edj) that will be used as layout
  * @param[in] group The group that the layout belongs in edje file
  */
-EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group);
+ELM_API Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group);
 
 /**
  * Get the loaded file
@@ -275,7 +275,7 @@ EAPI Eina_Bool elm_layout_file_set(Eo *obj, const char *file, const char *group)
  *
  * @since 1.14
  */
-EAPI void elm_layout_file_get(Eo *obj, const char **file, const char **group);
+ELM_API void elm_layout_file_get(Eo *obj, const char **file, const char **group);
 
 /**
  * Set the mmap file that will be used as layout
@@ -289,7 +289,7 @@ EAPI void elm_layout_file_get(Eo *obj, const char **file, const char **group);
  *
  * @since 1.19
  */
-EAPI Eina_Bool elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *group);
+ELM_API Eina_Bool elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *group);
 
 /**
  * Get the loaded mmap file
@@ -301,7 +301,7 @@ EAPI Eina_Bool elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *g
  *
  * @since 1.19
  */
-EAPI void elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group);
+ELM_API void elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group);
 
 /**
  * @brief Freezes the Elementary layout object.
@@ -313,7 +313,7 @@ EAPI void elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **grou
  *
  * @return The frozen state or 0 on error.
  */
-EAPI int elm_layout_freeze(Evas_Object *obj);
+ELM_API int elm_layout_freeze(Evas_Object *obj);
 
 /**
  * @brief Thaws the Elementary object.
@@ -327,7 +327,7 @@ EAPI int elm_layout_freeze(Evas_Object *obj);
  *
  * @return The frozen state or 0 if the object is not frozen or on error.
  */
-EAPI int elm_layout_thaw(Evas_Object *obj);
+ELM_API int elm_layout_thaw(Evas_Object *obj);
 
 /**
  * @brief Append child to layout box part.
@@ -341,7 +341,7 @@ EAPI int elm_layout_thaw(Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child);
+ELM_API Eina_Bool elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * @brief Prepend child to layout box part.
@@ -355,7 +355,7 @@ EAPI Eina_Bool elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Ob
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child);
+ELM_API Eina_Bool elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * @brief Insert child to layout box part before a reference object.
@@ -370,7 +370,7 @@ EAPI Eina_Bool elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_O
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+ELM_API Eina_Bool elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
 
 /**
  * @brief Insert child to layout box part at a given position.
@@ -385,7 +385,7 @@ EAPI Eina_Bool elm_layout_box_insert_before(Evas_Object *obj, const char *part, 
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
+ELM_API Eina_Bool elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
 
 /**
  * @brief Remove a child of the given part box.
@@ -400,7 +400,7 @@ EAPI Eina_Bool elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas
  *
  * @ingroup Elm_Layout
  */
-EAPI Evas_Object *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child);
+ELM_API Evas_Object *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * @brief Remove all children of the given part box.
@@ -414,7 +414,7 @@ EAPI Evas_Object *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear);
+ELM_API Eina_Bool elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
  * @brief Insert child to layout table part.
@@ -438,7 +438,7 @@ EAPI Eina_Bool elm_layout_box_remove_all(Evas_Object *obj, const char *part, Ein
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+ELM_API Eina_Bool elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 
 /**
  * @brief Unpack (remove) a child of the given part table.
@@ -453,7 +453,7 @@ EAPI Eina_Bool elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Ob
  *
  * @ingroup Elm_Layout
  */
-EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child);
+ELM_API Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * @brief Remove all the child objects of the given part table.
@@ -467,7 +467,7 @@ EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Ev
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
+ELM_API Eina_Bool elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
  * @brief Get the edje data from the given layout.
@@ -484,7 +484,7 @@ EAPI Eina_Bool elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_B
  *
  * @ingroup Elm_Layout
  */
-EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
+ELM_API const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
 
 /**
  * @brief Send a (Edje) signal to a given layout widget's underlying Edje
@@ -499,7 +499,7 @@ EAPI const char *elm_layout_data_get(const Evas_Object *obj, const char *key);
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+ELM_API void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
 /**
  * @brief Add a callback for a (Edje) signal emitted by a layout widget's
@@ -517,7 +517,7 @@ EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const c
  *
  * @ingroup Elm_Layout
  */
-EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+ELM_API void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
  * @brief Remove a signal-triggered callback from a given layout widget.
@@ -538,7 +538,7 @@ EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission,
  *
  * @ingroup Elm_Layout
  */
-EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+ELM_API void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * @brief Freezes the Elementary layout object.
@@ -552,7 +552,7 @@ EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission
  *
  * @ingroup Elm_Layout
  */
-EAPI int elm_layout_freeze(Evas_Object *obj);
+ELM_API int elm_layout_freeze(Evas_Object *obj);
 
 /**
  * @brief Thaws the Elementary object.
@@ -568,7 +568,7 @@ EAPI int elm_layout_freeze(Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI int elm_layout_thaw(Evas_Object *obj);
+ELM_API int elm_layout_thaw(Evas_Object *obj);
 
 /**
  * @brief Set the text of the given part.
@@ -580,7 +580,7 @@ EAPI int elm_layout_thaw(Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_text_set(Evas_Object *obj, const char * part, const char *text);
+ELM_API Eina_Bool elm_layout_text_set(Evas_Object *obj, const char * part, const char *text);
 
 /**
  * @brief Get the text set in the given part.
@@ -591,7 +591,7 @@ EAPI Eina_Bool elm_layout_text_set(Evas_Object *obj, const char * part, const ch
  *
  * @ingroup Elm_Layout
  */
-EAPI const char *elm_layout_text_get(const Evas_Object *obj, const char * part);
+ELM_API const char *elm_layout_text_get(const Evas_Object *obj, const char * part);
 
 /**
  * @brief Set accessibility to all texblock(text) parts in the layout object.
@@ -607,7 +607,7 @@ EAPI const char *elm_layout_text_get(const Evas_Object *obj, const char * part);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
+ELM_API Eina_Bool elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
 
 /**
  * @brief Get accessibility state of texblock(text) parts in the layout object
@@ -619,7 +619,7 @@ EAPI Eina_Bool elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_edje_object_can_access_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_layout_edje_object_can_access_get(const Evas_Object *obj);
 
 /**
  * @brief Sets if the cursor set should be searched on the theme or should use
@@ -638,7 +638,7 @@ EAPI Eina_Bool elm_layout_edje_object_can_access_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
+ELM_API Eina_Bool elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
 
 /**
  * @brief Get a specific cursor engine_only for an edje part.
@@ -649,7 +649,7 @@ EAPI Eina_Bool elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const ch
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
+ELM_API Eina_Bool elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
 
 /**
  * @brief Sets a specific cursor for an edje part.
@@ -662,7 +662,7 @@ EAPI Eina_Bool elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, co
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
+ELM_API Eina_Bool elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
 
 /**
  * @brief Get the cursor to be shown when mouse is over an edje part.
@@ -673,7 +673,7 @@ EAPI Eina_Bool elm_layout_part_cursor_set(Evas_Object *obj, const char *part_nam
  *
  * @ingroup Elm_Layout
  */
-EAPI const char *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name);
+ELM_API const char *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name);
 
 /**
  * @brief Sets a specific cursor style for an edje part.
@@ -686,7 +686,7 @@ EAPI const char *elm_layout_part_cursor_get(const Evas_Object *obj, const char *
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
+ELM_API Eina_Bool elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
 
 /**
  * @brief Get a specific cursor style for an edje part.
@@ -698,7 +698,7 @@ EAPI Eina_Bool elm_layout_part_cursor_style_set(Evas_Object *obj, const char *pa
  *
  * @ingroup Elm_Layout
  */
-EAPI const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
+ELM_API const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
 
 /**
  * @brief Unsets a cursor previously set with @ref elm_layout_part_cursor_set.
@@ -710,4 +710,4 @@ EAPI const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const 
  *
  * @ingroup Elm_Layout
  */
-EAPI Eina_Bool elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
+ELM_API Eina_Bool elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);

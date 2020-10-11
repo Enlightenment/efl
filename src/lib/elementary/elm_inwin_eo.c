@@ -1,7 +1,7 @@
 
 void _elm_inwin_activate(Eo *obj, Elm_Inwin_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_win_inwin_activate);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_win_inwin_activate);
 
 Efl_Object *_elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd);
 

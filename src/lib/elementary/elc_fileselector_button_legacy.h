@@ -8,7 +8,7 @@
  *
  * @ingroup Elm_File_Selector_Button
  */
-EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent);
+ELM_API Evas_Object                *elm_fileselector_button_add(Evas_Object *parent);
 
 #include "elm_fileselector_button_eo.legacy.h"
 
@@ -25,7 +25,7 @@ EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent
  *
  * @ingroup Elm_Fileselector_Button
  */
-EAPI void elm_fileselector_button_inwin_mode_set(Elm_Fileselector_Button *obj, Eina_Bool value);
+ELM_API void elm_fileselector_button_inwin_mode_set(Elm_Fileselector_Button *obj, Eina_Bool value);
 
 /**
  * @brief Get whether a given file selector button widget's internal file
@@ -39,7 +39,7 @@ EAPI void elm_fileselector_button_inwin_mode_set(Elm_Fileselector_Button *obj, E
  *
  * @ingroup Elm_Fileselector_Button
  */
-EAPI Eina_Bool elm_fileselector_button_inwin_mode_get(const Elm_Fileselector_Button *obj);
+ELM_API Eina_Bool elm_fileselector_button_inwin_mode_get(const Elm_Fileselector_Button *obj);
 
 /**
  * @brief Set the size of a given file selector button widget's window, holding
@@ -56,7 +56,7 @@ EAPI Eina_Bool elm_fileselector_button_inwin_mode_get(const Elm_Fileselector_But
  *
  * @ingroup Elm_Fileselector_Button
  */
-EAPI void elm_fileselector_button_window_size_set(Elm_Fileselector_Button *obj, Evas_Coord width, Evas_Coord height);
+ELM_API void elm_fileselector_button_window_size_set(Elm_Fileselector_Button *obj, Evas_Coord width, Evas_Coord height);
 
 /**
  * @brief Get the size of a given file selector button widget's window, holding
@@ -72,7 +72,7 @@ EAPI void elm_fileselector_button_window_size_set(Elm_Fileselector_Button *obj, 
  *
  * @ingroup Elm_Fileselector_Button
  */
-EAPI void elm_fileselector_button_window_size_get(const Elm_Fileselector_Button *obj, Evas_Coord *width, Evas_Coord *height);
+ELM_API void elm_fileselector_button_window_size_get(const Elm_Fileselector_Button *obj, Evas_Coord *width, Evas_Coord *height);
 
 /**
  * @brief Set the title for a given file selector button widget's window
@@ -90,7 +90,7 @@ EAPI void elm_fileselector_button_window_size_get(const Elm_Fileselector_Button 
  *
  * @ingroup Elm_Fileselector_Button
  */
-EAPI void elm_fileselector_button_window_title_set(Elm_Fileselector_Button *obj, const char *title);
+ELM_API void elm_fileselector_button_window_title_set(Elm_Fileselector_Button *obj, const char *title);
 
 /**
  * @brief Get the title for a given file selector button widget's window
@@ -101,4 +101,4 @@ EAPI void elm_fileselector_button_window_title_set(Elm_Fileselector_Button *obj,
  *
  * @ingroup Elm_Fileselector_Button
  */
-EAPI const char *elm_fileselector_button_window_title_get(const Elm_Fileselector_Button *obj);
+ELM_API const char *elm_fileselector_button_window_title_get(const Elm_Fileselector_Button *obj);

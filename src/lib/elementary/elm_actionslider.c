@@ -514,7 +514,7 @@ _elm_actionslider_efl_canvas_group_group_add(Eo *obj, Elm_Actionslider_Data *pri
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_actionslider_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

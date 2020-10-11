@@ -699,7 +699,7 @@ _elm_hoversel_efl_ui_autorepeat_autorepeat_enabled_set(const Eo *obj EINA_UNUSED
    efl_ui_autorepeat_enabled_set(efl_super(obj, MY_CLASS), EINA_FALSE);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_hoversel_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

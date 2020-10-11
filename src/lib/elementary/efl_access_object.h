@@ -22,12 +22,12 @@
 /**
  * Free Efl_Access_Attributes_List
  */
-EAPI void efl_access_attributes_list_free(Eina_List *list);
+ELM_API void efl_access_attributes_list_free(Eina_List *list);
 
 /**
  * Free the Efl_Access_Attribute type
  */
-EAPI void
+ELM_API void
 efl_access_attribute_free(Efl_Access_Attribute *attr);
 
 /**

@@ -862,7 +862,7 @@ _elm_scroller_efl_canvas_group_group_member_add(Eo *obj, Elm_Scroller_Data *sd, 
      evas_object_raise(sd->hit_rect);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_scroller_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -919,7 +919,7 @@ _elm_scroller_custom_widget_base_theme_set(Eo *obj, Elm_Scroller_Data *_pd EINA_
        efl_ui_widget_theme_apply(obj);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_content_min_limit(Evas_Object *obj,
                                Eina_Bool w,
                                Eina_Bool h)
@@ -929,7 +929,7 @@ elm_scroller_content_min_limit(Evas_Object *obj,
    elm_interface_scrollable_content_min_limit(obj, w, h);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_region_show(Evas_Object *obj,
                          Evas_Coord x,
                          Evas_Coord y,
@@ -941,7 +941,7 @@ elm_scroller_region_show(Evas_Object *obj,
    elm_interface_scrollable_content_region_show(obj, x, y, w, h);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_policy_set(Evas_Object *obj,
                         Elm_Scroller_Policy policy_h,
                         Elm_Scroller_Policy policy_v)
@@ -960,7 +960,7 @@ _elm_scroller_elm_interface_scrollable_policy_set(Eo *obj, Elm_Scroller_Data *sd
    elm_interface_scrollable_policy_set(efl_super(obj, MY_CLASS), policy_h, policy_v);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_policy_get(const Evas_Object *obj,
                         Elm_Scroller_Policy *policy_h,
                         Elm_Scroller_Policy *policy_v)
@@ -970,7 +970,7 @@ elm_scroller_policy_get(const Evas_Object *obj,
    elm_interface_scrollable_policy_get((Eo *) obj, policy_h, policy_v);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_single_direction_set(Evas_Object *obj,
                                   Elm_Scroller_Single_Direction single_dir)
 {
@@ -987,7 +987,7 @@ _elm_scroller_elm_interface_scrollable_single_direction_set(Eo *obj, Elm_Scrolle
    elm_interface_scrollable_single_direction_set(efl_super(obj, MY_CLASS), single_dir);
 }
 
-EAPI Elm_Scroller_Single_Direction
+ELM_API Elm_Scroller_Single_Direction
 elm_scroller_single_direction_get(const Evas_Object *obj)
 {
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_SINGLE_DIRECTION_NONE);
@@ -1003,7 +1003,7 @@ _elm_scroller_elm_interface_scrollable_single_direction_get(const Eo *obj, Elm_S
    return elm_interface_scrollable_single_direction_get(efl_super(obj, MY_CLASS));
 }
 
-EAPI void
+ELM_API void
 elm_scroller_region_get(const Evas_Object *obj,
                         Evas_Coord *x,
                         Evas_Coord *y,
@@ -1014,7 +1014,7 @@ elm_scroller_region_get(const Evas_Object *obj,
    elm_interface_scrollable_content_region_get((Eo *) obj, x, y, w, h);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_child_size_get(const Evas_Object *obj,
                             Evas_Coord *w,
                             Evas_Coord *h)
@@ -1024,7 +1024,7 @@ elm_scroller_child_size_get(const Evas_Object *obj,
    elm_interface_scrollable_content_size_get((Eo *) obj, w, h);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_snap_set(Evas_Object *obj,
                              Eina_Bool page_snap_h,
                              Eina_Bool page_snap_v)
@@ -1035,7 +1035,7 @@ elm_scroller_page_snap_set(Evas_Object *obj,
          (obj, page_snap_h, page_snap_v);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_snap_get(const Evas_Object *obj,
                              Eina_Bool *page_snap_h,
                              Eina_Bool *page_snap_v)
@@ -1046,7 +1046,7 @@ elm_scroller_page_snap_get(const Evas_Object *obj,
          ((Eo *) obj, page_snap_h, page_snap_v);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_bounce_set(Evas_Object *obj,
                         Eina_Bool h_bounce,
                         Eina_Bool v_bounce)
@@ -1056,7 +1056,7 @@ elm_scroller_bounce_set(Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_set(obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_bounce_get(const Evas_Object *obj,
                         Eina_Bool *h_bounce,
                         Eina_Bool *v_bounce)
@@ -1066,7 +1066,7 @@ elm_scroller_bounce_get(const Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_get((Eo *) obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_relative_set(Evas_Object *obj,
                                double h_pagerel,
                                double v_pagerel)
@@ -1076,7 +1076,7 @@ elm_scroller_page_relative_set(Evas_Object *obj,
    elm_interface_scrollable_page_relative_set((Eo *)obj, h_pagerel, v_pagerel);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_relative_get(const Evas_Object *obj,
                                double *h_pagerel,
                                double *v_pagerel)
@@ -1086,7 +1086,7 @@ elm_scroller_page_relative_get(const Evas_Object *obj,
    elm_interface_scrollable_paging_get((Eo *)obj, h_pagerel, v_pagerel, NULL, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_size_set(Evas_Object *obj,
                            Evas_Coord h_pagesize,
                            Evas_Coord v_pagesize)
@@ -1105,7 +1105,7 @@ _elm_scroller_elm_interface_scrollable_page_size_set(Eo *obj, Elm_Scroller_Data 
    elm_interface_scrollable_paging_set(obj, pagerel_h, pagerel_v, h_pagesize, v_pagesize);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_size_get(const Evas_Object *obj,
                            Evas_Coord *h_pagesize,
                            Evas_Coord *v_pagesize)
@@ -1134,7 +1134,7 @@ _elm_scroller_page_scroll_limit_get(const Eo *obj, Elm_Scroller_Data *_pd EINA_U
          (obj, page_limit_h, page_limit_v);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_current_page_get(const Evas_Object *obj,
                               int *h_pagenumber,
                               int *v_pagenumber)
@@ -1144,7 +1144,7 @@ elm_scroller_current_page_get(const Evas_Object *obj,
    elm_interface_scrollable_current_page_get((Eo *) obj, h_pagenumber, v_pagenumber);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_last_page_get(const Evas_Object *obj,
                            int *h_pagenumber,
                            int *v_pagenumber)
@@ -1154,7 +1154,7 @@ elm_scroller_last_page_get(const Evas_Object *obj,
    elm_interface_scrollable_last_page_get((Eo *) obj, h_pagenumber, v_pagenumber);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_show(Evas_Object *obj,
                        int h_pagenumber,
                        int v_pagenumber)
@@ -1164,7 +1164,7 @@ elm_scroller_page_show(Evas_Object *obj,
    elm_interface_scrollable_page_show(obj, h_pagenumber, v_pagenumber);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_page_bring_in(Evas_Object *obj,
                            int h_pagenumber,
                            int v_pagenumber)
@@ -1174,7 +1174,7 @@ elm_scroller_page_bring_in(Evas_Object *obj,
    elm_interface_scrollable_page_bring_in(obj, h_pagenumber, v_pagenumber);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_region_bring_in(Evas_Object *obj,
                              Evas_Coord x,
                              Evas_Coord y,
@@ -1186,7 +1186,7 @@ elm_scroller_region_bring_in(Evas_Object *obj,
    elm_interface_scrollable_region_bring_in(obj, x, y, w, h);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_gravity_set(Evas_Object *obj,
                          double x,
                          double y)
@@ -1196,7 +1196,7 @@ elm_scroller_gravity_set(Evas_Object *obj,
    elm_interface_scrollable_gravity_set(obj, x, y);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_gravity_get(const Evas_Object *obj,
                          double *x,
                          double *y)
@@ -1206,7 +1206,7 @@ elm_scroller_gravity_get(const Evas_Object *obj,
    elm_interface_scrollable_gravity_get((Eo *) obj, x, y);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_movement_block_set(Evas_Object *obj,
                                 Elm_Scroller_Movement_Block block)
 {
@@ -1222,7 +1222,7 @@ elm_scroller_movement_block_set(Evas_Object *obj,
    elm_interface_scrollable_movement_block_set(obj, mode);
 }
 
-EAPI Elm_Scroller_Movement_Block
+ELM_API Elm_Scroller_Movement_Block
 elm_scroller_movement_block_get(const Evas_Object *obj)
 {
    Efl_Ui_Layout_Orientation mode;
@@ -1242,7 +1242,7 @@ elm_scroller_movement_block_get(const Evas_Object *obj)
    return mode2;
 }
 
-EAPI void
+ELM_API void
 elm_scroller_step_size_set(Evas_Object *obj,
                            Evas_Coord x,
                            Evas_Coord y)
@@ -1252,7 +1252,7 @@ elm_scroller_step_size_set(Evas_Object *obj,
    elm_interface_scrollable_step_size_set(obj, x, y);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_step_size_get(const Evas_Object *obj,
                            Evas_Coord *x,
                            Evas_Coord *y)
@@ -1303,7 +1303,7 @@ _elm_scroller_elm_interface_scrollable_content_loop_set(Eo *obj, Elm_Scroller_Da
    elm_layout_sizing_eval(obj);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_loop_set(Evas_Object *obj,
                       Eina_Bool loop_h,
                       Eina_Bool loop_v)
@@ -1320,7 +1320,7 @@ _elm_scroller_elm_interface_scrollable_content_loop_get(Eo *obj EINA_UNUSED, Elm
    if (loop_v) *loop_v = sd->loop_v;
 }
 
-EAPI void
+ELM_API void
 elm_scroller_loop_get(const Evas_Object *obj,
                       Eina_Bool *loop_h,
                       Eina_Bool *loop_v)
@@ -1330,7 +1330,7 @@ elm_scroller_loop_get(const Evas_Object *obj,
    elm_interface_scrollable_content_loop_get(obj, loop_h, loop_v);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
    ELM_SCROLLABLE_CHECK(obj);
@@ -1338,7 +1338,7 @@ elm_scroller_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    elm_interface_scrollable_wheel_disabled_set((Eo *)obj, disabled);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_scroller_wheel_disabled_get(const Evas_Object *obj)
 {
    ELM_SCROLLABLE_CHECK(obj, EINA_FALSE);
@@ -1346,13 +1346,13 @@ elm_scroller_wheel_disabled_get(const Evas_Object *obj)
    return elm_interface_scrollable_wheel_disabled_get((Eo *) obj);
 }
 
-EAPI void
+ELM_API void
 elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation)
 {
    evas_object_propagate_events_set(elm_layout_edje_get(obj), propagation);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_scroller_propagate_events_get(const Evas_Object *obj)
 {
    return evas_object_propagate_events_get(elm_layout_edje_get(obj));

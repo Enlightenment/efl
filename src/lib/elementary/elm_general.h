@@ -493,36 +493,36 @@ typedef enum
 
 
 /**************************************************************************/
-EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
+ELM_API extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
 
 /**
  * Emitted when the application has reconfigured elementary settings due
  * to an external configuration tool asking it to.
  */
-EAPI extern int ELM_EVENT_CONFIG_ALL_CHANGED;
+ELM_API extern int ELM_EVENT_CONFIG_ALL_CHANGED;
 
 /**
  * Emitted when any Elementary's policy value is changed.
  */
-EAPI extern int ELM_EVENT_POLICY_CHANGED;
+ELM_API extern int ELM_EVENT_POLICY_CHANGED;
 
 /**
  * Emitted when nothing is visible and the process as a whole should go into
  * a background state.
  * @since 1.12
  */
-EAPI extern int ELM_EVENT_PROCESS_BACKGROUND;
+ELM_API extern int ELM_EVENT_PROCESS_BACKGROUND;
 
 /**
  * Emitted when going from nothing being visible to at least one window
  * being visible.
  * @since 1.12
  */
-EAPI extern int ELM_EVENT_PROCESS_FOREGROUND;
+ELM_API extern int ELM_EVENT_PROCESS_FOREGROUND;
 
 typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */
 
-EAPI extern double _elm_startup_time;
+ELM_API extern double _elm_startup_time;
 
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ELM_MAIN() int main(int argc, char **argv) { int ret__; _elm_startup_time = ecore_time_unix_get(); elm_init(argc, argv); ret__ = elm_main(argc, argv); elm_shutdown(); return ret__; } /**< macro to be used after the elm_main() function */
@@ -573,7 +573,7 @@ EAPI extern double _elm_startup_time;
  * @see elm_shutdown().
  * @ingroup Elm_General
  */
-EAPI int       elm_init(int argc, char **argv);
+ELM_API int       elm_init(int argc, char **argv);
 
 /**
  * Shut down Elementary
@@ -593,7 +593,7 @@ EAPI int       elm_init(int argc, char **argv);
  *
  * @ingroup Elm_General
  */
-EAPI int       elm_shutdown(void);
+ELM_API int       elm_shutdown(void);
 
 /**
  * Run Elementary's main loop
@@ -611,7 +611,7 @@ EAPI int       elm_shutdown(void);
  *
  * @ingroup Elm_General
  */
-EAPI void      elm_run(void);
+ELM_API void      elm_run(void);
 
 /**
  * Ask to exit Elementary's main loop
@@ -630,72 +630,72 @@ EAPI void      elm_run(void);
  *
  * @ingroup Elm_General
  */
-EAPI void      elm_exit(void);
+ELM_API void      elm_exit(void);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI void      elm_quicklaunch_mode_set(Eina_Bool ql_on);
+ELM_API void      elm_quicklaunch_mode_set(Eina_Bool ql_on);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI Eina_Bool elm_quicklaunch_mode_get(void);
+ELM_API Eina_Bool elm_quicklaunch_mode_get(void);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI int       elm_quicklaunch_init(int argc, char **argv);
+ELM_API int       elm_quicklaunch_init(int argc, char **argv);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI int       elm_quicklaunch_sub_init(int argc, char **argv);
+ELM_API int       elm_quicklaunch_sub_init(int argc, char **argv);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI int       elm_quicklaunch_sub_shutdown(void);
+ELM_API int       elm_quicklaunch_sub_shutdown(void);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI int       elm_quicklaunch_shutdown(void);
+ELM_API int       elm_quicklaunch_shutdown(void);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI void      elm_quicklaunch_seed(void);
+ELM_API void      elm_quicklaunch_seed(void);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI Eina_Bool elm_quicklaunch_prepare(int argc, char **argv, const char *cwd);
+ELM_API Eina_Bool elm_quicklaunch_prepare(int argc, char **argv, const char *cwd);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI Eina_Bool efl_quicklaunch_prepare(int argc, char **argv, const char *cwd);
+ELM_API Eina_Bool efl_quicklaunch_prepare(int argc, char **argv, const char *cwd);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI int elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (*postfork_func) (void *data), void *postfork_data);
+ELM_API int elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (*postfork_func) (void *data), void *postfork_data);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI void      elm_quicklaunch_cleanup(void);
+ELM_API void      elm_quicklaunch_cleanup(void);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI int       elm_quicklaunch_fallback(int argc, char **argv);
+ELM_API int       elm_quicklaunch_fallback(int argc, char **argv);
 
 /**
  * Exposed symbol used only by macros and should not be used by apps
  */
-EAPI char     *elm_quicklaunch_exe_path_get(const char *exe, const char *cwd);
+ELM_API char     *elm_quicklaunch_exe_path_get(const char *exe, const char *cwd);
 
 /**
  * Set a new policy's value (for a given policy group/identifier).
@@ -717,7 +717,7 @@ EAPI char     *elm_quicklaunch_exe_path_get(const char *exe, const char *cwd);
  *
  * @ingroup Elm_General
  */
-EAPI Eina_Bool elm_policy_set(unsigned int policy, int value);
+ELM_API Eina_Bool elm_policy_set(unsigned int policy, int value);
 
 /**
  * Get the policy value for given policy identifier.
@@ -728,7 +728,7 @@ EAPI Eina_Bool elm_policy_set(unsigned int policy, int value);
  *
  * @ingroup Elm_General
  */
-EAPI int       elm_policy_get(unsigned int policy);
+ELM_API int       elm_policy_get(unsigned int policy);
 
 /**
  * Change the language of the current application
@@ -749,7 +749,7 @@ EAPI int       elm_policy_get(unsigned int policy);
  *
  * @ingroup Elm_General
  */
-EAPI void      elm_language_set(const char *lang);
+ELM_API void      elm_language_set(const char *lang);
 
 typedef enum _Elm_Process_State
 {
@@ -770,7 +770,7 @@ typedef enum _Elm_Process_State
  * @ingroup Elm_General
  * @since 1.12
  */
-EAPI Elm_Process_State  elm_process_state_get(void);
+ELM_API Elm_Process_State  elm_process_state_get(void);
 
 
 /* legacy to eo translation */

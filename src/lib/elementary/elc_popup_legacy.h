@@ -6,6 +6,6 @@
  *
  * @ingroup Elm_Popup_Group
  */
-EAPI Evas_Object *elm_popup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+ELM_API Evas_Object *elm_popup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 #include "elm_popup_eo.legacy.h"

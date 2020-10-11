@@ -1,33 +1,33 @@
-EWAPI const Efl_Event_Description _ELM_ACTIONSLIDER_EVENT_POS_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ACTIONSLIDER_EVENT_POS_CHANGED =
    EFL_EVENT_DESCRIPTION("pos_changed");
 
 void _elm_actionslider_indicator_pos_set(Eo *obj, Elm_Actionslider_Data *pd, Elm_Actionslider_Pos pos);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_actionslider_indicator_pos_set, EFL_FUNC_CALL(pos), Elm_Actionslider_Pos pos);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_actionslider_indicator_pos_set, EFL_FUNC_CALL(pos), Elm_Actionslider_Pos pos);
 
 Elm_Actionslider_Pos _elm_actionslider_indicator_pos_get(const Eo *obj, Elm_Actionslider_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_actionslider_indicator_pos_get, Elm_Actionslider_Pos, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_actionslider_indicator_pos_get, Elm_Actionslider_Pos, 0);
 
 void _elm_actionslider_magnet_pos_set(Eo *obj, Elm_Actionslider_Data *pd, Elm_Actionslider_Pos pos);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_actionslider_magnet_pos_set, EFL_FUNC_CALL(pos), Elm_Actionslider_Pos pos);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_actionslider_magnet_pos_set, EFL_FUNC_CALL(pos), Elm_Actionslider_Pos pos);
 
 Elm_Actionslider_Pos _elm_actionslider_magnet_pos_get(const Eo *obj, Elm_Actionslider_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_actionslider_magnet_pos_get, Elm_Actionslider_Pos, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_actionslider_magnet_pos_get, Elm_Actionslider_Pos, 0);
 
 void _elm_actionslider_enabled_pos_set(Eo *obj, Elm_Actionslider_Data *pd, Elm_Actionslider_Pos pos);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_actionslider_enabled_pos_set, EFL_FUNC_CALL(pos), Elm_Actionslider_Pos pos);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_actionslider_enabled_pos_set, EFL_FUNC_CALL(pos), Elm_Actionslider_Pos pos);
 
 Elm_Actionslider_Pos _elm_actionslider_enabled_pos_get(const Eo *obj, Elm_Actionslider_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_actionslider_enabled_pos_get, Elm_Actionslider_Pos, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_actionslider_enabled_pos_get, Elm_Actionslider_Pos, 0);
 
 const char *_elm_actionslider_selected_label_get(const Eo *obj, Elm_Actionslider_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_actionslider_selected_label_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_actionslider_selected_label_get, const char *, NULL);
 
 Efl_Object *_elm_actionslider_efl_object_constructor(Eo *obj, Elm_Actionslider_Data *pd);
 

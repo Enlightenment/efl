@@ -24,7 +24,7 @@ typedef Eo Elm_Code_Widget;
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_code_set(Elm_Code_Widget *obj, Elm_Code *code);
+ELM_API void elm_code_widget_code_set(Elm_Code_Widget *obj, Elm_Code *code);
 
 /**
  * @brief Get the underlying code object we are rendering
@@ -35,7 +35,7 @@ EAPI void elm_code_widget_code_set(Elm_Code_Widget *obj, Elm_Code *code);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Elm_Code *elm_code_widget_code_get(const Elm_Code_Widget *obj);
+ELM_API Elm_Code *elm_code_widget_code_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set the font that this widget uses, the font should be a monospaced
@@ -47,7 +47,7 @@ EAPI Elm_Code *elm_code_widget_code_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_font_set(Elm_Code_Widget *obj, const char *name, int size);
+ELM_API void elm_code_widget_font_set(Elm_Code_Widget *obj, const char *name, int size);
 
 /**
  * @brief Get the font currently in use. The font name is a copy ad should be
@@ -59,7 +59,7 @@ EAPI void elm_code_widget_font_set(Elm_Code_Widget *obj, const char *name, int s
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_font_get(const Elm_Code_Widget *obj, const char **name, int *size);
+ELM_API void elm_code_widget_font_get(const Elm_Code_Widget *obj, const char **name, int *size);
 
 /**
  * @brief Get the number of columns in the widget currently. This will be the
@@ -72,7 +72,7 @@ EAPI void elm_code_widget_font_get(const Elm_Code_Widget *obj, const char **name
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_columns_get(const Elm_Code_Widget *obj);
+ELM_API unsigned int elm_code_widget_columns_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set how this widget's scroller should respond to new lines being
@@ -91,7 +91,7 @@ EAPI unsigned int elm_code_widget_columns_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_gravity_set(Elm_Code_Widget *obj, double x, double y);
+ELM_API void elm_code_widget_gravity_set(Elm_Code_Widget *obj, double x, double y);
 
 /**
  * @brief Get the current x and y gravity of the widget's scroller
@@ -104,7 +104,7 @@ EAPI void elm_code_widget_gravity_set(Elm_Code_Widget *obj, double x, double y);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_gravity_get(const Elm_Code_Widget *obj, double *x, double *y);
+ELM_API void elm_code_widget_gravity_get(const Elm_Code_Widget *obj, double *x, double *y);
 
 /**
  * @brief Set the policy for scrollbar visibility.
@@ -115,7 +115,7 @@ EAPI void elm_code_widget_gravity_get(const Elm_Code_Widget *obj, double *x, dou
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_policy_set(Elm_Code_Widget *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+ELM_API void elm_code_widget_policy_set(Elm_Code_Widget *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * @brief Get the widget's policy for scrollbar visibility.
@@ -126,7 +126,7 @@ EAPI void elm_code_widget_policy_set(Elm_Code_Widget *obj, Elm_Scroller_Policy p
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_policy_get(const Elm_Code_Widget *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+ELM_API void elm_code_widget_policy_get(const Elm_Code_Widget *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * @brief Set the width of a tab stop, used purely for visual layout of tab
@@ -139,7 +139,7 @@ EAPI void elm_code_widget_policy_get(const Elm_Code_Widget *obj, Elm_Scroller_Po
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_tabstop_set(Elm_Code_Widget *obj, unsigned int tabstop);
+ELM_API void elm_code_widget_tabstop_set(Elm_Code_Widget *obj, unsigned int tabstop);
 
 /**
  * @brief Get the current width of a tab stop. This is used to determine where
@@ -151,7 +151,7 @@ EAPI void elm_code_widget_tabstop_set(Elm_Code_Widget *obj, unsigned int tabstop
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_tabstop_get(const Elm_Code_Widget *obj);
+ELM_API unsigned int elm_code_widget_tabstop_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set whether this widget allows editing
@@ -166,7 +166,7 @@ EAPI unsigned int elm_code_widget_tabstop_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_editable_set(Elm_Code_Widget *obj, Eina_Bool editable);
+ELM_API void elm_code_widget_editable_set(Elm_Code_Widget *obj, Eina_Bool editable);
 
 /**
  * @brief Get the current editable state of this widget
@@ -181,7 +181,7 @@ EAPI void elm_code_widget_editable_set(Elm_Code_Widget *obj, Eina_Bool editable)
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_editable_get(const Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_editable_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set whether line numbers should be displayed in the left gutter.
@@ -195,7 +195,7 @@ EAPI Eina_Bool elm_code_widget_editable_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_line_numbers_set(Elm_Code_Widget *obj, Eina_Bool line_numbers);
+ELM_API void elm_code_widget_line_numbers_set(Elm_Code_Widget *obj, Eina_Bool line_numbers);
 
 /**
  * @brief Get the status of line number display for this widget.
@@ -206,7 +206,7 @@ EAPI void elm_code_widget_line_numbers_set(Elm_Code_Widget *obj, Eina_Bool line_
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_line_numbers_get(const Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_line_numbers_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set where the line width market should be shown.
@@ -219,7 +219,7 @@ EAPI Eina_Bool elm_code_widget_line_numbers_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_line_width_marker_set(Elm_Code_Widget *obj, unsigned int line_width_marker);
+ELM_API void elm_code_widget_line_width_marker_set(Elm_Code_Widget *obj, unsigned int line_width_marker);
 
 /**
  * @brief Get the position of the line width marker, any positive return
@@ -231,7 +231,7 @@ EAPI void elm_code_widget_line_width_marker_set(Elm_Code_Widget *obj, unsigned i
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_line_width_marker_get(const Elm_Code_Widget *obj);
+ELM_API unsigned int elm_code_widget_line_width_marker_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set whether white space should be shown.
@@ -241,7 +241,7 @@ EAPI unsigned int elm_code_widget_line_width_marker_get(const Elm_Code_Widget *o
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_show_whitespace_set(Elm_Code_Widget *obj, Eina_Bool show_whitespace);
+ELM_API void elm_code_widget_show_whitespace_set(Elm_Code_Widget *obj, Eina_Bool show_whitespace);
 
 /**
  * @brief Get whether or not white space will be visible.
@@ -252,7 +252,7 @@ EAPI void elm_code_widget_show_whitespace_set(Elm_Code_Widget *obj, Eina_Bool sh
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_show_whitespace_get(const Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_show_whitespace_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set an alpha color value for this widget (0 - 255) default is fully
@@ -263,7 +263,7 @@ EAPI Eina_Bool elm_code_widget_show_whitespace_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_alpha_set(Elm_Code_Widget *obj, int alpha);
+ELM_API void elm_code_widget_alpha_set(Elm_Code_Widget *obj, int alpha);
 
 /**
  * @brief Set an alpha color value for this widget (0 - 255) default is fully
@@ -275,7 +275,7 @@ EAPI void elm_code_widget_alpha_set(Elm_Code_Widget *obj, int alpha);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI int elm_code_widget_alpha_get(const Elm_Code_Widget *obj);
+ELM_API int elm_code_widget_alpha_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set whether syntax highlighting should be use for this widget.
@@ -285,7 +285,7 @@ EAPI int elm_code_widget_alpha_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_syntax_enabled_set(Elm_Code_Widget *obj, Eina_Bool syntax_enabled);
+ELM_API void elm_code_widget_syntax_enabled_set(Elm_Code_Widget *obj, Eina_Bool syntax_enabled);
 
 /**
  * @brief Get this widget's enabled state for syntax highlighting.
@@ -296,7 +296,7 @@ EAPI void elm_code_widget_syntax_enabled_set(Elm_Code_Widget *obj, Eina_Bool syn
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_syntax_enabled_get(const Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_syntax_enabled_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set whether space characters should be inserted instead of tabs.
@@ -307,7 +307,7 @@ EAPI Eina_Bool elm_code_widget_syntax_enabled_get(const Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_tab_inserts_spaces_set(Elm_Code_Widget *obj, Eina_Bool tab_inserts_spaces);
+ELM_API void elm_code_widget_tab_inserts_spaces_set(Elm_Code_Widget *obj, Eina_Bool tab_inserts_spaces);
 
 /**
  * @brief Get whether or not space characters will be inserted instead of tabs.
@@ -319,7 +319,7 @@ EAPI void elm_code_widget_tab_inserts_spaces_set(Elm_Code_Widget *obj, Eina_Bool
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_tab_inserts_spaces_get(const Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_tab_inserts_spaces_get(const Elm_Code_Widget *obj);
 
 /**
  * @brief Set the current location of the text cursor.
@@ -330,7 +330,7 @@ EAPI Eina_Bool elm_code_widget_tab_inserts_spaces_get(const Elm_Code_Widget *obj
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_cursor_position_set(Elm_Code_Widget *obj, unsigned int row, unsigned int col);
+ELM_API void elm_code_widget_cursor_position_set(Elm_Code_Widget *obj, unsigned int row, unsigned int col);
 
 /**
  * @brief Get the current x and y position of the widget's cursor.
@@ -342,13 +342,13 @@ EAPI void elm_code_widget_cursor_position_set(Elm_Code_Widget *obj, unsigned int
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_cursor_position_get(const Elm_Code_Widget *obj, unsigned int *row, unsigned int *col);
+ELM_API void elm_code_widget_cursor_position_get(const Elm_Code_Widget *obj, unsigned int *row, unsigned int *col);
 
 /** Update and refresh theme for widget.
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_theme_refresh(Elm_Code_Widget *obj);
+ELM_API void elm_code_widget_theme_refresh(Elm_Code_Widget *obj);
 
 /**
  * @brief Refresh code line in widget
@@ -358,7 +358,7 @@ EAPI void elm_code_widget_theme_refresh(Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_line_refresh(Elm_Code_Widget *obj, Elm_Code_Line *line);
+ELM_API void elm_code_widget_line_refresh(Elm_Code_Widget *obj, Elm_Code_Line *line);
 
 /**
  * @brief Check if the code line is currently visible
@@ -371,7 +371,7 @@ EAPI void elm_code_widget_line_refresh(Elm_Code_Widget *obj, Elm_Code_Line *line
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_line_visible_get(Elm_Code_Widget *obj, Elm_Code_Line *line);
+ELM_API Eina_Bool elm_code_widget_line_visible_get(Elm_Code_Widget *obj, Elm_Code_Line *line);
 
 /**
  * @brief Get the number of code lines currently visible in the widget
@@ -382,7 +382,7 @@ EAPI Eina_Bool elm_code_widget_line_visible_get(Elm_Code_Widget *obj, Elm_Code_L
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_lines_visible_get(Elm_Code_Widget *obj);
+ELM_API unsigned int elm_code_widget_lines_visible_get(Elm_Code_Widget *obj);
 
 /**
  * @brief Get the row, col position for a given coordinate on the widget.
@@ -397,7 +397,7 @@ EAPI unsigned int elm_code_widget_lines_visible_get(Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *obj, int x, int y, unsigned int *row, int *col);
+ELM_API Eina_Bool elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *obj, int x, int y, unsigned int *row, int *col);
 
 /**
  * @brief Get the geometry for the cell at the specified position.
@@ -414,7 +414,7 @@ EAPI Eina_Bool elm_code_widget_position_at_coordinates_get(Elm_Code_Widget *obj,
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_geometry_for_position_get(Elm_Code_Widget *obj, unsigned int row, int col, int *x, int *y, int *w, int *h);
+ELM_API Eina_Bool elm_code_widget_geometry_for_position_get(Elm_Code_Widget *obj, unsigned int row, int col, int *x, int *y, int *w, int *h);
 
 /**
  * @brief Get the column width of the gutter
@@ -425,7 +425,7 @@ EAPI Eina_Bool elm_code_widget_geometry_for_position_get(Elm_Code_Widget *obj, u
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI int elm_code_widget_text_left_gutter_width_get(Elm_Code_Widget *obj);
+ELM_API int elm_code_widget_text_left_gutter_width_get(Elm_Code_Widget *obj);
 
 /**
  * @brief Get text between given positions
@@ -440,7 +440,7 @@ EAPI int elm_code_widget_text_left_gutter_width_get(Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI char *elm_code_widget_text_between_positions_get(Elm_Code_Widget *obj, unsigned int start_line, unsigned int start_col, unsigned int end_line, unsigned int end_col);
+ELM_API char *elm_code_widget_text_between_positions_get(Elm_Code_Widget *obj, unsigned int start_line, unsigned int start_col, unsigned int end_line, unsigned int end_col);
 
 /**
  * @brief Insert the provided text at the cursor position. This will add the
@@ -451,7 +451,7 @@ EAPI char *elm_code_widget_text_between_positions_get(Elm_Code_Widget *obj, unsi
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *obj, const char *text);
+ELM_API void elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *obj, const char *text);
 
 /**
  * @brief Get text column width at given position
@@ -464,7 +464,7 @@ EAPI void elm_code_widget_text_at_cursor_insert(Elm_Code_Widget *obj, const char
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_line_text_column_width_to_position(Elm_Code_Widget *obj, Elm_Code_Line *line, unsigned int position);
+ELM_API unsigned int elm_code_widget_line_text_column_width_to_position(Elm_Code_Widget *obj, Elm_Code_Line *line, unsigned int position);
 
 /**
  * @brief Get text column width for code line
@@ -476,7 +476,7 @@ EAPI unsigned int elm_code_widget_line_text_column_width_to_position(Elm_Code_Wi
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_line_text_column_width_get(Elm_Code_Widget *obj, Elm_Code_Line *line);
+ELM_API unsigned int elm_code_widget_line_text_column_width_get(Elm_Code_Widget *obj, Elm_Code_Line *line);
 
 /**
  * @brief Get position from column
@@ -489,7 +489,7 @@ EAPI unsigned int elm_code_widget_line_text_column_width_get(Elm_Code_Widget *ob
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_line_text_position_for_column_get(Elm_Code_Widget *obj, Elm_Code_Line *line, unsigned int column);
+ELM_API unsigned int elm_code_widget_line_text_position_for_column_get(Elm_Code_Widget *obj, Elm_Code_Line *line, unsigned int column);
 
 /**
  * @brief Get tabwidth for column
@@ -501,7 +501,7 @@ EAPI unsigned int elm_code_widget_line_text_position_for_column_get(Elm_Code_Wid
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI unsigned int elm_code_widget_text_tabwidth_at_column_get(Elm_Code_Widget *obj, unsigned int column);
+ELM_API unsigned int elm_code_widget_text_tabwidth_at_column_get(Elm_Code_Widget *obj, unsigned int column);
 
 /**
  * @brief Toggle the display of the line status widget
@@ -511,13 +511,13 @@ EAPI unsigned int elm_code_widget_text_tabwidth_at_column_get(Elm_Code_Widget *o
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_line_status_toggle(Elm_Code_Widget *obj, Elm_Code_Line *line);
+ELM_API void elm_code_widget_line_status_toggle(Elm_Code_Widget *obj, Elm_Code_Line *line);
 
 /** Undo last action
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_undo(Elm_Code_Widget *obj);
+ELM_API void elm_code_widget_undo(Elm_Code_Widget *obj);
 
 /**
  * @brief Determine if there are any available undo operations
@@ -528,13 +528,13 @@ EAPI void elm_code_widget_undo(Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_can_undo_get(Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_can_undo_get(Elm_Code_Widget *obj);
 
 /** Redo last action
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI void elm_code_widget_redo(Elm_Code_Widget *obj);
+ELM_API void elm_code_widget_redo(Elm_Code_Widget *obj);
 
 /**
  * @brief Determine if there are any available redo operations
@@ -545,6 +545,6 @@ EAPI void elm_code_widget_redo(Elm_Code_Widget *obj);
  *
  * @ingroup Elm_Code_Widget_Group
  */
-EAPI Eina_Bool elm_code_widget_can_redo_get(Elm_Code_Widget *obj);
+ELM_API Eina_Bool elm_code_widget_can_redo_get(Elm_Code_Widget *obj);
 
 #endif

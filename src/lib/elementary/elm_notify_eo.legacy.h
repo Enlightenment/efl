@@ -30,7 +30,7 @@ typedef Eo Elm_Notify;
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI void elm_notify_align_set(Elm_Notify *obj, double horizontal, double vertical);
+ELM_API void elm_notify_align_set(Elm_Notify *obj, double horizontal, double vertical);
 
 /**
  * @brief Get the alignment of the notify object
@@ -43,7 +43,7 @@ EAPI void elm_notify_align_set(Elm_Notify *obj, double horizontal, double vertic
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI void elm_notify_align_get(const Elm_Notify *obj, double *horizontal, double *vertical);
+ELM_API void elm_notify_align_get(const Elm_Notify *obj, double *horizontal, double *vertical);
 
 /**
  * @brief Sets whether events should be passed to by a click outside its area.
@@ -58,7 +58,7 @@ EAPI void elm_notify_align_get(const Elm_Notify *obj, double *horizontal, double
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI void elm_notify_allow_events_set(Elm_Notify *obj, Eina_Bool allow);
+ELM_API void elm_notify_allow_events_set(Elm_Notify *obj, Eina_Bool allow);
 
 /**
  * @brief Return true if events are allowed below the notify object.
@@ -69,7 +69,7 @@ EAPI void elm_notify_allow_events_set(Elm_Notify *obj, Eina_Bool allow);
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI Eina_Bool elm_notify_allow_events_get(const Elm_Notify *obj);
+ELM_API Eina_Bool elm_notify_allow_events_get(const Elm_Notify *obj);
 
 /**
  * @brief Set the time interval after which the notify window is going to be
@@ -90,7 +90,7 @@ EAPI Eina_Bool elm_notify_allow_events_get(const Elm_Notify *obj);
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI void elm_notify_timeout_set(Elm_Notify *obj, double timeout);
+ELM_API void elm_notify_timeout_set(Elm_Notify *obj, double timeout);
 
 /**
  * @brief Return the timeout value (in seconds)
@@ -101,7 +101,7 @@ EAPI void elm_notify_timeout_set(Elm_Notify *obj, double timeout);
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI double elm_notify_timeout_get(const Elm_Notify *obj);
+ELM_API double elm_notify_timeout_get(const Elm_Notify *obj);
 
 /** Dismiss a notify object.
  *
@@ -109,6 +109,6 @@ EAPI double elm_notify_timeout_get(const Elm_Notify *obj);
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI void elm_notify_dismiss(Elm_Notify *obj);
+ELM_API void elm_notify_dismiss(Elm_Notify *obj);
 
 #endif

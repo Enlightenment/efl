@@ -14,7 +14,7 @@
  *
  * @see elm_toolbar_item_state_set() for more details.
  */
-EAPI void                         elm_toolbar_item_state_unset(Elm_Object_Item *it);
+ELM_API void                         elm_toolbar_item_state_unset(Elm_Object_Item *it);
 
 /**
  * @}

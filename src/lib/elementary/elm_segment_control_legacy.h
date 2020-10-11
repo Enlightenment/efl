@@ -9,7 +9,7 @@
  *
  * @ingroup Elm_Segment_Control
  */
-EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
+ELM_API Evas_Object      *elm_segment_control_add(Evas_Object *parent);
 
 #include "elm_segment_control_item_eo.legacy.h"
 #include "elm_segment_control_eo.legacy.h"

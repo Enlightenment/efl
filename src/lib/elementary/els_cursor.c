@@ -693,7 +693,7 @@ _efl_ui_widget_cursor_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA
    return elm_object_sub_cursor_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_cursor_unset(Evas_Object *obj)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);

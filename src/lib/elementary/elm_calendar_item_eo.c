@@ -17,7 +17,7 @@ __eolian_elm_calendar_item_day_number_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_calendar_item_day_number_set, EFL_FUNC_CALL(i), int i);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_calendar_item_day_number_set, EFL_FUNC_CALL(i), int i);
 
 int _elm_calendar_item_day_number_get(const Eo *obj, Elm_Calendar_Item_Data *pd);
 
@@ -29,7 +29,7 @@ __eolian_elm_calendar_item_day_number_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_calendar_item_day_number_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_calendar_item_day_number_get, int, 0);
 
 void _elm_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Calendar_Item_Data *pd, Eina_Bool focus);
 

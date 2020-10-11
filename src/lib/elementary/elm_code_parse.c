@@ -7,9 +7,9 @@
 #include "elm_code_private.h"
 
 #ifndef ELM_CODE_TEST
-EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_SYNTAX = NULL;
-EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF = NULL;
-EAPI Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO = NULL;
+ELM_API Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_SYNTAX = NULL;
+ELM_API Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF = NULL;
+ELM_API Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO = NULL;
 #endif
 
 struct _Elm_Code_Parser
@@ -81,7 +81,7 @@ _elm_code_parser_new(void (*parse_line)(Elm_Code_Line *, void *),
    return parser;
 }
 
-EAPI void
+ELM_API void
 elm_code_parser_add(Elm_Code *code,
                     void (*parse_line)(Elm_Code_Line *, void *),
                     void (*parse_file)(Elm_Code_File *, void *), void *data)
@@ -97,7 +97,7 @@ elm_code_parser_add(Elm_Code *code,
    code->parsers = eina_list_append(code->parsers, parser);
 }
 
-EAPI void
+ELM_API void
 elm_code_parser_standard_add(Elm_Code *code, Elm_Code_Parser *parser)
 {
    if (!parser || !code)

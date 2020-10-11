@@ -28,7 +28,7 @@ typedef Eo Elm_Naviframe_Item;
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI void elm_naviframe_item_pop_to(Elm_Naviframe_Item *obj);
+ELM_API void elm_naviframe_item_pop_to(Elm_Naviframe_Item *obj);
 
 /**
  * @brief Get a value whether title area is enabled or not.
@@ -39,7 +39,7 @@ EAPI void elm_naviframe_item_pop_to(Elm_Naviframe_Item *obj);
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI Eina_Bool elm_naviframe_item_title_enabled_get(const Elm_Naviframe_Item *obj);
+ELM_API Eina_Bool elm_naviframe_item_title_enabled_get(const Elm_Naviframe_Item *obj);
 
 /**
  * @brief Enable/Disable the title area with transition effect
@@ -54,7 +54,7 @@ EAPI Eina_Bool elm_naviframe_item_title_enabled_get(const Elm_Naviframe_Item *ob
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI void elm_naviframe_item_title_enabled_set(Elm_Naviframe_Item *obj, Eina_Bool enable, Eina_Bool transition);
+ELM_API void elm_naviframe_item_title_enabled_set(Elm_Naviframe_Item *obj, Eina_Bool enable, Eina_Bool transition);
 
 /**
  * @brief Promote an item already in the naviframe stack to the top of the
@@ -67,7 +67,7 @@ EAPI void elm_naviframe_item_title_enabled_set(Elm_Naviframe_Item *obj, Eina_Boo
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI void elm_naviframe_item_promote(Elm_Naviframe_Item *obj);
+ELM_API void elm_naviframe_item_promote(Elm_Naviframe_Item *obj);
 
 /**
  * @brief Set a function to be called when an item of the naviframe is going to
@@ -87,6 +87,6 @@ EAPI void elm_naviframe_item_promote(Elm_Naviframe_Item *obj);
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI void elm_naviframe_item_pop_cb_set(Elm_Naviframe_Item *obj, Elm_Naviframe_Item_Pop_Cb func, void *data);
+ELM_API void elm_naviframe_item_pop_cb_set(Elm_Naviframe_Item *obj, Elm_Naviframe_Item_Pop_Cb func, void *data);
 
 #endif

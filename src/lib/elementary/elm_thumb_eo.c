@@ -1,12 +1,12 @@
-EWAPI const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_ERROR =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_ERROR =
    EFL_EVENT_DESCRIPTION("generate,error");
-EWAPI const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_START =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_START =
    EFL_EVENT_DESCRIPTION("generate,start");
-EWAPI const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_STOP =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_THUMB_EVENT_GENERATE_STOP =
    EFL_EVENT_DESCRIPTION("generate,stop");
-EWAPI const Efl_Event_Description _ELM_THUMB_EVENT_LOAD_ERROR =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_THUMB_EVENT_LOAD_ERROR =
    EFL_EVENT_DESCRIPTION("load,error");
-EWAPI const Efl_Event_Description _ELM_THUMB_EVENT_PRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_THUMB_EVENT_PRESS =
    EFL_EVENT_DESCRIPTION("press");
 
 Efl_Object *_elm_thumb_efl_object_constructor(Eo *obj, Elm_Thumb_Data *pd);

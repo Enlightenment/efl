@@ -521,7 +521,7 @@ _elm_theme_shutdown(void)
      }
 }
 
-EAPI Elm_Theme *
+ELM_API Elm_Theme *
 elm_theme_new(void)
 {
    Eo *obj = efl_add(EFL_UI_THEME_CLASS, efl_main_loop_get());
@@ -529,7 +529,7 @@ elm_theme_new(void)
    return td->th;
 }
 
-EAPI void
+ELM_API void
 elm_theme_free(Elm_Theme *th)
 {
    EINA_SAFETY_ON_NULL_RETURN(th);
@@ -558,7 +558,7 @@ elm_theme_files_copy(Eina_Inlist **dst, Eina_Inlist **src)
      }
 }
 
-EAPI void
+ELM_API void
 elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst)
 {
    Eo *thdst_obj;
@@ -591,7 +591,7 @@ elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst)
    elm_theme_flush(thdst);
 }
 
-EAPI void
+ELM_API void
 elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
 {
    Eo *th_obj;
@@ -619,7 +619,7 @@ elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
    elm_theme_flush(th);
 }
 
-EAPI Elm_Theme *
+ELM_API Elm_Theme *
 elm_theme_ref_get(const Elm_Theme *th)
 {
    if (!th) th = theme_default;
@@ -627,13 +627,13 @@ elm_theme_ref_get(const Elm_Theme *th)
    return th->ref_theme;
 }
 
-EAPI Elm_Theme *
+ELM_API Elm_Theme *
 elm_theme_default_get(void)
 {
    return theme_default;
 }
 
-EAPI void
+ELM_API void
 elm_theme_overlay_add(Elm_Theme *th, const char *item)
 {
    if (!th) th = theme_default;
@@ -641,7 +641,7 @@ elm_theme_overlay_add(Elm_Theme *th, const char *item)
    efl_ui_theme_overlay_add(th->eo_theme, item);
 }
 
-EAPI void
+ELM_API void
 elm_theme_overlay_del(Elm_Theme *th, const char *item)
 {
    if (!th) th = theme_default;
@@ -649,7 +649,7 @@ elm_theme_overlay_del(Elm_Theme *th, const char *item)
    efl_ui_theme_overlay_del(th->eo_theme, item);
 }
 
-EAPI void
+ELM_API void
 elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
 {
    Eina_File *file = eina_file_dup(f);
@@ -665,7 +665,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
    elm_theme_flush(th);
 }
 
-EAPI void
+ELM_API void
 elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f)
 {
    if (!f) return;
@@ -676,7 +676,7 @@ elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f)
    elm_theme_flush(th);
 }
 
-EAPI const Eina_List *
+ELM_API const Eina_List *
 elm_theme_overlay_list_get(const Elm_Theme *th)
 {
    if (!th) th = theme_default;
@@ -691,7 +691,7 @@ elm_theme_overlay_list_get(const Elm_Theme *th)
    return th->overlay_items;
 }
 
-EAPI void
+ELM_API void
 elm_theme_extension_add(Elm_Theme *th, const char *item)
 {
    if (!th) th = theme_default;
@@ -699,7 +699,7 @@ elm_theme_extension_add(Elm_Theme *th, const char *item)
    efl_ui_theme_extension_add(th->eo_theme, item);
 }
 
-EAPI void
+ELM_API void
 elm_theme_extension_del(Elm_Theme *th, const char *item)
 {
    if (!th) th = theme_default;
@@ -707,7 +707,7 @@ elm_theme_extension_del(Elm_Theme *th, const char *item)
    efl_ui_theme_extension_del(th->eo_theme, item);
 }
 
-EAPI void
+ELM_API void
 elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 {
    Eina_File *file;
@@ -721,7 +721,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
    elm_theme_flush(th);
 }
 
-EAPI void
+ELM_API void
 elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f)
 {
    if (!f) return;
@@ -732,7 +732,7 @@ elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f)
    elm_theme_flush(th);
 }
 
-EAPI const Eina_List *
+ELM_API const Eina_List *
 elm_theme_extension_list_get(const Elm_Theme *th)
 {
    if (!th) th = theme_default;
@@ -747,7 +747,7 @@ elm_theme_extension_list_get(const Elm_Theme *th)
    return th->extension_items;
 }
 
-EAPI void
+ELM_API void
 elm_theme_set(Elm_Theme *th, const char *theme)
 {
    if (!th) th = theme_default;
@@ -759,7 +759,7 @@ elm_theme_set(Elm_Theme *th, const char *theme)
      eina_stringshare_replace(&_elm_config->theme, theme);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_theme_get(Elm_Theme *th)
 {
    if (!th) th = theme_default;
@@ -791,7 +791,7 @@ elm_theme_get(Elm_Theme *th)
    return th->theme;
 }
 
-EAPI const Eina_List *
+ELM_API const Eina_List *
 elm_theme_list_get(const Elm_Theme *th)
 {
    if (!th) th = theme_default;
@@ -806,7 +806,7 @@ elm_theme_list_get(const Elm_Theme *th)
    return th->theme_items;
 }
 
-EAPI char *
+ELM_API char *
 elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
 {
    static const char *home = NULL;
@@ -855,7 +855,7 @@ elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
    return NULL;
 }
 
-EAPI void
+ELM_API void
 elm_theme_flush(Elm_Theme *th)
 {
    if (!th) th = theme_default;
@@ -877,7 +877,7 @@ elm_theme_flush(Elm_Theme *th)
      }
 }
 
-EAPI void
+ELM_API void
 elm_theme_full_flush(void)
 {
    Eina_List *l;
@@ -890,7 +890,7 @@ elm_theme_full_flush(void)
    elm_theme_flush(theme_default);
 }
 
-EAPI Eina_List *
+ELM_API Eina_List *
 elm_theme_name_available_list_new(void)
 {
    Eina_List *list = NULL;
@@ -955,28 +955,28 @@ elm_theme_name_available_list_new(void)
    return list;
 }
 
-EAPI void
+ELM_API void
 elm_theme_name_available_list_free(Eina_List *list)
 {
    char *s;
    EINA_LIST_FREE(list, s) free(s);
 }
 
-EAPI void
+ELM_API void
 elm_object_theme_set(Evas_Object *obj, Elm_Theme *th)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_theme_set(obj, th);
 }
 
-EAPI Elm_Theme *
+ELM_API Elm_Theme *
 elm_object_theme_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_theme_get(obj);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_theme_data_get(Elm_Theme *th, const char *key)
 {
    if (!th) th = theme_default;
@@ -984,7 +984,7 @@ elm_theme_data_get(Elm_Theme *th, const char *key)
    return _elm_theme_data_find(th, key);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_theme_group_path_find(Elm_Theme *th, const char *group)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, NULL);
@@ -1032,7 +1032,7 @@ _elm_theme_file_group_base_list(Eina_List *list,
    return list;
 }
 
-EAPI Eina_List *
+ELM_API Eina_List *
 elm_theme_group_base_list(Elm_Theme *th, const char *base)
 {
    Eina_List *list;
@@ -1058,7 +1058,7 @@ elm_theme_group_base_list(Elm_Theme *th, const char *base)
    return list;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_theme_system_dir_get(void)
 {
    static char *path = NULL;
@@ -1072,7 +1072,7 @@ elm_theme_system_dir_get(void)
    return path;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_theme_user_dir_get(void)
 {
    static char *path = NULL;

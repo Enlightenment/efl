@@ -1,6 +1,6 @@
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_sys_notify_interface_send, EFL_FUNC_CALL(replaces_id, icon, summary, body, urgency, timeout, cb, cb_data), unsigned int replaces_id, const char *icon, const char *summary, const char *body, Elm_Sys_Notify_Urgency urgency, int timeout, Elm_Sys_Notify_Send_Cb cb, const void *cb_data);
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_sys_notify_interface_simple_send, EFL_FUNC_CALL(icon, summary, body), const char *icon, const char *summary, const char *body);
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_sys_notify_interface_close, EFL_FUNC_CALL(id), unsigned int id);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_sys_notify_interface_send, EFL_FUNC_CALL(replaces_id, icon, summary, body, urgency, timeout, cb, cb_data), unsigned int replaces_id, const char *icon, const char *summary, const char *body, Elm_Sys_Notify_Urgency urgency, int timeout, Elm_Sys_Notify_Send_Cb cb, const void *cb_data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_sys_notify_interface_simple_send, EFL_FUNC_CALL(icon, summary, body), const char *icon, const char *summary, const char *body);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_sys_notify_interface_close, EFL_FUNC_CALL(id), unsigned int id);
 
 static Eina_Bool
 _elm_sys_notify_interface_class_initializer(Efl_Class *klass)

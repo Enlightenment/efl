@@ -30,7 +30,7 @@
  *
  * @ingroup Elm_Cursors
  */
-EAPI Eina_Bool elm_object_cursor_set(Eo *obj, const char *cursor);
+ELM_API Eina_Bool elm_object_cursor_set(Eo *obj, const char *cursor);
 
 /**
  * @brief The cursor to be shown when mouse is over the object
@@ -51,7 +51,7 @@ EAPI Eina_Bool elm_object_cursor_set(Eo *obj, const char *cursor);
  *
  * @ingroup Elm_Cursors
  */
-EAPI const char *elm_object_cursor_get(const Eo *obj);
+ELM_API const char *elm_object_cursor_get(const Eo *obj);
 
 /**
  * @brief A different style for the cursor.
@@ -69,7 +69,7 @@ EAPI const char *elm_object_cursor_get(const Eo *obj);
  *
  * @ingroup Elm_Cursors
  */
-EAPI Eina_Bool elm_object_cursor_style_set(Eo *obj, const char *style);
+ELM_API Eina_Bool elm_object_cursor_style_set(Eo *obj, const char *style);
 
 /**
  * @brief A different style for the cursor.
@@ -86,7 +86,7 @@ EAPI Eina_Bool elm_object_cursor_style_set(Eo *obj, const char *style);
  *
  * @ingroup Elm_Cursors
  */
-EAPI const char *elm_object_cursor_style_get(const Eo *obj);
+ELM_API const char *elm_object_cursor_style_get(const Eo *obj);
 
 /**
  * @brief Whether the cursor may be looked in the theme or not.
@@ -103,7 +103,7 @@ EAPI const char *elm_object_cursor_style_get(const Eo *obj);
  *
  * @ingroup Elm_Cursors
  */
-EAPI Eina_Bool elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool allow);
+ELM_API Eina_Bool elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool allow);
 
 /**
  * @brief Whether the cursor may be looked in the theme or not.
@@ -119,7 +119,7 @@ EAPI Eina_Bool elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool all
  *
  * @ingroup Elm_Cursors
  */
-EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Eo *obj);
+ELM_API Eina_Bool elm_object_cursor_theme_search_enabled_get(const Eo *obj);
 
 /**
  * Unset cursor for object
@@ -132,7 +132,7 @@ EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Eo *obj);
  *
  * @ingroup Elm_Cursors
  */
-EAPI void elm_object_cursor_unset(Evas_Object *obj);
+ELM_API void elm_object_cursor_unset(Evas_Object *obj);
 
 #endif
 

@@ -19,7 +19,7 @@ typedef Eo Elm_Menu_Item;
  */
 #define ELM_MENU_ITEM_CLASS elm_menu_item_class_get()
 
-EWAPI const Efl_Class *elm_menu_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_menu_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the icon of a menu item to the standard icon with the given name.
@@ -32,7 +32,7 @@ EWAPI const Efl_Class *elm_menu_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI void elm_obj_menu_item_icon_name_set(Eo *obj, const char *icon);
+ELM_API ELM_API_WEAK void elm_obj_menu_item_icon_name_set(Eo *obj, const char *icon);
 
 /**
  * @brief Get the string representation from the icon of a menu item
@@ -46,7 +46,7 @@ EOAPI void elm_obj_menu_item_icon_name_set(Eo *obj, const char *icon);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI const char *elm_obj_menu_item_icon_name_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_menu_item_icon_name_get(const Eo *obj);
 
 /**
  * @brief Get the item before this one in the widget's list of items.
@@ -60,7 +60,7 @@ EOAPI const char *elm_obj_menu_item_icon_name_get(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI Elm_Widget_Item *elm_obj_menu_item_prev_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_menu_item_prev_get(const Eo *obj);
 
 /**
  * @brief Get the item after this one in the widget's list of items.
@@ -74,7 +74,7 @@ EOAPI Elm_Widget_Item *elm_obj_menu_item_prev_get(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI Elm_Widget_Item *elm_obj_menu_item_next_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_menu_item_next_get(const Eo *obj);
 
 /**
  * @brief Indicates whether this item is currently selected.
@@ -95,7 +95,7 @@ EOAPI Elm_Widget_Item *elm_obj_menu_item_next_get(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI void elm_obj_menu_item_selected_set(Eo *obj, Eina_Bool selected);
+ELM_API ELM_API_WEAK void elm_obj_menu_item_selected_set(Eo *obj, Eina_Bool selected);
 
 /**
  * @brief Indicates whether this item is currently selected.
@@ -108,7 +108,7 @@ EOAPI void elm_obj_menu_item_selected_set(Eo *obj, Eina_Bool selected);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI Eina_Bool elm_obj_menu_item_selected_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_menu_item_selected_get(const Eo *obj);
 
 /**
  * @brief Get the item index
@@ -119,7 +119,7 @@ EOAPI Eina_Bool elm_obj_menu_item_selected_get(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI unsigned int elm_obj_menu_item_index_get(const Eo *obj);
+ELM_API ELM_API_WEAK unsigned int elm_obj_menu_item_index_get(const Eo *obj);
 
 /**
  * @brief Remove all sub-items (children) of the given item
@@ -133,7 +133,7 @@ EOAPI unsigned int elm_obj_menu_item_index_get(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI void elm_obj_menu_item_subitems_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_menu_item_subitems_clear(Eo *obj);
 
 /**
  * @brief Returns a list of @c item's subitems.
@@ -144,7 +144,7 @@ EOAPI void elm_obj_menu_item_subitems_clear(Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI const Eina_List *elm_obj_menu_item_subitems_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_menu_item_subitems_get(const Eo *obj);
 
 /**
  * @brief Returns whether @c item is a separator.
@@ -155,7 +155,7 @@ EOAPI const Eina_List *elm_obj_menu_item_subitems_get(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI Eina_Bool elm_obj_menu_item_is_separator(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_menu_item_is_separator(const Eo *obj);
 
 /**
  * @brief Get the real Evas(Edje) object created to implement the view of a
@@ -170,6 +170,6 @@ EOAPI Eina_Bool elm_obj_menu_item_is_separator(const Eo *obj);
  *
  * @ingroup Elm_Menu_Item
  */
-EOAPI Efl_Canvas_Object *elm_obj_menu_item_object_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_menu_item_object_get(const Eo *obj);
 
 #endif

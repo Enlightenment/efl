@@ -53,7 +53,7 @@ typedef enum
  */
 #define ELM_INTERFACE_FILESELECTOR_INTERFACE elm_interface_fileselector_interface_get()
 
-EWAPI const Efl_Class *elm_interface_fileselector_interface_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_interface_fileselector_interface_get(void) EINA_CONST;
 
 /**
  * @brief Enable/disable folder-only view for a given file selector widget
@@ -63,7 +63,7 @@ EWAPI const Efl_Class *elm_interface_fileselector_interface_get(void) EINA_CONST
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_folder_only_set(Eo *obj, Eina_Bool only);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_folder_only_set(Eo *obj, Eina_Bool only);
 
 /**
  * @brief Get whether folder-only view is set for a given file selector
@@ -74,7 +74,7 @@ EOAPI void elm_interface_fileselector_folder_only_set(Eo *obj, Eina_Bool only);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_folder_only_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_folder_only_get(const Eo *obj);
 
 /**
  * @brief Set the size for the thumbnail of the file selector widget's view.
@@ -85,7 +85,7 @@ EOAPI Eina_Bool elm_interface_fileselector_folder_only_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_thumbnail_size_set(Eo *obj, int w, int h);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_thumbnail_size_set(Eo *obj, int w, int h);
 
 /**
  * @brief Get the size for the thumbnail of a given file selector widget
@@ -96,7 +96,7 @@ EOAPI void elm_interface_fileselector_thumbnail_size_set(Eo *obj, int w, int h);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_thumbnail_size_get(const Eo *obj, int *w, int *h);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_thumbnail_size_get(const Eo *obj, int *w, int *h);
 
 /**
  * @brief Enable or disable visibility of hidden files/directories in the file
@@ -107,7 +107,7 @@ EOAPI void elm_interface_fileselector_thumbnail_size_get(const Eo *obj, int *w, 
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_hidden_visible_set(Eo *obj, Eina_Bool hidden);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_hidden_visible_set(Eo *obj, Eina_Bool hidden);
 
 /**
  * @brief Get if hiden files/directories in the file selector are visible or
@@ -119,7 +119,7 @@ EOAPI void elm_interface_fileselector_hidden_visible_set(Eo *obj, Eina_Bool hidd
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_hidden_visible_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_hidden_visible_get(const Eo *obj);
 
 /**
  * @brief Set the sort method of the file selector widget.
@@ -129,7 +129,7 @@ EOAPI Eina_Bool elm_interface_fileselector_hidden_visible_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_sort_method_set(Eo *obj, Elm_Fileselector_Sort sort);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_sort_method_set(Eo *obj, Elm_Fileselector_Sort sort);
 
 /**
  * @brief Get the sort method of the file selector widget.
@@ -140,7 +140,7 @@ EOAPI void elm_interface_fileselector_sort_method_set(Eo *obj, Elm_Fileselector_
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Elm_Fileselector_Sort elm_interface_fileselector_sort_method_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Fileselector_Sort elm_interface_fileselector_sort_method_get(const Eo *obj);
 
 /**
  * @brief Enable or disable multi-selection in the fileselector
@@ -150,7 +150,7 @@ EOAPI Elm_Fileselector_Sort elm_interface_fileselector_sort_method_get(const Eo 
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_multi_select_set(Eo *obj, Eina_Bool multi);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_multi_select_set(Eo *obj, Eina_Bool multi);
 
 /**
  * @brief Gets if multi-selection in fileselector is enabled or disabled.
@@ -161,7 +161,7 @@ EOAPI void elm_interface_fileselector_multi_select_set(Eo *obj, Eina_Bool multi)
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_multi_select_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_multi_select_get(const Eo *obj);
 
 /**
  * @brief Enable/disable a tree view in the given file selector widget, <b>if
@@ -172,7 +172,7 @@ EOAPI Eina_Bool elm_interface_fileselector_multi_select_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_expandable_set(Eo *obj, Eina_Bool expand);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_expandable_set(Eo *obj, Eina_Bool expand);
 
 /**
  * @brief Get whether tree view is enabled for the given file selector
@@ -183,7 +183,7 @@ EOAPI void elm_interface_fileselector_expandable_set(Eo *obj, Eina_Bool expand);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_expandable_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_expandable_get(const Eo *obj);
 
 /**
  * @brief Set the mode in which a given file selector widget will display
@@ -194,7 +194,7 @@ EOAPI Eina_Bool elm_interface_fileselector_expandable_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_Mode mode);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_Mode mode);
 
 /**
  * @brief Get the mode in which a given file selector widget is displaying
@@ -205,7 +205,7 @@ EOAPI void elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_Mode mo
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Elm_Fileselector_Mode elm_interface_fileselector_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Fileselector_Mode elm_interface_fileselector_mode_get(const Eo *obj);
 
 /**
  * @brief Enable/disable the file name entry box where the user can type in a
@@ -216,7 +216,7 @@ EOAPI Elm_Fileselector_Mode elm_interface_fileselector_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_is_save_set(Eo *obj, Eina_Bool is_save);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_is_save_set(Eo *obj, Eina_Bool is_save);
 
 /**
  * @brief Get whether the given file selector is in "saving dialog" mode
@@ -227,7 +227,7 @@ EOAPI void elm_interface_fileselector_is_save_set(Eo *obj, Eina_Bool is_save);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_is_save_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_is_save_get(const Eo *obj);
 
 /**
  * @brief Get a list of models selected in the fileselector.
@@ -238,7 +238,7 @@ EOAPI Eina_Bool elm_interface_fileselector_is_save_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI const Eina_List *elm_interface_fileselector_selected_models_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_interface_fileselector_selected_models_get(const Eo *obj);
 
 /**
  * @brief The filename that will be displayed in the filename entry
@@ -248,7 +248,7 @@ EOAPI const Eina_List *elm_interface_fileselector_selected_models_get(const Eo *
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_current_name_set(Eo *obj, const char *name);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_current_name_set(Eo *obj, const char *name);
 
 /**
  * @brief The filename that will be displayed in the filename entry
@@ -259,7 +259,7 @@ EOAPI void elm_interface_fileselector_current_name_set(Eo *obj, const char *name
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI const char *elm_interface_fileselector_current_name_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_interface_fileselector_current_name_get(const Eo *obj);
 
 #ifdef EFL_BETA_API_SUPPORT
 /**
@@ -273,7 +273,7 @@ EOAPI const char *elm_interface_fileselector_current_name_get(const Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_selected_model_set(Eo *obj, Efl_Io_Model *model);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_selected_model_set(Eo *obj, Efl_Io_Model *model);
 #endif /* EFL_BETA_API_SUPPORT */
 
 #ifdef EFL_BETA_API_SUPPORT
@@ -287,7 +287,7 @@ EOAPI Eina_Bool elm_interface_fileselector_selected_model_set(Eo *obj, Efl_Io_Mo
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Efl_Io_Model *elm_interface_fileselector_selected_model_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Io_Model *elm_interface_fileselector_selected_model_get(const Eo *obj);
 #endif /* EFL_BETA_API_SUPPORT */
 
 /**
@@ -302,13 +302,13 @@ EOAPI Efl_Io_Model *elm_interface_fileselector_selected_model_get(const Eo *obj)
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name);
 
 /** Clear all filters registered
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI void elm_interface_fileselector_filters_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_interface_fileselector_filters_clear(Eo *obj);
 
 /**
  * @brief Append mime type based filter into filter list
@@ -321,6 +321,6 @@ EOAPI void elm_interface_fileselector_filters_clear(Eo *obj);
  *
  * @ingroup Elm_Interface_Fileselector
  */
-EOAPI Eina_Bool elm_interface_fileselector_mime_types_filter_append(Eo *obj, const char *mime_types, const char *filter_name);
+ELM_API ELM_API_WEAK Eina_Bool elm_interface_fileselector_mime_types_filter_append(Eo *obj, const char *mime_types, const char *filter_name);
 
 #endif

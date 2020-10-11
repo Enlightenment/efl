@@ -41,7 +41,7 @@ typedef struct _Efl_Ui_Widget_Focus_State
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI void elm_widget_resize_object_set(Efl_Ui_Widget *obj, Efl_Canvas_Object *sobj);
+ELM_API void elm_widget_resize_object_set(Efl_Ui_Widget *obj, Efl_Canvas_Object *sobj);
 
 /**
  * @brief Whether the widget is enabled (accepts and reacts to user inputs).
@@ -64,7 +64,7 @@ EAPI void elm_widget_resize_object_set(Efl_Ui_Widget *obj, Efl_Canvas_Object *so
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI void elm_widget_disabled_set(Efl_Ui_Widget *obj, Eina_Bool disabled);
+ELM_API void elm_widget_disabled_set(Efl_Ui_Widget *obj, Eina_Bool disabled);
 
 /**
  * @brief Whether the widget is enabled (accepts and reacts to user inputs).
@@ -89,7 +89,7 @@ EAPI void elm_widget_disabled_set(Efl_Ui_Widget *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Bool elm_widget_disabled_get(const Efl_Ui_Widget *obj);
+ELM_API Eina_Bool elm_widget_disabled_get(const Efl_Ui_Widget *obj);
 
 /**
  * @brief The widget style to use.
@@ -112,7 +112,7 @@ EAPI Eina_Bool elm_widget_disabled_get(const Efl_Ui_Widget *obj);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Error elm_widget_style_set(Efl_Ui_Widget *obj, const char *style);
+ELM_API Eina_Error elm_widget_style_set(Efl_Ui_Widget *obj, const char *style);
 
 /**
  * @brief The widget style to use.
@@ -133,7 +133,7 @@ EAPI Eina_Error elm_widget_style_set(Efl_Ui_Widget *obj, const char *style);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI const char *elm_widget_style_get(const Efl_Ui_Widget *obj);
+ELM_API const char *elm_widget_style_get(const Efl_Ui_Widget *obj);
 
 
 /**
@@ -155,7 +155,7 @@ EAPI const char *elm_widget_style_get(const Efl_Ui_Widget *obj);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI void elm_widget_can_focus_set(Efl_Ui_Widget *obj, Eina_Bool can_focus);
+ELM_API void elm_widget_can_focus_set(Efl_Ui_Widget *obj, Eina_Bool can_focus);
 
 /**
  * @brief The ability for a widget to be focused.
@@ -177,7 +177,7 @@ EAPI void elm_widget_can_focus_set(Efl_Ui_Widget *obj, Eina_Bool can_focus);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Bool elm_widget_can_focus_get(const Efl_Ui_Widget *obj);
+ELM_API Eina_Bool elm_widget_can_focus_get(const Efl_Ui_Widget *obj);
 
 /**
  * @brief The internal parent of this widget.
@@ -191,7 +191,7 @@ EAPI Eina_Bool elm_widget_can_focus_get(const Efl_Ui_Widget *obj);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI void elm_widget_parent_set(Efl_Ui_Widget *obj, Efl_Ui_Widget *parent);
+ELM_API void elm_widget_parent_set(Efl_Ui_Widget *obj, Efl_Ui_Widget *parent);
 
 /**
  * @brief The internal parent of this widget.
@@ -206,7 +206,7 @@ EAPI void elm_widget_parent_set(Efl_Ui_Widget *obj, Efl_Ui_Widget *parent);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Efl_Ui_Widget *elm_widget_parent_get(const Efl_Ui_Widget *obj);
+ELM_API Efl_Ui_Widget *elm_widget_parent_get(const Efl_Ui_Widget *obj);
 
 /**
  * @brief Virtual function handling sub objects being added.
@@ -222,7 +222,7 @@ EAPI Efl_Ui_Widget *elm_widget_parent_get(const Efl_Ui_Widget *obj);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Bool elm_widget_sub_object_add(Efl_Ui_Widget *obj, Efl_Canvas_Object *sub_obj);
+ELM_API Eina_Bool elm_widget_sub_object_add(Efl_Ui_Widget *obj, Efl_Canvas_Object *sub_obj);
 
 /**
  * @brief Virtual function handling sub objects being removed.
@@ -239,7 +239,7 @@ EAPI Eina_Bool elm_widget_sub_object_add(Efl_Ui_Widget *obj, Efl_Canvas_Object *
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Bool elm_widget_sub_object_del(Efl_Ui_Widget *obj, Efl_Canvas_Object *sub_obj);
+ELM_API Eina_Bool elm_widget_sub_object_del(Efl_Ui_Widget *obj, Efl_Canvas_Object *sub_obj);
 
 /**
  * @brief Virtual function called when the widget needs to re-apply its theme.
@@ -258,7 +258,7 @@ EAPI Eina_Bool elm_widget_sub_object_del(Efl_Ui_Widget *obj, Efl_Canvas_Object *
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Error elm_widget_theme_apply(Efl_Ui_Widget *obj);
+ELM_API Eina_Error elm_widget_theme_apply(Efl_Ui_Widget *obj);
 
 /**
  * @brief Region of interest inside this widget, that should be given priority
@@ -282,7 +282,7 @@ EAPI Eina_Error elm_widget_theme_apply(Efl_Ui_Widget *obj);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Rect elm_widget_focus_region_get(const Efl_Ui_Widget *obj);
+ELM_API Eina_Rect elm_widget_focus_region_get(const Efl_Ui_Widget *obj);
 
 /**
  * @brief The rectangle region to be highlighted on focus.
@@ -297,7 +297,7 @@ EAPI Eina_Rect elm_widget_focus_region_get(const Efl_Ui_Widget *obj);
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Rect elm_widget_focus_highlight_geometry_get(const Efl_Ui_Widget *obj);
+ELM_API Eina_Rect elm_widget_focus_highlight_geometry_get(const Efl_Ui_Widget *obj);
 
 /**
  * @brief Register focus with the given configuration.
@@ -323,6 +323,6 @@ EAPI Eina_Rect elm_widget_focus_highlight_geometry_get(const Efl_Ui_Widget *obj)
  *
  * @ingroup Elm_Widget_Group
  */
-EAPI Eina_Bool elm_widget_focus_state_apply(Efl_Ui_Widget *obj, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect);
+ELM_API Eina_Bool elm_widget_focus_state_apply(Efl_Ui_Widget *obj, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect);
 
 #endif

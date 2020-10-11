@@ -2509,7 +2509,7 @@ _elm_list_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd,
      }
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_list_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -2638,7 +2638,7 @@ _elm_list_select_mode_get(const Eo *obj EINA_UNUSED, Elm_List_Data *sd)
    return sd->select_mode;
 }
 
-EAPI void
+ELM_API void
 elm_list_bounce_set(Evas_Object *obj,
                     Eina_Bool h_bounce,
                     Eina_Bool v_bounce)
@@ -2648,7 +2648,7 @@ elm_list_bounce_set(Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_set(obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_list_bounce_get(const Evas_Object *obj,
                     Eina_Bool *h_bounce,
                     Eina_Bool *v_bounce)
@@ -2658,7 +2658,7 @@ elm_list_bounce_get(const Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_get((Eo *) obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_list_scroller_policy_set(Evas_Object *obj,
                              Elm_Scroller_Policy policy_h,
                              Elm_Scroller_Policy policy_v)
@@ -2677,7 +2677,7 @@ _elm_list_elm_interface_scrollable_policy_set(Eo *obj, Elm_List_Data *sd EINA_UN
    elm_interface_scrollable_policy_set(efl_super(obj, MY_CLASS), policy_h, policy_v);
 }
 
-EAPI void
+ELM_API void
 elm_list_scroller_policy_get(const Evas_Object *obj,
                              Elm_Scroller_Policy *policy_h,
                              Elm_Scroller_Policy *policy_v)

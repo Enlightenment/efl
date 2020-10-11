@@ -121,7 +121,7 @@ deliver:
    return !!it->current;
 }
 
-EAPI Eina_Iterator*
+ELM_API Eina_Iterator*
 efl_ui_widget_tree_iterator(Efl_Ui_Widget *obj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
@@ -137,7 +137,7 @@ _only_widget(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNU
    return efl_isa(data, EFL_UI_WIDGET_CLASS);
 }
 
-EAPI Eina_Iterator*
+ELM_API Eina_Iterator*
 efl_ui_widget_tree_widget_iterator(Efl_Ui_Widget *obj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
@@ -165,7 +165,7 @@ _parent_next(Widget_Iterator *it, void **data)
    return !!*data;
 }
 
-EAPI Eina_Iterator*
+ELM_API Eina_Iterator*
 efl_ui_widget_parent_iterator(Efl_Ui_Widget *obj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);

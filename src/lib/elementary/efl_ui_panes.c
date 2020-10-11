@@ -719,14 +719,14 @@ _efl_ui_panes_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(EFL_UI_PANES_LEGACY_CLASS, parent);
 }
 
-EAPI void
+ELM_API void
 elm_panes_content_left_min_size_set(Evas_Object *obj, int size)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN(obj, sd);
@@ -737,14 +737,14 @@ elm_panes_content_left_min_size_set(Evas_Object *obj, int size)
    _update_fixed_sides(obj);
 }
 
-EAPI int
+ELM_API int
 elm_panes_content_left_min_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
    return sd->left_min_size;
 }
 
-EAPI void
+ELM_API void
 elm_panes_content_right_min_size_set(Evas_Object *obj, int size)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN(obj, sd);
@@ -755,26 +755,26 @@ elm_panes_content_right_min_size_set(Evas_Object *obj, int size)
    _update_fixed_sides(obj);
 }
 
-EAPI int
+ELM_API int
 elm_panes_content_right_min_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
    return sd->right_min_size;
 }
 
-EAPI double
+ELM_API double
 elm_panes_content_left_size_get(const Evas_Object *obj)
 {
    return efl_ui_panes_split_ratio_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_panes_content_left_size_set(Evas_Object *obj, double size)
 {
    efl_ui_panes_split_ratio_set(obj, size);
 }
 
-EAPI double
+ELM_API double
 elm_panes_content_right_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_CHECK(obj) 0.0;
@@ -782,13 +782,13 @@ elm_panes_content_right_size_get(const Evas_Object *obj)
    return 1.0 - elm_panes_content_left_size_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_panes_content_right_size_set(Evas_Object *obj, double size)
 {
    elm_panes_content_left_size_set(obj, (1.0 - size));
 }
 
-EAPI void
+ELM_API void
 elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double size)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN(obj, sd);
@@ -798,14 +798,14 @@ elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double size)
    _update_fixed_sides(obj);
 }
 
-EAPI double
+ELM_API double
 elm_panes_content_left_min_relative_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN_VAL(obj, sd, 0.0);
    return sd->left_min_relative_size;
 }
 
-EAPI void
+ELM_API void
 elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double size)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN(obj, sd);
@@ -816,14 +816,14 @@ elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double size)
    _update_fixed_sides(obj);
 }
 
-EAPI double
+ELM_API double
 elm_panes_content_right_min_relative_size_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_DATA_GET_OR_RETURN_VAL(obj, sd, 0.0);
    return sd->right_min_relative_size;
 }
 
-EAPI void
+ELM_API void
 elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    EFL_UI_PANES_CHECK(obj);
@@ -838,7 +838,7 @@ elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    efl_ui_layout_orientation_set(obj, dir);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_panes_horizontal_get(const Evas_Object *obj)
 {
    EFL_UI_PANES_CHECK(obj) EINA_FALSE;
@@ -851,39 +851,39 @@ elm_panes_horizontal_get(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_panes_content_left_set(Evas_Object *obj,
                            Evas_Object *content)
 {
    elm_layout_content_set(obj, "left", content);
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_panes_content_right_set(Evas_Object *obj,
                             Evas_Object *content)
 {
    elm_layout_content_set(obj, "right", content);
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
+EINA_DEPRECATED ELM_API Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
    return elm_layout_content_get(obj, "left");
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
+EINA_DEPRECATED ELM_API Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
    return elm_layout_content_get(obj, "right");
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
+EINA_DEPRECATED ELM_API Evas_Object *
 elm_panes_content_left_unset(Evas_Object *obj)
 {
    return elm_layout_content_unset(obj, "left");
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
+EINA_DEPRECATED ELM_API Evas_Object *
 elm_panes_content_right_unset(Evas_Object *obj)
 {
    return elm_layout_content_unset(obj, "right");

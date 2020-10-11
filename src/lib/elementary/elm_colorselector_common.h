@@ -31,7 +31,7 @@ struct _Elm_Custom_Palette
  *
  * @ingroup Elm_Colorselector
  */
-EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r, int *g, int *b, int *a);
+ELM_API void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Set palette item's color.
@@ -44,7 +44,7 @@ EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, in
  *
  * @ingroup Elm_Colorselector
  */
-EAPI void elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r, int g, int b, int a);
+ELM_API void elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r, int g, int b, int a);
 
 /**
  * @brief Get the selected state of color palette item.
@@ -54,7 +54,7 @@ EAPI void elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r, i
  *
  * @ingroup Elm_Colorselector
  */
-EAPI Eina_Bool elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it);
+ELM_API Eina_Bool elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the selected state of color palette item.
@@ -64,7 +64,7 @@ EAPI Eina_Bool elm_colorselector_palette_item_selected_get(const Elm_Object_Item
  *
  * @ingroup Elm_Colorselector
  */
-EAPI void elm_colorselector_palette_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
+ELM_API void elm_colorselector_palette_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 
 /**
  * @}

@@ -991,14 +991,14 @@ _efl_ui_textpath_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_textpath_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(EFL_UI_TEXTPATH_LEGACY_CLASS, parent);
 }
 
-EAPI void
+ELM_API void
 elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
 {
    double sweep_length;
@@ -1038,7 +1038,7 @@ elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
 }
 
-EAPI void
+ELM_API void
 elm_textpath_text_user_style_set(Eo *obj, const char *style)
 {
    EFL_UI_TEXTPATH_DATA_GET(obj, pd);

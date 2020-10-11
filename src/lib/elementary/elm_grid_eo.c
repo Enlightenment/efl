@@ -1,27 +1,27 @@
 
 void _elm_grid_grid_size_set(Eo *obj, void *pd, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_grid_size_set, EFL_FUNC_CALL(w, h), int w, int h);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_grid_size_set, EFL_FUNC_CALL(w, h), int w, int h);
 
 void _elm_grid_grid_size_get(const Eo *obj, void *pd, int *w, int *h);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_grid_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_grid_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
 
 Eina_List *_elm_grid_children_get(const Eo *obj, void *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_grid_children_get, Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_grid_children_get, Eina_List *, NULL);
 
 void _elm_grid_clear(Eo *obj, void *pd, Eina_Bool clear);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_grid_clear, EFL_FUNC_CALL(clear), Eina_Bool clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_grid_clear, EFL_FUNC_CALL(clear), Eina_Bool clear);
 
 void _elm_grid_unpack(Eo *obj, void *pd, Efl_Canvas_Object *subobj);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_grid_unpack, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_grid_unpack, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
 
 void _elm_grid_pack(Eo *obj, void *pd, Efl_Canvas_Object *subobj, int x, int y, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_grid_pack, EFL_FUNC_CALL(subobj, x, y, w, h), Efl_Canvas_Object *subobj, int x, int y, int w, int h);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_grid_pack, EFL_FUNC_CALL(subobj, x, y, w, h), Efl_Canvas_Object *subobj, int x, int y, int w, int h);
 
 Efl_Object *_elm_grid_efl_object_constructor(Eo *obj, void *pd);
 

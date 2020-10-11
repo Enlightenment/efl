@@ -19,7 +19,7 @@ typedef Eo Elm_Slideshow;
  */
 #define ELM_SLIDESHOW_CLASS elm_slideshow_class_get()
 
-EWAPI const Efl_Class *elm_slideshow_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_slideshow_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the number of items to cache, on a given slideshow widget, after
@@ -33,7 +33,7 @@ EWAPI const Efl_Class *elm_slideshow_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_cache_after_set(Eo *obj, int count);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_cache_after_set(Eo *obj, int count);
 
 /**
  * @brief Get the number of items to cache, on a given slideshow widget, after
@@ -45,7 +45,7 @@ EOAPI void elm_obj_slideshow_cache_after_set(Eo *obj, int count);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI int elm_obj_slideshow_cache_after_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_slideshow_cache_after_get(const Eo *obj);
 
 /**
  * @brief Set the number of items to cache, on a given slideshow widget, before
@@ -59,7 +59,7 @@ EOAPI int elm_obj_slideshow_cache_after_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_cache_before_set(Eo *obj, int count);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_cache_before_set(Eo *obj, int count);
 
 /**
  * @brief Get the number of items to cache, on a given slideshow widget, before
@@ -71,7 +71,7 @@ EOAPI void elm_obj_slideshow_cache_before_set(Eo *obj, int count);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI int elm_obj_slideshow_cache_before_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_slideshow_cache_before_get(const Eo *obj);
 
 /**
  * @brief Set the current slide layout in use for a given slideshow widget
@@ -87,7 +87,7 @@ EOAPI int elm_obj_slideshow_cache_before_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_layout_set(Eo *obj, const char *layout);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_layout_set(Eo *obj, const char *layout);
 
 /**
  * @brief Get the current slide layout in use for a given slideshow widget.
@@ -98,7 +98,7 @@ EOAPI void elm_obj_slideshow_layout_set(Eo *obj, const char *layout);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI const char *elm_obj_slideshow_layout_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_slideshow_layout_get(const Eo *obj);
 
 /**
  * @brief Set the current slide transition/effect in use for a given slideshow
@@ -113,7 +113,7 @@ EOAPI const char *elm_obj_slideshow_layout_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_transition_set(Eo *obj, const char *transition);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_transition_set(Eo *obj, const char *transition);
 
 /**
  * @brief Get the current slide transition/effect in use for a given slideshow
@@ -125,7 +125,7 @@ EOAPI void elm_obj_slideshow_transition_set(Eo *obj, const char *transition);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI const char *elm_obj_slideshow_transition_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_slideshow_transition_get(const Eo *obj);
 
 /**
  * @brief Set if the slideshow items should be displayed cyclically or not, so
@@ -141,7 +141,7 @@ EOAPI const char *elm_obj_slideshow_transition_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_items_loop_set(Eo *obj, Eina_Bool loop);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_items_loop_set(Eo *obj, Eina_Bool loop);
 
 /**
  * @brief Get if, after a slideshow is started, for a given slideshow widget,
@@ -154,7 +154,7 @@ EOAPI void elm_obj_slideshow_items_loop_set(Eo *obj, Eina_Bool loop);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI Eina_Bool elm_obj_slideshow_items_loop_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_slideshow_items_loop_get(const Eo *obj);
 
 /**
  * @brief Set the interval between each image transition on a given slideshow
@@ -175,7 +175,7 @@ EOAPI Eina_Bool elm_obj_slideshow_items_loop_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_timeout_set(Eo *obj, double timeout);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_timeout_set(Eo *obj, double timeout);
 
 /**
  * @brief Get the interval set for image transitions on a given slideshow
@@ -187,7 +187,7 @@ EOAPI void elm_obj_slideshow_timeout_set(Eo *obj, double timeout);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI double elm_obj_slideshow_timeout_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_slideshow_timeout_get(const Eo *obj);
 
 /**
  * @brief Get the internal list of items in a given slideshow widget.
@@ -204,7 +204,7 @@ EOAPI double elm_obj_slideshow_timeout_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI const Eina_List *elm_obj_slideshow_items_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_slideshow_items_get(const Eo *obj);
 
 /**
  * @brief Returns the list of sliding transition/effect names available, for a
@@ -238,7 +238,7 @@ EOAPI const Eina_List *elm_obj_slideshow_items_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI const Eina_List *elm_obj_slideshow_transitions_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_slideshow_transitions_get(const Eo *obj);
 
 /**
  * @brief Get the number of items stored in a given slideshow widget.
@@ -249,7 +249,7 @@ EOAPI const Eina_List *elm_obj_slideshow_transitions_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI unsigned int elm_obj_slideshow_count_get(const Eo *obj);
+ELM_API ELM_API_WEAK unsigned int elm_obj_slideshow_count_get(const Eo *obj);
 
 /**
  * @brief Returns the currently displayed item, in a given slideshow widget.
@@ -261,7 +261,7 @@ EOAPI unsigned int elm_obj_slideshow_count_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI Elm_Widget_Item *elm_obj_slideshow_item_current_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_slideshow_item_current_get(const Eo *obj);
 
 /**
  * @brief Returns the list of layout names available, for a given slideshow
@@ -291,7 +291,7 @@ EOAPI Elm_Widget_Item *elm_obj_slideshow_item_current_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI const Eina_List *elm_obj_slideshow_layouts_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_slideshow_layouts_get(const Eo *obj);
 
 /**
  * @brief Slide to the previous item, in a given slideshow widget
@@ -305,7 +305,7 @@ EOAPI const Eina_List *elm_obj_slideshow_layouts_get(const Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_previous(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_previous(Eo *obj);
 
 /**
  * @brief Get the the item, in a given slideshow widget, placed at position
@@ -320,7 +320,7 @@ EOAPI void elm_obj_slideshow_previous(Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI Elm_Widget_Item *elm_obj_slideshow_item_nth_get(const Eo *obj, unsigned int nth);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_slideshow_item_nth_get(const Eo *obj, unsigned int nth);
 
 /**
  * @brief Slide to the next item, in a given slideshow widget.
@@ -334,7 +334,7 @@ EOAPI Elm_Widget_Item *elm_obj_slideshow_item_nth_get(const Eo *obj, unsigned in
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_next(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_next(Eo *obj);
 
 /**
  * @brief Remove all items from a given slideshow widget.
@@ -344,7 +344,7 @@ EOAPI void elm_obj_slideshow_next(Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI void elm_obj_slideshow_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_slideshow_clear(Eo *obj);
 
 /**
  * @brief Add (append) a new item in a given slideshow widget.
@@ -363,7 +363,7 @@ EOAPI void elm_obj_slideshow_clear(Eo *obj);
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI Elm_Widget_Item *elm_obj_slideshow_item_add(Eo *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_slideshow_item_add(Eo *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
 
 /**
  * @brief Insert a new item into the given slideshow widget, using the @c func
@@ -385,9 +385,9 @@ EOAPI Elm_Widget_Item *elm_obj_slideshow_item_add(Eo *obj, const Elm_Slideshow_I
  *
  * @ingroup Elm_Slideshow
  */
-EOAPI Elm_Widget_Item *elm_obj_slideshow_item_sorted_insert(Eo *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_slideshow_item_sorted_insert(Eo *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func);
 
-EWAPI extern const Efl_Event_Description _ELM_SLIDESHOW_EVENT_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SLIDESHOW_EVENT_CHANGED;
 
 /** Called when slideshow widget changed
  * @return Efl_Object *
@@ -396,7 +396,7 @@ EWAPI extern const Efl_Event_Description _ELM_SLIDESHOW_EVENT_CHANGED;
  */
 #define ELM_SLIDESHOW_EVENT_CHANGED (&(_ELM_SLIDESHOW_EVENT_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_SLIDESHOW_EVENT_TRANSITION_END;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SLIDESHOW_EVENT_TRANSITION_END;
 
 /** Called on transition end
  * @return Efl_Object *

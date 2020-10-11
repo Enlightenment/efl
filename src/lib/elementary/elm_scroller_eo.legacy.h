@@ -23,7 +23,7 @@ typedef Eo Elm_Scroller;
  *
  * @ingroup Elm_Scroller_Group
  */
-EAPI void elm_scroller_custom_widget_base_theme_set(Elm_Scroller *obj, const char *klass, const char *group);
+ELM_API void elm_scroller_custom_widget_base_theme_set(Elm_Scroller *obj, const char *klass, const char *group);
 
 /**
  * @brief Set the maximum of the movable page at a flicking.
@@ -38,7 +38,7 @@ EAPI void elm_scroller_custom_widget_base_theme_set(Elm_Scroller *obj, const cha
  *
  * @ingroup Elm_Scroller_Group
  */
-EAPI void elm_scroller_page_scroll_limit_set(const Elm_Scroller *obj, int page_limit_h, int page_limit_v);
+ELM_API void elm_scroller_page_scroll_limit_set(const Elm_Scroller *obj, int page_limit_h, int page_limit_v);
 
 /**
  * @brief Get the maximum of the movable page at a flicking.
@@ -51,6 +51,6 @@ EAPI void elm_scroller_page_scroll_limit_set(const Elm_Scroller *obj, int page_l
  *
  * @ingroup Elm_Scroller_Group
  */
-EAPI void elm_scroller_page_scroll_limit_get(const Elm_Scroller *obj, int *page_limit_h, int *page_limit_v);
+ELM_API void elm_scroller_page_scroll_limit_get(const Elm_Scroller *obj, int *page_limit_h, int *page_limit_v);
 
 #endif

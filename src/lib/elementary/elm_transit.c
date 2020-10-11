@@ -559,7 +559,7 @@ _go_in_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EAPI Elm_Transit *
+ELM_API Elm_Transit *
 elm_transit_add(void)
 {
    Elm_Transit *transit = ELM_NEW(Elm_Transit);
@@ -580,7 +580,7 @@ elm_transit_add(void)
    return transit;
 }
 
-EAPI void
+ELM_API void
 elm_transit_del(Elm_Transit *transit)
 {
    if (!transit) return;
@@ -592,7 +592,7 @@ elm_transit_del(Elm_Transit *transit)
    _transit_del(transit);
 }
 
-EAPI void
+ELM_API void
 elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -620,7 +620,7 @@ elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb tr
    transit->effect_list = eina_inlist_append(transit->effect_list, (Eina_Inlist*) effect_module);
 }
 
-EAPI void
+ELM_API void
 elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -646,7 +646,7 @@ elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb tr
      }
 }
 
-EAPI void
+ELM_API void
 elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -675,7 +675,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    transit->objs = eina_list_append(transit->objs, obj);
 }
 
-EAPI void
+ELM_API void
 elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -685,28 +685,28 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
    if (!transit->objs) elm_transit_del(transit);
 }
 
-EAPI const Eina_List *
+ELM_API const Eina_List *
 elm_transit_objects_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    return transit->objs;
 }
 
-EAPI void
+ELM_API void
 elm_transit_smooth_set(Elm_Transit *transit, Eina_Bool smooth)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    transit->smooth = !!smooth;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_transit_smooth_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
    return transit->smooth;
 }
 
-EAPI void
+ELM_API void
 elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -722,14 +722,14 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
      evas_object_freeze_events_set(obj, enabled);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_transit_event_enabled_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
    return transit->event_enabled;
 }
 
-EAPI void
+ELM_API void
 elm_transit_del_cb_set(Elm_Transit *transit, void (*cb) (void *data, Elm_Transit *transit), void *data)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -737,21 +737,21 @@ elm_transit_del_cb_set(Elm_Transit *transit, void (*cb) (void *data, Elm_Transit
    transit->del_data.arg = data;
 }
 
-EAPI void
+ELM_API void
 elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    transit->auto_reverse = reverse;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_transit_auto_reverse_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
    return transit->auto_reverse;
 }
 
-EAPI void
+ELM_API void
 elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -759,35 +759,35 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
    transit->repeat.current = 0;
 }
 
-EAPI int
+ELM_API int
 elm_transit_current_repeat_times_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
    return transit->repeat.current;
 }
 
-EAPI int
+ELM_API int
 elm_transit_repeat_times_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
    return transit->repeat.count;
 }
 
-EAPI void
+ELM_API void
 elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    transit->tween_mode = tween_mode;
 }
 
-EAPI Elm_Transit_Tween_Mode
+ELM_API Elm_Transit_Tween_Mode
 elm_transit_tween_mode_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
    return transit->tween_mode;
 }
 
-EAPI void
+ELM_API void
 elm_transit_tween_mode_factor_set(Elm_Transit *transit, double v1, double v2)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -795,7 +795,7 @@ elm_transit_tween_mode_factor_set(Elm_Transit *transit, double v1, double v2)
    transit->v[1] = v2;
 }
 
-EAPI void
+ELM_API void
 elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double *v2)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -803,7 +803,7 @@ elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double
    if (v2) *v2 = transit->v[1];
 }
 
-EAPI void
+ELM_API void
 elm_transit_tween_mode_factor_n_set(Elm_Transit *transit, unsigned int v_size, double *v)
 {
    unsigned int i;
@@ -813,21 +813,21 @@ elm_transit_tween_mode_factor_n_set(Elm_Transit *transit, unsigned int v_size, d
      transit->v[i] = v[i];
 }
 
-EAPI void
+ELM_API void
 elm_transit_duration_set(Elm_Transit *transit, double duration)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    transit->time.duration = duration;
 }
 
-EAPI double
+ELM_API double
 elm_transit_duration_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0.0);
    return transit->time.duration;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_transit_revert(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
@@ -849,7 +849,7 @@ elm_transit_revert(Elm_Transit *transit)
    return EINA_TRUE;
 }
 
-EAPI void
+ELM_API void
 elm_transit_go(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -898,7 +898,7 @@ elm_transit_go(Elm_Transit *transit)
    _transit_animate_cb(transit);
 }
 
-EAPI void
+ELM_API void
 elm_transit_go_in(Elm_Transit *transit, double in)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -907,7 +907,7 @@ elm_transit_go_in(Elm_Transit *transit, double in)
    transit->go_in_timer = ecore_timer_add(in, _go_in_timer_cb, transit);
 }
 
-EAPI void
+ELM_API void
 elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -947,7 +947,7 @@ elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_transit_paused_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
@@ -958,7 +958,7 @@ elm_transit_paused_get(const Elm_Transit *transit)
    return EINA_TRUE;
 }
 
-EAPI void
+ELM_API void
 elm_transit_progress_value_set(Elm_Transit *transit, double progress)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -969,7 +969,7 @@ elm_transit_progress_value_set(Elm_Transit *transit, double progress)
    transit->inter_progress = (progress - transit->base_progress);
 }
 
-EAPI double
+ELM_API double
 elm_transit_progress_value_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
@@ -977,7 +977,7 @@ elm_transit_progress_value_get(const Elm_Transit *transit)
    return transit->progress;
 }
 
-EAPI void
+ELM_API void
 elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -991,14 +991,14 @@ elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_k
    transit->state_keep = !!state_keep;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
    return transit->state_keep;
 }
 
-EAPI void
+ELM_API void
 elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -1019,7 +1019,7 @@ elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
    transit->next_chain_transits = eina_list_append(transit->next_chain_transits, chain_transit);
 }
 
-EAPI void
+ELM_API void
 elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
@@ -1035,7 +1035,7 @@ elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit)
    transit->next_chain_transits = eina_list_remove(transit->next_chain_transits, chain_transit);
 }
 
-EAPI Eina_List *
+ELM_API Eina_List *
 elm_transit_chain_transits_get(const Elm_Transit * transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -1094,7 +1094,7 @@ _transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_
    return resizing;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -1233,7 +1233,7 @@ _transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, 
    return translation;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -1323,7 +1323,7 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
    return zoom;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -1481,7 +1481,7 @@ _transit_effect_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw
    return flip;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -1791,7 +1791,7 @@ _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Ei
    return resizable_flip;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -2017,7 +2017,7 @@ _transit_effect_wipe_context_new(Elm_Transit_Effect_Wipe_Type type, Elm_Transit_
    return wipe;
 }
 
-EAPI void *
+ELM_API void *
 elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -2095,7 +2095,7 @@ _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsi
    return color;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -2289,7 +2289,7 @@ _transit_effect_fade_context_new(void)
    return fade;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_fade_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -2457,7 +2457,7 @@ _transit_effect_blend_context_new(void)
    return blend;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_blend_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -2553,7 +2553,7 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree)
    return rotation;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
@@ -2656,7 +2656,7 @@ _transit_effect_image_animation_context_new(Eina_List *images)
    return image_animation;
 }
 
-EAPI Elm_Transit_Effect *
+ELM_API Elm_Transit_Effect *
 elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);

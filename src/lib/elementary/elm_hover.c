@@ -681,7 +681,7 @@ _elm_hover_content_aliases_get(Eo *obj, void *_pd EINA_UNUSED)
    return _content_aliases;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_hover_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -753,7 +753,7 @@ _elm_hover_target_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *target)
      }
 
 }
-EAPI void
+ELM_API void
 elm_hover_parent_set(Evas_Object *obj,
                      Evas_Object *parent)
 {
@@ -770,7 +770,7 @@ _elm_hover_target_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
    return sd->target;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_HOVER_CHECK(obj) NULL;

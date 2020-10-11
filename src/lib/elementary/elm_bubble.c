@@ -170,7 +170,7 @@ _elm_bubble_efl_ui_widget_on_access_update(Eo *obj, Elm_Bubble_Data *_pd EINA_UN
      elm_widget_can_focus_set(obj, EINA_FALSE);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_bubble_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

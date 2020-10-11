@@ -19,7 +19,7 @@ typedef Eo Elm_Index_Item;
  */
 #define ELM_INDEX_ITEM_CLASS elm_index_item_class_get()
 
-EWAPI const Efl_Class *elm_index_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_index_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the selected state of an item.
@@ -38,7 +38,7 @@ EWAPI const Efl_Class *elm_index_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Index_Item
  */
-EOAPI void elm_obj_index_item_selected_set(Eo *obj, Eina_Bool selected);
+ELM_API ELM_API_WEAK void elm_obj_index_item_selected_set(Eo *obj, Eina_Bool selected);
 
 /**
  * @brief Sets the priority of an item.
@@ -55,7 +55,7 @@ EOAPI void elm_obj_index_item_selected_set(Eo *obj, Eina_Bool selected);
  *
  * @ingroup Elm_Index_Item
  */
-EOAPI void elm_obj_index_item_priority_set(Eo *obj, int priority);
+ELM_API ELM_API_WEAK void elm_obj_index_item_priority_set(Eo *obj, int priority);
 
 /**
  * @brief Get the letter (string) set on a given index widget item.
@@ -66,6 +66,6 @@ EOAPI void elm_obj_index_item_priority_set(Eo *obj, int priority);
  *
  * @ingroup Elm_Index_Item
  */
-EOAPI const char *elm_obj_index_item_letter_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_index_item_letter_get(const Eo *obj);
 
 #endif

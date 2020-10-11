@@ -11,7 +11,7 @@ typedef Eo Elm_Slider;
  *
  * @ingroup Elm_Slider
  */
-EAPI Evas_Object                 *elm_slider_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_slider_add(Evas_Object *parent);
 
 /**
  * @brief Set the orientation of a given slider widget.
@@ -25,13 +25,13 @@ EAPI Evas_Object                 *elm_slider_add(Evas_Object *parent);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+ELM_API void elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /** Get the orientation of a given slider widget.
  *
  * @ingroup Elm_Slider
  */
-EAPI Eina_Bool elm_slider_horizontal_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_slider_horizontal_get(const Evas_Object *obj);
 
 /**
  * @brief Set the value the slider displays.
@@ -47,7 +47,7 @@ EAPI Eina_Bool elm_slider_horizontal_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_value_set(Evas_Object *obj, double val);
+ELM_API void elm_slider_value_set(Evas_Object *obj, double val);
 
 /**
  * @brief Get the value displayed by the slider.
@@ -56,7 +56,7 @@ EAPI void elm_slider_value_set(Evas_Object *obj, double val);
  *
  * @ingroup Elm_Slider
  */
-EAPI double elm_slider_value_get(const Evas_Object *obj);
+ELM_API double elm_slider_value_get(const Evas_Object *obj);
 
 /**
  * @brief Invert a given slider widget's displaying values order
@@ -71,7 +71,7 @@ EAPI double elm_slider_value_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
+ELM_API void elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
 
 /**
  * @brief Get whether a given slider widget's displaying values are inverted or
@@ -82,7 +82,7 @@ EAPI void elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
  *
  * @ingroup Elm_Slider
  */
-EAPI Eina_Bool elm_slider_inverted_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_slider_inverted_get(const Evas_Object *obj);
 
 /**
  * @brief Set the (exact) length of the bar region of a given slider widget.
@@ -101,7 +101,7 @@ EAPI Eina_Bool elm_slider_inverted_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
+ELM_API void elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
 
 /**
  * @brief Get the length set for the bar region of a given slider widget
@@ -113,7 +113,7 @@ EAPI void elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
  *
  * @ingroup Elm_Slider
  */
-EAPI Evas_Coord elm_slider_span_size_get(const Evas_Object *obj);
+ELM_API Evas_Coord elm_slider_span_size_get(const Evas_Object *obj);
 
 /**
  * @brief Set the format string for the unit label.
@@ -135,7 +135,7 @@ EAPI Evas_Coord elm_slider_span_size_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_unit_format_set(Evas_Object *obj, const char *units);
+ELM_API void elm_slider_unit_format_set(Evas_Object *obj, const char *units);
 
 /**
  * @brief Get the unit label format of the slider.
@@ -147,7 +147,7 @@ EAPI void elm_slider_unit_format_set(Evas_Object *obj, const char *units);
  *
  * @ingroup Elm_Slider
  */
-EAPI const char *elm_slider_unit_format_get(const Evas_Object *obj);
+ELM_API const char *elm_slider_unit_format_get(const Evas_Object *obj);
 
 /**
  * @brief Set the format function pointer for the units label
@@ -159,7 +159,7 @@ EAPI const char *elm_slider_unit_format_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
+ELM_API void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
 
 /**
  * @brief Set the minimum and maximum values for the slider.
@@ -180,7 +180,7 @@ EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_typ
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
+ELM_API void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
 
 /**
  * @brief Get the minimum and maximum values of the slider.
@@ -193,7 +193,7 @@ EAPI void elm_slider_min_max_set(Evas_Object *obj, double min, double max);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
+ELM_API void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
 
 /**
  * @brief This enables two indicators in slider.
@@ -202,7 +202,7 @@ EAPI void elm_slider_min_max_get(const Evas_Object *obj, double *min, double *ma
  *
  * @since 1.18
  */
-EAPI void elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable);
+ELM_API void elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable);
 
 /**
  * @brief This enables two indicators in slider.
@@ -211,7 +211,7 @@ EAPI void elm_slider_range_enabled_set(Evas_Object *obj, Eina_Bool enable);
  *
  * @since 1.18
  */
-EAPI Eina_Bool elm_slider_range_enabled_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_slider_range_enabled_get(const Evas_Object *obj);
 
 /**
  * @brief Sets up a start and end range point for the slider
@@ -221,7 +221,7 @@ EAPI Eina_Bool elm_slider_range_enabled_get(const Evas_Object *obj);
  *
  * @since 1.18
  */
-EAPI void elm_slider_range_set(Evas_Object *obj, double from, double to);
+ELM_API void elm_slider_range_set(Evas_Object *obj, double from, double to);
 
 /**
  * @brief Sets up a start and end range point for the slider
@@ -231,7 +231,7 @@ EAPI void elm_slider_range_set(Evas_Object *obj, double from, double to);
  *
  * @since 1.18
  */
-EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to);
+ELM_API void elm_slider_range_get(const Evas_Object *obj, double *from, double *to);
 
 /**
  * @brief Set the format string for the indicator label.
@@ -255,7 +255,7 @@ EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
  *
  * @ingroup Elm_Slider
  */
- EAPI void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+ ELM_API void elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
 
  /**
   * @brief Get the indicator label format of the slider.
@@ -270,7 +270,7 @@ EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
   *
   * @ingroup Elm_Slider
   */
- EAPI const char *elm_slider_indicator_format_get(const Evas_Object *obj);
+ ELM_API const char *elm_slider_indicator_format_get(const Evas_Object *obj);
 
  /**
  * @brief Set the format function pointer for the indicator label
@@ -283,7 +283,7 @@ EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
+ELM_API void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
 
 /**
  * @brief Show the indicator of slider on focus.
@@ -293,7 +293,7 @@ EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag);
+ELM_API void elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool flag);
 
 /**
  * @brief Get whether the indicator of the slider is set or not.
@@ -304,7 +304,7 @@ EAPI void elm_slider_indicator_show_on_focus_set(Evas_Object *obj, Eina_Bool fla
  *
  * @ingroup Elm_Slider
  */
-EAPI Eina_Bool elm_slider_indicator_show_on_focus_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_slider_indicator_show_on_focus_get(const Evas_Object *obj);
 
 /**
  * @brief Set whether to enlarge slider indicator (augmented knob) or not.
@@ -317,7 +317,7 @@ EAPI Eina_Bool elm_slider_indicator_show_on_focus_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
+ELM_API void elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
 
 /**
  * @brief Get whether a given slider widget's enlarging indicator or not.
@@ -329,7 +329,7 @@ EAPI void elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
  *
  * @ingroup Elm_Slider
  */
-EAPI Eina_Bool elm_slider_indicator_show_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_slider_indicator_show_get(const Evas_Object *obj);
 
 /**
  * @brief Set/Get the visible mode of indicator.
@@ -339,7 +339,7 @@ EAPI Eina_Bool elm_slider_indicator_show_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode);
+ELM_API void elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode);
 
 /**
  * @brief Set/Get the visible mode of indicator.
@@ -350,7 +350,7 @@ EAPI void elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Ind
  *
  * @ingroup Elm_Slider
  */
-EAPI Elm_Slider_Indicator_Visible_Mode elm_slider_indicator_visible_mode_get(const Evas_Object *obj);
+ELM_API Elm_Slider_Indicator_Visible_Mode elm_slider_indicator_visible_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Get the step by which slider indicator moves.
@@ -363,7 +363,7 @@ EAPI Elm_Slider_Indicator_Visible_Mode elm_slider_indicator_visible_mode_get(con
  *
  * @ingroup Elm_Slider
  */
-EAPI double elm_slider_step_get(const Evas_Object *obj);
+ELM_API double elm_slider_step_get(const Evas_Object *obj);
 
 /**
  * @brief Set the step by which slider indicator will move.
@@ -380,4 +380,4 @@ EAPI double elm_slider_step_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_step_set(Evas_Object *obj, double step);
+ELM_API void elm_slider_step_set(Evas_Object *obj, double step);

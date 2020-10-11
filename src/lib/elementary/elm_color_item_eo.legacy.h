@@ -25,7 +25,7 @@ typedef Eo Elm_Color_Item;
  *
  * @ingroup Elm_Color_Item_Group
  */
-EAPI void elm_color_item_color_set(Elm_Color_Item *obj, int r, int g, int b, int a);
+ELM_API void elm_color_item_color_set(Elm_Color_Item *obj, int r, int g, int b, int a);
 
 /**
  * @brief Get Palette item's color.
@@ -38,7 +38,7 @@ EAPI void elm_color_item_color_set(Elm_Color_Item *obj, int r, int g, int b, int
  *
  * @ingroup Elm_Color_Item_Group
  */
-EAPI void elm_color_item_color_get(const Elm_Color_Item *obj, int *r, int *g, int *b, int *a);
+ELM_API void elm_color_item_color_get(const Elm_Color_Item *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Set the selected state of color palette item
@@ -50,7 +50,7 @@ EAPI void elm_color_item_color_get(const Elm_Color_Item *obj, int *r, int *g, in
  *
  * @ingroup Elm_Color_Item_Group
  */
-EAPI void elm_color_item_selected_set(Elm_Color_Item *obj, Eina_Bool selected);
+ELM_API void elm_color_item_selected_set(Elm_Color_Item *obj, Eina_Bool selected);
 
 /**
  * @brief Get the selected state of color palette item
@@ -63,6 +63,6 @@ EAPI void elm_color_item_selected_set(Elm_Color_Item *obj, Eina_Bool selected);
  *
  * @ingroup Elm_Color_Item_Group
  */
-EAPI Eina_Bool elm_color_item_selected_get(const Elm_Color_Item *obj);
+ELM_API Eina_Bool elm_color_item_selected_get(const Elm_Color_Item *obj);
 
 #endif

@@ -1,19 +1,19 @@
-EWAPI const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED =
    EFL_EVENT_DESCRIPTION("color,item,selected");
-EWAPI const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED =
    EFL_EVENT_DESCRIPTION("color,item,longpressed");
-EWAPI const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
-EWAPI const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED_USER =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED_USER =
    EFL_EVENT_DESCRIPTION("changed,user");
 
 void _elm_colorselector_picked_color_set(Eo *obj, Elm_Colorselector_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_colorselector_picked_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_colorselector_picked_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _elm_colorselector_picked_color_get(const Eo *obj, Elm_Colorselector_Data *pd, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_colorselector_picked_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_colorselector_picked_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 void _elm_colorselector_palette_name_set(Eo *obj, Elm_Colorselector_Data *pd, const char *palette_name);
 
@@ -33,7 +33,7 @@ __eolian_elm_colorselector_palette_name_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_colorselector_palette_name_set, EFL_FUNC_CALL(palette_name), const char *palette_name);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_colorselector_palette_name_set, EFL_FUNC_CALL(palette_name), const char *palette_name);
 
 const char *_elm_colorselector_palette_name_get(const Eo *obj, Elm_Colorselector_Data *pd);
 
@@ -45,31 +45,31 @@ __eolian_elm_colorselector_palette_name_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_colorselector_palette_name_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_colorselector_palette_name_get, const char *, NULL);
 
 void _elm_colorselector_mode_set(Eo *obj, Elm_Colorselector_Data *pd, Elm_Colorselector_Mode mode);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_colorselector_mode_set, EFL_FUNC_CALL(mode), Elm_Colorselector_Mode mode);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_colorselector_mode_set, EFL_FUNC_CALL(mode), Elm_Colorselector_Mode mode);
 
 Elm_Colorselector_Mode _elm_colorselector_mode_get(const Eo *obj, Elm_Colorselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_colorselector_mode_get, Elm_Colorselector_Mode, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_colorselector_mode_get, Elm_Colorselector_Mode, 0);
 
 const Eina_List *_elm_colorselector_palette_items_get(const Eo *obj, Elm_Colorselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_colorselector_palette_items_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_colorselector_palette_items_get, const Eina_List *, NULL);
 
 Elm_Widget_Item *_elm_colorselector_palette_selected_item_get(const Eo *obj, Elm_Colorselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_colorselector_palette_selected_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_colorselector_palette_selected_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_colorselector_palette_color_add(Eo *obj, Elm_Colorselector_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_colorselector_palette_color_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_colorselector_palette_color_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _elm_colorselector_palette_clear(Eo *obj, Elm_Colorselector_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_colorselector_palette_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_colorselector_palette_clear);
 
 Efl_Object *_elm_colorselector_efl_object_constructor(Eo *obj, Elm_Colorselector_Data *pd);
 

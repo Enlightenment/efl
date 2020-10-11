@@ -129,14 +129,14 @@ _elm_font_available_hash_del(Eina_Hash *hash)
    eina_hash_free(hash);
 }
 
-EAPI Elm_Font_Properties *
+ELM_API Elm_Font_Properties *
 elm_font_properties_get(const char *font)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(font, NULL);
    return _elm_font_properties_get(NULL, font);
 }
 
-EAPI void
+ELM_API void
 elm_font_properties_free(Elm_Font_Properties *efp)
 {
    const char *str;
@@ -148,7 +148,7 @@ elm_font_properties_free(Elm_Font_Properties *efp)
    free(efp);
 }
 
-EAPI char *
+ELM_API char *
 elm_font_fontconfig_name_get(const char *name,
                              const char *style)
 {
@@ -160,13 +160,13 @@ elm_font_fontconfig_name_get(const char *name,
    return (char *) eina_stringshare_add(buf);
 }
 
-EAPI void
+ELM_API void
 elm_font_fontconfig_name_free(char *name)
 {
    eina_stringshare_del(name);
 }
 
-EAPI Eina_Hash *
+ELM_API Eina_Hash *
 elm_font_available_hash_add(Eina_List *list)
 {
    Eina_Hash *font_hash;
@@ -196,7 +196,7 @@ elm_font_available_hash_add(Eina_List *list)
    return font_hash;
 }
 
-EAPI void
+ELM_API void
 elm_font_available_hash_del(Eina_Hash *hash)
 {
    _elm_font_available_hash_del(hash);

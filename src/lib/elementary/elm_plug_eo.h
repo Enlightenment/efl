@@ -19,7 +19,7 @@ typedef Eo Elm_Plug;
  */
 #define ELM_PLUG_CLASS elm_plug_class_get()
 
-EWAPI const Efl_Class *elm_plug_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_plug_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the basic Evas_Image object from this object (widget).
@@ -36,7 +36,7 @@ EWAPI const Efl_Class *elm_plug_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Plug
  */
-EOAPI Efl_Canvas_Object *elm_obj_plug_image_object_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_plug_image_object_get(const Eo *obj);
 
 /**
  * @brief Connect a plug widget to service provided by socket image.
@@ -51,9 +51,9 @@ EOAPI Efl_Canvas_Object *elm_obj_plug_image_object_get(const Eo *obj);
  *
  * @ingroup Elm_Plug
  */
-EOAPI Eina_Bool elm_obj_plug_connect(Eo *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_plug_connect(Eo *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
-EWAPI extern const Efl_Event_Description _ELM_PLUG_EVENT_IMAGE_DELETED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PLUG_EVENT_IMAGE_DELETED;
 
 /** Called when image was deleted
  *
@@ -61,7 +61,7 @@ EWAPI extern const Efl_Event_Description _ELM_PLUG_EVENT_IMAGE_DELETED;
  */
 #define ELM_PLUG_EVENT_IMAGE_DELETED (&(_ELM_PLUG_EVENT_IMAGE_DELETED))
 
-EWAPI extern const Efl_Event_Description _ELM_PLUG_EVENT_IMAGE_RESIZED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PLUG_EVENT_IMAGE_RESIZED;
 
 /** Called when image was resized
  * @return Eina_Position2D

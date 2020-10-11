@@ -26,7 +26,7 @@ typedef Eo Elm_Ctxpopup_Item;
  *
  * @ingroup Elm_Ctxpopup_Item_Group
  */
-EAPI Elm_Widget_Item *elm_ctxpopup_item_prev_get(const Elm_Ctxpopup_Item *obj);
+ELM_API Elm_Widget_Item *elm_ctxpopup_item_prev_get(const Elm_Ctxpopup_Item *obj);
 
 /**
  * @brief Get the item after this one in the widget's list of items.
@@ -40,7 +40,7 @@ EAPI Elm_Widget_Item *elm_ctxpopup_item_prev_get(const Elm_Ctxpopup_Item *obj);
  *
  * @ingroup Elm_Ctxpopup_Item_Group
  */
-EAPI Elm_Widget_Item *elm_ctxpopup_item_next_get(const Elm_Ctxpopup_Item *obj);
+ELM_API Elm_Widget_Item *elm_ctxpopup_item_next_get(const Elm_Ctxpopup_Item *obj);
 
 /**
  * @brief Indicates whether this item is currently selected.
@@ -61,7 +61,7 @@ EAPI Elm_Widget_Item *elm_ctxpopup_item_next_get(const Elm_Ctxpopup_Item *obj);
  *
  * @ingroup Elm_Ctxpopup_Item_Group
  */
-EAPI void elm_ctxpopup_item_selected_set(Elm_Ctxpopup_Item *obj, Eina_Bool selected);
+ELM_API void elm_ctxpopup_item_selected_set(Elm_Ctxpopup_Item *obj, Eina_Bool selected);
 
 /**
  * @brief Indicates whether this item is currently selected.
@@ -74,7 +74,7 @@ EAPI void elm_ctxpopup_item_selected_set(Elm_Ctxpopup_Item *obj, Eina_Bool selec
  *
  * @ingroup Elm_Ctxpopup_Item_Group
  */
-EAPI Eina_Bool elm_ctxpopup_item_selected_get(const Elm_Ctxpopup_Item *obj);
+ELM_API Eina_Bool elm_ctxpopup_item_selected_get(const Elm_Ctxpopup_Item *obj);
 
 /**
  * @brief Init context popup item
@@ -85,6 +85,6 @@ EAPI Eina_Bool elm_ctxpopup_item_selected_get(const Elm_Ctxpopup_Item *obj);
  *
  * @ingroup Elm_Ctxpopup_Item_Group
  */
-EAPI void elm_ctxpopup_item_init(Elm_Ctxpopup_Item *obj, Evas_Smart_Cb func, const void *data);
+ELM_API void elm_ctxpopup_item_init(Elm_Ctxpopup_Item *obj, Evas_Smart_Cb func, const void *data);
 
 #endif

@@ -4163,7 +4163,7 @@ _on_elm_atspi_bridge_app_register(void *data EINA_UNUSED, const Eldbus_Message *
    DBG("Application successfully registered at ATSPI2 bus.");
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 _elm_atspi_bridge_app_register(Eo *bridge)
 {
    Eo *root;
@@ -4182,7 +4182,7 @@ _elm_atspi_bridge_app_register(Eo *bridge)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 _elm_atspi_bridge_app_unregister(Eo *bridge)
 {
    Eo *root;
@@ -5042,7 +5042,7 @@ _elm_atspi_bridge_init(void)
      }
 }
 
-EAPI Eo*
+ELM_API Eo*
 _elm_atspi_bridge_get(void)
 {
    return _instance;

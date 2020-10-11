@@ -27,7 +27,7 @@ typedef Eo Elm_Bg;
  *
  * @ingroup Elm_Bg
  */
-EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_bg_add(Evas_Object *parent);
 
 /**
  * @brief Sets the color on a given background widget
@@ -50,7 +50,7 @@ EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
  *
  * @ingroup Elm_Bg
  */
-EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
+ELM_API void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
 
 /**
  * @brief Gets the color set on a given background widget
@@ -67,7 +67,7 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
  *
  * @ingroup Elm_Bg
  */
-EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
+ELM_API void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
 /**
  * @brief Sets the file (image or edje collection) to give life for the
@@ -97,7 +97,7 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
  * @param[in] file The file path
  * @param[in] group Optional key (group in Edje) within the file
  */
-EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
+ELM_API Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
 
 /**
  * @brief Gets the file (image or edje collection) set on a given background
@@ -112,7 +112,7 @@ EAPI Eina_Bool elm_bg_file_set(Eo *obj, const char *file, const char *group);
  * @param[out] file The file path
  * @param[out] group Optional key (group in Edje) within the file
  */
-EAPI void elm_bg_file_get(const Eo *obj, const char **file, const char **group);
+ELM_API void elm_bg_file_get(const Eo *obj, const char **file, const char **group);
 
 /**
   * @brief Sets the mode of display for a given background widget's image
@@ -128,7 +128,7 @@ EAPI void elm_bg_file_get(const Eo *obj, const char **file, const char **group);
   *
   * @ingroup Elm_Bg
   */
-EAPI void elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
+ELM_API void elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
 
 /**
   * @brief Gets the mode of display of a given background widget's image
@@ -139,7 +139,7 @@ EAPI void elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
   *
   * @ingroup Elm_Bg
   */
-EAPI Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj);
+ELM_API Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj);
 
 /**
   * @brief Sets the size of the pixmap representation of the image set on a
@@ -163,6 +163,6 @@ EAPI Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj);
   * @param[in] w The new width of the image pixmap representation
   * @param[in] h The new height of the image pixmap representation
   */
-EAPI void elm_bg_load_size_set(Evas_Object *obj, int w, int h);
+ELM_API void elm_bg_load_size_set(Evas_Object *obj, int w, int h);
 
 #include "efl_ui_bg_eo.legacy.h"

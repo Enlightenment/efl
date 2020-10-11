@@ -336,37 +336,37 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_button, Efl_Ui_Button_Data)
 
-EAPI void
+ELM_API void
 elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
 {
    efl_ui_autorepeat_initial_timeout_set(obj, t);
 }
 
-EAPI double
+ELM_API double
 elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj)
 {
    return efl_ui_autorepeat_initial_timeout_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
 {
    efl_ui_autorepeat_gap_timeout_set(obj, t);
 }
 
-EAPI double
+ELM_API double
 elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj)
 {
    return efl_ui_autorepeat_gap_timeout_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
 {
    efl_ui_autorepeat_enabled_set(obj, on);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_button_autorepeat_get(const Evas_Object *obj)
 {
    return efl_ui_autorepeat_enabled_get(obj);
@@ -455,7 +455,7 @@ ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(efl_ui_button_legacy)
 
 /* Efl.Part end */
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

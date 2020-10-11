@@ -31,7 +31,7 @@ typedef Eo Elm_Gengrid_Item;
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI Elm_Widget_Item *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *obj);
+ELM_API Elm_Widget_Item *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *obj);
 
 /**
  * @brief Get the next item in a gengrid widget's internal list of items, given
@@ -45,7 +45,7 @@ EAPI Elm_Widget_Item *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *obj);
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI Elm_Widget_Item *elm_gengrid_item_next_get(const Elm_Gengrid_Item *obj);
+ELM_API Elm_Widget_Item *elm_gengrid_item_next_get(const Elm_Gengrid_Item *obj);
 
 /**
  * @brief Control whether a given gengrid item is selected or not
@@ -63,7 +63,7 @@ EAPI Elm_Widget_Item *elm_gengrid_item_next_get(const Elm_Gengrid_Item *obj);
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_selected_set(Elm_Gengrid_Item *obj, Eina_Bool selected);
+ELM_API void elm_gengrid_item_selected_set(Elm_Gengrid_Item *obj, Eina_Bool selected);
 
 /**
  * @brief Control whether a given gengrid item is selected or not
@@ -81,7 +81,7 @@ EAPI void elm_gengrid_item_selected_set(Elm_Gengrid_Item *obj, Eina_Bool selecte
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI Eina_Bool elm_gengrid_item_selected_get(const Elm_Gengrid_Item *obj);
+ELM_API Eina_Bool elm_gengrid_item_selected_get(const Elm_Gengrid_Item *obj);
 
 /**
  * @brief Get the Gengrid Item class for the given Gengrid Item.
@@ -95,7 +95,7 @@ EAPI Eina_Bool elm_gengrid_item_selected_get(const Elm_Gengrid_Item *obj);
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Gengrid_Item *obj);
+ELM_API const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Gengrid_Item *obj);
 
 /**
  * @brief Get the index of the item. It is only valid once displayed.
@@ -106,7 +106,7 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Gen
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI int elm_gengrid_item_index_get(const Elm_Gengrid_Item *obj);
+ELM_API int elm_gengrid_item_index_get(const Elm_Gengrid_Item *obj);
 
 /**
  * @brief Get a given gengrid item's position, relative to the whole gengrid's
@@ -121,7 +121,7 @@ EAPI int elm_gengrid_item_index_get(const Elm_Gengrid_Item *obj);
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_pos_get(const Elm_Gengrid_Item *obj, unsigned int *x, unsigned int *y);
+ELM_API void elm_gengrid_item_pos_get(const Elm_Gengrid_Item *obj, unsigned int *x, unsigned int *y);
 
 /**
  * @brief Control the gengrid item's select mode.
@@ -147,7 +147,7 @@ EAPI void elm_gengrid_item_pos_get(const Elm_Gengrid_Item *obj, unsigned int *x,
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_select_mode_set(Elm_Gengrid_Item *obj, Elm_Object_Select_Mode mode);
+ELM_API void elm_gengrid_item_select_mode_set(Elm_Gengrid_Item *obj, Elm_Object_Select_Mode mode);
 
 /**
  * @brief Control the gengrid item's select mode.
@@ -174,7 +174,7 @@ EAPI void elm_gengrid_item_select_mode_set(Elm_Gengrid_Item *obj, Elm_Object_Sel
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI Elm_Object_Select_Mode elm_gengrid_item_select_mode_get(const Elm_Gengrid_Item *obj);
+ELM_API Elm_Object_Select_Mode elm_gengrid_item_select_mode_get(const Elm_Gengrid_Item *obj);
 
 /**
  * @brief Custom size mode for non-homogeneous gengrid.
@@ -196,7 +196,7 @@ EAPI Elm_Object_Select_Mode elm_gengrid_item_select_mode_get(const Elm_Gengrid_I
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_custom_size_set(Elm_Gengrid_Item *obj, int w, int h);
+ELM_API void elm_gengrid_item_custom_size_set(Elm_Gengrid_Item *obj, int w, int h);
 
 /**
  * @brief Custom size mode for non-homogeneous gengrid.
@@ -215,7 +215,7 @@ EAPI void elm_gengrid_item_custom_size_set(Elm_Gengrid_Item *obj, int w, int h);
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_custom_size_get(const Elm_Gengrid_Item *obj, int *w, int *h);
+ELM_API void elm_gengrid_item_custom_size_get(const Elm_Gengrid_Item *obj, int *w, int *h);
 
 /**
  * @brief Show the portion of a gengrid's internal grid containing a given
@@ -229,7 +229,7 @@ EAPI void elm_gengrid_item_custom_size_get(const Elm_Gengrid_Item *obj, int *w, 
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_show(Elm_Gengrid_Item *obj, Elm_Gengrid_Item_Scrollto_Type type);
+ELM_API void elm_gengrid_item_show(Elm_Gengrid_Item *obj, Elm_Gengrid_Item_Scrollto_Type type);
 
 /**
  * @brief Animatedly bring in, to the visible area of a gengrid, a given item
@@ -244,7 +244,7 @@ EAPI void elm_gengrid_item_show(Elm_Gengrid_Item *obj, Elm_Gengrid_Item_Scrollto
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_bring_in(Elm_Gengrid_Item *obj, Elm_Gengrid_Item_Scrollto_Type type);
+ELM_API void elm_gengrid_item_bring_in(Elm_Gengrid_Item *obj, Elm_Gengrid_Item_Scrollto_Type type);
 
 /**
  * @brief Update the contents of a given gengrid item
@@ -256,7 +256,7 @@ EAPI void elm_gengrid_item_bring_in(Elm_Gengrid_Item *obj, Elm_Gengrid_Item_Scro
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_update(Elm_Gengrid_Item *obj);
+ELM_API void elm_gengrid_item_update(Elm_Gengrid_Item *obj);
 
 /**
  * @brief Update the part of an item
@@ -277,7 +277,7 @@ EAPI void elm_gengrid_item_update(Elm_Gengrid_Item *obj);
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_fields_update(Elm_Gengrid_Item *obj, const char *parts, Elm_Gengrid_Item_Field_Type itf);
+ELM_API void elm_gengrid_item_fields_update(Elm_Gengrid_Item *obj, const char *parts, Elm_Gengrid_Item_Field_Type itf);
 
 /**
  * @brief Update the item class of a gengrid item.
@@ -292,7 +292,7 @@ EAPI void elm_gengrid_item_fields_update(Elm_Gengrid_Item *obj, const char *part
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_item_class_update(Elm_Gengrid_Item *obj, const Elm_Gengrid_Item_Class *itc);
+ELM_API void elm_gengrid_item_item_class_update(Elm_Gengrid_Item *obj, const Elm_Gengrid_Item_Class *itc);
 
 /**
  * @brief Unset all contents fetched by the item class
@@ -308,6 +308,6 @@ EAPI void elm_gengrid_item_item_class_update(Elm_Gengrid_Item *obj, const Elm_Ge
  *
  * @ingroup Elm_Gengrid_Item_Group
  */
-EAPI void elm_gengrid_item_all_contents_unset(Elm_Gengrid_Item *obj, Eina_List **l);
+ELM_API void elm_gengrid_item_all_contents_unset(Elm_Gengrid_Item *obj, Eina_List **l);
 
 #endif

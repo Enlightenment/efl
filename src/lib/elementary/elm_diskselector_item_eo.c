@@ -1,11 +1,11 @@
 
 Elm_Widget_Item *_elm_diskselector_item_prev_get(const Eo *obj, Elm_Diskselector_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_item_prev_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_item_prev_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_diskselector_item_next_get(const Eo *obj, Elm_Diskselector_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_item_next_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_item_next_get, Elm_Widget_Item *, NULL);
 
 void _elm_diskselector_item_selected_set(Eo *obj, Elm_Diskselector_Item_Data *pd, Eina_Bool selected);
 
@@ -25,7 +25,7 @@ __eolian_elm_diskselector_item_selected_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_diskselector_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_diskselector_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
 
 Eina_Bool _elm_diskselector_item_selected_get(const Eo *obj, Elm_Diskselector_Item_Data *pd);
 
@@ -37,7 +37,7 @@ __eolian_elm_diskselector_item_selected_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_item_selected_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_item_selected_get, Eina_Bool, 0);
 
 Efl_Object *_elm_diskselector_item_efl_object_constructor(Eo *obj, Elm_Diskselector_Item_Data *pd);
 

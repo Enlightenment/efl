@@ -1182,21 +1182,21 @@ _elm_index_efl_ui_widget_on_access_update(Eo *obj, Elm_Index_Data *_pd EINA_UNUS
    _access_obj_process(obj, _elm_index_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_index_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+ELM_API void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    Efl_Ui_Layout_Orientation dir = horizontal ? EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL : EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    efl_ui_layout_orientation_set(obj, dir);
 }
 
-EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj)
+ELM_API Eina_Bool elm_index_horizontal_get(const Evas_Object *obj)
 {
    Efl_Ui_Layout_Orientation dir = efl_ui_layout_orientation_get(obj);
 
@@ -1381,7 +1381,7 @@ _elm_index_item_prepend(Eo *obj, Elm_Index_Data *sd, const char *letter, Evas_Sm
    return eo_item;
 }
 
-EINA_DEPRECATED EAPI Elm_Object_Item *
+EINA_DEPRECATED ELM_API Elm_Object_Item *
 elm_index_item_prepend_relative(Evas_Object *obj,
                                 const char *letter,
                                 const void *item,

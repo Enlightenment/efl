@@ -513,7 +513,7 @@ _elm_store_filesystem_item_free(Elm_Store_Item *item)
    eina_stringshare_del(sti->path);
 }
 
-EAPI Elm_Store *
+ELM_API Elm_Store *
 elm_store_filesystem_new(void)
 {
    Elm_Store_Filesystem *st = elm_store_new(Elm_Store_Filesystem);
@@ -526,7 +526,7 @@ elm_store_filesystem_new(void)
    return &st->base;
 }
 
-EAPI void
+ELM_API void
 elm_store_free(Elm_Store *st)
 {
    void (*item_free)(Elm_Store_Item *);
@@ -564,7 +564,7 @@ elm_store_free(Elm_Store *st)
    free(st);
 }
 
-EAPI void
+ELM_API void
 elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
@@ -584,7 +584,7 @@ elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj)
    elm_genlist_clear(st->genlist);
 }
 
-EAPI void
+ELM_API void
 elm_store_filesystem_directory_set(Elm_Store *store, const char *dir)
 {
    Elm_Store_Filesystem *st = (Elm_Store_Filesystem *)store;
@@ -599,7 +599,7 @@ elm_store_filesystem_directory_set(Elm_Store *store, const char *dir)
                                               st, EINA_TRUE);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_store_filesystem_directory_get(const Elm_Store *store)
 {
    const Elm_Store_Filesystem *st = (const Elm_Store_Filesystem *)store;
@@ -608,7 +608,7 @@ elm_store_filesystem_directory_get(const Elm_Store *store)
    return st->dir;
 }
 
-EAPI void
+ELM_API void
 elm_store_cache_set(Elm_Store *st, int max)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
@@ -617,14 +617,14 @@ elm_store_cache_set(Elm_Store *st, int max)
    _store_cache_trim(st);
 }
 
-EAPI int
+ELM_API int
 elm_store_cache_get(const Elm_Store *st)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return 0;
    return st->cache_max;
 }
 
-EAPI void
+ELM_API void
 elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
@@ -632,7 +632,7 @@ elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *
    st->cb.list.data = (void *)data;
 }
 
-EAPI void
+ELM_API void
 elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
@@ -640,21 +640,21 @@ elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void
    st->cb.fetch.data = (void *)data;
 }
 
-EAPI void
+ELM_API void
 elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
    st->fetch_thread = !!use_thread;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_store_fetch_thread_get(const Elm_Store *st)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return EINA_FALSE;
    return st->fetch_thread;
 }
 
-EAPI void
+ELM_API void
 elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
@@ -662,21 +662,21 @@ elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const 
    st->cb.unfetch.data = (void *)data;
 }
 
-EAPI void
+ELM_API void
 elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
    st->sorted = sorted;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_store_sorted_get(const Elm_Store *st)
 {
    if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return EINA_FALSE;
    return st->sorted;
 }
 
-EAPI void
+ELM_API void
 elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
@@ -686,7 +686,7 @@ elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 //   eina_lock_release(&sti->lock);
 }
 
-EAPI void *
+ELM_API void *
 elm_store_item_data_get(Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
@@ -698,7 +698,7 @@ elm_store_item_data_get(Elm_Store_Item *sti)
    return d;
 }
 
-EAPI const Elm_Store *
+ELM_API const Elm_Store *
 elm_store_item_store_get(const Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
@@ -706,7 +706,7 @@ elm_store_item_store_get(const Elm_Store_Item *sti)
    return sti->store;
 }
 
-EAPI const Elm_Object_Item *
+ELM_API const Elm_Object_Item *
 elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
@@ -714,7 +714,7 @@ elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
    return sti->item;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_store_item_filesystem_path_get(const Elm_Store_Item *item)
 {
    Elm_Store_Item_Filesystem *sti = (Elm_Store_Item_Filesystem *)item;

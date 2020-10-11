@@ -13,7 +13,7 @@
  *
  * @ingroup Elm_Calendar
  */
-EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent);
+ELM_API Evas_Object         *elm_calendar_add(Evas_Object *parent);
 
 /**
  * Delete mark from the calendar.
@@ -27,7 +27,7 @@ EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent);
  *
  * @ref calendar_example_06
  */
-EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark);
+ELM_API void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark);
 
 /**
  * Set the minimum and maximum values for the year.
@@ -43,7 +43,7 @@ EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark);
  *
  * @ref calendar_example_03
  */
-EAPI void                 elm_calendar_min_max_year_set(Elm_Calendar *obj, int min, int max);
+ELM_API void                 elm_calendar_min_max_year_set(Elm_Calendar *obj, int min, int max);
 
 /**
  * Get the minimum and maximum values for the year.
@@ -57,4 +57,4 @@ EAPI void                 elm_calendar_min_max_year_set(Elm_Calendar *obj, int m
  *
  * @ref calendar_example_05
  */
-EAPI void                 elm_calendar_min_max_year_get(const Elm_Calendar *obj, int *min, int *max);
+ELM_API void                 elm_calendar_min_max_year_get(const Elm_Calendar *obj, int *min, int *max);

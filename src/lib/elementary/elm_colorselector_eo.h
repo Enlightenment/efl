@@ -37,7 +37,7 @@ typedef enum
  */
 #define ELM_COLORSELECTOR_CLASS elm_colorselector_class_get()
 
-EWAPI const Efl_Class *elm_colorselector_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_colorselector_class_get(void) EINA_CONST;
 
 /**
  * @brief Set color to colorselector.
@@ -50,7 +50,7 @@ EWAPI const Efl_Class *elm_colorselector_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI void elm_obj_colorselector_picked_color_set(Eo *obj, int r, int g, int b, int a);
+ELM_API ELM_API_WEAK void elm_obj_colorselector_picked_color_set(Eo *obj, int r, int g, int b, int a);
 
 /**
  * @brief Get current color from colorselector.
@@ -63,7 +63,7 @@ EOAPI void elm_obj_colorselector_picked_color_set(Eo *obj, int r, int g, int b, 
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI void elm_obj_colorselector_picked_color_get(const Eo *obj, int *r, int *g, int *b, int *a);
+ELM_API ELM_API_WEAK void elm_obj_colorselector_picked_color_get(const Eo *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Set current palette's name
@@ -77,7 +77,7 @@ EOAPI void elm_obj_colorselector_picked_color_get(const Eo *obj, int *r, int *g,
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI void elm_obj_colorselector_palette_name_set(Eo *obj, const char *palette_name);
+ELM_API ELM_API_WEAK void elm_obj_colorselector_palette_name_set(Eo *obj, const char *palette_name);
 
 /**
  * @brief Get current palette's name
@@ -91,7 +91,7 @@ EOAPI void elm_obj_colorselector_palette_name_set(Eo *obj, const char *palette_n
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI const char *elm_obj_colorselector_palette_name_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_colorselector_palette_name_get(const Eo *obj);
 
 /**
  * @brief Set Colorselector's mode.
@@ -103,7 +103,7 @@ EOAPI const char *elm_obj_colorselector_palette_name_get(const Eo *obj);
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI void elm_obj_colorselector_mode_set(Eo *obj, Elm_Colorselector_Mode mode);
+ELM_API ELM_API_WEAK void elm_obj_colorselector_mode_set(Eo *obj, Elm_Colorselector_Mode mode);
 
 /**
  * @brief Get Colorselector's mode.
@@ -114,7 +114,7 @@ EOAPI void elm_obj_colorselector_mode_set(Eo *obj, Elm_Colorselector_Mode mode);
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI Elm_Colorselector_Mode elm_obj_colorselector_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Colorselector_Mode elm_obj_colorselector_mode_get(const Eo *obj);
 
 /**
  * @brief Get list of palette items.
@@ -130,7 +130,7 @@ EOAPI Elm_Colorselector_Mode elm_obj_colorselector_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI const Eina_List *elm_obj_colorselector_palette_items_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_colorselector_palette_items_get(const Eo *obj);
 
 /**
  * @brief Get the selected item in colorselector palette.
@@ -143,7 +143,7 @@ EOAPI const Eina_List *elm_obj_colorselector_palette_items_get(const Eo *obj);
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI Elm_Widget_Item *elm_obj_colorselector_palette_selected_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_colorselector_palette_selected_item_get(const Eo *obj);
 
 /**
  * @brief Add a new color item to palette.
@@ -158,15 +158,15 @@ EOAPI Elm_Widget_Item *elm_obj_colorselector_palette_selected_item_get(const Eo 
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI Elm_Widget_Item *elm_obj_colorselector_palette_color_add(Eo *obj, int r, int g, int b, int a);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_colorselector_palette_color_add(Eo *obj, int r, int g, int b, int a);
 
 /** Clear the palette items.
  *
  * @ingroup Elm_Colorselector
  */
-EOAPI void elm_obj_colorselector_palette_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_colorselector_palette_clear(Eo *obj);
 
-EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED;
 
 /** Called when color item was selected
  * @return Efl_Object *
@@ -175,7 +175,7 @@ EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SEL
  */
 #define ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED (&(_ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED))
 
-EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED;
 
 /** Called when color item got a long press
  * @return Efl_Object *
@@ -184,7 +184,7 @@ EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LON
  */
 #define ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED (&(_ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED))
 
-EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED;
 
 /** Called when colorselector changed
  *
@@ -192,7 +192,7 @@ EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED;
  */
 #define ELM_COLORSELECTOR_EVENT_CHANGED (&(_ELM_COLORSELECTOR_EVENT_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED_USER;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_COLORSELECTOR_EVENT_CHANGED_USER;
 
 /** Called when the object changed due to user interaction
  *

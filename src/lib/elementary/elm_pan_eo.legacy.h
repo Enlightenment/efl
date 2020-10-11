@@ -23,7 +23,7 @@ typedef Eo Elm_Pan;
  *
  * @ingroup Elm_Pan_Group
  */
-EAPI void elm_pan_pos_set(Elm_Pan *obj, int x, int y);
+ELM_API void elm_pan_pos_set(Elm_Pan *obj, int x, int y);
 
 /**
  * @brief Position
@@ -34,7 +34,7 @@ EAPI void elm_pan_pos_set(Elm_Pan *obj, int x, int y);
  *
  * @ingroup Elm_Pan_Group
  */
-EAPI void elm_pan_pos_get(const Elm_Pan *obj, int *x, int *y);
+ELM_API void elm_pan_pos_get(const Elm_Pan *obj, int *x, int *y);
 
 /**
  * @brief Content size
@@ -45,7 +45,7 @@ EAPI void elm_pan_pos_get(const Elm_Pan *obj, int *x, int *y);
  *
  * @ingroup Elm_Pan_Group
  */
-EAPI void elm_pan_content_size_get(const Elm_Pan *obj, int *w, int *h);
+ELM_API void elm_pan_content_size_get(const Elm_Pan *obj, int *w, int *h);
 
 /**
  * @brief Minimal position
@@ -56,7 +56,7 @@ EAPI void elm_pan_content_size_get(const Elm_Pan *obj, int *w, int *h);
  *
  * @ingroup Elm_Pan_Group
  */
-EAPI void elm_pan_pos_min_get(const Elm_Pan *obj, int *x, int *y);
+ELM_API void elm_pan_pos_min_get(const Elm_Pan *obj, int *x, int *y);
 
 /**
  * @brief Maximal position
@@ -67,6 +67,6 @@ EAPI void elm_pan_pos_min_get(const Elm_Pan *obj, int *x, int *y);
  *
  * @ingroup Elm_Pan_Group
  */
-EAPI void elm_pan_pos_max_get(const Elm_Pan *obj, int *x, int *y);
+ELM_API void elm_pan_pos_max_get(const Elm_Pan *obj, int *x, int *y);
 
 #endif

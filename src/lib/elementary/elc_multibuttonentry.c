@@ -1624,7 +1624,7 @@ _elm_multibuttonentry_efl_ui_widget_on_access_update(Eo *obj, Elm_Multibuttonent
    _access_obj_process(obj, _elm_multibuttonentry_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_multibuttonentry_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -1838,13 +1838,13 @@ _elm_multibuttonentry_item_elm_widget_item_disable(Eo *eo_it, Elm_Multibuttonent
    elm_layout_signal_emit(VIEW(it), emission, "elm");
 }
 
-EINA_DEPRECATED EAPI void *
+EINA_DEPRECATED ELM_API void *
 elm_multibuttonentry_item_data_get(const Elm_Object_Item *it)
 {
    return (void *)WIDGET_ITEM_DATA_GET(it);
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_multibuttonentry_item_data_set(Elm_Object_Item *it,
                                    void *data)
 {

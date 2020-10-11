@@ -22,7 +22,7 @@ typedef Eo Elm_Index;
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_autohide_disabled_set(Elm_Index *obj, Eina_Bool disabled);
+ELM_API void elm_index_autohide_disabled_set(Elm_Index *obj, Eina_Bool disabled);
 
 /**
  * @brief Enable or disable auto hiding feature for a given index widget.
@@ -33,7 +33,7 @@ EAPI void elm_index_autohide_disabled_set(Elm_Index *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Eina_Bool elm_index_autohide_disabled_get(const Elm_Index *obj);
+ELM_API Eina_Bool elm_index_autohide_disabled_get(const Elm_Index *obj);
 
 /**
  * @brief Enable or disable omit feature for a given index widget.
@@ -45,7 +45,7 @@ EAPI Eina_Bool elm_index_autohide_disabled_get(const Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_omit_enabled_set(Elm_Index *obj, Eina_Bool enabled);
+ELM_API void elm_index_omit_enabled_set(Elm_Index *obj, Eina_Bool enabled);
 
 /**
  * @brief Enable or disable omit feature for a given index widget.
@@ -58,7 +58,7 @@ EAPI void elm_index_omit_enabled_set(Elm_Index *obj, Eina_Bool enabled);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Eina_Bool elm_index_omit_enabled_get(const Elm_Index *obj);
+ELM_API Eina_Bool elm_index_omit_enabled_get(const Elm_Index *obj);
 
 /**
  * @brief Control standard_priority group of index. Priority group will be
@@ -72,7 +72,7 @@ EAPI Eina_Bool elm_index_omit_enabled_get(const Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_standard_priority_set(Elm_Index *obj, int priority);
+ELM_API void elm_index_standard_priority_set(Elm_Index *obj, int priority);
 
 /**
  * @brief Control standard_priority group of index. Priority group will be
@@ -87,7 +87,7 @@ EAPI void elm_index_standard_priority_set(Elm_Index *obj, int priority);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI int elm_index_standard_priority_get(const Elm_Index *obj);
+ELM_API int elm_index_standard_priority_get(const Elm_Index *obj);
 
 /**
  * @brief Set a delay change time for index object.
@@ -99,7 +99,7 @@ EAPI int elm_index_standard_priority_get(const Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_delay_change_time_set(Elm_Index *obj, double dtime);
+ELM_API void elm_index_delay_change_time_set(Elm_Index *obj, double dtime);
 
 /**
  * @brief Set a delay change time for index object.
@@ -112,7 +112,7 @@ EAPI void elm_index_delay_change_time_set(Elm_Index *obj, double dtime);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI double elm_index_delay_change_time_get(const Elm_Index *obj);
+ELM_API double elm_index_delay_change_time_get(const Elm_Index *obj);
 
 /**
  * @brief Control the indicator as to be disabled.
@@ -125,7 +125,7 @@ EAPI double elm_index_delay_change_time_get(const Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_indicator_disabled_set(Elm_Index *obj, Eina_Bool disabled);
+ELM_API void elm_index_indicator_disabled_set(Elm_Index *obj, Eina_Bool disabled);
 
 /**
  * @brief Control the indicator as to be disabled.
@@ -139,7 +139,7 @@ EAPI void elm_index_indicator_disabled_set(Elm_Index *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Eina_Bool elm_index_indicator_disabled_get(const Elm_Index *obj);
+ELM_API Eina_Bool elm_index_indicator_disabled_get(const Elm_Index *obj);
 
 /**
  * @brief Set the items level for a given index widget.
@@ -151,7 +151,7 @@ EAPI Eina_Bool elm_index_indicator_disabled_get(const Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_item_level_set(Elm_Index *obj, int level);
+ELM_API void elm_index_item_level_set(Elm_Index *obj, int level);
 
 /**
  * @brief Set the items level for a given index widget.
@@ -164,7 +164,7 @@ EAPI void elm_index_item_level_set(Elm_Index *obj, int level);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI int elm_index_item_level_get(const Elm_Index *obj);
+ELM_API int elm_index_item_level_get(const Elm_Index *obj);
 
 /**
  * @brief Flush the changes made to the index items so they work correctly
@@ -180,7 +180,7 @@ EAPI int elm_index_item_level_get(const Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_level_go(Elm_Index *obj, int level);
+ELM_API void elm_index_level_go(Elm_Index *obj, int level);
 
 /**
  * @brief Prepend a new item on a given index widget.
@@ -200,7 +200,7 @@ EAPI void elm_index_level_go(Elm_Index *obj, int level);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_item_prepend(Elm_Index *obj, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API Elm_Widget_Item *elm_index_item_prepend(Elm_Index *obj, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Removes all items from a given index widget.
@@ -211,7 +211,7 @@ EAPI Elm_Widget_Item *elm_index_item_prepend(Elm_Index *obj, const char *letter,
  *
  * @ingroup Elm_Index_Group
  */
-EAPI void elm_index_item_clear(Elm_Index *obj);
+ELM_API void elm_index_item_clear(Elm_Index *obj);
 
 /**
  * @brief Insert a new item into the index object after item @c after.
@@ -235,7 +235,7 @@ EAPI void elm_index_item_clear(Elm_Index *obj);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_item_insert_after(Elm_Index *obj, Elm_Widget_Item *after, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API Elm_Widget_Item *elm_index_item_insert_after(Elm_Index *obj, Elm_Widget_Item *after, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Find a given index widget's item, using item data.
@@ -247,7 +247,7 @@ EAPI Elm_Widget_Item *elm_index_item_insert_after(Elm_Index *obj, Elm_Widget_Ite
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_item_find(Elm_Index *obj, const void *data);
+ELM_API Elm_Widget_Item *elm_index_item_find(Elm_Index *obj, const void *data);
 
 /**
  * @brief Insert a new item into the index object before item @c before.
@@ -271,7 +271,7 @@ EAPI Elm_Widget_Item *elm_index_item_find(Elm_Index *obj, const void *data);
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_item_insert_before(Elm_Index *obj, Elm_Widget_Item *before, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API Elm_Widget_Item *elm_index_item_insert_before(Elm_Index *obj, Elm_Widget_Item *before, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Append a new item on a given index widget.
@@ -291,7 +291,7 @@ EAPI Elm_Widget_Item *elm_index_item_insert_before(Elm_Index *obj, Elm_Widget_It
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_item_append(Elm_Index *obj, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API Elm_Widget_Item *elm_index_item_append(Elm_Index *obj, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Returns the last selected item, for a given index widget.
@@ -303,7 +303,7 @@ EAPI Elm_Widget_Item *elm_index_item_append(Elm_Index *obj, const char *letter, 
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_selected_item_get(const Elm_Index *obj, int level);
+ELM_API Elm_Widget_Item *elm_index_selected_item_get(const Elm_Index *obj, int level);
 
 /**
  * @brief Insert a new item into the given index widget, using @c cmp_func
@@ -336,6 +336,6 @@ EAPI Elm_Widget_Item *elm_index_selected_item_get(const Elm_Index *obj, int leve
  *
  * @ingroup Elm_Index_Group
  */
-EAPI Elm_Widget_Item *elm_index_item_sorted_insert(Elm_Index *obj, const char *letter, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
+ELM_API Elm_Widget_Item *elm_index_item_sorted_insert(Elm_Index *obj, const char *letter, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 
 #endif

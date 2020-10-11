@@ -1,45 +1,45 @@
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_PAGE_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_PAGE_CHANGED =
    EFL_EVENT_DESCRIPTION("scroll,page,changed");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_HBAR_UNPRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_HBAR_UNPRESS =
    EFL_EVENT_DESCRIPTION("hbar,unpress");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_HBAR_PRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_HBAR_PRESS =
    EFL_EVENT_DESCRIPTION("hbar,press");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_HBAR_DRAG =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_HBAR_DRAG =
    EFL_EVENT_DESCRIPTION("hbar,drag");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_VBAR_UNPRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_VBAR_UNPRESS =
    EFL_EVENT_DESCRIPTION("vbar,unpress");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_VBAR_PRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_VBAR_PRESS =
    EFL_EVENT_DESCRIPTION("vbar,press");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_VBAR_DRAG =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_VBAR_DRAG =
    EFL_EVENT_DESCRIPTION("vbar,drag");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_LEFT =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_LEFT =
    EFL_EVENT_DESCRIPTION("scroll,left");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_RIGHT =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_RIGHT =
    EFL_EVENT_DESCRIPTION("scroll,right");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_UP =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_UP =
    EFL_EVENT_DESCRIPTION("scroll,up");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_DOWN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_SCROLL_DOWN =
    EFL_EVENT_DESCRIPTION("scroll,down");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_LEFT =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_LEFT =
    EFL_EVENT_DESCRIPTION("edge,left");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_RIGHT =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_RIGHT =
    EFL_EVENT_DESCRIPTION("edge,right");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_TOP =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_TOP =
    EFL_EVENT_DESCRIPTION("edge,top");
-EWAPI const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_BOTTOM =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SCROLLER_EVENT_EDGE_BOTTOM =
    EFL_EVENT_DESCRIPTION("edge,bottom");
 
 void _elm_scroller_custom_widget_base_theme_set(Eo *obj, Elm_Scroller_Data *pd, const char *klass, const char *group);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_scroller_custom_widget_base_theme_set, EFL_FUNC_CALL(klass, group), const char *klass, const char *group);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_scroller_custom_widget_base_theme_set, EFL_FUNC_CALL(klass, group), const char *klass, const char *group);
 
 void _elm_scroller_page_scroll_limit_set(const Eo *obj, Elm_Scroller_Data *pd, int page_limit_h, int page_limit_v);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_scroller_page_scroll_limit_set, EFL_FUNC_CALL(page_limit_h, page_limit_v), int page_limit_h, int page_limit_v);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_scroller_page_scroll_limit_set, EFL_FUNC_CALL(page_limit_h, page_limit_v), int page_limit_h, int page_limit_v);
 
 void _elm_scroller_page_scroll_limit_get(const Eo *obj, Elm_Scroller_Data *pd, int *page_limit_h, int *page_limit_v);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_scroller_page_scroll_limit_get, EFL_FUNC_CALL(page_limit_h, page_limit_v), int *page_limit_h, int *page_limit_v);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_scroller_page_scroll_limit_get, EFL_FUNC_CALL(page_limit_h, page_limit_v), int *page_limit_h, int *page_limit_v);
 
 Efl_Object *_elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *pd);
 

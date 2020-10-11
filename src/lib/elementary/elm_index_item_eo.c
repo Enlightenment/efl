@@ -17,7 +17,7 @@ __eolian_elm_index_item_selected_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_index_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_index_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
 
 void _elm_index_item_priority_set(Eo *obj, Elm_Index_Item_Data *pd, int priority);
 
@@ -37,11 +37,11 @@ __eolian_elm_index_item_priority_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_index_item_priority_set, EFL_FUNC_CALL(priority), int priority);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_index_item_priority_set, EFL_FUNC_CALL(priority), int priority);
 
 const char *_elm_index_item_letter_get(const Eo *obj, Elm_Index_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_index_item_letter_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_index_item_letter_get, const char *, NULL);
 
 Efl_Object *_elm_index_item_efl_object_constructor(Eo *obj, Elm_Index_Item_Data *pd);
 

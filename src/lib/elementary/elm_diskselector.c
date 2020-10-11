@@ -1404,7 +1404,7 @@ _elm_diskselector_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Diskse
    _elm_diskselector_smart_focus_next_enable = acs;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_diskselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -1521,7 +1521,7 @@ _elm_diskselector_side_text_max_length_set(Eo *obj EINA_UNUSED, Elm_Diskselector
    sd->len_side = len;
 }
 
-EAPI void
+ELM_API void
 elm_diskselector_bounce_set(Evas_Object *obj,
                             Eina_Bool h_bounce,
                             Eina_Bool v_bounce)
@@ -1531,7 +1531,7 @@ elm_diskselector_bounce_set(Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_set(obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_diskselector_bounce_get(const Evas_Object *obj,
                             Eina_Bool *h_bounce,
                             Eina_Bool *v_bounce)
@@ -1541,7 +1541,7 @@ elm_diskselector_bounce_get(const Evas_Object *obj,
    elm_interface_scrollable_bounce_allow_get((Eo *) obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_diskselector_scroller_policy_get(const Evas_Object *obj,
                                      Elm_Scroller_Policy *policy_h,
                                      Elm_Scroller_Policy *policy_v)
@@ -1560,7 +1560,7 @@ _elm_diskselector_elm_interface_scrollable_policy_get(const Eo *obj, Elm_Disksel
    if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
 }
 
-EAPI void
+ELM_API void
 elm_diskselector_scroller_policy_set(Evas_Object *obj,
                                      Elm_Scroller_Policy policy_h,
                                      Elm_Scroller_Policy policy_v)

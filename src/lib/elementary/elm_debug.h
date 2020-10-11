@@ -12,7 +12,7 @@
  * @param top The root object
  * @ingroup Elm_Debug
  */
-EAPI void elm_object_tree_dump(const Evas_Object *top);
+ELM_API void elm_object_tree_dump(const Evas_Object *top);
 
 /**
  * Print Elm Objects tree hierarchy in file as dot(graphviz) syntax.
@@ -21,7 +21,7 @@ EAPI void elm_object_tree_dump(const Evas_Object *top);
  * @param file The path of output file
  * @ingroup Elm_Debug
  */
-EAPI void elm_object_tree_dot_dump(const Evas_Object *top, const char *file);
+ELM_API void elm_object_tree_dot_dump(const Evas_Object *top, const char *file);
 
 /**
  * @}

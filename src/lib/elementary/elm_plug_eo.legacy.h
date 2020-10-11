@@ -29,7 +29,7 @@ typedef Eo Elm_Plug;
  *
  * @ingroup Elm_Plug_Group
  */
-EAPI Efl_Canvas_Object *elm_plug_image_object_get(const Elm_Plug *obj);
+ELM_API Efl_Canvas_Object *elm_plug_image_object_get(const Elm_Plug *obj);
 
 /**
  * @brief Connect a plug widget to service provided by socket image.
@@ -44,6 +44,6 @@ EAPI Efl_Canvas_Object *elm_plug_image_object_get(const Elm_Plug *obj);
  *
  * @ingroup Elm_Plug_Group
  */
-EAPI Eina_Bool elm_plug_connect(Elm_Plug *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
+ELM_API Eina_Bool elm_plug_connect(Elm_Plug *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 #endif

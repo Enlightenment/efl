@@ -1,4 +1,4 @@
-EWAPI const Efl_Event_Description _ELM_LABEL_EVENT_SLIDE_END =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_LABEL_EVENT_SLIDE_END =
    EFL_EVENT_DESCRIPTION("slide,end");
 
 void _elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *pd, int w);
@@ -19,7 +19,7 @@ __eolian_elm_label_wrap_width_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_label_wrap_width_set, EFL_FUNC_CALL(w), int w);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_label_wrap_width_set, EFL_FUNC_CALL(w), int w);
 
 int _elm_label_wrap_width_get(const Eo *obj, Elm_Label_Data *pd);
 
@@ -31,7 +31,7 @@ __eolian_elm_label_wrap_width_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_label_wrap_width_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_label_wrap_width_get, int, 0);
 
 void _elm_label_slide_speed_set(Eo *obj, Elm_Label_Data *pd, double speed);
 
@@ -51,7 +51,7 @@ __eolian_elm_label_slide_speed_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_label_slide_speed_set, EFL_FUNC_CALL(speed), double speed);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_label_slide_speed_set, EFL_FUNC_CALL(speed), double speed);
 
 double _elm_label_slide_speed_get(const Eo *obj, Elm_Label_Data *pd);
 
@@ -63,15 +63,15 @@ __eolian_elm_label_slide_speed_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_label_slide_speed_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_label_slide_speed_get, double, 0);
 
 void _elm_label_slide_mode_set(Eo *obj, Elm_Label_Data *pd, Elm_Label_Slide_Mode mode);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_label_slide_mode_set, EFL_FUNC_CALL(mode), Elm_Label_Slide_Mode mode);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_label_slide_mode_set, EFL_FUNC_CALL(mode), Elm_Label_Slide_Mode mode);
 
 Elm_Label_Slide_Mode _elm_label_slide_mode_get(const Eo *obj, Elm_Label_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_label_slide_mode_get, Elm_Label_Slide_Mode, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_label_slide_mode_get, Elm_Label_Slide_Mode, 0);
 
 void _elm_label_slide_duration_set(Eo *obj, Elm_Label_Data *pd, double duration);
 
@@ -91,7 +91,7 @@ __eolian_elm_label_slide_duration_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_label_slide_duration_set, EFL_FUNC_CALL(duration), double duration);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_label_slide_duration_set, EFL_FUNC_CALL(duration), double duration);
 
 double _elm_label_slide_duration_get(const Eo *obj, Elm_Label_Data *pd);
 
@@ -103,15 +103,15 @@ __eolian_elm_label_slide_duration_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_label_slide_duration_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_label_slide_duration_get, double, 0);
 
 void _elm_label_line_wrap_set(Eo *obj, Elm_Label_Data *pd, Elm_Wrap_Type wrap);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_label_line_wrap_set, EFL_FUNC_CALL(wrap), Elm_Wrap_Type wrap);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_label_line_wrap_set, EFL_FUNC_CALL(wrap), Elm_Wrap_Type wrap);
 
 Elm_Wrap_Type _elm_label_line_wrap_get(const Eo *obj, Elm_Label_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_label_line_wrap_get, Elm_Wrap_Type, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_label_line_wrap_get, Elm_Wrap_Type, 0);
 
 void _elm_label_ellipsis_set(Eo *obj, Elm_Label_Data *pd, Eina_Bool ellipsis);
 
@@ -131,7 +131,7 @@ __eolian_elm_label_ellipsis_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_label_ellipsis_set, EFL_FUNC_CALL(ellipsis), Eina_Bool ellipsis);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_label_ellipsis_set, EFL_FUNC_CALL(ellipsis), Eina_Bool ellipsis);
 
 Eina_Bool _elm_label_ellipsis_get(const Eo *obj, Elm_Label_Data *pd);
 
@@ -143,11 +143,11 @@ __eolian_elm_label_ellipsis_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_label_ellipsis_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_label_ellipsis_get, Eina_Bool, 0);
 
 void _elm_label_slide_go(Eo *obj, Elm_Label_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_label_slide_go);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_label_slide_go);
 
 Efl_Object *_elm_label_efl_object_constructor(Eo *obj, Elm_Label_Data *pd);
 

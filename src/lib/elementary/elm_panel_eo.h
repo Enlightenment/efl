@@ -31,7 +31,7 @@ typedef enum
  */
 #define ELM_PANEL_CLASS elm_panel_class_get()
 
-EWAPI const Efl_Class *elm_panel_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_panel_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the orientation of the panel
@@ -43,7 +43,7 @@ EWAPI const Efl_Class *elm_panel_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Panel
  */
-EOAPI void elm_obj_panel_orient_set(Eo *obj, Elm_Panel_Orient orient);
+ELM_API ELM_API_WEAK void elm_obj_panel_orient_set(Eo *obj, Elm_Panel_Orient orient);
 
 /**
  * @brief Get the orientation of the panel.
@@ -54,7 +54,7 @@ EOAPI void elm_obj_panel_orient_set(Eo *obj, Elm_Panel_Orient orient);
  *
  * @ingroup Elm_Panel
  */
-EOAPI Elm_Panel_Orient elm_obj_panel_orient_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Panel_Orient elm_obj_panel_orient_get(const Eo *obj);
 
 /**
  * @brief Set the state of the panel.
@@ -64,7 +64,7 @@ EOAPI Elm_Panel_Orient elm_obj_panel_orient_get(const Eo *obj);
  *
  * @ingroup Elm_Panel
  */
-EOAPI void elm_obj_panel_hidden_set(Eo *obj, Eina_Bool hidden);
+ELM_API ELM_API_WEAK void elm_obj_panel_hidden_set(Eo *obj, Eina_Bool hidden);
 
 /**
  * @brief Get the state of the panel.
@@ -75,7 +75,7 @@ EOAPI void elm_obj_panel_hidden_set(Eo *obj, Eina_Bool hidden);
  *
  * @ingroup Elm_Panel
  */
-EOAPI Eina_Bool elm_obj_panel_hidden_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_panel_hidden_get(const Eo *obj);
 
 /**
  * @brief Set the scrollability of the panel.
@@ -85,7 +85,7 @@ EOAPI Eina_Bool elm_obj_panel_hidden_get(const Eo *obj);
  *
  * @ingroup Elm_Panel
  */
-EOAPI void elm_obj_panel_scrollable_set(Eo *obj, Eina_Bool scrollable);
+ELM_API ELM_API_WEAK void elm_obj_panel_scrollable_set(Eo *obj, Eina_Bool scrollable);
 
 /**
  * @brief Get the state of the scrollability.
@@ -98,7 +98,7 @@ EOAPI void elm_obj_panel_scrollable_set(Eo *obj, Eina_Bool scrollable);
  *
  * @ingroup Elm_Panel
  */
-EOAPI Eina_Bool elm_obj_panel_scrollable_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_panel_scrollable_get(const Eo *obj);
 
 /**
  * @brief Set the size of the scrollable panel.
@@ -108,7 +108,7 @@ EOAPI Eina_Bool elm_obj_panel_scrollable_get(const Eo *obj);
  *
  * @ingroup Elm_Panel
  */
-EOAPI void elm_obj_panel_scrollable_content_size_set(Eo *obj, double ratio);
+ELM_API ELM_API_WEAK void elm_obj_panel_scrollable_content_size_set(Eo *obj, double ratio);
 
 /**
  * @brief Get the size of the scrollable panel.
@@ -121,15 +121,15 @@ EOAPI void elm_obj_panel_scrollable_content_size_set(Eo *obj, double ratio);
  *
  * @ingroup Elm_Panel
  */
-EOAPI double elm_obj_panel_scrollable_content_size_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_panel_scrollable_content_size_get(const Eo *obj);
 
 /** Toggle the hidden state of the panel from code
  *
  * @ingroup Elm_Panel
  */
-EOAPI void elm_obj_panel_toggle(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_panel_toggle(Eo *obj);
 
-EWAPI extern const Efl_Event_Description _ELM_PANEL_EVENT_TOGGLED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PANEL_EVENT_TOGGLED;
 
 /** Called when the hidden state was toggled
  *

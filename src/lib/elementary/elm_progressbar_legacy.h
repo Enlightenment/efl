@@ -11,7 +11,7 @@ typedef Eo Elm_Progressbar;
  *
  * @ingroup Elm_Progressbar
  */
-EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_progressbar_add(Evas_Object *parent);
 
 /**
  * @brief Control the (exact) length of the bar region of a given progress bar
@@ -30,7 +30,7 @@ EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size);
+ELM_API void elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size);
 
 /**
  * @brief Control the (exact) length of the bar region of a given progress bar
@@ -49,7 +49,7 @@ EAPI void elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI Evas_Coord elm_progressbar_span_size_get(const Evas_Object *obj);
+ELM_API Evas_Coord elm_progressbar_span_size_get(const Evas_Object *obj);
 
 /**
  * @brief Control the progress value (in percentage) on a given progress bar
@@ -64,7 +64,7 @@ EAPI Evas_Coord elm_progressbar_span_size_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_value_set(Evas_Object *obj, double val);
+ELM_API void elm_progressbar_value_set(Evas_Object *obj, double val);
 
 /**
  * @brief Get the progress value (in percentage) on a given progress bar
@@ -74,7 +74,7 @@ EAPI void elm_progressbar_value_set(Evas_Object *obj, double val);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI double elm_progressbar_value_get(const Evas_Object *obj);
+ELM_API double elm_progressbar_value_get(const Evas_Object *obj);
 
 /**
  * @brief Invert a given progress bar widget's displaying values order
@@ -89,7 +89,7 @@ EAPI double elm_progressbar_value_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted);
+ELM_API void elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted);
 
 /**
  * @brief Invert a given progress bar widget's displaying values order
@@ -104,7 +104,7 @@ EAPI void elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI Eina_Bool elm_progressbar_inverted_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_progressbar_inverted_get(const Evas_Object *obj);
 
 /**
  * @brief Control the orientation of a given progress bar widget
@@ -117,7 +117,7 @@ EAPI Eina_Bool elm_progressbar_inverted_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+ELM_API void elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * @brief Control the orientation of a given progress bar widget
@@ -130,7 +130,7 @@ EAPI void elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
  *
  * @ingroup Elm_Progressbar
  */
-EAPI Eina_Bool elm_progressbar_horizontal_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_progressbar_horizontal_get(const Evas_Object *obj);
 
 /**
  * @brief Control the format string for a given progress bar widget's units
@@ -150,7 +150,7 @@ EAPI Eina_Bool elm_progressbar_horizontal_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_unit_format_set(Evas_Object *obj, const char *units);
+ELM_API void elm_progressbar_unit_format_set(Evas_Object *obj, const char *units);
 
 /**
  * @brief Control the format string for a given progress bar widget's units
@@ -170,7 +170,7 @@ EAPI void elm_progressbar_unit_format_set(Evas_Object *obj, const char *units);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI const char *elm_progressbar_unit_format_get(const Evas_Object *obj);
+ELM_API const char *elm_progressbar_unit_format_get(const Evas_Object *obj);
 
 /**
  * @brief Set the format function pointer for the units label
@@ -186,7 +186,7 @@ EAPI const char *elm_progressbar_unit_format_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func);
+ELM_API void elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func);
 
 /**
  * @brief Control whether a given progress bar widget is at "pulsing mode" or
@@ -206,7 +206,7 @@ EAPI void elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
+ELM_API void elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
 
 
 /**
@@ -227,7 +227,7 @@ EAPI void elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI Eina_Bool elm_progressbar_pulse_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_progressbar_pulse_get(const Evas_Object *obj);
 
 
 /**
@@ -241,7 +241,7 @@ EAPI Eina_Bool elm_progressbar_pulse_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
+ELM_API void elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
 
 
 /**
@@ -253,7 +253,7 @@ EAPI void elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI Eina_Bool elm_progressbar_is_pulsing_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_progressbar_is_pulsing_get(const Evas_Object *obj);
 
 
 /**
@@ -269,7 +269,7 @@ EAPI Eina_Bool elm_progressbar_is_pulsing_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Progressbar
  */
-EAPI void elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val);
+ELM_API void elm_progressbar_part_value_set(Evas_Object *obj, const char *part, double val);
 
 /**
  * @brief Get the progress value (in percentage) on a given progress bar widget
@@ -283,4 +283,4 @@ EAPI void elm_progressbar_part_value_set(Evas_Object *obj, const char *part, dou
  *
  * @ingroup Elm_Progressbar
  */
-EAPI double elm_progressbar_part_value_get(const Evas_Object *obj, const char *part);
+ELM_API double elm_progressbar_part_value_get(const Evas_Object *obj, const char *part);

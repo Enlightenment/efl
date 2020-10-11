@@ -10,7 +10,7 @@
  * @ingroup Elm_Spinner_Group
  *
  */
-EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_spinner_add(Evas_Object *parent);
 
 /**
  * Delete the special string display in the place of the numerical value.
@@ -26,7 +26,7 @@ EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
  * @ingroup Elm_Spinner_Group
  * @since 1.8
  */
-EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
+ELM_API void elm_spinner_special_value_del(Evas_Object *obj, double value);
 
 /**
  * Get the special string display in the place of the numerical value.
@@ -40,7 +40,7 @@ EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
  * @ingroup Elm_Spinner_Group
  * @since 1.8
  */
-EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
+ELM_API const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
 
 /**
  * @brief Control the minimum and maximum values for the spinner.
@@ -60,7 +60,7 @@ EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
+ELM_API void elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
 
 /**
  * @brief Control the minimum and maximum values for the spinner.
@@ -80,7 +80,7 @@ EAPI void elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max);
+ELM_API void elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max);
 
 /**
  * @brief Control the step used to increment or decrement the spinner value.
@@ -98,7 +98,7 @@ EAPI void elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *m
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_step_set(Evas_Object *obj, double step);
+ELM_API void elm_spinner_step_set(Evas_Object *obj, double step);
 
 /**
  * @brief Control the step used to increment or decrement the spinner value.
@@ -116,7 +116,7 @@ EAPI void elm_spinner_step_set(Evas_Object *obj, double step);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI double elm_spinner_step_get(const Evas_Object *obj);
+ELM_API double elm_spinner_step_get(const Evas_Object *obj);
 
 /**
  * @brief Control the value the spinner displays.
@@ -131,7 +131,7 @@ EAPI double elm_spinner_step_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_value_set(Evas_Object *obj, double val);
+ELM_API void elm_spinner_value_set(Evas_Object *obj, double val);
 
 /**
  * @brief Control the value the spinner displays.
@@ -146,6 +146,6 @@ EAPI void elm_spinner_value_set(Evas_Object *obj, double val);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI double elm_spinner_value_get(const Evas_Object *obj);
+ELM_API double elm_spinner_value_get(const Evas_Object *obj);
 
 #include "elm_spinner_eo.legacy.h"

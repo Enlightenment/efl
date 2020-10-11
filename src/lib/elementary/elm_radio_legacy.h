@@ -8,7 +8,7 @@ typedef Eo Elm_Radio;
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_radio_add(Evas_Object *parent);
 
 /**
  * @brief Set the value of the radio group.
@@ -20,7 +20,7 @@ EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI void                       elm_radio_value_set(Evas_Object *obj, int value);
+ELM_API void                       elm_radio_value_set(Evas_Object *obj, int value);
 
 /**
  * @brief Get the value of the radio group
@@ -29,6 +29,6 @@ EAPI void                       elm_radio_value_set(Evas_Object *obj, int value)
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI int                        elm_radio_value_get(const Evas_Object *obj);
+ELM_API int                        elm_radio_value_get(const Evas_Object *obj);
 
 #include "efl_ui_radio_eo.legacy.h"

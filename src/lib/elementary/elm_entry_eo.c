@@ -1,44 +1,44 @@
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ACTIVATED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ACTIVATED =
    EFL_EVENT_DESCRIPTION("activated");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_CHANGED_USER =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_CHANGED_USER =
    EFL_EVENT_DESCRIPTION("changed,user");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_VALIDATE =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_VALIDATE =
    EFL_EVENT_DESCRIPTION("validate");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_CONTEXT_OPEN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_CONTEXT_OPEN =
    EFL_EVENT_DESCRIPTION("context,open");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_CLICKED =
    EFL_EVENT_DESCRIPTION("anchor,clicked");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_REJECTED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_REJECTED =
    EFL_EVENT_DESCRIPTION("rejected");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_MAXLENGTH_REACHED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_MAXLENGTH_REACHED =
    EFL_EVENT_DESCRIPTION("maxlength,reached");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_PREEDIT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_PREEDIT_CHANGED =
    EFL_EVENT_DESCRIPTION("preedit,changed");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_PRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_PRESS =
    EFL_EVENT_DESCRIPTION("press");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_REDO_REQUEST =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_REDO_REQUEST =
    EFL_EVENT_DESCRIPTION("redo,request");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_UNDO_REQUEST =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_UNDO_REQUEST =
    EFL_EVENT_DESCRIPTION("undo,request");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_TEXT_SET_DONE =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_TEXT_SET_DONE =
    EFL_EVENT_DESCRIPTION("text,set,done");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ABORTED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ABORTED =
    EFL_EVENT_DESCRIPTION("aborted");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_DOWN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_DOWN =
    EFL_EVENT_DESCRIPTION("anchor,down");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_HOVER_OPENED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_HOVER_OPENED =
    EFL_EVENT_DESCRIPTION("anchor,hover,opened");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_IN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_IN =
    EFL_EVENT_DESCRIPTION("anchor,in");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_OUT =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_OUT =
    EFL_EVENT_DESCRIPTION("anchor,out");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_UP =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_ANCHOR_UP =
    EFL_EVENT_DESCRIPTION("anchor,up");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_CURSOR_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_CURSOR_CHANGED =
    EFL_EVENT_DESCRIPTION("cursor,changed");
-EWAPI const Efl_Event_Description _ELM_ENTRY_EVENT_CURSOR_CHANGED_MANUAL =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ENTRY_EVENT_CURSOR_CHANGED_MANUAL =
    EFL_EVENT_DESCRIPTION("cursor,changed,manual");
 
 void _elm_entry_scrollable_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool scroll);
@@ -59,7 +59,7 @@ __eolian_elm_entry_scrollable_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_scrollable_set, EFL_FUNC_CALL(scroll), Eina_Bool scroll);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_scrollable_set, EFL_FUNC_CALL(scroll), Eina_Bool scroll);
 
 Eina_Bool _elm_entry_scrollable_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -71,7 +71,7 @@ __eolian_elm_entry_scrollable_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_scrollable_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_scrollable_get, Eina_Bool, 0);
 
 void _elm_entry_input_panel_show_on_demand_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool ondemand);
 
@@ -91,7 +91,7 @@ __eolian_elm_entry_input_panel_show_on_demand_set_reflect(Eo *obj, Eina_Value va
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_show_on_demand_set, EFL_FUNC_CALL(ondemand), Eina_Bool ondemand);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_show_on_demand_set, EFL_FUNC_CALL(ondemand), Eina_Bool ondemand);
 
 Eina_Bool _elm_entry_input_panel_show_on_demand_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -103,7 +103,7 @@ __eolian_elm_entry_input_panel_show_on_demand_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_show_on_demand_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_show_on_demand_get, Eina_Bool, 0);
 
 void _elm_entry_context_menu_disabled_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool disabled);
 
@@ -123,7 +123,7 @@ __eolian_elm_entry_context_menu_disabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_context_menu_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_context_menu_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
 
 Eina_Bool _elm_entry_context_menu_disabled_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -135,27 +135,27 @@ __eolian_elm_entry_context_menu_disabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_context_menu_disabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_context_menu_disabled_get, Eina_Bool, 0);
 
 void _elm_entry_cnp_mode_set(Eo *obj, Elm_Entry_Data *pd, Elm_Cnp_Mode cnp_mode);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_cnp_mode_set, EFL_FUNC_CALL(cnp_mode), Elm_Cnp_Mode cnp_mode);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_cnp_mode_set, EFL_FUNC_CALL(cnp_mode), Elm_Cnp_Mode cnp_mode);
 
 Elm_Cnp_Mode _elm_entry_cnp_mode_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_cnp_mode_get, Elm_Cnp_Mode, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_cnp_mode_get, Elm_Cnp_Mode, 0);
 
 void _elm_entry_file_text_format_set(Eo *obj, Elm_Entry_Data *pd, Elm_Text_Format format);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_file_text_format_set, EFL_FUNC_CALL(format), Elm_Text_Format format);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_file_text_format_set, EFL_FUNC_CALL(format), Elm_Text_Format format);
 
 void _elm_entry_input_panel_language_set(Eo *obj, Elm_Entry_Data *pd, Elm_Input_Panel_Lang lang);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_language_set, EFL_FUNC_CALL(lang), Elm_Input_Panel_Lang lang);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_language_set, EFL_FUNC_CALL(lang), Elm_Input_Panel_Lang lang);
 
 Elm_Input_Panel_Lang _elm_entry_input_panel_language_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_language_get, Elm_Input_Panel_Lang, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_language_get, Elm_Input_Panel_Lang, 0);
 
 void _elm_entry_selection_handler_disabled_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool disabled);
 
@@ -175,7 +175,7 @@ __eolian_elm_entry_selection_handler_disabled_set_reflect(Eo *obj, Eina_Value va
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_selection_handler_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_selection_handler_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
 
 Eina_Bool _elm_entry_selection_handler_disabled_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -187,7 +187,7 @@ __eolian_elm_entry_selection_handler_disabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_selection_handler_disabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_selection_handler_disabled_get, Eina_Bool, 0);
 
 void _elm_entry_input_panel_layout_variation_set(Eo *obj, Elm_Entry_Data *pd, int variation);
 
@@ -207,7 +207,7 @@ __eolian_elm_entry_input_panel_layout_variation_set_reflect(Eo *obj, Eina_Value 
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_layout_variation_set, EFL_FUNC_CALL(variation), int variation);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_layout_variation_set, EFL_FUNC_CALL(variation), int variation);
 
 int _elm_entry_input_panel_layout_variation_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -219,15 +219,15 @@ __eolian_elm_entry_input_panel_layout_variation_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_layout_variation_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_layout_variation_get, int, 0);
 
 void _elm_entry_autocapital_type_set(Eo *obj, Elm_Entry_Data *pd, Elm_Autocapital_Type autocapital_type);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_autocapital_type_set, EFL_FUNC_CALL(autocapital_type), Elm_Autocapital_Type autocapital_type);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_autocapital_type_set, EFL_FUNC_CALL(autocapital_type), Elm_Autocapital_Type autocapital_type);
 
 Elm_Autocapital_Type _elm_entry_autocapital_type_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_autocapital_type_get, Elm_Autocapital_Type, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_autocapital_type_get, Elm_Autocapital_Type, 0);
 
 void _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool editable);
 
@@ -247,7 +247,7 @@ __eolian_elm_entry_editable_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_editable_set, EFL_FUNC_CALL(editable), Eina_Bool editable);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_editable_set, EFL_FUNC_CALL(editable), Eina_Bool editable);
 
 Eina_Bool _elm_entry_editable_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -259,7 +259,7 @@ __eolian_elm_entry_editable_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_editable_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_editable_get, Eina_Bool, 0);
 
 void _elm_entry_anchor_hover_style_set(Eo *obj, Elm_Entry_Data *pd, const char *style);
 
@@ -279,7 +279,7 @@ __eolian_elm_entry_anchor_hover_style_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_anchor_hover_style_set, EFL_FUNC_CALL(style), const char *style);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_anchor_hover_style_set, EFL_FUNC_CALL(style), const char *style);
 
 const char *_elm_entry_anchor_hover_style_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -291,7 +291,7 @@ __eolian_elm_entry_anchor_hover_style_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_anchor_hover_style_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_anchor_hover_style_get, const char *, NULL);
 
 void _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool single_line);
 
@@ -311,7 +311,7 @@ __eolian_elm_entry_single_line_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_single_line_set, EFL_FUNC_CALL(single_line), Eina_Bool single_line);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_single_line_set, EFL_FUNC_CALL(single_line), Eina_Bool single_line);
 
 Eina_Bool _elm_entry_single_line_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -323,7 +323,7 @@ __eolian_elm_entry_single_line_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_single_line_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_single_line_get, Eina_Bool, 0);
 
 void _elm_entry_password_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool password);
 
@@ -343,7 +343,7 @@ __eolian_elm_entry_password_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_password_set, EFL_FUNC_CALL(password), Eina_Bool password);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_password_set, EFL_FUNC_CALL(password), Eina_Bool password);
 
 Eina_Bool _elm_entry_password_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -355,7 +355,7 @@ __eolian_elm_entry_password_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_password_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_password_get, Eina_Bool, 0);
 
 void _elm_entry_input_panel_return_key_disabled_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool disabled);
 
@@ -375,7 +375,7 @@ __eolian_elm_entry_input_panel_return_key_disabled_set_reflect(Eo *obj, Eina_Val
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_return_key_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_return_key_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
 
 Eina_Bool _elm_entry_input_panel_return_key_disabled_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -387,7 +387,7 @@ __eolian_elm_entry_input_panel_return_key_disabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_return_key_disabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_return_key_disabled_get, Eina_Bool, 0);
 
 void _elm_entry_autosave_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool auto_save);
 
@@ -407,7 +407,7 @@ __eolian_elm_entry_autosave_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_autosave_set, EFL_FUNC_CALL(auto_save), Eina_Bool auto_save);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_autosave_set, EFL_FUNC_CALL(auto_save), Eina_Bool auto_save);
 
 Eina_Bool _elm_entry_autosave_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -419,15 +419,15 @@ __eolian_elm_entry_autosave_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_autosave_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_autosave_get, Eina_Bool, 0);
 
 void _elm_entry_anchor_hover_parent_set(Eo *obj, Elm_Entry_Data *pd, Efl_Canvas_Object *parent);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_anchor_hover_parent_set, EFL_FUNC_CALL(parent), Efl_Canvas_Object *parent);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_anchor_hover_parent_set, EFL_FUNC_CALL(parent), Efl_Canvas_Object *parent);
 
 Efl_Canvas_Object *_elm_entry_anchor_hover_parent_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_anchor_hover_parent_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_anchor_hover_parent_get, Efl_Canvas_Object *, NULL);
 
 void _elm_entry_prediction_allow_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool prediction);
 
@@ -447,7 +447,7 @@ __eolian_elm_entry_prediction_allow_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_prediction_allow_set, EFL_FUNC_CALL(prediction), Eina_Bool prediction);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_prediction_allow_set, EFL_FUNC_CALL(prediction), Eina_Bool prediction);
 
 Eina_Bool _elm_entry_prediction_allow_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -459,31 +459,31 @@ __eolian_elm_entry_prediction_allow_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_prediction_allow_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_prediction_allow_get, Eina_Bool, 0);
 
 void _elm_entry_input_hint_set(Eo *obj, Elm_Entry_Data *pd, Elm_Input_Hints hints);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_hint_set, EFL_FUNC_CALL(hints), Elm_Input_Hints hints);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_hint_set, EFL_FUNC_CALL(hints), Elm_Input_Hints hints);
 
 Elm_Input_Hints _elm_entry_input_hint_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_hint_get, Elm_Input_Hints, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_hint_get, Elm_Input_Hints, 0);
 
 void _elm_entry_input_panel_layout_set(Eo *obj, Elm_Entry_Data *pd, Elm_Input_Panel_Layout layout);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_layout_set, EFL_FUNC_CALL(layout), Elm_Input_Panel_Layout layout);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_layout_set, EFL_FUNC_CALL(layout), Elm_Input_Panel_Layout layout);
 
 Elm_Input_Panel_Layout _elm_entry_input_panel_layout_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_layout_get, Elm_Input_Panel_Layout, 8 /* Elm.Input.Panel.Layout.invalid */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_layout_get, Elm_Input_Panel_Layout, 8 /* Elm.Input.Panel.Layout.invalid */);
 
 void _elm_entry_input_panel_return_key_type_set(Eo *obj, Elm_Entry_Data *pd, Elm_Input_Panel_Return_Key_Type return_key_type);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_return_key_type_set, EFL_FUNC_CALL(return_key_type), Elm_Input_Panel_Return_Key_Type return_key_type);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_return_key_type_set, EFL_FUNC_CALL(return_key_type), Elm_Input_Panel_Return_Key_Type return_key_type);
 
 Elm_Input_Panel_Return_Key_Type _elm_entry_input_panel_return_key_type_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_return_key_type_get, Elm_Input_Panel_Return_Key_Type, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_return_key_type_get, Elm_Input_Panel_Return_Key_Type, 0);
 
 void _elm_entry_input_panel_enabled_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool enabled);
 
@@ -503,7 +503,7 @@ __eolian_elm_entry_input_panel_enabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
 
 Eina_Bool _elm_entry_input_panel_enabled_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -515,15 +515,15 @@ __eolian_elm_entry_input_panel_enabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_enabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_input_panel_enabled_get, Eina_Bool, 0);
 
 void _elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *pd, Elm_Wrap_Type wrap);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_line_wrap_set, EFL_FUNC_CALL(wrap), Elm_Wrap_Type wrap);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_line_wrap_set, EFL_FUNC_CALL(wrap), Elm_Wrap_Type wrap);
 
 Elm_Wrap_Type _elm_entry_line_wrap_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_line_wrap_get, Elm_Wrap_Type, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_line_wrap_get, Elm_Wrap_Type, 0);
 
 void _elm_entry_cursor_pos_set(Eo *obj, Elm_Entry_Data *pd, int pos);
 
@@ -543,7 +543,7 @@ __eolian_elm_entry_cursor_pos_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_cursor_pos_set, EFL_FUNC_CALL(pos), int pos);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_cursor_pos_set, EFL_FUNC_CALL(pos), int pos);
 
 int _elm_entry_cursor_pos_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -555,7 +555,7 @@ __eolian_elm_entry_cursor_pos_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_cursor_pos_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_cursor_pos_get, int, 0);
 
 void _elm_entry_icon_visible_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool setting);
 
@@ -575,19 +575,19 @@ __eolian_elm_entry_icon_visible_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_icon_visible_set, EFL_FUNC_CALL(setting), Eina_Bool setting);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_icon_visible_set, EFL_FUNC_CALL(setting), Eina_Bool setting);
 
 void _elm_entry_cursor_line_end_set(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_line_end_set);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_line_end_set);
 
 void _elm_entry_select_region_set(Eo *obj, Elm_Entry_Data *pd, int start, int end);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_select_region_set, EFL_FUNC_CALL(start, end), int start, int end);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_select_region_set, EFL_FUNC_CALL(start, end), int start, int end);
 
 void _elm_entry_select_region_get(const Eo *obj, Elm_Entry_Data *pd, int *start, int *end);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_entry_select_region_get, EFL_FUNC_CALL(start, end), int *start, int *end);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_entry_select_region_get, EFL_FUNC_CALL(start, end), int *start, int *end);
 
 void _elm_entry_input_panel_return_key_autoenabled_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool enabled);
 
@@ -607,7 +607,7 @@ __eolian_elm_entry_input_panel_return_key_autoenabled_set_reflect(Eo *obj, Eina_
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_return_key_autoenabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_return_key_autoenabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
 
 void _elm_entry_end_visible_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool setting);
 
@@ -627,47 +627,47 @@ __eolian_elm_entry_end_visible_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_end_visible_set, EFL_FUNC_CALL(setting), Eina_Bool setting);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_end_visible_set, EFL_FUNC_CALL(setting), Eina_Bool setting);
 
 void _elm_entry_cursor_begin_set(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_begin_set);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_begin_set);
 
 void _elm_entry_cursor_line_begin_set(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_line_begin_set);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_line_begin_set);
 
 void _elm_entry_cursor_end_set(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_end_set);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_end_set);
 
 Efl_Canvas_Object *_elm_entry_textblock_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_textblock_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_textblock_get, Efl_Canvas_Object *, NULL);
 
 Eina_Bool _elm_entry_textblock_cursor_geometry_get(const Eo *obj, Elm_Entry_Data *pd, int *x, int *y, int *w, int *h);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_entry_textblock_cursor_geometry_get, Eina_Bool, 0, EFL_FUNC_CALL(x, y, w, h), int *x, int *y, int *w, int *h);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_entry_textblock_cursor_geometry_get, Eina_Bool, 0, EFL_FUNC_CALL(x, y, w, h), int *x, int *y, int *w, int *h);
 
 void *_elm_entry_imf_context_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_imf_context_get, void *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_imf_context_get, void *, NULL);
 
 Eina_Bool _elm_entry_cursor_is_format_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_cursor_is_format_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_cursor_is_format_get, Eina_Bool, 0);
 
 char *_elm_entry_textblock_cursor_content_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_textblock_cursor_content_get, char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_textblock_cursor_content_get, char *, NULL);
 
 const char *_elm_entry_selection_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_selection_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_selection_get, const char *, NULL);
 
 Eina_Bool _elm_entry_cursor_is_visible_format_get(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_cursor_is_visible_format_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_cursor_is_visible_format_get, Eina_Bool, 0);
 
 void _elm_entry_select_allow_set(Eo *obj, Elm_Entry_Data *pd, Eina_Bool allow);
 
@@ -687,7 +687,7 @@ __eolian_elm_entry_select_allow_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_select_allow_set, EFL_FUNC_CALL(allow), Eina_Bool allow);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_select_allow_set, EFL_FUNC_CALL(allow), Eina_Bool allow);
 
 Eina_Bool _elm_entry_select_allow_get(const Eo *obj, Elm_Entry_Data *pd);
 
@@ -699,147 +699,147 @@ __eolian_elm_entry_select_allow_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_select_allow_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_select_allow_get, Eina_Bool, 0);
 
 Eina_Bool _elm_entry_cursor_prev(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_entry_cursor_prev, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_entry_cursor_prev, Eina_Bool, 0);
 
 void _elm_entry_text_style_user_pop(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_text_style_user_pop);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_text_style_user_pop);
 
 void _elm_entry_item_provider_prepend(Eo *obj, Elm_Entry_Data *pd, Elm_Entry_Item_Provider_Cb func, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_item_provider_prepend, EFL_FUNC_CALL(func, data), Elm_Entry_Item_Provider_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_item_provider_prepend, EFL_FUNC_CALL(func, data), Elm_Entry_Item_Provider_Cb func, void *data);
 
 void _elm_entry_input_panel_show(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_input_panel_show);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_input_panel_show);
 
 void _elm_entry_imf_context_reset(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_imf_context_reset);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_imf_context_reset);
 
 void _elm_entry_anchor_hover_end(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_anchor_hover_end);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_anchor_hover_end);
 
 void _elm_entry_cursor_selection_begin(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_selection_begin);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_selection_begin);
 
 Eina_Bool _elm_entry_cursor_down(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_entry_cursor_down, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_entry_cursor_down, Eina_Bool, 0);
 
 void _elm_entry_file_save(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_file_save);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_file_save);
 
 void _elm_entry_selection_copy(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_selection_copy);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_selection_copy);
 
 void _elm_entry_text_style_user_push(Eo *obj, Elm_Entry_Data *pd, const char *style);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_text_style_user_push, EFL_FUNC_CALL(style), const char *style);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_text_style_user_push, EFL_FUNC_CALL(style), const char *style);
 
 void _elm_entry_item_provider_remove(Eo *obj, Elm_Entry_Data *pd, Elm_Entry_Item_Provider_Cb func, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_item_provider_remove, EFL_FUNC_CALL(func, data), Elm_Entry_Item_Provider_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_item_provider_remove, EFL_FUNC_CALL(func, data), Elm_Entry_Item_Provider_Cb func, void *data);
 
 const char *_elm_entry_text_style_user_peek(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_text_style_user_peek, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_text_style_user_peek, const char *, NULL);
 
 void _elm_entry_context_menu_clear(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_context_menu_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_context_menu_clear);
 
 Eina_Bool _elm_entry_cursor_up(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_entry_cursor_up, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_entry_cursor_up, Eina_Bool, 0);
 
 void _elm_entry_entry_insert(Eo *obj, Elm_Entry_Data *pd, const char *entry);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_insert, EFL_FUNC_CALL(entry), const char *entry);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_insert, EFL_FUNC_CALL(entry), const char *entry);
 
 void _elm_entry_input_panel_imdata_set(Eo *obj, Elm_Entry_Data *pd, const void *data, int len);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_imdata_set, EFL_FUNC_CALL(data, len), const void *data, int len);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_input_panel_imdata_set, EFL_FUNC_CALL(data, len), const void *data, int len);
 
 void _elm_entry_input_panel_imdata_get(const Eo *obj, Elm_Entry_Data *pd, void *data, int *len);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_entry_input_panel_imdata_get, EFL_FUNC_CALL(data, len), void *data, int *len);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_entry_input_panel_imdata_get, EFL_FUNC_CALL(data, len), void *data, int *len);
 
 void _elm_entry_selection_paste(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_selection_paste);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_selection_paste);
 
 Eina_Bool _elm_entry_cursor_next(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_entry_cursor_next, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_entry_cursor_next, Eina_Bool, 0);
 
 void _elm_entry_select_none(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_select_none);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_select_none);
 
 void _elm_entry_input_panel_hide(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_input_panel_hide);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_input_panel_hide);
 
 void _elm_entry_select_all(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_select_all);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_select_all);
 
 void _elm_entry_cursor_selection_end(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_selection_end);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_cursor_selection_end);
 
 void _elm_entry_selection_cut(Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_entry_selection_cut);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_entry_selection_cut);
 
 Eina_Bool _elm_entry_is_empty(const Eo *obj, Elm_Entry_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_entry_is_empty, Eina_Bool, EINA_TRUE /* true */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_entry_is_empty, Eina_Bool, EINA_TRUE /* true */);
 
 void _elm_entry_markup_filter_remove(Eo *obj, Elm_Entry_Data *pd, Elm_Entry_Filter_Cb func, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_markup_filter_remove, EFL_FUNC_CALL(func, data), Elm_Entry_Filter_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_markup_filter_remove, EFL_FUNC_CALL(func, data), Elm_Entry_Filter_Cb func, void *data);
 
 void _elm_entry_item_provider_append(Eo *obj, Elm_Entry_Data *pd, Elm_Entry_Item_Provider_Cb func, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_item_provider_append, EFL_FUNC_CALL(func, data), Elm_Entry_Item_Provider_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_item_provider_append, EFL_FUNC_CALL(func, data), Elm_Entry_Item_Provider_Cb func, void *data);
 
 void _elm_entry_markup_filter_append(Eo *obj, Elm_Entry_Data *pd, Elm_Entry_Filter_Cb func, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_markup_filter_append, EFL_FUNC_CALL(func, data), Elm_Entry_Filter_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_markup_filter_append, EFL_FUNC_CALL(func, data), Elm_Entry_Filter_Cb func, void *data);
 
 void _elm_entry_entry_append(Eo *obj, Elm_Entry_Data *pd, const char *str);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_append, EFL_FUNC_CALL(str), const char *str);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_append, EFL_FUNC_CALL(str), const char *str);
 
 void _elm_entry_context_menu_item_add(Eo *obj, Elm_Entry_Data *pd, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_context_menu_item_add, EFL_FUNC_CALL(label, icon_file, icon_type, func, data), const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_context_menu_item_add, EFL_FUNC_CALL(label, icon_file, icon_type, func, data), const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
 void _elm_entry_markup_filter_prepend(Eo *obj, Elm_Entry_Data *pd, Elm_Entry_Filter_Cb func, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_markup_filter_prepend, EFL_FUNC_CALL(func, data), Elm_Entry_Filter_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_markup_filter_prepend, EFL_FUNC_CALL(func, data), Elm_Entry_Filter_Cb func, void *data);
 
 void _elm_entry_prediction_hint_set(Eo *obj, Elm_Entry_Data *pd, const char *prediction_hint);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_entry_prediction_hint_set, EFL_FUNC_CALL(prediction_hint), const char *prediction_hint);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_entry_prediction_hint_set, EFL_FUNC_CALL(prediction_hint), const char *prediction_hint);
 
 Eina_Bool _elm_entry_prediction_hint_hash_set(Eo *obj, Elm_Entry_Data *pd, const char *key, const char *value);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_entry_prediction_hint_hash_set, Eina_Bool, 0, EFL_FUNC_CALL(key, value), const char *key, const char *value);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_entry_prediction_hint_hash_set, Eina_Bool, 0, EFL_FUNC_CALL(key, value), const char *key, const char *value);
 
 Eina_Bool _elm_entry_prediction_hint_hash_del(Eo *obj, Elm_Entry_Data *pd, const char *key);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_entry_prediction_hint_hash_del, Eina_Bool, 0, EFL_FUNC_CALL(key), const char *key);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_entry_prediction_hint_hash_del, Eina_Bool, 0, EFL_FUNC_CALL(key), const char *key);
 
 Efl_Object *_elm_entry_efl_object_constructor(Eo *obj, Elm_Entry_Data *pd);
 

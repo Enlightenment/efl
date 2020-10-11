@@ -1,11 +1,11 @@
 
 void _elm_dayselector_week_start_set(Eo *obj, Elm_Dayselector_Data *pd, Elm_Dayselector_Day day);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_dayselector_week_start_set, EFL_FUNC_CALL(day), Elm_Dayselector_Day day);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_dayselector_week_start_set, EFL_FUNC_CALL(day), Elm_Dayselector_Day day);
 
 Elm_Dayselector_Day _elm_dayselector_week_start_get(const Eo *obj, Elm_Dayselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_dayselector_week_start_get, Elm_Dayselector_Day, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_dayselector_week_start_get, Elm_Dayselector_Day, 0);
 
 void _elm_dayselector_weekend_length_set(Eo *obj, Elm_Dayselector_Data *pd, unsigned int length);
 
@@ -25,7 +25,7 @@ __eolian_elm_dayselector_weekend_length_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_dayselector_weekend_length_set, EFL_FUNC_CALL(length), unsigned int length);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_dayselector_weekend_length_set, EFL_FUNC_CALL(length), unsigned int length);
 
 unsigned int _elm_dayselector_weekend_length_get(const Eo *obj, Elm_Dayselector_Data *pd);
 
@@ -37,31 +37,31 @@ __eolian_elm_dayselector_weekend_length_get_reflect(const Eo *obj)
    return eina_value_uint_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_dayselector_weekend_length_get, unsigned int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_dayselector_weekend_length_get, unsigned int, 0);
 
 void _elm_dayselector_weekend_start_set(Eo *obj, Elm_Dayselector_Data *pd, Elm_Dayselector_Day day);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_dayselector_weekend_start_set, EFL_FUNC_CALL(day), Elm_Dayselector_Day day);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_dayselector_weekend_start_set, EFL_FUNC_CALL(day), Elm_Dayselector_Day day);
 
 Elm_Dayselector_Day _elm_dayselector_weekend_start_get(const Eo *obj, Elm_Dayselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_dayselector_weekend_start_get, Elm_Dayselector_Day, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_dayselector_weekend_start_get, Elm_Dayselector_Day, 0);
 
 void _elm_dayselector_weekdays_names_set(Eo *obj, Elm_Dayselector_Data *pd, const char **weekdays);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_dayselector_weekdays_names_set, EFL_FUNC_CALL(weekdays), const char **weekdays);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_dayselector_weekdays_names_set, EFL_FUNC_CALL(weekdays), const char **weekdays);
 
 Eina_List *_elm_dayselector_weekdays_names_get(const Eo *obj, Elm_Dayselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_dayselector_weekdays_names_get, Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_dayselector_weekdays_names_get, Eina_List *, NULL);
 
 void _elm_dayselector_day_selected_set(Eo *obj, Elm_Dayselector_Data *pd, Elm_Dayselector_Day day, Eina_Bool selected);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_dayselector_day_selected_set, EFL_FUNC_CALL(day, selected), Elm_Dayselector_Day day, Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_dayselector_day_selected_set, EFL_FUNC_CALL(day, selected), Elm_Dayselector_Day day, Eina_Bool selected);
 
 Eina_Bool _elm_dayselector_day_selected_get(const Eo *obj, Elm_Dayselector_Data *pd, Elm_Dayselector_Day day);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_dayselector_day_selected_get, Eina_Bool, 0, EFL_FUNC_CALL(day), Elm_Dayselector_Day day);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_dayselector_day_selected_get, Eina_Bool, 0, EFL_FUNC_CALL(day), Elm_Dayselector_Day day);
 
 Efl_Object *_elm_dayselector_efl_object_constructor(Eo *obj, Elm_Dayselector_Data *pd);
 

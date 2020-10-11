@@ -29,7 +29,7 @@ typedef Eo Efl_Ui_Panes;
  *
  * @ingroup Elm_Panes_Group
  */
-EAPI void elm_panes_fixed_set(Efl_Ui_Panes *obj, Eina_Bool fixed);
+ELM_API void elm_panes_fixed_set(Efl_Ui_Panes *obj, Eina_Bool fixed);
 
 /**
  * @brief Set whether the left and right panes can be resized by user
@@ -44,6 +44,6 @@ EAPI void elm_panes_fixed_set(Efl_Ui_Panes *obj, Eina_Bool fixed);
  *
  * @ingroup Elm_Panes_Group
  */
-EAPI Eina_Bool elm_panes_fixed_get(const Efl_Ui_Panes *obj);
+ELM_API Eina_Bool elm_panes_fixed_get(const Efl_Ui_Panes *obj);
 
 #endif

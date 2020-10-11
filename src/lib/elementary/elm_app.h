@@ -84,7 +84,7 @@
  *
  * @ingroup Elm_App
  */
-EAPI void        elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile);
+ELM_API void        elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile);
 
 /**
  * Set a formal name to be used with the elm application.
@@ -94,7 +94,7 @@ EAPI void        elm_app_info_set(void *mainfunc, const char *dom, const char *c
  * @ingroup Elm_App
  * @since 1.8
  */
-EAPI void        elm_app_name_set(const char *name);
+ELM_API void        elm_app_name_set(const char *name);
 
 /**
  * Set the path to the '.desktop' file to be associated
@@ -108,7 +108,7 @@ EAPI void        elm_app_name_set(const char *name);
  * @ingroup Elm_App
  * @since 1.8
  */
-EAPI void        elm_app_desktop_entry_set(const char *path);
+ELM_API void        elm_app_desktop_entry_set(const char *path);
 
 /**
  * Provide information on the @b fallback application's binaries
@@ -128,7 +128,7 @@ EAPI void        elm_app_desktop_entry_set(const char *path);
  *
  * @ingroup Elm_App
  */
-EAPI void        elm_app_compile_bin_dir_set(const char *dir);
+ELM_API void        elm_app_compile_bin_dir_set(const char *dir);
 
 /**
  * Provide information on the @b fallback application's libraries
@@ -148,7 +148,7 @@ EAPI void        elm_app_compile_bin_dir_set(const char *dir);
  *
  * @ingroup Elm_App
  */
-EAPI void        elm_app_compile_lib_dir_set(const char *dir);
+ELM_API void        elm_app_compile_lib_dir_set(const char *dir);
 
 /**
  * Provide information on the @b fallback application's data
@@ -168,7 +168,7 @@ EAPI void        elm_app_compile_lib_dir_set(const char *dir);
  *
  * @ingroup Elm_App
  */
-EAPI void        elm_app_compile_data_dir_set(const char *dir);
+ELM_API void        elm_app_compile_data_dir_set(const char *dir);
 
 /**
  * Provide information on the @b fallback application's locale
@@ -183,7 +183,7 @@ EAPI void        elm_app_compile_data_dir_set(const char *dir);
  *
  * @ingroup Elm_App
  */
-EAPI void        elm_app_compile_locale_set(const char *dir);
+ELM_API void        elm_app_compile_locale_set(const char *dir);
 
 /**
  * Get the application formal name, as set by elm_app_name_set().
@@ -193,7 +193,7 @@ EAPI void        elm_app_compile_locale_set(const char *dir);
  * @ingroup Elm_App
  * @since 1.8
  */
-EAPI const char *elm_app_name_get(void);
+ELM_API const char *elm_app_name_get(void);
 
 /**
  * Get the path to the '.desktop' file, as set by
@@ -204,7 +204,7 @@ EAPI const char *elm_app_name_get(void);
  * @ingroup Elm_App
  * @since 1.8
  */
-EAPI const char *elm_app_desktop_entry_get(void);
+ELM_API const char *elm_app_desktop_entry_get(void);
 
 /**
  * Get the application's run time prefix directory, as set by
@@ -215,7 +215,7 @@ EAPI const char *elm_app_desktop_entry_get(void);
  *
  * @ingroup Elm_App
  */
-EAPI const char *elm_app_prefix_dir_get(void);
+ELM_API const char *elm_app_prefix_dir_get(void);
 
 /**
  * Get the application's run time binaries prefix directory, as
@@ -227,7 +227,7 @@ EAPI const char *elm_app_prefix_dir_get(void);
  *
  * @ingroup Elm_App
  */
-EAPI const char *elm_app_bin_dir_get(void);
+ELM_API const char *elm_app_bin_dir_get(void);
 
 /**
  * Get the application's run time libraries prefix directory, as
@@ -239,7 +239,7 @@ EAPI const char *elm_app_bin_dir_get(void);
  *
  * @ingroup Elm_App
  */
-EAPI const char *elm_app_lib_dir_get(void);
+ELM_API const char *elm_app_lib_dir_get(void);
 
 /**
  * Get the application's run time data prefix directory, as
@@ -251,7 +251,7 @@ EAPI const char *elm_app_lib_dir_get(void);
  *
  * @ingroup Elm_App
  */
-EAPI const char *elm_app_data_dir_get(void);
+ELM_API const char *elm_app_data_dir_get(void);
 
 /**
  * Get the application's run time locale prefix directory, as
@@ -263,7 +263,7 @@ EAPI const char *elm_app_data_dir_get(void);
  *
  * @ingroup Elm_App
  */
-EAPI const char *elm_app_locale_dir_get(void);
+ELM_API const char *elm_app_locale_dir_get(void);
 
 /**
  * Set the base scale of the application.
@@ -280,7 +280,7 @@ EAPI const char *elm_app_locale_dir_get(void);
  * @ingroup Elm_App
  * @since 1.12
  */
-EAPI void elm_app_base_scale_set(double base_scale);
+ELM_API void elm_app_base_scale_set(double base_scale);
 
 /**
  * Get the base scale of the application.
@@ -290,7 +290,7 @@ EAPI void elm_app_base_scale_set(double base_scale);
  * @ingroup Elm_App
  * @since 1.12
  */
-EAPI double elm_app_base_scale_get(void);
+ELM_API double elm_app_base_scale_get(void);
 
 /**
  * @}

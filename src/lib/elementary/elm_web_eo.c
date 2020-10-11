@@ -14,7 +14,7 @@ __eolian_elm_web_text_matches_highlight_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_FUNC_BODYV(elm_obj_web_text_matches_highlight_set, Eina_Bool, 0, EFL_FUNC_CALL(highlight), Eina_Bool highlight);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_web_text_matches_highlight_set, Eina_Bool, 0, EFL_FUNC_CALL(highlight), Eina_Bool highlight);
 
 static Eina_Value
 __eolian_elm_web_text_matches_highlight_get_reflect(const Eo *obj)
@@ -23,7 +23,7 @@ __eolian_elm_web_text_matches_highlight_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_text_matches_highlight_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_text_matches_highlight_get, Eina_Bool, 0);
 
 static Eina_Error
 __eolian_elm_web_useragent_set_reflect(Eo *obj, Eina_Value val)
@@ -40,7 +40,7 @@ __eolian_elm_web_useragent_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_useragent_set, EFL_FUNC_CALL(user_agent), const char *user_agent);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_useragent_set, EFL_FUNC_CALL(user_agent), const char *user_agent);
 
 static Eina_Value
 __eolian_elm_web_useragent_get_reflect(const Eo *obj)
@@ -49,7 +49,7 @@ __eolian_elm_web_useragent_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_useragent_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_useragent_get, const char *, NULL);
 
 static Eina_Error
 __eolian_elm_web_url_set_reflect(Eo *obj, Eina_Value val)
@@ -66,7 +66,7 @@ __eolian_elm_web_url_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_FUNC_BODYV(elm_obj_web_url_set, Eina_Bool, 0, EFL_FUNC_CALL(url), const char *url);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_web_url_set, Eina_Bool, 0, EFL_FUNC_CALL(url), const char *url);
 
 static Eina_Value
 __eolian_elm_web_url_get_reflect(const Eo *obj)
@@ -75,9 +75,9 @@ __eolian_elm_web_url_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_url_get, const char *, NULL);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_bg_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_web_bg_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_url_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_bg_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_web_bg_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 static Eina_Error
 __eolian_elm_web_inwin_mode_set_reflect(Eo *obj, Eina_Value val)
@@ -94,7 +94,7 @@ __eolian_elm_web_inwin_mode_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_inwin_mode_set, EFL_FUNC_CALL(value), Eina_Bool value);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_inwin_mode_set, EFL_FUNC_CALL(value), Eina_Bool value);
 
 static Eina_Value
 __eolian_elm_web_inwin_mode_get_reflect(const Eo *obj)
@@ -103,7 +103,7 @@ __eolian_elm_web_inwin_mode_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_inwin_mode_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_inwin_mode_get, Eina_Bool, 0);
 
 static Eina_Error
 __eolian_elm_web_tab_propagate_set_reflect(Eo *obj, Eina_Value val)
@@ -120,7 +120,7 @@ __eolian_elm_web_tab_propagate_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_tab_propagate_set, EFL_FUNC_CALL(propagate), Eina_Bool propagate);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_tab_propagate_set, EFL_FUNC_CALL(propagate), Eina_Bool propagate);
 
 static Eina_Value
 __eolian_elm_web_tab_propagate_get_reflect(const Eo *obj)
@@ -129,7 +129,7 @@ __eolian_elm_web_tab_propagate_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_tab_propagate_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_tab_propagate_get, Eina_Bool, 0);
 
 static Eina_Error
 __eolian_elm_web_history_enabled_set_reflect(Eo *obj, Eina_Value val)
@@ -146,7 +146,7 @@ __eolian_elm_web_history_enabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_history_enabled_set, EFL_FUNC_CALL(enable), Eina_Bool enable);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_history_enabled_set, EFL_FUNC_CALL(enable), Eina_Bool enable);
 
 static Eina_Value
 __eolian_elm_web_history_enabled_get_reflect(const Eo *obj)
@@ -155,11 +155,11 @@ __eolian_elm_web_history_enabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_history_enabled_get, Eina_Bool, 0);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_console_message_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Console_Message func, void *data);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_window_create_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Window_Open func, void *data);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_file_selector_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_File_Selector func, void *data);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_confirm_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_Confirm func, void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_history_enabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_console_message_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Console_Message func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_window_create_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Window_Open func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_file_selector_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_File_Selector func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_confirm_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_Confirm func, void *data);
 
 static Eina_Error
 __eolian_elm_web_popup_selected_set_reflect(Eo *obj, Eina_Value val)
@@ -176,29 +176,29 @@ __eolian_elm_web_popup_selected_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_popup_selected_set, EFL_FUNC_CALL(idx), int idx);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_prompt_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_Prompt func, void *data);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_alert_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_Alert func, void *data);
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_forward_possible_get, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_webkit_view_get, Efl_Canvas_Object *, NULL);
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_back_possible_get, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_load_progress_get, double, 0);
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_selection_get, char *, NULL);
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_web_title_get, Eina_Stringshare *, NULL);
-EOAPI EFL_FUNC_BODYV(elm_obj_web_navigate, Eina_Bool, 0, EFL_FUNC_CALL(steps), int steps);
-EOAPI EFL_FUNC_BODY(elm_obj_web_back, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODYV(elm_obj_web_html_string_load, Eina_Bool, 0, EFL_FUNC_CALL(html, base_url, unreachable_url), const char *html, const char *base_url, const char *unreachable_url);
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_web_text_search, Eina_Bool, 0, EFL_FUNC_CALL(string, case_sensitive, forward, wrap), const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
-EOAPI EFL_FUNC_BODY(elm_obj_web_popup_destroy, Eina_Bool, 0);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_region_show, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
-EOAPI EFL_FUNC_BODY(elm_obj_web_forward, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODYV(elm_obj_web_text_matches_mark, unsigned int, 0, EFL_FUNC_CALL(string, case_sensitive, highlight, limit), const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_region_bring_in, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
-EOAPI EFL_FUNC_BODY(elm_obj_web_stop, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODYV(elm_obj_web_navigate_possible_get, Eina_Bool, 0, EFL_FUNC_CALL(steps), int steps);
-EOAPI EFL_FUNC_BODY(elm_obj_web_reload_full, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODY(elm_obj_web_text_matches_unmark_all, Eina_Bool, 0);
-EOAPI EFL_FUNC_BODY(elm_obj_web_reload, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_popup_selected_set, EFL_FUNC_CALL(idx), int idx);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_prompt_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_Prompt func, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_dialog_alert_hook_set, EFL_FUNC_CALL(func, data), Elm_Web_Dialog_Alert func, void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_forward_possible_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_webkit_view_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_back_possible_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_load_progress_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_selection_get, char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_web_title_get, Eina_Stringshare *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_web_navigate, Eina_Bool, 0, EFL_FUNC_CALL(steps), int steps);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_back, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_web_html_string_load, Eina_Bool, 0, EFL_FUNC_CALL(html, base_url, unreachable_url), const char *html, const char *base_url, const char *unreachable_url);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_web_text_search, Eina_Bool, 0, EFL_FUNC_CALL(string, case_sensitive, forward, wrap), const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_popup_destroy, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_region_show, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_forward, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_web_text_matches_mark, unsigned int, 0, EFL_FUNC_CALL(string, case_sensitive, highlight, limit), const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_web_region_bring_in, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_stop, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_web_navigate_possible_get, Eina_Bool, 0, EFL_FUNC_CALL(steps), int steps);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_reload_full, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_text_matches_unmark_all, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_web_reload, Eina_Bool, 0);
 
 Efl_Object *_elm_web_efl_object_constructor(Eo *obj, Elm_Web_Data *pd);
 

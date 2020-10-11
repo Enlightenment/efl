@@ -17,7 +17,7 @@ __eolian_elm_diskselector_side_text_max_length_set_reflect(Eo *obj, Eina_Value v
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_diskselector_side_text_max_length_set, EFL_FUNC_CALL(len), int len);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_diskselector_side_text_max_length_set, EFL_FUNC_CALL(len), int len);
 
 int _elm_diskselector_side_text_max_length_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
@@ -29,7 +29,7 @@ __eolian_elm_diskselector_side_text_max_length_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_side_text_max_length_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_side_text_max_length_get, int, 0);
 
 void _elm_diskselector_round_enabled_set(Eo *obj, Elm_Diskselector_Data *pd, Eina_Bool enabled);
 
@@ -49,7 +49,7 @@ __eolian_elm_diskselector_round_enabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_diskselector_round_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_diskselector_round_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
 
 Eina_Bool _elm_diskselector_round_enabled_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
@@ -61,7 +61,7 @@ __eolian_elm_diskselector_round_enabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_round_enabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_round_enabled_get, Eina_Bool, 0);
 
 void _elm_diskselector_display_item_num_set(Eo *obj, Elm_Diskselector_Data *pd, int num);
 
@@ -81,7 +81,7 @@ __eolian_elm_diskselector_display_item_num_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_diskselector_display_item_num_set, EFL_FUNC_CALL(num), int num);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_diskselector_display_item_num_set, EFL_FUNC_CALL(num), int num);
 
 int _elm_diskselector_display_item_num_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
@@ -93,31 +93,31 @@ __eolian_elm_diskselector_display_item_num_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_display_item_num_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_display_item_num_get, int, 0);
 
 Elm_Widget_Item *_elm_diskselector_first_item_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_first_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_first_item_get, Elm_Widget_Item *, NULL);
 
 const Eina_List *_elm_diskselector_items_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_items_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_items_get, const Eina_List *, NULL);
 
 Elm_Widget_Item *_elm_diskselector_last_item_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_last_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_last_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_diskselector_selected_item_get(const Eo *obj, Elm_Diskselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_diskselector_selected_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_diskselector_selected_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_diskselector_item_append(Eo *obj, Elm_Diskselector_Data *pd, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_diskselector_item_append, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_diskselector_item_append, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 void _elm_diskselector_clear(Eo *obj, Elm_Diskselector_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_diskselector_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_diskselector_clear);
 
 Efl_Object *_elm_diskselector_efl_object_constructor(Eo *obj, Elm_Diskselector_Data *pd);
 

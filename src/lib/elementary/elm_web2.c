@@ -69,14 +69,14 @@ _elm_unneed_web(void)
    ewm.unneed_web();
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_web(void)
 {
    if (!ewm.need_web) return EINA_FALSE;
    return ewm.need_web();
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_web_add(Evas_Object *parent)
 {
    if (!parent || !ewm.class_get) return NULL;
@@ -84,7 +84,7 @@ elm_web_add(Evas_Object *parent)
    return elm_legacy_add(ewm.class_get(), parent);
 }
 
-EAPI const Efl_Class *
+ELM_API const Efl_Class *
 elm_web_real_class_get(void)
 {
    if (!ewm.class_get) return NULL;
@@ -104,7 +104,7 @@ _elm_web_efl_object_constructor(Eo *obj, Elm_Web_Data *sd)
    return obj;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_web_uri_set(Evas_Object *obj, const char *url)
 {
    ELM_WEB_CHECK(obj) EINA_FALSE;
@@ -112,28 +112,28 @@ elm_web_uri_set(Evas_Object *obj, const char *url)
    return elm_obj_web_url_set(obj, url);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_web_uri_get(const Evas_Object *obj)
 {
    return elm_obj_web_url_get((Eo *) obj);
 }
 
 // FIXME: override with module function
-EAPI void
+ELM_API void
 elm_web_window_features_ref(Elm_Web_Window_Features *wf)
 {
    if (!ewm.window_features_ref) return ;
    ewm.window_features_ref(wf);
 }
 
-EAPI void
+ELM_API void
 elm_web_window_features_unref(Elm_Web_Window_Features *wf)
 {
    if (!ewm.window_features_unref) return ;
    ewm.window_features_unref(wf);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_web_window_features_property_get(const Elm_Web_Window_Features *wf,
                                      Elm_Web_Window_Feature_Flag flag)
 {
@@ -141,7 +141,7 @@ elm_web_window_features_property_get(const Elm_Web_Window_Features *wf,
    return ewm.window_features_property_get(wf, flag);
 }
 
-EAPI void
+ELM_API void
 elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
                                    Evas_Coord *x,
                                    Evas_Coord *y,
@@ -182,7 +182,7 @@ _convert_web_zoom_mode(Elm_Web_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, E
    #undef CONVERT
 }
 
-EAPI void
+ELM_API void
 elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
 {
    Efl_Ui_Zoom_Mode new_mode = EFL_UI_ZOOM_MODE_MANUAL;;
@@ -192,7 +192,7 @@ elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
    efl_ui_zoom_mode_set(obj, new_mode);
 }
 
-EAPI Elm_Web_Zoom_Mode
+ELM_API Elm_Web_Zoom_Mode
 elm_web_zoom_mode_get(const Evas_Object *obj)
 {
    Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
@@ -203,13 +203,13 @@ elm_web_zoom_mode_get(const Evas_Object *obj)
    return mode;
 }
 
-EAPI void
+ELM_API void
 elm_web_zoom_set(Evas_Object *obj, double zoom)
 {
    efl_ui_zoom_level_set(obj, zoom);
 }
 
-EAPI double
+ELM_API double
 elm_web_zoom_get(const Evas_Object *obj)
 {
    return efl_ui_zoom_level_get(obj);

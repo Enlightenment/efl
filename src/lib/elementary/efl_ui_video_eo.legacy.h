@@ -25,7 +25,7 @@ typedef Eo Efl_Ui_Video;
  *
  * @ingroup Elm_Video_Group
  */
-EAPI void elm_video_remember_position_set(Efl_Ui_Video *obj, Eina_Bool remember);
+ELM_API void elm_video_remember_position_set(Efl_Ui_Video *obj, Eina_Bool remember);
 
 /**
  * @brief Set whether the object can remember the last played position.
@@ -39,7 +39,7 @@ EAPI void elm_video_remember_position_set(Efl_Ui_Video *obj, Eina_Bool remember)
  *
  * @ingroup Elm_Video_Group
  */
-EAPI Eina_Bool elm_video_remember_position_get(const Efl_Ui_Video *obj);
+ELM_API Eina_Bool elm_video_remember_position_get(const Efl_Ui_Video *obj);
 
 /**
  * @brief Get the underlying Emotion object.
@@ -50,7 +50,7 @@ EAPI Eina_Bool elm_video_remember_position_get(const Efl_Ui_Video *obj);
  *
  * @ingroup Elm_Video_Group
  */
-EAPI Efl_Canvas_Object *elm_video_emotion_get(const Efl_Ui_Video *obj);
+ELM_API Efl_Canvas_Object *elm_video_emotion_get(const Efl_Ui_Video *obj);
 
 /**
  * @brief Get the title (for instance DVD title) from this emotion object.
@@ -65,6 +65,6 @@ EAPI Efl_Canvas_Object *elm_video_emotion_get(const Efl_Ui_Video *obj);
  *
  * @ingroup Elm_Video_Group
  */
-EAPI const char *elm_video_title_get(const Efl_Ui_Video *obj);
+ELM_API const char *elm_video_title_get(const Efl_Ui_Video *obj);
 
 #endif

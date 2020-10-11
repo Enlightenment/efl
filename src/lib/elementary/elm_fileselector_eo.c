@@ -1,10 +1,10 @@
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_EVENT_DONE =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_EVENT_DONE =
    EFL_EVENT_DESCRIPTION("done");
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_EVENT_ACTIVATED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_EVENT_ACTIVATED =
    EFL_EVENT_DESCRIPTION("activated");
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_EVENT_SELECTED_INVALID =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_EVENT_SELECTED_INVALID =
    EFL_EVENT_DESCRIPTION("selected,invalid");
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN =
    EFL_EVENT_DESCRIPTION("directory,open");
 
 void _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *pd, Eina_Bool visible);
@@ -25,7 +25,7 @@ __eolian_elm_fileselector_buttons_ok_cancel_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_fileselector_buttons_ok_cancel_set, EFL_FUNC_CALL(visible), Eina_Bool visible);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_fileselector_buttons_ok_cancel_set, EFL_FUNC_CALL(visible), Eina_Bool visible);
 
 Eina_Bool _elm_fileselector_buttons_ok_cancel_get(const Eo *obj, Elm_Fileselector_Data *pd);
 
@@ -37,7 +37,7 @@ __eolian_elm_fileselector_buttons_ok_cancel_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_fileselector_buttons_ok_cancel_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_fileselector_buttons_ok_cancel_get, Eina_Bool, 0);
 
 Efl_Object *_elm_fileselector_efl_object_constructor(Eo *obj, Elm_Fileselector_Data *pd);
 

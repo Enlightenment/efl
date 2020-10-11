@@ -69,7 +69,7 @@ struct _Elm_Win_Trap
  *
  * @since 1.7
  */
-EAPI Eina_Bool elm_win_trap_set(const Elm_Win_Trap *trap);
+ELM_API Eina_Bool elm_win_trap_set(const Elm_Win_Trap *trap);
 
 /**
  * @}

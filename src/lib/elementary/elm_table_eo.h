@@ -19,7 +19,7 @@ typedef Eo Elm_Table;
  */
 #define ELM_TABLE_CLASS elm_table_class_get()
 
-EWAPI const Efl_Class *elm_table_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_table_class_get(void) EINA_CONST;
 
 /**
  * @brief Control the homogeneous state in a table.
@@ -30,7 +30,7 @@ EWAPI const Efl_Class *elm_table_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
+ELM_API ELM_API_WEAK void elm_obj_table_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
 
 /**
  * @brief Control the homogeneous state in a table.
@@ -41,7 +41,7 @@ EOAPI void elm_obj_table_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
  *
  * @ingroup Elm_Table
  */
-EOAPI Eina_Bool elm_obj_table_homogeneous_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_table_homogeneous_get(const Eo *obj);
 
 /**
  * @brief Set padding between cells. Default value is 0.
@@ -52,7 +52,7 @@ EOAPI Eina_Bool elm_obj_table_homogeneous_get(const Eo *obj);
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_padding_set(Eo *obj, int horizontal, int vertical);
+ELM_API ELM_API_WEAK void elm_obj_table_padding_set(Eo *obj, int horizontal, int vertical);
 
 /**
  * @brief Get padding between cells.
@@ -63,7 +63,7 @@ EOAPI void elm_obj_table_padding_set(Eo *obj, int horizontal, int vertical);
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_padding_get(const Eo *obj, int *horizontal, int *vertical);
+ELM_API ELM_API_WEAK void elm_obj_table_padding_get(const Eo *obj, int *horizontal, int *vertical);
 
 /**
  * @brief Set alignment of table. Default value is 0.5.
@@ -76,7 +76,7 @@ EOAPI void elm_obj_table_padding_get(const Eo *obj, int *horizontal, int *vertic
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_align_set(Eo *obj, double horizontal, double vertical);
+ELM_API ELM_API_WEAK void elm_obj_table_align_set(Eo *obj, double horizontal, double vertical);
 
 /**
  * @brief Get alignment of table.
@@ -89,7 +89,7 @@ EOAPI void elm_obj_table_align_set(Eo *obj, double horizontal, double vertical);
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_align_get(const Eo *obj, double *horizontal, double *vertical);
+ELM_API ELM_API_WEAK void elm_obj_table_align_get(const Eo *obj, double *horizontal, double *vertical);
 
 /**
  * @brief Faster way to remove all child objects from a table object.
@@ -100,7 +100,7 @@ EOAPI void elm_obj_table_align_get(const Eo *obj, double *horizontal, double *ve
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_clear(Eo *obj, Eina_Bool clear);
+ELM_API ELM_API_WEAK void elm_obj_table_clear(Eo *obj, Eina_Bool clear);
 
 /**
  * @brief Get child object of table at given coordinates.
@@ -113,7 +113,7 @@ EOAPI void elm_obj_table_clear(Eo *obj, Eina_Bool clear);
  *
  * @ingroup Elm_Table
  */
-EOAPI Efl_Canvas_Object *elm_obj_table_child_get(const Eo *obj, int col, int row);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_table_child_get(const Eo *obj, int col, int row);
 
 /**
  * @brief Set the packing location of an existing child of the table
@@ -133,7 +133,7 @@ EOAPI Efl_Canvas_Object *elm_obj_table_child_get(const Eo *obj, int col, int row
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_pack_set(Eo *obj, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
+ELM_API ELM_API_WEAK void elm_obj_table_pack_set(Eo *obj, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
 /**
  * @brief Get the packing location of an existing child of the table.
@@ -147,7 +147,7 @@ EOAPI void elm_obj_table_pack_set(Eo *obj, Efl_Canvas_Object *subobj, int column
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_pack_get(Eo *obj, Efl_Canvas_Object *subobj, int *column, int *row, int *colspan, int *rowspan);
+ELM_API ELM_API_WEAK void elm_obj_table_pack_get(Eo *obj, Efl_Canvas_Object *subobj, int *column, int *row, int *colspan, int *rowspan);
 
 /**
  * @brief Remove child from table.
@@ -157,7 +157,7 @@ EOAPI void elm_obj_table_pack_get(Eo *obj, Efl_Canvas_Object *subobj, int *colum
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_unpack(Eo *obj, Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK void elm_obj_table_unpack(Eo *obj, Efl_Canvas_Object *subobj);
 
 /**
  * @brief Add a subobject on the table with the coordinates passed.
@@ -180,6 +180,6 @@ EOAPI void elm_obj_table_unpack(Eo *obj, Efl_Canvas_Object *subobj);
  *
  * @ingroup Elm_Table
  */
-EOAPI void elm_obj_table_pack(Eo *obj, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
+ELM_API ELM_API_WEAK void elm_obj_table_pack(Eo *obj, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
 #endif

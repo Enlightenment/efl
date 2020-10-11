@@ -6,6 +6,6 @@
  *
  * @ingroup Elm_Route
  */
-EAPI Evas_Object *elm_route_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_route_add(Evas_Object *parent);
 
 #include "elm_route_eo.legacy.h"

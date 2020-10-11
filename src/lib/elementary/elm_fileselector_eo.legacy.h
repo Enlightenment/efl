@@ -28,7 +28,7 @@ typedef Eo Elm_Fileselector;
  *
  * @ingroup Elm_Fileselector_Group
  */
-EAPI void elm_fileselector_buttons_ok_cancel_set(Elm_Fileselector *obj, Eina_Bool visible);
+ELM_API void elm_fileselector_buttons_ok_cancel_set(Elm_Fileselector *obj, Eina_Bool visible);
 
 /**
  * @brief Get whether the "ok" and "cancel" buttons on a given file selector
@@ -42,6 +42,6 @@ EAPI void elm_fileselector_buttons_ok_cancel_set(Elm_Fileselector *obj, Eina_Boo
  *
  * @ingroup Elm_Fileselector_Group
  */
-EAPI Eina_Bool elm_fileselector_buttons_ok_cancel_get(const Elm_Fileselector *obj);
+ELM_API Eina_Bool elm_fileselector_buttons_ok_cancel_get(const Elm_Fileselector *obj);
 
 #endif

@@ -23,7 +23,7 @@ typedef Eo Efl_Ui_Frame;
  *
  * @ingroup Elm_Frame_Group
  */
-EAPI void elm_frame_collapse_set(Efl_Ui_Frame *obj, Eina_Bool collapse);
+ELM_API void elm_frame_collapse_set(Efl_Ui_Frame *obj, Eina_Bool collapse);
 
 /**
  * @brief Determine the collapse state of a frame Use this to determine the
@@ -35,7 +35,7 @@ EAPI void elm_frame_collapse_set(Efl_Ui_Frame *obj, Eina_Bool collapse);
  *
  * @ingroup Elm_Frame_Group
  */
-EAPI Eina_Bool elm_frame_collapse_get(const Efl_Ui_Frame *obj);
+ELM_API Eina_Bool elm_frame_collapse_get(const Efl_Ui_Frame *obj);
 
 /**
  * @brief Toggle autocollapsing of a frame When @c enable is @c true, clicking
@@ -47,7 +47,7 @@ EAPI Eina_Bool elm_frame_collapse_get(const Efl_Ui_Frame *obj);
  *
  * @ingroup Elm_Frame_Group
  */
-EAPI void elm_frame_autocollapse_set(Efl_Ui_Frame *obj, Eina_Bool autocollapse);
+ELM_API void elm_frame_autocollapse_set(Efl_Ui_Frame *obj, Eina_Bool autocollapse);
 
 /**
  * @brief Determine autocollapsing of a frame
@@ -62,7 +62,7 @@ EAPI void elm_frame_autocollapse_set(Efl_Ui_Frame *obj, Eina_Bool autocollapse);
  *
  * @ingroup Elm_Frame_Group
  */
-EAPI Eina_Bool elm_frame_autocollapse_get(const Efl_Ui_Frame *obj);
+ELM_API Eina_Bool elm_frame_autocollapse_get(const Efl_Ui_Frame *obj);
 
 /**
  * @brief Manually collapse a frame with animations Use this to toggle the
@@ -73,6 +73,6 @@ EAPI Eina_Bool elm_frame_autocollapse_get(const Efl_Ui_Frame *obj);
  *
  * @ingroup Elm_Frame_Group
  */
-EAPI void elm_frame_collapse_go(Efl_Ui_Frame *obj, Eina_Bool collapse);
+ELM_API void elm_frame_collapse_go(Efl_Ui_Frame *obj, Eina_Bool collapse);
 
 #endif

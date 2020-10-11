@@ -9,13 +9,13 @@
 
 #include "elm_code_private.h"
 
-EAPI const Efl_Event_Description ELM_CODE_EVENT_LINE_LOAD_DONE =
+ELM_API const Efl_Event_Description ELM_CODE_EVENT_LINE_LOAD_DONE =
     EFL_EVENT_DESCRIPTION("line,load,done");
-EAPI const Efl_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE =
+ELM_API const Efl_Event_Description ELM_CODE_EVENT_FILE_LOAD_DONE =
     EFL_EVENT_DESCRIPTION("file,load,done");
 
 
-EAPI Elm_Code *
+ELM_API Elm_Code *
 elm_code_create(void)
 {
    Elm_Code *ret;
@@ -29,7 +29,7 @@ elm_code_create(void)
    return ret;
 }
 
-EAPI void
+ELM_API void
 elm_code_free(Elm_Code *code)
 {
    Evas_Object *widget;
@@ -52,7 +52,7 @@ elm_code_free(Elm_Code *code)
    free(code);
 }
 
-EAPI void
+ELM_API void
 elm_code_callback_fire(Elm_Code *code, const Efl_Event_Description *signal, void *data)
 {
    Eina_List *item;

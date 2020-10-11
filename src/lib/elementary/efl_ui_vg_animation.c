@@ -889,20 +889,20 @@ _efl_ui_vg_animation_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED
    return obj;
 }
 
-EAPI Elm_Animation_View*
+ELM_API Elm_Animation_View*
 elm_animation_view_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(EFL_UI_VG_ANIMATION_LEGACY_CLASS, parent);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_animation_view_file_set(Elm_Animation_View *obj, const char *file, const char *key)
 {
    return efl_file_simple_load(obj, file, key);
 }
 
-EAPI Elm_Animation_View_State
+ELM_API Elm_Animation_View_State
 elm_animation_view_state_get(Elm_Animation_View *obj)
 {
    Elm_Animation_View_State state = ELM_ANIMATION_VIEW_STATE_NOT_READY;

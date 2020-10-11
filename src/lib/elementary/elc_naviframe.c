@@ -1601,7 +1601,7 @@ _item_push_helper(Elm_Naviframe_Item_Data *item)
      efl_event_callback_legacy_call(obj, ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, EO_OBJ(item));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_naviframe_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -1913,26 +1913,26 @@ _elm_naviframe_item_elm_widget_item_style_set(Eo *eo_item EINA_UNUSED,
    _item_title_enabled_update(nit, EINA_FALSE);
 }
 
-EAPI void
+ELM_API void
 elm_naviframe_item_style_set(Elm_Object_Item *obj, const char *style)
 {
    elm_wdg_item_style_set(obj, style);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_naviframe_item_style_get(const Elm_Object_Item *obj)
 {
    return elm_wdg_item_style_get(obj);
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_naviframe_item_title_visible_set(Elm_Object_Item *it,
                                      Eina_Bool visible)
 {
    elm_naviframe_item_title_enabled_set(it, visible, EINA_FALSE);
 }
 
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ELM_API Eina_Bool
 elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
 {
    return elm_naviframe_item_title_enabled_get(it);

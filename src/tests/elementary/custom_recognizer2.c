@@ -1,4 +1,5 @@
 #include <Efl_Ui.h>
+#include "efl_ui_suite.h"
 #include "custom_recognizer2.eo.h"
 #define MY_CLASS                       CUSTOM_RECOGNIZER2_CLASS
 

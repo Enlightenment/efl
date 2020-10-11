@@ -25,7 +25,7 @@ typedef Eo Efl_Ui_Image_Zoomable;
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void elm_photocam_gesture_enabled_set(Efl_Ui_Image_Zoomable *obj, Eina_Bool gesture);
+ELM_API void elm_photocam_gesture_enabled_set(Efl_Ui_Image_Zoomable *obj, Eina_Bool gesture);
 
 /**
  * @brief Get the gesture state for photocam.
@@ -38,7 +38,7 @@ EAPI void elm_photocam_gesture_enabled_set(Efl_Ui_Image_Zoomable *obj, Eina_Bool
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI Eina_Bool elm_photocam_gesture_enabled_get(const Efl_Ui_Image_Zoomable *obj);
+ELM_API Eina_Bool elm_photocam_gesture_enabled_get(const Efl_Ui_Image_Zoomable *obj);
 
 
 

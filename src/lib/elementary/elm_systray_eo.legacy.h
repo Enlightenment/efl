@@ -50,7 +50,7 @@ typedef enum
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_id_set(Elm_Systray *obj, const char *id);
+ELM_API void elm_systray_id_set(Elm_Systray *obj, const char *id);
 
 /**
  * @brief Get the id of the Status Notifier Item.
@@ -61,7 +61,7 @@ EAPI void elm_systray_id_set(Elm_Systray *obj, const char *id);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI const char *elm_systray_id_get(const Elm_Systray *obj);
+ELM_API const char *elm_systray_id_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the category of the Status Notifier Item.
@@ -71,7 +71,7 @@ EAPI const char *elm_systray_id_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_category_set(Elm_Systray *obj, Elm_Systray_Category cat);
+ELM_API void elm_systray_category_set(Elm_Systray *obj, Elm_Systray_Category cat);
 
 /**
  * @brief Get the category of the Status Notifier Item.
@@ -82,7 +82,7 @@ EAPI void elm_systray_category_set(Elm_Systray *obj, Elm_Systray_Category cat);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI Elm_Systray_Category elm_systray_category_get(const Elm_Systray *obj);
+ELM_API Elm_Systray_Category elm_systray_category_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the path to the theme where the icons can be found. Set this
@@ -93,7 +93,7 @@ EAPI Elm_Systray_Category elm_systray_category_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_icon_theme_path_set(Elm_Systray *obj, const char *icon_theme_path);
+ELM_API void elm_systray_icon_theme_path_set(Elm_Systray *obj, const char *icon_theme_path);
 
 /**
  * @brief Get the path to the icon's theme currently in use.
@@ -104,7 +104,7 @@ EAPI void elm_systray_icon_theme_path_set(Elm_Systray *obj, const char *icon_the
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI const char *elm_systray_icon_theme_path_get(const Elm_Systray *obj);
+ELM_API const char *elm_systray_icon_theme_path_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the object path of the D-Bus Menu that is to be show when the
@@ -115,7 +115,7 @@ EAPI const char *elm_systray_icon_theme_path_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_menu_set(Elm_Systray *obj, const Efl_Object *menu);
+ELM_API void elm_systray_menu_set(Elm_Systray *obj, const Efl_Object *menu);
 
 /**
  * @brief Get the object path of the D-Bus Menu currently in use.
@@ -126,7 +126,7 @@ EAPI void elm_systray_menu_set(Elm_Systray *obj, const Efl_Object *menu);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI const Efl_Object *elm_systray_menu_get(const Elm_Systray *obj);
+ELM_API const Efl_Object *elm_systray_menu_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the name of the attention icon to be used by the Status Notifier
@@ -137,7 +137,7 @@ EAPI const Efl_Object *elm_systray_menu_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_att_icon_name_set(Elm_Systray *obj, const char *att_icon_name);
+ELM_API void elm_systray_att_icon_name_set(Elm_Systray *obj, const char *att_icon_name);
 
 /**
  * @brief Get the name of the attention icon used by the Status Notifier Item.
@@ -148,7 +148,7 @@ EAPI void elm_systray_att_icon_name_set(Elm_Systray *obj, const char *att_icon_n
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI const char *elm_systray_att_icon_name_get(const Elm_Systray *obj);
+ELM_API const char *elm_systray_att_icon_name_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the status of the Status Notifier Item.
@@ -158,7 +158,7 @@ EAPI const char *elm_systray_att_icon_name_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_status_set(Elm_Systray *obj, Elm_Systray_Status st);
+ELM_API void elm_systray_status_set(Elm_Systray *obj, Elm_Systray_Status st);
 
 /**
  * @brief Get the status of the Status Notifier Item.
@@ -169,7 +169,7 @@ EAPI void elm_systray_status_set(Elm_Systray *obj, Elm_Systray_Status st);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI Elm_Systray_Status elm_systray_status_get(const Elm_Systray *obj);
+ELM_API Elm_Systray_Status elm_systray_status_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the name of the icon to be used by the Status Notifier Item.
@@ -179,7 +179,7 @@ EAPI Elm_Systray_Status elm_systray_status_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_icon_name_set(Elm_Systray *obj, const char *icon_name);
+ELM_API void elm_systray_icon_name_set(Elm_Systray *obj, const char *icon_name);
 
 /**
  * @brief Get the name of the icon used by the Status Notifier Item.
@@ -190,7 +190,7 @@ EAPI void elm_systray_icon_name_set(Elm_Systray *obj, const char *icon_name);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI const char *elm_systray_icon_name_get(const Elm_Systray *obj);
+ELM_API const char *elm_systray_icon_name_get(const Elm_Systray *obj);
 
 /**
  * @brief Set the title of the Status Notifier Item.
@@ -200,7 +200,7 @@ EAPI const char *elm_systray_icon_name_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI void elm_systray_title_set(Elm_Systray *obj, const char *title);
+ELM_API void elm_systray_title_set(Elm_Systray *obj, const char *title);
 
 /**
  * @brief Get the title of the Status Notifier Item.
@@ -211,7 +211,7 @@ EAPI void elm_systray_title_set(Elm_Systray *obj, const char *title);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI const char *elm_systray_title_get(const Elm_Systray *obj);
+ELM_API const char *elm_systray_title_get(const Elm_Systray *obj);
 
 /**
  * @brief Register this Status Notifier Item in the System Tray Watcher. This
@@ -224,6 +224,6 @@ EAPI const char *elm_systray_title_get(const Elm_Systray *obj);
  *
  * @ingroup Elm_Systray_Group
  */
-EAPI Eina_Bool elm_systray_register(Elm_Systray *obj);
+ELM_API Eina_Bool elm_systray_register(Elm_Systray *obj);
 
 #endif

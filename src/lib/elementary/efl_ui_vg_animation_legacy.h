@@ -11,7 +11,7 @@
  *
  * @since 1.23
  */
-EAPI Elm_Animation_View     *elm_animation_view_add(Evas_Object *parent);
+ELM_API Elm_Animation_View     *elm_animation_view_add(Evas_Object *parent);
 
 /**
  *
@@ -32,7 +32,7 @@ NULL, otherwise.
  *
  * @since 1.23
 */
-EAPI Eina_Bool        elm_animation_view_file_set(Elm_Animation_View *obj, const char *file, const char *key);
+ELM_API Eina_Bool        elm_animation_view_file_set(Elm_Animation_View *obj, const char *file, const char *key);
 
 /**
  * @brief Get current animation view state.
@@ -45,5 +45,5 @@ EAPI Eina_Bool        elm_animation_view_file_set(Elm_Animation_View *obj, const
  *
  * @since 1.23
  */
-EAPI Elm_Animation_View_State elm_animation_view_state_get(Elm_Animation_View *obj);
+ELM_API Elm_Animation_View_State elm_animation_view_state_get(Elm_Animation_View *obj);
 

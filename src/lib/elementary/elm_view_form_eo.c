@@ -1,11 +1,11 @@
 
 void _elm_view_form_model_set(Eo *obj, Elm_View_Form_Data *pd, Efl_Model *model);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_view_form_model_set, EFL_FUNC_CALL(model), Efl_Model *model);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_view_form_model_set, EFL_FUNC_CALL(model), Efl_Model *model);
 
 void _elm_view_form_widget_add(Eo *obj, Elm_View_Form_Data *pd, const char *propname, Efl_Canvas_Object *evas);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_view_form_widget_add, EFL_FUNC_CALL(propname, evas), const char *propname, Efl_Canvas_Object *evas);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_view_form_widget_add, EFL_FUNC_CALL(propname, evas), const char *propname, Efl_Canvas_Object *evas);
 
 void _elm_view_form_efl_object_destructor(Eo *obj, Elm_View_Form_Data *pd);
 

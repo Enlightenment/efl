@@ -45,7 +45,7 @@ typedef Eo Elm_Prefs;
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_data_set(Elm_Prefs *obj, Elm_Prefs_Data *data);
+ELM_API Eina_Bool elm_prefs_data_set(Elm_Prefs *obj, Elm_Prefs_Data *data);
 
 /**
  * @brief Set user data for a given prefs widget
@@ -77,7 +77,7 @@ EAPI Eina_Bool elm_prefs_data_set(Elm_Prefs *obj, Elm_Prefs_Data *data);
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Elm_Prefs_Data *elm_prefs_data_get(const Elm_Prefs *obj);
+ELM_API Elm_Prefs_Data *elm_prefs_data_get(const Elm_Prefs *obj);
 
 /**
  * @brief Control whether a given prefs widget should save its values back (on
@@ -97,7 +97,7 @@ EAPI Elm_Prefs_Data *elm_prefs_data_get(const Elm_Prefs *obj);
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI void elm_prefs_autosave_set(Elm_Prefs *obj, Eina_Bool autosave);
+ELM_API void elm_prefs_autosave_set(Elm_Prefs *obj, Eina_Bool autosave);
 
 /**
  * @brief Control whether a given prefs widget should save its values back (on
@@ -118,7 +118,7 @@ EAPI void elm_prefs_autosave_set(Elm_Prefs *obj, Eina_Bool autosave);
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_autosave_get(const Elm_Prefs *obj);
+ELM_API Eina_Bool elm_prefs_autosave_get(const Elm_Prefs *obj);
 
 /**
  * @brief Reset the values of a given prefs widget to a previous state.
@@ -135,7 +135,7 @@ EAPI Eina_Bool elm_prefs_autosave_get(const Elm_Prefs *obj);
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI void elm_prefs_reset(Elm_Prefs *obj, Elm_Prefs_Reset_Mode mode);
+ELM_API void elm_prefs_reset(Elm_Prefs *obj, Elm_Prefs_Reset_Mode mode);
 
 /**
  * @brief Set the value on a given prefs widget's item.
@@ -153,7 +153,7 @@ EAPI void elm_prefs_reset(Elm_Prefs *obj, Elm_Prefs_Reset_Mode mode);
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_item_value_set(Elm_Prefs *obj, const char *name, const Eina_Value *value);
+ELM_API Eina_Bool elm_prefs_item_value_set(Elm_Prefs *obj, const char *name, const Eina_Value *value);
 
 /**
  * @brief Get the value of a given prefs widget's item.
@@ -172,7 +172,7 @@ EAPI Eina_Bool elm_prefs_item_value_set(Elm_Prefs *obj, const char *name, const 
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_item_value_get(const Elm_Prefs *obj, const char *name, Eina_Value *value);
+ELM_API Eina_Bool elm_prefs_item_value_get(const Elm_Prefs *obj, const char *name, Eina_Value *value);
 
 /**
  * @brief Get the Elementary widget bound to a given prefs widget's item.
@@ -193,7 +193,7 @@ EAPI Eina_Bool elm_prefs_item_value_get(const Elm_Prefs *obj, const char *name, 
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI const Efl_Canvas_Object *elm_prefs_item_object_get(Elm_Prefs *obj, const char *name);
+ELM_API const Efl_Canvas_Object *elm_prefs_item_object_get(Elm_Prefs *obj, const char *name);
 
 /**
  * @brief Set whether the widget bound to a given prefs widget's item is
@@ -208,7 +208,7 @@ EAPI const Efl_Canvas_Object *elm_prefs_item_object_get(Elm_Prefs *obj, const ch
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI void elm_prefs_item_disabled_set(Elm_Prefs *obj, const char *name, Eina_Bool disabled);
+ELM_API void elm_prefs_item_disabled_set(Elm_Prefs *obj, const char *name, Eina_Bool disabled);
 
 /**
  * @brief Get whether the widget bound to a given prefs widget's item is
@@ -224,7 +224,7 @@ EAPI void elm_prefs_item_disabled_set(Elm_Prefs *obj, const char *name, Eina_Boo
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_item_disabled_get(const Elm_Prefs *obj, const char *name);
+ELM_API Eina_Bool elm_prefs_item_disabled_get(const Elm_Prefs *obj, const char *name);
 
 /**
  * @brief "Swallows" an object into a SWALLOW item of a prefs widget.
@@ -240,7 +240,7 @@ EAPI Eina_Bool elm_prefs_item_disabled_get(const Elm_Prefs *obj, const char *nam
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_item_swallow(Elm_Prefs *obj, const char *name, Efl_Canvas_Object *child);
+ELM_API Eina_Bool elm_prefs_item_swallow(Elm_Prefs *obj, const char *name, Efl_Canvas_Object *child);
 
 /**
  * @brief Set whether the widget bound to a given prefs widget's item is
@@ -258,7 +258,7 @@ EAPI Eina_Bool elm_prefs_item_swallow(Elm_Prefs *obj, const char *name, Efl_Canv
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI void elm_prefs_item_editable_set(Elm_Prefs *obj, const char *name, Eina_Bool editable);
+ELM_API void elm_prefs_item_editable_set(Elm_Prefs *obj, const char *name, Eina_Bool editable);
 
 /**
  * @brief Get whether the widget bound to a given prefs widget's item is
@@ -274,7 +274,7 @@ EAPI void elm_prefs_item_editable_set(Elm_Prefs *obj, const char *name, Eina_Boo
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_item_editable_get(const Elm_Prefs *obj, const char *name);
+ELM_API Eina_Bool elm_prefs_item_editable_get(const Elm_Prefs *obj, const char *name);
 
 /**
  * @brief Unswallow an object from a SWALLOW item of a prefs widget.
@@ -289,7 +289,7 @@ EAPI Eina_Bool elm_prefs_item_editable_get(const Elm_Prefs *obj, const char *nam
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Efl_Canvas_Object *elm_prefs_item_unswallow(Elm_Prefs *obj, const char *name);
+ELM_API Efl_Canvas_Object *elm_prefs_item_unswallow(Elm_Prefs *obj, const char *name);
 
 /**
  * @brief Set whether the widget bound to given prefs widget's item should be
@@ -308,7 +308,7 @@ EAPI Efl_Canvas_Object *elm_prefs_item_unswallow(Elm_Prefs *obj, const char *nam
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI void elm_prefs_item_visible_set(Elm_Prefs *obj, const char *name, Eina_Bool visible);
+ELM_API void elm_prefs_item_visible_set(Elm_Prefs *obj, const char *name, Eina_Bool visible);
 
 /**
  * @brief Get whether the widget bound to a given prefs widget's item is
@@ -324,6 +324,6 @@ EAPI void elm_prefs_item_visible_set(Elm_Prefs *obj, const char *name, Eina_Bool
  *
  * @ingroup Elm_Prefs_Group
  */
-EAPI Eina_Bool elm_prefs_item_visible_get(const Elm_Prefs *obj, const char *name);
+ELM_API Eina_Bool elm_prefs_item_visible_get(const Elm_Prefs *obj, const char *name);
 
 #endif

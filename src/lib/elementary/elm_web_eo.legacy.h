@@ -27,7 +27,7 @@ typedef Eo Elm_Web;
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_text_matches_highlight_set(Elm_Web *obj, Eina_Bool highlight);
+ELM_API Eina_Bool elm_web_text_matches_highlight_set(Elm_Web *obj, Eina_Bool highlight);
 
 /**
  * @brief Get whether highlighting marks is enabled.
@@ -38,7 +38,7 @@ EAPI Eina_Bool elm_web_text_matches_highlight_set(Elm_Web *obj, Eina_Bool highli
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_text_matches_highlight_get(const Elm_Web *obj);
+ELM_API Eina_Bool elm_web_text_matches_highlight_get(const Elm_Web *obj);
 
 /**
  * @brief Change useragent of a elm_web object.
@@ -48,7 +48,7 @@ EAPI Eina_Bool elm_web_text_matches_highlight_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_useragent_set(Elm_Web *obj, const char *user_agent);
+ELM_API void elm_web_useragent_set(Elm_Web *obj, const char *user_agent);
 
 /**
  * @brief Return current useragent of elm_web object.
@@ -59,7 +59,7 @@ EAPI void elm_web_useragent_set(Elm_Web *obj, const char *user_agent);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI const char *elm_web_useragent_get(const Elm_Web *obj);
+ELM_API const char *elm_web_useragent_get(const Elm_Web *obj);
 
 /**
  * @brief Sets the URL for the web object.
@@ -74,7 +74,7 @@ EAPI const char *elm_web_useragent_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_url_set(Elm_Web *obj, const char *url);
+ELM_API Eina_Bool elm_web_url_set(Elm_Web *obj, const char *url);
 
 /**
  * @brief Get the current URL for the object.
@@ -87,7 +87,7 @@ EAPI Eina_Bool elm_web_url_set(Elm_Web *obj, const char *url);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI const char *elm_web_url_get(const Elm_Web *obj);
+ELM_API const char *elm_web_url_get(const Elm_Web *obj);
 
 /**
  * @brief Sets the background color to be used by the web object.
@@ -103,7 +103,7 @@ EAPI const char *elm_web_url_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_bg_color_set(Elm_Web *obj, int r, int g, int b, int a);
+ELM_API void elm_web_bg_color_set(Elm_Web *obj, int r, int g, int b, int a);
 
 /**
  * @brief Get the background color to be used by the web object.
@@ -119,7 +119,7 @@ EAPI void elm_web_bg_color_set(Elm_Web *obj, int r, int g, int b, int a);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_bg_color_get(const Elm_Web *obj, int *r, int *g, int *b, int *a);
+ELM_API void elm_web_bg_color_get(const Elm_Web *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Sets the default dialogs to use an Inwin instead of a normal window.
@@ -134,7 +134,7 @@ EAPI void elm_web_bg_color_get(const Elm_Web *obj, int *r, int *g, int *b, int *
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_inwin_mode_set(Elm_Web *obj, Eina_Bool value);
+ELM_API void elm_web_inwin_mode_set(Elm_Web *obj, Eina_Bool value);
 
 /**
  * @brief Get whether Inwin mode is set for the current object.
@@ -145,7 +145,7 @@ EAPI void elm_web_inwin_mode_set(Elm_Web *obj, Eina_Bool value);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_inwin_mode_get(const Elm_Web *obj);
+ELM_API Eina_Bool elm_web_inwin_mode_get(const Elm_Web *obj);
 
 /**
  * @brief Sets whether to use tab propagation.
@@ -161,7 +161,7 @@ EAPI Eina_Bool elm_web_inwin_mode_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_tab_propagate_set(Elm_Web *obj, Eina_Bool propagate);
+ELM_API void elm_web_tab_propagate_set(Elm_Web *obj, Eina_Bool propagate);
 
 /**
  * @brief Get the status of the tab propagation.
@@ -172,7 +172,7 @@ EAPI void elm_web_tab_propagate_set(Elm_Web *obj, Eina_Bool propagate);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_tab_propagate_get(const Elm_Web *obj);
+ELM_API Eina_Bool elm_web_tab_propagate_get(const Elm_Web *obj);
 
 /**
  * @brief Enables or disables the browsing history.
@@ -182,7 +182,7 @@ EAPI Eina_Bool elm_web_tab_propagate_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_history_enabled_set(Elm_Web *obj, Eina_Bool enable);
+ELM_API void elm_web_history_enabled_set(Elm_Web *obj, Eina_Bool enable);
 
 /**
  * @brief Get whether browsing history is enabled for the given object.
@@ -193,7 +193,7 @@ EAPI void elm_web_history_enabled_set(Elm_Web *obj, Eina_Bool enable);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_history_enabled_get(const Elm_Web *obj);
+ELM_API Eina_Bool elm_web_history_enabled_get(const Elm_Web *obj);
 
 /**
  * @brief Sets the function to call when a console message is emitted from JS.
@@ -207,7 +207,7 @@ EAPI Eina_Bool elm_web_history_enabled_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_console_message_hook_set(Elm_Web *obj, Elm_Web_Console_Message func, void *data);
+ELM_API void elm_web_console_message_hook_set(Elm_Web *obj, Elm_Web_Console_Message func, void *data);
 
 /**
  * @brief Sets the function to call when a new window is requested.
@@ -223,7 +223,7 @@ EAPI void elm_web_console_message_hook_set(Elm_Web *obj, Elm_Web_Console_Message
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_window_create_hook_set(Elm_Web *obj, Elm_Web_Window_Open func, void *data);
+ELM_API void elm_web_window_create_hook_set(Elm_Web *obj, Elm_Web_Window_Open func, void *data);
 
 /**
  * @brief Sets the function to call when an file selector dialog.
@@ -238,7 +238,7 @@ EAPI void elm_web_window_create_hook_set(Elm_Web *obj, Elm_Web_Window_Open func,
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_dialog_file_selector_hook_set(Elm_Web *obj, Elm_Web_Dialog_File_Selector func, void *data);
+ELM_API void elm_web_dialog_file_selector_hook_set(Elm_Web *obj, Elm_Web_Dialog_File_Selector func, void *data);
 
 /**
  * @brief Sets the function to call when an confirm dialog.
@@ -253,7 +253,7 @@ EAPI void elm_web_dialog_file_selector_hook_set(Elm_Web *obj, Elm_Web_Dialog_Fil
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_dialog_confirm_hook_set(Elm_Web *obj, Elm_Web_Dialog_Confirm func, void *data);
+ELM_API void elm_web_dialog_confirm_hook_set(Elm_Web *obj, Elm_Web_Dialog_Confirm func, void *data);
 
 /**
  * @brief Tells the web object which index in the currently open popup was
@@ -268,7 +268,7 @@ EAPI void elm_web_dialog_confirm_hook_set(Elm_Web *obj, Elm_Web_Dialog_Confirm f
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_popup_selected_set(Elm_Web *obj, int idx);
+ELM_API void elm_web_popup_selected_set(Elm_Web *obj, int idx);
 
 /**
  * @brief Sets the function to call when an prompt dialog.
@@ -283,7 +283,7 @@ EAPI void elm_web_popup_selected_set(Elm_Web *obj, int idx);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_dialog_prompt_hook_set(Elm_Web *obj, Elm_Web_Dialog_Prompt func, void *data);
+ELM_API void elm_web_dialog_prompt_hook_set(Elm_Web *obj, Elm_Web_Dialog_Prompt func, void *data);
 
 /**
  * @brief Sets the function to call when an alert dialog.
@@ -298,7 +298,7 @@ EAPI void elm_web_dialog_prompt_hook_set(Elm_Web *obj, Elm_Web_Dialog_Prompt fun
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_dialog_alert_hook_set(Elm_Web *obj, Elm_Web_Dialog_Alert func, void *data);
+ELM_API void elm_web_dialog_alert_hook_set(Elm_Web *obj, Elm_Web_Dialog_Alert func, void *data);
 
 /**
  * @brief Queries whether it's possible to go forward in history.
@@ -309,7 +309,7 @@ EAPI void elm_web_dialog_alert_hook_set(Elm_Web *obj, Elm_Web_Dialog_Alert func,
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_forward_possible_get(const Elm_Web *obj);
+ELM_API Eina_Bool elm_web_forward_possible_get(const Elm_Web *obj);
 
 /**
  * @brief Get internal ewk_view object from web object.
@@ -325,7 +325,7 @@ EAPI Eina_Bool elm_web_forward_possible_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Efl_Canvas_Object *elm_web_webkit_view_get(const Elm_Web *obj);
+ELM_API Efl_Canvas_Object *elm_web_webkit_view_get(const Elm_Web *obj);
 
 /**
  * @brief Queries whether it's possible to go back in history.
@@ -336,7 +336,7 @@ EAPI Efl_Canvas_Object *elm_web_webkit_view_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_back_possible_get(const Elm_Web *obj);
+ELM_API Eina_Bool elm_web_back_possible_get(const Elm_Web *obj);
 
 /**
  * @brief Get the overall loading progress of the page.
@@ -352,7 +352,7 @@ EAPI Eina_Bool elm_web_back_possible_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI double elm_web_load_progress_get(const Elm_Web *obj);
+ELM_API double elm_web_load_progress_get(const Elm_Web *obj);
 
 /**
  * @brief Get a copy of the currently selected text.
@@ -366,7 +366,7 @@ EAPI double elm_web_load_progress_get(const Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI char *elm_web_selection_get(const Elm_Web *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API char *elm_web_selection_get(const Elm_Web *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get the current title.
@@ -380,7 +380,7 @@ EAPI char *elm_web_selection_get(const Elm_Web *obj) EINA_WARN_UNUSED_RESULT;
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Stringshare *elm_web_title_get(const Elm_Web *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API Eina_Stringshare *elm_web_title_get(const Elm_Web *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Jumps the given number of steps in the browsing history.
@@ -396,7 +396,7 @@ EAPI Eina_Stringshare *elm_web_title_get(const Elm_Web *obj) EINA_WARN_UNUSED_RE
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_navigate(Elm_Web *obj, int steps);
+ELM_API Eina_Bool elm_web_navigate(Elm_Web *obj, int steps);
 
 /**
  * @brief Goes back one step in the browsing history.
@@ -409,7 +409,7 @@ EAPI Eina_Bool elm_web_navigate(Elm_Web *obj, int steps);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_back(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_back(Elm_Web *obj);
 
 /**
  * @brief Loads the specified @c html string as the content of the web object.
@@ -432,7 +432,7 @@ EAPI Eina_Bool elm_web_back(Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_html_string_load(Elm_Web *obj, const char *html, const char *base_url, const char *unreachable_url);
+ELM_API Eina_Bool elm_web_html_string_load(Elm_Web *obj, const char *html, const char *base_url, const char *unreachable_url);
 
 /**
  * @brief Searches the given string in a document.
@@ -447,7 +447,7 @@ EAPI Eina_Bool elm_web_html_string_load(Elm_Web *obj, const char *html, const ch
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_text_search(const Elm_Web *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
+ELM_API Eina_Bool elm_web_text_search(const Elm_Web *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
 
 /**
  * @brief Dismisses an open dropdown popup
@@ -464,7 +464,7 @@ EAPI Eina_Bool elm_web_text_search(const Elm_Web *obj, const char *string, Eina_
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_popup_destroy(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_popup_destroy(Elm_Web *obj);
 
 /**
  * @brief Shows the given region in the web object.
@@ -477,7 +477,7 @@ EAPI Eina_Bool elm_web_popup_destroy(Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_region_show(Elm_Web *obj, int x, int y, int w, int h);
+ELM_API void elm_web_region_show(Elm_Web *obj, int x, int y, int w, int h);
 
 /**
  * @brief Goes forward one step in the browsing history.
@@ -493,7 +493,7 @@ EAPI void elm_web_region_show(Elm_Web *obj, int x, int y, int w, int h);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_forward(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_forward(Elm_Web *obj);
 
 /**
  * @brief Marks matches of the given string in a document.
@@ -508,7 +508,7 @@ EAPI Eina_Bool elm_web_forward(Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI unsigned int elm_web_text_matches_mark(Elm_Web *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
+ELM_API unsigned int elm_web_text_matches_mark(Elm_Web *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
 
 /**
  * @brief Brings in the region to the visible area.
@@ -524,7 +524,7 @@ EAPI unsigned int elm_web_text_matches_mark(Elm_Web *obj, const char *string, Ei
  *
  * @ingroup Elm_Web_Group
  */
-EAPI void elm_web_region_bring_in(Elm_Web *obj, int x, int y, int w, int h);
+ELM_API void elm_web_region_bring_in(Elm_Web *obj, int x, int y, int w, int h);
 
 /**
  * @brief Stops loading the current page.
@@ -539,7 +539,7 @@ EAPI void elm_web_region_bring_in(Elm_Web *obj, int x, int y, int w, int h);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_stop(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_stop(Elm_Web *obj);
 
 /**
  * @brief Queries whether it's possible to jump the given number of steps.
@@ -555,7 +555,7 @@ EAPI Eina_Bool elm_web_stop(Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_navigate_possible_get(Elm_Web *obj, int steps);
+ELM_API Eina_Bool elm_web_navigate_possible_get(Elm_Web *obj, int steps);
 
 /**
  * @brief Requests a reload of the current document, avoiding any existing
@@ -567,7 +567,7 @@ EAPI Eina_Bool elm_web_navigate_possible_get(Elm_Web *obj, int steps);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_reload_full(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_reload_full(Elm_Web *obj);
 
 /**
  * @brief Clears all marked matches in the document.
@@ -578,7 +578,7 @@ EAPI Eina_Bool elm_web_reload_full(Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_text_matches_unmark_all(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_text_matches_unmark_all(Elm_Web *obj);
 
 /**
  * @brief Requests a reload of the current document in the object.
@@ -589,6 +589,6 @@ EAPI Eina_Bool elm_web_text_matches_unmark_all(Elm_Web *obj);
  *
  * @ingroup Elm_Web_Group
  */
-EAPI Eina_Bool elm_web_reload(Elm_Web *obj);
+ELM_API Eina_Bool elm_web_reload(Elm_Web *obj);
 
 #endif

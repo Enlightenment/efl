@@ -37,7 +37,7 @@ typedef enum
  *
  * @ingroup Elm_Hover_Group
  */
-EAPI void elm_hover_target_set(Elm_Hover *obj, Efl_Canvas_Object *target);
+ELM_API void elm_hover_target_set(Elm_Hover *obj, Efl_Canvas_Object *target);
 
 /**
  * @brief Get the target object for the hover.
@@ -48,7 +48,7 @@ EAPI void elm_hover_target_set(Elm_Hover *obj, Efl_Canvas_Object *target);
  *
  * @ingroup Elm_Hover_Group
  */
-EAPI Efl_Canvas_Object *elm_hover_target_get(const Elm_Hover *obj);
+ELM_API Efl_Canvas_Object *elm_hover_target_get(const Elm_Hover *obj);
 
 /**
  * @brief Returns the best swallow location for content in the hover.
@@ -77,12 +77,12 @@ EAPI Efl_Canvas_Object *elm_hover_target_get(const Elm_Hover *obj);
  *
  * @ingroup Elm_Hover_Group
  */
-EAPI const char *elm_hover_best_content_location_get(const Elm_Hover *obj, Elm_Hover_Axis pref_axis);
+ELM_API const char *elm_hover_best_content_location_get(const Elm_Hover *obj, Elm_Hover_Axis pref_axis);
 
 /** Dismiss a hover object
  *
  * @ingroup Elm_Hover_Group
  */
-EAPI void elm_hover_dismiss(Elm_Hover *obj);
+ELM_API void elm_hover_dismiss(Elm_Hover *obj);
 
 #endif

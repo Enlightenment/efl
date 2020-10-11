@@ -29,7 +29,7 @@ typedef struct _Elm_Font_Properties
  * elm_font_fontconfig_name_get(), for one style only (single font
  * instance, not family).
  */
-EAPI Elm_Font_Properties *elm_font_properties_get(const char *font);
+ELM_API Elm_Font_Properties *elm_font_properties_get(const char *font);
 
 /**
  * Free font properties return by elm_font_properties_get().
@@ -38,7 +38,7 @@ EAPI Elm_Font_Properties *elm_font_properties_get(const char *font);
  *
  * @ingroup Elm_Fonts
  */
-EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
+ELM_API void             elm_font_properties_free(Elm_Font_Properties *efp);
 
 /**
  * Translate a font name, bound to a style, into fontconfig's font names
@@ -55,7 +55,7 @@ EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
  * elm_font_properties_get(), for one style only (single font
  * instance, not family).
  */
-EAPI char      *elm_font_fontconfig_name_get(const char *name, const char *style);
+ELM_API char      *elm_font_fontconfig_name_get(const char *name, const char *style);
 
 /**
  * Free the font string return by elm_font_fontconfig_name_get().
@@ -64,7 +64,7 @@ EAPI char      *elm_font_fontconfig_name_get(const char *name, const char *style
  *
  * @ingroup Elm_Fonts
  */
-EAPI void             elm_font_fontconfig_name_free(char *name);
+ELM_API void             elm_font_fontconfig_name_free(char *name);
 
 /**
  * Create a font hash table of available system fonts.
@@ -83,7 +83,7 @@ EAPI void             elm_font_fontconfig_name_free(char *name);
  * default font families (Sans, Serif, Monospace), which should be
  * present on most systems.
  */
-EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
+ELM_API Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
 
 /**
  * Free the hash returned by elm_font_available_hash_add().
@@ -92,7 +92,7 @@ EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
  *
  * @ingroup Elm_Fonts
  */
-EAPI void             elm_font_available_hash_del(Eina_Hash *hash);
+ELM_API void             elm_font_available_hash_del(Eina_Hash *hash);
 
 /**
  * @}

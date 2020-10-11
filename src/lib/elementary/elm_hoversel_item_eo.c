@@ -1,11 +1,11 @@
 
 void _elm_hoversel_item_icon_set(Eo *obj, Elm_Hoversel_Item_Data *pd, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_hoversel_item_icon_set, EFL_FUNC_CALL(icon_file, icon_group, icon_type), const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_hoversel_item_icon_set, EFL_FUNC_CALL(icon_file, icon_group, icon_type), const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
 
 void _elm_hoversel_item_icon_get(const Eo *obj, Elm_Hoversel_Item_Data *pd, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_hoversel_item_icon_get, EFL_FUNC_CALL(icon_file, icon_group, icon_type), const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_hoversel_item_icon_get, EFL_FUNC_CALL(icon_file, icon_group, icon_type), const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
 Efl_Object *_elm_hoversel_item_efl_object_constructor(Eo *obj, Elm_Hoversel_Item_Data *pd);
 

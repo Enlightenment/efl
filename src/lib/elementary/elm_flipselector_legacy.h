@@ -9,7 +9,7 @@
  *
  * @ingroup Elm_Flipselector
  */
-EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent);
+ELM_API Evas_Object                *elm_flipselector_add(Evas_Object *parent);
 
 #include "elm_flipselector_item_eo.legacy.h"
 #include "elm_flipselector_eo.legacy.h"

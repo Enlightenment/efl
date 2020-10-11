@@ -793,7 +793,7 @@ _elm_clock_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Clock_Data *_
    _access_obj_process(obj, _elm_clock_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_clock_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

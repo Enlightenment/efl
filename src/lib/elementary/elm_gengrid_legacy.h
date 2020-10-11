@@ -16,7 +16,7 @@
  *
  * @ingroup Elm_Gengrid_Group
  */
-EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
+ELM_API Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
 
 /**
  * Get the nth item, in a given gengrid widget, placed at position @p nth, in
@@ -31,7 +31,7 @@ EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
  * @ingroup Elm_Gengrid_Group
  * @since 1.8
  */
-EAPI Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth);
+ELM_API Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned int nth);
 
 /**
  * Show a specific virtual region within the gengrid content object by page number.
@@ -57,7 +57,7 @@ EAPI Elm_Object_Item *elm_gengrid_nth_item_get(const Evas_Object *obj, unsigned 
  *
  * @see elm_scroller_page_bring_in()
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
 /**
  * Set the scrollbar policy
@@ -82,7 +82,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_page_show(const E
  *
  * @ingroup Elm_Gengrid_Group
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+EINA_DEPRECATED ELM_API void          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * Get the scrollbar policy
@@ -99,7 +99,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *
  *
  * @ingroup Elm_Gengrid_Group
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+EINA_DEPRECATED ELM_API void          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Enable or disable bouncing effect for a given gengrid widget
@@ -123,7 +123,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Ob
  *
  * @ingroup Elm_Gengrid_Group
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED ELM_API void          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get whether bouncing effects are enabled or disabled, for a
@@ -141,7 +141,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina
  *
  * @ingroup Elm_Gengrid_Group
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED ELM_API void          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * @brief Get gengrid current page number.
@@ -163,7 +163,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_bounce_get(const Evas_Object *obj
  * @see elm_scroller_page_show()
  * @see elm_scroller_page_bring_in()
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+EINA_DEPRECATED ELM_API void          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
 /**
  * @brief Get gengrid last page number.
@@ -183,7 +183,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_current_page_get(const Evas_Objec
  * @see elm_scroller_page_show()
  * @see elm_scroller_page_bring_in()
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+EINA_DEPRECATED ELM_API void          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
 /**
  * Show a specific virtual region within the gengrid content object by page number.
@@ -209,7 +209,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *
  *
  * @see elm_scroller_page_show()
  */
-EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+EINA_DEPRECATED ELM_API void          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
 /**
  * @brief Set a given gengrid widget's scrolling page size.
@@ -220,7 +220,7 @@ EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *
  *
  * @ingroup Elm_Gengrid_Group
  */
-EAPI void elm_gengrid_page_size_set(Evas_Object *obj, int h_pagesize, int v_pagesize);
+ELM_API void elm_gengrid_page_size_set(Evas_Object *obj, int h_pagesize, int v_pagesize);
 
 /**
  * @brief Control  a given gengrid widget's scrolling page size, relative to
@@ -232,7 +232,7 @@ EAPI void elm_gengrid_page_size_set(Evas_Object *obj, int h_pagesize, int v_page
  *
  * @ingroup Elm_Gengrid_Group
  */
-EAPI void elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
+ELM_API void elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
 
 /**
  * @brief Control  a given gengrid widget's scrolling page size, relative to
@@ -244,7 +244,7 @@ EAPI void elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, doub
  *
  * @ingroup Elm_Gengrid_Group
  */
-EAPI void elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
+ELM_API void elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
 
 
 /**
@@ -260,7 +260,7 @@ EAPI void elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagere
  *
  * @ingroup Elm_Gengrid_Group
  */
-EAPI void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+ELM_API void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * @brief Get a value whether mouse wheel is enabled or not.
@@ -273,7 +273,7 @@ EAPI void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Gengrid_Group
  */
-EAPI Eina_Bool elm_gengrid_wheel_disabled_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_gengrid_wheel_disabled_get(const Evas_Object *obj);
 
 #include "elm_gengrid_item_eo.legacy.h"
 #include "elm_gengrid_eo.legacy.h"

@@ -8,7 +8,7 @@ typedef Eo Elm_Photocam;
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
+ELM_API Evas_Object           *elm_photocam_add(Evas_Object *parent);
 
 /**
  * @brief Bring in the viewed portion of the image
@@ -23,7 +23,7 @@ EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
+ELM_API void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
 
 /**
  *
@@ -42,7 +42,7 @@ EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj,
  *
  * @param[in] file The photo file
  */
-EAPI Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
+ELM_API Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
 
 /**
  *
@@ -55,7 +55,7 @@ EAPI Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
  * @ingroup Elm_Photocam_Group
  *
  */
-EAPI const char *elm_photocam_file_get(const Evas_Object *obj);
+ELM_API const char *elm_photocam_file_get(const Evas_Object *obj);
 
 /**
  * @brief Set the photocam image orientation.
@@ -69,7 +69,7 @@ EAPI const char *elm_photocam_file_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient);
+ELM_API void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orient);
 
 /**
  * @brief Get the photocam image orientation.
@@ -81,7 +81,7 @@ EAPI void elm_photocam_image_orient_set(Evas_Object *obj, Evas_Image_Orient orie
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
+ELM_API Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
 
 /**
  * @brief Get the internal low-res image used for photocam
@@ -94,7 +94,7 @@ EAPI Evas_Image_Orient elm_photocam_image_orient_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
+ELM_API Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
 
 /**
  * @brief Set the viewed region of the image
@@ -108,7 +108,7 @@ EAPI Evas_Object*      elm_photocam_internal_image_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
+ELM_API void              elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
 
 /**
  * @brief Get the current image pixel width and height
@@ -121,7 +121,7 @@ EAPI void              elm_photocam_image_region_show(Evas_Object *obj, int x, i
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void              elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
+ELM_API void              elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * @brief Get the paused state for photocam
@@ -132,7 +132,7 @@ EAPI void              elm_photocam_image_size_get(const Evas_Object *obj, int *
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
+ELM_API Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
 
 /**
  * @brief Set the paused state for photocam
@@ -145,7 +145,7 @@ EAPI Eina_Bool         elm_photocam_paused_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
+ELM_API void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
 
 /**
  * @brief Set the zoom level of the photo
@@ -162,7 +162,7 @@ EAPI void             elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
+ELM_API void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
 
 /**
  * @brief Get the zoom level of the photo
@@ -176,7 +176,7 @@ EAPI void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI double           elm_photocam_zoom_get(const Evas_Object *obj);
+ELM_API double           elm_photocam_zoom_get(const Evas_Object *obj);
 
 
 typedef enum
@@ -209,7 +209,7 @@ typedef enum
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
+ELM_API void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
 
 /**
  * @brief Get the zoom mode
@@ -220,7 +220,7 @@ EAPI void               elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photoca
  *
  * @ingroup Elm_Photocam_Group
  */
-EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
+ELM_API Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Get the region of the image that is currently shown
@@ -232,6 +232,6 @@ EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
  * @param[out] w Width of region in image original pixels
  * @param[out] h Height of region in image original pixels
  */
-EAPI void elm_photocam_image_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+ELM_API void elm_photocam_image_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
 #include "efl_ui_image_zoomable_eo.legacy.h"

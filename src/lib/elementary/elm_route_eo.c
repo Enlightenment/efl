@@ -1,15 +1,15 @@
 
 void _elm_route_emap_set(Eo *obj, Elm_Route_Data *pd, void *emap);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_route_emap_set, EFL_FUNC_CALL(emap), void *emap);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_route_emap_set, EFL_FUNC_CALL(emap), void *emap);
 
 void _elm_route_longitude_min_max_get(const Eo *obj, Elm_Route_Data *pd, double *min, double *max);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_route_longitude_min_max_get, EFL_FUNC_CALL(min, max), double *min, double *max);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_route_longitude_min_max_get, EFL_FUNC_CALL(min, max), double *min, double *max);
 
 void _elm_route_latitude_min_max_get(const Eo *obj, Elm_Route_Data *pd, double *min, double *max);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_route_latitude_min_max_get, EFL_FUNC_CALL(min, max), double *min, double *max);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_route_latitude_min_max_get, EFL_FUNC_CALL(min, max), double *min, double *max);
 
 Efl_Object *_elm_route_efl_object_constructor(Eo *obj, Elm_Route_Data *pd);
 

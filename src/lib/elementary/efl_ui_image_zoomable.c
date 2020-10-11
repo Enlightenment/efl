@@ -3316,7 +3316,7 @@ _efl_ui_image_zoomable_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNU
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_photocam_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -3367,13 +3367,13 @@ _efl_orient_to_evas_orient(Efl_Gfx_Image_Orientation efl_orient)
    return evas_orient[efl_orient];
 }
 
-EAPI void
+ELM_API void
 elm_photocam_image_orient_set(Eo *obj, Evas_Image_Orient evas_orient)
 {
    efl_gfx_image_orientation_set(obj, _evas_orient_to_efl_orient(evas_orient));
 }
 
-EAPI Evas_Image_Orient
+ELM_API Evas_Image_Orient
 elm_photocam_image_orient_get(const Eo *obj)
 {
    ELM_PHOTOCAM_CHECK(obj) EVAS_IMAGE_ORIENT_NONE;
@@ -3381,7 +3381,7 @@ elm_photocam_image_orient_get(const Eo *obj)
    return _efl_orient_to_evas_orient(sd->orient);
 }
 
-EAPI Evas_Object*
+ELM_API Evas_Object*
 elm_photocam_internal_image_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
@@ -3389,7 +3389,7 @@ elm_photocam_internal_image_get(const Evas_Object *obj)
    return sd->img;
 }
 
-EAPI void
+ELM_API void
 elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Eina_Size2D sz;
@@ -3398,43 +3398,43 @@ elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = sz.h;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_photocam_paused_get(const Evas_Object *obj)
 {
    return efl_ui_zoom_animation_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
 {
    efl_ui_zoom_animation_set(obj, paused);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_zoom_set(Evas_Object *obj, double zoom)
 {
    efl_ui_zoom_level_set(obj, zoom);
 }
 
-EAPI double
+ELM_API double
 elm_photocam_zoom_get(const Evas_Object *obj)
 {
    return efl_ui_zoom_level_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
 {
    efl_ui_zoom_mode_set(obj, (Efl_Ui_Zoom_Mode)mode);
 }
 
-EAPI Elm_Photocam_Zoom_Mode
+ELM_API Elm_Photocam_Zoom_Mode
 elm_photocam_zoom_mode_get(const Evas_Object *obj)
 {
    return (Elm_Photocam_Zoom_Mode)efl_ui_zoom_mode_get(obj);
 }
 
-EAPI Evas_Load_Error
+ELM_API Evas_Load_Error
 elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
    ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_GENERIC;
@@ -3455,19 +3455,19 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
           EVAS_LOAD_ERROR_GENERIC;
 }
 
-EAPI const char*
+ELM_API const char*
 elm_photocam_file_get(const Evas_Object *obj)
 {
    return efl_file_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h)
 {
    efl_ui_image_zoomable_image_region_set(obj, EINA_RECT(x, y, w, h));
 }
 
-EAPI void
+ELM_API void
 elm_photocam_image_region_bring_in(Evas_Object *obj,
                                    int x,
                                    int y,
@@ -3479,7 +3479,7 @@ elm_photocam_image_region_bring_in(Evas_Object *obj,
    efl_ui_scrollable_scroll(sd->smanager, EINA_RECT(x, y, w, h), EINA_TRUE);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_bounce_set(Evas_Object *obj,
                         Eina_Bool h_bounce,
                         Eina_Bool v_bounce)
@@ -3489,7 +3489,7 @@ elm_photocam_bounce_set(Evas_Object *obj,
    efl_ui_scrollable_bounce_enabled_set(obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_bounce_get(const Evas_Object *obj,
                         Eina_Bool *h_bounce,
                         Eina_Bool *v_bounce)
@@ -3499,7 +3499,7 @@ elm_photocam_bounce_get(const Evas_Object *obj,
    efl_ui_scrollable_bounce_enabled_get((Eo *)obj, h_bounce, v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_photocam_image_region_get(const Efl_Ui_Image_Zoomable *obj, int *x, int *y, int *w, int *h)
 {
    Eina_Rect r;

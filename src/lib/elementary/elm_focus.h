@@ -44,7 +44,7 @@
  *
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
+ELM_API Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
 
 /**
  * Set/unset focus to a given Elementary object.
@@ -66,7 +66,7 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus);
+ELM_API void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus);
 
 /**
  * Set the ability for an Elementary object to be focused
@@ -84,7 +84,7 @@ EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable);
+ELM_API void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable);
 
 /**
  * Get whether an Elementary object is focusable or not
@@ -99,7 +99,7 @@ EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool
  *
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj);
+ELM_API Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj);
 
 /**
  * Set custom focus chain.
@@ -114,7 +114,7 @@ EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj);
  * @param objs Chain of objects to pass focus
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs);
+ELM_API void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs);
 
 /**
  * Unset a custom focus chain on a given Elementary widget
@@ -126,7 +126,7 @@ EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Ei
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
+ELM_API void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
 
 /**
  * Get custom focus chain
@@ -135,7 +135,7 @@ EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
  * @return Chain of objects to pass focus.
  * @ingroup Elm_Focus
  */
-EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *obj);
+ELM_API const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *obj);
 
 /**
  * Append object to custom focus chain.
@@ -150,7 +150,7 @@ EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *o
  * @param relative_child The relative object to position the child
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
+ELM_API void                 elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 
 /**
  * Prepend object to custom focus chain.
@@ -165,7 +165,7 @@ EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj,
  * @param relative_child The relative object to position the child
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
+ELM_API void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 
 /**
  * Give focus to next object in object tree.
@@ -181,7 +181,7 @@ EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Direction dir);
+ELM_API void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
  * Get next object which was set with specific focus direction.
@@ -199,7 +199,7 @@ EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Dire
  *
  * @ingroup Elm_Focus
  */
-EAPI Evas_Object *        elm_object_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
+ELM_API Evas_Object *        elm_object_focus_next_object_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
  * Set next object with specific focus direction.
@@ -219,7 +219,7 @@ EAPI Evas_Object *        elm_object_focus_next_object_get(const Evas_Object *ob
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
+ELM_API void                 elm_object_focus_next_object_set(Evas_Object *obj, Evas_Object *next, Elm_Focus_Direction dir);
 
 /**
  * Get focused object in object tree.
@@ -233,7 +233,7 @@ EAPI void                 elm_object_focus_next_object_set(Evas_Object *obj, Eva
  *
  * @ingroup Elm_Focus
  */
-EAPI Evas_Object         *elm_object_focused_object_get(const Evas_Object *obj);
+ELM_API Evas_Object         *elm_object_focused_object_get(const Evas_Object *obj);
 
 /**
  * Make the elementary object and its children to be focusable
@@ -256,7 +256,7 @@ EAPI Evas_Object         *elm_object_focused_object_get(const Evas_Object *obj);
  * @ingroup Elm_Focus
  *
  */
-EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina_Bool focusable);
+ELM_API void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina_Bool focusable);
 
 /**
  * Get whether an Elementary object and its children are focusable or not.
@@ -269,7 +269,7 @@ EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina
  *
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj);
+ELM_API Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj);
 
 /**
  * Set the focus highlight style to be used by a given widget.
@@ -287,7 +287,7 @@ EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj
  *
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const char *style);
+ELM_API Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the focus highlight style to be used by a given widget.
@@ -301,7 +301,7 @@ EAPI Eina_Bool    elm_object_focus_highlight_style_set(Evas_Object *obj, const c
  *
  * @ingroup Elm_Focus
  */
-EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
+ELM_API const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
 
 /**
  * Set the focus movement policy to a given Elementary object.
@@ -315,7 +315,7 @@ EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
+ELM_API void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
 
 /**
  * Get the focus movement policy from a given Elementary object.
@@ -337,7 +337,7 @@ EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm
  *
  * @ingroup Elm_Focus
  */
-EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *obj);
+ELM_API Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *obj);
 
 /**
  * Set the focus region show mode to a given Elementary object.
@@ -358,7 +358,7 @@ EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *
  *
  * @ingroup Elm_Focus
  */
-EAPI void                       elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
+ELM_API void                       elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
 
 /**
  * Get the focus region show mode to a given Elementary object.
@@ -372,7 +372,7 @@ EAPI void                       elm_object_focus_region_show_mode_set(Evas_Objec
  *
  * @ingroup Elm_Focus
  */
-EAPI Elm_Focus_Region_Show_Mode elm_object_focus_region_show_mode_get(const Evas_Object *obj);
+ELM_API Elm_Focus_Region_Show_Mode elm_object_focus_region_show_mode_get(const Evas_Object *obj);
 
 /**
  * Returns the widget's focus movement policy mode setting.
@@ -386,7 +386,7 @@ EAPI Elm_Focus_Region_Show_Mode elm_object_focus_region_show_mode_get(const Evas
  *
  * @ingroup Focus
  */
-EAPI Eina_Bool elm_object_focus_move_policy_automatic_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_object_focus_move_policy_automatic_get(const Evas_Object *obj);
 
 /**
  * Sets the widget's focus movement policy mode setting.
@@ -402,4 +402,4 @@ EAPI Eina_Bool elm_object_focus_move_policy_automatic_get(const Evas_Object *obj
  *
  * @ingroup Focus
  */
-EAPI void      elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic);
+ELM_API void      elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic);

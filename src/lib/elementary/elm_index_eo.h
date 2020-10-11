@@ -19,7 +19,7 @@ typedef Eo Elm_Index;
  */
 #define ELM_INDEX_CLASS elm_index_class_get()
 
-EWAPI const Efl_Class *elm_index_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_index_class_get(void) EINA_CONST;
 
 /**
  * @brief Enable or disable auto hiding feature for a given index widget.
@@ -29,7 +29,7 @@ EWAPI const Efl_Class *elm_index_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_autohide_disabled_set(Eo *obj, Eina_Bool disabled);
+ELM_API ELM_API_WEAK void elm_obj_index_autohide_disabled_set(Eo *obj, Eina_Bool disabled);
 
 /**
  * @brief Enable or disable auto hiding feature for a given index widget.
@@ -40,7 +40,7 @@ EOAPI void elm_obj_index_autohide_disabled_set(Eo *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Index
  */
-EOAPI Eina_Bool elm_obj_index_autohide_disabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_index_autohide_disabled_get(const Eo *obj);
 
 /**
  * @brief Enable or disable omit feature for a given index widget.
@@ -52,7 +52,7 @@ EOAPI Eina_Bool elm_obj_index_autohide_disabled_get(const Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_omit_enabled_set(Eo *obj, Eina_Bool enabled);
+ELM_API ELM_API_WEAK void elm_obj_index_omit_enabled_set(Eo *obj, Eina_Bool enabled);
 
 /**
  * @brief Enable or disable omit feature for a given index widget.
@@ -65,7 +65,7 @@ EOAPI void elm_obj_index_omit_enabled_set(Eo *obj, Eina_Bool enabled);
  *
  * @ingroup Elm_Index
  */
-EOAPI Eina_Bool elm_obj_index_omit_enabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_index_omit_enabled_get(const Eo *obj);
 
 /**
  * @brief Control standard_priority group of index. Priority group will be
@@ -79,7 +79,7 @@ EOAPI Eina_Bool elm_obj_index_omit_enabled_get(const Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_standard_priority_set(Eo *obj, int priority);
+ELM_API ELM_API_WEAK void elm_obj_index_standard_priority_set(Eo *obj, int priority);
 
 /**
  * @brief Control standard_priority group of index. Priority group will be
@@ -94,7 +94,7 @@ EOAPI void elm_obj_index_standard_priority_set(Eo *obj, int priority);
  *
  * @ingroup Elm_Index
  */
-EOAPI int elm_obj_index_standard_priority_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_index_standard_priority_get(const Eo *obj);
 
 /**
  * @brief Set a delay change time for index object.
@@ -106,7 +106,7 @@ EOAPI int elm_obj_index_standard_priority_get(const Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_delay_change_time_set(Eo *obj, double dtime);
+ELM_API ELM_API_WEAK void elm_obj_index_delay_change_time_set(Eo *obj, double dtime);
 
 /**
  * @brief Set a delay change time for index object.
@@ -119,7 +119,7 @@ EOAPI void elm_obj_index_delay_change_time_set(Eo *obj, double dtime);
  *
  * @ingroup Elm_Index
  */
-EOAPI double elm_obj_index_delay_change_time_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_index_delay_change_time_get(const Eo *obj);
 
 /**
  * @brief Control the indicator as to be disabled.
@@ -132,7 +132,7 @@ EOAPI double elm_obj_index_delay_change_time_get(const Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_indicator_disabled_set(Eo *obj, Eina_Bool disabled);
+ELM_API ELM_API_WEAK void elm_obj_index_indicator_disabled_set(Eo *obj, Eina_Bool disabled);
 
 /**
  * @brief Control the indicator as to be disabled.
@@ -146,7 +146,7 @@ EOAPI void elm_obj_index_indicator_disabled_set(Eo *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Index
  */
-EOAPI Eina_Bool elm_obj_index_indicator_disabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_index_indicator_disabled_get(const Eo *obj);
 
 /**
  * @brief Set the items level for a given index widget.
@@ -158,7 +158,7 @@ EOAPI Eina_Bool elm_obj_index_indicator_disabled_get(const Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_item_level_set(Eo *obj, int level);
+ELM_API ELM_API_WEAK void elm_obj_index_item_level_set(Eo *obj, int level);
 
 /**
  * @brief Set the items level for a given index widget.
@@ -171,7 +171,7 @@ EOAPI void elm_obj_index_item_level_set(Eo *obj, int level);
  *
  * @ingroup Elm_Index
  */
-EOAPI int elm_obj_index_item_level_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_index_item_level_get(const Eo *obj);
 
 /**
  * @brief Flush the changes made to the index items so they work correctly
@@ -187,7 +187,7 @@ EOAPI int elm_obj_index_item_level_get(const Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_level_go(Eo *obj, int level);
+ELM_API ELM_API_WEAK void elm_obj_index_level_go(Eo *obj, int level);
 
 /**
  * @brief Prepend a new item on a given index widget.
@@ -207,7 +207,7 @@ EOAPI void elm_obj_index_level_go(Eo *obj, int level);
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_item_prepend(Eo *obj, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_item_prepend(Eo *obj, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Removes all items from a given index widget.
@@ -218,7 +218,7 @@ EOAPI Elm_Widget_Item *elm_obj_index_item_prepend(Eo *obj, const char *letter, E
  *
  * @ingroup Elm_Index
  */
-EOAPI void elm_obj_index_item_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_index_item_clear(Eo *obj);
 
 /**
  * @brief Insert a new item into the index object after item @c after.
@@ -242,7 +242,7 @@ EOAPI void elm_obj_index_item_clear(Eo *obj);
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_item_insert_after(Eo *obj, Elm_Widget_Item *after, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_item_insert_after(Eo *obj, Elm_Widget_Item *after, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Find a given index widget's item, using item data.
@@ -254,7 +254,7 @@ EOAPI Elm_Widget_Item *elm_obj_index_item_insert_after(Eo *obj, Elm_Widget_Item 
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_item_find(Eo *obj, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_item_find(Eo *obj, const void *data);
 
 /**
  * @brief Insert a new item into the index object before item @c before.
@@ -278,7 +278,7 @@ EOAPI Elm_Widget_Item *elm_obj_index_item_find(Eo *obj, const void *data);
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_item_insert_before(Eo *obj, Elm_Widget_Item *before, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_item_insert_before(Eo *obj, Elm_Widget_Item *before, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Append a new item on a given index widget.
@@ -298,7 +298,7 @@ EOAPI Elm_Widget_Item *elm_obj_index_item_insert_before(Eo *obj, Elm_Widget_Item
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_item_append(Eo *obj, const char *letter, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_item_append(Eo *obj, const char *letter, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Returns the last selected item, for a given index widget.
@@ -310,7 +310,7 @@ EOAPI Elm_Widget_Item *elm_obj_index_item_append(Eo *obj, const char *letter, Ev
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_selected_item_get(const Eo *obj, int level);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_selected_item_get(const Eo *obj, int level);
 
 /**
  * @brief Insert a new item into the given index widget, using @c cmp_func
@@ -343,9 +343,9 @@ EOAPI Elm_Widget_Item *elm_obj_index_selected_item_get(const Eo *obj, int level)
  *
  * @ingroup Elm_Index
  */
-EOAPI Elm_Widget_Item *elm_obj_index_item_sorted_insert(Eo *obj, const char *letter, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_index_item_sorted_insert(Eo *obj, const char *letter, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 
-EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_INDEX_EVENT_CHANGED;
 
 /** Called when index changed
  * @return Efl_Object *
@@ -354,7 +354,7 @@ EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_CHANGED;
  */
 #define ELM_INDEX_EVENT_CHANGED (&(_ELM_INDEX_EVENT_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_DELAY_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_INDEX_EVENT_DELAY_CHANGED;
 
 /** Called when delay changed
  * @return Efl_Object *
@@ -363,7 +363,7 @@ EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_DELAY_CHANGED;
  */
 #define ELM_INDEX_EVENT_DELAY_CHANGED (&(_ELM_INDEX_EVENT_DELAY_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_LEVEL_UP;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_INDEX_EVENT_LEVEL_UP;
 
 /** Called when level increased
  *
@@ -371,7 +371,7 @@ EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_LEVEL_UP;
  */
 #define ELM_INDEX_EVENT_LEVEL_UP (&(_ELM_INDEX_EVENT_LEVEL_UP))
 
-EWAPI extern const Efl_Event_Description _ELM_INDEX_EVENT_LEVEL_DOWN;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_INDEX_EVENT_LEVEL_DOWN;
 
 /** Called when level decreased
  *

@@ -4293,7 +4293,7 @@ _elm_map_efl_canvas_group_group_member_add(Eo *obj, Elm_Map_Data *sd, Evas_Objec
      evas_object_raise(sd->hit_rect);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_map_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -4337,13 +4337,13 @@ _elm_map_efl_ui_zoom_zoom_level_set(Eo *obj, Elm_Map_Data *sd, double zoom)
    evas_object_smart_changed(sd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_zoom_set(Eo *obj, int zoom)
 {
    efl_ui_zoom_level_set(obj, zoom);
 }
 
-EAPI int
+ELM_API int
 elm_map_zoom_get(const Eo *obj)
 {
    return efl_ui_zoom_level_get(obj);
@@ -4391,7 +4391,7 @@ _convert_map_zoom_mode(Elm_Map_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, E
    #undef CONVERT
 }
 
-EAPI void
+ELM_API void
 elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
 {
    Efl_Ui_Zoom_Mode new_mode = EFL_UI_ZOOM_MODE_MANUAL;
@@ -4401,7 +4401,7 @@ elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
    efl_ui_zoom_mode_set(obj, new_mode);
 }
 
-EAPI Elm_Map_Zoom_Mode
+ELM_API Elm_Map_Zoom_Mode
 elm_map_zoom_mode_get(const Eo *obj)
 {
    Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);
@@ -4706,7 +4706,7 @@ _elm_map_route_add(Eo *obj, Elm_Map_Data *sd, Elm_Map_Route_Type type, Elm_Map_R
    return ret;
 }
 
-EAPI void
+ELM_API void
 elm_map_route_del(Elm_Map_Route *route)
 {
    Path_Waypoint *w;
@@ -4740,21 +4740,21 @@ elm_map_route_del(Elm_Map_Route *route)
    free(route);
 }
 
-EAPI double
+ELM_API double
 elm_map_route_distance_get(const Elm_Map_Route *route)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, 0.0);
    return route->info.distance;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_map_route_node_get(const Elm_Map_Route *route)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
    return route->info.nodes;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_map_route_waypoint_get(const Elm_Map_Route *route)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
@@ -4780,7 +4780,7 @@ _elm_map_name_search(const Eo *obj, Elm_Map_Data *_pd EINA_UNUSED, const char *a
                         name_cb, data);
 }
 
-EAPI void
+ELM_API void
 elm_map_name_del(Elm_Map_Name *name)
 {
    EINA_SAFETY_ON_NULL_RETURN(name);
@@ -4799,7 +4799,7 @@ elm_map_name_del(Elm_Map_Name *name)
    free(name);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_map_name_address_get(const Elm_Map_Name *name)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
@@ -4809,7 +4809,7 @@ elm_map_name_address_get(const Elm_Map_Name *name)
    return name->address;
 }
 
-EAPI void
+ELM_API void
 elm_map_name_region_get(const Elm_Map_Name *name,
                         double *lon,
                         double *lat)
@@ -4859,7 +4859,7 @@ _elm_map_overlays_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
    return sd->all_overlays;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_del(Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN(overlay);
@@ -4903,7 +4903,7 @@ elm_map_overlay_del(Elm_Map_Overlay *overlay)
    free(overlay);
 }
 
-EAPI Elm_Map_Overlay_Type
+ELM_API Elm_Map_Overlay_Type
 elm_map_overlay_type_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, ELM_MAP_OVERLAY_TYPE_NONE);
@@ -4913,7 +4913,7 @@ elm_map_overlay_type_get(const Elm_Map_Overlay *overlay)
    return overlay->type;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_data_set(Elm_Map_Overlay *overlay,
                          void *data)
 {
@@ -4924,7 +4924,7 @@ elm_map_overlay_data_set(Elm_Map_Overlay *overlay,
    overlay->data = data;
 }
 
-EAPI void *
+ELM_API void *
 elm_map_overlay_data_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, NULL);
@@ -4934,7 +4934,7 @@ elm_map_overlay_data_get(const Elm_Map_Overlay *overlay)
    return overlay->data;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_hide_set(Elm_Map_Overlay *overlay,
                          Eina_Bool hide)
 {
@@ -4948,7 +4948,7 @@ elm_map_overlay_hide_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_map_overlay_hide_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, EINA_FALSE);
@@ -4958,7 +4958,7 @@ elm_map_overlay_hide_get(const Elm_Map_Overlay *overlay)
    return overlay->hide;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_displayed_zoom_min_set(Elm_Map_Overlay *overlay,
                                        int zoom)
 {
@@ -4970,7 +4970,7 @@ elm_map_overlay_displayed_zoom_min_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI int
+ELM_API int
 elm_map_overlay_displayed_zoom_min_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, 0);
@@ -4980,7 +4980,7 @@ elm_map_overlay_displayed_zoom_min_get(const Elm_Map_Overlay *overlay)
    return overlay->zoom_min;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_paused_set(Elm_Map_Overlay *overlay,
                            Eina_Bool paused)
 {
@@ -4994,7 +4994,7 @@ elm_map_overlay_paused_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_map_overlay_paused_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, EINA_FALSE);
@@ -5004,7 +5004,7 @@ elm_map_overlay_paused_get(const Elm_Map_Overlay *overlay)
    return overlay->paused;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_map_overlay_visible_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, EINA_FALSE);
@@ -5014,7 +5014,7 @@ elm_map_overlay_visible_get(const Elm_Map_Overlay *overlay)
    return overlay->visible;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_show(Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN(overlay);
@@ -5050,7 +5050,7 @@ elm_map_overlay_show(Elm_Map_Overlay *overlay)
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlays_show(Eina_List *overlays)
 {
    Elm_Map_Overlay *overlay;
@@ -5066,7 +5066,7 @@ elm_map_overlays_show(Eina_List *overlays)
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_region_set(Elm_Map_Overlay *overlay,
                            double lon,
                            double lat)
@@ -5095,7 +5095,7 @@ elm_map_overlay_region_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_region_get(const Elm_Map_Overlay *overlay,
                            double *lon,
                            double *lat)
@@ -5128,7 +5128,7 @@ elm_map_overlay_region_get(const Elm_Map_Overlay *overlay,
    else ERR("Not supported overlay type: %d", overlay->type);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_icon_set(Elm_Map_Overlay *overlay,
                          Evas_Object *icon)
 {
@@ -5145,7 +5145,7 @@ elm_map_overlay_icon_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI const Evas_Object *
+ELM_API const Evas_Object *
 elm_map_overlay_icon_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, NULL);
@@ -5171,7 +5171,7 @@ elm_map_overlay_icon_get(const Elm_Map_Overlay *overlay)
      }
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_content_set(Elm_Map_Overlay *overlay,
                             Evas_Object *content)
 {
@@ -5189,7 +5189,7 @@ elm_map_overlay_content_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 }
 
-EAPI const Evas_Object *
+ELM_API const Evas_Object *
 elm_map_overlay_content_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, NULL);
@@ -5214,7 +5214,7 @@ elm_map_overlay_content_get(const Elm_Map_Overlay *overlay)
      }
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_color_set(Elm_Map_Overlay *overlay,
                           int r,
                           int g,
@@ -5242,7 +5242,7 @@ elm_map_overlay_color_set(Elm_Map_Overlay *overlay,
      }
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_color_get(const Elm_Map_Overlay *overlay,
                           int *r,
                           int *g,
@@ -5270,7 +5270,7 @@ elm_map_overlay_color_get(const Elm_Map_Overlay *overlay,
      }
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay,
                            Elm_Map_Overlay_Get_Cb get_cb,
                            void *data)
@@ -5286,7 +5286,7 @@ elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay,
      _overlay_class_cb_set(overlay->ovl, get_cb, data);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_del_cb_set(Elm_Map_Overlay *overlay,
                            Elm_Map_Overlay_Del_Cb del_cb,
                            void *data)
@@ -5318,7 +5318,7 @@ _elm_map_overlay_class_add(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
    return overlay;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_class_append(Elm_Map_Overlay *klass,
                              Elm_Map_Overlay *overlay)
 {
@@ -5354,7 +5354,7 @@ elm_map_overlay_class_append(Elm_Map_Overlay *klass,
    evas_object_smart_changed(klass->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_class_remove(Elm_Map_Overlay *klass,
                              Elm_Map_Overlay *overlay)
 {
@@ -5381,7 +5381,7 @@ elm_map_overlay_class_remove(Elm_Map_Overlay *klass,
    evas_object_smart_changed(klass->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *klass,
                                    int zoom)
 {
@@ -5399,7 +5399,7 @@ elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *klass,
    evas_object_smart_changed(klass->wsd->pan_obj);
 }
 
-EAPI int
+ELM_API int
 elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *klass)
 {
    const Overlay_Class *ovl;
@@ -5415,7 +5415,7 @@ elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *klass)
    return ovl->zoom_max;
 }
 
-EAPI Eina_List *
+ELM_API Eina_List *
 elm_map_overlay_group_members_get(const Elm_Map_Overlay *grp)
 {
    Overlay_Group *ovl;
@@ -5451,7 +5451,7 @@ _elm_map_overlay_bubble_add(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
    return overlay;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble,
                               const Elm_Map_Overlay *parent)
 {
@@ -5471,7 +5471,7 @@ elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble,
    evas_object_smart_changed(bubble->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_bubble_content_append(Elm_Map_Overlay *bubble,
                                       Evas_Object *content)
 {
@@ -5488,7 +5488,7 @@ elm_map_overlay_bubble_content_append(Elm_Map_Overlay *bubble,
    evas_object_smart_changed(bubble->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble)
 {
    Overlay_Bubble *bb;
@@ -5503,25 +5503,25 @@ elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble)
    evas_object_smart_changed(bubble->wsd->pan_obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
    elm_interface_scrollable_wheel_disabled_set(obj, disabled);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_map_wheel_disabled_get(const Evas_Object *obj)
 {
    return elm_interface_scrollable_wheel_disabled_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
 {
    efl_ui_zoom_animation_set(obj, paused);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_map_paused_get(const Evas_Object *obj)
 {
    return efl_ui_zoom_animation_get(obj);
@@ -5591,7 +5591,7 @@ _elm_map_overlay_polygon_add(Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
    return overlay;
 }
 
-EAPI void
+ELM_API void
 elm_map_overlay_polygon_region_add(Elm_Map_Overlay *overlay,
                                    double lon,
                                    double lat)

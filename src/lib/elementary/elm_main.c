@@ -44,7 +44,7 @@
 Eina_Bool _running_in_tree;
 
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Elm_Version *elm_version = &_version;
+ELM_API Elm_Version *elm_version = &_version;
 
 Eina_FreeQ *postponed_fq = NULL;
 
@@ -118,9 +118,9 @@ const char *_elm_data_dir = NULL;
 const char *_elm_lib_dir = NULL;
 int _elm_log_dom = -1;
 
-EAPI int ELM_EVENT_POLICY_CHANGED = 0;
-EAPI int ELM_EVENT_PROCESS_BACKGROUND = 0;
-EAPI int ELM_EVENT_PROCESS_FOREGROUND = 0;
+ELM_API int ELM_EVENT_POLICY_CHANGED = 0;
+ELM_API int ELM_EVENT_PROCESS_BACKGROUND = 0;
+ELM_API int ELM_EVENT_PROCESS_FOREGROUND = 0;
 
 static int _elm_init_count = 0;
 static int _elm_sub_init_count = 0;
@@ -406,7 +406,7 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE = 0;
+ELM_API Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE = 0;
 
 static void
 _efl_ui_theme_apply_error_init(void)
@@ -420,7 +420,7 @@ _efl_ui_theme_apply_error_init(void)
 // This is necessary to keep backward compatibility
 static const char *bcargv[] = { "exe" };
 
-EAPI int
+ELM_API int
 elm_init(int argc, char **argv)
 {
    _elm_init_count++;
@@ -463,7 +463,7 @@ shutdown_ql:
    return --_elm_init_count;
 }
 
-EAPI int
+ELM_API int
 elm_shutdown(void)
 {
    if (_elm_init_count <= 0)
@@ -492,7 +492,7 @@ elm_shutdown(void)
    return _elm_init_count;
 }
 
-EAPI void
+ELM_API void
 elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile)
 {
    app_mainfunc = mainfunc;
@@ -500,43 +500,43 @@ elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile)
    eina_stringshare_replace(&app_checkfile, checkfile);
 }
 
-EAPI void
+ELM_API void
 elm_app_name_set(const char *name)
 {
    eina_stringshare_replace(&app_name, name);
 }
 
-EAPI void
+ELM_API void
 elm_app_desktop_entry_set(const char *path)
 {
    eina_stringshare_replace(&app_desktop_entry, path);
 }
 
-EAPI void
+ELM_API void
 elm_app_compile_bin_dir_set(const char *dir)
 {
    eina_stringshare_replace(&app_compile_bin_dir, dir);
 }
 
-EAPI void
+ELM_API void
 elm_app_compile_lib_dir_set(const char *dir)
 {
    eina_stringshare_replace(&app_compile_lib_dir, dir);
 }
 
-EAPI void
+ELM_API void
 elm_app_compile_data_dir_set(const char *dir)
 {
    eina_stringshare_replace(&app_compile_data_dir, dir);
 }
 
-EAPI void
+ELM_API void
 elm_app_compile_locale_set(const char *dir)
 {
    eina_stringshare_replace(&app_compile_locale_dir, dir);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_name_get(void)
 {
    if (app_name) return app_name;
@@ -544,7 +544,7 @@ elm_app_name_get(void)
    return "";
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_desktop_entry_get(void)
 {
    if (app_desktop_entry) return app_desktop_entry;
@@ -552,7 +552,7 @@ elm_app_desktop_entry_get(void)
    return "";
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_prefix_dir_get(void)
 {
    if (app_prefix_dir) return app_prefix_dir;
@@ -562,7 +562,7 @@ elm_app_prefix_dir_get(void)
    return app_prefix_dir;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_bin_dir_get(void)
 {
    if (app_bin_dir) return app_bin_dir;
@@ -572,7 +572,7 @@ elm_app_bin_dir_get(void)
    return app_bin_dir;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_lib_dir_get(void)
 {
    if (app_lib_dir) return app_lib_dir;
@@ -582,7 +582,7 @@ elm_app_lib_dir_get(void)
    return app_lib_dir;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_data_dir_get(void)
 {
    if (app_data_dir) return app_data_dir;
@@ -607,7 +607,7 @@ elm_app_data_dir_get(void)
    return app_data_dir;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_app_locale_dir_get(void)
 {
    if (app_locale_dir) return app_locale_dir;
@@ -617,7 +617,7 @@ elm_app_locale_dir_get(void)
    return app_locale_dir;
 }
 
-EAPI void
+ELM_API void
 elm_app_base_scale_set(double base_scale)
 {
    if (base_scale < 0.0) return;
@@ -625,7 +625,7 @@ elm_app_base_scale_set(double base_scale)
    app_base_scale = base_scale;
 }
 
-EAPI double
+ELM_API double
 elm_app_base_scale_get(void)
 {
    if (app_base_scale > 0.0) return app_base_scale;
@@ -635,7 +635,7 @@ elm_app_base_scale_get(void)
 static Eina_Bool _elm_need_e_dbus = EINA_FALSE;
 static void *e_dbus_handle = NULL;
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_e_dbus(void)
 {
    int (*init_func)(void) = NULL;
@@ -673,7 +673,7 @@ _elm_unneed_e_dbus(void)
 }
 
 static Eina_Bool _elm_need_eldbus = EINA_FALSE;
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_eldbus(void)
 {
    if (_elm_need_eldbus) return EINA_TRUE;
@@ -690,7 +690,7 @@ _elm_unneed_eldbus(void)
    eldbus_shutdown();
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_elocation(void)
 {
    return EINA_FALSE;
@@ -698,7 +698,7 @@ elm_need_elocation(void)
 
 static Eina_Bool _elm_need_efreet = EINA_FALSE;
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_efreet(void)
 {
    if (_elm_need_efreet) return EINA_TRUE;
@@ -742,13 +742,13 @@ _elm_unneed_efreet(void)
    efreet_shutdown();
 }
 
-EAPI void
+ELM_API void
 elm_quicklaunch_mode_set(Eina_Bool ql_on)
 {
    quicklaunch_on = ql_on;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_quicklaunch_mode_get(void)
 {
    return quicklaunch_on;
@@ -760,7 +760,7 @@ _postpone_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    eina_freeq_clear(postponed_fq);
 }
 
-EAPI int
+ELM_API int
 elm_quicklaunch_init(int    argc EINA_UNUSED,
                      char **argv)
 {
@@ -850,7 +850,7 @@ fail_eina:
    return --_elm_ql_init_count;
 }
 
-EAPI int
+ELM_API int
 elm_quicklaunch_sub_init(int    argc,
                          char **argv)
 {
@@ -890,7 +890,7 @@ ql_sub_ecore:
    return --_elm_sub_init_count;
 }
 
-EAPI int
+ELM_API int
 elm_quicklaunch_sub_shutdown(void)
 {
    _elm_sub_init_count--;
@@ -919,7 +919,7 @@ elm_quicklaunch_sub_shutdown(void)
    return _elm_sub_init_count;
 }
 
-EAPI int
+ELM_API int
 elm_quicklaunch_shutdown(void)
 {
    _elm_ql_init_count--;
@@ -974,7 +974,7 @@ elm_quicklaunch_shutdown(void)
    return _elm_ql_init_count;
 }
 
-EAPI void
+ELM_API void
 elm_quicklaunch_seed(void)
 {
 #ifndef SEMI_BROKEN_QUICKLAUNCH
@@ -1020,7 +1020,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_qre_main_ex,
                            { EFL_APP_EVENT_RESUME, qre_resume },
                            { EFL_EVENT_DEL, qre_terminate });
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_quicklaunch_prepare(int    argc,
                         char **argv,
                         const char *cwd)
@@ -1108,7 +1108,7 @@ elm_quicklaunch_prepare(int    argc,
 #endif
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 efl_quicklaunch_prepare(int    argc,
                         char **argv,
                         const char *cwd)
@@ -1164,7 +1164,7 @@ efl_quicklaunch_prepare(int    argc,
 #endif
 }
 
-EAPI int
+ELM_API int
 elm_quicklaunch_fork(int    argc,
                      char **argv,
                      char  *cwd,
@@ -1274,7 +1274,7 @@ elm_quicklaunch_fork(int    argc,
 #endif
 }
 
-EAPI void
+ELM_API void
 elm_quicklaunch_cleanup(void)
 {
 #ifdef HAVE_FORK
@@ -1287,7 +1287,7 @@ elm_quicklaunch_cleanup(void)
 #endif
 }
 
-EAPI int
+ELM_API int
 elm_quicklaunch_fallback(int    argc,
                          char **argv)
 {
@@ -1305,7 +1305,7 @@ fallback_ql:
    return 1;
 }
 
-EAPI char *
+ELM_API char *
 elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
 {
    static char *path = NULL;
@@ -1358,7 +1358,7 @@ elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
    return NULL;
 }
 
-EAPI void
+ELM_API void
 elm_run(void)
 {
    ecore_main_loop_begin();
@@ -1374,14 +1374,14 @@ _on_terminate(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
      evas_object_del(win);
 }
 
-EAPI void
+ELM_API void
 elm_exit(void)
 {
    efl_exit(0);
 }
 
 //FIXME: Use Elm_Policy Parameter when 2.0 is released.
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_policy_set(unsigned int policy,
                int          value)
 {
@@ -1422,7 +1422,7 @@ elm_policy_set(unsigned int policy,
 }
 
 //FIXME: Use Elm_Policy Parameter when 2.0 is released.
-EAPI int
+ELM_API int
 elm_policy_get(unsigned int policy)
 {
    if (policy >= ELM_POLICY_LAST)
@@ -1430,7 +1430,7 @@ elm_policy_get(unsigned int policy)
    return _elm_policies[policy];
 }
 
-EAPI void
+ELM_API void
 elm_language_set(const char *lang)
 {
    setlocale(LC_ALL, lang);
@@ -1439,28 +1439,28 @@ elm_language_set(const char *lang)
    edje_language_set(lang);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_mirrored_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return efl_ui_mirrored_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    efl_ui_mirrored_set(obj, mirrored);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_mirrored_automatic_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return efl_ui_mirrored_automatic_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -1471,7 +1471,7 @@ elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
  * @}
  */
 
-EAPI void
+ELM_API void
 elm_object_scale_set(Evas_Object *obj,
                      double       scale)
 {
@@ -1479,28 +1479,28 @@ elm_object_scale_set(Evas_Object *obj,
    efl_gfx_entity_scale_set(obj, scale);
 }
 
-EAPI double
+ELM_API double
 elm_object_scale_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0.0);
    return efl_gfx_entity_scale_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_part_text_set(Evas_Object *obj, const char *part, const char *label)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_part_text_set(obj, part, label);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_part_text_get(const Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_part_text_get(obj, part);
 }
 
-EAPI void
+ELM_API void
 elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -1522,7 +1522,7 @@ elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part,
      }
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -1544,47 +1544,47 @@ elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
      }
 }
 
-EAPI void
+ELM_API void
 elm_object_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_domain_part_text_translatable_set(obj, part, domain, translatable);
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_object_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text)
 {
    elm_object_domain_translatable_part_text_set(obj, part, domain, text);
 }
 
-EINA_DEPRECATED EAPI const char *
+EINA_DEPRECATED ELM_API const char *
 elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part)
 {
    return elm_object_translatable_part_text_get(obj, part);
 }
 
-EAPI void
+ELM_API void
 elm_object_part_content_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_content_part_set(obj, part, content);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_part_content_get(const Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_content_part_get(obj, part);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_part_content_unset(Evas_Object *obj, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_content_part_unset(obj, part);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_style_set(Evas_Object *obj,
                      const char  *style)
 {
@@ -1592,7 +1592,7 @@ elm_object_style_set(Evas_Object *obj,
    return elm_widget_style_set(obj, style) == EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_focus_highlight_style_set(Evas_Object *obj,
                                      const char  *style)
 {
@@ -1600,21 +1600,21 @@ elm_object_focus_highlight_style_set(Evas_Object *obj,
    return elm_win_focus_highlight_style_set(elm_widget_top_get(obj), style);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_focus_highlight_style_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_win_focus_highlight_style_get(elm_widget_top_get(obj));
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_style_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_style_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_disabled_set(Evas_Object *obj,
                         Eina_Bool    disabled)
 {
@@ -1636,14 +1636,14 @@ elm_object_disabled_set(Evas_Object *obj,
    elm_widget_disabled_set(obj, disabled);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_disabled_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return elm_widget_disabled_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_cache_all_flush(void)
 {
    const Eina_List *l;
@@ -1662,7 +1662,7 @@ elm_cache_all_flush(void)
      }
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_allow_set(Evas_Object *obj,
                            Eina_Bool    enable)
 {
@@ -1670,7 +1670,7 @@ elm_object_focus_allow_set(Evas_Object *obj,
    elm_widget_can_focus_set(obj, enable);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_focus_allow_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -1678,7 +1678,7 @@ elm_object_focus_allow_get(const Evas_Object *obj)
 }
 
 
-EAPI void
+ELM_API void
 elm_object_tree_focus_allow_set(Evas_Object *obj,
                                 Eina_Bool    tree_focusable)
 {
@@ -1686,14 +1686,14 @@ elm_object_tree_focus_allow_set(Evas_Object *obj,
    elm_widget_tree_unfocusable_set(obj, !tree_focusable);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_tree_focus_allow_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return !elm_widget_tree_unfocusable_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_move_policy_set(Evas_Object *obj,
                                  Elm_Focus_Move_Policy policy)
 {
@@ -1701,70 +1701,70 @@ elm_object_focus_move_policy_set(Evas_Object *obj,
    efl_ui_widget_focus_move_policy_set(obj, (Efl_Ui_Focus_Move_Policy)policy);
 }
 
-EAPI Elm_Focus_Move_Policy
+ELM_API Elm_Focus_Move_Policy
 elm_object_focus_move_policy_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return (Elm_Focus_Move_Policy)efl_ui_widget_focus_move_policy_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_focus_move_policy_automatic_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return efl_ui_widget_focus_move_policy_automatic_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_move_policy_automatic_set(Evas_Object *obj, Eina_Bool automatic)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    return efl_ui_widget_focus_move_policy_automatic_set(obj, automatic);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_hold_push(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_scroll_hold_push(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_hold_pop(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_scroll_hold_pop(obj);
 }
 
-EAPI int
+ELM_API int
 elm_object_scroll_hold_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
    return elm_widget_scroll_hold_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_freeze_push(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_scroll_freeze_push(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_freeze_pop(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_scroll_freeze_pop(obj);
 }
 
-EAPI int
+ELM_API int
 elm_object_scroll_freeze_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
    return elm_widget_scroll_freeze_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_lock_x_set(Evas_Object *obj,
                              Eina_Bool    lock)
 {
@@ -1777,7 +1777,7 @@ elm_object_scroll_lock_x_set(Evas_Object *obj,
    elm_widget_scroll_lock_set(obj, block);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_lock_y_set(Evas_Object *obj,
                              Eina_Bool    lock)
 {
@@ -1790,7 +1790,7 @@ elm_object_scroll_lock_y_set(Evas_Object *obj,
    elm_widget_scroll_lock_set(obj, block);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_scroll_lock_x_get(const Evas_Object *obj)
 {
    Efl_Ui_Layout_Orientation block;
@@ -1800,7 +1800,7 @@ elm_object_scroll_lock_x_get(const Evas_Object *obj)
    return !!(block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_scroll_lock_y_get(const Evas_Object *obj)
 {
    Efl_Ui_Layout_Orientation block;
@@ -1810,7 +1810,7 @@ elm_object_scroll_lock_y_get(const Evas_Object *obj)
    return !!(block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 }
 
-EAPI void
+ELM_API void
 elm_object_scroll_item_loop_enabled_set(Evas_Object *obj,
                                         Eina_Bool   enable)
 {
@@ -1819,7 +1819,7 @@ elm_object_scroll_item_loop_enabled_set(Evas_Object *obj,
    elm_interface_scrollable_item_loop_enabled_set(obj, enable);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -1827,35 +1827,35 @@ elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj)
    return elm_interface_scrollable_item_loop_enabled_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_widget_check(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return elm_widget_is(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_parent_widget_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_parent_widget_get(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_top_widget_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_top_get(obj);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_widget_type_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_type_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_signal_emit(Evas_Object *obj,
                        const char  *emission,
                        const char  *source)
@@ -1864,7 +1864,7 @@ elm_object_signal_emit(Evas_Object *obj,
    elm_widget_signal_emit(obj, emission, source);
 }
 
-EAPI void
+ELM_API void
 elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -1872,7 +1872,7 @@ elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const cha
     elm_widget_signal_callback_add(obj, emission, source, func, data);
 }
 
-EAPI void *
+ELM_API void *
 elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -1880,7 +1880,7 @@ elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const cha
     return elm_widget_signal_callback_del(obj, emission, source, func);
 }
 
-EAPI void
+ELM_API void
 elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -1888,7 +1888,7 @@ elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *d
    elm_widget_event_callback_add(obj, func, data);
 }
 
-EAPI void *
+ELM_API void *
 elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -1896,7 +1896,7 @@ elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *d
    return elm_widget_event_callback_del(obj, func, data);
 }
 
-EAPI void
+ELM_API void
 elm_object_tree_dump(const Evas_Object *top)
 {
 #ifdef ELM_DEBUG
@@ -1907,7 +1907,7 @@ elm_object_tree_dump(const Evas_Object *top)
 #endif
 }
 
-EAPI void
+ELM_API void
 elm_object_tree_dot_dump(const Evas_Object *top,
                          const char        *file)
 {
@@ -1922,7 +1922,7 @@ elm_object_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
-EAPI void
+ELM_API void
 elm_coords_finger_size_adjust(int times_w,
                               Evas_Coord *w,
                               int times_h,
@@ -1934,25 +1934,25 @@ elm_coords_finger_size_adjust(int times_w,
      *h = elm_config_finger_size_get() * times_h;
 }
 
-EAPI void
+ELM_API void
 elm_object_access_info_set(Evas_Object *obj, const char *txt)
 {
    elm_widget_access_info_set(obj, txt);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_access_info_get(Evas_Object *obj)
 {
    return elm_widget_access_info_get(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 {
    return elm_widget_name_find(obj, name, recurse);
 }
 
-EAPI void
+ELM_API void
 elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
    if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
@@ -1966,7 +1966,7 @@ elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
 {
    if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
@@ -1981,7 +1981,7 @@ elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
-EAPI Elm_Object_Item *
+ELM_API Elm_Object_Item *
 elm_object_focused_item_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -1990,7 +1990,7 @@ elm_object_focused_item_get(const Evas_Object *obj)
    return elm_widget_item_container_focused_item_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode)
 {
    if (efl_isa(obj, ELM_GENGRID_CLASS))
@@ -2000,7 +2000,7 @@ elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mo
      }
 }
 
-EAPI Elm_Focus_Region_Show_Mode
+ELM_API Elm_Focus_Region_Show_Mode
 elm_object_focus_region_show_mode_get(const Evas_Object *obj)
 {
    if (efl_isa(obj, ELM_GENGRID_CLASS))
@@ -2018,7 +2018,7 @@ _item_noref(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_del(ev->object);
 }
 
-EAPI void
+ELM_API void
 elm_object_item_del(Eo *obj)
 {
    Elm_Widget_Item_Data *item;
@@ -2037,37 +2037,37 @@ elm_object_item_del(Eo *obj)
 }
 
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_cursor_set(Eo *obj, const char *cursor)
 {
    return efl_ui_widget_cursor_set(obj, cursor);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_cursor_get(const Eo *obj)
 {
    return efl_ui_widget_cursor_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_cursor_style_set(Eo *obj, const char *style)
 {
    return efl_ui_widget_cursor_style_set(obj, style);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_cursor_style_get(const Eo *obj)
 {
    return efl_ui_widget_cursor_style_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool allow)
 {
    return efl_ui_widget_cursor_theme_search_enabled_set(obj, allow);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_cursor_theme_search_enabled_get(const Eo *obj)
 {
    return efl_ui_widget_cursor_theme_search_enabled_get(obj);

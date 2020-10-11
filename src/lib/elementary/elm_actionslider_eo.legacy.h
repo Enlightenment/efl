@@ -36,7 +36,7 @@ typedef enum
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI void elm_actionslider_indicator_pos_set(Elm_Actionslider *obj, Elm_Actionslider_Pos pos);
+ELM_API void elm_actionslider_indicator_pos_set(Elm_Actionslider *obj, Elm_Actionslider_Pos pos);
 
 /**
  * @brief Actionslider position indicator
@@ -47,7 +47,7 @@ EAPI void elm_actionslider_indicator_pos_set(Elm_Actionslider *obj, Elm_Actionsl
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI Elm_Actionslider_Pos elm_actionslider_indicator_pos_get(const Elm_Actionslider *obj);
+ELM_API Elm_Actionslider_Pos elm_actionslider_indicator_pos_get(const Elm_Actionslider *obj);
 
 /**
  * @brief Actionslider magnet position.
@@ -60,7 +60,7 @@ EAPI Elm_Actionslider_Pos elm_actionslider_indicator_pos_get(const Elm_Actionsli
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI void elm_actionslider_magnet_pos_set(Elm_Actionslider *obj, Elm_Actionslider_Pos pos);
+ELM_API void elm_actionslider_magnet_pos_set(Elm_Actionslider *obj, Elm_Actionslider_Pos pos);
 
 /**
  * @brief Actionslider magnet position.
@@ -71,7 +71,7 @@ EAPI void elm_actionslider_magnet_pos_set(Elm_Actionslider *obj, Elm_Actionslide
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI Elm_Actionslider_Pos elm_actionslider_magnet_pos_get(const Elm_Actionslider *obj);
+ELM_API Elm_Actionslider_Pos elm_actionslider_magnet_pos_get(const Elm_Actionslider *obj);
 
 /**
  * @brief Actionslider enabled position.
@@ -86,7 +86,7 @@ EAPI Elm_Actionslider_Pos elm_actionslider_magnet_pos_get(const Elm_Actionslider
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI void elm_actionslider_enabled_pos_set(Elm_Actionslider *obj, Elm_Actionslider_Pos pos);
+ELM_API void elm_actionslider_enabled_pos_set(Elm_Actionslider *obj, Elm_Actionslider_Pos pos);
 
 /**
  * @brief Actionslider enabled position.
@@ -97,7 +97,7 @@ EAPI void elm_actionslider_enabled_pos_set(Elm_Actionslider *obj, Elm_Actionslid
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI Elm_Actionslider_Pos elm_actionslider_enabled_pos_get(const Elm_Actionslider *obj);
+ELM_API Elm_Actionslider_Pos elm_actionslider_enabled_pos_get(const Elm_Actionslider *obj);
 
 /**
  * @brief Get actionslider selected label.
@@ -108,6 +108,6 @@ EAPI Elm_Actionslider_Pos elm_actionslider_enabled_pos_get(const Elm_Actionslide
  *
  * @ingroup Elm_Actionslider_Group
  */
-EAPI const char *elm_actionslider_selected_label_get(const Elm_Actionslider *obj);
+ELM_API const char *elm_actionslider_selected_label_get(const Elm_Actionslider *obj);
 
 #endif

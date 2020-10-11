@@ -32,7 +32,7 @@ typedef enum
  */
 #define ELM_SYS_NOTIFY_INTERFACE_INTERFACE elm_sys_notify_interface_interface_get()
 
-EWAPI const Efl_Class *elm_sys_notify_interface_interface_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_sys_notify_interface_interface_get(void) EINA_CONST;
 
 /**
  * @brief Causes a notification to be forcefully closed and removed from the
@@ -56,7 +56,7 @@ EWAPI const Efl_Class *elm_sys_notify_interface_interface_get(void) EINA_CONST;
  *
  * @ingroup Elm_Sys_Notify_Interface
  */
-EOAPI void elm_obj_sys_notify_interface_send(const Eo *obj, unsigned int replaces_id, const char *icon, const char *summary, const char *body, Elm_Sys_Notify_Urgency urgency, int timeout, Elm_Sys_Notify_Send_Cb cb, const void *cb_data);
+ELM_API ELM_API_WEAK void elm_obj_sys_notify_interface_send(const Eo *obj, unsigned int replaces_id, const char *icon, const char *summary, const char *body, Elm_Sys_Notify_Urgency urgency, int timeout, Elm_Sys_Notify_Send_Cb cb, const void *cb_data);
 
 /**
  * @brief Create a new notification just with Icon, Body and Summary. It is a
@@ -71,7 +71,7 @@ EOAPI void elm_obj_sys_notify_interface_send(const Eo *obj, unsigned int replace
  *
  * @ingroup Elm_Sys_Notify_Interface
  */
-EOAPI void elm_obj_sys_notify_interface_simple_send(const Eo *obj, const char *icon, const char *summary, const char *body);
+ELM_API ELM_API_WEAK void elm_obj_sys_notify_interface_simple_send(const Eo *obj, const char *icon, const char *summary, const char *body);
 
 /**
  * @brief Causes a notification to be forcefully closed and removed from the
@@ -86,6 +86,6 @@ EOAPI void elm_obj_sys_notify_interface_simple_send(const Eo *obj, const char *i
  *
  * @ingroup Elm_Sys_Notify_Interface
  */
-EOAPI void elm_obj_sys_notify_interface_close(const Eo *obj, unsigned int id);
+ELM_API ELM_API_WEAK void elm_obj_sys_notify_interface_close(const Eo *obj, unsigned int id);
 
 #endif

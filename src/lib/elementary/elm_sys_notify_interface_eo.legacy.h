@@ -49,7 +49,7 @@ typedef enum
  *
  * @ingroup Elm_Sys_Notify_Interface_Group
  */
-EAPI void elm_sys_notify_interface_send(const Elm_Sys_Notify_Interface *obj, unsigned int replaces_id, const char *icon, const char *summary, const char *body, Elm_Sys_Notify_Urgency urgency, int timeout, Elm_Sys_Notify_Send_Cb cb, const void *cb_data);
+ELM_API void elm_sys_notify_interface_send(const Elm_Sys_Notify_Interface *obj, unsigned int replaces_id, const char *icon, const char *summary, const char *body, Elm_Sys_Notify_Urgency urgency, int timeout, Elm_Sys_Notify_Send_Cb cb, const void *cb_data);
 
 /**
  * @brief Create a new notification just with Icon, Body and Summary. It is a
@@ -64,7 +64,7 @@ EAPI void elm_sys_notify_interface_send(const Elm_Sys_Notify_Interface *obj, uns
  *
  * @ingroup Elm_Sys_Notify_Interface_Group
  */
-EAPI void elm_sys_notify_interface_simple_send(const Elm_Sys_Notify_Interface *obj, const char *icon, const char *summary, const char *body);
+ELM_API void elm_sys_notify_interface_simple_send(const Elm_Sys_Notify_Interface *obj, const char *icon, const char *summary, const char *body);
 
 /**
  * @brief Causes a notification to be forcefully closed and removed from the
@@ -79,6 +79,6 @@ EAPI void elm_sys_notify_interface_simple_send(const Elm_Sys_Notify_Interface *o
  *
  * @ingroup Elm_Sys_Notify_Interface_Group
  */
-EAPI void elm_sys_notify_interface_close(const Elm_Sys_Notify_Interface *obj, unsigned int id);
+ELM_API void elm_sys_notify_interface_close(const Elm_Sys_Notify_Interface *obj, unsigned int id);
 
 #endif

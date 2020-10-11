@@ -1,4 +1,4 @@
-EWAPI const Efl_Event_Description _ELM_CLOCK_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CLOCK_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
 
 void _elm_clock_show_am_pm_set(Eo *obj, Elm_Clock_Data *pd, Eina_Bool am_pm);
@@ -19,7 +19,7 @@ __eolian_elm_clock_show_am_pm_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_show_am_pm_set, EFL_FUNC_CALL(am_pm), Eina_Bool am_pm);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_show_am_pm_set, EFL_FUNC_CALL(am_pm), Eina_Bool am_pm);
 
 Eina_Bool _elm_clock_show_am_pm_get(const Eo *obj, Elm_Clock_Data *pd);
 
@@ -31,7 +31,7 @@ __eolian_elm_clock_show_am_pm_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_clock_show_am_pm_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_clock_show_am_pm_get, Eina_Bool, 0);
 
 void _elm_clock_first_interval_set(Eo *obj, Elm_Clock_Data *pd, double interval);
 
@@ -51,7 +51,7 @@ __eolian_elm_clock_first_interval_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_first_interval_set, EFL_FUNC_CALL(interval), double interval);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_first_interval_set, EFL_FUNC_CALL(interval), double interval);
 
 double _elm_clock_first_interval_get(const Eo *obj, Elm_Clock_Data *pd);
 
@@ -63,7 +63,7 @@ __eolian_elm_clock_first_interval_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_clock_first_interval_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_clock_first_interval_get, double, 0);
 
 void _elm_clock_show_seconds_set(Eo *obj, Elm_Clock_Data *pd, Eina_Bool seconds);
 
@@ -83,7 +83,7 @@ __eolian_elm_clock_show_seconds_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_show_seconds_set, EFL_FUNC_CALL(seconds), Eina_Bool seconds);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_show_seconds_set, EFL_FUNC_CALL(seconds), Eina_Bool seconds);
 
 Eina_Bool _elm_clock_show_seconds_get(const Eo *obj, Elm_Clock_Data *pd);
 
@@ -95,7 +95,7 @@ __eolian_elm_clock_show_seconds_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_clock_show_seconds_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_clock_show_seconds_get, Eina_Bool, 0);
 
 void _elm_clock_edit_set(Eo *obj, Elm_Clock_Data *pd, Eina_Bool edit);
 
@@ -115,7 +115,7 @@ __eolian_elm_clock_edit_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_edit_set, EFL_FUNC_CALL(edit), Eina_Bool edit);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_edit_set, EFL_FUNC_CALL(edit), Eina_Bool edit);
 
 Eina_Bool _elm_clock_edit_get(const Eo *obj, Elm_Clock_Data *pd);
 
@@ -127,7 +127,7 @@ __eolian_elm_clock_edit_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_clock_edit_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_clock_edit_get, Eina_Bool, 0);
 
 void _elm_clock_pause_set(Eo *obj, Elm_Clock_Data *pd, Eina_Bool paused);
 
@@ -147,7 +147,7 @@ __eolian_elm_clock_pause_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_pause_set, EFL_FUNC_CALL(paused), Eina_Bool paused);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_pause_set, EFL_FUNC_CALL(paused), Eina_Bool paused);
 
 Eina_Bool _elm_clock_pause_get(const Eo *obj, Elm_Clock_Data *pd);
 
@@ -159,23 +159,23 @@ __eolian_elm_clock_pause_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_clock_pause_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_clock_pause_get, Eina_Bool, 0);
 
 void _elm_clock_time_set(Eo *obj, Elm_Clock_Data *pd, int hrs, int min, int sec);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_time_set, EFL_FUNC_CALL(hrs, min, sec), int hrs, int min, int sec);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_time_set, EFL_FUNC_CALL(hrs, min, sec), int hrs, int min, int sec);
 
 void _elm_clock_time_get(const Eo *obj, Elm_Clock_Data *pd, int *hrs, int *min, int *sec);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_clock_time_get, EFL_FUNC_CALL(hrs, min, sec), int *hrs, int *min, int *sec);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_clock_time_get, EFL_FUNC_CALL(hrs, min, sec), int *hrs, int *min, int *sec);
 
 void _elm_clock_edit_mode_set(Eo *obj, Elm_Clock_Data *pd, Elm_Clock_Edit_Mode digedit);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_clock_edit_mode_set, EFL_FUNC_CALL(digedit), Elm_Clock_Edit_Mode digedit);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_clock_edit_mode_set, EFL_FUNC_CALL(digedit), Elm_Clock_Edit_Mode digedit);
 
 Elm_Clock_Edit_Mode _elm_clock_edit_mode_get(const Eo *obj, Elm_Clock_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_clock_edit_mode_get, Elm_Clock_Edit_Mode, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_clock_edit_mode_get, Elm_Clock_Edit_Mode, 0);
 
 Efl_Object *_elm_clock_efl_object_constructor(Eo *obj, Elm_Clock_Data *pd);
 

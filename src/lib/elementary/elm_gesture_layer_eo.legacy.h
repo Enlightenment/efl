@@ -58,7 +58,7 @@ typedef enum
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_zoom_step_set(Elm_Gesture_Layer *obj, double step);
+ELM_API void elm_gesture_layer_zoom_step_set(Elm_Gesture_Layer *obj, double step);
 
 /**
  * @brief Control step value for zoom action.
@@ -69,7 +69,7 @@ EAPI void elm_gesture_layer_zoom_step_set(Elm_Gesture_Layer *obj, double step);
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI double elm_gesture_layer_zoom_step_get(const Elm_Gesture_Layer *obj);
+ELM_API double elm_gesture_layer_zoom_step_get(const Elm_Gesture_Layer *obj);
 
 /**
  * @brief This function sets the gesture layer finger-size for taps.
@@ -84,7 +84,7 @@ EAPI double elm_gesture_layer_zoom_step_get(const Elm_Gesture_Layer *obj);
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_tap_finger_size_set(Elm_Gesture_Layer *obj, int sz);
+ELM_API void elm_gesture_layer_tap_finger_size_set(Elm_Gesture_Layer *obj, int sz);
 
 /**
  * @brief This function returns the gesture layer finger-size for taps
@@ -97,7 +97,7 @@ EAPI void elm_gesture_layer_tap_finger_size_set(Elm_Gesture_Layer *obj, int sz);
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI int elm_gesture_layer_tap_finger_size_get(const Elm_Gesture_Layer *obj);
+ELM_API int elm_gesture_layer_tap_finger_size_get(const Elm_Gesture_Layer *obj);
 
 /**
  * @brief This function makes gesture-layer repeat events.
@@ -113,7 +113,7 @@ EAPI int elm_gesture_layer_tap_finger_size_get(const Elm_Gesture_Layer *obj);
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_hold_events_set(Elm_Gesture_Layer *obj, Eina_Bool hold_events);
+ELM_API void elm_gesture_layer_hold_events_set(Elm_Gesture_Layer *obj, Eina_Bool hold_events);
 
 /**
  * @brief Get the repeat-events setting.
@@ -125,7 +125,7 @@ EAPI void elm_gesture_layer_hold_events_set(Elm_Gesture_Layer *obj, Eina_Bool ho
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI Eina_Bool elm_gesture_layer_hold_events_get(const Elm_Gesture_Layer *obj);
+ELM_API Eina_Bool elm_gesture_layer_hold_events_get(const Elm_Gesture_Layer *obj);
 
 /**
  * @brief This function returns step-value for rotate action.
@@ -140,7 +140,7 @@ EAPI Eina_Bool elm_gesture_layer_hold_events_get(const Elm_Gesture_Layer *obj);
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_rotate_step_set(Elm_Gesture_Layer *obj, double step);
+ELM_API void elm_gesture_layer_rotate_step_set(Elm_Gesture_Layer *obj, double step);
 
 /**
  * @brief This function returns step-value for rotate action.
@@ -151,7 +151,7 @@ EAPI void elm_gesture_layer_rotate_step_set(Elm_Gesture_Layer *obj, double step)
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI double elm_gesture_layer_rotate_step_get(const Elm_Gesture_Layer *obj);
+ELM_API double elm_gesture_layer_rotate_step_get(const Elm_Gesture_Layer *obj);
 
 /**
  * @brief Set the gesture state change callback.
@@ -167,7 +167,7 @@ EAPI double elm_gesture_layer_rotate_step_get(const Elm_Gesture_Layer *obj);
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_cb_set(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+ELM_API void elm_gesture_layer_cb_set(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 /**
  * @brief Attach a gesture layer widget to an Evas object (setting the widget's
@@ -183,7 +183,7 @@ EAPI void elm_gesture_layer_cb_set(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx,
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI Eina_Bool elm_gesture_layer_attach(Elm_Gesture_Layer *obj, Efl_Canvas_Object *target);
+ELM_API Eina_Bool elm_gesture_layer_attach(Elm_Gesture_Layer *obj, Efl_Canvas_Object *target);
 
 /**
  * @brief Remove a gesture callback.
@@ -196,7 +196,7 @@ EAPI Eina_Bool elm_gesture_layer_attach(Elm_Gesture_Layer *obj, Efl_Canvas_Objec
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_cb_del(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+ELM_API void elm_gesture_layer_cb_del(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 /**
  * @brief Add a gesture state change callback.
@@ -217,6 +217,6 @@ EAPI void elm_gesture_layer_cb_del(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx,
  *
  * @ingroup Elm_Gesture_Layer_Group
  */
-EAPI void elm_gesture_layer_cb_add(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+ELM_API void elm_gesture_layer_cb_add(Elm_Gesture_Layer *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 #endif

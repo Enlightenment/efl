@@ -4944,8 +4944,8 @@ _elm_interface_scrollable_class_constructor(Efl_Class *klass)
  * Removed between 1.18 and 1.19. The symbols are kept purely for ABI
  * compatibility reasons.
  */
-EAPI void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
-EAPI void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
+ELM_API void elm_pan_gravity_set(Elm_Pan *obj EINA_UNUSED, double x EINA_UNUSED, double y EINA_UNUSED) {}
+ELM_API void elm_pan_gravity_get(const Elm_Pan *obj EINA_UNUSED, double *x EINA_UNUSED, double *y EINA_UNUSED) {}
 
 EOLIAN static Efl_Ui_Focus_Manager*
 _elm_interface_scrollable_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)

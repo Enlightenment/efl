@@ -1,11 +1,11 @@
 
 void _elm_slideshow_item_show(Eo *obj, Elm_Slideshow_Item_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_slideshow_item_show);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_slideshow_item_show);
 
 Efl_Canvas_Object *_elm_slideshow_item_object_get(const Eo *obj, Elm_Slideshow_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_item_object_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_item_object_get, Efl_Canvas_Object *, NULL);
 
 Efl_Object *_elm_slideshow_item_efl_object_constructor(Eo *obj, Elm_Slideshow_Item_Data *pd);
 

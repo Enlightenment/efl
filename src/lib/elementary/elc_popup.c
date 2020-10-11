@@ -1527,7 +1527,7 @@ _elm_popup_efl_ui_widget_on_access_update(Eo *obj, Elm_Popup_Data *_pd EINA_UNUS
    _access_obj_process(obj, is_access);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_popup_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

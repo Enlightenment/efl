@@ -46,7 +46,7 @@ typedef enum
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI void elm_dayselector_week_start_set(Elm_Dayselector *obj, Elm_Dayselector_Day day);
+ELM_API void elm_dayselector_week_start_set(Elm_Dayselector *obj, Elm_Dayselector_Day day);
 
 /**
  * @brief Get the starting day of Dayselector.
@@ -59,7 +59,7 @@ EAPI void elm_dayselector_week_start_set(Elm_Dayselector *obj, Elm_Dayselector_D
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI Elm_Dayselector_Day elm_dayselector_week_start_get(const Elm_Dayselector *obj);
+ELM_API Elm_Dayselector_Day elm_dayselector_week_start_get(const Elm_Dayselector *obj);
 
 /**
  * @brief Set the weekend length of Dayselector.
@@ -71,7 +71,7 @@ EAPI Elm_Dayselector_Day elm_dayselector_week_start_get(const Elm_Dayselector *o
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI void elm_dayselector_weekend_length_set(Elm_Dayselector *obj, unsigned int length);
+ELM_API void elm_dayselector_weekend_length_set(Elm_Dayselector *obj, unsigned int length);
 
 /**
  * @brief Get the weekend length of Dayselector.
@@ -84,7 +84,7 @@ EAPI void elm_dayselector_weekend_length_set(Elm_Dayselector *obj, unsigned int 
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI unsigned int elm_dayselector_weekend_length_get(const Elm_Dayselector *obj);
+ELM_API unsigned int elm_dayselector_weekend_length_get(const Elm_Dayselector *obj);
 
 /**
  * @brief Set the weekend starting day of Dayselector.
@@ -96,7 +96,7 @@ EAPI unsigned int elm_dayselector_weekend_length_get(const Elm_Dayselector *obj)
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI void elm_dayselector_weekend_start_set(Elm_Dayselector *obj, Elm_Dayselector_Day day);
+ELM_API void elm_dayselector_weekend_start_set(Elm_Dayselector *obj, Elm_Dayselector_Day day);
 
 /**
  * @brief Get the weekend starting day of Dayselector.
@@ -109,7 +109,7 @@ EAPI void elm_dayselector_weekend_start_set(Elm_Dayselector *obj, Elm_Dayselecto
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI Elm_Dayselector_Day elm_dayselector_weekend_start_get(const Elm_Dayselector *obj);
+ELM_API Elm_Dayselector_Day elm_dayselector_weekend_start_get(const Elm_Dayselector *obj);
 
 /**
  * @brief Set weekdays names to be displayed by the Dayselector.
@@ -131,7 +131,7 @@ EAPI Elm_Dayselector_Day elm_dayselector_weekend_start_get(const Elm_Dayselector
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI void elm_dayselector_weekdays_names_set(Elm_Dayselector *obj, const char **weekdays);
+ELM_API void elm_dayselector_weekdays_names_set(Elm_Dayselector *obj, const char **weekdays);
 
 /**
  * @brief Get weekdays names displayed by the calendar.
@@ -150,7 +150,7 @@ EAPI void elm_dayselector_weekdays_names_set(Elm_Dayselector *obj, const char **
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI Eina_List *elm_dayselector_weekdays_names_get(const Elm_Dayselector *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API Eina_List *elm_dayselector_weekdays_names_get(const Elm_Dayselector *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Set the state of given Dayselector_Day.
@@ -163,7 +163,7 @@ EAPI Eina_List *elm_dayselector_weekdays_names_get(const Elm_Dayselector *obj) E
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI void elm_dayselector_day_selected_set(Elm_Dayselector *obj, Elm_Dayselector_Day day, Eina_Bool selected);
+ELM_API void elm_dayselector_day_selected_set(Elm_Dayselector *obj, Elm_Dayselector_Day day, Eina_Bool selected);
 
 /**
  * @brief Get the state of given Dayselector_Day.
@@ -177,6 +177,6 @@ EAPI void elm_dayselector_day_selected_set(Elm_Dayselector *obj, Elm_Dayselector
  *
  * @ingroup Elm_Dayselector_Group
  */
-EAPI Eina_Bool elm_dayselector_day_selected_get(const Elm_Dayselector *obj, Elm_Dayselector_Day day);
+ELM_API Eina_Bool elm_dayselector_day_selected_get(const Elm_Dayselector *obj, Elm_Dayselector_Day day);
 
 #endif

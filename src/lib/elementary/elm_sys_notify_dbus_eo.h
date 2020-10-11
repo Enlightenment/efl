@@ -19,6 +19,6 @@ typedef Eo Elm_Sys_Notify_Dbus;
  */
 #define ELM_SYS_NOTIFY_DBUS_CLASS elm_sys_notify_dbus_class_get()
 
-EWAPI const Efl_Class *elm_sys_notify_dbus_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_sys_notify_dbus_class_get(void) EINA_CONST;
 
 #endif

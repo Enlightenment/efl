@@ -36,7 +36,7 @@ typedef enum
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI void elm_panel_orient_set(Elm_Panel *obj, Elm_Panel_Orient orient);
+ELM_API void elm_panel_orient_set(Elm_Panel *obj, Elm_Panel_Orient orient);
 
 /**
  * @brief Get the orientation of the panel.
@@ -47,7 +47,7 @@ EAPI void elm_panel_orient_set(Elm_Panel *obj, Elm_Panel_Orient orient);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI Elm_Panel_Orient elm_panel_orient_get(const Elm_Panel *obj);
+ELM_API Elm_Panel_Orient elm_panel_orient_get(const Elm_Panel *obj);
 
 /**
  * @brief Set the state of the panel.
@@ -57,7 +57,7 @@ EAPI Elm_Panel_Orient elm_panel_orient_get(const Elm_Panel *obj);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI void elm_panel_hidden_set(Elm_Panel *obj, Eina_Bool hidden);
+ELM_API void elm_panel_hidden_set(Elm_Panel *obj, Eina_Bool hidden);
 
 /**
  * @brief Get the state of the panel.
@@ -68,7 +68,7 @@ EAPI void elm_panel_hidden_set(Elm_Panel *obj, Eina_Bool hidden);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI Eina_Bool elm_panel_hidden_get(const Elm_Panel *obj);
+ELM_API Eina_Bool elm_panel_hidden_get(const Elm_Panel *obj);
 
 /**
  * @brief Set the scrollability of the panel.
@@ -78,7 +78,7 @@ EAPI Eina_Bool elm_panel_hidden_get(const Elm_Panel *obj);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI void elm_panel_scrollable_set(Elm_Panel *obj, Eina_Bool scrollable);
+ELM_API void elm_panel_scrollable_set(Elm_Panel *obj, Eina_Bool scrollable);
 
 /**
  * @brief Get the state of the scrollability.
@@ -91,7 +91,7 @@ EAPI void elm_panel_scrollable_set(Elm_Panel *obj, Eina_Bool scrollable);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI Eina_Bool elm_panel_scrollable_get(const Elm_Panel *obj);
+ELM_API Eina_Bool elm_panel_scrollable_get(const Elm_Panel *obj);
 
 /**
  * @brief Set the size of the scrollable panel.
@@ -101,7 +101,7 @@ EAPI Eina_Bool elm_panel_scrollable_get(const Elm_Panel *obj);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI void elm_panel_scrollable_content_size_set(Elm_Panel *obj, double ratio);
+ELM_API void elm_panel_scrollable_content_size_set(Elm_Panel *obj, double ratio);
 
 /**
  * @brief Get the size of the scrollable panel.
@@ -114,12 +114,12 @@ EAPI void elm_panel_scrollable_content_size_set(Elm_Panel *obj, double ratio);
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI double elm_panel_scrollable_content_size_get(const Elm_Panel *obj);
+ELM_API double elm_panel_scrollable_content_size_get(const Elm_Panel *obj);
 
 /** Toggle the hidden state of the panel from code
  *
  * @ingroup Elm_Panel_Group
  */
-EAPI void elm_panel_toggle(Elm_Panel *obj);
+ELM_API void elm_panel_toggle(Elm_Panel *obj);
 
 #endif

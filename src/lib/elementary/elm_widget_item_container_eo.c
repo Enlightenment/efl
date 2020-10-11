@@ -1,4 +1,4 @@
-EOAPI EFL_FUNC_BODY_CONST(elm_widget_item_container_focused_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_widget_item_container_focused_item_get, Elm_Widget_Item *, NULL);
 
 static Eina_Bool
 _elm_widget_item_container_class_initializer(Efl_Class *klass)

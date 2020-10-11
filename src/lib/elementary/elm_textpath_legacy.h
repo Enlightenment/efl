@@ -10,7 +10,7 @@ typedef Eo Elm_Textpath;
  *
  * @since 1.22
  */
-EAPI Evas_Object                 *elm_textpath_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_textpath_add(Evas_Object *parent);
 
 /**
  * @brief Set the user text style
@@ -25,6 +25,6 @@ EAPI Evas_Object                 *elm_textpath_add(Evas_Object *parent);
  *
  * @since 1.25
  */
-EAPI void                        elm_textpath_text_user_style_set(Evas_Object *obj, const char *style);
+ELM_API void                        elm_textpath_text_user_style_set(Evas_Object *obj, const char *style);
 
 #include "efl_ui_textpath_eo.legacy.h"

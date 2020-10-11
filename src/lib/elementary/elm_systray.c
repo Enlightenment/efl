@@ -8,7 +8,7 @@
 #include "elm_systray_eo.h"
 #include "elm_systray_watcher.h"
 
-EAPI int ELM_EVENT_SYSTRAY_READY = 0;
+ELM_API int ELM_EVENT_SYSTRAY_READY = 0;
 
 typedef struct _Elm_Systray_Private_Data
 {
@@ -452,7 +452,7 @@ _elm_systray_register(Eo *obj EINA_UNUSED, void *priv EINA_UNUSED)
    return _elm_systray_watcher_status_notifier_item_register(OBJ_PATH);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_need_systray(void)
 {
    if (_elm_need_systray) return EINA_TRUE;
@@ -514,7 +514,7 @@ _elm_unneed_systray(void)
      }
 }
 
-EAPI Elm_Systray*
+ELM_API Elm_Systray*
 elm_systray_add(Evas_Object *win)
 {
    return efl_add(ELM_SYSTRAY_CLASS, win);

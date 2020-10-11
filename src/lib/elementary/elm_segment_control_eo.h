@@ -19,7 +19,7 @@ typedef Eo Elm_Segment_Control;
  */
 #define ELM_SEGMENT_CONTROL_CLASS elm_segment_control_class_get()
 
-EWAPI const Efl_Class *elm_segment_control_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_segment_control_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the Segment items count from segment control.
@@ -32,7 +32,7 @@ EWAPI const Efl_Class *elm_segment_control_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI int elm_obj_segment_control_item_count_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_segment_control_item_count_get(const Eo *obj);
 
 /**
  * @brief Get the selected item.
@@ -48,7 +48,7 @@ EOAPI int elm_obj_segment_control_item_count_get(const Eo *obj);
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI Elm_Widget_Item *elm_obj_segment_control_item_selected_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_segment_control_item_selected_get(const Eo *obj);
 
 /**
  * @brief Get the label of item.
@@ -65,7 +65,7 @@ EOAPI Elm_Widget_Item *elm_obj_segment_control_item_selected_get(const Eo *obj);
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI const char *elm_obj_segment_control_item_label_get(const Eo *obj, int idx);
+ELM_API ELM_API_WEAK const char *elm_obj_segment_control_item_label_get(const Eo *obj, int idx);
 
 /**
  * @brief Insert a new item to the segment control object at specified
@@ -95,7 +95,7 @@ EOAPI const char *elm_obj_segment_control_item_label_get(const Eo *obj, int idx)
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI Elm_Widget_Item *elm_obj_segment_control_item_insert_at(Eo *obj, Efl_Canvas_Object *icon, const char *label, int idx);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_segment_control_item_insert_at(Eo *obj, Efl_Canvas_Object *icon, const char *label, int idx);
 
 /**
  * @brief Get the item placed at specified index.
@@ -111,7 +111,7 @@ EOAPI Elm_Widget_Item *elm_obj_segment_control_item_insert_at(Eo *obj, Efl_Canva
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI Elm_Widget_Item *elm_obj_segment_control_item_get(const Eo *obj, int idx);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_segment_control_item_get(const Eo *obj, int idx);
 
 /**
  * @brief Remove a segment control item at given index from its parent,
@@ -125,7 +125,7 @@ EOAPI Elm_Widget_Item *elm_obj_segment_control_item_get(const Eo *obj, int idx);
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI void elm_obj_segment_control_item_del_at(Eo *obj, int idx);
+ELM_API ELM_API_WEAK void elm_obj_segment_control_item_del_at(Eo *obj, int idx);
 
 /**
  * @brief Append a new item to the segment control object.
@@ -155,7 +155,7 @@ EOAPI void elm_obj_segment_control_item_del_at(Eo *obj, int idx);
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI Elm_Widget_Item *elm_obj_segment_control_item_add(Eo *obj, Efl_Canvas_Object *icon, const char *label);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_segment_control_item_add(Eo *obj, Efl_Canvas_Object *icon, const char *label);
 
 /**
  * @brief Get the icon associated to the item.
@@ -172,9 +172,9 @@ EOAPI Elm_Widget_Item *elm_obj_segment_control_item_add(Eo *obj, Efl_Canvas_Obje
  *
  * @ingroup Elm_Segment_Control
  */
-EOAPI Efl_Canvas_Object *elm_obj_segment_control_item_icon_get(const Eo *obj, int idx);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_segment_control_item_icon_get(const Eo *obj, int idx);
 
-EWAPI extern const Efl_Event_Description _ELM_SEGMENT_CONTROL_EVENT_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SEGMENT_CONTROL_EVENT_CHANGED;
 
 /** Called when segment control changed
  * @return Efl_Object *

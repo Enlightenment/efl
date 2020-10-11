@@ -21,7 +21,7 @@
  *
  * @ingroup Elm_Mirroring
  */
-EAPI Eina_Bool elm_object_mirrored_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_object_mirrored_get(const Evas_Object *obj);
 
 /**
  * Set the widget's mirrored mode.
@@ -31,7 +31,7 @@ EAPI Eina_Bool elm_object_mirrored_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Mirroring
  */
-EAPI void      elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
+ELM_API void      elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
 
 /**
  * Returns the widget's mirrored mode setting.
@@ -41,7 +41,7 @@ EAPI void      elm_object_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
  *
  * @ingroup Elm_Mirroring
  */
-EAPI Eina_Bool elm_object_mirrored_automatic_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_object_mirrored_automatic_get(const Evas_Object *obj);
 
 /**
  * Sets the widget's mirrored mode setting.
@@ -53,7 +53,7 @@ EAPI Eina_Bool elm_object_mirrored_automatic_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Mirroring
  */
-EAPI void      elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic);
+ELM_API void      elm_object_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic);
 
 /**
  * @}

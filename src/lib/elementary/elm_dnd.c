@@ -160,7 +160,7 @@ _format_to_mime_array(Elm_Sel_Format format)
    return ret;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_State enter_cb, void *enter_data,
                     Elm_Drag_State leave_cb, void *leave_data,
@@ -191,7 +191,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_State enter_cb, void *enter_data,
                     Elm_Drag_State leave_cb, void *leave_data,
@@ -547,13 +547,13 @@ _cont_obj_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *ev
    st->y_down = ev->canvas.y;
    st->tm = ecore_timer_add(st->tm_to_drag, _cont_obj_anim_start, st);
 }
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drag_item_container_del(Evas_Object *obj)
 {
    return elm_drag_item_container_del_internal(obj, EINA_TRUE);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drag_item_container_add(Evas_Object *obj,
                             double anim_tm,
                             double tm_to_drag,
@@ -695,7 +695,7 @@ elm_drop_item_container_del_internal(Evas_Object *obj, Eina_Bool full)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drop_item_container_add(Evas_Object *obj,
                             Elm_Sel_Format format,
                             Elm_Xy_Item_Get_Cb itemgetcb,
@@ -732,7 +732,7 @@ elm_drop_item_container_add(Evas_Object *obj,
 }
 
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drop_item_container_del(Evas_Object *obj)
 {
    return elm_drop_item_container_del_internal(obj, EINA_TRUE);
@@ -761,7 +761,7 @@ _drag_finished_cb(void *data, const Efl_Event *ev)
    free(dd);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
                const char *data, Elm_Xdnd_Action action,
                Elm_Drag_Icon_Create_Cb createicon,
@@ -811,7 +811,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drag_cancel(Evas_Object *obj)
 {
    efl_ui_dnd_drag_cancel(obj, _default_seat(obj));
@@ -819,7 +819,7 @@ elm_drag_cancel(Evas_Object *obj)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_drag_action_set(Evas_Object *obj EINA_UNUSED, Elm_Xdnd_Action action EINA_UNUSED)
 {
    ERR("This operation is not supported anymore.");

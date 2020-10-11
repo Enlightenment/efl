@@ -9,6 +9,6 @@
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_mapbuf_add(Evas_Object *parent);
 
 #include "elm_mapbuf_eo.legacy.h"

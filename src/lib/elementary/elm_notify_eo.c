@@ -1,17 +1,17 @@
-EWAPI const Efl_Event_Description _ELM_NOTIFY_EVENT_BLOCK_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NOTIFY_EVENT_BLOCK_CLICKED =
    EFL_EVENT_DESCRIPTION("block,clicked");
-EWAPI const Efl_Event_Description _ELM_NOTIFY_EVENT_TIMEOUT =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NOTIFY_EVENT_TIMEOUT =
    EFL_EVENT_DESCRIPTION("timeout");
-EWAPI const Efl_Event_Description _ELM_NOTIFY_EVENT_DISMISSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NOTIFY_EVENT_DISMISSED =
    EFL_EVENT_DESCRIPTION("dismissed");
 
 void _elm_notify_align_set(Eo *obj, Elm_Notify_Data *pd, double horizontal, double vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_notify_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_notify_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
 
 void _elm_notify_align_get(const Eo *obj, Elm_Notify_Data *pd, double *horizontal, double *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_notify_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_notify_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
 
 void _elm_notify_allow_events_set(Eo *obj, Elm_Notify_Data *pd, Eina_Bool allow);
 
@@ -31,7 +31,7 @@ __eolian_elm_notify_allow_events_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_notify_allow_events_set, EFL_FUNC_CALL(allow), Eina_Bool allow);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_notify_allow_events_set, EFL_FUNC_CALL(allow), Eina_Bool allow);
 
 Eina_Bool _elm_notify_allow_events_get(const Eo *obj, Elm_Notify_Data *pd);
 
@@ -43,7 +43,7 @@ __eolian_elm_notify_allow_events_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_notify_allow_events_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_notify_allow_events_get, Eina_Bool, 0);
 
 void _elm_notify_timeout_set(Eo *obj, Elm_Notify_Data *pd, double timeout);
 
@@ -63,7 +63,7 @@ __eolian_elm_notify_timeout_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_notify_timeout_set, EFL_FUNC_CALL(timeout), double timeout);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_notify_timeout_set, EFL_FUNC_CALL(timeout), double timeout);
 
 double _elm_notify_timeout_get(const Eo *obj, Elm_Notify_Data *pd);
 
@@ -75,11 +75,11 @@ __eolian_elm_notify_timeout_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_notify_timeout_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_notify_timeout_get, double, 0);
 
 void _elm_notify_dismiss(Eo *obj, Elm_Notify_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_notify_dismiss);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_notify_dismiss);
 
 Efl_Object *_elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *pd);
 

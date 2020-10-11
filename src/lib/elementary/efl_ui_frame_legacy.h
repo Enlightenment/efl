@@ -8,6 +8,6 @@ typedef Eo Elm_Frame;
  *
  * @ingroup Elm_Frame_Group
  */
-EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_frame_add(Evas_Object *parent);
 
 #include "efl_ui_frame_eo.legacy.h"

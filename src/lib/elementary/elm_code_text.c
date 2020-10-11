@@ -6,7 +6,7 @@
 
 #include "elm_code_private.h"
 
-EAPI const char *
+ELM_API const char *
 elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length)
 {
    if (!line)
@@ -27,7 +27,7 @@ elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length)
    return line->content;
 }
 
-EAPI void
+ELM_API void
 elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int length)
 {
    Elm_Code_File *file;
@@ -55,7 +55,7 @@ elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int leng
      }
 }
 
-EAPI int
+ELM_API int
 elm_code_text_strnpos(const char *content, unsigned int length, const char *search, int offset)
 {
    unsigned int searchlen, c;
@@ -79,7 +79,7 @@ elm_code_text_strnpos(const char *content, unsigned int length, const char *sear
    return ELM_CODE_TEXT_NOT_FOUND;
 }
 
-EAPI int
+ELM_API int
 elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
 {
    unsigned int length = 0;
@@ -89,13 +89,13 @@ elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset)
    return elm_code_text_strnpos(content, length, search, offset);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_code_line_text_contains(Elm_Code_Line *line, const char *search)
 {
    return elm_code_line_text_strpos(line, search, 0) != ELM_CODE_TEXT_NOT_FOUND;
 }
 
-EAPI char *
+ELM_API char *
 elm_code_line_text_substr(Elm_Code_Line *line, unsigned int position, int length)
 {
    const char *content;
@@ -145,7 +145,7 @@ _elm_code_line_tokens_move_left(Elm_Code_Line *line, int position, int move)
      }
 }
 
-EAPI void
+ELM_API void
 elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length)
 {
    Elm_Code_File *file;
@@ -186,7 +186,7 @@ elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char
      }
 }
 
-EAPI void
+ELM_API void
 elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length)
 {
    Elm_Code_File *file;
@@ -253,7 +253,7 @@ _elm_code_text_trailing_whitespace_length(const char *text, unsigned int length)
    return count;
 }
 
-EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
+ELM_API void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
 {
    unsigned int length, count = 0;
    const char *content;
@@ -276,7 +276,7 @@ EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line)
    elm_code_line_text_remove(line, 0, count);
 }
 
-EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
+ELM_API void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
 {
    unsigned int length = 0;
    unsigned int trailing;
@@ -292,7 +292,7 @@ EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line)
 
 /* generic text functions */
 
-EAPI int
+ELM_API int
 elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
 {
    int lfpos, crpos;
@@ -321,7 +321,7 @@ elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen)
    return crpos;
 }
 
-EAPI unsigned int
+ELM_API unsigned int
 elm_code_text_is_whitespace(const char *text, unsigned int length)
 {
    unsigned int leading;

@@ -12,7 +12,7 @@
  *
  * @return A iterator that contains subelement widgets and canvas objects of the root widget. Every contained object is a Efl.Gfx.Entity.
  */
-EAPI Eina_Iterator* efl_ui_widget_tree_iterator(Efl_Ui_Widget *obj);
+ELM_API Eina_Iterator* efl_ui_widget_tree_iterator(Efl_Ui_Widget *obj);
 
 /**
  * @brief Get an iterator over all subelements located at obj.
@@ -21,7 +21,7 @@ EAPI Eina_Iterator* efl_ui_widget_tree_iterator(Efl_Ui_Widget *obj);
  *
  * @return A iterator that contains subelement widgets of the root widget. Every contained object is a Efl.Ui.Widget.
  */
-EAPI Eina_Iterator* efl_ui_widget_tree_widget_iterator(Efl_Ui_Widget *obj);
+ELM_API Eina_Iterator* efl_ui_widget_tree_widget_iterator(Efl_Ui_Widget *obj);
 
 /**
  * @brief Get an iterator that contains all parents of the passed object.
@@ -30,6 +30,6 @@ EAPI Eina_Iterator* efl_ui_widget_tree_widget_iterator(Efl_Ui_Widget *obj);
  *
  * @return A iterator that contains all parents of the object. Every contained object is a Efl.Ui.Widget.
  */
-EAPI Eina_Iterator* efl_ui_widget_parent_iterator(Efl_Ui_Widget *obj);
+ELM_API Eina_Iterator* efl_ui_widget_parent_iterator(Efl_Ui_Widget *obj);
 
 #endif

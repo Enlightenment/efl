@@ -66,4 +66,8 @@ const Efl_Class* efl_ui_widget_realized_class_get(void);
 
 Eo *win_add();
 Eo *win_add_focused();
+
+#define ELMTEST_API
+#define ELMTEST_API_WEAK
+
 #endif

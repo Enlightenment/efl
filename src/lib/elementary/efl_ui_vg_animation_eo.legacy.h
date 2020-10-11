@@ -72,7 +72,7 @@ typedef enum
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_auto_play_set(Elm_Animation_View *obj, Eina_Bool auto_play);
+ELM_API void elm_animation_view_auto_play_set(Elm_Animation_View *obj, Eina_Bool auto_play);
 
 /**
  * @brief Animation will be started automatically when it's possible.
@@ -96,7 +96,7 @@ EAPI void elm_animation_view_auto_play_set(Elm_Animation_View *obj, Eina_Bool au
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_auto_play_get(const Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_auto_play_get(const Elm_Animation_View *obj);
 
 /**
  * @brief Turn on/off animation looping.
@@ -114,7 +114,7 @@ EAPI Eina_Bool elm_animation_view_auto_play_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_auto_repeat_set(Elm_Animation_View *obj, Eina_Bool auto_repeat);
+ELM_API void elm_animation_view_auto_repeat_set(Elm_Animation_View *obj, Eina_Bool auto_repeat);
 
 /**
  * @brief Turn on/off animation looping.
@@ -133,7 +133,7 @@ EAPI void elm_animation_view_auto_repeat_set(Elm_Animation_View *obj, Eina_Bool 
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_auto_repeat_get(const Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_auto_repeat_get(const Elm_Animation_View *obj);
 
 /**
  * @brief Control animation speed.
@@ -153,7 +153,7 @@ EAPI Eina_Bool elm_animation_view_auto_repeat_get(const Elm_Animation_View *obj)
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_speed_set(Elm_Animation_View *obj, double speed);
+ELM_API Eina_Bool elm_animation_view_speed_set(Elm_Animation_View *obj, double speed);
 
 /**
  * @brief Control animation speed.
@@ -174,7 +174,7 @@ EAPI Eina_Bool elm_animation_view_speed_set(Elm_Animation_View *obj, double spee
  *
  * @ingroup Elm_Animation_View
  */
-EAPI double elm_animation_view_speed_get(const Elm_Animation_View *obj);
+ELM_API double elm_animation_view_speed_get(const Elm_Animation_View *obj);
 
 /**
  * @brief Get the duration of animation in seconds.
@@ -192,7 +192,7 @@ EAPI double elm_animation_view_speed_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI double elm_animation_view_duration_time_get(const Elm_Animation_View *obj);
+ELM_API double elm_animation_view_duration_time_get(const Elm_Animation_View *obj);
 
 /**
  * @brief Set current progress position of animation view object.
@@ -211,7 +211,7 @@ EAPI double elm_animation_view_duration_time_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_progress_set(Elm_Animation_View *obj, double progress);
+ELM_API void elm_animation_view_progress_set(Elm_Animation_View *obj, double progress);
 
 /**
  * @brief Set current progress position of animation view object.
@@ -231,7 +231,7 @@ EAPI void elm_animation_view_progress_set(Elm_Animation_View *obj, double progre
  *
  * @ingroup Elm_Animation_View
  */
-EAPI double elm_animation_view_progress_get(const Elm_Animation_View *obj);
+ELM_API double elm_animation_view_progress_get(const Elm_Animation_View *obj);
 
 /**
  * @brief Number of current frame.
@@ -247,7 +247,7 @@ EAPI double elm_animation_view_progress_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_frame_set(Elm_Animation_View *obj, int frame_num);
+ELM_API void elm_animation_view_frame_set(Elm_Animation_View *obj, int frame_num);
 
 /**
  * @brief Number of current frame.
@@ -264,7 +264,7 @@ EAPI void elm_animation_view_frame_set(Elm_Animation_View *obj, int frame_num);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI int elm_animation_view_frame_get(const Elm_Animation_View *obj);
+ELM_API int elm_animation_view_frame_get(const Elm_Animation_View *obj);
 
 /**
  * @brief Play animation one time instantly when it's available.
@@ -283,7 +283,7 @@ EAPI int elm_animation_view_frame_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_play(Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_play(Elm_Animation_View *obj);
 
 /**
  * @brief Play back animation one time instantly when it's available.
@@ -302,7 +302,7 @@ EAPI Eina_Bool elm_animation_view_play(Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_play_back(Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_play_back(Elm_Animation_View *obj);
 
 /**
  * @brief Pause current animation instantly.
@@ -320,7 +320,7 @@ EAPI Eina_Bool elm_animation_view_play_back(Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_pause(Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_pause(Elm_Animation_View *obj);
 
 /**
  * @brief Resume paused animation to continue animation.
@@ -335,7 +335,7 @@ EAPI Eina_Bool elm_animation_view_pause(Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_resume(Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_resume(Elm_Animation_View *obj);
 
 /**
  * @brief Stop playing animation.
@@ -352,7 +352,7 @@ EAPI Eina_Bool elm_animation_view_resume(Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_stop(Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_stop(Elm_Animation_View *obj);
 
 /** Get the default view size that specified from vector resource.
  *
@@ -360,7 +360,7 @@ EAPI Eina_Bool elm_animation_view_stop(Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Size2D elm_animation_view_default_size_get(const Elm_Animation_View *obj);
+ELM_API Eina_Size2D elm_animation_view_default_size_get(const Elm_Animation_View *obj);
 
 
 /**
@@ -376,7 +376,7 @@ EAPI Eina_Size2D elm_animation_view_default_size_get(const Elm_Animation_View *o
  *
  * @ingroup Elm_Animation_View
  */
-EAPI Eina_Bool elm_animation_view_is_playing_back(Elm_Animation_View *obj);
+ELM_API Eina_Bool elm_animation_view_is_playing_back(Elm_Animation_View *obj);
 
 /**
  * @brief Get the index of end frame of the animation view, if it's animated.
@@ -390,7 +390,7 @@ EAPI Eina_Bool elm_animation_view_is_playing_back(Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI int elm_animation_view_frame_count_get(const Elm_Animation_View *obj);
+ELM_API int elm_animation_view_frame_count_get(const Elm_Animation_View *obj);
 
 /**
  * @brief The start progress of the play. Default value is 0.
@@ -404,7 +404,7 @@ EAPI int elm_animation_view_frame_count_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_min_progress_set(Elm_Animation_View *obj, double min_progress);
+ELM_API void elm_animation_view_min_progress_set(Elm_Animation_View *obj, double min_progress);
 
 /**
  * @brief The start progress of the play. Default value is 0.
@@ -419,7 +419,7 @@ EAPI void elm_animation_view_min_progress_set(Elm_Animation_View *obj, double mi
  *
  * @ingroup Elm_Animation_View
  */
-EAPI double elm_animation_view_min_progress_get(const Elm_Animation_View *obj);
+ELM_API double elm_animation_view_min_progress_get(const Elm_Animation_View *obj);
 
 /**
  * @brief The last progress of the play. Default value is 1.
@@ -433,7 +433,7 @@ EAPI double elm_animation_view_min_progress_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_max_progress_set(Elm_Animation_View *obj, double max_progress);
+ELM_API void elm_animation_view_max_progress_set(Elm_Animation_View *obj, double max_progress);
 
 /**
  * @brief The last progress of the play. Default value is 1.
@@ -448,7 +448,7 @@ EAPI void elm_animation_view_max_progress_set(Elm_Animation_View *obj, double ma
  *
  * @ingroup Elm_Animation_View
  */
-EAPI double elm_animation_view_max_progress_get(const Elm_Animation_View *obj);
+ELM_API double elm_animation_view_max_progress_get(const Elm_Animation_View *obj);
 
 /**
  * @brief The start frame of the play. Default value is 0.
@@ -463,7 +463,7 @@ EAPI double elm_animation_view_max_progress_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_min_frame_set(Elm_Animation_View *obj, int min_frame);
+ELM_API void elm_animation_view_min_frame_set(Elm_Animation_View *obj, int min_frame);
 
 /**
  * @brief The start frame of the play. Default value is 0.
@@ -479,7 +479,7 @@ EAPI void elm_animation_view_min_frame_set(Elm_Animation_View *obj, int min_fram
  *
  * @ingroup Elm_Animation_View
  */
-EAPI int elm_animation_view_min_frame_get(const Elm_Animation_View *obj);
+ELM_API int elm_animation_view_min_frame_get(const Elm_Animation_View *obj);
 
 /**
  * @brief The last frame of the play. Default value is
@@ -495,7 +495,7 @@ EAPI int elm_animation_view_min_frame_get(const Elm_Animation_View *obj);
  *
  * @ingroup Elm_Animation_View
  */
-EAPI void elm_animation_view_max_frame_set(Elm_Animation_View *obj, int max_frame);
+ELM_API void elm_animation_view_max_frame_set(Elm_Animation_View *obj, int max_frame);
 
 /**
  * @brief The last frame of the play. Default value is
@@ -512,7 +512,7 @@ EAPI void elm_animation_view_max_frame_set(Elm_Animation_View *obj, int max_fram
  *
  * @ingroup Elm_Animation_View
  */
-EAPI int elm_animation_view_max_frame_get(const Elm_Animation_View *obj);
+ELM_API int elm_animation_view_max_frame_get(const Elm_Animation_View *obj);
 
 #ifdef EFL_BETA_API_SUPPORT
 /** Elementary vg_animation class
@@ -521,7 +521,7 @@ EAPI int elm_animation_view_max_frame_get(const Elm_Animation_View *obj);
  */
 #define EFL_UI_VG_ANIMATION_LEGACY_CLASS efl_ui_vg_animation_legacy_class_get()
 
-EWAPI const Efl_Class *efl_ui_vg_animation_legacy_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *efl_ui_vg_animation_legacy_class_get(void) EINA_CONST;
 #endif /* EFL_BETA_API_SUPPORT */
 
 #endif

@@ -25,7 +25,7 @@ typedef Eo Elm_Multibuttonentry;
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_editable_set(Elm_Multibuttonentry *obj, Eina_Bool editable);
+ELM_API void elm_multibuttonentry_editable_set(Elm_Multibuttonentry *obj, Eina_Bool editable);
 
 /**
  * @brief Control if the multibuttonentry is to be editable or not.
@@ -39,7 +39,7 @@ EAPI void elm_multibuttonentry_editable_set(Elm_Multibuttonentry *obj, Eina_Bool
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Eina_Bool elm_multibuttonentry_editable_get(const Elm_Multibuttonentry *obj);
+ELM_API Eina_Bool elm_multibuttonentry_editable_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Control the multibuttonentry to expanded state.
@@ -53,7 +53,7 @@ EAPI Eina_Bool elm_multibuttonentry_editable_get(const Elm_Multibuttonentry *obj
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_expanded_set(Elm_Multibuttonentry *obj, Eina_Bool expanded);
+ELM_API void elm_multibuttonentry_expanded_set(Elm_Multibuttonentry *obj, Eina_Bool expanded);
 
 /**
  * @brief Control the multibuttonentry to expanded state.
@@ -68,7 +68,7 @@ EAPI void elm_multibuttonentry_expanded_set(Elm_Multibuttonentry *obj, Eina_Bool
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Eina_Bool elm_multibuttonentry_expanded_get(const Elm_Multibuttonentry *obj);
+ELM_API Eina_Bool elm_multibuttonentry_expanded_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Set a function to format the string that will be used to display the
@@ -85,7 +85,7 @@ EAPI Eina_Bool elm_multibuttonentry_expanded_get(const Elm_Multibuttonentry *obj
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_format_function_set(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Format_Cb format_function, const void *data);
+ELM_API void elm_multibuttonentry_format_function_set(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Format_Cb format_function, const void *data);
 
 /**
  * @brief Get a list of items in the multibuttonentry
@@ -96,7 +96,7 @@ EAPI void elm_multibuttonentry_format_function_set(Elm_Multibuttonentry *obj, El
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI const Eina_List *elm_multibuttonentry_items_get(const Elm_Multibuttonentry *obj);
+ELM_API const Eina_List *elm_multibuttonentry_items_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Get the first item in the multibuttonentry
@@ -107,7 +107,7 @@ EAPI const Eina_List *elm_multibuttonentry_items_get(const Elm_Multibuttonentry 
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_first_item_get(const Elm_Multibuttonentry *obj);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_first_item_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Get the last item in the multibuttonentry
@@ -118,7 +118,7 @@ EAPI Elm_Widget_Item *elm_multibuttonentry_first_item_get(const Elm_Multibuttone
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_last_item_get(const Elm_Multibuttonentry *obj);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_last_item_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Get the entry of the multibuttonentry object
@@ -129,7 +129,7 @@ EAPI Elm_Widget_Item *elm_multibuttonentry_last_item_get(const Elm_Multibuttonen
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Efl_Canvas_Object *elm_multibuttonentry_entry_get(const Elm_Multibuttonentry *obj);
+ELM_API Efl_Canvas_Object *elm_multibuttonentry_entry_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Get the selected item in the multibuttonentry
@@ -140,7 +140,7 @@ EAPI Efl_Canvas_Object *elm_multibuttonentry_entry_get(const Elm_Multibuttonentr
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_selected_item_get(const Elm_Multibuttonentry *obj);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_selected_item_get(const Elm_Multibuttonentry *obj);
 
 /**
  * @brief Prepend a new item to the multibuttonentry
@@ -157,13 +157,13 @@ EAPI Elm_Widget_Item *elm_multibuttonentry_selected_item_get(const Elm_Multibutt
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_item_prepend(Elm_Multibuttonentry *obj, const char *label, Evas_Smart_Cb func, void *data);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_item_prepend(Elm_Multibuttonentry *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /** Remove all items in the multibuttonentry.
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_clear(Elm_Multibuttonentry *obj);
+ELM_API void elm_multibuttonentry_clear(Elm_Multibuttonentry *obj);
 
 /**
  * @brief Remove a filter from the list
@@ -177,7 +177,7 @@ EAPI void elm_multibuttonentry_clear(Elm_Multibuttonentry *obj);
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_item_filter_remove(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
+ELM_API void elm_multibuttonentry_item_filter_remove(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * @brief Add a new item to the multibuttonentry before the indicated object
@@ -196,7 +196,7 @@ EAPI void elm_multibuttonentry_item_filter_remove(Elm_Multibuttonentry *obj, Elm
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_item_insert_before(Elm_Multibuttonentry *obj, Elm_Widget_Item *before, const char *label, Evas_Smart_Cb func, void *data);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_item_insert_before(Elm_Multibuttonentry *obj, Elm_Widget_Item *before, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * @brief Append a new item to the multibuttonentry
@@ -213,7 +213,7 @@ EAPI Elm_Widget_Item *elm_multibuttonentry_item_insert_before(Elm_Multibuttonent
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_item_append(Elm_Multibuttonentry *obj, const char *label, Evas_Smart_Cb func, void *data);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_item_append(Elm_Multibuttonentry *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * @brief Prepend a filter function for text inserted in the Multibuttonentry
@@ -227,7 +227,7 @@ EAPI Elm_Widget_Item *elm_multibuttonentry_item_append(Elm_Multibuttonentry *obj
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_item_filter_prepend(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
+ELM_API void elm_multibuttonentry_item_filter_prepend(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * @brief Append an item filter function for text inserted in the
@@ -246,7 +246,7 @@ EAPI void elm_multibuttonentry_item_filter_prepend(Elm_Multibuttonentry *obj, El
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI void elm_multibuttonentry_item_filter_append(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
+ELM_API void elm_multibuttonentry_item_filter_append(Elm_Multibuttonentry *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * @brief Add a new item to the multibuttonentry after the indicated object
@@ -264,6 +264,6 @@ EAPI void elm_multibuttonentry_item_filter_append(Elm_Multibuttonentry *obj, Elm
  *
  * @ingroup Elm_Multibuttonentry_Group
  */
-EAPI Elm_Widget_Item *elm_multibuttonentry_item_insert_after(Elm_Multibuttonentry *obj, Elm_Widget_Item *after, const char *label, Evas_Smart_Cb func, void *data);
+ELM_API Elm_Widget_Item *elm_multibuttonentry_item_insert_after(Elm_Multibuttonentry *obj, Elm_Widget_Item *after, const char *label, Evas_Smart_Cb func, void *data);
 
 #endif

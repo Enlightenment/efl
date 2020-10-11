@@ -80,7 +80,7 @@ _elm_code_diff_widget_parse_diff(Elm_Code_File *diff, Elm_Code_File *left, Elm_C
    _elm_code_parse_file(right->parent, right);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    Elm_Code *wcode1, *wcode2;
@@ -119,7 +119,7 @@ elm_code_diff_widget_add(Evas_Object *parent, Elm_Code *code)
    return hbox;
 }
 
-EAPI void
+ELM_API void
 elm_code_diff_widget_font_set(Evas_Object *widget, const char *name, int size)
 {
    Elm_Code_Widget *child;

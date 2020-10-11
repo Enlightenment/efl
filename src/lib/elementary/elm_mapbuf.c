@@ -306,7 +306,7 @@ _elm_mapbuf_efl_canvas_group_group_add(Eo *obj, Elm_Mapbuf_Data *priv)
    _sizing_eval(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_mapbuf_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

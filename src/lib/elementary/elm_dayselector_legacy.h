@@ -6,6 +6,6 @@
  *
  * @ingroup Elm_Dayselector
  */
-EAPI Evas_Object *elm_dayselector_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_dayselector_add(Evas_Object *parent);
 
 #include "elm_dayselector_eo.legacy.h"

@@ -1,23 +1,23 @@
-EWAPI const Efl_Event_Description _ELM_CTXPOPUP_EVENT_DISMISSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CTXPOPUP_EVENT_DISMISSED =
    EFL_EVENT_DESCRIPTION("dismissed");
-EWAPI const Efl_Event_Description _ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE =
    EFL_EVENT_DESCRIPTION("geometry,update");
 
 Elm_Widget_Item *_elm_ctxpopup_selected_item_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_selected_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_selected_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_ctxpopup_first_item_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_first_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_first_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_ctxpopup_last_item_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_last_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_last_item_get, Elm_Widget_Item *, NULL);
 
 const Eina_List *_elm_ctxpopup_items_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_items_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_items_get, const Eina_List *, NULL);
 
 void _elm_ctxpopup_horizontal_set(Eo *obj, Elm_Ctxpopup_Data *pd, Eina_Bool horizontal);
 
@@ -37,7 +37,7 @@ __eolian_elm_ctxpopup_horizontal_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
 
 Eina_Bool _elm_ctxpopup_horizontal_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
@@ -49,7 +49,7 @@ __eolian_elm_ctxpopup_horizontal_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_horizontal_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_horizontal_get, Eina_Bool, 0);
 
 void _elm_ctxpopup_auto_hide_disabled_set(Eo *obj, Elm_Ctxpopup_Data *pd, Eina_Bool disabled);
 
@@ -69,7 +69,7 @@ __eolian_elm_ctxpopup_auto_hide_disabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_auto_hide_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_auto_hide_disabled_set, EFL_FUNC_CALL(disabled), Eina_Bool disabled);
 
 Eina_Bool _elm_ctxpopup_auto_hide_disabled_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
@@ -81,51 +81,51 @@ __eolian_elm_ctxpopup_auto_hide_disabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_auto_hide_disabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_auto_hide_disabled_get, Eina_Bool, 0);
 
 void _elm_ctxpopup_hover_parent_set(Eo *obj, Elm_Ctxpopup_Data *pd, Efl_Canvas_Object *parent);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_hover_parent_set, EFL_FUNC_CALL(parent), Efl_Canvas_Object *parent);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_hover_parent_set, EFL_FUNC_CALL(parent), Efl_Canvas_Object *parent);
 
 Efl_Canvas_Object *_elm_ctxpopup_hover_parent_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_hover_parent_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_hover_parent_get, Efl_Canvas_Object *, NULL);
 
 void _elm_ctxpopup_direction_priority_set(Eo *obj, Elm_Ctxpopup_Data *pd, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_direction_priority_set, EFL_FUNC_CALL(first, second, third, fourth), Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_ctxpopup_direction_priority_set, EFL_FUNC_CALL(first, second, third, fourth), Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth);
 
 void _elm_ctxpopup_direction_priority_get(const Eo *obj, Elm_Ctxpopup_Data *pd, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_ctxpopup_direction_priority_get, EFL_FUNC_CALL(first, second, third, fourth), Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_ctxpopup_direction_priority_get, EFL_FUNC_CALL(first, second, third, fourth), Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
 
 Elm_Ctxpopup_Direction _elm_ctxpopup_direction_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_direction_get, Elm_Ctxpopup_Direction, 4 /* Elm.Ctxpopup.Direction.unknown */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_ctxpopup_direction_get, Elm_Ctxpopup_Direction, 4 /* Elm.Ctxpopup.Direction.unknown */);
 
 void _elm_ctxpopup_dismiss(Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_ctxpopup_dismiss);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_ctxpopup_dismiss);
 
 void _elm_ctxpopup_clear(Eo *obj, Elm_Ctxpopup_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_ctxpopup_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_ctxpopup_clear);
 
 Elm_Widget_Item *_elm_ctxpopup_item_insert_before(Eo *obj, Elm_Ctxpopup_Data *pd, Elm_Widget_Item *before, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_ctxpopup_item_insert_before, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(before, label, icon, func, data), Elm_Widget_Item *before, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_ctxpopup_item_insert_before, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(before, label, icon, func, data), Elm_Widget_Item *before, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 Elm_Widget_Item *_elm_ctxpopup_item_insert_after(Eo *obj, Elm_Ctxpopup_Data *pd, Elm_Widget_Item *after, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_ctxpopup_item_insert_after, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(after, label, icon, func, data), Elm_Widget_Item *after, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_ctxpopup_item_insert_after, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(after, label, icon, func, data), Elm_Widget_Item *after, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 Elm_Widget_Item *_elm_ctxpopup_item_append(Eo *obj, Elm_Ctxpopup_Data *pd, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_ctxpopup_item_append, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_ctxpopup_item_append, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 Elm_Widget_Item *_elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *pd, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_ctxpopup_item_prepend, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_ctxpopup_item_prepend, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 Efl_Object *_elm_ctxpopup_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Data *pd);
 

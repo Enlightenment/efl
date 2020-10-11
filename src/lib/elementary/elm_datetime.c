@@ -36,14 +36,14 @@ _efl_ui_clock_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_datetime_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(EFL_UI_CLOCK_LEGACY_CLASS, parent);
 }
 
-EAPI void
+ELM_API void
 elm_datetime_format_set(Evas_Object *obj,
                         const char *fmt)
 {
@@ -52,7 +52,7 @@ elm_datetime_format_set(Evas_Object *obj,
    efl_ui_clock_format_set(obj, fmt);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_datetime_format_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
@@ -90,7 +90,7 @@ adjust_field_type(Elm_Datetime_Field_Type type)
    return ctype;
 }
 
-EAPI void
+ELM_API void
 elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type type, int min, int max)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -100,7 +100,7 @@ elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type type, int
    efl_ui_clock_field_limit_set(obj, adjust_field_type(type), min, max);
 }
 
-EAPI void
+ELM_API void
 elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, int *min, int *max)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -110,7 +110,7 @@ elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Field_Type fie
    efl_ui_clock_field_limit_get(obj, adjust_field_type(fieldtype), min, max);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_datetime_value_min_set(Evas_Object *obj, const Efl_Time *mintime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -121,7 +121,7 @@ elm_datetime_value_min_set(Evas_Object *obj, const Efl_Time *mintime)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_datetime_value_min_get(const Evas_Object *obj, Efl_Time *mintime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -132,7 +132,7 @@ elm_datetime_value_min_get(const Evas_Object *obj, Efl_Time *mintime)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_datetime_value_set(Evas_Object *obj, const Efl_Time *newtime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -143,7 +143,7 @@ elm_datetime_value_set(Evas_Object *obj, const Efl_Time *newtime)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -154,7 +154,7 @@ elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime)
    return EINA_TRUE;
 }
 
-EAPI void
+ELM_API void
 elm_datetime_field_visible_set(Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, Eina_Bool visible)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -164,7 +164,7 @@ elm_datetime_field_visible_set(Evas_Object *obj, Elm_Datetime_Field_Type fieldty
    efl_ui_clock_field_visible_set(obj, adjust_field_type(fieldtype), visible);
 }
 
-EAPI Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype)
+ELM_API Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
@@ -173,7 +173,7 @@ EAPI Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Dateti
    return efl_ui_clock_field_visible_get(obj, adjust_field_type(fieldtype));
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxtime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -184,7 +184,7 @@ elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxtime)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_datetime_value_max_get(const Evas_Object *obj, Efl_Time *maxtime)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);

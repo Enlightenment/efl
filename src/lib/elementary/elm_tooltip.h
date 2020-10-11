@@ -43,7 +43,7 @@ typedef enum
  * @see elm_object_tooltip_move_freeze_get()
  * @since 1.9
  */
-EAPI void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
+ELM_API void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
 
 /**
  * This decrements the tooltip freeze count by one.
@@ -54,7 +54,7 @@ EAPI void elm_object_tooltip_move_freeze_push(Evas_Object *obj);
  * @see elm_object_tooltip_move_freeze_push()
  * @since 1.9
  */
-EAPI void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
+ELM_API void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
 
 /**
  * Get the movement freeze count
@@ -68,7 +68,7 @@ EAPI void elm_object_tooltip_move_freeze_pop(Evas_Object *obj);
  * @see elm_object_tooltip_move_freeze_push()
  * @since 1.9
  */
-EAPI int elm_object_tooltip_move_freeze_get(const Evas_Object *obj);
+ELM_API int elm_object_tooltip_move_freeze_get(const Evas_Object *obj);
 
 /**
  * @brief Sets the orientation of the tooltip around the owner region
@@ -83,7 +83,7 @@ EAPI int elm_object_tooltip_move_freeze_get(const Evas_Object *obj);
  * @see Elm_Tooltip_Orient for possible values.
  * @since 1.9
  */
-EAPI void elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient);
+ELM_API void elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient);
 
 /**
  * @brief Returns the orientation of Tooltip
@@ -95,7 +95,7 @@ EAPI void elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient ori
  * @see elm_object_tooltip_orient_set()
  * @ref Elm_Tooltip_Orient for possible values.
  */
-EAPI Elm_Tooltip_Orient elm_object_tooltip_orient_get(const Evas_Object *obj);
+ELM_API Elm_Tooltip_Orient elm_object_tooltip_orient_get(const Evas_Object *obj);
 
 /**
  * Called back when a widget's tooltip is activated and needs content.
@@ -127,7 +127,7 @@ typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj
  *
  * @ingroup Elm_Tooltips
  */
-EAPI void        elm_object_tooltip_show(Evas_Object *obj);
+ELM_API void        elm_object_tooltip_show(Evas_Object *obj);
 
 /**
  * @brief Force hide tooltip of object
@@ -138,7 +138,7 @@ EAPI void        elm_object_tooltip_show(Evas_Object *obj);
  *
  * @ingroup Elm_Tooltips
  */
-EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
+ELM_API void        elm_object_tooltip_hide(Evas_Object *obj);
 
 /**
  * @brief Set the text to be displayed inside the tooltip.
@@ -148,8 +148,8 @@ EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
  *
  * @ingroup Elm_Tooltips
  */
-EAPI void        elm_object_tooltip_text_set(Evas_Object *obj, const char *text);
-EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text);
+ELM_API void        elm_object_tooltip_text_set(Evas_Object *obj, const char *text);
+ELM_API void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text);
 #define elm_object_tooltip_translatable_text_set(obj, text) elm_object_tooltip_domain_translatable_text_set((obj), NULL, (text))
 
 /**
@@ -172,7 +172,7 @@ EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *ob
  *
  * @ingroup Elm_Tooltips
  */
-EAPI void        elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+ELM_API void        elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * @brief Unset tooltip from object
@@ -187,7 +187,7 @@ EAPI void        elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip
  *
  * @ingroup Elm_Tooltips
  */
-EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
+ELM_API void        elm_object_tooltip_unset(Evas_Object *obj);
 
 /**
  * @brief Set a different style for this object tooltip.
@@ -201,7 +201,7 @@ EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
  *
  * @ingroup Elm_Tooltips
  */
-EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
+ELM_API void        elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
 
 /**
  * @brief Get the style for this object tooltip.
@@ -212,7 +212,7 @@ EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *styl
  *
  * @ingroup Elm_Tooltips
  */
-EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
+ELM_API const char *elm_object_tooltip_style_get(const Evas_Object *obj);
 
 /**
  * @brief Disable size restrictions on an object's tooltip
@@ -226,7 +226,7 @@ EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Tooltips
  */
-EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable);
+ELM_API Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable);
 
 /**
  * @brief Get size restriction state of an object's tooltip
@@ -240,7 +240,7 @@ EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool 
  *
  * @ingroup Elm_Tooltips
  */
-EAPI Eina_Bool   elm_object_tooltip_window_mode_get(const Evas_Object *obj);
+ELM_API Eina_Bool   elm_object_tooltip_window_mode_get(const Evas_Object *obj);
 
 /**
  * @}

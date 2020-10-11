@@ -9,7 +9,7 @@
  *
  * @ingroup Elm_List_Group
  */
-EAPI Evas_Object                 *elm_list_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_list_add(Evas_Object *parent);
 
 #include "elm_list_item_eo.legacy.h"
 #include "elm_list_eo.legacy.h"

@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI void elm_naviframe_item_style_set(Elm_Object_Item *obj, const char *style);
+ELM_API void elm_naviframe_item_style_set(Elm_Object_Item *obj, const char *style);
 
 /**
  * @brief Get an item style.
@@ -17,7 +17,7 @@ EAPI void elm_naviframe_item_style_set(Elm_Object_Item *obj, const char *style);
  *
  * @ingroup Elm_Naviframe_Item_Group
  */
-EAPI const char *elm_naviframe_item_style_get(const Elm_Object_Item *obj);
+ELM_API const char *elm_naviframe_item_style_get(const Elm_Object_Item *obj);
 
 #include "elm_naviframe_item_eo.legacy.h"
 #include "elm_naviframe_eo.legacy.h"

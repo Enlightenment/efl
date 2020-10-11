@@ -279,7 +279,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    return wd->content;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_factory_add(Evas_Object *parent)
 {
    Evas_Object *obj;
@@ -310,7 +310,7 @@ elm_factory_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI void
+ELM_API void
 elm_factory_maxmin_mode_set(Evas_Object *obj, Eina_Bool enabled)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -319,7 +319,7 @@ elm_factory_maxmin_mode_set(Evas_Object *obj, Eina_Bool enabled)
    wd->maxmin = !!enabled;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_factory_maxmin_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
@@ -328,7 +328,7 @@ elm_factory_maxmin_mode_get(const Evas_Object *obj)
    return wd->maxmin;
 }
 
-EAPI void
+ELM_API void
 elm_factory_maxmin_reset_set(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);

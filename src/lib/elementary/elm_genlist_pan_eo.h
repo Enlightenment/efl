@@ -19,6 +19,6 @@ typedef Eo Elm_Genlist_Pan;
  */
 #define ELM_GENLIST_PAN_CLASS elm_genlist_pan_class_get()
 
-EWAPI const Efl_Class *elm_genlist_pan_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_genlist_pan_class_get(void) EINA_CONST;
 
 #endif

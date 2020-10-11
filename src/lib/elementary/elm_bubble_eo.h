@@ -40,7 +40,7 @@ typedef enum
  */
 #define ELM_BUBBLE_CLASS elm_bubble_class_get()
 
-EWAPI const Efl_Class *elm_bubble_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_bubble_class_get(void) EINA_CONST;
 
 /**
  * @brief The corner of the bubble
@@ -54,7 +54,7 @@ EWAPI const Efl_Class *elm_bubble_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Bubble
  */
-EOAPI void elm_obj_bubble_pos_set(Eo *obj, Elm_Bubble_Pos pos);
+ELM_API ELM_API_WEAK void elm_obj_bubble_pos_set(Eo *obj, Elm_Bubble_Pos pos);
 
 /**
  * @brief The corner of the bubble
@@ -69,6 +69,6 @@ EOAPI void elm_obj_bubble_pos_set(Eo *obj, Elm_Bubble_Pos pos);
  *
  * @ingroup Elm_Bubble
  */
-EOAPI Elm_Bubble_Pos elm_obj_bubble_pos_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Bubble_Pos elm_obj_bubble_pos_get(const Eo *obj);
 
 #endif

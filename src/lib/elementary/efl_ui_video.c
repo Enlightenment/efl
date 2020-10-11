@@ -467,80 +467,80 @@ _efl_ui_video_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_video_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
    return elm_legacy_add(EFL_UI_VIDEO_LEGACY_CLASS, parent);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_video_file_set(Eo *obj, const char *filename)
 {
    return efl_file_simple_load((Eo *) obj, filename, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_video_file_get(Eo *obj, const char **filename)
 {
    efl_file_simple_get((Eo *) obj, filename, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_video_audio_level_set(Evas_Object *obj, double volume)
 {
    efl_audio_control_volume_set(obj, volume);
 }
 
-EAPI double
+ELM_API double
 elm_video_audio_level_get(const Evas_Object *obj)
 {
    return efl_audio_control_volume_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
    efl_audio_control_mute_set(obj, mute);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_video_audio_mute_get(const Evas_Object *obj)
 {
    return efl_audio_control_mute_get(obj);
 }
 
-EAPI double
+ELM_API double
 elm_video_play_length_get(const Evas_Object *obj)
 {
    return efl_playable_length_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_video_is_seekable_get(const Evas_Object *obj)
 {
    return efl_playable_seekable_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_video_play_position_set(Evas_Object *obj, double position)
 {
    efl_player_playback_position_set(obj, position);
 }
 
-EAPI double
+ELM_API double
 elm_video_play_position_get(const Evas_Object *obj)
 {
    return efl_player_playback_position_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_video_is_playing_get(Evas_Object *obj)
 {
    return efl_player_playing_get(obj) && !efl_player_paused_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_video_play(Evas_Object *obj)
 {
    if (efl_player_playing_get(obj))
@@ -549,13 +549,13 @@ elm_video_play(Evas_Object *obj)
      efl_player_playing_set(obj, EINA_TRUE);
 }
 
-EAPI void
+ELM_API void
 elm_video_stop(Evas_Object *obj)
 {
    efl_player_playing_set(obj, EINA_FALSE);
 }
 
-EAPI void
+ELM_API void
 elm_video_pause(Evas_Object *obj)
 {
    efl_player_paused_set(obj, EINA_TRUE);

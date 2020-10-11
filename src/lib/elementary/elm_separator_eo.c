@@ -17,7 +17,7 @@ __eolian_elm_separator_horizontal_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_separator_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_separator_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
 
 Eina_Bool _elm_separator_horizontal_get(const Eo *obj, Elm_Separator_Data *pd);
 
@@ -29,7 +29,7 @@ __eolian_elm_separator_horizontal_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_separator_horizontal_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_separator_horizontal_get, Eina_Bool, 0);
 
 Efl_Object *_elm_separator_efl_object_constructor(Eo *obj, Elm_Separator_Data *pd);
 

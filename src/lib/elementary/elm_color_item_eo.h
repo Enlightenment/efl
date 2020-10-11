@@ -19,7 +19,7 @@ typedef Eo Elm_Color_Item;
  */
 #define ELM_COLOR_ITEM_CLASS elm_color_item_class_get()
 
-EWAPI const Efl_Class *elm_color_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_color_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set Palette item's color.
@@ -32,7 +32,7 @@ EWAPI const Efl_Class *elm_color_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Color_Item
  */
-EOAPI void elm_obj_color_item_color_set(Eo *obj, int r, int g, int b, int a);
+ELM_API ELM_API_WEAK void elm_obj_color_item_color_set(Eo *obj, int r, int g, int b, int a);
 
 /**
  * @brief Get Palette item's color.
@@ -45,7 +45,7 @@ EOAPI void elm_obj_color_item_color_set(Eo *obj, int r, int g, int b, int a);
  *
  * @ingroup Elm_Color_Item
  */
-EOAPI void elm_obj_color_item_color_get(const Eo *obj, int *r, int *g, int *b, int *a);
+ELM_API ELM_API_WEAK void elm_obj_color_item_color_get(const Eo *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @brief Set the selected state of color palette item
@@ -57,7 +57,7 @@ EOAPI void elm_obj_color_item_color_get(const Eo *obj, int *r, int *g, int *b, i
  *
  * @ingroup Elm_Color_Item
  */
-EOAPI void elm_obj_color_item_selected_set(Eo *obj, Eina_Bool selected);
+ELM_API ELM_API_WEAK void elm_obj_color_item_selected_set(Eo *obj, Eina_Bool selected);
 
 /**
  * @brief Get the selected state of color palette item
@@ -70,6 +70,6 @@ EOAPI void elm_obj_color_item_selected_set(Eo *obj, Eina_Bool selected);
  *
  * @ingroup Elm_Color_Item
  */
-EOAPI Eina_Bool elm_obj_color_item_selected_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_color_item_selected_get(const Eo *obj);
 
 #endif

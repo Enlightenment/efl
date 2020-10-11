@@ -46,7 +46,7 @@ typedef Elm_Gen_Item_Reusable_Content_Get_Cb Elm_Genlist_Reusable_Content_Get_Cb
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
+ELM_API Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
 
 /**
  * Remove an item class in a given genlist widget.
@@ -63,7 +63,7 @@ EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc);
+ELM_API void elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc);
 
 /**
  * Increments object reference count for the item class.
@@ -76,7 +76,7 @@ EAPI void elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
+ELM_API void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
 
 /**
  * Decrements object reference count for the item class.
@@ -91,7 +91,7 @@ EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
+ELM_API void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
 
 /**
  * Set the text to be shown in a given genlist item's tooltips.
@@ -110,7 +110,7 @@ EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+ELM_API void                          elm_genlist_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the content to be shown in a given genlist item's tooltips
@@ -138,7 +138,7 @@ EAPI void                          elm_genlist_item_tooltip_text_set(Elm_Object_
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+ELM_API void                          elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset a tooltip from a given genlist item
@@ -155,7 +155,7 @@ EAPI void                          elm_genlist_item_tooltip_content_cb_set(Elm_O
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_tooltip_unset(Elm_Object_Item *it);
+ELM_API void                          elm_genlist_item_tooltip_unset(Elm_Object_Item *it);
 
 /**
  * Set a different @b style for a given genlist item's tooltip.
@@ -178,7 +178,7 @@ EAPI void                          elm_genlist_item_tooltip_unset(Elm_Object_Ite
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+ELM_API void                          elm_genlist_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style set a given genlist item's tooltip.
@@ -192,7 +192,7 @@ EAPI void                          elm_genlist_item_tooltip_style_set(Elm_Object
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI const char                   *elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it);
+ELM_API const char                   *elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * @brief Disable size restrictions on an object's tooltip
@@ -203,7 +203,7 @@ EAPI const char                   *elm_genlist_item_tooltip_style_get(const Elm_
  * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
-EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
+ELM_API Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
 
 /**
  * @brief Get size restriction state of an object's tooltip
@@ -214,7 +214,7 @@ EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_
  * its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
-EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *it);
+ELM_API Eina_Bool                     elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *it);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,
@@ -238,7 +238,7 @@ EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_get(cons
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+ELM_API void                          elm_genlist_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
 /**
  * Get the type of mouse pointer/cursor decoration set to be shown,
@@ -254,7 +254,7 @@ EAPI void                          elm_genlist_item_cursor_set(Elm_Object_Item *
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI const char                   *elm_genlist_item_cursor_get(const Elm_Object_Item *it);
+ELM_API const char                   *elm_genlist_item_cursor_get(const Elm_Object_Item *it);
 
 /**
  * Unset any custom mouse pointer/cursor decoration set to be
@@ -271,7 +271,7 @@ EAPI const char                   *elm_genlist_item_cursor_get(const Elm_Object_
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_cursor_unset(Elm_Object_Item *it);
+ELM_API void                          elm_genlist_item_cursor_unset(Elm_Object_Item *it);
 
 /**
  * Set a different @b style for a given custom cursor set for a
@@ -296,7 +296,7 @@ EAPI void                          elm_genlist_item_cursor_unset(Elm_Object_Item
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+ELM_API void                          elm_genlist_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the current @b style set for a given genlist item's custom
@@ -310,7 +310,7 @@ EAPI void                          elm_genlist_item_cursor_style_set(Elm_Object_
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI const char                   *elm_genlist_item_cursor_style_get(const Elm_Object_Item *it);
+ELM_API const char                   *elm_genlist_item_cursor_style_get(const Elm_Object_Item *it);
 
 /**
  * Set if the (custom) cursor for a given genlist item should be
@@ -330,7 +330,7 @@ EAPI const char                   *elm_genlist_item_cursor_style_get(const Elm_O
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void                          elm_genlist_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
+ELM_API void                          elm_genlist_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
 
 /**
  * Get if the (custom) cursor for a given genlist item is being
@@ -346,5 +346,5 @@ EAPI void                          elm_genlist_item_cursor_engine_only_set(Elm_O
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *it);
+ELM_API Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *it);
 

@@ -31,7 +31,7 @@ typedef Eo Elm_Flipselector_Item;
  *
  * @ingroup Elm_Flipselector_Item_Group
  */
-EAPI void elm_flipselector_item_selected_set(Elm_Flipselector_Item *obj, Eina_Bool selected);
+ELM_API void elm_flipselector_item_selected_set(Elm_Flipselector_Item *obj, Eina_Bool selected);
 
 /**
  * @brief Get whether a given flip selector widget's item is the currently
@@ -45,7 +45,7 @@ EAPI void elm_flipselector_item_selected_set(Elm_Flipselector_Item *obj, Eina_Bo
  *
  * @ingroup Elm_Flipselector_Item_Group
  */
-EAPI Eina_Bool elm_flipselector_item_selected_get(const Elm_Flipselector_Item *obj);
+ELM_API Eina_Bool elm_flipselector_item_selected_get(const Elm_Flipselector_Item *obj);
 
 /**
  * @brief Get the item before @c item in a flip selector widget's internal list
@@ -60,7 +60,7 @@ EAPI Eina_Bool elm_flipselector_item_selected_get(const Elm_Flipselector_Item *o
  *
  * @ingroup Elm_Flipselector_Item_Group
  */
-EAPI Elm_Widget_Item *elm_flipselector_item_prev_get(const Elm_Flipselector_Item *obj);
+ELM_API Elm_Widget_Item *elm_flipselector_item_prev_get(const Elm_Flipselector_Item *obj);
 
 /**
  * @brief Get the item after @c item in a flip selector widget's internal list
@@ -75,6 +75,6 @@ EAPI Elm_Widget_Item *elm_flipselector_item_prev_get(const Elm_Flipselector_Item
  *
  * @ingroup Elm_Flipselector_Item_Group
  */
-EAPI Elm_Widget_Item *elm_flipselector_item_next_get(const Elm_Flipselector_Item *obj);
+ELM_API Elm_Widget_Item *elm_flipselector_item_next_get(const Elm_Flipselector_Item *obj);
 
 #endif

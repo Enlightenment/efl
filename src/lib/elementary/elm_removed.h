@@ -50,7 +50,7 @@
  *
  * @return The toggle object
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_toggle_add(Evas_Object *parent);
+EINA_DEPRECATED ELM_API Evas_Object *elm_toggle_add(Evas_Object *parent);
 
 /**
  * @brief Sets the label to be displayed with the toggle.
@@ -60,7 +60,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_toggle_add(Evas_Object *parent);
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toggle_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_toggle_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the label of the toggle
@@ -70,7 +70,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_label_set(Evas_Object *obj, const c
  *
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_toggle_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_toggle_label_get(const Evas_Object *obj);
 
 /**
  * @brief Set the icon used for the toggle
@@ -84,7 +84,7 @@ EINA_DEPRECATED EAPI const char  *elm_toggle_label_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_part_content_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * @brief Get the icon used for the toggle
@@ -96,7 +96,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Obj
  *
  * @deprecated use elm_object_part_content_get() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_toggle_icon_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the icon used for the toggle
@@ -108,7 +108,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_part_content_unset() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_toggle_icon_unset(Evas_Object *obj);
 
 /**
  * @brief Sets the labels to be associated with the on and off states of the toggle.
@@ -120,7 +120,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj);
  * @deprecated use elm_object_part_text_set() for "on" and "off" parts
  * instead.
  */
-EINA_DEPRECATED EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
+EINA_DEPRECATED ELM_API void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel);
 
 /**
  * @brief Get the labels associated with the on and off states of the
@@ -133,7 +133,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_states_labels_set(Evas_Object *obj,
  * @deprecated use elm_object_part_text_get() for "on" and "off" parts
  * instead.
  */
-EINA_DEPRECATED EAPI void         elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel);
+EINA_DEPRECATED ELM_API void         elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel);
 
 /**
  * @brief Sets the state of the toggle to @p state.
@@ -143,7 +143,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_states_labels_get(const Evas_Object
  *
  * @deprecated use elm_check_state_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toggle_state_set(Evas_Object *obj, Eina_Bool state);
+EINA_DEPRECATED ELM_API void         elm_toggle_state_set(Evas_Object *obj, Eina_Bool state);
 
 /**
  * @brief Get the state of the toggle to @p state.
@@ -153,7 +153,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_state_set(Evas_Object *obj, Eina_Bo
  *
  * @deprecated use elm_check_state_get() instead.
  */
-EINA_DEPRECATED EAPI Eina_Bool    elm_toggle_state_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool    elm_toggle_state_get(const Evas_Object *obj);
 
 /**
  * @brief Sets the state pointer of the toggle to @p statep.
@@ -163,7 +163,7 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_toggle_state_get(const Evas_Object *obj);
  *
  * @deprecated use elm_check_state_pointer_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
+EINA_DEPRECATED ELM_API void         elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
 
 /**
  * @}
@@ -181,7 +181,7 @@ EINA_DEPRECATED EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj,
  * @see elm_engine_set()
  * @deprecated Use elm_engine_get() instead.
  */
-EINA_DEPRECATED EAPI const char *elm_engine_current_get(void);
+EINA_DEPRECATED ELM_API const char *elm_engine_current_get(void);
 
 /**
  * Set the configured finger size for all applications on the display
@@ -193,7 +193,7 @@ EINA_DEPRECATED EAPI const char *elm_engine_current_get(void);
  * @ingroup Elm_Fingers
  * @deprecated Use elm_config_finger_size_set() and elm_config_all_flush()
  */
-EINA_DEPRECATED EAPI void       elm_finger_size_all_set(Evas_Coord size);
+EINA_DEPRECATED ELM_API void       elm_finger_size_all_set(Evas_Coord size);
 
 /**
  * Set the global scaling factor for all applications on the display
@@ -204,7 +204,7 @@ EINA_DEPRECATED EAPI void       elm_finger_size_all_set(Evas_Coord size);
  * @ingroup Elm_Scaling
  * @deprecated use elm_scale_set() and elm_config_all_flush()
  */
-EINA_DEPRECATED EAPI void   elm_scale_all_set(double scale);
+EINA_DEPRECATED ELM_API void   elm_scale_all_set(double scale);
 
 /**
  * Apply the changes made with elm_font_overlay_set() and
@@ -215,7 +215,7 @@ EINA_DEPRECATED EAPI void   elm_scale_all_set(double scale);
  * This applies all font overlays set to all objects in the UI.
  * @deprecated Use elm_font_overlay_apply and elm_config_all_flush()
  */
-EINA_DEPRECATED EAPI void             elm_font_overlay_all_apply(void);
+EINA_DEPRECATED ELM_API void             elm_font_overlay_all_apply(void);
 
 /**
  * Set the configured cache flush interval time for all applications on the
@@ -228,7 +228,7 @@ EINA_DEPRECATED EAPI void             elm_font_overlay_all_apply(void);
  * @deprecated Use elm_cache_flush_interval_set() and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
-EINA_DEPRECATED EAPI void      elm_cache_flush_interval_all_set(int size);
+EINA_DEPRECATED ELM_API void      elm_cache_flush_interval_all_set(int size);
 
 /**
  * Set the configured cache flush enabled state for all applications on the
@@ -241,7 +241,7 @@ EINA_DEPRECATED EAPI void      elm_cache_flush_interval_all_set(int size);
  * @deprecated Use elm_cache_flush_enabled_set and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
-EINA_DEPRECATED EAPI void      elm_cache_flush_enabled_all_set(Eina_Bool enabled);
+EINA_DEPRECATED ELM_API void      elm_cache_flush_enabled_all_set(Eina_Bool enabled);
 
 /**
  * Set the configured font cache size for all applications on the
@@ -254,7 +254,7 @@ EINA_DEPRECATED EAPI void      elm_cache_flush_enabled_all_set(Eina_Bool enabled
  * @deprecated Use elm_font_cache_set() and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
-EINA_DEPRECATED EAPI void      elm_font_cache_all_set(int size);
+EINA_DEPRECATED ELM_API void      elm_font_cache_all_set(int size);
 
 /**
  * Set the configured image cache size for all applications on the
@@ -267,7 +267,7 @@ EINA_DEPRECATED EAPI void      elm_font_cache_all_set(int size);
  * @deprecated Use elm_image_cache_set() and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
-EINA_DEPRECATED EAPI void      elm_image_cache_all_set(int size);
+EINA_DEPRECATED ELM_API void      elm_image_cache_all_set(int size);
 
 /**
  * Set the configured edje file cache size for all applications on the
@@ -280,7 +280,7 @@ EINA_DEPRECATED EAPI void      elm_image_cache_all_set(int size);
  * @deprecated Use elm_edje_file_cache_set() and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
-EINA_DEPRECATED EAPI void      elm_edje_file_cache_all_set(int size);
+EINA_DEPRECATED ELM_API void      elm_edje_file_cache_all_set(int size);
 
 /**
  * Set the configured edje collections (groups) cache size for all
@@ -293,7 +293,7 @@ EINA_DEPRECATED EAPI void      elm_edje_file_cache_all_set(int size);
  * @deprecated Use elm_edje_collection_cache_set() and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
-EINA_DEPRECATED EAPI void      elm_edje_collection_cache_all_set(int size);
+EINA_DEPRECATED ELM_API void      elm_edje_collection_cache_all_set(int size);
 
 /**
  * Set Elementary's profile.
@@ -306,7 +306,7 @@ EINA_DEPRECATED EAPI void      elm_edje_collection_cache_all_set(int size);
  * @ingroup Elm_Profile
  *
  */
-EINA_DEPRECATED EAPI void        elm_profile_all_set(const char *profile);
+EINA_DEPRECATED ELM_API void        elm_profile_all_set(const char *profile);
 
 /**
  * Set whether scrollers should bounce when they reach their
@@ -319,7 +319,7 @@ EINA_DEPRECATED EAPI void        elm_profile_all_set(const char *profile);
  * @deprecated Use elm_scroll_bounce_enabled_set() and elm_config_all_flush()
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_bounce_enabled_all_set(Eina_Bool enabled);
+EINA_DEPRECATED ELM_API void         elm_scroll_bounce_enabled_all_set(Eina_Bool enabled);
 
 /**
  * Set the amount of inertia a scroller will impose at bounce
@@ -331,7 +331,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bounce_enabled_all_set(Eina_Bool en
  * @deprecated Use elm_scroll_bounce_friction_set() and elm_config_all_flush()
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_bounce_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_bounce_friction_all_set(double friction);
 
 /**
  * Set the amount of inertia a <b>paged</b> scroller will impose at
@@ -344,7 +344,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bounce_friction_all_set(double fric
  * elm_config_all_flush()
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_page_scroll_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_page_scroll_friction_all_set(double friction);
 
 /**
  * Set the amount of inertia a scroller will impose at region bring
@@ -357,7 +357,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_page_scroll_friction_all_set(double
  * elm_config_all_flush()
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_bring_in_scroll_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_bring_in_scroll_friction_all_set(double friction);
 
 /**
  * Set the amount of inertia scrollers will impose at animations
@@ -370,7 +370,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bring_in_scroll_friction_all_set(do
  * @deprecated Use elm_scroll_zoom_friction_set() and elm_config_all_flush()
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_zoom_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_zoom_friction_all_set(double friction);
 
 /**
  * Set whether scrollers should be draggable from any point in their
@@ -384,7 +384,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_zoom_friction_all_set(double fricti
  *
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
+EINA_DEPRECATED ELM_API void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
 
 /**
 
@@ -400,7 +400,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bo
  *
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold);
+EINA_DEPRECATED ELM_API void         elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold);
 
 /**
  * Set the minimum speed of mouse cursor movement which will trigger
@@ -415,7 +415,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_threshold_all_set(unsig
  *
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold);
+EINA_DEPRECATED ELM_API void         elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold);
 
 /**
  * Set the amount of inertia a scroller will impose at self scrolling
@@ -429,7 +429,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_momentum_threshold_all_
  *
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_thumbscroll_friction_all_set(double friction);
 
 /**
  * Set the amount of lag between your actual mouse cursor dragging
@@ -447,7 +447,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_friction_all_set(double
  *
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_border_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_thumbscroll_border_friction_all_set(double friction);
 
 /**
  * Set the sensitivity amount which is be multiplied by the length of
@@ -464,30 +464,30 @@ EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_border_friction_all_set
  *
  * @ingroup Elm_Scrolling
  */
-EINA_DEPRECATED EAPI void         elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction);
+EINA_DEPRECATED ELM_API void         elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction);
 
-EINA_DEPRECATED EAPI void          elm_gen_clear(Evas_Object *obj);
-EINA_DEPRECATED EAPI void          elm_gen_item_selected_set(Elm_Gen_Item *it, Eina_Bool selected);
-EINA_DEPRECATED EAPI Eina_Bool     elm_gen_item_selected_get(const Elm_Gen_Item *it);
-EINA_DEPRECATED EAPI void          elm_gen_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-EINA_DEPRECATED EAPI Eina_Bool     elm_gen_always_select_mode_get(const Evas_Object *obj);
-EINA_DEPRECATED EAPI void          elm_gen_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-EINA_DEPRECATED EAPI Eina_Bool     elm_gen_no_select_mode_get(const Evas_Object *obj);
-EINA_DEPRECATED EAPI void          elm_gen_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-EINA_DEPRECATED EAPI void          elm_gen_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-EINA_DEPRECATED EAPI void          elm_gen_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
-EINA_DEPRECATED EAPI void          elm_gen_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
+EINA_DEPRECATED ELM_API void          elm_gen_clear(Evas_Object *obj);
+EINA_DEPRECATED ELM_API void          elm_gen_item_selected_set(Elm_Gen_Item *it, Eina_Bool selected);
+EINA_DEPRECATED ELM_API Eina_Bool     elm_gen_item_selected_get(const Elm_Gen_Item *it);
+EINA_DEPRECATED ELM_API void          elm_gen_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+EINA_DEPRECATED ELM_API Eina_Bool     elm_gen_always_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API void          elm_gen_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+EINA_DEPRECATED ELM_API Eina_Bool     elm_gen_no_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API void          elm_gen_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED ELM_API void          elm_gen_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED ELM_API void          elm_gen_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
+EINA_DEPRECATED ELM_API void          elm_gen_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
 
-EINA_DEPRECATED EAPI void          elm_gen_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
-EINA_DEPRECATED EAPI void          elm_gen_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
-EINA_DEPRECATED EAPI void          elm_gen_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
-EINA_DEPRECATED EAPI void          elm_gen_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
-EINA_DEPRECATED EAPI void          elm_gen_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
-EINA_DEPRECATED EAPI Elm_Gen_Item *elm_gen_first_item_get(const Evas_Object *obj);
-EINA_DEPRECATED EAPI Elm_Gen_Item *elm_gen_last_item_get(const Evas_Object *obj);
-EINA_DEPRECATED EAPI Elm_Gen_Item *elm_gen_item_next_get(const Elm_Gen_Item *it);
-EINA_DEPRECATED EAPI Elm_Gen_Item *elm_gen_item_prev_get(const Elm_Gen_Item *it);
-EINA_DEPRECATED EAPI Evas_Object  *elm_gen_item_widget_get(const Elm_Gen_Item *it);
+EINA_DEPRECATED ELM_API void          elm_gen_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
+EINA_DEPRECATED ELM_API void          elm_gen_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+EINA_DEPRECATED ELM_API void          elm_gen_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+EINA_DEPRECATED ELM_API void          elm_gen_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+EINA_DEPRECATED ELM_API void          elm_gen_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+EINA_DEPRECATED ELM_API Elm_Gen_Item *elm_gen_first_item_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_Gen_Item *elm_gen_last_item_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_Gen_Item *elm_gen_item_next_get(const Elm_Gen_Item *it);
+EINA_DEPRECATED ELM_API Elm_Gen_Item *elm_gen_item_prev_get(const Elm_Gen_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object  *elm_gen_item_widget_get(const Elm_Gen_Item *it);
 
 /**
  * Set the text to show in the anchorblock
@@ -505,7 +505,7 @@ EINA_DEPRECATED EAPI Evas_Object  *elm_gen_item_widget_get(const Elm_Gen_Item *i
  * up to the style defined in the theme which tags do what.
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_anchorblock_text_set(Evas_Object *obj, const char *text);
+EINA_DEPRECATED ELM_API void        elm_anchorblock_text_set(Evas_Object *obj, const char *text);
 
 /**
  * Get the markup text set for the anchorblock
@@ -517,7 +517,7 @@ EINA_DEPRECATED EAPI void        elm_anchorblock_text_set(Evas_Object *obj, cons
  * occurred
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char *elm_anchorblock_text_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_anchorblock_text_get(const Evas_Object *obj);
 
 /**
  * Set the text to show in the anchorview
@@ -535,7 +535,7 @@ EINA_DEPRECATED EAPI const char *elm_anchorblock_text_get(const Evas_Object *obj
  * up to the style defined in the theme which tags do what.
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_anchorview_text_set(Evas_Object *obj, const char *text);
+EINA_DEPRECATED ELM_API void        elm_anchorview_text_set(Evas_Object *obj, const char *text);
 
 /**
  * Get the markup text set for the anchorview
@@ -547,7 +547,7 @@ EINA_DEPRECATED EAPI void        elm_anchorview_text_set(Evas_Object *obj, const
  * occurred
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char *elm_anchorview_text_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_anchorview_text_get(const Evas_Object *obj);
 
 /**
  * @brief Get the ctxpopup item's disabled/enabled state.
@@ -560,7 +560,7 @@ EINA_DEPRECATED EAPI const char *elm_anchorview_text_get(const Evas_Object *obj)
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the ctxpopup item's state as disabled or enabled.
@@ -573,7 +573,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_ctxpopup_item_disabled_get
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED ELM_API void         elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * @brief Get the icon object for the given ctxpopup item.
@@ -589,7 +589,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_disabled_set(Elm_Object_Item
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it);
 
 /**
  * @brief Sets the side icon associated with the ctxpopup item
@@ -607,7 +607,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_It
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * @brief Get the label for the given ctxpopup item.
@@ -623,7 +623,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI const char  *elm_ctxpopup_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char  *elm_ctxpopup_item_label_get(const Elm_Object_Item *it);
 
 /**
  * @brief (Re)set the label on the given ctxpopup item.
@@ -635,7 +635,7 @@ EINA_DEPRECATED EAPI const char  *elm_ctxpopup_item_label_get(const Elm_Object_I
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label);
+EINA_DEPRECATED ELM_API void         elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label);
 
 /**
  * @brief Set an elm widget as the content of the ctxpopup.
@@ -654,7 +654,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *i
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Unset the ctxpopup content
@@ -672,7 +672,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Eva
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj);
 
 /**
  * @brief Delete the given item in a ctxpopup object.
@@ -684,7 +684,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj);
  *
  * @ingroup Elm_Ctxpopup
  */
-EINA_DEPRECATED EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_ctxpopup_item_del(Elm_Object_Item *it);
 
 /**
  * Set the label for a given file selector button widget
@@ -694,7 +694,7 @@ EINA_DEPRECATED EAPI void                         elm_ctxpopup_item_del(Elm_Obje
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_fileselector_button_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void        elm_fileselector_button_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label set for a given file selector button widget
@@ -704,7 +704,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_button_label_set(Evas_Object *
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char *elm_fileselector_button_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_fileselector_button_label_get(const Evas_Object *obj);
 
 /**
  * Set the icon on a given file selector button widget
@@ -719,7 +719,7 @@ EINA_DEPRECATED EAPI const char *elm_fileselector_button_label_get(const Evas_Ob
  * @deprecated Use elm_object_part_content_set() instead
  * @see elm_fileselector_button_icon_get()
  */
-EINA_DEPRECATED EAPI void                        elm_fileselector_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void                        elm_fileselector_button_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the icon set for a given file selector button widget
@@ -731,7 +731,7 @@ EINA_DEPRECATED EAPI void                        elm_fileselector_button_icon_se
  * @deprecated Use elm_object_part_content_get() instead
  * @see elm_fileselector_button_icon_set()
  */
-EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_button_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object                *elm_fileselector_button_icon_get(const Evas_Object *obj);
 
 /**
  * Unset the icon used in a given file selector button widget
@@ -746,7 +746,7 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_button_icon_ge
  * @deprecated Use elm_object_part_content_unset() instead
  * @see elm_fileselector_button_icon_set()
  */
-EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_button_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object                *elm_fileselector_button_icon_unset(Evas_Object *obj);
 
 /**
  * Set the label for a given file selector entry widget's button
@@ -757,7 +757,7 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_button_icon_un
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void        elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label set for a given file selector entry widget's button
@@ -767,7 +767,7 @@ EINA_DEPRECATED EAPI void        elm_fileselector_entry_button_label_set(Evas_Ob
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char *elm_fileselector_entry_button_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_fileselector_entry_button_label_get(const Evas_Object *obj);
 
 /**
  * Set the icon on a given file selector entry widget's button
@@ -782,7 +782,7 @@ EINA_DEPRECATED EAPI const char *elm_fileselector_entry_button_label_get(const E
  * @deprecated Use elm_object_part_content_set() instead
  * @see elm_fileselector_entry_button_icon_get()
  */
-EINA_DEPRECATED EAPI void                        elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void                        elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the icon set for a given file selector entry widget's button
@@ -794,7 +794,7 @@ EINA_DEPRECATED EAPI void                        elm_fileselector_entry_button_i
  * @deprecated Use elm_object_part_content_get() instead
  * @see elm_fileselector_entry_button_icon_set()
  */
-EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object                *elm_fileselector_entry_button_icon_get(const Evas_Object *obj);
 
 /**
  * Unset the icon used in a given file selector entry widget's
@@ -810,7 +810,7 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_i
  * @deprecated Use elm_object_part_content_unset() instead
  * @see elm_fileselector_entry_button_icon_set()
  */
-EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_Object *obj);
 
 /**
  * @brief Sets the content of the hover object and the direction in which it
@@ -843,7 +843,7 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_i
  *
  * @deprecated Use elm_object_part_content_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
 
 /**
  * @brief Get the content of the hover object, in a given direction.
@@ -858,7 +858,7 @@ EINA_DEPRECATED EAPI void         elm_hover_content_set(Evas_Object *obj, const 
  * @deprecated Use elm_object_part_content_get() instead
  * @see elm_object_part_content_set()
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swallow);
+EINA_DEPRECATED ELM_API Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swallow);
 
 /**
  * @brief Unset the content of the hover object, in a given direction.
@@ -872,7 +872,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, 
  * @deprecated Use elm_object_part_content_unset() instead
  * @see elm_object_part_content_set()
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow);
+EINA_DEPRECATED ELM_API Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow);
 
 /**
  * @brief Set the hoversel button label
@@ -885,7 +885,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, cons
  *
  * @deprecated elm_object_text_set()
  */
-EINA_DEPRECATED EAPI void         elm_hoversel_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_hoversel_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the hoversel button label
@@ -895,7 +895,7 @@ EINA_DEPRECATED EAPI void         elm_hoversel_label_set(Evas_Object *obj, const
  *
  * @deprecated elm_object_text_get()
  */
-EINA_DEPRECATED EAPI const char  *elm_hoversel_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_hoversel_label_get(const Evas_Object *obj);
 
 /**
  * @brief Set the icon of the hoversel button
@@ -911,7 +911,7 @@ EINA_DEPRECATED EAPI const char  *elm_hoversel_label_get(const Evas_Object *obj)
  * @see elm_object_content_set() for the button widget
  * @deprecated Use elm_object_item_part_content_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * @brief Get the icon of the hoversel button
@@ -925,7 +925,7 @@ EINA_DEPRECATED EAPI void         elm_hoversel_icon_set(Evas_Object *obj, Evas_O
  * @see elm_hoversel_icon_set()
  * @deprecated Use elm_object_item_part_content_get() instead
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_hoversel_icon_get(const Evas_Object *obj);
 
 /**
  * @brief Get and unparent the icon of the hoversel button
@@ -940,7 +940,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_get(const Evas_Object *obj);
  * @see elm_object_content_unset() for the button widget
  * @deprecated Use elm_object_item_part_content_unset() instead
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_hoversel_icon_unset(Evas_Object *obj);
 
 /**
  * @brief This returns the data pointer supplied with elm_hoversel_item_add()
@@ -952,7 +952,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_unset(Evas_Object *obj);
  * @see elm_hoversel_item_add()
  * @deprecated Use elm_object_item_data_get() instead
  */
-EINA_DEPRECATED EAPI void        *elm_hoversel_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void        *elm_hoversel_item_data_get(const Elm_Object_Item *it);
 
 /**
  * @brief This returns the label text of the given hoversel item.
@@ -963,7 +963,7 @@ EINA_DEPRECATED EAPI void        *elm_hoversel_item_data_get(const Elm_Object_It
  * @see elm_hoversel_item_add()
  * @deprecated Use elm_object_item_text_get() instead
  */
-EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char  *elm_hoversel_item_label_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the function to be called when an item from the hoversel is
@@ -980,7 +980,7 @@ EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_I
  * @see elm_hoversel_item_add()
  * @deprecated Use elm_object_item_del_cb_set() instead
  */
-EINA_DEPRECATED EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+EINA_DEPRECATED ELM_API void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * @brief Delete an item from the hoversel
@@ -993,7 +993,7 @@ EINA_DEPRECATED EAPI void                         elm_hoversel_item_del_cb_set(E
  * @deprecated Use elm_object_item_del() instead
  * @see elm_hoversel_item_add()
  */
-EINA_DEPRECATED EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_hoversel_item_del(Elm_Object_Item *it);
 
 /**
  * Set actionslider labels.
@@ -1004,7 +1004,7 @@ EINA_DEPRECATED EAPI void                         elm_hoversel_item_del(Elm_Obje
  * @param right_label The label to be set on the right.
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label);
+EINA_DEPRECATED ELM_API void        elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label);
 
 /**
  * Get actionslider labels.
@@ -1015,7 +1015,7 @@ EINA_DEPRECATED EAPI void        elm_actionslider_labels_set(Evas_Object *obj, c
  * @param right_label A char** to place the right_label of @p obj into.
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label);
+EINA_DEPRECATED ELM_API void        elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label);
 
 /**
  * Set the label used on the indicator.
@@ -1024,7 +1024,7 @@ EINA_DEPRECATED EAPI void        elm_actionslider_labels_get(const Evas_Object *
  * @param label The label to be set on the indicator.
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void        elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void        elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label used on the indicator object.
@@ -1033,7 +1033,7 @@ EINA_DEPRECATED EAPI void        elm_actionslider_indicator_label_set(Evas_Objec
  * @return The indicator label
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char *elm_actionslider_indicator_label_get(Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_actionslider_indicator_label_get(Evas_Object *obj);
 
 /**
  * Set the overlay object used for the background object.
@@ -1051,7 +1051,7 @@ EINA_DEPRECATED EAPI const char *elm_actionslider_indicator_label_get(Evas_Objec
  * @ingroup Elm_Bg
  */
 
-EINA_DEPRECATED EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay);
+EINA_DEPRECATED ELM_API void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay);
 
 /**
  * Get the overlay object used for the background object.
@@ -1065,7 +1065,7 @@ EINA_DEPRECATED EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Obje
  *
  * @ingroup Elm_Bg
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
 
 /**
  * Get the overlay object used for the background object.
@@ -1079,7 +1079,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Bg
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_bg_overlay_unset(Evas_Object *obj);
 
 
 /**
@@ -1092,7 +1092,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj);
  * the selected corner.
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_bubble_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_bubble_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label of the bubble
@@ -1103,7 +1103,7 @@ EINA_DEPRECATED EAPI void         elm_bubble_label_set(Evas_Object *obj, const c
  * This function gets the title of the bubble.
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_bubble_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_bubble_label_get(const Evas_Object *obj);
 
 /**
  * Set the info of the bubble
@@ -1115,7 +1115,7 @@ EINA_DEPRECATED EAPI const char  *elm_bubble_label_get(const Evas_Object *obj);
  * the selected corner.
  * @deprecated use elm_object_part_text_set() instead. (with "info" as the parameter).
  */
-EINA_DEPRECATED EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info);
+EINA_DEPRECATED ELM_API void         elm_bubble_info_set(Evas_Object *obj, const char *info);
 
 /**
  * Get the info of the bubble
@@ -1127,7 +1127,7 @@ EINA_DEPRECATED EAPI void         elm_bubble_info_set(Evas_Object *obj, const ch
  * This function gets the info text.
  * @deprecated use elm_object_part_text_get() instead. (with "info" as the parameter).
  */
-EINA_DEPRECATED EAPI const char  *elm_bubble_info_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_bubble_info_get(const Evas_Object *obj);
 
 /**
  * Set the content to be shown in the bubble
@@ -1144,7 +1144,7 @@ EINA_DEPRECATED EAPI const char  *elm_bubble_info_get(const Evas_Object *obj);
  * @deprecated use elm_object_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * Get the content shown in the bubble
@@ -1157,7 +1157,7 @@ EINA_DEPRECATED EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_
  * @deprecated use elm_object_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_bubble_content_get(const Evas_Object *obj);
 
 /**
  * Unset the content shown in the bubble
@@ -1170,7 +1170,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_get(const Evas_Object *obj)
  * @deprecated use elm_object_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_bubble_content_unset(Evas_Object *obj);
 
 /**
  * Set the icon of the bubble
@@ -1185,7 +1185,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_unset(Evas_Object *obj);
  * @deprecated use elm_object_part_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the icon of the bubble
@@ -1198,7 +1198,7 @@ EINA_DEPRECATED EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Obj
  * @deprecated use elm_object_part_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_bubble_icon_get(const Evas_Object *obj);
 
 /**
  * Unset the icon of the bubble
@@ -1211,7 +1211,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_bubble_icon_unset(Evas_Object *obj);
 
 
 /**
@@ -1224,7 +1224,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_unset(Evas_Object *obj);
  * @param label The text will be written on the button
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_button_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_button_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label set for the button
@@ -1239,7 +1239,7 @@ EINA_DEPRECATED EAPI void         elm_button_label_set(Evas_Object *obj, const c
  * @return The text set to the label, or NULL if nothing is set
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_button_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_button_label_get(const Evas_Object *obj);
 
 /**
  * Set the icon used for the button
@@ -1252,7 +1252,7 @@ EINA_DEPRECATED EAPI const char  *elm_button_label_get(const Evas_Object *obj);
  * @param icon The icon object for the button
  * @deprecated use elm_object_part_content_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the icon used for the button
@@ -1266,7 +1266,7 @@ EINA_DEPRECATED EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Obj
  *
  * @deprecated use elm_object_part_content_get() instead
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_button_icon_get(const Evas_Object *obj);
 
 /**
  * Remove the icon set without deleting it and return the object
@@ -1280,7 +1280,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj);
  * @return The icon object that was being used
  * @deprecated use elm_object_part_content_unset() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_button_icon_unset(Evas_Object *obj);
 
 /**
  * Set a day text color to the same that represents Saturdays.
@@ -1300,7 +1300,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj);
  *
  * @ingroup Elm_Calendar
  */
-EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos);
+EINA_DEPRECATED ELM_API void elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos);
 
 /**
  * Set a day text color to the same that represents Sundays.
@@ -1320,7 +1320,7 @@ EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj,
  *
  * @ingroup Elm_Calendar
  */
-EINA_DEPRECATED EAPI void elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos);
+EINA_DEPRECATED ELM_API void elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos);
 
 /**
  * Set a day text color to the same that represents Weekdays.
@@ -1349,7 +1349,7 @@ EINA_DEPRECATED EAPI void elm_calendar_text_sunday_color_set(Evas_Object *obj, i
  *
  * @ingroup Elm_Calendar
  */
-EINA_DEPRECATED EAPI void elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos);
+EINA_DEPRECATED ELM_API void elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos);
 
 
 /**
@@ -1360,7 +1360,7 @@ EINA_DEPRECATED EAPI void elm_calendar_text_weekday_color_set(Evas_Object *obj, 
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_check_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the text label of the check object
@@ -1370,7 +1370,7 @@ EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const ch
  *
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_check_label_get(const Evas_Object *obj);
 
 /**
  * @brief Set the icon object of the check object
@@ -1385,7 +1385,7 @@ EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * @brief Get the icon object of the check object
@@ -1396,7 +1396,7 @@ EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Obje
  * @deprecated use elm_object_part_content_get() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_check_icon_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the icon used for the check object
@@ -1409,7 +1409,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_unset() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_check_icon_unset(Evas_Object *obj);
 
 /**
  * @brief Set the text label of the check object
@@ -1419,7 +1419,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj);
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_check_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the text label of the check object
@@ -1429,7 +1429,7 @@ EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const ch
  *
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_check_label_get(const Evas_Object *obj);
 
 /**
  * @brief Set the icon object of the check object
@@ -1444,7 +1444,7 @@ EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * @brief Get the icon object of the check object
@@ -1455,7 +1455,7 @@ EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Obje
  * @deprecated use elm_object_part_content_get() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_check_icon_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the icon used for the check object
@@ -1468,10 +1468,10 @@ EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_unset() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_check_icon_unset(Evas_Object *obj);
 
-EINA_DEPRECATED EAPI void         elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext);
-EINA_DEPRECATED EAPI void         elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext);
+EINA_DEPRECATED ELM_API void         elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext);
+EINA_DEPRECATED ELM_API void         elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext);
 
 
 /**
@@ -1496,7 +1496,7 @@ EINA_DEPRECATED EAPI void         elm_check_states_labels_get(const Evas_Object 
  *
  * @ingroup Elm_Conformant
  */
-EINA_DEPRECATED EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * Get the content of the conformant widget.
@@ -1515,7 +1515,7 @@ EINA_DEPRECATED EAPI void         elm_conformant_content_set(Evas_Object *obj, E
  *
  * @ingroup Elm_Conformant
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_conformant_content_get(const Evas_Object *obj);
 
 /**
  * Unset the content of the conformant widget.
@@ -1531,7 +1531,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *
  *
  * @ingroup Elm_Conformant
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_conformant_content_unset(Evas_Object *obj);
 
 /**
  * Get the side labels max length.
@@ -1544,7 +1544,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj)
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API int    elm_diskselector_side_label_lenght_get(const Evas_Object *obj);
 
 /**
  * Set the side labels max length.
@@ -1556,7 +1556,7 @@ EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Ob
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len);
+EINA_DEPRECATED ELM_API void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len);
 
 /**
  * Get the data associated to the item.
@@ -1573,7 +1573,7 @@ EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                  *elm_diskselector_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Set the icon associated to the item.
@@ -1599,7 +1599,7 @@ EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const
  * @deprecated Use elm_object_item_part_content_set() instead
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * Get the icon associated to the item.
@@ -1618,7 +1618,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_O
  * @deprecated Use elm_object_item_part_content_set() instead
  * @ingroup Elm_Diskselector
  */
-EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item *it);
+ELM_API Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of item.
@@ -1654,7 +1654,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item
  * @deprecated Use elm_object_item_text_set() instead
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_Object_Item *it, const char *label);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_label_set(Elm_Object_Item *it, const char *label);
 
 /**
  * Get the label of item.
@@ -1673,7 +1673,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char            *elm_diskselector_item_label_get(const Elm_Object_Item *it);
 
 /**
  * Set the function called when a diskselector item is freed.
@@ -1693,7 +1693,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(cons
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Delete them item from the diskselector.
@@ -1709,7 +1709,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_del(Elm_Object_Item *it);
 
 /**
  * Set the text to be shown in the diskselector item.
@@ -1725,7 +1725,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_del(Elm_Object
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the content to be shown in the tooltip item.
@@ -1750,7 +1750,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_text_s
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset tooltip from item.
@@ -1767,7 +1767,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_conten
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_unset(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_tooltip_unset(Elm_Object_Item *it);
 
 /**
  * Sets a different style for this item tooltip.
@@ -1784,7 +1784,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_unset(
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style for this item tooltip.
@@ -1799,7 +1799,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_style_
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI const char            *elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char            *elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * Set the cursor to be shown when mouse is over the diskselector item
@@ -1812,7 +1812,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_tooltip_style_
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
 /**
  * Get the cursor to be shown when mouse is over the diskselector item
@@ -1826,7 +1826,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_set(Elm
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char            *elm_diskselector_item_cursor_get(const Elm_Object_Item *it);
 
 /**
  * Unset the cursor to be shown when mouse is over the diskselector item
@@ -1839,7 +1839,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_get(con
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_unset(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_cursor_unset(Elm_Object_Item *it);
 
 /**
  * Sets a different style for this item cursor.
@@ -1855,7 +1855,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_unset(E
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style for this item cursor.
@@ -1870,7 +1870,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_style_s
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char            *elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it);
 
 /**
  * Set if the cursor set should be searched on the theme or should use
@@ -1890,7 +1890,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_style_g
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
 
 /**
  * Get the cursor engine only usage for this item cursor.
@@ -1905,10 +1905,10 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_engine_
  *
  * @ingroup Elm_Diskselector
  */
-EINA_DEPRECATED EAPI Eina_Bool              elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool              elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
-EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
-EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API Evas_Object *elm_factory_content_get(const Evas_Object *obj);
 
 /**
  * Get the label of a given flip selector widget's item.
@@ -1921,7 +1921,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj
  * @deprecated see elm_object_item_text_get() instead
  * @ingroup Elm_Flipselector
  */
-EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char *elm_flipselector_item_label_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of a given flip selector widget's item.
@@ -1934,7 +1934,7 @@ EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Objec
  * @deprecated see elm_object_item_text_set() instead
  * @ingroup Elm_Flipselector
  */
-EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label);
+EINA_DEPRECATED ELM_API void        elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label);
 
 /**
  * Delete a given item from a flip selector widget.
@@ -1944,7 +1944,7 @@ EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item
  * @deprecated Use elm_object_item_del() instead
  * @ingroup Elm_Flipselector
  */
-EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void       elm_flipselector_item_del(Elm_Object_Item *it);
 
 /**
  * Set the interval on time updates for a user mouse button hold
@@ -1973,7 +1973,7 @@ EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
  *
  * @ingroup Elm_Flipselector
  */
-EINA_DEPRECATED EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
+EINA_DEPRECATED ELM_API void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for a user mouse button hold
@@ -1987,7 +1987,7 @@ EINA_DEPRECATED EAPI void                        elm_flipselector_interval_set(E
  *
  * @ingroup Elm_Flipselector
  */
-EINA_DEPRECATED EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API double                      elm_flipselector_interval_get(const Evas_Object *obj);
 
 /**
  * Make a given Elementary object the focused one.
@@ -2003,7 +2003,7 @@ EINA_DEPRECATED EAPI double                      elm_flipselector_interval_get(c
  *
  * @ingroup Elm_Focus
  */
-EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj);
+EINA_DEPRECATED ELM_API void elm_object_focus(Evas_Object *obj);
 
 /**
  * Give focus to next object in object tree.
@@ -2019,7 +2019,7 @@ EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj);
  *
  * @ingroup Elm_Focus
  */
-EINA_DEPRECATED EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+EINA_DEPRECATED ELM_API void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
  * Remove the focus from an Elementary object
@@ -2034,7 +2034,7 @@ EINA_DEPRECATED EAPI void                 elm_object_focus_cycle(Evas_Object *ob
  *
  * @ingroup Elm_Focus
  */
-EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj);
+EINA_DEPRECATED ELM_API void elm_object_unfocus(Evas_Object *obj);
 
 /**
  * Give focus to near object in one direction.
@@ -2049,7 +2049,7 @@ EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj);
  * @deprecated Support it later.
  * @ingroup Elm_Focus
  */
-EINA_DEPRECATED EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
+EINA_DEPRECATED ELM_API void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
 
 /**
  * @brief Set the frame label
@@ -2059,7 +2059,7 @@ EINA_DEPRECATED EAPI void                 elm_object_focus_direction_go(Evas_Obj
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_frame_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the frame label
@@ -2070,7 +2070,7 @@ EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const ch
  *
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_frame_label_get(const Evas_Object *obj);
 
 /**
  * @brief Set the content of the frame widget
@@ -2084,7 +2084,7 @@ EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_content_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Get the content of the frame widget
@@ -2096,7 +2096,7 @@ EINA_DEPRECATED EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_O
  *
  * @deprecated use elm_object_content_get() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_frame_content_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the content of the frame widget
@@ -2108,11 +2108,11 @@ EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_content_unset() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_frame_content_unset(Evas_Object *obj);
 
-EINA_DEPRECATED EAPI void          elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
-EINA_DEPRECATED EAPI Elm_List_Mode elm_genlist_horizontal_mode_get(const Evas_Object *obj);
-EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void          elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
+EINA_DEPRECATED ELM_API Elm_List_Mode elm_genlist_horizontal_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API void          elm_genlist_item_icons_orphan(Elm_Object_Item *it);
 /**
  * This sets the horizontal stretching mode.
  *
@@ -2132,7 +2132,7 @@ EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Object_Item
  * @deprecated use elm_genlist_mode_set()
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode);
+EINA_DEPRECATED ELM_API void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode);
 
 /**
  * Get the horizontal stretching mode.
@@ -2146,7 +2146,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Ev
  * @deprecated use elm_genlist_mode_get()
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
 
 /**
  * Return the data associated to a given genlist item
@@ -2163,7 +2163,7 @@ EINA_DEPRECATED EAPI Elm_List_Mode                 elm_genlist_horizontal_get(co
  * @deprecated Use elm_object_item_data_get() instead
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI void                         *elm_genlist_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         *elm_genlist_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Set the data associated to a given genlist item
@@ -2182,7 +2182,7 @@ EINA_DEPRECATED EAPI void                         *elm_genlist_item_data_get(con
  * @deprecated Use elm_object_item_data_set() instead
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_data_set(Elm_Object_Item *it, const void *data);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
  * Set whether a given genlist item is disabled or not.
@@ -2199,7 +2199,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_data_set(Elm
  *
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * Get whether a given genlist item is disabled or not.
@@ -2213,7 +2213,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_disabled_set
  *
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_genlist_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * Remove a genlist item from the its parent, deleting it.
@@ -2227,7 +2227,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get
  * @deprecated Use elm_object_item_del() instead
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_del(Elm_Object_Item *it);
 
 /**
  * Get the genlist object's handle which contains a given genlist
@@ -2241,7 +2241,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Obje
  *
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object                  *elm_genlist_item_genlist_get(const Elm_Object_Item *it);
 
 /**
  * Get the mode item style of items in the genlist
@@ -2255,7 +2255,7 @@ EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(
  *
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char                   *elm_genlist_mode_item_style_get(const Evas_Object *obj);
 
 /**
  * Set the mode item style of items in the genlist
@@ -2269,7 +2269,7 @@ EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_g
  *
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
+EINA_DEPRECATED ELM_API void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the Item's Flags
@@ -2283,7 +2283,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_s
  * @deprecated Use elm_genlist_item_type_get() instead
  * @ingroup Elm_Genlist
  */
-EINA_DEPRECATED EAPI Elm_Genlist_Item_Type        elm_genlist_item_flags_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Elm_Genlist_Item_Type        elm_genlist_item_flags_get(const Elm_Object_Item *it);
 
 /**
  * Tells genlist to "orphan" contents fetched by the item class
@@ -2297,7 +2297,7 @@ EINA_DEPRECATED EAPI Elm_Genlist_Item_Type        elm_genlist_item_flags_get(con
  *
  * @deprecated Use elm_genlist_item_all_contents_unset() instead
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2
@@ -2313,7 +2313,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_contents_orp
  * @see elm_index_item_data_set()
  *
  */
-EINA_DEPRECATED EAPI void *elm_index_item_data_get(const Elm_Object_Item *item);
+EINA_DEPRECATED ELM_API void *elm_index_item_data_get(const Elm_Object_Item *item);
 
 /**
  * Set the data associated with a given index widget item
@@ -2328,7 +2328,7 @@ EINA_DEPRECATED EAPI void *elm_index_item_data_get(const Elm_Object_Item *item);
  *
  * @deprecated Use elm_object_item_data_set() instead
  */
-EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const void *data);
+EINA_DEPRECATED ELM_API void  elm_index_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
  * Set the function to be called when a given index widget item is freed.
@@ -2342,7 +2342,7 @@ EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const vo
  *
  * @deprecated Use elm_object_item_del_cb_set() instead
  */
-EINA_DEPRECATED EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+EINA_DEPRECATED ELM_API void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Remove an item from a given index widget, <b>to be referenced by
@@ -2356,7 +2356,7 @@ EINA_DEPRECATED EAPI void                  elm_index_item_del_cb_set(Elm_Object_
  *
  * @deprecated Use elm_object_item_del() instead
  */
-EINA_DEPRECATED EAPI void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item *item);
+EINA_DEPRECATED ELM_API void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item *item);
 
 /**
 * @brief Set the label on the label object
@@ -2365,7 +2365,7 @@ EINA_DEPRECATED EAPI void                  elm_index_item_del(Evas_Object *obj, 
  * @param label The label will be used on the label object
  * @deprecated See elm_object_text_set()
  */
-EINA_DEPRECATED EAPI void        elm_label_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void        elm_label_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the label used on the label object
@@ -2374,7 +2374,7 @@ EINA_DEPRECATED EAPI void        elm_label_label_set(Evas_Object *obj, const cha
  * @return The string inside the label
  * @deprecated See elm_object_text_get()
  */
-EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_label_label_get(const Evas_Object *obj);
 
 /**
  * @def elm_layout_label_set
@@ -2396,7 +2396,7 @@ EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj);
 #define elm_layout_label_get(_ly) \
   elm_layout_text_get((_ly), "elm.text")
 
-EINA_DEPRECATED EAPI Evas_Object *elm_list_item_base_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object *elm_list_item_base_get(const Elm_Object_Item *it);
 
 
 /**
@@ -2414,7 +2414,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_list_item_base_get(const Elm_Object_Item *
  * @deprecated use elm_object_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * Get the content of the mapbuf.
@@ -2429,7 +2429,7 @@ EINA_DEPRECATED EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_
  * @deprecated use elm_object_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj);
 
 /**
  * Unset the content of the mapbuf.
@@ -2444,7 +2444,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj)
  * @deprecated use elm_object_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj);
 
 /**
  * @brief Set the label of a menu item
@@ -2457,7 +2457,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj);
  *
  * @deprecated Use elm_object_item_text_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_menu_item_label_set(Elm_Object_Item *it, const char *label);
+EINA_DEPRECATED ELM_API void         elm_menu_item_label_set(Elm_Object_Item *it, const char *label);
 
 /**
  * @brief Get the label of a menu item
@@ -2466,7 +2466,7 @@ EINA_DEPRECATED EAPI void         elm_menu_item_label_set(Elm_Object_Item *it, c
  * @return The label of @p item
  * @deprecated Use elm_object_item_text_get() instead
  */
-EINA_DEPRECATED EAPI const char  *elm_menu_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char  *elm_menu_item_label_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the content object of a menu item
@@ -2480,7 +2480,7 @@ EINA_DEPRECATED EAPI const char  *elm_menu_item_label_get(const Elm_Object_Item 
  *
  * @deprecated Use elm_object_item_content_set() instead
  */
-EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_object_content_set(Elm_Object_Item *it, Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool    elm_menu_item_object_content_set(Elm_Object_Item *it, Evas_Object *obj);
 
 /**
  * @brief Get the content object of a menu item
@@ -2495,7 +2495,7 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_object_content_set(Elm_Object_It
  *
  * @deprecated Use elm_object_item_content_get() instead
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object *elm_menu_item_object_content_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the disabled state of @p item.
@@ -2504,7 +2504,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Obj
  * @param disabled The enabled/disabled state of the item
  * @deprecated Use elm_object_item_disabled_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_menu_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED ELM_API void         elm_menu_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * @brief Get the disabled state of @p item.
@@ -2515,7 +2515,7 @@ EINA_DEPRECATED EAPI void         elm_menu_item_disabled_set(Elm_Object_Item *it
  * @see elm_menu_item_disabled_set()
  * @deprecated Use elm_object_item_disabled_get() instead
  */
-EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_disabled_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool    elm_menu_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * @brief Returns the data associated with menu item @p item.
@@ -2527,7 +2527,7 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_disabled_get(const Elm_Object_It
  *
  * @deprecated Use elm_object_item_data_get() instead
  */
-EINA_DEPRECATED EAPI void        *elm_menu_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void        *elm_menu_item_data_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the function called when a menu item is deleted.
@@ -2539,7 +2539,7 @@ EINA_DEPRECATED EAPI void        *elm_menu_item_data_get(const Elm_Object_Item *
  * @see elm_menu_item_del()
  * @deprecated Use elm_object_item_del_cb_set() instead
  */
-EINA_DEPRECATED EAPI void                         elm_menu_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+EINA_DEPRECATED ELM_API void                         elm_menu_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * @brief Sets the data to be associated with menu item @p item.
@@ -2549,7 +2549,7 @@ EINA_DEPRECATED EAPI void                         elm_menu_item_del_cb_set(Elm_O
  *
  * @deprecated Use elm_object_item_data_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_menu_item_data_set(Elm_Object_Item *it, const void *data);
+EINA_DEPRECATED ELM_API void         elm_menu_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
  * @brief Deletes an item from the menu.
@@ -2559,7 +2559,7 @@ EINA_DEPRECATED EAPI void         elm_menu_item_data_set(Elm_Object_Item *it, co
  * @deprecated Use elm_object_item_del() instead
  * @see elm_menu_item_add()
  */
-EINA_DEPRECATED EAPI void                         elm_menu_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_menu_item_del(Elm_Object_Item *it);
 
 /**
  * @brief @brief Return a menu item's owner menu
@@ -2570,7 +2570,7 @@ EINA_DEPRECATED EAPI void                         elm_menu_item_del(Elm_Object_I
  * Use this function to get the menu object owning an item.
  * @deprecated Use elm_object_item_widget_get() instead
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_menu_item_menu_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object                 *elm_menu_item_menu_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the icon of a menu item to the standard icon with name @p icon
@@ -2581,7 +2581,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_menu_item_menu_get(const E
  * @deprecated elm_menu_item_icon_name_set() instead
  * Once this icon is set, any previously set icon will be deleted.
  */
-EINA_DEPRECATED EAPI void                         elm_menu_item_object_icon_name_set(Elm_Object_Item *it, const char *icon);
+EINA_DEPRECATED ELM_API void                         elm_menu_item_object_icon_name_set(Elm_Object_Item *it, const char *icon);
 
 /**
  * @brief Get the string representation from the icon of a menu item
@@ -2592,7 +2592,7 @@ EINA_DEPRECATED EAPI void                         elm_menu_item_object_icon_name
  * @deprecated elm_menu_item_icon_name_get() instead
  * @see elm_menu_item_icon_name_set()
  */
-EINA_DEPRECATED EAPI const char                  *elm_menu_item_object_icon_name_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_menu_item_object_icon_name_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the content of the notify widget
@@ -2607,7 +2607,7 @@ EINA_DEPRECATED EAPI const char                  *elm_menu_item_object_icon_name
  * @deprecated use elm_object_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Unset the content of the notify widget
@@ -2621,7 +2621,7 @@ EINA_DEPRECATED EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_
  * @deprecated use elm_object_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_notify_content_unset(Evas_Object *obj);
 
 /**
  * @brief Return the content of the notify widget
@@ -2633,7 +2633,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj);
  * @deprecated use elm_object_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_notify_content_get(const Evas_Object *obj);
 
 /**
  * Set a label of an object
@@ -2645,7 +2645,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_get(const Evas_Object *obj)
  * @note Elementary objects may have many labels (e.g. Action Slider)
  * @deprecated Use elm_object_part_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
+EINA_DEPRECATED ELM_API void         elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
 
 /**
  * Get a label of an object
@@ -2657,7 +2657,7 @@ EINA_DEPRECATED EAPI void         elm_object_text_part_set(Evas_Object *obj, con
  * @note Elementary objects may have many labels (e.g. Action Slider)
  * @deprecated Use elm_object_part_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
+EINA_DEPRECATED ELM_API const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
 
 /**
  * Set a content of an object
@@ -2669,7 +2669,7 @@ EINA_DEPRECATED EAPI const char  *elm_object_text_part_get(const Evas_Object *ob
  * @note Elementary objects may have many contents
  * @deprecated Use elm_object_part_content_set instead.
  */
-EINA_DEPRECATED EAPI void         elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
 
 /**
  * Get a content of an object
@@ -2681,7 +2681,7 @@ EINA_DEPRECATED EAPI void         elm_object_content_part_set(Evas_Object *obj, 
  * @note Elementary objects may have many contents
  * @deprecated Use elm_object_part_content_get instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *part);
+EINA_DEPRECATED ELM_API Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *part);
 
 /**
  * Unset a content of an object
@@ -2692,7 +2692,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_get(const Evas_Object 
  * @note Elementary objects may have many contents
  * @deprecated Use elm_object_part_content_unset instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *part);
+EINA_DEPRECATED ELM_API Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *part);
 
 /**
  * Set a content of an object item
@@ -2704,7 +2704,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj
  * @note Elementary object items may have many contents
  * @deprecated Use elm_object_item_part_content_set instead.
  */
-EINA_DEPRECATED EAPI void         elm_object_item_content_part_set(Elm_Object_Item *it, const char *part, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_object_item_content_part_set(Elm_Object_Item *it, const char *part, Evas_Object *content);
 
 /**
  * Get a content of an object item
@@ -2716,7 +2716,7 @@ EINA_DEPRECATED EAPI void         elm_object_item_content_part_set(Elm_Object_It
  * @note Elementary object items may have many contents
  * @deprecated Use elm_object_item_part_content_get instead.
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *part);
+EINA_DEPRECATED ELM_API Evas_Object                 *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *part);
 
 /**
  * Unset a content of an object item
@@ -2727,7 +2727,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_object_item_content_part_g
  * @note Elementary object items may have many contents
  * @deprecated Use elm_object_item_part_content_unset instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part);
+EINA_DEPRECATED ELM_API Evas_Object *elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part);
 
 /**
  * Get a label of an object item
@@ -2739,7 +2739,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_object_item_content_part_unset(Elm_Object_
  * @note Elementary object items may have many labels
  * @deprecated Use elm_object_item_part_text_get instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
+EINA_DEPRECATED ELM_API const char  *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
 
 /**
  * Set a label of an object item
@@ -2751,7 +2751,7 @@ EINA_DEPRECATED EAPI const char  *elm_object_item_text_part_get(const Elm_Object
  * @note Elementary object items may have many labels
  * @deprecated Use elm_object_item_part_text_set instead.
  */
-EINA_DEPRECATED EAPI void         elm_object_item_text_part_set(Elm_Object_Item *it, const char *part, const char *label);
+EINA_DEPRECATED ELM_API void         elm_object_item_text_part_set(Elm_Object_Item *it, const char *part, const char *label);
 
 /**
  * @brief Set the content of the panel.
@@ -2766,7 +2766,7 @@ EINA_DEPRECATED EAPI void         elm_object_item_text_part_set(Elm_Object_Item 
  * @deprecated use elm_object_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Get the content of the panel.
@@ -2781,7 +2781,7 @@ EINA_DEPRECATED EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_O
  * @deprecated use elm_object_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_panel_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_panel_content_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the content of the panel.
@@ -2796,7 +2796,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_panel_content_get(const Evas_Object *obj);
  * @deprecated use elm_object_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_panel_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_panel_content_unset(Evas_Object *obj);
 
 /**
  * Set the left content of the panes widget.
@@ -2817,7 +2817,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_panel_content_unset(Evas_Object *obj);
  * @deprecated use elm_object_part_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * Set the right content of the panes widget.
@@ -2838,7 +2838,7 @@ EINA_DEPRECATED EAPI void         elm_panes_content_left_set(Evas_Object *obj, E
  * @deprecated use elm_object_part_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void         elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void         elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * Get the left content of the panes.
@@ -2853,7 +2853,7 @@ EINA_DEPRECATED EAPI void         elm_panes_content_right_set(Evas_Object *obj, 
  * @deprecated use elm_object_part_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_left_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_panes_content_left_get(const Evas_Object *obj);
 
 /**
  * Get the right content of the panes.
@@ -2868,7 +2868,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_left_get(const Evas_Object *
  * @deprecated use elm_object_part_content_get() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_right_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_panes_content_right_get(const Evas_Object *obj);
 
 /**
  * Unset the left content used for the panes.
@@ -2884,7 +2884,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_right_get(const Evas_Object 
  * @deprecated use elm_object_part_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_left_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_panes_content_left_unset(Evas_Object *obj);
 
 /**
  * Unset the right content used for the panes.
@@ -2901,7 +2901,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_left_unset(Evas_Object *obj)
  * @deprecated use elm_object_part_content_unset() instead
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_right_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_panes_content_right_unset(Evas_Object *obj);
 /**
  * Set the label of a given progress bar widget
  *
@@ -2910,7 +2910,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_right_unset(Evas_Object *obj
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_progressbar_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_progressbar_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label of a given progress bar widget
@@ -2920,7 +2920,7 @@ EINA_DEPRECATED EAPI void         elm_progressbar_label_set(Evas_Object *obj, co
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_progressbar_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_progressbar_label_get(const Evas_Object *obj);
 
 /**
  * Set the icon object of a given progress bar widget
@@ -2938,7 +2938,7 @@ EINA_DEPRECATED EAPI const char  *elm_progressbar_label_get(const Evas_Object *o
  * @deprecated use elm_object_part_content_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the icon object set for a given progress bar widget
@@ -2951,7 +2951,7 @@ EINA_DEPRECATED EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Eva
  * @deprecated use elm_object_part_content_get() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_progressbar_icon_get(const Evas_Object *obj);
 
 /**
  * Unset an icon set on a given progress bar widget
@@ -2967,7 +2967,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_get(const Evas_Object *ob
  * @deprecated use elm_object_part_content_unset() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj);
 
 /**
  * @brief Set the text label of the radio object
@@ -2977,7 +2977,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj);
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_radio_label_set(Evas_Object *obj, const char *label);
 
 /**
  * @brief Get the text label of the radio object
@@ -2987,7 +2987,7 @@ EINA_DEPRECATED EAPI void         elm_radio_label_set(Evas_Object *obj, const ch
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_radio_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_radio_label_get(const Evas_Object *obj);
 
 /**
  * @brief Set the icon object of the radio object
@@ -3002,7 +3002,7 @@ EINA_DEPRECATED EAPI const char  *elm_radio_label_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * @brief Get the icon object of the radio object
@@ -3015,7 +3015,7 @@ EINA_DEPRECATED EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Obje
  * @deprecated use elm_object_part_content_get() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_radio_icon_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the icon used for the radio object
@@ -3029,7 +3029,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_unset() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_radio_icon_unset(Evas_Object *obj);
 
 /**
  * Set the label of a given slider widget
@@ -3039,7 +3039,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj);
  *
  * @deprecated use elm_object_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_slider_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void         elm_slider_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label of a given slider widget
@@ -3049,7 +3049,7 @@ EINA_DEPRECATED EAPI void         elm_slider_label_set(Evas_Object *obj, const c
  *
  * @deprecated use elm_object_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_slider_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char  *elm_slider_label_get(const Evas_Object *obj);
 
 /**
  * Set the icon object of the slider object.
@@ -3069,7 +3069,7 @@ EINA_DEPRECATED EAPI const char  *elm_slider_label_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_part_content_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Unset an icon set on a given slider widget.
@@ -3089,7 +3089,7 @@ EINA_DEPRECATED EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Obj
  * @deprecated use elm_object_part_content_unset() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_slider_icon_unset(Evas_Object *obj);
 
 /**
  * Get the icon object set for a given slider widget.
@@ -3107,7 +3107,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_unset(Evas_Object *obj);
  * @deprecated use elm_object_part_content_get() instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
 
 /**
  * Set the end object of the slider object.
@@ -3128,7 +3128,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
  * @deprecated use elm_object_part_content_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void         elm_slider_end_set(Evas_Object *obj, Evas_Object *end);
+EINA_DEPRECATED ELM_API void         elm_slider_end_set(Evas_Object *obj, Evas_Object *end);
 
 /**
  * Unset an end object set on a given slider widget.
@@ -3150,7 +3150,7 @@ EINA_DEPRECATED EAPI void         elm_slider_end_set(Evas_Object *obj, Evas_Obje
  * instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_slider_end_unset(Evas_Object *obj);
 
 /**
  * Get the end object set for a given slider widget.
@@ -3170,7 +3170,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_unset(Evas_Object *obj);
  * instead.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_slider_end_get(const Evas_Object *obj);
 
 /**
  * Return the data associated with a given slideshow item
@@ -3180,7 +3180,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_get(const Evas_Object *obj);
  *
  * @deprecated use elm_object_item_data_get() instead
  */
-EINA_DEPRECATED EAPI void *elm_slideshow_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void *elm_slideshow_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Delete a given item from a slideshow widget.
@@ -3189,7 +3189,7 @@ EINA_DEPRECATED EAPI void *elm_slideshow_item_data_get(const Elm_Object_Item *it
  *
  * @deprecated Use elm_object_item_de() instead
  */
-EINA_DEPRECATED EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                  elm_slideshow_item_del(Elm_Object_Item *it);
 
 /**
  * Display a given slideshow widget's item, programmatically.
@@ -3202,7 +3202,7 @@ EINA_DEPRECATED EAPI void                  elm_slideshow_item_del(Elm_Object_Ite
  *
  * @deprecated use elm_slideshow_item_show() instead
  */
-EINA_DEPRECATED EAPI void                  elm_slideshow_show(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                  elm_slideshow_show(Elm_Object_Item *it);
 
 /**
  * Get the toolbar object from an item.
@@ -3214,7 +3214,7 @@ EINA_DEPRECATED EAPI void                  elm_slideshow_show(Elm_Object_Item *i
  *
  * @deprecated use elm_object_item_widget_get() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it);
 
 /**
  * Get the label of item.
@@ -3233,7 +3233,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_toolbar_item_toolbar_get(const Elm_Object_
  *
  * @deprecated use elm_object_item_text_get() instead.
  */
-EINA_DEPRECATED EAPI const char  *elm_toolbar_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char  *elm_toolbar_item_label_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of item.
@@ -3253,7 +3253,7 @@ EINA_DEPRECATED EAPI const char  *elm_toolbar_item_label_get(const Elm_Object_It
  *
  * @deprecated use elm_object_item_text_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label);
+EINA_DEPRECATED ELM_API void         elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label);
 
 /**
  * Return the data associated with a given toolbar widget item.
@@ -3265,7 +3265,7 @@ EINA_DEPRECATED EAPI void         elm_toolbar_item_label_set(Elm_Object_Item *it
  *
  * @deprecated use elm_object_item_data_get() instead.
  */
-EINA_DEPRECATED EAPI void        *elm_toolbar_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void        *elm_toolbar_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Set the data associated with a given toolbar widget item.
@@ -3280,7 +3280,7 @@ EINA_DEPRECATED EAPI void        *elm_toolbar_item_data_get(const Elm_Object_Ite
  *
  * @deprecated use elm_object_item_data_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data);
+EINA_DEPRECATED ELM_API void         elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
  * Get a value whether toolbar item is disabled or not.
@@ -3292,7 +3292,7 @@ EINA_DEPRECATED EAPI void         elm_toolbar_item_data_set(Elm_Object_Item *it,
  *
  * @deprecated use elm_object_item_disabled_get() instead.
  */
-EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_item_disabled_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool    elm_toolbar_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * Sets the disabled/enabled state of a toolbar item.
@@ -3307,7 +3307,7 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_item_disabled_get(const Elm_Object
  *
  * @deprecated use elm_object_item_disabled_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED ELM_API void         elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * Change a toolbar's orientation
@@ -3316,7 +3316,7 @@ EINA_DEPRECATED EAPI void         elm_toolbar_item_disabled_set(Elm_Object_Item 
  * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
  * @deprecated use elm_toolbar_horizontal_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical);
+EINA_DEPRECATED ELM_API void         elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical);
 
 /**
  * Get a toolbar's orientation
@@ -3325,7 +3325,7 @@ EINA_DEPRECATED EAPI void         elm_toolbar_orientation_set(Evas_Object *obj, 
  * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
  * @deprecated use elm_toolbar_horizontal_get() instead.
  */
-EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool    elm_toolbar_orientation_get(const Evas_Object *obj);
 
 /**
  * Set the function called when a toolbar item is freed.
@@ -3343,7 +3343,7 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object 
  *
  * @deprecated Use elm_object_item_del_cb_set() instead
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Delete them item from the toolbar.
@@ -3354,7 +3354,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_del_cb_set(El
  * @see elm_toolbar_item_append()
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_del(Elm_Object_Item *it);
 
 /**
  * Set the content to be shown in the tooltip item.
@@ -3378,7 +3378,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_del(Elm_Objec
  * @see elm_object_tooltip_content_cb_set() for more details.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset tooltip from item.
@@ -3394,7 +3394,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_conte
  * @see elm_toolbar_item_tooltip_content_cb_set()
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_unset(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_tooltip_unset(Elm_Object_Item *it);
 
 /**
  * Sets a different style for this item tooltip.
@@ -3410,7 +3410,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_unset
  * @see elm_object_tooltip_style_set() for more details.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style for this item tooltip.
@@ -3424,7 +3424,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_style
  * @see elm_toolbar_item_tooltip_style_set()
  *
  */
-EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,
@@ -3449,7 +3449,7 @@ EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_tooltip_style
  * @deprecated use elm_object_item_cursor_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
 /*
  * Get the type of mouse pointer/cursor decoration set to be shown,
@@ -3466,7 +3466,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_set(El
  * @deprecated Use elm_object_item_cursor_get() instead
  *
  */
-EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_cursor_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_toolbar_item_cursor_get(const Elm_Object_Item *it);
 
 /**
  * Unset any custom mouse pointer/cursor decoration set to be
@@ -3484,7 +3484,7 @@ EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_cursor_get(co
  * @deprecated Use elm_object_item_cursor_unset() instead
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_unset(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_cursor_unset(Elm_Object_Item *it);
 
 /**
  * Set a different @b style for a given custom cursor set for a
@@ -3510,7 +3510,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_unset(
  * @deprecated Use elm_object_item_cursor_style_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the current @b style set for a given toolbar item's custom
@@ -3525,7 +3525,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_style_
  * @deprecated Use elm_object_item_cursor_style_get() instead
  *
  */
-EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_cursor_style_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_toolbar_item_cursor_style_get(const Elm_Object_Item *it);
 
 /**
  * Set if the (custom)cursor for a given toolbar item should be
@@ -3546,7 +3546,7 @@ EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_cursor_style_
  * @deprecated Use elm_object_item_cursor_engine_only_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
 
 /**
  * Get if the (custom) cursor for a given toolbar item is being
@@ -3563,7 +3563,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_engine
  * @deprecated Use elm_object_item_cursor_engine_only_get() instead
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
  * @brief Link a Elm_Payer with an Elm_Video object.
@@ -3580,7 +3580,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_item_cursor_engine
  * @deprecated use elm_object_part_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
+EINA_DEPRECATED ELM_API void elm_player_video_set(Evas_Object *player, Evas_Object *video);
 
 /**
  * Set the label of item.
@@ -3600,7 +3600,7 @@ EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object 
  * @deprecated Use elm_object_item_text_set() instead
  *
  */
-EINA_DEPRECATED EAPI void              elm_segment_control_item_label_set(Elm_Object_Item *it, const char *label);
+EINA_DEPRECATED ELM_API void              elm_segment_control_item_label_set(Elm_Object_Item *it, const char *label);
 
 
 /**
@@ -3626,7 +3626,7 @@ EINA_DEPRECATED EAPI void              elm_segment_control_item_label_set(Elm_Ob
  * @deprecated Use elm_object_item_part_content_set() instead
  *
  */
-EINA_DEPRECATED EAPI void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * Remove a segment control item from its parent, deleting it.
@@ -3638,7 +3638,7 @@ EINA_DEPRECATED EAPI void              elm_segment_control_item_icon_set(Elm_Obj
  *
  * @deprecated Use elm_object_item_del() instead
  */
-EINA_DEPRECATED EAPI void              elm_segment_control_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void              elm_segment_control_item_del(Elm_Object_Item *it);
 
 /**
  * Get the label
@@ -3649,7 +3649,7 @@ EINA_DEPRECATED EAPI void              elm_segment_control_item_del(Elm_Object_I
  * @deprecated Use elm_object_text_get() instead
  *
  */
-EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char                *elm_multibuttonentry_label_get(const Evas_Object *obj);
 
 /**
  * Set the label
@@ -3660,7 +3660,7 @@ EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_label_get(c
  * @deprecated Use elm_object_text_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label);
+EINA_DEPRECATED ELM_API void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the label of a given item
@@ -3671,7 +3671,7 @@ EINA_DEPRECATED EAPI void                       elm_multibuttonentry_label_set(E
  * @deprecated Use elm_object_item_text_get() instead
  *
  */
-EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                *elm_multibuttonentry_item_label_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of a given item
@@ -3681,7 +3681,7 @@ EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_item_label_
  *
  * @deprecated Use elm_object_item_text_set() instead
  */
-EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str);
+EINA_DEPRECATED ELM_API void                       elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str);
 
 /**
  * Delete a given item
@@ -3691,7 +3691,7 @@ EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_label_
  * @deprecated Use elm_object_item_del() instead
  *
  */
-EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                       elm_multibuttonentry_item_del(Elm_Object_Item *it);
 
 /**
  * @brief Delete the given item instantly.
@@ -3704,7 +3704,7 @@ EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_del(El
  *
  * @deprecated Use elm_object_item_del() instead
  */
-EINA_DEPRECATED EAPI void             elm_naviframe_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void             elm_naviframe_item_del(Elm_Object_Item *it);
 
 
 
@@ -3722,7 +3722,7 @@ EINA_DEPRECATED EAPI void             elm_naviframe_item_del(Elm_Object_Item *it
  * @deprecated Use elm_object_item_disabled_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED ELM_API void                         elm_list_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * Get a value whether list item is disabled or not.
@@ -3735,7 +3735,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm
  * @deprecated Use elm_object_item_disabled_get() instead
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_list_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * @brief Disable size restrictions on an object's tooltip
@@ -3749,7 +3749,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(con
  * @deprecated Use elm_object_item_tooltip_window_mode_set() instead
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
 
 /**
  * @brief Get size restriction state of an object's tooltip
@@ -3763,7 +3763,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_m
  * @deprecated Use elm_object_item_tooltip_window_mode_get() instead
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_Object_Item *it);
 
 /**
  * Set the function called when a list item is freed.
@@ -3782,7 +3782,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_m
  * @deprecated Please use elm_object_item_del_cb_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+EINA_DEPRECATED ELM_API void                         elm_list_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Get the data associated to the item.
@@ -3799,7 +3799,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_O
  * @deprecated Please use elm_object_item_data_get() instead.
  *
  */
-EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                        *elm_list_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Get the left side icon associated to the item.
@@ -3818,7 +3818,7 @@ EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const E
  *
  * @deprecated Please use elm_object_item_part_content_get(item, NULL);
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object                 *elm_list_item_icon_get(const Elm_Object_Item *it);
 
 /**
  * Set the left side icon associated to the item.
@@ -3843,7 +3843,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const E
  *
  * @deprecated Please use elm_object_item_part_content_set(item, NULL, icon);
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void                         elm_list_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * Get the right side icon associated to the item.
@@ -3862,7 +3862,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_icon_set(Elm_Obj
  *
  * @deprecated Please use elm_object_item_part_content_get(item, "end");
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object                 *elm_list_item_end_get(const Elm_Object_Item *it);
 
 /**
  * Set the right side icon associated to the item.
@@ -3887,7 +3887,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const El
  *
  * @deprecated Please use elm_object_item_part_content_set(item, "end", end);
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_end_set(Elm_Object_Item *it, Evas_Object *end);
+EINA_DEPRECATED ELM_API void                         elm_list_item_end_set(Elm_Object_Item *it, Evas_Object *end);
 
 /**
  * Get the label of item.
@@ -3905,7 +3905,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_end_set(Elm_Obje
  *
  * @deprecated Please use elm_object_item_text_get(item);
  */
-EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_list_item_label_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of item.
@@ -3925,7 +3925,7 @@ EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const 
  *
  * @deprecated Please use elm_object_item_text_set(item, text);
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_label_set(Elm_Object_Item *it, const char *text);
+EINA_DEPRECATED ELM_API void                         elm_list_item_label_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the text to be shown in a given list item's tooltips.
@@ -3941,7 +3941,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_label_set(Elm_Ob
  * @see elm_object_tooltip_text_set() for more details.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+EINA_DEPRECATED ELM_API void                         elm_list_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the content to be shown in the tooltip item.
@@ -3966,7 +3966,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_text_set
  * @see elm_object_tooltip_content_cb_set() for more details.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+EINA_DEPRECATED ELM_API void                         elm_list_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset tooltip from item.
@@ -3982,7 +3982,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_content_
  * @see elm_list_item_tooltip_content_cb_set()
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_unset(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_list_item_tooltip_unset(Elm_Object_Item *it);
 
 /**
  * Sets a different style for this item tooltip.
@@ -3999,7 +3999,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_unset(El
  * @see elm_object_tooltip_style_set() for more details.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+EINA_DEPRECATED ELM_API void                         elm_list_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style for this item tooltip.
@@ -4014,7 +4014,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_style_se
  * @see elm_list_item_tooltip_style_set()
  *
  */
-EINA_DEPRECATED EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_list_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,
@@ -4038,7 +4038,7 @@ EINA_DEPRECATED EAPI const char                  *elm_list_item_tooltip_style_ge
  *
  * @deprecated Please use elm_object_item_cursor_set() instead
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+EINA_DEPRECATED ELM_API void                         elm_list_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
 /*
  * Get the type of mouse pointer/cursor decoration set to be shown,
@@ -4054,7 +4054,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_cursor_set(Elm_O
  *
  * @deprecated Please use elm_object_item_cursor_get() instead
  */
-EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_list_item_cursor_get(const Elm_Object_Item *it);
 
 /**
  * Unset any custom mouse pointer/cursor decoration set to be
@@ -4071,7 +4071,7 @@ EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_get(const
  *
  * @deprecated Please use elm_list_item_cursor_unset() instead
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_cursor_unset(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_list_item_cursor_unset(Elm_Object_Item *it);
 
 /**
  * Set a different @b style for a given custom cursor set for a
@@ -4096,7 +4096,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_cursor_unset(Elm
  *
  * @deprecated Please use elm_list_item_cursor_style_set() instead
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+EINA_DEPRECATED ELM_API void                         elm_list_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the current @b style set for a given list item's custom
@@ -4110,7 +4110,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_cursor_style_set
  *
  * @deprecated Please use elm_list_item_cursor_style_get() instead
  */
-EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_style_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const char                  *elm_list_item_cursor_style_get(const Elm_Object_Item *it);
 
 /**
  * Get if the (custom) cursor for a given list item is being
@@ -4126,7 +4126,7 @@ EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_style_get
  *
  * @deprecated Please use elm_list_item_cursor_engine_only_get() instead
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
  * Delete the item from the list.
@@ -4142,7 +4142,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_cursor_engine_on
  * @deprecated Use elm_object_item_del() instead
  *
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         elm_list_item_del(Elm_Object_Item *it);
 
 
 /**
@@ -4159,7 +4159,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_I
  * @deprecated Use elm_object_part_content_set(entry, "icon", content) instead
  * @see elm_entry_end_set()
  */
-EINA_DEPRECATED EAPI void               elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
+EINA_DEPRECATED ELM_API void               elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the leftmost widget of the scrolled entry. This object is
@@ -4170,7 +4170,7 @@ EINA_DEPRECATED EAPI void               elm_entry_icon_set(Evas_Object *obj, Eva
  *
  * @deprecated Use elm_object_part_content_get(entry, "icon") instead
  */
-EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object       *elm_entry_icon_get(const Evas_Object *obj);
 
 /**
  * Unset the leftmost widget of the scrolled entry, unparenting and
@@ -4183,7 +4183,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *ob
  * @deprecated Use elm_object_part_content_unset(entry, "icon") instead
  * @see elm_entry_icon_set()
  */
-EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
 
 /**
  * This sets a widget to be displayed to the end of a scrolled entry.
@@ -4199,7 +4199,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
  * @deprecated Use elm_object_part_content_set(entry, "end", content) instead
  * @see elm_entry_icon_set
  */
-EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
+EINA_DEPRECATED ELM_API void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
 
 /**
  * Get the endmost widget of the scrolled entry. This object is owned
@@ -4210,7 +4210,7 @@ EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas
  *
  * @deprecated Use elm_object_part_content_get(entry, "end") instead
  */
-EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
 
 /**
  * Unset the endmost widget of the scrolled entry, unparenting and
@@ -4223,7 +4223,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj
  * @deprecated Use elm_object_part_content_unset(entry, "end") instead
  * @see elm_entry_icon_set()
  */
-EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
 
 /**
  * Set route service to be used. By default used source is
@@ -4255,7 +4255,7 @@ typedef enum
  *
  * @deprecated Use elm_map_canvas_to_geo_convert() instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy);
+EINA_DEPRECATED ELM_API void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy);
 
 /**
  * Convert canvas coordinates into a geographic coordinate
@@ -4274,7 +4274,7 @@ EINA_DEPRECATED EAPI void                  elm_map_utils_rotate_coord(const Evas
  * @deprecatedUse Use elm_map_canvas_to_region_convert() instead
  *
  */
-EINA_DEPRECATED EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat);
+EINA_DEPRECATED ELM_API void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat);
 
 /**
  * Get the current geographic coordinates of the map.
@@ -4291,7 +4291,7 @@ EINA_DEPRECATED EAPI void                  elm_map_canvas_to_geo_convert(const E
  *
  * @deprecated Use elm_map_region_get() instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat);
+EINA_DEPRECATED ELM_API void                  elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat);
 
 /**
  * Animatedly bring in given coordinates to the center of the map.
@@ -4310,7 +4310,7 @@ EINA_DEPRECATED EAPI void                  elm_map_geo_region_get(const Evas_Obj
  *
  * @deprecated Use elm_map_region_bring_in() instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat);
+EINA_DEPRECATED ELM_API void                  elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat);
 
 /**
  * Show the given coordinates at the center of the map, @b immediately.
@@ -4328,7 +4328,7 @@ EINA_DEPRECATED EAPI void                  elm_map_geo_region_bring_in(Evas_Obje
  *
  * @deprecated Use elm_map_region_show() instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_geo_region_show(Evas_Object *obj, double lon, double lat);
+EINA_DEPRECATED ELM_API void                  elm_map_geo_region_show(Evas_Object *obj, double lon, double lat);
 
 /**
  * Set the minimum zoom of the source.
@@ -4340,7 +4340,7 @@ EINA_DEPRECATED EAPI void                  elm_map_geo_region_show(Evas_Object *
  *
  * @deprecated Use elm_map_zoom_min_set() instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_source_zoom_min_set(Evas_Object *obj, int zoom);
+EINA_DEPRECATED ELM_API void                  elm_map_source_zoom_min_set(Evas_Object *obj, int zoom);
 
 /**
  * Get the minimum zoom of the source.
@@ -4352,7 +4352,7 @@ EINA_DEPRECATED EAPI void                  elm_map_source_zoom_min_set(Evas_Obje
  *
  * @deprecated Use elm_map_zoom_min_get() instead
  */
-EINA_DEPRECATED EAPI int                   elm_map_source_zoom_min_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API int                   elm_map_source_zoom_min_get(const Evas_Object *obj);
 
 /**
  * Set the maximum zoom of the source.
@@ -4364,7 +4364,7 @@ EINA_DEPRECATED EAPI int                   elm_map_source_zoom_min_get(const Eva
  *
  * @deprecated Use elm_map_zoom_max_set() instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_source_zoom_max_set(Evas_Object *obj, int zoom);
+EINA_DEPRECATED ELM_API void                  elm_map_source_zoom_max_set(Evas_Object *obj, int zoom);
 
 /**
  * Get the maximum zoom of the source.
@@ -4376,7 +4376,7 @@ EINA_DEPRECATED EAPI void                  elm_map_source_zoom_max_set(Evas_Obje
  *
  * @deprecated Use elm_map_zoom_max_get() instead
  */
-EINA_DEPRECATED EAPI int                   elm_map_source_zoom_max_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API int                   elm_map_source_zoom_max_get(const Evas_Object *obj);
 
 
 /**
@@ -4400,7 +4400,7 @@ EINA_DEPRECATED EAPI int                   elm_map_source_zoom_max_get(const Eva
  * @deprecated Use elm_map_sources_get() instead
  *
  */
-EINA_DEPRECATED EAPI const char          **elm_map_source_names_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char          **elm_map_source_names_get(const Evas_Object *obj);
 
 /**
  * Set the source of the map.
@@ -4424,7 +4424,7 @@ EINA_DEPRECATED EAPI const char          **elm_map_source_names_get(const Evas_O
  * @deprecated Use elm_map_source_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                  elm_map_source_name_set(Evas_Object *obj, const char *source_name);
+EINA_DEPRECATED ELM_API void                  elm_map_source_name_set(Evas_Object *obj, const char *source_name);
 
 /**
  * Get the name of currently used source.
@@ -4436,7 +4436,7 @@ EINA_DEPRECATED EAPI void                  elm_map_source_name_set(Evas_Object *
  * @deprecated Use elm_map_source_get() instead
  *
  */
-EINA_DEPRECATED EAPI const char           *elm_map_source_name_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char           *elm_map_source_name_get(const Evas_Object *obj);
 
 /**
  * Set the source of the route service to be used by the map.
@@ -4461,7 +4461,7 @@ EINA_DEPRECATED EAPI const char           *elm_map_source_name_get(const Evas_Ob
  * @deprecated Use elm_map_source_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source);
+EINA_DEPRECATED ELM_API void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source);
 
 /**
  * Get the current route source.
@@ -4473,7 +4473,7 @@ EINA_DEPRECATED EAPI void                  elm_map_route_source_set(Evas_Object 
  * @deprecated Use elm_map_source_get() instead
  *
  */
-EINA_DEPRECATED EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj);
 
 /**
  * Set the maximum numbers of markers' content to be displayed in a group.
@@ -4499,7 +4499,7 @@ EINA_DEPRECATED EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_O
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
+EINA_DEPRECATED ELM_API void                  elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
 
 /**
  * Set to show markers during zoom level changes or not.
@@ -4528,7 +4528,7 @@ EINA_DEPRECATED EAPI void                  elm_map_max_marker_per_group_set(Evas
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused);
+EINA_DEPRECATED ELM_API void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused);
 
 /**
  * Get a value whether markers will be displayed on zoom level changes or not
@@ -4543,7 +4543,7 @@ EINA_DEPRECATED EAPI void                  elm_map_paused_markers_set(Evas_Objec
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj);
 
 /**
  * Close all the bubbles opened by the user.
@@ -4558,7 +4558,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_map_paused_markers_get(const Evas
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_bubbles_close(Evas_Object *obj);
+EINA_DEPRECATED ELM_API void                  elm_map_bubbles_close(Evas_Object *obj);
 
 /**
  * Set the marker's style of a group class.
@@ -4579,7 +4579,7 @@ EINA_DEPRECATED EAPI void                  elm_map_bubbles_close(Evas_Object *ob
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style);
+EINA_DEPRECATED ELM_API void                  elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style);
 
 /**
  * Set the icon callback function of a group class.
@@ -4595,7 +4595,7 @@ EINA_DEPRECATED EAPI void                  elm_map_group_class_style_set(Elm_Map
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, Elm_Map_Group_Icon_Get_Func icon_get);
+EINA_DEPRECATED ELM_API void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, Elm_Map_Group_Icon_Get_Func icon_get);
 
 /**
  * Set the data associated to the group class.
@@ -4615,7 +4615,7 @@ EINA_DEPRECATED EAPI void                  elm_map_group_class_icon_cb_set(Elm_M
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
+EINA_DEPRECATED ELM_API void                  elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
 
 /**
  * Set the minimum zoom from where the markers are displayed.
@@ -4631,7 +4631,7 @@ EINA_DEPRECATED EAPI void                  elm_map_group_class_data_set(Elm_Map_
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom);
+EINA_DEPRECATED ELM_API void                  elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom);
 
 /**
  * Set the zoom from where the markers are no more grouped.
@@ -4647,7 +4647,7 @@ EINA_DEPRECATED EAPI void                  elm_map_group_class_zoom_displayed_se
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom);
+EINA_DEPRECATED ELM_API void                  elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom);
 
 /**
  * Set if the markers associated to the group class @p clas are hidden or not.
@@ -4662,7 +4662,7 @@ EINA_DEPRECATED EAPI void                  elm_map_group_class_zoom_grouped_set(
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide);
+EINA_DEPRECATED ELM_API void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide);
 
 /**
  * Set the marker's style of a marker class.
@@ -4683,7 +4683,7 @@ EINA_DEPRECATED EAPI void                  elm_map_group_class_hide_set(Evas_Obj
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style);
+EINA_DEPRECATED ELM_API void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style);
 
 /**
  * Set the icon callback function of a marker class.
@@ -4699,7 +4699,7 @@ EINA_DEPRECATED EAPI void                  elm_map_marker_class_style_set(Elm_Ma
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Icon_Get_Func icon_get);
+EINA_DEPRECATED ELM_API void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Icon_Get_Func icon_get);
 
 /**
  * Set the bubble content callback function of a marker class.
@@ -4720,7 +4720,7 @@ EINA_DEPRECATED EAPI void                  elm_map_marker_class_icon_cb_set(Elm_
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Get_Func get);
+EINA_DEPRECATED ELM_API void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Get_Func get);
 
 /**
  * Set the callback function used to delete bubble content of a marker class.
@@ -4746,7 +4746,7 @@ EINA_DEPRECATED EAPI void                  elm_map_marker_class_get_cb_set(Elm_M
  *
  * @deprecated Use Elm_Map_Overlay instead
  */
-EINA_DEPRECATED EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_Func del);
+EINA_DEPRECATED ELM_API void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_Func del);
 
 /**
  * Set the route color.
@@ -4774,7 +4774,7 @@ EINA_DEPRECATED EAPI void                  elm_map_marker_class_del_cb_set(Elm_M
  * @deprecated Use elm_map_overlay_color_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                  elm_map_route_color_set(Elm_Map_Route *route, int r, int g, int b, int a);
+EINA_DEPRECATED ELM_API void                  elm_map_route_color_set(Elm_Map_Route *route, int r, int g, int b, int a);
 
 /**
  * Get the route color.
@@ -4789,7 +4789,7 @@ EINA_DEPRECATED EAPI void                  elm_map_route_color_set(Elm_Map_Route
  * @deprecated Use elm_map_overlay_color_get() instead
  *
  */
-EINA_DEPRECATED EAPI void                  elm_map_route_color_get(const Elm_Map_Route *route, int *r, int *g, int *b, int *a);
+EINA_DEPRECATED ELM_API void                  elm_map_route_color_get(const Elm_Map_Route *route, int *r, int *g, int *b, int *a);
 
 /**
  * Remove a name from the map.
@@ -4804,7 +4804,7 @@ EINA_DEPRECATED EAPI void                  elm_map_route_color_get(const Elm_Map
  * @deprecated Use elm_map_name_del() instead
  *
  */
-EINA_DEPRECATED EAPI void                  elm_map_name_remove(Elm_Map_Name *name);
+EINA_DEPRECATED ELM_API void                  elm_map_name_remove(Elm_Map_Name *name);
 
 /**
  * Get the gengrid object's handle which contains a given gengrid item
@@ -4816,7 +4816,7 @@ EINA_DEPRECATED EAPI void                  elm_map_name_remove(Elm_Map_Name *nam
  *
  * @deprecated Use elm_object_item_widget_get() instead
  */
-EINA_DEPRECATED EAPI Evas_Object                  *elm_gengrid_item_gengrid_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Evas_Object                  *elm_gengrid_item_gengrid_get(const Elm_Object_Item *it);
 
 /**
  * Return the data associated to a given gengrid item
@@ -4831,7 +4831,7 @@ EINA_DEPRECATED EAPI Evas_Object                  *elm_gengrid_item_gengrid_get(
  * @see elm_gengrid_item_data_set()
  * @deprecated Use elm_object_item_data_get() instead
  */
-EINA_DEPRECATED EAPI void                         *elm_gengrid_item_data_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                         *elm_gengrid_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Set the data associated with a given gengrid item
@@ -4850,7 +4850,7 @@ EINA_DEPRECATED EAPI void                         *elm_gengrid_item_data_get(con
  * @deprecated Use elm_object_item_data_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_item_data_set(Elm_Object_Item *it, const void *data);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
  * Set whether a given gengrid item is disabled or not.
@@ -4866,7 +4866,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_item_data_set(Elm
  * @deprecated Use elm_object_item_disabled_set() instead
  *
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * Get whether a given gengrid item is disabled or not.
@@ -4879,7 +4879,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_item_disabled_set
  * @deprecated Use elm_object_item_disabled_get() instead
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_item_disabled_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_gengrid_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * Remove a gengrid item from its parent, deleting it.
@@ -4892,7 +4892,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_item_disabled_get
  * @deprecated use elm_object_item_de() instead
  *
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_item_del(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_item_del(Elm_Object_Item *it);
 
 /**
  * Update the item class of a gengrid item.
@@ -4906,7 +4906,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_item_del(Elm_Obje
  *
  * @deprecated Use elm_gengrid_item_item_class_update instead
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_item_item_class_set(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_item_item_class_set(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
 
 /**
  * Insert an item in a gengrid widget using a user-defined sort function.
@@ -4930,7 +4930,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_item_item_class_s
  *
  * @deprecated Use elm_gengrid_item_sorted_insert() instead
  */
-EINA_DEPRECATED EAPI Elm_Object_Item             *elm_gengrid_item_direct_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
+EINA_DEPRECATED ELM_API Elm_Object_Item             *elm_gengrid_item_direct_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * Append a filter function for text inserted in the entry
@@ -4948,7 +4948,7 @@ EINA_DEPRECATED EAPI Elm_Object_Item             *elm_gengrid_item_direct_sorted
  * @param data User data to pass to @p func
  * @deprecated use elm_entry_markup_filter_append() instead
  */
-EINA_DEPRECATED EAPI void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+EINA_DEPRECATED ELM_API void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * Prepend a filter function for text inserted in the entry
@@ -4961,7 +4961,7 @@ EINA_DEPRECATED EAPI void               elm_entry_text_filter_append(Evas_Object
  * @param data User data to pass to @p func
  * @deprecated use elm_entry_markup_filter_prepend() instead
  */
-EINA_DEPRECATED EAPI void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+EINA_DEPRECATED ELM_API void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * Remove a filter from the list
@@ -4974,7 +4974,7 @@ EINA_DEPRECATED EAPI void               elm_entry_text_filter_prepend(Evas_Objec
  * @param data The user data passed when adding the function
  * @deprecated use elm_entry_markup_filter_remove() instead
  */
-EINA_DEPRECATED EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+EINA_DEPRECATED ELM_API void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * @brief Set the front content of the flip widget.
@@ -4988,7 +4988,7 @@ EINA_DEPRECATED EAPI void               elm_entry_text_filter_remove(Evas_Object
  *
  * @deprecated Use elm_object_part_content_set(flip, "front") instead
  */
-EINA_DEPRECATED EAPI void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Set the back content of the flip widget.
@@ -5002,7 +5002,7 @@ EINA_DEPRECATED EAPI void                 elm_flip_content_front_set(Evas_Object
  *
  * @deprecated Use elm_object_part_content_set(flip, "back") instead
  */
-EINA_DEPRECATED EAPI void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED ELM_API void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Get the front content used for the flip
@@ -5014,7 +5014,7 @@ EINA_DEPRECATED EAPI void                 elm_flip_content_back_set(Evas_Object 
  *
  * @deprecated Use elm_object_part_content_get(flip, "front") instead
  */
-EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj);
 
 /**
  * @brief Get the back content used for the flip
@@ -5026,7 +5026,7 @@ EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_get(const Evas_
  *
  * @deprecated Use elm_object_part_content_get(flip, "back") instead
  */
-EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the front content used for the flip
@@ -5038,7 +5038,7 @@ EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_get(const Evas_O
  *
  * @deprecated Use elm_object_part_content_unset(flip, "front") instead
  */
-EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj);
 
 /**
  * @brief Unset the back content used for the flip
@@ -5050,7 +5050,7 @@ EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Obje
  *
  * @deprecated Use elm_object_part_content_unset(flip, "back") instead
  */
-EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
 
 /**
  * @brief Get flip front visibility state
@@ -5061,7 +5061,7 @@ EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Objec
  *
  * @deprecated Use elm_flip_front_visible_get() instead
  */
-EINA_DEPRECATED EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool            elm_flip_front_get(const Evas_Object *obj);
 
 /**
  * @brief Set the font size on the label object.
@@ -5073,7 +5073,7 @@ EINA_DEPRECATED EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Use <font_size> tag instead. eg) <font_size=40>abc</font_size>
  */
-EINA_DEPRECATED EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
+EINA_DEPRECATED ELM_API void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
 
 /**
  * @brief Set the text color on the label object
@@ -5088,7 +5088,7 @@ EINA_DEPRECATED EAPI void                        elm_label_fontsize_set(Evas_Obj
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Use <color> tag instead. about <color> tag - Text color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA"
  */
-EINA_DEPRECATED EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+EINA_DEPRECATED ELM_API void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @brief Set the text align on the label object
@@ -5100,7 +5100,7 @@ EINA_DEPRECATED EAPI void                        elm_label_text_color_set(Evas_O
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Use <align> tag instead. about <align> tag - Either "auto" (meaning according to text direction), "left", "right", "center", "middle", a value between 0.0 and 1.0, or a value between 0% to 100%.
  */
-EINA_DEPRECATED EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
+EINA_DEPRECATED ELM_API void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
 
 /**
  * @brief Set background color of the label
@@ -5115,7 +5115,7 @@ EINA_DEPRECATED EAPI void                        elm_label_text_align_set(Evas_O
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Just make colored background by yourself.
  */
-EINA_DEPRECATED EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+EINA_DEPRECATED ELM_API void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @brief Set wrap height of the label
@@ -5128,7 +5128,7 @@ EINA_DEPRECATED EAPI void                        elm_label_background_color_set(
  * @warning This is only relevant if the label is inside a container.
  * @deprecated This function should not be used because of wrong concept.
  */
-EINA_DEPRECATED EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
+EINA_DEPRECATED ELM_API void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
 
 /**
  * @brief get wrap width of the label
@@ -5137,7 +5137,7 @@ EINA_DEPRECATED EAPI void                        elm_label_wrap_height_set(Evas_
  * @return The wrap height in pixels at a minimum where words need to wrap
  * @deprecated This function should not be used because of wrong concept.
  */
-EINA_DEPRECATED EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
 
 /**
  * @brief Flush all caches.
@@ -5154,7 +5154,7 @@ EINA_DEPRECATED EAPI Evas_Coord                  elm_label_wrap_height_get(const
  * @note Evas caches are flushed for every canvas associated with a window.
  * @deprecated Use elm_cache_all_flush() instead.
  */
-EINA_DEPRECATED EAPI void      elm_all_flush(void);
+EINA_DEPRECATED ELM_API void      elm_all_flush(void);
 
 
 /**
@@ -5171,7 +5171,7 @@ EINA_DEPRECATED EAPI void      elm_all_flush(void);
  * @deprecated Use elm_video_file_set() instead.
  *
  */
-EINA_DEPRECATED EAPI void                 elm_video_uri_set(Evas_Object *video, const char *uri);
+EINA_DEPRECATED ELM_API void                 elm_video_uri_set(Evas_Object *video, const char *uri);
 
 /**
  * @brief Get the region of the image that is currently shown
@@ -5184,7 +5184,7 @@ EINA_DEPRECATED EAPI void                 elm_video_uri_set(Evas_Object *video, 
  *
  * @deprecated Use elm_photocam_image_region_get() instead.
  */
-EINA_DEPRECATED EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+EINA_DEPRECATED ELM_API void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
 /**
  * @brief Set the gesture state for photocam.
@@ -5197,7 +5197,7 @@ EINA_DEPRECATED EAPI void                   elm_photocam_region_get(const Evas_O
  *
  * @deprecated Use elm_photocam_gesture_enabled_set() instead.
  */
-EINA_DEPRECATED EAPI void		    elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture);
+EINA_DEPRECATED ELM_API void		    elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture);
 
 /**
  * @brief Get the gesture state for photocam.
@@ -5209,17 +5209,17 @@ EINA_DEPRECATED EAPI void		    elm_photocam_gesture_set(Evas_Object *obj, Eina_B
  *
  * @deprecated Use elm_photocam_gesture_enabled_get() instead.
  */
-EINA_DEPRECATED EAPI Eina_Bool		    elm_photocam_gesture_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool		    elm_photocam_gesture_get(const Evas_Object *obj);
 /* No documentation for these API before.
  *
  * @deprecated Use elm_route_latitude_min_max_get()
  *             elm_route_longitude_min_max_get()
  *             instead.
  */
-EINA_DEPRECATED EAPI double       elm_route_lon_min_get(Evas_Object *obj);
-EINA_DEPRECATED EAPI double       elm_route_lat_min_get(Evas_Object *obj);
-EINA_DEPRECATED EAPI double       elm_route_lon_max_get(Evas_Object *obj);
-EINA_DEPRECATED EAPI double       elm_route_lat_max_get(Evas_Object *obj);
+EINA_DEPRECATED ELM_API double       elm_route_lon_min_get(Evas_Object *obj);
+EINA_DEPRECATED ELM_API double       elm_route_lat_min_get(Evas_Object *obj);
+EINA_DEPRECATED ELM_API double       elm_route_lon_max_get(Evas_Object *obj);
+EINA_DEPRECATED ELM_API double       elm_route_lat_max_get(Evas_Object *obj);
 
 
 /**
@@ -5228,7 +5228,7 @@ EINA_DEPRECATED EAPI double       elm_route_lat_max_get(Evas_Object *obj);
  * @return Duration after which tooltip will be shown.
  * @deprecated Use elm_config_tooltip_delay_get(void);
  */
-EINA_DEPRECATED EAPI double      elm_tooltip_delay_get(void);
+EINA_DEPRECATED ELM_API double      elm_tooltip_delay_get(void);
 
 /**
  * Set the duration after which tooltip will be shown.
@@ -5236,7 +5236,7 @@ EINA_DEPRECATED EAPI double      elm_tooltip_delay_get(void);
  * @return EINA_TRUE if value is set.
  * @deprecated Use elm_config_tooltip_delay_set(double delay);
  */
-EINA_DEPRECATED EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
+EINA_DEPRECATED ELM_API Eina_Bool   elm_tooltip_delay_set(double delay);
 
 /**
  * Set the corner of the bubble
@@ -5247,7 +5247,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
  * @deprecated Use elm_bubble_pos_set()
  *
  */
-EINA_DEPRECATED EAPI void elm_bubble_corner_set(Evas_Object *obj, const char *corner);
+EINA_DEPRECATED ELM_API void elm_bubble_corner_set(Evas_Object *obj, const char *corner);
 
 /**
  * Get the corner of the bubble
@@ -5257,7 +5257,7 @@ EINA_DEPRECATED EAPI void elm_bubble_corner_set(Evas_Object *obj, const char *co
  *
  * @deprecated Use elm_bubble_pos_get()
  */
-EINA_DEPRECATED EAPI const char *elm_bubble_corner_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char *elm_bubble_corner_get(const Evas_Object *obj);
 
 /**
  * Enable or disable day selection
@@ -5268,7 +5268,7 @@ EINA_DEPRECATED EAPI const char *elm_bubble_corner_get(const Evas_Object *obj);
  *
  * @deprecated Use elm_calendar_day_selection_disabled_set()
  */
-EINA_DEPRECATED EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+EINA_DEPRECATED ELM_API void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Get a value whether day selection is enabled or not.
@@ -5279,7 +5279,7 @@ EINA_DEPRECATED EAPI void                 elm_calendar_day_selection_enabled_set
  *
  * @deprecated elm_calendar_day_selection_disabled_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
 
 /**
  * @deprecated Use Elm_Calendar_Mark_Repeat_Type instead.
@@ -5294,7 +5294,7 @@ typedef _Elm_Calendar_Mark_Repeat_Type Elm_Calendar_Mark_Repeat EINA_DEPRECATED;
  * @return The font cache size
  * @deprecated elm_cache_font_cache_size_get(void);
  */
-EINA_DEPRECATED EAPI int       elm_font_cache_get(void);
+EINA_DEPRECATED ELM_API int       elm_font_cache_get(void);
 
 /**
  * Set the configured font cache size
@@ -5304,7 +5304,7 @@ EINA_DEPRECATED EAPI int       elm_font_cache_get(void);
  * @param size The font cache size
  * @deprecated elm_cache_font_cache_size_set(int size);
  */
-EINA_DEPRECATED EAPI void      elm_font_cache_set(int size);
+EINA_DEPRECATED ELM_API void      elm_font_cache_set(int size);
 
 /**
  * Get the configured image cache size
@@ -5313,8 +5313,8 @@ EINA_DEPRECATED EAPI void      elm_font_cache_set(int size);
  *
  * @return The image cache size
  */
-EINA_DEPRECATED EAPI int       elm_image_cache_get(void);
-EINA_DEPRECATED EAPI int       elm_cache_image_cache_size_get(void);
+EINA_DEPRECATED ELM_API int       elm_image_cache_get(void);
+EINA_DEPRECATED ELM_API int       elm_cache_image_cache_size_get(void);
 
 /**
  * Set the configured image cache size
@@ -5324,7 +5324,7 @@ EINA_DEPRECATED EAPI int       elm_cache_image_cache_size_get(void);
  * @param size The image cache size
  * @deprecated Use elm_cache_image_cache_size_set(int size);
  */
-EINA_DEPRECATED EAPI void      elm_image_cache_set(int size);
+EINA_DEPRECATED ELM_API void      elm_image_cache_set(int size);
 
 
 /**
@@ -5336,7 +5336,7 @@ EINA_DEPRECATED EAPI void      elm_image_cache_set(int size);
  * @return The edje file cache size
  * @deprecated Use elm_cache_edje_file_cache_size_get(void);
  */
-EINA_DEPRECATED EAPI int       elm_edje_file_cache_get(void);
+EINA_DEPRECATED ELM_API int       elm_edje_file_cache_get(void);
 
 /**
  * Set the configured edje file cache size
@@ -5347,7 +5347,7 @@ EINA_DEPRECATED EAPI int       elm_edje_file_cache_get(void);
  * @param size The edje file cache size
  * @deprecated Use elm_cache_edje_file_cache_size_get(int size);
  */
-EINA_DEPRECATED EAPI void      elm_edje_file_cache_set(int size);
+EINA_DEPRECATED ELM_API void      elm_edje_file_cache_set(int size);
 
 /**
  * Get the configured edje collections (groups) cache size.
@@ -5358,7 +5358,7 @@ EINA_DEPRECATED EAPI void      elm_edje_file_cache_set(int size);
  * @return The edje collections cache size
  * @deprecated Use elm_cache_edje_collection_cache_size_get(void);
  */
-EINA_DEPRECATED EAPI int       elm_edje_collection_cache_get(void);
+EINA_DEPRECATED ELM_API int       elm_edje_collection_cache_get(void);
 
 /**
  * Set the configured edje collections (groups) cache size
@@ -5369,7 +5369,7 @@ EINA_DEPRECATED EAPI int       elm_edje_collection_cache_get(void);
  * @param size The edje collections cache size
  * @deprecated elm_cache_edje_collection_cache_size_set(int size);
  */
-EINA_DEPRECATED EAPI void      elm_edje_collection_cache_set(int size);
+EINA_DEPRECATED ELM_API void      elm_edje_collection_cache_set(int size);
 
 /**
  * Get whether browsing history is enabled for the given object
@@ -5380,7 +5380,7 @@ EINA_DEPRECATED EAPI void      elm_edje_collection_cache_set(int size);
  *
  * @deprecated Use elm_web_history_enabled_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool         elm_web_history_enable_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool         elm_web_history_enable_get(const Evas_Object *obj);
 
 /**
  * Enables or disables the browsing history
@@ -5391,7 +5391,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_history_enable_get(const Evas_Obj
  * @deprecated Use elm_web_history_enabled_set()
  *
  */
-EINA_DEPRECATED EAPI void              elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable);
+EINA_DEPRECATED ELM_API void              elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable);
 
 /**
  * @brief Add an object swallowed in an item at the end of the given menu
@@ -5407,7 +5407,7 @@ EINA_DEPRECATED EAPI void              elm_web_history_enable_set(Evas_Object *o
  * Add an evas object as an item to the menu.
  * @deprecated please use "elm_menu_item_add" + "elm_object_item_content_set" instead.
  */
-EINA_DEPRECATED EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data);
+EINA_DEPRECATED ELM_API Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Sets whether events should be passed to by a click outside
@@ -5422,7 +5422,7 @@ EINA_DEPRECATED EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_
  * @note The default value is EINA_TRUE.
  * @deprecated Please use elm_notify_allow_events_set() instead
  */
-EINA_DEPRECATED EAPI void                         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
+EINA_DEPRECATED ELM_API void                         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
 
 /**
  * @brief Return true if events are repeat below the notify object
@@ -5431,7 +5431,7 @@ EINA_DEPRECATED EAPI void                         elm_notify_repeat_events_set(E
  * @see elm_notify_repeat_events_set()
  * @deprecated Please use elm_notify_allow_events_get() instead
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_notify_repeat_events_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_notify_repeat_events_get(const Evas_Object *obj);
 
 /**
  * Set if the cursor set should be searched on the theme or should use
@@ -5443,7 +5443,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_notify_repeat_events_get(c
  *
  * @deprecated Use elm_object_cursor_theme_search_enabled_set()
  */
-EINA_DEPRECATED EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
+EINA_DEPRECATED ELM_API void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
 
 /**
  * Get the cursor engine only usage for this object cursor.
@@ -5456,7 +5456,7 @@ EINA_DEPRECATED EAPI void        elm_object_cursor_engine_only_set(Evas_Object *
  *
  * @deprecated Use elm_object_cursor_theme_search_enabled_get();
  */
-EINA_DEPRECATED EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
 
 /**
  * Go to a given items level on a index widget
@@ -5466,7 +5466,7 @@ EINA_DEPRECATED EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Ob
  *
  * @deprecated please use "elm_index_level_go" instead.
  */
-EINA_DEPRECATED EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
+EINA_DEPRECATED ELM_API void                  elm_index_item_go(Evas_Object *obj, int level);
 
 /**
  * Enable or disable auto hiding feature for a given index widget.
@@ -5478,7 +5478,7 @@ EINA_DEPRECATED EAPI void                  elm_index_item_go(Evas_Object *obj, i
  *
  * @deprecated please use "elm_index_autohide_disabled_set" instead.
  */
-EINA_DEPRECATED EAPI void                  elm_index_active_set(Evas_Object *obj, Eina_Bool active);
+EINA_DEPRECATED ELM_API void                  elm_index_active_set(Evas_Object *obj, Eina_Bool active);
 
 /**
  * Get whether auto hiding feature is enabled or not for a given index widget.
@@ -5490,7 +5490,7 @@ EINA_DEPRECATED EAPI void                  elm_index_active_set(Evas_Object *obj
  *
  * @deprecated please use "elm_index_autohide_disabled_get" instead.
  */
-EINA_DEPRECATED EAPI Eina_Bool             elm_index_active_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool             elm_index_active_get(const Evas_Object *obj);
 
 /**
  * Append a new item, on a given index widget, <b>after the item
@@ -5514,7 +5514,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_index_active_get(const Evas_Objec
  *
  * @deprecated please use "elm_index_item_insert_after" instead.
  */
-EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+EINA_DEPRECATED ELM_API Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Prepend a new item, on a given index widget, <b>after the item
@@ -5538,7 +5538,7 @@ EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_O
  *
  * @deprecated please use "elm_index_item_insert_before" instead.
  */
-EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+EINA_DEPRECATED ELM_API Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Set the transparency state of a window.
@@ -5551,7 +5551,7 @@ EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_
  * @see elm_win_alpha_set()
  * @deprecated Please use elm_win_alpha_set()
  */
-EINA_DEPRECATED EAPI void                  elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent);
+EINA_DEPRECATED ELM_API void                  elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent);
 
 /**
  * Get the transparency state of a window.
@@ -5562,7 +5562,7 @@ EINA_DEPRECATED EAPI void                  elm_win_transparent_set(Evas_Object *
  * @see elm_win_transparent_set()
  * @deprecated Please use elm_win_alpha_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
 
 /**
  * Set the theme for all elementary using applications on the current display
@@ -5571,7 +5571,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_win_transparent_get(const Evas_Ob
  * environment variable.
  * @deprecated Use elm_theme_set(NULL, theme); elm_config_all_flush(); instead.
  */
-EINA_DEPRECATED EAPI void             elm_theme_all_set(const char *theme);
+EINA_DEPRECATED ELM_API void             elm_theme_all_set(const char *theme);
 
 /**
  * Returns the Evas_Object that represents the content area.
@@ -5580,7 +5580,7 @@ EINA_DEPRECATED EAPI void             elm_theme_all_set(const char *theme);
  * @return The content area of the widget.
  *
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj);
 
 /**
  * Set if the object is (up/down) resizable.
@@ -5599,7 +5599,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_conformant_content_area_ge
  * @deprecated Please use elm_image_resizable_set()
  *
  */
-EINA_DEPRECATED EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+EINA_DEPRECATED ELM_API void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
  * Get if the object is (up/down) resizable.
@@ -5612,7 +5612,7 @@ EINA_DEPRECATED EAPI void             elm_image_scale_set(Evas_Object *obj, Eina
  * @deprecated Please use elm_image_resizable_get()
  *
  */
-EINA_DEPRECATED EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
+EINA_DEPRECATED ELM_API void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
 
 /**
  * Set if the object is (up/down) resizable.
@@ -5631,7 +5631,7 @@ EINA_DEPRECATED EAPI void             elm_image_scale_get(const Evas_Object *obj
  * @deprecated Please use elm_icon_resizable_set()
  *
  */
-EINA_DEPRECATED EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+EINA_DEPRECATED ELM_API void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
  * Get if the object is (up/down) resizable.
@@ -5644,7 +5644,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_scale_set(Evas_Object *obj, 
  * @deprecated Please use elm_icon_resizable_get()
  *
  */
-EINA_DEPRECATED EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
+EINA_DEPRECATED ELM_API void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
 
 /**
  * Enable or disable preloading of the icon
@@ -5653,7 +5653,7 @@ EINA_DEPRECATED EAPI void                  elm_icon_scale_get(const Evas_Object 
  * @param disable If EINA_TRUE, preloading will be disabled
  * @deprecated Use elm_icon_preload_disabled_set() instead
  */
-EINA_DEPRECATED EAPI void                  elm_icon_preload_set(Evas_Object *obj, Eina_Bool disable);
+EINA_DEPRECATED ELM_API void                  elm_icon_preload_set(Evas_Object *obj, Eina_Bool disable);
 
 /**
  * Returns the last selected item, for a given index widget.
@@ -5664,21 +5664,21 @@ EINA_DEPRECATED EAPI void                  elm_icon_preload_set(Evas_Object *obj
  *
  *
  */
-EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
+EINA_DEPRECATED ELM_API Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
 
 /**
  * Get the value of shrink_mode state.
  *
  * @deprecated elm_multibuttonentry_expanded_get()
  */
-EINA_DEPRECATED EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj);
 
 /**
  * Set/Unset the multibuttonentry to shrink mode state of single line
  *
  * @deprecated elm_multibuttonentry_expanded_set()
  */
-EINA_DEPRECATED EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink_mode);
+EINA_DEPRECATED ELM_API void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink_mode);
 
 /**
  * Get the guide text
@@ -5688,7 +5688,7 @@ EINA_DEPRECATED EAPI void                       elm_multibuttonentry_shrink_mode
  *
  * @deprecated Please use elm_object_part_text_get(obj, "guide");
  */
-EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char                *elm_multibuttonentry_guide_text_get(const Evas_Object *obj);
 
 /**
  * Set the guide text
@@ -5698,7 +5698,7 @@ EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_guide_text_
  *
  * @deprecated Please use elm_object_part_text_set(obj, "guide", guidetext);
  */
-EINA_DEPRECATED EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
+EINA_DEPRECATED ELM_API void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
 
 /**
  * Make the elementary object and its children to be unfocusable
@@ -5720,7 +5720,7 @@ EINA_DEPRECATED EAPI void                       elm_multibuttonentry_guide_text_
  *
  * @deprecated Please use elm_object_tree_unfocusable_set()
  */
-EINA_DEPRECATED EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
+EINA_DEPRECATED ELM_API void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
 
 /**
  * Get whether an Elementary object and its children are unfocusable or not.
@@ -5733,7 +5733,7 @@ EINA_DEPRECATED EAPI void                 elm_object_tree_unfocusable_set(Evas_O
  *
  * @deprecated Please use elm_object_tree_unfocusable_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);
 
 /**
  * Animatedly bring in, to the visible are of a genlist, a given
@@ -5741,7 +5741,7 @@ EINA_DEPRECATED EAPI Eina_Bool            elm_object_tree_unfocusable_get(const 
  *
  * @deprecated elm_genlist_item_bring_in()
  */
-EINA_DEPRECATED EAPI void elm_genlist_item_top_bring_in(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void elm_genlist_item_top_bring_in(Elm_Object_Item *it);
 
 /**
  * Animatedly bring in, to the visible are of a genlist, a given
@@ -5749,7 +5749,7 @@ EINA_DEPRECATED EAPI void elm_genlist_item_top_bring_in(Elm_Object_Item *it);
  *
  * @deprecated elm_genlist_item_bring_in()
  */
-EINA_DEPRECATED EAPI void elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
 
 /**
  * Show the portion of a genlist's internal list containing a given
@@ -5760,7 +5760,7 @@ EINA_DEPRECATED EAPI void elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
  * @deprecated elm_genlist_item_show()
  *
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_top_show(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_top_show(Elm_Object_Item *it);
 
 /**
  * Show the portion of a genlist's internal list containing a given
@@ -5771,7 +5771,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_top_show(Elm
  * @deprecated elm_genlist_item_show()
  *
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_middle_show(Elm_Object_Item *it);
 
 /**
  * Enable or disable round mode.
@@ -5788,7 +5788,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_middle_show(
  *
  * @deprecated elm_diskselector_round_enabled_set()
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round);
 
 /**
  * Set whether items on a given gengrid widget are to get their
@@ -5809,7 +5809,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_round_set(Evas_Obje
  * @see elm_gengrid_always_select_mode_get()
  *
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
  * Get whether items on a given gengrid widget have their selection
@@ -5823,7 +5823,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_always_select_mod
  * @see elm_gengrid_always_select_mode_set() for more details
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set whether items on a given gengrid widget can be selected or not.
@@ -5840,7 +5840,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_always_select_mod
  * @see elm_gengrid_no_select_mode_get()
  *
  */
-EINA_DEPRECATED EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+EINA_DEPRECATED ELM_API void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
  * Get whether items on a given gengrid widget can be selected or
@@ -5853,7 +5853,7 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_no_select_mode_se
  * @see elm_gengrid_no_select_mode_set() for more details
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
 
 /**
  * Get the side labels max length.
@@ -5866,7 +5866,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_no_select_mode_ge
  *
  * @deprecated elm_diskselector_side_text_max_length_get()
  */
-EINA_DEPRECATED EAPI int                    elm_diskselector_side_label_length_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API int                    elm_diskselector_side_label_length_get(const Evas_Object *obj);
 
 /**
  * Set the side labels max length.
@@ -5893,7 +5893,7 @@ EINA_DEPRECATED EAPI int                    elm_diskselector_side_label_length_g
  *
  * @deprecated elm_diskselector_side_text_max_length_set()
  */
-EINA_DEPRECATED EAPI void                   elm_diskselector_side_label_length_set(Evas_Object *obj, int len);
+EINA_DEPRECATED ELM_API void                   elm_diskselector_side_label_length_set(Evas_Object *obj, int len);
 
 /**
  * Set whether the toolbar should always have an item selected.
@@ -5912,7 +5912,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_side_label_length_s
  *
  * @ingroup Elm_Toolbar
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
  * Get whether the toolbar should always have an item selected.
@@ -5925,7 +5925,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_always_select_mode
  *
  * @ingroup Elm_Toolbar
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set whether the toolbar items' should be selected by the user or not.
@@ -5944,7 +5944,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_always_select_mode
  *
  * @ingroup Elm_Toolbar
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
  * Set whether the toolbar items' should be selected by the user or not.
@@ -5957,7 +5957,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_no_select_mode_set
  *
  * @ingroup Elm_Toolbar
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
 
 /*
  * Set the interval on time updates for a user mouse button hold
@@ -5984,7 +5984,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_no_select_mode_get
  * @deprecated elm_clock_first_interval_set()
  *
  */
-EINA_DEPRECATED EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval);
+EINA_DEPRECATED ELM_API void              elm_clock_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for a user mouse button hold
@@ -5995,7 +5995,7 @@ EINA_DEPRECATED EAPI void              elm_clock_interval_set(Evas_Object *obj, 
  *
  * @elm_clock_first_interval_get()
  */
-EINA_DEPRECATED EAPI double            elm_clock_interval_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API double            elm_clock_interval_get(const Evas_Object *obj);
 
 /**
  * Set what digits of the given clock widget should be editable
@@ -6011,7 +6011,7 @@ EINA_DEPRECATED EAPI double            elm_clock_interval_get(const Evas_Object 
  *
  * @deprecated elm_clock_edit_mode_set()
  */
-EINA_DEPRECATED EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Edit_Mode digedit);
+EINA_DEPRECATED ELM_API void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Edit_Mode digedit);
 
 /**
  * Get what digits of the given clock widget should be
@@ -6023,7 +6023,7 @@ EINA_DEPRECATED EAPI void              elm_clock_digit_edit_set(Evas_Object *obj
  *
  * @deprecated elm_clock_edit_mode_get()
  */
-EINA_DEPRECATED EAPI Elm_Clock_Edit_Mode elm_clock_digit_edit_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_Clock_Edit_Mode elm_clock_digit_edit_get(const Evas_Object *obj);
 
 /*
  * Queries whether it's possible to go back in history
@@ -6034,7 +6034,7 @@ EINA_DEPRECATED EAPI Elm_Clock_Edit_Mode elm_clock_digit_edit_get(const Evas_Obj
  * otherwise
  * @deprecated elm_web_back_possible_get();
  */
-EINA_DEPRECATED EAPI Eina_Bool         elm_web_backward_possible(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool         elm_web_backward_possible(Evas_Object *obj);
 
 /**
  * Queries whether it's possible to go forward in history
@@ -6046,7 +6046,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_backward_possible(Evas_Object *ob
  *
  * @deprecated elm_web_forward_possible_get();
  */
-EINA_DEPRECATED EAPI Eina_Bool         elm_web_forward_possible(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool         elm_web_forward_possible(Evas_Object *obj);
 
 /**
  * Queries whether it's possible to jump the given number of steps
@@ -6054,7 +6054,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_forward_possible(Evas_Object *obj
  * @deprecated elm_web_navigate_possible_get();
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool         elm_web_navigate_possible(Evas_Object *obj, int steps);
+EINA_DEPRECATED ELM_API Eina_Bool         elm_web_navigate_possible(Evas_Object *obj, int steps);
 
 /**
  * @brief Set the content of the scroller widget (the object to be scrolled around).
@@ -6067,7 +6067,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_navigate_possible(Evas_Object *ob
  * elm_scroller_content_unset() function.
  * @deprecated use elm_object_content_set() instead
  */
-EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
+EINA_DEPRECATED ELM_API void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
 
 /**
  * @brief Get the content of the scroller widget
@@ -6080,7 +6080,7 @@ EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Eva
  * @see elm_scroller_content_set()
  * @deprecated use elm_object_content_get() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_scroller_content_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the content of the scroller widget
@@ -6093,7 +6093,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *ob
  * @see elm_scroller_content_set()
  * @deprecated use elm_object_content_unset() instead.
  */
-EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj);
+EINA_DEPRECATED ELM_API Evas_Object *elm_scroller_content_unset(Evas_Object *obj);
 
 /**
  * Set the shrink state of toolbar @p obj.
@@ -6109,7 +6109,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj);
  *
  * @deprecated Please use elm_toolbar_shrink_mode_set(obj, shrink_mode);
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
 
 /**
  * Get the shrink mode of toolbar @p obj.
@@ -6121,7 +6121,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_mode_shrink_set(Ev
  *
  * @deprecated Please use elm_toolbar_shrink_mode_get(obj);
  */
-EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);
 
 /**
  * Set the text to be shown in a given toolbar item's tooltips.
@@ -6137,7 +6137,7 @@ EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(co
  * @see elm_object_tooltip_text_set() for more details.
  *
  */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+EINA_DEPRECATED ELM_API void                         elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Enable or disable always select mode on the list object.
@@ -6159,7 +6159,7 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_text_
  *
  * @deprecated elm_list_always_select_mode_set()
  */
-EINA_DEPRECATED EAPI void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+EINA_DEPRECATED ELM_API void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
  * Get a value whether always select mode is enabled or not, meaning that
@@ -6174,7 +6174,7 @@ EINA_DEPRECATED EAPI void                         elm_list_always_select_mode_se
  *
  * @deprecated elm_list_always_select_mode_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
 
 /**
  * Get the real Evas object created to implement the view of a
@@ -6196,7 +6196,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_always_select_mode_ge
  * @deprecated No more support. If you need to emit signal to item's edje object, use elm_object_item_signal_emit().
  *
  */
-EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Set the always select mode.
@@ -6214,7 +6214,7 @@ EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(c
  * @deprecated use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS); instead. use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT); for normal mode.
  *
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+EINA_DEPRECATED ELM_API void                          elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 
 /**
@@ -6227,7 +6227,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_always_select_mod
  * @deprecated use elm_genlist_select_mode_get instead.
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_always_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_genlist_always_select_mode_get(const Evas_Object *obj);
 
 /**
  * Enable/disable the no select mode.
@@ -6242,7 +6242,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_always_select_mod
  * @deprecated use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_NONE); instead. use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT); for normal mode.
  *
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+EINA_DEPRECATED ELM_API void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
  * Get whether the no select mode is enabled.
@@ -6254,7 +6254,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_se
  * @deprecated use elm_genlist_select_mode_get instead.
  *
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
 
 /*
  * Enable/disable compress mode.
@@ -6271,7 +6271,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_no_select_mode_ge
  *
  * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
+EINA_DEPRECATED ELM_API void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
 
 /**
  * Sets the display only state of an item.
@@ -6291,7 +6291,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_compress_mode_set
  *
  * @deprecated elm_genlist_item_display_only_set()
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
 
 /**
  * Get the display only state of an item
@@ -6304,7 +6304,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_display_only
  *
  * @deprecated elm_genlist_item_display_only_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
 
 /**
  * Get whether the compress mode is enabled.
@@ -6315,7 +6315,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_display_only
  *
  * @deprecated elm_genlsit_mode_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Object *obj);
 
 /**
  * Enable/disable height-for-width mode.
@@ -6340,7 +6340,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_compress_mode_get
  *
  * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
+EINA_DEPRECATED ELM_API void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
 
 /**
  * Get whether the height-for-width mode is enabled.
@@ -6351,7 +6351,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_height_for_width_
  *
  * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
  */
-EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
 
 /**
  * Activate a genlist mode on an item
@@ -6390,7 +6390,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_height_for_width_
  *
  * @deprecated elm_genlist_item_decorate_mode_set()
  */
-EINA_DEPRECATED EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
+EINA_DEPRECATED ELM_API void                          elm_genlist_item_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
 
 /**
  * Get the last (or current) genlist mode used.
@@ -6402,7 +6402,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_mode_set(Elm
  *
  * @deprecated elm_genlist_item_decorate_mode_get()
  */
-EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
 
 /**
  * Get active genlist mode item
@@ -6416,7 +6416,7 @@ EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_type_get(con
  *
  * @deprecated elm_genlist_decorated_item_get()
  */
-EINA_DEPRECATED EAPI const Elm_Object_Item       *elm_genlist_mode_item_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const Elm_Object_Item       *elm_genlist_mode_item_get(const Evas_Object *obj);
 
 /**
  * Set Genlist edit mode
@@ -6429,7 +6429,7 @@ EINA_DEPRECATED EAPI const Elm_Object_Item       *elm_genlist_mode_item_get(cons
  *
  * @deprecated elm_genlist_decorate_mode_set
  */
-EINA_DEPRECATED EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode);
+EINA_DEPRECATED ELM_API void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode);
 
 /**
  * Get Genlist edit mode
@@ -6440,7 +6440,7 @@ EINA_DEPRECATED EAPI void               elm_genlist_edit_mode_set(Evas_Object *o
  *
  * @deprecated elm_genlist_decorate_mode_get()
  */
-EINA_DEPRECATED EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Notify the compositor that a uri should be preloaded
@@ -6452,7 +6452,7 @@ EINA_DEPRECATED EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Obj
  * @ingroup Efl_Ui_Win
  * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
  */
-EINA_DEPRECATED EAPI void elm_win_teamwork_uri_preload(Efl_Ui_Win *obj, const char *uri);
+EINA_DEPRECATED ELM_API void elm_win_teamwork_uri_preload(Efl_Ui_Win *obj, const char *uri);
 
 /**
  * @brief Notify the compositor that a uri should be displayed
@@ -6467,7 +6467,7 @@ EINA_DEPRECATED EAPI void elm_win_teamwork_uri_preload(Efl_Ui_Win *obj, const ch
  * @ingroup Efl_Ui_Win
  * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
  */
-EINA_DEPRECATED EAPI void elm_win_teamwork_uri_show(Efl_Ui_Win *obj, const char *uri);
+EINA_DEPRECATED ELM_API void elm_win_teamwork_uri_show(Efl_Ui_Win *obj, const char *uri);
 
 /**
  * @brief Notify the compositor that a uri should be hidden
@@ -6480,7 +6480,7 @@ EINA_DEPRECATED EAPI void elm_win_teamwork_uri_show(Efl_Ui_Win *obj, const char 
  * @ingroup Efl_Ui_Win
  * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
  */
-EINA_DEPRECATED EAPI void elm_win_teamwork_uri_hide(Efl_Ui_Win *obj);
+EINA_DEPRECATED ELM_API void elm_win_teamwork_uri_hide(Efl_Ui_Win *obj);
 
 /**
  * @brief Notify the compositor that a uri should be opened
@@ -6494,7 +6494,7 @@ EINA_DEPRECATED EAPI void elm_win_teamwork_uri_hide(Efl_Ui_Win *obj);
  * @ingroup Efl_Ui_Win
  * @deprecated This is a possibly security issue and is non-portable outside enlightenment and there is no code to detect if it exists and even works, so better not to have this
  */
-EINA_DEPRECATED EAPI void elm_win_teamwork_uri_open(Efl_Ui_Win *obj, const char *uri);
+EINA_DEPRECATED ELM_API void elm_win_teamwork_uri_open(Efl_Ui_Win *obj, const char *uri);
 
 /**
  * @}

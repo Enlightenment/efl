@@ -306,7 +306,7 @@ _elm_photo_efl_canvas_group_group_del(Eo *obj, Elm_Photo_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_photo_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -405,14 +405,14 @@ _elm_photo_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_photo_file_set(Eo *obj, const char *file)
 {
    return efl_file_simple_load((Eo *) obj, file, NULL);
 }
 
 /* Legacy deprecated functions */
-EAPI void
+ELM_API void
 elm_photo_editable_set(Evas_Object *obj, Eina_Bool edit)
 {
    ELM_PHOTO_CHECK(obj);
@@ -420,7 +420,7 @@ elm_photo_editable_set(Evas_Object *obj, Eina_Bool edit)
    elm_image_editable_set(sd->icon, edit);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_photo_editable_get(const Evas_Object *obj)
 {
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
@@ -428,7 +428,7 @@ elm_photo_editable_get(const Evas_Object *obj)
    return elm_image_editable_get(sd->icon);
 }
 
-EAPI void
+ELM_API void
 elm_photo_size_set(Evas_Object *obj, int size)
 {
    ELM_PHOTO_CHECK(obj);
@@ -440,7 +440,7 @@ elm_photo_size_set(Evas_Object *obj, int size)
    _sizing_eval(obj);
 }
 
-EAPI int
+ELM_API int
 elm_photo_size_get(const Evas_Object *obj)
 {
    ELM_PHOTO_CHECK(obj) 0;
@@ -448,7 +448,7 @@ elm_photo_size_get(const Evas_Object *obj)
    return sd->size;
 }
 
-EAPI void
+ELM_API void
 elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill)
 {
    ELM_PHOTO_CHECK(obj);
@@ -459,7 +459,7 @@ elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill)
    _sizing_eval(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_photo_fill_inside_get(const Evas_Object *obj)
 {
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
@@ -467,7 +467,7 @@ elm_photo_fill_inside_get(const Evas_Object *obj)
    return sd->fill_inside;
 }
 
-EAPI void
+ELM_API void
 elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 {
    ELM_PHOTO_CHECK(obj);
@@ -475,7 +475,7 @@ elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
    elm_image_aspect_fixed_set(sd->icon, fixed);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_photo_aspect_fixed_get(const Evas_Object *obj)
 {
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
@@ -483,7 +483,7 @@ elm_photo_aspect_fixed_get(const Evas_Object *obj)
    return elm_image_aspect_fixed_get(sd->icon);
 }
 
-EAPI void
+ELM_API void
 elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group)
 {
    ELM_PHOTO_CHECK(obj);

@@ -17,7 +17,7 @@ __eolian_elm_mapbuf_auto_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_private_mapbuf_auto_set, EFL_FUNC_CALL(on), Eina_Bool on);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_private_mapbuf_auto_set, EFL_FUNC_CALL(on), Eina_Bool on);
 
 Eina_Bool _elm_mapbuf_auto_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
@@ -29,7 +29,7 @@ __eolian_elm_mapbuf_auto_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_private_mapbuf_auto_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_private_mapbuf_auto_get, Eina_Bool, 0);
 
 void _elm_mapbuf_smooth_set(Eo *obj, Elm_Mapbuf_Data *pd, Eina_Bool smooth);
 
@@ -49,7 +49,7 @@ __eolian_elm_mapbuf_smooth_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_private_mapbuf_smooth_set, EFL_FUNC_CALL(smooth), Eina_Bool smooth);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_private_mapbuf_smooth_set, EFL_FUNC_CALL(smooth), Eina_Bool smooth);
 
 Eina_Bool _elm_mapbuf_smooth_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
@@ -61,7 +61,7 @@ __eolian_elm_mapbuf_smooth_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_private_mapbuf_smooth_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_private_mapbuf_smooth_get, Eina_Bool, 0);
 
 void _elm_mapbuf_alpha_set(Eo *obj, Elm_Mapbuf_Data *pd, Eina_Bool alpha);
 
@@ -81,7 +81,7 @@ __eolian_elm_mapbuf_alpha_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_private_mapbuf_alpha_set, EFL_FUNC_CALL(alpha), Eina_Bool alpha);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_private_mapbuf_alpha_set, EFL_FUNC_CALL(alpha), Eina_Bool alpha);
 
 Eina_Bool _elm_mapbuf_alpha_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
@@ -93,7 +93,7 @@ __eolian_elm_mapbuf_alpha_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_private_mapbuf_alpha_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_private_mapbuf_alpha_get, Eina_Bool, 0);
 
 void _elm_mapbuf_enabled_set(Eo *obj, Elm_Mapbuf_Data *pd, Eina_Bool enabled);
 
@@ -113,7 +113,7 @@ __eolian_elm_mapbuf_enabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_private_mapbuf_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_private_mapbuf_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
 
 Eina_Bool _elm_mapbuf_enabled_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
@@ -125,15 +125,15 @@ __eolian_elm_mapbuf_enabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_private_mapbuf_enabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_private_mapbuf_enabled_get, Eina_Bool, 0);
 
 void _elm_mapbuf_point_color_set(Eo *obj, Elm_Mapbuf_Data *pd, int idx, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_private_mapbuf_point_color_set, EFL_FUNC_CALL(idx, r, g, b, a), int idx, int r, int g, int b, int a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_private_mapbuf_point_color_set, EFL_FUNC_CALL(idx, r, g, b, a), int idx, int r, int g, int b, int a);
 
 void _elm_mapbuf_point_color_get(const Eo *obj, Elm_Mapbuf_Data *pd, int idx, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_private_mapbuf_point_color_get, EFL_FUNC_CALL(idx, r, g, b, a), int idx, int *r, int *g, int *b, int *a);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_private_mapbuf_point_color_get, EFL_FUNC_CALL(idx, r, g, b, a), int idx, int *r, int *g, int *b, int *a);
 
 Efl_Object *_elm_mapbuf_efl_object_constructor(Eo *obj, Elm_Mapbuf_Data *pd);
 

@@ -130,7 +130,7 @@ typedef enum
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI Eina_Bool elm_glview_resize_policy_set(Elm_Glview *obj, Elm_GLView_Resize_Policy policy);
+ELM_API Eina_Bool elm_glview_resize_policy_set(Elm_Glview *obj, Elm_GLView_Resize_Policy policy);
 
 /**
  * @brief Set the render policy for the glview object.
@@ -148,7 +148,7 @@ EAPI Eina_Bool elm_glview_resize_policy_set(Elm_Glview *obj, Elm_GLView_Resize_P
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI Eina_Bool elm_glview_render_policy_set(Elm_Glview *obj, Elm_GLView_Render_Policy policy);
+ELM_API Eina_Bool elm_glview_render_policy_set(Elm_Glview *obj, Elm_GLView_Render_Policy policy);
 
 /**
  * @brief Set the mode of the GLView. Supports alpha, depth, stencil.
@@ -165,7 +165,7 @@ EAPI Eina_Bool elm_glview_render_policy_set(Elm_Glview *obj, Elm_GLView_Render_P
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI Eina_Bool elm_glview_mode_set(Elm_Glview *obj, Elm_GLView_Mode mode);
+ELM_API Eina_Bool elm_glview_mode_set(Elm_Glview *obj, Elm_GLView_Mode mode);
 
 /**
  * @brief Get the gl api struct for gl rendering.
@@ -176,7 +176,7 @@ EAPI Eina_Bool elm_glview_mode_set(Elm_Glview *obj, Elm_GLView_Mode mode);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI Evas_GL_API *elm_glview_gl_api_get(const Elm_Glview *obj);
+ELM_API Evas_GL_API *elm_glview_gl_api_get(const Elm_Glview *obj);
 
 /**
  * @brief Get the internal Evas GL attached to this view.
@@ -192,7 +192,7 @@ EAPI Evas_GL_API *elm_glview_gl_api_get(const Elm_Glview *obj);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI Evas_GL *elm_glview_evas_gl_get(const Elm_Glview *obj);
+ELM_API Evas_GL *elm_glview_evas_gl_get(const Elm_Glview *obj);
 
 /**
  * @brief Get the current GL view's rotation when using direct rendering
@@ -210,7 +210,7 @@ EAPI Evas_GL *elm_glview_evas_gl_get(const Elm_Glview *obj);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI int elm_glview_rotation_get(const Elm_Glview *obj);
+ELM_API int elm_glview_rotation_get(const Elm_Glview *obj);
 
 
 #endif

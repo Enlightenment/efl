@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Menu
  */
-EAPI Evas_Object                 *elm_menu_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_menu_add(Evas_Object *parent);
 
 /**
  * @brief Set the parent for the given menu widget
@@ -16,7 +16,7 @@ EAPI Evas_Object                 *elm_menu_add(Evas_Object *parent);
  *
  * @ingroup Elm_Menu
  */
-EAPI void                         elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+ELM_API void                         elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Get the parent for the given menu widget
@@ -28,7 +28,7 @@ EAPI void                         elm_menu_parent_set(Evas_Object *obj, Evas_Obj
  *
  * @ingroup Elm_Menu
  */
-EAPI Evas_Object                 *elm_menu_parent_get(const Evas_Object *obj);
+ELM_API Evas_Object                 *elm_menu_parent_get(const Evas_Object *obj);
 
 #include "elm_menu_item_eo.legacy.h"
 #include "elm_menu_eo.legacy.h"

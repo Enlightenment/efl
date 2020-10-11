@@ -45,7 +45,7 @@ _elm_separator_efl_canvas_group_group_add(Eo *obj, Elm_Separator_Data *sd EINA_U
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_separator_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

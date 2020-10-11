@@ -965,7 +965,7 @@ _elm_panel_efl_ui_widget_on_access_update(Eo *obj, Elm_Panel_Data *_pd, Eina_Boo
        (obj, wd->resize_obj, "btn_icon");
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_panel_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

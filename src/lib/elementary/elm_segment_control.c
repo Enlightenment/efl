@@ -642,7 +642,7 @@ _elm_segment_control_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Seg
    _access_obj_process(sd, _elm_segment_control_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_segment_control_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

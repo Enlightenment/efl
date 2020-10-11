@@ -1,21 +1,21 @@
 
 Eina_Bool _elm_sys_notify_servers_set(Eo *obj, Elm_Sys_Notify_Data *pd, Elm_Sys_Notify_Server servers);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_sys_notify_servers_set, Eina_Bool, 0, EFL_FUNC_CALL(servers), Elm_Sys_Notify_Server servers);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_sys_notify_servers_set, Eina_Bool, 0, EFL_FUNC_CALL(servers), Elm_Sys_Notify_Server servers);
 
 Elm_Sys_Notify_Server _elm_sys_notify_servers_get(const Eo *obj, Elm_Sys_Notify_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_sys_notify_servers_get, Elm_Sys_Notify_Server, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_sys_notify_servers_get, Elm_Sys_Notify_Server, 0);
 
 Elm_Sys_Notify *_elm_sys_notify_singleton_get(void);
 
-EOAPI Elm_Sys_Notify * elm_obj_sys_notify_singleton_get(void)
+ELM_API ELM_API_WEAK Elm_Sys_Notify * elm_obj_sys_notify_singleton_get(void)
 {
    const Efl_Class *klass = elm_sys_notify_class_get();
    EINA_SAFETY_ON_NULL_RETURN_VAL(klass, NULL);
    return _elm_sys_notify_singleton_get();
 }
-EOAPI Elm_Sys_Notify * elm_sys_notify_singleton_get(void)
+ELM_API ELM_API_WEAK Elm_Sys_Notify * elm_sys_notify_singleton_get(void)
 {
    const Efl_Class *klass = elm_sys_notify_class_get();
    EINA_SAFETY_ON_NULL_RETURN_VAL(klass, NULL);

@@ -38,7 +38,7 @@ typedef enum
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_wrap_width_set(Elm_Label *obj, int w);
+ELM_API void elm_label_wrap_width_set(Elm_Label *obj, int w);
 
 /**
  * @brief Control wrap width of the label
@@ -53,7 +53,7 @@ EAPI void elm_label_wrap_width_set(Elm_Label *obj, int w);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI int elm_label_wrap_width_get(const Elm_Label *obj);
+ELM_API int elm_label_wrap_width_get(const Elm_Label *obj);
 
 /**
  * @brief Control the slide speed of the label
@@ -69,7 +69,7 @@ EAPI int elm_label_wrap_width_get(const Elm_Label *obj);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_slide_speed_set(Elm_Label *obj, double speed);
+ELM_API void elm_label_slide_speed_set(Elm_Label *obj, double speed);
 
 /**
  * @brief Control the slide speed of the label
@@ -86,7 +86,7 @@ EAPI void elm_label_slide_speed_set(Elm_Label *obj, double speed);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI double elm_label_slide_speed_get(const Elm_Label *obj);
+ELM_API double elm_label_slide_speed_get(const Elm_Label *obj);
 
 /**
  * @brief Control the slide mode of the label widget.
@@ -109,7 +109,7 @@ EAPI double elm_label_slide_speed_get(const Elm_Label *obj);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_slide_mode_set(Elm_Label *obj, Elm_Label_Slide_Mode mode);
+ELM_API void elm_label_slide_mode_set(Elm_Label *obj, Elm_Label_Slide_Mode mode);
 
 /**
  * @brief Control the slide mode of the label widget.
@@ -133,7 +133,7 @@ EAPI void elm_label_slide_mode_set(Elm_Label *obj, Elm_Label_Slide_Mode mode);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI Elm_Label_Slide_Mode elm_label_slide_mode_get(const Elm_Label *obj);
+ELM_API Elm_Label_Slide_Mode elm_label_slide_mode_get(const Elm_Label *obj);
 
 /**
  * @brief Control the slide duration of the label
@@ -148,7 +148,7 @@ EAPI Elm_Label_Slide_Mode elm_label_slide_mode_get(const Elm_Label *obj);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_slide_duration_set(Elm_Label *obj, double duration);
+ELM_API void elm_label_slide_duration_set(Elm_Label *obj, double duration);
 
 /**
  * @brief Control the slide duration of the label
@@ -164,7 +164,7 @@ EAPI void elm_label_slide_duration_set(Elm_Label *obj, double duration);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI double elm_label_slide_duration_get(const Elm_Label *obj);
+ELM_API double elm_label_slide_duration_get(const Elm_Label *obj);
 
 /**
  * @brief Control the wrapping behavior of the label
@@ -179,7 +179,7 @@ EAPI double elm_label_slide_duration_get(const Elm_Label *obj);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_line_wrap_set(Elm_Label *obj, Elm_Wrap_Type wrap);
+ELM_API void elm_label_line_wrap_set(Elm_Label *obj, Elm_Wrap_Type wrap);
 
 /**
  * @brief Control the wrapping behavior of the label
@@ -195,7 +195,7 @@ EAPI void elm_label_line_wrap_set(Elm_Label *obj, Elm_Wrap_Type wrap);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI Elm_Wrap_Type elm_label_line_wrap_get(const Elm_Label *obj);
+ELM_API Elm_Wrap_Type elm_label_line_wrap_get(const Elm_Label *obj);
 
 /**
  * @brief Control the ellipsis behavior of the label
@@ -211,7 +211,7 @@ EAPI Elm_Wrap_Type elm_label_line_wrap_get(const Elm_Label *obj);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_ellipsis_set(Elm_Label *obj, Eina_Bool ellipsis);
+ELM_API void elm_label_ellipsis_set(Elm_Label *obj, Eina_Bool ellipsis);
 
 /**
  * @brief Control the ellipsis behavior of the label
@@ -228,7 +228,7 @@ EAPI void elm_label_ellipsis_set(Elm_Label *obj, Eina_Bool ellipsis);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI Eina_Bool elm_label_ellipsis_get(const Elm_Label *obj);
+ELM_API Eina_Bool elm_label_ellipsis_get(const Elm_Label *obj);
 
 /**
  * @brief Start slide effect.
@@ -238,6 +238,6 @@ EAPI Eina_Bool elm_label_ellipsis_get(const Elm_Label *obj);
  *
  * @ingroup Elm_Label_Group
  */
-EAPI void elm_label_slide_go(Elm_Label *obj);
+ELM_API void elm_label_slide_go(Elm_Label *obj);
 
 #endif

@@ -72,7 +72,7 @@ typedef enum
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_zoom_min_set(Elm_Map *obj, int zoom);
+ELM_API void elm_map_zoom_min_set(Elm_Map *obj, int zoom);
 
 /**
  * @brief Get the minimum zoom of the source.
@@ -83,7 +83,7 @@ EAPI void elm_map_zoom_min_set(Elm_Map *obj, int zoom);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI int elm_map_zoom_min_get(const Elm_Map *obj);
+ELM_API int elm_map_zoom_min_get(const Elm_Map *obj);
 
 /**
  * @brief Rotate the map.
@@ -95,7 +95,7 @@ EAPI int elm_map_zoom_min_get(const Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_rotate_set(Elm_Map *obj, double degree, int cx, int cy);
+ELM_API void elm_map_rotate_set(Elm_Map *obj, double degree, int cx, int cy);
 
 /**
  * @brief Get the rotate degree of the map.
@@ -107,7 +107,7 @@ EAPI void elm_map_rotate_set(Elm_Map *obj, double degree, int cx, int cy);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_rotate_get(const Elm_Map *obj, double *degree, int *cx, int *cy);
+ELM_API void elm_map_rotate_get(const Elm_Map *obj, double *degree, int *cx, int *cy);
 
 /**
  * @brief Set the user agent used by the map object to access routing services.
@@ -123,7 +123,7 @@ EAPI void elm_map_rotate_get(const Elm_Map *obj, double *degree, int *cx, int *c
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_user_agent_set(Elm_Map *obj, const char *user_agent);
+ELM_API void elm_map_user_agent_set(Elm_Map *obj, const char *user_agent);
 
 /**
  * @brief Get the user agent used by the map object.
@@ -134,7 +134,7 @@ EAPI void elm_map_user_agent_set(Elm_Map *obj, const char *user_agent);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI const char *elm_map_user_agent_get(const Elm_Map *obj);
+ELM_API const char *elm_map_user_agent_get(const Elm_Map *obj);
 
 /**
  * @brief Set the maximum zoom of the source.
@@ -144,7 +144,7 @@ EAPI const char *elm_map_user_agent_get(const Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_zoom_max_set(Elm_Map *obj, int zoom);
+ELM_API void elm_map_zoom_max_set(Elm_Map *obj, int zoom);
 
 /**
  * @brief Get the maximum zoom of the source.
@@ -155,7 +155,7 @@ EAPI void elm_map_zoom_max_set(Elm_Map *obj, int zoom);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI int elm_map_zoom_max_get(const Elm_Map *obj);
+ELM_API int elm_map_zoom_max_get(const Elm_Map *obj);
 
 /**
  * @brief Get the current geographic coordinates of the map.
@@ -169,7 +169,7 @@ EAPI int elm_map_zoom_max_get(const Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_region_get(const Elm_Map *obj, double *lon, double *lat);
+ELM_API void elm_map_region_get(const Elm_Map *obj, double *lon, double *lat);
 
 /**
  * @brief Return all overlays in the map object.
@@ -185,7 +185,7 @@ EAPI void elm_map_region_get(const Elm_Map *obj, double *lon, double *lat);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Eina_List *elm_map_overlays_get(const Elm_Map *obj);
+ELM_API Eina_List *elm_map_overlays_get(const Elm_Map *obj);
 
 /**
  * @brief Get the information of tile load status.
@@ -199,7 +199,7 @@ EAPI Eina_List *elm_map_overlays_get(const Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_tile_load_status_get(const Elm_Map *obj, int *try_num, int *finish_num);
+ELM_API void elm_map_tile_load_status_get(const Elm_Map *obj, int *try_num, int *finish_num);
 
 /**
  * @brief Set the current source of the map for a specific type.
@@ -226,7 +226,7 @@ EAPI void elm_map_tile_load_status_get(const Elm_Map *obj, int *try_num, int *fi
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_source_set(Elm_Map *obj, Elm_Map_Source_Type type, const char *source_name);
+ELM_API void elm_map_source_set(Elm_Map *obj, Elm_Map_Source_Type type, const char *source_name);
 
 /**
  * @brief Get the name of currently used source for a specific type.
@@ -238,7 +238,7 @@ EAPI void elm_map_source_set(Elm_Map *obj, Elm_Map_Source_Type type, const char 
  *
  * @ingroup Elm_Map_Group
  */
-EAPI const char *elm_map_source_get(const Elm_Map *obj, Elm_Map_Source_Type type);
+ELM_API const char *elm_map_source_get(const Elm_Map *obj, Elm_Map_Source_Type type);
 
 /**
  * @brief Add a new route to the map object.
@@ -273,7 +273,7 @@ EAPI const char *elm_map_source_get(const Elm_Map *obj, Elm_Map_Source_Type type
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Route *elm_map_route_add(Elm_Map *obj, Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat, Elm_Map_Route_Cb route_cb, void *data);
+ELM_API Elm_Map_Route *elm_map_route_add(Elm_Map *obj, Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat, Elm_Map_Route_Cb route_cb, void *data);
 
 /**
  * @brief Add a track on the map.
@@ -285,7 +285,7 @@ EAPI Elm_Map_Route *elm_map_route_add(Elm_Map *obj, Elm_Map_Route_Type type, Elm
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Efl_Canvas_Object *elm_map_track_add(Elm_Map *obj, void *emap);
+ELM_API Efl_Canvas_Object *elm_map_track_add(Elm_Map *obj, void *emap);
 
 /**
  * @brief Convert geographic coordinates (longitude, latitude) into canvas
@@ -302,7 +302,7 @@ EAPI Efl_Canvas_Object *elm_map_track_add(Elm_Map *obj, void *emap);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_region_to_canvas_convert(const Elm_Map *obj, double lon, double lat, int *x, int *y);
+ELM_API void elm_map_region_to_canvas_convert(const Elm_Map *obj, double lon, double lat, int *x, int *y);
 
 /**
  * @brief Add a new circle overlay to the map object. This overlay has a circle
@@ -320,7 +320,7 @@ EAPI void elm_map_region_to_canvas_convert(const Elm_Map *obj, double lon, doubl
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_circle_add(Elm_Map *obj, double lon, double lat, double radius);
+ELM_API Elm_Map_Overlay *elm_map_overlay_circle_add(Elm_Map *obj, double lon, double lat, double radius);
 
 /**
  * @brief Add a new class overlay to the map object. This overlay has a class
@@ -344,7 +344,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_circle_add(Elm_Map *obj, double lon, doubl
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_class_add(Elm_Map *obj);
+ELM_API Elm_Map_Overlay *elm_map_overlay_class_add(Elm_Map *obj);
 
 /**
  * @brief Add a new bubble overlay to the map object. This overlay has a bubble
@@ -364,7 +364,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_class_add(Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_bubble_add(Elm_Map *obj);
+ELM_API Elm_Map_Overlay *elm_map_overlay_bubble_add(Elm_Map *obj);
 
 /**
  * @brief Get the names of available sources for a specific type.
@@ -386,7 +386,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_bubble_add(Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI const char **elm_map_sources_get(const Elm_Map *obj, Elm_Map_Source_Type type);
+ELM_API const char **elm_map_sources_get(const Elm_Map *obj, Elm_Map_Source_Type type);
 
 /**
  * @brief Add a new polygon overlay to the map object. This overlay has a
@@ -403,7 +403,7 @@ EAPI const char **elm_map_sources_get(const Elm_Map *obj, Elm_Map_Source_Type ty
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_polygon_add(Elm_Map *obj);
+ELM_API Elm_Map_Overlay *elm_map_overlay_polygon_add(Elm_Map *obj);
 
 /**
  * @brief Add a new line overlay to the map object. This overlay has a line
@@ -422,7 +422,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_polygon_add(Elm_Map *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_line_add(Elm_Map *obj, double flon, double flat, double tlon, double tlat);
+ELM_API Elm_Map_Overlay *elm_map_overlay_line_add(Elm_Map *obj, double flon, double flat, double tlon, double tlat);
 
 /**
  * @brief Show the given coordinates at the center of the map, immediately.
@@ -438,7 +438,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_line_add(Elm_Map *obj, double flon, double
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_region_show(Elm_Map *obj, double lon, double lat);
+ELM_API void elm_map_region_show(Elm_Map *obj, double lon, double lat);
 
 /**
  * @brief Request a address or geographic coordinates(longitude, latitude) from
@@ -464,7 +464,7 @@ EAPI void elm_map_region_show(Elm_Map *obj, double lon, double lat);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Name *elm_map_name_add(const Elm_Map *obj, const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data);
+ELM_API Elm_Map_Name *elm_map_name_add(const Elm_Map *obj, const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data);
 
 /**
  * @brief Requests a list of addresses corresponding to a given name.
@@ -480,7 +480,7 @@ EAPI Elm_Map_Name *elm_map_name_add(const Elm_Map *obj, const char *address, dou
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_name_search(const Elm_Map *obj, const char *address, Elm_Map_Name_List_Cb name_cb, void *data);
+ELM_API void elm_map_name_search(const Elm_Map *obj, const char *address, Elm_Map_Name_List_Cb name_cb, void *data);
 
 /**
  * @brief Animatedly bring in given coordinates to the center of the map.
@@ -498,7 +498,7 @@ EAPI void elm_map_name_search(const Elm_Map *obj, const char *address, Elm_Map_N
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_region_bring_in(Elm_Map *obj, double lon, double lat);
+ELM_API void elm_map_region_bring_in(Elm_Map *obj, double lon, double lat);
 
 /**
  * @brief Animatedly set the zoom level of the map and bring in given
@@ -519,7 +519,7 @@ EAPI void elm_map_region_bring_in(Elm_Map *obj, double lon, double lat);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_region_zoom_bring_in(Elm_Map *obj, int zoom, double lon, double lat);
+ELM_API void elm_map_region_zoom_bring_in(Elm_Map *obj, int zoom, double lon, double lat);
 
 /**
  * @brief Remove a track from the map.
@@ -529,7 +529,7 @@ EAPI void elm_map_region_zoom_bring_in(Elm_Map *obj, int zoom, double lon, doubl
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_track_remove(Elm_Map *obj, Efl_Canvas_Object *route);
+ELM_API void elm_map_track_remove(Elm_Map *obj, Efl_Canvas_Object *route);
 
 /**
  * @brief Add a new route overlay to the map object. This overlay has a route
@@ -549,7 +549,7 @@ EAPI void elm_map_track_remove(Elm_Map *obj, Efl_Canvas_Object *route);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_route_add(Elm_Map *obj, const Elm_Map_Route *route);
+ELM_API Elm_Map_Overlay *elm_map_overlay_route_add(Elm_Map *obj, const Elm_Map_Route *route);
 
 /**
  * @brief Add a new scale overlay to the map object. This overlay has a scale
@@ -569,7 +569,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_route_add(Elm_Map *obj, const Elm_Map_Rout
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_scale_add(Elm_Map *obj, int x, int y);
+ELM_API Elm_Map_Overlay *elm_map_overlay_scale_add(Elm_Map *obj, int x, int y);
 
 /**
  * @brief Add a new overlay to the map object. This overlay has a default type.
@@ -594,7 +594,7 @@ EAPI Elm_Map_Overlay *elm_map_overlay_scale_add(Elm_Map *obj, int x, int y);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Overlay *elm_map_overlay_add(Elm_Map *obj, double lon, double lat);
+ELM_API Elm_Map_Overlay *elm_map_overlay_add(Elm_Map *obj, double lon, double lat);
 
 /**
  * @brief Convert canvas coordinates into geographic coordinates (longitude,
@@ -611,6 +611,6 @@ EAPI Elm_Map_Overlay *elm_map_overlay_add(Elm_Map *obj, double lon, double lat);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_canvas_to_region_convert(const Elm_Map *obj, int x, int y, double *lon, double *lat);
+ELM_API void elm_map_canvas_to_region_convert(const Elm_Map *obj, int x, int y, double *lon, double *lat);
 
 #endif

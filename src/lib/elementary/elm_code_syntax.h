@@ -31,7 +31,7 @@ typedef struct _Elm_Code_Syntax Elm_Code_Syntax;
  *
  * @ingroup Syntax
  */
-EAPI Elm_Code_Syntax *elm_code_syntax_for_mime_get(const char *mime);
+ELM_API Elm_Code_Syntax *elm_code_syntax_for_mime_get(const char *mime);
 
 /**
  * Parse a line and apply the syntax definition by inserting Elm_Code_Token into the line.
@@ -41,7 +41,7 @@ EAPI Elm_Code_Syntax *elm_code_syntax_for_mime_get(const char *mime);
  *
  * @ingroup Syntax
  */
-EAPI void elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line);
+ELM_API void elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line);
 
 /**
  * Parse a file and apply the syntax definition one line at a time.
@@ -51,7 +51,7 @@ EAPI void elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *lin
  *
  * @ingroup Syntax
  */
-EAPI void elm_code_syntax_parse_file(Elm_Code_Syntax *syntax, Elm_Code_File *file);
+ELM_API void elm_code_syntax_parse_file(Elm_Code_Syntax *syntax, Elm_Code_File *file);
 
 
 /**

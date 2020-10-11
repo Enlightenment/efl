@@ -15,7 +15,7 @@
  * @ingroup Elm_Focus
  * @since 1.10
  */
-EAPI Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object *obj);
+ELM_API Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object *obj);
 
 /**
  * Get next object item which was set with specific focus direction.
@@ -34,7 +34,7 @@ EAPI Elm_Object_Item             *elm_object_focused_item_get(const Evas_Object 
  *
  * @ingroup Elm_Focus
  */
-EAPI Elm_Object_Item *    elm_object_focus_next_item_get(const Evas_Object *obj, Elm_Focus_Direction dir);
+ELM_API Elm_Object_Item *    elm_object_focus_next_item_get(const Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
  * Set next object item with specific focus direction.
@@ -56,6 +56,6 @@ EAPI Elm_Object_Item *    elm_object_focus_next_item_get(const Evas_Object *obj,
  *
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_object_focus_next_item_set(Evas_Object *obj, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
+ELM_API void                 elm_object_focus_next_item_set(Evas_Object *obj, Elm_Object_Item *next_item, Elm_Focus_Direction dir);
 
 

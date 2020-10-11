@@ -1,13 +1,13 @@
-EWAPI const Efl_Event_Description _ELM_PANEL_EVENT_TOGGLED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PANEL_EVENT_TOGGLED =
    EFL_EVENT_DESCRIPTION("toggled");
 
 void _elm_panel_orient_set(Eo *obj, Elm_Panel_Data *pd, Elm_Panel_Orient orient);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_panel_orient_set, EFL_FUNC_CALL(orient), Elm_Panel_Orient orient);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_panel_orient_set, EFL_FUNC_CALL(orient), Elm_Panel_Orient orient);
 
 Elm_Panel_Orient _elm_panel_orient_get(const Eo *obj, Elm_Panel_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_panel_orient_get, Elm_Panel_Orient, 2 /* Elm.Panel.Orient.left */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_panel_orient_get, Elm_Panel_Orient, 2 /* Elm.Panel.Orient.left */);
 
 void _elm_panel_hidden_set(Eo *obj, Elm_Panel_Data *pd, Eina_Bool hidden);
 
@@ -27,7 +27,7 @@ __eolian_elm_panel_hidden_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_panel_hidden_set, EFL_FUNC_CALL(hidden), Eina_Bool hidden);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_panel_hidden_set, EFL_FUNC_CALL(hidden), Eina_Bool hidden);
 
 Eina_Bool _elm_panel_hidden_get(const Eo *obj, Elm_Panel_Data *pd);
 
@@ -39,7 +39,7 @@ __eolian_elm_panel_hidden_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_panel_hidden_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_panel_hidden_get, Eina_Bool, 0);
 
 void _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *pd, Eina_Bool scrollable);
 
@@ -59,7 +59,7 @@ __eolian_elm_panel_scrollable_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_panel_scrollable_set, EFL_FUNC_CALL(scrollable), Eina_Bool scrollable);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_panel_scrollable_set, EFL_FUNC_CALL(scrollable), Eina_Bool scrollable);
 
 Eina_Bool _elm_panel_scrollable_get(const Eo *obj, Elm_Panel_Data *pd);
 
@@ -71,7 +71,7 @@ __eolian_elm_panel_scrollable_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_panel_scrollable_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_panel_scrollable_get, Eina_Bool, 0);
 
 void _elm_panel_scrollable_content_size_set(Eo *obj, Elm_Panel_Data *pd, double ratio);
 
@@ -91,7 +91,7 @@ __eolian_elm_panel_scrollable_content_size_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_panel_scrollable_content_size_set, EFL_FUNC_CALL(ratio), double ratio);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_panel_scrollable_content_size_set, EFL_FUNC_CALL(ratio), double ratio);
 
 double _elm_panel_scrollable_content_size_get(const Eo *obj, Elm_Panel_Data *pd);
 
@@ -103,11 +103,11 @@ __eolian_elm_panel_scrollable_content_size_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_panel_scrollable_content_size_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_panel_scrollable_content_size_get, double, 0);
 
 void _elm_panel_toggle(Eo *obj, Elm_Panel_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_panel_toggle);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_panel_toggle);
 
 Efl_Object *_elm_panel_efl_object_constructor(Eo *obj, Elm_Panel_Data *pd);
 

@@ -1,10 +1,10 @@
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED =
    EFL_EVENT_DESCRIPTION("activated");
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN =
    EFL_EVENT_DESCRIPTION("file,chosen");
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_PRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_ENTRY_EVENT_PRESS =
    EFL_EVENT_DESCRIPTION("press");
 
 Efl_Object *_elm_fileselector_entry_efl_object_constructor(Eo *obj, Elm_Fileselector_Entry_Data *pd);

@@ -242,8 +242,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
     }
 
 #ifdef EFL_BETA_API_SUPPORT
-EAPI void elm_pan_gravity_set(Elm_Pan *, double x, double) EINA_DEPRECATED;
-EAPI void elm_pan_gravity_get(const Elm_Pan *, double *, double *) EINA_DEPRECATED;
+ELM_API void elm_pan_gravity_set(Elm_Pan *, double x, double) EINA_DEPRECATED;
+ELM_API void elm_pan_gravity_get(const Elm_Pan *, double *, double *) EINA_DEPRECATED;
 #endif
 
 /**

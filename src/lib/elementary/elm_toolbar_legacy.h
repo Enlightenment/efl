@@ -9,7 +9,7 @@
  *
  * @ingroup Elm_Toolbar
  */
-EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
 
 /**
  * Set reorder mode
@@ -20,7 +20,7 @@ EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
  *
  * @ingroup Elm_Toolbar
  */
-EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
+ELM_API void                          elm_toolbar_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
 
 /**
  * Get the reorder mode
@@ -31,7 +31,7 @@ EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj
  *
  * @ingroup Elm_Toolbar
  */
-EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Object *obj);
+ELM_API Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Object *obj);
 
 /**
  * Set the item's transverse expansion of a given toolbar widget @p obj.
@@ -45,7 +45,7 @@ EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Objec
  *
  * @ingroup Elm_Toolbar
  */
-EAPI void                         elm_toolbar_transverse_expanded_set(Evas_Object *obj, Eina_Bool transverse_expanded);
+ELM_API void                         elm_toolbar_transverse_expanded_set(Evas_Object *obj, Eina_Bool transverse_expanded);
 
 /**
  * Get the transverse expansion of toolbar @p obj.
@@ -58,7 +58,7 @@ EAPI void                         elm_toolbar_transverse_expanded_set(Evas_Objec
  *
  * @ingroup Elm_Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_transverse_expanded_get(const Evas_Object *obj);
+ELM_API Eina_Bool                    elm_toolbar_transverse_expanded_get(const Evas_Object *obj);
 
 /**
  * Sets icon lookup order, for toolbar items' icons.
@@ -71,7 +71,7 @@ EAPI Eina_Bool                    elm_toolbar_transverse_expanded_get(const Evas
  *
  * @ingroup Elm_Toolbar
  */
-EAPI void elm_toolbar_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Lookup_Order order EINA_UNUSED);
+ELM_API void elm_toolbar_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Lookup_Order order EINA_UNUSED);
 
 /**
  * Gets icon lookup order, for toolbar items' icons.
@@ -84,7 +84,7 @@ EAPI void elm_toolbar_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Ic
  *
  * @ingroup Elm_Toolbar
  */
-EAPI Elm_Icon_Lookup_Order elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED);
+ELM_API Elm_Icon_Lookup_Order elm_toolbar_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED);
 
 /**
  * @brief Change a toolbar's orientation
@@ -96,7 +96,7 @@ EAPI Elm_Icon_Lookup_Order elm_toolbar_icon_order_lookup_get(const Evas_Object *
  *
  * @ingroup Elm_Toolbar
  */
-EAPI void elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+ELM_API void elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get toolbar's current orientation
@@ -107,7 +107,7 @@ EAPI void elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  *
  * @ingroup Elm_Toolbar
  */
-EAPI Eina_Bool elm_toolbar_horizontal_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_toolbar_horizontal_get(const Evas_Object *obj);
 
 #include "elm_toolbar_item_eo.legacy.h"
 #include "elm_toolbar_eo.legacy.h"

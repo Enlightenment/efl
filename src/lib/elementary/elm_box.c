@@ -359,7 +359,7 @@ _elm_box_efl_canvas_group_group_del(Eo *obj, Elm_Box_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_box_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -498,7 +498,7 @@ _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd EINA_UNUSED)
    efl_ui_focus_composition_dirty(obj);
 }
 
-EAPI void
+ELM_API void
 elm_box_layout_set(Eo *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -510,7 +510,7 @@ elm_box_layout_set(Eo *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_C
        (wd->resize_obj, _elm_box_custom_layout, obj, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_box_layout_transition(Evas_Object *obj,
                           Evas_Object_Box_Data *priv,
                           void *data)
@@ -545,7 +545,7 @@ elm_box_layout_transition(Evas_Object *obj,
      _transition_layout_animation_exec(obj, priv, box_data, curtime);
 }
 
-EAPI Elm_Box_Transition *
+ELM_API Elm_Box_Transition *
 elm_box_transition_new(const double duration,
                        Evas_Object_Box_Layout start_layout,
                        void *start_layout_data,
@@ -577,7 +577,7 @@ elm_box_transition_new(const double duration,
    return box_data;
 }
 
-EAPI void
+ELM_API void
 elm_box_transition_free(void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(data);

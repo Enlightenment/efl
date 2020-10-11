@@ -19,7 +19,7 @@ typedef Eo Elm_Spinner;
  */
 #define ELM_SPINNER_CLASS elm_spinner_class_get()
 
-EWAPI const Efl_Class *elm_spinner_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_spinner_class_get(void) EINA_CONST;
 
 /**
  * @brief Control whether the spinner should wrap when it reaches its minimum
@@ -47,7 +47,7 @@ EWAPI const Efl_Class *elm_spinner_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_wrap_set(Eo *obj, Eina_Bool wrap);
+ELM_API ELM_API_WEAK void elm_obj_spinner_wrap_set(Eo *obj, Eina_Bool wrap);
 
 /**
  * @brief Control whether the spinner should wrap when it reaches its minimum
@@ -76,7 +76,7 @@ EOAPI void elm_obj_spinner_wrap_set(Eo *obj, Eina_Bool wrap);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI Eina_Bool elm_obj_spinner_wrap_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_spinner_wrap_get(const Eo *obj);
 
 /**
  * @brief Control the interval on time updates for a user mouse button hold on
@@ -100,7 +100,7 @@ EOAPI Eina_Bool elm_obj_spinner_wrap_get(const Eo *obj);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_interval_set(Eo *obj, double interval);
+ELM_API ELM_API_WEAK void elm_obj_spinner_interval_set(Eo *obj, double interval);
 
 /**
  * @brief Control the interval on time updates for a user mouse button hold on
@@ -125,7 +125,7 @@ EOAPI void elm_obj_spinner_interval_set(Eo *obj, double interval);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI double elm_obj_spinner_interval_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_spinner_interval_get(const Eo *obj);
 
 /**
  * @brief Control the round value for rounding
@@ -137,7 +137,7 @@ EOAPI double elm_obj_spinner_interval_get(const Eo *obj);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_round_set(Eo *obj, int rnd);
+ELM_API ELM_API_WEAK void elm_obj_spinner_round_set(Eo *obj, int rnd);
 
 /**
  * @brief Control the round value for rounding
@@ -150,7 +150,7 @@ EOAPI void elm_obj_spinner_round_set(Eo *obj, int rnd);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI int elm_obj_spinner_round_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_spinner_round_get(const Eo *obj);
 
 /**
  * @brief Control whether the spinner can be directly edited by the user or
@@ -169,7 +169,7 @@ EOAPI int elm_obj_spinner_round_get(const Eo *obj);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_editable_set(Eo *obj, Eina_Bool editable);
+ELM_API ELM_API_WEAK void elm_obj_spinner_editable_set(Eo *obj, Eina_Bool editable);
 
 /**
  * @brief Control whether the spinner can be directly edited by the user or
@@ -189,7 +189,7 @@ EOAPI void elm_obj_spinner_editable_set(Eo *obj, Eina_Bool editable);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI Eina_Bool elm_obj_spinner_editable_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_spinner_editable_get(const Eo *obj);
 
 /**
  * @brief Control the base for rounding
@@ -213,7 +213,7 @@ EOAPI Eina_Bool elm_obj_spinner_editable_get(const Eo *obj);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_base_set(Eo *obj, double base);
+ELM_API ELM_API_WEAK void elm_obj_spinner_base_set(Eo *obj, double base);
 
 /**
  * @brief Control the base for rounding
@@ -238,7 +238,7 @@ EOAPI void elm_obj_spinner_base_set(Eo *obj, double base);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI double elm_obj_spinner_base_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_spinner_base_get(const Eo *obj);
 
 /**
  * @brief Control the format string of the displayed label.
@@ -258,7 +258,7 @@ EOAPI double elm_obj_spinner_base_get(const Eo *obj);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_label_format_set(Eo *obj, const char *fmt);
+ELM_API ELM_API_WEAK void elm_obj_spinner_label_format_set(Eo *obj, const char *fmt);
 
 /**
  * @brief Control the format string of the displayed label.
@@ -279,7 +279,7 @@ EOAPI void elm_obj_spinner_label_format_set(Eo *obj, const char *fmt);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI const char *elm_obj_spinner_label_format_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_spinner_label_format_get(const Eo *obj);
 
 /**
  * @brief Control special string to display in the place of the numerical
@@ -297,9 +297,9 @@ EOAPI const char *elm_obj_spinner_label_format_get(const Eo *obj);
  *
  * @ingroup Elm_Spinner
  */
-EOAPI void elm_obj_spinner_special_value_add(Eo *obj, double value, const char *label);
+ELM_API ELM_API_WEAK void elm_obj_spinner_special_value_add(Eo *obj, double value, const char *label);
 
-EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SPINNER_EVENT_CHANGED;
 
 /** Called when spinner changed
  *
@@ -307,7 +307,7 @@ EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_CHANGED;
  */
 #define ELM_SPINNER_EVENT_CHANGED (&(_ELM_SPINNER_EVENT_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_DELAY_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SPINNER_EVENT_DELAY_CHANGED;
 
 /** Called when spinner delay changed
  *
@@ -315,7 +315,7 @@ EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_DELAY_CHANGED;
  */
 #define ELM_SPINNER_EVENT_DELAY_CHANGED (&(_ELM_SPINNER_EVENT_DELAY_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_START;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_START;
 
 /** Called when spinner drag started
  *
@@ -323,7 +323,7 @@ EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_START;
  */
 #define ELM_SPINNER_EVENT_SPINNER_DRAG_START (&(_ELM_SPINNER_EVENT_SPINNER_DRAG_START))
 
-EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_STOP;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_STOP;
 
 /** Called when spinner drag stopped
  *
@@ -331,7 +331,7 @@ EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_STOP;
  */
 #define ELM_SPINNER_EVENT_SPINNER_DRAG_STOP (&(_ELM_SPINNER_EVENT_SPINNER_DRAG_STOP))
 
-EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_MIN_REACHED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SPINNER_EVENT_MIN_REACHED;
 
 /** Called when spinner value reached min
  *
@@ -339,7 +339,7 @@ EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_MIN_REACHED;
  */
 #define ELM_SPINNER_EVENT_MIN_REACHED (&(_ELM_SPINNER_EVENT_MIN_REACHED))
 
-EWAPI extern const Efl_Event_Description _ELM_SPINNER_EVENT_MAX_REACHED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_SPINNER_EVENT_MAX_REACHED;
 
 /** Called when spinner value reached max
  *

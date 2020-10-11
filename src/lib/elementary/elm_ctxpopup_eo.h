@@ -37,7 +37,7 @@ typedef enum
  */
 #define ELM_CTXPOPUP_CLASS elm_ctxpopup_class_get()
 
-EWAPI const Efl_Class *elm_ctxpopup_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_ctxpopup_class_get(void) EINA_CONST;
 
 /**
  * @brief Get the selected item in the widget.
@@ -48,7 +48,7 @@ EWAPI const Efl_Class *elm_ctxpopup_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_selected_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_selected_item_get(const Eo *obj);
 
 /**
  * @brief Get the first item in the widget.
@@ -59,7 +59,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_selected_item_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_first_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_first_item_get(const Eo *obj);
 
 /**
  * @brief Get the last item in the widget.
@@ -70,7 +70,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_first_item_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_last_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_last_item_get(const Eo *obj);
 
 /**
  * @brief Returns a list of the widget item.
@@ -81,7 +81,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_last_item_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI const Eina_List *elm_obj_ctxpopup_items_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_ctxpopup_items_get(const Eo *obj);
 
 /**
  * @brief Change the ctxpopup's orientation to horizontal or vertical.
@@ -91,7 +91,7 @@ EOAPI const Eina_List *elm_obj_ctxpopup_items_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_horizontal_set(Eo *obj, Eina_Bool horizontal);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_horizontal_set(Eo *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get the value of current ctxpopup object's orientation.
@@ -104,7 +104,7 @@ EOAPI void elm_obj_ctxpopup_horizontal_set(Eo *obj, Eina_Bool horizontal);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Eina_Bool elm_obj_ctxpopup_horizontal_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_ctxpopup_horizontal_get(const Eo *obj);
 
 /**
  * @brief Set ctxpopup auto hide mode triggered by ctxpopup policy.
@@ -126,7 +126,7 @@ EOAPI Eina_Bool elm_obj_ctxpopup_horizontal_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_auto_hide_disabled_set(Eo *obj, Eina_Bool disabled);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_auto_hide_disabled_set(Eo *obj, Eina_Bool disabled);
 
 /**
  * @brief Get ctxpopup auto hide mode triggered by ctxpopup policy.
@@ -141,7 +141,7 @@ EOAPI void elm_obj_ctxpopup_auto_hide_disabled_set(Eo *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Eina_Bool elm_obj_ctxpopup_auto_hide_disabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_ctxpopup_auto_hide_disabled_get(const Eo *obj);
 
 /**
  * @brief Set the Ctxpopup's parent
@@ -158,7 +158,7 @@ EOAPI Eina_Bool elm_obj_ctxpopup_auto_hide_disabled_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_hover_parent_set(Eo *obj, Efl_Canvas_Object *parent);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_hover_parent_set(Eo *obj, Efl_Canvas_Object *parent);
 
 /**
  * @brief Get the Ctxpopup's parent
@@ -171,7 +171,7 @@ EOAPI void elm_obj_ctxpopup_hover_parent_set(Eo *obj, Efl_Canvas_Object *parent)
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Efl_Canvas_Object *elm_obj_ctxpopup_hover_parent_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_ctxpopup_hover_parent_get(const Eo *obj);
 
 /**
  * @brief Set the direction priority of a ctxpopup.
@@ -190,7 +190,7 @@ EOAPI Efl_Canvas_Object *elm_obj_ctxpopup_hover_parent_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_direction_priority_set(Eo *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_direction_priority_set(Eo *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth);
 
 /**
  * @brief Get the direction priority of a ctxpopup.
@@ -205,7 +205,7 @@ EOAPI void elm_obj_ctxpopup_direction_priority_set(Eo *obj, Elm_Ctxpopup_Directi
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_direction_priority_get(const Eo *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_direction_priority_get(const Eo *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
 
 /**
  * @brief Get the current direction of a ctxpopup.
@@ -218,7 +218,7 @@ EOAPI void elm_obj_ctxpopup_direction_priority_get(const Eo *obj, Elm_Ctxpopup_D
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Ctxpopup_Direction elm_obj_ctxpopup_direction_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Ctxpopup_Direction elm_obj_ctxpopup_direction_get(const Eo *obj);
 
 /**
  * @brief Dismiss a ctxpopup object
@@ -230,13 +230,13 @@ EOAPI Elm_Ctxpopup_Direction elm_obj_ctxpopup_direction_get(const Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_dismiss(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_dismiss(Eo *obj);
 
 /** Clear all items in the given ctxpopup object.
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI void elm_obj_ctxpopup_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_ctxpopup_clear(Eo *obj);
 
 /**
  * @brief Insert a new item to a ctxpopup object before item @c before.
@@ -256,7 +256,7 @@ EOAPI void elm_obj_ctxpopup_clear(Eo *obj);
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_insert_before(Eo *obj, Elm_Widget_Item *before, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_item_insert_before(Eo *obj, Elm_Widget_Item *before, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Insert a new item to a ctxpopup object after item @c after.
@@ -276,7 +276,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_insert_before(Eo *obj, Elm_Widget_I
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_insert_after(Eo *obj, Elm_Widget_Item *after, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_item_insert_after(Eo *obj, Elm_Widget_Item *after, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Add a new item to a ctxpopup object.
@@ -296,7 +296,7 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_insert_after(Eo *obj, Elm_Widget_It
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_append(Eo *obj, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_item_append(Eo *obj, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Prepend a new item to a ctxpopup object.
@@ -318,9 +318,9 @@ EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_append(Eo *obj, const char *label, 
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_ctxpopup_item_prepend(Eo *obj, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_ctxpopup_item_prepend(Eo *obj, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
-EWAPI extern const Efl_Event_Description _ELM_CTXPOPUP_EVENT_DISMISSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_CTXPOPUP_EVENT_DISMISSED;
 
 /** Called when context popup was dismissed
  *
@@ -328,7 +328,7 @@ EWAPI extern const Efl_Event_Description _ELM_CTXPOPUP_EVENT_DISMISSED;
  */
 #define ELM_CTXPOPUP_EVENT_DISMISSED (&(_ELM_CTXPOPUP_EVENT_DISMISSED))
 
-EWAPI extern const Efl_Event_Description _ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_CTXPOPUP_EVENT_GEOMETRY_UPDATE;
 
 /** Called when context popup geometry was updated
  * @return const Eina_Rect *

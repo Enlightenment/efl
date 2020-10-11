@@ -417,7 +417,7 @@ _elm_label_efl_canvas_group_group_add(Eo *obj, Elm_Label_Data *priv)
    elm_layout_sizing_eval(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_label_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -576,7 +576,7 @@ _elm_label_slide_mode_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
    return sd->slide_mode;
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_label_slide_set(Evas_Object *obj, Eina_Bool slide)
 {
    if (slide)
@@ -585,7 +585,7 @@ elm_label_slide_set(Evas_Object *obj, Eina_Bool slide)
      elm_label_slide_mode_set(obj, ELM_LABEL_SLIDE_MODE_NONE);
 }
 
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ELM_API Eina_Bool
 elm_label_slide_get(const Evas_Object *obj)
 {
    Eina_Bool ret = EINA_FALSE;

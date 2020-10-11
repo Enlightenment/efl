@@ -8,6 +8,6 @@
  *
  * @ingroup Data
  */
-EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code);
+ELM_API Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code);
 
 #include "elm_code_widget_eo.legacy.h"

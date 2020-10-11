@@ -33,7 +33,7 @@ typedef Eo Elm_Genlist;
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_homogeneous_set(Elm_Genlist *obj, Eina_Bool homogeneous);
+ELM_API void elm_genlist_homogeneous_set(Elm_Genlist *obj, Eina_Bool homogeneous);
 
 /**
  * @brief Get whether the homogeneous mode is enabled.
@@ -45,7 +45,7 @@ EAPI void elm_genlist_homogeneous_set(Elm_Genlist *obj, Eina_Bool homogeneous);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_homogeneous_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_homogeneous_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set the genlist select mode.
@@ -63,7 +63,7 @@ EAPI Eina_Bool elm_genlist_homogeneous_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_select_mode_set(Elm_Genlist *obj, Elm_Object_Select_Mode mode);
+ELM_API void elm_genlist_select_mode_set(Elm_Genlist *obj, Elm_Object_Select_Mode mode);
 
 /**
  * @brief Get the genlist select mode.
@@ -74,7 +74,7 @@ EAPI void elm_genlist_select_mode_set(Elm_Genlist *obj, Elm_Object_Select_Mode m
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Object_Select_Mode elm_genlist_select_mode_get(const Elm_Genlist *obj);
+ELM_API Elm_Object_Select_Mode elm_genlist_select_mode_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set focus upon items selection mode
@@ -90,7 +90,7 @@ EAPI Elm_Object_Select_Mode elm_genlist_select_mode_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_focus_on_selection_set(Elm_Genlist *obj, Eina_Bool enabled);
+ELM_API void elm_genlist_focus_on_selection_set(Elm_Genlist *obj, Eina_Bool enabled);
 
 /**
  * @brief Get whether focus upon item's selection mode is enabled.
@@ -101,7 +101,7 @@ EAPI void elm_genlist_focus_on_selection_set(Elm_Genlist *obj, Eina_Bool enabled
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_focus_on_selection_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_focus_on_selection_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set the timeout in seconds for the longpress event.
@@ -119,7 +119,7 @@ EAPI Eina_Bool elm_genlist_focus_on_selection_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_longpress_timeout_set(Elm_Genlist *obj, double timeout);
+ELM_API void elm_genlist_longpress_timeout_set(Elm_Genlist *obj, double timeout);
 
 /**
  * @brief Get the timeout in seconds for the longpress event.
@@ -130,7 +130,7 @@ EAPI void elm_genlist_longpress_timeout_set(Elm_Genlist *obj, double timeout);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI double elm_genlist_longpress_timeout_get(const Elm_Genlist *obj);
+ELM_API double elm_genlist_longpress_timeout_get(const Elm_Genlist *obj);
 
 /**
  * @brief Enable or disable multi-selection in the genlist.
@@ -144,7 +144,7 @@ EAPI double elm_genlist_longpress_timeout_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_multi_select_set(Elm_Genlist *obj, Eina_Bool multi);
+ELM_API void elm_genlist_multi_select_set(Elm_Genlist *obj, Eina_Bool multi);
 
 /**
  * @brief Get if multi-selection in genlist is enabled or disabled.
@@ -155,7 +155,7 @@ EAPI void elm_genlist_multi_select_set(Elm_Genlist *obj, Eina_Bool multi);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_multi_select_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_multi_select_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set reorder mode.
@@ -169,7 +169,7 @@ EAPI Eina_Bool elm_genlist_multi_select_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_reorder_mode_set(Elm_Genlist *obj, Eina_Bool reorder_mode);
+ELM_API void elm_genlist_reorder_mode_set(Elm_Genlist *obj, Eina_Bool reorder_mode);
 
 /**
  * @brief Get the reorder mode.
@@ -180,7 +180,7 @@ EAPI void elm_genlist_reorder_mode_set(Elm_Genlist *obj, Eina_Bool reorder_mode)
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_reorder_mode_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_reorder_mode_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set Genlist decorate mode.
@@ -192,7 +192,7 @@ EAPI Eina_Bool elm_genlist_reorder_mode_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_decorate_mode_set(Elm_Genlist *obj, Eina_Bool decorated);
+ELM_API void elm_genlist_decorate_mode_set(Elm_Genlist *obj, Eina_Bool decorated);
 
 /**
  * @brief Get Genlist decorate mode.
@@ -203,7 +203,7 @@ EAPI void elm_genlist_decorate_mode_set(Elm_Genlist *obj, Eina_Bool decorated);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_decorate_mode_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_decorate_mode_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set the genlist multi select mode.
@@ -221,7 +221,7 @@ EAPI Eina_Bool elm_genlist_decorate_mode_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_multi_select_mode_set(Elm_Genlist *obj, Elm_Object_Multi_Select_Mode mode);
+ELM_API void elm_genlist_multi_select_mode_set(Elm_Genlist *obj, Elm_Object_Multi_Select_Mode mode);
 
 /**
  * @brief Get the genlist multi select mode.
@@ -234,7 +234,7 @@ EAPI void elm_genlist_multi_select_mode_set(Elm_Genlist *obj, Elm_Object_Multi_S
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Object_Multi_Select_Mode elm_genlist_multi_select_mode_get(const Elm_Genlist *obj);
+ELM_API Elm_Object_Multi_Select_Mode elm_genlist_multi_select_mode_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set the maximum number of items within an item block.
@@ -257,7 +257,7 @@ EAPI Elm_Object_Multi_Select_Mode elm_genlist_multi_select_mode_get(const Elm_Ge
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_block_count_set(Elm_Genlist *obj, int count);
+ELM_API void elm_genlist_block_count_set(Elm_Genlist *obj, int count);
 
 /**
  * @brief Get the maximum number of items within an item block.
@@ -268,7 +268,7 @@ EAPI void elm_genlist_block_count_set(Elm_Genlist *obj, int count);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI int elm_genlist_block_count_get(const Elm_Genlist *obj);
+ELM_API int elm_genlist_block_count_get(const Elm_Genlist *obj);
 
 /**
  * @brief Control genlist tree effect.
@@ -278,7 +278,7 @@ EAPI int elm_genlist_block_count_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_tree_effect_enabled_set(Elm_Genlist *obj, Eina_Bool enabled);
+ELM_API void elm_genlist_tree_effect_enabled_set(Elm_Genlist *obj, Eina_Bool enabled);
 
 /**
  * @brief Control genlist tree effect.
@@ -289,7 +289,7 @@ EAPI void elm_genlist_tree_effect_enabled_set(Elm_Genlist *obj, Eina_Bool enable
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_tree_effect_enabled_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_tree_effect_enabled_get(const Elm_Genlist *obj);
 
 /**
  * @brief Set whether the genlist items should be highlighted on item
@@ -306,7 +306,7 @@ EAPI Eina_Bool elm_genlist_tree_effect_enabled_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_highlight_mode_set(Elm_Genlist *obj, Eina_Bool highlight);
+ELM_API void elm_genlist_highlight_mode_set(Elm_Genlist *obj, Eina_Bool highlight);
 
 /**
  * @brief Get whether the genlist items' should be highlighted when item
@@ -318,7 +318,7 @@ EAPI void elm_genlist_highlight_mode_set(Elm_Genlist *obj, Eina_Bool highlight);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Bool elm_genlist_highlight_mode_get(const Elm_Genlist *obj);
+ELM_API Eina_Bool elm_genlist_highlight_mode_get(const Elm_Genlist *obj);
 
 /**
  * @brief This sets the horizontal stretching mode.
@@ -350,7 +350,7 @@ EAPI Eina_Bool elm_genlist_highlight_mode_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_mode_set(Elm_Genlist *obj, Elm_List_Mode mode);
+ELM_API void elm_genlist_mode_set(Elm_Genlist *obj, Elm_List_Mode mode);
 
 /**
  * @brief Get the horizontal stretching mode.
@@ -362,7 +362,7 @@ EAPI void elm_genlist_mode_set(Elm_Genlist *obj, Elm_List_Mode mode);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_List_Mode elm_genlist_mode_get(const Elm_Genlist *obj);
+ELM_API Elm_List_Mode elm_genlist_mode_get(const Elm_Genlist *obj);
 
 /**
  * @brief Get active genlist mode item.
@@ -377,7 +377,7 @@ EAPI Elm_List_Mode elm_genlist_mode_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_decorated_item_get(const Elm_Genlist *obj);
+ELM_API Elm_Widget_Item *elm_genlist_decorated_item_get(const Elm_Genlist *obj);
 
 /**
  * @brief Get the selected item in the genlist.
@@ -395,7 +395,7 @@ EAPI Elm_Widget_Item *elm_genlist_decorated_item_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_selected_item_get(const Elm_Genlist *obj);
+ELM_API Elm_Widget_Item *elm_genlist_selected_item_get(const Elm_Genlist *obj);
 
 /**
  * @brief Get the first item in the genlist.
@@ -410,7 +410,7 @@ EAPI Elm_Widget_Item *elm_genlist_selected_item_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_first_item_get(const Elm_Genlist *obj);
+ELM_API Elm_Widget_Item *elm_genlist_first_item_get(const Elm_Genlist *obj);
 
 /**
  * @brief Get a list of realized items in genlist.
@@ -426,7 +426,7 @@ EAPI Elm_Widget_Item *elm_genlist_first_item_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_List *elm_genlist_realized_items_get(const Elm_Genlist *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API Eina_List *elm_genlist_realized_items_get(const Elm_Genlist *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get a list of selected items in the genlist.
@@ -447,7 +447,7 @@ EAPI Eina_List *elm_genlist_realized_items_get(const Elm_Genlist *obj) EINA_WARN
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI const Eina_List *elm_genlist_selected_items_get(const Elm_Genlist *obj);
+ELM_API const Eina_List *elm_genlist_selected_items_get(const Elm_Genlist *obj);
 
 /**
  * @brief Get the last item in the genlist
@@ -462,7 +462,7 @@ EAPI const Eina_List *elm_genlist_selected_items_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_last_item_get(const Elm_Genlist *obj);
+ELM_API Elm_Widget_Item *elm_genlist_last_item_get(const Elm_Genlist *obj);
 
 /**
  * @brief Insert an item before another in a genlist widget
@@ -483,7 +483,7 @@ EAPI Elm_Widget_Item *elm_genlist_last_item_get(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_item_insert_before(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *before_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API Elm_Widget_Item *elm_genlist_item_insert_before(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *before_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Update the contents of all realized items.
@@ -497,7 +497,7 @@ EAPI Elm_Widget_Item *elm_genlist_item_insert_before(Elm_Genlist *obj, const Elm
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_realized_items_update(Elm_Genlist *obj);
+ELM_API void elm_genlist_realized_items_update(Elm_Genlist *obj);
 
 /**
  * @brief Insert an item after another in a genlist widget
@@ -518,7 +518,7 @@ EAPI void elm_genlist_realized_items_update(Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_item_insert_after(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *after_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API Elm_Widget_Item *elm_genlist_item_insert_after(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *after_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Get the item that is at the x, y canvas coords.
@@ -541,7 +541,7 @@ EAPI Elm_Widget_Item *elm_genlist_item_insert_after(Elm_Genlist *obj, const Elm_
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_at_xy_item_get(const Elm_Genlist *obj, int x, int y, int *posret);
+ELM_API Elm_Widget_Item *elm_genlist_at_xy_item_get(const Elm_Genlist *obj, int x, int y, int *posret);
 
 /**
  * @brief Set filter mode with key.
@@ -557,7 +557,7 @@ EAPI Elm_Widget_Item *elm_genlist_at_xy_item_get(const Elm_Genlist *obj, int x, 
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_filter_set(Elm_Genlist *obj, void *key);
+ELM_API void elm_genlist_filter_set(Elm_Genlist *obj, void *key);
 
 /**
  * @brief Returns an iterator over the list of filtered items.
@@ -571,7 +571,7 @@ EAPI void elm_genlist_filter_set(Elm_Genlist *obj, void *key);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Eina_Iterator *elm_genlist_filter_iterator_new(Elm_Genlist *obj);
+ELM_API Eina_Iterator *elm_genlist_filter_iterator_new(Elm_Genlist *obj);
 
 /**
  * @brief Return how many items have passed the filter currently.
@@ -588,7 +588,7 @@ EAPI Eina_Iterator *elm_genlist_filter_iterator_new(Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI unsigned int elm_genlist_filtered_items_count(const Elm_Genlist *obj);
+ELM_API unsigned int elm_genlist_filtered_items_count(const Elm_Genlist *obj);
 
 /**
  * @brief Return how many items are currently in a list.
@@ -601,7 +601,7 @@ EAPI unsigned int elm_genlist_filtered_items_count(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI unsigned int elm_genlist_items_count(const Elm_Genlist *obj);
+ELM_API unsigned int elm_genlist_items_count(const Elm_Genlist *obj);
 
 /**
  * @brief Prepend a new item in a given genlist widget.
@@ -621,7 +621,7 @@ EAPI unsigned int elm_genlist_items_count(const Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_item_prepend(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API Elm_Widget_Item *elm_genlist_item_prepend(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Remove all items from a given genlist widget.
@@ -631,7 +631,7 @@ EAPI Elm_Widget_Item *elm_genlist_item_prepend(Elm_Genlist *obj, const Elm_Genli
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI void elm_genlist_clear(Elm_Genlist *obj);
+ELM_API void elm_genlist_clear(Elm_Genlist *obj);
 
 /**
  * @brief Append a new item in a given genlist widget.
@@ -651,7 +651,7 @@ EAPI void elm_genlist_clear(Elm_Genlist *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_item_append(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API Elm_Widget_Item *elm_genlist_item_append(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Insert a new item into the sorted genlist object
@@ -673,7 +673,7 @@ EAPI Elm_Widget_Item *elm_genlist_item_append(Elm_Genlist *obj, const Elm_Genlis
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_item_sorted_insert(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
+ELM_API Elm_Widget_Item *elm_genlist_item_sorted_insert(Elm_Genlist *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Get genlist item by given string.
@@ -699,6 +699,6 @@ EAPI Elm_Widget_Item *elm_genlist_item_sorted_insert(Elm_Genlist *obj, const Elm
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Elm_Widget_Item *elm_genlist_search_by_text_item_get(Elm_Genlist *obj, Elm_Widget_Item *item_to_search_from, const char *part_name, const char *pattern, Elm_Glob_Match_Flags flags);
+ELM_API Elm_Widget_Item *elm_genlist_search_by_text_item_get(Elm_Genlist *obj, Elm_Widget_Item *item_to_search_from, const char *part_name, const char *pattern, Elm_Glob_Match_Flags flags);
 
 #endif

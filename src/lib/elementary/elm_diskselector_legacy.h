@@ -9,7 +9,7 @@
  *
  * @ingroup Elm_Diskselector
  */
-EAPI Evas_Object           *elm_diskselector_add(Evas_Object *parent);
+ELM_API Evas_Object           *elm_diskselector_add(Evas_Object *parent);
 
 #include "elm_diskselector_item_eo.legacy.h"
 #include "elm_diskselector_eo.legacy.h"

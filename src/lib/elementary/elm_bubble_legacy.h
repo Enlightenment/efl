@@ -8,6 +8,6 @@
  *
  * @ingroup Elm_Bubble
  */
-EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_bubble_add(Evas_Object *parent);
 
 #include "elm_bubble_eo.legacy.h"

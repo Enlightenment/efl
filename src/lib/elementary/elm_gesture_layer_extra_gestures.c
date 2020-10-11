@@ -188,7 +188,7 @@ _object_delete(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, vo
      }
 }
 
-EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data)
+ELM_API void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data)
 {
    Tap_Longpress_Info *info = evas_object_data_get(obj, "Tap-Longpress");
    if (!info)
@@ -216,7 +216,7 @@ EAPI void elm_gesture_layer_tap_longpress_cb_add(Evas_Object *obj, Elm_Gesture_S
          EINA_INLIST_GET(cb_info));
 }
 
-EAPI void elm_gesture_layer_tap_longpress_cb_del(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data)
+ELM_API void elm_gesture_layer_tap_longpress_cb_del(Evas_Object *obj, Elm_Gesture_State state, Elm_Gesture_Event_Cb cb, void *data)
 {
    Tap_Longpress_Info *info = evas_object_data_get(obj, "Tap-Longpress");
    if (!info) return;

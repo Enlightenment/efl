@@ -47,7 +47,7 @@ typedef enum
  *
  * @ingroup Elm_Bubble_Group
  */
-EAPI void elm_bubble_pos_set(Elm_Bubble *obj, Elm_Bubble_Pos pos);
+ELM_API void elm_bubble_pos_set(Elm_Bubble *obj, Elm_Bubble_Pos pos);
 
 /**
  * @brief The corner of the bubble
@@ -62,6 +62,6 @@ EAPI void elm_bubble_pos_set(Elm_Bubble *obj, Elm_Bubble_Pos pos);
  *
  * @ingroup Elm_Bubble_Group
  */
-EAPI Elm_Bubble_Pos elm_bubble_pos_get(const Elm_Bubble *obj);
+ELM_API Elm_Bubble_Pos elm_bubble_pos_get(const Elm_Bubble *obj);
 
 #endif

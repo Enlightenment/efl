@@ -1,10 +1,10 @@
-EWAPI const Efl_Event_Description _ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_ON =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_ON =
    EFL_EVENT_DESCRIPTION("virtualkeypad,state,on");
-EWAPI const Efl_Event_Description _ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_OFF =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CONFORMANT_EVENT_VIRTUALKEYPAD_STATE_OFF =
    EFL_EVENT_DESCRIPTION("virtualkeypad,state,off");
-EWAPI const Efl_Event_Description _ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_ON =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_ON =
    EFL_EVENT_DESCRIPTION("clipboard,state,on");
-EWAPI const Efl_Event_Description _ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF =
    EFL_EVENT_DESCRIPTION("clipboard,state,off");
 
 Efl_Object *_elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *pd);

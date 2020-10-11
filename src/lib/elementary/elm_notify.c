@@ -474,7 +474,7 @@ _elm_notify_efl_canvas_group_group_del(Eo *obj, Elm_Notify_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_notify_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -531,7 +531,7 @@ _elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
    return obj;
 }
 
-EAPI void
+ELM_API void
 elm_notify_parent_set(Evas_Object *obj,
                       Evas_Object *parent)
 {
@@ -542,7 +542,7 @@ elm_notify_parent_set(Evas_Object *obj,
    _parent_setup(obj, sd, parent);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_notify_parent_get(const Evas_Object *obj)
 {
    ELM_NOTIFY_CHECK(obj) NULL;
@@ -551,7 +551,7 @@ elm_notify_parent_get(const Evas_Object *obj)
    return ret;
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_notify_orient_set(Evas_Object *obj,
                       Elm_Notify_Orient orient)
 {
@@ -601,7 +601,7 @@ elm_notify_orient_set(Evas_Object *obj,
    elm_notify_align_set(obj, horizontal, vertical);
 }
 
-EINA_DEPRECATED EAPI Elm_Notify_Orient
+EINA_DEPRECATED ELM_API Elm_Notify_Orient
 elm_notify_orient_get(const Evas_Object *obj)
 {
    Elm_Notify_Orient orient;

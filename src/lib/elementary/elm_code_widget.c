@@ -60,7 +60,7 @@ static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newl
 
 #include "elm_code_widget_legacy_eo.h"
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -2134,13 +2134,13 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         (EINA_DBL_EQ(pd->gravity_y, 1.0) && wh > old_height) ? wh - old_height : 0);
 }
 
-EOAPI void
+ELM_API ELM_API_WEAK void
 _elm_code_widget_line_refresh(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
 {
    _elm_code_widget_fill_line(obj, pd, line);
 }
 
-EOAPI Eina_Bool
+ELM_API ELM_API_WEAK Eina_Bool
 _elm_code_widget_line_visible_get(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Line *line)
 {
    Evas_Coord cellh = 0, viewy = 0, viewh = 0;
@@ -2154,7 +2154,7 @@ _elm_code_widget_line_visible_get(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code_Li
    return EINA_TRUE;;
 }
 
-EOAPI unsigned int
+ELM_API ELM_API_WEAK unsigned int
 _elm_code_widget_lines_visible_get(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Evas_Coord cellh = 0, viewh = 0;

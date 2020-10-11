@@ -23,7 +23,7 @@ typedef enum
  *
  * @ingroup Elm_Icon
  */
-EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
+ELM_API Evas_Object          *elm_icon_add(Evas_Object *parent);
 
 /**
  * @brief Set the file that will be used, but use a generated thumbnail.
@@ -38,7 +38,7 @@ EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
  *
  * @ingroup Elm_Icon
  */
-EAPI void elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group);
+ELM_API void elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group);
 /**
  * @brief Sets the icon lookup order used by elm_icon_standard_set().
  *
@@ -51,7 +51,7 @@ EAPI void elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *gro
  * @ingroup Elm_Icon
  */
 
-EAPI void elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Lookup_Order order EINA_UNUSED) EINA_DEPRECATED;
+ELM_API void elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Lookup_Order order EINA_UNUSED) EINA_DEPRECATED;
 
 /**
  * @brief Get the icon lookup order.
@@ -63,7 +63,7 @@ EAPI void elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED, Elm_Icon_Looku
  *
  * @ingroup Elm_Icon
  */
-EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED) EINA_DEPRECATED;
+ELM_API Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED) EINA_DEPRECATED;
 
 /**
  * @brief Set the icon by icon standards names.
@@ -89,7 +89,7 @@ EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj EINA
  *
  * @ingroup Elm_Icon
  */
-EAPI Eina_Bool elm_icon_standard_set(Evas_Object *obj, const char *name);
+ELM_API Eina_Bool elm_icon_standard_set(Evas_Object *obj, const char *name);
 
 /**
  * @brief Get the icon name set by icon standard names.
@@ -101,6 +101,6 @@ EAPI Eina_Bool elm_icon_standard_set(Evas_Object *obj, const char *name);
  *
  * @ingroup Elm_Icon
  */
-EAPI const char *elm_icon_standard_get(const Evas_Object *obj);
+ELM_API const char *elm_icon_standard_get(const Evas_Object *obj);
 
 #include "elm_icon_eo.legacy.h"
