@@ -19,7 +19,7 @@ typedef Eo Elm_Naviframe;
  */
 #define ELM_NAVIFRAME_CLASS elm_naviframe_class_get()
 
-EWAPI const Efl_Class *elm_naviframe_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_naviframe_class_get(void) EINA_CONST;
 
 /**
  * @brief Control the event enabled when pushing/popping items
@@ -36,7 +36,7 @@ EWAPI const Efl_Class *elm_naviframe_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI void elm_obj_naviframe_event_enabled_set(Eo *obj, Eina_Bool enabled);
+ELM_API ELM_API_WEAK void elm_obj_naviframe_event_enabled_set(Eo *obj, Eina_Bool enabled);
 
 /**
  * @brief Control the event enabled when pushing/popping items
@@ -53,7 +53,7 @@ EOAPI void elm_obj_naviframe_event_enabled_set(Eo *obj, Eina_Bool enabled);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Eina_Bool elm_obj_naviframe_event_enabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_naviframe_event_enabled_get(const Eo *obj);
 
 /**
  * @brief Preserve the content objects when items are popped.
@@ -63,7 +63,7 @@ EOAPI Eina_Bool elm_obj_naviframe_event_enabled_get(const Eo *obj);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI void elm_obj_naviframe_content_preserve_on_pop_set(Eo *obj, Eina_Bool preserve);
+ELM_API ELM_API_WEAK void elm_obj_naviframe_content_preserve_on_pop_set(Eo *obj, Eina_Bool preserve);
 
 /**
  * @brief Preserve the content objects when items are popped.
@@ -74,7 +74,7 @@ EOAPI void elm_obj_naviframe_content_preserve_on_pop_set(Eo *obj, Eina_Bool pres
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Eina_Bool elm_obj_naviframe_content_preserve_on_pop_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_naviframe_content_preserve_on_pop_get(const Eo *obj);
 
 /**
  * @brief Control if creating prev button automatically or not
@@ -86,7 +86,7 @@ EOAPI Eina_Bool elm_obj_naviframe_content_preserve_on_pop_get(const Eo *obj);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI void elm_obj_naviframe_prev_btn_auto_pushed_set(Eo *obj, Eina_Bool auto_pushed);
+ELM_API ELM_API_WEAK void elm_obj_naviframe_prev_btn_auto_pushed_set(Eo *obj, Eina_Bool auto_pushed);
 
 /**
  * @brief Control if creating prev button automatically or not
@@ -99,7 +99,7 @@ EOAPI void elm_obj_naviframe_prev_btn_auto_pushed_set(Eo *obj, Eina_Bool auto_pu
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Eina_Bool elm_obj_naviframe_prev_btn_auto_pushed_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_naviframe_prev_btn_auto_pushed_get(const Eo *obj);
 
 /**
  * @brief Get a list of all the naviframe items.
@@ -111,7 +111,7 @@ EOAPI Eina_Bool elm_obj_naviframe_prev_btn_auto_pushed_get(const Eo *obj);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Eina_List *elm_obj_naviframe_items_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API ELM_API_WEAK Eina_List *elm_obj_naviframe_items_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get a top item on the naviframe stack
@@ -123,7 +123,7 @@ EOAPI Eina_List *elm_obj_naviframe_items_get(const Eo *obj) EINA_WARN_UNUSED_RES
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Elm_Widget_Item *elm_obj_naviframe_top_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_naviframe_top_item_get(const Eo *obj);
 
 /**
  * @brief Get a bottom item on the naviframe stack
@@ -135,7 +135,7 @@ EOAPI Elm_Widget_Item *elm_obj_naviframe_top_item_get(const Eo *obj);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Elm_Widget_Item *elm_obj_naviframe_bottom_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_naviframe_bottom_item_get(const Eo *obj);
 
 /**
  * @brief Pop an item that is on top of the stack
@@ -154,7 +154,7 @@ EOAPI Elm_Widget_Item *elm_obj_naviframe_bottom_item_get(const Eo *obj);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Efl_Canvas_Object *elm_obj_naviframe_item_pop(Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_naviframe_item_pop(Eo *obj);
 
 /**
  * @brief Insert a new item into the naviframe before item @c before.
@@ -180,7 +180,7 @@ EOAPI Efl_Canvas_Object *elm_obj_naviframe_item_pop(Eo *obj);
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Elm_Widget_Item *elm_obj_naviframe_item_insert_before(Eo *obj, Elm_Widget_Item *before, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_naviframe_item_insert_before(Eo *obj, Elm_Widget_Item *before, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
 /**
  * @brief Push a new item to the top of the naviframe stack (and show it).
@@ -210,7 +210,7 @@ EOAPI Elm_Widget_Item *elm_obj_naviframe_item_insert_before(Eo *obj, Elm_Widget_
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Elm_Widget_Item *elm_obj_naviframe_item_push(Eo *obj, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_naviframe_item_push(Eo *obj, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
 /**
  * @brief Simple version of item_promote.
@@ -220,7 +220,7 @@ EOAPI Elm_Widget_Item *elm_obj_naviframe_item_push(Eo *obj, const char *title_la
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI void elm_obj_naviframe_item_simple_promote(Eo *obj, Efl_Canvas_Object *content);
+ELM_API ELM_API_WEAK void elm_obj_naviframe_item_simple_promote(Eo *obj, Efl_Canvas_Object *content);
 
 /**
  * @brief Insert a new item into the naviframe after item @c after.
@@ -248,9 +248,9 @@ EOAPI void elm_obj_naviframe_item_simple_promote(Eo *obj, Efl_Canvas_Object *con
  *
  * @ingroup Elm_Naviframe
  */
-EOAPI Elm_Widget_Item *elm_obj_naviframe_item_insert_after(Eo *obj, Elm_Widget_Item *after, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_naviframe_item_insert_after(Eo *obj, Elm_Widget_Item *after, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
-EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED;
 
 /** Called when naviframe transition finished
  * @return Efl_Object *
@@ -259,7 +259,7 @@ EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TRANSITION_FINISHE
  */
 #define ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED (&(_ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED))
 
-EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED;
 
 /** Called when naviframe title transaction finished
  * @return Efl_Object *
@@ -268,7 +268,7 @@ EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_F
  */
 #define ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED (&(_ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED))
 
-EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_CLICKED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_CLICKED;
 
 /** Called when naviframe title was clicked
  * @return Efl_Object *
@@ -277,7 +277,7 @@ EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_CLICKED;
  */
 #define ELM_NAVIFRAME_EVENT_TITLE_CLICKED (&(_ELM_NAVIFRAME_EVENT_TITLE_CLICKED))
 
-EWAPI extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED;
 
 /** Called when naviframe item was activated
  * @return Efl_Object *

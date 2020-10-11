@@ -27,7 +27,7 @@ typedef Eo Elm_Box;
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_homogeneous_set(Elm_Box *obj, Eina_Bool homogeneous);
+ELM_API void elm_box_homogeneous_set(Elm_Box *obj, Eina_Bool homogeneous);
 
 /**
  * @brief Get whether the box is using homogeneous mode or not ($true if it's
@@ -39,7 +39,7 @@ EAPI void elm_box_homogeneous_set(Elm_Box *obj, Eina_Bool homogeneous);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI Eina_Bool elm_box_homogeneous_get(const Elm_Box *obj);
+ELM_API Eina_Bool elm_box_homogeneous_get(const Elm_Box *obj);
 
 /**
  * @brief Set the alignment of the whole bounding box of contents.
@@ -54,7 +54,7 @@ EAPI Eina_Bool elm_box_homogeneous_get(const Elm_Box *obj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_align_set(Elm_Box *obj, double horizontal, double vertical);
+ELM_API void elm_box_align_set(Elm_Box *obj, double horizontal, double vertical);
 
 /**
  * @brief Get the alignment of the whole bounding box of contents.
@@ -67,7 +67,7 @@ EAPI void elm_box_align_set(Elm_Box *obj, double horizontal, double vertical);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_align_get(const Elm_Box *obj, double *horizontal, double *vertical);
+ELM_API void elm_box_align_get(const Elm_Box *obj, double *horizontal, double *vertical);
 
 /**
  * @brief Set the horizontal orientation
@@ -83,7 +83,7 @@ EAPI void elm_box_align_get(const Elm_Box *obj, double *horizontal, double *vert
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_horizontal_set(Elm_Box *obj, Eina_Bool horizontal);
+ELM_API void elm_box_horizontal_set(Elm_Box *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get the horizontal orientation ($true if the box is set to horizontal
@@ -95,7 +95,7 @@ EAPI void elm_box_horizontal_set(Elm_Box *obj, Eina_Bool horizontal);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI Eina_Bool elm_box_horizontal_get(const Elm_Box *obj);
+ELM_API Eina_Bool elm_box_horizontal_get(const Elm_Box *obj);
 
 /**
  * @brief Set the space (padding) between the box's elements.
@@ -111,7 +111,7 @@ EAPI Eina_Bool elm_box_horizontal_get(const Elm_Box *obj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_padding_set(Elm_Box *obj, int horizontal, int vertical);
+ELM_API void elm_box_padding_set(Elm_Box *obj, int horizontal, int vertical);
 
 /**
  * @brief Get the space (padding) between the box's elements.
@@ -124,7 +124,7 @@ EAPI void elm_box_padding_set(Elm_Box *obj, int horizontal, int vertical);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_padding_get(const Elm_Box *obj, int *horizontal, int *vertical);
+ELM_API void elm_box_padding_get(const Elm_Box *obj, int *horizontal, int *vertical);
 
 /**
  * @brief Get a list of the objects packed into the box
@@ -140,7 +140,7 @@ EAPI void elm_box_padding_get(const Elm_Box *obj, int *horizontal, int *vertical
  *
  * @ingroup Elm_Box_Group
  */
-EAPI Eina_List *elm_box_children_get(const Elm_Box *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API Eina_List *elm_box_children_get(const Elm_Box *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Add an object at the end of the pack list
@@ -159,7 +159,7 @@ EAPI Eina_List *elm_box_children_get(const Elm_Box *obj) EINA_WARN_UNUSED_RESULT
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_pack_end(Elm_Box *obj, Efl_Canvas_Object *subobj);
+ELM_API void elm_box_pack_end(Elm_Box *obj, Efl_Canvas_Object *subobj);
 
 /**
  * @brief Remove all items from the box, without deleting them
@@ -175,7 +175,7 @@ EAPI void elm_box_pack_end(Elm_Box *obj, Efl_Canvas_Object *subobj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_unpack_all(Elm_Box *obj);
+ELM_API void elm_box_unpack_all(Elm_Box *obj);
 
 /**
  * @brief Unpack a box item
@@ -190,7 +190,7 @@ EAPI void elm_box_unpack_all(Elm_Box *obj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_unpack(Elm_Box *obj, Efl_Canvas_Object *subobj);
+ELM_API void elm_box_unpack(Elm_Box *obj, Efl_Canvas_Object *subobj);
 
 /**
  * @brief Adds an object to the box after the indicated object
@@ -210,7 +210,7 @@ EAPI void elm_box_unpack(Elm_Box *obj, Efl_Canvas_Object *subobj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_pack_after(Elm_Box *obj, Efl_Canvas_Object *subobj, Efl_Canvas_Object *after);
+ELM_API void elm_box_pack_after(Elm_Box *obj, Efl_Canvas_Object *subobj, Efl_Canvas_Object *after);
 
 /**
  * @brief Add an object to the beginning of the pack list
@@ -229,7 +229,7 @@ EAPI void elm_box_pack_after(Elm_Box *obj, Efl_Canvas_Object *subobj, Efl_Canvas
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_pack_start(Elm_Box *obj, Efl_Canvas_Object *subobj);
+ELM_API void elm_box_pack_start(Elm_Box *obj, Efl_Canvas_Object *subobj);
 
 /**
  * @brief Force the box to recalculate its children packing.
@@ -242,7 +242,7 @@ EAPI void elm_box_pack_start(Elm_Box *obj, Efl_Canvas_Object *subobj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_recalculate(Elm_Box *obj);
+ELM_API void elm_box_recalculate(Elm_Box *obj);
 
 /**
  * @brief Adds an object to the box before the indicated object
@@ -262,7 +262,7 @@ EAPI void elm_box_recalculate(Elm_Box *obj);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_pack_before(Elm_Box *obj, Efl_Canvas_Object *subobj, Efl_Canvas_Object *before);
+ELM_API void elm_box_pack_before(Elm_Box *obj, Efl_Canvas_Object *subobj, Efl_Canvas_Object *before);
 
 /**
  * @brief Clear the box of all children
@@ -275,6 +275,6 @@ EAPI void elm_box_pack_before(Elm_Box *obj, Efl_Canvas_Object *subobj, Efl_Canva
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_clear(Elm_Box *obj);
+ELM_API void elm_box_clear(Elm_Box *obj);
 
 #endif

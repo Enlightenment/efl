@@ -22,7 +22,7 @@ typedef Eo Elm_Route;
  *
  * @ingroup Elm_Route_Group
  */
-EAPI void elm_route_emap_set(Elm_Route *obj, void *emap);
+ELM_API void elm_route_emap_set(Elm_Route *obj, void *emap);
 
 /**
  * @brief Get the minimum and maximum values along the longitude.
@@ -35,7 +35,7 @@ EAPI void elm_route_emap_set(Elm_Route *obj, void *emap);
  *
  * @ingroup Elm_Route_Group
  */
-EAPI void elm_route_longitude_min_max_get(const Elm_Route *obj, double *min, double *max);
+ELM_API void elm_route_longitude_min_max_get(const Elm_Route *obj, double *min, double *max);
 
 /**
  * @brief Get the minimum and maximum values along the latitude.
@@ -48,6 +48,6 @@ EAPI void elm_route_longitude_min_max_get(const Elm_Route *obj, double *min, dou
  *
  * @ingroup Elm_Route_Group
  */
-EAPI void elm_route_latitude_min_max_get(const Elm_Route *obj, double *min, double *max);
+ELM_API void elm_route_latitude_min_max_get(const Elm_Route *obj, double *min, double *max);
 
 #endif

@@ -12,7 +12,7 @@
  *
  * @since 1.8
  */
-EAPI Evas_Object       *elm_prefs_add(Evas_Object *parent);
+ELM_API Evas_Object       *elm_prefs_add(Evas_Object *parent);
 
 /* API for prefs interface modules, from now on */
 
@@ -183,7 +183,7 @@ struct _Elm_Prefs_Item_Iface_Info
  *
  * @since 1.8
  */
-EAPI void      elm_prefs_item_iface_register(const Elm_Prefs_Item_Iface_Info *array);
+ELM_API void      elm_prefs_item_iface_register(const Elm_Prefs_Item_Iface_Info *array);
 
 /**
  * Mass-unregister widgets implementing prefs @b items interfaces.
@@ -198,9 +198,9 @@ EAPI void      elm_prefs_item_iface_register(const Elm_Prefs_Item_Iface_Info *ar
  *
  * @since 1.8
  */
-EAPI void      elm_prefs_item_iface_unregister(const Elm_Prefs_Item_Iface_Info *array);
+ELM_API void      elm_prefs_item_iface_unregister(const Elm_Prefs_Item_Iface_Info *array);
 
-EAPI Eina_Bool elm_prefs_item_widget_common_add(Evas_Object *prefs,
+ELM_API Eina_Bool elm_prefs_item_widget_common_add(Evas_Object *prefs,
                                                 Evas_Object *obj);
 
 typedef struct _Elm_Prefs_Page_Iface Elm_Prefs_Page_Iface;
@@ -297,7 +297,7 @@ struct _Elm_Prefs_Page_Iface_Info
  *
  * @since 1.8
  */
-EAPI void      elm_prefs_page_iface_register(const Elm_Prefs_Page_Iface_Info *array);
+ELM_API void      elm_prefs_page_iface_register(const Elm_Prefs_Page_Iface_Info *array);
 
 /**
  * Mass-unregister widgets implementing prefs @b pages interfaces.
@@ -312,7 +312,7 @@ EAPI void      elm_prefs_page_iface_register(const Elm_Prefs_Page_Iface_Info *ar
  *
  * @since 1.8
  */
-EAPI void      elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array);
+ELM_API void      elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array);
 
 /**
  * @}

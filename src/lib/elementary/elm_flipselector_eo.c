@@ -1,23 +1,23 @@
-EWAPI const Efl_Event_Description _ELM_FLIPSELECTOR_EVENT_UNDERFLOWED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FLIPSELECTOR_EVENT_UNDERFLOWED =
    EFL_EVENT_DESCRIPTION("underflowed");
-EWAPI const Efl_Event_Description _ELM_FLIPSELECTOR_EVENT_OVERFLOWED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FLIPSELECTOR_EVENT_OVERFLOWED =
    EFL_EVENT_DESCRIPTION("overflowed");
 
 const Eina_List *_elm_flipselector_items_get(const Eo *obj, Elm_Flipselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_flipselector_items_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_flipselector_items_get, const Eina_List *, NULL);
 
 Elm_Widget_Item *_elm_flipselector_first_item_get(const Eo *obj, Elm_Flipselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_flipselector_first_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_flipselector_first_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_flipselector_last_item_get(const Eo *obj, Elm_Flipselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_flipselector_last_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_flipselector_last_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_flipselector_selected_item_get(const Eo *obj, Elm_Flipselector_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_flipselector_selected_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_flipselector_selected_item_get, Elm_Widget_Item *, NULL);
 
 void _elm_flipselector_first_interval_set(Eo *obj, Elm_Flipselector_Data *pd, double interval);
 
@@ -37,7 +37,7 @@ __eolian_elm_flipselector_first_interval_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_flipselector_first_interval_set, EFL_FUNC_CALL(interval), double interval);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_flipselector_first_interval_set, EFL_FUNC_CALL(interval), double interval);
 
 double _elm_flipselector_first_interval_get(const Eo *obj, Elm_Flipselector_Data *pd);
 
@@ -49,23 +49,23 @@ __eolian_elm_flipselector_first_interval_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_flipselector_first_interval_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_flipselector_first_interval_get, double, 0);
 
 Elm_Widget_Item *_elm_flipselector_item_prepend(Eo *obj, Elm_Flipselector_Data *pd, const char *label, Evas_Smart_Cb func, void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_flipselector_item_prepend, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, func, data), const char *label, Evas_Smart_Cb func, void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_flipselector_item_prepend, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, func, data), const char *label, Evas_Smart_Cb func, void *data);
 
 void _elm_flipselector_flip_next(Eo *obj, Elm_Flipselector_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_flipselector_flip_next);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_flipselector_flip_next);
 
 Elm_Widget_Item *_elm_flipselector_item_append(Eo *obj, Elm_Flipselector_Data *pd, const char *label, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_flipselector_item_append, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, func, data), const char *label, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_flipselector_item_append, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, func, data), const char *label, Evas_Smart_Cb func, const void *data);
 
 void _elm_flipselector_flip_prev(Eo *obj, Elm_Flipselector_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_flipselector_flip_prev);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_flipselector_flip_prev);
 
 Efl_Object *_elm_flipselector_efl_object_constructor(Eo *obj, Elm_Flipselector_Data *pd);
 

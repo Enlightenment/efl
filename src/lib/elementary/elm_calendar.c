@@ -1497,7 +1497,7 @@ _elm_calendar_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Calendar_D
    _access_obj_process(obj, _elm_calendar_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_calendar_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -1551,7 +1551,7 @@ _elm_calendar_interval_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
    return sd->first_interval;
 }
 
-EAPI void
+ELM_API void
 elm_calendar_min_max_year_set(Elm_Calendar *obj, int min, int max)
 {
    Elm_Calendar_Data *sd;
@@ -1580,7 +1580,7 @@ elm_calendar_min_max_year_set(Elm_Calendar *obj, int min, int max)
    evas_object_smart_changed(obj);
 }
 
-EAPI void
+ELM_API void
 elm_calendar_min_max_year_get(const Elm_Calendar *obj, int *min, int *max)
 {
    Elm_Calendar_Data *sd;
@@ -1710,7 +1710,7 @@ _elm_calendar_date_max_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
    return &(sd->date_max);
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_calendar_day_selection_disabled_set(Evas_Object *obj,
                                         Eina_Bool disabled)
 {
@@ -1722,7 +1722,7 @@ elm_calendar_day_selection_disabled_set(Evas_Object *obj,
      elm_calendar_select_mode_set(obj, ELM_CALENDAR_SELECT_MODE_DEFAULT);
 }
 
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ELM_API Eina_Bool
 elm_calendar_day_selection_disabled_get(const Evas_Object *obj)
 {
    ELM_CALENDAR_CHECK(obj) EINA_FALSE;
@@ -1805,7 +1805,7 @@ _elm_calendar_mark_del(Eo *obj, Elm_Calendar_Data *sd, Elm_Calendar_Mark *mark)
    _mark_free(mark);
 }
 
-EAPI void
+ELM_API void
 elm_calendar_mark_del(Elm_Calendar_Mark *mark)
 {
    EINA_SAFETY_ON_NULL_RETURN(mark);

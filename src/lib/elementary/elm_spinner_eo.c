@@ -1,14 +1,14 @@
-EWAPI const Efl_Event_Description _ELM_SPINNER_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SPINNER_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
-EWAPI const Efl_Event_Description _ELM_SPINNER_EVENT_DELAY_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SPINNER_EVENT_DELAY_CHANGED =
    EFL_EVENT_DESCRIPTION("delay,changed");
-EWAPI const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_START =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_START =
    EFL_EVENT_DESCRIPTION("spinner,drag,start");
-EWAPI const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_STOP =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SPINNER_EVENT_SPINNER_DRAG_STOP =
    EFL_EVENT_DESCRIPTION("spinner,drag,stop");
-EWAPI const Efl_Event_Description _ELM_SPINNER_EVENT_MIN_REACHED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SPINNER_EVENT_MIN_REACHED =
    EFL_EVENT_DESCRIPTION("min,reached");
-EWAPI const Efl_Event_Description _ELM_SPINNER_EVENT_MAX_REACHED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SPINNER_EVENT_MAX_REACHED =
    EFL_EVENT_DESCRIPTION("max,reached");
 
 void _elm_spinner_wrap_set(Eo *obj, Elm_Spinner_Data *pd, Eina_Bool wrap);
@@ -29,7 +29,7 @@ __eolian_elm_spinner_wrap_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_wrap_set, EFL_FUNC_CALL(wrap), Eina_Bool wrap);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_wrap_set, EFL_FUNC_CALL(wrap), Eina_Bool wrap);
 
 Eina_Bool _elm_spinner_wrap_get(const Eo *obj, Elm_Spinner_Data *pd);
 
@@ -41,7 +41,7 @@ __eolian_elm_spinner_wrap_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_spinner_wrap_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_spinner_wrap_get, Eina_Bool, 0);
 
 void _elm_spinner_interval_set(Eo *obj, Elm_Spinner_Data *pd, double interval);
 
@@ -61,7 +61,7 @@ __eolian_elm_spinner_interval_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_interval_set, EFL_FUNC_CALL(interval), double interval);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_interval_set, EFL_FUNC_CALL(interval), double interval);
 
 double _elm_spinner_interval_get(const Eo *obj, Elm_Spinner_Data *pd);
 
@@ -73,7 +73,7 @@ __eolian_elm_spinner_interval_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_spinner_interval_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_spinner_interval_get, double, 0);
 
 void _elm_spinner_round_set(Eo *obj, Elm_Spinner_Data *pd, int rnd);
 
@@ -93,7 +93,7 @@ __eolian_elm_spinner_round_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_round_set, EFL_FUNC_CALL(rnd), int rnd);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_round_set, EFL_FUNC_CALL(rnd), int rnd);
 
 int _elm_spinner_round_get(const Eo *obj, Elm_Spinner_Data *pd);
 
@@ -105,7 +105,7 @@ __eolian_elm_spinner_round_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_spinner_round_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_spinner_round_get, int, 0);
 
 void _elm_spinner_editable_set(Eo *obj, Elm_Spinner_Data *pd, Eina_Bool editable);
 
@@ -125,7 +125,7 @@ __eolian_elm_spinner_editable_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_editable_set, EFL_FUNC_CALL(editable), Eina_Bool editable);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_editable_set, EFL_FUNC_CALL(editable), Eina_Bool editable);
 
 Eina_Bool _elm_spinner_editable_get(const Eo *obj, Elm_Spinner_Data *pd);
 
@@ -137,7 +137,7 @@ __eolian_elm_spinner_editable_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_spinner_editable_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_spinner_editable_get, Eina_Bool, 0);
 
 void _elm_spinner_base_set(Eo *obj, Elm_Spinner_Data *pd, double base);
 
@@ -157,7 +157,7 @@ __eolian_elm_spinner_base_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_base_set, EFL_FUNC_CALL(base), double base);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_base_set, EFL_FUNC_CALL(base), double base);
 
 double _elm_spinner_base_get(const Eo *obj, Elm_Spinner_Data *pd);
 
@@ -169,7 +169,7 @@ __eolian_elm_spinner_base_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_spinner_base_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_spinner_base_get, double, 0);
 
 void _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *pd, const char *fmt);
 
@@ -189,7 +189,7 @@ __eolian_elm_spinner_label_format_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_label_format_set, EFL_FUNC_CALL(fmt), const char *fmt);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_label_format_set, EFL_FUNC_CALL(fmt), const char *fmt);
 
 const char *_elm_spinner_label_format_get(const Eo *obj, Elm_Spinner_Data *pd);
 
@@ -201,11 +201,11 @@ __eolian_elm_spinner_label_format_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_spinner_label_format_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_spinner_label_format_get, const char *, NULL);
 
 void _elm_spinner_special_value_add(Eo *obj, Elm_Spinner_Data *pd, double value, const char *label);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_spinner_special_value_add, EFL_FUNC_CALL(value, label), double value, const char *label);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_spinner_special_value_add, EFL_FUNC_CALL(value, label), double value, const char *label);
 
 Efl_Object *_elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *pd);
 

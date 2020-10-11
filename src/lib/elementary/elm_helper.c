@@ -12,7 +12,7 @@ struct _Elm_Validator_Regexp
    regex_t regex;
 };
 
-EAPI Elm_Validator_Regexp *
+ELM_API Elm_Validator_Regexp *
 elm_validator_regexp_new(const char *pattern, const char *sig)
 {
    Elm_Validator_Regexp *validator;
@@ -24,7 +24,7 @@ elm_validator_regexp_new(const char *pattern, const char *sig)
    return validator;
 }
 
-EAPI void
+ELM_API void
 elm_validator_regexp_free(Elm_Validator_Regexp *validator)
 {
    eina_stringshare_del(validator->signal);
@@ -32,13 +32,13 @@ elm_validator_regexp_free(Elm_Validator_Regexp *validator)
    free(validator);
 }
 
-EAPI Elm_Regexp_Status
+ELM_API Elm_Regexp_Status
 elm_validator_regexp_status_get(Elm_Validator_Regexp *validator)
 {
    return validator->status;
 }
 
-EAPI void
+ELM_API void
 elm_validator_regexp_helper(void *data, const Efl_Event *event)
 {
    Elm_Validate_Content *vc = event->info;

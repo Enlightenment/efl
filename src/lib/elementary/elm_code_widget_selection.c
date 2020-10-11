@@ -38,7 +38,7 @@ _elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widge
      *col = width + 1;
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_start(Evas_Object *widget,
                                 unsigned int line, unsigned int col)
 {
@@ -65,7 +65,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
    efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CODE_SELECTION_START, widget);
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_end(Evas_Object *widget,
                               unsigned int line, unsigned int col)
 {
@@ -93,7 +93,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
    efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CODE_SELECTION_CHANGED, widget);
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_select_all(Evas_Object *widget)
 {
    Elm_Code_Line *last_line;
@@ -113,7 +113,7 @@ elm_code_widget_selection_select_all(Evas_Object *widget)
    efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CODE_SELECTION_CHANGED, widget);
 }
 
-EAPI Elm_Code_Widget_Selection_Data *
+ELM_API Elm_Code_Widget_Selection_Data *
 elm_code_widget_selection_normalized_get(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
@@ -154,7 +154,7 @@ elm_code_widget_selection_normalized_get(Evas_Object *widget)
    return selection;
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_clear(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
@@ -296,7 +296,7 @@ _elm_code_widget_selection_delete_do(Evas_Object *widget, Eina_Bool undo)
    elm_code_widget_cursor_position_set(widget, row, col);
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_delete(Evas_Object *widget)
 {
    _elm_code_widget_selection_delete_do(widget, EINA_TRUE);
@@ -308,7 +308,7 @@ _elm_code_widget_selection_delete_no_undo(Evas_Object *widget)
    _elm_code_widget_selection_delete_do(widget, EINA_FALSE);
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line)
 {
    Elm_Code_Widget_Data *pd;
@@ -342,7 +342,7 @@ _elm_code_widget_selection_char_breaks(char chr)
    return EINA_FALSE;
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, unsigned int col)
 {
    Elm_Code_Widget_Data *pd;
@@ -378,7 +378,7 @@ elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, un
                                  elm_code_widget_line_text_column_width_to_position(widget, lineobj, pos));
 }
 
-EAPI char *
+ELM_API char *
 elm_code_widget_selection_text_get(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;
@@ -410,7 +410,7 @@ _selection_loss_cb(void *data EINA_UNUSED, Elm_Sel_Type selection EINA_UNUSED)
 //   elm_code_widget_selection_clear(widget);
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_cut(Evas_Object *widget)
 {
    char *text;
@@ -429,7 +429,7 @@ elm_code_widget_selection_cut(Evas_Object *widget)
    efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_copy(Evas_Object *widget)
 {
    char *text;
@@ -458,7 +458,7 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
    return EINA_TRUE;
 }
 
-EAPI void
+ELM_API void
 elm_code_widget_selection_paste(Evas_Object *widget)
 {
    elm_code_widget_selection_delete(widget);
@@ -466,7 +466,7 @@ elm_code_widget_selection_paste(Evas_Object *widget)
    elm_cnp_selection_get(widget, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT, _selection_paste_cb, widget);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_code_widget_selection_is_empty(Evas_Object *widget)
 {
    Elm_Code_Widget_Data *pd;

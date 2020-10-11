@@ -67,7 +67,7 @@ typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Objec
  * @note Every elm_object_item supports this API
  * @ingroup Elm_General
  */
-EAPI void *elm_object_item_data_get(const Elm_Object_Item *it);
+ELM_API void *elm_object_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Set the data associated with an object item
@@ -77,10 +77,10 @@ EAPI void *elm_object_item_data_get(const Elm_Object_Item *it);
  * @note Every elm_object_item supports this API
  * @ingroup Elm_General
  */
-EAPI void elm_object_item_data_set(Elm_Object_Item *it, void *data);
+ELM_API void elm_object_item_data_set(Elm_Object_Item *it, void *data);
 
 /** Delete the given item.
  *
  * @ingroup Elm_General
  */
-EAPI void elm_object_item_del(Elm_Object_Item *obj);
+ELM_API void elm_object_item_del(Elm_Object_Item *obj);

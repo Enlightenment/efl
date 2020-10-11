@@ -19,6 +19,6 @@ typedef Eo Elm_Popup_Item;
  */
 #define ELM_POPUP_ITEM_CLASS elm_popup_item_class_get()
 
-EWAPI const Efl_Class *elm_popup_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_popup_item_class_get(void) EINA_CONST;
 
 #endif

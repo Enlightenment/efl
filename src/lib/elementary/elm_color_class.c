@@ -670,7 +670,7 @@ static const Eldbus_Service_Interface_Desc base_desc =
    ELM_COLOR_CLASS_METHOD_BASE, colorclass_editor_methods, colorclass_editor_signals, NULL, NULL, NULL
 };
 #endif
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_color_class_editor_add(Evas_Object *obj)
 {
    Evas_Object *ly, *bt, *gl, *cs;
@@ -793,19 +793,19 @@ elm_color_class_editor_add(Evas_Object *obj)
    return ly;
 }
 
-EAPI void
+ELM_API void
 elm_color_class_translate_cb_set(Elm_Color_Class_Name_Cb cb)
 {
    tl_cb = cb;
 }
 
-EAPI void
+ELM_API void
 elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb)
 {
    list_cb = cb;
 }
 
-EAPI Eina_List *
+ELM_API Eina_List *
 elm_color_class_util_edje_file_list(Eina_File *f)
 {
    Edje_Color_Class *ecc, *ecc2;

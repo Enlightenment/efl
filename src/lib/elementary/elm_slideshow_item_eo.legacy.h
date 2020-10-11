@@ -25,7 +25,7 @@ typedef Eo Elm_Slideshow_Item;
  *
  * @ingroup Elm_Slideshow_Item_Group
  */
-EAPI void elm_slideshow_item_show(Elm_Slideshow_Item *obj);
+ELM_API void elm_slideshow_item_show(Elm_Slideshow_Item *obj);
 
 /**
  * @brief Get the real Evas object created to implement the view of a given
@@ -45,6 +45,6 @@ EAPI void elm_slideshow_item_show(Elm_Slideshow_Item *obj);
  *
  * @ingroup Elm_Slideshow_Item_Group
  */
-EAPI Efl_Canvas_Object *elm_slideshow_item_object_get(const Elm_Slideshow_Item *obj);
+ELM_API Efl_Canvas_Object *elm_slideshow_item_object_get(const Elm_Slideshow_Item *obj);
 
 #endif

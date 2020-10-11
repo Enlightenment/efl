@@ -19,9 +19,9 @@ typedef Eo Elm_Fileselector_Button;
  */
 #define ELM_FILESELECTOR_BUTTON_CLASS elm_fileselector_button_class_get()
 
-EWAPI const Efl_Class *elm_fileselector_button_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_fileselector_button_class_get(void) EINA_CONST;
 
-EWAPI extern const Efl_Event_Description _ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN;
 
 /** Called when a file was chosen in the fileselector
  *

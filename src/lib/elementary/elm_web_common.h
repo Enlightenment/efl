@@ -264,7 +264,7 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
  *
  * @return @c EINA_TRUE if the flag is set, @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag);
+ELM_API Eina_Bool              elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag);
 
 /**
  *
@@ -273,10 +273,10 @@ EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_W
  * @param wf The web window features object
  * @param x, y, w, h - the co-ordinates of the web view window.
  */
-EAPI void              elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+ELM_API void              elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
-EAPI void              elm_web_window_features_ref(Elm_Web_Window_Features *wf);
-EAPI void              elm_web_window_features_unref(Elm_Web_Window_Features *wf);
+ELM_API void              elm_web_window_features_ref(Elm_Web_Window_Features *wf);
+ELM_API void              elm_web_window_features_unref(Elm_Web_Window_Features *wf);
 
 /**
  * @}

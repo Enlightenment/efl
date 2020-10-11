@@ -19,7 +19,7 @@ typedef Eo Elm_Prefs;
  */
 #define ELM_PREFS_CLASS elm_prefs_class_get()
 
-EWAPI const Efl_Class *elm_prefs_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_prefs_class_get(void) EINA_CONST;
 
 /**
  * @brief Set user data for a given prefs widget
@@ -52,7 +52,7 @@ EWAPI const Efl_Class *elm_prefs_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_data_set(Eo *obj, Elm_Prefs_Data *data);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_data_set(Eo *obj, Elm_Prefs_Data *data);
 
 /**
  * @brief Set user data for a given prefs widget
@@ -84,7 +84,7 @@ EOAPI Eina_Bool elm_obj_prefs_data_set(Eo *obj, Elm_Prefs_Data *data);
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Elm_Prefs_Data *elm_obj_prefs_data_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Prefs_Data *elm_obj_prefs_data_get(const Eo *obj);
 
 /**
  * @brief Control whether a given prefs widget should save its values back (on
@@ -104,7 +104,7 @@ EOAPI Elm_Prefs_Data *elm_obj_prefs_data_get(const Eo *obj);
  *
  * @ingroup Elm_Prefs
  */
-EOAPI void elm_obj_prefs_autosave_set(Eo *obj, Eina_Bool autosave);
+ELM_API ELM_API_WEAK void elm_obj_prefs_autosave_set(Eo *obj, Eina_Bool autosave);
 
 /**
  * @brief Control whether a given prefs widget should save its values back (on
@@ -125,7 +125,7 @@ EOAPI void elm_obj_prefs_autosave_set(Eo *obj, Eina_Bool autosave);
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_autosave_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_autosave_get(const Eo *obj);
 
 /**
  * @brief Reset the values of a given prefs widget to a previous state.
@@ -142,7 +142,7 @@ EOAPI Eina_Bool elm_obj_prefs_autosave_get(const Eo *obj);
  *
  * @ingroup Elm_Prefs
  */
-EOAPI void elm_obj_prefs_reset(Eo *obj, Elm_Prefs_Reset_Mode mode);
+ELM_API ELM_API_WEAK void elm_obj_prefs_reset(Eo *obj, Elm_Prefs_Reset_Mode mode);
 
 /**
  * @brief Set the value on a given prefs widget's item.
@@ -160,7 +160,7 @@ EOAPI void elm_obj_prefs_reset(Eo *obj, Elm_Prefs_Reset_Mode mode);
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_item_value_set(Eo *obj, const char *name, const Eina_Value *value);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_item_value_set(Eo *obj, const char *name, const Eina_Value *value);
 
 /**
  * @brief Get the value of a given prefs widget's item.
@@ -179,7 +179,7 @@ EOAPI Eina_Bool elm_obj_prefs_item_value_set(Eo *obj, const char *name, const Ei
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_item_value_get(const Eo *obj, const char *name, Eina_Value *value);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_item_value_get(const Eo *obj, const char *name, Eina_Value *value);
 
 /**
  * @brief Get the Elementary widget bound to a given prefs widget's item.
@@ -200,7 +200,7 @@ EOAPI Eina_Bool elm_obj_prefs_item_value_get(const Eo *obj, const char *name, Ei
  *
  * @ingroup Elm_Prefs
  */
-EOAPI const Efl_Canvas_Object *elm_obj_prefs_item_object_get(Eo *obj, const char *name);
+ELM_API ELM_API_WEAK const Efl_Canvas_Object *elm_obj_prefs_item_object_get(Eo *obj, const char *name);
 
 /**
  * @brief Set whether the widget bound to a given prefs widget's item is
@@ -215,7 +215,7 @@ EOAPI const Efl_Canvas_Object *elm_obj_prefs_item_object_get(Eo *obj, const char
  *
  * @ingroup Elm_Prefs
  */
-EOAPI void elm_obj_prefs_item_disabled_set(Eo *obj, const char *name, Eina_Bool disabled);
+ELM_API ELM_API_WEAK void elm_obj_prefs_item_disabled_set(Eo *obj, const char *name, Eina_Bool disabled);
 
 /**
  * @brief Get whether the widget bound to a given prefs widget's item is
@@ -231,7 +231,7 @@ EOAPI void elm_obj_prefs_item_disabled_set(Eo *obj, const char *name, Eina_Bool 
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_item_disabled_get(const Eo *obj, const char *name);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_item_disabled_get(const Eo *obj, const char *name);
 
 /**
  * @brief "Swallows" an object into a SWALLOW item of a prefs widget.
@@ -247,7 +247,7 @@ EOAPI Eina_Bool elm_obj_prefs_item_disabled_get(const Eo *obj, const char *name)
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_item_swallow(Eo *obj, const char *name, Efl_Canvas_Object *child);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_item_swallow(Eo *obj, const char *name, Efl_Canvas_Object *child);
 
 /**
  * @brief Set whether the widget bound to a given prefs widget's item is
@@ -265,7 +265,7 @@ EOAPI Eina_Bool elm_obj_prefs_item_swallow(Eo *obj, const char *name, Efl_Canvas
  *
  * @ingroup Elm_Prefs
  */
-EOAPI void elm_obj_prefs_item_editable_set(Eo *obj, const char *name, Eina_Bool editable);
+ELM_API ELM_API_WEAK void elm_obj_prefs_item_editable_set(Eo *obj, const char *name, Eina_Bool editable);
 
 /**
  * @brief Get whether the widget bound to a given prefs widget's item is
@@ -281,7 +281,7 @@ EOAPI void elm_obj_prefs_item_editable_set(Eo *obj, const char *name, Eina_Bool 
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_item_editable_get(const Eo *obj, const char *name);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_item_editable_get(const Eo *obj, const char *name);
 
 /**
  * @brief Unswallow an object from a SWALLOW item of a prefs widget.
@@ -296,7 +296,7 @@ EOAPI Eina_Bool elm_obj_prefs_item_editable_get(const Eo *obj, const char *name)
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Efl_Canvas_Object *elm_obj_prefs_item_unswallow(Eo *obj, const char *name);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_prefs_item_unswallow(Eo *obj, const char *name);
 
 /**
  * @brief Set whether the widget bound to given prefs widget's item should be
@@ -315,7 +315,7 @@ EOAPI Efl_Canvas_Object *elm_obj_prefs_item_unswallow(Eo *obj, const char *name)
  *
  * @ingroup Elm_Prefs
  */
-EOAPI void elm_obj_prefs_item_visible_set(Eo *obj, const char *name, Eina_Bool visible);
+ELM_API ELM_API_WEAK void elm_obj_prefs_item_visible_set(Eo *obj, const char *name, Eina_Bool visible);
 
 /**
  * @brief Get whether the widget bound to a given prefs widget's item is
@@ -331,9 +331,9 @@ EOAPI void elm_obj_prefs_item_visible_set(Eo *obj, const char *name, Eina_Bool v
  *
  * @ingroup Elm_Prefs
  */
-EOAPI Eina_Bool elm_obj_prefs_item_visible_get(const Eo *obj, const char *name);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_prefs_item_visible_get(const Eo *obj, const char *name);
 
-EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_CHANGED;
 
 /** Called when page changed
  * @return const char *
@@ -342,7 +342,7 @@ EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_CHANGED;
  */
 #define ELM_PREFS_EVENT_PAGE_CHANGED (&(_ELM_PREFS_EVENT_PAGE_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_SAVED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_SAVED;
 
 /** Called when page was saved
  * @return const char *
@@ -351,7 +351,7 @@ EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_SAVED;
  */
 #define ELM_PREFS_EVENT_PAGE_SAVED (&(_ELM_PREFS_EVENT_PAGE_SAVED))
 
-EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_LOADED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_LOADED;
 
 /** Called when page got loaded
  * @return const char *
@@ -360,7 +360,7 @@ EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_LOADED;
  */
 #define ELM_PREFS_EVENT_PAGE_LOADED (&(_ELM_PREFS_EVENT_PAGE_LOADED))
 
-EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_ITEM_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PREFS_EVENT_ITEM_CHANGED;
 
 /** Called when item changed
  * @return const char *
@@ -369,7 +369,7 @@ EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_ITEM_CHANGED;
  */
 #define ELM_PREFS_EVENT_ITEM_CHANGED (&(_ELM_PREFS_EVENT_ITEM_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_PREFS_EVENT_ACTION;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_PREFS_EVENT_ACTION;
 
 /** Called when action was done
  * @return const char *

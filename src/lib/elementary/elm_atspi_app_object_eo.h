@@ -19,6 +19,6 @@ typedef Eo Elm_Atspi_App_Object;
  */
 #define ELM_ATSPI_APP_OBJECT_CLASS elm_atspi_app_object_class_get()
 
-EWAPI const Efl_Class *elm_atspi_app_object_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_atspi_app_object_class_get(void) EINA_CONST;
 
 #endif

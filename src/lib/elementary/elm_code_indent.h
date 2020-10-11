@@ -20,9 +20,9 @@ extern "C" {
  *
  */
 
-EAPI char *elm_code_line_indent_get(Elm_Code_Line *line);
+ELM_API char *elm_code_line_indent_get(Elm_Code_Line *line);
 
-EAPI const char *elm_code_line_indent_matching_braces_get(Elm_Code_Line *line, unsigned int *length);
+ELM_API const char *elm_code_line_indent_matching_braces_get(Elm_Code_Line *line, unsigned int *length);
 
 /**
  * @}

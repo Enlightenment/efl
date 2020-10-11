@@ -2259,7 +2259,7 @@ _elm_colorselector_efl_ui_widget_on_access_update(Eo *obj, Elm_Colorselector_Dat
    _access_obj_process(obj, _elm_colorselector_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_colorselector_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -2379,7 +2379,7 @@ _elm_colorselector_mode_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *s
    return sd->mode;
 }
 
-EAPI void
+ELM_API void
 elm_colorselector_palette_item_color_get(const Elm_Object_Item *it,
                                          int *r,
                                          int *g,
@@ -2403,7 +2403,7 @@ _elm_color_item_color_get(const Eo *eo_item EINA_UNUSED,
     if (a) *a = item->color->a;
 }
 
-EAPI void
+ELM_API void
 elm_colorselector_palette_item_color_set(Elm_Object_Item *it,
                                          int r,
                                          int g,
@@ -2484,7 +2484,7 @@ _elm_colorselector_palette_items_get(const Eo *obj EINA_UNUSED, Elm_Colorselecto
    return sd->items;
 }
 
-EAPI void
+ELM_API void
 elm_colorselector_palette_item_selected_set(Elm_Object_Item *it,
                               Eina_Bool selected)
 {
@@ -2532,7 +2532,7 @@ _elm_color_item_selected_set(Eo *eo_item,
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_colorselector_palette_item_selected_get(const Elm_Object_Item *it)
 {
    return elm_obj_color_item_selected_get(it);

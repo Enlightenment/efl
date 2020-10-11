@@ -1,11 +1,11 @@
 
 void _elm_bubble_pos_set(Eo *obj, Elm_Bubble_Data *pd, Elm_Bubble_Pos pos);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_bubble_pos_set, EFL_FUNC_CALL(pos), Elm_Bubble_Pos pos);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_bubble_pos_set, EFL_FUNC_CALL(pos), Elm_Bubble_Pos pos);
 
 Elm_Bubble_Pos _elm_bubble_pos_get(const Eo *obj, Elm_Bubble_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_bubble_pos_get, Elm_Bubble_Pos, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_bubble_pos_get, Elm_Bubble_Pos, 0);
 
 Efl_Object *_elm_bubble_efl_object_constructor(Eo *obj, Elm_Bubble_Data *pd);
 

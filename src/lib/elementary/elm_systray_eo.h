@@ -47,7 +47,7 @@ typedef enum
  */
 #define ELM_SYSTRAY_CLASS elm_systray_class_get()
 
-EWAPI const Efl_Class *elm_systray_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_systray_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the id of the Status Notifier Item.
@@ -57,7 +57,7 @@ EWAPI const Efl_Class *elm_systray_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_id_set(Eo *obj, const char *id);
+ELM_API ELM_API_WEAK void elm_obj_systray_id_set(Eo *obj, const char *id);
 
 /**
  * @brief Get the id of the Status Notifier Item.
@@ -68,7 +68,7 @@ EOAPI void elm_obj_systray_id_set(Eo *obj, const char *id);
  *
  * @ingroup Elm_Systray
  */
-EOAPI const char *elm_obj_systray_id_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_systray_id_get(const Eo *obj);
 
 /**
  * @brief Set the category of the Status Notifier Item.
@@ -78,7 +78,7 @@ EOAPI const char *elm_obj_systray_id_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_category_set(Eo *obj, Elm_Systray_Category cat);
+ELM_API ELM_API_WEAK void elm_obj_systray_category_set(Eo *obj, Elm_Systray_Category cat);
 
 /**
  * @brief Get the category of the Status Notifier Item.
@@ -89,7 +89,7 @@ EOAPI void elm_obj_systray_category_set(Eo *obj, Elm_Systray_Category cat);
  *
  * @ingroup Elm_Systray
  */
-EOAPI Elm_Systray_Category elm_obj_systray_category_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Systray_Category elm_obj_systray_category_get(const Eo *obj);
 
 /**
  * @brief Set the path to the theme where the icons can be found. Set this
@@ -100,7 +100,7 @@ EOAPI Elm_Systray_Category elm_obj_systray_category_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_icon_theme_path_set(Eo *obj, const char *icon_theme_path);
+ELM_API ELM_API_WEAK void elm_obj_systray_icon_theme_path_set(Eo *obj, const char *icon_theme_path);
 
 /**
  * @brief Get the path to the icon's theme currently in use.
@@ -111,7 +111,7 @@ EOAPI void elm_obj_systray_icon_theme_path_set(Eo *obj, const char *icon_theme_p
  *
  * @ingroup Elm_Systray
  */
-EOAPI const char *elm_obj_systray_icon_theme_path_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_systray_icon_theme_path_get(const Eo *obj);
 
 /**
  * @brief Set the object path of the D-Bus Menu that is to be show when the
@@ -122,7 +122,7 @@ EOAPI const char *elm_obj_systray_icon_theme_path_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_menu_set(Eo *obj, const Efl_Object *menu);
+ELM_API ELM_API_WEAK void elm_obj_systray_menu_set(Eo *obj, const Efl_Object *menu);
 
 /**
  * @brief Get the object path of the D-Bus Menu currently in use.
@@ -133,7 +133,7 @@ EOAPI void elm_obj_systray_menu_set(Eo *obj, const Efl_Object *menu);
  *
  * @ingroup Elm_Systray
  */
-EOAPI const Efl_Object *elm_obj_systray_menu_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Efl_Object *elm_obj_systray_menu_get(const Eo *obj);
 
 /**
  * @brief Set the name of the attention icon to be used by the Status Notifier
@@ -144,7 +144,7 @@ EOAPI const Efl_Object *elm_obj_systray_menu_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_att_icon_name_set(Eo *obj, const char *att_icon_name);
+ELM_API ELM_API_WEAK void elm_obj_systray_att_icon_name_set(Eo *obj, const char *att_icon_name);
 
 /**
  * @brief Get the name of the attention icon used by the Status Notifier Item.
@@ -155,7 +155,7 @@ EOAPI void elm_obj_systray_att_icon_name_set(Eo *obj, const char *att_icon_name)
  *
  * @ingroup Elm_Systray
  */
-EOAPI const char *elm_obj_systray_att_icon_name_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_systray_att_icon_name_get(const Eo *obj);
 
 /**
  * @brief Set the status of the Status Notifier Item.
@@ -165,7 +165,7 @@ EOAPI const char *elm_obj_systray_att_icon_name_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_status_set(Eo *obj, Elm_Systray_Status st);
+ELM_API ELM_API_WEAK void elm_obj_systray_status_set(Eo *obj, Elm_Systray_Status st);
 
 /**
  * @brief Get the status of the Status Notifier Item.
@@ -176,7 +176,7 @@ EOAPI void elm_obj_systray_status_set(Eo *obj, Elm_Systray_Status st);
  *
  * @ingroup Elm_Systray
  */
-EOAPI Elm_Systray_Status elm_obj_systray_status_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Systray_Status elm_obj_systray_status_get(const Eo *obj);
 
 /**
  * @brief Set the name of the icon to be used by the Status Notifier Item.
@@ -186,7 +186,7 @@ EOAPI Elm_Systray_Status elm_obj_systray_status_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_icon_name_set(Eo *obj, const char *icon_name);
+ELM_API ELM_API_WEAK void elm_obj_systray_icon_name_set(Eo *obj, const char *icon_name);
 
 /**
  * @brief Get the name of the icon used by the Status Notifier Item.
@@ -197,7 +197,7 @@ EOAPI void elm_obj_systray_icon_name_set(Eo *obj, const char *icon_name);
  *
  * @ingroup Elm_Systray
  */
-EOAPI const char *elm_obj_systray_icon_name_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_systray_icon_name_get(const Eo *obj);
 
 /**
  * @brief Set the title of the Status Notifier Item.
@@ -207,7 +207,7 @@ EOAPI const char *elm_obj_systray_icon_name_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI void elm_obj_systray_title_set(Eo *obj, const char *title);
+ELM_API ELM_API_WEAK void elm_obj_systray_title_set(Eo *obj, const char *title);
 
 /**
  * @brief Get the title of the Status Notifier Item.
@@ -218,7 +218,7 @@ EOAPI void elm_obj_systray_title_set(Eo *obj, const char *title);
  *
  * @ingroup Elm_Systray
  */
-EOAPI const char *elm_obj_systray_title_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_obj_systray_title_get(const Eo *obj);
 
 /**
  * @brief Register this Status Notifier Item in the System Tray Watcher. This
@@ -231,6 +231,6 @@ EOAPI const char *elm_obj_systray_title_get(const Eo *obj);
  *
  * @ingroup Elm_Systray
  */
-EOAPI Eina_Bool elm_obj_systray_register(Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_systray_register(Eo *obj);
 
 #endif

@@ -875,7 +875,7 @@ _elm_tooltip_data_clean(Elm_Tooltip *tt)
    _elm_tooltip_content_del(tt);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_move_freeze_push(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
@@ -883,7 +883,7 @@ elm_object_tooltip_move_freeze_push(Evas_Object *obj)
    tt->move_freeze++;
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_move_freeze_pop(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
@@ -892,7 +892,7 @@ elm_object_tooltip_move_freeze_pop(Evas_Object *obj)
    if (tt->move_freeze < 0) tt->move_freeze = 0;
 }
 
-EAPI int
+ELM_API int
 elm_object_tooltip_move_freeze_get(const Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, 0);
@@ -900,7 +900,7 @@ elm_object_tooltip_move_freeze_get(const Evas_Object *obj)
    return tt->move_freeze;
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient)
 {
    ELM_TOOLTIP_GET_OR_CREATE(tt, obj);
@@ -911,7 +911,7 @@ elm_object_tooltip_orient_set(Evas_Object *obj, Elm_Tooltip_Orient orient)
      tt->orient = ELM_TOOLTIP_ORIENT_NONE;
 }
 
-EAPI Elm_Tooltip_Orient
+ELM_API Elm_Tooltip_Orient
 elm_object_tooltip_orient_get(const Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, ELM_TOOLTIP_ORIENT_NONE);
@@ -1034,7 +1034,7 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
    if (del_cb) del_cb((void *)data, owner, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_show(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
@@ -1042,7 +1042,7 @@ elm_object_tooltip_show(Evas_Object *obj)
    _elm_tooltip_show(tt);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_hide(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
@@ -1050,7 +1050,7 @@ elm_object_tooltip_hide(Evas_Object *obj)
    _elm_tooltip_hide_anim_start(tt);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
 {
    Elm_Tooltip *tt;
@@ -1069,7 +1069,7 @@ elm_object_tooltip_text_set(Evas_Object *obj, const char *text)
      (obj, _elm_tooltip_label_create, text, _elm_tooltip_label_del_cb);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text)
 {
    const char **data;
@@ -1085,20 +1085,20 @@ elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *do
       _elm_tooltip_trans_label_del_cb);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_content_cb_set(Evas_Object *obj, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
    elm_object_sub_tooltip_content_cb_set(obj, obj, func, data, del_cb);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_unset(Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj);
    _elm_tooltip_unset(tt);
 }
 
-EAPI void
+ELM_API void
 elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
 {
    ELM_TOOLTIP_GET_OR_CREATE(tt, obj);
@@ -1106,21 +1106,21 @@ elm_object_tooltip_style_set(Evas_Object *obj, const char *style)
    elm_tooltip_theme(tt);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_object_tooltip_style_get(const Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, NULL);
    return tt->style ? tt->style : "default";
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable)
 {
    ELM_TOOLTIP_GET_OR_CREATE(tt, obj, EINA_FALSE);
    return tt->free_size = disable;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_tooltip_window_mode_get(const Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);

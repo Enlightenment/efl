@@ -19,7 +19,7 @@ typedef Eo Elm_Calendar_Item;
  */
 #define ELM_CALENDAR_ITEM_CLASS elm_calendar_item_class_get()
 
-EWAPI const Efl_Class *elm_calendar_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_calendar_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Day number property
@@ -29,7 +29,7 @@ EWAPI const Efl_Class *elm_calendar_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Calendar_Item
  */
-EOAPI void elm_calendar_item_day_number_set(Eo *obj, int i);
+ELM_API ELM_API_WEAK void elm_calendar_item_day_number_set(Eo *obj, int i);
 
 /**
  * @brief Day number property
@@ -40,6 +40,6 @@ EOAPI void elm_calendar_item_day_number_set(Eo *obj, int i);
  *
  * @ingroup Elm_Calendar_Item
  */
-EOAPI int elm_calendar_item_day_number_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_calendar_item_day_number_get(const Eo *obj);
 
 #endif

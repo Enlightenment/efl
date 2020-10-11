@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_glview_add(Evas_Object *parent);
 
 /**
  * Adds a new GLView to the parent, given an OpenGL-ES context version number.
@@ -17,7 +17,7 @@ EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
  *
  * @since 1.12
  */
-EAPI Evas_Object *elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version);
+ELM_API Evas_Object *elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version);
 
 
 /**
@@ -27,7 +27,7 @@ EAPI Evas_Object *elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Ve
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI void elm_glview_changed_set(Evas_Object *obj);
+ELM_API void elm_glview_changed_set(Evas_Object *obj);
 
 /**
  * Gets the size of the GLView.
@@ -38,7 +38,7 @@ EAPI void elm_glview_changed_set(Evas_Object *obj);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI void elm_glview_size_get(const Evas_Object *obj, int *w, int *h);
+ELM_API void elm_glview_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * Sets the size of the GLView.
@@ -49,7 +49,7 @@ EAPI void elm_glview_size_get(const Evas_Object *obj, int *w, int *h);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI void elm_glview_size_set(Evas_Object *obj, int w, int h);
+ELM_API void elm_glview_size_set(Evas_Object *obj, int w, int h);
 
 /**
  * Set the init function that runs once in the main loop.
@@ -58,7 +58,7 @@ EAPI void elm_glview_size_set(Evas_Object *obj, int w, int h);
  *
  * @ingroup GLView
  */
-EAPI void elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
+ELM_API void elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Set the delete function that runs in the main loop.
@@ -68,7 +68,7 @@ EAPI void elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI void elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
+ELM_API void elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Set the resize function that gets called when resize happens.
@@ -78,7 +78,7 @@ EAPI void elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI void elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
+ELM_API void elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Set the render function that runs in the main loop.
@@ -88,5 +88,5 @@ EAPI void elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  *
  * @ingroup Elm_Glview_Group
  */
-EAPI void elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
+ELM_API void elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 #include "elm_glview_eo.legacy.h"

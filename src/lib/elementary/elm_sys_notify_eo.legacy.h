@@ -86,7 +86,7 @@ typedef struct _Elm_Sys_Notify_Action_Invoked
  *
  * @ingroup Elm_Sys_Notify_Group
  */
-EAPI Eina_Bool elm_sys_notify_servers_set(Elm_Sys_Notify *obj, Elm_Sys_Notify_Server servers);
+ELM_API Eina_Bool elm_sys_notify_servers_set(Elm_Sys_Notify *obj, Elm_Sys_Notify_Server servers);
 
 /**
  * @brief Get the notification servers that have been registered
@@ -100,7 +100,7 @@ EAPI Eina_Bool elm_sys_notify_servers_set(Elm_Sys_Notify *obj, Elm_Sys_Notify_Se
  *
  * @ingroup Elm_Sys_Notify_Group
  */
-EAPI Elm_Sys_Notify_Server elm_sys_notify_servers_get(const Elm_Sys_Notify *obj);
+ELM_API Elm_Sys_Notify_Server elm_sys_notify_servers_get(const Elm_Sys_Notify *obj);
 
 /**
  * @brief Returns the singleton instance of the notification manager
@@ -112,6 +112,6 @@ EAPI Elm_Sys_Notify_Server elm_sys_notify_servers_get(const Elm_Sys_Notify *obj)
  *
  * @ingroup Elm_Sys_Notify_Group
  */
-EAPI Elm_Sys_Notify *elm_sys_notify_singleton_get(void);
+ELM_API Elm_Sys_Notify *elm_sys_notify_singleton_get(void);
 
 #endif

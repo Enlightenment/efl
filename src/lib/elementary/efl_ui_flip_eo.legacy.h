@@ -24,7 +24,7 @@
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI void elm_flip_interaction_set(Eo *obj, Elm_Flip_Interaction mode);
+ELM_API void elm_flip_interaction_set(Eo *obj, Elm_Flip_Interaction mode);
 
 /**
  * @brief Get the interactive flip mode.
@@ -35,7 +35,7 @@ EAPI void elm_flip_interaction_set(Eo *obj, Elm_Flip_Interaction mode);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Eo *obj);
+ELM_API Elm_Flip_Interaction elm_flip_interaction_get(const Eo *obj);
 
 /**
  * @brief Get flip front visibility state.
@@ -46,7 +46,7 @@ EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Eo *obj);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI Eina_Bool elm_flip_front_visible_get(const Eo *obj);
+ELM_API Eina_Bool elm_flip_front_visible_get(const Eo *obj);
 
 
 
@@ -93,7 +93,7 @@ EAPI Eina_Bool elm_flip_front_visible_get(const Eo *obj);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI void elm_flip_go(Eo *obj, Elm_Flip_Mode mode);
+ELM_API void elm_flip_go(Eo *obj, Elm_Flip_Mode mode);
 
 /**
  * @brief Runs the flip animation to front or back.
@@ -135,6 +135,6 @@ EAPI void elm_flip_go(Eo *obj, Elm_Flip_Mode mode);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI void elm_flip_go_to(Eo *obj, Eina_Bool front, Elm_Flip_Mode mode);
+ELM_API void elm_flip_go_to(Eo *obj, Eina_Bool front, Elm_Flip_Mode mode);
 
 #endif

@@ -25,7 +25,7 @@ extern "C" {
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_start(Evas_Object *widget, unsigned int line, unsigned int col);
+ELM_API void elm_code_widget_selection_start(Evas_Object *widget, unsigned int line, unsigned int col);
 
 /**
  * @brief End the selection of widget contents.
@@ -37,7 +37,7 @@ EAPI void elm_code_widget_selection_start(Evas_Object *widget, unsigned int line
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_end(Evas_Object *widget, unsigned int line, unsigned int col);
+ELM_API void elm_code_widget_selection_end(Evas_Object *widget, unsigned int line, unsigned int col);
 
 /**
  * @brief Clear selection of widget contents.
@@ -47,7 +47,7 @@ EAPI void elm_code_widget_selection_end(Evas_Object *widget, unsigned int line, 
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_clear(Evas_Object *widget);
+ELM_API void elm_code_widget_selection_clear(Evas_Object *widget);
 
 /**
  * @brief Delete the selected contents of widget contents.
@@ -57,7 +57,7 @@ EAPI void elm_code_widget_selection_clear(Evas_Object *widget);
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_delete(Evas_Object *widget);
+ELM_API void elm_code_widget_selection_delete(Evas_Object *widget);
 
 /**
  * @brief Select the entire line from the widget.
@@ -68,7 +68,7 @@ EAPI void elm_code_widget_selection_delete(Evas_Object *widget);
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line);
+ELM_API void elm_code_widget_selection_select_line(Evas_Object *widget, unsigned int line);
 
 /**
  * @brief Select a word from the widget.
@@ -80,7 +80,7 @@ EAPI void elm_code_widget_selection_select_line(Evas_Object *widget, unsigned in
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, unsigned int col);
+ELM_API void elm_code_widget_selection_select_word(Evas_Object *widget, unsigned int line, unsigned int col);
 
 /**
  * @brief Get the selected widget content.
@@ -90,7 +90,7 @@ EAPI void elm_code_widget_selection_select_word(Evas_Object *widget, unsigned in
  * @return char pointer to text contents.
  *
  */
-EAPI char *elm_code_widget_selection_text_get(Evas_Object *widget);
+ELM_API char *elm_code_widget_selection_text_get(Evas_Object *widget);
 
 /**
  * @brief Cut the selected widget content.
@@ -100,7 +100,7 @@ EAPI char *elm_code_widget_selection_text_get(Evas_Object *widget);
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_cut(Evas_Object *widget);
+ELM_API void elm_code_widget_selection_cut(Evas_Object *widget);
 
 /**
  * @brief Copy the selected widget content to clipboard.
@@ -110,7 +110,7 @@ EAPI void elm_code_widget_selection_cut(Evas_Object *widget);
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_copy(Evas_Object *widget);
+ELM_API void elm_code_widget_selection_copy(Evas_Object *widget);
 
 /**
  * @brief Paste the copied widget content from clipboard.
@@ -121,7 +121,7 @@ EAPI void elm_code_widget_selection_copy(Evas_Object *widget);
  *
  */
 
-EAPI void elm_code_widget_selection_paste(Evas_Object *widget);
+ELM_API void elm_code_widget_selection_paste(Evas_Object *widget);
 
 /**
  * @brief check if the widget selection is empty.
@@ -131,7 +131,7 @@ EAPI void elm_code_widget_selection_paste(Evas_Object *widget);
  * @return true is empty, false otherwise
  *
  */
-EAPI Eina_Bool elm_code_widget_selection_is_empty(Evas_Object *widget);
+ELM_API Eina_Bool elm_code_widget_selection_is_empty(Evas_Object *widget);
 
 /**
  * @brief Select the entire widget contents.
@@ -141,7 +141,7 @@ EAPI Eina_Bool elm_code_widget_selection_is_empty(Evas_Object *widget);
  * @return None
  *
  */
-EAPI void elm_code_widget_selection_select_all(Evas_Object *widget);
+ELM_API void elm_code_widget_selection_select_all(Evas_Object *widget);
 
 
 /**

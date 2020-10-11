@@ -9,8 +9,8 @@
 
 #include "efl_ui_win.eo.h"
 
-EAPI void elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
-EAPI Eina_Bool elm_win_autodel_get(const Evas_Object *obj);
+ELM_API void elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
+ELM_API Eina_Bool elm_win_autodel_get(const Evas_Object *obj);
 
 
 

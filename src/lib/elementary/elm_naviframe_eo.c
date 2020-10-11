@@ -1,10 +1,10 @@
-EWAPI const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TRANSITION_FINISHED =
    EFL_EVENT_DESCRIPTION("transition,finished");
-EWAPI const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_TRANSITION_FINISHED =
    EFL_EVENT_DESCRIPTION("title,transition,finished");
-EWAPI const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NAVIFRAME_EVENT_TITLE_CLICKED =
    EFL_EVENT_DESCRIPTION("title,clicked");
-EWAPI const Efl_Event_Description _ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED =
    EFL_EVENT_DESCRIPTION("item,activated");
 
 void _elm_naviframe_event_enabled_set(Eo *obj, Elm_Naviframe_Data *pd, Eina_Bool enabled);
@@ -25,7 +25,7 @@ __eolian_elm_naviframe_event_enabled_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_naviframe_event_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_naviframe_event_enabled_set, EFL_FUNC_CALL(enabled), Eina_Bool enabled);
 
 Eina_Bool _elm_naviframe_event_enabled_get(const Eo *obj, Elm_Naviframe_Data *pd);
 
@@ -37,7 +37,7 @@ __eolian_elm_naviframe_event_enabled_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_naviframe_event_enabled_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_naviframe_event_enabled_get, Eina_Bool, 0);
 
 void _elm_naviframe_content_preserve_on_pop_set(Eo *obj, Elm_Naviframe_Data *pd, Eina_Bool preserve);
 
@@ -57,7 +57,7 @@ __eolian_elm_naviframe_content_preserve_on_pop_set_reflect(Eo *obj, Eina_Value v
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_naviframe_content_preserve_on_pop_set, EFL_FUNC_CALL(preserve), Eina_Bool preserve);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_naviframe_content_preserve_on_pop_set, EFL_FUNC_CALL(preserve), Eina_Bool preserve);
 
 Eina_Bool _elm_naviframe_content_preserve_on_pop_get(const Eo *obj, Elm_Naviframe_Data *pd);
 
@@ -69,7 +69,7 @@ __eolian_elm_naviframe_content_preserve_on_pop_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_naviframe_content_preserve_on_pop_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_naviframe_content_preserve_on_pop_get, Eina_Bool, 0);
 
 void _elm_naviframe_prev_btn_auto_pushed_set(Eo *obj, Elm_Naviframe_Data *pd, Eina_Bool auto_pushed);
 
@@ -89,7 +89,7 @@ __eolian_elm_naviframe_prev_btn_auto_pushed_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_naviframe_prev_btn_auto_pushed_set, EFL_FUNC_CALL(auto_pushed), Eina_Bool auto_pushed);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_naviframe_prev_btn_auto_pushed_set, EFL_FUNC_CALL(auto_pushed), Eina_Bool auto_pushed);
 
 Eina_Bool _elm_naviframe_prev_btn_auto_pushed_get(const Eo *obj, Elm_Naviframe_Data *pd);
 
@@ -101,39 +101,39 @@ __eolian_elm_naviframe_prev_btn_auto_pushed_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_naviframe_prev_btn_auto_pushed_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_naviframe_prev_btn_auto_pushed_get, Eina_Bool, 0);
 
 Eina_List *_elm_naviframe_items_get(const Eo *obj, Elm_Naviframe_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_naviframe_items_get, Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_naviframe_items_get, Eina_List *, NULL);
 
 Elm_Widget_Item *_elm_naviframe_top_item_get(const Eo *obj, Elm_Naviframe_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_naviframe_top_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_naviframe_top_item_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_naviframe_bottom_item_get(const Eo *obj, Elm_Naviframe_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_naviframe_bottom_item_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_naviframe_bottom_item_get, Elm_Widget_Item *, NULL);
 
 Efl_Canvas_Object *_elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_naviframe_item_pop, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_naviframe_item_pop, Efl_Canvas_Object *, NULL);
 
 Elm_Widget_Item *_elm_naviframe_item_insert_before(Eo *obj, Elm_Naviframe_Data *pd, Elm_Widget_Item *before, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_naviframe_item_insert_before, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(before, title_label, prev_btn, next_btn, content, item_style), Elm_Widget_Item *before, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_naviframe_item_insert_before, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(before, title_label, prev_btn, next_btn, content, item_style), Elm_Widget_Item *before, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
 Elm_Widget_Item *_elm_naviframe_item_push(Eo *obj, Elm_Naviframe_Data *pd, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_naviframe_item_push, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(title_label, prev_btn, next_btn, content, item_style), const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_naviframe_item_push, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(title_label, prev_btn, next_btn, content, item_style), const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
 void _elm_naviframe_item_simple_promote(Eo *obj, Elm_Naviframe_Data *pd, Efl_Canvas_Object *content);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_naviframe_item_simple_promote, EFL_FUNC_CALL(content), Efl_Canvas_Object *content);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_naviframe_item_simple_promote, EFL_FUNC_CALL(content), Efl_Canvas_Object *content);
 
 Elm_Widget_Item *_elm_naviframe_item_insert_after(Eo *obj, Elm_Naviframe_Data *pd, Elm_Widget_Item *after, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_naviframe_item_insert_after, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(after, title_label, prev_btn, next_btn, content, item_style), Elm_Widget_Item *after, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_naviframe_item_insert_after, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(after, title_label, prev_btn, next_btn, content, item_style), Elm_Widget_Item *after, const char *title_label, Efl_Canvas_Object *prev_btn, Efl_Canvas_Object *next_btn, Efl_Canvas_Object *content, const char *item_style);
 
 Efl_Object *_elm_naviframe_efl_object_constructor(Eo *obj, Elm_Naviframe_Data *pd);
 

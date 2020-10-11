@@ -56,7 +56,7 @@ typedef struct _Elm_Toolbar_Item_State
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Elm_Widget_Item *elm_toolbar_item_prev_get(const Elm_Toolbar_Item *obj);
+ELM_API Elm_Widget_Item *elm_toolbar_item_prev_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Get the item after this one in the widget's list of items.
@@ -70,7 +70,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_prev_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Elm_Widget_Item *elm_toolbar_item_next_get(const Elm_Toolbar_Item *obj);
+ELM_API Elm_Widget_Item *elm_toolbar_item_next_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Indicates whether this item is currently selected.
@@ -91,7 +91,7 @@ EAPI Elm_Widget_Item *elm_toolbar_item_next_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_selected_set(Elm_Toolbar_Item *obj, Eina_Bool selected);
+ELM_API void elm_toolbar_item_selected_set(Elm_Toolbar_Item *obj, Eina_Bool selected);
 
 /**
  * @brief Indicates whether this item is currently selected.
@@ -104,7 +104,7 @@ EAPI void elm_toolbar_item_selected_set(Elm_Toolbar_Item *obj, Eina_Bool selecte
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Eina_Bool elm_toolbar_item_selected_get(const Elm_Toolbar_Item *obj);
+ELM_API Eina_Bool elm_toolbar_item_selected_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Set the priority of a toolbar item.
@@ -121,7 +121,7 @@ EAPI Eina_Bool elm_toolbar_item_selected_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_priority_set(Elm_Toolbar_Item *obj, int priority);
+ELM_API void elm_toolbar_item_priority_set(Elm_Toolbar_Item *obj, int priority);
 
 /**
  * @brief Get the priority of a toolbar item.
@@ -133,7 +133,7 @@ EAPI void elm_toolbar_item_priority_set(Elm_Toolbar_Item *obj, int priority);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI int elm_toolbar_item_priority_get(const Elm_Toolbar_Item *obj);
+ELM_API int elm_toolbar_item_priority_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Set the icon associated with @c item.
@@ -150,7 +150,7 @@ EAPI int elm_toolbar_item_priority_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_icon_set(Elm_Toolbar_Item *obj, const char *icon);
+ELM_API void elm_toolbar_item_icon_set(Elm_Toolbar_Item *obj, const char *icon);
 
 /**
  * @brief Get the string used to set the icon of @c item.
@@ -161,7 +161,7 @@ EAPI void elm_toolbar_item_icon_set(Elm_Toolbar_Item *obj, const char *icon);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI const char *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *obj);
+ELM_API const char *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Get the real Evas(Edje) object created to implement the view of a
@@ -173,7 +173,7 @@ EAPI const char *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Efl_Canvas_Object *elm_toolbar_item_object_get(const Elm_Toolbar_Item *obj);
+ELM_API Efl_Canvas_Object *elm_toolbar_item_object_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Get the icon object of @c item.
@@ -187,7 +187,7 @@ EAPI Efl_Canvas_Object *elm_toolbar_item_object_get(const Elm_Toolbar_Item *obj)
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Efl_Canvas_Object *elm_toolbar_item_icon_object_get(const Elm_Toolbar_Item *obj);
+ELM_API Efl_Canvas_Object *elm_toolbar_item_icon_object_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Set or unset item as a separator.
@@ -202,7 +202,7 @@ EAPI Efl_Canvas_Object *elm_toolbar_item_icon_object_get(const Elm_Toolbar_Item 
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_separator_set(Elm_Toolbar_Item *obj, Eina_Bool separator);
+ELM_API void elm_toolbar_item_separator_set(Elm_Toolbar_Item *obj, Eina_Bool separator);
 
 /**
  * @brief Get a value whether item is a separator or not.
@@ -213,7 +213,7 @@ EAPI void elm_toolbar_item_separator_set(Elm_Toolbar_Item *obj, Eina_Bool separa
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Eina_Bool elm_toolbar_item_separator_get(const Elm_Toolbar_Item *obj);
+ELM_API Eina_Bool elm_toolbar_item_separator_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Get toolbar item's menu.
@@ -227,7 +227,7 @@ EAPI Eina_Bool elm_toolbar_item_separator_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Efl_Canvas_Object *elm_toolbar_item_menu_get(const Elm_Toolbar_Item *obj);
+ELM_API Efl_Canvas_Object *elm_toolbar_item_menu_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Set @c state as the current state of @c it.
@@ -243,7 +243,7 @@ EAPI Efl_Canvas_Object *elm_toolbar_item_menu_get(const Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Eina_Bool elm_toolbar_item_state_set(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_State *state);
+ELM_API Eina_Bool elm_toolbar_item_state_set(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_State *state);
 
 /**
  * @brief Get the current state of @c it.
@@ -254,7 +254,7 @@ EAPI Eina_Bool elm_toolbar_item_state_set(Elm_Toolbar_Item *obj, Elm_Toolbar_Ite
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Toolbar_Item *obj);
+ELM_API Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Toolbar_Item *obj);
 
 /**
  * @brief Set the icon associated with @c item to an image in a binary buffer.
@@ -273,7 +273,7 @@ EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Toolbar_Item *
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *obj, const void *img, size_t size, const char *format, const char *key);
+ELM_API Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *obj, const void *img, size_t size, const char *format, const char *key);
 
 /**
  * @brief Set the icon associated with @c item to an image in a binary buffer.
@@ -290,7 +290,7 @@ EAPI Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *obj, const vo
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Eina_Bool elm_toolbar_item_icon_file_set(Elm_Toolbar_Item *obj, const char *file, const char *key);
+ELM_API Eina_Bool elm_toolbar_item_icon_file_set(Elm_Toolbar_Item *obj, const char *file, const char *key);
 
 /**
  * @brief Add a new state to @c item.
@@ -314,7 +314,7 @@ EAPI Eina_Bool elm_toolbar_item_icon_file_set(Elm_Toolbar_Item *obj, const char 
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+ELM_API Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Delete a previously added state to @c item.
@@ -326,7 +326,7 @@ EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *obj, c
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Eina_Bool elm_toolbar_item_state_del(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_State *state);
+ELM_API Eina_Bool elm_toolbar_item_state_del(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_State *state);
 
 /**
  * @brief Get the state after selected state in toolbar's @c item.
@@ -339,7 +339,7 @@ EAPI Eina_Bool elm_toolbar_item_state_del(Elm_Toolbar_Item *obj, Elm_Toolbar_Ite
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Toolbar_Item *obj);
+ELM_API Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Toolbar_Item *obj);
 
 /**
  * @brief Get the state before selected state in toolbar's @c item.
@@ -352,7 +352,7 @@ EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Toolbar_Item *obj);
+ELM_API Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Toolbar_Item *obj);
 
 /**
  * @brief Show a specific item, when the toolbar can be scrolled.
@@ -364,7 +364,7 @@ EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Toolbar_Item *obj);
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_show(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_Scrollto_Type scrollto);
+ELM_API void elm_toolbar_item_show(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_Scrollto_Type scrollto);
 
 /**
  * @brief Show a specific item with scroll animation, when the toolbar can be
@@ -377,7 +377,7 @@ EAPI void elm_toolbar_item_show(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_Scrollto
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_bring_in(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_Scrollto_Type scrollto);
+ELM_API void elm_toolbar_item_bring_in(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_Scrollto_Type scrollto);
 
 /**
  * @brief Set whether the toolbar item opens a menu.
@@ -396,6 +396,6 @@ EAPI void elm_toolbar_item_bring_in(Elm_Toolbar_Item *obj, Elm_Toolbar_Item_Scro
  *
  * @ingroup Elm_Toolbar_Item_Group
  */
-EAPI void elm_toolbar_item_menu_set(Elm_Toolbar_Item *obj, Eina_Bool menu);
+ELM_API void elm_toolbar_item_menu_set(Elm_Toolbar_Item *obj, Eina_Bool menu);
 
 #endif

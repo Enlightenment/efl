@@ -1,21 +1,21 @@
-EWAPI const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_CHANGED =
    EFL_EVENT_DESCRIPTION("page,changed");
-EWAPI const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_SAVED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_SAVED =
    EFL_EVENT_DESCRIPTION("page,saved");
-EWAPI const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_LOADED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PREFS_EVENT_PAGE_LOADED =
    EFL_EVENT_DESCRIPTION("page,loaded");
-EWAPI const Efl_Event_Description _ELM_PREFS_EVENT_ITEM_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PREFS_EVENT_ITEM_CHANGED =
    EFL_EVENT_DESCRIPTION("item,changed");
-EWAPI const Efl_Event_Description _ELM_PREFS_EVENT_ACTION =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PREFS_EVENT_ACTION =
    EFL_EVENT_DESCRIPTION("action");
 
 Eina_Bool _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *pd, Elm_Prefs_Data *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_prefs_data_set, Eina_Bool, 0, EFL_FUNC_CALL(data), Elm_Prefs_Data *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_prefs_data_set, Eina_Bool, 0, EFL_FUNC_CALL(data), Elm_Prefs_Data *data);
 
 Elm_Prefs_Data *_elm_prefs_data_get(const Eo *obj, Elm_Prefs_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_prefs_data_get, Elm_Prefs_Data *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_prefs_data_get, Elm_Prefs_Data *, NULL);
 
 void _elm_prefs_autosave_set(Eo *obj, Elm_Prefs_Data *pd, Eina_Bool autosave);
 
@@ -35,7 +35,7 @@ __eolian_elm_prefs_autosave_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_prefs_autosave_set, EFL_FUNC_CALL(autosave), Eina_Bool autosave);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_prefs_autosave_set, EFL_FUNC_CALL(autosave), Eina_Bool autosave);
 
 Eina_Bool _elm_prefs_autosave_get(const Eo *obj, Elm_Prefs_Data *pd);
 
@@ -47,55 +47,55 @@ __eolian_elm_prefs_autosave_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_prefs_autosave_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_prefs_autosave_get, Eina_Bool, 0);
 
 void _elm_prefs_reset(Eo *obj, Elm_Prefs_Data *pd, Elm_Prefs_Reset_Mode mode);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_prefs_reset, EFL_FUNC_CALL(mode), Elm_Prefs_Reset_Mode mode);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_prefs_reset, EFL_FUNC_CALL(mode), Elm_Prefs_Reset_Mode mode);
 
 Eina_Bool _elm_prefs_item_value_set(Eo *obj, Elm_Prefs_Data *pd, const char *name, const Eina_Value *value);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_prefs_item_value_set, Eina_Bool, 0, EFL_FUNC_CALL(name, value), const char *name, const Eina_Value *value);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_prefs_item_value_set, Eina_Bool, 0, EFL_FUNC_CALL(name, value), const char *name, const Eina_Value *value);
 
 Eina_Bool _elm_prefs_item_value_get(const Eo *obj, Elm_Prefs_Data *pd, const char *name, Eina_Value *value);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_value_get, Eina_Bool, 0, EFL_FUNC_CALL(name, value), const char *name, Eina_Value *value);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_value_get, Eina_Bool, 0, EFL_FUNC_CALL(name, value), const char *name, Eina_Value *value);
 
 const Efl_Canvas_Object *_elm_prefs_item_object_get(Eo *obj, Elm_Prefs_Data *pd, const char *name);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_prefs_item_object_get, const Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(name), const char *name);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_prefs_item_object_get, const Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(name), const char *name);
 
 void _elm_prefs_item_disabled_set(Eo *obj, Elm_Prefs_Data *pd, const char *name, Eina_Bool disabled);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_prefs_item_disabled_set, EFL_FUNC_CALL(name, disabled), const char *name, Eina_Bool disabled);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_prefs_item_disabled_set, EFL_FUNC_CALL(name, disabled), const char *name, Eina_Bool disabled);
 
 Eina_Bool _elm_prefs_item_disabled_get(const Eo *obj, Elm_Prefs_Data *pd, const char *name);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_disabled_get, Eina_Bool, 0, EFL_FUNC_CALL(name), const char *name);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_disabled_get, Eina_Bool, 0, EFL_FUNC_CALL(name), const char *name);
 
 Eina_Bool _elm_prefs_item_swallow(Eo *obj, Elm_Prefs_Data *pd, const char *name, Efl_Canvas_Object *child);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_prefs_item_swallow, Eina_Bool, 0, EFL_FUNC_CALL(name, child), const char *name, Efl_Canvas_Object *child);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_prefs_item_swallow, Eina_Bool, 0, EFL_FUNC_CALL(name, child), const char *name, Efl_Canvas_Object *child);
 
 void _elm_prefs_item_editable_set(Eo *obj, Elm_Prefs_Data *pd, const char *name, Eina_Bool editable);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_prefs_item_editable_set, EFL_FUNC_CALL(name, editable), const char *name, Eina_Bool editable);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_prefs_item_editable_set, EFL_FUNC_CALL(name, editable), const char *name, Eina_Bool editable);
 
 Eina_Bool _elm_prefs_item_editable_get(const Eo *obj, Elm_Prefs_Data *pd, const char *name);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_editable_get, Eina_Bool, 0, EFL_FUNC_CALL(name), const char *name);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_editable_get, Eina_Bool, 0, EFL_FUNC_CALL(name), const char *name);
 
 Efl_Canvas_Object *_elm_prefs_item_unswallow(Eo *obj, Elm_Prefs_Data *pd, const char *name);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_prefs_item_unswallow, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(name), const char *name);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_prefs_item_unswallow, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(name), const char *name);
 
 void _elm_prefs_item_visible_set(Eo *obj, Elm_Prefs_Data *pd, const char *name, Eina_Bool visible);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_prefs_item_visible_set, EFL_FUNC_CALL(name, visible), const char *name, Eina_Bool visible);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_prefs_item_visible_set, EFL_FUNC_CALL(name, visible), const char *name, Eina_Bool visible);
 
 Eina_Bool _elm_prefs_item_visible_get(const Eo *obj, Elm_Prefs_Data *pd, const char *name);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_visible_get, Eina_Bool, 0, EFL_FUNC_CALL(name), const char *name);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_prefs_item_visible_get, Eina_Bool, 0, EFL_FUNC_CALL(name), const char *name);
 
 Efl_Object *_elm_prefs_efl_object_constructor(Eo *obj, Elm_Prefs_Data *pd);
 

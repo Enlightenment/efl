@@ -23,7 +23,7 @@
  *
  * @ingroup Elm_Scaling
  */
-EAPI void   elm_object_scale_set(Evas_Object *obj, double scale);
+ELM_API void   elm_object_scale_set(Evas_Object *obj, double scale);
 
 /**
  * Get the scaling factor for a given Elementary object
@@ -33,4 +33,4 @@ EAPI void   elm_object_scale_set(Evas_Object *obj, double scale);
  *
  * @ingroup Elm_Scaling
  */
-EAPI double elm_object_scale_get(const Evas_Object *obj);
+ELM_API double elm_object_scale_get(const Evas_Object *obj);

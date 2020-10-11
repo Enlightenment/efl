@@ -19,7 +19,7 @@ typedef Eo Elm_View_Form;
  */
 #define ELM_VIEW_FORM_CLASS elm_view_form_class_get()
 
-EWAPI const Efl_Class *elm_view_form_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_view_form_class_get(void) EINA_CONST;
 
 /**
  * @brief Set model
@@ -31,7 +31,7 @@ EWAPI const Efl_Class *elm_view_form_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_View_Form
  */
-EOAPI void elm_view_form_model_set(Eo *obj, Efl_Model *model);
+ELM_API ELM_API_WEAK void elm_view_form_model_set(Eo *obj, Efl_Model *model);
 
 /**
  * @brief Add new widget
@@ -44,6 +44,6 @@ EOAPI void elm_view_form_model_set(Eo *obj, Efl_Model *model);
  *
  * @ingroup Elm_View_Form
  */
-EOAPI void elm_view_form_widget_add(Eo *obj, const char *propname, Efl_Canvas_Object *evas);
+ELM_API ELM_API_WEAK void elm_view_form_widget_add(Eo *obj, const char *propname, Efl_Canvas_Object *evas);
 
 #endif

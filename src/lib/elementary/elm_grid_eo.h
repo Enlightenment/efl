@@ -19,7 +19,7 @@ typedef Eo Elm_Grid;
  */
 #define ELM_GRID_CLASS elm_grid_class_get()
 
-EWAPI const Efl_Class *elm_grid_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_grid_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the virtual size of the grid
@@ -30,7 +30,7 @@ EWAPI const Efl_Class *elm_grid_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Grid
  */
-EOAPI void elm_obj_grid_size_set(Eo *obj, int w, int h);
+ELM_API ELM_API_WEAK void elm_obj_grid_size_set(Eo *obj, int w, int h);
 
 /**
  * @brief Get the virtual size of the grid
@@ -41,7 +41,7 @@ EOAPI void elm_obj_grid_size_set(Eo *obj, int w, int h);
  *
  * @ingroup Elm_Grid
  */
-EOAPI void elm_obj_grid_size_get(const Eo *obj, int *w, int *h);
+ELM_API ELM_API_WEAK void elm_obj_grid_size_get(const Eo *obj, int *w, int *h);
 
 /**
  * @brief Get the list of the children for the grid.
@@ -57,7 +57,7 @@ EOAPI void elm_obj_grid_size_get(const Eo *obj, int *w, int *h);
  *
  * @ingroup Elm_Grid
  */
-EOAPI Eina_List *elm_obj_grid_children_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API ELM_API_WEAK Eina_List *elm_obj_grid_children_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Faster way to remove all child objects from a grid object.
@@ -67,7 +67,7 @@ EOAPI Eina_List *elm_obj_grid_children_get(const Eo *obj) EINA_WARN_UNUSED_RESUL
  *
  * @ingroup Elm_Grid
  */
-EOAPI void elm_obj_grid_clear(Eo *obj, Eina_Bool clear);
+ELM_API ELM_API_WEAK void elm_obj_grid_clear(Eo *obj, Eina_Bool clear);
 
 /**
  * @brief Unpack a child from a grid object
@@ -77,7 +77,7 @@ EOAPI void elm_obj_grid_clear(Eo *obj, Eina_Bool clear);
  *
  * @ingroup Elm_Grid
  */
-EOAPI void elm_obj_grid_unpack(Eo *obj, Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK void elm_obj_grid_unpack(Eo *obj, Efl_Canvas_Object *subobj);
 
 /**
  * @brief Pack child at given position and size
@@ -91,6 +91,6 @@ EOAPI void elm_obj_grid_unpack(Eo *obj, Efl_Canvas_Object *subobj);
  *
  * @ingroup Elm_Grid
  */
-EOAPI void elm_obj_grid_pack(Eo *obj, Efl_Canvas_Object *subobj, int x, int y, int w, int h);
+ELM_API ELM_API_WEAK void elm_obj_grid_pack(Eo *obj, Efl_Canvas_Object *subobj, int x, int y, int w, int h);
 
 #endif

@@ -24,7 +24,7 @@ typedef Eo Efl_Ui_Radio;
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI void elm_radio_state_value_set(Efl_Ui_Radio *obj, int value);
+ELM_API void elm_radio_state_value_set(Efl_Ui_Radio *obj, int value);
 
 /**
  * @brief Get the integer value that this radio object represents.
@@ -37,7 +37,7 @@ EAPI void elm_radio_state_value_set(Efl_Ui_Radio *obj, int value);
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI int elm_radio_state_value_get(const Efl_Ui_Radio *obj);
+ELM_API int elm_radio_state_value_get(const Efl_Ui_Radio *obj);
 
 /**
  * @brief Set a convenience pointer to an integer, which changes when radio
@@ -54,7 +54,7 @@ EAPI int elm_radio_state_value_get(const Efl_Ui_Radio *obj);
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI void elm_radio_value_pointer_set(Efl_Ui_Radio *obj, int *valuep);
+ELM_API void elm_radio_value_pointer_set(Efl_Ui_Radio *obj, int *valuep);
 
 /**
  * @brief Get the selected radio object.
@@ -65,7 +65,7 @@ EAPI void elm_radio_value_pointer_set(Efl_Ui_Radio *obj, int *valuep);
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI Efl_Canvas_Object *elm_radio_selected_object_get(const Efl_Ui_Radio *obj);
+ELM_API Efl_Canvas_Object *elm_radio_selected_object_get(const Efl_Ui_Radio *obj);
 
 /**
  * @brief Add this radio to a group of other radio objects
@@ -80,6 +80,6 @@ EAPI Efl_Canvas_Object *elm_radio_selected_object_get(const Efl_Ui_Radio *obj);
  *
  * @ingroup Elm_Radio_Group
  */
-EAPI void elm_radio_group_add(Efl_Ui_Radio *obj, Efl_Ui_Radio *group);
+ELM_API void elm_radio_group_add(Efl_Ui_Radio *obj, Efl_Ui_Radio *group);
 
 #endif

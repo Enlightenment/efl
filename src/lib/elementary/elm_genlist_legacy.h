@@ -13,7 +13,7 @@
  *
  * @ingroup Elm_Genlist_Group
  */
-EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
+ELM_API Evas_Object                  *elm_genlist_add(Evas_Object *parent);
 
 /**
  * Get the nth item, in a given genlist widget, placed at position @p nth, in
@@ -28,7 +28,7 @@ EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
  * @ingroup Elm_Genlist_Group
  * @since 1.8
  */
-EAPI Elm_Object_Item *
+ELM_API Elm_Object_Item *
 elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth);
 
 #include "elm_genlist_item_eo.legacy.h"

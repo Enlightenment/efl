@@ -1,4 +1,4 @@
-EWAPI const Efl_Event_Description _ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN =
    EFL_EVENT_DESCRIPTION("file,chosen");
 
 Efl_Object *_elm_fileselector_button_efl_object_constructor(Eo *obj, Elm_Fileselector_Button_Data *pd);

@@ -56,7 +56,7 @@ typedef enum
  */
 #define ELM_CLOCK_CLASS elm_clock_class_get()
 
-EWAPI const Efl_Class *elm_clock_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_clock_class_get(void) EINA_CONST;
 
 /**
  * @brief If the given clock widget must show hours in military or am/pm mode
@@ -70,7 +70,7 @@ EWAPI const Efl_Class *elm_clock_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_show_am_pm_set(Eo *obj, Eina_Bool am_pm);
+ELM_API ELM_API_WEAK void elm_obj_clock_show_am_pm_set(Eo *obj, Eina_Bool am_pm);
 
 /**
  * @brief If the given clock widget must show hours in military or am/pm mode
@@ -85,7 +85,7 @@ EOAPI void elm_obj_clock_show_am_pm_set(Eo *obj, Eina_Bool am_pm);
  *
  * @ingroup Elm_Clock
  */
-EOAPI Eina_Bool elm_obj_clock_show_am_pm_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_clock_show_am_pm_get(const Eo *obj);
 
 /**
  * @brief The first interval on time updates for a user mouse button hold on
@@ -109,7 +109,7 @@ EOAPI Eina_Bool elm_obj_clock_show_am_pm_get(const Eo *obj);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_first_interval_set(Eo *obj, double interval);
+ELM_API ELM_API_WEAK void elm_obj_clock_first_interval_set(Eo *obj, double interval);
 
 /**
  * @brief The first interval on time updates for a user mouse button hold on
@@ -134,7 +134,7 @@ EOAPI void elm_obj_clock_first_interval_set(Eo *obj, double interval);
  *
  * @ingroup Elm_Clock
  */
-EOAPI double elm_obj_clock_first_interval_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_clock_first_interval_get(const Eo *obj);
 
 /**
  * @brief If the given clock widget must show time with seconds or not
@@ -147,7 +147,7 @@ EOAPI double elm_obj_clock_first_interval_get(const Eo *obj);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_show_seconds_set(Eo *obj, Eina_Bool seconds);
+ELM_API ELM_API_WEAK void elm_obj_clock_show_seconds_set(Eo *obj, Eina_Bool seconds);
 
 /**
  * @brief If the given clock widget must show time with seconds or not
@@ -161,7 +161,7 @@ EOAPI void elm_obj_clock_show_seconds_set(Eo *obj, Eina_Bool seconds);
  *
  * @ingroup Elm_Clock
  */
-EOAPI Eina_Bool elm_obj_clock_show_seconds_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_clock_show_seconds_get(const Eo *obj);
 
 /**
  * @brief Whether a given clock widget is under editing mode or under (default)
@@ -181,7 +181,7 @@ EOAPI Eina_Bool elm_obj_clock_show_seconds_get(const Eo *obj);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_edit_set(Eo *obj, Eina_Bool edit);
+ELM_API ELM_API_WEAK void elm_obj_clock_edit_set(Eo *obj, Eina_Bool edit);
 
 /**
  * @brief Whether a given clock widget is under editing mode or under (default)
@@ -202,7 +202,7 @@ EOAPI void elm_obj_clock_edit_set(Eo *obj, Eina_Bool edit);
  *
  * @ingroup Elm_Clock
  */
-EOAPI Eina_Bool elm_obj_clock_edit_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_clock_edit_get(const Eo *obj);
 
 /**
  * @brief Whether the given clock widget should be paused or not.
@@ -216,7 +216,7 @@ EOAPI Eina_Bool elm_obj_clock_edit_get(const Eo *obj);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_pause_set(Eo *obj, Eina_Bool paused);
+ELM_API ELM_API_WEAK void elm_obj_clock_pause_set(Eo *obj, Eina_Bool paused);
 
 /**
  * @brief Whether the given clock widget should be paused or not.
@@ -231,7 +231,7 @@ EOAPI void elm_obj_clock_pause_set(Eo *obj, Eina_Bool paused);
  *
  * @ingroup Elm_Clock
  */
-EOAPI Eina_Bool elm_obj_clock_pause_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_clock_pause_get(const Eo *obj);
 
 /**
  * @brief Clock widget's time
@@ -248,7 +248,7 @@ EOAPI Eina_Bool elm_obj_clock_pause_get(const Eo *obj);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_time_set(Eo *obj, int hrs, int min, int sec);
+ELM_API ELM_API_WEAK void elm_obj_clock_time_set(Eo *obj, int hrs, int min, int sec);
 
 /**
  * @brief Clock widget's time
@@ -266,7 +266,7 @@ EOAPI void elm_obj_clock_time_set(Eo *obj, int hrs, int min, int sec);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_time_get(const Eo *obj, int *hrs, int *min, int *sec);
+ELM_API ELM_API_WEAK void elm_obj_clock_time_get(const Eo *obj, int *hrs, int *min, int *sec);
 
 /**
  * @brief Digits of the given clock widget should be editable when in editing
@@ -278,7 +278,7 @@ EOAPI void elm_obj_clock_time_get(const Eo *obj, int *hrs, int *min, int *sec);
  *
  * @ingroup Elm_Clock
  */
-EOAPI void elm_obj_clock_edit_mode_set(Eo *obj, Elm_Clock_Edit_Mode digedit);
+ELM_API ELM_API_WEAK void elm_obj_clock_edit_mode_set(Eo *obj, Elm_Clock_Edit_Mode digedit);
 
 /**
  * @brief Digits of the given clock widget should be editable when in editing
@@ -291,9 +291,9 @@ EOAPI void elm_obj_clock_edit_mode_set(Eo *obj, Elm_Clock_Edit_Mode digedit);
  *
  * @ingroup Elm_Clock
  */
-EOAPI Elm_Clock_Edit_Mode elm_obj_clock_edit_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Clock_Edit_Mode elm_obj_clock_edit_mode_get(const Eo *obj);
 
-EWAPI extern const Efl_Event_Description _ELM_CLOCK_EVENT_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_CLOCK_EVENT_CHANGED;
 
 /** The clock's user changed the time
  *

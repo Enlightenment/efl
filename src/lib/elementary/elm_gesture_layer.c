@@ -3831,7 +3831,7 @@ _elm_gesture_layer_efl_canvas_group_group_del(Eo *obj, Elm_Gesture_Layer_Data *s
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_gesture_layer_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -3979,7 +3979,7 @@ _elm_gesture_layer_cb_del(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd, Elm_G
      }
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_line_min_length_set(Evas_Object *obj, int line_min_length)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -3987,7 +3987,7 @@ elm_gesture_layer_line_min_length_set(Evas_Object *obj, int line_min_length)
    sd->line_min_length = line_min_length;
 }
 
-EAPI int
+ELM_API int
 elm_gesture_layer_line_min_length_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0;
@@ -3995,7 +3995,7 @@ elm_gesture_layer_line_min_length_get(const Evas_Object *obj)
    return sd->line_min_length;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_zoom_distance_tolerance_set(Evas_Object *obj, Evas_Coord zoom_distance_tolerance)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4003,7 +4003,7 @@ elm_gesture_layer_zoom_distance_tolerance_set(Evas_Object *obj, Evas_Coord zoom_
    sd->zoom_distance_tolerance = zoom_distance_tolerance;
 }
 
-EAPI Evas_Coord
+ELM_API Evas_Coord
 elm_gesture_layer_zoom_distance_tolerance_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0;
@@ -4011,7 +4011,7 @@ elm_gesture_layer_zoom_distance_tolerance_get(const Evas_Object *obj)
    return sd->zoom_distance_tolerance;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_line_distance_tolerance_set(Evas_Object *obj, Evas_Coord line_distance_tolerance)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4019,7 +4019,7 @@ elm_gesture_layer_line_distance_tolerance_set(Evas_Object *obj, Evas_Coord line_
    sd->line_distance_tolerance = line_distance_tolerance;
 }
 
-EAPI Evas_Coord
+ELM_API Evas_Coord
 elm_gesture_layer_line_distance_tolerance_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0;
@@ -4027,7 +4027,7 @@ elm_gesture_layer_line_distance_tolerance_get(const Evas_Object *obj)
    return sd->line_distance_tolerance;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_line_angular_tolerance_set(Evas_Object *obj, double line_angular_tolerance)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4035,7 +4035,7 @@ elm_gesture_layer_line_angular_tolerance_set(Evas_Object *obj, double line_angul
    sd->line_angular_tolerance = line_angular_tolerance;
 }
 
-EAPI double
+ELM_API double
 elm_gesture_layer_line_angular_tolerance_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;
@@ -4043,7 +4043,7 @@ elm_gesture_layer_line_angular_tolerance_get(const Evas_Object *obj)
    return sd->line_angular_tolerance;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_zoom_wheel_factor_set(Evas_Object *obj, double zoom_wheel_factor)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4051,7 +4051,7 @@ elm_gesture_layer_zoom_wheel_factor_set(Evas_Object *obj, double zoom_wheel_fact
    sd->zoom_wheel_factor = zoom_wheel_factor;
 }
 
-EAPI double
+ELM_API double
 elm_gesture_layer_zoom_wheel_factor_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;
@@ -4059,7 +4059,7 @@ elm_gesture_layer_zoom_wheel_factor_get(const Evas_Object *obj)
    return sd->zoom_wheel_factor;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_zoom_finger_factor_set(Evas_Object *obj, double zoom_finger_factor)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4067,7 +4067,7 @@ elm_gesture_layer_zoom_finger_factor_set(Evas_Object *obj, double zoom_finger_fa
    sd->zoom_finger_factor = zoom_finger_factor;
 }
 
-EAPI double
+ELM_API double
 elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;
@@ -4075,7 +4075,7 @@ elm_gesture_layer_zoom_finger_factor_get(const Evas_Object *obj)
    return sd->zoom_finger_factor;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_rotate_angular_tolerance_set(Evas_Object *obj, double rotate_angular_tolerance)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4083,7 +4083,7 @@ elm_gesture_layer_rotate_angular_tolerance_set(Evas_Object *obj, double rotate_a
    sd->rotate_angular_tolerance = rotate_angular_tolerance;
 }
 
-EAPI double
+ELM_API double
 elm_gesture_layer_rotate_angular_tolerance_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;
@@ -4091,7 +4091,7 @@ elm_gesture_layer_rotate_angular_tolerance_get(const Evas_Object *obj)
    return sd->rotate_angular_tolerance;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_flick_time_limit_ms_set(Evas_Object *obj, unsigned int flick_time_limit_ms)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4099,7 +4099,7 @@ elm_gesture_layer_flick_time_limit_ms_set(Evas_Object *obj, unsigned int flick_t
    sd->flick_time_limit_ms = flick_time_limit_ms;
 }
 
-EAPI unsigned int
+ELM_API unsigned int
 elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0;
@@ -4107,7 +4107,7 @@ elm_gesture_layer_flick_time_limit_ms_get(const Evas_Object *obj)
    return sd->flick_time_limit_ms;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_long_tap_start_timeout_set(Evas_Object *obj, double long_tap_start_timeout)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4115,7 +4115,7 @@ elm_gesture_layer_long_tap_start_timeout_set(Evas_Object *obj, double long_tap_s
    sd->long_tap_start_timeout = ((long_tap_start_timeout > 0) ? long_tap_start_timeout : 0);
 }
 
-EAPI double
+ELM_API double
 elm_gesture_layer_long_tap_start_timeout_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;
@@ -4123,7 +4123,7 @@ elm_gesture_layer_long_tap_start_timeout_get(const Evas_Object *obj)
    return sd->long_tap_start_timeout;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_continues_enable_set(Evas_Object *obj, Eina_Bool continues_enable)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4131,7 +4131,7 @@ elm_gesture_layer_continues_enable_set(Evas_Object *obj, Eina_Bool continues_ena
    sd->glayer_continues_enable = continues_enable;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_gesture_layer_continues_enable_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;
@@ -4139,7 +4139,7 @@ elm_gesture_layer_continues_enable_get(const Evas_Object *obj)
    return sd->glayer_continues_enable;
 }
 
-EAPI void
+ELM_API void
 elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double double_tap_timeout)
 {
    ELM_GESTURE_LAYER_CHECK(obj);
@@ -4147,7 +4147,7 @@ elm_gesture_layer_double_tap_timeout_set(Evas_Object *obj, double double_tap_tim
    sd->double_tap_timeout = ((double_tap_timeout > 0) ? double_tap_timeout : 0);
 }
 
-EAPI double
+ELM_API double
 elm_gesture_layer_double_tap_timeout_get(const Evas_Object *obj)
 {
    ELM_GESTURE_LAYER_CHECK(obj) 0.0;

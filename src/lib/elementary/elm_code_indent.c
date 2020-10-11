@@ -33,7 +33,7 @@ elm_code_line_indent_startswith_keyword(Elm_Code_Line *line)
    return ret == 0;
 }
 
-EAPI char *
+ELM_API char *
 elm_code_line_indent_get(Elm_Code_Line *line)
 {
    Elm_Code_Line *prevline;
@@ -118,7 +118,7 @@ elm_code_line_indent_get(Elm_Code_Line *line)
    return buf;
 }
 
-EAPI const char *
+ELM_API const char *
 elm_code_line_indent_matching_braces_get(Elm_Code_Line *line, unsigned int *length)
 {
    Elm_Code_File *file;

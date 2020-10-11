@@ -1,25 +1,25 @@
-EWAPI const Efl_Event_Description _ELM_PAN_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PAN_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
 
 void _elm_pan_pos_set(Eo *obj, Elm_Pan_Smart_Data *pd, int x, int y);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_pan_pos_set, EFL_FUNC_CALL(x, y), int x, int y);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_pan_pos_set, EFL_FUNC_CALL(x, y), int x, int y);
 
 void _elm_pan_pos_get(const Eo *obj, Elm_Pan_Smart_Data *pd, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_pos_get, EFL_FUNC_CALL(x, y), int *x, int *y);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_pos_get, EFL_FUNC_CALL(x, y), int *x, int *y);
 
 void _elm_pan_content_size_get(const Eo *obj, Elm_Pan_Smart_Data *pd, int *w, int *h);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_content_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_content_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
 
 void _elm_pan_pos_min_get(const Eo *obj, Elm_Pan_Smart_Data *pd, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_pos_min_get, EFL_FUNC_CALL(x, y), int *x, int *y);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_pos_min_get, EFL_FUNC_CALL(x, y), int *x, int *y);
 
 void _elm_pan_pos_max_get(const Eo *obj, Elm_Pan_Smart_Data *pd, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_pos_max_get, EFL_FUNC_CALL(x, y), int *x, int *y);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_pan_pos_max_get, EFL_FUNC_CALL(x, y), int *x, int *y);
 
 Efl_Object *_elm_pan_efl_object_constructor(Eo *obj, Elm_Pan_Smart_Data *pd);
 

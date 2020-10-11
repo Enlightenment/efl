@@ -1,6 +1,6 @@
-EWAPI const Efl_Event_Description _ELM_SLIDESHOW_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SLIDESHOW_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
-EWAPI const Efl_Event_Description _ELM_SLIDESHOW_EVENT_TRANSITION_END =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SLIDESHOW_EVENT_TRANSITION_END =
    EFL_EVENT_DESCRIPTION("transition,end");
 
 void _elm_slideshow_cache_after_set(Eo *obj, Elm_Slideshow_Data *pd, int count);
@@ -21,7 +21,7 @@ __eolian_elm_slideshow_cache_after_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_slideshow_cache_after_set, EFL_FUNC_CALL(count), int count);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_slideshow_cache_after_set, EFL_FUNC_CALL(count), int count);
 
 int _elm_slideshow_cache_after_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
@@ -33,7 +33,7 @@ __eolian_elm_slideshow_cache_after_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_cache_after_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_cache_after_get, int, 0);
 
 void _elm_slideshow_cache_before_set(Eo *obj, Elm_Slideshow_Data *pd, int count);
 
@@ -53,7 +53,7 @@ __eolian_elm_slideshow_cache_before_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_slideshow_cache_before_set, EFL_FUNC_CALL(count), int count);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_slideshow_cache_before_set, EFL_FUNC_CALL(count), int count);
 
 int _elm_slideshow_cache_before_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
@@ -65,7 +65,7 @@ __eolian_elm_slideshow_cache_before_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_cache_before_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_cache_before_get, int, 0);
 
 void _elm_slideshow_layout_set(Eo *obj, Elm_Slideshow_Data *pd, const char *layout);
 
@@ -85,7 +85,7 @@ __eolian_elm_slideshow_layout_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_slideshow_layout_set, EFL_FUNC_CALL(layout), const char *layout);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_slideshow_layout_set, EFL_FUNC_CALL(layout), const char *layout);
 
 const char *_elm_slideshow_layout_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
@@ -97,7 +97,7 @@ __eolian_elm_slideshow_layout_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_layout_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_layout_get, const char *, NULL);
 
 void _elm_slideshow_transition_set(Eo *obj, Elm_Slideshow_Data *pd, const char *transition);
 
@@ -117,7 +117,7 @@ __eolian_elm_slideshow_transition_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_slideshow_transition_set, EFL_FUNC_CALL(transition), const char *transition);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_slideshow_transition_set, EFL_FUNC_CALL(transition), const char *transition);
 
 const char *_elm_slideshow_transition_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
@@ -129,7 +129,7 @@ __eolian_elm_slideshow_transition_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_transition_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_transition_get, const char *, NULL);
 
 void _elm_slideshow_items_loop_set(Eo *obj, Elm_Slideshow_Data *pd, Eina_Bool loop);
 
@@ -149,7 +149,7 @@ __eolian_elm_slideshow_items_loop_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_slideshow_items_loop_set, EFL_FUNC_CALL(loop), Eina_Bool loop);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_slideshow_items_loop_set, EFL_FUNC_CALL(loop), Eina_Bool loop);
 
 Eina_Bool _elm_slideshow_items_loop_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
@@ -161,7 +161,7 @@ __eolian_elm_slideshow_items_loop_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_items_loop_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_items_loop_get, Eina_Bool, 0);
 
 void _elm_slideshow_timeout_set(Eo *obj, Elm_Slideshow_Data *pd, double timeout);
 
@@ -181,7 +181,7 @@ __eolian_elm_slideshow_timeout_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_slideshow_timeout_set, EFL_FUNC_CALL(timeout), double timeout);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_slideshow_timeout_set, EFL_FUNC_CALL(timeout), double timeout);
 
 double _elm_slideshow_timeout_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
@@ -193,51 +193,51 @@ __eolian_elm_slideshow_timeout_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_timeout_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_timeout_get, double, 0);
 
 const Eina_List *_elm_slideshow_items_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_items_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_items_get, const Eina_List *, NULL);
 
 const Eina_List *_elm_slideshow_transitions_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_transitions_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_transitions_get, const Eina_List *, NULL);
 
 unsigned int _elm_slideshow_count_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_count_get, unsigned int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_count_get, unsigned int, 0);
 
 Elm_Widget_Item *_elm_slideshow_item_current_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_item_current_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_item_current_get, Elm_Widget_Item *, NULL);
 
 const Eina_List *_elm_slideshow_layouts_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_slideshow_layouts_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_slideshow_layouts_get, const Eina_List *, NULL);
 
 void _elm_slideshow_previous(Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_slideshow_previous);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_slideshow_previous);
 
 Elm_Widget_Item *_elm_slideshow_item_nth_get(const Eo *obj, Elm_Slideshow_Data *pd, unsigned int nth);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_slideshow_item_nth_get, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(nth), unsigned int nth);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_slideshow_item_nth_get, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(nth), unsigned int nth);
 
 void _elm_slideshow_next(Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_slideshow_next);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_slideshow_next);
 
 void _elm_slideshow_clear(Eo *obj, Elm_Slideshow_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_slideshow_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_slideshow_clear);
 
 Elm_Widget_Item *_elm_slideshow_item_add(Eo *obj, Elm_Slideshow_Data *pd, const Elm_Slideshow_Item_Class *itc, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_slideshow_item_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(itc, data), const Elm_Slideshow_Item_Class *itc, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_slideshow_item_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(itc, data), const Elm_Slideshow_Item_Class *itc, const void *data);
 
 Elm_Widget_Item *_elm_slideshow_item_sorted_insert(Eo *obj, Elm_Slideshow_Data *pd, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_slideshow_item_sorted_insert, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(itc, data, func), const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_slideshow_item_sorted_insert, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(itc, data, func), const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func);
 
 Efl_Object *_elm_slideshow_efl_object_constructor(Eo *obj, Elm_Slideshow_Data *pd);
 

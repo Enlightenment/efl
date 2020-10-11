@@ -7,7 +7,7 @@
 #include "elm_priv.h"
 
 void
-EAPI elm_atspi_text_text_attribute_free(Efl_Access_Text_Attribute *attr)
+ELM_API elm_atspi_text_text_attribute_free(Efl_Access_Text_Attribute *attr)
 {
    if (!attr) return;
    if (attr->name) eina_stringshare_del(attr->name);
@@ -15,7 +15,7 @@ EAPI elm_atspi_text_text_attribute_free(Efl_Access_Text_Attribute *attr)
    free(attr);
 }
 
-EAPI void
+ELM_API void
 elm_atspi_text_text_range_free(Efl_Access_Text_Range *range)
 {
    free((char*)range->content);

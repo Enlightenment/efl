@@ -7,6 +7,6 @@
  *
  * @ingroup Elm_Separator
  */
-EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_separator_add(Evas_Object *parent);
 
 #include "elm_separator_eo.legacy.h"

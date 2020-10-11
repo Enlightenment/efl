@@ -49,7 +49,7 @@ typedef enum
  */
 #define ELM_POPUP_CLASS elm_popup_class_get()
 
-EWAPI const Efl_Class *elm_popup_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_popup_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the alignment of the popup object.
@@ -64,7 +64,7 @@ EWAPI const Efl_Class *elm_popup_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_align_set(Eo *obj, double horizontal, double vertical);
+ELM_API ELM_API_WEAK void elm_obj_popup_align_set(Eo *obj, double horizontal, double vertical);
 
 /**
  * @brief Get the alignment of the popup object.
@@ -77,7 +77,7 @@ EOAPI void elm_obj_popup_align_set(Eo *obj, double horizontal, double vertical);
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_align_get(const Eo *obj, double *horizontal, double *vertical);
+ELM_API ELM_API_WEAK void elm_obj_popup_align_get(const Eo *obj, double *horizontal, double *vertical);
 
 /**
  * @brief Sets whether events should be passed to by a click outside.
@@ -92,7 +92,7 @@ EOAPI void elm_obj_popup_align_get(const Eo *obj, double *horizontal, double *ve
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_allow_events_set(Eo *obj, Eina_Bool allow);
+ELM_API ELM_API_WEAK void elm_obj_popup_allow_events_set(Eo *obj, Eina_Bool allow);
 
 /**
  * @brief Returns value indicating whether allow event is enabled or not.
@@ -103,7 +103,7 @@ EOAPI void elm_obj_popup_allow_events_set(Eo *obj, Eina_Bool allow);
  *
  * @ingroup Elm_Popup
  */
-EOAPI Eina_Bool elm_obj_popup_allow_events_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_popup_allow_events_get(const Eo *obj);
 
 /**
  * @brief Control the wrapping type of content text packed in content area of
@@ -114,7 +114,7 @@ EOAPI Eina_Bool elm_obj_popup_allow_events_get(const Eo *obj);
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_content_text_wrap_type_set(Eo *obj, Elm_Wrap_Type wrap);
+ELM_API ELM_API_WEAK void elm_obj_popup_content_text_wrap_type_set(Eo *obj, Elm_Wrap_Type wrap);
 
 /**
  * @brief Control the wrapping type of content text packed in content area of
@@ -126,7 +126,7 @@ EOAPI void elm_obj_popup_content_text_wrap_type_set(Eo *obj, Elm_Wrap_Type wrap)
  *
  * @ingroup Elm_Popup
  */
-EOAPI Elm_Wrap_Type elm_obj_popup_content_text_wrap_type_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Wrap_Type elm_obj_popup_content_text_wrap_type_get(const Eo *obj);
 
 /**
  * @brief Sets the orientation of the popup in the parent region.
@@ -139,7 +139,7 @@ EOAPI Elm_Wrap_Type elm_obj_popup_content_text_wrap_type_get(const Eo *obj);
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_orient_set(Eo *obj, Elm_Popup_Orient orient);
+ELM_API ELM_API_WEAK void elm_obj_popup_orient_set(Eo *obj, Elm_Popup_Orient orient);
 
 /**
  * @brief Returns the orientation of the popup.
@@ -150,7 +150,7 @@ EOAPI void elm_obj_popup_orient_set(Eo *obj, Elm_Popup_Orient orient);
  *
  * @ingroup Elm_Popup
  */
-EOAPI Elm_Popup_Orient elm_obj_popup_orient_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Popup_Orient elm_obj_popup_orient_get(const Eo *obj);
 
 /**
  * @brief Sets a timeout to hide popup automatically
@@ -171,7 +171,7 @@ EOAPI Elm_Popup_Orient elm_obj_popup_orient_get(const Eo *obj);
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_timeout_set(Eo *obj, double timeout);
+ELM_API ELM_API_WEAK void elm_obj_popup_timeout_set(Eo *obj, double timeout);
 
 /**
  * @brief Returns the timeout value set to the popup (in seconds).
@@ -182,7 +182,7 @@ EOAPI void elm_obj_popup_timeout_set(Eo *obj, double timeout);
  *
  * @ingroup Elm_Popup
  */
-EOAPI double elm_obj_popup_timeout_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_popup_timeout_get(const Eo *obj);
 
 /**
  * @brief Enable or disable scroller in popup content area
@@ -196,7 +196,7 @@ EOAPI double elm_obj_popup_timeout_get(const Eo *obj);
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_scrollable_set(Eo *obj, Eina_Bool scroll);
+ELM_API ELM_API_WEAK void elm_obj_popup_scrollable_set(Eo *obj, Eina_Bool scroll);
 
 /**
  * @brief Get the scrollable state of popup content area
@@ -211,7 +211,7 @@ EOAPI void elm_obj_popup_scrollable_set(Eo *obj, Eina_Bool scroll);
  *
  * @ingroup Elm_Popup
  */
-EOAPI Eina_Bool elm_obj_popup_scrollable_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_popup_scrollable_get(const Eo *obj);
 
 /**
  * @brief Add a new item to a Popup object
@@ -233,7 +233,7 @@ EOAPI Eina_Bool elm_obj_popup_scrollable_get(const Eo *obj);
  *
  * @ingroup Elm_Popup
  */
-EOAPI Elm_Widget_Item *elm_obj_popup_item_append(Eo *obj, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_popup_item_append(Eo *obj, const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 /** Dismiss a Popup object.
  *
@@ -241,9 +241,9 @@ EOAPI Elm_Widget_Item *elm_obj_popup_item_append(Eo *obj, const char *label, Efl
  *
  * @ingroup Elm_Popup
  */
-EOAPI void elm_obj_popup_dismiss(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_popup_dismiss(Eo *obj);
 
-EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_BLOCK_CLICKED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_POPUP_EVENT_BLOCK_CLICKED;
 
 /** Called when popup was clicked
  *
@@ -251,7 +251,7 @@ EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_BLOCK_CLICKED;
  */
 #define ELM_POPUP_EVENT_BLOCK_CLICKED (&(_ELM_POPUP_EVENT_BLOCK_CLICKED))
 
-EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_TIMEOUT;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_POPUP_EVENT_TIMEOUT;
 
 /** Called when popup timed out
  *
@@ -259,7 +259,7 @@ EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_TIMEOUT;
  */
 #define ELM_POPUP_EVENT_TIMEOUT (&(_ELM_POPUP_EVENT_TIMEOUT))
 
-EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_ITEM_FOCUSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_POPUP_EVENT_ITEM_FOCUSED;
 
 /** Called when popup got focus
  * @return Efl_Object *
@@ -268,7 +268,7 @@ EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_ITEM_FOCUSED;
  */
 #define ELM_POPUP_EVENT_ITEM_FOCUSED (&(_ELM_POPUP_EVENT_ITEM_FOCUSED))
 
-EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_ITEM_UNFOCUSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_POPUP_EVENT_ITEM_UNFOCUSED;
 
 /** Called when popup lost focus
  * @return Efl_Object *
@@ -277,7 +277,7 @@ EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_ITEM_UNFOCUSED;
  */
 #define ELM_POPUP_EVENT_ITEM_UNFOCUSED (&(_ELM_POPUP_EVENT_ITEM_UNFOCUSED))
 
-EWAPI extern const Efl_Event_Description _ELM_POPUP_EVENT_DISMISSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_POPUP_EVENT_DISMISSED;
 
 /** Called when popup was dismissed
  *

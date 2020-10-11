@@ -69,7 +69,7 @@ typedef enum
  *
  * @ingroup Elm_Flip
  */
-EAPI void elm_flip_interaction_direction_hitsize_set(Elm_Flip *obj, Elm_Flip_Direction dir, double hitsize);
+ELM_API void elm_flip_interaction_direction_hitsize_set(Elm_Flip *obj, Elm_Flip_Direction dir, double hitsize);
 
 /**
  * @brief Get the amount of the flip that is sensitive to interactive flip.
@@ -80,7 +80,7 @@ EAPI void elm_flip_interaction_direction_hitsize_set(Elm_Flip *obj, Elm_Flip_Dir
  *
  * @ingroup Elm_Flip
  */
-EAPI double elm_flip_interaction_direction_hitsize_get(Elm_Flip *obj, Elm_Flip_Direction dir);
+ELM_API double elm_flip_interaction_direction_hitsize_get(Elm_Flip *obj, Elm_Flip_Direction dir);
 
 /**
  * @brief Set which directions of the flip respond to interactive flip
@@ -97,7 +97,7 @@ EAPI double elm_flip_interaction_direction_hitsize_get(Elm_Flip *obj, Elm_Flip_D
  *
  * @ingroup Elm_Flip
  */
-EAPI void elm_flip_interaction_direction_enabled_set(Elm_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
+ELM_API void elm_flip_interaction_direction_enabled_set(Elm_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
 
 /**
  * @brief Get the enabled state of that flip direction.
@@ -108,7 +108,7 @@ EAPI void elm_flip_interaction_direction_enabled_set(Elm_Flip *obj, Elm_Flip_Dir
  *
  * @ingroup Elm_Flip
  */
-EAPI Eina_Bool elm_flip_interaction_direction_enabled_get(Elm_Flip *obj, Elm_Flip_Direction dir);
+ELM_API Eina_Bool elm_flip_interaction_direction_enabled_get(Elm_Flip *obj, Elm_Flip_Direction dir);
 
 /**
  * @brief Add a new flip to the parent
@@ -118,7 +118,7 @@ EAPI Eina_Bool elm_flip_interaction_direction_enabled_get(Elm_Flip *obj, Elm_Fli
  *
  * @ingroup Elm_Flip
  */
-EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_flip_add(Evas_Object *parent);
 
 /**
  * @brief Set flip perspective
@@ -132,5 +132,5 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
  *
  * @ingroup Elm_Flip
  */
-EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
+ELM_API void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
 #include "efl_ui_flip_eo.legacy.h"

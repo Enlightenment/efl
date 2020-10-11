@@ -23,7 +23,7 @@ typedef Eo Elm_Table;
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_homogeneous_set(Elm_Table *obj, Eina_Bool homogeneous);
+ELM_API void elm_table_homogeneous_set(Elm_Table *obj, Eina_Bool homogeneous);
 
 /**
  * @brief Control the homogeneous state in a table.
@@ -34,7 +34,7 @@ EAPI void elm_table_homogeneous_set(Elm_Table *obj, Eina_Bool homogeneous);
  *
  * @ingroup Elm_Table_Group
  */
-EAPI Eina_Bool elm_table_homogeneous_get(const Elm_Table *obj);
+ELM_API Eina_Bool elm_table_homogeneous_get(const Elm_Table *obj);
 
 /**
  * @brief Set padding between cells. Default value is 0.
@@ -45,7 +45,7 @@ EAPI Eina_Bool elm_table_homogeneous_get(const Elm_Table *obj);
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_padding_set(Elm_Table *obj, int horizontal, int vertical);
+ELM_API void elm_table_padding_set(Elm_Table *obj, int horizontal, int vertical);
 
 /**
  * @brief Get padding between cells.
@@ -56,7 +56,7 @@ EAPI void elm_table_padding_set(Elm_Table *obj, int horizontal, int vertical);
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_padding_get(const Elm_Table *obj, int *horizontal, int *vertical);
+ELM_API void elm_table_padding_get(const Elm_Table *obj, int *horizontal, int *vertical);
 
 /**
  * @brief Set alignment of table. Default value is 0.5.
@@ -69,7 +69,7 @@ EAPI void elm_table_padding_get(const Elm_Table *obj, int *horizontal, int *vert
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_align_set(Elm_Table *obj, double horizontal, double vertical);
+ELM_API void elm_table_align_set(Elm_Table *obj, double horizontal, double vertical);
 
 /**
  * @brief Get alignment of table.
@@ -82,7 +82,7 @@ EAPI void elm_table_align_set(Elm_Table *obj, double horizontal, double vertical
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_align_get(const Elm_Table *obj, double *horizontal, double *vertical);
+ELM_API void elm_table_align_get(const Elm_Table *obj, double *horizontal, double *vertical);
 
 /**
  * @brief Faster way to remove all child objects from a table object.
@@ -93,7 +93,7 @@ EAPI void elm_table_align_get(const Elm_Table *obj, double *horizontal, double *
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_clear(Elm_Table *obj, Eina_Bool clear);
+ELM_API void elm_table_clear(Elm_Table *obj, Eina_Bool clear);
 
 /**
  * @brief Get child object of table at given coordinates.
@@ -106,7 +106,7 @@ EAPI void elm_table_clear(Elm_Table *obj, Eina_Bool clear);
  *
  * @ingroup Elm_Table_Group
  */
-EAPI Efl_Canvas_Object *elm_table_child_get(const Elm_Table *obj, int col, int row);
+ELM_API Efl_Canvas_Object *elm_table_child_get(const Elm_Table *obj, int col, int row);
 
 
 
@@ -118,7 +118,7 @@ EAPI Efl_Canvas_Object *elm_table_child_get(const Elm_Table *obj, int col, int r
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_unpack(Elm_Table *obj, Efl_Canvas_Object *subobj);
+ELM_API void elm_table_unpack(Elm_Table *obj, Efl_Canvas_Object *subobj);
 
 /**
  * @brief Add a subobject on the table with the coordinates passed.
@@ -141,6 +141,6 @@ EAPI void elm_table_unpack(Elm_Table *obj, Efl_Canvas_Object *subobj);
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void elm_table_pack(Elm_Table *obj, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
+ELM_API void elm_table_pack(Elm_Table *obj, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
 #endif

@@ -27,7 +27,7 @@ typedef Eo Elm_Segment_Control_Item;
  *
  * @ingroup Elm_Segment_Control_Item_Group
  */
-EAPI int elm_segment_control_item_index_get(const Elm_Segment_Control_Item *obj);
+ELM_API int elm_segment_control_item_index_get(const Elm_Segment_Control_Item *obj);
 
 /**
  * @brief Get the real Evas(Edje) object created to implement the view of a
@@ -41,7 +41,7 @@ EAPI int elm_segment_control_item_index_get(const Elm_Segment_Control_Item *obj)
  *
  * @ingroup Elm_Segment_Control_Item_Group
  */
-EAPI Efl_Canvas_Object *elm_segment_control_item_object_get(const Elm_Segment_Control_Item *obj);
+ELM_API Efl_Canvas_Object *elm_segment_control_item_object_get(const Elm_Segment_Control_Item *obj);
 
 /**
  * @brief Set the selected state of an item.
@@ -60,6 +60,6 @@ EAPI Efl_Canvas_Object *elm_segment_control_item_object_get(const Elm_Segment_Co
  *
  * @ingroup Elm_Segment_Control_Item_Group
  */
-EAPI void elm_segment_control_item_selected_set(Elm_Segment_Control_Item *obj, Eina_Bool selected);
+ELM_API void elm_segment_control_item_selected_set(Elm_Segment_Control_Item *obj, Eina_Bool selected);
 
 #endif

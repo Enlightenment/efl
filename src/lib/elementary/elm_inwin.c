@@ -46,7 +46,7 @@ _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
      CRI("Failed to set layout!");
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_win_inwin_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -89,21 +89,21 @@ _elm_inwin_activate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
    elm_object_focus_set(obj, EINA_TRUE);
 }
 
-EAPI void
+ELM_API void
 elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_INWIN_CHECK(obj);
    efl_content_set(obj, content);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_win_inwin_content_get(const Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;
    return efl_content_get(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_win_inwin_content_unset(Evas_Object *obj)
 {
    ELM_INWIN_CHECK(obj) NULL;

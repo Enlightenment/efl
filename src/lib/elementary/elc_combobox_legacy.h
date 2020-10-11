@@ -13,7 +13,7 @@ typedef Eo Elm_Combobox;
  *
  * @ingroup Elm_Combobox
  */
-EAPI Evas_Object                 *elm_combobox_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_combobox_add(Evas_Object *parent);
 
 /**
  * @brief Returns whether the combobox is expanded.
@@ -29,7 +29,7 @@ EAPI Evas_Object                 *elm_combobox_add(Evas_Object *parent);
  *
  * @ingroup Elm_Combobox_Group
  */
-EAPI Eina_Bool elm_combobox_expanded_get(const Elm_Combobox *obj);
+ELM_API Eina_Bool elm_combobox_expanded_get(const Elm_Combobox *obj);
 
 /** This triggers the combobox popup from code, the same as if the user had
  * clicked the button.
@@ -38,7 +38,7 @@ EAPI Eina_Bool elm_combobox_expanded_get(const Elm_Combobox *obj);
  *
  * @ingroup Elm_Combobox_Group
  */
-EAPI void elm_combobox_hover_begin(Elm_Combobox *obj);
+ELM_API void elm_combobox_hover_begin(Elm_Combobox *obj);
 
 /** This dismisses the combobox popup as if the user had clicked outside the
  * hover.
@@ -47,4 +47,4 @@ EAPI void elm_combobox_hover_begin(Elm_Combobox *obj);
  *
  * @ingroup Elm_Combobox_Group
  */
-EAPI void elm_combobox_hover_end(Elm_Combobox *obj);
+ELM_API void elm_combobox_hover_end(Elm_Combobox *obj);

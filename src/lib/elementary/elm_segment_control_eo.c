@@ -1,37 +1,37 @@
-EWAPI const Efl_Event_Description _ELM_SEGMENT_CONTROL_EVENT_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_SEGMENT_CONTROL_EVENT_CHANGED =
    EFL_EVENT_DESCRIPTION("changed");
 
 int _elm_segment_control_item_count_get(const Eo *obj, Elm_Segment_Control_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_count_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_count_get, int, 0);
 
 Elm_Widget_Item *_elm_segment_control_item_selected_get(const Eo *obj, Elm_Segment_Control_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_selected_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_selected_get, Elm_Widget_Item *, NULL);
 
 const char *_elm_segment_control_item_label_get(const Eo *obj, Elm_Segment_Control_Data *pd, int idx);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_segment_control_item_label_get, const char *, NULL, EFL_FUNC_CALL(idx), int idx);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_segment_control_item_label_get, const char *, NULL, EFL_FUNC_CALL(idx), int idx);
 
 Elm_Widget_Item *_elm_segment_control_item_insert_at(Eo *obj, Elm_Segment_Control_Data *pd, Efl_Canvas_Object *icon, const char *label, int idx);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_segment_control_item_insert_at, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(icon, label, idx), Efl_Canvas_Object *icon, const char *label, int idx);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_segment_control_item_insert_at, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(icon, label, idx), Efl_Canvas_Object *icon, const char *label, int idx);
 
 Elm_Widget_Item *_elm_segment_control_item_get(const Eo *obj, Elm_Segment_Control_Data *pd, int idx);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_segment_control_item_get, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(idx), int idx);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_segment_control_item_get, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(idx), int idx);
 
 void _elm_segment_control_item_del_at(Eo *obj, Elm_Segment_Control_Data *pd, int idx);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_segment_control_item_del_at, EFL_FUNC_CALL(idx), int idx);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_segment_control_item_del_at, EFL_FUNC_CALL(idx), int idx);
 
 Elm_Widget_Item *_elm_segment_control_item_add(Eo *obj, Elm_Segment_Control_Data *pd, Efl_Canvas_Object *icon, const char *label);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_segment_control_item_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(icon, label), Efl_Canvas_Object *icon, const char *label);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_segment_control_item_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(icon, label), Efl_Canvas_Object *icon, const char *label);
 
 Efl_Canvas_Object *_elm_segment_control_item_icon_get(const Eo *obj, Elm_Segment_Control_Data *pd, int idx);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_segment_control_item_icon_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(idx), int idx);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_segment_control_item_icon_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(idx), int idx);
 
 Efl_Object *_elm_segment_control_efl_object_constructor(Eo *obj, Elm_Segment_Control_Data *pd);
 

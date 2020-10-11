@@ -8,7 +8,7 @@
  *
  * @ingroup Elm_Box_Group
  */
-EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
+ELM_API Evas_Object        *elm_box_add(Evas_Object *parent);
 
 #include "elm_box_eo.legacy.h"
 
@@ -46,4 +46,4 @@ EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
  *
  * @ingroup Elm_Box_Group
  */
-EAPI void elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data);
+ELM_API void elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data);

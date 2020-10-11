@@ -19,7 +19,7 @@ typedef Eo Elm_List_Item;
  */
 #define ELM_LIST_ITEM_CLASS elm_list_item_class_get()
 
-EWAPI const Efl_Class *elm_list_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_list_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Set or unset item as a separator.
@@ -35,7 +35,7 @@ EWAPI const Efl_Class *elm_list_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_List_Item
  */
-EOAPI void elm_obj_list_item_separator_set(Eo *obj, Eina_Bool setting);
+ELM_API ELM_API_WEAK void elm_obj_list_item_separator_set(Eo *obj, Eina_Bool setting);
 
 /**
  * @brief Get a value whether item is a separator or not.
@@ -47,7 +47,7 @@ EOAPI void elm_obj_list_item_separator_set(Eo *obj, Eina_Bool setting);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI Eina_Bool elm_obj_list_item_separator_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_list_item_separator_get(const Eo *obj);
 
 /**
  * @brief Set the selected state of an item.
@@ -66,7 +66,7 @@ EOAPI Eina_Bool elm_obj_list_item_separator_get(const Eo *obj);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI void elm_obj_list_item_selected_set(Eo *obj, Eina_Bool selected);
+ELM_API ELM_API_WEAK void elm_obj_list_item_selected_set(Eo *obj, Eina_Bool selected);
 
 /**
  * @brief Get whether the item is selected or not.
@@ -77,7 +77,7 @@ EOAPI void elm_obj_list_item_selected_set(Eo *obj, Eina_Bool selected);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI Eina_Bool elm_obj_list_item_selected_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_list_item_selected_get(const Eo *obj);
 
 /**
  * @brief Get the real Evas(Edje) object created to implement the view of a
@@ -91,7 +91,7 @@ EOAPI Eina_Bool elm_obj_list_item_selected_get(const Eo *obj);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI Efl_Canvas_Object *elm_obj_list_item_object_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_list_item_object_get(const Eo *obj);
 
 /**
  * @brief Get the item before the item in list.
@@ -104,7 +104,7 @@ EOAPI Efl_Canvas_Object *elm_obj_list_item_object_get(const Eo *obj);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI Elm_Widget_Item *elm_obj_list_item_prev_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_list_item_prev_get(const Eo *obj);
 
 /**
  * @brief Get the item after the item in list.
@@ -117,7 +117,7 @@ EOAPI Elm_Widget_Item *elm_obj_list_item_prev_get(const Eo *obj);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI Elm_Widget_Item *elm_obj_list_item_next_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_list_item_next_get(const Eo *obj);
 
 /**
  * @brief Show item in the list view.
@@ -128,7 +128,7 @@ EOAPI Elm_Widget_Item *elm_obj_list_item_next_get(const Eo *obj);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI void elm_obj_list_item_show(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_list_item_show(Eo *obj);
 
 /**
  * @brief Bring in the given item to list view.
@@ -143,6 +143,6 @@ EOAPI void elm_obj_list_item_show(Eo *obj);
  *
  * @ingroup Elm_List_Item
  */
-EOAPI void elm_obj_list_item_bring_in(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_list_item_bring_in(Eo *obj);
 
 #endif

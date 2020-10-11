@@ -9,7 +9,7 @@
  *
  * @ingroup Elm_General
  */
-EAPI void                         elm_object_part_text_set(Evas_Object *obj, const char *part, const char *text);
+ELM_API void                         elm_object_part_text_set(Evas_Object *obj, const char *part, const char *text);
 
 #define elm_object_text_set(obj, text) elm_object_part_text_set((obj), NULL, (text))
 
@@ -24,7 +24,7 @@ EAPI void                         elm_object_part_text_set(Evas_Object *obj, con
  *
  * @ingroup Elm_General
  */
-EAPI const char                  *elm_object_part_text_get(const Evas_Object *obj, const char *part);
+ELM_API const char                  *elm_object_part_text_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_text_get(obj) elm_object_part_text_get((obj), NULL)
 
@@ -53,7 +53,7 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
  *
  * @ingroup Elm_General
  */
-EAPI void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
+ELM_API void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part, const char *domain, const char *text);
 
 #define elm_object_domain_translatable_text_set(obj, domain, text) elm_object_domain_translatable_part_text_set((obj), NULL, (domain), (text))
 
@@ -79,7 +79,7 @@ EAPI void      elm_object_domain_translatable_part_text_set(Evas_Object *obj, co
  *
  * @ingroup Elm_General
  */
-EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part);
+ELM_API const char *elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_translatable_text_get(obj) elm_object_translatable_part_text_get((obj), NULL)
 
@@ -106,7 +106,7 @@ EAPI const char *elm_object_translatable_part_text_get(const Evas_Object *obj, c
  *
  * @ingroup Elm_General
  */
-EAPI void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
+ELM_API void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
 
 #define elm_object_part_text_translatable_set(obj, part, translatable) elm_object_domain_part_text_translatable_set((obj), (part), NULL, (translatable))
 
@@ -132,7 +132,7 @@ EAPI void elm_object_domain_part_text_translatable_set(Evas_Object *obj, const c
  *
  * @ingroup Elm_General
  */
-EAPI void                         elm_object_part_content_set(Evas_Object *obj, const char *part, Evas_Object *content);
+ELM_API void                         elm_object_part_content_set(Evas_Object *obj, const char *part, Evas_Object *content);
 
 #define elm_object_content_set(obj, content) elm_object_part_content_set((obj), NULL, (content))
 
@@ -149,7 +149,7 @@ EAPI void                         elm_object_part_content_set(Evas_Object *obj, 
  *
  * @ingroup Elm_General
  */
-EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object *obj, const char *part);
+ELM_API Evas_Object                 *elm_object_part_content_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_content_get(obj) elm_object_part_content_get((obj), NULL)
 
@@ -166,7 +166,7 @@ EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object 
  *
  * @ingroup Elm_General
  */
-EAPI Evas_Object                 *elm_object_part_content_unset(Evas_Object *obj, const char *part);
+ELM_API Evas_Object                 *elm_object_part_content_unset(Evas_Object *obj, const char *part);
 
 #define elm_object_content_unset(obj) elm_object_part_content_unset((obj), NULL)
 
@@ -178,7 +178,7 @@ EAPI Evas_Object                 *elm_object_part_content_unset(Evas_Object *obj
  *
  * @ingroup Elm_General
  */
-EAPI void                         elm_object_access_info_set(Evas_Object *obj, const char *txt);
+ELM_API void                         elm_object_access_info_set(Evas_Object *obj, const char *txt);
 
 /**
  * Get the text to read out when in accessibility mode
@@ -190,7 +190,7 @@ EAPI void                         elm_object_access_info_set(Evas_Object *obj, c
  *
  * @since 1.14
  */
-EAPI const char *elm_object_access_info_get(Evas_Object *obj);
+ELM_API const char *elm_object_access_info_get(Evas_Object *obj);
 
 /**
  * Get a named object from the children
@@ -212,7 +212,7 @@ EAPI const char *elm_object_access_info_get(Evas_Object *obj);
  *
  * @ingroup Elm_General
  */
-EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, const char *name, int recurse);
+ELM_API Evas_Object                 *elm_object_name_find(const Evas_Object *obj, const char *name, int recurse);
 
 /**
  * @defgroup Elm_Styles Styles
@@ -243,7 +243,7 @@ EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, c
  *
  * @ingroup Elm_Styles
  */
-EAPI Eina_Bool    elm_object_style_set(Evas_Object *obj, const char *style);
+ELM_API Eina_Bool    elm_object_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the style used by the widget
@@ -259,7 +259,7 @@ EAPI Eina_Bool    elm_object_style_set(Evas_Object *obj, const char *style);
  *
  * @ingroup Elm_Styles
  */
-EAPI const char  *elm_object_style_get(const Evas_Object *obj);
+ELM_API const char  *elm_object_style_get(const Evas_Object *obj);
 
 /**
  * Set the disabled state of an Elementary object.
@@ -279,7 +279,7 @@ EAPI const char  *elm_object_style_get(const Evas_Object *obj);
  *
  * @ingroup Elm_General
  */
-EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+ELM_API void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * Get the disabled state of an Elementary object.
@@ -292,7 +292,7 @@ EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_General
  */
-EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
+ELM_API Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
 
 /**
  * @defgroup Elm_WidgetNavigation Widget Tree Navigation
@@ -310,7 +310,7 @@ EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
  *         @c EINA_FALSE otherwise
  * @ingroup Elm_WidgetNavigation
  */
-EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
+ELM_API Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
 
 /**
  * Get the first parent of the given object that is an Elementary
@@ -330,7 +330,7 @@ EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
  *
  * @ingroup Elm_WidgetNavigation
  */
-EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
+ELM_API Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
 
 /**
  * Get the top level parent of an Elementary widget.
@@ -340,7 +340,7 @@ EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
  * found.
  * @ingroup Elm_WidgetNavigation
  */
-EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
+ELM_API Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
 
 /**
  * Get the string that represents this Elementary widget.
@@ -349,7 +349,7 @@ EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
  * @return Elementary widget name, or @c NULL if not a valid widget.
  * @ingroup Elm_WidgetNavigation
  */
-EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj);
+ELM_API const char  *elm_object_widget_type_get(const Evas_Object *obj);
 
 /**
  * Send a signal to the widget edje object.
@@ -363,7 +363,7 @@ EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj);
  * @param source The signal's source.
  * @ingroup Elm_General
  */
-EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+ELM_API void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
 /**
  * Add a callback for a signal emitted by widget edje object.
@@ -380,7 +380,7 @@ EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission,
  * @param data A pointer to data to pass to the callback function.
  * @ingroup Elm_General
  */
-EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+ELM_API void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
  * Remove a signal-triggered callback from a widget edje object.
@@ -402,7 +402,7 @@ EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *e
  *
  * @ingroup Elm_General
  */
-EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+ELM_API void        *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * Add a callback for input events (key up, key down, mouse wheel)
@@ -454,7 +454,7 @@ EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *e
  *
  * @ingroup Elm_General
  */
-EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
+ELM_API void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 
 /**
  * Remove an event callback from a widget.
@@ -472,7 +472,7 @@ EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb f
  * @return The data pointer
  * @ingroup Elm_General
  */
-EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
+ELM_API void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 
 /**
  * Disable the orientation mode of a given widget.
@@ -492,7 +492,7 @@ EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb f
  *
  * @ingroup Elm_General
  */
-EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+ELM_API void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * Get the orientation mode of a given widget.
@@ -506,5 +506,5 @@ EAPI void        elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina
  *
  * @ingroup Elm_General
  */
-EAPI Eina_Bool   elm_object_orientation_mode_disabled_get(const Evas_Object *obj);
+ELM_API Eina_Bool   elm_object_orientation_mode_disabled_get(const Evas_Object *obj);
 

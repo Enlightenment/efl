@@ -162,7 +162,7 @@ typedef void (*Elm_Transit_Del_Cb)(void *data, Elm_Transit *transit);
  *
  * @ingroup Elm_Transit
  */
-EAPI Elm_Transit           *elm_transit_add(void);
+ELM_API Elm_Transit           *elm_transit_add(void);
 
 /**
  * Stops the animation and delete the @p transit object.
@@ -179,7 +179,7 @@ EAPI Elm_Transit           *elm_transit_add(void);
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_del(Elm_Transit *transit);
+ELM_API void                   elm_transit_del(Elm_Transit *transit);
 
 /**
  * Add a new effect to the transit.
@@ -214,7 +214,7 @@ EAPI void                   elm_transit_del(Elm_Transit *transit);
  * transition with the data_free_cb function.
  * Do not share the context data in between different transit objects.
  */
-EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb);
+ELM_API void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb);
 
 /**
  * Delete an added effect.
@@ -234,7 +234,7 @@ EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Tra
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect);
+ELM_API void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect);
 
 /**
  * Add new object to apply the effects.
@@ -256,7 +256,7 @@ EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Tra
  * @ingroup Elm_Transit
  * @warning It is not allowed to add a new object after transit begins.
  */
-EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj);
+ELM_API void                   elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj);
 
 /**
  * Removes an added object from the transit.
@@ -271,7 +271,7 @@ EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Ob
  * @ingroup Elm_Transit
  * @warning It is not allowed to remove objects after transit begins.
  */
-EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
+ELM_API void                   elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
 
 /**
  * Get the objects of the transit.
@@ -281,7 +281,7 @@ EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas
  *
  * @ingroup Elm_Transit
  */
-EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit);
+ELM_API const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit);
 
 /**
  * Enable/disable keeping up the objects states.
@@ -295,7 +295,7 @@ EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit);
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep);
+ELM_API void                   elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep);
 
 /**
  * Get a value whether the objects states will be reset or not.
@@ -310,7 +310,7 @@ EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit
  *
  * @ingroup Elm_Transit
  */
-EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_Transit *transit);
+ELM_API Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_Transit *transit);
 
 /**
  * Set the event enabled when transit is operating.
@@ -329,7 +329,7 @@ EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_T
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled);
+ELM_API void                   elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled);
 
 /**
  * Get the value of event enabled status.
@@ -342,7 +342,7 @@ EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, 
  *
  * @ingroup Elm_Transit
  */
-EAPI Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *transit);
+ELM_API Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *transit);
 
 /**
  * Set the user-callback function when the transit is deleted.
@@ -357,7 +357,7 @@ EAPI Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *tra
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Transit_Del_Cb cb, void *data);
+ELM_API void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Transit_Del_Cb cb, void *data);
 
 /**
  * Set reverse effect automatically.
@@ -373,7 +373,7 @@ EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Tra
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse);
+ELM_API void                   elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse);
 
 /**
  * Get if the auto reverse is on.
@@ -386,7 +386,7 @@ EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, E
  *
  * @ingroup Elm_Transit
  */
-EAPI Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *transit);
+ELM_API Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *transit);
 
 /**
  * Set the transit repeat count. Effect will be repeated by repeat count.
@@ -403,7 +403,7 @@ EAPI Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *tran
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, int repeat);
+ELM_API void                   elm_transit_repeat_times_set(Elm_Transit *transit, int repeat);
 
 /**
  * Get the transit repeat count.
@@ -416,7 +416,7 @@ EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, i
  *
  * @ingroup Elm_Transit
  */
-EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *transit);
+ELM_API int                    elm_transit_repeat_times_get(const Elm_Transit *transit);
 
 /**
  * Get current transit repeated count.
@@ -432,7 +432,7 @@ EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *tran
  *
  * @ingroup Elm_Transit
  */
-EAPI int                    elm_transit_current_repeat_times_get(const Elm_Transit *transit);
+ELM_API int                    elm_transit_current_repeat_times_get(const Elm_Transit *transit);
 
 /**
  * Set the transit animation acceleration type.
@@ -457,7 +457,7 @@ EAPI int                    elm_transit_current_repeat_times_get(const Elm_Trans
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode);
+ELM_API void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode);
 
 /**
  * Get the transit animation acceleration type.
@@ -470,7 +470,7 @@ EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm
  *
  * @ingroup Elm_Transit
  */
-EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit);
+ELM_API Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit);
 
 /**
  * Set the transit animation acceleration factor.
@@ -504,7 +504,7 @@ EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transi
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_tween_mode_factor_set(Elm_Transit *transit, double v1, double v2);
+ELM_API void                   elm_transit_tween_mode_factor_set(Elm_Transit *transit, double v1, double v2);
 
 /**
  * Get the transit animation acceleration factor.
@@ -519,7 +519,7 @@ EAPI void                   elm_transit_tween_mode_factor_set(Elm_Transit *trans
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double *v2);
+ELM_API void                   elm_transit_tween_mode_factor_get(const Elm_Transit *transit, double *v1, double *v2);
 
 /**
  * Set the transit animation acceleration factor.
@@ -555,7 +555,7 @@ EAPI void                   elm_transit_tween_mode_factor_get(const Elm_Transit 
  * @since 1.13
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_tween_mode_factor_n_set(Elm_Transit *transit, unsigned int v_size, double *v);
+ELM_API void                   elm_transit_tween_mode_factor_n_set(Elm_Transit *transit, unsigned int v_size, double *v);
 
 /**
  * Set the transit animation time
@@ -567,7 +567,7 @@ EAPI void                   elm_transit_tween_mode_factor_n_set(Elm_Transit *tra
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration);
+ELM_API void                   elm_transit_duration_set(Elm_Transit *transit, double duration);
 
 /**
  * Get the transit animation time
@@ -580,7 +580,7 @@ EAPI void                   elm_transit_duration_set(Elm_Transit *transit, doubl
  *
  * @ingroup Elm_Transit
  */
-EAPI double                 elm_transit_duration_get(const Elm_Transit *transit);
+ELM_API double                 elm_transit_duration_get(const Elm_Transit *transit);
 
 /**
  * Starts the transition.
@@ -592,7 +592,7 @@ EAPI double                 elm_transit_duration_get(const Elm_Transit *transit)
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_go(Elm_Transit *transit);
+ELM_API void                   elm_transit_go(Elm_Transit *transit);
 
 /**
  * This API can be used to reverse play an ongoing transition.
@@ -612,7 +612,7 @@ EAPI void                   elm_transit_go(Elm_Transit *transit);
  * @since 1.18
  * @ingroup Elm_Transit
  */
-EAPI Eina_Bool               elm_transit_revert(Elm_Transit *transit);
+ELM_API Eina_Bool               elm_transit_revert(Elm_Transit *transit);
 
 /**
  * Starts the transition in given seconds.
@@ -625,7 +625,7 @@ EAPI Eina_Bool               elm_transit_revert(Elm_Transit *transit);
  * @since 1.14
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_go_in(Elm_Transit *transit, double in);
+ELM_API void                   elm_transit_go_in(Elm_Transit *transit, double in);
 
 /**
  * Pause/Resume the transition.
@@ -640,7 +640,7 @@ EAPI void                   elm_transit_go_in(Elm_Transit *transit, double in);
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused);
+ELM_API void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused);
 
 /**
  * Get the value of paused status.
@@ -655,7 +655,7 @@ EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bo
  *
  * @ingroup Elm_Transit
  */
-EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit);
+ELM_API Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit);
 
 /**
  * Get the time progression of the animation (a double value between 0.0 and 1.0).
@@ -672,7 +672,7 @@ EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit);
  *
  * @ingroup Elm_Transit
  */
-EAPI double                 elm_transit_progress_value_get(const Elm_Transit *transit);
+ELM_API double                 elm_transit_progress_value_get(const Elm_Transit *transit);
 
 
 /**
@@ -691,7 +691,7 @@ EAPI double                 elm_transit_progress_value_get(const Elm_Transit *tr
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_progress_value_set(Elm_Transit *transit, double progress);
+ELM_API void                   elm_transit_progress_value_set(Elm_Transit *transit, double progress);
 
 /**
  * Makes the chain relationship between two transits.
@@ -709,7 +709,7 @@ EAPI void                   elm_transit_progress_value_set(Elm_Transit *transit,
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit);
+ELM_API void                   elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit);
 
 /**
  * Cut off the chain relationship between two transits.
@@ -724,7 +724,7 @@ EAPI void                   elm_transit_chain_transit_add(Elm_Transit *transit, 
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit);
+ELM_API void                   elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit);
 
 /**
  * Get the current chain transit list.
@@ -736,7 +736,7 @@ EAPI void                   elm_transit_chain_transit_del(Elm_Transit *transit, 
  *
  * @ingroup Elm_Transit
  */
-EAPI Eina_List             *elm_transit_chain_transits_get(const Elm_Transit *transit);
+ELM_API Eina_List             *elm_transit_chain_transits_get(const Elm_Transit *transit);
 
 /**
  * Set the smooth effect for a transit.
@@ -754,7 +754,7 @@ EAPI Eina_List             *elm_transit_chain_transits_get(const Elm_Transit *tr
  *
  * @ingroup Elm_Transit
  */
-EAPI void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bool enabled);
+ELM_API void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bool enabled);
 
 /**
  * Get the smooth scaling for transit map rendering
@@ -768,7 +768,7 @@ EAPI void                   elm_transit_smooth_set(Elm_Transit *transit, Eina_Bo
  * @since 1.8
  *
  */
-EAPI Eina_Bool              elm_transit_smooth_get(const Elm_Transit *transit);
+ELM_API Eina_Bool              elm_transit_smooth_get(const Elm_Transit *transit);
 
 /**
  * Add the Resizing Effect to Elm_Transit.
@@ -787,7 +787,7 @@ EAPI Eina_Bool              elm_transit_smooth_get(const Elm_Transit *transit);
  *
  * @ingroup Elm_Transit
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
 
 /**
  * Add the Translation Effect to Elm_Transit.
@@ -810,7 +810,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_resizing_add(Elm_Transit *transit
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy);
 
 /**
  * Add the Zoom Effect to Elm_Transit.
@@ -831,7 +831,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_translation_add(Elm_Transit *tran
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate);
 
 /**
  * Add the Flip Effect to Elm_Transit.
@@ -855,7 +855,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_zoom_add(Elm_Transit *transit, fl
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
 
 /**
  * Add the Resizeable Flip Effect to Elm_Transit.
@@ -879,7 +879,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, El
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
 
 /**
  * Add the Wipe Effect to Elm_Transit.
@@ -900,7 +900,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_resizable_flip_add(Elm_Transit *t
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir);
 
 /**
  * Add the Color Effect to Elm_Transit.
@@ -923,7 +923,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_wipe_add(Elm_Transit *transit, El
  *
  * @ingroup Elm_Transit
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
 
 /**
  * Add the Fade Effect to Elm_Transit.
@@ -945,7 +945,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_color_add(Elm_Transit *transit, u
  * This is because this effect needs the color information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_fade_add(Elm_Transit *transit);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_fade_add(Elm_Transit *transit);
 
 /**
  * Add the Blend Effect to Elm_Transit.
@@ -967,7 +967,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_fade_add(Elm_Transit *transit);
  * This is because this effect needs the color information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_blend_add(Elm_Transit *transit);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_blend_add(Elm_Transit *transit);
 
 /**
  * Add the Rotation Effect to Elm_Transit.
@@ -988,7 +988,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_blend_add(Elm_Transit *transit);
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree);
 
 /**
  * Add the ImageAnimation Effect to Elm_Transit.
@@ -1024,7 +1024,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_rotation_add(Elm_Transit *transit
  *
  * @ingroup Elm_Transit
  */
-EAPI Elm_Transit_Effect    *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);
+ELM_API Elm_Transit_Effect    *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);
 /**
  * @}
  */

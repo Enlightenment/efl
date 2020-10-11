@@ -26,7 +26,7 @@ typedef Eo Elm_Hoversel;
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI void elm_hoversel_horizontal_set(Elm_Hoversel *obj, Eina_Bool horizontal);
+ELM_API void elm_hoversel_horizontal_set(Elm_Hoversel *obj, Eina_Bool horizontal);
 
 /**
  * @brief Control if the hoversel should expand horizontally.
@@ -40,7 +40,7 @@ EAPI void elm_hoversel_horizontal_set(Elm_Hoversel *obj, Eina_Bool horizontal);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI Eina_Bool elm_hoversel_horizontal_get(const Elm_Hoversel *obj);
+ELM_API Eina_Bool elm_hoversel_horizontal_get(const Elm_Hoversel *obj);
 
 /**
  * @brief Control the hover parent.
@@ -53,7 +53,7 @@ EAPI Eina_Bool elm_hoversel_horizontal_get(const Elm_Hoversel *obj);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI void elm_hoversel_hover_parent_set(Elm_Hoversel *obj, Efl_Canvas_Object *parent);
+ELM_API void elm_hoversel_hover_parent_set(Elm_Hoversel *obj, Efl_Canvas_Object *parent);
 
 /**
  * @brief Control the hover parent.
@@ -67,7 +67,7 @@ EAPI void elm_hoversel_hover_parent_set(Elm_Hoversel *obj, Efl_Canvas_Object *pa
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI Efl_Canvas_Object *elm_hoversel_hover_parent_get(const Elm_Hoversel *obj);
+ELM_API Efl_Canvas_Object *elm_hoversel_hover_parent_get(const Elm_Hoversel *obj);
 
 /**
  * @brief Returns whether the hoversel is expanded.
@@ -78,7 +78,7 @@ EAPI Efl_Canvas_Object *elm_hoversel_hover_parent_get(const Elm_Hoversel *obj);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI Eina_Bool elm_hoversel_expanded_get(const Elm_Hoversel *obj);
+ELM_API Eina_Bool elm_hoversel_expanded_get(const Elm_Hoversel *obj);
 
 /**
  * @brief Get the list of items within the given hoversel.
@@ -89,7 +89,7 @@ EAPI Eina_Bool elm_hoversel_expanded_get(const Elm_Hoversel *obj);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI const Eina_List *elm_hoversel_items_get(const Elm_Hoversel *obj);
+ELM_API const Eina_List *elm_hoversel_items_get(const Elm_Hoversel *obj);
 
 /**
  * @brief Update icon and text of hoversel same to those of selected item
@@ -101,7 +101,7 @@ EAPI const Eina_List *elm_hoversel_items_get(const Elm_Hoversel *obj);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI void elm_hoversel_auto_update_set(Elm_Hoversel *obj, Eina_Bool auto_update);
+ELM_API void elm_hoversel_auto_update_set(Elm_Hoversel *obj, Eina_Bool auto_update);
 
 /**
  * @brief Update icon and text of hoversel same to those of selected item
@@ -113,14 +113,14 @@ EAPI void elm_hoversel_auto_update_set(Elm_Hoversel *obj, Eina_Bool auto_update)
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI Eina_Bool elm_hoversel_auto_update_get(const Elm_Hoversel *obj);
+ELM_API Eina_Bool elm_hoversel_auto_update_get(const Elm_Hoversel *obj);
 
 /** This triggers the hoversel popup from code, the same as if the user had
  * clicked the button.
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI void elm_hoversel_hover_begin(Elm_Hoversel *obj);
+ELM_API void elm_hoversel_hover_begin(Elm_Hoversel *obj);
 
 /**
  * @brief This will remove all the children items from the hoversel.
@@ -131,14 +131,14 @@ EAPI void elm_hoversel_hover_begin(Elm_Hoversel *obj);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI void elm_hoversel_clear(Elm_Hoversel *obj);
+ELM_API void elm_hoversel_clear(Elm_Hoversel *obj);
 
 /** This dismisses the hoversel popup as if the user had clicked outside the
  * hover.
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI void elm_hoversel_hover_end(Elm_Hoversel *obj);
+ELM_API void elm_hoversel_hover_end(Elm_Hoversel *obj);
 
 /**
  * @brief Add an item to the hoversel button
@@ -160,6 +160,6 @@ EAPI void elm_hoversel_hover_end(Elm_Hoversel *obj);
  *
  * @ingroup Elm_Hoversel_Group
  */
-EAPI Elm_Widget_Item *elm_hoversel_item_add(Elm_Hoversel *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
+ELM_API Elm_Widget_Item *elm_hoversel_item_add(Elm_Hoversel *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
 #endif

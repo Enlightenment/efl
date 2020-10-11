@@ -1,6 +1,6 @@
-EWAPI const Efl_Event_Description _ELM_ATSPI_BRIDGE_EVENT_CONNECTED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ATSPI_BRIDGE_EVENT_CONNECTED =
    EFL_EVENT_DESCRIPTION("connected");
-EWAPI const Efl_Event_Description _ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED =
    EFL_EVENT_DESCRIPTION("disconnected");
 
 Eina_Bool _elm_atspi_bridge_connected_get(const Eo *obj, Elm_Atspi_Bridge_Data *pd);
@@ -13,7 +13,7 @@ __eolian_elm_atspi_bridge_connected_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_atspi_bridge_connected_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_atspi_bridge_connected_get, Eina_Bool, 0);
 
 Efl_Object *_elm_atspi_bridge_efl_object_constructor(Eo *obj, Elm_Atspi_Bridge_Data *pd);
 

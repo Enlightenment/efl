@@ -35,7 +35,7 @@ typedef enum
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
+ELM_API Evas_Object          *elm_map_add(Evas_Object *parent);
 
 
 /**
@@ -57,7 +57,7 @@ EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_zoom_set(Evas_Object *obj, int zoom);
+ELM_API void elm_map_zoom_set(Evas_Object *obj, int zoom);
 
 /**
  * @brief Get the zoom level of the map.
@@ -74,7 +74,7 @@ EAPI void elm_map_zoom_set(Evas_Object *obj, int zoom);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI int elm_map_zoom_get(const Evas_Object *obj);
+ELM_API int elm_map_zoom_get(const Evas_Object *obj);
 
 
 /**
@@ -99,7 +99,7 @@ EAPI int elm_map_zoom_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
+ELM_API void elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
 
 /**
  * @brief Get the zoom mode used by the map object.
@@ -113,7 +113,7 @@ EAPI void elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
+ELM_API Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Enable or disable mouse wheel to be used to zoom in / out the map.
@@ -126,7 +126,7 @@ EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+ELM_API void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * @brief Get a value whether mouse wheel is enabled or not.
@@ -139,7 +139,7 @@ EAPI void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Eina_Bool elm_map_wheel_disabled_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_map_wheel_disabled_get(const Evas_Object *obj);
 
 /**
  * @brief Pause or unpause the map.
@@ -157,7 +157,7 @@ EAPI Eina_Bool elm_map_wheel_disabled_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI void elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
+ELM_API void elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
 
 /**
  * @brief Get a value whether map is paused or not.
@@ -170,6 +170,6 @@ EAPI void elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
  *
  * @ingroup Elm_Map_Group
  */
-EAPI Eina_Bool elm_map_paused_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_map_paused_get(const Evas_Object *obj);
 
 #include "elm_map_eo.legacy.h"

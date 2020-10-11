@@ -95,7 +95,7 @@ typedef struct _Elm_Theme Elm_Theme;
  *
  * @ingroup Elm_Theme
  */
-EAPI Elm_Theme       *elm_theme_new(void);
+ELM_API Elm_Theme       *elm_theme_new(void);
 
 /**
  * Free a specific theme
@@ -106,7 +106,7 @@ EAPI Elm_Theme       *elm_theme_new(void);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_free(Elm_Theme *th);
+ELM_API void             elm_theme_free(Elm_Theme *th);
 
 /**
  * Copy the theme from the source to the destination theme
@@ -121,7 +121,7 @@ EAPI void             elm_theme_free(Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst);
+ELM_API void             elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst);
 
 /**
  * Tell the source theme to reference the ref theme
@@ -135,7 +135,7 @@ EAPI void             elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
+ELM_API void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
 
 /**
  * Return the theme referred to
@@ -148,7 +148,7 @@ EAPI void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
  *
  * @ingroup Elm_Theme
  */
-EAPI Elm_Theme       *elm_theme_ref_get(const Elm_Theme *th);
+ELM_API Elm_Theme       *elm_theme_ref_get(const Elm_Theme *th);
 
 /**
  * Return the default theme
@@ -161,7 +161,7 @@ EAPI Elm_Theme       *elm_theme_ref_get(const Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI Elm_Theme       *elm_theme_default_get(void);
+ELM_API Elm_Theme       *elm_theme_default_get(void);
 
 /**
  * Prepends a theme overlay to the list of overlays
@@ -183,7 +183,7 @@ EAPI Elm_Theme       *elm_theme_default_get(void);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_overlay_add(Elm_Theme *th, const char *item);
+ELM_API void             elm_theme_overlay_add(Elm_Theme *th, const char *item);
 
 /**
  * Delete a theme overlay from the list of overlays
@@ -195,7 +195,7 @@ EAPI void             elm_theme_overlay_add(Elm_Theme *th, const char *item);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
+ELM_API void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
 
 /**
  * Prepends a theme overlay to the list of overlays
@@ -217,7 +217,7 @@ EAPI void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f);
+ELM_API void             elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f);
 
 /**
  * Delete a theme overlay from the list of overlays
@@ -229,7 +229,7 @@ EAPI void             elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File 
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f);
+ELM_API void             elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f);
 
 /**
  * Get the list of registered overlays for the given theme
@@ -241,7 +241,7 @@ EAPI void             elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File 
  *
  * @ingroup Elm_Theme
  */
-EAPI const Eina_List *elm_theme_overlay_list_get(const Elm_Theme *th);
+ELM_API const Eina_List *elm_theme_overlay_list_get(const Elm_Theme *th);
 
 /**
  * Appends a theme extension to the list of extensions.
@@ -264,7 +264,7 @@ EAPI const Eina_List *elm_theme_overlay_list_get(const Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_extension_add(Elm_Theme *th, const char *item);
+ELM_API void             elm_theme_extension_add(Elm_Theme *th, const char *item);
 
 /**
  * Deletes a theme extension from the list of extensions.
@@ -276,7 +276,7 @@ EAPI void             elm_theme_extension_add(Elm_Theme *th, const char *item);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_extension_del(Elm_Theme *th, const char *item);
+ELM_API void             elm_theme_extension_del(Elm_Theme *th, const char *item);
 
 /**
  * Appends a theme extension to the list of extensions.
@@ -299,7 +299,7 @@ EAPI void             elm_theme_extension_del(Elm_Theme *th, const char *item);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f);
+ELM_API void             elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f);
 
 /**
  * Deletes a theme extension from the list of extensions.
@@ -311,7 +311,7 @@ EAPI void             elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_Fil
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f);
+ELM_API void             elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f);
 
 /**
  * Get the list of registered extensions for the given theme
@@ -323,7 +323,7 @@ EAPI void             elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_Fil
  *
  * @ingroup Elm_Theme
  */
-EAPI const Eina_List *elm_theme_extension_list_get(const Elm_Theme *th);
+ELM_API const Eina_List *elm_theme_extension_list_get(const Elm_Theme *th);
 
 /**
  * Set the theme search order for the given theme
@@ -343,7 +343,7 @@ EAPI const Eina_List *elm_theme_extension_list_get(const Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_set(Elm_Theme *th, const char *theme);
+ELM_API void             elm_theme_set(Elm_Theme *th, const char *theme);
 
 /**
  * Return the theme search order
@@ -359,7 +359,7 @@ EAPI void             elm_theme_set(Elm_Theme *th, const char *theme);
  *
  * @ingroup Elm_Theme
  */
-EAPI const char      *elm_theme_get(Elm_Theme *th);
+ELM_API const char      *elm_theme_get(Elm_Theme *th);
 
 /**
  * Return a list of theme elements to be used in a theme.
@@ -382,7 +382,7 @@ EAPI const char      *elm_theme_get(Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI const Eina_List *elm_theme_list_get(const Elm_Theme *th);
+ELM_API const Eina_List *elm_theme_list_get(const Elm_Theme *th);
 
 /**
  * Return the full path for a theme element
@@ -402,7 +402,7 @@ EAPI const Eina_List *elm_theme_list_get(const Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI char            *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path);
+ELM_API char            *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path);
 
 /**
  * Flush the current theme.
@@ -416,7 +416,7 @@ EAPI char            *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_flush(Elm_Theme *th);
+ELM_API void             elm_theme_flush(Elm_Theme *th);
 
 /**
  * This flushes all themes (default and specific ones).
@@ -426,7 +426,7 @@ EAPI void             elm_theme_flush(Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_full_flush(void);
+ELM_API void             elm_theme_full_flush(void);
 
 /**
  * Return a list of theme elements in the theme search path
@@ -440,7 +440,7 @@ EAPI void             elm_theme_full_flush(void);
  *
  * @ingroup Elm_Theme
  */
-EAPI Eina_List       *elm_theme_name_available_list_new(void);
+ELM_API Eina_List       *elm_theme_name_available_list_new(void);
 
 /**
  * Free the list returned by elm_theme_name_available_list_new()
@@ -451,7 +451,7 @@ EAPI Eina_List       *elm_theme_name_available_list_new(void);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_theme_name_available_list_free(Eina_List *list);
+ELM_API void             elm_theme_name_available_list_free(Eina_List *list);
 
 /**
  * Set a specific theme to be used for this object and its children
@@ -470,7 +470,7 @@ EAPI void             elm_theme_name_available_list_free(Eina_List *list);
  *
  * @ingroup Elm_Theme
  */
-EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
+ELM_API void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
 
 /**
  * Get the specific theme to be used
@@ -485,7 +485,7 @@ EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
  *
  * @ingroup Elm_Theme
  */
-EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
+ELM_API Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
 
 /**
  * Get a data item from a theme
@@ -499,7 +499,7 @@ EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Theme
  */
-EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
+ELM_API const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
 
 /**
  * Get the file path for an edje file for the group and theme given
@@ -522,7 +522,7 @@ EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
  * @since 1.8
  * @ingroup Elm_Theme
  */
-EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
+ELM_API const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
 
 /**
  * Get a list of groups that match the initial base string given within all themes
@@ -544,7 +544,7 @@ EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
  * @since 1.8
  * @ingroup Elm_Theme
  */
- EAPI Eina_List *elm_theme_group_base_list(Elm_Theme *th, const char *base);
+ ELM_API Eina_List *elm_theme_group_base_list(Elm_Theme *th, const char *base);
 
 /**
  * Get the file path where elementary system theme files are found
@@ -559,7 +559,7 @@ EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
  * @since 1.8
  * @ingroup Elm_Theme
  */
-EAPI const char *elm_theme_system_dir_get(void);
+ELM_API const char *elm_theme_system_dir_get(void);
 
 /**
  * Get the file path where elementary user theme files are found
@@ -577,7 +577,7 @@ EAPI const char *elm_theme_system_dir_get(void);
  * @since 1.8
  * @ingroup Elm_Theme
  */
-EAPI const char *elm_theme_user_dir_get(void);
+ELM_API const char *elm_theme_user_dir_get(void);
 
 /**
  * @}

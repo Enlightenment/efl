@@ -9,7 +9,7 @@
  *
  * @ingroup Efreet
  */
-EAPI Eina_Bool elm_need_efreet(void);
+ELM_API Eina_Bool elm_need_efreet(void);
 
 /**
  * Request that your elementary application needs Elm_Systray
@@ -23,7 +23,7 @@ EAPI Eina_Bool elm_need_efreet(void);
  * @ingroup Elm_Systray
  * @since 1.8
  */
-EAPI Eina_Bool elm_need_systray(void);
+ELM_API Eina_Bool elm_need_systray(void);
 
 /**
  * Request that your elementary application needs Elm_Sys_Notify
@@ -37,7 +37,7 @@ EAPI Eina_Bool elm_need_systray(void);
  * @ingroup Elm_Sys_Notify
  * @since 1.8
  */
-EAPI Eina_Bool elm_need_sys_notify(void);
+ELM_API Eina_Bool elm_need_sys_notify(void);
 
 /**
  * Request that your elementary application needs e_dbus
@@ -53,7 +53,7 @@ EAPI Eina_Bool elm_need_sys_notify(void);
  *
  * @ingroup E_dbus
  */
-EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
+ELM_API Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
 
 /**
  * Request that your elementary application needs eldbus
@@ -68,7 +68,7 @@ EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
  *
  * @ingroup eldbus
  */
-EAPI Eina_Bool elm_need_eldbus(void);
+ELM_API Eina_Bool elm_need_eldbus(void);
 
 /**
  * Request that your elementary application needs ethumb
@@ -80,7 +80,7 @@ EAPI Eina_Bool elm_need_eldbus(void);
  *
  * @ingroup Elm_Thumb
  */
-EAPI Eina_Bool elm_need_ethumb(void);
+ELM_API Eina_Bool elm_need_ethumb(void);
 
 /**
  * Request that your elementary application needs web support
@@ -92,4 +92,4 @@ EAPI Eina_Bool elm_need_ethumb(void);
  *
  * @ingroup Elm_Web
  */
-EAPI Eina_Bool elm_need_web(void);
+ELM_API Eina_Bool elm_need_web(void);

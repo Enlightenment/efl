@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Ctxpopup_Group
  */
-EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent);
 
 #include "elm_ctxpopup_item_eo.legacy.h"
 #include "elm_ctxpopup_eo.legacy.h"

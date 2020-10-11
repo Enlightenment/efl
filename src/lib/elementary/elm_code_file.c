@@ -70,7 +70,7 @@ static void _elm_code_file_line_insert_data(Elm_Code_File *file, const char *con
      }
 }
 
-EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
+ELM_API const char *elm_code_file_filename_get(Elm_Code_File *file)
 {
    if (!file->file)
      return NULL;
@@ -78,7 +78,7 @@ EAPI const char *elm_code_file_filename_get(Elm_Code_File *file)
    return ecore_file_file_get(eina_file_filename_get(file->file));
 }
 
-EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
+ELM_API const char *elm_code_file_path_get(Elm_Code_File *file)
 {
    if (!file->file)
      return NULL;
@@ -86,7 +86,7 @@ EAPI const char *elm_code_file_path_get(Elm_Code_File *file)
    return eina_file_filename_get(file->file);
 }
 
-EAPI char *_elm_code_file_tmp_path_get(Elm_Code_File *file)
+ELM_API char *_elm_code_file_tmp_path_get(Elm_Code_File *file)
 {
    const char *name, *path;
    char *tmp;
@@ -104,7 +104,7 @@ EAPI char *_elm_code_file_tmp_path_get(Elm_Code_File *file)
    return tmp;
 }
 
-EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
+ELM_API Elm_Code_File *elm_code_file_new(Elm_Code *code)
 {
    Elm_Code_File *ret;
 
@@ -119,7 +119,7 @@ EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
    return ret;
 }
 
-EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
+ELM_API Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(code, NULL);
 
@@ -166,7 +166,7 @@ EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
    return ret;
 }
 
-EAPI void elm_code_file_save(Elm_Code_File *file)
+ELM_API void elm_code_file_save(Elm_Code_File *file)
 {
    Eina_List *item;
    Elm_Code *code;
@@ -231,7 +231,7 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
      }
 }
 
-EAPI void elm_code_file_free(Elm_Code_File *file)
+ELM_API void elm_code_file_free(Elm_Code_File *file)
 {
    Elm_Code_Line *l;
 
@@ -244,7 +244,7 @@ EAPI void elm_code_file_free(Elm_Code_File *file)
    free(file);
 }
 
-EAPI void elm_code_file_close(Elm_Code_File *file)
+ELM_API void elm_code_file_close(Elm_Code_File *file)
 {
    if (!file->file)
      return;
@@ -256,12 +256,12 @@ EAPI void elm_code_file_close(Elm_Code_File *file)
    file->file = NULL;
 }
 
-EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file)
+ELM_API Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file)
 {
    return file->line_ending;
 }
 
-EAPI const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short *length)
+ELM_API const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short *length)
 {
    if (length)
      {
@@ -276,7 +276,7 @@ EAPI const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short 
    return "\n";
 }
 
-EAPI void elm_code_file_clear(Elm_Code_File *file)
+ELM_API void elm_code_file_clear(Elm_Code_File *file)
 {
    Elm_Code_Line *l;
 
@@ -289,13 +289,13 @@ EAPI void elm_code_file_clear(Elm_Code_File *file)
      elm_code_callback_fire(file->parent, &ELM_CODE_EVENT_FILE_LOAD_DONE, file);
 }
 
-EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file)
+ELM_API unsigned int elm_code_file_lines_get(Elm_Code_File *file)
 {
    return eina_list_count(file->lines);
 }
 
 
-EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length, void *data)
+ELM_API void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length, void *data)
 {
    int row;
 
@@ -303,7 +303,7 @@ EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int l
    _elm_code_file_line_insert_data(file, line, length, row, EINA_FALSE, data);
 }
 
-EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const char *line, int length, void *data)
+ELM_API void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const char *line, int length, void *data)
 {
    Eina_List *item;
    Elm_Code_Line *line_item;
@@ -321,7 +321,7 @@ EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const
      }
 }
 
-EAPI void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row)
+ELM_API void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row)
 {
    Eina_List *item, *next;
    Elm_Code_Line *line_item, *tofree = NULL;
@@ -346,7 +346,7 @@ EAPI void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row)
      elm_code_line_free(tofree);
 }
 
-EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int number)
+ELM_API Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int number)
 {
    return eina_list_nth(file->lines, number - 1);
 }

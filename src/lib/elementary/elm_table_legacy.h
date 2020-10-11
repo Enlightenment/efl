@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Table_Group
  */
-EAPI Evas_Object *elm_table_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_table_add(Evas_Object *parent);
 
 /**
  * @brief Set the packing location of an existing child of the table
@@ -25,7 +25,7 @@ EAPI Evas_Object *elm_table_add(Evas_Object *parent);
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void      elm_table_pack_set(Evas_Object *subobj, int col, int row, int colspan, int rowspan);
+ELM_API void      elm_table_pack_set(Evas_Object *subobj, int col, int row, int colspan, int rowspan);
 
 /**
  * @brief Get the packing location of an existing child of the table
@@ -40,6 +40,6 @@ EAPI void      elm_table_pack_set(Evas_Object *subobj, int col, int row, int col
  *
  * @ingroup Elm_Table_Group
  */
-EAPI void      elm_table_pack_get(Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan);
+ELM_API void      elm_table_pack_get(Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan);
 
 #include "elm_table_eo.legacy.h"

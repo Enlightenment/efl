@@ -37,7 +37,7 @@ typedef Eina_List *(*Elm_Color_Class_List_Cb)(void);
  *
  * @since 1.14
  */
-EAPI Evas_Object *elm_color_class_editor_add(Evas_Object *obj);
+ELM_API Evas_Object *elm_color_class_editor_add(Evas_Object *obj);
 
 /**
  * @brief Set a callback to provide translations for color class descriptions
@@ -48,7 +48,7 @@ EAPI Evas_Object *elm_color_class_editor_add(Evas_Object *obj);
  *
  * @since 1.14
  **/
-EAPI void elm_color_class_translate_cb_set(Elm_Color_Class_Name_Cb cb);
+ELM_API void elm_color_class_translate_cb_set(Elm_Color_Class_Name_Cb cb);
 
 /**
  * @brief Set a callback to provide a list of supplementary color classes
@@ -61,7 +61,7 @@ EAPI void elm_color_class_translate_cb_set(Elm_Color_Class_Name_Cb cb);
  *
  * @since 1.14
  **/
-EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
+ELM_API void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
 
 /**
  * @brief Create an allocated list of allocated Edje_Color_Class structs from an open edje file
@@ -74,7 +74,7 @@ EAPI void elm_color_class_list_cb_set(Elm_Color_Class_List_Cb cb);
  *
  * @since 1.14
  **/
-EAPI Eina_List *elm_color_class_util_edje_file_list(Eina_File *f);
+ELM_API Eina_List *elm_color_class_util_edje_file_list(Eina_File *f);
 /** @} */
 
 #endif

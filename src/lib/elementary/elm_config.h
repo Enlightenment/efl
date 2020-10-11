@@ -25,7 +25,7 @@
  * configuration file.
  *
  */
-EAPI Eina_Bool elm_config_save(void);
+ELM_API Eina_Bool elm_config_save(void);
 
 /**
  * Reload Elementary's configuration, bounded to current selected
@@ -39,7 +39,7 @@ EAPI Eina_Bool elm_config_save(void);
  * for example, it will force a reload with system values instead.
  *
  */
-EAPI void      elm_config_reload(void);
+ELM_API void      elm_config_reload(void);
 
 /**
  * Flush all config settings then apply those settings to all applications
@@ -47,7 +47,7 @@ EAPI void      elm_config_reload(void);
  *
  * @ingroup Elm_Config
  */
-EAPI void      elm_config_all_flush(void);
+ELM_API void      elm_config_all_flush(void);
 
 /**
  * @}
@@ -76,7 +76,7 @@ EAPI void      elm_config_all_flush(void);
  * @return The profile's name
  * @ingroup Elm_Profile
  */
-EAPI const char *elm_config_profile_get(void);
+ELM_API const char *elm_config_profile_get(void);
 
 /**
  * Get an Elementary's profile directory path in the filesystem. One
@@ -91,7 +91,7 @@ EAPI const char *elm_config_profile_get(void);
  *
  * @note You must free it with elm_config_profile_dir_free().
  */
-EAPI const char *elm_config_profile_dir_get(const char *profile, Eina_Bool is_user);
+ELM_API const char *elm_config_profile_dir_get(const char *profile, Eina_Bool is_user);
 
 /**
  * Free an Elementary's profile directory path, as returned by
@@ -101,7 +101,7 @@ EAPI const char *elm_config_profile_dir_get(const char *profile, Eina_Bool is_us
  * @ingroup Elm_Profile
  *
  */
-EAPI void        elm_config_profile_dir_free(const char *p_dir);
+ELM_API void        elm_config_profile_dir_free(const char *p_dir);
 
 /**
  * Get Elementary's list of available profiles.
@@ -113,7 +113,7 @@ EAPI void        elm_config_profile_dir_free(const char *p_dir);
  * @note One must free this list, after usage, with the function
  *       elm_config_profile_list_free().
  */
-EAPI Eina_List  *elm_config_profile_list_get(void);
+ELM_API Eina_List  *elm_config_profile_list_get(void);
 
 /**
  * Get Elementary's list of available profiles including hidden ones.
@@ -129,7 +129,7 @@ EAPI Eina_List  *elm_config_profile_list_get(void);
  *       elm_config_profile_list_free().
  * @since 1.17
  */
-EAPI Eina_List  *elm_config_profile_list_full_get(void);
+ELM_API Eina_List  *elm_config_profile_list_full_get(void);
 
 /**
  * Free Elementary's list of available profiles.
@@ -138,7 +138,7 @@ EAPI Eina_List  *elm_config_profile_list_full_get(void);
  * @ingroup Elm_Profile
  *
  */
-EAPI void        elm_config_profile_list_free(Eina_List *l);
+ELM_API void        elm_config_profile_list_free(Eina_List *l);
 
 /**
  * Return if a profile of the given name exists
@@ -149,7 +149,7 @@ EAPI void        elm_config_profile_list_free(Eina_List *l);
  *
  * @since 1.17
  */
-EAPI Eina_Bool   elm_config_profile_exists(const char *profile);
+ELM_API Eina_Bool   elm_config_profile_exists(const char *profile);
 
 /**
  * Set Elementary's profile.
@@ -162,7 +162,7 @@ EAPI Eina_Bool   elm_config_profile_exists(const char *profile);
  * @ingroup Elm_Profile
  *
  */
-EAPI void        elm_config_profile_set(const char *profile);
+ELM_API void        elm_config_profile_set(const char *profile);
 
 /**
  * Take the current config and write it out to the named profile
@@ -176,7 +176,7 @@ EAPI void        elm_config_profile_set(const char *profile);
  *
  * @since 1.17
  */
-EAPI void        elm_config_profile_save(const char *profile);
+ELM_API void        elm_config_profile_save(const char *profile);
 
 /**
  * Add a new profile of the given name to be derived from the current profile
@@ -197,7 +197,7 @@ EAPI void        elm_config_profile_save(const char *profile);
  *
  * @since 1.17
  */
-EAPI void        elm_config_profile_derived_add(const char *profile, const char *derive_options);
+ELM_API void        elm_config_profile_derived_add(const char *profile, const char *derive_options);
 
 /**
  * Deletes a profile that is derived from the current one
@@ -217,7 +217,7 @@ EAPI void        elm_config_profile_derived_add(const char *profile, const char 
  *
  * @since 1.17
  */
-EAPI void        elm_config_profile_derived_del(const char *profile);
+ELM_API void        elm_config_profile_derived_del(const char *profile);
 
 /**
  * @}
@@ -242,7 +242,7 @@ EAPI void        elm_config_profile_derived_del(const char *profile);
  * This is the default behavior for touch screens, in general.
  * @ingroup Elm_Scrolling
  */
-EAPI Eina_Bool    elm_config_scroll_bounce_enabled_get(void);
+ELM_API Eina_Bool    elm_config_scroll_bounce_enabled_get(void);
 
 /**
  * Set whether scrollers should bounce when they reach their
@@ -253,7 +253,7 @@ EAPI Eina_Bool    elm_config_scroll_bounce_enabled_get(void);
  * @see elm_config_scroll_bounce_enabled_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_bounce_enabled_set(Eina_Bool enabled);
+ELM_API void         elm_config_scroll_bounce_enabled_set(Eina_Bool enabled);
 
 /**
  * Get the amount of inertia a scroller will impose at bounce
@@ -263,7 +263,7 @@ EAPI void         elm_config_scroll_bounce_enabled_set(Eina_Bool enabled);
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_bounce_friction_get(void);
+ELM_API double       elm_config_scroll_bounce_friction_get(void);
 
 /**
  * Set the amount of inertia a scroller will impose at bounce
@@ -274,7 +274,7 @@ EAPI double       elm_config_scroll_bounce_friction_get(void);
  * @see elm_config_scroll_bounce_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_bounce_friction_set(double friction);
+ELM_API void         elm_config_scroll_bounce_friction_set(double friction);
 
 /**
  * Get the amount of inertia a <b>paged</b> scroller will impose at
@@ -284,7 +284,7 @@ EAPI void         elm_config_scroll_bounce_friction_set(double friction);
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_page_scroll_friction_get(void);
+ELM_API double       elm_config_scroll_page_scroll_friction_get(void);
 
 /**
  * Set the amount of inertia a <b>paged</b> scroller will impose at
@@ -295,7 +295,7 @@ EAPI double       elm_config_scroll_page_scroll_friction_get(void);
  * @see elm_config_scroll_page_scroll_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
+ELM_API void         elm_config_scroll_page_scroll_friction_set(double friction);
 
 /**
  * Get enable status of context menu disabled.
@@ -307,7 +307,7 @@ EAPI void         elm_config_scroll_page_scroll_friction_set(double friction);
  * @ingroup Elm_Entry_Group
  * @since 1.17
  */
-EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
+ELM_API Eina_Bool elm_config_context_menu_disabled_get(void);
 
 /**
  * Enable or disable the context menu in entries.
@@ -318,7 +318,7 @@ EAPI Eina_Bool elm_config_context_menu_disabled_get(void);
  * @ingroup Elm_Entry_Group
  * @since 1.17
  */
-EAPI void elm_config_context_menu_disabled_set(Eina_Bool disabled);
+ELM_API void elm_config_context_menu_disabled_set(Eina_Bool disabled);
 
 /**
  * Get the amount of inertia a scroller will impose at region bring
@@ -328,7 +328,7 @@ EAPI void elm_config_context_menu_disabled_set(Eina_Bool disabled);
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_bring_in_scroll_friction_get(void);
+ELM_API double       elm_config_scroll_bring_in_scroll_friction_get(void);
 
 /**
  * Set the amount of inertia a scroller will impose at region bring
@@ -339,7 +339,7 @@ EAPI double       elm_config_scroll_bring_in_scroll_friction_get(void);
  * @see elm_config_scroll_bring_in_scroll_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_bring_in_scroll_friction_set(double friction);
+ELM_API void         elm_config_scroll_bring_in_scroll_friction_set(double friction);
 
 /**
  * Get the amount of inertia scrollers will impose at animations
@@ -349,7 +349,7 @@ EAPI void         elm_config_scroll_bring_in_scroll_friction_set(double friction
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_zoom_friction_get(void);
+ELM_API double       elm_config_scroll_zoom_friction_get(void);
 
 /**
  * Set the amount of inertia scrollers will impose at animations
@@ -360,7 +360,7 @@ EAPI double       elm_config_scroll_zoom_friction_get(void);
  * @see elm_config_scroll_zoom_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_zoom_friction_set(double friction);
+ELM_API void         elm_config_scroll_zoom_friction_set(double friction);
 
 /**
  * Get whether scrollers should be draggable from any point in their
@@ -374,7 +374,7 @@ EAPI void         elm_config_scroll_zoom_friction_set(double friction);
  *
  * @ingroup Elm_Scrolling
  */
-EAPI Eina_Bool    elm_config_scroll_thumbscroll_enabled_get(void);
+ELM_API Eina_Bool    elm_config_scroll_thumbscroll_enabled_get(void);
 
 /**
  * Set whether scrollers should be draggable from any point in their
@@ -385,7 +385,7 @@ EAPI Eina_Bool    elm_config_scroll_thumbscroll_enabled_get(void);
  * @see elm_config_scroll_thumbscroll_enabled_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_enabled_set(Eina_Bool enabled);
+ELM_API void         elm_config_scroll_thumbscroll_enabled_set(Eina_Bool enabled);
 
 /**
  * Get the number of pixels one should travel while dragging a
@@ -397,7 +397,7 @@ EAPI void         elm_config_scroll_thumbscroll_enabled_set(Eina_Bool enabled);
  * of their inherent imprecision.
  * @ingroup Elm_Scrolling
  */
-EAPI unsigned int elm_config_scroll_thumbscroll_threshold_get(void);
+ELM_API unsigned int elm_config_scroll_thumbscroll_threshold_get(void);
 
 /**
  * Set the number of pixels one should travel while dragging a
@@ -408,7 +408,7 @@ EAPI unsigned int elm_config_scroll_thumbscroll_threshold_get(void);
  * @see elm_config_thumbscroll_threshold_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_threshold_set(unsigned int threshold);
+ELM_API void         elm_config_scroll_thumbscroll_threshold_set(unsigned int threshold);
 
 /**
  * Get the number of pixels the range which can be scrolled,
@@ -418,7 +418,7 @@ EAPI void         elm_config_scroll_thumbscroll_threshold_set(unsigned int thres
  *
  * @ingroup Elm_Scrolling
  */
-EAPI unsigned int elm_config_scroll_thumbscroll_hold_threshold_get(void);
+ELM_API unsigned int elm_config_scroll_thumbscroll_hold_threshold_get(void);
 
 /**
  * Set the number of pixels the range which can be scrolled,
@@ -429,7 +429,7 @@ EAPI unsigned int elm_config_scroll_thumbscroll_hold_threshold_get(void);
  * @see elm_config_thumbscroll_hold_threshold_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_hold_threshold_set(unsigned int threshold);
+ELM_API void         elm_config_scroll_thumbscroll_hold_threshold_set(unsigned int threshold);
 
 /**
  * Get the minimum speed of mouse cursor movement which will trigger
@@ -440,7 +440,7 @@ EAPI void         elm_config_scroll_thumbscroll_hold_threshold_set(unsigned int 
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_momentum_threshold_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_momentum_threshold_get(void);
 
 /**
  * Set the minimum speed of mouse cursor movement which will trigger
@@ -452,7 +452,7 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_threshold_get(void);
  * @see elm_config_thumbscroll_momentum_threshold_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_momentum_threshold_set(double threshold);
+ELM_API void         elm_config_scroll_thumbscroll_momentum_threshold_set(double threshold);
 
 /**
  * Get the number of pixels the maximum distance which can be flicked.
@@ -463,7 +463,7 @@ EAPI void         elm_config_scroll_thumbscroll_momentum_threshold_set(double th
  *
  * @ingroup Elm_Scrolling
  */
-EAPI unsigned int elm_config_scroll_thumbscroll_momentum_distance_max_get(void);
+ELM_API unsigned int elm_config_scroll_thumbscroll_momentum_distance_max_get(void);
 
 /**
  * Set the number of pixels the maximum distance which can be flicked.
@@ -475,7 +475,7 @@ EAPI unsigned int elm_config_scroll_thumbscroll_momentum_distance_max_get(void);
  * @see elm_config_thumbscroll_momentum_distance_max_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_momentum_distance_max_set(unsigned int distance);
+ELM_API void         elm_config_scroll_thumbscroll_momentum_distance_max_set(unsigned int distance);
 
 /**
  * Get the scale ratio of geometric sequence as a kind of inertia a scroller
@@ -485,7 +485,7 @@ EAPI void         elm_config_scroll_thumbscroll_momentum_distance_max_set(unsign
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_momentum_friction_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_momentum_friction_get(void);
 
 /**
  * Set the scale ratio of geometric sequence as a kind of inertia a scroller
@@ -496,7 +496,7 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_friction_get(void);
  * @see elm_config_thumbscroll_momentum_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_momentum_friction_set(double friction);
+ELM_API void         elm_config_scroll_thumbscroll_momentum_friction_set(double friction);
 
 /**
  * Get the amount of lag between your actual mouse cursor dragging
@@ -507,7 +507,7 @@ EAPI void         elm_config_scroll_thumbscroll_momentum_friction_set(double fri
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_border_friction_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_border_friction_get(void);
 
 /**
  * Set the amount of lag between your actual mouse cursor dragging
@@ -523,7 +523,7 @@ EAPI double       elm_config_scroll_thumbscroll_border_friction_get(void);
  *
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_border_friction_set(double friction);
+ELM_API void         elm_config_scroll_thumbscroll_border_friction_set(double friction);
 
 /**
  * Get the sensitivity amount which is be multiplied by the length of
@@ -533,7 +533,7 @@ EAPI void         elm_config_scroll_thumbscroll_border_friction_set(double frict
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_sensitivity_friction_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_sensitivity_friction_get(void);
 
 /**
  * Set the sensitivity amount which is be multiplied by the length of
@@ -548,7 +548,7 @@ EAPI double       elm_config_scroll_thumbscroll_sensitivity_friction_get(void);
  *
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction);
+ELM_API void         elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction);
 
 /**
  * Get the smooth start mode for scrolling with your finger
@@ -560,7 +560,7 @@ EAPI void         elm_config_scroll_thumbscroll_sensitivity_friction_set(double 
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
-EAPI Eina_Bool    elm_config_scroll_thumbscroll_smooth_start_get(void);
+ELM_API Eina_Bool    elm_config_scroll_thumbscroll_smooth_start_get(void);
 
 /**
  * Set the smooth start mode for scrolling with your finger
@@ -576,7 +576,7 @@ EAPI Eina_Bool    elm_config_scroll_thumbscroll_smooth_start_get(void);
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable);
+ELM_API void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enable);
 
 /**
  * Get the value of this option
@@ -588,7 +588,7 @@ EAPI void         elm_config_scroll_thumbscroll_smooth_start_set(Eina_Bool enabl
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI Eina_Bool    elm_config_scroll_animation_disabled_get(void);
+ELM_API Eina_Bool    elm_config_scroll_animation_disabled_get(void);
 
 /**
  * Set the value for this option
@@ -603,7 +603,7 @@ EAPI Eina_Bool    elm_config_scroll_animation_disabled_get(void);
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_animation_disabled_set(Eina_Bool disable);
+ELM_API void         elm_config_scroll_animation_disabled_set(Eina_Bool disable);
 
 /**
  * Get the value of this option
@@ -615,7 +615,7 @@ EAPI void         elm_config_scroll_animation_disabled_set(Eina_Bool disable);
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_accel_factor_get(void);
+ELM_API double       elm_config_scroll_accel_factor_get(void);
 
 /**
  * Set the value for this option
@@ -632,7 +632,7 @@ EAPI double       elm_config_scroll_accel_factor_get(void);
  * @since 1.18
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_accel_factor_set(double factor);
+ELM_API void         elm_config_scroll_accel_factor_set(double factor);
 
 /**
  * Get the amount of smoothing to apply to scrolling
@@ -644,7 +644,7 @@ EAPI void         elm_config_scroll_accel_factor_set(double factor);
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
 
 /**
  * Set the amount of smoothing to apply to scrolling
@@ -660,7 +660,7 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_smooth_amount_set(double amount);
+ELM_API void         elm_config_scroll_thumbscroll_smooth_amount_set(double amount);
 
 /**
  * Get the time window to look back at for events for smoothing
@@ -672,7 +672,7 @@ EAPI void         elm_config_scroll_thumbscroll_smooth_amount_set(double amount)
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_smooth_time_window_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_smooth_time_window_get(void);
 
 /**
  * Set the time window to look back at for events for smoothing
@@ -688,7 +688,7 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_time_window_get(void);
  * @since 1.16
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_smooth_time_window_set(double amount);
+ELM_API void         elm_config_scroll_thumbscroll_smooth_time_window_set(double amount);
 
 /**
  * Get the minimum speed of mouse cursor movement which will accelerate
@@ -699,7 +699,7 @@ EAPI void         elm_config_scroll_thumbscroll_smooth_time_window_set(double am
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_acceleration_threshold_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_acceleration_threshold_get(void);
 
 /**
  * Set the minimum speed of mouse cursor movement which will accelerate
@@ -711,7 +711,7 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_threshold_get(void)
  * @see elm_config_thumbscroll_acceleration_threshold_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_acceleration_threshold_set(double threshold);
+ELM_API void         elm_config_scroll_thumbscroll_acceleration_threshold_set(double threshold);
 
 /**
  * Get the time limit for accelerating velocity.
@@ -720,7 +720,7 @@ EAPI void         elm_config_scroll_thumbscroll_acceleration_threshold_set(doubl
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_acceleration_time_limit_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_acceleration_time_limit_get(void);
 
 /**
  * Set the time limit for accelerating velocity.
@@ -730,7 +730,7 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_time_limit_get(void
  * @see elm_config_thumbscroll_acceleration_time_limit_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_acceleration_time_limit_set(double time_limit);
+ELM_API void         elm_config_scroll_thumbscroll_acceleration_time_limit_set(double time_limit);
 
 /**
  * Get the weight for the acceleration.
@@ -739,7 +739,7 @@ EAPI void         elm_config_scroll_thumbscroll_acceleration_time_limit_set(doub
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
 
 /**
  * Set the weight for the acceleration.
@@ -749,7 +749,7 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
  * @see elm_config_thumbscroll_acceleration_weight_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
+ELM_API void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
 
 /**
  * Get the min limit for the momentum animation duration(unit:second)
@@ -758,7 +758,7 @@ EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double w
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_get(void);
 
 /**
  * Set the min limit for the momentum animation duration(unit:second)
@@ -768,7 +768,7 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_min_
  * @see elm_config_scroll_thumbscroll_acceleration_weight_set()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_set(double min);
+ELM_API void         elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_set(double min);
 
 /**
  * Get the max limit for the momentum animation duration(unit:second)
@@ -777,7 +777,7 @@ EAPI void         elm_config_scroll_thumbscroll_momentum_animation_duration_min_
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get(void);
 
 /**
  * Set the max limit for the momentum animation duration(unit:second)
@@ -787,7 +787,7 @@ EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_max_
  * @see elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_set(double max);
+ELM_API void         elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_set(double max);
 
 /**
  * Get the min amount of inertia a scroller will impose at self scrolling
@@ -799,7 +799,7 @@ EAPI void         elm_config_scroll_thumbscroll_momentum_animation_duration_max_
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_min_friction_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_min_friction_get(void);
 
 /**
  * Set the min amount of inertia a scroller will impose at self scrolling
@@ -812,7 +812,7 @@ EAPI double       elm_config_scroll_thumbscroll_min_friction_get(void);
  * @see elm_config_thumbscroll_min_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_min_friction_set(double friction);
+ELM_API void         elm_config_scroll_thumbscroll_min_friction_set(double friction);
 
 /**
  * Get the standard velocity of the scroller. The scroll animation time is
@@ -825,7 +825,7 @@ EAPI void         elm_config_scroll_thumbscroll_min_friction_set(double friction
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_friction_standard_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_friction_standard_get(void);
 
 /**
  * Set the standard velocity of the scroller. The scroll animation time is
@@ -839,7 +839,7 @@ EAPI double       elm_config_scroll_thumbscroll_friction_standard_get(void);
  * @see elm_config_thumbscroll_friction_standard_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_friction_standard_set(double standard);
+ELM_API void         elm_config_scroll_thumbscroll_friction_standard_set(double standard);
 
 /**
  * Get the number of pixels the maximum distance which can be flicked.
@@ -852,7 +852,7 @@ EAPI void         elm_config_scroll_thumbscroll_friction_standard_set(double sta
  *
  * @ingroup Elm_Scrolling
  */
-EAPI unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(void);
+ELM_API unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(void);
 
 /**
  * Set the number of pixels the maximum distance which can be flicked.
@@ -866,7 +866,7 @@ EAPI unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(voi
  * @see elm_config_thumbscroll_flick_distance_tolerance_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance);
+ELM_API void         elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance);
 
 /**
  * Get the amount of inertia a scroller will impose at self scrolling
@@ -878,7 +878,7 @@ EAPI void         elm_config_scroll_thumbscroll_flick_distance_tolerance_set(uns
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_friction_get(void);
+ELM_API double       elm_config_scroll_thumbscroll_friction_get(void);
 
 /**
  * Set the amount of inertia a scroller will impose at self scrolling
@@ -891,7 +891,7 @@ EAPI double       elm_config_scroll_thumbscroll_friction_get(void);
  * @see elm_config_thumbscroll_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_friction_set(double friction);
+ELM_API void         elm_config_scroll_thumbscroll_friction_set(double friction);
 
 /**
  * Get focus auto scroll mode.
@@ -908,7 +908,7 @@ EAPI void         elm_config_scroll_thumbscroll_friction_set(double friction);
  * @ingroup Elm_Focus
  * @since 1.10
  */
-EAPI Elm_Focus_Autoscroll_Mode elm_config_focus_autoscroll_mode_get(void);
+ELM_API Elm_Focus_Autoscroll_Mode elm_config_focus_autoscroll_mode_get(void);
 
 /**
  * Set focus auto scroll mode.
@@ -926,7 +926,7 @@ EAPI Elm_Focus_Autoscroll_Mode elm_config_focus_autoscroll_mode_get(void);
  * @ingroup Elm_Focus
  * @since 1.10
  */
-EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode mode);
+ELM_API void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode mode);
 
 /**
  * Sets the slider's indicator visible mode.
@@ -937,7 +937,7 @@ EAPI void         elm_config_focus_autoscroll_mode_set(Elm_Focus_Autoscroll_Mode
  * @ingroup Elm_Slider
  * @since 1.13
  */
-EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode);
+ELM_API void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visible_Mode mode);
 
 /**
  * Get the slider's indicator visible mode.
@@ -949,7 +949,7 @@ EAPI void elm_config_slider_indicator_visible_mode_set(Elm_Slider_Indicator_Visi
  * @ingroup Elm_Slider
  * @since 1.13
  */
-EAPI Elm_Slider_Indicator_Visible_Mode elm_config_slider_indicator_visible_mode_get(void);
+ELM_API Elm_Slider_Indicator_Visible_Mode elm_config_slider_indicator_visible_mode_get(void);
 
 /**
  * @}
@@ -970,7 +970,7 @@ EAPI Elm_Slider_Indicator_Visible_Mode elm_config_slider_indicator_visible_mode_
  * @return Timeout for long press event
  * @ingroup Longpress
  */
-EAPI double       elm_config_longpress_timeout_get(void);
+ELM_API double       elm_config_longpress_timeout_get(void);
 
 /**
  * Set the duration for occurring long press event.
@@ -978,7 +978,7 @@ EAPI double       elm_config_longpress_timeout_get(void);
  * @param longpress_timeout Timeout for long press event
  * @ingroup Longpress
  */
-EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
+ELM_API void         elm_config_longpress_timeout_set(double longpress_timeout);
 
 /**
  * @}
@@ -1007,7 +1007,7 @@ EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
  * @see elm_config_softcursor_mode_get()
  * @since 1.7
  */
-EAPI void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
+ELM_API void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
 
 /**
  * Get the software cursor mode
@@ -1018,7 +1018,7 @@ EAPI void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
  * @see elm_config_softcursor_mode_set()
  * @since 1.7
  */
-EAPI Elm_Softcursor_Mode elm_config_softcursor_mode_get(void);
+ELM_API Elm_Softcursor_Mode elm_config_softcursor_mode_get(void);
 
 /**
  * @}
@@ -1034,14 +1034,14 @@ EAPI Elm_Softcursor_Mode elm_config_softcursor_mode_get(void);
  *
  * @return Duration after which tooltip will be shown.
  */
-EAPI double      elm_config_tooltip_delay_get(void);
+ELM_API double      elm_config_tooltip_delay_get(void);
 
 /**
  * Set the duration after which tooltip will be shown.
  *
  * @return @c EINA_TRUE if value is set.
  */
-EAPI void        elm_config_tooltip_delay_set(double delay);
+ELM_API void        elm_config_tooltip_delay_set(double delay);
 
 /**
  * @}
@@ -1055,7 +1055,7 @@ EAPI void        elm_config_tooltip_delay_set(double delay);
  * @return 1 if only engine cursors should be used
  * @ingroup Elm_Cursors
  */
-EAPI Eina_Bool   elm_config_cursor_engine_only_get(void);
+ELM_API Eina_Bool   elm_config_cursor_engine_only_get(void);
 
 /**
  * Set the configured cursor engine only usage
@@ -1067,7 +1067,7 @@ EAPI Eina_Bool   elm_config_cursor_engine_only_get(void);
  * look for them on theme before.
  * @ingroup Elm_Cursors
  */
-EAPI void        elm_config_cursor_engine_only_set(Eina_Bool engine_only);
+ELM_API void        elm_config_cursor_engine_only_set(Eina_Bool engine_only);
 
 /**
  * Get the global scaling factor
@@ -1078,7 +1078,7 @@ EAPI void        elm_config_cursor_engine_only_set(Eina_Bool engine_only);
  * @return The scaling factor
  * @ingroup Elm_Scaling
  */
-EAPI double elm_config_scale_get(void);
+ELM_API double elm_config_scale_get(void);
 
 /**
  * Set the global scaling factor
@@ -1089,7 +1089,7 @@ EAPI double elm_config_scale_get(void);
  * @param scale The scaling factor to set
  * @ingroup Elm_Scaling
  */
-EAPI void   elm_config_scale_set(double scale);
+ELM_API void   elm_config_scale_set(double scale);
 
 /**
  * Get the icon theme the user has set.
@@ -1101,7 +1101,7 @@ EAPI void   elm_config_scale_set(double scale);
  * @ingroup Elm_Icon
  * @since 1.18
  */
-EAPI const char *elm_config_icon_theme_get(void);
+ELM_API const char *elm_config_icon_theme_get(void);
 
 /**
  * Set the icon theme for all elementary apps.
@@ -1114,7 +1114,7 @@ EAPI const char *elm_config_icon_theme_get(void);
  * @ingroup Elm_Icon
  * @since 1.18
  */
-EAPI void elm_config_icon_theme_set(const char *theme);
+ELM_API void elm_config_icon_theme_set(const char *theme);
 
 /**
  * @defgroup Elm_Password_last_show Password show last
@@ -1140,7 +1140,7 @@ EAPI void elm_config_icon_theme_set(const char *theme);
  *
  * @ingroup Elm_Password_last_show
  */
-EAPI Eina_Bool elm_config_password_show_last_get(void);
+ELM_API Eina_Bool elm_config_password_show_last_get(void);
 
 /**
  * Set show last setting in password mode.
@@ -1151,7 +1151,7 @@ EAPI Eina_Bool elm_config_password_show_last_get(void);
  * @see elm_config_password_show_last_timeout_set()
  * @ingroup Elm_Password_last_show
  */
-EAPI void      elm_config_password_show_last_set(Eina_Bool password_show_last);
+ELM_API void      elm_config_password_show_last_set(Eina_Bool password_show_last);
 
 /**
  * Get the timeout value in "show last" password mode.
@@ -1162,7 +1162,7 @@ EAPI void      elm_config_password_show_last_set(Eina_Bool password_show_last);
  * @return The timeout value of "show last" password mode.
  * @ingroup Elm_Password_last_show
  */
-EAPI double    elm_config_password_show_last_timeout_get(void);
+ELM_API double    elm_config_password_show_last_timeout_get(void);
 
 /**
  * Set's the timeout value in "show last" password mode.
@@ -1174,7 +1174,7 @@ EAPI double    elm_config_password_show_last_timeout_get(void);
  * @see elm_config_password_show_last_set()
  * @ingroup Elm_Password_last_show
  */
-EAPI void      elm_config_password_show_last_timeout_set(double password_show_last_timeout);
+ELM_API void      elm_config_password_show_last_timeout_set(double password_show_last_timeout);
 
 /**
  * @}
@@ -1210,7 +1210,7 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
  * @see elm_config_engine_set()
  * @deprecated use elm_config_accel_preference_get() + elm_config_accel_preference_set()
  */
-EINA_DEPRECATED EAPI const char *elm_config_engine_get(void);
+EINA_DEPRECATED ELM_API const char *elm_config_engine_get(void);
 
 /**
  * @brief Set Elementary's rendering engine for use.
@@ -1223,7 +1223,7 @@ EINA_DEPRECATED EAPI const char *elm_config_engine_get(void);
  * @see elm_win_add()
  * @deprecated use elm_config_accel_preference_get() + elm_config_accel_preference_set()
  */
-EINA_DEPRECATED EAPI void        elm_config_engine_set(const char *engine);
+EINA_DEPRECATED ELM_API void        elm_config_engine_set(const char *engine);
 
 /**
  * @brief Get Elementary's preferred engine to use.
@@ -1240,7 +1240,7 @@ EINA_DEPRECATED EAPI void        elm_config_engine_set(const char *engine);
  *
  * @see elm_config_preferred_engine_set()
  */
-EAPI const char *elm_config_preferred_engine_get(void);
+ELM_API const char *elm_config_preferred_engine_get(void);
 
 /**
  * @brief Set Elementary's preferred rendering engine for use.
@@ -1258,7 +1258,7 @@ EAPI const char *elm_config_preferred_engine_get(void);
  * @see elm_config_accel_preference_set()
  * @see elm_config_engine_set()
  */
-EAPI void        elm_config_preferred_engine_set(const char *engine);
+ELM_API void        elm_config_preferred_engine_set(const char *engine);
 
 /**
  * @brief Get Elementary's preferred engine to use.
@@ -1272,7 +1272,7 @@ EAPI void        elm_config_preferred_engine_set(const char *engine);
  * @see elm_config_accel_preference_set()
  * @since 1.10
  */
-EAPI const char *elm_config_accel_preference_get(void);
+ELM_API const char *elm_config_accel_preference_get(void);
 
 /**
  * @brief Set Elementary's acceleration preferences for new windows.
@@ -1318,7 +1318,7 @@ EAPI const char *elm_config_accel_preference_get(void);
  *
  * @since 1.10
  */
-EAPI void        elm_config_accel_preference_set(const char *pref);
+ELM_API void        elm_config_accel_preference_set(const char *pref);
 
 
 typedef struct _Elm_Text_Class
@@ -1342,7 +1342,7 @@ typedef struct _Elm_Font_Overlay
  *
  * Release the list with elm_text_classes_list_free().
  */
-EAPI Eina_List *elm_config_text_classes_list_get(void);
+ELM_API Eina_List *elm_config_text_classes_list_get(void);
 
 /**
  * Free Elementary's list of supported text classes.
@@ -1352,7 +1352,7 @@ EAPI Eina_List *elm_config_text_classes_list_get(void);
  *
  * @see elm_config_text_classes_list_get().
  */
-EAPI void elm_config_text_classes_list_free(Eina_List *list);
+ELM_API void elm_config_text_classes_list_free(Eina_List *list);
 
 /**
  * Get Elementary's list of font overlays, set with
@@ -1369,7 +1369,7 @@ EAPI void elm_config_text_classes_list_free(Eina_List *list);
  *
  * @see elm_config_font_overlay_set() and elm_config_font_overlay_unset().
  */
-EAPI const Eina_List *elm_config_font_overlay_list_get(void);
+ELM_API const Eina_List *elm_config_font_overlay_list_get(void);
 
 /**
  * Set a font overlay for a given Elementary text class.
@@ -1387,7 +1387,7 @@ EAPI const Eina_List *elm_config_font_overlay_list_get(void);
  * @see elm_config_font_overlay_unset()
  * @see edje_object_text_class_set()
  */
-EAPI void             elm_config_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
+ELM_API void             elm_config_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
  * Get access mode
@@ -1400,7 +1400,7 @@ EAPI void             elm_config_font_overlay_set(const char *text_class, const 
  *
  * @see elm_config_access_set()
  */
-EAPI Eina_Bool        elm_config_access_get(void);
+ELM_API Eina_Bool        elm_config_access_get(void);
 
 /**
  * Set access mode
@@ -1417,7 +1417,7 @@ EAPI Eina_Bool        elm_config_access_get(void);
  *
  * @see elm_config_access_get()
  */
-EAPI void             elm_config_access_set(Eina_Bool is_access);
+ELM_API void             elm_config_access_set(Eina_Bool is_access);
 
 /**
  * Get whether selection should be cleared when entry widget is unfocused.
@@ -1430,7 +1430,7 @@ EAPI void             elm_config_access_set(Eina_Bool is_access);
  *
  * @see elm_config_selection_unfocused_clear_set()
  */
-EAPI Eina_Bool        elm_config_selection_unfocused_clear_get(void);
+ELM_API Eina_Bool        elm_config_selection_unfocused_clear_get(void);
 
 /**
  * Set whether selection should be cleared when entry widget is unfocused.
@@ -1444,7 +1444,7 @@ EAPI Eina_Bool        elm_config_selection_unfocused_clear_get(void);
  *
  * @see elm_config_selection_unfocused_clear_get()
  */
-EAPI void             elm_config_selection_unfocused_clear_set(Eina_Bool enabled);
+ELM_API void             elm_config_selection_unfocused_clear_set(Eina_Bool enabled);
 
 /**
  * Unset a font overlay for a given Elementary text class.
@@ -1456,7 +1456,7 @@ EAPI void             elm_config_selection_unfocused_clear_set(Eina_Bool enabled
  * This will bring back text elements belonging to text class
  * @p text_class back to their default font settings.
  */
-EAPI void             elm_config_font_overlay_unset(const char *text_class);
+ELM_API void             elm_config_font_overlay_unset(const char *text_class);
 
 /**
  * Apply the changes made with elm_config_font_overlay_set() and
@@ -1466,7 +1466,7 @@ EAPI void             elm_config_font_overlay_unset(const char *text_class);
  *
  * This applies all font overlays set to all objects in the UI.
  */
-EAPI void             elm_config_font_overlay_apply(void);
+ELM_API void             elm_config_font_overlay_apply(void);
 
 /**
  * Apply the specified font hinting type.
@@ -1481,7 +1481,7 @@ EAPI void             elm_config_font_overlay_apply(void);
  *
  * @since 1.13
  */
-EAPI void elm_config_font_hint_type_set(int type);
+ELM_API void elm_config_font_hint_type_set(int type);
 
 /**
  * Get the configured "finger size"
@@ -1492,7 +1492,7 @@ EAPI void elm_config_font_hint_type_set(int type);
  *
  * @ingroup Elm_Fingers
  */
-EAPI Evas_Coord elm_config_finger_size_get(void);
+ELM_API Evas_Coord elm_config_finger_size_get(void);
 
 /**
  * Set the configured finger size
@@ -1502,7 +1502,7 @@ EAPI Evas_Coord elm_config_finger_size_get(void);
  * @param size The finger size
  * @ingroup Elm_Fingers
  */
-EAPI void       elm_config_finger_size_set(Evas_Coord size);
+ELM_API void       elm_config_finger_size_set(Evas_Coord size);
 
 /**
  * Get the configured cache flush interval time
@@ -1515,7 +1515,7 @@ EAPI void       elm_config_finger_size_set(Evas_Coord size);
  *
  * @see elm_cache_all_flush()
  */
-EAPI int       elm_config_cache_flush_interval_get(void);
+ELM_API int       elm_config_cache_flush_interval_get(void);
 
 /**
  * Set the configured cache flush interval time
@@ -1531,7 +1531,7 @@ EAPI int       elm_config_cache_flush_interval_get(void);
  *
  * @see elm_cache_all_flush()
  */
-EAPI void      elm_config_cache_flush_interval_set(int size);
+ELM_API void      elm_config_cache_flush_interval_set(int size);
 
 /**
  * Get the configured cache flush enabled state
@@ -1549,7 +1549,7 @@ EAPI void      elm_config_cache_flush_interval_set(int size);
  *
  * @see elm_cache_all_flush()
  */
-EAPI Eina_Bool elm_config_cache_flush_enabled_get(void);
+ELM_API Eina_Bool elm_config_cache_flush_enabled_get(void);
 
 /**
  * Set the configured cache flush enabled state
@@ -1561,7 +1561,7 @@ EAPI Eina_Bool elm_config_cache_flush_enabled_get(void);
  *
  * @see elm_cache_all_flush()
  */
-EAPI void      elm_config_cache_flush_enabled_set(Eina_Bool enabled);
+ELM_API void      elm_config_cache_flush_enabled_set(Eina_Bool enabled);
 
 /**
  * Get the configured font cache size
@@ -1571,7 +1571,7 @@ EAPI void      elm_config_cache_flush_enabled_set(Eina_Bool enabled);
  * @return The font cache size
  * @ingroup Elm_Caches
  */
-EAPI int       elm_config_cache_font_cache_size_get(void);
+ELM_API int       elm_config_cache_font_cache_size_get(void);
 
 /**
  * Set the configured font cache size
@@ -1581,7 +1581,7 @@ EAPI int       elm_config_cache_font_cache_size_get(void);
  * @param size The font cache size
  * @ingroup Elm_Caches
  */
-EAPI void      elm_config_cache_font_cache_size_set(int size);
+ELM_API void      elm_config_cache_font_cache_size_set(int size);
 
 /**
  * Get the configured image cache size
@@ -1591,7 +1591,7 @@ EAPI void      elm_config_cache_font_cache_size_set(int size);
  * @return The image cache size
  * @ingroup Elm_Caches
  */
-EAPI int       elm_config_cache_image_cache_size_get(void);
+ELM_API int       elm_config_cache_image_cache_size_get(void);
 
 /**
  * Set the configured image cache size
@@ -1601,7 +1601,7 @@ EAPI int       elm_config_cache_image_cache_size_get(void);
  * @param size The image cache size
  * @ingroup Elm_Caches
  */
-EAPI void       elm_config_cache_image_cache_size_set(int size);
+ELM_API void       elm_config_cache_image_cache_size_set(int size);
 
 /**
  * Get the configured edje file cache size.
@@ -1612,7 +1612,7 @@ EAPI void       elm_config_cache_image_cache_size_set(int size);
  * @return The edje file cache size
  * @ingroup Elm_Caches
  */
-EAPI int       elm_config_cache_edje_file_cache_size_get(void);
+ELM_API int       elm_config_cache_edje_file_cache_size_get(void);
 
 /**
  * Set the configured edje file cache size
@@ -1623,7 +1623,7 @@ EAPI int       elm_config_cache_edje_file_cache_size_get(void);
  * @param size The edje file cache size
  * @ingroup Elm_Caches
  */
-EAPI void       elm_config_cache_edje_file_cache_size_set(int size);
+ELM_API void       elm_config_cache_edje_file_cache_size_set(int size);
 
 /**
  * Get the configured edje collections (groups) cache size.
@@ -1634,7 +1634,7 @@ EAPI void       elm_config_cache_edje_file_cache_size_set(int size);
  * @return The edje collections cache size
  * @ingroup Elm_Caches
  */
-EAPI int       elm_config_cache_edje_collection_cache_size_get(void);
+ELM_API int       elm_config_cache_edje_collection_cache_size_get(void);
 
 /**
  * Set the configured edje collections (groups) cache size
@@ -1645,7 +1645,7 @@ EAPI int       elm_config_cache_edje_collection_cache_size_get(void);
  * @param size The edje collections cache size
  * @ingroup Elm_Caches
  */
-EAPI void       elm_config_cache_edje_collection_cache_size_set(int size);
+ELM_API void       elm_config_cache_edje_collection_cache_size_set(int size);
 
 /**
  * Get the configured vsync flag
@@ -1657,7 +1657,7 @@ EAPI void       elm_config_cache_edje_collection_cache_size_set(int size);
  *
  * @since 1.11
  */
-EAPI Eina_Bool  elm_config_vsync_get(void);
+ELM_API Eina_Bool  elm_config_vsync_get(void);
 
 /**
  * Set the configured vsync flag
@@ -1670,7 +1670,7 @@ EAPI Eina_Bool  elm_config_vsync_get(void);
  *
  * @since 1.11
  */
-EAPI void       elm_config_vsync_set(Eina_Bool enabled);
+ELM_API void       elm_config_vsync_set(Eina_Bool enabled);
 
 /**
  * Get the configure flag that will define if a window aggressively drop its
@@ -1680,7 +1680,7 @@ EAPI void       elm_config_vsync_set(Eina_Bool enabled);
  *
  * @since 1.21
  */
-EAPI Eina_Bool elm_config_agressive_withdrawn_get(void);
+ELM_API Eina_Bool elm_config_agressive_withdrawn_get(void);
 
 /**
  * Set the configure flag that will make a window aggressively drop its
@@ -1690,7 +1690,7 @@ EAPI Eina_Bool elm_config_agressive_withdrawn_get(void);
  * not.
  * @since 1.21
  */
-EAPI void elm_config_agressive_withdrawn_set(Eina_Bool enabled);
+ELM_API void elm_config_agressive_withdrawn_set(Eina_Bool enabled);
 
 /**
  * Get the acceleration override preference flag
@@ -1703,7 +1703,7 @@ EAPI void elm_config_agressive_withdrawn_set(Eina_Bool enabled);
  *
  * @since 1.11
  */
-EAPI Eina_Bool  elm_config_accel_preference_override_get(void);
+ELM_API Eina_Bool  elm_config_accel_preference_override_get(void);
 
 /**
  * Set the acceleration override preference flag
@@ -1719,7 +1719,7 @@ EAPI Eina_Bool  elm_config_accel_preference_override_get(void);
  *
  * @since 1.11
  */
-EAPI void       elm_config_accel_preference_override_set(Eina_Bool enabled);
+ELM_API void       elm_config_accel_preference_override_set(Eina_Bool enabled);
 
 /**
  * Get the enable status of the focus highlight
@@ -1732,7 +1732,7 @@ EAPI void       elm_config_accel_preference_override_set(Eina_Bool enabled);
  * @see elm_config_focus_highlight_enabled_set()
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool            elm_config_focus_highlight_enabled_get(void);
+ELM_API Eina_Bool            elm_config_focus_highlight_enabled_get(void);
 
 /**
  * Set the enable status of the focus highlight
@@ -1747,7 +1747,7 @@ EAPI Eina_Bool            elm_config_focus_highlight_enabled_get(void);
  * @see elm_config_focus_highlight_enabled_get()
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_config_focus_highlight_enabled_set(Eina_Bool enable);
+ELM_API void                 elm_config_focus_highlight_enabled_set(Eina_Bool enable);
 
 /**
  * Get the enable status of the focus highlight animation
@@ -1761,7 +1761,7 @@ EAPI void                 elm_config_focus_highlight_enabled_set(Eina_Bool enabl
  * @see elm_config_focus_highlight_animate_set()
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
+ELM_API Eina_Bool            elm_config_focus_highlight_animate_get(void);
 
 /**
  * Set the enable status of the highlight animation
@@ -1777,7 +1777,7 @@ EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
  * @see elm_config_focus_highlight_animate_get()
  * @ingroup Elm_Focus
  */
-EAPI void                 elm_config_focus_highlight_animate_set(Eina_Bool animate);
+ELM_API void                 elm_config_focus_highlight_animate_set(Eina_Bool animate);
 
 /**
  * Get the disable status of the focus highlight clip feature.
@@ -1792,7 +1792,7 @@ EAPI void                 elm_config_focus_highlight_animate_set(Eina_Bool anima
  * @since 1.10
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool elm_config_focus_highlight_clip_disabled_get(void);
+ELM_API Eina_Bool elm_config_focus_highlight_clip_disabled_get(void);
 
 /**
  * Set the disable status of the focus highlight clip feature.
@@ -1804,7 +1804,7 @@ EAPI Eina_Bool elm_config_focus_highlight_clip_disabled_get(void);
  * @since 1.10
  * @ingroup Elm_Focus
  */
-EAPI void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
+ELM_API void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
 
 /**
  * Get the focus movement policy
@@ -1820,7 +1820,7 @@ EAPI void elm_config_focus_highlight_clip_disabled_set(Eina_Bool disable);
  * @since 1.10
  * @ingroup Elm_Focus
  */
-EAPI Elm_Focus_Move_Policy elm_config_focus_move_policy_get(void);
+ELM_API Elm_Focus_Move_Policy elm_config_focus_move_policy_get(void);
 
 /**
  * Set elementary focus movement policy
@@ -1831,7 +1831,7 @@ EAPI Elm_Focus_Move_Policy elm_config_focus_move_policy_get(void);
  * @since 1.10
  * @ingroup Elm_Focus
  */
-EAPI void elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy);
+ELM_API void elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy);
 
 /**
  * Get disable status of item select on focus feature.
@@ -1842,7 +1842,7 @@ EAPI void elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy);
  * @since 1.10
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool elm_config_item_select_on_focus_disabled_get(void);
+ELM_API Eina_Bool elm_config_item_select_on_focus_disabled_get(void);
 
 /**
  * Set the disable status of the item select on focus feature.
@@ -1853,7 +1853,7 @@ EAPI Eina_Bool elm_config_item_select_on_focus_disabled_get(void);
  * @since 1.10
  * @ingroup Elm_Focus
  */
-EAPI void elm_config_item_select_on_focus_disabled_set(Eina_Bool disabled);
+ELM_API void elm_config_item_select_on_focus_disabled_set(Eina_Bool disabled);
 
 /**
  * Get status of first item focus on first focusin feature.
@@ -1864,7 +1864,7 @@ EAPI void elm_config_item_select_on_focus_disabled_set(Eina_Bool disabled);
  * @since 1.11
  * @ingroup Elm_Focus
  */
-EAPI Eina_Bool elm_config_first_item_focus_on_first_focusin_get(void);
+ELM_API Eina_Bool elm_config_first_item_focus_on_first_focusin_get(void);
 
 /**
  * Set the first item focus on first focusin feature.
@@ -1875,7 +1875,7 @@ EAPI Eina_Bool elm_config_first_item_focus_on_first_focusin_get(void);
  * @since 1.11
  * @ingroup Elm_Focus
  */
-EAPI void elm_config_first_item_focus_on_first_focusin_set(Eina_Bool enabled);
+ELM_API void elm_config_first_item_focus_on_first_focusin_set(Eina_Bool enabled);
 
 /**
  * Get the system mirrored mode. This determines the default mirrored mode
@@ -1883,7 +1883,7 @@ EAPI void elm_config_first_item_focus_on_first_focusin_set(Eina_Bool enabled);
  *
  * @return @c EINA_TRUE if mirrored is set, @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool elm_config_mirrored_get(void);
+ELM_API Eina_Bool elm_config_mirrored_get(void);
 
 /**
  * Set the system mirrored mode. This determines the default mirrored mode
@@ -1891,7 +1891,7 @@ EAPI Eina_Bool elm_config_mirrored_get(void);
  *
  * @param mirrored @c EINA_TRUE to set mirrored mode, @c EINA_FALSE to unset it.
  */
-EAPI void      elm_config_mirrored_set(Eina_Bool mirrored);
+ELM_API void      elm_config_mirrored_set(Eina_Bool mirrored);
 
 /**
  * Get the clouseau state. @c EINA_TRUE if clouseau was tried to be run.
@@ -1899,7 +1899,7 @@ EAPI void      elm_config_mirrored_set(Eina_Bool mirrored);
  * @since 1.8
  * @return @c EINA_TRUE if clouseau was tried to run, @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool elm_config_clouseau_enabled_get(void);
+ELM_API Eina_Bool elm_config_clouseau_enabled_get(void);
 
 /**
  * Get the clouseau state. @c EINA_TRUE if clouseau should be attempted to be run.
@@ -1907,7 +1907,7 @@ EAPI Eina_Bool elm_config_clouseau_enabled_get(void);
  * @since 1.8
  * @param enabled @c EINA_TRUE to try and run clouseau, @c EINA_FALSE otherwise.
  */
-EAPI void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
+ELM_API void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
 
 /**
  * Get the indicator service name according to the rotation degree.
@@ -1921,7 +1921,7 @@ EAPI void      elm_config_clouseau_enabled_set(Eina_Bool enabled);
  *
  * @note Do not free the return string.
  */
-EAPI const char *elm_config_indicator_service_get(int rotation);
+ELM_API const char *elm_config_indicator_service_get(int rotation);
 
 /**
  * Get the duration for occurring long tap event of gesture layer.
@@ -1930,7 +1930,7 @@ EAPI const char *elm_config_indicator_service_get(int rotation);
  * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
-EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
+ELM_API double   elm_config_glayer_long_tap_start_timeout_get(void);
 
 /**
  * Set the duration for occurring long tap event of gesture layer.
@@ -1939,7 +1939,7 @@ EAPI double   elm_config_glayer_long_tap_start_timeout_get(void);
  * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
-EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout);
+ELM_API void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout);
 
 /**
  * Get the duration for occurring double tap event of gesture layer.
@@ -1948,7 +1948,7 @@ EAPI void   elm_config_glayer_long_tap_start_timeout_set(double long_tap_timeout
  * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
-EAPI double   elm_config_glayer_double_tap_timeout_get(void);
+ELM_API double   elm_config_glayer_double_tap_timeout_get(void);
 
 /**
  * Set the duration for occurring double tap event of gesture layer.
@@ -1957,7 +1957,7 @@ EAPI double   elm_config_glayer_double_tap_timeout_get(void);
  * @ingroup Elm_Gesture_Layer_Group
  * @since 1.8
  */
-EAPI void   elm_config_glayer_double_tap_timeout_set(double double_tap_timeout);
+ELM_API void   elm_config_glayer_double_tap_timeout_set(double double_tap_timeout);
 
 typedef struct _Elm_Color_Class
 {
@@ -1982,7 +1982,7 @@ typedef struct _Elm_Color_Overlay
  *
  * Release the list with elm_color_classes_list_free().
  */
-EAPI Eina_List *elm_config_color_classes_list_get(void);
+ELM_API Eina_List *elm_config_color_classes_list_get(void);
 
 /**
  * Free Elementary's list of supported color classes.
@@ -1993,7 +1993,7 @@ EAPI Eina_List *elm_config_color_classes_list_get(void);
  *
  * @see elm_config_color_classes_list_get().
  */
-EAPI void      elm_config_color_classes_list_free(Eina_List *list);
+ELM_API void      elm_config_color_classes_list_free(Eina_List *list);
 
 /**
  * Get Elementary's list of color overlays, set with
@@ -2012,7 +2012,7 @@ EAPI void      elm_config_color_classes_list_free(Eina_List *list);
  * @see elm_config_color_overlay_set()
  * @see elm_config_color_overlay_unset().
  */
-EAPI const Eina_List *elm_config_color_overlay_list_get(void);
+ELM_API const Eina_List *elm_config_color_overlay_list_get(void);
 
 /**
  * Set a color overlay for a given Elementary color class.
@@ -2049,7 +2049,7 @@ EAPI const Eina_List *elm_config_color_overlay_list_get(void);
  * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  */
-EAPI void      elm_config_color_overlay_set(const char *color_class,
+ELM_API void      elm_config_color_overlay_set(const char *color_class,
                                             int r, int g, int b, int a,
                                             int r2, int g2, int b2, int a2,
                                             int r3, int g3, int b3, int a3);
@@ -2065,7 +2065,7 @@ EAPI void      elm_config_color_overlay_set(const char *color_class,
  * This will bring back color elements belonging to color class
  * @p color_class back to their default color settings.
  */
-EAPI void      elm_config_color_overlay_unset(const char *color_class);
+ELM_API void      elm_config_color_overlay_unset(const char *color_class);
 
 /**
  * Apply the changes made with elm_config_color_overlay_set() and
@@ -2076,7 +2076,7 @@ EAPI void      elm_config_color_overlay_unset(const char *color_class);
  *
  * This applies all color overlays set to all objects in the UI.
  */
-EAPI void      elm_config_color_overlay_apply(void);
+ELM_API void      elm_config_color_overlay_apply(void);
 
 /**
  * Get the desktop style entry enabled state
@@ -2084,7 +2084,7 @@ EAPI void      elm_config_color_overlay_apply(void);
  * @return The desktop style enabled state for entries
  * @since 1.23
  */
-EAPI Eina_Bool elm_config_desktop_entry_get(void);
+ELM_API Eina_Bool elm_config_desktop_entry_get(void);
 
 /**
  * Set the desktop style entry enabled state
@@ -2092,7 +2092,7 @@ EAPI Eina_Bool elm_config_desktop_entry_get(void);
  * @param enable The desktop style enabled state for entries
  * @since 1.23
  */
-EAPI void elm_config_desktop_entry_set(Eina_Bool enable);
+ELM_API void elm_config_desktop_entry_set(Eina_Bool enable);
 
 /**
  * Get the magnifier enabled state for entries
@@ -2100,7 +2100,7 @@ EAPI void elm_config_desktop_entry_set(Eina_Bool enable);
  * @return The enabled state for magnifier
  * @since 1.9
  */
-EAPI Eina_Bool elm_config_magnifier_enable_get(void);
+ELM_API Eina_Bool elm_config_magnifier_enable_get(void);
 
 /**
  * Set the magnifier enabled state for entires
@@ -2108,7 +2108,7 @@ EAPI Eina_Bool elm_config_magnifier_enable_get(void);
  * @param enable The magnifier config state
  * @since 1.9
  */
-EAPI void      elm_config_magnifier_enable_set(Eina_Bool enable);
+ELM_API void      elm_config_magnifier_enable_set(Eina_Bool enable);
 
 /**
  * Get the amount of scaling the magnifer does
@@ -2116,7 +2116,7 @@ EAPI void      elm_config_magnifier_enable_set(Eina_Bool enable);
  * @return The scaling amount (1.0 is none, 2.0 is twice as big etc.)
  * @since 1.9
  */
-EAPI double    elm_config_magnifier_scale_get(void);
+ELM_API double    elm_config_magnifier_scale_get(void);
 
 /**
  * Set the amount of scaling the magnifier does
@@ -2124,7 +2124,7 @@ EAPI double    elm_config_magnifier_scale_get(void);
  * @param scale The scaling amount for magnifiers
  * @since 1.9
  */
-EAPI void      elm_config_magnifier_scale_set(double scale);
+ELM_API void      elm_config_magnifier_scale_set(double scale);
 
 /**
  * Get the mute state of an audio channel for effects
@@ -2133,7 +2133,7 @@ EAPI void      elm_config_magnifier_scale_set(double scale);
  * @return The mute state
  * @since 1.9
  */
-EAPI Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
+ELM_API Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
 
 /**
  * Set the mute state of the specified channel
@@ -2142,7 +2142,7 @@ EAPI Eina_Bool elm_config_audio_mute_get(Edje_Channel channel);
  * @param mute The mute state to set
  * @since 1.9
  */
-EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
+ELM_API void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
  * Get the auto focus enable flag
@@ -2155,7 +2155,7 @@ EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
  * @return The enabled state for auto focus display
  * @since 1.14
  */
-EAPI Eina_Bool elm_config_window_auto_focus_enable_get(void);
+ELM_API Eina_Bool elm_config_window_auto_focus_enable_get(void);
 
 /**
  * Set the auto focus enabled state
@@ -2168,7 +2168,7 @@ EAPI Eina_Bool elm_config_window_auto_focus_enable_get(void);
  * @param enable the auto focus display enabled state
  * @since 1.14
  */
-EAPI void      elm_config_window_auto_focus_enable_set(Eina_Bool enable);
+ELM_API void      elm_config_window_auto_focus_enable_set(Eina_Bool enable);
 
 /**
  * Get the auto focus animate flag
@@ -2179,7 +2179,7 @@ EAPI void      elm_config_window_auto_focus_enable_set(Eina_Bool enable);
  * @return The enabled state for auto focus animation
  * @since 1.14
  */
-EAPI Eina_Bool elm_config_window_auto_focus_animate_get(void);
+ELM_API Eina_Bool elm_config_window_auto_focus_animate_get(void);
 
 /**
  * Set the auto focus animation flag
@@ -2190,7 +2190,7 @@ EAPI Eina_Bool elm_config_window_auto_focus_animate_get(void);
  * @param enable the auto focus animation state
  * @since 1.14
  */
-EAPI void      elm_config_window_auto_focus_animate_set(Eina_Bool enable);
+ELM_API void      elm_config_window_auto_focus_animate_set(Eina_Bool enable);
 
 /**
  * Get the popup scrollable flag
@@ -2201,7 +2201,7 @@ EAPI void      elm_config_window_auto_focus_animate_set(Eina_Bool enable);
  * @return The enabled state for popup scroll
  * @since 1.18
  */
-EAPI Eina_Bool elm_config_popup_scrollable_get(void);
+ELM_API Eina_Bool elm_config_popup_scrollable_get(void);
 
 /**
  * Set the popup scrollable flag
@@ -2212,7 +2212,7 @@ EAPI Eina_Bool elm_config_popup_scrollable_get(void);
  * @param scrollable enable the popup scroll
  * @since 1.18
  */
-EAPI void      elm_config_popup_scrollable_set(Eina_Bool scrollable);
+ELM_API void      elm_config_popup_scrollable_set(Eina_Bool scrollable);
 
 /**
  * @defgroup ATSPI AT-SPI2 Accessibility
@@ -2236,7 +2236,7 @@ EAPI void      elm_config_popup_scrollable_set(Eina_Bool scrollable);
  *
  * @see elm_config_atspi_mode_set()
  */
-EAPI Eina_Bool        elm_config_atspi_mode_get(void);
+ELM_API Eina_Bool        elm_config_atspi_mode_get(void);
 
 /**
  * Sets ATSPI mode
@@ -2251,7 +2251,7 @@ EAPI Eina_Bool        elm_config_atspi_mode_get(void);
  *
  * @see elm_config_atspi_mode_get()
  */
-EAPI void             elm_config_atspi_mode_set(Eina_Bool is_atspi);
+ELM_API void             elm_config_atspi_mode_set(Eina_Bool is_atspi);
 
 /**
  * @}
@@ -2271,7 +2271,7 @@ EAPI void             elm_config_atspi_mode_set(Eina_Bool is_atspi);
  *
  * @see edje_transition_duration_set() for more details
  */
-EAPI void elm_config_transition_duration_factor_set(double factor);
+ELM_API void elm_config_transition_duration_factor_set(double factor);
 
 /**
  * Get the duration factor of transitions
@@ -2280,7 +2280,7 @@ EAPI void elm_config_transition_duration_factor_set(double factor);
  *
  * @since 1.15
  */
-EAPI double elm_config_transition_duration_factor_get(void);
+ELM_API double elm_config_transition_duration_factor_get(void);
 
 /**
  * Set the backend engine used by Elm_Web widget
@@ -2293,7 +2293,7 @@ EAPI double elm_config_transition_duration_factor_get(void);
  * @since 1.18
  * @see elm_config_web_backend_get()
  */
-EAPI void elm_config_web_backend_set(const char *backend);
+ELM_API void elm_config_web_backend_set(const char *backend);
 
 /**
  * Get the currently set backend engine used by Elm_Web widget
@@ -2306,7 +2306,7 @@ EAPI void elm_config_web_backend_set(const char *backend);
  * @since 1.18
  * @see elm_config_web_backend_set()
  */
-EAPI const char *elm_config_web_backend_get(void);
+ELM_API const char *elm_config_web_backend_get(void);
 
 /**
  * Get whether the system is offline
@@ -2316,7 +2316,7 @@ EAPI const char *elm_config_web_backend_get(void);
  * @since 1.21
  * @see elm_config_offline_set()
  */
-EAPI Eina_Bool elm_config_offline_get(void);
+ELM_API Eina_Bool elm_config_offline_get(void);
 
 /**
  * Set whether the system is offline
@@ -2326,7 +2326,7 @@ EAPI Eina_Bool elm_config_offline_get(void);
  * @since 1.21
  * @see elm_config_offline_get()
  */
-EAPI void elm_config_offline_set(Eina_Bool set);
+ELM_API void elm_config_offline_set(Eina_Bool set);
 
 /**
  * Get whether the system should be conserving power
@@ -2336,7 +2336,7 @@ EAPI void elm_config_offline_set(Eina_Bool set);
  * @since 1.21
  * @see elm_config_powersave_set()
  */
-EAPI int elm_config_powersave_get(void);
+ELM_API int elm_config_powersave_get(void);
 
 /**
  * Set whether the system should be conserving power
@@ -2346,7 +2346,7 @@ EAPI int elm_config_powersave_get(void);
  * @since 1.21
  * @see elm_config_powersave_set()
  */
-EAPI void elm_config_powersave_set(int set);
+ELM_API void elm_config_powersave_set(int set);
 
 /**
   * Get the animation duration for container objects
@@ -2356,7 +2356,7 @@ EAPI void elm_config_powersave_set(int set);
   * @since 1.21
   * @see elm_config_drag_anim_duration_set()
   */
-EAPI double elm_config_drag_anim_duration_get(void);
+ELM_API double elm_config_drag_anim_duration_get(void);
 
 /**
   * Set the animation duration for container objects
@@ -2366,7 +2366,7 @@ EAPI double elm_config_drag_anim_duration_get(void);
   * @since 1.21
   * @see elm_config_drag_anim_duration_get()
   */
-EAPI void elm_config_drag_anim_duration_set(double set);
+ELM_API void elm_config_drag_anim_duration_set(double set);
 
 
 /**

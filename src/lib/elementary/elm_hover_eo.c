@@ -1,23 +1,23 @@
-EWAPI const Efl_Event_Description _ELM_HOVER_EVENT_SMART_CHANGED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_HOVER_EVENT_SMART_CHANGED =
    EFL_EVENT_DESCRIPTION("smart,changed");
-EWAPI const Efl_Event_Description _ELM_HOVER_EVENT_DISMISSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_HOVER_EVENT_DISMISSED =
    EFL_EVENT_DESCRIPTION("dismissed");
 
 void _elm_hover_target_set(Eo *obj, Elm_Hover_Data *pd, Efl_Canvas_Object *target);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_hover_target_set, EFL_FUNC_CALL(target), Efl_Canvas_Object *target);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_hover_target_set, EFL_FUNC_CALL(target), Efl_Canvas_Object *target);
 
 Efl_Canvas_Object *_elm_hover_target_get(const Eo *obj, Elm_Hover_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_hover_target_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_hover_target_get, Efl_Canvas_Object *, NULL);
 
 const char *_elm_hover_best_content_location_get(const Eo *obj, Elm_Hover_Data *pd, Elm_Hover_Axis pref_axis);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_hover_best_content_location_get, const char *, NULL, EFL_FUNC_CALL(pref_axis), Elm_Hover_Axis pref_axis);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_hover_best_content_location_get, const char *, NULL, EFL_FUNC_CALL(pref_axis), Elm_Hover_Axis pref_axis);
 
 void _elm_hover_dismiss(Eo *obj, Elm_Hover_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_hover_dismiss);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_hover_dismiss);
 
 Efl_Object *_elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd);
 

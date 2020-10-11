@@ -63,7 +63,7 @@ struct _Efl_Ui_Image_Data
    int                   frame_count;
    int                   cur_frame;
 
-   Elm_Image_Orient      image_orient; // to support EAPI
+   Elm_Image_Orient      image_orient; // to support ELM_API
    Efl_Gfx_Image_Orientation orient;
 
    struct {

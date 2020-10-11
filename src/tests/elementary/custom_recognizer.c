@@ -1,4 +1,5 @@
 #include <Efl_Ui.h>
+#include "efl_ui_suite.h"
 #include "custom_recognizer.eo.h"
 #include "custom_gesture.eo.h"
 #include "custom_gesture.h"

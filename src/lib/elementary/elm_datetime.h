@@ -229,7 +229,7 @@ typedef Eo Elm_Datetime;
  *
  * @ingroup Elm_Datetime
  */
-EAPI Evas_Object *elm_datetime_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_datetime_add(Evas_Object *parent);
 
 /**
  * @brief Set the datetime format. Format is a combination of allowed Libc date
@@ -252,7 +252,7 @@ EAPI Evas_Object *elm_datetime_add(Evas_Object *parent);
  *
  * @ingroup Elm_Datetime
  */
-EAPI void elm_datetime_format_set(Evas_Object *obj, const char *fmt);
+ELM_API void elm_datetime_format_set(Evas_Object *obj, const char *fmt);
 
 /**
  * @brief Get the datetime format.
@@ -261,7 +261,7 @@ EAPI void elm_datetime_format_set(Evas_Object *obj, const char *fmt);
  *
  * @ingroup Elm_Datetime
  */
-EAPI const char *elm_datetime_format_get(const Evas_Object *obj);
+ELM_API const char *elm_datetime_format_get(const Evas_Object *obj);
 
 /**
  * @brief Set the field limits of a field.
@@ -280,7 +280,7 @@ EAPI const char *elm_datetime_format_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Datetime
  */
-EAPI void elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type type, int min, int max);
+ELM_API void elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type type, int min, int max);
 
 /**
  * @brief Get the field limits of a field.
@@ -299,7 +299,7 @@ EAPI void elm_datetime_field_limit_set(Evas_Object *obj, Elm_Datetime_Field_Type
  *
  * @ingroup Elm_Datetime
  */
-EAPI void elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, int *min, int *max);
+ELM_API void elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, int *min, int *max);
 
 /**
  * @brief Set the lower boundary of a field.
@@ -321,7 +321,7 @@ EAPI void elm_datetime_field_limit_get(const Evas_Object *obj, Elm_Datetime_Fiel
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_value_min_set(Evas_Object *obj, const Efl_Time *mintime);
+ELM_API Eina_Bool elm_datetime_value_min_set(Evas_Object *obj, const Efl_Time *mintime);
 
 /**
  * @brief Get the lower boundary of a field.
@@ -343,7 +343,7 @@ EAPI Eina_Bool elm_datetime_value_min_set(Evas_Object *obj, const Efl_Time *mint
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_value_min_get(const Evas_Object *obj, Efl_Time *mintime);
+ELM_API Eina_Bool elm_datetime_value_min_get(const Evas_Object *obj, Efl_Time *mintime);
 
 /**
  * @brief Set the current value of a Datetime object.
@@ -365,7 +365,7 @@ EAPI Eina_Bool elm_datetime_value_min_get(const Evas_Object *obj, Efl_Time *mint
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_value_set(Evas_Object *obj, const Efl_Time *newtime);
+ELM_API Eina_Bool elm_datetime_value_set(Evas_Object *obj, const Efl_Time *newtime);
 
 /**
  * @brief Get the current value of a Datetime object.
@@ -387,7 +387,7 @@ EAPI Eina_Bool elm_datetime_value_set(Evas_Object *obj, const Efl_Time *newtime)
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime);
+ELM_API Eina_Bool elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime);
 
 /**
  * @brief Set a field to be visible or not.
@@ -406,7 +406,7 @@ EAPI Eina_Bool elm_datetime_value_get(const Evas_Object *obj, Efl_Time *currtime
  *
  * @ingroup Elm_Datetime
  */
-EAPI void elm_datetime_field_visible_set(Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, Eina_Bool visible);
+ELM_API void elm_datetime_field_visible_set(Evas_Object *obj, Elm_Datetime_Field_Type fieldtype, Eina_Bool visible);
 
 /**
  * @brief Get whether a field can be visible/not.
@@ -417,7 +417,7 @@ EAPI void elm_datetime_field_visible_set(Evas_Object *obj, Elm_Datetime_Field_Ty
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype);
+ELM_API Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Datetime_Field_Type fieldtype);
 
 /**
  * @brief Set the upper boundary of a field.
@@ -439,7 +439,7 @@ EAPI Eina_Bool elm_datetime_field_visible_get(const Evas_Object *obj, Elm_Dateti
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxtime);
+ELM_API Eina_Bool elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxtime);
 
 /**
  * @brief Get the upper boundary of a field.
@@ -461,7 +461,7 @@ EAPI Eina_Bool elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxt
  *
  * @ingroup Elm_Datetime
  */
-EAPI Eina_Bool elm_datetime_value_max_get(const Evas_Object *obj, Efl_Time *maxtime);
+ELM_API Eina_Bool elm_datetime_value_max_get(const Evas_Object *obj, Efl_Time *maxtime);
 
 #define ELM_DATETIME_EVENT_CHANGED ELM_CLOCK_EVENT_CHANGED
 

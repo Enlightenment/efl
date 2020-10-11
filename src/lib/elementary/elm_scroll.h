@@ -28,7 +28,7 @@
  * @param obj The object
  * @ingroup Elm_Scrollhints
  */
-EAPI void      elm_object_scroll_hold_push(Evas_Object *obj);
+ELM_API void      elm_object_scroll_hold_push(Evas_Object *obj);
 
 /**
  * Pop the scroll hold by 1
@@ -39,7 +39,7 @@ EAPI void      elm_object_scroll_hold_push(Evas_Object *obj);
  * @param obj The object
  * @ingroup Elm_Scrollhints
  */
-EAPI void      elm_object_scroll_hold_pop(Evas_Object *obj);
+ELM_API void      elm_object_scroll_hold_pop(Evas_Object *obj);
 
 /**
  * Get the scroll hold by 1
@@ -51,7 +51,7 @@ EAPI void      elm_object_scroll_hold_pop(Evas_Object *obj);
  * @since 1.7
  * @ingroup Elm_Scrollhints
  */
-EAPI int       elm_object_scroll_hold_get(const Evas_Object *obj);
+ELM_API int       elm_object_scroll_hold_get(const Evas_Object *obj);
 
 /**
  * Push the scroll freeze by 1
@@ -63,7 +63,7 @@ EAPI int       elm_object_scroll_hold_get(const Evas_Object *obj);
  * @param obj The object
  * @ingroup Elm_Scrollhints
  */
-EAPI void      elm_object_scroll_freeze_push(Evas_Object *obj);
+ELM_API void      elm_object_scroll_freeze_push(Evas_Object *obj);
 
 /**
  * Pop the scroll freeze by 1
@@ -75,7 +75,7 @@ EAPI void      elm_object_scroll_freeze_push(Evas_Object *obj);
  * @param obj The object
  * @ingroup Elm_Scrollhints
  */
-EAPI void      elm_object_scroll_freeze_pop(Evas_Object *obj);
+ELM_API void      elm_object_scroll_freeze_pop(Evas_Object *obj);
 
 /**
  * Get the scroll freeze by 1
@@ -87,7 +87,7 @@ EAPI void      elm_object_scroll_freeze_pop(Evas_Object *obj);
  * @since 1.7
  * @ingroup Elm_Scrollhints
  */
-EAPI int       elm_object_scroll_freeze_get(const Evas_Object *obj);
+ELM_API int       elm_object_scroll_freeze_get(const Evas_Object *obj);
 
 /**
  * Lock the scrolling of the given widget (and thus all parents)
@@ -99,7 +99,7 @@ EAPI int       elm_object_scroll_freeze_get(const Evas_Object *obj);
  * @param lock The lock state (1 == locked, 0 == unlocked)
  * @ingroup Elm_Scrollhints
  */
-EAPI void      elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
+ELM_API void      elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
 
 /**
  * Lock the scrolling of the given widget (and thus all parents)
@@ -111,7 +111,7 @@ EAPI void      elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock);
  * @param lock The lock state (1 == locked, 0 == unlocked)
  * @ingroup Elm_Scrollhints
  */
-EAPI void      elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
+ELM_API void      elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
 
 /**
  * Get the scrolling lock of the given widget
@@ -121,7 +121,7 @@ EAPI void      elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
  * @param obj The object
  * @ingroup Elm_Scrollhints
  */
-EAPI Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
 
 /**
  * Get the scrolling lock of the given widget
@@ -131,7 +131,7 @@ EAPI Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
  * @param obj The object
  * @ingroup Elm_Scrollhints
  */
-EAPI Eina_Bool elm_object_scroll_lock_y_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_object_scroll_lock_y_get(const Evas_Object *obj);
 
 /**
  * Enable item loop feature of the given widget
@@ -147,7 +147,7 @@ EAPI Eina_Bool elm_object_scroll_lock_y_get(const Evas_Object *obj);
  * @since 1.10
  * @ingroup Scrollitem
  */
-EAPI void      elm_object_scroll_item_loop_enabled_set(Evas_Object *obj, Eina_Bool enable);
+ELM_API void      elm_object_scroll_item_loop_enabled_set(Evas_Object *obj, Eina_Bool enable);
 
 /**
  * Get the item loop enable status of the given widget
@@ -160,7 +160,7 @@ EAPI void      elm_object_scroll_item_loop_enabled_set(Evas_Object *obj, Eina_Bo
  * @since 1.10
  * @ingroup Scrollitem
  */
-EAPI Eina_Bool elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_object_scroll_item_loop_enabled_get(const Evas_Object *obj);
 
 /**
  * @}

@@ -17,7 +17,7 @@ __eolian_elm_systray_id_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_id_set, EFL_FUNC_CALL(id), const char *id);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_id_set, EFL_FUNC_CALL(id), const char *id);
 
 const char *_elm_systray_id_get(const Eo *obj, void *pd);
 
@@ -29,15 +29,15 @@ __eolian_elm_systray_id_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_id_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_id_get, const char *, NULL);
 
 void _elm_systray_category_set(Eo *obj, void *pd, Elm_Systray_Category cat);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_category_set, EFL_FUNC_CALL(cat), Elm_Systray_Category cat);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_category_set, EFL_FUNC_CALL(cat), Elm_Systray_Category cat);
 
 Elm_Systray_Category _elm_systray_category_get(const Eo *obj, void *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_category_get, Elm_Systray_Category, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_category_get, Elm_Systray_Category, 0);
 
 void _elm_systray_icon_theme_path_set(Eo *obj, void *pd, const char *icon_theme_path);
 
@@ -57,7 +57,7 @@ __eolian_elm_systray_icon_theme_path_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_icon_theme_path_set, EFL_FUNC_CALL(icon_theme_path), const char *icon_theme_path);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_icon_theme_path_set, EFL_FUNC_CALL(icon_theme_path), const char *icon_theme_path);
 
 const char *_elm_systray_icon_theme_path_get(const Eo *obj, void *pd);
 
@@ -69,15 +69,15 @@ __eolian_elm_systray_icon_theme_path_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_icon_theme_path_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_icon_theme_path_get, const char *, NULL);
 
 void _elm_systray_menu_set(Eo *obj, void *pd, const Efl_Object *menu);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_menu_set, EFL_FUNC_CALL(menu), const Efl_Object *menu);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_menu_set, EFL_FUNC_CALL(menu), const Efl_Object *menu);
 
 const Efl_Object *_elm_systray_menu_get(const Eo *obj, void *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_menu_get, const Efl_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_menu_get, const Efl_Object *, NULL);
 
 void _elm_systray_att_icon_name_set(Eo *obj, void *pd, const char *att_icon_name);
 
@@ -97,7 +97,7 @@ __eolian_elm_systray_att_icon_name_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_att_icon_name_set, EFL_FUNC_CALL(att_icon_name), const char *att_icon_name);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_att_icon_name_set, EFL_FUNC_CALL(att_icon_name), const char *att_icon_name);
 
 const char *_elm_systray_att_icon_name_get(const Eo *obj, void *pd);
 
@@ -109,15 +109,15 @@ __eolian_elm_systray_att_icon_name_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_att_icon_name_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_att_icon_name_get, const char *, NULL);
 
 void _elm_systray_status_set(Eo *obj, void *pd, Elm_Systray_Status st);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_status_set, EFL_FUNC_CALL(st), Elm_Systray_Status st);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_status_set, EFL_FUNC_CALL(st), Elm_Systray_Status st);
 
 Elm_Systray_Status _elm_systray_status_get(const Eo *obj, void *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_status_get, Elm_Systray_Status, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_status_get, Elm_Systray_Status, 0);
 
 void _elm_systray_icon_name_set(Eo *obj, void *pd, const char *icon_name);
 
@@ -137,7 +137,7 @@ __eolian_elm_systray_icon_name_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_icon_name_set, EFL_FUNC_CALL(icon_name), const char *icon_name);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_icon_name_set, EFL_FUNC_CALL(icon_name), const char *icon_name);
 
 const char *_elm_systray_icon_name_get(const Eo *obj, void *pd);
 
@@ -149,7 +149,7 @@ __eolian_elm_systray_icon_name_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_icon_name_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_icon_name_get, const char *, NULL);
 
 void _elm_systray_title_set(Eo *obj, void *pd, const char *title);
 
@@ -169,7 +169,7 @@ __eolian_elm_systray_title_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_systray_title_set, EFL_FUNC_CALL(title), const char *title);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_systray_title_set, EFL_FUNC_CALL(title), const char *title);
 
 const char *_elm_systray_title_get(const Eo *obj, void *pd);
 
@@ -181,11 +181,11 @@ __eolian_elm_systray_title_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_systray_title_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_systray_title_get, const char *, NULL);
 
 Eina_Bool _elm_systray_register(Eo *obj, void *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_systray_register, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_systray_register, Eina_Bool, 0);
 
 static Eina_Bool
 _elm_systray_class_initializer(Efl_Class *klass)

@@ -8,7 +8,7 @@ typedef Eo Elm_Button;
  *
  * @ingroup Elm_Button
  */
-EAPI Evas_Object                 *elm_button_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_button_add(Evas_Object *parent);
 
 /**
  * @brief The initial timeout before the autorepeat event is generated
@@ -25,7 +25,7 @@ EAPI Evas_Object                 *elm_button_add(Evas_Object *parent);
  * @ingroup Elm_Button
  */
 
-EAPI void                        elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t);
+ELM_API void                        elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t);
 
 /**
  * @brief The initial timeout before the autorepeat event is generated
@@ -42,7 +42,7 @@ EAPI void                        elm_button_autorepeat_initial_timeout_set(Evas_
  * @ingroup Elm_Button
  */
 
-EAPI double                      elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj);
+ELM_API double                      elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj);
 
 /**
  * @brief The interval between each generated autorepeat event
@@ -56,7 +56,7 @@ EAPI double                      elm_button_autorepeat_initial_timeout_get(const
  *
  * @ingroup Elm_Button
  */
-EAPI void                        elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t);
+ELM_API void                        elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t);
 
 /**
  * @brief The interval between each generated autorepeat event
@@ -70,7 +70,7 @@ EAPI void                        elm_button_autorepeat_gap_timeout_set(Evas_Obje
  *
  * @ingroup Elm_Button
  */
-EAPI double                      elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj);
+ELM_API double                      elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj);
 
 /**
  * @brief Turn on/off the autorepeat event generated when the button is kept
@@ -89,7 +89,7 @@ EAPI double                      elm_button_autorepeat_gap_timeout_get(const Eva
  *
  * @ingroup Elm_Button
  */
-EAPI void                        elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on);
+ELM_API void                        elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on);
 
 /**
  * @brief Turn on/off the autorepeat event generated when the button is kept
@@ -108,6 +108,6 @@ EAPI void                        elm_button_autorepeat_set(Evas_Object *obj, Ein
  *
  * @ingroup Elm_Button
  */
-EAPI Eina_Bool                   elm_button_autorepeat_get(const Evas_Object *obj);
+ELM_API Eina_Bool                   elm_button_autorepeat_get(const Evas_Object *obj);
 
 #include "efl_ui_button_eo.legacy.h"

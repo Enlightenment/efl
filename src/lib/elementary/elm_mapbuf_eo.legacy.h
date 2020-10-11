@@ -32,7 +32,7 @@ typedef Eo Elm_Mapbuf;
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI void elm_mapbuf_auto_set(Elm_Mapbuf *obj, Eina_Bool on);
+ELM_API void elm_mapbuf_auto_set(Elm_Mapbuf *obj, Eina_Bool on);
 
 /**
  * @brief Get a value whether auto mode is enabled or not.
@@ -43,7 +43,7 @@ EAPI void elm_mapbuf_auto_set(Elm_Mapbuf *obj, Eina_Bool on);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI Eina_Bool elm_mapbuf_auto_get(const Elm_Mapbuf *obj);
+ELM_API Eina_Bool elm_mapbuf_auto_get(const Elm_Mapbuf *obj);
 
 /**
  * @brief Enable or disable smooth map rendering.
@@ -59,7 +59,7 @@ EAPI Eina_Bool elm_mapbuf_auto_get(const Elm_Mapbuf *obj);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI void elm_mapbuf_smooth_set(Elm_Mapbuf *obj, Eina_Bool smooth);
+ELM_API void elm_mapbuf_smooth_set(Elm_Mapbuf *obj, Eina_Bool smooth);
 
 /**
  * @brief Get a value whether smooth map rendering is enabled or not.
@@ -70,7 +70,7 @@ EAPI void elm_mapbuf_smooth_set(Elm_Mapbuf *obj, Eina_Bool smooth);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI Eina_Bool elm_mapbuf_smooth_get(const Elm_Mapbuf *obj);
+ELM_API Eina_Bool elm_mapbuf_smooth_get(const Elm_Mapbuf *obj);
 
 /**
  * @brief Set or unset alpha flag for map rendering.
@@ -87,7 +87,7 @@ EAPI Eina_Bool elm_mapbuf_smooth_get(const Elm_Mapbuf *obj);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI void elm_mapbuf_alpha_set(Elm_Mapbuf *obj, Eina_Bool alpha);
+ELM_API void elm_mapbuf_alpha_set(Elm_Mapbuf *obj, Eina_Bool alpha);
 
 /**
  * @brief Get a value whether alpha blending is enabled or not.
@@ -98,7 +98,7 @@ EAPI void elm_mapbuf_alpha_set(Elm_Mapbuf *obj, Eina_Bool alpha);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI Eina_Bool elm_mapbuf_alpha_get(const Elm_Mapbuf *obj);
+ELM_API Eina_Bool elm_mapbuf_alpha_get(const Elm_Mapbuf *obj);
 
 /**
  * @brief Enable or disable the map.
@@ -121,7 +121,7 @@ EAPI Eina_Bool elm_mapbuf_alpha_get(const Elm_Mapbuf *obj);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI void elm_mapbuf_enabled_set(Elm_Mapbuf *obj, Eina_Bool enabled);
+ELM_API void elm_mapbuf_enabled_set(Elm_Mapbuf *obj, Eina_Bool enabled);
 
 /**
  * @brief Get a value whether map is enabled or not.
@@ -132,7 +132,7 @@ EAPI void elm_mapbuf_enabled_set(Elm_Mapbuf *obj, Eina_Bool enabled);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI Eina_Bool elm_mapbuf_enabled_get(const Elm_Mapbuf *obj);
+ELM_API Eina_Bool elm_mapbuf_enabled_get(const Elm_Mapbuf *obj);
 
 /**
  * @brief The color of a point (vertex) in the mapbuf.
@@ -154,7 +154,7 @@ EAPI Eina_Bool elm_mapbuf_enabled_get(const Elm_Mapbuf *obj);
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI void elm_mapbuf_point_color_set(Elm_Mapbuf *obj, int idx, int r, int g, int b, int a);
+ELM_API void elm_mapbuf_point_color_set(Elm_Mapbuf *obj, int idx, int r, int g, int b, int a);
 
 /**
  * @brief The color of a point (vertex) in the mapbuf.
@@ -176,6 +176,6 @@ EAPI void elm_mapbuf_point_color_set(Elm_Mapbuf *obj, int idx, int r, int g, int
  *
  * @ingroup Elm_Mapbuf_Group
  */
-EAPI void elm_mapbuf_point_color_get(const Elm_Mapbuf *obj, int idx, int *r, int *g, int *b, int *a);
+ELM_API void elm_mapbuf_point_color_get(const Elm_Mapbuf *obj, int idx, int *r, int *g, int *b, int *a);
 
 #endif

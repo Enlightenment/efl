@@ -1367,7 +1367,7 @@ _efl_ui_image_efl_file_async_wait(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *
  * Tizen has used elm_image_async_open_set() internally for a while, despite
  * EFL upstream not exposing a proper async API. */
 
-EAPI void
+ELM_API void
 elm_image_async_open_set(Eo *obj, Eina_Bool async)
 {
    Efl_Ui_Image_Data *pd;
@@ -1542,7 +1542,7 @@ _efl_ui_image_efl_gfx_image_image_load_error_get(const Eo *obj EINA_UNUSED, Efl_
    return efl_gfx_image_load_error_get(pd->img);
 }
 
-EAPI void
+ELM_API void
 elm_image_prescale_set(Evas_Object *obj,
                        int size)
 {
@@ -1657,7 +1657,7 @@ _efl_ui_image_efl_gfx_image_load_controller_load_region_support_get(const Eo *ob
   return EINA_TRUE;
 }
 
-EAPI int
+ELM_API int
 elm_image_prescale_get(const Evas_Object *obj)
 {
    Eina_Size2D sz;
@@ -1730,7 +1730,7 @@ _efl_ui_image_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED, Efl_Ui
    return sd->edit;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_animated_available_get(const Evas_Object *obj)
 {
    return efl_playable_get(obj);
@@ -1794,7 +1794,7 @@ _efl_ui_image_animated_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data
    return sd->anim;
 }
 
-EAPI void
+ELM_API void
 elm_image_animated_set(Evas_Object *obj, Eina_Bool anim)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
@@ -1802,7 +1802,7 @@ elm_image_animated_set(Evas_Object *obj, Eina_Bool anim)
    _efl_ui_image_animated_set_internal(obj, sd, anim);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_animated_get(const Evas_Object *obj)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
@@ -1958,7 +1958,7 @@ _efl_ui_image_animated_paused_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Ima
    return sd->paused;
 }
 
-EAPI void
+ELM_API void
 elm_image_animated_play_set(Elm_Image *obj, Eina_Bool play)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
@@ -1966,7 +1966,7 @@ elm_image_animated_play_set(Elm_Image *obj, Eina_Bool play)
    _efl_ui_image_animated_paused_set_internal(obj, sd, !play);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_animated_play_get(const Elm_Image *obj)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
@@ -2406,7 +2406,7 @@ _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd,
    return 0;
 }
 
-EAPI void
+ELM_API void
 elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, MY_CLASS));
@@ -2414,7 +2414,7 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
    efl_canvas_group_change(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_smooth_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), EINA_FALSE);
@@ -2424,19 +2424,19 @@ elm_image_smooth_get(const Evas_Object *obj)
 // A11Y - END
 
 /* Legacy deprecated functions */
-EAPI void
+ELM_API void
 elm_image_editable_set(Evas_Object *obj, Eina_Bool edit)
 {
    efl_ui_draggable_drag_target_set(obj, edit);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_editable_get(const Evas_Object *obj)
 {
    return efl_ui_draggable_drag_target_get(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -2461,21 +2461,21 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
-EAPI void
+ELM_API void
 elm_image_file_get(const Eo *obj, const char **file, const char **group)
 {
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    efl_file_simple_get(sd->img, file, group);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    return efl_file_simple_mmap_load(obj, file, group);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(img, EINA_FALSE);
@@ -2522,7 +2522,7 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
    return EINA_TRUE;
 }
 
-EAPI void
+ELM_API void
 elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2544,7 +2544,7 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    efl_canvas_group_change(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_fill_outside_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
@@ -2554,7 +2554,7 @@ elm_image_fill_outside_get(const Evas_Object *obj)
 }
 
 // TODO: merge preload and async code
-EAPI void
+ELM_API void
 elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2585,7 +2585,7 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
     }
 }
 
-EAPI void
+ELM_API void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient elm_orient)
 {
    // This array takes an Elm_Image_Orient and turns it into an Efl_Gfx_Image_Orientation
@@ -2610,7 +2610,7 @@ elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient elm_orient)
    if (sd->img) efl_gfx_image_orientation_set(sd->img,  efl_orient[elm_orient]);
 }
 
-EAPI Elm_Image_Orient
+ELM_API Elm_Image_Orient
 elm_image_orient_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) ELM_IMAGE_ORIENT_NONE;
@@ -2619,7 +2619,7 @@ elm_image_orient_get(const Evas_Object *obj)
    return sd->image_orient;
 }
 
-EAPI Evas_Object*
+ELM_API Evas_Object*
 elm_image_object_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) NULL;
@@ -2630,7 +2630,7 @@ elm_image_object_get(const Evas_Object *obj)
    return sd->img;
 }
 
-EAPI void
+ELM_API void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
    Eina_Size2D sz;
@@ -2639,7 +2639,7 @@ elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = sz.h;
 }
 
-EAPI void
+ELM_API void
 elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2649,7 +2649,7 @@ elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
    efl_canvas_group_change(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_no_scale_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
@@ -2657,7 +2657,7 @@ elm_image_no_scale_get(const Evas_Object *obj)
    return sd->no_scale;
 }
 
-EAPI void
+ELM_API void
 elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2668,7 +2668,7 @@ elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
    efl_canvas_group_change(obj);
 }
 
-EAPI void
+ELM_API void
 elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2677,7 +2677,7 @@ elm_image_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *s
    if (size_down) *size_down = sd->scale_down;
 }
 
-EAPI void
+ELM_API void
 elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 {
    EFL_UI_IMAGE_CHECK(obj);
@@ -2698,7 +2698,7 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
    efl_canvas_group_change(obj);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_image_aspect_fixed_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
@@ -2736,7 +2736,7 @@ _efl_ui_image_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_image_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

@@ -150,8 +150,8 @@ EFL_START_TEST(efl_ui_layout_test_layout_force)
 EFL_END_TEST
 
 /* private */
-EAPI Eina_Bool elm_widget_theme_klass_set(Evas_Object *obj, const char *name);
-EAPI Eina_Bool elm_widget_theme_style_set(Evas_Object *obj, const char *name);
+ELM_API Eina_Bool elm_widget_theme_klass_set(Evas_Object *obj, const char *name);
+ELM_API Eina_Bool elm_widget_theme_style_set(Evas_Object *obj, const char *name);
 
 EFL_START_TEST(efl_ui_layout_test_callback)
 {

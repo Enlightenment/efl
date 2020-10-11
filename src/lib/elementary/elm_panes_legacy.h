@@ -11,7 +11,7 @@ typedef Eo Elm_Panes;
  *
  * @ingroup Elm_Panes
  */
-EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_panes_add(Evas_Object *parent);
 
 /**
  * @brief Set how to split and dispose each content.
@@ -28,7 +28,7 @@ EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
  *
  * @ingroup Elm_Panes
  */
-EAPI void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+ELM_API void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get how to split and dispose each content.
@@ -45,7 +45,7 @@ EAPI void elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  *
  * @ingroup Elm_Panes
  */
-EAPI Eina_Bool elm_panes_horizontal_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_panes_horizontal_get(const Evas_Object *obj);
 
 /**
  * @brief Set the absolute minimum size of panes widget's left side.
@@ -56,7 +56,7 @@ EAPI Eina_Bool elm_panes_horizontal_get(const Evas_Object *obj);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI void elm_panes_content_left_min_size_set(Evas_Object *obj, int size);
+ELM_API void elm_panes_content_left_min_size_set(Evas_Object *obj, int size);
 
 /**
  * @brief Get the absolute minimum size of panes widget's left side.
@@ -67,7 +67,7 @@ EAPI void elm_panes_content_left_min_size_set(Evas_Object *obj, int size);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI int elm_panes_content_left_min_size_get(const Evas_Object *obj);
+ELM_API int elm_panes_content_left_min_size_get(const Evas_Object *obj);
 
 /**
  * @brief Control the absolute minimum size of panes widget's right side.
@@ -78,7 +78,7 @@ EAPI int elm_panes_content_left_min_size_get(const Evas_Object *obj);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI void elm_panes_content_right_min_size_set(Evas_Object *obj, int size);
+ELM_API void elm_panes_content_right_min_size_set(Evas_Object *obj, int size);
 
 /**
  * @brief Get the absolute minimum size of panes widget's right side.
@@ -89,7 +89,7 @@ EAPI void elm_panes_content_right_min_size_set(Evas_Object *obj, int size);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI int elm_panes_content_right_min_size_get(const Evas_Object *obj);
+ELM_API int elm_panes_content_right_min_size_get(const Evas_Object *obj);
 
 /**
  * @brief Set the size proportion of panes widget's right side.
@@ -111,7 +111,7 @@ EAPI int elm_panes_content_right_min_size_get(const Evas_Object *obj);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI void elm_panes_content_right_size_set(Evas_Object *obj, double size);
+ELM_API void elm_panes_content_right_size_set(Evas_Object *obj, double size);
 
 /**
  * @brief Get the size proportion of panes widget's right side.
@@ -128,7 +128,7 @@ EAPI void elm_panes_content_right_size_set(Evas_Object *obj, double size);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI double elm_panes_content_right_size_get(const Evas_Object *obj);
+ELM_API double elm_panes_content_right_size_get(const Evas_Object *obj);
 
 /**
  * @brief Set the size proportion of panes widget's left side.
@@ -150,7 +150,7 @@ EAPI double elm_panes_content_right_size_get(const Evas_Object *obj);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI void elm_panes_content_left_size_set(Evas_Object *obj, double size);
+ELM_API void elm_panes_content_left_size_set(Evas_Object *obj, double size);
 
 /**
  * @brief Get the size proportion of panes widget's left side.
@@ -166,7 +166,7 @@ EAPI void elm_panes_content_left_size_set(Evas_Object *obj, double size);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI double elm_panes_content_left_size_get(const Evas_Object *obj);
+ELM_API double elm_panes_content_left_size_get(const Evas_Object *obj);
 
 /**
  * @brief Controls the relative minimum size of panes widget's left side.
@@ -180,7 +180,7 @@ EAPI double elm_panes_content_left_size_get(const Evas_Object *obj);
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI void elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double size);
+ELM_API void elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double size);
 
 /**
  * @brief Get the relative minimum size of panes widget's left side.
@@ -194,7 +194,7 @@ EAPI void elm_panes_content_left_min_relative_size_set(Evas_Object *obj, double 
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI double elm_panes_content_left_min_relative_size_get(const Evas_Object *obj);
+ELM_API double elm_panes_content_left_min_relative_size_get(const Evas_Object *obj);
 
 /**
  * @brief Set the relative minimum size of panes widget's right side.
@@ -206,7 +206,7 @@ EAPI double elm_panes_content_left_min_relative_size_get(const Evas_Object *obj)
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI void elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double size);
+ELM_API void elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double size);
 
 /**
  * @brief Get the relative minimum size of panes widget's right side.
@@ -218,6 +218,6 @@ EAPI void elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double
  *
  * @ingroup Efl_Ui_Panes
  */
-EAPI double elm_panes_content_right_min_relative_size_get(const Evas_Object *obj);
+ELM_API double elm_panes_content_right_min_relative_size_get(const Evas_Object *obj);
 
 #include "efl_ui_panes_eo.legacy.h"

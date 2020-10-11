@@ -8,7 +8,7 @@ typedef Eo Elm_Check;
  *
  * @ingroup Elm_Check
  */
-EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
+ELM_API Evas_Object *                elm_check_add(Evas_Object *parent);
 
 /**
  * @brief Get the state of the check object
@@ -17,7 +17,7 @@ EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
  *
  * @ingroup Elm_Check
  */
-EAPI Eina_Bool                   elm_check_state_get(const Evas_Object *obj);
+ELM_API Eina_Bool                   elm_check_state_get(const Evas_Object *obj);
 
 /**
  * @brief Set the on/off state of the check object
@@ -32,7 +32,7 @@ EAPI Eina_Bool                   elm_check_state_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Check
  */
-EAPI void                        elm_check_state_set(Evas_Object *obj, Eina_Bool state);
+ELM_API void                        elm_check_state_set(Evas_Object *obj, Eina_Bool state);
 
 /**
  * @brief Set a convenience pointer to a boolean to change
@@ -49,6 +49,6 @@ EAPI void                        elm_check_state_set(Evas_Object *obj, Eina_Bool
  *
  * @ingroup Elm_Check
  */
-EAPI void                        elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
+ELM_API void                        elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
 
 # include "efl_ui_check_eo.legacy.h"

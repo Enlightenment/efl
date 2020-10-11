@@ -330,7 +330,7 @@ _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
      }
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_glview_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -338,7 +338,7 @@ elm_glview_add(Evas_Object *parent)
                          elm_obj_glview_version_constructor(efl_added, EVAS_GL_GLES_2_X));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_glview_version_add(Evas_Object *parent, Evas_GL_Context_Version version)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -559,7 +559,7 @@ _elm_glview_class_constructor(Efl_Class *klass)
 }
 
 /* Legacy deprecated functions */
-EAPI void
+ELM_API void
 elm_glview_changed_set(Evas_Object *obj)
 {
    ELM_GLVIEW_CHECK(obj);
@@ -567,7 +567,7 @@ elm_glview_changed_set(Evas_Object *obj)
    elm_obj_glview_draw_request(obj);
 }
 
-EAPI void
+ELM_API void
 elm_glview_size_get(const Elm_Glview *obj, int *w, int *h)
 {
    Eina_Size2D sz;
@@ -576,13 +576,13 @@ elm_glview_size_get(const Elm_Glview *obj, int *w, int *h)
    if (h) *h = sz.h;
 }
 
-EAPI void
+ELM_API void
 elm_glview_size_set(Elm_Glview *obj, int w, int h)
 {
    efl_gfx_view_size_set(obj, EINA_SIZE2D(w, h));
 }
 
-EAPI void
+ELM_API void
 elm_glview_init_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
 {
    ELM_GLVIEW_CHECK(obj);
@@ -592,7 +592,7 @@ elm_glview_init_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
    sd->init_func = func;
 }
 
-EAPI void
+ELM_API void
 elm_glview_del_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
 {
    ELM_GLVIEW_CHECK(obj);
@@ -601,7 +601,7 @@ elm_glview_del_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
    sd->del_func = func;
 }
 
-EAPI void
+ELM_API void
 elm_glview_resize_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
 {
    ELM_GLVIEW_CHECK(obj);
@@ -610,7 +610,7 @@ elm_glview_resize_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
    sd->resize_func = func;
 }
 
-EAPI void
+ELM_API void
 elm_glview_render_func_set(Elm_Glview *obj, Elm_GLView_Func_Cb func)
 {
    ELM_GLVIEW_CHECK(obj);

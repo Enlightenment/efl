@@ -1,11 +1,11 @@
 
 Elm_Widget_Item *_elm_gengrid_item_prev_get(const Eo *obj, Elm_Gen_Item *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_prev_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_prev_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_gengrid_item_next_get(const Eo *obj, Elm_Gen_Item *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_next_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_next_get, Elm_Widget_Item *, NULL);
 
 void _elm_gengrid_item_selected_set(Eo *obj, Elm_Gen_Item *pd, Eina_Bool selected);
 
@@ -25,7 +25,7 @@ __eolian_elm_gengrid_item_selected_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
 
 Eina_Bool _elm_gengrid_item_selected_get(const Eo *obj, Elm_Gen_Item *pd);
 
@@ -37,11 +37,11 @@ __eolian_elm_gengrid_item_selected_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_selected_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_selected_get, Eina_Bool, 0);
 
 const Elm_Gengrid_Item_Class *_elm_gengrid_item_item_class_get(const Eo *obj, Elm_Gen_Item *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_class_get, const Elm_Gengrid_Item_Class *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_class_get, const Elm_Gengrid_Item_Class *, NULL);
 
 int _elm_gengrid_item_index_get(const Eo *obj, Elm_Gen_Item *pd);
 
@@ -53,51 +53,51 @@ __eolian_elm_gengrid_item_index_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_index_get, int, -1 /* +1 */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_index_get, int, -1 /* +1 */);
 
 void _elm_gengrid_item_pos_get(const Eo *obj, Elm_Gen_Item *pd, unsigned int *x, unsigned int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_gengrid_item_pos_get, EFL_FUNC_CALL(x, y), unsigned int *x, unsigned int *y);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_gengrid_item_pos_get, EFL_FUNC_CALL(x, y), unsigned int *x, unsigned int *y);
 
 void _elm_gengrid_item_select_mode_set(Eo *obj, Elm_Gen_Item *pd, Elm_Object_Select_Mode mode);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_select_mode_set, EFL_FUNC_CALL(mode), Elm_Object_Select_Mode mode);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_select_mode_set, EFL_FUNC_CALL(mode), Elm_Object_Select_Mode mode);
 
 Elm_Object_Select_Mode _elm_gengrid_item_select_mode_get(const Eo *obj, Elm_Gen_Item *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_select_mode_get, Elm_Object_Select_Mode, 4 /* Elm.Object.Select_Mode.max */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gengrid_item_select_mode_get, Elm_Object_Select_Mode, 4 /* Elm.Object.Select_Mode.max */);
 
 void _elm_gengrid_item_custom_size_set(Eo *obj, Elm_Gen_Item *pd, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_custom_size_set, EFL_FUNC_CALL(w, h), int w, int h);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_custom_size_set, EFL_FUNC_CALL(w, h), int w, int h);
 
 void _elm_gengrid_item_custom_size_get(const Eo *obj, Elm_Gen_Item *pd, int *w, int *h);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_gengrid_item_custom_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_gengrid_item_custom_size_get, EFL_FUNC_CALL(w, h), int *w, int *h);
 
 void _elm_gengrid_item_show(Eo *obj, Elm_Gen_Item *pd, Elm_Gengrid_Item_Scrollto_Type type);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_show, EFL_FUNC_CALL(type), Elm_Gengrid_Item_Scrollto_Type type);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_show, EFL_FUNC_CALL(type), Elm_Gengrid_Item_Scrollto_Type type);
 
 void _elm_gengrid_item_bring_in(Eo *obj, Elm_Gen_Item *pd, Elm_Gengrid_Item_Scrollto_Type type);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_bring_in, EFL_FUNC_CALL(type), Elm_Gengrid_Item_Scrollto_Type type);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_bring_in, EFL_FUNC_CALL(type), Elm_Gengrid_Item_Scrollto_Type type);
 
 void _elm_gengrid_item_update(Eo *obj, Elm_Gen_Item *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_gengrid_item_update);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_gengrid_item_update);
 
 void _elm_gengrid_item_fields_update(Eo *obj, Elm_Gen_Item *pd, const char *parts, Elm_Gengrid_Item_Field_Type itf);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_fields_update, EFL_FUNC_CALL(parts, itf), const char *parts, Elm_Gengrid_Item_Field_Type itf);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_fields_update, EFL_FUNC_CALL(parts, itf), const char *parts, Elm_Gengrid_Item_Field_Type itf);
 
 void _elm_gengrid_item_item_class_update(Eo *obj, Elm_Gen_Item *pd, const Elm_Gengrid_Item_Class *itc);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_class_update, EFL_FUNC_CALL(itc), const Elm_Gengrid_Item_Class *itc);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_class_update, EFL_FUNC_CALL(itc), const Elm_Gengrid_Item_Class *itc);
 
 void _elm_gengrid_item_all_contents_unset(Eo *obj, Elm_Gen_Item *pd, Eina_List **l);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_all_contents_unset, EFL_FUNC_CALL(l), Eina_List **l);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gengrid_item_all_contents_unset, EFL_FUNC_CALL(l), Eina_List **l);
 
 Efl_Object *_elm_gengrid_item_efl_object_constructor(Eo *obj, Elm_Gen_Item *pd);
 

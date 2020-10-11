@@ -325,7 +325,7 @@ _eet_data_load(Elm_Prefs_Data *prefs_data,
    free(values);
 }
 
-EAPI Elm_Prefs_Data *
+ELM_API Elm_Prefs_Data *
 elm_prefs_data_new(const char *data_file,
                    const char *key,
                    Eet_File_Mode mode)
@@ -387,7 +387,7 @@ elm_prefs_data_new(const char *data_file,
    return prefs_data;
 }
 
-EAPI unsigned int
+ELM_API unsigned int
 elm_prefs_data_version_get(const Elm_Prefs_Data *prefs_data)
 {
    ELM_PREFS_DATA_CHECK_OR_RETURN_VAL(prefs_data, -1);
@@ -596,7 +596,7 @@ _elm_prefs_data_mark_as_dirty(Elm_Prefs_Data *prefs_data)
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
                            unsigned int version)
 {
@@ -609,7 +609,7 @@ elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
    return EINA_TRUE;
 }
 
-EAPI Elm_Prefs_Data *
+ELM_API Elm_Prefs_Data *
 elm_prefs_data_ref(Elm_Prefs_Data *prefs_data)
 {
    ELM_PREFS_DATA_CHECK_OR_RETURN_VAL(prefs_data, NULL);
@@ -645,7 +645,7 @@ _elm_prefs_data_del(Elm_Prefs_Data *prefs_data)
    free(prefs_data);
 }
 
-EAPI void
+ELM_API void
 elm_prefs_data_unref(Elm_Prefs_Data *prefs_data)
 {
    ELM_PREFS_DATA_CHECK(prefs_data);
@@ -656,7 +656,7 @@ elm_prefs_data_unref(Elm_Prefs_Data *prefs_data)
      _elm_prefs_data_del(prefs_data);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
                          const char *path,
                          const Elm_Prefs_Item_Type type,
@@ -744,7 +744,7 @@ elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
                          const char *path,
                          Elm_Prefs_Item_Type *type,
@@ -791,7 +791,7 @@ elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_event_callback_add(Elm_Prefs_Data *prefs_data,
                                   Elm_Prefs_Data_Event_Type type,
                                   Elm_Prefs_Data_Event_Cb cb,
@@ -818,7 +818,7 @@ elm_prefs_data_event_callback_add(Elm_Prefs_Data *prefs_data,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_event_callback_del(Elm_Prefs_Data *prefs_data,
                                   Elm_Prefs_Data_Event_Type type,
                                   Elm_Prefs_Data_Event_Cb cb,
@@ -856,7 +856,7 @@ elm_prefs_data_event_callback_del(Elm_Prefs_Data *prefs_data,
    return EINA_TRUE;
 }
 
-EAPI void
+ELM_API void
 elm_prefs_data_autosave_set(Elm_Prefs_Data *prefs_data,
                             Eina_Bool autosave)
 {
@@ -883,14 +883,14 @@ elm_prefs_data_autosave_set(Elm_Prefs_Data *prefs_data,
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_autosave_get(const Elm_Prefs_Data *prefs_data)
 {
    ELM_PREFS_DATA_CHECK_OR_RETURN_VAL(prefs_data, EINA_FALSE);
    return prefs_data->autosave;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_data_save(const Elm_Prefs_Data *prefs_data,
                     const char *file,
                     const char *key)

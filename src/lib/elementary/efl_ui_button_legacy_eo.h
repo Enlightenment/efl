@@ -24,7 +24,7 @@ typedef Eo Efl_Ui_Button_Legacy;
  */
 #define EFL_UI_BUTTON_LEGACY_CLASS efl_ui_button_legacy_class_get()
 
-EWAPI const Efl_Class *efl_ui_button_legacy_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *efl_ui_button_legacy_class_get(void) EINA_CONST;
 #endif /* EFL_BETA_API_SUPPORT */
 
 #endif

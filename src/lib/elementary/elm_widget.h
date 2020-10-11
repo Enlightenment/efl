@@ -157,10 +157,10 @@
  * }
  *
  * // actual API to create your widget. add more to manipulate it as
- * // needed mark your calls with EAPI to make them "external api"
+ * // needed mark your calls with ELM_API to make them "external api"
  * // calls.
  *
- * EAPI Evas_Object *
+ * ELM_API Evas_Object *
  * elm_wname_add(Evas_Object *parent)
  * {
  *    Evas_Object *obj;
@@ -177,7 +177,7 @@
  * }
  *
  * // example - do "whatever" to the widget (here just emit a signal)
- * EAPI void
+ * ELM_API void
  * elm_wname_whatever(Evas_Object *obj)
  * {
  *    // check if type is correct - check will return if it fails
@@ -301,7 +301,7 @@
 #include "efl_ui.eot.h"
 typedef Eo Efl_Ui_Focus_Manager;
 
-EAPI extern Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+ELM_API extern Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
 
 #define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
 #include "efl_ui_focus_object.eo.h"
@@ -504,30 +504,30 @@ Evas_Object          *_elm_win_focus_highlight_object_get(Evas_Object *obj);
 void                  _elm_win_focus_auto_show(Evas_Object *obj);
 void                  _elm_win_focus_auto_hide(Evas_Object *obj);
 
-EAPI void             _elm_access_clear(Elm_Access_Info *ac);
-EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
-EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Info_Cb func, const void *data);
-EAPI char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, const Evas_Object *obj); /* this is ok it actually returns a strduped string - it's meant to! */
-EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj);
-EAPI void             _elm_access_say(const char *txt);
-EAPI Elm_Access_Info *_elm_access_info_get(const Evas_Object *obj);
-EAPI void             _elm_access_object_highlight(Evas_Object *obj);
-EAPI void             _elm_access_object_unhighlight(Evas_Object *obj);
-EAPI void             _elm_access_object_highlight_disable(Evas *e);
-EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
-EAPI void             _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj);
-EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
-EAPI void             _elm_access_highlight_set(Evas_Object* obj);
-EAPI Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *obj, const Evas_Object *partobj, const char* part);
-EAPI void             _elm_access_edje_object_part_object_unregister(Evas_Object* obj, const Evas_Object *eobj, const char* part);
-EAPI void             _elm_access_widget_item_register(Elm_Widget_Item_Data *item);
-EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item_Data *item);
-EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
-EAPI void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb func, void *data);
-EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Efl_Ui_Activate act);
-EAPI void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+ELM_API void             _elm_access_clear(Elm_Access_Info *ac);
+ELM_API void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
+ELM_API void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Info_Cb func, const void *data);
+ELM_API char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, const Evas_Object *obj); /* this is ok it actually returns a strduped string - it's meant to! */
+ELM_API void             _elm_access_read(Elm_Access_Info *ac, int type, const Evas_Object *obj);
+ELM_API void             _elm_access_say(const char *txt);
+ELM_API Elm_Access_Info *_elm_access_info_get(const Evas_Object *obj);
+ELM_API void             _elm_access_object_highlight(Evas_Object *obj);
+ELM_API void             _elm_access_object_unhighlight(Evas_Object *obj);
+ELM_API void             _elm_access_object_highlight_disable(Evas *e);
+ELM_API void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
+ELM_API void             _elm_access_object_unregister(Evas_Object *obj, Evas_Object *hoverobj);
+ELM_API Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
+ELM_API void             _elm_access_highlight_set(Evas_Object* obj);
+ELM_API Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *obj, const Evas_Object *partobj, const char* part);
+ELM_API void             _elm_access_edje_object_part_object_unregister(Evas_Object* obj, const Evas_Object *eobj, const char* part);
+ELM_API void             _elm_access_widget_item_register(Elm_Widget_Item_Data *item);
+ELM_API void             _elm_access_widget_item_unregister(Elm_Widget_Item_Data *item);
+ELM_API void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
+ELM_API void             _elm_access_activate_callback_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb func, void *data);
+ELM_API void             _elm_access_highlight_object_activate(Evas_Object *obj, Efl_Ui_Activate act);
+ELM_API void             _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
-EINA_DEPRECATED EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
 
 #define ELM_PREFS_DATA_MAGIC 0xe1f5da7a
 
@@ -598,45 +598,45 @@ struct _Elm_Widget_Item_Data
 
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
-EAPI Eina_Bool        elm_widget_api_check(int ver);
-EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
-EAPI Eina_Error  elm_widget_theme(Evas_Object *obj);
-EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
-EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Elm_Widget_On_Show_Region_Cb func, Eina_Free_Cb data_free);
-EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
-EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
-EAPI Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
-EAPI void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
-EAPI void             elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj);
-EAPI void             elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *source);
-EAPI void             elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
-EAPI void            *elm_widget_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
-EAPI void             elm_widget_can_focus_set(Evas_Object *obj, Eina_Bool can_focus);
-EAPI Eina_Bool        elm_widget_can_focus_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_child_can_focus_get(const Evas_Object *obj);
-EAPI Eina_List       *elm_widget_can_focus_child_list_get(const Evas_Object *obj);
-EAPI void             elm_widget_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
-EAPI Eina_Bool        elm_widget_tree_unfocusable_get(const Evas_Object *obj);
-EAPI void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Bool ignore);
-EAPI Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
-EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
-EAPI Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
-EAPI void             elm_widget_access_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
-EAPI Eina_Bool        elm_widget_access_highlight_in_theme_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
-EAPI Eo              *elm_widget_top_get(const Eo *obj);
-EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
-EAPI Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
-EAPI void             elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
-EAPI void            *elm_widget_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
-EAPI Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style);
-EAPI const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
-EAPI void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
-EAPI void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
-EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
-EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
-EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+ELM_API Eina_Bool        elm_widget_api_check(int ver);
+ELM_API Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
+ELM_API Eina_Error  elm_widget_theme(Evas_Object *obj);
+ELM_API void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
+ELM_API void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Elm_Widget_On_Show_Region_Cb func, Eina_Free_Cb data_free);
+ELM_API Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
+ELM_API Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
+ELM_API Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
+ELM_API void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
+ELM_API void             elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj);
+ELM_API void             elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *source);
+ELM_API void             elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+ELM_API void            *elm_widget_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+ELM_API void             elm_widget_can_focus_set(Evas_Object *obj, Eina_Bool can_focus);
+ELM_API Eina_Bool        elm_widget_can_focus_get(const Evas_Object *obj);
+ELM_API Eina_Bool        elm_widget_child_can_focus_get(const Evas_Object *obj);
+ELM_API Eina_List       *elm_widget_can_focus_child_list_get(const Evas_Object *obj);
+ELM_API void             elm_widget_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
+ELM_API Eina_Bool        elm_widget_tree_unfocusable_get(const Evas_Object *obj);
+ELM_API void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Bool ignore);
+ELM_API Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
+ELM_API void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
+ELM_API Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
+ELM_API void             elm_widget_access_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
+ELM_API Eina_Bool        elm_widget_access_highlight_in_theme_get(const Evas_Object *obj);
+ELM_API Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
+ELM_API Eo              *elm_widget_top_get(const Eo *obj);
+ELM_API Eina_Bool        elm_widget_is(const Evas_Object *obj);
+ELM_API Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
+ELM_API void             elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
+ELM_API void            *elm_widget_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);
+ELM_API Eina_Bool        elm_widget_focus_highlight_style_set(Evas_Object *obj, const char *style);
+ELM_API const char      *elm_widget_focus_highlight_style_get(const Evas_Object *obj);
+ELM_API void             elm_widget_parent_highlight_set(Evas_Object *obj, Eina_Bool highlighted);
+ELM_API void             elm_widget_focus_set(Evas_Object *obj, Eina_Bool focus);
+ELM_API Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
+ELM_API void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode);
+ELM_API Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
+ELM_API void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *obj);
 
 /**
@@ -653,68 +653,68 @@ Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *
  * @ingroup Widget
  */
 
-EAPI void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabled);
-EAPI Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
-EAPI void             elm_widget_show_region_set(Evas_Object *obj, Eina_Rect sr, Eina_Bool forceshow);
-EAPI Eina_Rect        elm_widget_show_region_get(const Evas_Object *obj);
-EAPI Eina_Rect        elm_widget_focus_region_get(const Evas_Object *obj);
-EAPI void             elm_widget_focus_region_show(Evas_Object *obj);
-EAPI void             elm_widget_scroll_hold_push(Evas_Object *obj);
-EAPI void             elm_widget_scroll_hold_pop(Evas_Object *obj);
-EAPI int              elm_widget_scroll_hold_get(const Evas_Object *obj);
-EAPI void             elm_widget_scroll_freeze_push(Evas_Object *obj);
-EAPI void             elm_widget_scroll_freeze_pop(Evas_Object *obj);
-EAPI int              elm_widget_scroll_freeze_get(const Evas_Object *obj);
-EAPI void             elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
-EAPI Elm_Theme       *elm_widget_theme_get(const Evas_Object *obj);
-EAPI Eina_Error  elm_widget_style_set(Evas_Object *obj, const char *style);
-EAPI const char      *elm_widget_style_get(const Evas_Object *obj);
-EAPI void             elm_widget_type_set(Evas_Object *obj, const char *type);
-EAPI const char      *elm_widget_type_get(const Evas_Object *obj);
-EAPI void             elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt);
-EAPI void             elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt);
-EAPI void             elm_widget_cursor_add(Evas_Object *obj, Elm_Cursor *cur);
-EAPI void             elm_widget_cursor_del(Evas_Object *obj, Elm_Cursor *cur);
-EAPI void             elm_widget_scroll_lock_set(Evas_Object *obj, Efl_Ui_Layout_Orientation block);
-EAPI Efl_Ui_Layout_Orientation elm_widget_scroll_lock_get(const Evas_Object *obj);
-EAPI int              elm_widget_scroll_child_locked_x_get(const Evas_Object *obj);
-EAPI int              elm_widget_scroll_child_locked_y_get(const Evas_Object *obj);
-EAPI Eina_Error  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
-EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
-EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);
-EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
-EAPI void             elm_widget_stringlist_free(Eina_List *list);
-EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
-EAPI void             elm_widget_activate(Evas_Object *obj, Efl_Ui_Activate act);
-EAPI void             elm_widget_part_text_set(Evas_Object *obj, const char *part, const char *label);
-EAPI const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
-EAPI const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
-EAPI void             elm_widget_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
-EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
-EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
-EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
-EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
-EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
-EAPI Eina_Rect        elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
+ELM_API void             elm_widget_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+ELM_API Eina_Bool        elm_widget_disabled_get(const Evas_Object *obj);
+ELM_API void             elm_widget_show_region_set(Evas_Object *obj, Eina_Rect sr, Eina_Bool forceshow);
+ELM_API Eina_Rect        elm_widget_show_region_get(const Evas_Object *obj);
+ELM_API Eina_Rect        elm_widget_focus_region_get(const Evas_Object *obj);
+ELM_API void             elm_widget_focus_region_show(Evas_Object *obj);
+ELM_API void             elm_widget_scroll_hold_push(Evas_Object *obj);
+ELM_API void             elm_widget_scroll_hold_pop(Evas_Object *obj);
+ELM_API int              elm_widget_scroll_hold_get(const Evas_Object *obj);
+ELM_API void             elm_widget_scroll_freeze_push(Evas_Object *obj);
+ELM_API void             elm_widget_scroll_freeze_pop(Evas_Object *obj);
+ELM_API int              elm_widget_scroll_freeze_get(const Evas_Object *obj);
+ELM_API void             elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
+ELM_API Elm_Theme       *elm_widget_theme_get(const Evas_Object *obj);
+ELM_API Eina_Error  elm_widget_style_set(Evas_Object *obj, const char *style);
+ELM_API const char      *elm_widget_style_get(const Evas_Object *obj);
+ELM_API void             elm_widget_type_set(Evas_Object *obj, const char *type);
+ELM_API const char      *elm_widget_type_get(const Evas_Object *obj);
+ELM_API void             elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt);
+ELM_API void             elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt);
+ELM_API void             elm_widget_cursor_add(Evas_Object *obj, Elm_Cursor *cur);
+ELM_API void             elm_widget_cursor_del(Evas_Object *obj, Elm_Cursor *cur);
+ELM_API void             elm_widget_scroll_lock_set(Evas_Object *obj, Efl_Ui_Layout_Orientation block);
+ELM_API Efl_Ui_Layout_Orientation elm_widget_scroll_lock_get(const Evas_Object *obj);
+ELM_API int              elm_widget_scroll_child_locked_x_get(const Evas_Object *obj);
+ELM_API int              elm_widget_scroll_child_locked_y_get(const Evas_Object *obj);
+ELM_API Eina_Error  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
+ELM_API Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
+ELM_API Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);
+ELM_API Eina_List       *elm_widget_stringlist_get(const char *str);
+ELM_API void             elm_widget_stringlist_free(Eina_List *list);
+ELM_API void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
+ELM_API void             elm_widget_activate(Evas_Object *obj, Efl_Ui_Activate act);
+ELM_API void             elm_widget_part_text_set(Evas_Object *obj, const char *part, const char *label);
+ELM_API const char      *elm_widget_part_text_get(const Evas_Object *obj, const char *part);
+ELM_API const char      *elm_widget_translatable_part_text_get(const Evas_Object *obj, const char *part);
+ELM_API void             elm_widget_domain_part_text_translatable_set(Evas_Object *obj, const char *part, const char *domain, Eina_Bool translatable);
+ELM_API void             elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
+ELM_API Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
+ELM_API Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
+ELM_API void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
+ELM_API const char      *elm_widget_access_info_get(const Evas_Object *obj);
+ELM_API Eina_Rect        elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
-EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
-EAPI Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
+ELM_API void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
+ELM_API Elm_Focus_Region_Show_Mode elm_widget_focus_region_show_mode_get(const Evas_Object *obj);
 const char           *elm_widget_part_translatable_text_get(const Eo *obj, const char *part, const char **domain);
 void                  elm_widget_part_translatable_text_set(Eo *obj, const char *part, const char *label, const char *domain);
 
-EAPI Eina_Bool        elm_widget_theme_klass_set(Evas_Object *obj, const char *name);
-EAPI const char      *elm_widget_theme_klass_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_theme_element_set(Evas_Object *obj, const char *name);
-EAPI const char      *elm_widget_theme_element_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_theme_style_set(Evas_Object *obj, const char *name);
-EAPI const char      *elm_widget_theme_style_get(const Evas_Object *obj);
-EAPI Eina_Error elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name);
+ELM_API Eina_Bool        elm_widget_theme_klass_set(Evas_Object *obj, const char *name);
+ELM_API const char      *elm_widget_theme_klass_get(const Evas_Object *obj);
+ELM_API Eina_Bool        elm_widget_theme_element_set(Evas_Object *obj, const char *name);
+ELM_API const char      *elm_widget_theme_element_get(const Evas_Object *obj);
+ELM_API Eina_Bool        elm_widget_theme_style_set(Evas_Object *obj, const char *name);
+ELM_API const char      *elm_widget_theme_style_get(const Evas_Object *obj);
+ELM_API Eina_Error elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name);
 
 /* debug function. don't use it unless you are tracking parenting issues */
-EAPI void             elm_widget_tree_dump(const Evas_Object *top);
-EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
-EAPI Eina_Bool        _elm_widget_onscreen_is(const Evas_Object *widget);
-EAPI Eina_Bool        _elm_widget_item_onscreen_is(const Elm_Object_Item *item);
+ELM_API void             elm_widget_tree_dump(const Evas_Object *top);
+ELM_API void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
+ELM_API Eina_Bool        _elm_widget_onscreen_is(const Evas_Object *widget);
+ELM_API Eina_Bool        _elm_widget_item_onscreen_is(const Elm_Object_Item *item);
 const char*           _elm_widget_accessible_plain_name_get(const Evas_Object *obj, const char* name);
 const char*           _elm_widget_item_accessible_plain_name_get(const Elm_Object_Item *item, const char* name);
 
@@ -817,9 +817,9 @@ evas_object_widget_parent_find(Evas_Object *o)
  * parsing script skips it */
 #define ELM_INTERNAL_SMART_SUBCLASS_NEW EVAS_SMART_SUBCLASS_NEW
 
-EAPI Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
+ELM_API Eina_Bool elm_selection_selection_has_owner(Evas_Object *obj);
 
-EAPI Eina_Bool _elm_layout_part_aliasing_eval(const Evas_Object *obj,
+ELM_API Eina_Bool _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                               const char **part,
                                               Eina_Bool is_text);
 

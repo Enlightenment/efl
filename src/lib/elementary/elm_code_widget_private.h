@@ -69,7 +69,7 @@ void _elm_code_widget_backspace(Elm_Code_Widget *widget);
 
 void _elm_code_widget_delete(Elm_Code_Widget *widget);
 
-EAPI Elm_Code_Widget_Selection_Data *elm_code_widget_selection_normalized_get(Evas_Object *widget);
+ELM_API Elm_Code_Widget_Selection_Data *elm_code_widget_selection_normalized_get(Evas_Object *widget);
 
 void _elm_code_widget_selection_delete_no_undo(Elm_Code_Widget *widget);
 

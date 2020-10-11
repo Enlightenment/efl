@@ -36,7 +36,7 @@ typedef struct _Elm_Code_Line
    char *status_text;
 } Elm_Code_Line;
 
-EAPI void elm_code_line_free(Elm_Code_Line *line);
+ELM_API void elm_code_line_free(Elm_Code_Line *line);
 
 /**
  * @brief Line manipulation functions.
@@ -55,7 +55,7 @@ EAPI void elm_code_line_free(Elm_Code_Line *line);
  *
  * @ingroup Content
  */
-EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position);
+ELM_API void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position);
 
 /**
  * Merge the specified line with the line above.
@@ -68,7 +68,7 @@ EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position);
  *
  * @ingroup Content
  */
-EAPI void elm_code_line_merge_up(Elm_Code_Line *line);
+ELM_API void elm_code_line_merge_up(Elm_Code_Line *line);
 
 /**
  * Merge the specified line with the line below.
@@ -81,7 +81,7 @@ EAPI void elm_code_line_merge_up(Elm_Code_Line *line);
  *
  * @ingroup Content
  */
-EAPI void elm_code_line_merge_down(Elm_Code_Line *line);
+ELM_API void elm_code_line_merge_down(Elm_Code_Line *line);
 
 /**
  * @}
@@ -95,19 +95,19 @@ EAPI void elm_code_line_merge_down(Elm_Code_Line *line);
  *
  */
 
-EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status);
+ELM_API void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status);
 
-EAPI void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text);
+ELM_API void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text);
 
-EAPI void elm_code_line_status_clear(Elm_Code_Line *line);
+ELM_API void elm_code_line_status_clear(Elm_Code_Line *line);
 
-EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines, Elm_Code_Token_Type type);
+ELM_API void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines, Elm_Code_Token_Type type);
 
-EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line);
+ELM_API void elm_code_line_tokens_clear(Elm_Code_Line *line);
 
-EAPI unsigned int elm_code_line_scope_get(Elm_Code_Line *line);
+ELM_API unsigned int elm_code_line_scope_get(Elm_Code_Line *line);
 
-EAPI Eina_Bool elm_code_line_contains_widget_cursor(Elm_Code_Line *line);
+ELM_API Eina_Bool elm_code_line_contains_widget_cursor(Elm_Code_Line *line);
 
 /**
  * @}

@@ -22,7 +22,7 @@ typedef enum
  *
  * @ingroup Elm_Thumb
  */
-EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent);
+ELM_API Evas_Object                *elm_thumb_add(Evas_Object *parent);
 
 /**
  *
@@ -41,7 +41,7 @@ EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent);
  * @param[in] file The path to file that will be used as thumbnail source.
  * @param[in] key The key used in case of an EET file.
  */
-EAPI void elm_thumb_file_set(Eo *obj, const char *file, const char *key);
+ELM_API void elm_thumb_file_set(Eo *obj, const char *file, const char *key);
 
 /**
  *
@@ -55,7 +55,7 @@ EAPI void elm_thumb_file_set(Eo *obj, const char *file, const char *key);
  * @param[out] file The path to file that will be used as thumbnail source.
  * @param[out] key The key used in case of an EET file.
  */
-EAPI void elm_thumb_file_get(const Eo *obj, const char **file, const char **key);
+ELM_API void elm_thumb_file_get(const Eo *obj, const char **file, const char **key);
 
 /**
  * @brief Make the thumbnail 'editable'.
@@ -67,7 +67,7 @@ EAPI void elm_thumb_file_get(const Eo *obj, const char **file, const char **key)
  *
  * @ingroup Elm_Thumb
  */
-EAPI Eina_Bool elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
+ELM_API Eina_Bool elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
 
 /**
  * @brief Get whether the thumbnail is editable.
@@ -79,7 +79,7 @@ EAPI Eina_Bool elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
  *
  * @ingroup Elm_Thumb
  */
-EAPI Eina_Bool elm_thumb_editable_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_thumb_editable_get(const Evas_Object *obj);
 
 /**
  * @brief Set the compression for the thumb object.
@@ -90,7 +90,7 @@ EAPI Eina_Bool elm_thumb_editable_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_compress_set(Evas_Object *obj, int compress);
+ELM_API void elm_thumb_compress_set(Evas_Object *obj, int compress);
 
 /**
  * @brief Get the compression of the thumb object.
@@ -104,7 +104,7 @@ EAPI void elm_thumb_compress_set(Evas_Object *obj, int compress);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_compress_get(const Evas_Object *obj, int *compress);
+ELM_API void elm_thumb_compress_get(const Evas_Object *obj, int *compress);
 
 /**
  * @brief Set the format for the thumb object.
@@ -115,7 +115,7 @@ EAPI void elm_thumb_compress_get(const Evas_Object *obj, int *compress);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_format_set(Evas_Object *obj, Ethumb_Thumb_Format format);
+ELM_API void elm_thumb_format_set(Evas_Object *obj, Ethumb_Thumb_Format format);
 
 /**
  * @brief Get the format of the thumb object.
@@ -126,7 +126,7 @@ EAPI void elm_thumb_format_set(Evas_Object *obj, Ethumb_Thumb_Format format);
  *
  * @ingroup Elm_Thumb
  */
-EAPI Ethumb_Thumb_Format elm_thumb_format_get(const Evas_Object *obj);
+ELM_API Ethumb_Thumb_Format elm_thumb_format_get(const Evas_Object *obj);
 
 /**
  * @brief Set the animation state for the thumb object.
@@ -138,7 +138,7 @@ EAPI Ethumb_Thumb_Format elm_thumb_format_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting setting);
+ELM_API void elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting setting);
 
 /**
  * @brief Get the animation state for the thumb object.
@@ -147,7 +147,7 @@ EAPI void elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting se
  *
  * @ingroup Elm_Thumb
  */
-EAPI Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
+ELM_API Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
 
 /**
  * @brief Set the FDO size for the thumb object.
@@ -158,7 +158,7 @@ EAPI Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_fdo_size_set(Evas_Object *obj, Ethumb_Thumb_FDO_Size size);
+ELM_API void elm_thumb_fdo_size_set(Evas_Object *obj, Ethumb_Thumb_FDO_Size size);
 
 /**
  * @brief Get the fdo size of the thumb object.
@@ -169,7 +169,7 @@ EAPI void elm_thumb_fdo_size_set(Evas_Object *obj, Ethumb_Thumb_FDO_Size size);
  *
  * @ingroup Elm_Thumb
  */
-EAPI Ethumb_Thumb_FDO_Size elm_thumb_fdo_size_get(const Evas_Object *obj);
+ELM_API Ethumb_Thumb_FDO_Size elm_thumb_fdo_size_get(const Evas_Object *obj);
 
 /**
  * @brief Set the orientation for the thumb object.
@@ -180,7 +180,7 @@ EAPI Ethumb_Thumb_FDO_Size elm_thumb_fdo_size_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_orientation_set(Evas_Object *obj, Ethumb_Thumb_Orientation orient);
+ELM_API void elm_thumb_orientation_set(Evas_Object *obj, Ethumb_Thumb_Orientation orient);
 
 /**
  * @brief Get the orientation of the thumb object.
@@ -191,7 +191,7 @@ EAPI void elm_thumb_orientation_set(Evas_Object *obj, Ethumb_Thumb_Orientation o
  *
  * @ingroup Elm_Thumb
  */
-EAPI Ethumb_Thumb_Orientation elm_thumb_orientation_get(const Evas_Object *obj);
+ELM_API Ethumb_Thumb_Orientation elm_thumb_orientation_get(const Evas_Object *obj);
 
 /**
  * @brief Set the aspect for the thumb object.
@@ -202,7 +202,7 @@ EAPI Ethumb_Thumb_Orientation elm_thumb_orientation_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_aspect_set(Evas_Object *obj, Ethumb_Thumb_Aspect aspect);
+ELM_API void elm_thumb_aspect_set(Evas_Object *obj, Ethumb_Thumb_Aspect aspect);
 
 /**
  * @brief Get the aspect of the thumb object.
@@ -213,7 +213,7 @@ EAPI void elm_thumb_aspect_set(Evas_Object *obj, Ethumb_Thumb_Aspect aspect);
  *
  * @ingroup Elm_Thumb
  */
-EAPI Ethumb_Thumb_Aspect elm_thumb_aspect_get(const Evas_Object *obj);
+ELM_API Ethumb_Thumb_Aspect elm_thumb_aspect_get(const Evas_Object *obj);
 
 /**
  * @brief Set the quality for the thumb object.
@@ -224,7 +224,7 @@ EAPI Ethumb_Thumb_Aspect elm_thumb_aspect_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_quality_set(Evas_Object *obj, int quality);
+ELM_API void elm_thumb_quality_set(Evas_Object *obj, int quality);
 
 /**
  * @brief Get the quality of the thumb object.
@@ -235,7 +235,7 @@ EAPI void elm_thumb_quality_set(Evas_Object *obj, int quality);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_quality_get(const Evas_Object *obj, int *quality);
+ELM_API void elm_thumb_quality_get(const Evas_Object *obj, int *quality);
 
 /**
  * @brief Set the size for the thumb object.
@@ -247,7 +247,7 @@ EAPI void elm_thumb_quality_get(const Evas_Object *obj, int *quality);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_size_set(Evas_Object *obj, int tw, int th);
+ELM_API void elm_thumb_size_set(Evas_Object *obj, int tw, int th);
 
 /**
  * @brief Get the size of the thumb object.
@@ -259,7 +259,7 @@ EAPI void elm_thumb_size_set(Evas_Object *obj, int tw, int th);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_size_get(const Evas_Object *obj, int *tw, int *th);
+ELM_API void elm_thumb_size_get(const Evas_Object *obj, int *tw, int *th);
 
 /**
  * @brief Set the crop alignment for the thumb object.
@@ -271,7 +271,7 @@ EAPI void elm_thumb_size_get(const Evas_Object *obj, int *tw, int *th);
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_crop_align_set(Evas_Object *obj, double cropx, double cropy);
+ELM_API void elm_thumb_crop_align_set(Evas_Object *obj, double cropx, double cropy);
 
 /**
  * @brief Get the crop alignment of the thumb object.
@@ -283,7 +283,7 @@ EAPI void elm_thumb_crop_align_set(Evas_Object *obj, double cropx, double cropy)
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_crop_align_get(const Evas_Object *obj, double *cropx, double *cropy);
+ELM_API void elm_thumb_crop_align_get(const Evas_Object *obj, double *cropx, double *cropy);
 
 /**
  * @brief Get the path and key to the image or video thumbnail generated by
@@ -298,7 +298,7 @@ EAPI void elm_thumb_crop_align_get(const Evas_Object *obj, double *cropx, double
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key);
+ELM_API void elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key);
 
 /**
  * @brief Reload thumbnail if it was generated before.
@@ -312,6 +312,6 @@ EAPI void elm_thumb_path_get(const Evas_Object *obj, const char **file, const ch
  *
  * @ingroup Elm_Thumb
  */
-EAPI void elm_thumb_reload(Evas_Object *obj);
+ELM_API void elm_thumb_reload(Evas_Object *obj);
 
 #include "elm_thumb_eo.legacy.h"

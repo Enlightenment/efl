@@ -28,6 +28,6 @@ typedef Eo Elm_Inwin;
  *
  * @ingroup Elm_Inwin_Group
  */
-EAPI void elm_win_inwin_activate(Elm_Inwin *obj);
+ELM_API void elm_win_inwin_activate(Elm_Inwin *obj);
 
 #endif

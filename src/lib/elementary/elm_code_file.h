@@ -37,33 +37,33 @@ struct _Elm_Code_File
  *
  */
 
-EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code);
+ELM_API Elm_Code_File *elm_code_file_new(Elm_Code *code);
 
-EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path);
+ELM_API Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path);
 
-EAPI void elm_code_file_save(Elm_Code_File *file);
+ELM_API void elm_code_file_save(Elm_Code_File *file);
 
-EAPI void elm_code_file_free(Elm_Code_File *file);
+ELM_API void elm_code_file_free(Elm_Code_File *file);
 
-EAPI void elm_code_file_close(Elm_Code_File *file);
+ELM_API void elm_code_file_close(Elm_Code_File *file);
 
 /**
  * Get the filename for the file specified.
  *
  * @return the filename or NULL if it is an in-memory file
  */
-EAPI const char *elm_code_file_filename_get(Elm_Code_File *file);
+ELM_API const char *elm_code_file_filename_get(Elm_Code_File *file);
 
 /**
  * Get the file path for the file specified.
  *
  * @return the file's path or NULL if it is an in-memory file
  */
-EAPI const char *elm_code_file_path_get(Elm_Code_File *file);
+ELM_API const char *elm_code_file_path_get(Elm_Code_File *file);
 
-EAPI Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file);
+ELM_API Elm_Code_File_Line_Ending elm_code_file_line_ending_get(Elm_Code_File *file);
 
-EAPI const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short *length);
+ELM_API const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short *length);
 
 /**
  * @}
@@ -77,17 +77,17 @@ EAPI const char *elm_code_file_line_ending_chars_get(Elm_Code_File *file, short 
  *
  */
 
-EAPI void elm_code_file_clear(Elm_Code_File *file);
+ELM_API void elm_code_file_clear(Elm_Code_File *file);
 
-EAPI unsigned int elm_code_file_lines_get(Elm_Code_File *file);
+ELM_API unsigned int elm_code_file_lines_get(Elm_Code_File *file);
 
-EAPI void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length, void *data);
+ELM_API void elm_code_file_line_append(Elm_Code_File *file, const char *line, int length, void *data);
 
-EAPI void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const char *line, int length, void *data);
+ELM_API void elm_code_file_line_insert(Elm_Code_File *file, unsigned int row, const char *line, int length, void *data);
 
-EAPI void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row);
+ELM_API void elm_code_file_line_remove(Elm_Code_File *file, unsigned int row);
 
-EAPI Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int line);
+ELM_API Elm_Code_Line *elm_code_file_line_get(Elm_Code_File *file, unsigned int line);
 
 /**
  * @}

@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Grid_Group
  */
-EAPI Evas_Object *elm_grid_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_grid_add(Evas_Object *parent);
 
 /**
  * Set packing of an existing child at to position and size
@@ -19,7 +19,7 @@ EAPI Evas_Object *elm_grid_add(Evas_Object *parent);
  *
  * @ingroup Elm_Grid_Group
  */
-EAPI void         elm_grid_pack_set(Evas_Object *subobj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+ELM_API void         elm_grid_pack_set(Evas_Object *subobj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
 /**
  * Get packing of a child
@@ -32,6 +32,6 @@ EAPI void         elm_grid_pack_set(Evas_Object *subobj, Evas_Coord x, Evas_Coor
  *
  * @ingroup Elm_Grid_Group
  */
-EAPI void         elm_grid_pack_get(Evas_Object *subobj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+ELM_API void         elm_grid_pack_get(Evas_Object *subobj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 #include "elm_grid_eo.legacy.h"

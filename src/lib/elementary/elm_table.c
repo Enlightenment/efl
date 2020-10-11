@@ -130,7 +130,7 @@ _elm_table_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_table_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -257,7 +257,7 @@ _elm_table_unpack(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj)
    evas_object_table_unpack(wd->resize_obj, subobj);
 }
 
-EAPI void
+ELM_API void
 elm_table_pack_set(Evas_Object *subobj,
                    int col,
                    int row,
@@ -279,7 +279,7 @@ _elm_table_pack_set(Eo *obj, void *_pd EINA_UNUSED, Evas_Object *subobj, int col
    efl_ui_focus_composition_dirty(obj);
 }
 
-EAPI void
+ELM_API void
 elm_table_pack_get(Evas_Object *subobj,
                    int *col,
                    int *row,

@@ -609,7 +609,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
    return data;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_icon_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -636,7 +636,7 @@ _elm_icon_class_constructor(Efl_Class *klass)
 }
 
 /* Legacy deprecated functions */
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_memfile_set(Evas_Object *obj,
                      const void *img,
                      size_t size,
@@ -656,7 +656,7 @@ elm_icon_memfile_set(Evas_Object *obj,
    return elm_image_memfile_set(efl_super(obj, MY_CLASS), img, size, format, key);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_file_set(Evas_Object *obj,
                   const char *file,
                   const char *group)
@@ -667,7 +667,7 @@ elm_icon_file_set(Evas_Object *obj,
    return efl_file_simple_load(obj, file, group);
 }
 
-EAPI void
+ELM_API void
 elm_icon_file_get(const Evas_Object *obj,
                   const char **file,
                   const char **group)
@@ -677,7 +677,7 @@ elm_icon_file_get(const Evas_Object *obj,
    elm_image_file_get(obj, file, group);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_animated_available_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -685,7 +685,7 @@ elm_icon_animated_available_get(const Evas_Object *obj)
    return elm_image_animated_available_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_animated_set(Evas_Object *obj,
                       Eina_Bool anim)
 {
@@ -694,7 +694,7 @@ elm_icon_animated_set(Evas_Object *obj,
    return elm_image_animated_set(obj, anim);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_animated_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -702,7 +702,7 @@ elm_icon_animated_get(const Evas_Object *obj)
    return elm_image_animated_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_animated_play_set(Evas_Object *obj,
                            Eina_Bool play)
 {
@@ -711,7 +711,7 @@ elm_icon_animated_play_set(Evas_Object *obj,
    elm_image_animated_play_set(obj, play);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_animated_play_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -719,7 +719,7 @@ elm_icon_animated_play_get(const Evas_Object *obj)
    return elm_image_animated_play_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_smooth_set(Evas_Object *obj,
                     Eina_Bool smooth)
 {
@@ -728,7 +728,7 @@ elm_icon_smooth_set(Evas_Object *obj,
    elm_image_smooth_set(obj, smooth);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_smooth_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -736,7 +736,7 @@ elm_icon_smooth_get(const Evas_Object *obj)
    return elm_image_smooth_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_no_scale_set(Evas_Object *obj,
                       Eina_Bool no_scale)
 {
@@ -745,7 +745,7 @@ elm_icon_no_scale_set(Evas_Object *obj,
    elm_image_no_scale_set(obj, no_scale);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_no_scale_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -753,7 +753,7 @@ elm_icon_no_scale_get(const Evas_Object *obj)
    return elm_image_no_scale_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_resizable_set(Evas_Object *obj,
                        Eina_Bool size_up,
                        Eina_Bool size_down)
@@ -763,7 +763,7 @@ elm_icon_resizable_set(Evas_Object *obj,
    elm_image_resizable_set(obj, size_up, size_down);
 }
 
-EAPI void
+ELM_API void
 elm_icon_resizable_get(const Evas_Object *obj,
                        Eina_Bool *size_up,
                        Eina_Bool *size_down)
@@ -773,7 +773,7 @@ elm_icon_resizable_get(const Evas_Object *obj,
    elm_image_resizable_get(obj, size_up, size_down);
 }
 
-EAPI void
+ELM_API void
 elm_icon_fill_outside_set(Evas_Object *obj,
                           Eina_Bool fill_outside)
 {
@@ -782,7 +782,7 @@ elm_icon_fill_outside_set(Evas_Object *obj,
    elm_image_fill_outside_set(obj, fill_outside);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_fill_outside_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -790,7 +790,7 @@ elm_icon_fill_outside_get(const Evas_Object *obj)
    return elm_image_fill_outside_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_size_get(const Evas_Object *obj,
                   int *w,
                   int *h)
@@ -800,7 +800,7 @@ elm_icon_size_get(const Evas_Object *obj,
    elm_image_object_size_get(obj, w, h);
 }
 
-EAPI void
+ELM_API void
 elm_icon_prescale_set(Evas_Object *obj,
                       int size)
 {
@@ -809,7 +809,7 @@ elm_icon_prescale_set(Evas_Object *obj,
    elm_image_prescale_set(obj, size);
 }
 
-EAPI int
+ELM_API int
 elm_icon_prescale_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) 0;
@@ -817,7 +817,7 @@ elm_icon_prescale_get(const Evas_Object *obj)
    return elm_image_prescale_get(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_icon_object_get(Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) 0;
@@ -825,7 +825,7 @@ elm_icon_object_get(Evas_Object *obj)
    return elm_image_object_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_preload_disabled_set(Evas_Object *obj,
                               Eina_Bool disabled)
 {
@@ -834,7 +834,7 @@ elm_icon_preload_disabled_set(Evas_Object *obj,
    elm_image_preload_disabled_set(obj, disabled);
 }
 
-EAPI void
+ELM_API void
 elm_icon_aspect_fixed_set(Evas_Object *obj,
                           Eina_Bool fixed)
 {
@@ -843,7 +843,7 @@ elm_icon_aspect_fixed_set(Evas_Object *obj,
    elm_image_aspect_fixed_set(obj, fixed);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_aspect_fixed_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
@@ -851,7 +851,7 @@ elm_icon_aspect_fixed_get(const Evas_Object *obj)
    return elm_image_aspect_fixed_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
 {
    ELM_ICON_CHECK(obj);
@@ -881,7 +881,7 @@ elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_icon_standard_set(Evas_Object *obj, const char *name)
 {
    Eina_Bool fdo = EINA_FALSE;
@@ -902,7 +902,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
    return int_ret;
 }
 
-EAPI const char*
+ELM_API const char*
 elm_icon_standard_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) NULL;
@@ -911,14 +911,14 @@ elm_icon_standard_get(const Evas_Object *obj)
    return sd->stdicon;
 }
 
-EAPI void
+ELM_API void
 elm_icon_order_lookup_set(Evas_Object *obj EINA_UNUSED,
                            Elm_Icon_Lookup_Order order EINA_UNUSED)
 {
    // this method's behaviour has been overridden by elm_config_icon_theme_set
 }
 
-EAPI Elm_Icon_Lookup_Order
+ELM_API Elm_Icon_Lookup_Order
 elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 {
    return ELM_ICON_LOOKUP_FDO_THEME;

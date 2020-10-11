@@ -1,28 +1,28 @@
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_PRESS =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_PRESS =
    EFL_EVENT_DESCRIPTION("press");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_LOADED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_LOADED =
    EFL_EVENT_DESCRIPTION("loaded");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_TILE_LOAD =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_TILE_LOAD =
    EFL_EVENT_DESCRIPTION("tile,load");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_TILE_LOADED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_TILE_LOADED =
    EFL_EVENT_DESCRIPTION("tile,loaded");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_TILE_LOADED_FAIL =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_TILE_LOADED_FAIL =
    EFL_EVENT_DESCRIPTION("tile,loaded,fail");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_ROUTE_LOAD =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_ROUTE_LOAD =
    EFL_EVENT_DESCRIPTION("route,load");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_ROUTE_LOADED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_ROUTE_LOADED =
    EFL_EVENT_DESCRIPTION("route,loaded");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_ROUTE_LOADED_FAIL =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_ROUTE_LOADED_FAIL =
    EFL_EVENT_DESCRIPTION("route,loaded,fail");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_NAME_LOAD =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_NAME_LOAD =
    EFL_EVENT_DESCRIPTION("name,load");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_NAME_LOADED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_NAME_LOADED =
    EFL_EVENT_DESCRIPTION("name,loaded");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_NAME_LOADED_FAIL =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_NAME_LOADED_FAIL =
    EFL_EVENT_DESCRIPTION("name,loaded,fail");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_OVERLAY_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_OVERLAY_CLICKED =
    EFL_EVENT_DESCRIPTION("overlay,clicked");
-EWAPI const Efl_Event_Description _ELM_MAP_EVENT_OVERLAY_DEL =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_MAP_EVENT_OVERLAY_DEL =
    EFL_EVENT_DESCRIPTION("overlay,del");
 
 void _elm_map_zoom_min_set(Eo *obj, Elm_Map_Data *pd, int zoom);
@@ -43,7 +43,7 @@ __eolian_elm_map_zoom_min_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_zoom_min_set, EFL_FUNC_CALL(zoom), int zoom);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_zoom_min_set, EFL_FUNC_CALL(zoom), int zoom);
 
 int _elm_map_zoom_min_get(const Eo *obj, Elm_Map_Data *pd);
 
@@ -55,15 +55,15 @@ __eolian_elm_map_zoom_min_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_map_zoom_min_get, int, -1 /* +1 */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_map_zoom_min_get, int, -1 /* +1 */);
 
 void _elm_map_map_rotate_set(Eo *obj, Elm_Map_Data *pd, double degree, int cx, int cy);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_rotate_set, EFL_FUNC_CALL(degree, cx, cy), double degree, int cx, int cy);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_rotate_set, EFL_FUNC_CALL(degree, cx, cy), double degree, int cx, int cy);
 
 void _elm_map_map_rotate_get(const Eo *obj, Elm_Map_Data *pd, double *degree, int *cx, int *cy);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_rotate_get, EFL_FUNC_CALL(degree, cx, cy), double *degree, int *cx, int *cy);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_rotate_get, EFL_FUNC_CALL(degree, cx, cy), double *degree, int *cx, int *cy);
 
 void _elm_map_user_agent_set(Eo *obj, Elm_Map_Data *pd, const char *user_agent);
 
@@ -83,7 +83,7 @@ __eolian_elm_map_user_agent_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_user_agent_set, EFL_FUNC_CALL(user_agent), const char *user_agent);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_user_agent_set, EFL_FUNC_CALL(user_agent), const char *user_agent);
 
 const char *_elm_map_user_agent_get(const Eo *obj, Elm_Map_Data *pd);
 
@@ -95,7 +95,7 @@ __eolian_elm_map_user_agent_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_map_user_agent_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_map_user_agent_get, const char *, NULL);
 
 void _elm_map_zoom_max_set(Eo *obj, Elm_Map_Data *pd, int zoom);
 
@@ -115,7 +115,7 @@ __eolian_elm_map_zoom_max_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_zoom_max_set, EFL_FUNC_CALL(zoom), int zoom);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_zoom_max_set, EFL_FUNC_CALL(zoom), int zoom);
 
 int _elm_map_zoom_max_get(const Eo *obj, Elm_Map_Data *pd);
 
@@ -127,103 +127,103 @@ __eolian_elm_map_zoom_max_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_map_zoom_max_get, int, -1 /* +1 */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_map_zoom_max_get, int, -1 /* +1 */);
 
 void _elm_map_region_get(const Eo *obj, Elm_Map_Data *pd, double *lon, double *lat);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_region_get, EFL_FUNC_CALL(lon, lat), double *lon, double *lat);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_region_get, EFL_FUNC_CALL(lon, lat), double *lon, double *lat);
 
 Eina_List *_elm_map_overlays_get(const Eo *obj, Elm_Map_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_map_overlays_get, Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_map_overlays_get, Eina_List *, NULL);
 
 void _elm_map_tile_load_status_get(const Eo *obj, Elm_Map_Data *pd, int *try_num, int *finish_num);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_tile_load_status_get, EFL_FUNC_CALL(try_num, finish_num), int *try_num, int *finish_num);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_tile_load_status_get, EFL_FUNC_CALL(try_num, finish_num), int *try_num, int *finish_num);
 
 void _elm_map_source_set(Eo *obj, Elm_Map_Data *pd, Elm_Map_Source_Type type, const char *source_name);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_source_set, EFL_FUNC_CALL(type, source_name), Elm_Map_Source_Type type, const char *source_name);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_source_set, EFL_FUNC_CALL(type, source_name), Elm_Map_Source_Type type, const char *source_name);
 
 const char *_elm_map_source_get(const Eo *obj, Elm_Map_Data *pd, Elm_Map_Source_Type type);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_map_source_get, const char *, NULL, EFL_FUNC_CALL(type), Elm_Map_Source_Type type);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_map_source_get, const char *, NULL, EFL_FUNC_CALL(type), Elm_Map_Source_Type type);
 
 Elm_Map_Route *_elm_map_route_add(Eo *obj, Elm_Map_Data *pd, Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat, Elm_Map_Route_Cb route_cb, void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_route_add, Elm_Map_Route *, NULL, EFL_FUNC_CALL(type, method, flon, flat, tlon, tlat, route_cb, data), Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat, Elm_Map_Route_Cb route_cb, void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_route_add, Elm_Map_Route *, NULL, EFL_FUNC_CALL(type, method, flon, flat, tlon, tlat, route_cb, data), Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat, Elm_Map_Route_Cb route_cb, void *data);
 
 Efl_Canvas_Object *_elm_map_track_add(Eo *obj, Elm_Map_Data *pd, void *emap);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_track_add, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(emap), void *emap);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_track_add, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(emap), void *emap);
 
 void _elm_map_region_to_canvas_convert(const Eo *obj, Elm_Map_Data *pd, double lon, double lat, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_region_to_canvas_convert, EFL_FUNC_CALL(lon, lat, x, y), double lon, double lat, int *x, int *y);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_region_to_canvas_convert, EFL_FUNC_CALL(lon, lat, x, y), double lon, double lat, int *x, int *y);
 
 Elm_Map_Overlay *_elm_map_overlay_circle_add(Eo *obj, Elm_Map_Data *pd, double lon, double lat, double radius);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_overlay_circle_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(lon, lat, radius), double lon, double lat, double radius);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_overlay_circle_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(lon, lat, radius), double lon, double lat, double radius);
 
 Elm_Map_Overlay *_elm_map_overlay_class_add(Eo *obj, Elm_Map_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_map_overlay_class_add, Elm_Map_Overlay *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_map_overlay_class_add, Elm_Map_Overlay *, NULL);
 
 Elm_Map_Overlay *_elm_map_overlay_bubble_add(Eo *obj, Elm_Map_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_map_overlay_bubble_add, Elm_Map_Overlay *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_map_overlay_bubble_add, Elm_Map_Overlay *, NULL);
 
 const char **_elm_map_sources_get(const Eo *obj, Elm_Map_Data *pd, Elm_Map_Source_Type type);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_map_sources_get, const char **, NULL, EFL_FUNC_CALL(type), Elm_Map_Source_Type type);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_map_sources_get, const char **, NULL, EFL_FUNC_CALL(type), Elm_Map_Source_Type type);
 
 Elm_Map_Overlay *_elm_map_overlay_polygon_add(Eo *obj, Elm_Map_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_map_overlay_polygon_add, Elm_Map_Overlay *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_map_overlay_polygon_add, Elm_Map_Overlay *, NULL);
 
 Elm_Map_Overlay *_elm_map_overlay_line_add(Eo *obj, Elm_Map_Data *pd, double flon, double flat, double tlon, double tlat);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_overlay_line_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(flon, flat, tlon, tlat), double flon, double flat, double tlon, double tlat);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_overlay_line_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(flon, flat, tlon, tlat), double flon, double flat, double tlon, double tlat);
 
 void _elm_map_region_show(Eo *obj, Elm_Map_Data *pd, double lon, double lat);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_region_show, EFL_FUNC_CALL(lon, lat), double lon, double lat);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_region_show, EFL_FUNC_CALL(lon, lat), double lon, double lat);
 
 Elm_Map_Name *_elm_map_name_add(const Eo *obj, Elm_Map_Data *pd, const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_map_name_add, Elm_Map_Name *, NULL, EFL_FUNC_CALL(address, lon, lat, name_cb, data), const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_map_name_add, Elm_Map_Name *, NULL, EFL_FUNC_CALL(address, lon, lat, name_cb, data), const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data);
 
 void _elm_map_name_search(const Eo *obj, Elm_Map_Data *pd, const char *address, Elm_Map_Name_List_Cb name_cb, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_name_search, EFL_FUNC_CALL(address, name_cb, data), const char *address, Elm_Map_Name_List_Cb name_cb, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_name_search, EFL_FUNC_CALL(address, name_cb, data), const char *address, Elm_Map_Name_List_Cb name_cb, void *data);
 
 void _elm_map_map_region_bring_in(Eo *obj, Elm_Map_Data *pd, double lon, double lat);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_region_bring_in, EFL_FUNC_CALL(lon, lat), double lon, double lat);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_region_bring_in, EFL_FUNC_CALL(lon, lat), double lon, double lat);
 
 void _elm_map_region_zoom_bring_in(Eo *obj, Elm_Map_Data *pd, int zoom, double lon, double lat);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_region_zoom_bring_in, EFL_FUNC_CALL(zoom, lon, lat), int zoom, double lon, double lat);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_region_zoom_bring_in, EFL_FUNC_CALL(zoom, lon, lat), int zoom, double lon, double lat);
 
 void _elm_map_track_remove(Eo *obj, Elm_Map_Data *pd, Efl_Canvas_Object *route);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_map_track_remove, EFL_FUNC_CALL(route), Efl_Canvas_Object *route);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_map_track_remove, EFL_FUNC_CALL(route), Efl_Canvas_Object *route);
 
 Elm_Map_Overlay *_elm_map_overlay_route_add(Eo *obj, Elm_Map_Data *pd, const Elm_Map_Route *route);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_overlay_route_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(route), const Elm_Map_Route *route);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_overlay_route_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(route), const Elm_Map_Route *route);
 
 Elm_Map_Overlay *_elm_map_overlay_scale_add(Eo *obj, Elm_Map_Data *pd, int x, int y);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_overlay_scale_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(x, y), int x, int y);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_overlay_scale_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(x, y), int x, int y);
 
 Elm_Map_Overlay *_elm_map_overlay_add(Eo *obj, Elm_Map_Data *pd, double lon, double lat);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_map_overlay_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(lon, lat), double lon, double lat);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_map_overlay_add, Elm_Map_Overlay *, NULL, EFL_FUNC_CALL(lon, lat), double lon, double lat);
 
 void _elm_map_canvas_to_region_convert(const Eo *obj, Elm_Map_Data *pd, int x, int y, double *lon, double *lat);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_canvas_to_region_convert, EFL_FUNC_CALL(x, y, lon, lat), int x, int y, double *lon, double *lat);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_map_canvas_to_region_convert, EFL_FUNC_CALL(x, y, lon, lat), int x, int y, double *lon, double *lat);
 
 Efl_Object *_elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *pd);
 

@@ -19,7 +19,7 @@ typedef Eo Elm_Separator;
  */
 #define ELM_SEPARATOR_CLASS elm_separator_class_get()
 
-EWAPI const Efl_Class *elm_separator_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_separator_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the horizontal mode of a separator object
@@ -29,7 +29,7 @@ EWAPI const Efl_Class *elm_separator_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Separator
  */
-EOAPI void elm_obj_separator_horizontal_set(Eo *obj, Eina_Bool horizontal);
+ELM_API ELM_API_WEAK void elm_obj_separator_horizontal_set(Eo *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get the horizontal mode of a separator object
@@ -40,6 +40,6 @@ EOAPI void elm_obj_separator_horizontal_set(Eo *obj, Eina_Bool horizontal);
  *
  * @ingroup Elm_Separator
  */
-EOAPI Eina_Bool elm_obj_separator_horizontal_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_separator_horizontal_get(const Eo *obj);
 
 #endif

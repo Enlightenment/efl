@@ -19,6 +19,6 @@ typedef Eo Elm_Gengrid_Pan;
  */
 #define ELM_GENGRID_PAN_CLASS elm_gengrid_pan_class_get()
 
-EWAPI const Efl_Class *elm_gengrid_pan_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_gengrid_pan_class_get(void) EINA_CONST;
 
 #endif

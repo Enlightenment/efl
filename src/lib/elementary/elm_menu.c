@@ -807,7 +807,7 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
    efl_ui_widget_theme_apply(obj);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_menu_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -908,7 +908,7 @@ _elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *sd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EAPI void
+ELM_API void
 elm_menu_parent_set(Evas_Object *obj,
                     Evas_Object *parent)
 {
@@ -918,7 +918,7 @@ elm_menu_parent_set(Evas_Object *obj,
    _parent_setup(obj, sd, parent);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_menu_parent_get(const Evas_Object *obj)
 {
    ELM_MENU_CHECK(obj) NULL;

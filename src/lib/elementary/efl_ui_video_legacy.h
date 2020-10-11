@@ -17,7 +17,7 @@ typedef Eo Elm_Video;
  *
  * @ingroup Elm_Video
  */
-EAPI Evas_Object         *elm_player_add(Evas_Object *parent);
+ELM_API Evas_Object         *elm_player_add(Evas_Object *parent);
 
 /**
  * @brief Add a new Elm_Video object to the given parent Elementary (container) object.
@@ -31,7 +31,7 @@ EAPI Evas_Object         *elm_player_add(Evas_Object *parent);
  *
  * @ingroup Elm_Video
  */
-EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
+ELM_API Evas_Object         *elm_video_add(Evas_Object *parent);
 
 /**
  *
@@ -53,7 +53,7 @@ URI could be remote source of video, like http:// or local source like
 WebCam (v4l2://). (You can use Emotion API to request and list
 the available Webcam on your system).
  */
-EAPI Eina_Bool elm_video_file_set(Eo *obj, const char *filename);
+ELM_API Eina_Bool elm_video_file_set(Eo *obj, const char *filename);
 
 /**
  *
@@ -65,7 +65,7 @@ EAPI Eina_Bool elm_video_file_set(Eo *obj, const char *filename);
  *
  * @since 1.14
  */
-EAPI void elm_video_file_get(Eo *obj, const char **filename);
+ELM_API void elm_video_file_get(Eo *obj, const char **filename);
 
 /**
  * @brief Set the audio level of an Elm_Video object.
@@ -74,7 +74,7 @@ EAPI void elm_video_file_get(Eo *obj, const char **filename);
  *
  * @ingroup Elm_Video
  */
-EAPI void elm_video_audio_level_set(Evas_Object *obj, double volume);
+ELM_API void elm_video_audio_level_set(Evas_Object *obj, double volume);
 
 /**
  * @brief Get the audio level of the current video.
@@ -83,7 +83,7 @@ EAPI void elm_video_audio_level_set(Evas_Object *obj, double volume);
  *
  * @ingroup Elm_Video
  */
-EAPI double elm_video_audio_level_get(const Evas_Object *obj);
+ELM_API double elm_video_audio_level_get(const Evas_Object *obj);
 
 /**
  * @brief Change the mute state of the Elm_Video object.
@@ -92,7 +92,7 @@ EAPI double elm_video_audio_level_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Video
  */
-EAPI void elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute);
+ELM_API void elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute);
 
 /**
  * @brief Get whether audio is muted.
@@ -101,7 +101,7 @@ EAPI void elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute);
  *
  * @ingroup Elm_Video
  */
-EAPI Eina_Bool elm_video_audio_mute_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_video_audio_mute_get(const Evas_Object *obj);
 
 /**
  * @brief Get the total playing time (in seconds) of the Elm_Video object.
@@ -110,7 +110,7 @@ EAPI Eina_Bool elm_video_audio_mute_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Video
  */
-EAPI double elm_video_play_length_get(const Evas_Object *obj);
+ELM_API double elm_video_play_length_get(const Evas_Object *obj);
 
 /**
  * @brief Is it possible to seek inside the video.
@@ -119,7 +119,7 @@ EAPI double elm_video_play_length_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Video
  */
-EAPI Eina_Bool elm_video_is_seekable_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_video_is_seekable_get(const Evas_Object *obj);
 
 /**
  * @brief Set the current position (in seconds) to be played in the Elm_Video
@@ -130,7 +130,7 @@ EAPI Eina_Bool elm_video_is_seekable_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Video
  */
-EAPI void elm_video_play_position_set(Evas_Object *obj, double position);
+ELM_API void elm_video_play_position_set(Evas_Object *obj, double position);
 
 /**
  * @brief Get the current position (in seconds) being played in the Elm_Video
@@ -140,7 +140,7 @@ EAPI void elm_video_play_position_set(Evas_Object *obj, double position);
  *
  * @ingroup Elm_Video
  */
-EAPI double elm_video_play_position_get(const Evas_Object *obj);
+ELM_API double elm_video_play_position_get(const Evas_Object *obj);
 
 /**
  * @brief Get whether the video actually playing.
@@ -151,27 +151,27 @@ EAPI double elm_video_play_position_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Video
  */
-EAPI Eina_Bool elm_video_is_playing_get(Evas_Object *obj);
+ELM_API Eina_Bool elm_video_is_playing_get(Evas_Object *obj);
 
 /**
  * @brief Start playing a video.
  *
  * @ingroup Elm_Video
  */
-EAPI void elm_video_play(Evas_Object *obj);
+ELM_API void elm_video_play(Evas_Object *obj);
 
 /**
  * @brief Stop a video.
  *
  * @ingroup Elm_Video
  */
-EAPI void elm_video_stop(Evas_Object *obj);
+ELM_API void elm_video_stop(Evas_Object *obj);
 
 /**
  * @brief Pause a video.
  *
  * @ingroup Elm_Video
  */
-EAPI void elm_video_pause(Evas_Object *obj);
+ELM_API void elm_video_pause(Evas_Object *obj);
 
 #include "efl_ui_video_eo.legacy.h"

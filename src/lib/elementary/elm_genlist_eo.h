@@ -19,7 +19,7 @@ typedef Eo Elm_Genlist;
  */
 #define ELM_GENLIST_CLASS elm_genlist_class_get()
 
-EWAPI const Efl_Class *elm_genlist_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_genlist_class_get(void) EINA_CONST;
 
 /**
  * @brief Enable/disable homogeneous mode.
@@ -40,7 +40,7 @@ EWAPI const Efl_Class *elm_genlist_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
+ELM_API ELM_API_WEAK void elm_obj_genlist_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
 
 /**
  * @brief Get whether the homogeneous mode is enabled.
@@ -52,7 +52,7 @@ EOAPI void elm_obj_genlist_homogeneous_set(Eo *obj, Eina_Bool homogeneous);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_homogeneous_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_homogeneous_get(const Eo *obj);
 
 /**
  * @brief Set the genlist select mode.
@@ -70,7 +70,7 @@ EOAPI Eina_Bool elm_obj_genlist_homogeneous_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_select_mode_set(Eo *obj, Elm_Object_Select_Mode mode);
+ELM_API ELM_API_WEAK void elm_obj_genlist_select_mode_set(Eo *obj, Elm_Object_Select_Mode mode);
 
 /**
  * @brief Get the genlist select mode.
@@ -81,7 +81,7 @@ EOAPI void elm_obj_genlist_select_mode_set(Eo *obj, Elm_Object_Select_Mode mode)
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Object_Select_Mode elm_obj_genlist_select_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Object_Select_Mode elm_obj_genlist_select_mode_get(const Eo *obj);
 
 /**
  * @brief Set focus upon items selection mode
@@ -97,7 +97,7 @@ EOAPI Elm_Object_Select_Mode elm_obj_genlist_select_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_focus_on_selection_set(Eo *obj, Eina_Bool enabled);
+ELM_API ELM_API_WEAK void elm_obj_genlist_focus_on_selection_set(Eo *obj, Eina_Bool enabled);
 
 /**
  * @brief Get whether focus upon item's selection mode is enabled.
@@ -108,7 +108,7 @@ EOAPI void elm_obj_genlist_focus_on_selection_set(Eo *obj, Eina_Bool enabled);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_focus_on_selection_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_focus_on_selection_get(const Eo *obj);
 
 /**
  * @brief Set the timeout in seconds for the longpress event.
@@ -126,7 +126,7 @@ EOAPI Eina_Bool elm_obj_genlist_focus_on_selection_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_longpress_timeout_set(Eo *obj, double timeout);
+ELM_API ELM_API_WEAK void elm_obj_genlist_longpress_timeout_set(Eo *obj, double timeout);
 
 /**
  * @brief Get the timeout in seconds for the longpress event.
@@ -137,7 +137,7 @@ EOAPI void elm_obj_genlist_longpress_timeout_set(Eo *obj, double timeout);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI double elm_obj_genlist_longpress_timeout_get(const Eo *obj);
+ELM_API ELM_API_WEAK double elm_obj_genlist_longpress_timeout_get(const Eo *obj);
 
 /**
  * @brief Enable or disable multi-selection in the genlist.
@@ -151,7 +151,7 @@ EOAPI double elm_obj_genlist_longpress_timeout_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_multi_select_set(Eo *obj, Eina_Bool multi);
+ELM_API ELM_API_WEAK void elm_obj_genlist_multi_select_set(Eo *obj, Eina_Bool multi);
 
 /**
  * @brief Get if multi-selection in genlist is enabled or disabled.
@@ -162,7 +162,7 @@ EOAPI void elm_obj_genlist_multi_select_set(Eo *obj, Eina_Bool multi);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_multi_select_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_multi_select_get(const Eo *obj);
 
 /**
  * @brief Set reorder mode.
@@ -176,7 +176,7 @@ EOAPI Eina_Bool elm_obj_genlist_multi_select_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_reorder_mode_set(Eo *obj, Eina_Bool reorder_mode);
+ELM_API ELM_API_WEAK void elm_obj_genlist_reorder_mode_set(Eo *obj, Eina_Bool reorder_mode);
 
 /**
  * @brief Get the reorder mode.
@@ -187,7 +187,7 @@ EOAPI void elm_obj_genlist_reorder_mode_set(Eo *obj, Eina_Bool reorder_mode);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_reorder_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_reorder_mode_get(const Eo *obj);
 
 /**
  * @brief Set Genlist decorate mode.
@@ -199,7 +199,7 @@ EOAPI Eina_Bool elm_obj_genlist_reorder_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_decorate_mode_set(Eo *obj, Eina_Bool decorated);
+ELM_API ELM_API_WEAK void elm_obj_genlist_decorate_mode_set(Eo *obj, Eina_Bool decorated);
 
 /**
  * @brief Get Genlist decorate mode.
@@ -210,7 +210,7 @@ EOAPI void elm_obj_genlist_decorate_mode_set(Eo *obj, Eina_Bool decorated);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_decorate_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_decorate_mode_get(const Eo *obj);
 
 /**
  * @brief Set the genlist multi select mode.
@@ -228,7 +228,7 @@ EOAPI Eina_Bool elm_obj_genlist_decorate_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_multi_select_mode_set(Eo *obj, Elm_Object_Multi_Select_Mode mode);
+ELM_API ELM_API_WEAK void elm_obj_genlist_multi_select_mode_set(Eo *obj, Elm_Object_Multi_Select_Mode mode);
 
 /**
  * @brief Get the genlist multi select mode.
@@ -241,7 +241,7 @@ EOAPI void elm_obj_genlist_multi_select_mode_set(Eo *obj, Elm_Object_Multi_Selec
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Object_Multi_Select_Mode elm_obj_genlist_multi_select_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Object_Multi_Select_Mode elm_obj_genlist_multi_select_mode_get(const Eo *obj);
 
 /**
  * @brief Set the maximum number of items within an item block.
@@ -264,7 +264,7 @@ EOAPI Elm_Object_Multi_Select_Mode elm_obj_genlist_multi_select_mode_get(const E
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_block_count_set(Eo *obj, int count);
+ELM_API ELM_API_WEAK void elm_obj_genlist_block_count_set(Eo *obj, int count);
 
 /**
  * @brief Get the maximum number of items within an item block.
@@ -275,7 +275,7 @@ EOAPI void elm_obj_genlist_block_count_set(Eo *obj, int count);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI int elm_obj_genlist_block_count_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_obj_genlist_block_count_get(const Eo *obj);
 
 /**
  * @brief Control genlist tree effect.
@@ -285,7 +285,7 @@ EOAPI int elm_obj_genlist_block_count_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_tree_effect_enabled_set(Eo *obj, Eina_Bool enabled);
+ELM_API ELM_API_WEAK void elm_obj_genlist_tree_effect_enabled_set(Eo *obj, Eina_Bool enabled);
 
 /**
  * @brief Control genlist tree effect.
@@ -296,7 +296,7 @@ EOAPI void elm_obj_genlist_tree_effect_enabled_set(Eo *obj, Eina_Bool enabled);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_tree_effect_enabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_tree_effect_enabled_get(const Eo *obj);
 
 /**
  * @brief Set whether the genlist items should be highlighted on item
@@ -313,7 +313,7 @@ EOAPI Eina_Bool elm_obj_genlist_tree_effect_enabled_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_highlight_mode_set(Eo *obj, Eina_Bool highlight);
+ELM_API ELM_API_WEAK void elm_obj_genlist_highlight_mode_set(Eo *obj, Eina_Bool highlight);
 
 /**
  * @brief Get whether the genlist items' should be highlighted when item
@@ -325,7 +325,7 @@ EOAPI void elm_obj_genlist_highlight_mode_set(Eo *obj, Eina_Bool highlight);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Bool elm_obj_genlist_highlight_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_genlist_highlight_mode_get(const Eo *obj);
 
 /**
  * @brief This sets the horizontal stretching mode.
@@ -357,7 +357,7 @@ EOAPI Eina_Bool elm_obj_genlist_highlight_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_mode_set(Eo *obj, Elm_List_Mode mode);
+ELM_API ELM_API_WEAK void elm_obj_genlist_mode_set(Eo *obj, Elm_List_Mode mode);
 
 /**
  * @brief Get the horizontal stretching mode.
@@ -369,7 +369,7 @@ EOAPI void elm_obj_genlist_mode_set(Eo *obj, Elm_List_Mode mode);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_List_Mode elm_obj_genlist_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_List_Mode elm_obj_genlist_mode_get(const Eo *obj);
 
 /**
  * @brief Get active genlist mode item.
@@ -384,7 +384,7 @@ EOAPI Elm_List_Mode elm_obj_genlist_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_decorated_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_decorated_item_get(const Eo *obj);
 
 /**
  * @brief Get the selected item in the genlist.
@@ -402,7 +402,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_decorated_item_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_selected_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_selected_item_get(const Eo *obj);
 
 /**
  * @brief Get the first item in the genlist.
@@ -417,7 +417,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_selected_item_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_first_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_first_item_get(const Eo *obj);
 
 /**
  * @brief Get a list of realized items in genlist.
@@ -433,7 +433,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_first_item_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_List *elm_obj_genlist_realized_items_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+ELM_API ELM_API_WEAK Eina_List *elm_obj_genlist_realized_items_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get a list of selected items in the genlist.
@@ -454,7 +454,7 @@ EOAPI Eina_List *elm_obj_genlist_realized_items_get(const Eo *obj) EINA_WARN_UNU
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI const Eina_List *elm_obj_genlist_selected_items_get(const Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_obj_genlist_selected_items_get(const Eo *obj);
 
 /**
  * @brief Get the last item in the genlist
@@ -469,7 +469,7 @@ EOAPI const Eina_List *elm_obj_genlist_selected_items_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_last_item_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_last_item_get(const Eo *obj);
 
 /**
  * @brief Insert an item before another in a genlist widget
@@ -490,7 +490,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_last_item_get(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_item_insert_before(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *before_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_item_insert_before(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *before_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Update the contents of all realized items.
@@ -504,7 +504,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_item_insert_before(Eo *obj, const Elm_Gen
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_realized_items_update(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_genlist_realized_items_update(Eo *obj);
 
 /**
  * @brief Insert an item after another in a genlist widget
@@ -525,7 +525,7 @@ EOAPI void elm_obj_genlist_realized_items_update(Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_item_insert_after(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *after_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_item_insert_after(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Widget_Item *after_it, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Get the item that is at the x, y canvas coords.
@@ -548,7 +548,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_item_insert_after(Eo *obj, const Elm_Genl
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_at_xy_item_get(const Eo *obj, int x, int y, int *posret);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_at_xy_item_get(const Eo *obj, int x, int y, int *posret);
 
 /**
  * @brief Set filter mode with key.
@@ -564,7 +564,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_at_xy_item_get(const Eo *obj, int x, int 
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_filter_set(Eo *obj, void *key);
+ELM_API ELM_API_WEAK void elm_obj_genlist_filter_set(Eo *obj, void *key);
 
 /**
  * @brief Returns an iterator over the list of filtered items.
@@ -578,7 +578,7 @@ EOAPI void elm_obj_genlist_filter_set(Eo *obj, void *key);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Eina_Iterator *elm_obj_genlist_filter_iterator_new(Eo *obj);
+ELM_API ELM_API_WEAK Eina_Iterator *elm_obj_genlist_filter_iterator_new(Eo *obj);
 
 /**
  * @brief Return how many items have passed the filter currently.
@@ -595,7 +595,7 @@ EOAPI Eina_Iterator *elm_obj_genlist_filter_iterator_new(Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI unsigned int elm_obj_genlist_filtered_items_count(const Eo *obj);
+ELM_API ELM_API_WEAK unsigned int elm_obj_genlist_filtered_items_count(const Eo *obj);
 
 /**
  * @brief Return how many items are currently in a list.
@@ -608,7 +608,7 @@ EOAPI unsigned int elm_obj_genlist_filtered_items_count(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI unsigned int elm_obj_genlist_items_count(const Eo *obj);
+ELM_API ELM_API_WEAK unsigned int elm_obj_genlist_items_count(const Eo *obj);
 
 /**
  * @brief Prepend a new item in a given genlist widget.
@@ -628,7 +628,7 @@ EOAPI unsigned int elm_obj_genlist_items_count(const Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_item_prepend(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_item_prepend(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Remove all items from a given genlist widget.
@@ -638,7 +638,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_item_prepend(Eo *obj, const Elm_Genlist_I
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI void elm_obj_genlist_clear(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_genlist_clear(Eo *obj);
 
 /**
  * @brief Append a new item in a given genlist widget.
@@ -658,7 +658,7 @@ EOAPI void elm_obj_genlist_clear(Eo *obj);
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_item_append(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_item_append(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Insert a new item into the sorted genlist object
@@ -680,7 +680,7 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_item_append(Eo *obj, const Elm_Genlist_It
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_item_sorted_insert(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_item_sorted_insert(Eo *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Widget_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * @brief Get genlist item by given string.
@@ -706,9 +706,9 @@ EOAPI Elm_Widget_Item *elm_obj_genlist_item_sorted_insert(Eo *obj, const Elm_Gen
  *
  * @ingroup Elm_Genlist_Group
  */
-EOAPI Elm_Widget_Item *elm_obj_genlist_search_by_text_item_get(Eo *obj, Elm_Widget_Item *item_to_search_from, const char *part_name, const char *pattern, Elm_Glob_Match_Flags flags);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_genlist_search_by_text_item_get(Eo *obj, Elm_Widget_Item *item_to_search_from, const char *part_name, const char *pattern, Elm_Glob_Match_Flags flags);
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_ITEM_FOCUSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_ITEM_FOCUSED;
 
 /** Called when genlist item got focus
  * @return Efl_Object *
@@ -717,7 +717,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_ITEM_FOCUSED;
  */
 #define ELM_GENLIST_EVENT_ITEM_FOCUSED (&(_ELM_GENLIST_EVENT_ITEM_FOCUSED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_ITEM_UNFOCUSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_ITEM_UNFOCUSED;
 
 /** Called when genlist item lost focus
  * @return Efl_Object *
@@ -726,7 +726,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_ITEM_UNFOCUSED;
  */
 #define ELM_GENLIST_EVENT_ITEM_UNFOCUSED (&(_ELM_GENLIST_EVENT_ITEM_UNFOCUSED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_DRAG;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_DRAG;
 
 /** Called when vertical bar is dragged
  *
@@ -734,7 +734,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_DRAG;
  */
 #define ELM_GENLIST_EVENT_VBAR_DRAG (&(_ELM_GENLIST_EVENT_VBAR_DRAG))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_PRESS;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_PRESS;
 
 /** Called when vertical bar is pressed
  *
@@ -742,7 +742,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_PRESS;
  */
 #define ELM_GENLIST_EVENT_VBAR_PRESS (&(_ELM_GENLIST_EVENT_VBAR_PRESS))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_UNPRESS;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_UNPRESS;
 
 /** Called when vertical bar is no longer pressed
  *
@@ -750,7 +750,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_VBAR_UNPRESS;
  */
 #define ELM_GENLIST_EVENT_VBAR_UNPRESS (&(_ELM_GENLIST_EVENT_VBAR_UNPRESS))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_DRAG;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_DRAG;
 
 /** Called when horizontal bar is dragged
  *
@@ -758,7 +758,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_DRAG;
  */
 #define ELM_GENLIST_EVENT_HBAR_DRAG (&(_ELM_GENLIST_EVENT_HBAR_DRAG))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_PRESS;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_PRESS;
 
 /** Called when horizontal bar is pressed
  *
@@ -766,7 +766,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_PRESS;
  */
 #define ELM_GENLIST_EVENT_HBAR_PRESS (&(_ELM_GENLIST_EVENT_HBAR_PRESS))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_UNPRESS;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_UNPRESS;
 
 /** Called when horizontal bar is no longer pressed
  *
@@ -774,7 +774,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HBAR_UNPRESS;
  */
 #define ELM_GENLIST_EVENT_HBAR_UNPRESS (&(_ELM_GENLIST_EVENT_HBAR_UNPRESS))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_TOP;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_TOP;
 
 /** Called when top edge is reached
  *
@@ -782,7 +782,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_TOP;
  */
 #define ELM_GENLIST_EVENT_EDGE_TOP (&(_ELM_GENLIST_EVENT_EDGE_TOP))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_BOTTOM;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_BOTTOM;
 
 /** Called when bottom edge is reached
  *
@@ -790,7 +790,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_BOTTOM;
  */
 #define ELM_GENLIST_EVENT_EDGE_BOTTOM (&(_ELM_GENLIST_EVENT_EDGE_BOTTOM))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_LEFT;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_LEFT;
 
 /** Called when left edge is reached
  *
@@ -798,7 +798,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_LEFT;
  */
 #define ELM_GENLIST_EVENT_EDGE_LEFT (&(_ELM_GENLIST_EVENT_EDGE_LEFT))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_RIGHT;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_RIGHT;
 
 /** Called when right edge is reached
  *
@@ -806,7 +806,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EDGE_RIGHT;
  */
 #define ELM_GENLIST_EVENT_EDGE_RIGHT (&(_ELM_GENLIST_EVENT_EDGE_RIGHT))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED;
 
 /** Called when genlist item moved
  * @return Efl_Object *
@@ -815,7 +815,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED;
  */
 #define ELM_GENLIST_EVENT_MOVED (&(_ELM_GENLIST_EVENT_MOVED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED_BEFORE;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED_BEFORE;
 
 /** Called when genlist item moved before
  * @return Efl_Object *
@@ -824,7 +824,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED_BEFORE;
  */
 #define ELM_GENLIST_EVENT_MOVED_BEFORE (&(_ELM_GENLIST_EVENT_MOVED_BEFORE))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED_AFTER;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED_AFTER;
 
 /** Called when genlist item moved after
  * @return Efl_Object *
@@ -833,7 +833,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MOVED_AFTER;
  */
 #define ELM_GENLIST_EVENT_MOVED_AFTER (&(_ELM_GENLIST_EVENT_MOVED_AFTER))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_SWIPE;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_SWIPE;
 
 /** Called when swipe is detected
  * @return Efl_Object *
@@ -842,7 +842,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_SWIPE;
  */
 #define ELM_GENLIST_EVENT_SWIPE (&(_ELM_GENLIST_EVENT_SWIPE))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_PINCH_IN;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_PINCH_IN;
 
 /** Called when multitouch pinch in detected
  * @return Efl_Object *
@@ -851,7 +851,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_PINCH_IN;
  */
 #define ELM_GENLIST_EVENT_MULTI_PINCH_IN (&(_ELM_GENLIST_EVENT_MULTI_PINCH_IN))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_PINCH_OUT;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_PINCH_OUT;
 
 /** Called when multitouch pinch out detected
  * @return Efl_Object *
@@ -860,7 +860,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_PINCH_OUT;
  */
 #define ELM_GENLIST_EVENT_MULTI_PINCH_OUT (&(_ELM_GENLIST_EVENT_MULTI_PINCH_OUT))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_DOWN;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_DOWN;
 
 /** Called when multitouch swipe down detected
  * @return Efl_Object *
@@ -869,7 +869,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_DOWN;
  */
 #define ELM_GENLIST_EVENT_MULTI_SWIPE_DOWN (&(_ELM_GENLIST_EVENT_MULTI_SWIPE_DOWN))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_UP;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_UP;
 
 /** Called when multitouch swipe up detected
  * @return Efl_Object *
@@ -878,7 +878,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_UP;
  */
 #define ELM_GENLIST_EVENT_MULTI_SWIPE_UP (&(_ELM_GENLIST_EVENT_MULTI_SWIPE_UP))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_RIGHT;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_RIGHT;
 
 /** Called when multitouch swipe right detected
  * @return Efl_Object *
@@ -887,7 +887,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_RIGHT;
  */
 #define ELM_GENLIST_EVENT_MULTI_SWIPE_RIGHT (&(_ELM_GENLIST_EVENT_MULTI_SWIPE_RIGHT))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_LEFT;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_LEFT;
 
 /** Called when multitouch swipe left detected
  * @return Efl_Object *
@@ -896,7 +896,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_MULTI_SWIPE_LEFT;
  */
 #define ELM_GENLIST_EVENT_MULTI_SWIPE_LEFT (&(_ELM_GENLIST_EVENT_MULTI_SWIPE_LEFT))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_RELEASED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_RELEASED;
 
 /** Called when genlist is released
  * @return Efl_Object *
@@ -905,7 +905,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_RELEASED;
  */
 #define ELM_GENLIST_EVENT_RELEASED (&(_ELM_GENLIST_EVENT_RELEASED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_ACTIVATED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_ACTIVATED;
 
 /** called when genlist is activated
  * @return Efl_Object *
@@ -914,7 +914,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_ACTIVATED;
  */
 #define ELM_GENLIST_EVENT_ACTIVATED (&(_ELM_GENLIST_EVENT_ACTIVATED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HIGHLIGHTED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_HIGHLIGHTED;
 
 /** Called when genlist is highlighted
  * @return Efl_Object *
@@ -923,7 +923,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_HIGHLIGHTED;
  */
 #define ELM_GENLIST_EVENT_HIGHLIGHTED (&(_ELM_GENLIST_EVENT_HIGHLIGHTED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_UNHIGHLIGHTED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_UNHIGHLIGHTED;
 
 /** Called when genlist is no longer highlighted
  * @return Efl_Object *
@@ -932,7 +932,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_UNHIGHLIGHTED;
  */
 #define ELM_GENLIST_EVENT_UNHIGHLIGHTED (&(_ELM_GENLIST_EVENT_UNHIGHLIGHTED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_REALIZED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_REALIZED;
 
 /** Called when genlist is realized
  * @return Efl_Object *
@@ -941,7 +941,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_REALIZED;
  */
 #define ELM_GENLIST_EVENT_REALIZED (&(_ELM_GENLIST_EVENT_REALIZED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_UNREALIZED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_UNREALIZED;
 
 /** Called when genlist is unrealized
  * @return Efl_Object *
@@ -950,7 +950,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_UNREALIZED;
  */
 #define ELM_GENLIST_EVENT_UNREALIZED (&(_ELM_GENLIST_EVENT_UNREALIZED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_CONTRACT_REQUEST;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_CONTRACT_REQUEST;
 
 /** Called when contract is requested
  * @return Efl_Object *
@@ -959,7 +959,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_CONTRACT_REQUEST;
  */
 #define ELM_GENLIST_EVENT_CONTRACT_REQUEST (&(_ELM_GENLIST_EVENT_CONTRACT_REQUEST))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EXPAND_REQUEST;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_EXPAND_REQUEST;
 
 /** Called when expand is requested
  * @return Efl_Object *
@@ -968,7 +968,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EXPAND_REQUEST;
  */
 #define ELM_GENLIST_EVENT_EXPAND_REQUEST (&(_ELM_GENLIST_EVENT_EXPAND_REQUEST))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_CONTRACTED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_CONTRACTED;
 
 /** called when genlist is contracted
  * @return Efl_Object *
@@ -977,7 +977,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_CONTRACTED;
  */
 #define ELM_GENLIST_EVENT_CONTRACTED (&(_ELM_GENLIST_EVENT_CONTRACTED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EXPANDED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_EXPANDED;
 
 /** Called when genlist is expanded
  * @return Efl_Object *
@@ -986,7 +986,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_EXPANDED;
  */
 #define ELM_GENLIST_EVENT_EXPANDED (&(_ELM_GENLIST_EVENT_EXPANDED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_INDEX_UPDATE;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_INDEX_UPDATE;
 
 /** Called when genlist index updated
  * @return Efl_Object *
@@ -995,7 +995,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_INDEX_UPDATE;
  */
 #define ELM_GENLIST_EVENT_INDEX_UPDATE (&(_ELM_GENLIST_EVENT_INDEX_UPDATE))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_TREE_EFFECT_FINISHED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_TREE_EFFECT_FINISHED;
 
 /** Called when genlist tree effect finished
  *
@@ -1003,7 +1003,7 @@ EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_TREE_EFFECT_FINISHED
  */
 #define ELM_GENLIST_EVENT_TREE_EFFECT_FINISHED (&(_ELM_GENLIST_EVENT_TREE_EFFECT_FINISHED))
 
-EWAPI extern const Efl_Event_Description _ELM_GENLIST_EVENT_FILTER_DONE;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_GENLIST_EVENT_FILTER_DONE;
 
 /** Called when genlist filter is done
  *

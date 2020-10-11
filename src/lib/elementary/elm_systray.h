@@ -13,6 +13,6 @@
  *
  * @ingroup Elm_Systray
  */
-EAPI Elm_Systray                 *elm_systray_add(Evas_Object *win);
+ELM_API Elm_Systray                 *elm_systray_add(Evas_Object *win);
 
 #endif

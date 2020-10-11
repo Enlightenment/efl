@@ -1,24 +1,24 @@
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_FORWARD_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_FORWARD_CLICKED =
    EFL_EVENT_DESCRIPTION("forward,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_INFO_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_INFO_CLICKED =
    EFL_EVENT_DESCRIPTION("info,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_NEXT_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_NEXT_CLICKED =
    EFL_EVENT_DESCRIPTION("next,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_PAUSE_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_PAUSE_CLICKED =
    EFL_EVENT_DESCRIPTION("pause,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_PLAY_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_PLAY_CLICKED =
    EFL_EVENT_DESCRIPTION("play,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_PREV_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_PREV_CLICKED =
    EFL_EVENT_DESCRIPTION("prev,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_REWIND_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_REWIND_CLICKED =
    EFL_EVENT_DESCRIPTION("rewind,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_QUALITY_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_QUALITY_CLICKED =
    EFL_EVENT_DESCRIPTION("quality,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_EJECT_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_EJECT_CLICKED =
    EFL_EVENT_DESCRIPTION("eject,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_VOLUME_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_VOLUME_CLICKED =
    EFL_EVENT_DESCRIPTION("volume,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_MUTE_CLICKED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_PLAYER_EVENT_MUTE_CLICKED =
    EFL_EVENT_DESCRIPTION("mute,clicked");
 
 Efl_Object *_elm_player_efl_object_constructor(Eo *obj, Elm_Player_Data *pd);

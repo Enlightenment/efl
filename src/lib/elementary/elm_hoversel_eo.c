@@ -1,10 +1,10 @@
-EWAPI const Efl_Event_Description _ELM_HOVERSEL_EVENT_DISMISSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_HOVERSEL_EVENT_DISMISSED =
    EFL_EVENT_DESCRIPTION("dismissed");
-EWAPI const Efl_Event_Description _ELM_HOVERSEL_EVENT_EXPANDED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_HOVERSEL_EVENT_EXPANDED =
    EFL_EVENT_DESCRIPTION("expanded");
-EWAPI const Efl_Event_Description _ELM_HOVERSEL_EVENT_ITEM_FOCUSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_HOVERSEL_EVENT_ITEM_FOCUSED =
    EFL_EVENT_DESCRIPTION("item,focused");
-EWAPI const Efl_Event_Description _ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_HOVERSEL_EVENT_ITEM_UNFOCUSED =
    EFL_EVENT_DESCRIPTION("item,unfocused");
 
 void _elm_hoversel_horizontal_set(Eo *obj, Elm_Hoversel_Data *pd, Eina_Bool horizontal);
@@ -25,7 +25,7 @@ __eolian_elm_hoversel_horizontal_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_hoversel_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_hoversel_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
 
 Eina_Bool _elm_hoversel_horizontal_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
@@ -37,23 +37,23 @@ __eolian_elm_hoversel_horizontal_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_hoversel_horizontal_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_hoversel_horizontal_get, Eina_Bool, 0);
 
 void _elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *pd, Efl_Canvas_Object *parent);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_hoversel_hover_parent_set, EFL_FUNC_CALL(parent), Efl_Canvas_Object *parent);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_hoversel_hover_parent_set, EFL_FUNC_CALL(parent), Efl_Canvas_Object *parent);
 
 Efl_Canvas_Object *_elm_hoversel_hover_parent_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_hoversel_hover_parent_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_hoversel_hover_parent_get, Efl_Canvas_Object *, NULL);
 
 Eina_Bool _elm_hoversel_expanded_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_hoversel_expanded_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_hoversel_expanded_get, Eina_Bool, 0);
 
 const Eina_List *_elm_hoversel_items_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_hoversel_items_get, const Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_hoversel_items_get, const Eina_List *, NULL);
 
 void _elm_hoversel_auto_update_set(Eo *obj, Elm_Hoversel_Data *pd, Eina_Bool auto_update);
 
@@ -73,7 +73,7 @@ __eolian_elm_hoversel_auto_update_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_hoversel_auto_update_set, EFL_FUNC_CALL(auto_update), Eina_Bool auto_update);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_hoversel_auto_update_set, EFL_FUNC_CALL(auto_update), Eina_Bool auto_update);
 
 Eina_Bool _elm_hoversel_auto_update_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
@@ -85,23 +85,23 @@ __eolian_elm_hoversel_auto_update_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_hoversel_auto_update_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_hoversel_auto_update_get, Eina_Bool, 0);
 
 void _elm_hoversel_hover_begin(Eo *obj, Elm_Hoversel_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_hoversel_hover_begin);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_hoversel_hover_begin);
 
 void _elm_hoversel_clear(Eo *obj, Elm_Hoversel_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_hoversel_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_hoversel_clear);
 
 void _elm_hoversel_hover_end(Eo *obj, Elm_Hoversel_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_hoversel_hover_end);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_hoversel_hover_end);
 
 Elm_Widget_Item *_elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *pd, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_hoversel_item_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon_file, icon_type, func, data), const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_hoversel_item_add, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon_file, icon_type, func, data), const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
 Efl_Object *_elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *pd);
 

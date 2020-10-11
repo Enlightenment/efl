@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
+ELM_API Evas_Object                 *elm_notify_add(Evas_Object *parent);
 
 /**
  * @brief Set the notify parent
@@ -19,7 +19,7 @@ EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
+ELM_API void                         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Get the notify parent
@@ -31,6 +31,6 @@ EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_O
  *
  * @ingroup Elm_Notify_Group
  */
-EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
+ELM_API Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
 
 #include "elm_notify_eo.legacy.h"

@@ -7,7 +7,7 @@
 /**
  * Add a page widget to an elm_prefs object.
  */
-EAPI Eina_Bool elm_prefs_page_widget_common_add(Evas_Object *prefs, Evas_Object *obj);
+ELM_API Eina_Bool elm_prefs_page_widget_common_add(Evas_Object *prefs, Evas_Object *obj);
 
 /**
  *
@@ -41,7 +41,7 @@ EAPI Eina_Bool elm_prefs_page_widget_common_add(Evas_Object *prefs, Evas_Object 
  * @param[in] file The @b .epb (binary) file to get contents from
  * @param[in] page The page, inside @a file, where to get item contents from
  */
-EAPI Eina_Bool elm_prefs_file_set(Eo *obj, const char *file, const char *page);
+ELM_API Eina_Bool elm_prefs_file_set(Eo *obj, const char *file, const char *page);
 
 /**
  *
@@ -59,7 +59,7 @@ EAPI Eina_Bool elm_prefs_file_set(Eo *obj, const char *file, const char *page);
  * @param[out] file The @b .epb (binary) file to get contents from
  * @param[out] page The page, inside @a file, where to get item contents from
  */
-EAPI Eina_Bool elm_prefs_file_get(const Eo *obj, const char **file, const char **page);
+ELM_API Eina_Bool elm_prefs_file_get(const Eo *obj, const char **file, const char **page);
 
 #include "elm_prefs_eo.legacy.h"
 /**

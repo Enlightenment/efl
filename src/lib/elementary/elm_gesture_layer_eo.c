@@ -17,7 +17,7 @@ __eolian_elm_gesture_layer_zoom_step_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_zoom_step_set, EFL_FUNC_CALL(step), double step);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_zoom_step_set, EFL_FUNC_CALL(step), double step);
 
 double _elm_gesture_layer_zoom_step_get(const Eo *obj, Elm_Gesture_Layer_Data *pd);
 
@@ -29,7 +29,7 @@ __eolian_elm_gesture_layer_zoom_step_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_zoom_step_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_zoom_step_get, double, 0);
 
 void _elm_gesture_layer_tap_finger_size_set(Eo *obj, Elm_Gesture_Layer_Data *pd, int sz);
 
@@ -49,7 +49,7 @@ __eolian_elm_gesture_layer_tap_finger_size_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_tap_finger_size_set, EFL_FUNC_CALL(sz), int sz);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_tap_finger_size_set, EFL_FUNC_CALL(sz), int sz);
 
 int _elm_gesture_layer_tap_finger_size_get(const Eo *obj, Elm_Gesture_Layer_Data *pd);
 
@@ -61,7 +61,7 @@ __eolian_elm_gesture_layer_tap_finger_size_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_tap_finger_size_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_tap_finger_size_get, int, 0);
 
 void _elm_gesture_layer_hold_events_set(Eo *obj, Elm_Gesture_Layer_Data *pd, Eina_Bool hold_events);
 
@@ -81,7 +81,7 @@ __eolian_elm_gesture_layer_hold_events_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_hold_events_set, EFL_FUNC_CALL(hold_events), Eina_Bool hold_events);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_hold_events_set, EFL_FUNC_CALL(hold_events), Eina_Bool hold_events);
 
 Eina_Bool _elm_gesture_layer_hold_events_get(const Eo *obj, Elm_Gesture_Layer_Data *pd);
 
@@ -93,7 +93,7 @@ __eolian_elm_gesture_layer_hold_events_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_hold_events_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_hold_events_get, Eina_Bool, 0);
 
 void _elm_gesture_layer_rotate_step_set(Eo *obj, Elm_Gesture_Layer_Data *pd, double step);
 
@@ -113,7 +113,7 @@ __eolian_elm_gesture_layer_rotate_step_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_rotate_step_set, EFL_FUNC_CALL(step), double step);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_rotate_step_set, EFL_FUNC_CALL(step), double step);
 
 double _elm_gesture_layer_rotate_step_get(const Eo *obj, Elm_Gesture_Layer_Data *pd);
 
@@ -125,23 +125,23 @@ __eolian_elm_gesture_layer_rotate_step_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_rotate_step_get, double, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_gesture_layer_rotate_step_get, double, 0);
 
 void _elm_gesture_layer_cb_set(Eo *obj, Elm_Gesture_Layer_Data *pd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_cb_set, EFL_FUNC_CALL(idx, cb_type, cb, data), Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_cb_set, EFL_FUNC_CALL(idx, cb_type, cb, data), Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 Eina_Bool _elm_gesture_layer_attach(Eo *obj, Elm_Gesture_Layer_Data *pd, Efl_Canvas_Object *target);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_gesture_layer_attach, Eina_Bool, 0, EFL_FUNC_CALL(target), Efl_Canvas_Object *target);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_gesture_layer_attach, Eina_Bool, 0, EFL_FUNC_CALL(target), Efl_Canvas_Object *target);
 
 void _elm_gesture_layer_cb_del(Eo *obj, Elm_Gesture_Layer_Data *pd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_cb_del, EFL_FUNC_CALL(idx, cb_type, cb, data), Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_cb_del, EFL_FUNC_CALL(idx, cb_type, cb, data), Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 void _elm_gesture_layer_cb_add(Eo *obj, Elm_Gesture_Layer_Data *pd, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_cb_add, EFL_FUNC_CALL(idx, cb_type, cb, data), Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_gesture_layer_cb_add, EFL_FUNC_CALL(idx, cb_type, cb, data), Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 Efl_Object *_elm_gesture_layer_efl_object_constructor(Eo *obj, Elm_Gesture_Layer_Data *pd);
 

@@ -14,8 +14,8 @@
 #include "elm_genlist_eo.h"
 #include "elm_hover_eo.h"
 
-EOAPI void elm_obj_combobox_hover_begin(Eo *obj);
-EOAPI void elm_obj_combobox_hover_end(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_combobox_hover_begin(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_combobox_hover_end(Eo *obj);
 
 static const Efl_Event_Description _ELM_COMBOBOX_EVENT_DISMISSED =
    EFL_EVENT_DESCRIPTION("dismissed");
@@ -372,7 +372,7 @@ _elm_combobox_efl_ui_autorepeat_autorepeat_enabled_set(const Eo *obj EINA_UNUSED
    efl_ui_autorepeat_enabled_set(efl_super(obj, MY_CLASS), EINA_FALSE);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_combobox_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -593,9 +593,9 @@ _elm_combobox_efl_gfx_entity_size_set(Eo *obj, Elm_Combobox_Data *pd, Eina_Size2
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_combobox, Elm_Combobox_Data)
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_combobox_expanded_get, Eina_Bool, 0);
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_combobox_hover_begin);
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_combobox_hover_end);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_combobox_expanded_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_combobox_hover_begin);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_combobox_hover_end);
 
 static Eina_Bool
 _elm_combobox_class_initializer(Efl_Class *klass)
@@ -631,19 +631,19 @@ static const Efl_Class_Description _elm_combobox_class_desc = {
 
 EFL_DEFINE_CLASS(elm_combobox_class_get, &_elm_combobox_class_desc, EFL_UI_BUTTON_CLASS, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_ENTRY_CLASS, ELM_GENLIST_CLASS, ELM_HOVER_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_combobox_expanded_get(const Elm_Combobox *obj)
 {
    return elm_obj_combobox_expanded_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_combobox_hover_begin(Elm_Combobox *obj)
 {
    elm_obj_combobox_hover_begin(obj);
 }
 
-EAPI void
+ELM_API void
 elm_combobox_hover_end(Elm_Combobox *obj)
 {
    elm_obj_combobox_hover_end(obj);

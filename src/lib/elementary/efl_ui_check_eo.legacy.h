@@ -22,7 +22,7 @@ typedef Eo Efl_Ui_Check;
  *
  * @ingroup Elm_Check_Group
  */
-EAPI void elm_check_selected_set(Efl_Ui_Check *obj, Eina_Bool value);
+ELM_API void elm_check_selected_set(Efl_Ui_Check *obj, Eina_Bool value);
 
 /**
  * @brief The on/off state of the check object.
@@ -33,6 +33,6 @@ EAPI void elm_check_selected_set(Efl_Ui_Check *obj, Eina_Bool value);
  *
  * @ingroup Elm_Check_Group
  */
-EAPI Eina_Bool elm_check_selected_get(const Efl_Ui_Check *obj);
+ELM_API Eina_Bool elm_check_selected_get(const Efl_Ui_Check *obj);
 
 #endif

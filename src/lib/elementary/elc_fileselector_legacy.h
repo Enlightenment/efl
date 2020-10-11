@@ -10,7 +10,7 @@
  *
  * @ingroup Elm_Fileselector
  */
-EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
+ELM_API Evas_Object          *elm_fileselector_add(Evas_Object *parent);
 
 /**
  * Enable/disable the file name entry box where the user can type
@@ -29,7 +29,7 @@ EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
  *
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
+ELM_API void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
 
 /**
  * Get whether the given file selector is in "saving dialog" mode
@@ -42,7 +42,7 @@ EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_B
  *
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
+ELM_API Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
 
 /**
  * Enable/disable folder-only view for a given file selector widget
@@ -59,7 +59,7 @@ EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only);
+ELM_API void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only);
 
 /**
  * Get whether folder-only view is set for a given file selector
@@ -74,7 +74,7 @@ EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Ei
  *
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj);
+ELM_API Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj);
 
 /**
  * Enable/disable a tree view in the given file selector widget,
@@ -94,7 +94,7 @@ EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *o
  *
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand);
+ELM_API void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand);
 
 /**
  * Get whether tree view is enabled for the given file selector
@@ -108,7 +108,7 @@ EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Ein
  *
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj);
+ELM_API Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj);
 
 /**
  * Set, programmatically, the @b directory that a given file
@@ -125,7 +125,7 @@ EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *ob
  *
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const char *path);
+ELM_API void                  elm_fileselector_path_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the parent directory's path that a given file selector
@@ -139,7 +139,7 @@ EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const cha
  *
  * @ingroup Elm_Fileselector
  */
-EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj);
+ELM_API const char           *elm_fileselector_path_get(const Evas_Object *obj);
 
 /**
  * Set the mode in which a given file selector widget will display
@@ -165,7 +165,7 @@ EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode);
+ELM_API void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode);
 
 /**
  * Get the mode in which a given file selector widget is displaying
@@ -178,7 +178,7 @@ EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Files
  *
  * @ingroup Elm_Fileselector
  */
-EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
+ELM_API Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
 
 /**
  * Enable or disable multi-selection in the file selector widget.
@@ -197,7 +197,7 @@ EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+ELM_API void                  elm_fileselector_multi_select_set(Evas_Object *obj, Eina_Bool multi);
 
 /**
  * Get if multi-selection in the file selector is enabled or disabled.
@@ -211,7 +211,7 @@ EAPI void                  elm_fileselector_multi_select_set(Evas_Object *obj, E
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_multi_select_get(const Evas_Object *obj);
+ELM_API Eina_Bool             elm_fileselector_multi_select_get(const Evas_Object *obj);
 
 /**
  * Set, programmatically, the currently selected file/directory in
@@ -227,7 +227,7 @@ EAPI Eina_Bool             elm_fileselector_multi_select_get(const Evas_Object *
  *
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path);
+ELM_API Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the currently selected item's (full) path, in the given file
@@ -244,10 +244,10 @@ EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const
  *
  * @ingroup Elm_Fileselector
  */
-EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
+ELM_API const char           *elm_fileselector_selected_get(const Evas_Object *obj);
 
-EAPI void                  elm_fileselector_current_name_set(Evas_Object *obj, const char *name);
-EAPI const char           *elm_fileselector_current_name_get(const Evas_Object *obj);
+ELM_API void                  elm_fileselector_current_name_set(Evas_Object *obj, const char *name);
+ELM_API const char           *elm_fileselector_current_name_get(const Evas_Object *obj);
 
 /**
  * Get a list of selected paths in the file selector.
@@ -270,7 +270,7 @@ EAPI const char           *elm_fileselector_current_name_get(const Evas_Object *
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object *obj);
+ELM_API const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object *obj);
 
 /**
  * Append mime types filter into filter list
@@ -290,7 +290,7 @@ EAPI const Eina_List      *elm_fileselector_selected_paths_get(const Evas_Object
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_types, const char *filter_name);
+ELM_API Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object *obj, const char *mime_types, const char *filter_name);
 
 /**
  * Append custom filter into filter list
@@ -306,7 +306,7 @@ EAPI Eina_Bool             elm_fileselector_mime_types_filter_append(Evas_Object
  * @since 1.9
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name);
+ELM_API Eina_Bool             elm_fileselector_custom_filter_append(Evas_Object *obj, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name);
 
 /**
  * Clear all filters registered
@@ -321,7 +321,7 @@ EAPI Eina_Bool             elm_fileselector_custom_filter_append(Evas_Object *ob
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
+ELM_API void                  elm_fileselector_filters_clear(Evas_Object *obj);
 
 /**
  * Enable or disable visibility of hidden files/directories
@@ -336,7 +336,7 @@ EAPI void                  elm_fileselector_filters_clear(Evas_Object *obj);
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible);
+ELM_API void                  elm_fileselector_hidden_visible_set(Evas_Object *obj, Eina_Bool visible);
 
 /**
  * Get if hidden files/directories in the file selector widget are visible or not.
@@ -350,7 +350,7 @@ EAPI void                  elm_fileselector_hidden_visible_set(Evas_Object *obj,
  * @since 1.8
  * @ingroup Elm_Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object *obj);
+ELM_API Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object *obj);
 
 /**
  * Set the size for the thumbnail of the file selector widget's view.
@@ -366,7 +366,7 @@ EAPI Eina_Bool             elm_fileselector_hidden_visible_get(const Evas_Object
  * @since 1.9
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+ELM_API void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
  * Get the size for the thumbnail of a given file selector widget
@@ -383,7 +383,7 @@ EAPI void                  elm_fileselector_thumbnail_size_set(Evas_Object *obj,
  * @since 1.9
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_thumbnail_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+ELM_API void                  elm_fileselector_thumbnail_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
 /**
  * Get the sort method of the file selector widget.
@@ -396,7 +396,7 @@ EAPI void                  elm_fileselector_thumbnail_size_get(const Evas_Object
  * @since 1.9
  * @ingroup Elm_Fileselector
  */
-EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *obj);
+ELM_API Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *obj);
 
 /**
  * Set the sort method of the file selector widget.
@@ -409,6 +409,6 @@ EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *o
  * @since 1.9
  * @ingroup Elm_Fileselector
  */
-EAPI void                  elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort);
+ELM_API void                  elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort);
 
 #include "elm_fileselector_eo.legacy.h"

@@ -14,7 +14,7 @@
  *
  * @ingroup Elm_Entry_Group
  */
-EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
+ELM_API Evas_Object       *elm_entry_add(Evas_Object *parent);
 
 /**
  * This sets the text displayed within the entry to @p entry.
@@ -26,7 +26,7 @@ EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
  *
  * @ingroup Elm_Entry_Group
  */
-EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry);
+ELM_API void               elm_entry_entry_set(Evas_Object *obj, const char *entry);
 
 /**
  * This returns the text currently shown in object @p entry.
@@ -37,7 +37,7 @@ EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry)
  *
  * @ingroup Elm_Entry_Group
  */
-EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
+ELM_API const char        *elm_entry_entry_get(const Evas_Object *obj);
 
 /**
  *
@@ -57,7 +57,7 @@ EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
  * @param[in] file The path to the file to load and save
  * @param[in] format The file format
  */
-EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
+ELM_API Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
 
 /**
  *
@@ -72,7 +72,7 @@ EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, E
  * @param[out] file The path to the file to load and save
  * @param[out] format The file format
  */
-EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
+ELM_API void               elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
 
 
 /**
@@ -84,4 +84,4 @@ EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **
  *
  * @ingroup Elm_Entry_Group
  */
-EAPI void elm_entry_calc_force(Evas_Object *obj);
+ELM_API void elm_entry_calc_force(Evas_Object *obj);

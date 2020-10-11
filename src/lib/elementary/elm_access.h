@@ -117,7 +117,7 @@ typedef void (*Elm_Access_Activate_Cb)(void *data, Evas_Object *part_obj, Elm_Ob
  *
  * @ingroup Access
  */
-EAPI Evas_Object *elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
+ELM_API Evas_Object *elm_access_object_register(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Unregister accessible object.
@@ -127,7 +127,7 @@ EAPI Evas_Object *elm_access_object_register(Evas_Object *obj, Evas_Object *pare
  *
  * @ingroup Access
  */
-EAPI void elm_access_object_unregister(Evas_Object *obj);
+ELM_API void elm_access_object_unregister(Evas_Object *obj);
 
 /**
  * @brief Get an accessible object of the evas object.
@@ -138,7 +138,7 @@ EAPI void elm_access_object_unregister(Evas_Object *obj);
  *
  * @ingroup Access
  */
-EAPI Evas_Object *elm_access_object_get(const Evas_Object *obj);
+ELM_API Evas_Object *elm_access_object_get(const Evas_Object *obj);
 
 /**
  * @brief Set text to give information for specific type.
@@ -151,7 +151,7 @@ EAPI Evas_Object *elm_access_object_get(const Evas_Object *obj);
  * @see elm_access_info_cb_set
  * @ingroup Access
  */
-EAPI void elm_access_info_set(Evas_Object *obj, int type, const char *text);
+ELM_API void elm_access_info_set(Evas_Object *obj, int type, const char *text);
 
 /**
  * @brief Set text to give information for specific type.
@@ -163,7 +163,7 @@ EAPI void elm_access_info_set(Evas_Object *obj, int type, const char *text);
  * @see elm_access_info_cb_set
  * @ingroup Access
  */
-EAPI char *elm_access_info_get(const Evas_Object *obj, int type);
+ELM_API char *elm_access_info_get(const Evas_Object *obj, int type);
 
 /**
  * @brief Set content callback to give information for specific type.
@@ -184,7 +184,7 @@ EAPI char *elm_access_info_get(const Evas_Object *obj, int type);
  *
  * @ingroup Access
  */
-EAPI void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb func, const void *data);
+ELM_API void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb func, const void *data);
 
 /**
  * @brief Set activate callback to activate highlight object.
@@ -196,7 +196,7 @@ EAPI void elm_access_info_cb_set(Evas_Object *obj, int type, Elm_Access_Info_Cb 
  *
  * @ingroup Access
  */
-EAPI void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, void *data);
+ELM_API void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb func, void *data);
 
 /**
  * @brief Read out text information directly.
@@ -208,7 +208,7 @@ EAPI void elm_access_activate_cb_set(Evas_Object *obj, Elm_Access_Activate_Cb fu
  *
  * @ingroup Access
  */
-EAPI void elm_access_say(const char *text);
+ELM_API void elm_access_say(const char *text);
 
 /**
  * @brief Give the highlight to the object directly.
@@ -221,7 +221,7 @@ EAPI void elm_access_say(const char *text);
  * @see elm_access_object_get
  * @ingroup Access
  */
-EAPI void elm_access_highlight_set(Evas_Object* obj);
+ELM_API void elm_access_highlight_set(Evas_Object* obj);
 
 /**
  * @brief Do the accessibility action base on given object.
@@ -239,7 +239,7 @@ EAPI void elm_access_highlight_set(Evas_Object* obj);
  *
  * @ingroup Access
  */
-EAPI Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info);
+ELM_API Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type type, Elm_Access_Action_Info *action_info);
 
 /**
  * @brief Set a callback function to a given accessibility action type
@@ -252,7 +252,7 @@ EAPI Eina_Bool elm_access_action(Evas_Object *obj, const Elm_Access_Action_Type 
  *
  * @ingroup Access
  */
-EAPI void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data);
+ELM_API void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Type type, const Elm_Access_Action_Cb cb, const void *data);
 
 /**
  * @brief Set the next access object for highlight.
@@ -269,5 +269,5 @@ EAPI void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Typ
  *
  * @ingroup Access
  */
-EAPI void
+ELM_API void
 elm_access_highlight_next_set(Evas_Object *obj, Elm_Highlight_Direction dir, Evas_Object *next);

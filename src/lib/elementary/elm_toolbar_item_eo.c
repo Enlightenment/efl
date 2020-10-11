@@ -1,11 +1,11 @@
 
 Elm_Widget_Item *_elm_toolbar_item_prev_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_prev_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_prev_get, Elm_Widget_Item *, NULL);
 
 Elm_Widget_Item *_elm_toolbar_item_next_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_next_get, Elm_Widget_Item *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_next_get, Elm_Widget_Item *, NULL);
 
 void _elm_toolbar_item_selected_set(Eo *obj, Elm_Toolbar_Item_Data *pd, Eina_Bool selected);
 
@@ -25,7 +25,7 @@ __eolian_elm_toolbar_item_selected_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
 
 Eina_Bool _elm_toolbar_item_selected_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
@@ -37,7 +37,7 @@ __eolian_elm_toolbar_item_selected_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_selected_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_selected_get, Eina_Bool, 0);
 
 void _elm_toolbar_item_priority_set(Eo *obj, Elm_Toolbar_Item_Data *pd, int priority);
 
@@ -57,7 +57,7 @@ __eolian_elm_toolbar_item_priority_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_priority_set, EFL_FUNC_CALL(priority), int priority);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_priority_set, EFL_FUNC_CALL(priority), int priority);
 
 int _elm_toolbar_item_priority_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
@@ -69,7 +69,7 @@ __eolian_elm_toolbar_item_priority_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_priority_get, int, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_priority_get, int, 0);
 
 void _elm_toolbar_item_icon_set(Eo *obj, Elm_Toolbar_Item_Data *pd, const char *icon);
 
@@ -89,7 +89,7 @@ __eolian_elm_toolbar_item_icon_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_icon_set, EFL_FUNC_CALL(icon), const char *icon);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_icon_set, EFL_FUNC_CALL(icon), const char *icon);
 
 const char *_elm_toolbar_item_icon_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
@@ -101,15 +101,15 @@ __eolian_elm_toolbar_item_icon_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_icon_get, const char *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_icon_get, const char *, NULL);
 
 Efl_Canvas_Object *_elm_toolbar_item_object_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_object_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_object_get, Efl_Canvas_Object *, NULL);
 
 Efl_Canvas_Object *_elm_toolbar_item_icon_object_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_icon_object_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_icon_object_get, Efl_Canvas_Object *, NULL);
 
 void _elm_toolbar_item_separator_set(Eo *obj, Elm_Toolbar_Item_Data *pd, Eina_Bool separator);
 
@@ -129,7 +129,7 @@ __eolian_elm_toolbar_item_separator_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_separator_set, EFL_FUNC_CALL(separator), Eina_Bool separator);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_separator_set, EFL_FUNC_CALL(separator), Eina_Bool separator);
 
 Eina_Bool _elm_toolbar_item_separator_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
@@ -141,55 +141,55 @@ __eolian_elm_toolbar_item_separator_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_separator_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_separator_get, Eina_Bool, 0);
 
 Efl_Canvas_Object *_elm_toolbar_item_menu_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_menu_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_menu_get, Efl_Canvas_Object *, NULL);
 
 Eina_Bool _elm_toolbar_item_state_set(Eo *obj, Elm_Toolbar_Item_Data *pd, Elm_Toolbar_Item_State *state);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_toolbar_item_state_set, Eina_Bool, 0, EFL_FUNC_CALL(state), Elm_Toolbar_Item_State *state);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_toolbar_item_state_set, Eina_Bool, 0, EFL_FUNC_CALL(state), Elm_Toolbar_Item_State *state);
 
 Elm_Toolbar_Item_State *_elm_toolbar_item_state_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_state_get, Elm_Toolbar_Item_State *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_toolbar_item_state_get, Elm_Toolbar_Item_State *, NULL);
 
 Eina_Bool _elm_toolbar_item_icon_memfile_set(Eo *obj, Elm_Toolbar_Item_Data *pd, const void *img, size_t size, const char *format, const char *key);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_toolbar_item_icon_memfile_set, Eina_Bool, 0, EFL_FUNC_CALL(img, size, format, key), const void *img, size_t size, const char *format, const char *key);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_toolbar_item_icon_memfile_set, Eina_Bool, 0, EFL_FUNC_CALL(img, size, format, key), const void *img, size_t size, const char *format, const char *key);
 
 Eina_Bool _elm_toolbar_item_icon_file_set(Eo *obj, Elm_Toolbar_Item_Data *pd, const char *file, const char *key);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_toolbar_item_icon_file_set, Eina_Bool, 0, EFL_FUNC_CALL(file, key), const char *file, const char *key);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_toolbar_item_icon_file_set, Eina_Bool, 0, EFL_FUNC_CALL(file, key), const char *file, const char *key);
 
 Elm_Toolbar_Item_State *_elm_toolbar_item_state_add(Eo *obj, Elm_Toolbar_Item_Data *pd, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_toolbar_item_state_add, Elm_Toolbar_Item_State *, NULL, EFL_FUNC_CALL(icon, label, func, data), const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_toolbar_item_state_add, Elm_Toolbar_Item_State *, NULL, EFL_FUNC_CALL(icon, label, func, data), const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 Eina_Bool _elm_toolbar_item_state_del(Eo *obj, Elm_Toolbar_Item_Data *pd, Elm_Toolbar_Item_State *state);
 
-EOAPI EFL_FUNC_BODYV(elm_obj_toolbar_item_state_del, Eina_Bool, 0, EFL_FUNC_CALL(state), Elm_Toolbar_Item_State *state);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(elm_obj_toolbar_item_state_del, Eina_Bool, 0, EFL_FUNC_CALL(state), Elm_Toolbar_Item_State *state);
 
 Elm_Toolbar_Item_State *_elm_toolbar_item_state_next(Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_toolbar_item_state_next, Elm_Toolbar_Item_State *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_toolbar_item_state_next, Elm_Toolbar_Item_State *, NULL);
 
 Elm_Toolbar_Item_State *_elm_toolbar_item_state_prev(Eo *obj, Elm_Toolbar_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY(elm_obj_toolbar_item_state_prev, Elm_Toolbar_Item_State *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY(elm_obj_toolbar_item_state_prev, Elm_Toolbar_Item_State *, NULL);
 
 void _elm_toolbar_item_show(Eo *obj, Elm_Toolbar_Item_Data *pd, Elm_Toolbar_Item_Scrollto_Type scrollto);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_show, EFL_FUNC_CALL(scrollto), Elm_Toolbar_Item_Scrollto_Type scrollto);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_show, EFL_FUNC_CALL(scrollto), Elm_Toolbar_Item_Scrollto_Type scrollto);
 
 void _elm_toolbar_item_bring_in(Eo *obj, Elm_Toolbar_Item_Data *pd, Elm_Toolbar_Item_Scrollto_Type scrollto);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_bring_in, EFL_FUNC_CALL(scrollto), Elm_Toolbar_Item_Scrollto_Type scrollto);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_bring_in, EFL_FUNC_CALL(scrollto), Elm_Toolbar_Item_Scrollto_Type scrollto);
 
 void _elm_toolbar_item_menu_set(Eo *obj, Elm_Toolbar_Item_Data *pd, Eina_Bool menu);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_menu_set, EFL_FUNC_CALL(menu), Eina_Bool menu);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_toolbar_item_menu_set, EFL_FUNC_CALL(menu), Eina_Bool menu);
 
 Efl_Object *_elm_toolbar_item_efl_object_constructor(Eo *obj, Elm_Toolbar_Item_Data *pd);
 

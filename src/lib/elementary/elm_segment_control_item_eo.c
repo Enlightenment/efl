@@ -1,15 +1,15 @@
 
 int _elm_segment_control_item_index_get(const Eo *obj, Elm_Segment_Control_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_index_get, int, -1 /* +1 */);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_index_get, int, -1 /* +1 */);
 
 Efl_Canvas_Object *_elm_segment_control_item_object_get(const Eo *obj, Elm_Segment_Control_Item_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_object_get, Efl_Canvas_Object *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_segment_control_item_object_get, Efl_Canvas_Object *, NULL);
 
 void _elm_segment_control_item_selected_set(Eo *obj, Elm_Segment_Control_Item_Data *pd, Eina_Bool selected);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_segment_control_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_segment_control_item_selected_set, EFL_FUNC_CALL(selected), Eina_Bool selected);
 
 Efl_Object *_elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_Item_Data *pd);
 

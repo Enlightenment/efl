@@ -24,7 +24,7 @@
  *
  * @ingroup Elm_Caches
  */
-EAPI void      elm_cache_all_flush(void);
+ELM_API void      elm_cache_all_flush(void);
 
 /**
  * @}

@@ -19,7 +19,7 @@ typedef Eo Elm_Slider_Part_Indicator;
  */
 #define ELM_SLIDER_PART_INDICATOR_CLASS elm_slider_part_indicator_class_get()
 
-EWAPI const Efl_Class *elm_slider_part_indicator_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_slider_part_indicator_class_get(void) EINA_CONST;
 
 /**
  * @brief Set/Get the visible mode of indicator.
@@ -29,7 +29,7 @@ EWAPI const Efl_Class *elm_slider_part_indicator_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Slider_Part_Indicator
  */
-EOAPI void elm_slider_part_indicator_visible_mode_set(Eo *obj, Elm_Slider_Indicator_Visible_Mode mode);
+ELM_API ELM_API_WEAK void elm_slider_part_indicator_visible_mode_set(Eo *obj, Elm_Slider_Indicator_Visible_Mode mode);
 
 /**
  * @brief Set/Get the visible mode of indicator.
@@ -40,6 +40,6 @@ EOAPI void elm_slider_part_indicator_visible_mode_set(Eo *obj, Elm_Slider_Indica
  *
  * @ingroup Elm_Slider_Part_Indicator
  */
-EOAPI Elm_Slider_Indicator_Visible_Mode elm_slider_part_indicator_visible_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Slider_Indicator_Visible_Mode elm_slider_part_indicator_visible_mode_get(const Eo *obj);
 
 #endif

@@ -12,9 +12,9 @@ extern "C" {
 
 typedef struct _Elm_Code_Parser Elm_Code_Parser;
 
-EAPI extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_SYNTAX; /**< A provided parser to provide syntax highlighting */
-EAPI extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF; /**< A provided parser that will mark up diff text */
-EAPI extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO; /**< A provided parser that will highlight TODO and FIXME lines */
+ELM_API extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_SYNTAX; /**< A provided parser to provide syntax highlighting */
+ELM_API extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_DIFF; /**< A provided parser that will mark up diff text */
+ELM_API extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO; /**< A provided parser that will highlight TODO and FIXME lines */
 
 /**
  * @brief Parser helper functions.
@@ -26,10 +26,10 @@ EAPI extern Elm_Code_Parser *ELM_CODE_PARSER_STANDARD_TODO; /**< A provided pars
  *
  */
 
-EAPI void elm_code_parser_add(Elm_Code *code, void (*parse_line)(Elm_Code_Line *, void *),
+ELM_API void elm_code_parser_add(Elm_Code *code, void (*parse_line)(Elm_Code_Line *, void *),
                               void (*parse_file)(Elm_Code_File *, void *), void *data);
 
-EAPI void elm_code_parser_standard_add(Elm_Code *code, Elm_Code_Parser *parser);
+ELM_API void elm_code_parser_standard_add(Elm_Code *code, Elm_Code_Parser *parser);
 
 /**
  * @}

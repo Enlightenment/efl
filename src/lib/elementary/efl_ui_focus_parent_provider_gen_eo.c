@@ -1,23 +1,23 @@
 
 void _efl_ui_focus_parent_provider_gen_content_item_map_set(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Eina_Hash *map);
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_ui_focus_parent_provider_gen_content_item_map_set, EFL_FUNC_CALL(map), Eina_Hash *map);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(efl_ui_focus_parent_provider_gen_content_item_map_set, EFL_FUNC_CALL(map), Eina_Hash *map);
 
 Eina_Hash *_efl_ui_focus_parent_provider_gen_content_item_map_get(const Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(efl_ui_focus_parent_provider_gen_content_item_map_get, Eina_Hash *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(efl_ui_focus_parent_provider_gen_content_item_map_get, Eina_Hash *, NULL);
 
 void _efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Efl_Ui_Widget *container);
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_ui_focus_parent_provider_gen_container_set, EFL_FUNC_CALL(container), Efl_Ui_Widget *container);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(efl_ui_focus_parent_provider_gen_container_set, EFL_FUNC_CALL(container), Efl_Ui_Widget *container);
 
 Efl_Ui_Widget *_efl_ui_focus_parent_provider_gen_container_get(const Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(efl_ui_focus_parent_provider_gen_container_get, Efl_Ui_Widget *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(efl_ui_focus_parent_provider_gen_container_get, Efl_Ui_Widget *, NULL);
 
 Efl_Ui_Widget *_efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Efl_Ui_Widget *widget);
 
-EOAPI EFL_FUNC_BODYV(efl_ui_focus_parent_provider_gen_item_fetch, Efl_Ui_Widget *, NULL, EFL_FUNC_CALL(widget), Efl_Ui_Widget *widget);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV(efl_ui_focus_parent_provider_gen_item_fetch, Efl_Ui_Widget *, NULL, EFL_FUNC_CALL(widget), Efl_Ui_Widget *widget);
 
 Efl_Ui_Focus_Object *_efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_parent(Eo *obj, Efl_Ui_Focus_Parent_Provider_Gen_Data *pd, Efl_Ui_Focus_Object *widget);
 

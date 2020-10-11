@@ -16,7 +16,7 @@
  *
  * @ingroup Elm_Inwin_Group
  */
-EAPI Evas_Object *elm_win_inwin_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_win_inwin_add(Evas_Object *parent);
 
 /**
  * Set the content of an inwin object.
@@ -30,7 +30,7 @@ EAPI Evas_Object *elm_win_inwin_add(Evas_Object *parent);
  *
  * @ingroup Elm_Inwin_Group
  */
-EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
+ELM_API void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * Get the content of an inwin object.
@@ -49,7 +49,7 @@ EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *conte
  *
  * @ingroup Elm_Inwin_Group
  */
-EAPI Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
+ELM_API Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
 
 /**
  * Unset the content of an inwin object.
@@ -61,6 +61,6 @@ EAPI Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Inwin_Group
  */
-EAPI Evas_Object *elm_win_inwin_content_unset(Evas_Object *obj);
+ELM_API Evas_Object *elm_win_inwin_content_unset(Evas_Object *obj);
 
 #include "elm_inwin_eo.legacy.h"

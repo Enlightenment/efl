@@ -78,7 +78,7 @@ _efl_ui_bg_efl_object_destructor(Eo *obj, Efl_Ui_Bg_Data *sd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EAPI void
+ELM_API void
 elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 {
    Efl_Gfx_Image_Scale_Method type;
@@ -104,7 +104,7 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
    efl_gfx_image_scale_method_set(obj, type);
 }
 
-EAPI Elm_Bg_Option
+ELM_API Elm_Bg_Option
 elm_bg_option_get(const Evas_Object *obj)
 {
    Efl_Gfx_Image_Scale_Method type;
@@ -134,7 +134,7 @@ elm_bg_option_get(const Evas_Object *obj)
    return option;
 }
 
-EAPI void
+ELM_API void
 elm_bg_color_set(Evas_Object *obj,
                  int r,
                  int g,
@@ -158,7 +158,7 @@ _efl_ui_bg_efl_gfx_color_color_set(Eo *obj, Efl_Ui_Bg_Data *sd, int r, int g, in
    efl_gfx_color_set(sd->rect, r, g, b, a);
 }
 
-EAPI void
+ELM_API void
 elm_bg_color_get(const Evas_Object *obj,
                  int *r,
                  int *g,
@@ -177,14 +177,14 @@ _efl_ui_bg_efl_gfx_color_color_get(const Eo *obj, Efl_Ui_Bg_Data *sd, int *r, in
      efl_gfx_color_get(sd->rect, r, g, b, a);
 }
 
-EAPI void
+ELM_API void
 elm_bg_load_size_set(Evas_Object *obj, int w, int h)
 {
    EFL_UI_BG_DATA_GET_OR_RETURN(obj, sd);
    efl_gfx_image_load_controller_load_size_set(sd->img, EINA_SIZE2D(w, h));
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
    EFL_UI_BG_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
@@ -222,7 +222,7 @@ _efl_ui_bg_efl_file_key_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char 
    efl_file_key_set(sd->img, key);
 }
 
-EAPI void
+ELM_API void
 elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 {
    efl_file_simple_get((Eo *) obj, file, group);
@@ -300,7 +300,7 @@ _efl_ui_bg_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    return obj;
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

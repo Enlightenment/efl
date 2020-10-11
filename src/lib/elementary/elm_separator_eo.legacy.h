@@ -22,7 +22,7 @@ typedef Eo Elm_Separator;
  *
  * @ingroup Elm_Separator_Group
  */
-EAPI void elm_separator_horizontal_set(Elm_Separator *obj, Eina_Bool horizontal);
+ELM_API void elm_separator_horizontal_set(Elm_Separator *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get the horizontal mode of a separator object
@@ -33,6 +33,6 @@ EAPI void elm_separator_horizontal_set(Elm_Separator *obj, Eina_Bool horizontal)
  *
  * @ingroup Elm_Separator_Group
  */
-EAPI Eina_Bool elm_separator_horizontal_get(const Elm_Separator *obj);
+ELM_API Eina_Bool elm_separator_horizontal_get(const Elm_Separator *obj);
 
 #endif

@@ -66,49 +66,16 @@
 #include <Efl_Canvas.h>
 #include <Efl_Layout.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-#ifdef EWAPI
-# undef EWAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-# define EAPI_WEAK
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-# endif
-# else
-#  define EAPI
-#  define EAPI_WEAK
-# endif
-#endif
-
-#define EWAPI EAPI EAPI_WEAK
+#include <elementary_api.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-EAPI extern double _efl_startup_time;
+ELM_API extern double _efl_startup_time;
 
 /** Successfully applied the requested style from the current theme. */
-EAPI extern Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+ELM_API extern Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
 
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
@@ -120,7 +87,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
 # ifdef EFL_BETA_API_SUPPORT
-EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
+ELM_API void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # endif
 # include <efl_ui_focus_manager_window_root.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
@@ -193,7 +160,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
  *
  * @ingroup Efl_Ui_Win
  */
-EAPI void efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel);
+ELM_API void efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel);
 
 /**
  * @brief Get the window's autodel state.
@@ -206,7 +173,7 @@ EAPI void efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel);
  *
  * @ingroup Efl_Ui_Win
  */
-EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
+ELM_API Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 #endif
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
@@ -348,7 +315,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
  * @see elm_shutdown().
  * @ingroup Elm_General
  */
-EAPI int       elm_init(int argc, char **argv);
+ELM_API int       elm_init(int argc, char **argv);
 
 /**
  * Shut down Elementary
@@ -368,14 +335,11 @@ EAPI int       elm_init(int argc, char **argv);
  *
  * @ingroup Elm_General
  */
-EAPI int       elm_shutdown(void);
+ELM_API int       elm_shutdown(void);
 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
 

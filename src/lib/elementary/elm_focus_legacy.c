@@ -108,7 +108,7 @@ _custom_chain_set(Efl_Ui_Widget *node, Eina_List *lst)
    _flush_manager(node, pd);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_next_object_set(Evas_Object        *obj,
                                  Evas_Object        *next,
                                  Elm_Focus_Direction dir)
@@ -127,7 +127,7 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
    #undef MAP
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_custom_chain_set(Evas_Object *obj,
                                   Eina_List   *objs)
 {
@@ -137,7 +137,7 @@ elm_object_focus_custom_chain_set(Evas_Object *obj,
    _custom_chain_set(obj, objs);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_custom_chain_unset(Evas_Object *obj)
 {
    API_ENTRY()
@@ -146,7 +146,7 @@ elm_object_focus_custom_chain_unset(Evas_Object *obj)
    _custom_chain_set(obj, NULL);
 }
 
-EAPI const Eina_List *
+ELM_API const Eina_List *
 elm_object_focus_custom_chain_get(const Evas_Object *obj)
 {
    API_ENTRY_VAL(NULL)
@@ -154,7 +154,7 @@ elm_object_focus_custom_chain_get(const Evas_Object *obj)
    return _custom_chain_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_custom_chain_append(Evas_Object *obj,
                                      Evas_Object *child,
                                      Evas_Object *relative_child)
@@ -168,7 +168,7 @@ elm_object_focus_custom_chain_append(Evas_Object *obj,
    _custom_chain_set(obj, tmp);
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_custom_chain_prepend(Evas_Object *obj,
                                       Evas_Object *child,
                                       Evas_Object *relative_child)
@@ -182,7 +182,7 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
    _custom_chain_set(obj, tmp);
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ELM_API void
 elm_object_focus_cycle(Evas_Object        *obj,
                        Elm_Focus_Direction dir)
 {
@@ -221,7 +221,7 @@ _focus_parent_chain_gen(Efl_Ui_Focus_Object *obj)
    return result;
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
 {
@@ -299,7 +299,7 @@ elm_object_focus_next(Evas_Object        *obj,
      }
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_focus_next_object_get(const Evas_Object  *obj,
                                  Elm_Focus_Direction dir)
 {
@@ -313,7 +313,7 @@ elm_object_focus_next_object_get(const Evas_Object  *obj,
    return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(top), (Efl_Ui_Focus_Direction)dir, NULL, EINA_FALSE);
 }
 
-EAPI Elm_Object_Item *
+ELM_API Elm_Object_Item *
 elm_object_focus_next_item_get(const Evas_Object  *obj,
                                Elm_Focus_Direction dir EINA_UNUSED)
 {
@@ -327,7 +327,7 @@ elm_object_focus_next_item_get(const Evas_Object  *obj,
    return NULL;
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_next_item_set(Evas_Object     *obj,
                                Elm_Object_Item *next_item EINA_UNUSED,
                                Elm_Focus_Direction dir EINA_UNUSED)
@@ -340,7 +340,7 @@ elm_object_focus_next_item_set(Evas_Object     *obj,
    #undef MAP
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_object_focused_object_get(const Evas_Object *obj)
 {
    API_ENTRY_VAL(NULL)
@@ -359,7 +359,7 @@ elm_object_focused_object_get(const Evas_Object *obj)
    return efl_ui_focus_manager_focus_get(man);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
    API_ENTRY_VAL(EINA_FALSE)
@@ -370,7 +370,7 @@ elm_object_focus_get(const Evas_Object *obj)
    return _elm_widget_top_win_focused_get(obj) && (efl_ui_focus_object_child_focus_get(obj) | efl_ui_focus_object_focus_get(obj));
 }
 
-EAPI void
+ELM_API void
 elm_object_focus_set(Evas_Object *obj,
                      Eina_Bool    focus)
 {

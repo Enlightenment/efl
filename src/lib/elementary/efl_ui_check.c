@@ -368,7 +368,7 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    return obj;
 }
 
-EAPI void
+ELM_API void
 elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -377,13 +377,13 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
    efl_ui_selectable_selected_set(obj, state);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
    return !!efl_ui_selectable_selected_get(obj);
 }
 
-EAPI void
+ELM_API void
 elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 {
    EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
@@ -512,7 +512,7 @@ ELM_PART_OVERRIDE_CONTENT_SET_NO_SD(efl_ui_check_legacy)
 
 /* Efl.Part end */
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_check_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);

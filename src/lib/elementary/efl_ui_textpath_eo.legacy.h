@@ -38,7 +38,7 @@ typedef enum
  * @since 1.23
  * @ingroup Elm_Textpath_Group
  */
-EAPI void elm_textpath_circular_set(Efl_Ui_Textpath *obj, double radius, double start_angle, Efl_Ui_Textpath_Direction direction);
+ELM_API void elm_textpath_circular_set(Efl_Ui_Textpath *obj, double radius, double start_angle, Efl_Ui_Textpath_Direction direction);
 
 /**
  * @brief The number of slices. The larger the number of slice_num is, The
@@ -49,7 +49,7 @@ EAPI void elm_textpath_circular_set(Efl_Ui_Textpath *obj, double radius, double 
  *
  * @ingroup Elm_Textpath_Group
  */
-EAPI void elm_textpath_slice_number_set(Efl_Ui_Textpath *obj, int slice_no);
+ELM_API void elm_textpath_slice_number_set(Efl_Ui_Textpath *obj, int slice_no);
 
 /**
  * @brief The number of slices. The larger the number of slice_num is, The
@@ -61,7 +61,7 @@ EAPI void elm_textpath_slice_number_set(Efl_Ui_Textpath *obj, int slice_no);
  *
  * @ingroup Elm_Textpath_Group
  */
-EAPI int elm_textpath_slice_number_get(const Efl_Ui_Textpath *obj);
+ELM_API int elm_textpath_slice_number_get(const Efl_Ui_Textpath *obj);
 
 /**
  * @brief Control the ellipsis behavior of the textpath.
@@ -71,7 +71,7 @@ EAPI int elm_textpath_slice_number_get(const Efl_Ui_Textpath *obj);
  *
  * @ingroup Elm_Textpath_Group
  */
-EAPI void elm_textpath_ellipsis_set(Efl_Ui_Textpath *obj, Eina_Bool ellipsis);
+ELM_API void elm_textpath_ellipsis_set(Efl_Ui_Textpath *obj, Eina_Bool ellipsis);
 
 /**
  * @brief Control the ellipsis behavior of the textpath.
@@ -82,6 +82,6 @@ EAPI void elm_textpath_ellipsis_set(Efl_Ui_Textpath *obj, Eina_Bool ellipsis);
  *
  * @ingroup Elm_Textpath_Group
  */
-EAPI Eina_Bool elm_textpath_ellipsis_get(const Efl_Ui_Textpath *obj);
+ELM_API Eina_Bool elm_textpath_ellipsis_get(const Efl_Ui_Textpath *obj);
 
 #endif

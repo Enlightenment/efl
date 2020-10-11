@@ -40,7 +40,7 @@ typedef Eo Elm_Spinner;
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_wrap_set(Elm_Spinner *obj, Eina_Bool wrap);
+ELM_API void elm_spinner_wrap_set(Elm_Spinner *obj, Eina_Bool wrap);
 
 /**
  * @brief Control whether the spinner should wrap when it reaches its minimum
@@ -69,7 +69,7 @@ EAPI void elm_spinner_wrap_set(Elm_Spinner *obj, Eina_Bool wrap);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI Eina_Bool elm_spinner_wrap_get(const Elm_Spinner *obj);
+ELM_API Eina_Bool elm_spinner_wrap_get(const Elm_Spinner *obj);
 
 /**
  * @brief Control the interval on time updates for a user mouse button hold on
@@ -93,7 +93,7 @@ EAPI Eina_Bool elm_spinner_wrap_get(const Elm_Spinner *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_interval_set(Elm_Spinner *obj, double interval);
+ELM_API void elm_spinner_interval_set(Elm_Spinner *obj, double interval);
 
 /**
  * @brief Control the interval on time updates for a user mouse button hold on
@@ -118,7 +118,7 @@ EAPI void elm_spinner_interval_set(Elm_Spinner *obj, double interval);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI double elm_spinner_interval_get(const Elm_Spinner *obj);
+ELM_API double elm_spinner_interval_get(const Elm_Spinner *obj);
 
 /**
  * @brief Control the round value for rounding
@@ -130,7 +130,7 @@ EAPI double elm_spinner_interval_get(const Elm_Spinner *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_round_set(Elm_Spinner *obj, int rnd);
+ELM_API void elm_spinner_round_set(Elm_Spinner *obj, int rnd);
 
 /**
  * @brief Control the round value for rounding
@@ -143,7 +143,7 @@ EAPI void elm_spinner_round_set(Elm_Spinner *obj, int rnd);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI int elm_spinner_round_get(const Elm_Spinner *obj);
+ELM_API int elm_spinner_round_get(const Elm_Spinner *obj);
 
 /**
  * @brief Control whether the spinner can be directly edited by the user or
@@ -162,7 +162,7 @@ EAPI int elm_spinner_round_get(const Elm_Spinner *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_editable_set(Elm_Spinner *obj, Eina_Bool editable);
+ELM_API void elm_spinner_editable_set(Elm_Spinner *obj, Eina_Bool editable);
 
 /**
  * @brief Control whether the spinner can be directly edited by the user or
@@ -182,7 +182,7 @@ EAPI void elm_spinner_editable_set(Elm_Spinner *obj, Eina_Bool editable);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI Eina_Bool elm_spinner_editable_get(const Elm_Spinner *obj);
+ELM_API Eina_Bool elm_spinner_editable_get(const Elm_Spinner *obj);
 
 /**
  * @brief Control the base for rounding
@@ -206,7 +206,7 @@ EAPI Eina_Bool elm_spinner_editable_get(const Elm_Spinner *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_base_set(Elm_Spinner *obj, double base);
+ELM_API void elm_spinner_base_set(Elm_Spinner *obj, double base);
 
 /**
  * @brief Control the base for rounding
@@ -231,7 +231,7 @@ EAPI void elm_spinner_base_set(Elm_Spinner *obj, double base);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI double elm_spinner_base_get(const Elm_Spinner *obj);
+ELM_API double elm_spinner_base_get(const Elm_Spinner *obj);
 
 /**
  * @brief Control the format string of the displayed label.
@@ -251,7 +251,7 @@ EAPI double elm_spinner_base_get(const Elm_Spinner *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_label_format_set(Elm_Spinner *obj, const char *fmt);
+ELM_API void elm_spinner_label_format_set(Elm_Spinner *obj, const char *fmt);
 
 /**
  * @brief Control the format string of the displayed label.
@@ -272,7 +272,7 @@ EAPI void elm_spinner_label_format_set(Elm_Spinner *obj, const char *fmt);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI const char *elm_spinner_label_format_get(const Elm_Spinner *obj);
+ELM_API const char *elm_spinner_label_format_get(const Elm_Spinner *obj);
 
 /**
  * @brief Control special string to display in the place of the numerical
@@ -290,6 +290,6 @@ EAPI const char *elm_spinner_label_format_get(const Elm_Spinner *obj);
  *
  * @ingroup Elm_Spinner_Group
  */
-EAPI void elm_spinner_special_value_add(Elm_Spinner *obj, double value, const char *label);
+ELM_API void elm_spinner_special_value_add(Elm_Spinner *obj, double value, const char *label);
 
 #endif

@@ -17,7 +17,7 @@ __eolian_elm_table_homogeneous_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_homogeneous_set, EFL_FUNC_CALL(homogeneous), Eina_Bool homogeneous);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_homogeneous_set, EFL_FUNC_CALL(homogeneous), Eina_Bool homogeneous);
 
 Eina_Bool _elm_table_homogeneous_get(const Eo *obj, void *pd);
 
@@ -29,47 +29,47 @@ __eolian_elm_table_homogeneous_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_table_homogeneous_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_table_homogeneous_get, Eina_Bool, 0);
 
 void _elm_table_padding_set(Eo *obj, void *pd, int horizontal, int vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_padding_set, EFL_FUNC_CALL(horizontal, vertical), int horizontal, int vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_padding_set, EFL_FUNC_CALL(horizontal, vertical), int horizontal, int vertical);
 
 void _elm_table_padding_get(const Eo *obj, void *pd, int *horizontal, int *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_table_padding_get, EFL_FUNC_CALL(horizontal, vertical), int *horizontal, int *vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_table_padding_get, EFL_FUNC_CALL(horizontal, vertical), int *horizontal, int *vertical);
 
 void _elm_table_align_set(Eo *obj, void *pd, double horizontal, double vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
 
 void _elm_table_align_get(const Eo *obj, void *pd, double *horizontal, double *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_table_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_table_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
 
 void _elm_table_clear(Eo *obj, void *pd, Eina_Bool clear);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_clear, EFL_FUNC_CALL(clear), Eina_Bool clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_clear, EFL_FUNC_CALL(clear), Eina_Bool clear);
 
 Efl_Canvas_Object *_elm_table_child_get(const Eo *obj, void *pd, int col, int row);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_obj_table_child_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(col, row), int col, int row);
+ELM_API ELM_API_WEAK EFL_FUNC_BODYV_CONST(elm_obj_table_child_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(col, row), int col, int row);
 
 void _elm_table_pack_set(Eo *obj, void *pd, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_pack_set, EFL_FUNC_CALL(subobj, column, row, colspan, rowspan), Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_pack_set, EFL_FUNC_CALL(subobj, column, row, colspan, rowspan), Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
 void _elm_table_pack_get(Eo *obj, void *pd, Efl_Canvas_Object *subobj, int *column, int *row, int *colspan, int *rowspan);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_pack_get, EFL_FUNC_CALL(subobj, column, row, colspan, rowspan), Efl_Canvas_Object *subobj, int *column, int *row, int *colspan, int *rowspan);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_pack_get, EFL_FUNC_CALL(subobj, column, row, colspan, rowspan), Efl_Canvas_Object *subobj, int *column, int *row, int *colspan, int *rowspan);
 
 void _elm_table_unpack(Eo *obj, void *pd, Efl_Canvas_Object *subobj);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_unpack, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_unpack, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
 
 void _elm_table_pack(Eo *obj, void *pd, Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_table_pack, EFL_FUNC_CALL(subobj, column, row, colspan, rowspan), Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_table_pack, EFL_FUNC_CALL(subobj, column, row, colspan, rowspan), Efl_Canvas_Object *subobj, int column, int row, int colspan, int rowspan);
 
 Efl_Object *_elm_table_efl_object_constructor(Eo *obj, void *pd);
 

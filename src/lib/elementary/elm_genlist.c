@@ -5994,7 +5994,7 @@ _elm_genlist_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Genlist_Dat
    _access_obj_process(sd, _elm_genlist_smart_focus_next_enable);
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_genlist_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -7559,7 +7559,7 @@ _elm_genlist_item_label_del_cb(void *data,
    eina_stringshare_del(data);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_tooltip_text_set(Elm_Object_Item *it,
                                   const char *text)
 {
@@ -7577,7 +7577,7 @@ _elm_genlist_item_elm_widget_item_tooltip_text_set(Eo *eo_it, Elm_Gen_Item *it, 
      _elm_genlist_item_label_del_cb);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item *item,
                                         Elm_Tooltip_Item_Content_Cb func,
                                         const void *data,
@@ -7618,7 +7618,7 @@ error:
    if (del_cb) del_cb((void *)data, NULL, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_tooltip_unset(Elm_Object_Item *item)
 {
    elm_wdg_item_tooltip_unset(item);
@@ -7642,7 +7642,7 @@ _elm_genlist_item_elm_widget_item_tooltip_unset(Eo *eo_it, Elm_Gen_Item *it)
      elm_wdg_item_tooltip_style_set(eo_it, NULL);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_tooltip_style_set(Elm_Object_Item *item,
                                    const char *style)
 {
@@ -7659,7 +7659,7 @@ _elm_genlist_item_elm_widget_item_tooltip_style_set(Eo *eo_it, Elm_Gen_Item *it,
    if (VIEW(it)) elm_wdg_item_tooltip_style_set(efl_super(eo_it, ELM_GENLIST_ITEM_CLASS), style);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it)
 {
    return elm_wdg_item_tooltip_style_get(it);
@@ -7671,7 +7671,7 @@ _elm_genlist_item_elm_widget_item_tooltip_style_get(const Eo *eo_it EINA_UNUSED,
    return it->tooltip.style;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *item,
                                          Eina_Bool disable)
 {
@@ -7695,7 +7695,7 @@ _elm_genlist_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
    return disable;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *eo_it)
 {
    return elm_wdg_item_tooltip_window_mode_get(eo_it);
@@ -7707,7 +7707,7 @@ _elm_genlist_item_elm_widget_item_tooltip_window_mode_get(const Eo *eo_it EINA_U
    return it->tooltip.free_size;
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_cursor_set(Elm_Object_Item *item,
                             const char *cursor)
 {
@@ -7723,13 +7723,13 @@ _elm_genlist_item_elm_widget_item_cursor_set(Eo *eo_it, Elm_Gen_Item *it,
    if (VIEW(it)) elm_wdg_item_cursor_set(efl_super(eo_it, ELM_GENLIST_ITEM_CLASS), cursor);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_genlist_item_cursor_get(const Elm_Object_Item *eo_it)
 {
    return elm_wdg_item_cursor_get(eo_it);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_cursor_unset(Elm_Object_Item *item)
 {
    elm_wdg_item_cursor_unset(item);
@@ -7747,27 +7747,27 @@ _elm_genlist_item_elm_widget_item_cursor_unset(Eo *eo_it, Elm_Gen_Item *it)
    ELM_SAFE_FREE(it->mouse_cursor, eina_stringshare_del);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_cursor_style_set(Elm_Object_Item *eo_it,
                                   const char *style)
 {
    elm_wdg_item_cursor_style_set(eo_it, style);
 }
 
-EAPI const char *
+ELM_API const char *
 elm_genlist_item_cursor_style_get(const Elm_Object_Item *eo_it)
 {
    return elm_wdg_item_cursor_style_get(eo_it);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_cursor_engine_only_set(Elm_Object_Item *eo_it,
                                         Eina_Bool engine_only)
 {
    elm_wdg_item_cursor_engine_only_set(eo_it, engine_only);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *eo_it)
 {
    return elm_wdg_item_cursor_engine_only_get(eo_it);
@@ -7819,7 +7819,7 @@ _elm_genlist_mode_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
    return sd->mode;
 }
 
-EAPI void
+ELM_API void
 elm_genlist_bounce_set(Evas_Object *obj,
                        Eina_Bool h_bounce,
                        Eina_Bool v_bounce)
@@ -7837,7 +7837,7 @@ _elm_genlist_elm_interface_scrollable_bounce_allow_set(Eo *obj, Elm_Genlist_Data
          (efl_super(obj, MY_CLASS), sd->h_bounce, sd->v_bounce);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_bounce_get(const Evas_Object *obj,
                        Eina_Bool *h_bounce,
                        Eina_Bool *v_bounce)
@@ -8125,7 +8125,7 @@ _elm_genlist_longpress_timeout_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *
    return sd->longpress_timeout;
 }
 
-EAPI void
+ELM_API void
 elm_genlist_scroller_policy_set(Evas_Object *obj,
                                 Elm_Scroller_Policy policy_h,
                                 Elm_Scroller_Policy policy_v)
@@ -8144,7 +8144,7 @@ _elm_genlist_elm_interface_scrollable_policy_set(Eo *obj, Elm_Genlist_Data *sd E
    elm_interface_scrollable_policy_set(efl_super(obj, MY_CLASS), policy_h, policy_v);
 }
 
-EAPI void
+ELM_API void
 elm_genlist_scroller_policy_get(const Evas_Object *obj,
                                 Elm_Scroller_Policy *policy_h,
                                 Elm_Scroller_Policy *policy_v)
@@ -8386,7 +8386,7 @@ _elm_genlist_item_pin_get(const Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
      return EINA_FALSE;
 }
 
-EAPI Elm_Genlist_Item_Class *
+ELM_API Elm_Genlist_Item_Class *
 elm_genlist_item_class_new(void)
 {
    Elm_Genlist_Item_Class *itc = ELM_NEW(Elm_Genlist_Item_Class);
@@ -8399,7 +8399,7 @@ elm_genlist_item_class_new(void)
    return itc;
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
 {
    if (itc && (itc->version == CLASS_ALLOCATED))
@@ -8414,7 +8414,7 @@ elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
      }
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
 {
    if (itc && (itc->version == CLASS_ALLOCATED))
@@ -8424,7 +8424,7 @@ elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
      }
 }
 
-EAPI void
+ELM_API void
 elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
 {
    if (itc && (itc->version == CLASS_ALLOCATED))
@@ -8660,7 +8660,7 @@ _elm_genlist_focus_on_selection_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data 
    return sd->focus_on_selection_enabled;
 }
 
-EAPI Elm_Object_Item *
+ELM_API Elm_Object_Item *
 elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth)
 {
    Elm_Gen_Item *it = NULL;

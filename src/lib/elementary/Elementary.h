@@ -10,6 +10,8 @@
 /* Options which can be enabled or disabled by the buildtool */
 #include "Elementary_Options.h"
 
+#include <elementary_api.h>
+
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,47 +79,7 @@
 #include <EMap.h>
 #endif
 
-#ifdef EAPI
-# undef EAPI
-#endif
-#ifdef EWAPI
-# undef EWAPI
-#endif
-#ifdef EAPI_WEAK
-# undef EAPI_WEAK
-#endif
-#ifdef EOAPI
-# undef EOAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-# define EAPI_WEAK
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-# endif
-# else
-#  define EAPI
-#  define EAPI_WEAK
-# endif
-#endif
-
-#define EWAPI EAPI EAPI_WEAK
-#define EOAPI EAPI
+#include "elementary_api.h"
 
 /* allow usage from c++ */
 #ifdef __cplusplus
@@ -146,7 +108,7 @@ typedef struct _Elm_Version
  *
  * @ingroup Elm_General
  */
-EAPI extern Elm_Version *elm_version;
+ELM_API extern Elm_Version *elm_version;
 
 
 /* include these first for general used definitions */
@@ -281,11 +243,6 @@ EAPI extern Elm_Version *elm_version;
 
 #ifdef __cplusplus
 }
-#endif
-
-#ifndef EFL_BUILD
-# undef EAPI
-# define EAPI
 #endif
 
 #endif

@@ -156,7 +156,7 @@ static Elm_Code_Syntax _elm_code_syntax_csharp =
      "orderby","select","where","unmanaged","var", NULL }
 };
 
-EAPI Elm_Code_Syntax *
+ELM_API Elm_Code_Syntax *
 elm_code_syntax_for_mime_get(const char *mime)
 {
    if (!mime) return NULL;
@@ -289,7 +289,7 @@ _previous_line_scope(Elm_Code_Line *line)
    return prev->scope;
 }
 
-EAPI void
+ELM_API void
 elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
 {
    unsigned int i, i2, count, length;
@@ -424,7 +424,7 @@ elm_code_syntax_parse_line(Elm_Code_Syntax *syntax, Elm_Code_Line *line)
      _elm_code_syntax_parse_token(syntax, line, ptr-content, ptr, count);
 }
 
-EAPI void
+ELM_API void
 elm_code_syntax_parse_file(Elm_Code_Syntax *syntax, Elm_Code_File *file EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(syntax);

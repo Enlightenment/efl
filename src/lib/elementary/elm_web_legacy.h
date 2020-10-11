@@ -23,7 +23,7 @@ typedef enum
  *
  * @ingroup Elm_Web
  */
-EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
+ELM_API Evas_Object      *elm_web_add(Evas_Object *parent);
 
 /**
  * Sets the URI for the web object
@@ -41,7 +41,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
  *
  * @ingroup Elm_Web
  */
-EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
+EINA_DEPRECATED ELM_API Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
 
 /**
  * Get the current URI for the object
@@ -59,7 +59,7 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const c
  *
  * @ingroup Elm_Web
  */
-EINA_DEPRECATED EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
+EINA_DEPRECATED ELM_API const char       *elm_web_uri_get(const Evas_Object *obj);
 
 
 /**
@@ -82,7 +82,7 @@ EINA_DEPRECATED EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Web
  */
-EAPI void elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
+ELM_API void elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
 
 /**
  * @brief Get the currently set zoom mode.
@@ -93,7 +93,7 @@ EAPI void elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
  *
  * @ingroup Elm_Web
  */
-EAPI Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
+ELM_API Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Sets the zoom level of the web object.
@@ -108,7 +108,7 @@ EAPI Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Web
  */
-EAPI void elm_web_zoom_set(Evas_Object *obj, double zoom);
+ELM_API void elm_web_zoom_set(Evas_Object *obj, double zoom);
 
 /**
  * @brief Get the current zoom level set on the web object
@@ -125,5 +125,5 @@ EAPI void elm_web_zoom_set(Evas_Object *obj, double zoom);
  *
  * @ingroup Elm_Web
  */
-EAPI double elm_web_zoom_get(const Evas_Object *obj);
+ELM_API double elm_web_zoom_get(const Evas_Object *obj);
 #include "elm_web_eo.legacy.h"

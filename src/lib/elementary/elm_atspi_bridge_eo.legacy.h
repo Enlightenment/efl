@@ -23,6 +23,6 @@ typedef Eo Elm_Atspi_Bridge;
  *
  * @ingroup Elm_Atspi_Bridge_Group
  */
-EAPI Eina_Bool elm_atspi_bridge_connected_get(const Elm_Atspi_Bridge *obj);
+ELM_API Eina_Bool elm_atspi_bridge_connected_get(const Elm_Atspi_Bridge *obj);
 
 #endif

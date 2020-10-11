@@ -11,19 +11,18 @@
 # else
 #  define EMODAPI
 # endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EMODAPI __attribute__ ((visibility("default")))
-#   define EMODAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EMODAPI
-#   define EMODAPI_WEAK
-#  endif
+# define EMODAPI_WEAK
+#elif __GNUC__
+# if __GNUC__ >= 4
+#  define EMODAPI __attribute__ ((visibility("default")))
+#  define EMODAPI_WEAK __attribute__ ((weak))
 # else
 #  define EMODAPI
 #  define EMODAPI_WEAK
 # endif
+#else
+# define EMODAPI
+# define EMODAPI_WEAK
 #endif
 
 #endif

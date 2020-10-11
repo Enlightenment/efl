@@ -32,7 +32,7 @@ typedef enum
  */
 #define ELM_HOVER_CLASS elm_hover_class_get()
 
-EWAPI const Efl_Class *elm_hover_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_hover_class_get(void) EINA_CONST;
 
 /**
  * @brief Sets the target object for the hover.
@@ -44,7 +44,7 @@ EWAPI const Efl_Class *elm_hover_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Hover
  */
-EOAPI void elm_obj_hover_target_set(Eo *obj, Efl_Canvas_Object *target);
+ELM_API ELM_API_WEAK void elm_obj_hover_target_set(Eo *obj, Efl_Canvas_Object *target);
 
 /**
  * @brief Get the target object for the hover.
@@ -55,7 +55,7 @@ EOAPI void elm_obj_hover_target_set(Eo *obj, Efl_Canvas_Object *target);
  *
  * @ingroup Elm_Hover
  */
-EOAPI Efl_Canvas_Object *elm_obj_hover_target_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_obj_hover_target_get(const Eo *obj);
 
 /**
  * @brief Returns the best swallow location for content in the hover.
@@ -84,15 +84,15 @@ EOAPI Efl_Canvas_Object *elm_obj_hover_target_get(const Eo *obj);
  *
  * @ingroup Elm_Hover
  */
-EOAPI const char *elm_obj_hover_best_content_location_get(const Eo *obj, Elm_Hover_Axis pref_axis);
+ELM_API ELM_API_WEAK const char *elm_obj_hover_best_content_location_get(const Eo *obj, Elm_Hover_Axis pref_axis);
 
 /** Dismiss a hover object
  *
  * @ingroup Elm_Hover
  */
-EOAPI void elm_obj_hover_dismiss(Eo *obj);
+ELM_API ELM_API_WEAK void elm_obj_hover_dismiss(Eo *obj);
 
-EWAPI extern const Efl_Event_Description _ELM_HOVER_EVENT_SMART_CHANGED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_HOVER_EVENT_SMART_CHANGED;
 
 /** Called when hover changed
  * @return const char *
@@ -101,7 +101,7 @@ EWAPI extern const Efl_Event_Description _ELM_HOVER_EVENT_SMART_CHANGED;
  */
 #define ELM_HOVER_EVENT_SMART_CHANGED (&(_ELM_HOVER_EVENT_SMART_CHANGED))
 
-EWAPI extern const Efl_Event_Description _ELM_HOVER_EVENT_DISMISSED;
+ELM_API ELM_API_WEAK extern const Efl_Event_Description _ELM_HOVER_EVENT_DISMISSED;
 
 /** Called when hover was dismissed
  *

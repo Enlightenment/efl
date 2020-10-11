@@ -411,7 +411,7 @@ _efl_access_object_relations_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Da
    return eina_list_iterator_new(pd->relations);
 }
 
-EAPI void
+ELM_API void
 efl_access_attribute_free(Efl_Access_Attribute *attr)
 {
    eina_stringshare_del(attr->key);
@@ -419,7 +419,7 @@ efl_access_attribute_free(Efl_Access_Attribute *attr)
    free(attr);
 }
 
-EAPI void efl_access_attributes_list_free(Eina_List *list)
+ELM_API void efl_access_attributes_list_free(Eina_List *list)
 {
    Efl_Access_Attribute *attr;
    EINA_LIST_FREE(list, attr)

@@ -28,7 +28,7 @@ typedef Eo Elm_List_Item;
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI void elm_list_item_separator_set(Elm_List_Item *obj, Eina_Bool setting);
+ELM_API void elm_list_item_separator_set(Elm_List_Item *obj, Eina_Bool setting);
 
 /**
  * @brief Get a value whether item is a separator or not.
@@ -40,7 +40,7 @@ EAPI void elm_list_item_separator_set(Elm_List_Item *obj, Eina_Bool setting);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI Eina_Bool elm_list_item_separator_get(const Elm_List_Item *obj);
+ELM_API Eina_Bool elm_list_item_separator_get(const Elm_List_Item *obj);
 
 /**
  * @brief Set the selected state of an item.
@@ -59,7 +59,7 @@ EAPI Eina_Bool elm_list_item_separator_get(const Elm_List_Item *obj);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI void elm_list_item_selected_set(Elm_List_Item *obj, Eina_Bool selected);
+ELM_API void elm_list_item_selected_set(Elm_List_Item *obj, Eina_Bool selected);
 
 /**
  * @brief Get whether the item is selected or not.
@@ -70,7 +70,7 @@ EAPI void elm_list_item_selected_set(Elm_List_Item *obj, Eina_Bool selected);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI Eina_Bool elm_list_item_selected_get(const Elm_List_Item *obj);
+ELM_API Eina_Bool elm_list_item_selected_get(const Elm_List_Item *obj);
 
 /**
  * @brief Get the real Evas(Edje) object created to implement the view of a
@@ -84,7 +84,7 @@ EAPI Eina_Bool elm_list_item_selected_get(const Elm_List_Item *obj);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI Efl_Canvas_Object *elm_list_item_object_get(const Elm_List_Item *obj);
+ELM_API Efl_Canvas_Object *elm_list_item_object_get(const Elm_List_Item *obj);
 
 /**
  * @brief Get the item before the item in list.
@@ -97,7 +97,7 @@ EAPI Efl_Canvas_Object *elm_list_item_object_get(const Elm_List_Item *obj);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI Elm_Widget_Item *elm_list_item_prev(const Elm_List_Item *obj);
+ELM_API Elm_Widget_Item *elm_list_item_prev(const Elm_List_Item *obj);
 
 /**
  * @brief Get the item after the item in list.
@@ -110,7 +110,7 @@ EAPI Elm_Widget_Item *elm_list_item_prev(const Elm_List_Item *obj);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI Elm_Widget_Item *elm_list_item_next(const Elm_List_Item *obj);
+ELM_API Elm_Widget_Item *elm_list_item_next(const Elm_List_Item *obj);
 
 /**
  * @brief Show item in the list view.
@@ -121,7 +121,7 @@ EAPI Elm_Widget_Item *elm_list_item_next(const Elm_List_Item *obj);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI void elm_list_item_show(Elm_List_Item *obj);
+ELM_API void elm_list_item_show(Elm_List_Item *obj);
 
 /**
  * @brief Bring in the given item to list view.
@@ -136,6 +136,6 @@ EAPI void elm_list_item_show(Elm_List_Item *obj);
  *
  * @ingroup Elm_List_Item_Group
  */
-EAPI void elm_list_item_bring_in(Elm_List_Item *obj);
+ELM_API void elm_list_item_bring_in(Elm_List_Item *obj);
 
 #endif

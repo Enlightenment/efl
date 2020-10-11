@@ -131,7 +131,7 @@ typedef struct _Elm_Prefs_Data_Event_Changed
  *
  * @since 1.8
  */
-EAPI Elm_Prefs_Data *elm_prefs_data_new(const char *data_file,
+ELM_API Elm_Prefs_Data *elm_prefs_data_new(const char *data_file,
                                         const char *key,
                                         Eet_File_Mode mode);
 
@@ -146,7 +146,7 @@ EAPI Elm_Prefs_Data *elm_prefs_data_new(const char *data_file,
  *
  * @since 1.8
  */
-EAPI Eina_Bool       elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
+ELM_API Eina_Bool       elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
                                                 unsigned int version);
 
 /**
@@ -159,7 +159,7 @@ EAPI Eina_Bool       elm_prefs_data_version_set(Elm_Prefs_Data *prefs_data,
  *
  * @since 1.8
  */
-EAPI unsigned int    elm_prefs_data_version_get(const Elm_Prefs_Data *prefs_data);
+ELM_API unsigned int    elm_prefs_data_version_get(const Elm_Prefs_Data *prefs_data);
 
 /**
  * Increment reference count on a given prefs data handle.
@@ -174,7 +174,7 @@ EAPI unsigned int    elm_prefs_data_version_get(const Elm_Prefs_Data *prefs_data
  *
  * @since 1.8
  */
-EAPI Elm_Prefs_Data *elm_prefs_data_ref(Elm_Prefs_Data *prefs_data);
+ELM_API Elm_Prefs_Data *elm_prefs_data_ref(Elm_Prefs_Data *prefs_data);
 
 /**
  * Decrement reference count on a given prefs data handle.
@@ -188,7 +188,7 @@ EAPI Elm_Prefs_Data *elm_prefs_data_ref(Elm_Prefs_Data *prefs_data);
  *
  * @since 1.8
  */
-EAPI void            elm_prefs_data_unref(Elm_Prefs_Data *prefs_data);
+ELM_API void            elm_prefs_data_unref(Elm_Prefs_Data *prefs_data);
 
 /**
  * Set (or delete) one value of a given prefs data handle.
@@ -208,7 +208,7 @@ EAPI void            elm_prefs_data_unref(Elm_Prefs_Data *prefs_data);
  *
  * @since 1.8
  */
-EAPI Eina_Bool       elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
+ELM_API Eina_Bool       elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
                                               const char *path,
                                               const Elm_Prefs_Item_Type type,
                                               const Eina_Value *value);
@@ -228,7 +228,7 @@ EAPI Eina_Bool       elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
  *
  * @since 1.8
  */
-EAPI Eina_Bool       elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
+ELM_API Eina_Bool       elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
                                               const char *path,
                                               Elm_Prefs_Item_Type *type,
                                               Eina_Value *value);
@@ -247,7 +247,7 @@ EAPI Eina_Bool       elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
  *
  * @since 1.8
  */
-EAPI Eina_Bool       elm_prefs_data_event_callback_add(Elm_Prefs_Data *prefs_data,
+ELM_API Eina_Bool       elm_prefs_data_event_callback_add(Elm_Prefs_Data *prefs_data,
                                                        Elm_Prefs_Data_Event_Type type,
                                                        Elm_Prefs_Data_Event_Cb cb,
                                                        const void *cb_data);
@@ -270,7 +270,7 @@ EAPI Eina_Bool       elm_prefs_data_event_callback_add(Elm_Prefs_Data *prefs_dat
  *
  * @since 1.8
  */
-EAPI Eina_Bool       elm_prefs_data_event_callback_del(Elm_Prefs_Data *prefs_data,
+ELM_API Eina_Bool       elm_prefs_data_event_callback_del(Elm_Prefs_Data *prefs_data,
                                                        Elm_Prefs_Data_Event_Type type,
                                                        Elm_Prefs_Data_Event_Cb cb,
                                                        const void *cb_data);
@@ -293,7 +293,7 @@ EAPI Eina_Bool       elm_prefs_data_event_callback_del(Elm_Prefs_Data *prefs_dat
  *
  * @since 1.8
  */
-EAPI void      elm_prefs_data_autosave_set(Elm_Prefs_Data *prefs_data,
+ELM_API void      elm_prefs_data_autosave_set(Elm_Prefs_Data *prefs_data,
                                            Eina_Bool autosave);
 
 /**
@@ -308,7 +308,7 @@ EAPI void      elm_prefs_data_autosave_set(Elm_Prefs_Data *prefs_data,
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_prefs_data_autosave_get(const Elm_Prefs_Data *prefs_data);
+ELM_API Eina_Bool elm_prefs_data_autosave_get(const Elm_Prefs_Data *prefs_data);
 
 /**
  * Save, manually, a given elm prefs data handle data back, on the given
@@ -325,7 +325,7 @@ EAPI Eina_Bool elm_prefs_data_autosave_get(const Elm_Prefs_Data *prefs_data);
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_prefs_data_save(const Elm_Prefs_Data *prefs_data,
+ELM_API Eina_Bool elm_prefs_data_save(const Elm_Prefs_Data *prefs_data,
                                    const char *file,
                                    const char *key);
 

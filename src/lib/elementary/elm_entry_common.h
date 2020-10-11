@@ -150,7 +150,7 @@ typedef Edje_Entry_Change_Info Elm_Entry_Change_Info;
  * @param s The string (in markup) to be converted
  * @return The converted string (in UTF-8). It should be freed.
  */
-EAPI char              *elm_entry_markup_to_utf8(const char *s);
+ELM_API char              *elm_entry_markup_to_utf8(const char *s);
 
 /**
  * This converts a UTF-8 string into markup (HTML-like).
@@ -166,7 +166,7 @@ EAPI char              *elm_entry_markup_to_utf8(const char *s);
  * want to display "&" in label, entry, and some widgets which use textblock
  * internally.
  */
-EAPI char              *elm_entry_utf8_to_markup(const char *s);
+ELM_API char              *elm_entry_utf8_to_markup(const char *s);
 
 
 
@@ -214,7 +214,7 @@ struct _Elm_Entry_Filter_Limit_Size
  * This filter, like any others, does not apply when setting the entry text
  * directly with elm_object_text_set().
  */
-EAPI void elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text);
+ELM_API void elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text);
 
 /**
  * Data for the elm_entry_filter_accept_set() entry filter.
@@ -253,7 +253,7 @@ struct _Elm_Entry_Filter_Accept_Set
  * This filter, like any others, does not apply when setting the entry text
  * directly with elm_object_text_set()
  */
-EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
+ELM_API void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
 
 /**
  * Get the text of the contextual menu item of entry.
@@ -264,7 +264,7 @@ EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object 
  * @see elm_entry_context_menu_item_add()
  * @since 1.8
  */
-EAPI const char                  *elm_entry_context_menu_item_label_get(const Elm_Entry_Context_Menu_Item *item);
+ELM_API const char                  *elm_entry_context_menu_item_label_get(const Elm_Entry_Context_Menu_Item *item);
 
 /**
  * Get the icon object packed in the contextual menu item of entry.
@@ -279,7 +279,7 @@ EAPI const char                  *elm_entry_context_menu_item_label_get(const El
  * @see elm_entry_context_menu_item_add()
  * @since 1.8
  */
-EAPI void                         elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
+ELM_API void                         elm_entry_context_menu_item_icon_get(const Elm_Entry_Context_Menu_Item *item, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
 
 /**

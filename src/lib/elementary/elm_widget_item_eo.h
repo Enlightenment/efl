@@ -19,7 +19,7 @@ typedef Eo Elm_Widget_Item;
  */
 #define ELM_WIDGET_ITEM_CLASS elm_widget_item_class_get()
 
-EWAPI const Efl_Class *elm_widget_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_widget_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Control size restriction state of an object's tooltip
@@ -35,7 +35,7 @@ EWAPI const Efl_Class *elm_widget_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Eina_Bool elm_wdg_item_tooltip_window_mode_set(Eo *obj, Eina_Bool disable);
+ELM_API ELM_API_WEAK Eina_Bool elm_wdg_item_tooltip_window_mode_set(Eo *obj, Eina_Bool disable);
 
 /**
  * @brief Control size restriction state of an object's tooltip
@@ -50,7 +50,7 @@ EOAPI Eina_Bool elm_wdg_item_tooltip_window_mode_set(Eo *obj, Eina_Bool disable)
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Eina_Bool elm_wdg_item_tooltip_window_mode_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_wdg_item_tooltip_window_mode_get(const Eo *obj);
 
 /**
  * @brief Control a different style for this item tooltip.
@@ -66,7 +66,7 @@ EOAPI Eina_Bool elm_wdg_item_tooltip_window_mode_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_tooltip_style_set(Eo *obj, const char *style);
+ELM_API ELM_API_WEAK void elm_wdg_item_tooltip_style_set(Eo *obj, const char *style);
 
 /**
  * @brief Control a different style for this item tooltip.
@@ -83,7 +83,7 @@ EOAPI void elm_wdg_item_tooltip_style_set(Eo *obj, const char *style);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_tooltip_style_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_tooltip_style_get(const Eo *obj);
 
 /**
  * @brief Control the type of mouse pointer/cursor decoration to be shown, when
@@ -103,7 +103,7 @@ EOAPI const char *elm_wdg_item_tooltip_style_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_cursor_set(Eo *obj, const char *cursor);
+ELM_API ELM_API_WEAK void elm_wdg_item_cursor_set(Eo *obj, const char *cursor);
 
 /**
  * @brief Control the type of mouse pointer/cursor decoration to be shown, when
@@ -124,7 +124,7 @@ EOAPI void elm_wdg_item_cursor_set(Eo *obj, const char *cursor);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_cursor_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_cursor_get(const Eo *obj);
 
 /**
  * @brief Control a different @c style for a given custom cursor set for an
@@ -144,7 +144,7 @@ EOAPI const char *elm_wdg_item_cursor_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_cursor_style_set(Eo *obj, const char *style);
+ELM_API ELM_API_WEAK void elm_wdg_item_cursor_style_set(Eo *obj, const char *style);
 
 /**
  * @brief Control a different @c style for a given custom cursor set for an
@@ -164,7 +164,7 @@ EOAPI void elm_wdg_item_cursor_style_set(Eo *obj, const char *style);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_cursor_style_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_cursor_style_get(const Eo *obj);
 
 /**
  * @brief Control if the (custom)cursor for a given item should be searched in
@@ -183,7 +183,7 @@ EOAPI const char *elm_wdg_item_cursor_style_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_cursor_engine_only_set(Eo *obj, Eina_Bool engine_only);
+ELM_API ELM_API_WEAK void elm_wdg_item_cursor_engine_only_set(Eo *obj, Eina_Bool engine_only);
 
 /**
  * @brief Control if the (custom)cursor for a given item should be searched in
@@ -203,7 +203,7 @@ EOAPI void elm_wdg_item_cursor_engine_only_set(Eo *obj, Eina_Bool engine_only);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Eina_Bool elm_wdg_item_cursor_engine_only_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_wdg_item_cursor_engine_only_get(const Eo *obj);
 
 /**
  * @brief Control a content of an object item
@@ -218,7 +218,7 @@ EOAPI Eina_Bool elm_wdg_item_cursor_engine_only_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_part_content_set(Eo *obj, const char *part, Efl_Canvas_Object *content);
+ELM_API ELM_API_WEAK void elm_wdg_item_part_content_set(Eo *obj, const char *part, Efl_Canvas_Object *content);
 
 /**
  * @brief Control a content of an object item
@@ -234,7 +234,7 @@ EOAPI void elm_wdg_item_part_content_set(Eo *obj, const char *part, Efl_Canvas_O
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_part_content_get(const Eo *obj, const char *part);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_part_content_get(const Eo *obj, const char *part);
 
 /**
  * @brief Control a label of an object item
@@ -247,7 +247,7 @@ EOAPI Efl_Canvas_Object *elm_wdg_item_part_content_get(const Eo *obj, const char
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_part_text_set(Eo *obj, const char *part, const char *label);
+ELM_API ELM_API_WEAK void elm_wdg_item_part_text_set(Eo *obj, const char *part, const char *label);
 
 /**
  * @brief Control a label of an object item
@@ -261,7 +261,7 @@ EOAPI void elm_wdg_item_part_text_set(Eo *obj, const char *part, const char *lab
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_part_text_get(const Eo *obj, const char *part);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_part_text_get(const Eo *obj, const char *part);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /**
@@ -273,7 +273,7 @@ EOAPI const char *elm_wdg_item_part_text_get(const Eo *obj, const char *part);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_part_text_custom_set(Eo *obj, const char *part, const char *label);
+ELM_API ELM_API_WEAK void elm_wdg_item_part_text_custom_set(Eo *obj, const char *part, const char *label);
 #endif
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
@@ -287,7 +287,7 @@ EOAPI void elm_wdg_item_part_text_custom_set(Eo *obj, const char *part, const ch
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_part_text_custom_get(const Eo *obj, const char *part);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_part_text_custom_get(const Eo *obj, const char *part);
 #endif
 
 /**
@@ -300,7 +300,7 @@ EOAPI const char *elm_wdg_item_part_text_custom_get(const Eo *obj, const char *p
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_focus_set(Eo *obj, Eina_Bool focused);
+ELM_API ELM_API_WEAK void elm_wdg_item_focus_set(Eo *obj, Eina_Bool focused);
 
 /**
  * @brief Control the object item focused
@@ -313,7 +313,7 @@ EOAPI void elm_wdg_item_focus_set(Eo *obj, Eina_Bool focused);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Eina_Bool elm_wdg_item_focus_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_wdg_item_focus_get(const Eo *obj);
 
 /**
  * @brief Control the style of an object item
@@ -325,7 +325,7 @@ EOAPI Eina_Bool elm_wdg_item_focus_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_style_set(Eo *obj, const char *style);
+ELM_API ELM_API_WEAK void elm_wdg_item_style_set(Eo *obj, const char *style);
 
 /**
  * @brief Control the style of an object item
@@ -338,7 +338,7 @@ EOAPI void elm_wdg_item_style_set(Eo *obj, const char *style);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_style_get(const Eo *obj);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_style_get(const Eo *obj);
 
 /**
  * @brief Control the disabled state of a widget item.
@@ -357,7 +357,7 @@ EOAPI const char *elm_wdg_item_style_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_disabled_set(Eo *obj, Eina_Bool disable);
+ELM_API ELM_API_WEAK void elm_wdg_item_disabled_set(Eo *obj, Eina_Bool disable);
 
 /**
  * @brief Control the disabled state of a widget item.
@@ -377,7 +377,7 @@ EOAPI void elm_wdg_item_disabled_set(Eo *obj, Eina_Bool disable);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Eina_Bool elm_wdg_item_disabled_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_wdg_item_disabled_get(const Eo *obj);
 
 /**
  * @brief Get highlight order
@@ -390,7 +390,7 @@ EOAPI Eina_Bool elm_wdg_item_disabled_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const Eina_List *elm_wdg_item_access_order_get(Eo *obj);
+ELM_API ELM_API_WEAK const Eina_List *elm_wdg_item_access_order_get(Eo *obj);
 
 /**
  * @brief Set highlight order
@@ -402,7 +402,7 @@ EOAPI const Eina_List *elm_wdg_item_access_order_get(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_access_order_set(Eo *obj, Eina_List *objs);
+ELM_API ELM_API_WEAK void elm_wdg_item_access_order_set(Eo *obj, Eina_List *objs);
 
 /**
  * @brief Get the widget object's handle which contains a given item
@@ -416,14 +416,14 @@ EOAPI void elm_wdg_item_access_order_set(Eo *obj, Eina_List *objs);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_widget_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_widget_get(const Eo *obj);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /** notify deletion of widget item
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_pre_notify_del(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_pre_notify_del(Eo *obj);
 #endif
 
 /**
@@ -440,7 +440,7 @@ EOAPI void elm_wdg_item_pre_notify_del(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_tooltip_text_set(Eo *obj, const char *text);
+ELM_API ELM_API_WEAK void elm_wdg_item_tooltip_text_set(Eo *obj, const char *text);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /**
@@ -451,7 +451,7 @@ EOAPI void elm_wdg_item_tooltip_text_set(Eo *obj, const char *text);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_tooltip_translatable_text_set(Eo *obj, const char *text);
+ELM_API ELM_API_WEAK void elm_wdg_item_tooltip_translatable_text_set(Eo *obj, const char *text);
 #endif
 
 /**
@@ -467,7 +467,7 @@ EOAPI void elm_wdg_item_tooltip_translatable_text_set(Eo *obj, const char *text)
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_tooltip_unset(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_tooltip_unset(Eo *obj);
 
 /**
  * @brief Unset any custom mouse pointer/cursor decoration set to be shown,
@@ -482,7 +482,7 @@ EOAPI void elm_wdg_item_tooltip_unset(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_cursor_unset(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_cursor_unset(Eo *obj);
 
 /**
  * @brief Unset a content of an object item
@@ -497,14 +497,14 @@ EOAPI void elm_wdg_item_cursor_unset(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_part_content_unset(Eo *obj, const char *part);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_part_content_unset(Eo *obj, const char *part);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /** Update additional text part content
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_part_text_custom_update(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_part_text_custom_update(Eo *obj);
 #endif
 
 /**
@@ -525,7 +525,7 @@ EOAPI void elm_wdg_item_part_text_custom_update(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_signal_callback_add(Eo *obj, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func, void *data);
+ELM_API ELM_API_WEAK void elm_wdg_item_signal_callback_add(Eo *obj, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func, void *data);
 
 /**
  * @brief Remove a signal-triggered callback from a object item edje object.
@@ -550,7 +550,7 @@ EOAPI void elm_wdg_item_signal_callback_add(Eo *obj, const char *emission, const
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void *elm_wdg_item_signal_callback_del(Eo *obj, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func);
+ELM_API ELM_API_WEAK void *elm_wdg_item_signal_callback_del(Eo *obj, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func);
 
 /**
  * @brief Send a signal to the edje object of the widget item.
@@ -566,7 +566,7 @@ EOAPI void *elm_wdg_item_signal_callback_del(Eo *obj, const char *emission, cons
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_signal_emit(Eo *obj, const char *emission, const char *source);
+ELM_API ELM_API_WEAK void elm_wdg_item_signal_emit(Eo *obj, const char *emission, const char *source);
 
 /**
  * @brief Set the text to read out when in accessibility mode
@@ -577,7 +577,7 @@ EOAPI void elm_wdg_item_signal_emit(Eo *obj, const char *emission, const char *s
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_access_info_set(Eo *obj, const char *txt);
+ELM_API ELM_API_WEAK void elm_wdg_item_access_info_set(Eo *obj, const char *txt);
 
 /**
  * @brief Get an accessible object of the object item.
@@ -590,7 +590,7 @@ EOAPI void elm_wdg_item_access_info_set(Eo *obj, const char *txt);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_access_object_get(const Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_access_object_get(const Eo *obj);
 
 /**
  * @brief Set the text for an object item's part, marking it as translatable.
@@ -615,7 +615,7 @@ EOAPI Efl_Canvas_Object *elm_wdg_item_access_object_get(const Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_domain_translatable_part_text_set(Eo *obj, const char *part, const char *domain, const char *label);
+ELM_API ELM_API_WEAK void elm_wdg_item_domain_translatable_part_text_set(Eo *obj, const char *part, const char *domain, const char *label);
 
 /**
  * @brief Get the original string set as translatable for an object item.
@@ -633,14 +633,14 @@ EOAPI void elm_wdg_item_domain_translatable_part_text_set(Eo *obj, const char *p
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI const char *elm_wdg_item_translatable_part_text_get(const Eo *obj, const char *part);
+ELM_API ELM_API_WEAK const char *elm_wdg_item_translatable_part_text_get(const Eo *obj, const char *part);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /** Query translate
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_translate(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_translate(Eo *obj);
 #endif
 
 /**
@@ -665,7 +665,7 @@ EOAPI void elm_wdg_item_translate(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_domain_part_text_translatable_set(Eo *obj, const char *part, const char *domain, Eina_Bool translatable);
+ELM_API ELM_API_WEAK void elm_wdg_item_domain_part_text_translatable_set(Eo *obj, const char *part, const char *domain, Eina_Bool translatable);
 
 /**
  * @brief This returns track object of the item.
@@ -697,7 +697,7 @@ EOAPI void elm_wdg_item_domain_part_text_translatable_set(Eo *obj, const char *p
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_track(Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_track(Eo *obj);
 
 /**
  * @brief This retrieve the track object of the item.
@@ -713,7 +713,7 @@ EOAPI Efl_Canvas_Object *elm_wdg_item_track(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_untrack(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_untrack(Eo *obj);
 
 /**
  * @brief Get the track object reference count.
@@ -735,14 +735,14 @@ EOAPI void elm_wdg_item_untrack(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI int elm_wdg_item_track_get(const Eo *obj);
+ELM_API ELM_API_WEAK int elm_wdg_item_track_get(const Eo *obj);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /** Query track_cancel
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_track_cancel(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_track_cancel(Eo *obj);
 #endif
 
 /**
@@ -755,7 +755,7 @@ EOAPI void elm_wdg_item_track_cancel(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_del_cb_set(Eo *obj, Evas_Smart_Cb del_cb);
+ELM_API ELM_API_WEAK void elm_wdg_item_del_cb_set(Eo *obj, Evas_Smart_Cb del_cb);
 
 /**
  * @brief Set the content to be shown in the tooltip item.
@@ -779,7 +779,7 @@ EOAPI void elm_wdg_item_del_cb_set(Eo *obj, Evas_Smart_Cb del_cb);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_tooltip_content_cb_set(Eo *obj, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+ELM_API ELM_API_WEAK void elm_wdg_item_tooltip_content_cb_set(Eo *obj, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * @brief Register object item as an accessible object.
@@ -792,7 +792,7 @@ EOAPI void elm_wdg_item_tooltip_content_cb_set(Eo *obj, Elm_Tooltip_Item_Content
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_access_register(Eo *obj);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_access_register(Eo *obj);
 
 /** Unregister accessible object of the object item.
  *
@@ -800,7 +800,7 @@ EOAPI Efl_Canvas_Object *elm_wdg_item_access_register(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_access_unregister(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_access_unregister(Eo *obj);
 
 /** Unset highlight order
  *
@@ -808,14 +808,14 @@ EOAPI void elm_wdg_item_access_unregister(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_access_order_unset(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_access_order_unset(Eo *obj);
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
 /** Disable widget item
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_disable(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_disable(Eo *obj);
 #endif
 
 #ifdef ELM_WIDGET_ITEM_PROTECTED
@@ -823,7 +823,7 @@ EOAPI void elm_wdg_item_disable(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_del_pre(Eo *obj);
+ELM_API ELM_API_WEAK void elm_wdg_item_del_pre(Eo *obj);
 #endif
 
 /**
@@ -838,7 +838,7 @@ EOAPI void elm_wdg_item_del_pre(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_focus_next_object_get(const Eo *obj, Elm_Focus_Direction dir);
+ELM_API ELM_API_WEAK Efl_Canvas_Object *elm_wdg_item_focus_next_object_get(const Eo *obj, Elm_Focus_Direction dir);
 
 /**
  * @brief Set the next object with specific focus direction.
@@ -851,7 +851,7 @@ EOAPI Efl_Canvas_Object *elm_wdg_item_focus_next_object_get(const Eo *obj, Elm_F
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_focus_next_object_set(Eo *obj, Efl_Canvas_Object *next, Elm_Focus_Direction dir);
+ELM_API ELM_API_WEAK void elm_wdg_item_focus_next_object_set(Eo *obj, Efl_Canvas_Object *next, Elm_Focus_Direction dir);
 
 /**
  * @brief Get the next object item with specific focus direction.
@@ -865,7 +865,7 @@ EOAPI void elm_wdg_item_focus_next_object_set(Eo *obj, Efl_Canvas_Object *next, 
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Elm_Widget_Item *elm_wdg_item_focus_next_item_get(const Eo *obj, Elm_Focus_Direction dir);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_wdg_item_focus_next_item_get(const Eo *obj, Elm_Focus_Direction dir);
 
 /**
  * @brief Set the next object item with specific focus direction.
@@ -878,6 +878,6 @@ EOAPI Elm_Widget_Item *elm_wdg_item_focus_next_item_get(const Eo *obj, Elm_Focus
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_focus_next_item_set(Eo *obj, Elm_Widget_Item *next_item, Elm_Focus_Direction dir);
+ELM_API ELM_API_WEAK void elm_wdg_item_focus_next_item_set(Eo *obj, Elm_Widget_Item *next_item, Elm_Focus_Direction dir);
 
 #endif

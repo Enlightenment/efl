@@ -22,23 +22,23 @@ extern "C" {
  *
  */
 
-EAPI const char *elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length);
+ELM_API const char *elm_code_line_text_get(Elm_Code_Line *line, unsigned int *length);
 
-EAPI void elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int length);
+ELM_API void elm_code_line_text_set(Elm_Code_Line *line, const char *chars, unsigned int length);
 
-EAPI int elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset);
+ELM_API int elm_code_line_text_strpos(Elm_Code_Line *line, const char *search, int offset);
 
-EAPI Eina_Bool elm_code_line_text_contains(Elm_Code_Line *line, const char *search);
+ELM_API Eina_Bool elm_code_line_text_contains(Elm_Code_Line *line, const char *search);
 
-EAPI char *elm_code_line_text_substr(Elm_Code_Line *line, unsigned int position, int length);
+ELM_API char *elm_code_line_text_substr(Elm_Code_Line *line, unsigned int position, int length);
 
-EAPI void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length);
+ELM_API void elm_code_line_text_insert(Elm_Code_Line *line, unsigned int position, const char *string, int length);
 
-EAPI void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length);
+ELM_API void elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length);
 
-EAPI void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line);
+ELM_API void elm_code_line_text_leading_whitespace_strip(Elm_Code_Line *line);
 
-EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line);
+ELM_API void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line);
 
 /**
  * @}
@@ -52,11 +52,11 @@ EAPI void elm_code_line_text_trailing_whitespace_strip(Elm_Code_Line *line);
  *
  */
 
-EAPI int elm_code_text_strnpos(const char *text, unsigned int length, const char *search, int offset);
+ELM_API int elm_code_text_strnpos(const char *text, unsigned int length, const char *search, int offset);
 
-EAPI int elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen);
+ELM_API int elm_code_text_newlinenpos(const char *text, unsigned int length, short *nllen);
 
-EAPI unsigned int elm_code_text_is_whitespace(const char *text, unsigned int length);
+ELM_API unsigned int elm_code_text_is_whitespace(const char *text, unsigned int length);
 
 /**
  * @}

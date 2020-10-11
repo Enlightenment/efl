@@ -1,6 +1,6 @@
-EWAPI const Efl_Event_Description _ELM_BOX_EVENT_CHILD_ADDED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_BOX_EVENT_CHILD_ADDED =
    EFL_EVENT_DESCRIPTION("child,added");
-EWAPI const Efl_Event_Description _ELM_BOX_EVENT_CHILD_REMOVED =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_BOX_EVENT_CHILD_REMOVED =
    EFL_EVENT_DESCRIPTION("child,removed");
 
 void _elm_box_homogeneous_set(Eo *obj, Elm_Box_Data *pd, Eina_Bool homogeneous);
@@ -21,7 +21,7 @@ __eolian_elm_box_homogeneous_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_homogeneous_set, EFL_FUNC_CALL(homogeneous), Eina_Bool homogeneous);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_homogeneous_set, EFL_FUNC_CALL(homogeneous), Eina_Bool homogeneous);
 
 Eina_Bool _elm_box_homogeneous_get(const Eo *obj, Elm_Box_Data *pd);
 
@@ -33,15 +33,15 @@ __eolian_elm_box_homogeneous_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_box_homogeneous_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_box_homogeneous_get, Eina_Bool, 0);
 
 void _elm_box_align_set(Eo *obj, Elm_Box_Data *pd, double horizontal, double vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
 
 void _elm_box_align_get(const Eo *obj, Elm_Box_Data *pd, double *horizontal, double *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_box_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_box_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
 
 void _elm_box_horizontal_set(Eo *obj, Elm_Box_Data *pd, Eina_Bool horizontal);
 
@@ -61,7 +61,7 @@ __eolian_elm_box_horizontal_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_horizontal_set, EFL_FUNC_CALL(horizontal), Eina_Bool horizontal);
 
 Eina_Bool _elm_box_horizontal_get(const Eo *obj, Elm_Box_Data *pd);
 
@@ -73,51 +73,51 @@ __eolian_elm_box_horizontal_get_reflect(const Eo *obj)
    return eina_value_bool_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_box_horizontal_get, Eina_Bool, 0);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_box_horizontal_get, Eina_Bool, 0);
 
 void _elm_box_padding_set(Eo *obj, Elm_Box_Data *pd, int horizontal, int vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_padding_set, EFL_FUNC_CALL(horizontal, vertical), int horizontal, int vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_padding_set, EFL_FUNC_CALL(horizontal, vertical), int horizontal, int vertical);
 
 void _elm_box_padding_get(const Eo *obj, Elm_Box_Data *pd, int *horizontal, int *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(elm_obj_box_padding_get, EFL_FUNC_CALL(horizontal, vertical), int *horizontal, int *vertical);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV_CONST(elm_obj_box_padding_get, EFL_FUNC_CALL(horizontal, vertical), int *horizontal, int *vertical);
 
 Eina_List *_elm_box_children_get(const Eo *obj, Elm_Box_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_obj_box_children_get, Eina_List *, NULL);
+ELM_API ELM_API_WEAK EFL_FUNC_BODY_CONST(elm_obj_box_children_get, Eina_List *, NULL);
 
 void _elm_box_pack_end(Eo *obj, Elm_Box_Data *pd, Efl_Canvas_Object *subobj);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_pack_end, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_pack_end, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
 
 void _elm_box_unpack_all(Eo *obj, Elm_Box_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_box_unpack_all);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_box_unpack_all);
 
 void _elm_box_unpack(Eo *obj, Elm_Box_Data *pd, Efl_Canvas_Object *subobj);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_unpack, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_unpack, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
 
 void _elm_box_pack_after(Eo *obj, Elm_Box_Data *pd, Efl_Canvas_Object *subobj, Efl_Canvas_Object *after);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_pack_after, EFL_FUNC_CALL(subobj, after), Efl_Canvas_Object *subobj, Efl_Canvas_Object *after);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_pack_after, EFL_FUNC_CALL(subobj, after), Efl_Canvas_Object *subobj, Efl_Canvas_Object *after);
 
 void _elm_box_pack_start(Eo *obj, Elm_Box_Data *pd, Efl_Canvas_Object *subobj);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_pack_start, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_pack_start, EFL_FUNC_CALL(subobj), Efl_Canvas_Object *subobj);
 
 void _elm_box_recalculate(Eo *obj, Elm_Box_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_box_recalculate);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_box_recalculate);
 
 void _elm_box_pack_before(Eo *obj, Elm_Box_Data *pd, Efl_Canvas_Object *subobj, Efl_Canvas_Object *before);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_obj_box_pack_before, EFL_FUNC_CALL(subobj, before), Efl_Canvas_Object *subobj, Efl_Canvas_Object *before);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODYV(elm_obj_box_pack_before, EFL_FUNC_CALL(subobj, before), Efl_Canvas_Object *subobj, Efl_Canvas_Object *before);
 
 void _elm_box_clear(Eo *obj, Elm_Box_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(elm_obj_box_clear);
+ELM_API ELM_API_WEAK EFL_VOID_FUNC_BODY(elm_obj_box_clear);
 
 Efl_Object *_elm_box_efl_object_constructor(Eo *obj, Elm_Box_Data *pd);
 

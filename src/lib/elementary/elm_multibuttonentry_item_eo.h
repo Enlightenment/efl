@@ -19,7 +19,7 @@ typedef Eo Elm_Multibuttonentry_Item;
  */
 #define ELM_MULTIBUTTONENTRY_ITEM_CLASS elm_multibuttonentry_item_class_get()
 
-EWAPI const Efl_Class *elm_multibuttonentry_item_class_get(void) EINA_CONST;
+ELM_API ELM_API_WEAK const Efl_Class *elm_multibuttonentry_item_class_get(void) EINA_CONST;
 
 /**
  * @brief Control the selected state of an item
@@ -29,7 +29,7 @@ EWAPI const Efl_Class *elm_multibuttonentry_item_class_get(void) EINA_CONST;
  *
  * @ingroup Elm_Multibuttonentry_Item
  */
-EOAPI void elm_obj_multibuttonentry_item_selected_set(Eo *obj, Eina_Bool selected);
+ELM_API ELM_API_WEAK void elm_obj_multibuttonentry_item_selected_set(Eo *obj, Eina_Bool selected);
 
 /**
  * @brief Control the selected state of an item
@@ -40,7 +40,7 @@ EOAPI void elm_obj_multibuttonentry_item_selected_set(Eo *obj, Eina_Bool selecte
  *
  * @ingroup Elm_Multibuttonentry_Item
  */
-EOAPI Eina_Bool elm_obj_multibuttonentry_item_selected_get(const Eo *obj);
+ELM_API ELM_API_WEAK Eina_Bool elm_obj_multibuttonentry_item_selected_get(const Eo *obj);
 
 /**
  * @brief Get the previous item in the multibuttonentry
@@ -51,7 +51,7 @@ EOAPI Eina_Bool elm_obj_multibuttonentry_item_selected_get(const Eo *obj);
  *
  * @ingroup Elm_Multibuttonentry_Item
  */
-EOAPI Elm_Widget_Item *elm_obj_multibuttonentry_item_prev_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_multibuttonentry_item_prev_get(const Eo *obj);
 
 /**
  * @brief Get the next item in the multibuttonentry
@@ -62,6 +62,6 @@ EOAPI Elm_Widget_Item *elm_obj_multibuttonentry_item_prev_get(const Eo *obj);
  *
  * @ingroup Elm_Multibuttonentry_Item
  */
-EOAPI Elm_Widget_Item *elm_obj_multibuttonentry_item_next_get(const Eo *obj);
+ELM_API ELM_API_WEAK Elm_Widget_Item *elm_obj_multibuttonentry_item_next_get(const Eo *obj);
 
 #endif

@@ -90,7 +90,7 @@ _elm_grid_efl_canvas_group_group_del(Eo *obj, void *_pd EINA_UNUSED)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_grid_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -162,7 +162,7 @@ _elm_grid_clear(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool clear)
    efl_ui_focus_composition_dirty(obj);
 }
 
-EAPI void
+ELM_API void
 elm_grid_pack_set(Evas_Object *subobj,
                   Evas_Coord x,
                   Evas_Coord y,
@@ -178,7 +178,7 @@ elm_grid_pack_set(Evas_Object *subobj,
    efl_ui_focus_composition_dirty(obj);
 }
 
-EAPI void
+ELM_API void
 elm_grid_pack_get(Evas_Object *subobj,
                   int *x,
                   int *y,

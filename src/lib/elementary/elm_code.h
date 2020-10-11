@@ -52,14 +52,14 @@ extern "C" {
  * @return an allocated Elm_Code that references the given file
  * @see elm_code_file_open()
  */
-EAPI Elm_Code *elm_code_create(void);
+ELM_API Elm_Code *elm_code_create(void);
 
 /**
  * Free an Elm Code instance
  *
  * Releases the resources retained by the code instance and any files it references.
  */
-EAPI void elm_code_free(Elm_Code *code);
+ELM_API void elm_code_free(Elm_Code *code);
 
 /**
  * @}
@@ -73,7 +73,7 @@ EAPI void elm_code_free(Elm_Code *code);
  */
 
 
-EAPI void elm_code_callback_fire(Elm_Code *code, const Efl_Event_Description *signal, void *data);
+ELM_API void elm_code_callback_fire(Elm_Code *code, const Efl_Event_Description *signal, void *data);
 
 
 /**

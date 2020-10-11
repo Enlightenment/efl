@@ -34,7 +34,7 @@ static const Efl_Class_Description _efl_ui_layout_legacy_class_desc = {
 EFL_DEFINE_CLASS(efl_ui_layout_legacy_class_get, &_efl_ui_layout_legacy_class_desc, EFL_UI_LAYOUT_CLASS, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
 
 static void _elm_layout_sizing_eval(Eo *obj, Elm_Layout_Data *ld);
-EAPI EFL_VOID_FUNC_BODY(elm_layout_sizing_eval);
+ELM_API EFL_VOID_FUNC_BODY(elm_layout_sizing_eval);
 
 static Eina_Bool
 _elm_layout_class_initializer(Efl_Class *klass)

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-EAPI void
+ELM_API void
 efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel)
 {
    eina_iterator_free(rel->right);

@@ -25,7 +25,7 @@
 #endif
 #include <Efl_Ui.hh>
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char* argv[] EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);

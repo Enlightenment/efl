@@ -48,7 +48,7 @@
  * @see Elm_Cnp_Event_Selection_Changed
  * @since 1.20
  */
-EAPI extern int ELM_CNP_EVENT_SELECTION_CHANGED;
+ELM_API extern int ELM_CNP_EVENT_SELECTION_CHANGED;
 
 /**
  * Defines the types of selection property names.
@@ -232,7 +232,7 @@ typedef void (*Elm_Drag_Start) (void *data, Evas_Object *obj);
  * @ingroup CopyPaste
  *
  */
-EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
+ELM_API Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                                      Elm_Sel_Format format,
                                      const void *buf, size_t buflen);
 
@@ -255,7 +255,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
  *
  * @ingroup CopyPaste
  */
-EAPI Eina_Bool elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
+ELM_API Eina_Bool elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type selection,
                                      Elm_Sel_Format format,
                                      Elm_Drop_Cb datacb, void *udata);
 
@@ -273,7 +273,7 @@ EAPI Eina_Bool elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type select
  * @ingroup CopyPaste
  *
  */
-EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
+ELM_API Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
                                               Elm_Sel_Type selection);
 
 
@@ -306,7 +306,7 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
  *
  * @since 1.7
  */
-EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
+ELM_API void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 
 /**
  * @brief Determine whether the clipboard selection has an owner
@@ -316,7 +316,7 @@ EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type sel
  * @ingroup CopyPaste
  * @since 1.20
  */
-EAPI Eina_Bool elm_cnp_clipboard_selection_has_owner(Evas_Object *win);
+ELM_API Eina_Bool elm_cnp_clipboard_selection_has_owner(Evas_Object *win);
 
 /**
  * @brief Set the given object as a target for drops for drag-and-drop
@@ -337,7 +337,7 @@ EAPI Eina_Bool elm_cnp_clipboard_selection_has_owner(Evas_Object *win);
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
+ELM_API Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                                    Elm_Drag_State entercb, void *enterdata,
                                    Elm_Drag_State leavecb, void *leavedata,
                                    Elm_Drag_Pos poscb, void *posdata,
@@ -362,7 +362,7 @@ EAPI Eina_Bool elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
+ELM_API Eina_Bool elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                                    Elm_Drag_State entercb, void *enterdata,
                                    Elm_Drag_State leavecb, void *leavedata,
                                    Elm_Drag_Pos poscb, void *posdata,
@@ -390,7 +390,7 @@ EAPI Eina_Bool elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
+ELM_API Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
                               const char *data, Elm_Xdnd_Action action,
                               Elm_Drag_Icon_Create_Cb createicon,
                               void *createdata,
@@ -410,7 +410,7 @@ EAPI Eina_Bool elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
  *
  * @since 1.9
  */
-EAPI Eina_Bool elm_drag_cancel(Evas_Object *obj);
+ELM_API Eina_Bool elm_drag_cancel(Evas_Object *obj);
 
 /**
  * @brief Changes the current drag action
@@ -423,7 +423,7 @@ EAPI Eina_Bool elm_drag_cancel(Evas_Object *obj);
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action);
+ELM_API Eina_Bool elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action);
 
 /**
  * Callback called when a drag is over an object
@@ -514,7 +514,7 @@ typedef Eina_Bool (*Elm_Item_Container_Data_Get_Cb)(
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drag_item_container_add(Evas_Object *obj, double tm_to_anim, double tm_to_drag, Elm_Xy_Item_Get_Cb itemgetcb, Elm_Item_Container_Data_Get_Cb data_get);
+ELM_API Eina_Bool elm_drag_item_container_add(Evas_Object *obj, double tm_to_anim, double tm_to_drag, Elm_Xy_Item_Get_Cb itemgetcb, Elm_Item_Container_Data_Get_Cb data_get);
 
 /**
  * @brief Deletes a item container from drag-source list
@@ -526,7 +526,7 @@ EAPI Eina_Bool elm_drag_item_container_add(Evas_Object *obj, double tm_to_anim, 
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drag_item_container_del(Evas_Object *obj);
+ELM_API Eina_Bool elm_drag_item_container_del(Evas_Object *obj);
 
 /**
  * @brief Set a item container (list, genlist, grid) as target for drop.
@@ -548,7 +548,7 @@ EAPI Eina_Bool elm_drag_item_container_del(Evas_Object *obj);
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
+ELM_API Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
       Elm_Sel_Format format,
       Elm_Xy_Item_Get_Cb itemgetcb,
       Elm_Drag_State entercb, void *enterdata,
@@ -566,7 +566,7 @@ EAPI Eina_Bool elm_drop_item_container_add(Evas_Object *obj,
  *
  * @since 1.8
  */
-EAPI Eina_Bool elm_drop_item_container_del(Evas_Object *obj);
+ELM_API Eina_Bool elm_drop_item_container_del(Evas_Object *obj);
 
 /**
  * @}

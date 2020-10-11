@@ -29,7 +29,7 @@ typedef Eo Elm_Hoversel_Item;
  *
  * @ingroup Elm_Hoversel_Item_Group
  */
-EAPI void elm_hoversel_item_icon_set(Elm_Hoversel_Item *obj, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
+ELM_API void elm_hoversel_item_icon_set(Elm_Hoversel_Item *obj, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
 
 /**
  * @brief This controls the icon for the given hoversel item.
@@ -46,6 +46,6 @@ EAPI void elm_hoversel_item_icon_set(Elm_Hoversel_Item *obj, const char *icon_fi
  *
  * @ingroup Elm_Hoversel_Item_Group
  */
-EAPI void elm_hoversel_item_icon_get(const Elm_Hoversel_Item *obj, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
+ELM_API void elm_hoversel_item_icon_get(const Elm_Hoversel_Item *obj, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
 #endif

@@ -6,6 +6,6 @@
  *
  * @ingroup Elm_Actionslider
  */
-EAPI Evas_Object                *elm_actionslider_add(Evas_Object *parent);
+ELM_API Evas_Object                *elm_actionslider_add(Evas_Object *parent);
 
 #include "elm_actionslider_eo.legacy.h"

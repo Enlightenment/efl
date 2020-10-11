@@ -1,6 +1,6 @@
-EWAPI const Efl_Event_Description _ELM_ICON_EVENT_THUMB_DONE =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ICON_EVENT_THUMB_DONE =
    EFL_EVENT_DESCRIPTION("thumb,done");
-EWAPI const Efl_Event_Description _ELM_ICON_EVENT_THUMB_ERROR =
+ELM_API ELM_API_WEAK const Efl_Event_Description _ELM_ICON_EVENT_THUMB_ERROR =
    EFL_EVENT_DESCRIPTION("thumb,error");
 
 Efl_Object *_elm_icon_efl_object_constructor(Eo *obj, Elm_Icon_Data *pd);

@@ -474,7 +474,7 @@ _elm_prefs_efl_canvas_group_group_del(Eo *obj, Elm_Prefs_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
+ELM_API Evas_Object *
 elm_prefs_add(Evas_Object *parent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -1546,7 +1546,7 @@ elm_prefs_item_iface_abi_version_get(void)
    return ELM_PREFS_ITEM_IFACE_ABI_VERSION;
 }
 
-EAPI void
+ELM_API void
 elm_prefs_item_iface_register(const Elm_Prefs_Item_Iface_Info *array)
 {
    const Elm_Prefs_Item_Iface_Info *itr;
@@ -1581,7 +1581,7 @@ elm_prefs_item_iface_register(const Elm_Prefs_Item_Iface_Info *array)
      }
 }
 
-EAPI void
+ELM_API void
 elm_prefs_item_iface_unregister(const Elm_Prefs_Item_Iface_Info *array)
 {
    const Elm_Prefs_Item_Iface_Info *itr;
@@ -1608,7 +1608,7 @@ elm_prefs_page_iface_abi_version_get(void)
    return ELM_PREFS_PAGE_IFACE_ABI_VERSION;
 }
 
-EAPI void
+ELM_API void
 elm_prefs_page_iface_register(const Elm_Prefs_Page_Iface_Info *array)
 {
    const Elm_Prefs_Page_Iface_Info *itr;
@@ -1637,7 +1637,7 @@ elm_prefs_page_iface_register(const Elm_Prefs_Page_Iface_Info *array)
      }
 }
 
-EAPI void
+ELM_API void
 elm_prefs_page_iface_unregister(const Elm_Prefs_Page_Iface_Info *array)
 {
    const Elm_Prefs_Page_Iface_Info *itr;
@@ -1709,7 +1709,7 @@ _prefs_item_del_cb(void *data EINA_UNUSED,
    it->w_obj = NULL;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_item_widget_common_add(Evas_Object *prefs EINA_UNUSED,
                                  Evas_Object *obj)
 {
@@ -1721,7 +1721,7 @@ elm_prefs_item_widget_common_add(Evas_Object *prefs EINA_UNUSED,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_page_widget_common_add(Evas_Object *prefs EINA_UNUSED,
                                  Evas_Object *obj)
 {
@@ -1790,7 +1790,7 @@ _elm_prefs_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_file_set(Eo *obj, const char *file, const char *page)
 {
    Elm_Prefs_Data *sd = efl_data_scope_get(obj, MY_CLASS);
@@ -1848,7 +1848,7 @@ elm_prefs_file_set(Eo *obj, const char *file, const char *page)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
 {
    Elm_Prefs_Data *sd = efl_data_scope_get(obj, MY_CLASS);

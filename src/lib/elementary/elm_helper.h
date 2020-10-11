@@ -50,7 +50,7 @@ typedef enum
  *
  * @since 1.14
  */
-EAPI Elm_Validator_Regexp *
+ELM_API Elm_Validator_Regexp *
 elm_validator_regexp_new(const char *pattern, const char *signal) EINA_ARG_NONNULL(1);
 
 /**
@@ -62,7 +62,7 @@ elm_validator_regexp_new(const char *pattern, const char *signal) EINA_ARG_NONNU
  *
  * @since 1.14
  */
-EAPI void
+ELM_API void
 elm_validator_regexp_free(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 
 /**
@@ -74,7 +74,7 @@ elm_validator_regexp_free(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
  *
  * @since 1.14
  */
-EAPI Elm_Regexp_Status
+ELM_API Elm_Regexp_Status
 elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 
 #if defined(EFL_BETA_API_SUPPORT)
@@ -99,7 +99,7 @@ elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNUL
  * @see elm_validator_regexp_new()
  * @since 1.14
  */
-EAPI void
+ELM_API void
 elm_validator_regexp_helper(void *data, const Efl_Event *event);
 #endif
 

@@ -6,7 +6,7 @@
  *
  * @ingroup Elm_Photo
  */
-EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
+ELM_API Evas_Object *elm_photo_add(Evas_Object *parent);
 
 /**
  *
@@ -21,7 +21,7 @@ EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
  *
  * @param[in] file The path to file that will be used as @a obj's image.
  */
-EAPI Eina_Bool elm_photo_file_set(Eo *obj, const char *file);
+ELM_API Eina_Bool elm_photo_file_set(Eo *obj, const char *file);
 
 /**
  * Set editability of the photo.
@@ -34,7 +34,7 @@ EAPI Eina_Bool elm_photo_file_set(Eo *obj, const char *file);
  *
  * @ingroup Elm_Photo
  */
-EAPI void elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
+ELM_API void elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
 
 /**
  * Get editability of the photo.
@@ -43,7 +43,7 @@ EAPI void elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
  *
  * @ingroup Elm_Photo
  */
-EAPI Eina_Bool elm_photo_editable_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_photo_editable_get(const Evas_Object *obj);
 
 /**
  * @brief Set if the photo should be completely visible or not.
@@ -52,7 +52,7 @@ EAPI Eina_Bool elm_photo_editable_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photo
  */
-EAPI void elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
+ELM_API void elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
 
 /**
  * @brief Get if the photo should be completely visible or not.
@@ -61,7 +61,7 @@ EAPI void elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
  *
  * @ingroup Elm_Photo
  */
-EAPI Eina_Bool elm_photo_fill_inside_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_photo_fill_inside_get(const Evas_Object *obj);
 
 /**
  * @brief Set whether the original aspect ratio of the photo should be kept on
@@ -78,7 +78,7 @@ EAPI Eina_Bool elm_photo_fill_inside_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photo
  */
-EAPI void elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+ELM_API void elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
 
 /**
  * @brief Get if the object keeps the original aspect ratio.
@@ -87,7 +87,7 @@ EAPI void elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
  *
  * @ingroup Elm_Photo
  */
-EAPI Eina_Bool elm_photo_aspect_fixed_get(const Evas_Object *obj);
+ELM_API Eina_Bool elm_photo_aspect_fixed_get(const Evas_Object *obj);
 
 /**
  * @brief Set the size that will be used on the photo
@@ -96,7 +96,7 @@ EAPI Eina_Bool elm_photo_aspect_fixed_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photo
  */
-EAPI void elm_photo_size_set(Evas_Object *obj, int size);
+ELM_API void elm_photo_size_set(Evas_Object *obj, int size);
 
 /**
  * @brief Get the size that will be used on the photo
@@ -105,7 +105,7 @@ EAPI void elm_photo_size_set(Evas_Object *obj, int size);
  *
  * @ingroup Elm_Photo
  */
-EAPI int elm_photo_size_get(const Evas_Object *obj);
+ELM_API int elm_photo_size_get(const Evas_Object *obj);
 
 /**
  * @brief Set the file that will be used as thumbnail in the photo.
@@ -114,6 +114,6 @@ EAPI int elm_photo_size_get(const Evas_Object *obj);
  *
  * @ingroup Elm_Photo
  */
-EAPI void elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group);
+ELM_API void elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group);
 
 #include "elm_photo_eo.legacy.h"

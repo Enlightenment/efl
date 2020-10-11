@@ -6,7 +6,7 @@
 
 #include "elm_code_private.h"
 
-EAPI void
+ELM_API void
 elm_code_line_free(Elm_Code_Line *line)
 {
    if (!line)
@@ -60,7 +60,7 @@ _elm_code_line_tokens_split_at(Elm_Code_Line *oldline, Elm_Code_Line *newline,
    elm_code_callback_fire(newline->file->parent, &ELM_CODE_EVENT_LINE_LOAD_DONE, newline);
 }
 
-EAPI void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position)
+ELM_API void elm_code_line_split_at(Elm_Code_Line *line, unsigned int position)
 {
    Elm_Code_Line *newline;
    Elm_Code_Token *token EINA_UNUSED;
@@ -128,7 +128,7 @@ _elm_code_line_merge_into(Elm_Code_Line *line1, Elm_Code_Line *line2)
    free(newtext);
 }
 
-EAPI void
+ELM_API void
 elm_code_line_merge_up(Elm_Code_Line *line)
 {
    Elm_Code_Line *other;
@@ -139,7 +139,7 @@ elm_code_line_merge_up(Elm_Code_Line *line)
      _elm_code_line_merge_into(other, line);
 }
 
-EAPI void
+ELM_API void
 elm_code_line_merge_down(Elm_Code_Line *line)
 {
    Elm_Code_Line *other;
@@ -150,7 +150,7 @@ elm_code_line_merge_down(Elm_Code_Line *line)
      _elm_code_line_merge_into(line, other);
 }
 
-EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status)
+ELM_API void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type status)
 {
    if (!line)
      return;
@@ -158,7 +158,7 @@ EAPI void elm_code_line_status_set(Elm_Code_Line *line, Elm_Code_Status_Type sta
    line->status = status;
 }
 
-EAPI void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text)
+ELM_API void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text)
 {
    if (line->status_text)
      free(line->status_text);
@@ -169,7 +169,7 @@ EAPI void elm_code_line_status_text_set(Elm_Code_Line *line, const char *text)
      line->status_text = NULL;
 }
 
-EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines,
+ELM_API void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int lines,
                                   Elm_Code_Token_Type type)
 {
    Elm_Code_Token *tok;
@@ -195,7 +195,7 @@ EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int l
      }
 }
 
-EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line)
+ELM_API void elm_code_line_tokens_clear(Elm_Code_Line *line)
 {
    Elm_Code_Token *token;
 
@@ -207,7 +207,7 @@ EAPI void elm_code_line_tokens_clear(Elm_Code_Line *line)
    line->tokens = NULL;
 }
 
-EAPI void elm_code_line_status_clear(Elm_Code_Line *line)
+ELM_API void elm_code_line_status_clear(Elm_Code_Line *line)
 {
    line->status = ELM_CODE_STATUS_TYPE_DEFAULT;
    if (line->status_text)
@@ -217,7 +217,7 @@ EAPI void elm_code_line_status_clear(Elm_Code_Line *line)
      }
 }
 
-EAPI Eina_Bool
+ELM_API Eina_Bool
 elm_code_line_contains_widget_cursor(Elm_Code_Line *line)
 {
    Elm_Code *code = line->file->parent;

@@ -35,6 +35,7 @@ foreach eo_file : pub_legacy_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ELM_API',
                            '-gchd', '@INPUT@'])
 
 endforeach
@@ -203,6 +204,7 @@ foreach eo_file : pub_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ELM_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -223,6 +225,7 @@ foreach eo_file : pub_eo_types_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ELM_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -253,6 +256,7 @@ foreach eo_file : priv_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ELM_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -1020,7 +1024,7 @@ elementary_lib = library('elementary',
     dependencies: elementary_pub_deps + elementary_deps + elementary_ext_deps,
     include_directories : config_dir + [include_directories('.')] + [include_directories(join_paths('..', '..', '..'))],
     install: true,
-    c_args : elm_package_c_args,
+    c_args : [elm_package_c_args, '-DELM_BUILD'],
     version : meson.project_version()
 )
 
