@@ -1651,10 +1651,12 @@ _copy_attribute(Svg_Node *to, Svg_Node *from)
         case SVG_NODE_POLYGON:
            to->node.polygon.points_count = from->node.polygon.points_count;
            to->node.polygon.points = calloc(to->node.polygon.points_count, sizeof(double));
+           memcpy(to->node.polygon.points, from->node.polygon.points, to->node.polygon.points_count * sizeof(double));
            break;
         case SVG_NODE_POLYLINE:
            to->node.polyline.points_count = from->node.polyline.points_count;
            to->node.polyline.points = calloc(to->node.polyline.points_count, sizeof(double));
+           memcpy(to->node.polyline.points, from->node.polyline.points, to->node.polyline.points_count * sizeof(double));
            break;
         default:
            break;
