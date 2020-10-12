@@ -137,6 +137,7 @@ I160("i-efm-exe", "efm-exe")
 I160("i-efm-trash", "efm-trash")
 
 I160("i-mobile", "mobile-phone")
+I160("i-media-player", "media-player")
 I160("i-battery", "battery")
 I160("i-tools", "tools")
 I160("i-atom", "atom")

@@ -343,7 +343,6 @@ ICO1(CTX, "preferences-other", 128)
 
 ////  devices  ////////////////////////////////////////////////////////////////
 #define CTX "devices"
-ICO1(CTX, "multimedia-player", 128)
 ICO1(CTX, "media-optical", 128)
 ICO1(CTX, "media-optical-cd", 128)
 ICO1(CTX, "media-optical-audio", 128)
