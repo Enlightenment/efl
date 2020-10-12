@@ -28,7 +28,7 @@
 #include <errno.h>
 
 #ifdef _WIN32
-# include <evil_private.h> /* windows.h fcntl mkstemps mkdtemp */
+# include <evil_private.h> /* windows.h */
 #endif
 
 #define COPY_BLOCKSIZE (4 * 1024 * 1024)
@@ -991,98 +991,6 @@ eina_file_copy(const char *src, const char *dst, Eina_File_Copy_Flags flags, Ein
      unlink(dst);
 
    return success;
-}
-
-EAPI int
-eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
-{
-   char buffer[PATH_MAX];
-   const char *XXXXXX = NULL, *sep;
-   int fd, len;
-#ifndef _WIN32
-   mode_t old_umask;
-#endif
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, -1);
-
-   sep = strchr(templatename, '/');
-#ifdef _WIN32
-   if (!sep) sep = strchr(templatename, '\\');
-#endif
-   if (sep)
-     {
-        len = eina_strlcpy(buffer, templatename, sizeof(buffer));
-     }
-   else
-     {
-        len = eina_file_path_join(buffer, sizeof(buffer),
-                                  eina_environment_tmp_get(), templatename);
-     }
-
-   /*
-    * Unix:
-    * Make sure temp file is created with secure permissions,
-    * http://man7.org/linux/man-pages/man3/mkstemp.3.html#NOTES
-    *
-    * Windows:
-    * no secure permissions anyway and the umask use below makes
-    * the file read-only.
-    */
-#ifndef _WIN32
-   old_umask = umask(S_IRWXG|S_IRWXO);
-#endif
-   if ((XXXXXX = strstr(buffer, "XXXXXX.")) != NULL)
-     {
-        int suffixlen = buffer + len - XXXXXX - 6;
-        fd = mkstemps(buffer, suffixlen);
-     }
-   else
-     fd = mkstemp(buffer);
-#ifndef _WIN32
-   umask(old_umask);
-#endif
-
-   if (fd < 0)
-     {
-        if (path) *path = NULL;
-        return -1;
-     }
-
-   if (path) *path = eina_tmpstr_add(buffer);
-   return fd;
-}
-
-EAPI Eina_Bool
-eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
-{
-   char buffer[PATH_MAX];
-   char *tmpdirname, *sep;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, EINA_FALSE);
-
-   sep = strchr(templatename, '/');
-#ifdef _WIN32
-   if (!sep) sep = strchr(templatename, '\\');
-#endif
-   if (sep)
-     {
-        eina_strlcpy(buffer, templatename, sizeof(buffer));
-     }
-   else
-     {
-        eina_file_path_join(buffer, sizeof(buffer),
-                            eina_environment_tmp_get(), templatename);
-     }
-
-   tmpdirname = mkdtemp(buffer);
-   if (tmpdirname == NULL)
-     {
-        if (path) *path = NULL;
-        return EINA_FALSE;
-     }
-
-   if (path) *path = eina_tmpstr_add(tmpdirname);
-   return EINA_TRUE;
 }
 
 /*============================================================================*

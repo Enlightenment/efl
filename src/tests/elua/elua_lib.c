@@ -19,7 +19,6 @@ EFL_START_TEST(elua_api)
 {
     Elua_State *st;
     lua_State *lst;
-    char buf[] = "tmpXXXXXX";
     FILE *f;
     int fd;
     char *cargv[2];
@@ -29,6 +28,7 @@ EFL_START_TEST(elua_api)
     cargv[0] = arg1;
     cargv[1] = arg2;
     char *spath = NULL;
+    Eina_Tmpstr *tmpf = NULL;
 
     st = elua_state_new("test");
     fail_if(!st);
@@ -84,16 +84,16 @@ EFL_START_TEST(elua_api)
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
     lua_pop(lst, 1);
 
-    fd = mkstemp(buf);
+    fd = eina_file_mkstemp("tmpXXXXXX", &tmpf);
     fail_if(fd < 0);
     f = fdopen(fd, "wb");
     fail_if(!f);
     fprintf(f, "return 5\n");
     fclose(f);
-    fail_if(!elua_util_file_run(st, buf));
+    fail_if(!elua_util_file_run(st, tmpf));
     fail_if(lua_tointeger(lst, -1) != 5);
     lua_pop(lst, 1);
-    fail_if(remove(buf));
+    fail_if(remove(tmpf));
 
     /* halfassed testing here, but not possible otherwise */
     fail_if(elua_util_error_report(st, 0));
@@ -101,21 +101,21 @@ EFL_START_TEST(elua_api)
     fail_if(!elua_util_error_report(st, 5));
     fail_if(lua_gettop(lst) > 0);
 
-    f = fopen(buf, "wb");
+    f = fopen(tmpf, "wb");
     fail_if(!f);
     fprintf(f, "return true");
     fclose(f);
-    cargv[1] = buf;
+    cargv[1] = tmpf;
     fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 1);
 
-    f = fopen(buf, "wb");
+    f = fopen(tmpf, "wb");
     fail_if(!f);
     fprintf(f, "return false");
     fclose(f);
     fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 0);
-    fail_if(remove(buf));
+    fail_if(remove(tmpf));
 
     /* elua API here tries accessing files by relative path,
      * prevent any unintentional file accesses in cwd
@@ -139,6 +139,7 @@ EFL_START_TEST(elua_api)
     lua_pop(lst, 1);
 
     elua_state_free(st);
+    eina_tmpstr_del(tmpf);
 }
 EFL_END_TEST
 

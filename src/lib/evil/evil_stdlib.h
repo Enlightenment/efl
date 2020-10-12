@@ -68,24 +68,6 @@ EAPI int unsetenv(const char *name);
  */
 
 /**
- * @brief create an unique temporary directory
- *
- * @since 1.8.0
- */
-EAPI char *mkdtemp(char *__template);
-
-/**
- * @brief Create a unique temporary file name with a suffix.
- *
- * @param __template Template of the file to create.
- * @param suffixlen Length of the suffix following the 'XXXXXX' placeholder.
- * @return A file descriptor on success, -1 otherwise.
- *
- * @since 1.10.0
- */
-EAPI int mkstemps(char *__template, int suffixlen);
-
-/**
  * @brief Return an absolute or full path name for a specified relative path name.
  *
  * @param file_name The absolute path name.

@@ -169,86 +169,6 @@ EFL_START_TEST(evil_stdlib_unsetenv)
 }
 EFL_END_TEST
 
-EFL_START_TEST(evil_stdlib_mkdtemp)
-{
-   char template[] = "file_XXXXXX";
-   char *res;
-
-   res = mkdtemp(template);
-   fail_if(res == NULL);
-
-   fail_if(rmdir(res) < 0);
-}
-EFL_END_TEST
-
-EFL_START_TEST(evil_stdlib_mkdtemp_fail)
-{
-   char template[] = "file_XXX";
-   char *res;
-
-   res = mkdtemp(template);
-   fail_if(res != NULL);
-}
-EFL_END_TEST
-
-EFL_START_TEST(evil_stdlib_mkstemp)
-{
-   char template[] = "file_XXXXXX";
-   int fd;
-
-   fd = mkstemp(template);
-   fail_if(fd < 0);
-
-   fail_if(close(fd) == -1);
-
-   fail_if(unlink(template) == -1);
-}
-EFL_END_TEST
-
-EFL_START_TEST(evil_stdlib_mkstemp_fail)
-{
-   char template[] = "file_XXX";
-   int fd;
-
-   fd = mkstemp(template);
-   fail_if(fd >= 0);
-}
-EFL_END_TEST
-
-EFL_START_TEST(evil_stdlib_mkstemps)
-{
-   char template[] = "file_XXXXXX.ext";
-   int fd;
-
-   fd = mkstemps(template, 4);
-   fail_if(fd < 0);
-
-   fail_if(close(fd) == -1);
-
-   fail_if(unlink(template) == -1);
-}
-EFL_END_TEST
-
-EFL_START_TEST(evil_stdlib_mkstemps_fail_1)
-{
-   char template[] = "file_XXX.ext";
-   int fd;
-
-   fd = mkstemps(template, 4);
-   fail_if(fd >= 0);
-}
-EFL_END_TEST
-
-EFL_START_TEST(evil_stdlib_mkstemps_fail_2)
-{
-   char template[] = "file_XXX";
-   int fd;
-
-   fd = mkstemps(template, 4);
-   fail_if(fd >= 0);
-}
-EFL_END_TEST
-
 EFL_START_TEST(evil_stdlib_realpath_1)
 {
    char buf[PATH_MAX];
@@ -301,14 +221,6 @@ void evil_test_stdlib(TCase *tc)
    tcase_add_test(tc, evil_stdlib_getenv_two);
    tcase_add_test(tc, evil_stdlib_getenv_two_swapped);
    tcase_add_test(tc, evil_stdlib_unsetenv);
-
-   tcase_add_test(tc, evil_stdlib_mkdtemp);
-   tcase_add_test(tc, evil_stdlib_mkdtemp_fail);
-   tcase_add_test(tc, evil_stdlib_mkstemp);
-   tcase_add_test(tc, evil_stdlib_mkstemp_fail);
-   tcase_add_test(tc, evil_stdlib_mkstemps);
-   tcase_add_test(tc, evil_stdlib_mkstemps_fail_1);
-   tcase_add_test(tc, evil_stdlib_mkstemps_fail_2);
 
    tcase_add_test(tc, evil_stdlib_realpath_1);
    tcase_add_test(tc, evil_stdlib_realpath_2);

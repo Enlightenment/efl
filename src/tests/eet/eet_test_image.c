@@ -72,7 +72,6 @@ static const Eet_Test_Image test_alpha = {
 EFL_START_TEST(eet_test_image_normal)
 {
    Eet_File *ef;
-   char *file;
    unsigned int *data;
    int compress;
    int quality;
@@ -82,14 +81,13 @@ EFL_START_TEST(eet_test_image_normal)
    unsigned int w;
    unsigned int h;
    int tmpfd;
+   Eina_Tmpstr *tmpf = NULL;
 
-   file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(-1 == (tmpfd = eina_file_mkstemp("eet_suite_testXXXXXX", &tmpf)));
    fail_if(!!close(tmpfd));
 
    /* Save the encoded data in a file. */
-   ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+   ef = eet_open(tmpf, EET_FILE_MODE_READ_WRITE);
    fail_if(!ef);
 
    result = eet_data_image_write(ef,
@@ -219,7 +217,7 @@ EFL_START_TEST(eet_test_image_normal)
    eet_close(ef);
 
    /* Test read of image */
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_open(tmpf, EET_FILE_MODE_READ);
    fail_if(!ef);
 
    result = eet_data_image_header_read(ef,
@@ -424,14 +422,14 @@ EFL_START_TEST(eet_test_image_normal)
 
    eet_close(ef);
 
-   fail_if(unlink(file) != 0);
+   fail_if(unlink(tmpf) != 0);
 
+   eina_tmpstr_del(tmpf);
 }
 EFL_END_TEST
 
 EFL_START_TEST(eet_test_image_small)
 {
-   char *file;
    unsigned int image[4];
    unsigned int *data;
    Eet_File *ef;
@@ -443,18 +441,17 @@ EFL_START_TEST(eet_test_image_small)
    Eet_Image_Encoding lossy;
    int result;
    int tmpfd;
-
-   file = strdup("/tmp/eet_suite_testXXXXXX");
+   Eina_Tmpstr *tmpf = NULL;
 
    image[0] = IM0;
    image[1] = IM1;
    image[2] = IM2;
    image[3] = IM3;
 
-   fail_if(-1 == (tmpfd = mkstemp(file)));
+   fail_if(-1 == (tmpfd = eina_file_mkstemp("/tmp/eet_suite_testXXXXXX", &tmpf)));
    fail_if(!!close(tmpfd));
 
-   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   ef = eet_open(tmpf, EET_FILE_MODE_WRITE);
    fail_if(!ef);
 
    result = eet_data_image_write(ef, "/images/test", image, 2, 2, 1, 9, 100, 0);
@@ -462,7 +459,7 @@ EFL_START_TEST(eet_test_image_small)
 
    eet_close(ef);
 
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_open(tmpf, EET_FILE_MODE_READ);
    fail_if(!ef);
 
    data = (unsigned int *)eet_data_image_read(ef,
@@ -477,7 +474,7 @@ EFL_START_TEST(eet_test_image_small)
 
    eet_close(ef);
 
-   fail_if(unlink(file) != 0);
+   fail_if(unlink(tmpf) != 0);
 
    fail_if(data[0] != IM0);
    fail_if(data[1] != IM1);
@@ -486,6 +483,7 @@ EFL_START_TEST(eet_test_image_small)
 
    free(data);
 
+   eina_tmpstr_del(tmpf);
 }
 EFL_END_TEST
 

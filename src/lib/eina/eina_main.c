@@ -120,6 +120,10 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
 extern Eina_Lock       _sysmon_lock;
 #endif
 
+#ifdef _WIN32
+BCRYPT_ALG_HANDLE _eina_bcrypt_provider;
+#endif
+
 /* place module init/shutdown functions here to avoid other modules
  * calling them by mistake.
  */
@@ -292,6 +296,10 @@ eina_init(void)
       return ++_eina_main_count;
 
 #ifdef _WIN32
+   if (!BCRYPT_SUCCESS(BCryptOpenAlgorithmProvider(&_eina_bcrypt_provider,
+                                                   BCRYPT_RNG_ALGORITHM,
+                                                   NULL, 0)))
+     return 0;
 #else
    int fd = open("/dev/urandom", O_RDONLY);
    if (fd >= 0)
@@ -396,6 +404,10 @@ eina_shutdown(void)
              muntrace();
              _mt_enabled = 0;
           }
+#endif
+
+#ifdef _WIN32
+        BCryptCloseAlgorithmProvider(_eina_bcrypt_provider, 0);
 #endif
      }
 

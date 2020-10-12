@@ -10249,7 +10249,7 @@ evas_textblock_cursor_word_start(Efl_Text_Cursor_Handle *cur)
    if ((cur->pos > 0) && (cur->pos == len))
       cur->pos--;
 
-   for (i = cur->pos ; _is_white(text[i]) && BREAK_AFTER(i) ; i--)
+   for (i = cur->pos ; _is_white(text[i]) ; i--)
      {
         if (i == 0)
           {
@@ -10316,7 +10316,7 @@ evas_textblock_cursor_word_end(Efl_Text_Cursor_Handle *cur)
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
 
-   for (i = cur->pos; text[i] && _is_white(text[i]) && (BREAK_AFTER(i)) ; i++);
+   for (i = cur->pos; text[i] && _is_white(text[i]) ; i++);
    if (i == len)
      {
         Evas_Object_Textblock_Node_Text *nnode;

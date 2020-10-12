@@ -273,7 +273,7 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
 
               If a new, empty session is to be used, start with an
               empty or non-existent file such as one created with
-              mkstemp() or tmpfile(). Alternatively use an
+              eina_file_mkstemp() or tmpfile(). Alternatively use an
               empty string ("") to keep it in memory.
 
               If you want to start from a pre-existent cookie jar

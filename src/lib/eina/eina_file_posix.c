@@ -1509,3 +1509,79 @@ skip3:
      }
 #endif
 }
+
+EAPI int
+eina_file_mkstemp(const char *templatename, Eina_Tmpstr **path)
+{
+   char buffer[PATH_MAX];
+   const char *XXXXXX = NULL, *sep;
+   int fd, len;
+   mode_t old_umask;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, -1);
+
+   sep = strchr(templatename, '/');
+   if (sep)
+     {
+        len = eina_strlcpy(buffer, templatename, sizeof(buffer));
+     }
+   else
+     {
+        len = eina_file_path_join(buffer, sizeof(buffer),
+                                  eina_environment_tmp_get(), templatename);
+     }
+
+   /*
+    * Unix:
+    * Make sure temp file is created with secure permissions,
+    * http://man7.org/linux/man-pages/man3/mkstemp.3.html#NOTES
+    */
+   old_umask = umask(S_IRWXG|S_IRWXO);
+   if ((XXXXXX = strstr(buffer, "XXXXXX.")) != NULL)
+     {
+        int suffixlen = buffer + len - XXXXXX - 6;
+        fd = mkstemps(buffer, suffixlen);
+     }
+   else
+     fd = mkstemp(buffer);
+   umask(old_umask);
+
+   if (fd < 0)
+     {
+        if (path) *path = NULL;
+        return -1;
+     }
+
+   if (path) *path = eina_tmpstr_add(buffer);
+   return fd;
+}
+
+EAPI Eina_Bool
+eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
+{
+   char buffer[PATH_MAX];
+   char *tmpdirname, *sep;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, EINA_FALSE);
+
+   sep = strchr(templatename, '/');
+   if (sep)
+     {
+        eina_strlcpy(buffer, templatename, sizeof(buffer));
+     }
+   else
+     {
+        eina_file_path_join(buffer, sizeof(buffer),
+                            eina_environment_tmp_get(), templatename);
+     }
+
+   tmpdirname = mkdtemp(buffer);
+   if (tmpdirname == NULL)
+     {
+        if (path) *path = NULL;
+        return EINA_FALSE;
+     }
+
+   if (path) *path = eina_tmpstr_add(tmpdirname);
+   return EINA_TRUE;
+}

@@ -6,11 +6,11 @@ Overview
 
 This is the README file for libunibreak, an implementation of the line
 breaking and word breaking algorithms as described in [Unicode Standard
-Annex 14] [1] and [Unicode Standard Annex 29] [2].  Check the project's
-[home page] [3] for up-to-date information.
+Annex 14][1] and [Unicode Standard Annex 29][2].  Check the project's
+[home page][3] for up-to-date information.
 
-  [1]: http://www.unicode.org/reports/tr14/tr14-37.html
-  [2]: http://www.unicode.org/reports/tr29/tr29-29.html
+  [1]: http://www.unicode.org/reports/tr14/
+  [2]: http://www.unicode.org/reports/tr29/
   [3]: https://github.com/adah1972/libunibreak
 
 
@@ -21,7 +21,7 @@ This library is released under an open-source licence, the zlib/libpng
 licence.  Please check the file *LICENCE* for details.
 
 Apart from using the algorithm, part of the code is derived from the
-[Unicode Public Data] [4], and the [Unicode Terms of Use] [5] may apply.
+[Unicode Public Data][4], and the [Unicode Terms of Use][5] may apply.
 
   [4]: http://www.unicode.org/Public/
   [5]: http://www.unicode.org/copyright.html
@@ -48,6 +48,8 @@ There are three ways to build the library:
      *WordBreakProperty.txt*.
    - type `make graphemebreakdata` to regenerate *graphemebreakdata.c*
      from *GraphemeBreakProperty.txt*.
+   - type `make emojidata` to regenerate *emojidata.c* from
+     *emoji-data.txt*.
 
 2. On systems where GCC and Binutils are supported, one can type
 
@@ -65,6 +67,8 @@ There are three ways to build the library:
      *WordBreakProperty.txt*.
    - type `make graphemebreakdata` to regenerate *graphemebreakdata.c*
      from *GraphemeBreakProperty.txt*.
+   - type `make emojidata` to regenerate *emojidata.c* from
+     *emoji-data.txt*.
 
 3. On Windows, apart from using method 1 (Cygwin/MSYS) and method 2
    (MinGW), MSVC can also be used.  Type
@@ -72,7 +76,7 @@ There are three ways to build the library:
         cd src
         nmake -f Makefile.msvc
 
-   to build the static library.  By default the debug release is built.
+   to build the static library.  By default the debug version is built.
    To build the release version
 
         nmake -f Makefile.msvc CFG="libunibreak - Win32 Release"

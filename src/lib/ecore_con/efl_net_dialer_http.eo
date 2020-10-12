@@ -310,7 +310,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
 
               If a new, empty session is to be used, start with an
               empty or non-existent file such as created with
-              mkstemp() or tmpfile(). Alternatively use an
+              eina_file_mkstemp() or tmpfile(). Alternatively use an
               empty string ("") to store it in memory.
 
               If you want to start from a pre-existing cookie jar

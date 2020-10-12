@@ -60,18 +60,16 @@ EFL_START_TEST(eet_test_identity_simple)
    Eet_Key *k;
    FILE *noread;
    char *test;
-   char *file;
    int size;
    int fd;
+   Eina_Tmpstr *tmpf = NULL;
 
-   file = strdup("/tmp/eet_suite_testXXXXXX");
-
-   fail_if(-1 == (fd = mkstemp(file)));
+   fail_if(-1 == (fd = eina_file_mkstemp("eet_suite_testXXXXXX", &tmpf)));
    fail_if(!!close(fd));
    fail_if(!(noread = fopen("/dev/null", "wb")));
 
    /* Sign an eet file. */
-   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   ef = eet_open(tmpf, EET_FILE_MODE_WRITE);
    fail_if(!ef);
 
    fail_if(!eet_write(ef, "keys/tests", buffer, strlen(buffer) + 1, 0));
@@ -85,7 +83,7 @@ EFL_START_TEST(eet_test_identity_simple)
    eet_close(ef);
 
    /* Open a signed file. */
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_open(tmpf, EET_FILE_MODE_READ);
    fail_if(!ef);
 
    /* check that the certificates match */
@@ -109,7 +107,7 @@ EFL_START_TEST(eet_test_identity_simple)
    eet_clearcache();
 
    /* Corrupting the file. */
-   fd = open(file, O_WRONLY | O_BINARY);
+   fd = open(tmpf, O_WRONLY | O_BINARY);
    fail_if(fd < 0);
 
    fail_if(lseek(fd, 200, SEEK_SET) != 200);
@@ -122,11 +120,12 @@ EFL_START_TEST(eet_test_identity_simple)
    close(fd);
 
    /* Attempt to open a modified file. */
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_open(tmpf, EET_FILE_MODE_READ);
    fail_if(ef);
 
-   fail_if(unlink(file) != 0);
+   fail_if(unlink(tmpf) != 0);
 
+   eina_tmpstr_del(tmpf);
 }
 EFL_END_TEST
 
