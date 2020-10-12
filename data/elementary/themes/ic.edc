@@ -96,69 +96,16 @@ I060("i-media-volume", "media-volume")
 I060("i-media-mute", "media-mute")
 I060("i-media-next", "media-next")
 I060("i-media-prev", "media-prev")
-// exclam
-// more
-// chat
-// clock
-// eject
-// ff
-// rw
-// next
-// prev
-// stop
-// play
-// pause
-// head
-// info
-// mute
-// sound/volume
-// search
-// pair
-// unpair
-// auto lock
-// no lock
-// auto connect
-// manual connect
-// connect
-// disconnect
-// trust
-// untrust
-// pair
-// unpair
-// more
-// cancel
-// upload
-// download
-// up+download
-// battery
-// power
-// network
-// ethernet
-// temp
-// tile float
-// tile h
-// tile v
-// package
-// bug
-// enhance
-// pri low
-// pri med
-// pri hi
-// hand
-// pointer
-// ban
-// screen
-// op ask
-// op copy
-// op move
-// kbd+mouse
-// moon
-// paintbrush
-// chip
-// mic
-// bright bulb
-// phone
-// cleanup
+I060("i-media-record", "media-record")
+I060("i-zoom-in", "zoom-in")
+I060("i-zoom-out", "zoom-out")
+I060("i-zoom-reset", "zoom-reset")
+I060("i-zoom-fit", "zoom-fit")
+I060("i-zoom-fill", "zoom-fill")
+I060("i-zoom-fit-best", "zoom-fit-best")
+I060("i-view-reset", "view-reset")
+I060("i-view-sort-ascending", "view-sort-ascending")
+I060("i-view-sort-descending", "view-sort-descending")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)
@@ -190,6 +137,7 @@ I160("i-efm-exe", "efm-exe")
 I160("i-efm-trash", "efm-trash")
 
 I160("i-mobile", "mobile-phone")
+I160("i-battery", "battery")
 I160("i-tools", "tools")
 I160("i-atom", "atom")
 I160("i-folder-open", "folder-open")
@@ -199,6 +147,11 @@ I160("i-termprompt", "termprompt")
 I160("i-warning", "warning")
 I160("i-warning-red", "warning-red")
 I160("i-camera", "camera")
+I160("i-photo", "photo")
+I160("i-webcam", "webcam")
+I160("i-video-camera", "video-camera")
+I160("i-drive-hdd-fw", "drive-hdd-fw")
+I160("i-drive-hdd-usb", "drive-hdd-usb")
 I160("i-paint", "paint")
 I160("i-desks", "desks")
 I160("i-window", "window")
@@ -207,6 +160,7 @@ I160("i-window-lost", "window-lost")
 I160("i-window-stacking", "window-stacking")
 I160("i-system-run", "system-run")
 I160("i-desktop-pc", "desktop-pc")
+I160("i-laptop-pc", "laptop-pc")
 I160("i-padlock-lock", "padlock-lock")
 I160("i-padlock-unlock", "padlock-unlock")
 I160("i-gear-person", "gear-person")
@@ -286,6 +240,8 @@ I160("i-head", "head")
 I160("i-bookmark", "bookmark")
 I160("i-here", "here")
 I160("i-server", "server")
+I160("i-sound-card", "sound-card")
+I160("i-microphone", "microphone")
 I160("i-server-group", "server-group")
 I160("i-folder-dropin", "folder-dropin")
 I160("i-folder-world", "folder-world")

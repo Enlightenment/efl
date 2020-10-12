@@ -392,6 +392,40 @@ ICON("media_player/volume", "i-media-volume")
 ICON("media_player/volume/default", "i-media-volume")
 ICON("media_player/mute", "i-media-mute")
 ICON("media_player/mute/default", "i-media-mute")
+
+ICON("media-eject", "i-media-eject")
+ICON("media-playback-pause", "i-media-pause")
+ICON("media-playback-start", "i-media-play")
+ICON("media-playback-stop", "i-media-stop")
+ICON("media-record", "i-media-record")
+ICON("media-seek-backward", "i-media-rw")
+ICON("media-seek-forward", "i-media-ff")
+ICON("media-skip-backward", "i-media-prev")
+ICON("media-skip-forward", "i-media-next")
+
+ICON("zoom-in", "i-zoom-in")
+ICON("zoom-out", "i-zoom-out")
+ICON("zoom-original", "i-zoom-reset")
+ICON("zoom-fit", "i-zoom-fit")
+ICON("zoom-fill", "i-zoom-fill")
+ICON("zoom-fit-best", "i-zoom-fit-best")
+
+ICON("view-refresh", "i-reload")
+ICON("view-fullscreen", "i-fullscreen")
+ICON("view-close", "i-close")
+ICON("view-restore", "i-view-reset")
+ICON("view-sort-ascending", "i-view-sort-ascending")
+ICON("view-sort-descending", "i-view-sort-descending")
+
+ICON("window-close", "i-close")
+
+ICON("system-shutdown", "i-system-shutdown")
+ICON("system-reboot", "i-system-restart")
+ICON("system-lock-screen", "i-system-lock")
+ICON("system-log-out", "i-system-logout")
+ICON("system-search", "i-search")
+ICON("system-run", "i-media-play")
+
 #undef ICON
 
 // regular icons
@@ -448,6 +482,8 @@ ICON("start-here", "i-here")
 
 ICON("network-server", "i-server")
 ICON("network-workgroup", "i-server-group")
+ICON("audio-card", "i-sound-card")
+ICON("audio-input-microphone", "i-microphone")
 
 ICON("inode-directory", "i-folder")
 
@@ -462,5 +498,20 @@ ICON("folder-pictures", "i-folder-pictures")
 ICON("folder-music", "i-folder-music")
 ICON("folder-videos", "i-folder-videos")
 ICON("folder-visiting", "i-folder-visiting")
+
+ICON("battery", "i-battery")
+ICON("camera", "i-camera")
+ICON("camera-photo", "i-camera")
+ICON("camera-web", "i-webcam")
+ICON("camera-video", "i-video-camera")
+ICON("drive-harddisk", "i-drive-hdd")
+ICON("drive-harddisk-ieee1394", "i-drive-hdd-fw")
+ICON("drive-harddisk-usb", "i-drive-hdd-usb")
+ICON("drive-optical", "i-drive-cd")
+ICON("drive-removable-media", "i-drive-usb-media")
+ICON("drive-removable-media-usb", "i-drive-usb-media")
+ICON("drive-removable-media-ieee1394", "i-drive-usb-media")
+ICON("computer", "i-desktop-pc")
+ICON("computer-laptop", "i-laptop-pc")
 
 #undef ICON
