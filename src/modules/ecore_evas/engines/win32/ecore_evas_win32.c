@@ -100,6 +100,7 @@ static Eina_Bool _ecore_evas_win32_event_window_delete_request(void *data EINA_U
 
 static Eina_Bool _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
+
 /* Private functions */
 
 static int
@@ -830,7 +831,8 @@ _ecore_evas_win32_activate(Ecore_Evas *ee)
 {
    INF("ecore evas activate");
 
-   ecore_win32_window_focus((Ecore_Win32_Window *)ee->prop.window);
+   ecore_evas_show(ee);
+   ecore_win32_window_activate(ee->prop.window);
 }
 
 static void
@@ -1371,7 +1373,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
    _ecore_evas_win32_iconified_set,
    _ecore_evas_win32_borderless_set,
    _ecore_evas_win32_override_set,
-   NULL,
+   NULL, /* _ecore_evas_x_maximize_set */
    _ecore_evas_win32_fullscreen_set,
    NULL, /* _ecore_evas_x_avoid_damage_set */
    NULL, /* _ecore_evas_x_withdrawn_set */

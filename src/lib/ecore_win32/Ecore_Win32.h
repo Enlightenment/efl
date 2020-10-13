@@ -611,6 +611,8 @@ EAPI void ecore_win32_window_raise(Ecore_Win32_Window *window);
 
 EAPI void ecore_win32_window_lower(Ecore_Win32_Window *window);
 
+EAPI void ecore_win32_window_activate(Ecore_Win32_Window *window);
+
 EAPI void ecore_win32_window_title_set(Ecore_Win32_Window *window,
                                        const char         *title);
 

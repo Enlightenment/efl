@@ -1155,6 +1155,29 @@ ecore_win32_window_lower(Ecore_Win32_Window *window)
 }
 
 /**
+ * @brief Activate the given window.
+ *
+ * @param window The window to activate.
+ *
+ * This functions activates the windows @p window. If @p window
+ * is @c NULL, this function does nothing. Otherwise, the window is
+ * activated. So if is minimized or maximized, the window is restored
+ * to its original position and size.
+ *
+ *@since 1.26
+ */
+EAPI void
+ecore_win32_window_activate(Ecore_Win32_Window *window)
+{
+   if (!window) return;
+
+   INF("activate window");
+
+   ShowWindow(window->window, SW_RESTORE);
+   window->iconified = EINA_FALSE;
+}
+
+/**
  * @brief Set the title of the given window.
  *
  * @param window The window to set the title.
