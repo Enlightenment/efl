@@ -212,25 +212,25 @@ _efl_canvas_layout_seat_get(const Eo *obj EINA_UNUSED, Edje *ed, Eina_Stringshar
    return _edje_seat_get(ed, name);
 }
 
-EAPI void
+EDJE_API void
 edje_frametime_set(double t)
 {
    ecore_animator_frametime_set(t);
 }
 
-EAPI double
+EDJE_API double
 edje_frametime_get(void)
 {
    return ecore_animator_frametime_get();
 }
 
-EAPI double
+EDJE_API double
 edje_transition_duration_factor_get(void)
 {
    return _edje_transition_duration_scale;
 }
 
-EAPI void
+EDJE_API void
 edje_transition_duration_factor_set(double scale)
 {
    _edje_transition_duration_scale = FROM_DOUBLE(scale);
@@ -1698,14 +1698,14 @@ break_prog:
 static void *callback_extra_data = NULL;
 static void *callback_seat_data = NULL;
 
-EAPI void *
+EDJE_API void *
 edje_object_signal_callback_extra_data_get(void)
 {
    return callback_extra_data;
 }
 
 #ifdef EFL_BETA_API_SUPPORT
-EAPI void *
+EDJE_API void *
 edje_object_signal_callback_seat_data_get(void)
 {
    return callback_seat_data;

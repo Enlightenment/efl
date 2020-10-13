@@ -104,7 +104,7 @@ _efl_canvas_layout_layout_load_error_get(const Eo *obj EINA_UNUSED, Edje *ed)
    return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 }
 
-EAPI const char *
+EDJE_API const char *
 edje_load_error_str(Edje_Load_Error error)
 {
    switch (error)
@@ -144,7 +144,7 @@ edje_load_error_str(Edje_Load_Error error)
      }
 }
 
-EAPI Eina_List *
+EDJE_API Eina_List *
 edje_mmap_collection_list(Eina_File *f)
 {
    Eina_List *lst = NULL;
@@ -171,7 +171,7 @@ edje_mmap_collection_list(Eina_File *f)
    return lst;
 }
 
-EAPI Eina_List *
+EDJE_API Eina_List *
 edje_file_collection_list(const char *file)
 {
    Eina_File *f;
@@ -191,7 +191,7 @@ err:
    return lst;
 }
 
-EAPI void
+EDJE_API void
 edje_file_collection_list_free(Eina_List *lst)
 {
    while (lst)
@@ -201,13 +201,13 @@ edje_file_collection_list_free(Eina_List *lst)
      }
 }
 
-EAPI void
+EDJE_API void
 edje_mmap_collection_list_free(Eina_List *lst)
 {
    edje_file_collection_list_free(lst);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_mmap_group_exists(Eina_File *f, const char *glob)
 {
    Edje_File *edf;
@@ -268,7 +268,7 @@ edje_mmap_group_exists(Eina_File *f, const char *glob)
    return succeed;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_mmap_3d_has(Eina_File *f EINA_UNUSED, const char *group EINA_UNUSED)
 {
    return EINA_FALSE;
@@ -311,7 +311,7 @@ _edje_file_iterator_free(Eina_Iterator *it)
    free(et);
 }
 
-EAPI Eina_Iterator *
+EDJE_API Eina_Iterator *
 edje_file_iterator_new(void)
 {
    Edje_File_Iterator *it;
@@ -330,7 +330,7 @@ edje_file_iterator_new(void)
    return &it->iterator;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_file_group_exists(const char *file, const char *glob)
 {
    Eina_File *f;
@@ -353,7 +353,7 @@ err:
    return result;
 }
 
-EAPI char *
+EDJE_API char *
 edje_mmap_data_get(const Eina_File *f, const char *key)
 {
    Edje_File *edf;
@@ -374,7 +374,7 @@ edje_mmap_data_get(const Eina_File *f, const char *key)
    return str;
 }
 
-EAPI char *
+EDJE_API char *
 edje_file_data_get(const char *file, const char *key)
 {
    Eina_File *f;

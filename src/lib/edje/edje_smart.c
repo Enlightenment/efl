@@ -18,7 +18,7 @@ Eina_Inlist *_edje_edjes = NULL;
 
 /************************** API Routines **************************/
 
-EAPI Evas_Object *
+EDJE_API Evas_Object *
 edje_object_add(Evas *evas)
 {
    evas = evas_find(evas);
@@ -457,20 +457,20 @@ _efl_canvas_layout_efl_file_load(Eo *obj, Edje *ed)
    return err;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 {
    return efl_file_simple_mmap_load(obj, file, group);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
    /* mtime checking of file is handled in efl.file mixin */
    return efl_file_simple_load(obj, file, group);
 }
 
-EAPI void
+EDJE_API void
 edje_object_file_get(const Edje_Object *obj, const char **file, const char **group)
 {
    if (file) *file = efl_file_get(obj);

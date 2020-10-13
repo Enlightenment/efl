@@ -64,39 +64,14 @@
 #endif
 
 #include "Edje.h"
+#include <edje_api.h>
 #define EFL_INTERNAL_UNSTABLE
 #include <Evas_Internal.h>
-
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
 
 // This object is internal, only the interface needs to be exposed.
 #include "edje_global.eo.h"
 
-EAPI extern int _edje_default_log_dom ;
+EDJE_API extern int _edje_default_log_dom ;
 
 #ifdef EDJE_DEFAULT_LOG_COLOR
 # undef EDJE_DEFAULT_LOG_COLOR
@@ -2318,12 +2293,12 @@ Eina_Bool _edje_object_signal_callback_add(Evas_Object *obj, Edje *ed,
                                            Efl_Signal_Cb func_eo, Eina_Free_Cb func_free_cb, void *data);
 
 // FIXME remove below 3 eapi decls when edje_convert goes
-EAPI void _edje_edd_init(void);
-EAPI void _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd, Eet_Data_Descriptor **_font_edd);
-EAPI void _edje_edd_shutdown(void);
+EDJE_API void _edje_edd_init(void);
+EDJE_API void _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd, Eet_Data_Descriptor **_font_edd);
+EDJE_API void _edje_edd_shutdown(void);
 
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
-EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
+EDJE_API extern Eet_Data_Descriptor *_edje_edd_edje_file;
+EDJE_API extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 
 extern Eina_Inlist     *_edje_edjes;
 
@@ -2349,20 +2324,20 @@ extern Eina_Hash       *_edje_id_hash;
 extern const char      *_edje_language;
 extern const char      *_edje_cache_path;
 
-EAPI extern Eina_Mempool *_emp_RECTANGLE;
-EAPI extern Eina_Mempool *_emp_TEXT;
-EAPI extern Eina_Mempool *_emp_IMAGE;
-EAPI extern Eina_Mempool *_emp_PROXY;
-EAPI extern Eina_Mempool *_emp_SWALLOW;
-EAPI extern Eina_Mempool *_emp_TEXTBLOCK;
-EAPI extern Eina_Mempool *_emp_GROUP;
-EAPI extern Eina_Mempool *_emp_BOX;
-EAPI extern Eina_Mempool *_emp_TABLE;
-EAPI extern Eina_Mempool *_emp_EXTERNAL;
-EAPI extern Eina_Mempool *_emp_SPACER;
-EAPI extern Eina_Mempool *_emp_SNAPSHOT;
-EAPI extern Eina_Mempool *_emp_part;
-EAPI extern Eina_Mempool *_emp_VECTOR;
+EDJE_API extern Eina_Mempool *_emp_RECTANGLE;
+EDJE_API extern Eina_Mempool *_emp_TEXT;
+EDJE_API extern Eina_Mempool *_emp_IMAGE;
+EDJE_API extern Eina_Mempool *_emp_PROXY;
+EDJE_API extern Eina_Mempool *_emp_SWALLOW;
+EDJE_API extern Eina_Mempool *_emp_TEXTBLOCK;
+EDJE_API extern Eina_Mempool *_emp_GROUP;
+EDJE_API extern Eina_Mempool *_emp_BOX;
+EDJE_API extern Eina_Mempool *_emp_TABLE;
+EDJE_API extern Eina_Mempool *_emp_EXTERNAL;
+EDJE_API extern Eina_Mempool *_emp_SPACER;
+EDJE_API extern Eina_Mempool *_emp_SNAPSHOT;
+EDJE_API extern Eina_Mempool *_emp_part;
+EDJE_API extern Eina_Mempool *_emp_VECTOR;
 
 static inline Edje_Global *
 _edje_global(void)
@@ -2443,8 +2418,8 @@ Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
                                         Edje_Signal_Cb func_legacy,
                                         EflLayoutSignalCb func, Eina_Free_Cb func_free_cb, void *data);
 
-EAPI void _edje_edd_init(void);
-EAPI void _edje_edd_shutdown(void);
+EDJE_API void _edje_edd_init(void);
+EDJE_API void _edje_edd_shutdown(void);
 
 Eina_Error _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
@@ -2666,9 +2641,9 @@ Edje_File *_edje_file_cache_find(const Eina_File *file);
 void _edje_cache_coll_clean(Edje_File *edf);
 void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
-EAPI void edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce);
-EAPI void edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce);
-EAPI void _edje_cache_file_unref(Edje_File *edf);
+EDJE_API void edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce);
+EDJE_API void edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce);
+EDJE_API void _edje_cache_file_unref(Edje_File *edf);
 
 void _edje_embryo_globals_init(Edje *ed);
 
@@ -2888,8 +2863,8 @@ void edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *da
 
 
 /* used by edje_cc - private still */
-EAPI void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
-EAPI void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
+EDJE_API void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
+EDJE_API void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 
 void _edje_lua2_error_full(const char *file, const char *fnc, int line, lua_State *L, int err_code);
 #define _edje_lua2_error(L, err_code) _edje_lua2_error_full(__FILE__, __func__, __LINE__, L, err_code)
@@ -3278,8 +3253,5 @@ typedef RemixBase* (*MULTISENSE_SOUND_PLAYER_GET_FUNC) (Edje_Multisense_Env *);
 #endif
 
 #include "efl_canvas_layout_part_invalid.eo.h"
-
-#undef EAPI
-#define EAPI
 
 #endif

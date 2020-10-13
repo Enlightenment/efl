@@ -42,7 +42,7 @@ typedef Eo Efl_Layout_Group;
  *
  * @ingroup (null)_Group
  */
-EAPI const char *edje_object_data_get(const Efl_Layout_Group *obj, const char *key);
+EDJE_API const char *edje_object_data_get(const Efl_Layout_Group *obj, const char *key);
 
 
 #endif
