@@ -1010,21 +1010,21 @@ _edje_message_del(Edje *ed)
      }
 }
 
-/* Legacy EAPI */
+/* Legacy EDJE_API */
 
-EAPI void
+EDJE_API void
 edje_object_message_send(Eo *obj, Edje_Message_Type type, int id, void *msg)
 {
    _edje_object_message_propagate_send(obj, type, id, msg, EINA_FALSE);
 }
 
-EAPI void
+EDJE_API void
 edje_message_signal_process(void)
 {
    _edje_message_queue_process();
 }
 
-EAPI void
+EDJE_API void
 edje_object_message_handler_set(Eo *obj, Edje_Message_Handler_Cb func, void *data)
 {
    Edje *ed;

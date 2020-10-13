@@ -162,7 +162,7 @@ typedef struct _Edje_Version
  * Current Edje Version info
  *
  */
-EAPI extern Edje_Version *edje_version;
+EDJE_API extern Edje_Version *edje_version;
 
 #ifndef _EDJE_OBJECT_EO_CLASS_TYPE
 #define _EDJE_OBJECT_EO_CLASS_TYPE
@@ -246,7 +246,7 @@ struct _Edje_Size_Class
  * (alive) edje objects.
  *
  */
-EAPI void         edje_message_signal_process             (void);
+EDJE_API void         edje_message_signal_process             (void);
 
 /**
  * @}
@@ -282,7 +282,7 @@ typedef Efl_Signal_Cb Edje_Signal_Cb;
  * @see edje_object_signal_callback_add() for more on Edje signals.
  * @since 1.1.0
  */
-EAPI void *       edje_object_signal_callback_extra_data_get(void);
+EDJE_API void *       edje_object_signal_callback_extra_data_get(void);
 
 
 #ifdef EFL_BETA_API_SUPPORT
@@ -302,7 +302,7 @@ EAPI void *       edje_object_signal_callback_extra_data_get(void);
  * @see edje_object_signal_callback_add() for more on Edje signals.
  * @since 1.21
  */
-EAPI void *edje_object_signal_callback_seat_data_get(void);
+EDJE_API void *edje_object_signal_callback_seat_data_get(void);
 #endif
 
 
@@ -353,7 +353,7 @@ typedef enum _Edje_Channel
  *
  * @since 1.9
  */
-EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
+EDJE_API void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
 
 /**
  * @brief Gets the mute state of the given channel.
@@ -365,7 +365,7 @@ EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
  *
  * @since 1.9
  */
-EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
+EDJE_API Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
 
 /**
  * @}
@@ -403,7 +403,7 @@ EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
  * @see eet_init()
  *
  */
-EAPI int          edje_init                       (void);
+EDJE_API int          edje_init                       (void);
 
 /**
  * @brief Shuts down the Edje library.
@@ -424,7 +424,7 @@ EAPI int          edje_init                       (void);
  * @see eet_shutdown()
  *
  */
-EAPI int		edje_shutdown			(void);
+EDJE_API int		edje_shutdown			(void);
 
 /**
  * @brief Sets the edje append fontset.
@@ -434,7 +434,7 @@ EAPI int		edje_shutdown			(void);
  * This function sets the edje append fontset.
  *
  */
-EAPI void		edje_fontset_append_set		(const char *fonts);
+EDJE_API void		edje_fontset_append_set		(const char *fonts);
 
 /**
  * @brief Gets data from the file level data block of an edje mapped file.
@@ -453,7 +453,7 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
  *
  * Then, edje_file_data_get("test.edj", "key1") will return "value1"
  */
-EAPI char             *edje_mmap_data_get(const Eina_File *f, const char *key);
+EDJE_API char             *edje_mmap_data_get(const Eina_File *f, const char *key);
 
 /**
  * @brief Gets data from the file level data block of an edje file.
@@ -474,7 +474,7 @@ EAPI char             *edje_mmap_data_get(const Eina_File *f, const char *key);
  *
  * @see edje_mmap_data_get()
  */
-EAPI char        *edje_file_data_get              (const char *file, const char *key);
+EDJE_API char        *edje_file_data_get              (const char *file, const char *key);
 
 /**
  * @brief Loads a new module in Edje.
@@ -485,7 +485,7 @@ EAPI char        *edje_file_data_get              (const char *file, const char 
  * So, when a module is loaded, its functionality should be available for use.
  *
  */
-EAPI Eina_Bool               edje_module_load                (const char *module);
+EDJE_API Eina_Bool               edje_module_load                (const char *module);
 
 /**
  * @brief Retrieves all modules that can be loaded.
@@ -496,7 +496,7 @@ EAPI Eina_Bool               edje_module_load                (const char *module
  * @see edje_module_load().
  *
  */
-EAPI const Eina_List        *edje_available_modules_get      (void);
+EDJE_API const Eina_List        *edje_available_modules_get      (void);
 
 /**
  * @brief Gets the edje append fontset.
@@ -509,7 +509,7 @@ EAPI const Eina_List        *edje_available_modules_get      (void);
  * @see edje_fontset_append_set().
  *
  */
-EAPI const char		*edje_fontset_append_get	(void);
+EDJE_API const char		*edje_fontset_append_get	(void);
 
 /**
  * @brief Sets the file cache size.
@@ -524,7 +524,7 @@ EAPI const char		*edje_fontset_append_get	(void);
  * @see edje_file_cache_flush()
  *
  */
-EAPI void         edje_file_cache_set             (int count);
+EDJE_API void         edje_file_cache_set             (int count);
 
 /**
  * @brief Returns the file cache size.
@@ -538,7 +538,7 @@ EAPI void         edje_file_cache_set             (int count);
  * @see edje_file_cache_flush()
  *
  */
-EAPI int          edje_file_cache_get             (void);
+EDJE_API int          edje_file_cache_get             (void);
 
 /**
  * @brief Cleans the file cache.
@@ -550,7 +550,7 @@ EAPI int          edje_file_cache_get             (void);
  * @see edje_file_cache_get()
  *
  */
-EAPI void         edje_file_cache_flush           (void);
+EDJE_API void         edje_file_cache_flush           (void);
 
 /**
  * @brief Sets the collection cache size.
@@ -566,7 +566,7 @@ EAPI void         edje_file_cache_flush           (void);
  * @see edje_collection_cache_flush()
  *
  */
-EAPI void         edje_collection_cache_set       (int count);
+EDJE_API void         edje_collection_cache_set       (int count);
 
 /**
  * @brief Returns the collection cache size.
@@ -580,7 +580,7 @@ EAPI void         edje_collection_cache_set       (int count);
  * @see edje_collection_cache_flush()
  *
  */
-EAPI int          edje_collection_cache_get       (void);
+EDJE_API int          edje_collection_cache_get       (void);
 
 /**
  * @brief Cleans the collection cache.
@@ -592,7 +592,7 @@ EAPI int          edje_collection_cache_get       (void);
  * @see edje_collection_cache_get()
  *
  */
-EAPI void         edje_collection_cache_flush     (void);
+EDJE_API void         edje_collection_cache_flush     (void);
 
 /**
  * @}
@@ -666,7 +666,7 @@ typedef struct _Edje_External_Param
  * @param type the identifier to convert.
  * @return the string with the string representation, or @c "(unknown)".
  */
-EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
+EDJE_API const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
 
 /**
  * Helper macro to indicate an EXTERNAL's integer parameter is undefined.
@@ -912,7 +912,7 @@ typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
  *
  * @see edje_external_type_array_register()
  */
-EAPI Eina_Bool    edje_external_type_register             (const char *type_name, const Edje_External_Type *type_info);
+EDJE_API Eina_Bool    edje_external_type_register             (const char *type_name, const Edje_External_Type *type_info);
 
 /**
  * @brief Unregisters a previously registered EXTERNAL type.
@@ -925,7 +925,7 @@ EAPI Eina_Bool    edje_external_type_register             (const char *type_name
  *
  * @see edje_external_type_array_unregister()
  */
-EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name);
+EDJE_API Eina_Bool    edje_external_type_unregister           (const char *type_name);
 
 /**
  * @brief Registers a batch of types and their information.
@@ -950,7 +950,7 @@ EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name
  *
  * @see edje_external_type_register()
  */
-EAPI void         edje_external_type_array_register       (const Edje_External_Type_Info *array);
+EDJE_API void         edje_external_type_array_register       (const Edje_External_Type_Info *array);
 
 /**
  * @brief Unregisters a batch of given external type previously registered.
@@ -960,7 +960,7 @@ EAPI void         edje_external_type_array_register       (const Edje_External_T
  *
  * @see edje_external_type_unregister()
  */
-EAPI void         edje_external_type_array_unregister     (const Edje_External_Type_Info *array);
+EDJE_API void         edje_external_type_array_unregister     (const Edje_External_Type_Info *array);
 
 /**
  * @brief Returns the current ABI version for Edje_External_Type structure.
@@ -981,7 +981,7 @@ EAPI void         edje_external_type_array_unregister     (const Edje_External_T
  * @return The external ABI version the Edje library was compiled with. That
  * is, the value #EDJE_EXTERNAL_TYPE_ABI_VERSION had at that moment.
  */
-EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
+EDJE_API unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
 
 /**
  *
@@ -1026,7 +1026,7 @@ EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
  *
  * @endcode
  */
-EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
+EDJE_API Eina_Iterator                  *edje_external_iterator_get     (void);
 
 /**
  * @brief Convenience function to find a specific parameter in a list of them.
@@ -1036,7 +1036,7 @@ EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
  *
  * @return The matching #Edje_External_Param or NULL if it's not found.
  */
-EAPI Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
+EDJE_API Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
 
 /**
  * @brief Gets the value of the given parameter of integer type.
@@ -1054,7 +1054,7 @@ EAPI Edje_External_Param            *edje_external_param_find       (const Eina_
  * @return @c EINA_TRUE if the parameter was found and is of integer type,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
+EDJE_API Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
 
 /**
  * @brief Gets the value of the given parameter of double type.
@@ -1072,7 +1072,7 @@ EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_
  * @return @c EINA_TRUE if the parameter was found and is of double type,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool                       edje_external_param_double_get (const Eina_List *params, const char *key, double *ret);
+EDJE_API Eina_Bool                       edje_external_param_double_get (const Eina_List *params, const char *key, double *ret);
 
 /**
  * @brief Gets the value of the given parameter of string type.
@@ -1092,7 +1092,7 @@ EAPI Eina_Bool                       edje_external_param_double_get (const Eina_
  * @return @c EINA_TRUE if the parameter was found and is of string type,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool                       edje_external_param_string_get (const Eina_List *params, const char *key, const char **ret);
+EDJE_API Eina_Bool                       edje_external_param_string_get (const Eina_List *params, const char *key, const char **ret);
 
 /**
  * @brief Gets the value of the given parameter of boolean type.
@@ -1110,7 +1110,7 @@ EAPI Eina_Bool                       edje_external_param_string_get (const Eina_
  * @return @c EINA_TRUE if the parameter was found and is of boolean type,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool                       edje_external_param_bool_get   (const Eina_List *params, const char *key, Eina_Bool *ret);
+EDJE_API Eina_Bool                       edje_external_param_bool_get   (const Eina_List *params, const char *key, Eina_Bool *ret);
 
 /**
  * @brief Gets the value of the given parameter of choice type.
@@ -1130,7 +1130,7 @@ EAPI Eina_Bool                       edje_external_param_bool_get   (const Eina_
  * @return EINA_TRUE if the parameter was found and is of integer type,
  * EINA_FALSE otherwise.
  */
-EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_List *params, const char *key, const char **ret);
+EDJE_API Eina_Bool                       edje_external_param_choice_get (const Eina_List *params, const char *key, const char **ret);
 
 /**
  * @brief Gets the array of parameters information about a type given its name.
@@ -1146,13 +1146,13 @@ EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_
  *
  * @see edje_external_type_get()
  */
-EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char *type_name);
+EDJE_API const Edje_External_Param_Info *edje_external_param_info_get   (const char *type_name);
 
 /**
  * @brief Gets the #Edje_External_Type that defines an EXTERNAL type registered with
  * the name @p type_name.
  */
-EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
+EDJE_API const Edje_External_Type       *edje_external_type_get         (const char *type_name);
 
 /**
  * @}
@@ -1199,7 +1199,7 @@ typedef enum _Edje_Aspect_Control
  * @see edje_object_part_object_get()
  * @since 1.10
  */
-EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
+EDJE_API const char *edje_object_part_object_name_get(const Evas_Object *obj);
 
 /**
  * @}
@@ -1239,7 +1239,7 @@ EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
  *
  * @see edje_scale_get().
  */
-EAPI void         edje_scale_set                  (double scale);
+EDJE_API void         edje_scale_set                  (double scale);
 
 /**
  * @brief Retrieves Edje's global scaling factor.
@@ -1251,7 +1251,7 @@ EAPI void         edje_scale_set                  (double scale);
  * @see edje_scale_set() for more details
  *
  */
-EAPI double       edje_scale_get                  (void);
+EDJE_API double       edje_scale_get                  (void);
 
 /**
  * @}
@@ -1373,7 +1373,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
  *
  * @see edje_password_show_last_timeout_set().
  */
-EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
+EDJE_API void edje_password_show_last_set(Eina_Bool password_show_last);
 
 /**
  * @brief Sets the timeout value in last show password mode.
@@ -1388,7 +1388,7 @@ EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
  * @see edje_password_show_last_set().
  *
  */
-EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
+EDJE_API void edje_password_show_last_timeout_set(double password_show_last_timeout);
 
 /**
  * @}
@@ -1450,7 +1450,7 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
  *
  * @return Eina_Bool, @c EINA_TRUE on success and @c EINA_FALSE on failure.
  */
-EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+EDJE_API Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
 
 /**
  * @brief Gets Edje color class.
@@ -1486,7 +1486,7 @@ EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int 
  * @note Unlike Evas, Edje colors are @b not pre-multiplied. That is,
  *       half-transparent white is 255 255 255 128.
  */
-EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
+EDJE_API Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
 
 /**
  * @brief Deletes edje color class.
@@ -1501,7 +1501,7 @@ EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int 
  * Deleting the color class will emit the signal "color_class,del"
  * to all the Edje objects in the running program.
  */
-EAPI void         edje_color_class_del            (const char *color_class);
+EDJE_API void         edje_color_class_del            (const char *color_class);
 
 /**
  * @brief Lists color classes.
@@ -1513,7 +1513,7 @@ EAPI void         edje_color_class_del            (const char *color_class);
  * process.
  *
  */
-EAPI Eina_List   *edje_color_class_list           (void);
+EDJE_API Eina_List   *edje_color_class_list           (void);
 
 /**
  * @brief Iterates over all the active class of an application.
@@ -1525,7 +1525,7 @@ EAPI Eina_List   *edje_color_class_list           (void);
  *
  * @since 1.14
  */
-EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
+EDJE_API Eina_Iterator *edje_color_class_active_iterator_new(void);
 
 /**
  * @brief Iterates over all the color class provided by an Edje file.
@@ -1536,7 +1536,7 @@ EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
  *
  * @since 1.14
  */
-EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
+EDJE_API Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
 
 /**
  * @}
@@ -1578,7 +1578,7 @@ EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
  *
  * @since 1.17
  */
-EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh);
+EDJE_API Eina_Bool    edje_size_class_set             (const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh);
 
 /**
  * @brief Gets the Edje size class.
@@ -1596,7 +1596,7 @@ EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_
  *
  * @since 1.17
  */
-EAPI Eina_Bool    edje_size_class_get             (const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh);
+EDJE_API Eina_Bool    edje_size_class_get             (const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh);
 
 /**
  * @brief Deletes the size class.
@@ -1608,7 +1608,7 @@ EAPI Eina_Bool    edje_size_class_get             (const char *size_class, Evas_
  *
  * @since 1.17
  */
-EAPI void         edje_size_class_del             (const char *size_class);
+EDJE_API void         edje_size_class_del             (const char *size_class);
 
 /**
  * @brief Lists size classes.
@@ -1621,7 +1621,7 @@ EAPI void         edje_size_class_del             (const char *size_class);
  *
  * @since 1.17
  */
-EAPI Eina_List   *edje_size_class_list            (void);
+EDJE_API Eina_List   *edje_size_class_list            (void);
 
 /**
  * @brief Iterates over all active classes of an application.
@@ -1633,7 +1633,7 @@ EAPI Eina_List   *edje_size_class_list            (void);
  *
  * @since 1.17
  */
-EAPI Eina_Iterator *edje_size_class_active_iterator_new(void);
+EDJE_API Eina_Iterator *edje_size_class_active_iterator_new(void);
 
 /**
  * @brief Iterates over all size classes provided by an Edje file.
@@ -1644,7 +1644,7 @@ EAPI Eina_Iterator *edje_size_class_active_iterator_new(void);
  *
  * @since 1.17
  */
-EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
+EDJE_API Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
 
 /**
  * @}
@@ -1687,7 +1687,7 @@ EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
  * @see edje_text_class_get().
  *
  */
-EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
+EDJE_API Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
  * @brief Gets the font and the font size from Edje text class.
@@ -1705,7 +1705,7 @@ EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const
  *
  * @since 1.14
  */
-EAPI Eina_Bool    edje_text_class_get             (const char *text_class, const char **font, Evas_Font_Size *size);
+EDJE_API Eina_Bool    edje_text_class_get             (const char *text_class, const char **font, Evas_Font_Size *size);
 
 /**
  * @brief Deletes the text class.
@@ -1716,7 +1716,7 @@ EAPI Eina_Bool    edje_text_class_get             (const char *text_class, const
  * specified text class.
  *
  */
-EAPI void         edje_text_class_del             (const char *text_class);
+EDJE_API void         edje_text_class_del             (const char *text_class);
 
 /**
  * @brief Lists text classes.
@@ -1728,7 +1728,7 @@ EAPI void         edje_text_class_del             (const char *text_class);
  * process.
  *
  */
-EAPI Eina_List   *edje_text_class_list            (void);
+EDJE_API Eina_List   *edje_text_class_list            (void);
 
 /**
  * @brief Iterate over all active classes of an application.
@@ -1741,7 +1741,7 @@ EAPI Eina_List   *edje_text_class_list            (void);
  * @since 1.17
  *
  */
-EAPI Eina_Iterator *edje_text_class_active_iterator_new(void);
+EDJE_API Eina_Iterator *edje_text_class_active_iterator_new(void);
 
 /**
  * @brief Iterate over all text classes provided by an Edje file.
@@ -1753,7 +1753,7 @@ EAPI Eina_Iterator *edje_text_class_active_iterator_new(void);
  * @since 1.17
  *
  */
-EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
+EDJE_API Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
 
 /**
  * @}
@@ -1787,7 +1787,7 @@ EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
  * Note: the list must be freed using edje_mmap_collection_list_free()
  * when you are done with it.
  */
-EAPI Eina_List        *edje_mmap_collection_list(Eina_File *f);
+EDJE_API Eina_List        *edje_mmap_collection_list(Eina_File *f);
 
 /**
  * @brief Frees file collection list.
@@ -1795,7 +1795,7 @@ EAPI Eina_List        *edje_mmap_collection_list(Eina_File *f);
  *
  * Frees the list returned by edje_mmap_collection_list().
  */
-EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
+EDJE_API void              edje_mmap_collection_list_free(Eina_List *lst);
 
 /**
  * @brief Determines whether a group matching glob exists in an edje mapped file.
@@ -1804,7 +1804,7 @@ EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
  *
  * @return @c 1 if a match is found, @c 0 otherwise
  */
-EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
+EDJE_API Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
 
 /**
  * @brief Determines whether a group have 3D Scene.
@@ -1816,7 +1816,7 @@ EAPI Eina_Bool         edje_mmap_group_exists(Eina_File *f, const char *glob);
  * @deprecated
  * @since 1.18
  */
-EINA_DEPRECATED EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
+EINA_DEPRECATED EDJE_API Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char *group);
 
 /**
  * @brief Iterates over all the opened Edje files.
@@ -1825,7 +1825,7 @@ EINA_DEPRECATED EAPI Eina_Bool         edje_mmap_3d_has(Eina_File *f, const char
  *
  * @since 1.14
  */
-EAPI Eina_Iterator *edje_file_iterator_new(void);
+EDJE_API Eina_Iterator *edje_file_iterator_new(void);
 
 /**
  * @brief Gets a list of groups in an edje file.
@@ -1839,7 +1839,7 @@ EAPI Eina_Iterator *edje_file_iterator_new(void);
  *
  * @see edje_mmap_group_exists()
  */
-EAPI Eina_List        *edje_file_collection_list  (const char *file);
+EDJE_API Eina_List        *edje_file_collection_list  (const char *file);
 
 /**
  * @brief Frees file collection list.
@@ -1847,7 +1847,7 @@ EAPI Eina_List        *edje_file_collection_list  (const char *file);
  *
  * Frees the list returned by edje_file_collection_list().
  */
-EAPI void             edje_file_collection_list_free (Eina_List *lst);
+EDJE_API void             edje_file_collection_list_free (Eina_List *lst);
 
 /**
  * @brief Determines whether a group matching glob exists in an edje file.
@@ -1856,7 +1856,7 @@ EAPI void             edje_file_collection_list_free (Eina_List *lst);
  *
  * @return @c 1 if a match is found, @c 0 otherwise
  */
-EAPI Eina_Bool        edje_file_group_exists      (const char *file, const char *glob);
+EDJE_API Eina_Bool        edje_file_group_exists      (const char *file, const char *glob);
 
 /**
  * @}
@@ -1953,7 +1953,7 @@ typedef enum _Edje_Action_Type
  * @see edje_frametime_get()
  *
  */
-EAPI void         edje_frametime_set              (double t);
+EDJE_API void         edje_frametime_set              (double t);
 
 /**
  * @brief Gets edje transitions' frame time.
@@ -1966,7 +1966,7 @@ EAPI void         edje_frametime_set              (double t);
  * @see edje_frametime_set()
  *
  */
-EAPI double       edje_frametime_get              (void);
+EDJE_API double       edje_frametime_get              (void);
 
 /**
  * @brief Freezes Edje objects.
@@ -1978,7 +1978,7 @@ EAPI double       edje_frametime_get              (void);
  * @see edje_thaw()
  *
  */
-EAPI void         edje_freeze                     (void);
+EDJE_API void         edje_freeze                     (void);
 
 /**
  * @brief Thaws Edje objects.
@@ -1990,7 +1990,7 @@ EAPI void         edje_freeze                     (void);
  * @see edje_freeze()
  *
  */
-EAPI void         edje_thaw                       (void);
+EDJE_API void         edje_thaw                       (void);
 
 /**
  * @brief Sets Edje language.
@@ -2003,7 +2003,7 @@ EAPI void         edje_thaw                       (void);
  *
  * @since 1.15
  */
-EAPI void         edje_language_set               (const char *locale);
+EDJE_API void         edje_language_set               (const char *locale);
 
 /**
  * @brief Sets edje transition duration factor.
@@ -2026,7 +2026,7 @@ EAPI void         edje_language_set               (const char *locale);
  *
  * @since 1.15
  */
-EAPI void         edje_transition_duration_factor_set        (double scale);
+EDJE_API void         edje_transition_duration_factor_set        (double scale);
 
 /**
  * @brief Retrieves transitions duration factor.
@@ -2040,7 +2040,7 @@ EAPI void         edje_transition_duration_factor_set        (double scale);
  * @since 1.15
  *
  */
-EAPI double       edje_transition_duration_factor_get                  (void);
+EDJE_API double       edje_transition_duration_factor_get                  (void);
 
 /**
  * @}
@@ -2238,7 +2238,7 @@ typedef enum _Edje_Text_Effect
  * as its parameter, and this one will be freed by free_data whenever
  * the layout is unregistered from Edje.
  */
-EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
+EDJE_API void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
 
 /**
  * @}

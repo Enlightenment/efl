@@ -11,7 +11,7 @@ Eina_List *_modules_found = NULL;
 # define EDJE_MODULE_NAME "module.so"
 #endif
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_module_load(const char *module)
 {
    if (_edje_module_handle_load(module)) return EINA_TRUE;
@@ -145,7 +145,7 @@ _edje_module_shutdown(void)
      eina_stringshare_del(path);
 }
 
-EAPI const Eina_List *
+EDJE_API const Eina_List *
 edje_available_modules_get(void)
 {
    Eina_File_Direct_Info *info;

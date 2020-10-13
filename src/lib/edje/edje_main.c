@@ -1,7 +1,7 @@
 #include "edje_private.h"
 
 static Edje_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Edje_Version * edje_version = &_version;
+EDJE_API Edje_Version * edje_version = &_version;
 
 static int _edje_init_count = 0;
 static Eina_Bool _need_imf = EINA_FALSE;
@@ -31,7 +31,7 @@ static void _edje_ephysics_clear(void);
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
-EAPI int
+EDJE_API int
 edje_init(void)
 {
    Eina_Strbuf *str;
@@ -260,7 +260,7 @@ _edje_lib_unref(void)
    if (_edje_init_count == 0) _edje_shutdown_core();
 }
 
-EAPI int
+EDJE_API int
 edje_shutdown(void)
 {
    if (_edje_init_count <= 0)

@@ -3,7 +3,7 @@
 static Eina_Hash *type_registry = NULL;
 static int init_count = 0;
 
-EAPI const char *
+EDJE_API const char *
 edje_external_param_type_str(Edje_External_Param_Type type)
 {
    switch (type)
@@ -150,7 +150,7 @@ _edje_object_part_external_param_type_get(Edje *ed, const char *part, const char
    return EDJE_EXTERNAL_PARAM_TYPE_MAX;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_type_register(const char *type_name, const Edje_External_Type *type_info)
 {
    if (!type_name)
@@ -175,7 +175,7 @@ edje_external_type_register(const char *type_name, const Edje_External_Type *typ
    return eina_hash_add(type_registry, type_name, type_info);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_type_unregister(const char *type_name)
 {
    if (!type_name)
@@ -183,7 +183,7 @@ edje_external_type_unregister(const char *type_name)
    return eina_hash_del_by_key(type_registry, type_name);
 }
 
-EAPI void
+EDJE_API void
 edje_external_type_array_register(const Edje_External_Type_Info *array)
 {
    const Edje_External_Type_Info *itr;
@@ -206,7 +206,7 @@ edje_external_type_array_register(const Edje_External_Type_Info *array)
      }
 }
 
-EAPI void
+EDJE_API void
 edje_external_type_array_unregister(const Edje_External_Type_Info *array)
 {
    const Edje_External_Type_Info *itr;
@@ -218,19 +218,19 @@ edje_external_type_array_unregister(const Edje_External_Type_Info *array)
      eina_hash_del(type_registry, itr->name, itr->info);
 }
 
-EAPI unsigned int
+EDJE_API unsigned int
 edje_external_type_abi_version_get(void)
 {
    return EDJE_EXTERNAL_TYPE_ABI_VERSION;
 }
 
-EAPI Eina_Iterator *
+EDJE_API Eina_Iterator *
 edje_external_iterator_get(void)
 {
    return eina_hash_iterator_tuple_new(type_registry);
 }
 
-EAPI Edje_External_Param *
+EDJE_API Edje_External_Param *
 edje_external_param_find(const Eina_List *params, const char *key)
 {
    const Eina_List *l;
@@ -242,7 +242,7 @@ edje_external_param_find(const Eina_List *params, const char *key)
    return NULL;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_param_int_get(const Eina_List *params, const char *key, int *ret)
 {
    Edje_External_Param *param;
@@ -259,7 +259,7 @@ edje_external_param_int_get(const Eina_List *params, const char *key, int *ret)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_param_double_get(const Eina_List *params, const char *key, double *ret)
 {
    Edje_External_Param *param;
@@ -276,7 +276,7 @@ edje_external_param_double_get(const Eina_List *params, const char *key, double 
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_param_string_get(const Eina_List *params, const char *key, const char **ret)
 {
    Edje_External_Param *param;
@@ -293,7 +293,7 @@ edje_external_param_string_get(const Eina_List *params, const char *key, const c
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool *ret)
 {
    Edje_External_Param *param;
@@ -310,7 +310,7 @@ edje_external_param_bool_get(const Eina_List *params, const char *key, Eina_Bool
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_external_param_choice_get(const Eina_List *params, const char *key, const char **ret)
 {
    Edje_External_Param *param;
@@ -327,7 +327,7 @@ edje_external_param_choice_get(const Eina_List *params, const char *key, const c
    return EINA_FALSE;
 }
 
-EAPI const Edje_External_Param_Info *
+EDJE_API const Edje_External_Param_Info *
 edje_external_param_info_get(const char *type_name)
 {
    Edje_External_Type *type;
@@ -338,7 +338,7 @@ edje_external_param_info_get(const char *type_name)
    return type->parameters_info;
 }
 
-EAPI const Edje_External_Type *
+EDJE_API const Edje_External_Type *
 edje_external_type_get(const char *type_name)
 {
    return eina_hash_find(type_registry, type_name);

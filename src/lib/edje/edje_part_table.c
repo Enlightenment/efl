@@ -228,49 +228,49 @@ _efl_canvas_layout_part_table_efl_pack_table_table_cell_row_set(Eo *obj, void *_
    __box; })
 #endif
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_box_append(Edje_Object *obj, const char *part, Evas_Object *child)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
    return efl_pack_end(box, child);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_box_prepend(Edje_Object *obj, const char *part, Evas_Object *child)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
    return efl_pack_begin(box, child);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_box_insert_before(Edje_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
    return efl_pack_before(box, child, reference);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_box_insert_after(Edje_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
    return efl_pack_after(box, child, reference);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_box_insert_at(Edje_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
    return efl_pack_at(box, child, pos);
 }
 
-EAPI Evas_Object *
+EDJE_API Evas_Object *
 edje_object_part_box_remove_at(Edje_Object *obj, const char *part, unsigned int pos)
 {
    Eo *box = PART_BOX_GET(obj, part, NULL);
    return efl_pack_unpack_at(box, pos);
 }
 
-EAPI Evas_Object *
+EDJE_API Evas_Object *
 edje_object_part_box_remove(Edje_Object *obj, const char *part, Evas_Object *child)
 {
    Eo *box = PART_BOX_GET(obj, part, NULL);
@@ -279,7 +279,7 @@ edje_object_part_box_remove(Edje_Object *obj, const char *part, Evas_Object *chi
    return NULL;
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool clear)
 {
    Eo *box = PART_BOX_GET(obj, part, EINA_FALSE);
@@ -289,14 +289,14 @@ edje_object_part_box_remove_all(Edje_Object *obj, const char *part, Eina_Bool cl
      return efl_pack_unpack_all(box);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_table_pack(Edje_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
    Eo *table = PART_TABLE_GET(obj, part, EINA_FALSE);
    return efl_pack_table(table, child_obj, col, row, colspan, rowspan);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_table_col_row_size_get(const Edje_Object *obj, const char *part, int *cols, int *rows)
 {
    Eo *table = PART_TABLE_GET(obj, part, EINA_FALSE);
@@ -304,21 +304,21 @@ edje_object_part_table_col_row_size_get(const Edje_Object *obj, const char *part
    return EINA_TRUE;
 }
 
-EAPI Evas_Object *
+EDJE_API Evas_Object *
 edje_object_part_table_child_get(const Edje_Object *obj, const char *part, unsigned int col, unsigned int row)
 {
    Eo *table = PART_TABLE_GET(obj, part, NULL);
    return efl_pack_table_content_get(table, col, row);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_table_unpack(Edje_Object *obj, const char *part, Evas_Object *child_obj)
 {
    Eo *table = PART_TABLE_GET(obj, part, EINA_FALSE);
    return efl_pack_unpack(table, child_obj);
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_object_part_table_clear(Edje_Object *obj, const char *part, Eina_Bool clear)
 {
    Eo *table = PART_TABLE_GET(obj, part, EINA_FALSE);

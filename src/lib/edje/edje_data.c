@@ -1,7 +1,7 @@
 #include "edje_private.h"
 
-EAPI Eet_Data_Descriptor * _edje_edd_edje_file = NULL;
-EAPI Eet_Data_Descriptor * _edje_edd_edje_part_collection = NULL;
+EDJE_API Eet_Data_Descriptor * _edje_edd_edje_file = NULL;
+EDJE_API Eet_Data_Descriptor * _edje_edd_edje_part_collection = NULL;
 
 Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
@@ -86,7 +86,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_vector_pointer = NULL;
  * edje files.
  */
 #define EMP(Type, Minus)                            \
-  EAPI Eina_Mempool *_emp_##Type = NULL;            \
+  EDJE_API Eina_Mempool *_emp_##Type = NULL;            \
                                                     \
   static void *                                     \
   mem_alloc_##Minus(size_t size)                    \
@@ -122,7 +122,7 @@ EMP(SNAPSHOT, snapshot)
 EMP(VECTOR, vector)
 #undef EMP
 
-EAPI Eina_Mempool *_emp_part = NULL;
+EDJE_API Eina_Mempool *_emp_part = NULL;
 
 static void *
 mem_alloc_part(size_t size)
@@ -227,8 +227,8 @@ _edje_eina_hash_add_alloc(Eina_Hash *hash,
    return hash;
 }
 
-// FIXME: remove EAPI when edje_convert goes
-EAPI void
+// FIXME: remove EDJE_API when edje_convert goes
+EDJE_API void
 _edje_edd_shutdown(void)
 {
    FREED(_edje_edd_edje_string);
@@ -326,8 +326,8 @@ _edje_edd_shutdown(void)
      EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_##Name##_pointer, Edje_##Type##_Pointer, "pointer", pointer, _edje_edd_edje_##Name); \
   }
 
-// FIXME: remove EAPI when edje_convert goes
-EAPI void
+// FIXME: remove EDJE_API when edje_convert goes
+EDJE_API void
 _edje_edd_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
@@ -1318,7 +1318,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "use_custom_seat_names", use_custom_seat_names, EET_T_UCHAR);
 }
 
-EAPI void
+EDJE_API void
 _edje_data_font_list_desc_make(Eet_Data_Descriptor **_font_list_edd,
                                Eet_Data_Descriptor **_font_edd)
 {  /* User have to free: _font_list_edd, _font_edd */

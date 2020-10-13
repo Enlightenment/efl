@@ -9,7 +9,7 @@ static Eina_List *_edje_file_cache = NULL;
 
 static int _edje_collection_cache_size = 16;
 
-EAPI void
+EDJE_API void
 edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
 {
    /* Init Eina Mempools this is also used in edje_pick.c */
@@ -44,7 +44,7 @@ edje_cache_emp_alloc(Edje_Part_Collection_Directory_Entry *ce)
   INIT_EMP(part, Edje_Part, ce);
 }
 
-EAPI void
+EDJE_API void
 edje_cache_emp_free(Edje_Part_Collection_Directory_Entry *ce)
 {  /* Free Eina Mempools this is also used in edje_pick.c */
    /* Destroy all part and description. */
@@ -850,7 +850,7 @@ _edje_cache_file_clean(void)
      }
 }
 
-EAPI void
+EDJE_API void
 _edje_cache_file_unref(Edje_File *edf)
 {
    edf->references--;
@@ -915,7 +915,7 @@ _edje_file_cache_shutdown(void)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI void
+EDJE_API void
 edje_file_cache_set(int count)
 {
    if (count < 0) count = 0;
@@ -923,13 +923,13 @@ edje_file_cache_set(int count)
    _edje_cache_file_clean();
 }
 
-EAPI int
+EDJE_API int
 edje_file_cache_get(void)
 {
    return _edje_file_cache_size;
 }
 
-EAPI void
+EDJE_API void
 edje_file_cache_flush(void)
 {
    int ps;
@@ -940,7 +940,7 @@ edje_file_cache_flush(void)
    _edje_file_cache_size = ps;
 }
 
-EAPI void
+EDJE_API void
 edje_collection_cache_set(int count)
 {
    Eina_List *l;
@@ -953,13 +953,13 @@ edje_collection_cache_set(int count)
    /* FIXME: freach in file hash too! */
 }
 
-EAPI int
+EDJE_API int
 edje_collection_cache_get(void)
 {
    return _edje_collection_cache_size;
 }
 
-EAPI void
+EDJE_API void
 edje_collection_cache_flush(void)
 {
    int ps;

@@ -31,7 +31,7 @@ typedef Eo Efl_Canvas_Layout;
  *
  * @ingroup Edje_Object_Group
  */
-EAPI void edje_object_animation_set(Efl_Canvas_Layout *obj, Eina_Bool on);
+EDJE_API void edje_object_animation_set(Efl_Canvas_Layout *obj, Eina_Bool on);
 
 /**
  * @brief Whether this object is animating or not.
@@ -51,7 +51,7 @@ EAPI void edje_object_animation_set(Efl_Canvas_Layout *obj, Eina_Bool on);
  *
  * @ingroup Edje_Object_Group
  */
-EAPI Eina_Bool edje_object_animation_get(const Efl_Canvas_Layout *obj);
+EDJE_API Eina_Bool edje_object_animation_get(const Efl_Canvas_Layout *obj);
 
 /**
  * @brief Returns the seat device given its Edje's name.
@@ -69,7 +69,7 @@ EAPI Eina_Bool edje_object_animation_get(const Efl_Canvas_Layout *obj);
  *
  * @ingroup Edje_Object_Group
  */
-EAPI Efl_Input_Device *edje_object_seat_get(const Efl_Canvas_Layout *obj, Eina_Stringshare *name);
+EDJE_API Efl_Input_Device *edje_object_seat_get(const Efl_Canvas_Layout *obj, Eina_Stringshare *name);
 
 /**
  * @brief Gets the name given to a set by Edje.
@@ -87,7 +87,7 @@ EAPI Efl_Input_Device *edje_object_seat_get(const Efl_Canvas_Layout *obj, Eina_S
  *
  * @ingroup Edje_Object_Group
  */
-EAPI Eina_Stringshare *edje_object_seat_name_get(const Efl_Canvas_Layout *obj, Efl_Input_Device *device);
+EDJE_API Eina_Stringshare *edje_object_seat_name_get(const Efl_Canvas_Layout *obj, Efl_Input_Device *device);
 
 /**
  * @brief Gets the (last) file loading error for a given object.
@@ -98,7 +98,7 @@ EAPI Eina_Stringshare *edje_object_seat_name_get(const Efl_Canvas_Layout *obj, E
  *
  * @ingroup Edje_Object_Group
  */
-EAPI Eina_Error edje_object_layout_load_error_get(const Efl_Canvas_Layout *obj);
+EDJE_API Eina_Error edje_object_layout_load_error_get(const Efl_Canvas_Layout *obj);
 
 /**
  * @brief Unswallow an object from this Edje.
@@ -110,6 +110,6 @@ EAPI Eina_Error edje_object_layout_load_error_get(const Efl_Canvas_Layout *obj);
  *
  * @ingroup Edje_Object_Group
  */
-EAPI Eina_Bool edje_object_content_remove(Efl_Canvas_Layout *obj, Efl_Gfx_Entity *content);
+EDJE_API Eina_Bool edje_object_content_remove(Efl_Canvas_Layout *obj, Efl_Gfx_Entity *content);
 
 #endif

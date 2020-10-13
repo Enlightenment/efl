@@ -112,7 +112,7 @@ _channel_mute(Edje *ed EINA_UNUSED, int channel)
 
 #endif
 
-EAPI void
+EDJE_API void
 edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute)
 {
 #ifdef ENABLE_MULTISENSE
@@ -124,7 +124,7 @@ edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute)
 #endif
 }
 
-EAPI Eina_Bool
+EDJE_API Eina_Bool
 edje_audio_channel_mute_get(Edje_Channel channel)
 {
 #ifdef ENABLE_MULTISENSE
