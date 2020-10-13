@@ -104,6 +104,7 @@ struct _Ecore_Win32_Window
    unsigned int pointer_is_in : 1;
    unsigned int borderless    : 1;
    unsigned int iconified     : 1;
+   unsigned int maximized     : 1;
    unsigned int fullscreen    : 1;
 
    struct {

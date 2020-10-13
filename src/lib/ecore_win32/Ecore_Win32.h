@@ -625,6 +625,8 @@ EAPI void ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
 
 EAPI void ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
                                             Eina_Bool           on);
+EAPI void ecore_win32_window_maximized_set(Ecore_Win32_Window *window,
+                                           Eina_Bool           on);
 
 EAPI void ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                                             Eina_Bool           on);
