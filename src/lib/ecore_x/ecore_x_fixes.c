@@ -92,7 +92,7 @@ _ecore_x_rectangle_x_to_ecore(XRectangle *xrect,
 
 #endif /* ifdef ECORE_XFIXES */
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
@@ -112,7 +112,7 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_fixes_window_selection_notification_request(Ecore_X_Window window, Ecore_X_Atom selection)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
@@ -132,7 +132,7 @@ ecore_x_fixes_window_selection_notification_request(Ecore_X_Window window, Ecore
    return EINA_FALSE;
 }
 
-EAPI Ecore_X_Region
+ECORE_X_API Ecore_X_Region
 ecore_x_region_new(Ecore_X_Rectangle *rects,
                    int num)
 {
@@ -152,7 +152,7 @@ ecore_x_region_new(Ecore_X_Rectangle *rects,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI Ecore_X_Region
+ECORE_X_API Ecore_X_Region
 ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
@@ -168,7 +168,7 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI Ecore_X_Region
+ECORE_X_API Ecore_X_Region
 ecore_x_region_new_from_window(Ecore_X_Window win,
                                Ecore_X_Region_Type type)
 {
@@ -185,7 +185,7 @@ ecore_x_region_new_from_window(Ecore_X_Window win,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI Ecore_X_Region
+ECORE_X_API Ecore_X_Region
 ecore_x_region_new_from_gc(Ecore_X_GC gc)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
@@ -201,7 +201,7 @@ ecore_x_region_new_from_gc(Ecore_X_GC gc)
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI Ecore_X_Region
+ECORE_X_API Ecore_X_Region
 ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
@@ -217,7 +217,7 @@ ecore_x_region_new_from_picture(Ecore_X_Picture picture)
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_free(Ecore_X_Region region)
 {
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
@@ -227,7 +227,7 @@ ecore_x_region_free(Ecore_X_Region region)
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_set(Ecore_X_Region region,
                    Ecore_X_Rectangle *rects,
                    int num)
@@ -241,7 +241,7 @@ ecore_x_region_set(Ecore_X_Region region,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_copy(Ecore_X_Region dest,
                     Ecore_X_Region source)
 {
@@ -253,7 +253,7 @@ ecore_x_region_copy(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_combine(Ecore_X_Region dest,
                        Ecore_X_Region source1,
                        Ecore_X_Region source2)
@@ -266,7 +266,7 @@ ecore_x_region_combine(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_intersect(Ecore_X_Region dest,
                          Ecore_X_Region source1,
                          Ecore_X_Region source2)
@@ -279,7 +279,7 @@ ecore_x_region_intersect(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_subtract(Ecore_X_Region dest,
                         Ecore_X_Region source1,
                         Ecore_X_Region source2)
@@ -292,7 +292,7 @@ ecore_x_region_subtract(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_invert(Ecore_X_Region dest,
                       Ecore_X_Rectangle *bounds,
                       Ecore_X_Region source)
@@ -311,7 +311,7 @@ ecore_x_region_invert(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_translate(Ecore_X_Region region,
                          int dx,
                          int dy)
@@ -324,7 +324,7 @@ ecore_x_region_translate(Ecore_X_Region region,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_extents(Ecore_X_Region dest,
                        Ecore_X_Region source)
 {
@@ -336,7 +336,7 @@ ecore_x_region_extents(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI Ecore_X_Rectangle *
+ECORE_X_API Ecore_X_Rectangle *
 ecore_x_region_fetch(Ecore_X_Region region,
                      int *num,
                      Ecore_X_Rectangle *bounds)
@@ -361,7 +361,7 @@ ecore_x_region_fetch(Ecore_X_Region region,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_expand(Ecore_X_Region dest,
                       Ecore_X_Region source,
                       unsigned int left,
@@ -377,7 +377,7 @@ ecore_x_region_expand(Ecore_X_Region dest,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_gc_clip_set(Ecore_X_Region region,
                            Ecore_X_GC gc,
                            int x_origin,
@@ -391,7 +391,7 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_window_shape_set(Ecore_X_Region region,
                                 Ecore_X_Window win,
                                 Ecore_X_Shape_Type type,
@@ -411,7 +411,7 @@ ecore_x_region_window_shape_set(Ecore_X_Region region,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_region_picture_clip_set(Ecore_X_Region region,
                                 Ecore_X_Picture picture,
                                 int x_origin,
@@ -429,7 +429,7 @@ ecore_x_region_picture_clip_set(Ecore_X_Region region,
 #endif /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_cursor_show(void)
 {
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
@@ -443,7 +443,7 @@ ecore_x_cursor_show(void)
 #endif  /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_cursor_hide(void)
 {
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
@@ -457,7 +457,7 @@ ecore_x_cursor_hide(void)
 #endif  /* ifdef ECORE_XFIXES */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num)
 {
 #ifdef ECORE_XFIXES

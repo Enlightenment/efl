@@ -41,7 +41,7 @@ _ecore_x_atoms_init(void)
  * @param  name The given name.
  * @return Associated atom value.
  */
-EAPI Ecore_X_Atom
+ECORE_X_API Ecore_X_Atom
 ecore_x_atom_get(const char *name)
 {
    Ecore_X_Atom atom;
@@ -53,7 +53,7 @@ ecore_x_atom_get(const char *name)
    return atom;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_atoms_get(const char **names,
                   int num,
                   Ecore_X_Atom *atoms)
@@ -70,7 +70,7 @@ ecore_x_atoms_get(const char **names,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI char *
+ECORE_X_API char *
 ecore_x_atom_name_get(Ecore_X_Atom atom)
 {
    char *name;

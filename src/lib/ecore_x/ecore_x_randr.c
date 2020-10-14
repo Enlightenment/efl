@@ -76,7 +76,7 @@ _ecore_x_randr_init(void)
 }
 
 /* public functions */
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_version_get(void)
 {
 #ifdef ECORE_XRANDR
@@ -85,7 +85,7 @@ ecore_x_randr_version_get(void)
    return -1;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_query(void)
 {
    return _randr_avail;
@@ -101,7 +101,7 @@ ecore_x_randr_query(void)
  *
  * @since 1.8
  */
-EAPI Ecore_X_Time
+ECORE_X_API Ecore_X_Time 
 ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
 {
    Ecore_X_Time timestamp = 0;
@@ -133,7 +133,7 @@ ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
 /*
  * @param root window which's primary output will be queried
  */
-EAPI Ecore_X_Randr_Orientation
+ECORE_X_API Ecore_X_Randr_Orientation 
 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -153,7 +153,7 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
  * @param root window which's primary output will be queried
  * @return the current orientation of the root window's screen primary output
  */
-EAPI Ecore_X_Randr_Orientation
+ECORE_X_API Ecore_X_Randr_Orientation 
 ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -178,7 +178,7 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
  * @return @c EINA_TRUE if the primary output's orientation could be
  * successfully altered.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Orientation orient)
 {
 #ifdef ECORE_XRANDR
@@ -213,7 +213,7 @@ ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X
  * @param num number of sizes reported as supported by the screen's primary output
  * @return an array of sizes reported as supported by the screen's primary output or - if query failed - NULL
  */
-EAPI Ecore_X_Randr_Screen_Size_MM *
+ECORE_X_API Ecore_X_Randr_Screen_Size_MM *
 ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 {
    if (num) *num = 0;
@@ -250,7 +250,7 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
 #endif
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm, int *size_index)
 {
 #ifdef ECORE_XRANDR
@@ -303,7 +303,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure due to e.g.
  * invalid times.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index)
 {
 #ifdef ECORE_XRANDR
@@ -349,7 +349,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
  * @param root window which's primary output will be queried
  * @return currently used refresh rate or - if request failed or RandRR is not available - 0.0
  */
-EAPI Ecore_X_Randr_Refresh_Rate
+ECORE_X_API Ecore_X_Randr_Refresh_Rate 
 ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -377,7 +377,7 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root
  * @param size_index referencing the size to query valid refresh rates for
  * @return currently used refresh rate or - if request failed or RandRR is not available - NULL
  */
-EAPI Ecore_X_Randr_Refresh_Rate *
+ECORE_X_API Ecore_X_Randr_Refresh_Rate *
 ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int size_index, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -418,7 +418,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
  * @param rate The refresh rate to be set.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int size_index, Ecore_X_Randr_Refresh_Rate rate)
 {
 #ifdef ECORE_XRANDR
@@ -465,7 +465,7 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(Ecore_X_Window root, int si
  * @param win Select this window's properties for RandR events.
  * @param on Enable/disable selecting.
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
 {
 #ifdef ECORE_XRANDR
@@ -488,7 +488,7 @@ ecore_x_randr_events_select(Ecore_X_Window win, Eina_Bool on)
  * @param w width of screen in px
  * @param h height of screen in px
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm)
 {
 #ifdef ECORE_XRANDR
@@ -514,7 +514,7 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *
  * @param wmax maximum width the screen can be set to
  * @param hmax maximum height the screen can be set to
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, int *wmax, int *hmax)
 {
 #ifdef ECORE_XRANDR
@@ -543,7 +543,7 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, i
  * and all other CRTCs dx,dy respectively.
  * @param root the window's screen which will be reset.
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_screen_reset(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -625,7 +625,7 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
  * @return @c EINA_TRUE if request was successfully sent or screen is already
  * in requested size, @c EINA_FALSE if parameters are invalid.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_mm, int h_mm)
 {
 #ifdef ECORE_XRANDR
@@ -683,7 +683,7 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
  * @param num number of modes returned
  * @return modes' information
  */
-EAPI Ecore_X_Randr_Mode_Info **
+ECORE_X_API Ecore_X_Randr_Mode_Info **
 ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
 {
    if (num) *num = 0;
@@ -775,7 +775,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
  * adding failed.
  * @since 1.2.0
  */
-EAPI Ecore_X_Randr_Mode
+ECORE_X_API Ecore_X_Randr_Mode 
 ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_info)
 {
 #ifdef ECORE_XRANDR
@@ -800,7 +800,7 @@ ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_i
  * @param mode_info
  * @since 1.2.0
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_mode_del(Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -815,7 +815,7 @@ ecore_x_randr_mode_del(Ecore_X_Randr_Mode mode)
  * @param mode the XID which identifies the mode of interest
  * @return mode's detailed information
  */
-EAPI Ecore_X_Randr_Mode_Info *
+ECORE_X_API Ecore_X_Randr_Mode_Info *
 ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -887,7 +887,7 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
  *
  * @param mode_info The mode information that should be freed.
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
 {
 #ifdef ECORE_XRANDR
@@ -909,7 +909,7 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
  * @param num Number of CRTCs returned.
  * @return CRTC IDs.
  */
-EAPI Ecore_X_Randr_Crtc *
+ECORE_X_API Ecore_X_Randr_Crtc *
 ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
 {
    if (num) *num = 0;
@@ -952,7 +952,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root, int *num)
    return NULL;
 }
 
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
 {
    if (num) *num = 0;
@@ -1003,7 +1003,7 @@ ecore_x_randr_outputs_get(Ecore_X_Window root, int *num)
  * @return Array of outputs that display a certain window. @c NULL if no
  * outputs was found that displays the specified window.
  */
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
 {
    if (num) *num = 0;
@@ -1082,7 +1082,7 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window, int *num)
  * @return Array of outputs that display a certain window. @c NULL if no
  * outputs was found that displays the specified window.
  */
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_current_output_get(Ecore_X_Window window, int *num)
 {
    return ecore_x_randr_window_outputs_get(window, num);
@@ -1096,7 +1096,7 @@ ecore_x_randr_current_output_get(Ecore_X_Window window, int *num)
  * was found that displays the specified window.
  * @since 1.2.0
  */
-EAPI Ecore_X_Randr_Crtc *
+ECORE_X_API Ecore_X_Randr_Crtc *
 ecore_x_randr_window_crtcs_get(Ecore_X_Window window, int *num)
 {
    if (num) *num = 0;
@@ -1200,7 +1200,7 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window, int *num)
  * @return Array of crtcs that display a certain window. @c NULL if no crtcs
  * was found that displays the specified window.
  */
-EAPI Ecore_X_Randr_Crtc *
+ECORE_X_API Ecore_X_Randr_Crtc *
 ecore_x_randr_current_crtc_get(Ecore_X_Window window, int *num)
 {
    return ecore_x_randr_window_crtcs_get(window, num);
@@ -1211,7 +1211,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window, int *num)
  * @param root the root window which's screen will be queried
  * @param num number of outputs referenced by given CRTC
  */
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *num)
 {
    if (num) *num = 0;
@@ -1271,7 +1271,7 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int
  * @param root the root window which's screen will be queried
  * @param num number of possible outputs referenced by given CRTC
  */
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *num)
 {
    if (num) *num = 0;
@@ -1325,7 +1325,7 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc 
    return NULL;
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -1356,7 +1356,7 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, in
 #endif
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y)
 {
 #ifdef ECORE_XRANDR
@@ -1378,7 +1378,7 @@ ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x,
  * value will be kept.
  * @return @c EINA_TRUE if position could successfully be altered.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, int y)
 {
 #ifdef ECORE_XRANDR
@@ -1419,7 +1419,7 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
  * @return currently set mode or - in case parameters are invalid -
  * Ecore_X_Randr_Unset
  */
-EAPI Ecore_X_Randr_Mode
+ECORE_X_API Ecore_X_Randr_Mode 
 ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1466,7 +1466,7 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
  * @return @c EINA_TRUE if mode setting was successful, @c EINA_FALSE
  * otherwise.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_mode_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Output *outputs, int noutputs, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -1478,7 +1478,7 @@ ecore_x_randr_crtc_mode_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -1487,7 +1487,7 @@ ecore_x_randr_crtc_size_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *w
 #endif
 }
 
-EAPI Ecore_X_Randr_Refresh_Rate
+ECORE_X_API Ecore_X_Randr_Refresh_Rate 
 ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc EINA_UNUSED, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -1524,7 +1524,7 @@ ecore_x_randr_crtc_refresh_rate_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
    return 0.0;
 }
 
-EAPI Ecore_X_Randr_Orientation
+ECORE_X_API Ecore_X_Randr_Orientation 
 ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1557,7 +1557,7 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
    return 0;
 }
 
-EAPI Ecore_X_Randr_Orientation
+ECORE_X_API Ecore_X_Randr_Orientation 
 ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1590,7 +1590,7 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    return 0;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Orientation orientation)
 {
 #ifdef ECORE_XRANDR
@@ -1603,7 +1603,7 @@ ecore_x_randr_crtc_orientation_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, Ecore_X_Randr_Crtc cln)
 {
 #ifdef ECORE_XRANDR
@@ -1666,7 +1666,7 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, E
  * @return @c EINA_TRUE if the configuration alteration was successful,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ecore_X_Randr_Output *outputs, int noutputs, int x, int y, Ecore_X_Randr_Mode mode, Ecore_X_Randr_Orientation orientation)
 {
 #ifdef ECORE_XRANDR
@@ -1751,7 +1751,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
  * if repositioning failed or if position of new crtc would be out of given
  * screen's min/max bounds.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc_r1, Ecore_X_Randr_Crtc crtc_r2, Ecore_X_Randr_Output_Policy policy, Ecore_X_Randr_Relative_Alignment alignment)
 {
 #ifdef ECORE_XRANDR
@@ -1866,7 +1866,7 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 /*
  * @since 1.8
  */
-EAPI Ecore_X_Randr_Crtc_Info *
+ECORE_X_API Ecore_X_Randr_Crtc_Info *
 ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -1943,7 +1943,7 @@ ecore_x_randr_crtc_info_get(Ecore_X_Window root, const Ecore_X_Randr_Crtc crtc)
 /*
  * @since 1.8
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
 {
 #ifdef ECORE_XRANDR
@@ -1968,7 +1968,7 @@ ecore_x_randr_crtc_info_free(Ecore_X_Randr_Crtc_Info *info)
  * @c EINA_TRUE.
  * @since 1.2.0
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -1993,7 +1993,7 @@ ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mo
  * @param mode the mode removed from the output
  * @since 1.2.0
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_output_mode_del(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode)
 {
 #ifdef ECORE_XRANDR
@@ -2005,7 +2005,7 @@ ecore_x_randr_output_mode_del(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mo
 #endif
 }
 
-EAPI Ecore_X_Randr_Mode *
+ECORE_X_API Ecore_X_Randr_Mode *
 ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num, int *npreferred)
 {
 #ifdef ECORE_XRANDR
@@ -2056,7 +2056,7 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output,
  * @param output the output which's clones we concern
  * @param num number of possible clones
  */
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -2100,7 +2100,7 @@ ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output
    return NULL;
 }
 
-EAPI Ecore_X_Randr_Crtc *
+ECORE_X_API Ecore_X_Randr_Crtc *
 ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -2144,7 +2144,7 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
    return NULL;
 }
 
-EAPI Ecore_X_Randr_Crtc
+ECORE_X_API Ecore_X_Randr_Crtc 
 ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -2183,7 +2183,7 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
  * @param len length of returned c-string.
  * @return name of the output as reported by X
  */
-EAPI char *
+ECORE_X_API char *
 ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len)
 {
 #ifdef ECORE_XRANDR
@@ -2231,7 +2231,7 @@ ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, 
 /*
  * @deprecated use ecore_x_randr_crtc_gamma_size_get()
  */
-EINA_DEPRECATED EAPI int
+EINA_DEPRECATED ECORE_X_API int 
 ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
    return 0;
@@ -2240,7 +2240,7 @@ ecore_x_randr_crtc_gamma_ramp_size_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 /*
  * @deprecated use ecore_x_randr_crtc_gamma_get()
  */
-EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc_Gamma **
+EINA_DEPRECATED ECORE_X_API Ecore_X_Randr_Crtc_Gamma **
 ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
    return NULL;
@@ -2249,7 +2249,7 @@ ecore_x_randr_crtc_gamma_ramps_get(Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 /*
  * @deprecated use ecore_x_randr_crtc_gamma_set()
  */
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *red EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *green EINA_UNUSED, const Ecore_X_Randr_Crtc_Gamma *blue EINA_UNUSED)
 {
    return EINA_FALSE;
@@ -2258,7 +2258,7 @@ ecore_x_randr_crtc_gamma_ramps_set(Ecore_X_Randr_Crtc crtc EINA_UNUSED, const Ec
 /*
  * @since 1.8
  */
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -2273,7 +2273,7 @@ ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc)
 /*
  * @since 1.8
  */
-EAPI Ecore_X_Randr_Crtc_Gamma_Info *
+ECORE_X_API Ecore_X_Randr_Crtc_Gamma_Info *
 ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc)
 {
 #ifdef ECORE_XRANDR
@@ -2303,7 +2303,7 @@ ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc)
 /*
  * @since 1.8
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma)
 {
 #ifdef ECORE_XRANDR
@@ -2322,7 +2322,7 @@ ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_G
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *not_moved, int nnot_moved, int dx, int dy)
 {
 #ifdef ECORE_XRANDR
@@ -2388,7 +2388,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
  * @param dy Amount of pixels the CRTCs should be moved in y direction.
  * @return @c EINA_TRUE if all crtcs could be moved successfully.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_move_crtcs(Ecore_X_Window root, const Ecore_X_Randr_Crtc *crtcs, int ncrtc, int dx, int dy)
 {
 #ifdef ECORE_XRANDR
@@ -2494,7 +2494,7 @@ err:
  * @param w width of given mode in px
  * @param h height of given mode in px
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -2526,7 +2526,7 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w
 #endif
 }
 
-EAPI Ecore_X_Randr_Connection_Status
+ECORE_X_API Ecore_X_Randr_Connection_Status 
 ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -2560,7 +2560,7 @@ ecore_x_randr_output_connection_status_get(Ecore_X_Window root, Ecore_X_Randr_Ou
    return ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -2589,14 +2589,14 @@ ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output outpu
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_output_crtc_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, const Ecore_X_Randr_Crtc crtc EINA_UNUSED)
 {
    /* TODO: !! */
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_output_backlight_available(void)
 {
 #ifdef ECORE_XRANDR
@@ -2619,7 +2619,7 @@ ecore_x_randr_output_backlight_available(void)
  * @param root The window's screen which will be set.
  * @param level Of the backlight between @c 0 and @c 1.
  */
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level)
 {
 #ifdef ECORE_XRANDR
@@ -2641,7 +2641,7 @@ ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level)
 #endif
 }
 
-EAPI double
+ECORE_X_API double 
 ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -2713,7 +2713,7 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root EINA_UNUSED, Ecore_
    return -1;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_output_backlight_level_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, double level)
 {
 #ifdef ECORE_XRANDR
@@ -2784,7 +2784,7 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root EINA_UNUSED, Ecore_
  * @param output the XID of the output
  * @param length length of the byte-array. If NULL, request will fail.
  */
-EAPI unsigned char *
+ECORE_X_API unsigned char *
 ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, unsigned long *length)
 {
 #ifdef ECORE_XRANDR
@@ -2824,7 +2824,7 @@ ecore_x_randr_output_edid_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Out
    return NULL;
 }
 
-EAPI Ecore_X_Render_Subpixel_Order
+ECORE_X_API Ecore_X_Render_Subpixel_Order 
 ecore_x_randr_output_subpixel_order_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -2861,7 +2861,7 @@ ecore_x_randr_output_subpixel_order_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
  * API Functions for RandR version 1.3 *
  ***************************************/
 
-EAPI Ecore_X_Randr_Output *
+ECORE_X_API Ecore_X_Randr_Output *
 ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -2906,7 +2906,7 @@ ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_R
    return NULL;
 }
 
-EAPI Ecore_X_Randr_Output **
+ECORE_X_API Ecore_X_Randr_Output **
 ecore_x_randr_output_compatibility_list_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, int *num EINA_UNUSED)
 {
    /* TODO: (1.3) !! */
@@ -2914,7 +2914,7 @@ ecore_x_randr_output_compatibility_list_get(Ecore_X_Window root EINA_UNUSED, Eco
    return NULL;
 }
 
-EAPI Ecore_X_Randr_Signal_Format *
+ECORE_X_API Ecore_X_Randr_Signal_Format *
 ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -2975,7 +2975,7 @@ ecore_x_randr_output_signal_formats_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    return NULL;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_output_signal_format_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output EINA_UNUSED, Ecore_X_Randr_Signal_Format *sig EINA_UNUSED)
 {
    /* TODO: (1.3) !! */
@@ -2983,7 +2983,7 @@ ecore_x_randr_output_signal_format_set(Ecore_X_Window root EINA_UNUSED, Ecore_X_
    return EINA_FALSE;
 }
 
-EAPI Ecore_X_Randr_Signal_Property *
+ECORE_X_API Ecore_X_Randr_Signal_Property *
 ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -3055,7 +3055,7 @@ ecore_x_randr_output_signal_properties_get(Ecore_X_Window root EINA_UNUSED, Ecor
  * 3 == (typically) TV Connector but is driver/hardware dependent
  *
  */
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -3107,7 +3107,7 @@ ecore_x_randr_output_connector_number_get(Ecore_X_Window root EINA_UNUSED, Ecore
    return -1;
 }
 
-EAPI Ecore_X_Randr_Connector_Type
+ECORE_X_API Ecore_X_Randr_Connector_Type 
 ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -3178,7 +3178,7 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    return -1;
 }
 
-EAPI Ecore_X_Randr_Output
+ECORE_X_API Ecore_X_Randr_Output 
 ecore_x_randr_primary_output_get(Ecore_X_Window root)
 {
 #ifdef ECORE_XRANDR
@@ -3189,7 +3189,7 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
 #endif
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR
@@ -3202,7 +3202,7 @@ ecore_x_randr_primary_output_set(Ecore_X_Window root, Ecore_X_Randr_Output outpu
  * API Functions for RandR version 1.4 *
  ***************************************/
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -3232,7 +3232,7 @@ ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
 {
 #ifdef ECORE_XRANDR
@@ -3273,7 +3273,7 @@ ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc
 #endif
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -3303,7 +3303,7 @@ ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crt
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int x, const int y, const int w, const int h)
 {
 #ifdef ECORE_XRANDR
@@ -3344,7 +3344,7 @@ ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crt
 #endif
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
@@ -3374,7 +3374,7 @@ ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, const int left, const int top, const int right, const int bottom)
 {
 #ifdef ECORE_XRANDR
@@ -3419,7 +3419,7 @@ ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc,
  * API Functions for RandR Edid
  ***************************************/
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_length)
 {
    const unsigned char header[] =
@@ -3431,7 +3431,7 @@ ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_leng
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3466,7 +3466,7 @@ ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long ed
 #endif
 }
 
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3483,7 +3483,7 @@ ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 #endif
 }
 
-EAPI char *
+ECORE_X_API char *
 ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3507,7 +3507,7 @@ ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid
    return NULL;
 }
 
-EAPI char *
+ECORE_X_API char *
 ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3543,7 +3543,7 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
    return NULL;
 }
 
-EAPI char *
+ECORE_X_API char *
 ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3579,7 +3579,7 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_len
    return NULL;
 }
 
-EAPI char *
+ECORE_X_API char *
 ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3615,13 +3615,13 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
    return NULL;
 }
 
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_edid_model_get(unsigned char *edid, unsigned long edid_length)
 {
    return ecore_x_randr_edid_manufacturer_model_get(edid, edid_length);
 }
 
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3636,7 +3636,7 @@ ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned 
 #endif
 }
 
-EAPI int
+ECORE_X_API int 
 ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3647,7 +3647,7 @@ ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edi
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3662,7 +3662,7 @@ ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_le
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3676,7 +3676,7 @@ ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3690,7 +3690,7 @@ ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3704,7 +3704,7 @@ ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edi
    return EINA_FALSE;
 }
 
-EAPI Ecore_X_Randr_Edid_Aspect_Ratio
+ECORE_X_API Ecore_X_Randr_Edid_Aspect_Ratio 
 ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3750,7 +3750,7 @@ ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsig
 #endif
 }
 
-EAPI Ecore_X_Randr_Edid_Aspect_Ratio
+ECORE_X_API Ecore_X_Randr_Edid_Aspect_Ratio 
 ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3791,7 +3791,7 @@ ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long 
 #endif
 }
 
-EAPI Ecore_X_Randr_Edid_Display_Colorscheme
+ECORE_X_API Ecore_X_Randr_Edid_Display_Colorscheme 
 ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3821,7 +3821,7 @@ ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long ed
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool 
 ecore_x_randr_edid_display_type_digital_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR
@@ -3836,7 +3836,7 @@ ecore_x_randr_edid_display_type_digital_get(unsigned char *edid, unsigned long e
 #endif
 }
 
-EAPI Ecore_X_Randr_Edid_Display_Interface_Type
+ECORE_X_API Ecore_X_Randr_Edid_Display_Interface_Type 
 ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long edid_length)
 {
 #ifdef ECORE_XRANDR

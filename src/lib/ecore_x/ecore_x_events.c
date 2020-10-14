@@ -114,7 +114,7 @@ _ecore_x_event_free_mouse_move(void *data EINA_UNUSED,
    free(e);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_event_mask_set(Ecore_X_Window w,
                        Ecore_X_Event_Mask mask)
 {
@@ -136,7 +136,7 @@ ecore_x_event_mask_set(Ecore_X_Window w,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_event_mask_unset(Ecore_X_Window w,
                          Ecore_X_Event_Mask mask)
 {

@@ -18,7 +18,7 @@
  *                   same than the corresponding bitmaks.
  * @return The new default graphics context.
  */
-EAPI Ecore_X_GC
+ECORE_X_API Ecore_X_GC
 ecore_x_gc_new(Ecore_X_Drawable draw,
                Ecore_X_GC_Value_Mask value_mask,
                const unsigned int *value_list)
@@ -165,7 +165,7 @@ ecore_x_gc_new(Ecore_X_Drawable draw,
  * Deletes and frees the given graphics context.
  * @param gc The given graphics context.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_gc_free(Ecore_X_GC gc)
 {
    LOGFN;

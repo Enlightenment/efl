@@ -577,7 +577,7 @@ error:
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_window_keygrab_set(Ecore_X_Window win,
                            const char *key,
                            int mod EINA_UNUSED,
@@ -601,7 +601,7 @@ ecore_x_window_keygrab_set(Ecore_X_Window win,
    return _ecore_x_window_keygrab_set_internal(win, key, grab_mode);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_window_keygrab_unset(Ecore_X_Window win,
                              const char *key,
                              int mod EINA_UNUSED,

@@ -106,7 +106,7 @@ _ecore_x_present_handler(XGenericEvent *ge)
 }
 #endif
 
-EAPI void
+ECORE_X_API void
 ecore_x_present_select_events(Ecore_X_Window win, unsigned int events)
 {
 #ifdef ECORE_XPRESENT
@@ -118,7 +118,7 @@ ecore_x_present_select_events(Ecore_X_Window win, unsigned int events)
 #endif
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_present_notify_msc(Ecore_X_Window win, unsigned int serial, unsigned long long target_msc, unsigned long long divisor, unsigned long long remainder)
 {
 #ifdef ECORE_XPRESENT
@@ -133,7 +133,7 @@ ecore_x_present_notify_msc(Ecore_X_Window win, unsigned int serial, unsigned lon
 #endif
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_present_pixmap(Ecore_X_Window win, Ecore_X_Pixmap pixmap, unsigned int serial, Ecore_X_Region valid,
                        Ecore_X_Region update, int x_off, int y_off, Ecore_X_Randr_Crtc target_crtc,
                        Ecore_X_Sync_Fence wait_fence, Ecore_X_Sync_Fence idle_fence, unsigned int options,
@@ -165,7 +165,7 @@ ecore_x_present_pixmap(Ecore_X_Window win, Ecore_X_Pixmap pixmap, unsigned int s
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_present_exists(void)
 {
    return _ecore_x_present_exists;

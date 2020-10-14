@@ -29,7 +29,7 @@
 #include "Ecore_Input.h"
 
 static Ecore_X_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Ecore_X_Version *ecore_x_version = &_version;
+ECORE_X_API Ecore_X_Version *ecore_x_version = &_version;
 
 static Eina_Bool _ecore_x_fd_handler(void *data,
                                      Ecore_Fd_Handler *fd_handler);
@@ -83,88 +83,88 @@ Ecore_X_Window _ecore_x_private_win = 0;
 
 Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
-EAPI int ECORE_X_EVENT_ANY = 0;
-EAPI int ECORE_X_EVENT_MOUSE_IN = 0;
-EAPI int ECORE_X_EVENT_MOUSE_OUT = 0;
-EAPI int ECORE_X_EVENT_WINDOW_FOCUS_IN = 0;
-EAPI int ECORE_X_EVENT_WINDOW_FOCUS_OUT = 0;
-EAPI int ECORE_X_EVENT_WINDOW_KEYMAP = 0;
-EAPI int ECORE_X_EVENT_WINDOW_DAMAGE = 0;
-EAPI int ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE = 0;
-EAPI int ECORE_X_EVENT_WINDOW_CREATE = 0;
-EAPI int ECORE_X_EVENT_WINDOW_DESTROY = 0;
-EAPI int ECORE_X_EVENT_WINDOW_HIDE = 0;
-EAPI int ECORE_X_EVENT_WINDOW_SHOW = 0;
-EAPI int ECORE_X_EVENT_WINDOW_SHOW_REQUEST = 0;
-EAPI int ECORE_X_EVENT_WINDOW_REPARENT = 0;
-EAPI int ECORE_X_EVENT_WINDOW_CONFIGURE = 0;
-EAPI int ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST = 0;
-EAPI int ECORE_X_EVENT_WINDOW_GRAVITY = 0;
-EAPI int ECORE_X_EVENT_WINDOW_RESIZE_REQUEST = 0;
-EAPI int ECORE_X_EVENT_WINDOW_STACK = 0;
-EAPI int ECORE_X_EVENT_WINDOW_STACK_REQUEST = 0;
-EAPI int ECORE_X_EVENT_WINDOW_PROPERTY = 0;
-EAPI int ECORE_X_EVENT_WINDOW_COLORMAP = 0;
-EAPI int ECORE_X_EVENT_WINDOW_MAPPING = 0;
-EAPI int ECORE_X_EVENT_MAPPING_CHANGE = 0;
-EAPI int ECORE_X_EVENT_SELECTION_CLEAR = 0;
-EAPI int ECORE_X_EVENT_SELECTION_REQUEST = 0;
-EAPI int ECORE_X_EVENT_SELECTION_NOTIFY = 0;
-EAPI int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = 0;
-EAPI int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
-EAPI int ECORE_X_EVENT_WINDOW_SHAPE = 0;
-EAPI int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_FLICK;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_PAN;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_TAP;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_HOLD;
-EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_GROUP;
-EAPI int ECORE_X_EVENT_SYNC_COUNTER = 0;
-EAPI int ECORE_X_EVENT_SYNC_ALARM = 0;
-EAPI int ECORE_X_EVENT_SCREEN_CHANGE = 0;
-EAPI int ECORE_X_EVENT_DAMAGE_NOTIFY = 0;
-EAPI int ECORE_X_EVENT_RANDR_CRTC_CHANGE = 0;
-EAPI int ECORE_X_EVENT_RANDR_OUTPUT_CHANGE = 0;
-EAPI int ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY = 0;
-EAPI int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
-EAPI int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = 0;
-EAPI int ECORE_X_EVENT_WINDOW_STATE_REQUEST = 0;
-EAPI int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST = 0;
-EAPI int ECORE_X_EVENT_PING = 0;
-EAPI int ECORE_X_EVENT_DESKTOP_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_ANY = 0;
+ECORE_X_API int ECORE_X_EVENT_MOUSE_IN = 0;
+ECORE_X_API int ECORE_X_EVENT_MOUSE_OUT = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_FOCUS_IN = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_FOCUS_OUT = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_KEYMAP = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_DAMAGE = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_CREATE = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_DESTROY = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_HIDE = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_SHOW = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_SHOW_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_REPARENT = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_CONFIGURE = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_GRAVITY = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_RESIZE_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_STACK = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_STACK_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_PROPERTY = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_COLORMAP = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_MAPPING = 0;
+ECORE_X_API int ECORE_X_EVENT_MAPPING_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_SELECTION_CLEAR = 0;
+ECORE_X_API int ECORE_X_EVENT_SELECTION_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_SELECTION_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_SHAPE = 0;
+ECORE_X_API int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_FLICK;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_PAN;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_TAP;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_HOLD;
+ECORE_X_API int ECORE_X_EVENT_GESTURE_NOTIFY_GROUP;
+ECORE_X_API int ECORE_X_EVENT_SYNC_COUNTER = 0;
+ECORE_X_API int ECORE_X_EVENT_SYNC_ALARM = 0;
+ECORE_X_API int ECORE_X_EVENT_SCREEN_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_DAMAGE_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_RANDR_CRTC_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_RANDR_OUTPUT_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_WINDOW_STATE_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST = 0;
+ECORE_X_API int ECORE_X_EVENT_PING = 0;
+ECORE_X_API int ECORE_X_EVENT_DESKTOP_CHANGE = 0;
 
-EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = 0;
-EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = 0;
-EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = 0;
+ECORE_X_API int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = 0;
+ECORE_X_API int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = 0;
+ECORE_X_API int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = 0;
 
-EAPI int ECORE_X_EVENT_XKB_STATE_NOTIFY = 0;
-EAPI int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_XKB_STATE_NOTIFY = 0;
+ECORE_X_API int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
 
 
-EAPI int ECORE_X_EVENT_GENERIC = 0;
+ECORE_X_API int ECORE_X_EVENT_GENERIC = 0;
 
-EAPI int ECORE_X_EVENT_PRESENT_CONFIGURE = 0;
-EAPI int ECORE_X_EVENT_PRESENT_COMPLETE = 0;
-EAPI int ECORE_X_EVENT_PRESENT_IDLE = 0;
+ECORE_X_API int ECORE_X_EVENT_PRESENT_CONFIGURE = 0;
+ECORE_X_API int ECORE_X_EVENT_PRESENT_COMPLETE = 0;
+ECORE_X_API int ECORE_X_EVENT_PRESENT_IDLE = 0;
 
-EAPI int ECORE_X_MODIFIER_SHIFT = 0;
-EAPI int ECORE_X_MODIFIER_CTRL = 0;
-EAPI int ECORE_X_MODIFIER_ALT = 0;
-EAPI int ECORE_X_MODIFIER_WIN = 0;
-EAPI int ECORE_X_MODIFIER_ALTGR = 0;
+ECORE_X_API int ECORE_X_MODIFIER_SHIFT = 0;
+ECORE_X_API int ECORE_X_MODIFIER_CTRL = 0;
+ECORE_X_API int ECORE_X_MODIFIER_ALT = 0;
+ECORE_X_API int ECORE_X_MODIFIER_WIN = 0;
+ECORE_X_API int ECORE_X_MODIFIER_ALTGR = 0;
 
-EAPI int ECORE_X_LOCK_SCROLL = 0;
-EAPI int ECORE_X_LOCK_NUM = 0;
-EAPI int ECORE_X_LOCK_CAPS = 0;
-EAPI int ECORE_X_LOCK_SHIFT = 0;
+ECORE_X_API int ECORE_X_LOCK_SCROLL = 0;
+ECORE_X_API int ECORE_X_LOCK_NUM = 0;
+ECORE_X_API int ECORE_X_LOCK_CAPS = 0;
+ECORE_X_API int ECORE_X_LOCK_SHIFT = 0;
 
-EAPI int ECORE_X_RAW_BUTTON_PRESS = 0;
-EAPI int ECORE_X_RAW_BUTTON_RELEASE = 0;
-EAPI int ECORE_X_RAW_MOTION = 0;
+ECORE_X_API int ECORE_X_RAW_BUTTON_PRESS = 0;
+ECORE_X_API int ECORE_X_RAW_BUTTON_RELEASE = 0;
+ECORE_X_API int ECORE_X_RAW_MOTION = 0;
 
-EAPI int ECORE_X_DEVICES_CHANGE = 0;
+ECORE_X_API int ECORE_X_DEVICES_CHANGE = 0;
 
 #ifdef LOGRT
 static double t0 = 0.0;
@@ -710,7 +710,7 @@ close_display:
  *          being shut down.  0 is returned if an error occurs.
  * @ingroup Ecore_X_Init_Group
  */
-EAPI int
+ECORE_X_API int
 ecore_x_init(const char *name)
 {
    if (++_ecore_x_init_count != 1)
@@ -736,7 +736,7 @@ shutdown_ecore_event:
    return --_ecore_x_init_count;
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_init_from_display(Ecore_X_Display *display)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, 0);
@@ -863,7 +863,7 @@ _ecore_x_shutdown2(void)
  *          being shut down. 0 is returned if an error occurs.
  * @ingroup Ecore_X_Init_Group
  */
-EAPI int
+ECORE_X_API int
 ecore_x_shutdown(void)
 {
    if (!_ecore_x_init_count)
@@ -888,7 +888,7 @@ ecore_x_shutdown(void)
  *
  * @ingroup Ecore_X_Init_Group
  */
-EAPI int
+ECORE_X_API int
 ecore_x_disconnect(void)
 {
    if (--_ecore_x_init_count != 0)
@@ -914,7 +914,7 @@ ecore_x_disconnect(void)
  * @return  The current X display.
  * @ingroup Ecore_X_Display_Attr_Group
  */
-EAPI Ecore_X_Display *
+ECORE_X_API Ecore_X_Display *
 ecore_x_display_get(void)
 {
    return (Ecore_X_Display *)_ecore_x_disp;
@@ -925,7 +925,7 @@ ecore_x_display_get(void)
  * @return  The current X display file descriptor.
  * @ingroup Ecore_X_Display_Attr_Group
  */
-EAPI int
+ECORE_X_API int
 ecore_x_fd_get(void)
 {
    LOGFN;
@@ -938,7 +938,7 @@ ecore_x_fd_get(void)
  * @return  The current default screen.
  * @ingroup Ecore_X_Display_Attr_Group
  */
-EAPI Ecore_X_Screen *
+ECORE_X_API Ecore_X_Screen *
 ecore_x_default_screen_get(void)
 {
    LOGFN;
@@ -956,7 +956,7 @@ ecore_x_default_screen_get(void)
  *
  * @since 1.1
  */
-EAPI void
+ECORE_X_API void
 ecore_x_screen_size_get(const Ecore_X_Screen *screen,
                         int *w,
                         int *h)
@@ -978,7 +978,7 @@ ecore_x_screen_size_get(const Ecore_X_Screen *screen,
  *
  * @since 1.1
  */
-EAPI int
+ECORE_X_API int
 ecore_x_screen_count_get(void)
 {
    LOGFN;
@@ -995,7 +995,7 @@ ecore_x_screen_count_get(void)
  *
  * @since 1.1
  */
-EAPI int
+ECORE_X_API int
 ecore_x_screen_index_get(const Ecore_X_Screen *screen)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(screen, -1);
@@ -1011,7 +1011,7 @@ ecore_x_screen_index_get(const Ecore_X_Screen *screen)
  *
  * @since 1.1
  */
-EAPI Ecore_X_Screen *
+ECORE_X_API Ecore_X_Screen *
 ecore_x_screen_get(int idx)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
@@ -1028,7 +1028,7 @@ ecore_x_screen_get(int idx)
  * @param   t The time in seconds
  * @ingroup Ecore_X_Display_Attr_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_double_click_time_set(double t)
 {
    if (t < 0.0)
@@ -1045,7 +1045,7 @@ ecore_x_double_click_time_set(double t)
  * @return  The timeout for double clicks in seconds.
  * @ingroup Ecore_X_Display_Attr_Group
  */
-EAPI double
+ECORE_X_API double
 ecore_x_double_click_time_get(void)
 {
    return _ecore_x_double_click_time;
@@ -1062,7 +1062,7 @@ ecore_x_double_click_time_get(void)
  * Sends all X commands in the X Display buffer.
  * @ingroup Ecore_X_Flush_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_flush(void)
 {
    LOGFN;
@@ -1075,7 +1075,7 @@ ecore_x_flush(void)
  * processed by the server.
  * @ingroup Ecore_X_Flush_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_sync(void)
 {
    LOGFN;
@@ -1092,7 +1092,7 @@ ecore_x_sync(void)
  *
  * @param root The window whose children will be killed.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_killall(Ecore_X_Window root)
 {
    unsigned int j;
@@ -1127,7 +1127,7 @@ ecore_x_killall(Ecore_X_Window root)
  *
  * @param win Window of the client to be killed
  */
-EAPI void
+ECORE_X_API void
 ecore_x_kill(Ecore_X_Window win)
 {
    LOGFN;
@@ -1139,7 +1139,7 @@ ecore_x_kill(Ecore_X_Window win)
 /**
  * Return the last event time
  */
-EAPI Ecore_X_Time
+ECORE_X_API Ecore_X_Time
 ecore_x_current_time_get(void)
 {
    return _ecore_x_event_last_time;
@@ -1154,7 +1154,7 @@ ecore_x_current_time_get(void)
  *
  * @return the general screen DPI (dots/pixels per inch).
  */
-EAPI int
+ECORE_X_API int
 ecore_x_dpi_get(void)
 {
    Screen *s;
@@ -1180,7 +1180,7 @@ ecore_x_dpi_get(void)
  *
  * @returns @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_bell(int percent)
 {
    int ret;
@@ -1275,7 +1275,7 @@ _ecore_x_key_mask_get(XModifierKeymap *mod, KeySym sym)
  * @return An array of all the root windows.  @c NULL is returned if memory
  *         could not be allocated for the list, or if @p num_ret is @c NULL.
  */
-EAPI Ecore_X_Window *
+ECORE_X_API Ecore_X_Window *
 ecore_x_window_root_list(int *num_ret)
 {
    int num, i;
@@ -1299,7 +1299,7 @@ ecore_x_window_root_list(int *num_ret)
    return roots;
 }
 
-EAPI Ecore_X_Window
+ECORE_X_API Ecore_X_Window
 ecore_x_window_root_first_get(void)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
@@ -1332,7 +1332,7 @@ _ecore_x_window_manage_error(void *data EINA_UNUSED)
      _ecore_x_window_manage_succeeded = EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_window_manage(Ecore_X_Window win)
 {
    XWindowAttributes att;
@@ -1366,7 +1366,7 @@ ecore_x_window_manage(Ecore_X_Window win)
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_container_manage(Ecore_X_Window win)
 {
    LOGFN;
@@ -1378,7 +1378,7 @@ ecore_x_window_container_manage(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_client_manage(Ecore_X_Window win)
 {
    LOGFN;
@@ -1398,7 +1398,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_sniff(Ecore_X_Window win)
 {
    LOGFN;
@@ -1411,7 +1411,7 @@ ecore_x_window_sniff(Ecore_X_Window win)
 }
 
 /* this is internal-only for now */
-EAPI void
+ECORE_X_API void
 ecore_x_window_root_properties_select(void)
 {
    LOGFN;
@@ -1421,7 +1421,7 @@ ecore_x_window_root_properties_select(void)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_client_sniff(Ecore_X_Window win)
 {
    LOGFN;
@@ -1439,7 +1439,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_window_attributes_get(Ecore_X_Window win,
                               Ecore_X_Window_Attributes *att_ret)
 {
@@ -1485,7 +1485,7 @@ ecore_x_window_attributes_get(Ecore_X_Window win,
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_save_set_add(Ecore_X_Window win)
 {
    LOGFN;
@@ -1494,7 +1494,7 @@ ecore_x_window_save_set_add(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_save_set_del(Ecore_X_Window win)
 {
    LOGFN;
@@ -1503,7 +1503,7 @@ ecore_x_window_save_set_del(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI Ecore_X_Window *
+ECORE_X_API Ecore_X_Window *
 ecore_x_window_children_get(Ecore_X_Window win,
                             int *num)
 {
@@ -1537,7 +1537,7 @@ ecore_x_window_children_get(Ecore_X_Window win,
    return windows;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_control_set(int accel_num,
                             int accel_denom,
                             int threshold)
@@ -1551,7 +1551,7 @@ ecore_x_pointer_control_set(int accel_num,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_control_get(int *accel_num,
                             int *accel_denom,
                             int *threshold)
@@ -1565,7 +1565,7 @@ ecore_x_pointer_control_get(int *accel_num,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_mapping_set(unsigned char *map,
                             int nmap)
 {
@@ -1577,7 +1577,7 @@ ecore_x_pointer_mapping_set(unsigned char *map,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_mapping_get(unsigned char *map,
                             int nmap)
 {
@@ -1589,7 +1589,7 @@ ecore_x_pointer_mapping_get(unsigned char *map,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_grab(Ecore_X_Window win)
 {
    Eina_Bool ret;
@@ -1604,7 +1604,7 @@ ecore_x_pointer_grab(Ecore_X_Window win)
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_confine_grab(Ecore_X_Window win)
 {
    Eina_Bool ret;
@@ -1619,7 +1619,7 @@ ecore_x_pointer_confine_grab(Ecore_X_Window win)
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_pointer_ungrab(void)
 {
    LOGFN;
@@ -1628,7 +1628,7 @@ ecore_x_pointer_ungrab(void)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_pointer_warp(Ecore_X_Window win,
                      int x,
                      int y)
@@ -1641,7 +1641,7 @@ ecore_x_pointer_warp(Ecore_X_Window win,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_keyboard_grab(Ecore_X_Window win)
 {
    Eina_Bool ret;
@@ -1654,7 +1654,7 @@ ecore_x_keyboard_grab(Ecore_X_Window win)
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_keyboard_ungrab(void)
 {
    LOGFN;
@@ -1662,7 +1662,7 @@ ecore_x_keyboard_ungrab(void)
    XUngrabKeyboard(_ecore_x_disp, CurrentTime);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_grab(void)
 {
    LOGFN;
@@ -1672,7 +1672,7 @@ ecore_x_grab(void)
      XGrabServer(_ecore_x_disp);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_ungrab(void)
 {
    LOGFN;
@@ -1690,7 +1690,7 @@ Eina_Bool (*_ecore_window_grab_replay_func)(void *data,
                                             void *event);
 void *_ecore_window_grab_replay_data;
 
-EAPI void
+ECORE_X_API void
 ecore_x_passive_grab_replay_func_set(Eina_Bool (*func)(void *data,
                                                        int event_type,
                                                        void *event),
@@ -1745,7 +1745,7 @@ _ecore_x_window_button_grab_internal(Ecore_X_Window win,
                  win, False, ev, GrabModeSync, GrabModeAsync, None, None);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_button_grab(Ecore_X_Window win,
                            int button,
                            Ecore_X_Event_Mask event_mask,
@@ -1860,7 +1860,7 @@ _ecore_x_window_button_ungrab_internal(Ecore_X_Window win,
      }
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_button_ungrab(Ecore_X_Window win,
                              int button,
                              int mod,
@@ -1964,7 +1964,7 @@ _ecore_x_window_key_grab_internal(Ecore_X_Window win,
    return keycode;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_key_grab(Ecore_X_Window win,
                         const char *key,
                         int mod,
@@ -2076,7 +2076,7 @@ _ecore_x_window_key_ungrab_internal(Ecore_X_Window win,
    return keycode;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_window_key_ungrab(Ecore_X_Window win,
                           const char *key,
                           int mod,
@@ -2135,7 +2135,7 @@ _ecore_x_key_grab_resume(void)
  *
  * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_client_message32_send(Ecore_X_Window win,
                               Ecore_X_Atom type,
                               Ecore_X_Event_Mask mask,
@@ -2175,7 +2175,7 @@ ecore_x_client_message32_send(Ecore_X_Window win,
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_client_message8_send(Ecore_X_Window win,
                              Ecore_X_Atom type,
                              const void *data,
@@ -2203,7 +2203,7 @@ ecore_x_client_message8_send(Ecore_X_Window win,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_mouse_move_send(Ecore_X_Window win,
                         int x,
                         int y)
@@ -2235,7 +2235,7 @@ ecore_x_mouse_move_send(Ecore_X_Window win,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_mouse_down_send(Ecore_X_Window win,
                         int x,
                         int y,
@@ -2268,7 +2268,7 @@ ecore_x_mouse_down_send(Ecore_X_Window win,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_mouse_up_send(Ecore_X_Window win,
                       int x,
                       int y,
@@ -2301,7 +2301,7 @@ ecore_x_mouse_up_send(Ecore_X_Window win,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_mouse_in_send(Ecore_X_Window win,
                       int x,
                       int y)
@@ -2335,7 +2335,7 @@ ecore_x_mouse_in_send(Ecore_X_Window win,
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_mouse_out_send(Ecore_X_Window win,
                       int x,
                       int y)
@@ -2369,7 +2369,7 @@ ecore_x_mouse_out_send(Ecore_X_Window win,
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_focus_reset(void)
 {
    LOGFN;
@@ -2378,7 +2378,7 @@ ecore_x_focus_reset(void)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_events_allow_all(void)
 {
    LOGFN;
@@ -2387,7 +2387,7 @@ ecore_x_events_allow_all(void)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_pointer_last_xy_get(int *x,
                             int *y)
 {
@@ -2398,7 +2398,7 @@ ecore_x_pointer_last_xy_get(int *x,
      *y = _ecore_x_event_last_root_y;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_pointer_xy_get(Ecore_X_Window win,
                        int *x,
                        int *y)
@@ -2419,7 +2419,7 @@ ecore_x_pointer_xy_get(Ecore_X_Window win,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_pointer_root_xy_get(int *x, int *y)
 {
    Ecore_X_Window *root;
@@ -2455,7 +2455,7 @@ ecore_x_pointer_root_xy_get(int *x, int *y)
  * @return The visual id.
  * @since 1.1.0
  */
-EAPI unsigned int
+ECORE_X_API unsigned int
 ecore_x_visual_id_get(Ecore_X_Visual visual)
 {
    unsigned int vis;
@@ -2473,7 +2473,7 @@ ecore_x_visual_id_get(Ecore_X_Visual visual)
  * @return The default visual.
  * @since 1.1.0
  */
-EAPI Ecore_X_Visual
+ECORE_X_API Ecore_X_Visual
 ecore_x_default_visual_get(Ecore_X_Display *disp,
                            Ecore_X_Screen *screen)
 {
@@ -2491,7 +2491,7 @@ ecore_x_default_visual_get(Ecore_X_Display *disp,
  * @return The default colormap.
  * @since 1.1.0
  */
-EAPI Ecore_X_Colormap
+ECORE_X_API Ecore_X_Colormap
 ecore_x_default_colormap_get(Ecore_X_Display *disp,
                              Ecore_X_Screen *screen)
 {
@@ -2509,7 +2509,7 @@ ecore_x_default_colormap_get(Ecore_X_Display *disp,
  * @return The default depth.
  * @since 1.1.0
  */
-EAPI int
+ECORE_X_API int
 ecore_x_default_depth_get(Ecore_X_Display *disp,
                           Ecore_X_Screen *screen)
 {
@@ -2518,14 +2518,14 @@ ecore_x_default_depth_get(Ecore_X_Display *disp,
    return depth;
 }
 
-EAPI Ecore_X_Connection *
+ECORE_X_API Ecore_X_Connection *
 ecore_x_connection_get(void)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
    return XGetXCBConnection(_ecore_x_disp);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_xkb_select_group(int group)
 {
 #ifdef ECORE_XKB
@@ -2535,7 +2535,7 @@ ecore_x_xkb_select_group(int group)
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xkb_track_state(void)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -2549,7 +2549,7 @@ ecore_x_xkb_track_state(void)
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xkb_state_get(Ecore_X_Xkb_State *state)
 {
    Eina_Bool ret = EINA_FALSE;

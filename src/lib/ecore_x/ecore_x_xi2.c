@@ -773,7 +773,7 @@ _ecore_x_input_handler(XEvent *xevent)
 #endif /* ifdef ECORE_XI2 */
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_input_multi_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
@@ -837,7 +837,7 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 #endif /* ifdef ECORE_XI2 */
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_input_raw_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
@@ -870,7 +870,7 @@ ecore_x_input_raw_select(Ecore_X_Window win)
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 _ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
 {
 #ifdef ECORE_XI2
@@ -933,20 +933,20 @@ _ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win, Eina_Bool grab)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_input_touch_devices_grab(Ecore_X_Window grab_win)
 {
    return _ecore_x_input_touch_devices_grab(grab_win, EINA_TRUE);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_input_touch_devices_ungrab(void)
 {
    return _ecore_x_input_touch_devices_grab(0, EINA_FALSE);
 }
 
 // XXX
-EAPI void
+ECORE_X_API void
 ecore_x_input_devices_update(void)
 {
    if (_ecore_x_xi2_devs) XIFreeDeviceInfo(_ecore_x_xi2_devs);
@@ -955,27 +955,27 @@ ecore_x_input_devices_update(void)
                                      &_ecore_x_xi2_num);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_input_device_num_get(void)
 {
    return _ecore_x_xi2_num;
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_input_device_id_get(int slot)
 {
    if ((slot < 0) || (slot >= _ecore_x_xi2_num)) return 0;
    return _ecore_x_xi2_devs[slot].deviceid;
 }
 
-EAPI const char *
+ECORE_X_API const char *
 ecore_x_input_device_name_get(int slot)
 {
    if ((slot < 0) || (slot >= _ecore_x_xi2_num)) return NULL;
    return _ecore_x_xi2_devs[slot].name;
 }
 
-EAPI char **
+ECORE_X_API char **
 ecore_x_input_device_properties_list(int slot, int *num_ret)
 {
    char **atoms = NULL;
@@ -1006,7 +1006,7 @@ err:
    return NULL;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_input_device_properties_free(char **list, int num)
 {
    int i;
@@ -1023,7 +1023,7 @@ ecore_x_input_device_properties_free(char **list, int num)
 // ECORE_X_ATOM_ATOM // very rare
 // ECORE_X_ATOM_STRING (unit_size 8 only - guaratee nul termination)
 
-EAPI void *
+ECORE_X_API void *
 ecore_x_input_device_property_get(int slot, const char *prop, int *num_ret,
                                   Ecore_X_Atom *format_ret, int *unit_size_ret)
 {
@@ -1068,7 +1068,7 @@ err:
    return NULL;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_input_device_property_set(int slot, const char *prop, void *data,
                                   int num, Ecore_X_Atom format, int unit_size)
 {

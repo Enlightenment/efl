@@ -28,13 +28,13 @@ _ecore_x_damage_init(void)
 #endif /* ifdef ECORE_XDAMAGE */
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_damage_query(void)
 {
    return _damage_available;
 }
 
-EAPI Ecore_X_Damage
+ECORE_X_API Ecore_X_Damage
 ecore_x_damage_new(Ecore_X_Drawable d,
                    Ecore_X_Damage_Report_Level level)
 {
@@ -51,7 +51,7 @@ ecore_x_damage_new(Ecore_X_Drawable d,
 #endif /* ifdef ECORE_XDAMAGE */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_damage_free(Ecore_X_Damage damage)
 {
 #ifdef ECORE_XDAMAGE
@@ -61,7 +61,7 @@ ecore_x_damage_free(Ecore_X_Damage damage)
 #endif /* ifdef ECORE_XDAMAGE */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_damage_subtract(Ecore_X_Damage damage,
                         Ecore_X_Region repair,
                         Ecore_X_Region parts)

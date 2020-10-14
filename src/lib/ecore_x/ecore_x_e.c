@@ -20,12 +20,12 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_init(void)
 {
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_frame_size_set(Ecore_X_Window win,
                          int fl,
                          int fr,
@@ -42,7 +42,7 @@ ecore_x_e_frame_size_set(Ecore_X_Window win,
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_FRAME_SIZE, frames, 4);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_virtual_keyboard_set(Ecore_X_Window win,
                                unsigned int is_keyboard)
 {
@@ -51,7 +51,7 @@ ecore_x_e_virtual_keyboard_set(Ecore_X_Window win,
                                   &is_keyboard, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -172,7 +172,7 @@ _ecore_x_e_vkbd_atom_get(Ecore_X_Virtual_Keyboard_State state)
    return 0;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win,
                                      Ecore_X_Virtual_Keyboard_State state)
 {
@@ -184,7 +184,7 @@ ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Virtual_Keyboard_State
+ECORE_X_API Ecore_X_Virtual_Keyboard_State
 ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -197,7 +197,7 @@ ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
    return _ecore_x_e_vkbd_state_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win,
                                       Ecore_X_Virtual_Keyboard_State state)
 {
@@ -243,7 +243,7 @@ _ecore_x_e_illume_mode_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_MODE_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_zone_set(Ecore_X_Window win,
                           Ecore_X_Window zone)
 {
@@ -252,7 +252,7 @@ ecore_x_e_illume_zone_set(Ecore_X_Window win,
                                   &zone, 1);
 }
 
-EAPI Ecore_X_Window
+ECORE_X_API Ecore_X_Window
 ecore_x_e_illume_zone_get(Ecore_X_Window win)
 {
    Ecore_X_Window zone = 0;
@@ -267,7 +267,7 @@ ecore_x_e_illume_zone_get(Ecore_X_Window win)
    return zone;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_zone_list_set(Ecore_X_Window win,
                                Ecore_X_Window *zones,
                                unsigned int n_zones)
@@ -277,7 +277,7 @@ ecore_x_e_illume_zone_list_set(Ecore_X_Window win,
                                   zones, n_zones);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_conformant_set(Ecore_X_Window win,
                                 unsigned int is_conformant)
 {
@@ -286,7 +286,7 @@ ecore_x_e_illume_conformant_set(Ecore_X_Window win,
                                   &is_conformant, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_conformant_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -301,7 +301,7 @@ ecore_x_e_illume_conformant_get(Ecore_X_Window win)
    return val ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_mode_set(Ecore_X_Window win,
                           Ecore_X_Illume_Mode mode)
 {
@@ -313,7 +313,7 @@ ecore_x_e_illume_mode_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Mode
+ECORE_X_API Ecore_X_Illume_Mode
 ecore_x_e_illume_mode_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -325,7 +325,7 @@ ecore_x_e_illume_mode_get(Ecore_X_Window win)
    return _ecore_x_e_illume_mode_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_mode_send(Ecore_X_Window win,
                            Ecore_X_Illume_Mode mode)
 {
@@ -336,7 +336,7 @@ ecore_x_e_illume_mode_send(Ecore_X_Window win,
                                  0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_focus_back_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -345,7 +345,7 @@ ecore_x_e_illume_focus_back_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_focus_forward_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -354,7 +354,7 @@ ecore_x_e_illume_focus_forward_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_focus_home_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -363,7 +363,7 @@ ecore_x_e_illume_focus_home_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_close_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -372,7 +372,7 @@ ecore_x_e_illume_close_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_home_new_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -381,7 +381,7 @@ ecore_x_e_illume_home_new_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_home_del_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -390,7 +390,7 @@ ecore_x_e_illume_home_del_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_next_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -401,7 +401,7 @@ ecore_x_e_illume_access_action_next_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_prev_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -412,7 +412,7 @@ ecore_x_e_illume_access_action_prev_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -423,7 +423,7 @@ ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_over_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -434,7 +434,7 @@ ecore_x_e_illume_access_action_over_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_read_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -445,7 +445,7 @@ ecore_x_e_illume_access_action_read_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -456,7 +456,7 @@ ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -467,7 +467,7 @@ ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_up_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -478,7 +478,7 @@ ecore_x_e_illume_access_action_up_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_access_action_down_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -489,7 +489,7 @@ ecore_x_e_illume_access_action_down_send(Ecore_X_Window win)
                                  0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_drag_set(Ecore_X_Window win,
                           unsigned int drag)
 {
@@ -497,7 +497,7 @@ ecore_x_e_illume_drag_set(Ecore_X_Window win,
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG, &drag, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_drag_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -512,7 +512,7 @@ ecore_x_e_illume_drag_get(Ecore_X_Window win)
    return val ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_drag_locked_set(Ecore_X_Window win,
                                  unsigned int is_locked)
 {
@@ -521,7 +521,7 @@ ecore_x_e_illume_drag_locked_set(Ecore_X_Window win,
                                   &is_locked, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -536,7 +536,7 @@ ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
    return val ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_drag_start_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -545,7 +545,7 @@ ecore_x_e_illume_drag_start_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -554,7 +554,7 @@ ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
                                  1, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win,
                                         int x,
                                         int y,
@@ -572,7 +572,7 @@ ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
                                         int *x,
                                         int *y,
@@ -605,7 +605,7 @@ ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win,
                                       int x,
                                       int y,
@@ -623,7 +623,7 @@ ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
                                       int *x,
                                       int *y,
@@ -656,7 +656,7 @@ ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win,
                                        int x,
                                        int y,
@@ -674,7 +674,7 @@ ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win,
                                        int *x,
                                        int *y,
@@ -736,7 +736,7 @@ _ecore_x_e_quickpanel_state_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_QUICKPANEL_STATE_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_set(Ecore_X_Window win,
                                 unsigned int is_quickpanel)
 {
@@ -745,7 +745,7 @@ ecore_x_e_illume_quickpanel_set(Ecore_X_Window win,
                                   &is_quickpanel, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -760,7 +760,7 @@ ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
    return val ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win,
                                       Ecore_X_Illume_Quickpanel_State state)
 {
@@ -772,7 +772,7 @@ ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Quickpanel_State
+ECORE_X_API Ecore_X_Illume_Quickpanel_State
 ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -786,7 +786,7 @@ ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win)
    return _ecore_x_e_quickpanel_state_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win,
                                        Ecore_X_Illume_Quickpanel_State state)
 {
@@ -797,7 +797,7 @@ ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win,
                                  0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_state_toggle(Ecore_X_Window win)
 {
    LOGFN;
@@ -807,7 +807,7 @@ ecore_x_e_illume_quickpanel_state_toggle(Ecore_X_Window win)
                                  0, 0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
                                                unsigned int priority)
 {
@@ -817,7 +817,7 @@ ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
                                   &priority, 1);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -832,7 +832,7 @@ ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
    return val;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
                                                unsigned int priority)
 {
@@ -842,7 +842,7 @@ ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
                                   &priority, 1);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -858,7 +858,7 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
    return val;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win,
                                      unsigned int zone)
 {
@@ -868,7 +868,7 @@ ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win,
                                   &zone, 1);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -884,7 +884,7 @@ ecore_x_e_illume_quickpanel_zone_get(Ecore_X_Window win)
    return val;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win)
 {
    LOGFN;
@@ -921,7 +921,7 @@ _ecore_x_e_clipboard_state_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_clipboard_state_set(Ecore_X_Window win,
                                      Ecore_X_Illume_Clipboard_State state)
 {
@@ -935,7 +935,7 @@ ecore_x_e_illume_clipboard_state_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Clipboard_State
+ECORE_X_API Ecore_X_Illume_Clipboard_State
 ecore_x_e_illume_clipboard_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -949,7 +949,7 @@ ecore_x_e_illume_clipboard_state_get(Ecore_X_Window win)
    return _ecore_x_e_clipboard_state_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_clipboard_geometry_set(Ecore_X_Window win,
                                         int x, int y, int w, int h)
 {
@@ -965,7 +965,7 @@ ecore_x_e_illume_clipboard_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
                                         int *x, int *y, int *w, int *h)
 {
@@ -988,7 +988,7 @@ ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
 }
 
 /* for sliding window */
-EAPI void
+ECORE_X_API void 
 ecore_x_e_illume_sliding_win_state_set(Ecore_X_Window win,
                                        unsigned int   is_visible)
 {
@@ -998,7 +998,7 @@ ecore_x_e_illume_sliding_win_state_set(Ecore_X_Window win,
                                   &is_visible, 1);
 } /* ecore_x_e_illume_sliding_win_state_set */
 
-EAPI int
+ECORE_X_API int 
 ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
 {
    unsigned int is_visible = 0;
@@ -1014,7 +1014,7 @@ ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
    return is_visible;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_sliding_win_geometry_set(Ecore_X_Window win,
                                           int            x,
                                           int            y,
@@ -1033,7 +1033,7 @@ ecore_x_e_illume_sliding_win_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 } /* ecore_x_e_illume_sliding_win_geometry_set */
 
-EAPI int
+ECORE_X_API int 
 ecore_x_e_illume_sliding_win_geometry_get(Ecore_X_Window win,
                                           int           *x,
                                           int           *y,
@@ -1066,7 +1066,7 @@ ecore_x_e_illume_sliding_win_geometry_get(Ecore_X_Window win,
    return 1;
 }/* ecore_x_e_illume_sliding_win_geometry_get */
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win,
                                 Ecore_X_Sync_Counter counter)
 {
@@ -1078,7 +1078,7 @@ ecore_x_e_comp_sync_counter_set(Ecore_X_Window win,
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_COMP_SYNC_COUNTER);
 }
 
-EAPI Ecore_X_Sync_Counter
+ECORE_X_API Ecore_X_Sync_Counter
 ecore_x_e_comp_sync_counter_get(Ecore_X_Window win)
 {
    int ret = 0;
@@ -1096,7 +1096,7 @@ ecore_x_e_comp_sync_counter_get(Ecore_X_Window win)
    return counter;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
                                    Ecore_X_Window win)
 {
@@ -1126,7 +1126,7 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
                                         Ecore_X_Window win,
                                         int w,
@@ -1162,7 +1162,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
  * @since 1.3
  * @deprecated use ecore_x_e_window_available_profiles_set
  */
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
                                   const char    **profiles,
                                   unsigned int    num_profiles)
@@ -1190,7 +1190,7 @@ ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
  * @since 1.3
  * @deprecated use ecore_x_e_window_available_profiles_get
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
                                   const char    ***profiles,
                                   int             *ret_num)
@@ -1248,7 +1248,7 @@ ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
 /*
  * @since 1.3
  */
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_profile_set(Ecore_X_Window win,
                              const char    *profile)
 {
@@ -1271,7 +1271,7 @@ ecore_x_e_window_profile_set(Ecore_X_Window win,
 /*
  * @since 1.3
  */
-EAPI char *
+ECORE_X_API char *
 ecore_x_e_window_profile_get(Ecore_X_Window win)
 {
    Ecore_X_Atom *atom = NULL;
@@ -1298,7 +1298,7 @@ ecore_x_e_window_profile_get(Ecore_X_Window win)
    return profile;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_profile_supported_set(Ecore_X_Window root,
                                        Eina_Bool      enabled)
 {
@@ -1338,7 +1338,7 @@ ecore_x_e_window_profile_supported_set(Ecore_X_Window root,
      }
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_profile_supported_get(Ecore_X_Window root)
 {
    Ecore_X_Window win, win2;
@@ -1370,7 +1370,7 @@ ecore_x_e_window_profile_supported_get(Ecore_X_Window root)
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_available_profiles_set(Ecore_X_Window  win,
                                         const char    **profiles,
                                         unsigned int    count)
@@ -1395,7 +1395,7 @@ ecore_x_e_window_available_profiles_set(Ecore_X_Window  win,
      }
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_available_profiles_get(Ecore_X_Window   win,
                                         const char    ***profiles,
                                         int             *count)
@@ -1452,7 +1452,7 @@ ecore_x_e_window_available_profiles_get(Ecore_X_Window   win,
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
                                      Ecore_X_Window  win,
                                      const char     *profile)
@@ -1489,7 +1489,7 @@ ecore_x_e_window_profile_change_send(Ecore_X_Window  root,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
                                              const char    *profile)
 {
@@ -1521,7 +1521,7 @@ ecore_x_e_window_profile_change_request_send(Ecore_X_Window win,
 }
 
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
                                           Ecore_X_Window win,
                                           const char    *profile)
@@ -1555,7 +1555,7 @@ ecore_x_e_window_profile_change_done_send(Ecore_X_Window root,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_supported_set(Ecore_X_Window root,
                                   Eina_Bool enabled)
 {
@@ -1594,7 +1594,7 @@ ecore_x_e_comp_sync_supported_set(Ecore_X_Window root,
      }
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
 {
    Ecore_X_Window win, win2;
@@ -1626,7 +1626,7 @@ ecore_x_e_comp_sync_supported_get(Ecore_X_Window root)
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
@@ -1652,7 +1652,7 @@ ecore_x_e_comp_sync_begin_send(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
@@ -1678,7 +1678,7 @@ ecore_x_e_comp_sync_end_send(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
@@ -1704,7 +1704,7 @@ ecore_x_e_comp_sync_cancel_send(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_flush_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
@@ -1730,7 +1730,7 @@ ecore_x_e_comp_flush_send(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_dump_send(Ecore_X_Window win)
 {
    XEvent xev = { 0 };
@@ -1756,7 +1756,7 @@ ecore_x_e_comp_dump_send(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_comp_pixmap_set(Ecore_X_Window win,
                           Ecore_X_Pixmap pixmap)
 {
@@ -1768,7 +1768,7 @@ ecore_x_e_comp_pixmap_set(Ecore_X_Window win,
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_COMP_PIXMAP);
 }
 
-EAPI Ecore_X_Pixmap
+ECORE_X_API Ecore_X_Pixmap
 ecore_x_e_comp_pixmap_get(Ecore_X_Window win)
 {
    int ret = 0;
@@ -1815,7 +1815,7 @@ _ecore_x_e_indicator_state_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_INDICATOR_STATE_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_state_set(Ecore_X_Window win,
                                      Ecore_X_Illume_Indicator_State state)
 {
@@ -1827,7 +1827,7 @@ ecore_x_e_illume_indicator_state_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Indicator_State
+ECORE_X_API Ecore_X_Illume_Indicator_State
 ecore_x_e_illume_indicator_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -1841,7 +1841,7 @@ ecore_x_e_illume_indicator_state_get(Ecore_X_Window win)
    return _ecore_x_e_indicator_state_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_state_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_State state)
 {
@@ -1887,7 +1887,7 @@ _ecore_x_e_indicator_opacity_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_INDICATOR_OPACITY_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win,
                                      Ecore_X_Illume_Indicator_Opacity_Mode mode)
 {
@@ -1900,7 +1900,7 @@ ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Indicator_Opacity_Mode
+ECORE_X_API Ecore_X_Illume_Indicator_Opacity_Mode
 ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -1914,7 +1914,7 @@ ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win)
    return _ecore_x_e_indicator_opacity_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_Opacity_Mode mode)
 {
@@ -1961,7 +1961,7 @@ _ecore_x_e_indicator_type_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_INDICATOR_TYPE_UNKNOWN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_type_set(Ecore_X_Window win,
                                      Ecore_X_Illume_Indicator_Type_Mode mode)
 {
@@ -1974,7 +1974,7 @@ ecore_x_e_illume_indicator_type_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Indicator_Type_Mode
+ECORE_X_API Ecore_X_Illume_Indicator_Type_Mode
 ecore_x_e_illume_indicator_type_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom = 0;
@@ -1988,7 +1988,7 @@ ecore_x_e_illume_indicator_type_get(Ecore_X_Window win)
    return _ecore_x_e_indicator_type_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_indicator_type_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_Type_Mode mode)
 {
@@ -2029,7 +2029,7 @@ _ecore_x_e_illume_window_state_get(Ecore_X_Atom atom)
    return ECORE_X_ILLUME_WINDOW_STATE_NORMAL;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_window_state_set(Ecore_X_Window win,
                                   Ecore_X_Illume_Window_State state)
 {
@@ -2041,7 +2041,7 @@ ecore_x_e_illume_window_state_set(Ecore_X_Window win,
                                 &atom, 1);
 }
 
-EAPI Ecore_X_Illume_Window_State
+ECORE_X_API Ecore_X_Illume_Window_State
 ecore_x_e_illume_window_state_get(Ecore_X_Window win)
 {
    Ecore_X_Atom atom;
@@ -2055,7 +2055,7 @@ ecore_x_e_illume_window_state_get(Ecore_X_Window win)
    return _ecore_x_e_illume_window_state_get(atom);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_illume_window_state_send(Ecore_X_Window win,
                                    Ecore_X_Illume_Window_State state)
 {
@@ -2067,7 +2067,7 @@ ecore_x_e_illume_window_state_send(Ecore_X_Window win,
                                  0, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_supported_set(Ecore_X_Window root,
                                         Eina_Bool      enabled)
 {
@@ -2106,7 +2106,7 @@ ecore_x_e_window_rotation_supported_set(Ecore_X_Window root,
      }
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_rotation_supported_get(Ecore_X_Window root)
 {
    Ecore_X_Window win, win2;
@@ -2138,7 +2138,7 @@ ecore_x_e_window_rotation_supported_get(Ecore_X_Window root)
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_app_set(Ecore_X_Window win,
                                   Eina_Bool      set)
 {
@@ -2153,7 +2153,7 @@ ecore_x_e_window_rotation_app_set(Ecore_X_Window win,
                                   &val, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_rotation_app_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -2167,7 +2167,7 @@ ecore_x_e_window_rotation_app_get(Ecore_X_Window win)
    return val ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_preferred_rotation_set(Ecore_X_Window win,
                                                  int            rot)
 {
@@ -2189,7 +2189,7 @@ ecore_x_e_window_rotation_preferred_rotation_set(Ecore_X_Window win,
      }
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_rotation_preferred_rotation_get(Ecore_X_Window win,
                                                  int           *rot)
 {
@@ -2209,7 +2209,7 @@ ecore_x_e_window_rotation_preferred_rotation_get(Ecore_X_Window win,
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_available_rotations_set(Ecore_X_Window win,
                                                   const int     *rots,
                                                   unsigned int   count)
@@ -2227,7 +2227,7 @@ ecore_x_e_window_rotation_available_rotations_set(Ecore_X_Window win,
                                       ECORE_X_ATOM_E_WINDOW_ROTATION_AVAILABLE_LIST);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_window_rotation_available_rotations_get(Ecore_X_Window  win,
                                                   int           **rots,
                                                   unsigned int   *count)
@@ -2269,7 +2269,7 @@ ecore_x_e_window_rotation_available_rotations_get(Ecore_X_Window  win,
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_change_prepare_send(Ecore_X_Window win,
                                               int            rot,
                                               Eina_Bool      resize,
@@ -2283,7 +2283,7 @@ ecore_x_e_window_rotation_change_prepare_send(Ecore_X_Window win,
      win, rot, resize, w, h);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root,
                                                    Ecore_X_Window win,
                                                    int            rot)
@@ -2313,7 +2313,7 @@ ecore_x_e_window_rotation_change_prepare_done_send(Ecore_X_Window root,
               &xev);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_change_request_send(Ecore_X_Window win,
                                               int            rot)
 {
@@ -2324,7 +2324,7 @@ ecore_x_e_window_rotation_change_request_send(Ecore_X_Window win,
      win, rot, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
                                            Ecore_X_Window win,
                                            int            rot,
@@ -2359,7 +2359,7 @@ ecore_x_e_window_rotation_change_done_send(Ecore_X_Window root,
 /*
  * Does keyrouter exist?
  */
-EAPI void
+ECORE_X_API void
 ecore_x_e_keyrouter_set(Ecore_X_Window win EINA_UNUSED,
                         Eina_Bool on)
 {
@@ -2378,7 +2378,7 @@ ecore_x_e_keyrouter_set(Ecore_X_Window win EINA_UNUSED,
                                   &val, 1);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
 {
    //check the existance of keyrouter
@@ -2399,7 +2399,7 @@ ecore_x_e_keyrouter_get(Ecore_X_Window win EINA_UNUSED)
    return val == 1 ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_stack_type_set(Ecore_X_Window win,
                          Ecore_X_Stack_Type stack_type)
 {
@@ -2415,7 +2415,7 @@ ecore_x_e_stack_type_set(Ecore_X_Window win,
                                     &val, 1);
 }
 
-EAPI Ecore_X_Stack_Type
+ECORE_X_API Ecore_X_Stack_Type
 ecore_x_e_stack_type_get(Ecore_X_Window win)
 {
    int ret;
@@ -2431,7 +2431,7 @@ ecore_x_e_stack_type_get(Ecore_X_Window win)
    return (Ecore_X_Stack_Type)val;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_e_stack_position_set(Ecore_X_Window win,
                              Ecore_X_Stack_Position stack_position)
 {
@@ -2447,7 +2447,7 @@ ecore_x_e_stack_position_set(Ecore_X_Window win,
                                     &val, 1);
 }
 
-EAPI Ecore_X_Stack_Position
+ECORE_X_API Ecore_X_Stack_Position
 ecore_x_e_stack_position_get(Ecore_X_Window win)
 {
    int ret;
