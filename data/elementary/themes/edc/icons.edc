@@ -514,5 +514,8 @@ ICON("drive-removable-media-ieee1394", "i-drive-usb-media")
 ICON("computer", "i-desktop-pc")
 ICON("computer-laptop", "i-laptop-pc")
 ICON("multimedia-player", "i-media-player")
+ICON("pda", "i-pda")
+ICON("phone", "i-phone")
+ICON("printer", "i-printer")
 
 #undef ICON
