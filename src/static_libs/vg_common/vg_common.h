@@ -25,12 +25,14 @@ typedef struct _Svg_Ellipse_Node           Svg_Ellipse_Node;
 typedef struct _Svg_Polygon_Node           Svg_Polygon_Node;
 typedef struct _Svg_Rect_Node              Svg_Rect_Node;
 typedef struct _Svg_Path_Node              Svg_Path_Node;
+typedef struct _Svg_Composite              Svg_Composite;
 typedef struct _Svg_Style_Property         Svg_Style_Property;
 typedef struct _Svg_Line_Node              Svg_Line_Node;
 typedef struct _Svg_Custom_Command_Node    Svg_Custom_Command_Node;
 
 typedef struct  _Svg_Style_Stroke          Svg_Style_Stroke;
 typedef struct  _Svg_Style_Fill            Svg_Style_Fill;
+typedef enum    _Svg_Composite_Flags       Svg_Composite_Flags;
 typedef enum    _Svg_Fill_Flags            Svg_Fill_Flags;
 typedef enum    _Svg_Stroke_Flags          Svg_Stroke_Flags;
 
@@ -62,6 +64,7 @@ enum _Svg_Node_Type
    SVG_NODE_USE,
    SVG_NODE_VIDEO,
    SVG_NODE_CUSTOME_COMMAND,
+   SVG_NODE_CLIP_PATH,
    SVG_NODE_UNKNOWN
 };
 
@@ -224,6 +227,12 @@ struct _Svg_Paint
    Eina_Stringshare    *url;
 };
 
+enum _Svg_Composite_Flags
+{
+    SVG_COMPOSITE_FLAGS_CLIP_PATH = 0x01,
+};
+
+
 enum _Svg_Fill_Flags
 {
    SVG_FILL_FLAGS_PAINT     = 0x1,
@@ -266,10 +275,18 @@ struct _Svg_Style_Stroke
    int                  dash_count;
 };
 
+struct _Svg_Composite
+{
+    Svg_Composite_Flags flags;
+    const char *url;
+    Svg_Node* node;
+};
+
 struct _Svg_Style_Property
 {
    Svg_Style_Fill     fill;
    Svg_Style_Stroke   stroke;
+   Svg_Composite      comp;
    // the color property indirectly 
    // used by fill and stroke
    int                r;
