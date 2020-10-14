@@ -13,7 +13,7 @@
 
 static int _screensaver_available = -1;
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_screensaver_event_available_get(void)
 {
    if (_screensaver_available >= 0)
@@ -38,7 +38,7 @@ ecore_x_screensaver_event_available_get(void)
    return _screensaver_available;
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_screensaver_idle_time_get(void)
 {
 #ifdef ECORE_XSS
@@ -98,7 +98,7 @@ ecore_x_screensaver_idle_time_get(void)
 #endif /* ifdef ECORE_XSS */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_set(int timeout,
                         int interval,
                         int prefer_blanking,
@@ -112,7 +112,7 @@ ecore_x_screensaver_set(int timeout,
                    allow_exposures);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_timeout_set(int timeout)
 {
    int pto, pint, pblank, pexpo;
@@ -122,7 +122,7 @@ ecore_x_screensaver_timeout_set(int timeout)
    XSetScreenSaver(_ecore_x_disp, timeout, pint, pblank, pexpo);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_screensaver_timeout_get(void)
 {
    int pto, pint, pblank, pexpo;
@@ -132,7 +132,7 @@ ecore_x_screensaver_timeout_get(void)
    return pto;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_blank_set(int blank)
 {
    int pto, pint, pblank, pexpo;
@@ -142,7 +142,7 @@ ecore_x_screensaver_blank_set(int blank)
    XSetScreenSaver(_ecore_x_disp, pto, pint, blank, pexpo);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_screensaver_blank_get(void)
 {
    int pto, pint, pblank, pexpo;
@@ -152,7 +152,7 @@ ecore_x_screensaver_blank_get(void)
    return pblank;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_expose_set(int expose)
 {
    int pto, pint, pblank, pexpo;
@@ -162,7 +162,7 @@ ecore_x_screensaver_expose_set(int expose)
    XSetScreenSaver(_ecore_x_disp, pto, pint, pblank, expose);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_screensaver_expose_get(void)
 {
    int pto, pint, pblank, pexpo;
@@ -172,7 +172,7 @@ ecore_x_screensaver_expose_get(void)
    return pexpo;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_interval_set(int interval)
 {
    int pto, pint, pblank, pexpo;
@@ -182,7 +182,7 @@ ecore_x_screensaver_interval_set(int interval)
    XSetScreenSaver(_ecore_x_disp, pto, interval, pblank, pexpo);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_screensaver_interval_get(void)
 {
    int pto, pint, pblank, pexpo;
@@ -192,7 +192,7 @@ ecore_x_screensaver_interval_get(void)
    return pint;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_event_listen_set(Eina_Bool on)
 {
 #ifdef ECORE_XSS
@@ -212,7 +212,7 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
 }
 
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_screensaver_custom_blanking_enable(void)
 {
 #ifdef ECORE_XSS
@@ -229,7 +229,7 @@ ecore_x_screensaver_custom_blanking_enable(void)
 #endif /* ifdef ECORE_XSS */
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_screensaver_custom_blanking_disable(void)
 {
 #ifdef ECORE_XSS
@@ -241,13 +241,13 @@ ecore_x_screensaver_custom_blanking_disable(void)
 #endif /* ifdef ECORE_XSS */
 }
 
-EINA_DEPRECATED EAPI void
+EINA_DEPRECATED ECORE_X_API void
 ecore_x_screensaver_supend(void)
 {
    ecore_x_screensaver_suspend();
 }
 
-EAPI void
+ECORE_X_API void 
 ecore_x_screensaver_suspend(void)
 {
 #ifdef ECORE_XSS
@@ -255,7 +255,7 @@ ecore_x_screensaver_suspend(void)
 #endif /* ifdef ECORE_XSS */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_resume(void)
 {
 #ifdef ECORE_XSS
@@ -263,13 +263,13 @@ ecore_x_screensaver_resume(void)
 #endif /* ifdef ECORE_XSS */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_reset(void)
 {
    XResetScreenSaver(_ecore_x_disp);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_screensaver_activate(void)
 {
    XActivateScreenSaver(_ecore_x_disp);

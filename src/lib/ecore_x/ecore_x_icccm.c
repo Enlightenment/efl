@@ -17,13 +17,13 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_init(void)
 {
    LOGFN;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_state_set(Ecore_X_Window win,
                         Ecore_X_Window_State_Hint state)
 {
@@ -44,7 +44,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI Ecore_X_Window_State_Hint
+ECORE_X_API Ecore_X_Window_State_Hint
 ecore_x_icccm_state_get(Ecore_X_Window win)
 {
    unsigned char *prop_ret = NULL;
@@ -76,7 +76,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    return hint;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win,
                                  Ecore_X_Time t)
 {
@@ -87,7 +87,7 @@ ecore_x_icccm_delete_window_send(Ecore_X_Window win,
                                  t, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_take_focus_send(Ecore_X_Window win,
                               Ecore_X_Time t)
 {
@@ -98,7 +98,7 @@ ecore_x_icccm_take_focus_send(Ecore_X_Window win,
                                  t, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_save_yourself_send(Ecore_X_Window win,
                                  Ecore_X_Time t)
 {
@@ -109,7 +109,7 @@ ecore_x_icccm_save_yourself_send(Ecore_X_Window win,
                                  t, 0, 0, 0);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_move_resize_send(Ecore_X_Window win,
                                int x,
                                int y,
@@ -134,7 +134,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_hints_set(Ecore_X_Window win,
                         Eina_Bool accepts_focus,
                         Ecore_X_Window_State_Hint initial_state,
@@ -192,7 +192,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
    XFree(hints);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_icccm_hints_get(Ecore_X_Window win,
                         Eina_Bool *accepts_focus,
                         Ecore_X_Window_State_Hint *initial_state,
@@ -270,7 +270,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
                                  Eina_Bool request_pos,
                                  Ecore_X_Gravity gravity,
@@ -344,7 +344,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
                                  Eina_Bool *request_pos,
                                  Ecore_X_Gravity *gravity,
@@ -472,7 +472,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_title_set(Ecore_X_Window win,
                         const char *t)
 {
@@ -515,7 +515,7 @@ ecore_x_icccm_title_set(Ecore_X_Window win,
    free(list[0]);
 }
 
-EAPI char *
+ECORE_X_API char *
 ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    XTextProperty xprop;
@@ -576,7 +576,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
  * @param protos An array of protocol atoms
  * @param num the number of members of the array
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
                                  Ecore_X_Atom *protos,
                                  int num)
@@ -599,7 +599,7 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
  * @param protocol The protocol to enable/disable
  * @param on On/Off
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_protocol_set(Ecore_X_Window win,
                            Ecore_X_WM_Protocol protocol,
                            Eina_Bool on)
@@ -687,7 +687,7 @@ leave:
  * @param protocol The protocol to query
  * @return 1 if the protocol is set, else 0.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_icccm_protocol_isset(Ecore_X_Window win,
                              Ecore_X_WM_Protocol protocol)
 {
@@ -727,7 +727,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win,
  *
  * Set a window name * class
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_name_class_set(Ecore_X_Window win,
                              const char *n,
                              const char *c)
@@ -754,7 +754,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win,
  *
  * Get a window name * class
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_name_class_get(Ecore_X_Window win,
                              char **n,
                              char **c)
@@ -793,7 +793,7 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win,
  *
  * Return the client machine of a window. String must be free'd when done with.
  */
-EAPI char *
+ECORE_X_API char *
 ecore_x_icccm_client_machine_get(Ecore_X_Window win)
 {
    char *name;
@@ -810,7 +810,7 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
  * @param argc Number of arguments.
  * @param argv Arguments.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_command_set(Ecore_X_Window win,
                           int argc,
                           char **argv)
@@ -829,7 +829,7 @@ ecore_x_icccm_command_set(Ecore_X_Window win,
  * @param argc Number of arguments.
  * @param argv Arguments.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_command_get(Ecore_X_Window win,
                           int *argc,
                           char ***argv)
@@ -891,7 +891,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win,
  *
  * Set a window icon name
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_icon_name_set(Ecore_X_Window win,
                             const char *t)
 {
@@ -936,7 +936,7 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win,
  *
  * Return the icon name of a window. String must be free'd when done with.
  */
-EAPI char *
+ECORE_X_API char *
 ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
    XTextProperty xprop;
@@ -999,7 +999,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
  * @param win The toplevel window
  * @param subwin The subwindow to be added to the colormap windows list
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
                                   Ecore_X_Window subwin)
 {
@@ -1063,7 +1063,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win,
  * @param win The toplevel window
  * @param subwin The window to be removed from the colormap window list.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
                                     Ecore_X_Window subwin)
 {
@@ -1130,7 +1130,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win,
  * @param win the transient window
  * @param forwin the toplevel window
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_transient_for_set(Ecore_X_Window win,
                                 Ecore_X_Window forwin)
 {
@@ -1143,7 +1143,7 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win,
  * Remove the transient_for setting from a window.
  * @param win The window
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 {
    LOGFN;
@@ -1156,7 +1156,7 @@ ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
  * @param win The window to check
  * @return The window ID of the top-level window, or 0 if the property does not exist.
  */
-EAPI Ecore_X_Window
+ECORE_X_API Ecore_X_Window
 ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 {
    Window forwin;
@@ -1176,7 +1176,7 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
  * @param win The window
  * @param role The role string
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_window_role_set(Ecore_X_Window win,
                               const char *role)
 {
@@ -1190,7 +1190,7 @@ ecore_x_icccm_window_role_set(Ecore_X_Window win,
  * @param win The window
  * @return The window's role string.
  */
-EAPI char *
+ECORE_X_API char *
 ecore_x_icccm_window_role_get(Ecore_X_Window win)
 {
    LOGFN;
@@ -1205,7 +1205,7 @@ ecore_x_icccm_window_role_get(Ecore_X_Window win)
  * All non-transient top-level windows created by an app other than
  * the main window must have this property set to the app's main window.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_client_leader_set(Ecore_X_Window win,
                                 Ecore_X_Window l)
 {
@@ -1218,7 +1218,7 @@ ecore_x_icccm_client_leader_set(Ecore_X_Window win,
  * Get the window's client leader.
  * @param win The window
  * @return The window's client leader window, or 0 if unset */
-EAPI Ecore_X_Window
+ECORE_X_API Ecore_X_Window
 ecore_x_icccm_client_leader_get(Ecore_X_Window win)
 {
    Ecore_X_Window l;
@@ -1231,7 +1231,7 @@ ecore_x_icccm_client_leader_get(Ecore_X_Window win)
    return 0;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_icccm_iconic_request_send(Ecore_X_Window win,
                                   Ecore_X_Window root)
 {

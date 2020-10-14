@@ -6,13 +6,13 @@
 
 #include "ecore_x_private.h"
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_cursor_color_supported_get(void)
 {
    return _ecore_x_xcursor;
 }
 
-EAPI Ecore_X_Cursor
+ECORE_X_API Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win,
                    int *pixels,
                    int w,
@@ -215,7 +215,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
    return 0;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_cursor_free(Ecore_X_Cursor c)
 {
    LOGFN;
@@ -229,7 +229,7 @@ ecore_x_cursor_free(Ecore_X_Cursor c)
  * Note that the return value must not be freed with
  * ecore_x_cursor_free()!
  */
-EAPI Ecore_X_Cursor
+ECORE_X_API Ecore_X_Cursor
 ecore_x_cursor_shape_get(int shape)
 {
    Ecore_X_Cursor cur;
@@ -241,7 +241,7 @@ ecore_x_cursor_shape_get(int shape)
    return cur;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_cursor_size_set(int size)
 {
 #ifdef ECORE_XCURSOR
@@ -254,7 +254,7 @@ ecore_x_cursor_size_set(int size)
 #endif /* ifdef ECORE_XCURSOR */
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_cursor_size_get(void)
 {
 #ifdef ECORE_XCURSOR

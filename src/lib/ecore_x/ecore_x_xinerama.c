@@ -16,7 +16,7 @@ static XineramaScreenInfo *_xin_info = NULL;
 static int _xin_scr_num = 0;
 #endif /* ifdef ECORE_XINERAMA */
 
-EAPI int
+ECORE_X_API int
 ecore_x_xinerama_screen_count_get(void)
 {
 #ifdef ECORE_XINERAMA
@@ -41,7 +41,7 @@ ecore_x_xinerama_screen_count_get(void)
    return 0;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xinerama_screen_geometry_get(int screen EINA_UNUSED, // if no xinerama
                                      int *x,
                                      int *y,

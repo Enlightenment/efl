@@ -35,14 +35,14 @@ _ecore_x_composite_init(void)
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_composite_query(void)
 {
    LOGFN;
    return _composite_available;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_redirect_window(Ecore_X_Window win,
                                   Ecore_X_Composite_Update_Type type)
 {
@@ -65,7 +65,7 @@ ecore_x_composite_redirect_window(Ecore_X_Window win,
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
                                       Ecore_X_Composite_Update_Type type)
 {
@@ -88,7 +88,7 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_unredirect_window(Ecore_X_Window win,
                                     Ecore_X_Composite_Update_Type type)
 {
@@ -111,7 +111,7 @@ ecore_x_composite_unredirect_window(Ecore_X_Window win,
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
                                         Ecore_X_Composite_Update_Type type)
 {
@@ -134,7 +134,7 @@ ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
-EAPI Ecore_X_Pixmap
+ECORE_X_API Ecore_X_Pixmap
 ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 {
    Ecore_X_Pixmap pixmap = None;
@@ -146,7 +146,7 @@ ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
    return pixmap;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_window_events_disable(Ecore_X_Window win)
 {
 #ifdef ECORE_XCOMPOSITE
@@ -155,7 +155,7 @@ ecore_x_composite_window_events_disable(Ecore_X_Window win)
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_window_events_enable(Ecore_X_Window win)
 {
 #ifdef ECORE_XCOMPOSITE
@@ -164,7 +164,7 @@ ecore_x_composite_window_events_enable(Ecore_X_Window win)
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
-EAPI Ecore_X_Window
+ECORE_X_API Ecore_X_Window
 ecore_x_composite_render_window_enable(Ecore_X_Window root)
 {
    Ecore_X_Window win = 0;
@@ -176,7 +176,7 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
    return win;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_composite_render_window_disable(Ecore_X_Window root)
 {
 #ifdef ECORE_XCOMPOSITE

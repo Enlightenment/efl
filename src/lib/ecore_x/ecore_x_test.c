@@ -12,7 +12,7 @@
 #include "Ecore_X.h"
 #include <string.h>
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 #ifdef ECORE_XTEST
 ecore_x_test_fake_key_down(const char *key)
 #else
@@ -44,7 +44,7 @@ ecore_x_test_fake_key_down(const char *key EINA_UNUSED)
 #endif /* ifdef ECORE_XTEST */
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 #ifdef ECORE_XTEST
 ecore_x_test_fake_key_up(const char *key)
 #else
@@ -76,7 +76,7 @@ ecore_x_test_fake_key_up(const char *key EINA_UNUSED)
 #endif /* ifdef ECORE_XTEST */
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 #ifdef ECORE_XTEST
 ecore_x_test_fake_key_press(const char *key)
 #else
@@ -147,13 +147,13 @@ ecore_x_test_fake_key_press(const char *key EINA_UNUSED)
 #endif /* ifdef ECORE_XTEST */
 }
 
-EAPI const char *
+ECORE_X_API const char *
 ecore_x_keysym_string_get(int keysym)
 {
    return XKeysymToString(keysym);
 }
 
-EAPI int
+ECORE_X_API int 
 ecore_x_keysym_keycode_get(const char *keyname)
 {
    int keycode = 0;
@@ -166,7 +166,7 @@ ecore_x_keysym_keycode_get(const char *keyname)
    return keycode;
 }
 
-EAPI unsigned int
+ECORE_X_API unsigned int
 ecore_x_keysym_get(const char *string)
 {
    return XStringToKeysym(string);

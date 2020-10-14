@@ -28,7 +28,7 @@ static Ecore_X_ID _error_resource_id = 0;
  *
  * Set the X error handler function
  */
-EAPI void
+ECORE_X_API void
 ecore_x_error_handler_set(void (*func)(void *data),
                           const void *data)
 {
@@ -43,7 +43,7 @@ ecore_x_error_handler_set(void (*func)(void *data),
  *
  * Set the X I/O error handler function
  */
-EAPI void
+ECORE_X_API void
 ecore_x_io_error_handler_set(void (*func)(void *data),
                              const void *data)
 {
@@ -57,7 +57,7 @@ ecore_x_io_error_handler_set(void (*func)(void *data),
  *
  * Return the X request code that caused the last X error
  */
-EAPI int
+ECORE_X_API int
 ecore_x_error_request_get(void)
 {
    return _error_request_code;
@@ -70,7 +70,7 @@ ecore_x_error_request_get(void)
  * Return the error code from the last X error
  */
 //FIXME: Use Ecore_X_Error_Code type when 2.0 is released
-EAPI int
+ECORE_X_API int
 ecore_x_error_code_get(void)
 {
    return _error_code;
@@ -82,7 +82,7 @@ ecore_x_error_code_get(void)
  *
  * Return the X resource id that caused the last X error
  */
-EAPI Ecore_X_ID
+ECORE_X_API Ecore_X_ID
 ecore_x_error_resource_id_get(void)
 {
    return _error_resource_id;

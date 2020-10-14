@@ -31,7 +31,7 @@ typedef struct _mwmhints
 }
 MWMHints;
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_mwm_hints_get(Ecore_X_Window win,
                       Ecore_X_MWM_Hint_Func *fhint,
                       Ecore_X_MWM_Hint_Decor *dhint,
@@ -91,7 +91,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window win,
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_mwm_borderless_set(Ecore_X_Window win,
                            Eina_Bool borderless)
 {

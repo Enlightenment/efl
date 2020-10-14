@@ -20,7 +20,7 @@
  * @param h Pointer to an integer into which the height is to be stored.
  * @ingroup Ecore_X_Drawable_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
                               int *x,
                               int *y,
@@ -62,7 +62,7 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
  * @return The border width of the given drawable.
  * @ingroup Ecore_X_Drawable_Group
  */
-EAPI int
+ECORE_X_API int
 ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
 {
    Window dummy_win;
@@ -84,7 +84,7 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
  * @return The depth of the given drawable.
  * @ingroup Ecore_X_Drawable_Group
  */
-EAPI int
+ECORE_X_API int
 ecore_x_drawable_depth_get(Ecore_X_Drawable d)
 {
    Window dummy_win;
@@ -109,7 +109,7 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
  * @param width The width of the rectangle.
  * @param height The height of the rectangle.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d,
                                 Ecore_X_GC gc,
                                 int x,

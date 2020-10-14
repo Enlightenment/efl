@@ -27,14 +27,14 @@
  * [x] XRectInRegion
  */
 
-EAPI Ecore_X_XRegion *
+ECORE_X_API Ecore_X_XRegion *
 ecore_x_xregion_new()
 {
    LOGFN;
    return (Ecore_X_XRegion *)XCreateRegion();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_xregion_free(Ecore_X_XRegion *region)
 {
    LOGFN;
@@ -44,7 +44,7 @@ ecore_x_xregion_free(Ecore_X_XRegion *region)
    XDestroyRegion((Region)region);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_set(Ecore_X_XRegion *region,
                     Ecore_X_GC gc)
 {
@@ -55,7 +55,7 @@ ecore_x_xregion_set(Ecore_X_XRegion *region,
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_xregion_translate(Ecore_X_XRegion *region,
                           int x,
                           int y)
@@ -68,7 +68,7 @@ ecore_x_xregion_translate(Ecore_X_XRegion *region,
    XOffsetRegion((Region)region, x, y);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_intersect(Ecore_X_XRegion *dst,
                           Ecore_X_XRegion *r1,
                           Ecore_X_XRegion *r2)
@@ -77,7 +77,7 @@ ecore_x_xregion_intersect(Ecore_X_XRegion *dst,
    return XIntersectRegion((Region)r1, (Region)r2, (Region)dst) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_union(Ecore_X_XRegion *dst,
                       Ecore_X_XRegion *r1,
                       Ecore_X_XRegion *r2)
@@ -86,7 +86,7 @@ ecore_x_xregion_union(Ecore_X_XRegion *dst,
    return XUnionRegion((Region)r1, (Region)r2, (Region)dst) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_union_rect(Ecore_X_XRegion *dst,
                            Ecore_X_XRegion *src,
                            Ecore_X_Rectangle *rect)
@@ -102,7 +102,7 @@ ecore_x_xregion_union_rect(Ecore_X_XRegion *dst,
    return XUnionRectWithRegion(&xr, (Region)src, (Region)dst) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_subtract(Ecore_X_XRegion *dst,
                          Ecore_X_XRegion *rm,
                          Ecore_X_XRegion *rs)
@@ -111,7 +111,7 @@ ecore_x_xregion_subtract(Ecore_X_XRegion *dst,
    return XSubtractRegion((Region)rm, (Region)rs, (Region)dst) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_is_empty(Ecore_X_XRegion *region)
 {
    if (!region)
@@ -121,7 +121,7 @@ ecore_x_xregion_is_empty(Ecore_X_XRegion *region)
    return XEmptyRegion((Region)region) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
                          Ecore_X_XRegion *r2)
 {
@@ -132,7 +132,7 @@ ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
    return XEqualRegion((Region)r1, (Region)r1) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
                               int x,
                               int y)
@@ -144,7 +144,7 @@ ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
    return XPointInRegion((Region)region, x, y) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_xregion_rect_contain(Ecore_X_XRegion *region,
                              Ecore_X_Rectangle *rect)
 {

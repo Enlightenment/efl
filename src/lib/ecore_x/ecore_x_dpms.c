@@ -39,7 +39,7 @@ _ecore_x_dpms_init(void)
  * @return @c 1 if the X DPMS extension is available, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dpms_query(void)
 {
    return _dpms_available;
@@ -50,7 +50,7 @@ ecore_x_dpms_query(void)
  * @return @c 1 if the X server is capable of DPMS, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dpms_capable_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -67,7 +67,7 @@ ecore_x_dpms_capable_get(void)
  * @return @c 1 if DPMS is enabled, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dpms_enabled_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -92,7 +92,7 @@ ecore_x_dpms_enabled_get(void)
  * @return @c -1 othwhise.
  */
 
-EAPI Ecore_X_Dpms_Mode
+ECORE_X_API Ecore_X_Dpms_Mode
 ecore_x_dpms_power_level_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -113,7 +113,7 @@ ecore_x_dpms_power_level_get(void)
  * @param enabled @c 0 to disable DPMS characteristics of the server, enable it otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dpms_enabled_set(int enabled)
 {
 #ifdef ECORE_XDPMS
@@ -134,7 +134,7 @@ ecore_x_dpms_enabled_set(int enabled)
  * @param off     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dpms_timeouts_get(unsigned int *standby,
                           unsigned int *suspend,
                           unsigned int *off)
@@ -154,7 +154,7 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
  * @param off     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dpms_timeouts_set(unsigned int standby,
                           unsigned int suspend,
                           unsigned int off)
@@ -173,7 +173,7 @@ ecore_x_dpms_timeouts_set(unsigned int standby,
  * @return The standby timeout value.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI unsigned int
+ECORE_X_API unsigned int
 ecore_x_dpms_timeout_standby_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -194,7 +194,7 @@ ecore_x_dpms_timeout_standby_get(void)
  * @return The suspend timeout value.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI unsigned int
+ECORE_X_API unsigned int
 ecore_x_dpms_timeout_suspend_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -215,7 +215,7 @@ ecore_x_dpms_timeout_suspend_get(void)
  * @return The off timeout value.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI unsigned int
+ECORE_X_API unsigned int
 ecore_x_dpms_timeout_off_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -235,7 +235,7 @@ ecore_x_dpms_timeout_off_get(void)
  * @param new_timeout Amount of time of inactivity before standby mode will be invoked.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 {
 #ifdef ECORE_XDPMS
@@ -253,7 +253,7 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
  * @param new_timeout Amount of time of inactivity before the screen is placed into suspend mode.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 {
 #ifdef ECORE_XDPMS
@@ -271,7 +271,7 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
  * @param new_timeout     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
 {
 #ifdef ECORE_XDPMS
@@ -289,7 +289,7 @@ ecore_x_dpms_timeout_off_set(unsigned int new_timeout)
  * @param on If DPMS is to be forced on (EINA_TRUE) or forced off
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dpms_force(Eina_Bool on)
 {
 #ifdef ECORE_XDPMS

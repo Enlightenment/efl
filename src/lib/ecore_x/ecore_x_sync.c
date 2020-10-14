@@ -11,7 +11,7 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-EAPI Ecore_X_Sync_Alarm
+ECORE_X_API Ecore_X_Sync_Alarm
 ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
 {
    Ecore_X_Sync_Alarm alarm;
@@ -44,14 +44,14 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
    return alarm;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
    LOGFN;
    return XSyncDestroyAlarm(_ecore_x_disp, alarm);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter,
                            unsigned int *val)
 {
@@ -67,7 +67,7 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter,
    return EINA_FALSE;
 }
 
-EAPI Ecore_X_Sync_Counter
+ECORE_X_API Ecore_X_Sync_Counter
 ecore_x_sync_counter_new(int val)
 {
    XSyncCounter counter;
@@ -79,14 +79,14 @@ ecore_x_sync_counter_new(int val)
    return counter;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 {
    LOGFN;
    XSyncDestroyCounter(_ecore_x_disp, counter);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
                          int by)
 {
@@ -97,7 +97,7 @@ ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
    XSyncChangeCounter(_ecore_x_disp, counter, v);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
                               int val)
 {
@@ -117,7 +117,7 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
 //   XSync(_ecore_x_disp, False); // dont need this
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter,
                          int val)
 {
@@ -128,7 +128,7 @@ ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter,
    XSyncSetCounter(_ecore_x_disp, counter, v);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter,
                            int val_hi,
                            unsigned int val_lo)
@@ -140,7 +140,7 @@ ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter,
    XSyncSetCounter(_ecore_x_disp, counter, v);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter,
                              int *val_hi,
                              unsigned int *val_lo)

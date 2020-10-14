@@ -170,7 +170,7 @@ _ecore_x_selection_set(Window w,
  * @return     Returns 1 if the ownership of the selection was successfully
  *             claimed, or 0 if unsuccessful.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_primary_set(Ecore_X_Window w,
                               const void *data,
                               int size)
@@ -185,7 +185,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w,
  *             or 0 if unsuccessful.
  *
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_primary_clear(void)
 {
    LOGFN;
@@ -200,7 +200,7 @@ ecore_x_selection_primary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully
  *             claimed, or 0 if unsuccessful.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_secondary_set(Ecore_X_Window w,
                                 const void *data,
                                 int size)
@@ -218,7 +218,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w,
  *             or 0 if unsuccessful.
  *
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_secondary_clear(void)
 {
    LOGFN;
@@ -236,7 +236,7 @@ ecore_x_selection_secondary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully
  *             claimed, or 0 if unsuccessful.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_xdnd_set(Ecore_X_Window w,
                            const void *data,
                            int size)
@@ -251,7 +251,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window w,
  *             or 0 if unsuccessful.
  *
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_xdnd_clear(void)
 {
    LOGFN;
@@ -269,7 +269,7 @@ ecore_x_selection_xdnd_clear(void)
  * Get the converted data from a previous CLIPBOARD selection
  * request. The buffer must be freed when done with.
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_clipboard_set(Ecore_X_Window w,
                                 const void *data,
                                 int size)
@@ -287,7 +287,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w,
  *             or 0 if unsuccessful.
  *
  */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_clipboard_clear(void)
 {
    LOGFN;
@@ -361,7 +361,7 @@ _ecore_x_selection_request(Ecore_X_Window w,
                      w, CurrentTime);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_primary_request(Ecore_X_Window w,
                                   const char *target)
 {
@@ -369,7 +369,7 @@ ecore_x_selection_primary_request(Ecore_X_Window w,
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_PRIMARY, target);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_secondary_request(Ecore_X_Window w,
                                     const char *target)
 {
@@ -377,7 +377,7 @@ ecore_x_selection_secondary_request(Ecore_X_Window w,
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_SECONDARY, target);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_xdnd_request(Ecore_X_Window w,
                                const char *target)
 {
@@ -393,7 +393,7 @@ ecore_x_selection_xdnd_request(Ecore_X_Window w,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_clipboard_request(Ecore_X_Window w,
                                     const char *target)
 {
@@ -401,7 +401,7 @@ ecore_x_selection_clipboard_request(Ecore_X_Window w,
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_CLIPBOARD, target);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
                                      Eina_Bool (*func)(char *target,
                                                        void *data,
@@ -431,7 +431,7 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
       (EINA_INLIST_GET(converters), EINA_INLIST_GET(cnv));
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_converter_add(char *target,
                                 Eina_Bool (*func)(char *target,
                                                   void *data,
@@ -452,7 +452,7 @@ ecore_x_selection_converter_add(char *target,
    ecore_x_selection_converter_atom_add(x_target, func);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
 {
    Ecore_X_Selection_Converter *cnv;
@@ -471,7 +471,7 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
      }
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_converter_del(char *target)
 {
    Ecore_X_Atom x_target;
@@ -484,7 +484,7 @@ ecore_x_selection_converter_del(char *target)
    ecore_x_selection_converter_atom_del(x_target);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_notify_send(Ecore_X_Window requestor,
                               Ecore_X_Atom selection,
                               Ecore_X_Atom target,
@@ -510,7 +510,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
 }
 
 /* Locate and run conversion callback for specified selection target */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_convert(Ecore_X_Atom selection,
                           Ecore_X_Atom target,
                           void **data_ret,
@@ -560,7 +560,7 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_selection_converter_text(char *target,
                                  void *data,
                                  int size,
@@ -630,7 +630,7 @@ ecore_x_selection_converter_text(char *target,
      }
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_parser_add(const char *target,
                              void *(*func)(const char *target, void *data,
                                            int size,
@@ -660,7 +660,7 @@ ecore_x_selection_parser_add(const char *target,
       (EINA_INLIST_GET(parsers), EINA_INLIST_GET(prs));
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_selection_parser_del(const char *target)
 {
    Ecore_X_Selection_Parser *prs;
@@ -690,7 +690,7 @@ ecore_x_selection_parser_del(const char *target)
  * @param tim Specifies the time
  * @since 1.1.0
  */
-EAPI void
+ECORE_X_API void
 ecore_x_selection_owner_set(Ecore_X_Window win,
                             Ecore_X_Atom atom,
                             Ecore_X_Time tim)
@@ -706,7 +706,7 @@ ecore_x_selection_owner_set(Ecore_X_Window win,
  * @return The window that currently owns the specified selection.
  * @since 1.1.0
  */
-EAPI Ecore_X_Window
+ECORE_X_API Ecore_X_Window
 ecore_x_selection_owner_get(Ecore_X_Atom atom)
 {
    return XGetSelectionOwner(_ecore_x_disp, atom);

@@ -10,12 +10,12 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-EAPI int ECORE_X_EVENT_XDND_ENTER = 0;
-EAPI int ECORE_X_EVENT_XDND_POSITION = 0;
-EAPI int ECORE_X_EVENT_XDND_STATUS = 0;
-EAPI int ECORE_X_EVENT_XDND_LEAVE = 0;
-EAPI int ECORE_X_EVENT_XDND_DROP = 0;
-EAPI int ECORE_X_EVENT_XDND_FINISHED = 0;
+ECORE_X_API int ECORE_X_EVENT_XDND_ENTER = 0;
+ECORE_X_API int ECORE_X_EVENT_XDND_POSITION = 0;
+ECORE_X_API int ECORE_X_EVENT_XDND_STATUS = 0;
+ECORE_X_API int ECORE_X_EVENT_XDND_LEAVE = 0;
+ECORE_X_API int ECORE_X_EVENT_XDND_DROP = 0;
+ECORE_X_API int ECORE_X_EVENT_XDND_FINISHED = 0;
 
 static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
@@ -141,7 +141,7 @@ _ecore_x_dnd_converter_copy(char *target EINA_UNUSED,
      }
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_aware_set(Ecore_X_Window win,
                       Eina_Bool on)
 {
@@ -155,7 +155,7 @@ ecore_x_dnd_aware_set(Ecore_X_Window win,
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_AWARE);
 }
 
-EAPI int
+ECORE_X_API int
 ecore_x_dnd_version_get(Ecore_X_Window win)
 {
    unsigned char *prop_data;
@@ -226,7 +226,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
    return 0;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dnd_type_isset(Ecore_X_Window win,
                        const char *type)
 {
@@ -255,7 +255,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win,
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_type_set(Ecore_X_Window win,
                      const char *type,
                      Eina_Bool on)
@@ -332,7 +332,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
    free(newset);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_types_set(Ecore_X_Window win,
                       const char **types,
                       unsigned int num_types)
@@ -363,7 +363,7 @@ ecore_x_dnd_types_set(Ecore_X_Window win,
      }
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_actions_set(Ecore_X_Window win,
                         Ecore_X_Atom *actions,
                         unsigned int num_actions)
@@ -401,7 +401,7 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
  * @param cb Callback to updated each time ecore_x sends a position update.
  * @param data User data.
  */
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_callback_pos_update_set(
   void (*cb)(void *,
              Ecore_X_Xdnd_Position *data),
@@ -512,7 +512,7 @@ _ecore_x_dnd_drop(Eina_Bool self)
    return status;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dnd_begin(Ecore_X_Window source,
                   unsigned char *data,
                   int size)
@@ -520,13 +520,13 @@ ecore_x_dnd_begin(Ecore_X_Window source,
    return _ecore_x_dnd_begin(source, EINA_FALSE, data, size);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dnd_drop(void)
 {
    return _ecore_x_dnd_drop(EINA_FALSE);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dnd_self_begin(Ecore_X_Window source,
                        unsigned char *data,
                        int size)
@@ -534,13 +534,13 @@ ecore_x_dnd_self_begin(Ecore_X_Window source,
    return _ecore_x_dnd_begin(source, EINA_TRUE, data, size);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dnd_self_drop(void)
 {
    return _ecore_x_dnd_drop(EINA_TRUE);
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_send_status(Eina_Bool will_accept,
                         Eina_Bool suppress,
                         Ecore_X_Rectangle rectangle,
@@ -595,7 +595,7 @@ ecore_x_dnd_send_status(Eina_Bool will_accept,
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_send_finished(void)
 {
    XEvent xev = { 0 };
@@ -627,7 +627,7 @@ ecore_x_dnd_send_finished(void)
    _target->state = ECORE_X_DND_TARGET_IDLE;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_dnd_source_action_set(Ecore_X_Atom action)
 {
    _source->action = action;
@@ -635,7 +635,7 @@ ecore_x_dnd_source_action_set(Ecore_X_Atom action)
      _ecore_x_dnd_drag(_source->prev.window, _source->prev.x, _source->prev.y);
 }
 
-EAPI Ecore_X_Atom
+ECORE_X_API Ecore_X_Atom
 ecore_x_dnd_source_action_get(void)
 {
    return _source->action;
@@ -771,7 +771,7 @@ _ecore_x_dnd_drag(Ecore_X_Window root,
    _source->dest = win;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_dnd_abort(Ecore_X_Window xwin_source)
 {
    if (xwin_source == _source->win)

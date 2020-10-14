@@ -177,7 +177,7 @@ struct _Ecore_X_Image
    Eina_Bool       shm : 1;
 };
 
-EAPI Ecore_X_Image *
+ECORE_X_API Ecore_X_Image *
 ecore_x_image_new(int w,
                   int h,
                   Ecore_X_Visual vis,
@@ -203,7 +203,7 @@ ecore_x_image_new(int w,
    return im;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_image_free(Ecore_X_Image *im)
 {
    LOGFN;
@@ -293,7 +293,7 @@ _ecore_x_image_create(Ecore_X_Image *im)
    _ecore_x_image_finalize(im);
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_image_get(Ecore_X_Image *im,
                   Ecore_X_Drawable draw,
                   int x,
@@ -387,7 +387,7 @@ ecore_x_image_get(Ecore_X_Image *im,
    return ret;
 }
 
-EAPI void
+ECORE_X_API void
 ecore_x_image_put(Ecore_X_Image *im,
                   Ecore_X_Drawable draw,
                   Ecore_X_GC gc,
@@ -428,7 +428,7 @@ ecore_x_image_put(Ecore_X_Image *im,
    if (tgc) ecore_x_gc_free(tgc);
 }
 
-EAPI void *
+ECORE_X_API void *
 ecore_x_image_data_get(Ecore_X_Image *im,
                        int *bpl,
                        int *rows,
@@ -447,7 +447,7 @@ ecore_x_image_data_get(Ecore_X_Image *im,
    return im->data;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_image_is_argb32_get(Ecore_X_Image *im)
 {
    Visual *vis = im->vis;
@@ -467,7 +467,7 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_image_to_argb_convert(void *src,
                               int sbpp,
                               int sbpl,

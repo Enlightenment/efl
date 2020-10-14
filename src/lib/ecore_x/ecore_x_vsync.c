@@ -387,7 +387,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
 
 static double _ecore_x_vsync_wakeup_time = 0.0;
 
-EAPI double _ecore_x_vsync_wakeup_time_get(void)
+ECORE_X_API double _ecore_x_vxync_wakeup_time_get(void)
 {
    return _ecore_x_vsync_wakeup_time;
 }
@@ -894,7 +894,7 @@ _vsync_init(void)
    done = 1;
 }
 
-EAPI Eina_Bool
+ECORE_X_API Eina_Bool
 ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 {
    Ecore_X_Window root;
