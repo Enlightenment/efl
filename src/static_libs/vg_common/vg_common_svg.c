@@ -763,7 +763,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
         efl_gfx_color_set(vg, ((float) r) * fa, ((float) g) * fa, ((float) b) * fa, ((float) a) * fa);
      }
 
-   if (node->type == SVG_NODE_G)  return;
+   if (node->type == SVG_NODE_G || node->type == SVG_NODE_CLIP_PATH)  return;
 
    // apply the fill style property
    efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
@@ -829,12 +829,51 @@ _add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
 }
 
 static Efl_VG *
+_create_vg_container(Efl_VG *parent)
+{
+   if (!parent)
+     return efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
+   else
+     return efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, parent);
+}
+
+static Efl_VG *
 vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent, Vg_File_Data *vg_data)
 {
    Efl_VG *vg = NULL;
    Svg_Node *child;
    Eina_List *l;
 
+   // apply composite node
+   if (node->style->comp.node)
+     {
+        // composite ClipPath
+        if (node->style->comp.flags & SVG_COMPOSITE_FLAGS_CLIP_PATH)
+          {
+             Svg_Node *comp_node = node->style->comp.node;
+             Efl_VG *comp_parent = NULL ,*comp_vg_container = NULL;
+
+             //NOTE:: If node has a composition node, add a container to use VG_COMPOSITION_METHOD.
+             //       The composition method is applied to the newly added container.
+             comp_parent = _create_vg_container(parent);
+             comp_vg_container = _create_vg_container(parent);
+
+             // apply the transformation
+             if (comp_node->transform) efl_canvas_vg_node_transformation_set(comp_vg_container, comp_node->transform);
+
+             EINA_LIST_FOREACH(comp_node->child, l, child)
+               {
+                  Efl_VG *vg = vg_common_create_vg_node_helper(child, comp_vg_container, vg_data);
+                  // clippath does not require color blending. That's why we keep 255 opacity.
+                  efl_gfx_color_set(vg, 255, 255, 255, 255);
+               }
+
+             // Composition matte alpha
+             efl_canvas_vg_node_comp_method_set(comp_parent, comp_vg_container, EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA);
+
+             parent = comp_parent; // replace parent
+          }
+     }
    switch (node->type)
      {
         case SVG_NODE_DOC:
