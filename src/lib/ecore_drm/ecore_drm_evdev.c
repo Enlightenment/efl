@@ -972,7 +972,7 @@ _ecore_drm_evdev_event_process(struct libinput_event *event)
  * height must set for it. If its absolute set the ioctl correctly, if
  * not, unsupported device.
  */
-EAPI void
+ECORE_DRM_API void
 ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *edev, int w, int h)
 {
    const char *sysname;
@@ -1029,7 +1029,7 @@ cont:
  * If the given enable value is EINA_FALSE, the key remap functionality wil be disable and
  * the existing hash table for remapping keys will be freed.
  */
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool
 ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool enable)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(edev, EINA_FALSE);
@@ -1063,7 +1063,7 @@ ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool enable)
  * the keycode of it can be replaced with the key found in the hash table.
  * If there is no key found, the coming keycode will be used.
  */
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool
 ecore_drm_evdev_key_remap_set(Ecore_Drm_Evdev *edev, int *from_keys, int *to_keys, int num)
 {
    int i;

@@ -25,7 +25,7 @@ ecore_drm_lib = library('ecore_drm',
     dependencies: [m] + ecore_drm_deps + ecore_drm_pub_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_DRM_BUILD'],
 )
 
 ecore_drm = declare_dependency(

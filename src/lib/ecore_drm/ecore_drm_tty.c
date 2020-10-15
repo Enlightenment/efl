@@ -160,7 +160,7 @@ err_kmode:
  * Functions that deal with opening, closing, and otherwise using a tty
  */
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name)
 {
    char tty[32] = "<stdin>";
@@ -253,7 +253,7 @@ _ecore_drm_tty_restore(Ecore_Drm_Device *dev)
      ERR("Could not reset VT handling\n");
 }
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_tty_close(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -276,7 +276,7 @@ ecore_drm_tty_close(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_tty_release(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -293,7 +293,7 @@ ecore_drm_tty_release(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
 {
    /* check for valid device */
@@ -310,7 +310,7 @@ ecore_drm_tty_acquire(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI int
+ECORE_DRM_API int 
 ecore_drm_tty_get(Ecore_Drm_Device *dev)
 {
    /* check for valid device */

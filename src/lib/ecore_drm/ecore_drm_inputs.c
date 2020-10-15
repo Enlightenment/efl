@@ -28,7 +28,7 @@
 
 #include "ecore_drm_private.h"
 
-EAPI int ECORE_DRM_EVENT_SEAT_ADD = -1;
+ECORE_DRM_API int ECORE_DRM_EVENT_SEAT_ADD = -1;
 static Eina_Hash *_fd_hash = NULL;
 
 /* local functions */
@@ -230,7 +230,7 @@ const struct libinput_interface _input_interface =
 };
 
 /* public functions */
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_inputs_create(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
@@ -285,7 +285,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_DRM_API void 
 ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Input *input;
@@ -313,7 +313,7 @@ ecore_drm_inputs_destroy(Ecore_Drm_Device *dev)
      }
 }
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_inputs_enable(Ecore_Drm_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
@@ -351,7 +351,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_DRM_API void 
 ecore_drm_inputs_disable(Ecore_Drm_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);

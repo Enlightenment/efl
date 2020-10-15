@@ -8,19 +8,7 @@
 # include <Eeze.h>
 # include <xkbcommon/xkbcommon.h>
 
-# ifdef EAPI
-#  undef EAPI
-# endif
-
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else // if __GNUC__ >= 4
-#   define EAPI
-#  endif // if __GNUC__ >= 4
-# else // ifdef __GNUC__
-#  define EAPI
-# endif // ifdef __GNUC__
+# include <ecore_drm_api.h>
 
 # warning The Ecore_Drm library has been deprecated. Please use the Ecore_Drm2 library
 
@@ -202,11 +190,11 @@ typedef struct _Ecore_Drm_Event_Output Ecore_Drm_Event_Output;
 /** @since 1.14 */
 typedef void (*Ecore_Drm_Pageflip_Cb)(void *data);
 
-EAPI extern int ECORE_DRM_EVENT_ACTIVATE;
+ECORE_DRM_API extern int ECORE_DRM_EVENT_ACTIVATE;
 
-EAPI extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
+ECORE_DRM_API extern int ECORE_DRM_EVENT_OUTPUT; /**< @since 1.14 */
 
-EAPI extern int ECORE_DRM_EVENT_SEAT_ADD; /**< @since 1.14 */
+ECORE_DRM_API extern int ECORE_DRM_EVENT_SEAT_ADD; /**< @since 1.14 */
 
 /**
  * @file
@@ -225,8 +213,8 @@ EAPI extern int ECORE_DRM_EVENT_SEAT_ADD; /**< @since 1.14 */
  *
  */
 
-EAPI int ecore_drm_init(void);
-EAPI int ecore_drm_shutdown(void);
+ECORE_DRM_API int ecore_drm_init(void);
+ECORE_DRM_API int ecore_drm_shutdown(void);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -240,7 +228,7 @@ EAPI int ecore_drm_shutdown(void);
  * @return An opaque Ecore_Drm_Device structure representing the card.
  *
  */
-EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat);
+ECORE_DRM_API Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -251,7 +239,7 @@ EAPI Ecore_Drm_Device *ecore_drm_device_find(const char *name, const char *seat)
  * @param dev The Ecore_Drm_Device to free
  *
  */
-EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
+ECORE_DRM_API void ecore_drm_device_free(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -264,7 +252,7 @@ EAPI void ecore_drm_device_free(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -277,7 +265,7 @@ EAPI Eina_Bool ecore_drm_device_open(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_device_close(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_device_close(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -290,7 +278,7 @@ EAPI Eina_Bool ecore_drm_device_close(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE if device is master, @c EINA_FALSE otherwise
  *
  */
-EAPI Eina_Bool ecore_drm_device_master_get(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_device_master_get(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -303,7 +291,7 @@ EAPI Eina_Bool ecore_drm_device_master_get(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_device_master_set(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_device_master_set(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -316,7 +304,7 @@ EAPI Eina_Bool ecore_drm_device_master_set(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -329,7 +317,7 @@ EAPI Eina_Bool ecore_drm_device_master_drop(Ecore_Drm_Device *dev);
  * @return fd Value on success, @c -1 on failure
  *
  */
-EAPI int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
+ECORE_DRM_API int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -342,7 +330,7 @@ EAPI int ecore_drm_device_fd_get(Ecore_Drm_Device *dev);
  *
  * @since 1.10
  */
-EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window);
+ECORE_DRM_API void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -357,7 +345,7 @@ EAPI void ecore_drm_device_window_set(Ecore_Drm_Device *dev, unsigned int window
  *
  * @since 1.10
  */
-EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
+ECORE_DRM_API const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -372,7 +360,7 @@ EAPI const char *ecore_drm_device_name_get(Ecore_Drm_Device *dev);
  *
  * @since 1.14
  */
-EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -387,7 +375,7 @@ EAPI Eina_Bool ecore_drm_device_software_setup(Ecore_Drm_Device *dev);
  *
  * @since 1.17
  */
-EAPI Eina_Bool ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, Eina_Bool left_handed);
+ECORE_DRM_API Eina_Bool ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, Eina_Bool left_handed);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -399,7 +387,7 @@ EAPI Eina_Bool ecore_drm_device_pointer_left_handed_set(Ecore_Drm_Device *dev, E
  *
  * @since 1.17
  */
-EAPI void ecore_drm_device_keyboard_cached_context_set(struct xkb_context *ctx);
+ECORE_DRM_API void ecore_drm_device_keyboard_cached_context_set(struct xkb_context *ctx);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -411,7 +399,7 @@ EAPI void ecore_drm_device_keyboard_cached_context_set(struct xkb_context *ctx);
  *
  * @since 1.17
  */
-EAPI void ecore_drm_device_keyboard_cached_keymap_set(struct xkb_keymap *map);
+ECORE_DRM_API void ecore_drm_device_keyboard_cached_keymap_set(struct xkb_keymap *map);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -428,7 +416,7 @@ EAPI void ecore_drm_device_keyboard_cached_keymap_set(struct xkb_keymap *map);
  *
  * @since 1.14
  */
-EAPI Ecore_Drm_Output *ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y);
+ECORE_DRM_API Ecore_Drm_Output *ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x, int y);
 
 /**
  * @ingroup Ecore_Drm_Tty_Group
@@ -441,7 +429,7 @@ EAPI Ecore_Drm_Output *ecore_drm_device_output_find(Ecore_Drm_Device *dev, int x
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
+ECORE_DRM_API Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
 
 /**
  * @ingroup Ecore_Drm_Tty_Group
@@ -452,7 +440,7 @@ EAPI Eina_Bool ecore_drm_tty_open(Ecore_Drm_Device *dev, const char *name);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Tty_Group
@@ -463,7 +451,7 @@ EAPI Eina_Bool ecore_drm_tty_close(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_tty_release(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_tty_release(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Tty_Group
@@ -474,7 +462,7 @@ EAPI Eina_Bool ecore_drm_tty_release(Ecore_Drm_Device *dev);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
  *
  */
-EAPI Eina_Bool ecore_drm_tty_acquire(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_tty_acquire(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Tty_Group
@@ -487,7 +475,7 @@ EAPI Eina_Bool ecore_drm_tty_acquire(Ecore_Drm_Device *dev);
  *
  * @since 1.10
  */
-EAPI int ecore_drm_tty_get(Ecore_Drm_Device *dev);
+ECORE_DRM_API int ecore_drm_tty_get(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -501,7 +489,7 @@ EAPI int ecore_drm_tty_get(Ecore_Drm_Device *dev);
  * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  */
-EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -512,7 +500,7 @@ EAPI Eina_Bool ecore_drm_outputs_create(Ecore_Drm_Device *dev);
  * @param output The Ecore_Drm_Output to free
  *
  */
-EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
+ECORE_DRM_API void ecore_drm_output_free(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -526,7 +514,7 @@ EAPI void ecore_drm_output_free(Ecore_Drm_Output *output);
  * @param h The height of cursor
  *
  */
-EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h);
+ECORE_DRM_API void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle, int w, int h);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -538,7 +526,7 @@ EAPI void ecore_drm_output_cursor_size_set(Ecore_Drm_Output *output, int handle,
  *
  * @since 1.14
  */
-EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
+ECORE_DRM_API Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -550,13 +538,13 @@ EAPI Eina_Bool ecore_drm_output_enable(Ecore_Drm_Output *output);
  *
  * @since 1.14
  */
-EAPI void ecore_drm_output_disable(Ecore_Drm_Output *output);
+ECORE_DRM_API void ecore_drm_output_disable(Ecore_Drm_Output *output);
 
 /* TODO: Doxy */
-EAPI void ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
+ECORE_DRM_API void ecore_drm_output_fb_release(Ecore_Drm_Output *output, Ecore_Drm_Fb *fb);
 
 /* TODO: Doxy */
-EAPI void ecore_drm_output_repaint(Ecore_Drm_Output *output);
+ECORE_DRM_API void ecore_drm_output_repaint(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -570,13 +558,13 @@ EAPI void ecore_drm_output_repaint(Ecore_Drm_Output *output);
  * @param *h The parameter in which output height is stored
  *
  */
-EAPI void ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h);
+ECORE_DRM_API void ecore_drm_output_size_get(Ecore_Drm_Device *dev, int output, int *w, int *h);
 
 /**
  * TODO: Doxy
  * @since 1.12
  */
-EAPI void ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, int *h);
+ECORE_DRM_API void ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, int *w, int *h);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -590,7 +578,7 @@ EAPI void ecore_drm_outputs_geometry_get(Ecore_Drm_Device *dev, int *x, int *y, 
  *
  * @since 1.14
  */
-EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
+ECORE_DRM_API unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -604,7 +592,7 @@ EAPI unsigned int ecore_drm_output_crtc_id_get(Ecore_Drm_Output *output);
  *
  * @since 1.14
  */
-EAPI unsigned int ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output);
+ECORE_DRM_API unsigned int ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -618,27 +606,27 @@ EAPI unsigned int ecore_drm_output_crtc_buffer_get(Ecore_Drm_Output *output);
  *
  * @since 1.14
  */
-EAPI unsigned int ecore_drm_output_connector_id_get(Ecore_Drm_Output *output);
+ECORE_DRM_API unsigned int ecore_drm_output_connector_id_get(Ecore_Drm_Output *output);
 
 /** @defgroup Ecore_Drm_Input_Group Drm input handling
  *  @{
  */
-EAPI Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
-EAPI void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
-EAPI Eina_Bool ecore_drm_inputs_enable(Ecore_Drm_Input *input);
-EAPI void ecore_drm_inputs_disable(Ecore_Drm_Input *input);
-EAPI void ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h);
+ECORE_DRM_API Eina_Bool ecore_drm_inputs_create(Ecore_Drm_Device *dev);
+ECORE_DRM_API void ecore_drm_inputs_destroy(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_inputs_enable(Ecore_Drm_Input *input);
+ECORE_DRM_API void ecore_drm_inputs_disable(Ecore_Drm_Input *input);
+ECORE_DRM_API void ecore_drm_inputs_device_axis_size_set(Ecore_Drm_Evdev *dev, int w, int h);
 /**
  * @}
  */
 
-EAPI Eina_Bool ecore_drm_sprites_create(Ecore_Drm_Device *dev);
-EAPI void ecore_drm_sprites_destroy(Ecore_Drm_Device *dev);
-EAPI void ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags);
-EAPI Eina_Bool ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supported);
+ECORE_DRM_API Eina_Bool ecore_drm_sprites_create(Ecore_Drm_Device *dev);
+ECORE_DRM_API void ecore_drm_sprites_destroy(Ecore_Drm_Device *dev);
+ECORE_DRM_API void ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags);
+ECORE_DRM_API Eina_Bool ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supported);
 
-EAPI Ecore_Drm_Fb *ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
-EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
+ECORE_DRM_API Ecore_Drm_Fb *ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height);
+ECORE_DRM_API void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
 
 /**
  * @ingroup Ecore_Drm_Fb_Group
@@ -652,7 +640,7 @@ EAPI void ecore_drm_fb_destroy(Ecore_Drm_Fb *fb);
  *
  * @since 1.14
  */
-EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count);
+ECORE_DRM_API void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count);
 
 /**
  * @ingroup Ecore_Drm_Fb_Group
@@ -668,7 +656,7 @@ EAPI void ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned i
  *
  * @since 1.14
  */
-EINA_DEPRECATED EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
+EINA_DEPRECATED ECORE_DRM_API void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb);
 
 /**
  * @internal
@@ -685,10 +673,10 @@ EINA_DEPRECATED EAPI void ecore_drm_fb_set(Ecore_Drm_Device *dev, Ecore_Drm_Fb *
  *
  * @since 1.14
  */
-EAPI void ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func, void *data);
+ECORE_DRM_API void ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func, void *data);
 
-EAPI Eina_Bool ecore_drm_launcher_connect(Ecore_Drm_Device *dev);
-EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
+ECORE_DRM_API Eina_Bool ecore_drm_launcher_connect(Ecore_Drm_Device *dev);
+ECORE_DRM_API void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -702,7 +690,7 @@ EAPI void ecore_drm_launcher_disconnect(Ecore_Drm_Device *dev);
  *
  * @since 1.14
  */
-EAPI void ecore_drm_output_position_get(Ecore_Drm_Output *output, int *x, int *y);
+ECORE_DRM_API void ecore_drm_output_position_get(Ecore_Drm_Output *output, int *x, int *y);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -717,7 +705,7 @@ EAPI void ecore_drm_output_position_get(Ecore_Drm_Output *output, int *x, int *y
  *
  * @since 1.14
  */
-EAPI void ecore_drm_output_current_resolution_get(Ecore_Drm_Output *output, int *w, int *h, unsigned int *refresh);
+ECORE_DRM_API void ecore_drm_output_current_resolution_get(Ecore_Drm_Output *output, int *w, int *h, unsigned int *refresh);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -731,7 +719,7 @@ EAPI void ecore_drm_output_current_resolution_get(Ecore_Drm_Output *output, int 
  *
  * @since 1.14
  */
-EAPI void ecore_drm_output_physical_size_get(Ecore_Drm_Output *output, int *w, int *h);
+ECORE_DRM_API void ecore_drm_output_physical_size_get(Ecore_Drm_Output *output, int *w, int *h);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -744,7 +732,7 @@ EAPI void ecore_drm_output_physical_size_get(Ecore_Drm_Output *output, int *w, i
  *
  * @since 1.14
  */
-EAPI unsigned int ecore_drm_output_subpixel_order_get(Ecore_Drm_Output *output);
+ECORE_DRM_API unsigned int ecore_drm_output_subpixel_order_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -757,7 +745,7 @@ EAPI unsigned int ecore_drm_output_subpixel_order_get(Ecore_Drm_Output *output);
  *
  * @since 1.14
  */
-EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
+ECORE_DRM_API Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -770,7 +758,7 @@ EAPI Eina_Stringshare *ecore_drm_output_model_get(Ecore_Drm_Output *output);
  *
  * @since 1.14
  */
-EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
+ECORE_DRM_API Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -783,7 +771,7 @@ EAPI Eina_Stringshare *ecore_drm_output_make_get(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI char *ecore_drm_output_name_get(Ecore_Drm_Output *output);
+ECORE_DRM_API char *ecore_drm_output_name_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -796,7 +784,7 @@ EAPI char *ecore_drm_output_name_get(Ecore_Drm_Output *output);
  *
  * @since 1.14
  */
-EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
+ECORE_DRM_API void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -812,7 +800,7 @@ EAPI void ecore_drm_output_dpms_set(Ecore_Drm_Output *output, int level);
  *
  * @since 1.14
  */
-EAPI void ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r, uint16_t *g, uint16_t *b);
+ECORE_DRM_API void ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, uint16_t *r, uint16_t *g, uint16_t *b);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -826,7 +814,7 @@ EAPI void ecore_drm_output_gamma_set(Ecore_Drm_Output *output, uint16_t size, ui
  *
  * @since 1.14
  */
-EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y);
+ECORE_DRM_API void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -840,7 +828,7 @@ EAPI void ecore_drm_device_pointer_xy_get(Ecore_Drm_Device *dev, int *x, int *y)
  *
  * @since 1.18
  */
-EAPI void ecore_drm_device_pointer_warp(Ecore_Drm_Device *dev, int x, int y);
+ECORE_DRM_API void ecore_drm_device_pointer_warp(Ecore_Drm_Device *dev, int x, int y);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -850,7 +838,7 @@ EAPI void ecore_drm_device_pointer_warp(Ecore_Drm_Device *dev, int x, int y);
  *
  * @since 1.14
  */
-EAPI const Eina_List *ecore_drm_devices_get(void);
+ECORE_DRM_API const Eina_List *ecore_drm_devices_get(void);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -864,7 +852,7 @@ EAPI const Eina_List *ecore_drm_devices_get(void);
  *
  * @since 1.15
  */
-EAPI void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
+ECORE_DRM_API void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -876,7 +864,7 @@ EAPI void ecore_drm_screen_size_range_get(Ecore_Drm_Device *dev, int *minw, int 
  *
  * @since 1.15
  */
-EAPI Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
+ECORE_DRM_API Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -888,7 +876,7 @@ EAPI Eina_Bool ecore_drm_output_connected_get(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
+ECORE_DRM_API unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -900,7 +888,7 @@ EAPI unsigned int ecore_drm_output_connector_type_get(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
+ECORE_DRM_API Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -912,7 +900,7 @@ EAPI Eina_Bool ecore_drm_output_backlight_get(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
+ECORE_DRM_API char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -926,7 +914,7 @@ EAPI char *ecore_drm_output_edid_get(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
+ECORE_DRM_API Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -938,7 +926,7 @@ EAPI Eina_List *ecore_drm_output_modes_get(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
+ECORE_DRM_API Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -948,7 +936,7 @@ EAPI Ecore_Drm_Output *ecore_drm_output_primary_get(Ecore_Drm_Device *dev);
  *
  * @since 1.15
  */
-EAPI void ecore_drm_output_primary_set(Ecore_Drm_Output *output);
+ECORE_DRM_API void ecore_drm_output_primary_set(Ecore_Drm_Output *output);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -960,7 +948,7 @@ EAPI void ecore_drm_output_primary_set(Ecore_Drm_Output *output);
  *
  * @since 1.15
  */
-EAPI void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height);
+ECORE_DRM_API void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, int *height);
 
 /**
  * @ingroup Ecore_Drm_Device_Group
@@ -976,7 +964,7 @@ EAPI void ecore_drm_output_crtc_size_get(Ecore_Drm_Output *output, int *width, i
  *
  * @since 1.15
  */
-EAPI Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name);
+ECORE_DRM_API Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, const char *name);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -992,7 +980,7 @@ EAPI Ecore_Drm_Output *ecore_drm_device_output_name_find(Ecore_Drm_Device *dev, 
  *
  * @since 1.15
  */
-EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc);
+ECORE_DRM_API Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsigned int crtc);
 
 /**
  * @ingroup Ecore_Drm_Output_Group
@@ -1009,15 +997,15 @@ EAPI Eina_Bool ecore_drm_output_possible_crtc_get(Ecore_Drm_Output *output, unsi
  *
  * @since 1.15
  */
-EAPI Eina_Bool ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode, int x, int y);
+ECORE_DRM_API Eina_Bool ecore_drm_output_mode_set(Ecore_Drm_Output *output, Ecore_Drm_Output_Mode *mode, int x, int y);
 
 /* TODO: doxy */
 /* @since 1.18 */
-EAPI unsigned int ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type);
+ECORE_DRM_API unsigned int ecore_drm_output_supported_rotations_get(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type);
 
 /* TODO: doxy */
 /* @since 1.18 */
-EAPI Eina_Bool ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type, unsigned int rotation);
+ECORE_DRM_API Eina_Bool ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm_Plane_Type type, unsigned int rotation);
 
 /**
  * @ingroup Ecore_Drm_Input_Group
@@ -1033,7 +1021,7 @@ EAPI Eina_Bool ecore_drm_output_rotation_set(Ecore_Drm_Output *output, Ecore_Drm
  *
  * @since 1.17
  */
-EAPI Eina_Bool ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool enable);
+ECORE_DRM_API Eina_Bool ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool enable);
 
 /**
  * @ingroup Ecore_Drm_Input_Group
@@ -1052,13 +1040,10 @@ EAPI Eina_Bool ecore_drm_evdev_key_remap_enable(Ecore_Drm_Evdev *edev, Eina_Bool
  *
  * @since 1.17
  */
-EAPI Eina_Bool ecore_drm_evdev_key_remap_set(Ecore_Drm_Evdev *edev, int *from_keys, int *to_keys, int num);
+ECORE_DRM_API Eina_Bool ecore_drm_evdev_key_remap_set(Ecore_Drm_Evdev *edev, int *from_keys, int *to_keys, int num);
 
 # ifdef __cplusplus
 }
 # endif
-
-# undef EAPI
-# define EAPI
 
 #endif
