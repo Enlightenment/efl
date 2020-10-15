@@ -34,7 +34,7 @@ static int _ecore_drm_init_count = 0;
 /* external variables */
 int _ecore_drm_log_dom = -1;
 
-EAPI int ECORE_DRM_EVENT_ACTIVATE = 0;
+ECORE_DRM_API int ECORE_DRM_EVENT_ACTIVATE = 0;
 
 static void
 _ecore_drm_event_activate_free(void *data EINA_UNUSED, void *event)
@@ -68,7 +68,7 @@ _ecore_drm_event_activate_send(Eina_Bool active)
  *
  * @ingroup Ecore_Drm_Init_Group
  */
-EAPI int
+ECORE_DRM_API int 
 ecore_drm_init(void)
 {
    /* if we have already initialized, return the count */
@@ -134,7 +134,7 @@ log_err:
  *
  * @ingroup Ecore_Drm_Init_Group
  */
-EAPI int
+ECORE_DRM_API int
 ecore_drm_shutdown(void)
 {
    Eina_List *lists;

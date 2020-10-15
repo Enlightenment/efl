@@ -37,7 +37,7 @@
 
 /* TODO: DOXY !! */
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_sprites_create(Ecore_Drm_Device *dev)
 {
    drmModePlaneRes *res;
@@ -84,7 +84,7 @@ ecore_drm_sprites_create(Ecore_Drm_Device *dev)
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_DRM_API void 
 ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
 {
    Ecore_Drm_Sprite *sprite;
@@ -106,7 +106,7 @@ ecore_drm_sprites_destroy(Ecore_Drm_Device *dev)
      }
 }
 
-EAPI void
+ECORE_DRM_API void 
 ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags)
 {
    EINA_SAFETY_ON_TRUE_RETURN((!sprite) || (!sprite->output));
@@ -127,7 +127,7 @@ ecore_drm_sprites_fb_set(Ecore_Drm_Sprite *sprite, int fb_id, int flags)
      }
 }
 
-EAPI Eina_Bool
+ECORE_DRM_API Eina_Bool 
 ecore_drm_sprites_crtc_supported(Ecore_Drm_Output *output, unsigned int supported)
 {
    Ecore_Drm_Device *dev;

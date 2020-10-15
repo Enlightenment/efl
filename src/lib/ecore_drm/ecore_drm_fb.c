@@ -74,7 +74,7 @@ _ecore_drm_fb_create2(int fd, Ecore_Drm_Fb *fb)
    return EINA_TRUE;
 }
 
-EAPI Ecore_Drm_Fb *
+ECORE_DRM_API Ecore_Drm_Fb *
 ecore_drm_fb_create(Ecore_Drm_Device *dev, int width, int height)
 {
    Ecore_Drm_Fb *fb;
@@ -148,7 +148,7 @@ create_err:
    return NULL;
 }
 
-EAPI void
+ECORE_DRM_API void 
 ecore_drm_fb_destroy(Ecore_Drm_Fb *fb)
 {
    struct drm_mode_destroy_dumb darg;
@@ -163,7 +163,7 @@ ecore_drm_fb_destroy(Ecore_Drm_Fb *fb)
    free(fb);
 }
 
-EAPI void
+ECORE_DRM_API void
 ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
@@ -193,7 +193,7 @@ ecore_drm_fb_dirty(Ecore_Drm_Fb *fb, Eina_Rectangle *rects, unsigned int count)
 #endif
 }
 
-EAPI void
+ECORE_DRM_API void
 ecore_drm_fb_set(Ecore_Drm_Device *dev EINA_UNUSED, Ecore_Drm_Fb *fb EINA_UNUSED)
 {
   /* ecore_drm_fb_set no longer has any functionality distinct from
@@ -253,7 +253,7 @@ _ecore_drm_output_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Out
    output->current = fb;
 }
 
-EAPI void
+ECORE_DRM_API void
 ecore_drm_fb_send(Ecore_Drm_Device *dev, Ecore_Drm_Fb *fb, Ecore_Drm_Pageflip_Cb func EINA_UNUSED, void *data EINA_UNUSED)
 {
    Ecore_Drm_Output *output;
