@@ -188,7 +188,7 @@ _ecore_avahi_timeout_free(AvahiTimeout *t)
 }
 #endif
 
-EAPI Ecore_Avahi *
+ECORE_AVAHI_API Ecore_Avahi *
 ecore_avahi_add(void)
 {
 #ifdef HAVE_AVAHI
@@ -213,7 +213,7 @@ ecore_avahi_add(void)
 #endif
 }
 
-EAPI void
+ECORE_AVAHI_API void
 ecore_avahi_del(Ecore_Avahi *handler)
 {
 #ifdef HAVE_AVAHI
@@ -238,7 +238,7 @@ ecore_avahi_del(Ecore_Avahi *handler)
 #endif
 }
 
-EAPI const void *
+ECORE_AVAHI_API const void *
 ecore_avahi_poll_get(Ecore_Avahi *handler)
 {
 #ifdef HAVE_AVAHI
