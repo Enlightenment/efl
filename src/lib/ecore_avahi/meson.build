@@ -9,7 +9,7 @@ config_h.set('HAVE_AVAHI', '1')
 
 ecore_avahi_lib = library('ecore_avahi',
     ecore_avahi_src,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_AVAHI_BUILD'],
     dependencies: [m] + ecore_avahi_deps + ecore_avahi_pub_deps,
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
