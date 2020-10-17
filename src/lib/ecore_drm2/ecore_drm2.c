@@ -48,8 +48,8 @@ int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t
 int (*sym_drmPrimeFDToHandle)(int fd, int prime_fd, uint32_t *handle) = NULL;
 int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl) = NULL;
 
-EAPI int ECORE_DRM2_EVENT_OUTPUT_CHANGED = -1;
-EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
+ECORE_DRM2_API int ECORE_DRM2_EVENT_OUTPUT_CHANGED = -1;
+ECORE_DRM2_API int ECORE_DRM2_EVENT_ACTIVATE = -1;
 
 static Eina_Bool
 _ecore_drm2_link(void)
@@ -138,7 +138,7 @@ _ecore_drm2_link(void)
    return EINA_TRUE;
 }
 
-EAPI int
+ECORE_DRM2_API int
 ecore_drm2_init(void)
 {
    if (++_ecore_drm2_init_count != 1) return _ecore_drm2_init_count;
@@ -193,7 +193,7 @@ eina_err:
    return --_ecore_drm2_init_count;
 }
 
-EAPI int
+ECORE_DRM2_API int
 ecore_drm2_shutdown(void)
 {
    if (_ecore_drm2_init_count < 1)
@@ -218,7 +218,7 @@ ecore_drm2_shutdown(void)
    return _ecore_drm2_init_count;
 }
 
-EAPI int
+ECORE_DRM2_API int
 ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drmctx)
 {
    drmEventContext ctx;
