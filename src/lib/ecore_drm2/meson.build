@@ -17,7 +17,7 @@ ecore_drm2_src = files([
 
 ecore_drm2_lib = library('ecore_drm2',
     ecore_drm2_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_DRM2_BUILD'],
     dependencies: ecore_drm2_pub_deps + ecore_drm2_deps + ecore_drm2_ext_deps,
     include_directories : config_dir,
     install: true,

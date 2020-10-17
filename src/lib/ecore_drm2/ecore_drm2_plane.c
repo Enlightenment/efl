@@ -38,7 +38,7 @@ _plane_cursor_size_get(int fd, int *width, int *height)
      }
 }
 
-EAPI Ecore_Drm2_Plane *
+ECORE_DRM2_API Ecore_Drm2_Plane *
 ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int y)
 {
    Eina_List *l;
@@ -133,7 +133,7 @@ out:
    return plane;
 }
 
-EAPI void
+ECORE_DRM2_API void
 ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
 {
    Ecore_Drm2_Fb *fb;
@@ -156,7 +156,7 @@ ecore_drm2_plane_release(Ecore_Drm2_Plane *plane)
                         fb->status_data);
 }
 
-EAPI void
+ECORE_DRM2_API void
 ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h)
 {
    EINA_SAFETY_ON_NULL_RETURN(plane);
@@ -170,7 +170,7 @@ ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, i
    _fb_atomic_flip_test(plane->output);
 }
 
-EAPI Eina_Bool
+ECORE_DRM2_API Eina_Bool
 ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
 {
    uint32_t fallback_id;

@@ -3,19 +3,7 @@
 
 # include <Ecore.h>
 
-# ifdef EAPI
-#  undef EAPI
-# endif
-
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else // if __GNUC__ >= 4
-#   define EAPI
-#  endif // if __GNUC__ >= 4
-# else // ifdef __GNUC__
-#  define EAPI
-# endif // ifdef __GNUC__
+# include <ecore_drm2_api.h>
 
 # ifdef EFL_BETA_API_SUPPORT
 
@@ -96,8 +84,8 @@ typedef struct _Ecore_Drm2_Context
                               unsigned int tv_usec, unsigned int crtc_id, void *user_data);
 } Ecore_Drm2_Context;
 
-EAPI extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
-EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
+ECORE_DRM2_API extern int ECORE_DRM2_EVENT_OUTPUT_CHANGED;
+ECORE_DRM2_API extern int ECORE_DRM2_EVENT_ACTIVATE;
 
 typedef void (*Ecore_Drm2_Release_Handler)(void *data, Ecore_Drm2_Fb *b);
 typedef void (*Ecore_Drm2_Fb_Status_Handler)(Ecore_Drm2_Fb *b, Ecore_Drm2_Fb_Status status, void *data);
@@ -133,7 +121,7 @@ typedef void (*Ecore_Drm2_Fb_Status_Handler)(Ecore_Drm2_Fb *b, Ecore_Drm2_Fb_Sta
  * @ingroup Ecore_Drm2_Init_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_init(void);
+ECORE_DRM2_API int ecore_drm2_init(void);
 
 /**
  * Shutdown the Ecore_Drm2 library
@@ -144,7 +132,7 @@ EAPI int ecore_drm2_init(void);
  * @ingroup Ecore_Drm2_Init_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_shutdown(void);
+ECORE_DRM2_API int ecore_drm2_shutdown(void);
 
 /**
  * Read and process pending Drm events
@@ -161,7 +149,7 @@ EAPI int ecore_drm2_shutdown(void);
  * @ingroup Ecore_Drm_Init_Group
  * @since 1.19
  */
-EAPI int ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drmctx);
+ECORE_DRM2_API int ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drmctx);
 
 /**
  * @defgroup Ecore_Drm2_Device_Group Drm device functions
@@ -181,7 +169,7 @@ EAPI int ecore_drm2_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Context *drm
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tty);
+ECORE_DRM2_API Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tty);
 
 /**
  * Close an open Ecore_Drm2_Device
@@ -191,7 +179,7 @@ EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tt
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *device);
+ECORE_DRM2_API void ecore_drm2_device_close(Ecore_Drm2_Device *device);
 
 /**
  * Get the type of clock used by a given Ecore_Drm2_Device
@@ -203,7 +191,7 @@ EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *device);
+ECORE_DRM2_API int ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *device);
 
 /**
  * Get the size of the cursor supported by a given Ecore_Drm2_Device
@@ -215,7 +203,7 @@ EAPI int ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *height);
+ECORE_DRM2_API void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *width, int *height);
 
 /**
  * Get the current pointer position
@@ -227,7 +215,7 @@ EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *device, int *widt
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, int *y);
+ECORE_DRM2_API void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, int *y);
 
 /**
  * Warp the pointer position to given coordinates
@@ -239,7 +227,7 @@ EAPI void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *device, int *x, in
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y);
+ECORE_DRM2_API void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y);
 
 /**
  * Set a left handed mode for the given device
@@ -252,7 +240,7 @@ EAPI void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *device, int x, int y
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *device, Eina_Bool left);
+ECORE_DRM2_API Eina_Bool ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *device, Eina_Bool left);
 
 /**
  * Set which window is to be used for input events
@@ -263,7 +251,7 @@ EAPI Eina_Bool ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *devi
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window);
+ECORE_DRM2_API void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window);
 
 /**
  * Set maximium position that pointer device is allowed to move
@@ -275,7 +263,7 @@ EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int w
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h);
+ECORE_DRM2_API void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, int h);
 
 /**
  * Set pointer acceleration speed
@@ -286,7 +274,7 @@ EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *device, int w, in
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.21
  */
-EAPI void ecore_drm2_device_pointer_accel_speed_set(Ecore_Drm2_Device *device, double speed);
+ECORE_DRM2_API void ecore_drm2_device_pointer_accel_speed_set(Ecore_Drm2_Device *device, double speed);
 
 /**
  * Set pointer acceleration profile
@@ -297,7 +285,7 @@ EAPI void ecore_drm2_device_pointer_accel_speed_set(Ecore_Drm2_Device *device, d
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.21
  */
-EAPI void ecore_drm2_device_pointer_accel_profile_set(Ecore_Drm2_Device *device, uint32_t profile);
+ECORE_DRM2_API void ecore_drm2_device_pointer_accel_profile_set(Ecore_Drm2_Device *device, uint32_t profile);
 
 /**
  * Set pointer value rotation
@@ -310,7 +298,7 @@ EAPI void ecore_drm2_device_pointer_accel_profile_set(Ecore_Drm2_Device *device,
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *device, int rotation);
+ECORE_DRM2_API Eina_Bool ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *device, int rotation);
 
 /**
  * Enable or disable pointer tap-to-click
@@ -321,7 +309,7 @@ EAPI Eina_Bool ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *device,
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.22
  */
-EAPI void ecore_drm2_device_touch_tap_to_click_enabled_set(Ecore_Drm2_Device *device, Eina_Bool enabled);
+ECORE_DRM2_API void ecore_drm2_device_touch_tap_to_click_enabled_set(Ecore_Drm2_Device *device, Eina_Bool enabled);
 
 /**
  * Set info to be used on keyboards
@@ -334,7 +322,7 @@ EAPI void ecore_drm2_device_touch_tap_to_click_enabled_set(Ecore_Drm2_Device *de
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.20
  */
-EAPI void ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *device, void *context, void *keymap, int group);
+ECORE_DRM2_API void ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *device, void *context, void *keymap, int group);
 
 /**
  * Set a group layout to be used on keyboards
@@ -345,7 +333,7 @@ EAPI void ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *device, void *c
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.20
  */
-EAPI void ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *device, int group);
+ECORE_DRM2_API void ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *device, int group);
 
 /**
  * Get the crtcs of a given device
@@ -358,7 +346,7 @@ EAPI void ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *device, int gr
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI unsigned int *ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *num);
+ECORE_DRM2_API unsigned int *ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *num);
 
 /**
  * Get the minimum and maximum screen size range
@@ -372,7 +360,7 @@ EAPI unsigned int *ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *device, int *n
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int *minw, int *minh, int *maxw, int *maxh);
+ECORE_DRM2_API void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int *minw, int *minh, int *maxw, int *maxh);
 
 /**
  * Calibrate any input devices for given screen size
@@ -384,7 +372,7 @@ EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *device, int
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h);
+ECORE_DRM2_API void ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h);
 
 /**
  * Try to switch to a given virtual terminal
@@ -397,7 +385,7 @@ EAPI void ecore_drm2_device_calibrate(Ecore_Drm2_Device *device, int w, int h);
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
+ECORE_DRM2_API Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
 
 /**
  * Get if a given device prefers the use of shadow buffers
@@ -409,7 +397,7 @@ EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *device, int vt);
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.19
  */
-EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
+ECORE_DRM2_API Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
 
 /**
  * Get the default depth & bpp from a given device
@@ -421,7 +409,7 @@ EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.25
  */
-EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *device, int *depth, int *bpp);
+ECORE_DRM2_API void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *device, int *depth, int *bpp);
 
 /**
  * @defgroup Ecore_Drm2_Output_Group Drm output functions
@@ -439,7 +427,7 @@ EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *device, int *
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_outputs_create(Ecore_Drm2_Device *device);
+ECORE_DRM2_API Eina_Bool ecore_drm2_outputs_create(Ecore_Drm2_Device *device);
 
 /**
  * Destroy any created outputs
@@ -449,7 +437,7 @@ EAPI Eina_Bool ecore_drm2_outputs_create(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_outputs_destroy(Ecore_Drm2_Device *device);
+ECORE_DRM2_API void ecore_drm2_outputs_destroy(Ecore_Drm2_Device *device);
 
 /**
  * Get the list of outputs from a drm device
@@ -461,7 +449,7 @@ EAPI void ecore_drm2_outputs_destroy(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI const Eina_List *ecore_drm2_outputs_get(Ecore_Drm2_Device *device);
+ECORE_DRM2_API const Eina_List *ecore_drm2_outputs_get(Ecore_Drm2_Device *device);
 
 /**
  * Get the dpms level of a given output
@@ -474,7 +462,7 @@ EAPI const Eina_List *ecore_drm2_outputs_get(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_output_dpms_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API int ecore_drm2_output_dpms_get(Ecore_Drm2_Output *output);
 
 /**
  * Set the dpms level of a given output
@@ -485,7 +473,7 @@ EAPI int ecore_drm2_output_dpms_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level);
+ECORE_DRM2_API void ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level);
 
 /**
  * Get the edid of a given output
@@ -497,7 +485,7 @@ EAPI void ecore_drm2_output_dpms_set(Ecore_Drm2_Output *output, int level);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI char *ecore_drm2_output_edid_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API char *ecore_drm2_output_edid_get(Ecore_Drm2_Output *output);
 
 /**
  * Get if a given output has a backlight
@@ -509,7 +497,7 @@ EAPI char *ecore_drm2_output_edid_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_backlight_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_backlight_get(Ecore_Drm2_Output *output);
 
 /**
  * Find an output at the given position
@@ -523,7 +511,7 @@ EAPI Eina_Bool ecore_drm2_output_backlight_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Ecore_Drm2_Output *ecore_drm2_output_find(Ecore_Drm2_Device *device, int x, int y);
+ECORE_DRM2_API Ecore_Drm2_Output *ecore_drm2_output_find(Ecore_Drm2_Device *device, int x, int y);
 
 /**
  * Get the dpi of a given output
@@ -535,7 +523,7 @@ EAPI Ecore_Drm2_Output *ecore_drm2_output_find(Ecore_Drm2_Device *device, int x,
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI void ecore_drm2_output_dpi_get(Ecore_Drm2_Output *output, int *xdpi, int *ydpi);
+ECORE_DRM2_API void ecore_drm2_output_dpi_get(Ecore_Drm2_Output *output, int *xdpi, int *ydpi);
 
 /**
  * Get the id of the crtc that an output is using
@@ -547,7 +535,7 @@ EAPI void ecore_drm2_output_dpi_get(Ecore_Drm2_Output *output, int *xdpi, int *y
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
 
 /**
  * Return the most recently set Ecore_Drm2_Fb for a given output
@@ -563,7 +551,7 @@ EAPI unsigned int ecore_drm2_output_crtc_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI Ecore_Drm2_Fb *ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Ecore_Drm2_Fb *ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output);
 
 /**
  * Get if a given output is marked as the primary output
@@ -575,7 +563,7 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_output_latest_fb_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_primary_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_primary_get(Ecore_Drm2_Output *output);
 
 /**
  * Set a given output to be primary
@@ -586,7 +574,7 @@ EAPI Eina_Bool ecore_drm2_output_primary_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool primary);
+ECORE_DRM2_API void ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool primary);
 
 /**
  * Get if a given output is enabled
@@ -598,7 +586,7 @@ EAPI void ecore_drm2_output_primary_set(Ecore_Drm2_Output *output, Eina_Bool pri
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_enabled_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_enabled_get(Ecore_Drm2_Output *output);
 
 /**
  * Set if a given output is enabled
@@ -609,7 +597,7 @@ EAPI Eina_Bool ecore_drm2_output_enabled_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled);
+ECORE_DRM2_API void ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool enabled);
 
 /**
  * Get the physical size of a given output
@@ -623,7 +611,7 @@ EAPI void ecore_drm2_output_enabled_set(Ecore_Drm2_Output *output, Eina_Bool ena
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_output_physical_size_get(Ecore_Drm2_Output *output, int *w, int *h);
+ECORE_DRM2_API void ecore_drm2_output_physical_size_get(Ecore_Drm2_Output *output, int *w, int *h);
 
 /**
  * Get a list of the modes supported on a given output
@@ -637,7 +625,7 @@ EAPI void ecore_drm2_output_physical_size_get(Ecore_Drm2_Output *output, int *w,
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI const Eina_List *ecore_drm2_output_modes_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API const Eina_List *ecore_drm2_output_modes_get(Ecore_Drm2_Output *output);
 
 /**
  * Get information from an existing output mode
@@ -651,7 +639,7 @@ EAPI const Eina_List *ecore_drm2_output_modes_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, int *h, unsigned int *refresh, unsigned int *flags);
+ECORE_DRM2_API void ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, int *h, unsigned int *refresh, unsigned int *flags);
 
 /**
  * Set a given mode to be used on a given output
@@ -666,7 +654,7 @@ EAPI void ecore_drm2_output_mode_info_get(Ecore_Drm2_Output_Mode *mode, int *w, 
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode, int x, int y);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode, int x, int y);
 
 /**
  * Get the name of a given output
@@ -678,7 +666,7 @@ EAPI Eina_Bool ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI char *ecore_drm2_output_name_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API char *ecore_drm2_output_name_get(Ecore_Drm2_Output *output);
 
 /**
  * Get the model of a given output
@@ -690,7 +678,7 @@ EAPI char *ecore_drm2_output_name_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI char *ecore_drm2_output_model_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API char *ecore_drm2_output_model_get(Ecore_Drm2_Output *output);
 
 /**
  * Get if a given output is connected
@@ -702,7 +690,7 @@ EAPI char *ecore_drm2_output_model_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_connected_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_connected_get(Ecore_Drm2_Output *output);
 
 /**
  * Get if a given output is cloned
@@ -714,7 +702,7 @@ EAPI Eina_Bool ecore_drm2_output_connected_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
 
 /**
  * Get the connector type of a given output
@@ -726,7 +714,7 @@ EAPI Eina_Bool ecore_drm2_output_cloned_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output);
 
 /**
  * Get the geometry and refresh rate for a given output
@@ -741,7 +729,7 @@ EAPI unsigned int ecore_drm2_output_connector_type_get(Ecore_Drm2_Output *output
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI void ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h, unsigned int *refresh);
+ECORE_DRM2_API void ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, int *h, unsigned int *refresh);
 
 /**
  * Get if an output can be used on a given crtc
@@ -757,7 +745,7 @@ EAPI void ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, 
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, unsigned int crtc);
 
 /**
  * Set the gamma level of an Ecore_Drm_Output
@@ -773,7 +761,7 @@ EAPI Eina_Bool ecore_drm2_output_possible_crtc_get(Ecore_Drm2_Output *output, un
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI void ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
+ECORE_DRM2_API void ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 
 /**
  * Get the supported rotations of a given output
@@ -788,7 +776,7 @@ EAPI void ecore_drm2_output_gamma_set(Ecore_Drm2_Output *output, uint16_t size, 
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
 
 /**
  * Set a rotation on a given output
@@ -804,7 +792,7 @@ EAPI int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation);
 
 /**
  * Get current output rotation
@@ -816,7 +804,7 @@ EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rot
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.22
  */
-EAPI int ecore_drm2_output_rotation_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API int ecore_drm2_output_rotation_get(Ecore_Drm2_Output *output);
 
 /**
  * Set the user data for the output's page flip handler
@@ -827,7 +815,7 @@ EAPI int ecore_drm2_output_rotation_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
+ECORE_DRM2_API void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
 
 /**
  * Get the user data for a given output
@@ -839,7 +827,7 @@ EAPI void ecore_drm2_output_user_data_set(Ecore_Drm2_Output *o, void *data);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *output);
 
 /**
  * Get the subpixel state of the output
@@ -848,7 +836,7 @@ EAPI void *ecore_drm2_output_user_data_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.20
  */
-EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output);
+ECORE_DRM2_API unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output);
 
 /**
  * Set the relative mode for an output
@@ -859,7 +847,7 @@ EAPI unsigned int ecore_drm2_output_subpixel_get(const Ecore_Drm2_Output *output
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI void ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative_Mode mode);
+ECORE_DRM2_API void ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Relative_Mode mode);
 
 /**
  * Get the relative mode of an output
@@ -871,7 +859,7 @@ EAPI void ecore_drm2_output_relative_mode_set(Ecore_Drm2_Output *output, Ecore_D
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI Ecore_Drm2_Relative_Mode ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Ecore_Drm2_Relative_Mode ecore_drm2_output_relative_mode_get(Ecore_Drm2_Output *output);
 
 /**
  * Set which output a given output is relative to
@@ -882,7 +870,7 @@ EAPI Ecore_Drm2_Relative_Mode ecore_drm2_output_relative_mode_get(Ecore_Drm2_Out
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI void ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const char *relative);
+ECORE_DRM2_API void ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const char *relative);
 
 /**
  * Get which output is relative to a given output
@@ -894,7 +882,7 @@ EAPI void ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const cha
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.21
  */
-EAPI const char *ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API const char *ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output);
 
 /**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
@@ -917,9 +905,9 @@ EAPI const char *ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format);
+ECORE_DRM2_API Ecore_Drm2_Fb *ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format);
 
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo);
+ECORE_DRM2_API Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo);
 
 /**
  * Get a framebuffer's mmap'd data
@@ -931,7 +919,7 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_fb_gbm_create(Ecore_Drm2_Device *dev, int width, 
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI void *ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API void *ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb);
 
 /**
  * Get a framebuffer's size
@@ -943,7 +931,7 @@ EAPI void *ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI unsigned int ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API unsigned int ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb);
 
 /**
  * Get a framebuffer's stride
@@ -955,7 +943,7 @@ EAPI unsigned int ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI unsigned int ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API unsigned int ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb);
 
 /**
  * Mark regions of a framebuffer as dirty
@@ -967,7 +955,7 @@ EAPI unsigned int ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count);
+ECORE_DRM2_API void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count);
 
 /**
  * Schedule a pageflip to the given Ecore_Drm2_Fb
@@ -983,7 +971,7 @@ EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output);
+ECORE_DRM2_API int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output);
 
 /**
  * Must be called by a page flip handler when the flip completes.
@@ -995,7 +983,7 @@ EAPI int ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.18
  */
-EAPI Eina_Bool ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output);
 
 /**
  * Return the Ecore_Drm2_Fb's busy status
@@ -1007,7 +995,7 @@ EAPI Eina_Bool ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.19
  */
-EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
 
 /**
  * Try to force a framebuffer release for an output
@@ -1027,7 +1015,7 @@ EAPI Eina_Bool ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb);
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.19
  */
-EAPI Eina_Bool ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
+ECORE_DRM2_API Eina_Bool ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
 
 /**
  * Get the Framebuffer's gbm buffer object
@@ -1039,7 +1027,7 @@ EAPI Eina_Bool ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.19
  */
-EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
 
 /**
  * Import a dmabuf object as a Framebuffer
@@ -1060,7 +1048,7 @@ EAPI void *ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb);
  * @since 1.20
  *
  */
-EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
+ECORE_DRM2_API Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count);
 
 /**
  * Discard a framebuffer object
@@ -1073,7 +1061,7 @@ EAPI Ecore_Drm2_Fb *ecore_drm2_fb_dmabuf_import(Ecore_Drm2_Device *dev, int widt
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.20
  */
-EAPI void ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API void ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb);
 
 /**
  * @defgroup Ecore_Drm2_Plane_Group Functions that deal with hardware planes
@@ -1092,7 +1080,7 @@ EAPI void ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb);
  * @ingroup Ecore_Drm2_Plane_Group
  * @since 1.20
  */
-EAPI Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int y);
+ECORE_DRM2_API Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int y);
 
 /**
  * Remove a hardware plane from display
@@ -1102,7 +1090,7 @@ EAPI Ecore_Drm2_Plane *ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_
  * @ingroup Ecore_Drm2_Plane_Group
  * @since 1.20
  */
-EAPI void ecore_drm2_plane_release(Ecore_Drm2_Plane *plane);
+ECORE_DRM2_API void ecore_drm2_plane_release(Ecore_Drm2_Plane *plane);
 
 /**
  * Set plane destination values
@@ -1116,7 +1104,7 @@ EAPI void ecore_drm2_plane_release(Ecore_Drm2_Plane *plane);
  * @ingroup Ecore_Drm2_Plane_Group
  * @since 1.20
  */
-EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h);
+ECORE_DRM2_API void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y, int w, int h);
 
 /**
  * Set plane frame buffer
@@ -1129,7 +1117,7 @@ EAPI void ecore_drm2_plane_destination_set(Ecore_Drm2_Plane *plane, int x, int y
  * @ingroup Ecore_Drm2_Plane_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb);
+ECORE_DRM2_API Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb);
 
 /**
  * Register a callback for buffer status updates
@@ -1147,7 +1135,7 @@ EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *f
  * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.20
  */
-EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data);
+ECORE_DRM2_API void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data);
 
 /**
  * Get the time of the last vblank
@@ -1166,7 +1154,7 @@ EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Stat
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec);
 
 /**
  * Get the fd of an Ecore_Drm2_Device
@@ -1178,7 +1166,7 @@ EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int se
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.20
  */
-EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
+ECORE_DRM2_API int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
 
 /**
  * Check if there's a pageflip in progress for an output
@@ -1191,7 +1179,7 @@ EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
  * @ingroup Ecore_Drm2_Output_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
 
 /**
  * Set the background color of an output's crtc
@@ -1208,7 +1196,7 @@ EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
  *
  * @since 1.23
  */
-EAPI Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a);
+ECORE_DRM2_API Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a);
 
 /**
  * Check if vblank is supported by the current video driver
@@ -1219,7 +1207,7 @@ EAPI Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output,
  *
  * @ingroup Ecore_Drm2_Device_Group
  * @since 1.23 */
-EAPI Eina_Bool ecore_drm2_vblank_supported(Ecore_Drm2_Device *dev);
+ECORE_DRM2_API Eina_Bool ecore_drm2_vblank_supported(Ecore_Drm2_Device *dev);
 
 # endif
 

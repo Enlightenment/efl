@@ -17,7 +17,7 @@ _fb2_create(Ecore_Drm2_Fb *fb)
    return EINA_TRUE;
 }
 
-EAPI Ecore_Drm2_Fb *
+ECORE_DRM2_API Ecore_Drm2_Fb *
 ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format)
 {
    Ecore_Drm2_Fb *fb;
@@ -92,7 +92,7 @@ err:
    return NULL;
 }
 
-EAPI Ecore_Drm2_Fb *
+ECORE_DRM2_API Ecore_Drm2_Fb *
 ecore_drm2_fb_gbm_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int handle, unsigned int stride, void *bo)
 {
    Ecore_Drm2_Fb *fb;
@@ -176,7 +176,7 @@ _ecore_drm2_fb_deref(Ecore_Drm2_Fb *fb)
    _ecore_drm2_fb_destroy(fb);
 }
 
-EAPI void
+ECORE_DRM2_API void
 ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
@@ -186,7 +186,7 @@ ecore_drm2_fb_discard(Ecore_Drm2_Fb *fb)
    _ecore_drm2_fb_deref(fb);
 }
 
-EAPI void *
+ECORE_DRM2_API void *
 ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
@@ -194,7 +194,7 @@ ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb)
    return fb->mmap;
 }
 
-EAPI unsigned int
+ECORE_DRM2_API unsigned int
 ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
@@ -202,7 +202,7 @@ ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb)
    return fb->sizes[0];
 }
 
-EAPI unsigned int
+ECORE_DRM2_API unsigned int
 ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
@@ -211,7 +211,7 @@ ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
    return fb->strides[0];
 }
 
-EAPI void
+ECORE_DRM2_API void
 ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(fb);
@@ -266,7 +266,7 @@ _cb_mainloop_async_timer_del(void *data)
    output->flip_timeout = NULL;
 }
 
-EAPI Eina_Bool
+ECORE_DRM2_API Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
    Eina_Bool plane_scanout;
@@ -647,7 +647,7 @@ _fb_flip(Ecore_Drm2_Output *output)
    return 0;
 }
 
-EAPI int
+ECORE_DRM2_API int
 ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 {
    int ret = -1;
@@ -706,7 +706,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
    return 0;
 }
 
-EAPI Eina_Bool
+ECORE_DRM2_API Eina_Bool
 ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
@@ -715,7 +715,7 @@ ecore_drm2_fb_busy_get(Ecore_Drm2_Fb *fb)
    return !!(fb->ref - 1);
 }
 
-EAPI Eina_Bool
+ECORE_DRM2_API Eina_Bool
 ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
@@ -750,7 +750,7 @@ ecore_drm2_fb_release(Ecore_Drm2_Output *o, Eina_Bool panic)
    return EINA_FALSE;
 }
 
-EAPI void *
+ECORE_DRM2_API void *
 ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
@@ -759,7 +759,7 @@ ecore_drm2_fb_bo_get(Ecore_Drm2_Fb *fb)
    return fb->gbm_bo;
 }
 
-EAPI Ecore_Drm2_Fb *
+ECORE_DRM2_API Ecore_Drm2_Fb *
 ecore_drm2_fb_dmabuf_import(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, unsigned int strides[4], int dmabuf_fd[4], int dmabuf_fd_count)
 {
    int i;
@@ -791,7 +791,7 @@ fail:
    return NULL;
 }
 
-EAPI void
+ECORE_DRM2_API void
 ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data)
 {
    fb->status_handler = handler;
