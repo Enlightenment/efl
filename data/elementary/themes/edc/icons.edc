@@ -517,5 +517,6 @@ ICON("multimedia-player", "i-media-player")
 ICON("pda", "i-pda")
 ICON("phone", "i-phone")
 ICON("printer", "i-printer")
+ICON("scanner", "i-scanner")
 
 #undef ICON
