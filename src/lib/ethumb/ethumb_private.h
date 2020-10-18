@@ -4,31 +4,7 @@
 #include <Ethumb.h>
 #include <Ethumb_Plugin.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ethumb_api.h>
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 
@@ -79,8 +55,5 @@ struct _Ethumb
    void *pdata;
    Ethumb_Plugin *plugin;
 };
-
-#undef EAPI
-#define EAPI
 
 #endif /* __ETHUMB_PRIVATE_H__ */
