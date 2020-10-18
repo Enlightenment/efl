@@ -4,31 +4,7 @@
 #include <Eina.h>
 #include <Efl_Config.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ethumb_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +24,7 @@ extern "C" {
         int revision; /** < git revision (0 if a proper release or the git revision number Ethumb is built from) */
      } Ethumb_Version;
 
-   EAPI extern Ethumb_Version *ethumb_version;
+   ETHUMB_API extern Ethumb_Version *ethumb_version;
 
 /**
  * @page ethumb_main Ethumb
@@ -148,23 +124,23 @@ typedef void (*Ethumb_Generate_Cb)(void *data, Ethumb *e, Eina_Bool success);
  * @brief Initialize ethumb.
  * @return 1 or greater on success, 0 otherwise.
  */
-EAPI int ethumb_init(void);
+ETHUMB_API int ethumb_init(void);
 /**
  * @brief Shutdown ethumb, unloading all currently-loaded modules.
  * @return 0 if ethumb shuts down, an integer greater than 0 otherwise.
  */
-EAPI int ethumb_shutdown(void);
+ETHUMB_API int ethumb_shutdown(void);
 
 /**
  * @brief Create a new ethumb object.
  * return The newly-created ethumb object
  */
-EAPI Ethumb * ethumb_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+ETHUMB_API Ethumb * ethumb_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Free an ethumb object.
  */
-EAPI void ethumb_free(Ethumb *e);
+ETHUMB_API void ethumb_free(Ethumb *e);
 
 /**
  * @}
@@ -192,7 +168,7 @@ EAPI void ethumb_free(Ethumb *e);
  *
  * @return EINA_TRUE on success and EINA_FALSE on failure
  */
-EAPI Eina_Bool    ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow) EINA_ARG_NONNULL(1);
+ETHUMB_API Eina_Bool    ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Retreives the current ethumb frame of and Ethumb instance.
@@ -202,7 +178,7 @@ EAPI Eina_Bool    ethumb_frame_set(Ethumb *e, const char *theme_file, const char
  * @param group will be setted with the edje group
  * @param swallow will be setted with the edje swallow
  */
-EAPI void         ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the ethumb thumbnails path
@@ -211,7 +187,7 @@ EAPI void         ethumb_frame_get(const Ethumb *e, const char **theme_file, con
  * @param path The thumbnails path
  *
  */
-EAPI void         ethumb_thumb_dir_path_set(Ethumb *e, const char *path) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_dir_path_set(Ethumb *e, const char *path) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the ethumb thumbnails path
@@ -220,7 +196,7 @@ EAPI void         ethumb_thumb_dir_path_set(Ethumb *e, const char *path) EINA_AR
  *
  * @return The thumbnails path for the current thumbnailer
  */
-EAPI const char  *ethumb_thumb_dir_path_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API const char  *ethumb_thumb_dir_path_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the thumbnails category
@@ -228,7 +204,7 @@ EAPI const char  *ethumb_thumb_dir_path_get(const Ethumb *e) EINA_WARN_UNUSED_RE
  * @param e handle of the current thumbnailer.
  * @param category the category to set
  */
-EAPI void         ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_category_set(Ethumb *e, const char *category) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the thumbnails category
@@ -237,12 +213,12 @@ EAPI void         ethumb_thumb_category_set(Ethumb *e, const char *category) EIN
  *
  * @return the current thumbnailer thumbnails category
  */
-EAPI const char  *ethumb_thumb_category_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API const char  *ethumb_thumb_category_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI void         ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
-EAPI void         ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
-EAPI void         ethumb_thumb_hash(Ethumb *e) EINA_ARG_NONNULL(1);
-EAPI void         ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src) EINA_ARG_NONNULL(1, 2);
+ETHUMB_API void         ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_hash(Ethumb *e) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src) EINA_ARG_NONNULL(1, 2);
 
 typedef enum _Ethumb_Thumb_FDO_Size
 {
@@ -277,7 +253,7 @@ typedef enum _Ethumb_Thumb_Orientation
   ETHUMB_THUMB_ORIENT_ORIGINAL  /**< use orientation from metadata (EXIF-only currently) */
 } Ethumb_Thumb_Orientation;
 
-EAPI void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s) EINA_ARG_NONNULL(1);
+ETHUMB_API void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the size of thumbnails.
@@ -286,7 +262,7 @@ EAPI void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s) EINA_ARG_NONN
  * @param tw Thumbnail width.
  * @param th Thumbnail height.
  */
-EAPI void ethumb_thumb_size_set(Ethumb *e, int tw, int th) EINA_ARG_NONNULL(1);
+ETHUMB_API void ethumb_thumb_size_set(Ethumb *e, int tw, int th) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the size of thumbnails.
  *
@@ -294,7 +270,7 @@ EAPI void ethumb_thumb_size_set(Ethumb *e, int tw, int th) EINA_ARG_NONNULL(1);
  * @param[out] tw Pointer to an int to store the thumbnail width.
  * @param[out] th Pointer to an int to store the thumbnail height.
  */
-EAPI void ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th) EINA_ARG_NONNULL(1);
+ETHUMB_API void ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the fileformat of the thumbnails
@@ -303,7 +279,7 @@ EAPI void ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th) EINA_ARG_NONN
  *
  * @param e A pointer to an Ethumb object.
  */
-EAPI void                     ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f) EINA_ARG_NONNULL(1);
+ETHUMB_API void                     ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the fileformat of the thumbnails
  *
@@ -312,7 +288,7 @@ EAPI void                     ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Fo
  *
  * @see ethumb_thumb_format_set
  */
-EAPI Ethumb_Thumb_Format      ethumb_thumb_format_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API Ethumb_Thumb_Format      ethumb_thumb_format_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the aspect ratio policy.
@@ -324,14 +300,14 @@ EAPI Ethumb_Thumb_Format      ethumb_thumb_format_get(const Ethumb *e) EINA_WARN
  * @param e A pointer to an Ethumb object.
  * @param aspect  The new aspect ratio policy.
  */
-EAPI void                     ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect aspect) EINA_ARG_NONNULL(1);
+ETHUMB_API void                     ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect aspect) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the aspect ratio policy.
  *
  * @param e A pointer to an Ethumb object.
  * @return The aspect ratio policy.
  */
-EAPI Ethumb_Thumb_Aspect      ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API Ethumb_Thumb_Aspect      ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the thumbnail rotation or flip.
@@ -339,17 +315,17 @@ EAPI Ethumb_Thumb_Aspect      ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN
  * @param e A pointer to an Ethumb object.
  * @param orientation The new orientation.
  */
-EAPI void                     ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation orientation) EINA_ARG_NONNULL(1);
+ETHUMB_API void                     ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation orientation) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the thumbnail rotation.
  *
  * @param e A pointer to an Ethumb object.
  * @return The current rotation.
  */
-EAPI Ethumb_Thumb_Orientation ethumb_thumb_orientation_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API Ethumb_Thumb_Orientation ethumb_thumb_orientation_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI void         ethumb_thumb_crop_align_set(Ethumb *e, float x, float y) EINA_ARG_NONNULL(1);
-EAPI void         ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_crop_align_set(Ethumb *e, float x, float y) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the thumbnail compression quality.
@@ -357,14 +333,14 @@ EAPI void         ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *
  * @param e A pointer to an Ethumb object.
  * @param quality Compression quality (from 0 to 100, 100 being the best; default is 80)
  */
-EAPI void         ethumb_thumb_quality_set(Ethumb *e, int quality) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_quality_set(Ethumb *e, int quality) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the thumbnail compression quality.
  *
  * @param e A pointer to an Ethumb object.
  * @return The current compression quality (from 0 to 100, 100 being the best)
  */
-EAPI int          ethumb_thumb_quality_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+ETHUMB_API int          ethumb_thumb_quality_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Set the compression rate
@@ -373,7 +349,7 @@ EAPI int          ethumb_thumb_quality_get(const Ethumb *e) EINA_ARG_NONNULL(1) 
  * @param compress the compression rate (in percentage)
  *
  */
-EAPI void         ethumb_thumb_compress_set(Ethumb *e, int compress) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_thumb_compress_set(Ethumb *e, int compress) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the compression rate
@@ -382,7 +358,7 @@ EAPI void         ethumb_thumb_compress_set(Ethumb *e, int compress) EINA_ARG_NO
  *
  * @return the compression rate (in percentage)
  */
-EAPI int          ethumb_thumb_compress_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+ETHUMB_API int          ethumb_thumb_compress_get(const Ethumb *e) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief set the video play start point
@@ -392,7 +368,7 @@ EAPI int          ethumb_thumb_compress_get(const Ethumb *e) EINA_ARG_NONNULL(1)
  * @param e handle of the current thumbnailer.
  * @param start the start point (float from 0.0 to 1.0)
  */
-EAPI void         ethumb_video_start_set(Ethumb *e, float start) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_video_start_set(Ethumb *e, float start) EINA_ARG_NONNULL(1);
 
 /**
  * @brief get the video play start point
@@ -403,7 +379,7 @@ EAPI void         ethumb_video_start_set(Ethumb *e, float start) EINA_ARG_NONNUL
  *
  * @return the start point (float from 0.0 to 1.0)
  */
-EAPI float        ethumb_video_start_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API float        ethumb_video_start_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the video time (duration) in seconds.
@@ -411,7 +387,7 @@ EAPI float        ethumb_video_start_get(const Ethumb *e) EINA_WARN_UNUSED_RESUL
  * @param e handle of the current thumbnailer.
  * @param time the video duration in seconds
  */
-EAPI void         ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the video time (duration) in seconds.
@@ -419,7 +395,7 @@ EAPI void         ethumb_video_time_set(Ethumb *e, float time) EINA_ARG_NONNULL(
  * @param e handle of the current thumbnailer.
  * @return the video duration in seconds
  */
-EAPI float        ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API float        ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the video frame interval, in seconds
@@ -432,7 +408,7 @@ EAPI float        ethumb_video_time_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT
  * @param e handle of the current thumbnailer.
  * @param interval the frame display interval in seconds
  */
-EAPI void         ethumb_video_interval_set(Ethumb *e, float interval) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_video_interval_set(Ethumb *e, float interval) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the video frame interval, in seconds
@@ -440,7 +416,7 @@ EAPI void         ethumb_video_interval_set(Ethumb *e, float interval) EINA_ARG_
  * @param e handle of the current thumbnailer.
  * @return the frame display interval in seconds
  */
-EAPI float        ethumb_video_interval_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API float        ethumb_video_interval_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the number of times the video loops (if applicable).
@@ -448,14 +424,14 @@ EAPI float        ethumb_video_interval_get(const Ethumb *e) EINA_WARN_UNUSED_RE
  * @param e A pointer to an Ethumb object.
  * @param ntimes The number of times the video loops.
  */
-EAPI void         ethumb_video_ntimes_set(Ethumb *e, unsigned int ntimes) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_video_ntimes_set(Ethumb *e, unsigned int ntimes) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the number of times the video loops (if applicable).
  *
  * @param e A pointer to an Ethumb object.
  * @return The number of times the video loops.
  */
-EAPI unsigned int ethumb_video_ntimes_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API unsigned int ethumb_video_ntimes_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the thumbnail framerate.
@@ -463,14 +439,14 @@ EAPI unsigned int ethumb_video_ntimes_get(const Ethumb *e) EINA_WARN_UNUSED_RESU
  * @param e A pointer to an Ethumb object.
  * @param fps New framerate of the thumbnail (default 10).
  */
-EAPI void         ethumb_video_fps_set(Ethumb *e, unsigned int fps) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_video_fps_set(Ethumb *e, unsigned int fps) EINA_ARG_NONNULL(1);
 /**
  * @brief Get the thumbnail framerate.
  *
  * @param e A pointer to an Ethumb object.
  * @return Current framerate of the thumbnail.
  */
-EAPI unsigned int ethumb_video_fps_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API unsigned int ethumb_video_fps_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Set the page number to thumbnail in paged documents
@@ -478,7 +454,7 @@ EAPI unsigned int ethumb_video_fps_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT 
  * @param e handle of the current thumbnailer.
  * @param page the page number.
  */
-EAPI void         ethumb_document_page_set(Ethumb *e, unsigned int page) EINA_ARG_NONNULL(1);
+ETHUMB_API void         ethumb_document_page_set(Ethumb *e, unsigned int page) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the page number thumbnailed in paged documents
@@ -486,7 +462,7 @@ EAPI void         ethumb_document_page_set(Ethumb *e, unsigned int page) EINA_AR
  * @param e handle of the current thumbnailer.
  * @return the page number.
  */
-EAPI unsigned int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API unsigned int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 /**
  * @}
  */
@@ -505,7 +481,7 @@ EAPI unsigned int ethumb_document_page_get(const Ethumb *e) EINA_WARN_UNUSED_RES
  *            (EET or Edje for instance), @a key is the key used to locate the
  *            right resource inside the file. NULL if not applicable.
  */
-EAPI Eina_Bool ethumb_file_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1, 2);
+ETHUMB_API Eina_Bool ethumb_file_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1, 2);
 /**
  * @brief Get the file for which to generate thumbnails.
  *
@@ -515,14 +491,14 @@ EAPI Eina_Bool ethumb_file_set(Ethumb *e, const char *path, const char *key) EIN
  *                 can store several of them. NULL if not applicable.
  * @see ethumb_file_set
  */
-EAPI void      ethumb_file_get(const Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
+ETHUMB_API void      ethumb_file_get(const Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Reset the source file information.
  *
  * @param e A pointer to an Ethumb object.
  */
-EAPI void      ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
+ETHUMB_API void      ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Generate the thumbnail.
@@ -533,7 +509,7 @@ EAPI void      ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
  *
  * @return EINA_TRUE on success and EINA_FALSE on failure
  */
-EAPI Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data) EINA_ARG_NONNULL(1, 2);
+ETHUMB_API Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief test if the thumbnailer exists
@@ -542,7 +518,7 @@ EAPI Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const 
  *
  * @return EINA_TRUE if thumbnailer exists and EINA_FALSE otherwise.
  */
-EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+ETHUMB_API Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @brief Duplicate an thumbnailer
@@ -551,7 +527,7 @@ EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL
  *
  * @return a new allocated copy of the thumbnailer.
  */
-EAPI Ethumb *ethumb_dup(const Ethumb *e) EINA_ARG_NONNULL(1);
+ETHUMB_API Ethumb *ethumb_dup(const Ethumb *e) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Compare two thumbnailers.
@@ -561,12 +537,12 @@ EAPI Ethumb *ethumb_dup(const Ethumb *e) EINA_ARG_NONNULL(1);
  *
  * @return EINA_TRUE if the thumbnailers are equal and EINA_FALSE otherwise
  */
-EAPI Eina_Bool ethumb_cmp(const Ethumb *e1, const Ethumb *e2) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+ETHUMB_API Eina_Bool ethumb_cmp(const Ethumb *e1, const Ethumb *e2) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
-EAPI int ethumb_hash(const void *key, int key_length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
-EAPI int ethumb_key_cmp(const void *key1, int key1_length,
+ETHUMB_API int ethumb_hash(const void *key, int key_length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+ETHUMB_API int ethumb_key_cmp(const void *key1, int key1_length,
                         const void *key2, int key2_length) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT EINA_PURE;
-EAPI unsigned int ethumb_length(const void *key) EINA_PURE EINA_WARN_UNUSED_RESULT;
+ETHUMB_API unsigned int ethumb_length(const void *key) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
   /**
  * @}
@@ -578,8 +554,5 @@ EAPI unsigned int ethumb_length(const void *key) EINA_PURE EINA_WARN_UNUSED_RESU
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif /* __ETHUMB_H__ */

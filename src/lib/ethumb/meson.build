@@ -18,7 +18,7 @@ ethumb_lib = library('ethumb',
     dependencies: ethumb_pub_deps + ethumb_ext_deps + ethumb_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DETHUMB_BUILD'],
     version : meson.project_version()
 )
 

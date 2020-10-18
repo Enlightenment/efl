@@ -68,7 +68,7 @@
 #include "../../static_libs/buildsystem/buildsystem.h"
 
 static Ethumb_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Ethumb_Version *ethumb_version = &_version;
+ETHUMB_API Ethumb_Version *ethumb_version = &_version;
 
 static int _log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
@@ -89,7 +89,7 @@ static Eina_Hash *_plugins_ext = NULL;
 static Eina_Array *_plugins = NULL;
 static Eina_Prefix *_pfx = NULL;
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_plugin_register(const Ethumb_Plugin *plugin)
 {
    const char * const *ext;
@@ -116,7 +116,7 @@ ethumb_plugin_register(const Ethumb_Plugin *plugin)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_plugin_unregister(const Ethumb_Plugin *plugin)
 {
    const char * const *ext;
@@ -222,7 +222,7 @@ _ethumb_plugins_unload(void)
    _plugins_loaded = EINA_FALSE;
 }
 
-EAPI int
+ETHUMB_API int
 ethumb_init(void)
 {
    const char *home;
@@ -297,7 +297,7 @@ ethumb_init(void)
    return 0;
 }
 
-EAPI int
+ETHUMB_API int
 ethumb_shutdown(void)
 {
    if (initcount <= 0)
@@ -326,7 +326,7 @@ ethumb_shutdown(void)
    return initcount;
 }
 
-EAPI Ethumb *
+ETHUMB_API Ethumb *
 ethumb_new(void)
 {
    Ethumb *ethumb;
@@ -424,7 +424,7 @@ _ethumb_frame_free(Ethumb_Frame *frame)
    free(frame);
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_free(Ethumb *ethumb)
 {
    EINA_SAFETY_ON_NULL_RETURN(ethumb);
@@ -443,7 +443,7 @@ ethumb_free(Ethumb *ethumb)
    free(ethumb);
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -473,7 +473,7 @@ ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s)
    e->category = NULL;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_size_set(Ethumb *e, int tw, int th)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -485,7 +485,7 @@ ethumb_thumb_size_set(Ethumb *e, int tw, int th)
    e->th = th;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -494,7 +494,7 @@ ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th)
    if (th) *th = e->th;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -506,14 +506,14 @@ ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f)
    e->format = f;
 }
 
-EAPI Ethumb_Thumb_Format
+ETHUMB_API Ethumb_Thumb_Format
 ethumb_thumb_format_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    return e->format;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -525,14 +525,14 @@ ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a)
    e->aspect = a;
 }
 
-EAPI Ethumb_Thumb_Aspect
+ETHUMB_API Ethumb_Thumb_Aspect
 ethumb_thumb_aspect_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    return e->aspect;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation o)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -550,14 +550,14 @@ ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation o)
    e->orientation = o;
 }
 
-EAPI Ethumb_Thumb_Orientation
+ETHUMB_API Ethumb_Thumb_Orientation
 ethumb_thumb_orientation_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    return e->orientation;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_crop_align_set(Ethumb *e, float x, float y)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -567,7 +567,7 @@ ethumb_thumb_crop_align_set(Ethumb *e, float x, float y)
    e->crop_y = y;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -576,7 +576,7 @@ ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y)
    if (y) *y = e->crop_y;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_quality_set(Ethumb *e, int quality)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -585,14 +585,14 @@ ethumb_thumb_quality_set(Ethumb *e, int quality)
    e->quality = quality;
 }
 
-EAPI int
+ETHUMB_API int
 ethumb_thumb_quality_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    return e->quality;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_compress_set(Ethumb *e, int compress)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -601,14 +601,14 @@ ethumb_thumb_compress_set(Ethumb *e, int compress)
    e->compress = compress;
 }
 
-EAPI int
+ETHUMB_API int
 ethumb_thumb_compress_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    return e->compress;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const char *swallow)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -681,7 +681,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
    return EINA_TRUE;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, const char **swallow)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -700,7 +700,7 @@ ethumb_frame_get(const Ethumb *e, const char **theme_file, const char **group, c
      }
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
 {
    char *sanitized_path;
@@ -712,7 +712,7 @@ ethumb_thumb_dir_path_set(Ethumb *e, const char *path)
    free(sanitized_path);
 }
 
-EAPI const char *
+ETHUMB_API const char *
 ethumb_thumb_dir_path_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
@@ -720,7 +720,7 @@ ethumb_thumb_dir_path_get(const Ethumb *e)
    return e->thumb_dir;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_category_set(Ethumb *e, const char *category)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -729,7 +729,7 @@ ethumb_thumb_category_set(Ethumb *e, const char *category)
    eina_stringshare_replace(&e->category, category);
 }
 
-EAPI const char *
+ETHUMB_API const char *
 ethumb_thumb_category_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
@@ -737,7 +737,7 @@ ethumb_thumb_category_get(const Ethumb *e)
    return e->category;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_video_start_set(Ethumb *e, float start)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -748,7 +748,7 @@ ethumb_video_start_set(Ethumb *e, float start)
    e->video.start = start;
 }
 
-EAPI float
+ETHUMB_API float
 ethumb_video_start_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -756,7 +756,7 @@ ethumb_video_start_get(const Ethumb *e)
    return e->video.start;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_video_time_set(Ethumb *e, float t)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -765,7 +765,7 @@ ethumb_video_time_set(Ethumb *e, float t)
    e->video.time = t;
 }
 
-EAPI float
+ETHUMB_API float
 ethumb_video_time_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -773,7 +773,7 @@ ethumb_video_time_get(const Ethumb *e)
    return e->video.time;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_video_interval_set(Ethumb *e, float interval)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -782,7 +782,7 @@ ethumb_video_interval_set(Ethumb *e, float interval)
    e->video.interval = interval;
 }
 
-EAPI float
+ETHUMB_API float
 ethumb_video_interval_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -790,7 +790,7 @@ ethumb_video_interval_get(const Ethumb *e)
    return e->video.interval;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_video_ntimes_set(Ethumb *e, unsigned int ntimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -800,7 +800,7 @@ ethumb_video_ntimes_set(Ethumb *e, unsigned int ntimes)
    e->video.ntimes = ntimes;
 }
 
-EAPI unsigned int
+ETHUMB_API unsigned int
 ethumb_video_ntimes_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -808,7 +808,7 @@ ethumb_video_ntimes_get(const Ethumb *e)
    return e->video.ntimes;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_video_fps_set(Ethumb *e, unsigned int fps)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -818,7 +818,7 @@ ethumb_video_fps_set(Ethumb *e, unsigned int fps)
    e->video.fps = fps;
 }
 
-EAPI unsigned int
+ETHUMB_API unsigned int
 ethumb_video_fps_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -826,7 +826,7 @@ ethumb_video_fps_get(const Ethumb *e)
    return e->video.fps;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_document_page_set(Ethumb *e, unsigned int page)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -835,7 +835,7 @@ ethumb_document_page_set(Ethumb *e, unsigned int page)
    e->document.page = page;
 }
 
-EAPI unsigned int
+ETHUMB_API unsigned int
 ethumb_document_page_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
@@ -843,7 +843,7 @@ ethumb_document_page_get(const Ethumb *e)
    return e->document.page;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_file_set(Ethumb *e, const char *path, const char *key)
 {
    char *sanitized_path;
@@ -868,7 +868,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
    return EINA_TRUE;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_file_get(const Ethumb *e, const char **path, const char **key)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -1083,7 +1083,7 @@ _ethumb_file_generate_path(Ethumb *e)
    eina_stringshare_del(category);
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_file_free(Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -1096,7 +1096,7 @@ ethumb_file_free(Ethumb *e)
    eina_stringshare_replace(&e->thumb_key, NULL);
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
 {
    char *sanitized_path;
@@ -1118,7 +1118,7 @@ ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key)
      }
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -1129,7 +1129,7 @@ ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
    if (key) *key = e->thumb_key;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_hash(Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -1143,7 +1143,7 @@ ethumb_thumb_hash(Ethumb *e)
      }
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src)
 {
    EINA_SAFETY_ON_NULL_RETURN(dst);
@@ -1155,7 +1155,7 @@ ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src)
    dst->src_hash = eina_stringshare_ref(src->src_hash);
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
 {
    float a;
@@ -1179,7 +1179,7 @@ ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
      }
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
 {
    float ia;
@@ -1192,7 +1192,7 @@ ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
    ethumb_calculate_aspect_from_ratio(e, ia, w, h);
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw, int *fh)
 {
    float a;
@@ -1228,7 +1228,7 @@ ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw,
      }
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int *fh)
 {
    float ia;
@@ -1275,7 +1275,7 @@ _ethumb_plugin_generate(Ethumb *e)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_plugin_image_resize(Ethumb *e, int w, int h)
 {
    Evas_Object *img;
@@ -1305,7 +1305,7 @@ ethumb_plugin_image_resize(Ethumb *e, int w, int h)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_image_save(Ethumb *e)
 {
    Eina_Bool r;
@@ -1561,7 +1561,7 @@ _ethumb_finished_idler_cb(void *data)
    return EINA_FALSE;
 }
 
-EAPI void
+ETHUMB_API void
 ethumb_finished_callback_call(Ethumb *e, int result)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
@@ -1574,7 +1574,7 @@ ethumb_finished_callback_call(Ethumb *e, int result)
    e->pdata = NULL;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data)
 {
    int r;
@@ -1625,7 +1625,7 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_exists(Ethumb *e)
 {
    struct stat thumb, src;
@@ -1653,7 +1653,7 @@ ethumb_exists(Ethumb *e)
    return r;
 }
 
-EAPI Evas *
+ETHUMB_API Evas *
 ethumb_evas_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
@@ -1661,7 +1661,7 @@ ethumb_evas_get(const Ethumb *e)
    return e->sub_e;
 }
 
-EAPI Ecore_Evas *
+ETHUMB_API Ecore_Evas *
 ethumb_ecore_evas_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
@@ -1669,7 +1669,7 @@ ethumb_ecore_evas_get(const Ethumb *e)
    return e->sub_ee;
 }
 
-EAPI Ethumb *
+ETHUMB_API Ethumb *
 ethumb_dup(const Ethumb *e)
 {
    Ecore_Evas *ee;
@@ -1756,7 +1756,7 @@ ethumb_dup(const Ethumb *e)
   if (!EINA_FLT_EQ(e1->Param, e2->Param))      \
     return EINA_TRUE;
 
-EAPI Eina_Bool
+ETHUMB_API Eina_Bool
 ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
 {
    CHECK_FLT_DELTA(crop_x);
@@ -1783,7 +1783,7 @@ ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
    return EINA_FALSE;
 }
 
-EAPI unsigned int
+ETHUMB_API unsigned int
 ethumb_length(EINA_UNUSED const void *key)
 {
    return sizeof (Ethumb);
@@ -1797,7 +1797,7 @@ ethumb_length(EINA_UNUSED const void *key)
   if (!EINA_FLT_EQ(e1->Param, e2->Param))      \
     return e1->Param - e2->Param;
 
-EAPI int
+ETHUMB_API int
 ethumb_key_cmp(const void *key1, EINA_UNUSED int key1_length,
                const void *key2, EINA_UNUSED int key2_length)
 {
@@ -1841,7 +1841,7 @@ ethumb_key_cmp(const void *key1, EINA_UNUSED int key1_length,
 #define HASH_PARAM_D(Param) r ^= eina_hash_int64((unsigned long long int*)&e->Param, 0);
 #define HASH_PARAM_F(Param) r ^= eina_hash_int32((unsigned int*) &e->Param, 0);
 
-EAPI int
+ETHUMB_API int
 ethumb_hash(const void *key, int key_length EINA_UNUSED)
 {
    const Ethumb *e = key;
