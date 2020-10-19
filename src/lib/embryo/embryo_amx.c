@@ -233,7 +233,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 
 /*** EXPORTED CALLS ***/
 
-EAPI Embryo_Program *
+EMBRYO_API Embryo_Program *
 embryo_program_new(void *data, int size)
 {
    Embryo_Program *ep;
@@ -257,7 +257,7 @@ embryo_program_new(void *data, int size)
    return NULL;
 }
 
-EAPI Embryo_Program *
+EMBRYO_API Embryo_Program *
 embryo_program_const_new(void *data, int size)
 {
    Embryo_Program *ep;
@@ -276,7 +276,7 @@ embryo_program_const_new(void *data, int size)
    return NULL;
 }
 
-EAPI Embryo_Program *
+EMBRYO_API Embryo_Program *
 embryo_program_load(const char *file)
 {
    Embryo_Program *ep;
@@ -323,7 +323,7 @@ embryo_program_load(const char *file)
    return ep;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_free(Embryo_Program *ep)
 {
    int i;
@@ -340,7 +340,7 @@ embryo_program_free(Embryo_Program *ep)
    free(ep);
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell (*func)(Embryo_Program *ep, Embryo_Cell *params))
 {
    Embryo_Func_Stub *func_entry;
@@ -395,7 +395,7 @@ embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell
      }
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_vm_reset(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
@@ -411,7 +411,7 @@ embryo_program_vm_reset(Embryo_Program *ep)
    ep->stk = ep->stp;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_vm_push(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
@@ -433,7 +433,7 @@ embryo_program_vm_push(Embryo_Program *ep)
    embryo_program_vm_reset(ep);
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_vm_pop(Embryo_Program *ep)
 {
    if ((!ep) || (!ep->base)) return;
@@ -443,7 +443,7 @@ embryo_program_vm_pop(Embryo_Program *ep)
    ep->base = NULL;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_swap_16(unsigned short *v
 #ifndef WORDS_BIGENDIAN
                EINA_UNUSED
@@ -455,7 +455,7 @@ embryo_swap_16(unsigned short *v
 #endif
 }
 
-EAPI void
+EMBRYO_API void
 embryo_swap_32(unsigned int *v
 #ifndef WORDS_BIGENDIAN
                EINA_UNUSED
@@ -467,7 +467,7 @@ embryo_swap_32(unsigned int *v
 #endif
 }
 
-EAPI Embryo_Function
+EMBRYO_API Embryo_Function
 embryo_program_function_find(Embryo_Program *ep, const char *name)
 {
    int first, last, mid, result;
@@ -495,7 +495,7 @@ embryo_program_function_find(Embryo_Program *ep, const char *name)
    return EMBRYO_FUNCTION_NONE;
 }
 
-EAPI Embryo_Cell
+EMBRYO_API Embryo_Cell
 embryo_program_variable_find(Embryo_Program *ep, const char *name)
 {
    int first, last, mid, result;
@@ -525,7 +525,7 @@ embryo_program_variable_find(Embryo_Program *ep, const char *name)
    return EMBRYO_CELL_NONE;
 }
 
-EAPI int
+EMBRYO_API int
 embryo_program_variable_count_get(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
@@ -536,7 +536,7 @@ embryo_program_variable_count_get(Embryo_Program *ep)
    return NUMENTRIES(hdr, pubvars, tags);
 }
 
-EAPI Embryo_Cell
+EMBRYO_API Embryo_Cell
 embryo_program_variable_get(Embryo_Program *ep, int num)
 {
    Embryo_Cell paddr;
@@ -549,35 +549,35 @@ embryo_program_variable_get(Embryo_Program *ep, int num)
    return EMBRYO_CELL_NONE;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_error_set(Embryo_Program *ep, Embryo_Error error)
 {
    if (!ep) return;
    ep->error = error;
 }
 
-EAPI Embryo_Error
+EMBRYO_API Embryo_Error
 embryo_program_error_get(Embryo_Program *ep)
 {
    if (!ep) return EMBRYO_ERROR_NONE;
    return ep->error;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_data_set(Embryo_Program *ep, void *data)
 {
    if (!ep) return;
    ep->data = data;
 }
 
-EAPI void *
+EMBRYO_API void *
 embryo_program_data_get(Embryo_Program *ep)
 {
    if (!ep) return NULL;
    return ep->data;
 }
 
-EAPI const char *
+EMBRYO_API const char *
 embryo_error_string_get(Embryo_Error error)
 {
    const char *messages[] =
@@ -616,7 +616,7 @@ embryo_error_string_get(Embryo_Error error)
    return messages[error];
 }
 
-EAPI int
+EMBRYO_API int
 embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell)
 {
    int len;
@@ -632,7 +632,7 @@ embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell)
    return len;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
 {
    int i;
@@ -669,7 +669,7 @@ embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
    dst[i] = 0;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_data_string_set(Embryo_Program *ep, const char *src, Embryo_Cell *str_cell)
 {
    int i;
@@ -710,7 +710,7 @@ embryo_data_string_set(Embryo_Program *ep, const char *src, Embryo_Cell *str_cel
    str_cell[i] = 0;
 }
 
-EAPI Embryo_Cell *
+EMBRYO_API Embryo_Cell *
 embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr)
 {
    Embryo_Header *hdr;
@@ -723,7 +723,7 @@ embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr)
    return (Embryo_Cell *)(data + (int)addr);
 }
 
-EAPI Embryo_Cell
+EMBRYO_API Embryo_Cell
 embryo_data_heap_push(Embryo_Program *ep, int cells)
 {
    Embryo_Cell addr;
@@ -736,7 +736,7 @@ embryo_data_heap_push(Embryo_Program *ep, int cells)
    return addr;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to)
 {
    if (!ep) return;
@@ -744,7 +744,7 @@ embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to)
    if (ep->hea > down_to) ep->hea = down_to;
 }
 
-EAPI int
+EMBRYO_API int
 embryo_program_recursion_get(Embryo_Program *ep)
 {
    return ep->run_count;
@@ -770,7 +770,7 @@ embryo_program_recursion_get(Embryo_Program *ep)
 #define BREAK     break
 #endif
 
-EAPI Embryo_Status
+EMBRYO_API Embryo_Status
 embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 {
    Embryo_Header *hdr;
@@ -1898,14 +1898,14 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    return EMBRYO_PROGRAM_OK;
 }
 
-EAPI Embryo_Cell
+EMBRYO_API Embryo_Cell
 embryo_program_return_value_get(Embryo_Program *ep)
 {
    if (!ep) return 0;
    return ep->retval;
 }
 
-EAPI void
+EMBRYO_API void
 embryo_program_max_cycle_run_set(Embryo_Program *ep, int max)
 {
    if (!ep) return;
@@ -1913,14 +1913,14 @@ embryo_program_max_cycle_run_set(Embryo_Program *ep, int max)
    ep->max_run_cycles = max;
 }
 
-EAPI int
+EMBRYO_API int
 embryo_program_max_cycle_run_get(Embryo_Program *ep)
 {
    if (!ep) return 0;
    return ep->max_run_cycles;
 }
 
-EAPI int
+EMBRYO_API int
 embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
 {
    Embryo_Param *pr;
@@ -1941,7 +1941,7 @@ embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
    return 1;
 }
 
-EAPI int
+EMBRYO_API int
 embryo_parameter_string_push(Embryo_Program *ep, const char *str)
 {
    Embryo_Param *pr;
@@ -1971,7 +1971,7 @@ embryo_parameter_string_push(Embryo_Program *ep, const char *str)
    return 1;
 }
 
-EAPI int
+EMBRYO_API int
 embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num)
 {
    Embryo_Param *pr;
