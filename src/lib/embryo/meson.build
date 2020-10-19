@@ -22,7 +22,7 @@ embryo_lib = library('embryo',
     dependencies: [embryo_deps, embryo_pub_deps, embryo_ext_deps],
     include_directories : config_dir + [include_directories(join_paths('..','..'))],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEMBRYO_BUILD'],
     version : meson.project_version()
 )
 

@@ -146,7 +146,7 @@ enum _Embryo_Opcode
      EMBRYO_OP_NUM_OPCODES
 };
 
-EAPI extern int _embryo_default_log_dom ;
+EMBRYO_API extern int _embryo_default_log_dom ;
 
 #ifdef EMBRYO_DEFAULT_LOG_COLOR
 # undef EMBRYO_DEFAULT_LOG_COLOR
