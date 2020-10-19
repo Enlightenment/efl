@@ -73,6 +73,7 @@ struct _Ecore_Evas_Engine_Data_Win32
    {
       unsigned char region     : 1;
       unsigned char fullscreen : 1;
+      unsigned char maximized  : 1;
    } state;
 };
 
@@ -99,6 +100,7 @@ static Eina_Bool _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED
 static Eina_Bool _ecore_evas_win32_event_window_delete_request(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 static Eina_Bool _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+
 
 /* Private functions */
 
@@ -433,9 +435,11 @@ _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type 
 {
    struct {
       struct {
+         unsigned char maximized : 1;
          unsigned char fullscreen : 1;
       } win32;
       struct {
+         Eina_Bool maximized : 1;
          Eina_Bool fullscreen : 1;
       } prop;
    } prev;
@@ -455,12 +459,16 @@ _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type 
    wdata = ee->engine.data;
 
    prev.win32.fullscreen = wdata->state.fullscreen;
+   prev.win32.maximized = wdata->state.maximized;
 
    prev.prop.fullscreen = ee->prop.fullscreen;
+   prev.prop.maximized = ee->prop.maximized;
 
    wdata->state.fullscreen = 0;
+   wdata->state.maximized = 0;
 
    ee->prop.fullscreen = EINA_FALSE;
+   ee->prop.maximized = EINA_FALSE;
 
    /* we get the states status */
    ecore_win32_window_state_get(e->window, &state, &num);
@@ -474,6 +482,10 @@ _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type 
                    ee->prop.fullscreen = 1;
                    wdata->state.fullscreen = 1;
                    break;
+                case ECORE_WIN32_WINDOW_STATE_MAXIMIZED:
+                   ee->prop.maximized = 1;
+                   wdata->state.maximized = 1;
+                   break;
                 default:
                    break;
                }
@@ -482,7 +494,9 @@ _ecore_evas_win32_event_window_property_change(void *data EINA_UNUSED, int type 
      }
 
    if ((prev.win32.fullscreen != wdata->state.fullscreen) ||
-       (prev.prop.fullscreen != ee->prop.fullscreen))
+       (prev.prop.fullscreen != ee->prop.fullscreen) ||
+       (prev.win32.maximized != wdata->state.maximized) ||
+       (prev.prop.maximized != ee->prop.maximized))
      {
         if (ee->func.fn_state_change)
           ee->func.fn_state_change(ee);
@@ -507,6 +521,8 @@ _ecore_evas_win32_state_update(Ecore_Evas *ee)
      state[num++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED_VERT;
    if (ee->prop.maximized)
      state[num++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED_HORZ;
+   if (ee->prop.maximized)
+     state[num++] = ECORE_WIN32_WINDOW_STATE_MAXIMIZED;
 //   if (bd->client.netwm.state.shaded)
 //     state[num++] = ECORE_WIN32_WINDOW_STATE_SHADED;
    /* if (ee->prop.focus_skip) */
@@ -830,7 +846,8 @@ _ecore_evas_win32_activate(Ecore_Evas *ee)
 {
    INF("ecore evas activate");
 
-   ecore_win32_window_focus((Ecore_Win32_Window *)ee->prop.window);
+   ecore_evas_show(ee);
+   ecore_win32_window_activate((Ecore_Win32_Window *)ee->prop.window);
 }
 
 static void
@@ -970,6 +987,30 @@ _ecore_evas_win32_override_set(Ecore_Evas *ee, Eina_Bool on)
    if (ee->should_be_visible) ecore_win32_window_show(window);
    if (ecore_evas_focus_device_get(ee, NULL)) ecore_win32_window_focus(window);
    ee->prop.override = on;
+}
+
+static void
+_ecore_evas_win32_maximized_set(Ecore_Evas *ee, Eina_Bool on)
+{
+   Ecore_Evas_Engine_Data_Win32 *wdata = ee->engine.data;
+
+   INF("ecore evas maximized set");
+
+   wdata->state.maximized = !!on;
+   if (ee->should_be_visible)
+     {
+        struct _Ecore_Win32_Window *window;
+
+        window = (Ecore_Win32_Window *)ee->prop.window;
+        ecore_win32_window_maximized_set(window, on);
+     }
+   else
+     {
+        if (ee->prop.maximized == on) return;
+        ee->prop.maximized = on;
+        wdata->state.maximized = on;
+        _ecore_evas_win32_state_update(ee);
+     }
 }
 
 static void
@@ -1371,7 +1412,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
    _ecore_evas_win32_iconified_set,
    _ecore_evas_win32_borderless_set,
    _ecore_evas_win32_override_set,
-   NULL,
+   _ecore_evas_win32_maximized_set,
    _ecore_evas_win32_fullscreen_set,
    NULL, /* _ecore_evas_x_avoid_damage_set */
    NULL, /* _ecore_evas_x_withdrawn_set */

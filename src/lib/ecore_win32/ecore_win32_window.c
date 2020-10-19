@@ -146,6 +146,7 @@ _ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    w->pointer_is_in = 0;
    w->borderless    = 0;
    w->iconified     = 0;
+   w->maximized     = 0;
    w->fullscreen    = 0;
 
    w->drag.x = x;
@@ -1155,6 +1156,29 @@ ecore_win32_window_lower(Ecore_Win32_Window *window)
 }
 
 /**
+ * @brief Activate the given window.
+ *
+ * @param window The window to activate.
+ *
+ * This functions activates the windows @p window. If @p window
+ * is @c NULL, this function does nothing. Otherwise, the window is
+ * activated. So if is minimized or maximized, the window is restored
+ * to its original position and size.
+ *
+ *@since 1.26
+ */
+EAPI void
+ecore_win32_window_activate(Ecore_Win32_Window *window)
+{
+   if (!window) return;
+
+   INF("activate window");
+
+   ShowWindow(window->window, SW_RESTORE);
+   window->iconified = EINA_FALSE;
+}
+
+/**
  * @brief Set the title of the given window.
  *
  * @param window The window to set the title.
@@ -1337,6 +1361,37 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
 }
 
 /**
+ * @brief Maximize or restore the given window.
+ *
+ * @param window The window.
+ * @param on @c EINA_TRUE for maximized window, @c EINA_FALSE to
+ * restore it.
+ *
+ * This function maximizes @p window if @p on is set
+ * to @c EINA_TRUE, or restores the window if it is set to
+ * @c EINA_FALSE. If @p window is @c NULL or if the state
+ * does not change (like setting to fullscreenmaximized the window is already
+ * maximized), this function does nothing.
+ *
+ * @since 1.26
+ */
+EAPI void
+ecore_win32_window_maximized_set(Ecore_Win32_Window *window,
+                                 Eina_Bool           on)
+{
+   if (!window) return;
+
+   if (((window->maximized) && (on)) ||
+       ((!window->maximized) && (!on)))
+     return;
+
+   INF("maximizing window: %s", on ? "yes" : "no");
+
+   ShowWindow(window->window, on ? SW_MAXIMIZE : SW_RESTORE);
+   window->maximized = on;
+}
+
+/**
  * @brief Set the given window to fullscreen.
  *
  * @param window The window.
@@ -1502,8 +1557,7 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
             window->state.maximized_horz = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_MAXIMIZED:
-            window->state.maximized_horz = 1;
-            window->state.maximized_vert = 1;
+            window->state.maximized = 1;
             break;
           case ECORE_WIN32_WINDOW_STATE_SHADED:
             window->state.shaded = 1;
