@@ -62,7 +62,7 @@ _ecore_imf_evas_event_mouse_flags_wrap(Evas_Button_Flags evas_flags,
      *imf_flags |= ECORE_IMF_MOUSE_TRIPLE_CLICK;
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event,
                                    Ecore_IMF_Event_Mouse_In *imf_event)
 {
@@ -79,7 +79,7 @@ ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event,
    _ecore_imf_evas_event_locks_wrap(evas_event->locks, &imf_event->locks);
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event,
                                     Ecore_IMF_Event_Mouse_Out *imf_event)
 {
@@ -96,7 +96,7 @@ ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event,
    _ecore_imf_evas_event_locks_wrap(evas_event->locks, &imf_event->locks);
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event,
                                      Ecore_IMF_Event_Mouse_Move *imf_event)
 {
@@ -117,7 +117,7 @@ ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event,
    _ecore_imf_evas_event_locks_wrap(evas_event->locks, &imf_event->locks);
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event,
                                      Ecore_IMF_Event_Mouse_Down *imf_event)
 {
@@ -135,7 +135,7 @@ ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event,
    _ecore_imf_evas_event_mouse_flags_wrap(evas_event->flags, &imf_event->flags);
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event,
                                    Ecore_IMF_Event_Mouse_Up *imf_event)
 {
@@ -153,7 +153,7 @@ ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event,
    _ecore_imf_evas_event_mouse_flags_wrap(evas_event->flags, &imf_event->flags);
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event,
                                       Ecore_IMF_Event_Mouse_Wheel *imf_event)
 {
@@ -172,7 +172,7 @@ ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event,
    imf_event->timestamp = evas_event->timestamp;
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
                                    Ecore_IMF_Event_Key_Down *imf_event)
 {
@@ -203,7 +203,7 @@ ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
    _ecore_imf_evas_event_locks_wrap(evas_event->locks, &imf_event->locks);
 }
 
-EAPI void
+ECORE_IMF_EVAS_API void
 ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
                                  Ecore_IMF_Event_Key_Up *imf_event)
 {
