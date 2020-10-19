@@ -4,29 +4,29 @@
 #include <Ecore_IMF.h>
 #include <Evas.h>
 
-#ifdef EAPI
-# undef EAPI
+#ifdef ECORE_IMF_EVAS_API
+# undef ECORE_IMF_EVAS_API
 #endif
 
 #ifdef _WIN32
 # ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
+#   define ECORE_IMF_EVAS_API __declspec(dllexport)
 #  else
-#   define EAPI
+#   define ECORE_IMF_EVAS_API
 #  endif
 # else
-#  define EAPI __declspec(dllimport)
+#  define ECORE_IMF_EVAS_API __declspec(dllimport)
 # endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
+#   define ECORE_IMF_EVAS_API __attribute__ ((visibility("default")))
 #  else
-#   define EAPI
+#   define ECORE_IMF_EVAS_API
 #  endif
 # else
-#  define EAPI
+#  define ECORE_IMF_EVAS_API
 # endif
 #endif
 
@@ -52,7 +52,7 @@ extern "C" {
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  */
-EAPI void ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event, Ecore_IMF_Event_Mouse_In *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event, Ecore_IMF_Event_Mouse_In *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -61,7 +61,7 @@ EAPI void ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event, Ec
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  */
-EAPI void ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event, Ecore_IMF_Event_Mouse_Out *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event, Ecore_IMF_Event_Mouse_Out *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -70,7 +70,7 @@ EAPI void ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event, 
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  */
-EAPI void ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event, Ecore_IMF_Event_Mouse_Move *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event, Ecore_IMF_Event_Mouse_Move *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -79,7 +79,7 @@ EAPI void ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  */
-EAPI void ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event, Ecore_IMF_Event_Mouse_Down *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event, Ecore_IMF_Event_Mouse_Down *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -88,7 +88,7 @@ EAPI void ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  */
-EAPI void ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event, Ecore_IMF_Event_Mouse_Up *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event, Ecore_IMF_Event_Mouse_Up *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -97,7 +97,7 @@ EAPI void ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event, Ec
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  */
-EAPI void ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event, Ecore_IMF_Event_Mouse_Wheel *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event, Ecore_IMF_Event_Mouse_Wheel *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -128,7 +128,7 @@ EAPI void ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_eve
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, data);
  * @endcode
  */
-EAPI void ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event, Ecore_IMF_Event_Key_Down *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event, Ecore_IMF_Event_Key_Down *imf_event);
 
 /**
  * @ingroup Ecore_IMF_Evas_Group
@@ -159,13 +159,10 @@ EAPI void ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event, Ec
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP, _key_up_cb, data);
  * @endcode
  */
-EAPI void ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event, Ecore_IMF_Event_Key_Up *imf_event);
+ECORE_IMF_EVAS_API void ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event, Ecore_IMF_Event_Key_Up *imf_event);
 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
