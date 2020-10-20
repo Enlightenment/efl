@@ -1251,7 +1251,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 #endif
         if (efl_text_interactive_have_selection_get(obj))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (efl_text_cursor_object_move(cur,EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_PREVIOUS))
+        if (efl_text_cursor_object_move(cur,EFL_TEXT_CURSOR_MOVE_TYPE_CLUSTER_PREVIOUS))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
@@ -1270,7 +1270,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
 #endif
         if (efl_text_interactive_have_selection_get(obj))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-        if (efl_text_cursor_object_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT))
+        if (efl_text_cursor_object_move(cur, EFL_TEXT_CURSOR_MOVE_TYPE_CLUSTER_NEXT))
           ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
@@ -1551,7 +1551,7 @@ end:
 }
 
 static void
-_cursor_char_coord_set(Efl_Canvas_Textblock *obj, Efl_Text_Cursor_Object *cur, Evas_Coord canvasx, Evas_Coord canvasy, Evas_Coord *_cx, Evas_Coord *_cy)
+_cursor_cluster_coord_set(Efl_Canvas_Textblock *obj, Efl_Text_Cursor_Object *cur, Evas_Coord canvasx, Evas_Coord canvasy, Evas_Coord *_cx, Evas_Coord *_cy)
 {
    Evas_Coord cx, cy;
    Evas_Coord x, y, lh = 0, cly = 0;
@@ -1582,7 +1582,7 @@ _cursor_char_coord_set(Efl_Canvas_Textblock *obj, Efl_Text_Cursor_Object *cur, E
    efl_del(line_cur);
    /* No need to check return value if not able to set the char coord Textblock
     * will take care */
-   efl_text_cursor_object_char_coord_set(cur, EINA_POSITION2D(cx, cy));
+   efl_text_cursor_object_cluster_coord_set(cur, EINA_POSITION2D(cx, cy));
    if (_cx) *_cx = cx;
    if (_cy) *_cy = cy;
 }
@@ -1676,7 +1676,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EIN
              goto end;
           }
      }
-   _cursor_char_coord_set(obj, cur, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _cursor_cluster_coord_set(obj, cur, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
    if (dosel)
      {
@@ -1721,7 +1721,7 @@ _mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
      }
 #endif
 
-   _cursor_char_coord_set(obj, cur, ev->canvas.x, ev->canvas.y, &cx, &cy);
+   _cursor_cluster_coord_set(obj, cur, ev->canvas.x, ev->canvas.y, &cx, &cy);
 
    if (en->select_allow)
      {
