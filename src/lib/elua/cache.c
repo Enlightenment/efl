@@ -141,7 +141,7 @@ getf_map(lua_State *L EINA_UNUSED, void *ud, size_t *size)
    return fmap;
 }
 
-EAPI int
+ELUA_API int
 elua_io_loadfile(const Elua_State *es, const char *fname)
 {
    Map_Stream s;

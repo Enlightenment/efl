@@ -7,7 +7,7 @@ static Eina_Prefix *_elua_pfx = NULL;
 static int _elua_init_counter = 0;
 int _elua_log_dom = -1;
 
-EAPI int
+ELUA_API int
 elua_init(void)
 {
    const char *dom = "elua";
@@ -39,7 +39,7 @@ elua_init(void)
    return ++_elua_init_counter;
 }
 
-EAPI int
+ELUA_API int
 elua_shutdown(void)
 {
    if (_elua_init_counter <= 0)
@@ -125,7 +125,7 @@ _elua_searchpath(lua_State *L)
 #endif
 #endif
 
-EAPI Elua_State *
+ELUA_API Elua_State *
 elua_state_new(const char *progname)
 {
    Elua_State *ret = NULL;
@@ -200,7 +200,7 @@ err:
    return NULL;
 }
 
-EAPI void
+ELUA_API void
 elua_state_free(Elua_State *es)
 {
    void *data;
@@ -227,7 +227,7 @@ elua_state_free(Elua_State *es)
    free(es);
 }
 
-EAPI void
+ELUA_API void
 elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
                     const char *apps)
 {
@@ -256,7 +256,7 @@ elua_state_dirs_set(Elua_State *es, const char *core, const char *mods,
      }
 }
 
-EAPI void
+ELUA_API void
 elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env)
 {
    const char *coredir = NULL, *moddir = NULL, *appsdir = NULL;
@@ -306,35 +306,35 @@ elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env)
      }
 }
 
-EAPI Eina_Stringshare *
+ELUA_API Eina_Stringshare *
 elua_state_core_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->coredir;
 }
 
-EAPI Eina_Stringshare *
+ELUA_API Eina_Stringshare *
 elua_state_mod_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->moddir;
 }
 
-EAPI Eina_Stringshare *
+ELUA_API Eina_Stringshare *
 elua_state_apps_dir_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->appsdir;
 }
 
-EAPI Eina_Stringshare *
+ELUA_API Eina_Stringshare *
 elua_state_prog_name_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->progname;
 }
 
-EAPI void
+ELUA_API void
 elua_state_include_path_add(Elua_State *es, const char *path)
 {
    char *spath = NULL;
@@ -346,7 +346,7 @@ elua_state_include_path_add(Elua_State *es, const char *path)
    free(spath);
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_state_require_ref_push(Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -355,7 +355,7 @@ elua_state_require_ref_push(Elua_State *es)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_state_appload_ref_push(Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -364,14 +364,14 @@ elua_state_appload_ref_push(Elua_State *es)
    return EINA_TRUE;
 }
 
-EAPI lua_State *
+ELUA_API lua_State *
 elua_state_lua_state_get(const Elua_State *es)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, NULL);
    return es->luastate;
 }
 
-EAPI Elua_State *
+ELUA_API Elua_State *
 elua_state_from_lua_state_get(lua_State *L)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(L, NULL);
@@ -673,7 +673,7 @@ _elua_module_system_init(lua_State *L)
    return 2;
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_state_setup(Elua_State *es)
 {
    Eina_Stringshare *data;
@@ -767,7 +767,7 @@ _elua_getargs(Elua_State *es, int argc, char **argv, int n)
    return narg;
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_util_require(Elua_State *es, const char *libname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -781,7 +781,7 @@ elua_util_require(Elua_State *es, const char *libname)
    return !elua_util_error_report(es, lua_pcall(es->luastate, 1, 0, 0));
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_util_file_run(Elua_State *es, const char *fname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -789,7 +789,7 @@ elua_util_file_run(Elua_State *es, const char *fname)
                                   || _elua_docall(es, 0, 1));
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_util_string_run(Elua_State *es, const char *chunk, const char *chname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
@@ -798,7 +798,7 @@ elua_util_string_run(Elua_State *es, const char *chunk, const char *chname)
                                       || _elua_docall(es, 0, 0));
 }
 
-EAPI int
+ELUA_API int
 elua_util_app_load(Elua_State *es, const char *appname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, -1);
@@ -814,7 +814,7 @@ elua_util_app_load(Elua_State *es, const char *appname)
    return 0;
 }
 
-EAPI Eina_Bool
+ELUA_API Eina_Bool
 elua_util_script_run(Elua_State *es, int argc, char **argv, int n, int *quit)
 {
    int status, narg;
@@ -858,7 +858,7 @@ _elua_errmsg(const char *pname, const char *msg)
    ERR("%s%s%s", pname ? pname : "", pname ? ": " : "", msg);
 }
 
-EAPI int
+ELUA_API int
 elua_util_error_report(const Elua_State *es, int status)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(es, status);
