@@ -26,31 +26,7 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <elua_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -116,7 +92,7 @@ typedef struct _Elua_State Elua_State;
  *
  * @ingroup Elua
  */
-EAPI int elua_init(void);
+ELUA_API int elua_init(void);
 
 /**
  * @brief Shutdown the Elua library.
@@ -129,7 +105,7 @@ EAPI int elua_init(void);
  *
  * @ingroup Elua
  */
-EAPI int elua_shutdown(void);
+ELUA_API int elua_shutdown(void);
 
 /**
  * @brief Create a new Elua state.
@@ -145,7 +121,7 @@ EAPI int elua_shutdown(void);
  *
  * @ingroup Elua
  */
-EAPI Elua_State *elua_state_new(const char *progname);
+ELUA_API Elua_State *elua_state_new(const char *progname);
 
 /**
  * @brief Retrieve an Elua state from a Lua state.
@@ -160,7 +136,7 @@ EAPI Elua_State *elua_state_new(const char *progname);
  *
  * @ingroup Elua
  */
-EAPI Elua_State *elua_state_from_lua_state_get(lua_State *L);
+ELUA_API Elua_State *elua_state_from_lua_state_get(lua_State *L);
 
 /**
  * @brief Destroy an Elua state.
@@ -172,7 +148,7 @@ EAPI Elua_State *elua_state_from_lua_state_get(lua_State *L);
  *
  * @ingroup Elua
  */
-EAPI void elua_state_free(Elua_State *es);
+ELUA_API void elua_state_free(Elua_State *es);
 
 /**
  * @brief Set the Elua directory paths.
@@ -201,7 +177,7 @@ EAPI void elua_state_free(Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
+ELUA_API void elua_state_dirs_set(Elua_State *es, const char *core,
                               const char *mods, const char *apps);
 
 /**
@@ -223,7 +199,7 @@ EAPI void elua_state_dirs_set(Elua_State *es, const char *core,
  *
  * @ingroup Elua
  */
-EAPI void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
+ELUA_API void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
 
 /**
  * @brief Retrieve the Elua core dir.
@@ -233,7 +209,7 @@ EAPI void elua_state_dirs_fill(Elua_State *es, Eina_Bool ignore_env);
  *
  * @ingroup Elua
  */
-EAPI Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
+ELUA_API Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
 
 /**
  * @brief Retrieve the Elua module dir.
@@ -243,7 +219,7 @@ EAPI Eina_Stringshare *elua_state_core_dir_get(const Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI Eina_Stringshare *elua_state_mod_dir_get(const Elua_State *es);
+ELUA_API Eina_Stringshare *elua_state_mod_dir_get(const Elua_State *es);
 
 /**
  * @brief Retrieve the Elua apps dir.
@@ -253,7 +229,7 @@ EAPI Eina_Stringshare *elua_state_mod_dir_get(const Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI Eina_Stringshare *elua_state_apps_dir_get(const Elua_State *es);
+ELUA_API Eina_Stringshare *elua_state_apps_dir_get(const Elua_State *es);
 
 /**
  * @brief Retrieve the prog name set on state creation.
@@ -263,7 +239,7 @@ EAPI Eina_Stringshare *elua_state_apps_dir_get(const Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI Eina_Stringshare *elua_state_prog_name_get(const Elua_State *es);
+ELUA_API Eina_Stringshare *elua_state_prog_name_get(const Elua_State *es);
 
 /**
  * @brief Add another path to look up modules in to the state.
@@ -274,7 +250,7 @@ EAPI Eina_Stringshare *elua_state_prog_name_get(const Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI void elua_state_include_path_add(Elua_State *es, const char *path);
+ELUA_API void elua_state_include_path_add(Elua_State *es, const char *path);
 
 /**
  * @brief Push the Elua "require" function onto the Lua stack.
@@ -284,7 +260,7 @@ EAPI void elua_state_include_path_add(Elua_State *es, const char *path);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_state_require_ref_push(Elua_State *es);
+ELUA_API Eina_Bool elua_state_require_ref_push(Elua_State *es);
 
 /**
  * @brief Push the Elua app loader function onto the Lua stack.
@@ -294,7 +270,7 @@ EAPI Eina_Bool elua_state_require_ref_push(Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
+ELUA_API Eina_Bool elua_state_appload_ref_push(Elua_State *es);
 
 /**
  * @brief Retrieve the Lua state from an Elua state.
@@ -308,7 +284,7 @@ EAPI Eina_Bool elua_state_appload_ref_push(Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
+ELUA_API lua_State *elua_state_lua_state_get(const Elua_State *es);
 
 /**
  * @brief Set up the Elua state.
@@ -333,7 +309,7 @@ EAPI lua_State *elua_state_lua_state_get(const Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_state_setup(Elua_State *es);
+ELUA_API Eina_Bool elua_state_setup(Elua_State *es);
 
 /**
  * @brief Loads a file using Elua's own mmap-based IO.
@@ -350,7 +326,7 @@ EAPI Eina_Bool elua_state_setup(Elua_State *es);
  *
  * @ingroup Elua
  */
-EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
+ELUA_API int elua_io_loadfile(const Elua_State *es, const char *fname);
 
 /**
  * @brief Requires a module.
@@ -363,7 +339,7 @@ EAPI int elua_io_loadfile(const Elua_State *es, const char *fname);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_util_require(Elua_State *es, const char *libname);
+ELUA_API Eina_Bool elua_util_require(Elua_State *es, const char *libname);
 
 /**
  * @brief Runs a file.
@@ -376,7 +352,7 @@ EAPI Eina_Bool elua_util_require(Elua_State *es, const char *libname);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_util_file_run(Elua_State *es, const char *fname);
+ELUA_API Eina_Bool elua_util_file_run(Elua_State *es, const char *fname);
 
 /**
  * @brief Runs a string.
@@ -390,7 +366,7 @@ EAPI Eina_Bool elua_util_file_run(Elua_State *es, const char *fname);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_util_string_run(Elua_State *es, const char *chunk,
+ELUA_API Eina_Bool elua_util_string_run(Elua_State *es, const char *chunk,
                                     const char *chname);
 
 /**
@@ -408,7 +384,7 @@ EAPI Eina_Bool elua_util_string_run(Elua_State *es, const char *chunk,
  *
  * @ingroup Elua
  */
-EAPI int elua_util_app_load(Elua_State *es, const char *appname);
+ELUA_API int elua_util_app_load(Elua_State *es, const char *appname);
 
 /**
  * @brief Runs a script.
@@ -437,7 +413,7 @@ EAPI int elua_util_app_load(Elua_State *es, const char *appname);
  *
  * @ingroup Elua
  */
-EAPI Eina_Bool elua_util_script_run(Elua_State *es, int argc, char **argv,
+ELUA_API Eina_Bool elua_util_script_run(Elua_State *es, int argc, char **argv,
                                     int n, int *quit);
 
 /**
@@ -454,7 +430,7 @@ EAPI Eina_Bool elua_util_script_run(Elua_State *es, int argc, char **argv,
  *
  * @ingroup Elua
  */
-EAPI int elua_util_error_report(const Elua_State *es, int status);
+ELUA_API int elua_util_error_report(const Elua_State *es, int status);
 
 /**
  * @}
@@ -465,8 +441,5 @@ EAPI int elua_util_error_report(const Elua_State *es, int status);
 #ifdef __cplusplus
 } // extern "C" {
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
