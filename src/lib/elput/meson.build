@@ -22,7 +22,7 @@ elput_ext_deps += dependency('libudev')
 
 elput_lib = library('elput',
     elput_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DELPUT_BUILD'],
     dependencies: elput_pub_deps + elput_deps + elput_ext_deps,
     include_directories : config_dir,
     install: true,

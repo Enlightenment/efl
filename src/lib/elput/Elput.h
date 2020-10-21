@@ -4,19 +4,7 @@
 # ifdef EFL_BETA_API_SUPPORT
 #  include <Eina.h>
 
-#  ifdef EAPI
-#   undef EAPI
-#  endif
-
-#  ifdef __GNUC__
-#   if __GNUC__ >= 4
-#    define EAPI __attribute__ ((visibility("default")))
-#   else
-#    define EAPI
-#   endif
-#  else
-#   define EAPI
-#  endif
+#  include <elput_api.h>
 
 typedef enum
 {
@@ -125,17 +113,17 @@ typedef struct _Elput_Event_Switch
 } Elput_Event_Switch;
 
 
-EAPI extern int ELPUT_EVENT_SEAT_CAPS;
-EAPI extern int ELPUT_EVENT_SEAT_FRAME;
-EAPI extern int ELPUT_EVENT_MODIFIERS_SEND;
-EAPI extern int ELPUT_EVENT_DEVICE_CHANGE;
-EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
+ELPUT_API extern int ELPUT_EVENT_SEAT_CAPS;
+ELPUT_API extern int ELPUT_EVENT_SEAT_FRAME;
+ELPUT_API extern int ELPUT_EVENT_MODIFIERS_SEND;
+ELPUT_API extern int ELPUT_EVENT_DEVICE_CHANGE;
+ELPUT_API extern int ELPUT_EVENT_SESSION_ACTIVE;
 
 /** @since 1.19 */
-EAPI extern int ELPUT_EVENT_POINTER_MOTION;
+ELPUT_API extern int ELPUT_EVENT_POINTER_MOTION;
 
 /** @since 1.21 */
-EAPI extern int ELPUT_EVENT_SWITCH;
+ELPUT_API extern int ELPUT_EVENT_SWITCH;
 
 /**
  * @file
@@ -168,7 +156,7 @@ EAPI extern int ELPUT_EVENT_SWITCH;
  * @ingroup Elput_Init_Group
  * @since 1.18
  */
-EAPI int elput_init(void);
+ELPUT_API int elput_init(void);
 
 /**
  * Shutdown the Elput library
@@ -179,7 +167,7 @@ EAPI int elput_init(void);
  * @ingroup Elput_Init_Group
  * @since 1.18
  */
-EAPI int elput_shutdown(void);
+ELPUT_API int elput_shutdown(void);
 
 /**
  * @defgroup Elput_Manager_Group Elput Manager
@@ -199,7 +187,7 @@ EAPI int elput_shutdown(void);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty);
+ELPUT_API Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty);
 
 /**
  * Disconnect an input manager
@@ -209,7 +197,7 @@ EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI void elput_manager_disconnect(Elput_Manager *manager);
+ELPUT_API void elput_manager_disconnect(Elput_Manager *manager);
 
 /**
  * Request input manager to open a file
@@ -223,7 +211,7 @@ EAPI void elput_manager_disconnect(Elput_Manager *manager);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI int elput_manager_open(Elput_Manager *manager, const char *path, int flags);
+ELPUT_API int elput_manager_open(Elput_Manager *manager, const char *path, int flags);
 
 /**
  * Request input manager to close a file
@@ -234,7 +222,7 @@ EAPI int elput_manager_open(Elput_Manager *manager, const char *path, int flags)
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI void elput_manager_close(Elput_Manager *manager, int fd);
+ELPUT_API void elput_manager_close(Elput_Manager *manager, int fd);
 
 /**
  * Request to switch to a given vt
@@ -247,7 +235,7 @@ EAPI void elput_manager_close(Elput_Manager *manager, int fd);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI Eina_Bool elput_manager_vt_set(Elput_Manager *manager, int vt);
+ELPUT_API Eina_Bool elput_manager_vt_set(Elput_Manager *manager, int vt);
 
 /**
  * Get the list of seats from a manager
@@ -259,7 +247,7 @@ EAPI Eina_Bool elput_manager_vt_set(Elput_Manager *manager, int vt);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
+ELPUT_API const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
 
 
 /**
@@ -277,7 +265,7 @@ EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
  * @ingroup Elput_Manager_Group
  * @since 1.18
  */
-EAPI void elput_manager_window_set(Elput_Manager *manager, unsigned int window);
+ELPUT_API void elput_manager_window_set(Elput_Manager *manager, unsigned int window);
 
 /**
  * @defgroup Elput_Input_Group Elput input functions
@@ -295,7 +283,7 @@ EAPI void elput_manager_window_set(Elput_Manager *manager, unsigned int window);
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI Eina_Bool elput_input_init(Elput_Manager *manager);
+ELPUT_API Eina_Bool elput_input_init(Elput_Manager *manager);
 
 /**
  * Shutdown input
@@ -305,7 +293,7 @@ EAPI Eina_Bool elput_input_init(Elput_Manager *manager);
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI void elput_input_shutdown(Elput_Manager *manager);
+ELPUT_API void elput_input_shutdown(Elput_Manager *manager);
 
 /**
  * Get the pointer position on a given seat
@@ -318,7 +306,7 @@ EAPI void elput_input_shutdown(Elput_Manager *manager);
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI void elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int *y);
+ELPUT_API void elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int *y);
 
 /**
  * Set the pointer position on a given seat
@@ -331,7 +319,7 @@ EAPI void elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, i
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int y);
+ELPUT_API void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int y);
 
 /**
  * Set the pointer left-handed mode
@@ -345,7 +333,7 @@ EAPI void elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, i
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI Eina_Bool elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Eina_Bool left);
+ELPUT_API Eina_Bool elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Eina_Bool left);
 
 /**
  * Set the maximum position of any existing mouse pointers
@@ -357,7 +345,7 @@ EAPI Eina_Bool elput_input_pointer_left_handed_set(Elput_Manager *manager, const
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh);
+ELPUT_API void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh);
 
 /**
  * Set pointer value rotation
@@ -370,7 +358,7 @@ EAPI void elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh
  * @ingroup Elput_Input_Group
  * @since 1.20
  */
-EAPI Eina_Bool elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation);
+ELPUT_API Eina_Bool elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation);
 
 /**
  * Set tap-to-click status
@@ -384,7 +372,7 @@ EAPI Eina_Bool elput_input_pointer_rotation_set(Elput_Manager *manager, int rota
  * @ingroup Elput_Input_Group
  * @since 1.22
  */
-EAPI void elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, const char *seat, Eina_Bool enabled);
+ELPUT_API void elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, const char *seat, Eina_Bool enabled);
 
 /**
  * Calibrate input devices for given screen size
@@ -396,7 +384,7 @@ EAPI void elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, con
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI void elput_input_devices_calibrate(Elput_Manager *manager, int w, int h);
+ELPUT_API void elput_input_devices_calibrate(Elput_Manager *manager, int w, int h);
 
 /**
  * Enable key remap functionality
@@ -409,7 +397,7 @@ EAPI void elput_input_devices_calibrate(Elput_Manager *manager, int w, int h);
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI Eina_Bool elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable);
+ELPUT_API Eina_Bool elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable);
 
 /**
  * Set a given set of keys as remapped keys
@@ -424,7 +412,7 @@ EAPI Eina_Bool elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool en
  * @ingroup Elput_Input_Group
  * @since 1.18
  */
-EAPI Eina_Bool elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, int num);
+ELPUT_API Eina_Bool elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, int num);
 
 /**
  * Set info to be used for keyboards
@@ -437,7 +425,7 @@ EAPI Eina_Bool elput_input_key_remap_set(Elput_Manager *manager, int *from_keys,
  * @ingroup Elput_Input_Group
  * @since 1.20
  */
-EAPI void elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keymap, int group);
+ELPUT_API void elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keymap, int group);
 
 /**
  * Set group layout to be used for keyboards
@@ -448,7 +436,7 @@ EAPI void elput_input_keyboard_info_set(Elput_Manager *manager, void *context, v
  * @ingroup Elput_Input_Group
  * @since 1.20
  */
-EAPI void elput_input_keyboard_group_set(Elput_Manager *manager, int group);
+ELPUT_API void elput_input_keyboard_group_set(Elput_Manager *manager, int group);
 
 /**
  * Set the pointer acceleration profile
@@ -460,7 +448,7 @@ EAPI void elput_input_keyboard_group_set(Elput_Manager *manager, int group);
  * @ingroup Elput_Input_Group
  * @since 1.19
  */
-EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile);
+ELPUT_API void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile);
 
 /**
  * Set the pointer acceleration speed
@@ -472,7 +460,7 @@ EAPI void elput_input_pointer_accel_profile_set(Elput_Manager *manager, const ch
  * @ingroup Elput_Input_Group
  * @since 1.21
  */
-EAPI void elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, double speed);
+ELPUT_API void elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, double speed);
 
 /**
  * @defgroup Elput_Touch_Group Configuration of touch devices
@@ -495,7 +483,7 @@ EAPI void elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enabled);
+ELPUT_API Eina_Bool elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enabled);
 
 /**
  * Get if tap-and-drag is enabled on this device.
@@ -507,7 +495,7 @@ EAPI Eina_Bool elput_touch_drag_enabled_set(Elput_Device *device, Eina_Bool enab
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
+ELPUT_API Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
 
 /**
  * Enable or disable drag-lock during tapping on a device.
@@ -525,7 +513,7 @@ EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool enabled);
+ELPUT_API Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool enabled);
 
 /**
  * Get if drag-lock is enabled on this device.
@@ -537,7 +525,7 @@ EAPI Eina_Bool elput_touch_drag_lock_enabled_set(Elput_Device *device, Eina_Bool
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_drag_lock_enabled_get(Elput_Device *device);
+ELPUT_API Eina_Bool elput_touch_drag_lock_enabled_get(Elput_Device *device);
 
 /**
  * Enable or disable touchpad dwt (disable-while-typing) feature.
@@ -553,7 +541,7 @@ EAPI Eina_Bool elput_touch_drag_lock_enabled_get(Elput_Device *device);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabled);
+ELPUT_API Eina_Bool elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabled);
 
 /**
  * Get if touchpad dwt (disable-while-typing) is enabled.
@@ -565,7 +553,7 @@ EAPI Eina_Bool elput_touch_dwt_enabled_set(Elput_Device *device, Eina_Bool enabl
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_dwt_enabled_get(Elput_Device *device);
+ELPUT_API Eina_Bool elput_touch_dwt_enabled_get(Elput_Device *device);
 
 /**
  * Set the scroll method used for this device.
@@ -581,7 +569,7 @@ EAPI Eina_Bool elput_touch_dwt_enabled_get(Elput_Device *device);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_scroll_method_set(Elput_Device *device, int method);
+ELPUT_API Eina_Bool elput_touch_scroll_method_set(Elput_Device *device, int method);
 
 /**
  * Get the current scroll method set on a device
@@ -593,7 +581,7 @@ EAPI Eina_Bool elput_touch_scroll_method_set(Elput_Device *device, int method);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI int elput_touch_scroll_method_get(Elput_Device *device);
+ELPUT_API int elput_touch_scroll_method_get(Elput_Device *device);
 
 /**
  * Set the button click method for a device.
@@ -609,7 +597,7 @@ EAPI int elput_touch_scroll_method_get(Elput_Device *device);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_click_method_set(Elput_Device *device, int method);
+ELPUT_API Eina_Bool elput_touch_click_method_set(Elput_Device *device, int method);
 
 /**
  * Get the current button click method for a device
@@ -621,7 +609,7 @@ EAPI Eina_Bool elput_touch_click_method_set(Elput_Device *device, int method);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI int elput_touch_click_method_get(Elput_Device *device);
+ELPUT_API int elput_touch_click_method_get(Elput_Device *device);
 
 /**
  * Enable or disable tap-to-click on a given device
@@ -634,7 +622,7 @@ EAPI int elput_touch_click_method_get(Elput_Device *device);
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabled);
+ELPUT_API Eina_Bool elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabled);
 
 /**
  * Get if tap-to-click is enabled on a given device
@@ -646,7 +634,7 @@ EAPI Eina_Bool elput_touch_tap_enabled_set(Elput_Device *device, Eina_Bool enabl
  * @ingroup Elput_Touch_Group
  * @since 1.19
  */
-EAPI Eina_Bool elput_touch_tap_enabled_get(Elput_Device *device);
+ELPUT_API Eina_Bool elput_touch_tap_enabled_get(Elput_Device *device);
 
 
 /**
@@ -662,7 +650,7 @@ EAPI Eina_Bool elput_touch_tap_enabled_get(Elput_Device *device);
  * @ingroup Elput_Device_Group
  * @since 1.20
  */
-EAPI Elput_Seat *elput_device_seat_get(const Elput_Device *dev);
+ELPUT_API Elput_Seat *elput_device_seat_get(const Elput_Device *dev);
 
 /**
  * Get the caps for a device
@@ -671,7 +659,7 @@ EAPI Elput_Seat *elput_device_seat_get(const Elput_Device *dev);
  * @ingroup Elput_Device_Group
  * @since 1.20
  */
-EAPI Elput_Device_Caps elput_device_caps_get(const Elput_Device *dev);
+ELPUT_API Elput_Device_Caps elput_device_caps_get(const Elput_Device *dev);
 
 /**
  * Return the output name associated with a given device
@@ -683,7 +671,7 @@ EAPI Elput_Device_Caps elput_device_caps_get(const Elput_Device *dev);
  * @ingroup Elput_Device_Group
  * @since 1.20
  */
-EAPI Eina_Stringshare *elput_device_output_name_get(Elput_Device *device);
+ELPUT_API Eina_Stringshare *elput_device_output_name_get(Elput_Device *device);
 
 /**
  * @defgroup Elput_Seat_Group Elput seat functions
@@ -701,7 +689,7 @@ EAPI Eina_Stringshare *elput_device_output_name_get(Elput_Device *device);
  * @ingroup Elput_Seat_Group
  * @since 1.20
  */
-EAPI const Eina_List *elput_seat_devices_get(const Elput_Seat *seat);
+ELPUT_API const Eina_List *elput_seat_devices_get(const Elput_Seat *seat);
 
 /**
  * Get the name of a given seat
@@ -713,7 +701,7 @@ EAPI const Eina_List *elput_seat_devices_get(const Elput_Seat *seat);
  * @ingroup Elput_Seat_Group
  * @since 1.20
  */
-EAPI Eina_Stringshare *elput_seat_name_get(const Elput_Seat *seat);
+ELPUT_API Eina_Stringshare *elput_seat_name_get(const Elput_Seat *seat);
 
 /**
  * Get the manager of a given seat
@@ -725,10 +713,7 @@ EAPI Eina_Stringshare *elput_seat_name_get(const Elput_Seat *seat);
  * @ingroup Elput_Seat_Group
  * @since 1.20
  */
-EAPI Elput_Manager *elput_seat_manager_get(const Elput_Seat *seat);
+ELPUT_API Elput_Manager *elput_seat_manager_get(const Elput_Seat *seat);
 # endif
-
-# undef EAPI
-# define EAPI
 
 #endif
