@@ -448,7 +448,7 @@ _elput_input_disable(Elput_Manager *manager)
    manager->input.suspended = EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELPUT_API Eina_Bool
 elput_input_init(Elput_Manager *manager)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
@@ -463,7 +463,7 @@ elput_input_init(Elput_Manager *manager)
    return !!manager->input.thread;
 }
 
-EAPI void
+ELPUT_API void
 elput_input_shutdown(Elput_Manager *manager)
 {
    Elput_Seat *seat;
@@ -485,7 +485,7 @@ elput_input_shutdown(Elput_Manager *manager)
      }
 }
 
-EAPI void
+ELPUT_API void
 elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int *y)
 {
    Elput_Seat *eseat;
@@ -508,7 +508,7 @@ elput_input_pointer_xy_get(Elput_Manager *manager, const char *seat, int *x, int
      }
 }
 
-EAPI void
+ELPUT_API void
 elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int y)
 {
    Elput_Seat *eseat;
@@ -549,7 +549,7 @@ elput_input_pointer_xy_set(Elput_Manager *manager, const char *seat, int x, int 
      }
 }
 
-EAPI Eina_Bool
+ELPUT_API Eina_Bool
 elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Eina_Bool left)
 {
    Elput_Seat *eseat;
@@ -590,7 +590,7 @@ elput_input_pointer_left_handed_set(Elput_Manager *manager, const char *seat, Ei
    return EINA_TRUE;
 }
 
-EAPI void
+ELPUT_API void
 elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
 {
    EINA_SAFETY_ON_NULL_RETURN(manager);
@@ -598,7 +598,7 @@ elput_input_pointer_max_set(Elput_Manager *manager, int maxw, int maxh)
    manager->input.pointer_h = maxh;
 }
 
-EAPI Eina_Bool
+ELPUT_API Eina_Bool
 elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation)
 {
    Elput_Seat *eseat;
@@ -649,7 +649,7 @@ elput_input_pointer_rotation_set(Elput_Manager *manager, int rotation)
    return EINA_TRUE;
 }
 
-EAPI void
+ELPUT_API void
 elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
 {
    Elput_Seat *eseat;
@@ -672,7 +672,7 @@ elput_input_devices_calibrate(Elput_Manager *manager, int w, int h)
      }
 }
 
-EAPI Eina_Bool
+ELPUT_API Eina_Bool
 elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable)
 {
    Elput_Seat *eseat;
@@ -699,7 +699,7 @@ elput_input_key_remap_enable(Elput_Manager *manager, Eina_Bool enable)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELPUT_API Eina_Bool
 elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, int num)
 {
    Elput_Seat *eseat;
@@ -738,7 +738,7 @@ elput_input_key_remap_set(Elput_Manager *manager, int *from_keys, int *to_keys, 
    return EINA_TRUE;
 }
 
-EAPI void
+ELPUT_API void
 elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keymap, int group)
 {
    Eina_List *l;
@@ -761,7 +761,7 @@ elput_input_keyboard_info_set(Elput_Manager *manager, void *context, void *keyma
      _keyboard_keymap_update(seat);
 }
 
-EAPI void
+ELPUT_API void
 elput_input_keyboard_group_set(Elput_Manager *manager, int group)
 {
    Eina_List *l;
@@ -774,7 +774,7 @@ elput_input_keyboard_group_set(Elput_Manager *manager, int group)
      _keyboard_group_update(seat);
 }
 
-EAPI void
+ELPUT_API void
 elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, uint32_t profile)
 {
    Elput_Seat *eseat;
@@ -809,7 +809,7 @@ elput_input_pointer_accel_profile_set(Elput_Manager *manager, const char *seat, 
      }
 }
 
-EAPI void
+ELPUT_API void
 elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, double speed)
 {
    Elput_Seat *eseat;
@@ -847,7 +847,7 @@ elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, do
      }
 }
 
-EAPI void
+ELPUT_API void
 elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, const char *seat, Eina_Bool enabled)
 {
    Elput_Seat *eseat;
@@ -885,21 +885,21 @@ elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, const char *s
      }
 }
 
-EAPI Elput_Seat *
+ELPUT_API Elput_Seat *
 elput_device_seat_get(const Elput_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
    return dev->seat;
 }
 
-EAPI Elput_Device_Caps
+ELPUT_API Elput_Device_Caps
 elput_device_caps_get(const Elput_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, 0);
    return dev->caps;
 }
 
-EAPI Eina_Stringshare *
+ELPUT_API Eina_Stringshare *
 elput_device_output_name_get(Elput_Device *device)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(device, NULL);
@@ -907,21 +907,21 @@ elput_device_output_name_get(Elput_Device *device)
    return device->output_name;
 }
 
-EAPI const Eina_List *
+ELPUT_API const Eina_List *
 elput_seat_devices_get(const Elput_Seat *seat)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
    return seat->devices;
 }
 
-EAPI Eina_Stringshare *
+ELPUT_API Eina_Stringshare *
 elput_seat_name_get(const Elput_Seat *seat)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
    return seat->name;
 }
 
-EAPI Elput_Manager *
+ELPUT_API Elput_Manager *
 elput_seat_manager_get(const Elput_Seat *seat)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);

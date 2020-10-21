@@ -6,16 +6,16 @@ static int _elput_init_count = 0;
 /* external variables */
 int _elput_log_dom = -1;
 
-EAPI int ELPUT_EVENT_SEAT_CAPS = 0;
-EAPI int ELPUT_EVENT_SEAT_FRAME = 0;
-EAPI int ELPUT_EVENT_KEYMAP_SEND = 0;
-EAPI int ELPUT_EVENT_MODIFIERS_SEND = 0;
-EAPI int ELPUT_EVENT_DEVICE_CHANGE = 0;
-EAPI int ELPUT_EVENT_SESSION_ACTIVE = 0;
-EAPI int ELPUT_EVENT_POINTER_MOTION = 0;
-EAPI int ELPUT_EVENT_SWITCH = 0;
+ELPUT_API int ELPUT_EVENT_SEAT_CAPS = 0;
+ELPUT_API int ELPUT_EVENT_SEAT_FRAME = 0;
+ELPUT_API int ELPUT_EVENT_KEYMAP_SEND = 0;
+ELPUT_API int ELPUT_EVENT_MODIFIERS_SEND = 0;
+ELPUT_API int ELPUT_EVENT_DEVICE_CHANGE = 0;
+ELPUT_API int ELPUT_EVENT_SESSION_ACTIVE = 0;
+ELPUT_API int ELPUT_EVENT_POINTER_MOTION = 0;
+ELPUT_API int ELPUT_EVENT_SWITCH = 0;
 
-EAPI int
+ELPUT_API int
 elput_init(void)
 {
    if (++_elput_init_count != 1) return _elput_init_count;
@@ -55,7 +55,7 @@ eina_err:
    return --_elput_init_count;
 }
 
-EAPI int
+ELPUT_API int
 elput_shutdown(void)
 {
    if (_elput_init_count < 1) return 0;

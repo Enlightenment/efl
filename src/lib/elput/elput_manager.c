@@ -34,7 +34,7 @@ _cb_key_down(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
-EAPI Elput_Manager *
+ELPUT_API Elput_Manager *
 elput_manager_connect(const char *seat, unsigned int tty)
 {
    Elput_Interface **it;
@@ -52,7 +52,7 @@ elput_manager_connect(const char *seat, unsigned int tty)
    return NULL;
 }
 
-EAPI void
+ELPUT_API void
 elput_manager_disconnect(Elput_Manager *manager)
 {
    EINA_SAFETY_ON_NULL_RETURN(manager);
@@ -69,7 +69,7 @@ elput_manager_disconnect(Elput_Manager *manager)
      manager->interface->disconnect(manager);
 }
 
-EAPI int
+ELPUT_API int
 elput_manager_open(Elput_Manager *manager, const char *path, int flags)
 {
    int ret = -1;
@@ -95,7 +95,7 @@ elput_manager_open(Elput_Manager *manager, const char *path, int flags)
    return ret;
 }
 
-EAPI void
+ELPUT_API void
 elput_manager_close(Elput_Manager *manager, int fd)
 {
    EINA_SAFETY_ON_NULL_RETURN(manager);
@@ -111,7 +111,7 @@ elput_manager_close(Elput_Manager *manager, int fd)
      manager->interface->close(manager, fd);
 }
 
-EAPI Eina_Bool
+ELPUT_API Eina_Bool
 elput_manager_vt_set(Elput_Manager *manager, int vt)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(manager, EINA_FALSE);
@@ -124,7 +124,7 @@ elput_manager_vt_set(Elput_Manager *manager, int vt)
    return EINA_FALSE;
 }
 
-EAPI void
+ELPUT_API void
 elput_manager_window_set(Elput_Manager *manager, unsigned int window)
 {
    EINA_SAFETY_ON_NULL_RETURN(manager);
@@ -132,7 +132,7 @@ elput_manager_window_set(Elput_Manager *manager, unsigned int window)
    manager->window = window;
 }
 
-EAPI const Eina_List *
+ELPUT_API const Eina_List *
 elput_manager_seats_get(Elput_Manager *manager)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(manager, NULL);
