@@ -5,7 +5,7 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_walk_check_sysattr(const char *syspath,
                              const char *sysattr,
                              const char *value)
@@ -36,7 +36,7 @@ eeze_udev_walk_check_sysattr(const char *syspath,
    return ret;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_walk_get_sysattr(const char *syspath,
                            const char *sysattr)
 {

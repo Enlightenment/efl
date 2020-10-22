@@ -91,7 +91,7 @@ eeze_lib = library('eeze',
     dependencies: eeze_deps + eeze_pub_deps + eeze_deps + eeze_ext_deps,
     include_directories : config_dir,
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEEZE_BUILD'],
     version : meson.project_version()
 )
 

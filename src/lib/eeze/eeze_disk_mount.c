@@ -16,10 +16,10 @@
 
 #define EEZE_MOUNT_DEFAULT_OPTS "noexec,nosuid,utf8"
 
-EAPI int EEZE_EVENT_DISK_MOUNT = 0;
-EAPI int EEZE_EVENT_DISK_UNMOUNT = 0;
-EAPI int EEZE_EVENT_DISK_EJECT = 0;
-EAPI int EEZE_EVENT_DISK_ERROR = 0;
+EEZE_API int EEZE_EVENT_DISK_MOUNT = 0;
+EEZE_API int EEZE_EVENT_DISK_UNMOUNT = 0;
+EEZE_API int EEZE_EVENT_DISK_EJECT = 0;
+EEZE_API int EEZE_EVENT_DISK_ERROR = 0;
 static Ecore_Event_Handler *_mount_handler = NULL;
 Eina_List *eeze_events = NULL;
 
@@ -201,7 +201,7 @@ eeze_mount_shutdown(void)
  *
  */
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_mounted_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
@@ -209,7 +209,7 @@ eeze_disk_mounted_get(Eeze_Disk *disk)
    return eeze_disk_libmount_mounted_get(disk);
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
@@ -221,14 +221,14 @@ eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
    return EINA_TRUE;
 }
 
-EAPI unsigned long
+EEZE_API unsigned long
 eeze_disk_mountopts_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, 0);
    return disk->mount_opts;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
@@ -243,14 +243,14 @@ eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper)
    return EINA_TRUE;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_mount_wrapper_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
    return disk->mount_wrapper;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_mount(Eeze_Disk *disk)
 {
    struct stat st;
@@ -354,7 +354,7 @@ eeze_disk_mount(Eeze_Disk *disk)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_unmount(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
@@ -384,7 +384,7 @@ eeze_disk_unmount(Eeze_Disk *disk)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_eject(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
@@ -415,7 +415,7 @@ eeze_disk_eject(Eeze_Disk *disk)
    return EINA_TRUE;
 }
 
-EAPI void
+EEZE_API void
 eeze_disk_cancel(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN(disk);
@@ -425,7 +425,7 @@ eeze_disk_cancel(Eeze_Disk *disk)
    disk->mounter = NULL;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_mount_point_get(Eeze_Disk *disk)
 {
    const char *mp;
@@ -455,7 +455,7 @@ eeze_disk_mount_point_get(Eeze_Disk *disk)
    return NULL;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);

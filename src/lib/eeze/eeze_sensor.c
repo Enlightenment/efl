@@ -11,27 +11,27 @@
 #include "eeze_sensor_private.h"
 #include "../../static_libs/buildsystem/buildsystem.h"
 
-EAPI int EEZE_SENSOR_EVENT_ACCELEROMETER;
-EAPI int EEZE_SENSOR_EVENT_GRAVITY;
-EAPI int EEZE_SENSOR_EVENT_LINEAR_ACCELERATION;
-EAPI int EEZE_SENSOR_EVENT_DEVICE_ORIENTATION;
-EAPI int EEZE_SENSOR_EVENT_MAGNETIC;
-EAPI int EEZE_SENSOR_EVENT_ORIENTATION;
-EAPI int EEZE_SENSOR_EVENT_GYROSCOPE;
-EAPI int EEZE_SENSOR_EVENT_LIGHT;
-EAPI int EEZE_SENSOR_EVENT_PROXIMITY;
-EAPI int EEZE_SENSOR_EVENT_SNAP;
-EAPI int EEZE_SENSOR_EVENT_SHAKE;
-EAPI int EEZE_SENSOR_EVENT_DOUBLETAP;
-EAPI int EEZE_SENSOR_EVENT_PANNING;
-EAPI int EEZE_SENSOR_EVENT_PANNING_BROWSE;
-EAPI int EEZE_SENSOR_EVENT_TILT;
-EAPI int EEZE_SENSOR_EVENT_FACEDOWN;
-EAPI int EEZE_SENSOR_EVENT_DIRECT_CALL;
-EAPI int EEZE_SENSOR_EVENT_SMART_ALERT;
-EAPI int EEZE_SENSOR_EVENT_NO_MOVE;
-EAPI int EEZE_SENSOR_EVENT_BAROMETER;
-EAPI int EEZE_SENSOR_EVENT_TEMPERATURE;
+EEZE_API int EEZE_SENSOR_EVENT_ACCELEROMETER;
+EEZE_API int EEZE_SENSOR_EVENT_GRAVITY;
+EEZE_API int EEZE_SENSOR_EVENT_LINEAR_ACCELERATION;
+EEZE_API int EEZE_SENSOR_EVENT_DEVICE_ORIENTATION;
+EEZE_API int EEZE_SENSOR_EVENT_MAGNETIC;
+EEZE_API int EEZE_SENSOR_EVENT_ORIENTATION;
+EEZE_API int EEZE_SENSOR_EVENT_GYROSCOPE;
+EEZE_API int EEZE_SENSOR_EVENT_LIGHT;
+EEZE_API int EEZE_SENSOR_EVENT_PROXIMITY;
+EEZE_API int EEZE_SENSOR_EVENT_SNAP;
+EEZE_API int EEZE_SENSOR_EVENT_SHAKE;
+EEZE_API int EEZE_SENSOR_EVENT_DOUBLETAP;
+EEZE_API int EEZE_SENSOR_EVENT_PANNING;
+EEZE_API int EEZE_SENSOR_EVENT_PANNING_BROWSE;
+EEZE_API int EEZE_SENSOR_EVENT_TILT;
+EEZE_API int EEZE_SENSOR_EVENT_FACEDOWN;
+EEZE_API int EEZE_SENSOR_EVENT_DIRECT_CALL;
+EEZE_API int EEZE_SENSOR_EVENT_SMART_ALERT;
+EEZE_API int EEZE_SENSOR_EVENT_NO_MOVE;
+EEZE_API int EEZE_SENSOR_EVENT_BAROMETER;
+EEZE_API int EEZE_SENSOR_EVENT_TEMPERATURE;
 
 static Eeze_Sensor *g_handle;
 static Eina_Prefix *pfx;
@@ -68,7 +68,7 @@ _highest_priority_module_get(void)
 /* Utility function to take the given sensor type and get the matching sensor
  * object from the highest priority module.
  */
-EAPI Eeze_Sensor_Obj *
+EEZE_API Eeze_Sensor_Obj *
 eeze_sensor_obj_get(Eeze_Sensor_Type sensor_type)
 {
    Eina_List *l;
@@ -154,7 +154,7 @@ eeze_sensor_modules_unload(void)
  * been loaded in initialized. They stay in the hash function until they
  * unregister themself.
  */
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
 {
    Eeze_Sensor_Module *module = NULL;
@@ -174,7 +174,7 @@ eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod)
 /* This function is offered to the modules to unregsiter itself. When requested
  * we remove them safely from the hash.
  */
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_module_unregister(const char *name)
 {
    DBG("Unregister module %s", name);
@@ -197,7 +197,7 @@ eeze_sensor_module_unregister(const char *name)
  * Make sure to use the eeze_sensor_free function to remove this sensor object
  * when it is no longer needed.
  */
-EAPI Eeze_Sensor_Obj *
+EEZE_API Eeze_Sensor_Obj *
 eeze_sensor_new(Eeze_Sensor_Type type)
 {
    Eeze_Sensor_Obj *sens;
@@ -234,7 +234,7 @@ eeze_sensor_new(Eeze_Sensor_Type type)
 }
 
 /* Free sensor object created with eeze_sensor_new */
-EAPI void
+EEZE_API void
 eeze_sensor_free(Eeze_Sensor_Obj *sens)
 {
    if (!sens) return;
@@ -245,7 +245,7 @@ eeze_sensor_free(Eeze_Sensor_Obj *sens)
  * sensor read. It is way faster this way but also means that the timestamp
  * should be checked to ensure recent data if needed.
  */
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy)
 {
    if (!sens) return EINA_FALSE;
@@ -254,7 +254,7 @@ eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, float *z)
 {
    if (!sens) return EINA_FALSE;
@@ -265,7 +265,7 @@ eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, float *z)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y)
 {
    if (!sens) return EINA_FALSE;
@@ -275,7 +275,7 @@ eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x)
 {
    if (!sens) return EINA_FALSE;
@@ -284,7 +284,7 @@ eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestamp)
 {
    if (!sens) return EINA_FALSE;
@@ -296,7 +296,7 @@ eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestamp)
 /* Synchronous read. Blocked until the data was readout from the hardware
  * sensor
  */
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_read(Eeze_Sensor_Obj *sens)
 {
    Eeze_Sensor_Module *module = NULL;
@@ -315,7 +315,7 @@ eeze_sensor_read(Eeze_Sensor_Obj *sens)
 /* Asynchronous read. Schedule a new read out that will update the cached values
  * as soon as it arrives.
  */
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
 {
    Eeze_Sensor_Module *module = NULL;

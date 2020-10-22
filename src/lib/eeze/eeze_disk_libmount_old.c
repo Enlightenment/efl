@@ -306,7 +306,7 @@ eeze_disk_libmount_mp_lookup_by_devpath(const char *devpath)
  * API
  *
  */
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_mount_tabs_watch(void)
 {
    mnt_tab *bak;
@@ -347,7 +347,7 @@ error:
    return EINA_FALSE;
 }
 
-EAPI void
+EEZE_API void
 eeze_mount_tabs_unwatch(void)
 {
    if (!_watching)
@@ -357,7 +357,7 @@ eeze_mount_tabs_unwatch(void)
    ecore_file_monitor_del(_fstab_mon);
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_mount_mtab_scan(void)
 {
    mnt_tab *bak;
@@ -380,7 +380,7 @@ error:
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_mount_fstab_scan(void)
 {
    mnt_tab *bak;

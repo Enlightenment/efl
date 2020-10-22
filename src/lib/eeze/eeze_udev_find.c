@@ -10,7 +10,7 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_find_similar_from_syspath(const char *syspath)
 {
    _udev_device *device;
@@ -75,7 +75,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
    return ret;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_find_unlisted_similar(Eina_List *list)
 {
    _udev_device *device;
@@ -143,7 +143,7 @@ eeze_udev_find_unlisted_similar(Eina_List *list)
    return list;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_find_by_type(Eeze_Udev_Type etype,
                        const char    *name)
 {
@@ -321,7 +321,7 @@ out:
    return ret;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_find_by_filter(const char *subsystem,
                          const char *type,
                          const char *name)
@@ -359,7 +359,7 @@ eeze_udev_find_by_filter(const char *subsystem,
    return ret;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_find_by_sysattr(const char *sysattr,
                           const char *value)
 {
@@ -388,7 +388,7 @@ eeze_udev_find_by_sysattr(const char *sysattr,
    return ret;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_find_by_subsystem_sysname(const char *subsystem, const char *sysname)
 {
    _udev_enumerate *en;

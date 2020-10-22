@@ -4,19 +4,7 @@
 #include <Eina.h>
 #include <Ecore.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  define EAPI __attribute__ ((visibility("default")))
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI
-#endif
+#include <eeze_api.h>
 
 /**
  * @file Eeze_Disk.h
@@ -72,10 +60,10 @@ typedef enum
 } Eeze_Mount_Opts;
 
 
-EAPI extern int EEZE_EVENT_DISK_MOUNT;
-EAPI extern int EEZE_EVENT_DISK_UNMOUNT;
-EAPI extern int EEZE_EVENT_DISK_EJECT;
-EAPI extern int EEZE_EVENT_DISK_ERROR;
+EEZE_API extern int EEZE_EVENT_DISK_MOUNT;
+EEZE_API extern int EEZE_EVENT_DISK_UNMOUNT;
+EEZE_API extern int EEZE_EVENT_DISK_EJECT;
+EEZE_API extern int EEZE_EVENT_DISK_ERROR;
 
 typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Mount;
 typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Unmount;
@@ -115,7 +103,7 @@ struct _Eeze_Event_Disk_Error
  * if your application successfully runs/compiles with this function then you have eeze_disk.
  * @since 1.1
  */
-EAPI void           eeze_disk_function(void);
+EEZE_API void           eeze_disk_function(void);
 
 /**
  * @brief Return whether mount support is available in eeze
@@ -124,7 +112,7 @@ EAPI void           eeze_disk_function(void);
  * binary available.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_can_mount(void);
+EEZE_API Eina_Bool      eeze_disk_can_mount(void);
 
 /**
  * @brief Return whether unmount support is available in eeze
@@ -133,7 +121,7 @@ EAPI Eina_Bool      eeze_disk_can_mount(void);
  * binary available.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_can_unmount(void);
+EEZE_API Eina_Bool      eeze_disk_can_unmount(void);
 
 /**
  * @brief Return whether eject support is available in eeze
@@ -142,7 +130,7 @@ EAPI Eina_Bool      eeze_disk_can_unmount(void);
  * binary available.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_can_eject(void);
+EEZE_API Eina_Bool      eeze_disk_can_eject(void);
 
 /**
  * @brief Create a new disk object from a /sys/ path or /dev/ path
@@ -154,7 +142,7 @@ EAPI Eina_Bool      eeze_disk_can_eject(void);
  * is not retrieved in this call.
  * @since 1.1
  */
-EAPI Eeze_Disk     *eeze_disk_new(const char *path);
+EEZE_API Eeze_Disk     *eeze_disk_new(const char *path);
 
 /**
  * @brief Create a new disk object from a mount point
@@ -167,7 +155,7 @@ EAPI Eeze_Disk     *eeze_disk_new(const char *path);
  * in /etc/fstab.
  * @since 1.1
  */
-EAPI Eeze_Disk     *eeze_disk_new_from_mount(const char *mount_point);
+EEZE_API Eeze_Disk     *eeze_disk_new_from_mount(const char *mount_point);
 
 /**
  * @brief Frees a disk object
@@ -176,7 +164,7 @@ EAPI Eeze_Disk     *eeze_disk_new_from_mount(const char *mount_point);
  * This call frees an #Eeze_Disk.  Once freed, the disk can no longer be used.
  * @since 1.1
  */
-EAPI void           eeze_disk_free(Eeze_Disk *disk);
+EEZE_API void           eeze_disk_free(Eeze_Disk *disk);
 
 /**
  * @brief Retrieve all disk information
@@ -187,7 +175,7 @@ EAPI void           eeze_disk_free(Eeze_Disk *disk);
  * meaning that subsequent calls will return immediately without performing any work.
  * @since 1.1
  */
-EAPI void           eeze_disk_scan(Eeze_Disk *disk);
+EEZE_API void           eeze_disk_scan(Eeze_Disk *disk);
 
 /**
  * @brief Associate data with a disk
@@ -198,7 +186,7 @@ EAPI void           eeze_disk_scan(Eeze_Disk *disk);
  * @see eeze_disk_data_get
  * @since 1.1
  */
-EAPI void           eeze_disk_data_set(Eeze_Disk *disk, void *data);
+EEZE_API void           eeze_disk_data_set(Eeze_Disk *disk, void *data);
 
 /**
  * @brief Retrieve data previously associated with a disk
@@ -210,7 +198,7 @@ EAPI void           eeze_disk_data_set(Eeze_Disk *disk, void *data);
  * @see eeze_disk_data_set
  * @since 1.1
  */
-EAPI void          *eeze_disk_data_get(Eeze_Disk *disk);
+EEZE_API void          *eeze_disk_data_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the /sys/ path of a disk
@@ -220,7 +208,7 @@ EAPI void          *eeze_disk_data_get(Eeze_Disk *disk);
  * This retrieves the /sys/ path that udev associates with @p disk.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_syspath_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_syspath_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the /dev/ path of a disk
@@ -230,7 +218,7 @@ EAPI const char    *eeze_disk_syspath_get(Eeze_Disk *disk);
  * This retrieves the /dev/ path that udev has created a device node at for @p disk.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_devpath_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_devpath_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the filesystem of the disk (if known)
@@ -240,7 +228,7 @@ EAPI const char    *eeze_disk_devpath_get(Eeze_Disk *disk);
  * This retrieves the filesystem that the disk is using, or @c NULL if unknown.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_fstype_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_fstype_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the manufacturing vendor of the disk
@@ -250,7 +238,7 @@ EAPI const char    *eeze_disk_fstype_get(Eeze_Disk *disk);
  * This retrieves the vendor which manufactured the disk, or @c NULL if unknown.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_vendor_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_vendor_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the model of the disk
@@ -260,7 +248,7 @@ EAPI const char    *eeze_disk_vendor_get(Eeze_Disk *disk);
  * This retrieves the model of the disk, or @c NULL if unknown.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_model_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_model_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the serial number of the disk
@@ -270,7 +258,7 @@ EAPI const char    *eeze_disk_model_get(Eeze_Disk *disk);
  * This retrieves the serial number the disk, or @c NULL if unknown.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_serial_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_serial_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the UUID of the disk
@@ -282,7 +270,7 @@ EAPI const char    *eeze_disk_serial_get(Eeze_Disk *disk);
  * be used to store persistent information about a disk.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_uuid_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_uuid_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the label of the disk
@@ -292,7 +280,7 @@ EAPI const char    *eeze_disk_uuid_get(Eeze_Disk *disk);
  * This retrieves the label (name) of the disk, or @c NULL if unknown.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_label_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_label_get(Eeze_Disk *disk);
 
 /**
  * @brief Return the #Eeze_Disk_Type of the disk
@@ -303,7 +291,7 @@ EAPI const char    *eeze_disk_label_get(Eeze_Disk *disk);
  * the bus that the disk is connected through.
  * @since 1.1
  */
-EAPI Eeze_Disk_Type eeze_disk_type_get(Eeze_Disk *disk);
+EEZE_API Eeze_Disk_Type eeze_disk_type_get(Eeze_Disk *disk);
 
 /**
  * @brief Return whether the disk is removable
@@ -311,7 +299,7 @@ EAPI Eeze_Disk_Type eeze_disk_type_get(Eeze_Disk *disk);
  * @return @c EINA_TRUE if removable, @c EINA_FALSE otherwise.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
+EEZE_API Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
 
 
 /**
@@ -323,7 +311,7 @@ EAPI Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
  * @c EINA_FALSE otherwise.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
+EEZE_API Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
 
 /**
  * @brief Get the previously set mount wrapper for a disk
@@ -333,7 +321,7 @@ EAPI Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
  * This returns the wrapper previously set with eeze_disk_mount_wrapper_set
  * @since 1.1
  */
-EAPI const char    *eeze_disk_mount_wrapper_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_mount_wrapper_get(Eeze_Disk *disk);
 
 /**
  * @brief Set a wrapper to run mount commands with
@@ -346,7 +334,7 @@ EAPI const char    *eeze_disk_mount_wrapper_get(Eeze_Disk *disk);
  * Note that this function will call stat() on @p wrapper if not @c NULL to test for existence.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper);
+EEZE_API Eina_Bool      eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper);
 
 /**
  * @brief Begin a mount operation on the disk
@@ -362,7 +350,7 @@ EAPI Eina_Bool      eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wra
  * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
+EEZE_API Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
 
 /**
  * @brief Begin an unmount operation on the disk
@@ -378,7 +366,7 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
  * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
+EEZE_API Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
 
 /**
  * @brief Begin an eject operation on the disk
@@ -394,7 +382,7 @@ EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
  * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_eject(Eeze_Disk *disk);
+EEZE_API Eina_Bool      eeze_disk_eject(Eeze_Disk *disk);
 /**
  * @brief Cancel a pending operation on the disk
  * @param disk The disk
@@ -403,7 +391,7 @@ EAPI Eina_Bool      eeze_disk_eject(Eeze_Disk *disk);
  * started with eeze_disk_mount or eeze_disk_unmount.
  * @since 1.1
  */
-EAPI void           eeze_disk_cancel(Eeze_Disk *disk);
+EEZE_API void           eeze_disk_cancel(Eeze_Disk *disk);
 
 /**
  * @brief Return the mount point of a disk
@@ -414,7 +402,7 @@ EAPI void           eeze_disk_cancel(Eeze_Disk *disk);
  * Note that to determine whether the disk is actually mounted, eeze_disk_mounted_get should be used.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
 
 /**
  * @brief Set the mount point of a disk
@@ -427,7 +415,7 @@ EAPI const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
  * Also note that this function cannot be used while the disk is mounted to avoid losing the current mount point.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point);
+EEZE_API Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point);
 
 /**
  * @brief Set the mount options using flags
@@ -438,7 +426,7 @@ EAPI Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount
  * This function replaces the current mount opts of a disk with the ones in @p opts.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts);
+EEZE_API Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts);
 
 /**
  * @brief Get the flags of a disk's current mount options
@@ -448,7 +436,7 @@ EAPI Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
  * This function returns the current mount opts of a disk.
  * @since 1.1
  */
-EAPI unsigned long  eeze_disk_mountopts_get(Eeze_Disk *disk);
+EEZE_API unsigned long  eeze_disk_mountopts_get(Eeze_Disk *disk);
 
 
 /**
@@ -462,7 +450,7 @@ EAPI unsigned long  eeze_disk_mountopts_get(Eeze_Disk *disk);
  * @see eeze_mount_mtab_scan, eeze_mount_fstab_scan
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_mount_tabs_watch(void);
+EEZE_API Eina_Bool      eeze_mount_tabs_watch(void);
 
 /**
  * @brief Stop watching /etc/fstab and /etc/mtab
@@ -470,7 +458,7 @@ EAPI Eina_Bool      eeze_mount_tabs_watch(void);
  * This function stops watching fstab and mtab.  Data obtained previously will be saved.
  * @since 1.1
  */
-EAPI void           eeze_mount_tabs_unwatch(void);
+EEZE_API void           eeze_mount_tabs_unwatch(void);
 
 /**
  * @brief Scan /etc/mtab a single time
@@ -485,7 +473,7 @@ EAPI void           eeze_mount_tabs_unwatch(void);
  * @see eeze_mount_tabs_watch, eeze_mount_fstab_scan
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_mount_mtab_scan(void);
+EEZE_API Eina_Bool      eeze_mount_mtab_scan(void);
 
 /**
  * @brief Scan /etc/fstab a single time
@@ -500,7 +488,7 @@ EAPI Eina_Bool      eeze_mount_mtab_scan(void);
  * @see eeze_mount_tabs_watch, eeze_mount_mtab_scan
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_mount_fstab_scan(void);
+EEZE_API Eina_Bool      eeze_mount_fstab_scan(void);
 
 /**
  * @brief Get the property value of a disk
@@ -511,7 +499,7 @@ EAPI Eina_Bool      eeze_mount_fstab_scan(void);
  * @since 1.1
  */
 
-EAPI const char    *eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property);
+EEZE_API const char    *eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property);
 
 /**
  * @brief Get the sysattr value of a disk.
@@ -522,7 +510,7 @@ EAPI const char    *eeze_disk_udev_get_property(Eeze_Disk *disk, const char *pro
  * @since 1.1
  */
 
-EAPI const char    *eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr);
+EEZE_API const char    *eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr);
 
 /**
  * Find the root device of a disk.
@@ -533,7 +521,7 @@ EAPI const char    *eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysa
  * Return a stringshared syspath (/sys/$syspath) for the parent device.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_udev_get_parent(Eeze_Disk *disk);
+EEZE_API const char    *eeze_disk_udev_get_parent(Eeze_Disk *disk);
 
 /**
  * Walks up the device chain using the device from @p disk,
@@ -547,7 +535,7 @@ EAPI const char    *eeze_disk_udev_get_parent(Eeze_Disk *disk);
  * @c EINA_FALSE otherwise.
  * @since 1.1
  */
-EAPI Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const char *sysattr, const char *value);
+EEZE_API Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const char *sysattr, const char *value);
 
 /**
  * @brief Walks up the device chain of @p disk
@@ -559,7 +547,7 @@ EAPI Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const cha
  * @return The stringshared value of @p sysattr if found, or @c NULL.
  * @since 1.1
  */
-EAPI const char    *eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk, const char *sysattr);
+EEZE_API const char    *eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk, const char *sysattr);
 
 #ifdef __cplusplus
 }
