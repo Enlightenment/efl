@@ -376,7 +376,7 @@ _eeze_udev_watch_reset()
      }
 }
 
-EAPI Eeze_Udev_Watch *
+EEZE_API Eeze_Udev_Watch *
 eeze_udev_watch_add(Eeze_Udev_Type     type,
                     int                event,
                     Eeze_Udev_Watch_Cb cb,
@@ -402,7 +402,7 @@ error:
    return NULL;
 }
 
-EAPI void *
+EEZE_API void *
 eeze_udev_watch_del(Eeze_Udev_Watch *watch)
 {
    void *ret = NULL;

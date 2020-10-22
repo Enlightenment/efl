@@ -55,25 +55,25 @@ eeze_disk_libmount_mp_lookup_by_devpath(const char *devpath EINA_UNUSED)
    return NULL;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_mount_tabs_watch(void)
 {
    ERR("Dummy backend no watching code provided !");
    return EINA_FALSE;
 }
 
-EAPI void
+EEZE_API void
 eeze_mount_tabs_unwatch(void)
 {
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_mount_mtab_scan(void)
 {
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_mount_fstab_scan(void)
 {
    return EINA_FALSE;

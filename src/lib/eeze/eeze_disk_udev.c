@@ -9,7 +9,7 @@
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property)
 {
    const char *ret;
@@ -21,7 +21,7 @@ eeze_disk_udev_get_property(Eeze_Disk *disk, const char *property)
    return eina_stringshare_add(ret);
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr)
 {
    const char *ret;
@@ -33,7 +33,7 @@ eeze_disk_udev_get_sysattr(Eeze_Disk *disk, const char *sysattr)
    return eina_stringshare_add(ret);
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_udev_get_parent(Eeze_Disk *disk)
 {
    _udev_device *parent;
@@ -43,7 +43,7 @@ eeze_disk_udev_get_parent(Eeze_Disk *disk)
    return eina_stringshare_add(udev_device_get_syspath(parent));
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk,
                                   const char *sysattr,
                                   const char *value)
@@ -69,7 +69,7 @@ eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk,
    return EINA_FALSE;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk,
                                   const char *sysattr)
 {

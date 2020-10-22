@@ -1,21 +1,9 @@
 #ifndef EEZE_SENSOR_H
 #define EEZE_SENSOR_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  define EAPI __attribute__ ((visibility("default")))
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI
-#endif
-
 #include <Eina.h>
+
+#include <eeze_api.h>
 
 /**
  * @file Eeze_Sensor.h
@@ -103,27 +91,27 @@ typedef enum
  * @since 1.8
  * @{
  */
-EAPI extern int EEZE_SENSOR_EVENT_ACCELEROMETER;
-EAPI extern int EEZE_SENSOR_EVENT_GRAVITY;
-EAPI extern int EEZE_SENSOR_EVENT_LINEAR_ACCELERATION;
-EAPI extern int EEZE_SENSOR_EVENT_DEVICE_ORIENTATION;
-EAPI extern int EEZE_SENSOR_EVENT_MAGNETIC;
-EAPI extern int EEZE_SENSOR_EVENT_ORIENTATION;
-EAPI extern int EEZE_SENSOR_EVENT_GYROSCOPE;
-EAPI extern int EEZE_SENSOR_EVENT_LIGHT;
-EAPI extern int EEZE_SENSOR_EVENT_PROXIMITY;
-EAPI extern int EEZE_SENSOR_EVENT_SNAP;
-EAPI extern int EEZE_SENSOR_EVENT_SHAKE;
-EAPI extern int EEZE_SENSOR_EVENT_DOUBLETAP;
-EAPI extern int EEZE_SENSOR_EVENT_PANNING;
-EAPI extern int EEZE_SENSOR_EVENT_PANNING_BROWSE;
-EAPI extern int EEZE_SENSOR_EVENT_TILT;
-EAPI extern int EEZE_SENSOR_EVENT_FACEDOWN;
-EAPI extern int EEZE_SENSOR_EVENT_DIRECT_CALL;
-EAPI extern int EEZE_SENSOR_EVENT_SMART_ALERT;
-EAPI extern int EEZE_SENSOR_EVENT_NO_MOVE;
-EAPI extern int EEZE_SENSOR_EVENT_BAROMETER;
-EAPI extern int EEZE_SENSOR_EVENT_TEMPERATURE;
+EEZE_API extern int EEZE_SENSOR_EVENT_ACCELEROMETER;
+EEZE_API extern int EEZE_SENSOR_EVENT_GRAVITY;
+EEZE_API extern int EEZE_SENSOR_EVENT_LINEAR_ACCELERATION;
+EEZE_API extern int EEZE_SENSOR_EVENT_DEVICE_ORIENTATION;
+EEZE_API extern int EEZE_SENSOR_EVENT_MAGNETIC;
+EEZE_API extern int EEZE_SENSOR_EVENT_ORIENTATION;
+EEZE_API extern int EEZE_SENSOR_EVENT_GYROSCOPE;
+EEZE_API extern int EEZE_SENSOR_EVENT_LIGHT;
+EEZE_API extern int EEZE_SENSOR_EVENT_PROXIMITY;
+EEZE_API extern int EEZE_SENSOR_EVENT_SNAP;
+EEZE_API extern int EEZE_SENSOR_EVENT_SHAKE;
+EEZE_API extern int EEZE_SENSOR_EVENT_DOUBLETAP;
+EEZE_API extern int EEZE_SENSOR_EVENT_PANNING;
+EEZE_API extern int EEZE_SENSOR_EVENT_PANNING_BROWSE;
+EEZE_API extern int EEZE_SENSOR_EVENT_TILT;
+EEZE_API extern int EEZE_SENSOR_EVENT_FACEDOWN;
+EEZE_API extern int EEZE_SENSOR_EVENT_DIRECT_CALL;
+EEZE_API extern int EEZE_SENSOR_EVENT_SMART_ALERT;
+EEZE_API extern int EEZE_SENSOR_EVENT_NO_MOVE;
+EEZE_API extern int EEZE_SENSOR_EVENT_BAROMETER;
+EEZE_API extern int EEZE_SENSOR_EVENT_TEMPERATURE;
 /**@}*/
 
 /**
@@ -175,7 +163,7 @@ extern "C" {
  *
  * @since 1.8
  */
-EAPI Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
+EEZE_API Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
 
 /**
  * @brief Free a sensor object.
@@ -186,7 +174,7 @@ EAPI Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
  *
  * @since 1.8
  */
-EAPI void eeze_sensor_free(Eeze_Sensor_Obj *sens);
+EEZE_API void eeze_sensor_free(Eeze_Sensor_Obj *sens);
 
 /**
  * @brief Get accuracy from sensor object.
@@ -204,7 +192,7 @@ EAPI void eeze_sensor_free(Eeze_Sensor_Obj *sens);
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy);
+EEZE_API Eina_Bool eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy);
 
 /**
  * @brief Get data from all three data properties
@@ -220,7 +208,7 @@ EAPI Eina_Bool eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy);
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, float *z);
+EEZE_API Eina_Bool eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, float *z);
 
 /**
  * @brief Get data from first two data properties
@@ -234,7 +222,7 @@ EAPI Eina_Bool eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, fl
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y);
+EEZE_API Eina_Bool eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y);
 
 /**
  * @brief Get the data from  first data property
@@ -247,7 +235,7 @@ EAPI Eina_Bool eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y);
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x);
+EEZE_API Eina_Bool eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x);
 
 /**
  * @brief Get timestamp from sensor object.
@@ -261,7 +249,7 @@ EAPI Eina_Bool eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x);
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestamp);
+EEZE_API Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestamp);
 
 /**
  * @brief Read out sensor data
@@ -278,7 +266,7 @@ EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, double *timestam
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
+EEZE_API Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
 
 /**
  * @brief Asynchronous read out sensor data
@@ -303,7 +291,7 @@ EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
  *
  * @since 1.8
  */
-EAPI Eina_Bool       eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data);
+EEZE_API Eina_Bool       eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data);
 
 #ifdef __cplusplus
 }

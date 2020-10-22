@@ -5,7 +5,7 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-EAPI Eina_Stringshare *
+EEZE_API Eina_Stringshare *
 eeze_udev_syspath_get_parent_filtered(const char *syspath, const char *subsystem, const char *devtype)
 {
    _udev_device *device, *parent;
@@ -22,7 +22,7 @@ eeze_udev_syspath_get_parent_filtered(const char *syspath, const char *subsystem
    return ret;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_syspath_get_parent(const char *syspath)
 {
    _udev_device *device, *parent;
@@ -39,7 +39,7 @@ eeze_udev_syspath_get_parent(const char *syspath)
    return ret;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_syspath_get_parents(const char *syspath)
 {
    _udev_device *child, *parent, *device;
@@ -65,7 +65,7 @@ eeze_udev_syspath_get_parents(const char *syspath)
    return devlist;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_syspath_get_devpath(const char *syspath)
 {
    _udev_device *device;
@@ -85,7 +85,7 @@ eeze_udev_syspath_get_devpath(const char *syspath)
    return name;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_syspath_get_devname(const char *syspath)
 {
    _udev_device *device;
@@ -105,7 +105,7 @@ eeze_udev_syspath_get_devname(const char *syspath)
    return name;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_syspath_get_subsystem(const char *syspath)
 {
    _udev_device *device;
@@ -121,7 +121,7 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
    return subsystem;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_check_property(const char *syspath, const char *property, const char *value)
 {
    _udev_device *device;
@@ -140,7 +140,7 @@ eeze_udev_syspath_check_property(const char *syspath, const char *property, cons
    return ret;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_syspath_get_property(const char *syspath,
                                const char *property)
 {
@@ -160,7 +160,7 @@ eeze_udev_syspath_get_property(const char *syspath,
    return value;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_check_sysattr(const char *syspath, const char *sysattr, const char *value)
 {
    _udev_device *device;
@@ -180,7 +180,7 @@ eeze_udev_syspath_check_sysattr(const char *syspath, const char *sysattr, const 
    return ret;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_syspath_get_sysattr(const char *syspath,
                               const char *sysattr)
 {
@@ -200,7 +200,7 @@ eeze_udev_syspath_get_sysattr(const char *syspath,
    return value;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_set_sysattr(const char *syspath,
                               const char *sysattr,
                               double value)
@@ -230,7 +230,7 @@ eeze_udev_syspath_set_sysattr(const char *syspath,
   return ret;
 }
 
-EAPI Eina_List *
+EEZE_API Eina_List *
 eeze_udev_syspath_get_sysattr_list(const char *syspath)
 {
    _udev_device *device;
@@ -254,7 +254,7 @@ eeze_udev_syspath_get_sysattr_list(const char *syspath)
    return syslist;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_is_mouse(const char *syspath)
 {
    _udev_device *device = NULL;
@@ -276,7 +276,7 @@ eeze_udev_syspath_is_mouse(const char *syspath)
    return mouse;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_is_kbd(const char *syspath)
 {
    _udev_device *device = NULL;
@@ -298,7 +298,7 @@ eeze_udev_syspath_is_kbd(const char *syspath)
    return kbd;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_is_touchpad(const char *syspath)
 {
    _udev_device *device = NULL;
@@ -320,7 +320,7 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
    return touchpad;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_udev_syspath_is_joystick(const char *syspath)
 {
    _udev_device *device = NULL;
@@ -342,7 +342,7 @@ eeze_udev_syspath_is_joystick(const char *syspath)
    return joystick;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_udev_devpath_get_syspath(const char *devpath)
 {
    _udev_enumerate *en;
@@ -369,7 +369,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    return ret;
 }
 
-EAPI int
+EEZE_API int 
 eeze_udev_syspath_get_sysnum(const char *syspath)
 {
    _udev_device *device;

@@ -143,12 +143,12 @@ disk_fail:
    return EINA_FALSE;
 }
 
-EAPI void
+EEZE_API void
 eeze_disk_function(void)
 {
 }
 
-EAPI Eeze_Disk *
+EEZE_API Eeze_Disk *
 eeze_disk_new(const char *path)
 {
    Eeze_Disk *disk;
@@ -198,7 +198,7 @@ eeze_disk_new(const char *path)
    return disk;
 }
 
-EAPI Eeze_Disk *
+EEZE_API Eeze_Disk *
 eeze_disk_new_from_mount(const char *mount_point)
 {
    Eeze_Disk *disk = NULL;
@@ -266,7 +266,7 @@ error:
    return NULL;
 }
 
-EAPI void
+EEZE_API void
 eeze_disk_free(Eeze_Disk *disk)
 {
    extern Eina_List *eeze_events;
@@ -285,7 +285,7 @@ eeze_disk_free(Eeze_Disk *disk)
    free(disk);
 }
 
-EAPI void
+EEZE_API void
 eeze_disk_scan(Eeze_Disk *disk)
 {
    const char *test;
@@ -322,7 +322,7 @@ eeze_disk_scan(Eeze_Disk *disk)
    disk->cache.filled = EINA_TRUE;
 }
 
-EAPI void
+EEZE_API void
 eeze_disk_data_set(Eeze_Disk *disk, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(disk);
@@ -330,7 +330,7 @@ eeze_disk_data_set(Eeze_Disk *disk, void *data)
    disk->data = data;
 }
 
-EAPI void *
+EEZE_API void *
 eeze_disk_data_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -338,7 +338,7 @@ eeze_disk_data_get(Eeze_Disk *disk)
    return disk->data;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_syspath_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -346,7 +346,7 @@ eeze_disk_syspath_get(Eeze_Disk *disk)
    return disk->syspath;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_devpath_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -357,7 +357,7 @@ eeze_disk_devpath_get(Eeze_Disk *disk)
    return disk->devpath;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_fstype_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -365,7 +365,7 @@ eeze_disk_fstype_get(Eeze_Disk *disk)
    return disk->fstype;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_vendor_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -378,7 +378,7 @@ eeze_disk_vendor_get(Eeze_Disk *disk)
    return disk->cache.vendor;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_model_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -391,7 +391,7 @@ eeze_disk_model_get(Eeze_Disk *disk)
    return disk->cache.model;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_serial_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -402,7 +402,7 @@ eeze_disk_serial_get(Eeze_Disk *disk)
    return disk->cache.serial;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_uuid_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -413,7 +413,7 @@ eeze_disk_uuid_get(Eeze_Disk *disk)
    return disk->cache.uuid;
 }
 
-EAPI const char *
+EEZE_API const char *
 eeze_disk_label_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, NULL);
@@ -424,7 +424,7 @@ eeze_disk_label_get(Eeze_Disk *disk)
    return disk->cache.label;
 }
 
-EAPI Eeze_Disk_Type
+EEZE_API Eeze_Disk_Type
 eeze_disk_type_get(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EEZE_DISK_TYPE_UNKNOWN);
@@ -435,7 +435,7 @@ eeze_disk_type_get(Eeze_Disk *disk)
    return disk->cache.type;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_removable_get(Eeze_Disk *disk)
 {
    const char *test;
@@ -456,7 +456,7 @@ eeze_disk_removable_get(Eeze_Disk *disk)
    return disk->cache.removable;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_can_mount(void)
 {
    if (sizeof(EEZE_MOUNT_BIN) == sizeof(""))
@@ -464,7 +464,7 @@ eeze_disk_can_mount(void)
    return access(EEZE_MOUNT_BIN, X_OK | R_OK) == 0;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_can_unmount(void)
 {
    if (sizeof(EEZE_UNMOUNT_BIN) == sizeof(""))
@@ -472,7 +472,7 @@ eeze_disk_can_unmount(void)
    return access(EEZE_UNMOUNT_BIN, X_OK | R_OK) == 0;
 }
 
-EAPI Eina_Bool
+EEZE_API Eina_Bool
 eeze_disk_can_eject(void)
 {
    if (sizeof(EEZE_EJECT_BIN) == sizeof(""))

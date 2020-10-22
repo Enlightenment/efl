@@ -74,7 +74,7 @@ typedef struct _Eeze_Sensor_Module
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
+EEZE_API Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module *mod);
 
 /**
  * @brief Unregister a module from eeze_sensor core.
@@ -85,7 +85,7 @@ EAPI Eina_Bool eeze_sensor_module_register(const char *name, Eeze_Sensor_Module 
  *
  * @since 1.8
  */
-EAPI Eina_Bool eeze_sensor_module_unregister(const char *name);
+EEZE_API Eina_Bool eeze_sensor_module_unregister(const char *name);
 
 /**
  * @brief Fetch the sensor object by type from the sensor object list
@@ -94,7 +94,7 @@ EAPI Eina_Bool eeze_sensor_module_unregister(const char *name);
  *
  * @since 1.8
  */
-EAPI Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
+EEZE_API Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
 
 /**
  * @brief Initialize the Eeze sensor subsystem.
