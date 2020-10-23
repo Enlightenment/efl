@@ -120,7 +120,7 @@ emile_hmac_sha1(const void    *key,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_binbuf_hmac_sha1(const char *key,
                        unsigned int key_len,
                        const Eina_Binbuf *data,
@@ -161,14 +161,14 @@ emile_sha1(const void    *data,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
 {
    Eina_Slice slice = eina_binbuf_slice_get(data);
    return emile_sha1(slice.mem, slice.len, digest);
 }
 
-EAPI Eina_Binbuf *
+EMILE_API Eina_Binbuf *
 emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
                     const Eina_Binbuf *data,
                     const char *key,
@@ -271,7 +271,7 @@ on_error:
    return NULL;
 }
 
-EAPI Eina_Binbuf *
+EMILE_API Eina_Binbuf *
 emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
                       const Eina_Binbuf *data,
                       const char *key,
@@ -368,7 +368,7 @@ on_error:
 // FIXME: handshaking and fun
 
 
-EAPI Emile_SSL *
+EMILE_API Emile_SSL *
 emile_cipher_server_listen(Emile_Cipher_Type t)
 {
    Emile_SSL *r;
@@ -397,13 +397,13 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
    return NULL;
 }
 
-EAPI Emile_SSL *
+EMILE_API Emile_SSL *
 emile_cipher_client_connect(Emile_SSL *server EINA_UNUSED, int fd EINA_UNUSED)
 {
    return NULL;
 }
 
-EAPI Emile_SSL *
+EMILE_API Emile_SSL *
 emile_cipher_server_connect(Emile_Cipher_Type t)
 {
    const char *priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT";
@@ -455,13 +455,13 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
    return NULL;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_free(Emile_SSL *emile EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_cafile_add(Emile_SSL *emile, const char *file)
 {
    Eina_File_Direct_Info *info;
@@ -500,13 +500,13 @@ emile_cipher_cafile_add(Emile_SSL *emile, const char *file)
    return !count ? EINA_FALSE : EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_cert_add(Emile_SSL *emile, const char *file)
 {
    return eina_stringshare_replace(&emile->cert_file, file);
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_privkey_add(Emile_SSL *emile, const char *file)
 {
    int ret;
@@ -521,7 +521,7 @@ emile_cipher_privkey_add(Emile_SSL *emile, const char *file)
    return ret ? EINA_FALSE : EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_crl_add(Emile_SSL *emile, const char *file)
 {
    int ret;
@@ -533,7 +533,7 @@ emile_cipher_crl_add(Emile_SSL *emile, const char *file)
    return ret ? EINA_FALSE : EINA_TRUE;
 }
 
-EAPI int
+EMILE_API int
 emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
 {
    int num;
@@ -554,49 +554,49 @@ emile_cipher_read(Emile_SSL *emile, Eina_Binbuf *buffer)
    return num;
 }
 
-EAPI int
+EMILE_API int
 emile_cipher_write(Emile_SSL *emile EINA_UNUSED, const Eina_Binbuf *buffer EINA_UNUSED)
 {
    return 0;
 }
 
-EAPI const char *
+EMILE_API const char *
 emile_cipher_error_get(const Emile_SSL *emile)
 {
    return emile->last_error;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_verify_name_set(Emile_SSL *emile, const char *name)
 {
    return eina_stringshare_replace(&emile->name, name);
 }
 
-EAPI const char *
+EMILE_API const char *
 emile_cipher_verify_name_get(const Emile_SSL *emile)
 {
    return emile->name;
 }
 
-EAPI void
+EMILE_API void
 emile_cipher_verify_set(Emile_SSL *emile, Eina_Bool verify)
 {
    emile->verify = verify;
 }
 
-EAPI void
+EMILE_API void
 emile_cipher_verify_basic_set(Emile_SSL *emile, Eina_Bool verify_basic)
 {
    emile->verify_basic = verify_basic;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_verify_get(const Emile_SSL *emile)
 {
    return emile->verify;
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_verify_basic_get(const Emile_SSL *emile)
 {
    return emile->verify_basic;

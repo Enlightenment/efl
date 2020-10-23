@@ -23,7 +23,7 @@ static Eina_Bool _emile_cipher_inited = EINA_FALSE;
 static unsigned int _emile_init_count = 0;
 int _emile_log_dom_global = -1;
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_cipher_init(void)
 {
    if (_emile_cipher_inited)
@@ -37,7 +37,7 @@ emile_cipher_init(void)
    return EINA_TRUE;
 }
 
-EAPI Emile_Cipher_Backend
+EMILE_API Emile_Cipher_Backend
 emile_cipher_module_get(void)
 {
 #ifdef HAVE_GNUTLS
@@ -51,7 +51,7 @@ emile_cipher_module_get(void)
 #endif
 }
 
-EAPI int
+EMILE_API int
 emile_init(void)
 {
    if (++_emile_init_count != 1)
@@ -77,7 +77,7 @@ shutdown_eina:
    return --_emile_init_count;
 }
 
-EAPI int
+EMILE_API int
 emile_shutdown(void)
 {
    if (--_emile_init_count != 0)

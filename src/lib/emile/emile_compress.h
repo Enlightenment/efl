@@ -51,7 +51,7 @@ typedef enum
  *
  * @since 1.14
  */
-EAPI Eina_Binbuf *emile_compress(const Eina_Binbuf * in, Emile_Compressor_Type t, Emile_Compressor_Level level);
+EMILE_API Eina_Binbuf *emile_compress(const Eina_Binbuf * in, Emile_Compressor_Type t, Emile_Compressor_Level level);
 /**
  * @brief Uncompress a buffer into a newly allocated buffer.
  *
@@ -67,7 +67,7 @@ EAPI Eina_Binbuf *emile_compress(const Eina_Binbuf * in, Emile_Compressor_Type t
  * @note That if dest_length doesn't match the expanded data, it will
  * just fail and return @c NULL.
  */
-EAPI Eina_Binbuf *emile_decompress(const Eina_Binbuf * in, Emile_Compressor_Type t, unsigned int dest_length);
+EMILE_API Eina_Binbuf *emile_decompress(const Eina_Binbuf * in, Emile_Compressor_Type t, unsigned int dest_length);
 
 /**
  * @brief Uncompress a buffer into an existing buffer.
@@ -83,7 +83,7 @@ EAPI Eina_Binbuf *emile_decompress(const Eina_Binbuf * in, Emile_Compressor_Type
  * expanded data or it will fail. In case of failure, random garbage
  * could fill the out buffer.
  */
-EAPI Eina_Bool emile_expand(const Eina_Binbuf * in, Eina_Binbuf * out, Emile_Compressor_Type t);
+EMILE_API Eina_Bool emile_expand(const Eina_Binbuf * in, Eina_Binbuf * out, Emile_Compressor_Type t);
 /**
  * @}
  */

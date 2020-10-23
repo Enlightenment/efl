@@ -2385,7 +2385,7 @@ _emile_image_bind(Emile_Image *ei,
 
 /* Public API to manipulate Emile_Image */
 
-EAPI Emile_Image *
+EMILE_API Emile_Image *
 emile_image_tgv_memory_open(Eina_Binbuf *source,
                             Emile_Image_Load_Opts *opts,
                             Emile_Image_Animated *animated,
@@ -2404,7 +2404,7 @@ emile_image_tgv_memory_open(Eina_Binbuf *source,
    return _emile_image_bind(ei, opts, animated, error);
 }
 
-EAPI Emile_Image *
+EMILE_API Emile_Image *
 emile_image_tgv_file_open(Eina_File *source,
                           Emile_Image_Load_Opts *opts,
                           Emile_Image_Animated *animated,
@@ -2423,7 +2423,7 @@ emile_image_tgv_file_open(Eina_File *source,
    return _emile_image_bind(ei, opts, animated, error);
 }
 
-EAPI Emile_Image *
+EMILE_API Emile_Image *
 emile_image_jpeg_memory_open(Eina_Binbuf *source,
                              Emile_Image_Load_Opts *opts,
                              Emile_Image_Animated *animated,
@@ -2442,7 +2442,7 @@ emile_image_jpeg_memory_open(Eina_Binbuf *source,
    return _emile_image_bind(ei, opts, animated, error);
 }
 
-EAPI Emile_Image *
+EMILE_API Emile_Image *
 emile_image_jpeg_file_open(Eina_File *source,
                            Emile_Image_Load_Opts *opts,
                            Emile_Image_Animated *animated,
@@ -2461,7 +2461,7 @@ emile_image_jpeg_file_open(Eina_File *source,
    return _emile_image_bind(ei, opts, animated, error);
 }
 
-EAPI void
+EMILE_API void
 emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data)
 {
    if (!image) return ;
@@ -2472,7 +2472,7 @@ emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Act
    image->cancelled = callback;
 }
 
-EAPI void
+EMILE_API void
 emile_image_close(Emile_Image *image)
 {
    if (!image)
@@ -2485,7 +2485,7 @@ emile_image_close(Emile_Image *image)
    free(image);
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_image_head(Emile_Image *image,
                  Emile_Image_Property *prop,
                  unsigned int property_size,
@@ -2498,7 +2498,7 @@ emile_image_head(Emile_Image *image,
    return image->head(image, prop, property_size, error);
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_image_data(Emile_Image *image,
                  Emile_Image_Property *prop,
                  unsigned int property_size,
@@ -2512,7 +2512,7 @@ emile_image_data(Emile_Image *image,
    return image->data(image, prop, property_size, pixels, error);
 }
 
-EAPI const char *
+EMILE_API const char *
 emile_load_error_str(Emile_Image *source EINA_UNUSED,
                      Emile_Image_Load_Error error)
 {

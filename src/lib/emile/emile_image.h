@@ -246,7 +246,7 @@ struct _Emile_Image_Load_Opts
  *
  * @since 1.14
  */
-EAPI Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+EMILE_API Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 /**
  * Open a TGV image from a file.
@@ -259,7 +259,7 @@ EAPI Emile_Image *emile_image_tgv_memory_open(Eina_Binbuf * source, Emile_Image_
  *
  * @since 1.14
  */
-EAPI Emile_Image *emile_image_tgv_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+EMILE_API Emile_Image *emile_image_tgv_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 
 /**
@@ -273,7 +273,7 @@ EAPI Emile_Image *emile_image_tgv_file_open(Eina_File * source, Emile_Image_Load
  *
  * @since 1.14
  */
-EAPI Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+EMILE_API Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 /**
  * Open a JPEG image from file.
@@ -286,7 +286,7 @@ EAPI Emile_Image *emile_image_jpeg_memory_open(Eina_Binbuf * source, Emile_Image
  *
  * @since 1.14
  */
-EAPI Emile_Image *emile_image_jpeg_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
+EMILE_API Emile_Image *emile_image_jpeg_file_open(Eina_File * source, Emile_Image_Load_Opts * opts, Emile_Image_Animated * animated, Emile_Image_Load_Error * error);
 
 /**
  * Read the header of an image to fill Emile_Image_Property.
@@ -299,7 +299,7 @@ EAPI Emile_Image *emile_image_jpeg_file_open(Eina_File * source, Emile_Image_Loa
  *
  * @since 1.14
  */
-EAPI Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, Emile_Image_Load_Error * error);
+EMILE_API Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, Emile_Image_Load_Error * error);
 
 /**
  * Read the pixels from an image file.
@@ -313,7 +313,7 @@ EAPI Eina_Bool emile_image_head(Emile_Image * image, Emile_Image_Property * prop
  *
  * @since 1.14
  */
-EAPI Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error * error);
+EMILE_API Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop, unsigned int property_size, void *pixels, Emile_Image_Load_Error * error);
 
 /**
  * Register a callback for emile to ask what to do during the processing of an image
@@ -323,7 +323,7 @@ EAPI Eina_Bool emile_image_data(Emile_Image * image, Emile_Image_Property * prop
  * @param action The action this callback is triggered on.
  * @since 1.19
  */
-EAPI void emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data);
+EMILE_API void emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback, Emile_Action action, const void *data);
 
 /**
  * Close an opened image handler.
@@ -332,7 +332,7 @@ EAPI void emile_image_callback_set(Emile_Image *image, Emile_Action_Cb callback,
  *
  * @since 1.14
  */
-EAPI void emile_image_close(Emile_Image * source);
+EMILE_API void emile_image_close(Emile_Image * source);
 
 /**
  * Convert an error code related to an image handler into a meaningful string.
@@ -343,7 +343,7 @@ EAPI void emile_image_close(Emile_Image * source);
  *
  * @since 1.14
  */
-EAPI const char *emile_load_error_str(Emile_Image * source, Emile_Image_Load_Error error);
+EMILE_API const char *emile_load_error_str(Emile_Image * source, Emile_Image_Load_Error error);
 
 /**
  * @}

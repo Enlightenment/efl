@@ -19,7 +19,7 @@
  *
  * @since 1.17.0
  */
-EAPI Eina_Strbuf *emile_base64_encode(const Eina_Binbuf *in);
+EMILE_API Eina_Strbuf *emile_base64_encode(const Eina_Binbuf *in);
 
 /**
  * @brief base64 url and filename safe encoding function.
@@ -33,7 +33,7 @@ EAPI Eina_Strbuf *emile_base64_encode(const Eina_Binbuf *in);
  *
  * @since 1.17.0
  */
-EAPI Eina_Strbuf *emile_base64url_encode(const Eina_Binbuf *in);
+EMILE_API Eina_Strbuf *emile_base64url_encode(const Eina_Binbuf *in);
 
 /**
  * @brief base64 decoding function.
@@ -45,7 +45,7 @@ EAPI Eina_Strbuf *emile_base64url_encode(const Eina_Binbuf *in);
  *
  * @since 1.17.0
  */
-EAPI Eina_Binbuf* emile_base64_decode(const Eina_Strbuf *in);
+EMILE_API Eina_Binbuf* emile_base64_decode(const Eina_Strbuf *in);
 
 /**
  * @brief decoding function for base64 url and filename safe encoding.
@@ -57,7 +57,7 @@ EAPI Eina_Binbuf* emile_base64_decode(const Eina_Strbuf *in);
  *
  * @since 1.17.0
  */
-EAPI Eina_Binbuf* emile_base64url_decode(const Eina_Strbuf *in);
+EMILE_API Eina_Binbuf* emile_base64url_decode(const Eina_Strbuf *in);
 
 /**
  * @}

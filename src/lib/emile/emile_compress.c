@@ -33,7 +33,7 @@ _emile_compress_buffer_size(const Eina_Binbuf *data, Emile_Compressor_Type t)
      }
 }
 
-EAPI Eina_Binbuf *
+EMILE_API Eina_Binbuf *
 emile_compress(const Eina_Binbuf *data,
                Emile_Compressor_Type t,
                Emile_Compressor_Level l)
@@ -93,7 +93,7 @@ emile_compress(const Eina_Binbuf *data,
    return eina_binbuf_manage_new(compact, length, EINA_FALSE);
 }
 
-EAPI Eina_Bool
+EMILE_API Eina_Bool
 emile_expand(const Eina_Binbuf *in, Eina_Binbuf *out, Emile_Compressor_Type t)
 {
    if (!in || !out)
@@ -131,7 +131,7 @@ emile_expand(const Eina_Binbuf *in, Eina_Binbuf *out, Emile_Compressor_Type t)
    return EINA_TRUE;
 }
 
-EAPI Eina_Binbuf *
+EMILE_API Eina_Binbuf *
 emile_decompress(const Eina_Binbuf *data,
                  Emile_Compressor_Type t,
                  unsigned int dest_length)

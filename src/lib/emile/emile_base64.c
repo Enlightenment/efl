@@ -182,25 +182,25 @@ emile_base64_decode_common(const Eina_Strbuf *in, Eina_Bool is_base64url_decode)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI Eina_Strbuf *
+EMILE_API Eina_Strbuf *
 emile_base64_encode(const Eina_Binbuf *in)
 {
    return emile_base64_encode_common(in, EINA_FALSE);
 }
 
-EAPI Eina_Strbuf *
+EMILE_API Eina_Strbuf *
 emile_base64url_encode(const Eina_Binbuf *in)
 {
    return emile_base64_encode_common(in, EINA_TRUE);
 }
 
-EAPI Eina_Binbuf *
+EMILE_API Eina_Binbuf *
 emile_base64_decode(const Eina_Strbuf *in)
 {
    return emile_base64_decode_common(in, EINA_FALSE);
 }
 
-EAPI Eina_Binbuf *
+EMILE_API Eina_Binbuf *
 emile_base64url_decode(const Eina_Strbuf *in)
 {
    return emile_base64_decode_common(in, EINA_TRUE);
