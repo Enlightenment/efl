@@ -26,7 +26,7 @@ endif
 
 emile_lib = library('emile',
     emile_src,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEMILE_BUILD'],
     include_directories: config_dir,
     dependencies: emile_pub_deps + emile_deps + emile_ext_deps,
     install: true,
