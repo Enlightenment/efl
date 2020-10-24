@@ -470,7 +470,7 @@ int ECORE_WIN32_EVENT_SELECTION_NOTIFY      = 0;
  * When Ecore_Win32 is not used anymore, call ecore_win32_shutdown()
  * to shut down the Ecore_Win32 library.
  */
-EAPI int
+ECORE_WIN32_API int
 ecore_win32_init()
 {
    WNDCLASSEX wc;
@@ -595,7 +595,7 @@ ecore_win32_init()
  * been called the same number of times than ecore_win32_init(). In that case
  * it shuts down all the Windows graphic system.
  */
-EAPI int
+ECORE_WIN32_API int
 ecore_win32_shutdown()
 {
    int i;
@@ -650,7 +650,7 @@ ecore_win32_shutdown()
  * This function returns the depth of the screen. If an error occurs,
  * it returns 0.
  */
-EAPI int
+ECORE_WIN32_API int
 ecore_win32_screen_depth_get()
 {
    HDC dc;
@@ -683,7 +683,7 @@ ecore_win32_screen_depth_get()
  * double_click flag is set in a button down event. If 3 clicks occur
  * within double this time, the triple_click flag is also set.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_double_click_time_set(double t)
 {
    if (t < 0.0) t = 0.0;
@@ -700,7 +700,7 @@ ecore_win32_double_click_time_set(double t)
  * default value is returned. See ecore_win32_double_click_time_set()
  * for more informations.
  */
-EAPI double
+ECORE_WIN32_API double
 ecore_win32_double_click_time_get(void)
 {
    return _ecore_win32_double_click_time;
@@ -713,7 +713,7 @@ ecore_win32_double_click_time_get(void)
  *
  * This function returns the last event time.
  */
-EAPI unsigned long
+ECORE_WIN32_API unsigned long
 ecore_win32_current_time_get(void)
 {
    return _ecore_win32_event_last_time;

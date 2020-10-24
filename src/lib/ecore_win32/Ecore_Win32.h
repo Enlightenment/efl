@@ -20,32 +20,7 @@
 
 #include <Eina.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
-
+#include <ecore_win32_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -504,176 +479,176 @@ struct _Ecore_Win32_Event_Selection_Notify
  */
 typedef int (*Ecore_Win32_Dnd_DropTarget_Callback)(void *window, int event, int pt_x, int pt_y, void *data, int size);
 
-EAPI extern int ECORE_WIN32_EVENT_MOUSE_IN; /**< Ecore_Event for the #Ecore_Win32_Event_Mouse_In event */
-EAPI extern int ECORE_WIN32_EVENT_MOUSE_OUT; /**< Ecore_Event for the #Ecore_Win32_Event_Mouse_Out event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Focus_In event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Focus_Out event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_DAMAGE; /**< Ecore_Event for the Ecore_Win32_Event_Damage event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_CREATE; /**< Ecore_Event for the Ecore_Win32_Event_Create event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_DESTROY; /**< Ecore_Event for the Ecore_Win32_Event_Destroy event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_HIDE; /**< Ecore_Event for the Ecore_Win32_Event_Hide event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_SHOW; /**< Ecore_Event for the Ecore_Win32_Event_Show event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_CONFIGURE; /**< Ecore_Event for the Ecore_Win32_Event_Configure event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_RESIZE; /**< Ecore_Event for the Ecore_Win32_Event_Resize event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_PROPERTY; /**< Ecore_Event for the Ecore_Win32_Event_Property event @since 1.20 */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Delete_Request event */
-EAPI extern int ECORE_WIN32_EVENT_SELECTION_CLEAR; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Clear event @since 1.16 */
-EAPI extern int ECORE_WIN32_EVENT_SELECTION_NOTIFY; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Notify event @since 1.16 */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_MOUSE_IN; /**< Ecore_Event for the #Ecore_Win32_Event_Mouse_In event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_MOUSE_OUT; /**< Ecore_Event for the #Ecore_Win32_Event_Mouse_Out event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Focus_In event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Focus_Out event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_DAMAGE; /**< Ecore_Event for the Ecore_Win32_Event_Damage event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_CREATE; /**< Ecore_Event for the Ecore_Win32_Event_Create event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_DESTROY; /**< Ecore_Event for the Ecore_Win32_Event_Destroy event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_HIDE; /**< Ecore_Event for the Ecore_Win32_Event_Hide event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_SHOW; /**< Ecore_Event for the Ecore_Win32_Event_Show event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_CONFIGURE; /**< Ecore_Event for the Ecore_Win32_Event_Configure event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_RESIZE; /**< Ecore_Event for the Ecore_Win32_Event_Resize event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_PROPERTY; /**< Ecore_Event for the Ecore_Win32_Event_Property event @since 1.20 */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Delete_Request event */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_SELECTION_CLEAR; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Clear event @since 1.16 */
+ECORE_WIN32_API extern int ECORE_WIN32_EVENT_SELECTION_NOTIFY; /**< Ecore_Event for the #Ecore_Win32_Event_Selection_Notify event @since 1.16 */
 
 
 /* Core */
 
-EAPI int           ecore_win32_init();
-EAPI int           ecore_win32_shutdown();
-EAPI int           ecore_win32_screen_depth_get();
-EAPI void          ecore_win32_double_click_time_set(double t);
-EAPI double        ecore_win32_double_click_time_get(void);
-EAPI unsigned long ecore_win32_current_time_get(void);
+ECORE_WIN32_API int           ecore_win32_init();
+ECORE_WIN32_API int           ecore_win32_shutdown();
+ECORE_WIN32_API int           ecore_win32_screen_depth_get();
+ECORE_WIN32_API void          ecore_win32_double_click_time_set(double t);
+ECORE_WIN32_API double        ecore_win32_double_click_time_get(void);
+ECORE_WIN32_API unsigned long ecore_win32_current_time_get(void);
 
 /* Window */
 
-EAPI Ecore_Win32_Window *ecore_win32_window_new(Ecore_Win32_Window *parent,
+ECORE_WIN32_API Ecore_Win32_Window *ecore_win32_window_new(Ecore_Win32_Window *parent,
                                                 int                 x,
                                                 int                 y,
                                                 int                 width,
                                                 int                 height);
-EAPI Ecore_Win32_Window *ecore_win32_window_override_new(Ecore_Win32_Window *parent,
+ECORE_WIN32_API Ecore_Win32_Window *ecore_win32_window_override_new(Ecore_Win32_Window *parent,
                                                          int                 x,
                                                          int                 y,
                                                          int                 width,
                                                          int                 height);
 
-EAPI void ecore_win32_window_free(Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_window_free(Ecore_Win32_Window *window);
 
-EAPI void *ecore_win32_window_hwnd_get(Ecore_Win32_Window *window);
+ECORE_WIN32_API void *ecore_win32_window_hwnd_get(Ecore_Win32_Window *window);
 
-EAPI void ecore_win32_window_move(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_move(Ecore_Win32_Window *window,
                                   int                 x,
                                   int                 y);
 
-EAPI void ecore_win32_window_resize(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_resize(Ecore_Win32_Window *window,
                                     int                 width,
                                     int                 height);
 
-EAPI void ecore_win32_window_move_resize(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_move_resize(Ecore_Win32_Window *window,
                                          int                 x,
                                          int                 y,
                                          int                 width,
                                          int                 height);
 
-EAPI void ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
                                           int                *x,
                                           int                *y,
                                           int                *width,
                                           int                *height);
 
-EAPI void ecore_win32_window_size_get(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_get(Ecore_Win32_Window *window,
                                       int                *width,
                                       int                *height);
 
-EAPI void ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
                                           int                 min_width,
                                           int                 min_height);
 
-EAPI void ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
                                           int                *min_width,
                                           int                *min_height);
 
-EAPI void ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
                                           int                 max_width,
                                           int                 max_height);
 
-EAPI void ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
                                           int                *max_width,
                                           int                *max_height);
 
-EAPI void ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
                                            int                 base_width,
                                            int                 base_height);
 
-EAPI void ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
                                            int                *base_width,
                                            int                *base_height);
 
-EAPI void ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
                                            int                 step_width,
                                            int                 step_height);
 
-EAPI void ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
                                            int                *step_width,
                                            int                *step_height);
 
-EAPI void ecore_win32_window_show(Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_window_show(Ecore_Win32_Window *window);
 
-EAPI void ecore_win32_window_hide(Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_window_hide(Ecore_Win32_Window *window);
 
-EAPI void ecore_win32_window_raise(Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_window_raise(Ecore_Win32_Window *window);
 
-EAPI void ecore_win32_window_lower(Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_window_lower(Ecore_Win32_Window *window);
 
-EAPI void ecore_win32_window_title_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_title_set(Ecore_Win32_Window *window,
                                        const char         *title);
 
-EAPI void ecore_win32_window_focus(Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_window_focus(Ecore_Win32_Window *window);
 
-EAPI void *ecore_win32_window_focus_get(void);
+ECORE_WIN32_API void *ecore_win32_window_focus_get(void);
 
-EAPI void ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
                                            Eina_Bool           on);
 
-EAPI void ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
                                             Eina_Bool           on);
 
-EAPI void ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                                             Eina_Bool           on);
 
-EAPI void ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
+ECORE_WIN32_API void ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
                                         Ecore_Win32_Cursor *cursor);
 
-EAPI void ecore_win32_window_state_set(Ecore_Win32_Window       *window,
+ECORE_WIN32_API void ecore_win32_window_state_set(Ecore_Win32_Window       *window,
                                        Ecore_Win32_Window_State *state,
                                        unsigned int              num);
 
-EAPI void ecore_win32_window_state_get(Ecore_Win32_Window        *window,
+ECORE_WIN32_API void ecore_win32_window_state_get(Ecore_Win32_Window        *window,
                                        Ecore_Win32_Window_State **state,
                                        unsigned int              *num);
 
-EAPI void ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
+ECORE_WIN32_API void ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                                                 Ecore_Win32_Window_State state,
                                                 unsigned int             set);
 
-EAPI void ecore_win32_window_type_set(Ecore_Win32_Window      *window,
+ECORE_WIN32_API void ecore_win32_window_type_set(Ecore_Win32_Window      *window,
                                       Ecore_Win32_Window_Type  type);
 
 /* Cursor */
 
-EAPI Ecore_Win32_Cursor *ecore_win32_cursor_new(const void *pixels_and,
+ECORE_WIN32_API Ecore_Win32_Cursor *ecore_win32_cursor_new(const void *pixels_and,
                                                 const void *pixels_xor,
                                                 int         width,
                                                 int         height,
                                                 int         hot_x,
                                                 int         hot_y);
 
-EAPI void                ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor);
+ECORE_WIN32_API void                ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor);
 
-EAPI Ecore_Win32_Cursor *ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape);
+ECORE_WIN32_API Ecore_Win32_Cursor *ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape);
 
-EAPI const Ecore_Win32_Cursor *ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape);
+ECORE_WIN32_API const Ecore_Win32_Cursor *ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape);
 
-EAPI void                ecore_win32_cursor_size_get(int *width, int *height);
+ECORE_WIN32_API void                ecore_win32_cursor_size_get(int *width, int *height);
 
-EAPI void                ecore_win32_cursor_show(Eina_Bool show);
+ECORE_WIN32_API void                ecore_win32_cursor_show(Eina_Bool show);
 
 
 
 /* Drag and drop */
-EAPI int       ecore_win32_dnd_init();
-EAPI int       ecore_win32_dnd_shutdown();
-EAPI Eina_Bool ecore_win32_dnd_begin(const char *data,
+ECORE_WIN32_API int       ecore_win32_dnd_init();
+ECORE_WIN32_API int       ecore_win32_dnd_shutdown();
+ECORE_WIN32_API Eina_Bool ecore_win32_dnd_begin(const char *data,
                                      int         size);
-EAPI Eina_Bool ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
+ECORE_WIN32_API Eina_Bool ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
                                                     Ecore_Win32_Dnd_DropTarget_Callback callback);
-EAPI void      ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window);
+ECORE_WIN32_API void      ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window);
 
 /* Clipboard */
 
@@ -693,7 +668,7 @@ EAPI void      ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window
  *
  * @since 1.24
  */
-EAPI Eina_Bool ecore_win32_clipboard_set(const Ecore_Win32_Window *window,
+ECORE_WIN32_API Eina_Bool ecore_win32_clipboard_set(const Ecore_Win32_Window *window,
                                          const void *data,
                                          size_t size,
                                          const char *mime_type);
@@ -711,7 +686,7 @@ EAPI Eina_Bool ecore_win32_clipboard_set(const Ecore_Win32_Window *window,
  *
  * @since 1.24
  */
-EAPI void * ecore_win32_clipboard_get(const Ecore_Win32_Window *window,
+ECORE_WIN32_API void * ecore_win32_clipboard_get(const Ecore_Win32_Window *window,
                                          size_t *size,
                                          const char *mime_type);
 
@@ -726,7 +701,7 @@ EAPI void * ecore_win32_clipboard_get(const Ecore_Win32_Window *window,
  *
  * @since 1.24
  */
-EAPI void ecore_win32_clipboard_clear(const Ecore_Win32_Window *window);
+ECORE_WIN32_API void ecore_win32_clipboard_clear(const Ecore_Win32_Window *window);
 
 /**
  * @typedef Ecore_Win32_Monitor
@@ -755,7 +730,7 @@ typedef struct
  *
  * @since 1.20
  */
-EAPI Eina_Iterator *ecore_win32_monitors_get(void);
+ECORE_WIN32_API Eina_Iterator *ecore_win32_monitors_get(void);
 
 /**
  * @}
@@ -764,8 +739,5 @@ EAPI Eina_Iterator *ecore_win32_monitors_get(void);
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif /* __ECORE_WIN32_H__ */
