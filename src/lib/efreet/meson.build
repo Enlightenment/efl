@@ -41,7 +41,7 @@ efreet_lib = library('efreet',
     dependencies: efreet_pub_deps + efreet_ext_deps + efreet_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEFREET_BUILD'],
     version : meson.project_version()
 )
 

@@ -104,9 +104,9 @@ static Eina_Bool disable_cache;
 static Eina_Bool run_in_tree;
 static int relaunch_try = 0;
 
-EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
-EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
-EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
+EFREET_API int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
+EFREET_API int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
+EFREET_API int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
 
 #define IPC_HEAD(_type) \
    Ecore_Ipc_Event_Server_##_type *e = event; \
@@ -283,7 +283,7 @@ _icon_desktop_cache_update_event_add(int event_type)
    ecore_event_add(event_type, ev, icon_cache_update_free, l);
 }
 
-EAPI void (*_efreet_mime_update_func) (void) = NULL;
+EFREET_API void (*_efreet_mime_update_func) (void) = NULL;
 
 static Eina_Bool
 _cb_server_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -471,9 +471,9 @@ efreet_cache_shutdown(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI const char *
+EFREET_API const char *
 efreet_icon_cache_file(const char *theme)
 {
     static char cache_file[PATH_MAX] = { '\0' };
@@ -489,9 +489,9 @@ efreet_icon_cache_file(const char *theme)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI const char *
+EFREET_API const char *
 efreet_icon_theme_cache_file(void)
 {
     char tmp[PATH_MAX] = { '\0' };
@@ -506,9 +506,9 @@ efreet_icon_theme_cache_file(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI const char *
+EFREET_API const char *
 efreet_desktop_util_cache_file(void)
 {
     char tmp[PATH_MAX] = { '\0' };
@@ -534,9 +534,6 @@ efreet_desktop_util_cache_file(void)
     return util_cache_file;
 }
 
-/*
- * Needs EAPI because of helper binaries
- */
 #define SHSH(n, v) ((((v) << (n)) & 0xffffffff) | ((v) >> (32 - (n))))
 
 static inline int
@@ -623,7 +620,7 @@ sha1(unsigned char *data, int size, unsigned char *dst)
    memcpy(dst, digest, 5 * 4);
 }
 
-EAPI Eina_Bool
+EFREET_API Eina_Bool
 efreet_file_cache_fill(const char *file, Efreet_Cache_Check *check)
 {
    struct stat st;
@@ -659,7 +656,7 @@ efreet_file_cache_fill(const char *file, Efreet_Cache_Check *check)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool // true if matches
+EFREET_API Eina_Bool // true if matches
 efreet_file_cache_check(const Efreet_Cache_Check *check1, const Efreet_Cache_Check *check2)
 {
    if ((check1->mtime  != check2->mtime ) ||
@@ -676,7 +673,7 @@ efreet_file_cache_check(const Efreet_Cache_Check *check1, const Efreet_Cache_Che
    return EINA_TRUE; // matches
 }
 
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_version_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -696,9 +693,9 @@ efreet_version_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_hash_array_string_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -717,9 +714,9 @@ efreet_hash_array_string_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_hash_string_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -737,9 +734,9 @@ efreet_hash_string_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_array_string_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -756,9 +753,9 @@ efreet_array_string_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI const char *
+EFREET_API const char *
 efreet_desktop_cache_file(void)
 {
     char tmp[PATH_MAX] = { '\0' };
@@ -852,9 +849,9 @@ efreet_icon_directory_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_icon_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -893,9 +890,9 @@ efreet_icon_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_icon_theme_edd(Eina_Bool cache)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -971,9 +968,9 @@ efreet_icon_theme_edd(Eina_Bool cache)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_icon_fallback_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -991,9 +988,9 @@ efreet_icon_fallback_edd(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eet_Data_Descriptor *
+EFREET_API Eet_Data_Descriptor *
 efreet_desktop_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
@@ -1190,9 +1187,9 @@ efreet_cache_icon_theme_list(void)
 }
 
 /*
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI void
+EFREET_API void
 efreet_cache_array_string_free(Efreet_Cache_Array_String *array)
 {
     if (!array) return;
@@ -1545,7 +1542,7 @@ hash_array_string_add(void *hash, const char *key, void *data)
     return hash;
 }
 
-EAPI void
+EFREET_API void
 efreet_cache_disable(void)
 {
    Eina_Bool prev = disable_cache;
@@ -1561,7 +1558,7 @@ efreet_cache_disable(void)
      }
 }
 
-EAPI void
+EFREET_API void
 efreet_cache_enable(void)
 {
    Eina_Bool prev = disable_cache;

@@ -22,7 +22,7 @@
  * This is where user-specific data files should be written
  * ($XDG_DATA_HOME or $HOME/.local/share).
  */
-EAPI const char *efreet_data_home_get(void);
+EFREET_API const char *efreet_data_home_get(void);
 
 /**
  * @return Returns the Eina_List of preference ordered extra data directories
@@ -35,7 +35,7 @@ EAPI const char *efreet_data_home_get(void);
  * list then the next call to efreet_data_dirs_get() will return your
  * modified values. DO NOT free this list.
  */
-EAPI Eina_List *efreet_data_dirs_get(void);
+EFREET_API Eina_List *efreet_data_dirs_get(void);
 
 
 /**
@@ -45,7 +45,7 @@ EAPI Eina_List *efreet_data_dirs_get(void);
  * This is where user-specific configuration files should be
  * written ($XDG_CONFIG_HOME or $HOME/.config).
  */
-EAPI const char *efreet_config_home_get(void);
+EFREET_API const char *efreet_config_home_get(void);
 
 /**
  * @return Returns the XDG Desktop directory
@@ -57,7 +57,7 @@ EAPI const char *efreet_config_home_get(void);
  *
  * @since 1.3
  */
-EAPI const char *efreet_desktop_dir_get(void);
+EFREET_API const char *efreet_desktop_dir_get(void);
 
 /**
  * @return Returns the XDG Download directory
@@ -77,7 +77,7 @@ EAPI const char *efreet_desktop_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_download_dir_get(void);
+EFREET_API const char *efreet_download_dir_get(void);
 
 /**
  * @return Returns the XDG Templates directory
@@ -94,7 +94,7 @@ EAPI const char *efreet_download_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_templates_dir_get(void);
+EFREET_API const char *efreet_templates_dir_get(void);
 
 /**
  * @return Returns the XDG Public Share directory
@@ -108,7 +108,7 @@ EAPI const char *efreet_templates_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_public_share_dir_get(void);
+EFREET_API const char *efreet_public_share_dir_get(void);
 
 /**
  * @return Returns the XDG Documents directory
@@ -125,7 +125,7 @@ EAPI const char *efreet_public_share_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_documents_dir_get(void);
+EFREET_API const char *efreet_documents_dir_get(void);
 
 /**
  * @return Returns the XDG Music directory
@@ -142,7 +142,7 @@ EAPI const char *efreet_documents_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_music_dir_get(void);
+EFREET_API const char *efreet_music_dir_get(void);
 
 /**
  * @return Returns the XDG Pictures directory
@@ -159,7 +159,7 @@ EAPI const char *efreet_music_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_pictures_dir_get(void);
+EFREET_API const char *efreet_pictures_dir_get(void);
 
 /**
  * @return Returns the XDG Videos directory
@@ -176,7 +176,7 @@ EAPI const char *efreet_pictures_dir_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_videos_dir_get(void);
+EFREET_API const char *efreet_videos_dir_get(void);
 
 /**
  * @return Returns the Eina_List of preference ordered extra config directories
@@ -190,7 +190,7 @@ EAPI const char *efreet_videos_dir_get(void);
  * list then the next call to efreet_config_dirs_get() will return your
  * modified values. DO NOT free this list.
  */
-EAPI Eina_List *efreet_config_dirs_get(void);
+EFREET_API Eina_List *efreet_config_dirs_get(void);
 
 
 /**
@@ -205,7 +205,7 @@ EAPI Eina_List *efreet_config_dirs_get(void);
  * @see efreet_download_dir_get()
  * @see efreet_config_home_get()
  */
-EAPI const char *efreet_cache_home_get(void);
+EFREET_API const char *efreet_cache_home_get(void);
 
 /**
  * @return Returns the XDG User Runtime directory.
@@ -252,13 +252,13 @@ EAPI const char *efreet_cache_home_get(void);
  *
  * @since 1.8
  */
-EAPI const char *efreet_runtime_dir_get(void);
+EFREET_API const char *efreet_runtime_dir_get(void);
 
 /**
  * @return Returns the current hostname
  * @brief Returns the current hostname or empty string if not found
  */
-EAPI const char *efreet_hostname_get(void);
+EFREET_API const char *efreet_hostname_get(void);
 
 /**
  * Efreet_Event_Cache_Update

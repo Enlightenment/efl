@@ -50,7 +50,7 @@ efreet_ini_shutdown(void)
     _efreet_ini_log_dom = -1;
 }
 
-EAPI Efreet_Ini *
+EFREET_API Efreet_Ini *
 efreet_ini_new(const char *file)
 {
     Efreet_Ini *ini;
@@ -230,7 +230,7 @@ error:
     return NULL;
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_free(Efreet_Ini *ini)
 {
     if (!ini) return;
@@ -239,7 +239,7 @@ efreet_ini_free(Efreet_Ini *ini)
     FREE(ini);
 }
 
-EAPI int
+EFREET_API int
 efreet_ini_save(Efreet_Ini *ini, const char *file)
 {
     char *dir;
@@ -265,7 +265,7 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
     return 1;
 }
 
-EAPI int
+EFREET_API int
 efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(ini, 0);
@@ -276,7 +276,7 @@ efreet_ini_section_set(Efreet_Ini *ini, const char *section)
     return (ini->section ? 1 : 0);
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_section_add(Efreet_Ini *ini, const char *section)
 {
     Eina_Hash *hash;
@@ -292,7 +292,7 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
     eina_hash_add(ini->data, section, hash);
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_ini_string_get(Efreet_Ini *ini, const char *key)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(ini, NULL);
@@ -302,7 +302,7 @@ efreet_ini_string_get(Efreet_Ini *ini, const char *key)
     return eina_hash_find(ini->section, key);
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
 {
     EINA_SAFETY_ON_NULL_RETURN(ini);
@@ -313,7 +313,7 @@ efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
     eina_hash_add(ini->section, key, eina_stringshare_add(value));
 }
 
-EAPI int
+EFREET_API int
 efreet_ini_int_get(Efreet_Ini *ini, const char *key)
 {
     const char *str;
@@ -328,7 +328,7 @@ efreet_ini_int_get(Efreet_Ini *ini, const char *key)
     return -1;
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value)
 {
     char str[12];
@@ -341,7 +341,7 @@ efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value)
     efreet_ini_string_set(ini, key, str);
 }
 
-EAPI double
+EFREET_API double
 efreet_ini_double_get(Efreet_Ini *ini, const char *key)
 {
     const char *str;
@@ -356,7 +356,7 @@ efreet_ini_double_get(Efreet_Ini *ini, const char *key)
     return -1;
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_double_set(Efreet_Ini *ini, const char *key, double value)
 {
     char str[512];
@@ -373,7 +373,7 @@ efreet_ini_double_set(Efreet_Ini *ini, const char *key, double value)
     efreet_ini_string_set(ini, key, str);
 }
 
-EAPI unsigned int
+EFREET_API unsigned int
 efreet_ini_boolean_get(Efreet_Ini *ini, const char *key)
 {
     const char *str;
@@ -388,7 +388,7 @@ efreet_ini_boolean_get(Efreet_Ini *ini, const char *key)
     return 0;
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_boolean_set(Efreet_Ini *ini, const char *key, unsigned int value)
 {
     EINA_SAFETY_ON_NULL_RETURN(ini);
@@ -399,7 +399,7 @@ efreet_ini_boolean_set(Efreet_Ini *ini, const char *key, unsigned int value)
     else efreet_ini_string_set(ini, key, "false");
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
 {
     const char *lang, *country, *modifier;
@@ -457,7 +457,7 @@ efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
     return val;
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
 {
     const char *lang, *country, *modifier;
@@ -493,7 +493,7 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
     efreet_ini_string_set(ini, buf, value);
 }
 
-EAPI void
+EFREET_API void
 efreet_ini_key_unset(Efreet_Ini *ini, const char *key)
 {
     EINA_SAFETY_ON_NULL_RETURN(ini);

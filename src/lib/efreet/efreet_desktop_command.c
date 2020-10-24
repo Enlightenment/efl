@@ -113,20 +113,20 @@ static char *efreet_string_append_char(char *dest, int *size,
                                         int *len, char c);
 
 
-EAPI void
+EFREET_API void
 efreet_desktop_exec(Efreet_Desktop *desktop, Eina_List *files, void *data)
 {
     efreet_desktop_command_get(desktop, files, efreet_desktop_exec_cb, data);
 }
 
-EAPI void *
+EFREET_API void *
 efreet_desktop_command_get(Efreet_Desktop *desktop, Eina_List *files,
                             Efreet_Desktop_Command_Cb func, void *data)
 {
     return efreet_desktop_command_progress_get(desktop, files, func, NULL, data);
 }
 
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
 {
     Efreet_Desktop_Command *command;
@@ -166,7 +166,7 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
     return execs;
 }
 
-EAPI void *
+EFREET_API void *
 efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
                                     Efreet_Desktop_Command_Cb cb_command,
                                     Efreet_Desktop_Progress_Cb cb_progress,

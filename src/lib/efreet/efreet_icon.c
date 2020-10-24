@@ -93,7 +93,7 @@ efreet_icon_extensions_refresh(void)
    efreet_cache_icon_exts_add(efreet_icon_extensions);
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_icon_deprecated_user_dir_get(void)
 {
     const char *user;
@@ -114,7 +114,7 @@ efreet_icon_deprecated_user_dir_get(void)
     return efreet_icon_deprecated_user_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_icon_user_dir_get(void)
 {
     const char *user;
@@ -135,7 +135,7 @@ efreet_icon_user_dir_get(void)
     return efreet_icon_user_dir;
 }
 
-EAPI void
+EFREET_API void
 efreet_icon_extension_add(const char *ext)
 {
     Eina_List *l;
@@ -154,26 +154,26 @@ efreet_icon_extension_add(const char *ext)
     efreet_icon_extensions_refresh();
 }
 
-EAPI Eina_List **
+EFREET_API Eina_List **
 efreet_icon_extra_list_get(void)
 {
     ecore_job_add(efreet_cache_icon_dirs_add_cb, NULL);
     return &efreet_extra_icon_dirs;
 }
 
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_icon_extensions_list_get(void)
 {
     return efreet_icon_extensions;
 }
 
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_icon_theme_list_get(void)
 {
     return efreet_cache_icon_theme_list();
 }
 
-EAPI Efreet_Icon_Theme *
+EFREET_API Efreet_Icon_Theme *
 efreet_icon_theme_find(const char *theme_name)
 {
     if (!theme_name) return NULL;
@@ -219,7 +219,7 @@ efreet_icon_remove_extension(const char *icon)
 }
 #endif
 
-EAPI const char *
+EFREET_API const char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
 #ifdef SLOPPY_SPEC
@@ -267,7 +267,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     return value;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_icon_list_find(const char *theme_name, Eina_List *icons,
                       unsigned int size)
 {
@@ -346,7 +346,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
     return value;
 }
 
-EAPI Efreet_Icon *
+EFREET_API Efreet_Icon *
 efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
 {
     const char *path;
@@ -408,7 +408,7 @@ efreet_icon_new(const char *path)
     return icon;
 }
 
-EAPI void
+EFREET_API void
 efreet_icon_free(Efreet_Icon *icon)
 {
     if (!icon) return;

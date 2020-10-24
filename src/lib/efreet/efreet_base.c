@@ -26,7 +26,7 @@ static int _efreet_base_log_dom = -1;
 #include "efreet_private.h"
 
 static Efreet_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Efreet_Version *efreet_version = &_version;
+EFREET_API Efreet_Version *efreet_version = &_version;
 
 #ifdef _WIN32
 # define EFREET_PATH_SEP ';'
@@ -130,7 +130,7 @@ efreet_home_dir_get(void)
     return efreet_home_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_desktop_dir_get(void)
 {
     if (xdg_desktop_dir) return xdg_desktop_dir;
@@ -138,7 +138,7 @@ efreet_desktop_dir_get(void)
     return xdg_desktop_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_download_dir_get(void)
 {
     if (xdg_download_dir) return xdg_download_dir;
@@ -146,7 +146,7 @@ efreet_download_dir_get(void)
     return xdg_download_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_templates_dir_get(void)
 {
     if (xdg_templates_dir) return xdg_templates_dir;
@@ -155,7 +155,7 @@ efreet_templates_dir_get(void)
     return xdg_templates_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_public_share_dir_get(void)
 {
     if (xdg_publicshare_dir) return xdg_publicshare_dir;
@@ -164,7 +164,7 @@ efreet_public_share_dir_get(void)
     return xdg_publicshare_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_documents_dir_get(void)
 {
     if (xdg_documents_dir) return xdg_documents_dir;
@@ -173,7 +173,7 @@ efreet_documents_dir_get(void)
     return xdg_documents_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_music_dir_get(void)
 {
     if (xdg_music_dir) return xdg_music_dir;
@@ -181,7 +181,7 @@ efreet_music_dir_get(void)
     return xdg_music_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_pictures_dir_get(void)
 {
     if (xdg_pictures_dir) return xdg_pictures_dir;
@@ -189,7 +189,7 @@ efreet_pictures_dir_get(void)
     return xdg_pictures_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_videos_dir_get(void)
 {
     if (xdg_videos_dir) return xdg_videos_dir;
@@ -197,43 +197,43 @@ efreet_videos_dir_get(void)
     return xdg_videos_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_data_home_get(void)
 {
     return xdg_data_home;
 }
 
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_data_dirs_get(void)
 {
     return xdg_data_dirs;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_config_home_get(void)
 {
     return xdg_config_home;
 }
 
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_config_dirs_get(void)
 {
     return xdg_config_dirs;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_cache_home_get(void)
 {
     return xdg_cache_home;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_runtime_dir_get(void)
 {
     return xdg_runtime_dir;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_hostname_get(void)
 {
     return hostname;
@@ -248,9 +248,9 @@ efreet_hostname_get(void)
  * @brief Creates the list of directories based on the user
  * dir, system dirs and given suffix.
  *
- * Needs EAPI because of helper binaries
+ * Needs EFREET_API because of helper binaries
  */
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_default_dirs_get(const char *user_dir, Eina_List *system_dirs,
                                                     const char *suffix)
 {

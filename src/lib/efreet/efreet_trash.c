@@ -62,19 +62,19 @@ efreet_internal_trash_shutdown(void)
     return _efreet_trash_init_count;
 }
 
-EAPI int
+EFREET_API int
 efreet_trash_init(void)
 {
    return efreet_init();
 }
 
-EAPI int
+EFREET_API int
 efreet_trash_shutdown(void)
 {
    return efreet_shutdown();
 }
 
-EAPI const char*
+EFREET_API const char*
 efreet_trash_dir_get(const char *file)
 {
     char buf[PATH_MAX + PATH_MAX + 128];
@@ -169,7 +169,7 @@ efreet_trash_dir_get(const char *file)
     return trash_dir;
 }
 
-EAPI int
+EFREET_API int
 efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
 {
     char dest[PATH_MAX];
@@ -256,7 +256,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     return 1;
 }
 
-EAPI int
+EFREET_API int
 efreet_trash_is_empty(void)
 {
     char buf[PATH_MAX];
@@ -267,7 +267,7 @@ efreet_trash_is_empty(void)
     return ecore_file_dir_is_empty(buf);
 }
 
-EAPI int
+EFREET_API int
 efreet_trash_empty_trash(void)
 {
     char buf[PATH_MAX];
@@ -284,7 +284,7 @@ efreet_trash_empty_trash(void)
     return 1;
 }
 
-EAPI Eina_List*
+EFREET_API Eina_List*
 efreet_trash_ls(void)
 {
     char *infofile;
