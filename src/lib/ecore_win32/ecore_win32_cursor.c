@@ -181,7 +181,7 @@ _ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape)
  * @see ecore_win32_cursor_free()
  * @see ecore_win32_window_cursor_set()
  */
-EAPI Ecore_Win32_Cursor *
+ECORE_WIN32_API Ecore_Win32_Cursor *
 ecore_win32_cursor_new(const void *pixels_and,
                        const void *pixels_xor,
                        int         width,
@@ -226,7 +226,7 @@ ecore_win32_cursor_new(const void *pixels_and,
  * @see ecore_win32_cursor_new()
  * @see ecore_win32_cursor_x11_shaped_new()
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
 {
    INF("destroying cursor");
@@ -247,7 +247,7 @@ ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
  * @p shape. This cursor does not need to be freed, as it is loaded
  * from an existing resource. On error @c NULL is returned.
  */
-EAPI Ecore_Win32_Cursor *
+ECORE_WIN32_API Ecore_Win32_Cursor *
 ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape)
 {
    Ecore_Win32_Cursor *cursor = NULL;
@@ -324,7 +324,7 @@ ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape)
  *
  * @since 1.16
  */
-EAPI const Ecore_Win32_Cursor *
+ECORE_WIN32_API const Ecore_Win32_Cursor *
 ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape)
 {
    INF("getting X11 shaped cursor");
@@ -346,7 +346,7 @@ ecore_win32_cursor_x11_shaped_get(Ecore_Win32_Cursor_X11_Shape shape)
  * ecore_win32_cursor_new(). @p width and @p height are buffers that
  * will be filled with the correct size. They can be @c NULL.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_cursor_size_get(int *width, int *height)
 {
    INF("geting size cursor");
@@ -355,7 +355,7 @@ ecore_win32_cursor_size_get(int *width, int *height)
    if (*height) *height = GetSystemMetrics(SM_CYCURSOR);
 }
 
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_cursor_show(Eina_Bool show)
 {
    INF("show cursor");

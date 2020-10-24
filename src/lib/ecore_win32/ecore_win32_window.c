@@ -446,7 +446,7 @@ ecore_win32_window_drag(Ecore_Win32_Window *w, int ptx, int pty)
  * title bar). This function returns a newly created window on
  * success, and @c NULL on failure.
  */
-EAPI Ecore_Win32_Window *
+ECORE_WIN32_API Ecore_Win32_Window *
 ecore_win32_window_new(Ecore_Win32_Window *parent,
                        int                 x,
                        int                 y,
@@ -474,7 +474,7 @@ ecore_win32_window_new(Ecore_Win32_Window *parent,
  * This function is the same than ecore_win32_window_override_new()
  * but the returned window is borderless.
  */
-EAPI Ecore_Win32_Window *
+ECORE_WIN32_API Ecore_Win32_Window *
 ecore_win32_window_override_new(Ecore_Win32_Window *parent,
                                 int                 x,
                                 int                 y,
@@ -497,7 +497,7 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
  * This function frees @p window. If @p window is @c NULL, this
  * function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_free(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -521,7 +521,7 @@ ecore_win32_window_free(Ecore_Win32_Window *window)
  *
  * @note The returned value is of type HWND.
  */
-EAPI void *
+ECORE_WIN32_API void *
 ecore_win32_window_hwnd_get(Ecore_Win32_Window *window)
 {
    if (!window) return NULL;
@@ -572,7 +572,7 @@ ecore_win32_window_configure(Ecore_Win32_Window        *window,
  * and @p y. If @p window is @c NULL, or if it is fullscreen, or on
  * error, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_move(Ecore_Win32_Window *window,
                         int                 x,
                         int                 y)
@@ -610,7 +610,7 @@ ecore_win32_window_move(Ecore_Win32_Window *window,
  * If @p window is @c NULL, or if it is fullscreen, or on error, this
  * function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_resize(Ecore_Win32_Window *window,
                           int                 width,
                           int                 height)
@@ -674,7 +674,7 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
  * and @p y and the new @p width and @p height. If @p window is @c NULL,
  * or if it is fullscreen, or on error, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_move_resize(Ecore_Win32_Window *window,
                                int                 x,
                                int                 y,
@@ -733,7 +733,7 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
  * buffers are not @c NULL, they will be filled with respectively 0,
  * 0, the size of the screen and the height of the screen.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
                                 int                *x,
                                 int                *y,
@@ -803,7 +803,7 @@ ecore_win32_window_geometry_get(Ecore_Win32_Window *window,
  * @c NULL, they will be filled with respectively the size of the screen
  * and the height of the screen.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_get(Ecore_Win32_Window *window,
                             int                *width,
                             int                *height)
@@ -843,7 +843,7 @@ ecore_win32_window_size_get(Ecore_Win32_Window *window,
  * and *p min_height. If @p window is @c NULL, this functions does
  * nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
                                 int                 min_width,
                                 int                 min_height)
@@ -879,7 +879,7 @@ ecore_win32_window_size_min_set(Ecore_Win32_Window *window,
  * @p min_width and *p min_height. They both can be @c NULL. If
  * @p window is @c NULL, this functions does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
                                 int                *min_width,
                                 int                *min_height)
@@ -908,7 +908,7 @@ ecore_win32_window_size_min_get(Ecore_Win32_Window *window,
  * and *p max_height. If @p window is @c NULL, this functions does
  * nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
                                 int                 max_width,
                                 int                 max_height)
@@ -936,7 +936,7 @@ ecore_win32_window_size_max_set(Ecore_Win32_Window *window,
  * @p max_width and *p max_height. They both can be @c NULL. If
  * @p window is @c NULL, this functions does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
                                 int                *max_width,
                                 int                *max_height)
@@ -965,7 +965,7 @@ ecore_win32_window_size_max_get(Ecore_Win32_Window *window,
  * and *p base_height. If @p window is @c NULL, this functions does
  * nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
                                  int                 base_width,
                                  int                 base_height)
@@ -993,7 +993,7 @@ ecore_win32_window_size_base_set(Ecore_Win32_Window *window,
  * @p base_width and *p base_height. They both can be @c NULL. If
  * @p window is @c NULL, this functions does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
                                  int                *base_width,
                                  int                *base_height)
@@ -1022,7 +1022,7 @@ ecore_win32_window_size_base_get(Ecore_Win32_Window *window,
  * and *p step_height. If @p window is @c NULL, this functions does
  * nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
                                  int                 step_width,
                                  int                 step_height)
@@ -1050,7 +1050,7 @@ ecore_win32_window_size_step_set(Ecore_Win32_Window *window,
  * @p step_width and *p step_height. They both can be @c NULL. If
  * @p window is @c NULL, this functions does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
                                  int                *step_width,
                                  int                *step_height)
@@ -1076,7 +1076,7 @@ ecore_win32_window_size_step_get(Ecore_Win32_Window *window,
  * This function shows @p window. If @p window is @c NULL, or on
  * error, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_show(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -1099,7 +1099,7 @@ ecore_win32_window_show(Ecore_Win32_Window *window)
  * This function hides @p window. If @p window is @c NULL, or on
  * error, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_hide(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -1117,7 +1117,7 @@ ecore_win32_window_hide(Ecore_Win32_Window *window)
  * This function places @p window at the top of the Z order. If
  * @p window is @c NULL, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_raise(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -1140,7 +1140,7 @@ ecore_win32_window_raise(Ecore_Win32_Window *window)
  * This function places @p window at the bottom of the Z order. If
  * @p window is @c NULL, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_lower(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -1167,7 +1167,7 @@ ecore_win32_window_lower(Ecore_Win32_Window *window)
  *
  *@since 1.26
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_activate(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -1188,7 +1188,7 @@ ecore_win32_window_activate(Ecore_Win32_Window *window)
  * is @c NULL, or if @p title is @c NULL or empty, or on error, this
  * function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_title_set(Ecore_Win32_Window *window,
                              const char         *title)
 {
@@ -1212,7 +1212,7 @@ ecore_win32_window_title_set(Ecore_Win32_Window *window,
  * This function gives the focus to @p window. If @p window is
  * @c NULL, this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_focus(Ecore_Win32_Window *window)
 {
    if (!window) return;
@@ -1239,7 +1239,7 @@ ecore_win32_window_focus(Ecore_Win32_Window *window)
  *
  * @note The returned value is of type HWND.
  */
-EAPI void *
+ECORE_WIN32_API void *
 ecore_win32_window_focus_get(void)
 {
    HWND focused;
@@ -1268,7 +1268,7 @@ ecore_win32_window_focus_get(void)
  * (like iconifying the window while it is already iconified), this function
  * does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
                                  Eina_Bool           on)
 {
@@ -1296,7 +1296,7 @@ ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
  * change (like setting to borderless while the window has no border), this
  * function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
                                   Eina_Bool           on)
 {
@@ -1375,7 +1375,7 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
  *
  * @since 1.26
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_maximized_set(Ecore_Win32_Window *window,
                                  Eina_Bool           on)
 {
@@ -1403,7 +1403,7 @@ ecore_win32_window_maximized_set(Ecore_Win32_Window *window,
  * does not change (like setting to fullscreen while the window is already
  * fullscreen), this function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                                   Eina_Bool           on)
 {
@@ -1502,7 +1502,7 @@ ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
  * @see ecore_win32_cursor_shaped_new()
  * @see ecore_win32_cursor_x11_shaped_new()
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
                               Ecore_Win32_Cursor *cursor)
 {
@@ -1525,7 +1525,7 @@ ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
  * states of size @p num. If @p window or @p state are @c NULL, or if
  * @p num is less or equal than 0, the function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_state_set(Ecore_Win32_Window       *window,
                              Ecore_Win32_Window_State *state,
                              unsigned int              num)
@@ -1597,7 +1597,7 @@ ecore_win32_window_state_set(Ecore_Win32_Window       *window,
  *
  * @since 1.20
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_state_get(Ecore_Win32_Window        *window,
                              Ecore_Win32_Window_State **state,
                              unsigned int              *num)
@@ -1688,7 +1688,7 @@ ecore_win32_window_state_get(Ecore_Win32_Window        *window,
  * #ECORE_WIN32_WINDOW_STATE_FULLSCREEN. If @p window is @c NULL, the
  * function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
                                       Ecore_Win32_Window_State state,
                                       unsigned int             set)
@@ -1829,7 +1829,7 @@ ecore_win32_window_state_request_send(Ecore_Win32_Window      *window,
  * This function sets the type of @p window to @p type. If
  * @p window is @c NULL, the function does nothing.
  */
-EAPI void
+ECORE_WIN32_API void
 ecore_win32_window_type_set(Ecore_Win32_Window      *window,
                             Ecore_Win32_Window_Type  type)
 {

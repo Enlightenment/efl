@@ -217,7 +217,7 @@ ecore_win32_monitor_update(int d)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eina_Iterator *
+ECORE_WIN32_API Eina_Iterator *
 ecore_win32_monitors_get(void)
 {
    return eina_list_iterator_new(ecore_win32_monitors);
