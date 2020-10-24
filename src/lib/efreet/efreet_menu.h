@@ -57,7 +57,7 @@ typedef void (*Efreet_Menu_Cb) (void *data, Efreet_Menu *menu);
  * @brief Initialize legacy kde support. This function blocks while
  * the kde-config script is run.
  */
-EAPI int              efreet_menu_kde_legacy_init(void);
+EFREET_API int              efreet_menu_kde_legacy_init(void);
 
 /**
  * @param name The internal name of the menu
@@ -65,7 +65,7 @@ EAPI int              efreet_menu_kde_legacy_init(void);
  * NULL on failure
  * @brief Creates a new menu
  */
-EAPI Efreet_Menu     *efreet_menu_new(const char *name);
+EFREET_API Efreet_Menu     *efreet_menu_new(const char *name);
 
 /**
  * @brief Override which file is used for menu creation
@@ -74,7 +74,7 @@ EAPI Efreet_Menu     *efreet_menu_new(const char *name);
  * This file is only used if it exists, else the standard files will be used
  * for the menu.
  */
-EAPI void             efreet_menu_file_set(const char *file);
+EFREET_API void             efreet_menu_file_set(const char *file);
 
 /**
  * Creates the Efreet_Menu representation of the default menu or
@@ -84,14 +84,14 @@ EAPI void             efreet_menu_file_set(const char *file);
  *
  * @deprecated
  */
-EFREET_DEPRECATED_API EAPI void             efreet_menu_async_get(Efreet_Menu_Cb func, const void *data);
+EFREET_DEPRECATED_API EFREET_API void             efreet_menu_async_get(Efreet_Menu_Cb func, const void *data);
 
 /**
  * @return Returns the Efreet_Menu representation of the default menu or
  * NULL if none found
  * @brief Creates the default menu representation
  */
-EAPI Efreet_Menu     *efreet_menu_get(void);
+EFREET_API Efreet_Menu     *efreet_menu_get(void);
 
 /**
  * Parses the given .menu file and creates the menu representation, and
@@ -102,7 +102,7 @@ EAPI Efreet_Menu     *efreet_menu_get(void);
  *
  * @deprecated
  */
-EFREET_DEPRECATED_API EAPI void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data);
+EFREET_DEPRECATED_API EFREET_API void             efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data);
 
 /**
  * @param path The path of the menu to load
@@ -110,7 +110,7 @@ EFREET_DEPRECATED_API EAPI void             efreet_menu_async_parse(const char *
  * failure
  * @brief Parses the given .menu file and creates the menu representation
  */
-EAPI Efreet_Menu     *efreet_menu_parse(const char *path);
+EFREET_API Efreet_Menu     *efreet_menu_parse(const char *path);
 
 /**
  * @param menu The menu to work with
@@ -118,14 +118,14 @@ EAPI Efreet_Menu     *efreet_menu_parse(const char *path);
  * @return Returns 1 on success, 0 on failure
  * @brief Saves the menu to file
  */
-EAPI int              efreet_menu_save(Efreet_Menu *menu, const char *path);
+EFREET_API int              efreet_menu_save(Efreet_Menu *menu, const char *path);
 
 /**
  * @param menu The Efreet_Menu to free
  * @return Returns no value
  * @brief Frees the given structure (if refcount at 1 at the time of this call)
  */
-EAPI void             efreet_menu_free(Efreet_Menu *menu);
+EFREET_API void             efreet_menu_free(Efreet_Menu *menu);
 
 /**
  * @param menu The Efreet_Menu to reference
@@ -133,7 +133,7 @@ EAPI void             efreet_menu_free(Efreet_Menu *menu);
  * @brief Incriments refcount for the menu
  * @since 1.11
  */
-EAPI void             efreet_menu_ref(Efreet_Menu *menu);
+EFREET_API void             efreet_menu_ref(Efreet_Menu *menu);
 
 
 /**
@@ -142,7 +142,7 @@ EAPI void             efreet_menu_ref(Efreet_Menu *menu);
  * @brief Decrements refcount for the menu, and on 0 frees
  * @since 1.11
  */
-EAPI void             efreet_menu_unref(Efreet_Menu *menu);
+EFREET_API void             efreet_menu_unref(Efreet_Menu *menu);
 
 
 /**
@@ -153,7 +153,7 @@ EAPI void             efreet_menu_unref(Efreet_Menu *menu);
  * @brief Insert a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
  */
-EAPI int              efreet_menu_desktop_insert(Efreet_Menu *menu,
+EFREET_API int              efreet_menu_desktop_insert(Efreet_Menu *menu,
                                                     Efreet_Desktop *desktop,
                                                     int pos);
 
@@ -164,7 +164,7 @@ EAPI int              efreet_menu_desktop_insert(Efreet_Menu *menu,
  * @brief Remove a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
  */
-EAPI int              efreet_menu_desktop_remove(Efreet_Menu *menu,
+EFREET_API int              efreet_menu_desktop_remove(Efreet_Menu *menu,
                                                     Efreet_Desktop *desktop);
 
 
@@ -175,7 +175,7 @@ EAPI int              efreet_menu_desktop_remove(Efreet_Menu *menu,
  * @return Returns no value
  * @brief Dumps the contents of the menu to the command line
  */
-EAPI void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
+EFREET_API void             efreet_menu_dump(Efreet_Menu *menu, const char *indent);
 
 /**
  * @}

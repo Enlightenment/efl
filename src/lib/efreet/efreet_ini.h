@@ -34,14 +34,14 @@ struct Efreet_Ini
  * @brief Creates and initializes a new Ini structure with the contents of
  * @a file, or NULL on failure
  */
-EAPI Efreet_Ini  *efreet_ini_new(const char *file);
+EFREET_API Efreet_Ini  *efreet_ini_new(const char *file);
 
 /**
  * @param ini The Efreet_Ini to work with
  * @return Returns no value
  * @brief Frees the given Efree_Ini structure.
  */
-EAPI void         efreet_ini_free(Efreet_Ini *ini);
+EFREET_API void         efreet_ini_free(Efreet_Ini *ini);
 
 /**
  * @param ini The Efreet_Ini to work with
@@ -49,7 +49,7 @@ EAPI void         efreet_ini_free(Efreet_Ini *ini);
  * @return Returns no value
  * @brief Saves the given Efree_Ini structure.
  */
-EAPI int          efreet_ini_save(Efreet_Ini *ini, const char *path);
+EFREET_API int          efreet_ini_save(Efreet_Ini *ini, const char *path);
 
 
 /**
@@ -58,7 +58,7 @@ EAPI int          efreet_ini_save(Efreet_Ini *ini, const char *path);
  * @return Returns 1 if the section exists, otherwise 0
  * @brief Sets the current working section of the ini file to @a section
  */
-EAPI int          efreet_ini_section_set(Efreet_Ini *ini, const char *section);
+EFREET_API int          efreet_ini_section_set(Efreet_Ini *ini, const char *section);
 
 /**
  * @param ini The Efreet_Ini to work with
@@ -66,7 +66,7 @@ EAPI int          efreet_ini_section_set(Efreet_Ini *ini, const char *section);
  * @return Returns no value
  * @brief Adds a new working section of the ini file to @a section
  */
-EAPI void         efreet_ini_section_add(Efreet_Ini *ini, const char *section);
+EFREET_API void         efreet_ini_section_add(Efreet_Ini *ini, const char *section);
 
 
 /**
@@ -76,7 +76,7 @@ EAPI void         efreet_ini_section_add(Efreet_Ini *ini, const char *section);
  * found.
  * @brief Retrieves the value for the given key or NULL if none found.
  */
-EAPI const char  *efreet_ini_string_get(Efreet_Ini *ini, const char *key);
+EFREET_API const char  *efreet_ini_string_get(Efreet_Ini *ini, const char *key);
 
 /**
  * @param ini The Efree_Ini to work with
@@ -85,7 +85,7 @@ EAPI const char  *efreet_ini_string_get(Efreet_Ini *ini, const char *key);
  * @return Returns no value
  * @brief Sets the value for the given key
  */
-EAPI void         efreet_ini_string_set(Efreet_Ini *ini, const char *key,
+EFREET_API void         efreet_ini_string_set(Efreet_Ini *ini, const char *key,
                                                     const char *value);
 
 
@@ -96,7 +96,7 @@ EAPI void         efreet_ini_string_set(Efreet_Ini *ini, const char *key,
  *         if none found
  * @brief Retrieves the utf8 encoded string associated with @a key in the current locale or NULL if none found
  */
-EAPI const char  *efreet_ini_localestring_get(Efreet_Ini *ini, const char *key);
+EFREET_API const char  *efreet_ini_localestring_get(Efreet_Ini *ini, const char *key);
 
 /**
  * @param ini The ini struct to work with
@@ -105,7 +105,7 @@ EAPI const char  *efreet_ini_localestring_get(Efreet_Ini *ini, const char *key);
  * @return Returns no value
  * @brief Sets the value for the given key
  */
-EAPI void         efreet_ini_localestring_set(Efreet_Ini *ini, const char *key,
+EFREET_API void         efreet_ini_localestring_set(Efreet_Ini *ini, const char *key,
                                                     const char *value);
 
 
@@ -115,7 +115,7 @@ EAPI void         efreet_ini_localestring_set(Efreet_Ini *ini, const char *key,
  * @return Returns 1 if the boolean is true, 0 otherwise
  * @brief Retrieves the boolean value at key @a key from the ini @a ini
  */
-EAPI unsigned int efreet_ini_boolean_get(Efreet_Ini *ini, const char *key);
+EFREET_API unsigned int efreet_ini_boolean_get(Efreet_Ini *ini, const char *key);
 
 /**
  * @param ini The ini struct to work with
@@ -124,7 +124,7 @@ EAPI unsigned int efreet_ini_boolean_get(Efreet_Ini *ini, const char *key);
  * @return Returns no value
  * @brief Sets the value for the given key
  */
-EAPI void         efreet_ini_boolean_set(Efreet_Ini *ini, const char *key,
+EFREET_API void         efreet_ini_boolean_set(Efreet_Ini *ini, const char *key,
                                                     unsigned int value);
 
 
@@ -135,7 +135,7 @@ EAPI void         efreet_ini_boolean_set(Efreet_Ini *ini, const char *key,
  * found.
  * @brief Retrieves the value for the given key or -1 if none found.
  */
-EAPI int          efreet_ini_int_get(Efreet_Ini *ini, const char *key);
+EFREET_API int          efreet_ini_int_get(Efreet_Ini *ini, const char *key);
 
 /**
  * @param ini The Efree_Ini to work with
@@ -144,7 +144,7 @@ EAPI int          efreet_ini_int_get(Efreet_Ini *ini, const char *key);
  * @return Returns no value
  * @brief Sets the value for the given key
  */
-EAPI void         efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value);
+EFREET_API void         efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value);
 
 
 /**
@@ -154,7 +154,7 @@ EAPI void         efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value
  * found.
  * @brief Retrieves the value for the given key or -1 if none found.
  */
-EAPI double       efreet_ini_double_get(Efreet_Ini *ini, const char *key);
+EFREET_API double       efreet_ini_double_get(Efreet_Ini *ini, const char *key);
 
 /**
  * @param ini The Efree_Ini to work with
@@ -163,7 +163,7 @@ EAPI double       efreet_ini_double_get(Efreet_Ini *ini, const char *key);
  * @return Returns no value
  * @brief Sets the value for the given key
  */
-EAPI void         efreet_ini_double_set(Efreet_Ini *ini, const char *key,
+EFREET_API void         efreet_ini_double_set(Efreet_Ini *ini, const char *key,
                                                     double value);
 
 
@@ -173,7 +173,7 @@ EAPI void         efreet_ini_double_set(Efreet_Ini *ini, const char *key,
  * @return Returns no value
  * @brief Remove the given key from the ini struct
  */
-EAPI void         efreet_ini_key_unset(Efreet_Ini *ini, const char *key);
+EFREET_API void         efreet_ini_key_unset(Efreet_Ini *ini, const char *key);
 
 /**
  * @}

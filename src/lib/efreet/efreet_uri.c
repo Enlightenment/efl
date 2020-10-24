@@ -16,7 +16,7 @@
 
 /* The URI standard is at http://tools.ietf.org/html/std66 */
 
-EAPI Efreet_Uri *
+EFREET_API Efreet_Uri *
 efreet_uri_decode(const char *full_uri)
 {
     Efreet_Uri *uri;
@@ -87,7 +87,7 @@ efreet_uri_decode(const char *full_uri)
     return uri;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_uri_encode(Efreet_Uri *uri)
 {
     char dest[PATH_MAX * 3 + 4];
@@ -116,7 +116,7 @@ efreet_uri_encode(Efreet_Uri *uri)
     return eina_stringshare_add(dest);
 }
 
-EAPI void
+EFREET_API void
 efreet_uri_free(Efreet_Uri *uri)
 {
     if (!uri) return;

@@ -20,7 +20,7 @@
  *
  * @return File id for path or NULL
  */
-EAPI const char *efreet_util_path_to_file_id(const char *path);
+EFREET_API const char *efreet_util_path_to_file_id(const char *path);
 
 
 /**
@@ -31,7 +31,7 @@ EAPI const char *efreet_util_path_to_file_id(const char *path);
  * @param mime the mime type
  * @return a list of desktops
  */
-EAPI Eina_List *efreet_util_desktop_mime_list(const char *mime);
+EFREET_API Eina_List *efreet_util_desktop_mime_list(const char *mime);
 
 
 /**
@@ -43,7 +43,7 @@ EAPI Eina_List *efreet_util_desktop_mime_list(const char *mime);
  * @param wmclass the wm class
  * @return a list of desktops
  */
-EAPI Efreet_Desktop *efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass);
+EFREET_API Efreet_Desktop *efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass);
 
 /**
  * Find a desktop by file id
@@ -53,7 +53,7 @@ EAPI Efreet_Desktop *efreet_util_desktop_wm_class_find(const char *wmname, const
  * @param file_id the file id
  * @return a desktop
  */
-EAPI Efreet_Desktop *efreet_util_desktop_file_id_find(const char *file_id);
+EFREET_API Efreet_Desktop *efreet_util_desktop_file_id_find(const char *file_id);
 
 /**
  * Find a desktop by exec
@@ -63,7 +63,7 @@ EAPI Efreet_Desktop *efreet_util_desktop_file_id_find(const char *file_id);
  * @param exec the exec name
  * @return a desktop
  */
-EAPI Efreet_Desktop *efreet_util_desktop_exec_find(const char *exec);
+EFREET_API Efreet_Desktop *efreet_util_desktop_exec_find(const char *exec);
 
 /**
  * Find a desktop by name
@@ -73,7 +73,7 @@ EAPI Efreet_Desktop *efreet_util_desktop_exec_find(const char *exec);
  * @param name the name
  * @return a desktop
  */
-EAPI Efreet_Desktop *efreet_util_desktop_name_find(const char *name);
+EFREET_API Efreet_Desktop *efreet_util_desktop_name_find(const char *name);
 
 /**
  * Find a desktop by generic name
@@ -83,7 +83,7 @@ EAPI Efreet_Desktop *efreet_util_desktop_name_find(const char *name);
  * @param generic_name the generic name
  * @return a desktop
  */
-EAPI Efreet_Desktop *efreet_util_desktop_generic_name_find(const char *generic_name);
+EFREET_API Efreet_Desktop *efreet_util_desktop_generic_name_find(const char *generic_name);
 
 
 /**
@@ -94,7 +94,7 @@ EAPI Efreet_Desktop *efreet_util_desktop_generic_name_find(const char *generic_n
  * @param glob the pattern to match
  * @return a list of desktops
  */
-EAPI Eina_List *efreet_util_desktop_name_glob_list(const char *glob);
+EFREET_API Eina_List *efreet_util_desktop_name_glob_list(const char *glob);
 
 /**
  * Find all desktops where exec matches a glob pattern
@@ -104,7 +104,7 @@ EAPI Eina_List *efreet_util_desktop_name_glob_list(const char *glob);
  * @param glob the pattern to match
  * @return a list of desktops
  */
-EAPI Eina_List *efreet_util_desktop_exec_glob_list(const char *glob);
+EFREET_API Eina_List *efreet_util_desktop_exec_glob_list(const char *glob);
 
 /**
  * Find all desktops where generic name matches a glob pattern
@@ -114,7 +114,7 @@ EAPI Eina_List *efreet_util_desktop_exec_glob_list(const char *glob);
  * @param glob the pattern to match
  * @return a list of desktops
  */
-EAPI Eina_List *efreet_util_desktop_generic_name_glob_list(const char *glob);
+EFREET_API Eina_List *efreet_util_desktop_generic_name_glob_list(const char *glob);
 
 /**
  * Find all desktops where comment matches a glob pattern
@@ -124,7 +124,7 @@ EAPI Eina_List *efreet_util_desktop_generic_name_glob_list(const char *glob);
  * @param glob the pattern to match
  * @return a list of desktops
  */
-EAPI Eina_List *efreet_util_desktop_comment_glob_list(const char *glob);
+EFREET_API Eina_List *efreet_util_desktop_comment_glob_list(const char *glob);
 
 
 /**
@@ -133,7 +133,7 @@ EAPI Eina_List *efreet_util_desktop_comment_glob_list(const char *glob);
  *
  * @return an Eina_List of category names (const char *)
  */
-EAPI Eina_List *efreet_util_desktop_categories_list(void);
+EFREET_API Eina_List *efreet_util_desktop_categories_list(void);
 
 /**
  * Find all desktops in a given category
@@ -143,14 +143,14 @@ EAPI Eina_List *efreet_util_desktop_categories_list(void);
  * @param category the category name
  * @return a list of desktops
  */
-EAPI Eina_List *efreet_util_desktop_category_list(const char *category);
+EFREET_API Eina_List *efreet_util_desktop_category_list(const char *category);
 
 
 /**
  * Returns a list of .menu files found in the various config dirs.
  * @return An eina list of menu file paths (const char *). This must be freed with EINA_LIST_FREE.
  */
-EAPI Eina_List *efreet_util_menus_find(void);
+EFREET_API Eina_List *efreet_util_menus_find(void);
 
 /**
  * Find all known desktop environments
@@ -159,7 +159,7 @@ EAPI Eina_List *efreet_util_menus_find(void);
  *
  * @return an Eina_List of desktop environments names (const char *)
  */
-EAPI Eina_List *efreet_util_desktop_environments_list(void);
+EFREET_API Eina_List *efreet_util_desktop_environments_list(void);
 
 
 /**

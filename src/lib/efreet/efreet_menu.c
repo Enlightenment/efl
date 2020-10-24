@@ -448,7 +448,7 @@ efreet_menu_init(void)
     return 1;
 }
 
-EAPI int
+EFREET_API int
 efreet_menu_kde_legacy_init(void)
 {
     FILE *f;
@@ -506,7 +506,7 @@ efreet_menu_shutdown(void)
     _efreet_menu_log_dom = -1;
 }
 
-EAPI Efreet_Menu *
+EFREET_API Efreet_Menu *
 efreet_menu_new(const char *name)
 {
     Efreet_Menu *menu;
@@ -519,7 +519,7 @@ efreet_menu_new(const char *name)
     return menu;
 }
 
-EAPI void
+EFREET_API void
 efreet_menu_file_set(const char *file)
 {
     IF_RELEASE(efreet_menu_file);
@@ -528,7 +528,7 @@ efreet_menu_file_set(const char *file)
 }
 
 /* deprecated */
-EFREET_DEPRECATED_API EAPI void
+EFREET_DEPRECATED_API EFREET_API void
 efreet_menu_async_get(Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNUSED)
 {
     ERR("%s is deprecated and shouldn't be called", __func__);
@@ -536,7 +536,7 @@ efreet_menu_async_get(Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNU
     return;
 }
 
-EAPI Efreet_Menu *
+EFREET_API Efreet_Menu *
 efreet_menu_get(void)
 {
     char menu[PATH_MAX];
@@ -572,7 +572,7 @@ efreet_menu_get(void)
 }
 
 /* deprecated */
-EFREET_DEPRECATED_API EAPI void
+EFREET_DEPRECATED_API EFREET_API void
 efreet_menu_async_parse(const char *path EINA_UNUSED, Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNUSED)
 {
     ERR("%s is deprecated and shouldn't be called", __func__);
@@ -580,7 +580,7 @@ efreet_menu_async_parse(const char *path EINA_UNUSED, Efreet_Menu_Cb func EINA_U
     return;
 }
 
-EAPI Efreet_Menu *
+EFREET_API Efreet_Menu *
 efreet_menu_parse(const char *path)
 {
     Efreet_Xml *xml;
@@ -648,7 +648,7 @@ error:
     return entry;
 }
 
-EAPI int
+EFREET_API int
 efreet_menu_save(Efreet_Menu *menu, const char *path)
 {
     FILE *f;
@@ -667,7 +667,7 @@ efreet_menu_save(Efreet_Menu *menu, const char *path)
     return ret;
 }
 
-EAPI int
+EFREET_API int
 efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 {
     Efreet_Menu *entry;
@@ -697,7 +697,7 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
     return 1;
 }
 
-EAPI int
+EFREET_API int
 efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
 {
     Efreet_Menu *entry;
@@ -717,7 +717,7 @@ efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
     return 0;
 }
 
-EAPI void
+EFREET_API void
 efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 {
     Eina_List *l;
@@ -2339,7 +2339,7 @@ efreet_menu_entry_new(void)
     return entry;
 }
 
-EAPI void
+EFREET_API void
 efreet_menu_free(Efreet_Menu *entry)
 {
     Efreet_Menu *sub;
@@ -2357,7 +2357,7 @@ efreet_menu_free(Efreet_Menu *entry)
     FREE(entry);
 }
 
-EAPI void
+EFREET_API void
 efreet_menu_ref(Efreet_Menu *entry)
 {
     Efreet_Menu *sub;
@@ -2370,7 +2370,7 @@ efreet_menu_ref(Efreet_Menu *entry)
     entry->references++;
 }
 
-EAPI void
+EFREET_API void
 efreet_menu_unref(Efreet_Menu *entry)
 {
     efreet_menu_free(entry);

@@ -38,7 +38,7 @@ struct Efreet_Uri
  * @note The resulting string will contain the protocol and the path but not
  * the hostname, as many apps doesn't handle it.
  */
-EAPI const char *efreet_uri_encode(Efreet_Uri *uri);
+EFREET_API const char *efreet_uri_encode(Efreet_Uri *uri);
 
 /**
  * @param val a valid uri string to parse
@@ -47,13 +47,13 @@ EAPI const char *efreet_uri_encode(Efreet_Uri *uri);
  * hostname in the uri then the hostname parameter will be NULL. All the uri
  * escaped chars will be converted to normal.
  */
-EAPI Efreet_Uri *efreet_uri_decode(const char *val);
+EFREET_API Efreet_Uri *efreet_uri_decode(const char *val);
 
 /**
  * @param uri The uri to free
  * @brief Free the given uri structure.
  */
-EAPI void        efreet_uri_free(Efreet_Uri *uri);
+EFREET_API void        efreet_uri_free(Efreet_Uri *uri);
 
 
 /**

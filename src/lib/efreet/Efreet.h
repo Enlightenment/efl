@@ -74,37 +74,7 @@
 #include <Eina.h>
 #include <Efl_Config.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef EFL_BUILD
-# define EFREET_DEPRECATED_API
-#else
-# define EFREET_DEPRECATED_API EINA_DEPRECATED
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <efreet_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -124,7 +94,7 @@ extern "C" {
         int revision; /** < git revision (0 if a proper release or the git revision number Efreet is built from) */
      } Efreet_Version;
 
-   EAPI extern Efreet_Version *efreet_version;
+   EFREET_API extern Efreet_Version *efreet_version;
 
 #include "efreet_base.h"
 #include "efreet_ini.h"
@@ -138,7 +108,7 @@ extern "C" {
  * @return Value > @c 0 if the initialization was successful, @c 0 otherwise.
  * @brief Initializes the Efreet system
  */
-EAPI int efreet_init(void);
+EFREET_API int efreet_init(void);
 
 /**
  * @return The number of times the init function has been called minus the
@@ -146,32 +116,29 @@ EAPI int efreet_init(void);
  * @brief Shuts down Efreet if a balanced number of init/shutdown calls have
  * been made
  */
-EAPI int efreet_shutdown(void);
+EFREET_API int efreet_shutdown(void);
 
 /**
  * @brief Resets language dependent variables and resets language dependent
  * caches This must be called whenever the locale is changed.
  * @since 1.7
  */
-EAPI void efreet_lang_reset(void);
+EFREET_API void efreet_lang_reset(void);
 
 /**
  * @brief Disables connecting to efreet cache for this process.
  * @since 1.21
  */
-EAPI void efreet_cache_disable(void);
+EFREET_API void efreet_cache_disable(void);
 
 /**
  * @brief Enables connecting to efreet cache for this process.
  * @since 1.21
  */
-EAPI void efreet_cache_enable(void);
+EFREET_API void efreet_cache_enable(void);
 
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
-
-#undef EAPI
-#define EAPI
 
 #ifdef __cplusplus
 }

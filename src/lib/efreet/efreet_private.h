@@ -1,31 +1,7 @@
 #ifndef EFREET_PRIVATE_H
 #define EFREET_PRIVATE_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <efreet_api.h>
 
 #ifdef ENABLE_NLS
 # include <libintl.h>
@@ -201,7 +177,7 @@ void efreet_icon_extensions_refresh(void);
 
 int efreet_menu_init(void);
 void efreet_menu_shutdown(void);
-EAPI Eina_List *efreet_default_dirs_get(const char *user_dir,
+EFREET_API Eina_List *efreet_default_dirs_get(const char *user_dir,
                                         Eina_List *system_dirs,
                                         const char *suffix);
 
@@ -223,10 +199,10 @@ int efreet_internal_trash_shutdown(void);
 const char *efreet_home_dir_get(void);
 void        efreet_dirs_reset(void);
 
-EAPI const char *efreet_lang_get(void);
-EAPI const char *efreet_lang_country_get(void);
-EAPI const char *efreet_lang_modifier_get(void);
-EAPI const char *efreet_language_get(void);
+EFREET_API const char *efreet_lang_get(void);
+EFREET_API const char *efreet_lang_country_get(void);
+EFREET_API const char *efreet_lang_modifier_get(void);
+EFREET_API const char *efreet_language_get(void);
 
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
@@ -249,18 +225,15 @@ Efreet_Cache_Hash *efreet_cache_util_hash_string(const char *key);
 Efreet_Cache_Hash *efreet_cache_util_hash_array_string(const char *key);
 Efreet_Cache_Array_String *efreet_cache_util_names(const char *key);
 
-EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
+EFREET_API void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
-EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
-EAPI void efreet_setowner(const char *path);
-EAPI void efreet_fsetowner(int fd);
+EFREET_API void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
+EFREET_API void efreet_setowner(const char *path);
+EFREET_API void efreet_fsetowner(int fd);
 
-EAPI extern int efreet_cache_update;
+EFREET_API extern int efreet_cache_update;
 
-EAPI extern void (*_efreet_mime_update_func) (void);
-
-#undef EAPI
-#define EAPI
+EFREET_API extern void (*_efreet_mime_update_func) (void);
 
 /**
  * @}

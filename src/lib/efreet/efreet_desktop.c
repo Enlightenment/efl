@@ -30,9 +30,9 @@ static Eina_List *efreet_desktop_types = NULL;
 
 static Eina_Lock _lock;
 
-EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
-EAPI int EFREET_DESKTOP_TYPE_LINK = 0;
-EAPI int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
+EFREET_API int EFREET_DESKTOP_TYPE_APPLICATION = 0;
+EFREET_API int EFREET_DESKTOP_TYPE_LINK = 0;
+EFREET_API int EFREET_DESKTOP_TYPE_DIRECTORY = 0;
 
 /**
  * @internal
@@ -146,7 +146,7 @@ efreet_desktop_shutdown(void)
     _efreet_desktop_log_dom = -1;
 }
 
-EAPI Efreet_Desktop *
+EFREET_API Efreet_Desktop *
 efreet_desktop_get(const char *file)
 {
     Efreet_Desktop *desktop;
@@ -194,7 +194,7 @@ efreet_desktop_get(const char *file)
 #endif
 }
 
-EAPI int
+EFREET_API int
 efreet_desktop_ref(Efreet_Desktop *desktop)
 {
     int ret;
@@ -207,7 +207,7 @@ efreet_desktop_ref(Efreet_Desktop *desktop)
     return ret;
 }
 
-EAPI Efreet_Desktop *
+EFREET_API Efreet_Desktop *
 efreet_desktop_empty_new(const char *file)
 {
     Efreet_Desktop *desktop;
@@ -235,7 +235,7 @@ efreet_desktop_empty_new(const char *file)
     return desktop;
 }
 
-EAPI Efreet_Desktop *
+EFREET_API Efreet_Desktop *
 efreet_desktop_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
@@ -264,7 +264,7 @@ efreet_desktop_new(const char *file)
     return efreet_desktop_uncached_new(file);
 }
 
-EAPI Efreet_Desktop *
+EFREET_API Efreet_Desktop *
 efreet_desktop_uncached_new(const char *file)
 {
     Efreet_Desktop *desktop = NULL;
@@ -293,7 +293,7 @@ efreet_desktop_uncached_new(const char *file)
     return desktop;
 }
 
-EAPI int
+EFREET_API int
 efreet_desktop_save(Efreet_Desktop *desktop)
 {
     Efreet_Desktop_Type_Info *info;
@@ -349,7 +349,7 @@ efreet_desktop_save(Efreet_Desktop *desktop)
     return ok;
 }
 
-EAPI int
+EFREET_API int
 efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, 0);
@@ -363,7 +363,7 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
     return efreet_desktop_save(desktop);
 }
 
-EAPI void
+EFREET_API void
 efreet_desktop_free(Efreet_Desktop *desktop)
 {
     if (!desktop) return;
@@ -432,26 +432,26 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     eina_lock_release(&_lock);
 }
 
-EAPI void
+EFREET_API void
 efreet_desktop_environment_set(const char *environment)
 {
    eina_stringshare_replace(&desktop_environment, environment);
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_desktop_environment_get(void)
 {
     return desktop_environment;
 }
 
-EAPI unsigned int
+EFREET_API unsigned int
 efreet_desktop_category_count_get(Efreet_Desktop *desktop)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, 0);
     return eina_list_count(desktop->categories);
 }
 
-EAPI void
+EFREET_API void
 efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
 {
     EINA_SAFETY_ON_NULL_RETURN(desktop);
@@ -466,7 +466,7 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
     eina_lock_release(&_lock);
 }
 
-EAPI int
+EFREET_API int
 efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
 {
     char *found = NULL;
@@ -487,7 +487,7 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
     return 0;
 }
 
-EAPI int
+EFREET_API int
 efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_func,
                         Efreet_Desktop_Type_Save_Cb save_func,
                         Efreet_Desktop_Type_Free_Cb free_func)
@@ -511,7 +511,7 @@ efreet_desktop_type_add(const char *type, Efreet_Desktop_Type_Parse_Cb parse_fun
     return id;
 }
 
-EAPI int
+EFREET_API int
 efreet_desktop_type_alias(int from_type, const char *alias)
 {
     Efreet_Desktop_Type_Info *info;
@@ -521,7 +521,7 @@ efreet_desktop_type_alias(int from_type, const char *alias)
     return efreet_desktop_type_add(alias, info->parse_func, info->save_func, info->free_func);
 }
 
-EAPI Eina_Bool
+EFREET_API Eina_Bool
 efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, EINA_FALSE);
@@ -539,7 +539,7 @@ efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char 
     return EINA_TRUE;
 }
 
-EAPI const char *
+EFREET_API const char *
 efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
 {
     const char *ret;
@@ -562,7 +562,7 @@ efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
     return ret;
 }
 
-EAPI Eina_Bool
+EFREET_API Eina_Bool
 efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
 {
     Eina_Bool ret;
@@ -576,14 +576,14 @@ efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
     return ret;
 }
 
-EAPI void *
+EFREET_API void *
 efreet_desktop_type_data_get(Efreet_Desktop *desktop)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
     return desktop->type_data;
 }
 
-EAPI Eina_List *
+EFREET_API Eina_List *
 efreet_desktop_string_list_parse(const char *string)
 {
     Eina_List *list = NULL;
@@ -617,7 +617,7 @@ efreet_desktop_string_list_parse(const char *string)
     return list;
 }
 
-EAPI char *
+EFREET_API char *
 efreet_desktop_string_list_join(Eina_List *list)
 {
     Eina_List *l;
