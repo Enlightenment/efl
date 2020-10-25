@@ -21,7 +21,7 @@ eet_src = files([
 
 eet_lib = library('eet',
     eet_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEET_BUILD'],
     dependencies: eet_deps + eet_pub_deps + eet_ext_deps,
     include_directories : config_dir,
     install: true,

@@ -23,7 +23,7 @@
 #endif
 
 static Eet_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Eet_Version *eet_version = &_version;
+EET_API Eet_Version *eet_version = &_version;
 
 #ifdef HAVE_REALPATH
 # undef HAVE_REALPATH
@@ -536,7 +536,7 @@ sign_error:
    return error;
 }
 
-EAPI int
+EET_API int
 eet_init(void)
 {
    if (++eet_init_count != 1)
@@ -590,7 +590,7 @@ shutdown_eina:
    return --eet_init_count;
 }
 
-EAPI int
+EET_API int
 eet_shutdown(void)
 {
    if (eet_init_count <= 0)
@@ -647,7 +647,7 @@ eet_shutdown(void)
    return eet_init_count;
 }
 
-EAPI Eet_Error
+EET_API Eet_Error
 eet_sync(Eet_File *ef)
 {
    Eet_Error ret;
@@ -670,7 +670,7 @@ eet_sync(Eet_File *ef)
    return ret;
 }
 
-EAPI void
+EET_API void
 eet_clearcache(void)
 {
    int num = 0;
@@ -1383,7 +1383,7 @@ on_error:
    return EET_ERROR_NONE;
 }
 
-EAPI Eet_File *
+EET_API Eet_File *
 eet_memopen_read(const void *data,
                  size_t      size)
 {
@@ -1420,14 +1420,14 @@ eet_memopen_read(const void *data,
    return ef;
 }
 
-EAPI const char *
+EET_API const char *
 eet_file_get(Eet_File *ef)
 {
    if (eet_check_pointer(ef)) return NULL;
    return ef->path;
 }
 
-EAPI Eet_File *
+EET_API Eet_File *
 eet_mmap(const Eina_File *file)
 {
    Eet_File *ef = NULL;
@@ -1495,7 +1495,7 @@ eet_mmap(const Eina_File *file)
    return NULL;
 }
 
-EAPI Eet_File *
+EET_API Eet_File *
 eet_open(const char   *file,
          Eet_File_Mode mode)
 {
@@ -1665,7 +1665,7 @@ on_error:
    return NULL;
 }
 
-EAPI Eet_File_Mode
+EET_API Eet_File_Mode
 eet_mode_get(Eet_File *ef)
 {
    /* check to see its' an eet file pointer */
@@ -1794,7 +1794,7 @@ _base64_dec(const char *file, int *size_ret)
    return data;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_identity_verify(Eet_File   *ef,
                     const char *certificate_file)
 {
@@ -1825,7 +1825,7 @@ eet_identity_verify(Eet_File   *ef,
    return EINA_TRUE;
 }
 
-EAPI const void *
+EET_API const void *
 eet_identity_x509(Eet_File *ef,
                   int      *der_length)
 {
@@ -1841,7 +1841,7 @@ eet_identity_x509(Eet_File *ef,
    return ef->x509_der;
 }
 
-EAPI const void *
+EET_API const void *
 eet_identity_signature(Eet_File *ef,
                        int      *signature_length)
 {
@@ -1857,7 +1857,7 @@ eet_identity_signature(Eet_File *ef,
    return ef->signature;
 }
 
-EAPI const void *
+EET_API const void *
 eet_identity_sha1(Eet_File *ef,
                   int      *sha1_length)
 {
@@ -1875,7 +1875,7 @@ eet_identity_sha1(Eet_File *ef,
    return ef->sha1;
 }
 
-EAPI Eet_Error
+EET_API Eet_Error
 eet_identity_set(Eet_File *ef,
                  Eet_Key  *key)
 {
@@ -1895,13 +1895,13 @@ eet_identity_set(Eet_File *ef,
    return EET_ERROR_NONE;
 }
 
-EAPI Eet_Error
+EET_API Eet_Error
 eet_close(Eet_File *ef)
 {
    return eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
 }
 
-EAPI void *
+EET_API void *
 eet_read_cipher(Eet_File   *ef,
                 const char *name,
                 int        *size_ret,
@@ -2002,7 +2002,7 @@ on_error:
    return NULL;
 }
 
-EAPI void *
+EET_API void *
 eet_read(Eet_File   *ef,
          const char *name,
          int        *size_ret)
@@ -2010,7 +2010,7 @@ eet_read(Eet_File   *ef,
    return eet_read_cipher(ef, name, size_ret, NULL);
 }
 
-EAPI const void *
+EET_API const void *
 eet_read_direct(Eet_File   *ef,
                 const char *name,
                 int        *size_ret)
@@ -2114,7 +2114,7 @@ on_error:
    return NULL;
 }
 
-EAPI const char *
+EET_API const char *
 eet_alias_get(Eet_File   *ef,
               const char *name)
 {
@@ -2216,7 +2216,7 @@ eet_define_data(Eet_File *ef, Eet_File_Node *efn, Eina_Binbuf *data, int origina
    efn->offset = ef->data_size + 1;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_alias(Eet_File   *ef,
           const char *name,
           const char *destination,
@@ -2338,7 +2338,7 @@ on_error:
    return success;
 }
 
-EAPI int
+EET_API int
 eet_write_cipher(Eet_File   *ef,
                  const char *name,
                  const void *data,
@@ -2488,7 +2488,7 @@ on_error:
    return 0;
 }
 
-EAPI int
+EET_API int
 eet_write(Eet_File   *ef,
           const char *name,
           const void *data,
@@ -2498,7 +2498,7 @@ eet_write(Eet_File   *ef,
    return eet_write_cipher(ef, name, data, size, comp, NULL);
 }
 
-EAPI int
+EET_API int
 eet_delete(Eet_File   *ef,
            const char *name)
 {
@@ -2560,7 +2560,7 @@ eet_delete(Eet_File   *ef,
    return exists_already;
 }
 
-EAPI Eet_Dictionary *
+EET_API Eet_Dictionary *
 eet_dictionary_get(Eet_File *ef)
 {
    if (eet_check_pointer(ef))
@@ -2569,7 +2569,7 @@ eet_dictionary_get(Eet_File *ef)
    return ef->ed;
 }
 
-EAPI char **
+EET_API char **
 eet_list(Eet_File   *ef,
          const char *glob,
          int        *count_ret)
@@ -2653,7 +2653,7 @@ on_error:
    return NULL;
 }
 
-EAPI int
+EET_API int
 eet_num_entries(Eet_File *ef)
 {
    int i, num, ret = 0;
@@ -2773,7 +2773,7 @@ _eet_entries_iterator_unlock(Eet_Entries_Iterator *it)
    return EINA_TRUE;
 }
 
-EAPI Eina_Iterator *
+EET_API Eina_Iterator *
 eet_list_entries(Eet_File *ef)
 {
    Eet_Entries_Iterator *it;

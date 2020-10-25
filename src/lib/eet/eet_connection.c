@@ -27,7 +27,7 @@ struct _Eet_Connection
    void         *buffer;
 };
 
-EAPI Eet_Connection *
+EET_API Eet_Connection *
 eet_connection_new(Eet_Read_Cb  *eet_read_cb,
                    Eet_Write_Cb *eet_write_cb,
                    const void   *user_data)
@@ -44,7 +44,7 @@ eet_connection_new(Eet_Read_Cb  *eet_read_cb,
    return conn;
 }
 
-EAPI int
+EET_API int
 eet_connection_received(Eet_Connection *conn,
                         const void     *data,
                         size_t          size)
@@ -146,14 +146,14 @@ _eet_connection_raw_send(Eet_Connection *conn,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_connection_empty(Eet_Connection *conn)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_TRUE);
    return conn->size ? EINA_FALSE : EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_connection_send(Eet_Connection      *conn,
                     Eet_Data_Descriptor *edd,
                     const void          *data_in,
@@ -175,7 +175,7 @@ eet_connection_send(Eet_Connection      *conn,
    return ret;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_connection_node_send(Eet_Connection *conn,
                          Eet_Node       *node,
                          const char     *cipher_key)
@@ -194,7 +194,7 @@ eet_connection_node_send(Eet_Connection *conn,
    return ret;
 }
 
-EAPI void *
+EET_API void *
 eet_connection_close(Eet_Connection *conn,
                      Eina_Bool      *on_going)
 {

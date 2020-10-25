@@ -100,31 +100,7 @@
 #include <Eina.h>
 #include <Emile.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <eet_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -179,7 +155,6 @@ typedef struct _Eet_Version
    int revision; /** < svn revision (0 if a proper release or the svn revision number Eet is built from) */
 } Eet_Version;
 
-
 /**
  * @defgroup Eet_Group Top level functions
  * @ingroup Eet
@@ -191,7 +166,7 @@ typedef struct _Eet_Version
 /**
  * Eet Version Information
  */
-EAPI extern Eet_Version *eet_version;
+EET_API extern Eet_Version *eet_version;
 
 /**
  * @enum _Eet_Error
@@ -271,7 +246,7 @@ typedef enum _Eet_Compression
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_init(void);
 
 /**
@@ -287,7 +262,7 @@ eet_init(void);
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_shutdown(void);
 
 /**
@@ -306,7 +281,7 @@ eet_shutdown(void);
  *
  * @since 1.0.0
  */
-EAPI void
+EET_API void
 eet_clearcache(void);
 
 /**
@@ -596,7 +571,7 @@ struct _Eet_Entry
  *
  * @since 1.0.0
  */
-EAPI Eet_File *
+EET_API Eet_File *
 eet_open(const char *file,
          Eet_File_Mode mode);
 
@@ -622,7 +597,7 @@ eet_open(const char *file,
  *
  * @since 1.8.0
  */
-EAPI Eet_File *
+EET_API Eet_File *
 eet_mmap(const Eina_File *file);
 
 /**
@@ -639,7 +614,7 @@ eet_mmap(const Eina_File *file);
  *
  * @since 1.1.0
  */
-EAPI Eet_File *
+EET_API Eet_File *
 eet_memopen_read(const void *data,
                  size_t size);
 
@@ -651,7 +626,7 @@ eet_memopen_read(const void *data,
  *
  * @since 1.0.0
  */
-EAPI Eet_File_Mode
+EET_API Eet_File_Mode
 eet_mode_get(Eet_File *ef);
 
 /**
@@ -672,7 +647,7 @@ eet_mode_get(Eet_File *ef);
  *
  * @see eet_clearcache()
  */
-EAPI Eet_Error
+EET_API Eet_Error
 eet_close(Eet_File *ef);
 
 /**
@@ -688,7 +663,7 @@ eet_close(Eet_File *ef);
  *
  * @since 1.2.4
  */
-EAPI Eet_Error
+EET_API Eet_Error
 eet_sync(Eet_File *ef);
 
 /**
@@ -707,7 +682,7 @@ eet_sync(Eet_File *ef);
  *
  * @since 1.0.0
  */
-EAPI Eet_Dictionary *
+EET_API Eet_Dictionary *
 eet_dictionary_get(Eet_File *ef);
 
 /**
@@ -724,7 +699,7 @@ eet_dictionary_get(Eet_File *ef);
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_dictionary_string_check(Eet_Dictionary *ed,
                             const char *string);
 
@@ -736,7 +711,7 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
  *
  * @since 1.6.0
  */
-EAPI int
+EET_API int
 eet_dictionary_count(const Eet_Dictionary *ed);
 
 /**
@@ -761,7 +736,7 @@ eet_dictionary_count(const Eet_Dictionary *ed);
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_read(Eet_File *ef,
          const char *name,
          int *size_ret);
@@ -786,7 +761,7 @@ eet_read(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI const void *
+EET_API const void *
 eet_read_direct(Eet_File *ef,
                 const char *name,
                 int *size_ret);
@@ -819,7 +794,7 @@ eet_read_direct(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_write(Eet_File *ef,
           const char *name,
           const void *data,
@@ -844,7 +819,7 @@ eet_write(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_delete(Eet_File *ef,
            const char *name);
 
@@ -863,7 +838,7 @@ eet_delete(Eet_File *ef,
  *
  * @since 1.3.3
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_alias(Eet_File *ef,
           const char *name,
           const char *destination,
@@ -879,7 +854,7 @@ eet_alias(Eet_File *ef,
  *
  * @since 1.6
  */
-EAPI const char *
+EET_API const char *
 eet_file_get(Eet_File *ef);
 
 /**
@@ -893,7 +868,7 @@ eet_file_get(Eet_File *ef);
  *
  * @since 1.5
  */
-EAPI const char *
+EET_API const char *
 eet_alias_get(Eet_File *ef,
               const char *name);
 
@@ -927,7 +902,7 @@ eet_alias_get(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI char **
+EET_API char **
 eet_list(Eet_File *ef,
          const char *glob,
          int *count_ret);
@@ -941,7 +916,7 @@ eet_list(Eet_File *ef,
  * @since 1.8.0
  */
 
-EAPI Eina_Iterator *eet_list_entries(Eet_File *ef);
+EET_API Eina_Iterator *eet_list_entries(Eet_File *ef);
 
 /**
  * @ingroup Eet_File_Group
@@ -952,7 +927,7 @@ EAPI Eina_Iterator *eet_list_entries(Eet_File *ef);
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_num_entries(Eet_File *ef);
 
 /**
@@ -989,7 +964,7 @@ eet_num_entries(Eet_File *ef);
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_read_cipher(Eet_File *ef,
                 const char *name,
                 int *size_ret,
@@ -1024,7 +999,7 @@ eet_read_cipher(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_write_cipher(Eet_File *ef,
                  const char *name,
                  const void *data,
@@ -1088,7 +1063,7 @@ eet_write_cipher(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_image_header_read(Eet_File *ef,
                            const char *name,
                            unsigned int *w,
@@ -1133,7 +1108,7 @@ eet_data_image_header_read(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_image_read(Eet_File *ef,
                     const char *name,
                     unsigned int *w,
@@ -1191,7 +1166,7 @@ eet_data_image_read(Eet_File *ef,
  *
  * @since 1.0.2
  */
-EAPI int
+EET_API int
 eet_data_image_read_to_surface(Eet_File *ef,
                                const char *name,
                                unsigned int src_x,
@@ -1242,7 +1217,7 @@ eet_data_image_read_to_surface(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_image_write(Eet_File *ef,
                      const char *name,
                      const void *data,
@@ -1278,7 +1253,7 @@ eet_data_image_write(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_image_header_decode(const void *data,
                              int size,
                              unsigned int *w,
@@ -1318,7 +1293,7 @@ eet_data_image_header_decode(const void *data,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_image_decode(const void *data,
                       int size,
                       unsigned int *w,
@@ -1356,7 +1331,7 @@ eet_data_image_decode(const void *data,
  *
  * @since 1.0.2
  */
-EAPI int
+EET_API int
 eet_data_image_decode_to_surface(const void *data,
                                  int size,
                                  unsigned int src_x,
@@ -1400,7 +1375,7 @@ eet_data_image_decode_to_surface(const void *data,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_image_encode(const void *data,
                       int *size_ret,
                       unsigned int w,
@@ -1458,7 +1433,7 @@ eet_data_image_encode(const void *data,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_image_header_read_cipher(Eet_File *ef,
                                   const char *name,
                                   const char *cipher_key,
@@ -1481,7 +1456,7 @@ eet_data_image_header_read_cipher(Eet_File *ef,
  *
  * @since 1.10.0
  */
-EAPI int
+EET_API int
 eet_data_image_colorspace_get(Eet_File *ef,
                               const char *name,
                               const char *cipher_key,
@@ -1526,7 +1501,7 @@ eet_data_image_colorspace_get(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_image_read_cipher(Eet_File *ef,
                            const char *name,
                            const char *cipher_key,
@@ -1580,7 +1555,7 @@ eet_data_image_read_cipher(Eet_File *ef,
  *
  * @since 1.0.2
  */
-EAPI int
+EET_API int
 eet_data_image_read_to_surface_cipher(Eet_File *ef,
                                       const char *name,
                                       const char *cipher_key,
@@ -1641,7 +1616,7 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef,
  *
  * @since 1.10.0
  */
-EAPI int
+EET_API int
 eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
                                              const char   *name,
                                              const char   *cipher_key,
@@ -1703,7 +1678,7 @@ eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
  * @since 1.10.0
  */
 
-EAPI int
+EET_API int
 eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
                                                const char   *cipher_key,
                                                int           size,
@@ -1755,7 +1730,7 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_image_write_cipher(Eet_File *ef,
                             const char *name,
                             const char *cipher_key,
@@ -1804,7 +1779,7 @@ eet_data_image_write_cipher(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_image_header_decode_cipher(const void *data,
                                     const char *cipher_key,
                                     int size,
@@ -1854,7 +1829,7 @@ eet_data_image_header_decode_cipher(const void *data,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_image_decode_cipher(const void *data,
                              const char *cipher_key,
                              int size,
@@ -1906,7 +1881,7 @@ eet_data_image_decode_cipher(const void *data,
  *
  * @since 1.0.2
  */
-EAPI int
+EET_API int
 eet_data_image_decode_to_surface_cipher(const void *data,
                                         const char *cipher_key,
                                         int size,
@@ -1956,7 +1931,7 @@ eet_data_image_decode_to_surface_cipher(const void *data,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_image_encode_cipher(const void *data,
                              const char *cipher_key,
                              unsigned int w,
@@ -2024,7 +1999,7 @@ typedef int (*Eet_Key_Password_Callback)(char *buffer, int size, int rwflag, voi
  * @warning You need to compile signature support in EET.
  * @since 1.2.0
  */
-EAPI Eet_Key *
+EET_API Eet_Key *
 eet_identity_open(const char *certificate_file,
                   const char *private_key_file,
                   Eet_Key_Password_Callback cb);
@@ -2039,7 +2014,7 @@ eet_identity_open(const char *certificate_file,
  *
  * @since 1.2.0
  */
-EAPI void
+EET_API void
 eet_identity_close(Eet_Key *key);
 
 /**
@@ -2053,7 +2028,7 @@ eet_identity_close(Eet_Key *key);
  *
  * @since 1.2.0
  */
-EAPI Eet_Error
+EET_API Eet_Error
 eet_identity_set(Eet_File *ef,
                  Eet_Key *key);
 
@@ -2067,7 +2042,7 @@ eet_identity_set(Eet_File *ef,
  * @warning You need to compile signature support in EET.
  * @since 1.2.0
  */
-EAPI void
+EET_API void
 eet_identity_print(Eet_Key *key,
                    FILE *out);
 
@@ -2090,7 +2065,7 @@ eet_identity_print(Eet_Key *key,
  * @warning You need to compile signature support in EET.
  * @since 1.13
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_identity_verify(Eet_File *ef,
                     const char *certificate_file);
 
@@ -2105,7 +2080,7 @@ eet_identity_verify(Eet_File *ef,
  *
  * @since 1.2.0
  */
-EAPI const void *
+EET_API const void *
 eet_identity_x509(Eet_File *ef,
                   int *der_length);
 
@@ -2119,7 +2094,7 @@ eet_identity_x509(Eet_File *ef,
  * @return The raw signature or @c NULL on error.
  *
  */
-EAPI const void *
+EET_API const void *
 eet_identity_signature(Eet_File *ef,
                        int *signature_length);
 
@@ -2135,7 +2110,7 @@ eet_identity_signature(Eet_File *ef,
  *
  * @since 1.2.0
  */
-EAPI const void *
+EET_API const void *
 eet_identity_sha1(Eet_File *ef,
                   int *sha1_length);
 
@@ -2150,7 +2125,7 @@ eet_identity_sha1(Eet_File *ef,
  * @warning You need to compile signature support in EET.
  * @since 1.2.0
  */
-EAPI void
+EET_API void
 eet_identity_certificate_print(const unsigned char *certificate,
                                int der_length,
                                FILE *out);
@@ -2894,7 +2869,7 @@ struct _Eet_Data_Descriptor_Class
  * @since 1.0.0
  *
  */
-EINA_DEPRECATED EAPI Eet_Data_Descriptor *
+EINA_DEPRECATED EET_API Eet_Data_Descriptor *
 eet_data_descriptor_new(const char *name,
                         int size,
                         Eet_Descriptor_List_Next_Callback func_list_next,
@@ -2910,9 +2885,9 @@ eet_data_descriptor_new(const char *name,
  * moving to this api from the old above. this will break things when the
  * move happens - but be warned
  */
-EINA_DEPRECATED EAPI Eet_Data_Descriptor *
+EINA_DEPRECATED EET_API Eet_Data_Descriptor *
  eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc);
-EINA_DEPRECATED EAPI Eet_Data_Descriptor *
+EINA_DEPRECATED EET_API Eet_Data_Descriptor *
  eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
@@ -2940,7 +2915,7 @@ EINA_DEPRECATED EAPI Eet_Data_Descriptor *
  *
  * @since 1.2.3
  */
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
@@ -2990,7 +2965,7 @@ eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
  *
  * @since 1.2.3
  */
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
 
 /**
@@ -3011,7 +2986,7 @@ eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
  *
  * @since 1.2.3
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
                                           unsigned int eddc_size,
                                           const char *name,
@@ -3052,7 +3027,7 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  *
  * @since 1.2.3
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
                                         unsigned int eddc_size,
                                         const char *name,
@@ -3086,7 +3061,7 @@ eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  *
  * @since 1.0.0
  */
-EAPI void
+EET_API void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd);
 
 /**
@@ -3097,7 +3072,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd);
  *
  * @since 1.8.0
  */
-EAPI const char *eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd);
+EET_API const char *eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd);
 
 /**
  * @ingroup Eet_Data_Group
@@ -3125,7 +3100,7 @@ EAPI const char *eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd);
  *
  * @since 1.0.0
  */
-EAPI void
+EET_API void
 eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
                                 const char *name,
                                 int type,
@@ -3163,7 +3138,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_read(Eet_File *ef,
               Eet_Data_Descriptor *edd,
               const char *name);
@@ -3187,7 +3162,7 @@ eet_data_read(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_write(Eet_File *ef,
                Eet_Data_Descriptor *edd,
                const char *name,
@@ -3252,7 +3227,7 @@ typedef void (*Eet_Dump_Callback)(void *data, const char *str);
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_text_dump(const void *data_in,
                    int size_in,
                    Eet_Dump_Callback dumpfunc,
@@ -3277,7 +3252,7 @@ eet_data_text_dump(const void *data_in,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_text_undump(const char *text,
                      int textlen,
                      int *size_ret) EINA_ARG_NONNULL(3);
@@ -3305,7 +3280,7 @@ eet_data_text_undump(const char *text,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_dump(Eet_File *ef,
               const char *name,
               Eet_Dump_Callback dumpfunc,
@@ -3333,7 +3308,7 @@ eet_data_dump(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_undump(Eet_File *ef,
                 const char *name,
                 const char *text,
@@ -3367,7 +3342,7 @@ eet_data_undump(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
                            const void *data_in,
                            int size_in);
@@ -3401,7 +3376,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
                            const void *data_in,
                            int *size_ret);
@@ -3935,7 +3910,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_read_cipher(Eet_File *ef,
                      Eet_Data_Descriptor *edd,
                      const char *name,
@@ -3971,7 +3946,7 @@ eet_data_read_cipher(Eet_File *ef,
  *
  * @since 1.10.0
  */
-EAPI void *
+EET_API void *
 eet_data_read_cipher_buffer(Eet_File            *ef,
                             Eet_Data_Descriptor *edd,
                             const char          *name,
@@ -4002,7 +3977,7 @@ eet_data_read_cipher_buffer(Eet_File            *ef,
  *
  * @since 1.5.0
  */
-EAPI void *
+EET_API void *
 eet_data_xattr_cipher_get(const char *filename,
                           const char *attribute,
                           Eet_Data_Descriptor *edd,
@@ -4025,7 +4000,7 @@ eet_data_xattr_cipher_get(const char *filename,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_write_cipher(Eet_File *ef,
                       Eet_Data_Descriptor *edd,
                       const char *name,
@@ -4050,7 +4025,7 @@ eet_data_write_cipher(Eet_File *ef,
  *
  * @since 1.5.0
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_data_xattr_cipher_set(const char *filename,
                           const char *attribute,
                           Eet_Data_Descriptor *edd,
@@ -4106,7 +4081,7 @@ eet_data_xattr_cipher_set(const char *filename,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_text_dump_cipher(const void *data_in,
                           const char *cipher_key,
                           int size_in,
@@ -4134,7 +4109,7 @@ eet_data_text_dump_cipher(const void *data_in,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_text_undump_cipher(const char *text,
                             const char *cipher_key,
                             int textlen,
@@ -4165,7 +4140,7 @@ eet_data_text_undump_cipher(const char *text,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_dump_cipher(Eet_File *ef,
                      const char *name,
                      const char *cipher_key,
@@ -4196,7 +4171,7 @@ eet_data_dump_cipher(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI int
+EET_API int
 eet_data_undump_cipher(Eet_File *ef,
                        const char *name,
                        const char *cipher_key,
@@ -4233,7 +4208,7 @@ eet_data_undump_cipher(Eet_File *ef,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
                                   const void *data_in,
                                   const char *cipher_key,
@@ -4270,7 +4245,7 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
  *
  * @since 1.0.0
  */
-EAPI void *
+EET_API void *
 eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
                                   const void *data_in,
                                   const char *cipher_key,
@@ -4330,7 +4305,7 @@ struct _Eet_Node_Data
  * @param c Character value.
  * @return A new character node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_char_new(const char *name,
                   char c);
 
@@ -4341,7 +4316,7 @@ eet_node_char_new(const char *name,
  * @param s Short value.
  * @return A new short node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_short_new(const char *name,
                    short s);
 
@@ -4352,7 +4327,7 @@ eet_node_short_new(const char *name,
  * @param i Integer value.
  * @return A new integer node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_int_new(const char *name,
                  int i);
 
@@ -4363,7 +4338,7 @@ eet_node_int_new(const char *name,
  * @param l Long long integer value.
  * @return A new long long integer node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_long_long_new(const char *name,
                        long long l);
 
@@ -4374,7 +4349,7 @@ eet_node_long_long_new(const char *name,
  * @param f Float value.
  * @return A new float node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_float_new(const char *name,
                    float f);
 
@@ -4385,7 +4360,7 @@ eet_node_float_new(const char *name,
  * @param d Double value.
  * @return A new double node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_double_new(const char *name,
                     double d);
 
@@ -4396,7 +4371,7 @@ eet_node_double_new(const char *name,
  * @param uc Unsigned char value.
  * @return A new unsigned char node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_unsigned_char_new(const char *name,
                            unsigned char uc);
 
@@ -4407,7 +4382,7 @@ eet_node_unsigned_char_new(const char *name,
  * @param us Unsigned short value.
  * @return A new unsigned short node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_unsigned_short_new(const char *name,
                             unsigned short us);
 
@@ -4418,7 +4393,7 @@ eet_node_unsigned_short_new(const char *name,
  * @param ui Unsigned integer value.
  * @return A new unsigned integer node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_unsigned_int_new(const char *name,
                           unsigned int ui);
 
@@ -4429,7 +4404,7 @@ eet_node_unsigned_int_new(const char *name,
  * @param l Unsigned long long integer value.
  * @return A new unsigned long long integer node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_unsigned_long_long_new(const char *name,
                                 unsigned long long l);
 
@@ -4440,7 +4415,7 @@ eet_node_unsigned_long_long_new(const char *name,
  * @param str String value.
  * @return A new string node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_string_new(const char *name,
                     const char *str);
 
@@ -4451,7 +4426,7 @@ eet_node_string_new(const char *name,
  * @param str String value.
  * @return A new inlined string node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_inlined_string_new(const char *name,
                             const char *str);
 
@@ -4461,7 +4436,7 @@ eet_node_inlined_string_new(const char *name,
  * @param name Name of the node.
  * @return A new empty node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_null_new(const char *name);
 
 /**
@@ -4471,7 +4446,7 @@ eet_node_null_new(const char *name);
  * @param nodes List of nodes.
  * @return A new list node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_list_new(const char *name,
                   Eina_List *nodes);
 
@@ -4483,7 +4458,7 @@ eet_node_list_new(const char *name,
  * @param nodes List of nodes.
  * @return A new array node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_array_new(const char *name,
                    int count,
                    Eina_List *nodes);
@@ -4495,7 +4470,7 @@ eet_node_array_new(const char *name,
  * @param nodes List of nodes.
  * @return A new variable array node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_var_array_new(const char *name,
                        Eina_List *nodes);
 
@@ -4511,7 +4486,7 @@ eet_node_var_array_new(const char *name,
  * @param node The node.
  * @return A new hash node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_hash_new(const char *name,
                   const char *key,
                   Eet_Node *node);
@@ -4523,7 +4498,7 @@ eet_node_hash_new(const char *name,
  * @param nodes List of nodes.
  * @return A new struct node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_struct_new(const char *name,
                     Eina_List *nodes);
 
@@ -4538,7 +4513,7 @@ eet_node_struct_new(const char *name,
  * @param child The child node.
  * @return A new struct child node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_struct_child_new(const char *parent,
                           Eet_Node *child);
 
@@ -4550,7 +4525,7 @@ eet_node_struct_child_new(const char *parent,
  * next child node and the parent.
  * @since 1.5
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_children_get(Eet_Node *node);
 
 /**
@@ -4561,7 +4536,7 @@ eet_node_children_get(Eet_Node *node);
  * next child node and the parent.
  * @since 1.5
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_next_get(Eet_Node *node);
 
 /**
@@ -4571,7 +4546,7 @@ eet_node_next_get(Eet_Node *node);
  * @return The parent node of @p node
  * @since 1.5
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_node_parent_get(Eet_Node *node);
 
 /**
@@ -4581,7 +4556,7 @@ eet_node_parent_get(Eet_Node *node);
  * @param name The name of new node.
  * @param child The child node.
  */
-EAPI void
+EET_API void
 eet_node_list_append(Eet_Node *parent,
                      const char *name,
                      Eet_Node *child);
@@ -4594,7 +4569,7 @@ eet_node_list_append(Eet_Node *parent,
  * @param name The name of new node.
  * @param child The child node.
  */
-EAPI void
+EET_API void
 eet_node_struct_append(Eet_Node *parent,
                        const char *name,
                        Eet_Node *child);
@@ -4608,7 +4583,7 @@ eet_node_struct_append(Eet_Node *parent,
  * @param key Key of the node.
  * @param child The child node.
  */
-EAPI void
+EET_API void
 eet_node_hash_add(Eet_Node *parent,
                   const char *name,
                   const char *key,
@@ -4624,7 +4599,7 @@ eet_node_hash_add(Eet_Node *parent,
  *        data is converted to text.
  * @param dumpdata The data to pass to the @p dumpfunc callback.
  */
-EAPI void
+EET_API void
 eet_node_dump(Eet_Node *n,
               int dumplevel,
               Eet_Dump_Callback dumpfunc,
@@ -4637,7 +4612,7 @@ eet_node_dump(Eet_Node *n,
  * @return The node's type (EET_T_$TYPE)
  * @since 1.5
  */
-EAPI int
+EET_API int
 eet_node_type_get(Eet_Node *node);
 
 /**
@@ -4647,7 +4622,7 @@ eet_node_type_get(Eet_Node *node);
  * @return The data contained in the node
  * @since 1.5
  */
-EAPI Eet_Node_Data *
+EET_API Eet_Node_Data *
 eet_node_value_get(Eet_Node *node);
 
 /**
@@ -4656,7 +4631,7 @@ eet_node_value_get(Eet_Node *node);
  * @brief Deletes the given node.
  * @param n The node.
  */
-EAPI void
+EET_API void
 eet_node_del(Eet_Node *n);
 
 /**
@@ -4667,7 +4642,7 @@ eet_node_del(Eet_Node *n);
  * @param cipher_key The key to use as cipher.
  * @param size_ret Number of bytes read from entry and returned.
  */
-EAPI void *
+EET_API void *
 eet_data_node_encode_cipher(Eet_Node *node,
                             const char *cipher_key,
                             int *size_ret);
@@ -4681,7 +4656,7 @@ eet_data_node_encode_cipher(Eet_Node *node,
  * @param size_in The size of the data pointed to in bytes.
  * @return The decoded node.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_data_node_decode_cipher(const void *data_in,
                             const char *cipher_key,
                             int size_in);
@@ -4695,7 +4670,7 @@ eet_data_node_decode_cipher(const void *data_in,
  * @param cipher_key The key to use as cipher.
  * @return A node to the decoded data structure.
  */
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_data_node_read_cipher(Eet_File *ef,
                           const char *name,
                           const char *cipher_key);
@@ -4711,7 +4686,7 @@ eet_data_node_read_cipher(Eet_File *ef,
  * @param compress Compression flags for storage.
  * @return bytes written on successful write, 0 on failure.
  */
-EAPI int
+EET_API int
 eet_data_node_write_cipher(Eet_File *ef,
                            const char *name,
                            const char *cipher_key,
@@ -4783,7 +4758,7 @@ struct _Eet_Node_Walk
  * @ingroup Eet_Node_Group
  * Walks trees of #Eet_Node
  */
-EAPI void *
+EET_API void *
 eet_node_walk(void *parent,
               const char *name,
               Eet_Node *root,
@@ -4836,7 +4811,7 @@ typedef Eina_Bool Eet_Write_Cb (const void *data, size_t size, void *user_data);
  *
  * @since 1.2.4
  */
-EAPI Eet_Connection *
+EET_API Eet_Connection *
 eet_connection_new(Eet_Read_Cb *eet_read_cb,
                    Eet_Write_Cb *eet_write_cb,
                    const void *user_data);
@@ -4855,7 +4830,7 @@ eet_connection_new(Eet_Read_Cb *eet_read_cb,
  *
  * @since 1.2.4
  */
-EAPI int
+EET_API int
 eet_connection_received(Eet_Connection *conn,
                         const void *data,
                         size_t size);
@@ -4872,7 +4847,7 @@ eet_connection_received(Eet_Connection *conn,
  *
  * @since 1.7
  */
-EAPI Eina_Bool eet_connection_empty(Eet_Connection *conn);
+EET_API Eina_Bool eet_connection_empty(Eet_Connection *conn);
 
 /**
  * @ingroup Eet_Connection_Group
@@ -4891,7 +4866,7 @@ EAPI Eina_Bool eet_connection_empty(Eet_Connection *conn);
  *
  * @since 1.2.4
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_connection_send(Eet_Connection *conn,
                     Eet_Data_Descriptor *edd,
                     const void *data_in,
@@ -4913,7 +4888,7 @@ eet_connection_send(Eet_Connection *conn,
  *
  * @since 1.2.4
  */
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_connection_node_send(Eet_Connection *conn,
                          Eet_Node *node,
                          const char *cipher_key);
@@ -4927,7 +4902,7 @@ eet_connection_node_send(Eet_Connection *conn,
  *
  * @since 1.2.4
  */
-EAPI void *
+EET_API void *
 eet_connection_close(Eet_Connection *conn,
                      Eina_Bool *on_going);
 
@@ -4935,8 +4910,5 @@ eet_connection_close(Eet_Connection *conn,
 #ifdef __cplusplus
 }
 #endif /* ifdef __cplusplus */
-
-#undef EAPI
-#define EAPI
 
 #endif /* ifndef _EET_H */
