@@ -62,7 +62,7 @@ _eet_node_append(Eet_Node  *n,
 }
 
 #define EET_NODE_NEW(Eet_type, Name, Value, Type)         \
-  EAPI Eet_Node *                                         \
+  EET_API Eet_Node *                                         \
   eet_node_ ## Name ## _new(const char *name, Type Value) \
   {                                                       \
      Eet_Node *n;                                         \
@@ -76,7 +76,7 @@ _eet_node_append(Eet_Node  *n,
   }
 
 #define EET_NODE_STR_NEW(Eet_type, Name, Value, Type)     \
-  EAPI Eet_Node *                                         \
+  EET_API Eet_Node *                                         \
   eet_node_ ## Name ## _new(const char *name, Type Value) \
   {                                                       \
      Eet_Node *n;                                         \

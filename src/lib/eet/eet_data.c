@@ -1918,7 +1918,7 @@ _eet_eina_hash_free(void *hash)
 }
 
 /*---*/
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
      /* When we change the structure content in the future, we need to handle old structure type too */
                                           unsigned int               eddc_size,
@@ -1953,7 +1953,7 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
      /* When we change the structure content in the future, we need to handle old structure type too */
                                         unsigned int               eddc_size,
@@ -2033,7 +2033,7 @@ _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc,
    return edd;
 }
 
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor_new(const char                          *name,
                         int                                  size,
                         Eet_Descriptor_List_Next_Callback    func_list_next,
@@ -2066,31 +2066,31 @@ eet_data_descriptor_new(const char                          *name,
    return _eet_data_descriptor_new(&eddc, 0);
 }
 
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 1);
 }
 
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 2);
 }
 
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 1);
 }
 
-EAPI Eet_Data_Descriptor *
+EET_API Eet_Data_Descriptor *
 eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 2);
 }
 
-EAPI const char *
+EET_API const char *
 eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
@@ -2098,7 +2098,7 @@ eet_data_descriptor_name_get(const Eet_Data_Descriptor *edd)
 }
 
 
-EAPI void
+EET_API void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
    if (!edd)
@@ -2119,7 +2119,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
    free(edd);
 }
 
-EAPI void
+EET_API void
 eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
                                 const char          *name,
                                 int                  type,
@@ -2256,7 +2256,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->subtype = subtype;
 }
 
-EAPI void *
+EET_API void *
 eet_data_read_cipher(Eet_File            *ef,
                      Eet_Data_Descriptor *edd,
                      const char          *name,
@@ -2295,7 +2295,7 @@ eet_data_read_cipher(Eet_File            *ef,
    return data_dec;
 }
 
-EAPI void *
+EET_API void *
 eet_data_read_cipher_buffer(Eet_File            *ef,
                             Eet_Data_Descriptor *edd,
                             const char          *name,
@@ -2336,7 +2336,7 @@ eet_data_read_cipher_buffer(Eet_File            *ef,
    return data_dec;
 }
 
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_data_node_read_cipher(Eet_File   *ef,
                           const char *name,
                           const char *cipher_key)
@@ -2373,7 +2373,7 @@ eet_data_node_read_cipher(Eet_File   *ef,
    return result;
 }
 
-EAPI void *
+EET_API void *
 eet_data_read(Eet_File            *ef,
               Eet_Data_Descriptor *edd,
               const char          *name)
@@ -2381,7 +2381,7 @@ eet_data_read(Eet_File            *ef,
    return eet_data_read_cipher(ef, edd, name, NULL);
 }
 
-EAPI int
+EET_API int
 eet_data_write_cipher(Eet_File            *ef,
                       Eet_Data_Descriptor *edd,
                       const char          *name,
@@ -2410,7 +2410,7 @@ eet_data_write_cipher(Eet_File            *ef,
    return val;
 }
 
-EAPI int
+EET_API int
 eet_data_write(Eet_File            *ef,
                Eet_Data_Descriptor *edd,
                const char          *name,
@@ -4812,7 +4812,7 @@ eet_data_put_hash(Eet_Dictionary      *ed,
    edd->func.hash_foreach(l, eet_data_descriptor_encode_hash_cb, &fdata);
 }
 
-EAPI int
+EET_API int
 eet_data_dump_cipher(Eet_File         *ef,
                      const char       *name,
                      const char       *cipher_key,
@@ -4855,7 +4855,7 @@ eet_data_dump_cipher(Eet_File         *ef,
    return result ? 1 : 0;
 }
 
-EAPI int
+EET_API int
 eet_data_dump(Eet_File         *ef,
               const char       *name,
               Eet_Dump_Callback dumpfunc,
@@ -4864,7 +4864,7 @@ eet_data_dump(Eet_File         *ef,
    return eet_data_dump_cipher(ef, name, NULL, dumpfunc, dumpdata);
 }
 
-EAPI int
+EET_API int
 eet_data_text_dump_cipher(const void       *data_in,
                           const char       *cipher_key,
                           int               size_in,
@@ -4909,7 +4909,7 @@ eet_data_text_dump_cipher(const void       *data_in,
    return result ? 1 : 0;
 }
 
-EAPI int
+EET_API int
 eet_data_text_dump(const void       *data_in,
                    int               size_in,
                    Eet_Dump_Callback dumpfunc,
@@ -4918,7 +4918,7 @@ eet_data_text_dump(const void       *data_in,
    return eet_data_text_dump_cipher(data_in, NULL, size_in, dumpfunc, dumpdata);
 }
 
-EAPI void *
+EET_API void *
 eet_data_text_undump_cipher(const char *text,
                             const char *cipher_key,
                             int         textlen,
@@ -4951,7 +4951,7 @@ eet_data_text_undump_cipher(const char *text,
    return ret;
 }
 
-EAPI void *
+EET_API void *
 eet_data_text_undump(const char *text,
                      int         textlen,
                      int        *size_ret)
@@ -4959,7 +4959,7 @@ eet_data_text_undump(const char *text,
    return eet_data_text_undump_cipher(text, NULL, textlen, size_ret);
 }
 
-EAPI int
+EET_API int
 eet_data_undump_cipher(Eet_File   *ef,
                        const char *name,
                        const char *cipher_key,
@@ -4985,7 +4985,7 @@ eet_data_undump_cipher(Eet_File   *ef,
    return val;
 }
 
-EAPI int
+EET_API int
 eet_data_undump(Eet_File   *ef,
                 const char *name,
                 const char *text,
@@ -4995,7 +4995,7 @@ eet_data_undump(Eet_File   *ef,
    return eet_data_undump_cipher(ef, name, NULL, text, textlen, comp);
 }
 
-EAPI void *
+EET_API void *
 eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
                                   const void          *data_in,
                                   const char          *cipher_key,
@@ -5033,7 +5033,7 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
    return ret;
 }
 
-EAPI void *
+EET_API void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
                            const void          *data_in,
                            int                  size_in)
@@ -5041,7 +5041,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    return eet_data_descriptor_decode_cipher(edd, data_in, NULL, size_in);
 }
 
-EAPI Eet_Node *
+EET_API Eet_Node *
 eet_data_node_decode_cipher(const void *data_in,
                             const char *cipher_key,
                             int         size_in)
@@ -5138,7 +5138,7 @@ _eet_data_descriptor_encode(Eet_Dictionary      *ed,
    return cdata;
 }
 
-EAPI int
+EET_API int
 eet_data_node_write_cipher(Eet_File   *ef,
                            const char *name,
                            const char *cipher_key,
@@ -5163,7 +5163,7 @@ eet_data_node_write_cipher(Eet_File   *ef,
    return val;
 }
 
-EAPI void *
+EET_API void *
 eet_data_node_encode_cipher(Eet_Node   *node,
                             const char *cipher_key,
                             int        *size_ret)
@@ -5200,7 +5200,7 @@ eet_data_node_encode_cipher(Eet_Node   *node,
    return ret;
 }
 
-EAPI void *
+EET_API void *
 eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
                                   const void          *data_in,
                                   const char          *cipher_key,
@@ -5241,7 +5241,7 @@ eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
    return ret;
 }
 
-EAPI void *
+EET_API void *
 eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
                            const void          *data_in,
                            int                 *size_ret)
@@ -5249,7 +5249,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
    return eet_data_descriptor_encode_cipher(edd, data_in, NULL, size_ret);
 }
 
-EAPI void *
+EET_API void *
 eet_data_xattr_cipher_get(const char          *filename,
                           const char          *attribute,
                           Eet_Data_Descriptor *edd,
@@ -5270,7 +5270,7 @@ eet_data_xattr_cipher_get(const char          *filename,
    return ret;
 }
 
-EAPI Eina_Bool
+EET_API Eina_Bool
 eet_data_xattr_cipher_set(const char          *filename,
                           const char          *attribute,
                           Eet_Data_Descriptor *edd,

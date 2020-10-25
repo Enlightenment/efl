@@ -1318,7 +1318,7 @@ eet_data_image_jpeg_alpha_convert(int         *size,
    return d;
 }
 
-EAPI int
+EET_API int
 eet_data_image_write_cipher(Eet_File    *ef,
                             const char  *name,
                             const char  *cipher_key,
@@ -1346,7 +1346,7 @@ eet_data_image_write_cipher(Eet_File    *ef,
    return 0;
 }
 
-EAPI int
+EET_API int
 eet_data_image_write(Eet_File    *ef,
                      const char  *name,
                      const void  *data,
@@ -1369,7 +1369,7 @@ eet_data_image_write(Eet_File    *ef,
                                       lossy);
 }
 
-EAPI void *
+EET_API void *
 eet_data_image_read_cipher(Eet_File     *ef,
                            const char   *name,
                            const char   *cipher_key,
@@ -1404,7 +1404,7 @@ eet_data_image_read_cipher(Eet_File     *ef,
    return d;
 }
 
-EAPI void *
+EET_API void *
 eet_data_image_read(Eet_File     *ef,
                     const char   *name,
                     unsigned int *w,
@@ -1418,7 +1418,7 @@ eet_data_image_read(Eet_File     *ef,
                                      comp, quality, lossy);
 }
 
-EAPI int
+EET_API int
 eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
                                              const char   *name,
                                              const char   *cipher_key,
@@ -1460,7 +1460,7 @@ eet_data_image_read_to_cspace_surface_cipher(Eet_File     *ef,
    return res;
 }
 
-EAPI int
+EET_API int
 eet_data_image_read_to_surface_cipher(Eet_File     *ef,
                                       const char   *name,
                                       const char   *cipher_key,
@@ -1481,7 +1481,7 @@ eet_data_image_read_to_surface_cipher(Eet_File     *ef,
                                                        alpha, comp, quality, lossy);
 }
 
-EAPI int
+EET_API int
 eet_data_image_read_to_surface(Eet_File     *ef,
                                const char   *name,
                                unsigned int  src_x,
@@ -1502,7 +1502,7 @@ eet_data_image_read_to_surface(Eet_File     *ef,
                                                 lossy);
 }
 
-EAPI int
+EET_API int
 eet_data_image_header_read_cipher(Eet_File     *ef,
                                   const char   *name,
                                   const char   *cipher_key,
@@ -1537,7 +1537,7 @@ eet_data_image_header_read_cipher(Eet_File     *ef,
    return d;
 }
 
-EAPI int
+EET_API int
 eet_data_image_header_read(Eet_File     *ef,
                            const char   *name,
                            unsigned int *w,
@@ -1552,7 +1552,7 @@ eet_data_image_header_read(Eet_File     *ef,
                                             comp, quality, lossy);
 }
 
-EAPI void *
+EET_API void *
 eet_data_image_encode_cipher(const void  *data,
                              const char  *cipher_key,
                              unsigned int w,
@@ -1625,7 +1625,7 @@ eet_data_image_encode_cipher(const void  *data,
    return d;
 }
 
-EAPI void *
+EET_API void *
 eet_data_image_encode(const void  *data,
                       int         *size_ret,
                       unsigned int w,
@@ -1855,7 +1855,7 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
    return r;
 }
 
-EAPI int
+EET_API int
 eet_data_image_header_decode_cipher(const void   *data,
                                     const char   *cipher_key,
                                     int           size,
@@ -1872,7 +1872,7 @@ eet_data_image_header_decode_cipher(const void   *data,
                                                       NULL);
 }
 
-EAPI int
+EET_API int
 eet_data_image_colorspace_get(Eet_File *ef,
                               const char *name,
                               const char *cipher_key,
@@ -1903,7 +1903,7 @@ eet_data_image_colorspace_get(Eet_File *ef,
    return d;
 }
 
-EAPI int
+EET_API int
 eet_data_image_header_decode(const void   *data,
                              int           size,
                              unsigned int *w,
@@ -2061,7 +2061,7 @@ _eet_data_image_decode_inside(const void   *data,
    return 1;
 }
 
-EAPI void *
+EET_API void *
 eet_data_image_decode_cipher(const void   *data,
                              const char   *cipher_key,
                              int           size,
@@ -2133,7 +2133,7 @@ eet_data_image_decode_cipher(const void   *data,
    return d;
 }
 
-EAPI void *
+EET_API void *
 eet_data_image_decode(const void   *data,
                       int           size,
                       unsigned int *w,
@@ -2147,7 +2147,7 @@ eet_data_image_decode(const void   *data,
                                        alpha, comp, quality, lossy);
 }
 
-EAPI int
+EET_API int
 eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
                                                const char   *cipher_key,
                                                int           size,
@@ -2237,7 +2237,7 @@ eet_data_image_decode_to_cspace_surface_cipher(const void   *data,
    return 1;
 }
 
-EAPI int
+EET_API int
 eet_data_image_decode_to_surface_cipher(const void   *data,
                                         const char   *cipher_key,
                                         int           size,
@@ -2255,7 +2255,7 @@ eet_data_image_decode_to_surface_cipher(const void   *data,
    return eet_data_image_decode_to_cspace_surface_cipher(data, cipher_key, size, src_x, src_y, d, w, h, row_stride, EET_COLORSPACE_ARGB8888, alpha, comp, quality, lossy);
 }
 
-EAPI int
+EET_API int
 eet_data_image_decode_to_surface(const void   *data,
                                  int           size,
                                  unsigned int  src_x,

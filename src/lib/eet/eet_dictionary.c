@@ -186,7 +186,7 @@ eet_dictionary_string_get_size(const Eet_Dictionary *ed,
    return length;
 }
 
-EAPI int
+EET_API int
 eet_dictionary_count(const Eet_Dictionary *ed)
 {
    int cnt;
@@ -489,7 +489,7 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
    return ret;
 }
 
-EAPI int
+EET_API int
 eet_dictionary_string_check(Eet_Dictionary *ed,
                             const char     *string)
 {
