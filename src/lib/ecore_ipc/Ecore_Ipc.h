@@ -3,31 +3,7 @@
 
 #include <Eina.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_ipc_api.h>
 
 /**
  * @defgroup Ecore_IPC_Group Ecore_IPC - Ecore inter-process communication functions.
@@ -45,9 +21,9 @@ extern "C" {
 typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server; /**< An IPC connection handle */
 typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client; /**< An IPC connection handle */
 
-EAPI unsigned short     _ecore_ipc_swap_16(unsigned short v) EINA_DEPRECATED;
-EAPI unsigned int       _ecore_ipc_swap_32(unsigned int v) EINA_DEPRECATED;
-EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED;
+ECORE_IPC_API unsigned short     _ecore_ipc_swap_16(unsigned short v) EINA_DEPRECATED;
+ECORE_IPC_API unsigned int       _ecore_ipc_swap_32(unsigned int v) EINA_DEPRECATED;
+ECORE_IPC_API unsigned long long _ecore_ipc_swap_64(unsigned long long v) EINA_DEPRECATED;
 
 #ifdef WORDS_BIGENDIAN
 #define ECORE_IPC_SWAP2NET64(x) eina_swap64(x)
@@ -319,12 +295,12 @@ struct _Ecore_Ipc_Event_Server_Data
    int               size; /**< The data length (in bytes) */
 };
 
-EAPI extern int ECORE_IPC_EVENT_CLIENT_ADD;
-EAPI extern int ECORE_IPC_EVENT_CLIENT_DEL;
-EAPI extern int ECORE_IPC_EVENT_SERVER_ADD;
-EAPI extern int ECORE_IPC_EVENT_SERVER_DEL;
-EAPI extern int ECORE_IPC_EVENT_CLIENT_DATA;
-EAPI extern int ECORE_IPC_EVENT_SERVER_DATA;
+ECORE_IPC_API extern int ECORE_IPC_EVENT_CLIENT_ADD;
+ECORE_IPC_API extern int ECORE_IPC_EVENT_CLIENT_DEL;
+ECORE_IPC_API extern int ECORE_IPC_EVENT_SERVER_ADD;
+ECORE_IPC_API extern int ECORE_IPC_EVENT_SERVER_DEL;
+ECORE_IPC_API extern int ECORE_IPC_EVENT_CLIENT_DATA;
+ECORE_IPC_API extern int ECORE_IPC_EVENT_SERVER_DATA;
 
 /**
  * @ingroup Ecore_IPC_Group
@@ -332,7 +308,7 @@ EAPI extern int ECORE_IPC_EVENT_SERVER_DATA;
  * @return  Number of times the library has been initialised without
  *          being shut down.
  */
-EAPI int               ecore_ipc_init(void);
+ECORE_IPC_API int               ecore_ipc_init(void);
 
 /**
  * @ingroup Ecore_IPC_Group
@@ -340,7 +316,7 @@ EAPI int               ecore_ipc_init(void);
  * @return  Number of times the library has been initialised without being
  *          shut down.
  */
-EAPI int               ecore_ipc_shutdown(void);
+ECORE_IPC_API int               ecore_ipc_shutdown(void);
 
 /**
  * @defgroup Ecore_IPC_Server_Group IPC Server Functions
@@ -363,7 +339,7 @@ EAPI int               ecore_ipc_shutdown(void);
  * @return  New IPC server.  If there is an error, @c NULL is returned.
  * @todo    Need to add protocol type parameter to this function.
  */
-EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void *data);
+ECORE_IPC_API Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void *data);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -382,7 +358,7 @@ EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, const char *nam
  * @return  A new IPC server.  @c NULL is returned on error.
  * @todo    Need to add protocol type parameter.
  */
-EAPI Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data);
+ECORE_IPC_API Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -390,7 +366,7 @@ EAPI Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name,
  * @param   svr The given IPC server.
  * @return  The data associated with the server when it was created.
  */
-EAPI void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
+ECORE_IPC_API void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -398,7 +374,7 @@ EAPI void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
  * @param   svr The given IPC server.
  * @return  The associated data.
  */
-EAPI void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
+ECORE_IPC_API void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -406,7 +382,7 @@ EAPI void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
  * @param   svr The given IPC server.
  * @return @c EINA_TRUE if the server is connected, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool         ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
+ECORE_IPC_API Eina_Bool         ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -414,7 +390,7 @@ EAPI Eina_Bool         ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
  * @param   svr The given IPC server.
  * @return  An Eina_List with the clients.
  */
-EAPI Eina_List        *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
+ECORE_IPC_API Eina_List        *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -435,7 +411,7 @@ EAPI Eina_List        *ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr);
  * @todo    This function needs to become an IPC message.
  * @todo Fix up the documentation: Make sure what ref_to and response are.
  */
-EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
+ECORE_IPC_API int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -459,7 +435,7 @@ EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, i
  *                        connections (or your kernel's limit, whichever is
  *                        lower).
  */
-EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients);
+ECORE_IPC_API void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -468,7 +444,7 @@ EAPI void              ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, 
  * @param   svr           The given server.
  * @param   size          The maximum data payload size in bytes.
  */
-EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size);
+ECORE_IPC_API void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr, int size);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -477,7 +453,7 @@ EAPI void              ecore_ipc_server_data_size_max_set(Ecore_Ipc_Server *svr,
  * @param   svr           The given server.
  * @return The maximum data payload in bytes.
  */
-EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr);
+ECORE_IPC_API int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -489,7 +465,7 @@ EAPI int               ecore_ipc_server_data_size_max_get(Ecore_Ipc_Server *svr)
  *          This string should not be modified or trusted to stay valid after
  *          deletion for the @p svr object. If no IP is known NULL is returned.
  */
-EAPI const char       *ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr);
+ECORE_IPC_API const char       *ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr);
 
 /**
  * @ingroup Ecore_IPC_Server_Group
@@ -497,7 +473,7 @@ EAPI const char       *ecore_ipc_server_ip_get(Ecore_Ipc_Server *svr);
  *
  * @param   svr           The given server.
  */
-EAPI void              ecore_ipc_server_flush(Ecore_Ipc_Server *svr);
+ECORE_IPC_API void              ecore_ipc_server_flush(Ecore_Ipc_Server *svr);
 
 /**
  * @defgroup Ecore_IPC_Client_Group IPC Client Functions
@@ -523,7 +499,7 @@ EAPI void              ecore_ipc_server_flush(Ecore_Ipc_Server *svr);
  * @todo    This function needs to become an IPC message.
  * @todo    Make sure ref_to and response parameters are described correctly.
  */
-EAPI int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
+ECORE_IPC_API int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, const void *data, int size);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -532,7 +508,7 @@ EAPI int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, in
  * @param   cl The given IPC client.
  * @return  The IPC server the IPC client is connected to.
  */
-EAPI Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
+ECORE_IPC_API Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -542,7 +518,7 @@ EAPI Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
  * @param   cl The given client.
  * @return  Data associated with the client.
  */
-EAPI void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
+ECORE_IPC_API void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -551,7 +527,7 @@ EAPI void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
  * @param   cl   The given IPC client.
  * @param   data The data to associate with the IPC client.
  */
-EAPI void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data);
+ECORE_IPC_API void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -560,7 +536,7 @@ EAPI void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const voi
  * @param   cl The given client.
  * @return  The data associated with the IPC client.
  */
-EAPI void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
+ECORE_IPC_API void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -569,7 +545,7 @@ EAPI void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
  * @param   cl        The given client.
  * @param   size          The maximum data payload size in bytes.
  */
-EAPI void              ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size);
+ECORE_IPC_API void              ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -578,7 +554,7 @@ EAPI void              ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, 
  * @param   cl            The given client.
  * @return The maximum data payload size in bytes on success, @c -1 on failure.
  */
-EAPI int               ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl);
+ECORE_IPC_API int               ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -591,7 +567,7 @@ EAPI int               ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl);
  *          deletion for the @p cl object. If no IP is known @c NULL is
  *          returned.
  */
-EAPI const char       *ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl);
+ECORE_IPC_API const char       *ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl);
 
 /**
  * @ingroup Ecore_IPC_Client_Group
@@ -599,7 +575,7 @@ EAPI const char       *ecore_ipc_client_ip_get(Ecore_Ipc_Client *cl);
  *
  * @param   cl            The given client.
  */
-EAPI void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
+ECORE_IPC_API void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
 
 /**
  * @ingroup Ecore_Con_Client_Group
@@ -607,16 +583,13 @@ EAPI void              ecore_ipc_client_flush(Ecore_Ipc_Client *cl);
  *
  * @return  1 if SSL is available, 0 if it is not.
  */
-EAPI int               ecore_ipc_ssl_available_get(void);
+ECORE_IPC_API int               ecore_ipc_ssl_available_get(void);
 /* FIXME: need to add a callback to "ok" large ipc messages greater than */
 /*        a certain size (security/DOS attack safety) */
 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 /**
  * @}

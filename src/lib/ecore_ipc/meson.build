@@ -12,7 +12,7 @@ ecore_ipc_src = files([
 
 ecore_ipc_lib = library('ecore_ipc',
     ecore_ipc_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_IPC_BUILD'],
     dependencies: [ecore_ipc_deps, ecore_ipc_pub_deps, ecore_ipc_ext_deps],
     include_directories : config_dir,
     install: true,
