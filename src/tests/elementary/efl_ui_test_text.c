@@ -483,6 +483,47 @@ EFL_START_TEST(text_multiline_singleline_cursor_pos)
 }
 EFL_END_TEST
 
+EFL_START_TEST(text_keyboard_mouse_cluster_cursor_movement)
+{
+   Eo *txt;
+   Eo *cursor;
+   Eo *win = win_add();
+   Evas *e;
+   Eina_Rect rc, rc2;
+
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 300));
+   efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
+   efl_ui_textbox_scrollable_set(txt, EINA_TRUE);
+   get_me_to_those_events(txt);
+
+   efl_text_markup_set(txt, "A\u1100\u1161\u11AA");
+   cursor = efl_text_interactive_main_cursor_get(txt);
+   efl_text_cursor_object_position_set(cursor, 1);
+
+   e = evas_object_evas_get(txt);
+   efl_ui_focus_util_focus(txt);
+   evas_event_feed_key_down(e, "Right", "Right", "Right", "Right", time(NULL), NULL);
+
+   ck_assert_int_eq(4, efl_text_cursor_object_position_get(cursor));
+
+   efl_text_cursor_object_position_set(cursor, 1);
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
+   efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
+   rc = efl_text_cursor_object_content_geometry_get(cursor);
+   rc2 = efl_ui_scrollable_viewport_geometry_get(txt);
+
+   efl_text_cursor_object_position_set(cursor, 0);
+   click_object_at(win, rc2.x + rc.x + (rc.w/2), rc2.y + rc.y + (rc.h/2));
+
+   ck_assert_int_eq(4, efl_text_cursor_object_position_get(cursor));
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
@@ -497,4 +538,5 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_singleline_cursor_movement);
    tcase_add_test(tc, text_multiline_singleline_cursor_pos);
    tcase_add_test(tc, text_on_startup);
+   tcase_add_test(tc, text_keyboard_mouse_cluster_cursor_movement);
 }
