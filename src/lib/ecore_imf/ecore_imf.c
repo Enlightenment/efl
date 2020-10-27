@@ -8,17 +8,17 @@
 #include "Ecore_IMF.h"
 #include "ecore_imf_private.h"
 
-EAPI int ECORE_IMF_EVENT_PREEDIT_START = 0;
-EAPI int ECORE_IMF_EVENT_PREEDIT_END = 0;
-EAPI int ECORE_IMF_EVENT_PREEDIT_CHANGED = 0;
-EAPI int ECORE_IMF_EVENT_COMMIT = 0;
-EAPI int ECORE_IMF_EVENT_DELETE_SURROUNDING = 0;
+ECORE_IMF_API int ECORE_IMF_EVENT_PREEDIT_START = 0;
+ECORE_IMF_API int ECORE_IMF_EVENT_PREEDIT_END = 0;
+ECORE_IMF_API int ECORE_IMF_EVENT_PREEDIT_CHANGED = 0;
+ECORE_IMF_API int ECORE_IMF_EVENT_COMMIT = 0;
+ECORE_IMF_API int ECORE_IMF_EVENT_DELETE_SURROUNDING = 0;
 
 int _ecore_imf_log_dom = -1;
 static int _ecore_imf_init_count = 0;
 extern Ecore_IMF_Context *show_req_ctx;
 
-EAPI int
+ECORE_IMF_API int
 ecore_imf_init(void)
 {
    if (++_ecore_imf_init_count != 1) return _ecore_imf_init_count;
@@ -43,7 +43,7 @@ ecore_imf_init(void)
    return _ecore_imf_init_count;
 }
 
-EAPI int
+ECORE_IMF_API int
 ecore_imf_shutdown(void)
 {
    if (--_ecore_imf_init_count != 0) return _ecore_imf_init_count;
@@ -61,7 +61,7 @@ ecore_imf_shutdown(void)
    return _ecore_imf_init_count;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_input_panel_hide(void)
 {
    if (show_req_ctx)
