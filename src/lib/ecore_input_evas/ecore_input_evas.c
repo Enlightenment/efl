@@ -278,7 +278,7 @@ _ecore_event_evas_push_mouse_move(Ecore_Event_Mouse_Move *e)
        }
 }
 
-EAPI void
+ECORE_INPUT_EVAS_API void
 ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
                                            Evas_Device *seat)
 {
@@ -326,13 +326,13 @@ ecore_event_evas_seat_modifier_lock_update(Evas *e, unsigned int modifiers,
    else evas_seat_key_lock_off(e, "Shift_Lock", seat);
 }
 
-EAPI void
+ECORE_INPUT_EVAS_API void
 ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
 {
    ecore_event_evas_seat_modifier_lock_update(e, modifiers, NULL);
 }
 
-EAPI void
+ECORE_INPUT_EVAS_API void
 ecore_event_window_register(Ecore_Window id, void *window, Evas *evas,
                             Ecore_Event_Mouse_Move_Cb move_mouse,
                             Ecore_Event_Multi_Move_Cb move_multi,
@@ -366,13 +366,13 @@ ecore_event_window_register(Ecore_Window id, void *window, Evas *evas,
    evas_key_lock_add(evas, "Scroll_Lock");
 }
 
-EAPI void
+ECORE_INPUT_EVAS_API void
 ecore_event_window_unregister(Ecore_Window id)
 {
    eina_hash_del(_window_hash, &id, NULL);
 }
 
-EAPI void
+ECORE_INPUT_EVAS_API void
 _ecore_event_window_direct_cb_set(Ecore_Window id, Ecore_Event_Direct_Input_Cb fptr)
 {
    Ecore_Input_Window *lookup;
@@ -382,7 +382,7 @@ _ecore_event_window_direct_cb_set(Ecore_Window id, Ecore_Event_Direct_Input_Cb f
    lookup->direct = fptr;
 }
 
-EAPI void *
+ECORE_INPUT_EVAS_API void *
 ecore_event_window_match(Ecore_Window id)
 {
    Ecore_Input_Window *lookup;
@@ -392,7 +392,7 @@ ecore_event_window_match(Ecore_Window id)
    return NULL;
 }
 
-EAPI void
+ECORE_INPUT_EVAS_API void
 ecore_event_window_ignore_events(Ecore_Window id, int ignore_event)
 {
    Ecore_Input_Window *lookup;
@@ -600,7 +600,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Move *e;
@@ -647,19 +647,19 @@ ecore_event_evas_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_button_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_DOWN, EINA_FALSE);
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_button_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_button((Ecore_Event_Mouse_Button *)event, ECORE_UP, EINA_FALSE);
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_button_cancel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_button_cancel((Ecore_Event_Mouse_Button *)event);
@@ -700,19 +700,19 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_key((Ecore_Event_Key *)event, ECORE_DOWN);
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_key_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_key((Ecore_Event_Key *)event, ECORE_UP);
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Wheel *e;
@@ -733,19 +733,19 @@ ecore_event_evas_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_IN);
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    return _ecore_event_evas_mouse_io((Ecore_Event_Mouse_IO *)event, ECORE_OUT);
 }
 
-EAPI Eina_Bool
+ECORE_INPUT_EVAS_API Eina_Bool
 ecore_event_evas_axis_update(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Axis_Update *e;
@@ -765,7 +765,7 @@ ecore_event_evas_axis_update(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    return ECORE_CALLBACK_PASS_ON;
 }
 
-EAPI int
+ECORE_INPUT_EVAS_API int
 ecore_event_evas_init(void)
 {
    if (++_ecore_event_evas_init_count !=  1)
@@ -841,7 +841,7 @@ ecore_event_evas_init(void)
    return --_ecore_event_evas_init_count;
 }
 
-EAPI int
+ECORE_INPUT_EVAS_API int
 ecore_event_evas_shutdown(void)
 {
    size_t i;
