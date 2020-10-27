@@ -15,7 +15,7 @@ ecore_input_evas_src = files([
 
 ecore_input_evas_lib = library('ecore_input_evas',
     ecore_input_evas_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_INPUT_EVAS_BUILD'],
     dependencies: [ecore_input_evas_pub_deps, ecore_input_evas_deps, ecore_input_evas_ext_deps],
     include_directories : config_dir,
     install: true,
