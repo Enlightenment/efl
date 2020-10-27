@@ -293,7 +293,7 @@ ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type)
    return values;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_module_register(const Ecore_IMF_Context_Info *info,
                           Ecore_IMF_Context *(*imf_module_create)(void),
                           Ecore_IMF_Context *(*imf_module_exit)(void))

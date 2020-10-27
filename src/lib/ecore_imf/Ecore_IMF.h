@@ -3,31 +3,7 @@
 
 #include <Eina.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_imf_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -202,11 +178,11 @@ typedef struct _Ecore_IMF_Context_Info             Ecore_IMF_Context_Info;      
 /* Preedit attribute info */
 typedef struct _Ecore_IMF_Preedit_Attr             Ecore_IMF_Preedit_Attr;
 
-EAPI extern int ECORE_IMF_EVENT_PREEDIT_START;
-EAPI extern int ECORE_IMF_EVENT_PREEDIT_END;
-EAPI extern int ECORE_IMF_EVENT_PREEDIT_CHANGED;
-EAPI extern int ECORE_IMF_EVENT_COMMIT;
-EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
+ECORE_IMF_API extern int ECORE_IMF_EVENT_PREEDIT_START;
+ECORE_IMF_API extern int ECORE_IMF_EVENT_PREEDIT_END;
+ECORE_IMF_API extern int ECORE_IMF_EVENT_PREEDIT_CHANGED;
+ECORE_IMF_API extern int ECORE_IMF_EVENT_COMMIT;
+ECORE_IMF_API extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
 
 /**
  * @typedef Ecore_IMF_Event_Cb
@@ -835,7 +811,7 @@ struct _Ecore_IMF_Context_Info
  * @return  Number of times the library has been initialised without being
  *          shut down.
  */
-EAPI int                           ecore_imf_init(void);
+ECORE_IMF_API int                           ecore_imf_init(void);
 
 /**
  * @ingroup Ecore_IMF_Lib_Group
@@ -843,7 +819,7 @@ EAPI int                           ecore_imf_init(void);
  * @return  Number of times the library has been initialised without being
  *          shut down.
  */
-EAPI int                           ecore_imf_shutdown(void);
+ECORE_IMF_API int                           ecore_imf_shutdown(void);
 
 /**
  * @ingroup Ecore_IMF_Lib_Group
@@ -854,7 +830,7 @@ EAPI int                           ecore_imf_shutdown(void);
  * @param imf_module_exit   A function to call when exiting
  *
  */
-EAPI void                          ecore_imf_module_register(const Ecore_IMF_Context_Info *info, Ecore_IMF_Context *(*imf_module_create)(void), Ecore_IMF_Context *(*imf_module_exit)(void));
+ECORE_IMF_API void                          ecore_imf_module_register(const Ecore_IMF_Context_Info *info, Ecore_IMF_Context *(*imf_module_create)(void), Ecore_IMF_Context *(*imf_module_exit)(void));
 
 /**
  * @ingroup Ecore_IMF_Lib_Group
@@ -863,7 +839,7 @@ EAPI void                          ecore_imf_module_register(const Ecore_IMF_Con
             EINA_FALSE if the input panel is already in hidden state
  * @since 1.8.0
  */
-EAPI Eina_Bool                     ecore_imf_input_panel_hide(void);
+ECORE_IMF_API Eina_Bool                     ecore_imf_input_panel_hide(void);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -875,7 +851,7 @@ EAPI Eina_Bool                     ecore_imf_input_panel_hide(void);
  * @return Return an Eina_List of strings;
  *         on failure it returns NULL.
  */
-EAPI Eina_List                    *ecore_imf_context_available_ids_get(void);
+ECORE_IMF_API Eina_List                    *ecore_imf_context_available_ids_get(void);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -888,7 +864,7 @@ EAPI Eina_List                    *ecore_imf_context_available_ids_get(void);
  * @return Return an Eina_List of strings;
  *         on failure it returns NULL.
  */
-EAPI Eina_List                    *ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type);
+ECORE_IMF_API Eina_List                    *ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -899,7 +875,7 @@ EAPI Eina_List                    *ecore_imf_context_available_ids_by_canvas_typ
  * @return Return a string containing the id of the default Input
  *         Method Context; on failure it returns NULL.
  */
-EAPI const char                   *ecore_imf_context_default_id_get(void);
+ECORE_IMF_API const char                   *ecore_imf_context_default_id_get(void);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -912,7 +888,7 @@ EAPI const char                   *ecore_imf_context_default_id_get(void);
  * @return Return a string containing the id of the default Input
  *         Method Context; on failure it returns NULL.
  */
-EAPI const char                   *ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type);
+ECORE_IMF_API const char                   *ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -948,7 +924,7 @@ EAPI const char                   *ecore_imf_context_default_id_by_canvas_type_g
  *   }
  * @endcode
  */
-EAPI const Ecore_IMF_Context_Info *ecore_imf_context_info_by_id_get(const char *id);
+ECORE_IMF_API const Ecore_IMF_Context_Info *ecore_imf_context_info_by_id_get(const char *id);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -958,7 +934,7 @@ EAPI const Ecore_IMF_Context_Info *ecore_imf_context_info_by_id_get(const char *
  * @return A newly allocated Input Method Context;
  *         on failure it returns NULL.
  */
-EAPI Ecore_IMF_Context            *ecore_imf_context_add(const char *id);
+ECORE_IMF_API Ecore_IMF_Context            *ecore_imf_context_add(const char *id);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -968,7 +944,7 @@ EAPI Ecore_IMF_Context            *ecore_imf_context_add(const char *id);
  * @return Return a #Ecore_IMF_Context_Info for the given Input Method Context;
  *         on failure it returns NULL.
  */
-EAPI const Ecore_IMF_Context_Info *ecore_imf_context_info_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API const Ecore_IMF_Context_Info *ecore_imf_context_info_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -976,7 +952,7 @@ EAPI const Ecore_IMF_Context_Info *ecore_imf_context_info_get(Ecore_IMF_Context 
  *
  * @param ctx An #Ecore_IMF_Context.
  */
-EAPI void                          ecore_imf_context_del(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_del(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -989,7 +965,7 @@ EAPI void                          ecore_imf_context_del(Ecore_IMF_Context *ctx)
  * @param window The client window. This may be @c NULL to indicate
  *               that the previous client window no longer exists.
  */
-EAPI void                          ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window);
+ECORE_IMF_API void                          ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1001,7 +977,7 @@ EAPI void                          ecore_imf_context_client_window_set(Ecore_IMF
  * @return Return the client window.
  * @since 1.1.0
  */
-EAPI void                         *ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                         *ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1016,7 +992,7 @@ EAPI void                         *ecore_imf_context_client_window_get(Ecore_IMF
  * @param canvas The client canvas. This may be @c NULL to indicate
  *               that the previous client canvas no longer exists.
  */
-EAPI void                          ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas);
+ECORE_IMF_API void                          ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1028,7 +1004,7 @@ EAPI void                          ecore_imf_context_client_canvas_set(Ecore_IMF
  * @return Return the client canvas.
  * @since 1.1.0
  */
-EAPI void                         *ecore_imf_context_client_canvas_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                         *ecore_imf_context_client_canvas_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1038,7 +1014,7 @@ EAPI void                         *ecore_imf_context_client_canvas_get(Ecore_IMF
  *
  * @deprecated use ecore_imf_context_input_panel_show() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_show(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_show(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1048,7 +1024,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_show(Ecore_IMF_Context *ctx
  *
  * @deprecated use ecore_imf_context_input_panel_hide() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_hide(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_hide(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1061,7 +1037,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_hide(Ecore_IMF_Context *ctx
  * @param cursor_pos Location to store position of cursor (in characters)
  *                   within the preedit string.
  */
-EAPI void                          ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cursor_pos);
+ECORE_IMF_API void                          ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cursor_pos);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1116,7 +1092,7 @@ EAPI void                          ecore_imf_context_preedit_string_get(Ecore_IM
  * @endcode
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos);
+ECORE_IMF_API void                          ecore_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1137,7 +1113,7 @@ EAPI void                          ecore_imf_context_preedit_string_with_attribu
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _focus_in_cb, imf_context);
  * @endcode
  */
-EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_focus_in(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1159,7 +1135,7 @@ EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context 
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _focus_out_cb, ed);
  * @endcode
  */
-EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_focus_out(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1189,7 +1165,7 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _focus_out_cb, imf_context);
  * @endcode
  */
-EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1204,7 +1180,7 @@ EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ct
  * @param ctx An #Ecore_IMF_Context.
  * @param cursor_pos New cursor position in characters.
  */
-EAPI void                          ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos);
+ECORE_IMF_API void                          ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1220,7 +1196,7 @@ EAPI void                          ecore_imf_context_cursor_position_set(Ecore_I
  * @param h cursor height.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h);
+ECORE_IMF_API void                          ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1232,7 +1208,7 @@ EAPI void                          ecore_imf_context_cursor_location_set(Ecore_I
  * @param ctx An #Ecore_IMF_Context.
  * @param use_preedit Whether the IM context should use the preedit string.
  */
-EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
+ECORE_IMF_API void                          ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1247,7 +1223,7 @@ EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_C
  * @param func The callback to be called.
  * @param data The data pointer to be passed to @p func
  */
-EAPI void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
+ECORE_IMF_API void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1261,7 +1237,7 @@ EAPI void                          ecore_imf_context_retrieve_surrounding_callba
  * @param data The data pointer to be passed to @p func
  * @since 1.9.0
  */
-EAPI void                          ecore_imf_context_retrieve_selection_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text), const void *data);
+ECORE_IMF_API void                          ecore_imf_context_retrieve_selection_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text), const void *data);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1274,7 +1250,7 @@ EAPI void                          ecore_imf_context_retrieve_selection_callback
  * @param ctx An #Ecore_IMF_Context.
  * @param input_mode The input mode to be used by @p ctx.
  */
-EAPI void                          ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
+ECORE_IMF_API void                          ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1285,7 +1261,7 @@ EAPI void                          ecore_imf_context_input_mode_set(Ecore_IMF_Co
  * @param ctx An #Ecore_IMF_Context.
  * @return The input mode being used by @p ctx.
  */
-EAPI Ecore_IMF_Input_Mode          ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Mode          ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1324,7 +1300,7 @@ EAPI Ecore_IMF_Input_Mode          ecore_imf_context_input_mode_get(Ecore_IMF_Co
  * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, data);
  * @endcode
  */
-EAPI Eina_Bool                     ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
 
 /* plugin specific functions */
 
@@ -1345,7 +1321,7 @@ EAPI Eina_Bool                     ecore_imf_context_filter_event(Ecore_IMF_Cont
  * @param ctxc An #Ecore_IMF_Context_Class.
  * @return A new #Ecore_IMF_Context; on failure it returns NULL.
  */
-EAPI Ecore_IMF_Context            *ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc);
+ECORE_IMF_API Ecore_IMF_Context            *ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1359,7 +1335,7 @@ EAPI Ecore_IMF_Context            *ecore_imf_context_new(const Ecore_IMF_Context
  * @param data The Input Method Context specific data.
  * @return A new #Ecore_IMF_Context; on failure it returns NULL.
  */
-EAPI void                          ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data);
+ECORE_IMF_API void                          ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1370,7 +1346,7 @@ EAPI void                          ecore_imf_context_data_set(Ecore_IMF_Context 
  * @param ctx An #Ecore_IMF_Context.
  * @return The Input Method Context specific data.
  */
-EAPI void                         *ecore_imf_context_data_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                         *ecore_imf_context_data_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1397,7 +1373,7 @@ EAPI void                         *ecore_imf_context_data_get(Ecore_IMF_Context 
  * @return @c EINA_TRUE if surrounding text was provided; otherwise
  * @c EINA_FALSE.
  */
-EAPI Eina_Bool                     ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1419,7 +1395,7 @@ EAPI Eina_Bool                     ecore_imf_context_surrounding_get(Ecore_IMF_C
  * @c EINA_FALSE.
  * @since 1.9.0
  */
-EAPI Eina_Bool                     ecore_imf_context_selection_get(Ecore_IMF_Context *ctx, char **text);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_selection_get(Ecore_IMF_Context *ctx, char **text);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1433,7 +1409,7 @@ EAPI Eina_Bool                     ecore_imf_context_selection_get(Ecore_IMF_Con
  *
  * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1447,7 +1423,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_start_event_add(Eco
  *
  * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1460,7 +1436,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_end_event_add(Ecore
  *
  * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1474,7 +1450,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_changed_event_add(E
  *
  * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1493,7 +1469,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_commit_event_add(Ecore_IMF_
  *
  * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1554,7 +1530,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_delete_surrounding_event_ad
  * ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_COMMIT_CONTENT, _imf_event_commit_content_cb, data);
  * @endcode
  */
-EAPI void                          ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func, const void *data);
+ECORE_IMF_API void                          ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func, const void *data);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1573,7 +1549,7 @@ EAPI void                          ecore_imf_context_event_callback_add(Ecore_IM
  * @return the data pointer
  * @since 1.2.0
  */
-EAPI void                         *ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func);
+ECORE_IMF_API void                         *ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1592,7 +1568,7 @@ EAPI void                         *ecore_imf_context_event_callback_del(Ecore_IM
  *        pass to the callback functions registered on this event
  * @since 1.2.0
  */
-EAPI void                          ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, void *event_info);
+ECORE_IMF_API void                          ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, void *event_info);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1605,7 +1581,7 @@ EAPI void                          ecore_imf_context_event_callback_call(Ecore_I
  * @note Default value is EINA_TRUE.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool prediction);
+ECORE_IMF_API void                          ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool prediction);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1616,7 +1592,7 @@ EAPI void                          ecore_imf_context_prediction_allow_set(Ecore_
  * @c EINA_FALSE.
  * @since 1.1.0
  */
-EAPI Eina_Bool                     ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1627,7 +1603,7 @@ EAPI Eina_Bool                     ecore_imf_context_prediction_allow_get(Ecore_
  * @note Default type is ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type);
+ECORE_IMF_API void                          ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1637,7 +1613,7 @@ EAPI void                          ecore_imf_context_autocapital_type_set(Ecore_
  * @return The autocapital type being used by @p ctx.
  * @since 1.1.0
  */
-EAPI Ecore_IMF_Autocapital_Type    ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Autocapital_Type    ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1648,7 +1624,7 @@ EAPI Ecore_IMF_Autocapital_Type    ecore_imf_context_autocapital_type_get(Ecore_
  * @note The default input hint is @c ECORE_IMF_INPUT_HINT_AUTO_COMPLETE.
  * @since 1.12
  */
-EAPI void                          ecore_imf_context_input_hint_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints hints);
+ECORE_IMF_API void                          ecore_imf_context_input_hint_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints hints);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1658,7 +1634,7 @@ EAPI void                          ecore_imf_context_input_hint_set(Ecore_IMF_Co
  * @return The value of input hint
  * @since 1.12
  */
-EAPI Ecore_IMF_Input_Hints         ecore_imf_context_input_hint_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Hints         ecore_imf_context_input_hint_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1667,7 +1643,7 @@ EAPI Ecore_IMF_Input_Hints         ecore_imf_context_input_hint_get(Ecore_IMF_Co
  * @param ctx An #Ecore_IMF_Context.
  * @since 1.1.0
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_control_panel_show(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_control_panel_show(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1676,7 +1652,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_control_panel_show(Ecore_IM
  * @param ctx An #Ecore_IMF_Context.
  * @since 1.1.0
  */
-EINA_DEPRECATED EAPI void          ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED ECORE_IMF_API void          ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1685,7 +1661,7 @@ EINA_DEPRECATED EAPI void          ecore_imf_context_control_panel_hide(Ecore_IM
  * @param ctx An #Ecore_IMF_Context.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1694,7 +1670,7 @@ EAPI void                          ecore_imf_context_input_panel_show(Ecore_IMF_
  * @param ctx An #Ecore_IMF_Context.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1705,7 +1681,7 @@ EAPI void                          ecore_imf_context_input_panel_hide(Ecore_IMF_
  * @note Default layout type is ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1715,7 +1691,7 @@ EAPI void                          ecore_imf_context_input_panel_layout_set(Ecor
  * @return layout see #Ecore_IMF_Input_Panel_Layout
  * @since 1.1.0
  */
-EAPI Ecore_IMF_Input_Panel_Layout  ecore_imf_context_input_panel_layout_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Panel_Layout  ecore_imf_context_input_panel_layout_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1726,7 +1702,7 @@ EAPI Ecore_IMF_Input_Panel_Layout  ecore_imf_context_input_panel_layout_get(Ecor
  * @note Default layout variation type is NORMAL.
  * @since 1.8.0
  */
-EAPI void                          ecore_imf_context_input_panel_layout_variation_set(Ecore_IMF_Context *ctx, int variation);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_layout_variation_set(Ecore_IMF_Context *ctx, int variation);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1736,7 +1712,7 @@ EAPI void                          ecore_imf_context_input_panel_layout_variatio
  * @return the layout variation
  * @since 1.8.0
  */
-EAPI int                           ecore_imf_context_input_panel_layout_variation_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API int                           ecore_imf_context_input_panel_layout_variation_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1747,7 +1723,7 @@ EAPI int                           ecore_imf_context_input_panel_layout_variatio
  * @param lang the language to be set to the input panel.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_input_panel_language_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_language_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1759,7 +1735,7 @@ EAPI void                          ecore_imf_context_input_panel_language_set(Ec
  * @return Ecore_IMF_Input_Panel_Lang
  * @since 1.1.0
  */
-EAPI Ecore_IMF_Input_Panel_Lang    ecore_imf_context_input_panel_language_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Panel_Lang    ecore_imf_context_input_panel_language_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1770,7 +1746,7 @@ EAPI Ecore_IMF_Input_Panel_Lang    ecore_imf_context_input_panel_language_get(Ec
  * @param enabled If true, the input panel will be shown when the widget is clicked or has focus.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx, Eina_Bool enabled);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx, Eina_Bool enabled);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1780,7 +1756,7 @@ EAPI void                          ecore_imf_context_input_panel_enabled_set(Eco
  * @return Return the attribute to show the input panel automatically
  * @since 1.1.0
  */
-EAPI Eina_Bool                     ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1794,7 +1770,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_enabled_get(Eco
  * @param len the length of data, in bytes, to send to the input panel
  * @since 1.2.0
  */
-EAPI void                          ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *data, int len);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *data, int len);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1805,7 +1781,7 @@ EAPI void                          ecore_imf_context_input_panel_imdata_set(Ecor
  * @param len The length of data
  * @since 1.2.0
  */
-EAPI void                          ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int *len);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int *len);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1819,7 +1795,7 @@ EAPI void                          ecore_imf_context_input_panel_imdata_get(Ecor
  * @note Default type is ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT.
  * @since 1.2.0
  */
-EAPI void                          ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1831,7 +1807,7 @@ EAPI void                          ecore_imf_context_input_panel_return_key_type
  * @return The type of "return" key on the input panel
  * @since 1.2.0
  */
-EAPI Ecore_IMF_Input_Panel_Return_Key_Type ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Panel_Return_Key_Type ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1841,7 +1817,7 @@ EAPI Ecore_IMF_Input_Panel_Return_Key_Type ecore_imf_context_input_panel_return_
  * @param disabled The state
  * @since 1.2.0
  */
-EAPI void                          ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Eina_Bool disabled);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Eina_Bool disabled);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1851,7 +1827,7 @@ EAPI void                          ecore_imf_context_input_panel_return_key_disa
  * @return @c EINA_TRUE if it should be disabled.
  * @since 1.2.0
  */
-EAPI Eina_Bool                     ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1861,7 +1837,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_return_key_disa
  * @param mode Turn on caps lock on the input panel if @c EINA_TRUE.
  * @since 1.2.0
  */
-EAPI void                          ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bool mode);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bool mode);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1871,7 +1847,7 @@ EAPI void                          ecore_imf_context_input_panel_caps_lock_mode_
  * @return @c EINA_TRUE if the caps lock is turned on.
  * @since 1.2.0
  */
-EAPI Eina_Bool                     ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1884,7 +1860,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_caps_lock_mode_
  * @param h height of the input panel
  * @since 1.3
  */
-EAPI void                          ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1894,7 +1870,7 @@ EAPI void                          ecore_imf_context_input_panel_geometry_get(Ec
  * @return The state of input panel.
  * @since 1.3
  */
-EAPI Ecore_IMF_Input_Panel_State   ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Panel_State   ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1908,7 +1884,7 @@ EAPI Ecore_IMF_Input_Panel_State   ecore_imf_context_input_panel_state_get(Ecore
  * @param data application-input panel specific data.
  * @since 1.3
  */
-EAPI void                          ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value), const void *data);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value), const void *data);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1919,7 +1895,7 @@ EAPI void                          ecore_imf_context_input_panel_event_callback_
  * @param func the callback function
  * @since 1.3
  */
-EAPI void                          ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value));
+ECORE_IMF_API void                          ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, void (*func) (void *data, Ecore_IMF_Context *ctx, int value));
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1930,7 +1906,7 @@ EAPI void                          ecore_imf_context_input_panel_event_callback_
  * @param value the event value
  * @since 1.8.0
  */
-EAPI void                          ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, int value);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, int value);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1941,7 +1917,7 @@ EAPI void                          ecore_imf_context_input_panel_event_callback_
  * @param ctx Ecore_IMF_Context.
  * @since 1.8.0
  */
-EAPI void                          ecore_imf_context_input_panel_event_callback_clear(Ecore_IMF_Context *ctx);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_event_callback_clear(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1954,7 +1930,7 @@ EAPI void                          ecore_imf_context_input_panel_event_callback_
  *             string retrieved must be freed with free().
  * @since 1.3
  */
-EAPI void                          ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char **lang);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char **lang);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1967,7 +1943,7 @@ EAPI void                          ecore_imf_context_input_panel_language_locale
  * @param h height of the candidate panel
  * @since 1.3
  */
-EAPI void                          ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
+ECORE_IMF_API void                          ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1978,7 +1954,7 @@ EAPI void                          ecore_imf_context_candidate_panel_geometry_ge
  * @param ondemand If true, the input panel will be shown in case of only Mouse up event. (Focus event will be ignored.)
  * @since 1.8.0
  */
-EAPI void                          ecore_imf_context_input_panel_show_on_demand_set(Ecore_IMF_Context *ctx, Eina_Bool ondemand);
+ECORE_IMF_API void                          ecore_imf_context_input_panel_show_on_demand_set(Ecore_IMF_Context *ctx, Eina_Bool ondemand);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1988,7 +1964,7 @@ EAPI void                          ecore_imf_context_input_panel_show_on_demand_
  * @return @c EINA_TRUE if the input panel will be shown in case of only Mouse up event.
  * @since 1.8.0
  */
-EAPI Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1999,7 +1975,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_show_on_demand_
  * @param[in] ctx An #Ecore_IMF_Context
  * @param[in] direction The direction mode
  */
-EAPI void                          ecore_imf_context_bidi_direction_set(Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction);
+ECORE_IMF_API void                          ecore_imf_context_bidi_direction_set(Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2010,7 +1986,7 @@ EAPI void                          ecore_imf_context_bidi_direction_set(Ecore_IM
  * @param[in] ctx An #Ecore_IMF_Context
  * @return The direction mode
  */
-EAPI Ecore_IMF_BiDi_Direction      ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_BiDi_Direction      ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2021,7 +1997,7 @@ EAPI Ecore_IMF_BiDi_Direction      ecore_imf_context_bidi_direction_get(Ecore_IM
  * @param[in] ctx An #Ecore_IMF_Context
  * @return the keyboard mode
  */
-EAPI Ecore_IMF_Input_Panel_Keyboard_Mode ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API Ecore_IMF_Input_Panel_Keyboard_Mode ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2037,7 +2013,7 @@ EAPI Ecore_IMF_Input_Panel_Keyboard_Mode ecore_imf_context_keyboard_mode_get(Eco
  * @param[in] ctx An #Ecore_IMF_Context
  * @param[in] prediction_hint The prediction hint string.
  */
-EAPI void                          ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *prediction_hint);
+ECORE_IMF_API void                          ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *prediction_hint);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2054,7 +2030,7 @@ EAPI void                          ecore_imf_context_prediction_hint_set(Ecore_I
  * ecore_imf_context_mime_type_accept_set(imf_context, mime_type);
  * @endcode
  */
-EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type);
+ECORE_IMF_API void                         ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2067,7 +2043,7 @@ EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_I
  * @param x top-left x coordinate of the input panel
  * @param y top-left y coordinate of the input panel
  */
-EAPI void                         ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y);
+ECORE_IMF_API void                         ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2085,7 +2061,7 @@ EAPI void                         ecore_imf_context_input_panel_position_set(Eco
  * key @p key. On success this function returns EINA_TRUE,
  * otherwise it returns @c EINA_FALSE.
  */
-EAPI Eina_Bool                    ecore_imf_context_prediction_hint_hash_set(Ecore_IMF_Context *ctx, const char *key, const char *value);
+ECORE_IMF_API Eina_Bool                    ecore_imf_context_prediction_hint_hash_set(Ecore_IMF_Context *ctx, const char *key, const char *value);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2099,7 +2075,7 @@ EAPI Eina_Bool                    ecore_imf_context_prediction_hint_hash_set(Eco
  *
  * This function removes the entry identified by @p key from the hash associated @p ctx.
  */
-EAPI Eina_Bool                    ecore_imf_context_prediction_hint_hash_del(Ecore_IMF_Context *ctx, const char *key);
+ECORE_IMF_API Eina_Bool                    ecore_imf_context_prediction_hint_hash_del(Ecore_IMF_Context *ctx, const char *key);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -2110,7 +2086,7 @@ EAPI Eina_Bool                    ecore_imf_context_prediction_hint_hash_del(Eco
  * @param[in] ctx An #Ecore_IMF_Context
  * @return The prediction hint hash table
  */
-EAPI const Eina_Hash             *ecore_imf_context_prediction_hint_hash_get(Ecore_IMF_Context *ctx);
+ECORE_IMF_API const Eina_Hash             *ecore_imf_context_prediction_hint_hash_get(Ecore_IMF_Context *ctx);
 
 /* The following entry points must be exported by each input method module
  */
@@ -2124,8 +2100,5 @@ EAPI const Eina_Hash             *ecore_imf_context_prediction_hint_hash_get(Eco
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

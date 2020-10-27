@@ -14,13 +14,13 @@
 
 Ecore_IMF_Context *show_req_ctx = NULL;
 
-EAPI Eina_List *
+ECORE_IMF_API Eina_List *
 ecore_imf_context_available_ids_get(void)
 {
    return ecore_imf_module_context_ids_get();
 }
 
-EAPI Eina_List *
+ECORE_IMF_API Eina_List *
 ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type)
 {
    return ecore_imf_module_context_ids_by_canvas_type_get(canvas_type);
@@ -52,13 +52,13 @@ _ecore_imf_context_match_locale(const char *locale, const char *against, int aga
 }
 */
 
-EAPI const char *
+ECORE_IMF_API const char *
 ecore_imf_context_default_id_get(void)
 {
    return ecore_imf_context_default_id_by_canvas_type_get(NULL);
 }
 
-EAPI const char *
+ECORE_IMF_API const char *
 ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type EINA_UNUSED)
 {
    const char *id = getenv("ECORE_IMF_MODULE");
@@ -131,7 +131,7 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type EINA_UNU
  */
 }
 
-EAPI const Ecore_IMF_Context_Info *
+ECORE_IMF_API const Ecore_IMF_Context_Info *
 ecore_imf_context_info_by_id_get(const char *id)
 {
    Ecore_IMF_Module *module;
@@ -142,7 +142,7 @@ ecore_imf_context_info_by_id_get(const char *id)
    return module->info;
 }
 
-EAPI Ecore_IMF_Context *
+ECORE_IMF_API Ecore_IMF_Context *
 ecore_imf_context_add(const char *id)
 {
    Ecore_IMF_Context *ctx;
@@ -183,7 +183,7 @@ ecore_imf_context_add(const char *id)
    return ctx;
 }
 
-EAPI const Ecore_IMF_Context_Info *
+ECORE_IMF_API const Ecore_IMF_Context_Info *
 ecore_imf_context_info_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -195,7 +195,7 @@ ecore_imf_context_info_get(Ecore_IMF_Context *ctx)
    return ctx->module->info;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_del(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Func_Node *fn;
@@ -231,7 +231,7 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
    free(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -245,7 +245,7 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
    ctx->window = window;
 }
 
-EAPI void *
+ECORE_IMF_API void *
 ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -257,7 +257,7 @@ ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx)
    return ctx->window;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -271,7 +271,7 @@ ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
    ctx->client_canvas = canvas;
 }
 
-EAPI void *
+ECORE_IMF_API void *
 ecore_imf_context_client_canvas_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -283,7 +283,7 @@ ecore_imf_context_client_canvas_get(Ecore_IMF_Context *ctx)
    return ctx->client_canvas;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_show(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -297,7 +297,7 @@ ecore_imf_context_show(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->show) ctx->klass->show(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_hide(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -310,7 +310,7 @@ ecore_imf_context_hide(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->hide) ctx->klass->hide(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cursor_pos)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -329,7 +329,7 @@ ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cu
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -348,7 +348,7 @@ ecore_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, cha
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_focus_in(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -361,7 +361,7 @@ ecore_imf_context_focus_in(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->focus_in) ctx->klass->focus_in(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_focus_out(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -374,7 +374,7 @@ ecore_imf_context_focus_out(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->focus_out) ctx->klass->focus_out(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_reset(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -387,7 +387,7 @@ ecore_imf_context_reset(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->reset) ctx->klass->reset(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -400,7 +400,7 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
    if (ctx->klass && ctx->klass->cursor_position_set) ctx->klass->cursor_position_set(ctx, cursor_pos);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -412,7 +412,7 @@ ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int 
    if (ctx->klass && ctx->klass->cursor_location_set) ctx->klass->cursor_location_set(ctx, x, y, w, h);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -424,7 +424,7 @@ ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
    if (ctx->klass && ctx->klass->use_preedit_set) ctx->klass->use_preedit_set(ctx, use_preedit);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool prediction)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -443,7 +443,7 @@ ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool predict
      }
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -456,7 +456,7 @@ ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx)
    return ctx->allow_prediction;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -474,7 +474,7 @@ ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocap
      }
 }
 
-EAPI Ecore_IMF_Autocapital_Type
+ECORE_IMF_API Ecore_IMF_Autocapital_Type
 ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -487,7 +487,7 @@ ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx)
    return ctx->autocapital_type;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -501,7 +501,7 @@ ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina
    ctx->retrieve_surrounding_data = (void *) data;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_retrieve_selection_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text), const void *data)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -515,7 +515,7 @@ ecore_imf_context_retrieve_selection_callback_set(Ecore_IMF_Context *ctx, Eina_B
    ctx->retrieve_selection_data = (void *) data;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -528,7 +528,7 @@ ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode in
    ctx->input_mode = input_mode;
 }
 
-EAPI Ecore_IMF_Input_Mode
+ECORE_IMF_API Ecore_IMF_Input_Mode
 ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -540,7 +540,7 @@ ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx)
    return ctx->input_mode;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -553,7 +553,7 @@ ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type
    return EINA_FALSE;
 }
 
-EAPI Ecore_IMF_Context *
+ECORE_IMF_API Ecore_IMF_Context *
 ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc)
 {
    Ecore_IMF_Context *ctx;
@@ -569,7 +569,7 @@ ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc)
    return ctx;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -581,7 +581,7 @@ ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data)
    ctx->data = data;
 }
 
-EAPI void *
+ECORE_IMF_API void *
 ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -593,7 +593,7 @@ ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
    return ctx->data;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *cursor_pos)
 {
    int result = EINA_FALSE;
@@ -617,7 +617,7 @@ ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *curs
    return result;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_selection_get(Ecore_IMF_Context *ctx, char **text)
 {
    Eina_Bool result = EINA_FALSE;
@@ -646,7 +646,7 @@ _ecore_imf_event_free_preedit(void *data EINA_UNUSED, void *event)
    free(event);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Event_Preedit_Start *ev;
@@ -666,7 +666,7 @@ ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
                    ev, _ecore_imf_event_free_preedit, NULL);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Event_Preedit_End *ev;
@@ -686,7 +686,7 @@ ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
                    ev, _ecore_imf_event_free_preedit, NULL);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Event_Preedit_Changed *ev;
@@ -716,7 +716,7 @@ _ecore_imf_event_free_commit(void *data EINA_UNUSED, void *event)
    free(ev);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str)
 {
    Ecore_IMF_Event_Commit *ev;
@@ -743,7 +743,7 @@ _ecore_imf_event_free_delete_surrounding(void *data EINA_UNUSED, void *event)
    free(event);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars)
 {
    Ecore_IMF_Event_Delete_Surrounding *ev;
@@ -763,7 +763,7 @@ ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offse
                    ev, _ecore_imf_event_free_delete_surrounding, NULL);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func, const void *data)
 {
    Ecore_IMF_Func_Node *fn = NULL;
@@ -787,7 +787,7 @@ ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
    ctx->callbacks = eina_list_append(ctx->callbacks, fn);
 }
 
-EAPI void *
+ECORE_IMF_API void *
 ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func)
 {
    Eina_List *l = NULL;
@@ -817,7 +817,7 @@ ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
    return NULL;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, void *event_info)
 {
    Ecore_IMF_Func_Node *fn = NULL;
@@ -837,7 +837,7 @@ ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_control_panel_show(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -850,7 +850,7 @@ ecore_imf_context_control_panel_show(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->control_panel_show) ctx->klass->control_panel_show(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -863,7 +863,7 @@ ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx)
    if (ctx->klass && ctx->klass->control_panel_hide) ctx->klass->control_panel_hide(ctx);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_hint_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints input_hints)
 {
     if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -882,7 +882,7 @@ ecore_imf_context_input_hint_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Hints i
      }
 }
 
-EAPI Ecore_IMF_Input_Hints
+ECORE_IMF_API Ecore_IMF_Input_Hints
 ecore_imf_context_input_hint_get(Ecore_IMF_Context *ctx)
 {
     if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -895,7 +895,7 @@ ecore_imf_context_input_hint_get(Ecore_IMF_Context *ctx)
     return ctx->input_hints;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -913,7 +913,7 @@ ecore_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -930,7 +930,7 @@ ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Layout layout)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -952,7 +952,7 @@ ecore_imf_context_input_panel_layout_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input
      }
 }
 
-EAPI Ecore_IMF_Input_Panel_Layout
+ECORE_IMF_API Ecore_IMF_Input_Panel_Layout
 ecore_imf_context_input_panel_layout_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -968,7 +968,7 @@ ecore_imf_context_input_panel_layout_get(Ecore_IMF_Context *ctx)
      return ECORE_IMF_INPUT_PANEL_LAYOUT_INVALID;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_layout_variation_set(Ecore_IMF_Context *ctx, int variation)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -981,7 +981,7 @@ ecore_imf_context_input_panel_layout_variation_set(Ecore_IMF_Context *ctx, int v
    ctx->input_panel_layout_variation = variation;
 }
 
-EAPI int
+ECORE_IMF_API int
 ecore_imf_context_input_panel_layout_variation_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -994,7 +994,7 @@ ecore_imf_context_input_panel_layout_variation_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_layout_variation;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_language_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1013,7 +1013,7 @@ ecore_imf_context_input_panel_language_set(Ecore_IMF_Context *ctx, Ecore_IMF_Inp
      }
 }
 
-EAPI Ecore_IMF_Input_Panel_Lang
+ECORE_IMF_API Ecore_IMF_Input_Panel_Lang
 ecore_imf_context_input_panel_language_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1026,7 +1026,7 @@ ecore_imf_context_input_panel_language_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_lang;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx,
                                            Eina_Bool enabled)
 {
@@ -1040,7 +1040,7 @@ ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx,
    ctx->input_panel_enabled = enabled;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1053,7 +1053,7 @@ ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_enabled;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *data, int len)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1069,7 +1069,7 @@ ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *dat
      ctx->klass->input_panel_imdata_set(ctx, data, len);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int *len)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1085,7 +1085,7 @@ ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int
      ctx->klass->input_panel_imdata_get(ctx, data, len);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1103,7 +1103,7 @@ ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_
      }
 }
 
-EAPI Ecore_IMF_Input_Panel_Return_Key_Type
+ECORE_IMF_API Ecore_IMF_Input_Panel_Return_Key_Type
 ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1116,7 +1116,7 @@ ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_return_key_type;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Eina_Bool disabled)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1134,7 +1134,7 @@ ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Ei
      }
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1147,7 +1147,7 @@ ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_return_key_disabled;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bool mode)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1166,7 +1166,7 @@ ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bo
      }
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1179,7 +1179,7 @@ ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_caps_lock_mode;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1193,7 +1193,7 @@ ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *
      ctx->klass->input_panel_geometry_get(ctx, x, y, w, h);
 }
 
-EAPI Ecore_IMF_Input_Panel_State
+ECORE_IMF_API Ecore_IMF_Input_Panel_State
 ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Input_Panel_State state = ECORE_IMF_INPUT_PANEL_STATE_HIDE;
@@ -1210,7 +1210,7 @@ ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
    return state;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
                                                  Ecore_IMF_Input_Panel_Event type,
                                                  void (*func) (void *data, Ecore_IMF_Context *ctx, int value),
@@ -1237,7 +1237,7 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
    ctx->input_panel_callbacks = eina_list_append(ctx->input_panel_callbacks, fn);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
                                                  Ecore_IMF_Input_Panel_Event type,
                                                  void (*func) (void *data, Ecore_IMF_Context *ctx, int value))
@@ -1267,7 +1267,7 @@ ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Event type, int value)
 {
    Ecore_IMF_Input_Panel_Callback_Node *fn = NULL;
@@ -1296,7 +1296,7 @@ ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_event_callback_clear(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Input_Panel_Callback_Node *fn = NULL;
@@ -1322,7 +1322,7 @@ ecore_imf_context_input_panel_event_callback_clear(Ecore_IMF_Context *ctx)
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char **lang)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1340,7 +1340,7 @@ ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char *
      }
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1354,7 +1354,7 @@ ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, i
      ctx->klass->candidate_panel_geometry_get(ctx, x, y, w, h);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_show_on_demand_set(Ecore_IMF_Context *ctx, Eina_Bool ondemand)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1367,7 +1367,7 @@ ecore_imf_context_input_panel_show_on_demand_set(Ecore_IMF_Context *ctx, Eina_Bo
    ctx->input_panel_show_on_demand = ondemand;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1380,7 +1380,7 @@ ecore_imf_context_input_panel_show_on_demand_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_show_on_demand;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_bidi_direction_set(Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Direction direction)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1399,7 +1399,7 @@ ecore_imf_context_bidi_direction_set(Ecore_IMF_Context *ctx, Ecore_IMF_BiDi_Dire
      }
 }
 
-EAPI Ecore_IMF_BiDi_Direction
+ECORE_IMF_API Ecore_IMF_BiDi_Direction
 ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1412,7 +1412,7 @@ ecore_imf_context_bidi_direction_get(Ecore_IMF_Context *ctx)
    return ctx->bidi_direction;
 }
 
-EAPI Ecore_IMF_Input_Panel_Keyboard_Mode
+ECORE_IMF_API Ecore_IMF_Input_Panel_Keyboard_Mode
 ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Input_Panel_Keyboard_Mode mode = ECORE_IMF_INPUT_PANEL_SW_KEYBOARD_MODE;
@@ -1429,7 +1429,7 @@ ecore_imf_context_keyboard_mode_get(Ecore_IMF_Context *ctx)
    return mode;
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *prediction_hint)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1443,7 +1443,7 @@ ecore_imf_context_prediction_hint_set(Ecore_IMF_Context *ctx, const char *predic
      ctx->klass->prediction_hint_set(ctx, prediction_hint);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_type)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1459,7 +1459,7 @@ ecore_imf_context_mime_type_accept_set(Ecore_IMF_Context *ctx, const char *mime_
      ctx->klass->mime_type_accept_set(ctx, mime_type);
 }
 
-EAPI void
+ECORE_IMF_API void
 ecore_imf_context_input_panel_position_set(Ecore_IMF_Context *ctx, int x, int y)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1481,7 +1481,7 @@ _prediction_hint_hash_free_cb(void *data)
    free(data);
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_prediction_hint_hash_set(Ecore_IMF_Context *ctx, const char *key, const char *value)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1504,7 +1504,7 @@ ecore_imf_context_prediction_hint_hash_set(Ecore_IMF_Context *ctx, const char *k
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_IMF_API Eina_Bool
 ecore_imf_context_prediction_hint_hash_del(Ecore_IMF_Context *ctx, const char *key)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
@@ -1520,7 +1520,7 @@ ecore_imf_context_prediction_hint_hash_del(Ecore_IMF_Context *ctx, const char *k
    return eina_hash_del(ctx->prediction_hint_hash, key, NULL);
 }
 
-EAPI const Eina_Hash *
+ECORE_IMF_API const Eina_Hash *
 ecore_imf_context_prediction_hint_hash_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
