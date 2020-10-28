@@ -209,7 +209,7 @@ _ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_inf
    bdata->lock_data = EINA_FALSE;
 }
 
-EAPI int
+ECORE_EVAS_API int
 ecore_evas_buffer_render(Ecore_Evas *ee)
 {
    int r;
@@ -769,7 +769,7 @@ _ecore_evas_buffer_pix_free(void *data EINA_UNUSED, void *pix)
    free(pix);
 }
 
-EAPI Ecore_Evas *
+ECORE_EVAS_API Ecore_Evas *
 ecore_evas_buffer_allocfunc_new(int w, int h,
                                 void *(*alloc_func) (void *data, int size),
                                 void (*free_func) (void *data, void *pix),
@@ -892,7 +892,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
    return ee;
 }
 
-EAPI Ecore_Evas *
+ECORE_EVAS_API Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {
    Ecore_Evas *ee;
@@ -914,7 +914,7 @@ ecore_evas_buffer_new(int w, int h)
    return ee;
 }
 
-EAPI const void *
+ECORE_EVAS_API const void *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Buffer_Data *bdata;
@@ -927,7 +927,7 @@ ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
    return bdata->pixels;
 }
 
-EAPI Ecore_Evas *
+ECORE_EVAS_API Ecore_Evas *
 ecore_evas_buffer_ecore_evas_parent_get(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Buffer_Data *bdata;
@@ -938,7 +938,7 @@ ecore_evas_buffer_ecore_evas_parent_get(Ecore_Evas *ee)
    return evas_object_data_get(bdata->image, "Ecore_Evas_Parent");
 }
 
-EAPI Evas_Object *
+ECORE_EVAS_API Evas_Object *
 ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {
    Evas_Object *o;

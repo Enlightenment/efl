@@ -1,41 +1,17 @@
 #ifndef _ECORE_EVAS_PRIVATE_H
 #define _ECORE_EVAS_PRIVATE_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_evas_api.h>
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
 /** Log domain macros and variables **/
 
-EAPI extern int _ecore_evas_log_dom;
+ECORE_EVAS_API extern int _ecore_evas_log_dom;
 
-EAPI extern Eina_Error ecore_evas_no_matching_type;
-EAPI extern Eina_Error ecore_evas_no_selection;
-EAPI extern Eina_Error ecore_evas_request_replaced;
+ECORE_EVAS_API extern Eina_Error ecore_evas_no_matching_type;
+ECORE_EVAS_API extern Eina_Error ecore_evas_no_selection;
+ECORE_EVAS_API extern Eina_Error ecore_evas_request_replaced;
 
 #ifdef ECORE_EVAS_DEFAULT_LOG_COLOR
 # undef ECORE_EVAS_DEFAULT_LOG_COLOR
@@ -442,22 +418,22 @@ struct _Ecore_Evas_Aux_Hint
    unsigned char notified : 1; // let caller know ee has got response for this aux hint
 };
 
-EAPI void _ecore_evas_ref(Ecore_Evas *ee);
-EAPI void _ecore_evas_unref(Ecore_Evas *ee);
-EAPI int ecore_evas_buffer_render(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_ref(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_unref(Ecore_Evas *ee);
+ECORE_EVAS_API int ecore_evas_buffer_render(Ecore_Evas *ee);
 
-EAPI void _ecore_evas_fps_debug_init(void);
-EAPI void _ecore_evas_fps_debug_shutdown(void);
-EAPI void _ecore_evas_fps_debug_rendertime_add(double t);
-EAPI void _ecore_evas_register(Ecore_Evas *ee);
-EAPI void _ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee);
-EAPI void _ecore_evas_register_animators(Ecore_Evas *ee);
-EAPI void _ecore_evas_free(Ecore_Evas *ee);
-EAPI void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
-EAPI void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
-EAPI void _ecore_evas_mouse_device_move_process(Ecore_Evas *ee, Efl_Input_Device *pointer,
+ECORE_EVAS_API void _ecore_evas_fps_debug_init(void);
+ECORE_EVAS_API void _ecore_evas_fps_debug_shutdown(void);
+ECORE_EVAS_API void _ecore_evas_fps_debug_rendertime_add(double t);
+ECORE_EVAS_API void _ecore_evas_register(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_register_animators(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_free(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
+ECORE_EVAS_API void _ecore_evas_mouse_device_move_process(Ecore_Evas *ee, Efl_Input_Device *pointer,
                                                 int x, int y, unsigned int timestamp);
-EAPI void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
+ECORE_EVAS_API void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                                int x, int y,
                                                double radius,
                                                double radius_x, double radius_y,
@@ -465,7 +441,7 @@ EAPI void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
                                                double angle,
                                                double mx, double my,
                                                unsigned int timestamp);
-EAPI void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
+ECORE_EVAS_API void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
                                                int x, int y,
                                                double radius,
                                                double radius_x, double radius_y,
@@ -474,7 +450,7 @@ EAPI void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
                                                double mx, double my,
                                                Evas_Button_Flags flags,
                                                unsigned int timestamp);
-EAPI void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
+ECORE_EVAS_API void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                              int x, int y,
                                              double radius,
                                              double radius_x, double radius_y,
@@ -483,26 +459,26 @@ EAPI void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
                                              double mx, double my,
                                              Evas_Button_Flags flags,
                                              unsigned int timestamp);
-EAPI Eina_Bool _ecore_evas_input_direct_cb(void *window, int type, const void *info);
+ECORE_EVAS_API Eina_Bool _ecore_evas_input_direct_cb(void *window, int type, const void *info);
 
-EAPI extern Eina_Bool _ecore_evas_app_comp_sync;
+ECORE_EVAS_API extern Eina_Bool _ecore_evas_app_comp_sync;
 
 
-EAPI Ecore_Evas_Interface *_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname);
+ECORE_EVAS_API Ecore_Evas_Interface *_ecore_evas_interface_get(const Ecore_Evas *ee, const char *iname);
 
 /**
  * @brief Free the string of the window profile.
  *
  * This is a helper function to free window profile.
  */
-EAPI void _ecore_evas_window_profile_free(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_window_profile_free(Ecore_Evas *ee);
 
 /**
  * @brief Free the string array of available window profiles.
  *
  * This is a helper function to free available window profiles.
  */
-EAPI void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_window_available_profiles_free(Ecore_Evas *ee);
 
 #ifdef BUILD_ECORE_EVAS_EWS
 void _ecore_evas_ews_events_init(void);
@@ -513,7 +489,7 @@ int _ecore_evas_ews_shutdown(void);
 void _ecore_evas_extn_init(void);
 void _ecore_evas_extn_shutdown(void);
 
-EAPI Eina_Strbuf *_ecore_evas_aux_hints_string_get(Ecore_Evas *ee);
+ECORE_EVAS_API Eina_Strbuf *_ecore_evas_aux_hints_string_get(Ecore_Evas *ee);
 void              _ecore_evas_aux_hint_free(Ecore_Evas *ee);
 
 Eina_Module *_ecore_evas_engine_load(const char *engine);
@@ -521,32 +497,32 @@ const Eina_List *_ecore_evas_available_engines_get(void);
 void _ecore_evas_engine_init(void);
 void _ecore_evas_engine_shutdown(void);
 
-EAPI void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time);
+ECORE_EVAS_API void ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time);
 
 Eina_Module *_ecore_evas_vnc_server_module_load(void);
 
-EAPI void _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
+ECORE_EVAS_API void _ecore_evas_focus_device_set(Ecore_Evas *ee, Efl_Input_Device *seat,
                                        Eina_Bool on);
 
-EAPI Eina_Bool _ecore_evas_mouse_in_check(Ecore_Evas *ee, Efl_Input_Device *mouse);
-EAPI void _ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
+ECORE_EVAS_API Eina_Bool _ecore_evas_mouse_in_check(Ecore_Evas *ee, Efl_Input_Device *mouse);
+ECORE_EVAS_API void _ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
                                       Eina_Bool in, Eina_Bool force_out);
 
-EAPI Evas_Object *_ecore_evas_default_cursor_image_get(Ecore_Evas *ee);
-EAPI void _ecore_evas_default_cursor_hide(Ecore_Evas *ee);
+ECORE_EVAS_API Evas_Object *_ecore_evas_default_cursor_image_get(Ecore_Evas *ee);
+ECORE_EVAS_API void _ecore_evas_default_cursor_hide(Ecore_Evas *ee);
 
 Eina_Bool _ecore_evas_cursors_init(Ecore_Evas *ee);
 
-EAPI void ecore_evas_render_wait(Ecore_Evas *ee);
-EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
+ECORE_EVAS_API void ecore_evas_render_wait(Ecore_Evas *ee);
+ECORE_EVAS_API Eina_Bool ecore_evas_render(Ecore_Evas *ee);
 
-EAPI Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
-EAPI void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
-EAPI void ecore_evas_dnd_mark_motion_used(Ecore_Evas *ee, unsigned int seat);
-EAPI Eina_Bool ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
-EAPI void ecore_evas_dnd_leave(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
-EAPI void ecore_evas_dnd_enter(Ecore_Evas *ee, unsigned int seat, Eina_Iterator *available_types, Eina_Position2D pos);
-EAPI Eina_Position2D ecore_evas_dnd_pos_get(Ecore_Evas *ee, unsigned int seat);
+ECORE_EVAS_API Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
+ECORE_EVAS_API void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
+ECORE_EVAS_API void ecore_evas_dnd_mark_motion_used(Ecore_Evas *ee, unsigned int seat);
+ECORE_EVAS_API Eina_Bool ecore_evas_dnd_position_set(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
+ECORE_EVAS_API void ecore_evas_dnd_leave(Ecore_Evas *ee, unsigned int seat, Eina_Position2D pos);
+ECORE_EVAS_API void ecore_evas_dnd_enter(Ecore_Evas *ee, unsigned int seat, Eina_Iterator *available_types, Eina_Position2D pos);
+ECORE_EVAS_API Eina_Position2D ecore_evas_dnd_pos_get(Ecore_Evas *ee, unsigned int seat);
 
 
 void fallback_selection_init(Ecore_Evas *ee);
@@ -558,8 +534,8 @@ Eina_Bool fallback_dnd_start(Ecore_Evas *ee, unsigned int seat, Eina_Array *avai
 Eina_Bool fallback_dnd_stop(Ecore_Evas *ee, unsigned int seat);
 
 #ifdef IPA_YLNO_ESU_LANRETNI_MLE
-EAPI Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
-EAPI Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt);
+ECORE_EVAS_API Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+ECORE_EVAS_API Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt);
 #else
 #define _wayland_shm_new DONT_USE_INTERNAL_API
 #define _wayland_egl_new DONT_USE_INTERNAL_API
@@ -590,8 +566,5 @@ ecore_evas_render_prepare(Ecore_Evas *ee)
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    return r;
 }
-
-#undef EAPI
-#define EAPI
 
 #endif

@@ -35,7 +35,7 @@ ecore_evas_ext_deps += declare_dependency(
 
 ecore_evas_lib = library('ecore_evas',
     ecore_evas_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_EVAS'],
     dependencies: ecore_evas_deps + ecore_evas_ext_deps,
     include_directories : config_dir,
     install: true,

@@ -5,8 +5,8 @@
 #include <Ecore.h>
 #include "Ecore_Evas.h"
 
-EAPI int ECORE_EVAS_EXTN_CLIENT_ADD = 0;
-EAPI int ECORE_EVAS_EXTN_CLIENT_DEL = 0;
+ECORE_EVAS_API int ECORE_EVAS_EXTN_CLIENT_ADD = 0;
+ECORE_EVAS_API int ECORE_EVAS_EXTN_CLIENT_DEL = 0;
 
 void
 _ecore_evas_extn_init(void)
