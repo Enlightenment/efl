@@ -18,7 +18,7 @@ ecore_file_monitor_shutdown(void)
    ecore_file_monitor_backend_shutdown();
 }
 
-EAPI Ecore_File_Monitor *
+ECORE_FILE_API Ecore_File_Monitor *
 ecore_file_monitor_add(const char           *path,
                        Ecore_File_Monitor_Cb func,
                        void                 *data)
@@ -30,7 +30,7 @@ ecore_file_monitor_add(const char           *path,
    return ecore_file_monitor_backend_add(path, func, data);
 }
 
-EAPI void
+ECORE_FILE_API void
 ecore_file_monitor_del(Ecore_File_Monitor *em)
 {
    if (!em) return;
@@ -38,7 +38,7 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
    ecore_file_monitor_backend_del(em);
 }
 
-EAPI const char *
+ECORE_FILE_API const char *
 ecore_file_monitor_path_get(Ecore_File_Monitor *em)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(em, NULL);

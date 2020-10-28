@@ -79,7 +79,7 @@ _ecore_file_stat(const char *file,
    return EINA_TRUE;
 }
 
-EAPI int
+ECORE_FILE_API int
 ecore_file_init()
 {
    if (++_ecore_file_init_count != 1)
@@ -121,7 +121,7 @@ ecore_file_init()
    */
 }
 
-EAPI int
+ECORE_FILE_API int
 ecore_file_shutdown()
 {
    if (--_ecore_file_init_count != 0)
@@ -139,7 +139,7 @@ ecore_file_shutdown()
    return _ecore_file_init_count;
 }
 
-EAPI long long
+ECORE_FILE_API long long
 ecore_file_mod_time(const char *file)
 {
    long long time;
@@ -150,7 +150,7 @@ ecore_file_mod_time(const char *file)
    return time;
 }
 
-EAPI long long
+ECORE_FILE_API long long
 ecore_file_size(const char *file)
 {
    long long size;
@@ -161,7 +161,7 @@ ecore_file_size(const char *file)
    return size;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_exists(const char *file)
 {
 #ifdef _WIN32
@@ -177,7 +177,7 @@ ecore_file_exists(const char *file)
 #endif
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_is_dir(const char *file)
 {
    Eina_Bool is_dir;
@@ -190,13 +190,13 @@ ecore_file_is_dir(const char *file)
 
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_mkdir(const char *dir)
 {
    return (mkdir(dir, default_mode) == 0);
 }
 
-EAPI int
+ECORE_FILE_API int
 ecore_file_mkdirs(const char **dirs)
 {
    int i = 0;
@@ -209,7 +209,7 @@ ecore_file_mkdirs(const char **dirs)
    return i;
 }
 
-EAPI int
+ECORE_FILE_API int
 ecore_file_mksubdirs(const char *base, const char **subdirs)
 {
 #ifndef HAVE_ATFILE_SOURCE
@@ -291,28 +291,28 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
    return i;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_rmdir(const char *dir)
 {
    if (rmdir(dir) < 0) return EINA_FALSE;
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_unlink(const char *file)
 {
    if (unlink(file) < 0) return EINA_FALSE;
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_remove(const char *file)
 {
    if (remove(file) < 0) return EINA_FALSE;
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_recursive_rm(const char *dir)
 {
 #ifndef _WIN32
@@ -378,7 +378,7 @@ _ecore_file_mkpath_if_not_exists(const char *path)
      return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
@@ -403,7 +403,7 @@ ecore_file_mkpath(const char *path)
    return _ecore_file_mkpath_if_not_exists(ss);
 }
 
-EAPI int
+ECORE_FILE_API int
 ecore_file_mkpaths(const char **paths)
 {
    int i = 0;
@@ -416,7 +416,7 @@ ecore_file_mkpaths(const char **paths)
    return i;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_cp(const char *src, const char *dst)
 {
    FILE *f1, *f2;
@@ -445,7 +445,7 @@ ecore_file_cp(const char *src, const char *dst)
    return ret;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_mv(const char *src, const char *dst)
 {
    char buf[PATH_MAX];
@@ -538,7 +538,7 @@ FAIL:
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_symlink(const char *src, const char *dest)
 {
 #ifndef _WIN32
@@ -550,7 +550,7 @@ ecore_file_symlink(const char *src, const char *dest)
 #endif
 }
 
-EAPI char *
+ECORE_FILE_API char *
 ecore_file_realpath(const char *file)
 {
    char buf[PATH_MAX];
@@ -565,7 +565,7 @@ ecore_file_realpath(const char *file)
    return strdup(buf);
 }
 
-EAPI const char *
+ECORE_FILE_API const char *
 ecore_file_file_get(const char *path)
 {
    char *result = NULL;
@@ -590,7 +590,7 @@ ecore_file_file_get(const char *path)
    return result;
 }
 
-EAPI char *
+ECORE_FILE_API char *
 ecore_file_dir_get(const char *file)
 {
    char *p;
@@ -603,7 +603,7 @@ ecore_file_dir_get(const char *file)
    return strdup(p);
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_can_read(const char *file)
 {
    if (!file) return EINA_FALSE;
@@ -611,7 +611,7 @@ ecore_file_can_read(const char *file)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_can_write(const char *file)
 {
    if (!file) return EINA_FALSE;
@@ -619,7 +619,7 @@ ecore_file_can_write(const char *file)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_can_exec(const char *file)
 {
 #ifdef _WIN32
@@ -713,7 +713,7 @@ ecore_file_can_exec(const char *file)
    return EINA_FALSE;
 }
 
-EAPI char *
+ECORE_FILE_API char *
 ecore_file_readlink(const char *link)
 {
 #ifndef _WIN32
@@ -729,7 +729,7 @@ ecore_file_readlink(const char *link)
 #endif
 }
 
-EAPI Eina_List *
+ECORE_FILE_API Eina_List *
 ecore_file_ls(const char *dir)
 {
    Eina_File_Direct_Info *info;
@@ -753,7 +753,7 @@ ecore_file_ls(const char *dir)
    return list;
 }
 
-EAPI char *
+ECORE_FILE_API char *
 ecore_file_app_exe_get(const char *app)
 {
    Eina_Strbuf *buf;
@@ -815,7 +815,7 @@ ecore_file_app_exe_get(const char *app)
    return exe;
 }
 
-EAPI char *
+ECORE_FILE_API char *
 ecore_file_escape_name(const char *filename)
 {
    const char *p;
@@ -873,7 +873,7 @@ ecore_file_escape_name(const char *filename)
    return strdup(buf);
 }
 
-EAPI char *
+ECORE_FILE_API char *
 ecore_file_strip_ext(const char *path)
 {
    char *p, *file = NULL;
@@ -897,7 +897,7 @@ ecore_file_strip_ext(const char *path)
    return file;
 }
 
-EAPI int
+ECORE_FILE_API int
 ecore_file_dir_is_empty(const char *dir)
 {
    Eina_File_Direct_Info *info;

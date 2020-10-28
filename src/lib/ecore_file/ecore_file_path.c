@@ -68,7 +68,7 @@ _ecore_file_path_from_env(const char *env)
    return path;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_path_dir_exists(const char *in_dir)
 {
    Eina_List *l;
@@ -87,7 +87,7 @@ ecore_file_path_dir_exists(const char *in_dir)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_app_installed(const char *exe)
 {
    Eina_List *l;
@@ -110,7 +110,7 @@ ecore_file_app_installed(const char *exe)
    return EINA_FALSE;
 }
 
-EAPI Eina_List *
+ECORE_FILE_API Eina_List *
 ecore_file_app_list(void)
 {
    Eina_List *list = NULL;
