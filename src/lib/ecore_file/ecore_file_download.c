@@ -174,7 +174,7 @@ _ecore_file_download_headers_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_download_full(const char *url,
                          const char *dst,
                          Ecore_File_Download_Completion_Cb completion_cb,
@@ -274,7 +274,7 @@ ecore_file_download_full(const char *url,
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_download(const char *url,
                     const char *dst,
                     Ecore_File_Download_Completion_Cb completion_cb,
@@ -285,7 +285,7 @@ ecore_file_download(const char *url,
    return ecore_file_download_full(url, dst, completion_cb, progress_cb, data, job_ret, NULL);
 }
 
-EAPI Eina_Bool
+ECORE_FILE_API Eina_Bool
 ecore_file_download_protocol_available(const char *protocol)
 {
    if (!strncmp(protocol, "file://", 7)) return EINA_TRUE;
@@ -296,7 +296,7 @@ ecore_file_download_protocol_available(const char *protocol)
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_FILE_API void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
    const char *file;
@@ -331,7 +331,7 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
    efl_io_closer_close(job->copier);
 }
 
-EAPI void
+ECORE_FILE_API void
 ecore_file_download_abort_all(void)
 {
    Ecore_File_Download_Job *job;

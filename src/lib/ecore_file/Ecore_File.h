@@ -8,31 +8,7 @@
 
 #include <Eina.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_file_api.h>
 
 /**
  * @file Ecore_File.h
@@ -127,7 +103,7 @@ typedef int (*Ecore_File_Download_Progress_Cb)(void *data,
  * When Ecore_File is not used anymore, call ecore_file_shutdown()
  * to shut down the Ecore_File library.
  */
-EAPI int            ecore_file_init         (void);
+ECORE_FILE_API int            ecore_file_init         (void);
 
 /**
  * @brief Shuts down the Ecore_File library.
@@ -139,7 +115,7 @@ EAPI int            ecore_file_init         (void);
  * been called the same number of times than ecore_file_init(). In that case
  * it shuts down all the services it uses.
  */
-EAPI int            ecore_file_shutdown     (void);
+ECORE_FILE_API int            ecore_file_shutdown     (void);
 
 /**
  * @brief Gets the time of the last modification to the given file.
@@ -151,7 +127,7 @@ EAPI int            ecore_file_shutdown     (void);
  * This function returns the time of the last modification of
  * @p file. On failure, it returns 0.
  */
-EAPI long long      ecore_file_mod_time     (const char *file);
+ECORE_FILE_API long long      ecore_file_mod_time     (const char *file);
 
 /**
  * @brief Gets the size of the given file.
@@ -162,7 +138,7 @@ EAPI long long      ecore_file_mod_time     (const char *file);
  * This function returns the size of @p file in bytes. On failure, it
  * returns 0.
  */
-EAPI long long      ecore_file_size         (const char *file);
+ECORE_FILE_API long long      ecore_file_size         (const char *file);
 
 /**
  * @brief Checks if the given file exists.
@@ -173,7 +149,7 @@ EAPI long long      ecore_file_size         (const char *file);
  * This function returns @c EINA_TRUE if @p file exists on local filesystem,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_exists       (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_exists       (const char *file);
 
 /**
  * @brief Checks if the given file is a directory.
@@ -185,7 +161,7 @@ EAPI Eina_Bool      ecore_file_exists       (const char *file);
  * This function returns @c EINA_TRUE if @p file exists exists and is a
  * directory on local filesystem, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_is_dir       (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_is_dir       (const char *file);
 
 /**
  * @brief Creates a new directory.
@@ -198,7 +174,7 @@ EAPI Eina_Bool      ecore_file_is_dir       (const char *file);
  * (mode is unused on Windows). On success, it returns @c EINA_TRUE,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_mkdir        (const char *dir);
+ECORE_FILE_API Eina_Bool      ecore_file_mkdir        (const char *dir);
 
 /**
  * @brief Creates complete directory in a batch.
@@ -213,7 +189,7 @@ EAPI Eina_Bool      ecore_file_mkdir        (const char *dir);
  * @c NULL, otherwise if returns the number of successfully created
  * directories.
  */
-EAPI int            ecore_file_mkdirs       (const char **dirs);
+ECORE_FILE_API int            ecore_file_mkdirs       (const char **dirs);
 
 /**
  * @brief Creates complete list of sub-directories in a batch (optimized).
@@ -233,7 +209,7 @@ EAPI int            ecore_file_mkdirs       (const char **dirs);
  * invalid, or if it can't be created. Otherwise if returns the number
  * of successfully created directories.
  */
-EAPI int            ecore_file_mksubdirs    (const char *base, const char **subdirs);
+ECORE_FILE_API int            ecore_file_mksubdirs    (const char *base, const char **subdirs);
 
 /**
  * @brief Deletes the given empty directory.
@@ -244,7 +220,7 @@ EAPI int            ecore_file_mksubdirs    (const char *base, const char **subd
  * This function deletes @p dir. It returns @c EINA_TRUE on success,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_rmdir        (const char *dir);
+ECORE_FILE_API Eina_Bool      ecore_file_rmdir        (const char *dir);
 
 /**
  * @brief Deletes the given directory and all its contents.
@@ -256,7 +232,7 @@ EAPI Eina_Bool      ecore_file_rmdir        (const char *dir);
  * link only the link is removed. It returns @c EINA_TRUE on success,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_recursive_rm (const char *dir);
+ECORE_FILE_API Eina_Bool      ecore_file_recursive_rm (const char *dir);
 
 /**
  * @brief Creates a complete path.
@@ -269,7 +245,7 @@ EAPI Eina_Bool      ecore_file_recursive_rm (const char *dir);
  * function returns @c EINA_TRUE immediately. It returns @c EINA_TRUE on
  * success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_mkpath       (const char *path);
+ECORE_FILE_API Eina_Bool      ecore_file_mkpath       (const char *path);
 
 /**
  * @brief Creates complete paths in a batch.
@@ -284,7 +260,7 @@ EAPI Eina_Bool      ecore_file_mkpath       (const char *path);
  * returns -1 if @p paths is @c NULL. Otherwise if returns the number
  * of successfully created directories.
  */
-EAPI int            ecore_file_mkpaths      (const char **paths);
+ECORE_FILE_API int            ecore_file_mkpaths      (const char **paths);
 
 /**
  * @brief Copies the given file to the given destination.
@@ -298,7 +274,7 @@ EAPI int            ecore_file_mkpaths      (const char **paths);
  * the copy fails, the function returns @c EINA_FALSE, otherwise it
  * returns @c EINA_TRUE.
  */
-EAPI Eina_Bool      ecore_file_cp           (const char *src, const char *dst);
+ECORE_FILE_API Eina_Bool      ecore_file_cp           (const char *src, const char *dst);
 
 /**
  * @brief Moves the given file to the given destination.
@@ -310,7 +286,7 @@ EAPI Eina_Bool      ecore_file_cp           (const char *src, const char *dst);
  * This function moves @p src to @p dst. It returns @c EINA_TRUE on
  * success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_mv           (const char *src, const char *dst);
+ECORE_FILE_API Eina_Bool      ecore_file_mv           (const char *src, const char *dst);
 
 /**
  * @brief Creates a symbolic link.
@@ -324,7 +300,7 @@ EAPI Eina_Bool      ecore_file_mv           (const char *src, const char *dst);
  *
  * @note On windows, this function always returns @c EINA_FALSE.
  */
-EAPI Eina_Bool      ecore_file_symlink      (const char *src, const char *dest);
+ECORE_FILE_API Eina_Bool      ecore_file_symlink      (const char *src, const char *dest);
 
 /**
  * @brief Gets the canonicalized absolute path name.
@@ -338,7 +314,7 @@ EAPI Eina_Bool      ecore_file_symlink      (const char *src, const char *dest);
  * returns an empty string. Otherwise, it returns the absolute path
  * name. When not needed anymore, the returned value must be freed.
  */
-EAPI char          *ecore_file_realpath     (const char *file);
+ECORE_FILE_API char          *ecore_file_realpath     (const char *file);
 
 /**
  * @brief Deletes the given file.
@@ -349,7 +325,7 @@ EAPI char          *ecore_file_realpath     (const char *file);
  * This function deletes @p file. It returns @c EINA_TRUE on success,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_unlink       (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_unlink       (const char *file);
 
 /**
  * @brief Removes the given file or directory.
@@ -360,7 +336,7 @@ EAPI Eina_Bool      ecore_file_unlink       (const char *file);
  * This function removes @p file. It returns @c EINA_TRUE on success,
  * @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool      ecore_file_remove       (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_remove       (const char *file);
 
 /**
  * @brief Gets the filename from a given path.
@@ -371,7 +347,7 @@ EAPI Eina_Bool      ecore_file_remove       (const char *file);
  * This function returns the file name of @p path. If @p path is
  * @c NULL, the functions returns @c NULL.
  */
-EAPI const char    *ecore_file_file_get     (const char *path);
+ECORE_FILE_API const char    *ecore_file_file_get     (const char *path);
 
 /**
  * @brief Gets the directory where the given file resides.
@@ -384,7 +360,7 @@ EAPI const char    *ecore_file_file_get     (const char *path);
  * returns @c NULL. When not needed anymore, the returned value must
  * be freed.
  */
-EAPI char          *ecore_file_dir_get      (const char *file);
+ECORE_FILE_API char          *ecore_file_dir_get      (const char *file);
 
 /**
  * @brief Checks if the given file can be read.
@@ -395,7 +371,7 @@ EAPI char          *ecore_file_dir_get      (const char *file);
  * This function returns @c EINA_TRUE if @p file can be read, @c EINA_FALSE
  * otherwise.
  */
-EAPI Eina_Bool      ecore_file_can_read     (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_can_read     (const char *file);
 
 /**
  * @brief Checks if the given file can be written.
@@ -406,7 +382,7 @@ EAPI Eina_Bool      ecore_file_can_read     (const char *file);
  * This function returns @c EINA_TRUE if @p file can be written, @c EINA_FALSE
  * otherwise.
  */
-EAPI Eina_Bool      ecore_file_can_write    (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_can_write    (const char *file);
 
 /**
  * @brief Checks if the given file can be executed.
@@ -418,7 +394,7 @@ EAPI Eina_Bool      ecore_file_can_write    (const char *file);
  * This function returns @c EINA_TRUE if @p file can be executed, @c EINA_FALSE
  * otherwise.
  */
-EAPI Eina_Bool      ecore_file_can_exec     (const char *file);
+ECORE_FILE_API Eina_Bool      ecore_file_can_exec     (const char *file);
 
 /**
  * @brief Gets the path pointed by the given link.
@@ -432,7 +408,7 @@ EAPI Eina_Bool      ecore_file_can_exec     (const char *file);
  *
  * @note On windows, this function always returns @c NULL.
  */
-EAPI char          *ecore_file_readlink     (const char *link);
+ECORE_FILE_API char          *ecore_file_readlink     (const char *link);
 
 /**
  * @brief Gets the list of the files and directories in the given
@@ -451,7 +427,7 @@ EAPI char          *ecore_file_readlink     (const char *link);
  * '.' and '..'. On failure, @c NULL is returned. When not needed
  * anymore, the list elements must be freed.
  */
-EAPI Eina_List     *ecore_file_ls           (const char *dir);
+ECORE_FILE_API Eina_List     *ecore_file_ls           (const char *dir);
 
 /**
  * @brief Returns the executable from the given command.
@@ -462,7 +438,7 @@ EAPI Eina_List     *ecore_file_ls           (const char *dir);
  * on failure, the function returns @c NULL. When not needed anymore, the
  * returned value must be freed.
  */
-EAPI char          *ecore_file_app_exe_get  (const char *app);
+ECORE_FILE_API char          *ecore_file_app_exe_get  (const char *app);
 
 /**
  * @brief Adds the escape sequence ('\\') to the given file name.
@@ -476,7 +452,7 @@ EAPI char          *ecore_file_app_exe_get  (const char *app);
  * failure, @c NULL is returned. When not needed anymore, the returned
  * value must be freed.
  */
-EAPI char          *ecore_file_escape_name  (const char *filename);
+ECORE_FILE_API char          *ecore_file_escape_name  (const char *filename);
 
 /**
  * @brief Removes the extension from the given file name.
@@ -490,7 +466,7 @@ EAPI char          *ecore_file_escape_name  (const char *filename);
  * failure, the function returns @c NULL. When not needed anymore, the
  * returned value must be freed.
  */
-EAPI char          *ecore_file_strip_ext    (const char *path);
+ECORE_FILE_API char          *ecore_file_strip_ext    (const char *path);
 
 /**
  * @brief Checks if the given directory is empty.
@@ -503,7 +479,7 @@ EAPI char          *ecore_file_strip_ext    (const char *path);
  * will be ignored. If @p dir is empty, 1 is returned, if it contains
  * at least one file, @c 0 is returned. On failure, @c -1 is returned.
  */
-EAPI int            ecore_file_dir_is_empty (const char *dir);
+ECORE_FILE_API int            ecore_file_dir_is_empty (const char *dir);
 
 /* Monitoring */
 
@@ -524,7 +500,7 @@ EAPI int            ecore_file_dir_is_empty (const char *dir);
  * and @p data is passed to @p func.Call ecore_file_monitor_del() to
  * stop the monitoring.
  */
-EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
+ECORE_FILE_API Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
                                                 Ecore_File_Monitor_Cb func,
                                                 void *data);
 
@@ -539,7 +515,7 @@ EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
  * of the notify methods (Inotify, Windows notification or polling) is
  * available this function does nothing.
  */
-EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *em);
+ECORE_FILE_API void                ecore_file_monitor_del(Ecore_File_Monitor *em);
 
 /**
  * @brief Gets the monitored path.
@@ -552,7 +528,7 @@ EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *em);
  * returned by ecore_file_monitor_add(). If @p em is @c NULL, the
  * function returns @c NULL.
  */
-EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *em);
+ECORE_FILE_API const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *em);
 
 /* Path */
 
@@ -567,7 +543,7 @@ EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *em);
  * not in PATH, the function returns @c EINA_FALSE, otherwise it returns
  * @c EINA_TRUE.
  */
-EAPI Eina_Bool  ecore_file_path_dir_exists(const char *in_dir);
+ECORE_FILE_API Eina_Bool  ecore_file_path_dir_exists(const char *in_dir);
 
 /**
  * @brief Checks if the given application is installed.
@@ -580,7 +556,7 @@ EAPI Eina_Bool  ecore_file_path_dir_exists(const char *in_dir);
  * @p exe is @c NULL or is not executable, the function returns
  * @c EINA_FALSE, otherwise it returns @c EINA_TRUE.
  */
-EAPI Eina_Bool  ecore_file_app_installed(const char *exe);
+ECORE_FILE_API Eina_Bool  ecore_file_app_installed(const char *exe);
 
 /**
  * @brief Gets a list of all the applications installed on the system.
@@ -593,7 +569,7 @@ EAPI Eina_Bool  ecore_file_app_installed(const char *exe);
  * @c NULL. When not needed anymore, the element of the list must be
  * freed.
  */
-EAPI Eina_List *ecore_file_app_list(void);
+ECORE_FILE_API Eina_List *ecore_file_app_list(void);
 
 /* Download */
 
@@ -626,7 +602,7 @@ EAPI Eina_List *ecore_file_app_list(void);
  * abort all download operations. This function returns @c EINA_TRUE if the
  * download starts, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool ecore_file_download(const char *url,
+ECORE_FILE_API Eina_Bool ecore_file_download(const char *url,
                                    const char *dst,
                                    Ecore_File_Download_Completion_Cb completion_cb,
                                    Ecore_File_Download_Progress_Cb progress_cb,
@@ -645,7 +621,7 @@ EAPI Eina_Bool ecore_file_download(const char *url,
  * @param  headers pointer of header lists.
  * @return @c EINA_TRUE if the download start or @c EINA_FALSE on failure.
  */
-EAPI Eina_Bool ecore_file_download_full(const char *url,
+ECORE_FILE_API Eina_Bool ecore_file_download_full(const char *url,
                                         const char *dst,
                                         Ecore_File_Download_Completion_Cb completion_cb,
                                         Ecore_File_Download_Progress_Cb progress_cb,
@@ -661,7 +637,7 @@ EAPI Eina_Bool ecore_file_download_full(const char *url,
  * ecore_file_download_abort() for each of them. To abort only one
  * specific download operation, call ecore_file_download_abort().
  */
-EAPI void      ecore_file_download_abort_all(void);
+ECORE_FILE_API void      ecore_file_download_abort_all(void);
 
 /**
  * @brief Aborts the given download job and call the completion_cb
@@ -675,7 +651,7 @@ EAPI void      ecore_file_download_abort_all(void);
  * function does nothing. To abort all the currently downloading
  * operations, call ecore_file_download_abort_all().
  */
-EAPI void      ecore_file_download_abort(Ecore_File_Download_Job *job);
+ECORE_FILE_API void      ecore_file_download_abort(Ecore_File_Download_Job *job);
 
 /**
  * @brief Checks if the given protocol is available.
@@ -688,7 +664,7 @@ EAPI void      ecore_file_download_abort(Ecore_File_Download_Job *job);
  * '%file://'. Ecore_FILE must be compiled with CURL to handle http and
  * ftp protocols.
  */
-EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);
+ECORE_FILE_API Eina_Bool ecore_file_download_protocol_available(const char *protocol);
 
 /**
  * @}
@@ -697,8 +673,5 @@ EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
