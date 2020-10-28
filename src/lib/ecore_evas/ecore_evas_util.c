@@ -219,7 +219,7 @@ _ecore_evas_object_evas_check(const char *function EINA_UNUSED, const Ecore_Evas
    return 0;
 }
 
-EAPI Eina_Bool
+ECORE_EVAS_API Eina_Bool
 ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags)
 {
    Ecore_Evas *old_ee;
@@ -247,7 +247,7 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_EVAS_API Eina_Bool
 ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 {
    Ecore_Evas *old_ee;
@@ -279,7 +279,7 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
    return EINA_TRUE;
 }
 
-EAPI Evas_Object *
+ECORE_EVAS_API Evas_Object *
 ecore_evas_object_associate_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
