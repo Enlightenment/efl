@@ -38,7 +38,7 @@ nosigint(int val EINA_UNUSED)
  * When Ecore_Fb is not used anymore, call ecore_fb_shutdown() to shut down
  * the Ecore_Fb library.
  */
-EAPI int
+ECORE_FB_API int
 ecore_fb_init(const char *name)
 {
    const char *s;
@@ -72,7 +72,7 @@ ecore_fb_init(const char *name)
  * This function shuts down the Ecore_Fb library. It returns 0 when it has
  * been called the same number of times than ecore_fb_init().
  */
-EAPI int
+ECORE_FB_API int
 ecore_fb_shutdown(void)
 {
    const char *s;
@@ -108,7 +108,7 @@ ecore_fb_shutdown(void)
  * corresponding values. If one of them is @c NULL, nothing will be
  * done for that parameter.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_size_get(int *w, int *h)
 {
    if (w) *w = _ecore_fb_console_w;

@@ -241,7 +241,7 @@ ecore_fb_vt_shutdown(void)
  * to vt1 and your app was using vt1). @p data will be pass to @p func if
  * the callback is called.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
 {
    _ecore_fb_func_fb_gain = func;
@@ -259,7 +259,7 @@ ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
  * want to give up that vt). @p data will be pass to @p func if the
  * callback is called.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_callback_lose_set(void (*func) (void *data), void *data)
 {
    _ecore_fb_func_fb_lost = func;
