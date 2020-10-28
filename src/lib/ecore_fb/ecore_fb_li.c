@@ -459,7 +459,7 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh EINA_UNUSED)
  * If @p listen is @c EINA_FALSE, listening mode is disabled, if it is
  * @c EINA_TRUE, it is enabled.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
 {
    if (!dev) return;
@@ -506,7 +506,7 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
  *
  * @since 1.1
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_input_device_window_set(Ecore_Fb_Input_Device *dev, void *window)
 {
    if (!dev) return;
@@ -523,7 +523,7 @@ ecore_fb_input_device_window_set(Ecore_Fb_Input_Device *dev, void *window)
  * This function opens the input device named @p dev and returns the
  * object for it, or returns @c NULL on failure.
  */
-EAPI Ecore_Fb_Input_Device *
+ECORE_FB_API Ecore_Fb_Input_Device *
 ecore_fb_input_device_open(const char *dev)
 {
    Ecore_Fb_Input_Device *device;
@@ -606,7 +606,7 @@ error_open:
  * This function closes the device @p dev. If @p dev is @c NULL, this
  * function does nothing.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
 {
    if (!dev || dev->fd < 0) return;
@@ -630,7 +630,7 @@ ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
  * height must set for it. If its absolute set the ioctl correctly, if
  * not, unsupported device.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
 {
    if (!dev) return;
@@ -671,7 +671,7 @@ ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
  * This function returns the name of the device @p dev. If @p dev is
  * @c NULL, this function returns @c NULL.
  */
-EAPI const char *
+ECORE_FB_API const char *
 ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev)
 {
    if (!dev) return NULL;
@@ -687,7 +687,7 @@ ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev)
  * This function returns the capability of the device @p dev. If @p dev is
  * @c NULL, this function returns ECORE_FB_INPUT_DEVICE_CAP_NONE.
  */
-EAPI Ecore_Fb_Input_Device_Cap
+ECORE_FB_API Ecore_Fb_Input_Device_Cap
 ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev)
 {
    if (!dev) return ECORE_FB_INPUT_DEVICE_CAP_NONE;
@@ -704,7 +704,7 @@ ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev)
  * @p dev to @p threshold. If @p dev is @c NULL, this function does
  * nothing.
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_input_device_threshold_click_set(Ecore_Fb_Input_Device *dev, double threshold)
 {
    if (!dev) return;
@@ -722,7 +722,7 @@ ecore_fb_input_device_threshold_click_set(Ecore_Fb_Input_Device *dev, double thr
  * This function returns the threshold of mouse clicks of the device
  * @p dev. If @p dev is @c NULL, this function returns 0.0.
  */
-EAPI double
+ECORE_FB_API double
 ecore_fb_input_device_threshold_click_get(Ecore_Fb_Input_Device *dev)
 {
    if (!dev) return 0;

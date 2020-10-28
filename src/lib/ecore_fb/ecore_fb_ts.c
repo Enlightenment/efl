@@ -78,7 +78,7 @@ struct ts_sample _ecore_fb_tslib_event;
 static double _ecore_fb_double_click_time = 0.25;
 static void *_ecore_fb_ts_event_window = NULL;
 
-EAPI int
+ECORE_FB_API int
 ecore_fb_ts_init(void)
 {
 #ifdef HAVE_TSLIB
@@ -130,7 +130,7 @@ ecore_fb_ts_init(void)
    return 0;
 }
 
-EAPI void
+ECORE_FB_API void
 ecore_fb_ts_shutdown(void)
 {
    if (_ecore_fb_ts_fd_handler_handle)
@@ -141,13 +141,13 @@ ecore_fb_ts_shutdown(void)
    _ecore_fb_ts_event_window = NULL;
 }
 
-EAPI void
+ECORE_FB_API void
 ecore_fb_ts_event_window_set(void *window)
 {
    _ecore_fb_ts_event_window = window;
 }
 
-EAPI void *
+ECORE_FB_API void *
 ecore_fb_ts_event_window_get(void)
 {
     return _ecore_fb_ts_event_window;
@@ -170,7 +170,7 @@ ecore_fb_ts_event_window_get(void)
  * @param   xyswap Swap X & Y flag.
  * @ingroup Ecore_FB_Calibrate_Group
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap)
 {
    Ecore_Fb_Ts_Calibrate cal;
@@ -198,7 +198,7 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
  * @param   xyswap Pointer to an integer in which to store the Swap X & Y flag.
  * @ingroup Ecore_FB_Calibrate_Group
  */
-EAPI void
+ECORE_FB_API void
 ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap)
 {
    Ecore_Fb_Ts_Calibrate cal;

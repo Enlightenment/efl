@@ -3,19 +3,7 @@
 
 #include <Eina.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  define EAPI __attribute__ ((visibility("default")))
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI
-#endif
+#include <ecore_fb_api.h>
 
 /* FIXME:
  * maybe a new module?
@@ -67,28 +55,28 @@ enum _Ecore_Fb_Input_Device_Cap
 typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 
 /* ecore_fb_vt.c */
-EAPI void                      ecore_fb_callback_gain_set(void (*func) (void *data), void *data);
-EAPI void                      ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
+ECORE_FB_API void                      ecore_fb_callback_gain_set(void (*func) (void *data), void *data);
+ECORE_FB_API void                      ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
 
 /* ecore_fb_li.c */
-EAPI Ecore_Fb_Input_Device    *ecore_fb_input_device_open(const char *dev);
-EAPI void                      ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev);
-EAPI void                      ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen);
-EAPI const char               *ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev);
-EAPI Ecore_Fb_Input_Device_Cap ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev);
-EAPI void                      ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h);
-EAPI void                      ecore_fb_input_threshold_click_set(Ecore_Fb_Input_Device *dev, double threshold);
-EAPI double                    ecore_fb_input_threshold_click_get(Ecore_Fb_Input_Device *dev);
-EAPI void                      ecore_fb_input_device_window_set(Ecore_Fb_Input_Device *dev, void *window);
+ECORE_FB_API Ecore_Fb_Input_Device    *ecore_fb_input_device_open(const char *dev);
+ECORE_FB_API void                      ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev);
+ECORE_FB_API void                      ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen);
+ECORE_FB_API const char               *ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev);
+ECORE_FB_API Ecore_Fb_Input_Device_Cap ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev);
+ECORE_FB_API void                      ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h);
+ECORE_FB_API void                      ecore_fb_input_threshold_click_set(Ecore_Fb_Input_Device *dev, double threshold);
+ECORE_FB_API double                    ecore_fb_input_threshold_click_get(Ecore_Fb_Input_Device *dev);
+ECORE_FB_API void                      ecore_fb_input_device_window_set(Ecore_Fb_Input_Device *dev, void *window);
 
 /* ecore_fb.c */
 
-EAPI int                       ecore_fb_init(const char *name);
-EAPI int                       ecore_fb_shutdown(void);
-EAPI void                      ecore_fb_size_get(int *w, int *h);
+ECORE_FB_API int                       ecore_fb_init(const char *name);
+ECORE_FB_API int                       ecore_fb_shutdown(void);
+ECORE_FB_API void                      ecore_fb_size_get(int *w, int *h);
 
-EAPI void                      ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
-EAPI void                      ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
+ECORE_FB_API void                      ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
+ECORE_FB_API void                      ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
 
 /**
  * @}
@@ -97,8 +85,5 @@ EAPI void                      ecore_fb_touch_screen_calibrate_get(int *xscale, 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
