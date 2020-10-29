@@ -110,7 +110,7 @@ _ecore_buffer_backends_free(const Eina_Hash *hash EINA_UNUSED, const void *key E
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_BUFFER_API Eina_Bool
 ecore_buffer_register(Ecore_Buffer_Backend *be)
 {
    Ecore_Buffer_Module *bm;
@@ -127,7 +127,7 @@ ecore_buffer_register(Ecore_Buffer_Backend *be)
    return eina_hash_add(_backends, be->name, bm);
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_unregister(Ecore_Buffer_Backend *be)
 {
    Ecore_Buffer_Module *bm;
@@ -142,7 +142,7 @@ ecore_buffer_unregister(Ecore_Buffer_Backend *be)
    free(bm);
 }
 
-EAPI Eina_Bool
+ECORE_BUFFER_API Eina_Bool
 ecore_buffer_init(void)
 {
    char *path;
@@ -206,7 +206,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_BUFFER_API Eina_Bool
 ecore_buffer_shutdown(void)
 {
    if (_ecore_buffer_init_count < 1)
@@ -234,7 +234,7 @@ ecore_buffer_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI Ecore_Buffer*
+ECORE_BUFFER_API Ecore_Buffer*
 ecore_buffer_new(const char *engine, unsigned int width, unsigned int height, Ecore_Buffer_Format format, unsigned int flags)
 {
    Ecore_Buffer_Module *bm;
@@ -277,7 +277,7 @@ ecore_buffer_new(const char *engine, unsigned int width, unsigned int height, Ec
    return bo;
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_free(Ecore_Buffer *buf)
 {
    Ecore_Buffer_Cb_Data *free_cb;
@@ -307,7 +307,7 @@ ecore_buffer_free(Ecore_Buffer *buf)
    free(buf);
 }
 
-EAPI void *
+ECORE_BUFFER_API void *
 ecore_buffer_data_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
@@ -320,7 +320,7 @@ ecore_buffer_data_get(Ecore_Buffer *buf)
    return buf->bm->be->data_get(buf->bm->data, buf->buffer_data);
 }
 
-EAPI Ecore_Pixmap
+ECORE_BUFFER_API Ecore_Pixmap
 ecore_buffer_pixmap_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
@@ -333,7 +333,7 @@ ecore_buffer_pixmap_get(Ecore_Buffer *buf)
    return buf->bm->be->pixmap_get(buf->bm->data, buf->buffer_data);
 }
 
-EAPI void *
+ECORE_BUFFER_API void *
 ecore_buffer_tbm_surface_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, NULL);
@@ -349,7 +349,7 @@ ecore_buffer_tbm_surface_get(Ecore_Buffer *buf)
    return buf->bm->be->tbm_surface_get(buf->bm->data, buf->buffer_data);
 }
 
-EAPI Eina_Bool
+ECORE_BUFFER_API Eina_Bool
 ecore_buffer_size_get(Ecore_Buffer *buf, unsigned int *width, unsigned int *height)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, EINA_FALSE);
@@ -360,7 +360,7 @@ ecore_buffer_size_get(Ecore_Buffer *buf, unsigned int *width, unsigned int *heig
    return EINA_TRUE;
 }
 
-EAPI unsigned int
+ECORE_BUFFER_API unsigned int
 ecore_buffer_format_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
@@ -368,7 +368,7 @@ ecore_buffer_format_get(Ecore_Buffer *buf)
    return buf->format;
 }
 
-EAPI unsigned int
+ECORE_BUFFER_API unsigned int
 ecore_buffer_flags_get(Ecore_Buffer *buf)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
@@ -376,7 +376,7 @@ ecore_buffer_flags_get(Ecore_Buffer *buf)
    return buf->flags;
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_free_callback_add(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(buf);
@@ -393,7 +393,7 @@ ecore_buffer_free_callback_add(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *da
    buf->free_callbacks = eina_inlist_append(buf->free_callbacks, EINA_INLIST_GET(free_cb));
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_free_callback_remove(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *data)
 {
    Ecore_Buffer_Cb_Data *free_cb;

@@ -45,7 +45,7 @@ struct bq_consumer_listener _ecore_buffer_consumer_listener =
    _ecore_buffer_consumer_cb_add_buffer
 };
 
-EAPI Ecore_Buffer_Consumer *
+ECORE_BUFFER_API Ecore_Buffer_Consumer *
 ecore_buffer_consumer_new(const char *name, int32_t queue_size, int32_t w, int32_t h)
 {
    Ecore_Buffer_Consumer *consumer;
@@ -90,7 +90,7 @@ ecore_buffer_consumer_new(const char *name, int32_t queue_size, int32_t w, int32
    return consumer;
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_consumer_free(Ecore_Buffer_Consumer *consumer)
 {
    EINA_SAFETY_ON_NULL_RETURN(consumer);
@@ -106,7 +106,7 @@ ecore_buffer_consumer_free(Ecore_Buffer_Consumer *consumer)
    free(consumer);
 }
 
-EAPI Eina_Bool
+ECORE_BUFFER_API Eina_Bool
 ecore_buffer_consumer_buffer_release(Ecore_Buffer_Consumer *consumer, Ecore_Buffer *buffer)
 {
    Shared_Buffer *sb;
@@ -151,7 +151,7 @@ ecore_buffer_consumer_buffer_release(Ecore_Buffer_Consumer *consumer, Ecore_Buff
    return EINA_TRUE;
 }
 
-EAPI Ecore_Buffer *
+ECORE_BUFFER_API Ecore_Buffer *
 ecore_buffer_consumer_buffer_dequeue(Ecore_Buffer_Consumer *consumer)
 {
    Shared_Buffer *sb;
@@ -179,7 +179,7 @@ ecore_buffer_consumer_buffer_dequeue(Ecore_Buffer_Consumer *consumer)
    return _shared_buffer_buffer_get(sb);
 }
 
-EAPI Eina_Bool
+ECORE_BUFFER_API Eina_Bool
 ecore_buffer_consumer_queue_is_empty(Ecore_Buffer_Consumer *consumer)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(consumer, EINA_FALSE);
@@ -187,7 +187,7 @@ ecore_buffer_consumer_queue_is_empty(Ecore_Buffer_Consumer *consumer)
    return _ecore_buffer_queue_is_empty(consumer->ebq);
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_consumer_provider_add_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Provider_Add_Cb func, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(consumer);
@@ -196,7 +196,7 @@ ecore_buffer_consumer_provider_add_cb_set(Ecore_Buffer_Consumer *consumer, Ecore
    consumer->cb.data = data;
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_consumer_provider_del_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Provider_Del_Cb func, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(consumer);
@@ -205,7 +205,7 @@ ecore_buffer_consumer_provider_del_cb_set(Ecore_Buffer_Consumer *consumer, Ecore
    consumer->cb.data = data;
 }
 
-EAPI void
+ECORE_BUFFER_API void
 ecore_buffer_consumer_buffer_enqueued_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Enqueue_Cb func, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(consumer);
