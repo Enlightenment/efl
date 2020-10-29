@@ -4,31 +4,7 @@
 #include <Eina.h>
 #include <Ecore_Buffer.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_buffer_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -184,7 +160,7 @@ typedef void (*Ecore_Buffer_Provider_Enqueue_Cb) (Ecore_Buffer_Provider *provide
  *
  * @see ecore_buffer_queue_shutdown()
  */
-EAPI int   ecore_buffer_queue_init(void);
+ECORE_BUFFER_API int   ecore_buffer_queue_init(void);
 /**
  * @brief Shuts down the Ecore_Buffer_Queue system.
  *
@@ -196,7 +172,7 @@ EAPI int   ecore_buffer_queue_init(void);
  *
  * @see ecore_buffer_queue_init()
  */
-EAPI int    ecore_buffer_queue_shutdown(void);
+ECORE_BUFFER_API int    ecore_buffer_queue_shutdown(void);
 
 /**
  * @}
@@ -219,7 +195,7 @@ EAPI int    ecore_buffer_queue_shutdown(void);
  *
  * @return Ecore_Buffer_Consumer instance or @c NULL if creation failed.
  */
-EAPI Ecore_Buffer_Consumer    *ecore_buffer_consumer_new(const char *name, int32_t queue_size, int32_t w, int32_t h);
+ECORE_BUFFER_API Ecore_Buffer_Consumer    *ecore_buffer_consumer_new(const char *name, int32_t queue_size, int32_t w, int32_t h);
 /**
  * @brief Frees an Ecore_Buffer_Consumer.
  *
@@ -229,7 +205,7 @@ EAPI Ecore_Buffer_Consumer    *ecore_buffer_consumer_new(const char *name, int32
  *
  * This frees up any memory used by the Ecore_Buffer_Consumer.
  */
-EAPI void                      ecore_buffer_consumer_free(Ecore_Buffer_Consumer *consumer);
+ECORE_BUFFER_API void                      ecore_buffer_consumer_free(Ecore_Buffer_Consumer *consumer);
 /**
  * @brief Returns the latest Ecore_Buffer submitted by provider.
  *
@@ -244,7 +220,7 @@ EAPI void                      ecore_buffer_consumer_free(Ecore_Buffer_Consumer 
  * Consumer can store Ecore_Buffer submitted by Provider as much as size of queue
  * which is passed as a argument of ecore_buffer_consumer_new().
  */
-EAPI Ecore_Buffer             *ecore_buffer_consumer_buffer_dequeue(Ecore_Buffer_Consumer *consumer);
+ECORE_BUFFER_API Ecore_Buffer             *ecore_buffer_consumer_buffer_dequeue(Ecore_Buffer_Consumer *consumer);
 /**
  * @brief Releases the acquired Ecore_Buffer.
  *
@@ -262,7 +238,7 @@ EAPI Ecore_Buffer             *ecore_buffer_consumer_buffer_dequeue(Ecore_Buffer
  * or freed internally if Ecore_Buffer is not necessary anymore.
  * If not, the resource of Ecore_Buffer is continually owned by consumer until released.
  */
-EAPI Eina_Bool                 ecore_buffer_consumer_buffer_release(Ecore_Buffer_Consumer *consumer, Ecore_Buffer *buffer);
+ECORE_BUFFER_API Eina_Bool                 ecore_buffer_consumer_buffer_release(Ecore_Buffer_Consumer *consumer, Ecore_Buffer *buffer);
 /**
  * @brief Checks if Queue of Ecore_Buffer is empty.
  *
@@ -272,7 +248,7 @@ EAPI Eina_Bool                 ecore_buffer_consumer_buffer_release(Ecore_Buffer
  *
  * @return @c EINA_TRUE means queue is empty, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool                 ecore_buffer_consumer_queue_is_empty(Ecore_Buffer_Consumer *consumer);
+ECORE_BUFFER_API Eina_Bool                 ecore_buffer_consumer_queue_is_empty(Ecore_Buffer_Consumer *consumer);
 /**
  * @brief Sets a callback for provider connection events.
  *
@@ -285,7 +261,7 @@ EAPI Eina_Bool                 ecore_buffer_consumer_queue_is_empty(Ecore_Buffer
  * A call to this function will set a callback on an Ecore_Buffer_Consumer, causing
  * @p func to be called whenever @p consumer is connected with provider.
  */
-EAPI void                      ecore_buffer_consumer_provider_add_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Provider_Add_Cb func, void *data);
+ECORE_BUFFER_API void                      ecore_buffer_consumer_provider_add_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Provider_Add_Cb func, void *data);
 /**
  * @brief Sets a callback for provider disconnection events.
  *
@@ -298,7 +274,7 @@ EAPI void                      ecore_buffer_consumer_provider_add_cb_set(Ecore_B
  * A call to this function will set a callback on an Ecore_Buffer_Consumer, causing
  * @p func to be called whenever @p consumer is disconnected with provider.
  */
-EAPI void                      ecore_buffer_consumer_provider_del_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Provider_Del_Cb func, void *data);
+ECORE_BUFFER_API void                      ecore_buffer_consumer_provider_del_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Provider_Del_Cb func, void *data);
 /**
  * @brief Sets a callback for enqueued buffer events.
  *
@@ -313,7 +289,7 @@ EAPI void                      ecore_buffer_consumer_provider_del_cb_set(Ecore_B
  *
  * You may success acquire Ecore_Buffer after this callback called.
  */
-EAPI void                      ecore_buffer_consumer_buffer_enqueued_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Enqueue_Cb func, void *data);
+ECORE_BUFFER_API void                      ecore_buffer_consumer_buffer_enqueued_cb_set(Ecore_Buffer_Consumer *consumer, Ecore_Buffer_Consumer_Enqueue_Cb func, void *data);
 
 /**
  * @}
@@ -333,7 +309,7 @@ EAPI void                      ecore_buffer_consumer_buffer_enqueued_cb_set(Ecor
  *
  * @return Ecore_Buffer_Provider instance or @c NULL if creation failed.
  */
-EAPI Ecore_Buffer_Provider    *ecore_buffer_provider_new(const char *name);
+ECORE_BUFFER_API Ecore_Buffer_Provider    *ecore_buffer_provider_new(const char *name);
 /**
  * @brief Frees an Ecore_Buffer_Provider.
  *
@@ -343,7 +319,7 @@ EAPI Ecore_Buffer_Provider    *ecore_buffer_provider_new(const char *name);
  *
  * This frees up any memory used by the Ecore_Buffer_Provider.
  */
-EAPI void                      ecore_buffer_provider_free(Ecore_Buffer_Provider *provider);
+ECORE_BUFFER_API void                      ecore_buffer_provider_free(Ecore_Buffer_Provider *provider);
 /**
  * @brief Returns the Ecore_Buffer released by consumer or State of Queue.
  *
@@ -365,7 +341,7 @@ EAPI void                      ecore_buffer_provider_free(Ecore_Buffer_Provider 
  *
  * @see ecore_buffer_new(), ecore_buffer_provider_buffer_enqueue()
  */
-EAPI Ecore_Buffer_Return       ecore_buffer_provider_buffer_acquire(Ecore_Buffer_Provider *provider, Ecore_Buffer **ret_buf);
+ECORE_BUFFER_API Ecore_Buffer_Return       ecore_buffer_provider_buffer_acquire(Ecore_Buffer_Provider *provider, Ecore_Buffer **ret_buf);
 /**
  * @brief Submits the Ecore_Buffer to Consumer to request compositing.
  *
@@ -382,7 +358,7 @@ EAPI Ecore_Buffer_Return       ecore_buffer_provider_buffer_acquire(Ecore_Buffer
  *
  * @see ecore_buffer_new(), ecore_buffer_provider_buffer_dequeue()
  */
-EAPI Eina_Bool                 ecore_buffer_provider_buffer_enqueue(Ecore_Buffer_Provider *provider, Ecore_Buffer *buffer);
+ECORE_BUFFER_API Eina_Bool                 ecore_buffer_provider_buffer_enqueue(Ecore_Buffer_Provider *provider, Ecore_Buffer *buffer);
 /**
  * @brief Checks if state of queue.
  *
@@ -398,7 +374,7 @@ EAPI Eina_Bool                 ecore_buffer_provider_buffer_enqueue(Ecore_Buffer
  *
  * @return @c EINA_TRUE means queue is empty, @c EINA_FALSE otherwise.
  */
-EAPI Ecore_Buffer_Return       ecore_buffer_provider_buffer_acquirable_check(Ecore_Buffer_Provider *provider);
+ECORE_BUFFER_API Ecore_Buffer_Return       ecore_buffer_provider_buffer_acquirable_check(Ecore_Buffer_Provider *provider);
 /**
  * @brief Sets a callback for consumer connection events.
  *
@@ -411,7 +387,7 @@ EAPI Ecore_Buffer_Return       ecore_buffer_provider_buffer_acquirable_check(Eco
  * A call to this function will set a callback on an Ecore_Buffer_Provider, causing
  * @p func to be called whenever @p provider is connected with consumer.
  */
-EAPI void                      ecore_buffer_provider_consumer_add_cb_set(Ecore_Buffer_Provider *provider, Ecore_Buffer_Provider_Consumer_Add_Cb func, void *data);
+ECORE_BUFFER_API void                      ecore_buffer_provider_consumer_add_cb_set(Ecore_Buffer_Provider *provider, Ecore_Buffer_Provider_Consumer_Add_Cb func, void *data);
 /**
  * @brief Sets a callback for consumer disconnection events.
  *
@@ -424,7 +400,7 @@ EAPI void                      ecore_buffer_provider_consumer_add_cb_set(Ecore_B
  * A call to this function will set a callback on an Ecore_Buffer_Provider, causing
  * @p func to be called whenever @p provider is disconnected with consumer.
  */
-EAPI void                      ecore_buffer_provider_consumer_del_cb_set(Ecore_Buffer_Provider *provider, Ecore_Buffer_Provider_Consumer_Del_Cb func, void *data);
+ECORE_BUFFER_API void                      ecore_buffer_provider_consumer_del_cb_set(Ecore_Buffer_Provider *provider, Ecore_Buffer_Provider_Consumer_Del_Cb func, void *data);
 /**
  * @brief Sets a callback for released buffer events.
  *
@@ -439,7 +415,7 @@ EAPI void                      ecore_buffer_provider_consumer_del_cb_set(Ecore_B
  *
  * You may success dequeue the Ecore_Buffer after this callback called.
  */
-EAPI void                      ecore_buffer_provider_buffer_released_cb_set(Ecore_Buffer_Provider *provider, Ecore_Buffer_Provider_Enqueue_Cb func, void *data);
+ECORE_BUFFER_API void                      ecore_buffer_provider_buffer_released_cb_set(Ecore_Buffer_Provider *provider, Ecore_Buffer_Provider_Enqueue_Cb func, void *data);
 
 /**
  * @}
@@ -448,8 +424,5 @@ EAPI void                      ecore_buffer_provider_buffer_released_cb_set(Ecor
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif /* _ECORE_BUFFER_QUEUE_H_ */

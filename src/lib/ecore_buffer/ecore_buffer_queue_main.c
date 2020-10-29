@@ -5,7 +5,7 @@
 int _ecore_buffer_queue_log_dom = -1;
 static int _ecore_buffer_queue_init_count = 0;
 
-EAPI int
+ECORE_BUFFER_API int
 ecore_buffer_queue_init(void)
 {
    if (++_ecore_buffer_queue_init_count != 1)
@@ -39,7 +39,7 @@ err:
    return --_ecore_buffer_queue_init_count;
 }
 
-EAPI int
+ECORE_BUFFER_API int
 ecore_buffer_queue_shutdown(void)
 {
    if (--_ecore_buffer_queue_init_count != 0)

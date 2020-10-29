@@ -20,7 +20,7 @@ ecore_buffer_src = files([
 
 ecore_buffer_lib = library('ecore_buffer',
     ecore_buffer_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_BUFFER_BUILD'],
     dependencies: ecore_buffer_pub_deps + ecore_buffer_deps + ecore_buffer_ext_deps,
     include_directories : config_dir,
     install: true,

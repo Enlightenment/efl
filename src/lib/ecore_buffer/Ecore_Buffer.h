@@ -1,31 +1,7 @@
 #ifndef _ECORE_BUFFER_H_
 # define _ECORE_BUFFER_H_
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_buffer_api.h>
 
 /**
  * @defgroup Ecore_Buffer_Group Ecore_Buffer - Graphics buffer functions
@@ -472,7 +448,7 @@ struct _Ecore_Buffer_Backend
  *
  * @see ecore_buffer_shutdown()
  */
-EAPI Eina_Bool     ecore_buffer_init(void);
+ECORE_BUFFER_API Eina_Bool     ecore_buffer_init(void);
 /**
  * @brief Shuts down the Ecore_Buffer system.
  *
@@ -482,7 +458,7 @@ EAPI Eina_Bool     ecore_buffer_init(void);
  *
  * @see ecore_buffer_init()
  */
-EAPI Eina_Bool     ecore_buffer_shutdown(void);
+ECORE_BUFFER_API Eina_Bool     ecore_buffer_shutdown(void);
 /**
  * @brief Registers the given buffer backend.
  *
@@ -492,7 +468,7 @@ EAPI Eina_Bool     ecore_buffer_shutdown(void);
  *
  * @return @c EINA_TRUE if backend has been correctly registered, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool     ecore_buffer_register(Ecore_Buffer_Backend *be);
+ECORE_BUFFER_API Eina_Bool     ecore_buffer_register(Ecore_Buffer_Backend *be);
 /**
  * @brief Unregisters the given buffer backend.
  *
@@ -500,7 +476,7 @@ EAPI Eina_Bool     ecore_buffer_register(Ecore_Buffer_Backend *be);
  *
  * @param[in] be The backend
  */
-EAPI void          ecore_buffer_unregister(Ecore_Buffer_Backend *be);
+ECORE_BUFFER_API void          ecore_buffer_unregister(Ecore_Buffer_Backend *be);
 /**
  * @brief Creates a new Ecore_Buffer given type.
  *
@@ -514,7 +490,7 @@ EAPI void          ecore_buffer_unregister(Ecore_Buffer_Backend *be);
  *
  * @return Newly allocated Ecore_Buffer instance, NULL otherwise.
  */
-EAPI Ecore_Buffer *ecore_buffer_new(const char *engine, unsigned int width, unsigned int height, Ecore_Buffer_Format format, unsigned int flags);
+ECORE_BUFFER_API Ecore_Buffer *ecore_buffer_new(const char *engine, unsigned int width, unsigned int height, Ecore_Buffer_Format format, unsigned int flags);
 /**
  * @brief Frees the given Ecore_Buffer.
  *
@@ -522,7 +498,7 @@ EAPI Ecore_Buffer *ecore_buffer_new(const char *engine, unsigned int width, unsi
  *
  * @param[in] buf The Ecore_Buffer to free
  */
-EAPI void          ecore_buffer_free(Ecore_Buffer *buf);
+ECORE_BUFFER_API void          ecore_buffer_free(Ecore_Buffer *buf);
 /**
  * @brief Sets a callback for Ecore_Buffer free events.
  *
@@ -537,7 +513,7 @@ EAPI void          ecore_buffer_free(Ecore_Buffer *buf);
  *
  * @see ecore_buffer_free_callback_remove()
  */
-EAPI void          ecore_buffer_free_callback_add(Ecore_Buffer *buf, Ecore_Buffer_Cb  func, void *data);
+ECORE_BUFFER_API void          ecore_buffer_free_callback_add(Ecore_Buffer *buf, Ecore_Buffer_Cb  func, void *data);
 /**
  * @brief Removes a callback for Ecore_Buffer free events.
  *
@@ -549,7 +525,7 @@ EAPI void          ecore_buffer_free_callback_add(Ecore_Buffer *buf, Ecore_Buffe
  *
  * @see ecore_buffer_free_callback_add()
  */
-EAPI void          ecore_buffer_free_callback_remove(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *data);
+ECORE_BUFFER_API void          ecore_buffer_free_callback_remove(Ecore_Buffer *buf, Ecore_Buffer_Cb func, void *data);
 /**
  * @brief Get a pointer to the raw data of the given Ecore_Buffer.
  *
@@ -557,7 +533,7 @@ EAPI void          ecore_buffer_free_callback_remove(Ecore_Buffer *buf, Ecore_Bu
  *
  * @return The pointer of raw data.
  */
-EAPI void         *ecore_buffer_data_get(Ecore_Buffer *buf);
+ECORE_BUFFER_API void         *ecore_buffer_data_get(Ecore_Buffer *buf);
 /**
  * @brief Returns the Pixmap of given Ecore_Buffer.
  *
@@ -567,7 +543,7 @@ EAPI void         *ecore_buffer_data_get(Ecore_Buffer *buf);
  *
  * @return The Pixmap instance, @c 0 otherwise.
  */
-EAPI Ecore_Pixmap  ecore_buffer_pixmap_get(Ecore_Buffer *buf);
+ECORE_BUFFER_API Ecore_Pixmap  ecore_buffer_pixmap_get(Ecore_Buffer *buf);
 /**
  * @brief Returns the tbm surface handle of given Ecore_Buffer.
  *
@@ -580,7 +556,7 @@ EAPI Ecore_Pixmap  ecore_buffer_pixmap_get(Ecore_Buffer *buf);
  * The tbm surface handle will be used for the API of libtbm.
  * The API is described in tbm_surface.h in libtbm.
  */
-EAPI void         *ecore_buffer_tbm_surface_get(Ecore_Buffer *buf);
+ECORE_BUFFER_API void         *ecore_buffer_tbm_surface_get(Ecore_Buffer *buf);
 /**
  * @brief Returns size of given Ecore_Buffer.
  *
@@ -592,7 +568,7 @@ EAPI void         *ecore_buffer_tbm_surface_get(Ecore_Buffer *buf);
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool     ecore_buffer_size_get(Ecore_Buffer *buf, unsigned int *width, unsigned int *height);
+ECORE_BUFFER_API Eina_Bool     ecore_buffer_size_get(Ecore_Buffer *buf, unsigned int *width, unsigned int *height);
 /**
  * @brief Returns format of given Ecore_Buffer.
  *
@@ -604,7 +580,7 @@ EAPI Eina_Bool     ecore_buffer_size_get(Ecore_Buffer *buf, unsigned int *width,
  *
  * Return value can be one of those pre-defined value such as ECORE_BUFFER_FORMAT_XRGB8888.
  */
-EAPI Ecore_Buffer_Format ecore_buffer_format_get(Ecore_Buffer *buf);
+ECORE_BUFFER_API Ecore_Buffer_Format ecore_buffer_format_get(Ecore_Buffer *buf);
 /**
  * @brief Returns the flags of given Ecore_Buffer.
  *
@@ -616,7 +592,7 @@ EAPI Ecore_Buffer_Format ecore_buffer_format_get(Ecore_Buffer *buf);
  *
  * NOTE: Not Defined yet.
  */
-EAPI unsigned int  ecore_buffer_flags_get(Ecore_Buffer *buf);
+ECORE_BUFFER_API unsigned int  ecore_buffer_flags_get(Ecore_Buffer *buf);
 
 /**
  * @}
@@ -625,8 +601,5 @@ EAPI unsigned int  ecore_buffer_flags_get(Ecore_Buffer *buf);
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
