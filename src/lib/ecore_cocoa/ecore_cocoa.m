@@ -19,10 +19,10 @@
 
 #include "ecore_cocoa_private.h"
 
-EAPI int ECORE_COCOA_EVENT_WINDOW_UNFOCUSED = 0;
-EAPI int ECORE_COCOA_EVENT_WINDOW_FOCUSED = 0;
-EAPI int ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST = 0;
-EAPI int ECORE_COCOA_EVENT_WINDOW_DESTROY = 0;
+ECORE_COCOA_API int ECORE_COCOA_EVENT_WINDOW_UNFOCUSED = 0;
+ECORE_COCOA_API int ECORE_COCOA_EVENT_WINDOW_FOCUSED = 0;
+ECORE_COCOA_API int ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST = 0;
+ECORE_COCOA_API int ECORE_COCOA_EVENT_WINDOW_DESTROY = 0;
 
 static int _ecore_cocoa_init_count = 0;
 
@@ -30,7 +30,7 @@ static int old_flags;
 
 int _ecore_cocoa_log_domain = -1;
 
-EAPI int
+ECORE_COCOA_API int
 ecore_cocoa_init(void)
 {
    if (++_ecore_cocoa_init_count != 1)
@@ -76,7 +76,7 @@ ecore_cocoa_init(void)
  *             being shut down.
  * @ingroup Ecore_Cocoa_Library_Group
  */
-EAPI int
+ECORE_COCOA_API int
 ecore_cocoa_shutdown(void)
 {
    if (--_ecore_cocoa_init_count != 0)
@@ -393,7 +393,7 @@ _ecore_cocoa_feed_events(void *anEvent)
    return pass;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen EINA_UNUSED, int *w, int *h)
 {
    NSSize pt =  [[[NSScreen screens] objectAtIndex:0] frame].size;
@@ -404,7 +404,7 @@ ecore_cocoa_screen_size_get(Ecore_Cocoa_Screen *screen EINA_UNUSED, int *w, int 
    DBG("Screen size get : %dx%d", (int)pt.width, (int)pt.height);
 }
 
-EAPI int
+ECORE_COCOA_API int
 ecore_cocoa_titlebar_height_get(void)
 {
    static int height = -1;
@@ -421,7 +421,7 @@ ecore_cocoa_titlebar_height_get(void)
    return height;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
 {
    EINA_SAFETY_ON_NULL_RETURN(cb);

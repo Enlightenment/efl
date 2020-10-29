@@ -8,7 +8,7 @@
 #include "ecore_cocoa_private.h"
 #import "ecore_cocoa_app.h"
 
-EAPI Eina_Bool
+ECORE_COCOA_API Eina_Bool
 ecore_cocoa_clipboard_set(const void *data,
                           int size,
                           const char *raw_mime_type)
@@ -46,7 +46,7 @@ ecore_cocoa_clipboard_set(const void *data,
    return (ok) ? EINA_TRUE : EINA_FALSE;
 }
 
-EAPI Eina_Bool
+ECORE_COCOA_API Eina_Bool
 ecore_cocoa_clipboard_exists(void)
 {
    NSDictionary *options;
@@ -61,7 +61,7 @@ ecore_cocoa_clipboard_exists(void)
    return [pb canReadItemWithDataConformingToTypes: classes];
 }
 
-EAPI void *
+ECORE_COCOA_API void *
 ecore_cocoa_clipboard_get(int *size,
                           const char *raw_mime_type)
 {
@@ -158,7 +158,7 @@ fail:
    return NULL;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_clipboard_clear(void)
 {
    [[NSPasteboard generalPasteboard] clearContents];
