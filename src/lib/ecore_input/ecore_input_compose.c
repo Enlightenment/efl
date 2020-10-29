@@ -16,7 +16,7 @@
 // isolate compose tree into its own file - hand crafted into static const c
 #include "ecore_input_compose.h"
 
-EAPI Ecore_Compose_State
+ECORE_INPUT_API Ecore_Compose_State
 ecore_compose_get(const Eina_List *seq, char **seqstr_ret)
 {
    const char *p, *pend;

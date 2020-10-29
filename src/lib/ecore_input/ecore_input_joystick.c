@@ -607,7 +607,7 @@ ecore_input_joystick_shutdown(void)
    return _ecore_input_joystick_init_count;
 }
 
-EAPI void
+ECORE_INPUT_API void
 ecore_input_joystick_event_axis_deadzone_set(int event_axis_deadzone)
 {
    event_axis_deadzone = abs(event_axis_deadzone);
@@ -616,13 +616,13 @@ ecore_input_joystick_event_axis_deadzone_set(int event_axis_deadzone)
    _event_axis_deadzone = event_axis_deadzone;
 }
 
-EAPI int
+ECORE_INPUT_API int
 ecore_input_joystick_event_axis_deadzone_get(void)
 {
    return _event_axis_deadzone;
 }
 
-EAPI const char *
+ECORE_INPUT_API const char *
 ecore_input_joystick_name_get(int index)
 {
 #if defined(HAVE_EEZE) && defined(JSIOCGNAME)
