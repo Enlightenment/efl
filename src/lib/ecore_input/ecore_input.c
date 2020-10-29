@@ -14,21 +14,21 @@
 
 int _ecore_input_log_dom = -1;
 
-EAPI int ECORE_EVENT_KEY_DOWN = 0;
-EAPI int ECORE_EVENT_KEY_UP = 0;
-EAPI int ECORE_EVENT_MOUSE_BUTTON_DOWN = 0;
-EAPI int ECORE_EVENT_MOUSE_BUTTON_UP = 0;
-EAPI int ECORE_EVENT_MOUSE_MOVE = 0;
-EAPI int ECORE_EVENT_MOUSE_WHEEL = 0;
-EAPI int ECORE_EVENT_MOUSE_IN = 0;
-EAPI int ECORE_EVENT_MOUSE_OUT = 0;
-EAPI int ECORE_EVENT_AXIS_UPDATE = 0;
-EAPI int ECORE_EVENT_MOUSE_BUTTON_CANCEL = 0;
-EAPI int ECORE_EVENT_JOYSTICK = 0;
+ECORE_INPUT_API int ECORE_EVENT_KEY_DOWN = 0;
+ECORE_INPUT_API int ECORE_EVENT_KEY_UP = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_BUTTON_DOWN = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_BUTTON_UP = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_MOVE = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_WHEEL = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_IN = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_OUT = 0;
+ECORE_INPUT_API int ECORE_EVENT_AXIS_UPDATE = 0;
+ECORE_INPUT_API int ECORE_EVENT_MOUSE_BUTTON_CANCEL = 0;
+ECORE_INPUT_API int ECORE_EVENT_JOYSTICK = 0;
 
 static int _ecore_event_init_count = 0;
 
-EAPI int
+ECORE_INPUT_API int
 ecore_event_init(void)
 {
    if (++_ecore_event_init_count != 1)
@@ -64,7 +64,7 @@ ecore_event_init(void)
    return _ecore_event_init_count;
 }
 
-EAPI int
+ECORE_INPUT_API int
 ecore_event_shutdown(void)
 {
    if (--_ecore_event_init_count != 0)
@@ -110,7 +110,7 @@ static const Ecore_Event_Modifier_Match matchs[] = {
   { "Scroll_Lock", ECORE_SCROLL, ECORE_EVENT_MODIFIER_SCROLL }
 };
 
-EAPI unsigned int
+ECORE_INPUT_API unsigned int
 ecore_event_modifier_mask(Ecore_Event_Modifier modifier)
 {
    size_t i;
@@ -122,7 +122,7 @@ ecore_event_modifier_mask(Ecore_Event_Modifier modifier)
    return 0;
 }
 
-EAPI Ecore_Event_Modifier
+ECORE_INPUT_API Ecore_Event_Modifier
 ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc)
 {
    size_t i;

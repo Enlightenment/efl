@@ -11,31 +11,7 @@
 
 #include <Eo.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ecore_input_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,17 +23,17 @@ extern "C" {
  *
  *@{
  */
-   EAPI extern int ECORE_EVENT_KEY_DOWN;
-   EAPI extern int ECORE_EVENT_KEY_UP;
-   EAPI extern int ECORE_EVENT_MOUSE_BUTTON_DOWN;
-   EAPI extern int ECORE_EVENT_MOUSE_BUTTON_UP;
-   EAPI extern int ECORE_EVENT_MOUSE_MOVE;
-   EAPI extern int ECORE_EVENT_MOUSE_WHEEL;
-   EAPI extern int ECORE_EVENT_MOUSE_IN;
-   EAPI extern int ECORE_EVENT_MOUSE_OUT;
-   EAPI extern int ECORE_EVENT_AXIS_UPDATE; /**< @since 1.13 */
-   EAPI extern int ECORE_EVENT_MOUSE_BUTTON_CANCEL; /**< @since 1.15 */
-   EAPI extern int ECORE_EVENT_JOYSTICK; /**< @since 1.18 */
+   ECORE_INPUT_API extern int ECORE_EVENT_KEY_DOWN;
+   ECORE_INPUT_API extern int ECORE_EVENT_KEY_UP;
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_BUTTON_DOWN;
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_BUTTON_UP;
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_MOVE;
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_WHEEL;
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_IN;
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_OUT;
+   ECORE_INPUT_API extern int ECORE_EVENT_AXIS_UPDATE; /**< @since 1.13 */
+   ECORE_INPUT_API extern int ECORE_EVENT_MOUSE_BUTTON_CANCEL; /**< @since 1.15 */
+   ECORE_INPUT_API extern int ECORE_EVENT_JOYSTICK; /**< @since 1.18 */
 
 #define ECORE_EVENT_MODIFIER_SHIFT      0x0001
 #define ECORE_EVENT_MODIFIER_CTRL       0x0002
@@ -418,11 +394,11 @@ extern "C" {
    /**
     * Initializes the Ecore Event system.
     */
-   EAPI int                  ecore_event_init(void);
+   ECORE_INPUT_API int                  ecore_event_init(void);
    /**
     * Shutdowns the Ecore Event system.
     */
-   EAPI int                  ecore_event_shutdown(void);
+   ECORE_INPUT_API int                  ecore_event_shutdown(void);
 
    /**
     * Returns the Ecore modifier event integer associated to a
@@ -432,7 +408,7 @@ extern "C" {
     * @return A event_modifier integer that matches with the provided modifier
     * event.
     */
-   EAPI unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
+   ECORE_INPUT_API unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
 
    /**
     * Update a Ecore_Event_Modifiers array with "key" modifier.
@@ -444,7 +420,7 @@ extern "C" {
     * @return ECORE_NONE if the key does not match with an existing one, else
     * the corresponding Ecore_Event_Modifier.
     */
-   EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
+   ECORE_INPUT_API Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 
    /**
     * Handles a sequence of key symbols to make a final compose string.
@@ -456,7 +432,7 @@ extern "C" {
     * @param seqstr_ret The final compose string.
     * @return The status of the composition.
     */
-   EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
+   ECORE_INPUT_API Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
 
    /**
     * Set deadzone of joystick event for an axis.
@@ -469,7 +445,7 @@ extern "C" {
     * @param event_axis_deadzone The joystick event axis deadzone.
     * @since 1.19
     */
-   EAPI void ecore_input_joystick_event_axis_deadzone_set(int event_axis_deadzone);
+   ECORE_INPUT_API void ecore_input_joystick_event_axis_deadzone_set(int event_axis_deadzone);
 
    /**
     * Get deadzone of joystick event for an axis.
@@ -477,7 +453,7 @@ extern "C" {
     * @return deadzone of joystick event for an axis.
     * @since 1.19
     */
-   EAPI int ecore_input_joystick_event_axis_deadzone_get(void);
+   ECORE_INPUT_API int ecore_input_joystick_event_axis_deadzone_get(void);
 
    /**
     * Get name of joystick
@@ -489,13 +465,10 @@ extern "C" {
     * @return name of joystick.
     * @since 1.20
     */
-   EAPI const char *ecore_input_joystick_name_get(int index);
+   ECORE_INPUT_API const char *ecore_input_joystick_name_get(int index);
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 /** @} */
 #endif
