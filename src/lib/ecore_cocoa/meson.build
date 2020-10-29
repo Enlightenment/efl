@@ -33,7 +33,7 @@ evas_include_directories = [
 
 ecore_cocoa_lib = library('ecore_cocoa',
     ecore_cocoa_src, pub_eo_file_target,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_COCOA_BUILD'],
     dependencies: ecore_cocoa_deps + ecore_cocoa_pub_deps + ecore_cocoa_ext_deps,
     link_args : '-Wl,-U,_evas_textblock_text_markup_to_utf8',
     include_directories : config_dir + evas_include_directories,

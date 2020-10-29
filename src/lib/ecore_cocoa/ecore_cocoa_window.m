@@ -325,7 +325,7 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
 @end
 
-EAPI Ecore_Cocoa_Window *
+ECORE_COCOA_API Ecore_Cocoa_Window *
 ecore_cocoa_window_new(int x,
                        int y,
                        int w,
@@ -364,7 +364,7 @@ ecore_cocoa_window_new(int x,
    return win;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
 {
    if (!window)
@@ -374,7 +374,7 @@ ecore_cocoa_window_free(Ecore_Cocoa_Window *window)
    free(window);
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
                                 int                 w,
                                 int                 h)
@@ -384,7 +384,7 @@ ecore_cocoa_window_size_min_set(Ecore_Cocoa_Window *window,
    window->window.contentMinSize = NSMakeSize(w, h);
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
                                 int                      *w,
                                 int                      *h)
@@ -396,7 +396,7 @@ ecore_cocoa_window_size_min_get(const Ecore_Cocoa_Window *window,
    if (h) *h = size.height;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
                                 int                 w,
                                 int                 h)
@@ -406,7 +406,7 @@ ecore_cocoa_window_size_max_set(Ecore_Cocoa_Window *window,
    window->window.contentMaxSize = NSMakeSize(w, h);
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
                                 int                      *w,
                                 int                      *h)
@@ -418,7 +418,7 @@ ecore_cocoa_window_size_max_get(const Ecore_Cocoa_Window *window,
    if (h) *h = size.height;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
                                  int                 w,
                                  int                 h)
@@ -428,7 +428,7 @@ ecore_cocoa_window_size_step_set(Ecore_Cocoa_Window *window,
    window->window.contentResizeIncrements = NSMakeSize(w, h);
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
                                  int                      *w,
                                  int                      *h)
@@ -440,7 +440,7 @@ ecore_cocoa_window_size_step_get(const Ecore_Cocoa_Window *window,
    if (h) *h = size.height;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
                         int                 x,
                         int                 y)
@@ -456,7 +456,7 @@ ecore_cocoa_window_move(Ecore_Cocoa_Window *window,
    [window->window setFrame:win_frame display:YES];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
                           int                 w,
                           int                 h)
@@ -474,7 +474,7 @@ ecore_cocoa_window_resize(Ecore_Cocoa_Window *window,
    [win setFrame:win_frame display:YES];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
                                 int                      *x,
                                 int                      *y,
@@ -490,7 +490,7 @@ ecore_cocoa_window_geometry_get(const Ecore_Cocoa_Window *window,
    if (h) *h = frame.size.height;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_size_get(const Ecore_Cocoa_Window *window,
                             int                      *w,
                             int                      *h)
@@ -502,7 +502,7 @@ ecore_cocoa_window_size_get(const Ecore_Cocoa_Window *window,
    if (h) *h = size.height;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
                                int                 x,
                                int                 y,
@@ -523,7 +523,7 @@ ecore_cocoa_window_move_resize(Ecore_Cocoa_Window *window,
    [window->window setFrame:win_frame display:YES];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window, const char *title)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -532,7 +532,7 @@ ecore_cocoa_window_title_set(Ecore_Cocoa_Window *window, const char *title)
    [window->window setTitle:[NSString stringWithUTF8String:title]];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -542,7 +542,7 @@ ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
    [window->window display];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
@@ -551,28 +551,28 @@ ecore_cocoa_window_hide(Ecore_Cocoa_Window *window)
      [window->window orderOut:NSApp];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_raise(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    [window->window orderFront:nil];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_lower(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    [window->window orderBack:nil];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_activate(Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN(window);
    [window->window makeKeyAndOrderFront:nil];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
                                  Eina_Bool           on)
 {
@@ -588,7 +588,7 @@ ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
      }
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
                                   Eina_Bool           on)
 {
@@ -603,7 +603,7 @@ ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
      }
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
                             Ecore_Cocoa_Object *view)
 {
@@ -625,14 +625,14 @@ ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
    [area release];
 }
 
-EAPI Ecore_Cocoa_Object *
+ECORE_COCOA_API Ecore_Cocoa_Object *
 ecore_cocoa_window_get(const Ecore_Cocoa_Window *window)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
    return window->window;
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
                               Ecore_Cocoa_Cursor  c)
 {
@@ -645,7 +645,7 @@ ecore_cocoa_window_cursor_set(Ecore_Cocoa_Window *win,
    [cursor set];
 }
 
-EAPI void
+ECORE_COCOA_API void
 ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win,
                                Eina_Bool           show)
 {
