@@ -482,7 +482,7 @@ _ethumb_client_exists_end(void *data, Ecore_Thread *thread EINA_UNUSED)
  * @see ethumb_client_connect()
  * @see @ref tutorial_ethumb_client
  */
-EAPI int
+ETHUMB_CLIENT_API int
 ethumb_client_init(void)
 {
    if (_initcount)
@@ -525,7 +525,7 @@ ethumb_client_init(void)
  * ethumb_client_init() again to use the Ethumb_Client functions
  * again.
  */
-EAPI int
+ETHUMB_CLIENT_API int
 ethumb_client_shutdown(void)
 {
    _initcount--;
@@ -593,7 +593,7 @@ _name_start(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *p
  *         called with @c success=EINA_FALSE. The client instance is
  *         not ready to be used until @a connect_cb is called.
  */
-EAPI Ethumb_Client *
+ETHUMB_CLIENT_API Ethumb_Client *
 ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data)
 {
    Ethumb_Client *eclient;
@@ -659,7 +659,7 @@ err:
  * @param client client instance to be destroyed. Must @b not be @c
  *        NULL.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_disconnect(Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -688,7 +688,7 @@ ethumb_client_disconnect(Ethumb_Client *client)
  *        server_die_cb is called or user calls
  *        ethumb_client_disconnect().
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -792,7 +792,7 @@ _setup_iterator_close(Eldbus_Message_Iter *array, Eldbus_Message_Iter *entry, El
  * @param client client instance. Must @b not be @c NULL and client
  *        must be connected (after connected_cb is called).
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_ethumb_setup(Ethumb_Client *client)
 {
    Eldbus_Message *msg;
@@ -1109,7 +1109,7 @@ end:
  *        cancel_cb is called or user calls
  *        ethumb_client_disconnect().
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data)
 {
    struct _ethumb_pending_remove *pending;
@@ -1191,7 +1191,7 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
  *
  * @see ethumb_client_generate_cancel()
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_generate_cancel_all(Ethumb_Client *client)
 {
    void *data;
@@ -1242,7 +1242,7 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
  * @see ethumb_client_category_set()
  * @see ethumb_client_dir_path_set()
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1261,7 +1261,7 @@ ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s)
  * @param tw width, default is 128.
  * @param th height, default is 128.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1280,7 +1280,7 @@ ethumb_client_size_set(Ethumb_Client *client, int tw, int th)
  * @param tw where to return width. May be @c NULL.
  * @param th where to return height. May be @c NULL.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
 {
    if (tw) *tw = 0;
@@ -1299,7 +1299,7 @@ ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th)
  * @param f format identifier to use, either #ETHUMB_THUMB_FDO (0),
  *        #ETHUMB_THUMB_JPEG (1) or #ETHUMB_THUMB_EET (2). Default is FDO.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1319,7 +1319,7 @@ ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f)
  * @return format identifier to use, either #ETHUMB_THUMB_FDO (0),
  *         #ETHUMB_THUMB_JPEG (1) or #ETHUMB_THUMB_EET (2).
  */
-EAPI Ethumb_Thumb_Format
+ETHUMB_CLIENT_API Ethumb_Thumb_Format
 ethumb_client_format_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1356,7 +1356,7 @@ ethumb_client_format_get(const Ethumb_Client *client)
  * @param a aspect mode identifier, either #ETHUMB_THUMB_KEEP_ASPECT (0),
  *        #ETHUMB_THUMB_IGNORE_ASPECT (1) or #ETHUMB_THUMB_CROP (2).
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1375,7 +1375,7 @@ ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a)
  *
  * @return aspect in use for future requests.
  */
-EAPI Ethumb_Thumb_Aspect
+ETHUMB_CLIENT_API Ethumb_Thumb_Aspect
 ethumb_client_aspect_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1399,7 +1399,7 @@ ethumb_client_aspect_get(const Ethumb_Client *client)
  *        #ETHUMB_THUMB_FLIP_TRANSVERSE (7) or #ETHUMB_THUMB_ORIENT_ORIGINAL
  *        (8). Default is ORIGINAL.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_orientation_set(Ethumb_Client *client, Ethumb_Thumb_Orientation o)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1418,7 +1418,7 @@ ethumb_client_orientation_set(Ethumb_Client *client, Ethumb_Thumb_Orientation o)
  *
  * @return orientation in use for future requests.
  */
-EAPI Ethumb_Thumb_Orientation
+ETHUMB_CLIENT_API Ethumb_Thumb_Orientation
 ethumb_client_orientation_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1439,7 +1439,7 @@ ethumb_client_orientation_get(const Ethumb_Client *client)
  * @param y vertical alignment. 0.0 is top visible, 1.0 is bottom
  *        visible, 0.5 is center visible. Default is 0.5
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1458,7 +1458,7 @@ ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y)
  * @param x where to return horizontal alignment. May be @c NULL.
  * @param y where to return vertical alignment. May be @c NULL.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
 {
    if (x) *x = 0.0;
@@ -1477,7 +1477,7 @@ ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y)
  * @param quality value from 0 to 100, default is 80. The effect
  *        depends on the format being used, PNG will not use it.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_quality_set(Ethumb_Client *client, int quality)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1495,7 +1495,7 @@ ethumb_client_quality_set(Ethumb_Client *client, int quality)
  * @return quality value from 0 to 100, default is 80. The effect
  *         depends on the format being used, PNG will not use it.
  */
-EAPI int
+ETHUMB_CLIENT_API int
 ethumb_client_quality_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1512,7 +1512,7 @@ ethumb_client_quality_get(const Ethumb_Client *client)
  * @param compress value from 0 to 9, default is 9. The effect
  *        depends on the format being used, JPEG will not use it.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_compress_set(Ethumb_Client *client, int compress)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1530,7 +1530,7 @@ ethumb_client_compress_set(Ethumb_Client *client, int compress)
  * @return compress value from 0 to 9, default is 9. The effect
  *         depends on the format being used, JPEG will not use it.
  */
-EAPI int
+ETHUMB_CLIENT_API int
 ethumb_client_compress_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1556,7 +1556,7 @@ ethumb_client_compress_get(const Ethumb_Client *client)
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  */
-EAPI Eina_Bool
+ETHUMB_CLIENT_API Eina_Bool
 ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *group, const char *swallow)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1589,7 +1589,7 @@ ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *gro
  *
  * @see ethumb_client_category_set()
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_dir_path_set(Ethumb_Client *client, const char *path)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1611,7 +1611,7 @@ ethumb_client_dir_path_set(Ethumb_Client *client, const char *path)
  *
  * @see ethumb_client_dir_path_set()
  */
-EAPI const char *
+ETHUMB_CLIENT_API const char *
 ethumb_client_dir_path_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, NULL);
@@ -1643,7 +1643,7 @@ ethumb_client_dir_path_get(const Ethumb_Client *client)
  *
  * @see ethumb_client_dir_path_set()
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_category_set(Ethumb_Client *client, const char *category)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1665,7 +1665,7 @@ ethumb_client_category_set(Ethumb_Client *client, const char *category)
  *
  * @see ethumb_client_category_set()
  */
-EAPI const char *
+ETHUMB_CLIENT_API const char *
 ethumb_client_category_get(const Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, NULL);
@@ -1681,7 +1681,7 @@ ethumb_client_category_get(const Ethumb_Client *client)
  *        connected_cb)
  * @param t duration (in seconds). Defaults to 3 seconds.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_video_time_set(Ethumb_Client *client, float t)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1703,7 +1703,7 @@ ethumb_client_video_time_set(Ethumb_Client *client, float t)
  * @param start initial video positon to thumbnail, in percentage (0.0
  *        to 1.0, inclusive). Defaults to 10% (0.1).
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_video_start_set(Ethumb_Client *client, float start)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1734,7 +1734,7 @@ ethumb_client_video_start_set(Ethumb_Client *client, float start)
  * @param interval time between frames, in seconds. Defaults to 0.05
  *        seconds.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_video_interval_set(Ethumb_Client *client, float interval)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1756,7 +1756,7 @@ ethumb_client_video_interval_set(Ethumb_Client *client, float interval)
  * @param ntimes number of times, must be greater than zero.
  *        Defaults to 3.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_video_ntimes_set(Ethumb_Client *client, unsigned int ntimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1783,7 +1783,7 @@ ethumb_client_video_ntimes_set(Ethumb_Client *client, unsigned int ntimes)
  * @param fps number of frames per second to thumbnail. Must be greater
  *        than zero. Defaults to 10.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_video_fps_set(Ethumb_Client *client, unsigned int fps)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1802,7 +1802,7 @@ ethumb_client_video_fps_set(Ethumb_Client *client, unsigned int fps)
  *        connected_cb)
  * @param page page number, defaults to 0 (first).
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_document_page_set(Ethumb_Client *client, unsigned int page)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1829,7 +1829,7 @@ ethumb_client_document_page_set(Ethumb_Client *client, unsigned int page)
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  */
-EAPI Eina_Bool
+ETHUMB_CLIENT_API Eina_Bool
 ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
@@ -1852,7 +1852,7 @@ ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key)
  *        but @b no references are added (do it with
  *        eina_stringshare_ref())!
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key)
 {
    if (path) *path = NULL;
@@ -1869,7 +1869,7 @@ ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **ke
  *        NULL. May be pending connected (can be called before @c
  *        connected_cb)
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_file_free(Ethumb_Client *client)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1895,7 +1895,7 @@ ethumb_client_file_free(Ethumb_Client *client)
  * @param key force generated thumbnail to the exact given key. If
  *        @c NULL, then reverts back to auto-generation.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN(client);
@@ -1927,7 +1927,7 @@ ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char
  *        pointer to a stringshared instance, but @b no references are
  *        added (do it with eina_stringshare_ref())!
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key)
 {
    if (path) *path = NULL;
@@ -1951,7 +1951,7 @@ ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const cha
  *
  * @return @c NULL on failure, a valid Ethumb_Exists pointer otherwise
  */
-EAPI Ethumb_Exists *
+ETHUMB_CLIENT_API Ethumb_Exists *
 ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data)
 {
    const char *path = NULL;
@@ -2036,7 +2036,7 @@ on_error:
  *
  * @param exists the request to cancel.
  */
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists)
 {
    Ethumb_Async_Exists *async = exists->parent;
@@ -2056,7 +2056,7 @@ ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists)
  * @param exists the request to check.
  * @result return EINA_TRUE if the request was cancelled.
  */
-EAPI Eina_Bool
+ETHUMB_CLIENT_API Eina_Bool
 ethumb_client_thumb_exists_check(Ethumb_Exists *exists)
 {
    Ethumb_Async_Exists *async = exists->parent;
@@ -2102,7 +2102,7 @@ ethumb_client_thumb_exists_check(Ethumb_Exists *exists)
  * @see ethumb_client_generate_cancel()
  * @see ethumb_client_generate_cancel_all()
  */
-EAPI int
+ETHUMB_CLIENT_API int
 ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data)
 {
    const char *file, *key, *thumb, *thumb_key;
@@ -2290,7 +2290,7 @@ _ethumb_client_thumb_exists_idler(void *data EINA_UNUSED)
    return EINA_FALSE;
 }
 
-EAPI Ethumb_Client_Async *
+ETHUMB_CLIENT_API Ethumb_Client_Async *
 ethumb_client_thumb_async_get(Ethumb_Client *client,
                               Ethumb_Client_Async_Done_Cb done,
                               Ethumb_Client_Async_Error_Cb error,
@@ -2324,7 +2324,7 @@ ethumb_client_thumb_async_get(Ethumb_Client *client,
    return async;
 }
 
-EAPI void
+ETHUMB_CLIENT_API void
 ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_Async *request)
 {
    const char *path;

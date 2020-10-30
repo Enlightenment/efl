@@ -3,7 +3,8 @@ ethumb_client_header_src = [
 ]
 
 ethumb_client_src = files([
-  'ethumb_client.c'
+  'ethumb_client.c',
+  'ethumb_client_api.h',
 ])
 
 ethumb_client_deps = [
@@ -19,7 +20,7 @@ ethumb_client_lib = library('ethumb_client',
     dependencies: ethumb_client_pub_deps + ethumb_client_deps + ethumb_client_ext_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DETHUMB_CLIENT_BUILD'],
     version : meson.project_version()
 )
 

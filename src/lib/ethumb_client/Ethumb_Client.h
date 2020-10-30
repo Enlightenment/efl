@@ -3,31 +3,7 @@
 
 #include <Ethumb.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ethumb_client_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -125,12 +101,12 @@ typedef void (*Ethumb_Client_Thumb_Exists_Cb)(void *data, Ethumb_Client *client,
  */
 typedef void (*Ethumb_Client_Generate_Cancel_Cb)(void *data, Eina_Bool success);
 
-EAPI int ethumb_client_init(void);
-EAPI int ethumb_client_shutdown(void);
+ETHUMB_CLIENT_API int ethumb_client_init(void);
+ETHUMB_CLIENT_API int ethumb_client_shutdown(void);
 
-EAPI Ethumb_Client *ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data);
-EAPI void ethumb_client_disconnect(Ethumb_Client *client);
-EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data);
+ETHUMB_CLIENT_API Ethumb_Client *ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Eina_Free_Cb free_data);
+ETHUMB_CLIENT_API void ethumb_client_disconnect(Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb_Client_Die_Cb server_die_cb, const void *data, Eina_Free_Cb free_data);
 
 /**
  * @}
@@ -145,37 +121,37 @@ EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb
  * @{
  */
 
-EAPI void ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s);
-EAPI void ethumb_client_size_set(Ethumb_Client *client, int tw, int th);
-EAPI void ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th);
-EAPI void ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f);
-EAPI Ethumb_Thumb_Format ethumb_client_format_get(const Ethumb_Client *client);
-EAPI void ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a);
-EAPI Ethumb_Thumb_Aspect ethumb_client_aspect_get(const Ethumb_Client *client);
-EAPI void ethumb_client_orientation_set(Ethumb_Client *client, Ethumb_Thumb_Orientation o);
-EAPI Ethumb_Thumb_Orientation ethumb_client_orientation_get(const Ethumb_Client *client);
-EAPI void ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y);
-EAPI void ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y);
-EAPI void ethumb_client_quality_set(Ethumb_Client *client, int quality);
-EAPI int ethumb_client_quality_get(const Ethumb_Client *client);
-EAPI void ethumb_client_compress_set(Ethumb_Client *client, int compress);
-EAPI int ethumb_client_compress_get(const Ethumb_Client *client);
-EAPI Eina_Bool ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *group, const char *swallow);
-EAPI void ethumb_client_dir_path_set(Ethumb_Client *client, const char *path);
-EAPI const char * ethumb_client_dir_path_get(const Ethumb_Client *client);
-EAPI void ethumb_client_category_set(Ethumb_Client *client, const char *category);
-EAPI const char * ethumb_client_category_get(const Ethumb_Client *client);
-EAPI void ethumb_client_video_time_set(Ethumb_Client *client, float time);
-EAPI void ethumb_client_video_start_set(Ethumb_Client *client, float start);
-EAPI void ethumb_client_video_interval_set(Ethumb_Client *client, float interval);
-EAPI void ethumb_client_video_ntimes_set(Ethumb_Client *client, unsigned int ntimes);
-EAPI void ethumb_client_video_fps_set(Ethumb_Client *client, unsigned int fps);
-EAPI void ethumb_client_document_page_set(Ethumb_Client *client, unsigned int page);
+ETHUMB_CLIENT_API void ethumb_client_fdo_set(Ethumb_Client *client, Ethumb_Thumb_FDO_Size s);
+ETHUMB_CLIENT_API void ethumb_client_size_set(Ethumb_Client *client, int tw, int th);
+ETHUMB_CLIENT_API void ethumb_client_size_get(const Ethumb_Client *client, int *tw, int *th);
+ETHUMB_CLIENT_API void ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f);
+ETHUMB_CLIENT_API Ethumb_Thumb_Format ethumb_client_format_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a);
+ETHUMB_CLIENT_API Ethumb_Thumb_Aspect ethumb_client_aspect_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_orientation_set(Ethumb_Client *client, Ethumb_Thumb_Orientation o);
+ETHUMB_CLIENT_API Ethumb_Thumb_Orientation ethumb_client_orientation_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y);
+ETHUMB_CLIENT_API void ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y);
+ETHUMB_CLIENT_API void ethumb_client_quality_set(Ethumb_Client *client, int quality);
+ETHUMB_CLIENT_API int ethumb_client_quality_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_compress_set(Ethumb_Client *client, int compress);
+ETHUMB_CLIENT_API int ethumb_client_compress_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API Eina_Bool ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *group, const char *swallow);
+ETHUMB_CLIENT_API void ethumb_client_dir_path_set(Ethumb_Client *client, const char *path);
+ETHUMB_CLIENT_API const char * ethumb_client_dir_path_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_category_set(Ethumb_Client *client, const char *category);
+ETHUMB_CLIENT_API const char * ethumb_client_category_get(const Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_video_time_set(Ethumb_Client *client, float time);
+ETHUMB_CLIENT_API void ethumb_client_video_start_set(Ethumb_Client *client, float start);
+ETHUMB_CLIENT_API void ethumb_client_video_interval_set(Ethumb_Client *client, float interval);
+ETHUMB_CLIENT_API void ethumb_client_video_ntimes_set(Ethumb_Client *client, unsigned int ntimes);
+ETHUMB_CLIENT_API void ethumb_client_video_fps_set(Ethumb_Client *client, unsigned int fps);
+ETHUMB_CLIENT_API void ethumb_client_document_page_set(Ethumb_Client *client, unsigned int page);
 
-EAPI void ethumb_client_ethumb_setup(Ethumb_Client *client);
+ETHUMB_CLIENT_API void ethumb_client_ethumb_setup(Ethumb_Client *client);
 
-EAPI void ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key);
-EAPI void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key);
+ETHUMB_CLIENT_API void ethumb_client_thumb_path_set(Ethumb_Client *client, const char *path, const char *key);
+ETHUMB_CLIENT_API void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path, const char **key);
 /**
  * @}
  */
@@ -184,27 +160,27 @@ EAPI void ethumb_client_thumb_path_get(Ethumb_Client *client, const char **path,
  * @addtogroup Ethumb_Client_Basics Ethumb Client Basics
  * @{
  */
-EAPI Eina_Bool ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key);
-EAPI void ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key);
-EAPI void ethumb_client_file_free(Ethumb_Client *client);
+ETHUMB_CLIENT_API Eina_Bool ethumb_client_file_set(Ethumb_Client *client, const char *path, const char *key);
+ETHUMB_CLIENT_API void ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key);
+ETHUMB_CLIENT_API void ethumb_client_file_free(Ethumb_Client *client);
 
-EAPI Ethumb_Exists *ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data);
-EAPI void ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists);
-EAPI Eina_Bool ethumb_client_thumb_exists_check(Ethumb_Exists *exists);
-EAPI int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
-EAPI void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);
-EAPI void ethumb_client_generate_cancel_all(Ethumb_Client *client);
+ETHUMB_CLIENT_API Ethumb_Exists *ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data);
+ETHUMB_CLIENT_API void ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists);
+ETHUMB_CLIENT_API Eina_Bool ethumb_client_thumb_exists_check(Ethumb_Exists *exists);
+ETHUMB_CLIENT_API int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
+ETHUMB_CLIENT_API void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);
+ETHUMB_CLIENT_API void ethumb_client_generate_cancel_all(Ethumb_Client *client);
 
 typedef void (*Ethumb_Client_Async_Done_Cb)(Ethumb_Client *ethumbd, const char *thumb_path, const char *thumb_key, void *data);
 typedef void (*Ethumb_Client_Async_Error_Cb)(Ethumb_Client *ethumbd, void *data);
 
 typedef struct _Ethumb_Client_Async Ethumb_Client_Async;
 
-EAPI Ethumb_Client_Async *ethumb_client_thumb_async_get(Ethumb_Client *client,
+ETHUMB_CLIENT_API Ethumb_Client_Async *ethumb_client_thumb_async_get(Ethumb_Client *client,
                                                         Ethumb_Client_Async_Done_Cb done,
                                                         Ethumb_Client_Async_Error_Cb error,
                                                         const void *data);
-EAPI void ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_Async *request);
+ETHUMB_CLIENT_API void ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_Async *request);
   /**
  * @}
  */
@@ -215,8 +191,5 @@ EAPI void ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif /* __ETHUMB_CLIENT_H__ */
