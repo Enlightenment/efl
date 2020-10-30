@@ -113,7 +113,7 @@ ephysics_camera_del(EPhysics_Camera *camera)
    INF("Camera deleted.");
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Evas_Coord y)
 {
    if (!camera)
@@ -141,7 +141,7 @@ ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Evas_Coord y
    INF("Camera position set to (%i, %i).", x, y);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_position_get(const EPhysics_Camera *camera, Evas_Coord *x, Evas_Coord *y)
 {
    if (!camera)
@@ -154,7 +154,7 @@ ephysics_camera_position_get(const EPhysics_Camera *camera, Evas_Coord *x, Evas_
    if (y) *y = camera->y;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *body, Eina_Bool horizontal, Eina_Bool vertical)
 {
    if (!camera)
@@ -195,7 +195,7 @@ ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *body, Eina_Bo
        camera->track_horizontal, camera->track_vertical);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Body **body, Eina_Bool *horizontal, Eina_Bool *vertical)
 {
    if (!camera)
@@ -209,7 +209,7 @@ ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Body **body, 
    if (vertical) *vertical = camera->track_vertical;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_perspective_set(EPhysics_Camera *camera, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc)
 {
    if (!camera)
@@ -231,7 +231,7 @@ ephysics_camera_perspective_set(EPhysics_Camera *camera, Evas_Coord px, Evas_Coo
    ephysics_world_force_update_set(camera->world, EINA_TRUE);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_perspective_get(const EPhysics_Camera *camera, Evas_Coord *px, Evas_Coord *py, Evas_Coord *z0, Evas_Coord *foc)
 {
    if (!camera)
@@ -246,7 +246,7 @@ ephysics_camera_perspective_get(const EPhysics_Camera *camera, Evas_Coord *px, E
    if (foc) *foc = camera->perspective.foc;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_camera_perspective_enabled_set(EPhysics_Camera *camera, Eina_Bool enabled)
 {
    if (!camera)
@@ -259,7 +259,7 @@ ephysics_camera_perspective_enabled_set(EPhysics_Camera *camera, Eina_Bool enabl
    ephysics_world_force_update_set(camera->world, EINA_TRUE);
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_camera_perspective_enabled_get(const EPhysics_Camera *camera)
 {
    if (!camera)

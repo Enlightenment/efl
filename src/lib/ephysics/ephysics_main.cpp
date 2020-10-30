@@ -36,7 +36,7 @@ ephysics_dom_count_dec(void)
    eina_shutdown();
 }
 
-EAPI int
+EPHYSICS_API int
 ephysics_init()
 {
    if (++_ephysics_init_count != 1)
@@ -82,7 +82,7 @@ no_ecore:
    return --_ephysics_init_count;
 }
 
-EAPI int
+EPHYSICS_API int
 ephysics_shutdown()
 {
    if (--_ephysics_init_count != 0)

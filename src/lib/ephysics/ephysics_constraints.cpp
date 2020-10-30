@@ -97,7 +97,7 @@ ephysics_constraint_recalc(EPhysics_Constraint *constraint, double rate)
                                    upper_y, lower_z, upper_z, rate);
 }
 
-EAPI EPhysics_Constraint *
+EPHYSICS_API EPhysics_Constraint *
 ephysics_constraint_add(EPhysics_Body *body)
 {
    EPhysics_Constraint *constraint;
@@ -140,7 +140,7 @@ ephysics_constraint_add(EPhysics_Body *body)
    return constraint;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord lower_x, Evas_Coord upper_x, Evas_Coord lower_y, Evas_Coord upper_y, Evas_Coord lower_z, Evas_Coord upper_z)
 {
    double rate;
@@ -158,7 +158,7 @@ ephysics_constraint_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord
    ephysics_world_lock_release(constraint->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_linear_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *lower_x, Evas_Coord *upper_x, Evas_Coord *lower_y, Evas_Coord *upper_y, Evas_Coord *lower_z, Evas_Coord *upper_z)
 {
    int rate;
@@ -174,7 +174,7 @@ ephysics_constraint_linear_limit_get(const EPhysics_Constraint *constraint, Evas
                                          upper_y, lower_z, upper_z, rate);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_angular_limit_set(EPhysics_Constraint *constraint, double counter_clock_x, double clock_wise_x, double counter_clock_y, double clock_wise_y, double counter_clock_z, double clock_wise_z)
 {
 
@@ -195,7 +195,7 @@ ephysics_constraint_angular_limit_set(EPhysics_Constraint *constraint, double co
    ephysics_world_lock_release(constraint->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_angular_limit_get(const EPhysics_Constraint *constraint, double *counter_clock_x, double *clock_wise_x, double *counter_clock_y, double *clock_wise_y, double *counter_clock_z, double *clock_wise_z)
 {
    btVector3 angular_limit;
@@ -243,7 +243,7 @@ ephysics_constraint_angular_limit_get(const EPhysics_Constraint *constraint, dou
      }
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_anchor_set(EPhysics_Constraint *constraint, Evas_Coord anchor_b1_x, Evas_Coord anchor_b1_y, Evas_Coord anchor_b1_z, Evas_Coord anchor_b2_x, Evas_Coord anchor_b2_y, Evas_Coord anchor_b2_z)
 {
    btTransform anchor_b1;
@@ -310,7 +310,7 @@ ephysics_constraint_anchor_set(EPhysics_Constraint *constraint, Evas_Coord ancho
    ephysics_world_lock_release(constraint->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_anchor_get(const EPhysics_Constraint *constraint, Evas_Coord *anchor_b1_x, Evas_Coord *anchor_b1_y, Evas_Coord *anchor_b1_z, Evas_Coord *anchor_b2_x, Evas_Coord *anchor_b2_y, Evas_Coord *anchor_b2_z)
 {
    btTransform anchor_b1;
@@ -336,7 +336,7 @@ ephysics_constraint_anchor_get(const EPhysics_Constraint *constraint, Evas_Coord
    if (anchor_b2_z) *anchor_b2_z = round(anchor_b2.getOrigin().z() * rate);
 }
 
-EAPI EPhysics_Constraint *
+EPHYSICS_API EPhysics_Constraint *
 ephysics_constraint_linked_add(EPhysics_Body *body1, EPhysics_Body *body2)
 {
    EPhysics_Constraint *constraint;
@@ -394,7 +394,7 @@ ephysics_constraint_linked_add(EPhysics_Body *body1, EPhysics_Body *body2)
    return constraint;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_constraint_del(EPhysics_Constraint *constraint)
 {
    if (!constraint)
