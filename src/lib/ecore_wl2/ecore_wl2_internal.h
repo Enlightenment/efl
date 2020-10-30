@@ -1,75 +1,51 @@
 #ifndef _ECORE_WL2_INTERNAL_H
 # define _ECORE_WL2_INTERNAL_H
 
-# ifdef EAPI
-#  undef EAPI
-# endif
+#include <ecore_wl2_api.h>
 
-# ifdef _WIN32
-#  ifdef EFL_BUILD
-#   ifdef DLL_EXPORT
-#    define EAPI __declspec(dllexport)
-#   else
-#    define EAPI
-#   endif
-#  else
-#   define EAPI __declspec(dllimport)
-#  endif
-# else
-#  ifdef __GNUC__
-#   if __GNUC__ >= 4
-#    define EAPI __attribute__ ((visibility("default")))
-#   else
-#    define EAPI
-#   endif
-#  else
-#   define EAPI
-#  endif
-# endif
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE; /** @since 1.20 */
 
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE; /** @since 1.20 */
+ECORE_WL2_API void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
+ECORE_WL2_API void ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot);
+ECORE_WL2_API void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot);
+ECORE_WL2_API void ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h);
 
-EAPI void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
-EAPI void ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot);
-EAPI void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot);
-EAPI void ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h);
+ECORE_WL2_API void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
 
-EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
-EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
+ECORE_WL2_API void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
+ECORE_WL2_API Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
+ECORE_WL2_API Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha);
+ECORE_WL2_API void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
+ECORE_WL2_API struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf);
+ECORE_WL2_API void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride);
+ECORE_WL2_API void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
+ECORE_WL2_API void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
+ECORE_WL2_API void ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b);
+ECORE_WL2_API void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
+ECORE_WL2_API void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
+ECORE_WL2_API Eina_Bool ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer);
+ECORE_WL2_API void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
+ECORE_WL2_API int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
+ECORE_WL2_API void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age);
+ECORE_WL2_API void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
 
-EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
-EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
-EAPI Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha);
-EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
-EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf);
-EAPI void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride);
-EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
-EAPI void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
-EAPI void ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b);
-EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
-EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
-EAPI Eina_Bool ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer);
-EAPI void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
-EAPI int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
-EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age);
-EAPI void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
-
-EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
-EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha);
-EAPI void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
-EAPI int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-EAPI void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge);
-EAPI void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge);
-EAPI Ecore_Wl2_Buffer *ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface);
-EAPI int ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf);
-EAPI void ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf);
-EAPI Ecore_Wl2_Window *ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface);
-EAPI Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
+ECORE_WL2_API Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
+ECORE_WL2_API void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
+ECORE_WL2_API void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha);
+ECORE_WL2_API void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
+ECORE_WL2_API int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
+ECORE_WL2_API void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
+ECORE_WL2_API void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge);
+ECORE_WL2_API void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge);
+ECORE_WL2_API Ecore_Wl2_Buffer *ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface);
+ECORE_WL2_API int ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf);
+ECORE_WL2_API void ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf);
+ECORE_WL2_API Ecore_Wl2_Window *ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface);
+ECORE_WL2_API Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
 
 /**
  * Attach a buffer to a window
@@ -87,7 +63,7 @@ EAPI Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
  *
  * @since 1.21
  */
-EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
+ECORE_WL2_API void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, int x, int y, Eina_Bool implicit);
 
 /**
  * Set a buffer transform on a given window
@@ -98,7 +74,7 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
+ECORE_WL2_API void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int transform);
 
 /**
  * Iconify a window
@@ -109,7 +85,7 @@ EAPI void ecore_wl2_window_buffer_transform_set(Ecore_Wl2_Window *window, int tr
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
+ECORE_WL2_API void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified);
 
 /**
  * Check if a wayland window's surface is in the pending state.
@@ -123,7 +99,7 @@ EAPI void ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool ico
  *
  * @since 1.21
  */
-EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 
 /**
  * @defgroup Ecore_Wl2_Dnd_Group Wayland Library Drag-n-Drop Functions
@@ -143,7 +119,7 @@ EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
+ECORE_WL2_API void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types);
 
 /**
  * Start a drag on the given input
@@ -157,7 +133,7 @@ EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **type
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17
  */
-EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
+ECORE_WL2_API uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window);
 
 /**
  * Call wl_data_source.set_actions on an existing source
@@ -169,7 +145,7 @@ EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window 
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
+ECORE_WL2_API void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
 
 /**
  * End a drag started by a call to ecore_wl2_dnd_drag_start
@@ -179,7 +155,7 @@ EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
+ECORE_WL2_API void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
 
 /**
  * Get the offer which is currently resposible for the clipboard
@@ -189,7 +165,7 @@ EAPI void ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
+ECORE_WL2_API Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
 
 /**
  * Set the types which are available from this client
@@ -204,7 +180,7 @@ EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17
  */
-EAPI uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
+ECORE_WL2_API uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types);
 
 /**
  * Clear the selection currently setted on this input.
@@ -216,7 +192,7 @@ EAPI uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **t
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17
  */
-EAPI uint32_t ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
+ECORE_WL2_API uint32_t ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
 
 /**
  * Get the actions available from the data source
@@ -228,7 +204,7 @@ EAPI uint32_t ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_actions_get(Ecore_Wl2_Offer *offer);
+ECORE_WL2_API Ecore_Wl2_Drag_Action ecore_wl2_offer_actions_get(Ecore_Wl2_Offer *offer);
 
 /**
  * Set the actions which are supported by you
@@ -240,7 +216,7 @@ EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_actions_get(Ecore_Wl2_Offer *offer);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI void ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Action actions, Ecore_Wl2_Drag_Action action);
+ECORE_WL2_API void ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Action actions, Ecore_Wl2_Drag_Action action);
 
 /**
  * Get action which is set by either the data source or in the last call of actions_set
@@ -252,7 +228,7 @@ EAPI void ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Act
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
+ECORE_WL2_API Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
 
 /**
  * Get the mime types which are given by the source
@@ -264,7 +240,7 @@ EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
+ECORE_WL2_API Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
 
 /**
  * Set mimetypes you are accepting under this offer
@@ -274,7 +250,7 @@ EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI void ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes);
+ECORE_WL2_API void ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes);
 
 /**
  * Accept a single mime type for an offer
@@ -285,7 +261,7 @@ EAPI void ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type);
+ECORE_WL2_API void ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type);
 
 /**
  * Request the data from this offer.
@@ -298,7 +274,7 @@ EAPI void ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
+ECORE_WL2_API void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
 
 /**
  * Request the data from this offer on an externally managed fd.
@@ -312,7 +288,7 @@ EAPI void ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd);
+ECORE_WL2_API void ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd);
 
 /**
  * End the use of a proxy received offer. This may invalidate the offer object
@@ -322,7 +298,7 @@ EAPI void ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer);
+ECORE_WL2_API void ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer);
 
 /**
  * Check if the given offer supports the given mimetype
@@ -335,7 +311,7 @@ EAPI void ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer);
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI Eina_Bool ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char *mime);
+ECORE_WL2_API Eina_Bool ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char *mime);
 
 /**
  * Mark this offer as finished
@@ -346,7 +322,7 @@ EAPI Eina_Bool ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char 
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
-EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
+ECORE_WL2_API void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
 
 /**
  * @defgroup Ecore_Wl2_Subsurface_Group Functions to manipulate subsurfaces.
@@ -377,7 +353,7 @@ EAPI void ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer);
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
+ECORE_WL2_API Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
 
 /**
  * Destroy the given subsurface, as well as the surface associated with it.
@@ -387,7 +363,7 @@ EAPI Ecore_Wl2_Subsurface *ecore_wl2_subsurface_new(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
+ECORE_WL2_API void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
 
 /**
  * Get the wl_surface for this subsurface
@@ -399,7 +375,7 @@ EAPI void ecore_wl2_subsurface_del(Ecore_Wl2_Subsurface *subsurface);
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface);
+ECORE_WL2_API struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *subsurface);
 
 /**
  * Set the position of this subsurface, relative to its parent surface.
@@ -413,7 +389,7 @@ EAPI struct wl_surface *ecore_wl2_subsurface_surface_get(Ecore_Wl2_Subsurface *s
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y);
+ECORE_WL2_API void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, int x, int y);
 
 /**
  * Get the position of this subsurface, relative to its parent surface.
@@ -426,7 +402,7 @@ EAPI void ecore_wl2_subsurface_position_set(Ecore_Wl2_Subsurface *subsurface, in
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, int *x, int *y);
+ECORE_WL2_API void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, int *x, int *y);
 
 /**
  * Place subsurface on layer above a reference surface
@@ -442,7 +418,7 @@ EAPI void ecore_wl2_subsurface_position_get(Ecore_Wl2_Subsurface *subsurface, in
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
+ECORE_WL2_API void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
 
 /**
  * Place subsurface on layer below a reference surface
@@ -455,7 +431,7 @@ EAPI void ecore_wl2_subsurface_place_above(Ecore_Wl2_Subsurface *subsurface, str
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
+ECORE_WL2_API void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, struct wl_surface *surface);
 
 /**
  * Enables or disables sub-surface synchronization
@@ -483,7 +459,7 @@ EAPI void ecore_wl2_subsurface_place_below(Ecore_Wl2_Subsurface *subsurface, str
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync);
+ECORE_WL2_API void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_Bool sync);
 
 /**
  * Set an opaque region for the given subsurface.
@@ -503,7 +479,7 @@ EAPI void ecore_wl2_subsurface_sync_set(Ecore_Wl2_Subsurface *subsurface, Eina_B
  * @ingroup Ecore_Wl2_Subsurface_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
+ECORE_WL2_API void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurface, int x, int y, int w, int h);
 
 /**
  * Get list of supported auxiliary window hints
@@ -515,7 +491,7 @@ EAPI void ecore_wl2_subsurface_opaque_region_set(Ecore_Wl2_Subsurface *subsurfac
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_List *ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_List *ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *window);
 
 /**
  * Add a supported auxiliary hint to a given window
@@ -528,7 +504,7 @@ EAPI Eina_List *ecore_wl2_window_aux_hints_supported_get(Ecore_Wl2_Window *windo
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint, const char *val);
+ECORE_WL2_API void ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const char *hint, const char *val);
 
 /**
  * Change an auxiliary hint on a given window
@@ -540,7 +516,7 @@ EAPI void ecore_wl2_window_aux_hint_add(Ecore_Wl2_Window *window, int id, const 
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val);
+ECORE_WL2_API void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, const char *val);
 
 /**
  * Delete an auxiliary hint on a given window
@@ -551,7 +527,7 @@ EAPI void ecore_wl2_window_aux_hint_change(Ecore_Wl2_Window *window, int id, con
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
+ECORE_WL2_API void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
 
 /**
  * Terminate a Wayland display's main loop
@@ -565,9 +541,6 @@ EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
-
-# undef EAPI
-# define EAPI
+ECORE_WL2_API void ecore_wl2_display_terminate(Ecore_Wl2_Display *display);
 
 #endif

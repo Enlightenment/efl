@@ -10,7 +10,7 @@
 static Eina_List *_smanagers = NULL;
 static int _smanager_count = 0;
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -27,7 +27,7 @@ ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
    ecore_wl2_shutdown();
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -38,7 +38,7 @@ ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t
    surface->alpha = alpha;
 }
 
-EAPI void *
+ECORE_WL2_API void *
 ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
@@ -46,7 +46,7 @@ ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
    return surface->funcs->data_get(surface, surface->private_data, w, h);
 }
 
-EAPI int
+ECORE_WL2_API int
 ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
@@ -54,7 +54,7 @@ ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
    return surface->funcs->assign(surface, surface->private_data);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -62,7 +62,7 @@ ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsign
    surface->funcs->post(surface, surface->private_data, rects, count);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
@@ -82,7 +82,7 @@ _ecore_wl2_surface_cb_offscreen(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
-EAPI Ecore_Wl2_Surface *
+ECORE_WL2_API Ecore_Wl2_Surface *
 ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
    Ecore_Wl2_Surface *out;
@@ -126,7 +126,7 @@ ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
    return NULL;
 }
 
-EAPI Ecore_Wl2_Buffer *
+ECORE_WL2_API Ecore_Wl2_Buffer *
 ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface)
 {
    Ecore_Wl2_Display *ewd;
@@ -139,7 +139,7 @@ ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface)
    return ecore_wl2_buffer_create(ewd, surface->w, surface->h, surface->alpha);
 }
 
-EAPI int
+ECORE_WL2_API int
 ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf)
 {
    if (intf->version < ECORE_WL2_SURFACE_INTERFACE_VERSION)
@@ -150,13 +150,13 @@ ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf)
    return intf->id;
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf)
 {
    _smanagers = eina_list_remove(_smanagers, intf);
 }
 
-EAPI Ecore_Wl2_Window *
+ECORE_WL2_API Ecore_Wl2_Window *
 ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
@@ -164,7 +164,7 @@ ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface)
    return surface->wl2_win;
 }
 
-EAPI Eina_Bool
+ECORE_WL2_API Eina_Bool
 ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
