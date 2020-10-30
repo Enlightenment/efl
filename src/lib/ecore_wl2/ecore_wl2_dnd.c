@@ -420,7 +420,7 @@ _ecore_wl2_dnd_del(Ecore_Wl2_Dnd_Source *source)
    free(source);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
 {
    struct wl_data_device_manager *manager;
@@ -462,7 +462,7 @@ ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **types)
      }
 }
 
-EAPI uint32_t
+ECORE_WL2_API uint32_t
 ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore_Wl2_Window *drag_window)
 {
    struct wl_surface *dsurface = NULL, *osurface;
@@ -493,7 +493,7 @@ ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, Ecore
    return input->data.drag.serial;
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);
@@ -504,7 +504,7 @@ ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input)
        WL_DATA_DEVICE_MANAGER_DND_ACTION_MOVE | WL_DATA_DEVICE_MANAGER_DND_ACTION_COPY);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Event_Dnd_End *ev;
@@ -536,7 +536,7 @@ ecore_wl2_dnd_drag_end(Ecore_Wl2_Input *input)
    ecore_event_add(ECORE_WL2_EVENT_DND_END, ev, _display_event_free, ev->display);
 }
 
-EAPI Ecore_Wl2_Offer*
+ECORE_WL2_API Ecore_Wl2_Offer*
 ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
@@ -544,7 +544,7 @@ ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input)
    return input->selection.offer;
 }
 
-EAPI uint32_t
+ECORE_WL2_API uint32_t
 ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
 {
    struct wl_data_device_manager *manager;
@@ -594,7 +594,7 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
    return input->display->serial;
 }
 
-EAPI uint32_t
+ECORE_WL2_API uint32_t
 ecore_wl2_dnd_selection_clear(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
@@ -697,13 +697,13 @@ _ecore_wl2_dnd_add(Ecore_Wl2_Input *input, struct wl_data_offer *offer)
    wl_data_offer_add_listener(offer, &_offer_listener, result);
 }
 
-EAPI Ecore_Wl2_Drag_Action
+ECORE_WL2_API Ecore_Wl2_Drag_Action
 ecore_wl2_offer_actions_get(Ecore_Wl2_Offer *offer)
 {
    return offer->actions;
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Action actions, Ecore_Wl2_Drag_Action action)
 {
    uint32_t val = 0;
@@ -722,14 +722,14 @@ ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Action action
    wl_data_offer_set_actions(offer->offer, val, offer->action);
 }
 
-EAPI Ecore_Wl2_Drag_Action
+ECORE_WL2_API Ecore_Wl2_Drag_Action
 ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(offer, ECORE_WL2_DRAG_ACTION_NONE);
    return offer->action;
 }
 
-EAPI Eina_Array*
+ECORE_WL2_API Eina_Array*
 ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(offer, NULL);
@@ -746,7 +746,7 @@ _emit_mime(const void *container EINA_UNUSED, void *elem, void *data)
    return 1;
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes)
 {
    EINA_SAFETY_ON_NULL_RETURN(offer);
@@ -757,7 +757,7 @@ ecore_wl2_offer_mimes_set(Ecore_Wl2_Offer *offer, Eina_Array *mimes)
      wl_data_offer_accept(offer->offer, offer->serial, NULL);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_accept(Ecore_Wl2_Offer *offer, const char *mime_type)
 {
    EINA_SAFETY_ON_NULL_RETURN(offer);
@@ -831,7 +831,7 @@ _offer_receive_fd_cb(void *data, Ecore_Fd_Handler *fdh)
      }
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime)
 {
    Read_Buffer *buffer;
@@ -863,7 +863,7 @@ ecore_wl2_offer_receive(Ecore_Wl2_Offer *offer, char *mime)
    return;
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd)
 {
    EINA_SAFETY_ON_NULL_RETURN(offer);
@@ -873,7 +873,7 @@ ecore_wl2_offer_proxy_receive(Ecore_Wl2_Offer *offer, const char *mime, int fd)
    wl_data_offer_receive(offer->offer, mime, fd);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer)
 {
    EINA_SAFETY_ON_NULL_RETURN(offer);
@@ -883,7 +883,7 @@ ecore_wl2_offer_proxy_receive_end(Ecore_Wl2_Offer *offer)
    _ecore_wl2_offer_unref(offer);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_offer_finish(Ecore_Wl2_Offer *offer)
 {
    EINA_SAFETY_ON_NULL_RETURN(offer);
@@ -926,7 +926,7 @@ _compare(const void *container EINA_UNUSED, void *elem, void *data)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_WL2_API Eina_Bool
 ecore_wl2_offer_supports_mime(Ecore_Wl2_Offer *offer, const char *mime)
 {
   EINA_SAFETY_ON_NULL_RETURN_VAL(offer, EINA_FALSE);

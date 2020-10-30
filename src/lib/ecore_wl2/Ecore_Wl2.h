@@ -10,19 +10,7 @@
 # define WL_HIDE_DEPRECATED
 # include <wayland-server.h>
 
-# ifdef EAPI
-#  undef EAPI
-# endif
-
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
+#include <ecore_wl2_api.h>
 
 /* # ifdef __cplusplus */
 /* extern "C" { */
@@ -391,46 +379,46 @@ typedef void (*Ecore_Wl2_Unbind_Cb)(struct wl_resource *resource);
 typedef void (*Ecore_Wl2_Frame_Cb)(Ecore_Wl2_Window *win, uint32_t timestamp, void *data);
 typedef struct _Ecore_Wl2_Frame_Cb_Handle Ecore_Wl2_Frame_Cb_Handle;
 
-EAPI extern int ECORE_WL2_EVENT_DISCONNECT; /** @since 1.18 */
-EAPI extern int ECORE_WL2_EVENT_CONNECT; /** @since 1.18 */
-EAPI extern int ECORE_WL2_EVENT_GLOBAL_ADDED; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_GLOBAL_REMOVED; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_FOCUS_IN; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_FOCUS_OUT; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DND_ENTER; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DND_LEAVE; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DND_MOTION; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DND_DROP; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DND_END; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_END; /** @since 1.18 */
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_DROP; /** @since 1.18 */
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_ACTION; /** @since 1.18 */
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_SYNC_DONE; /** @since 1.17 */
-EAPI extern int ECORE_WL2_EVENT_OFFER_DATA_READY; /** @since 1.19 */
-EAPI extern int ECORE_WL2_EVENT_SEAT_NAME_CHANGED; /** @since 1.19 */
-EAPI extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
-EAPI extern int ECORE_WL2_EVENT_DEVICE_ADDED; /** @since 1.19 */
-EAPI extern int ECORE_WL2_EVENT_DEVICE_REMOVED; /** @since 1.19 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE; /** @since 1.19 */
-EAPI extern int ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_AUX_HINT_SUPPORTED; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_AUX_MESSAGE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_SHOW; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_HIDE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ACTIVATE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_DEACTIVATE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE; /** @since 1.21 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_OFFSCREEN; /** @since 1.21 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_CREATE; /** @since 1.25 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_DESTROY; /** @since 1.25 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DISCONNECT; /** @since 1.18 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_CONNECT; /** @since 1.18 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_GLOBAL_ADDED; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_GLOBAL_REMOVED; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_FOCUS_IN; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_FOCUS_OUT; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DND_ENTER; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DND_LEAVE; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DND_MOTION; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DND_DROP; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DND_END; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DATA_SOURCE_END; /** @since 1.18 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DATA_SOURCE_DROP; /** @since 1.18 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DATA_SOURCE_ACTION; /** @since 1.18 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DATA_SOURCE_TARGET; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DATA_SOURCE_SEND; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_SYNC_DONE; /** @since 1.17 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_OFFER_DATA_READY; /** @since 1.19 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_SEAT_NAME_CHANGED; /** @since 1.19 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED; /** @since 1.19 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DEVICE_ADDED; /** @since 1.19 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_DEVICE_REMOVED; /** @since 1.19 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE; /** @since 1.19 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_SEAT_KEYMAP_CHANGED; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ROTATE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_AUX_HINT_SUPPORTED; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_AUX_MESSAGE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_SHOW; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_HIDE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ACTIVATE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_DEACTIVATE; /** @since 1.20 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE; /** @since 1.21 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_OFFSCREEN; /** @since 1.21 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_CREATE; /** @since 1.25 */
+ECORE_WL2_API extern int ECORE_WL2_EVENT_WINDOW_DESTROY; /** @since 1.25 */
 
 typedef struct _Ecore_Wl2_Surface_Interface
 {
@@ -480,7 +468,7 @@ typedef struct _Ecore_Wl2_Surface_Interface
  * @ingroup Ecore_Wl2_Init_Group
  * @since 1.17
  */
-EAPI int ecore_wl2_init(void);
+ECORE_WL2_API int ecore_wl2_init(void);
 
 /**
  * Shutdown the Ecore_Wl2 Library
@@ -491,7 +479,7 @@ EAPI int ecore_wl2_init(void);
  * @ingroup Ecore_Wl2_Init_Group
  * @since 1.17
  */
-EAPI int ecore_wl2_shutdown(void);
+ECORE_WL2_API int ecore_wl2_shutdown(void);
 
 /**
  * @defgroup Ecore_Wl2_Display_Group Wayland Library Display Functions
@@ -515,7 +503,7 @@ EAPI int ecore_wl2_shutdown(void);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
+ECORE_WL2_API Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
 
 /**
  * Destroy an existing Wayland display
@@ -528,7 +516,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_create(const char *name);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_display_destroy(Ecore_Wl2_Display *display);
+ECORE_WL2_API void ecore_wl2_display_destroy(Ecore_Wl2_Display *display);
 
 /**
  * Connect to an existing Wayland display
@@ -544,7 +532,7 @@ EAPI void ecore_wl2_display_destroy(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
+ECORE_WL2_API Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
 
 /**
  * Disconnect an existing Wayland display
@@ -557,7 +545,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_display_connect(const char *name);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
+ECORE_WL2_API void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
 
 /**
  * Retrieve the existing Wayland display
@@ -570,7 +558,7 @@ EAPI void ecore_wl2_display_disconnect(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
 
 /**
  * Retrieve the wl_shm from a given Ecore_Wl2_Display
@@ -583,7 +571,7 @@ EAPI struct wl_display *ecore_wl2_display_get(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
 
 /**
  * Retrieve the wl_dmabuf from a given Ecore_Wl2_Display
@@ -604,7 +592,7 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  *
  * @since 1.18
  */
-EAPI void *ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API void *ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display);
 
 /**
  * Return an Eina_Iterator that can be used to iterate through globals
@@ -617,7 +605,7 @@ EAPI void *ecore_wl2_display_dmabuf_get(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
 
 /**
  * Retrieves the size of the current screen.
@@ -629,7 +617,7 @@ EAPI Eina_Iterator *ecore_wl2_display_globals_get(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
+ECORE_WL2_API void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, int *h);
 
 /**
  * Get all the Ecore_Wl2_Input from the display.
@@ -641,7 +629,7 @@ EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, 
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.19
  */
-EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
 
 /**
  * Find a seat for a given display object using the seat id
@@ -654,7 +642,7 @@ EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
-EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *display, unsigned int id);
+ECORE_WL2_API Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *display, unsigned int id);
 
 /**
  * Find a seat for a given display object using the seat id
@@ -667,7 +655,7 @@ EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *disp
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
-EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Display *display, const char *name);
+ECORE_WL2_API Ecore_Wl2_Input *ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Display *display, const char *name);
 
 /**
  * Retrieves the Wayland Registry used for the current Wayland display.
@@ -679,7 +667,7 @@ EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Displ
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *display);
 
 /**
  * Check if the display has performed a sync
@@ -692,7 +680,7 @@ EAPI struct wl_registry *ecore_wl2_display_registry_get(Ecore_Wl2_Display *displ
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
+ECORE_WL2_API Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
 
 /**
  * Get the name of the display object
@@ -704,7 +692,7 @@ EAPI Eina_Bool ecore_wl2_display_sync_is_done(const Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
-EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
+ECORE_WL2_API const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
 
 /**
  * Finds an Ecore_Wl2_Window based on wl_surface
@@ -717,7 +705,7 @@ EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.24
  */
-EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Display *display, struct wl_surface *surface);
+ECORE_WL2_API Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Display *display, struct wl_surface *surface);
 
 /**
  * Gets the connected display object
@@ -733,7 +721,7 @@ EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find_by_surface(Ecore_Wl2_Displa
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.24
  */
-EAPI Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
+ECORE_WL2_API Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
 
 /**
  * Gets the wl_compositor which belongs to this display
@@ -745,7 +733,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_connected_display_get(const char *name);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.24
  */
-EAPI struct wl_compositor *ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display);
+ECORE_WL2_API struct wl_compositor *ecore_wl2_display_compositor_get(Ecore_Wl2_Display *display);
 
 /**
  * @defgroup Ecore_Wl2_Window_Group Wayland Library Window Functions
@@ -768,7 +756,7 @@ EAPI struct wl_compositor *ecore_wl2_display_compositor_get(Ecore_Wl2_Display *d
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
+ECORE_WL2_API Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
 
 /**
  * Set a callback to be caleld just before the window is closed and freed
@@ -780,7 +768,7 @@ EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI void ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*cb) (void *data, Ecore_Wl2_Window *win), void *data);
+ECORE_WL2_API void ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*cb) (void *data, Ecore_Wl2_Window *win), void *data);
 
 /**
  * Get the wl_surface which belongs to this window
@@ -792,7 +780,7 @@ EAPI void ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*c
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
 
 /**
  * Get the id of a given Ecore_Wl2_Window
@@ -804,21 +792,21 @@ EAPI struct wl_surface *ecore_wl2_window_surface_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API int ecore_wl2_window_surface_id_get(Ecore_Wl2_Window *window);
 
 /**
  * @see evas_object_size_hint_aspect_set
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.21
  */
-EAPI void ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect);
+ECORE_WL2_API void ecore_wl2_window_aspect_set(Ecore_Wl2_Window *window, int w, int h, unsigned int aspect);
 
 /**
  * @see evas_object_size_hint_aspect_get
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI void ecore_wl2_window_aspect_get(Ecore_Wl2_Window *window, int *w, int *h, unsigned int *aspect);
+ECORE_WL2_API void ecore_wl2_window_aspect_get(Ecore_Wl2_Window *window, int *w, int *h, unsigned int *aspect);
 
 /**
  * Show a given Ecore_Wl2_Window
@@ -828,7 +816,7 @@ EAPI void ecore_wl2_window_aspect_get(Ecore_Wl2_Window *window, int *w, int *h, 
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
+ECORE_WL2_API void ecore_wl2_window_show(Ecore_Wl2_Window *window);
 
 /**
  * Hide a given Ecore_Wl2_Window
@@ -838,7 +826,7 @@ EAPI void ecore_wl2_window_show(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
+ECORE_WL2_API void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
 
 /**
  * Free a given Ecore_Wl2_Window
@@ -848,7 +836,7 @@ EAPI void ecore_wl2_window_hide(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
+ECORE_WL2_API void ecore_wl2_window_free(Ecore_Wl2_Window *window);
 
 /**
  * @brief Begin moving a given Ecore_Wl2_Window
@@ -859,7 +847,7 @@ EAPI void ecore_wl2_window_free(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
+ECORE_WL2_API void ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
 
 /**
  * @brief Begin resizing a given window
@@ -871,7 +859,7 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int location);
+ECORE_WL2_API void ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int location);
 
 /**
  * Get if a given window is alpha
@@ -883,7 +871,7 @@ EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *inp
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
 
 /**
  * Set a given window's alpha property
@@ -894,7 +882,7 @@ EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
+ECORE_WL2_API void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
 
 /**
  * Set the opaque region of the Ecore_Wl2_Window
@@ -908,7 +896,7 @@ EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+ECORE_WL2_API void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /**
  * Get the opaque region of the Ecore_Wl2_Window
@@ -922,7 +910,7 @@ EAPI void ecore_wl2_window_opaque_region_set(Ecore_Wl2_Window *window, int x, in
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI void ecore_wl2_window_opaque_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
+ECORE_WL2_API void ecore_wl2_window_opaque_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
 /**
  * Set the input region of the Ecore_Wl2_Window.
@@ -940,7 +928,7 @@ EAPI void ecore_wl2_window_opaque_region_get(Ecore_Wl2_Window *window, int *x, i
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+ECORE_WL2_API void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /**
  * Get the input region of the Ecore_Wl2_Window.
@@ -954,7 +942,7 @@ EAPI void ecore_wl2_window_input_region_set(Ecore_Wl2_Window *window, int x, int
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI void ecore_wl2_window_input_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
+ECORE_WL2_API void ecore_wl2_window_input_region_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
 /**
  * Get if a given window is maximized
@@ -966,7 +954,7 @@ EAPI void ecore_wl2_window_input_region_get(Ecore_Wl2_Window *window, int *x, in
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
 
 /**
  * Set the maximized state of a given window
@@ -977,7 +965,7 @@ EAPI Eina_Bool ecore_wl2_window_maximized_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized);
+ECORE_WL2_API void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool maximized);
 
 /**
  * Get if a given window is fullscreen
@@ -989,7 +977,7 @@ EAPI void ecore_wl2_window_maximized_set(Ecore_Wl2_Window *window, Eina_Bool max
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
 
 /**
  * Set the fullscreen state of a given window
@@ -1000,7 +988,7 @@ EAPI Eina_Bool ecore_wl2_window_fullscreen_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen);
+ECORE_WL2_API void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fullscreen);
 
 /**
  * Get if a given window is rotated
@@ -1012,7 +1000,7 @@ EAPI void ecore_wl2_window_fullscreen_set(Ecore_Wl2_Window *window, Eina_Bool fu
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI int ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API int ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window);
 
 /**
  * Set the rotation of a given window
@@ -1023,7 +1011,7 @@ EAPI int ecore_wl2_window_rotation_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
+ECORE_WL2_API void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
 
 /**
  * Set the title of a given window
@@ -1034,7 +1022,7 @@ EAPI void ecore_wl2_window_rotation_set(Ecore_Wl2_Window *window, int rotation);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
+ECORE_WL2_API void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title);
 
 /**
  * Get the title of a given window
@@ -1046,7 +1034,7 @@ EAPI void ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI const char *ecore_wl2_window_title_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API const char *ecore_wl2_window_title_get(Ecore_Wl2_Window *window);
 
 /**
  * Set the class of a given window
@@ -1057,7 +1045,7 @@ EAPI const char *ecore_wl2_window_title_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas);
+ECORE_WL2_API void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas);
 
 
 /**
@@ -1070,7 +1058,7 @@ EAPI void ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI const char *ecore_wl2_window_class_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API const char *ecore_wl2_window_class_get(Ecore_Wl2_Window *window);
 
 /**
  * Get the geometry of a given window
@@ -1088,7 +1076,7 @@ EAPI const char *ecore_wl2_window_class_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
+ECORE_WL2_API void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y, int *w, int *h);
 
 /**
  * Set the geometry of a given window
@@ -1106,7 +1094,7 @@ EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
+ECORE_WL2_API void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
 
 /**
  * Set the type of a given window
@@ -1117,7 +1105,7 @@ EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, 
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
+ECORE_WL2_API void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_Type type);
 
 /**
  * Get the type of a given window
@@ -1127,7 +1115,7 @@ EAPI void ecore_wl2_window_type_set(Ecore_Wl2_Window *window, Ecore_Wl2_Window_T
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
 
 /**
  * Find the output that a given window is on
@@ -1139,7 +1127,7 @@ EAPI Ecore_Wl2_Window_Type ecore_wl2_window_type_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
+ECORE_WL2_API Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
 
 /**
  * Set if window rotation is supported by the window manager
@@ -1150,7 +1138,7 @@ EAPI Ecore_Wl2_Output *ecore_wl2_window_output_find(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_wm_rotation_supported_set(Ecore_Wl2_Window *window, Eina_Bool enabled);
+ECORE_WL2_API void ecore_wl2_window_wm_rotation_supported_set(Ecore_Wl2_Window *window, Eina_Bool enabled);
 
 /**
  * Get if window rotation is supported by the window manager
@@ -1162,7 +1150,7 @@ EAPI void ecore_wl2_window_wm_rotation_supported_set(Ecore_Wl2_Window *window, E
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_wm_rotation_supported_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_wm_rotation_supported_get(Ecore_Wl2_Window *window);
 
 /**
  * Set if an application has set window rotation
@@ -1173,7 +1161,7 @@ EAPI Eina_Bool ecore_wl2_window_wm_rotation_supported_get(Ecore_Wl2_Window *wind
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_rotation_app_set(Ecore_Wl2_Window *window, Eina_Bool set);
+ECORE_WL2_API void ecore_wl2_window_rotation_app_set(Ecore_Wl2_Window *window, Eina_Bool set);
 
 /**
  * Get if an application has set window rotation
@@ -1185,7 +1173,7 @@ EAPI void ecore_wl2_window_rotation_app_set(Ecore_Wl2_Window *window, Eina_Bool 
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
 
 /**
  * Set preferred rotation on a given window
@@ -1196,7 +1184,7 @@ EAPI Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int rot);
+ECORE_WL2_API void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int rot);
 
 /**
  * Get preferred rotation for a given window
@@ -1208,7 +1196,7 @@ EAPI void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int 
  * @ingroup Ecore_Wl2_Window
  * @since 1.20
  */
-EAPI int ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API int ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window);
 
 /**
  * Set a windows available rotations
@@ -1220,7 +1208,7 @@ EAPI int ecore_wl2_window_preferred_rotation_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *rots, unsigned int count);
+ECORE_WL2_API void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, const int *rots, unsigned int count);
 
 /**
  * Get a windows available rotations
@@ -1234,7 +1222,7 @@ EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, con
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count);
 
 /**
  * @brief Get the activated state of a window
@@ -1246,7 +1234,7 @@ EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
 
 /**
  * @brief Set the seat for a popup window to be used with grab
@@ -1260,7 +1248,7 @@ EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
+ECORE_WL2_API void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input);
 
 /**
  * @brief Get the seat for a popup window to be used with grab
@@ -1272,7 +1260,7 @@ EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_I
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI Ecore_Wl2_Input *ecore_wl2_window_popup_input_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Ecore_Wl2_Input *ecore_wl2_window_popup_input_get(Ecore_Wl2_Window *window);
 
 /**
  * Check if a window has a shell surface - without one it can't be visible.
@@ -1284,7 +1272,7 @@ EAPI Ecore_Wl2_Input *ecore_wl2_window_popup_input_get(Ecore_Wl2_Window *window)
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.19
  */
-EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
 
 /**
  * Get which display a given window is using
@@ -1296,7 +1284,7 @@ EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.17
  */
-EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
+ECORE_WL2_API Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
 
 /**
  * Set if this window should ignore focus requests
@@ -1307,7 +1295,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *win
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip);
+ECORE_WL2_API void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool focus_skip);
 
 /**
  * Get if this window ignores focus requests
@@ -1319,7 +1307,7 @@ EAPI void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool fo
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
 
 /**
  * Set the role of a given window
@@ -1330,7 +1318,7 @@ EAPI Eina_Bool ecore_wl2_window_focus_skip_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
+ECORE_WL2_API void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
 
 /**
  * Get the role of a given window
@@ -1342,7 +1330,7 @@ EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI const char *ecore_wl2_window_role_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API const char *ecore_wl2_window_role_get(Ecore_Wl2_Window *window);
 
 /**
  * Set if a given window is in floating mode
@@ -1353,7 +1341,7 @@ EAPI const char *ecore_wl2_window_role_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool floating);
+ECORE_WL2_API void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool floating);
 
 /**
  * Get if a given window is in floating mode
@@ -1365,7 +1353,7 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
 
 /**
  * Finds a window by surface
@@ -1375,7 +1363,7 @@ EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.24
  */
-EAPI Ecore_Wl2_Window *ecore_wl2_window_surface_find(struct wl_surface *surface);
+ECORE_WL2_API Ecore_Wl2_Window *ecore_wl2_window_surface_find(struct wl_surface *surface);
 
 /**
  * @defgroup Ecore_Wl2_Input_Group Wayland Library Input Functions
@@ -1395,7 +1383,7 @@ EAPI Ecore_Wl2_Window *ecore_wl2_window_surface_find(struct wl_surface *surface)
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.17
  */
-EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
+ECORE_WL2_API struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
  * Get the seat capabilities for a given input.
@@ -1405,7 +1393,7 @@ EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.19
  */
-EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input);
+ECORE_WL2_API Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input);
 
 /**
  * Get the wayland's seat id from an input.
@@ -1417,7 +1405,7 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.19
  */
-EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_UNUSED_RESULT;
+ECORE_WL2_API unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Get the display object of an input
@@ -1429,7 +1417,7 @@ EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI Ecore_Wl2_Display *ecore_wl2_input_display_get(const Ecore_Wl2_Input *input);
+ECORE_WL2_API Ecore_Wl2_Display *ecore_wl2_input_display_get(const Ecore_Wl2_Input *input);
 
 /**
  * Get the xkb_keymap object of an input
@@ -1441,7 +1429,7 @@ EAPI Ecore_Wl2_Display *ecore_wl2_input_display_get(const Ecore_Wl2_Input *input
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI struct xkb_keymap *ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input);
+ECORE_WL2_API struct xkb_keymap *ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input);
 
 /**
  * Get the name of an input
@@ -1453,7 +1441,7 @@ EAPI struct xkb_keymap *ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
+ECORE_WL2_API Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 
 /**
  * Get the keyboard repeat rate and delay of an input
@@ -1467,7 +1455,7 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
+ECORE_WL2_API Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay);
 
 /**
  * Set the keyboard repeat rate and delay of an input
@@ -1478,7 +1466,7 @@ EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input,
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.24
  */
-EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double delay);
+ECORE_WL2_API Eina_Bool ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double delay);
 
 /**
  * Retrieves the mouse position of the seat
@@ -1491,7 +1479,7 @@ EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, doubl
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI Eina_Bool ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y);
+ECORE_WL2_API Eina_Bool ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y);
 
 /**
  * Set a given wl_surface to use as the pointer on a seat
@@ -1504,7 +1492,7 @@ EAPI Eina_Bool ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int 
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
+ECORE_WL2_API void ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
 
 /**
  * Set a specific cursor on a given seat
@@ -1519,7 +1507,7 @@ EAPI void ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface 
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
-EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
+ECORE_WL2_API void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor);
 
 /**
  * Gets default input of a given display
@@ -1529,7 +1517,7 @@ EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const cha
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.24
  */
-EAPI Ecore_Wl2_Input *ecore_wl2_input_default_input_get(const Ecore_Wl2_Display *ewd);
+ECORE_WL2_API Ecore_Wl2_Input *ecore_wl2_input_default_input_get(const Ecore_Wl2_Display *ewd);
 
 /**
  * @defgroup Ecore_Wl2_Output_Group Wayland Library Output Functions
@@ -1553,7 +1541,7 @@ EAPI Ecore_Wl2_Input *ecore_wl2_input_default_input_get(const Ecore_Wl2_Display 
  * @ingroup Ecore_Wl2_Output_Group
  * @since 1.17
  */
-EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
+ECORE_WL2_API int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
 
 /**
  * Get the current transform of a given output
@@ -1565,7 +1553,7 @@ EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
  * @ingroup Ecore_Wl2_Output_Group
  * @since 1.20
  */
-EAPI int ecore_wl2_output_transform_get(Ecore_Wl2_Output *output);
+ECORE_WL2_API int ecore_wl2_output_transform_get(Ecore_Wl2_Output *output);
 
 /**
  * Return the version of the display's compositor object
@@ -1577,7 +1565,7 @@ EAPI int ecore_wl2_output_transform_get(Ecore_Wl2_Output *output);
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.17
  */
-EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
+ECORE_WL2_API int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
 
 /**
  * Disable session recovery for any further connections.  Must be called
@@ -1586,7 +1574,7 @@ EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
  *
  * @since 1.19
  */
-EAPI void ecore_wl2_session_recovery_disable(void);
+ECORE_WL2_API void ecore_wl2_session_recovery_disable(void);
 
 /**
  * Commit the surface of a wayland window.
@@ -1603,7 +1591,7 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  *
  * @since 1.21
  */
-EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
+ECORE_WL2_API void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
 /**
  * Add a callback that fires when the window's surface_frame callback fires
@@ -1614,7 +1602,7 @@ EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
  *
  * @since 1.21
  */
-EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data);
+ECORE_WL2_API Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb cb, void *data);
 
 /**
  * Delete a callback that fires when the window's surface_frame callback fires
@@ -1623,7 +1611,7 @@ EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Wi
  *
  * @since 1.21
  */
-EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle);
+ECORE_WL2_API void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle);
 
 /**
  * Push buffered wayland protocol to compositor
@@ -1636,7 +1624,7 @@ EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
  *
  * @since 1.21
  */
-EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
+ECORE_WL2_API void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 
 /**
  * Get if a given window is resizing
@@ -1648,7 +1636,7 @@ EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.21
  */
-EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
+ECORE_WL2_API Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
 
 /**
  * Latch window state at the start of an update
@@ -1664,12 +1652,9 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  *
  * @since 1.21
  */
-EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
+ECORE_WL2_API void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
 # endif
-
-# undef EAPI
-# define EAPI
 
 /* # ifdef __cplusplus */
 /* } */

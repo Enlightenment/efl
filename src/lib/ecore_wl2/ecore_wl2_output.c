@@ -128,7 +128,7 @@ _ecore_wl2_output_find(Ecore_Wl2_Display *display, struct wl_output *op)
    return NULL;
 }
 
-EAPI int
+ECORE_WL2_API int
 ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output)
 {
    int w, h, mw, mh, dpi;
@@ -151,7 +151,7 @@ ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output)
    return dpi;
 }
 
-EAPI int
+ECORE_WL2_API int
 ecore_wl2_output_transform_get(Ecore_Wl2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, 0);

@@ -1761,7 +1761,7 @@ _ecore_wl2_input_window_remove(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window)
         }
 }
 
-EAPI struct wl_seat *
+ECORE_WL2_API struct wl_seat *
 ecore_wl2_input_seat_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
@@ -1769,7 +1769,7 @@ ecore_wl2_input_seat_get(Ecore_Wl2_Input *input)
    return input->wl.seat;
 }
 
-EAPI Ecore_Wl2_Seat_Capabilities
+ECORE_WL2_API Ecore_Wl2_Seat_Capabilities
 ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
 {
    Ecore_Wl2_Seat_Capabilities cap = ECORE_WL2_SEAT_CAPABILITIES_NONE;
@@ -1785,14 +1785,14 @@ ecore_wl2_input_seat_capabilities_get(Ecore_Wl2_Input *input)
    return cap;
 }
 
-EAPI Eina_Stringshare *
+ECORE_WL2_API Eina_Stringshare *
 ecore_wl2_input_name_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
    return input->name;
 }
 
-EAPI unsigned int
+ECORE_WL2_API unsigned int
 ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, 0);
@@ -1800,7 +1800,7 @@ ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input)
    return input->id;
 }
 
-EAPI Ecore_Wl2_Display *
+ECORE_WL2_API Ecore_Wl2_Display *
 ecore_wl2_input_display_get(const Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
@@ -1808,7 +1808,7 @@ ecore_wl2_input_display_get(const Ecore_Wl2_Input *input)
    return input->display;
 }
 
-EAPI struct xkb_keymap *
+ECORE_WL2_API struct xkb_keymap *
 ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, NULL);
@@ -1817,7 +1817,7 @@ ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
    return input->xkb.keymap;
 }
 
-EAPI Eina_Bool
+ECORE_WL2_API Eina_Bool
 ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double delay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
@@ -1829,7 +1829,7 @@ ecore_wl2_input_keyboard_repeat_set(Ecore_Wl2_Input *input, double rate, double 
    return input->repeat.enabled;
 }
 
-EAPI Eina_Bool
+ECORE_WL2_API Eina_Bool
 ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, double *delay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
@@ -1840,7 +1840,7 @@ ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input, double *rate, 
    return input->repeat.enabled;
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, int hot_x, int hot_y)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);
@@ -1852,14 +1852,14 @@ ecore_wl2_input_pointer_set(Ecore_Wl2_Input *input, struct wl_surface *surface, 
    _ecore_wl2_input_cursor_update(input);
 }
 
-EAPI void
+ECORE_WL2_API void
 ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const char *cursor)
 {
    EINA_SAFETY_ON_NULL_RETURN(input);
    _ecore_wl2_input_cursor_set(input, cursor);
 }
 
-EAPI Eina_Bool
+ECORE_WL2_API Eina_Bool
 ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(input, EINA_FALSE);
@@ -1872,7 +1872,7 @@ ecore_wl2_input_pointer_xy_get(const Ecore_Wl2_Input *input, int *x, int *y)
    return EINA_TRUE;
 }
 
-EAPI Ecore_Wl2_Input *
+ECORE_WL2_API Ecore_Wl2_Input *
 ecore_wl2_input_default_input_get(const Ecore_Wl2_Display *ewd)
 {
    Ecore_Wl2_Input *input;

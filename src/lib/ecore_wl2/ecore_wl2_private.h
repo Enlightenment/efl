@@ -20,19 +20,7 @@
 extern int _ecore_wl2_log_dom;
 extern Eina_Bool no_session_recovery;
 
-# ifdef EAPI
-#  undef EAPI
-# endif
-
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
+#include <ecore_wl2_api.h>
 
 # ifdef ECORE_WL2_DEFAULT_LOG_COLOR
 #  undef ECORE_WL2_DEFAULT_LOG_COLOR
@@ -573,8 +561,8 @@ typedef struct _Ecore_Wl2_Surface
    Eina_Bool alpha : 1;
 } Ecore_Wl2_Surface;
 
-EAPI extern int _ecore_wl2_event_window_www;
-EAPI extern int _ecore_wl2_event_window_www_drag;
+ECORE_WL2_API extern int _ecore_wl2_event_window_www;
+ECORE_WL2_API extern int _ecore_wl2_event_window_www_drag;
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
 void _display_event_free(void *d, void *event EINA_UNUSED);
@@ -613,7 +601,7 @@ Eina_Bool _ecore_wl2_display_sync_get(void);
 
 void _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd);
 
-EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h);
+ECORE_WL2_API void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h);
 
 Ecore_Wl2_Output *_ecore_wl2_output_find(Ecore_Wl2_Display *dsp, struct wl_output *op);
 
