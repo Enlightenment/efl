@@ -3,24 +3,7 @@
 #include <Evas.h>
 #include <Efl_Core.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-#ifdef EAPI_WEAK
-# undef EAPI_WEAK
-#endif
-
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-#  endif
-# endif
-
-#define EWAPI EAPI EAPI_WEAK
+#include <efl_canvas_wl_api.h>
 
 #ifdef WAYLAND_UTIL_H
 typedef struct wl_surface Efl_Canvas_Wl_Wl_Surface;
@@ -53,9 +36,5 @@ typedef struct Efl_Canvas_Wl_Xkb_State Efl_Canvas_Wl_Xkb_State;
  * @return The Evas_Object of the surface, NULL on failure
  * @since 1.24
  */
-EAPI Evas_Object *efl_canvas_wl_extracted_surface_object_find(void *surface_resource);
-#undef EAPI
-#define EAPI
-#undef EAPI_WEAK
-#define EAPI_WEAK
+EFL_CANVAS_WL_API Evas_Object *efl_canvas_wl_extracted_surface_object_find(void *surface_resource);
 #endif
