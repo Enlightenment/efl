@@ -32,7 +32,7 @@ _ephysics_quaternion_params_check(const EPhysics_Quaternion *quat1, const EPhysi
    return ephysics_quaternion_new();
 }
 
-EAPI EPhysics_Quaternion *
+EPHYSICS_API EPhysics_Quaternion *
 ephysics_quaternion_new(void)
 {
    EPhysics_Quaternion *quat;
@@ -49,7 +49,7 @@ ephysics_quaternion_new(void)
    return quat;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_get(const EPhysics_Quaternion *quat, double *x, double *y, double *z, double *w)
 {
    if (!quat)
@@ -64,7 +64,7 @@ ephysics_quaternion_get(const EPhysics_Quaternion *quat, double *x, double *y, d
    if (w) *w = quat->w;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_axis_angle_get(const EPhysics_Quaternion *quat, double *nx, double *ny, double *nz, double *a)
 {
    btQuaternion bt_quat;
@@ -83,7 +83,7 @@ ephysics_quaternion_axis_angle_get(const EPhysics_Quaternion *quat, double *nx, 
    if (a) *a = bt_quat.getAngle() * RAD_TO_DEG;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_set(EPhysics_Quaternion *quat, double x, double y, double z, double w)
 {
    if (!quat)
@@ -98,7 +98,7 @@ ephysics_quaternion_set(EPhysics_Quaternion *quat, double x, double y, double z,
    quat->w = w;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_axis_angle_set(EPhysics_Quaternion *quat, double nx, double ny, double nz, double a)
 {
    btQuaternion bt_quat;
@@ -115,7 +115,7 @@ ephysics_quaternion_axis_angle_set(EPhysics_Quaternion *quat, double nx, double 
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_euler_set(EPhysics_Quaternion *quat, double yaw, double pitch, double roll)
 {
    btQuaternion bt_quat;
@@ -130,7 +130,7 @@ ephysics_quaternion_euler_set(EPhysics_Quaternion *quat, double yaw, double pitc
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_normalize(EPhysics_Quaternion *quat)
 {
    btQuaternion bt_quat;
@@ -146,7 +146,7 @@ ephysics_quaternion_normalize(EPhysics_Quaternion *quat)
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_invert(EPhysics_Quaternion *quat)
 {
    btQuaternion bt_quat;
@@ -162,7 +162,7 @@ ephysics_quaternion_invert(EPhysics_Quaternion *quat)
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_scale(EPhysics_Quaternion *quat, double scale)
 {
    btQuaternion bt_quat;
@@ -178,7 +178,7 @@ ephysics_quaternion_scale(EPhysics_Quaternion *quat, double scale)
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_quaternion_inverse_scale(EPhysics_Quaternion *quat, double scale)
 {
    btQuaternion bt_quat;
@@ -194,7 +194,7 @@ ephysics_quaternion_inverse_scale(EPhysics_Quaternion *quat, double scale)
    _ephysics_quaternion_update(quat, &bt_quat);
 }
 
-EAPI EPhysics_Quaternion *
+EPHYSICS_API EPhysics_Quaternion *
 ephysics_quaternion_sum(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, EPhysics_Quaternion *result)
 {
    btQuaternion bt_quat1, bt_quat2, bt_quat;
@@ -211,7 +211,7 @@ ephysics_quaternion_sum(const EPhysics_Quaternion *quat1, const EPhysics_Quatern
    return quat;
 }
 
-EAPI EPhysics_Quaternion *
+EPHYSICS_API EPhysics_Quaternion *
 ephysics_quaternion_diff(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, EPhysics_Quaternion *result)
 {
    btQuaternion bt_quat1, bt_quat2, bt_quat;
@@ -228,7 +228,7 @@ ephysics_quaternion_diff(const EPhysics_Quaternion *quat1, const EPhysics_Quater
    return quat;
 }
 
-EAPI EPhysics_Quaternion *
+EPHYSICS_API EPhysics_Quaternion *
 ephysics_quaternion_multiply(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, EPhysics_Quaternion *result)
 {
    btQuaternion bt_quat1, bt_quat2, bt_quat;
@@ -245,7 +245,7 @@ ephysics_quaternion_multiply(const EPhysics_Quaternion *quat1, const EPhysics_Qu
    return quat;
 }
 
-EAPI EPhysics_Quaternion *
+EPHYSICS_API EPhysics_Quaternion *
 ephysics_quaternion_slerp(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2, double ratio, EPhysics_Quaternion *result)
 {
    btQuaternion bt_quat1, bt_quat2;
@@ -262,7 +262,7 @@ ephysics_quaternion_slerp(const EPhysics_Quaternion *quat1, const EPhysics_Quate
    return quat;
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_quaternion_dot(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2)
 {
    btQuaternion bt_quat1, bt_quat2;
@@ -279,7 +279,7 @@ ephysics_quaternion_dot(const EPhysics_Quaternion *quat1, const EPhysics_Quatern
    return bt_quat1.dot(bt_quat2);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_quaternion_angle_get(const EPhysics_Quaternion *quat1, const EPhysics_Quaternion *quat2)
 {
    btQuaternion bt_quat1, bt_quat2;
@@ -296,7 +296,7 @@ ephysics_quaternion_angle_get(const EPhysics_Quaternion *quat1, const EPhysics_Q
    return bt_quat1.angle(bt_quat2) * RAD_TO_DEG;
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_quaternion_length_get(const EPhysics_Quaternion *quat)
 {
    btQuaternion bt_quat;
@@ -311,7 +311,7 @@ ephysics_quaternion_length_get(const EPhysics_Quaternion *quat)
    return bt_quat.length();
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_quaternion_length2_get(const EPhysics_Quaternion *quat)
 {
    btQuaternion bt_quat;

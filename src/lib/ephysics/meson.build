@@ -5,6 +5,7 @@ ephysics_pub_deps = [eina, eo, efl]
 ephysics_ext_deps = [m, bullet]
 ephysics_header_src = [
   'EPhysics.h'
+  'ephysics_api.h'
 ]
 
 ephysics_src = files([
@@ -25,7 +26,7 @@ ephysics_lib = library('ephysics',
     dependencies: ephysics_pub_deps + ephysics_deps + ephysics_ext_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEPHYSICS_BUILD'],
     version : meson.project_version()
 )
 

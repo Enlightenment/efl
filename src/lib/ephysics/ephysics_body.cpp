@@ -86,7 +86,7 @@ _ephysics_body_cloth_anchor_mass_reset(EPhysics_Body *body)
    DBG("Cloth anchors mass reset.");
 }
 
-EAPI void
+EPHYSICS_API void
 _ephysics_body_soft_body_light_apply(Evas_Map *m, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz, int lr, int lg, int lb, int ar, int ag, int ab, Evas_Coord bx, Evas_Coord by, Evas_Coord bz)
 {
    double x, y, z, nx, ny, nz, ln, br;
@@ -308,7 +308,7 @@ _ephysics_body_soft_body_slices_get(EPhysics_Body *body)
    return slices;
 }
 
-EAPI int
+EPHYSICS_API int
 ephysics_body_soft_body_slice_index_get(EPhysics_Body *body, Evas_Object *slice)
 {
    Eina_List *slices;
@@ -716,7 +716,7 @@ ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_body_collision_group_add(EPhysics_Body *body, const char *group)
 {
    Eina_Stringshare *group_str;
@@ -742,7 +742,7 @@ ephysics_body_collision_group_add(EPhysics_Body *body, const char *group)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
 {
    Eina_Stringshare *group_str;
@@ -769,7 +769,7 @@ ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
    return EINA_TRUE;
 }
 
-EAPI const Eina_List *
+EPHYSICS_API const Eina_List *
 ephysics_body_collision_group_list_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -1813,7 +1813,7 @@ ephysics_body_evas_object_update_select(EPhysics_Body *body)
      _ephysics_body_outside_render_area_check(body);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
    if (!collision)
@@ -1827,7 +1827,7 @@ ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, E
    if (z) *z = collision->z;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_collision_contact_body_get(const EPhysics_Body_Collision *collision)
 {
    if (!collision)
@@ -1886,7 +1886,7 @@ ephysics_body_soft_body_get(const EPhysics_Body *body)
    return body->soft_body;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_anchor_hardness_set(EPhysics_Body *body, double hardness)
 {
    if (!body)
@@ -1916,7 +1916,7 @@ ephysics_body_soft_body_anchor_hardness_set(EPhysics_Body *body, double hardness
    DBG("Soft body anchor hardness set to: %lf", hardness);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_soft_body_anchor_hardness_get(EPhysics_Body *body)
 {
    if (!body)
@@ -1935,7 +1935,7 @@ ephysics_body_soft_body_anchor_hardness_get(EPhysics_Body *body)
    return body->soft_body->m_cfg.kAHR * 100;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_drag_coefficient_set(EPhysics_Body *body, double coefficient)
 {
    if (!body)
@@ -1955,7 +1955,7 @@ ephysics_body_soft_body_drag_coefficient_set(EPhysics_Body *body, double coeffic
    DBG("Soft body drag coefficient set to: %lf", coefficient);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_soft_body_drag_coefficient_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -1995,7 +1995,7 @@ _ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
    DBG("Soft body %p hardness set to %lf.", body, hardness);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {
    if (!body)
@@ -2021,7 +2021,7 @@ ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle)
 {
    if (!body)
@@ -2050,7 +2050,7 @@ ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle)
    DBG("Body %p appended to world's dragging bodies list.", body);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_dragging_unset(EPhysics_Body *body)
 {
    btSoftBody::Face face;
@@ -2086,7 +2086,7 @@ ephysics_body_soft_body_dragging_unset(EPhysics_Body *body)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_soft_body_hardness_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -2140,7 +2140,7 @@ _ephysics_body_soft_body_add(EPhysics_World *world, btCollisionShape *collision_
    return body;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, EPhysics_Body_Cloth_Anchor_Side side)
 {
    int rows;
@@ -2201,7 +2201,7 @@ ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, 
    _ephysics_body_cloth_anchor_mass_reset(body1);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_cloth_anchor_add(EPhysics_Body *body1, EPhysics_Body *body2, int node)
 {
    if (!body1 || !body2)
@@ -2221,7 +2221,7 @@ ephysics_body_cloth_anchor_add(EPhysics_Body *body1, EPhysics_Body *body2, int n
    _ephysics_body_cloth_anchor_mass_reset(body1);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_cloth_anchor_del(EPhysics_Body *body)
 {
    if (!body)
@@ -2264,7 +2264,7 @@ _ephysics_body_slices_add(EPhysics_Body *body, int slices_cnt, int *points, doub
    return NULL;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_position_iterations_set(EPhysics_Body *body, int iterations)
 {
    if (!body)
@@ -2285,7 +2285,7 @@ ephysics_body_soft_body_position_iterations_set(EPhysics_Body *body, int iterati
    DBG("Soft body position solver iterations set to: %d", iterations);
 }
 
-EAPI int
+EPHYSICS_API int
 ephysics_body_soft_body_position_iterations_get(EPhysics_Body *body)
 {
    if (!body)
@@ -2305,7 +2305,7 @@ ephysics_body_soft_body_position_iterations_get(EPhysics_Body *body)
    return body->soft_body->m_cfg.piterations;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, int number)
 {
    if (!body)
@@ -2325,7 +2325,7 @@ ephysics_body_soft_body_bending_constraints_add(EPhysics_Body *body, int number)
    DBG("Added new bending constraints to body: %p", body);
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_cloth_add(EPhysics_World *world, unsigned short rows, unsigned short columns)
 {
    EPhysics_Body *body;
@@ -2449,7 +2449,7 @@ ephysics_body_soft_body_dragging_apply(EPhysics_Body *body)
    node->m_im *= 0;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
    btScalar xx, yy, zz;
@@ -2506,7 +2506,7 @@ ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x
    ephysics_world_lock_release(body->world);
 }
 
-EAPI Eina_List *
+EPHYSICS_API Eina_List *
 ephysics_body_soft_body_triangles_inside_get(const EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    Eina_List *face_list = NULL;
@@ -2586,7 +2586,7 @@ _ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body *body, int idx, do
        impulse.y(), impulse.z());
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, double x, double y, double z)
 {
 
@@ -2608,7 +2608,7 @@ ephysics_body_soft_body_triangle_impulse_apply(EPhysics_Body * body, int idx, do
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_soft_body_triangle_list_impulse_apply(EPhysics_Body *body, Eina_List *triangles, double x, double y, double z)
 {
    Eina_List *l;
@@ -2639,7 +2639,7 @@ ephysics_body_soft_body_triangle_list_impulse_apply(EPhysics_Body *body, Eina_Li
    ephysics_world_lock_release(body->world);
 }
 
-EAPI int
+EPHYSICS_API int
 ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
 {
    int w, h, r, c, index = -1;
@@ -2745,7 +2745,7 @@ no_deform:
    return NULL;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_soft_sphere_add(EPhysics_World *world, int granularity)
 {
    EPhysics_Body *body;
@@ -2824,7 +2824,7 @@ no_collision_shape:
    return NULL;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_soft_cylinder_add(EPhysics_World *world)
 {
    EPhysics_Body *body;
@@ -2914,7 +2914,7 @@ no_collision_shape:
    return NULL;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_sphere_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;
@@ -2941,7 +2941,7 @@ ephysics_body_sphere_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_cylinder_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;
@@ -2968,7 +2968,7 @@ ephysics_body_cylinder_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_soft_box_add(EPhysics_World *world)
 {
    EPhysics_Body *body;
@@ -3058,7 +3058,7 @@ no_collision_shape:
    return NULL;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_box_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;
@@ -3080,7 +3080,7 @@ ephysics_body_box_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
 {
    double max_x, max_y, max_z, min_x, min_y, min_z, cm_x, cm_y, cm_z,
@@ -3269,7 +3269,7 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_top_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, z, w, d;
@@ -3281,7 +3281,7 @@ ephysics_body_top_boundary_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_bottom_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, z, w, h, d;
@@ -3293,7 +3293,7 @@ ephysics_body_bottom_boundary_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_left_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, z, h, d;
@@ -3305,7 +3305,7 @@ ephysics_body_left_boundary_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_right_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, z, w, h, d;
@@ -3317,7 +3317,7 @@ ephysics_body_right_boundary_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_front_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, z, w, h;
@@ -3329,7 +3329,7 @@ ephysics_body_front_boundary_add(EPhysics_World *world)
    return body;
 }
 
-EAPI EPhysics_Body *
+EPHYSICS_API EPhysics_Body *
 ephysics_body_back_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, z, w, h, d;
@@ -3350,7 +3350,7 @@ ephysics_orphan_body_del(EPhysics_Body *body)
    _ephysics_body_del(body);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_del(EPhysics_Body *body)
 {
    EPhysics_World *world;
@@ -3370,7 +3370,7 @@ ephysics_body_del(EPhysics_Body *body)
    ephysics_world_lock_release(world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
    int obj_x, obj_y, obj_w, obj_h, bz, bd;
@@ -3433,7 +3433,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
                                   _ephysics_body_efl_canvas_object_resize_cb, body);
 }
 
-EAPI Evas_Object *
+EPHYSICS_API Evas_Object *
 ephysics_body_evas_object_unset(EPhysics_Body *body)
 {
    Evas_Object *obj;
@@ -3467,7 +3467,7 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
    return obj;
 }
 
-EAPI Evas_Object *
+EPHYSICS_API Evas_Object *
 ephysics_body_evas_object_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -3479,7 +3479,7 @@ ephysics_body_evas_object_get(const EPhysics_Body *body)
    return body->evas_obj;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    if (!body)
@@ -3503,7 +3503,7 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    if (!body)
@@ -3523,7 +3523,7 @@ ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
    if (!body)
@@ -3537,7 +3537,7 @@ ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d)
 {
    btTransform trans;
@@ -3568,7 +3568,7 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
    if (d) *d = body->size.d;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_mass_set(EPhysics_Body *body, double mass)
 {
    if (!body)
@@ -3590,7 +3590,7 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_mass_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -3602,7 +3602,7 @@ ephysics_body_mass_get(const EPhysics_Body *body)
    return body->mass;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double z)
 {
    if (!body)
@@ -3631,7 +3631,7 @@ _ephysics_body_soft_body_linear_velocity_get(const EPhysics_Body *body, double *
    if (z) *z = total_velocity.getZ() * rate;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    double rate;
@@ -3653,7 +3653,7 @@ ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *
    _ephysics_body_soft_body_linear_velocity_get(body, x, y, z, rate);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_angular_velocity_set(EPhysics_Body *body, double x, double y, double z)
 {
    if (!body)
@@ -3674,7 +3674,7 @@ ephysics_body_angular_velocity_set(EPhysics_Body *body, double x, double y, doub
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    if (!body)
@@ -3690,7 +3690,7 @@ ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *x, double 
    if (z) *z = -body->rigid_body->getAngularVelocity().getZ() * RAD_TO_DEG;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold)
 {
    if (!body)
@@ -3708,7 +3708,7 @@ ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshol
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_sleeping_threshold_get(const EPhysics_Body *body, double *linear_threshold, double *angular_threshold)
 {
    double rate;
@@ -3729,7 +3729,7 @@ ephysics_body_sleeping_threshold_get(const EPhysics_Body *body, double *linear_t
         RAD_TO_DEG;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_stop(EPhysics_Body *body)
 {
    if (!body)
@@ -3758,7 +3758,7 @@ ephysics_body_stop(EPhysics_Body *body)
    DBG("Body %p stopped", body);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double angular_damping)
 {
    if (!body)
@@ -3775,7 +3775,7 @@ ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double ang
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_damping_get(const EPhysics_Body *body, double *linear_damping, double *angular_damping)
 {
    if (!body)
@@ -3791,7 +3791,7 @@ ephysics_body_damping_get(const EPhysics_Body *body, double *linear_damping, dou
      body->rigid_body->getAngularDamping();
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_evas_object_update(EPhysics_Body *body)
 {
    if (!body)
@@ -3803,7 +3803,7 @@ ephysics_body_evas_object_update(EPhysics_Body *body)
    _ephysics_body_evas_object_default_update(body);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, const void *data)
 {
    EPhysics_Body_Callback *cb;
@@ -3842,7 +3842,7 @@ ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Body_Typ
        body->collision_cb++;
 }
 
-EAPI void *
+EPHYSICS_API void *
 ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func)
 {
    EPhysics_Body_Callback *cb;
@@ -3869,7 +3869,7 @@ ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Typ
    return cb_data;
 }
 
-EAPI void *
+EPHYSICS_API void *
 ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, void *data)
 {
    EPhysics_Body_Callback *cb;
@@ -3907,7 +3907,7 @@ _ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
    body->soft_body->setRestitution(btScalar(restitution));
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
 {
    if (!body)
@@ -3922,7 +3922,7 @@ ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_restitution_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -3950,7 +3950,7 @@ _ephysics_body_friction_set(EPhysics_Body *body, double friction)
    body->soft_body->setFriction(btScalar(friction));
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_friction_set(EPhysics_Body *body, double friction)
 {
    if (!body)
@@ -3965,7 +3965,7 @@ ephysics_body_friction_set(EPhysics_Body *body, double friction)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_friction_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -3980,7 +3980,7 @@ ephysics_body_friction_get(const EPhysics_Body *body)
    return body->soft_body->getFriction();
 }
 
-EAPI EPhysics_World *
+EPHYSICS_API EPhysics_World *
 ephysics_body_world_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4005,7 +4005,7 @@ _ephysics_body_soft_body_central_impulse_apply(EPhysics_Body *body, btVector3 im
      }
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y, double z)
 {
    double rate;
@@ -4032,7 +4032,7 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y, dou
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, double z, Evas_Coord pos_x, Evas_Coord pos_y, Evas_Coord pos_z)
 {
    double rate;
@@ -4054,7 +4054,7 @@ ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, double z, E
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z)
 {
    if (!body)
@@ -4071,7 +4071,7 @@ ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y, Eina_Bool *enable_z)
 {
    if (!body)
@@ -4087,7 +4087,7 @@ ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *e
    if (enable_z) *enable_z = !!body->rigid_body->getLinearFactor().z();
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_torque_impulse_apply(EPhysics_Body *body, double pitch, double yaw, double roll)
 {
    if (!body)
@@ -4102,7 +4102,7 @@ ephysics_body_torque_impulse_apply(EPhysics_Body *body, double pitch, double yaw
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_angular_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z)
 {
    if (!body)
@@ -4119,7 +4119,7 @@ ephysics_body_angular_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y, Eina_Bool *enable_z)
 {
    if (!body)
@@ -4135,7 +4135,7 @@ ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *
    if (enable_z) *enable_z = !!body->rigid_body->getAngularFactor().z();
 }
 
-EAPI EPhysics_Quaternion *
+EPHYSICS_API EPhysics_Quaternion *
 ephysics_body_rotation_get(const EPhysics_Body *body, EPhysics_Quaternion *rotation)
 {
    EPhysics_Quaternion *quat;
@@ -4185,7 +4185,7 @@ _ephysics_body_soft_body_rotation_set(EPhysics_Body *body, btTransform trans)
    body->soft_body->updateConstants();
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_rotation_set(EPhysics_Body *body, EPhysics_Quaternion *quat)
 {
    btQuaternion bt_quat;
@@ -4224,7 +4224,7 @@ ephysics_body_rotation_set(EPhysics_Body *body, EPhysics_Quaternion *quat)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_data_set(EPhysics_Body *body, void *data)
 {
    if (!body)
@@ -4236,7 +4236,7 @@ ephysics_body_data_set(EPhysics_Body *body, void *data)
    body->data = data;
 }
 
-EAPI void *
+EPHYSICS_API void *
 ephysics_body_data_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4248,7 +4248,7 @@ ephysics_body_data_get(const EPhysics_Body *body)
    return body->data;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y, double z)
 {
    double rate;
@@ -4268,7 +4268,7 @@ ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y, doubl
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_force_apply(EPhysics_Body *body, double x, double y, double z, Evas_Coord pos_x, Evas_Coord pos_y, Evas_Coord pos_z)
 {
    double rate;
@@ -4290,7 +4290,7 @@ ephysics_body_force_apply(EPhysics_Body *body, double x, double y, double z, Eva
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_torque_apply(EPhysics_Body *body, double torque_x, double torque_y, double torque_z)
 {
    if (!body)
@@ -4306,7 +4306,7 @@ ephysics_body_torque_apply(EPhysics_Body *body, double torque_x, double torque_y
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    double rate, gx, gy, gz;
@@ -4325,7 +4325,7 @@ ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double
    if (z) *z = body->force.z * rate + gz;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_torques_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    if (!body)
@@ -4339,7 +4339,7 @@ ephysics_body_torques_get(const EPhysics_Body *body, double *x, double *y, doubl
    if (z) *z = -body->force.torque_z;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_forces_clear(EPhysics_Body *body)
 {
    if (!body)
@@ -4356,7 +4356,7 @@ ephysics_body_forces_clear(EPhysics_Body *body)
    body->force.torque_z = 0;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    if (!body)
@@ -4370,7 +4370,7 @@ ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y, d
    if (z) *z = body->cm.z;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_density_set(EPhysics_Body *body, double density)
 {
    if (!body)
@@ -4386,7 +4386,7 @@ ephysics_body_density_set(EPhysics_Body *body, double density)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_density_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4398,7 +4398,7 @@ ephysics_body_density_get(const EPhysics_Body *body)
    return body->density;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_material_set(EPhysics_Body *body, EPhysics_Body_Material material)
 {
    if (!body)
@@ -4436,7 +4436,7 @@ ephysics_body_material_set(EPhysics_Body *body, EPhysics_Body_Material material)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI EPhysics_Body_Material
+EPHYSICS_API EPhysics_Body_Material
 ephysics_body_material_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4448,7 +4448,7 @@ ephysics_body_material_get(const EPhysics_Body *body)
    return body->material;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_light_set(EPhysics_Body *body, Eina_Bool enable)
 {
    if (!body)
@@ -4460,7 +4460,7 @@ ephysics_body_light_set(EPhysics_Body *body, Eina_Bool enable)
    body->light_apply = !!enable;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_body_light_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4472,7 +4472,7 @@ ephysics_body_light_get(const EPhysics_Body *body)
    return body->light_apply;
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_body_volume_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4483,7 +4483,7 @@ ephysics_body_volume_get(const EPhysics_Body *body)
    return _ephysics_body_volume_get(body);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_back_face_culling_set(EPhysics_Body *body, Eina_Bool enable)
 {
    if (!body)
@@ -4494,7 +4494,7 @@ ephysics_body_back_face_culling_set(EPhysics_Body *body, Eina_Bool enable)
    body->back_face_culling = !!enable;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_body_back_face_culling_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -4505,7 +4505,7 @@ ephysics_body_back_face_culling_get(const EPhysics_Body *body)
    return body->back_face_culling;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_body_clockwise_get(const EPhysics_Body *body)
 {
    if (!body)
@@ -5215,7 +5215,7 @@ _ephysics_body_soft_sphere_face_evas_object_unset(EPhysics_Body *body, EPhysics_
    return obj;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_body_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
    if (!body)
@@ -5249,7 +5249,7 @@ ephysics_body_face_evas_object_set(EPhysics_Body *body, EPhysics_Body_Face face,
    ERR("Can't handle body %p type.", body);
 }
 
-EAPI Evas_Object *
+EPHYSICS_API Evas_Object *
 ephysics_body_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face face)
 {
    if (!body)
@@ -5274,7 +5274,7 @@ ephysics_body_face_evas_object_get(const EPhysics_Body *body, EPhysics_Body_Face
    return NULL;
 }
 
-EAPI Evas_Object *
+EPHYSICS_API Evas_Object *
 ephysics_body_face_evas_object_unset(EPhysics_Body *body, EPhysics_Body_Face face)
 {
    if (!body)
