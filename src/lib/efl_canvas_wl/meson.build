@@ -23,6 +23,7 @@ foreach eo_file : pub_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EFL_CANVAS_WL_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -31,7 +32,7 @@ efl_canvas_wl_src = files([
  'efl_canvas_wl.c',
 ])
 
-efl_canvas_wl_header_src = ['Efl_Canvas_Wl.h']
+efl_canvas_wl_header_src = ['Efl_Canvas_Wl.h', 'efl_canvas_wl_api.h']
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
 efl_canvas_wl_lib = library('efl_canvas_wl',
