@@ -82,7 +82,7 @@ _ecore_wl_dnd_offer_listener =
  * @deprecated use ecore_wl_dnd_selection_set
  * @since 1.7
 */
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered)
 {
    LOGFN;
@@ -94,7 +94,7 @@ ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered)
  * @deprecated use ecore_wl_dnd_selection_get
  * @since 1.7
 */
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type)
 {
    LOGFN;
@@ -106,7 +106,7 @@ ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type)
  * @deprecated Do Not Use
  * @since 1.7
  */
-EINA_DEPRECATED EAPI Ecore_Wl_Dnd *
+EINA_DEPRECATED ECORE_WAYLAND_API Ecore_Wl_Dnd *
 ecore_wl_dnd_get(void)
 {
    return NULL;
@@ -116,7 +116,7 @@ ecore_wl_dnd_get(void)
  * @deprecated use ecore_wl_dnd_drag_start
  * @since 1.7
  */
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd EINA_UNUSED)
 {
    return EINA_FALSE;
@@ -126,7 +126,7 @@ ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd EINA_UNUSED)
  * @deprecated use ecore_wl_dnd_selection_owner_has
  * @since 1.7
  */
-EINA_DEPRECATED EAPI Eina_Bool
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd)
 {
    return ecore_wl_dnd_selection_owner_has(dnd->input);
@@ -136,7 +136,7 @@ ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI Eina_Bool
+ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
 {
    struct wl_data_device_manager *man;
@@ -192,7 +192,7 @@ ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI Eina_Bool
+ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type)
 {
    char **t;
@@ -218,7 +218,7 @@ ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI Eina_Bool
+ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input)
 {
    LOGFN;
@@ -231,7 +231,7 @@ ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI Eina_Bool
+ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_selection_clear(Ecore_Wl_Input *input)
 {
    LOGFN;
@@ -250,7 +250,7 @@ ecore_wl_dnd_selection_clear(Ecore_Wl_Input *input)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Window *dragwin, int x EINA_UNUSED, int y EINA_UNUSED, int w EINA_UNUSED, int h EINA_UNUSED)
 {
    struct wl_surface *drag_surface;
@@ -307,7 +307,7 @@ ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Wi
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_dnd_drag_end(Ecore_Wl_Input *input)
 {
    Ecore_Wl_Event_Dnd_End *ev;
@@ -349,7 +349,7 @@ ecore_wl_dnd_drag_end(Ecore_Wl_Input *input)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI Eina_Bool
+ECORE_WAYLAND_API Eina_Bool
 ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type)
 {
    char **t;
@@ -373,7 +373,7 @@ ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered)
 {
    struct wl_data_device_manager *man;
@@ -423,7 +423,7 @@ ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered)
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI struct wl_array *
+ECORE_WAYLAND_API struct wl_array *
 ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input)
 {
    LOGFN;

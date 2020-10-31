@@ -63,7 +63,7 @@ static const struct wl_output_listener _ecore_wl_output_listener =
 
 /* Get list of available outputs
  * @since 1.2 */
-EAPI Eina_Inlist *
+ECORE_WAYLAND_API Eina_Inlist *
 ecore_wl_outputs_get(void)
 {
    return _ecore_wl_disp->outputs;

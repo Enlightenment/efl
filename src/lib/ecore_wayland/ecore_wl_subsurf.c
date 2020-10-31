@@ -27,7 +27,7 @@ struct _Ecore_Wl_Subsurf
    Eina_Bool sync : 1;
 };
 
-EAPI Ecore_Wl_Subsurf *
+ECORE_WAYLAND_API Ecore_Wl_Subsurf *
 ecore_wl_subsurf_create(Ecore_Wl_Window *win)
 {
    struct wl_subsurface *subsurface;
@@ -86,7 +86,7 @@ _ecore_wl_subsurf_destroy(Ecore_Wl_Subsurf *ess)
    free(ess);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_del(Ecore_Wl_Subsurf *ess)
 {
    LOGFN;
@@ -109,7 +109,7 @@ _ecore_wl_subsurfs_del_all(Ecore_Wl_Window *win)
      }
 }
 
-EAPI struct wl_surface *
+ECORE_WAYLAND_API struct wl_surface *
 ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess)
 {
    LOGFN;
@@ -119,7 +119,7 @@ ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess)
    return ess->surface;
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y)
 {
    LOGFN;
@@ -136,7 +136,7 @@ ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y)
    wl_subsurface_set_position(ess->subsurface, x, y);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y)
 {
    LOGFN;
@@ -147,7 +147,7 @@ ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y)
    if (y) *y = ess->y;
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 {
    LOGFN;
@@ -159,7 +159,7 @@ ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
    wl_subsurface_place_above(ess->subsurface, surface);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
 {
    LOGFN;
@@ -171,7 +171,7 @@ ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface)
    wl_subsurface_place_below(ess->subsurface, surface);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val)
 {
    LOGFN;
@@ -190,7 +190,7 @@ ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val)
      wl_subsurface_set_desync(ess->subsurface);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, int h)
 {
    struct wl_region *region = NULL;

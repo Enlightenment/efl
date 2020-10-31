@@ -81,22 +81,22 @@ static const struct xdg_shell_listener xdg_shell_listener =
 int _ecore_wl_log_dom = -1;
 Ecore_Wl_Display *_ecore_wl_disp = NULL;
 
-EAPI int ECORE_WL_EVENT_MOUSE_IN = 0;
-EAPI int ECORE_WL_EVENT_MOUSE_OUT = 0;
-EAPI int ECORE_WL_EVENT_FOCUS_IN = 0;
-EAPI int ECORE_WL_EVENT_FOCUS_OUT = 0;
-EAPI int ECORE_WL_EVENT_WINDOW_CONFIGURE = 0;
-EAPI int ECORE_WL_EVENT_DND_ENTER = 0;
-EAPI int ECORE_WL_EVENT_DND_POSITION = 0;
-EAPI int ECORE_WL_EVENT_DND_LEAVE = 0;
-EAPI int ECORE_WL_EVENT_DND_DROP = 0;
-EAPI int ECORE_WL_EVENT_DND_OFFER = 0;
-EAPI int ECORE_WL_EVENT_DND_END = 0;
-EAPI int ECORE_WL_EVENT_DATA_SOURCE_TARGET = 0;
-EAPI int ECORE_WL_EVENT_DATA_SOURCE_SEND = 0;
-EAPI int ECORE_WL_EVENT_SELECTION_DATA_READY = 0;
-EAPI int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED = 0;
-EAPI int ECORE_WL_EVENT_INTERFACES_BOUND = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_MOUSE_IN = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_MOUSE_OUT = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_FOCUS_IN = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_FOCUS_OUT = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_WINDOW_CONFIGURE = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DND_ENTER = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DND_POSITION = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DND_LEAVE = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DND_DROP = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DND_OFFER = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DND_END = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DATA_SOURCE_TARGET = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DATA_SOURCE_SEND = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_SELECTION_DATA_READY = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED = 0;
+ECORE_WAYLAND_API int ECORE_WL_EVENT_INTERFACES_BOUND = 0;
 
 static void
 _ecore_wl_init_callback(void *data, struct wl_callback *callback, uint32_t serial EINA_UNUSED)
@@ -124,7 +124,7 @@ _ecore_wl_init_wait(void)
      }
 }
 
-EAPI int
+ECORE_WAYLAND_API int
 ecore_wl_init(const char *name)
 {
    struct wl_callback *callback;
@@ -237,7 +237,7 @@ exit_eina:
    return --_ecore_wl_init_count;
 }
 
-EAPI int
+ECORE_WAYLAND_API int
 ecore_wl_shutdown(void)
 {
    LOGFN;
@@ -245,14 +245,14 @@ ecore_wl_shutdown(void)
    return _ecore_wl_shutdown(EINA_TRUE);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_flush(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display)) return;
    wl_display_flush(_ecore_wl_disp->wl.display);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_sync(void)
 {
    int ret;
@@ -271,7 +271,7 @@ ecore_wl_sync(void)
      }
 }
 
-EAPI struct wl_shm *
+ECORE_WAYLAND_API struct wl_shm *
 ecore_wl_shm_get(void)
 {
    if (!_ecore_wl_disp) return NULL;
@@ -281,7 +281,7 @@ ecore_wl_shm_get(void)
    return _ecore_wl_disp->wl.shm;
 }
 
-EAPI struct wl_display *
+ECORE_WAYLAND_API struct wl_display *
 ecore_wl_display_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
@@ -289,7 +289,7 @@ ecore_wl_display_get(void)
    return _ecore_wl_disp->wl.display;
 }
 
-EAPI Eina_Inlist *
+ECORE_WAYLAND_API Eina_Inlist *
 ecore_wl_globals_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
@@ -300,7 +300,7 @@ ecore_wl_globals_get(void)
    return _ecore_wl_disp->globals;
 }
 
-EAPI struct wl_registry *
+ECORE_WAYLAND_API struct wl_registry *
 ecore_wl_registry_get(void)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->wl.display))
@@ -330,7 +330,7 @@ _ecore_wl_subcompositor_get(void)
    return _ecore_wl_disp->wl.subcompositor;
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_screen_size_get(int *w, int *h)
 {
    Ecore_Wl_Output *out;
@@ -377,7 +377,7 @@ ecore_wl_screen_size_get(int *w, int *h)
 }
 
 /* @since 1.2 */
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_pointer_xy_get(int *x, int *y)
 {
    LOGFN;
@@ -385,7 +385,7 @@ ecore_wl_pointer_xy_get(int *x, int *y)
    _ecore_wl_input_pointer_xy_get(x, y);
 }
 
-EAPI int
+ECORE_WAYLAND_API int
 ecore_wl_dpi_get(void)
 {
    int w, mw;
@@ -407,7 +407,7 @@ ecore_wl_dpi_get(void)
    return (((w * 254) / mw) + 5) / 10;
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_display_iterate(void)
 {
    int ret;
@@ -425,7 +425,7 @@ ecore_wl_display_iterate(void)
 }
 
 /* @since 1.8 */
-EAPI Eina_Bool
+ECORE_WAYLAND_API Eina_Bool
 ecore_wl_animator_source_set(Ecore_Animator_Source source)
 {
    LOGFN;
@@ -457,7 +457,7 @@ ecore_wl_animator_source_set(Ecore_Animator_Source source)
    return EINA_TRUE;
 }
 
-EAPI struct wl_cursor *
+ECORE_WAYLAND_API struct wl_cursor *
 ecore_wl_cursor_get(const char *cursor_name)
 {
    if ((!_ecore_wl_disp) || (!_ecore_wl_disp->cursor_theme))
@@ -467,7 +467,7 @@ ecore_wl_cursor_get(const char *cursor_name)
                                      cursor_name);
 }
 
-EAPI void
+ECORE_WAYLAND_API void
 ecore_wl_server_mode_set(Eina_Bool on)
 {
    _ecore_wl_server_mode = on;

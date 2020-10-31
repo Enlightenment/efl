@@ -13,19 +13,7 @@
 # include <wayland-cursor.h>
 # include <xkbcommon/xkbcommon.h>
 
-# ifdef EAPI
-#  undef EAPI
-# endif
-
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
+# include <ecore_wayland_api.h>
 
 # warning The Ecore_Wayland library has been deprecated. Please use the Ecore_Wl2 library
 
@@ -244,22 +232,22 @@ struct _Ecore_Wl_Event_Interfaces_Bound
  * @li @ref Ecore_Wl_Subsurf
  */
 
-EAPI extern int ECORE_WL_EVENT_MOUSE_IN;
-EAPI extern int ECORE_WL_EVENT_MOUSE_OUT;
-EAPI extern int ECORE_WL_EVENT_FOCUS_IN;
-EAPI extern int ECORE_WL_EVENT_FOCUS_OUT;
-EAPI extern int ECORE_WL_EVENT_WINDOW_CONFIGURE;
-EAPI extern int ECORE_WL_EVENT_DND_ENTER;
-EAPI extern int ECORE_WL_EVENT_DND_POSITION;
-EAPI extern int ECORE_WL_EVENT_DND_LEAVE;
-EAPI extern int ECORE_WL_EVENT_DND_DROP;
-EAPI extern int ECORE_WL_EVENT_DND_OFFER; /** @since 1.8 */
-EAPI extern int ECORE_WL_EVENT_DND_END; /** @since 1.8 */
-EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_TARGET; /** @since 1.7 */
-EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_SEND; /** @since 1.7 */
-EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.7 */
-EAPI extern int ECORE_WL_EVENT_SELECTION_DATA_READY; /** @since 1.7 */
-EAPI extern int ECORE_WL_EVENT_INTERFACES_BOUND;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_MOUSE_IN;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_MOUSE_OUT;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_FOCUS_IN;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_FOCUS_OUT;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_WINDOW_CONFIGURE;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DND_ENTER;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DND_POSITION;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DND_LEAVE;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DND_DROP;
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DND_OFFER; /** @since 1.8 */
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DND_END; /** @since 1.8 */
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DATA_SOURCE_TARGET; /** @since 1.7 */
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DATA_SOURCE_SEND; /** @since 1.7 */
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.7 */
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_SELECTION_DATA_READY; /** @since 1.7 */
+ECORE_WAYLAND_API extern int ECORE_WL_EVENT_INTERFACES_BOUND;
 
 /**
  * @defgroup Ecore_Wl_Init_Group Wayland Library Init and Shutdown Functions
@@ -278,7 +266,7 @@ EAPI extern int ECORE_WL_EVENT_INTERFACES_BOUND;
  *          shut down. @c 0 is returned if an error occurs.
  *
  */
-EAPI int ecore_wl_init(const char *name);
+ECORE_WAYLAND_API int ecore_wl_init(const char *name);
 
 /**
  * @ingroup Ecore_Wl_Init_Group
@@ -291,7 +279,7 @@ EAPI int ecore_wl_init(const char *name);
  *          being shut down.
  *
  */
-EAPI int ecore_wl_shutdown(void);
+ECORE_WAYLAND_API int ecore_wl_shutdown(void);
 
 /**
  * @defgroup Ecore_Wl_Flush_Group Wayland Synchronization Functions
@@ -307,7 +295,7 @@ EAPI int ecore_wl_shutdown(void);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_flush(void);
+ECORE_WAYLAND_API void ecore_wl_flush(void);
 
 /**
  * @ingroup Ecore_Wl_Flush_Group
@@ -316,7 +304,7 @@ EAPI void ecore_wl_flush(void);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_sync(void);
+ECORE_WAYLAND_API void ecore_wl_sync(void);
 
 /**
  * @defgroup Ecore_Wl_Display_Group Wayland Display Functions
@@ -333,7 +321,7 @@ EAPI void ecore_wl_sync(void);
  *
  * @since 1.2
  */
-EAPI struct wl_shm *ecore_wl_shm_get(void);
+ECORE_WAYLAND_API struct wl_shm *ecore_wl_shm_get(void);
 
 /**
  * @ingroup Ecore_Wl_Display_Group
@@ -343,7 +331,7 @@ EAPI struct wl_shm *ecore_wl_shm_get(void);
  *
  * @since 1.2
  */
-EAPI struct wl_display *ecore_wl_display_get(void);
+ECORE_WAYLAND_API struct wl_display *ecore_wl_display_get(void);
 
 /**
  * @brief Retrieves the Compositor interface.
@@ -364,7 +352,7 @@ EAPI struct wl_display *ecore_wl_display_get(void);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_screen_size_get(int *w, int *h);
+ECORE_WAYLAND_API void ecore_wl_screen_size_get(int *w, int *h);
 
 /**
  * @ingroup Ecore_Wl_Display_Group
@@ -375,7 +363,7 @@ EAPI void ecore_wl_screen_size_get(int *w, int *h);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
+ECORE_WAYLAND_API void ecore_wl_pointer_xy_get(int *x, int *y);
 
 /**
  * @brief Returns the screen DPI.
@@ -388,7 +376,7 @@ EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
  *
  * @since 1.2
  */
-EAPI int ecore_wl_dpi_get(void);
+ECORE_WAYLAND_API int ecore_wl_dpi_get(void);
 
 /**
  * @brief Dispatches Wayland events.
@@ -397,13 +385,13 @@ EAPI int ecore_wl_dpi_get(void);
  * to read from the display fd and queue things up according to the proxy
  * assignment.
  */
-EAPI void ecore_wl_display_iterate(void);
+ECORE_WAYLAND_API void ecore_wl_display_iterate(void);
 
 /*
  * @ingroup Ecore_Wl_Display_Group
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_animator_source_set(Ecore_Animator_Source source);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_animator_source_set(Ecore_Animator_Source source);
 
 /**
  * @brief Retrieves the requested cursor from the cursor theme.
@@ -413,7 +401,7 @@ EAPI Eina_Bool ecore_wl_animator_source_set(Ecore_Animator_Source source);
  *
  * @since 1.2
  */
-EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
+ECORE_WAYLAND_API struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
 
 /**
  * @defgroup Ecore_Wl_Input_Group Functions dealing with Wayland Input
@@ -426,28 +414,28 @@ EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
  * @ingroup Ecore_Wl_Input_Group
  * @since 1.8
  */
-EAPI Ecore_Wl_Input *ecore_wl_input_get(void);
-EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
-EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
-EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
-EAPI void ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name);
-EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
-EAPI struct wl_seat *ecore_wl_input_seat_get(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API Ecore_Wl_Input *ecore_wl_input_get(void);
+ECORE_WAYLAND_API void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
+ECORE_WAYLAND_API void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
+ECORE_WAYLAND_API void ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name);
+ECORE_WAYLAND_API void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API struct wl_seat *ecore_wl_input_seat_get(Ecore_Wl_Input *input);
 
-EAPI Eina_Inlist *ecore_wl_outputs_get(void);
+ECORE_WAYLAND_API Eina_Inlist *ecore_wl_outputs_get(void);
 
 /**
  * @ingroup Ecore_Wl_Input_Group
  * @since 1.12
  */
-EAPI void ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size);
-EAPI void ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_theme_name);
+ECORE_WAYLAND_API void ecore_wl_input_cursor_size_set(Ecore_Wl_Input *input, const int size);
+ECORE_WAYLAND_API void ecore_wl_input_cursor_theme_name_set(Ecore_Wl_Input *input, const char *cursor_theme_name);
 
 /**
  * @ingroup Ecore_Wl_Input_Group
  * @since 1.17
  */
-EAPI struct xkb_keymap *ecore_wl_input_keymap_get(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API struct xkb_keymap *ecore_wl_input_keymap_get(Ecore_Wl_Input *input);
 
 
 /**
@@ -467,7 +455,7 @@ EAPI struct xkb_keymap *ecore_wl_input_keymap_get(Ecore_Wl_Input *input);
  *
  * @since 1.7.6
  */
-EAPI Eina_Inlist *ecore_wl_globals_get(void);
+ECORE_WAYLAND_API Eina_Inlist *ecore_wl_globals_get(void);
 
 /**
  * @ingroup Ecore_Wl_Display_Group
@@ -477,7 +465,7 @@ EAPI Eina_Inlist *ecore_wl_globals_get(void);
  *
  * @since 1.7.6
  */
-EAPI struct wl_registry *ecore_wl_registry_get(void);
+ECORE_WAYLAND_API struct wl_registry *ecore_wl_registry_get(void);
 
 /**
  * @defgroup Ecore_Wl_Window_Group Wayland Window functions.
@@ -502,7 +490,7 @@ EAPI struct wl_registry *ecore_wl_registry_get(void);
  *
  * @since 1.2
  */
-EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type);
+ECORE_WAYLAND_API Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -512,7 +500,7 @@ EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y,
  *
  * @since 1.2
  */
-EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_free(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -527,7 +515,7 @@ EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
+ECORE_WAYLAND_API void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -543,12 +531,12 @@ EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location);
-EAPI void ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h);
-EAPI void ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, int x, int y);
+ECORE_WAYLAND_API void ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location);
+ECORE_WAYLAND_API void ecore_wl_window_damage(Ecore_Wl_Window *win, int x, int y, int w, int h);
+ECORE_WAYLAND_API void ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, int x, int y);
 
 /* @since 1.8 */
-EAPI void ecore_wl_window_commit(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_commit(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -560,7 +548,7 @@ EAPI void ecore_wl_window_commit(Ecore_Wl_Window *win);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_window_show(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_show(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -572,7 +560,7 @@ EAPI void ecore_wl_window_show(Ecore_Wl_Window *win);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_hide(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -582,24 +570,24 @@ EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
  *
  * @since 1.2
  */
-EAPI void ecore_wl_window_raise(Ecore_Wl_Window *win);
-EAPI void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized);
-EAPI Eina_Bool ecore_wl_window_maximized_get(Ecore_Wl_Window *win);
-EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);
-EAPI Eina_Bool ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win);
-EAPI void ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent);
-EAPI Eina_Bool ecore_wl_window_transparent_get(Ecore_Wl_Window *win);
-EAPI void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
-EAPI void ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y);
-EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
-EAPI struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
-EAPI struct xdg_surface *ecore_wl_window_xdg_surface_get(Ecore_Wl_Window *win); /** @since 1.12 */
-EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
-EAPI void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
-EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, int hot_x, int hot_y);
-EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
-EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
-EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
+ECORE_WAYLAND_API void ecore_wl_window_raise(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_window_maximized_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_window_fullscreen_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_window_transparent_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
+ECORE_WAYLAND_API void ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y);
+ECORE_WAYLAND_API struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API struct xdg_surface *ecore_wl_window_xdg_surface_get(Ecore_Wl_Window *win); /** @since 1.12 */
+ECORE_WAYLAND_API Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
+ECORE_WAYLAND_API void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
+ECORE_WAYLAND_API void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, int hot_x, int hot_y);
+ECORE_WAYLAND_API void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
+ECORE_WAYLAND_API void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -609,16 +597,16 @@ EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *pare
  *
  * @since 1.12
  */
-EAPI void ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified);
-EAPI Eina_Bool ecore_wl_window_iconified_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_iconified_set(Ecore_Wl_Window *win, Eina_Bool iconified);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_window_iconified_get(Ecore_Wl_Window *win);
 
 
-EAPI int ecore_wl_window_id_get(Ecore_Wl_Window *win);
-EAPI void ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title);
-EAPI void ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name);
-EAPI int ecore_wl_window_surface_id_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API int ecore_wl_window_id_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_title_set(Ecore_Wl_Window *win, const char *title);
+ECORE_WAYLAND_API void ecore_wl_window_class_name_set(Ecore_Wl_Window *win, const char *class_name);
+ECORE_WAYLAND_API int ecore_wl_window_surface_id_get(Ecore_Wl_Window *win);
 
-EAPI Ecore_Wl_Input *ecore_wl_window_keyboard_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API Ecore_Wl_Input *ecore_wl_window_keyboard_get(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -629,10 +617,10 @@ EAPI Ecore_Wl_Input *ecore_wl_window_keyboard_get(Ecore_Wl_Window *win);
  *
  * @since 1.8
  */
-EAPI struct wl_surface *ecore_wl_window_surface_create(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API struct wl_surface *ecore_wl_window_surface_create(Ecore_Wl_Window *win);
 
-EAPI void ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha);
-EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API void ecore_wl_window_alpha_set(Ecore_Wl_Window *win, Eina_Bool alpha);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -643,7 +631,7 @@ EAPI Eina_Bool ecore_wl_window_alpha_get(Ecore_Wl_Window *win);
  *
  * @since 1.8
  */
-EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
+ECORE_WAYLAND_API Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -661,7 +649,7 @@ EAPI Ecore_Wl_Window *ecore_wl_window_surface_find(struct wl_surface *surface);
  *
  * @since 1.8
  */
-EAPI void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
+ECORE_WAYLAND_API void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -675,7 +663,7 @@ EAPI void ecore_wl_window_input_region_set(Ecore_Wl_Window *win, int x, int y, i
  *
  * @since 1.8
  */
-EAPI void ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
+ECORE_WAYLAND_API void ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, int w, int h);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -686,7 +674,7 @@ EAPI void ecore_wl_window_opaque_region_set(Ecore_Wl_Window *win, int x, int y, 
  *
  * @since 1.8
  */
-EAPI void ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation);
+ECORE_WAYLAND_API void ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation);
 
 /**
  * @ingroup Ecore_Wl_Window_Group
@@ -697,7 +685,7 @@ EAPI void ecore_wl_window_rotation_set(Ecore_Wl_Window *win, int rotation);
  *
  * @since 1.8
  */
-EAPI int ecore_wl_window_rotation_get(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API int ecore_wl_window_rotation_get(Ecore_Wl_Window *win);
 
 /**
  * @defgroup Ecore_Wl_Dnd_Group Functions dealing with Wayland Drag-n-Drop
@@ -710,31 +698,31 @@ EAPI int ecore_wl_window_rotation_get(Ecore_Wl_Window *win);
  * @deprecated use ecore_wl_dnd_selection_set
  * @since 1.7
 */
-EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
 
 /**
  * @deprecated use ecore_wl_dnd_selection_get
  * @since 1.7
 */
-EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
 
 /**
  * @deprecated Do Not Use
  * @since 1.7
  */
-EINA_DEPRECATED EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
+EINA_DEPRECATED ECORE_WAYLAND_API Ecore_Wl_Dnd *ecore_wl_dnd_get(void);
 
 /**
  * @deprecated use ecore_wl_dnd_drag_start
  * @since 1.7
  */
-EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd);
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_start_drag(Ecore_Wl_Dnd *dnd);
 
 /**
  * @deprecated use ecore_wl_dnd_selection_owner_has
  * @since 1.7
  */
-EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
+EINA_DEPRECATED ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
@@ -742,7 +730,7 @@ EINA_DEPRECATED EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dn
  *
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
@@ -750,7 +738,7 @@ EAPI Eina_Bool ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **ty
  *
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *type);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
@@ -758,7 +746,7 @@ EAPI Eina_Bool ecore_wl_dnd_selection_get(Ecore_Wl_Input *input, const char *typ
  *
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
@@ -766,19 +754,19 @@ EAPI Eina_Bool ecore_wl_dnd_selection_owner_has(Ecore_Wl_Input *input);
  *
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_dnd_selection_clear(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_selection_clear(Ecore_Wl_Input *input);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI void ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Window *dragwin, int x, int y, int w, int h);
+ECORE_WAYLAND_API void ecore_wl_dnd_drag_start(Ecore_Wl_Input *input, Ecore_Wl_Window *win, Ecore_Wl_Window *dragwin, int x, int y, int w, int h);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI void ecore_wl_dnd_drag_end(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API void ecore_wl_dnd_drag_end(Ecore_Wl_Input *input);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
@@ -786,13 +774,13 @@ EAPI void ecore_wl_dnd_drag_end(Ecore_Wl_Input *input);
  *
  * @since 1.8
  */
-EAPI Eina_Bool ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type);
+ECORE_WAYLAND_API Eina_Bool ecore_wl_dnd_drag_get(Ecore_Wl_Input *input, const char *type);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-EAPI void ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered);
+ECORE_WAYLAND_API void ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_offered);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
@@ -800,13 +788,13 @@ EAPI void ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_
  *
  * @since 1.8
  */
-EAPI struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
+ECORE_WAYLAND_API struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
 
 /**
  * @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
  */
-/* EAPI Ecore_Wl_Dnd_Source *ecore_wl_dnd_drag_source_create(Ecore_Wl_Dnd *dnd); */
+/* ECORE_WAYLAND_API Ecore_Wl_Dnd_Source *ecore_wl_dnd_drag_source_create(Ecore_Wl_Dnd *dnd); */
 
 /**
  * Enables/disables server mode.
@@ -815,7 +803,7 @@ EAPI struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
  * the display and dispatching events.  With it disabled, the process is
  * handled as a client.
  */
-EAPI void ecore_wl_server_mode_set(Eina_Bool on);
+ECORE_WAYLAND_API void ecore_wl_server_mode_set(Eina_Bool on);
 
 /**
  * @defgroup Ecore_Wl_Subsurf Functions to manipulate subsurfaces.
@@ -847,7 +835,7 @@ EAPI void ecore_wl_server_mode_set(Eina_Bool on);
  *
  * @since 1.8
  */
-EAPI Ecore_Wl_Subsurf *ecore_wl_subsurf_create(Ecore_Wl_Window *win);
+ECORE_WAYLAND_API Ecore_Wl_Subsurf *ecore_wl_subsurf_create(Ecore_Wl_Window *win);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -857,7 +845,7 @@ EAPI Ecore_Wl_Subsurf *ecore_wl_subsurf_create(Ecore_Wl_Window *win);
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_del(Ecore_Wl_Subsurf *ess);
+ECORE_WAYLAND_API void ecore_wl_subsurf_del(Ecore_Wl_Subsurf *ess);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -868,7 +856,7 @@ EAPI void ecore_wl_subsurf_del(Ecore_Wl_Subsurf *ess);
  *
  * @since 1.8
  */
-EAPI struct wl_surface *ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess);
+ECORE_WAYLAND_API struct wl_surface *ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -882,7 +870,7 @@ EAPI struct wl_surface *ecore_wl_subsurf_surface_get(Ecore_Wl_Subsurf *ess);
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y);
+ECORE_WAYLAND_API void ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -895,7 +883,7 @@ EAPI void ecore_wl_subsurf_position_set(Ecore_Wl_Subsurf *ess, int x, int y);
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y);
+ECORE_WAYLAND_API void ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -911,7 +899,7 @@ EAPI void ecore_wl_subsurf_position_get(Ecore_Wl_Subsurf *ess, int *x, int *y);
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface);
+ECORE_WAYLAND_API void ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface *surface);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -924,7 +912,7 @@ EAPI void ecore_wl_subsurf_place_above(Ecore_Wl_Subsurf *ess, struct wl_surface 
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface);
+ECORE_WAYLAND_API void ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface *surface);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -952,7 +940,7 @@ EAPI void ecore_wl_subsurf_place_below(Ecore_Wl_Subsurf *ess, struct wl_surface 
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val);
+ECORE_WAYLAND_API void ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val);
 
 /**
  * @ingroup Ecore_Wl_Subsurf
@@ -972,13 +960,10 @@ EAPI void ecore_wl_subsurf_sync_set(Ecore_Wl_Subsurf *ess, Eina_Bool val);
  *
  * @since 1.8
  */
-EAPI void ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, int h);
+ECORE_WAYLAND_API void ecore_wl_subsurf_opaque_region_set(Ecore_Wl_Subsurf *ess, int x, int y, int w, int h);
 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
