@@ -17793,10 +17793,13 @@ int fit_text_block(Evas_Object *eo_obj)
                     }
                   else
                     {
+                       int pad_l, pad_r, pad_t, pad_b;
+
                        fit_style_update(eo_obj,fc->p_size_array[mid],EINA_TRUE,bwrap);
                        Eina_Size2D size = efl_canvas_textblock_size_formatted_get(eo_obj);
-                       wf_new = size.w;
-                       hf_new = size.h;
+                       efl_canvas_textblock_style_insets_get(eo_obj, &pad_l, &pad_r, &pad_t, &pad_b);
+                       wf_new = size.w + pad_l + pad_r;
+                       hf_new = size.h + pad_t + pad_b;
                        if (fc->p_size_array[mid]<255)
                          {
                              fc->size_cache[font_size].w = wf_new;
