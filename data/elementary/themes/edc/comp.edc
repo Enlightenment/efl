@@ -265,8 +265,8 @@ group { name: "e/comp/frame/default";
       spacer { "gspacer";
          desc {
             rel.to: "e.swallow.content";
-            rel1.offset: -5  -5;
-            rel2.offset: 4 4;
+            rel1.offset: -5 -5;
+            rel2.offset:  4  4;
          }
       }
    }
