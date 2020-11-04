@@ -519,4 +519,15 @@ ICON("phone", "i-phone")
 ICON("printer", "i-printer")
 ICON("scanner", "i-scanner")
 
+ICON("media-optical", "i-drive-cd")
+ICON("media-optical-cd", "i-drive-cd")
+ICON("media-optical-audio", "i-drive-cd")
+ICON("media-optical-dvd", "i-drive-cd")
+ICON("media-optical-bd", "i-drive-cd")
+ICON("media-flash", "i-drive-flash")
+ICON("media-flash-cf", "i-drive-flash")
+ICON("media-flash-ms", "i-drive-flash")
+ICON("media-flash-sd", "i-drive-flash")
+ICON("media-flash-cm", "i-drive-flash")
+
 #undef ICON

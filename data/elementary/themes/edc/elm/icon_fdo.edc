@@ -343,16 +343,6 @@ ICO1(CTX, "preferences-other", 128)
 
 ////  devices  ////////////////////////////////////////////////////////////////
 #define CTX "devices"
-ICO1(CTX, "media-optical", 128)
-ICO1(CTX, "media-optical-cd", 128)
-ICO1(CTX, "media-optical-audio", 128)
-ICO1(CTX, "media-optical-dvd", 128)
-ICO1(CTX, "media-optical-bd", 128)
-ICO1(CTX, "media-flash", 128)
-ICO1(CTX, "media-flash-cf", 128)
-ICO1(CTX, "media-flash-ms", 128)
-ICO1(CTX, "media-flash-sd", 128)
-ICO1(CTX, "media-flash-sm", 128)
 ICO1(CTX, "media-floppy", 128)
 ICO1(CTX, "media-zip", 128)
 ICO1(CTX, "media-tape", 128)
