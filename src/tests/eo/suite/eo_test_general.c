@@ -199,11 +199,26 @@ _eo_signals_cb_added_deled(void *data EINA_UNUSED, const Efl_Event *event)
      fail_if(callback_array->func != _eo_signals_cb_added_deled);
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,
-{ EV_A_CHANGED, _eo_signals_a_changed_cb },
-{ EV_A_CHANGED, _eo_signals_a_changed_cb2 },
-{ EV_A_CHANGED, _eo_signals_a_changed_never },
-{ EFL_EVENT_DEL, _eo_signals_efl_del_cb });
+// We don't use the EFL_CALLBACKS_ARRAY_DEFINE macro because
+// we need the callbacks be called in a specific order
+static Efl_Callback_Array_Item *
+_eo_signals_callbacks(void)
+{
+    static Efl_Callback_Array_Item items[] =
+      {
+          { EV_A_CHANGED, _eo_signals_a_changed_cb },
+          { EV_A_CHANGED, _eo_signals_a_changed_cb2 },
+          { EV_A_CHANGED, _eo_signals_a_changed_never },
+          { 0, _eo_signals_efl_del_cb },
+          { 0, 0 },
+      };
+
+    // On Windows, because _EFL_EVENT_DEL is a symbol exported
+    // from the DLL, we can't assign from a context expression
+    items[3].desc = EFL_EVENT_DEL;
+
+    return items;
+}
 
 EFL_START_TEST(eo_signals)
 {
