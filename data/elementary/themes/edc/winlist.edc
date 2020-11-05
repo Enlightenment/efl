@@ -331,19 +331,14 @@ group { name: "e/widgets/winlist/large";
    data.item: "noshadow" "1";
    parts {
       part { name: "list_clip"; type: RECT;
-         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 8 8;
-            rel2.offset: -9 -9;
-            offscale;
          }
       }
       part { name: "e.swallow.list"; type: SWALLOW;
          clip_to: "list_clip";
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to_y: "list_clip";
-            rel2.to_y: "list_clip";
+            rel.to: "list_clip";
             rel1.offset: 8 8;
             rel2.offset: -9 -9;
             offscale;
