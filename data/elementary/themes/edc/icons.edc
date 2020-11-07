@@ -529,5 +529,10 @@ ICON("media-flash-cf", "i-drive-flash")
 ICON("media-flash-ms", "i-drive-flash")
 ICON("media-flash-sd", "i-drive-flash")
 ICON("media-flash-cm", "i-drive-flash")
+ICON("media-floppy", "i-floppy")
+ICON("media-zip", "i-zipdisk")
+ICON("media-tape", "i-datatape")
+ICON("media-memory", "i-memory")
+ICON("processor", "i-cpu")
 
 #undef ICON

@@ -343,11 +343,6 @@ ICO1(CTX, "preferences-other", 128)
 
 ////  devices  ////////////////////////////////////////////////////////////////
 #define CTX "devices"
-ICO1(CTX, "media-floppy", 128)
-ICO1(CTX, "media-zip", 128)
-ICO1(CTX, "media-tape", 128)
-ICO1(CTX, "media-memory", 128)
-ICO1(CTX, "processor", 128)
 ICO1(CTX, "input-mouse", 128)
 ICO1(CTX, "input-tablet", 128)
 ICO1(CTX, "input-keyboard", 128)
