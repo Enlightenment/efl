@@ -2279,6 +2279,7 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
         attrs_length = length - sz;
         while ((sz > 0) && (isspace(content[sz - 1])))
           sz--;
+        if ((unsigned int)sz > sizeof(tag_name)) return;
         strncpy(tag_name, content, sz);
         tag_name[sz] = '\0';
      }
