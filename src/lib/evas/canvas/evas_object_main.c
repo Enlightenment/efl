@@ -131,7 +131,7 @@ evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
         if (obj->proxy->is_proxy && obj->proxy->src_events)
           _evas_object_proxy_grab_del(obj, pdata);
      }
-   if (obj->events->pointer_grabs)
+   if ((obj->events) && (obj->events->pointer_grabs))
      {
         EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
           events->pointer_grabs = eina_inlist_remove(events->pointer_grabs, EINA_INLIST_GET(pdata));
