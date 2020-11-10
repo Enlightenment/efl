@@ -341,18 +341,6 @@ ICO1(CTX, "preferences-other", 128)
 // TODO system-help
 #undef CTX
 
-////  devices  ////////////////////////////////////////////////////////////////
-#define CTX "devices"
-ICO1(CTX, "input-mouse", 128)
-ICO1(CTX, "input-tablet", 128)
-ICO1(CTX, "input-keyboard", 128)
-ICO1(CTX, "input-gaming", 128)
-ICO1(CTX, "modem", 128)
-ICO1(CTX, "video-display", 128)
-ICO1(CTX, "network-wired", 128)
-ICO1(CTX, "network-wireless", 128)
-#undef CTX
-
 ////  emotions  ///////////////////////////////////////////////////////////////
 #define CTX "emotions"
 // TODO face-angel
