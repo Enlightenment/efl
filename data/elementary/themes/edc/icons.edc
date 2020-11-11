@@ -543,4 +543,13 @@ ICON("modem", "i-modem")
 ICON("tablet", "i-tablet")
 ICON("input-tablet", "i-drawing-tablet")
 ICON("input-gaming", "i-gamepad")
+
+ICON("preferences-desktop-keyboard", "i-keyboard")
+ICON("preferences-desktop-locale", "i-lang")
+ICON("preferences-desktop-screensaver", "i-screen")
+ICON("preferences-desktop-wallpaper", "i-picture-landscape")
+ICON("system-file-manager", "i-folder")
+
+//ICON("", "")
+
 #undef ICON
