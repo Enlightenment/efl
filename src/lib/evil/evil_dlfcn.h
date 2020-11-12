@@ -2,6 +2,7 @@
 #define __EVIL_DLFCN_H__
 
 
+#include "evil_private.h"
 #include <limits.h>
 
 
@@ -142,7 +143,7 @@ struct Dl_info
  *
  * @ingroup Evil_Dlfcn
  */
-EAPI void *dlopen(const char* path, int mode);
+EVIL_API void *dlopen(const char* path, int mode);
 #ifndef HAVE_DLOPEN
 # define HAVE_DLOPEN 1
 #endif
@@ -168,7 +169,7 @@ EAPI void *dlopen(const char* path, int mode);
  *
  * @ingroup Evil_Dlfcn
  */
-EAPI int dlclose(void* handle);
+EVIL_API int dlclose(void* handle);
 
 /**
  * @brief Get the address of a symbol.
@@ -192,7 +193,7 @@ EAPI int dlclose(void* handle);
  *
  * @ingroup Evil_Dlfcn
  */
-EAPI void *dlsym(void* handle, const char* symbol);
+EVIL_API void *dlsym(void* handle, const char* symbol);
 #ifndef HAVE_DLSYM
 # define HAVE_DLSYM 1
 #endif
@@ -221,7 +222,7 @@ EAPI void *dlsym(void* handle, const char* symbol);
  *
  * @ingroup Evil_Dlfcn
  */
-EAPI int dladdr (const void *addr, Dl_info *info);
+EVIL_API int dladdr(const void *addr, Dl_info *info);
 #ifndef HAVE_DLADDR
 # define HAVE_DLADDR 1
 #endif
@@ -248,7 +249,7 @@ EAPI int dladdr (const void *addr, Dl_info *info);
  *
  * @ingroup Evil_Dlfcn
  */
-EAPI char *dlerror (void);
+EVIL_API char *dlerror(void);
 
 
 #endif /* __EVIL_DLFCN_H__ */
