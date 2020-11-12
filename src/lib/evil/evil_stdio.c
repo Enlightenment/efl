@@ -9,7 +9,7 @@
 
 #undef rename
 
-int
+EVIL_API int
 evil_rename(const char *src, const char* dst)
 {
    DWORD res;
@@ -24,7 +24,7 @@ evil_rename(const char *src, const char* dst)
    return MoveFileEx(src, dst, MOVEFILE_REPLACE_EXISTING) ? 0 : -1;
 }
 
-int
+EVIL_API int
 evil_mkdir(const char *dirname, mode_t mode EVIL_UNUSED)
 {
    return _mkdir(dirname);

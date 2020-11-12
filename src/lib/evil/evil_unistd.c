@@ -23,7 +23,7 @@ LONGLONG _evil_time_count;
  *
  */
 
-double
+EVIL_API double
 evil_time_get(void)
 {
    LARGE_INTEGER count;
@@ -39,7 +39,7 @@ evil_time_get(void)
  *
  */
 
-int
+EVIL_API int
 evil_sockets_init(void)
 {
    WSADATA wsa_data;
@@ -61,7 +61,7 @@ evil_sockets_init(void)
    return 0;
 }
 
-void
+EVIL_API void
 evil_sockets_shutdown(void)
 {
    WSACleanup();
@@ -71,7 +71,7 @@ evil_sockets_shutdown(void)
  * The code of the following functions has been kindly offered
  * by Tor Lillqvist.
  */
-int
+EVIL_API int
 evil_pipe(int *fds)
 {
    struct sockaddr_in saddr;
