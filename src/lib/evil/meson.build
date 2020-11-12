@@ -29,7 +29,7 @@ if target_machine.system() == 'windows'
   evil_ext_deps += [psapi, ole32, ws2_32, secur32, uuid, regexp]
 
   evil_lib = library('evil', evil_src,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEVIL_BUILD'],
     dependencies : evil_ext_deps,
     include_directories : [config_dir],
     install: true,

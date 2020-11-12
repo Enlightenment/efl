@@ -19,7 +19,7 @@
  *
  * @ingroup Evil
  */
-EAPI wchar_t *evil_char_to_wchar(const char *text);
+EVIL_API wchar_t *evil_char_to_wchar(const char *text);
 
 /**
  * @brief Convert a string from wchar_t * to char *.
@@ -38,7 +38,7 @@ EAPI wchar_t *evil_char_to_wchar(const char *text);
  *
  * @ingroup Evil
  */
-EAPI char *evil_wchar_to_char(const wchar_t *text);
+EVIL_API char *evil_wchar_to_char(const wchar_t *text);
 
 /**
  * @brief Convert a string from UTF-16 to UTF-8.
@@ -57,7 +57,7 @@ EAPI char *evil_wchar_to_char(const wchar_t *text);
  *
  * @ingroup Evil
  */
-EAPI char *evil_utf16_to_utf8(const wchar_t *text);
+EVIL_API char *evil_utf16_to_utf8(const wchar_t *text);
 
 /**
  * @brief Convert a string from UTF-8 to UTF-16.
@@ -75,11 +75,11 @@ EAPI char *evil_utf16_to_utf8(const wchar_t *text);
  *
  * @ingroup Evil
  */
-EAPI wchar_t *evil_utf8_to_utf16(const char *text);
+EVIL_API wchar_t *evil_utf8_to_utf16(const char *text);
 
-EAPI const char *evil_format_message(long err);
+EVIL_API const char *evil_format_message(long err);
 
-EAPI const char *evil_last_error_get(void);
+EVIL_API const char *evil_last_error_get(void);
 
 /**
  * @brief check if the given path is absolute.
@@ -102,6 +102,6 @@ EAPI const char *evil_last_error_get(void);
  *
  * @ingroup Evil
  */
-EAPI int evil_path_is_absolute(const char *path);
+EVIL_API int evil_path_is_absolute(const char *path);
 
 #endif /* __EVIL_UTIL_H__ */
