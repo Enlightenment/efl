@@ -307,15 +307,10 @@ ICO1(CTX, "non-starred", 128) /* */
 // TODO multimedia-volume-control
 // TODO help-browser
 // TODO preferences-desktop-accessibility
-ICO1(CTX, "preferences-desktop-keyboard", 64)
-ICO1(CTX, "preferences-desktop-locale", 64)
-ICO1(CTX, "preferences-desktop-screensaver", 64)
-ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO system-software-install
 // TODO system-software-update
 // TODO utilities-system-monitor
 // TODO utilities-terminal
-ICO1(CTX, "system-file-manager", 64)
 #undef CTX
 
 ////  categories  /////////////////////////////////////////////////////////////
@@ -339,18 +334,6 @@ ICO1(CTX, "preferences-other", 128)
 // TODO preferences-desktop-personal
 // TODO preferences-system-network
 // TODO system-help
-#undef CTX
-
-////  devices  ////////////////////////////////////////////////////////////////
-#define CTX "devices"
-ICO1(CTX, "input-mouse", 128)
-ICO1(CTX, "input-tablet", 128)
-ICO1(CTX, "input-keyboard", 128)
-ICO1(CTX, "input-gaming", 128)
-ICO1(CTX, "modem", 128)
-ICO1(CTX, "video-display", 128)
-ICO1(CTX, "network-wired", 128)
-ICO1(CTX, "network-wireless", 128)
 #undef CTX
 
 ////  emotions  ///////////////////////////////////////////////////////////////
