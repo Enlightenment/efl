@@ -323,7 +323,7 @@ static void
 _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
 {
    Ecore_Evas_Engine_Wl_Data *wdata;
-   int ow, oh, ew, eh, fw, fh;
+   int ow, oh, ew, eh, fw, fh, ww, hh;
    int diff = 0;
 
    LOGFN;
@@ -348,30 +348,42 @@ _ecore_evas_wl_common_resize(Ecore_Evas *ee, int w, int h)
    if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel &&
        wdata->win->pending.min)
      {
-        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel,
-                                     ee->prop.min.w + fw, ee->prop.min.h + fh);
+        ww = ee->prop.min.w + fw;
+        hh = ee->prop.min.h + fh;
+        if (ww < 1) ww = 1;
+        if (hh < 1) hh = 1;
+        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ww, hh);
         wdata->win->pending.min = 0;
      }
    if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel &&
        wdata->win->pending.max)
      {
-        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel,
-                                     ee->prop.max.w + fw, ee->prop.max.h + fh);
+        ww = ee->prop.max.w + fw;
+        hh = ee->prop.max.h + fh;
+        if (ww < 0) ww = 0;
+        if (hh < 0) hh = 0;
+        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ww, hh);
         wdata->win->pending.max = 0;
      }
 
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel &&
        wdata->win->pending.min)
      {
-        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel,
-                                      ee->prop.min.w + fw, ee->prop.min.h + fh);
+        ww = ee->prop.min.w + fw;
+        hh = ee->prop.min.h + fh;
+        if (ww < 1) ww = 1;
+        if (hh < 1) hh = 1;
+        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ww, hh);
         wdata->win->pending.min = 0;
      }
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel &&
        wdata->win->pending.max)
      {
-        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel,
-                                      ee->prop.max.w + fw, ee->prop.max.h + fh);
+        ww = ee->prop.max.w + fw;
+        hh = ee->prop.max.h + fh;
+        if (ww < 0) ww = 0;
+        if (hh < 0) hh = 0;
+        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ww, hh);
         wdata->win->pending.max = 0;
      }
 
@@ -1687,7 +1699,7 @@ _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *
 static void
 _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 {
-   int fw, fh;
+   int fw, fh, ww, hh;
    Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN;
 
@@ -1702,12 +1714,20 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
    if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel)
      {
-        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, w + fw, h + fh);
+        ww = w + fw;
+        hh = h + fh;
+        if (ww < 1) ww = 1;
+        if (hh < 1) hh = 1;
+        wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ww, hh);
         wdata->win->pending.min = 0;
      }
    if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel)
      {
-        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, w + fw, h + fh);
+        ww = w + fw;
+        hh = h + fh;
+        if (ww < 1) ww = 1;
+        if (hh < 1) hh = 1;
+        wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ww, hh);
         wdata->win->pending.min = 0;
      }
    else
@@ -1718,7 +1738,7 @@ _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h)
 static void
 _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
 {
-   int fw, fh;
+   int fw, fh, ww, hh;
    Ecore_Evas_Engine_Wl_Data *wdata;
    LOGFN;
 
@@ -1732,12 +1752,20 @@ _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h)
    evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
    if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel)
      {
-        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, w + fw, h + fh);
+        ww = w + fw;
+        hh = h + fh;
+        if (ww < 0) ww = 0;
+        if (hh < 0) hh = 0;
+        wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ww, hh);
         wdata->win->pending.max = 0;
      }
    if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel)
      {
-        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, w + fw, h + fh);
+        ww = w + fw;
+        hh = h + fh;
+        if (ww < 0) ww = 0;
+        if (hh < 0) hh = 0;
+        wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ww, hh);
         wdata->win->pending.max = 0;
      }
    else
@@ -2158,6 +2186,7 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
+   int ww, hh;
 
    LOGFN;
 
@@ -2179,33 +2208,41 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
         if (wdata->win->xdg_set_min_size && wdata->win->xdg_toplevel &&
             wdata->win->pending.min)
           {
-             wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel,
-                                          ee->prop.min.w + fw,
-                                          ee->prop.min.h + fh);
+             ww = ee->prop.min.w + fw;
+             hh = ee->prop.min.h + fh;
+             if (ww < 1) ww = 1;
+             if (hh < 1) hh = 1;
+             wdata->win->xdg_set_min_size(wdata->win->xdg_toplevel, ww, hh);
              wdata->win->pending.min = 0;
           }
         if (wdata->win->xdg_set_max_size && wdata->win->xdg_toplevel &&
             wdata->win->pending.max)
           {
-             wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel,
-                                          ee->prop.max.w + fw,
-                                          ee->prop.max.h + fh);
+             ww = ee->prop.max.w + fw;
+             hh = ee->prop.max.h + fh;
+             if (ww < 0) ww = 0;
+             if (hh < 0) hh = 0;
+             wdata->win->xdg_set_max_size(wdata->win->xdg_toplevel, ww, hh);
              wdata->win->pending.max = 0;
           }
         if (wdata->win->zxdg_set_min_size && wdata->win->zxdg_toplevel &&
             wdata->win->pending.min)
           {
-             wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel,
-                                           ee->prop.min.w + fw,
-                                           ee->prop.min.h + fh);
+             ww = ee->prop.min.w + fw;
+             hh = ee->prop.min.h + fh;
+             if (ww < 1) ww = 1;
+             if (hh < 1) hh = 1;
+             wdata->win->zxdg_set_min_size(wdata->win->zxdg_toplevel, ww, hh);
              wdata->win->pending.min = 0;
           }
         if (wdata->win->zxdg_set_max_size && wdata->win->zxdg_toplevel &&
             wdata->win->pending.max)
           {
-             wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel,
-                                           ee->prop.max.w + fw,
-                                           ee->prop.max.h + fh);
+             ww = ee->prop.max.w + fw;
+             hh = ee->prop.max.h + fh;
+             if (ww < 0) ww = 0;
+             if (hh < 0) hh = 0;
+             wdata->win->zxdg_set_max_size(wdata->win->zxdg_toplevel, ww, hh);
              wdata->win->pending.max = 0;
           }
 

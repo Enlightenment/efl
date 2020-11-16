@@ -26,18 +26,42 @@ extern "C" {
 #include <sys/stat.h> /* for mkdir in evil_macro_wrapper */
 
 
-#ifdef EAPI
-# undef EAPI
+#ifdef EVIL_API
+#error EVIL_API should not be already defined
 #endif
 
-#ifdef EFL_BUILD
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+#ifdef _WIN32
+# ifndef EVIL_STATIC
+#  ifdef EVIL_BUILD
+#   define EVIL_API __declspec(dllexport)
+#  else
+#   define EVIL_API __declspec(dllimport)
+#  endif
 # else
-#  define EAPI
+#  define EVIL_API
+# endif
+# define EVIL_API_WEAK
+#elif defined(__GNUC__)
+# if __GNUC__ >= 4
+#  define EVIL_API __attribute__ ((visibility("default")))
+#  define EVIL_API_WEAK __attribute__ ((weak))
+# else
+#  define EVIL_API
+#  define EVIL_API_WEAK
 # endif
 #else
-# define EAPI __declspec(dllimport)
+/**
+ * @def EVIL_API
+ * @brief Used to export functions (by changing visibility).
+ */
+# define EVIL_API
+/**
+ * @def EINA_API_WEAK
+ * @brief Weak symbol, primarily useful in defining library functions which
+ * can be overridden in user code.
+ * Note: Not supported on all platforms.
+ */
+# define EINA_API_WEAK
 #endif
 
 #ifndef PATH_MAX
@@ -60,9 +84,6 @@ extern "C" {
 #define sigsetjmp(Env, Save) setjmp(Env)
 
 #include "evil_macro_wrapper.h"
-
-#undef EAPI
-#define EAPI
 
 #ifdef __cplusplus
 }

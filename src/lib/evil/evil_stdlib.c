@@ -22,7 +22,7 @@
  *
  */
 
-int
+EVIL_API int
 setenv(const char *name,
        const char *value,
        int         overwrite)
@@ -65,7 +65,7 @@ setenv(const char *name,
    return res;
 }
 
-int
+EVIL_API int
 unsetenv(const char *name)
 {
    return setenv(name, NULL, 1);
@@ -77,7 +77,7 @@ unsetenv(const char *name)
  *
  */
 
-char *
+EVIL_API char *
 realpath(const char *file_name, char *resolved_name)
 {
    char *retname = NULL;  /* we will return this, if we fail */
