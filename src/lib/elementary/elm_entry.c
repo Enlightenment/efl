@@ -2341,9 +2341,7 @@ _entry_selection_start_signal_cb(void *data,
         if (entry != data) elm_entry_select_none(entry);
      }
 
-   Eina_Bool b_value = EINA_TRUE;
-   efl_event_callback_legacy_call
-     (data, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+   evas_object_smart_callback_call(data, "selection,start", NULL);
 
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -2411,9 +2409,7 @@ _entry_selection_cleared_signal_cb(void *data,
    if (!sd->have_selection) return;
 
    sd->have_selection = EINA_FALSE;
-   Eina_Bool b_value = sd->have_selection;
-   efl_event_callback_legacy_call
-     (data, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+   evas_object_smart_callback_call(data, "selection,cleared", NULL);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -4450,9 +4446,7 @@ _elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
      }
    if (sd->have_selection)
      {
-        Eina_Bool b_value = sd->have_selection;
-        efl_event_callback_legacy_call
-       (obj, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, &b_value);
+       evas_object_smart_callback_call(obj, "selection,cleared", NULL);
      }
 
    sd->have_selection = EINA_FALSE;
