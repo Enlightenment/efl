@@ -17728,6 +17728,10 @@ int fit_text_block(Evas_Object *eo_obj)
 
    TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
 
+   // If there are no text or Paragraphs, then do nothing
+   if (efl_canvas_textblock_is_empty_get(eo_obj))
+     return EVAS_ERROR_SUCCESS;
+
    if (fc->options == TEXTBLOCK_FIT_MODE_NONE && !fc->force_refit)
      return EVAS_ERROR_SUCCESS;
 
