@@ -2199,6 +2199,29 @@ eng_image_can_region_get(void *engine EINA_UNUSED, void *image)
    return ((Evas_Image_Load_Func*) im->info.loader)->do_region;
 }
 
+static Eina_Bool
+eng_image_stretch_region_get(void *engine EINA_UNUSED, void *image,
+                             uint8_t **horizontal, uint8_t **vertical)
+{
+   Evas_GL_Image *gim = image;
+   RGBA_Image *im;
+
+   if (!gim || !gim->im) return EINA_FALSE;
+
+   im = (RGBA_Image *)gim->im;
+
+   if (!im->cache_entry.need_data) return EINA_FALSE;
+
+   if (!im->image.data) evas_cache_image_load_data(&im->cache_entry);
+
+   if (!im->cache_entry.stretch.horizontal.region ||
+       !im->cache_entry.stretch.vertical.region)
+     return EINA_FALSE;
+
+   *horizontal = im->cache_entry.stretch.horizontal.region;
+   *vertical = im->cache_entry.stretch.vertical.region;
+   return EINA_TRUE;
+}
 
 static void
 eng_image_max_size_get(void *engine, int *maxw, int *maxh)
@@ -3122,6 +3145,7 @@ module_open(Evas_Module *em)
    ORD(image_colorspace_get);
    ORD(image_file_colorspace_get);
    ORD(image_can_region_get);
+   ORD(image_stretch_region_get);
    ORD(image_native_init);
    ORD(image_native_shutdown);
    ORD(image_native_set);
