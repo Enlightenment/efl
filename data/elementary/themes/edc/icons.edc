@@ -143,6 +143,7 @@ ICON("applications-games", "i-gamepad")
 ICON("applications-graphics", "i-paintbrush")
 ICON("applications-internet", "i-globe-cloud")
 ICON("applications-multimedia", "i-monitor-speakers")
+ICON("applications-office", "i-briefcase")
 
 ICON("enlightenment/wallpaper_stretch", "i-fill-stretch")
 ICON("enlightenment/wallpaper_center", "i-fill-center")
