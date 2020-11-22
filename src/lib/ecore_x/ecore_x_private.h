@@ -383,6 +383,8 @@ Ecore_Event_Mouse_Button *_ecore_mouse_button(int event,
 void _ecore_x_modifiers_get(void);
 KeySym _ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int index);
 
+void _ecore_x_resource_shutdown(void);
+
 int _ecore_x_shutdown(void);
 //#define LOGFNS 1
 

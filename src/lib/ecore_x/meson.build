@@ -43,6 +43,7 @@ ecore_x_src = files([
   'ecore_x_xi2.c',
   'ecore_x_vsync.c',
   'ecore_x_gesture.c',
+  'ecore_x_resource.c',
   'ecore_x_private.h'
 ])
 

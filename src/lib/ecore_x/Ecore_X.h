@@ -2802,6 +2802,11 @@ EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_
 EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); /**< @since 1.15 */ //Key router set keyrouter flag using this
 EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); /**< @since 1.15 */ //Client check the existence of keyrouter using this
 
+EAPI void                                  ecore_x_rersource_load(const char *file); /** @since 1.26 */
+EAPI void                                  ecore_x_resource_db_string_set(const char *key, const char *val); /** @since 1.26 */
+EAPI const char                           *ecore_x_resource_db_string_get(const char *key); /** @since 1.26 */
+EAPI void                                  ecore_x_resource_db_flush(void); /** @since 1.26 */
+
 #ifdef EFL_BETA_API_SUPPORT
 // XXX: FIXME: re-evaluate this after looking at xdg foreign in wayland
 EAPI void                                  ecore_x_e_stack_type_set(Ecore_X_Window win, Ecore_X_Stack_Type stack_type);

@@ -836,6 +836,7 @@ _ecore_x_shutdown(void)
    _ecore_x_input_shutdown();
    _ecore_x_selection_shutdown();
    _ecore_x_dnd_shutdown();
+   _ecore_x_resource_shutdown();
    ecore_x_netwm_shutdown();
 
    return 0;
