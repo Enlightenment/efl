@@ -35,7 +35,9 @@ ecore_x_rersource_load(const char *file)
    if (!db) return;
    if (_ecore_x_resource_db) XrmDestroyDatabase(_ecore_x_resource_db);
    _ecore_x_resource_db = db;
-   XrmSetDatabase(_ecore_x_disp, db);
+// something smells fishy/broken in xlib - this segfaults in trying to free
+// up the previous db bveing used for that display...
+//   XrmSetDatabase(_ecore_x_disp, db);
 }
 
 EAPI void
