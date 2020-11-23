@@ -8,7 +8,7 @@
 group { name: "elm/label/base/default";
    styles {
       style { name: "label_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
@@ -56,7 +56,7 @@ group { name: "elm/label/base/default/left";
    inherit: "elm/label/base/default";
    styles {
       style { name: "label_style_left";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
@@ -74,7 +74,7 @@ group { name: "elm/label/base/default/right";
    inherit: "elm/label/base/default";
    styles {
       style { name: "label_style_right";
-         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
@@ -92,7 +92,7 @@ group { name: "elm/label/base/marker";
    inherit: "elm/label/base/default";
    styles {
       style { name: "label_style2";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#a0a0a0";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
          tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
@@ -115,7 +115,7 @@ group { "elm/label/base/marker/left";
    inherit: "elm/label/base/default";
    styles {
       style { name: "label_style3";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#a0a0a0";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
          tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
@@ -138,7 +138,7 @@ group { "elm/label/base/marker/right";
    inherit: "elm/label/base/default";
    styles {
       style { name: "label_style4";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#a0a0a0";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
          tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";

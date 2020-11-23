@@ -10,9 +10,7 @@
 
 #define DAYSELECTOR_DAY(_pos, _after)\
    alias: "day"#_pos "elm.swallow.day"#_pos; \
-   part {\
-      name: "elm.swallow.day"#_pos;\
-      type: SWALLOW;\
+   part { name: "elm.swallow.day"#_pos; type: SWALLOW;\
       scale: 1;\
       clip_to: "clipper";\
       description { state: "default" 0.0;\
@@ -37,17 +35,11 @@
       }\
    }\
    programs{\
-      program {\
-         name: "day"#_pos"visible";\
-         signal: "elm,day"#_pos",visible";\
-         source: "elm";\
+      program { signal: "elm,day"#_pos",visible"; source: "elm";\
          action: STATE_SET "visible" 0.0;\
          target: "elm.swallow.day"#_pos;\
       }\
-      program {\
-         name: "day"#_pos"notvisible";\
-         signal: "elm,day"#_pos",default";\
-         source: "elm";\
+      program { signal: "elm,day"#_pos",default"; source: "elm";\
          action: STATE_SET "default" 0.0;\
          target: "elm.swallow.day"#_pos;\
       }\
@@ -55,9 +47,7 @@
 
 group { name: "elm/dayselector/base/default";
    parts {
-      part {
-         name: "elm.swallow.day0";
-         type: SWALLOW;
+      part { name: "elm.swallow.day0"; type: SWALLOW;
          scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
@@ -78,63 +68,43 @@ group { name: "elm/dayselector/base/default";
       DAYSELECTOR_DAY(4, 3)
       DAYSELECTOR_DAY(5, 4)
       DAYSELECTOR_DAY(6, 5)
-      part {
-         name: "clipper";
-         type: RECT;
-         description {
-            state: "default" 0.0;
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
             rel1.to: "elm.swallow.day0";
             rel2.to: "elm.swallow.day6";
          }
-         description {
-            state: "visible" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 185 185 185 185;
+            color: 255 255 255 128;
          }
       }
-      part {
-         name: "disabler";
-         type: RECT;
-         description {
-            state: "default" 0.0;
+      part { name: "disabler"; type: RECT;
+         description { state: "default" 0.0;
             color: 0 0 0 0;
             visible: 0;
          }
-         description {
-            state: "visible" 0.0;
+         description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
          }
       }
    }
    programs {
-      program {
-         name: "disble_dayselector";
-         signal: "elm,state,disabled";
-         source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "disabler";
          target: "clipper";
       }
-      program {
-         name: "enable_dayselector";
-         signal: "elm,state,enabled";
-         source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "disabler";
          target: "clipper";
       }
-      program {
-         name: "day0_visible";
-         signal: "elm,day0,visible";
-         source: "elm";
+      program { signal: "elm,day0,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.day0";
       }
-      program {
-         name: "day0_default";
-         signal: "elm,day0,default";
-         source: "elm";
+      program { signal: "elm,day0,default"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.day0";
       }
@@ -142,188 +112,105 @@ group { name: "elm/dayselector/base/default";
 }
 
 group { name: "elm/check/base/dayselector/default";
-   images {
-      image: "day_middle_normal.png" COMP;
-      image: "day_left_normal.png" COMP;
-      image: "day_right_normal.png" COMP;
-      image: "day_middle_press.png" COMP;
-      image: "day_middle_selected.png" COMP;
-      image: "day_left_press.png" COMP;
-      image: "day_left_selected.png" COMP;
-      image: "day_right_press.png" COMP;
-      image: "day_right_selected.png" COMP;
-   }
    script {
       public check_pos; // Left, Right, Middle.
       public check_type; // Weekday, Weekend.
       public check_state = DAYSELECOR_DAY_STATE_DEFAULT; // Default, Pressed, Selected.
 
       public check_bg_show() {
-         if(get_int(check_pos) == DAYSELECOR_DAY_POS_LEFT) {
-           if(get_int(check_state) == DAYSELECOR_DAY_STATE_DEFAULT)
+         if (get_int(check_pos) == DAYSELECOR_DAY_POS_LEFT) {
+           if (get_int(check_state) == DAYSELECOR_DAY_STATE_DEFAULT)
              set_state(PART:"bg", "default_left", 0.0);
-           else if(get_int(check_state) == DAYSELECOR_DAY_STATE_PRESSED)
+           else if (get_int(check_state) == DAYSELECOR_DAY_STATE_PRESSED)
              set_state(PART:"bg", "pressed_left", 0.0);
-           else if(get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED)
+           else if (get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED)
              set_state(PART:"bg", "selected_left", 0.0);
-         }
-         else if(get_int(check_pos) == DAYSELECOR_DAY_POS_RIGHT) {
-           if(get_int(check_state) == DAYSELECOR_DAY_STATE_DEFAULT)
+         } else if (get_int(check_pos) == DAYSELECOR_DAY_POS_RIGHT) {
+           if (get_int(check_state) == DAYSELECOR_DAY_STATE_DEFAULT)
              set_state(PART:"bg", "default_right", 0.0);
-           else if(get_int(check_state) == DAYSELECOR_DAY_STATE_PRESSED)
+           else if (get_int(check_state) == DAYSELECOR_DAY_STATE_PRESSED)
              set_state(PART:"bg", "pressed_right", 0.0);
-           else if(get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED)
+           else if (get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED)
              set_state(PART:"bg", "selected_right", 0.0);
-         }
-         else if(get_int(check_pos) == DAYSELECOR_DAY_POS_MIDDLE) {
-           if(get_int(check_state) == DAYSELECOR_DAY_STATE_DEFAULT)
+         } else if (get_int(check_pos) == DAYSELECOR_DAY_POS_MIDDLE) {
+           if (get_int(check_state) == DAYSELECOR_DAY_STATE_DEFAULT)
              set_state(PART:"bg", "default_middle", 0.0);
-           else if(get_int(check_state) == DAYSELECOR_DAY_STATE_PRESSED)
+           else if (get_int(check_state) == DAYSELECOR_DAY_STATE_PRESSED)
              set_state(PART:"bg", "pressed_middle", 0.0);
-           else if(get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED)
+           else if (get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED)
              set_state(PART:"bg", "selected_middle", 0.0);
          }
       }
       public check_text_show() {
-        if(get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED) {
+        if (get_int(check_state) == DAYSELECOR_DAY_STATE_SELECTED) {
           set_state(PART:"elm.text", "selected", 0.0);
-          set_state(PART:"text2", "selected", 0.0);
         } else {
-          if(get_int(check_type) == DAYSELECOR_DAY_TYPE_WEEKDAY) {
+          if (get_int(check_type) == DAYSELECOR_DAY_TYPE_WEEKDAY) {
             set_state(PART:"elm.text", "default", 0.0);
-            set_state(PART:"text2", "default", 0.0);
           } else if (get_int(check_type) ==
                      DAYSELECOR_DAY_TYPE_WEEKEND_DEFAULT) {
             set_state(PART:"elm.text", "weekend_default", 0.0);
-            set_state(PART:"text2", "weekend_default", 0.0);
           }
           else if (get_int(check_type) == DAYSELECOR_DAY_TYPE_WEEKEND_STYLE1) {
             set_state(PART:"elm.text", "weekend_style1", 0.0);
-            set_state(PART:"text2", "weekend_style1", 0.0);
           }
         }
       }
       public check_text_pressed() {
         set_state(PART:"elm.text", "pressed", 0.0);
-        set_state(PART:"text2", "default", 0.0);
       }
    }
    parts {
-      part {
-         name: "bg";
+      part { name: "bg"; type: RECT;
          mouse_events: 0;
-         scale: 1;
-         description {
-            state: "default" 0.0;
-            image {
-               normal: "day_middle_normal.png";
-               border: 1 1 3 4;
-            }
+         description { state: "default" 0.0;
+            color: 80 80 80 255;
          }
          /* default */
          description { state: "default_left" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_left_normal.png";
-               border: 4 1 3 4;
-            }
          }
          description { state: "default_right" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_right_normal.png";
-               border: 1 4 3 5;
-            }
          }
          description { state: "default_middle" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_middle_normal.png";
-               border: 1 1 3 4;
-            }
          }
          /* pressed */
          description { state: "pressed_left" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_left_press.png";
-               border:  5 1 4 5;
-            }
+            color: 51 153 255 255;
          }
          description { state: "pressed_right" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_right_press.png";
-               border:  1 5 4 5;
-            }
+            color: 51 153 255 255;
          }
          description { state: "pressed_middle" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_middle_press.png";
-               border: 2 1 4 7;
-            }
+            color: 51 153 255 255;
          }
          /* selected */
          description { state: "selected_left" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_left_selected.png";
-               border:  5 1 4 5;
-            }
+            color: 51 153 255 255;
          }
          description { state: "selected_right" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_right_selected.png";
-               border:  1 5 4 5;
-            }
+            color: 51 153 255 255;
          }
          description { state: "selected_middle" 0.0;
             inherit: "default" 0.0;
-            image {
-               normal: "day_middle_selected.png";
-               border: 2 1 4 7;
-            }
+            color: 51 153 255 255;
          }
       }
-      part {
-         name: "left_padding";
-         type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 5 0;
-            fixed: 1 0;
-            align: 0.0 0.5;
-            rel2.relative: 0.0 1.0;
-         }
-      }
-      part {
-         name: "right_padding";
-         type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 5 0;
-            fixed: 1 0;
-            align: 1.0 0.5;
-            rel1.relative: 1.0 0.0;
-         }
-      }
-      part {
-         name: "elm.text";
-         type: TEXT;
+      part { name: "elm.text"; type: TEXT;
          mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            rel1 {
-               to: "left_padding";
-               relative: 1.0 0.0;
-            }
-            rel2 {
-               to: "right_padding";
-               relative: 0.0 1.0;
-            }
+            color: 160 160 160 255;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
             text {
                font: FN;
                size: 10;
@@ -331,145 +218,94 @@ group { name: "elm/check/base/dayselector/default";
                ellipsis: -1;
                text_class: "button";
             }
-            color: FN_COL_DEFAULT;
          }
          description { state: "weekend_default" 0.0;
             inherit: "default" 0.0;
-            color: 175 175 175 255;
-            color3: 0 0 0 128;
-            visible: 1;
+            color: 128 128 128 255;
          }
          description { state: "weekend_style1" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 128 128 128 255;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            visible: 0;
+            color: 255 255 255 255;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
-            color3: 255 255 255 0;
-            visible: 1;
          }
       }
-      part {
-         name: "text2";
-         type: TEXT;
-         mouse_events: 0;
-         scale: 1;
-         effect: GLOW;
-         description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel1.offset: 0 -1;
-            rel2.to: "elm.text";
-            rel2.offset: -1 -2;
-            text {
-               font: FN;
-               size: 10;
-               min: 1 1;
-               ellipsis: -1;
-               text_source: "elm.text";
-               text_class: "button";
-            }
-            color: FN_COL_HIGHLIGHT;
-            visible: 0;
-         }
-         description { state: "weekend_default" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-         description { state: "weekend_style1" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            color2: 255 255 255 24;
-            color3: 255 255 255 18;
-            visible: 1;
-         }
-      }
-      part {
-         name: "events";
-         type: RECT;
+      part { name: "events"; type: RECT;
          ignore_flags: ON_HOLD;
-         description {
-            state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+         description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
    }
    programs {
-      program { name: "check,pressed";
-         signal: "mouse,down,1"; source: "events";
+      program { signal: "mouse,down,1"; source: "events";
          script {
             set_int(check_state, DAYSELECOR_DAY_STATE_PRESSED);
             check_bg_show();
             check_text_pressed();
          }
       }
-      program { name: "check,toggle";
-         signal: "mouse,up,1"; source: "events";
-         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
-      }
-      program { name: "check,on";
-         signal: "elm,state,check,on"; source: "elm";
-         script {
-            set_int(check_state, DAYSELECOR_DAY_STATE_SELECTED);
-            check_bg_show();
-            check_text_show();
-         }
-      }
-      program { name: "check,off";
-         signal: "elm,state,check,off"; source: "elm";
+      program { signal: "mouse,up,1"; source: "events";
          script {
             set_int(check_state, DAYSELECOR_DAY_STATE_DEFAULT);
             check_bg_show();
             check_text_show();
          }
       }
-      program { name: "check,left";
-         signal: "elm,pos,check,left"; source: "elm";
+      program { signal: "mouse,clicked,1"; source: "events";
+         action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
+      }
+      program { signal: "elm,state,check,on"; source: "elm";
+         script {
+            set_int(check_state, DAYSELECOR_DAY_STATE_SELECTED);
+            check_bg_show();
+            check_text_show();
+         }
+      }
+      program { signal: "elm,state,check,off"; source: "elm";
+         script {
+            set_int(check_state, DAYSELECOR_DAY_STATE_DEFAULT);
+            check_bg_show();
+            check_text_show();
+         }
+      }
+      program { signal: "elm,pos,check,left"; source: "elm";
          script {
             set_int(check_pos, DAYSELECOR_DAY_POS_LEFT);
             check_bg_show();
          }
       }
-      program { name: "check,right";
-         signal: "elm,pos,check,right"; source: "elm";
+      program { signal: "elm,pos,check,right"; source: "elm";
          script {
             set_int(check_pos, DAYSELECOR_DAY_POS_RIGHT);
             check_bg_show();
          }
       }
-      program { name: "check,middle";
-         signal: "elm,pos,check,middle"; source: "elm";
+      program { signal: "elm,pos,check,middle"; source: "elm";
          script {
             set_int(check_pos, DAYSELECOR_DAY_POS_MIDDLE);
             check_bg_show();
          }
       }
-      program { name: "check,weekday";
-         signal: "elm,type,weekday,default"; source: "elm";
+      program { signal: "elm,type,weekday,default"; source: "elm";
          script {
             set_int(check_type, DAYSELECOR_DAY_TYPE_WEEKDAY);
             check_text_show();
          }
       }
-      program { name: "check,weekend,default";
-         signal: "elm,type,weekend,default"; source: "elm";
+      program { signal: "elm,type,weekend,default"; source: "elm";
          script {
             set_int(check_type, DAYSELECOR_DAY_TYPE_WEEKEND_DEFAULT);
             check_text_show();
          }
       }
-      program { name: "check,weekend,style1";
-         signal: "elm,type,weekend,style1"; source: "elm";
+      program { signal: "elm,type,weekend,style1"; source: "elm";
          script {
             set_int(check_type, DAYSELECOR_DAY_TYPE_WEEKEND_STYLE1);
             check_text_show();

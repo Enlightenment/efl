@@ -1,44 +1,29 @@
 group { name: "e/modules/pager16/popup";
-   images.image: "vgrad_tall.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
    parts {
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "vgrad_tall.png";
-            fill.smooth: 0;
-            TILED_HORIZ(40)
+            color: 64 64 64 255;
          }
       }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-                  }
-            }
       part { name: "e.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to_y: "e.text.label";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 2 0;
+            rel1.offset: 0 8;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -2;
-                  }
-            }
+            rel2.offset: -1 -9;
+         }
+      }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "border_title";
             rel1.to: "base";
             rel1.offset: 0 1;
             rel2.to: "base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -1 1;
             align: 0.5 0.0;
-            color: FN_COL_DISABLE;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                text_class: "title_bar";
                align: 0.5 0.0;
@@ -47,51 +32,24 @@ group { name: "e/modules/pager16/popup";
             fixed: 0 1;
          }
       }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            FIXED_SIZE(69, 5)
-         }
-      }
    }
 }
 
 group { name: "e/modules/pager16/desk";
-   images.image: "vgrad_med_darker.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "bevel_in.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "inset_shadow.png" COMP;
    images.image: "mini_blue_glow_arrow_0.png" COMP;
    images.image: "mini_blue_glow_arrow_1.png" COMP;
    images.image: "mini_blue_glow_arrow_2.png" COMP;
    images.image: "mini_blue_glow_arrow_3.png" COMP;
    parts {
-      part { name: "base"; type: SPACER;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel2.to: "inset";
-            rel2.offset: -2 -2;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "base";
-            rel2.to: "base";
-            fill.smooth: 0;
+            color: 0 0 0 0;
          }
       }
       part { name: "clip"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
+         desc { "default";
+            rel1.to: "e.swallow.content";
+            rel2.to: "e.swallow.content";
          }
       }
       part { name: "e.swallow.drop"; type: SWALLOW;
@@ -108,46 +66,18 @@ group { name: "e/modules/pager16/desk";
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "clip";
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            rel2.offset: -2 -1;
+         desc { "default";
             link.base: "e,state,visible" "e";
          }
          desc { "hid"; inherit; hid;
             link.base: "e,state,hidden" "e";
          }
       }
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "base";
-            rel2.to: "base";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "downlight_glow.png";
-            image.border: 0 0 3 0;
-            rel1.to: "base";
-            rel2.to: "base";
-            color: 255 255 255 0;
-         }
-         description { state: "active" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            color_class: "module_label_invisible";
+         desc { "default";
+            rel1.to: "e.swallow.content";
+            rel2.to: "e.swallow.content";
             color3: 255 255 255 255;
             text { font: "Sans"; size: 10;
                text_class: "module_small";
@@ -155,30 +85,37 @@ group { name: "e/modules/pager16/desk";
             }
             visible: 0;
          }
-         description { state: "active" 0.0;
-            inherit: "default" 0.0;
+         desc { "active"; inherit;
             color_class: "module_label";
-            color3: 255 255 255 255;
             visible: 1;
          }
       }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.offset: 1 2;
-            rel2.offset: -2 -3;
-            fill.smooth: 0;
+      part { name: "sel"; type: RECT; mouse_events: 0;
+         scale: 1;
+         clip_to: "clip";
+         desc { "default";
+            color: 51 153 255 255;
+            visible: 0;
+            rel1.to: "e.swallow.content";
+            rel2.to: "e.swallow.content";
+            rel2.offset: -1 0;
+            rel1.relative: 0.0 1.0;
+            align: 0.5 1.0;
+            max: 99999 6;
+         }
+         desc { "active"; inherit;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.5;
+            visible: 1;
          }
       }
       part { name: "drop0"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_0.png";
-            rel1.to: "base";
+            rel1.to: "e.swallow.content";
             rel1.offset: -1 -1;
             rel1.relative: 0.0 0.0;
-            rel2.to: "base";
+            rel2.to: "e.swallow.content";
             rel2.relative: 0.0 0.0;
             rel2.offset: -1 -1;
             align: 0.0 0.0;
@@ -201,10 +138,10 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop1"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_1.png";
-            rel1.to: "base";
+            rel1.to: "e.swallow.content";
             rel1.offset: 0 -1;
             rel1.relative: 1.0 0.0;
-            rel2.to: "base";
+            rel2.to: "e.swallow.content";
             rel2.relative: 1.0 0.0;
             rel2.offset: 0 -1;
             align: 1.0 0.0;
@@ -227,10 +164,10 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop2"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_2.png";
-            rel1.to: "base";
+            rel1.to: "e.swallow.content";
             rel1.offset: 0 0;
             rel1.relative: 1.0 1.0;
-            rel2.to: "base";
+            rel2.to: "e.swallow.content";
             rel2.relative: 1.0 1.0;
             rel2.offset: 0 0;
             align: 1.0 1.0;
@@ -253,10 +190,10 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop3"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_3.png";
-            rel1.to: "base";
+            rel1.to: "e.swallow.content";
             rel1.offset: -1 0;
             rel1.relative: 0.0 1.0;
-            rel2.to: "base";
+            rel2.to: "e.swallow.content";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 0;
             align: 0.0 1.0;
@@ -287,8 +224,8 @@ group { name: "e/modules/pager16/desk";
       program { name: "sel";
          signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: BOUNCE 0.4 0.5 4;
-         target: "glow";
+         transition: DECELERATE 0.2;
+         target: "sel";
       }
       program {
          signal: "e,state,unselected"; source: "e";
@@ -299,7 +236,7 @@ group { name: "e/modules/pager16/desk";
          signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.2;
-         target: "glow";
+         target: "sel";
       }
       program { name: "drop1";
          signal: "e,action,drag,in"; source: "e";

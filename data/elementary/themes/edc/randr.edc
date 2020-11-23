@@ -1,45 +1,42 @@
 group { name: "e/conf/randr/main";
-   images.image: "inset_shadow.png" COMP;
-   images.image: "bevel_in.png" COMP;
+   images.image: "diagonal_stripes.png" COMP;
    parts {
       part { name: "bg"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
-            color: 64 64 64 255;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            color: DARK_GREY_BG_COLOR;
+            min: 18 18;
+            offscale;
          }
+      }
+      part { name: "pat";
+         scale: 1;
+         description
+           { state: "default" 0.0;
+              rel.to: "bg";
+              rel1.offset: 2 2;
+              rel2.offset: -3 -3;
+              image.normal: "diagonal_stripes.png";
+              color: 255 255 255 64;
+              TILED_PATTERN(240, 240)
+              offscale;
+           }
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
+            rel.to: "pat";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "clipper";
-         description { state: "default" 0.0; }
-      }
-      part { name: "shadow"; type: IMAGE; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            fill.smooth: 0;
-            color: 255 255 255 128;
-         }
-      }
-      part { name: "inset"; type: IMAGE; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.offset: -1 -1;
-            rel1.to: "bg";
-            rel2.offset: 0 0;
-            rel2.to: "bg";
-            fill.smooth: 0;
+         scale: 1;
+         description { state: "default" 0.0; 
+            rel.to: "pat";
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            offscale;
          }
       }
    }
@@ -66,8 +63,6 @@ group { name: "e/conf/randr/main/frame";
    images.image: "led_tiny_orange.png" COMP;
    images.image: "led_tiny_green.png" COMP;
    images.image: "screen_bg.png" COMP;
-   images.image: "screen_fg.png" COMP;
-   images.image: "shine.png" COMP;
    images.image: "mini_blue_glow_arrow_0.png" COMP;
    images.image: "mini_blue_glow_arrow_2.png" COMP;
    images.image: "sym_down_light_normal.png" COMP;
@@ -78,17 +73,17 @@ group { name: "e/conf/randr/main/frame";
    images.image: "icon_arrow_up.png" COMP;
    styles {
       style { name: "randr_name_style";
-         base: "font="FN" font_size=10 text_class=randr_monitor align=center color=#ffff style=shadow,bottom shadow_color=#00000080 wrap=word";
+         base: "font="FNBD" font_size=10 text_class=randr_monitor align=center color=#ffff wrap=word";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD"";
       }
       style { name: "randr_resolution_style";
-         base: "font="FN" font_size=10 text_class=randr_resolution align=center color=#3399ffff wrap=mixed style=glow glow_color=#3399ff18 align=center glow2_color=#3399ff12";
+         base: "font="FN" font_size=10 text_class=randr_resolution align=center color=#ff9933ff wrap=mixed align=center";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD"";
       }
       style { name: "randr_position_style";
-         base: "font="FN" font_size=10 text_class=randr_position align=center color=#3399ffff wrap=mixed style=glow glow_color=#3399ff18 align=center glow2_color=#3399ff12";
+         base: "font="FN" font_size=10 text_class=randr_position align=center color=#3399ffff wrap=mixed align=center";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD"";
       }
@@ -99,10 +94,10 @@ group { name: "e/conf/randr/main/frame";
    parts {
       part { name: "primary"; type: IMAGE;
          description { state: "default" 0.0;
-            image.normal: "glow_small.png";
-            image.border: 7 7 7 7;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
+            image.normal: "screen_bg.png";
+            image.border: 4 4 4 4;
+            rel1.offset: -2 -2;
+            rel2.offset: 1 1;
             visible: 0;
          }
          description { state: "on" 0.0;
@@ -181,12 +176,6 @@ group { name: "e/conf/randr/main/frame";
             fixed: 1 1;
          }
       }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "screen_fg.png";
-            image.border: 4 4 4 4;
-         }
-      }
       part { name: "led"; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "hole";
@@ -257,17 +246,6 @@ group { name: "e/conf/randr/main/frame";
             visible: 0;
          }
       }
-      part { name: "scr_shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -1;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 3;
-            rel2.to: "base";
-            FIXED_SIZE(69, 5)
-         }
-      }
       part { name: "pwrhint"; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to: "hole";
@@ -276,9 +254,10 @@ group { name: "e/conf/randr/main/frame";
             rel2.to: "hole";
             rel2.offset: -1 3;
             align: 0.5 0.0;
-            FIXED_SIZE(10, 10)
-            image.normal: "icon_arrow_up.png";
+            FIXED_SIZE(15, 15)
+            image.normal: "arrow-u-015.png";
             fixed: 1 1;
+            color: 51 153 255 255;
          }
       }
       part { name: "pwrhint2"; mouse_events: 0;
@@ -288,9 +267,10 @@ group { name: "e/conf/randr/main/frame";
             rel1.relative: 1.0 0.0;
             rel2.to: "pwrhint";
             align: 0.0 0.0;
-            FIXED_SIZE(16, 16)
+            FIXED_SIZE(20, 20)
             image.normal: "icon_system-shutdown.png";
             fixed: 1 1;
+            color: 51 153 255 255;
          }
       }
       part { name: "rsz1"; mouse_events: 0;
@@ -301,13 +281,14 @@ group { name: "e/conf/randr/main/frame";
             rel1.to: "e.event.resize";
             rel2.to: "e.event.resize";
             image.normal: "mini_blue_glow_arrow_2.png";
-            FIXED_SIZE(10, 10)
+            FIXED_SIZE(5, 5)
+            color: 51 153 255 255;
          }
          description { state: "pulse" 0.0;
             inherit: "default" 0.0;
             rel1.relative: -1.0 -1.0;
             rel2.relative: -1.0 -1.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "rsz2"; mouse_events: 0;
@@ -318,13 +299,14 @@ group { name: "e/conf/randr/main/frame";
             rel1.to: "e.event.resize";
             rel2.to: "e.event.resize";
             image.normal: "mini_blue_glow_arrow_0.png";
-            FIXED_SIZE(10, 10)
+            FIXED_SIZE(5, 5)
+            color: 51 153 255 255;
          }
          description { state: "pulse" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 2.0 2.0;
             rel2.relative: 2.0 2.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       } 
       part { name: "rotc"; type: RECT;
@@ -344,14 +326,15 @@ group { name: "e/conf/randr/main/frame";
             rel1.to: "e.event.rotate";
             rel2.to: "e.event.rotate";
             image.normal: "mini_blue_glow_arrow_2.png";
-            FIXED_SIZE(10, 10)
+            FIXED_SIZE(5, 5)
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "rotc";
+            color: 51 153 255 255;
          }
          description { state: "pulse" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
             map.rotation.z: -60;
          }
       }
@@ -363,14 +346,15 @@ group { name: "e/conf/randr/main/frame";
             rel1.to: "e.event.rotate";
             rel2.to: "e.event.rotate";
             image.normal: "mini_blue_glow_arrow_0.png";
-            FIXED_SIZE(10, 10)
+            FIXED_SIZE(5, 5)
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "rotc";
+            color: 51 153 255 255;
          }
          description { state: "pulse" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
             map.rotation.z: 60;
          }
       }
@@ -428,8 +412,9 @@ group { name: "e/conf/randr/main/frame";
          description { state: "default" 0.0;
             rel1.to: "e.event.arrow.show";
             rel2.to: "e.event.arrow.show";
-            image.normal: "sym_down_light_normal.png";
+            image.normal: "arrow-d-015.png";
             FIXED_SIZE(15, 15)
+            color: 51 153 255 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -441,8 +426,9 @@ group { name: "e/conf/randr/main/frame";
          description { state: "default" 0.0;
             rel1.to: "e.event.arrow.show";
             rel2.to: "e.event.arrow.show";
-            image.normal: "sym_up_light_normal.png";
+            image.normal: "arrow-u-015.png";
             FIXED_SIZE(15, 15)
+            color: 51 153 255 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -529,7 +515,7 @@ group { name: "e/conf/randr/main/frame";
       }
       program { name: "refresh_show";
          action: STATE_SET "expanded" 0.0;
-         transition: BOUNCE 1.0 0.5 4;
+         transition: DECELERATE 0.5;
          target: "e.swallow.refresh";
       }
       program { name: "refresh_hide";

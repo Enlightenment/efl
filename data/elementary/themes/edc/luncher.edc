@@ -12,9 +12,9 @@ group { name: "e/gadget/luncher/bar";
       part { name: "e.swallow.bar"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.relative: 0.0 0.0;
-            rel1.offset: 0 0;
+            rel1.offset: 1 1;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -1;
+            rel2.offset: -2 -2;
          }
       }
    }
@@ -31,9 +31,9 @@ group { name: "e/gadget/luncher/grid";
       part { name: "e.swallow.grid"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.relative: 0.0 0.0;
-            rel1.offset: 0 0;
+            rel1.offset: 1 1;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -1;
+            rel2.offset: -2 -2;
          }
       }
    }
@@ -61,7 +61,6 @@ group { name: "e/gadget/luncher/icon";
          clip_to: "item_clip";
          mouse_events: 0;
          description {
-            align: 0.5 0.5;
             state: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
@@ -83,82 +82,64 @@ group { name: "e/gadget/luncher/icon";
             color: 255 255 255 50;
          }
       }
-      part { name: "indicator"; type: RECT;
-         clip_to: "item_clip";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            visible: 0;
-            color: 255 255 255 0;
-         }
-         description { state: "on_left" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            rel1.relative: 0.0 0.025;
-            rel1.offset: 0 1;
-            rel2.relative: 0.05 0.975;
-            color: 51 153 255 255;
-         }
-         description { state: "on_top" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            rel1.relative: 0.025 0.0;
-            rel1.offset: 1 0;
-            rel2.relative: 0.975 0.05;
-            color: 51 153 255 255;
-         }
-         description { state: "on_right" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            rel1.relative: 0.95 0.025;
-            rel1.offset: 0 1;
-            rel2.relative: 1.0 0.975;
-            color: 51 153 255 255;
-         }
-         description { state: "on_bottom" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            rel1.relative: 0.025 0.95;
-            rel1.offset: 1 0;
-            rel2.relative: 0.975 1.0;
-            color: 51 153 255 255;
-         }
-      }
       part { name: "e.swallow.icon"; type: SWALLOW;
          clip_to: "item_clip";
          mouse_events: 1;
          repeat_events: 1;
          description { state: "default" 0.0;
-            align: 0.5 0.5;
             rel1.to: "sizer";
+            rel1.offset: 3 3;
             rel2.to: "sizer";
+            rel2.offset: -4 -4;
          }
-         description { state: "on_left" 0.0;
-            inherit: "default" 0.0;
-            align: 1.0 0.5;
-            rel1.relative: 0.065 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -1;
-         }
-         description { state: "on_top" 0.0;
-            inherit: "default" 0.0;
+      }
+      part { name: "indicator"; type: RECT;
+         clip_to: "item_clip";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 0;
+            color: 51 153 255 255;
             align: 0.5 1.0;
-            rel1.relative: 0.0 0.065;
-            rel1.offset: 1 1;
-            rel2.offset: -1 -2;
+            max: 99999 5;
          }
-         description { state: "on_right" 0.0;
+         description { state: "left" 0.0;
             inherit: "default" 0.0;
             align: 0.0 0.5;
-            rel2.relative: 0.945 1.0;
-            rel1.offset: 2 1;
-            rel2.offset: -1 -1;
+            max: 5 99999;
+            rel2.relative: 0.5 1.0;
          }
-         description { state: "on_bottom" 0.0;
+         description { state: "top" 0.0;
             inherit: "default" 0.0;
             align: 0.5 0.0;
-            rel2.relative: 1.0 0.945;
-            rel1.offset: 1 2;
-            rel2.offset: -1 -1;
+            rel2.relative: 1.0 0.5;
+         }
+         description { state: "right" 0.0;
+            inherit: "default" 0.0;
+            align: 1.0 0.5;
+            max: 5 99999;
+            rel1.relative: 0.5 0.0;
+         }
+         description { state: "bottom" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.0 0.5;
+
+         }
+         description { state: "on_left" 0.0;
+            inherit: "left" 0.0;
+            visible: 1;
+         }
+         description { state: "on_top" 0.0;
+            inherit: "top" 0.0;
+            visible: 1;
+         }
+         description { state: "on_right" 0.0;
+            inherit: "right" 0.0;
+            visible: 1;
+         }
+         description { state: "on_bottom" 0.0;
+            inherit: "bottom" 0.0;
+            visible: 1;
          }
       }
       part { name: "obackground"; type: RECT;
@@ -236,63 +217,62 @@ group { name: "e/gadget/luncher/icon";
          target: "item_clip";
          transition: DECELERATE 0.1;
       }
-      program { name: "icon_on_left";
+      program { name: "sel_left";
          signal: "e,state,on,left"; source: "e";
-         action: STATE_SET "on_left" 0.0;
+         action: STATE_SET "left" 0.0;
          target: "indicator";
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         after: "on_left";
       }
-      program { name: "icon_on_top";
+      program { name: "sel_top";
          signal: "e,state,on,top"; source: "e";
-         action: STATE_SET "on_top" 0.0;
+         action: STATE_SET "top" 0.0;
          target: "indicator";
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         after: "on_top";
       }
-      program { name: "icon_on_right";
+      program { name: "sel_right";
          signal: "e,state,on,right"; source: "e";
-         action: STATE_SET "on_right" 0.0;
+         action: STATE_SET "right" 0.0;
          target: "indicator";
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         after: "on_right";
       }
-      program { name: "icon_on_bottom";
+      program { name: "sel_bottom";
          signal: "e,state,on,bottom"; source: "e";
-         action: STATE_SET "on_bottom" 0.0;
+         action: STATE_SET "bottom" 0.0;
          target: "indicator";
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         after: "on_bottom";
       }
-      program { name: "icon_off_left";
-         signal: "e,state,off,left"; source: "e";
+      program { name: "on_left";
          action: STATE_SET "on_left" 0.0;
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         transition: DECELERATE 0.2;
+         target: "indicator";
       }
-      program { name: "icon_off_top";
-         signal: "e,state,off,top"; source: "e";
+      program { name: "on_top";
          action: STATE_SET "on_top" 0.0;
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         transition: DECELERATE 0.2;
+         target: "indicator";
       }
-      program { name: "icon_off_right";
-         signal: "e,state,off,right"; source: "e";
+      program { name: "on_right";
          action: STATE_SET "on_right" 0.0;
-         target: "e.swallow.icon";
-         transition: ACCELERATE 0.1;
+         transition: DECELERATE 0.2;
+         target: "indicator";
       }
-      program { name: "icon_off_bottom";
-         signal: "e,state,off,bottom"; source: "e";
+      program { name: "on_bottom";
          action: STATE_SET "on_bottom" 0.0;
-         target: "e.swallow.icon";
-         transition: DECELERATE 0.1;
+         transition: DECELERATE 0.2;
+         target: "indicator";
       }
-      program { name: "icon_off";
+      program {
+         signal: "e,state,off,*"; source: "e";
+         action: ACTION_STOP;
+         target: "sel_left";
+         target: "sel_top";
+         target: "sel_right";
+         target: "sel_bottom";
+      }
+      program {
          signal: "e,state,off,*"; source: "e";
          action: STATE_SET "default" 0.0;
-         target: "indicator";        
-         transition: DECELERATE 0.1;
+         target: "indicator";
       }
       program { name: "urgent";
          signal: "e,state,urgent"; source: "e";

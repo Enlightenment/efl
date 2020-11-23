@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="48"
+   inkscape:export-xdpi="48"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/cpu-speed-040.png"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="cpu-speed.svg"
+   viewBox="0 0 80 80"
+   height="80"
+   width="80"
+   id="svg2"
+   version="1.1">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6">
+    <rect
+       id="rect878"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+    <rect
+       id="rect872"
+       height="30"
+       width="40"
+       y="50"
+       x="20" />
+    <rect
+       id="rect864"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+    <rect
+       id="rect858"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+    <rect
+       id="rect852"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:snap-nodes="true"
+     inkscape:snap-others="false"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox="true"
+     showguides="false"
+     inkscape:current-layer="g10"
+     inkscape:window-maximized="1"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="40.047847"
+     inkscape:cx="40"
+     inkscape:zoom="10.45"
+     showgrid="true"
+     id="namedview4"
+     inkscape:window-height="1377"
+     inkscape:window-width="2560"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#404040"
+     inkscape:document-rotation="0">
+    <inkscape:grid
+       id="grid837"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <g
+     id="g10"
+     inkscape:label="Image"
+     inkscape:groupmode="layer">
+    <rect
+       y="10"
+       x="10"
+       height="60"
+       width="60"
+       id="rect21903"
+       style="fill:#202020;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.00157;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.2"
+       id="path920"
+       cx="40"
+       cy="40"
+       r="5" />
+    <path
+       id="path924"
+       style="fill:#b44541;fill-opacity:1;stroke:none;stroke-width:1.00157;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.2"
+       d="M 39.832031 15 A 25 25 0 0 0 37.505859 15.125 A 25 25 0 0 1 60 40 L 65 40 A 25 25 0 0 0 40 15 A 25 25 0 0 0 39.832031 15 z " />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 38.966757,36.140308 2.070553,7.727408 23.112869,-10.33418 z"
+       id="path922"
+       sodipodi:nodetypes="cccc"
+       inkscape:transform-center-x="-11.560065"
+       inkscape:transform-center-y="-1.302705" />
+    <g
+       transform="translate(0,-0.5)"
+       id="g21920">
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21905"
+         width="5"
+         height="5"
+         x="5"
+         y="18" />
+      <rect
+         y="28"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21907"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21909"
+         width="5"
+         height="5"
+         x="5"
+         y="38" />
+      <rect
+         y="48"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21911"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21913"
+         width="5"
+         height="5"
+         x="5"
+         y="58" />
+    </g>
+    <g
+       id="g21932"
+       transform="translate(65,-0.5)">
+      <rect
+         y="18"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21922"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21924"
+         width="5"
+         height="5"
+         x="5"
+         y="28" />
+      <rect
+         y="38"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21926"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21928"
+         width="5"
+         height="5"
+         x="5"
+         y="48" />
+      <rect
+         y="58"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21930"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+    </g>
+    <g
+       transform="rotate(-90,7.25,7.75)"
+       id="g21944">
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21934"
+         width="5"
+         height="5"
+         x="5"
+         y="18" />
+      <rect
+         y="28"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21936"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21938"
+         width="5"
+         height="5"
+         x="5"
+         y="38" />
+      <rect
+         y="48"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21940"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21942"
+         width="5"
+         height="5"
+         x="5"
+         y="58" />
+    </g>
+    <g
+       id="g21956"
+       transform="rotate(-90,39.75,40.25)">
+      <rect
+         y="18"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21946"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21948"
+         width="5"
+         height="5"
+         x="5"
+         y="28" />
+      <rect
+         y="38"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21950"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+      <rect
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
+         id="rect21952"
+         width="5"
+         height="5"
+         x="5"
+         y="48" />
+      <rect
+         y="58"
+         x="5"
+         height="5"
+         width="5"
+         id="rect21954"
+         style="fill:#ffffff;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" />
+    </g>
+  </g>
+</svg>

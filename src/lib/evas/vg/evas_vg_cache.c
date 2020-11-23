@@ -227,6 +227,16 @@ _root_update(Vg_Cache_Entry *vg_entry)
 }
 
 static void
+_local_wrap_transform(Efl_VG *root, Vg_File_Data *vfd)
+{
+   Eina_Matrix3 m;
+
+   eina_matrix3_identity(&m);
+   eina_matrix3_translate(&m, -vfd->bl,  -vfd->bt);
+   efl_canvas_vg_node_transformation_set(root, &m);
+}
+
+static void
 _local_transform(Efl_VG *root, double w, double h, Vg_File_Data *vfd)
 {
    double sx = 0, sy= 0, scale;
@@ -432,8 +442,8 @@ evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, 
    if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
    if (!name) return EINA_FALSE;
 
-   Vg_File_Anim_Data_Marker *marker;
-   Vg_File_Anim_Data_Marker new_marker;
+   Efl_Gfx_Frame_Sector_Data *marker;
+   Efl_Gfx_Frame_Sector_Data new_marker;
    int i = 0;
 
    EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
@@ -463,7 +473,7 @@ evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, 
    if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
    if (!name) return EINA_FALSE;
 
-   Vg_File_Anim_Data_Marker *marker;
+   Efl_Gfx_Frame_Sector_Data *marker;
    EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
      {
         if (!strcmp(marker->name, name))
@@ -474,6 +484,15 @@ evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* vg_entry, const char *name, 
           }
      }
    return EINA_FALSE;
+}
+
+Eina_Inarray*
+evas_cache_vg_anim_sector_list_get(const Vg_Cache_Entry* vg_entry)
+{
+   if (!vg_entry) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data) return EINA_FALSE;
+   if (!vg_entry->vfd->anim_data->markers) return EINA_FALSE;
+   return vg_entry->vfd->anim_data->markers;
 }
 
 Efl_VG*
@@ -514,7 +533,10 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 
    _root_update(vg_entry);
 
-   _local_transform(vg_entry->root, vg_entry->w, vg_entry->h, vfd);
+   if (vfd->is_wrap)
+     _local_wrap_transform(vg_entry->root, vfd);
+   else
+     _local_transform(vg_entry->root, vg_entry->w, vg_entry->h, vfd);
 
    return vg_entry->root;
 }
@@ -545,6 +567,27 @@ evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry)
 {
    if (!vg_entry) return EINA_SIZE2D(0, 0);
    return EINA_SIZE2D(vg_entry->vfd->w, vg_entry->vfd->h);
+}
+
+Eina_Size2D
+evas_cache_vg_entry_default_min_size_get(const Vg_Cache_Entry *vg_entry)
+{
+   if (!vg_entry) return EINA_SIZE2D(0, 0);
+   return EINA_SIZE2D(vg_entry->vfd->minw, vg_entry->vfd->minh);
+}
+
+Eina_Position2D
+evas_cache_vg_entry_default_position_get(const Vg_Cache_Entry *vg_entry)
+{
+   if (!vg_entry) return EINA_POSITION2D(0, 0);
+   return EINA_POSITION2D(vg_entry->vfd->bl, vg_entry->vfd->bt);
+}
+
+void
+evas_cache_vg_entry_wrap_mode_set(const Vg_Cache_Entry *vg_entry, Eina_Bool wrap_mode)
+{
+   if (!vg_entry) return;
+   vg_entry->vfd->is_wrap = wrap_mode;
 }
 
 Eina_Bool

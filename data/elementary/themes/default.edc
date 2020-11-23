@@ -10,21 +10,20 @@ data.item: "version" "119";
 data.item: "efl_theme_base" "dark";
 
 collections {
+#include "ic.edc"
+
 #include "fonts.edc"
 #include "colorclasses.edc"
 
 // elm
 #include "edc/elm/bg.edc"
 #include "edc/elm/button.edc"
-// XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/elm/scroller.edc"
-// XXX: mobile mode needs different entry setup
 #include "edc/elm/entry.edc"
 #include "edc/elm/frame.edc"
 #include "edc/elm/label.edc"
 #include "edc/elm/separator.edc"
 #include "edc/elm/check.edc"
-#include "edc/elm/slider.edc"
 #include "edc/elm/radio.edc"
 #include "edc/elm/bubble.edc"
 #include "edc/elm/panes.edc"
@@ -67,7 +66,6 @@ collections {
 #include "edc/elm/panel.edc"
 #include "edc/elm/popup.edc"
 #include "edc/elm/border.edc"
-// XXX: min size calc problems - too wide! ... err ok on my 32bit box... eh?
 #include "edc/elm/spinner.edc"
 #include "edc/elm/menu.edc"
 #include "edc/elm/clock.edc"
@@ -77,32 +75,8 @@ collections {
 #include "edc/elm/code.edc"
 #include "edc/elm/ews.edc"
 #include "edc/elm/textpath.edc"
+#include "edc/elm/slider.edc"
 
-
-// desktop in general
-#include "edc/wallpaper.edc"
-#include "edc/comp.edc"
-#include "edc/comp_compat.edc"
-#include "edc/comp_effects.edc"
-#include "edc/background.edc"
-#include "edc/bryce.edc"
-#include "edc/bryce_editor.edc"
-#include "edc/shelf.edc"
-#include "edc/border.edc"
-#include "edc/dialog.edc"
-#include "edc/conf.edc"
-#include "edc/gadman.edc"
-#include "edc/syscon.edc"
-#include "edc/pointer.edc"
-#include "edc/sys.edc"
-#include "edc/winlist.edc"
-#include "edc/desklock.edc"
-#include "edc/deskmirror.edc"
-#include "edc/wizard.edc"
-#include "edc/init.edc"
-#include "edc/about-e.edc"
-#include "edc/about-theme.edc"
-#include "edc/transitions.edc"
 
 // widgets
 #include "edc/menu.edc"
@@ -125,6 +99,30 @@ collections {
 #include "edc/cslider.edc"
 #include "edc/spectrum.edc"
 
+// desktop in general
+#include "edc/wallpaper.edc"
+#include "edc/comp.edc"
+#include "edc/comp_compat.edc"
+#include "edc/comp_effects.edc"
+#include "edc/background.edc"
+#include "edc/bryce.edc"
+#include "edc/bryce_editor.edc"
+#include "edc/shelf.edc"
+#include "edc/border.edc"
+#include "edc/dialog.edc"
+#include "edc/conf.edc"
+#include "edc/gadman.edc"
+#include "edc/syscon.edc"
+#include "edc/pointer.edc"
+#include "edc/winlist.edc"
+#include "edc/desklock.edc"
+#include "edc/deskmirror.edc"
+#include "edc/wizard.edc"
+#include "edc/init.edc"
+#include "edc/about-e.edc"
+#include "edc/about-theme.edc"
+#include "edc/transitions.edc"
+
 // modules
 #include "edc/start.edc"
 #include "edc/pager.edc"
@@ -142,7 +140,9 @@ collections {
 #include "edc/randr.edc"
 #include "edc/notification.edc"
 #include "edc/cpufreq.edc"
+#include "edc/cpuclock.edc"
 #include "edc/temperature.edc"
+#include "edc/thermal.edc"
 #include "edc/backlight.edc"
 #include "edc/mixer.edc"
 #include "edc/battery.edc"
@@ -150,6 +150,7 @@ collections {
 #include "edc/evrything.edc"
 #include "edc/illume.edc"
 #include "edc/bluez4.edc"
+#include "edc/bluez5.edc"
 #include "edc/packagekit.edc"
 #include "edc/wireless.edc"
 #include "edc/time.edc"
@@ -157,6 +158,7 @@ collections {
 #include "edc/memusage.edc"
 #include "edc/cpumonitor.edc"
 #include "edc/netstatus.edc"
+#include "edc/tiling.edc"
 
 // icons
 #include "edc/icons.edc"
@@ -173,11 +175,9 @@ collections {
 #include "edc/efl/calendar.edc"
 #include "edc/efl/navigation_bar.edc"
 #include "edc/efl/navigation_layout.edc"
-// XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/efl/scroller.edc"
 #include "edc/efl/list.edc"
 #include "edc/efl/grid.edc"
-// XXX: mobile mode needs different entry setup
 #include "edc/efl/text.edc"
 #include "edc/efl/frame.edc"
 #include "edc/efl/check.edc"
@@ -197,7 +197,6 @@ collections {
 #include "edc/efl/spin_button.edc"
 #include "edc/efl/datepicker.edc"
 #include "edc/efl/timepicker.edc"
-// XXX: min size calc problems - too wide! ... err ok on my 32bit box... eh?
 #include "edc/efl/cursor.edc"
 #include "edc/efl/pointer.edc"
 #include "edc/efl/textpath.edc"

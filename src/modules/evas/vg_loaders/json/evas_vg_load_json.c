@@ -24,7 +24,7 @@ evas_vg_load_file_close_json(Vg_File_Data *vfd)
      {
         if (vfd->anim_data->markers)
           {
-             Vg_File_Anim_Data_Marker *marker;
+             Efl_Gfx_Frame_Sector_Data *marker;
              EINA_INARRAY_FOREACH(vfd->anim_data->markers, marker)
                 if (marker->name) eina_stringshare_del(marker->name);
              eina_inarray_free(vfd->anim_data->markers);
@@ -85,9 +85,9 @@ evas_vg_load_file_open_json(Eina_File *file,
         const LOTMarkerList *markerlist = lottie_animation_get_markerlist(lot_anim);
         if (markerlist && markerlist->size > 0)
           {
-             Vg_File_Anim_Data_Marker *marker;
+             Efl_Gfx_Frame_Sector_Data *marker;
              int i = 0;
-             vfd->anim_data->markers = eina_inarray_new(sizeof(Vg_File_Anim_Data_Marker), 0);
+             vfd->anim_data->markers = eina_inarray_new(sizeof(Efl_Gfx_Frame_Sector_Data), 0);
              eina_inarray_resize(vfd->anim_data->markers, markerlist->size);
              EINA_INARRAY_FOREACH(vfd->anim_data->markers, marker)
                {

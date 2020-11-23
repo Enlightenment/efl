@@ -1,25 +1,30 @@
 group { name: "e/modules/bluez4/main";
-   images.image: "bt_base.png" COMP;
+   images.image: "bz5_logo.png" COMP;
    max: 160 160;
    parts {
       part { name: "base";
          description { state: "default" 0.0;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            image.normal: "bt_base.png";
+            rel1.relative: (25/380) (25/380);
+            rel2.relative: (365/380) (365/380);
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "bz5_logo.png";
+            color: 160 160 160 255;
          }
       }
    }
 }
 
 group { name: "e/modules/bluez4/inactive";
-   images.image: "bt_base.png" COMP;
+   images.image: "bz5_logo.png" COMP;
    max: 160 160;
    parts {
       part { name: "base";
          description { state: "default" 0.0;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            image.normal: "bt_base.png";
-            color: 255 255 255 128;
+            rel1.relative: (25/380) (25/380);
+            rel2.relative: (365/380) (365/380);
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "bz5_logo.png";
+            color: 160 160 160 128;
          }
       }
    }

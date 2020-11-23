@@ -1,12 +1,10 @@
 group { name: "elm/focus_highlight/top/default";
-   images.image: "box_glow.png" COMP;
-   images.image: "box_outline.png" COMP;
    data.item: "animate" "on";
    script {
       public s_x, s_y, s_w, s_h; /* source */
       public difx, dify, difw, difh;
       public g_anim_id;
-      
+
       public animator1(val, Float:pos) {
          new x, y, w, h, dx, dy, dw, dh, Float:p;
          p = 1.0 - ((1.0 - pos) * (1.0 - pos) * (1.0 - pos));
@@ -27,14 +25,14 @@ group { name: "elm/focus_highlight/top/default";
 
       public update_offset(x, y, w, h) {
          set_state_val(PART:"base", STATE_REL1_OFFSET, x, y);
-         set_state_val(PART:"base", STATE_REL2_OFFSET, x + w, y + h);
+         set_state_val(PART:"base", STATE_REL2_OFFSET, x + w - 1, y + h - 1);
       }
 
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new x1, y1, w1, h1, x2, y2, w2, h2;
             new anim_id;
-            
+
             anim_id = get_int(g_anim_id);
             if (anim_id != 0) {
                cancel_anim(anim_id);
@@ -63,7 +61,7 @@ group { name: "elm/focus_highlight/top/default";
             set_state_val(PART:"base", STATE_REL2, 0.0, 0.0);
             update_offset(x1, y1, w1, h1);
             set_state(PART:"base", "custom", 0.0);
-            
+
             anim_id = anim(0.2, "animator1", 1);
             set_int(g_anim_id, anim_id);
          }
@@ -77,38 +75,106 @@ group { name: "elm/focus_highlight/top/default";
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "glow";
-            rel2.to: "glow";
+            rel.to: "base";
+            rel1.relative: -1.0 -1.0;
+            rel1.offset: -999 -999;
+            rel2.relative: 2.0 2.0;
+            rel2.offset: 999 999;
             color: 255 255 255 0;
+            visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
+            visible: 1;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "top"; type: RECT;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "box_glow.png";
-            image.border: 12 12 12 12;
-            image.middle: 0;
-            fill.smooth: 0;
-            rel1.to: "base";
-            rel1.offset: -7 -7;
-            rel2.to: "base";
-            rel2.offset: 5 5;
+            rel.to: "base";
+            color: 51 153 255 255;
+            rel2.relative: 1.0 0.0;
+            min: 4 4;
+         }
+         description { state: "hi" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
       }
-      part { name: "sel"; mouse_events: 0;
+      part { name: "topl"; type: RECT;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "box_outline.png";
-            image.border: 12 12 12 12;
-            image.middle: 0;
-            fill.smooth: 0;
-            rel1.to: "glow";
-            rel2.to: "glow";
-            color: 255 255 255 0;
+            rel.to: "top";
+            color: 51 153 255 255;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.0;
+            min: 4 4;
+         }
+         description { state: "hi" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "topr"; type: RECT;
+         clip_to: "clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "top";
+            color: 51 153 255 255;
+            rel1.relative: 1.0 1.0;
+            rel2.relative: 1.0 1.0;
+            align: 1.0 0.0;
+            min: 4 4;
+         }
+         description { state: "hi" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "bot"; type: RECT;
+         clip_to: "clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            color: 51 153 255 255;
+            rel1.relative: 0.0 1.0;
+            min: 4 4;
+         }
+         description { state: "hi" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "botl"; type: RECT;
+         clip_to: "clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "bot";
+            color: 51 153 255 255;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 0.0;
+            align: 0.0 1.0;
+            min: 4 4;
+         }
+         description { state: "hi" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "botr"; type: RECT;
+         clip_to: "clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "bot";
+            color: 51 153 255 255;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 0.0;
+            align: 1.0 1.0;
+            min: 4 4;
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
@@ -117,8 +183,7 @@ group { name: "elm/focus_highlight/top/default";
       }
    }
    programs {
-      program {
-         signal: "elm,action,focus,show"; source: "elm";
+      program { signal: "elm,action,focus,show"; source: "elm";
          action: ACTION_STOP;
          target: "pulse";
          target: "pulse2";
@@ -134,8 +199,7 @@ group { name: "elm/focus_highlight/top/default";
       program { name: "go3";
          action: SIGNAL_EMIT "elm,action,focus,show,end" "elm";
       }
-      program {
-         signal: "elm,action,focus,hide"; source: "elm";
+      program { signal: "elm,action,focus,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.4;
          target: "clip";
@@ -154,17 +218,26 @@ group { name: "elm/focus_highlight/top/default";
          action: STATE_SET "hi" 0.0;
          transition: SINUSOIDAL 0.2;
          in: 3.0 0.0;
-         target: "sel";
+         target: "top";
+         target: "topl";
+         target: "topr";
+         target: "bot";
+         target: "botl";
+         target: "botr";
          after: "pulse2";
       }
       program { name: "pulse2";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.4;
-         target: "sel";
+         target: "top";
+         target: "topl";
+         target: "topr";
+         target: "bot";
+         target: "botl";
+         target: "botr";
          after: "pulse";
       }
-      program {
-         signal: "elm,state,anim,stop"; source: "elm";
+      program { signal: "elm,state,anim,stop"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
       }

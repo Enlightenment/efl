@@ -174,10 +174,6 @@
 
 //Code//
 
-   EFM_MIME_ICON("text/x-csrc","efm_generic_icon_content_code.png", (114/88), (114/88), ".C", 240, 0.3);
-   EFM_MIME_ICON("text/x-chdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".H", 240, 0.3);
-   EFM_MIME_ICON("text/x-c++hdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".HH", 240, 0.3);
-   EFM_MIME_ICON("text/x-c++src","efm_generic_icon_content_code.png", (114/88), (114/88), ".C++", 240, 0.3);
    EFM_MIME_ICON("text/x-csharp","efm_generic_icon_content_code.png", (114/88), (114/88), ".C#", 240, 0.3);
    EFM_MIME_ICON("application/x-awk","efm_generic_icon_content_code.png", (114/88), (114/88), ".AWK", 240, 0.3);
    EFM_MIME_ICON("text/x-hdr","efm_generic_icon_content_code.png", (114/88), (114/88), ".HPP", 240, 0.3);
@@ -190,7 +186,6 @@
 //Text//   
 
    EFM_MIME_ICON("text/x-patch","efm_generic_icon_content_text.png", (114/126), (114/126), ".PATCH", 240, 0.5);
-   EFM_MIME_ICON("text/plain","efm_generic_icon_content_text.png", (114/126), (114/126), ".TXT", 240, 0.5);
    EFM_MIME_ICON("text/x-log","efm_generic_icon_content_text.png",  (114/126), (114/126), ".LOG", 240, 0.5);
    EFM_MIME_ICON("application/x-md5","efm_generic_icon_content_text.png",  (114/126), (114/126), ".MD5", 240, 0.5);
    EFM_MIME_ICON("text/x-makefile","efm_generic_icon_content_text.png",  (114/126), (114/126), ".MK", 240, 0.5);
@@ -358,31 +353,14 @@
       } \
    }
 
-//Script//
-   
-   EFM_MIME_ICON_SIMPLE("application/x-shellscript","efm_generic_icon_content_script.png", (114/126), (114/126), 240, 0.5);
-
-//Executable//
-
-   EFM_MIME_ICON_SIMPLE("application/x-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("application/x-ms-dos-executable","efm_generic_icon_content_executable.png", (114/114), (114/114), 240, 0.5);
-
 //Libraries//
 
    EFM_MIME_ICON_SIMPLE("application/x-sharedlib","efm_generic_icon_content_lib.png", (114/114), (114/114), 240, 0.5);
    EFM_MIME_ICON_SIMPLE("application/x-shared-library-la","efm_generic_icon_content_lib.png", (114/114), (114/114), 240, 0.5);
 
 //Unknown//
-   
+
    EFM_MIME_ICON_SIMPLE("application/x-object","efm_generic_icon_content_unknown.png", (100/154), (100/154), 240, 0.5);
-
-//Trash//
-
-   EFM_MIME_ICON_SIMPLE("application/x-trash","efm_generic_icon_content_trash.png", (114/142), (114/142), 240, 0.5);
-
-//Octet-Stream//
-   
-   EFM_MIME_ICON_SIMPLE("application/octet-stream","efm_generic_icon_content_text.png",(114/126), (114/126), 240, 0.5);
 
 //Install//
 
@@ -391,14 +369,6 @@
 //Cache//
 
    EFM_MIME_ICON_SIMPLE("chemical/x-cache","efm_generic_icon_content_db.png", (114/128), (114/128), 240, 0.5);
-
-//Inode//
-   
-   EFM_MIME_ICON_SIMPLE("inode/chardevice","efm_generic_icon_content_inode_char.png", (114/77), (114/77), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/blockdevice","efm_generic_icon_content_inode_block.png", (81/114), (81/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/fifo","efm_generic_icon_content_inode_fifo.png", (87/114), (87/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/socket","efm_generic_icon_content_inode_socket.png", (114/114), (114/114), 240, 0.5);
-   EFM_MIME_ICON_SIMPLE("inode/file","efm_generic_icon_content_inode_file.png", (83/114), (83/114), 240, 0.5);
 
 #undefine EFM_MIME_ICON
 #undefine EFM_MIME_ICON_SIMPLE
@@ -452,19 +422,6 @@
       }                                               \
    }
 
-   MIMEICON("inode/directory","icon_efm_folder.png", 128);
-
    MIMEICON("application/x-deb","icon_mime_deb.png", 128);
-   MIMEICON("application/x-bzip","icon_mime_package.png", 128);
-   MIMEICON("application/zip","icon_mime_package.png", 128);
-   MIMEICON("application/x-gzip","icon_mime_package.png", 128);
-   MIMEICON("application/x-bzip-compressed-tar","icon_mime_package.png", 128);
-   MIMEICON("application/x-bzip2-compressed-tar","icon_mime_package.png",128);
-   MIMEICON("application/x-compressed-tar","icon_mime_package.png",128);
-   MIMEICON("application/x-tar","icon_mime_package.png", 128);
-   MIMEICON("application/x-rar","icon_mime_package.png", 128);
-
-   MIMEICON("application/x-7z-compressed","icon_mime_package.png", 128);
-   MIMEICON("application/vnd.ms-cab-compressed","icon_mime_package.png", 128);
 
 

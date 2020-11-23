@@ -24,7 +24,6 @@
  * 
  */
 
-
 // Single FDO icon
 #define ICO1(Cat, Name, Size)                                     \
    group { name: "elm/icon/"##Name##"/default";                   \
@@ -36,7 +35,6 @@
                image.normal: ##Cat##"/"##Size##"/"##Name##".png"; \
                aspect: 1.0 1.0; aspect_preference: BOTH;          \
    }  }  }  }
-
 
 // FDO icon with small and normal source (16 and 128px)
 #define ICO2(Cat, Name)                                         \
@@ -61,7 +59,6 @@
                aspect: 1.0 1.0; aspect_preference: BOTH;        \
    }  }  }  }
 
-
 // Flag icon
 #define FLAG(Cat, Name)                                     \
    group { name: "elm/icon/"##Name##"/default";             \
@@ -73,31 +70,6 @@
                image.normal: ##Cat##"/128/"##Name##".png";  \
                aspect_preference: SOURCE;                   \
    }  }  }  }
-
-
-////  places  /////////////////////////////////////////////////////////////////
-#define CTX "places"
-ICO1(CTX, "user-home", 128)
-ICO1(CTX, "user-bookmarks", 128)
-ICO2(CTX, "user-desktop")
-ICO1(CTX, "user-trash", 128)
-ICO2(CTX, "folder")
-ICO2(CTX, "folder-drag-accept") /* spec have this icon in the Status category */
-ICO2(CTX, "folder-remote")
-ICO2(CTX, "folder-open") /* */
-ICO2(CTX, "folder-home") /* */
-ICO2(CTX, "folder-download") /* */
-ICO2(CTX, "folder-recent") /* */
-ICO2(CTX, "folder-documents") /* */
-ICO2(CTX, "folder-pictures") /* */
-ICO2(CTX, "folder-music") /* */
-ICO2(CTX, "folder-videos") /* */
-ICO2(CTX, "folder-visiting") /* spec have this icon in the Status category */
-ICO2(CTX, "network-server")
-ICO2(CTX, "network-workgroup")
-ICO2(CTX, "start-here")
-#undef CTX
-
 
 ////  emblems  ////////////////////////////////////////////////////////////////
 #define CTX "emblems"
@@ -116,7 +88,6 @@ ICO1(CTX, "emblem-system", 96)
 ICO1(CTX, "emblem-synchronized", 96)
 ICO1(CTX, "emblem-synchronizing", 96) /* */
 #undef CTX
-
 
 ////  actions  ////////////////////////////////////////////////////////////////
 #define CTX "actions"
@@ -200,16 +171,6 @@ ICO1(CTX, "mail-reply-sender", 128)
 ICO1(CTX, "mail-send", 128)
 ICO1(CTX, "mail-send-receive", 128)
 
-ICO1(CTX, "media-eject", 128)
-ICO1(CTX, "media-playback-pause", 128)
-ICO1(CTX, "media-playback-start", 128)
-ICO1(CTX, "media-playback-stop", 128)
-ICO1(CTX, "media-record", 128)
-ICO1(CTX, "media-seek-backward", 128)
-ICO1(CTX, "media-seek-forward", 128)
-ICO1(CTX, "media-skip-backward", 128)
-ICO1(CTX, "media-skip-forward", 128)
-
 ICO1(CTX, "object-flip-horizontal", 128)
 ICO1(CTX, "object-flip-vertical", 128)
 ICO1(CTX, "object-rotate-left", 128)
@@ -222,36 +183,12 @@ ICO1(CTX, "view-list-compact", 128) /* */
 ICO1(CTX, "view-list-details", 128) /* */
 ICO1(CTX, "view-list-icons", 128) /* */
 
-ICO1(CTX, "view-fullscreen", 128)
-ICO1(CTX, "view-refresh", 128)
-ICO1(CTX, "view-restore", 128)
-ICO1(CTX, "view-sort-ascending", 128)
-ICO1(CTX, "view-sort-descending", 128)
-ICO1(CTX, "view-close", 128) /* */
-
-ICO1(CTX, "window-close", 128)
 ICO1(CTX, "window-new", 128)
-
-ICO1(CTX, "system-run", 128)
-ICO1(CTX, "system-shutdown", 128)
-ICO1(CTX, "system-reboot", 128)
-ICO1(CTX, "system-lock-screen", 128)
-ICO1(CTX, "system-log-out", 128)
-ICO1(CTX, "system-search", 128)
 
 ICO1(CTX, "help-about", 128)
 ICO1(CTX, "help-contents", 128)
 ICO1(CTX, "help-faq", 128)
-
-ICO1(CTX, "zoom-in", 128)
-ICO1(CTX, "zoom-out", 128)
-ICO1(CTX, "zoom-original", 128)
-ICO1(CTX, "zoom-fit", 128) /* */
-ICO1(CTX, "zoom-fill", 128) /* */
-ICO1(CTX, "zoom-fit-best", 128)
-
 #undef CTX
-
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
@@ -356,12 +293,10 @@ ICO1(CTX, "non-starred", 128) /* */
 // folder-drag-accept /* in the Places category */
 #undef CTX
 
-
 ////  animations  /////////////////////////////////////////////////////////////
 #define CTX "animations"
 // TODO process-working
 #undef CTX
-
 
 ////  applications  ///////////////////////////////////////////////////////////
 #define CTX "apps"
@@ -371,24 +306,12 @@ ICO1(CTX, "non-starred", 128) /* */
 // TODO accessories-text-editor
 // TODO multimedia-volume-control
 // TODO help-browser
-ICO1(CTX, "preferences-color", 64) /* */
-ICO1(CTX, "preferences-profile", 64) /* Elm specific */
 // TODO preferences-desktop-accessibility
-ICO1(CTX, "preferences-desktop-display", 64) /* */
-ICO1(CTX, "preferences-desktop-font", 64)
-ICO1(CTX, "preferences-desktop-keyboard", 64)
-ICO1(CTX, "preferences-desktop-locale", 64)
-ICO1(CTX, "preferences-desktop-multimedia", 64)
-ICO1(CTX, "preferences-desktop-screensaver", 64)
-ICO1(CTX, "preferences-desktop-theme", 64)
-ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO system-software-install
 // TODO system-software-update
 // TODO utilities-system-monitor
 // TODO utilities-terminal
-ICO1(CTX, "system-file-manager", 64)
 #undef CTX
-
 
 ////  categories  /////////////////////////////////////////////////////////////
 #define CTX "categories"
@@ -412,56 +335,6 @@ ICO1(CTX, "preferences-other", 128)
 // TODO preferences-system-network
 // TODO system-help
 #undef CTX
-
-
-////  devices  ////////////////////////////////////////////////////////////////
-#define CTX "devices"
-ICO1(CTX, "audio-card", 128)
-ICO1(CTX, "audio-input-microphone", 128)
-ICO1(CTX, "battery", 128)
-ICO1(CTX, "camera", 128)
-ICO1(CTX, "camera-photo", 128)
-ICO1(CTX, "camera-web", 128)
-ICO1(CTX, "camera-video", 128)
-ICO1(CTX, "drive-harddisk", 128)
-ICO1(CTX, "drive-harddisk-ieee1394", 128)
-ICO1(CTX, "drive-harddisk-usb", 128)
-ICO1(CTX, "drive-optical", 128)
-ICO1(CTX, "drive-removable-media", 128)
-ICO1(CTX, "drive-removable-media-ieee1394", 128)
-ICO1(CTX, "drive-removable-media-usb", 128)
-ICO1(CTX, "computer", 128)
-ICO1(CTX, "computer-laptop", 128)
-ICO1(CTX, "multimedia-player", 128)
-ICO1(CTX, "media-optical", 128)
-ICO1(CTX, "media-optical-cd", 128)
-ICO1(CTX, "media-optical-audio", 128)
-ICO1(CTX, "media-optical-dvd", 128)
-ICO1(CTX, "media-optical-bd", 128)
-ICO1(CTX, "media-flash", 128)
-ICO1(CTX, "media-flash-cf", 128)
-ICO1(CTX, "media-flash-ms", 128)
-ICO1(CTX, "media-flash-sd", 128)
-ICO1(CTX, "media-flash-sm", 128)
-ICO1(CTX, "media-floppy", 128)
-ICO1(CTX, "media-zip", 128)
-ICO1(CTX, "media-tape", 128)
-ICO1(CTX, "media-memory", 128)
-ICO1(CTX, "processor", 128)
-ICO1(CTX, "input-mouse", 128)
-ICO1(CTX, "input-tablet", 128)
-ICO1(CTX, "input-keyboard", 128)
-ICO1(CTX, "input-gaming", 128)
-ICO1(CTX, "pda", 128)
-ICO1(CTX, "phone", 128)
-ICO1(CTX, "printer", 128)
-ICO1(CTX, "scanner", 128)
-ICO1(CTX, "modem", 128)
-ICO1(CTX, "video-display", 128)
-ICO1(CTX, "network-wired", 128)
-ICO1(CTX, "network-wireless", 128)
-#undef CTX
-
 
 ////  emotions  ///////////////////////////////////////////////////////////////
 #define CTX "emotions"
@@ -487,7 +360,6 @@ ICO1(CTX, "network-wireless", 128)
 // TODO face-wink
 // TODO face-worried
 #undef CTX
-
 
 ////  international  //////////////////////////////////////////////////////////
 // Country flags, ISO 3166-1 alpha-2 country code (flag-aa)
@@ -586,15 +458,6 @@ FLAG(CTX, "flag-vn")
 FLAG(CTX, "flag-za")
 #undef CTX
 
-
-////  mimetypes  //////////////////////////////////////////////////////////////
-#define CTX "mimetypes"
-ICO2(CTX, "inode-directory")
-// TODO ... don't really know about this one (they are LOTS of icons)
-#undef CTX
-
-
 #undef ICO1
 #undef ICO2
 #undef FLAG
-

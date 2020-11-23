@@ -631,28 +631,30 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
        (vg_entry->h != h))
      {
         Eina_Size2D size = evas_cache_vg_entry_default_size_get(pd->vg_entry);
-
-        //adjust size for aspect ratio.
-        if (size.w > 0 && size.h > 0)
+        if (!vg_entry->vfd->is_wrap)
           {
-             float rw = (float) w / (float) size.w;
-             float rh = (float) h / (float) size.h;
-
-             if (rw < rh)
+             //adjust size for aspect ratio.
+             if (size.w > 0 && size.h > 0)
                {
-                  size.w = w;
-                  size.h = (int) ((float) size.h * rw);
+                  float rw = (float) w / (float) size.w;
+                  float rh = (float) h / (float) size.h;
+
+                  if (rw < rh)
+                    {
+                       size.w = w;
+                      size.h = (int) ((float) size.h * rw);
+                    }
+                  else
+                    {
+                       size.w = (int) ((float) size.w * rh);
+                       size.h = h;
+                    }
                }
              else
                {
-                  size.w = (int) ((float) size.w * rh);
-                  size.h = h;
-               }
-          }
-        else
-          {
-              size.w = w;
-              size.h = h;
+                   size.w = w;
+                   size.h = h;
+                }
           }
 
         //Size is changed, cached data is invalid.
@@ -681,10 +683,11 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
           }
 
         //update for adjusted pos and size.
-        offset.x = w - size.w;
+        offset.x = vg_entry->vfd->is_wrap?0:(w - size.w);
         if (offset.x > 0) offset.x /= 2;
-        offset.y = h - size.h;
+        offset.y = vg_entry->vfd->is_wrap?0:(h - size.h);
         if (offset.y > 0) offset.y /= 2;
+
         w = size.w;
         h = size.h;
      }
@@ -1050,6 +1053,17 @@ Eina_Bool _efl_canvas_vg_object_efl_gfx_frame_controller_sector_get(const Eo *ob
    return EINA_TRUE;
 }
 
+EOLIAN static Eina_Iterator *
+_efl_canvas_vg_object_efl_gfx_frame_controller_sector_list_get(const Eo *obj EINA_UNUSED,
+                                                               Efl_Canvas_Vg_Object_Data *pd)
+{
+   if (!pd->vg_entry) return EINA_FALSE;
+
+   Eina_Inarray* markers = evas_cache_vg_anim_sector_list_get(pd->vg_entry);
+   if (!markers) return NULL;
+   return eina_inarray_iterator_new(markers);
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_gfx_frame_controller_frame_set(Eo *eo_obj,
                                                          Efl_Canvas_Vg_Object_Data *pd,
@@ -1078,6 +1092,27 @@ _efl_canvas_vg_object_default_size_get(const Eo *eo_obj EINA_UNUSED,
                                        Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
 {
    return evas_cache_vg_entry_default_size_get(pd->vg_entry);
+}
+
+EOLIAN static Eina_Position2D
+_efl_canvas_vg_object_default_position_get(const Eo *eo_obj EINA_UNUSED,
+                                           Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   return evas_cache_vg_entry_default_position_get(pd->vg_entry);
+}
+
+EOLIAN static Eina_Size2D
+_efl_canvas_vg_object_default_min_size_get(const Eo *eo_obj EINA_UNUSED,
+                                           Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   return evas_cache_vg_entry_default_min_size_get(pd->vg_entry);
+}
+
+EOLIAN static void
+_efl_canvas_vg_object_wrap_mode_set(Eo *obj EINA_UNUSED,
+                                    Efl_Canvas_Vg_Object_Data *pd, Eina_Bool wrap_mode)
+{
+   evas_cache_vg_entry_wrap_mode_set(pd->vg_entry, wrap_mode);
 }
 
 /* the actual api call to add a vector graphic object */

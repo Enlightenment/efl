@@ -2,8 +2,6 @@ group { name: "elm/bubble/top_left/default";
    alias: "elm/bubble/base/default";
    images.image: "bub_base_tl.png" COMP;
    images.image: "bub_base_tr.png" COMP;
-   images.image: "bub_over_top.png" COMP;
-   images.image: "shine.png" COMP;
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
@@ -16,11 +14,11 @@ group { name: "elm/bubble/top_left/default";
             visible: 0;
             align: 0.0 0.0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2 {
                to_y: "elm.text";
                relative: 0.0 1.0;
-               offset: 2 -1;
+               offset: 4 -5;
             }
          }
          description { state: "visible" 0.0;
@@ -45,12 +43,11 @@ group { name: "elm/bubble/top_left/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
@@ -58,15 +55,14 @@ group { name: "elm/bubble/top_left/default";
             rel1 {
                to_x: "elm.swallow.icon";
                relative: 1.0 0.0;
-               offset: 2 2;
+               offset: 4 4;
             }
             rel2 {
                to_x: "elm.info";
                relative: 0.0 0.0;
-               offset: -3 2;
+               offset: -5 4;
             }
-            color: FN_COL_DEFAULT;
-            color_class: "bubble_text";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -76,17 +72,15 @@ group { name: "elm/bubble/top_left/default";
          }
       }
       part { name: "elm.info"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             align: 1.0 0.0;
             fixed: 1 1;
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 2;
-            color: FN_COL_DISABLE;
-            color_class: "bubble_info";
+            rel2.offset: -5 4;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -98,20 +92,23 @@ group { name: "elm/bubble/top_left/default";
       }
       part { name: "base"; mouse_events:  0;
          description { state: "default" 0.0;
+            color: 48 48 48 255;
             rel1 {
                to_y: "elm.swallow.icon";
                relative: 0.0 1.0;
-               offset: 0 0;
+               offset: 4 4;
             }
+            rel2.offset: -5 -5;
             image.normal: "bub_base_tl.png";
-            image.border: 24 8 12 9;
+            image.border: 24 0 12 0;
             image.middle: SOLID;
             fill.smooth: 0;
+            offscale;
          }
          description { state: "rtl" 0.0;
             inherit: "default" 0.0;
             image.normal: "bub_base_tr.png";
-            image.border: 8 24 12 9;
+            image.border: 0 24 12 0;
          }
       }
       part { name: "elm.swallow.content";
@@ -121,41 +118,6 @@ group { name: "elm/bubble/top_left/default";
             rel1.offset: 5 9;
             rel2.to: "base";
             rel2.offset: -6 -7;
-         }
-      }
-      part { name: "over"; mouse_events:  0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 20 6;
-            rel2.to: "base";
-            rel2.offset: -6 6;
-            rel2.relative: 1.0 0.4;
-            image.normal: "bub_over_top.png";
-            fill.smooth: 0;
-         }
-         description { state: "rtl" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: 5 6;
-            rel2.offset: -21 6;
-         }
-      }
-      part { name: "shine_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "over";
-            rel1.offset: 0 -10;
-            rel2.to: "over";
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         clip_to: "shine_clip";
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "over";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "over";
-            FIXED_SIZE(69, 5)
          }
       }
    }
@@ -176,13 +138,11 @@ group { name: "elm/bubble/top_left/default";
          signal: "edje,state,rtl"; source: "edje";
          action: STATE_SET "rtl" 0.0;
          target: "base";
-         target: "over";
       }
       program {
          signal: "edje,state,ltr"; source: "edje";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "over";
       }
    }
 }
@@ -190,8 +150,6 @@ group { name: "elm/bubble/top_left/default";
 group { name: "elm/bubble/top_right/default";
    images.image: "bub_base_tr.png" COMP;
    images.image: "bub_base_tl.png" COMP;
-   images.image: "bub_over_top.png" COMP;
-   images.image: "shine.png" COMP;
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
@@ -204,12 +162,12 @@ group { name: "elm/bubble/top_right/default";
             visible: 0;
             align: 1.0 0.0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
             rel2 {
                to_y: "elm.text";
                relative: 1.0 1.0;
-               offset: -3 -1;
+               offset: -5 -1;
             }
          }
          description { state: "visible" 0.0;
@@ -234,24 +192,22 @@ group { name: "elm/bubble/top_right/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.0 0.0;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2 {
                to_x: "elm.info";
                relative: 0.0 0.0;
-               offset: -3 2;
+               offset: -5 4;
             }
-            color: FN_COL_DEFAULT;
-            color_class: "bubble_text";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -261,18 +217,16 @@ group { name: "elm/bubble/top_right/default";
          }
       }
       part { name: "elm.info"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             align: 1.0 0.0;
             fixed: 1 1;
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.to_x: "elm.swallow.icon";
             rel2.relative: 0.0 0.0;
-            rel2.offset: -3 2;
-            color: FN_COL_DISABLE;
-            color_class: "bubble_info";
+            rel2.offset: -5 4;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -284,20 +238,23 @@ group { name: "elm/bubble/top_right/default";
       }
       part { name: "base"; mouse_events:  0;
          description { state: "default" 0.0;
+            color: 48 48 48 255;
             rel1 {
                to_y: "elm.swallow.icon";
                relative: 0.0 1.0;
-               offset: 0 0;
+               offset: 4 4;
             }
+            rel2.offset: -5 -5;
             image.normal: "bub_base_tr.png";
-            image.border: 8 24 12 9;
+            image.border: 0 24 12 0;
             image.middle: SOLID;
             fill.smooth: 0;
+            offscale;
          }
          description { state: "rtl" 0.0;
             inherit: "default" 0.0;
             image.normal: "bub_base_tl.png";
-            image.border: 24 8 12 9;
+            image.border: 24 0 12 0;
          }
       }
       part { name: "elm.swallow.content";
@@ -307,41 +264,6 @@ group { name: "elm/bubble/top_right/default";
             rel1.offset: 5 9;
             rel2.to: "base";
             rel2.offset: -6 -7;
-         }
-      }
-      part { name: "over"; mouse_events:  0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 5 6;
-            rel2.to: "base";
-            rel2.offset: -21 6;
-            rel2.relative: 1.0 0.4;
-            image.normal: "bub_over_top.png";
-            fill.smooth: 0;
-         }
-         description { state: "rtl" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: 20 6;
-            rel2.offset: -6 6;
-         }
-      }
-      part { name: "shine_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "over";
-            rel1.offset: 0 -10;
-            rel2.to: "over";
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         clip_to: "shine_clip";
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "over";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "over";
-            FIXED_SIZE(69, 5)
          }
       }
    }
@@ -362,13 +284,11 @@ group { name: "elm/bubble/top_right/default";
          signal: "edje,state,rtl"; source: "edje";
          action: STATE_SET "rtl" 0.0;
          target: "base";
-         target: "over";
       }
       program {
          signal: "edje,state,ltr"; source: "edje";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "over";
       }
    }
 }
@@ -376,8 +296,6 @@ group { name: "elm/bubble/top_right/default";
 group { name: "elm/bubble/bottom_left/default";
    images.image: "bub_base_bl.png" COMP;
    images.image: "bub_base_br.png" COMP;
-   images.image: "bub_over_bot.png" COMP;
-   images.image: "shine.png" COMP;
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
@@ -392,11 +310,11 @@ group { name: "elm/bubble/bottom_left/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1 {
                to_y: "elm.text";
-               offset: 2 0;
+               offset: 4 0;
             }
             rel2 {
                relative: 0.0 1.0;
-               offset: 2 -3;
+               offset: 4 -5;
             }
          }
          description { state: "visible" 0.0;
@@ -421,12 +339,11 @@ group { name: "elm/bubble/bottom_left/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
@@ -434,15 +351,14 @@ group { name: "elm/bubble/bottom_left/default";
             rel1 {
                to_x: "elm.swallow.icon";
                relative: 1.0 1.0;
-               offset: 2 -3;
+               offset: 4 -5;
             }
             rel2 {
                to_x: "elm.info";
                relative: 0.0 1.0;
-               offset: -3 -3;
+               offset: -5 -5;
             }
-            color: FN_COL_DEFAULT;
-            color_class: "bubble_text";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -452,17 +368,15 @@ group { name: "elm/bubble/bottom_left/default";
          }
       }
       part { name: "elm.info"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             align: 1.0 1.0;
             fixed: 1 1;
             rel1.relative: 1.0 1.0;
-            rel1.offset: -3 -3;
+            rel1.offset: -5 -5;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -3;
-            color: FN_COL_DISABLE;
-            color_class: "bubble_info";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -474,19 +388,22 @@ group { name: "elm/bubble/bottom_left/default";
       }
       part { name: "base"; mouse_events:  0;
          description { state: "default" 0.0;
+            color: 48 48 48 255;
+            rel1.offset: 4 4;
             rel2 {
                to_y: "elm.swallow.icon";
                relative: 1.0 0.0;
+               offset: -5 -5;
             }
             image.normal: "bub_base_bl.png";
-            image.border: 24 8 8 13;
+            image.border: 24 0 0 13;
             image.middle: SOLID;
             fill.smooth: 0;
          }
          description { state: "rtl" 0.0;
             inherit: "default" 0.0;
             image.normal: "bub_base_br.png";
-            image.border: 8 24 8 13;
+            image.border: 0 24 0 13;
          }
       }
       part { name: "elm.swallow.content";
@@ -496,36 +413,6 @@ group { name: "elm/bubble/bottom_left/default";
             rel1.offset: 5 4;
             rel2.to: "base";
             rel2.offset: -6 -12;
-         }
-      }
-      part { name: "over"; mouse_events:  0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 2 1;
-            rel2.to: "base";
-            rel2.offset: -3 1;
-            rel2.relative: 1.0 0.4;
-            image.normal: "bub_over_bot.png";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shine_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "over";
-            rel1.offset: 0 -10;
-            rel2.to: "over";
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         clip_to: "shine_clip";
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "over";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "over";
-            FIXED_SIZE(69, 5)
          }
       }
    }
@@ -558,8 +445,6 @@ group { name: "elm/bubble/bottom_left/default";
 group { name: "elm/bubble/bottom_right/default";
    images.image: "bub_base_br.png" COMP;
    images.image: "bub_base_bl.png" COMP;
-   images.image: "bub_over_bot.png" COMP;
-   images.image: "shine.png" COMP;
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
@@ -574,11 +459,11 @@ group { name: "elm/bubble/bottom_right/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1 {
                to_y: "elm.text";
-               offset: -3 0;
+               offset: -5 0;
             }
             rel2 {
                relative: 1.0 1.0;
-               offset: -3 -3;
+               offset: -5 -5;
             }
          }
          description { state: "visible" 0.0;
@@ -603,27 +488,25 @@ group { name: "elm/bubble/bottom_right/default";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.0 1.0;
             rel1 {
                relative: 0.0 1.0;
-               offset: 2 -3;
+               offset: 4 -5;
             }
             rel2 {
                to_x: "elm.info";
                relative: 0.0 1.0;
-               offset: -3 -3;
+               offset: -5 -5;
             }
-            color: FN_COL_DEFAULT;
-            color_class: "bubble_text";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -633,18 +516,16 @@ group { name: "elm/bubble/bottom_right/default";
          }
       }
       part { name: "elm.info"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             align: 1.0 1.0;
             fixed: 1 1;
             rel1.relative: 1.0 1.0;
-            rel1.offset: -3 -3;
+            rel1.offset: -5 -5;
             rel2.to_x: "elm.swallow.icon";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -3 -3;
-            color: FN_COL_DISABLE;
-            color_class: "bubble_info";
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -656,19 +537,22 @@ group { name: "elm/bubble/bottom_right/default";
       }
       part { name: "base"; mouse_events:  0;
          description { state: "default" 0.0;
+            color: 48 48 48 255;
+            rel1.offset: 4 4;
             rel2 {
                to_y: "elm.swallow.icon";
                relative: 1.0 0.0;
+               offset: -5 -5;
             }
             image.normal: "bub_base_br.png";
-            image.border: 8 24 8 13;
+            image.border: 0 24 0 13;
             image.middle: SOLID;
             fill.smooth: 0;
          }
          description { state: "rtl" 0.0;
             inherit: "default" 0.0;
             image.normal: "bub_base_bl.png";
-            image.border: 24 8 8 13;
+            image.border: 24 0 0 13;
          }
       }
       part { name: "elm.swallow.content";
@@ -678,36 +562,6 @@ group { name: "elm/bubble/bottom_right/default";
             rel1.offset: 5 4;
             rel2.to: "base";
             rel2.offset: -6 -12;
-         }
-      }
-      part { name: "over"; mouse_events:  0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 2 1;
-            rel2.to: "base";
-            rel2.offset: -3 1;
-            rel2.relative: 1.0 0.4;
-            image.normal: "bub_over_bot.png";
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shine_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "over";
-            rel1.offset: 0 -10;
-            rel2.to: "over";
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         clip_to: "shine_clip";
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "over";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "over";
-            FIXED_SIZE(69, 5)
          }
       }
    }

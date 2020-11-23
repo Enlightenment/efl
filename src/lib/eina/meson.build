@@ -355,8 +355,8 @@ public_headers += eina_config_file
 unwind = dependency('libunwind-generic', required: false)
 if unwind.found()
    config_h.set('HAVE_UNWIND', 1)
-   eina_ext_deps += unwind
-   config_h.set('EINA_LOG_BACKTRACE_ENABLE', 1)
+   eina_deps += unwind
+   config_h.set('EINA_LOG_BACKTRACE_ENABLE', 0)
 endif
 
 #for the case that the iconv library is not part of libc but rather libiconv or smth. like that

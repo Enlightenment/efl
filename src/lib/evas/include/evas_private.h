@@ -103,7 +103,6 @@ typedef enum _Evas_Filter_Support           Evas_Filter_Support;
 
 typedef struct _Vg_File_Data                   Vg_File_Data;
 typedef struct _Vg_File_Anim_Data              Vg_File_Anim_Data;
-typedef struct _Vg_File_Anim_Data_Marker       Vg_File_Anim_Data_Marker;
 
 /* General types - used for script type chceking */
 #define OPAQUE_TYPE(type) struct __##type { int a; }; \
@@ -1114,19 +1113,12 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
 
-struct _Vg_File_Anim_Data_Marker
-{
-   Eina_Stringshare *name;
-   int               startframe;
-   int               endframe;
-};
-
 struct _Vg_File_Anim_Data
 {
    unsigned int frame_num;            //current frame number
    unsigned int frame_cnt;            //total frame count
    float        duration;             //animation duration
-   Eina_Inarray *markers;             //array of Vg_File_Anim_Data_Marker
+   Eina_Inarray *markers;             //array of Efl_Gfx_Frame_Sector_Data
 };
 
 struct _Vg_File_Data
@@ -1137,6 +1129,8 @@ struct _Vg_File_Data
    Vg_File_Anim_Data *anim_data;           //only when animation supported.
    int ref;
    int w, h;                               //default size
+   int minw, minh;
+   double bl, bt, br, bb;
    Eina_List         *vp_list;             //Value providers.
 
    void           *loader_data;            //loader specific local data
@@ -1145,6 +1139,7 @@ struct _Vg_File_Data
    Eina_Bool       preserve_aspect : 1;    //Used in SVG
 
    Eina_Bool       shareable: 1;
+   Eina_Bool       is_wrap: 1;
 };
 
 struct _Evas_Vg_Load_Func
