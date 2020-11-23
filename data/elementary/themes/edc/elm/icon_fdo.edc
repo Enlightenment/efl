@@ -315,12 +315,6 @@ ICO1(CTX, "non-starred", 128) /* */
 
 ////  categories  /////////////////////////////////////////////////////////////
 #define CTX "categories"
-ICO2(CTX, "applications-accessories")
-ICO2(CTX, "applications-development")
-ICO2(CTX, "applications-games")
-ICO2(CTX, "applications-graphics")
-ICO2(CTX, "applications-internet")
-ICO2(CTX, "applications-multimedia")
 ICO2(CTX, "applications-office")
 ICO2(CTX, "applications-other")
 ICO2(CTX, "applications-science")

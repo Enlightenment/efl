@@ -268,6 +268,11 @@ I160("i-folder-pictures", "folder-pictures")
 I160("i-folder-music", "folder-music")
 I160("i-folder-videos", "folder-videos")
 I160("i-folder-visiting", "folder-visiting")
+I160("i-scissor-rule", "scissor-rule")
+I160("i-gear-curly-braces", "gear-curly-braces")
+I160("i-paintbrush", "paintbrush")
+I160("i-globe-cloud", "globe-cloud")
+I160("i-monitor-speakers", "monitor-speakers")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
