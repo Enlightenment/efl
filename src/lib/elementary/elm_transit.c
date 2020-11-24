@@ -95,6 +95,7 @@ struct _Elm_Transit_Obj_Data
       Eina_Bool map_enabled : 1;
       Eina_Bool visible : 1;
       Eina_Bool freeze_events : 1;
+      Eina_Bool anti_alias : 1;
    } state;
    int ref;
 };
@@ -140,6 +141,7 @@ _transit_obj_data_save(Evas_Object *obj)
    obj_data->state.visible = evas_object_visible_get(obj);
    obj_data->state.freeze_events = evas_object_freeze_events_get(obj);
    obj_data->state.map_enabled = evas_object_map_enable_get(obj);
+   obj_data->state.anti_alias = evas_object_anti_alias_get(obj);
 
    ELM_SAFE_FREE(obj_data->state.map, evas_map_free);
 
@@ -205,6 +207,7 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
                               obj_data->state.b, obj_data->state.a);
         if (obj_data->state.visible) evas_object_show(obj);
         else evas_object_hide(obj);
+        evas_object_anti_alias_set(obj, obj_data->state.anti_alias);
         evas_object_map_enable_set(obj, obj_data->state.map_enabled);
         evas_object_map_set(obj, obj_data->state.map);
      }
@@ -1282,6 +1285,9 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
+        //Turn on for fixing jiggling by sub-pixel rendering
+        evas_object_anti_alias_set(obj, EINA_TRUE);
+
         obj_data = evas_object_data_get(obj, _transit_key);
         if (obj_data && obj_data->state.map_enabled)
           {

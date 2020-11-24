@@ -1318,7 +1318,8 @@ eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *su
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
 
-   if (fabsf(m->pts[0].fx - m->pts[3].fx) < FLT_EPSILON &&
+   if (!((RGBA_Draw_Context*) context)->anti_alias &&
+       fabsf(m->pts[0].fx - m->pts[3].fx) < FLT_EPSILON &&
        fabsf(m->pts[1].fx - m->pts[2].fx) < FLT_EPSILON &&
        fabsf(m->pts[0].fy - m->pts[1].fy) < FLT_EPSILON &&
        fabsf(m->pts[3].fy - m->pts[2].fy) < FLT_EPSILON &&
