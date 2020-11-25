@@ -5,21 +5,21 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI const Eolian_Class *
+EOLIAN_API const Eolian_Class *
 eolian_implement_class_get(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
    return impl->klass;
 }
 
-EAPI const Eolian_Class *
+EOLIAN_API const Eolian_Class *
 eolian_implement_implementing_class_get(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
    return impl->implklass;
 }
 
-EAPI const Eolian_Function *
+EOLIAN_API const Eolian_Function *
 eolian_implement_function_get(const Eolian_Implement *impl,
                               Eolian_Function_Type   *func_type)
 {
@@ -43,7 +43,7 @@ eolian_implement_function_get(const Eolian_Implement *impl,
    return impl->foo_id;
 }
 
-EAPI const Eolian_Documentation *
+EOLIAN_API const Eolian_Documentation *
 eolian_implement_documentation_get(const Eolian_Implement *impl,
                                    Eolian_Function_Type ftype)
 {
@@ -56,7 +56,7 @@ eolian_implement_documentation_get(const Eolian_Implement *impl,
      }
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
@@ -75,7 +75,7 @@ eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftyp
      }
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
@@ -94,7 +94,7 @@ eolian_implement_is_empty(const Eolian_Implement *impl, Eolian_Function_Type fty
      }
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_implement_is_pure_virtual(const Eolian_Implement *impl, Eolian_Function_Type ftype)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
@@ -113,14 +113,14 @@ eolian_implement_is_pure_virtual(const Eolian_Implement *impl, Eolian_Function_T
      }
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_implement_is_prop_get(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);
    return impl->is_prop_get;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_implement_is_prop_set(const Eolian_Implement *impl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(impl, EINA_FALSE);

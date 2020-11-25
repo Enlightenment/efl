@@ -5,14 +5,14 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI const Eolian_Class *
+EOLIAN_API const Eolian_Class *
 eolian_constructor_class_get(const Eolian_Constructor *ctor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, NULL);
    return ctor->klass;
 }
 
-EAPI const Eolian_Function *
+EOLIAN_API const Eolian_Function *
 eolian_constructor_function_get(const Eolian_Constructor *ctor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, NULL);
@@ -23,7 +23,7 @@ eolian_constructor_function_get(const Eolian_Constructor *ctor)
        ctor->base.name + strlen(klass->base.name) + 1, EOLIAN_UNRESOLVED);
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_constructor_is_optional(const Eolian_Constructor *ctor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, EINA_FALSE);

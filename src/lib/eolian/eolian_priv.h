@@ -1,6 +1,7 @@
 #ifndef EOLIAN_PRIV_H
 #define EOLIAN_PRIV_H
 
+#include "eolian_api.h"
 #include <Eina.h>
 #include <stdio.h>
 #include <stdarg.h>
