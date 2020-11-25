@@ -167,7 +167,7 @@ _eina_mmap_safe_sigbus(int sig, siginfo_t *siginfo, void *ptr)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_mmap_safety_enabled_set(Eina_Bool enabled)
 {
 #ifndef HAVE_SIGINFO_T
@@ -235,7 +235,7 @@ done:
 #endif
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_mmap_safety_enabled_get(void)
 {
    return mmap_safe;

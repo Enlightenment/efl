@@ -106,8 +106,8 @@ typedef void (*Eina_Module_Shutdown)(void);
  */
 #define EINA_MODULE_SHUTDOWN(f) EXPORTAPI Eina_Module_Shutdown __eina_module_shutdown = &f
 
-EAPI extern Eina_Error EINA_ERROR_WRONG_MODULE;
-EAPI extern Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
+extern EINA_API Eina_Error EINA_ERROR_WRONG_MODULE;
+extern EINA_API Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
 
 /**
  * @brief Returns a new module.
@@ -123,7 +123,7 @@ EAPI extern Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
  *
  * @see eina_module_load
  */
-EAPI Eina_Module *
+EINA_API Eina_Module *
  eina_module_new(const char *file) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
@@ -137,7 +137,7 @@ EAPI Eina_Module *
  * returns #EINA_TRUE and #EINA_FALSE otherwise. If @p module is @c NULL, the
  * function returns immediately.
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
  eina_module_free(Eina_Module *module) EINA_ARG_NONNULL(1);
 
 /**
@@ -158,7 +158,7 @@ EAPI Eina_Bool
  * When the symbols of the shared file objects are not needed
  * anymore, call eina_module_unload() to unload the module.
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
  eina_module_load(Eina_Module *module) EINA_ARG_NONNULL(1);
 
 /**
@@ -175,7 +175,7 @@ EAPI Eina_Bool
  * returned. In all case, the reference counter is decreased. If @p module
  * is @c NULL, the function returns immediately #EINA_FALSE.
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
  eina_module_unload(Eina_Module *module) EINA_ARG_NONNULL(1);
 
 /**
@@ -190,7 +190,7 @@ EAPI Eina_Bool
  * is @c NULL, or if it has not been correctly loaded before, the
  * function returns immediately @c NULL.
  */
-EAPI void *
+EINA_API void *
  eina_module_symbol_get(const Eina_Module *module, const char *symbol) EINA_PURE EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -203,7 +203,7 @@ EAPI void *
  * @p module is @c NULL, the function returns immediately @c NULL. The
  * returned value must no be freed.
  */
-EAPI const char *
+EINA_API const char *
  eina_module_file_get(const Eina_Module *module) EINA_PURE EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
@@ -214,7 +214,7 @@ EAPI const char *
  *
  * @since 1.11
  */
-EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
+EINA_API void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Returns the path built from the location of a library and a
@@ -230,7 +230,7 @@ EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) E
  * anymore. If the symbol is not found, or dl_addr() is not supported,
  * or allocation fails, this function returns @c NULL.
  */
-EAPI char *
+EINA_API char *
  eina_module_symbol_path_get(const void *symbol, const char *sub_dir) EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 /**
@@ -247,7 +247,7 @@ EAPI char *
  * anymore. If the symbol is not found, or @p env does not exist, or
  * allocation fails, this function returns @c NULL.
  */
-EAPI char *
+EINA_API char *
  eina_module_environment_path_get(const char *env, const char *sub_dir) EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 
@@ -264,7 +264,7 @@ EAPI char *
  * @c NULL, the function returns immediately @p array. @p array can be
  * @c NULL. In that case, it is created with 4 elements.
  */
-EAPI Eina_Array *
+EINA_API Eina_Array *
  eina_module_arch_list_get(Eina_Array *array, const char *path, const char *arch);
 
 /**
@@ -286,7 +286,7 @@ EAPI Eina_Array *
  * @p array can be @c NULL. In that case, it is created with 4
  * elements. @p cb can be @c NULL.
  */
-EAPI Eina_Array *
+EINA_API Eina_Array *
  eina_module_list_get(Eina_Array *array, const char *path, Eina_Bool recursive, Eina_Module_Cb cb, void *data) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -297,7 +297,7 @@ EAPI Eina_Array *
  * This function calls eina_module_load() on each element found in
  * @p array. If @p array is @c NULL, this function does nothing.
  */
-EAPI void
+EINA_API void
  eina_module_list_load(Eina_Array *array) EINA_ARG_NONNULL(1);
 
 /**
@@ -308,7 +308,7 @@ EAPI void
  * This function calls eina_module_unload() on each element found in
  * @p array. If @p array is @c NULL, this function does nothing.
  */
-EAPI void
+EINA_API void
  eina_module_list_unload(Eina_Array *array) EINA_ARG_NONNULL(1);
 
 /**
@@ -319,7 +319,7 @@ EAPI void
  * This function calls eina_module_free() on each element found in
  * @p array. If @p array is @c NULL, this function does nothing.
  */
-EAPI void
+EINA_API void
  eina_module_list_free(Eina_Array *array) EINA_ARG_NONNULL(1);
 
 /**
@@ -333,7 +333,7 @@ EAPI void
  * If the element is found  the function returns the module, else
  * @c NULL is returned.
  */
-EAPI Eina_Module *
+EINA_API Eina_Module *
  eina_module_find(const Eina_Array *array, const char *module) EINA_ARG_NONNULL(1, 2);
 
 /**

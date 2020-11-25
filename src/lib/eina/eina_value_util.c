@@ -73,7 +73,7 @@ static Eina_Value_Struct_Operations operations =
    NULL
 };
 
-EAPI Eina_Value_Struct_Desc *
+EINA_API Eina_Value_Struct_Desc *
 eina_value_util_struct_desc_new(void)
 {
    Eina_Value_Util_Struct_Desc *st_desc;
@@ -85,7 +85,7 @@ eina_value_util_struct_desc_new(void)
    return (Eina_Value_Struct_Desc*)st_desc;
 }
 
-EAPI Eina_Value *
+EINA_API Eina_Value *
 eina_value_util_time_string_new(const char *timestr)
 {
    Eina_Value *v;

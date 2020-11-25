@@ -562,7 +562,7 @@ eina_file_cleanup(Eina_Tmpstr *path)
 
 
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_dir_list(const char *dir,
                    Eina_Bool recursive,
                    Eina_File_Dir_List_Cb cb,
@@ -594,7 +594,7 @@ eina_file_dir_list(const char *dir,
    return EINA_TRUE;
 }
 
-EAPI Eina_Array *
+EINA_API Eina_Array *
 eina_file_split(char *path)
 {
    Eina_Array *ea;
@@ -627,7 +627,7 @@ eina_file_split(char *path)
    return ea;
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_file_ls(const char *dir)
 {
 #ifdef HAVE_DIRENT_H
@@ -675,7 +675,7 @@ eina_file_ls(const char *dir)
 #endif
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_file_direct_ls(const char *dir)
 {
 #ifdef HAVE_DIRENT_H
@@ -735,7 +735,7 @@ eina_file_direct_ls(const char *dir)
 #endif
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_file_stat_ls(const char *dir)
 {
 #ifdef HAVE_DIRENT_H
@@ -795,7 +795,7 @@ eina_file_stat_ls(const char *dir)
 #endif
 }
 
-EAPI Eina_File *
+EINA_API Eina_File *
 eina_file_open(const char *path, Eina_Bool shared)
 {
    Eina_File *file;
@@ -904,7 +904,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    return NULL;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_refresh(Eina_File *file)
 {
    struct stat file_stat;
@@ -937,7 +937,7 @@ eina_file_refresh(Eina_File *file)
    return r;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_unlink(const char *pathname)
 {
    if ( unlink(pathname) < 0)
@@ -947,7 +947,7 @@ eina_file_unlink(const char *pathname)
    return EINA_TRUE;
 }
 
-EAPI void *
+EINA_API void *
 eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 {
    int flags = MAP_SHARED;
@@ -998,7 +998,7 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
    return ret;
 }
 
-EAPI void *
+EINA_API void *
 eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
                   unsigned long int offset, unsigned long int length)
 {
@@ -1077,7 +1077,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
    return NULL;
 }
 
-EAPI void
+EINA_API void
 eina_file_map_free(Eina_File *file, void *map)
 {
    EINA_SAFETY_ON_NULL_RETURN(file);
@@ -1108,7 +1108,7 @@ eina_file_map_free(Eina_File *file, void *map)
    eina_lock_release(&file->lock);
 }
 
-EAPI void
+EINA_API void
 eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map,
                        unsigned long int offset, unsigned long int length)
 {
@@ -1123,7 +1123,7 @@ eina_file_map_populate(Eina_File *file, Eina_File_Populate rule, const void *map
    eina_lock_release(&file->lock);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_file_map_faulted(Eina_File *file, void *map)
 {
    Eina_Bool r = EINA_FALSE;
@@ -1165,7 +1165,7 @@ eina_file_map_faulted(Eina_File *file, void *map)
    return r;
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_file_xattr_get(Eina_File *file)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
@@ -1175,7 +1175,7 @@ eina_file_xattr_get(Eina_File *file)
    return eina_xattr_fd_ls(file->fd);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_file_xattr_value_get(Eina_File *file)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
@@ -1185,7 +1185,7 @@ eina_file_xattr_value_get(Eina_File *file)
    return eina_xattr_value_fd_ls(file->fd);
 }
 
-EAPI int
+EINA_API int
 eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
 {
    struct stat buf;
@@ -1312,7 +1312,7 @@ typedef struct
 } Dirent;
 #endif
 
-EAPI void
+EINA_API void
 eina_file_close_from(int fd, int *except_fd)
 {
 #if defined(_WIN32)

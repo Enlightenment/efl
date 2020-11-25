@@ -61,14 +61,14 @@ typedef void Eina_Cow_Data;
  * @param[in] gc Is it possible to run garbage collection on this pool.
  * @return A valid new Eina_Cow, or @c NULL on error.
  */
-EAPI Eina_Cow *eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, const void *default_value, Eina_Bool gc) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Cow *eina_cow_add(const char *name, unsigned int struct_size, unsigned int step, const void *default_value, Eina_Bool gc) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Destroys an Eina_Cow pool and all the allocated memory.
  *
  * @param[in] cow The pool to destroy
  */
-EAPI void eina_cow_del(Eina_Cow *cow);
+EINA_API void eina_cow_del(Eina_Cow *cow);
 
 /**
  * @brief Returns an initialized pointer from the pool.
@@ -76,7 +76,7 @@ EAPI void eina_cow_del(Eina_Cow *cow);
  * @param[in] cow The pool to take things from.
  * @return A pointer to the new pool instance
  */
-EAPI const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
+EINA_API const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Frees a pointer from the pool.
@@ -87,7 +87,7 @@ EAPI const Eina_Cow_Data *eina_cow_alloc(Eina_Cow *cow) EINA_WARN_UNUSED_RESULT;
  * @note To simplify the caller code *data will point to the default
  * read only state after the call to this function.
  */
-EAPI void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data);
+EINA_API void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data);
 
 /**
  * @brief Gets a writeable pointer from a const pointer.
@@ -97,7 +97,7 @@ EAPI void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data);
  *
  * @note This function is not thread safe.
  */
-EAPI void *eina_cow_write(Eina_Cow *cow,
+EINA_API void *eina_cow_write(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *src) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -110,7 +110,7 @@ EAPI void *eina_cow_write(Eina_Cow *cow,
  *
  * @note This function is not thread safe.
  */
-EAPI void eina_cow_done(Eina_Cow *cow,
+EINA_API void eina_cow_done(Eina_Cow *cow,
 			const Eina_Cow_Data * const *dst,
 			const void *data,
 			Eina_Bool needed_gc);
@@ -121,7 +121,7 @@ EAPI void eina_cow_done(Eina_Cow *cow,
  * @param[in] dst The destination to update.
  * @param[in] src The source of information to copy.
  */
-EAPI void eina_cow_memcpy(Eina_Cow *cow,
+EINA_API void eina_cow_memcpy(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *dst,
 			  const Eina_Cow_Data *src);
 
@@ -135,7 +135,7 @@ EAPI void eina_cow_memcpy(Eina_Cow *cow,
  * It does run a hash function on all possible common structures trying to
  * find the one that matches and merge them into one pointer.
  */
-EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
+EINA_API Eina_Bool eina_cow_gc(Eina_Cow *cow);
 
 /**
  * @def EINA_COW_WRITE_BEGIN

@@ -53,7 +53,7 @@ static inline void _quad_dump(Eina_Quad *q)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
-EAPI void
+EINA_API void
 eina_quad_rectangle_to(const Eina_Quad *q,
                        Eina_Rectangle *r)
 {
@@ -82,7 +82,7 @@ eina_quad_rectangle_to(const Eina_Quad *q,
    r->h = lround(ymax) - r->y;
 }
 
-EAPI void
+EINA_API void
 eina_quad_rectangle_from(Eina_Quad *q,
                          const Eina_Rectangle *r)
 {
@@ -96,7 +96,7 @@ eina_quad_rectangle_from(Eina_Quad *q,
    QUAD_Y3(q) = r->y + r->h;
 }
 
-EAPI void eina_quad_coords_get(const Eina_Quad *q,
+EINA_API void eina_quad_coords_get(const Eina_Quad *q,
                                double *qx0, double *qy0,
                                double *qx1, double *qy1,
                                double *qx2, double *qy2,
@@ -112,7 +112,7 @@ EAPI void eina_quad_coords_get(const Eina_Quad *q,
    if (qy3) *qy3 = q->y3;
 }
 
-EAPI void eina_quad_coords_set(Eina_Quad *q,
+EINA_API void eina_quad_coords_set(Eina_Quad *q,
                                double qx0, double qy0,
                                double qx1, double qy1,
                                double qx2, double qy2,

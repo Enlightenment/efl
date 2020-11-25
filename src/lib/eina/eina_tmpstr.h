@@ -162,7 +162,7 @@ typedef const char Eina_Tmpstr;
  *
  * @since 1.8.0
  */
-EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Adds a new temporary string based on the input string and length.
@@ -195,7 +195,7 @@ EAPI Eina_Tmpstr *eina_tmpstr_add(const char *str) EINA_WARN_UNUSED_RESULT;
  *
  * @since 1.8.0
  */
-EAPI Eina_Tmpstr *eina_tmpstr_add_length(const char *str, size_t length);
+EINA_API Eina_Tmpstr *eina_tmpstr_add_length(const char *str, size_t length);
 
 /**
  * @brief **Deprecated** Return the length of a temporary string including the '\0'.
@@ -208,7 +208,7 @@ EAPI Eina_Tmpstr *eina_tmpstr_add_length(const char *str, size_t length);
  * @see eina_tmpstr_len()
  * @since 1.8.0
  */
-EINA_DEPRECATED EAPI size_t eina_tmpstr_strlen(Eina_Tmpstr *tmpstr);
+EINA_DEPRECATED EINA_API size_t eina_tmpstr_strlen(Eina_Tmpstr *tmpstr);
 
 /**
  * @brief Returns the length of a temporary string.
@@ -219,7 +219,7 @@ EINA_DEPRECATED EAPI size_t eina_tmpstr_strlen(Eina_Tmpstr *tmpstr);
  *
  * @since 1.14.0
  */
-EAPI size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
+EINA_API size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
 
 /**
  * @brief Deletes the temporary string if it is one, or ignore it if it is not.
@@ -235,7 +235,7 @@ EAPI size_t eina_tmpstr_len(Eina_Tmpstr *tmpstr);
  *
  * @since 1.8.0
  */
-EAPI void eina_tmpstr_del(Eina_Tmpstr *tmpstr) EINA_ARG_NONNULL(1);
+EINA_API void eina_tmpstr_del(Eina_Tmpstr *tmpstr) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Adds a new temporary string using the passed string. The passed
@@ -250,7 +250,7 @@ EAPI void eina_tmpstr_del(Eina_Tmpstr *tmpstr) EINA_ARG_NONNULL(1);
  * @see eina_tmpstr_del()
  * @since 1.17.0
  */
-EAPI Eina_Tmpstr *eina_tmpstr_manage_new(char *str) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Tmpstr *eina_tmpstr_manage_new(char *str) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Adds a new temporary string using the passed string. The passed
@@ -267,7 +267,7 @@ EAPI Eina_Tmpstr *eina_tmpstr_manage_new(char *str) EINA_WARN_UNUSED_RESULT;
  * @see eina_tmpstr_del()
  * @since 1.17.0
  */
-EAPI Eina_Tmpstr *eina_tmpstr_manage_new_length(char *str, size_t length);
+EINA_API Eina_Tmpstr *eina_tmpstr_manage_new_length(char *str, size_t length);
 
 /**
  * @}

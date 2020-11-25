@@ -1,7 +1,7 @@
 #define NEED_SSE3 1
 
 #include "Eina.h"
-
+#include "Evas.h"
 #include "evas_common_types.h"
 
 EAPI void evas_common_cpu_end_opt(void);

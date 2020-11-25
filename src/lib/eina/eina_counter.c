@@ -113,7 +113,7 @@ _eina_counter_asiprintf(char *base, int *position, const char *format, ...)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eina_Counter *
+EINA_API Eina_Counter *
 eina_counter_new(const char *name)
 {
    Eina_Counter *counter;
@@ -131,7 +131,7 @@ eina_counter_new(const char *name)
    return counter;
 }
 
-EAPI void
+EINA_API void
 eina_counter_free(Eina_Counter *counter)
 {
    EINA_SAFETY_ON_NULL_RETURN(counter);
@@ -147,7 +147,7 @@ eina_counter_free(Eina_Counter *counter)
    free(counter);
 }
 
-EAPI void
+EINA_API void
 eina_counter_start(Eina_Counter *counter)
 {
    Eina_Clock *clk;
@@ -165,7 +165,7 @@ eina_counter_start(Eina_Counter *counter)
    clk->start = tp;
 }
 
-EAPI void
+EINA_API void
 eina_counter_stop(Eina_Counter *counter, int specimen)
 {
    Eina_Clock *clk;
@@ -185,7 +185,7 @@ eina_counter_stop(Eina_Counter *counter, int specimen)
    clk->valid = EINA_TRUE;
 }
 
-EAPI char *
+EINA_API char *
 eina_counter_dump(Eina_Counter *counter)
 {
    Eina_Clock *clk;

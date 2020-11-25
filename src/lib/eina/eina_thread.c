@@ -200,19 +200,19 @@ _eina_internal_call(void *context)
    return r;
 }
 
-EAPI Eina_Thread
+EINA_API Eina_Thread
 eina_thread_self(void)
 {
    return _eina_thread_self();
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_thread_equal(Eina_Thread t1, Eina_Thread t2)
 {
    return !!_eina_thread_equal(t1, t2);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_thread_create(Eina_Thread *t,
                    Eina_Thread_Priority prio, int affinity,
                    Eina_Thread_Cb func, const void *data)
@@ -239,13 +239,13 @@ eina_thread_create(Eina_Thread *t,
    return EINA_FALSE;
 }
 
-EAPI void *
+EINA_API void *
 eina_thread_join(Eina_Thread t)
 {
    return _eina_thread_join(t);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_thread_name_set(Eina_Thread t, const char *name)
 {
 #ifdef EINA_HAVE_PTHREAD_SETNAME
@@ -269,14 +269,14 @@ eina_thread_name_set(Eina_Thread t, const char *name)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_thread_cancel(Eina_Thread t)
 {
    if (!t) return EINA_FALSE;
    return pthread_cancel((pthread_t)t) == 0;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
 {
    int state = cancellable ? PTHREAD_CANCEL_ENABLE : PTHREAD_CANCEL_DISABLE;
@@ -293,13 +293,13 @@ eina_thread_cancellable_set(Eina_Bool cancellable, Eina_Bool *was_cancellable)
    return r == 0;
 }
 
-EAPI void
+EINA_API void
 eina_thread_cancel_checkpoint(void)
 {
    pthread_testcancel();
 }
 
-EAPI void *
+EINA_API void *
 eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb cleanup_cb, void *data)
 {
    Eina_Bool old = EINA_FALSE;
@@ -313,7 +313,7 @@ eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb clea
    return ret;
 }
 
-EAPI const void *EINA_THREAD_JOIN_CANCELED = PTHREAD_CANCELED;
+EINA_API const void *EINA_THREAD_JOIN_CANCELED = PTHREAD_CANCELED;
 
 Eina_Bool
 eina_thread_init(void)

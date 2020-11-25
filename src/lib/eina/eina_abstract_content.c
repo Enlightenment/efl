@@ -12,7 +12,7 @@ struct _Eina_Content
    const char *file;
    EINA_REFCOUNT;
 };
-EAPI const Eina_Value_Type *EINA_VALUE_TYPE_CONTENT;
+EINA_API const Eina_Value_Type *EINA_VALUE_TYPE_CONTENT;
 
 static int _eina_abstract_content_log_domain = -1;
 
@@ -39,7 +39,7 @@ _eina_content_ref(Eina_Content *content)
    EINA_REFCOUNT_REF(content);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_content_converter_conversion_register(const char *from, const char *to, Eina_Content_Conversion_Callback conversion)
 {
    Eina_Content_Conversion_Node *node = calloc(1, sizeof(Eina_Content_Conversion_Node));
@@ -93,7 +93,7 @@ end:
    return result;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_content_converter_convert_can(const char *from, const char *to)
 {
    return !!_conversion_callback_fetch(from, to);
@@ -107,7 +107,7 @@ _process_cb(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUS
    return n->to;
  }
 
-EAPI Eina_Iterator*
+EINA_API Eina_Iterator*
 eina_content_converter_possible_conversions(const char *from)
 {
    Eina_List *possibilities = _conversion_callback_fetch_possible(from);
@@ -115,7 +115,7 @@ eina_content_converter_possible_conversions(const char *from)
    return eina_iterator_processed_new(eina_list_iterator_new(possibilities) , EINA_PROCESS_CB(_process_cb), NULL, possibilities);
 }
 
-EAPI Eina_Content*
+EINA_API Eina_Content*
 eina_content_new(Eina_Slice data, const char *type)
 {
    Eina_Content *content;
@@ -149,7 +149,7 @@ err:
    return NULL;
 }
 
-EAPI void
+EINA_API void
 eina_content_free(Eina_Content *content)
 {
    EINA_REFCOUNT_UNREF(content)
@@ -161,7 +161,7 @@ eina_content_free(Eina_Content *content)
      }
 }
 
-EAPI const char*
+EINA_API const char*
 eina_content_as_file(Eina_Content *content)
 {
    if (!content->file)
@@ -189,19 +189,19 @@ eina_content_as_file(Eina_Content *content)
    return content->file;
 }
 
-EAPI const char*
+EINA_API const char*
 eina_content_type_get(Eina_Content *content)
 {
    return content->type;
 }
 
-EAPI Eina_Slice
+EINA_API Eina_Slice
 eina_content_data_get(Eina_Content *content)
 {
    return eina_rw_slice_slice_get(content->data);
 }
 
-EAPI Eina_Content*
+EINA_API Eina_Content*
 eina_content_convert(Eina_Content *content, const char *new_type)
 {
    Eina_Content_Conversion_Callback callback = _conversion_callback_fetch(content->type, new_type);
@@ -370,7 +370,7 @@ _eina_value_type_content_pget(const Eina_Value_Type *type EINA_UNUSED, const voi
    return EINA_TRUE;
 }
 
-EAPI const Eina_Value_Type _EINA_VALUE_TYPE_CONTENT ={
+EINA_API const Eina_Value_Type _EINA_VALUE_TYPE_CONTENT ={
   EINA_VALUE_TYPE_VERSION,
   sizeof(Eina_Content*),
   "Eina_Abstract_Content",

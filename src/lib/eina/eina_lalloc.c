@@ -65,7 +65,7 @@ struct _Eina_Lalloc
  * @{
  */
 
-EAPI Eina_Lalloc *eina_lalloc_new(void *data,
+EINA_API Eina_Lalloc *eina_lalloc_new(void *data,
                                   Eina_Lalloc_Alloc alloc_cb,
                                   Eina_Lalloc_Free free_cb,
                                   int num_init)
@@ -88,7 +88,7 @@ EAPI Eina_Lalloc *eina_lalloc_new(void *data,
    return a;
 }
 
-EAPI void eina_lalloc_free(Eina_Lalloc *a)
+EINA_API void eina_lalloc_free(Eina_Lalloc *a)
 {
    EINA_SAFETY_ON_NULL_RETURN(a);
    EINA_SAFETY_ON_NULL_RETURN(a->free_cb);
@@ -96,7 +96,7 @@ EAPI void eina_lalloc_free(Eina_Lalloc *a)
    free(a);
 }
 
-EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
+EINA_API Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(a,           EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(a->alloc_cb, EINA_FALSE);
@@ -117,7 +117,7 @@ EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num)
+EINA_API Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a, int num)
 {
    int tmp;
 

@@ -287,7 +287,7 @@ static const unsigned int table[8][256] =
    }
 };
 
-EAPI unsigned int
+EINA_API unsigned int
 _eina_crc(const char *data, int len, unsigned int seed, Eina_Bool start_stream)
 {
    unsigned int crc;

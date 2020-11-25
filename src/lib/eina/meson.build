@@ -370,7 +370,7 @@ execinfo = cc.find_library('execinfo', required: false)
 eina_ext_deps += [execinfo]
 
 eina_lib = library('eina', eina_src,
-  c_args : package_c_args,
+  c_args : [package_c_args, '-DEINA_BUILD'],
   include_directories : config_dir,
   dependencies: eina_ext_deps + [eina_deps, evil],
   install: true,

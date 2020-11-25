@@ -53,7 +53,7 @@ static const char __BINBUF_MAGIC_STR[] = "Eina Binbuf";
 
 #include "eina_binbuf_template_c.x"
 
-EAPI Eina_Binbuf *
+EINA_API Eina_Binbuf *
 eina_binbuf_manage_new(const unsigned char *str, size_t length, Eina_Bool ro)
 {
    Eina_Binbuf *buf;

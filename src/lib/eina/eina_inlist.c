@@ -223,7 +223,7 @@ _eina_inlist_sorted_state_compact(Eina_Inlist_Sorted_State *state)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
 {
    Eina_Inlist *l;
@@ -250,7 +250,7 @@ eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
    return list;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(new_l, list);
@@ -270,7 +270,7 @@ eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
    return new_l;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_append_relative(Eina_Inlist *list,
                             Eina_Inlist *new_l,
                             Eina_Inlist *relative)
@@ -298,7 +298,7 @@ eina_inlist_append_relative(Eina_Inlist *list,
    return eina_inlist_append(list, new_l);
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_prepend_relative(Eina_Inlist *list,
                              Eina_Inlist *new_l,
                              Eina_Inlist *relative)
@@ -331,7 +331,7 @@ eina_inlist_prepend_relative(Eina_Inlist *list,
    return eina_inlist_prepend(list, new_l);
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
 {
    Eina_Inlist *return_l;
@@ -368,7 +368,7 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    return return_l;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
@@ -395,7 +395,7 @@ eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
    return item;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
 {
    Eina_Inlist *l;
@@ -429,7 +429,7 @@ eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
    return l;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
 {
    Eina_Inlist *l;
@@ -444,7 +444,7 @@ eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
    return NULL;
 }
 
-EAPI unsigned int
+EINA_API unsigned int
 eina_inlist_count(const Eina_Inlist *list)
 {
    const Eina_Inlist *l;
@@ -456,7 +456,7 @@ eina_inlist_count(const Eina_Inlist *list)
    return i;
 }
 
-EAPI int
+EINA_API int
 eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list)
 {
    Eina_Inlist *ct = NULL;
@@ -486,7 +486,7 @@ eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list
    return count;
 }
 
-EAPI Eina_Inlist_Sorted_State *
+EINA_API Eina_Inlist_Sorted_State *
 eina_inlist_sorted_state_new(void)
 {
    Eina_Inlist_Sorted_State *r;
@@ -499,7 +499,7 @@ eina_inlist_sorted_state_new(void)
    return r;
 }
 
-EAPI void
+EINA_API void
 eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state)
 {
    free(state);
@@ -554,7 +554,7 @@ _eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
      }
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_sorted_insert(Eina_Inlist *list,
                           Eina_Inlist *item,
                           Eina_Compare_Cb func)
@@ -661,7 +661,7 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
    return eina_inlist_prepend_relative(list, item, ct);
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_sorted_state_insert(Eina_Inlist *list,
                                 Eina_Inlist *item,
                                 Eina_Compare_Cb func,
@@ -800,7 +800,7 @@ eina_inlist_sorted_state_insert(Eina_Inlist *list,
    return ct;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func)
 {
    unsigned int i = 0;
@@ -848,7 +848,7 @@ eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func)
 
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_inlist_iterator_new(const Eina_Inlist *list)
 {
    Eina_Iterator_Inlist *it;
@@ -870,7 +870,7 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
    return &it->iterator;
 }
 
-EAPI Eina_Accessor *
+EINA_API Eina_Accessor *
 eina_inlist_accessor_new(const Eina_Inlist *list)
 {
    Eina_Accessor_Inlist *ac;
