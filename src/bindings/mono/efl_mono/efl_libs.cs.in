@@ -33,7 +33,7 @@ internal class Libs {
 
     internal const string CustomExports = "@CUSTOM_EXPORTS_MONO_DL_MONO@";
 
-    internal const string Libdl = "libdl.so";
+    internal const string Libdl = "@LIBDL_DL_MONO@";
     internal const string Kernel32 = "kernel32.dll";
 
     internal static readonly Efl.Eo.NativeModule EflModule = new Efl.Eo.NativeModule(Efl);
