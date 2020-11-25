@@ -5,7 +5,7 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI const Eolian_Type *
+EOLIAN_API const Eolian_Type *
 eolian_event_type_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
@@ -14,42 +14,42 @@ eolian_event_type_get(const Eolian_Event *event)
    return event->type;
 }
 
-EAPI const Eolian_Class *
+EOLIAN_API const Eolian_Class *
 eolian_event_class_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
    return event->klass;
 }
 
-EAPI const Eolian_Documentation *
+EOLIAN_API const Eolian_Documentation *
 eolian_event_documentation_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
    return event->doc;
 }
 
-EAPI Eolian_Object_Scope
+EOLIAN_API Eolian_Object_Scope
 eolian_event_scope_get(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EOLIAN_SCOPE_UNKNOWN);
    return event->scope;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_event_is_hot(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_FALSE);
    return event->is_hot;
 }
 
-EAPI Eina_Bool
+EOLIAN_API Eina_Bool
 eolian_event_is_restart(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_FALSE);
    return event->is_restart;
 }
 
-EAPI Eina_Stringshare *
+EOLIAN_API Eina_Stringshare *
 eolian_event_c_macro_get(const Eolian_Event *event)
 {
     char  buf[512];
@@ -63,7 +63,7 @@ eolian_event_c_macro_get(const Eolian_Event *event)
     return eina_stringshare_add(buf);
 }
 
-EAPI const Eolian_Event *
+EOLIAN_API const Eolian_Event *
 eolian_class_event_by_name_get(const Eolian_Class *klass, const char *event_name)
 {
    Eina_List *itr;
