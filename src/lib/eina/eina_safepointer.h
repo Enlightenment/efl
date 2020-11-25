@@ -77,7 +77,7 @@ typedef struct _Eina_Safepointer Eina_Safepointer;
  *
  * @since 1.18
  */
-EAPI const Eina_Safepointer *eina_safepointer_register(const void *target);
+EINA_API const Eina_Safepointer *eina_safepointer_register(const void *target);
 
 /**
  * @brief Unregister an Eina_Safepointer and the pointer that maps to it.
@@ -88,7 +88,7 @@ EAPI const Eina_Safepointer *eina_safepointer_register(const void *target);
  *
  * @since 1.18
  */
-EAPI void  eina_safepointer_unregister(const Eina_Safepointer *safe);
+EINA_API void  eina_safepointer_unregister(const Eina_Safepointer *safe);
 
 /**
  * @brief Get the associated pointer from an Eina_Safepointer mapping.

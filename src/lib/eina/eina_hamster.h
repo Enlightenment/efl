@@ -40,7 +40,7 @@
  *
  * This function returns how many hamsters you have.
  */
-EAPI int eina_hamster_count(void);
+EINA_API int eina_hamster_count(void);
 
 /**
  * @}

@@ -73,7 +73,7 @@ typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
  */
 typedef void (*Eina_Mempool_Repack_Cb)(void *dst, void *src, void *data);
 
-EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
+EINA_API extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 /**
  * @brief Creates a new mempool of the given type
@@ -84,14 +84,14 @@ EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
  * @param[in] ... Additional options to pass to the allocator; depends entirely on the type of mempool ("int pool size" for chained and "int item_size" for one_big.
  * @return Newly allocated mempool instance, NULL otherwise.
  */
-EAPI Eina_Mempool  *eina_mempool_add(const char *name, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EINA_API Eina_Mempool  *eina_mempool_add(const char *name, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Deletes the given mempool.
  *
  * @param[in] mp The mempool to delete
  */
-EAPI void           eina_mempool_del(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+EINA_API void           eina_mempool_del(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Re-allocates an amount memory by the given mempool.
@@ -192,14 +192,14 @@ static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_
  * @see Eina_Mempool_Repack_Cb
  * @see _Eina_Mempool_Backend
  */
-EAPI void           eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
+EINA_API void           eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Runs a garbage collection cycle.
  *
  * @param[in] mp The mempool
  */
-EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+EINA_API void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Check if a pointer is a valid element from the mempool
@@ -218,7 +218,7 @@ static inline Eina_Bool eina_mempool_from(Eina_Mempool *mp, void *element);
  * @param[in] mp The mempool
  *
  */
-EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
+EINA_API void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Provide an iterator to walk all allocated elements from a specified mempool.
@@ -238,14 +238,14 @@ static inline Eina_Iterator *eina_mempool_iterator_new(Eina_Mempool *mp);
  * @return #EINA_TRUE if backend has been correctly registered, #EINA_FALSE
  *         otherwise.
  */
-EAPI Eina_Bool      eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
+EINA_API Eina_Bool      eina_mempool_register(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Unregisters the given memory pool backend.
  *
  * @param[in] be The backend
  */
-EAPI void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
+EINA_API void           eina_mempool_unregister(Eina_Mempool_Backend *be) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Computes the alignment that would be used when allocating a object of size @p size.

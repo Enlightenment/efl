@@ -34,7 +34,7 @@
 #define RTNICENESS 1
 #define NICENESS 5
 
-EAPI void
+EINA_API void
 eina_sched_prio_drop(void)
 {
    struct sched_param param;

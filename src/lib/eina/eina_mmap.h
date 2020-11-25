@@ -39,7 +39,7 @@
  *
  * @since 1.1.0
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_mmap_safety_enabled_set(Eina_Bool enabled);
 
 /**
@@ -52,7 +52,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled);
  *
  * @since 1.1.0
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_mmap_safety_enabled_get(void);
 
 /**

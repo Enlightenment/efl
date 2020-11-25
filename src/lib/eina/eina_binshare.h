@@ -93,7 +93,7 @@
  *
  * @see eina_binshare_add()
  */
-EAPI const void *eina_binshare_add_length(const void  *obj,
+EINA_API const void *eina_binshare_add_length(const void  *obj,
                                           unsigned int olen) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -110,7 +110,7 @@ EAPI const void *eina_binshare_add_length(const void  *obj,
  *
  * @note There is no unref since this is the work of eina_binshare_del().
  */
-EAPI const void *eina_binshare_ref(const void *obj);
+EINA_API const void *eina_binshare_ref(const void *obj);
 
 /**
  * @brief Notes that the given object has lost an instance.
@@ -125,7 +125,7 @@ EAPI const void *eina_binshare_ref(const void *obj);
  * @warning If the given pointer is not shared, bad things happen, mostly a
  *          segmentation fault.
  */
-EAPI void        eina_binshare_del(const void *obj);
+EINA_API void        eina_binshare_del(const void *obj);
 
 /**
  * @brief Notes that the given object @b must be shared.
@@ -138,7 +138,7 @@ EAPI void        eina_binshare_del(const void *obj);
  * @warning If the given pointer is not shared, bad things happen, mostly a
  *          segmentation fault. If in doubt, try strlen().
  */
-EAPI int         eina_binshare_length(const void *obj) EINA_WARN_UNUSED_RESULT EINA_PURE;
+EINA_API int         eina_binshare_length(const void *obj) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Dumps the contents of share_common.
@@ -146,7 +146,7 @@ EAPI int         eina_binshare_length(const void *obj) EINA_WARN_UNUSED_RESULT E
  * @details This function dumps all the objects from share_common to stdout with a
  *          DDD: prefix per line and a memory usage summary.
  */
-EAPI void        eina_binshare_dump(void);
+EINA_API void        eina_binshare_dump(void);
 
 /**
  * @brief Retrieves an instance of a blob for use in a program.

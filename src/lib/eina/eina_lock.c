@@ -28,14 +28,14 @@
 #  define os_unfair_lock_trylock(LCK) OSSpinLockTry(LCK)
 # endif
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 _eina_spinlock_macos_take(Eina_Spinlock *spinlock)
 {
    os_unfair_lock_lock(SPINLOCK_GET(spinlock));
    return EINA_LOCK_SUCCEED;
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 _eina_spinlock_macos_take_try(Eina_Spinlock *spinlock)
 {
    return (os_unfair_lock_trylock(SPINLOCK_GET(spinlock)) == true)
@@ -43,7 +43,7 @@ _eina_spinlock_macos_take_try(Eina_Spinlock *spinlock)
       : EINA_LOCK_FAIL;
 }
 
-EAPI Eina_Lock_Result
+EINA_API Eina_Lock_Result
 _eina_spinlock_macos_release(Eina_Spinlock *spinlock)
 {
    os_unfair_lock_unlock(SPINLOCK_GET(spinlock));
@@ -54,7 +54,7 @@ _eina_spinlock_macos_release(Eina_Spinlock *spinlock)
 
 Eina_Bool fork_resetting;
 
-EAPI void
+EINA_API void
 _eina_lock_debug_abort(int err, const char *fn, const volatile void *ptr)
 {
    if (fork_resetting) return;
@@ -64,7 +64,7 @@ _eina_lock_debug_abort(int err, const char *fn, const volatile void *ptr)
 #endif
 }
 
-EAPI void
+EINA_API void
 _eina_lock_debug_deadlock(const char *fn, const volatile void *ptr)
 {
    fprintf(stderr, "EINA ERROR: DEADLOCK on %s %p\n", fn, ptr);
@@ -73,7 +73,7 @@ _eina_lock_debug_deadlock(const char *fn, const volatile void *ptr)
 #endif
 }
 
-EAPI void
+EINA_API void
 eina_lock_debug(const Eina_Lock *mutex)
 {
 #ifdef EINA_HAVE_DEBUG_THREADS
@@ -85,7 +85,7 @@ eina_lock_debug(const Eina_Lock *mutex)
 #endif
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_lock_new(Eina_Lock *mutex, Eina_Bool recursive)
 {
    pthread_mutexattr_t attr;
@@ -106,7 +106,7 @@ fail_release:
    return ok;
 }
 
-EAPI void
+EINA_API void
 _eina_lock_free(Eina_Lock *mutex)
 {
    int ok;
@@ -115,7 +115,7 @@ _eina_lock_free(Eina_Lock *mutex)
    if (ok != 0) EINA_LOCK_ABORT_DEBUG(ok, mutex_destroy, mutex);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
 {
    pthread_condattr_t attr;
@@ -161,13 +161,13 @@ _eina_condition_new(Eina_Condition *cond, Eina_Lock *mutex)
    return EINA_TRUE;
 }
 
-EAPI void
+EINA_API void
 _eina_condition_free(Eina_Condition *cond)
 {
    pthread_cond_destroy(&(cond->condition));
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_rwlock_new(Eina_RWLock *mutex)
 {
    int ok;
@@ -179,13 +179,13 @@ _eina_rwlock_new(Eina_RWLock *mutex)
    return EINA_FALSE;
 }
 
-EAPI void
+EINA_API void
 _eina_rwlock_free(Eina_RWLock *mutex)
 {
    pthread_rwlock_destroy(&(mutex->mutex));
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_barrier_new(Eina_Barrier *barrier, int needed)
 {
 #ifdef EINA_HAVE_PTHREAD_BARRIER
@@ -206,7 +206,7 @@ _eina_barrier_new(Eina_Barrier *barrier, int needed)
 #endif
 }
 
-EAPI void
+EINA_API void
 _eina_barrier_free(Eina_Barrier *barrier)
 {
 #ifdef EINA_HAVE_PTHREAD_BARRIER
@@ -220,7 +220,7 @@ _eina_barrier_free(Eina_Barrier *barrier)
 #endif
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_spinlock_new(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
@@ -237,7 +237,7 @@ _eina_spinlock_new(Eina_Spinlock *spinlock)
 #endif
 }
 
-EAPI void
+EINA_API void
 _eina_spinlock_free(Eina_Spinlock *spinlock)
 {
 #if defined(EINA_HAVE_POSIX_SPINLOCK)
@@ -251,7 +251,7 @@ _eina_spinlock_free(Eina_Spinlock *spinlock)
 #endif
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_semaphore_new(Eina_Semaphore *sem, int count_init)
 {
    if (sem && (count_init >= 0))
@@ -266,7 +266,7 @@ _eina_semaphore_new(Eina_Semaphore *sem, int count_init)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 _eina_semaphore_free(Eina_Semaphore *sem)
 {
    if (sem)

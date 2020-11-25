@@ -142,7 +142,7 @@ static void _opcodes_register_all(Eina_Debug_Session *session);
 #endif
 static void _thread_start(Eina_Debug_Session *session);
 
-EAPI int
+EINA_API int
 eina_debug_session_send(Eina_Debug_Session *session, int dest, int op, void *data, int size)
 {
    Eina_Debug_Packet_Header hdr;
@@ -262,13 +262,13 @@ end:
 }
 #endif
 
-EAPI void
+EINA_API void
 eina_debug_disable()
 {
    _debug_disabled = EINA_TRUE;
 }
 
-EAPI void
+EINA_API void
 eina_debug_session_terminate(Eina_Debug_Session *session)
 {
    /* Close fd here so the thread terminates its own session by itself */
@@ -287,7 +287,7 @@ eina_debug_session_terminate(Eina_Debug_Session *session)
      }
 }
 
-EAPI void
+EINA_API void
 eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dispatch_Cb disp_cb)
 {
    if (!session) return;
@@ -295,7 +295,7 @@ eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dis
    session->dispatch_cb = disp_cb;
 }
 
-EAPI Eina_Debug_Dispatch_Cb
+EINA_API Eina_Debug_Dispatch_Cb
 eina_debug_session_dispatch_get(Eina_Debug_Session *session)
 {
    if (session) return session->dispatch_cb;
@@ -462,7 +462,7 @@ _session_create(int fd)
    return session;
 }
 
-EAPI Eina_Debug_Session *
+EINA_API Eina_Debug_Session *
 eina_debug_remote_connect(int port)
 {
    int fd;
@@ -492,7 +492,7 @@ err:
    return NULL;
 }
 
-EAPI Eina_Debug_Session *
+EINA_API Eina_Debug_Session *
 eina_debug_local_connect(Eina_Bool is_master)
 {
 #ifndef _WIN32
@@ -641,7 +641,7 @@ _thread_start(Eina_Debug_Session *session)
  * - Pointer to ops: returned in the response to determine which opcodes have been added
  * - List of opcode names separated by \0
  */
-EAPI void
+EINA_API void
 eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode ops[],
       Eina_Debug_Opcode_Status_Cb status_cb, void *data)
 {
@@ -663,7 +663,7 @@ eina_debug_opcodes_register(Eina_Debug_Session *session, const Eina_Debug_Opcode
       _opcodes_registration_send(session, info);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
 {
    Eina_Debug_Packet_Header *hdr = buffer;
@@ -688,13 +688,13 @@ eina_debug_dispatch(Eina_Debug_Session *session, void *buffer)
    return EINA_TRUE;
 }
 
-EAPI void
+EINA_API void
 eina_debug_session_data_set(Eina_Debug_Session *session, void *data)
 {
    if (session) session->data = data;
 }
 
-EAPI void *
+EINA_API void *
 eina_debug_session_data_get(Eina_Debug_Session *session)
 {
    if (session) return session->data;
@@ -750,7 +750,7 @@ eina_debug_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI void
+EINA_API void
 eina_debug_fork_reset(void)
 {
    extern Eina_Bool fork_resetting;

@@ -119,8 +119,8 @@ struct _Eina_Memory_Table
    Eina_Memory_Entry entries[EINA_MAX_ENTRY_ID];
 };
 
-EAPI extern Eina_Memory_Table **_eina_sp_ids_tables[EINA_MAX_MID_TABLE_ID];
-EAPI extern int _eina_sp_log_dom;
+EINA_API extern Eina_Memory_Table **_eina_sp_ids_tables[EINA_MAX_MID_TABLE_ID];
+EINA_API extern int _eina_sp_log_dom;
 
 #ifdef _EINA_SP_ERR
 #undef _EINA_SP_ERR

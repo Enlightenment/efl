@@ -66,9 +66,9 @@ typedef struct _Eina_Version
    int revision; /**< Revision component of the version */
 } Eina_Version;
 
-EAPI extern Eina_Version *eina_version;
+EINA_API extern Eina_Version *eina_version;
 
-EAPI extern Eina_Error EINA_ERROR_NOT_IMPLEMENTED;
+EINA_API extern Eina_Error EINA_ERROR_NOT_IMPLEMENTED;
 
 /**
  * @brief Initializes the Eina library.
@@ -175,7 +175,7 @@ EAPI extern Eina_Error EINA_ERROR_NOT_IMPLEMENTED;
  *      threads, but requires Eina to be compiled with such feature.
  *
  */
-EAPI int eina_init(void);
+EINA_API int eina_init(void);
 
 /**
  * @brief Shuts down the Eina library.
@@ -191,7 +191,7 @@ EAPI int eina_init(void);
  * not call any of the Eina functions anymore. You must call
  * eina_init() again to use the Eina functions again.
  */
-EAPI int eina_shutdown(void);
+EINA_API int eina_shutdown(void);
 
 /**
  * @brief Initializes the mutexes of the Eina library.
@@ -208,7 +208,7 @@ EAPI int eina_shutdown(void);
  *
  * This function should never be called outside of the main loop.
  */
-EAPI int eina_threads_init(void);
+EINA_API int eina_threads_init(void);
 
 /**
  * @brief Shuts down mutexes in the Eina library.
@@ -226,7 +226,7 @@ EAPI int eina_threads_init(void);
  *
  * This function should never be called outside of the main loop.
  */
-EAPI int eina_threads_shutdown(void);
+EINA_API int eina_threads_shutdown(void);
 
 /**
  * @brief Checks if you are calling this function from the same thread Eina was initialized or not.
@@ -239,7 +239,7 @@ EAPI int eina_threads_shutdown(void);
  * the main loop. With this call you could know if you can call an EFL
  * function or not.
  */
-EAPI Eina_Bool eina_main_loop_is(void);
+EINA_API Eina_Bool eina_main_loop_is(void);
 
 /**
  * @brief You should never use this function except if you really really know what your are doing.
@@ -248,7 +248,7 @@ EAPI Eina_Bool eina_main_loop_is(void);
  * If you are reading this documentation, that certainly means you don't know what is the purpose of
  * this call and you should just not use it.
  */
-EAPI void eina_main_loop_define(void);
+EINA_API void eina_main_loop_define(void);
 
 /**
  * @}

@@ -584,7 +584,7 @@ end:
    object->root = NULL;
 }
 
-EAPI Eina_QuadTree *
+EINA_API Eina_QuadTree *
 eina_quadtree_new(size_t w, size_t h,
                   Eina_Quad_Callback vertical, Eina_Quad_Callback horizontal)
 {
@@ -612,7 +612,7 @@ eina_quadtree_new(size_t w, size_t h,
    return result;
 }
 
-EAPI void
+EINA_API void
 eina_quadtree_free(Eina_QuadTree *q)
 {
    Eina_QuadTree_Item *item;
@@ -653,7 +653,7 @@ eina_quadtree_free(Eina_QuadTree *q)
    free(q);
 }
 
-EAPI Eina_QuadTree_Item *
+EINA_API Eina_QuadTree_Item *
 eina_quadtree_add(Eina_QuadTree *q, const void *object)
 {
    Eina_QuadTree_Item *result;
@@ -691,7 +691,7 @@ eina_quadtree_add(Eina_QuadTree *q, const void *object)
    return result;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_quadtree_del(Eina_QuadTree_Item *object)
 {
    if (!object)
@@ -728,7 +728,7 @@ eina_quadtree_del(Eina_QuadTree_Item *object)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_quadtree_change(Eina_QuadTree_Item *object)
 {
    EINA_MAGIC_CHECK_QUADTREE_ITEM(object, EINA_FALSE);
@@ -751,7 +751,7 @@ eina_quadtree_change(Eina_QuadTree_Item *object)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_quadtree_hide(Eina_QuadTree_Item *object)
 {
    EINA_MAGIC_CHECK_QUADTREE_ITEM(object, EINA_FALSE);
@@ -761,7 +761,7 @@ eina_quadtree_hide(Eina_QuadTree_Item *object)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_quadtree_show(Eina_QuadTree_Item *object)
 {
    EINA_MAGIC_CHECK_QUADTREE_ITEM(object, EINA_FALSE);
@@ -778,7 +778,7 @@ eina_quadtree_show(Eina_QuadTree_Item *object)
    return EINA_TRUE;
 }
 
-EAPI Eina_Inlist *
+EINA_API Eina_Inlist *
 eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h)
 {
    Eina_Rectangle canvas;
@@ -826,7 +826,7 @@ eina_quadtree_collide(Eina_QuadTree *q, int x, int y, int w, int h)
    return q->cached;
 }
 
-EAPI void *
+EINA_API void *
 eina_quadtree_object(Eina_Inlist *item)
 {
    Eina_QuadTree_Item *qi;
@@ -846,7 +846,7 @@ eina_quadtree_object(Eina_Inlist *item)
    return (void *)qi->object;
 }
 
-EAPI void
+EINA_API void
 eina_quadtree_resize(Eina_QuadTree *q, size_t w, size_t h)
 {
    EINA_MAGIC_CHECK_QUADTREE(q);
@@ -860,7 +860,7 @@ eina_quadtree_resize(Eina_QuadTree *q, size_t w, size_t h)
    q->geom.h = h;
 }
 
-EAPI void
+EINA_API void
 eina_quadtree_cycle(Eina_QuadTree *q)
 {
    EINA_MAGIC_CHECK_QUADTREE(q);
@@ -868,7 +868,7 @@ eina_quadtree_cycle(Eina_QuadTree *q)
    q->index = 0;
 }
 
-EAPI void
+EINA_API void
 eina_quadtree_increase(Eina_QuadTree_Item *object)
 {
    size_t tmp;

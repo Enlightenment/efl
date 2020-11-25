@@ -433,7 +433,7 @@ struct _Eina_Inlist
  *
  * @return The new list head. Use it and not @a in_list anymore.
  */
-EAPI Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
+EINA_API Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
                                      Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -452,7 +452,7 @@ EAPI Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
  *
  * @return The new list head. Use it and not @a in_list anymore.
  */
-EAPI Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
+EINA_API Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
                                       Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -477,7 +477,7 @@ EAPI Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
  *
  * @return The new list head. Use it and not @a list anymore.
  */
-EAPI Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
+EINA_API Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
                                               Eina_Inlist *in_item,
                                               Eina_Inlist *in_relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
@@ -503,7 +503,7 @@ EAPI Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
  *
  * @return The new list head. Use it and not @a in_list anymore.
  */
-EAPI Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
+EINA_API Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
                                                Eina_Inlist *in_item,
                                                Eina_Inlist *in_relative) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
@@ -524,7 +524,7 @@ EAPI Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
  *
  * @return The new list head. Use it and not @a list anymore.
  */
-EAPI Eina_Inlist   *eina_inlist_remove(Eina_Inlist *in_list,
+EINA_API Eina_Inlist   *eina_inlist_remove(Eina_Inlist *in_list,
                                        Eina_Inlist *in_item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -538,7 +538,7 @@ EAPI Eina_Inlist   *eina_inlist_remove(Eina_Inlist *in_list,
  *
  * @return @a in_item if found, @c NULL if not.
  */
-EAPI Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
+EINA_API Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
                                      Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -556,7 +556,7 @@ EAPI Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
  *
  * @return The new list head. Use it and not @a list anymore.
  */
-EAPI Eina_Inlist   *eina_inlist_promote(Eina_Inlist *list,
+EINA_API Eina_Inlist   *eina_inlist_promote(Eina_Inlist *list,
                                         Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -574,7 +574,7 @@ EAPI Eina_Inlist   *eina_inlist_promote(Eina_Inlist *list,
  *
  * @return The new list head. Use it and not @a list anymore.
  */
-EAPI Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
+EINA_API Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
                                        Eina_Inlist *item) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -622,7 +622,7 @@ static inline Eina_Inlist *eina_inlist_last(const Eina_Inlist *list) EINA_PURE E
  *    on the number of elements on the list, so, it might become
  *    slow for big lists!
  */
-EAPI unsigned int   eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_RESULT;
+EINA_API unsigned int   eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_RESULT;
 
 
 /**
@@ -644,7 +644,7 @@ EAPI unsigned int   eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_
  *    invalid, and if you add or remove nodes iterator
  *    behavior is undefined, and your program may crash!
  */
-EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Returns a new accessor associated to a list.
@@ -658,7 +658,7 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
  * not be allocated, @c NULL is returned and Otherwise, a valid accessor is
  * returned.
  */
-EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Inserts a new node into a sorted list.
@@ -682,7 +682,7 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  *
  * @since 1.1.0
  */
-EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item, Eina_Compare_Cb func) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
+EINA_API Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item, Eina_Compare_Cb func) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Creates state with valid data in it.
@@ -693,7 +693,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item
  *
  * See eina_inlist_sorted_state_insert() for more information.
  */
-EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
+EINA_API Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
 
 /**
  * @brief Forces an Eina_Inlist_Sorted_State to match the content of a list.
@@ -708,7 +708,7 @@ EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
  * useful if you didn't use eina_inlist_sorted_state_insert() at some point, but
  * still think you have a sorted list. It will only correctly work on a sorted list.
  */
-EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
+EINA_API int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inlist *list);
 
 /**
  * @brief Frees an Eina_Inlist_Sorted_State.
@@ -719,7 +719,7 @@ EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inl
  *
  * See eina_inlist_sorted_state_insert() for more information.
  */
-EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
+EINA_API void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
 
 /**
  * @brief Inserts a new node into a sorted list.
@@ -749,7 +749,7 @@ EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
  * linear cost again. Consider worst case to be almost O(n) pointer
  * dereference (list walk).
  */
-EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
+EINA_API Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
 						  Eina_Inlist *item,
 						  Eina_Compare_Cb func,
 						  Eina_Inlist_Sorted_State *state);
@@ -797,7 +797,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
  * list = eina_inlist_sort(list, sort_cb);
  * @endcode
  */
-EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
+EINA_API Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /* These two macros are helpers for the _FOREACH ones, don't use them */
 /**

@@ -63,7 +63,7 @@ eina_tmpstr_shutdown(void)
    return EINA_TRUE;
 }
 
-EAPI Eina_Tmpstr *
+EINA_API Eina_Tmpstr *
 eina_tmpstr_add_length(const char *str, size_t length)
 {
    Str *s;
@@ -83,7 +83,7 @@ eina_tmpstr_add_length(const char *str, size_t length)
    return s->str;
 }
 
-EAPI Eina_Tmpstr *
+EINA_API Eina_Tmpstr *
 eina_tmpstr_manage_new_length(char *str, size_t length)
 {
    Str *s;
@@ -101,7 +101,7 @@ eina_tmpstr_manage_new_length(char *str, size_t length)
    return s->str;
 }
 
-EAPI Eina_Tmpstr *
+EINA_API Eina_Tmpstr *
 eina_tmpstr_manage_new(char *str)
 {
    size_t len;
@@ -111,7 +111,7 @@ eina_tmpstr_manage_new(char *str)
    return eina_tmpstr_manage_new_length(str, len);
 }
 
-EAPI Eina_Tmpstr *
+EINA_API Eina_Tmpstr *
 eina_tmpstr_add(const char *str)
 {
    size_t len;
@@ -121,7 +121,7 @@ eina_tmpstr_add(const char *str)
    return eina_tmpstr_add_length(str, len);
 }
 
-EAPI void
+EINA_API void
 eina_tmpstr_del(Eina_Tmpstr *tmpstr)
 {
    Str *s, *sp;
@@ -142,14 +142,14 @@ eina_tmpstr_del(Eina_Tmpstr *tmpstr)
    eina_lock_release(&_mutex);
 }
 
-EAPI size_t
+EINA_API size_t
 eina_tmpstr_strlen(Eina_Tmpstr *tmpstr)
 {
    if (!tmpstr) return 0;
    return eina_tmpstr_len(tmpstr) + 1;
 }
 
-EAPI size_t
+EINA_API size_t
 eina_tmpstr_len(Eina_Tmpstr *tmpstr)
 {
    Str *s;
