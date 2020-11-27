@@ -285,7 +285,7 @@ group { name: "e/widgets/winlist/large/bg";
    programs {
       program { signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "bg_clip";
          target: "bg_blur";
          target: "shadow";
@@ -296,7 +296,7 @@ group { name: "e/widgets/winlist/large/bg";
       }
       program { signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: ACCELERATE 0.2;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "bg_clip";
          target: "bg_blur";
          target: "shadow";
@@ -308,7 +308,7 @@ group { name: "e/widgets/winlist/large/bg";
    }
 }
 
-group { name: "e/widgets/winlist/fg";
+group { name: "e/widgets/winlist/large/fg";
    alias: "e/widgets/winlist/fg";
    parts {
       part { name: "fg_darken"; type: RECT;
