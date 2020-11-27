@@ -3,7 +3,7 @@
 # This script will generate a C file containing all the shaders used by Evas
 
 DIR=`dirname $0`
-cd $DIR/../../../../../
+#cd $DIR/../../../../../
 
 OUTPUT="$DIR/evas_gl_shaders.x"
 

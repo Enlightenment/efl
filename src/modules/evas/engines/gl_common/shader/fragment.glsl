@@ -97,6 +97,37 @@ uniform float blur_div;
 
 // ----------------------------------------------------------------------------
 
+#ifdef SHD_DITHER
+const mat4 dm = mat4(vec4( 0,  8,  2, 10),
+                     vec4(12,  4, 14,  6),
+                     vec4( 3, 11,  1,  9),
+                     vec4(15,  7, 13,  5));
+
+float dither_closest(vec2 pos, float val)
+{
+   float limit = dm[int(pos.x)][int(pos.y)] / 16.0;
+   if (val <= limit) return 0.0;
+   return 1.0;
+}
+
+float dither_8bit(vec2 modpos, float val)
+{
+   float val_quant = float(floor(val * 255.0)) / 255.0;
+   float val_delta = (val - val_quant) / (1.0 / 256.0);
+   float val_roundup = dither_closest(modpos, val_delta);
+   return val_quant + (val_roundup * (1.0 / 256.0));
+}
+
+vec4 dither(vec4 col, vec2 pos)
+{
+   vec2 modpos = vec2(mod(float(pos.x), 4.0), mod(float(pos.y), 4.0));
+   return vec4(dither_8bit(modpos, col.r),
+               dither_8bit(modpos, col.g),
+               dither_8bit(modpos, col.b),
+               dither_8bit(modpos, col.a));
+}
+#endif
+
 #ifndef SHD_FILTER_BLUR
 void main()
 {
@@ -243,6 +274,9 @@ vec4 fetch_pixel(float ox, float oy)
 #ifndef SHD_FILTER_BLUR
 
    gl_FragColor =
+#ifdef SHD_DITHER
+   dither(
+#endif
        c
 #ifndef SHD_NOMUL
      * col
@@ -252,6 +286,9 @@ vec4 fetch_pixel(float ox, float oy)
 #endif
 #ifdef SHD_FILTER_DISPLACE
      * fa
+#endif
+#ifdef SHD_DITHER
+   , gl_FragCoord.xy)
 #endif
    ;
 }
@@ -312,9 +349,25 @@ void main()
    }
 
 #ifndef SHD_NOMUL
-   gl_FragColor = (acc / blur_div) * col;
+   gl_FragColor =
+#ifdef SHD_DITHER
+     dither(
+#endif
+            (acc / blur_div) * col, gl_FragCoord.xy
+#ifdef SHD_DITHER
+           )
+#endif
+   ;
 #else
-   gl_FragColor = (acc / blur_div);
+   gl_FragColor =
+#ifdef SHD_DITHER
+     dither(
+#endif
+            (acc / blur_div), gl_FragCoord.xy
+#ifdef SHD_DITHER
+           )
+#endif
+   ;
 #endif
 }
 
