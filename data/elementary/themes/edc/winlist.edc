@@ -303,7 +303,7 @@ group { name: "e/widgets/winlist/large/bg";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program { signal: "e,state,visible,off"; source: "e";
-         action: STATE_SET "visible" 0.0;
+         action: STATE_SET "default" 0.0;
          transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "bg_clip";
 //         target: "bg_blur";
