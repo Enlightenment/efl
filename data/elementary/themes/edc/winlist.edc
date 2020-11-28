@@ -266,7 +266,7 @@ group { name: "e/widgets/winlist/large/bg";
       part { name: "bg_darken"; type: RECT;
          clip_to: "bg_clip";
          description { state: "default" 0.0;
-            color: 0 0 0 128;
+            color: 0 0 0 192;
          }
       }
 /*
@@ -293,7 +293,7 @@ group { name: "e/widgets/winlist/large/bg";
    programs {
       program { signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "bg_clip";
 //         target: "bg_blur";
 //         target: "shadow";
@@ -304,7 +304,7 @@ group { name: "e/widgets/winlist/large/bg";
       }
       program { signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "bg_clip";
 //         target: "bg_blur";
 //         target: "shadow";
