@@ -9,8 +9,8 @@
 #define SHADER_EET_CHECKSUM "/shader/checksum"
 #define SHADER_EET_CACHENAME "binary_shader"
 
-#define P(i) ((void*)(intptr_t)i)
-#define I(p) ((int)(intptr_t)p)
+#define P(i) ((void*)(intptr_t)(i))
+#define I(p) ((int)(intptr_t)(p))
 
 #ifdef WORDS_BIGENDIAN
 # define BASEFLAG SHADER_FLAG_DITHER | SHADER_FLAG_BIGENDIAN
