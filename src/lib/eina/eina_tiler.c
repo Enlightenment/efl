@@ -1137,7 +1137,7 @@ static void _iterator_free(Eina_Iterator_Tiler *it)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI Eina_Tiler *eina_tiler_new(int w, int h)
+EINA_API Eina_Tiler *eina_tiler_new(int w, int h)
 {
    Eina_Tiler *t;
 
@@ -1158,7 +1158,7 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
    return t;
 }
 
-EAPI void eina_tiler_free(Eina_Tiler *t)
+EINA_API void eina_tiler_free(Eina_Tiler *t)
 {
    if (!t)
      return;
@@ -1168,7 +1168,7 @@ EAPI void eina_tiler_free(Eina_Tiler *t)
    free(t);
 }
 
-EAPI void eina_tiler_area_size_set(Eina_Tiler *t, int w, int h)
+EINA_API void eina_tiler_area_size_set(Eina_Tiler *t, int w, int h)
 {
    EINA_MAGIC_CHECK_TILER(t);
    if ((w <= 0) || (h <= 0))
@@ -1178,14 +1178,14 @@ EAPI void eina_tiler_area_size_set(Eina_Tiler *t, int w, int h)
    t->area.h = h;
 }
 
-EAPI void eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h)
+EINA_API void eina_tiler_area_size_get(const Eina_Tiler *t, int *w, int *h)
 {
    EINA_MAGIC_CHECK_TILER(t);
    if (w) *w = t->area.w;
    if (h) *h = t->area.h;
 }
 
-EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
+EINA_API void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
 {
    EINA_MAGIC_CHECK_TILER(t);
    if ((w <= 0) || (h <= 0))
@@ -1198,7 +1198,7 @@ EAPI void eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h)
    _splitter_tile_size_set(t, w, h);
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tiler_empty(const Eina_Tiler *t)
 {
    EINA_MAGIC_CHECK_TILER(t, EINA_TRUE);
@@ -1219,7 +1219,7 @@ _rect_same(Eina_Rectangle *rec1, Eina_Rectangle *rec2)
    return ((same1->x == same2->x) && (same1->y == same2->y));
 }
 
-EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
+EINA_API Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
 {
    Eina_Rectangle tmp __attribute__ ((aligned (8)));
 
@@ -1245,7 +1245,7 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
    return _splitter_rect_add(t, &tmp);
 }
 
-EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
+EINA_API void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
 {
    Eina_Rectangle tmp __attribute__ ((aligned (8)));
 
@@ -1271,7 +1271,7 @@ EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
    _splitter_rect_del(t, &tmp);
 }
 
-EAPI void eina_tiler_clear(Eina_Tiler *t)
+EINA_API void eina_tiler_clear(Eina_Tiler *t)
 {
    EINA_MAGIC_CHECK_TILER(t);
    _splitter_clear(t);
@@ -1281,14 +1281,14 @@ EAPI void eina_tiler_clear(Eina_Tiler *t)
    t->last.del.h = -1;
 }
 
-EAPI void
+EINA_API void
 eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict)
 {
    EINA_MAGIC_CHECK_TILER(t);
    t->strict = strict;
 }
 
-EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
+EINA_API Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
 {
    Eina_Iterator_Tiler *it;
 
@@ -1363,7 +1363,7 @@ EAPI Eina_Iterator *eina_tiler_iterator_new(const Eina_Tiler *t)
    return &it->iterator;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tiler_union(Eina_Tiler *dst,
                  Eina_Tiler *src)
 {
@@ -1405,7 +1405,7 @@ eina_tiler_union(Eina_Tiler *dst,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tiler_subtract(Eina_Tiler *dst,
                     Eina_Tiler *src)
 {
@@ -1444,7 +1444,7 @@ eina_tiler_subtract(Eina_Tiler *dst,
    return EINA_TRUE;
 }
 
-EAPI Eina_Tiler *
+EINA_API Eina_Tiler *
 eina_tiler_intersection(Eina_Tiler *t1,
                         Eina_Tiler *t2)
 {
@@ -1527,7 +1527,7 @@ cleanup:
    return t;
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_tiler_equal(const Eina_Tiler *t1,
                  const Eina_Tiler *t2)
 {
@@ -1604,7 +1604,7 @@ eina_tile_grid_slicer_iterator_next(Eina_Tile_Grid_Slicer_Iterator *it,
              (&it->priv, (const Eina_Tile_Grid_Info **)data);
 }
 
-EAPI Eina_Iterator *
+EINA_API Eina_Iterator *
 eina_tile_grid_slicer_iterator_new(int x,
                                    int y,
                                    int w,

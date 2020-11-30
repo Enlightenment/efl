@@ -39,7 +39,7 @@ eolian_lib = library('eolian', eolian_src,
     include_directories: config_dir,
     dependencies: eina,
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEOLIAN_BUILD'],
     version : meson.project_version()
 )
 

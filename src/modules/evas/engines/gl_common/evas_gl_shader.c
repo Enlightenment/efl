@@ -13,9 +13,9 @@
 #define I(p) ((int)(intptr_t)p)
 
 #ifdef WORDS_BIGENDIAN
-# define BASEFLAG SHADER_FLAG_BIGENDIAN
+# define BASEFLAG SHADER_FLAG_DITHER | SHADER_FLAG_BIGENDIAN
 #else
-# define BASEFLAG 0
+# define BASEFLAG SHADER_FLAG_DITHER
 #endif
 
 typedef enum {
@@ -47,8 +47,9 @@ typedef enum {
    SHADER_FLAG_FILTER_ALPHA_ONLY = (1 << 25),
    SHADER_FLAG_FILTER_GRAYSCALE  = (1 << 26),
    SHADER_FLAG_FILTER_INVERSE_COLOR  = (1 << 27),
+   SHADER_FLAG_DITHER            = (1 << 28),
 } Shader_Flag;
-#define SHADER_FLAG_COUNT 28
+#define SHADER_FLAG_COUNT 29
 
 static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "TEX",
@@ -79,6 +80,7 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
    "ALPHA_ONLY",
    "FILTER_GRAYSCALE",
    "FILTER_INVERSE_COLOR",
+   "DITHER",
 };
 
 static Eina_Bool compiler_released = EINA_FALSE;

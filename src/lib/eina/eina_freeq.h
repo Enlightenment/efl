@@ -126,7 +126,7 @@ typedef enum _Eina_FreeQ_Type
  * @return A new free queue
  * @since 1.19
  */
-EAPI Eina_FreeQ *
+EINA_API Eina_FreeQ *
 eina_freeq_new(Eina_FreeQ_Type type);
 
 /**
@@ -136,7 +136,7 @@ eina_freeq_new(Eina_FreeQ_Type type);
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_freeq_free(Eina_FreeQ *fq);
 
 /**
@@ -146,7 +146,7 @@ eina_freeq_free(Eina_FreeQ *fq);
  *
  * @since 1.19
  */
-EAPI Eina_FreeQ_Type
+EINA_API Eina_FreeQ_Type
 eina_freeq_type_get(Eina_FreeQ *fq);
 
 /**
@@ -156,7 +156,7 @@ eina_freeq_type_get(Eina_FreeQ *fq);
  *
  * @since 1.19
  */
-EAPI Eina_FreeQ *
+EINA_API Eina_FreeQ *
 eina_freeq_main_get(void);
 
 /**
@@ -177,7 +177,7 @@ eina_freeq_main_get(void);
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_freeq_count_max_set(Eina_FreeQ *fq, int count);
 
 /**
@@ -188,7 +188,7 @@ eina_freeq_count_max_set(Eina_FreeQ *fq, int count);
  *
  * @since 1.19
  */
-EAPI int
+EINA_API int
 eina_freeq_count_max_get(Eina_FreeQ *fq);
 
 /**
@@ -210,7 +210,7 @@ eina_freeq_count_max_get(Eina_FreeQ *fq);
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_freeq_mem_max_set(Eina_FreeQ *fq, size_t mem);
 
 /**
@@ -221,7 +221,7 @@ eina_freeq_mem_max_set(Eina_FreeQ *fq, size_t mem);
  *
  * @since 1.19
  */
-EAPI size_t
+EINA_API size_t
 eina_freeq_mem_max_get(Eina_FreeQ *fq);
 
 /**
@@ -235,7 +235,7 @@ eina_freeq_mem_max_get(Eina_FreeQ *fq);
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_freeq_clear(Eina_FreeQ *fq);
 
 /**
@@ -251,7 +251,7 @@ eina_freeq_clear(Eina_FreeQ *fq);
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_freeq_reduce(Eina_FreeQ *fq, int count);
 
 /**
@@ -262,7 +262,7 @@ eina_freeq_reduce(Eina_FreeQ *fq, int count);
  *
  * @since 1.19
  */
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_freeq_ptr_pending(Eina_FreeQ *fq);
 
 /**
@@ -306,7 +306,7 @@ eina_freeq_ptr_pending(Eina_FreeQ *fq);
  *
  * @since 1.19
  */
-EAPI void
+EINA_API void
 eina_freeq_ptr_add(Eina_FreeQ *fq, void *ptr, void (*free_func) (void *ptr), size_t size);
 
 /**

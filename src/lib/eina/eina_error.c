@@ -138,7 +138,7 @@ static inline int strerror_r(int errnum, char *buf, size_t buflen)
  * @cond LOCAL
  */
 
-EAPI Eina_Error EINA_ERROR_OUT_OF_MEMORY = ENOMEM;
+EINA_API Eina_Error EINA_ERROR_OUT_OF_MEMORY = ENOMEM;
 
 /**
  * @endcond
@@ -225,7 +225,7 @@ eina_error_shutdown(void)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI Eina_Error
+EINA_API Eina_Error
 eina_error_msg_register(const char *msg)
 {
    Eina_Error_Message *eem;
@@ -247,7 +247,7 @@ eina_error_msg_register(const char *msg)
    return EINA_ERROR_FROM_INDEX(_eina_errors_count); /* identifier = index + 1 (== _count). */
 }
 
-EAPI Eina_Error
+EINA_API Eina_Error
 eina_error_msg_static_register(const char *msg)
 {
    Eina_Error_Message *eem;
@@ -263,7 +263,7 @@ eina_error_msg_static_register(const char *msg)
    return EINA_ERROR_FROM_INDEX(_eina_errors_count); /* identifier = index + 1 (== _count). */
 }
 
-EAPI Eina_Bool
+EINA_API Eina_Bool
 eina_error_msg_modify(Eina_Error error, const char *msg)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
@@ -291,7 +291,7 @@ eina_error_msg_modify(Eina_Error error, const char *msg)
    return EINA_TRUE;
 }
 
-EAPI const char *
+EINA_API const char *
 eina_error_msg_get(Eina_Error error)
 {
    if (!EINA_ERROR_REGISTERED_CHECK(error))
@@ -385,7 +385,7 @@ eina_error_msg_get(Eina_Error error)
    return _eina_errors[error - 1].string;
 }
 
-EAPI Eina_Error
+EINA_API Eina_Error
 eina_error_get(void)
 {
    if (eina_main_loop_is())
@@ -394,7 +394,7 @@ eina_error_get(void)
    return (Eina_Error)(uintptr_t) eina_tls_get(_eina_last_key);
 }
 
-EAPI void
+EINA_API void
 eina_error_set(Eina_Error err)
 {
    if (eina_main_loop_is())
@@ -403,7 +403,7 @@ eina_error_set(Eina_Error err)
      eina_tls_set(_eina_last_key, (void*)(uintptr_t) err);
 }
 
-EAPI Eina_Error
+EINA_API Eina_Error
 eina_error_find(const char *msg)
 {
    size_t i;

@@ -76,7 +76,7 @@ typedef struct _Eina_Lalloc Eina_Lalloc;
  * @return A new lazy allocator.
  *
  */
-EAPI Eina_Lalloc *eina_lalloc_new(void             *data,
+EINA_API Eina_Lalloc *eina_lalloc_new(void             *data,
                                   Eina_Lalloc_Alloc alloc_cb,
                                   Eina_Lalloc_Free  free_cb,
                                   int               num_init) EINA_ARG_NONNULL(2, 3);
@@ -87,7 +87,7 @@ EAPI Eina_Lalloc *eina_lalloc_new(void             *data,
  * @param[in,out] a The lazy allocator to free.
  *
  */
-EAPI void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
+EINA_API void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Adds several elements to a lazy allocator.
@@ -98,7 +98,7 @@ EAPI void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
  * @return #EINA_TRUE on success, else #EINA_FALSE.
  *
  */
-EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a,
+EINA_API Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a,
                                         int          num) EINA_ARG_NONNULL(1);
 
 /**
@@ -109,7 +109,7 @@ EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a,
  * @return #EINA_TRUE on success, else #EINA_FALSE.
  *
  */
-EAPI Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
+EINA_API Eina_Bool eina_lalloc_element_add(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
 
 /**
  * @}

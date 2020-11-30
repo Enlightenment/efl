@@ -162,7 +162,7 @@ typedef struct
  * of them.
  * Need to be invoked before eina_init. Otherwise it won't have any effect.
  */
-EAPI void eina_debug_disable(void);
+EINA_API void eina_debug_disable(void);
 
 /**
  * @brief Connect to the local daemon
@@ -171,7 +171,7 @@ EAPI void eina_debug_disable(void);
  *
  * @return The session on success or NULL otherwise.
  */
-EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
+EINA_API Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
 
 /**
  * @brief Connect to remote daemon
@@ -182,14 +182,14 @@ EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
  *
  * @return The session on success or NULL otherwise.
  */
-EAPI Eina_Debug_Session *eina_debug_remote_connect(int port);
+EINA_API Eina_Debug_Session *eina_debug_remote_connect(int port);
 
 /**
  * @brief Terminate the session
  *
  * @param[in,out] session the session to terminate
  */
-EAPI void eina_debug_session_terminate(Eina_Debug_Session *session);
+EINA_API void eina_debug_session_terminate(Eina_Debug_Session *session);
 
 /**
  * @brief Override the dispatcher of a specific session
@@ -201,7 +201,7 @@ EAPI void eina_debug_session_terminate(Eina_Debug_Session *session);
  * @param[in,out] session the session
  * @param[in] disp_cb the new dispatcher for the given session
  */
-EAPI void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dispatch_Cb disp_cb);
+EINA_API void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dispatch_Cb disp_cb);
 
 /**
  * @brief Get the dispatcher of a specific session
@@ -210,7 +210,7 @@ EAPI void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina
  *
  * @return The session dispatcher.
  */
-EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *session);
+EINA_API Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *session);
 
 /**
  * @brief Dispatch a given packet according to its header.
@@ -224,7 +224,7 @@ EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *
  *
  * @return True on success, false if the connection seems compromised.
  */
-EAPI Eina_Bool eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
+EINA_API Eina_Bool eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
 
 /**
  * @brief Set data to a session
@@ -232,7 +232,7 @@ EAPI Eina_Bool eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
  * @param[in,out] session the session
  * @param[in] data the data to set
  */
-EAPI void eina_debug_session_data_set(Eina_Debug_Session *session, void *data);
+EINA_API void eina_debug_session_data_set(Eina_Debug_Session *session, void *data);
 
 /**
  * @brief Get the data attached to a session
@@ -241,7 +241,7 @@ EAPI void eina_debug_session_data_set(Eina_Debug_Session *session, void *data);
  *
  * @return The data of the session.
  */
-EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
+EINA_API void *eina_debug_session_data_get(Eina_Debug_Session *session);
 
 /**
  * @brief Register opcodes to a session
@@ -257,7 +257,7 @@ EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
  * @param[in] status_cb a function to call when the opcodes are received
  * @param[in] status_data the data to give to status_cb
  */
-EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
+EINA_API void eina_debug_opcodes_register(Eina_Debug_Session *session,
       const Eina_Debug_Opcode ops[],
       Eina_Debug_Opcode_Status_Cb status_cb, void *status_data);
 
@@ -274,7 +274,7 @@ EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
  *
  * @return The number of sent bytes.
  */
-EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int op, void *data, int size);
+EINA_API int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int op, void *data, int size);
 
 /**
  * @brief Add a timer
@@ -285,7 +285,7 @@ EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int o
  *
  * @return The timer handle, NULL on error.
  */
-EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
+EINA_API Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
 
 /**
  * @brief Delete a timer
@@ -295,7 +295,7 @@ EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_
  * If the timer reaches the end and has not be renewed, trying to delete it will lead to a crash, as
  * it has already been deleted internally.
  */
-EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
+EINA_API void eina_debug_timer_del(Eina_Debug_Timer *timer);
 
 /**
  * @brief Reset the eina debug system after forking
@@ -303,7 +303,7 @@ EAPI void eina_debug_timer_del(Eina_Debug_Timer *timer);
  * Call this any time the application forks
  * @since 1.21
  * */
-EAPI void eina_debug_fork_reset(void);
+EINA_API void eina_debug_fork_reset(void);
 /**
  * @}
  */
