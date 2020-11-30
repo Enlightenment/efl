@@ -270,19 +270,7 @@ ICO1(CTX, "user-invisible", 128) /* */
 ICO1(CTX, "user-idle", 128)
 ICO1(CTX, "user-offline", 128)
 ICO1(CTX, "user-trash-full", 128) /* */
-ICO1(CTX, "weather-clear-night", 128)
-ICO1(CTX, "weather-clear", 128)
-ICO1(CTX, "weather-clouds-night", 128) /* */
-ICO1(CTX, "weather-clouds", 128) /* */
-ICO1(CTX, "weather-few-clouds-night", 128)
-ICO1(CTX, "weather-few-clouds", 128)
-ICO1(CTX, "weather-fog", 128)
-ICO1(CTX, "weather-overcast", 128)
-ICO1(CTX, "weather-severe-alert", 128)
-ICO1(CTX, "weather-showers-scattered", 128)
-ICO1(CTX, "weather-showers", 128)
-ICO1(CTX, "weather-snow", 128)
-ICO1(CTX, "weather-storm", 128)
+
 // TODO image-loading
 // TODO image-missing
 // TODO sync-error
