@@ -38,7 +38,7 @@
          image.border_scale_by: _scale; \
          rel1.offset: (-_l) (-_t); \
          rel2.offset: (_r-1) (_b-1); \
-         fill.smooth: 0; \
+         fill.smooth: 1; \
          offscale; \
       }
 #define SHAD_CLIP(_to, _clip, _l, _r, _t, _b, _scale) \

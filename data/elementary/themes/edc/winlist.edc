@@ -232,7 +232,11 @@ group { name: "e/widgets/winlist/item";
 
 group { name: "e/widgets/winlist/large/bg";
    alias: "e/widgets/winlist/bg";
-   images.image: "screen_circular_shadow.png" COMP;
+// disable blue and the circular shadow - they are pricey - esp blur by far
+// on older gpu's.... whilst it looks nice, it just is too costly. keep here
+// for information so can turn on maybe with ifdefs and alternate build that
+// turnns on costly expensive things like this
+//   images.image: "screen_circular_shadow.png" COMP;
    parts {
       part { name: "bg_clip"; type: RECT;
          description { state: "default" 0.0;
@@ -245,6 +249,7 @@ group { name: "e/widgets/winlist/large/bg";
             color: 255 255 255 255;
          }
       }
+/*
       snapshot { "bg_blur";
          clip_to: "bg_clip";
          description { state: "default" 0.0;
@@ -257,12 +262,14 @@ group { name: "e/widgets/winlist/large/bg";
             visible: 1;
          }
       }
+ */
       part { name: "bg_darken"; type: RECT;
          clip_to: "bg_clip";
          description { state: "default" 0.0;
-            color: 0 0 0 128;
+            color: 0 0 0 192;
          }
       }
+/*
       part { name: "shadow"; mouse_events: 0;
          clip_to: "bg_clip";
          description { state: "default" 0.0;
@@ -281,25 +288,26 @@ group { name: "e/widgets/winlist/large/bg";
             visible: 1;
          }
       }
+ */
    }
    programs {
       program { signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "bg_clip";
-         target: "bg_blur";
-         target: "shadow";
+//         target: "bg_blur";
+//         target: "shadow";
          after: "show2";
       }
       program { name: "show2";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program { signal: "e,state,visible,off"; source: "e";
-         action: STATE_SET "visible" 0.0;
-         transition: ACCELERATE 0.2;
+         action: STATE_SET "default" 0.0;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "bg_clip";
-         target: "bg_blur";
-         target: "shadow";
+//         target: "bg_blur";
+//         target: "shadow";
          after: "hide2";
       }
       program { name: "hide2";
@@ -308,7 +316,7 @@ group { name: "e/widgets/winlist/large/bg";
    }
 }
 
-group { name: "e/widgets/winlist/fg";
+group { name: "e/widgets/winlist/large/fg";
    alias: "e/widgets/winlist/fg";
    parts {
       part { name: "fg_darken"; type: RECT;
