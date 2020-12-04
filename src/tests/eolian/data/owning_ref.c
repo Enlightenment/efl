@@ -11,7 +11,7 @@ _owning_test1_ownership_fallback(Eina_List *test1, Eina_Iterator *test2, Eina_Ha
    eina_accessor_free(test4);
 }
 
-EOAPI EFL_VOID_FUNC_BODYV_FALLBACK(owning_test1, _owning_test1_ownership_fallback(test1, test2, test3, test4);, EFL_FUNC_CALL(test1, test2, test3, test4), Eina_List *test1, Eina_Iterator *test2, Eina_Hash *test3, Eina_Accessor *test4);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV_FALLBACK(owning_test1, _owning_test1_ownership_fallback(test1, test2, test3, test4);, EFL_FUNC_CALL(test1, test2, test3, test4), Eina_List *test1, Eina_Iterator *test2, Eina_Hash *test3, Eina_Accessor *test4);
 
 void _owning_test2(Eo *obj, Owning_Data *pd, Eina_List *test1, Eina_Hash *test2);
 
@@ -27,7 +27,7 @@ _owning_test2_ownership_fallback(Eina_List *test1, Eina_Hash *test2)
    eina_hash_free(test2);
 }
 
-EOAPI EFL_VOID_FUNC_BODYV_FALLBACK(owning_test2, _owning_test2_ownership_fallback(test1, test2);, EFL_FUNC_CALL(test1, test2), Eina_List *test1, Eina_Hash *test2);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV_FALLBACK(owning_test2, _owning_test2_ownership_fallback(test1, test2);, EFL_FUNC_CALL(test1, test2), Eina_List *test1, Eina_Hash *test2);
 
 static Eina_Bool
 _owning_class_initializer(Efl_Class *klass)
