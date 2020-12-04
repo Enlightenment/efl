@@ -426,6 +426,17 @@ ICON("system-log-out", "i-system-logout")
 ICON("system-search", "i-search")
 ICON("system-run", "i-media-play")
 
+ICON("edit-clear", "i-trash")
+ICON("edit-copy", "i-copy")
+ICON("edit-cut", "i-cut")
+ICON("edit-delete", "i-trash")
+ICON("edit-find", "i-search")
+ICON("edit-find-replace", "i-search-edit")
+ICON("edit-paste", "i-paste")
+ICON("edit-redo", "i-redo")
+ICON("edit-undo", "i-undo")
+ICON("edit-select-all", "i-select-all")
+
 #undef ICON
 
 // regular icons
@@ -575,6 +586,11 @@ ICON("weather-snow", "i-cloud-snow")
 ICON("weather-fog", "i-cloud-fog")
 ICON("weather-overcast", "i-clouds-overcast")
 ICON("weather-severe-alert", "i-cloud-severe-warn")
+
+ICON("insert-image", "i-picture-landscape-plus")
+ICON("insert-link", "i-link-plus")
+ICON("insert-text", "i-text-plus")
+ICON("insert-object", "i-cube-plus")
 
 //ICON("", "")
 
