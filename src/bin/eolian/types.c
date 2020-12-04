@@ -4,6 +4,8 @@
 #include "headers.h"
 #include "docs.h"
 
+extern char* _eolian_api_symbol;
+
 static Eina_Strbuf *
 _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
                Eina_Bool full)
@@ -226,7 +228,8 @@ _err_generate(const Eolian_State *state, const Eolian_Error *err)
    if (!buf) buf = eina_strbuf_new();
    else eina_strbuf_append_char(buf, '\n');
 
-   eina_strbuf_prepend_printf(buf, "EWAPI Eina_Error %s_get(void);\n\n", fn);
+   eina_strbuf_prepend_printf(buf, "%s %s_WEAK Eina_Error %s_get(void);\n\n",
+                              _eolian_api_symbol, _eolian_api_symbol, fn);
 
    char *ufn = strdup(fn);
    eina_str_toupper(&ufn);
@@ -324,7 +327,8 @@ _source_gen_error(Eina_Strbuf *buf, const Eolian_Error *err)
      *p = '_';
    eina_str_tolower(&fn);
 
-   eina_strbuf_append_printf(buf, "EWAPI Eina_Error %s_get(void)\n{\n", fn);
+   eina_strbuf_append_printf(buf, "%s %s_WEAK Eina_Error %s_get(void)\n{\n",
+                             _eolian_api_symbol, _eolian_api_symbol, fn);
    free(fn);
 
    const char *msg = eolian_error_message_get(err);

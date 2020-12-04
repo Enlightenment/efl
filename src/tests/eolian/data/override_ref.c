@@ -1,8 +1,8 @@
-EOAPI EFL_VOID_FUNC_BODY(override_a_set);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODY(override_a_set);
 
 void _override_a_get(const Eo *obj, Override_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY_CONST(override_a_get);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODY_CONST(override_a_get);
 
 static void __eolian_override_b_set(Eo *obj EINA_UNUSED, Override_Data *pd, int idx EINA_UNUSED, float a, char b, int c)
 {
@@ -11,23 +11,23 @@ static void __eolian_override_b_set(Eo *obj EINA_UNUSED, Override_Data *pd, int 
    pd->c = c;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(override_b_set, EFL_FUNC_CALL(idx, a, b, c), int idx, float a, char b, int c);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV(override_b_set, EFL_FUNC_CALL(idx, a, b, c), int idx, float a, char b, int c);
 
 void _override_b_get(const Eo *obj, Override_Data *pd, int idx, float *a, char *b, int *c);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(override_b_get, EFL_FUNC_CALL(idx, a, b, c), int idx, float *a, char *b, int *c);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV_CONST(override_b_get, EFL_FUNC_CALL(idx, a, b, c), int idx, float *a, char *b, int *c);
 
 void _override_c_set(Eo *obj, Override_Data *pd, int idx, int c);
 
-EOAPI EFL_VOID_FUNC_BODYV(override_c_set, EFL_FUNC_CALL(idx, c), int idx, int c);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV(override_c_set, EFL_FUNC_CALL(idx, c), int idx, int c);
 
 static int __eolian_override_c_get(const Eo *obj EINA_UNUSED, Override_Data *pd EINA_UNUSED, int idx EINA_UNUSED)
 {
    return 50;
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(override_c_get, int, 50, EFL_FUNC_CALL(idx), int idx);
-EOAPI EFL_VOID_FUNC_BODY(override_foo);
+EAPI EAPI_WEAK EFL_FUNC_BODYV_CONST(override_c_get, int, 50, EFL_FUNC_CALL(idx), int idx);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODY(override_foo);
 
 static void __eolian_override_bar(Eo *obj EINA_UNUSED, Override_Data *pd EINA_UNUSED, int idx EINA_UNUSED, int *a, char **str)
 {
@@ -35,7 +35,7 @@ static void __eolian_override_bar(Eo *obj EINA_UNUSED, Override_Data *pd EINA_UN
    if (str) *str = NULL;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(override_bar, EFL_FUNC_CALL(idx, a, str), int idx, int *a, char **str);
+EAPI EAPI_WEAK EFL_VOID_FUNC_BODYV(override_bar, EFL_FUNC_CALL(idx, a, str), int idx, int *a, char **str);
 
 void _override_base_constructor(Eo *obj, Override_Data *pd);
 
