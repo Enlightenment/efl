@@ -7,8 +7,8 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-EOAPI const Efl_Event_Description _SIMPLE_FOO = EFL_EVENT_DESCRIPTION("foo");
-EOAPI const Efl_Event_Description _SIMPLE_BAR = EFL_EVENT_DESCRIPTION("bar");
+const Efl_Event_Description _SIMPLE_FOO = EFL_EVENT_DESCRIPTION("foo");
+const Efl_Event_Description _SIMPLE_BAR = EFL_EVENT_DESCRIPTION("bar");
 
 static void
 _other_call(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo *other, int times)
@@ -19,7 +19,7 @@ _other_call(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, Eo *other, int ti
      }
 }
 
-EAPI EFL_VOID_FUNC_BODYV(simple_other_call, EFL_FUNC_CALL(other, times), Eo *other, int times);
+EFL_VOID_FUNC_BODYV(simple_other_call, EFL_FUNC_CALL(other, times), Eo *other, int times);
 
 static void
 _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
@@ -28,7 +28,7 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    pd->a = a;
 }
 
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)
