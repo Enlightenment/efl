@@ -1,3 +1,4 @@
+#include <Eldbus.h>
 #include "eldbus_introspection.h"
 
 typedef struct _Eldbus_Introspection_Element_Parse_Table Eldbus_Introspection_Element_Parse_Table;
