@@ -109,6 +109,12 @@ I060("i-zoom-fit-best", "zoom-fit-best")
 I060("i-view-reset", "view-reset")
 I060("i-view-sort-ascending", "view-sort-ascending")
 I060("i-view-sort-descending", "view-sort-descending")
+I060("i-list-add", "list-add")
+I060("i-list-del", "list-del")
+I060("i-arrow-first", "arrow-first")
+I060("i-arrow-last", "arrow-last")
+I060("i-arrow-top", "arrow-top")
+I060("i-arrow-bottom", "arrow-bottom")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)

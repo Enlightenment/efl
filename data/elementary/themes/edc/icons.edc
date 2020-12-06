@@ -437,6 +437,20 @@ ICON("edit-redo", "i-redo")
 ICON("edit-undo", "i-undo")
 ICON("edit-select-all", "i-select-all")
 
+ICON("list-add", "i-list-add")
+ICON("list-remove", "i-list-del")
+
+ICON("go-home", "i-home")
+ICON("go-up", "i-arrow-u")
+ICON("go-down", "i-arrow-d")
+ICON("go-previous", "i-arrow-l")
+ICON("go-next", "i-arrow-r")
+ICON("go-top", "i-arrow-top")
+ICON("go-bottom", "i-arrow-bottom")
+ICON("go-first", "i-arrow-first")
+ICON("go-last", "i-arrow-last")
+ICON("go-jump", "i-redo")
+
 #undef ICON
 
 // regular icons
