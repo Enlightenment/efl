@@ -9,9 +9,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:export-ydpi="48"
    inkscape:export-xdpi="48"
-   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/picture-landscape-plus-040.png"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/text-plus-040.png"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
-   sodipodi:docname="picture-landscape.svg"
+   sodipodi:docname="text-plus.svg"
    viewBox="0 0 80 80"
    height="80"
    width="80"
@@ -41,9 +41,9 @@
      inkscape:window-maximized="1"
      inkscape:window-y="0"
      inkscape:window-x="0"
-     inkscape:cy="40"
+     inkscape:cy="40.143885"
      inkscape:cx="40"
-     inkscape:zoom="10.4625"
+     inkscape:zoom="10.425"
      showgrid="true"
      id="namedview4"
      inkscape:window-height="1017"
@@ -67,43 +67,10 @@
      inkscape:label="Image"
      inkscape:groupmode="layer">
     <path
-       id="path1324"
-       d="M 40,10 25,20 V 30 H 55 V 20 Z"
-       style="opacity:1;fill:none;fill-opacity:1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:#c8c8c8;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
-    <rect
-       y="20"
-       x="10"
-       height="45"
-       width="60"
-       id="rect1322"
-       style="opacity:1;fill:#805c38;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round" />
-    <circle
-       r="2"
-       cy="10"
-       cx="40"
-       id="path1326"
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <rect
-       y="24"
-       x="14"
-       height="37"
-       width="52"
-       id="rect1328"
-       style="opacity:1;fill:#63a7e2;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <path
-       id="path1330"
-       d="m 14,50 16,-15 15,15 21,3 v 8 H 14 Z"
-       style="opacity:1;fill:#1a5c24;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <path
-       id="path1332"
-       d="m 14,57 11,-6 12,4 18,-16 11,8 V 61 H 14 Z"
-       style="opacity:1;fill:#278936;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <circle
-       r="5"
-       cy="33"
-       cx="50"
-       id="path1334"
-       style="opacity:1;fill:#e5e0a6;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:#202020;fill-opacity:1;fill-rule:evenodd;stroke:#c8c8c8;stroke-width:4;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 11,10 v 18 c 0,-4 4,-8 8,-8 h 7 c 4,0 8,4 8,8 v 34 c 0,4 -4,8 -8,8 h 28 c -4,0 -8,-4 -8,-8 V 28 c 0,-4 4,-8 8,-8 h 7 c 4,0 8,4 8,8 V 10 Z"
+       id="path8144"
+       sodipodi:nodetypes="ccccccccccccccc" />
     <g
        id="g7854">
       <rect
