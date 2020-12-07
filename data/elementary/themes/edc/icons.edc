@@ -451,6 +451,11 @@ ICON("go-first", "i-arrow-first")
 ICON("go-last", "i-arrow-last")
 ICON("go-jump", "i-redo")
 
+ICON("object-flip-horizontal", "i-arrow-h2")
+ICON("object-flip-vertical", "i-arrow-v2")
+ICON("object-rotate-left", "i-undo")
+ICON("object-rotate-right", "i-redo")
+
 #undef ICON
 
 // regular icons

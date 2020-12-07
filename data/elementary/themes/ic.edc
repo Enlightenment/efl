@@ -115,6 +115,8 @@ I060("i-arrow-first", "arrow-first")
 I060("i-arrow-last", "arrow-last")
 I060("i-arrow-top", "arrow-top")
 I060("i-arrow-bottom", "arrow-bottom")
+I060("i-arrow-h2", "arrow-h2")
+I060("i-arrow-v2", "arrow-v2")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)

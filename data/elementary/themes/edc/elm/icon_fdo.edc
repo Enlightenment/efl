@@ -141,11 +141,6 @@ ICO1(CTX, "mail-reply-sender", 128)
 ICO1(CTX, "mail-send", 128)
 ICO1(CTX, "mail-send-receive", 128)
 
-ICO1(CTX, "object-flip-horizontal", 128)
-ICO1(CTX, "object-flip-vertical", 128)
-ICO1(CTX, "object-rotate-left", 128)
-ICO1(CTX, "object-rotate-right", 128)
-
 ICO1(CTX, "process-stop", 128)
 ICO1(CTX, "tools-check-spelling", 128)
 
