@@ -6384,6 +6384,7 @@ _edje_real_part_swallow_clear(Edje *ed, Edje_Real_Part *rp)
                                          rp);
    evas_object_clip_unset(rp->typedata.swallow->swallowed_object);
    evas_object_data_del(rp->typedata.swallow->swallowed_object, "\377 edje.swallowing_part");
+   evas_object_data_del(rp->typedata.swallow->swallowed_object, ".edje");
    _edje_callbacks_del(rp->typedata.swallow->swallowed_object, ed);
    _edje_callbacks_focus_del(rp->typedata.swallow->swallowed_object, ed);
    rp->typedata.swallow->swallowed_object = NULL;
