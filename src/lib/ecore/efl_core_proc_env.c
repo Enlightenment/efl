@@ -16,7 +16,7 @@
 #if defined (__FreeBSD__) || defined (__OpenBSD__)
 # include <dlfcn.h>
 static char ***_dl_environ;
-#else
+#elif !defined(_MSC_VER)
 extern char **environ;
 #endif
 
