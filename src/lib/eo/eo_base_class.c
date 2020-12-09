@@ -13,10 +13,10 @@
 #include "eo_private.h"
 #include "eina_promise_private.h"
 
-EAPI const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD =
+EO_API const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD =
     EFL_EVENT_DESCRIPTION_HOT("callback,add");
 
-EAPI const Efl_Event_Description _EFL_EVENT_CALLBACK_DEL =
+EO_API const Efl_Event_Description _EFL_EVENT_CALLBACK_DEL =
     EFL_EVENT_DESCRIPTION_HOT("callback,del");
 
 static int event_freeze_count = 0;
@@ -423,7 +423,7 @@ _efl_object_key_data_set(Eo *obj, Efl_Object_Data *pd, const char *key, const vo
    _key_generic_set(obj, pd, key, data, DATA_PTR, EINA_TRUE);
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_key_data_set, EFL_FUNC_CALL(key, data),
+EO_API EFL_VOID_FUNC_BODYV(efl_key_data_set, EFL_FUNC_CALL(key, data),
                           const char *key, const void *data);
 
 EOLIAN static void *
@@ -432,7 +432,7 @@ _efl_object_key_data_get(Eo *obj, Efl_Object_Data *pd, const char *key)
    return _key_generic_get(obj, pd, key, DATA_PTR);
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(efl_key_data_get, void *, NULL, EFL_FUNC_CALL(key),
+EO_API EFL_FUNC_BODYV_CONST(efl_key_data_get, void *, NULL, EFL_FUNC_CALL(key),
                            const char *key);
 
 EOLIAN static void
@@ -449,7 +449,7 @@ _efl_object_key_ref_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *ke
      }
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_key_ref_set, EFL_FUNC_CALL(key, objdata),
+EO_API EFL_VOID_FUNC_BODYV(efl_key_ref_set, EFL_FUNC_CALL(key, objdata),
                           const char *key, const Efl_Object *objdata);
 
 EOLIAN static Eo *
@@ -458,7 +458,7 @@ _efl_object_key_ref_get(Eo *obj, Efl_Object_Data *pd, const char *key)
    return _key_generic_get(obj, pd, key, DATA_OBJ);
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(efl_key_ref_get, Efl_Object *, NULL,
+EO_API EFL_FUNC_BODYV_CONST(efl_key_ref_get, Efl_Object *, NULL,
                            EFL_FUNC_CALL(key), const char *key);
 
 EOLIAN static void
@@ -474,7 +474,7 @@ _efl_object_key_wref_set(Eo *obj, Efl_Object_Data *pd, const char * key, const E
      }
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_key_wref_set, EFL_FUNC_CALL(key, objdata),
+EO_API EFL_VOID_FUNC_BODYV(efl_key_wref_set, EFL_FUNC_CALL(key, objdata),
                           const char *key, const Efl_Object *objdata);
 
 EOLIAN static Eo *
@@ -483,7 +483,7 @@ _efl_object_key_wref_get(Eo *obj, Efl_Object_Data *pd, const char * key)
    return _key_generic_get(obj, pd, key, DATA_OBJ_WEAK);
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(efl_key_wref_get, Efl_Object *, NULL,
+EO_API EFL_FUNC_BODYV_CONST(efl_key_wref_get, Efl_Object *, NULL,
                            EFL_FUNC_CALL(key), const char *key);
 
 EOLIAN static void
@@ -492,7 +492,7 @@ _efl_object_key_value_set(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const char *
    _key_generic_set(obj, pd, key, value, DATA_VAL, EINA_TRUE);
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_key_value_set, EFL_FUNC_CALL(key, value),
+EO_API EFL_VOID_FUNC_BODYV(efl_key_value_set, EFL_FUNC_CALL(key, value),
                           const char *key, Eina_Value *value);
 
 EOLIAN static Eina_Value *
@@ -501,7 +501,7 @@ _efl_object_key_value_get(Eo *obj, Efl_Object_Data *pd, const char *key)
    return _key_generic_get(obj, pd, key, DATA_VAL);
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(efl_key_value_get, Eina_Value *, NULL,
+EO_API EFL_FUNC_BODYV_CONST(efl_key_value_get, Eina_Value *, NULL,
                            EFL_FUNC_CALL(key), const char *key);
 
 EOLIAN static void
@@ -717,7 +717,7 @@ _efl_object_debug_name_override(Eo *obj_id EINA_UNUSED, Efl_Object_Data *pd EINA
 {
 }
 
-EAPI void
+EO_API void
 efl_del(const Eo *obj)
 {
    if (!obj) return ;
@@ -1033,7 +1033,7 @@ _efl_object_dbg_info_get(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED, E
    return;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_dbg_info_get, EFL_FUNC_CALL(root_node), Efl_Dbg_Info *root_node);
+EO_API EFL_VOID_FUNC_BODYV(efl_dbg_info_get, EFL_FUNC_CALL(root_node), Efl_Dbg_Info *root_node);
 
 /* Weak reference. */
 
@@ -1074,7 +1074,7 @@ _efl_object_wref_add(Eo *obj, Efl_Object_Data *pd, Eo **wref)
      }
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_wref_add, EFL_FUNC_CALL(wref), Efl_Object **wref);
+EO_API EFL_VOID_FUNC_BODYV(efl_wref_add, EFL_FUNC_CALL(wref), Efl_Object **wref);
 
 EOLIAN static void
 _efl_object_wref_del(Eo *obj, Efl_Object_Data *pd, Eo **wref)
@@ -1140,7 +1140,7 @@ err_wref_not_obj:
    return;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_wref_del, EFL_FUNC_CALL(wref), Efl_Object **wref);
+EO_API EFL_VOID_FUNC_BODYV(efl_wref_del, EFL_FUNC_CALL(wref), Efl_Object **wref);
 
 static inline void
 _wref_destruct(Efl_Object_Data *pd)
@@ -1163,7 +1163,7 @@ _wref_destruct(Efl_Object_Data *pd)
 /* XXX: Legacy support, remove when legacy is dead. */
 static Eina_Hash *_legacy_events_hash = NULL;
 
-EAPI const Efl_Event_Description *
+EO_API const Efl_Event_Description *
 efl_object_legacy_only_event_description_get(const char *_event_name)
 {
    Eina_Stringshare *event_name = eina_stringshare_add(_event_name);
@@ -1586,7 +1586,7 @@ err: EINA_COLD
    return EINA_FALSE;
 }
 
-EOAPI EFL_FUNC_BODYV(efl_event_callback_priority_add,
+EO_API EFL_FUNC_BODYV(efl_event_callback_priority_add,
                      Eina_Bool, 0, EFL_FUNC_CALL(desc, priority, cb, data),
                      const Efl_Event_Description *desc,
                      Efl_Callback_Priority priority,
@@ -1636,7 +1636,7 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
    return EINA_FALSE;
 }
 
-EOAPI EFL_FUNC_BODYV(efl_event_callback_del,
+EO_API EFL_FUNC_BODYV(efl_event_callback_del,
                      Eina_Bool, 0, EFL_FUNC_CALL(desc, func, user_data),
                      const Efl_Event_Description *desc,
                      Efl_Event_Cb func, const void *user_data);
@@ -1741,7 +1741,7 @@ err:
    return EINA_FALSE;
 }
 
-EOAPI EFL_FUNC_BODYV(efl_event_callback_array_priority_add,
+EO_API EFL_FUNC_BODYV(efl_event_callback_array_priority_add,
                      Eina_Bool, 0, EFL_FUNC_CALL(array, priority, data),
                      const Efl_Callback_Array_Item *array,
                      Efl_Callback_Priority priority, const void *data);
@@ -1789,7 +1789,7 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
    return EINA_FALSE;
 }
 
-EOAPI EFL_FUNC_BODYV(efl_event_callback_array_del,
+EO_API EFL_FUNC_BODYV(efl_event_callback_array_del,
                      Eina_Bool, 0, EFL_FUNC_CALL(array, user_data),
                      const Efl_Callback_Array_Item *array,
                      const void *user_data);
@@ -1973,11 +1973,11 @@ _efl_object_event_future_scheduler_get(const Eo *obj, Efl_Object_Data *pd, Efl_C
    return &sched->scheduler;
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(efl_event_future_scheduler_get,
+EO_API EFL_FUNC_BODYV_CONST(efl_event_future_scheduler_get,
                            Eina_Future_Scheduler *, 0, EFL_FUNC_CALL(array),
                            Efl_Callback_Array_Item *array);
 
-EOAPI unsigned int
+EO_API unsigned int
 _efl_object_event_callback_count(const Eo *obj EINA_UNUSED,
                                  Efl_Object_Data *pd,
                                  const Efl_Event_Description *desc)
@@ -2009,7 +2009,7 @@ _efl_object_event_callback_count(const Eo *obj EINA_UNUSED,
    return r;
 }
 
-EOAPI EFL_FUNC_BODYV_CONST(efl_event_callback_count,
+EO_API EFL_FUNC_BODYV_CONST(efl_event_callback_count,
                            unsigned int, 0, EFL_FUNC_CALL(desc),
                            const Efl_Event_Description *desc);
 
@@ -2185,7 +2185,7 @@ _efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    return _event_callback_call(obj_id, pd, desc, event_info, EINA_FALSE);
 }
 
-EOAPI EFL_FUNC_BODYV(efl_event_callback_call,
+EO_API EFL_FUNC_BODYV(efl_event_callback_call,
                      Eina_Bool, 0, EFL_FUNC_CALL(desc, event_info),
                      const Efl_Event_Description *desc, void *event_info);
 
@@ -2197,7 +2197,7 @@ _efl_object_event_callback_legacy_call(Eo *obj_id, Efl_Object_Data *pd,
    return _event_callback_call(obj_id, pd, desc, event_info, EINA_TRUE);
 }
 
-EOAPI EFL_FUNC_BODYV(efl_event_callback_legacy_call,
+EO_API EFL_FUNC_BODYV(efl_event_callback_legacy_call,
                      Eina_Bool, 0, EFL_FUNC_CALL(desc, event_info),
                      const Efl_Event_Description *desc, void *event_info);
 
@@ -2471,7 +2471,7 @@ _efl_object_composite_part_is(Eo *comp_obj_id EINA_UNUSED, Efl_Object_Data *pd)
 }
 
 /* Eo_Dbg */
-EAPI void
+EO_API void
 efl_dbg_info_free(Efl_Dbg_Info *info)
 {
    eina_value_flush(&(info->value));
@@ -2561,7 +2561,7 @@ static const Eina_Value_Type _EFL_DBG_INFO_TYPE = {
    _eo_dbg_info_pget
 };
 
-EAPI const Eina_Value_Type *EFL_DBG_INFO_TYPE = &_EFL_DBG_INFO_TYPE;
+EO_API const Eina_Value_Type *EFL_DBG_INFO_TYPE = &_EFL_DBG_INFO_TYPE;
 
 
 /* EOF event callbacks */
@@ -2597,7 +2597,7 @@ _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_futur
    return ret;
 }
 
-EOAPI Eina_Future_Desc
+EO_API Eina_Future_Desc
 efl_future_cb_from_desc(const Eo *o, const Efl_Future_Cb_Desc desc)
 {
    Efl_Future_Pending *pending = NULL;
@@ -2625,7 +2625,7 @@ efl_future_cb_from_desc(const Eo *o, const Efl_Future_Cb_Desc desc)
    return (Eina_Future_Desc){ .cb = _efl_future_cb, .data = pending, .storage = storage };
 }
 
-EOAPI Eina_Future *
+EO_API Eina_Future *
 efl_future_chain_array(Eo *obj,
                        Eina_Future *prev,
                        const Efl_Future_Cb_Desc descs[])
@@ -2783,7 +2783,7 @@ _efl_object_allow_parent_unref_get(const Eo *obj_id EINA_UNUSED, Efl_Object_Data
    return pd->allow_parent_unref;
 }
 
-EAPI void
+EO_API void
 ___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable)
 {
    // Write-only property

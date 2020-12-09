@@ -1,7 +1,7 @@
 #ifndef SIMPLE_H
 #define SIMPLE_H
 
-EAPI void simple_a_set(Eo *obj, int a);
+void simple_a_set(Eo *obj, int a);
 
 typedef struct
 {

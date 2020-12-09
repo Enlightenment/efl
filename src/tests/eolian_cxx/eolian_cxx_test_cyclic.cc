@@ -24,6 +24,9 @@ typedef Eo Cyclic1;
 typedef Eo Cyclic2;
 }
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include <cyclic1.eo.h>
 #include <cyclic2.eo.h>
 #include <cyclic1.eo.hh>

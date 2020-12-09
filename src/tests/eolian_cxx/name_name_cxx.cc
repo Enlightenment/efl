@@ -20,6 +20,9 @@
 
 #include <Eo.h>
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "name_name.eo.h"
 #include "name_name.eo.hh"
 #include "ns_name.eo.h"

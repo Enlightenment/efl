@@ -7,6 +7,9 @@
 #include <Eo.h>
 #include <Ecore.h>
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "simple.eo.h"
 
 #define MY_CLASS SIMPLE_CLASS

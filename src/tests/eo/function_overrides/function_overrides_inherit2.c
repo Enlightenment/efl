@@ -42,8 +42,8 @@ _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EAPI EFL_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
-EAPI EFL_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
+EFL_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
+EFL_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)

@@ -19,6 +19,9 @@
 
 #include <Eo.hh>
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include <a.eo.hh>
 #include <b.eo.hh>
 #include <c.eo.hh>
