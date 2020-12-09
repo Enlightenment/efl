@@ -14,6 +14,13 @@
  * @{
  */
 
+/*
+ * Define environ for native windows based on UCRT
+ *
+ */
+#ifdef _MSC_VER
+# define environ _environ
+#endif
 
 /*
  * Environment variable related functions
