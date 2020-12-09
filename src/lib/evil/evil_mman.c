@@ -92,8 +92,8 @@ mmap(void  *addr EVIL_UNUSED,
      }
 
 #ifdef _WIN64
-   low = (DWORD)((len >> 32) & 0x00000000ffffffff);
-   low = (DWORD)(len & 0x00000000ffffffff);
+   high = (DWORD)((len >> 32) & 0x00000000ffffffffULL);
+   low = (DWORD)(len & 0x00000000ffffffffULL);
 #else
    high = 0L;
    low = len;
