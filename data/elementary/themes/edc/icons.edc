@@ -611,6 +611,22 @@ ICON("insert-link", "i-link-plus")
 ICON("insert-text", "i-text-plus")
 ICON("insert-object", "i-cube-plus")
 
+ICON("folder-copy", "i-folder-copy")
+ICON("folder-move", "i-folder-move")
+ICON("folder-new", "i-folder-plus")
+
+ICON("window-new", "i-window-plus")
+ICON("process-stop", "i-gear-x")
+ICON("tools-check-spelling", "i-spelling")
+
+ICON("help-about", "i-help")
+ICON("help-contents", "i-help-contents")
+ICON("help-faq", "i-faq")
+
+ICON("view-list-compact", "i-list-compact")
+ICON("view-list-details", "i-list-details")
+ICON("view-list-icons", "i-list-icons")
+
 //ICON("", "")
 
 #undef ICON

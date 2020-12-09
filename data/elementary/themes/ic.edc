@@ -309,6 +309,21 @@ I160("i-link-plus", "link-plus")
 I160("i-text-plus", "text-plus")
 I160("i-cube-plus", "cube-plus")
 
+I160("i-folder-plus", "folder-plus")
+I160("i-folder-move", "folder-move")
+I160("i-folder-copy", "folder-copy")
+
+I160("i-window-plus", "window-plus")
+I160("i-gear-x", "gear-x")
+I160("i-spelling", "spelling")
+I160("i-help", "help")
+I160("i-help-contents", "help-contents")
+I160("i-faq", "faq")
+
+I160("i-list-icons", "list-icons")
+I160("i-list-compact", "list-compact")
+I160("i-list-details", "list-details")
+
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
 I160("i-system", "system")
