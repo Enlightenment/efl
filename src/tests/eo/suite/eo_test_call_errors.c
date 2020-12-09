@@ -72,7 +72,7 @@ test_func(void)
 
 //implementation of the test function
 
-EAPI void simple_error_test(Eo *obj);
+void simple_error_test(Eo *obj);
 EFL_VOID_FUNC_BODY_FALLBACK(simple_error_test, test_func(););
 static void
 _test(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)

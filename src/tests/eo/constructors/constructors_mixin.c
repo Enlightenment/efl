@@ -35,7 +35,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
    my_init_count--;
 }
 
-EAPI EFL_VOID_FUNC_BODYV(mixin_add_and_print, EFL_FUNC_CALL(x), int x);
+EFL_VOID_FUNC_BODYV(mixin_add_and_print, EFL_FUNC_CALL(x), int x);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)

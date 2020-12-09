@@ -8,6 +8,9 @@
 #define GENERIC_BETA
 #define GENERIC_PROTECTED
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "generic.eo.h"
 #include "generic_interface.eo.h"
 

@@ -30,7 +30,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EAPI EFL_FUNC_BODY(mixin_ab_sum_get, int, 0);
+EFL_FUNC_BODY(mixin_ab_sum_get, int, 0);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)

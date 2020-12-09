@@ -14,6 +14,9 @@ typedef struct _Type_Generation_Data Type_Generation_Data;
 
 #define MY_CLASS TYPE1_TYPE2_TYPE_GENERATION_CLASS
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "name1_name2_type_generation.eo.h"
 
 void _name1_name2_type_generation_invoidptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, void *v)
