@@ -324,6 +324,18 @@ I160("i-list-icons", "list-icons")
 I160("i-list-compact", "list-compact")
 I160("i-list-details", "list-details")
 
+I160("i-mail", "mail")
+I160("i-mail-arrow-u", "mail-arrow-u")
+I160("i-mail-arrow-l", "mail-arrow-l")
+I160("i-mail-arrow-r", "mail-arrow-r")
+I160("i-mail-arrow-in-d", "mail-arrow-in-d")
+I160("i-mail-arrow-heads-l", "mail-arrow-heads-l")
+I160("i-mail-opened", "mail-opened")
+I160("i-mail-pencil", "mail-pencil")
+I160("i-mail-bug", "mail-bug")
+I160("i-mail-bug-no", "mail-bug-no")
+I160("i-mail-exclam", "mail-exclam")
+
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)
 I160("i-system", "system")

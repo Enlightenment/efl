@@ -627,6 +627,18 @@ ICON("view-list-compact", "i-list-compact")
 ICON("view-list-details", "i-list-details")
 ICON("view-list-icons", "i-list-icons")
 
+ICON("mail-forward", "i-mail-arrow-r")
+ICON("mail-mark-important", "i-mail-exclam")
+ICON("mail-mark-junk", "i-mail-bug")
+ICON("mail-mark-notjunk", "i-mail-bug-no")
+ICON("mail-mark-read", "i-mail-opened")
+ICON("mail-mark-unread", "i-mail")
+ICON("mail-message-new", "i-mail-pencil")
+ICON("mail-reply-all", "i-mail-arrow-heads-l")
+ICON("mail-reply-sender", "i-mail-arrow-l")
+ICON("mail-send", "i-mail-arrow-u")
+ICON("mail-send-receive", "i-mail-arrow-in-d")
+
 //ICON("", "")
 
 #undef ICON
