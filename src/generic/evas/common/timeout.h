@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 void timeout_init(int seconds);
+void timeout_func_set(void (*func) (void));
 
 #ifdef __cplusplus
 }

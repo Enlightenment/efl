@@ -1,3 +1,6 @@
+#include <stdio.h>
+static void (*timeout_func) (void) = NULL;
+
 #ifdef _WIN32
 # include <stdio.h>
 # include <windows.h>
@@ -8,6 +11,7 @@ _timeout(void *arg)
 {
    int s = (int)(uintptr_t)arg;
    Sleep(s * 1000);
+   if (timeout_func) timeout_func();
    _Exit(-1);
    _endthreadex(0);
    return 0;
@@ -26,6 +30,7 @@ timeout_init(int seconds)
 static void
 _timeout(int val)
 {
+   if (timeout_func) timeout_func();
    _exit(-1);
    if (val) return;
 }
@@ -37,3 +42,9 @@ timeout_init(int seconds)
    alarm(seconds);
 }
 #endif
+
+void
+timeout_func_set(void (*func) (void))
+{
+   timeout_func = func;
+}
