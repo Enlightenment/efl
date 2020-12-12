@@ -111,19 +111,6 @@ ICO1(CTX, "document-print-preview", 128)
 ICO1(CTX, "document-revert", 128)
 ICO1(CTX, "document-export", 128) /* */
 ICO1(CTX, "document-import", 128) /* */
-
-ICO1(CTX, "format-indent-less", 128)
-ICO1(CTX, "format-indent-more", 128)
-ICO1(CTX, "format-justify-center", 128)
-ICO1(CTX, "format-justify-fill", 128)
-ICO1(CTX, "format-justify-left", 128)
-ICO1(CTX, "format-justify-right", 128)
-ICO1(CTX, "format-text-direction-ltr", 128)
-ICO1(CTX, "format-text-direction-rtl", 128)
-ICO1(CTX, "format-text-bold", 128)
-ICO1(CTX, "format-text-italic", 128)
-ICO1(CTX, "format-text-underline", 128)
-ICO1(CTX, "format-text-strikethrough", 128)
 #undef CTX
 
 ////  status  /////////////////////////////////////////////////////////////

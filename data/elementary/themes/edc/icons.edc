@@ -639,6 +639,19 @@ ICON("mail-reply-sender", "i-mail-arrow-l")
 ICON("mail-send", "i-mail-arrow-u")
 ICON("mail-send-receive", "i-mail-arrow-in-d")
 
+ICON("format-indent-less", "i-format-indent-less")
+ICON("format-indent-more", "i-format-indent-more")
+ICON("format-justify-center", "i-format-justify-center")
+ICON("format-justify-left", "i-format-justify-left")
+ICON("format-justify-right", "i-format-justify-right")
+ICON("format-justify-fill", "i-format-justify-fill")
+ICON("format-text-direction-ltr", "i-format-text-ltr")
+ICON("format-text-direction-rtl", "i-format-text-rtl")
+ICON("format-text-bold", "i-format-bold")
+ICON("format-text-italic", "i-format-italic")
+ICON("format-text-underline", "i-format-underline")
+ICON("format-text-strikethrough", "i-format-strikethrough")
+
 //ICON("", "")
 
 #undef ICON
