@@ -418,6 +418,7 @@ ICON("view-sort-ascending", "i-view-sort-ascending")
 ICON("view-sort-descending", "i-view-sort-descending")
 
 ICON("window-close", "i-close")
+ICON("application-exit", "i-close")
 
 ICON("system-shutdown", "i-system-shutdown")
 ICON("system-reboot", "i-system-restart")
@@ -651,6 +652,8 @@ ICON("format-text-bold", "i-format-bold")
 ICON("format-text-italic", "i-format-italic")
 ICON("format-text-underline", "i-format-underline")
 ICON("format-text-strikethrough", "i-format-strikethrough")
+
+ICON("address-book-new", "i-addressbook")
 
 //ICON("", "")
 
