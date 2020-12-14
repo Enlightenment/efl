@@ -38,8 +38,8 @@ static Eina_Bool _eo_trash_bypass = EINA_FALSE;
 #define EFL_OBJECT_OP_IDS_FIRST 1
 
 /* Used inside the class_get functions of classes, see #EFL_DEFINE_CLASS */
-EAPI Eina_Lock _efl_class_creation_lock;
-EAPI unsigned int _efl_object_init_generation = 1;
+EO_API Eina_Lock _efl_class_creation_lock;
+EO_API unsigned int _efl_object_init_generation = 1;
 int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
 static unsigned int efl_del_api_generation = 0;
@@ -524,19 +524,19 @@ err_obj_hierarchy:
    return NULL;
 }
 
-EAPI Eo *
+EO_API Eo *
 efl_super(const Eo *eo_id, const Efl_Class *cur_klass)
 {
    return _efl_super_cast(eo_id, cur_klass, EINA_TRUE);
 }
 
-EAPI Eo *
+EO_API Eo *
 efl_cast(const Eo *eo_id, const Efl_Class *cur_klass)
 {
    return _efl_super_cast(eo_id, cur_klass, EINA_FALSE);
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 _efl_object_call_resolve(Eo *eo_id, const char *func_name, Efl_Object_Op_Call_Data *call, Efl_Object_Op op, const char *file, int line)
 {
    const _Efl_Class *klass, *main_klass;
@@ -692,7 +692,7 @@ on_null:
    return EINA_FALSE;
 }
 
-EAPI void
+EO_API void
 _efl_object_call_end(Efl_Object_Op_Call_Data *call)
 {
    if (EINA_LIKELY(!!call->obj))
@@ -735,7 +735,7 @@ _efl_object_api_op_id_get_internal(const void *api_func)
 }
 
 /* LEGACY, should be removed before next release */
-EAPI Efl_Object_Op
+EO_API Efl_Object_Op
 _efl_object_api_op_id_get(const void *api_func)
 {
    Efl_Object_Op op = _efl_object_api_op_id_get_internal(api_func);
@@ -748,7 +748,7 @@ _efl_object_api_op_id_get(const void *api_func)
    return op;
 }
 
-EAPI Efl_Object_Op
+EO_API Efl_Object_Op
 _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *api_func_name, const char *file, int line)
 {
    Efl_Object_Op op;
@@ -886,7 +886,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Property_Reflection_Ops *reflection_table)
 {
    EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
@@ -1092,13 +1092,13 @@ err_parent:
    return NULL;
 }
 
-EAPI Eo *
+EO_API Eo *
 _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
 {
    return _efl_add_internal_start_do(file, line, klass_id, parent_id, ref, is_fallback, NULL, NULL);
 }
 
-EAPI Eo * _efl_add_internal_start_bindings(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
+EO_API Eo * _efl_add_internal_start_bindings(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
 {
    return _efl_add_internal_start_do(file, line, klass_id, parent_id, ref, is_fallback, substitute_ctor, sub_ctor_data);
 }
@@ -1145,7 +1145,7 @@ cleanup:
    return NULL;
 }
 
-EAPI Eo *
+EO_API Eo *
 _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
 {
    if (!eo_id) return NULL;
@@ -1165,7 +1165,7 @@ _efl_add_end(Eo *eo_id, Eina_Bool is_ref, Eina_Bool is_fallback)
    return ret;
 }
 
-EAPI void
+EO_API void
 efl_reuse(const Eo *eo_id)
 {
    Eo *obj = (Eo *) eo_id;
@@ -1248,7 +1248,7 @@ _eo_free(_Eo_Object *obj, Eina_Bool manual_free EINA_UNUSED)
 }
 /*****************************************************************************/
 
-EAPI const Efl_Class *
+EO_API const Efl_Class *
 efl_class_get(const Eo *eo_id)
 {
    const Efl_Class *klass;
@@ -1270,7 +1270,7 @@ err_obj:
    return NULL;
 }
 
-EAPI const char *
+EO_API const char *
 efl_class_name_get(const Efl_Class *eo_id)
 {
    const _Efl_Class *klass;
@@ -1294,7 +1294,7 @@ err_obj:
    return NULL;
 }
 
-EAPI size_t
+EO_API size_t
 efl_class_memory_size_get(const Efl_Class *eo_id)
 {
    const _Efl_Class *klass;
@@ -1561,7 +1561,7 @@ _eo_classes_expand(void)
    _eo_classes = (_Efl_Class **)ptr;
 }
 
-EAPI const Efl_Class *
+EO_API const Efl_Class *
 efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...)
 {
    _Efl_Class *klass;
@@ -1807,7 +1807,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    return _eo_class_id_get(klass);
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_object_override(Eo *eo_id, const Efl_Object_Ops *ops)
 {
    EO_OBJ_POINTER_RETURN_VAL(eo_id, obj, EINA_FALSE);
@@ -1864,7 +1864,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 {
    Efl_Id_Domain domain;
@@ -1979,7 +1979,7 @@ err: EINA_COLD
    return EINA_FALSE;
 }
 
-EAPI Eo *
+EO_API Eo *
 efl_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
 {
    efl_ref(obj_id);
@@ -2004,7 +2004,7 @@ efl_xref_internal(const char *file, int line, Eo *obj_id, const Eo *ref_obj_id)
    return obj_id;
 }
 
-EAPI void
+EO_API void
 efl_xunref(Eo *obj_id, const Eo *ref_obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -2034,7 +2034,7 @@ efl_xunref(Eo *obj_id, const Eo *ref_obj_id)
    efl_unref(obj_id);
 }
 
-EAPI Eo *
+EO_API Eo *
 efl_ref(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, (Eo *)obj_id);
@@ -2052,7 +2052,7 @@ efl_ref(const Eo *obj_id)
    return (Eo *)obj_id;
 }
 
-EAPI void
+EO_API void
 efl_unref(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -2114,7 +2114,7 @@ efl_unref(const Eo *obj_id)
    EO_OBJ_DONE(obj_id);
 }
 
-EAPI int
+EO_API int
 efl_ref_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
@@ -2124,7 +2124,7 @@ efl_ref_count(const Eo *obj_id)
    return ref;
 }
 
-EAPI int
+EO_API int
 ___efl_ref2_count(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, 0);
@@ -2134,7 +2134,7 @@ ___efl_ref2_count(const Eo *obj_id)
    return ref;
 }
 
-EAPI void
+EO_API void
 ___efl_ref2_reset(const Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -2143,7 +2143,7 @@ ___efl_ref2_reset(const Eo *obj_id)
 }
 
 
-EAPI void
+EO_API void
 efl_del_intercept_set(Eo *obj_id, Efl_Del_Intercept del_intercept_func)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -2151,7 +2151,7 @@ efl_del_intercept_set(Eo *obj_id, Efl_Del_Intercept del_intercept_func)
    EO_OBJ_DONE(obj_id);
 }
 
-EAPI Efl_Del_Intercept
+EO_API Efl_Del_Intercept
 efl_del_intercept_get(const Eo *obj_id)
 {
    Efl_Del_Intercept func;
@@ -2282,7 +2282,7 @@ _efl_data_xunref_internal(_Eo_Object *obj EINA_UNUSED, void *data EINA_UNUSED, c
 #endif
 }
 
-EAPI void *
+EO_API void *
 efl_data_scope_get(const Eo *obj_id, const Efl_Class *klass_id)
 {
    void *ret = NULL;
@@ -2310,7 +2310,7 @@ err_klass:
    return ret;
 }
 
-EAPI void *
+EO_API void *
 efl_data_scope_safe_get(const Eo *obj_id, const Efl_Class *klass_id)
 {
    void *ret = NULL;
@@ -2335,7 +2335,7 @@ err_klass:
    return ret;
 }
 
-EAPI void *
+EO_API void *
 efl_data_xref_internal(const char *file, int line, const Eo *obj_id, const Efl_Class *klass_id, const Eo *ref_obj_id)
 {
    void *ret = NULL;
@@ -2378,7 +2378,7 @@ err:
 #endif
 }
 
-EAPI void
+EO_API void
 efl_data_xunref_internal(const Eo *obj_id, void *data, const Eo *ref_obj_id)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -2403,7 +2403,7 @@ _eo_table_del_cb(void *in)
  * This is used by the gdb debug helper script */
 Eo_Id_Data *_eo_gdb_main_domain = NULL;
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_object_init(void)
 {
    const char *log_dom = "eo";
@@ -2498,7 +2498,7 @@ efl_object_init(void)
    return efl_klass && efl_object;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_object_shutdown(void)
 {
    size_t i;
@@ -2569,21 +2569,21 @@ efl_object_shutdown(void)
 }
 
 
-EAPI Efl_Id_Domain
+EO_API Efl_Id_Domain
 efl_domain_get(void)
 {
    Eo_Id_Data *data = _eo_table_data_get();
    return data->local_domain;
 }
 
-EAPI Efl_Id_Domain
+EO_API Efl_Id_Domain
 efl_domain_current_get(void)
 {
    Eo_Id_Data *data = _eo_table_data_get();
    return data->domain_stack[data->stack_top];
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_domain_switch(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
@@ -2630,21 +2630,21 @@ _efl_domain_pop(Eo_Id_Data *data)
    if (data->stack_top > 0) data->stack_top--;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_domain_current_push(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
    return _efl_domain_push(data, domain);
 }
 
-EAPI void
+EO_API void
 efl_domain_current_pop(void)
 {
    Eo_Id_Data *data = _eo_table_data_get();
    _efl_domain_pop(data);
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_domain_current_set(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
@@ -2657,14 +2657,14 @@ efl_domain_current_set(Efl_Id_Domain domain)
    return EINA_TRUE;
 }
 
-EAPI Efl_Domain_Data *
+EO_API Efl_Domain_Data *
 efl_domain_data_get(void)
 {
    Eo_Id_Data *data = _eo_table_data_get();
    return (Efl_Domain_Data *)data;
 }
 
-EAPI Efl_Id_Domain
+EO_API Efl_Id_Domain
 efl_domain_data_adopt(Efl_Domain_Data *data_in)
 {
    Eo_Id_Data *data = _eo_table_data_get();
@@ -2692,7 +2692,7 @@ efl_domain_data_adopt(Efl_Domain_Data *data_in)
    return data->domain_stack[data->stack_top];
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_domain_data_return(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
@@ -2712,7 +2712,7 @@ efl_domain_data_return(Efl_Id_Domain domain)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_compatible(const Eo *obj, const Eo *obj_target)
 {
    Efl_Id_Domain domain1 = ((Eo_Id)obj >> SHIFT_DOMAIN) & MASK_DOMAIN;
@@ -2723,7 +2723,7 @@ efl_compatible(const Eo *obj, const Eo *obj_target)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_class_override_register(const Efl_Class *klass, const Efl_Class *override)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
@@ -2737,7 +2737,7 @@ efl_class_override_register(const Efl_Class *klass, const Efl_Class *override)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override)
 {
    const Efl_Class *set;
@@ -2750,7 +2750,7 @@ efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override)
    return eina_hash_del_by_key(class_overrides, &klass);
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_destructed_is(const Eo *obj_id)
 {
    Eina_Bool is;
@@ -2760,7 +2760,7 @@ efl_destructed_is(const Eo *obj_id)
    return is;
 }
 
-EAPI void
+EO_API void
 efl_manual_free_set(Eo *obj_id, Eina_Bool manual_free)
 {
    EO_OBJ_POINTER_RETURN(obj_id, obj);
@@ -2768,7 +2768,7 @@ efl_manual_free_set(Eo *obj_id, Eina_Bool manual_free)
    EO_OBJ_DONE(obj_id);
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_manual_free(Eo *obj_id)
 {
    EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_FALSE);
@@ -2792,7 +2792,7 @@ err:
    return EINA_FALSE;
 }
 
-EAPI const char *
+EO_API const char *
 efl_debug_name_get(const Eo *obj_id)
 {
    const char *override = "";
@@ -2852,7 +2852,7 @@ efl_debug_name_get(const Eo *obj_id)
    return eina_slstr_strbuf_new(sb);
 }
 
-EAPI int
+EO_API int
 efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_Array_Item *b)
 {
    if (a->desc == b->desc) return 0;
@@ -2982,7 +2982,7 @@ _eo_log_obj_entry_show(const Eo_Log_Obj_Entry *entry, int log_level, const char 
                   entry->timestamp - _eo_log_time_start, now - entry->timestamp,
                   entry->bt_hits);
 
-   // Skip EAPI and _eo_log_obj_ref_op()
+   // Skip EO_API and _eo_log_obj_ref_op()
    for (i = 2; i < entry->bt_size; i++)
      {
 #ifdef HAVE_DLADDR
@@ -3525,7 +3525,7 @@ _eo_classes_iterator_free(Eina_Iterator *it)
    free(it);
 }
 
-EAPI Eina_Iterator *
+EO_API Eina_Iterator *
 eo_classes_iterator_new(void)
 {
    _Eo_Classes_Iterator *it;
@@ -3602,7 +3602,7 @@ _eo_objects_iterator_free(Eina_Iterator *it)
    free(it);
 }
 
-EAPI Eina_Iterator *
+EO_API Eina_Iterator *
 eo_objects_iterator_new(void)
 {
    _Eo_Objects_Iterator *it;
@@ -3717,7 +3717,7 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_OBJECT = {
   .pget = _eo_value_pget
 };
 
-EOAPI const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT = &_EINA_VALUE_TYPE_OBJECT;
+EO_API const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT = &_EINA_VALUE_TYPE_OBJECT;
 
 static const Efl_Object_Property_Reflection*
 _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
@@ -3751,7 +3751,7 @@ _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
    return NULL;
 }
 
-EAPI Eina_Error
+EO_API Eina_Error
 efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value value)
 {
    Eina_Error r = EINA_ERROR_NOT_IMPLEMENTED;
@@ -3772,7 +3772,7 @@ efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value va
    return r;
 }
 
-EAPI Eina_Value
+EO_API Eina_Value
 efl_property_reflection_get(const Eo *obj_id, const char *property_name)
 {
    Eina_Value r = eina_value_error_init(EINA_ERROR_NOT_IMPLEMENTED);
@@ -3789,7 +3789,7 @@ efl_property_reflection_get(const Eo *obj_id, const char *property_name)
    return r;
 }
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_property_reflection_exist(Eo *obj_id, const char *property_name)
 {
    Eina_Bool r = EINA_FALSE;
@@ -3802,7 +3802,7 @@ efl_property_reflection_exist(Eo *obj_id, const char *property_name)
    return r;
 }
 
-EAPI Efl_Class_Type
+EO_API Efl_Class_Type
 efl_class_type_get(const Efl_Class *klass_id)
 {
    EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EFL_CLASS_TYPE_INVALID);
@@ -3811,7 +3811,7 @@ efl_class_type_get(const Efl_Class *klass_id)
 }
 
 
-EAPI Eina_Bool
+EO_API Eina_Bool
 efl_ownable_get(const Eo *obj)
 {
    int ref = efl_ref_count(obj);

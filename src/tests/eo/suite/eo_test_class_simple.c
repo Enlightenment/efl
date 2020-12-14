@@ -7,10 +7,10 @@
 
 #define MY_CLASS SIMPLE_CLASS
 
-EAPI const Efl_Event_Description _EV_A_CHANGED =
+const Efl_Event_Description _EV_A_CHANGED =
         EFL_EVENT_DESCRIPTION("a,changed");
 
-EAPI const Efl_Event_Description _EV_A_CHANGED2 =
+const Efl_Event_Description _EV_A_CHANGED2 =
         EFL_EVENT_DESCRIPTION("a,changed");
 
 static void

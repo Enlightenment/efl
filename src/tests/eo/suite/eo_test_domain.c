@@ -8,7 +8,7 @@
 
 #define MY_CLASS DOMAIN_CLASS
 
-EAPI const Efl_Event_Description _EV_DOMAIN_A_CHANGED =
+const Efl_Event_Description _EV_DOMAIN_A_CHANGED =
         EFL_EVENT_DESCRIPTION("domain,a,changed");
 
 static void

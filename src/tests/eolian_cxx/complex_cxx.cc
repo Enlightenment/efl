@@ -21,6 +21,9 @@
 #include <Eina.h>
 #include <Eo.h>
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "complex.eo.h"
 #include "complex.eo.hh"
 

@@ -11,9 +11,9 @@ typedef struct
    int a;
 } Private_Data;
 
-EAPI const Efl_Event_Description _EV_A_CHANGED =
+const Efl_Event_Description _EV_A_CHANGED =
         EFL_EVENT_DESCRIPTION("a,changed");
-EAPI const Efl_Event_Description _EV_RESTART =
+const Efl_Event_Description _EV_RESTART =
         EFL_EVENT_DESCRIPTION_RESTART("restart");
 
 #define MY_CLASS SIMPLE_CLASS
@@ -69,7 +69,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
    return obj;
 }
 
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
 
 static Eina_Bool
 _class_initializer(Efl_Class *klass)

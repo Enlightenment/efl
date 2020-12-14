@@ -130,7 +130,7 @@ _eo_call_stack_get_thread(void)
    return stack;
 }
 
-EAPI Eo *
+EO_API Eo *
 _efl_added_get(void)
 {
    return _EFL_OBJECT_CALL_STACK_GET()->frame_ptr->obj;

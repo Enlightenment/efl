@@ -4,6 +4,9 @@
 
 #include <Eo.h>
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include "a.eo.h"
 #include "b.eo.h"
 

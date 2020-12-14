@@ -11,11 +11,11 @@
 
 //Class definition with one event
 
-EWAPI const Efl_Class *efl_test_event_class_get(void) EINA_CONST;
+EO_API_WEAK const Efl_Class *efl_test_event_class_get(void) EINA_CONST;
 
-EWAPI extern const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER;
-EWAPI extern const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE;
-EWAPI extern const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_CLAMP_TEST;
+EO_API_WEAK extern const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER;
+EO_API_WEAK extern const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE;
+EO_API_WEAK extern const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_CLAMP_TEST;
 
 #define EFL_TEST_EVENT_EVENT_TESTER (&(_EFL_TEST_EVENT_EVENT_TESTER))
 #define EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE (&(_EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE))
@@ -232,13 +232,13 @@ void eo_test_event(TCase *tc)
 
 //class implementation
 
-EWAPI const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER =
+EO_API_WEAK const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER =
    EFL_EVENT_DESCRIPTION("tester");
 
-EWAPI const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE =
+EO_API_WEAK const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_SUBSCRIBE =
    EFL_EVENT_DESCRIPTION("tester");
 
-EWAPI const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_CLAMP_TEST =
+EO_API_WEAK const Efl_Event_Description _EFL_TEST_EVENT_EVENT_TESTER_CLAMP_TEST =
    EFL_EVENT_DESCRIPTION("tester");
 
 

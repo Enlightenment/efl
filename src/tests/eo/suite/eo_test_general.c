@@ -66,7 +66,7 @@ _simple_obj_override_a_double_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    simple_a_set(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS), 2 * a);
 }
 
-EAPI int test_class_beef_get(const Efl_Object *obj);
+int test_class_beef_get(const Efl_Object *obj);
 
 EFL_FUNC_BODY_CONST(test_class_beef_get, int, 0)
 

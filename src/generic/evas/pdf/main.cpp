@@ -18,6 +18,11 @@
 #include "shmfile.h"
 #include "timeout.h"
 
+#ifndef _WIN32
+# include <unistd.h>
+# include <signal.h>
+#endif
+
 #define DATA32 unsigned int
 typedef char RGB24[3];
 
@@ -192,11 +197,43 @@ void poppler_load_image(int size_w EINA_UNUSED, int size_h EINA_UNUSED)
    delete renderer;
 }
 
+static Eina_Tmpstr *tmpdir = NULL;
+static Eina_Tmpstr *generated = NULL;
+
+static void
+tmp_cleanup(void)
+{
+   if (tmpdir)
+     {
+        if (generated)
+          {
+             unlink(generated);
+          }
+        if (rmdir(tmpdir) < 0)
+          {
+             D("Failed to delete tmpdir %s\n", tmpdir);
+          }
+        eina_tmpstr_del(tmpdir);
+        tmpdir = NULL;
+        if (generated)
+          {
+             eina_tmpstr_del(generated);
+             generated = NULL;
+          }
+     }
+}
+
+static void
+_crash(int val)
+{
+   D("Crash\n");
+   tmp_cleanup();
+   _exit(-1 | val);
+}
+
 int
 main(int argc, char **argv)
 {
-   Eina_Tmpstr *tmpdir = NULL;
-   Eina_Tmpstr *generated = NULL;
    char *extension;
    char *dir;
    char *file;
@@ -204,6 +241,7 @@ main(int argc, char **argv)
    int size_w = 0, size_h = 0;
    int head_only = 0;
    int page_num = 0;
+   int ret = 0;
 
    if (argc < 2) return -1;
    // file is ALWAYS first arg, other options come after
@@ -247,6 +285,18 @@ main(int argc, char **argv)
    dir = dirname(argv[0]);
    if (extension && dir && strcmp(extension, ".pdf"))
      {
+#ifndef _WIN32
+        signal(SIGSEGV, _crash);
+        signal(SIGBUS, _crash);
+        signal(SIGFPE, _crash);
+        signal(SIGABRT, _crash);
+        signal(SIGILL, _crash);
+        signal(SIGSYS, _crash);
+        signal(SIGINT, _crash);
+        signal(SIGTERM, _crash);
+        signal(SIGQUIT, _crash);
+#endif
+        timeout_func_set(tmp_cleanup);
         if (eina_file_mkdtemp("evas_generic_pdf_loaderXXXXXX", &tmpdir))
           {
              Eina_Strbuf *tmp;
@@ -270,6 +320,7 @@ main(int argc, char **argv)
                   pclose(cmd);
 
                   filename = basename(file);
+
                   generated = eina_tmpstr_add_length(filename, strlen(filename) - strlen(extension));
 
                   eina_strbuf_append_printf(tmp, "%s/%s.pdf", tmpdir, generated);
@@ -291,12 +342,15 @@ main(int argc, char **argv)
      }
 
    // Let's force a timeout if things go wrong
-   timeout_init(10);
+   timeout_init(30);
 
    // Now process the pdf (or the generated pdf)
    D("poppler_file_init\n");
    if (!poppler_init(file, page_num, size_w, size_h))
-     return -1;
+     {
+        goto cleanup;
+        ret = 1;
+     }
    D("poppler_file_init done\n");
 
    D("dpi2...: %f\n", dpi);
@@ -338,18 +392,9 @@ main(int argc, char **argv)
      printf("done\n");
 
    poppler_shutdown();
-
-   if (tmpdir)
-     {
-        if (generated) unlink(generated);
-        if (rmdir(tmpdir) < 0)
-          {
-             D("Failed to delete tmpdir %s\n", tmpdir);
-          }
-
-        eina_tmpstr_del(tmpdir);
-        eina_tmpstr_del(generated);
-     }
+cleanup:
+   timeout_func_set(NULL);
+   tmp_cleanup();
    fflush(stdout);
-   return 0;
+   return ret;
 }

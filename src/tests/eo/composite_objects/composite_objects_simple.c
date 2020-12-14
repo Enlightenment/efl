@@ -5,7 +5,7 @@
 #include "Eo.h"
 #include "composite_objects_simple.h"
 
-EAPI const Efl_Event_Description _EV_A_CHANGED =
+const Efl_Event_Description _EV_A_CHANGED =
         EFL_EVENT_DESCRIPTION("a,changed");
 
 #define MY_CLASS SIMPLE_CLASS
@@ -27,73 +27,73 @@ _a_get(Eo *obj EINA_UNUSED, void *class_data)
    return pd->a;
 }
 
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
-EAPI EFL_FUNC_BODY(simple_a_get, int, 0);
+EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
+EFL_FUNC_BODY(simple_a_get, int, 0);
 
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set1, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set2, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set3, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set4, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set5, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set6, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set7, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set8, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set9, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set10, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set11, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set12, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set13, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set14, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set15, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set16, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set17, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set18, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set19, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set20, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set21, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set22, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set23, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set24, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set25, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set26, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set27, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set28, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set29, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set30, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set31, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_set32, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get1, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get2, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get3, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get4, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get5, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get6, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get7, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get8, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get9, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get10, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get11, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get12, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get13, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get14, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get15, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get16, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get17, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get18, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get19, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get20, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get21, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get22, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get23, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get24, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get25, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get26, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get27, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get28, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get29, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get30, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get31, EFL_FUNC_CALL(a), int a);
-EAPI EFL_VOID_FUNC_BODYV(simple_a_get32, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set1, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set2, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set3, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set4, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set5, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set6, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set7, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set8, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set9, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set10, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set11, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set12, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set13, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set14, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set15, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set16, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set17, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set18, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set19, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set20, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set21, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set22, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set23, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set24, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set25, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set26, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set27, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set28, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set29, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set30, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set31, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_set32, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get1, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get2, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get3, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get4, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get5, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get6, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get7, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get8, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get9, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get10, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get11, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get12, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get13, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get14, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get15, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get16, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get17, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get18, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get19, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get20, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get21, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get22, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get23, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get24, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get25, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get26, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get27, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get28, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get29, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get30, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get31, EFL_FUNC_CALL(a), int a);
+EFL_VOID_FUNC_BODYV(simple_a_get32, EFL_FUNC_CALL(a), int a);
 
 
 static Eina_Bool

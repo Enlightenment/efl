@@ -20,6 +20,9 @@
 #include <Eo.h>
 #include <Ecore.h>
 
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
 #include <simple.eo.hh>
 
 #include "eolian_cxx_suite.h"
