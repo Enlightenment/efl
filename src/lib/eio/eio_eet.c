@@ -307,7 +307,7 @@ _eio_eet_read_cipher_end(void *data, Ecore_Thread *thread EINA_UNUSED)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_open(const char *filename,
              Eet_File_Mode mode,
 	     Eio_Eet_Open_Cb eet_cb,
@@ -339,7 +339,7 @@ eio_eet_open(const char *filename,
    return &eet->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_close(Eet_File *ef,
 	      Eio_Done_Cb done_cb,
 	      Eio_Eet_Error_Cb error_cb,
@@ -369,7 +369,7 @@ eio_eet_close(Eet_File *ef,
    return &eet->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_flush(Eet_File *ef,
 	      Eio_Done_Cb done_cb,
 	      Eio_Eet_Error_Cb error_cb,
@@ -399,7 +399,7 @@ eio_eet_flush(Eet_File *ef,
    return &eet->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_sync(Eet_File *ef,
              Eio_Done_Cb done_cb,
              Eio_Eet_Error_Cb error_cb,
@@ -408,7 +408,7 @@ eio_eet_sync(Eet_File *ef,
    return eio_eet_flush(ef, done_cb, error_cb, data);
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_data_write_cipher(Eet_File *ef,
 			  Eet_Data_Descriptor *edd,
 			  const char *name,
@@ -450,7 +450,7 @@ eio_eet_data_write_cipher(Eet_File *ef,
    return &ew->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_data_read_cipher(Eet_File *ef,
 			 Eet_Data_Descriptor *edd,
 			 const char *name,
@@ -488,7 +488,7 @@ eio_eet_data_read_cipher(Eet_File *ef,
    return &er->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_data_image_write_cipher(Eet_File *ef,
 				const char *name,
 				const char *cipher_key,
@@ -537,7 +537,7 @@ eio_eet_data_image_write_cipher(Eet_File *ef,
    return &eiw->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_read_direct(Eet_File *ef,
 		    const char *name,
 		    Eio_Done_Data_Cb done_cb,
@@ -572,7 +572,7 @@ eio_eet_read_direct(Eet_File *ef,
    return &er->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_read_cipher(Eet_File *ef,
 		    const char *name,
 		    const char *cipher_key,
@@ -607,7 +607,7 @@ eio_eet_read_cipher(Eet_File *ef,
    return &er->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_eet_write_cipher(Eet_File *ef,
 		     const char *name,
 		     void *write_data,

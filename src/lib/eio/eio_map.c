@@ -179,7 +179,7 @@ _eio_file_map_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_open(const char *name, Eina_Bool shared,
 	      Eio_Open_Cb open_cb,
 	      Eio_Error_Cb error_cb,
@@ -211,7 +211,7 @@ eio_file_open(const char *name, Eina_Bool shared,
    return &map->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_close(Eina_File *f,
                Eio_Done_Cb done_cb,
                Eio_Error_Cb error_cb,
@@ -241,7 +241,7 @@ eio_file_close(Eina_File *f,
    return &map->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_map_all(Eina_File *f,
                  Eina_File_Populate rule,
                  Eio_Filter_Map_Cb filter_cb,
@@ -277,7 +277,7 @@ eio_file_map_all(Eina_File *f,
    return &map->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_map_new(Eina_File *f,
                  Eina_File_Populate rule,
                  unsigned long int offset,

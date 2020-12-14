@@ -18,6 +18,7 @@ foreach eo_file : pub_eo_files
                            meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EIO_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -72,7 +73,7 @@ eio_lib = library('eio',
     dependencies: eio_deps + eio_pub_deps + eio_ext_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DEIO_BUILD'],
     link_args : linker_args,
     version : meson.project_version()
 )
