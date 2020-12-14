@@ -573,7 +573,7 @@ _eio_file_internal_ls(const char *dir,
    return &async->ls.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_ls(const char *dir,
 	    Eio_Filter_Cb filter_cb,
 	    Eio_Main_Cb main_cb,
@@ -641,7 +641,7 @@ _eio_file_direct_internal_ls(const char *dir,
    return &async->ls.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_direct_ls(const char *dir,
 		   Eio_Filter_Direct_Cb filter_cb,
 		   Eio_Main_Direct_Cb main_cb,
@@ -709,7 +709,7 @@ _eio_file_stat_internal_ls(const char *dir,
    return &async->ls.common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_stat_ls(const char *dir,
                  Eio_Filter_Direct_Cb filter_cb,
                  Eio_Main_Direct_Cb main_cb,
@@ -734,7 +734,7 @@ _eio_file_stat_ls(const char *dir,
    return _eio_file_stat_internal_ls(dir, NULL, NULL, main_internal_cb, done_cb, error_cb, data);
 }
 
-EAPI Eina_Bool
+EIO_API Eina_Bool
 eio_file_cancel(Eio_File *ls)
 {
    if (!ls) return EINA_FALSE;
@@ -748,21 +748,21 @@ eio_file_cancel(Eio_File *ls)
    return ecore_thread_cancel(ls->thread);
 }
 
-EAPI Eina_Bool
+EIO_API Eina_Bool
 eio_file_check(Eio_File *ls)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_TRUE);
    return ecore_thread_check(ls->thread);
 }
 
-EAPI void *
+EIO_API void *
 eio_file_container_get(Eio_File *ls)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, NULL);
    return ls->container;
 }
 
-EAPI Eina_Bool
+EIO_API Eina_Bool
 eio_file_associate_add(Eio_File *ls,
                        const char *key,
                        const void *data, Eina_Free_Cb free_cb)
@@ -778,7 +778,7 @@ eio_file_associate_add(Eio_File *ls,
                         eio_associate_malloc(data, free_cb));
 }
 
-EAPI Eina_Bool
+EIO_API Eina_Bool
 eio_file_associate_direct_add(Eio_File *ls,
                               const char *key,
                               const void *data, Eina_Free_Cb free_cb)
@@ -794,7 +794,7 @@ eio_file_associate_direct_add(Eio_File *ls,
                                eio_associate_malloc(data, free_cb));
 }
 
-EAPI void *
+EIO_API void *
 eio_file_associate_find(Eio_File *ls, const char *key)
 {
    Eio_File_Associate *search;
@@ -809,7 +809,7 @@ eio_file_associate_find(Eio_File *ls, const char *key)
    return search->data;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_copy(const char *source,
 	      const char *dest,
 	      Eio_Progress_Cb progress_cb,
@@ -845,7 +845,7 @@ eio_file_copy(const char *source,
    return &copy->common;
 }
 
-EAPI Eio_File *
+EIO_API Eio_File *
 eio_file_move(const char *source,
 	      const char *dest,
 	      Eio_Progress_Cb progress_cb,

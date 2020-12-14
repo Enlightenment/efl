@@ -17,7 +17,7 @@
 #include "elm_priv.h"
 #include "eo_internal.h"
 #include <Elementary.h>
-#include "Eio_Eo.h"
+#include "Eio.h"
 #include "elm_fileselector_button_eo.h"
 #include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"

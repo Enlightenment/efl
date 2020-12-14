@@ -32,40 +32,33 @@
 #include <Eet.h>
 #include <Efl_Config.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef EAPI_WEAK
-# undef EAPI_WEAK
+#ifdef EIO_API
+#error EIO_API should not be already defined
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
+# ifndef EIO_STATIC
+#  ifdef EIO_BUILD
+#   define EIO_API __declspec(dllexport)
 #  else
-#   define EAPI
+#   define EIO_API __declspec(dllimport)
 #  endif
 # else
-#  define EAPI __declspec(dllimport)
+#  define EIO_API
 # endif
-# define EAPI_WEAK
+# define EIO_API_WEAK
+#elif defined(__GNUC__)
+# if __GNUC__ >= 4
+#  define EIO_API __attribute__ ((visibility("default")))
+#  define EIO_API_WEAK __attribute__ ((weak))
+# else
+#  define EIO_API
+#  define EIO_API_WEAK
+# endif
 #else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-#  endif
-# else
-#  define EAPI
-#  define EAPI_WEAK
-# endif
+# define EIO_API
+# define EIO_API_WEAK
 #endif
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,7 +126,7 @@ static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
  * @param interval The interval (in seconds) to poll
  * @since 1.21
  */
-EAPI void eio_monitoring_interval_set(double interval);
+EIO_API void eio_monitoring_interval_set(double interval);
 
 #include "eio_inline_helper.x"
 
@@ -143,8 +136,5 @@ EAPI void eio_monitoring_interval_set(double interval);
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

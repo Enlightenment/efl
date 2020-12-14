@@ -7,7 +7,7 @@
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
-#include "Eio_Eo.h"
+#include "Eio.h"
 #include "elm_priv.h"
 #include "elm_fileselector_button_eo.h"
 #include "elm_fileselector_entry_eo.h"
