@@ -451,6 +451,11 @@ ICON("go-first", "i-arrow-first")
 ICON("go-last", "i-arrow-last")
 ICON("go-jump", "i-redo")
 
+ICON("object-flip-horizontal", "i-arrow-h2")
+ICON("object-flip-vertical", "i-arrow-v2")
+ICON("object-rotate-left", "i-undo")
+ICON("object-rotate-right", "i-redo")
+
 #undef ICON
 
 // regular icons
@@ -605,6 +610,47 @@ ICON("insert-image", "i-picture-landscape-plus")
 ICON("insert-link", "i-link-plus")
 ICON("insert-text", "i-text-plus")
 ICON("insert-object", "i-cube-plus")
+
+ICON("folder-copy", "i-folder-copy")
+ICON("folder-move", "i-folder-move")
+ICON("folder-new", "i-folder-plus")
+
+ICON("window-new", "i-window-plus")
+ICON("process-stop", "i-gear-x")
+ICON("tools-check-spelling", "i-spelling")
+
+ICON("help-about", "i-help")
+ICON("help-contents", "i-help-contents")
+ICON("help-faq", "i-faq")
+
+ICON("view-list-compact", "i-list-compact")
+ICON("view-list-details", "i-list-details")
+ICON("view-list-icons", "i-list-icons")
+
+ICON("mail-forward", "i-mail-arrow-r")
+ICON("mail-mark-important", "i-mail-exclam")
+ICON("mail-mark-junk", "i-mail-bug")
+ICON("mail-mark-notjunk", "i-mail-bug-no")
+ICON("mail-mark-read", "i-mail-opened")
+ICON("mail-mark-unread", "i-mail")
+ICON("mail-message-new", "i-mail-pencil")
+ICON("mail-reply-all", "i-mail-arrow-heads-l")
+ICON("mail-reply-sender", "i-mail-arrow-l")
+ICON("mail-send", "i-mail-arrow-u")
+ICON("mail-send-receive", "i-mail-arrow-in-d")
+
+ICON("format-indent-less", "i-format-indent-less")
+ICON("format-indent-more", "i-format-indent-more")
+ICON("format-justify-center", "i-format-justify-center")
+ICON("format-justify-left", "i-format-justify-left")
+ICON("format-justify-right", "i-format-justify-right")
+ICON("format-justify-fill", "i-format-justify-fill")
+ICON("format-text-direction-ltr", "i-format-text-ltr")
+ICON("format-text-direction-rtl", "i-format-text-rtl")
+ICON("format-text-bold", "i-format-bold")
+ICON("format-text-italic", "i-format-italic")
+ICON("format-text-underline", "i-format-underline")
+ICON("format-text-strikethrough", "i-format-strikethrough")
 
 //ICON("", "")
 

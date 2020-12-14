@@ -232,7 +232,7 @@ group { name: "e/widgets/winlist/item";
 
 group { name: "e/widgets/winlist/large/bg";
    alias: "e/widgets/winlist/bg";
-// disable blue and the circular shadow - they are pricey - esp blur by far
+// disable blur and the circular shadow - they are pricey - esp blur by far
 // on older gpu's.... whilst it looks nice, it just is too costly. keep here
 // for information so can turn on maybe with ifdefs and alternate build that
 // turnns on costly expensive things like this
