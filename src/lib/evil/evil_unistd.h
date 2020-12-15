@@ -18,6 +18,17 @@
 
 #include <io.h> // for read, write, access, close
 
+#define execvp _ucrt_execvp  // overriding execvp below
+#include <process.h> // for _execvp (but not execvp), getpid
+#undef execvp 
+EVIL_API int execvp(const char *file, char *const argv[]);
+
+/* Values for the second argument to access.  These may be OR'd together.  */
+#define R_OK    4       /* Test for read permission.  */
+#define W_OK    2       /* Test for write permission.  */
+#define X_OK    0       /* execute permission, originally '1', just a bypass here*/
+#define F_OK    0       /* Test for existence.  */
+
 #endif // _MSC_VER
 
 /*

@@ -14,6 +14,13 @@
 
 #include "evil_private.h"
 
+#ifdef _MSC_VER
+EVIL_API int
+execvp(const char *file, char *const argv[])
+{
+   return _execvp(file, (const char *const *)argv);
+}
+#endif
 
 LONGLONG _evil_time_freq;
 LONGLONG _evil_time_count;
