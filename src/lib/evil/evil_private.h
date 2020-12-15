@@ -68,6 +68,10 @@ extern "C" {
 # define PATH_MAX MAX_PATH
 #endif
 
+#ifdef _WIN32
+# define _USE_MATH_DEFINES
+#endif
+
 #include "evil_dlfcn.h"
 #include "evil_fcntl.h"
 #include "evil_langinfo.h"
@@ -82,6 +86,15 @@ extern "C" {
 #include "evil_util.h"
 
 #define sigsetjmp(Env, Save) setjmp(Env)
+
+#ifdef _MSC_VER
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 
 #include "evil_macro_wrapper.h"
 
