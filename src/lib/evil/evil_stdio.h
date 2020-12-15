@@ -2,6 +2,10 @@
 #define __EVIL_STDIO_H__
 
 
+#ifdef _MSC_VER
+typedef int mode_t;
+#endif
+
 /**
  * @file evil_stdio.h
  * @brief The file that provides functions ported from Unix in stdio.h.
