@@ -66,7 +66,6 @@ public_sub_headers = [
 'eina_main.h',
 'eina_cpu.h',
 'eina_inline_cpu.x',
-'eina_sched.h',
 'eina_tiler.h',
 'eina_hamster.h',
 'eina_matrixsparse.h',
@@ -171,7 +170,6 @@ eina_src = files([
 'eina_rbtree.c',
 'eina_rectangle.c',
 'eina_safety_checks.c',
-'eina_sched.c',
 'eina_share_common.c',
 'eina_simple_xml_parser.c',
 'eina_str.c',
@@ -203,10 +201,10 @@ eina_src = files([
 ]) + eina_mp_sources
 
 if sys_windows == true
-  eina_src += files('eina_file_win32.c')
+  eina_src += files('eina_file_win32.c', 'eina_win32_dllmain.c', 'eina_thread_win32.c')
   eina_src += 'eina_fnmatch.c'
 else
-  eina_src += files('eina_file.c')
+  eina_src += files('eina_file.c', 'eina_thread_posix.c')
 endif
 
 eina_config = configuration_data()

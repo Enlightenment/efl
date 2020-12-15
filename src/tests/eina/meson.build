@@ -56,6 +56,7 @@ eina_test_src = files(
 'eina_test_slstr.c',
 'eina_test_vpath.c',
 'eina_test_abstract_content.c',
+'eina_test_thread.c',
 )
 
 
