@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 /* get the casefold feature! */
-#include <fnmatch.h>
+#include <Eina.h>
 #include <unistd.h>
 #include <sys/param.h>
 
@@ -114,7 +114,7 @@ evas_file_path_list(char *path, const char *match, int match_case)
      {
         if (match)
           {
-             if (fnmatch(match, info->path + info->name_start, flags) == 0)
+             if (eina_fnmatch(match, info->path + info->name_start, flags) == 0)
                files = eina_list_append(files, strdup(info->path + info->name_start));
           }
         else

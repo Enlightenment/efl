@@ -9,7 +9,6 @@
 #include <time.h>
 #include <string.h>
 #include <unistd.h>
-#include <fnmatch.h>
 #include <fcntl.h>
 
 #include <Eina.h>
@@ -2607,7 +2606,7 @@ eet_list(Eet_File   *ef,
               * check for * explicitly, because on some systems, * isn't well
               * supported
               */
-               if ((!glob) || !fnmatch(glob, efn->name, 0))
+               if ((!glob) || !eina_fnmatch(glob, efn->name, 0))
                  {
      /* add it to our list */
                      list_count++;

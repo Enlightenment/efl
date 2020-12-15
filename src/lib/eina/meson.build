@@ -115,6 +115,7 @@ public_sub_headers = [
 'eina_vpath.h',
 'eina_abstract_content.h',
 'eina_pipe.h',
+'eina_fnmatch.h'
 ]
 
 public_headers = [
@@ -203,6 +204,7 @@ eina_src = files([
 
 if sys_windows == true
   eina_src += files('eina_file_win32.c')
+  eina_src += 'eina_fnmatch.c'
 else
   eina_src += files('eina_file.c')
 endif

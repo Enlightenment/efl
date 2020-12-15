@@ -278,6 +278,7 @@ extern "C" {
 #include <eina_promise.h>
 #include <eina_vpath.h>
 #include <eina_abstract_content.h>
+#include <eina_fnmatch.h>
 
 
 #ifdef __cplusplus
