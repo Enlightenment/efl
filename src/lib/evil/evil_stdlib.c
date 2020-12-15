@@ -157,7 +157,7 @@ mkdtemp(char *__template)
    return NULL;
 }
 
-int
+EVIL_API int
 mkstemps(char *__template, int suffixlen)
 {
    char      *suffix;
