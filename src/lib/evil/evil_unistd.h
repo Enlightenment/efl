@@ -16,6 +16,7 @@
 
 #ifdef _MSC_VER
 
+#include <stdio.h>
 #include <io.h> // for read, write, access, close
 
 #define execvp _ucrt_execvp  // overriding execvp below
@@ -28,6 +29,10 @@ EVIL_API int execvp(const char *file, char *const argv[]);
 #define W_OK    2       /* Test for write permission.  */
 #define X_OK    0       /* execute permission, originally '1', just a bypass here*/
 #define F_OK    0       /* Test for existence.  */
+
+# define STDIN_FILENO  _fileno(stdin)
+# define STDOUT_FILENO _fileno(stdout)
+# define STDERR_FILENO _fileno(stderr)
 
 #endif // _MSC_VER
 
