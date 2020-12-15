@@ -27,6 +27,7 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
    src = data;
    end = src + (stride * h);
    ret = malloc(w * h * sizeof(DATA32));
+   if (!ret) return NULL;
 
    dst = ret;
    if (has_alpha)
@@ -55,6 +56,7 @@ evas_common_convert_agry88_to_argb8888(const void *data, int w, int h, int strid
    src = data;
    end = src + ((stride >> 1) * h);
    ret = malloc(w * h * sizeof(DATA32));
+   if (!ret) return NULL;
    dst = ret;
 
    if (has_alpha)
@@ -97,6 +99,7 @@ evas_common_convert_gry8_to_argb8888(const void *data, int w, int h, int stride,
    src = data;
    end = src + (stride * h);
    ret = malloc(w * h * sizeof(DATA32));
+   if (!ret) return NULL;
    dst = ret;
 
    if (has_alpha)
