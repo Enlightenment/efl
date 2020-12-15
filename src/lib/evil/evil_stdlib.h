@@ -83,6 +83,16 @@ EVIL_API int unsetenv(const char *name);
 EVIL_API char *mkdtemp(char *__template);
 
 /**
+ * @brief Create a unique temporary file name.
+ *
+ * @param __template Template of the file to create.
+ * @return A file descriptor on success, -1 otherwise.
+ *
+ * @since ????
+ */
+#define mkstemp(__template) mkstemps(__template, 0)
+
+/**
  * @brief Create a unique temporary file name with a suffix.
  *
  * @param __template Template of the file to create.
