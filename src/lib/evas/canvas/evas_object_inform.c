@@ -3,13 +3,13 @@
 #include "evas_private.h"
 
 /* BEGIN: events to maintain compatibility with legacy */
-EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW =
    EFL_EVENT_DESCRIPTION("show");
-EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE =
    EFL_EVENT_DESCRIPTION("hide");
-EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_PRELOAD =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_PRELOAD =
    EFL_EVENT_DESCRIPTION("preload");
-EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_UNLOAD =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_UNLOAD =
    EFL_EVENT_DESCRIPTION("unload");
 /* END: events to maintain compatibility with legacy */
 

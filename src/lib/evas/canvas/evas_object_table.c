@@ -965,7 +965,7 @@ _evas_table_efl_canvas_group_group_calculate(Eo *o, Evas_Table_Data *priv)
    evas_event_thaw_eval(e);
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_table_add(Evas *evas)
 {
    evas = evas_find(evas);
@@ -1411,7 +1411,7 @@ _evas_table_efl_ui_i18n_mirrored_get(const Eo *o EINA_UNUSED, Evas_Table_Data *p
    return priv->is_mirrored;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_table_mirrored_get(const Eo *obj)
 {
    return efl_ui_mirrored_get(obj);
@@ -1427,7 +1427,7 @@ _evas_table_efl_ui_i18n_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mir
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored)
 {
    efl_ui_mirrored_set(obj, mirrored);

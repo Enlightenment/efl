@@ -19,24 +19,24 @@
 #define MY_CLASS EVAS_CANVAS_CLASS
 
 #ifdef LKDEBUG
-EAPI Eina_Bool lockdebug = EINA_FALSE;
-EAPI int lockmax = 0;
+EVAS_API Eina_Bool lockdebug = EINA_FALSE;
+EVAS_API int lockmax = 0;
 #endif
 
 static int _evas_init_count = 0;
 int _evas_log_dom_global = -1;
 
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_NONE = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_GENERIC = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION = 0;
-EAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_NONE = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_GENERIC = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION = 0;
+EVAS_API Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE = 0;
 
 #define NUM_ERRORS 11
 
@@ -148,7 +148,7 @@ _utf8_to_markup(Eina_Content *from, const char *to_type)
    return ret;
 }
 
-EAPI int
+EVAS_API int
 evas_init(void)
 {
    if (++_evas_init_count != 1)
@@ -235,7 +235,7 @@ shutdown_evil:
    return --_evas_init_count;
 }
 
-EAPI int
+EVAS_API int
 evas_shutdown(void)
 {
    if (_evas_init_count <= 0)
@@ -305,7 +305,7 @@ evas_shutdown(void)
 }
 
 
-EAPI Evas *
+EVAS_API Evas *
 evas_new(void)
 {
    Evas_Object *eo_obj = efl_add(EVAS_CANVAS_CLASS, efl_main_loop_get());
@@ -387,7 +387,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    return eo_obj;
 }
 
-EAPI void
+EVAS_API void
 evas_free(Evas *eo_e)
 {
    if (!eo_e) return;
@@ -673,7 +673,7 @@ _evas_canvas_efl_object_destructor(Eo *eo_e, Evas_Public_Data *e)
 // It is now expected that the first output in the list is the default one
 // manipulated by this set of legacy API
 
-EAPI Evas_Engine_Info *
+EVAS_API Evas_Engine_Info *
 evas_engine_info_get(const Evas *obj)
 {
    if (!obj) return NULL;
@@ -692,7 +692,7 @@ evas_engine_info_get(const Evas *obj)
    return efl_canvas_output_engine_info_get(output);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_engine_info_set(Evas *obj, Evas_Engine_Info *info)
 {
    if (!obj) return EINA_FALSE;
@@ -750,7 +750,7 @@ _evas_canvas_default_device_get(const Eo *eo_e EINA_UNUSED,
    return NULL;
 }
 
-EAPI int
+EVAS_API int
 evas_render_method_lookup(const char *name)
 {
    Evas_Module *em;
@@ -763,13 +763,13 @@ evas_render_method_lookup(const char *name)
    return em->id_engine;
 }
 
-EAPI Eina_List *
+EVAS_API Eina_List *
 evas_render_method_list(void)
 {
    return evas_module_engine_list();
 }
 
-EAPI void
+EVAS_API void
 evas_render_method_list_free(Eina_List *list)
 {
    const char *s;
@@ -777,7 +777,7 @@ evas_render_method_list_free(Eina_List *list)
    EINA_LIST_FREE(list, s) eina_stringshare_del(s);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_extension_can_load_get(const char *file)
 {
    const char *tmp;
@@ -790,7 +790,7 @@ evas_object_image_extension_can_load_get(const char *file)
    return result;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_image_extension_can_load_fast_get(const char *file)
 {
    return evas_common_extension_can_load_get(file);
@@ -970,7 +970,7 @@ _evas_unwalk(Evas_Public_Data *e)
    efl_unref(e->evas);
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_load_error_str(Evas_Load_Error error)
 {
    switch (error)
@@ -994,38 +994,38 @@ evas_load_error_str(Evas_Load_Error error)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
    evas_common_convert_color_hsv_to_rgb(h, s, v, r, g, b);
 }
 
-EAPI void
+EVAS_API void
 evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
    evas_common_convert_color_rgb_to_hsv(r, g, b, h, s, v);
 }
 
-EAPI void
+EVAS_API void
 evas_color_argb_premul(int a, int *r, int *g, int *b)
 {
    evas_common_convert_color_argb_premul(a, r, g, b);
 }
 
-EAPI void
+EVAS_API void
 evas_color_argb_unpremul(int a, int *r, int *g, int *b)
 {
    evas_common_convert_color_argb_unpremul(a, r, g, b);
 }
 
-EAPI void
+EVAS_API void
 evas_data_argb_premul(unsigned int *data, unsigned int len)
 {
    if (!data || (len < 1)) return;
    evas_common_convert_argb_premul(data, len);
 }
 
-EAPI void
+EVAS_API void
 evas_data_argb_unpremul(unsigned int *data, unsigned int len)
 {
    if (!data || (len < 1)) return;
@@ -1060,13 +1060,13 @@ evas_ector_get(Evas_Public_Data *e)
    return e->ector;
 }
 
-EAPI Evas_BiDi_Direction
+EVAS_API Evas_BiDi_Direction
 evas_language_direction_get(void)
 {
    return evas_common_language_direction_get();
 }
 
-EAPI void
+EVAS_API void
 evas_language_reinit(void)
 {
    evas_common_language_reinit();
@@ -1102,7 +1102,7 @@ _image_data_unset(Evas_Object_Protected_Data *obj, Eina_List **list)
    *list = eina_list_append(*list, obj->object);
 }
 
-EAPI Eina_List *
+EVAS_API Eina_List *
 _evas_canvas_image_data_unset(Evas *eo_e)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, MY_CLASS);
@@ -1156,7 +1156,7 @@ _image_data_regenerate(Evas_Object *eo_obj)
    //else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,)
 }
 
-EAPI void
+EVAS_API void
 _evas_canvas_image_data_regenerate(Eina_List *list)
 {
    Evas_Object *eo_obj;
@@ -1256,7 +1256,7 @@ _evas_canvas_efl_canvas_scene_image_max_size_get(const Eo *eo_e EINA_UNUSED, Eva
 
 /* Legacy deprecated functions */
 
-EAPI void
+EVAS_API void
 evas_output_framespace_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1275,7 +1275,7 @@ evas_output_framespace_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
    e->changed = 1;
 }
 
-EAPI void
+EVAS_API void
 evas_output_framespace_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1288,7 +1288,7 @@ evas_output_framespace_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_
    if (h) *h = e->framespace.h;
 }
 
-EAPI void
+EVAS_API void
 evas_output_method_set(Evas *eo_e, int render_method)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1360,7 +1360,7 @@ evas_output_method_set(Evas *eo_e, int render_method)
                                               EVAS_DEVICE_SUBCLASS_NONE);
 }
 
-EAPI int
+EVAS_API int
 evas_output_method_get(const Evas *eo_e)
 {
    EVAS_TYPE_CHECK(eo_e, RENDER_METHOD_INVALID);
@@ -1370,7 +1370,7 @@ evas_output_method_get(const Evas *eo_e)
    return e->output.render_method;
 }
 
-EAPI void
+EVAS_API void
 evas_output_size_set(Evas *eo_e, int w, int h)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1398,7 +1398,7 @@ evas_output_size_set(Evas *eo_e, int w, int h)
    evas_render_invalidate(eo_e);
 }
 
-EAPI void
+EVAS_API void
 evas_output_size_get(const Evas *eo_e, int *w, int *h)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1409,7 +1409,7 @@ evas_output_size_get(const Evas *eo_e, int *w, int *h)
    if (h) *h = e->output.h;
 }
 
-EAPI void
+EVAS_API void
 evas_output_viewport_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1437,7 +1437,7 @@ evas_output_viewport_set(Evas *eo_e, Evas_Coord x, Evas_Coord y, Evas_Coord w, E
    evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_VIEWPORT_RESIZE, NULL);
 }
 
-EAPI void
+EVAS_API void
 evas_output_viewport_get(const Evas *eo_e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1606,7 +1606,7 @@ _efl_canvas_iterator_free(Efl_Canvas_Iterator *it)
    free(it);
 }
 
-EAPI Eina_Iterator *
+EVAS_API Eina_Iterator *
 efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list)
 {
    Efl_Canvas_Iterator *it;
@@ -1662,14 +1662,14 @@ _evas_canvas_efl_canvas_scene_object_top_at_xy_get(const Eo *eo_e EINA_UNUSED, E
    return NULL;
 }
 
-EAPI Evas_Object*
+EVAS_API Evas_Object*
 evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    Eina_Position2D pos = {x, y};
    return efl_canvas_scene_object_top_at_xy_get(eo_e, pos, include_pass_events_objects, include_hidden_objects);
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_top_at_pointer_get(const Evas *eo_e)
 {
    Evas_Public_Data *e = efl_isa(eo_e, EVAS_CANVAS_CLASS) ?
@@ -1721,7 +1721,7 @@ _evas_canvas_efl_canvas_scene_object_top_in_rectangle_get(const Eo *eo_e EINA_UN
    return NULL;
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_top_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    return efl_canvas_scene_object_top_in_rectangle_get(obj, EINA_RECT(x, y, w, h), include_pass_events_objects, include_hidden_objects);
@@ -1848,7 +1848,7 @@ _evas_canvas_efl_canvas_scene_objects_in_rectangle_get(Eo *eo_e EINA_UNUSED, Eva
    return efl_canvas_iterator_create(eo_e, eina_list_iterator_new(l), l);
 }
 
-EAPI Eina_List *
+EVAS_API Eina_List *
 evas_objects_in_rectangle_get(const Evas_Canvas *eo_e, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    EVAS_LEGACY_API(eo_e, e, NULL);
@@ -1941,7 +1941,7 @@ evas_font_object_rehint(Evas_Object *eo_obj)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_font_hinting_set(Eo *eo_e, Evas_Font_Hinting_Flags hinting)
 {
    Evas_Layer *lay;
@@ -1960,14 +1960,14 @@ evas_font_hinting_set(Eo *eo_e, Evas_Font_Hinting_Flags hinting)
      }
 }
 
-EAPI Evas_Font_Hinting_Flags
+EVAS_API Evas_Font_Hinting_Flags
 evas_font_hinting_get(const Evas *eo_e)
 {
    EVAS_LEGACY_API(eo_e, e, EVAS_FONT_HINTING_NONE);
    return e->hinting;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
 {
    EVAS_LEGACY_API(eo_e, e, EINA_FALSE);
@@ -1977,7 +1977,7 @@ evas_font_hinting_can_hint(const Evas *eo_e, Evas_Font_Hinting_Flags hinting)
    else return EINA_FALSE;
 }
 
-EAPI void
+EVAS_API void
 evas_font_available_list_free(Evas *eo_e, Eina_List *available)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -1992,7 +1992,7 @@ _evas_canvas_efl_canvas_scene_group_objects_calculate(Eo *eo_e, Evas_Public_Data
    evas_call_smarts_calculate(eo_e);
 }
 
-EAPI void
+EVAS_API void
 evas_smart_objects_calculate(Eo *eo_e)
 {
    EVAS_TYPE_CHECK(eo_e);
@@ -2005,7 +2005,7 @@ _evas_canvas_efl_canvas_scene_group_objects_calculating_get(const Eo *eo_e EINA_
    return !!e->in_smart_calc;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_smart_objects_calculating_get(const Eo *obj)
 {
    EVAS_TYPE_CHECK(obj, EINA_FALSE);
@@ -2017,23 +2017,23 @@ _evas_canvas_smart_objects_calculate_count_get(const Eo *eo_e EINA_UNUSED, Evas_
 {
    return e->smart_calc_count;
 }
-/* Legacy EAPI */
+/* Legacy EVAS_API */
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_pointer_inside_get(const Evas *obj)
 {
    EVAS_TYPE_CHECK(obj, EINA_FALSE);
    return efl_canvas_pointer_inside_get(obj, NULL);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_pointer_inside_by_device_get(const Evas *obj, Eo *dev)
 {
    EVAS_TYPE_CHECK(obj, EINA_FALSE);
    return efl_canvas_pointer_inside_get(obj, dev);
 }
 
-EAPI Eina_List*
+EVAS_API Eina_List*
 evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
    EVAS_TYPE_CHECK(eo_e, NULL);
@@ -2041,13 +2041,13 @@ evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_obj
 }
 /* Internal EO APIs */
 
-EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE =
    EFL_EVENT_DESCRIPTION("render,flush,pre");
-EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST =
    EFL_EVENT_DESCRIPTION("render,flush,post");
-EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
    EFL_EVENT_DESCRIPTION("axis,update");
-EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
+EVAS_API EVAS_API_WEAK const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
    EFL_EVENT_DESCRIPTION("viewport,resize");
 
 #define CHECK_ADD(var, ev, member) \

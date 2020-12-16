@@ -64,7 +64,7 @@ evas_gfx_compositor_get(unsigned char op)
    return comp;
 }
 
-EAPI void
+EVAS_API void
 evas_common_blend_init(void)
 {
    static int gfx_initialised = 0;

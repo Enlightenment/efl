@@ -1081,7 +1081,7 @@ _efl_canvas_vg_object_default_size_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 /* the actual api call to add a vector graphic object */
-EAPI Eo *
+EVAS_API Eo *
 evas_object_vg_add(Evas *e)
 {
    e = evas_find(e);
@@ -1090,31 +1090,31 @@ evas_object_vg_add(Evas *e)
    return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
-EAPI int
+EVAS_API int
 evas_object_vg_animated_frame_get(const Evas_Object *obj)
 {
    return efl_gfx_frame_controller_frame_get(obj);
 }
 
-EAPI double
+EVAS_API double
 evas_object_vg_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num)
 {
    return efl_gfx_frame_controller_frame_duration_get(obj, start_frame, frame_num);
 }
 
-EAPI int
+EVAS_API int
 evas_object_vg_animated_frame_count_get(const Evas_Object *obj)
 {
    return efl_gfx_frame_controller_frame_count_get(obj);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index)
 {
    return efl_gfx_frame_controller_frame_set(obj, frame_index);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    return efl_file_simple_load(obj, file, key);
@@ -1152,13 +1152,13 @@ _efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(Efl_Canvas_Vg_Fil
    return EVAS_OBJECT_VG_FILL_MODE_NONE;
 }
 
-EAPI void
+EVAS_API void
 evas_object_vg_fill_mode_set(Evas_Object *obj, Evas_Object_Vg_Fill_Mode fill_mode)
 {
    efl_canvas_vg_object_fill_mode_set(obj, _evas_object_vg_fill_mode_to_efl_ui_canvas_object_vg_fill_mode(fill_mode));
 }
 
-EAPI Evas_Object_Vg_Fill_Mode
+EVAS_API Evas_Object_Vg_Fill_Mode
 evas_object_vg_fill_mode_get(const Evas_Object *obj)
 {
    return _efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(efl_canvas_vg_object_fill_mode_get(obj));

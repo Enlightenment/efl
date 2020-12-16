@@ -1926,7 +1926,7 @@ _padding_set_instruction_prepare(Evas_Filter_Program *pgm EINA_UNUSED,
 #undef PARSE_CHECK
 #define PARSE_CHECK(a) do { if (!(a)) { ERR("Parsing failed because '%s' is false at %s:%d", #a, __func__, __LINE__); PARSE_ABORT(); goto end; } } while (0)
 
-EAPI void
+EVAS_API void
 evas_filter_program_del(Evas_Filter_Program *pgm)
 {
    Evas_Filter_Instruction *instr;
@@ -2855,7 +2855,7 @@ _filter_program_reset(Evas_Filter_Program *pgm)
 
 /** Parse a style program */
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str)
 {
    lua_State *L;
@@ -2966,7 +2966,7 @@ _buffers_update(Evas_Filter_Context *ctx, Evas_Filter_Program *pgm)
 
 /** Evaluate required padding to correctly apply an effect */
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_filter_program_padding_get(Evas_Filter_Program *pgm,
                                 Evas_Filter_Padding *out_final,
                                 Evas_Filter_Padding *out_calculated)
@@ -3032,7 +3032,7 @@ evas_filter_program_padding_get(Evas_Filter_Program *pgm,
 
 /** Create an empty filter program for style parsing */
 
-EAPI Evas_Filter_Program *
+EVAS_API Evas_Filter_Program *
 evas_filter_program_new(const char *name, Eina_Bool input_alpha)
 {
    Evas_Filter_Program *pgm;
@@ -3046,7 +3046,7 @@ evas_filter_program_new(const char *name, Eina_Bool input_alpha)
    return pgm;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_filter_program_state_set(Evas_Filter_Program *pgm,
                               const Efl_Canvas_Filter_State *state)
 {
@@ -3066,7 +3066,7 @@ evas_filter_program_state_set(Evas_Filter_Program *pgm,
 }
 
 /** Bind objects for proxy rendering */
-EAPI void
+EVAS_API void
 evas_filter_program_source_set_all(Evas_Filter_Program *pgm,
                                    Eina_Hash *proxies)
 {

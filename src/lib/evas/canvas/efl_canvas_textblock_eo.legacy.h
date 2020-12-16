@@ -33,7 +33,7 @@ typedef Efl_Canvas_Textblock Efl_Canvas_Text;
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI Eina_Bool evas_object_textblock_visible_range_get(Efl_Canvas_Textblock *obj, Efl_Text_Cursor_Handle *start, Efl_Text_Cursor_Handle *end);
+EVAS_API Eina_Bool evas_object_textblock_visible_range_get(Efl_Canvas_Textblock *obj, Efl_Text_Cursor_Handle *start, Efl_Text_Cursor_Handle *end);
 
 /**
  * @brief Gets the left, right, top and bottom insets of the text.
@@ -50,7 +50,7 @@ EAPI Eina_Bool evas_object_textblock_visible_range_get(Efl_Canvas_Textblock *obj
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_style_insets_get(const Efl_Canvas_Textblock *obj, int *left, int *right, int *top, int *bottom);
+EVAS_API void evas_object_textblock_style_insets_get(const Efl_Canvas_Textblock *obj, int *left, int *right, int *top, int *bottom);
 
 /**
  * @brief BiDi delimiters are used for in-paragraph separation of bidi
@@ -65,7 +65,7 @@ EAPI void evas_object_textblock_style_insets_get(const Efl_Canvas_Textblock *obj
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_bidi_delimiters_set(Efl_Canvas_Textblock *obj, const char *delim);
+EVAS_API void evas_object_textblock_bidi_delimiters_set(Efl_Canvas_Textblock *obj, const char *delim);
 
 /**
  * @brief BiDi delimiters are used for in-paragraph separation of bidi
@@ -80,7 +80,7 @@ EAPI void evas_object_textblock_bidi_delimiters_set(Efl_Canvas_Textblock *obj, c
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI const char *evas_object_textblock_bidi_delimiters_get(const Efl_Canvas_Textblock *obj);
+EVAS_API const char *evas_object_textblock_bidi_delimiters_get(const Efl_Canvas_Textblock *obj);
 
 /**
  * @brief When @c true, newline character will behave as a paragraph separator.
@@ -92,7 +92,7 @@ EAPI const char *evas_object_textblock_bidi_delimiters_get(const Efl_Canvas_Text
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_legacy_newline_set(Efl_Canvas_Textblock *obj, Eina_Bool mode);
+EVAS_API void evas_object_textblock_legacy_newline_set(Efl_Canvas_Textblock *obj, Eina_Bool mode);
 
 /**
  * @brief When @c true, newline character will behave as a paragraph separator.
@@ -105,7 +105,7 @@ EAPI void evas_object_textblock_legacy_newline_set(Efl_Canvas_Textblock *obj, Ei
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI Eina_Bool evas_object_textblock_legacy_newline_get(const Efl_Canvas_Textblock *obj);
+EVAS_API Eina_Bool evas_object_textblock_legacy_newline_get(const Efl_Canvas_Textblock *obj);
 
 
 
@@ -134,7 +134,7 @@ EAPI Eina_Bool evas_object_textblock_legacy_newline_get(const Efl_Canvas_Textblo
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_size_formatted_get(const Efl_Canvas_Textblock *obj, int *width, int *height);
+EVAS_API void evas_object_textblock_size_formatted_get(const Efl_Canvas_Textblock *obj, int *width, int *height);
 
 /**
  * @brief The native width and height.
@@ -162,7 +162,7 @@ EAPI void evas_object_textblock_size_formatted_get(const Efl_Canvas_Textblock *o
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_size_native_get(const Efl_Canvas_Textblock *obj, int *width, int *height);
+EVAS_API void evas_object_textblock_size_native_get(const Efl_Canvas_Textblock *obj, int *width, int *height);
 
 
 
@@ -184,7 +184,7 @@ EAPI void evas_object_textblock_size_native_get(const Efl_Canvas_Textblock *obj,
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI Eina_Bool evas_object_textblock_obstacle_add(Efl_Canvas_Textblock *obj, Efl_Canvas_Object *eo_obs);
+EVAS_API Eina_Bool evas_object_textblock_obstacle_add(Efl_Canvas_Textblock *obj, Efl_Canvas_Object *eo_obs);
 
 /**
  * @brief Removes @c eo_obs from observation during text layout.
@@ -198,7 +198,7 @@ EAPI Eina_Bool evas_object_textblock_obstacle_add(Efl_Canvas_Textblock *obj, Efl
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI Eina_Bool evas_object_textblock_obstacle_del(Efl_Canvas_Textblock *obj, Efl_Canvas_Object *eo_obs);
+EVAS_API Eina_Bool evas_object_textblock_obstacle_del(Efl_Canvas_Textblock *obj, Efl_Canvas_Object *eo_obs);
 
 /**
  * @brief Triggers for relayout due to obstacles' state change.
@@ -217,7 +217,7 @@ EAPI Eina_Bool evas_object_textblock_obstacle_del(Efl_Canvas_Textblock *obj, Efl
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_obstacles_update(Efl_Canvas_Textblock *obj);
+EVAS_API void evas_object_textblock_obstacles_update(Efl_Canvas_Textblock *obj);
 
 
 #endif

@@ -2961,7 +2961,7 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
    eina_evlog("-render_pre_objects_finalize", eo_e, 0.0, NULL);
 }
 
-EAPI void
+EVAS_API void
 evas_render_pending_objects_flush(Evas *eo_e)
 {
    Evas_Public_Data *evas = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
@@ -4061,7 +4061,7 @@ evas_render_pipe_wakeup(void *data)
    eina_evlog("-render_pipe_wakeup", e, 0.0, NULL);
 }
 
-EAPI void
+EVAS_API void
 evas_render_updates_free(Eina_List *updates)
 {
    Eina_Rectangle *r;
@@ -4153,7 +4153,7 @@ _evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
    evas_render_updates_internal_wait(eo_e, 0, 0);
 }
 
-EAPI void
+EVAS_API void
 evas_norender_with_updates(Eo *eo_e)
 {
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);

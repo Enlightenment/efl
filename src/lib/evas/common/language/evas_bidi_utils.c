@@ -105,7 +105,7 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str)
  * @param len the length of th string.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  */
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, size_t len)
 {
    FriBidiChar *ustr, *base_ustr = NULL;

@@ -9,7 +9,7 @@
 
 #define MY_CLASS EFL_INPUT_KEY_CLASS
 
-EOAPI Eo*
+EVAS_API EVAS_API_WEAK Eo*
 efl_input_key_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Key_Data *ev;

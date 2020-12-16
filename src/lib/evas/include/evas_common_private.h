@@ -2,7 +2,7 @@
 #define EVAS_COMMON_H
 
 //#ifdef HAVE_CONFIG_H
-#include "config.h"  /* so that EAPI in Evas.h is correctly defined */
+#include "config.h"  /* so that EVAS_API in Evas.h is correctly defined */
 //#endif
 
 #ifdef STDC_HEADERS
@@ -51,31 +51,7 @@
 
 #include "../common/evas_font.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <evas_api.h>
 
 #ifndef HAVE_LROUND
 /* right now i dont care about rendering bugs on platforms without lround
@@ -86,7 +62,7 @@
 #endif
 
 /* macros needed to log message through eina_log */
-EAPI extern int _evas_log_dom_global;
+EVAS_API extern int _evas_log_dom_global;
 #ifdef  _EVAS_DEFAULT_LOG_DOM
 # undef _EVAS_DEFAULT_LOG_DOM
 #endif
@@ -1047,20 +1023,20 @@ extern "C" {
 #endif
 
 /****/
-EAPI void evas_common_init                                   (void);
-EAPI void evas_common_shutdown                               (void);
+EVAS_API void evas_common_init                                   (void);
+EVAS_API void evas_common_shutdown                               (void);
 
-EAPI void evas_common_cpu_init                          (void);
+EVAS_API void evas_common_cpu_init                          (void);
 
 int  evas_common_cpu_have_cpuid                         (void);
 int  evas_common_cpu_has_feature                        (unsigned int feature);
-EAPI void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
-EAPI void evas_common_cpu_end_opt                       (void);
+EVAS_API void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
+EVAS_API void evas_common_cpu_end_opt                       (void);
 
 /****/
 #include "../common/evas_blend.h"
 
-EAPI Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);
+EVAS_API Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 /****/
 #include "../common/evas_convert_color.h"
@@ -1080,26 +1056,26 @@ EAPI Gfx_Func_Copy        evas_common_draw_func_copy_get        (int pixels, int
 #include "../common/evas_rectangle.h"
 
 /****/
-EAPI void     evas_common_blit_init               (void);
+EVAS_API void     evas_common_blit_init               (void);
 
-EAPI void     evas_common_blit_rectangle          (const RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
-
-/****/
+EVAS_API void     evas_common_blit_rectangle          (const RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
 /****/
-EAPI void          evas_common_tilebuf_init               (void);
 
-EAPI Tilebuf      *evas_common_tilebuf_new               (int w, int h);
-EAPI void          evas_common_tilebuf_free              (Tilebuf *tb);
-EAPI void          evas_common_tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
-EAPI void          evas_common_tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
-EAPI void          evas_common_tilebuf_tile_strict_set   (Tilebuf *tb, Eina_Bool strict);
-EAPI int           evas_common_tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
-EAPI int           evas_common_tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
-EAPI int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);
-EAPI void          evas_common_tilebuf_clear             (Tilebuf *tb);
-EAPI Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
-EAPI void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
+/****/
+EVAS_API void          evas_common_tilebuf_init               (void);
+
+EVAS_API Tilebuf      *evas_common_tilebuf_new               (int w, int h);
+EVAS_API void          evas_common_tilebuf_free              (Tilebuf *tb);
+EVAS_API void          evas_common_tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
+EVAS_API void          evas_common_tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
+EVAS_API void          evas_common_tilebuf_tile_strict_set   (Tilebuf *tb, Eina_Bool strict);
+EVAS_API int           evas_common_tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
+EVAS_API int           evas_common_tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
+EVAS_API int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);
+EVAS_API void          evas_common_tilebuf_clear             (Tilebuf *tb);
+EVAS_API Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
+EVAS_API void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
 
 /*
 Regionbuf    *evas_common_regionbuf_new       (int w, int h);
@@ -1118,16 +1094,16 @@ Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
 /****/
 #include "../common/evas_pipe.h"
 
-EAPI void         evas_thread_queue_wait(void);
+EVAS_API void         evas_thread_queue_wait(void);
 
-EAPI int          evas_async_events_process_blocking(void);
+EVAS_API int          evas_async_events_process_blocking(void);
 void	          evas_render_rendering_wait(Evas_Public_Data *evas);
 void              evas_all_sync(void);
 
 int               evas_thread_init(void);
 int               evas_thread_shutdown(void);
-EAPI void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data);
-EAPI void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data);
+EVAS_API void         evas_thread_cmd_enqueue(Evas_Thread_Command_Cb cb, void *data);
+EVAS_API void         evas_thread_queue_flush(Evas_Thread_Command_Cb cb, void *data);
 
 typedef enum _Evas_Render_Mode
 {
@@ -1163,20 +1139,17 @@ struct _Generic_Cache
    Generic_Cache_Free  free_func;
 };
 
-EAPI Generic_Cache* generic_cache_new(void *user_data, Generic_Cache_Free func);
-EAPI void generic_cache_destroy(Generic_Cache *cache);
-EAPI void generic_cache_dump(Generic_Cache *cache);
-EAPI void generic_cache_data_set(Generic_Cache *cache, void *key, void *data);
-EAPI void *generic_cache_data_get(Generic_Cache *cache, void *key);
-EAPI void generic_cache_data_drop(Generic_Cache *cache, void *key);
+EVAS_API Generic_Cache* generic_cache_new(void *user_data, Generic_Cache_Free func);
+EVAS_API void generic_cache_destroy(Generic_Cache *cache);
+EVAS_API void generic_cache_dump(Generic_Cache *cache);
+EVAS_API void generic_cache_data_set(Generic_Cache *cache, void *key, void *data);
+EVAS_API void *generic_cache_data_get(Generic_Cache *cache, void *key);
+EVAS_API void generic_cache_data_drop(Generic_Cache *cache, void *key);
 
 /*****************************************************************************/
 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

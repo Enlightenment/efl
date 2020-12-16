@@ -15,32 +15,7 @@
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"
 
-
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <evas_api.h>
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
@@ -148,7 +123,7 @@ MAGIC_CHECK_FAILED(o, t, m)
 # define MAGIC_CHECK_END() }}
 #endif
 
-// helper function for legacy EAPI implementations
+// helper function for legacy EVAS_API implementations
 #define EVAS_OBJ_GET_OR_RETURN(o, ...) ({ \
    Evas_Object_Protected_Data *_obj = efl_isa(o, EFL_CANVAS_OBJECT_CLASS) ? \
      efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS) : NULL; \
@@ -1369,8 +1344,8 @@ int evas_async_events_init(void);
 int evas_async_events_shutdown(void);
 int evas_async_target_del(const void *target);
 
-EAPI int evas_thread_main_loop_begin(void);
-EAPI int evas_thread_main_loop_end(void);
+EVAS_API int evas_thread_main_loop_begin(void);
+EVAS_API int evas_thread_main_loop_end(void);
 
 void _evas_preload_thread_init(void);
 void _evas_preload_thread_shutdown(void);
@@ -1385,15 +1360,15 @@ Eina_Bool evas_preload_pthread_wait(Evas_Preload_Pthread *work, double wait);
 void _evas_walk(Evas_Public_Data *e_pd);
 void _evas_unwalk(Evas_Public_Data *e_pd);
 
-EAPI void evas_module_task_register(Eina_Bool (*cancelled)(void *data), void *data);
-EAPI void evas_module_task_unregister(void);
+EVAS_API void evas_module_task_register(Eina_Bool (*cancelled)(void *data), void *data);
+EVAS_API void evas_module_task_unregister(void);
 
 // expose for use in engines
-EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name, size_t info);
-EAPI const char *_evas_module_libdir_get(void);
+EVAS_API int _evas_module_engine_inherit(Evas_Func *funcs, char *name, size_t info);
+EVAS_API const char *_evas_module_libdir_get(void);
 const char *_evas_module_datadir_get(void);
-EAPI Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
-EAPI void _evas_canvas_image_data_regenerate(Eina_List *list);
+EVAS_API Eina_List *_evas_canvas_image_data_unset(Evas *eo_e);
+EVAS_API void _evas_canvas_image_data_regenerate(Eina_List *list);
 void _evas_image_preload_update(Eo *eo_obj, Eina_File *f);
 Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj,
                              Evas_Object_Protected_Data *source_pd,
@@ -1485,13 +1460,13 @@ Evas_Load_Error _efl_gfx_image_load_error_to_evas_load_error(Eina_Error err);
   while (0);
 
 /* BEGIN: events to maintain compatibility with legacy */
-EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW;
 #define EFL_GFX_ENTITY_EVENT_SHOW (&(_EFL_GFX_ENTITY_EVENT_SHOW))
-EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE;
 #define EFL_GFX_ENTITY_EVENT_HIDE (&(_EFL_GFX_ENTITY_EVENT_HIDE))
-EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_PRELOAD;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_PRELOAD;
 #define EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD (&(_EFL_GFX_ENTITY_EVENT_IMAGE_PRELOAD))
-EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_UNLOAD;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_UNLOAD;
 #define EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD (&(_EFL_GFX_ENTITY_EVENT_IMAGE_UNLOAD))
 /* END: events to maintain compatibility with legacy */
 
@@ -1582,9 +1557,6 @@ _gfx_to_evas_render_op(Efl_Gfx_Render_Op rop)
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif
 

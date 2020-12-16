@@ -1,11 +1,11 @@
 
 void _evas_text_shadow_color_set(Eo *obj, Evas_Text_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_shadow_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_shadow_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _evas_text_shadow_color_get(const Eo *obj, Evas_Text_Data *pd, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_shadow_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_shadow_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 void _evas_text_ellipsis_set(Eo *obj, Evas_Text_Data *pd, double ellipsis);
 
@@ -25,7 +25,7 @@ __eolian_evas_text_ellipsis_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_ellipsis_set, EFL_FUNC_CALL(ellipsis), double ellipsis);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_ellipsis_set, EFL_FUNC_CALL(ellipsis), double ellipsis);
 
 double _evas_text_ellipsis_get(const Eo *obj, Evas_Text_Data *pd);
 
@@ -37,7 +37,7 @@ __eolian_evas_text_ellipsis_get_reflect(const Eo *obj)
    return eina_value_double_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_ellipsis_get, double, -1.000000 /* +1.000000 */);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_ellipsis_get, double, -1.000000 /* +1.000000 */);
 
 void _evas_text_bidi_delimiters_set(Eo *obj, Evas_Text_Data *pd, const char *delim);
 
@@ -57,7 +57,7 @@ __eolian_evas_text_bidi_delimiters_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_bidi_delimiters_set, EFL_FUNC_CALL(delim), const char *delim);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_bidi_delimiters_set, EFL_FUNC_CALL(delim), const char *delim);
 
 const char *_evas_text_bidi_delimiters_get(const Eo *obj, Evas_Text_Data *pd);
 
@@ -69,87 +69,87 @@ __eolian_evas_text_bidi_delimiters_get_reflect(const Eo *obj)
    return eina_value_string_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_bidi_delimiters_get, const char *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_bidi_delimiters_get, const char *, NULL);
 
 void _evas_text_outline_color_set(Eo *obj, Evas_Text_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_outline_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_outline_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _evas_text_outline_color_get(const Eo *obj, Evas_Text_Data *pd, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_outline_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_outline_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 void _evas_text_glow2_color_set(Eo *obj, Evas_Text_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_glow2_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_glow2_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _evas_text_glow2_color_get(const Eo *obj, Evas_Text_Data *pd, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_glow2_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_glow2_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 void _evas_text_style_set(Eo *obj, Evas_Text_Data *pd, Evas_Text_Style_Type style);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_style_set, EFL_FUNC_CALL(style), Evas_Text_Style_Type style);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_style_set, EFL_FUNC_CALL(style), Evas_Text_Style_Type style);
 
 Evas_Text_Style_Type _evas_text_style_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_style_get, Evas_Text_Style_Type, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_style_get, Evas_Text_Style_Type, 0);
 
 void _evas_text_glow_color_set(Eo *obj, Evas_Text_Data *pd, int r, int g, int b, int a);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_text_glow_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_text_glow_color_set, EFL_FUNC_CALL(r, g, b, a), int r, int g, int b, int a);
 
 void _evas_text_glow_color_get(const Eo *obj, Evas_Text_Data *pd, int *r, int *g, int *b, int *a);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_glow_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_glow_color_get, EFL_FUNC_CALL(r, g, b, a), int *r, int *g, int *b, int *a);
 
 int _evas_text_max_descent_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_max_descent_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_max_descent_get, int, 0);
 
 void _evas_text_style_pad_get(const Eo *obj, Evas_Text_Data *pd, int *l, int *r, int *t, int *b);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_style_pad_get, EFL_FUNC_CALL(l, r, t, b), int *l, int *r, int *t, int *b);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_text_style_pad_get, EFL_FUNC_CALL(l, r, t, b), int *l, int *r, int *t, int *b);
 
 Efl_Text_Bidirectional_Type _evas_text_direction_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_direction_get, Efl_Text_Bidirectional_Type, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_direction_get, Efl_Text_Bidirectional_Type, 0);
 
 int _evas_text_ascent_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_ascent_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_ascent_get, int, 0);
 
 int _evas_text_horiz_advance_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_horiz_advance_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_horiz_advance_get, int, 0);
 
 int _evas_text_inset_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_inset_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_inset_get, int, 0);
 
 int _evas_text_max_ascent_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_max_ascent_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_max_ascent_get, int, 0);
 
 int _evas_text_vert_advance_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_vert_advance_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_vert_advance_get, int, 0);
 
 int _evas_text_descent_get(const Eo *obj, Evas_Text_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_text_descent_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_text_descent_get, int, 0);
 
 int _evas_text_last_up_to_pos(const Eo *obj, Evas_Text_Data *pd, int x, int y);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_obj_text_last_up_to_pos, int, -1 /* +1 */, EFL_FUNC_CALL(x, y), int x, int y);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_obj_text_last_up_to_pos, int, -1 /* +1 */, EFL_FUNC_CALL(x, y), int x, int y);
 
 int _evas_text_char_coords_get(const Eo *obj, Evas_Text_Data *pd, int x, int y, int *cx, int *cy, int *cw, int *ch);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_obj_text_char_coords_get, int, 0, EFL_FUNC_CALL(x, y, cx, cy, cw, ch), int x, int y, int *cx, int *cy, int *cw, int *ch);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_obj_text_char_coords_get, int, 0, EFL_FUNC_CALL(x, y, cx, cy, cw, ch), int x, int y, int *cx, int *cy, int *cw, int *ch);
 
 Eina_Bool _evas_text_char_pos_get(const Eo *obj, Evas_Text_Data *pd, int pos, int *cx, int *cy, int *cw, int *ch);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_obj_text_char_pos_get, Eina_Bool, 0, EFL_FUNC_CALL(pos, cx, cy, cw, ch), int pos, int *cx, int *cy, int *cw, int *ch);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_obj_text_char_pos_get, Eina_Bool, 0, EFL_FUNC_CALL(pos, cx, cy, cw, ch), int pos, int *cx, int *cy, int *cw, int *ch);
 
 Efl_Object *_evas_text_efl_object_constructor(Eo *obj, Evas_Text_Data *pd);
 

@@ -74,7 +74,7 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_rectangle_add(Evas *e)
 {
    e = evas_find(e);

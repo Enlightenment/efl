@@ -416,7 +416,7 @@ struct _RGBA_Map_Cutout
    RGBA_Map_Spans spans[1];
 };
 
-EAPI void
+EVAS_API void
 evas_common_map_rgba_clean(RGBA_Map *m)
 {
    RGBA_Map_Cutout *spans = m->engine_data;
@@ -555,7 +555,7 @@ _evas_common_map_rgba_span(RGBA_Map_Spans *span,
      }
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
                              RGBA_Draw_Context *dc,
                              RGBA_Map *m)
@@ -769,7 +769,7 @@ void evas_common_map_rgba_internal_neon(RGBA_Image *src, RGBA_Image *dst, RGBA_D
 }
 #endif
 
-EAPI void
+EVAS_API void
 evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
                         RGBA_Draw_Context *dc,
                         int npoints EINA_UNUSED, RGBA_Map_Point *p,
@@ -812,7 +812,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map *map, int smooth, int level, int offset, Evas_Common_Map_Thread_RGBA_Cb cb)
 {
    Cutout_Rect  *r;
@@ -856,7 +856,7 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
    return ret;
 }
 
-EAPI void
+EVAS_API void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                      RGBA_Draw_Context *dc,
                      int npoints, RGBA_Map_Point *p,
@@ -889,7 +889,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
    evas_common_map_rgba_cb(src, dst, dc, npoints, p, smooth, level, cb);
 }
 
-EAPI void
+EVAS_API void
 evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    //The best quaility requsted.
@@ -932,7 +932,7 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_map_rgba_do(const Eina_Rectangle *clip,
                         RGBA_Image *src, RGBA_Image *dst,
 			RGBA_Draw_Context *dc,

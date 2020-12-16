@@ -80,7 +80,7 @@ _efl_input_hold_efl_object_destructor(Eo *obj, Efl_Input_Hold_Data *pd)
 }
 
 
-EOAPI Eo*
+EVAS_API EVAS_API_WEAK Eo*
 efl_input_hold_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Event *evt = efl_input_event_instance_get(EFL_INPUT_HOLD_CLASS, owner);;

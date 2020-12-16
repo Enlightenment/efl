@@ -2,7 +2,7 @@
 #include "evas_private.h"
 
 static Evas_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Evas_Version *evas_version = &_version;
+EVAS_API Evas_Version *evas_version = &_version;
 
 int _evas_alloc_error = 0;
 static int _evas_debug_init = 0;
@@ -13,7 +13,7 @@ static enum {
 } _evas_debug_show = _EVAS_DEBUG_DEFAULT;
 static int _evas_debug_abort = 0;
 
-EAPI Evas_Alloc_Error
+EVAS_API Evas_Alloc_Error
 evas_alloc_error(void)
 {
    return _evas_alloc_error;

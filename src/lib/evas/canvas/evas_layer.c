@@ -208,7 +208,7 @@ _evas_object_layer_set_child(Evas_Object_Protected_Data *obj, Evas_Object_Protec
 
 /* public functions */
 
-EAPI void
+EVAS_API void
 evas_object_layer_set(Evas_Object *obj, short l)
 {
    efl_gfx_stack_layer_set((Evas_Object *)obj, l);
@@ -265,7 +265,7 @@ _efl_canvas_object_efl_gfx_stack_layer_set(Eo *eo_obj, Evas_Object_Protected_Dat
    evas_object_inform_call_restack(eo_obj, obj);
 }
 
-EAPI short
+EVAS_API short
 evas_object_layer_get(const Evas_Object *obj)
 {
    return efl_gfx_stack_layer_get((Evas_Object *)obj);

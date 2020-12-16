@@ -17,7 +17,7 @@ __eolian_evas_canvas_image_cache_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_image_cache_set, EFL_FUNC_CALL(size), int size);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_image_cache_set, EFL_FUNC_CALL(size), int size);
 
 int _evas_canvas_image_cache_get(const Eo *obj, Evas_Public_Data *pd);
 
@@ -29,15 +29,15 @@ __eolian_evas_canvas_image_cache_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_image_cache_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_image_cache_get, int, 0);
 
 void _evas_canvas_event_default_flags_set(Eo *obj, Evas_Public_Data *pd, Evas_Event_Flags flags);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_event_default_flags_set, EFL_FUNC_CALL(flags), Evas_Event_Flags flags);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_event_default_flags_set, EFL_FUNC_CALL(flags), Evas_Event_Flags flags);
 
 Evas_Event_Flags _evas_canvas_event_default_flags_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_event_default_flags_get, Evas_Event_Flags, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_event_default_flags_get, Evas_Event_Flags, 0);
 
 void _evas_canvas_font_cache_set(Eo *obj, Evas_Public_Data *pd, int size);
 
@@ -57,7 +57,7 @@ __eolian_evas_canvas_font_cache_set_reflect(Eo *obj, Eina_Value val)
    return r;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_font_cache_set, EFL_FUNC_CALL(size), int size);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_font_cache_set, EFL_FUNC_CALL(size), int size);
 
 int _evas_canvas_font_cache_get(const Eo *obj, Evas_Public_Data *pd);
 
@@ -69,251 +69,251 @@ __eolian_evas_canvas_font_cache_get_reflect(const Eo *obj)
    return eina_value_int_init(val);
 }
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_font_cache_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_font_cache_get, int, 0);
 
 void _evas_canvas_data_attach_set(Eo *obj, Evas_Public_Data *pd, void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_data_attach_set, EFL_FUNC_CALL(data), void *data);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_data_attach_set, EFL_FUNC_CALL(data), void *data);
 
 void *_evas_canvas_data_attach_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_data_attach_get, void *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_data_attach_get, void *, NULL);
 
 Efl_Canvas_Object *_evas_canvas_focus_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_focus_get, Efl_Canvas_Object *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_focus_get, Efl_Canvas_Object *, NULL);
 
 Efl_Canvas_Object *_evas_canvas_seat_focus_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(seat), Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 Efl_Canvas_Object *_evas_canvas_object_top_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_object_top_get, Efl_Canvas_Object *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_object_top_get, Efl_Canvas_Object *, NULL);
 
 void _evas_canvas_pointer_canvas_xy_by_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *dev, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_canvas_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Evas_Device *dev, int *x, int *y);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_canvas_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Evas_Device *dev, int *x, int *y);
 
 void _evas_canvas_pointer_canvas_xy_get(const Eo *obj, Evas_Public_Data *pd, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_canvas_xy_get, EFL_FUNC_CALL(x, y), int *x, int *y);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_canvas_xy_get, EFL_FUNC_CALL(x, y), int *x, int *y);
 
 int _evas_canvas_event_down_count_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_event_down_count_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_event_down_count_get, int, 0);
 
 int _evas_canvas_smart_objects_calculate_count_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_smart_objects_calculate_count_get, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_smart_objects_calculate_count_get, int, 0);
 
 Eina_Bool _evas_canvas_focus_state_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_focus_state_get, Eina_Bool, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_focus_state_get, Eina_Bool, 0);
 
 Eina_Bool _evas_canvas_seat_focus_state_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_state_get, Eina_Bool, 0, EFL_FUNC_CALL(seat), Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_state_get, Eina_Bool, 0, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 Eina_Bool _evas_canvas_changed_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_changed_get, Eina_Bool, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_changed_get, Eina_Bool, 0);
 
 void _evas_canvas_pointer_output_xy_by_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *dev, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_output_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Evas_Device *dev, int *x, int *y);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_output_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Evas_Device *dev, int *x, int *y);
 
 void _evas_canvas_pointer_output_xy_get(const Eo *obj, Evas_Public_Data *pd, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_output_xy_get, EFL_FUNC_CALL(x, y), int *x, int *y);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_output_xy_get, EFL_FUNC_CALL(x, y), int *x, int *y);
 
 Efl_Canvas_Object *_evas_canvas_object_bottom_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_object_bottom_get, Efl_Canvas_Object *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_object_bottom_get, Efl_Canvas_Object *, NULL);
 
 unsigned int _evas_canvas_pointer_button_down_mask_by_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *dev);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_pointer_button_down_mask_by_device_get, unsigned int, 0, EFL_FUNC_CALL(dev), Evas_Device *dev);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_pointer_button_down_mask_by_device_get, unsigned int, 0, EFL_FUNC_CALL(dev), Evas_Device *dev);
 
 unsigned int _evas_canvas_pointer_button_down_mask_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_pointer_button_down_mask_get, unsigned int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_pointer_button_down_mask_get, unsigned int, 0);
 
 Eina_List *_evas_canvas_tree_objects_at_xy_get(Eo *obj, Evas_Public_Data *pd, Efl_Canvas_Object *stop, int x, int y);
 
-EOAPI EFL_FUNC_BODYV(evas_canvas_tree_objects_at_xy_get, Eina_List *, NULL, EFL_FUNC_CALL(stop, x, y), Efl_Canvas_Object *stop, int x, int y);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV(evas_canvas_tree_objects_at_xy_get, Eina_List *, NULL, EFL_FUNC_CALL(stop, x, y), Efl_Canvas_Object *stop, int x, int y);
 
 void _evas_canvas_key_lock_on(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_on, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_on, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_seat_key_lock_on(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
 void _evas_canvas_seat_key_lock_off(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
 void _evas_canvas_key_modifier_add(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_add, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_add, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_key_modifier_off(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_off, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_off, EFL_FUNC_CALL(keyname), const char *keyname);
 
 Eina_Bool _evas_canvas_render_async(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY(evas_canvas_render_async, Eina_Bool, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY(evas_canvas_render_async, Eina_Bool, 0);
 
 void _evas_canvas_focus_out(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_focus_out);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_focus_out);
 
 void _evas_canvas_norender(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_norender);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_norender);
 
 void _evas_canvas_nochange_pop(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_nochange_pop);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_nochange_pop);
 
 void _evas_canvas_key_lock_off(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_off, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_off, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_nochange_push(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_nochange_push);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_nochange_push);
 
 void _evas_canvas_font_cache_flush(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_font_cache_flush);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_font_cache_flush);
 
 void _evas_canvas_key_modifier_on(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_on, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_on, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_seat_key_modifier_on(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
 void _evas_canvas_seat_key_modifier_off(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
 Eina_List *_evas_canvas_font_available_list(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_font_available_list, Eina_List *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_font_available_list, Eina_List *, NULL);
 
 Efl_Canvas_Object *_evas_canvas_object_name_find(const Eo *obj, Evas_Public_Data *pd, const char *name);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_object_name_find, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(name), const char *name);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_object_name_find, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(name), const char *name);
 
 void _evas_canvas_font_path_append(Eo *obj, Evas_Public_Data *pd, const char *path);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_font_path_append, EFL_FUNC_CALL(path), const char *path);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_font_path_append, EFL_FUNC_CALL(path), const char *path);
 
 void _evas_canvas_font_path_clear(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_font_path_clear);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_font_path_clear);
 
 void _evas_canvas_touch_point_list_nth_xy_get(Eo *obj, Evas_Public_Data *pd, unsigned int n, double *x, double *y);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_touch_point_list_nth_xy_get, EFL_FUNC_CALL(n, x, y), unsigned int n, double *x, double *y);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_touch_point_list_nth_xy_get, EFL_FUNC_CALL(n, x, y), unsigned int n, double *x, double *y);
 
 void _evas_canvas_key_lock_del(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_del, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_del, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_damage_rectangle_add(Eo *obj, Evas_Public_Data *pd, int x, int y, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_damage_rectangle_add, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_damage_rectangle_add, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
 
 void _evas_canvas_sync(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_sync);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_sync);
 
 const Eina_List *_evas_canvas_font_path_list(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_font_path_list, const Eina_List *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_canvas_font_path_list, const Eina_List *, NULL);
 
 void _evas_canvas_image_cache_reload(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_image_cache_reload);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_image_cache_reload);
 
 int _evas_canvas_coord_world_x_to_screen(const Eo *obj, Evas_Public_Data *pd, int x);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_coord_world_x_to_screen, int, 0, EFL_FUNC_CALL(x), int x);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_coord_world_x_to_screen, int, 0, EFL_FUNC_CALL(x), int x);
 
 Eina_List *_evas_canvas_render_updates(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY(evas_canvas_render_updates, Eina_List *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY(evas_canvas_render_updates, Eina_List *, NULL);
 
 void _evas_canvas_image_cache_flush(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_image_cache_flush);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_image_cache_flush);
 
 int _evas_canvas_coord_screen_y_to_world(const Eo *obj, Evas_Public_Data *pd, int y);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_coord_screen_y_to_world, int, 0, EFL_FUNC_CALL(y), int y);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_coord_screen_y_to_world, int, 0, EFL_FUNC_CALL(y), int y);
 
 void _evas_canvas_key_modifier_del(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_del, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_del, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_focus_in(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_focus_in);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_focus_in);
 
 void _evas_canvas_seat_focus_in(Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_in, EFL_FUNC_CALL(seat), Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_in, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 void _evas_canvas_seat_focus_out(Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_out, EFL_FUNC_CALL(seat), Evas_Device *seat);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_out, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 void _evas_canvas_obscured_rectangle_add(Eo *obj, Evas_Public_Data *pd, int x, int y, int w, int h);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_obscured_rectangle_add, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_obscured_rectangle_add, EFL_FUNC_CALL(x, y, w, h), int x, int y, int w, int h);
 
 void _evas_canvas_render_dump(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_render_dump);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_render_dump);
 
 void _evas_canvas_render(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_render);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_render);
 
 void _evas_canvas_font_path_prepend(Eo *obj, Evas_Public_Data *pd, const char *path);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_font_path_prepend, EFL_FUNC_CALL(path), const char *path);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_font_path_prepend, EFL_FUNC_CALL(path), const char *path);
 
 void _evas_canvas_obscured_clear(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_obscured_clear);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_obscured_clear);
 
 int _evas_canvas_coord_screen_x_to_world(const Eo *obj, Evas_Public_Data *pd, int x);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_coord_screen_x_to_world, int, 0, EFL_FUNC_CALL(x), int x);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_coord_screen_x_to_world, int, 0, EFL_FUNC_CALL(x), int x);
 
 void _evas_canvas_key_lock_add(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_add, EFL_FUNC_CALL(keyname), const char *keyname);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_add, EFL_FUNC_CALL(keyname), const char *keyname);
 
 void _evas_canvas_render_idle_flush(Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_VOID_FUNC_BODY(evas_canvas_render_idle_flush);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODY(evas_canvas_render_idle_flush);
 
 Evas_Device *_evas_canvas_default_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device_Class type);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_default_device_get, Evas_Device *, NULL, EFL_FUNC_CALL(type), Evas_Device_Class type);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_default_device_get, Evas_Device *, NULL, EFL_FUNC_CALL(type), Evas_Device_Class type);
 
 int _evas_canvas_coord_world_y_to_screen(const Eo *obj, Evas_Public_Data *pd, int y);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_coord_world_y_to_screen, int, 0, EFL_FUNC_CALL(y), int y);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_canvas_coord_world_y_to_screen, int, 0, EFL_FUNC_CALL(y), int y);
 
 Efl_Object *_evas_canvas_efl_object_constructor(Eo *obj, Evas_Public_Data *pd);
 

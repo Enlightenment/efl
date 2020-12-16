@@ -193,43 +193,43 @@ _efl_canvas_vg_gradient_radial_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas
    return cn;
 }
 
-EAPI void
+EVAS_API void
 evas_vg_gradient_radial_center_set(Evas_Vg_Gradient_Radial *obj, double x, double y)
 {
    efl_gfx_gradient_radial_center_set(obj, x, y);
 }
 
-EAPI void
+EVAS_API void
 evas_vg_gradient_radial_center_get(Evas_Vg_Gradient_Radial *obj, double *x, double *y)
 {
    efl_gfx_gradient_radial_center_get(obj, x, y);
 }
 
-EAPI void
+EVAS_API void
 evas_vg_gradient_radial_radius_set(Evas_Vg_Gradient_Radial *obj, double r)
 {
    efl_gfx_gradient_radial_radius_set(obj, r);
 }
 
-EAPI double
+EVAS_API double
 evas_vg_gradient_radial_radius_get(Evas_Vg_Gradient_Radial *obj)
 {
    return efl_gfx_gradient_radial_radius_get(obj);
 }
 
-EAPI void
+EVAS_API void
 evas_vg_gradient_radial_focal_set(Evas_Vg_Gradient_Radial *obj, double x, double y)
 {
    efl_gfx_gradient_radial_focal_set(obj, x, y);
 }
 
-EAPI void
+EVAS_API void
 evas_vg_gradient_radial_focal_get(Evas_Vg_Gradient_Radial *obj, double *x, double *y)
 {
    efl_gfx_gradient_radial_focal_get(obj, x, y);
 }
 
-EAPI Evas_Vg_Gradient_Radial*
+EVAS_API Evas_Vg_Gradient_Radial*
 evas_vg_gradient_radial_add(Evas_Vg_Container *parent)
 {
    return efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);

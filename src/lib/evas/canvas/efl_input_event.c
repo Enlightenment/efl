@@ -133,7 +133,7 @@ efl_input_event_instance_clean(Eo *klass)
 
 /* Internal EO APIs */
 
-EOAPI EFL_FUNC_BODY_CONST(efl_input_legacy_info_get, void *, NULL)
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(efl_input_legacy_info_get, void *, NULL)
 
 #define EFL_INPUT_EVENT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, NULL)

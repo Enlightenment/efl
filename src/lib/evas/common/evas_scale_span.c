@@ -447,35 +447,35 @@ evas_common_scale_clip_a8_span_(DATA32 *src EINA_UNUSED, DATA8 *mask, int src_le
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_rgba_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    evas_common_scale_rgba_span_(src, mask, src_len, mul_col, dst, dst_len, dir);
    evas_common_cpu_end_opt();
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_rgba_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    evas_common_scale_rgba_a8_span_(src, mask, src_len, mul_col, dst, dst_len, dir);
    evas_common_cpu_end_opt();
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    evas_common_scale_a8_span_(src, mask, src_len, mul_col, dst, dst_len, dir);
    evas_common_cpu_end_opt();
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_clip_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    evas_common_scale_clip_a8_span_(src, mask, src_len, mul_col, dst, dst_len, dir);
    evas_common_cpu_end_opt();
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask EINA_UNUSED, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    int  mul = 0, step = 1;
@@ -558,7 +558,7 @@ evas_common_scale_hsva_span(DATA32 *src, DATA8 *mask EINA_UNUSED, int src_len, D
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_hsva_a8_span(DATA32 *src, DATA8 *mask, int src_len, DATA32 mul_col, DATA32 *dst, int dst_len, int dir)
 {
    int  mul = 0, step = 1;

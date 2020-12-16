@@ -19,7 +19,7 @@ typedef Eo Evas_Grid;
  */
 #define EVAS_GRID_CLASS evas_grid_class_get()
 
-EWAPI const Efl_Class *evas_grid_class_get(void) EINA_CONST;
+EVAS_API EVAS_API_WEAK const Efl_Class *evas_grid_class_get(void) EINA_CONST;
 
 /**
  * @brief Set the virtual resolution for the grid
@@ -32,7 +32,7 @@ EWAPI const Efl_Class *evas_grid_class_get(void) EINA_CONST;
  *
  * @ingroup Evas_Grid
  */
-EOAPI void evas_obj_grid_size_set(Eo *obj, int w, int h);
+EVAS_API EVAS_API_WEAK void evas_obj_grid_size_set(Eo *obj, int w, int h);
 
 /**
  * @brief Get the current virtual resolution
@@ -47,7 +47,7 @@ EOAPI void evas_obj_grid_size_set(Eo *obj, int w, int h);
  *
  * @ingroup Evas_Grid
  */
-EOAPI void evas_obj_grid_size_get(const Eo *obj, int *w, int *h);
+EVAS_API EVAS_API_WEAK void evas_obj_grid_size_get(const Eo *obj, int *w, int *h);
 
 /**
  * @brief Get the list of children for the grid.
@@ -65,7 +65,7 @@ EOAPI void evas_obj_grid_size_get(const Eo *obj, int *w, int *h);
  *
  * @ingroup Evas_Grid
  */
-EOAPI Eina_List *evas_obj_grid_children_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Eina_List *evas_obj_grid_children_get(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get an accessor to get random access to the list of children for the
@@ -81,7 +81,7 @@ EOAPI Eina_List *evas_obj_grid_children_get(const Eo *obj) EINA_WARN_UNUSED_RESU
  *
  * @ingroup Evas_Grid
  */
-EOAPI Eina_Accessor *evas_obj_grid_accessor_new(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Eina_Accessor *evas_obj_grid_accessor_new(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Faster way to remove all child objects from a grid object.
@@ -93,7 +93,7 @@ EOAPI Eina_Accessor *evas_obj_grid_accessor_new(const Eo *obj) EINA_WARN_UNUSED_
  *
  * @ingroup Evas_Grid
  */
-EOAPI void evas_obj_grid_clear(Eo *obj, Eina_Bool clear);
+EVAS_API EVAS_API_WEAK void evas_obj_grid_clear(Eo *obj, Eina_Bool clear);
 
 /**
  * @brief Get an iterator to walk the list of children for the grid.
@@ -108,7 +108,7 @@ EOAPI void evas_obj_grid_clear(Eo *obj, Eina_Bool clear);
  *
  * @ingroup Evas_Grid
  */
-EOAPI Eina_Iterator *evas_obj_grid_iterator_new(const Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Eina_Iterator *evas_obj_grid_iterator_new(const Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Create a grid that is child of a given element parent.
@@ -123,7 +123,7 @@ EOAPI Eina_Iterator *evas_obj_grid_iterator_new(const Eo *obj) EINA_WARN_UNUSED_
  *
  * @ingroup Evas_Grid
  */
-EOAPI Efl_Canvas_Object *evas_obj_grid_add_to(Eo *obj) EINA_WARN_UNUSED_RESULT;
+EVAS_API EVAS_API_WEAK Efl_Canvas_Object *evas_obj_grid_add_to(Eo *obj) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Remove child from grid.
@@ -141,7 +141,7 @@ EOAPI Efl_Canvas_Object *evas_obj_grid_add_to(Eo *obj) EINA_WARN_UNUSED_RESULT;
  *
  * @ingroup Evas_Grid
  */
-EOAPI Eina_Bool evas_obj_grid_unpack(Eo *obj, Efl_Canvas_Object *child) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_obj_grid_unpack(Eo *obj, Efl_Canvas_Object *child) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Get the pack options for a grid child
@@ -162,7 +162,7 @@ EOAPI Eina_Bool evas_obj_grid_unpack(Eo *obj, Efl_Canvas_Object *child) EINA_ARG
  *
  * @ingroup Evas_Grid
  */
-EOAPI Eina_Bool evas_obj_grid_pack_get(const Eo *obj, Efl_Canvas_Object *child, int *x, int *y, int *w, int *h);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_obj_grid_pack_get(const Eo *obj, Efl_Canvas_Object *child, int *x, int *y, int *w, int *h);
 
 /**
  * @brief Add a new child to a grid object.
@@ -180,6 +180,6 @@ EOAPI Eina_Bool evas_obj_grid_pack_get(const Eo *obj, Efl_Canvas_Object *child, 
  *
  * @ingroup Evas_Grid
  */
-EOAPI Eina_Bool evas_obj_grid_pack(Eo *obj, Efl_Canvas_Object *child, int x, int y, int w, int h) EINA_ARG_NONNULL(2);
+EVAS_API EVAS_API_WEAK Eina_Bool evas_obj_grid_pack(Eo *obj, Efl_Canvas_Object *child, int x, int y, int w, int h) EINA_ARG_NONNULL(2);
 
 #endif

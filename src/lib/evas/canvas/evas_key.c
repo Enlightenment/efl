@@ -31,14 +31,14 @@ evas_key_lock_number(const Evas_Lock *l, const char *keyname)
 
 /* public calls */
 
-EAPI const Evas_Modifier*
+EVAS_API const Evas_Modifier*
 evas_key_modifier_get(const Evas *eo_e)
 {
    EVAS_LEGACY_API(eo_e, e, NULL);
    return &(e->modifiers);
 }
 
-EAPI const Evas_Lock*
+EVAS_API const Evas_Lock*
 evas_key_lock_get(const Evas *eo_e)
 {
    EVAS_LEGACY_API(eo_e, e, NULL);
@@ -60,7 +60,7 @@ _key_is_set(int n, Eina_Hash *masks, const Evas_Device *seat)
    return 0;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname,
                               const Evas_Device *seat)
 {
@@ -72,21 +72,21 @@ evas_seat_key_modifier_is_set(const Evas_Modifier *m, const char *keyname,
    return _key_is_set(evas_key_modifier_number(m, keyname), m->masks, seat);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_key_modifier_is_set(const Evas_Modifier *m, const char *keyname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
    return evas_seat_key_modifier_is_set(m, keyname, NULL);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(l, EINA_FALSE);
    return evas_seat_key_lock_is_set(l, keyname, NULL);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_seat_key_lock_is_set(const Evas_Lock *l, const char *keyname,
                           const Evas_Device *seat)
 {
@@ -267,7 +267,7 @@ _evas_canvas_key_lock_off(Eo *eo_e, Evas_Public_Data *e, const char *keyname)
 
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
 
-EAPI Evas_Modifier_Mask
+EVAS_API Evas_Modifier_Mask
 evas_key_modifier_mask_get(const Evas *eo_e, const char *keyname)
 {
    int n;

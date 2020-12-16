@@ -1,11 +1,11 @@
 
 void _evas_line_xy_set(Eo *obj, Evas_Line_Data *pd, int x1, int y1, int x2, int y2);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_line_xy_set, EFL_FUNC_CALL(x1, y1, x2, y2), int x1, int y1, int x2, int y2);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_line_xy_set, EFL_FUNC_CALL(x1, y1, x2, y2), int x1, int y1, int x2, int y2);
 
 void _evas_line_xy_get(const Eo *obj, Evas_Line_Data *pd, int *x1, int *y1, int *x2, int *y2);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_line_xy_get, EFL_FUNC_CALL(x1, y1, x2, y2), int *x1, int *y1, int *x2, int *y2);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_line_xy_get, EFL_FUNC_CALL(x1, y1, x2, y2), int *x1, int *y1, int *x2, int *y2);
 
 Efl_Object *_evas_line_efl_object_constructor(Eo *obj, Evas_Line_Data *pd);
 
