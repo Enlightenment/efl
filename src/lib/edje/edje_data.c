@@ -809,8 +809,10 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "user_set.fixed", Dec.user_set.fixed, EET_T_UCHAR);                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.w", Dec.min.w, EET_T_INT);                                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.h", Dec.min.h, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "min.limit", Dec.min.limit, EET_T_CHAR);                                \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.w", Dec.max.w, EET_T_INT);                                         \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.h", Dec.max.h, EET_T_INT);                                         \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "max.limit", Dec.max.limit, EET_T_CHAR);                                \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.x", Dec.step.x, EET_T_INT);                                       \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "step.y", Dec.step.y, EET_T_INT);                                       \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "aspect.min", Dec.aspect.min, EDJE_T_FLOAT);                            \
