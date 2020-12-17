@@ -52,6 +52,7 @@ eolian = declare_dependency(
 eolian_include_dir = join_paths(dir_data, 'eolian', 'include')
 
 eolian_header_src = [
+'eolian_api.h',
 'Eolian.h',
 'Eolian_Aux.h'
 ]

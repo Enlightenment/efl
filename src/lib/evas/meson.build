@@ -124,6 +124,7 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 evas_src += pub_eo_file_target
 
 evas_header_src = [
+  'evas_api.h',
   'Evas.h',
   'Evas_Common.h',
   'Evas_Eo.h',
