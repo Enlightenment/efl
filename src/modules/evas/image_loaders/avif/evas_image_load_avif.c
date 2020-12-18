@@ -43,7 +43,6 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
                                         int *error)
 {
    Evas_Image_Animated *animated;
-   avifROData raw;
    avifDecoder *decoder;
    avifResult res;
    Eina_Bool ret;
@@ -55,9 +54,6 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
    prop->h = 0;
    prop->alpha = EINA_FALSE;
 
-   raw.size = length;
-   raw.data = (const uint8_t *)map;
-
    decoder = avifDecoderCreate();
    if (!decoder)
      {
@@ -65,7 +61,8 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
         return ret;
      }
 
-   res = avifDecoderParse(decoder, &raw);
+   avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
+   res = avifDecoderParse(decoder);
    if (res != AVIF_RESULT_OK)
      {
         ERR("avif file format invalid");
@@ -141,7 +138,6 @@ evas_image_load_file_data_avif_internal(Evas_Loader_Internal *loader,
    decoder = loader->decoder;
    if (!decoder)
      {
-        avifROData raw;
         decoder = avifDecoderCreate();
         if (!decoder)
           {
@@ -149,10 +145,8 @@ evas_image_load_file_data_avif_internal(Evas_Loader_Internal *loader,
              return EINA_FALSE;
           }
 
-        raw.size = length;
-        raw.data = (const uint8_t *)map;
-
-        res = avifDecoderParse(decoder, &raw);
+        avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
+        res = avifDecoderParse(decoder);
         if (res != AVIF_RESULT_OK)
           {
              *error = EVAS_LOAD_ERROR_GENERIC;
