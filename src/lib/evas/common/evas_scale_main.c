@@ -1,12 +1,12 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-EAPI void
+EVAS_API void
 evas_common_scale_init(void)
 {
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_prepare(Cutout_Rects **reuse, const RGBA_Image *src EINA_UNUSED,
 					      const RGBA_Image *dst,
 					      RGBA_Draw_Context *dc,
@@ -31,7 +31,7 @@ evas_common_scale_rgba_in_to_out_clip_prepare(Cutout_Rects **reuse, const RGBA_I
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_cb(RGBA_Image *src, RGBA_Image *dst,
                                          RGBA_Draw_Context *dc,
                                          int src_region_x, int src_region_y,

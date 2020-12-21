@@ -53,7 +53,7 @@ _evas_touch_point_remove(Evas *eo_e, int id)
      }
 }
 
-EAPI unsigned int
+EVAS_API unsigned int
 evas_touch_point_list_count(Eo *eo_e)
 {
    EVAS_LEGACY_API(eo_e, e, 0);
@@ -79,7 +79,7 @@ _evas_canvas_touch_point_list_nth_xy_get(Evas_Canvas *eo_e EINA_UNUSED,
    if (y) *y = point->y;
 }
 
-EAPI void
+EVAS_API void
 evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n,
                                  Evas_Coord *x, Evas_Coord *y)
 {
@@ -91,7 +91,7 @@ evas_touch_point_list_nth_xy_get(Evas *eo_e, unsigned int n,
    if (y) *y = Y;
 }
 
-EAPI int
+EVAS_API int
 evas_touch_point_list_nth_id_get(Evas *eo_e, unsigned int n)
 {
    Evas_Coord_Touch_Point *point;
@@ -102,7 +102,7 @@ evas_touch_point_list_nth_id_get(Evas *eo_e, unsigned int n)
    else return point->id;
 }
 
-EAPI Evas_Touch_Point_State
+EVAS_API Evas_Touch_Point_State
 evas_touch_point_list_nth_state_get(Evas *eo_e, unsigned int n)
 {
    Evas_Coord_Touch_Point *point;

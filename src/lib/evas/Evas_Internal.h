@@ -2,31 +2,7 @@
 #ifndef _EVAS_INTERNAL_H
 #define _EVAS_INTERNAL_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <evas_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,16 +16,16 @@ extern "C" {
 
 typedef struct _Evas_Object_Pointer_Data Evas_Object_Pointer_Data;
 
-EOAPI const Eina_List *efl_input_device_children_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK const Eina_List *efl_input_device_children_get(const Eo *obj);
 
-EOAPI void efl_input_device_evas_set(Eo *obj, Evas *e);
-EOAPI Evas *efl_input_device_evas_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK void efl_input_device_evas_set(Eo *obj, Evas *e);
+EVAS_API EVAS_API_WEAK Evas *efl_input_device_evas_get(const Eo *obj);
 
-EOAPI void efl_input_device_subclass_set(Eo *obj, Evas_Device_Subclass sub_clas);
-EOAPI Evas_Device_Subclass efl_input_device_subclass_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK void efl_input_device_subclass_set(Eo *obj, Evas_Device_Subclass sub_clas);
+EVAS_API EVAS_API_WEAK Evas_Device_Subclass efl_input_device_subclass_get(const Eo *obj);
 
-EOAPI void efl_input_device_grab_register(Eo *obj, Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
-EOAPI void efl_input_device_grab_unregister(Eo *obj, Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+EVAS_API EVAS_API_WEAK void efl_input_device_grab_register(Eo *obj, Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
+EVAS_API EVAS_API_WEAK void efl_input_device_grab_unregister(Eo *obj, Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
 
 typedef struct _Efl_Input_Pointer_Data  Efl_Input_Pointer_Data;
 typedef struct _Efl_Input_Key_Data      Efl_Input_Key_Data;
@@ -193,23 +169,23 @@ _efl_input_value_mark(Efl_Input_Pointer_Data *pd, Efl_Input_Value key)
 
 typedef struct _Efl_Canvas_Output Efl_Canvas_Output;
 
-EAPI Efl_Canvas_Output *efl_canvas_output_add(Evas *canvas);
-EAPI void efl_canvas_output_del(Efl_Canvas_Output *output);
-EAPI void efl_canvas_output_view_set(Efl_Canvas_Output *output,
+EVAS_API Efl_Canvas_Output *efl_canvas_output_add(Evas *canvas);
+EVAS_API void efl_canvas_output_del(Efl_Canvas_Output *output);
+EVAS_API void efl_canvas_output_view_set(Efl_Canvas_Output *output,
                                      Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
-EAPI void efl_canvas_output_view_get(Efl_Canvas_Output *output,
+EVAS_API void efl_canvas_output_view_get(Efl_Canvas_Output *output,
                                      Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-EAPI Eina_Bool efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
+EVAS_API Eina_Bool efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
                                                  Evas_Engine_Info *info);
-EAPI Evas_Engine_Info *efl_canvas_output_engine_info_get(Efl_Canvas_Output *output);
-EAPI Eina_Bool efl_canvas_output_lock(Efl_Canvas_Output *output);
-EAPI Eina_Bool efl_canvas_output_unlock(Efl_Canvas_Output *output);
+EVAS_API Evas_Engine_Info *efl_canvas_output_engine_info_get(Efl_Canvas_Output *output);
+EVAS_API Eina_Bool efl_canvas_output_lock(Efl_Canvas_Output *output);
+EVAS_API Eina_Bool efl_canvas_output_unlock(Efl_Canvas_Output *output);
 
-EAPI void evas_render_pending_objects_flush(Evas *eo_evas);
+EVAS_API void evas_render_pending_objects_flush(Evas *eo_evas);
 
-EAPI void efl_input_pointer_finalize(Efl_Input_Pointer *obj);
+EVAS_API void efl_input_pointer_finalize(Efl_Input_Pointer *obj);
 
-EAPI Eina_Iterator *efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list);
+EVAS_API Eina_Iterator *efl_canvas_iterator_create(Eo *obj, Eina_Iterator *real_iterator, Eina_List *list);
 
 static inline void
 evas_object_size_hint_combined_min_get(const Eo *obj, int *w, int *h)
@@ -230,23 +206,23 @@ evas_object_size_hint_combined_max_get(const Eo *obj, int *w, int *h)
 }
 
 /* Internal EO APIs */
-EAPI Eo *evas_find(const Eo *obj);
-EOAPI void efl_canvas_object_legacy_ctor(Eo *obj);
-EOAPI void efl_canvas_object_type_set(Eo *obj, const char *type);
-EOAPI void efl_canvas_group_add(Eo *obj);
-EOAPI void efl_canvas_group_del(Eo *obj);
-EOAPI void efl_canvas_group_clipped_set(Eo *obj, Eina_Bool unclipped);
-EOAPI void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, double *x, double *y);
-EOAPI void evas_canvas_seat_focus_in(Eo *obj, Efl_Input_Device *seat);
-EOAPI void evas_canvas_seat_focus_out(Eo *obj, Efl_Input_Device *seat);
-EOAPI Eo* evas_canvas_seat_focus_get(const Eo *obj, Efl_Input_Device *seat);
+EVAS_API Eo *evas_find(const Eo *obj);
+EVAS_API EVAS_API_WEAK void efl_canvas_object_legacy_ctor(Eo *obj);
+EVAS_API EVAS_API_WEAK void efl_canvas_object_type_set(Eo *obj, const char *type);
+EVAS_API EVAS_API_WEAK void efl_canvas_group_add(Eo *obj);
+EVAS_API EVAS_API_WEAK void efl_canvas_group_del(Eo *obj);
+EVAS_API EVAS_API_WEAK void efl_canvas_group_clipped_set(Eo *obj, Eina_Bool unclipped);
+EVAS_API EVAS_API_WEAK void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, double *x, double *y);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_focus_in(Eo *obj, Efl_Input_Device *seat);
+EVAS_API EVAS_API_WEAK void evas_canvas_seat_focus_out(Eo *obj, Efl_Input_Device *seat);
+EVAS_API EVAS_API_WEAK Eo* evas_canvas_seat_focus_get(const Eo *obj, Efl_Input_Device *seat);
 
-EOAPI void *efl_input_legacy_info_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK void *efl_input_legacy_info_get(const Eo *obj);
 
-EOAPI Eo *efl_input_focus_instance_get(Efl_Object *owner, void **priv);
-EOAPI Eo *efl_input_hold_instance_get(Efl_Object *owner, void **priv);
-EOAPI Eo *efl_input_key_instance_get(Efl_Object *owner, void **priv);
-EOAPI Eo *efl_input_pointer_instance_get(Efl_Object *owner, void **priv);
+EVAS_API EVAS_API_WEAK Eo *efl_input_focus_instance_get(Efl_Object *owner, void **priv);
+EVAS_API EVAS_API_WEAK Eo *efl_input_hold_instance_get(Efl_Object *owner, void **priv);
+EVAS_API EVAS_API_WEAK Eo *efl_input_key_instance_get(Efl_Object *owner, void **priv);
+EVAS_API EVAS_API_WEAK Eo *efl_input_pointer_instance_get(Efl_Object *owner, void **priv);
 /**
  * @brief If @c true the object belongs to the window border decorations.
  *
@@ -264,7 +240,7 @@ EOAPI Eo *efl_input_pointer_instance_get(Efl_Object *owner, void **priv);
  *
  * @ingroup Efl_Canvas_Object
  */
-EOAPI void efl_canvas_object_is_frame_object_set(Eo *obj, Eina_Bool is_frame);
+EVAS_API EVAS_API_WEAK void efl_canvas_object_is_frame_object_set(Eo *obj, Eina_Bool is_frame);
 
 /**
  * @brief If @c true the object belongs to the window border decorations.
@@ -284,18 +260,18 @@ EOAPI void efl_canvas_object_is_frame_object_set(Eo *obj, Eina_Bool is_frame);
  *
  * @ingroup Efl_Canvas_Object
  */
-EOAPI Eina_Bool efl_canvas_object_is_frame_object_get(const Eo *obj);
+EVAS_API EVAS_API_WEAK Eina_Bool efl_canvas_object_is_frame_object_get(const Eo *obj);
 
-EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
 #define EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE))
 
-EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_POST;
 #define EVAS_CANVAS_EVENT_RENDER_FLUSH_POST (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_POST))
 
-EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE;
 #define EVAS_CANVAS_EVENT_AXIS_UPDATE (&(_EVAS_CANVAS_EVENT_AXIS_UPDATE))
 
-EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
 #define EVAS_CANVAS_EVENT_VIEWPORT_RESIZE (&(_EVAS_CANVAS_EVENT_VIEWPORT_RESIZE))
 
 #define EFL_CANVAS_GROUP_DEL_OPS(kls) EFL_OBJECT_OP_FUNC(efl_canvas_group_del, _##kls##_efl_canvas_group_group_del)
@@ -303,7 +279,7 @@ EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE;
 #define EFL_CANVAS_GROUP_ADD_DEL_OPS(kls) EFL_CANVAS_GROUP_ADD_OPS(kls), EFL_CANVAS_GROUP_DEL_OPS(kls)
 
 /* Efl.Animation.Player */
-EWAPI extern const Efl_Event_Description _EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED;
+EVAS_API EVAS_API_WEAK extern const Efl_Event_Description _EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED;
 #define EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED (&(_EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED))
 /* Efl.Animation.Player END */
 
@@ -316,24 +292,21 @@ EWAPI extern const Efl_Event_Description _EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED
  * @param cur the cursor.
  * @param forward if Eina_True check cluster after cusror position, else before cursor position.
  */
-EAPI Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_Cursor *cur,Eina_Bool forward);
+EVAS_API Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_Cursor *cur,Eina_Bool forward);
 
 
 
 
 /*Attribute Factory Internal function*/
-EAPI const char * efl_text_formatter_attribute_get(Efl_Text_Attribute_Handle *annotation);
-EAPI Eina_Iterator * efl_text_formatter_range_attributes_get(const Efl_Text_Cursor_Object *start, const Efl_Text_Cursor_Object *end);
-EAPI void efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor_Object *start, Efl_Text_Cursor_Object *end);
-EAPI void efl_text_formatter_remove(Efl_Text_Attribute_Handle *annotation);
-EAPI Eina_Bool efl_text_formatter_attribute_is_item(Efl_Text_Attribute_Handle *annotation);
-EAPI Eina_Bool efl_text_formatter_item_geometry_get(const Efl_Text_Attribute_Handle *annotation, int *x, int *y, int *w, int *h);
+EVAS_API const char * efl_text_formatter_attribute_get(Efl_Text_Attribute_Handle *annotation);
+EVAS_API Eina_Iterator * efl_text_formatter_range_attributes_get(const Efl_Text_Cursor_Object *start, const Efl_Text_Cursor_Object *end);
+EVAS_API void efl_text_formatter_attribute_cursors_get(const Efl_Text_Attribute_Handle *handle, Efl_Text_Cursor_Object *start, Efl_Text_Cursor_Object *end);
+EVAS_API void efl_text_formatter_remove(Efl_Text_Attribute_Handle *annotation);
+EVAS_API Eina_Bool efl_text_formatter_attribute_is_item(Efl_Text_Attribute_Handle *annotation);
+EVAS_API Eina_Bool efl_text_formatter_item_geometry_get(const Efl_Text_Attribute_Handle *annotation, int *x, int *y, int *w, int *h);
 
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

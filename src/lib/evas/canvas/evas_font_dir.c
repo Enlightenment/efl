@@ -1425,7 +1425,7 @@ evas_object_text_font_string_parse(char *buffer, char dest[14][256])
    return n;
 }
 
-EAPI void
+EVAS_API void
 evas_font_path_global_append(const char *path)
 {
    if (!path) return;
@@ -1436,7 +1436,7 @@ evas_font_path_global_append(const char *path)
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_font_path_global_prepend(const char *path)
 {
    if (!path) return;
@@ -1447,7 +1447,7 @@ evas_font_path_global_prepend(const char *path)
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_font_path_global_clear(void)
 {
    while (global_font_path)
@@ -1461,13 +1461,13 @@ evas_font_path_global_clear(void)
 #endif
 }
 
-EAPI const Eina_List *
+EVAS_API const Eina_List *
 evas_font_path_global_list(void)
 {
    return global_font_path;
 }
 
-EAPI void
+EVAS_API void
 evas_font_reinit(void)
 {
 #ifdef HAVE_FONTCONFIG

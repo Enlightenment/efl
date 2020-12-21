@@ -1,71 +1,71 @@
 
 void _evas_table_homogeneous_set(Eo *obj, Evas_Table_Data *pd, Evas_Object_Table_Homogeneous_Mode homogeneous);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_table_homogeneous_set, EFL_FUNC_CALL(homogeneous), Evas_Object_Table_Homogeneous_Mode homogeneous);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_table_homogeneous_set, EFL_FUNC_CALL(homogeneous), Evas_Object_Table_Homogeneous_Mode homogeneous);
 
 Evas_Object_Table_Homogeneous_Mode _evas_table_homogeneous_get(const Eo *obj, Evas_Table_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_table_homogeneous_get, Evas_Object_Table_Homogeneous_Mode, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_table_homogeneous_get, Evas_Object_Table_Homogeneous_Mode, 0);
 
 void _evas_table_align_set(Eo *obj, Evas_Table_Data *pd, double horizontal, double vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_table_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_table_align_set, EFL_FUNC_CALL(horizontal, vertical), double horizontal, double vertical);
 
 void _evas_table_align_get(const Eo *obj, Evas_Table_Data *pd, double *horizontal, double *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_table_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_table_align_get, EFL_FUNC_CALL(horizontal, vertical), double *horizontal, double *vertical);
 
 void _evas_table_padding_set(Eo *obj, Evas_Table_Data *pd, int horizontal, int vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_table_padding_set, EFL_FUNC_CALL(horizontal, vertical), int horizontal, int vertical);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_table_padding_set, EFL_FUNC_CALL(horizontal, vertical), int horizontal, int vertical);
 
 void _evas_table_padding_get(const Eo *obj, Evas_Table_Data *pd, int *horizontal, int *vertical);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_table_padding_get, EFL_FUNC_CALL(horizontal, vertical), int *horizontal, int *vertical);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_table_padding_get, EFL_FUNC_CALL(horizontal, vertical), int *horizontal, int *vertical);
 
 void _evas_table_col_row_size_get(const Eo *obj, Evas_Table_Data *pd, int *cols, int *rows);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_obj_table_col_row_size_get, EFL_FUNC_CALL(cols, rows), int *cols, int *rows);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV_CONST(evas_obj_table_col_row_size_get, EFL_FUNC_CALL(cols, rows), int *cols, int *rows);
 
 Eina_List *_evas_table_children_get(const Eo *obj, Evas_Table_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_table_children_get, Eina_List *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_table_children_get, Eina_List *, NULL);
 
 Efl_Canvas_Object *_evas_table_child_get(const Eo *obj, Evas_Table_Data *pd, unsigned short col, unsigned short row);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_obj_table_child_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(col, row), unsigned short col, unsigned short row);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_obj_table_child_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(col, row), unsigned short col, unsigned short row);
 
 void _evas_table_clear(Eo *obj, Evas_Table_Data *pd, Eina_Bool clear);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_obj_table_clear, EFL_FUNC_CALL(clear), Eina_Bool clear);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(evas_obj_table_clear, EFL_FUNC_CALL(clear), Eina_Bool clear);
 
 Eina_Accessor *_evas_table_accessor_new(const Eo *obj, Evas_Table_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_table_accessor_new, Eina_Accessor *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_table_accessor_new, Eina_Accessor *, NULL);
 
 Eina_Iterator *_evas_table_iterator_new(const Eo *obj, Evas_Table_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_obj_table_iterator_new, Eina_Iterator *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(evas_obj_table_iterator_new, Eina_Iterator *, NULL);
 
 Efl_Canvas_Object *_evas_table_add_to(Eo *obj, Evas_Table_Data *pd);
 
-EOAPI EFL_FUNC_BODY(evas_obj_table_add_to, Efl_Canvas_Object *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY(evas_obj_table_add_to, Efl_Canvas_Object *, NULL);
 
 Eina_Bool _evas_table_pack_get(const Eo *obj, Evas_Table_Data *pd, Efl_Canvas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_obj_table_pack_get, Eina_Bool, 0, EFL_FUNC_CALL(child, col, row, colspan, rowspan), Efl_Canvas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV_CONST(evas_obj_table_pack_get, Eina_Bool, 0, EFL_FUNC_CALL(child, col, row, colspan, rowspan), Efl_Canvas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
 
 Eina_Bool _evas_table_pack(Eo *obj, Evas_Table_Data *pd, Efl_Canvas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 
-EOAPI EFL_FUNC_BODYV(evas_obj_table_pack, Eina_Bool, 0, EFL_FUNC_CALL(child, col, row, colspan, rowspan), Efl_Canvas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV(evas_obj_table_pack, Eina_Bool, 0, EFL_FUNC_CALL(child, col, row, colspan, rowspan), Efl_Canvas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 
 Eina_Bool _evas_table_unpack(Eo *obj, Evas_Table_Data *pd, Efl_Canvas_Object *child);
 
-EOAPI EFL_FUNC_BODYV(evas_obj_table_unpack, Eina_Bool, 0, EFL_FUNC_CALL(child), Efl_Canvas_Object *child);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODYV(evas_obj_table_unpack, Eina_Bool, 0, EFL_FUNC_CALL(child), Efl_Canvas_Object *child);
 
 int _evas_table_count(Eo *obj, Evas_Table_Data *pd);
 
-EOAPI EFL_FUNC_BODY(evas_obj_table_count, int, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY(evas_obj_table_count, int, 0);
 
 Efl_Object *_evas_table_efl_object_constructor(Eo *obj, Evas_Table_Data *pd);
 

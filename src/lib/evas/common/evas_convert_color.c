@@ -2,7 +2,7 @@
 #include "evas_convert_color.h"
 #include "draw.h"
 
-EAPI DATA32
+EVAS_API DATA32
 evas_common_convert_ag_premul(DATA16 *data, unsigned int len)
 {
    DATA16 *de = data + len;
@@ -23,7 +23,7 @@ evas_common_convert_ag_premul(DATA16 *data, unsigned int len)
    return nas;
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_ag_unpremul(DATA16 *data, unsigned int len)
 {
    DATA16 *de = data + len;
@@ -51,19 +51,19 @@ evas_common_convert_ag_unpremul(DATA16 *data, unsigned int len)
      }
 }
 
-EAPI DATA32
+EVAS_API DATA32
 evas_common_convert_argb_premul(DATA32 *data, unsigned int len)
 {
    return (DATA32) efl_draw_argb_premul(data, len);
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_argb_unpremul(DATA32 *data, unsigned int len)
 {
    return efl_draw_argb_unpremul(data, len);
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_color_argb_premul(int a, int *r, int *g, int *b)
 {
    a++;
@@ -72,7 +72,7 @@ evas_common_convert_color_argb_premul(int a, int *r, int *g, int *b)
    if (b) { *b = (a * *b) >> 8; }
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_color_argb_unpremul(int a, int *r, int *g, int *b)
 {
    if (!a) return;
@@ -81,7 +81,7 @@ evas_common_convert_color_argb_unpremul(int a, int *r, int *g, int *b)
    if (b) { *b = (255 * *b) / a; }
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
    int i;
@@ -139,7 +139,7 @@ evas_common_convert_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, 
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
    int max, min, d = r - g;
@@ -194,7 +194,7 @@ evas_common_convert_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, fl
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_color_hsv_to_rgb_int(int h, int s, int v, int *r, int *g, int *b)
 {
    int   i, f;
@@ -234,7 +234,7 @@ evas_common_convert_color_hsv_to_rgb_int(int h, int s, int v, int *r, int *g, in
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_convert_color_rgb_to_hsv_int(int r, int g, int b, int *h, int *s, int *v)
 {
    int  min, max, d = r - g;

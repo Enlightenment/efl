@@ -20,9 +20,9 @@
 #define TESTS_DIC_DIR TESTS_SRC_DIR"/dicts"
 
 /* Functions defined in evas_object_textblock.c */
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 _evas_textblock_check_item_node_link(Evas_Object *obj);
-EAPI int
+EVAS_API int
 _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 

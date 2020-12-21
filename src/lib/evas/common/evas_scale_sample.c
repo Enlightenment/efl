@@ -41,7 +41,7 @@ static Eina_Thread scaling_thread;
 static Eina_Thread_Queue *thread_queue = NULL;
 static Eina_Thread_Queue *main_queue = NULL;
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
                                              RGBA_Draw_Context *dc,
                                              int src_region_x, int src_region_y,
@@ -56,7 +56,7 @@ evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
       scale_rgba_in_to_out_clip_sample_internal);
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_rgba_in_to_out_clip_sample_do(const Cutout_Rects *reuse,
                                                 const Eina_Rectangle *clip,
                                                 RGBA_Image *src, RGBA_Image *dst,
@@ -197,7 +197,7 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_clip_x, int dst_clip_y, int dst_clip_w, int dst_clip_h, DATA32 mul_col, int render_op, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    int      x, y;
@@ -806,7 +806,7 @@ evas_common_scale_sample_fork_reset(void *data EINA_UNUSED)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_sample_init(void)
 {
    if (eina_cpu_count() <= 2) return ;
@@ -846,7 +846,7 @@ cleanup:
    if (main_queue) eina_thread_queue_free(main_queue);
 }
 
-EAPI void
+EVAS_API void
 evas_common_scale_sample_shutdown(void)
 {
    Evas_Scale_Msg *msg;

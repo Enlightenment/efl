@@ -273,7 +273,7 @@ _evas_object_grid_smart_set_user(Evas_Smart_Class *sc)
    sc->calculate = _evas_object_grid_smart_calculate;
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_grid_add(Evas *evas)
 {
    evas = evas_find(evas);
@@ -498,13 +498,13 @@ _evas_grid_efl_ui_i18n_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Ein
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_grid_mirrored_set(Evas_Grid *obj, Eina_Bool mirrored)
 {
    efl_ui_mirrored_set(obj, mirrored);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_grid_mirrored_get(const Evas_Grid *obj)
 {
    return efl_ui_mirrored_get(obj);

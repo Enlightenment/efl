@@ -4,7 +4,7 @@
 #include "evas_font.h"
 
 /* macros needed to log message through eina_log */
-EAPI extern int _evas_font_log_dom_global;
+EVAS_API extern int _evas_font_log_dom_global;
 #ifdef  _EVAS_FONT_DEFAULT_LOG_DOM
 # undef _EVAS_FONT_DEFAULT_LOG_DOM
 #endif

@@ -2,7 +2,7 @@
 #define _EVAS_BLEND_H
 
 
-EAPI void evas_common_blend_init (void);
+EVAS_API void evas_common_blend_init (void);
 
 
 #endif /* _EVAS_BLEND_H */

@@ -243,7 +243,7 @@ _efl_canvas_object_key_ungrab(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
 // Legacy API
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_key_grab(Evas_Object *eo_obj, const char *keyname,
                      Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers,
                      Eina_Bool exclusive)
@@ -256,7 +256,7 @@ evas_object_key_grab(Evas_Object *eo_obj, const char *keyname,
    return _object_key_grab(eo_obj, obj, keyname, modifiers, not_modifiers, exclusive);
 }
 
-EAPI void
+EVAS_API void
 evas_object_key_ungrab(Efl_Canvas_Object *eo_obj, const char *keyname,
                        Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {

@@ -27,6 +27,7 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
    src = data;
    end = src + (stride * h);
    ret = malloc(w * h * sizeof(DATA32));
+   if (!ret) return NULL;
 
    dst = ret;
    if (has_alpha)
@@ -55,6 +56,7 @@ evas_common_convert_agry88_to_argb8888(const void *data, int w, int h, int strid
    src = data;
    end = src + ((stride >> 1) * h);
    ret = malloc(w * h * sizeof(DATA32));
+   if (!ret) return NULL;
    dst = ret;
 
    if (has_alpha)
@@ -97,6 +99,7 @@ evas_common_convert_gry8_to_argb8888(const void *data, int w, int h, int stride,
    src = data;
    end = src + (stride * h);
    ret = malloc(w * h * sizeof(DATA32));
+   if (!ret) return NULL;
    dst = ret;
 
    if (has_alpha)
@@ -152,7 +155,7 @@ evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bo
    return ret;
 }
 
-EAPI void *
+EVAS_API void *
 evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
 {
    switch (cspace)
@@ -167,7 +170,7 @@ evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool 
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_common_convert_rgb565_a5p_to(void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
 {
    switch (cspace)
@@ -180,7 +183,7 @@ evas_common_convert_rgb565_a5p_to(void *data, int w, int h, int stride, Eina_Boo
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_common_convert_yuv_422_601_to(void *data, int w, int h, Evas_Colorspace cspace)
 {
    switch (cspace)
@@ -201,7 +204,7 @@ evas_common_convert_yuv_422_601_to(void *data, int w, int h, Evas_Colorspace csp
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_common_convert_yuv_422P_601_to(void *data, int w, int h, Evas_Colorspace cspace)
 {
    switch (cspace)
@@ -222,7 +225,7 @@ evas_common_convert_yuv_422P_601_to(void *data, int w, int h, Evas_Colorspace cs
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_common_convert_yuv_420_601_to(void *data, int w, int h, Evas_Colorspace cspace)
 {
    switch (cspace)
@@ -243,7 +246,7 @@ evas_common_convert_yuv_420_601_to(void *data, int w, int h, Evas_Colorspace csp
    return NULL;
 }
 
-EAPI void *
+EVAS_API void *
 evas_common_convert_yuv_420T_601_to(void *data, int w, int h, Evas_Colorspace cspace)
 {
    switch (cspace)

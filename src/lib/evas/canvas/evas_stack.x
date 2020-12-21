@@ -34,7 +34,7 @@ evas_object_below_get_internal(const Evas_Object_Protected_Data *obj)
    return NULL;
 }
 
-EAPI void
+EVAS_API void
 evas_object_raise(Evas_Object *obj)
 {
    efl_gfx_stack_raise_to_top((Evas_Object *)obj);
@@ -83,7 +83,7 @@ _efl_canvas_object_efl_gfx_stack_raise_to_top(Eo *eo_obj, Evas_Object_Protected_
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_lower(Evas_Object *obj)
 {
    efl_gfx_stack_lower_to_bottom((Evas_Object *)obj);
@@ -133,7 +133,7 @@ _efl_canvas_object_efl_gfx_stack_lower_to_bottom(Eo *eo_obj, Evas_Object_Protect
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 {
    efl_gfx_stack_above((Evas_Object *)obj, above);
@@ -227,7 +227,7 @@ _efl_canvas_object_efl_gfx_stack_stack_above(Eo *eo_obj, Evas_Object_Protected_D
      }
 }
 
-EAPI void
+EVAS_API void
 evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 {
    efl_gfx_stack_below((Evas_Object *)obj, below);
@@ -319,7 +319,7 @@ _efl_canvas_object_efl_gfx_stack_stack_below(Eo *eo_obj, Evas_Object_Protected_D
      }
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_above_get(const Evas_Object *obj)
 {
    return efl_gfx_stack_above_get((Evas_Object *)obj);
@@ -348,7 +348,7 @@ _efl_canvas_object_efl_gfx_stack_above_get(Eo *eo_obj EINA_UNUSED,
    return NULL;
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_below_get(const Evas_Object *obj)
 {
    return efl_gfx_stack_below_get((Evas_Object *)obj);

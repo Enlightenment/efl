@@ -444,7 +444,7 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
 }
 #endif
 
-EAPI void
+EVAS_API void
 evas_common_rgba_image_scalecache_size_set(unsigned int size)
 {
 #ifdef SCALECACHE
@@ -458,7 +458,7 @@ evas_common_rgba_image_scalecache_size_set(unsigned int size)
 #endif
 }
 
-EAPI unsigned int
+EVAS_API unsigned int
 evas_common_rgba_image_scalecache_size_get(void)
 {
 #ifdef SCALECACHE
@@ -472,7 +472,7 @@ evas_common_rgba_image_scalecache_size_get(void)
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_common_rgba_image_scalecache_prune(void)
 {
 #ifdef SCALECACHE
@@ -482,7 +482,7 @@ evas_common_rgba_image_scalecache_prune(void)
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_common_rgba_image_scalecache_dump(void)
 {
 #ifdef SCALECACHE
@@ -496,7 +496,7 @@ evas_common_rgba_image_scalecache_dump(void)
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_common_rgba_image_scalecache_flush(void)
 {
 #ifdef SCALECACHE
@@ -510,7 +510,7 @@ evas_common_rgba_image_scalecache_flush(void)
 #endif
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_UNUSED,
                                           RGBA_Draw_Context *dc, int smooth,
                                           int src_region_x, int src_region_y,
@@ -644,7 +644,7 @@ evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst EINA_
 //static int noscales = 0;
 #endif
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
                                          RGBA_Draw_Context *dc, int smooth,
                                          int src_region_x, int src_region_y,
@@ -953,7 +953,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 }
 
 
-EAPI void
+EVAS_API void
 evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                                      RGBA_Draw_Context *dc, int smooth,
                                      int src_region_x, int src_region_y,

@@ -362,7 +362,7 @@ _evas_object_text_vert_advance_get(const Evas_Object *obj EINA_UNUSED,
    return o->max_ascent + o->max_descent;
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_text_add(Evas *e)
 {
    e = evas_find(e);
@@ -1457,7 +1457,7 @@ _evas_text_style_pad_get(const Eo *eo_obj, Evas_Text_Data *o, int *l, int *r, in
    _evas_object_text_pad_get(eo_obj, o, l, r, t, b);
 }
 
-EAPI int
+EVAS_API int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
 {
    int p, d;
@@ -1473,7 +1473,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
    return p;
 }
 
-EAPI int
+EVAS_API int
 evas_string_char_prev_get(const char *str, int pos, int *decoded)
 {
    int p, d;
@@ -1486,7 +1486,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    return p;
 }
 
-EAPI int
+EVAS_API int
 evas_string_char_len_get(const char *str)
 {
    if (!str) return 0;
@@ -2322,13 +2322,13 @@ _evas_object_text_recalc(Evas_Object *eo_obj, Eina_Unicode *text)
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_object_text_font_source_set(Eo *obj, const char *font_source)
 {
    efl_text_font_source_set((Eo *) obj, font_source);
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_object_text_font_source_get(const Eo *obj)
 {
    const char *font_source = 0;
@@ -2336,7 +2336,7 @@ evas_object_text_font_source_get(const Eo *obj)
    return font_source;
 }
 
-EAPI void
+EVAS_API void
 evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size)
 {
    if (!font || size <= 0) return; /*Condition for legacy object*/
@@ -2345,20 +2345,20 @@ evas_object_text_font_set(Eo *obj, const char *font, Evas_Font_Size size)
    efl_text_font_size_set((Eo *) obj, size);
 }
 
-EAPI void
+EVAS_API void
 evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_Size *size)
 {
    if (font) *font = efl_text_font_family_get((Eo *) obj);
    if (size) *size = efl_text_font_size_get((Eo *) obj);
 }
 
-EAPI void
+EVAS_API void
 evas_object_text_text_set(Eo *obj, const char *text)
 {
    efl_text_set((Eo *) obj, text);
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_object_text_text_get(const Eo *obj)
 {
    return efl_text_get((Eo *) obj);
@@ -2372,14 +2372,14 @@ _evas_text_efl_gfx_filter_filter_program_set(Eo *obj, Evas_Text_Data *pd EINA_UN
 }
 
 /* deprecated */
-EAPI void
+EVAS_API void
 evas_object_text_filter_program_set(Evas_Object *obj, const char *code)
 {
    efl_gfx_filter_program_set(obj, code, NULL);
 }
 
 /* deprecated */
-EAPI void
+EVAS_API void
 evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source)
 {
    efl_gfx_filter_source_set(obj, name, source);

@@ -255,7 +255,7 @@ _efl_input_device_children_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data 
    return pd->children;
 }
 
-EOAPI EFL_FUNC_BODY_CONST(efl_input_device_children_get, const Eina_List *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(efl_input_device_children_get, const Eina_List *, NULL);
 
 static Evas *
 _efl_input_device_evas_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
@@ -263,7 +263,7 @@ _efl_input_device_evas_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
    return pd->evas;
 }
 
-EOAPI EFL_FUNC_BODY_CONST(efl_input_device_evas_get, Evas *, NULL);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(efl_input_device_evas_get, Evas *, NULL);
 
 static void
 _efl_input_device_evas_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Evas *e)
@@ -271,7 +271,7 @@ _efl_input_device_evas_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd, Evas 
    pd->evas = e;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_evas_set, EFL_FUNC_CALL(e), Evas *e);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_input_device_evas_set, EFL_FUNC_CALL(e), Evas *e);
 
 static Evas_Device_Subclass
 _efl_input_device_subclass_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
@@ -279,7 +279,7 @@ _efl_input_device_subclass_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data 
    return pd->subclass;
 }
 
-EOAPI EFL_FUNC_BODY_CONST(efl_input_device_subclass_get, Evas_Device_Subclass, 0);
+EVAS_API EVAS_API_WEAK EFL_FUNC_BODY_CONST(efl_input_device_subclass_get, Evas_Device_Subclass, 0);
 
 static void
 _efl_input_device_subclass_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
@@ -288,7 +288,7 @@ _efl_input_device_subclass_set(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
    pd->subclass = sub_clas;
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_subclass_set, EFL_FUNC_CALL(sub_clas), Evas_Device_Subclass sub_clas);
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_input_device_subclass_set, EFL_FUNC_CALL(sub_clas), Evas_Device_Subclass sub_clas);
 
 static void
 _grab_del(void *data)
@@ -306,7 +306,7 @@ _efl_input_device_grab_register(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd,
    eina_hash_add(pd->grabs, &grab, pdata);
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_grab_register, EFL_FUNC_CALL(grab, pdata),
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_input_device_grab_register, EFL_FUNC_CALL(grab, pdata),
                           Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
 
 static void
@@ -316,7 +316,7 @@ _efl_input_device_grab_unregister(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd
    eina_hash_del(pd->grabs, &grab, pdata);
 }
 
-EOAPI EFL_VOID_FUNC_BODYV(efl_input_device_grab_unregister, EFL_FUNC_CALL(grab, pdata),
+EVAS_API EVAS_API_WEAK EFL_VOID_FUNC_BODYV(efl_input_device_grab_unregister, EFL_FUNC_CALL(grab, pdata),
                           Efl_Canvas_Object *grab, Evas_Object_Pointer_Data *pdata);
 
 #define EFL_INPUT_DEVICE_EXTRA_OPS                                      \

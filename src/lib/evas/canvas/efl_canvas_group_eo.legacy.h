@@ -34,7 +34,7 @@ typedef Eo Efl_Canvas_Group;
  *
  * @ingroup Evas_Object_Smart_Group
  */
-EAPI void evas_object_smart_need_recalculate_set(Efl_Canvas_Group *obj, Eina_Bool value);
+EVAS_API void evas_object_smart_need_recalculate_set(Efl_Canvas_Group *obj, Eina_Bool value);
 
 /**
  * @brief Indicates that the group's layout needs to be recalculated.
@@ -57,7 +57,7 @@ EAPI void evas_object_smart_need_recalculate_set(Efl_Canvas_Group *obj, Eina_Boo
  *
  * @ingroup Evas_Object_Smart_Group
  */
-EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Efl_Canvas_Group *obj);
+EVAS_API Eina_Bool evas_object_smart_need_recalculate_get(const Efl_Canvas_Group *obj);
 
 /**
  * @brief Marks the object as dirty.
@@ -69,7 +69,7 @@ EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Efl_Canvas_Group *ob
  *
  * @ingroup Evas_Object_Smart_Group
  */
-EAPI void evas_object_smart_changed(Efl_Canvas_Group *obj);
+EVAS_API void evas_object_smart_changed(Efl_Canvas_Group *obj);
 
 /**
  * @brief Triggers an immediate recalculation of this object's geometry.
@@ -79,7 +79,7 @@ EAPI void evas_object_smart_changed(Efl_Canvas_Group *obj);
  *
  * @ingroup Evas_Object_Smart_Group
  */
-EAPI void evas_object_smart_calculate(Efl_Canvas_Group *obj);
+EVAS_API void evas_object_smart_calculate(Efl_Canvas_Group *obj);
 
 /**
  * @brief Returns an iterator over the children of this object, which are
@@ -95,7 +95,7 @@ EAPI void evas_object_smart_calculate(Efl_Canvas_Group *obj);
  *
  * @ingroup Evas_Object_Smart_Group
  */
-EAPI Eina_Iterator *evas_object_smart_iterator_new(const Efl_Canvas_Group *obj);
+EVAS_API Eina_Iterator *evas_object_smart_iterator_new(const Efl_Canvas_Group *obj);
 
 
 

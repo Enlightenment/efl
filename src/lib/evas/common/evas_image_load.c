@@ -266,7 +266,7 @@ _evas_image_foreach_loader(const Eina_Hash *hash EINA_UNUSED, const void *key EI
    return r;
 }
 
-EAPI int
+EVAS_API int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    const char           *loader = NULL, *end;
@@ -392,7 +392,7 @@ _timestamp_build(Image_Timestamp *tstamp, struct stat *st)
 #endif
 }
 
-EAPI int
+EVAS_API int
 evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
 {
    void *pixels;
@@ -495,7 +495,7 @@ end:
    return ret;
 }
 
-EAPI double
+EVAS_API double
 evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int start, const int frame_num)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
@@ -512,7 +512,7 @@ evas_common_load_rgba_image_frame_duration_from_file(Image_Entry *ie, const int 
    return -1;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_extension_can_load_get(const char *file)
 {
    unsigned int length;

@@ -477,7 +477,7 @@ _evas_box_efl_canvas_group_group_calculate(Eo *o, Evas_Object_Box_Data *priv)
      ERR("No layout function set for %p box.", o);
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_box_add(Evas *evas)
 {
    evas = evas_find(evas);
@@ -509,13 +509,13 @@ _evas_box_add_to(Eo *parent, Evas_Object_Box_Data *_pd EINA_UNUSED)
    return o;
 }
 
-EAPI void
+EVAS_API void
 evas_object_box_smart_set(Evas_Object_Box_Api *api EINA_UNUSED)
 {
    return;
 }
 
-EAPI const Evas_Object_Box_Api *
+EVAS_API const Evas_Object_Box_Api *
 evas_object_box_smart_class_get(void)
 {
    return NULL;
@@ -1920,7 +1920,7 @@ _evas_box_accessor_new(const Eo *o, Evas_Object_Box_Data *priv)
    return &it->accessor;
 }
 
-EAPI Eina_List *
+EVAS_API Eina_List *
 evas_object_box_children_get(const Evas_Object *o)
 {
    Eina_List *new_list = NULL, *l;
@@ -1953,7 +1953,7 @@ _evas_box_option_property_id_get(const Eo *o EINA_UNUSED, Evas_Object_Box_Data *
    return -1;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
    Eina_Bool ret;
@@ -1967,7 +1967,7 @@ evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt,
 }
 
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    return evas_obj_box_option_property_vset(o, opt, property, (va_list *) &args);
@@ -1979,7 +1979,7 @@ _evas_box_option_property_vset(Eo *o EINA_UNUSED, Evas_Object_Box_Data *_pd EINA
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_box_option_property_get(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
    Eina_Bool ret;
@@ -1992,7 +1992,7 @@ evas_object_box_option_property_get(const Evas_Object *o, Evas_Object_Box_Option
    return ret;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    return evas_obj_box_option_property_vget((Eo *)o, opt, property, (va_list *) &args);

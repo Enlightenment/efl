@@ -218,7 +218,7 @@ evas_common_pipe_begin(RGBA_Image *im)
    eina_barrier_wait(&(thbarrier[0]));
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_flush(RGBA_Image *im)
 {
    if (!im->cache_entry.pipe) return;
@@ -252,7 +252,7 @@ evas_common_pipe_flush(RGBA_Image *im)
    evas_common_pipe_free(im);
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_free(RGBA_Image *im)
 {
 
@@ -311,7 +311,7 @@ evas_common_pipe_rectangle_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op
    return r;
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    RGBA_Pipe_Op *op;
@@ -343,7 +343,7 @@ evas_common_pipe_line_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGB
                          op->op.line.x1, op->op.line.y1);
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
                            int x0, int y0, int x1, int y1)
 {
@@ -391,7 +391,7 @@ evas_common_pipe_poly_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGB
                             op->op.poly.points, op->op.poly.x, op->op.poly.y);
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
                            RGBA_Polygon_Point *points, int x, int y)
 {
@@ -457,7 +457,7 @@ evas_common_pipe_text_draw_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op
    return r;
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 			   int x, int y, Evas_Text_Props *intl_props)
 {
@@ -561,7 +561,7 @@ evas_common_pipe_image_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, const RG
 #endif
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
 			   RGBA_Draw_Context *dc, int smooth,
 			   int src_region_x, int src_region_y,
@@ -629,7 +629,7 @@ evas_common_pipe_map_draw_prepare(void *data EINA_UNUSED, RGBA_Image *dst, RGBA_
    return r;
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
                           RGBA_Draw_Context *dc, RGBA_Map *m,
                           int smooth, int level)
@@ -777,7 +777,7 @@ evas_common_pipe_load_do(RGBA_Image *im)
    eina_barrier_wait(&(task_thbarrier[1]));
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_image_load(RGBA_Image *im)
 {
   if (im->flags & RGBA_IMAGE_TODO_LOAD)
@@ -799,7 +799,7 @@ evas_common_pipe_image_load(RGBA_Image *im)
   im->flags |= RGBA_IMAGE_TODO_LOAD;
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_text_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
@@ -827,7 +827,7 @@ evas_common_pipe_text_prepare(Evas_Text_Props *text_props)
    LKU(fi->ft_mutex);
 }
 
-EAPI void
+EVAS_API void
 evas_common_pipe_map_begin(RGBA_Image *root)
 {
   if (!evas_common_pipe_init())
@@ -850,7 +850,7 @@ evas_common_pipe_map_begin(RGBA_Image *root)
 }
 #endif
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_common_pipe_init(void)
 {
 #ifdef BUILD_PIPE_RENDER

@@ -18,7 +18,7 @@ extern "C" {
  * Eio Version Information
  * @ingroup Eio
  */
-EAPI extern Eio_Version *eio_version;
+EIO_API extern Eio_Version *eio_version;
 
 /**
  * @file
@@ -206,7 +206,7 @@ struct _Eio_Progress
  * @see eio_file_direct_ls()
  * @see eio_file_stat_ls()
  */
-EAPI Eio_File *eio_file_ls(const char *dir,
+EIO_API Eio_File *eio_file_ls(const char *dir,
                            Eio_Filter_Cb filter_cb,
                            Eio_Main_Cb main_cb,
                            Eio_Done_Cb done_cb,
@@ -241,7 +241,7 @@ EAPI Eio_File *eio_file_ls(const char *dir,
  * @see eina_file_direct_ls()
  * @see ecore_thread_feedback_run()
  */
-EAPI Eio_File *eio_file_direct_ls(const char *dir,
+EIO_API Eio_File *eio_file_direct_ls(const char *dir,
                                   Eio_Filter_Direct_Cb filter_cb,
                                   Eio_Main_Direct_Cb main_cb,
                                   Eio_Done_Cb done_cb,
@@ -272,7 +272,7 @@ EAPI Eio_File *eio_file_direct_ls(const char *dir,
  * @see eina_file_stat_ls()
  * @see ecore_thread_feedback_run()
  */
-EAPI Eio_File *eio_file_stat_ls(const char *dir,
+EIO_API Eio_File *eio_file_stat_ls(const char *dir,
                                 Eio_Filter_Direct_Cb filter_cb,
                                 Eio_Main_Direct_Cb main_cb,
                                 Eio_Done_Cb done_cb,
@@ -301,7 +301,7 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
  * @see eina_file_stat_ls()
  * @see ecore_thread_feedback_run()
  */
-EAPI Eio_File *eio_dir_stat_ls(const char *dir,
+EIO_API Eio_File *eio_dir_stat_ls(const char *dir,
                                Eio_Filter_Direct_Cb filter_cb,
                                Eio_Main_Direct_Cb main_cb,
                                Eio_Done_Cb done_cb,
@@ -329,7 +329,7 @@ EAPI Eio_File *eio_dir_stat_ls(const char *dir,
  * @see eina_file_direct_ls()
  * @see ecore_thread_feedback_run()
  */
-EAPI Eio_File *eio_dir_direct_ls(const char *dir,
+EIO_API Eio_File *eio_dir_direct_ls(const char *dir,
                                  Eio_Filter_Dir_Cb filter_cb,
                                  Eio_Main_Direct_Cb main_cb,
                                  Eio_Done_Cb done_cb,
@@ -346,7 +346,7 @@ EAPI Eio_File *eio_dir_direct_ls(const char *dir,
  *
  * eio_file_direct_stat calls stat in another thread. This prevents any blocking in your apps.
  */
-EAPI Eio_File *eio_file_direct_stat(const char *path,
+EIO_API Eio_File *eio_file_direct_stat(const char *path,
                                     Eio_Stat_Cb done_cb,
                                     Eio_Error_Cb error_cb,
                                     const void *data);
@@ -380,7 +380,7 @@ EAPI Eio_File *eio_file_direct_stat(const char *path,
  * Set a new permission of a path changing it to the mode passed as argument.
  * It's equivalent to the chmod command.
  */
-EAPI Eio_File *eio_file_chmod(const char *path,
+EIO_API Eio_File *eio_file_chmod(const char *path,
                               mode_t mode,
                               Eio_Done_Cb done_cb,
                               Eio_Error_Cb error_cb,
@@ -402,7 +402,7 @@ EAPI Eio_File *eio_file_chmod(const char *path,
  * @note Some platforms (including Windows) do not support chown(). In that
  * case, this function returns @c NULL.
  */
-EAPI Eio_File *eio_file_chown(const char *path,
+EIO_API Eio_File *eio_file_chown(const char *path,
                               const char *user,
                               const char *group,
                               Eio_Done_Cb done_cb,
@@ -419,7 +419,7 @@ EAPI Eio_File *eio_file_chown(const char *path,
  *
  * This function will erase a file.
  */
-EAPI Eio_File *eio_file_unlink(const char *path,
+EIO_API Eio_File *eio_file_unlink(const char *path,
                                Eio_Done_Cb done_cb,
                                Eio_Error_Cb error_cb,
                                const void *data);
@@ -435,7 +435,7 @@ EAPI Eio_File *eio_file_unlink(const char *path,
  *
  * Creates a new directory using the mode provided.
  */
-EAPI Eio_File *eio_file_mkdir(const char *path,
+EIO_API Eio_File *eio_file_mkdir(const char *path,
                               mode_t mode,
                               Eio_Done_Cb done_cb,
                               Eio_Error_Cb error_cb,
@@ -457,7 +457,7 @@ EAPI Eio_File *eio_file_mkdir(const char *path,
  * if possible, if not it will fallback to mmap/write. It will try to preserve
  * access rights, but not user/group identification.
  */
-EAPI Eio_File *eio_file_move(const char *source,
+EIO_API Eio_File *eio_file_move(const char *source,
                              const char *dest,
                              Eio_Progress_Cb progress_cb,
                              Eio_Done_Cb done_cb,
@@ -479,7 +479,7 @@ EAPI Eio_File *eio_file_move(const char *source,
  * if possible, if not it will fallback to mmap/write. It will try to preserve
  * access rights, but not user/group identification.
  */
-EAPI Eio_File *eio_file_copy(const char *source,
+EIO_API Eio_File *eio_file_copy(const char *source,
                              const char *dest,
                              Eio_Progress_Cb progress_cb,
                              Eio_Done_Cb done_cb,
@@ -509,7 +509,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
  *
  * @note if a rename occurs, the filter callback will not be called.
  */
-EAPI Eio_File *eio_dir_move(const char *source,
+EIO_API Eio_File *eio_dir_move(const char *source,
                             const char *dest,
                             Eio_Filter_Direct_Cb filter_cb,
                             Eio_Progress_Cb progress_cb,
@@ -537,7 +537,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
  */
-EAPI Eio_File *eio_dir_copy(const char *source,
+EIO_API Eio_File *eio_dir_copy(const char *source,
                             const char *dest,
                             Eio_Filter_Direct_Cb filter_cb,
                             Eio_Progress_Cb progress_cb,
@@ -562,7 +562,7 @@ EAPI Eio_File *eio_dir_copy(const char *source,
  * want to pass the file to the main_cb or not. Return EINA_TRUE to pass it to
  * the main_cb or EINA_FALSE to ignore it.
  */
-EAPI Eio_File *eio_dir_unlink(const char *path,
+EIO_API Eio_File *eio_dir_unlink(const char *path,
                               Eio_Filter_Direct_Cb filter_cb,
                               Eio_Progress_Cb progress_cb,
                               Eio_Done_Cb done_cb,
@@ -593,7 +593,7 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
  * @param data Unmodified user data passed to callbacks
  * @return A reference to the I/O operation.
  */
-EAPI Eio_File *eio_file_xattr(const char *path,
+EIO_API Eio_File *eio_file_xattr(const char *path,
                   Eio_Filter_Cb filter_cb,
                   Eio_Main_Cb main_cb,
                   Eio_Done_Cb done_cb,
@@ -614,7 +614,7 @@ EAPI Eio_File *eio_file_xattr(const char *path,
  * eio_file_xattr_int_set calls eina_xattr_int_set from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
-EAPI Eio_File *eio_file_xattr_int_set(const char *path,
+EIO_API Eio_File *eio_file_xattr_int_set(const char *path,
                       const char *attribute,
                       int xattr_int,
                       Eina_Xattr_Flags flags,
@@ -636,7 +636,7 @@ EAPI Eio_File *eio_file_xattr_int_set(const char *path,
  * eio_file_xattr_double_set calls eina_xattr_double_set from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
-EAPI Eio_File *eio_file_xattr_double_set(const char *path,
+EIO_API Eio_File *eio_file_xattr_double_set(const char *path,
                      const char *attribute,
                      double xattr_double,
                      Eina_Xattr_Flags flags,
@@ -657,7 +657,7 @@ EAPI Eio_File *eio_file_xattr_double_set(const char *path,
  * eio_file_xattr_string_set calls eina_xattr_string_set from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
-EAPI Eio_File *eio_file_xattr_string_set(const char *path,
+EIO_API Eio_File *eio_file_xattr_string_set(const char *path,
                      const char *attribute,
                      const char *xattr_string,
                      Eina_Xattr_Flags flags,
@@ -679,7 +679,7 @@ EAPI Eio_File *eio_file_xattr_string_set(const char *path,
  * eio_file_xattr_set calls setxattr from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came too late.
  */
-EAPI Eio_File *eio_file_xattr_set(const char *path,
+EIO_API Eio_File *eio_file_xattr_set(const char *path,
                   const char *attribute,
                   const char *xattr_data,
                   unsigned int xattr_size,
@@ -699,7 +699,7 @@ EAPI Eio_File *eio_file_xattr_set(const char *path,
  *
  * eio_file_xattr_get calls getxattr from another thread. This prevents blocking in your apps.
  */
-EAPI Eio_File *eio_file_xattr_get(const char *path,
+EIO_API Eio_File *eio_file_xattr_get(const char *path,
                   const char *attribute,
                   Eio_Done_Data_Cb done_cb,
                   Eio_Error_Cb error_cb,
@@ -715,7 +715,7 @@ EAPI Eio_File *eio_file_xattr_get(const char *path,
  *
  * eio_file_xattr_int_get calls eina_xattr_int_get from another thread. This prevents blocking in your apps.
  */
-EAPI Eio_File *eio_file_xattr_int_get(const char *path,
+EIO_API Eio_File *eio_file_xattr_int_get(const char *path,
                       const char *attribute,
                       Eio_Done_Int_Cb done_cb,
                       Eio_Error_Cb error_cb,
@@ -731,7 +731,7 @@ EAPI Eio_File *eio_file_xattr_int_get(const char *path,
  *
  * eio_file_xattr_double_get calls eina_xattr_double_get from another thread. This prevents blocking in your apps.
  */
-EAPI Eio_File *eio_file_xattr_double_get(const char *path,
+EIO_API Eio_File *eio_file_xattr_double_get(const char *path,
                      const char *attribute,
                      Eio_Done_Double_Cb done_cb,
                      Eio_Error_Cb error_cb,
@@ -747,7 +747,7 @@ EAPI Eio_File *eio_file_xattr_double_get(const char *path,
  *
  * eio_file_xattr_string_get calls eina_xattr_string_get from another thread. This prevents blocking in your apps.
  */
-EAPI Eio_File *eio_file_xattr_string_get(const char *path,
+EIO_API Eio_File *eio_file_xattr_string_get(const char *path,
                      const char *attribute,
                      Eio_Done_String_Cb done_cb,
                      Eio_Error_Cb error_cb,
@@ -774,13 +774,13 @@ EAPI Eio_File *eio_file_xattr_string_get(const char *path,
  * @brief Initialize eio and all its required submodule.
  * @return the current number of eio users.
  */
-EAPI int eio_init(void);
+EIO_API int eio_init(void);
 
 /**
  * @brief Shutdown eio and all its submodule if possible.
  * @return the number of pending users of eio.
  */
-EAPI int eio_shutdown(void);
+EIO_API int eio_shutdown(void);
 
 /**
  * @brief Set the limit to the maximum amount of memory used
@@ -798,7 +798,7 @@ EAPI int eio_shutdown(void);
  * the thread might stall.
  * @since 1.10
  */
-EAPI void eio_memory_burst_limit_set(size_t limit);
+EIO_API void eio_memory_burst_limit_set(size_t limit);
 
 /**
  * @brief Get the actual limit to the maximum amount of memory used
@@ -807,7 +807,7 @@ EAPI void eio_memory_burst_limit_set(size_t limit);
  * @since 1.10
  * @see eio_memory_burst_limit_set
  */
-EAPI size_t eio_memory_burst_limit_get(void);
+EIO_API size_t eio_memory_burst_limit_get(void);
 
 /**
  * @brief Return the container during EIO operation
@@ -817,7 +817,7 @@ EAPI size_t eio_memory_burst_limit_get(void);
  * This is only available and make sense in the thread callback, not in
  * the mainloop.
  */
-EAPI void *eio_file_container_get(Eio_File *ls);
+EIO_API void *eio_file_container_get(Eio_File *ls);
 
 /**
  * @brief Cancel any Eio_File.
@@ -827,7 +827,7 @@ EAPI void *eio_file_container_get(Eio_File *ls);
  * This will cancel any kind of I/O operation and cleanup the mess. This means
  * that it could take time to cancel an I/O.
  */
-EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
+EIO_API Eina_Bool eio_file_cancel(Eio_File *ls);
 
 /**
  * @brief Check if an Eio_File operation has been cancelled.
@@ -836,7 +836,7 @@ EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
  *
  * In case of an error it also return EINA_TRUE.
  */
-EAPI Eina_Bool eio_file_check(Eio_File *ls);
+EIO_API Eina_Bool eio_file_check(Eio_File *ls);
 
 /**
  * @brief Associate data with the current filtered file.
@@ -851,7 +851,7 @@ EAPI Eina_Bool eio_file_check(Eio_File *ls);
  * This function can only be safely called from within the filter callback.
  * If you don't need to copy the key around you can use @ref eio_file_associate_direct_add
  */
-EAPI Eina_Bool eio_file_associate_add(Eio_File *ls,
+EIO_API Eina_Bool eio_file_associate_add(Eio_File *ls,
                       const char *key,
                       const void *data, Eina_Free_Cb free_cb);
 
@@ -867,7 +867,7 @@ EAPI Eina_Bool eio_file_associate_add(Eio_File *ls,
  * If you need eio to make a proper copy of the @p key to be safe use
  * @ref eio_file_associate_add instead.
  */
-EAPI Eina_Bool eio_file_associate_direct_add(Eio_File *ls,
+EIO_API Eina_Bool eio_file_associate_direct_add(Eio_File *ls,
                          const char *key,
                          const void *data, Eina_Free_Cb free_cb);
 
@@ -877,7 +877,7 @@ EAPI Eina_Bool eio_file_associate_direct_add(Eio_File *ls,
  * @param key The key pointing to the data to retrieve.
  * @return the data associated with the key or @p NULL if not found.
  */
-EAPI void *eio_file_associate_find(Eio_File *ls, const char *key);
+EIO_API void *eio_file_associate_find(Eio_File *ls, const char *key);
 
 /**
  * @}
@@ -909,7 +909,7 @@ EAPI void *eio_file_associate_find(Eio_File *ls, const char *key);
  * @return Pointer to the file if successful or NULL otherwise.
  *
  */
-EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
+EIO_API Eio_File *eio_file_open(const char *name, Eina_Bool shared,
                              Eio_Open_Cb open_cb,
                              Eio_Error_Cb error_cb,
                              const void *data);
@@ -922,7 +922,7 @@ EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
  * @param data Unmodified user data passed to callbacks
  * @return Pointer to the file if successful or NULL otherwise.
  */
-EAPI Eio_File *eio_file_close(Eina_File *f,
+EIO_API Eio_File *eio_file_close(Eina_File *f,
                               Eio_Done_Cb done_cb,
                               Eio_Error_Cb error_cb,
                               const void *data);
@@ -939,7 +939,7 @@ EAPI Eio_File *eio_file_close(Eina_File *f,
  *
  * The container of the Eio_File is the Eina_File.
  */
-EAPI Eio_File *eio_file_map_all(Eina_File *f,
+EIO_API Eio_File *eio_file_map_all(Eina_File *f,
                                 Eina_File_Populate rule,
                                 Eio_Filter_Map_Cb filter_cb,
                                 Eio_Map_Cb map_cb,
@@ -960,7 +960,7 @@ EAPI Eio_File *eio_file_map_all(Eina_File *f,
  *
  * The container of the Eio_File is the Eina_File.
  */
-EAPI Eio_File *eio_file_map_new(Eina_File *f,
+EIO_API Eio_File *eio_file_map_new(Eina_File *f,
                                 Eina_File_Populate rule,
                                 unsigned long int offset,
                                 unsigned long int length,
@@ -994,7 +994,7 @@ EAPI Eio_File *eio_file_map_new(Eina_File *f,
  *
  * This function calls eet_open() from another thread using Ecore_Thread.
  */
-EAPI Eio_File *eio_eet_open(const char *filename,
+EIO_API Eio_File *eio_eet_open(const char *filename,
                             Eet_File_Mode mode,
                 Eio_Eet_Open_Cb eet_cb,
                 Eio_Error_Cb error_cb,
@@ -1011,7 +1011,7 @@ EAPI Eio_File *eio_eet_open(const char *filename,
  * using Ecore_Thread. You should assume that the Eet_File is dead after this
  * function is called.
  */
-EAPI Eio_File *eio_eet_close(Eet_File *ef,
+EIO_API Eio_File *eio_eet_close(Eet_File *ef,
                  Eio_Done_Cb done_cb,
                  Eio_Eet_Error_Cb error_cb,
                  const void *data);
@@ -1027,7 +1027,7 @@ EAPI Eio_File *eio_eet_close(Eet_File *ef,
  * This function will call eet_sync() from another thread. As long as the done_cb or
  * error_cb haven't be called, you must keep @p ef open.
  */
-EAPI Eio_File *eio_eet_sync(Eet_File *ef,
+EIO_API Eio_File *eio_eet_sync(Eet_File *ef,
                             Eio_Done_Cb done_cb,
                             Eio_Eet_Error_Cb error_cb,
                             const void *data);
@@ -1046,7 +1046,7 @@ EAPI Eio_File *eio_eet_sync(Eet_File *ef,
  * @param user_data Private data given to each callback.
  * @return NULL in case of a failure.
  */
-EAPI Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
+EIO_API Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
                      Eet_Data_Descriptor *edd,
                      const char *name,
                      const char *cipher_key,
@@ -1067,7 +1067,7 @@ EAPI Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
  * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
-EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
+EIO_API Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
                                         Eet_Data_Descriptor *edd,
                                         const char *name,
                                         const char *cipher_key,
@@ -1092,7 +1092,7 @@ EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
  * @param user_data Private data given to each callback.
  * @return NULL in case of a failure.
  */
-EAPI Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
+EIO_API Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
                                                const char *name,
                                                const char *cipher_key,
                                                void *write_data,
@@ -1115,7 +1115,7 @@ EAPI Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
  * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
-EAPI Eio_File *eio_eet_read_direct(Eet_File *ef,
+EIO_API Eio_File *eio_eet_read_direct(Eet_File *ef,
                                    const char *name,
                                    Eio_Done_Data_Cb done_cb,
                                    Eio_Error_Cb error_cb,
@@ -1131,7 +1131,7 @@ EAPI Eio_File *eio_eet_read_direct(Eet_File *ef,
  * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
-EAPI Eio_File *eio_eet_read_cipher(Eet_File *ef,
+EIO_API Eio_File *eio_eet_read_cipher(Eet_File *ef,
                                    const char *name,
                                    const char *cipher_key,
                                    Eio_Done_Read_Cb done_cb,
@@ -1151,7 +1151,7 @@ EAPI Eio_File *eio_eet_read_cipher(Eet_File *ef,
  * @param user_data Private data given to each callback.
  * @return NULL in case of a failure.
  */
-EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
+EIO_API Eio_File *eio_eet_write_cipher(Eet_File *ef,
                                     const char *name,
                                     void *write_data,
                                     int size,
@@ -1178,17 +1178,17 @@ EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
  * @{
  */
 
-EAPI extern int EIO_MONITOR_FILE_CREATED; /**< A new file was created in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_DELETED; /**< A watched file was deleted, or a file in a watched directory was deleted */
-EAPI extern int EIO_MONITOR_FILE_MODIFIED; /**< A file was modified in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_CLOSED; /**< A file was closed in a watched directory. This event is never sent on Windows and OSX, or for non-fallback monitors */
-EAPI extern int EIO_MONITOR_DIRECTORY_CREATED; /**< A new directory was created in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_DELETED; /**< A directory has been deleted: this can be either a watched directory or one of its subdirectories */
-EAPI extern int EIO_MONITOR_DIRECTORY_MODIFIED; /**< A directory has been modified in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_CLOSED; /**< A directory has been closed in a watched directory. This event is never sent on Windows and OSX, or for non-fallback monitors */
-EAPI extern int EIO_MONITOR_SELF_RENAME; /**< The monitored path has been renamed, an error could happen just after if the renamed path doesn't exist. This event is never sent on OSX, or for non-fallback monitors */
-EAPI extern int EIO_MONITOR_SELF_DELETED; /**< The monitored path has been removed. This event is never sent on OSX */
-EAPI extern int EIO_MONITOR_ERROR; /**< During operation the monitor failed and will no longer work. eio_monitor_del must be called on it. */
+EIO_API extern int EIO_MONITOR_FILE_CREATED; /**< A new file was created in a watched directory */
+EIO_API extern int EIO_MONITOR_FILE_DELETED; /**< A watched file was deleted, or a file in a watched directory was deleted */
+EIO_API extern int EIO_MONITOR_FILE_MODIFIED; /**< A file was modified in a watched directory */
+EIO_API extern int EIO_MONITOR_FILE_CLOSED; /**< A file was closed in a watched directory. This event is never sent on Windows and OSX, or for non-fallback monitors */
+EIO_API extern int EIO_MONITOR_DIRECTORY_CREATED; /**< A new directory was created in a watched directory */
+EIO_API extern int EIO_MONITOR_DIRECTORY_DELETED; /**< A directory has been deleted: this can be either a watched directory or one of its subdirectories */
+EIO_API extern int EIO_MONITOR_DIRECTORY_MODIFIED; /**< A directory has been modified in a watched directory */
+EIO_API extern int EIO_MONITOR_DIRECTORY_CLOSED; /**< A directory has been closed in a watched directory. This event is never sent on Windows and OSX, or for non-fallback monitors */
+EIO_API extern int EIO_MONITOR_SELF_RENAME; /**< The monitored path has been renamed, an error could happen just after if the renamed path doesn't exist. This event is never sent on OSX, or for non-fallback monitors */
+EIO_API extern int EIO_MONITOR_SELF_DELETED; /**< The monitored path has been removed. This event is never sent on OSX */
+EIO_API extern int EIO_MONITOR_ERROR; /**< During operation the monitor failed and will no longer work. eio_monitor_del must be called on it. */
 
 typedef struct _Eio_Monitor Eio_Monitor;
 
@@ -1217,7 +1217,7 @@ struct _Eio_Monitor_Event
  * list of files to monitor. It utilizes the inotify mechanism
  * introduced in kernel 2.6.13 for passive monitoring.
  */
-EAPI Eio_Monitor *eio_monitor_add(const char *path);
+EIO_API Eio_Monitor *eio_monitor_add(const char *path);
 
 /**
  * @brief Adds a file/directory to monitor
@@ -1230,7 +1230,7 @@ EAPI Eio_Monitor *eio_monitor_add(const char *path);
  * This function is just like eio_monitor_add(), however the string passed by
  * argument must be created using eina_stringshare_add().
  */
-EAPI Eio_Monitor *eio_monitor_stringshared_add(const char *path);
+EIO_API Eio_Monitor *eio_monitor_stringshared_add(const char *path);
 
 /**
  * @brief Deletes a path from the “watched” list
@@ -1238,7 +1238,7 @@ EAPI Eio_Monitor *eio_monitor_stringshared_add(const char *path);
  *  It can only be an Eio_Monitor returned to you from calling
  *  eio_monitor_add() or eio_monitor_stringshared_add()
  */
-EAPI void eio_monitor_del(Eio_Monitor *monitor);
+EIO_API void eio_monitor_del(Eio_Monitor *monitor);
 
 /**
  * @brief returns the path being watched by the given
@@ -1246,7 +1246,7 @@ EAPI void eio_monitor_del(Eio_Monitor *monitor);
  * @param monitor Eio_Monitor to return the path of
  * @return The stringshared path belonging to @p monitor
  */
-EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
+EIO_API const char *eio_monitor_path_get(Eio_Monitor *monitor);
 
 #ifdef EFL_BETA_API_SUPPORT
 /**
@@ -1259,7 +1259,7 @@ EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
  *
  * @since 1.21
  */
-EAPI Eina_Bool eio_monitor_fallback_check(const Eio_Monitor *monitor);
+EIO_API Eina_Bool eio_monitor_fallback_check(const Eio_Monitor *monitor);
 
 /**
  * @brief Check if a monitor has the context about a file or not
@@ -1276,7 +1276,7 @@ EAPI Eina_Bool eio_monitor_fallback_check(const Eio_Monitor *monitor);
  *
  * @since 1.23
  */
-EAPI Eina_Bool eio_monitor_has_context(const Eio_Monitor *monitor, const char *path);
+EIO_API Eina_Bool eio_monitor_has_context(const Eio_Monitor *monitor, const char *path);
 #endif
 /**
  * @}

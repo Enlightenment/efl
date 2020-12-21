@@ -5,31 +5,7 @@
 #include "evas_private.h"
 
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <evas_api.h>
 
 #include "efl_canvas_filter_internal.eo.h"
 
@@ -140,12 +116,12 @@ struct _Evas_Filter_Padding
 #define EFL_CANVAS_FILTER_STATE_DEFAULT { {}, { 255, 255, 255, 255 }, { "default", 0.0 }, {}, 0, 0, 1.0, 0.0 }
 
 /* Parser stuff (high level API) */
-EAPI Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool input_alpha);
-EAPI Eina_Bool           evas_filter_program_state_set(Evas_Filter_Program *pgm, const Efl_Canvas_Filter_State *state);
-EAPI Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
-EAPI void                evas_filter_program_del(Evas_Filter_Program *pgm);
-EAPI Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, Evas_Filter_Padding *final, Evas_Filter_Padding *calc);
-EAPI void                evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
+EVAS_API Evas_Filter_Program *evas_filter_program_new(const char *name, Eina_Bool input_alpha);
+EVAS_API Eina_Bool           evas_filter_program_state_set(Evas_Filter_Program *pgm, const Efl_Canvas_Filter_State *state);
+EVAS_API Eina_Bool           evas_filter_program_parse(Evas_Filter_Program *pgm, const char *str);
+EVAS_API void                evas_filter_program_del(Evas_Filter_Program *pgm);
+EVAS_API Eina_Bool           evas_filter_program_padding_get(Evas_Filter_Program *pgm, Evas_Filter_Padding *final, Evas_Filter_Padding *calc);
+EVAS_API void                evas_filter_program_source_set_all(Evas_Filter_Program *pgm, Eina_Hash *sources);
 void                     evas_filter_program_data_set_all(Evas_Filter_Program *pgm, Eina_Inlist *data);
 
 /* Filter context (low level) */
@@ -346,8 +322,5 @@ struct _Evas_Filter_Data_Binding
    Eina_Stringshare *value;
    Eina_Bool execute : 1;
 };
-
-#undef EAPI
-#define EAPI
 
 #endif

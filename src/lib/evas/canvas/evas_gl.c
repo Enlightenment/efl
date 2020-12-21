@@ -121,7 +121,7 @@ _evas_gl_internal_error_get(Evas_GL *evas_gl)
    return tls_data->error_state;
 }
 
-EAPI Evas_GL *
+EVAS_API Evas_GL *
 evas_gl_new(Evas *e)
 {
    Evas_GL *evas_gl;
@@ -171,7 +171,7 @@ evas_gl_new(Evas *e)
    return evas_gl;
 }
 
-EAPI void
+EVAS_API void
 evas_gl_free(Evas_GL *evas_gl)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -199,7 +199,7 @@ evas_gl_free(Evas_GL *evas_gl)
    free(evas_gl);
 }
 
-EAPI Evas_GL_Config *
+EVAS_API Evas_GL_Config *
 evas_gl_config_new(void)
 {
    Evas_GL_Config *cfg;
@@ -211,13 +211,13 @@ evas_gl_config_new(void)
    return cfg;
 }
 
-EAPI void
+EVAS_API void
 evas_gl_config_free(Evas_GL_Config *cfg)
 {
    if (cfg) free(cfg);
 }
 
-EAPI Evas_GL_Surface *
+EVAS_API Evas_GL_Surface *
 evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int height)
 {
    Evas_GL_Surface *surf;
@@ -265,7 +265,7 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
    return surf;
 }
 
-EAPI Evas_GL_Surface *
+EVAS_API Evas_GL_Surface *
 evas_gl_pbuffer_surface_create(Evas_GL *evas_gl, Evas_GL_Config *cfg,
                                int w, int h, const int *attrib_list)
 {
@@ -321,7 +321,7 @@ evas_gl_pbuffer_surface_create(Evas_GL *evas_gl, Evas_GL_Config *cfg,
    return surf;
 }
 
-EAPI void
+EVAS_API void
 evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
 {
    // Magic
@@ -369,7 +369,7 @@ evas_gl_engine_data_get(void *evgl)
    return _evas_engine_context(evasgl->evas);
 }
 
-EAPI Evas_GL_Context *
+EVAS_API Evas_GL_Context *
 evas_gl_context_version_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx,
                                Evas_GL_Context_Version version)
 {
@@ -419,13 +419,13 @@ evas_gl_context_version_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx,
    return ctx;
 }
 
-EAPI Evas_GL_Context *
+EVAS_API Evas_GL_Context *
 evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
 {
    return evas_gl_context_version_create(evas_gl, share_ctx, EVAS_GL_GLES_2_X);
 }
 
-EAPI void
+EVAS_API void
 evas_gl_context_destroy(Evas_GL *evas_gl, Evas_GL_Context *ctx)
 {
 
@@ -453,7 +453,7 @@ evas_gl_context_destroy(Evas_GL *evas_gl, Evas_GL_Context *ctx)
    ctx = NULL;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx)
 {
    Eina_Bool ret;
@@ -481,7 +481,7 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
    return ret;
 }
 
-EAPI Evas_GL_Context *
+EVAS_API Evas_GL_Context *
 evas_gl_current_context_get(Evas_GL *evas_gl)
 {
    Evas_GL_Context *comp;
@@ -519,7 +519,7 @@ evas_gl_current_context_get(Evas_GL *evas_gl)
    return NULL;
 }
 
-EAPI Evas_GL_Surface *
+EVAS_API Evas_GL_Surface *
 evas_gl_current_surface_get(Evas_GL *evas_gl)
 {
    Evas_GL_Surface *comp;
@@ -557,7 +557,7 @@ evas_gl_current_surface_get(Evas_GL *evas_gl)
    return NULL;
 }
 
-EAPI Evas_GL *
+EVAS_API Evas_GL *
 evas_gl_current_evas_gl_get(Evas_GL_Context **context, Evas_GL_Surface **surface)
 {
    Evas_GL *evasgl = NULL;
@@ -577,7 +577,7 @@ evas_gl_current_evas_gl_get(Evas_GL_Context **context, Evas_GL_Surface **surface
    return evasgl;
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_gl_string_query(Evas_GL *evas_gl, int name)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -587,7 +587,7 @@ evas_gl_string_query(Evas_GL *evas_gl, int name)
    return evas_gl->evas->engine.func->gl_string_query(_evas_engine_context(evas_gl->evas), name);
 }
 
-EAPI Evas_GL_Func
+EVAS_API Evas_GL_Func
 evas_gl_proc_address_get(Evas_GL *evas_gl, const char *name)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -597,7 +597,7 @@ evas_gl_proc_address_get(Evas_GL *evas_gl, const char *name)
    return (Evas_GL_Func)evas_gl->evas->engine.func->gl_proc_address_get(_evas_engine_context(evas_gl->evas), name);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_gl_native_surface_get(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -622,7 +622,7 @@ evas_gl_native_surface_get(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_
 }
 
 
-EAPI Evas_GL_API *
+EVAS_API Evas_GL_API *
 evas_gl_api_get(Evas_GL *evas_gl)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -632,7 +632,7 @@ evas_gl_api_get(Evas_GL *evas_gl)
    return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(_evas_engine_context(evas_gl->evas), EVAS_GL_GLES_2_X);
 }
 
-EAPI Evas_GL_API *
+EVAS_API Evas_GL_API *
 evas_gl_context_api_get(Evas_GL *evas_gl, Evas_GL_Context *ctx)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -648,7 +648,7 @@ evas_gl_context_api_get(Evas_GL *evas_gl, Evas_GL_Context *ctx)
    return (Evas_GL_API*)evas_gl->evas->engine.func->gl_api_get(_evas_engine_context(evas_gl->evas), ctx->version);
 }
 
-EAPI int
+EVAS_API int
 evas_gl_rotation_get(Evas_GL *evas_gl)
 {
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
@@ -661,7 +661,7 @@ evas_gl_rotation_get(Evas_GL *evas_gl)
    return evas_gl->evas->engine.func->gl_rotation_angle_get(_evas_engine_context(evas_gl->evas));
 }
 
-EAPI int
+EVAS_API int
 evas_gl_error_get(Evas_GL *evas_gl)
 {
    int err;
@@ -684,7 +684,7 @@ end:
    return err;
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_gl_surface_query(Evas_GL *evas_gl, Evas_GL_Surface *surface, int attribute, void *value)
 {
    if (!evas_gl) return EINA_FALSE;

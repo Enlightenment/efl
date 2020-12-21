@@ -7,7 +7,7 @@ static void _evas_smart_class_interfaces_create(Evas_Smart *s);
 
 /* all public */
 
-EAPI void
+EVAS_API void
 evas_smart_free(Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
@@ -22,7 +22,7 @@ evas_smart_free(Evas_Smart *s)
    free(s);
 }
 
-EAPI Evas_Smart *
+EVAS_API Evas_Smart *
 evas_smart_class_new(const Evas_Smart_Class *sc)
 {
    Evas_Smart *s;
@@ -44,7 +44,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
    return s;
 }
 
-EAPI const Evas_Smart_Class *
+EVAS_API const Evas_Smart_Class *
 evas_smart_class_get(const Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
@@ -53,7 +53,7 @@ evas_smart_class_get(const Evas_Smart *s)
    return s->smart_class;
 }
 
-EAPI void *
+EVAS_API void *
 evas_smart_data_get(const Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
@@ -62,7 +62,7 @@ evas_smart_data_get(const Evas_Smart *s)
    return (void *)s->smart_class->data;
 }
 
-EAPI const Evas_Smart_Cb_Description **
+EVAS_API const Evas_Smart_Cb_Description **
 evas_smart_callbacks_descriptions_get(const Evas_Smart *s, unsigned int *count)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
@@ -74,7 +74,7 @@ evas_smart_callbacks_descriptions_get(const Evas_Smart *s, unsigned int *count)
    return s->callbacks.array;
 }
 
-EAPI const Evas_Smart_Cb_Description *
+EVAS_API const Evas_Smart_Cb_Description *
 evas_smart_callback_description_find(const Evas_Smart *s, const char *name)
 {
    if (!name) return NULL;
@@ -84,7 +84,7 @@ evas_smart_callback_description_find(const Evas_Smart *s, const char *name)
    return evas_smart_cb_description_find(&s->callbacks, name);
 }
 
-EAPI Eina_Bool
+EVAS_API Eina_Bool
 evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size)
 {
    unsigned int off;
@@ -116,7 +116,7 @@ evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *pare
    return EINA_TRUE;
 }
 
-EAPI int
+EVAS_API int
 evas_smart_usage_get(const Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);

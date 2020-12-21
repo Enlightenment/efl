@@ -1,7 +1,7 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-EAPI void
+EVAS_API void
 evas_object_name_set(Evas_Object *eo_obj, const char *name)
 {
    Evas_Object_Protected_Data *obj = efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS) ?
@@ -22,7 +22,7 @@ evas_object_name_set(Evas_Object *eo_obj, const char *name)
      }
 }
 
-EAPI const char *
+EVAS_API const char *
 evas_object_name_get(const Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_isa(eo_obj, EFL_CANVAS_OBJECT_CLASS) ?
@@ -60,7 +60,7 @@ _priv_evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, i
    return NULL;
 }
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_name_child_find(const Evas_Object *eo_obj, const char *name, int recurse)
 {
    return (!name ?  NULL : _priv_evas_object_name_child_find(eo_obj, name, recurse));

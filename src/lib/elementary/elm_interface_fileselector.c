@@ -4,7 +4,7 @@
 
 
 #include "elm_priv.h"
-#include "Eio_Eo.h"
+#include "Eio.h"
 
 #include "elm_interface_fileselector.h"
 

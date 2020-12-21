@@ -10,7 +10,7 @@
   CSO_DATA_GET(eo_obj, ptr) \
   if (!ptr) return __VA_ARGS__;
 
-EAPI Evas_Object *
+EVAS_API Evas_Object *
 evas_object_smart_clipped_clipper_get(const Evas_Object *eo_obj)
 {
    CSO_DATA_GET_OR_RETURN(eo_obj, cso, NULL);
@@ -98,7 +98,7 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *eo_obj, Evas_Object *mem
      evas_object_hide(cso->clipper);
 }
 
-EAPI void
+EVAS_API void
 evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
 {
    if (!sc)
@@ -117,7 +117,7 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
    sc->member_del = evas_object_smart_clipped_smart_member_del;
 }
 
-EAPI const Evas_Smart_Class *
+EVAS_API const Evas_Smart_Class *
 evas_object_smart_clipped_class_get(void)
 {
    static Evas_Smart_Class _sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("EvasObjectSmartClipped");

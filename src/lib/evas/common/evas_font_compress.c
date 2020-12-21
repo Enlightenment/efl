@@ -402,7 +402,7 @@ decompress_bpp4(DATA8 *src, DATA8 *dst, int pitch, int w, int h)
 //--------------------------------------------------------------------------
 //- GENERAL ----------------------------------------------------------------
 //--------------------------------------------------------------------------
-EAPI void *
+EVAS_API void *
 evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode,
                                 int pitch_data, int w, int h, int *size_ret)
 {
@@ -438,7 +438,7 @@ evas_common_font_glyph_compress(void *data, int num_grays, int pixel_mode,
 
 // this decompresses a whole block of compressed font data back to 8bit
 // per pixels and deals with both 4bit RLE and 4bit packed encoding modes
-EAPI DATA8 *
+EVAS_API DATA8 *
 evas_common_font_glyph_uncompress(RGBA_Font_Glyph *fg, int *wret, int *hret)
 {
    RGBA_Font_Glyph_Out *fgo = fg->glyph_out;

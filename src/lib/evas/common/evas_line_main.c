@@ -20,7 +20,7 @@
      x1 = _tmp;                                 \
   }
 
-EAPI void
+EVAS_API void
 evas_common_line_init(void)
 {
 }
@@ -69,7 +69,7 @@ _evas_draw_point(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y)
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_line_point_draw(RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 color, int render_op, int x, int y, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    Eina_Bool no_cuse;
@@ -747,7 +747,7 @@ _draw_render_thread_simple_line(RGBA_Image *dst, int clip_x, int clip_y, int cli
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_line_draw_line(RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 color, int render_op, int x0, int y0, int x1, int y1, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    int     px, py, x, y, prev_x, prev_y;
@@ -1077,7 +1077,7 @@ next_y:
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_line_draw_line_aa(RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 color, int render_op, int x0, int y0, int x1, int y1, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    int     px, py, x, y, prev_x, prev_y;
@@ -1515,7 +1515,7 @@ next_x:
      }
 }
 
-EAPI void
+EVAS_API void
 evas_common_line_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1, Evas_Common_Line_Draw_Cb cb)
 {
    int  x, y, w, h;
@@ -1573,7 +1573,7 @@ evas_common_line_draw_cb(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0,
    dc->clip.h = ch;
 }
 
-EAPI void
+EVAS_API void
 evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, int y1)
 {
    Evas_Common_Line_Draw_Cb cb;

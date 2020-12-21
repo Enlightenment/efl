@@ -39,31 +39,7 @@
 #include "Eina.h"
 #include "Emile.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <evas_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -239,10 +215,10 @@ struct _Evas_Image_Load_Func
   Eina_Bool do_region;
 };
 
-EAPI Eina_Bool    evas_module_register   (const Evas_Module_Api *module, Evas_Module_Type type);
-EAPI Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Module_Type type);
+EVAS_API Eina_Bool    evas_module_register   (const Evas_Module_Api *module, Evas_Module_Type type);
+EVAS_API Eina_Bool    evas_module_unregister (const Evas_Module_Api *module, Evas_Module_Type type);
 
-EAPI Eina_Bool    evas_module_task_cancelled (void); /**< @since 1.19 */
+EVAS_API Eina_Bool    evas_module_task_cancelled (void); /**< @since 1.19 */
 
 #define EVAS_MODULE_TASK_CHECK(Count, Mask, Error, Error_Handler)       \
   do {                                                                  \
@@ -305,8 +281,5 @@ evas_loader_helper_stretch_region_push(uint8_t **region,
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

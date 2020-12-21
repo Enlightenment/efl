@@ -113,62 +113,62 @@ extern "C" {
 #endif
 
 
-EAPI Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
-EAPI void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
-EAPI Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
-EAPI Image_Entry*             evas_cache_image_mmap_request(Evas_Cache_Image *cache, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
-EAPI void                     evas_cache_image_ref(Image_Entry *im);
-EAPI void                     evas_cache_image_drop(Image_Entry *im);
-EAPI void                     evas_cache_image_data_not_needed(Image_Entry *im);
-EAPI int                      evas_cache_image_flush(Evas_Cache_Image *cache);
-EAPI void                     evas_cache_private_set(Evas_Cache_Image *cache, const void *data);
-EAPI void*                    evas_cache_private_get(Evas_Cache_Image *cache);
-EAPI void*                    evas_cache_private_from_image_entry_get(Image_Entry *im);
+EVAS_API Evas_Cache_Image*        evas_cache_image_init(const Evas_Cache_Image_Func *cb);
+EVAS_API void                     evas_cache_image_shutdown(Evas_Cache_Image *cache);
+EVAS_API Image_Entry*             evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
+EVAS_API Image_Entry*             evas_cache_image_mmap_request(Evas_Cache_Image *cache, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error);
+EVAS_API void                     evas_cache_image_ref(Image_Entry *im);
+EVAS_API void                     evas_cache_image_drop(Image_Entry *im);
+EVAS_API void                     evas_cache_image_data_not_needed(Image_Entry *im);
+EVAS_API int                      evas_cache_image_flush(Evas_Cache_Image *cache);
+EVAS_API void                     evas_cache_private_set(Evas_Cache_Image *cache, const void *data);
+EVAS_API void*                    evas_cache_private_get(Evas_Cache_Image *cache);
+EVAS_API void*                    evas_cache_private_from_image_entry_get(Image_Entry *im);
 
-EAPI int                      evas_cache_image_usage_get(Evas_Cache_Image *cache);
-EAPI int                      evas_cache_image_get(Evas_Cache_Image *cache);
-EAPI void                     evas_cache_image_set(Evas_Cache_Image *cache, unsigned int size);
+EVAS_API int                      evas_cache_image_usage_get(Evas_Cache_Image *cache);
+EVAS_API int                      evas_cache_image_get(Evas_Cache_Image *cache);
+EVAS_API void                     evas_cache_image_set(Evas_Cache_Image *cache, unsigned int size);
 
-EAPI Image_Entry*             evas_cache_image_alone(Image_Entry *im);
-EAPI Image_Entry*             evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
-EAPI int                      evas_cache_image_load_data(Image_Entry *im);
-EAPI void                     evas_cache_image_unload_data(Image_Entry *im);
-EAPI Eina_Bool                evas_cache_image_is_loaded(Image_Entry *im);
-EAPI void                     evas_cache_image_unload_all(Evas_Cache_Image *cache);
-EAPI void                     evas_cache_image_surface_alloc(Image_Entry *im, unsigned int w, unsigned int h);
-EAPI DATA32*                  evas_cache_image_pixels(Image_Entry *im);
-EAPI Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
-EAPI Image_Entry*             evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
-EAPI void                     evas_cache_image_colorspace(Image_Entry *im, Evas_Colorspace cspace);
-EAPI Image_Entry*             evas_cache_image_empty(Evas_Cache_Image *cache);
-EAPI Image_Entry*             evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h);
+EVAS_API Image_Entry*             evas_cache_image_alone(Image_Entry *im);
+EVAS_API Image_Entry*             evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
+EVAS_API int                      evas_cache_image_load_data(Image_Entry *im);
+EVAS_API void                     evas_cache_image_unload_data(Image_Entry *im);
+EVAS_API Eina_Bool                evas_cache_image_is_loaded(Image_Entry *im);
+EVAS_API void                     evas_cache_image_unload_all(Evas_Cache_Image *cache);
+EVAS_API void                     evas_cache_image_surface_alloc(Image_Entry *im, unsigned int w, unsigned int h);
+EVAS_API DATA32*                  evas_cache_image_pixels(Image_Entry *im);
+EVAS_API Image_Entry*             evas_cache_image_copied_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+EVAS_API Image_Entry*             evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace);
+EVAS_API void                     evas_cache_image_colorspace(Image_Entry *im, Evas_Colorspace cspace);
+EVAS_API Image_Entry*             evas_cache_image_empty(Evas_Cache_Image *cache);
+EVAS_API Image_Entry*             evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h);
 
-EAPI Evas_Cache_Engine_Image* evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Image *parent);
-EAPI void                     evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache);
+EVAS_API Evas_Cache_Engine_Image* evas_cache_engine_image_init(const Evas_Cache_Engine_Image_Func *cb, Evas_Cache_Image *parent);
+EVAS_API void                     evas_cache_engine_image_shutdown(Evas_Cache_Engine_Image *cache);
 
-EAPI int                      evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache);
-EAPI int                      evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache);
-EAPI void                     evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit);
+EVAS_API int                      evas_cache_engine_image_usage_get(Evas_Cache_Engine_Image *cache);
+EVAS_API int                      evas_cache_engine_image_get(Evas_Cache_Engine_Image *cache);
+EVAS_API void                     evas_cache_engine_image_set(Evas_Cache_Engine_Image *cache, int limit);
 
-EAPI Engine_Image_Entry*      evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, void *engine_data, int *error);
-EAPI void                     evas_cache_engine_parent_not_needed(Engine_Image_Entry *eim);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data);
-EAPI void                     evas_cache_engine_image_drop(Engine_Image_Entry *eim);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data);
-EAPI void                     evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, Evas_Colorspace cspace, void *engine_data);
-EAPI Engine_Image_Entry*      evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsigned int h);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_request(Evas_Cache_Engine_Image *cache, const char *file, const char *key, Evas_Image_Load_Opts *lo, void *engine_data, int *error);
+EVAS_API void                     evas_cache_engine_parent_not_needed(Engine_Image_Entry *eim);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_engine(Evas_Cache_Engine_Image *cache, void *engine_data);
+EVAS_API void                     evas_cache_engine_image_drop(Engine_Image_Entry *eim);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_alone(Engine_Image_Entry *eim, void *data);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_dirty(Engine_Image_Entry *eim, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_copied_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_data(Evas_Cache_Engine_Image *cache, unsigned int w, unsigned int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace, void *engine_data);
+EVAS_API void                     evas_cache_engine_image_colorspace(Engine_Image_Entry *eim, Evas_Colorspace cspace, void *engine_data);
+EVAS_API Engine_Image_Entry*      evas_cache_engine_image_size_set(Engine_Image_Entry *eim, unsigned int w, unsigned int h);
 
-EAPI void                     evas_cache_engine_image_load_data(Engine_Image_Entry *eim);
+EVAS_API void                     evas_cache_engine_image_load_data(Engine_Image_Entry *eim);
 
-EAPI void                     evas_cache_image_preload_data(Image_Entry *im, const Eo *target, void (*preloaded_cb)(void *data), void *preloaded_data);
-EAPI void                     evas_cache_image_preload_cancel(Image_Entry *im, const Eo *target, Eina_Bool force);
+EVAS_API void                     evas_cache_image_preload_data(Image_Entry *im, const Eo *target, void (*preloaded_cb)(void *data), void *preloaded_data);
+EVAS_API void                     evas_cache_image_preload_cancel(Image_Entry *im, const Eo *target, Eina_Bool force);
 
-EAPI int                      evas_cache_async_frozen_get(void);
-EAPI void                     evas_cache_async_freeze(void);
-EAPI void                     evas_cache_async_thaw(void);
+EVAS_API int                      evas_cache_async_frozen_get(void);
+EVAS_API void                     evas_cache_async_freeze(void);
+EVAS_API void                     evas_cache_async_thaw(void);
 
 #ifdef __cplusplus
 }

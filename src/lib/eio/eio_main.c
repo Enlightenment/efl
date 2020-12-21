@@ -24,7 +24,7 @@
  *============================================================================*/
 
 static Eio_Version _version = { VMAJ, VMIN, VMIC, VREV };
-EAPI Eio_Version *eio_version = &_version;
+EIO_API Eio_Version *eio_version = &_version;
 
 /**
  * @cond LOCAL
@@ -272,7 +272,7 @@ eio_file_unregister(Eio_File *common)
  *                                   API                                      *
  *============================================================================*/
 
-EAPI int
+EIO_API int
 eio_init(void)
 {
    if (++_eio_init_count != 1)
@@ -336,7 +336,7 @@ shutdown_eina:
    return --_eio_init_count;
 }
 
-EAPI int
+EIO_API int
 eio_shutdown(void)
 {
    Eio_File_Direct_Info *info;
@@ -409,7 +409,7 @@ eio_shutdown(void)
    return _eio_init_count;
 }
 
-EAPI void
+EIO_API void
 eio_memory_burst_limit_set(size_t limit)
 {
    eina_lock_take(&(memory_pool_mutex));
@@ -422,7 +422,7 @@ eio_memory_burst_limit_set(size_t limit)
    eina_lock_release(&(memory_pool_mutex));
 }
 
-EAPI size_t
+EIO_API size_t
 eio_memory_burst_limit_get(void)
 {
    return memory_pool_limit;

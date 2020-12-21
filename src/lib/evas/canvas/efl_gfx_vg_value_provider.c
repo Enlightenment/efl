@@ -60,7 +60,7 @@ _efl_gfx_vg_value_provider_transform_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_V
    return pd->m;
 }
 
-EOAPI void
+EVAS_API EVAS_API_WEAK void
 _efl_gfx_vg_value_provider_fill_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, int r, int g, int b, int a)
 {
    pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_FLAGS_FILL_COLOR;
@@ -71,7 +71,7 @@ _efl_gfx_vg_value_provider_fill_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_
    pd->fill.a = a;
 }
 
-EOAPI void
+EVAS_API EVAS_API_WEAK void
 _efl_gfx_vg_value_provider_fill_color_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->fill.r;
@@ -80,7 +80,7 @@ _efl_gfx_vg_value_provider_fill_color_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_
    if (a) *a = pd->fill.a;
 }
 
-EOAPI void
+EVAS_API EVAS_API_WEAK void
 _efl_gfx_vg_value_provider_stroke_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, int r, int g, int b, int a)
 {
    pd->flag = pd->flag | EFL_GFX_VG_VALUE_PROVIDER_FLAGS_STROKE_COLOR;
@@ -91,7 +91,7 @@ _efl_gfx_vg_value_provider_stroke_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Valu
    pd->stroke.a = a;
 }
 
-EOAPI void
+EVAS_API EVAS_API_WEAK void
 _efl_gfx_vg_value_provider_stroke_color_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->stroke.r;
@@ -100,7 +100,7 @@ _efl_gfx_vg_value_provider_stroke_color_get(const Eo *obj EINA_UNUSED, Efl_Gfx_V
    if (a) *a = pd->stroke.a;
 }
 
-EOAPI void
+EVAS_API EVAS_API_WEAK void
 _efl_gfx_vg_value_provider_stroke_width_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd, double w)
 {
   if (w < 0) return ;
@@ -109,13 +109,13 @@ _efl_gfx_vg_value_provider_stroke_width_set(Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Valu
   pd->stroke.width = w;
 }
 
-EOAPI double
+EVAS_API EVAS_API_WEAK double
 _efl_gfx_vg_value_provider_stroke_width_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd)
 {
    return pd->stroke.width;
 }
 
-EOAPI Efl_Gfx_Vg_Value_Provider_Flags
+EVAS_API EVAS_API_WEAK Efl_Gfx_Vg_Value_Provider_Flags
 _efl_gfx_vg_value_provider_updated_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Vg_Value_Provider_Data *pd)
 {
    return pd->flag;

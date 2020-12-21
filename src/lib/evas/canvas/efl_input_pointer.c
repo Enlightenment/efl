@@ -21,7 +21,7 @@
  */
 
 /* internal eo */
-EOAPI Eo*
+EVAS_API EVAS_API_WEAK Eo*
 efl_input_pointer_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Pointer_Data *ev;
@@ -43,7 +43,7 @@ _efl_input_pointer_class_destructor(Efl_Class *klass)
    efl_input_event_instance_clean(klass);
 }
 
-EAPI void
+EVAS_API void
 efl_input_pointer_finalize(Efl_Input_Pointer *obj)
 {
    const Evas_Pointer_Data *pdata;
