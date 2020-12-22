@@ -117,6 +117,8 @@ I060("i-arrow-top", "arrow-top")
 I060("i-arrow-bottom", "arrow-bottom")
 I060("i-arrow-h2", "arrow-h2")
 I060("i-arrow-v2", "arrow-v2")
+I060("i-call-start", "call-start")
+I060("i-call-stop", "call-stop")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)
@@ -348,6 +350,26 @@ I160("i-format-bold", "format-bold")
 I160("i-format-italic", "format-italic")
 I160("i-format-underline", "format-underline")
 I160("i-format-strikethrough", "format-strikethrough")
+
+I160("i-addressbook", "addressbook")
+I160("i-calendar-plus", "calendar-plus")
+I160("i-person-plus", "person-plus")
+
+I160("i-floppy-blank", "floppy-blank")
+I160("i-floppy-text", "floppy-text")
+I160("i-print-doc", "print-doc")
+I160("i-print-doc-content", "print-doc-content")
+
+I160("i-doc-file-open", "doc-file-open")
+I160("i-doc-file-open-clock", "doc-file-open-clock")
+I160("i-doc-file-page-setup", "doc-file-page-setup")
+I160("i-doc-properties", "doc-properties")
+I160("i-doc-send", "doc-send")
+I160("i-doc-file-close", "doc-file-close")
+I160("i-doc-file-plus", "doc-file-plus")
+I160("i-doc-file-undo", "doc-file-undo")
+I160("i-doc-file-arrow-l", "doc-file-arrow-l")
+I160("i-doc-file-arrow-r", "doc-file-arrow-r")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger mono icons (mostly efm or settings)

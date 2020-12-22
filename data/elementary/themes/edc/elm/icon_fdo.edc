@@ -89,30 +89,6 @@ ICO1(CTX, "emblem-synchronized", 96)
 ICO1(CTX, "emblem-synchronizing", 96) /* */
 #undef CTX
 
-////  actions  ////////////////////////////////////////////////////////////////
-#define CTX "actions"
-ICO1(CTX, "address-book-new", 128)
-ICO1(CTX, "application-exit", 128)
-ICO1(CTX, "appointment-new", 128)
-ICO1(CTX, "call-start", 128)
-ICO1(CTX, "call-stop", 128)
-ICO1(CTX, "contact-new", 128)
-ICO1(CTX, "document-open", 128)
-ICO1(CTX, "document-open-recent", 128)
-ICO1(CTX, "document-page-setup", 128)
-ICO1(CTX, "document-properties", 128)
-ICO1(CTX, "document-save", 128)
-ICO1(CTX, "document-save-as", 128)
-ICO1(CTX, "document-send", 128)
-ICO1(CTX, "document-close", 128) /* */
-ICO1(CTX, "document-new", 128)
-ICO1(CTX, "document-print", 128)
-ICO1(CTX, "document-print-preview", 128)
-ICO1(CTX, "document-revert", 128)
-ICO1(CTX, "document-export", 128) /* */
-ICO1(CTX, "document-import", 128) /* */
-#undef CTX
-
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
 ICO1(CTX, "appointment-missed", 128)

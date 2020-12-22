@@ -457,6 +457,9 @@ ICON("object-flip-vertical", "i-arrow-v2")
 ICON("object-rotate-left", "i-undo")
 ICON("object-rotate-right", "i-redo")
 
+ICON("call-start", "i-call-start")
+ICON("call-stop", "i-call-stop")
+
 #undef ICON
 
 // regular icons
@@ -654,6 +657,23 @@ ICON("format-text-underline", "i-format-underline")
 ICON("format-text-strikethrough", "i-format-strikethrough")
 
 ICON("address-book-new", "i-addressbook")
+ICON("appointment-new", "i-calendar-plus")
+ICON("contact-new", "i-person-plus")
+
+ICON("document-open", "i-doc-file-open")
+ICON("document-open-recent", "i-doc-file-open-clock")
+ICON("document-page-setup", "i-doc-file-page-setup")
+ICON("document-properties", "i-doc-properties")
+ICON("document-save", "i-floppy-blank")
+ICON("document-save-as", "i-floppy-text")
+ICON("document-send", "i-doc-send")
+ICON("document-close", "i-doc-file-close")
+ICON("document-new", "i-doc-file-plus")
+ICON("document-print", "i-print-doc")
+ICON("document-print-preview", "i-print-doc-content")
+ICON("document-revert", "i-doc-file-undo")
+ICON("document-export", "i-doc-file-arrow-r")
+ICON("document-import", "i-doc-file-arrow-l")
 
 //ICON("", "")
 
