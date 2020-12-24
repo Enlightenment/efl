@@ -78,7 +78,11 @@ eeze_net_new(const char *name)
      }
    if (!device) return NULL;
    net = calloc(1, sizeof(Eeze_Net));
-   if (!net) return NULL;
+   if (!net)
+     {
+        udev_device_unref(device);
+        return NULL;
+     }
    EINA_REFCOUNT_INIT(net);
    net->device = device;
    net->syspath = syspath;
