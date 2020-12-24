@@ -78,7 +78,10 @@ eeze_udev_syspath_get_devpath(const char *syspath)
      return NULL;
 
    if (!(name = udev_device_get_devnode(device)))
-     return NULL;
+     {
+        udev_device_unref(device);
+        return NULL;
+     }
 
    name = eina_stringshare_add(name);
    udev_device_unref(device);
@@ -98,7 +101,10 @@ eeze_udev_syspath_get_devname(const char *syspath)
      return NULL;
 
    if (!(name = udev_device_get_sysname(device)))
-     return NULL;
+     {
+        udev_device_unref(device);
+        return NULL;
+     }
 
    name = eina_stringshare_add(name);
    udev_device_unref(device);
