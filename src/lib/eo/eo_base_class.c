@@ -362,6 +362,8 @@ _key_generic_set(const Eo *obj, Efl_Object_Data *pd, const char *key, const void
                }
           }
      }
+   else
+     if (!data) return NULL;
 
    ext = _efl_object_extension_need(pd);
    if (ext)
