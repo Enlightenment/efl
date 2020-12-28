@@ -507,7 +507,7 @@ EFL_START_TEST(text_keyboard_mouse_cluster_cursor_movement)
    efl_ui_focus_util_focus(txt);
    evas_event_feed_key_down(e, "Right", "Right", "Right", "Right", time(NULL), NULL);
 
-   ck_assert_int_eq(4, efl_text_cursor_object_position_get(cursor));
+   ck_assert_int_eq(2, efl_text_cursor_object_position_get(cursor));
 
    efl_text_cursor_object_position_set(cursor, 1);
    efl_text_cursor_object_move(cursor, EFL_TEXT_CURSOR_MOVE_TYPE_CHARACTER_NEXT);
@@ -518,7 +518,7 @@ EFL_START_TEST(text_keyboard_mouse_cluster_cursor_movement)
    efl_text_cursor_object_position_set(cursor, 0);
    click_object_at(win, rc2.x + rc.x + (rc.w/2), rc2.y + rc.y + (rc.h/2));
 
-   ck_assert_int_eq(4, efl_text_cursor_object_position_get(cursor));
+   ck_assert_int_eq(2, efl_text_cursor_object_position_get(cursor));
 
    efl_del(txt);
    efl_del(win);
