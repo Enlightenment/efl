@@ -41,7 +41,7 @@ static Eina_List *_url_con_url_list = NULL;
  * @{
  */
 
-EAPI int
+ECORE_CON_API int
 ecore_con_url_init(void)
 {
    if (++_init_count > 1) return _init_count;
@@ -64,7 +64,7 @@ ecore_con_url_init(void)
    return --_init_count;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_url_shutdown(void)
 {
    Ecore_Con_Url *url_con_url;
@@ -84,7 +84,7 @@ ecore_con_url_shutdown(void)
    return 0;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_pipeline_set(Eina_Bool enable)
 {
    if (!_c_init()) return;
@@ -93,7 +93,7 @@ ecore_con_url_pipeline_set(Eina_Bool enable)
    pipelining = enable;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_pipeline_get(void)
 {
    return pipelining;
@@ -778,7 +778,7 @@ _ecore_con_url_request_prepare(Ecore_Con_Url *url_con, const char *method)
    return EINA_FALSE;
 }
 
-EAPI Ecore_Con_Url *
+ECORE_CON_API Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
    Ecore_Con_Url *url_con;
@@ -798,7 +798,7 @@ ecore_con_url_new(const char *url)
    return url_con;
 }
 
-EAPI Ecore_Con_Url *
+ECORE_CON_API Ecore_Con_Url *
 ecore_con_url_custom_new(const char *url,
                          const char *custom_request)
 {
@@ -815,7 +815,7 @@ ecore_con_url_custom_new(const char *url,
    return url_con;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_free(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con);
@@ -826,14 +826,14 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
    _ecore_con_url_free_internal(url_con);
 }
 
-EAPI void *
+ECORE_CON_API void *
 ecore_con_url_data_get(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, NULL);
    return url_con->data;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_data_set(Ecore_Con_Url *url_con,
                        void *data)
 {
@@ -841,7 +841,7 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con,
    url_con->data = data;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_url_set(Ecore_Con_Url *url_con,
                       const char *url)
 {
@@ -850,7 +850,7 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con,
    return EINA_TRUE;
 }
 
-EAPI const char *
+ECORE_CON_API const char *
 ecore_con_url_url_get(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, NULL);
@@ -858,7 +858,7 @@ ecore_con_url_url_get(Ecore_Con_Url *url_con)
 }
 
 /* LEGACY: HTTP requests */
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_get(Ecore_Con_Url *url_con)
 {
    Eina_Error err;
@@ -879,7 +879,7 @@ ecore_con_url_get(Ecore_Con_Url *url_con)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_head(Ecore_Con_Url *url_con)
 {
    Eina_Error err;
@@ -900,7 +900,7 @@ ecore_con_url_head(Ecore_Con_Url *url_con)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_post(Ecore_Con_Url *url_con,
                    const void *data,
                    long length,
@@ -963,7 +963,7 @@ ecore_con_url_post(Ecore_Con_Url *url_con,
 }
 
 /* LEGACY: headers */
-EAPI void
+ECORE_CON_API void
 ecore_con_url_additional_header_add(Ecore_Con_Url *url_con,
                                     const char *key,
                                     const char *value)
@@ -990,14 +990,14 @@ ecore_con_url_additional_header_add(Ecore_Con_Url *url_con,
                                                header);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con);
    _ecore_con_url_request_headers_free(url_con);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_time(Ecore_Con_Url *url_con,
                    Ecore_Con_Url_Time time_condition,
                    double timestamp)
@@ -1008,7 +1008,7 @@ ecore_con_url_time(Ecore_Con_Url *url_con,
 }
 
 /* LEGACY: cookies */
-EAPI void
+ECORE_CON_API void
 ecore_con_url_cookies_init(Ecore_Con_Url *url_con)
 {
    CURL *curl_easy;
@@ -1026,7 +1026,7 @@ ecore_con_url_cookies_init(Ecore_Con_Url *url_con)
    _c->curl_easy_setopt(curl_easy, CURLOPT_COOKIEFILE, "");
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_cookies_file_add(Ecore_Con_Url *url_con,
                                const char * const file_name)
 {
@@ -1046,7 +1046,7 @@ ecore_con_url_cookies_file_add(Ecore_Con_Url *url_con,
    _c->curl_easy_setopt(curl_easy, CURLOPT_COOKIEFILE, file_name);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_cookies_clear(Ecore_Con_Url *url_con)
 {
    static const char cookielist_cmd_all[] = "ALL";
@@ -1067,7 +1067,7 @@ ecore_con_url_cookies_clear(Ecore_Con_Url *url_con)
    _c->curl_easy_setopt(curl_easy, CURLOPT_COOKIELIST, cookielist_cmd_all);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_con)
 {
    static const char cookielist_cmd_sess[] = "SESS";
@@ -1088,7 +1088,7 @@ ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_con)
    _c->curl_easy_setopt(curl_easy, CURLOPT_COOKIELIST, cookielist_cmd_sess);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Url *url_con,
                                              Eina_Bool ignore)
 {
@@ -1096,7 +1096,7 @@ ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Url *url_con,
    url_con->cookies.ignore_old_session = ignore;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_cookies_jar_file_set(Ecore_Con_Url *url_con,
                                    const char * const cookiejar_file)
 {
@@ -1117,7 +1117,7 @@ ecore_con_url_cookies_jar_file_set(Ecore_Con_Url *url_con,
    return EINA_TRUE;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_con)
 {
    CURL *curl_easy;
@@ -1134,7 +1134,7 @@ ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_con)
 }
 
 /* LEGACY: file upload/download */
-EAPI void
+ECORE_CON_API void
 ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con);
@@ -1145,7 +1145,7 @@ ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd)
    if (!url_con->dialer) return;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
                          const char *filename,
                          const char *user,
@@ -1211,7 +1211,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
                                Eina_Bool use_epsv)
 {
@@ -1219,7 +1219,7 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
    url_con->ftp_use_epsv = use_epsv;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_limit_upload_speed(Ecore_Con_Url *url_con, off_t max_speed)
 {
    CURL *curl_easy;
@@ -1233,7 +1233,7 @@ ecore_con_url_limit_upload_speed(Ecore_Con_Url *url_con, off_t max_speed)
    _c->curl_easy_setopt(curl_easy, CURLOPT_MAX_SEND_SPEED_LARGE, max_speed);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_limit_download_speed(Ecore_Con_Url *url_con, off_t max_speed)
 {
    CURL *curl_easy;
@@ -1248,7 +1248,7 @@ ecore_con_url_limit_download_speed(Ecore_Con_Url *url_con, off_t max_speed)
 }
 
 /* LEGACY: proxy */
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, EINA_FALSE);
@@ -1257,7 +1257,7 @@ ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, EINA_FALSE);
@@ -1266,7 +1266,7 @@ ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy_url)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, EINA_FALSE);
@@ -1275,14 +1275,14 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy_url)
 }
 
 /* LEGACY: response */
-EAPI int
+ECORE_CON_API int
 ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, EINA_FALSE);
    return url_con->received_bytes;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_url_status_code_get(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, 0);
@@ -1290,7 +1290,7 @@ ecore_con_url_status_code_get(Ecore_Con_Url *url_con)
    return efl_net_dialer_http_response_status_get(url_con->dialer);
 }
 
-EAPI const Eina_List *
+ECORE_CON_API const Eina_List *
 ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, NULL);
@@ -1298,7 +1298,7 @@ ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
 }
 
 /* LEGACY: SSL */
-EAPI int
+ECORE_CON_API int
 ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
                          const char *ca_path)
 {
@@ -1308,7 +1308,7 @@ ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
    return 0;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
                                   Eina_Bool verify)
 {
@@ -1317,7 +1317,7 @@ ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
 }
 
 /* LEGACY: misc */
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
                            const char *username,
                            const char *password,
@@ -1334,7 +1334,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con, EINA_FALSE);
@@ -1375,7 +1375,7 @@ _ecore_con_url_timeout_cb(void *data)
    return EINA_FALSE;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout)
 {
    ECORE_CON_URL_CHECK_RETURN(url_con);
@@ -1393,7 +1393,7 @@ ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout)
    url_con->timer = ecore_timer_add(timeout, _ecore_con_url_timeout_cb, url_con);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
                           Eina_Bool verbose)
 {

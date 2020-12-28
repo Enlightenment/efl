@@ -70,6 +70,7 @@ foreach eo_file : pub_eo_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ECORE_CON_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -91,6 +92,7 @@ foreach eo_file : pub_eo_types_files
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'ECORE_CON_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -107,7 +109,8 @@ ecore_con_header_src = [
   'ecore_con_eet_client_obj_eo.h',
   'ecore_con_eet_client_obj_eo.legacy.h',
   'ecore_con_eet_server_obj_eo.h',
-  'ecore_con_eet_server_obj_eo.legacy.h'
+  'ecore_con_eet_server_obj_eo.legacy.h',
+  'ecore_con_api.h',
 ]
 
 ecore_con_src = files([
@@ -187,7 +190,7 @@ ecore_con_lib = library('ecore_con',
     dependencies: [ecore_con_deps, ecore_con_ext_deps, ecore_con_pub_deps],
     include_directories : config_dir,
     install: true,
-    c_args : package_c_args,
+    c_args : [package_c_args, '-DECORE_CON_BUILD'],
     version : meson.project_version()
 )
 
