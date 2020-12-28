@@ -498,7 +498,8 @@ EFL_START_TEST(text_keyboard_mouse_cluster_cursor_movement)
    efl_ui_textbox_scrollable_set(txt, EINA_TRUE);
    get_me_to_those_events(txt);
 
-   efl_text_markup_set(txt, "A\u1100\u1161\u11AA");
+//   efl_text_markup_set(txt, "A\u1100\u1161\u11AA");
+   efl_text_markup_set(txt, "AAAAAA");
    cursor = efl_text_interactive_main_cursor_get(txt);
    efl_text_cursor_object_position_set(cursor, 1);
 
