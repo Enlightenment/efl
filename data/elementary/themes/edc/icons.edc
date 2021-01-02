@@ -666,6 +666,17 @@ ICON("audio-volume-low", "i-speaker-volume-low")
 ICON("audio-volume-muted", "i-speaker-volume-mute")
 ICON("audio-volume", "i-speaker-volume")
 
+ICON("battery-caution", "i-battery-caution")
+ICON("battery-empty", "i-battery-empty")
+ICON("battery-low", "i-battery-low")
+ICON("battery-good", "i-battery-good")
+ICON("battery-full", "i-battery-full")
+ICON("battery-caution-charging", "i-battery-caution-charging")
+ICON("battery-empty-charging", "i-battery-empty-charging")
+ICON("battery-low-charging", "i-battery-low-charging")
+ICON("battery-good-charging", "i-battery-good-charging")
+ICON("battery-full-charging", "i-battery-full-charging")
+
 ICON("address-book-new", "i-addressbook")
 ICON("contact-new", "i-person-plus")
 

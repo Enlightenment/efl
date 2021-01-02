@@ -361,6 +361,17 @@ I160("i-speaker-volume-low", "speaker-volume-low")
 I160("i-speaker-volume-mute", "speaker-volume-mute")
 I160("i-speaker-volume", "speaker-volume")
 
+I160("i-battery-caution", "battery-caution")
+I160("i-battery-empty", "battery-empty")
+I160("i-battery-low", "battery-low")
+I160("i-battery-good", "battery-good")
+I160("i-battery-full", "battery-full")
+I160("i-battery-caution-charging", "battery-caution-charging")
+I160("i-battery-empty-charging", "battery-empty-charging")
+I160("i-battery-low-charging", "battery-low-charging")
+I160("i-battery-good-charging", "battery-good-charging")
+I160("i-battery-full-charging", "battery-full-charging")
+
 I160("i-addressbook", "addressbook")
 I160("i-person-plus", "person-plus")
 

@@ -73,16 +73,6 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "battery-caution", 128)
-ICO1(CTX, "battery-empty", 128) /* */
-ICO1(CTX, "battery-low", 128)
-ICO1(CTX, "battery-good", 128) /* */
-ICO1(CTX, "battery-full", 128) /* */
-ICO1(CTX, "battery-caution-charging", 128) /* */
-ICO1(CTX, "battery-empty-charging", 128) /* */
-ICO1(CTX, "battery-low-charging", 128) /* */
-ICO1(CTX, "battery-good-charging", 128) /* */
-ICO1(CTX, "battery-full-charging", 128) /* */
 ICO1(CTX, "bluetooth-active", 128) /* */
 ICO1(CTX, "bluetooth-disabled", 128) /* */
 ICO1(CTX, "changes-allow", 128) /* */
