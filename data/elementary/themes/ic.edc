@@ -355,6 +355,12 @@ I160("i-calendar-plus", "calendar-plus")
 I160("i-calendar-appointment-bad", "calendar-appointment-bad")
 I160("i-calendar-appointment-good", "calendar-appointment-good")
 
+I160("i-speaker-volume-high", "speaker-volume-high")
+I160("i-speaker-volume-medium", "speaker-volume-medium")
+I160("i-speaker-volume-low", "speaker-volume-low")
+I160("i-speaker-volume-mute", "speaker-volume-mute")
+I160("i-speaker-volume", "speaker-volume")
+
 I160("i-addressbook", "addressbook")
 I160("i-person-plus", "person-plus")
 

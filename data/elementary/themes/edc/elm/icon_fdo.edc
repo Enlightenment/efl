@@ -73,11 +73,6 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "audio-volume-high", 128)
-ICO1(CTX, "audio-volume-low", 128)
-ICO1(CTX, "audio-volume-medium", 128)
-ICO1(CTX, "audio-volume-muted", 128)
-ICO1(CTX, "audio-volume", 128) /* */
 ICO1(CTX, "battery-caution", 128)
 ICO1(CTX, "battery-empty", 128) /* */
 ICO1(CTX, "battery-low", 128)

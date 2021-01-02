@@ -660,6 +660,12 @@ ICON("appointment-new", "i-calendar-plus")
 ICON("appointment-missed", "i-calendar-appointment-bad")
 ICON("appointment-soon", "i-calendar-appointment-good")
 
+ICON("audio-volume-high", "i-speaker-volume-high")
+ICON("audio-volume-medium", "i-speaker-volume-medium")
+ICON("audio-volume-low", "i-speaker-volume-low")
+ICON("audio-volume-muted", "i-speaker-volume-mute")
+ICON("audio-volume", "i-speaker-volume")
+
 ICON("address-book-new", "i-addressbook")
 ICON("contact-new", "i-person-plus")
 
