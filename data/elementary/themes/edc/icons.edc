@@ -656,8 +656,11 @@ ICON("format-text-italic", "i-format-italic")
 ICON("format-text-underline", "i-format-underline")
 ICON("format-text-strikethrough", "i-format-strikethrough")
 
-ICON("address-book-new", "i-addressbook")
 ICON("appointment-new", "i-calendar-plus")
+ICON("appointment-missed", "i-calendar-appointment-bad")
+ICON("appointment-soon", "i-calendar-appointment-good")
+
+ICON("address-book-new", "i-addressbook")
 ICON("contact-new", "i-person-plus")
 
 ICON("document-open", "i-doc-file-open")

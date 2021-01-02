@@ -351,8 +351,11 @@ I160("i-format-italic", "format-italic")
 I160("i-format-underline", "format-underline")
 I160("i-format-strikethrough", "format-strikethrough")
 
-I160("i-addressbook", "addressbook")
 I160("i-calendar-plus", "calendar-plus")
+I160("i-calendar-appointment-bad", "calendar-appointment-bad")
+I160("i-calendar-appointment-good", "calendar-appointment-good")
+
+I160("i-addressbook", "addressbook")
 I160("i-person-plus", "person-plus")
 
 I160("i-floppy-blank", "floppy-blank")

@@ -73,8 +73,6 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "appointment-missed", 128)
-ICO1(CTX, "appointment-soon", 128)
 ICO1(CTX, "audio-volume-high", 128)
 ICO1(CTX, "audio-volume-low", 128)
 ICO1(CTX, "audio-volume-medium", 128)
