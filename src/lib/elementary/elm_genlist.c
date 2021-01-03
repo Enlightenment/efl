@@ -7410,6 +7410,7 @@ _elm_genlist_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, 
    Evas_Object *content;
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
+   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    EINA_LIST_FREE(it->contents, content)
      {
@@ -7417,6 +7418,7 @@ _elm_genlist_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, 
         edje_object_part_unswallow(VIEW(it), content);
         evas_object_hide(content);
         if (l) *l = eina_list_append(*l, content);
+        eina_hash_del_by_key(sd->content_item_map, &content);
      }
 }
 
