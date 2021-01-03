@@ -677,6 +677,9 @@ ICON("battery-low-charging", "i-battery-low-charging")
 ICON("battery-good-charging", "i-battery-good-charging")
 ICON("battery-full-charging", "i-battery-full-charging")
 
+ICON("bluetooth-active", "i-bluetooth-active")
+ICON("bluetooth-disabled", "i-bluetooth-disabled")
+
 ICON("address-book-new", "i-addressbook")
 ICON("contact-new", "i-person-plus")
 

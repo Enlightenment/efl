@@ -73,8 +73,6 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "bluetooth-active", 128) /* */
-ICO1(CTX, "bluetooth-disabled", 128) /* */
 ICO1(CTX, "changes-allow", 128) /* */
 ICO1(CTX, "changes-prevent", 128)/* */
 ICO1(CTX, "dialog-error", 128)
