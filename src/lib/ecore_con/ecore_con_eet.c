@@ -717,7 +717,7 @@ _ecore_con_eet_base_server_get(const Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Dat
 * Global API *
 **************/
 
-EAPI Ecore_Con_Eet *
+ECORE_CON_API Ecore_Con_Eet *
 ecore_con_eet_server_new(Ecore_Con_Server *server)
 {
    Ecore_Con_Eet *ece_obj;
@@ -729,7 +729,7 @@ ecore_con_eet_server_new(Ecore_Con_Server *server)
    return ece_obj;
 }
 
-EAPI Ecore_Con_Eet *
+ECORE_CON_API Ecore_Con_Eet *
 ecore_con_eet_client_new(Ecore_Con_Server *server)
 {
    Ecore_Con_Eet *ece_obj;
@@ -741,43 +741,43 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
    return ece_obj;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_server_free(Ecore_Con_Eet *server)
 {
    efl_unref(server);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_register(Ecore_Con_Eet *ece, const char *name, Eet_Data_Descriptor *edd)
 {
    ecore_con_eet_base_register(ece, name, edd);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Data_Cb func, const void *data)
 {
    ecore_con_eet_base_data_callback_set(ece, name, func, data);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_data_callback_del(Ecore_Con_Eet *ece, const char *name)
 {
    ecore_con_eet_base_data_callback_del(ece, name);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data)
 {
    ecore_con_eet_base_raw_data_callback_set(ece, name, func, data);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_raw_data_callback_del(Ecore_Con_Eet *ece, const char *name)
 {
    ecore_con_eet_base_raw_data_callback_del(ece, name);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_client_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data)
 {
    Ecore_Con_Eet_Server_Obj_Data *eces = efl_data_scope_get(ece, ECORE_CON_EET_SERVER_OBJ_CLASS);
@@ -794,7 +794,7 @@ ecore_con_eet_client_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Clie
    eces->client_connect_callbacks = eina_list_append(eces->client_connect_callbacks, c);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_client_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data)
 {
    Ecore_Con_Eet_Server_Obj_Data *eces = efl_data_scope_get(ece, ECORE_CON_EET_SERVER_OBJ_CLASS);
@@ -812,7 +812,7 @@ ecore_con_eet_client_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Clie
        }
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_client_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data)
 {
    Ecore_Con_Eet_Server_Obj_Data *eces = efl_data_scope_get(ece, ECORE_CON_EET_SERVER_OBJ_CLASS);
@@ -829,7 +829,7 @@ ecore_con_eet_client_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_C
    eces->client_disconnect_callbacks = eina_list_append(eces->client_disconnect_callbacks, c);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_client_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data)
 {
    Ecore_Con_Eet_Server_Obj_Data *eced = efl_data_scope_get(ece, ECORE_CON_EET_SERVER_OBJ_CLASS);
@@ -847,7 +847,7 @@ ecore_con_eet_client_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_C
        }
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_server_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data)
 {
    Ecore_Con_Eet_Client_Obj_Data *eced = efl_data_scope_get(ece, ECORE_CON_EET_CLIENT_OBJ_CLASS);
@@ -864,7 +864,7 @@ ecore_con_eet_server_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Serv
    eced->server_connect_callbacks = eina_list_append(eced->server_connect_callbacks, s);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_server_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data)
 {
    Ecore_Con_Eet_Client_Obj_Data *eced = efl_data_scope_get(ece, ECORE_CON_EET_CLIENT_OBJ_CLASS);
@@ -882,7 +882,7 @@ ecore_con_eet_server_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Serv
        }
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_server_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data)
 {
    Ecore_Con_Eet_Client_Obj_Data *eced = efl_data_scope_get(ece, ECORE_CON_EET_CLIENT_OBJ_CLASS);
@@ -899,7 +899,7 @@ ecore_con_eet_server_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_S
    eced->server_disconnect_callbacks = eina_list_append(eced->server_disconnect_callbacks, s);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data)
 {
    Ecore_Con_Eet_Client_Obj_Data *eced = efl_data_scope_get(ece, ECORE_CON_EET_CLIENT_OBJ_CLASS);
@@ -917,32 +917,32 @@ ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_S
        }
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data)
 {
    efl_key_data_set(ece, ECORE_CON_EET_DATA_KEY, data);
 }
 
-EAPI const void *
+ECORE_CON_API const void *
 ecore_con_eet_data_get(Ecore_Con_Eet *ece)
 {
    return efl_key_data_get(ece, ECORE_CON_EET_DATA_KEY);
 }
 
-EAPI Ecore_Con_Eet *
+ECORE_CON_API Ecore_Con_Eet *
 ecore_con_eet_reply(Ecore_Con_Reply *reply)
 {
    if (!reply) return NULL;
    return reply->ece;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_send(Ecore_Con_Reply *reply, const char *name, void *value)
 {
    ecore_con_eet_base_send(reply->ece, reply, name, value);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
 {
    Eina_Binbuf *buf = eina_binbuf_manage_new(value, length, 1);

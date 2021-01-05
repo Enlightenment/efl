@@ -6,31 +6,8 @@
 #ifdef EFL_BETA_API_SUPPORT
 #include <Efl.h>
 #endif
-#ifdef EAPI
-# undef EAPI
-#endif
 
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
+#include <ector_api.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,7 +110,7 @@ typedef enum _Ector_Update_Type
  *
  * @see ector_shutfown()
  */
-EAPI int ector_init(void);
+ECTOR_API int ector_init(void);
 
 /**
  * @brief Shutdown the ector subsystem
@@ -141,7 +118,7 @@ EAPI int ector_init(void);
  *
  * @see ector_init()
  */
-EAPI int ector_shutdown(void);
+ECTOR_API int ector_shutdown(void);
 
 /**
  * @brief Registers OpenGL API calls with the internal Ector_GL_API.
@@ -156,7 +133,7 @@ EAPI int ector_shutdown(void);
  *
  * @see dlsym()
  */
-EAPI Eina_Bool ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib);
+ECTOR_API Eina_Bool ector_glsym_set(void *(*glsym)(void *lib, const char *name), void *lib);
 
 /* Avoid redefinition of types */
 #define _ECTOR_SURFACE_EO_CLASS_TYPE
@@ -176,8 +153,5 @@ EAPI Eina_Bool ector_glsym_set(void *(*glsym)(void *lib, const char *name), void
 #ifdef __cplusplus
 }
 #endif
-
-#undef EAPI
-#define EAPI
 
 #endif

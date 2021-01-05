@@ -327,7 +327,7 @@ _ecore_main_pre_idle_exit(void)
    // even if we never go idle, keep up flushing some of our freeq away
    // on every idle exit which may happen if we even never called idlers
    // for now an idea but dont enforce
-//   eina_freeq_reduce(eina_freeq_main_get(), 128);
+   eina_freeq_reduce(eina_freeq_main_get(), 128);
 }
 
 #ifdef HAVE_LIBUV

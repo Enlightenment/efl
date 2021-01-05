@@ -361,7 +361,7 @@ _ecore_con_local_win32_listening(void *data)
    return 0;
 }
 
-EAPI char *
+ECORE_CON_API char *
 ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
 {
    char buf[256];

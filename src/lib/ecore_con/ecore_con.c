@@ -64,7 +64,7 @@ char      **_efl_net_proxy_helper_url_wait    (int id);
 void        _efl_net_proxy_helper_init        (void);
 void        _efl_net_proxy_helper_shutdown    (void);
 
-EAPI int
+ECORE_CON_API int
 ecore_con_init(void)
 {
    if (++_ecore_con_init_count != 1)
@@ -129,7 +129,7 @@ ecore_con_log_error:
    return --_ecore_con_init_count;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_shutdown(void)
 {
    /* _ecore_con_init_count should not go below zero. */
@@ -162,7 +162,7 @@ ecore_con_shutdown(void)
    return _ecore_con_init_count;
 }
 
-EAPI int
+ECORE_CON_API int
 ecore_con_ssl_available_get(void)
 {
 #if HAVE_GNUTLS

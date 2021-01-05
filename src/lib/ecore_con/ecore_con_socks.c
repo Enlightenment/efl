@@ -172,7 +172,7 @@ ecore_con_socks_init(void)
  * General Socks API.
  */
 
-EAPI Ecore_Con_Socks *
+ECORE_CON_API Ecore_Con_Socks *
 ecore_con_socks4_remote_add(const char *ip, int port, const char *username)
 {
    Ecore_Con_Socks *ecs;
@@ -201,7 +201,7 @@ ecore_con_socks4_remote_add(const char *ip, int port, const char *username)
    return ecs;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_socks4_remote_exists(const char *ip, int port, const char *username)
 {
    if ((!ip) || (!ip[0]) || (port < -1) || (port > 65535) || (username && (!username[0])))
@@ -209,7 +209,7 @@ ecore_con_socks4_remote_exists(const char *ip, int port, const char *username)
    return !!_ecore_con_socks_find(4, ip, port, username, username ? strlen(username) : 0, NULL, 0);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks4_remote_del(const char *ip, int port, const char *username)
 {
    Ecore_Con_Socks_v4 *v4;
@@ -223,7 +223,7 @@ ecore_con_socks4_remote_del(const char *ip, int port, const char *username)
    _ecore_con_socks_free((Ecore_Con_Socks *)v4);
 }
 
-EAPI Ecore_Con_Socks *
+ECORE_CON_API Ecore_Con_Socks *
 ecore_con_socks5_remote_add(const char *ip, int port, const char *username, const char *password)
 {
    Ecore_Con_Socks_v5 *ecs5;
@@ -260,7 +260,7 @@ ecore_con_socks5_remote_add(const char *ip, int port, const char *username, cons
    return (Ecore_Con_Socks *)ecs5;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, const char *password)
 {
    if ((!ip) || (!ip[0]) || (port < -1) || (port > 65535) || (username && (!username[0])) || (password && (!password[0])))
@@ -268,7 +268,7 @@ ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, c
    return !!_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, password ? strlen(password) : 0);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks5_remote_del(const char *ip, int port, const char *username, const char *password)
 {
    Ecore_Con_Socks_v5 *v5;
@@ -283,21 +283,21 @@ ecore_con_socks5_remote_del(const char *ip, int port, const char *username, cons
    _ecore_con_socks_free((Ecore_Con_Socks *)v5);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable)
 {
    ECORE_CON_SOCKS_VERSION_CHECK(ecs);
    ecs->lookup = !!enable;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_socks_lookup_get(Ecore_Con_Socks *ecs)
 {
    ECORE_CON_SOCKS_VERSION_CHECK_RETURN(ecs, EINA_FALSE);
    return ecs->lookup;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind)
 {
    EINA_SAFETY_ON_NULL_RETURN(ecs);
@@ -305,7 +305,7 @@ ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind)
    ecs->bind = !!is_bind;
 }
 
-EAPI Eina_Bool
+ECORE_CON_API Eina_Bool
 ecore_con_socks_bind_get(Ecore_Con_Socks *ecs)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ecs, EINA_FALSE);
@@ -313,7 +313,7 @@ ecore_con_socks_bind_get(Ecore_Con_Socks *ecs)
    return ecs->bind;
 }
 
-EAPI unsigned int
+ECORE_CON_API unsigned int
 ecore_con_socks_version_get(Ecore_Con_Socks *ecs)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ecs, 0);
@@ -321,7 +321,7 @@ ecore_con_socks_version_get(Ecore_Con_Socks *ecs)
    return ecs->version;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks_remote_del(Ecore_Con_Socks *ecs)
 {
    EINA_SAFETY_ON_NULL_RETURN(ecs);
@@ -331,13 +331,13 @@ ecore_con_socks_remote_del(Ecore_Con_Socks *ecs)
    _ecore_con_socks_free(ecs);
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks_apply_once(Ecore_Con_Socks *ecs)
 {
    _ecore_con_proxy_once = ecs;
 }
 
-EAPI void
+ECORE_CON_API void
 ecore_con_socks_apply_always(Ecore_Con_Socks *ecs)
 {
    _ecore_con_proxy_global = ecs;

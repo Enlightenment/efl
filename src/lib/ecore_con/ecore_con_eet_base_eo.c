@@ -1,39 +1,39 @@
 
 void _ecore_con_eet_base_server_set(Eo *obj, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Server *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_server_set, EFL_FUNC_CALL(data), Ecore_Con_Server *data);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_server_set, EFL_FUNC_CALL(data), Ecore_Con_Server *data);
 
 Ecore_Con_Server *_ecore_con_eet_base_server_get(const Eo *obj, Ecore_Con_Eet_Base_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(ecore_con_eet_base_server_get, Ecore_Con_Server *, NULL);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_FUNC_BODY_CONST(ecore_con_eet_base_server_get, Ecore_Con_Server *, NULL);
 
 void _ecore_con_eet_base_data_callback_set(Eo *obj, Ecore_Con_Eet_Base_Data *pd, const char *name, Ecore_Con_Eet_Data_Cb func, const void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_data_callback_set, EFL_FUNC_CALL(name, func, data), const char *name, Ecore_Con_Eet_Data_Cb func, const void *data);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_data_callback_set, EFL_FUNC_CALL(name, func, data), const char *name, Ecore_Con_Eet_Data_Cb func, const void *data);
 
 void _ecore_con_eet_base_raw_data_callback_set(Eo *obj, Ecore_Con_Eet_Base_Data *pd, const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_raw_data_callback_set, EFL_FUNC_CALL(name, func, data), const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_raw_data_callback_set, EFL_FUNC_CALL(name, func, data), const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data);
 
 void _ecore_con_eet_base_data_callback_del(Eo *obj, Ecore_Con_Eet_Base_Data *pd, const char *name);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_data_callback_del, EFL_FUNC_CALL(name), const char *name);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_data_callback_del, EFL_FUNC_CALL(name), const char *name);
 
 void _ecore_con_eet_base_raw_data_callback_del(Eo *obj, Ecore_Con_Eet_Base_Data *pd, const char *name);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_raw_data_callback_del, EFL_FUNC_CALL(name), const char *name);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_raw_data_callback_del, EFL_FUNC_CALL(name), const char *name);
 
 void _ecore_con_eet_base_register(Eo *obj, Ecore_Con_Eet_Base_Data *pd, const char *name, Eet_Data_Descriptor *edd);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_register, EFL_FUNC_CALL(name, edd), const char *name, Eet_Data_Descriptor *edd);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_register, EFL_FUNC_CALL(name, edd), const char *name, Eet_Data_Descriptor *edd);
 
 void _ecore_con_eet_base_send(Eo *obj, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *name, void *value);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_send, EFL_FUNC_CALL(reply, name, value), Ecore_Con_Reply *reply, const char *name, void *value);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_send, EFL_FUNC_CALL(reply, name, value), Ecore_Con_Reply *reply, const char *name, void *value);
 
 void _ecore_con_eet_base_raw_send(Eo *obj, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *protocol_name, const char *section, Eina_Binbuf *section_data);
 
-EOAPI EFL_VOID_FUNC_BODYV(ecore_con_eet_base_raw_send, EFL_FUNC_CALL(reply, protocol_name, section, section_data), Ecore_Con_Reply *reply, const char *protocol_name, const char *section, Eina_Binbuf *section_data);
+ECORE_CON_API ECORE_CON_API_WEAK EFL_VOID_FUNC_BODYV(ecore_con_eet_base_raw_send, EFL_FUNC_CALL(reply, protocol_name, section, section_data), Ecore_Con_Reply *reply, const char *protocol_name, const char *section, Eina_Binbuf *section_data);
 
 Efl_Object *_ecore_con_eet_base_efl_object_constructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd);
 
