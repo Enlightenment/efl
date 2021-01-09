@@ -38,6 +38,7 @@ group { name: "e/modules/music-control/popup";
 #ifdef SKIP_NAMESPACE_VALIDATION
    skip_namespace_validation: 1;
 #endif
+   images.image: "grad-v-bi.png" COMP;
    min: 160 160;
    styles {
       style { name: "music_control_metadata_style";
@@ -48,10 +49,52 @@ group { name: "e/modules/music-control/popup";
       }
    }
    script {
+      timeprint(dst[], dstn, Float:pos, Float:fmt) {
+         new h, m, s, fh, fm;
+         m  = round(pos / 60.0, FLOOR);
+         h  = round(float(m) / 60.0, FLOOR);
+         m  = m - (h * 60);
+         s  = round(pos - float((h * 3600) + (m * 60)), FLOOR);
+
+         fm = round(fmt / 60.0, FLOOR);
+         fh = round(float(fm) / 60.0, FLOOR);
+         if      (fh > 0) {
+            if (m >= 10) {
+               if (s >= 10) snprintf(dst, dstn, "%i:%i:%i",  h, m, s);
+               else         snprintf(dst, dstn, "%i:%i:0%i", h, m, s);
+            } else {
+               if (s >= 10) snprintf(dst, dstn, "%i:0%i:%i",  h, m, s);
+               else         snprintf(dst, dstn, "%i:0%i:0%i", h, m, s);
+            }
+         }
+         else if (fm > 0) {
+            if (s >= 10) snprintf(dst, dstn, "%i:%i",  m, s);
+            else         snprintf(dst, dstn, "%i:0%i", m, s);
+         }
+         else {
+            if (s >= 10)  snprintf(dst, dstn, "0%i",  s);
+            else          snprintf(dst, dstn, "%i",  s);
+         }
+      }
       public message(Msg_Type:type, id, ...) {
-         new txt[128];
-         getsarg(2, txt, 128);
-         set_text(PART:"player_name", txt);
+         if (id == 0) {
+            new txt[128];
+            getsarg(2, txt, 128);
+            set_text(PART:"player_name", txt);
+         } else if (id == 1) {
+            new Float:pos, Float:len, txt[128];
+            pos = getfarg(2);
+            len = getfarg(3);
+
+            timeprint(txt, 128, pos, len);
+            set_text(PART:"pos_txt", txt);
+            timeprint(txt, 128, len, len);
+            set_text(PART:"len_txt", txt);
+
+            custom_state(PART:"pos", "default", 0.0);
+            set_state_val(PART:"pos", STATE_REL2, (pos / len), 1.0);
+            set_state(PART:"pos", "custom", 0.0)
+         }
       }
    }
    parts {
@@ -61,6 +104,7 @@ group { name: "e/modules/music-control/popup";
             rel1.relative: 0.25 0.25;
             rel2.relative: 0.75 0.75;
             image.normal: "efm_drive_cd_icon";
+            color: 255 255 255 128;
          }
       }
       part { name: "e.cover_swallow"; type: SWALLOW;
@@ -79,6 +123,17 @@ group { name: "e/modules/music-control/popup";
             rel2.offset: 3 3;
             rel2.to_y: "player_name";
             offscale;
+         }
+      }
+      part { name: "player_mid";
+         scale: 1;
+         description { state: "default" 0;
+            color: 0 0 0 128;
+            rel1.to: "player_name_back";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "btn_back";
+            rel2.relative: 1.0 0.0;
+            image.normal: "grad-v-bi.png";
          }
       }
       part { name: "player_name"; type: TEXT;
@@ -129,6 +184,40 @@ group { name: "e/modules/music-control/popup";
             color: 0 0 0 220;
          }
       }
+      part { name: "pos_txt"; type: TEXT;
+         scale : 1;
+         description { state: "default" 0;
+            min: 64 15;
+            rel.to: "btn_back";
+            color: 255 255 255 255;
+            align: 0.5 1.0;
+            text.size: 10;
+            text.font: FN;
+            text.align: 0.0 1.0;
+            text.min: 0 1;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
+            rel2.relative: 1.0 0.0;
+            offscale;
+         }
+      }
+      part { name: "len_txt"; type: TEXT;
+         scale : 1;
+         description { state: "default" 0;
+            min: 64 15;
+            rel.to: "btn_back";
+            color: 255 255 255 255;
+            align: 0.5 1.0;
+            text.size: 10;
+            text.font: FN;
+            text.align: 1.0 1.0;
+            text.min: 0 1;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
+            rel2.relative: 1.0 0.0;
+            offscale;
+         }
+      }
       part { name: "play_btn";
          scale: 1;
          description { state: "default" 0;
@@ -141,6 +230,25 @@ group { name: "e/modules/music-control/popup";
          description { state: "play" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-media-play";
+         }
+      }
+      part { name: "loop";
+         scale: 1;
+         description { state: "default" 0;
+            fixed: 1 1;
+            rel.to: "player_name_back";
+            min: 15 15;
+            max: 15 15;
+            align: 1.0 0.5;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
+            image.normal: "i-reload";
+            visible: 0;
+         }
+         description { state: "loop" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
       part { name: "previous_btn";
@@ -167,52 +275,64 @@ group { name: "e/modules/music-control/popup";
             image.normal: "i-media-next";
          }
       }
+      part { name: "pos"; type: RECT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0;
+            fixed: 1 1;
+            color: 51 153 255 255;
+            rel.to: "btn_back";
+            rel1.offset: 0 -1;
+            rel1.relative: 0.0 1.0;
+            min: 0 5;
+            align: 0.0 1.0;
+         }
+      }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "*_btn";
+      program { signal: "mouse,down,1"; source: "*_btn";
          action: STATE_SET "pressed" 0.0;
          target: "btn_back";
       }
-      program {
-         signal: "mouse,up,1"; source: "*_btn";
+      program { signal: "mouse,up,1"; source: "*_btn";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 1.0;
          target: "btn_back";
       }
-      program {
-         signal: "mouse,clicked,*"; source: "previous_btn";
+      program { signal: "mouse,clicked,*"; source: "previous_btn";
          action: SIGNAL_EMIT "btn,clicked" "previous";
       }
-      program {
-         signal: "mouse,clicked,*"; source: "play_btn";
+      program { signal: "mouse,clicked,*"; source: "play_btn";
          action: SIGNAL_EMIT "btn,clicked" "play";
       }
-      program {
-         signal: "mouse,clicked,*"; source: "next_btn";
+      program { signal: "mouse,clicked,*"; source: "next_btn";
          action: SIGNAL_EMIT "btn,clicked" "next";
       }
-      program {
-         signal: "btn,state,image,play"; source: "play";
+      program { signal: "btn,state,image,play"; source: "play";
          action: STATE_SET "play" 0.0;
          transition: LINEAR 0.1;
          target: "play_btn";
       }
-      program {
-         signal: "btn,state,image,play,no_delay"; source: "play";
+      program { signal: "btn,state,image,play,no_delay"; source: "play";
          action: STATE_SET "play" 0.0;
          transition: LINEAR 0.0;
          target: "play_btn";
       }
-      program {
-         signal: "btn,state,image,pause"; source: "play";
+      program { signal: "btn,state,image,pause"; source: "play";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.1;
          target: "play_btn";
       }
-      program {
-         signal: "mouse,clicked,*"; source: "player_name";
+      program { signal: "mouse,clicked,*"; source: "player_name";
          action: SIGNAL_EMIT "label,clicked" "player_name";
+      }
+      program { signal: "loop,state,on"; source: "play";
+         action: STATE_SET "loop" 0.0;
+         target: "loop";
+      }
+      program { signal: "loop,state,off"; source: "play";
+         action: STATE_SET "default" 0.0;
+         target: "loop";
       }
    }
 }
