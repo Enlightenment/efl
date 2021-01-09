@@ -86,14 +86,23 @@ group { name: "e/modules/music-control/popup";
             pos = getfarg(2);
             len = getfarg(3);
 
-            timeprint(txt, 128, pos, len);
-            set_text(PART:"pos_txt", txt);
-            timeprint(txt, 128, len, len);
-            set_text(PART:"len_txt", txt);
+            if (len > 0.0) {
+               timeprint(txt, 128, pos, len);
+               set_text(PART:"pos_txt", txt);
+               timeprint(txt, 128, len, len);
+               set_text(PART:"len_txt", txt);
 
-            custom_state(PART:"pos", "default", 0.0);
-            set_state_val(PART:"pos", STATE_REL2, (pos / len), 1.0);
-            set_state(PART:"pos", "custom", 0.0)
+               custom_state(PART:"pos", "default", 0.0);
+               set_state_val(PART:"pos", STATE_REL2, (pos / len), 1.0);
+               set_state(PART:"pos", "custom", 0.0)
+            } else {
+               set_text(PART:"pos_txt", "");
+               set_text(PART:"len_txt", "");
+
+               custom_state(PART:"pos", "default", 0.0);
+               set_state_val(PART:"pos", STATE_REL2, 0.0, 1.0);
+               set_state(PART:"pos", "custom", 0.0)
+            }
          }
       }
    }
