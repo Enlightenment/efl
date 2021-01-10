@@ -168,7 +168,6 @@ evas_image_load_file_head_webp(void *loader_data,
 				  &prop->w, &prop->h, &prop->alpha,
 				  error))
      {
-        ERR("Image File is Invalid");
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         return EINA_FALSE;
      }
