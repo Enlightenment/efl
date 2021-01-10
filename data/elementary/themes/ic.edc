@@ -375,6 +375,10 @@ I160("i-battery-full-charging", "battery-full-charging")
 I160("i-bluetooth-active", "bluetooth-active")
 I160("i-bluetooth-disabled", "bluetooth-disabled")
 
+I160("i-shield-gold", "shield-gold")
+I160("i-shield-silver", "shield-silver")
+I160("i-shield-empty", "shield-empty")
+
 I160("i-addressbook", "addressbook")
 I160("i-person-plus", "person-plus")
 

@@ -680,6 +680,10 @@ ICON("battery-full-charging", "i-battery-full-charging")
 ICON("bluetooth-active", "i-bluetooth-active")
 ICON("bluetooth-disabled", "i-bluetooth-disabled")
 
+ICON("security-high", "i-shield-gold")
+ICON("security-medium", "i-shield-silver")
+ICON("security-low", "i-shield-empty")
+
 ICON("address-book-new", "i-addressbook")
 ICON("contact-new", "i-person-plus")
 

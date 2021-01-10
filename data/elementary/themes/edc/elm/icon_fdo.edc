@@ -118,9 +118,6 @@ ICO1(CTX, "network-wireless-signal-weak", 128) /* */
 ICO1(CTX, "printer-error", 128)
 ICO1(CTX, "printer-printing", 128)
 ICO1(CTX, "printer-warning", 128) /* */
-ICO1(CTX, "security-high", 128)
-ICO1(CTX, "security-medium", 128)
-ICO1(CTX, "security-low", 128)
 ICO1(CTX, "software-update-available", 128)
 ICO1(CTX, "software-update-urgent", 128)
 ICO1(CTX, "task-due", 128)
