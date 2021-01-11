@@ -16,6 +16,7 @@ foreach eo_file : pub_eo_file
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-e', 'EMOTION_API',
                            '-gchd', '@INPUT@'])
 endforeach
 
@@ -26,6 +27,7 @@ emotion_header_src = [
   'Emotion_Legacy.h',
   'Emotion_Eo.h',
   'efl_canvas_video_eo.legacy.h',
+  'emotion_api.h',
 ]
 
 emotion_src = files([
@@ -53,7 +55,7 @@ emotion_lib = library('emotion',
     dependencies: emotion_deps + emotion_pub_deps + emotion_ext_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
-    c_args : emotion_package_c_args,
+    c_args : [emotion_package_c_args, '-DEMOTION_BUILD'],
     version : meson.project_version()
 )
 

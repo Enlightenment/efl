@@ -18,9 +18,9 @@
 
 #include "emotion_private.h"
 
-EAPI int EMOTION_WEBCAM_UPDATE = 0;
-EAPI int EMOTION_WEBCAM_ADD = 0;
-EAPI int EMOTION_WEBCAM_DEL = 0;
+EMOTION_API int EMOTION_WEBCAM_UPDATE = 0;
+EMOTION_API int EMOTION_WEBCAM_ADD = 0;
+EMOTION_API int EMOTION_WEBCAM_DEL = 0;
 
 typedef struct _Emotion_Webcams Emotion_Webcams;
 
@@ -295,7 +295,7 @@ emotion_webcam_shutdown(void)
 #endif
 }
 
-EAPI const Eina_List *
+EMOTION_API const Eina_List *
 emotion_webcams_get(void)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(_emotion_webcams, NULL);
@@ -303,21 +303,21 @@ emotion_webcams_get(void)
    return _emotion_webcams->webcams;
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_webcam_name_get(const Emotion_Webcam *ew)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ew, NULL);
    return ew->name;
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_webcam_device_get(const Emotion_Webcam *ew)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ew, NULL);
    return ew->device;
 }
 
-EAPI const char *
+EMOTION_API const char *
 emotion_webcam_custom_get(const char *device EINA_UNUSED)
 {
    return NULL;
