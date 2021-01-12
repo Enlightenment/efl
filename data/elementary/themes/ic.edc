@@ -337,6 +337,10 @@ I160("i-mail-pencil", "mail-pencil")
 I160("i-mail-bug", "mail-bug")
 I160("i-mail-bug-no", "mail-bug-no")
 I160("i-mail-exclam", "mail-exclam")
+I160("i-mail-attach", "mail-attach")
+I160("i-mail-reply", "mail-reply")
+I160("i-mail-sign", "mail-sign")
+I160("i-mail-sign-verified", "mail-sign-verified")
 
 I160("i-format-indent-more", "format-indent-more")
 I160("i-format-indent-less", "format-indent-less")
@@ -379,8 +383,14 @@ I160("i-shield-gold", "shield-gold")
 I160("i-shield-silver", "shield-silver")
 I160("i-shield-empty", "shield-empty")
 
+I160("i-printer-warning", "printer-warning")
+I160("i-printer-error", "printer-error")
+
 I160("i-addressbook", "addressbook")
 I160("i-person-plus", "person-plus")
+
+I160("i-pencil-check", "pencil-check")
+I160("i-pencil-cross", "pencil-cross")
 
 I160("i-floppy-blank", "floppy-blank")
 I160("i-floppy-text", "floppy-text")

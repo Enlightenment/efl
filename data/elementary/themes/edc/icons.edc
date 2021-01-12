@@ -642,6 +642,12 @@ ICON("mail-reply-all", "i-mail-arrow-heads-l")
 ICON("mail-reply-sender", "i-mail-arrow-l")
 ICON("mail-send", "i-mail-arrow-u")
 ICON("mail-send-receive", "i-mail-arrow-in-d")
+ICON("mail-unread", "i-mail")
+ICON("mail-read", "i-mail-opened")
+ICON("mail-attachment", "i-mail-attach")
+ICON("mail-replied", "i-mail-reply")
+ICON("mail-signed", "i-mail-sign")
+ICON("mail-signed-verified", "i-mail-sign-verified")
 
 ICON("format-indent-less", "i-format-indent-less")
 ICON("format-indent-more", "i-format-indent-more")
@@ -684,8 +690,15 @@ ICON("security-high", "i-shield-gold")
 ICON("security-medium", "i-shield-silver")
 ICON("security-low", "i-shield-empty")
 
+ICON("printer-printing", "i-printer")
+ICON("printer-warning", "i-printer-warning")
+ICON("printer-error", "i-printer-error")
+
 ICON("address-book-new", "i-addressbook")
 ICON("contact-new", "i-person-plus")
+
+ICON("changes-allow", "i-pencil-check")
+ICON("changes-prevent", "i-pencil-cross")
 
 ICON("document-open", "i-doc-file-open")
 ICON("document-open-recent", "i-doc-file-open-clock")
