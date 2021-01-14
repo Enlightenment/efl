@@ -602,6 +602,11 @@ void
 evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
 {
    if (im->content_hint == hint) return;
+   if ((im->gc) &&
+       ((!im->gc->shared->info.sec_image_map) &&
+        ((!im->gc->shared->info.sec_tbm_surface) ||
+         (!im->gc->shared->info.egl_tbm_ext))))
+     return;
    im->content_hint = hint;
    if (!im->gc) return;
    if (!im->gc->shared->info.bgra) return;
