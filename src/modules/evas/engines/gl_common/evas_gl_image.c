@@ -720,7 +720,15 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      {
         if (_evas_gl_image_cache_add(im)) return;
      }
-   if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
+   if (im->tex)
+     {
+        if (!evas_gl_common_texture_free(im->tex, EINA_TRUE))
+          {
+             /* if texture is not freed, we need to assign im to NULL
+                because after this point im will be freed */
+             im->tex->im = NULL;
+          }
+     }
    if (im->im)
      evas_cache_image_drop(&im->im->cache_entry);
 
