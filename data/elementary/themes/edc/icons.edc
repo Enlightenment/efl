@@ -700,6 +700,27 @@ ICON("contact-new", "i-person-plus")
 ICON("changes-allow", "i-pencil-check")
 ICON("changes-prevent", "i-pencil-cross")
 
+ICON("task-due", "i-task-due")
+ICON("task-past-due", "i-task-past-due")
+
+ICON("software-update-available", "i-badge-tick")
+ICON("software-update-urgent", "i-badge-exclamation")
+
+ICON("user-available", "i-person-smile")
+ICON("user-away", "i-person")
+ICON("user-busy", "i-person-call")
+ICON("user-invisible", "i-person-invisible")
+ICON("user-idle", "i-person-sleep")
+ICON("user-offline", "i-person-offline")
+
+ICON("user-trash-full", "i-efm-trash-full")
+
+ICON("dialog-error", "i-warn-sign-red")
+ICON("dialog-information", "i-warn-sign-orange")
+ICON("dialog-password", "i-password-sign-blue")
+ICON("dialog-question", "i-question-sign-green")
+ICON("dialog-warning", "i-warn-sign-orange-red")
+
 ICON("document-open", "i-doc-file-open")
 ICON("document-open-recent", "i-doc-file-open-clock")
 ICON("document-page-setup", "i-doc-file-page-setup")

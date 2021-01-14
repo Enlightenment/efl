@@ -153,6 +153,7 @@ I160("i-efm-sh", "efm-sh")
 I160("i-efm-zip", "efm-zip")
 I160("i-efm-exe", "efm-exe")
 I160("i-efm-trash", "efm-trash")
+I160("i-efm-trash-full", "efm-trash-full")
 
 I160("i-mobile", "mobile-phone")
 I160("i-pda", "pda")
@@ -387,10 +388,29 @@ I160("i-printer-warning", "printer-warning")
 I160("i-printer-error", "printer-error")
 
 I160("i-addressbook", "addressbook")
+
+I160("i-person", "person")
 I160("i-person-plus", "person-plus")
+I160("i-person-smile", "person-smile")
+I160("i-person-sleep", "person-sleep")
+I160("i-person-call", "person-call")
+I160("i-person-invisible", "person-invisible")
+I160("i-person-offline", "person-offline")
 
 I160("i-pencil-check", "pencil-check")
 I160("i-pencil-cross", "pencil-cross")
+
+I160("i-warn-sign-orange", "warn-sign-orange")
+I160("i-warn-sign-orange-red", "warn-sign-orange-red")
+I160("i-warn-sign-red", "warn-sign-red")
+I160("i-password-sign-blue", "password-sign-blue")
+I160("i-question-sign-green", "question-sign-green")
+
+I160("i-task-due", "task-due")
+I160("i-task-past-due", "task-past-due")
+
+I160("i-badge-tick", "badge-tick")
+I160("i-badge-exclamation", "badge-exclamation")
 
 I160("i-floppy-blank", "floppy-blank")
 I160("i-floppy-text", "floppy-text")

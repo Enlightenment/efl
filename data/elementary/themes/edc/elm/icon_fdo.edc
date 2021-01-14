@@ -73,11 +73,6 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "dialog-error", 128)
-ICO1(CTX, "dialog-information", 128)
-ICO1(CTX, "dialog-password", 128)
-ICO1(CTX, "dialog-question", 128)
-ICO1(CTX, "dialog-warning", 128)
 ICO1(CTX, "media-playlist-repeat", 128)
 ICO1(CTX, "media-playlist-shuffle", 128)
 ICO1(CTX, "network-cellular-3g", 128) /* */
@@ -107,17 +102,6 @@ ICO1(CTX, "network-wireless-signal-good", 128) /* */
 ICO1(CTX, "network-wireless-signal-none", 128) /* */
 ICO1(CTX, "network-wireless-signal-ok", 128) /* */
 ICO1(CTX, "network-wireless-signal-weak", 128) /* */
-ICO1(CTX, "software-update-available", 128)
-ICO1(CTX, "software-update-urgent", 128)
-ICO1(CTX, "task-due", 128)
-ICO1(CTX, "task-past-due", 128)
-ICO1(CTX, "user-available", 128)
-ICO1(CTX, "user-away", 128)
-ICO1(CTX, "user-busy", 128) /* */
-ICO1(CTX, "user-invisible", 128) /* */
-ICO1(CTX, "user-idle", 128)
-ICO1(CTX, "user-offline", 128)
-ICO1(CTX, "user-trash-full", 128) /* */
 
 // TODO image-loading
 // TODO image-missing
