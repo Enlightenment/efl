@@ -73,8 +73,6 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "media-playlist-repeat", 128)
-ICO1(CTX, "media-playlist-shuffle", 128)
 ICO1(CTX, "network-cellular-3g", 128) /* */
 ICO1(CTX, "network-cellular-4g", 128) /* */
 ICO1(CTX, "network-cellular-edge", 128) /* */

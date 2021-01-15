@@ -402,6 +402,8 @@ ICON("media-seek-backward", "i-media-rw")
 ICON("media-seek-forward", "i-media-ff")
 ICON("media-skip-backward", "i-media-prev")
 ICON("media-skip-forward", "i-media-next")
+ICON("media-playlist-repeat", "i-media-repeat")
+ICON("media-playlist-shuffle", "i-media-shuffle")
 
 ICON("zoom-in", "i-zoom-in")
 ICON("zoom-out", "i-zoom-out")
