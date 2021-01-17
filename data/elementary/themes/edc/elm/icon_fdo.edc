@@ -73,40 +73,11 @@
 
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "network-cellular-3g", 128) /* */
-ICO1(CTX, "network-cellular-4g", 128) /* */
-ICO1(CTX, "network-cellular-edge", 128) /* */
-ICO1(CTX, "network-cellular-gprs", 128) /* */
-ICO1(CTX, "network-cellular-umts", 128) /* */
-ICO1(CTX, "network-cellular-connected", 128) /* */
-ICO1(CTX, "network-cellular-signal-excellent", 128) /* */
-ICO1(CTX, "network-cellular-signal-good", 128) /* */
-ICO1(CTX, "network-cellular-signal-none", 128) /* */
-ICO1(CTX, "network-cellular-signal-ok", 128) /* */
-ICO1(CTX, "network-cellular-signal-weak", 128) /* */
-ICO1(CTX, "network-cellular-signal-acquiring", 128) /* */
-ICO1(CTX, "network-error", 128)
-ICO1(CTX, "network-offline", 128)
-ICO1(CTX, "network-receive", 128)
-ICO1(CTX, "network-transmit-receive", 128)
-ICO1(CTX, "network-transmit", 128)
-ICO1(CTX, "network-idle", 128)
-ICO1(CTX, "network-vpn", 128) /* */
-ICO1(CTX, "network-vpn-acquiring", 128) /* */
-ICO1(CTX, "network-wireless-acquiring", 128) /* */
-ICO1(CTX, "network-wireless-encrypted", 128) /* */
-ICO1(CTX, "network-wireless-signal-excellent", 128) /* */
-ICO1(CTX, "network-wireless-signal-good", 128) /* */
-ICO1(CTX, "network-wireless-signal-none", 128) /* */
-ICO1(CTX, "network-wireless-signal-ok", 128) /* */
-ICO1(CTX, "network-wireless-signal-weak", 128) /* */
 
 // TODO image-loading
 // TODO image-missing
 // TODO sync-error
 // TODO sync-synchronizing
-ICO1(CTX, "starred", 128) /* */
-ICO1(CTX, "non-starred", 128) /* */
 // folder-visiting  /* in the Places category */
 // folder-drag-accept /* in the Places category */
 #undef CTX
