@@ -1,6 +1,6 @@
 group { name: "e/gadman/popup";
    parts {
-      part { name: "bg"; type: RECT; mouse_events: 0;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             color: 64 64 64 255;
          }
