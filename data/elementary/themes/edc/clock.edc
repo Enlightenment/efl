@@ -739,6 +739,7 @@ group { name: "e/modules/clock/calendar/day";
             color: 160 160 160 255;
             rel1.offset: 3 3;
             rel2.offset: -4 -4;
+            offscale;
             text { font: FN; size: 10;
                text: "00";
                min: 1 1;
