@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg2"
+   width="15"
+   height="15"
+   viewBox="0 0 15 15"
+   sodipodi:docname="net-wifi-connecting.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/net-vpn-connecting-015.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     pagecolor="#404040"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview4"
+     showgrid="true"
+     inkscape:zoom="55.933333"
+     inkscape:cx="7.5"
+     inkscape:cy="7.5"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g10"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="false"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-smooth-nodes="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid837"
+       spacingx="0.5"
+       spacingy="0.5" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g10">
+    <path
+       id="path4174"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.102652"
+       d="M 5.0859375 2.6054688 A 9.2386713 9.2386713 0 0 0 0.953125 4.9980469 L 1.6835938 5.7285156 A 8.2121523 8.2121523 0 0 1 5.0859375 3.6777344 L 5.0859375 2.6054688 z M 9.9140625 2.6171875 L 9.9140625 3.6835938 A 8.2121523 8.2121523 0 0 1 13.291016 5.71875 L 14.011719 4.9980469 A 9.2386713 9.2386713 0 0 0 9.9140625 2.6171875 z " />
+    <path
+       id="path3354"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.102652"
+       d="M 10.878906 5.1875 A 1.414355 1.414355 0 0 1 10.914062 5.5 L 10.914062 6.40625 A 6.1636766 6.186488 0 0 1 11.851562 7.1738281 L 12.578125 6.4492188 A 7.1856332 7.1856332 0 0 0 10.878906 5.1875 z M 4.1191406 5.1914062 A 7.1856332 7.1856332 0 0 0 2.421875 6.4492188 L 3.1523438 7.1777344 A 6.1636766 6.186488 0 0 1 4.0859375 6.4101562 L 4.0859375 5.5 A 1.414355 1.414355 0 0 1 4.1191406 5.1914062 z " />
+    <path
+       id="ellipse3349"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.102652"
+       d="M 4.0859375 7.6875 A 5.1025492 5.1158666 0 0 0 3.8671875 7.8945312 L 4.0859375 8.1132812 L 4.0859375 7.6875 z M 10.914062 7.7382812 L 10.914062 8.1113281 L 11.103516 7.921875 A 5.1025492 5.1158666 0 0 0 10.914062 7.7382812 z " />
+    <circle
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.051326;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path5460"
+       cx="7.5"
+       cy="11.526519"
+       r="1.0265191" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 6.5,5 -1,1 v 1 h 4 V 6 L 8.5,5 V 2.5 h -2 z"
+       id="path14668"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 6.5,10 5.5,9 V 8 h 4 v 1 l -1,1 v 1.5 h -2 z"
+       id="path15345"
+       sodipodi:nodetypes="ccccccccc" />
+  </g>
+</svg>
