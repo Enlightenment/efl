@@ -102,7 +102,7 @@ _units_set(Evas_Object *obj)
      {
         Eina_Value val;
 
-        eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+        if (!eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE)) return;
 
         eina_strbuf_reset(sd->format_strbuf);
         if (!sd->intvl_enable)
@@ -147,7 +147,7 @@ _indicator_set(Evas_Object *obj)
 
    if (!sd->indi_format_cb) return;
 
-   eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+   if (!eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE)) return;
    eina_strbuf_reset(sd->indi_format_strbuf);
 
    eina_value_set(&val, sd->val);
@@ -180,7 +180,7 @@ _min_max_set(Evas_Object *obj)
    Eina_Value val;
 
    if (!sd->format_cb) return;
-   eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+   if (!eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE)) return;
 
    str = eina_strbuf_new();
 

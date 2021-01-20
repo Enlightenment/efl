@@ -723,7 +723,7 @@ Evas_GL_Texture  *evas_gl_common_texture_render_noscale_new(Evas_Engine_GL_Conte
 Evas_GL_Texture  *evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int bytes_count);
-void              evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force);
+Eina_Bool         evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force);
 Evas_GL_Texture  *evas_gl_common_texture_alpha_new(Evas_Engine_GL_Context *gc, DATA8 *pixels, unsigned int w, unsigned int h, int fh);
 void              evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels, unsigned int w, unsigned int h, int fh);
 Evas_GL_Texture  *evas_gl_common_texture_yuv_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h);

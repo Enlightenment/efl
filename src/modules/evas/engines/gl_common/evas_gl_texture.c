@@ -1550,10 +1550,10 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    im->cache_entry.flags.textured = 1;
 }
 
-void
+Eina_Bool
 evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
 {
-   if (!tex) return;
+   if (!tex) return EINA_FALSE;
    if (force)
      {
         evas_gl_preload_pop(tex);
@@ -1562,7 +1562,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
           evas_gl_preload_target_unregister(tex, eina_list_data_get(tex->targets));
      }
    tex->references--;
-   if (tex->references != 0) return;
+   if (tex->references != 0) return EINA_FALSE;
    if (tex->fglyph)
      {
         tex->gc->font_glyph_textures_size -= tex->w * tex->h * 4;
@@ -1617,6 +1617,7 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex, Eina_Bool force)
      }
 
    evas_gl_common_texture_light_free(tex);
+   return EINA_TRUE;
 }
 
 Evas_GL_Texture *
