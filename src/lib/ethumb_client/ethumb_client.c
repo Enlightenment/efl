@@ -204,6 +204,7 @@ _ethumb_client_free(Ethumb_Client *client)
    if (client->invalid)
       return;
 
+   if (client->dbus_pending)
      {
         Eldbus_Pending *pending;
         EINA_LIST_FREE(client->dbus_pending, pending)
@@ -216,8 +217,11 @@ _ethumb_client_free(Ethumb_Client *client)
         struct _ethumb_pending_add *pending = data;
         if (pending->pending_call)
           {
-             eldbus_pending_cancel(pending->pending_call);
+             Eldbus_Pending *call = pending->pending_call;
+
+             pending->pending_call = NULL;
              pending->client = NULL;
+             eldbus_pending_cancel(call);
           }
         else
           {
@@ -245,8 +249,11 @@ _ethumb_client_free(Ethumb_Client *client)
           pending->free_data(pending->data);
         if (pending->pending_call)
           {
-             eldbus_pending_cancel(pending->pending_call);
+             Eldbus_Pending *call = pending->pending_call;
+
+             pending->pending_call = NULL;
              pending->client = NULL;
+             eldbus_pending_cancel(call);
           }
         else
           {
