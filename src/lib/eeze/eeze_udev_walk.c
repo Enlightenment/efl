@@ -49,17 +49,18 @@ eeze_udev_walk_get_sysattr(const char *syspath,
    if (!(device = _new_device(syspath)))
      return NULL;
 
-   for (parent = device; parent;
-        child = parent, parent = udev_device_get_parent(child))
+   for (parent = device; parent;)
      {
         if ((test = udev_device_get_sysattr_value(parent, sysattr)))
           {
              test = eina_stringshare_add(test);
-             udev_device_unref(device);
+             udev_device_unref(parent);
              return test;
           }
+        child = parent;
+        parent = udev_device_get_parent(child);
+        udev_device_unref(child);
      }
 
-   udev_device_unref(device);
    return NULL;
 }
