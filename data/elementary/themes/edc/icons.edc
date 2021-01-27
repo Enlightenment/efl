@@ -303,6 +303,8 @@ ICON("text/html", "i-efm-html")
 ICON("text/css", "i-efm-html")
 ICON("text/json", "i-efm-html")
 
+ICON("application/xhtml+xml", "i-efm-html")
+
 ICON("text/x-gettext-translation", "i-lang")
 ICON("text/x-gettext-translation-template", "i-lang")
 
@@ -392,13 +394,17 @@ ICON("application/x-shared-library-la", "i-efm-so")
 
 ICON("application/vnd.oasis.opendocument.spreadsheet", "i-efm-spreadsheet")
 ICON("application/vnd.ms-excel", "i-efm-spreadsheet")
+ICON("application/vnd.stardivision.calc", "i-efm-spreadsheet")
 
 ICON("application/vnd.ms-powerpoint", "i-efm-present")
 ICON("application/vnd.oasis.opendocument.presentation", "i-efm-present")
+ICON("application/vnd.stardivision.impress", "i-efm-present")
 
 ICON("application/vnd.oasis.opendocument.text", "i-efm-doc")
 ICON("application/x-msword", "i-efm-doc")
 ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "i-efm-doc")
+ICON("application/vnd.sun.xml.writer", "i-efm-doc")
+ICON("application/vnd.stardivision.writer", "i-efm-doc")
 ICON("application/x-abiword", "i-efm-doc")
 ICON("application/vnd.scribus", "i-efm-doc")
 ICON("application/x-lyx", "i-efm-doc")
