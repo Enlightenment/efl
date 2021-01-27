@@ -299,16 +299,19 @@ ICON("text/x-log", "i-efm-txt")
 ICON("text/x-makefile", "i-efm-txt")
 ICON("text/x-subviewer", "i-efm-txt")
 
-ICON("text/x-gettext-translation", "i-lang")
-
 ICON("text/html", "i-efm-html")
 ICON("text/css", "i-efm-html")
 ICON("text/json", "i-efm-html")
+
+ICON("text/x-gettext-translation", "i-lang")
+ICON("text/x-gettext-translation-template", "i-lang")
 
 ICON("text/x-csharp", "i-efm-code")
 ICON("text/x-hdr", "i-efm-code")
 ICON("text/x-fortran", "i-efm-code")
 ICON("text/x-java-source", "i-efm-code")
+
+ICON("text/x-lua", "i-efm-lua")
 
 ICON("application/x-python", "i-efm-py")
 
@@ -319,6 +322,8 @@ ICON("application/x-perl", "i-efm-pl")
 ICON("application/x-python-bytecode", "i-efm-pyb")
 
 ICON("application/x-shellscript", "i-efm-sh")
+
+ICON("application/x-php", "i-efm-php")
 
 ICON("application/x-md5", "i-efm-txt")
 ICON("application/x-m4", "i-efm-txt")
@@ -343,6 +348,7 @@ ICON("application/x-xz-compressed-tar", "i-efm-zip")
 ICON("application/vnd.ms-cab-compressed", "i-efm-zip")
 
 ICON("application/x-gettext-translation", "i-lang")
+ICON("application/x-gettext-translation-template", "i-lang")
 
 ICON("application/xml", "i-efm-html")
 ICON("application/javascript", "i-efm-html")
@@ -352,11 +358,79 @@ ICON("application/x-awk", "i-efm-code")
 
 ICON("application/x-deb", "i-efm-deb")
 
+ICON("application/x-font-ttf", "i-font-file")
+ICON("application/x-font-pcf", "i-font-file")
+ICON("application/x-font-pdf", "i-font-file")
+ICON("application/x-font-otf", "i-font-file")
+
+ICON("font/ttf", "i-font-file")
+
+ICON("application/postscript", "i-efm-ps")
+
+ICON("application/pdf", "i-efm-pdf")
+
+ICON("application/acad", "i-efm-cad")
+ICON("application/x-acad", "i-efm-cad")
+ICON("application/autocad_dwg", "i-efm-cad")
+ICON("application/dwg", "i-efm-cad")
+ICON("application/x-dwg", "i-efm-cad")
+ICON("application/x-autocad", "i-efm-cad")
+
+ICON("image/x-dwg", "i-efm-cad")
+ICON("image/vnd.dwg", "i-efm-cad")
+
+ICON("application/vnd.ms-binder", "i-efm-db")
+ICON("application/x-sqlite3", "i-efm-db")
+ICON("chemical/x-cache", "i-efm-db")
+
+ICON("drawing/dwg", "i-efm-cad")
+
+ICON("application/x-object", "i-efm-o")
+
+ICON("application/x-sharedlib", "i-efm-so")
+ICON("application/x-shared-library-la", "i-efm-so")
+
+ICON("application/vnd.oasis.opendocument.spreadsheet", "i-efm-spreadsheet")
+ICON("application/vnd.ms-excel", "i-efm-spreadsheet")
+
+ICON("application/vnd.ms-powerpoint", "i-efm-present")
+ICON("application/vnd.oasis.opendocument.presentation", "i-efm-present")
+
+ICON("application/vnd.oasis.opendocument.text", "i-efm-doc")
+ICON("application/x-msword", "i-efm-doc")
+ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "i-efm-doc")
+ICON("application/x-abiword", "i-efm-doc")
+ICON("application/vnd.scribus", "i-efm-doc")
+ICON("application/x-lyx", "i-efm-doc")
+
+ICON("text/markdown", "i-efm-doc")
+
+ICON("application/x-vnd.oasis.opendocument.graphics", "i-efm-draw")
+
+ICON("application/x-vnd.oasis.opendocument.formula", "i-efm-formula")
+
+ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.template", "i-efm-template")
+ICON("application/vnd.openxmlformats-officedocument.spreadsheetml.template", "i-efm-template")
+ICON("application/vnd.openxmlformats-officedocument.presentationml.template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.chart-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.formula-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.graphics-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.image-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.presentation-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.spreadsheet-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.text-template", "i-efm-template")
+
+ICON("application/x-install-instructions", "i-efm-install")
+
+ICON("application/edje", "i-efm-efile")
+ICON("text/edje", "i-efm-efile")
+
 ICON("image/png", "i-picture-landscape")
 ICON("image/jpeg", "i-picture-landscape")
 ICON("image/gif", "i-picture-landscape")
 ICON("image/bmp", "i-picture-landscape")
 ICON("image/webp", "i-picture-landscape")
+ICON("image/x-compressed-xcf", "i-picture-landscape")
 ICON("application/x-xcf", "i-picture-landscape")
 ICON("application/x-cbz", "i-picture-landscape")
 ICON("application/x-cbr", "i-picture-landscape")

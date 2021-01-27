@@ -190,27 +190,28 @@ I160("i-efm-rb", "efm-rb")
 I160("i-efm-pl", "efm-pl")
 I160("i-efm-html", "efm-html")
 I160("i-efm-code", "efm-code")
-// cad
-// edje
-// doc
-// xls
-// ppt
-// drawing
-// database
-// formula
-// template
-// font
-// ps
-// pdf
-// shared lib *.so)
-// unknown
-// install
-// cache
+I160("i-efm-ps", "efm-ps")
+I160("i-efm-pdf", "efm-pdf")
+I160("i-efm-cad", "efm-cad")
+I160("i-efm-draw", "efm-draw")
+I160("i-efm-formula", "efm-formula")
+I160("i-efm-efile", "efm-efile")
+I160("i-efm-spreadsheet", "efm-spreadsheet")
+I160("i-efm-present", "efm-present")
+I160("i-efm-doc", "efm-doc")
+I160("i-efm-template", "efm-template")
+I160("i-efm-install", "efm-install")
+I160("i-efm-lua", "efm-lua")
+I160("i-efm-php", "efm-php")
+I160("i-efm-db", "efm-db")
+I160("i-efm-o", "efm-o")
+I160("i-efm-so", "efm-so")
 I160("i-efm-trash", "efm-trash")
 I160("i-efm-trash-full", "efm-trash-full")
 
 I160("i-film", "film")
 I160("i-sound", "sound")
+I160("i-font-file", "font-file")
 
 I160("i-mobile", "mobile-phone")
 I160("i-pda", "pda")
