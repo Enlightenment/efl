@@ -5203,6 +5203,27 @@ EFL_START_TEST(efl_text_font_source)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_text_default_format)
+{
+   Evas *evas;
+   Eo *txt;
+   evas = EVAS_TEST_INIT_EVAS();
+   txt = efl_add(EFL_CANVAS_TEXTBLOCK_CLASS, evas);
+
+   Eina_Size2D size;
+
+   efl_text_markup_set(txt, "<font=Sans>Hello</font>");
+
+   efl_text_font_size_set(txt, 80);
+   efl_text_color_set(txt, 255, 255, 255, 255);
+   size = efl_canvas_textblock_size_native_get(txt);
+
+   ck_assert_int_gt(size.h, 20);
+   efl_del(txt);
+   evas_free(evas);
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -5246,5 +5267,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_text_style);
    tcase_add_test(tc, efl_text_markup);
    tcase_add_test(tc, efl_text_font_source);
+   tcase_add_test(tc, efl_text_default_format);
 }
 

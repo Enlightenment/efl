@@ -4372,6 +4372,10 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                                              (int)(((double) _FMT_INFO(size)) * evas_obj->cur->scale),
                                              fmt->font.bitmap_scalable);
           }
+        else if (_FMT_INFO(size)) // if font size specified alone, without font
+          {
+             fmt->font.size = _FMT_INFO(size);
+          }
         if (_FMT_INFO(gfx_filter_name))
           {
              if (!fmt->gfx_filter)
