@@ -264,7 +264,7 @@ static void
 _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *map, Efl_Ui_Textpath_Line line)
 {
    double x1, x2, y1, y2;
-   double line_len, len, sina, cosa;
+   double line_len_2, line_len, len, sina, cosa;
    Eina_Rect r;
 
    x1 = line.start.x;
@@ -272,15 +272,17 @@ _text_on_line_draw(Efl_Ui_Textpath_Data *pd, int w1, int w2, int cmp, Evas_Map *
    x2 = line.end.x;
    y2 = line.end.y;
 
-   line_len = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+   line_len_2 = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
    len = w2 - w1;
-   if (line_len > len)
+   if (line_len_2 > (len * len))
      {
+        line_len = sqrt(line_len_2);
         x2 = x1 + len * (x2 - x1) / line_len;
         y2 = y1 + len * (y2 - y1) / line_len;
+        line_len_2 = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1);
      }
 
-   len = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+   len = sqrt(line_len_2);
    sina = (y2 - y1) / len;
    cosa = (x2 - x1) / len;
 
