@@ -734,6 +734,8 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                            user_entry->path_bounds.w,
                            user_entry->path_bounds.h);
      }
+   // If size of the drawing area is 0, no render.
+   else return;
 
    if (pd->viewbox.w != 0 && pd->viewbox.h !=0)
      {
