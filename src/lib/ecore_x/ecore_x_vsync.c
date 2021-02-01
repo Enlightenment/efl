@@ -29,6 +29,8 @@ int _ecore_x_image_shm_check(void);
 
 static int _vsync_log_dom = -1;
 
+static double _ecore_x_vsync_animator_tick_delay = 0.0;
+
 #undef ERR
 #define ERR(...) EINA_LOG_DOM_ERR(_vsync_log_dom, __VA_ARGS__)
 
@@ -293,6 +295,39 @@ _drm_send_time(double t)
           {
              *tim = t;
              DBG("   ... send %1.8f", t);
+             // if we are the wm/compositor we need to offset out vsync by 1/2
+             // a frame ... we should never offset by more than
+             // frame_time - render_time though ... but we don't know what
+             // this is and this varies... so for now this will do.a
+             if (_ecore_x_vsync_animator_tick_delay > 0.0)
+               {
+                  static double t_last = 0.0;
+                  static double t_delta_hist[10] = { 0.0 };
+                  double t_delta = t - t_last;
+                  double t_delta_min = 0.0;
+                  double t_sleep = 0.0;
+
+                  // if time delta is sane like 1/20th of a sec or less..
+                  if (t_delta < (1.0 / 20.0))
+                    {
+                       int i;
+
+                       for (i = 0; i < 9; i++)
+                         t_delta_hist[i] = t_delta_hist[i + 1];
+                       t_delta_hist[9] = t_delta;
+                       t_delta_min = t_delta_hist[0];
+                       for (i = 1; i < 10; i++)
+                         {
+                            if (t_delta_hist[i] < t_delta_min)
+                              t_delta_min = t_delta_hist[i];
+                         }
+                       t_sleep = t_delta_min * _ecore_x_vsync_animator_tick_delay;
+                       // if w'ere sleeping too long - don't sleep at all.
+                       if (t_sleep > (1.0 / 20.0)) t_sleep = 0.0;
+                    }
+                  usleep(t_sleep * 1000000.0);
+                  t_last = t;
+               }
              D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
              eina_spinlock_take(&tick_queue_lock);
              tick_queue_count++;
@@ -928,4 +963,10 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 #endif
      }
    return EINA_TRUE;
+}
+
+EAPI void
+ecore_x_vsync_animator_tick_delay_set(double delay)
+{
+   _ecore_x_vsync_animator_tick_delay = delay;
 }
