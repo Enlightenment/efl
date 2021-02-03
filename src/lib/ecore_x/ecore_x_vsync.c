@@ -384,12 +384,20 @@ _drm_vblank_handler(int fd EINA_UNUSED,
         if (pframe != frame)
           {
 #define DELTA_COUNT 10
-             double t = (double)sec + ((double)usec / 1000000);
              double tnow = ecore_time_get();
+             double t = (double)sec + ((double)usec / 1000000);
+             unsigned long long tusec, ptusec;
              static double tdelta[DELTA_COUNT];
              static double tdelta_avg = 0.0;
              static int tdelta_n = 0;
+             static unsigned int psec = 0, pusec = 0;
 
+             tusec = ((unsigned long long)sec) * 1000000 + usec;
+             ptusec = ((unsigned long long)psec) * 1000000 + pusec;
+             if (tusec <= ptusec)
+               fprintf(stderr,
+                       "EEEEEEK! drm time went backwards! %u.%06u -> %u.%06u\n",
+                       psec, pusec, sec, usec);
              if (t > tnow)
                {
                   if (tdelta_n > DELTA_COUNT)
@@ -420,6 +428,8 @@ _drm_vblank_handler(int fd EINA_UNUSED,
              _drm_fail_count = 0;
              _drm_send_time(t);
              pframe = frame;
+             psec = sec;
+             pusec = usec;
           }
      }
    else
