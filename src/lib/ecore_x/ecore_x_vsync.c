@@ -290,7 +290,16 @@ _drm_send_time(double t)
 {
    if (threaded_vsync)
      {
+        static double t_last = 0.0;
         double *tim = malloc(sizeof(*tim));
+
+        // you won't believe this
+        if (t <= t_last)
+          {
+             fprintf(stderr, "EEEEEEK! time went backwards! %1.5f -> %1.5f\n", t_last, t);
+             t = ecore_time_get();
+             if (t <= t_last) t = t_last + 0.001;
+          }
         if (tim)
           {
              *tim = t;
@@ -301,7 +310,6 @@ _drm_send_time(double t)
              // this is and this varies... so for now this will do.a
              if (_ecore_x_vsync_animator_tick_delay > 0.0)
                {
-                  static double t_last = 0.0;
                   static double t_delta_hist[10] = { 0.0 };
                   double t_delta = t - t_last;
                   double t_delta_min = 0.0;
@@ -325,8 +333,7 @@ _drm_send_time(double t)
                        // if w'ere sleeping too long - don't sleep at all.
                        if (t_sleep > (1.0 / 20.0)) t_sleep = 0.0;
                     }
-                  usleep(t_sleep * 1000000.0);
-                  t_last = t;
+                  if (t_sleep > 0.0) usleep(t_sleep * 1000000.0);
                }
              D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
              eina_spinlock_take(&tick_queue_lock);
@@ -334,6 +341,7 @@ _drm_send_time(double t)
              eina_spinlock_release(&tick_queue_lock);
              ecore_thread_feedback(drm_thread, tim);
           }
+        t_last = t;
      }
    else
      {
