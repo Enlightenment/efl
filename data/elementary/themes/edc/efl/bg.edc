@@ -13,7 +13,6 @@ Group: efl/bg (@since 1.23)
 
 group { "efl/bg";
    data.item: "version" "123";
-   images.image: "bevel_dark_out.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
@@ -21,7 +20,6 @@ group { "efl/bg";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "dialog_base";
             color: 64 64 64 255;
          }
       }
@@ -33,14 +31,6 @@ group { "efl/bg";
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-         }
-      }
-      part { name: "bevel";
-         description { state: "default" 0.0;
-            image.normal: "bevel_dark_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
          }
       }
       part { name: "efl.content"; type: SWALLOW; required;
