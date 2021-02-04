@@ -564,6 +564,11 @@ eet_identity_sign(FILE    *fp,
    /* Do the signature. */
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
    md_ctx = EVP_MD_CTX_new();
+   if (!md_ctx)
+     {
+        err = EET_ERROR_OUT_OF_MEMORY;
+        goto on_error;
+     }
    EVP_SignInit(md_ctx, EVP_sha1());
    EVP_SignUpdate(md_ctx, data, st_buf.st_size);
    err = EVP_SignFinal(md_ctx,
@@ -776,6 +781,16 @@ eet_identity_check(const void   *data_base,
    /* Verify the signature */
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
    md_ctx = EVP_MD_CTX_new();
+   if (!md_ctx)
+     {
+        err = EET_ERROR_OUT_OF_MEMORY;
+
+        X509_free(x509);
+        EVP_PKEY_free(pkey);
+
+        return NULL;
+     }
+
    EVP_VerifyInit(md_ctx, EVP_sha1());
    EVP_VerifyUpdate(md_ctx, data_base, data_length);
    err = EVP_VerifyFinal(md_ctx, sign, sign_len, pkey);

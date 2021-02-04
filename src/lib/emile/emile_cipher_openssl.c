@@ -75,10 +75,16 @@ emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
    Eina_Slice slice = eina_binbuf_slice_get(data);
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
    EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+   if (!ctx) return EINA_FALSE;
 
    EVP_DigestInit_ex(ctx, md, NULL);
 
-   EVP_DigestUpdate(ctx, slice.mem, slice.len);
+   if (!EVP_DigestUpdate(ctx, slice.mem, slice.len))
+     {
+        EVP_MD_CTX_free(ctx);
+        return EINA_FALSE;
+     }
+
    EVP_DigestFinal_ex(ctx, digest, NULL);
 
    EVP_MD_CTX_free(ctx);
