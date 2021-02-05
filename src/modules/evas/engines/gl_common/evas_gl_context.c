@@ -381,7 +381,8 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
    FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
 
-   FINDSYMN(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
 
    // Old SEC extensions
    FINDSYMN(secsym_eglMapImageSEC, "eglMapImageSEC", NULL, secsym_func_void_ptr);
