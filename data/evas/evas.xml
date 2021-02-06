@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+>------<mime-type type="image/heif">
+>------>-------<comment>HEIF image file</comment>
+>------>-------<glob pattern="*.heif"/>
+>------>-------<glob pattern="*.heic"/>
+>------</mime-type>
+>------<mime-type type="image/avif">
+>------>-------<comment>AVIF image file</comment>
+>------>--------<glob pattern="*.avif"/>
+>------</mime-type>
+</mime-info>
+

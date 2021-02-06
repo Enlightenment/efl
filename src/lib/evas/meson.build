@@ -11,6 +11,7 @@ webp = dependency('libwebp', version: ['>=0.5.0'], required: get_option('evas-lo
 webpdemux = dependency('libwebpdemux', version: ['>=0.5.0'], required: get_option('evas-loaders-disabler').contains('webp') == false)
 libopenjp2 = dependency('libopenjp2', required: get_option('evas-loaders-disabler').contains('jp2k') == false)
 libavif = dependency('libavif', required: get_option('evas-loaders-disabler').contains('avif') == false, version: '>= 0.8.2')
+heif= dependency('libheif', required: get_option('evas-loaders-disabler').contains('heif') == false)
 
 evas_image_loaders_file = [
      ['avif',    'shared', [libavif]],
@@ -18,6 +19,7 @@ evas_image_loaders_file = [
      ['eet',     'static', [eet]],
      ['generic', 'shared', [rt]],
      ['gif',     'shared', [giflib]],
+     ['heif',    'shared', [heif]],
      ['ico',     'shared', []],
      ['jpeg',    'static', [jpeg]],
      ['jp2k',    'shared', [libopenjp2]],
