@@ -210,6 +210,7 @@ group { name: "elm/progressbar/horizontal/default";
       part { name: "inside";
          scale: 1;
          description { state: "default" 0.0;
+            fixed: 1 1;
             min: 4 4;
             rel1.to: "ins0";
             rel1.relative: 1.0 (6/16);
