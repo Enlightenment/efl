@@ -106,13 +106,13 @@ group { name: "e/shelf/default/inset"; nomouse;
       spacer { "sizer";
          scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 3 0;
-            rel2.offset: -4 -1;
+            rel1.offset: (3 + SHELFPAD) SHELFPAD;
+            rel2.offset: (-4 - SHELFPAD) (-1 - SHELFPAD);
             offscale;
          }
          description { state: "vert" 0.0;
-            rel1.offset: 0 3;
-            rel2.offset: -1 -4;
+            rel1.offset: SHELFPAD (3 + SHELFPAD);
+            rel2.offset: (-1 - SHELFPAD) (-4 - SHELFPAD);
             offscale;
          }
       }
@@ -217,8 +217,7 @@ group { name: "e/shelf/default/inset"; nomouse;
    }
    programs {
 #define ORIENT_SATE(_ORIENT, _STATE) \
-program { \
-signal: "e,state,orientation,"_ORIENT; source: "e"; \
+program { signal: "e,state,orientation,"_ORIENT; source: "e"; \
 action: STATE_SET _STATE 0.0; \
 target: "sizer"; \
 target: "clip"; \
@@ -238,61 +237,96 @@ target: "sh_vert_clip"; \
       ORIENT_SATE("right_top", "vert")
       ORIENT_SATE("right_bottom", "vert")
 #undef ORIENT_SATE
-      program {
-         signal: "e,state,scroll,begin"; source: "e";
+      program { signal: "e,state,scroll,begin"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "sh_l";
          target: "sh_t";
       }
-      program {
-         signal: "e,state,scroll,begin"; source: "e";
+      program { signal: "e,state,scroll,begin"; source: "e";
          action: STATE_SET "active" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "sh_r";
          target: "sh_b";
       }
-      program {
-         signal: "e,state,scroll,middle"; source: "e";
-         action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
-         target: "sh_l";
-         target: "sh_t";
-      }
-      program {
-         signal: "e,state,scroll,middle"; source: "e";
-         action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
-         target: "sh_r";
-         target: "sh_b";
-      }
-      program {
-         signal: "e,state,scroll,end"; source: "e";
+      program { signal: "e,state,scroll,middle"; source: "e";
          action: STATE_SET "active" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "sh_l";
          target: "sh_t";
       }
-      program {
-         signal: "e,state,scroll,end"; source: "e";
+      program { signal: "e,state,scroll,middle"; source: "e";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.5 CURRENT;
+         target: "sh_r";
+         target: "sh_b";
+      }
+      program { signal: "e,state,scroll,end"; source: "e";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.5 CURRENT;
+         target: "sh_l";
+         target: "sh_t";
+      }
+      program { signal: "e,state,scroll,end"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "sh_r";
          target: "sh_b";
       }
-      program {
-         signal: "e,state,scroll,none"; source: "e";
+      program { signal: "e,state,scroll,none"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "sh_l";
          target: "sh_t";
       }
-      program {
-         signal: "e,state,scroll,none"; source: "e";
+      program { signal: "e,state,scroll,none"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.5 CURRENT;
          target: "sh_r";
          target: "sh_b";
+      }
+   }
+}
+
+group { name: "e/shelf/default/plain"; nomouse;
+   alias: "e/shelf/alternate/plain";
+   alias: "e/shelf/invisible/plain";
+   alias: "e/shelf/translucent/plain";
+   parts {
+      rect { "mouse"; mouse;
+         desc { color: 0 0 0 0; }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      spacer { "sizer";
+         scale: 1;
+         desc {
+            rel1.offset: SHELFPAD SHELFPAD;
+            rel2.offset: (-1 - SHELFPAD) (-1 - SHELFPAD);
+            offscale;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW; mouse;
+         clip_to: "clip";
+         desc {
+            rel.to: "sizer";
+            link.base: "e,state,visible" "e";
+         }
+         desc { "hidden"; hid;
+            rel.to: "sizer";
+            link.base: "e,state,hidden" "e";
+         }
+      }
+      rect { "events"; repeat; mouse;
+         desc { color: 0 0 0 0; }
       }
    }
 }
@@ -326,11 +360,6 @@ group { name: "e/shelf/invisible/base"; nomouse;
             visible: 0;
          }
       }
-      part { name: "shine";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
-      }
    }
 }
 
@@ -343,52 +372,11 @@ group { name: "e/shelf/translucent/base"; nomouse;
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 32 32 32 128;
+            color: 64 64 64 128;
          }
          description { state: "vert" 0.0;
-            color: 32 32 32 128;
+            color: 64 64 64 128;
          }
-      }
-   }
-}
-
-group { name: "e/shelf/default/plain"; nomouse;
-   alias: "e/shelf/alternate/plain";
-   alias: "e/shelf/invisible/plain";
-   alias: "e/shelf/translucent/plain";
-   parts {
-      rect { "mouse"; mouse;
-         desc { color: 0 0 0 0; }
-      }
-      part { name: "base"; type: RECT;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "clip"; type: RECT;
-         description { state: "default" 0.0;
-            color: 255 255 255 255;
-         }
-      }
-      spacer { "sizer";
-         desc {
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-         }
-      }
-      part { name: "e.swallow.content"; type: SWALLOW; mouse;
-         clip_to: "clip";
-         desc {
-            rel.to: "sizer";
-            link.base: "e,state,visible" "e";
-         }
-         desc { "hidden"; hid;
-            rel.to: "sizer";
-            link.base: "e,state,hidden" "e";
-         }
-      }
-      rect { "events"; repeat; mouse;
-         desc { color: 0 0 0 0; }
       }
    }
 }

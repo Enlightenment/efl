@@ -17,9 +17,8 @@ group { name: "e/modules/pager16/popup";
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 0 1;
-            rel2.to: "base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -1 1;
             align: 0.5 0.0;
@@ -31,6 +30,82 @@ group { name: "e/modules/pager16/popup";
             }
             fixed: 0 1;
          }
+      }
+   }
+}
+
+group { name: "e/modules/pager16/base";
+   parts {
+      part { name: "e.swallow.content"; type: SWALLOW;
+         scale: 1;
+         desc { "default";
+            rel1.offset: 0 (0 - SHELFPAD);
+            rel2.offset: -1 (SHELFPAD - 1);
+            offscale;
+         }
+         desc { "vertical";
+            inherit: "default" 0.0;
+            rel1.offset: (0 - SHELFPAD) 0;
+            rel2.offset: (SHELFPAD - 1) -1;
+         }
+      }
+   }
+   programs {
+      program { signal: "e,state,orient,horiz"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,vert"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,left"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,right"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,top"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,bottom"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_tl"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_tr"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_bl"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_br"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_lt"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_rt"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_lb"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
+      }
+      program { signal: "e,state,orient,corner_rb"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "e.swallow.content";
       }
    }
 }
@@ -48,16 +123,13 @@ group { name: "e/modules/pager16/desk";
       }
       part { name: "clip"; type: RECT; mouse_events: 0;
          desc { "default";
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
          }
       }
       part { name: "e.swallow.drop"; type: SWALLOW;
          clip_to: "clip";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            rel2.offset: -2 -1;
+            rel.to: "base";
             link.base: "e,state,visible" "e";
          }
          desc { "hid"; inherit; hid;
@@ -67,6 +139,7 @@ group { name: "e/modules/pager16/desk";
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "clip";
          desc { "default";
+            rel.to: "base";
             link.base: "e,state,visible" "e";
          }
          desc { "hid"; inherit; hid;
@@ -76,8 +149,7 @@ group { name: "e/modules/pager16/desk";
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
          desc { "default";
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             color3: 255 255 255 255;
             text { font: "Sans"; size: 10;
                text_class: "module_small";
@@ -96,12 +168,10 @@ group { name: "e/modules/pager16/desk";
          desc { "default";
             color: 51 153 255 255;
             visible: 0;
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
-            rel2.offset: -1 0;
+            rel.to: "e.swallow.content";
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
-            max: 99999 6;
+            max: 99999 5;
          }
          desc { "active"; inherit;
             inherit: "default" 0.0;
@@ -112,10 +182,9 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop0"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_0.png";
-            rel1.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             rel1.offset: -1 -1;
             rel1.relative: 0.0 0.0;
-            rel2.to: "e.swallow.content";
             rel2.relative: 0.0 0.0;
             rel2.offset: -1 -1;
             align: 0.0 0.0;
@@ -138,10 +207,9 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop1"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_1.png";
-            rel1.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             rel1.offset: 0 -1;
             rel1.relative: 1.0 0.0;
-            rel2.to: "e.swallow.content";
             rel2.relative: 1.0 0.0;
             rel2.offset: 0 -1;
             align: 1.0 0.0;
@@ -164,10 +232,9 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop2"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_2.png";
-            rel1.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             rel1.offset: 0 0;
             rel1.relative: 1.0 1.0;
-            rel2.to: "e.swallow.content";
             rel2.relative: 1.0 1.0;
             rel2.offset: 0 0;
             align: 1.0 1.0;
@@ -190,10 +257,9 @@ group { name: "e/modules/pager16/desk";
       part { name: "drop3"; mouse_events: 0;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_3.png";
-            rel1.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
             rel1.offset: -1 0;
             rel1.relative: 0.0 1.0;
-            rel2.to: "e.swallow.content";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 0;
             align: 0.0 1.0;
@@ -227,13 +293,11 @@ group { name: "e/modules/pager16/desk";
          transition: DECELERATE 0.2;
          target: "sel";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: ACTION_STOP;
          target: "sel";
       }
-      program {
-         signal: "e,state,unselected"; source: "e";
+      program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.2;
          target: "sel";
@@ -256,21 +320,18 @@ group { name: "e/modules/pager16/desk";
          target: "drop3";
          after: "drop1";
       }
-      program {
-         signal: "e,action,drag,out"; source: "e";
+      program { signal: "e,action,drag,out"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "drop0";
          target: "drop1";
          target: "drop2";
          target: "drop3";
       }
-      program {
-         signal: "e,name,show"; source: "e";
+      program { signal: "e,name,show"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "e.text.label";
       }
-      program {
-         signal: "e,name,hide"; source: "e";
+      program { signal: "e,name,hide"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
       }

@@ -51,11 +51,12 @@ group { name: "e/modules/ibox/icon";
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "item_clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "content";
-            rel2.to: "content";
+            rel.to: "content";
             rel1.offset: 3 3;
             rel2.offset: -4 -4;
+            offscale;
          }
          description { state: "bounce1" 0.0;
             inherit: "default" 0.0;
@@ -91,42 +92,58 @@ group { name: "e/modules/ibox/icon";
          }
       }
       part { name: "clip"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
+            rel1.offset: (0 - SHELFPAD) (0 - SHELFPAD);
+            rel2.offset: (SHELFPAD - 1) (SHELFPAD - 1);
+            offscale;
          }
       }
       part { name: "clip1"; type: RECT; mouse_events: 0;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
+            rel1.offset: (0 - SHELFPAD) (0 - SHELFPAD);
+            rel2.offset: (SHELFPAD - 1) (SHELFPAD - 1);
+            offscale;
             visible: 1;
          }
          description { state: "left" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
          description { state: "right" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
       }
       part { name: "clip2"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
+            rel.to: "clip1";
             visible: 0;
          }
          description { state: "left" 0.0;
+            inherit: "default" 0.0;
             visible: 1;
          }
          description { state: "right" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
       }
       part { name: "clip3"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
+            rel.to: "clip1";
             visible: 0;
          }
          description { state: "left" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
          description { state: "right" 0.0;
+            inherit: "default" 0.0;
             visible: 1;
          }
       }
@@ -139,6 +156,9 @@ group { name: "e/modules/ibox/icon";
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
             max: 99999 5;
+            rel1.offset: 0 (SHELFPAD - 1);
+            rel2.offset: -1 (SHELFPAD - 1);
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -155,6 +175,9 @@ group { name: "e/modules/ibox/icon";
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
             max: 5 99999;
+            rel1.offset: (0 - SHELFPAD) 0;
+            rel2.offset: (0 - SHELFPAD) -1;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -171,6 +194,9 @@ group { name: "e/modules/ibox/icon";
             rel1.relative: 1.0 0.0;
             align: 1.0 0.5;
             max: 5 99999;
+            rel1.offset: (SHELFPAD - 1) 0;
+            rel2.offset: (SHELFPAD - 1) -1;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -185,22 +211,19 @@ group { name: "e/modules/ibox/icon";
       }
    }
    programs {
-      program {
-         signal: "e,origin,center"; source: "e";
+      program { signal: "e,origin,center"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "clip1";
          target: "clip2";
          target: "clip3";
       }
-      program {
-         signal: "e,origin,left"; source: "e";
+      program { signal: "e,origin,left"; source: "e";
          action: STATE_SET "left" 0.0;
          target: "clip1";
          target: "clip2";
          target: "clip3";
       }
-      program {
-         signal: "e,origin,right"; source: "e";
+      program { signal: "e,origin,right"; source: "e";
          action: STATE_SET "right" 0.0;
          target: "clip1";
          target: "clip2";
@@ -225,29 +248,25 @@ group { name: "e/modules/ibox/icon";
 //      program {
 //         signal: "e,action,hide,label"; source: "e";
 //      }
-      program {
-         signal: "e,state,starting"; source: "e";
+      program { signal: "e,state,starting"; source: "e";
          action: STATE_SET "starting" 0.0;
          transition: DECELERATE 0.2;
          target: "content";
       }
-      program {
-         signal: "e,state,started"; source: "e";
+      program { signal: "e,state,started"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: ACCELERATE 0.2;
          target: "content";
       }
       /////////////////////////////////////////////////////////////
-      program {
-         signal: "e,state,on"; source: "e";
+      program { signal: "e,state,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          target: "indicator1";
          target: "indicator2";
          target: "indicator3";
          transition: ACCELERATE 0.2;
       }
-      program {
-         signal: "e,state,off"; source: "e";
+      program { signal: "e,state,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "indicator1";
          target: "indicator2";
@@ -255,8 +274,7 @@ group { name: "e/modules/ibox/icon";
          transition: DECELERATE 0.2;
       }
       /////////////////////////////////////////////////////////////
-      program {
-         signal: "e,state,urgent"; source: "e";
+      program { signal: "e,state,urgent"; source: "e";
          action: STATE_SET "bounce1" 0.0;
          target: "e.swallow.content";
          target: "e.swallow.preview";
@@ -276,8 +294,7 @@ group { name: "e/modules/ibox/icon";
          target: "e.swallow.preview";
          after: "urg1";
       }
-      program {
-         signal: "e,state,not_urgent"; source: "e";
+      program { signal: "e,state,not_urgent"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.content";
          target: "e.swallow.preview";
@@ -327,8 +344,7 @@ group { name: "e/modules/ibox/icon_overlay";
          clip_to: "item_clip";
          description { state: "default" 0.0;
             visible: 0;
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             color: 255 255 255 0;
          }
          description { state: "visible" 0.0;
@@ -362,8 +378,7 @@ group { name: "e/modules/ibox/icon_overlay";
       BUSY("busy_area", "e,state,starting", "e", "e,state,started", "e")
       part { name: "busy_area"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "content";
-            rel2.to: "content";
+            rel.to: "content";
             rel1.relative: -0.5 -0.5;
             rel2.relative:  1.5  1.5;
          }
@@ -406,9 +421,8 @@ group { name: "e/modules/ibox/icon_overlay";
       part { name: "bg"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.offset: -5 -5;
-            rel1.to: "e.text.label";
+            rel.to: "e.text.label";
             rel2.offset: 4 4;
-            rel2.to: "e.text.label";
             fixed: 1 1;
             color: 0 0 0 0;
             visible: 0;
@@ -451,21 +465,18 @@ group { name: "e/modules/ibox/icon_overlay";
 //      program {
 //         signal: "e,action,start"; source: "e";
 //      }
-      program {
-         signal: "e,state,starting"; source: "e";
+      program { signal: "e,state,starting"; source: "e";
          action: STATE_SET "starting" 0.0;
          transition: DECELERATE 0.2;
          target: "content";
       }
-      program {
-         signal: "e,state,started"; source: "e";
+      program { signal: "e,state,started"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: ACCELERATE 0.2;
          target: "content";
       }
       ///////////////////////////////////////////////////////////
-      program {
-         signal: "load"; source: "";
+      program { signal: "load"; source: "";
          script {
             set_int(urgent, 0);
          }
@@ -497,15 +508,13 @@ group { name: "e/modules/ibox/icon_overlay";
          }
          after: "go_passive2";
       }
-      program {
-         signal: "e,action,show,label"; source: "e";
+      program { signal: "e,action,show,label"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: SINUSOIDAL 0.5;
          target: "e.text.label";
          target: "bg";
       }
-      program {
-         signal: "e,action,hide,label"; source: "e";
+      program { signal: "e,action,hide,label"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "e.text.label";
@@ -543,8 +552,7 @@ group { name: "e/modules/ibox/icon_overlay";
          action: STATE_SET "disabled" 0.0;
          target: "item_clip";
       }
-      program {
-         signal: "e,state,not_urgent"; source: "e";
+      program { signal: "e,state,not_urgent"; source: "e";
          script {
             set_int(urgent, 0);
          }
@@ -554,8 +562,7 @@ group { name: "e/modules/ibox/icon_overlay";
          action: STATE_SET "default" 0.0;
          target: "item_clip";
       }
-      program {
-         signal: "e,action,exec"; source: "e";
+      program { signal: "e,action,exec"; source: "e";
          after: "exec_start";
       }
       program { name: "exec_start";
@@ -846,8 +853,7 @@ group { name: "e/modules/ibar/menu/item";
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          description { state: "default";
-            rel1.to: "icon";
-            rel2.to: "icon";
+            rel.to: "icon";
          }
       }
       part { name: "e.text.title"; type: TEXT; mouse_events: 0;
@@ -879,14 +885,12 @@ group { name: "e/modules/ibar/menu/item";
       }
    }
    programs {
-      program {
-         signal: "mouse,in"; source: "event";
+      program { signal: "mouse,in"; source: "event";
          action: STATE_SET "focus" 0.0;
          target: "e.text.title";
          transition: ACCELERATE 0.2;
       }
-      program {
-         signal: "mouse,out"; source: "event";
+      program { signal: "mouse,out"; source: "event";
          action: STATE_SET "default" 0.0;
          target: "e.text.title";
          transition: DECELERATE 0.2;
