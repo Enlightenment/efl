@@ -396,6 +396,8 @@ ICON("application/vnd.oasis.opendocument.spreadsheet", "i-efm-spreadsheet")
 ICON("application/vnd.ms-excel", "i-efm-spreadsheet")
 ICON("application/vnd.stardivision.calc", "i-efm-spreadsheet")
 
+ICON("text/csv", "i-efm-spreadsheet")
+
 ICON("application/vnd.ms-powerpoint", "i-efm-present")
 ICON("application/vnd.oasis.opendocument.presentation", "i-efm-present")
 ICON("application/vnd.stardivision.impress", "i-efm-present")
