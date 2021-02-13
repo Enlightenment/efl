@@ -1167,7 +1167,6 @@ eng_image_orient_set(void *engine, void *image, Evas_Image_Orient orient)
      {
         im_new->tex = im->tex;
         im_new->tex->references++;
-        im_new->tex->pt->references++;
      }
 
    evas_gl_common_image_free(im);
