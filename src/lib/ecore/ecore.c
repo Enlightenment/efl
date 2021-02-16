@@ -51,8 +51,8 @@ EAPI double _efl_startup_time = 0;
     Global = Local;
 
 static Eina_Bool _ecore_memory_statistic(void *data);
-static int _ecore_memory_max_total = 0;
-static int _ecore_memory_max_free = 0;
+static size_t _ecore_memory_max_total = 0;
+static size_t _ecore_memory_max_free = 0;
 static pid_t _ecore_memory_pid = 0;
 #ifdef HAVE_MALLOC_INFO
 static FILE *_ecore_memory_statistic_file = NULL;
@@ -437,7 +437,7 @@ ecore_shutdown(void)
        {
           _ecore_memory_statistic(NULL);
 
-          ERR("[%i] Memory MAX total: %i, free: %i",
+          ERR("[%i] Memory MAX total: %lu, free: %lu",
               _ecore_memory_pid,
               _ecore_memory_max_total,
               _ecore_memory_max_free);
@@ -971,12 +971,12 @@ _ecore_memory_statistic(EINA_UNUSED void *data)
    static int frame = 0;
 #endif
 #ifdef HAVE_MALLINFO
-   struct mallinfo mi;
-   static int uordblks = 0;
-   static int fordblks = 0;
+   struct mallinfo2 mi;
+   static size_t uordblks = 0;
+   static size_t fordblks = 0;
    Eina_Bool changed = EINA_FALSE;
 
-   mi = mallinfo();
+   mi = mallinfo2();
 
 #define HAS_CHANGED(Global, Local) \
   if (Global != Local)             \
@@ -989,7 +989,7 @@ _ecore_memory_statistic(EINA_UNUSED void *data)
    HAS_CHANGED(fordblks, mi.fordblks);
 
    if (changed)
-     ERR("[%i] Memory total: %i, free: %i",
+     ERR("[%i] Memory total: %lu, free: %lu",
          _ecore_memory_pid,
          mi.uordblks,
          mi.fordblks);
