@@ -53,7 +53,10 @@ eeze_udev_syspath_get_parents(const char *syspath)
      return NULL;
 
    if (!(parent = udev_device_get_parent(device)))
-     return NULL;
+     {
+        udev_device_unref(device);
+        return NULL;
+     }
 
    for (; parent; child = parent, parent = udev_device_get_parent(child))
      {
