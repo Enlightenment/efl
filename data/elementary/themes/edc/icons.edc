@@ -128,7 +128,6 @@ ICON("preferences-window-maximize", "i-window-maximize")
 ICON("preferences-window-stacking", "i-window-stacking")
 ICON("preferences-windows-lost", "i-window-lost")
 ICON("preferences-dialogs", "i-dialog")
-ICON("preferences-illume", "i-mobile")
 ICON("preferences-gradient", "i-gradient")
 ICON("preferences-engine", "i-engine")
 ICON("preferences-desktop-shelf-bottom-desk", "i-shelf")
@@ -275,7 +274,9 @@ ICON("inode/fifo", "i-device-pipe")
 ICON("inode/socket", "i-device-socket")
 ICON("inode/symlink", "i-symlink")
 
+ICON("application/x-iso9660-image", "i-drive-cd")
 ICON("application/x-raw-disk-image", "i-drive-cd")
+ICON("application/x-cue", "i-drive-cd")
 
 ICON("application/octet-stream", "i-file2")
 
@@ -286,8 +287,51 @@ ICON("text/x-csrc", "i-efm-c")
 ICON("text/x-chdr", "i-efm-h")
 ICON("text/x-c++src", "i-efm-cpp")
 ICON("text/x-c++hdr", "i-efm-hpp")
+ICON("text/x-python", "i-efm-py")
+ICON("text/x-python3", "i-efm-py")
+
+ICON("text/x-ruby", "i-efm-rb")
+
+ICON("text/x-perl", "i-efm-pl")
+
+ICON("text/x-patch", "i-efm-txt")
+ICON("text/x-log", "i-efm-txt")
+ICON("text/x-makefile", "i-efm-txt")
+ICON("text/x-subviewer", "i-efm-txt")
+
+ICON("text/html", "i-efm-html")
+ICON("text/css", "i-efm-html")
+ICON("text/json", "i-efm-html")
+
+ICON("application/xhtml+xml", "i-efm-html")
+
+ICON("text/x-gettext-translation", "i-lang")
+ICON("text/x-gettext-translation-template", "i-lang")
+
+ICON("text/x-csharp", "i-efm-code")
+ICON("text/x-hdr", "i-efm-code")
+ICON("text/x-fortran", "i-efm-code")
+ICON("text/x-java-source", "i-efm-code")
+
+ICON("text/x-lua", "i-efm-lua")
+
+ICON("application/x-python", "i-efm-py")
+
+ICON("application/x-ruby", "i-efm-rb")
+
+ICON("application/x-perl", "i-efm-pl")
+
+ICON("application/x-python-bytecode", "i-efm-pyb")
 
 ICON("application/x-shellscript", "i-efm-sh")
+
+ICON("application/x-php", "i-efm-php")
+
+ICON("application/x-md5", "i-efm-txt")
+ICON("application/x-m4", "i-efm-txt")
+ICON("application/pkix-attr-cert", "i-efm-txt")
+ICON("application/x-wais-source", "i-efm-txt")
+
 ICON("application/x-executable", "i-efm-exe")
 ICON("application/x-ms-dos-executable", "i-efm-exe")
 
@@ -304,6 +348,177 @@ ICON("application/x-bzip2-compressed-tar", "i-efm-zip")
 ICON("application/x-7z-compressed-tar", "i-efm-zip")
 ICON("application/x-xz-compressed-tar", "i-efm-zip")
 ICON("application/vnd.ms-cab-compressed", "i-efm-zip")
+
+ICON("application/x-gettext-translation", "i-lang")
+ICON("application/x-gettext-translation-template", "i-lang")
+
+ICON("application/xml", "i-efm-html")
+ICON("application/javascript", "i-efm-html")
+ICON("application/json", "i-efm-html")
+
+ICON("application/x-awk", "i-efm-code")
+
+ICON("application/x-deb", "i-efm-deb")
+
+ICON("application/x-font-ttf", "i-font-file")
+ICON("application/x-font-pcf", "i-font-file")
+ICON("application/x-font-pdf", "i-font-file")
+ICON("application/x-font-otf", "i-font-file")
+
+ICON("font/ttf", "i-font-file")
+
+ICON("application/postscript", "i-efm-ps")
+
+ICON("application/pdf", "i-efm-pdf")
+
+ICON("application/acad", "i-efm-cad")
+ICON("application/x-acad", "i-efm-cad")
+ICON("application/autocad_dwg", "i-efm-cad")
+ICON("application/dwg", "i-efm-cad")
+ICON("application/x-dwg", "i-efm-cad")
+ICON("application/x-autocad", "i-efm-cad")
+
+ICON("image/x-dwg", "i-efm-cad")
+ICON("image/vnd.dwg", "i-efm-cad")
+
+ICON("application/vnd.ms-binder", "i-efm-db")
+ICON("application/x-sqlite3", "i-efm-db")
+ICON("chemical/x-cache", "i-efm-db")
+
+ICON("drawing/dwg", "i-efm-cad")
+
+ICON("application/x-object", "i-efm-o")
+
+ICON("application/x-sharedlib", "i-efm-so")
+ICON("application/x-shared-library-la", "i-efm-so")
+
+ICON("application/vnd.oasis.opendocument.spreadsheet", "i-efm-spreadsheet")
+ICON("application/vnd.ms-excel", "i-efm-spreadsheet")
+ICON("application/vnd.stardivision.calc", "i-efm-spreadsheet")
+
+ICON("text/csv", "i-efm-spreadsheet")
+
+ICON("application/vnd.ms-powerpoint", "i-efm-present")
+ICON("application/vnd.oasis.opendocument.presentation", "i-efm-present")
+ICON("application/vnd.stardivision.impress", "i-efm-present")
+
+ICON("application/vnd.oasis.opendocument.text", "i-efm-doc")
+ICON("application/x-msword", "i-efm-doc")
+ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "i-efm-doc")
+ICON("application/vnd.sun.xml.writer", "i-efm-doc")
+ICON("application/vnd.stardivision.writer", "i-efm-doc")
+ICON("application/x-abiword", "i-efm-doc")
+ICON("application/vnd.scribus", "i-efm-doc")
+ICON("application/x-lyx", "i-efm-doc")
+
+ICON("text/markdown", "i-efm-doc")
+
+ICON("application/x-vnd.oasis.opendocument.graphics", "i-efm-draw")
+
+ICON("application/x-vnd.oasis.opendocument.formula", "i-efm-formula")
+
+ICON("application/vnd.openxmlformats-officedocument.wordprocessingml.template", "i-efm-template")
+ICON("application/vnd.openxmlformats-officedocument.spreadsheetml.template", "i-efm-template")
+ICON("application/vnd.openxmlformats-officedocument.presentationml.template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.chart-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.formula-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.graphics-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.image-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.presentation-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.spreadsheet-template", "i-efm-template")
+ICON("application/vnd.oasis.opendocument.text-template", "i-efm-template")
+
+ICON("application/x-install-instructions", "i-efm-install")
+
+ICON("application/edje", "i-efm-efile")
+ICON("text/edje", "i-efm-efile")
+
+ICON("image/png", "i-picture-landscape")
+ICON("image/jpeg", "i-picture-landscape")
+ICON("image/gif", "i-picture-landscape")
+ICON("image/bmp", "i-picture-landscape")
+ICON("image/webp", "i-picture-landscape")
+ICON("image/x-compressed-xcf", "i-picture-landscape")
+ICON("application/x-xcf", "i-picture-landscape")
+ICON("application/x-cbz", "i-picture-landscape")
+ICON("application/x-cbr", "i-picture-landscape")
+
+ICON("application/ogg", "i-film")
+ICON("application/vnd.rn-realmedia", "i-film")
+ICON("video/mp4", "i-film")
+ICON("video/mpeg", "i-film")
+ICON("video/ogg", "i-film")
+ICON("video/quicktime", "i-film")
+ICON("video/webm", "i-film")
+ICON("video/x-flv", "i-film")
+ICON("video/x-msvideo", "i-film")
+ICON("video/x-matroska", "i-film")
+ICON("video/x-ms-wmv", "i-film")
+ICON("video/x-theora+ogg", "i-film")
+
+ICON("audio/mpeg", "i-sound")
+ICON("audio/x-wav", "i-sound")
+ICON("audio/x-flac", "i-sound")
+ICON("audio/flac", "i-sound")
+ICON("audio/x-musepack", "i-sound")
+ICON("audio/x-vorbis+ogg", "i-sound")
+ICON("application/x-audacity-project", "i-sound")
+ICON("audio/x-ms-wma", "i-sound")
+ICON("audio/opus", "i-sound")
+ICON("audio/ogg", "i-sound")
+ICON("audio/x-opus+ogg", "i-sound")
+ICON("audio/ape", "i-sound")
+ICON("audio/webm", "i-sound")
+ICON("audio/mp4", "i-sound")
+ICON("audio/midi", "i-sound")
+ICON("audio/speex", "i-sound")
+ICON("audio/aac", "i-sound")
+ICON("audio/vnd.rn-realaudio", "i-sound")
+ICON("audio/x-voc", "i-sound")
+ICON("audio/x-tta", "i-sound")
+ICON("audio/x-stm", "i-sound")
+ICON("audio/x-speex+ogg", "i-sound")
+ICON("audio/x-wacpack", "i-sound")
+ICON("audio/x-xmf", "i-sound")
+ICON("audio/x-xm", "i-sound")
+ICON("audio/x-xi", "i-sound")
+ICON("audio/x-wacpack-correction", "i-sound")
+ICON("audio/x-s3m", "i-sound")
+ICON("audio/x-riff", "i-sound")
+ICON("audio/x-psflib", "i-sound")
+ICON("audio/x-psf", "i-sound")
+ICON("audio/x-scpls", "i-sound")
+ICON("audio/x-ms-asx", "i-sound")
+ICON("audio/x-mpegurl", "i-sound")
+ICON("audio/x-mod", "i-sound")
+ICON("audio/x-mo3", "i-sound")
+ICON("audio/x-minipsf", "i-sound")
+ICON("audio/matroska", "i-sound")
+ICON("audio/x-m4b", "i-sound")
+ICON("audio/x-it", "i-sound")
+ICON("audio/x-iriver-pla", "i-sound")
+ICON("audio/x-gsm", "i-sound")
+ICON("audio/x-flac+ogg", "i-sound")
+ICON("audio/x-amzxml", "i-sound")
+ICON("audio/x-aiff", "i-sound")
+ICON("audio/x-aifc", "i-sound")
+ICON("audio/x-adpcm", "i-sound")
+ICON("audio/vdn.rn-realaudio", "i-sound")
+ICON("audio/vdn.dts", "i-sound")
+ICON("audio/vdn.dts.hd", "i-sound")
+ICON("audio/prs.sid", "i-sound")
+ICON("audio/mp2", "i-sound")
+ICON("audio/basic", "i-sound")
+ICON("audio/annodex", "i-sound")
+ICON("audio/AMR", "i-sound")
+ICON("audio/amr", "i-sound")
+ICON("audio/amr-wb", "i-sound")
+ICON("audio/AMR-WB", "i-sound")
+ICON("audio/ac3", "i-sound")
+
+ICON("application/x-mpegurl", "i-sound")
+ICON("application/vnd.apple.mpegurl", "i-sound")
+
 #undef ICON
 
 // elm icons

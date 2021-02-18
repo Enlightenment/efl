@@ -107,6 +107,7 @@ group { name: "elm/border/base/default";
          desc { "default";
             color: 64 64 64 255;
             visible: 0;
+            rel.to: "elm.spacer.content";
          }
          desc { "visible";
             inherit: "default";
@@ -117,6 +118,9 @@ group { name: "elm/border/base/default";
       swallow { "elm.swallow.background";
          required; // @since 1.19
          clip: "client_clip";
+         desc { "default";
+            rel.to: "elm.spacer.content";
+         }
       }
       spacer { "indicator_spacer";
          desc { "default";

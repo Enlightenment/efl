@@ -15,7 +15,6 @@ group { name: "elm/bg/base/default";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "dialog_base";
             color: 64 64 64 255;
          }
       }

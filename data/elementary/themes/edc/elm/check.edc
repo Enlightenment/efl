@@ -1,4 +1,12 @@
 group { name: "elm/check/base/default";
+   sounds {
+      sample { name: "wood-tap1" LOSSY 64;
+         source: "wood-tap.wav";
+      }
+      sample { name: "wood-tap2" LOSSY 64;
+         source: "wood-tap2.wav";
+      }
+   }
    script {
       BUTTONMODE_SCRIPT
    }
@@ -214,6 +222,15 @@ group { name: "elm/check/base/default";
       program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,check,toggle" "elm";
       }
+      program { signal: "mouse,down,1"; source: "event";
+         script {
+            new buf[32]; new Float:val;
+            get_state(PART:"ck_check", buf, 32, val);
+            if (!strcmp(buf, "default")) { run_program(PROGRAM:"snd-check-on"); }
+            else { run_program(PROGRAM:"snd-check-off"); }
+            echo(buf);
+         }
+      }
       program { signal: "elm,state,check,on"; source: "elm";
          action:  STATE_SET "selected" 0.0;
          target: "ck_check";
@@ -221,6 +238,12 @@ group { name: "elm/check/base/default";
       program { signal: "elm,state,check,off"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "ck_check";
+      }
+      program { name: "snd-check-on";
+         action: PLAY_SAMPLE "wood-tap1" 1.0 INPUT;
+      }
+      program { name: "snd-check-off";
+         action: PLAY_SAMPLE "wood-tap2" 1.0 INPUT;
       }
       program { signal: "mouse,down,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,press" "elm";
