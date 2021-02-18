@@ -14,6 +14,8 @@ if sys_windows == true
   ecore_file_src += files([ 'ecore_file_monitor_win32.c'])
 elif sys_linux == true
   ecore_file_src += files([ 'ecore_file_monitor_inotify.c'])
+elif sys_bsd == true
+  ecore_file_src += files([ 'ecore_file_monitor_kevent.c'])
 else
   ecore_file_src += files([ 'ecore_file_monitor_poll.c'])
 endif

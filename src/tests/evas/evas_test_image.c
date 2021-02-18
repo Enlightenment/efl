@@ -53,6 +53,11 @@ static const char *exts[] = {
   ,"jpeg"
   ,"jpg"
 #endif
+#ifdef BUILD_LOADER_HEIF
+  ,"heif"
+  ,"heic"
+//   ,"avif"
+#endif
 };
 
 EFL_START_TEST(evas_object_image_loader)

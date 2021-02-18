@@ -36,6 +36,11 @@ efreet_ext_deps = [buildsystem_simple, intl, m]
 
 package_c_args += ['-DDATA_DIR="'+dir_data+'"']
 
+if sys_windows
+  shlwapi = cc.find_library('shlwapi')
+  efreet_ext_deps += [shlwapi]
+endif
+
 efreet_lib = library('efreet',
     efreet_src,
     dependencies: efreet_pub_deps + efreet_ext_deps + efreet_deps,

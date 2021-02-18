@@ -1376,8 +1376,8 @@ eng_gl_symbols(Outbuf *ob)
 
    // This is a GL extension
    exts = (const char *) glGetString(GL_EXTENSIONS);
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
    FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
 
 #else
 

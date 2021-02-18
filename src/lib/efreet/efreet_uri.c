@@ -2,7 +2,14 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+# include <windows.h>
+# include <shlwapi.h>
+#endif
 
 #ifndef _POSIX_HOST_NAME_MAX
 #define _POSIX_HOST_NAME_MAX 255
@@ -28,6 +35,64 @@ efreet_uri_decode(const char *full_uri)
     EINA_SAFETY_ON_NULL_RETURN_VAL(full_uri, NULL);
 
     /* An uri should be in the form <scheme>:[<authority>][<path>][<query>][<fragment>] */
+
+    /*
+     * Specific code for Windows when the scheme part of full_uri is 'file',
+     * for local Windows file path.
+     * see https://docs.microsoft.com/en-us/archive/blogs/ie/file-uris-in-windows
+     *
+     * Correct syntax :
+     * file:///c:/path/to/file
+     *
+     * The returned path must be c:\path\to\file
+     */
+#ifdef _WIN32
+
+    *scheme = 0;
+    *authority = 0;
+    *path = 0;
+
+    if (strncasecmp(full_uri, "file://", strlen("file://")) == 0)
+      {
+         HRESULT res;
+         DWORD len;
+# ifdef UNICODE
+         wchar_t buf[MAX_PATH];
+         wchar_t *w_full_uri;
+         char *uri;
+
+         w_full_uri = evil_utf8_to_utf16(full_uri);
+         if (!w_full_uri)
+           return NULL;
+
+         if (wcslen(w_full_uri) > 2048)
+           {
+              free(w_full_uri);
+              return NULL;
+           }
+
+         len = sizeof(buf);
+         res = PathCreateFromUrl(w_full_uri, buf, &len, 0UL);
+         free(w_full_uri);
+         if (res != S_OK)
+           return NULL;
+         uri = evil_utf16_to_utf8(buf);
+         if (uri)
+           {
+              strncpy(path, uri, sizeof(path));
+              path[sizeof(path)-1] = 0;
+              goto win32_file_scheme;
+           }
+#else
+         len = sizeof(path);
+         res = PathCreateFromUrl(full_uri, path, &len, 0UL);
+         if (res == S_OK)
+           goto win32_file_scheme;
+#endif
+         return NULL;
+      }
+#endif
+
     sep = strchr(full_uri, ':');
     if (!sep) return NULL;
     /* check if we have a Windows PATH, that is a letter follow by a colon */
@@ -76,6 +141,11 @@ efreet_uri_decode(const char *full_uri)
         else
             path[i] = *p;
     }
+
+#ifdef _WIN32
+ win32_file_scheme:
+    strcpy(scheme, "file");
+#endif
 
     uri = NEW(Efreet_Uri, 1);
     if (!uri) return NULL;

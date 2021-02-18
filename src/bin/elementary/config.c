@@ -4414,25 +4414,25 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
         else if ((!strcmp(arg, "-t")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             theme_set = arg;
+             theme_set = eina_array_data_get(arge->argv, i);
              interactive = 0;
           }
         else if ((!strcmp(arg, "-f")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             finger_size_set = arg;
+             finger_size_set = eina_array_data_get(arge->argv, i);
              interactive = 0;
           }
         else if ((!strcmp(arg, "-s")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             scale_set = arg;
+             scale_set = eina_array_data_get(arge->argv, i);
              interactive = 0;
           }
         else if ((!strcmp(arg, "-w")) && (i < eina_array_count(arge->argv)))
           {
              i++;
-             web_backend = arg;
+             web_backend = eina_array_data_get(arge->argv, i);
              interactive = 0;
           }
      }

@@ -292,6 +292,24 @@ _gl_selected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 }
 
 static void
+_gl_unselected(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("unselected: %p\n", event_info);
+}
+
+static void
+_gl_highlighted(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("highlighted: %p\n", event_info);
+}
+
+static void
+_gl_unhighlighted(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   printf("unhighlighted: %p\n", event_info);
+}
+
+static void
 _gl_double_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    printf("double clicked: %p\n", event_info);
@@ -445,6 +463,9 @@ test_genlist(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    gl = elm_genlist_add(win);
    evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
+   evas_object_smart_callback_add(gl, "unselected", _gl_unselected, NULL);
+   evas_object_smart_callback_add(gl, "highlighted", _gl_highlighted, NULL);
+   evas_object_smart_callback_add(gl, "unhighlighted", _gl_unhighlighted, NULL);
    evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
    evas_object_smart_callback_add(gl, "clicked,right", _gl_right_clicked, NULL);
    evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);

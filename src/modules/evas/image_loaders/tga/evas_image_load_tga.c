@@ -77,7 +77,7 @@ evas_image_load_file_head_tga(void *loader_data,
    tga_footer *footer, tfooter;
    char hasa = 0;
    int w, h, bpp;
-   int x, y;
+//   int x, y;
    Eina_Bool r = EINA_FALSE;
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -104,7 +104,6 @@ evas_image_load_file_head_tga(void *loader_data,
           }
      }
 //   else goto close_file;
-   //printf("1\n");
 
    filedata = (unsigned char *)filedata + sizeof(tga_header);
    switch (header->imageType)
@@ -135,13 +134,14 @@ evas_image_load_file_head_tga(void *loader_data,
          (header->colorMapSize == 24) ||
          (header->colorMapSize == 32)))
      goto close_file;
-   x = (header->xOriginHi << 8) | (header->xOriginLo);
-   y = (header->yOriginHi << 8) | (header->yOriginLo);
+//   x = (header->xOriginHi << 8) | (header->xOriginLo);
+//   y = (header->yOriginHi << 8) | (header->yOriginLo);
    w = (header->widthHi << 8) | header->widthLo;
    h = (header->heightHi << 8) | header->heightLo;
    // x origin gerater that width, y origin greater than height - wrong file
-   if ((x >= w) || (y >= h))
-     goto close_file;
+//   if ((x >= w) || (y >= h))
+//     goto close_file;
+   printf("x\n");
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
      goto close_file;
@@ -237,13 +237,13 @@ evas_image_load_file_data_tga(void *loader_data,
          (header->colorMapSize == 24) ||
          (header->colorMapSize == 32)))
      goto close_file;
-   x = (header->xOriginHi << 8) | (header->xOriginLo);
-   y = (header->yOriginHi << 8) | (header->yOriginLo);
+//   x = (header->xOriginHi << 8) | (header->xOriginLo);
+//   y = (header->yOriginHi << 8) | (header->yOriginLo);
    w = (header->widthHi << 8) | header->widthLo;
    h = (header->heightHi << 8) | header->heightLo;
    // x origin gerater that width, y origin greater than height - wrong file
-   if ((x >= w) || (y >= h))
-     goto close_file;
+//   if ((x >= w) || (y >= h))
+//     goto close_file;
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
      goto close_file;

@@ -3088,11 +3088,18 @@ _ecore_evas_animator_detach(Ecore_Animator *a)
 
    ee = a->ee;
    if (a->suspended)
-     ee->ee_anim.suspended = eina_inlist_remove(ee->ee_anim.suspended, EINA_INLIST_GET(a));
-   else if ((!tmp->next) && (!tmp->prev) && (EINA_INLIST_GET(a) != ee->ee_anim.active))
+     {
+        ee->ee_anim.suspended =
+          eina_inlist_remove(ee->ee_anim.suspended, EINA_INLIST_GET(a));
+     }
+   else if ((!tmp->next) && (!tmp->prev) &&
+            (EINA_INLIST_GET(a) != ee->ee_anim.active))
      return;
    else
-     ee->ee_anim.active = eina_inlist_remove(ee->ee_anim.active, EINA_INLIST_GET(a));
+     {
+        ee->ee_anim.active =
+          eina_inlist_remove(ee->ee_anim.active, EINA_INLIST_GET(a));
+     }
 
    a->suspended = EINA_FALSE;
 }

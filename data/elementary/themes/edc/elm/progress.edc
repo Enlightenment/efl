@@ -165,6 +165,41 @@ group { name: "elm/progressbar/horizontal/default";
          description { state: "default" 0.0;
             rel1.to: "bg";
             rel2.to: "bg";
+            min: 5 16;
+            align: 1.0 0.5;
+         }
+      }
+      part { name: "inside-hi";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "inside";
+            rel1.offset: 0 1;
+            rel2.to: "inside";
+            rel2.offset: -1 0;
+            image.normal: "inset_bar_horiz_inside_light.png";
+            image.border: 8 8 0 0;
+            image.border_scale_by: 0.25; image.border_scale: 1;
+         }
+      }
+      part { name: "inside";
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 4 4;
+            rel1.to: "ins0";
+            rel1.relative: 1.0 (6/16);
+            rel2.to: "ins1";
+            rel2.relative: 0.0 (10/16);
+            image.normal: "inset_bar_horiz_inside_base.png";
+            image.border: 8 8 0 0;
+            image.border_scale_by: 0.25; image.border_scale: 1;
+         }
+      }
+      part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "inside";
+            rel2.to: "inside";
+>>>>>>> master
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;

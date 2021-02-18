@@ -404,6 +404,15 @@ This library acts as a porting library for Windows to provide missing
 libc calls not in Mingw32 that EFL needs.
 
 
+**Heif:**
+
+//LGPL v3 license//
+
+The license doesnt affect efl or apps using efl, but gpl3 or lgpl3
+affects the entire os requiring any gpl/lgpl3 component be
+user-replacable.
+The end user must be able to modify the libheif code and still be
+able to use the efl.
 
 
 COMPILING AND INSTALLING

@@ -2610,6 +2610,7 @@ EAPI void          *ecore_x_input_device_property_get(int slot, const char *prop
 EAPI void           ecore_x_input_device_property_set(int slot, const char *prop, void *data, int num, Ecore_X_Atom format, int unit_size); /**< @since 1.24 */
 
 EAPI Eina_Bool      ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);
+EAPI void           ecore_x_vsync_animator_tick_delay_set(double delay); /** < @since 1.26 */
 
 typedef enum _Ecore_X_Gesture_Event_Mask
 {

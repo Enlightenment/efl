@@ -1279,6 +1279,8 @@ _anchors_update(Evas_Textblock_Cursor *c EINA_UNUSED, Evas_Object *o, Entry *en)
                {
                   Evas_Textblock_Rectangle *r;
 
+                  if (!range) break;
+
                   r = range->data;
                   *(&(sel->rect)) = *r;
                   if (_is_anchors_outside_viewport(y, r->y, r->h, vy, tvh) ||
