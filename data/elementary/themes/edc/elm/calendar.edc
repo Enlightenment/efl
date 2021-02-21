@@ -537,6 +537,7 @@ group { name: "elm/calendar/base/double_spinners";
    }
 }
 
+#undef CIT_STYLES
 #undef CAL_SPIN
 #undef CIT
 #undef CH
