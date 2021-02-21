@@ -373,3 +373,103 @@
          new m = get_int(btmode) & ~flag; \
          set_int(btmode, m); eval_mode(m); \
       }
+#define BUTTONMODE_SCRIPT2 \
+      public btmode; \
+      public eval_mode(m) { \
+         new m1 = m & MASK; \
+         new d  = m & DISABLE; \
+         new p  = m & PRESSED; \
+         new bg = m & BACKGROUND; \
+         if (bg) { \
+            set_state(PART:"base", "hidden", 0.0); \
+            set_state(PART:"efl.background", "visible", 0.0); \
+         } else { \
+            set_state(PART:"efl.background", "default", 0.0); \
+            if (!d) { \
+               if (!p) { \
+                  set_state(PART:"base", "default", 0.0); \
+                  set_state(PART:"shadow", "default", 0.0); \
+               } else { \
+                  set_state(PART:"base", "pressed", 0.0); \
+                  set_state(PART:"shadow", "pressed", 0.0); \
+               } \
+            } else { \
+               set_state(PART:"base", "disabled", 0.0); \
+               set_state(PART:"shadow", "disabled", 0.0); \
+            } \
+         } \
+         if (m1 == (ICON | LABEL)) { \
+            if (!d) { \
+               set_state(PART:"efl.content", "visible", 0.0); \
+               set_state(PART:"sizer_content", "visible", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+               if (!p) { \
+                  set_state(PART:"efl.text", "visible", 0.0); \
+                  set_state(PART:"icon_clip", "default", 0.0); \
+               } else { \
+                  set_state(PART:"efl.text", "pressed_visible", 0.0); \
+                  set_state(PART:"icon_clip", "pressed", 0.0); \
+               } \
+            } else { \
+               set_state(PART:"efl.content", "visible", 0.0); \
+               set_state(PART:"sizer_content", "visible", 0.0); \
+               set_state(PART:"efl.text", "disabled_visible", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } else if (m1 == (ICON)) { \
+            if (!d) { \
+               set_state(PART:"efl.content", "icononly", 0.0); \
+               set_state(PART:"sizer_content", "icononly", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+               set_state(PART:"efl.text", "default", 0.0); \
+               if (!p) \
+                  set_state(PART:"icon_clip", "default", 0.0); \
+               else \
+                  set_state(PART:"icon_clip", "pressed", 0.0); \
+            } else { \
+               set_state(PART:"efl.content", "icononly", 0.0); \
+               set_state(PART:"sizer_content", "icononly", 0.0); \
+               set_state(PART:"efl.text", "default", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } else if (m1 == (LABEL)) { \
+            if (!d) { \
+               set_state(PART:"efl.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"icon_clip", "default", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+               if (!p) \
+                  set_state(PART:"efl.text", "textonly", 0.0); \
+               else \
+                  set_state(PART:"efl.text", "pressed_textonly", 0.0); \
+            } else { \
+               set_state(PART:"efl.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"efl.text", "disabled_textonly", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } else { \
+            if (!d) { \
+               set_state(PART:"efl.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"icon_clip", "default", 0.0); \
+               set_state(PART:"event", "default", 0.0); \
+            } else { \
+               set_state(PART:"efl.content", "default", 0.0); \
+               set_state(PART:"sizer_content", "default", 0.0); \
+               set_state(PART:"icon_clip", "disabled", 0.0); \
+               set_state(PART:"event", "disabled", 0.0); \
+            } \
+         } \
+      } \
+      flag_set(flag) { \
+         new m = get_int(btmode) | flag; \
+         set_int(btmode, m); eval_mode(m); \
+      } \
+      flag_unset(flag) { \
+         new m = get_int(btmode) & ~flag; \
+         set_int(btmode, m); eval_mode(m); \
+      }

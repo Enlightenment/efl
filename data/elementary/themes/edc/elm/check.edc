@@ -326,7 +326,6 @@ group { name: "elm/check/base/default";
 }
 
 group { name: "elm/check/base/toggle";
-   images.image: "check.png" COMP;
    script {
       public is_drag;
       public was_drag;
