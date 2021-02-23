@@ -131,13 +131,15 @@
        id="path4990-70"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 64,31.97159 v 12 H 32"
-       id="path915" />
+       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 64,32 v 8 H 32"
+       id="path915"
+       sodipodi:nodetypes="ccc" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 36,39.97159 -4,4 4,4"
-       id="path917" />
+       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 38,34 -6,6 6,6"
+       id="path917"
+       sodipodi:nodetypes="ccc" />
     <path
        style="fill:url(#linearGradient985);fill-opacity:1;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"
        d="M 44,76 28,44 c -4,-8 0,-16 8,-16 8,0 10,4 12,8 l 12,24 z"

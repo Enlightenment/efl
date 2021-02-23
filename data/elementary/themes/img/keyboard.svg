@@ -109,12 +109,14 @@
        id="path4990-70"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:none;fill-opacity:1;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke:#666666;stroke-opacity:1"
-       d="M 64,32 V 44 H 32"
-       id="path915" />
+       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 64,32 v 8 H 32"
+       id="path915"
+       sodipodi:nodetypes="ccc" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
-       d="m 36,40 -4,4 4,4"
-       id="path917" />
+       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 38,34 -6,6 6,6"
+       id="path917"
+       sodipodi:nodetypes="ccc" />
   </g>
 </svg>
