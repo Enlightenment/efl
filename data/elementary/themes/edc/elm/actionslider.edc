@@ -1,9 +1,4 @@
 group { name: "elm/actionslider/base/default";
-   images.image: "bevel_in.png" COMP;
-   images.image: "button_normal.png" COMP;
-   images.image: "button_clicked.png" COMP;
-   images.image: "glow_small.png" COMP;
-   images.image: "inset_shadow.png" COMP;
    parts {
       part { name: "bg"; type: RECT; mouse_events: 0;
          scale: 1;
@@ -214,7 +209,6 @@ group { name: "elm/actionslider/base/default";
 
 group { name: "elm/actionslider/base/bar";
    inherit: "elm/actionslider/base/default";
-   images.image: "horiz_glow_run_big.png" COMP;
    parts {
       part { name: "bar"; type: RECT; mouse_events: 0;
          insert_before: "elm.drag_button_base";
