@@ -213,7 +213,6 @@ group { name: "elm/frame/base/pad_huge";
 }
 
 group { name: "elm/frame/base/outdent_top";
-   images.image: "separator_horiz.png" COMP;
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -236,7 +235,6 @@ group { name: "elm/frame/base/outdent_top";
 }
 
 group { name: "elm/frame/base/outdent_bottom";
-   images.image: "separator_horiz.png" COMP;
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -259,7 +257,6 @@ group { name: "elm/frame/base/outdent_bottom";
 }
 
 group { name: "elm/frame/base/outline";
-   images.image: "win_shad_flat.png" COMP;
    parts {
       part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
