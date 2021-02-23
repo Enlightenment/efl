@@ -69,9 +69,8 @@ group { name: "elm/frame/base/default";
          scale: 1;
          description { state: "default" 0.0;
             align: 0.0 1.0;
-            rel1.to: "bg";
+            rel.to: "bg";
             rel1.offset: 4 4;
-            rel2.to: "bg";
             rel2.offset: -5 -5;
             offscale;
          }
@@ -103,12 +102,10 @@ group { name: "elm/frame/base/default";
          transition: DECELERATE 0.3;
          after: "signal";
       }
-      program {
-         signal:  "mouse,up,1"; source:  "event";
+      program { signal:  "mouse,up,1"; source:  "event";
          action:  SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program {
-         signal:  "elm,action,toggle"; source: "elm";
+      program { signal:  "elm,action,toggle"; source: "elm";
          script {
             new st[31];
             new Float:vl;
@@ -119,8 +116,7 @@ group { name: "elm/frame/base/default";
               run_program(PROGRAM:"expand");
          }
       }
-      program {
-         signal:  "elm,action,switch"; source: "elm";
+      program { signal:  "elm,action,switch"; source: "elm";
          script {
             new st[31];
             new Float:vl;
@@ -168,11 +164,13 @@ group { name: "elm/frame/base/pad_medium";
    inherit: "elm/frame/base/pad_small";
    parts {
       part { name: "b0";
+         scale: 1;
          description { state: "default" 0.0;
             min: 6 6; max: 6 6;
          }
       }
       part { name: "b1";
+         scale: 1;
          description { state: "default" 0.0;
             min: 6 6; max: 6 6;
          }
@@ -184,11 +182,13 @@ group { name: "elm/frame/base/pad_large";
    inherit: "elm/frame/base/pad_small";
    parts {
       part { name: "b0";
+         scale: 1;
          description { state: "default" 0.0;
             min: 12 12; max: 12 12;
          }
       }
       part { name: "b1";
+         scale: 1;
          description { state: "default" 0.0;
             min: 12 12; max: 12 12;
          }
@@ -200,11 +200,13 @@ group { name: "elm/frame/base/pad_huge";
    inherit: "elm/frame/base/pad_small";
    parts {
       part { name: "b0";
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 24; max: 24 24;
          }
       }
       part { name: "b1";
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 24; max: 24 24;
          }
@@ -215,6 +217,7 @@ group { name: "elm/frame/base/pad_huge";
 group { name: "elm/frame/base/outdent_top";
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to_y: "base";
             rel1.relative: 0.0 1.0;
@@ -223,6 +226,7 @@ group { name: "elm/frame/base/outdent_top";
          }
       }
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             rel1.offset: 4 2;
@@ -237,6 +241,7 @@ group { name: "elm/frame/base/outdent_top";
 group { name: "elm/frame/base/outdent_bottom";
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel2.to_y: "base";
@@ -245,6 +250,7 @@ group { name: "elm/frame/base/outdent_bottom";
          }
       }
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             rel1.offset: 4 -3;
