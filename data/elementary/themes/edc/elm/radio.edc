@@ -285,7 +285,6 @@ group { name: "elm/radio/base/default";
 
 group { name: "elm/radio/base/plain";
    alias: "elm/check/base/plain";
-   images.image: "win_shadow.png" COMP;
    script {
       public btmode;
       public eval_mode(m) {
@@ -623,7 +622,6 @@ group { name: "elm/radio/base/plain";
 
 group { name: "elm/radio/base/icon";
    alias: "elm/check/base/icon";
-   images.image: "win_shadow.png" COMP;
    script {
       public btmode;
       public eval_mode(m) {
