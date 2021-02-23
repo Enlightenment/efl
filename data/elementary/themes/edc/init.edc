@@ -1,9 +1,4 @@
 group { name: "e/init/splash";
-   sounds {
-      sample { name: "splash" LOSSY 256;
-        source: "splash.wav";
-      }
-   }
    set { name: "logo_mono";
       image { image: "logo.png" COMP;  size: 601 601 99999 99999; }
       image { image: "logo2.png" COMP; size: 301 301   600   600; }

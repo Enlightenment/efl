@@ -522,23 +522,6 @@ group { "efl/text";
       item: "guide.font.size" "10";
       item: "guide.style.color" "#666";
    }
-   sounds {
-      sample { name: "key-tap1" LOSSY 64;
-         source: "kbd-tap.wav";
-      }
-      sample { name: "key-tap2" LOSSY 64;
-         source: "kbd-tap2.wav";
-      }
-      sample { name: "key-tap3" LOSSY 64;
-         source: "kbd-tap3.wav";
-      }
-      sample { name: "key-tap4" LOSSY 64;
-         source: "kbd-tap4.wav";
-      }
-      sample { name: "key-tap5" LOSSY 64;
-         source: "kbd-tap5.wav";
-      }
-   }
    styles {
       style { name: "efl_ui_text_guide_style";
          base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
