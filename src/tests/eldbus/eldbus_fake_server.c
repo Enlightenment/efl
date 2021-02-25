@@ -153,12 +153,20 @@ _fake_server_property_set(const Eldbus_Service_Interface *iface,
    ck_assert_ptr_ne(NULL, data);
 
    if (strcmp(propname, FAKE_SERVER_WRITEONLY_PROPERTY) == 0)
-     eldbus_message_iter_arguments_get(iter, "i", &data->writeonly_property);
+     {
+        if (!eldbus_message_iter_arguments_get(iter, "i", &data->writeonly_property))
+          ck_abort_msg("error getting iter arguments on _fake_server_property_set");
+     }
    else
-   if (strcmp(propname, FAKE_SERVER_READWRITE_PROPERTY) == 0)
-     eldbus_message_iter_arguments_get(iter, "i", &data->readwrite_property);
-   else
-     return eldbus_message_error_new(msg, "Invalid property", "Invalid property.");
+     {
+        if (strcmp(propname, FAKE_SERVER_READWRITE_PROPERTY) == 0)
+          {
+             if (!eldbus_message_iter_arguments_get(iter, "i", &data->readwrite_property))
+               ck_abort_msg("error getting iter arguments on _fake_server_property_set");
+          }
+        else
+          return eldbus_message_error_new(msg, "Invalid property", "Invalid property.");
+     }
 
    return eldbus_message_method_return_new(msg);
 }
