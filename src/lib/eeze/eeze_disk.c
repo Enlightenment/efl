@@ -174,10 +174,8 @@ eeze_disk_new(const char *path)
    else if (!(dev = _new_device(path)))
      return NULL;
 
-
    if (!(disk = calloc(1, sizeof(Eeze_Disk))))
      return NULL;
-
 
    if (is_dev)
      {
