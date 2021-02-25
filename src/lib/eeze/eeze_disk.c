@@ -175,7 +175,11 @@ eeze_disk_new(const char *path)
      return NULL;
 
    if (!(disk = calloc(1, sizeof(Eeze_Disk))))
-     return NULL;
+     {
+        eina_stringshare_del(syspath);
+        udev_device_unref(dev);
+        return NULL;
+     }
 
    if (is_dev)
      {
@@ -184,7 +188,6 @@ eeze_disk_new(const char *path)
      }
    else
      disk->syspath = eina_stringshare_add(udev_device_get_syspath(dev));
-
 
    disk->device = dev;
    disk->mount_opts = EEZE_DISK_MOUNTOPT_DEFAULTS;
