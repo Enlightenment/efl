@@ -336,15 +336,10 @@ _efl_ui_format_decimal_places_get(Eo *obj EINA_UNUSED, Efl_Ui_Format_Data *pd)
 EOLIAN static void
 _efl_ui_format_efl_object_destructor(Eo *obj, Efl_Ui_Format_Data *pd EINA_UNUSED)
 {
-  /* Legacy widgets keep their own formatting data and have their own destructors */
-  if (!elm_widget_is_legacy(obj))
-    {
-       /* Otherwise, free formatting data */
-       efl_ui_format_func_set(obj, NULL, NULL, NULL);
-       efl_ui_format_values_set(obj, NULL);
-       efl_ui_format_string_set(obj, NULL, 0);
-    }
-  efl_destructor(efl_super(obj, EFL_UI_FORMAT_MIXIN));
+   efl_ui_format_func_set(obj, NULL, NULL, NULL);
+   efl_ui_format_values_set(obj, NULL);
+   efl_ui_format_string_set(obj, NULL, 0);
+   efl_destructor(efl_super(obj, EFL_UI_FORMAT_MIXIN));
 }
 
 #include "efl_ui_format.eo.c"
