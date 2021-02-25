@@ -140,7 +140,11 @@ efl_loop_exit_code_process(Eina_Value *value)
 
         eina_value_setup(&v, EINA_VALUE_TYPE_INT);
         if (!eina_value_convert(value, &v)) r = -1;
-        else eina_value_get(&v, &r);
+        else
+          {
+             if (!eina_value_get(&v, &r))
+               r = -1;
+          }
      }
    else
      {
