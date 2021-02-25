@@ -88,7 +88,7 @@ _done_cb(void *data,
         unsigned long files_count = 0;
 
         eina_value_setup(&convert, EINA_VALUE_TYPE_ULONG);
-        eina_value_convert(&file, &convert);
+        fail_if(eina_value_convert(&file, &convert) != EINA_TRUE);
         fail_unless(eina_value_ulong_get(&convert, &files_count));
 
         fail_if((*number_of_listed_files) != test_count);
