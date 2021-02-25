@@ -1468,7 +1468,9 @@ _eina_future_cb_ignore_error(void *data, const Eina_Value value,
    if (value.type == EINA_VALUE_TYPE_ERROR)
      {
         Eina_Error err;
-        eina_value_get(&value, &err);
+
+        if (!eina_value_get(&value, &err))
+          return EINA_VALUE_EMPTY;
         if ((!expected_err) || (expected_err == err))
           {
              DBG("ignored error %d (%s)", err, eina_error_msg_get(err));
