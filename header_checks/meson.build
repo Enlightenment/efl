@@ -113,6 +113,7 @@ function_checks = [
   ['dlopen', ['dlfcn.h'],                               ['dl']],
   ['dlsym', ['dlfcn.h'],                                ['dl']],
   ['lround', ['math.h'],                                ['m']],
+  ['mallinfo2', ['malloc.h'],                            ['malloc']],
   ['mallinfo', ['malloc.h'],                            ['malloc']],
   ['shm_open', ['sys/mman.h', 'sys/stat.h', 'fcntl.h'], ['rt']],
 #from here on we specify arguments
