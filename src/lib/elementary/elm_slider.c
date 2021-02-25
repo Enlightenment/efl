@@ -1571,7 +1571,9 @@ _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value va
    const Eina_Value_Type *type = eina_value_type_get(&value);
 
    if (type == EINA_VALUE_TYPE_DOUBLE)
-     eina_value_get(&value, &val);
+     {
+        if (!eina_value_get(&value, &val)) return EINA_FALSE;
+     }
 
    if (sfwd->format_cb)
      buf = sfwd->format_cb(val);
