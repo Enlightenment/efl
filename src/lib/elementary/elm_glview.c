@@ -53,7 +53,8 @@ _glview_update_surface(Evas_Object *obj)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!sd) return;
 
-   evas_gl_make_current(sd->evasgl, NULL, NULL);
+   if (!evas_gl_make_current(sd->evasgl, NULL, NULL))
+     return;
 
    if (sd->surface)
      {
