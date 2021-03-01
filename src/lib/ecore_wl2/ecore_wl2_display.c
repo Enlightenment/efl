@@ -307,15 +307,6 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         ewd->wl.data_device_manager =
           wl_registry_bind(registry, id, &wl_data_device_manager_interface, ewd->wl.data_device_manager_version);
      }
-   else if ((eina_streq(interface, "www")) &&
-            (getenv("EFL_WAYLAND_ENABLE_WWW")))
-     {
-        Ecore_Wl2_Window *window;
-
-        ewd->wl.www = wl_registry_bind(registry, id, &www_interface, 1);
-        EINA_INLIST_FOREACH(ewd->windows, window)
-          _ecore_wl2_window_www_surface_init(window);
-     }
    else if ((!strcmp(interface, "zwp_e_session_recovery")) &&
             (!no_session_recovery))
      {
@@ -452,7 +443,6 @@ _ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
 {
    if (ewd->wl.session_recovery)
      zwp_e_session_recovery_destroy(ewd->wl.session_recovery);
-   if (ewd->wl.www) www_destroy(ewd->wl.www);
    if (ewd->wl.xdg_wm_base) xdg_wm_base_destroy(ewd->wl.xdg_wm_base);
    if (ewd->wl.zxdg_shell) zxdg_shell_v6_destroy(ewd->wl.zxdg_shell);
    if (ewd->wl.shm) wl_shm_destroy(ewd->wl.shm);
