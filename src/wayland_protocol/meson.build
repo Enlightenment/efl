@@ -7,8 +7,7 @@ wayland_client = dependency('wayland-client')
 wl_protocol_local = [
   'efl-aux-hints.xml',
   'efl-hints.xml',
-  'session-recovery.xml',
-  'teamwork.xml'
+  'session-recovery.xml'
 ]
 
 wl_unstable_protocol_sys = [

@@ -7,9 +7,6 @@
 # include <xkbcommon/xkbcommon-compose.h>
 # include "ecore_wl2_internal.h"
 
-# define EFL_TEAMWORK_VERSION 2
-# include "teamwork-client-protocol.h"
-
 # include "session-recovery-client-protocol.h"
 
 # include "xdg-shell-client-protocol.h"
@@ -92,7 +89,6 @@ struct _Ecore_Wl2_Display
         struct xdg_wm_base *xdg_wm_base;
         struct zwp_e_session_recovery *session_recovery;
         struct efl_aux_hints *efl_aux_hints;
-        struct zwp_teamwork *teamwork;
         struct efl_hints *efl_hints;
         int compositor_version;
      } wl;

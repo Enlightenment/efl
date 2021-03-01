@@ -326,12 +326,6 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
         EINA_INLIST_FOREACH(ewd->windows, window)
           if (window->surface) efl_aux_hints_get_supported_aux_hints(ewd->wl.efl_aux_hints, window->surface);
      }
-   else if (!strcmp(interface, "zwp_teamwork"))
-     {
-        ewd->wl.teamwork =
-          wl_registry_bind(registry, id,
-                           &zwp_teamwork_interface, EFL_TEAMWORK_VERSION);
-     }
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl2_output_add(ewd, id);
    else if (!strcmp(interface, "wl_seat"))
