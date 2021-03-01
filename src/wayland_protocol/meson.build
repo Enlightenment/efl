@@ -8,8 +8,7 @@ wl_protocol_local = [
   'efl-aux-hints.xml',
   'efl-hints.xml',
   'session-recovery.xml',
-  'teamwork.xml',	
-  'www.xml'
+  'teamwork.xml'
 ]
 
 wl_unstable_protocol_sys = [
