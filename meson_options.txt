@@ -67,7 +67,7 @@ option('eeze',
 option('opengl',
   type : 'combo',
   choices : ['full', 'es-egl', 'none'],
-  value : 'es-egl',
+  value : 'full',
   description : 'Type of OpenGL support in efl'
 )
 
