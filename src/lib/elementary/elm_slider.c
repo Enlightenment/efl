@@ -1270,6 +1270,9 @@ _elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *sd, void *func
 
    if (sd->format_cb_data && sd->format_free_cb)
      sd->format_free_cb(sd->format_cb_data);
+   sd->format_cb = NULL;
+   sd->format_cb_data = NULL;
+   sd->format_free_cb = NULL;
 
    if (efl_invalidated_get(obj)) return;
 
