@@ -1,7 +1,5 @@
 group { name: "elm/thumb/base/default";
-   images.image: "knob_round_busy.png" COMP;
-   images.image: "glow_round_corners.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
+   images.image: "win_shadow.png" COMP;
    parts {
       part { name: "shadow"; mouse_events: 0;
          scale: 1;
