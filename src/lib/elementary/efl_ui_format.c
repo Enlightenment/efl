@@ -340,8 +340,14 @@ _efl_ui_format_efl_object_destructor(Eo *obj, Efl_Ui_Format_Data *pd EINA_UNUSED
      {
         efl_ui_format_func_set(obj, NULL, NULL, NULL);
      }
-   efl_ui_format_values_set(obj, NULL);
-   efl_ui_format_string_set(obj, NULL, 0);
+   if (pd->format_values)
+     {
+        efl_ui_format_values_set(obj, NULL);
+     }
+   if (pd->format_string_type)
+     {
+        efl_ui_format_string_set(obj, NULL, 0);
+     }
    efl_destructor(efl_super(obj, EFL_UI_FORMAT_MIXIN));
 }
 
