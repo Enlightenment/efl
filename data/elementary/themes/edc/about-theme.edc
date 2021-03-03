@@ -2,7 +2,7 @@ group { name: "e/theme/about";
    // data.item: "borderless" "1";
    // data.item: "shaped" "1";
 //   images.image: "check_fill.png" COMP;
-   images.image: "clouds.jpg" LOSSY 99;
+   images.image: "about-flat-bg.png" COMP;
    min: 220 320;
    parts {
       part { name: "sizer"; type: SPACER;
@@ -35,7 +35,7 @@ group { name: "e/theme/about";
       part { name: "image";
          description { state: "default" 0.0;
             fixed: 1 1;
-            image.normal: "clouds.jpg";
+            image.normal: "about-flat-bg.png";
             aspect: 1.0 1.0; aspect_preference: NONE;
          }
       }

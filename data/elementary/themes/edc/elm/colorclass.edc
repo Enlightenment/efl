@@ -164,6 +164,7 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
 }
 
 group { "colorclass/colors"; program_source: "elm"; nobroadcast;
+   images.image: "box_glow.png" COMP;
    parts {
       group { "color1"; source: "colorclass/color1";
          desc { min: 1 1; max: 1 1; hid;

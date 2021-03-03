@@ -17,60 +17,44 @@ Group: efl/datepicker/spin_button (@since 1.23)
 	 Signal: efl,state,disabled
 	 Signal: efl,state,enabled
 */
-group { "efl/datepicker"; data.item: "version" "123";
+group { "efl/datepicker";
+   data.item: "version" "123";
    parts {
       spacer { "base";
          scale;
          desc { "default";
-             min: 150 170;
-         }
-      }
-      rect { "base_bg";
-         scale;
-         desc { "default";
-            rel.to: "base";
-            color_class: "datepicker_bg";
+             min: 160 40;
          }
       }
       spacer { "padding_bg_top";
          scale;
          desc { "default";
-            min: 0 10;
-            max: -1 10;
+            min: 0 5;
+            max: -1 5;
             fixed: 0 1;
-            rel1 {
-               relative: 0.0 0.0;
-               to: "base_bg";
-            }
-            rel2 {
-               relative: 1.0 0.0;
-               to: "base_bg";
-            }
+            rel.to: "base";
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
          }
       }
       spacer { "padding_bg_bottom";
          scale;
          desc { "default";
-            min: 0 10;
-            max: -1 10;
+            min: 0 5;
+            max: -1 5;
             fixed: 0 1;
-            rel1 {
-               relative: 0.0 1.0;
-               to: "base_bg";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "base_bg";
-            }
+            rel.to: "base";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
             align: 0.5 1.0;
          }
       }
       spacer { "bg";
          scale;
          desc { "default";
-            min: 150 150;
-            max: 150 150;
+            min: 160 40;
+            max: 160 40;
             rel1 {
                relative: 0.0 1.0;
                to: "padding_bg_top";
@@ -87,14 +71,9 @@ group { "efl/datepicker"; data.item: "version" "123";
             min: 5 0;
             max: 5 -1;
             fixed: 1 0;
-            rel1 {
-               relative: 0.0 0.0;
-               to: "bg";
-            }
-            rel2 {
-               relative: 0.0 1.0;
-               to: "bg";
-            }
+            rel.to: "bg";
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
             align: 0.0 0.0;
          }
       }
@@ -104,15 +83,9 @@ group { "efl/datepicker"; data.item: "version" "123";
             min: 5 0;
             max: 5 -1;
             fixed: 1 0;
-            rel2.to: "bg";
-            rel1 {
-               relative: 1.0 0.0;
-               to: "bg";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "bg";
-            }
+            rel.to: "bg";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
             align: 1.0 1.0;
          }
       }
@@ -120,13 +93,10 @@ group { "efl/datepicker"; data.item: "version" "123";
          mouse;
          scale;
          desc { "default";
-            fixed: 1 0;
+            fixed: 1 1;
             min: 40 0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "padding_left";
-            }
-            rel2.to: "padding_left";
+            rel.to: "padding_left";
+            rel1.relative: 1.0 0.0;
             align: 0.0 0.5;
          }
       }
@@ -134,13 +104,10 @@ group { "efl/datepicker"; data.item: "version" "123";
          scale;
          desc { "default";
             fixed: 1 0;
-            min: 10 0;
-            max: 10 -1;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "efl.field0";
-            }
-            rel2.to: "efl.field0";
+            min: 5 0;
+            max: 5 -1;
+            rel.to: "efl.field0";
+            rel1.relative: 1.0 0.0;
             align: 0.0 0.5;
          }
       }
@@ -148,7 +115,7 @@ group { "efl/datepicker"; data.item: "version" "123";
          mouse;
          scale;
          desc { "default";
-            fixed: 1 0;
+            fixed: 1 1;
             min: 40 0;
             rel1 {
                relative: 1.0 0.0;
@@ -167,11 +134,8 @@ group { "efl/datepicker"; data.item: "version" "123";
             fixed: 1 0;
             min: 10 0;
             max: 10 -1;
-            rel1.to: "efl.field2";
-            rel2 {
-               relative: 0.0 1.0;
-               to: "efl.field2";
-            }
+            rel.to: "efl.field2";
+            rel2.relative: 0.0 1.0;
             align: 1.0 0.5;
          }
       }
@@ -179,13 +143,10 @@ group { "efl/datepicker"; data.item: "version" "123";
          mouse;
          scale;
          desc { "default";
-            fixed: 1 0;
+            fixed: 1 1;
             min: 40 0;
-            rel1.to: "padding_right";
-            rel2 {
-               relative: 0.0 1.0;
-               to: "padding_right";
-            }
+            rel.to: "padding_right";
+            rel2.relative: 0.0 1.0;
             align: 1.0 0.5;
          }
       }
@@ -193,15 +154,15 @@ group { "efl/datepicker"; data.item: "version" "123";
          repeat;
          desc { "default";
             fixed: 1 1;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
             color: 0 0 0 0;
          }
       }
    }
 }
 
-group { "efl/datepicker/spin_button"; data.item: "version" "123";
+group { "efl/datepicker/spin_button";
+   data.item: "version" "123";
    parts {
       rect { "clip";
          desc { "default";
@@ -211,13 +172,7 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
       spacer { "base";
          scale;
          desc { "default";
-           min: 40 150;
-         }
-      }
-      rect { "bg";
-         scale;
-         desc { "default";
-            color_class: "spinner_bg";
+           min: 20 60;
          }
       }
       rect { "access";
@@ -225,8 +180,7 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
          desc { "default";
             fixed: 1 1;
             color: 0 0 0 0;
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             hid;
          }
          desc { "active";
@@ -238,8 +192,8 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
          scale;
          desc { "default";
             align: 0.5 0.0;
-            min: 40 40;
-            max: 40 40;
+            min: 20 20;
+            max: 20 20;
             fixed: 1 1;
          }
       }
@@ -247,8 +201,8 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
          scale;
          desc { "default";
             align: 0.5 1.0;
-            min: 40 40;
-            max: 40 40;
+            min: 20 20;
+            max: 20 20;
             fixed: 1 1;
          }
       }
@@ -256,8 +210,7 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
          clip: "clip";
          desc { "default";
             fixed: 1 1;
-            rel1.to: "efl.text_button";
-            rel2.to: "efl.text_button";
+            rel.to: "efl.text_button";
             hid;
          }
          desc { "active";
@@ -277,8 +230,8 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
                to_y: "efl.dec_button";
                relative: 1.0 0.0;
             }
-            min: 0 70;
-            max: -1 70;
+            min: 0 20;
+            max: -1 20;
             fixed: 0 1;
          }
          desc { "inactive";
@@ -300,51 +253,35 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
       }
    }
    programs {
-      program { "entry_active";
-         signal: "efl,entry,visible,on";
-         source: "efl";
+      program { signal: "efl,entry,visible,on"; source: "efl";
          action: STATE_SET "active";
          target: "efl.entry";
       }
-      program { "entry_inactive";
-         signal: "efl,entry,visible,off";
-         source: "efl";
+      program { signal: "efl,entry,visible,off"; source: "efl";
          action: STATE_SET "default";
          target: "efl.entry";
       }
-      program { "text_button_active";
-         signal: "efl,button,visible,on";
-         source: "efl";
+      program { signal: "efl,button,visible,on"; source: "efl";
          action: STATE_SET "default";
          target: "efl.text_button";
       }
-      program { "text_button_inactive";
-         signal: "efl,button,visible,off";
-         source: "efl";
+      program { signal: "efl,button,visible,off"; source: "efl";
          action: STATE_SET "inactive";
          target: "efl.text_button";
       }
-      program { "access_activate";
-         signal: "efl,state,access,active";
-         source: "efl";
+      program { signal: "efl,state,access,active"; source: "efl";
          action:  STATE_SET "active";
          target: "access";
       }
-      program { "access_inactivate";
-         signal: "efl,state,access,inactive";
-         source: "efl";
+      program { signal: "efl,state,access,inactive"; source: "efl";
          action:  STATE_SET "default";
          target: "access";
       }
-      program { "disable";
-         signal: "efl,state,disabled";
-         source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled";
          target: "disabler";
       }
-      program { "enable";
-         signal: "efl,state,enabled";
-         source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default";
          target: "disabler";
       }

@@ -1,12 +1,4 @@
 group { name: "elm/check/base/default";
-   sounds {
-      sample { name: "wood-tap1" LOSSY 64;
-         source: "wood-tap.wav";
-      }
-      sample { name: "wood-tap2" LOSSY 64;
-         source: "wood-tap2.wav";
-      }
-   }
    script {
       BUTTONMODE_SCRIPT
    }
@@ -326,7 +318,6 @@ group { name: "elm/check/base/default";
 }
 
 group { name: "elm/check/base/toggle";
-   images.image: "check.png" COMP;
    script {
       public is_drag;
       public was_drag;

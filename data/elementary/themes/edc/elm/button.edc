@@ -1425,9 +1425,6 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
    group { name: "elm/button/base/spinner/decrease/vertical";
       inherit: "elm/button/base/spinner/decrease/default";
       alias: "elm/button/base/spin_button/decrease/vertical";
-      images.image: "sym_down_light_normal.png" COMP;
-      images.image: "sym_down_glow_normal.png" COMP;
-      images.image: "sym_down_dark_normal.png" COMP;
       parts {
          part { name: "arrow.image";
             description { state: "default" 0.0;

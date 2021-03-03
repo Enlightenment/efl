@@ -254,6 +254,7 @@ group { name: "e/comp/frame/default";
          description { state: "focused" 0.0;
             inherit;
             color_class: "comp_focus_color";
+            color: 255 255 255 255;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
