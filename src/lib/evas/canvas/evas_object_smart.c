@@ -1377,12 +1377,27 @@ evas_object_smart_changed_get(Evas_Object_Protected_Data *obj)
      return EINA_FALSE;
 
    //b. Object clipper visibility
-   if ((obj->prev->clipper && obj->cur->clipper) &&
-       ((!obj->prev->clipper->cur->visible &&
-         !obj->cur->clipper->cur->visible) ||
-        ((obj->prev->clipper->cur->color.a == 0) &&
-         (obj->cur->clipper->cur->color.a == 0))))
-     return EINA_FALSE;
+   if (obj->prev->clipper && obj->cur->clipper)
+     {
+        if (obj->prev->clipper != obj->cur->clipper)
+          {
+             /* check between prev clipper and current clipper */
+             if ((!obj->prev->clipper->cur->visible &&
+                  !obj->cur->clipper->cur->visible) ||
+                 ((obj->prev->clipper->cur->color.a == 0) &&
+                  (obj->cur->clipper->cur->color.a == 0)))
+               return EINA_FALSE;
+          }
+        else
+          {
+             /* check between prev value and current value of clipper */
+             if ((!obj->cur->clipper->prev->visible &&
+                  !obj->cur->clipper->cur->visible) ||
+                 ((obj->cur->clipper->prev->color.a == 0) &&
+                  (obj->cur->clipper->cur->color.a == 0)))
+               return EINA_FALSE;
+          }
+     }
 
    if (!obj->clip.clipees)
      {
