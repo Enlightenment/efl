@@ -987,45 +987,6 @@ _rotation_do(Ecore_Evas *ee, int rotation, int resize)
      }
 }
 
-static Eina_Bool
-_ecore_evas_wl_common_cb_www_drag(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
-{
-   Ecore_Wl2_Event_Window_WWW_Drag *ev = event;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   Ecore_Evas *ee;
-
-   ee = ecore_event_window_match((Ecore_Window)ev->window);
-   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if ((Ecore_Window)ev->window != ee->prop.window)
-     return ECORE_CALLBACK_PASS_ON;
-
-   wdata = ee->engine.data;
-   wdata->dragging = !!ev->dragging;
-   if (!ev->dragging)
-     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_ecore_evas_wl_common_cb_www(void *d EINA_UNUSED, int t EINA_UNUSED, void *event)
-{
-   Ecore_Wl2_Event_Window_WWW *ev = event;
-   Ecore_Evas_Engine_Wl_Data *wdata;
-   Ecore_Evas *ee;
-
-   ee = ecore_event_window_match((Ecore_Window)ev->window);
-   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if ((Ecore_Window)ev->window != ee->prop.window)
-     return ECORE_CALLBACK_PASS_ON;
-
-   wdata = ee->engine.data;
-   wdata->x_rel += ev->x_rel;
-   wdata->y_rel += ev->y_rel;
-   wdata->timestamp = ev->timestamp;
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   return ECORE_CALLBACK_RENEW;
-}
-
 static void
 _ecore_evas_wl_common_cb_device_event_free(void *user_data, void *func_data)
 {
@@ -1359,14 +1320,6 @@ _ecore_evas_wl_common_init(void)
 
    h = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
                                _ecore_evas_wl_common_cb_window_configure, NULL);
-   eina_array_push(_ecore_evas_wl_event_hdls, h);
-
-   h = ecore_event_handler_add(_ecore_wl2_event_window_www,
-                               _ecore_evas_wl_common_cb_www, NULL);
-   eina_array_push(_ecore_evas_wl_event_hdls, h);
-
-   h = ecore_event_handler_add(_ecore_wl2_event_window_www_drag,
-                               _ecore_evas_wl_common_cb_www_drag, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
 
    h = ecore_event_handler_add(ECORE_WL2_EVENT_DISCONNECT,
@@ -2255,7 +2208,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
              einfo->info.destination_alpha = ee_needs_alpha(ee);
              einfo->info.wl2_win = wdata->win;
              einfo->info.hidden = wdata->win->pending.configure; //EINA_FALSE;
-             einfo->www_avail = !!wdata->win->www_surface;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                ERR("Failed to set Evas Engine Info for '%s'", ee->driver);
              if (ECORE_EVAS_PORTRAIT(ee))

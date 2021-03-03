@@ -1270,6 +1270,9 @@ _elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *sd, void *func
 
    if (sd->format_cb_data && sd->format_free_cb)
      sd->format_free_cb(sd->format_cb_data);
+//   sd->format_cb = NULL;
+//   sd->format_cb_data = NULL;
+//   sd->format_free_cb = NULL;
 
    if (efl_invalidated_get(obj)) return;
 
@@ -1571,7 +1574,9 @@ _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value va
    const Eina_Value_Type *type = eina_value_type_get(&value);
 
    if (type == EINA_VALUE_TYPE_DOUBLE)
-     eina_value_get(&value, &val);
+     {
+        if (!eina_value_get(&value, &val)) return EINA_FALSE;
+     }
 
    if (sfwd->format_cb)
      buf = sfwd->format_cb(val);

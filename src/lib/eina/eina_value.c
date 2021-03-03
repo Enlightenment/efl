@@ -4614,27 +4614,27 @@ eina_value_optional_pset(Eina_Value *value,
 {
    eina_value_optional_reset(value);
 
-   if(sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
+   if (sizeof(Eina_Value_Optional_Outer) <= sizeof(Eina_Value_Union))
      {
-       Eina_Value_Optional_Outer outer;
-       outer.subtype = subtype;
-       outer.value = malloc(subtype->value_size);
-       eina_value_type_setup(subtype, outer.value);
-       eina_value_type_pset(subtype, outer.value, subvalue);
-       if (!eina_value_pset(value, &outer))
-         {
-           return EINA_FALSE;
-         }
+        Eina_Value_Optional_Outer outer;
+        outer.subtype = subtype;
+        outer.value = malloc(subtype->value_size);
+        if (!eina_value_type_setup(subtype, outer.value))
+          return EINA_FALSE;
+        eina_value_type_pset(subtype, outer.value, subvalue);
+        if (!eina_value_pset(value, &outer))
+          return EINA_FALSE;
      }
    else
      {
         Eina_Value_Optional_Inner *inner =
           malloc(sizeof(Eina_Value_Optional_Inner) + subtype->value_size);
         inner->subtype = subtype;
-        eina_value_type_setup(subtype, inner->value);
+        if (!eina_value_type_setup(subtype, inner->value))
+          return EINA_FALSE;
         eina_value_type_pset(subtype, inner->value, subvalue);
         if (!eina_value_pset(value, &inner))
-             return EINA_FALSE;
+          return EINA_FALSE;
      }
 
    return EINA_TRUE;

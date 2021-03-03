@@ -5,11 +5,7 @@
 # include "Ecore_Wl2.h"
 # include "Ecore_Input.h"
 # include <xkbcommon/xkbcommon-compose.h>
-# include "www-client-protocol.h"
 # include "ecore_wl2_internal.h"
-
-# define EFL_TEAMWORK_VERSION 2
-# include "teamwork-client-protocol.h"
 
 # include "session-recovery-client-protocol.h"
 
@@ -91,10 +87,8 @@ struct _Ecore_Wl2_Display
         struct zwp_linux_dmabuf_v1 *dmabuf;
         struct zxdg_shell_v6 *zxdg_shell;
         struct xdg_wm_base *xdg_wm_base;
-        struct www *www;
         struct zwp_e_session_recovery *session_recovery;
         struct efl_aux_hints *efl_aux_hints;
-        struct zwp_teamwork *teamwork;
         struct efl_hints *efl_hints;
         int compositor_version;
      } wl;
@@ -182,7 +176,6 @@ struct _Ecore_Wl2_Window
    struct wl_surface *surface;
    void *buffer;
    struct wl_callback *callback;
-   struct www_surface *www_surface;
    struct xdg_surface *xdg_surface;
    struct xdg_toplevel *xdg_toplevel;
    struct xdg_popup *xdg_popup;
@@ -529,20 +522,6 @@ struct _Ecore_Wl2_Input
    Eina_List *devices_list;
 };
 
-typedef struct Ecore_Wl2_Event_Window_WWW
-{
-   Ecore_Wl2_Window *window;
-   int x_rel;
-   int y_rel;
-   uint32_t timestamp;
-} Ecore_Wl2_Event_Window_WWW;
-
-typedef struct Ecore_Wl2_Event_Window_WWW_Drag
-{
-   Ecore_Wl2_Window *window;
-   Eina_Bool dragging;
-} Ecore_Wl2_Event_Window_WWW_Drag;
-
 typedef struct _Buffer_Handle Buffer_Handle;
 typedef struct _Ecore_Wl2_Buffer
 {
@@ -573,9 +552,6 @@ typedef struct _Ecore_Wl2_Surface
    Eina_Bool alpha : 1;
 } Ecore_Wl2_Surface;
 
-EAPI extern int _ecore_wl2_event_window_www;
-EAPI extern int _ecore_wl2_event_window_www_drag;
-
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
 void _display_event_free(void *d, void *event EINA_UNUSED);
 
@@ -605,7 +581,6 @@ void _ecore_wl2_subsurf_free(Ecore_Wl2_Subsurface *subsurf);
 
 void _ecore_wl2_window_surface_create(Ecore_Wl2_Window *window);
 void _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window);
-void _ecore_wl2_window_www_surface_init(Ecore_Wl2_Window *window);
 void _ecore_wl2_window_semi_free(Ecore_Wl2_Window *window);
 
 void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);

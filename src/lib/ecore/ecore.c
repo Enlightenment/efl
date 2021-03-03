@@ -32,8 +32,8 @@
 #include "ecore_private.h"
 #include "../../static_libs/buildsystem/buildsystem.h"
 
-#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
-#include <malloc.h>
+#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO) || defined(HAVE_MALLINFO2)
+# include <malloc.h>
 #endif
 
 #ifndef O_BINARY
@@ -45,14 +45,19 @@ EAPI Ecore_Version *ecore_version = &_version;
 
 EAPI double _efl_startup_time = 0;
 
-#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
-#define KEEP_MAX(Global, Local) \
-  if (Global < (Local))         \
-    Global = Local;
+#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO) || defined(HAVE_MALLINFO2)
+# define KEEP_MAX(Global, Local) \
+   if (Global < (Local))         \
+       Global = Local;
 
 static Eina_Bool _ecore_memory_statistic(void *data);
+# ifdef HAVE_MALLINFO2
+static size_t _ecore_memory_max_total = 0;
+static size_t _ecore_memory_max_free = 0;
+# else
 static int _ecore_memory_max_total = 0;
 static int _ecore_memory_max_free = 0;
+# endif
 static pid_t _ecore_memory_pid = 0;
 #ifdef HAVE_MALLOC_INFO
 static FILE *_ecore_memory_statistic_file = NULL;
@@ -291,7 +296,7 @@ ecore_init(void)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
 
-#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
+#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO) || defined(HAVE_MALLINFO2)
    if (getenv("ECORE_MEM_STAT"))
      {
 #ifdef HAVE_MALLOC_INFO
@@ -432,16 +437,22 @@ ecore_shutdown(void)
 
      _ecore_main_loop_shutdown();
 
-#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
+#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO) || defined(HAVE_MALLINFO2)
      if (getenv("ECORE_MEM_STAT"))
        {
           _ecore_memory_statistic(NULL);
 
+          #ifdef HAVE_MALLINFO2
+          ERR("[%i] Memory MAX total: %lu, free: %lu",
+              _ecore_memory_pid,
+              _ecore_memory_max_total,
+              _ecore_memory_max_free);
+          #else
           ERR("[%i] Memory MAX total: %i, free: %i",
               _ecore_memory_pid,
               _ecore_memory_max_total,
               _ecore_memory_max_free);
-
+          #endif
 
 #ifdef HAVE_MALLOC_INFO
           fclose(_ecore_memory_statistic_file);
@@ -963,20 +974,30 @@ _systemd_watchdog_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 #endif
 
-#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
+#if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO) || defined(HAVE_MALLINFO2)
 static Eina_Bool
 _ecore_memory_statistic(EINA_UNUSED void *data)
 {
 #ifdef HAVE_MALLOC_INFO
    static int frame = 0;
 #endif
-#ifdef HAVE_MALLINFO
+
+#if defined(HAVE_MALLINFO) || defined(HAVE_MALLINFO2)
+   Eina_Bool changed = EINA_FALSE;
+
+# if defined(HAVE_MALLINFO2)
+   struct mallinfo2 mi;
+   static size_t uordblks = 0;
+   static size_t fordblks = 0;
+
+   mi = mallinfo2();
+# else
    struct mallinfo mi;
    static int uordblks = 0;
    static int fordblks = 0;
-   Eina_Bool changed = EINA_FALSE;
 
    mi = mallinfo();
+# endif
 
 #define HAS_CHANGED(Global, Local) \
   if (Global != Local)             \
@@ -989,14 +1010,24 @@ _ecore_memory_statistic(EINA_UNUSED void *data)
    HAS_CHANGED(fordblks, mi.fordblks);
 
    if (changed)
-     ERR("[%i] Memory total: %i, free: %i",
-         _ecore_memory_pid,
-         mi.uordblks,
-         mi.fordblks);
+     {
+#ifdef HAVE_MALLINFO2
+        ERR("[%i] Memory total: %lu, free: %lu",
+            _ecore_memory_pid,
+            mi.uordblks,
+            mi.fordblks);
+#else
+        ERR("[%i] Memory total: %i, free: %i",
+            _ecore_memory_pid,
+            mi.uordblks,
+            mi.fordblks);
+#endif
+     }
 
    KEEP_MAX(_ecore_memory_max_total, mi.uordblks);
    KEEP_MAX(_ecore_memory_max_free, mi.fordblks);
 #endif
+
 #ifdef HAVE_MALLOC_INFO
    if (frame) fputs("\n", _ecore_memory_statistic_file);
    malloc_info(0, _ecore_memory_statistic_file);

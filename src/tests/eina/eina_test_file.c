@@ -357,12 +357,12 @@ EFL_START_TEST(eina_file_map_new_test)
    strcat(test_file2_path, test_file2_name_part);
 
    fd = open(test_file_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
-   fail_if(fd == 0);
+   fail_if(fd <= 0);
    fail_if(write(fd, eina_map_test_string, strlen(eina_map_test_string)) != (ssize_t) strlen(eina_map_test_string));
    close(fd);
 
    fd = open(test_file2_path, O_WRONLY | O_BINARY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
-   fail_if(fd == 0);
+   fail_if(fd <= 0);
    fail_if(write(fd, big_buffer, big_buffer_size - file_min_offset) != big_buffer_size - file_min_offset);
    close(fd);
 
