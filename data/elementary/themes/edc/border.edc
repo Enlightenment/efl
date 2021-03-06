@@ -132,19 +132,6 @@ group { name: "e/widgets/border/default/border";
    images.image: "screen_circular_shadow.png" COMP;
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
-   script {
-      public message(Msg_Type:type, id, ...) {
-         new text[128];
-         new ncpu, cpu, mem;
-         if ((type == MSG_INT_SET) && (id == 1)) {
-            ncpu = getarg(2);
-            cpu = getarg(3) / ncpu;
-            mem = getarg(4);
-            snprintf(text, 128, "%i%% %i.%iM", cpu, mem / 1024, (mem % 1024) / 100)
-            set_text(PART:"e.procstats.text", text);
-         }
-      }
-   }
    parts {
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
@@ -683,29 +670,27 @@ group { name: "e/widgets/border/default/border";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
      }
-     part { name: "e.procstats.text"; type: TEXT;
+     part { name: "e.procstats.swallow"; type: SWALLOW;
          scale: 1.0;
          repeat_events: 1;
          description { state: "default" 0.0;
+            fixed: 1 0;
             rel1.to: "procstats";
-            rel1.relative: 2.0 0.0;
             rel2.to: "procstats";
-            rel2.relative: 2.0 1.0;
+            rel2.relative: 1.0 1.0;
             rel2.offset: 0.0 -1;
-            visible: 1;
-            text {
-               size: 9;
-               font: FNBD;
-               min: 1 1;
-               ellipsis: -1;
-               text_class: "menu_item";
-               align: 0.0 0.5;
-             }
+            align: 0.0 0.5;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            visible: 0;
          }
          description { state: "hidden";
             visible: 0;
          }
-      }
+         description { state: "visible";
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+     }
    }
    programs {
       program {
@@ -842,14 +827,15 @@ group { name: "e/widgets/border/default/border";
       }
       program {
          signal: "e,state,procstats,on"; source: "e";
-         action: STATE_SET "default" 0.0;
-         target: "e.procstats.text";
+         action: STATE_SET "visible" 0.0;
+         target: "e.procstats.swallow";
       }
       program {
          signal: "e,state,procstats,off"; source: "e";
          action: STATE_SET "hidden" 0.0;
-         target: "e.procstats.text";
+         target: "e.procstats.swallow";
       }
+
 //      program {
 //         signal: "e,action,maximize"; source: "e";
 //      }
