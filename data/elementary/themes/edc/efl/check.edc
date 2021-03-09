@@ -255,7 +255,6 @@ group { name: "efl/check";
             get_state(PART:"ck_check", buf, 32, val);
             if (!strcmp(buf, "default")) { run_program(PROGRAM:"snd-check-on"); }
             else { run_program(PROGRAM:"snd-check-off"); }
-            echo(buf);
          }
       }
       program { signal: "efl,state,selected"; source: "efl";
