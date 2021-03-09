@@ -519,6 +519,8 @@ ICON("audio/ac3", "i-sound")
 ICON("application/x-mpegurl", "i-sound")
 ICON("application/vnd.apple.mpegurl", "i-sound")
 
+ICON("application/x-partial-download", "i-download")
+
 #undef ICON
 
 // elm icons

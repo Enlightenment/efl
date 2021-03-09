@@ -213,6 +213,8 @@ I160("i-film", "film")
 I160("i-sound", "sound")
 I160("i-font-file", "font-file")
 
+I160("i-download", "download")
+
 I160("i-mobile", "mobile-phone")
 I160("i-pda", "pda")
 I160("i-phone", "phone")
