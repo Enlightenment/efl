@@ -1591,7 +1591,9 @@ _icon_preview_icon_add(const char *icon, const char *theme)
    elm_box_pack_end(icon_preview_frame, ic);
    evas_object_show(ic);
 
-   if (strcmp(theme, ELM_CONFIG_ICON_THEME_ELEMENTARY))
+   if (!strcmp(theme, ELM_CONFIG_ICON_THEME_ELEMENTARY))
+     elm_icon_standard_set(ic, icon);
+   else
      elm_image_file_set(ic, efreet_icon_path_find(theme, icon, 48), NULL);
 }
 
@@ -1602,9 +1604,9 @@ _icon_preview_update(Evas_Object *win)
    const char **example_icon, *example_icons[] =
    {
       "folder",
-      "user-home",
-      "text-x-generic",
-      "system-run",
+      "video-display",
+      "mail-unread",
+      "start-here",
       "preferences-system",
       NULL,
    };
