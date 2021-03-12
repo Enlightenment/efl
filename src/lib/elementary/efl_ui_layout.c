@@ -1463,9 +1463,10 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
      {
         if ((sub_d->type == TEXT) && (!strcmp(part, sub_d->part)))
           {
-             if (!text)
+             if ((!text) || (text[0] == 0))
                {
-                  _text_signal_emit(sd, sub_d, EINA_FALSE);
+                  if ((!strcmp(part, "elm.text") || !strcmp(part, "efl.text")))
+                    _text_signal_emit(sd, sub_d, EINA_FALSE);
                   eina_stringshare_del(sub_d->part);
                   free(sub_d);
                   edje_object_part_text_escaped_set
@@ -1479,7 +1480,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
           }
      }
 
-   if (!text) return EINA_TRUE;
+   if ((!text) || (text[0] == 0)) return EINA_TRUE;
 
    if (elm_widget_is_legacy(obj))
      {
@@ -1505,7 +1506,8 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
         sd->subs = eina_list_append(sd->subs, sub_d);
      }
 
-   _text_signal_emit(sd, sub_d, EINA_TRUE);
+   if ((!strcmp(part, "elm.text") || !strcmp(part, "efl.text")))
+     _text_signal_emit(sd, sub_d, EINA_TRUE);
 
    efl_canvas_group_change(obj);
 
