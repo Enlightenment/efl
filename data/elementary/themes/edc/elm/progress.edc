@@ -41,8 +41,7 @@ group { name: "elm/progressbar/horizontal/default";
    parts {
       part { name: "dis_clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel.to: "elm.swallow.content";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -77,7 +76,7 @@ group { name: "elm/progressbar/horizontal/default";
             visible: 0;
             align: 0.0 0.5;
             fixed: 1 0;
-            rel1.offset: 0 4;
+            rel1.offset: -1 4;
             rel2.offset: -1 -5;
             rel2.relative: 0.0 1.0;
             offscale;
@@ -85,7 +84,7 @@ group { name: "elm/progressbar/horizontal/default";
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+//            aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2.offset: 4 -5;
          }
@@ -102,8 +101,7 @@ group { name: "elm/progressbar/horizontal/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel.to: "elm.swallow.content";
             text {
                min: 1 1;
                ellipsis: -1;
@@ -163,8 +161,7 @@ group { name: "elm/progressbar/horizontal/default";
       }
       part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;
@@ -175,8 +172,7 @@ group { name: "elm/progressbar/horizontal/default";
             fixed: 1 1;
             min: 1 1;
             max: 1 9999;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
          }
       }
       part { name: "barend"; type: SPACER;
@@ -215,8 +211,7 @@ group { name: "elm/progressbar/horizontal/default";
             fixed: 1 1;
             min: 16 8;
             max: 16 9999;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
             align: 0.0 0.5;
             color: 51 153 255 255;
          }
@@ -229,9 +224,8 @@ group { name: "elm/progressbar/horizontal/default";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
             rel1.offset: 4 0;
-            rel2.to: "elm.swallow.bar";
             rel2.offset: -5 -1;
             align: 1.0 0.5;
             text { font: FN; size: 10;
@@ -459,7 +453,7 @@ group { name: "elm/progressbar/vertical/default";
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            aspect: 1.0 1.0; aspect_preference: HORIZONTAL;
+//            aspect: 1.0 1.0; aspect_preference: HORIZONTAL;
             rel1.offset: 4 4;
             rel2.offset: -5 4;
          }
