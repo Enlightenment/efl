@@ -147,6 +147,7 @@ typedef struct {
    Efl_Gfx_Entity *sizer;
    unsigned int start_id, end_id;
    Eina_Bool allow_manual_deselection : 1;
+   Eina_Bool api_selection_change : 1;
 } Efl_Ui_Collection_Data;
 
 static Eina_Bool register_item(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Item *item);
@@ -579,7 +580,7 @@ _selection_changed(void *data, const Efl_Event *ev)
           {
              _single_selection_behaviour(obj, pd, ev->object);
           }
-        else if (pd->mode == EFL_UI_SELECT_MODE_MULTI && _elm_config->desktop_entry)
+        else if (pd->mode == EFL_UI_SELECT_MODE_MULTI && _elm_config->desktop_entry && !pd->api_selection_change)
           {
              const Evas_Modifier *mod = evas_key_modifier_get(evas_object_evas_get(ev->object));
              if (!(efl_input_clickable_interaction_get(ev->object)
@@ -1111,13 +1112,17 @@ _selectable_range_apply(Eina_List *start, Eina_Bool flag)
 EOLIAN static void
 _efl_ui_collection_efl_ui_multi_selectable_all_select(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
+   pd->api_selection_change = EINA_TRUE;
    _selectable_range_apply(pd->items, EINA_TRUE);
+   pd->api_selection_change = EINA_FALSE;
 }
 
 EOLIAN static void
 _efl_ui_collection_efl_ui_multi_selectable_all_unselect(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
+   pd->api_selection_change = EINA_TRUE;
    _selectable_range_apply(pd->items, EINA_FALSE);
+   pd->api_selection_change = EINA_FALSE;
 }
 
 static void
