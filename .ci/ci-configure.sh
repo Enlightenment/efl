@@ -17,7 +17,7 @@ if [ "$DISTRO" != "" ] ; then
   # - Ibus
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dglib=true -Dg-mainloop=true -Dxpresent=true -Dxinput22=true \
-  -Devas-loaders-disabler=json,avif -Decore-imf-loaders-disabler= \
+  -Decore-imf-loaders-disabler= \
   -Dharfbuzz=true -Dpixman=true -Dhyphen=true -Defl-one=true \
   -Dvnc-server=true -Delua=true -Dbindings=lua,cxx,mono -Delogind=false -Dinstall-eo-files=true -Dphysics=true"
 
@@ -26,7 +26,7 @@ if [ "$DISTRO" != "" ] ; then
   -Dopengl=none -Deina-magic-debug=false -Dbuild-examples=false -Dbuild-tests=false \
   -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
   -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false \
-  -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm,avif \
+  -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm,avif,heif \
   -Decore-imf-loaders-disabler=xim,ibus,scim \
   -Dfribidi=false -Dfontconfig=false \
   -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
@@ -37,7 +37,7 @@ if [ "$DISTRO" != "" ] ; then
 
   MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
-  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg,avif \
+  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg,avif,heif \
   -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
 
   if [ "$1" = "default" ]; then
