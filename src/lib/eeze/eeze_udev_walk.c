@@ -40,7 +40,7 @@ EAPI const char *
 eeze_udev_walk_get_sysattr(const char *syspath,
                            const char *sysattr)
 {
-   _udev_device *device, *child, *parent;
+   _udev_device *device, *parent;
    const char *test = NULL;
 
    if (!syspath)
@@ -49,18 +49,12 @@ eeze_udev_walk_get_sysattr(const char *syspath,
    if (!(device = _new_device(syspath)))
      return NULL;
 
-   for (parent = device; parent;)
+   for (parent = device; parent && !test;)
      {
-        if ((test = udev_device_get_sysattr_value(parent, sysattr)))
-          {
-             test = eina_stringshare_add(test);
-             udev_device_unref(parent);
-             return test;
-          }
-        child = parent;
-        parent = udev_device_get_parent(child);
-        udev_device_unref(child);
+        test = udev_device_get_sysattr_value(parent, sysattr);
+        parent = udev_device_get_parent(parent);
      }
 
-   return NULL;
+   udev_device_unref(device);
+   return eina_stringshare_add(test);
 }
