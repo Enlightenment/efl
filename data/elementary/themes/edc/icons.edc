@@ -519,6 +519,8 @@ ICON("audio/ac3", "i-sound")
 ICON("application/x-mpegurl", "i-sound")
 ICON("application/vnd.apple.mpegurl", "i-sound")
 
+ICON("application/x-partial-download", "i-download")
+
 #undef ICON
 
 // elm icons
@@ -731,6 +733,8 @@ ICON("no_photo", "i-head")
 
 ICON("photo/no_photo", "i-head")
 
+ICON("heart", "i-heart")
+
 ICON("toolbar/folder", "i-folder")
 ICON("toolbar/file", "i-file")
 ICON("toolbar/clock", "i-clock")
@@ -788,6 +792,7 @@ ICON("folder-videos", "i-folder-videos")
 ICON("folder-visiting", "i-folder-visiting")
 
 ICON("battery", "i-battery")
+ICON("power-plug", "i-power-plug")
 ICON("camera", "i-camera")
 ICON("camera-photo", "i-photo")
 ICON("camera-web", "i-webcam")
@@ -806,6 +811,9 @@ ICON("pda", "i-pda")
 ICON("phone", "i-phone")
 ICON("printer", "i-printer")
 ICON("scanner", "i-scanner")
+
+ICON("health", "i-health")
+ICON("tech", "i-tech")
 
 ICON("media-optical", "i-drive-cd")
 ICON("media-optical-cd", "i-drive-cd")

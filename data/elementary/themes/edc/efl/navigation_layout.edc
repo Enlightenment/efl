@@ -1,11 +1,13 @@
 //Efl.Ui.Navigation_Layout Themes
-group { "efl/navigation_layout"; data.item: "version" "123";
+group { "efl/navigation_layout";
+   data.item: "version" "123";
    parts {
       spacer { "base";
          desc { "default";
          }
       }
       swallow { "efl.bar";
+         scale: 1;
          desc { "default";
             fixed: 0 1;
             min: 0 40;
