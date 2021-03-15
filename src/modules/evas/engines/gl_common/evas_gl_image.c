@@ -702,6 +702,10 @@ evas_gl_common_image_free(Evas_GL_Image *im)
         im->fglyph->ext_dat = NULL;
         im->fglyph->ext_dat_free = NULL;
      }
+   else if ((im->gc) && (im->gc->shared))
+     {
+        im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
+     }
 
    if (im->gc)
      evas_gl_common_context_flush(im->gc);
