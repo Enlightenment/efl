@@ -55,7 +55,7 @@ group { name: "e/gadman/full_bg";
       program {
          signal: "e,state,visibility,show"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "bg";
       }
       program {
@@ -66,7 +66,7 @@ group { name: "e/gadman/full_bg";
       program {
          signal: "e,state,visibility,hide"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "bg";
          after: "hide_stop";
       }
@@ -79,7 +79,7 @@ group { name: "e/gadman/full_bg";
       program {
          signal: "e,state,visibility,show,custom"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "custom_bg";
       }
       program {
@@ -90,7 +90,7 @@ group { name: "e/gadman/full_bg";
       program {
          signal: "e,state,visibility,hide,custom"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "custom_bg";
          after: "hide_stop";
       }

@@ -320,12 +320,12 @@ group { name:"e/modules/tasks/item";
 
       program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
-         transition: ACCELERATE 0.2;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "bar";
       }
       program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "bar";
       }
 
@@ -338,7 +338,7 @@ group { name:"e/modules/tasks/item";
       }
       program { signal: "state,default"; source: "int";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.2;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
          target: "icon2";
       }
       program { signal: "state,focused"; source: "int";
@@ -350,7 +350,7 @@ group { name:"e/modules/tasks/item";
       }
       program { signal: "state,focused"; source: "int";
          action: STATE_SET "focused" 0.0;
-         transition: SINUSOIDAL 0.2;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
          target: "icon2";
       }
       program { signal: "state,iconic"; source: "int";
@@ -362,7 +362,7 @@ group { name:"e/modules/tasks/item";
       }
       program { signal: "state,iconic"; source: "int";
          action: STATE_SET "iconic" 0.0;
-         transition: SINUSOIDAL 0.2;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
          target: "icon2";
       }
 

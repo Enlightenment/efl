@@ -121,7 +121,7 @@ group { name: "e/init/splash";
       }
       program { signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 1.0;
+         transition: DECELERATE 1.0 USE_DURATION_FACTOR 1;
          in: 1.0 0.0;
          target: "blanker";
       }
@@ -129,7 +129,7 @@ group { name: "e/init/splash";
          action: STATE_SET "active" 0.0;
          target: "logo";
          in: 1.5 0.0;
-         transition: SINUSOIDAL 0.8;
+         transition: SINUSOIDAL 0.8 USE_DURATION_FACTOR 1;
          after: "ready";
       }
       program { signal: "show"; source: "";
@@ -156,7 +156,7 @@ group { name: "e/init/splash";
       }
       program { name: "exit1";
          action: STATE_SET "faded" 0.0;
-         transition: SINUSOIDAL 1.0 CURRENT;
+         transition: SINUSOIDAL 1.0 CURRENT USE_DURATION_FACTOR 1;
          target: "fader";
          after: "exit2";
       }
@@ -207,7 +207,7 @@ group { name: "e/init/extra_screen";
       }
       program { signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 1.0;
+         transition: DECELERATE 1.0 USE_DURATION_FACTOR 1;
          in: 1.0 0.0;
          target: "blanker";
          after: "ready";
@@ -234,7 +234,7 @@ group { name: "e/init/extra_screen";
       }
       program { name: "exit1";
          action: STATE_SET "faded" 0.0;
-         transition: SINUSOIDAL 1.0 CURRENT;
+         transition: SINUSOIDAL 1.0 CURRENT USE_DURATION_FACTOR 1;
          target: "fader";
          after: "exit2";
       }

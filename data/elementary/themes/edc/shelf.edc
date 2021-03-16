@@ -239,49 +239,49 @@ target: "sh_vert_clip"; \
 #undef ORIENT_SATE
       program { signal: "e,state,scroll,begin"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_l";
          target: "sh_t";
       }
       program { signal: "e,state,scroll,begin"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_r";
          target: "sh_b";
       }
       program { signal: "e,state,scroll,middle"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_l";
          target: "sh_t";
       }
       program { signal: "e,state,scroll,middle"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_r";
          target: "sh_b";
       }
       program { signal: "e,state,scroll,end"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_l";
          target: "sh_t";
       }
       program { signal: "e,state,scroll,end"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_r";
          target: "sh_b";
       }
       program { signal: "e,state,scroll,none"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_l";
          target: "sh_t";
       }
       program { signal: "e,state,scroll,none"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.5 CURRENT;
+         transition: SINUSOIDAL 0.5 CURRENT USE_DURATION_FACTOR 1;
          target: "sh_r";
          target: "sh_b";
       }

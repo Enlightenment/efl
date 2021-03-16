@@ -1,15 +1,14 @@
-group { name: "efl/panel"; data.item: "version" "123";
-   data {
-      item: "handler_size" "30";
-   }
+group { name: "efl/panel";
+   data.item: "version" "123";
+   data.item: "handler_size" "30";
    parts {
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
          }
       }
    }
 }
+
 group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
    parts {
       part { name: "efl.panel_area";
@@ -832,3 +831,766 @@ group { name: "efl/panel/bottom";
       }
    }
 }
+
+#if 0
+group { name: "elm/scroller/panel/left/default";
+   parts {
+      part { name: "elm.panel_area";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.5;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.event_area";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "elm.panel_area";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "elm.panel_area";
+            }
+            align: 0.0 0.5;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.outline";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "bg";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            color: 64 64 64 255;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { name: "active";
+         signal: "elm,state,content,visible";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+      program { name: "inactive";
+         signal: "elm,state,content,hidden";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+   }
+}
+
+group { name: "elm/scroller/panel/right/default";
+   parts {
+      part { name: "elm.event_area";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel2.relative: 0.0 1.0;
+            align: 0.0 0.5;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.panel_area";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1 {
+               relative: 1.0 0.0;
+               to: "elm.event_area";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "elm.event_area";
+            }
+            align: 0.0 0.5;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.outline";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "bg";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            color: 64 64 64 255;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { name: "active";
+         signal: "elm,state,content,visible";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+      program { name: "inactive";
+         signal: "elm,state,content,hidden";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+   }
+}
+
+group { name: "elm/scroller/panel/top/default";
+   parts {
+      part { name: "elm.panel_area";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.event_area";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "elm.panel_area";
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               to: "elm.panel_area";
+            }
+            align: 0.5 0.0;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.outline";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "bg";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            color: 64 64 64 255;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            rel1.to: "elm.panel_area";
+            rel2.to: "elm.panel_area";
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { name: "active";
+         signal: "elm,state,content,visible";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+      program { name: "inactive";
+         signal: "elm,state,content,hidden";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+   }
+}
+
+group { name: "elm/scroller/panel/bottom/default";
+   parts {
+      part { name: "elm.event_area"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.panel_area"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel.to: "elm.event_area";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+            align: 0.5 0.0;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "access.outline"; type: RECT; repeat_events: 1;
+         description { state: "default" 0.0;
+            rel.to: "elm.panel_area";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "elm.panel_area";
+            color: 64 64 64 255;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+            rel.to: "elm.panel_area";
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { signal: "elm,state,content,visible"; source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+      program { signal: "elm,state,content,hidden"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.panel_area";
+         target: "elm.event_area";
+         target: "bg";
+         target: "elm.swallow.content";
+      }
+   }
+}
+
+group { name: "elm/panel/left/default";
+   data.item: "focus_highlight" "on";
+   script {
+      public is_rtl = 0;
+   }
+   parts {
+      part { name: "shadow"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            WIN_SHADOW_SMALL;
+         }
+      }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            color: 51 153 255 255;
+            visible: 0;
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            rel1.offset: -5 -5;
+            rel2.offset: 4 4;
+            visible: 1;
+         }
+      }
+      part { name: "all"; type: SPACER;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to_x: "all";
+            rel2.to_x: "elm.swallow.event";
+            rel2.relative: 0.0 1.0;
+            color: 64 64 64 255;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+      }
+      part { name: "elm.swallow.event"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 30 30; max: 30 999999;
+            align: 1.0 0.5;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            align: 0.0 0.5;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      part { name: "btn"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "elm.swallow.event";
+            color: 0 0 0 0;
+         }
+         description { state: "hidden" 0.0;
+            rel.to: "elm.swallow.event";
+         }
+      }
+      part { name: "icn"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 30 30; max: 30 30;
+            rel.to: "btn";
+            image.normal: "i-arrow-l";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "i-arrow-r";
+         }
+      }
+   }
+   programs {
+      program { signal: "mouse,clicked,1"; source: "btn";
+         action: SIGNAL_EMIT "elm,action,panel,toggle" "elm";
+      }
+      program { signal: "elm,action,show"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.2;
+         target: "elm.swallow.event";
+         target: "base";
+      }
+      program { signal: "elm,action,show"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program { signal: "elm,action,show,no_animate"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.event";
+         target: "base";
+      }
+      program { signal: "elm,action,show,no_animate"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program { signal: "edje,state,rtl"; source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "hidden", 0.0);
+            else
+              set_state(PART:"icn", "default", 0.0);
+            set_int(is_rtl, 1);
+         }
+      }
+      program { signal: "edje,state,ltr"; source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+            set_int(is_rtl, 0);
+         }
+      }
+      program { signal: "elm,action,hide"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         transition: ACCELERATE 0.2;
+         target: "elm.swallow.event";
+      }
+      program { signal: "elm,action,hide"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "hidden", 0.0);
+            else
+              set_state(PART:"icn", "default", 0.0);
+         }
+      }
+      program { name: "hide1";
+         signal: "elm,action,hide"; source: "elm";
+         script {
+            new x, y, w, h;
+            if (get_int(is_rtl) == 0) {
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+               get_geometry(PART:"elm.swallow.event", x, y, w, h);
+               set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
+            } else {
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+               set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
+               get_geometry(PART:"elm.swallow.event", x, y, w, h);
+               set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
+            }
+         }
+         after: "hide2";
+      }
+      program { name: "hide2";
+         action: STATE_SET "custom" 0.0;
+         transition: ACCELERATE 0.3;
+         target: "base";
+      }
+      program { signal: "elm,action,hide,no_animate"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "elm.swallow.event";
+      }
+      program { signal: "elm,action,hide,no_animate"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "hidden", 0.0);
+            else
+              set_state(PART:"icn", "default", 0.0);
+         }
+      }
+      program { name: "hide1_no_animate";
+         signal: "elm,action,hide,no_animate"; source: "elm";
+         script {
+            new x, y, w, h;
+            if (get_int(is_rtl) == 0) {
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+               get_geometry(PART:"elm.swallow.event", x, y, w, h);
+               set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
+            } else {
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+               set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
+               get_geometry(PART:"elm.swallow.event", x, y, w, h);
+               set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
+            }
+         }
+         after: "hide2_no_animate";
+      }
+      program { name: "hide2_no_animate";
+         action: STATE_SET "custom" 0.0;
+         target: "base";
+      }
+      program { signal: "elm,action,focus_highlight,show"; source: "elm";
+         action: STATE_SET "focused" 0.0;
+         transition: ACCELERATE 0.2;
+         target: "glow";
+      }
+      program { signal: "elm,action,focus_highlight,hide"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
+         target: "glow";
+      }
+   }
+}
+
+group { name: "elm/panel/right/default";
+   inherit: "elm/panel/left/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.event";
+            rel1.offset: 3 0;
+            rel2.relative: 1.0 1.0;
+            rel2.to_x: "all";
+            rel2.offset: -1 -1;
+         }
+      }
+      part { name: "elm.swallow.event";
+         description { state: "default" 0.0;
+            align: 0.0 0.5;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.0 1.0;
+         }
+         description { state: "hidden" 0.0;
+            align: 1.0 0.5;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "icn";
+         description { state: "default" 0.0;
+            image.normal: "i-arrow-r";
+         }
+         description { state: "hidden" 0.0;
+            image.normal: "i-arrow-l";
+         }
+      }
+   }
+   programs {
+      program { name: "hide1";
+         script {
+            new x, y, w, h;
+
+            custom_state(PART:"base", "default", 0.0);
+            set_state_val(PART:"base", STATE_REL1, 1.0, 0.0);
+            set_state_val(PART:"base", STATE_REL2, 2.0, 1.0);
+            get_geometry(PART:"elm.swallow.event", x, y, w, h);
+            set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
+         }
+      }
+   }
+}
+
+group { name: "elm/panel/top/default";
+   inherit: "elm/panel/left/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel1.to_x: "all";
+            rel1.to_y: "all";
+            rel2.relative: 1.0 0.0;
+            rel2.to_x: "all";
+            rel2.to_y: "elm.swallow.event";
+         }
+      }
+      part { name: "elm.swallow.event";
+         description { state: "default" 0.0;
+            min: 30 30; max: 999999 30;
+            align: 0.5 1.0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "hidden" 0.0;
+            align: 0.5 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
+      part { name: "icn";
+         description { state: "default" 0.0;
+            image.normal: "i-arrow-u";
+         }
+         description { state: "hidden" 0.0;
+            image.normal: "i-arrow-d";
+         }
+      }
+   }
+   programs {
+      program { name: "hide1";
+         script {
+            new x, y, w, h;
+            custom_state(PART:"base", "default", 0.0);
+            set_state_val(PART:"base", STATE_REL1, 0.0, -1.0);
+            set_state_val(PART:"base", STATE_REL2, 1.0, 0.0);
+            get_geometry(PART:"elm.swallow.event", x, y, w, h);
+            set_state_val(PART:"base", STATE_REL1_OFFSET, 0, h);
+         }
+      }
+      program {
+         signal: "elm,action,show"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "icn";
+      }
+      program {
+         signal: "edje,state,rtl"; 
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program {
+         signal: "edje,state,ltr"; 
+         source: "edje";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.event", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program {
+         signal: "elm,action,hide"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "icn";
+      }
+   }
+}
+
+group { name: "elm/panel/bottom/default";
+   inherit: "elm/panel/top/default";
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel1.to_x: "all";
+            rel1.to_y: "elm.swallow.event";
+            rel2.relative: 1.0 1.0;
+            rel2.to_x: "all";
+            rel2.to_y: "all";
+         }
+      }
+      part { name: "elm.swallow.event";
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+         }
+         description { state: "hidden" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part { name: "icn";
+         description { state: "default" 0.0;
+            image.normal: "i-arrow-d";
+         }
+         description { state: "hidden" 0.0;
+            image.normal: "i-arrow-u";
+         }
+      }
+   }
+   programs {
+      program { name: "hide1";
+         script {
+            new x, y, w, h;
+            custom_state(PART:"base", "default", 0.0);
+            set_state_val(PART:"base", STATE_REL1, 0.0, 1.0);
+            set_state_val(PART:"base", STATE_REL2, 1.0, 2.0);
+            get_geometry(PART:"elm.swallow.event", x, y, w, h);
+            set_state_val(PART:"base", STATE_REL2_OFFSET, 0, -h);
+         }
+      }
+   }
+}
+#endif

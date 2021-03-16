@@ -84,7 +84,7 @@ group { name: "e/comp/border/default";
          name: "visible_on";
          signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.15;
+         transition: DECELERATE 0.15 USE_DURATION_FACTOR 1;
          target: "clipper";
          target: "shower";
          after: "show2";
@@ -96,7 +96,7 @@ group { name: "e/comp/border/default";
          name: "visible_off";
          signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.30;
+         transition: DECELERATE 0.30 USE_DURATION_FACTOR 1;
          target: "clipper";
          target: "shower";
          after: "hide2";
@@ -109,47 +109,47 @@ group { name: "e/comp/border/default";
          name: "focus_on";
          signal: "e,state,focus,on"; source: "e";
          action: STATE_SET "focused" 0.0;
-         transition: SINUSOIDAL 0.1;
+         transition: SINUSOIDAL 0.1 USE_DURATION_FACTOR 1;
          target: "glow";
          target: "focus-clipper";
          after: "focus2";
       }
       program { name: "focus2";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.4;
+         transition: SINUSOIDAL 0.4 USE_DURATION_FACTOR 1;
          target: "glow";
       }
       program {
          name: "focus_off";
          signal: "e,state,focus,off"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.1;
+         transition: SINUSOIDAL 0.1 USE_DURATION_FACTOR 1;
          target: "focus-clipper";
          after: "focus_off2";
       }
       program {
          name: "focus_off2";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.4;
+         transition: SINUSOIDAL 0.4 USE_DURATION_FACTOR 1;
          target: "glow";
       }
       program { name: "urgent1";
          signal: "e,state,urgent,on"; source: "e";
          action: STATE_SET "focused" 0.0;
-         transition: SINUSOIDAL 0.3;
+         transition: SINUSOIDAL 0.3 USE_DURATION_FACTOR 1;
          target: "glow";
          after: "urgent2";
       }
       program { name: "urgent2";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.3;
+         transition: SINUSOIDAL 0.3 USE_DURATION_FACTOR 1;
          target: "glow";
          after: "urgent1";
       }
       program {
          signal: "e,state,urgent,off"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.6 CURRENT;
+         transition: SINUSOIDAL 0.6 CURRENT USE_DURATION_FACTOR 1;
          target: "glow";
       }
  */
@@ -187,13 +187,13 @@ group { name: "e/comp/border/rotate";
          signal: "e,state,focus,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.content";
-         transition: LINEAR 0.3;
+         transition: LINEAR 0.3 USE_DURATION_FACTOR 1;
       }
       program { name: "focus_off3";
          signal: "e,state,focus,off"; source: "e";
          action: STATE_SET "focus-out" 0.0;
          target: "e.swallow.content";
-         transition: LINEAR 0.3;
+         transition: LINEAR 0.3 USE_DURATION_FACTOR 1;
       }
    }
 }
@@ -401,7 +401,7 @@ group { name: "e/comp/border/fullscreen";
          name: "visible_on";
          signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 0.25;
+         transition: DECELERATE 0.25 USE_DURATION_FACTOR 1;
          target: "scr_shadow";
          target: "scr_shade";
       }
@@ -409,7 +409,7 @@ group { name: "e/comp/border/fullscreen";
          name: "visible_on2";
          signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible1" 0.0;
-         transition: DECELERATE 0.05;
+         transition: DECELERATE 0.05 USE_DURATION_FACTOR 1;
          target: "clipper";
          target: "shower";
          target: "fader";
@@ -417,7 +417,7 @@ group { name: "e/comp/border/fullscreen";
       }
       program { name: "show2";
          action: STATE_SET "visible2" 0.0;
-         transition: DECELERATE 0.20;
+         transition: DECELERATE 0.20 USE_DURATION_FACTOR 1;
          target: "clipper";
          target: "shower";
          target: "fader";
@@ -430,7 +430,7 @@ group { name: "e/comp/border/fullscreen";
          name: "visible_off";
          signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.25;
+         transition: DECELERATE 0.25 USE_DURATION_FACTOR 1;
          target: "scr_shadow";
          target: "scr_shade";
       }
@@ -438,7 +438,7 @@ group { name: "e/comp/border/fullscreen";
          name: "visible_off2";
          signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "visible1" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "clipper";
          target: "shower";
          target: "fader";
@@ -446,7 +446,7 @@ group { name: "e/comp/border/fullscreen";
       }
       program { name: "hide2";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.05;
+         transition: DECELERATE 0.05 USE_DURATION_FACTOR 1;
          target: "clipper";
          target: "shower";
          target: "fader";

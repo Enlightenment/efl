@@ -250,12 +250,12 @@ group { name: "e/modules/ibox/icon";
 //      }
       program { signal: "e,state,starting"; source: "e";
          action: STATE_SET "starting" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "content";
       }
       program { signal: "e,state,started"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: ACCELERATE 0.2;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "content";
       }
       /////////////////////////////////////////////////////////////
@@ -264,14 +264,14 @@ group { name: "e/modules/ibox/icon";
          target: "indicator1";
          target: "indicator2";
          target: "indicator3";
-         transition: ACCELERATE 0.2;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
       }
       program { signal: "e,state,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "indicator1";
          target: "indicator2";
          target: "indicator3";
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
       }
       /////////////////////////////////////////////////////////////
       program { signal: "e,state,urgent"; source: "e";
@@ -405,17 +405,17 @@ group { name: "e/modules/ibox/icon_overlay";
                text_source: "e.text.label";
             }
             link.base: "e,origin,center" "e";
-            link.transition: SINUSOIDAL 0.1 CURRENT;
+            link.transition: SINUSOIDAL 0.1 CURRENT USE_DURATION_FACTOR 1;
          }
          desc { "left"; inherit: "default";
             align: 0.0 0.5;
             link.base: "e,origin,left" "e";
-            link.transition: SINUSOIDAL 0.1 CURRENT;
+            link.transition: SINUSOIDAL 0.1 CURRENT USE_DURATION_FACTOR 1;
          }
          desc { "right"; inherit: "default";
             align: 1.0 0.5;
             link.base: "e,origin,right" "e";
-            link.transition: SINUSOIDAL 0.1 CURRENT;
+            link.transition: SINUSOIDAL 0.1 CURRENT USE_DURATION_FACTOR 1;
          }
       }
       part { name: "bg"; type: RECT; mouse_events: 0;
@@ -467,12 +467,12 @@ group { name: "e/modules/ibox/icon_overlay";
 //      }
       program { signal: "e,state,starting"; source: "e";
          action: STATE_SET "starting" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "content";
       }
       program { signal: "e,state,started"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: ACCELERATE 0.2;
+         transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "content";
       }
       ///////////////////////////////////////////////////////////
@@ -510,24 +510,24 @@ group { name: "e/modules/ibox/icon_overlay";
       }
       program { signal: "e,action,show,label"; source: "e";
          action: STATE_SET "visible" 0.0;
-         transition: SINUSOIDAL 0.5;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
          target: "e.text.label";
          target: "bg";
       }
       program { signal: "e,action,hide,label"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 1.0;
+         transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1;
          target: "e.text.label";
          target: "bg";
       }
       program {
          action: STATE_SET visible 0.0;
-         transition: SINUSOIDAL 1.0;
+         transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1;
          target: "bg";
       }
       program {
          action: STATE_SET default 0.0;
-         transition: SINUSOIDAL 1.0;
+         transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1;
          target: "bg";
       }
       program { name: "go_passive2";
@@ -583,7 +583,7 @@ group { name: "e/modules/ibox/icon_overlay";
       }
       program { name: "go_big2";
          action: STATE_SET "huge" 0.0;
-         transition: LINEAR 0.5;
+         transition: LINEAR 0.5 USE_DURATION_FACTOR 1;
          target: "background";
       }
    }
