@@ -94,6 +94,7 @@ _efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_
 {
    Eo *o = data;
    Efl_Net_Dialer_Unix_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   if (!pd) return;
 
    pd->connect.thread = NULL;
 
