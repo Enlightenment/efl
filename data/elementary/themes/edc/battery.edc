@@ -3,6 +3,7 @@ group { name: "e/modules/battery/main";
    min: 16 16;
    max: 160 160;
    script {
+      public load_time;
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_FLOAT) && (id == 1)) {
             new Float:val = getfarg(2);
@@ -11,6 +12,20 @@ group { name: "e/modules/battery/main";
             set_state_val(PART:"fill_clip", STATE_REL1, 0.0, val);
             set_state(PART:"fill_clip", "custom", 0.0);
          }
+      }
+      public Float:year_sec() {
+         new year, month, day, yearday, weekday, hour, minute;
+         new Float:second;
+
+         date(year, month, day, yearday, weekday, hour, minute, second);
+         return seconds() + float(yearday * 24 * 3600);
+      }
+      public run_prog_later(prog) {
+         new Float:second, Float:start;
+
+         second = Float:year_sec();
+         start = get_float(load_time);
+         if ((second - start) > float(5)) run_program(prog);
       }
    }
    parts {
@@ -112,10 +127,19 @@ group { name: "e/modules/battery/main";
       }
    }
    programs {
+      program { signal: "load"; source: "";
+         script { set_float(load_time, year_sec()); }
+      }
       program { signal: "e,state,ac,on"; source: "e";
+         script { run_prog_later(PROGRAM:"ac_on"); }
+      }
+      program { name: "ac_on";
          action: PLAY_SAMPLE "synth-worble-up" 1.0 ALERT;
       }
       program { signal: "e,state,ac,off"; source: "e";
+         script { run_prog_later(PROGRAM:"ac_off"); }
+      }
+      program { name: "ac_off";
          action: PLAY_SAMPLE "synth-worble-dn" 1.0 ALERT;
       }
       program { signal: "e,state,charging"; source: "e";
