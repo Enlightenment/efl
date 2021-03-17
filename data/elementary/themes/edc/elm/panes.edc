@@ -358,8 +358,7 @@ group { name: "elm/panes/vertical/flush";
             visible: 0;
             min: PANEMIN PANEMIN2;
             fixed: 1 1;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel.to: "elm.bar";
          }
       }
       part { name: "bar"; type: RECT;
@@ -601,8 +600,7 @@ group { name: "elm/panes/horizontal/flush";
             visible: 0;
             min: PANEMIN2 PANEMIN;
             fixed: 1 1;
-            rel1.to: "elm.bar";
-            rel2.to: "elm.bar";
+            rel.to: "elm.bar";
          }
       }
       part { name: "bar"; type: RECT;
@@ -767,8 +765,6 @@ group { name: "elm/panes/horizontal/flush";
 
 group { name: "elm/panes/vertical/left-fold";
    inherit: "elm/panes/vertical/default";
-   images.image: "big_arrow_left.png" COMP;
-   images.image: "big_arrow_right.png" COMP;
    script {
       public open;
       public drag_x;
@@ -777,13 +773,13 @@ group { name: "elm/panes/vertical/left-fold";
    parts {
       image { "dots";
          desc { "default";
-            image.normal: "big_arrow_left.png";
-            FIXED_SIZE(14, 17)
+            image.normal: "i-arrow-l";
+            FIXED_SIZE(15, 15)
             fill.smooth: 1;
          }
          desc { "closed";
             inherit: "default" 0.0;
-            image.normal: "big_arrow_right.png";
+            image.normal: "i-arrow-r";
          }
       }
       rect { "event";
@@ -822,8 +818,6 @@ group { name: "elm/panes/vertical/left-fold";
 
 group { name: "elm/panes/vertical/right-fold";
    inherit: "elm/panes/vertical/default";
-   images.image: "big_arrow_left.png" COMP;
-   images.image: "big_arrow_right.png" COMP;
    script {
       public open;
       public drag_x;
@@ -832,13 +826,13 @@ group { name: "elm/panes/vertical/right-fold";
    parts {
       image { "dots";
          desc { "default";
-            image.normal: "big_arrow_right.png";
-            FIXED_SIZE(14, 17)
+            image.normal: "i-arrow-r";
+            FIXED_SIZE(15, 15)
             fill.smooth: 1;
          }
          desc { "closed";
             inherit: "default" 0.0;
-            image.normal: "big_arrow_left.png";
+            image.normal: "i-arrow-l";
          }
       }
       rect { "event";
@@ -877,8 +871,6 @@ group { name: "elm/panes/vertical/right-fold";
 
 group { name: "elm/panes/horizontal/up-fold";
    inherit: "elm/panes/horizontal/default";
-   images.image: "big_arrow_up.png" COMP;
-   images.image: "big_arrow_down.png" COMP;
    script {
       public open;
       public drag_x;
@@ -887,20 +879,19 @@ group { name: "elm/panes/horizontal/up-fold";
    parts {
       image { "dots";
          desc { "default";
-            image.normal: "big_arrow_up.png";
-            FIXED_SIZE(17, 14)
+            image.normal: "i-arrow-u";
+            FIXED_SIZE(15, 15)
             fill.smooth: 1;
          }
          desc { "closed";
             inherit: "default" 0.0;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
          }
       }
       rect { "event";
          repeat;
          desc { "default";
-            rel1.to: "dots";
-            rel2.to: "dots";
+            rel.to: "dots";
             color: 0 0 0 0;
          }
       }
@@ -933,8 +924,6 @@ group { name: "elm/panes/horizontal/up-fold";
 
 group { name: "elm/panes/horizontal/down-fold";
    inherit: "elm/panes/horizontal/default";
-   images.image: "big_arrow_up.png" COMP;
-   images.image: "big_arrow_down.png" COMP;
    script {
       public open;
       public drag_x;
@@ -943,20 +932,19 @@ group { name: "elm/panes/horizontal/down-fold";
    parts {
       image { "dots";
          desc { "default";
-            image.normal: "big_arrow_down.png";
-            FIXED_SIZE(17, 14)
+            image.normal: "i-arrow-d";
+            FIXED_SIZE(15, 15)
             fill.smooth: 1;
          }
          desc { "closed";
             inherit: "default" 0.0;
-            image.normal: "big_arrow_up.png";
+            image.normal: "i-arrow-u";
          }
       }
       rect { "event";
          repeat;
          desc { "default";
-            rel1.to: "dots";
-            rel2.to: "dots";
+            rel.to: "dots";
             color: 0 0 0 0;
          }
       }
