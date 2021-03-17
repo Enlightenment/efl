@@ -71,68 +71,93 @@ Group: efl/alert_popup/left_button (@since 1.23)
 */
 group { "efl/popup";
    data.item: "version" "123";
-   images.image: "rounded_square.png" COMP;
    parts {
-      spacer { "base";
+      image { "shadow";
+         scale;
          desc { "default";
-            rel1.offset: 10 10;
-            rel2.offset: -11 -11;
+            rel.to: "base";
+            WIN_SHADOW;
          }
       }
-      image { "bg";
+      rect { "base";
+         scale;
          desc { "default";
             min: 100 100;
-            image.border: 15 15 15 15;
-            image.normal: "rounded_square.png";
+            color: 0 0 0 192;
+            rel1.offset: 16 16;
+            rel2.offset: -17 -17;
+            offscale;
          }
       }
       swallow { "efl.background"; required;
          desc { "default";
-            rel.to: "bg";
+            rel.to: "base";
          }
       }
       swallow { "efl.content"; required;
+         scale;
          desc { "default";
             rel.to: "base";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
    }
 }
 
-group { "efl/alert_popup"; data.item: "version" "123";
-   images.image: "rounded_square.png" COMP;
+group { "efl/alert_popup";
+   data.item: "version" "123";
    parts {
-      image { "bg";
+      image { "shadow";
+         scale;
+         desc { "default";
+            rel.to: "base";
+            WIN_SHADOW;
+         }
+      }
+      rect { "base";
+         scale;
          desc { "default";
             min: 100 100;
-            image.border: 15 15 15 15;
-            image.normal: "rounded_square.png";
+            color: 0 0 0 192;
+            rel1.offset: 16 16;
+            rel2.offset: -17 -17;
+            offscale;
          }
       }
       swallow { "efl.background"; required;
          desc { "default";
-            rel.to: "bg";
+            rel.to: "base";
          }
       }
-      spacer { "base";
+      swallow { "efl.content"; required;
+         scale;
          desc { "default";
-            rel.to: "bg";
-            rel1.offset: 10 10;
-            rel2.offset: -11 -11;
+            rel1.to_x: "base";
+            rel1.to_y: "title_bg";
+            rel2.to_x: "base";
+            rel2.to_y: "efl.buttons";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
       rect { "title_bg";
+         scale;
          desc { "default";
             fixed: 0 1;
             min: 0 0;
             rel.to: "base";
             rel2.relative: 1.0 0.0;
-            align: 0.5 0.0;
-            color: 0 0 0 0;
+            align: 0.0 0.0;
+            color: 32 32 32 255;
          }
          desc { "title_visible";
             inherit: "default";
-            min: 0 20;
+            min: 0 24;
          }
       }
       textblock { "efl.text.title"; required;
@@ -143,6 +168,9 @@ group { "efl/alert_popup"; data.item: "version" "123";
               style: "popup_title_style_ellipsis";
             }
             rel.to: "title_bg";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
             hid;
          }
          desc { "title_visible";
@@ -151,51 +179,45 @@ group { "efl/alert_popup"; data.item: "version" "123";
          }
       }
       swallow { "efl.buttons"; required;
+         scale;
          desc { "default";
             fixed: 0 1;
             rel.to: "base";
             rel1.relative: 0.0 1.0;
+            rel1.offset:  4 0;
+            rel2.offset: -5 0;
             align: 0.5 1.0;
             min: 0 0;
+            offscale;
          }
          desc { "button_visible";
             inherit: "default";
-            min: 0 30;
-         }
-      }
-      swallow { "efl.content"; required;
-         desc { "default";
-            rel1.to_x: "base";
-            rel1.to_y: "title_bg";
-            rel2.to_x: "base";
-            rel2.to_y: "efl.buttons";
-            rel1.relative: 0.0 1.0;
-            rel2.relative: 1.0 0.0;
+            min: 80 24;
+            rel1.offset:  4 -5;
+            rel2.offset: -5 -5;
          }
       }
    }
    programs {
-      program {
-         signal: "efl,title,visible,on"; source: "efl";
+      program { signal: "efl,title,visible,on"; source: "efl";
          action: STATE_SET "title_visible" 0.0;
          target: "title_bg";
          target: "efl.text.title";
       }
-      program {
-         signal: "efl,title,visible,off"; source: "efl";
+      program { signal: "efl,title,visible,off"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "title_bg";
          target: "efl.text.title";
       }
-      program {
-         signal: "efl,buttons,visible,on"; source: "efl";
+      program { signal: "efl,buttons,visible,on"; source: "efl";
          action: STATE_SET "button_visible" 0.0;
          target: "efl.buttons";
       }
    }
 }
 
-group { "efl/popup/backwall"; data.item: "version" "123";
+group { "efl/popup/backwall";
+   data.item: "version" "123";
    alias: "efl/alert_popup/backwall";
    parts {
       rect { "base";
@@ -208,9 +230,13 @@ group { "efl/popup/backwall"; data.item: "version" "123";
          }
       }
       swallow { "efl.content"; required;
+         scale;
          desc { "default";
             rel.to: "base";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
             hid;
+            offscale;
          }
          desc { "content_visible";
             inherit: "default";
@@ -226,33 +252,32 @@ group { "efl/popup/backwall"; data.item: "version" "123";
    }
 
    programs {
-      program {
-         signal: "efl,content,set"; source: "efl";
+      program { signal: "efl,content,set"; source: "efl";
          action: STATE_SET "content_visible" 0.0;
          target: "base";
          target: "efl.content";
       }
-      program {
-         signal: "efl,content,unset"; source: "efl";
+      program { signal: "efl,content,unset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "efl.content";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "block";
+      program { signal: "mouse,clicked,1"; source: "block";
          action: SIGNAL_EMIT "efl,action,click" "efl";
       }
    }
 }
 
-group { "efl/alert_popup/button_layout1"; data.item: "version" "123";
+group { "efl/alert_popup/button_layout1";
+   data.item: "version" "123";
    parts {
       swallow { "efl.button1"; required;
       }
    }
 }
 
-group { "efl/alert_popup/button_layout2"; data.item: "version" "123";
+group { "efl/alert_popup/button_layout2";
+   data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -276,20 +301,23 @@ group { "efl/alert_popup/button_layout2"; data.item: "version" "123";
    }
 }
 
-group { "efl/alert_popup/button_layout3"; data.item: "version" "123";
+group { "efl/alert_popup/button_layout3";
+   data.item: "version" "123";
    parts {
       spacer { "div1";
+         scale;
          desc { "default";
             rel1.relative: 0.333 0.5;
             rel2.relative: 0.333 0.5;
-            min: 5 5;
+            min: 4 4;
          }
       }
       spacer { "div2";
+         scale;
          desc { "default";
             rel1.relative: 0.666 0.5;
             rel2.relative: 0.666 0.5;
-            min: 5 5;
+            min: 4 4;
          }
       }
       swallow { "efl.button1"; required;
