@@ -9,10 +9,10 @@ group { name: "efl/panel";
    }
 }
 
-group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
+group { name: "efl/scroller/panel/left";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
@@ -24,17 +24,11 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "efl.panel_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "efl.panel_area";
-            }
+            rel.to: "efl.panel_area";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
             align: 0.0 0.5;
             fixed: 1 1;
             visible: 0;
@@ -44,20 +38,16 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
+      part { name: "access.outline"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             color: 64 64 64 255;
             visible: 0;
          }
@@ -66,11 +56,9 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -80,31 +68,27 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.content";
+         target: "efl.swallow.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.content";
+         target: "efl.swallow.content";
       }
    }
 }
 
-group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
+group { name: "efl/scroller/panel/right";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
@@ -116,8 +100,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1 {
                relative: 1.0 0.0;
@@ -136,8 +119,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
+      part { name: "access.outline"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
@@ -145,8 +127,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -158,8 +139,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -172,31 +152,27 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.content";
+         target: "efl.swallow.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.content";
+         target: "efl.swallow.content";
       }
    }
 }
 
-group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
+group { name: "efl/scroller/panel/top";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
@@ -208,8 +184,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1 {
                relative: 0.0 1.0;
@@ -228,8 +203,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
+      part { name: "access.outline"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
@@ -237,8 +211,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -250,8 +223,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -264,763 +236,27 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.content";
+         target: "efl.swallow.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.content";
+         target: "efl.swallow.content";
       }
    }
 }
 
-group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
-   parts {
-      part { name: "efl.event_area";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel2.relative: 1.0 0.0;
-            align: 0.5 0.0;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "efl.panel_area";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1 {
-               relative: 0.0 1.0;
-               to: "efl.event_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "efl.event_area";
-            }
-            align: 0.5 0.0;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "access.outline";
-         type: RECT;
-         repeat_events: 1;
-         description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "bg";
-         type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
-            color: 64 64 64 255;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "efl.content";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
-         action: STATE_SET "visible" 0.0;
-         target: "efl.panel_area";
-         target: "efl.event_area";
-         target: "bg";
-         target: "efl.content";
-      }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "efl.panel_area";
-         target: "efl.event_area";
-         target: "bg";
-         target: "efl.content";
-      }
-   }
-}
-
-group { name: "efl/panel/left"; data.item: "version" "123";
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
-   images.image: "holes_tiny_glow_vert.png" COMP;
-   images.image: "holes_tiny_glow_horiz.png" COMP;
-   images.image: "win_glow.png" COMP;
-   images.image: "icon_arrow_right.png" COMP;
-   images.image: "icon_arrow_left.png" COMP;
-   images.image: "icon_arrow_up.png" COMP;
-   images.image: "icon_arrow_down.png" COMP;
-   data.item: "focus_highlight" "on";
-   script {
-      public is_rtl = 0;
-   }
-   parts {
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: -3 -2;
-            rel1.to: "base";
-            rel2.offset: 2 4;
-            rel2.to: "base";
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -5  -5;
-            rel1.to: "base";
-            rel2.offset: 4 4;
-            rel2.to: "base";
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
-      part { name: "all"; type: SPACER;
-         description { state: "default" 0.0;
-         }
-      }
-      part { name: "base"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to_x: "all";
-            rel2.to_x: "efl.swallow.event";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -4 -1;
-            color: 64 64 64 255;
-         }
-      }
-      part { name: "efl.content"; type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1.offset: 4 4;
-            rel1.to: "base";
-            rel2.offset: -5 -5;
-            rel2.to: "base";
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "base";
-            FIXED_SIZE(69, 5)
-         }
-      }
-      part { name: "efl.swallow.event"; type: SWALLOW;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
-            align: 1.0 0.5;
-            rel1.relative: 1.0 0.0;
-            rel2.relative: 1.0 1.0;
-            color: 0 0 0 0;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            align: 0.0 0.5;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 0.0 1.0;
-         }
-      }
-      part { name: "btn"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "efl.swallow.event";
-            rel2.to: "efl.swallow.event";
-            color: 0 0 0 0;
-         }
-         description { state: "hidden" 0.0;
-            rel1.to: "efl.swallow.event";
-            rel2.to: "efl.swallow.event";
-         }
-      }
-      part { name: "dots"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "icn";
-            rel2.to: "icn";
-            align: 0.0 0.5;
-            image.normal: "holes_tiny_glow_vert.png";
-            FIXED_SIZE(11, 17)
-         }
-      }
-      part { name: "icn"; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
-            rel1.to: "btn";
-            rel2.to: "btn";
-            image.normal: "icon_arrow_left.png";
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "icon_arrow_right.png";
-         }
-      }
-   }
-   programs {
-      program {
-         signal: "mouse,clicked,1"; source: "btn";
-         action: SIGNAL_EMIT "efl,action,panel,toggle" "efl";
-      }
-      program {
-         signal: "efl,action,show"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
-         target: "efl.swallow.event";
-         target: "base";
-      }
-      program {
-         signal: "efl,action,show"; source: "efl";
-         script {
-            if (get_int(is_rtl) == 0)
-              set_state(PART:"icn", "default", 0.0);
-            else
-              set_state(PART:"icn", "hidden", 0.0);
-         }
-      }
-      program {
-         signal: "edje,state,rtl";
-         source: "edje";
-         script {
-            new st[31];
-            new Float:vl;
-            get_state(PART:"efl.swallow.event", st, 30, vl);
-            if (!strcmp(st, "default"))
-              set_state(PART:"icn", "hidden", 0.0);
-            else
-              set_state(PART:"icn", "default", 0.0);
-            set_int(is_rtl, 1);
-         }
-      }
-      program {
-         signal: "edje,state,ltr"; 
-         source: "edje";
-         script {
-            new st[31];
-            new Float:vl;
-            get_state(PART:"efl.swallow.event", st, 30, vl);
-            if (!strcmp(st, "default"))
-              set_state(PART:"icn", "default", 0.0);
-            else
-              set_state(PART:"icn", "hidden", 0.0);
-            set_int(is_rtl, 0);
-         }
-      }
-      program {
-         signal: "efl,action,hide"; source: "efl";
-         action: STATE_SET "hidden" 0.0;
-         transition: ACCELERATE 0.3;
-         target: "efl.swallow.event";
-      }
-      program {
-         signal: "efl,action,hide"; source: "efl";
-         script {
-            if (get_int(is_rtl) == 0)
-              set_state(PART:"icn", "hidden", 0.0);
-            else
-              set_state(PART:"icn", "default", 0.0);
-         }
-      }
-      program { name: "hide1";
-         signal: "efl,action,hide"; source: "efl";
-         script {
-            new x, y, w, h;
-            if (get_int(is_rtl) == 0)
-              {
-                 custom_state(PART:"base", "default", 0.0);
-                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-                 get_geometry(PART:"efl.swallow.event", x, y, w, h);
-                 set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
-               }
-            else
-              {
-                 custom_state(PART:"base", "default", 0.0);
-                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-                 set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
-                 get_geometry(PART:"efl.swallow.event", x, y, w, h);
-                 set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
-              }
-         }
-         after: "hide2";
-      }
-      program { name: "hide2";
-         action: STATE_SET "custom" 0.0;
-         transition: ACCELERATE 0.3;
-         target: "base";
-      }
-      program {
-         signal: "efl,action,focus_highlight,show"; source: "efl";
-         action: STATE_SET "focused" 0.0;
-         transition: ACCELERATE 0.2;
-         target: "glow";
-      }
-      program {
-         signal: "efl,action,focus_highlight,hide"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.5;
-         target: "glow";
-      }
-   }
-}
-
-group { name: "efl/panel/right";
-   inherit: "efl/panel/left";
+group { name: "efl/scroller/panel/bottom";
    data.item: "version" "123";
    parts {
-      part { name: "base";
-         description { state: "default" 0.0;
-            rel1.relative: 1.0 0.0;
-            rel1.to_x: "efl.swallow.event";
-            rel1.offset: 3 0;
-            rel2.relative: 1.0 1.0;
-            rel2.to_x: "all";
-            rel2.offset: -1 -1;
-         }
-      }
-      part { name: "efl.swallow.event";
-         description { state: "default" 0.0;
-            align: 0.0 0.5;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 0.0 1.0;
-         }
-         description { state: "hidden" 0.0;
-            align: 1.0 0.5;
-            rel1.relative: 1.0 0.0;
-            rel2.relative: 1.0 1.0;
-         }
-      }
-      part { name: "dots";
-         description { state: "default" 0.0;
-            align: 1.0 0.5;
-         }
-      }
-      part { name: "icn";
-         description { state: "default" 0.0;
-            image.normal: "icon_arrow_right.png";
-         }
-         description { state: "hidden" 0.0;
-            image.normal: "icon_arrow_left.png";
-         }
-      }
-   }
-   programs {
-      program { name: "hide1";
-         script {
-            new x, y, w, h;
-    
-            custom_state(PART:"base", "default", 0.0);
-            set_state_val(PART:"base", STATE_REL1, 1.0, 0.0);
-            set_state_val(PART:"base", STATE_REL2, 2.0, 1.0);
-            get_geometry(PART:"efl.swallow.event", x, y, w, h);
-            set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
-         }
-      }
-   }
-}
-
-group { name: "efl/panel/top";
-   inherit: "efl/panel/left";
-   data.item: "version" "123";
-   parts {
-      part { name: "base";
-         description { state: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel1.to_x: "all";
-            rel1.to_y: "all";
-            rel1.offset: 0 0;
-            rel2.relative: 1.0 0.0;
-            rel2.to_x: "all";
-            rel2.to_y: "efl.swallow.event";
-            rel2.offset: -1 -4;
-         }
-      }
-      part { name: "efl.swallow.event";
-         description { state: "default" 0.0;
-            align: 0.5 1.0;
-            rel1.relative: 0.0 1.0;
-            rel2.relative: 1.0 1.0;
-         }
-         description { state: "hidden" 0.0;
-            align: 0.5 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 0.0;
-         }
-      }
-      part { name: "dots";
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            image.normal: "holes_tiny_glow_horiz.png";
-            FIXED_SIZE(17, 11)
-         }
-      }
-      part { name: "icn";
-         description { state: "default" 0.0;
-            image.normal: "icon_arrow_up.png";
-         }
-         description { state: "hidden" 0.0;
-            image.normal: "icon_arrow_down.png";
-         }
-      }
-   }
-   programs {
-      program { name: "hide1";
-         script {
-            new x, y, w, h;
-            
-            custom_state(PART:"base", "default", 0.0);
-            set_state_val(PART:"base", STATE_REL1, 0.0, -1.0);
-            set_state_val(PART:"base", STATE_REL2, 1.0, 0.0);
-            get_geometry(PART:"efl.swallow.event", x, y, w, h);
-            set_state_val(PART:"base", STATE_REL1_OFFSET, 0, h);
-         }
-      }
-      program {
-         signal: "efl,action,show"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "icn";
-      }
-      program {
-         signal: "edje,state,rtl";
-         source: "edje";
-         script {
-            new st[31];
-            new Float:vl;
-            get_state(PART:"efl.swallow.event", st, 30, vl);
-            if (!strcmp(st, "default"))
-              set_state(PART:"icn", "default", 0.0);
-            else
-              set_state(PART:"icn", "hidden", 0.0);
-         }
-      }
-      program {
-         signal: "edje,state,ltr";
-         source: "edje";
-         script {
-            new st[31];
-            new Float:vl;
-            get_state(PART:"efl.swallow.event", st, 30, vl);
-            if (!strcmp(st, "default"))
-              set_state(PART:"icn", "default", 0.0);
-            else
-              set_state(PART:"icn", "hidden", 0.0);
-         }
-      }
-      program {
-         signal: "efl,action,hide"; source: "efl";
-         action: STATE_SET "hidden" 0.0;
-         target: "icn";
-      }
-   }
-}
-
-group { name: "efl/panel/bottom";
-   inherit: "efl/panel/top";
-   data.item: "version" "123";
-   parts {
-      part { name: "base";
-         description { state: "default" 0.0;
-            rel1.relative: 0.0 1.0;
-            rel1.to_x: "all";
-            rel1.to_y: "efl.swallow.event";
-            rel1.offset: 0 3;
-            rel2.relative: 1.0 1.0;
-            rel2.to_x: "all";
-            rel2.to_y: "all";
-            rel2.offset: -1 -1;
-         }
-      }
-      part { name: "efl.swallow.event";
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 0.0;
-         }
-         description { state: "hidden" 0.0;
-            align: 0.5 1.0;
-            rel1.relative: 0.0 1.0;
-            rel2.relative: 1.0 1.0;
-         }
-      }
-      part { name: "dots";
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            image.normal: "holes_tiny_glow_horiz.png";
-            FIXED_SIZE(17, 11)
-         }
-      }
-      part { name: "icn";
-         description { state: "default" 0.0;
-            image.normal: "icon_arrow_down.png";
-         }
-         description { state: "hidden" 0.0;
-            image.normal: "icon_arrow_up.png";
-         }
-      }
-   }
-   programs {
-      program { name: "hide1";
-         script {
-            new x, y, w, h;
-            custom_state(PART:"base", "default", 0.0);
-            set_state_val(PART:"base", STATE_REL1, 0.0, 1.0);
-            set_state_val(PART:"base", STATE_REL2, 1.0, 2.0);
-            get_geometry(PART:"efl.swallow.event", x, y, w, h);
-            set_state_val(PART:"base", STATE_REL2_OFFSET, 0, -h);
-         }
-      }
-   }
-}
-
-#if 0
-group { name: "elm/scroller/panel/left/default";
-   parts {
-      part { name: "elm.panel_area";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel2.relative: 0.0 1.0;
-            align: 0.0 0.5;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.event_area";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "elm.panel_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "elm.panel_area";
-            }
-            align: 0.0 0.5;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "access.outline";
-         type: RECT;
-         repeat_events: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "bg";
-         type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            color: 64 64 64 255;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-      program { name: "active";
-         signal: "elm,state,content,visible";
-         source: "elm";
-         action: STATE_SET "visible" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
-         target: "bg";
-         target: "elm.swallow.content";
-      }
-      program { name: "inactive";
-         signal: "elm,state,content,hidden";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
-         target: "bg";
-         target: "elm.swallow.content";
-      }
-   }
-}
-
-group { name: "elm/scroller/panel/right/default";
-   parts {
-      part { name: "elm.event_area";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel2.relative: 0.0 1.0;
-            align: 0.0 0.5;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.panel_area";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "elm.event_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "elm.event_area";
-            }
-            align: 0.0 0.5;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "access.outline";
-         type: RECT;
-         repeat_events: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "bg";
-         type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            color: 64 64 64 255;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-      program { name: "active";
-         signal: "elm,state,content,visible";
-         source: "elm";
-         action: STATE_SET "visible" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
-         target: "bg";
-         target: "elm.swallow.content";
-      }
-      program { name: "inactive";
-         signal: "elm,state,content,hidden";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
-         target: "bg";
-         target: "elm.swallow.content";
-      }
-   }
-}
-
-group { name: "elm/scroller/panel/top/default";
-   parts {
-      part { name: "elm.panel_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
@@ -1032,100 +268,9 @@ group { name: "elm/scroller/panel/top/default";
             visible: 1;
          }
       }
-      part { name: "elm.event_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1 {
-               relative: 0.0 1.0;
-               to: "elm.panel_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "elm.panel_area";
-            }
-            align: 0.5 0.0;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "access.outline";
-         type: RECT;
-         repeat_events: 1;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "bg";
-         type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            color: 64 64 64 255;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1.to: "elm.panel_area";
-            rel2.to: "elm.panel_area";
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-      program { name: "active";
-         signal: "elm,state,content,visible";
-         source: "elm";
-         action: STATE_SET "visible" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
-         target: "bg";
-         target: "elm.swallow.content";
-      }
-      program { name: "inactive";
-         signal: "elm,state,content,hidden";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
-         target: "bg";
-         target: "elm.swallow.content";
-      }
-   }
-}
-
-group { name: "elm/scroller/panel/bottom/default";
-   parts {
-      part { name: "elm.event_area"; type: SWALLOW;
-         description { state: "default" 0.0;
-            rel2.relative: 1.0 0.0;
-            align: 0.5 0.0;
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.panel_area"; type: SWALLOW;
-         description { state: "default" 0.0;
-            rel.to: "elm.event_area";
+            rel.to: "efl.event_area";
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 1.0;
             align: 0.5 0.0;
@@ -1139,13 +284,13 @@ group { name: "elm/scroller/panel/bottom/default";
       }
       part { name: "access.outline"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
-            rel.to: "elm.panel_area";
+            rel.to: "efl.panel_area";
             color: 0 0 0 0;
          }
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel.to: "elm.panel_area";
+            rel.to: "efl.panel_area";
             color: 64 64 64 255;
             visible: 0;
          }
@@ -1154,9 +299,9 @@ group { name: "elm/scroller/panel/bottom/default";
             visible: 1;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "efl.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel.to: "elm.panel_area";
+            rel.to: "efl.panel_area";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1166,24 +311,25 @@ group { name: "elm/scroller/panel/bottom/default";
       }
    }
    programs {
-      program { signal: "elm,state,content,visible"; source: "elm";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
+         target: "efl.panel_area";
+         target: "efl.event_area";
          target: "bg";
-         target: "elm.swallow.content";
+         target: "efl.swallow.content";
       }
-      program { signal: "elm,state,content,hidden"; source: "elm";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.panel_area";
-         target: "elm.event_area";
+         target: "efl.panel_area";
+         target: "efl.event_area";
          target: "bg";
-         target: "elm.swallow.content";
+         target: "efl.swallow.content";
       }
    }
 }
 
-group { name: "elm/panel/left/default";
+group { name: "efl/panel/left";
+   data.item: "version" "123";
    data.item: "focus_highlight" "on";
    script {
       public is_rtl = 0;
@@ -1218,12 +364,12 @@ group { name: "elm/panel/left/default";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             rel1.to_x: "all";
-            rel2.to_x: "elm.swallow.event";
+            rel2.to_x: "efl.swallow.event";
             rel2.relative: 0.0 1.0;
             color: 64 64 64 255;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
@@ -1232,7 +378,7 @@ group { name: "elm/panel/left/default";
             offscale;
          }
       }
-      part { name: "elm.swallow.event"; type: SWALLOW;
+      part { name: "efl.swallow.event"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1251,11 +397,11 @@ group { name: "elm/panel/left/default";
       }
       part { name: "btn"; type: RECT;
          description { state: "default" 0.0;
-            rel.to: "elm.swallow.event";
+            rel.to: "efl.swallow.event";
             color: 0 0 0 0;
          }
          description { state: "hidden" 0.0;
-            rel.to: "elm.swallow.event";
+            rel.to: "efl.swallow.event";
          }
       }
       part { name: "icn"; mouse_events: 0;
@@ -1274,28 +420,15 @@ group { name: "elm/panel/left/default";
    }
    programs {
       program { signal: "mouse,clicked,1"; source: "btn";
-         action: SIGNAL_EMIT "elm,action,panel,toggle" "elm";
+         action: SIGNAL_EMIT "efl,action,panel,toggle" "efl";
       }
-      program { signal: "elm,action,show"; source: "elm";
+      program { signal: "efl,action,show"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.2;
-         target: "elm.swallow.event";
+         target: "efl.swallow.event";
          target: "base";
       }
-      program { signal: "elm,action,show"; source: "elm";
-         script {
-            if (get_int(is_rtl) == 0)
-              set_state(PART:"icn", "default", 0.0);
-            else
-              set_state(PART:"icn", "hidden", 0.0);
-         }
-      }
-      program { signal: "elm,action,show,no_animate"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.swallow.event";
-         target: "base";
-      }
-      program { signal: "elm,action,show,no_animate"; source: "elm";
+      program { signal: "efl,action,show"; source: "efl";
          script {
             if (get_int(is_rtl) == 0)
               set_state(PART:"icn", "default", 0.0);
@@ -1307,7 +440,7 @@ group { name: "elm/panel/left/default";
          script {
             new st[31];
             new Float:vl;
-            get_state(PART:"elm.swallow.event", st, 30, vl);
+            get_state(PART:"efl.swallow.event", st, 30, vl);
             if (!strcmp(st, "default"))
               set_state(PART:"icn", "hidden", 0.0);
             else
@@ -1319,7 +452,7 @@ group { name: "elm/panel/left/default";
          script {
             new st[31];
             new Float:vl;
-            get_state(PART:"elm.swallow.event", st, 30, vl);
+            get_state(PART:"efl.swallow.event", st, 30, vl);
             if (!strcmp(st, "default"))
               set_state(PART:"icn", "default", 0.0);
             else
@@ -1327,12 +460,12 @@ group { name: "elm/panel/left/default";
             set_int(is_rtl, 0);
          }
       }
-      program { signal: "elm,action,hide"; source: "elm";
+      program { signal: "efl,action,hide"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          transition: ACCELERATE 0.2;
-         target: "elm.swallow.event";
+         target: "efl.swallow.event";
       }
-      program { signal: "elm,action,hide"; source: "elm";
+      program { signal: "efl,action,hide"; source: "efl";
          script {
             if (get_int(is_rtl) == 0)
               set_state(PART:"icn", "hidden", 0.0);
@@ -1341,19 +474,19 @@ group { name: "elm/panel/left/default";
          }
       }
       program { name: "hide1";
-         signal: "elm,action,hide"; source: "elm";
+         signal: "efl,action,hide"; source: "efl";
          script {
             new x, y, w, h;
             if (get_int(is_rtl) == 0) {
                custom_state(PART:"base", "default", 0.0);
                set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-               get_geometry(PART:"elm.swallow.event", x, y, w, h);
+               get_geometry(PART:"efl.swallow.event", x, y, w, h);
                set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
             } else {
                custom_state(PART:"base", "default", 0.0);
                set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
                set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
-               get_geometry(PART:"elm.swallow.event", x, y, w, h);
+               get_geometry(PART:"efl.swallow.event", x, y, w, h);
                set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
             }
          }
@@ -1364,47 +497,12 @@ group { name: "elm/panel/left/default";
          transition: ACCELERATE 0.3;
          target: "base";
       }
-      program { signal: "elm,action,hide,no_animate"; source: "elm";
-         action: STATE_SET "hidden" 0.0;
-         target: "elm.swallow.event";
-      }
-      program { signal: "elm,action,hide,no_animate"; source: "elm";
-         script {
-            if (get_int(is_rtl) == 0)
-              set_state(PART:"icn", "hidden", 0.0);
-            else
-              set_state(PART:"icn", "default", 0.0);
-         }
-      }
-      program { name: "hide1_no_animate";
-         signal: "elm,action,hide,no_animate"; source: "elm";
-         script {
-            new x, y, w, h;
-            if (get_int(is_rtl) == 0) {
-               custom_state(PART:"base", "default", 0.0);
-               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-               get_geometry(PART:"elm.swallow.event", x, y, w, h);
-               set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
-            } else {
-               custom_state(PART:"base", "default", 0.0);
-               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-               set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
-               get_geometry(PART:"elm.swallow.event", x, y, w, h);
-               set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
-            }
-         }
-         after: "hide2_no_animate";
-      }
-      program { name: "hide2_no_animate";
-         action: STATE_SET "custom" 0.0;
-         target: "base";
-      }
-      program { signal: "elm,action,focus_highlight,show"; source: "elm";
+      program { signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
          transition: ACCELERATE 0.2;
          target: "glow";
       }
-      program { signal: "elm,action,focus_highlight,hide"; source: "elm";
+      program { signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "glow";
@@ -1412,20 +510,21 @@ group { name: "elm/panel/left/default";
    }
 }
 
-group { name: "elm/panel/right/default";
-   inherit: "elm/panel/left/default";
+group { name: "efl/panel/right";
+   data.item: "version" "123";
+   inherit: "efl/panel/left";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.to_x: "elm.swallow.event";
+            rel1.to_x: "efl.swallow.event";
             rel1.offset: 3 0;
             rel2.relative: 1.0 1.0;
             rel2.to_x: "all";
             rel2.offset: -1 -1;
          }
       }
-      part { name: "elm.swallow.event";
+      part { name: "efl.swallow.event";
          description { state: "default" 0.0;
             align: 0.0 0.5;
             rel1.relative: 0.0 0.0;
@@ -1454,15 +553,16 @@ group { name: "elm/panel/right/default";
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 1.0, 0.0);
             set_state_val(PART:"base", STATE_REL2, 2.0, 1.0);
-            get_geometry(PART:"elm.swallow.event", x, y, w, h);
+            get_geometry(PART:"efl.swallow.event", x, y, w, h);
             set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
          }
       }
    }
 }
 
-group { name: "elm/panel/top/default";
-   inherit: "elm/panel/left/default";
+group { name: "efl/panel/top";
+   data.item: "version" "123";
+   inherit: "efl/panel/left";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
@@ -1471,10 +571,10 @@ group { name: "elm/panel/top/default";
             rel1.to_y: "all";
             rel2.relative: 1.0 0.0;
             rel2.to_x: "all";
-            rel2.to_y: "elm.swallow.event";
+            rel2.to_y: "efl.swallow.event";
          }
       }
-      part { name: "elm.swallow.event";
+      part { name: "efl.swallow.event";
          description { state: "default" 0.0;
             min: 30 30; max: 999999 30;
             align: 0.5 1.0;
@@ -1503,63 +603,58 @@ group { name: "elm/panel/top/default";
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 0.0, -1.0);
             set_state_val(PART:"base", STATE_REL2, 1.0, 0.0);
-            get_geometry(PART:"elm.swallow.event", x, y, w, h);
+            get_geometry(PART:"efl.swallow.event", x, y, w, h);
             set_state_val(PART:"base", STATE_REL1_OFFSET, 0, h);
          }
       }
-      program {
-         signal: "elm,action,show"; source: "elm";
+      program { signal: "efl,action,show"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "icn";
       }
-      program {
-         signal: "edje,state,rtl"; 
-         source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          script {
             new st[31];
             new Float:vl;
-            get_state(PART:"elm.swallow.event", st, 30, vl);
+            get_state(PART:"efl.swallow.event", st, 30, vl);
             if (!strcmp(st, "default"))
               set_state(PART:"icn", "default", 0.0);
             else
               set_state(PART:"icn", "hidden", 0.0);
          }
       }
-      program {
-         signal: "edje,state,ltr"; 
-         source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          script {
             new st[31];
             new Float:vl;
-            get_state(PART:"elm.swallow.event", st, 30, vl);
+            get_state(PART:"efl.swallow.event", st, 30, vl);
             if (!strcmp(st, "default"))
               set_state(PART:"icn", "default", 0.0);
             else
               set_state(PART:"icn", "hidden", 0.0);
          }
       }
-      program {
-         signal: "elm,action,hide"; source: "elm";
+      program { signal: "efl,action,hide"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "icn";
       }
    }
 }
 
-group { name: "elm/panel/bottom/default";
-   inherit: "elm/panel/top/default";
+group { name: "efl/panel/bottom";
+   data.item: "version" "123";
+   inherit: "efl/panel/top";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
             rel1.to_x: "all";
-            rel1.to_y: "elm.swallow.event";
+            rel1.to_y: "efl.swallow.event";
             rel2.relative: 1.0 1.0;
             rel2.to_x: "all";
             rel2.to_y: "all";
          }
       }
-      part { name: "elm.swallow.event";
+      part { name: "efl.swallow.event";
          description { state: "default" 0.0;
             align: 0.5 0.0;
             rel1.relative: 0.0 0.0;
@@ -1587,10 +682,10 @@ group { name: "elm/panel/bottom/default";
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 0.0, 1.0);
             set_state_val(PART:"base", STATE_REL2, 1.0, 2.0);
-            get_geometry(PART:"elm.swallow.event", x, y, w, h);
+            get_geometry(PART:"efl.swallow.event", x, y, w, h);
             set_state_val(PART:"base", STATE_REL2_OFFSET, 0, -h);
          }
       }
    }
 }
-#endif
+
