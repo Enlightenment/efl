@@ -112,6 +112,12 @@ group { name: "e/modules/battery/main";
       }
    }
    programs {
+      program { signal: "e,state,ac,on"; source: "e";
+         action: PLAY_SAMPLE "synth-worble-up" 1.0 ALERT;
+      }
+      program { signal: "e,state,ac,off"; source: "e";
+         action: PLAY_SAMPLE "synth-worble-dn" 1.0 ALERT;
+      }
       program { signal: "e,state,charging"; source: "e";
          action: STATE_SET "charging" 0.0;
          target: "fill";
