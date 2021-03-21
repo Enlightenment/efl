@@ -14,32 +14,9 @@ Group: efl/slider/vertical (@since 1.23)
 	 Signal: efl,state,inverted,off
 	 Signal: efl,state,inverted,on
 */
-group { "efl/slider/horizontal";
+group { name: "efl/slider/horizontal";
    data.item: "version" "123";
-   images.image: "slider_run_base_horiz.png" COMP;
-   images.image: "slider_run_bevel_horiz.png" COMP;
-   images.image: "slider_run_base_light_horiz.png" COMP;
-   images.image: "horiz_glow_run.png" COMP;
-   images.image: "horiz_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
-   }
-#define MASK    15
 #define INVERT  16
-#define DISABLE 32
    script {
       public slmode;
       public eval_mode(m) {
@@ -64,8 +41,10 @@ group { "efl/slider/horizontal";
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
+            set_state(PART:"knob", "default", 0.0);
          } else {
             set_state(PART:"event", "disabled", 0.0);
+            set_state(PART:"knob", "disabled", 0.0);
          }
       }
    }
@@ -73,72 +52,53 @@ group { "efl/slider/horizontal";
       part { name: "efl.bar"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 42 21;
-            max: 99999 21;
+            min: 40 20;
+            max: 99999 20;
             align: 1.0 0.5;
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 2 0;
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -1;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.bar";
-            rel2.to: "efl.bar";
-            image.normal: "slider_run_base_horiz.png";
-            image.border: 4 4 0 0;
-            fill.smooth: 0;
-            min: 8 5;
-            max: 99999 5;
+            rel.to: "efl.bar";
+            color: 48 48 48 255;
+            min: 8 4;
+            max: 99999 4;
             fixed: 0 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_horiz.png";
+            color: 56 56 56 255;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "horiz_glow_run.png";
-            rel1.offset: 1 1;
+            color: 53 153 255 255;
             rel1.to: "base";
             rel2.relative: 0.5 1.0;
-            rel2.offset: -1 -2;
-            rel2.to_x: "efl.draggable.slider";
+            rel2.to_x: "knob";
             rel2.to_y: "base";
-            image.border: 0 4 0 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 192 192 192 64;
          }
          description { state: "inverted" 0.0;
-            image.normal: "horiz_glow_run_rev.png";
+            color: 53 153 255 255;
             rel1.relative: 0.5 0.0;
-            rel1.offset: 0 1;
-            rel1.to_x: "efl.draggable.slider";
+            rel1.to_x: "knob";
             rel1.to_y: "base";
-            rel2.offset: -2 -2;
             rel2.to: "base";
-            image.border: 4 0 0 0;
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_horiz.png";
-            image.border: 5 5 0 0;
-            fill.smooth: 0;
+            color: 192 192 192 64;
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
@@ -154,33 +114,23 @@ group { "efl/slider/horizontal";
             rel2.to_x: "efl.bar";
          }
       }
-      part { name: "knob";
-         nomouse;
+      part { name: "knob"; nomouse;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.draggable.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "efl.draggable.slider";
-            rel2.offset: 3 3;
+            rel.to: "efl.draggable.slider";
+            image.normal: "i-radio";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
-      }
-      part { name: "slideevent"; type: RECT; repeat_events: 1;
-         nomouse;
-         scale: 1;
-         ignore_flags: ON_HOLD;
-         dragable.events: "efl.draggable.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "efl.draggable.slider";
-            rel2.to: "efl.draggable.slider";
-            color: 0 0 0 0;
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "event"; type: RECT;
@@ -195,42 +145,36 @@ group { "efl/slider/horizontal";
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "efl.draggable.slider";
+      program { signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
-      program {
-         signal: "mouse,up,1"; source: "efl.draggable.slider";
+      program { signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
-      program {
-         signal: "efl,state,inverted,on"; source: "efl";
+      program { signal: "efl,state,inverted,on"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= INVERT; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,inverted,off"; source: "efl";
+      program { signal: "efl,state,inverted,off"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~INVERT; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -238,37 +182,12 @@ group { "efl/slider/horizontal";
          }
       }
    }
-#undef MASK
 #undef INVERT
-#undef DISABLE
 }
 
-group { "efl/slider/vertical";
+group { name: "efl/slider/vertical";
    data.item: "version" "123";
-   images.image: "slider_run_base_vert.png" COMP;
-   images.image: "slider_run_bevel_vert.png" COMP;
-   images.image: "slider_run_base_light_vert.png" COMP;
-   images.image: "vert_glow_run.png" COMP;
-   images.image: "vert_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
-   }
-#define MASK    15
 #define INVERT  16
-#define DISABLE 32
    script {
       public slmode;
       public eval_mode(m) {
@@ -293,8 +212,10 @@ group { "efl/slider/vertical";
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
+            set_state(PART:"knob", "default", 0.0);
          } else {
             set_state(PART:"event", "disabled", 0.0);
+            set_state(PART:"knob", "disabled", 0.0);
          }
       }
    }
@@ -302,72 +223,53 @@ group { "efl/slider/vertical";
       part { name: "efl.bar"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 42;
-            max: 21 99999;
+            min: 20 40;
+            max: 20 99999;
             align: 0.5 1.0;
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 0 2;
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.bar";
-            rel2.to: "efl.bar";
-            image.normal: "slider_run_base_vert.png";
-            image.border: 0 0 4 4;
-            fill.smooth: 0;
-            min: 5 8;
-            max: 5 99999;
+            rel.to: "efl.bar";
+            color: 48 48 48 255;
+            min: 4 8;
+            max: 4 99999;
             fixed: 1 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_vert.png";
+            color: 56 56 56 255;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "vert_glow_run.png";
-            rel1.relative: 0.0 0.5;
-            rel1.offset: 1 0;
-            rel1.to_y: "efl.draggable.slider";
-            rel1.to_x: "base";
-            rel2.offset: -2 -2;
-            rel2.to: "base";
-            image.border: 0 0 4 0;
+            color: 53 153 255 255;
+            rel1.to: "base";
+            rel2.relative: 1.0 0.5;
+            rel2.to_y: "knob";
+            rel2.to_x: "base";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 192 192 192 64;
          }
          description { state: "inverted" 0.0;
-            image.normal: "vert_glow_run_rev.png";
-            rel1.offset: 1 1;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.5;
-            rel2.offset: -2 -1;
-            rel2.to_y: "efl.draggable.slider";
-            rel2.to_x: "base";
-            image.border: 0 0 0 4;
+            color: 53 153 255 255;
+            rel1.relative: 0.0 0.5;
+            rel1.to_y: "knob";
+            rel1.to_x: "base";
+            rel2.to: "base";
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_vert.png";
-            image.border: 0 0 5 5;
-            fill.smooth: 0;
+            color: 192 192 192 64;
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
@@ -378,38 +280,28 @@ group { "efl/slider/vertical";
             max: 16 16;
             fixed: 1 1;
             rel1.relative: 0.0 0.5;
-            rel1.to_x: "efl.bar";
+            rel1.to_y: "efl.bar";
             rel2.relative: 1.0 0.5;
-            rel2.to_x: "efl.bar";
+            rel2.to_y: "efl.bar";
          }
       }
-      part { name: "knob";
-         nomouse;
+      part { name: "knob"; nomouse;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.draggable.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "efl.draggable.slider";
-            rel2.offset: 3 3;
+            rel.to: "efl.draggable.slider";
+            image.normal: "i-radio";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
-      }
-      part { name: "slideevent"; type: RECT; repeat_events: 1;
-         nomouse;
-         scale: 1;
-         ignore_flags: ON_HOLD;
-         dragable.events: "efl.draggable.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "efl.draggable.slider";
-            rel2.to: "efl.draggable.slider";
-            color: 0 0 0 0;
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "event"; type: RECT;
@@ -424,42 +316,36 @@ group { "efl/slider/vertical";
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "efl.draggable.slider";
+      program { signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
-      program {
-         signal: "mouse,up,1"; source: "efl.draggable.slider";
+      program { signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
-      program {
-         signal: "efl,state,inverted,on"; source: "efl";
+      program { signal: "efl,state,inverted,on"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= INVERT; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,inverted,off"; source: "efl";
+      program { signal: "efl,state,inverted,off"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~INVERT; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
@@ -467,141 +353,95 @@ group { "efl/slider/vertical";
          }
       }
    }
-#undef MASK
 #undef INVERT
-#undef DISABLE
 }
 
 //Range
-
-group { "efl/slider_interval/horizontal";
+group { name: "efl/slider_interval/horizontal";
    data.item: "version" "123";
-   images.image: "slider_run_base_horiz.png" COMP;
-   images.image: "slider_run_bevel_horiz.png" COMP;
-   images.image: "slider_run_base_light_horiz.png" COMP;
-   images.image: "horiz_glow_run.png" COMP;
-   images.image: "horiz_glow_range.png" COMP;
-   images.image: "horiz_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
-   }
-#define MASK    15
-#define DISABLE 32
    script {
       public slmode;
-      public g_timer_id;
-      public update_glow()
-        {
-           new x1,y1,w1,h1;
-           new x2,y2,w2,h2;
-           get_geometry(PART:"knob", x1, y1, w1, h1);
-           get_geometry(PART:"knob2", x2, y2, w2, h2);
-           if(x2 < x1)
-             set_state(PART:"glow", "range_reverse", 0.0);
-           else
-             set_state(PART:"glow", "default", 0.0);
-        }
+      public update_glow() {
+         new Float:x1, Float:y1;
+         new Float:x2, Float:y2;
+         get_drag(PART:"efl.draggable.slider", x1, y1);
+         get_drag(PART:"efl.draggable2.slider", x2, y2);
+         if (x2 < x1)
+           set_state(PART:"glow", "range_reverse", 0.0);
+         else
+           set_state(PART:"glow", "default", 0.0);
+      }
       public eval_mode(m) {
          new d = m & DISABLE;
          if (d) {
-              new x1,y1,w1,h1;
-              new x2,y2,w2,h2;
-              get_geometry(PART:"knob", x1, y1, w1, h1);
-              get_geometry(PART:"knob2", x2, y2, w2, h2);
-              set_state(PART:"base", "disabled", 0.0);
-              if(x2 < x1)
-                set_state(PART:"glow", "disabled_range_reverse", 0.0);
-              else
-                set_state(PART:"glow", "disabled_range", 0.0);
+            new Float:x1, Float:y1;
+            new Float:x2, Float:y2;
+            get_drag(PART:"efl.draggable.slider", x1, y1);
+            get_drag(PART:"efl.draggable2.slider", x2, y2);
+            set_state(PART:"base", "disabled", 0.0);
+            if (x2 < x1)
+              set_state(PART:"glow", "disabled_range_reverse", 0.0);
+            else
+              set_state(PART:"glow", "disabled_range", 0.0);
          }
-         if (!d) {
-            set_state(PART:"event", "default", 0.0);
-         } else {
-            set_state(PART:"event", "disabled", 0.0);
-         }
+         if (!d)
+           set_state(PART:"event", "default", 0.0);
+         else
+           set_state(PART:"event", "disabled", 0.0);
       }
    }
    parts {
       part { name: "efl.bar"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 42 21;
-            max: 99999 21;
+            min: 40 20;
+            max: 99999 20;
             align: 1.0 0.5;
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 2 0;
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -1;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.bar";
-            rel2.to: "efl.bar";
-            image.normal: "slider_run_base_horiz.png";
-            image.border: 4 4 0 0;
-            fill.smooth: 0;
-            min: 8 5;
-            max: 99999 5;
+            rel.to: "efl.bar";
+            color: 48 48 48 255;
+            min: 8 4;
+            max: 99999 4;
             fixed: 0 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_horiz.png";
+            color: 56 56 56 255;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "horiz_glow_range.png";
-            rel1.relative: 0.5 1.0;
-            rel1.offset: -1 -2;
-            rel1.to_x: "efl.draggable.slider";
-            rel1.to_y: "base";
+            color: 53 153 255 255;
+            rel1.relative: 0.5 0.0;
             rel2.relative: 0.5 1.0;
-            rel2.offset: -1 -2;
-            rel2.to_x: "efl.draggable2.slider";
+            rel1.to_x: "knob";
+            rel2.to_x: "knob2";
+            rel1.to_y: "base";
             rel2.to_y: "base";
-            fixed: 0 1;
-            image.border: 0 4 0 0;
          }
          description { state: "disabled_range" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 192 192 192 64;
          }
          description { state: "range_reverse" 0.0;
             inherit: "default" 0.0;
-            rel1.to_x: "efl.draggable2.slider";
-            rel2.to_x: "efl.draggable.slider";
+            color: 53 153 255 255;
+            rel1.to_x: "knob2";
+            rel2.to_x: "knob";
          }
          description { state: "disabled_range_reverse" 0.0;
             inherit: "range_reverse" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_horiz.png";
-            image.border: 5 5 0 0;
-            fill.smooth: 0;
+            color: 192 192 192 64;
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
@@ -617,37 +457,26 @@ group { "efl/slider_interval/horizontal";
             rel2.to_x: "efl.bar";
          }
       }
-      part { name: "knob";
-         nomouse;
+      part { name: "knob"; nomouse;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.draggable.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "efl.draggable.slider";
-            rel2.offset: 3 3;
+            rel.to: "efl.draggable.slider";
+            image.normal: "i-radio";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
-      }
-      part { name: "slideevent"; type: RECT; repeat_events: 1;
-         nomouse;
-         scale: 1;
-         ignore_flags: ON_HOLD;
-         dragable.events: "efl.draggable.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "efl.draggable.slider";
-            rel2.to: "efl.draggable.slider";
-            color: 0 0 0 0;
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "efl.draggable2.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
@@ -663,33 +492,23 @@ group { "efl/slider_interval/horizontal";
             rel2.to_x: "efl.bar";
          }
       }
-      part { name: "knob2";
-         nomouse;
+      part { name: "knob2"; nomouse;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.draggable2.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "efl.draggable2.slider";
-            rel2.offset: 3 3;
+            rel.to: "efl.draggable2.slider";
+            image.normal: "i-radio";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
-      }
-      part { name: "slideevent2"; type: RECT; repeat_events: 1;
-         nomouse;
-         scale: 1;
-         ignore_flags: ON_HOLD;
-         dragable.events: "efl.draggable2.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "efl.draggable2.slider";
-            rel2.to: "efl.draggable2.slider";
-            color: 0 0 0 0;
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "event"; type: RECT;
@@ -704,172 +523,128 @@ group { "efl/slider_interval/horizontal";
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "efl.draggable.slider";
+      program { signal: "drag"; source: "efl.draggable*";
+         script { update_glow(); }
+      }
+      program { signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
-      program {
-         signal: "mouse,up,1"; source: "efl.draggable.slider";
+      program { signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
-      program {
-         signal: "drag";
-         source: "efl.draggable*";
-         script {
-            update_glow();
-         }
+      program { signal: "mouse,down,1"; source: "efl.draggable2.slider";
+         action:  STATE_SET "clicked" 0.0;
+         target: "knob2";
       }
-      program {
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "mouse,up,1"; source: "efl.draggable2.slider";
+         action:  STATE_SET "default" 0.0;
+         target: "knob2";
+      }
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
             eval_mode(m);
+            update_glow();
          }
       }
    }
-#undef MASK
-#undef DISABLE
-}
-
-group { "efl/slider_interval/vertical";
-   data.item: "version" "123";
-   images.image: "slider_run_base_vert.png" COMP;
-   images.image: "slider_run_bevel_vert.png" COMP;
-   images.image: "slider_run_base_light_vert.png" COMP;
-   images.image: "vert_glow_run.png" COMP;
-   images.image: "vert_glow_range.png" COMP;
-   images.image: "vert_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
    }
-#define MASK    15
-#define DISABLE 32
+
+group { name: "efl/slider_interval/vertical";
+   data.item: "version" "123";
    script {
       public slmode;
-      public g_timer_id;
-      public update_glow()
-        {
-           new x1,y1,w1,h1;
-           new x2,y2,w2,h2;
-           get_geometry(PART:"knob", x1, y1, w1, h1);
-           get_geometry(PART:"knob2", x2, y2, w2, h2);
-           if(y2 < y1)
-             set_state(PART:"glow", "range_reverse", 0.0);
-           else
-             set_state(PART:"glow", "default", 0.0);
-        }
+      public update_glow() {
+         new Float:x1, Float:y1;
+         new Float:x2, Float:y2;
+         get_drag(PART:"efl.draggable.slider", x1, y1);
+         get_drag(PART:"efl.draggable2.slider", x2, y2);
+         if (y2 < y1)
+           set_state(PART:"glow", "range_reverse", 0.0);
+         else
+           set_state(PART:"glow", "default", 0.0);
+      }
       public eval_mode(m) {
          new d = m & DISABLE;
          if (d) {
-              new x1,y1,w1,h1;
-              new x2,y2,w2,h2;
-              get_geometry(PART:"knob", x1, y1, w1, h1);
-              get_geometry(PART:"knob2", x2, y2, w2, h2);
-              set_state(PART:"base", "disabled", 0.0);
-              if(y2 < y1)
-                set_state(PART:"glow", "disabled_range_reverse", 0.0);
-              else
-                set_state(PART:"glow", "disabled_range", 0.0);
+            new Float:x1, Float:y1;
+            new Float:x2, Float:y2;
+            get_drag(PART:"efl.draggable.slider", x1, y1);
+            get_drag(PART:"efl.draggable2.slider", x2, y2);
+            set_state(PART:"base", "disabled", 0.0);
+            if (y2 < y1)
+              set_state(PART:"glow", "disabled_range_reverse", 0.0);
+            else
+              set_state(PART:"glow", "disabled_range", 0.0);
          }
-         if (!d) {
-            set_state(PART:"event", "default", 0.0);
-         } else {
-            set_state(PART:"event", "disabled", 0.0);
-         }
+         if (!d)
+           set_state(PART:"event", "default", 0.0);
+         else
+           set_state(PART:"event", "disabled", 0.0);
       }
    }
    parts {
       part { name: "efl.bar"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 42;
-            max: 21 99999;
+            min: 20 40;
+            max: 20 99999;
             align: 0.5 1.0;
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 0 2;
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.bar";
-            rel2.to: "efl.bar";
-            image.normal: "slider_run_base_vert.png";
-            image.border: 0 0 4 4;
-            fill.smooth: 0;
-            min: 5 8;
-            max: 5 99999;
+            rel.to: "efl.bar";
+            color: 48 48 48 255;
+            min: 4 8;
+            max: 4 99999;
             fixed: 1 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_vert.png";
+            color: 56 56 56 255;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "vert_glow_range.png";
-            rel1.relative: 0.5 1.0;
-            rel1.offset: -1 -2;
+            color: 53 153 255 255;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
             rel1.to_x: "base";
-            rel1.to_y: "efl.draggable.slider";
-            rel2.relative: 0.5 1.0;
-            rel2.offset: -1 -2;
+            rel1.to_y: "knob";
             rel2.to_x: "base";
-            rel2.to_y: "efl.draggable2.slider";
-            fixed: 1 0;
-            image.border: 0 4 0 0;
+            rel2.to_y: "knob2";
          }
          description { state: "disabled_range" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 192 192 192 64;
          }
          description { state: "range_reverse" 0.0;
             inherit: "default" 0.0;
-            rel1.to_y: "efl.draggable2.slider";
-            rel2.to_y: "efl.draggable.slider";
+            color: 53 153 255 255;
+            rel1.to_y: "knob2";
+            rel2.to_y: "knob";
          }
          description { state: "disabled_range_reverse" 0.0;
             inherit: "range_reverse" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_vert.png";
-            image.border: 0 0 5 5;
-            fill.smooth: 0;
+            color: 192 192 192 64;
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
@@ -880,42 +655,31 @@ group { "efl/slider_interval/vertical";
             max: 16 16;
             fixed: 1 1;
             rel1.relative: 0.0 0.5;
-            rel1.to_x: "efl.bar";
+            rel1.to_y: "efl.bar";
             rel2.relative: 1.0 0.5;
-            rel2.to_x: "efl.bar";
+            rel2.to_y: "efl.bar";
          }
       }
-      part { name: "knob";
-         nomouse;
+      part { name: "knob"; nomouse;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.draggable.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "efl.draggable.slider";
-            rel2.offset: 3 3;
+            rel.to: "efl.draggable.slider";
+            image.normal: "i-radio";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
-      }
-      part { name: "slideevent"; type: RECT; repeat_events: 1;
-         nomouse;
-         scale: 1;
-         ignore_flags: ON_HOLD;
-         dragable.events: "efl.draggable.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "efl.draggable.slider";
-            rel2.to: "efl.draggable.slider";
-            color: 0 0 0 0;
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "efl.draggable2.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
@@ -926,38 +690,28 @@ group { "efl/slider_interval/vertical";
             max: 16 16;
             fixed: 1 1;
             rel1.relative: 0.0 0.5;
-            rel1.to_x: "efl.bar";
+            rel1.to_y: "efl.bar";
             rel2.relative: 1.0 0.5;
-            rel2.to_x: "efl.bar";
+            rel2.to_y: "efl.bar";
          }
       }
-      part { name: "knob2";
-         nomouse;
+      part { name: "knob2"; nomouse;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "efl.draggable2.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "efl.draggable2.slider";
-            rel2.offset: 3 3;
+            rel.to: "efl.draggable2.slider";
+            image.normal: "i-radio";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
-      }
-      part { name: "slideevent2"; type: RECT; repeat_events: 1;
-         nomouse;
-         scale: 1;
-         ignore_flags: ON_HOLD;
-         dragable.events: "efl.draggable2.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "efl.draggable2.slider";
-            rel2.to: "efl.draggable2.slider";
-            color: 0 0 0 0;
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "event"; type: RECT;
@@ -972,40 +726,39 @@ group { "efl/slider_interval/vertical";
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "efl.draggable.slider";
+      program { signal: "drag"; source: "efl.draggable*";
+         script { update_glow(); }
+      }
+      program { signal: "mouse,down,1"; source: "efl.draggable.slider";
          action:  STATE_SET "clicked" 0.0;
          target: "knob";
       }
-      program {
-         signal: "mouse,up,1"; source: "efl.draggable.slider";
+      program { signal: "mouse,up,1"; source: "efl.draggable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
       }
-      program {
-         signal: "drag";
-         source: "efl.draggable*";
-         script {
-            update_glow();
-         }
+      program { signal: "mouse,down,1"; source: "efl.draggable2.slider";
+         action:  STATE_SET "clicked" 0.0;
+         target: "knob2";
       }
-      program {
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "mouse,up,1"; source: "efl.draggable2.slider";
+         action:  STATE_SET "default" 0.0;
+         target: "knob2";
+      }
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m |= DISABLE; set_int(slmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(slmode);
             m &= ~DISABLE; set_int(slmode, m);
             eval_mode(m);
+            update_glow();
          }
       }
    }
-#undef MASK
-#undef DISABLE
 }
