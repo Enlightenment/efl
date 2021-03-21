@@ -56,7 +56,7 @@ group { name: "efl/scroller/panel/left";
             visible: 1;
          }
       }
-      part { name: "efl.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel.to: "efl.panel_area";
             visible: 0;
@@ -73,14 +73,14 @@ group { name: "efl/scroller/panel/left";
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
       program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
    }
 }
@@ -139,7 +139,7 @@ group { name: "efl/scroller/panel/right";
             visible: 1;
          }
       }
-      part { name: "efl.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -157,14 +157,14 @@ group { name: "efl/scroller/panel/right";
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
       program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
    }
 }
@@ -223,7 +223,7 @@ group { name: "efl/scroller/panel/top";
             visible: 1;
          }
       }
-      part { name: "efl.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -241,14 +241,14 @@ group { name: "efl/scroller/panel/top";
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
       program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
    }
 }
@@ -299,7 +299,7 @@ group { name: "efl/scroller/panel/bottom";
             visible: 1;
          }
       }
-      part { name: "efl.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel.to: "efl.panel_area";
             visible: 0;
@@ -316,14 +316,14 @@ group { name: "efl/scroller/panel/bottom";
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
       program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
-         target: "efl.swallow.content";
+         target: "efl.content";
       }
    }
 }
