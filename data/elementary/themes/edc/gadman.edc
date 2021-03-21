@@ -1,3 +1,5 @@
+// FIXME: FLAT: improve for flat
+
 group { name: "e/gadman/popup";
    parts {
       part { name: "bg"; type: RECT;
@@ -51,51 +53,43 @@ group { name: "e/gadman/full_bg";
          }
       }
    }
-   programs {   
-      program {
-         signal: "e,state,visibility,show"; source: "e";
+   programs {
+      program { signal: "e,state,visibility,show"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "bg";
       }
-      program {
-         signal: "e,state,visibility,show,now"; source: "e";
+      program { signal: "e,state,visibility,show,now"; source: "e";
          action: STATE_SET "visible" 0.0;
          target: "bg";
       }
-      program {
-         signal: "e,state,visibility,hide"; source: "e";
+      program { signal: "e,state,visibility,hide"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "bg";
          after: "hide_stop";
       }
-      program {
-         signal: "e,state,visibility,hide,now"; source: "e";
+      program { signal: "e,state,visibility,hide,now"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "bg";
          after: "hide_stop";
       }
-      program {
-         signal: "e,state,visibility,show,custom"; source: "e";
+      program { signal: "e,state,visibility,show,custom"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "custom_bg";
       }
-      program {
-         signal: "e,state,visibility,show,custom,now"; source: "e";
+      program { signal: "e,state,visibility,show,custom,now"; source: "e";
          action: STATE_SET "visible" 0.0;
          target: "custom_bg";
       }
-      program {
-         signal: "e,state,visibility,hide,custom"; source: "e";
+      program { signal: "e,state,visibility,hide,custom"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "custom_bg";
          after: "hide_stop";
       }
-      program {
-         signal: "e,state,visibility,hide,custom,now"; source: "e";
+      program { signal: "e,state,visibility,hide,custom,now"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "custom_bg";
          after: "hide_stop";
@@ -328,34 +322,6 @@ group { name: "e/gadman/control";
             visible: 0;
          }
       }
-      part { name: "resizeh1"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            rel2.relative: 0.5 1.0;
-            align: 0.0 0.5;
-            max: 7 99999;
-            color: 0 0 0 0;
-         }
-         description { state: "off" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "resizeh2"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            rel1.relative: 0.5 0.0;
-            align: 1.0 0.5;
-            max: 7 99999;
-            color: 0 0 0 0;
-         }
-         description { state: "off" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
       part { name: "resizev1"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "base";
@@ -384,49 +350,69 @@ group { name: "e/gadman/control";
             visible: 0;
          }
       }
+      part { name: "resizeh1"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel2.relative: 0.5 1.0;
+            align: 0.0 0.5;
+            max: 7 99999;
+            color: 0 0 0 0;
+         }
+         description { state: "off" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "resizeh2"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel1.relative: 0.5 0.0;
+            align: 1.0 0.5;
+            max: 7 99999;
+            color: 0 0 0 0;
+         }
+         description { state: "off" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
    }
    programs {
-      program {
-         signal: "e,state,hsize,on"; source: "e";
+      program { signal: "e,state,hsize,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "resizeh1";
          target: "resizeh2";
       }
-      program {
-         signal: "e,state,hsize,off"; source: "e";
+      program { signal: "e,state,hsize,off"; source: "e";
          action: STATE_SET "off" 0.0;
          target: "resizeh1";
          target: "resizeh2";
       }
-      program {
-         signal: "e,state,vsize,on"; source: "e";
+      program { signal: "e,state,vsize,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "resizev1";
          target: "resizev2";
       }
-      program {
-         signal: "e,state,vsize,off"; source: "e";
+      program { signal: "e,state,vsize,off"; source: "e";
          action: STATE_SET "off" 0.0;
          target: "resizev1";
          target: "resizev2";
       }
-      program {
-         signal: "e,state,move,on"; source: "e";
+      program { signal: "e,state,move,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "move";
       }
-      program {
-         signal: "e,state,move,off"; source: "e";
+      program { signal: "e,state,move,off"; source: "e";
          action: STATE_SET "off" 0.0;
          target: "move";
       }
-      program {
-         signal: "e,state,focused"; source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "active" 0.0;
          target: "base";
       }
-      program {
-         signal: "e,state,unfocused"; source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -451,8 +437,7 @@ group { name: "e/gadman/control";
          target: _DST2; \
          after: _NAME"1"; \
       } \
-      program { \
-         signal: "mouse,out"; source: _SRC; \
+      program { signal: "mouse,out"; source: _SRC; \
          action: ACTION_STOP; \
          target: _NAME"0"; \
          target: _NAME"1"; \
@@ -468,25 +453,22 @@ group { name: "e/gadman/control";
       ARROWPULSE("pulse2", "resizev2", "av20", "av21")
       ARROWPULSE("pulse3", "resizeh1", "ah10", "ah11")
       ARROWPULSE("pulse4", "resizeh2", "ah20", "ah21")
-#undef ARROWPULSE              
+#undef ARROWPULSE
 #define PROGSET(_SRC, _ACT) \
-      program { \
-         signal: "mouse,down,1"; source: _SRC; \
+      program { signal: "mouse,down,1"; source: _SRC; \
          action: SIGNAL_EMIT "e,action,"_ACT",start" ""; \
       } \
-      program { \
-         signal: "mouse,up,1"; source: _SRC; \
+      program { signal: "mouse,up,1"; source: _SRC; \
          action: SIGNAL_EMIT "e,action,"_ACT",stop" ""; \
       } \
-      program { \
-         signal: "mouse,move"; source: _SRC; \
+      program { signal: "mouse,move"; source: _SRC; \
          action: SIGNAL_EMIT "e,action,"_ACT",go"  ""; \
       }
       PROGSET("move", "move")
-      PROGSET("resizeh1", "resize,left")
-      PROGSET("resizeh2", "resize,right")
       PROGSET("resizev1", "resize,up")
       PROGSET("resizev2", "resize,down")
+      PROGSET("resizeh1", "resize,left")
+      PROGSET("resizeh2", "resize,right")
 #undef PROGSET
    }
 }
