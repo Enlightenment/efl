@@ -70,7 +70,6 @@ Group: efl/spin_button/vertical/inc_button (@since 1.23)
 */
 group { "efl/spin_button/horizontal";
    data.item: "version" "123";
-   images.image: "vert_bar_inset.png" COMP;
    parts {
       rect { "clip";
          desc { "default";
@@ -78,19 +77,8 @@ group { "efl/spin_button/horizontal";
          }
       }
       rect { "bg";
-         scale;
          desc { "default";
-            color_class: "spinner_bg";
-         }
-      }
-      image { "inset"; nomouse;
-         desc { "default";
-            rel1.offset: 0 1;
-            rel2.offset: -1 -2;
-            image.normal: "vert_bar_inset.png";
-            image.border: 1 1 8 6;
-            image.middle: 0;
-            fill.smooth: 0;
+            color: DARK_GREY_BG_COLOR;
          }
       }
       rect { "access";
@@ -98,8 +86,7 @@ group { "efl/spin_button/horizontal";
          desc { "default";
             fixed: 1 1;
             color: 0 0 0 0;
-            rel1.to: "inset";
-            rel2.to: "inset";
+            rel.to: "bg";
             hid;
          }
          desc { "active";
@@ -111,8 +98,7 @@ group { "efl/spin_button/horizontal";
          clip: "clip";
          desc { "default";
             fixed: 1 1;
-            rel1.to: "efl.text_button";
-            rel2.to: "efl.text_button";
+            rel.to: "efl.text_button";
             hid;
          }
          desc { "active";
@@ -123,33 +109,36 @@ group { "efl/spin_button/horizontal";
       swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
-            fixed: 1 0;
+            fixed: 1 1;
             align: 0.0 0.5;
-            min: 15 15;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            min: 23 23;
+            max: 23 23;
          }
       }
       swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
-            fixed: 1 0;
+            fixed: 1 1;
             align: 1.0 0.5;
-            min: 15 15;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            min: 23 23;
+            max: 23 23;
          }
       }
       swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             vis;
-            rel1.to_y: "inset";
+            rel1.to_y: "bg";
             rel1.to_x: "efl.dec_button";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 1;
-            rel2.to_y: "inset";
+            rel1.offset: 4 4;
+            rel2.to_y: "bg";
             rel2.to_x: "efl.inc_button";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -2 -2;
+            rel2.offset: -5 -5;
+            min: 23 0;
+            max: -1 -1;
+            offscale;
          }
          desc { "inactive";
             inherit: "default";
@@ -170,51 +159,37 @@ group { "efl/spin_button/horizontal";
       }
    }
    programs {
-      program { "entry_active";
-         signal: "efl,entry,visible,on";
+      program { "entry_active"; signal: "efl,entry,visible,on";
          source: "efl";
          action: STATE_SET "active";
          target: "efl.entry";
       }
-      program { "entry_inactive";
-         signal: "efl,entry,visible,off";
+      program { "entry_inactive"; signal: "efl,entry,visible,off";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.entry";
       }
-      program { "text_button_active";
-         signal: "efl,button,visible,on";
-         source: "efl";
+      program { signal: "efl,button,visible,on"; source: "efl";
          action: STATE_SET "default";
          target: "efl.text_button";
       }
-      program { "text_button_inactive";
-         signal: "efl,button,visible,off";
-         source: "efl";
+      program { signal: "efl,button,visible,off"; source: "efl";
          action: STATE_SET "inactive";
          target: "efl.text_button";
       }
-      program { "access_activate";
-         signal: "efl,state,access,active";
-         source: "efl";
+      program { signal: "efl,state,access,active"; source: "efl";
          action:  STATE_SET "active";
          target: "access";
       }
-      program { "access_inactivate";
-         signal: "efl,state,access,inactive";
-         source: "efl";
+      program { signal: "efl,state,access,inactive"; source: "efl";
          action:  STATE_SET "default";
          target: "access";
       }
-      program { "disable";
-         signal: "efl,state,disabled";
-         source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled";
          target: "disabler";
       }
-      program { "enable";
-         signal: "efl,state,enabled";
-         source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default";
          target: "disabler";
       }
@@ -225,45 +200,39 @@ group { "efl/spin_button/vertical";
    inherit: "efl/spin_button/horizontal";
    data.item: "version" "123";
    parts {
-      image { "inset"; nomouse;
+      part { name: "bg";
          desc { "default";
-            min: 40 150;
+            min: 40 69;
          }
       }
       swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
-            rel.to: "inset";
+            rel.to: "bg";
             align: 0.5 0.0;
-            min: 40 40;
-            max: 40 40;
-            fixed: 1 1;
          }
       }
       swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
-            rel.to: "inset";
+            rel.to: "bg";
             align: 0.5 1.0;
-            min: 40 40;
-            max: 40 40;
-            fixed: 1 1;
          }
       }
       swallow { "efl.text_button"; required;
          scale;
          desc { "default";
-            rel.to_x: "inset";
+            rel.to_x: "bg";
             rel1 {
+               to_x: "bg";
                to_y: "efl.inc_button";
                relative: 0.0 1.0;
             }
             rel2 {
+               to_x: "bg";
                to_y: "efl.dec_button";
                relative: 1.0 0.0;
             }
-            min: 0 70;
-            max: -1 70;
             fixed: 0 1;
          }
          desc { "inactive";
@@ -276,9 +245,6 @@ group { "efl/spin_button/vertical";
 
 group { "efl/spin_button/horizontal/inc_button";
    data.item: "version" "123";
-   images.image: "sym_right_light_normal.png" COMP;
-   images.image: "sym_right_glow_normal.png" COMP;
-   images.image: "sym_right_dark_normal.png" COMP;
    script {
       public mouse_down = 0;
       public multi_down = 0;
@@ -289,27 +255,30 @@ group { "efl/spin_button/horizontal/inc_button";
          description { state: "default" 0.0;
             min: 15 15;
             max: 15 15;
-            color_class: "F032L1";
-            image.normal: "sym_right_light_normal.png";
+            image.normal: "i-arrow-r";
+            color: 160 160 160 255;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            image.normal: "sym_right_glow_normal.png";
+            color: 255 255 255 255;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "sym_right_dark_normal.png";
+            color: 96 96 96 255;
          }
       }
-      part { name: "over";
-         type: RECT;
+      part { name: "over"; type: RECT;
          repeat_events: 1;
+         scale;
          description { state: "default" 0.0;
             color: 0 0 0 0;
+            min: 23 23;
          }
       }
-      part { name: "disabler";
-         type: RECT;
+      part { name: "disabler"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
             visible: 0;
@@ -321,9 +290,7 @@ group { "efl/spin_button/horizontal/inc_button";
       }
    }
    programs {
-      program { name: "button_press";
-         signal: "mouse,down,1";
-         source: "over";
+      program { signal: "mouse,down,1"; source: "over";
          script {
             if ((get_int(multi_down) == 0) &&
                 (get_int(mouse_down) == 0)) {
@@ -340,9 +307,7 @@ group { "efl/spin_button/horizontal/inc_button";
          action: STATE_SET "pressed" 0.0;
          target: "arrow.image";
       }
-      program { name: "button_unpress";
-         signal: "mouse,up,1";
-         source: "over";
+      program { signal: "mouse,up,1"; source: "over";
          script {
             if (get_int(mouse_down) == 1) {
                   set_int(mouse_down, 0);
@@ -358,31 +323,23 @@ group { "efl/spin_button/horizontal/inc_button";
          action: STATE_SET "default" 0.0;
          target: "arrow.image";
       }
-      program { name: "button_click";
-         signal: "mouse,clicked,1";
-         source: "over";
+      program { signal: "mouse,clicked,1"; source: "over";
          script {
             if (get_int(multi_down) == 0) {
               run_program(PROGRAM:"button_click2");
             }
          }
       }
-      program { name: "action_unpressed";
-         signal: "efl,action,unpressed";
-         source: "efl";
+      program { signal: "efl,action,unpressed"; source: "efl";
          after: "button_unpress_anim";
       }
-      program { name: "action_pressed";
-         signal: "efl,action,pressed";
-         source: "efl";
+      program { signal: "efl,action,pressed"; source: "efl";
          after: "button_press_anim";
       }
       program { name: "button_click2";
          action: SIGNAL_EMIT "efl,action,click" "";
       }
-      program { name: "access_pressed";
-         signal: "efl,state,animation,activated";
-         source: "efl";
+      program { signal: "efl,state,animation,activated"; source: "efl";
          action: STATE_SET "pressed" 0.0;
          target: "arrow.image";
          after: "access_pressed_anim";
@@ -392,32 +349,22 @@ group { "efl/spin_button/horizontal/inc_button";
          transition: DECELERATE 0.1;
          target: "arrow.image";
       }
-      program { name: "disable";
-         signal: "efl,state,disabled";
-         source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "arrow.image";
          target: "disabler";
       }
-      program { name: "enable";
-         signal: "efl,state,enabled";
-         source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "arrow.image";
          target: "disabler";
       }
-      program {
-         name: "multi_down";
-         signal: "efl,action,multi,down";
-         source: "efl";
+      program { signal: "efl,action,multi,down"; source: "efl";
          script {
             set_int(multi_down, 1);
          }
       }
-      program {
-         name: "multi_up";
-         signal: "efl,action,multi,up";
-         source: "efl";
+      program { signal: "efl,action,multi,up"; source: "efl";
          script {
             set_int(multi_down, 0);
          }
@@ -434,24 +381,16 @@ group { "efl/spin_button/horizontal/entry";
 group { "efl/spin_button/horizontal/dec_button";
    inherit: "efl/spin_button/horizontal/inc_button";
    data.item: "version" "123";
-   images.image: "sym_left_light_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_left_dark_normal.png" COMP;
    parts {
       part { name: "arrow.image";
-         scale: 1;
          description { state: "default" 0.0;
-            min: 15 15;
-            max: 15 15;
-            image.normal: "sym_left_light_normal.png";
+            image.normal: "i-arrow-l";
          }
          description { state: "pressed" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
          }
          description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "sym_left_dark_normal.png";
+            image.normal: "i-arrow-l";
          }
       }
    }
@@ -467,15 +406,14 @@ group { "efl/spin_button/horizontal/text_button";
          description { state: "default" 0.0;
          }
       }
-      part { name: "efl.text";
-         type: TEXT;
+      part { name: "efl.text"; type: TEXT;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color: FN_COL_DEFAULT;
-            color_class: "spinner";
-            rel1.to: "bg";
-            rel2.to: "bg";
+            color: 160 160 160 255;
+            rel.to: "bg";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
             text { font: FN; size: 10;
                min: 1 1;
                text_class: "spinner";
@@ -483,20 +421,17 @@ group { "efl/spin_button/horizontal/text_button";
             }
          }
          description { state: "disabled" 0.0;
-           inherit: "default" 0.0 ;
-           color: FN_COL_DISABLE;
-           color_class: "spinner_disabled";
+            inherit: "default" 0.0 ;
+            color: 96 96 96 255;
          }
       }
-      part { name: "over";
-         type: RECT;
+      part { name: "over"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
-      part { name: "disabler";
-         type: RECT;
+      part { name: "disabler"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
             visible: 0;
@@ -508,9 +443,7 @@ group { "efl/spin_button/horizontal/text_button";
       }
    }
    programs {
-      program { name: "button_click";
-         signal: "mouse,clicked,1";
-         source: "over";
+      program { signal: "mouse,clicked,1"; source: "over";
          script {
             run_program(PROGRAM:"button_click2");
          }
@@ -518,16 +451,12 @@ group { "efl/spin_button/horizontal/text_button";
       program { name: "button_click2";
          action: SIGNAL_EMIT "efl,action,click" "";
       }
-      program { name: "disable";
-         signal: "efl,state,disabled";
-         source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "disabler";
          target: "efl.text";
       }
-      program { name: "enable";
-         signal: "efl,state,enabled";
-         source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "disabler";
          target: "efl.text";
@@ -538,24 +467,16 @@ group { "efl/spin_button/horizontal/text_button";
 group { "efl/spin_button/vertical/inc_button";
    inherit: "efl/spin_button/horizontal/inc_button";
    data.item: "version" "123";
-   images.image: "sym_up_light_normal.png" COMP;
-   images.image: "sym_up_glow_normal.png" COMP;
-   images.image: "sym_up_dark_normal.png" COMP;
    parts {
       part { name: "arrow.image";
-         scale: 1;
          description { state: "default" 0.0;
-            min: 15 15;
-            max: 15 15;
-            image.normal: "sym_up_light_normal.png";
+            image.normal: "i-arrow-u";
          }
          description { state: "pressed" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "sym_up_glow_normal.png";
+            image.normal: "i-arrow-u";
          }
          description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "sym_up_dark_normal.png";
+            image.normal: "i-arrow-u";
          }
       }
    }
@@ -564,24 +485,16 @@ group { "efl/spin_button/vertical/inc_button";
 group { "efl/spin_button/vertical/dec_button";
    inherit: "efl/spin_button/horizontal/dec_button";
    data.item: "version" "123";
-   images.image: "sym_down_light_normal.png" COMP;
-   images.image: "sym_down_glow_normal.png" COMP;
-   images.image: "sym_down_dark_normal.png" COMP;
    parts {
       part { name: "arrow.image";
-         scale: 1;
          description { state: "default" 0.0;
-            min: 15 15;
-            max: 15 15;
-            image.normal: "sym_down_light_normal.png";
+            image.normal: "i-arrow-d";
          }
          description { state: "pressed" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "sym_down_glow_normal.png";
+            image.normal: "i-arrow-d";
          }
          description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "sym_down_dark_normal.png";
+            image.normal: "i-arrow-d";
          }
       }
    }
