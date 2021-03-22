@@ -196,13 +196,13 @@ group { name: "e/widgets/syscon/item/button";
       }
       program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "e.text.label";
          target: "sel";
       }
       program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "e.text.label";
          target: "sel";
       }

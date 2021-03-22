@@ -166,12 +166,12 @@ group { name: "e/widgets/scrollframe";
       }
       program { signal: "mouse,in"; source: "sb_vbar_over";
          action: STATE_SET "over" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "base_vbar";
       }
       program { signal: "mouse,out"; source: "sb_vbar_over";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "base_vbar";
       }
       part { name: "y_vbar_up_mapper"; type: SPACER;
@@ -364,12 +364,12 @@ group { name: "e/widgets/scrollframe";
       }
       program { signal: "mouse,in"; source: "sb_hbar_over";
          action: STATE_SET "over" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "base_hbar";
       }
       program { signal: "mouse,out"; source: "sb_hbar_over";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "base_hbar";
       }
       part { name: "x_hbar_left_mapper"; type: SPACER;

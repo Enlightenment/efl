@@ -1,10 +1,7 @@
 group { name: "elm/scroller/panel/default";
-   data {
-      item: "handler_size" "30";
-   }
+   data.item: "handler_size" "30";
    parts {
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
+      part { name: "elm.swallow.content"; type: SWALLOW;
          description { state: "default" 0.0;
          }
       }

@@ -305,7 +305,7 @@ group { name: "e/modules/music-control/popup";
       }
       program { signal: "mouse,up,1"; source: "*_btn";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 1.0;
+         transition: DECELERATE 1.0 USE_DURATION_FACTOR 1;
          target: "btn_back";
       }
       program { signal: "mouse,clicked,*"; source: "previous_btn";

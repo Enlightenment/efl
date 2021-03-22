@@ -290,7 +290,7 @@ group { name: "e/modules/pager16/desk";
       program { name: "sel";
          signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { signal: "e,state,unselected"; source: "e";
@@ -299,7 +299,7 @@ group { name: "e/modules/pager16/desk";
       }
       program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "drop1";

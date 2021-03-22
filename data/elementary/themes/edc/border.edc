@@ -98,7 +98,7 @@ group { name: "e/widgets/border/volume";
          }
          program { name: "show_volume2";
             action: STATE_SET "show" 0.0;
-            transition: SINUSOIDAL 0.3;
+            transition: SINUSOIDAL 0.3 USE_DURATION_FACTOR 1;
             target: "clip";
          }
 
@@ -110,7 +110,7 @@ group { name: "e/widgets/border/volume";
          }
          program { name: "hide_volume1";
             action: STATE_SET "default" 0.0;
-            transition: SINUSOIDAL 0.5;
+            transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
             target: "clip";
             after: "hide_volume2";
          }
@@ -612,13 +612,13 @@ group { name: "e/widgets/border/default/border";
       }
       program { name: "urg1";
          action: STATE_SET "bounce2" 0.0;
-         transition: DECELERATE 0.4;
+         transition: DECELERATE 0.4 USE_DURATION_FACTOR 1;
          target: "icon";
          after: "urg2";
       }
       program { name: "urg2";
          action: STATE_SET "bounce1" 0.0;
-         transition: ACCELERATE 0.3;
+         transition: ACCELERATE 0.3 USE_DURATION_FACTOR 1;
          target: "icon";
          after: "urg1";
       }

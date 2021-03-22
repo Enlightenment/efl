@@ -115,12 +115,12 @@ group { name: "e/modules/mixer/main";
    programs {
       program { name: "mute";
          action: STATE_SET "mute" 0.0;
-         transition: LINEAR 0.3;
+         transition: LINEAR 0.3 USE_DURATION_FACTOR 1;
          target: "state";
       }
       program { name: "unmute";
          action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.2;
+         transition: LINEAR 0.2 USE_DURATION_FACTOR 1;
          target: "state";
       }
    }

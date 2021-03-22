@@ -131,7 +131,7 @@ group { name: "e/wizard/main";
    programs {
       program { signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
-         transition: DECELERATE 1.0;
+         transition: DECELERATE 1.0 USE_DURATION_FACTOR 1;
          target: "blanker";
       }
       program { signal: "mouse,down,1"; source: "base";

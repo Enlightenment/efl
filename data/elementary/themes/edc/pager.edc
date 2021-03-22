@@ -213,7 +213,7 @@ group { name: "e/modules/pager/desk";
       program { name: "sel";
          signal: "e,state,selected"; source: "e";
          action: STATE_SET "active" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { signal: "e,state,unselected"; source: "e";
@@ -222,7 +222,7 @@ group { name: "e/modules/pager/desk";
       }
       program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { signal: "e,preview,on"; source: "e";
@@ -518,22 +518,22 @@ group { name: "e/gadget/pager/plain/desk";
       }
       program { name: "on_left";
          action: STATE_SET "on_left" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "on_top";
          action: STATE_SET "on_top" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "on_right";
          action: STATE_SET "on_right" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "on_bottom";
          action: STATE_SET "on_bottom" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { signal: "e,state,unselected"; source: "e";
@@ -831,22 +831,22 @@ group { name: "e/gadget/pager/default/desk";
       }
       program { name: "on_left";
          action: STATE_SET "on_left" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "on_top";
          action: STATE_SET "on_top" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "on_right";
          action: STATE_SET "on_right" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { name: "on_bottom";
          action: STATE_SET "on_bottom" 0.0;
-         transition: DECELERATE 0.2;
+         transition: DECELERATE 0.2 USE_DURATION_FACTOR 1;
          target: "sel";
       }
       program { signal: "e,state,unselected"; source: "e";
