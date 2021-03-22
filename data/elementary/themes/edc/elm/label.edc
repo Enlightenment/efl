@@ -1,5 +1,4 @@
 #define FIXED 1
-#define DISABLE 2
 
 #define LABEL_SCRIPT \
       public btmode; \
@@ -598,4 +597,4 @@ group { name: "elm/label/base/slide_bounce";
       }
    }
 }
-#undef HORIZONTAL_FIXED
+#undef FIXED
