@@ -14,7 +14,70 @@ typedef struct {
    int freeze_want;
    Eina_Bool scroll_count : 1;
    Eina_Bool need_scroll : 1;
+   Eina_Bool show_up : 1;
+   Eina_Bool show_down : 1;
+   Eina_Bool show_left: 1;
+   Eina_Bool show_right : 1;
 } Scroll_Connector_Context;
+
+static void
+_scroll_connector_bar_direction_show_update(Scroll_Connector_Context *ctx)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(ctx->obj, wd);
+   Eina_Bool hbar_visible = EINA_FALSE, vbar_visible = EINA_FALSE;
+   Eina_Bool show_up = EINA_FALSE, show_down = EINA_FALSE, show_left = EINA_FALSE, show_right = EINA_FALSE;
+   double vx = 0.0, vy = 0.0;
+
+   edje_object_part_drag_value_get
+     (wd->resize_obj, "efl.draggable.vertical_bar", NULL, &vy);
+
+   edje_object_part_drag_value_get
+     (wd->resize_obj, "efl.draggable.horizontal_bar", &vx, NULL);
+
+   efl_ui_scrollbar_bar_visibility_get(ctx->smanager, &hbar_visible, &vbar_visible);
+   if (hbar_visible)
+     {
+        if (vx < 1.0) show_right = EINA_TRUE;
+        if (vx > 0.0) show_left = EINA_TRUE;
+     }
+   if (vbar_visible)
+     {
+        if (vy < 1.0) show_down = EINA_TRUE;
+        if (vy > 0.0) show_up = EINA_TRUE;
+     }
+   if (show_right != ctx->show_right)
+     {
+        if (show_right)
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,show,right", "efl");
+        else
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,right", "efl");
+        ctx->show_right = show_right;
+     }
+   if (show_left != ctx->show_left)
+     {
+        if (show_left)
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,show,left", "efl");
+        else
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,left", "efl");
+        ctx->show_left = show_left;
+     }
+   if (show_up != ctx->show_up)
+     {
+        if (show_up)
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,show,up", "efl");
+        else
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,up", "efl");
+        ctx->show_up = show_up;
+     }
+   if (show_down != ctx->show_down)
+     {
+        if (show_down)
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,show,down", "efl");
+        else
+          efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,down", "efl");
+        ctx->show_down = show_down;
+     }
+}
 
 static void
 _scroll_connector_bar_read_and_update(Scroll_Connector_Context *ctx)
@@ -29,6 +92,7 @@ _scroll_connector_bar_read_and_update(Scroll_Connector_Context *ctx)
      (wd->resize_obj, "efl.draggable.horizontal_bar", &vx, NULL);
 
    efl_ui_scrollbar_bar_position_set(ctx->smanager, vx, vy);
+   _scroll_connector_bar_direction_show_update(ctx);
 }
 
 static void
@@ -54,6 +118,7 @@ _scroll_connector_reload_cb(void *data,
      efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,off", "efl");
 
    efl_ui_scrollbar_bar_visibility_update(ctx->smanager);
+   _scroll_connector_bar_direction_show_update(ctx);
 }
 
 
@@ -244,6 +309,7 @@ _scroll_connector_bar_show_cb(void *data, const Efl_Event *event)
      efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,on", "efl");
    else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,on", "efl");
+   _scroll_connector_bar_direction_show_update(ctx);
 }
 
 static void
@@ -257,6 +323,7 @@ _scroll_connector_bar_hide_cb(void *data, const Efl_Event *event)
      efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,off", "efl");
    else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,off", "efl");
+   _scroll_connector_bar_direction_show_update(ctx);
 }
 
 void

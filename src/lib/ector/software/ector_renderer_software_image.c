@@ -106,6 +106,10 @@ _ector_renderer_software_image_ector_renderer_draw(Eo *obj EINA_UNUSED,
    double im11, im12, im21, im22, im31, im32;
    uint32_t *dst_buf, *src_buf;
    int image_w, image_h;
+
+   int dst_buf_width = MIN(pd->boundary.x2, (int)pd->surface->rasterizer->fill_data.raster_buffer->generic->w);
+   int dst_buf_height = MIN(pd->boundary.y2, (int)pd->surface->rasterizer->fill_data.raster_buffer->generic->h);
+
    ector_buffer_size_get(pd->image->buffer, &image_w, &image_h);
 
    dst_buf = pd->surface->rasterizer->fill_data.raster_buffer->pixels.u32;
@@ -116,9 +120,9 @@ _ector_renderer_software_image_ector_renderer_draw(Eo *obj EINA_UNUSED,
                                        &im31, &im32, NULL);
 
    //Draw
-   for (int local_y = pd->boundary.y1; local_y < pd->boundary.y2; local_y++)
+   for (int local_y = pd->boundary.y1; local_y < dst_buf_height; local_y++)
      {
-        for (int local_x = pd->boundary.x1; local_x <  pd->boundary.x2; local_x++)
+        for (int local_x = pd->boundary.x1; local_x <  dst_buf_width; local_x++)
           {
              uint32_t *dst = dst_buf + ((int)local_x + ((int)local_y * pix_stride));
              int rx, ry;
