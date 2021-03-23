@@ -1,31 +1,54 @@
 group { "efl/tab_pager";
    data.item: "version" "123";
+   images.image: "win_shad_flat.png" COMP;
    parts {
-      spacer { "base";
-         scale;
-         desc { "default";
+      part { name: "shadow"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "_sh1";
          }
       }
+      WIN_SHAD("bg", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25)
       swallow { "efl.tab_root"; required;
          scale;
          desc { "default";
-            rel.to: "base";
-            align: 0 0;
-            min: 0 50;
-            max: -1 50;
             fixed: 0 1;
+            min: 0 46;
+            max: -1 46;
+            rel1.to_x: "bg";
+            rel2.to_x: "bg";
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
+            align: 0.5 0.0;
+            offscale;
+         }
+      }
+      part { name: "bg"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_y: "efl.tab_root";
+            rel1.relative: 0.0 1.0;
+            color: 64 64 64 255;
+            rel1.offset: 4 0;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "bg";
          }
       }
       swallow { "efl.page_root"; required;
+         clip_to: "clip";
          scale;
          desc { "default";
-            rel1.to: "efl.tab_root";
-            rel2.to: "base";
-            rel1.relative: 0 1;
+            rel.to: "bg";
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
+            offscale;
          }
       }
       swallow { "efl.event"; required;
-         scale;
          repeat_events: 1;
          desc { "default";
             rel.to: "efl.page_root";
