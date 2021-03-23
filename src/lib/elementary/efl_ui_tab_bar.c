@@ -23,7 +23,10 @@ _efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNU
 {
    pd->fallback_selection = fallback;
    if (!pd->selected)
-     efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+     {
+        efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+        if (pd->selected) evas_object_raise(pd->selected);
+     }
 }
 
 EOLIAN static void
@@ -64,7 +67,10 @@ _selelction_change_cb(void *data, const Efl_Event *ev)
         if (!pd->in_value_change)
           {
              if (!pd->selected && pd->fallback_selection)
-               efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+               {
+                  efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+                  if (pd->selected) evas_object_raise(pd->selected);
+               }
           }
      }
    else
@@ -76,6 +82,7 @@ _selelction_change_cb(void *data, const Efl_Event *ev)
         EINA_SAFETY_ON_FALSE_RETURN(!pd->selected);
         pd->selected = ev->object;
         efl_event_callback_call(data, EFL_UI_EVENT_ITEM_SELECTED, NULL);
+        if (pd->selected) evas_object_raise(pd->selected);
      }
    if (!pd->in_value_change)
      {
@@ -187,40 +194,60 @@ _efl_ui_tab_bar_efl_pack_unpack(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   Eina_Bool val;
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
-   return efl_pack_begin(pd->bx, subobj);
+   val = efl_pack_begin(pd->bx, subobj);
+   if (pd->selected) evas_object_raise(pd->selected);
+   return val;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   Eina_Bool val;
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
-   return efl_pack_end(pd->bx, subobj);
+   val = efl_pack_end(pd->bx, subobj);
+   if (pd->selected) evas_object_raise(pd->selected);
+   return val;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   Eina_Bool val;
+
    if (existing)
      EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_pack_index_get(pd->bx, existing) >= 0, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
-   return efl_pack_before(pd->bx, subobj, existing);
+   val = efl_pack_before(pd->bx, subobj, existing);
+   if (pd->selected) evas_object_raise(pd->selected);
+   return val;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   Eina_Bool val;
+
    if (existing)
      EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_pack_index_get(pd->bx, existing) >= 0, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
-   return efl_pack_after(pd->bx, subobj, existing);
+   val = efl_pack_after(pd->bx, subobj, existing);
+   if (pd->selected) evas_object_raise(pd->selected);
+   return val;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, int index)
 {
+   Eina_Bool val;
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
-   return efl_pack_at(pd->bx, subobj, index);
+   val = efl_pack_at(pd->bx, subobj, index);
+   if (pd->selected) evas_object_raise(pd->selected);
+   return val;
 }
 
 EOLIAN static int
@@ -245,8 +272,12 @@ _efl_ui_tab_bar_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Tab_Bar_Data *pd,
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_pack(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   Eina_Bool val;
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
-   return efl_pack(pd->bx, subobj);
+   val = efl_pack(pd->bx, subobj);
+   if (pd->selected) evas_object_raise(pd->selected);
+   return val;
 }
 
 #include "efl_ui_tab_bar.eo.c"
