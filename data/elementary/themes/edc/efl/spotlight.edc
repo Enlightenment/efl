@@ -1,32 +1,32 @@
-group { "efl/spotlight"; data.item: "version" "123";
+group { "efl/spotlight";
+   data.item: "version" "123";
    parts {
       swallow { "efl.indicator";
          scale;
          desc { "default";
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
-            min: 0 50;
+            min: 0 46;
          }
       }
    }
 }
-group { "efl/spotlight/indicator_holder"; data.item: "version" "123";
+group { "efl/spotlight/indicator_holder";
+   data.item: "version" "123";
    parts {
       swallow { "efl.indicator";
          scale;
          desc { "default";
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
-            min: 0 50;
+            min: 0 46;
          }
       }
    }
 }
 
-group { "efl/spotlight/indicator"; data.item: "version" "123";
-   images {
-      image: "ring_white_middle.png" COMP;
-   }
+group { "efl/spotlight/indicator";
+   data.item: "version" "123";
    parts {
       spacer { "base";
          scale;
@@ -36,9 +36,12 @@ group { "efl/spotlight/indicator"; data.item: "version" "123";
       image { "icon";
          scale;
          desc { "default";
-            image.normal: "ring_white_middle.png";
+            image.normal: "i-radio";
             color: 0 0 0 255;
-            min: 6 6;
+            min: 8 8;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "selected";
             inherit: "default";
