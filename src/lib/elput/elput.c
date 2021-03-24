@@ -14,6 +14,9 @@ EAPI int ELPUT_EVENT_DEVICE_CHANGE = 0;
 EAPI int ELPUT_EVENT_SESSION_ACTIVE = 0;
 EAPI int ELPUT_EVENT_POINTER_MOTION = 0;
 EAPI int ELPUT_EVENT_SWITCH = 0;
+EAPI int ELPUT_EVENT_SWIPE_BEGIN = 0;
+EAPI int ELPUT_EVENT_SWIPE_UPDATE = 0;
+EAPI int ELPUT_EVENT_SWIPE_END = 0;
 
 EAPI int
 elput_init(void)
@@ -40,6 +43,9 @@ elput_init(void)
    ELPUT_EVENT_SESSION_ACTIVE = ecore_event_type_new();
    ELPUT_EVENT_POINTER_MOTION = ecore_event_type_new();
    ELPUT_EVENT_SWITCH = ecore_event_type_new();
+   ELPUT_EVENT_SWIPE_BEGIN = ecore_event_type_new();
+   ELPUT_EVENT_SWIPE_UPDATE = ecore_event_type_new();
+   ELPUT_EVENT_SWIPE_END = ecore_event_type_new();
 
    return _elput_init_count;
 

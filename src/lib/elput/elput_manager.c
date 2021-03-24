@@ -5,6 +5,7 @@ static Elput_Interface *_ifaces[] =
 #ifdef HAVE_SYSTEMD
    &_logind_interface,
 #endif
+   &_root_interface,
    NULL,
 };
 

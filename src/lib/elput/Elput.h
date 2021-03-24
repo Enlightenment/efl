@@ -47,6 +47,9 @@ typedef struct _Elput_Pointer Elput_Pointer;
 /* opaque structure to represent a touch device */
 typedef struct _Elput_Touch Elput_Touch;
 
+/* opaque structure to represent swipe data */
+typedef struct _Elput_Swipe_Gesture Elput_Swipe_Gesture;
+
 /* structure to represent event for seat capability changes */
 typedef struct _Elput_Event_Seat_Caps
 {
@@ -131,6 +134,7 @@ EAPI extern int ELPUT_EVENT_MODIFIERS_SEND;
 EAPI extern int ELPUT_EVENT_DEVICE_CHANGE;
 EAPI extern int ELPUT_EVENT_SESSION_ACTIVE;
 
+
 /** @since 1.19 */
 EAPI extern int ELPUT_EVENT_POINTER_MOTION;
 
@@ -200,6 +204,19 @@ EAPI int elput_shutdown(void);
  * @since 1.18
  */
 EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty);
+
+/**
+ * Create an input manager on the specified seat. Only gesture events are emitted. Nothing else.
+ *
+ * @param seat
+ * @param tty
+ *
+ * @return A Elput_Manager on success, NULL on failure
+ *
+ * @ingroup Elput_Manager_Group
+ */
+EAPI Elput_Manager *elput_manager_connect_gestures(const char *seat, unsigned int tty);
+
 
 /**
  * Disconnect an input manager
@@ -726,6 +743,93 @@ EAPI Eina_Stringshare *elput_seat_name_get(const Elput_Seat *seat);
  * @since 1.20
  */
 EAPI Elput_Manager *elput_seat_manager_get(const Elput_Seat *seat);
+
+
+/**
+ * @defgroup Elput_Gestures Elput gesture accessors
+ *
+ * Functions for accessing details of gesture events.
+ * The structure pointers can only be accessed within the events that emit them.
+ */
+
+/**
+ * A swipe gesture has began.
+ * ELPUT_EVENT_SWIPE_UPDATE and finally a single ELPUT_EVENT_SWIPE_END event will be emitted.
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI extern int ELPUT_EVENT_SWIPE_BEGIN;
+
+/**
+ * There is a change to a ongoing swipe gesture.
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI extern int ELPUT_EVENT_SWIPE_UPDATE;
+
+/**
+ * A ongoing swipe gesture has ended.
+ * This ends the lifetime of this gesture.
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI extern int ELPUT_EVENT_SWIPE_END;
+
+/**
+ * Get the difference of x position from the last event to this event.
+ *
+ * @param gesture The event, if NULL 0 is returned
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI double elput_swipe_dx_get(Elput_Swipe_Gesture *gesture);
+
+/**
+ * Get the difference of y position from the last event to this event.
+ *
+ * @param gesture The event, if NULL 0 is returned
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI double elput_swipe_dy_get(Elput_Swipe_Gesture *gesture);
+
+/**
+ * Get the finger_count for this gesture
+ *
+ * @param gesture The event, if NULL 0 is returned
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI int elput_swipe_finger_count_get(Elput_Swipe_Gesture *gesture);
+
+/**
+ * Get the window in which this event is emitted.
+ *
+ * @param gesture The event, if NULL 0 is returned
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI int elput_swipe_window_get(Elput_Swipe_Gesture *gesture);
+
+/**
+ * Get the device from which the gesture event is coming.
+ *
+ * This value is the same for the lifetime of a gesture
+ *
+ * @param gesture The event, if NULL, NULL is returned
+ *
+ * @ingroup Elput_Gestures
+ * @since 1.26
+ */
+EAPI Elput_Device *elput_swipe_device_get(Elput_Swipe_Gesture *gesture);
+
 # endif
 
 # undef EAPI

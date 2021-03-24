@@ -11,7 +11,9 @@ elput_src = files([
   'elput_evdev.c',
   'elput_input.c',
   'elput_logind.c',
+  'elput_root.c',
   'elput_manager.c',
+  'elput_gestures.c',
   'elput.c',
   'elput_private.h'
 ])
