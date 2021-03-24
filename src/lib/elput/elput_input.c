@@ -301,20 +301,25 @@ _udev_process_event(struct libinput_event *event)
 }
 
 static void
-_process_event(struct libinput_event *event)
+_process_event(Elput_Manager *em, struct libinput_event *event)
 {
    if (_udev_process_event(event)) return;
-   if (_evdev_event_process(event)) return;
+   if (!em->only_gesture_events)
+     {
+        if (_evdev_event_process(event)) return;
+     }
+   if (_gesture_event_process(event)) return;
 }
 
 static void
-_process_events(Elput_Input *ei)
+_process_events(Elput_Manager *em)
 {
    struct libinput_event *event;
+   Elput_Input *ei = &em->input;
 
    while ((ei->lib) && (event = libinput_get_event(ei->lib)))
      {
-        _process_event(event);
+        _process_event(em, event);
         libinput_event_destroy(event);
      }
 }
@@ -322,14 +327,14 @@ _process_events(Elput_Input *ei)
 static Eina_Bool
 _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
-   Elput_Input *ei;
+   Elput_Manager *em;
 
-   ei = data;
+   em = data;
 
-   if ((ei->lib) && (libinput_dispatch(ei->lib) != 0))
+   if ((em->input.lib) && (libinput_dispatch(em->input.lib) != 0))
      WRN("libinput failed to dispatch events");
 
-   _process_events(ei);
+   _process_events(em);
 
    return EINA_TRUE;
 }
@@ -361,10 +366,10 @@ _elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
    manager->input.hdlr =
      ecore_main_fd_handler_add(libinput_get_fd(manager->input.lib),
                                ECORE_FD_READ, _cb_input_dispatch,
-                               &manager->input, NULL, NULL);
+                               manager, NULL, NULL);
 
    if (manager->input.hdlr)
-      _process_events(&manager->input);
+      _process_events(manager);
    else
      {
         ERR("Could not create input fd handler");
@@ -431,7 +436,7 @@ _elput_input_enable(Elput_Manager *manager)
      {
         if (libinput_resume(manager->input.lib) != 0) return;
         manager->input.suspended = EINA_FALSE;
-        _process_events(&manager->input);
+        _process_events(manager);
      }
 }
 
@@ -444,7 +449,7 @@ _elput_input_disable(Elput_Manager *manager)
    EINA_LIST_FOREACH(manager->input.seats, l, seat)
      seat->pending_motion = 1;
    if (manager->input.lib) libinput_suspend(manager->input.lib);
-   _process_events(&manager->input);
+   _process_events(manager);
    manager->input.suspended = EINA_TRUE;
 }
 

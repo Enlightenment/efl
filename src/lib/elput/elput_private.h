@@ -246,6 +246,16 @@ struct _Elput_Device
    Eina_Bool invert_y : 1;
 };
 
+typedef struct {
+  Elput_Swipe_Gesture_Callback cb;
+  void *data;
+} Elput_Gesture_Swipe_Callback;
+
+struct _Elput_Swipe_Gesture {
+  double dx, dy;
+  int finger_count;
+};
+
 struct _Elput_Manager
 {
    Elput_Interface *interface;
@@ -257,6 +267,9 @@ struct _Elput_Manager
    int vt_fd;
    Ecore_Event_Handler *vt_hdlr;
    uint32_t window;
+   struct {
+      Elput_Gesture_Swipe_Callback begin, update, end;
+   } swipe_callback;
 
    int pending_ptr_x;
    int pending_ptr_y;
@@ -282,6 +295,7 @@ struct _Elput_Manager
 
    Elput_Input input;
    Eina_Bool del : 1;
+   Eina_Bool only_gesture_events : 1;
 };
 
 typedef struct _Elput_Async_Open
@@ -295,6 +309,7 @@ void _elput_input_enable(Elput_Manager *manager);
 void _elput_input_disable(Elput_Manager *manager);
 
 int _evdev_event_process(struct libinput_event *event);
+int _gesture_event_process(struct libinput_event *event);
 Elput_Device *_evdev_device_create(Elput_Seat *seat, struct libinput_device *device);
 void _evdev_device_destroy(Elput_Device *edev);
 void _evdev_keyboard_destroy(Elput_Keyboard *kbd);
@@ -308,6 +323,7 @@ Elput_Keyboard *_evdev_keyboard_get(Elput_Seat *seat);
 Elput_Touch *_evdev_touch_get(Elput_Seat *seat);
 
 extern Elput_Interface _logind_interface;
+extern Elput_Interface _root_interface;
 
 void _keyboard_keymap_update(Elput_Seat *seat);
 void _keyboard_group_update(Elput_Seat *seat);

@@ -47,6 +47,8 @@ typedef struct _Elput_Pointer Elput_Pointer;
 /* opaque structure to represent a touch device */
 typedef struct _Elput_Touch Elput_Touch;
 
+typedef struct _Elput_Swipe_Gesture Elput_Swipe_Gesture;
+
 /* structure to represent event for seat capability changes */
 typedef struct _Elput_Event_Seat_Caps
 {
@@ -200,6 +202,19 @@ EAPI int elput_shutdown(void);
  * @since 1.18
  */
 EAPI Elput_Manager *elput_manager_connect(const char *seat, unsigned int tty);
+
+/**
+ * Create an input manager on the specified seat. Only gesture events are emitted. Nothing else.
+ *
+ * @param seat
+ * @param tty
+ *
+ * @return A Elput_Manager on success, NULL on failure
+ *
+ * @ingroup Elput_Manager_Group
+ */
+EAPI Elput_Manager *elput_manager_connect_gestures(const char *seat, unsigned int tty);
+
 
 /**
  * Disconnect an input manager
@@ -726,6 +741,17 @@ EAPI Eina_Stringshare *elput_seat_name_get(const Elput_Seat *seat);
  * @since 1.20
  */
 EAPI Elput_Manager *elput_seat_manager_get(const Elput_Seat *seat);
+
+typedef void (*Elput_Swipe_Gesture_Callback)(void *data, Elput_Device *dev, Elput_Swipe_Gesture *gesture);
+
+EAPI double elput_swipe_dx_get(Elput_Swipe_Gesture *gesture);
+EAPI double elput_swipe_dy_get(Elput_Swipe_Gesture *gesture);
+EAPI int elput_swipe_finger_count_get(Elput_Swipe_Gesture *gesture);
+EAPI void elput_manager_swipe_gesture_listen(Elput_Manager *em,
+                                             Elput_Swipe_Gesture_Callback begin, void *begin_data,
+                                             Elput_Swipe_Gesture_Callback update, void *update_data,
+                                             Elput_Swipe_Gesture_Callback end, void *end_data);
+
 # endif
 
 # undef EAPI
