@@ -29,19 +29,17 @@ group { "efl/tags/label";
    parts {
       text { "efl.text";
          nomouse;
-         effect: GLOW;
          scale;
          desc { "default";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "tags_label";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
-               align: 0.5 0.5;
                text_class: "tags_label";
             }
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.offset: -5 -5;
+            offscale;
          }
       }
    }
@@ -49,17 +47,30 @@ group { "efl/tags/label";
 
 group { "efl/tags/btn";
    data.item: "version" "123";
-   images.image: "button_normal.png" COMP;
-   images.image: "button_clicked.png" COMP;
-   images.image: "sym_close_dark_normal.png" COMP;
-   images.image: "sym_close_dark_selected.png" COMP;
-   images.image: "win_glow.png" COMP;
+   images.image: "win_shadow.png" COMP;
+
    styles {
       style { name: "efl_tags_textblock_style";
-         base: "font="FN" align=0.5 font_size=10 color=#ffffffff style=shadow,bottom shadow_color=#00000080 text_class=tags_item ellipsis=1.0";
+         base: "font="FN" align=0.5 font_size=10 color=#a0a0a0 text_class=tags_item ellipsis=1.0";
          tag: "br" "\n";
          tag: "ps" "ps";
-         tag: "hilight" "+ font="FNBD;
+         tag: "hilight" "+ color=#ffffff font="FNBD;
+         tag: "b" "+ font="FNBD;
+         tag: "tab" "\t";
+      }
+      style { name: "efl_tags_textblock_style_pressed";
+         base: "font="FN" align=0.5 font_size=10 color=#ffffff text_class=tags_item ellipsis=1.0";
+         tag: "br" "\n";
+         tag: "ps" "ps";
+         tag: "hilight" "+ color=#ffffff font="FNBD;
+         tag: "b" "+ font="FNBD;
+         tag: "tab" "\t";
+      }
+      style { name: "efl_tags_textblock_style_disabled";
+         base: "font="FN" align=0.5 font_size=10 color=#606060 text_class=tags_item ellipsis=1.0";
+         tag: "br" "\n";
+         tag: "ps" "ps";
+         tag: "hilight" "+ color=#808080 font="FNBD;
          tag: "b" "+ font="FNBD;
          tag: "tab" "\t";
       }
@@ -70,80 +81,77 @@ group { "efl/tags/btn";
    }
 
    parts {
-      rect { "bg";
-         desc { "default";
-            color_class: "tags_item_bg";
+      part { name: "shadow"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            WIN_SHADOW_SMALL;
          }
-         desc { "pressed";
-            color_class: "tags_item_bg_selected";
+         description { state: "pressed" 0.0; inherit;
+            image.border_scale_by: 0.1;
+            rel1.offset: -2 -1;
+            rel2.offset: 0 1;
          }
       }
-      image { "base";
+      rect { "base";
+         scale: 1;
          desc { "default";
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
-            rel1.offset: -1 0;
-            rel2.offset: 0 1;
-            fill.smooth: 0;
+            color: 96 96 96 255;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            offscale;
          }
          desc { "pressed";
-            inherit: "default";
-            image.normal: "button_clicked.png";
-            image.border: 5 5 4 6;
+            color: 128 128 128 255;
+            rel1.offset: 3 3;
+            rel2.offset: -4 -4;
+            offscale;
          }
       }
       image { "glow";
          nomouse;
          desc { "default";
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -2  -3;
-            rel1.to: "base";
-            rel2.offset: 1 0;
-            rel2.to: "base";
-            fill.smooth: 0;
-            color: 255 255 255 0;
+            rel.to: "base";
+            color: 51 153 255 0;
             hid;
          }
          desc { "focused";
             inherit: "default";
-            color: 255 255 255 255;
+            color: 51 153 255 255;
             vis;
-         }
-         desc { "unfocused";
-            inherit: "default";
          }
       }
       image { "close";
          nomouse;
          desc { "default";
-            image.normal: "sym_close_dark_normal.png";
-            rel1.to: "del";
-            rel2.to: "del";
+            image.normal: "i-close";
+            rel.to: "del";
             min: 15 15;
             max: 15 15;
+            color: 160 160 160 255;
             fixed: 1 1;
+         }
+         desc { "pressed";
+            inherit: "default";
+            color: 255 255 255 255;
          }
          desc { "clicked";
             inherit: "default";
-            image.normal: "sym_close_dark_selected.png";
+            color: 255 255 255 255;
          }
       }
       rect { "del";
          scale;
          desc { "default";
             fixed: 1 0;
-            min: 4 4;
+            min: 15 15;
             align: 1.0 0.5;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            rel.to: "base";
             rel1.relative: 1.0 0.0;
-            rel1.to: "base";
-            rel1.offset: -6 5;
-            rel2.offset: -6 -7;
-            rel2.to: "base";
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
             color: 0 0 0 0;
+            offscale;
          }
       }
       textblock { "efl.btn.text";
@@ -154,137 +162,91 @@ group { "efl/tags/btn";
             text { style: "efl_tags_textblock_style";
                min: 1 1;
                ellipsis: -1;
-               text_class: "tags_item_text";
             }
-            hid;
-            rel1.offset: 5 5;
+            rel1.offset: 4 4;
             rel1.to: "base";
             rel2.to_x: "del";
             rel2.to_y: "base";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -3 -7;
-         }
-      }
-      textblock { "text";
-         nomouse;
-         scale;
-         desc { "default";
-            color_class: "tags_item_text";
-            text { style: "efl_tags_textblock_style";
-               text_source: "efl.btn.text";
-               min: 0 1;
-               align: 0.0 0.5;
-               text_class: "tags_item_text";
-            }
-            align: 0.0 0.5;
-            rel1.offset: 5 5;
-            rel1.to: "base";
-            rel2.to_x: "del";
-            rel2.to_y: "base";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -3 -7;
+            rel2.offset: -5 -5;
+            min: 30 15;
+            offscale;
          }
          desc { "pressed";
             inherit: "default";
-            color_class: "tags_item_text_pressed";
-            text {
-               text_class: "tags_item_text_pressed";
-            }
+            text.style: "efl_tags_textblock_style_pressed";
          }
          desc { "disabled";
             inherit: "default";
-            color_class: "tags_item_text_disabled";
-            text {
-               text_class: "tags_item_text_disabled";
-            }
+            text.style: "efl_tags_textblock_style_disabled";
          }
       }
    }
    programs {
-      program {
-         signal: "mouse,clicked,1";
-         source: "base";
+      program { signal: "mouse,clicked,1"; source: "base";
          script {
             if (get_int(disabled) == 0) {
                emit("clicked", "");
             }
          }
       }
-      program {
-         signal: "efl,state,default";
-         source: "efl";
+      program { signal: "efl,state,default"; source: "efl";
          action: STATE_SET "default";
          target: "glow";
       }
-      program {
-         signal: "efl,state,focused";
-         source: "efl";
+      program { signal: "efl,state,focused"; source: "efl";
          action: STATE_SET "focused";
          target: "glow";
       }
-      program {
-         signal: "efl,state,enabled";
-         source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
-            set_state(PART:"text", "default", 0.0);
+            set_state(PART:"efl.btn.text", "default", 0.0);
             set_int(disabled , 0);
          }
       }
-      program {
-         signal: "efl,state,disabled";
-         source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new st[31];
             new Float: vl;
             get_state(PART:"glow", st, 30, vl);
             if (!strcmp(st, "focused"))
               set_state(PART:"glow", "default", 0.0);
-            set_state(PART:"text", "disabled", 0.0);
+            set_state(PART:"efl.btn.text", "disabled", 0.0);
             set_int(disabled , 1);
          }
       }
-      program {
-         signal: "efl,state,unfocused";
-         source: "efl";
-         action: STATE_SET "unfocused";
+      program { signal: "efl,state,unfocused"; source: "efl";
+         action: STATE_SET "default";
          target: "glow";
       }
-      program {
-         signal: "mouse,down,1";
-         source: "base";
+      program { signal: "mouse,down,1"; source: "base";
          script {
             if (get_int(disabled) == 0) {
+               set_state(PART:"close", "pressed", 0.0);
                set_state(PART:"base", "pressed", 0.0);
-               set_state(PART:"bg", "pressed", 0.0);
-               set_state(PART:"text", "pressed", 0.0);
+               set_state(PART:"shadow", "pressed", 0.0);
+               set_state(PART:"efl.btn.text", "pressed", 0.0);
             }
          }
       }
-      program {
-         signal: "mouse,up,1";
-         source: "base";
+      program { signal: "mouse,up,1"; source: "base";
          script {
             if (get_int(disabled) == 0) {
+               set_state(PART:"close", "default", 0.0);
                set_state(PART:"base", "default", 0.0);
-               set_state(PART:"bg", "default", 0.0);
-               set_state(PART:"text", "default", 0.0);
+               set_state(PART:"shadow", "default", 0.0);
+               set_state(PART:"efl.btn.text", "default", 0.0);
             }
          }
       }
-      program {
-         signal: "mouse,clicked,1";
-         source: "del";
+      program { signal: "mouse,clicked,1"; source: "del";
          action: SIGNAL_EMIT "efl,deleted" "efl";
       }
-      program {
-         signal: "mouse,down,1";
-         source: "del";
+      program { signal: "mouse,down,1"; source: "del";
          action: STATE_SET "clicked";
          target: "close";
       }
-      program {
-         signal: "mouse,up,1";
-         source: "del";
+      program { signal: "mouse,up,1"; source: "del";
          action: STATE_SET "default";
          target: "close";
       }
@@ -296,19 +258,18 @@ group { "efl/tags/number";
    parts {
       text { "efl.text";
          nomouse;
-         effect: GLOW;
          scale;
          desc { "default";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "tags_number";
-            text { font: FNBD; size: 10;
+            color: 160 160 160 255;
+            text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
                text_class: "tags_number";
             }
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.offset: -5 -5;
+            offscale;
          }
       }
    }
