@@ -53,7 +53,6 @@ group { name: "efl/scroller";
          description { state: "default" 0.0;
             rel.to: "efl.background";
             color: 0 0 0 0;
-            color_class: "scroller_bg";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -62,12 +61,8 @@ group { name: "efl/scroller";
          }
       }
       part { name: "efl.background"; type: SWALLOW;
-//         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-//            rel1.offset: 2 2;
-//            rel2.offset: -3 -3;
-//            offscale;
          }
       }
       part { name: "efl.content"; type: SWALLOW;

@@ -2,7 +2,7 @@ group { name: "efl/textpath";
    data.item: "version" "123";
    styles {
       style { name: "textpath_style2";
-         base: "font="FN" font_size=16 text_class=tb_plain wrap=none align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain wrap=none align=left color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
