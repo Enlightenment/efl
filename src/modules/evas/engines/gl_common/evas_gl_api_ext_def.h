@@ -1675,6 +1675,25 @@ _EVASGL_EXT_BEGIN(EGL_WL_bind_wayland_display)
 
 _EVASGL_EXT_END()
 
+_EVASGL_EXT_BEGIN(EGL_EXT_image_dma_buf_import_modifiers)
+
+        _EVASGL_EXT_DRVNAME(EGL_EXT_image_dma_buf_import_modifiers)
+
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglQueryDmaBufFormatsEXT, (EGLDisplay dpy, int max_formats, int *formats, int *num_formats), (dpy, max_formats, formats, num_formats))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglQueryDmaBufFormatsEXT")
+        _EVASGL_EXT_FUNCTION_PRIVATE_END()
+        _EVASGL_EXT_FUNCTION_PRIVATE_BEGIN(EGLBoolean, eglQueryDmaBufModifiersEXT, (EGLDisplay dpy, int format, int max_modifiers, uint64_t *modifiers, Eina_Bool *external_only, int *num_modifiers), (dpy, format, max_modifiers, modifiers, external_only, num_modifiers))
+                _EVASGL_EXT_FUNCTION_DRVFUNC_PROCADDR("eglQueryDmaBufModifiersEXT")
+        _EVASGL_EXT_FUNCTION_PRIVATE_END()
+
+        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglQueryDmaBufFormats, (Evas_GL *evas_gl, int max_formats, int *formats, int *num_formats), (evas_gl, max_formats, formats, num_formats))
+                _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglQueryDmaBufFormats)
+        _EVASGL_EXT_FUNCTION_END()
+        _EVASGL_EXT_FUNCTION_BEGIN(Eina_Bool, evasglQueryDmaBufModifiers, (Evas_GL *evas_gl, int format, int max_modifiers, uint64_t *modifiers, Eina_Bool *external_only, int *num_modifiers), (evas_gl, format, max_modifiers, modifiers, external_only, num_modifiers))
+                _EVASGL_EXT_FUNCTION_DRVFUNC(_evgl_evasglQueryDmaBufModifiers)
+        _EVASGL_EXT_FUNCTION_END()
+_EVASGL_EXT_END()
+
 
 #if 0
 _EVASGL_EXT_BEGIN(EGL_SEC_map_image)

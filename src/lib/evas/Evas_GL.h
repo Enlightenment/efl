@@ -5117,8 +5117,9 @@ typedef unsigned long long EvasGLTime;
  * Version 4: [version 3] + GLES3.0 + GLES3.0 extensions
  * Version 5: [version 4] + GLES3.1
  * Version 6: [version 5] + GLES3.2
+ * Version 7: [version 7] + query formats + modifiers
  */
-#define EVAS_GL_API_VERSION 6
+#define EVAS_GL_API_VERSION 7
 
 /**
  * @brief The Evas GL API
@@ -6106,6 +6107,25 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
     * new APIs here, please bump the struct version number (together with
     * the EFL version bump).
     */
+
+   /**
+    * @name Evas GL Wayland functions
+    *
+    * Evas_GL_API version 7 or higher.
+    *
+    * @since 1.26
+    * @{ */
+   /**
+    * @anchor evasglQueryDmaBufFormats
+    * @brief Direct map to eglQueryDmaBufFormatsEXT
+    */
+   Eina_Bool    (*evasglQueryDmaBufFormats) (Evas_GL *evas_gl, int max_formats, int *formats, int *num_formats);
+   /**
+    * @anchor evasglQueryDmaBufModifiers
+    * @brief RDirect map to eglQueryDmaBufModifiersEXT
+    */
+   Eina_Bool    (*evasglQueryDmaBufModifiers) (Evas_GL *evas_gl, int format, int max_modifiers, uint64_t *modifiers, Eina_Bool *external_only, int *num_modifiers);
+   /** @} */
 };
 
 /**

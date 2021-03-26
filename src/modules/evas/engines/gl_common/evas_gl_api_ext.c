@@ -414,6 +414,24 @@ _evgl_evasglQueryWaylandBuffer(Evas_GL *evas_gl,
    return EXT_FUNC_EGL(eglQueryWaylandBufferWL)(dpy, buffer, attribute, value);
 }
 
+static Eina_Bool
+_evgl_evasglQueryDmaBufFormats(Evas_GL *evas_gl,
+                               int max_formats, int *formats, int *num_formats)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET(evas_gl);
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC_EGL(eglQueryDmaBufFormatsEXT)(dpy, max_formats, formats, num_formats);
+}
+
+static Eina_Bool
+_evgl_evasglQueryDmaBufModifiers(Evas_GL *evas_gl,
+                                 int format, int max_modifiers, uint64_t *modifiers, Eina_Bool *external_only, int *num_modifiers)
+{
+   EGLDisplay dpy = EGLDISPLAY_GET(evas_gl);
+   if (!dpy) return EINA_FALSE;
+   return EXT_FUNC_EGL(eglQueryDmaBufModifiersEXT)(dpy, format, max_modifiers, modifiers, external_only, num_modifiers);
+}
+
 #else
 #endif
 
