@@ -108,7 +108,7 @@ group { "efl/tags/btn";
             offscale;
          }
       }
-      image { "glow";
+      rect { "glow";
          nomouse;
          desc { "default";
             rel.to: "base";
