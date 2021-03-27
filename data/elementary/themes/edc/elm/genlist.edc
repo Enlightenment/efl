@@ -3277,9 +3277,6 @@ group { "elm/genlist/item/edit/default"; nomouse;
    data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
 //   data.item: "selectraise" "on";
 //   data.item: "focusraise" "on";
-   images.image: "vgrad_med_dark.png" COMP;
-   images.image: "bevel_horiz_out.png" COMP;
-   images.image: "shadow_horiz.png" COMP;
    program_source: "elm";
    parts {
       rect { "base";
