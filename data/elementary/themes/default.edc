@@ -178,10 +178,6 @@ sounds {
 #include "edc/icons.edc"
 #include "edc/border-icons.edc"
 
-// port unchanged stuff so this can work as a replacement
-#include "edc/O/efm_icons.edc"
-#include "edc/O/icons.edc"
-
 // New efl ui themes
 #include "edc/efl/macros.edc"
 #include "edc/efl/bg.edc"
