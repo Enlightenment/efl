@@ -24,382 +24,177 @@ Group: efl/timepicker (@since 1.23)
 	 Signal: efl,colon_field1,visible,on
 
 */
+#define TP_24H 1
+#define TP_HR 2
+#define TP_MN 4
 group { "efl/timepicker";
    data.item: "version" "123";
-   nomouse;
+   script {
+      public btmode;
+      public eval_mode(m) {
+         new v24h = m & TP_24H;
+         new vhr  = m & TP_HR;
+         new vmn  = m & TP_MN;
+         if (v24h) {
+            set_state(PART:"efl.field0", "default", 0.0);
+            if (vhr) {
+               set_state(PART:"efl.field1", "default", 0.0);
+               if (vmn) {
+                  set_state(PART:"efl.field2", "invisible", 0.0);
+                  set_state(PART:"colon", "default", 0.0);
+               } else {
+                  set_state(PART:"efl.field2", "default", 0.0);
+                  set_state(PART:"colon", "invisible", 0.0);
+               }
+            } else {
+               set_state(PART:"efl.field1", "invisible", 0.0);
+               if (vmn) {
+                  set_state(PART:"efl.field2", "invisible", 0.0);
+                  set_state(PART:"colon", "invisible", 0.0);
+               } else {
+                  set_state(PART:"efl.field2", "default", 0.0);
+                  set_state(PART:"colon", "invisible", 0.0);
+               }
+            }
+         } else {
+            set_state(PART:"efl.field0", "invisible", 0.0);
+            if (vhr) {
+               set_state(PART:"efl.field1", "default", 0.0);
+               if (vmn) {
+                  set_state(PART:"efl.field2", "invisible", 0.0);
+                  set_state(PART:"colon", "default", 0.0);
+               } else {
+                  set_state(PART:"efl.field2", "default", 0.0);
+                  set_state(PART:"colon", "invisible", 0.0);
+               }
+            } else {
+               set_state(PART:"efl.field1", "invisible", 0.0);
+               if (vmn) {
+                  set_state(PART:"efl.field2", "invisible", 0.0);
+                  set_state(PART:"colon", "invisible", 0.0);
+               } else {
+                  set_state(PART:"efl.field2", "default", 0.0);
+                  set_state(PART:"colon", "invisible", 0.0);
+               }
+            }
+         }
+      }
+      flag_set(flag) {
+         new m = get_int(btmode) | flag;
+         set_int(btmode, m); eval_mode(m);
+      }
+      flag_unset(flag) {
+         new m = get_int(btmode) & ~flag;
+         set_int(btmode, m); eval_mode(m);
+      }
+   }
    parts {
       spacer { "base";
          scale;
          desc { "default";
-            min: 150 170;
+            min: 81 77;
          }
-         desc { "24layout";
-            min: 110 170;
+         desc { "24h";
+            min: 54 77;
          }
       }
-      rect { "base_bg";
-         scale;
+      rect { "bg";
          desc { "default";
             rel.to: "base";
-            color_class: "timepicker_bg";
+            color: 64 64 64 255;
          }
       }
-      spacer { "padding_bg_top";
+      text { "colon";
          scale;
          desc { "default";
-            min: 0 10;
-            max: -1 10;
-            fixed: 0 1;
-            rel1 {
-               relative: 0.0 0.0;
-               to: "base_bg";
-            }
-            rel2 {
-               relative: 1.0 0.0;
-               to: "base_bg";
-            }
-            align: 0.5 0.0;
-         }
-      }
-      spacer { "padding_bg_bottom";
-         scale;
-         desc { "default";
-            min: 0 10;
-            max: -1 10;
-            fixed: 0 1;
-            rel1 {
-               relative: 0.0 1.0;
-               to: "base_bg";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "base_bg";
-            }
-            align: 0.5 1.0;
-         }
-      }
-      spacer { "bg";
-         scale;
-         desc { "default";
-            min: 150 150;
-            max: 150 150;
-            rel1 {
-               relative: 0.0 1.0;
-               to: "padding_bg_top";
-            }
-            rel2 {
-               relative: 1.0 0.0;
-               to: "padding_bg_bottom";
-            }
-         }
-         desc { "24layout";
-            inherit: "default";
-            min: 110 150;
-            max: 110 150;
-         }
-      }
-      spacer { "padding_left";
-         scale;
-         desc { "default";
-            min: 0 0;
-            max: 0 -1;
-            fixed: 1 0;
-            rel1 {
-               relative: 0.0 0.0;
-               to: "bg";
-            }
-            rel2 {
-               relative: 0.0 1.0;
-               to: "bg";
-            }
-            align: 0.0 0.0;
-         }
-      }
-      spacer { "padding_right";
-         scale;
-         desc { "default";
-            min: 0 0;
-            max: 0 -1;
-            fixed: 1 0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "bg";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "bg";
-            }
-            align: 1.0 1.0;
-         }
-      }
-      swallow { "efl.field0"; required;
-         mouse;
-         scale;
-         desc { "default";
-            fixed: 1 0;
-            min: 40 0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "padding_left";
-            }
-            rel2.to: "padding_left";
-            align: 0.0 0.5;
-         }
-      }
-      spacer{ "padding_center1";
-         scale;
-         desc { "default";
-            fixed: 1 0;
-            min: 3 0;
-            max: 3 -1;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "efl.field0";
-            }
-            rel2.to: "efl.field0";
-            align: 0.0 0.5;
-         }
-         desc { "invisible";
-            inherit: default 0.0;
-            min: 15 0;
-            max: 15 -1;
-         }
-      }
-      spacer { "bg_text";
-         scale;
-         desc { "default";
-            rel1 {
-               relative: 1.0 0.0;
-               to: "padding_center1";
-            }
-            rel2.to: "padding_center1";
-            align: 0.0 0.5;
-            min: 9 0;
-            max: 9 -1;
-            fixed: 1 0;
-         }
-         desc { "invisible";
-            inherit: default 0.0;
-            min: 0 0;
-            max: 0 0;
-         }
-      }
-      text { "hour_minute_colon";
-         scale;
-         desc { "default";
-            rel1.to: "bg_text";
-            rel2.to: "bg_text";
-            color: 255 255 255 255;
-            fixed: 1 1;
+            rel1.to: "efl.field1";
+            rel1.relative: 1.0 0.0;
+            rel2.to: "efl.field2";
+            rel2.relative: 0.0 1.0;
+            color: 160 160 160 255;
             text {
-               min: 1 0;
-               font: "Sans";
-               size: "15";
-               //text: ":";
-               align: 0.5 0.44;
+               font: FN;
+               size: 10;
+               min: 1 1;
+               text: ":";
+               align: 0.5 0.5;
             }
             vis;
          }
          desc { "invisible";
             inherit: default 0.0;
             hid;
-         }
-      }
-      spacer { "padding_center2";
-         scale;
-         desc { "default";
-            fixed: 1 0;
-            min: 3 0;
-            max: 3 -1;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "bg_text";
-            }
-            rel2.to: "bg_text";
-            align: 0.0 0.5;
-         }
-         desc { "invisible";
-            inherit: default 0.0;
-            min: 0 0;
-            max: 0 0;
          }
       }
       swallow { "efl.field1"; required;
-         mouse;
          scale;
          desc { "default";
-            fixed: 1 0;
-            min: 40 0;
-             rel1 {
-               relative: 1.0 0.0;
-               to: "padding_center2";
-            }
-            rel2.to: "padding_center2";
-            align: 0.0 0.5;
-         }
-      }
-      spacer { "padding_center3";
-         scale;
-         desc { "default";
-            fixed: 1 0;
-            min: 3 0;
-            max: 3 -1;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "efl.field1";
-            }
-            rel2.to: "efl.field1";
-            align: 0.0 0.5;
+            min: 23 69;
+            rel1.offset: 4 4;
+            rel2.offset: -3 -5;
+            rel2.relative: (1/3) 1.0;
+            offscale;
          }
          desc { "invisible";
-            inherit: default 0.0;
-            min: 15 0;
-            max: 15 -1;
-         }
-      }
-      spacer { "bg_text2";
-         scale;
-         desc { "default";
-            rel1 {
-               relative: 1.0 0.0;
-               to: "padding_center3";
-            }
-            rel2.to: "padding_center3";
-            align: 0.0 0.5;
-            min: 9 0;
-            max: 9 -1;
-            fixed: 1 0;
-         }
-         desc { "invisible";
-            inherit: default 0.0;
-            min: 0 0;
-            max: 0 0;
-         }
-      }
-      text { "hour_minute_colon2";
-         scale;
-         desc { "default";
-            rel1.to: "bg_text2";
-            rel2.to: "bg_text2";
-            color: 255 255 255 255;
-            fixed: 1 1;
-            text {
-               min: 1 0;
-               font: "Sans";
-               size: "15";
-               //text: ":";
-               align: 0.5 0.44;
-            }
-            vis;
-         }
-         desc { "invisible";
-            inherit: default 0.0;
+            inherit: "default" 0.0;
             hid;
-         }
-      }
-      spacer { "padding_center4";
-         scale;
-         desc { "default";
-            fixed: 1 0;
-            min: 3 0;
-            max: 3 -1;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "bg_text2";
-            }
-            rel2.to: "bg_text2";
-            align: 0.0 0.5;
-         }
-         desc { "invisible";
-            inherit: default 0.0;
-            min: 0 0;
-            max: 0 0;
          }
       }
       swallow { "efl.field2"; required;
-         mouse;
          scale;
          desc { "default";
-            fixed: 1 0;
-            min: 40 0;
-            max: 40 -1;
-             rel1 {
-               relative: 1.0 0.0;
-               to: "padding_center4";
-            }
-            rel2.to: "padding_center4";
-            align: 0.0 0.5;
+            min: 23 69;
+            rel1.offset: 2 4;
+            rel1.relative: (1/3) 0.0;
+            rel2.offset: -3 -5;
+            rel2.relative: (2/3) 1.0;
+            offscale;
          }
-         desc { "24layout";
+         desc { "invisible";
+            inherit: "default" 0.0;
             hid;
-            min: 0 0;
-            max: 0 -1;
+         }
+      }
+      swallow { "efl.field0"; required;
+         scale;
+         desc { "default";
+            min: 23 69;
+            rel1.offset: 4 4;
+            rel1.relative: (2/3) 0.0;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+         desc { "invisible";
+            inherit: "default" 0.0;
+            hid;
          }
       }
       rect { "access";
          repeat;
          desc { "default";
-            fixed: 1 1;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "base";
             color: 0 0 0 0;
          }
       }
    }
    programs {
-      program { "visible_ampm";
-         signal: "efl,ampm,visible,on";
-         source: "efl";
-         script {
-            set_state(PART:"base", "default", 0.0);
-            set_state(PART:"bg", "default", 0.0);
-            set_state(PART:"efl.field2", "default", 0.0);
-         }
+      program { signal: "efl,ampm,visible,on"; source: "efl";
+         script { flag_unset(TP_24H); }
       }
-      program { "invisible_ampm";
-         signal: "efl,ampm,visible,off";
-         source: "efl";
-         script {
-            set_state(PART:"base", "24layout", 0.0);
-            set_state(PART:"bg", "24layout", 0.0);
-            set_state(PART:"efl.field2", "24layout", 0.0);
-         }
+      program { signal: "efl,ampm,visible,off"; source: "efl";
+         script { flag_set(TP_24H); }
       }
-      program { "visible_colon_field0";
-         signal: "efl,colon_field0,visible,on";
-         source: "efl";
-         action: STATE_SET "default";
-         target: "padding_center1";
-         target: "hour_minute_colon";
-         target: "bg_text";
-         target: "padding_center2";
+      program { signal: "efl,colon_field0,visible,on"; source: "efl";
+         script { flag_set(TP_HR); }
       }
-      program { "invisible_colon_field0";
-         signal: "efl,colon_field0,visible,off";
-         source: "efl";
-         action: STATE_SET "invisible";
-         target: "padding_center1";
-         target: "hour_minute_colon";
-         target: "bg_text";
-         target: "padding_center2";
+      program { signal: "efl,colon_field0,visible,off"; source: "efl";
+         script { flag_unset(TP_HR); }
       }
-      program { "visible_colon_field1";
-         signal: "efl,colon_field1,visible,on";
-         source: "efl";
-         action: STATE_SET "default";
-         target: "padding_center3";
-         target: "hour_minute_colon2";
-         target: "bg_text2";
-         target: "padding_center4";
+      program { signal: "efl,colon_field1,visible,on"; source: "efl";
+         script { flag_set(TP_MN); }
       }
-      program { "invisible_colon_field1";
-         signal: "efl,colon_field1,visible,off";
-         source: "efl";
-         action: STATE_SET "invisible";
-         target: "padding_center3";
-         target: "hour_minute_colon2";
-         target: "bg_text2";
-         target: "padding_center4";
+      program { signal: "efl,colon_field1,visible,off"; source: "efl";
+         script { flag_unset(TP_MN); }
       }
    }
 }
@@ -410,12 +205,12 @@ group { "efl/timepicker/button";
    parts {
       image { "base";
          desc { "default";
-            min: 40 40;
-            max: 40 40;
+            min: 23 23;
+            max: 23 23;
          }
          desc { "pressed";
-            min: 40 40;
-            max: 40 40;
+            min: 23 23;
+            max: 23 23;
          }
       }
    }
