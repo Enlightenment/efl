@@ -465,7 +465,6 @@ group { name: "elm/tooltip/base/luncher";
    data.item: "hide_timeout" "0.35";
    // if in a window... it's transparent!
    data.item: "transparent" "enabled";
-   images.image: "tooltip-base.png" COMP;
    images.image: "tooltip-corner-top-left-tip.png" COMP;
    images.image: "tooltip-corner-top-right-tip.png" COMP;
    images.image: "tooltip-corner-bottom-left-tip.png" COMP;

@@ -1,8 +1,4 @@
 group { name: "e/widgets/cslider";
-   images.image: "col_sel_end_bottom.png" COMP;
-   images.image: "col_sel_end_top.png" COMP;
-   images.image: "col_sel_end_left.png" COMP;
-   images.image: "col_sel_end_right.png" COMP;
    parts {
       part { name: "bg"; type: RECT;
          scale: 1;

@@ -1,8 +1,5 @@
 #define BSZ 24
 group { name: "elm/player/base/default";
-   images.image: "bevel_out.png" COMP;
-   images.image: "vgrad_shadow_bi.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
    script {
       public in_control;
       public in_volume;

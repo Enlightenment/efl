@@ -492,9 +492,6 @@ group { name: "elm/hover/base/menu/default";
 //and no part should interact except the bottom area
 group { name: "elm/hover/base/submenu/default";
    inherit: "elm/hover/base/menu/default";
-   images {
-      image: "vgrad_med.png" COMP;
-   }
    parts {
       part { name: "elm.swallow.offset";
          repeat_events: 1;

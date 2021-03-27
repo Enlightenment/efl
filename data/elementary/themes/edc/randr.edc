@@ -60,7 +60,6 @@ group { name: "e/conf/randr/main/monitor";
 
 group { name: "e/conf/randr/main/frame";
    images.image: "hole_tiny.png" COMP;
-   images.image: "led_tiny_orange.png" COMP;
    images.image: "led_tiny_green.png" COMP;
    images.image: "screen_bg.png" COMP;
    images.image: "mini_blue_glow_arrow_0.png" COMP;
@@ -70,7 +69,6 @@ group { name: "e/conf/randr/main/frame";
    images.image: "sym_up_light_normal.png" COMP;
    images.image: "sym_up_light_selected.png" COMP;
    images.image: "icon_system-shutdown.png" COMP;
-   images.image: "icon_arrow_up.png" COMP;
    styles {
       style { name: "randr_name_style";
          base: "font="FNBD" font_size=10 text_class=randr_monitor align=center color=#ffff wrap=word";

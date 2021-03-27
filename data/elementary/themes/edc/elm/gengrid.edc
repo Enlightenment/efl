@@ -324,7 +324,6 @@ IC("ic-arrow-u", "arrow-u")
 
 group { name: "elm/gengrid/item/up/default";
    inherit: "elm/gengrid/item/default/default";
-   images.image: "icon_arrow_up.png" COMP;
    parts {
       part { name: "icon_area"; type: RECT;
          description { state: "default" 0.0;

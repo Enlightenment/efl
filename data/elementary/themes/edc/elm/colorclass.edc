@@ -280,8 +280,6 @@ group { "colorclass/colors"; program_source: "elm"; nobroadcast;
 }
 
 group { "colorclass/color1"; nomouse; nobroadcast;
-   images.image: "inset_shadow.png" COMP;
-   images.image: "bevel_in.png" COMP;
    parts {
       rect { "event"; mouse;
          desc { color: 0 0 0 0; fixed: 1 1; }
@@ -295,15 +293,6 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      image { "pat"; clip: "clip";
-         desc {
-            rel1.to: "bg";
-            rel2.to: "bg";
-            image.normal: "dot_pattern.png";
-            TILED_PATTERN(256, 256)
-            fixed: 1 1;
-         }
-      }
       rect { "color"; clip: "clip";
          desc { align: 0 0;
             min: 40 20;
@@ -313,33 +302,7 @@ group { "colorclass/color1"; nomouse; nobroadcast;
             fixed: 1 1;
          }
       }
-      image { "shadow"; clip: "clip";
-         desc {
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            fill.smooth: 0;
-            color: 255 255 255 128;
-            fixed: 1 1;
-         }
-      }
-      image { "inset"; clip: "clip";
-         desc {
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel1.offset: 1 1;
-            rel2.to: "bg";
-            rel2.offset: -2 -2;
-            fill.smooth: 0;
-            fixed: 1 1;
-         }
-      }
       text { "text"; clip: "clip";
-         effect: SHADOW BOTTOM;
          scale: 1;
          desc { align: 0 0.5;
             rel1.offset: 2 2;

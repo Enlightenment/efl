@@ -66,7 +66,6 @@ group { name: "e/widgets/menu/default/background";
 }
 
 group { name: "e/widgets/menu/default/separator";
-   images.image: "separator_horiz.png" COMP;
    parts {
       part { name: "base"; type: RECT;
          scale: 1;
