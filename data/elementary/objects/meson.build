@@ -21,7 +21,7 @@ foreach edc_file : edc_files
     input : edc_file,
     output : '@BASENAME@.edj',
     command : edje_cc_exe + [ '-beta', '-fastcomp',
-              '-sd', join_paths(meson.current_source_dir()),
+              '-sd', elm_themes_sound_include,
               '-id', elm_themes_image_include,
               '-id', join_paths(meson.current_source_dir()),
               '-fd', join_paths(meson.current_source_dir()),

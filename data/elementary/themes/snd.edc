@@ -1,0 +1,12 @@
+sounds {
+   sample { name: "splash"           LOSSY 256; source: "splash.wav"; }
+   sample { name: "wood-tap1"        LOSSY  64; source: "wood-tap.wav"; }
+   sample { name: "wood-tap2"        LOSSY  64; source: "wood-tap2.wav"; }
+   sample { name: "key-tap1"         LOSSY  64; source: "kbd-tap.wav"; }
+   sample { name: "key-tap2"         LOSSY  64; source: "kbd-tap2.wav"; }
+   sample { name: "key-tap3"         LOSSY  64; source: "kbd-tap3.wav"; }
+   sample { name: "key-tap4"         LOSSY  64; source: "kbd-tap4.wav"; }
+   sample { name: "key-tap5"         LOSSY  64; source: "kbd-tap5.wav"; }
+   sample { name: "synth-worble-dn"  LOSSY 128; source: "synth-worble-down.wav"; }
+   sample { name: "synth-worble-up"  LOSSY 128; source: "synth-worble-up.wav"; }
+}

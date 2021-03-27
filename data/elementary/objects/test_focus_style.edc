@@ -434,6 +434,8 @@ collections {
       }
    } //group ends
 
+#include "../../../data/elementary/themes/snd.edc"
+#include "../../../data/elementary/themes/ic.edc"
 #include "../../../data/elementary/themes/macros.edc"
 #include "../../../data/elementary/themes/fonts.edc"
 #include "../../../data/elementary/themes/colorclasses.edc"
