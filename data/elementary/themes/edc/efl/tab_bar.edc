@@ -14,11 +14,6 @@ group { "efl/tab_bar/tab";
 
    images.image: "win_shad_flat.png" COMP;
 
-   images.image: "shadow_inset_bevels.png" COMP;
-   images.image: "shadow_angled_in_sides.png" COMP;
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
-   images.image: "bevel_dark_in.png" COMP;
-
 #define ICON    1
 #define LABEL   2
 #define MASK    3
