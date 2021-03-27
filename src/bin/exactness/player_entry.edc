@@ -2,19 +2,12 @@ collections {
    #include "../../../data/elementary/themes/fonts.edc"
    group { name: "elm/entry/cursor/default";
       min: 1 0;
-      images.image: "white_bar_vert_glow.png" COMP;
       parts {
-         part { name: "cursor"; mouse_events: 0;
+         part { name: "cursor"; type: RECT; mouse_events: 0;
             clip_to: "clipper";
             description { state: "default" 0.0;
-               rel1.offset: -4 -4;
-               rel2.offset: 3 3;
-               image.normal: "white_bar_vert_glow.png";
-               image.border: 4 4 4 4;
-               fill.smooth: 0;
-               color: 255 255 255 0;
-               color_class: "entry_cursor";
-               min: 9 10;
+               color: 255 255 255 255;
+               min: 1 10;
             }
             description { state: "visible" 0.0;
                inherit: "default" 0.0;
@@ -113,17 +106,16 @@ collections {
    }
 
    group { name: "elm/entry/anchor/default";
-      images.image: "horizontal_separated_bar_small_glow.png" COMP;
       parts {
-         part { name: "bar";
+         part { name: "bar"; type: RECT;
+            scale: 1;
             description { state: "default" 0.0;
-               image.normal: "horizontal_separated_bar_small_glow.png";
-               image.border: 4 4 4 4;
-               fill.smooth: 0;
+               color: 51 153 255 255;
                fixed: 0 1;
                rel1.relative: 0.0 1.0;
-               rel1.offset: -3 -5;
-               rel2.offset: 2 4;
+               rel1.offset: -1 -1;
+               rel2.offset: 0 -1;
+               offscale;
             }
          }
       }
@@ -646,14 +638,11 @@ collections {
    }
 
    group { name: "elm/entry/magnifier/default";
-      images.image: "frame_rounded.png" COMP;
       parts {
          part { name: "bg"; type: RECT; mouse_events: 0;
             description { state: "default" 0.0;
                rel1.offset: 10 10;
-               rel1.to: "over";
                rel2.offset: -11 -11;
-               rel2.to: "over";
                color: 48 48 48 255;
             }
             description { state: "hidden" 0.0;
@@ -664,24 +653,7 @@ collections {
          part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
             description { state: "default" 0.0;
                rel1.offset: 10 10;
-               rel1.to: "over";
                rel2.offset: -11 -11;
-               rel2.to: "over";
-            }
-            description { state: "hidden" 0.0;
-               inherit: "default" 0.0;
-               visible: 0;
-            }
-         }
-         part { name: "over"; mouse_events: 0;
-            scale: 1;
-            description { state: "default" 0.0;
-               min: 128 64;
-               align: 0 0;
-               image.normal: "frame_rounded.png";
-               image.border: 14 14 14 14;
-               image.middle: 0;
-               fill.smooth: 0;
             }
             description { state: "hidden" 0.0;
                inherit: "default" 0.0;
@@ -695,14 +667,12 @@ collections {
             action: STATE_SET "default" 0.0;
             target: "elm.swallow.content";
             target: "bg";
-            target: "over";
          }
          program { name: "magnifier_hide";
             signal: "elm,action,hide,magnifier"; source: "elm";
             action: STATE_SET "hidden" 0.0;
             target: "elm.swallow.content";
             target: "bg";
-            target: "over";
          }
       }
    }
