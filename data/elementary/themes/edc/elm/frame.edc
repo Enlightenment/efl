@@ -1,113 +1,84 @@
 group { name: "elm/frame/base/default";
-   images.image: "shadow_square_tiny.png" COMP;
-   images.image: "vgrad_med_curved.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "holes_tiny_vert.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    parts {
-      part { name: "shadow"; mouse_events: 0;
+      part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
-            rel1.offset: -1 0;
-            rel2.offset: 0 1;
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
+            rel.to: "_sh1";
+         }
+         description { state: "hidden" 0.0;
+            inherit;
+            visible: 0;
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.relative: 0.0 1.0;
-            rel1.offset: 2 0;
-            rel1.to_y: "top";
-            rel2.offset: -3 -3;
-            color: 64 64 64 255;
+            rel1.offset: 6 6;
+            rel2.offset: -7 -7;
+            color: 80 80 80 255;
+            offscale;
          }
       }
-      part { name: "top";
+      part { name: "top"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "vgrad_med_curved.png";
-            rel1.offset: 2 2;
+            rel1.to: "base";
+            rel2.to_x: "base";
             rel2.to_y: "elm.text";
-            rel2.offset: -3 -1;
-            fill.smooth: 0;
-            TILED_HORIZ(120)
-         }
-      }
-      part { name: "edge1";
-         description { state: "default" 0.0;
-            image.normal: "holes_tiny_vert.png";
-            rel1.offset: 4 0;
-            rel1.to_y: "elm.text";
-            rel2.offset: 4 -1;
-            rel2.relative: 0.0 1.0;
-            rel2.to_y: "elm.text";
-            align: 0.0 0.5;
-            FIXED_SIZE(3, 11)
-         }
-      }
-      part { name: "edge2";
-         description { state: "default" 0.0;
-            image.normal: "holes_tiny_vert.png";
-            rel1.offset: -5 0;
-            rel1.to_y: "elm.text";
-            rel1.relative: 1.0 0.0;
-            rel2.offset: -5 -1;
-            rel2.relative: 1.0 1.0;
-            rel2.to_y: "elm.text";
-            align: 1.0 0.5;
-            FIXED_SIZE(3, 11)
+            rel2.offset: -1 3;
+            offscale;
          }
       }
       part { name: "elm.text"; type: TEXT;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
-            color_class: "frame";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 1 2;
-            rel1.to_x: "edge1";
-            rel2.relative: 0.0 0.0;
-            rel2.offset: -3 1;
-            rel2.to_x: "edge2";
+            rel1.offset: 4 4;
+            rel1.to: "base";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 4;
+            rel2.to: "base";
             align: 0.0 0.0;
-            color: FN_COL_DISABLE;
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
-               text_class: "frame";
                align: 0.0 0.0;
                min: 0 1;
             }
             fixed: 0 1;
+            offscale;
+         }
+      }
+      part { name: "bg"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel1.to_y: "top";
+            rel1.relative: 0.0 1.0;
+            rel2.to: "base";
+            color: 64 64 64 255;
          }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.relative: 0.0 1.0;
-            rel1.offset: 5 0;
-            rel1.to_y: "elm.text";
-            rel2.offset: -7 -7;
+            rel1.to: "bg";
+            rel2.to: "bg";
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
             align: 0.0 1.0;
-            rel1.relative: 0.0 1.0;
-            rel1.offset: 5 0;
-            rel1.to_y: "elm.text";
-            rel2.offset: -7 -7;
+            rel.to: "bg";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          description { state: "collapsed" 0.0;
             inherit: "default" 0.0;
             minmul: 1.0 0.0;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
+            rel1.offset: 4 0;
+            rel2.offset: -5 -1;
          }
       }
       part { name: "event"; type: RECT; ignore_flags: ON_HOLD;
@@ -131,12 +102,10 @@ group { name: "elm/frame/base/default";
          transition: DECELERATE 0.3;
          after: "signal";
       }
-      program {
-         signal:  "mouse,up,1"; source:  "event";
+      program { signal:  "mouse,up,1"; source:  "event";
          action:  SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program {
-         signal:  "elm,action,toggle"; source: "elm";
+      program { signal:  "elm,action,toggle"; source: "elm";
          script {
             new st[31];
             new Float:vl;
@@ -147,8 +116,7 @@ group { name: "elm/frame/base/default";
               run_program(PROGRAM:"expand");
          }
       }
-      program {
-         signal:  "elm,action,switch"; source: "elm";
+      program { signal:  "elm,action,switch"; source: "elm";
          script {
             new st[31];
             new Float:vl;
@@ -196,11 +164,13 @@ group { name: "elm/frame/base/pad_medium";
    inherit: "elm/frame/base/pad_small";
    parts {
       part { name: "b0";
+         scale: 1;
          description { state: "default" 0.0;
             min: 6 6; max: 6 6;
          }
       }
       part { name: "b1";
+         scale: 1;
          description { state: "default" 0.0;
             min: 6 6; max: 6 6;
          }
@@ -212,11 +182,13 @@ group { name: "elm/frame/base/pad_large";
    inherit: "elm/frame/base/pad_small";
    parts {
       part { name: "b0";
+         scale: 1;
          description { state: "default" 0.0;
             min: 12 12; max: 12 12;
          }
       }
       part { name: "b1";
+         scale: 1;
          description { state: "default" 0.0;
             min: 12 12; max: 12 12;
          }
@@ -228,11 +200,13 @@ group { name: "elm/frame/base/pad_huge";
    inherit: "elm/frame/base/pad_small";
    parts {
       part { name: "b0";
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 24; max: 24 24;
          }
       }
       part { name: "b1";
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 24; max: 24 24;
          }
@@ -241,96 +215,82 @@ group { name: "elm/frame/base/pad_huge";
 }
 
 group { name: "elm/frame/base/outdent_top";
-   images.image: "separator_horiz.png" COMP;
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 3 3;
-            rel2.offset: -4 -4;
+            rel1.to_y: "base";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
          }
       }
-      part { name: "base";
+      part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "separator_horiz.png";
-            rel1.offset: 0 2;
-            rel2.offset: -1 3; 
+            fixed: 0 1;
+            rel1.offset: 4 2;
+            rel2.offset: -5 2;
             rel2.relative: 1.0 0.0;
-            min: 0 2;
-            fill.smooth: 0;
+            min: 0 1;
          }
       }
    }
 }
 
 group { name: "elm/frame/base/outdent_bottom";
-   images.image: "separator_horiz.png" COMP;
    parts {
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 3 3;
-            rel2.offset: -4 -4;
+            rel1.offset: 4 4;
+            rel2.to_y: "base";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 -5;
          }
       }
-      part { name: "base";
+      part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "separator_horiz.png";
-            rel1.offset: 0 -4;
+            fixed: 0 1;
+            rel1.offset: 4 -3;
             rel1.relative: 0.0 1.0;
-            rel2.offset: -1 -3;
-            min: 0 2;
-            fill.smooth: 0;
+            rel2.offset: -5 -3;
+            min: 0 1;
          }
       }
    }
 }
 
 group { name: "elm/frame/base/outline";
-   images.image: "shadow_square_tiny.png" COMP;
-   images.image: "bevel_out.png" COMP;
-      parts {
-         part { name: "shadow"; mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.offset: -1 0;
-               rel2.offset: 0 1;
-               image.normal: "shadow_square_tiny.png";
-               image.border: 6 6 6 6;
-               fill.smooth: 0;
-            }
+   parts {
+      part { name: "shadow"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "_sh1";
          }
-         part { name: "base"; type: RECT;
-            description { state: "default" 0.0;
-               rel1.offset: 3 0;
-               rel2.offset: -3 -3;
-               color: 64 64 64 255;
-            }
-         }
-         part { name: "clip"; type: RECT;
-            description { state: "default" 0.0;
-               rel1.offset: 5 0;
-               rel2.offset: -7 -7;
-            }
-         }
-         part { name: "elm.swallow.content"; type: SWALLOW;
-            clip_to: "clip";
-            description { state: "default" 0.0;
-               align: 0.0 1.0;
-               rel1.offset: 5 5;
-               rel2.offset: -5 -5;
-            }
-            description { state: "collapsed" 0.0;
-              inherit: "default" 0.0;
-              minmul: 1.0 0.0;
-            }
-         }
-         part { name: "bevel"; mouse_events: 0;
-            description { state: "default" 0.0;
-               rel1.offset: 2 2;
-               rel2.offset: -3 -3;
-               image.normal: "bevel_out.png";
-               image.border: 1 1 1 1;
-               image.middle: 0;
-               fill.smooth: 0;
-            }
+         description { state: "hidden" 0.0;
+            inherit;
+            visible: 0;
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
+      part { name: "base"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 6 6;
+            rel2.offset: -7 -7;
+            color: 64 64 64 255;
+            offscale;
+         }
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+      }
+   }
 }

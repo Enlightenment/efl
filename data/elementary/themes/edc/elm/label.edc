@@ -1,17 +1,43 @@
-#define HORIZONTAL_FIXED \
-   description { state: "horizontal_fixed" 0.0; \
-      inherit: "default" 0.0; \
-      fixed: 1 0; \
-      text.min: 0 1; \
-   }
+#define FIXED 1
+
+#define LABEL_SCRIPT \
+      public btmode; \
+      public eval_mode(m) { \
+         new f = m & FIXED; \
+         new d = m & DISABLE; \
+         if (d) { \
+            if (f) set_state(PART:"elm.text", "disabled_horizontal_fixed", 0.0); \
+            else set_state(PART:"elm.text", "disabled", 0.0); \
+         } else { \
+            if (f) set_state(PART:"elm.text", "horizontal_fixed", 0.0); \
+            else set_state(PART:"elm.text", "default", 0.0); \
+         } \
+      } \
+      public flag_set(flag) { \
+         new m = get_int(btmode) | flag; \
+         set_int(btmode, m); eval_mode(m); \
+      } \
+      public flag_unset(flag) { \
+         new m = get_int(btmode) & ~flag; \
+         set_int(btmode, m); eval_mode(m); \
+      }
 
 group { name: "elm/label/base/default";
+   script {
+      LABEL_SCRIPT
+   }
    styles {
       style { name: "label_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "label_style_disabled";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#606060";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
@@ -35,124 +61,178 @@ group { name: "elm/label/base/default";
                min: 1 1;
             }
          }
-         HORIZONTAL_FIXED
+         description { state: "horizontal_fixed" 0.0;
+            inherit: "default" 0.0;
+            fixed: 1 0;
+            text.min: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            text.style: "label_style_disabled";
+         }
+         description { state: "disabled_horizontal_fixed" 0.0;
+            inherit: "horizontal_fixed" 0.0;
+            text.style: "label_style_disabled";
+         }
       }
    }
    programs {
-      program { name: "horizontal_expandable";
-         signal: "elm,state,horizontal,expandable"; source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.text";
+      program { signal: "elm,state,horizontal,expandable"; source: "elm";
+         script { flag_unset(FIXED); }
       }
-      program { name: "horizontal_fixed";
-         signal: "elm,state,horizontal,fixed"; source: "elm";
-         action: STATE_SET "horizontal_fixed" 0.0;
-         target: "elm.text";
+      program { signal: "elm,state,horizontal,fixed"; source: "elm";
+         script { flag_set(FIXED); }
+      }
+      program { signal: "elm,state,disabled"; source: "elm";
+         script { flag_set(DISABLE); }
+      }
+      program { signal: "elm,state,enabled"; source: "elm";
+         script { flag_unset(DISABLE); }
       }
    }
 }
 
 group { name: "elm/label/base/default/left";
    inherit: "elm/label/base/default";
+   script {
+      LABEL_SCRIPT
+   }
    styles {
       style { name: "label_style_left";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "label_style_left_disabled";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#606060";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
       textblock { "elm.text";
          desc { "default"; text.style: "label_style_left"; }
-         HORIZONTAL_FIXED
+         desc { "horizontal_fixed"; text.style: "label_style_left"; }
+         desc { "disabled"; text.style: "label_style_left_disabled"; }
+         desc { "disabled_horizontal_fixed"; text.style: "label_style_left_disabled"; }
       }
    }
 }
 
 group { name: "elm/label/base/default/right";
    inherit: "elm/label/base/default";
+   script {
+      LABEL_SCRIPT
+   }
    styles {
       style { name: "label_style_right";
-         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#a0a0a0";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
+      }
+      style { name: "label_style_right_disabled";
+         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#606060";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
       textblock { "elm.text";
          desc { "default"; text.style: "label_style_right"; }
-         HORIZONTAL_FIXED
+         desc { "horizontal_fixed"; text.style: "label_style_right"; }
+         desc { "disabled"; text.style: "label_style_right_disabled"; }
+         desc { "disabled_horizontal_fixed"; text.style: "label_style_right_disabled"; }
       }
    }
 }
 
 group { name: "elm/label/base/marker";
    inherit: "elm/label/base/default";
+   script {
+      LABEL_SCRIPT
+   }
    styles {
       style { name: "label_style2";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#a0a0a0";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
          tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
       }
+      style { name: "label_style2_disabled";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#606060";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+         tag: "b" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+      }
    }
    parts {
-      part { name: "elm.text"; type: TEXTBLOCK;
-         scale: 1;
-         description { state: "default" 0.0;
-            text { style: "label_style2";
-               min: 1 1;
-               ellipsis: -1;
-            }
-         }
+      textblock { "elm.text";
+         desc { "default"; text.style: "label_style2"; }
+         desc { "horizontal_fixed"; text.style: "label_style2"; }
+         desc { "disabled"; text.style: "label_style2_disabled"; }
+         desc { "disabled_horizontal_fixed"; text.style: "label_style2_disabled"; }
       }
    }
 }
 
 group { "elm/label/base/marker/left";
    inherit: "elm/label/base/default";
+   script {
+      LABEL_SCRIPT
+   }
    styles {
       style { name: "label_style3";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#a0a0a0";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
          tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
       }
+      style { name: "label_style3_disabled";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#606060";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+         tag: "b" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+      }
    }
    parts {
-      part { name: "elm.text"; type: TEXTBLOCK;
-         scale: 1;
-         description { state: "default" 0.0;
-            text { style: "label_style3";
-               min: 1 1;
-               ellipsis: -1;
-            }
-         }
+      textblock { "elm.text";
+         desc { "default"; text.style: "label_style3"; }
+         desc { "horizontal_fixed"; text.style: "label_style3"; }
+         desc { "disabled"; text.style: "label_style3_disabled"; }
+         desc { "disabled_horizontal_fixed"; text.style: "label_style3_disabled"; }
       }
    }
 }
 
 group { "elm/label/base/marker/right";
    inherit: "elm/label/base/default";
+   script {
+      LABEL_SCRIPT
+   }
    styles {
       style { name: "label_style4";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#a0a0a0";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
          tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
       }
+      style { name: "label_style4_disabled";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#606060";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+         tag: "b" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+      }
    }
    parts {
-      part { name: "elm.text"; type: TEXTBLOCK;
-         scale: 1;
-         description { state: "default" 0.0;
-            text { style: "label_style4";
-               min: 1 1;
-               ellipsis: -1;
-            }
-         }
+      textblock { "elm.text";
+         desc { "default"; text.style: "label_style4"; }
+         desc { "horizontal_fixed"; text.style: "label_style4"; }
+         desc { "disabled"; text.style: "label_style4_disabled"; }
+         desc { "disabled_horizontal_fixed"; text.style: "label_style4_disabled"; }
       }
    }
 }
@@ -160,6 +240,7 @@ group { "elm/label/base/marker/right";
 group { name: "elm/label/base/slide_long";
    inherit: "elm/label/base/default";
    script {
+      LABEL_SCRIPT
       public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
       public message(Msg_Type:type, id, ...) {
@@ -278,6 +359,7 @@ group { name: "elm/label/base/slide_long";
 group { name: "elm/label/base/slide_short";
    inherit: "elm/label/base/default";
    script {
+      LABEL_SCRIPT
       public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
       public message(Msg_Type:type, id, ...) {
@@ -392,6 +474,7 @@ group { name: "elm/label/base/slide_short";
 group { name: "elm/label/base/slide_bounce";
    inherit: "elm/label/base/default";
    script {
+      LABEL_SCRIPT
       public g_duration, g_stopslide, g_timer_id, g_anim_id;
 
       public message(Msg_Type:type, id, ...) {
@@ -514,4 +597,4 @@ group { name: "elm/label/base/slide_bounce";
       }
    }
 }
-#undef HORIZONTAL_FIXED
+#undef FIXED

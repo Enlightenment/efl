@@ -1,19 +1,17 @@
 group { name: "e/desktop/background";
-   images.image: "bg_radgrad.png" COMP;
-   images.image: "dot_pattern.png" COMP;
+   alias: "elm/ews/background/default";
+   BACKGROUND_IMG
    parts {
-      part { name: "bg";
+      part { name: "clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "bg_radgrad.png";
-            image.scale_hint: STATIC;
-            fill.smooth: 0;
-            ASPECT_FILL((1024/653))
          }
       }
-      part { name: "pat";
+      part { name: "bg";
+         clip_to: "clip";
          description { state: "default" 0.0;
-            image.normal: "dot_pattern.png";
-            TILED_PATTERN(256, 256)
+            image.normal: "background";
+            image.scale_hint: STATIC;
+            ASPECT_FILL((7680/4320))
          }
       }
    }

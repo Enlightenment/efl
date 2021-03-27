@@ -1,21 +1,21 @@
 #define CIT_STYLES\
       style { name: "calendar_date_style";\
-         base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 align=center text_class=calendar_day_text color_class=calendar_day_text";\
+         base: "font="FN" font_size=10 color=#a0a0a0 align=center text_class=calendar_day_text";\
       }\
       style { name: "calendar_date_holiday_style";\
-         base: "font="FN" font_size=10 color=#808080 style=shadow,bottom shadow_color=#00000080 align=center text_class=calendar_day_text_holiday color_class=calendar_day_text_holiday";\
+         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_holiday";\
       }\
       style { name: "calendar_date_today_style";\
-         base: "font="FN" font_size=10 color=#3399ff style=glow glow_color=#3399ff18 align=center text_class=calendar_day_text_today color_class=calendar_day_text_today";\
+         base: "font="FN" font_size=10 color=#ffffff align=center text_class=calendar_day_text_today";\
       }\
       style { name: "calendar_date_disabled_style";\
-         base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_disabled text_class=calendar_day_text_disabled";\
+         base: "font="FN" font_size=10 color=#282828 align=center text_class=calendar_day_text_disabled";\
       }\
       style { name: "calendar_date_weekend1_style";\
-         base: "font="FN" font_size=10 color=#2020C0 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_weekend1 color_class=calendar_day_text_weekend1";\
+         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_weekend1";\
       }\
       style { name: "calendar_date_weekend2_style";\
-         base: "font="FN" font_size=10 color=#C02020 style=shadow,bottom shadow_color=#ffffffc0 align=center text_class=calendar_day_text_weekend2 color_class=calendar_day_text_weekend2";\
+         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_weekend2";\
       }\
 
 #define CAL_SPIN(_sufix, _text, _relative)\
@@ -30,8 +30,8 @@
                offset: 0 -1;\
             }\
             align: 0.0 0.5;\
-            min: 15 15;\
-            max: 15 15;\
+            min: 25 25;\
+            max: 25 25;\
          }\
       }\
       part { name: "right_bt"#_sufix; type: RECT;\
@@ -45,125 +45,110 @@
                offset: -1 -1;\
             }\
             align: 1.0 0.5;\
-            min: 15 15;\
-            max: 15 15;\
+            min: 25 25;\
+            max: 25 25;\
             color: 0 0 0 0;\
          }\
       }\
-      part { name: "elm,calendar,button"#_sufix",left";\
-         type: SWALLOW;\
+      part { name: "elm,calendar,button"#_sufix",left"; type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\
             fixed: 1 1;\
-            rel1.to: "left_bt"#_sufix;\
-            rel2.to: "left_bt"#_sufix;\
+            rel.to: "left_bt"#_sufix;\
+            min: 15 15;\
+            max: 15 15;\
          }\
          description { state: "rtl" 0.0;\
             inherit: "default" 0.0;\
-            rel1.to: "right_bt"#_sufix;\
-            rel2.to: "right_bt"#_sufix;\
+            rel.to: "right_bt"#_sufix;\
          }\
       }\
-      part { name: "elm,calendar,button"#_sufix",right";\
-         type: SWALLOW;\
+      part { name: "elm,calendar,button"#_sufix",right"; type: SWALLOW;\
          scale: 1;\
          description { state: "default" 0.0;\
             fixed: 1 1;\
-            rel1.to: "right_bt"#_sufix;\
-            rel2.to: "right_bt"#_sufix;\
+            rel.to: "right_bt"#_sufix;\
+            min: 15 15;\
+            max: 15 15;\
          }\
          description { state: "rtl" 0.0;\
             inherit: "default" 0.0;\
-            rel1.to: "left_bt"#_sufix;\
-            rel2.to: "left_bt"#_sufix;\
+            rel.to: "left_bt"#_sufix;\
          }\
       }\
       part { name: #_text; type: TEXT; mouse_events: 0;\
-         effect: SHADOW BOTTOM; \
          scale: 1;\
          description { state: "default" 0.0;\
             fixed: 1 1;\
             rel1 { relative: 1.0 0.0;\
                to: "left_bt"#_sufix;\
+               offset: 8 8;\
             }\
             rel2 { relative: 0.0 1.0;\
                to: "right_bt"#_sufix;\
+               offset: -9 -9;\
             }\
+            offscale;\
             text { font: FNBD; size: 10;\
                min: 0 1;\
                text_class: "calendar_"#_text; \
             }\
-            color_class: "calendar_"#_text; \
+            color: 160 160 160 255; \
          }\
       }
 
 #define CH(_pos) \
    part { name: "ch_"#_pos"_base"; type: SPACER; \
       description { state: "default" 0.0; \
-         rel1 { \
-            relative: (_pos % 7 / 7) 0.0; \
-            to: "header"; \
-         } \
-         rel2 { \
-            relative: (_pos % 7 / 7 + 1 / 7) 1.0; \
-            to: "header"; \
-         } \
+         rel.to: "header";\
+         rel1.relative: (_pos % 7 / 7) 0.0; \
+         rel2.relative: (_pos % 7 / 7 + 1 / 7) 1.0; \
       } \
    } \
    part { name: "elm.ch_"#_pos".text"; type: TEXT; mouse_events: 0; \
-      effect: SHADOW BOTTOM; \
       scale: 1; \
       clip_to: "ch_"#_pos"_clipper"; \
       description { state: "default" 0.0; \
-         rel1.to: "ch_"#_pos"_base"; \
-         rel2.to: "ch_"#_pos"_base"; \
+         rel.to: "ch_"#_pos"_base"; \
+         rel1.offset: 0 3; \
+         rel2.offset: -1 -4; \
+         offscale;\
          text { font: FN; size: 8; \
             min: 1 1; \
             ellipsis: -1; \
             text_class: "calendar_weekday_text"; \
          } \
-         color_class: "calendar_weekday_text"; \
+         color: 160 160 160 255; \
       } \
    } \
    part { name: "ch_"#_pos"_clipper"; type: RECT; \
       description { state: "default" 0.0; \
-         rel1.to: "ch_"#_pos"_base"; \
-         rel2.to: "ch_"#_pos"_base"; \
+         rel.to: "ch_"#_pos"_base"; \
       } \
    }
 
 #define CIT(_pos) \
    part { name: "cit_"#_pos"_rect"; type: SPACER; \
       description { state: "default" 0.0; \
-         rel1 { \
-            relative: (_pos % 7 / 7) \
-            (_pos / 7 / 6 - _pos % 7 / 7 / 6); \
-            to: "base"; \
-         } \
-         rel2 { \
-            relative: (_pos % 7 / 7 + 1 / 7) \
-            (_pos / 7 / 6 + 1 / 6 - _pos % 7 / 7 / 6); \
-            to: "base"; \
-         } \
+         rel.to: "base"; \
+         rel1.relative: (_pos % 7 / 7) (_pos / 7 / 6 - _pos % 7 / 7 / 6); \
+         rel2.relative: (_pos % 7 / 7 + 1 / 7) (_pos / 7 / 6 + 1 / 6 - _pos % 7 / 7 / 6); \
       } \
    } \
    part { name: "cit_"#_pos"_event"; type: RECT; repeat_events: 1; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_rect"; \
-         rel2.to: "cit_"#_pos"_rect"; \
+         rel.to: "cit_"#_pos"_rect"; \
          color: 0 0 0 0; \
       } \
+      description { state: "today" 0.0; \
+         inherit: "default" 0.0; \
+         color: 0 0 0 64; \
+      } \
    } \
-   part { name: "cit_"#_pos"_pat"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_selected"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_selected"; \
-         rel1.offset: 1 1; \
-         rel2.to: "cit_"#_pos"_selected"; \
-         rel2.offset: -2 -2; \
-         image.normal: "diagonal_stripes.png"; \
-         color: 255 255 255 25; \
-         TILED_PATTERN(240, 240) \
-         color_class: "calendar_day_selected"; \
+         rel.to: "cit_"#_pos"_rect"; \
+         color: 51 153 255 128; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
@@ -171,46 +156,13 @@
          visible: 1; \
       } \
    } \
-   part { name: "cit_"#_pos"_selected"; mouse_events: 0; \
+   part { name: "cit_"#_pos"_focus"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_rect"; \
-         rel2.to: "cit_"#_pos"_rect"; \
-         image.normal: "outline_glow.png"; \
-         image.border: 4 4 4 4; \
-         color_class: "calendar_day_selected"; \
+         rel.to: "cit_"#_pos"_rect"; \
+         color: 255 153 51 128; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
-         inherit: "default" 0.0; \
-         visible: 1; \
-      } \
-   } \
-   part { name: "cit_"#_pos"_selected2"; mouse_events: 0; \
-      description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_rect"; \
-         rel2.to: "cit_"#_pos"_rect"; \
-         image.normal: "outline_glow.png"; \
-         image.border: 4 4 4 4; \
-         color: 255 255 255 128; \
-         color_class: "calendar_day_highlighted"; \
-         visible: 0; \
-      } \
-      description { state: "highlighted" 0.0; \
-         inherit: "default" 0.0; \
-         visible: 1; \
-      } \
-   } \
-   part { name: "cit_"#_pos"_glow"; mouse_events: 0; \
-      description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_rect"; \
-         rel2.to: "cit_"#_pos"_rect"; \
-         image.normal: "box_glow.png"; \
-         image.border: 12 12 12 12; \
-         image.middle: 0; \
-         fill.smooth: 0; \
-         visible: 0; \
-      } \
-      description { state: "focused" 0.0; \
          inherit: "default" 0.0; \
          visible: 1; \
       } \
@@ -218,11 +170,13 @@
    part { name: "elm.cit_"#_pos".text"; type: TEXTBLOCK; mouse_events: 0; \
       scale: 1; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_rect"; \
-         rel2.to: "cit_"#_pos"_rect"; \
+         rel.to: "cit_"#_pos"_rect"; \
+         rel1.offset: 3 0; \
+         rel2.offset: -4 -1; \
          text.style: "calendar_date_style"; \
          text.min: 1 1; \
          text.ellipsis: -1; \
+         offscale; \
       } \
       description { state: "holiday" 0.0; \
          inherit: "default" 0.0; \
@@ -249,20 +203,13 @@
       scale: 1; \
       description { state: "default" 0.0; \
          fixed: 1 1; \
-         rel1 { \
-            to: "cit_"#_pos"_rect"; \
-            relative: 0.6 0.5; \
-         } \
-         rel2 { \
-            to: "cit_"#_pos"_rect"; \
-            relative: 0.6 0.5; \
-         } \
-         min: 16 16; \
-         max: 16 16; \
-         aspect: 1 1; \
+         rel.to: "cit_"#_pos"_rect"; \
+         rel1.relative: 0.6 0.5; \
+         min: 15 15; \
+         max: 15 15; \
          align: 0.0 1.0;\
-         image.normal: "icon_border_remember.png"; \
-         color_class: "calendar_day_checked"; \
+         image.normal: "i-check"; \
+         color: 53 153 255 255; \
          visible: 0; \
       } \
       description { state: "visible" 0.0; \
@@ -272,8 +219,7 @@
    } \
    part { name: "elm.cit_"#_pos".access"; type: RECT; repeat_events: 1; \
       description { state: "default" 0.0; \
-         rel1.to: "cit_"#_pos"_event"; \
-         rel2.to: "cit_"#_pos"_event"; \
+         rel.to: "cit_"#_pos"_event"; \
          color: 0 0 0 0; \
       } \
    } \
@@ -283,7 +229,6 @@
          signal:  "cit_"#_pos",selected"; \
          source:  "elm"; \
          action:  STATE_SET "selected" 0.0; \
-         target:  "cit_"#_pos"_pat"; \
          target:  "cit_"#_pos"_selected"; \
       } \
       program { \
@@ -291,7 +236,6 @@
          signal:  "cit_"#_pos",unselected"; \
          source:  "elm"; \
          action:  STATE_SET "default" 0.0; \
-         target:  "cit_"#_pos"_pat"; \
          target:  "cit_"#_pos"_selected"; \
       } \
       program { \
@@ -302,7 +246,7 @@
             set_int(item_focus_enabled, 1); \
             set_int(last_focused_item, _pos); \
             if (get_int(win_focus_enabled) == 1) \
-               set_state(PART:"cit_"#_pos"_glow", "focused", 0.0); \
+               set_state(PART:"cit_"#_pos"_focus", "selected", 0.0); \
          } \
       } \
       program { \
@@ -311,7 +255,7 @@
          source:  "elm"; \
          script { \
             set_int(item_focus_enabled, 0); \
-            set_state(PART:"cit_"#_pos"_glow", "default", 0.0); \
+            set_state(PART:"cit_"#_pos"_focus", "default", 0.0); \
          } \
       } \
       program { \
@@ -320,6 +264,7 @@
          source:  "elm"; \
          action:  STATE_SET "today" 0.0; \
          target:  "elm.cit_"#_pos".text"; \
+         target:  "cit_"#_pos"_event";\
       } \
       program { \
          name:    "cit_"#_pos"_not_today"; \
@@ -327,6 +272,7 @@
          source:  "elm"; \
          action:  STATE_SET "default" 0.0; \
          target:  "elm.cit_"#_pos".text"; \
+         target:  "cit_"#_pos"_event";\
       } \
       program { \
          name:    "cit_"#_pos"_enable"; \
@@ -351,15 +297,15 @@
          source: "cit_"#_pos"_clicked"; \
          signal: "mouse,down,1"; \
          source: "cit_"#_pos"_event"; \
-         action:  STATE_SET "highlighted" 0.0; \
-         target:  "cit_"#_pos"_selected2"; \
+         action:  STATE_SET "selected" 0.0; \
+         target:  "cit_"#_pos"_selected"; \
       } \
       program { \
          source: "cit_"#_pos"_clicked"; \
          signal: "mouse,up,1"; \
          source: "cit_"#_pos"_event"; \
          action:  STATE_SET "default" 0.0; \
-         target:  "cit_"#_pos"_selected2"; \
+         target:  "cit_"#_pos"_selected"; \
       } \
       program { \
          source: "cit_"#_pos"_clicked"; \
@@ -442,14 +388,6 @@
    }
 
 group { name: "elm/calendar/base/default";
-   images.image: "sym_left_light_normal.png" COMP;
-   images.image: "sym_right_light_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_right_glow_normal.png" COMP;
-   images.image: "icon_border_remember.png" COMP;
-   images.image: "outline_glow.png" COMP;
-   images.image: "box_glow.png" COMP;
-   images.image: "diagonal_stripes.png" COMP;
    data.item: "focus_highlight" "on";
    script {
       public rtl;
@@ -462,28 +400,30 @@ group { name: "elm/calendar/base/default";
    }
    parts {
       part { name: "bg"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
+            rel1.offset: 8 8;
+            rel2.offset: -9 -9;
+            offscale;
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "spinner-base1"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 16;
             max: 999999 16;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
             rel2.relative: 1.0 (1/8);
             align: 0.5 0.0;
          }
       }
       part { name: "table-base"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             min: 70 60;
             rel1.to_x: "bg";
@@ -492,29 +432,31 @@ group { name: "elm/calendar/base/default";
             rel1.relative: 0.0 1.0;
             rel2.to: "bg";
             rel2.offset: -4 -4;
+            offscale;
          }
       }
       part { name: "header"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "table-base";
-            rel2.to: "table-base";
+            rel.to: "table-base";
             rel2.relative: 1.0 (1/7);
             align: 0.5 0.0;
-            min: 0 16;
+            min: 0 25;
          }
       }
-      part { name: "header_separator"; mouse_events:  0;
+      part { name: "header_separator"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "header";
+            rel.to: "header";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -2;
-            rel2.to: "header";
-            image.normal: "separator_horiz.png";
-            fill.smooth: 0;
+            rel1.offset: 8 -1;
+            rel2.offset: -9 -1;
+            color: 80 80 80 255;
+            offscale;
          }
       }
       part { name: "base"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to_x: "table-base";
             rel1.to_y: "header";
@@ -522,6 +464,7 @@ group { name: "elm/calendar/base/default";
             rel1.offset: 3 0;
             rel2.to: "table-base";
             rel2.offset: -3 0;
+            offscale;
          }
       }
 
@@ -562,18 +505,20 @@ group { name: "elm/calendar/base/double_spinners";
    inherit: "elm/calendar/base/default";
    parts {
       part { name: "spinner-base1"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 24;
             max: 999999 24;
-            rel1.to: "bg";
+            rel.to: "bg";
             rel1.offset: 6 6;
-            rel2.to: "bg";
             rel2.relative: 0.5 1.0;
             rel2.offset: -7 -7;
             align: 0.0 0.0;
+            offscale;
          }
       }
       part { name: "spinner-base2"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             min: 24 24;
             max: 999999 24;
@@ -584,6 +529,7 @@ group { name: "elm/calendar/base/double_spinners";
             rel2.to: "bg";
             rel2.offset: -7 -7;
             align: 0.0 0.0;
+            offscale;
          }
       }
       CAL_SPIN(,month_text, spinner-base1)
@@ -591,6 +537,7 @@ group { name: "elm/calendar/base/double_spinners";
    }
 }
 
+#undef CIT_STYLES
 #undef CAL_SPIN
 #undef CIT
 #undef CH

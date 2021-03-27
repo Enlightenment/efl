@@ -24,7 +24,6 @@
  * 
  */
 
-
 // Single FDO icon
 #define ICO1(Cat, Name, Size)                                     \
    group { name: "elm/icon/"##Name##"/default";                   \
@@ -36,7 +35,6 @@
                image.normal: ##Cat##"/"##Size##"/"##Name##".png"; \
                aspect: 1.0 1.0; aspect_preference: BOTH;          \
    }  }  }  }
-
 
 // FDO icon with small and normal source (16 and 128px)
 #define ICO2(Cat, Name)                                         \
@@ -61,7 +59,6 @@
                aspect: 1.0 1.0; aspect_preference: BOTH;        \
    }  }  }  }
 
-
 // Flag icon
 #define FLAG(Cat, Name)                                     \
    group { name: "elm/icon/"##Name##"/default";             \
@@ -74,294 +71,21 @@
                aspect_preference: SOURCE;                   \
    }  }  }  }
 
-
-////  places  /////////////////////////////////////////////////////////////////
-#define CTX "places"
-ICO1(CTX, "user-home", 128)
-ICO1(CTX, "user-bookmarks", 128)
-ICO2(CTX, "user-desktop")
-ICO1(CTX, "user-trash", 128)
-ICO2(CTX, "folder")
-ICO2(CTX, "folder-drag-accept") /* spec have this icon in the Status category */
-ICO2(CTX, "folder-remote")
-ICO2(CTX, "folder-open") /* */
-ICO2(CTX, "folder-home") /* */
-ICO2(CTX, "folder-download") /* */
-ICO2(CTX, "folder-recent") /* */
-ICO2(CTX, "folder-documents") /* */
-ICO2(CTX, "folder-pictures") /* */
-ICO2(CTX, "folder-music") /* */
-ICO2(CTX, "folder-videos") /* */
-ICO2(CTX, "folder-visiting") /* spec have this icon in the Status category */
-ICO2(CTX, "network-server")
-ICO2(CTX, "network-workgroup")
-ICO2(CTX, "start-here")
-#undef CTX
-
-
-////  emblems  ////////////////////////////////////////////////////////////////
-#define CTX "emblems"
-ICO1(CTX, "emblem-default", 96)
-ICO1(CTX, "emblem-documents", 96)
-ICO1(CTX, "emblem-downloads", 96)
-ICO1(CTX, "emblem-favorite", 96)
-ICO1(CTX, "emblem-important", 96)
-ICO1(CTX, "emblem-mail", 96)
-ICO1(CTX, "emblem-photos", 96)
-ICO1(CTX, "emblem-readonly", 96)
-ICO1(CTX, "emblem-shared", 96)
-ICO1(CTX, "emblem-symbolic-link", 96)
-ICO1(CTX, "emblem-unreadable", 96)
-ICO1(CTX, "emblem-system", 96)
-ICO1(CTX, "emblem-synchronized", 96)
-ICO1(CTX, "emblem-synchronizing", 96) /* */
-#undef CTX
-
-
-////  actions  ////////////////////////////////////////////////////////////////
-#define CTX "actions"
-ICO1(CTX, "address-book-new", 128)
-ICO1(CTX, "application-exit", 128)
-ICO1(CTX, "appointment-new", 128)
-ICO1(CTX, "call-start", 128)
-ICO1(CTX, "call-stop", 128)
-ICO1(CTX, "contact-new", 128)
-ICO1(CTX, "document-open", 128)
-ICO1(CTX, "document-open-recent", 128)
-ICO1(CTX, "document-page-setup", 128)
-ICO1(CTX, "document-properties", 128)
-ICO1(CTX, "document-save", 128)
-ICO1(CTX, "document-save-as", 128)
-ICO1(CTX, "document-send", 128)
-ICO1(CTX, "document-close", 128) /* */
-ICO1(CTX, "document-new", 128)
-ICO1(CTX, "document-print", 128)
-ICO1(CTX, "document-print-preview", 128)
-ICO1(CTX, "document-revert", 128)
-ICO1(CTX, "document-export", 128) /* */
-ICO1(CTX, "document-import", 128) /* */
-
-ICO1(CTX, "edit-clear", 128)
-ICO1(CTX, "edit-copy", 128)
-ICO1(CTX, "edit-cut", 128)
-ICO1(CTX, "edit-delete", 128)
-ICO1(CTX, "edit-find", 128)
-ICO1(CTX, "edit-find-replace", 128)
-ICO1(CTX, "edit-paste", 128)
-ICO1(CTX, "edit-redo", 128)
-ICO1(CTX, "edit-undo", 128)
-ICO1(CTX, "edit-select-all", 128)
-
-ICO1(CTX, "folder-copy", 128) /* */
-ICO1(CTX, "folder-move", 128) /* */
-ICO1(CTX, "folder-new", 128) /* */
-
-ICO1(CTX, "format-indent-less", 128)
-ICO1(CTX, "format-indent-more", 128)
-ICO1(CTX, "format-justify-center", 128)
-ICO1(CTX, "format-justify-fill", 128)
-ICO1(CTX, "format-justify-left", 128)
-ICO1(CTX, "format-justify-right", 128)
-ICO1(CTX, "format-text-direction-ltr", 128)
-ICO1(CTX, "format-text-direction-rtl", 128)
-ICO1(CTX, "format-text-bold", 128)
-ICO1(CTX, "format-text-italic", 128)
-ICO1(CTX, "format-text-underline", 128)
-ICO1(CTX, "format-text-strikethrough", 128)
-
-ICO1(CTX, "go-home", 128)
-ICO1(CTX, "go-bottom", 128)
-ICO1(CTX, "go-down", 128)
-ICO1(CTX, "go-first", 128)
-ICO1(CTX, "go-jump", 128)
-ICO1(CTX, "go-last", 128)
-ICO1(CTX, "go-next", 128)
-ICO1(CTX, "go-previous", 128)
-ICO1(CTX, "go-top", 128)
-ICO1(CTX, "go-up", 128)
-
-ICO1(CTX, "insert-image", 128)
-ICO1(CTX, "insert-link", 128)
-ICO1(CTX, "insert-object", 128)
-ICO1(CTX, "insert-text", 128)
-
-ICO1(CTX, "list-add", 128)
-ICO1(CTX, "list-remove", 128)
-
-ICO1(CTX, "mail-forward", 128)
-ICO1(CTX, "mail-mark-important", 128)
-ICO1(CTX, "mail-mark-junk", 128)
-ICO1(CTX, "mail-mark-notjunk", 128)
-ICO1(CTX, "mail-mark-read", 128)
-ICO1(CTX, "mail-mark-unread", 128)
-ICO1(CTX, "mail-message-new", 128)
-ICO1(CTX, "mail-reply-all", 128)
-ICO1(CTX, "mail-reply-sender", 128)
-ICO1(CTX, "mail-send", 128)
-ICO1(CTX, "mail-send-receive", 128)
-
-ICO1(CTX, "media-eject", 128)
-ICO1(CTX, "media-playback-pause", 128)
-ICO1(CTX, "media-playback-start", 128)
-ICO1(CTX, "media-playback-stop", 128)
-ICO1(CTX, "media-record", 128)
-ICO1(CTX, "media-seek-backward", 128)
-ICO1(CTX, "media-seek-forward", 128)
-ICO1(CTX, "media-skip-backward", 128)
-ICO1(CTX, "media-skip-forward", 128)
-
-ICO1(CTX, "object-flip-horizontal", 128)
-ICO1(CTX, "object-flip-vertical", 128)
-ICO1(CTX, "object-rotate-left", 128)
-ICO1(CTX, "object-rotate-right", 128)
-
-ICO1(CTX, "process-stop", 128)
-ICO1(CTX, "tools-check-spelling", 128)
-
-ICO1(CTX, "view-list-compact", 128) /* */
-ICO1(CTX, "view-list-details", 128) /* */
-ICO1(CTX, "view-list-icons", 128) /* */
-
-ICO1(CTX, "view-fullscreen", 128)
-ICO1(CTX, "view-refresh", 128)
-ICO1(CTX, "view-restore", 128)
-ICO1(CTX, "view-sort-ascending", 128)
-ICO1(CTX, "view-sort-descending", 128)
-ICO1(CTX, "view-close", 128) /* */
-
-ICO1(CTX, "window-close", 128)
-ICO1(CTX, "window-new", 128)
-
-ICO1(CTX, "system-run", 128)
-ICO1(CTX, "system-shutdown", 128)
-ICO1(CTX, "system-reboot", 128)
-ICO1(CTX, "system-lock-screen", 128)
-ICO1(CTX, "system-log-out", 128)
-ICO1(CTX, "system-search", 128)
-
-ICO1(CTX, "help-about", 128)
-ICO1(CTX, "help-contents", 128)
-ICO1(CTX, "help-faq", 128)
-
-ICO1(CTX, "zoom-in", 128)
-ICO1(CTX, "zoom-out", 128)
-ICO1(CTX, "zoom-original", 128)
-ICO1(CTX, "zoom-fit", 128) /* */
-ICO1(CTX, "zoom-fill", 128) /* */
-ICO1(CTX, "zoom-fit-best", 128)
-
-#undef CTX
-
-
 ////  status  /////////////////////////////////////////////////////////////
 #define CTX "status"
-ICO1(CTX, "appointment-missed", 128)
-ICO1(CTX, "appointment-soon", 128)
-ICO1(CTX, "audio-volume-high", 128)
-ICO1(CTX, "audio-volume-low", 128)
-ICO1(CTX, "audio-volume-medium", 128)
-ICO1(CTX, "audio-volume-muted", 128)
-ICO1(CTX, "audio-volume", 128) /* */
-ICO1(CTX, "battery-caution", 128)
-ICO1(CTX, "battery-empty", 128) /* */
-ICO1(CTX, "battery-low", 128)
-ICO1(CTX, "battery-good", 128) /* */
-ICO1(CTX, "battery-full", 128) /* */
-ICO1(CTX, "battery-caution-charging", 128) /* */
-ICO1(CTX, "battery-empty-charging", 128) /* */
-ICO1(CTX, "battery-low-charging", 128) /* */
-ICO1(CTX, "battery-good-charging", 128) /* */
-ICO1(CTX, "battery-full-charging", 128) /* */
-ICO1(CTX, "bluetooth-active", 128) /* */
-ICO1(CTX, "bluetooth-disabled", 128) /* */
-ICO1(CTX, "changes-allow", 128) /* */
-ICO1(CTX, "changes-prevent", 128)/* */
-ICO1(CTX, "dialog-error", 128)
-ICO1(CTX, "dialog-information", 128)
-ICO1(CTX, "dialog-password", 128)
-ICO1(CTX, "dialog-question", 128)
-ICO1(CTX, "dialog-warning", 128)
-ICO1(CTX, "media-playlist-repeat", 128)
-ICO1(CTX, "media-playlist-shuffle", 128)
-ICO1(CTX, "mail-attachment", 128)
-ICO1(CTX, "mail-unread", 128)
-ICO1(CTX, "mail-read", 128)
-ICO1(CTX, "mail-replied", 128)
-ICO1(CTX, "mail-signed", 128)
-ICO1(CTX, "mail-signed-verified", 128)
-ICO1(CTX, "network-cellular-3g", 128) /* */
-ICO1(CTX, "network-cellular-4g", 128) /* */
-ICO1(CTX, "network-cellular-edge", 128) /* */
-ICO1(CTX, "network-cellular-gprs", 128) /* */
-ICO1(CTX, "network-cellular-umts", 128) /* */
-ICO1(CTX, "network-cellular-connected", 128) /* */
-ICO1(CTX, "network-cellular-signal-excellent", 128) /* */
-ICO1(CTX, "network-cellular-signal-good", 128) /* */
-ICO1(CTX, "network-cellular-signal-none", 128) /* */
-ICO1(CTX, "network-cellular-signal-ok", 128) /* */
-ICO1(CTX, "network-cellular-signal-weak", 128) /* */
-ICO1(CTX, "network-cellular-signal-acquiring", 128) /* */
-ICO1(CTX, "network-error", 128)
-ICO1(CTX, "network-offline", 128)
-ICO1(CTX, "network-receive", 128)
-ICO1(CTX, "network-transmit-receive", 128)
-ICO1(CTX, "network-transmit", 128)
-ICO1(CTX, "network-idle", 128)
-ICO1(CTX, "network-vpn", 128) /* */
-ICO1(CTX, "network-vpn-acquiring", 128) /* */
-ICO1(CTX, "network-wireless-acquiring", 128) /* */
-ICO1(CTX, "network-wireless-encrypted", 128) /* */
-ICO1(CTX, "network-wireless-signal-excellent", 128) /* */
-ICO1(CTX, "network-wireless-signal-good", 128) /* */
-ICO1(CTX, "network-wireless-signal-none", 128) /* */
-ICO1(CTX, "network-wireless-signal-ok", 128) /* */
-ICO1(CTX, "network-wireless-signal-weak", 128) /* */
-ICO1(CTX, "printer-error", 128)
-ICO1(CTX, "printer-printing", 128)
-ICO1(CTX, "printer-warning", 128) /* */
-ICO1(CTX, "security-high", 128)
-ICO1(CTX, "security-medium", 128)
-ICO1(CTX, "security-low", 128)
-ICO1(CTX, "software-update-available", 128)
-ICO1(CTX, "software-update-urgent", 128)
-ICO1(CTX, "task-due", 128)
-ICO1(CTX, "task-past-due", 128)
-ICO1(CTX, "user-available", 128)
-ICO1(CTX, "user-away", 128)
-ICO1(CTX, "user-busy", 128) /* */
-ICO1(CTX, "user-invisible", 128) /* */
-ICO1(CTX, "user-idle", 128)
-ICO1(CTX, "user-offline", 128)
-ICO1(CTX, "user-trash-full", 128) /* */
-ICO1(CTX, "weather-clear-night", 128)
-ICO1(CTX, "weather-clear", 128)
-ICO1(CTX, "weather-clouds-night", 128) /* */
-ICO1(CTX, "weather-clouds", 128) /* */
-ICO1(CTX, "weather-few-clouds-night", 128)
-ICO1(CTX, "weather-few-clouds", 128)
-ICO1(CTX, "weather-fog", 128)
-ICO1(CTX, "weather-overcast", 128)
-ICO1(CTX, "weather-severe-alert", 128)
-ICO1(CTX, "weather-showers-scattered", 128)
-ICO1(CTX, "weather-showers", 128)
-ICO1(CTX, "weather-snow", 128)
-ICO1(CTX, "weather-storm", 128)
+
 // TODO image-loading
 // TODO image-missing
 // TODO sync-error
 // TODO sync-synchronizing
-ICO1(CTX, "starred", 128) /* */
-ICO1(CTX, "non-starred", 128) /* */
 // folder-visiting  /* in the Places category */
 // folder-drag-accept /* in the Places category */
 #undef CTX
-
 
 ////  animations  /////////////////////////////////////////////////////////////
 #define CTX "animations"
 // TODO process-working
 #undef CTX
-
 
 ////  applications  ///////////////////////////////////////////////////////////
 #define CTX "apps"
@@ -371,97 +95,21 @@ ICO1(CTX, "non-starred", 128) /* */
 // TODO accessories-text-editor
 // TODO multimedia-volume-control
 // TODO help-browser
-ICO1(CTX, "preferences-color", 64) /* */
-ICO1(CTX, "preferences-profile", 64) /* Elm specific */
 // TODO preferences-desktop-accessibility
-ICO1(CTX, "preferences-desktop-display", 64) /* */
-ICO1(CTX, "preferences-desktop-font", 64)
-ICO1(CTX, "preferences-desktop-keyboard", 64)
-ICO1(CTX, "preferences-desktop-locale", 64)
-ICO1(CTX, "preferences-desktop-multimedia", 64)
-ICO1(CTX, "preferences-desktop-screensaver", 64)
-ICO1(CTX, "preferences-desktop-theme", 64)
-ICO1(CTX, "preferences-desktop-wallpaper", 64)
 // TODO system-software-install
 // TODO system-software-update
 // TODO utilities-system-monitor
 // TODO utilities-terminal
-ICO1(CTX, "system-file-manager", 64)
 #undef CTX
-
 
 ////  categories  /////////////////////////////////////////////////////////////
 #define CTX "categories"
-ICO2(CTX, "applications-accessories")
-ICO2(CTX, "applications-development")
-ICO2(CTX, "applications-games")
-ICO2(CTX, "applications-graphics")
-ICO2(CTX, "applications-internet")
-ICO2(CTX, "applications-multimedia")
-ICO2(CTX, "applications-office")
-ICO2(CTX, "applications-other")
-ICO2(CTX, "applications-science")
-ICO2(CTX, "applications-system")
-ICO2(CTX, "applications-utilities")
-ICO2(CTX, "preferences-desktop")
-ICO2(CTX, "preferences-system")
-ICO1(CTX, "preferences-other", 128)
 // TODO applications-engineering
 // TODO preferences-desktop-peripherals
 // TODO preferences-desktop-personal
 // TODO preferences-system-network
 // TODO system-help
 #undef CTX
-
-
-////  devices  ////////////////////////////////////////////////////////////////
-#define CTX "devices"
-ICO1(CTX, "audio-card", 128)
-ICO1(CTX, "audio-input-microphone", 128)
-ICO1(CTX, "battery", 128)
-ICO1(CTX, "camera", 128)
-ICO1(CTX, "camera-photo", 128)
-ICO1(CTX, "camera-web", 128)
-ICO1(CTX, "camera-video", 128)
-ICO1(CTX, "drive-harddisk", 128)
-ICO1(CTX, "drive-harddisk-ieee1394", 128)
-ICO1(CTX, "drive-harddisk-usb", 128)
-ICO1(CTX, "drive-optical", 128)
-ICO1(CTX, "drive-removable-media", 128)
-ICO1(CTX, "drive-removable-media-ieee1394", 128)
-ICO1(CTX, "drive-removable-media-usb", 128)
-ICO1(CTX, "computer", 128)
-ICO1(CTX, "computer-laptop", 128)
-ICO1(CTX, "multimedia-player", 128)
-ICO1(CTX, "media-optical", 128)
-ICO1(CTX, "media-optical-cd", 128)
-ICO1(CTX, "media-optical-audio", 128)
-ICO1(CTX, "media-optical-dvd", 128)
-ICO1(CTX, "media-optical-bd", 128)
-ICO1(CTX, "media-flash", 128)
-ICO1(CTX, "media-flash-cf", 128)
-ICO1(CTX, "media-flash-ms", 128)
-ICO1(CTX, "media-flash-sd", 128)
-ICO1(CTX, "media-flash-sm", 128)
-ICO1(CTX, "media-floppy", 128)
-ICO1(CTX, "media-zip", 128)
-ICO1(CTX, "media-tape", 128)
-ICO1(CTX, "media-memory", 128)
-ICO1(CTX, "processor", 128)
-ICO1(CTX, "input-mouse", 128)
-ICO1(CTX, "input-tablet", 128)
-ICO1(CTX, "input-keyboard", 128)
-ICO1(CTX, "input-gaming", 128)
-ICO1(CTX, "pda", 128)
-ICO1(CTX, "phone", 128)
-ICO1(CTX, "printer", 128)
-ICO1(CTX, "scanner", 128)
-ICO1(CTX, "modem", 128)
-ICO1(CTX, "video-display", 128)
-ICO1(CTX, "network-wired", 128)
-ICO1(CTX, "network-wireless", 128)
-#undef CTX
-
 
 ////  emotions  ///////////////////////////////////////////////////////////////
 #define CTX "emotions"
@@ -488,113 +136,11 @@ ICO1(CTX, "network-wireless", 128)
 // TODO face-worried
 #undef CTX
 
-
 ////  international  //////////////////////////////////////////////////////////
 // Country flags, ISO 3166-1 alpha-2 country code (flag-aa)
 #define CTX "intl"
-FLAG(CTX, "flag-ad")
-FLAG(CTX, "flag-af")
-FLAG(CTX, "flag-al")
-FLAG(CTX, "flag-am")
-FLAG(CTX, "flag-ar")
-FLAG(CTX, "flag-at")
-FLAG(CTX, "flag-au")
-FLAG(CTX, "flag-az")
-FLAG(CTX, "flag-ba")
-FLAG(CTX, "flag-bd")
-FLAG(CTX, "flag-be")
-FLAG(CTX, "flag-bg")
-FLAG(CTX, "flag-br")
-FLAG(CTX, "flag-bt")
-FLAG(CTX, "flag-bw")
-FLAG(CTX, "flag-by")
-FLAG(CTX, "flag-ca")
-FLAG(CTX, "flag-cd")
-FLAG(CTX, "flag-ch")
-FLAG(CTX, "flag-cm")
-FLAG(CTX, "flag-cn")
-FLAG(CTX, "flag-cz")
-FLAG(CTX, "flag-de")
-FLAG(CTX, "flag-dk")
-FLAG(CTX, "flag-ee")
-FLAG(CTX, "flag-es")
-FLAG(CTX, "flag-et")
-FLAG(CTX, "flag-fi")
-FLAG(CTX, "flag-fo")
-FLAG(CTX, "flag-fr")
-FLAG(CTX, "flag-gb")
-FLAG(CTX, "flag-ge")
-FLAG(CTX, "flag-gh")
-FLAG(CTX, "flag-gn")
-FLAG(CTX, "flag-gr")
-FLAG(CTX, "flag-hr")
-FLAG(CTX, "flag-hu")
-FLAG(CTX, "flag-ie")
-FLAG(CTX, "flag-il")
-FLAG(CTX, "flag-in")
-FLAG(CTX, "flag-iq")
-FLAG(CTX, "flag-ir")
-FLAG(CTX, "flag-is")
-FLAG(CTX, "flag-it")
-FLAG(CTX, "flag-jp")
-FLAG(CTX, "flag-ke")
-FLAG(CTX, "flag-kg")
-FLAG(CTX, "flag-kh")
-FLAG(CTX, "flag-kr")
-FLAG(CTX, "flag-ku")
-FLAG(CTX, "flag-kz")
-FLAG(CTX, "flag-la")
-FLAG(CTX, "flag-lk")
-FLAG(CTX, "flag-lt")
-FLAG(CTX, "flag-lv")
-FLAG(CTX, "flag-ma")
-FLAG(CTX, "flag-md")
-FLAG(CTX, "flag-me")
-FLAG(CTX, "flag-mk")
-FLAG(CTX, "flag-ml")
-FLAG(CTX, "flag-mm")
-FLAG(CTX, "flag-mn")
-FLAG(CTX, "flag-mt")
-FLAG(CTX, "flag-mv")
-FLAG(CTX, "flag-my")
-FLAG(CTX, "flag-ng")
-FLAG(CTX, "flag-nl")
-FLAG(CTX, "flag-no")
-FLAG(CTX, "flag-np")
-FLAG(CTX, "flag-ph")
-FLAG(CTX, "flag-pk")
-FLAG(CTX, "flag-pl")
-FLAG(CTX, "flag-pt")
-FLAG(CTX, "flag-ro")
-FLAG(CTX, "flag-rs")
-FLAG(CTX, "flag-ru")
-FLAG(CTX, "flag-se")
-FLAG(CTX, "flag-si")
-FLAG(CTX, "flag-sk")
-FLAG(CTX, "flag-sn")
-FLAG(CTX, "flag-sy")
-FLAG(CTX, "flag-th")
-FLAG(CTX, "flag-tj")
-FLAG(CTX, "flag-tm")
-FLAG(CTX, "flag-tr")
-FLAG(CTX, "flag-tw")
-FLAG(CTX, "flag-tz")
-FLAG(CTX, "flag-ua")
-FLAG(CTX, "flag-us")
-FLAG(CTX, "flag-uz")
-FLAG(CTX, "flag-vn")
-FLAG(CTX, "flag-za")
 #undef CTX
-
-
-////  mimetypes  //////////////////////////////////////////////////////////////
-#define CTX "mimetypes"
-ICO2(CTX, "inode-directory")
-// TODO ... don't really know about this one (they are LOTS of icons)
-#undef CTX
-
 
 #undef ICO1
 #undef ICO2
 #undef FLAG
-

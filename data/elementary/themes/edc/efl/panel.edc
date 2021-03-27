@@ -1,19 +1,18 @@
-group { name: "efl/panel"; data.item: "version" "123";
-   data {
-      item: "handler_size" "30";
-   }
+group { name: "efl/panel";
+   data.item: "version" "123";
+   data.item: "handler_size" "30";
    parts {
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
          }
       }
    }
 }
-group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
+
+group { name: "efl/scroller/panel/left";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
@@ -25,17 +24,11 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1 {
-               relative: 1.0 0.0;
-               to: "efl.panel_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "efl.panel_area";
-            }
+            rel.to: "efl.panel_area";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 1.0;
             align: 0.0 0.5;
             fixed: 1 1;
             visible: 0;
@@ -45,20 +38,16 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
+      part { name: "access.outline"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             color: 64 64 64 255;
             visible: 0;
          }
@@ -67,11 +56,9 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -81,18 +68,14 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
          target: "efl.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
@@ -102,10 +85,10 @@ group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
    }
 }
 
-group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
+group { name: "efl/scroller/panel/right";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
@@ -117,8 +100,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1 {
                relative: 1.0 0.0;
@@ -137,8 +119,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
+      part { name: "access.outline"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
@@ -146,8 +127,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -159,8 +139,7 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -173,18 +152,14 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
          target: "efl.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
@@ -194,10 +169,10 @@ group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
    }
 }
 
-group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
+group { name: "efl/scroller/panel/top";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
@@ -209,8 +184,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1 {
                relative: 0.0 1.0;
@@ -229,8 +203,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
+      part { name: "access.outline"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
@@ -238,8 +211,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -251,8 +223,7 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.to: "efl.panel_area";
             rel2.to: "efl.panel_area";
@@ -265,18 +236,14 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
          target: "efl.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
@@ -286,10 +253,10 @@ group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
    }
 }
 
-group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
+group { name: "efl/scroller/panel/bottom";
+   data.item: "version" "123";
    parts {
-      part { name: "efl.event_area";
-         type: SWALLOW;
+      part { name: "efl.event_area"; type: SWALLOW;
          description { state: "default" 0.0;
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
@@ -301,17 +268,11 @@ group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.panel_area";
-         type: SWALLOW;
+      part { name: "efl.panel_area"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1 {
-               relative: 0.0 1.0;
-               to: "efl.event_area";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "efl.event_area";
-            }
+            rel.to: "efl.event_area";
+            rel1.relative: 0.0 1.0;
+            rel2.relative: 1.0 1.0;
             align: 0.5 0.0;
             fixed: 1 1;
             visible: 0;
@@ -321,20 +282,15 @@ group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "access.outline";
-         type: RECT;
-         repeat_events: 1;
+      part { name: "access.outline"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             color: 0 0 0 0;
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             color: 64 64 64 255;
             visible: 0;
          }
@@ -343,11 +299,9 @@ group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
             visible: 1;
          }
       }
-      part { name: "efl.content";
-         type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "efl.panel_area";
-            rel2.to: "efl.panel_area";
+            rel.to: "efl.panel_area";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -357,18 +311,14 @@ group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
       }
    }
    programs {
-      program { name: "active";
-         signal: "efl,state,content,visible";
-         source: "efl";
+      program { signal: "efl,state,content,visible"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
          target: "bg";
          target: "efl.content";
       }
-      program { name: "inactive";
-         signal: "efl,state,content,hidden";
-         source: "efl";
+      program { signal: "efl,state,content,hidden"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.panel_area";
          target: "efl.event_area";
@@ -378,49 +328,32 @@ group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
    }
 }
 
-group { name: "efl/panel/left"; data.item: "version" "123";
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
-   images.image: "holes_tiny_glow_vert.png" COMP;
-   images.image: "holes_tiny_glow_horiz.png" COMP;
-   images.image: "win_glow.png" COMP;
-   images.image: "icon_arrow_right.png" COMP;
-   images.image: "icon_arrow_left.png" COMP;
-   images.image: "icon_arrow_up.png" COMP;
-   images.image: "icon_arrow_down.png" COMP;
+group { name: "efl/panel/left";
+   data.item: "version" "123";
    data.item: "focus_highlight" "on";
    script {
       public is_rtl = 0;
    }
    parts {
       part { name: "shadow"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -3 -2;
-            rel1.to: "base";
-            rel2.offset: 2 4;
-            rel2.to: "base";
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
+            rel.to: "base";
+            WIN_SHADOW_SMALL;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "win_glow.png";
-            image.border: 9 9 9 9;
-            image.middle: 0;
-            rel1.offset: -5  -5;
-            rel1.to: "base";
-            rel2.offset: 4 4;
-            rel2.to: "base";
-            fill.smooth: 0;
-            color: 255 255 255 0;
+            rel.to: "base";
+            color: 51 153 255 255;
             visible: 0;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            rel1.offset: -5 -5;
+            rel2.offset: 4 4;
             visible: 1;
          }
       }
@@ -433,44 +366,23 @@ group { name: "efl/panel/left"; data.item: "version" "123";
             rel1.to_x: "all";
             rel2.to_x: "efl.swallow.event";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -4 -1;
             color: 64 64 64 255;
          }
       }
       part { name: "efl.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
+            rel.to: "base";
             rel1.offset: 4 4;
-            rel1.to: "base";
             rel2.offset: -5 -5;
-            rel2.to: "base";
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shine"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "shine.png";
-            rel1.offset: 0 -2;
-            rel1.to: "base";
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to: "base";
-            FIXED_SIZE(69, 5)
+            offscale;
          }
       }
       part { name: "efl.swallow.event"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
+            min: 30 30; max: 30 999999;
             align: 1.0 0.5;
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 1.0;
@@ -485,54 +397,38 @@ group { name: "efl/panel/left"; data.item: "version" "123";
       }
       part { name: "btn"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "efl.swallow.event";
-            rel2.to: "efl.swallow.event";
+            rel.to: "efl.swallow.event";
             color: 0 0 0 0;
          }
          description { state: "hidden" 0.0;
-            rel1.to: "efl.swallow.event";
-            rel2.to: "efl.swallow.event";
-         }
-      }
-      part { name: "dots"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "icn";
-            rel2.to: "icn";
-            align: 0.0 0.5;
-            image.normal: "holes_tiny_glow_vert.png";
-            FIXED_SIZE(11, 17)
+            rel.to: "efl.swallow.event";
          }
       }
       part { name: "icn"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 20 20;
-            max: 20 20;
-            rel1.to: "btn";
-            rel2.to: "btn";
-            image.normal: "icon_arrow_left.png";
+            min: 30 30; max: 30 30;
+            rel.to: "btn";
+            image.normal: "i-arrow-l";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            image.normal: "icon_arrow_right.png";
+            image.normal: "i-arrow-r";
          }
       }
    }
    programs {
-      program {
-         signal: "mouse,clicked,1"; source: "btn";
+      program { signal: "mouse,clicked,1"; source: "btn";
          action: SIGNAL_EMIT "efl,action,panel,toggle" "efl";
       }
-      program {
-         signal: "efl,action,show"; source: "efl";
+      program { signal: "efl,action,show"; source: "efl";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
+         transition: DECELERATE 0.2;
          target: "efl.swallow.event";
          target: "base";
       }
-      program {
-         signal: "efl,action,show"; source: "efl";
+      program { signal: "efl,action,show"; source: "efl";
          script {
             if (get_int(is_rtl) == 0)
               set_state(PART:"icn", "default", 0.0);
@@ -540,9 +436,7 @@ group { name: "efl/panel/left"; data.item: "version" "123";
               set_state(PART:"icn", "hidden", 0.0);
          }
       }
-      program {
-         signal: "edje,state,rtl";
-         source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          script {
             new st[31];
             new Float:vl;
@@ -554,9 +448,7 @@ group { name: "efl/panel/left"; data.item: "version" "123";
             set_int(is_rtl, 1);
          }
       }
-      program {
-         signal: "edje,state,ltr"; 
-         source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          script {
             new st[31];
             new Float:vl;
@@ -568,14 +460,12 @@ group { name: "efl/panel/left"; data.item: "version" "123";
             set_int(is_rtl, 0);
          }
       }
-      program {
-         signal: "efl,action,hide"; source: "efl";
+      program { signal: "efl,action,hide"; source: "efl";
          action: STATE_SET "hidden" 0.0;
-         transition: ACCELERATE 0.3;
+         transition: ACCELERATE 0.2;
          target: "efl.swallow.event";
       }
-      program {
-         signal: "efl,action,hide"; source: "efl";
+      program { signal: "efl,action,hide"; source: "efl";
          script {
             if (get_int(is_rtl) == 0)
               set_state(PART:"icn", "hidden", 0.0);
@@ -587,21 +477,18 @@ group { name: "efl/panel/left"; data.item: "version" "123";
          signal: "efl,action,hide"; source: "efl";
          script {
             new x, y, w, h;
-            if (get_int(is_rtl) == 0)
-              {
-                 custom_state(PART:"base", "default", 0.0);
-                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-                 get_geometry(PART:"efl.swallow.event", x, y, w, h);
-                 set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
-               }
-            else
-              {
-                 custom_state(PART:"base", "default", 0.0);
-                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
-                 set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
-                 get_geometry(PART:"efl.swallow.event", x, y, w, h);
-                 set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
-              }
+            if (get_int(is_rtl) == 0) {
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+               get_geometry(PART:"efl.swallow.event", x, y, w, h);
+               set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
+            } else {
+               custom_state(PART:"base", "default", 0.0);
+               set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+               set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
+               get_geometry(PART:"efl.swallow.event", x, y, w, h);
+               set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
+            }
          }
          after: "hide2";
       }
@@ -610,14 +497,12 @@ group { name: "efl/panel/left"; data.item: "version" "123";
          transition: ACCELERATE 0.3;
          target: "base";
       }
-      program {
-         signal: "efl,action,focus_highlight,show"; source: "efl";
+      program { signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
          transition: ACCELERATE 0.2;
          target: "glow";
       }
-      program {
-         signal: "efl,action,focus_highlight,hide"; source: "efl";
+      program { signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "glow";
@@ -626,8 +511,8 @@ group { name: "efl/panel/left"; data.item: "version" "123";
 }
 
 group { name: "efl/panel/right";
-   inherit: "efl/panel/left";
    data.item: "version" "123";
+   inherit: "efl/panel/left";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
@@ -651,17 +536,12 @@ group { name: "efl/panel/right";
             rel2.relative: 1.0 1.0;
          }
       }
-      part { name: "dots";
-         description { state: "default" 0.0;
-            align: 1.0 0.5;
-         }
-      }
       part { name: "icn";
          description { state: "default" 0.0;
-            image.normal: "icon_arrow_right.png";
+            image.normal: "i-arrow-r";
          }
          description { state: "hidden" 0.0;
-            image.normal: "icon_arrow_left.png";
+            image.normal: "i-arrow-l";
          }
       }
    }
@@ -669,7 +549,7 @@ group { name: "efl/panel/right";
       program { name: "hide1";
          script {
             new x, y, w, h;
-    
+
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 1.0, 0.0);
             set_state_val(PART:"base", STATE_REL2, 2.0, 1.0);
@@ -681,23 +561,22 @@ group { name: "efl/panel/right";
 }
 
 group { name: "efl/panel/top";
-   inherit: "efl/panel/left";
    data.item: "version" "123";
+   inherit: "efl/panel/left";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel1.to_x: "all";
             rel1.to_y: "all";
-            rel1.offset: 0 0;
             rel2.relative: 1.0 0.0;
             rel2.to_x: "all";
             rel2.to_y: "efl.swallow.event";
-            rel2.offset: -1 -4;
          }
       }
       part { name: "efl.swallow.event";
          description { state: "default" 0.0;
+            min: 30 30; max: 999999 30;
             align: 0.5 1.0;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 1.0;
@@ -708,19 +587,12 @@ group { name: "efl/panel/top";
             rel2.relative: 1.0 0.0;
          }
       }
-      part { name: "dots";
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            image.normal: "holes_tiny_glow_horiz.png";
-            FIXED_SIZE(17, 11)
-         }
-      }
       part { name: "icn";
          description { state: "default" 0.0;
-            image.normal: "icon_arrow_up.png";
+            image.normal: "i-arrow-u";
          }
          description { state: "hidden" 0.0;
-            image.normal: "icon_arrow_down.png";
+            image.normal: "i-arrow-d";
          }
       }
    }
@@ -728,7 +600,6 @@ group { name: "efl/panel/top";
       program { name: "hide1";
          script {
             new x, y, w, h;
-            
             custom_state(PART:"base", "default", 0.0);
             set_state_val(PART:"base", STATE_REL1, 0.0, -1.0);
             set_state_val(PART:"base", STATE_REL2, 1.0, 0.0);
@@ -736,14 +607,11 @@ group { name: "efl/panel/top";
             set_state_val(PART:"base", STATE_REL1_OFFSET, 0, h);
          }
       }
-      program {
-         signal: "efl,action,show"; source: "efl";
+      program { signal: "efl,action,show"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "icn";
       }
-      program {
-         signal: "edje,state,rtl";
-         source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          script {
             new st[31];
             new Float:vl;
@@ -754,9 +622,7 @@ group { name: "efl/panel/top";
               set_state(PART:"icn", "hidden", 0.0);
          }
       }
-      program {
-         signal: "edje,state,ltr";
-         source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          script {
             new st[31];
             new Float:vl;
@@ -767,8 +633,7 @@ group { name: "efl/panel/top";
               set_state(PART:"icn", "hidden", 0.0);
          }
       }
-      program {
-         signal: "efl,action,hide"; source: "efl";
+      program { signal: "efl,action,hide"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "icn";
       }
@@ -776,19 +641,17 @@ group { name: "efl/panel/top";
 }
 
 group { name: "efl/panel/bottom";
-   inherit: "efl/panel/top";
    data.item: "version" "123";
+   inherit: "efl/panel/top";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
             rel1.to_x: "all";
             rel1.to_y: "efl.swallow.event";
-            rel1.offset: 0 3;
             rel2.relative: 1.0 1.0;
             rel2.to_x: "all";
             rel2.to_y: "all";
-            rel2.offset: -1 -1;
          }
       }
       part { name: "efl.swallow.event";
@@ -803,19 +666,12 @@ group { name: "efl/panel/bottom";
             rel2.relative: 1.0 1.0;
          }
       }
-      part { name: "dots";
-         description { state: "default" 0.0;
-            align: 0.5 0.0;
-            image.normal: "holes_tiny_glow_horiz.png";
-            FIXED_SIZE(17, 11)
-         }
-      }
       part { name: "icn";
          description { state: "default" 0.0;
-            image.normal: "icon_arrow_down.png";
+            image.normal: "i-arrow-d";
          }
          description { state: "hidden" 0.0;
-            image.normal: "icon_arrow_up.png";
+            image.normal: "i-arrow-u";
          }
       }
    }
@@ -832,3 +688,4 @@ group { name: "efl/panel/bottom";
       }
    }
 }
+

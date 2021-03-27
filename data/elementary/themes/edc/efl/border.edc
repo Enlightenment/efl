@@ -8,28 +8,52 @@
  */
 
 group { "efl/border"; data.item: "version" "123";
-   images.image: "vgrad_med_lighter.png" COMP;
-   images.image: "vgrad_med_dark.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
-   images.image: "bevel_dark_out.png" COMP;
-   images.image: "sym_close_dark_normal.png" COMP;
-   images.image: "sym_close_dark_selected.png" COMP;
-   images.image: "sym_close_light_normal.png" COMP;
-   images.image: "sym_close_light_selected.png" COMP;
-   images.image: "sym_down_dark_normal.png" COMP;
-   images.image: "sym_down_dark_selected.png" COMP;
-   images.image: "sym_down_light_normal.png" COMP;
-   images.image: "sym_down_light_selected.png" COMP;
-   images.image: "sym_up_dark_normal.png" COMP;
-   images.image: "sym_up_dark_selected.png" COMP;
-   images.image: "sym_up_light_normal.png" COMP;
-   images.image: "sym_up_light_selected.png" COMP;
-   images.image: "glow_round_corners_small.png" COMP;
-   images.image: "knob_round_small_busy.png" COMP;
-   images.image: "screen_circular_shadow.png" COMP;
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    data.item: "shadow" "1";
+#define BORDERLESS  1
+#define MAXIMIZED   2
+#define UNRESIZABLE 4
+#define SET_MODE(a) script { new m = get_int(border_mode); m |= (a); set_int(border_mode, m); eval_mode(m); }
+#define UNSET_MODE(a) script { new m = get_int(border_mode); m &= ~(a); set_int(border_mode, m); eval_mode(m); }
+
+#define INDICATOR_TYPE_UNKNOWN 0
+#define INDICATOR_TYPE_BG_OPAQUE 1
+#define INDICATOR_TYPE_BG_TRANSPARENT 2
+#define INDICATOR_TYPE_HIDDEN 3
+   script {
+      public hide_shadow;
+      public show_menu;
+      public eval_shadow_menu() {
+         new m_show = get_int(show_menu);
+         new s_hide = get_int(hide_shadow);
+
+         if (s_hide) {
+            set_state(PART:"shadow_clip", "hidden", 0.0);
+            set_state(PART:"shadow_base", "hidden", 0.0);
+         } else {
+            set_state(PART:"shadow_clip", "default", 0.0);
+            set_state(PART:"shadow_base", "default", 0.0);
+         }
+         if ((m_show)/* && (s_hide)*/) {
+            set_state(PART:"efl.menu", "visible", 0.0);
+         } else {
+            set_state(PART:"efl.menu", "default", 0.0);
+         }
+      }
+
+      public border_mode;
+      public indicator_type = 0;
+      public indicator_enabled = 0;
+      public eval_mode(m) {
+         if (m & (BORDERLESS | MAXIMIZED | UNRESIZABLE)) {
+            set_state(PART:"bottom_clip", "hidden", 0.0);
+            set_state(PART:"top_resize_clip", "hidden", 0.0);
+         } else {
+            set_state(PART:"bottom_clip", "default", 0.0);
+            set_state(PART:"top_resize_clip", "default", 0.0);
+         }
+      }
+   }
    parts {
       /* opaque region of the window, to inform the compositor */
       spacer { "efl.spacer.opaque";
@@ -49,9 +73,17 @@ group { "efl/border"; data.item: "version" "123";
             rel2.relative: 1.0 0.0;
          }
       }
-      /* shadow spacer and clipper */
-      spacer { "shadow_spacer";
-         desc { "default";
+      part { name: "shadow_clip"; type: RECT; mouse_events: 0;
+         description { state: "default";
+            rel.to: "_sh1";
+         }
+         description { state: "hidden";
+            visible: 0;
+         }
+      }
+      part { name: "shadow_base"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
             WIN_SHADOW_SPACER;
          }
          desc { "hidden";
@@ -59,16 +91,9 @@ group { "efl/border"; data.item: "version" "123";
             rel2.offset: -1 -1;
          }
       }
-      image { "shadow"; nomouse;
-         desc { "default";
-            rel.to: "shadow_spacer";
-            WIN_SHADOW;
-         }
-         desc { "hidden"; inherit: "default"; hid; }
-      }
+      WIN_SHAD("shadow_base", "shadow_clip", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
       /* window background: solid color */
-      rect { "bg_clip";
-         nomouse;
+      rect { "bg_clip"; nomouse;
          desc { "default";
             rel1.to: "top_clip";
             rel1.relative: 0.0 1.0;
@@ -79,8 +104,10 @@ group { "efl/border"; data.item: "version" "123";
          required; // @since 1.19
          clip: "bg_clip";
          desc { "default";
+//            color: 64 64 64 255;
             color: 255 255 255 255;
             color_class: "elm/win/background"; // FIXME: color_class naming scheme
+            rel.to: "efl.spacer.content";
             visible: 0;
          }
          desc { "visible";
@@ -92,21 +119,8 @@ group { "efl/border"; data.item: "version" "123";
       swallow { "efl.background";
          required; // @since 1.19
          clip: "client_clip";
-      }
-      image { "background_bevel";
          desc { "default";
-            image {
-               normal: "bevel_dark_out.png";
-               border: 1 1 1 1;
-               middle: 0;
-            }
-            fill.smooth: 0;
             rel.to: "efl.spacer.content";
-            visible: 0;
-         }
-         desc { "visible";
-            inherit: "default";
-            visible: 1;
          }
       }
       spacer { "indicator_spacer";
@@ -127,18 +141,26 @@ group { "efl/border"; data.item: "version" "123";
             color: 64 64 64 255; // FIXME: color_class
             align: 0.5 0.0;
             rel.to: "efl.menu";
+            fixed: 1 1;
+            visible: 0;
          }
       }
-      swallow { "efl.menu"; required;
+      swallow { "efl.menu";
          required: 1; // since 1.19
          desc { "default";
-            rel.to: "indicator_spacer";
-            rel1.relative: 0.0 1.0;
+            rel.to: "top_clip";
             visible: 0;
-            align: 0.5 0.0;
+            align: 0.5 1.0;
             fixed: 1 1;
+            rel2.relative: 1.0 1.0;
+            rel1.offset: 0 -1;
+// debug...
+//min:  0 40;
          }
          desc { "visible"; inherit: "default";
+            // GGGG
+            rel1.offset: 0 0;
+            align: 0.5 0.0;
             visible: 1;
             fixed: 0 1;
          }
@@ -165,6 +187,7 @@ group { "efl/border"; data.item: "version" "123";
          clip: "client_clip";
          desc { "default";
             rel.to: "client_spacer";
+            visible: 1;
          }
       }
 
@@ -189,16 +212,21 @@ group { "efl/border"; data.item: "version" "123";
 
       /* top title bar - spacer and clipper */
       rect { "top_clip"; //nomouse;
+         scale: 1;
          desc { "default";
-            rel1.to: "shadow_spacer";
-            rel2.to_y: "title2";
-            rel2.to_x: "shadow_spacer";
+            rel1.to: "shadow_base";
+            rel2.to_x: "shadow_base";
+            rel2.to_y: "efl.text.title";
+            rel2.offset: -1 2;
             vis;
+            offscale;
          }
          desc { "hidden";
             inherit: "default";
+            rel.to: "";
             rel1.relative: 0.0 0.0;
-            rel2.to: "shadow_spacer";
+            rel1.offset: 0 -1;
+            rel2.to: "shadow_base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -1 -1;
             max: -1 0;
@@ -208,93 +236,48 @@ group { "efl/border"; data.item: "version" "123";
          }
       }
       /* top title bar */
-      image { "top"; nomouse;
+      part { name: "top"; type: RECT;
          clip: "top_clip";
-         desc { "default";
-            image.normal: "vgrad_med_lighter.png";
+         description { state: "default" 0.0;
             rel.to: "top_clip";
-            fill.smooth: 0;
-            TILED_HORIZ(120)
-            color_class: "border_frame";
+            color: 64 64 64 255;
          }
-         desc { "focused";
-            inherit: "default";
-            image.normal: "vgrad_med_dark.png";
-            color_class: "border_frame_active";
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 32 32 32 255;
          }
       }
-      image { "bevel"; nomouse;
-         clip: "top_clip";
-         desc { "default";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel.to: "top_clip";
-            fill.smooth: 0;
-         }
-      }
-      text {  "efl.text.title"; nomouse;
+      part { name: "efl.text.title"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          clip: "top_clip";
-         desc { "default";
+         description { state: "default" 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 3;
-            rel1.to_x: "event.icon";
-            rel1.to_y: "shadow_spacer";
+            rel1.offset: 1 4;
+            rel1.to_x: "icon";
+            rel1.to_y: "shadow_base";
             rel2.relative: 0.0 0.0;
-            rel2.offset: -2 3;
+            rel2.offset: -2 4;
             rel2.to_x: "event.minimize";
-            rel2.to_y: "shadow_spacer";
+            rel2.to_y: "shadow_base";
             align: 0.5 0.0;
-            color_class: "border_title";
-            color3: 255 255 255 255;
+            color: 160 160 160 255;
+            min: 0 16;
             text { font: FNBD; size: 10;
                text_class: "title_bar";
                align: 0.5 0.0;
                min: 0 1;
             }
             fixed: 0 1;
+            offscale;
          }
-         desc { "focused";
-            inherit: "default";
-            visible: 0;
-         }
-      }
-      text {  "title2"; nomouse;
-         scale: 1;
-         effect: SOFT_SHADOW BOTTOM;
-         clip: "top_clip";
-         desc { "default";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 1 2;
-            rel1.to_x: "event.icon";
-            rel1.to_y: "shadow_spacer";
-            rel2.relative: 0.0 0.0;
-            rel2.offset: -1 2;
-            rel2.to_x: "event.minimize";
-            rel2.to_y: "shadow_spacer";
-            align: 0.5 0.0;
-            color_class: "border_title_active";
-            color3: 255 255 255 255;
-            text { font: FNBD; size: 10;
-               text_source: "efl.text.title";
-               text_class: "title_bar";
-               align: 0.5 0.0;
-               min: 0 1;
-            }
-            fixed: 0 1;
-            visible: 0;
-         }
-         desc { "focused";
-            inherit: "default";
-            visible: 1;
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
          }
       }
       spacer {  "icon";
          desc { "default";
-            rel1.to: "event.icon";
-            rel2.to: "event.icon";
+            rel.to: "event.icon";
          }
          desc { "bounce1";
             inherit: "default";
@@ -307,7 +290,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.relative: 1.2 1.2;
          }
       }
-      swallow {  "efl.icon"; nomouse; required;
+      swallow {  "efl.icon"; nomouse;
          clip_to: "top_clip";
          desc { "default";
             rel1.to: "icon";
@@ -317,54 +300,9 @@ group { "efl/border"; data.item: "version" "123";
             rel2.offset: 0 0;
          }
       }
-      rect {  "busy_clip"; nomouse;
-         desc { "default";
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         desc { "hung";
-            inherit: "default";
-            color: 255 255 255 255;
-            visible: 1;
-         }
-      }
-      image { "knob"; nomouse;
-         clip: "busy_clip";
-         desc { "default";
-            fixed: 1 1;
-            image.normal: "knob_round_small_busy.png";
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            max: 20 20;
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 2 -0;
-            rel1.to: "event.icon";
-            rel2.relative: 1.0 1.0;
-            rel2.offset: 2 -1;
-            rel2.to: "event.icon";
-            align: 0.0 0.5;
-            fixed: 1 1;
-         }
-      }
-      image { "knob_spinner"; nomouse;
-         clip: "busy_clip";
-         desc { "default";
-            fixed: 1 1;
-            rel1.to: "knob";
-            rel2.to: "knob";
-            image.normal: "glow_round_corners_small.png";
-            map.on: 1;
-            map.smooth: 1;
-            map.rotation.center: "knob";
-         }
-         desc { "spin";
-            inherit: "default";
-            map.rotation.z: 360;
-         }
-      }
       rect {  "clip1"; nomouse;
          desc { "default";
-            rel1.to: "top_clip";
-            rel2.to: "top_clip";
+            rel.to: "top_clip";
          }
          desc { "focused";
             inherit: "default";
@@ -373,8 +311,7 @@ group { "efl/border"; data.item: "version" "123";
       }
       rect {  "clip2"; nomouse;
          desc { "default";
-            rel1.to: "top_clip";
-            rel2.to: "top_clip";
+            rel.to: "top_clip";
             visible: 0;
          }
          desc { "focused";
@@ -384,92 +321,92 @@ group { "efl/border"; data.item: "version" "123";
       }
       image { "close1";  nomouse;
          clip: "clip1";
+         scale: 1;
          desc { "default";
-            image.normal: "sym_close_dark_normal.png";
-            rel1.to: "event.close";
-            rel2.to: "event.close";
-            min: 15 15;
-            max: 15 15;
+            image.normal: "i-close";
+            rel.to: "event.close";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
+            color: 160 160 160 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_close_dark_selected.png";
+            color: 255 255 255 255;
          }
       }
       image { "max1"; nomouse;
          clip: "clip1";
+         scale: 1;
          desc { "default";
-            image.normal: "sym_up_dark_normal.png";
-            rel1.to: "event.maximize";
-            rel2.to: "event.maximize";
-            min: 15 15;
-            max: 15 15;
+            image.normal: "i-arrow-u";
+            rel.to: "event.maximize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
+            color: 160 160 160 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_up_dark_selected.png";
+            color: 255 255 255 255;
          }
       }
       image { "min1"; nomouse;
          clip: "clip1";
+         scale: 1;
          desc { "default";
-            image.normal: "sym_down_dark_normal.png";
-            rel1.to: "event.minimize";
-            rel2.to: "event.minimize";
-            min: 15 15;
-            max: 15 15;
+            image.normal: "i-arrow-d";
+            rel.to: "event.minimize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
+            color: 160 160 160 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_down_dark_selected.png";
+            color: 255 255 255 255;
          }
       }
-      image { "close2"; nomouse;
+      image { "close2";  nomouse;
          clip: "clip2";
+         scale: 1;
          desc { "default";
-            image.normal: "sym_close_light_normal.png";
-            rel1.to: "event.close";
-            rel2.to: "event.close";
-            min: 15 15;
-            max: 15 15;
+            image.normal: "i-close";
+            rel.to: "event.close";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
+            color: 255 255 255 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_close_light_selected.png";
+            color: 220 220 220 255;
          }
       }
       image { "max2"; nomouse;
          clip: "clip2";
+         scale: 1;
          desc { "default";
-            image.normal: "sym_up_light_normal.png";
-            rel1.to: "event.maximize";
-            rel2.to: "event.maximize";
-            min: 15 15;
-            max: 15 15;
+            image.normal: "i-arrow-u";
+            rel.to: "event.maximize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
+            color: 255 255 255 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_up_light_selected.png";
+            color: 220 220 220 255;
          }
       }
       image { "min2"; nomouse;
          clip: "clip2";
+         scale: 1;
          desc { "default";
-            image.normal: "sym_down_light_normal.png";
-            rel1.to: "event.minimize";
-            rel2.to: "event.minimize";
-            min: 15 15;
-            max: 15 15;
+            image.normal: "i-arrow-d";
+            rel.to: "event.minimize";
+            min: 15 15; max: 15 15;
             fixed: 1 1;
+            color: 255 255 255 255;
          }
          desc { "selected";
             inherit: "default";
-            image.normal: "sym_down_light_selected.png";
+            color: 220 220 220 255;
          }
       }
       rect {  "event.icon";
@@ -545,11 +482,13 @@ group { "efl/border"; data.item: "version" "123";
       }
       rect {  "efl.event.resize.tl";
          clip: "top_resize_clip";
+         scale: 1;
          desc { "default";
             rel.to: "top_clip";
             rel2.relative: 0.0 0.0;
-            min: 32 4;
-            align: 0.0 0.0;
+            rel2.offset: 31 3;
+            min: 40 6;
+            align: 1.0 1.0;
             color: 0 0 0 0;
             fixed: 1 1;
          }
@@ -557,15 +496,14 @@ group { "efl/border"; data.item: "version" "123";
       }
       rect {  "efl.event.resize.t";
          clip: "top_resize_clip";
+         scale: 1;
          desc { "default";
+            rel1.to: "efl.event.resize.tl";
             rel1.relative: 1.0 0.0;
-            rel1.to_y: "top_clip";
-            rel1.to_x: "efl.event.resize.tl";
-            rel2.relative: 0.0 0.0;
-            rel2.to_x: "efl.event.resize.tr";
-            rel2.to_y: "top_clip";
-            min: 0 4;
-            align: 0.5 0.0;
+            rel2.to: "efl.event.resize.tr";
+            rel2.relative: 0.0 1.0;
+            min: 0 6;
+            align: 0.5 1.0;
             color: 0 0 0 0;
             fixed: 1 1;
          }
@@ -573,12 +511,15 @@ group { "efl/border"; data.item: "version" "123";
       }
       rect {  "efl.event.resize.tr";
          clip: "top_resize_clip";
+         scale: 1;
          desc { "default";
             rel.to: "top_clip";
             rel1.relative: 1.0 0.0;
+            rel1.offset: -32 0;
             rel2.relative: 1.0 0.0;
-            min: 32 4;
-            align: 1.0 0.0;
+            rel2.offset: -1 3;
+            min: 40 6;
+            align: 0.0 1.0;
             color: 0 0 0 0;
             fixed: 1 1;
          }
@@ -594,93 +535,75 @@ group { "efl/border"; data.item: "version" "123";
          }
       }
       rect { "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel.to: "shadow_spacer";
-            rel1 { relative: 0.0 1.0; offset: 0 -5; }
+            rel.to: "shadow_base";
+            rel1 { relative: 0.0 1.0; offset: 0 -1; }
+            align: 0.0 1.0;
             min: 0 5;
             fixed: 0 1;
          }
          desc { "hidden";
             inherit: "default";
             rel1 { relative: 0.0 1.0; offset: 0 0; }
+            rel2 { relative: 1.0 1.0; offset: 0 0; }
             min: 0 0;
             hid;
          }
       }
-      rect { "bottom";
-         nomouse;
-         desc { "default";
-            color_class: "border_bottom";
-            color: 64 64 64 255; /* FIXME */
-            rel.to: "bottom_clip";
-         }
-      }
-      image { "bevel2"; nomouse;
+      part { name: "bottom"; type: RECT; mouse_events: 0;
          clip: "bottom_clip";
-         desc { "default";
-            image.normal: "bevel_dark_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
+         description { state: "default" 0.0;
+            color: 64 64 64 255;
             rel.to: "bottom_clip";
-            fill.smooth: 0;
          }
       }
+
       rect {  "efl.event.resize.bl";
          clip: "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel1.relative: 0.0 1.0;
-            rel1.to: "bottom_clip";
+            rel.to: "bottom_clip";
             rel2.relative: 0.0 1.0;
-            rel2.to: "bottom_clip";
-            min: 32 5;
-            align: 0.0 1.0;
+            rel2.offset: 31 -1;
+            min: 40 10;
+            align: 0.0 0.5;
             color: 0 0 0 0;
             fixed: 1 1;
+            offscale;
          }
          desc { "hidden"; inherit: "default"; hid; }
       }
       rect {  "efl.event.resize.b";
          clip: "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel1.relative: 1.0 1.0;
-            rel1.to_x: "efl.event.resize.tl";
-            rel1.to_y: "bottom_clip";
-            rel1.offset: 0 -1;
+            rel1.to: "efl.event.resize.bl";
+            rel1.relative: 1.0 0.0;
+            rel2.to: "efl.event.resize.br";
             rel2.relative: 0.0 1.0;
-            rel2.to_x: "efl.event.resize.tr";
-            rel2.to_y: "bottom_clip";
-            min: 0 5;
-            align: 0.5 1.0;
+            min: 0 10;
+            align: 0.5 0.5;
             color: 0 0 0 0;
-            fixed: 0 1;
+            fixed: 1 1;
+            offscale;
          }
          desc { "hidden"; inherit: "default"; hid; }
       }
       rect {  "efl.event.resize.br";
          clip: "bottom_clip";
+         scale: 1;
          desc { "default";
-            rel1.relative: 1.0 1.0;
-            rel1.to: "bottom_clip";
-            rel2.relative: 1.0 1.0;
-            rel2.to: "bottom_clip";
-            min: 32 5;
-            align: 1.0 1.0;
+            rel.to: "bottom_clip";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -32 0;
+            min: 40 10;
+            align: 0.0 0.5;
             color: 0 0 0 0;
             fixed: 1 1;
+            offscale;
          }
          desc { "hidden"; inherit: "default"; hid; }
-      }
-      /* top title bar decoration */
-      image { "shine"; nomouse;
-         clip: "top_clip";
-         desc { "default";
-            image.normal: "shine.png";
-            rel.to: "top_clip";
-            rel1.offset: 0 -2;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            FIXED_SIZE(69, 5)
-         }
       }
       rect { "indicator_bg";
          clip: "bg_clip";
@@ -693,7 +616,7 @@ group { "efl/border"; data.item: "version" "123";
             color: 0 0 0 0;
          }
       }
-      swallow { "efl.indicator"; required;
+      swallow { "efl.indicator";
          clip: "bg_clip";
          desc { "default";
             rel.to: "top_clip";
@@ -712,41 +635,14 @@ group { "efl/border"; data.item: "version" "123";
       }
    }
 
-#define BORDERLESS  1
-#define MAXIMIZED   2
-#define UNRESIZABLE 4
-#define SET_MODE(a) script { new m = get_int(border_mode); m |= (a); set_int(border_mode, m); eval_mode(m); }
-#define UNSET_MODE(a) script { new m = get_int(border_mode); m &= ~(a); set_int(border_mode, m); eval_mode(m); }
-
-#define INDICATOR_TYPE_UNKNOWN 0
-#define INDICATOR_TYPE_BG_OPAQUE 1
-#define INDICATOR_TYPE_BG_TRANSPARENT 2
-#define INDICATOR_TYPE_HIDDEN 3
-
    programs {
-      script {
-         public border_mode;
-         public indicator_type = 0;
-         public indicator_enabled = 0;
-         public eval_mode(m) {
-            if (m & (BORDERLESS | MAXIMIZED | UNRESIZABLE)) {
-               set_state(PART:"bottom_clip", "hidden", 0.0);
-               set_state(PART:"top_resize_clip", "hidden", 0.0);
-            } else {
-               set_state(PART:"bottom_clip", "default", 0.0);
-               set_state(PART:"top_resize_clip", "default", 0.0);
-            }
-         }
-      }
-      program {
-         signal: "efl,state,borderless,on"; source: "efl";
+      program { signal: "efl,state,borderless,on"; source: "efl";
          action: STATE_SET "hidden";
          targets: "top_clip" "bottom_clip";
          after: "borderless,on";
       }
       program { "borderless,on"; SET_MODE(BORDERLESS); }
-      program {
-         signal: "efl,state,borderless,off"; source: "efl";
+      program { signal: "efl,state,borderless,off"; source: "efl";
          action: STATE_SET "default";
          targets: "top_clip" "bottom_clip";
          after: "borderless,off";
@@ -756,60 +652,75 @@ group { "efl/border"; data.item: "version" "123";
          signal: "efl,state,unresizable,on"; source: "efl";
          SET_MODE(UNRESIZABLE);
       }
-      program {
-         signal: "efl,state,unresizable,off"; source: "efl";
+      program { signal: "efl,state,unresizable,off"; source: "efl";
          UNSET_MODE(UNRESIZABLE);
       }
-      program {
-         signal: "efl,state,shadow,on"; source: "efl";
-         action: STATE_SET "default";
-         targets: "shadow_spacer" "shadow";
+      program { signal: "efl,state,shadow,on"; source: "efl";
+         script {
+            set_int(hide_shadow, 0);
+            eval_shadow_menu();
+         }
+//         action: STATE_SET "default";
+//         target: "shadow_clip";
+//         target: "shadow_base";
       }
-      program {
-         signal: "efl,state,shadow,off"; source: "efl";
-         action: STATE_SET "hidden";
-         targets: "shadow_spacer" "shadow";
+      program { signal: "efl,state,shadow,off"; source: "efl";
+         script {
+            set_int(hide_shadow, 1);
+            eval_shadow_menu();
+         }
+//         action: STATE_SET "hidden";
+//         target: "shadow_clip";
+//         target: "shadow_base";
       }
-      program {
-         signal: "efl,state,background,solid,on"; source: "efl";
+      /* application desktop menu */
+      program { signal: "efl,action,show_menu"; source: "efl";
+         script {
+            set_int(show_menu, 1);
+            eval_shadow_menu();
+         }
+//         action: STATE_SET "visible";
+//         target: "efl.menu";
+      }
+      program { signal: "efl,action,hide"; source: "efl";
+         script {
+            set_int(show_menu, 0);
+            eval_shadow_menu();
+         }
+//         action: STATE_SET "default";
+//         target: "efl.menu";
+      }
+      program { signal: "efl,state,background,solid,on"; source: "efl";
          action: STATE_SET "visible";
          target: "efl.rect.background";
       }
-      program {
-         signal: "efl,state,background,solid,off"; source: "efl";
+      program { signal: "efl,state,background,solid,off"; source: "efl";
          action: STATE_SET "default";
          target: "efl.rect.background";
       }
-      program {
-         signal: "efl,state,background,standard,on"; source: "efl";
-         action: STATE_SET "visible";
-         target: "background_bevel";
-      }
-      program {
-         signal: "efl,state,background,standard,off"; source: "efl";
-         action: STATE_SET "default";
-         target: "background_bevel";
-      }
-      program {
-         signal: "efl,action,focus"; source: "efl";
+//      program { signal: "efl,state,background,standard,on"; source: "efl";
+//         action: STATE_SET "visible";
+//         target: "background_bevel";
+//      }
+//      program { signal: "efl,state,background,standard,off"; source: "efl";
+//         action: STATE_SET "default";
+//         target: "background_bevel";
+//      }
+      program { signal: "efl,action,focus"; source: "efl";
          action: STATE_SET "focused";
          target: "top";
          target: "efl.text.title";
-         target: "title2";
          target: "clip1";
          target: "clip2";
       }
-      program {
-         signal: "efl,action,unfocus"; source: "efl";
+      program { signal: "efl,action,unfocus"; source: "efl";
          action: STATE_SET "default";
          target: "top";
          target: "efl.text.title";
-         target: "title2";
          target: "clip1";
          target: "clip2";
       }
-      program {
-         signal: "efl,state,urgent"; source: "efl";
+      program { signal: "efl,state,urgent"; source: "efl";
          action: STATE_SET "bounce1";
          target: "icon";
          after: "urg1";
@@ -826,111 +737,64 @@ group { "efl/border"; data.item: "version" "123";
          target: "icon";
          after: "urg1";
       }
-      program {
-         signal: "efl,state,not_urgent"; source: "efl";
+      program { signal: "efl,state,not_urgent"; source: "efl";
          action: STATE_SET "default";
          target: "icon";
       }
-      program { name: "spin";
-         signal: "efl,state,hung"; source: "efl";
-         action: STATE_SET "spin";
-         transition: LINEAR 1.0;
-         target: "knob_spinner";
-         after: "spin2";
-      }
-      program { name: "spin2";
-         action: STATE_SET "default";
-         target: "knob_spinner";
-         after: "spin";
-      }
-      program {
-         signal: "efl,state,hung"; source: "efl";
-         action: STATE_SET "hung";
-         transition: SINUSOIDAL 0.25;
-         target: "busy_clip";
-      }
-      program {
-         signal: "efl,state,unhung"; source: "efl";
-         action: STATE_SET "default";
-         transition: SINUSOIDAL 1.0;
-         target: "busy_clip";
-         after: "spin3";
-      }
-      program { name: "spin3";
-         action: ACTION_STOP;
-         target: "spin";
-         target: "spin2";
-         after: "spin4";
-      }
-      program { name: "spin4";
-         action: STATE_SET "default";
-         target: "knob_spinner";
-      }
 
       /* maximize & unmaximize */
-      program {
-         signal: "efl,state,maximize*"; source: "efl";
+      program { signal: "efl,state,maximize*"; source: "efl";
          action: STATE_SET "max";
          target: "efl.spacer.opaque";
       }
-      program {
-         signal: "efl,state,maximize*"; source: "efl";
+      program { signal: "efl,state,maximize*"; source: "efl";
          SET_MODE(MAXIMIZED);
       }
-      program {
-         signal: "efl,state,unmaximize*"; source: "efl";
+      program { signal: "efl,state,unmaximize*"; source: "efl";
          action: STATE_SET "default";
          target: "efl.spacer.opaque";
       }
-      program {
-         signal: "efl,state,unmaximize*"; source: "efl";
+      program { signal: "efl,state,unmaximize*"; source: "efl";
          UNSET_MODE(MAXIMIZED);
       }
 
       /*indicator*/
-      program {
-         signal: "efl,action,show_indicator"; source: "efl";
+      program { signal: "efl,action,show_indicator"; source: "efl";
          script {
             set_int(indicator_enabled, 1);
          }
          after: "update_indicator";
       }
-      program {
-         signal: "efl,action,hide_indicator"; source: "efl";
+      program { signal: "efl,action,hide_indicator"; source: "efl";
          script {
             set_int(indicator_enabled, 0);
          }
          after: "update_indicator";
       }
-      program {
-         signal: "efl,action,indicator,bg_opaque"; source: "efl";
+      program { signal: "efl,action,indicator,bg_opaque"; source: "efl";
          script {
             set_int(indicator_type, INDICATOR_TYPE_BG_OPAQUE);
          }
          after: "update_indicator";
       }
-      program {
-         signal: "efl,action,indicator,bg_transparent"; source: "efl";
+      program { signal: "efl,action,indicator,bg_transparent"; source: "efl";
          script {
             set_int(indicator_type, INDICATOR_TYPE_BG_TRANSPARENT);
          }
          after: "update_indicator";
       }
-      program {
-         signal: "efl,action,indicator,hidden"; source: "efl";
+      program { signal: "efl,action,indicator,hidden"; source: "efl";
          script {
             set_int(indicator_type, INDICATOR_TYPE_HIDDEN);
          }
          after: "update_indicator";
       }
-      program {
-         signal: "efl,action,indicator,show_effect"; source: "efl";
+      program { signal: "efl,action,indicator,show_effect"; source: "efl";
          action: STATE_SET "visible";
          transition: DECELERATE 0.2;
          target: "efl.indicator";
       }
-      program {
-         signal: "efl,action,indicator,hide_effect"; source: "efl";
+      program { signal: "efl,action,indicator,hide_effect"; source: "efl";
          action: STATE_SET "hidden";
          transition: DECELERATE 0.2;
          target: "efl.indicator";
@@ -953,177 +817,132 @@ group { "efl/border"; data.item: "version" "123";
                 set_state(PART:"indicator_bg", "default", 0.0);
               }
             } else {
-             set_state(PART:"efl.indicator", "default", 0.0);
-             set_state(PART:"indicator_spacer", "default", 0.0);
+              set_state(PART:"efl.indicator", "default", 0.0);
+              set_state(PART:"indicator_spacer", "default", 0.0);
             }
          }
       }
 
-      /* application desktop menu */
-      program { name: "show_menu";
-         signal: "efl,action,show_menu"; source: "efl";
-         action: STATE_SET "visible";
-         target: "efl.menu";
-      }
-      program { name: "hide_menu";
-         signal: "efl,action,hide"; source: "efl";
-         action: STATE_SET "default";
-         target: "efl.menu";
-      }
-
       /* modal windows */
-      program { name: "hide_blocker";
-         signal: "efl,action,hide_blocker"; source: "efl";
+      program { signal: "efl,action,hide_blocker"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "rect.blocker";
          transition: DECELERATE 0.2;
       }
-      program { name: "show_blocker";
-         signal: "efl,action,show_blocker"; source: "efl";
+      program { signal: "efl,action,show_blocker"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "rect.blocker";
          transition: DECELERATE 0.2;
       }
 
       /* minimize, maximize & close buttons */
-      program {
-         signal: "mouse,down,*"; source: "event.close";
+      program { signal: "mouse,down,*"; source: "event.close";
          action: STATE_SET "selected";
          target: "close1";
          target: "close2";
       }
-      program {
-         signal: "mouse,up,*"; source: "event.close";
+      program { signal: "mouse,up,*"; source: "event.close";
          action: STATE_SET "default";
          target: "close1";
          target: "close2";
       }
-      program {
-         signal: "mouse,down,*"; source: "event.maximize";
+      program { signal: "mouse,down,*"; source: "event.maximize";
          action: STATE_SET "selected";
          target: "max1";
          target: "max2";
       }
-      program {
-         signal: "mouse,up,*"; source: "event.maximize";
+      program { signal: "mouse,up,*"; source: "event.maximize";
          action: STATE_SET "default";
          target: "max1";
          target: "max2";
       }
-      program {
-         signal: "mouse,down,*"; source: "event.minimize";
+      program { signal: "mouse,down,*"; source: "event.minimize";
          action: STATE_SET "selected";
          target: "min1";
          target: "min2";
       }
-      program {
-         signal: "mouse,up,*"; source: "event.minimize";
+      program { signal: "mouse,up,*"; source: "event.minimize";
          action: STATE_SET "default";
          target: "min1";
          target: "min2";
       }
-      program {
-         signal: "mouse,down,1"; source: "event.titlebar";
+      program { signal: "mouse,down,1"; source: "event.titlebar";
          action: SIGNAL_EMIT "efl,action,move,start" "efl";
       }
-      program {
-         signal: "mouse,up,1"; source: "event.titlebar";
+      program { signal: "mouse,up,1"; source: "event.titlebar";
          action: SIGNAL_EMIT "efl,action,move,stop" "efl";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event.minimize";
+      program { signal: "mouse,clicked,1"; source: "event.minimize";
          action: SIGNAL_EMIT "efl,action,minimize" "efl";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event.maximize";
+      program { signal: "mouse,clicked,1"; source: "event.maximize";
          action: SIGNAL_EMIT "efl,action,maximize" "efl";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event.close";
+      program { signal: "mouse,clicked,1"; source: "event.close";
          action: SIGNAL_EMIT "efl,action,close" "efl";
       }
-      program {
-         signal: "mouse,in"; source: "efl.event.resize.t";
+      program { signal: "mouse,in"; source: "efl.event.resize.t";
          action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.t";
       }
-      program {
-         signal: "mouse,out"; source: "efl.event.resize.t";
+      program { signal: "mouse,out"; source: "efl.event.resize.t";
          action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.t";
       }
-      program {
-         signal: "mouse,down,1"; source: "efl.event.resize.t";
+      program { signal: "mouse,down,1"; source: "efl.event.resize.t";
          action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.t";
       }
-      program {
-         signal: "mouse,in"; source: "efl.event.resize.b";
+      program { signal: "mouse,in"; source: "efl.event.resize.b";
          action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.b";
       }
-      program {
-         signal: "mouse,out"; source: "efl.event.resize.b";
+      program { signal: "mouse,out"; source: "efl.event.resize.b";
          action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.b";
       }
-      program {
-         signal: "mouse,down,1"; source: "efl.event.resize.b";
+      program { signal: "mouse,down,1"; source: "efl.event.resize.b";
          action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.b";
       }
-      program {
-         signal: "mouse,in"; source: "efl.event.resize.tl";
+      program { signal: "mouse,in"; source: "efl.event.resize.tl";
          action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.tl";
       }
-      program {
-         signal: "mouse,out"; source: "efl.event.resize.tl";
+      program { signal: "mouse,out"; source: "efl.event.resize.tl";
          action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.tl";
       }
-      program {
-         signal: "mouse,down,1"; source: "efl.event.resize.tl";
+      program { signal: "mouse,down,1"; source: "efl.event.resize.tl";
          action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.tl";
       }
-      program {
-         signal: "mouse,in"; source: "efl.event.resize.tr";
+      program { signal: "mouse,in"; source: "efl.event.resize.tr";
          action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.tr";
       }
-      program {
-         signal: "mouse,out"; source: "efl.event.resize.tr";
+      program { signal: "mouse,out"; source: "efl.event.resize.tr";
          action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.tr";
       }
-      program {
-         signal: "mouse,down,1"; source: "efl.event.resize.tr";
+      program { signal: "mouse,down,1"; source: "efl.event.resize.tr";
          action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.tr";
       }
-      program {
-         signal: "mouse,in"; source: "efl.event.resize.bl";
+      program { signal: "mouse,in"; source: "efl.event.resize.bl";
          action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.bl";
       }
-      program {
-         signal: "mouse,out"; source: "efl.event.resize.bl";
+      program { signal: "mouse,out"; source: "efl.event.resize.bl";
          action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.bl";
       }
-      program {
-         signal: "mouse,down,1"; source: "efl.event.resize.bl";
+      program { signal: "mouse,down,1"; source: "efl.event.resize.bl";
          action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.bl";
       }
-      program {
-         signal: "mouse,in"; source: "efl.event.resize.br";
+      program { signal: "mouse,in"; source: "efl.event.resize.br";
          action: SIGNAL_EMIT "efl,action,resize,show" "efl.event.resize.br";
       }
-      program {
-         signal: "mouse,out"; source: "efl.event.resize.br";
+      program { signal: "mouse,out"; source: "efl.event.resize.br";
          action: SIGNAL_EMIT "efl,action,resize,hide" "efl.event.resize.br";
       }
-      program {
-         signal: "mouse,down,1"; source: "efl.event.resize.br";
+      program { signal: "mouse,down,1"; source: "efl.event.resize.br";
          action: SIGNAL_EMIT "efl,action,resize,start" "efl.event.resize.br";
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event.icon";
+      program { signal: "mouse,clicked,1"; source: "event.icon";
          action: SIGNAL_EMIT "efl,action,menu" "efl";
       }
    }
 }
 
-group { "efl/border/dialog";
-   inherit:   "efl/border";
-   data.item: "version" "123";
+group { name: "efl/border/dialog";
+   inherit: "efl/border";
    parts {
       text {  "efl.text.title";
          clip: "top_clip";
@@ -1176,12 +995,12 @@ group { "efl/border/dialog";
             visible: 0;
          }
       }
-      rect {  "event.maximize";
+      rect {  "efl.event.maximize";
          desc { "default";
             visible: 0;
          }
       }
-      rect {  "event.minimize";
+      rect {  "efl.event.minimize";
          desc { "default";
             visible: 0;
          }
@@ -1189,28 +1008,24 @@ group { "efl/border/dialog";
    }
 }
 
-group { "efl/border/naviframe";
-   inherit:   "efl/border";
-   data.item: "version" "123";
-   images.image: "sym_left_dark_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_left_light_normal.png" COMP;
+group { name: "efl/border/naviframe";
+   inherit:   "efl/border/dialog";
    parts {
       image { "close1";
          desc { "default";
-            image.normal: "sym_left_dark_normal.png";
+            image.normal: "i-arrow-l";
          }
          desc { "selected";
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
          }
       }
       image { "close2"; nomouse;
          clip: "clip2";
          desc { "default";
-            image.normal: "sym_left_light_normal.png";
+            image.normal: "i-arrow-l";
          }
          desc { "selected";
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
          }
       }
    }
@@ -1221,3 +1036,4 @@ group { "efl/border/naviframe";
 #undef MAXIMIZED
 #undef SET_MODE
 #undef UNSET_MODE
+

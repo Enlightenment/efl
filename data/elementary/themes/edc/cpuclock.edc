@@ -1,0 +1,241 @@
+group { name: "e/gadget/cpuclock/main";
+   alias: "e/gadget/cpuclock/main_vert";
+   images.image: "cpu_base.png" COMP;
+   images.image: "cpu_clip1.png" COMP;
+   images.image: "cpu_clip2.png" COMP;
+   images.image: "cpu_clip3.png" COMP;
+   set { name: "marker";
+      image { image: "cpu_marker.png"  COMP; size: 72 72 99999 99999; }
+      image { image: "cpu_marker2.png" COMP; size: 36 36 72 72; }
+      image { image: "cpu_marker3.png" COMP; size: 18 18 36 36; }
+      image { image: "cpu_marker4.png" COMP; size: 0 0 4 18; }
+   }
+   script {
+      public available_frequencies;
+      public available_governors;
+
+      public cur_freq_old;
+      public cur_freq_new;
+      public cur_freq_now;
+      public cur_freq_anim;
+
+      public min_freq_old;
+      public min_freq_new;
+      public min_freq_now;
+
+      public max_freq_old;
+      public max_freq_new;
+      public max_freq_now;
+
+      public slide_cur_freq(val, Float:v) {
+         new Float:freq, Float:min_freq, Float:max_freq, Float:tf;
+         new f, f0, f1;
+
+         v = (1.0 - cos(v * 3.141592654)) / 2.0;
+
+         min_freq = fetch_int(available_frequencies, 0);
+         max_freq = fetch_int(available_frequencies,
+                              count(available_frequencies) - 1);
+
+         f0 = get_int(cur_freq_old);
+         f1 = get_int(cur_freq_new);
+         f = f1 - f0;
+         freq = float(f) * v;
+         f = round(freq);
+         f = f + f0;
+         set_int(cur_freq_now, f);
+
+         freq = (float(f) - min_freq) / (max_freq - min_freq);
+         tf = (freq * 225.0) - 135.0;
+         custom_state(PART:"meter", "default", 0.0);
+         set_state_val(PART:"meter", STATE_MAP_ROT_Z, tf);
+         set_state(PART:"meter", "custom", 0.0);
+
+         f0 = get_int(min_freq_old);
+         f1 = get_int(min_freq_new);
+         f = f1 - f0;
+         freq = float(f) * v;
+         f = round(freq);
+         f = f + f0;
+         set_int(min_freq_now, f);
+
+         freq = (float(f) - min_freq) / (max_freq - min_freq);
+         tf = (freq * 225.0) - 135.0;
+         custom_state(PART:"meter_min", "default", 0.0);
+         set_state_val(PART:"meter_min", STATE_MAP_ROT_Z, tf);
+         set_state(PART:"meter_min", "custom", 0.0);
+
+         f0 = get_int(max_freq_old);
+         f1 = get_int(max_freq_new);
+         f = f1 - f0;
+         freq = float(f) * v;
+         f = round(freq);
+         f = f + f0;
+         set_int(max_freq_now, f);
+
+         freq = (float(f) - min_freq) / (max_freq - min_freq);
+         tf = (freq * 225.0) - 135.0;
+         custom_state(PART:"meter_max", "default", 0.0);
+         set_state_val(PART:"meter_max", STATE_MAP_ROT_Z, tf);
+         set_state(PART:"meter_max", "custom", 0.0);
+
+         if (v >= 1.0) {
+            set_int(cur_freq_anim, 0);
+            return 0;
+         }
+         return 1;
+      }
+
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 1)) { // add an available freq
+            while (count(available_frequencies) > 0) {
+               remove(available_frequencies, 0);
+            }
+            for (new i = 2; i < numargs(); i++) {
+               append_int(available_frequencies, getarg(i));
+            }
+         }
+         else if ((type == MSG_STRING_SET) && (id == 2)) { // add a governor
+            new text[100];
+            while (count(available_governors) > 0) {
+               remove(available_governors, 0);
+            }
+            for (new i = 2; i < numargs(); i++) {
+               snprintf(text, 100, "%s", getarg(i));
+               append_str(available_governors, text);
+            }
+         } else if ((type == MSG_INT_SET) && (id == 3)) { // avg freq
+            new f;
+            new ani, curf, minf, maxf;
+            new text[100];
+
+            f = getarg(2);
+            if (f < 1000000) {
+               f += 500;
+               snprintf(text, 100, "%i", f / 1000);
+            } else {
+               f += 50000;
+               snprintf(text, 100, "%i.%i", f / 1000000,
+                        (f % 1000000) / 100000);
+            }
+
+            ani = get_int(cur_freq_anim);
+            if (ani > 0) cancel_anim(ani);
+            ani = anim(0.25, "slide_cur_freq", 0);
+            set_int(cur_freq_anim, ani);
+
+            f = getarg(2);
+            curf = get_int(cur_freq_now);
+            set_int(cur_freq_old, curf);
+            set_int(cur_freq_new, f);
+
+            f = getarg(4);
+            minf = get_int(min_freq_now);
+            set_int(min_freq_old, minf);
+            set_int(min_freq_new, f);
+
+            f = getarg(5);
+            maxf = get_int(max_freq_now);
+            set_int(max_freq_old, maxf);
+            set_int(max_freq_new, f);
+         } else if ((type == MSG_STRING) && (id == 4)) {
+            new text[100];
+            snprintf(text, 100, "%s", getarg(2));
+         }
+      }
+   }
+   parts {
+      part { name: "fade_clip"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "faded" 0.0;
+            color: 255 255 255 128;
+         }
+      }
+      part { name: "clip1";
+         clip_to: "fade_clip";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "cpu_clip1.png";
+         }
+      }
+      part { name: "clip2";
+         clip_to: "fade_clip";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "cpu_clip2.png";
+         }
+      }
+      part { name: "clip3";
+         clip_to: "fade_clip";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image.normal: "cpu_clip3.png";
+         }
+      }
+      part { name: "base";
+         description { state: "default" 0.0;
+            rel1.relative: (25/380) (25/380);
+            rel2.relative: (365/380) (365/380);
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "cpu_base.png";
+         }
+      }
+      part { name: "meter_min"; mouse_events: 0;
+         clip_to: "clip3";
+         description { state: "default" 0.0;
+            image.normal: "marker";
+            color: 51 153 255 255;
+            rel1.to: "base";
+            rel2.to: "base";
+            map {
+               on: 1;
+               rotation.center: "base";
+            }
+         }
+      }
+      part { name: "meter_max"; mouse_events: 0;
+         clip_to: "clip1";
+         description { state: "default" 0.0;
+            image.normal: "marker";
+            color: 255 0 0 255;
+            rel1.to: "base";
+            rel2.to: "base";
+            map {
+               on: 1;
+               rotation.center: "base";
+            }
+         }
+      }
+      part { name: "meter"; mouse_events: 0;
+         clip_to: "clip2";
+         description { state: "default" 0.0000;
+            color: 255 153 51 255;
+            image.normal: "marker";
+            rel1.to: "base";
+            rel2.to: "base";
+            map {
+               on: 1;
+               rotation.center: "base";
+            }
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "e,state,enabled"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "fade_clip";
+      }
+      program {
+         signal: "e,state,disabled"; source: "e";
+         action: STATE_SET "faded" 0.0;
+         target: "fade_clip";
+      }
+   }
+}
+

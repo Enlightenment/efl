@@ -35,7 +35,6 @@
 #define DATETIME_SEPARATOR(_pos, _after) \
    text { "efl.separator"#_pos; \
       scale; \
-      effect: SHADOW BOTTOM; \
       clip_to: "disclip"; \
       desc { "default"; \
          hid; \
@@ -50,9 +49,9 @@
             relative: 1.0 1.0; \
             to: "efl.field"#_after; \
          } \
-         color_class: "datetime_separator_text"; \
+         color: 160 160 160 255; \
          text { \
-            font: "Sans"; size: 10; \
+            font: FN; size: 10; \
             min: 1 0; \
             ellipsis: -1; \
             align: 0.5 0.5; \
@@ -67,16 +66,15 @@
    } \
    text { "efl.separator"#_pos"d"; \
       scale; \
-      effect: SHADOW BOTTOM; \
       clip_to: "disclip2"; \
       desc { "default"; \
          hid; \
          rel1.to: "efl.separator"#_pos; \
          rel2.to: "efl.separator"#_pos; \
-         color_class: "datetime_separator_text_disabled"; \
+         color: 160 160 160 255; \
          text { \
             text_source: "efl.separator"#_pos; \
-            font: "Sans"; size: 10; \
+            font: FN; size: 10; \
             text_class: "datetime_separator_text_disabled"; \
          } \
       } \
@@ -107,7 +105,7 @@ group { "efl/uiclock";
    parts {
       rect { "bg";
          desc { "default";
-            color_class: "datetime_bg";
+            color: 64 64 64 255;
          }
       }
       rect { "clip";

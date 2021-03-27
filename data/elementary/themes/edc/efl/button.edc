@@ -26,145 +26,64 @@ Group: efl/button:anchor (@since 1.23)
 	 Signal: efl,text,set
 	 Signal: efl,text,unset
 */
-group { name: "efl/button"; data.item: "version" "123";
-   images.image: "button_normal.png" COMP;
-   images.image: "button_clicked.png" COMP;
-
-#undef ICON
-#define ICON     1
-#define LABEL    2
-#define MASK     3
-#define DISABLE  4
-#define PRESSED  8
+#define ICON         1
+#define LABEL        2
+#define MASK         3
+#define DISABLE      4
+#define PRESSED      8
 #define BACKGROUND  16
+
+group { name: "efl/button";
+   data.item: "version" "123";
    script {
-      public btmode;
-      public eval_mode(m) {
-         new m1 = m & MASK;
-         new d = m & DISABLE;
-         new p = m & PRESSED;
-         new bg = m & BACKGROUND;
-         if (bg) {
-            set_state(PART:"base", "hidden", 0.0);
-            set_state(PART:"efl.background", "visible", 0.0);
-         } else {
-            set_state(PART:"efl.background", "default", 0.0);
-            if (!d) {
-               if (!p)
-                 {
-                  set_state(PART:"base", "default", 0.0);
-                  set_state(PART:"base", "default", 0.0);
-                 }
-               else {
-                    set_state(PART:"base", "pressed", 0.0);
-                 }
-            } else {
-               set_state(PART:"base", "disabled", 0.0);
-            }
-         }
-         if (m1 == (ICON | LABEL)) {
-            if (!d) {
-               set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
-               set_state(PART:"event", "default", 0.0);
-               if (!p) {
-                  set_state(PART:"efl.text", "visible", 0.0);
-                  set_state(PART:"icon_clip", "default", 0.0);
-               } else {
-                  set_state(PART:"efl.text", "pressed_visible", 0.0);
-                  set_state(PART:"icon_clip", "pressed", 0.0);
-               }
-            } else {
-               set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
-               set_state(PART:"efl.text", "disabled_visible", 0.0);
-               set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         } else if (m1 == (ICON)) {
-            if (!d) {
-               set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
-               set_state(PART:"event", "default", 0.0);
-               set_state(PART:"efl.text", "default", 0.0);
-               if (!p)
-                  set_state(PART:"icon_clip", "default", 0.0);
-               else
-                  set_state(PART:"icon_clip", "pressed", 0.0);
-            } else {
-               set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
-               set_state(PART:"efl.text", "default", 0.0);
-               set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         } else if (m1 == (LABEL)) {
-            if (!d) {
-               set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"icon_clip", "default", 0.0);
-               set_state(PART:"event", "default", 0.0);
-               if (!p)
-                  set_state(PART:"efl.text", "textonly", 0.0);
-               else
-                  set_state(PART:"efl.text", "pressed_textonly", 0.0);
-            } else {
-               set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"efl.text", "disabled_textonly", 0.0);
-               set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         } else {
-            if (!d) {
-               set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"icon_clip", "default", 0.0);
-               set_state(PART:"event", "default", 0.0);
-            } else {
-               set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"event", "disabled", 0.0);
-            }
-         }
-      }
+      BUTTONMODE_SCRIPT2
    }
+   images.image: "win_shadow.png" COMP;
    parts {
-      image { "base";
-         desc { "default";
-            image.normal: "button_normal.png";
-            image.border: 4 4 3 5;
-            image.middle: SOLID;
-            rel1.offset: -1 0;
+      part { name: "shadow"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            WIN_SHADOW_SMALL;
+         }
+         description { state: "pressed" 0.0; inherit;
+            image.border_scale_by: 0.1;
+            rel1.offset: -2 -1;
             rel2.offset: 0 1;
-            fill.smooth: 0;
-            color_class: "button_bg";
          }
-         desc { "pressed";
-            inherit: "default";
-            image.normal: "button_clicked.png";
-            image.border: 5 5 4 6;
-            color_class: "button_bg_pressed";
+         description { state: "disabled" 0.0; inherit;
+            image.border_scale_by: 0.1;
+            rel1.offset: -2 -1;
+            rel2.offset: 0 1;
          }
-         desc { "disabled";
-            inherit: "default";
-            color_class: "button_bg_disabled";
+      }
+      rect { "base";
+         scale: 1;
+         desc { "default";
+            color: 96 96 96 255;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            offscale;
          }
-         desc { "hidden";
-            inherit: "default";
+         desc { "pressed"; inherit;
+            color: 128 128 128 255;
+            rel1.offset: 3 3;
+            rel2.offset: -4 -4;
+            offscale;
+         }
+         desc { "disabled"; inherit;
+            color: 72 72 72 255;
+         }
+         desc { "hidden"; inherit;
             visible: 0;
          }
       }
-      swallow { "efl.background"; nomouse;
-         required;
+      swallow { "efl.background"; nomouse; required;
          desc { "default";
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             visible: 0;
          }
-         desc { "visible";
-            inherit: "default";
+         desc { "visible"; inherit;
             visible: 1;
          }
       }
@@ -172,290 +91,224 @@ group { name: "efl/button"; data.item: "version" "123";
          desc { "default";
             color_class: "button_icon";
          }
-         desc { "pressed";
-            inherit: "default";
+         desc { "pressed"; inherit;
             color_class: "button_icon_pressed";
          }
-         desc { "disabled";
-            inherit: "default";
+         desc { "disabled"; inherit;
             color_class: "button_icon_disabled";
          }
       }
-      swallow { "efl.content"; nomouse;
+      swallow { "efl.content"; nomouse; required;
          clip_to: "icon_clip";
-         required;
+         scale: 1;
          desc { "default";
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 6 5;
-            rel1.to: "base";
+            rel1.offset: 6 6;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 6 -8;
-            rel2.to: "base";
+            rel2.offset: 6 -7;
             visible: 0;
+            offscale;
          }
-         desc { "visible";
-            inherit: "default";
+         desc { "visible"; inherit;
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
          }
-         desc { "icononly";
-            inherit: "default";
+         desc { "icononly"; inherit;
             fixed: 0 0;
             align: 0.5 0.5;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -7 -8;
+            rel2.offset: -5 -5;
             visible: 1;
          }
       }
       text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
-//            fixed: 1 1;
+            fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
                min: 0 0;
                text_class: "button_text";
             }
          }
-         desc { "visible";
-            inherit: "default";
-            rel1.to: "efl.content";
-            rel2.to: "efl.content";
+         desc { "visible"; inherit;
+            rel.to: "efl.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
-         desc { "icononly";
-            inherit: "default";
-            rel1.to: "efl.content";
-            rel2.to: "efl.content";
+         desc { "icononly"; inherit;
+            fixed: 0 0;
+            rel.to: "efl.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
-      text { "efl.text"; nomouse;
-         effect: SHADOW BOTTOM;
-         scale;
-         required;
+      text { "efl.text"; nomouse; required;
+         scale: 1;
          desc { "default";
-            rel1.offset: 0 5;
+            fixed: 0 0;
+            color: 192 192 192 255;
+            rel1.offset: 0 6;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "efl.content";
-            rel1.to_y: "base";
-            rel2.offset: -8 -8;
-            rel2.to: "base";
-            color_class: "button_text";
-            color3: 255 255 255 255;
+            rel2.offset: -7 -7;
             text { font: FN; size: 10;
                align: 0.5 0.5;
                min: 0 0;
-               text_class: "button";
             }
             visible: 0;
-            fixed: 1 1;
+            offscale;
          }
-         desc { "visible";
-            inherit: "default";
-            rel1.offset: 2 5;
+         desc { "visible"; inherit;
+            fixed: 0 0;
+            rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
-         desc { "pressed_visible";
-            inherit: "default";
-            rel1.offset: 2 5;
+         desc { "pressed_visible"; inherit;
+            fixed: 0 0;
+            color: 255 255 255 255;
+            rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
-            color_class: "button_text_pressed";
          }
-         desc { "textonly";
-            inherit: "default";
+         desc { "textonly"; inherit;
+            fixed: 0 0;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
-         desc { "pressed_textonly";
-            inherit: "default";
+         desc { "pressed_textonly"; inherit;
+            fixed: 0 0;
+            color: 255 255 255 255;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
-            color_class: "button_text_pressed";
          }
-         desc { "disabled_visible";
-            inherit: "default";
-            rel1.offset: 2 5;
-            color_class: "button_text_disabled";
-            color3: 255 255 255 255;
+         desc { "disabled_visible"; inherit;
+            fixed: 0 0;
+            color: 96 96 96 255;
+            rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
-         desc { "disabled_textonly";
-            inherit: "default";
-            color_class: "button_text_disabled";
-            color3: 255 255 255 255;
+         desc { "disabled_textonly"; inherit;
+            fixed: 0 0;
+            color: 96 96 96 255;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
       }
       rect { "event";
+         ignore_flags: ON_HOLD;
          desc { "default";
             color: 0 0 0 0;
          }
-         desc { "disabled";
-            inherit: "default";
+         desc { "disabled"; inherit;
             visible: 0;
          }
       }
    }
    programs {
       EFL_UI_CLICKABLE_PART_BIND("event")
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
-         script {
-            new m = get_int(btmode);
-            m |= PRESSED; set_int(btmode, m);
-            eval_mode(m);
-         }
+         script { flag_set(PRESSED); }
       }
       program { name: "button_unclick";
          signal: "mouse,up,1"; source: "event";
          after: "button_unclick_anim";
       }
       program { name: "button_unclick_anim";
-         script {
-            new m = get_int(btmode);
-            m &= ~PRESSED; set_int(btmode, m);
-            eval_mode(m);
-         }
+         script { flag_unset(PRESSED); }
       }
-      program { name: "buttonactivate";
-         signal: "efl,state,animation,activated"; source: "efl";
+      program { signal: "efl,state,animation,activated"; source: "efl";
          action: STATE_SET "pressed" 0.0;
+         target: "shadow";
          target: "base";
          after: "button_unpressed_anim";
       }
       program { name: "button_unpressed_anim";
-         action: STATE_SET "default" 0.0;
          in: 0.5 0.0;
+         action: STATE_SET "default" 0.0;
+         target: "shadow";
          target: "base";
       }
-      program { name: "button_text_visible";
-         signal: "efl,text,set"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m |= LABEL; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,text,set"; source: "efl";
+         script { flag_set(LABEL); }
       }
-      program { name: "button_text_hidden";
-         signal: "efl,text,unset"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m &= ~LABEL; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,text,unset"; source: "efl";
+         script { flag_unset(LABEL); }
       }
-      program { name: "button_icon_visible";
-         signal: "efl,content,set"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m |= ICON; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,content,set"; source: "efl";
+         script { flag_set(ICON); }
       }
-      program { name: "button_icon_hidden";
-         signal: "efl,content,unset"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m &= ~ICON; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,content,unset"; source: "efl";
+         script { flag_unset(ICON); }
       }
-      program { name: "button_background_visible";
-         signal: "efl,state,background,set"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m |= BACKGROUND; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,state,background,set"; source: "efl";
+         script { flag_set(BACKGROUND); }
       }
-      program { name: "button_background_hidden";
-         signal: "efl,state,background,unset"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m &= ~BACKGROUND; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,state,background,unset"; source: "efl";
+         script { flag_unset(BACKGROUND); }
       }
-      program { name: "button_state_disabled";
-         signal: "efl,state,disabled"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m |= DISABLE; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,state,disabled"; source: "efl";
+         script { flag_set(DISABLE); }
       }
-      program { name: "button_state_enabled";
-         signal: "efl,state,enabled"; source: "efl";
-         script {
-            new m = get_int(btmode);
-            m &= ~DISABLE; set_int(btmode, m);
-            eval_mode(m);
-         }
+      program { signal: "efl,state,enabled"; source: "efl";
+         script { flag_unset(DISABLE); }
       }
    }
-#undef ICON
-#undef LABEL
-#undef MASK
-#undef DISABLE
-#undef PRESSED
-#undef BACKGROUND
 }
 
-group { name: "efl/button:anchor"; data.item: "version" "123";
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
-#define ICON     1
-#define LABEL    2
-#define MASK     3
-#define DISABLE  4
+group { name: "efl/button:anchor";
+   data.item: "version" "123";
    script {
       public btmode;
       public eval_mode(m) {
          new m1 = m & MASK;
          new d = m & DISABLE;
+         new p = m & PRESSED;
+         if (!d) {
+            if (!p) {
+               set_state(PART:"bar", "default", 0.0);
+            }
+            else {
+               set_state(PART:"bar", "pressed", 0.0);
+            }
+         } else {
+            set_state(PART:"bar", "disabled", 0.0);
+         }
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "visible", 0.0);
                set_state(PART:"sizer_content", "visible", 0.0);
-               set_state(PART:"efl.text", "visible", 0.0);
+               if (!p) {
+                  set_state(PART:"efl.text", "visible", 0.0);
+               } else {
+                  set_state(PART:"efl.text", "pressed_visible", 0.0);
+               }
                set_state(PART:"icon_clip", "default", 0.0);
-               set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "visible", 0.0);
                set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"bar", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          } else if (m1 == (ICON)) {
@@ -464,30 +317,30 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
                set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
-               set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "icononly", 0.0);
                set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"bar", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer_content", "default", 0.0);
-               set_state(PART:"efl.text", "textonly", 0.0);
+               if (!p) {
+                  set_state(PART:"efl.text", "textonly", 0.0);
+               } else {
+                  set_state(PART:"efl.text", "pressed_textonly", 0.0);
+               }
                set_state(PART:"icon_clip", "default", 0.0);
-               set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "disabled_textonly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"bar", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          } else {
@@ -495,13 +348,11 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
                set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
-               set_state(PART:"bar", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
                set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
-               set_state(PART:"bar", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
          }
@@ -511,6 +362,15 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
       rect { "base";
          desc { "default";
             color: 0 0 0 0;
+         }
+         desc { "pressed"; inherit;
+            inherit: "default";
+         }
+         desc { "disabled"; inherit;
+            inherit: "default";
+         }
+         desc { "hidden"; inherit;
+            inherit: "default";
          }
       }
       rect { "icon_clip";
@@ -523,8 +383,7 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
       }
       swallow { "efl.background"; nomouse; required;
          desc { "default";
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             visible: 0;
          }
          desc { "visible";
@@ -537,10 +396,10 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
          desc { "default";
             fixed: 1 0;
             align: 0.0 0.5;
-            rel1.offset: 0 4;
+            rel1.offset: 4 4;
             rel1.to: "base";
             rel2.relative: 0.0 1.0;
-            rel2.offset: 0 -5;
+            rel2.offset: 4 -5;
             rel2.to: "base";
             visible: 0;
          }
@@ -555,141 +414,116 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
             fixed: 0 0;
             align: 0.5 0.5;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -5;
+            rel2.offset: -5 -5;
             visible: 1;
          }
       }
       text { "sizer_content"; nomouse;
          scale: 1;
          desc { "default";
+            fixed: 1 1;
             visible: 0;
             text { font: FN; size: 10;
                min: 0 0;
                text_class: "button_text";
             }
          }
-         desc { "visible";
-            inherit: "default";
-            rel1.to: "efl.content";
-            rel2.to: "efl.content";
+         desc { "visible"; inherit;
+            rel.to: "efl.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
-         desc { "icononly";
-            inherit: "default";
-            rel1.to: "efl.content";
-            rel2.to: "efl.content";
+         desc { "icononly";  inherit;
+            fixed: 0 0;
+            rel.to: "efl.content";
             text {
                min: 1 1;
                ellipsis: -1;
-               text: "M";
+               text: SPACER_TEXT;
             }
          }
       }
-      text { "efl.text"; nomouse;
-         effect: GLOW;
+      text { "efl.text"; nomouse; required;
          scale: 1;
          desc { "default";
-            rel1.offset: -2 0;
+            rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "efl.content";
             rel1.to_y: "base";
-            rel2.offset: -1 -1;
+            rel2.offset: -5 -5;
             rel2.to: "base";
-            color_class: "button_text_anchor";
-            color2: 255 255 255 255;
-            color3: 255 255 255 255;
+            color: 51 153 255 255;
             text { font: FN; size: 10;
                align: 0.5 0.5;
                min: 0 0;
-               text_class: "button_anchor";
             }
             visible: 0;
          }
          desc { "visible";
             inherit: "default";
-            rel1.offset: 0 0;
+            rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
-         desc { "textonly";
+         desc { "pressed_visible";
             inherit: "default";
+            color: 255 255 255 255;
+            rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
+            fixed: 0 0;
+         }
+         desc { "textonly";
+            inherit: "default";
+            rel1.offset: 0 4;
+            text.min: 1 1;
+            text.ellipsis: -1;
+            visible: 1;
+         }
+         desc { "pressed_textonly";
+            inherit: "default";
+            color: 255 255 255 255;
+            text.min: 1 1;
+            text.ellipsis: -1;
+            visible: 1;
+            fixed: 0 0;
          }
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 0 0;
-            color_class: "button_text_anchor_disabled";
+            color: 96 96 96 255;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_textonly";
             inherit: "default";
-            color_class: "button_text_anchor_disabled";
+            rel1.offset: 0 4;
+            color: 96 96 96 255;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
       }
-      text { "text2"; nomouse;
-         effect: GLOW;
-         scale: 1;
+      rect { "bar"; nomouse;
          desc { "default";
-            fixed: 1 1;
-            rel1.to: "efl.text";
-            rel2.to: "efl.text";
-            color_class: "button_text_anchor";
-            color2: 255 255 255 255;
-            color3: 255 255 255 255;
-            text { font: FN; size: 10;
-               text_source: "efl.text";
-               min: 1 1;
-               ellipsis: -1;
-               text_class: "button_anchor";
-            }
-            visible: 0;
-         }
-         desc { "clicked";
-            inherit: "default";
-            visible: 1;
-         }
-      }
-      image { "bar"; nomouse;
-         desc { "default";
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            fixed: 0 1;
+            color: 51 153 255 255;
             rel1.relative: 0.0 1.0;
-            rel1.offset: -3 -6;
-            rel2.offset: 2 3;
+            rel1.offset: 2 -3;
+            rel2.offset: -3 -3;
+         }
+         desc { "pressed";
+            inherit: "default";
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
-         }
-      }
-      image { "bar2"; nomouse;
-         desc { "default";
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            rel1.to: "bar";
-            rel2.to: "bar";
-            color: 255 255 255 0;
-            visible: 0;
-         }
-         desc { "clicked";
-            inherit: "default";
-            color: 255 255 255 255;
-            visible: 1;
+            color: 96 96 96 255;
          }
       }
       rect { "event";
@@ -704,89 +538,80 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
    }
    programs {
       EFL_UI_CLICKABLE_PART_BIND("event")
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
-         action: STATE_SET "clicked" 0.0;
-         target: "bar2";
-         target: "text2";
+         script {
+            new m = get_int(btmode);
+            m |= PRESSED; set_int(btmode, m);
+            eval_mode(m);
+         }
       }
-      program {
-         signal: "mouse,up,1"; source: "event";
+      program { signal: "mouse,up,1"; source: "event";
          after: "button_unclick_anim";
       }
       program { name: "button_unclick_anim";
-         action: STATE_SET "default" 0.0;
-         target: "bar2";
-         target: "text2";
+         script {
+            new m = get_int(btmode);
+            m &= ~PRESSED; set_int(btmode, m);
+            eval_mode(m);
+         }
       }
-      program {
-         signal: "efl,state,animation,activated"; source: "efl";
-         action: STATE_SET "clicked" 0.0;
-         target: "bar2";
-         target: "text2";
+      program { signal: "efl,state,animation,activated"; source: "efl";
+         action: STATE_SET "pressed" 0.0;
+         target: "base";
          after: "button_unpressed_anim";
       }
       program { name: "button_unpressed_anim";
          action: STATE_SET "default" 0.0;
          in: 0.5 0.0;
-         target: "bar2";
-         target: "text2";
+         target: "base";
       }
-      program { name: "button_text_visible";
-         signal: "efl,text,set"; source: "efl";
+      program { signal: "efl,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "button_text_hidden";
-         signal: "efl,text,unset"; source: "efl";
+      program { signal: "efl,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "button_icon_visible";
-         signal: "efl,content,set"; source: "efl";
+      program { signal: "efl,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "button_icon_hidden";
-         signal: "efl,content,unset"; source: "efl";
+      program { signal: "efl,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "button_background_visible";
-         signal: "efl,state,background,set"; source: "efl";
+      program { signal: "efl,state,background,set"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.background";
       }
-      program { name: "button_background_hidden";
-         signal: "efl,state,background,unset"; source: "efl";
+      program { signal: "efl,state,background,unset"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "efl.background";
       }
-      program { name: "button_state_disabled";
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "button_state_enabled";
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);
@@ -794,8 +619,4 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
          }
       }
    }
-#undef ICON
-#undef LABEL
-#undef MASK
-#undef DISABLE
 }

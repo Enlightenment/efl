@@ -1,18 +1,8 @@
 group { "efl/tab_bar";
    data.item: "version" "123";
-   images.image: "vgrad_med_lighter.png" COMP;
-   images.image: "bevel_out.png" COMP;
-   images.image: "shadow_square_tiny.png" COMP;
    parts {
-      spacer { "base";
-         scale;
-         desc { "default";
-         }
-      }
       swallow { "efl.content";
-         scale;
          desc { "default";
-            rel.to: "base";
          }
       }
    }
@@ -20,10 +10,13 @@ group { "efl/tab_bar";
 
 group { "efl/tab_bar/tab";
    data.item: "version" "123";
+   data.item: "transition_animation_on" "1";
+
+   images.image: "win_shad_flat.png" COMP;
+
    images.image: "shadow_inset_bevels.png" COMP;
    images.image: "shadow_angled_in_sides.png" COMP;
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
-   data.item: "transition_animation_on" "1";
    images.image: "bevel_dark_in.png" COMP;
 
 #define ICON    1
@@ -40,71 +33,102 @@ group { "efl/tab_bar/tab";
                set_state(PART:"efl.icon", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
-               set_state(PART:"label2", "default", 0.0);
             } else {
                set_state(PART:"efl.icon", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"efl.text", "disabled", 0.0);
-               set_state(PART:"label2", "default", 0.0);
             }
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"efl.icon", "icononly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"efl.text", "icononly", 0.0);
-               set_state(PART:"label2", "icononly", 0.0);
             } else {
                set_state(PART:"efl.icon", "icononly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"efl.text", "icononly", 0.0);
-               set_state(PART:"label2", "icononly", 0.0);
             }
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"efl.icon", "noicon", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"efl.text", "noicon", 0.0);
-               set_state(PART:"label2", "noicon", 0.0);
             } else {
                set_state(PART:"efl.icon", "noicon", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"efl.text", "noicon_disabled", 0.0);
-               set_state(PART:"label2", "noicon_disabled", 0.0);
             }
          } else {
             if (!d) {
                set_state(PART:"efl.icon", "noicon", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"efl.text", "noicon", 0.0);
-               set_state(PART:"label2", "noicon", 0.0);
             } else {
                set_state(PART:"efl.icon", "noicon", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"efl.text", "noicon_disabled", 0.0);
-               set_state(PART:"label2", "noicon_disabled", 0.0);
             }
          }
       }
    }
    parts {
-      spacer { "base";
-         scale;
-         desc { "default";
-         }
-         desc { "vert";
-         }
-      }
-      rect { "shadow1";
-         nomouse;
-         desc { "default";
-            rel.to: "base";
-            rel2.offset: 0 0;
-            color: 0 0 0 50;
-            vis;
+      part { name: "shadow"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to_x: "_sh1";
+            rel1.to_y: "_sh1";
+            rel2.to_x: "_sh1";
+            rel2.to_y: "";
+            color: 255 255 255 128;
          }
          desc { "selected";
-            inherit: "default";
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25)
+      rect { "base";
+         desc { "default";
+            color: 64 64 64 255;
+         }
+         desc { "vert";
+            inherit: "default" 0.0;
+         }
+      }
+      rect { "inset_clip";
+         desc { "default";
+            rel.to: "base";
+            color: 255 255 255 128;
+         }
+         desc { "selected";
+            inherit;
             hid;
+         }
+      }
+      image { "inset";
+         clip_to: "inset_clip";
+         scale;
+         desc { "default";
+            image.normal: "win_shad_flat.png";
+            image.border: 44 44 44 44;
+            image.border_scale: 1;
+            image.border_scale_by: 0.25;
+            fill.smooth: 1;
+            rel.to: "base";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: -22 -11;
+            rel2.offset: 21 20;
+            offscale;
+         }
+      }
+      rect { "highlight";
+         desc { "default";
+            rel.to: "base";
+            hid;
+            color: 51 153 255 255;
+         }
+         desc { "selected";
+            inherit: "default" 0.0;
+            vis;
          }
       }
       rect { "icon_clip";
@@ -129,27 +153,28 @@ group { "efl/tab_bar/tab";
       }
       swallow { "efl.icon";
          clip_to: "icon_clip1";
+         scale;
          desc { "default";
             align: 0.5 0.5;
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 5 5;
+            rel1.offset: 4 4;
             rel2.to_y: "efl.text";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -6 -4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "noicon";
             inherit: "default" 0.0;
             hid;
-            rel1.offset: 2 0;
+            rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -4;
+            rel2.offset: -5 0;
          }
          desc { "icononly";
             inherit: "default" 0.0;
             vis;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -3;
-            rel2.to_y: "icon_clip";
+            rel2.offset: -5 -5;
+            rel2.to_y: "";
          }
       }
       rect { "icon_clip2";
@@ -166,27 +191,29 @@ group { "efl/tab_bar/tab";
       }
       swallow { "efl.icon_new";
          clip_to: "icon_clip2";
+         scale;
          desc { "default";
             align: 0.5 0.5;
             rel1.relative: 0.0 0.0;
-            rel1.offset: 2 2;
+            rel1.offset: 4 4;
             rel2.to_y: "efl.text";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -1;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "noicon";
-            inherit: "default";
+            inherit: "default" 0.0;
             hid;
-            rel1.offset: 2 0;
+            rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -4;
+            rel2.offset: -5 0;
          }
          desc { "icononly";
             inherit: "default" 0.0;
             vis;
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -3;
-            rel2.to_y: "icon_clip";
+            rel2.offset: -5 -5;
+            rel2.to_y: "";
          }
       }
       rect { "text_clip1";
@@ -202,16 +229,15 @@ group { "efl/tab_bar/tab";
       }
       text { "efl.text";
          nomouse;
-         effect: SHADOW BOTTOM;
          scale;
          clip_to: "text_clip1";
          desc { "default";
-            rel1.offset: 4 -3;
+            rel1.offset: 4 0;
             rel1.relative: 0.0 1.0;
-            rel2.offset: -5 -3;
+            rel2.offset: -5 -5;
             align: 0.5 1.0;
-            color: FN_COL_DEFAULT;
-            color_class: "toolbar_item";
+            color: 160 160 160 255;
+            offscale;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -222,59 +248,21 @@ group { "efl/tab_bar/tab";
          }
          desc { "selected";
             inherit: "default";
-            hid;
-            color_class: "toolbar_item_selected";
+            color: 255 255 255 255;
          }
          desc { "disabled";
             inherit: "default";
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
+            color: 96 96 96 255;
          }
          desc { "noicon";
             inherit: "default";
-            rel1.offset: 4 2;
+            rel1.offset: 4 4;
             rel1.relative: 0.0 0.0;
+            align: 0.5 0.5;
          }
          desc { "noicon_disabled";
             inherit: "noicon";
-            color: FN_COL_DISABLE;
-            color_class: "toolbar_item_disabled";
-         }
-         desc { "icononly";
-            inherit: "default";
-            text.min: 0 0;
-            hid;
-            fixed: 1 1;
-         }
-      }
-      text { "label2";
-         nomouse;
-         effect: GLOW;
-         scale;
-         clip_to: "text_clip1";
-         desc { "default";
-            rel1.offset: -3 -3;
-            rel1.to: "efl.text";
-            rel2.offset: 2 1;
-            rel2.to: "efl.text";
-            color: FN_COL_HIGHLIGHT;
-            color_class: "toolbar_item_active";
-            text { font: FN; size: 10;
-               text_source: "efl.text";
-               align: 0.5 0.5;
-               text_class: "toolbar_item";
-            }
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-         desc { "noicon";
-            inherit: "default";
-         }
-         desc { "noicon_disabled";
-            inherit: "noicon";
+            color: 96 96 96 255;
          }
          desc { "icononly";
             inherit: "default";
@@ -294,23 +282,22 @@ group { "efl/tab_bar/tab";
             vis;
          }
       }
-      image { "bar";
+      rect { "bar";
          nomouse;
+         scale;
          desc { "default";
             fixed: 0 1;
-            rel1.relative: 0.0 0.0;
-            rel1.to: "shadow1";
-            rel1.offset: -2 -2;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: 0 7;
-            rel2.to: "shadow1";
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
+            rel.to: "base";
+            min: 0 0;
+            max: -1 0;
+            align: 0.5 0.0;
+            color: 51 153 255 255;
             hid;
          }
          desc { "selected";
             inherit: "default";
+            min: 0 0;
+            max: -1 5;
             vis;
          }
       }
@@ -320,104 +307,102 @@ group { "efl/tab_bar/tab";
          }
       }
       swallow { "efl.extra";
+         scale;
          desc { "default";
             fixed: 1 1;
             align: 1.0 0.0;
             rel1.relative: 1.0 0.0;
-            rel1.offset: -3 2;
+            rel1.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 2;
+            rel2.offset: -5 4;
+            offscale;
          }
       }
+   }
    programs {
       EFL_UI_CLICKABLE_PART_BIND(event)
-      program {
-         signal: "efl,state,horizontal"; source: "efl";
+      program { signal: "efl,state,horizontal"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
-      program {
-         signal: "efl,state,vertical"; source: "efl";
+      program { signal: "efl,state,vertical"; source: "efl";
          action: STATE_SET "vert" 0.0;
          target: "base";
       }
-      program { name: "st0";
-         signal: "load"; source: "";
+      program { signal: "load"; source: "";
          script {
             set_int(btmode, LABEL | ICON);
          }
       }
-      program {
-         signal: "efl,state,selected"; source: "efl";
+      program { signal: "efl,state,selected"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "efl.text";
-         target: "label2";
-         target: "shadow1";
+         target: "shadow";
          target: "bar";
+         target: "inset_clip";
       }
-      program {
-         signal: "efl,state,unselected"; source: "efl";
+      program { signal: "efl,state,unselected"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.text";
-         target: "label2";
-         target: "shadow1";
+         target: "shadow";
          target: "bar";
+         target: "inset_clip";
       }
-      program { name: "st1";
-         signal: "efl,text,unset"; source: "efl";
+      program { signal: "efl,highlight,on"; source: "efl";
+         action: STATE_SET "selected" 0.0;
+         target: "highlight";
+      }
+      program { signal: "efl,highlight,off"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
+      }
+      program { signal: "efl,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "st2";
-         signal: "efl,text,set"; source: "efl";
+      program { signal: "efl,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "st3";
-         signal: "efl,state,icon,unset"; source: "efl";
+      program { signal: "efl,state,icon,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "st4";
-         signal: "efl,state,icon,set"; source: "efl";
+      program { signal: "efl,state,icon,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "st5";
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= DISABLE; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program { name: "st6";
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~DISABLE; set_int(btmode, m);
             eval_mode(m);
          }
       }
-      program {
-         signal: "efl,state,moving"; source: "efl";
+      program { signal: "efl,state,moving"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "shadow1";
+         target: "shadow";
       }
-      program { name: "icon_set,animation";
-         signal: "efl,state,icon_new,set"; source: "efl";
+      program { signal: "efl,state,icon_new,set"; source: "efl";
          action: STATE_SET "animation" 0.0;
          target: "icon_clip1";
          target: "icon_clip2";
@@ -427,18 +412,15 @@ group { "efl/tab_bar/tab";
       program { name: "icon_set,animation,done";
          action: SIGNAL_EMIT "efl,state,icon_set,done" "efl";
       }
-      program {
-         signal: "efl,state,icon,reset"; source: "efl";
+      program { signal: "efl,state,icon,reset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "icon_clip1";
          target: "icon_clip2";
       }
-      program {
-         signal: "efl,state,label_set,forward"; source: "efl";
+      program { signal: "efl,state,label_set,forward"; source: "efl";
          after: "label_set,animation";
       }
-      program {
-         signal: "efl,state,label_set,backward"; source: "efl";
+      program { signal: "efl,state,label_set,backward"; source: "efl";
          after: "label_set,animation";
       }
       program { name: "label_set,animation";
@@ -452,8 +434,7 @@ group { "efl/tab_bar/tab";
       program { name: "label_set,animation,done";
          action: SIGNAL_EMIT "efl,state,label_set,done" "efl";
       }
-      program {
-         signal: "efl,state,label,reset"; source: "efl";
+      program { signal: "efl,state,label,reset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "text_clip1";
          target: "text_clip2";
@@ -463,5 +444,4 @@ group { "efl/tab_bar/tab";
 #undef LABEL
 #undef MASK
 #undef DISABLE
-   }
 }

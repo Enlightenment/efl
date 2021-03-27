@@ -6,29 +6,25 @@ group { name: "elm/notify/block_events/default";
             color: 0 0 0 0;
          }
          desc { "visible";
-            color: 0 0 0 64; /* FIXME: color_class */
+            color: 0 0 0 128; /* FIXME: color_class */
          }
       }
-      program {
-         signal: "mouse,clicked,1"; source: "block_events";
+      program { signal: "mouse,clicked,1"; source: "block_events";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
-      program {
-         signal: "show"; source: "*";
+      program { signal: "show"; source: "*";
          action: STATE_SET "visible";
          targets: "block_events";
-         transition: DECELERATE 0.3;
+         transition: DECELERATE 0.2;
       }
-      program {
-         signal: "hide"; source: "";
+      program { signal: "hide"; source: "";
          action: STATE_SET "default" 0.0;
          target: "block_events";
       }
-      program {
-         signal: "elm,state,hide"; source: "elm";
+      program { signal: "elm,state,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "block_events";
-         transition: DECELERATE 0.3;
+         transition: DECELERATE 0.5;
          after: "hide_finish";
       }
       program { name: "hide_finish";
@@ -38,11 +34,12 @@ group { name: "elm/notify/block_events/default";
 }
 
 group { name: "elm/notify/top/default";
-   images.image: "darken_rounded_square.png" COMP;
    data.item: "hide_finished_signal" "on";
    parts {
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
+            rel1.offset: -500 -500;
+            rel2.offset: 499 499;
             color: 255 255 255 0;
          }
          description { state: "visible" 0.0;
@@ -50,15 +47,26 @@ group { name: "elm/notify/top/default";
             color: 255 255 255 255;
          }
       }
-      part { name: "base";
+      part { name: "shadow"; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
-            image.normal: "darken_rounded_square.png";
-            image.border: 15 15 15 15;
+            rel.to: "base";
+            WIN_SHADOW;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "base"; type: RECT;
+         clip_to: "clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 48 48 48 255;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 -1.0;
             rel2.relative: 1.0 0.0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -68,33 +76,34 @@ group { name: "elm/notify/top/default";
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel1.offset: 12 12;
-            rel2.to: "base";
-            rel2.offset: -13 -13;
+            rel.to: "base";
+            rel1.offset: 10 10;
+            rel2.offset: -11 -11;
+            offscale;
          }
       }
    }
    programs {
-      program {
-         signal: "show"; source: "";
+      program { signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
          target: "clip";
          target: "base";
-         transition: DECELERATE 0.5;
+         target: "shadow";
+         transition: DECELERATE 0.2;
       }
-      program {
-         signal: "hide"; source: "";
+      program { signal: "hide"; source: "";
          action: STATE_SET "default" 0.0;
          target: "clip";
          target: "base";
+         target: "shadow";
       }
-      program {
-         signal: "elm,state,hide"; source: "elm";
+      program { signal: "elm,state,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "clip";
          target: "base";
+         target: "shadow";
          transition: DECELERATE 0.5;
          after: "hide_finish";
       }
@@ -110,7 +119,7 @@ group { name: "elm/notify/bottom/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 2.0;
          }
@@ -124,7 +133,7 @@ group { name: "elm/notify/left/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: -1.0 0.0;
             rel2.relative: 0.0 1.0;
          }
@@ -138,7 +147,7 @@ group { name: "elm/notify/right/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 1.0 0.0;
             rel2.relative: 2.0 1.0;
          }
@@ -152,7 +161,7 @@ group { name: "elm/notify/top_left/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 -1.0;
             rel2.relative: 1.0 0.0;
          }
@@ -166,7 +175,7 @@ group { name: "elm/notify/top_right/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 -1.0;
             rel2.relative: 1.0 0.0;
          }
@@ -180,7 +189,7 @@ group { name: "elm/notify/bottom_left/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 2.0;
          }
@@ -194,7 +203,7 @@ group { name: "elm/notify/bottom_right/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 2.0;
          }
@@ -208,7 +217,7 @@ group { name: "elm/notify/center/default";
       part { name: "base";
          description { state: "default" 0.0;
             rel1.offset: 10 10;
-            rel2.offset: -10 -10;
+            rel2.offset: -11 -11;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
          }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="32"
+   height="32"
+   viewBox="0 0 8.4666667 8.4666667"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="spanner.svg"
+   inkscape:export-filename="/home/raster/spanner.png"
+   inkscape:export-xdpi="384"
+   inkscape:export-ydpi="384">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#404040"
+     bordercolor="#000000"
+     borderopacity="1"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="37.59375"
+     inkscape:cx="16"
+     inkscape:cy="16"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid815"
+       empspacing="4"
+       color="#000047"
+       opacity="0.14901961"
+       empcolor="#29003d"
+       empopacity="0.36862745" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-288.53333)">
+    <path
+       style="fill:#cecece;fill-opacity:1;stroke:none;stroke-width:0.99999994"
+       d="M 21.541016 2.34375 A 7.9999994 7.9999994 0 0 0 16 4.6855469 A 7.9999994 7.9999994 0 0 0 13.935547 12.408203 L 4.6855469 21.65625 A 3.9999999 3.9999999 0 0 0 4.6855469 27.314453 A 3.9999999 3.9999999 0 0 0 10.34375 27.314453 L 19.595703 18.0625 A 7.9999994 7.9999994 0 0 0 27.314453 16 A 7.9999994 7.9999994 0 0 0 29.376953 8.28125 L 25.193359 12.464844 L 20.949219 11.050781 L 19.535156 6.8066406 L 23.720703 2.6210938 A 7.9999994 7.9999994 0 0 0 21.541016 2.34375 z "
+       transform="matrix(0.26458333,0,0,0.26458333,0,288.53333)"
+       id="path817" />
+  </g>
+</svg>

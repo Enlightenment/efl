@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg2"
+   width="15"
+   height="15"
+   viewBox="0 0 15 15"
+   sodipodi:docname="net-vpn-connecting.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/net-vpn-connecting-015.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     pagecolor="#404040"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview4"
+     showgrid="true"
+     inkscape:zoom="55.933333"
+     inkscape:cx="7.5"
+     inkscape:cy="7.5"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g10"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="false"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:object-paths="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-smooth-nodes="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid837"
+       spacingx="0.5"
+       spacingy="0.5" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g10">
+    <path
+       id="path849"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.204241px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 7.5,0.92857085 C 7.0915179,2.1540173 6.2745536,3.3794637 4.640625,3.3794637 3.0066964,3.3794637 2.5982143,2.5624994 1.78125,1.7455351 1.78125,11.549107 5.8660714,12.366071 7.5,14 9.133929,12.366071 13.21875,11.549107 13.21875,1.7455351 12.401786,2.5624994 11.993304,3.3794637 10.359375,3.3794637 8.725446,3.3794637 7.9084821,2.1540173 7.5,0.92857085 Z m 0,2.43014965 c 0.037824,0.040821 0.056246,0.088957 0.096137,0.128848 0.653768,0.653767 1.637265,1.1281126 2.763238,1.1281126 0.547858,0 1.044304,-0.094807 1.483141,-0.2465252 -0.28841,2.9914596 -1.039793,4.7329667 -1.859312,5.8256571 -0.76977,1.026361 -1.635157,1.533814 -2.4832045,2.179636 C 6.6519535,11.728627 5.7865661,11.221174 5.0167956,10.194813 4.1972777,9.1021226 3.4458942,7.3606155 3.1574838,4.3691553 3.5963216,4.5208739 4.0927672,4.6156806 4.640625,4.6156806 c 1.1259739,0 2.1094711,-0.4743456 2.7632381,-1.1281127 C 7.4437531,3.4476769 7.4621751,3.3995419 7.5,3.3587205 Z" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 6.5,5 -1,1 v 1 h 4 V 6 L 8.5,5 V 3 h -2 z"
+       id="path14668"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 6.5,10 5.5,9 V 8 h 4 v 1 l -1,1 v 2.5 h -2 z"
+       id="path14670"
+       sodipodi:nodetypes="ccccccccc" />
+  </g>
+</svg>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="48"
+   inkscape:export-xdpi="48"
+   inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/face-040.png"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="face.svg"
+   viewBox="0 0 80 80"
+   height="80"
+   width="80"
+   id="svg2"
+   version="1.1">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6">
+    <rect
+       id="rect878"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+    <rect
+       id="rect872"
+       height="30"
+       width="40"
+       y="50"
+       x="20" />
+    <rect
+       id="rect864"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+    <rect
+       id="rect858"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+    <rect
+       id="rect852"
+       height="30"
+       width="40"
+       y="20"
+       x="20" />
+  </defs>
+  <sodipodi:namedview
+     borderlayer="true"
+     inkscape:snap-nodes="true"
+     inkscape:snap-others="false"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox="true"
+     showguides="false"
+     inkscape:current-layer="g10"
+     inkscape:window-maximized="1"
+     inkscape:window-y="0"
+     inkscape:window-x="0"
+     inkscape:cy="34.728171"
+     inkscape:cx="40"
+     inkscape:zoom="15.175"
+     showgrid="true"
+     id="namedview4"
+     inkscape:window-height="1377"
+     inkscape:window-width="2560"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#404040"
+     inkscape:document-rotation="0">
+    <inkscape:grid
+       id="grid837"
+       type="xygrid" />
+  </sodipodi:namedview>
+  <g
+     id="g10"
+     inkscape:label="Image"
+     inkscape:groupmode="layer">
+    <path
+       sodipodi:nodetypes="czssacssssacccc"
+       id="path22245"
+       d="m 50,16 c 3,2 3,4 4,10 1,6 8,11 8,13 0,1.20185 -2,1 -2,3 0,0.745356 1.119393,1.264268 1,2 -0.151021,0.930635 -1.333333,1.333333 -2,2 0.666667,0.333333 2,0 2,1 0,1 -2,1 -2,3 0,1.666667 1,4 0,5 -1,1 -2,1 -3,1 -3.333333,0 -6.837722,-1.054093 -10,0 -6.324555,2.108185 -10.666667,8 -16,12 L 23,64 37,44 Z"
+       style="opacity:1;fill:#c8c8c8;fill-opacity:1;stroke:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="cccc"
+       id="path22247"
+       d="m 53,33 c 1,1 1,1 3,2 -2,1 -4,2 -7,2 2,-1 4,-2 4,-4 z"
+       style="opacity:1;fill:#404040;fill-opacity:1;stroke:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="czcsc"
+       id="path22249"
+       d="m 53,29 c 0,0 0,-1 -2,-1 -2,0 -4,4 -4,4 0,0 2.014887,-1.893745 3.014887,-2.893745 C 51.014887,28.106255 53,29 53,29 Z"
+       style="opacity:1;fill:#404040;fill-opacity:1;stroke:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="M 39.990234 10 A 30 30 0 0 0 38.496094 10.039062 A 30 30 0 0 0 38.460938 10.039062 C 38.450154 10.039627 38.440454 10.040439 38.429688 10.041016 A 30 30 0 0 0 11.761719 29.873047 A 30 30 0 0 0 20.972656 63.193359 L 20.982422 63.164062 C 20.98604 63.167726 20.988541 63.172134 20.992188 63.175781 C 21.992188 64.175781 22 64 23 64 C 27 64 33.45398 62.461401 37 59 C 40.322354 55.756927 42 52 42 46 C 43 47 44.509288 48 46 48 C 48 48 48.860647 46.407331 49 45 C 49.118427 43.803999 48 43 47 42 C 47 42 48 43.254644 48 44 C 48 45 47 45 46 45 C 45 45 43 45 43 39 C 43 32 50 27 50 16 C 50 14.007784 43.936176 10.032877 40.046875 10.001953 L 40.048828 10 A 30 30 0 0 0 40.003906 10 C 40.002648 9.9999992 40.001258 10 40 10 C 39.996631 10 39.993602 9.9999989 39.990234 10 z "
+       style="opacity:1;fill:#202020;fill-opacity:1;stroke:none;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path22253" />
+  </g>
+</svg>

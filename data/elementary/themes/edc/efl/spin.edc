@@ -11,15 +11,18 @@ group { "efl/spin";
          nomouse;
          scale;
          desc { "default";
-            color: FN_COL_DEFAULT;
+            color: 160 160 160 255;
             text {
-               font: FNBD;
+               font: FN;
                size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
             }
             rel.to: "bg";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
    }

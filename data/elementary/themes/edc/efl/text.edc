@@ -1,20 +1,14 @@
-
 group { "efl/text/scroller";
    inherit: "efl/scroller";
    data.item: "version" "123";
-   image: "bg_glow_in.png" COMP;
    parts {
-      part { name: "efl.background"; type: SWALLOW;
-         clip_to: "clipper";
+      part { name: "bg";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
+            color: DARK_GREY_BG_COLOR;
          }
       }
-      part { name: "validation_glow";
-         type: RECT;
-         insert_before: "bg";
-         mouse_events: 0;
+      part { name: "validation_glow"; type: RECT; mouse_events: 0;
+         insert_after: "efl.background";
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
@@ -24,117 +18,6 @@ group { "efl/text/scroller";
          description { state: "fail" 0.0;
             color: 255 0 0 90;
          }
-      }
-      part { name: "bg";
-         description { state: "default" 0.0;
-            color: DARK_GREY_BG_COLOR;
-         }
-      }
-      part { name: "efl.content"; type: SWALLOW;
-         description { state: "default" 0.0;
-            rel1.to: "efl.icon";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 0 0;
-            rel2.to: "efl.extra";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -1;
-         }
-      }
-      part { name: "efl.icon"; type: SWALLOW;
-         clip_to: "clipper";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "clipper";
-            rel1.offset: 1 1;
-            rel2.to: "clipper";
-            rel2.offset: 1 -2;
-            rel2.relative: 0.0 1.0;
-            visible: 0;
-            align: 1.0 0.0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            align: 0.0 0.0;
-         }
-      }
-      program {
-         signal: "efl,action,show,icon"; source: "efl";
-         action: STATE_SET "visible" 0.0;
-         target: "efl.icon";
-      }
-      program {
-         signal: "efl,action,hide,icon"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "efl.icon";
-      }
-      part { name: "efl.extra"; type: SWALLOW;
-         clip_to: "clipper";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "clipper";
-            rel1.offset: -2 1;
-            rel1.relative: 1.0 0.0;
-            rel2.to: "clipper";
-            rel2.offset: -2 -2;
-            visible: 0;
-            align: 0.0 0.0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            align: 1.0 0.0;
-         }
-      }
-      program {
-         signal: "efl,action,show,end"; source: "efl";
-         action: STATE_SET "visible" 0.0;
-         target: "efl.extra";
-      }
-      program {
-         signal: "efl,action,hide,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "efl.extra";
-      }
-      part { name: "glow";
-         insert_after: "shadow";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            image.normal: "bg_glow_in.png";
-            image.border: 7 7 7 7;
-            image.middle: 0;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-         description { state: "focused2" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-   }
-   programs {
-      program {
-         signal: "efl,action,focus_highlight,show"; source: "efl";
-         action: STATE_SET "focused" 0.0;
-         target: "glow";
-         after: "focus_in2";
-      }
-      program { name: "focus_in2";
-         action: STATE_SET "focused2" 0.0;
-         transition: DECELERATE 0.5;
-         target: "glow";
-      }
-      program {
-         signal: "efl,action,focus_highlight,hide"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
-         target: "glow";
       }
       program { name: "validation_fail";
          signal: "validation,default,fail";
@@ -154,30 +37,111 @@ group { "efl/text/scroller";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         insert_before: "efl.content";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "bg";
+            rel1.relative: 0.0 1.0;
+            color: 51 153 255 0;
+            visible: 0;
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 255;
+            rel1.offset: 0 -3;
+            visible: 1;
+         }
+      }
+      program { signal: "efl,action,focus_highlight,show"; source: "efl";
+         action: STATE_SET "focused" 0.0;
+         transition: DECELERATE 0.3;
+         target: "glow";
+      }
+      program { signal: "efl,action,focus_highlight,hide"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.3;
+         target: "glow";
+      }
+      part { name: "efl.content"; type: SWALLOW;
+         scale: 1;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            rel1.to: "efl.icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 2 2;
+            rel2.to: "efl.extra";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -3 -3;
+            offscale;
+         }
+      }
+      part { name: "efl.icon"; type: SWALLOW;
+         scale: 1;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
+            rel2.relative: 0.0 1.0;
+            visible: 0;
+            align: 1.0 0.5;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            align: 0.0 0.5;
+         }
+      }
+      program { signal: "efl,action,show,icon"; source: "efl";
+         action: STATE_SET "visible" 0.0;
+         target: "efl.icon";
+      }
+      program { signal: "efl,action,hide,icon"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "efl.icon";
+      }
+      part { name: "efl.extra"; type: SWALLOW;
+         scale: 1;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.offset: -3 2;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+            visible: 0;
+            align: 0.0 0.5;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            align: 1.0 0.5;
+         }
+      }
+      program { signal: "efl,action,show,end"; source: "efl";
+         action: STATE_SET "visible" 0.0;
+         target: "efl.extra";
+      }
+      program { signal: "efl,action,hide,end"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "efl.extra";
+      }
+      part { name: "efl.overlay"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            rel.to: "clipper";
+         }
+      }
    }
 }
 
 group { "efl/text/single/scroller";
    data.item: "version" "123";
-   images.image: "bevel_in.png" COMP;
-   images.image: "inset_shadow.png" COMP;
-   image: "bg_glow_in.png" COMP;
    data.item: "focus_highlight" "on";
    parts {
-      part { name: "validation_glow";
-         type: RECT;
-         insert_before: "bg";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "pass" 0.0;
-            color: 0 255 0 90;
-         }
-         description { state: "fail" 0.0;
-            color: 255 0 0 90;
-         }
-      }
       part { name: "sb_vbar_base"; type: RECT;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -220,43 +184,73 @@ group { "efl/text/single/scroller";
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "efl.background";
-            rel2.to: "efl.background";
+            rel.to: "efl.background";
             color: DARK_GREY_BG_COLOR;
-            color_class: "scroller_bg";
          }
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "efl.background";
-            rel2.to: "efl.background";
+            rel.to: "efl.background";
          }
       }
       part { name: "efl.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
+         }
+      }
+      part { name: "validation_glow"; type: RECT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "pass" 0.0;
+            color: 0 255 0 90;
+         }
+         description { state: "fail" 0.0;
+            color: 255 0 0 90;
+         }
+      }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         insert_before: "efl.content";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "bg";
+            rel1.relative: 0.0 1.0;
+            color: 51 153 255 0;
+            visible: 0;
+            offscale;
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 255;
+            rel1.offset: 0 -3;
+            visible: 1;
          }
       }
       part { name: "efl.content"; type: SWALLOW;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
+            rel1.offset: 2 2;
             rel2.to: "efl.extra";
             rel2.relative: 0.0 1.0;
+            rel2.offset: -3 -3;
+            offscale;
          }
       }
       part { name: "efl.icon"; type: SWALLOW;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: 1 1;
-            rel2.offset: 1 -2;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
             rel2.relative: 0.0 1.0;
             visible: 0;
             align: 1.0 0.5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -264,25 +258,25 @@ group { "efl/text/single/scroller";
             align: 0.0 0.5;
          }
       }
-      program {
-         signal: "efl,action,show,icon"; source: "efl";
+      program { signal: "efl,action,show,icon"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.icon";
       }
-      program {
-         signal: "efl,action,hide,icon"; source: "efl";
+      program { signal: "efl,action,hide,icon"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
       part { name: "efl.extra"; type: SWALLOW;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: -2 1;
+            rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -2 -2;
+            rel2.offset: -3 -3;
             visible: 0;
             align: 0.0 0.5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -290,81 +284,28 @@ group { "efl/text/single/scroller";
             align: 1.0 0.5;
          }
       }
-      program {
-         signal: "efl,action,show,end"; source: "efl";
+      program { signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "efl.extra";
       }
-      program {
-         signal: "efl,action,hide,end"; source: "efl";
+      program { signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.extra";
-      }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "bevel_in.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel1.offset: -1 -1;
-            rel2.to: "bg";
-            rel2.offset: 0 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "inset_shadow.png";
-            image.border: 5 5 7 3;
-            image.middle: 0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            fill.smooth: 0;
-            color: 255 255 255 128;
-         }
       }
       part { name: "efl.overlay"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
-         }
-      }
-      part { name: "glow";
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
-            image.normal: "bg_glow_in.png";
-            image.border: 7 7 7 7;
-            image.middle: 0;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-         }
-         description { state: "focused" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
-         description { state: "focused2" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 64;
+            rel.to: "clipper";
          }
       }
    }
    programs {
-      program {
-         signal: "efl,action,focus_highlight,show"; source: "efl";
+      program { signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
-         target: "glow";
-         after: "focus_in2";
-      }
-      program { name: "focus_in2";
-         action: STATE_SET "focused2" 0.0;
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.2;
          target: "glow";
       }
-      program {
-         signal: "efl,action,focus_highlight,hide"; source: "efl";
+      program { signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
@@ -393,23 +334,18 @@ group { "efl/text/single/scroller";
 group { "efl/text/cursor";
    data.item: "version" "123";
    min: 1 0;
-   images.image: "white_bar_vert_glow.png" COMP;
    parts {
-      part { name: "cursor"; mouse_events: 0;
+      part { name: "cursor"; type: RECT;
+         mouse_events: 0;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            image.normal: "white_bar_vert_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            color: 255 255 255 0;
-            color_class: "entry_cursor";
-            min: 9 10;
+            min: 1 10;
+            visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            visible: 1;
          }
       }
       part { name: "clipper"; type: RECT;
@@ -425,23 +361,19 @@ group { "efl/text/cursor";
       }
    }
    programs {
-      program {
-         signal: "selection,changed"; source: "efl.text";
+      program { signal: "selection,changed"; source: "efl.text";
          action: STATE_SET "hidden" 0.0;
          target: "clipper";
       }
-      program {
-         signal: "selection,cleared"; source: "efl.text";
+      program { signal: "selection,cleared"; source: "efl.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
-      program {
-         signal: "selection,reset"; source: "efl.text";
+      program { signal: "selection,reset"; source: "efl.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
-      program {
-         signal: "efl,action,focus"; source: "efl";
+      program { signal: "efl,action,focus"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -449,8 +381,7 @@ group { "efl/text/cursor";
          target: "cursor_hide_timer";
          after: "cursor_show";
       }
-      program {
-         signal: "efl,action,unfocus"; source: "efl";
+      program { signal: "efl,action,unfocus"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -458,8 +389,7 @@ group { "efl/text/cursor";
          target: "cursor_hide_timer";
          after: "cursor_hide_stop";
       }
-      program {
-         signal: "efl,action,show,cursor"; source: "efl";
+      program { signal: "efl,action,show,cursor"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -498,7 +428,7 @@ group { "efl/text/selection";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color: 51 153 255 128;
          }
       }
    }
@@ -506,17 +436,16 @@ group { "efl/text/selection";
 
 group { "efl/text/anchor";
    data.item: "version" "123";
-   images.image: "horizontal_separated_bar_small_glow.png" COMP;
    parts {
-      part { name: "bar";
+      part { name: "bar"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
+            color: 51 153 255 255;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            rel1.offset: -3 -5;
-            rel2.offset: 2 4;
+            rel1.offset: -1 -1;
+            rel2.offset: 0 -1;
+            offscale;
          }
       }
    }
@@ -527,41 +456,22 @@ group { "efl/text";
    data {
       item: "font.name" "Sans";
       item: "font.size" "10";
-      item: "style.color" "#fff";
-      item: "style.color_disabled" "#151515";
+      item: "style.color" "#a0a0a0";
+      item: "style.color_disabled" "#707070";
 
       item: "guide.font.name" "Sans";
       item: "guide.font.size" "10";
-      item: "guide.style.color" "#666";
-   }
-   sounds {
-      sample { name: "key-tap1" LOSSY 64;
-         source: "kbd-tap.wav";
-      }
-      sample { name: "key-tap2" LOSSY 64;
-         source: "kbd-tap2.wav";
-      }
-      sample { name: "key-tap3" LOSSY 64;
-         source: "kbd-tap3.wav";
-      }
-      sample { name: "key-tap4" LOSSY 64;
-         source: "kbd-tap4.wav";
-      }
-      sample { name: "key-tap5" LOSSY 64;
-         source: "kbd-tap5.wav";
-      }
+      item: "guide.style.color" "#505050";
    }
    styles {
       style { name: "efl_ui_text_guide_style";
-         base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
       part { name: "efl.background"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.offset: 1 1;
-            rel2.offset: -2 -2;
          }
       }
       part { name: "efl.text"; type: SWALLOW;
@@ -571,6 +481,7 @@ group { "efl/text";
             fixed: 0 0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -582,6 +493,7 @@ group { "efl/text";
             fixed: 0 0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -589,35 +501,29 @@ group { "efl/text";
       }
    }
    programs {
-      program {
-         signal: "load"; source: "";
+      program { signal: "load"; source: "";
          action: FOCUS_SET;
          target: "efl.text";
       }
-      program {
-         signal: "efl,state,disabled"; source: "efl";
+      program { signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "efl.text";
       }
-      program {
-         signal: "efl,state,enabled"; source: "efl";
+      program { signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.text";
       }
       #if 0
-      program {
-         signal: "efl,guide,disabled"; source: "efl";
+      program { signal: "efl,guide,disabled"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "efl.guide";
       }
-      program {
-         signal: "efl,guide,enabled"; source: "efl";
+      program { signal: "efl,guide,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.guide";
       }
       #endif
-      program { name: "key-down";
-         signal: "entry,keydown"; source: "efl.text";
+      program { signal: "entry,keydown"; source: "efl.text";
          script {
             new buf[32];
             snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
@@ -644,15 +550,25 @@ group { "efl/text";
 
 group { "efl/text/magnifier";
    data.item: "version" "123";
-   images.image: "frame_rounded.png" COMP;
    parts {
-      part { name: "bg"; type: RECT; mouse_events: 0;
+      part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.offset: 10 10;
-            rel1.to: "over";
-            rel2.offset: -11 -11;
-            rel2.to: "over";
+            rel.to: "bg";
+            WIN_SHADOW;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "bg"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 80 40;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
             color: 48 48 48 255;
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -661,25 +577,7 @@ group { "efl/text/magnifier";
       }
       part { name: "efl.content"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.offset: 10 10;
-            rel1.to: "over";
-            rel2.offset: -11 -11;
-            rel2.to: "over";
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "over"; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 128 64;
-            align: 0 0;
-            image.normal: "frame_rounded.png";
-            image.border: 14 14 14 14;
-            image.middle: 0;
-            fill.smooth: 0;
+            rel.to: "bg";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -688,117 +586,127 @@ group { "efl/text/magnifier";
       }
    }
    programs {
-      program { name: "magnifier_show";
-         signal: "efl,action,show,magnifier"; source: "efl";
+      program { signal: "efl,action,show,magnifier"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "efl.content";
          target: "bg";
-         target: "over";
+         target: "shadow";
       }
-      program { name: "magnifier_hide";
-         signal: "efl,action,hide,magnifier"; source: "efl";
+      program { signal: "efl,action,hide,magnifier"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "efl.content";
          target: "bg";
-         target: "over";
+         target: "shadow";
       }
    }
 }
 
 group { "efl/text/handler/start";
    data.item: "version" "123";
-   images.image: "handle_pick_up_left.png" COMP;
    parts {
-      part { name: "base"; mouse_events: 0;
-         scale: 1;
+      part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            min: 21 27; // 42 54
-            image.normal: "handle_pick_up_left.png";
-            align: (29/42) (11/54);
-            color_class: "entry_selection_handler";
-            visible: 0;
+            rel.to: "bg";
+            WIN_SHADOW;
          }
-         description { state: "visible" 0.0;
+         description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
+            visible: 0;
          }
       }
-      part { name: "event"; type: RECT;
+      part { name: "bg"; type: RECT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
-            rel1.to: "base";
-            rel2.to: "base";
-            min: 32 32;
+            min: 80 40;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color: 48 48 48 255;
+            offscale;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
-         description { state: "visible" 0.0;
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel.to: "bg";
+         }
+         description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
+            visible: 0;
          }
       }
    }
    programs {
       program {
          signal: "efl,handler,show"; source: "efl";
-         action: STATE_SET "visible" 0.0;
-         target: "base";
-         target: "event";
+         action: STATE_SET "default" 0.0;
+         target: "shadow";
+         target: "bg";
+         target: "elm.swallow.content";
       }
       program {
          signal: "efl,handler,hide"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "base";
-         target: "event";
+         action: STATE_SET "hidden" 0.0;
+         target: "shadow";
+         target: "bg";
+         target: "elm.swallow.content";
       }
    }
 }
 
 group { "efl/text/handler/end";
    data.item: "version" "123";
-   images.image: "handle_pick_up_right.png" COMP;
    parts {
-      part { name: "base"; mouse_events: 0;
-         scale: 1;
+      part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            min: 21 27; // 42 54
-            image.normal: "handle_pick_up_right.png";
-            align: (12/42) (11/54);
-            color_class: "entry_selection_handler";
-            visible: 0;
+            rel.to: "bg";
+            WIN_SHADOW;
          }
-         description { state: "visible" 0.0;
+         description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
+            visible: 0;
          }
       }
-      part { name: "event"; type: RECT;
+      part { name: "bg"; type: RECT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
-            rel1.to: "base";
-            rel2.to: "base";
-            min: 32 32;
+            min: 80 40;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color: 48 48 48 255;
+            offscale;
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
-         description { state: "visible" 0.0;
+      }
+      part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel.to: "bg";
+         }
+         description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
+            visible: 0;
          }
       }
    }
    programs {
       program {
          signal: "efl,handler,show"; source: "efl";
-         action: STATE_SET "visible" 0.0;
-         target: "base";
-         target: "event";
+         action: STATE_SET "default" 0.0;
+         target: "shadow";
+         target: "bg";
+         target: "elm.swallow.content";
       }
       program {
          signal: "efl,handler,hide"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "base";
-         target: "event";
+         action: STATE_SET "hidden" 0.0;
+         target: "shadow";
+         target: "bg";
+         target: "elm.swallow.content";
       }
    }
 }
