@@ -251,9 +251,6 @@ _ecore_evas_available_engines_get(void)
 #ifdef BUILD_ECORE_EVAS_BUFFER
                        ADDENG("buffer");
 #endif
-#ifdef BUILD_ECORE_EVAS_EWS
-                       ADDENG("ews");
-#endif
                     }
                   else if (!strcmp(name, "cocoa"))
                     {

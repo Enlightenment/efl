@@ -858,7 +858,6 @@ elementary_src = files([
   'els_box.c',
   'els_cursor.c',
   'els_tooltip.c',
-  'elu_ews_wm.c',
   'efl_ui_container_layout.c',
   'efl_ui_container_layout.h',
   'efl_ui_box.c',

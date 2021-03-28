@@ -144,7 +144,6 @@ _elm_rescale(void)
 {
    edje_scale_set(_elm_config->scale);
    _elm_win_rescale(NULL, EINA_FALSE);
-   _elm_ews_wm_rescale(NULL, EINA_FALSE);
 }
 
 static void *app_mainfunc = NULL;
@@ -869,12 +868,8 @@ elm_quicklaunch_sub_init(int    argc,
         EINA_SAFETY_ON_FALSE_GOTO(ecore_con_init(), ql_sub_ecore_con);
         EINA_SAFETY_ON_FALSE_GOTO(ecore_con_url_init(), ql_sub_ecore_con_url);
         _elm_prefs_initted = _elm_prefs_init();
-        EINA_SAFETY_ON_FALSE_GOTO(_elm_ews_wm_init(), ql_sub_ews);;
      }
    return _elm_sub_init_count;
-ql_sub_ews:
-   if (_elm_prefs_initted) _elm_prefs_shutdown();
-   ecore_con_url_shutdown();
 ql_sub_ecore_con_url:
    ecore_con_shutdown();
 ql_sub_ecore_con:
@@ -900,7 +895,6 @@ elm_quicklaunch_sub_shutdown(void)
         ecore_shutdown_ex();
 
         _elm_win_shutdown();
-        _elm_ews_wm_shutdown();
         ecore_con_url_shutdown();
         ecore_con_shutdown();
         ecore_imf_shutdown();

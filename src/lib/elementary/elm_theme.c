@@ -867,7 +867,6 @@ elm_theme_flush(Elm_Theme *th)
    if (th->cache_style_load_failed) eina_hash_free(th->cache_style_load_failed);
    th->cache_style_load_failed = eina_hash_string_superfast_new(NULL);
    _elm_win_rescale(th, EINA_TRUE);
-   _elm_ews_wm_rescale(th, EINA_TRUE);
    if (th->referrers)
      {
         Eina_List *l;

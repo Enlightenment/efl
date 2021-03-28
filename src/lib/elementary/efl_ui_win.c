@@ -5268,11 +5268,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
       default:
         disp = getenv("ELM_DISPLAY");
-        if ((disp) && (!strcmp(disp, "ews")))
-          {
-             enginelist[p++] = ELM_EWS;
-          }
-        else if ((disp) && (!strcmp(disp, "buffer")))
+        if ((disp) && (!strcmp(disp, "buffer")))
           {
              enginelist[p++] = ELM_BUFFER;
           }
@@ -5534,8 +5530,6 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                tmp_sd.ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
              else if (!strcmp(enginelist[i], ELM_OPENGL_COCOA))
                tmp_sd.ee = ecore_evas_cocoa_new(NULL, 1, 1, 0, 0);
-             else if (!strcmp(enginelist[i], ELM_EWS))
-               tmp_sd.ee = ecore_evas_ews_new(0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_FB))
                tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_BUFFER))

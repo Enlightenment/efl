@@ -97,7 +97,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_COCOA 1
 #define HAVE_ECORE_EVAS_SDL 1
 //#define HAVE_ECORE_EVAS_WINCE 1
-#define HAVE_ECORE_EVAS_EWS 1
+//#define HAVE_ECORE_EVAS_EWS 1 /* @deprecated */
 #define HAVE_ECORE_EVAS_PSL1GHT 1
 #define HAVE_ECORE_EVAS_WAYLAND_SHM 1
 #define HAVE_ECORE_EVAS_WAYLAND_EGL 1
@@ -125,7 +125,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW,
    ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE,
    ECORE_EVAS_ENGINE_OPENGL_SDL,
-   ECORE_EVAS_ENGINE_EWS,
+   ECORE_EVAS_ENGINE_EWS, /* @deprecated */
    ECORE_EVAS_ENGINE_PSL1GHT,
    ECORE_EVAS_ENGINE_WAYLAND_SHM,
    ECORE_EVAS_ENGINE_WAYLAND_EGL,
@@ -1788,6 +1788,7 @@ EAPI Ecore_Evas *ecore_evas_buffer_ecore_evas_parent_get(Ecore_Evas *ee);
  * @see ecore_evas_ews_ecore_evas_get()
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
 
@@ -1806,6 +1807,7 @@ EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
  * @see ecore_evas_ews_manager_set()
  * @see ecore_evas_ews_evas_get()
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI Evas_Object *ecore_evas_ews_backing_store_get(const Ecore_Evas *ee);
 
@@ -1816,6 +1818,7 @@ EAPI Evas_Object *ecore_evas_ews_backing_store_get(const Ecore_Evas *ee);
  * @param ee The Ecore_Evas for which window will be deleted.
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
 
@@ -3216,6 +3219,7 @@ EAPI void        ecore_evas_callback_new_set(Evas *(*func)(int w, int h));
  * ecore_evas_ews_new().
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  * @{
  */
 
@@ -3227,6 +3231,7 @@ EAPI void        ecore_evas_callback_new_set(Evas *(*func)(int w, int h));
  * @return @c EINA_TRUE on success, @c EINA_FALSE if ews is already in use.
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options);
 
@@ -3240,6 +3245,7 @@ EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
 
@@ -3253,6 +3259,7 @@ EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
  *
  * @see ecore_evas_ews_evas_get()
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
 
@@ -3266,11 +3273,13 @@ EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
  *
  * @see ecore_evas_ews_ecore_evas_get()
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI Evas *ecore_evas_ews_evas_get(void);
 
 /**
  * @brief Gets the current background.
+ * @deprecated - @since 1.26
  */
 EAPI Evas_Object *ecore_evas_ews_background_get(void);
 
@@ -3284,6 +3293,7 @@ EAPI Evas_Object *ecore_evas_ews_background_get(void);
  * rectangle.
  *
  * @note previous object will be deleted!
+ * @deprecated - @since 1.26
  */
 EAPI void ecore_evas_ews_background_set(Evas_Object *o);
 
@@ -3295,6 +3305,7 @@ EAPI void ecore_evas_ews_background_set(Evas_Object *o);
  * @note Do not change the returned list or its contents.
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI const Eina_List *ecore_evas_ews_children_get(void);
 
@@ -3309,6 +3320,7 @@ EAPI const Eina_List *ecore_evas_ews_children_get(void);
  *
  * @see ecore_evas_ews_manager_get()
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI void        ecore_evas_ews_manager_set(const void *manager);
 
@@ -3318,6 +3330,7 @@ EAPI void        ecore_evas_ews_manager_set(const void *manager);
  * @return the value set by ecore_evas_ews_manager_set()
  *
  * @since 1.1
+ * @deprecated - @since 1.26
  */
 EAPI const void *ecore_evas_ews_manager_get(void);
 

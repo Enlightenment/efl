@@ -288,13 +288,12 @@ extern const char *_elm_engines[];
 # define ELM_SOFTWARE_SDL      (_elm_engines[4])
 # define ELM_OPENGL_SDL        (_elm_engines[5])
 # define ELM_BUFFER            (_elm_engines[6])
-# define ELM_EWS               (_elm_engines[7])
-# define ELM_OPENGL_COCOA      (_elm_engines[8])
-# define ELM_WAYLAND_SHM       (_elm_engines[9])
-# define ELM_WAYLAND_EGL       (_elm_engines[10])
-# define ELM_DRM               (_elm_engines[11])
-# define ELM_SOFTWARE_DDRAW    (_elm_engines[12])
-# define ELM_GL_DRM            (_elm_engines[13])
+# define ELM_OPENGL_COCOA      (_elm_engines[7])
+# define ELM_WAYLAND_SHM       (_elm_engines[8])
+# define ELM_WAYLAND_EGL       (_elm_engines[9])
+# define ELM_DRM               (_elm_engines[10])
+# define ELM_SOFTWARE_DDRAW    (_elm_engines[11])
+# define ELM_GL_DRM            (_elm_engines[12])
 
 # define ELM_FONT_TOKEN_STYLE  ":style="
 
@@ -667,11 +666,6 @@ void                 _elm_prefs_data_init(void);
 void                 _elm_prefs_data_shutdown(void);
 
 /* init functions for dnd and cnp */
-int                  _elm_ews_wm_init(void);
-void                 _elm_ews_wm_shutdown(void);
-void                 _elm_ews_wm_rescale(Elm_Theme *th,
-                                         Eina_Bool use_theme);
-
 void                 _elm_win_shutdown(void);
 void                 _elm_win_rescale(Elm_Theme *th,
                                       Eina_Bool use_theme);

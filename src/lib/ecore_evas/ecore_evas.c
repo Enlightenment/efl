@@ -565,11 +565,7 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
         return EINA_FALSE;
 #endif
       case ECORE_EVAS_ENGINE_EWS:
-#ifdef BUILD_ECORE_EVAS_EWS
-        return EINA_TRUE;
-#else
         return EINA_FALSE;
-#endif
      case ECORE_EVAS_ENGINE_PSL1GHT:
         return EINA_FALSE;
      case ECORE_EVAS_ENGINE_WAYLAND_SHM:
@@ -632,10 +628,6 @@ ecore_evas_init(void)
    if (getenv("ECORE_EVAS_RENDER_NOSYNC")) _ecore_evas_render_sync = 0;
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
 
-#ifdef BUILD_ECORE_EVAS_EWS
-   _ecore_evas_ews_events_init();
-#endif
-
    _ecore_evas_extn_init();
 
    _ecore_evas_engine_init();
@@ -680,10 +672,6 @@ ecore_evas_shutdown(void)
                    EINA_LOG_STATE_START,
                    EINA_LOG_STATE_SHUTDOWN);
 
-#ifdef BUILD_ECORE_EVAS_EWS
-   _ecore_evas_ews_events_flush();
-#endif
-
    while (ecore_evases) _ecore_evas_free(ecore_evases);
 
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
@@ -694,9 +682,6 @@ ecore_evas_shutdown(void)
 
    _ecore_evas_extn_shutdown();
 
-#ifdef BUILD_ECORE_EVAS_EWS
-   while (_ecore_evas_ews_shutdown());
-#endif
    _ecore_evas_engine_shutdown();
 
    eina_log_domain_unregister(_ecore_evas_log_dom);
@@ -995,14 +980,6 @@ _ecore_evas_constructor_buffer(int x EINA_UNUSED, int y EINA_UNUSED, int w, int 
    return ecore_evas_buffer_new(w, h);
 }
 
-#ifdef BUILD_ECORE_EVAS_EWS
-static Ecore_Evas *
-_ecore_evas_constructor_ews(int x, int y, int w, int h, const char *extra_options EINA_UNUSED)
-{
-   return ecore_evas_ews_new(x, y, w, h);
-}
-#endif
-
 /* note: keep sorted by priority, highest first */
 static const struct ecore_evas_engine _engines[] = {
   /* unix */
@@ -1022,9 +999,6 @@ static const struct ecore_evas_engine _engines[] = {
   {"opengl_sdl", _ecore_evas_constructor_opengl_sdl},
   {"sdl", _ecore_evas_constructor_sdl},
   {"buffer", _ecore_evas_constructor_buffer},
-#ifdef BUILD_ECORE_EVAS_EWS
-  {"ews", _ecore_evas_constructor_ews},
-#endif
   {NULL, NULL}
 };
 

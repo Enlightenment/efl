@@ -1190,7 +1190,6 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
  * The following are the available engines:
  * @li "fb" (Framebuffer)
  * @li "buffer" (Pixel Memory Buffer)
- * @li "ews" (Ecore + Evas Single Process Windowing System)
  * @li NULL - no engine config
  *
  * @deprecated Please use elm_config_accel_preference_override_set() instead

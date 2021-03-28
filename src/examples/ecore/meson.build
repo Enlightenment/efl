@@ -73,7 +73,6 @@ examples = [
   'ecore_evas_buffer_example_01',
   'ecore_evas_buffer_example_02',
   'ecore_evas_callbacks',
-  'ecore_evas_ews_example',
   'ecore_evas_object_example',
   'ecore_evas_window_sizes_example',
 ]

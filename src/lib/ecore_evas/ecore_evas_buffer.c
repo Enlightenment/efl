@@ -219,7 +219,6 @@ ecore_evas_buffer_render(Ecore_Evas *ee)
    return r;
 }
 
-// NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
 static void
 _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {

@@ -50,7 +50,6 @@ const char *_elm_engines[] = {
    "sdl",
    "opengl_sdl",
    "buffer",
-   "ews",
    "opengl_cocoa",
    "wayland_shm",
    "wayland_egl",
@@ -2546,8 +2545,6 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, ELM_BUFFER);
         else if ((!strncmp(s, "shot:", 5)))
           eina_stringshare_replace(&_elm_config->engine, s);
-        else if ((!strcasecmp(s, "ews")))
-          eina_stringshare_replace(&_elm_config->engine, ELM_EWS);
         else if ((!strcasecmp(s, "wayland_shm")) ||
                  (!strcasecmp(s, "wayland-shm")))
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_SHM);
