@@ -143,6 +143,8 @@ ICON("enlightenment/wallpaper_tile", "i-fill-tile")
 ICON("enlightenment/wallpaper_scale_aspect_in", "i-fill-within")
 ICON("enlightenment/wallpaper_scale_aspect_out", "i-fill-fill")
 ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
+
+ICON("battery",  "i-battery")
 #undef ICON
 
 // mono color default fg color icons
