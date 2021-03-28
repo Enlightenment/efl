@@ -1,7 +1,6 @@
 group { name: "e/theme/about";
    // data.item: "borderless" "1";
    // data.item: "shaped" "1";
-//   images.image: "check_fill.png" COMP;
    images.image: "about-flat-bg.png" COMP;
    min: 220 320;
    parts {
