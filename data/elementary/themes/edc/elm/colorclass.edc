@@ -164,8 +164,25 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
 }
 
 group { "colorclass/colors"; program_source: "elm"; nobroadcast;
-   images.image: "box_glow.png" COMP;
    parts {
+      rect { "glow"; nomouse;
+         desc {
+            rel1.offset: -7 -7;
+            rel1.to: "color1";
+            rel2.offset: 8 8;
+            rel2.to: "color1";
+            rel2.relative: 1 1;
+            fixed: 1 1;
+         }
+         desc { "color2"; inherit: "default";
+            rel1.to: "color2";
+            rel2.to: "color2";
+         }
+         desc { "color3"; inherit: "default";
+            rel1.to: "color3";
+            rel2.to: "color3";
+         }
+      }
       group { "color1"; source: "colorclass/color1";
          desc { min: 1 1; max: 1 1; hid;
             link.base: "hide" "";
@@ -227,28 +244,6 @@ group { "colorclass/colors"; program_source: "elm"; nobroadcast;
                transition: LINEAR 0.2;
                target: "glow";
             }
-         }
-      }
-      image { "glow"; nomouse;
-         desc {
-            image.normal: "box_glow.png";
-            image.border: 12 12 12 12;
-            image.middle: 0;
-            fill.smooth: 0;
-            rel1.offset: -7 -8;
-            rel1.to: "color1";
-            rel2.offset: 7 7;
-            rel2.to: "color1";
-            rel2.relative: 1 1;
-            fixed: 1 1;
-         }
-         desc { "color2"; inherit: "default";
-            rel1.to: "color2";
-            rel2.to: "color2";
-         }
-         desc { "color3"; inherit: "default";
-            rel1.to: "color3";
-            rel2.to: "color3";
          }
       }
       swallow { "colors";
