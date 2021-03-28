@@ -63,7 +63,6 @@ group { name: "elm/multibuttonentry/guidetext/default";
 }
 
 group { name: "elm/multibuttonentry/btn/default";
-   images.image: "border_close.png" COMP;
    styles {
       style { name: "multibuttonentry_textblock_style";
          base: "font="FN" align=0.5 font_size=10 color=#ffff text_class=multibuttonentry_item ellipsis=1.0";
@@ -113,7 +112,7 @@ group { name: "elm/multibuttonentry/btn/default";
       }
       part { name: "close"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "del";
             min: 15 15;
             max: 15 15;

@@ -21,7 +21,6 @@ group { name: "e/modules/notification/logo";
 }
 
 group { name: "e/modules/notification/main";
-   images.image: "border_close.png" COMP;
    images.image: "win_shadow.png" COMP;
    data.item: "app_icon_max" "48 48";
    styles {
@@ -163,7 +162,7 @@ group { name: "e/modules/notification/main";
 
       part { name: "close";
          description { state: "default" 0.0;
-            image.normal: "border_close.png";
+            image.normal: "i-close";
             rel.to: "notification.event.close";
             min: 15 15;
             max: 15 15;

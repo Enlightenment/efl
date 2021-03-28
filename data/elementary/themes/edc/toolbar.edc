@@ -1,6 +1,4 @@
 group { name: "e/widgets/toolbar";
-   images.image: "calendar_next.png" COMP;
-   images.image: "calendar_prev.png" COMP;
    parts {
       part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
@@ -59,7 +57,7 @@ group { name: "e/widgets/toolbar";
             fixed: 1 1;
             rel1.to: "arrow1_ev";
             rel2.to: "arrow1_ev";
-            image.normal: "calendar_prev.png";
+            image.normal: "i-arrow-l";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }
@@ -91,7 +89,7 @@ group { name: "e/widgets/toolbar";
             fixed: 1 1;
             rel1.to: "arrow2_ev";
             rel2.to: "arrow2_ev";
-            image.normal: "calendar_next.png";
+            image.normal: "i-arrow-r";
             FIXED_SIZE(15, 15)
             color: 160 160 160 255;
          }
