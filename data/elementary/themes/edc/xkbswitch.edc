@@ -1,6 +1,4 @@
 group { name: "e/modules/xkbswitch/main";
-   alias: "e/gadget/xkbswitch/main";
-   alias: "e/gadget/xkbswitch/main_vert";
    alias: "e/modules/xkbswitch/main_vert";
    max: 128 128;
    parts {
@@ -68,8 +66,6 @@ group { name: "e/modules/xkbswitch/main";
 }
 
 group { name: "e/modules/xkbswitch/noflag";
-   alias: "e/gadget/xkbswitch/noflag";
-   alias: "e/gadget/xkbswitch/noflag_vert";
    max: 128 128;
    parts {
       part { name: "base"; type: RECT; mouse_events: 0;

@@ -1,6 +1,4 @@
 group { name: "e/modules/backlight/main";
-   alias: "e/gadget/backlight/main";
-   alias: "e/gadget/backlight/main_vert";
    alias: "e/modules/backlight/main_vert";
    images.image: "bulb_middle.png" COMP;
    images.image: "bulb_over.png" COMP;

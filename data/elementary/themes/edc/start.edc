@@ -1,5 +1,4 @@
 group { name: "e/modules/start/main";
-   alias: "e/gadget/start/main";
    parts {
       part { name: "arrow_base"; type: RECT;
          description { state: "default" 0.0;
