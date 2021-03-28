@@ -425,8 +425,6 @@ group { name: "e/modules/everything/list";
 }
 
 group { name: "e/modules/everything/thumbview/main/window";
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_right_glow_normal.png" COMP;
    parts {
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
@@ -448,33 +446,33 @@ group { name: "e/modules/everything/thumbview/main/window";
       part { name: "left_arrow"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
             align: 0.0 0.5;
             min: 15 15;
             max: 15 15;
             visible: 0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            color: 255 255 255 255;
+            color: 51 153 255 255;
          }
       }
       part { name: "right_arrow"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            image.normal: "sym_right_glow_normal.png";
+            image.normal: "i-arrow-r";
             align: 1.0 0.5;
             min: 15 15;
             max: 15 15;
             visible: 0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            color: 255 255 255 255;
+            color: 51 153 255 255;
          }
       }
       part { name: "event"; type: RECT; repeat_events: 1;

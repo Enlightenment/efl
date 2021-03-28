@@ -1,11 +1,11 @@
 group { name: "elm/entry/path/separator/default";
-   images.image: "sym_right_glow_normal.png" COMP;
    parts {
       image { "icon"; nomouse;
          desc { "default";
-            image.normal: "sym_right_glow_normal.png";
+            image.normal: "i-arrow-r";
             FIXED_SIZE(15, 15)
             aspect: 1.0 1.0;
+            color: 51 153 255 255;
          }
       }
    }

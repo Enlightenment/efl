@@ -114,10 +114,6 @@ group { name: "e/gadman/frame";
 group { name: "e/gadman/control";
    images.image: "outline.png" COMP;
    images.image: "diagonal_stripes.png" COMP;
-   images.image: "sym_up_glow_normal.png" COMP;
-   images.image: "sym_down_glow_normal.png" COMP;
-   images.image: "sym_left_glow_normal.png" COMP;
-   images.image: "sym_right_glow_normal.png" COMP;
    parts {
       part { name: "base"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -144,12 +140,14 @@ group { name: "e/gadman/control";
          }
       }
       part { name: "av10"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 0.5 1.0;
             rel1.to: "resizev1";
             rel2.relative: 1.0 0.0;
             rel2.to: "resizev1";
-            image.normal: "sym_up_glow_normal.png";
+            image.normal: "i-arrow-u";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -161,16 +159,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel2.relative: 1.0 -5.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "av11"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 0.5 0.0;
             rel1.to: "resizev1";
             rel1.relative: 0.0 1.0;
             rel2.to: "resizev1";
-            image.normal: "sym_down_glow_normal.png";
+            image.normal: "i-arrow-d";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -182,16 +182,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 0.0 6.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "av20"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 0.5 1.0;
             rel1.to: "resizev2";
             rel2.relative: 1.0 0.0;
             rel2.to: "resizev2";
-            image.normal: "sym_up_glow_normal.png";
+            image.normal: "i-arrow-u";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -203,16 +205,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel2.relative: 1.0 -5.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "av21"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 0.5 0.0;
             rel1.to: "resizev2";
             rel1.relative: 0.0 1.0;
             rel2.to: "resizev2";
-            image.normal: "sym_down_glow_normal.png";
+            image.normal: "i-arrow-d";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -224,16 +228,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 0.0 6.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "ah10"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 1.0 0.5;
             rel1.to: "resizeh1";
             rel2.relative: 0.0 1.0;
             rel2.to: "resizeh1";
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -245,16 +251,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel2.relative: -5.0 1.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "ah11"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 0.0 0.5;
             rel1.to: "resizeh1";
             rel1.relative: 1.0 0.0;
             rel2.to: "resizeh1";
-            image.normal: "sym_right_glow_normal.png";
+            image.normal: "i-arrow-r";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -266,16 +274,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 6.0 0.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "ah20"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 1.0 0.5;
             rel1.to: "resizeh2";
             rel2.relative: 0.0 1.0;
             rel2.to: "resizeh2";
-            image.normal: "sym_left_glow_normal.png";
+            image.normal: "i-arrow-l";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -287,16 +297,18 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel2.relative: -5.0 1.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "ah21"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             align: 0.0 0.5;
             rel1.to: "resizeh2";
             rel1.relative: 1.0 0.0;
             rel2.to: "resizeh2";
-            image.normal: "sym_right_glow_normal.png";
+            image.normal: "i-arrow-r";
+            color: 51 153 255 255;
             visible: 0;
             FIXED_SIZE(15, 15)
          }
@@ -308,7 +320,7 @@ group { name: "e/gadman/control";
             inherit: "default" 0.0;
             visible: 1;
             rel1.relative: 6.0 0.0;
-            color: 255 255 255 0;
+            color: 51 153 255 0;
          }
       }
       part { name: "move"; type: RECT;
