@@ -80,7 +80,7 @@ group { name: "e/conf/randr/main/frame";
       public refresh_open;
    }
    parts {
-      part { name: "primary";
+      part { name: "primary"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             color: 48 48 48 255;

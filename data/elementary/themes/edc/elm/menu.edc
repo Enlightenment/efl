@@ -379,7 +379,7 @@ group { name: "elm/menu/main_menu_submenu/default";
 
 //In the hover used by the menu only the bottom part is used.
 group { name: "elm/hover/base/menu/default";
-   images.image: "win_menu_shadow.png" COMP;
+   images.image: "win_shad_angle.png" COMP;
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -431,11 +431,13 @@ group { name: "elm/hover/base/menu/default";
             color: 255 255 255 255;
          }
       }
-      part { name: "shadow";
+      WIN_SHAD("bg", "shadow", "win_shad_angle.png", 21, 21, 14, 28, 0.5)
+      part { name: "shadow"; type: RECT;
          clip_to: "bottomclip";
          description { state: "default" 0.0;
             rel.to: "bg";
-            WIN_MENU_SHADOW;
+            rel1.offset: -1000 -1000;
+            rel2.offset: 1000 1000;
          }
       }
       part { name: "bg"; type: RECT; mouse_events: 0;
@@ -565,7 +567,7 @@ group { name: "elm/hover/base/main_menu/default";
 }
 
 group { name: "elm/hover/base/main_menu_submenu/default";
-   images.image: "win_menu_shadow.png" COMP;
+   images.image: "win_shad_angle.png" COMP;
    parts {
       part { name: "elm.swallow.offset"; type: SWALLOW;
          repeat_events:1;
@@ -601,11 +603,13 @@ group { name: "elm/hover/base/main_menu_submenu/default";
             color: 255 255 255 255;
          }
       }
-      part { name: "shadow";
+      WIN_SHAD("bg", "shadow", "win_shad_angle.png", 21, 21, 14, 28, 0.5)
+      part { name: "shadow"; type: RECT;
          clip_to: "bottomclip";
          description { state: "default" 0.0;
             rel.to: "bg";
-            WIN_MENU_SHADOW;
+            rel1.offset: -1000 -1000;
+            rel2.offset: 1000 1000;
          }
       }
       part { name: "bg"; type: RECT; mouse_events: 0;
