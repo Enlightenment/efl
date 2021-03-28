@@ -10,7 +10,7 @@
    inkscape:export-ydpi="48"
    inkscape:export-xdpi="48"
    inkscape:export-filename="/home/raster/C/th-efl/th/img/ic/picture-landscape-plus-040.png"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
    sodipodi:docname="picture-landscape.svg"
    viewBox="0 0 80 80"
    height="80"
@@ -104,22 +104,5 @@
        cx="50"
        id="path1334"
        style="opacity:1;fill:#e5e0a6;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <g
-       id="g7854">
-      <rect
-         style="fill:#ffffff;stroke-width:5.71411"
-         id="rect7848"
-         width="8"
-         height="32"
-         x="52"
-         y="40" />
-      <rect
-         style="fill:#ffffff;stroke-width:5.71411"
-         id="rect7850"
-         width="32"
-         height="8"
-         x="40"
-         y="52" />
-    </g>
   </g>
 </svg>
