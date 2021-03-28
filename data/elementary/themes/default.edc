@@ -75,7 +75,6 @@ collections {
 #include "edc/elm/hover.edc"
 #include "edc/elm/cursor.edc"
 #include "edc/elm/code.edc"
-#include "edc/elm/ews.edc"
 #include "edc/elm/textpath.edc"
 #include "edc/elm/slider.edc"
 

@@ -64,9 +64,7 @@ group { name: "e/conf/randr/main/frame";
    images.image: "screen_bg.png" COMP;
    images.image: "mini_blue_glow_arrow_0.png" COMP;
    images.image: "mini_blue_glow_arrow_2.png" COMP;
-   images.image: "sym_down_light_normal.png" COMP;
    images.image: "sym_down_light_selected.png" COMP;
-   images.image: "sym_up_light_normal.png" COMP;
    images.image: "sym_up_light_selected.png" COMP;
    images.image: "icon_system-shutdown.png" COMP;
    styles {
