@@ -1245,33 +1245,37 @@ group { name: "e/widgets/border/tiling/border";
 }
 
 group { name: "e/widgets/border/default/move";
-   images.image: "ic_win_move.png" COMP;
    parts {
       part { name: "bg"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             color: 64 64 64 255;
+            min: 120 38;
          }
       }
       part { name: "icon";
+         scale: 1;
          description { state: "default" 0.0;
             align: 0.0 0.5;
-            FIXED_SIZE(21, 21)
-            rel1.offset: 2 2;
+            fixed: 1 1;
+            FIXED_SIZE(30, 30)
+            rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
-            rel2.offset: 2 -3;
-            image.normal: "ic_win_move.png";
+            rel2.offset: 4 -5;
+            image.normal: "i-move";
+            color: 160 160 160 255;
+            offscale;
          }
       }
       part { name: "e.text.label"; type: TEXT;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
+            rel1.relative: 1.0 0.0;
             rel1.to_x: "icon";
             rel1.offset: 4 4;
-            rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
-            color_class: "move_text";
-            color3: 255 255 255 255;
+            color: 160 160 160 255;
+            offscale;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1284,17 +1288,10 @@ group { name: "e/widgets/border/default/move";
 
 group { name: "e/widgets/border/default/resize";
    inherit: "e/widgets/border/default/move";
-   images.image: "ic_win_resize.png" COMP;
    parts {
       part { name: "icon";
          description { state: "default" 0.0;
-            image.normal: "ic_win_resize.png";
-         }
-      }
-      part { name: "e.text.label"; type: TEXT;
-         description { state: "default" 0.0;
-            color_class: "resize_text";
-            color3: 255 255 255 255;
+            image.normal: "i-resize";
          }
       }
    }
