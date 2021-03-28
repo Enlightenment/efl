@@ -145,6 +145,7 @@ ICON("enlightenment/wallpaper_scale_aspect_out", "i-fill-fill")
 ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
 
 ICON("battery",  "i-battery")
+ICON("gadgets",  "i-gadgets")
 #undef ICON
 
 // mono color default fg color icons

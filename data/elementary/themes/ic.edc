@@ -398,6 +398,8 @@ I160("i-faq", "faq")
 I160("i-health", "heart")
 I160("i-tech", "tech")
 
+I160("i-gadgets", "gadgets")
+
 I160("i-list-icons", "list-icons")
 I160("i-list-compact", "list-compact")
 I160("i-list-details", "list-details")
