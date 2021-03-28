@@ -128,7 +128,7 @@
                   relative: 0.0 0.0;
                   offset: 8 8;
                }
-               image.normal: "arrow-u-030.png";
+               image.normal: "i-arrow-u";
                color: 160 160 160 255;
             }
          }
