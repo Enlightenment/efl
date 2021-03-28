@@ -4,7 +4,6 @@ group { name: "e/widgets/about/main";
    images.image: "about-lines.png" COMP;
    images.image: "about-triangles.png" COMP;
    images.image: "win_shadow.png" COMP;
-//   images.image: "snow.jpg" LOSSY 90;
    set { name: "logo_mono";
       image { image: "logo.png" COMP;  size: 601 601 99999 99999; }
       image { image: "logo2.png" COMP; size: 301 301   600   600; }
