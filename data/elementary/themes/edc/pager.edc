@@ -269,11 +269,11 @@ group { name: "e/modules/pager/desk";
 }
 
 group { name: "e/modules/pager/window";
-   images.image: "mini_box_bevel_shadow.png" COMP;
+   images.image: "pager_mini_win_shadow.png" COMP;
    parts {
       part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "mini_box_bevel_shadow.png";
+            image.normal: "pager_mini_win_shadow.png";
             image.border: 7 7 7 7;
             image.middle: 0;
             rel1.to: "win";
