@@ -44,6 +44,7 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
 {
    Evas_Image_Animated *animated;
    avifDecoder *decoder;
+   const char *codec_name;
    avifResult res;
    Eina_Bool ret;
 
@@ -60,6 +61,16 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return ret;
      }
+
+   codec_name = avifCodecName(decoder->codecChoice, AVIF_CODEC_FLAG_CAN_DECODE);
+   if (!codec_name)
+     {
+        ERR("AV1 codec not  available");
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        goto destroy_decoder;
+     }
+
+   INF("AV1 codec name (decode): %s", codec_name);
 
    avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
    res = avifDecoderParse(decoder);
@@ -138,12 +149,25 @@ evas_image_load_file_data_avif_internal(Evas_Loader_Internal *loader,
    decoder = loader->decoder;
    if (!decoder)
      {
+        const char *codec_name;
+
         decoder = avifDecoderCreate();
         if (!decoder)
           {
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              return EINA_FALSE;
           }
+
+        codec_name = avifCodecName(decoder->codecChoice,
+                                   AVIF_CODEC_FLAG_CAN_DECODE);
+        if (!codec_name)
+          {
+             ERR("AV1 codec not  available");
+             *error = EVAS_LOAD_ERROR_GENERIC;
+             goto on_error;
+          }
+
+        INF("AV1 codec name (decode): %s", codec_name);
 
         avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
         res = avifDecoderParse(decoder);
