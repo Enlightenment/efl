@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg2"
+   width="80"
+   height="80"
+   viewBox="0 0 80 80"
+   sodipodi:docname="headset.svg"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
+   inkscape:export-filename="/home/raster/C/efl/th/img/ic/headset-040.png"
+   inkscape:export-xdpi="48"
+   inkscape:export-ydpi="48">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6">
+    <rect
+       x="20"
+       y="20"
+       width="40"
+       height="30"
+       id="rect878" />
+    <rect
+       x="20"
+       y="50"
+       width="40"
+       height="30"
+       id="rect872" />
+    <rect
+       x="20"
+       y="20"
+       width="40"
+       height="30"
+       id="rect864" />
+    <rect
+       x="20"
+       y="20"
+       width="40"
+       height="30"
+       id="rect858" />
+    <rect
+       x="20"
+       y="20"
+       width="40"
+       height="30"
+       id="rect852" />
+  </defs>
+  <sodipodi:namedview
+     inkscape:document-rotation="0"
+     pagecolor="#404040"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     id="namedview4"
+     showgrid="true"
+     inkscape:zoom="14.8125"
+     inkscape:cx="40"
+     inkscape:cy="40"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g10"
+     showguides="false"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-others="true"
+     inkscape:snap-nodes="true"
+     borderlayer="true"
+     inkscape:bbox-paths="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid837"
+       empspacing="4" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     inkscape:label="Image"
+     id="g10">
+    <path
+       id="path874"
+       style="fill:#282828;fill-opacity:1;stroke-width:4.66667;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       d="M 40,4 C 24.536027,4 12,16.536027 12,32 v 24 h 4 V 32 C 15.999491,18.827107 26.616678,8.1157776 39.789062,8 39.859374,7.999691 39.929688,7.999691 40,8 53.254834,8 64,18.745166 64,32 v 24 h 4 V 32 C 68,16.536027 55.463973,4 40,4 Z"
+       sodipodi:nodetypes="sscccccsccss" />
+    <rect
+       style="fill:#202020;fill-opacity:1;stroke-width:6.92821;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect888"
+       width="12"
+       height="32"
+       x="52"
+       y="34"
+       ry="4" />
+    <rect
+       style="fill:#303030;fill-opacity:1;stroke-width:6.00001;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect891"
+       width="12"
+       height="24"
+       x="52"
+       y="34"
+       ry="4" />
+    <rect
+       style="fill:#404040;fill-opacity:1;stroke-width:2.82844;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect893"
+       width="8"
+       height="8"
+       x="54"
+       y="36"
+       ry="2" />
+    <rect
+       style="fill:#a0a0a0;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect895"
+       width="6"
+       height="2"
+       x="55"
+       y="38"
+       ry="1" />
+    <rect
+       style="fill:#202020;fill-opacity:1;stroke-width:6.92821;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect905"
+       width="12"
+       height="32"
+       x="16"
+       y="34"
+       ry="4" />
+    <rect
+       style="fill:#303030;fill-opacity:1;stroke-width:6.00001;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect907"
+       width="12"
+       height="24"
+       x="16"
+       y="34"
+       ry="4" />
+    <rect
+       style="fill:#404040;fill-opacity:1;stroke-width:2.82844;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect909"
+       width="8"
+       height="8"
+       x="18"
+       y="36"
+       ry="2" />
+    <rect
+       style="fill:#a0a0a0;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       id="rect911"
+       width="6"
+       height="2"
+       x="19"
+       y="38"
+       ry="1" />
+    <path
+       style="fill:#282828;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       d="m 68,44 4,4 V 64 L 60,76 h -8 v -6 h 4 l 4,2 8,-8 v -8 z"
+       id="path924"
+       sodipodi:nodetypes="ccccccccccc" />
+    <path
+       style="fill:#202020;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       d="m 60,72 -4,4 h -4 v -6 h 4 z"
+       id="path926" />
+    <path
+       style="fill:#303030;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       d="m 72,49 -4,-3 v 8 l 4,-1 z"
+       id="path928"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       style="fill:#404040;fill-opacity:1;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0"
+       d="m 72,50 -4,-2 v 3 l 4,1 z"
+       id="path930"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+</svg>

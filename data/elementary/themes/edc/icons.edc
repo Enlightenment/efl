@@ -782,6 +782,9 @@ ICON("audio-input-microphone", "i-microphone")
 
 ICON("speaker-box", "i-speakerbox")
 ICON("headphones", "i-headphones")
+ICON("earbud", "i-earbud")
+ICON("headset", "i-headset")
+ICON("headset-one-ear", "i-headset-one-ear")
 
 ICON("inode-directory", "i-folder")
 
