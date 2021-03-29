@@ -780,6 +780,9 @@ ICON("network-workgroup", "i-server-group")
 ICON("audio-card", "i-sound-card")
 ICON("audio-input-microphone", "i-microphone")
 
+ICON("speaker-box", "i-speakerbox")
+ICON("headphones", "i-headphones")
+
 ICON("inode-directory", "i-folder")
 
 ICON("folder-drag-accept", "i-folder-dropin")
