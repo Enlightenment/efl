@@ -1042,6 +1042,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
+            text.align: 0.0 0.5;
             offscale;
          }
          desc { "visible"; inherit;
@@ -1053,6 +1054,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
+            text.align: 0.0 0.5;
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
@@ -1073,6 +1075,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
+            text.align: 0.0 0.5;
          }
          desc { "pressed_textonly"; inherit;
             fixed: 0 0;
@@ -1083,6 +1086,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
+            text.align: 0.0 0.5;
          }
          desc { "disabled_visible"; inherit;
             fixed: 0 0;
@@ -1094,6 +1098,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
+            text.align: 0.0 0.5;
          }
          desc { "disabled_textonly"; inherit;
             fixed: 0 0;
@@ -1104,6 +1109,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
+            text.align: 0.0 0.5;
          }
       }
       rect { "select_line"; nomouse;
