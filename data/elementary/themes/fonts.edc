@@ -50,6 +50,7 @@
 #define ENABLED_TEXTBLOCK_TAGS                                             \
    tag: "em" "+ font_style=Oblique";                                       \
    tag: "hilight" "+ font_weight=Bold color=#3399ff";                      \
+   tag: "heading" "+ font_weight=Bold color=#ffffff font_size=11";         \
    tag: "link" "+ color=#3399ff underline=on underline_color=#3399ff";     \
    tag: "preedit" "+ underline=on underline_color=#3399ff";                \
    tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";  \
