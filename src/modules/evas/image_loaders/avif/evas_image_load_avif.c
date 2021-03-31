@@ -250,7 +250,12 @@ evas_image_load_file_close_avif(void *loader_data)
    Evas_Loader_Internal *loader;
 
    loader = loader_data;
-   avifDecoderDestroy(loader->decoder);
+   /*
+    * in case _head() fails (because the file is not an avif one),
+    * loader is not filled and loader->decoder is NULL
+    */
+   if (loader->decoder)
+     avifDecoderDestroy(loader->decoder);
    free(loader_data);
 }
 
