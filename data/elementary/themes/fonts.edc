@@ -84,6 +84,7 @@
 #define DISABLED_TEXTBLOCK_TAGS                                            \
    tag: "em" "+ font_style=Oblique";                                       \
    tag: "hilight" "+ font_weight=Bold color=#3399ff";                      \
+   tag: "heading" "+ font_weight=Bold color=#a0a0a0 font_size=11";         \
    tag: "link" "+ color=#607080 underline=on underline_color=#3399ff";     \
    tag: "preedit" "+ underline=on underline_color=#3399ff88";              \
    tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#888888";  \
