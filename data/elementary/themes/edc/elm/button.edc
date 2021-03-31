@@ -80,6 +80,7 @@ group { name: "elm/button/base/default";
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly"; inherit;
             fixed: 0 0;
@@ -87,40 +88,12 @@ group { name: "elm/button/base/default";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly"; inherit;
-            fixed: 0 0;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       text { "elm.text"; nomouse;
          scale: 1;
          desc { "default";
-            fixed: 1 1;
             color: 192 192 192 255;
             rel1.offset: 0 6;
             rel1.relative: 1.0 0.0;
@@ -130,6 +103,7 @@ group { name: "elm/button/base/default";
                align: 0.5 0.5;
                min: 0 0;
             }
+            min: 0 ICMIN;
             visible: 0;
             offscale;
          }
@@ -276,7 +250,6 @@ group { name: "elm/button/base/anchor";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                if (!p) {
                   set_state(PART:"elm.text", "visible", 0.0);
                } else {
@@ -286,7 +259,6 @@ group { name: "elm/button/base/anchor";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -294,13 +266,11 @@ group { name: "elm/button/base/anchor";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -308,7 +278,6 @@ group { name: "elm/button/base/anchor";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                if (!p) {
                   set_state(PART:"elm.text", "textonly", 0.0);
                } else {
@@ -318,7 +287,6 @@ group { name: "elm/button/base/anchor";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_textonly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -326,12 +294,10 @@ group { name: "elm/button/base/anchor";
          } else {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
@@ -374,6 +340,7 @@ group { name: "elm/button/base/anchor";
       }
       swallow { "elm.swallow.content"; nomouse;
          clip_to: "icon_clip";
+         scale: 1;
          desc { "default";
             fixed: 1 0;
             align: 0.0 0.5;
@@ -383,12 +350,14 @@ group { name: "elm/button/base/anchor";
             rel2.offset: 4 -5;
             rel2.to: "base";
             visible: 0;
+            offscale;
          }
          desc { "visible";
             inherit: "default";
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly";
             inherit: "default";
@@ -397,34 +366,7 @@ group { name: "elm/button/base/anchor";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly";  inherit;
-            fixed: 0 0;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       text { "elm.text"; nomouse;
@@ -441,6 +383,7 @@ group { name: "elm/button/base/anchor";
                align: 0.5 0.5;
                min: 0 0;
             }
+            min: 0 ICMIN;
             visible: 0;
          }
          desc { "visible";
@@ -798,13 +741,11 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "disabled", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -812,13 +753,11 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -826,13 +765,11 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "disabled", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -840,12 +777,10 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          } else {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
@@ -876,6 +811,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
       }
       swallow { "elm.swallow.content"; nomouse;
          clip_to: "icon_clip";
+         scale: 1;
          desc { "default";
             fixed: 1 0;
             align: 0.0 0.5;
@@ -884,12 +820,14 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.relative: 0.0 1.0;
             rel2.offset: 4 -5;
             visible: 0;
+            offscale;
          }
          desc { "visible";
             inherit: "default";
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly";
             inherit: "default";
@@ -898,34 +836,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly";  inherit;
-            fixed: 0 0;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       rect { "click_clip";
@@ -952,6 +863,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
                min: 1 1;
                text_class: "button";
             }
+            min: 0 ICMIN;
          }
          desc { "clicked";
             inherit: "default";
@@ -1106,6 +1018,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel2.relative: 0.0 1.0;
             text.align: 0.0 0.5;
             offscale;
+            min: 0 ICMIN;
          }
          desc { "visible"; inherit;
             fixed: 0 0;
@@ -1422,6 +1335,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
                   text_class: "spinner";
                   ellipsis: -1;
                }
+               min: 0 ICMIN;
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0 ;

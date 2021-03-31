@@ -344,13 +344,11 @@ group { name: "elm/toolbar/item/default";
             if (!d) {
                set_state(PART:"elm.swallow.icon", "default", 0.0);
                set_state(PART:"elm.swallow.icon_new", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.icon", "default", 0.0);
                set_state(PART:"elm.swallow.icon_new", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"elm.text", "disabled", 0.0);
             }
@@ -358,13 +356,11 @@ group { name: "elm/toolbar/item/default";
             if (!d) {
                set_state(PART:"elm.swallow.icon", "icononly", 0.0);
                set_state(PART:"elm.swallow.icon_new", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"elm.text", "icononly", 0.0);
             } else {
                set_state(PART:"elm.swallow.icon", "icononly", 0.0);
                set_state(PART:"elm.swallow.icon_new", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"elm.text", "icononly", 0.0);
             }
@@ -372,13 +368,11 @@ group { name: "elm/toolbar/item/default";
             if (!d) {
                set_state(PART:"elm.swallow.icon", "noicon", 0.0);
                set_state(PART:"elm.swallow.icon_new", "noicon", 0.0);
-              set_state(PART:"sizer_content", "noicon", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"elm.text", "noicon", 0.0);
             } else {
                set_state(PART:"elm.swallow.icon", "noicon", 0.0);
                set_state(PART:"elm.swallow.icon_new", "noicon", 0.0);
-               set_state(PART:"sizer_content", "noicon", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"elm.text", "noicon_disabled", 0.0);
             }
@@ -386,13 +380,11 @@ group { name: "elm/toolbar/item/default";
             if (!d) {
                set_state(PART:"elm.swallow.icon", "noicon", 0.0);
                set_state(PART:"elm.swallow.icon_new", "noicon", 0.0);
-               set_state(PART:"sizer_content", "noicon", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"elm.text", "noicon", 0.0);
             } else {
                set_state(PART:"elm.swallow.icon", "noicon", 0.0);
                set_state(PART:"elm.swallow.icon_new", "noicon", 0.0);
-               set_state(PART:"sizer_content", "noicon", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"elm.text", "noicon_disabled", 0.0);
             }
@@ -432,33 +424,6 @@ group { name: "elm/toolbar/item/default";
             visible: 0;
          }
       }
-      text { "sizer_content"; nomouse; scale: 1;
-         desc { "default";
-            min: 16 16;
-            visible: 0;
-            text { font: FN; size: 10;
-              min: 1 1;
-              text_class: "toolbar_item";
-            }
-         }
-         desc { "noicon"; inherit;
-            rel.to: "elm.swallow.icon_new";
-            text {
-              min: 0 0;
-              ellipsis: -1;
-              text: SPACER_TEXT;
-            }
-            fixed: 1 1;
-         }
-         desc { "icononly"; inherit;
-            rel.to: "elm.swallow.icon_new";
-            text {
-              min: 1 1;
-              ellipsis: -1;
-              text: SPACER_TEXT;
-            }
-         }
-      }
 
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "icon_clip1";
@@ -470,6 +435,7 @@ group { name: "elm/toolbar/item/default";
             rel2.to_y: "elm.text";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
+            min: ICMIN ICMIN;
             offscale;
          }
          description { state: "noicon" 0.0;
@@ -478,6 +444,7 @@ group { name: "elm/toolbar/item/default";
             rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
+            min: 0 0;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -485,6 +452,7 @@ group { name: "elm/toolbar/item/default";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             rel2.to_y: "icon_clip";
+            min: ICMIN ICMIN;
          }
       }
       part { name: "icon_clip2"; type: RECT;
@@ -509,6 +477,7 @@ group { name: "elm/toolbar/item/default";
             rel2.to_y: "elm.text";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
+            min: ICMIN ICMIN;
             offscale;
          }
          description { state: "noicon" 0.0;
@@ -517,6 +486,7 @@ group { name: "elm/toolbar/item/default";
             rel1.offset: 4 0;
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 0;
+            min: 0 0;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -524,6 +494,7 @@ group { name: "elm/toolbar/item/default";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             rel2.to_y: "icon_clip";
+            min: ICMIN ICMIN;
          }
       }
       
@@ -907,8 +878,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel2.relative: 0.0 1.0;
             rel2.offset: 4 -5;
             offscale;
-            min: 16 16;
-            max: 16 16;
+            min: ICMIN ICMIN;
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
@@ -917,7 +887,6 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel2.relative: 0.0 1.0;
             rel2.offset: 0 -5;
             min: 0 0;
-            max: 0 0;
             fixed: 1 1;
          }
          description { state: "icononly" 0.0;
@@ -925,6 +894,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             rel2.to_x: "icon_clip";
+            min: ICMIN ICMIN;
          }
       }
       part { name: "icon_clip2"; type: RECT;
@@ -949,9 +919,7 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel2.relative: 0.0 1.0;
             rel2.offset: 4 -5;
             offscale;
-            min: 16 16;
-            max: 16 16;
-            fixed: 1 1;
+            min: ICMIN ICMIN;
          }
          description { state: "noicon" 0.0;
             inherit: "default" 0.0;
@@ -960,13 +928,13 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel2.relative: 0.0 1.0;
             rel2.offset: 0 -5;
             min: 0 0;
-            max: 0 0;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             rel2.to_x: "icon_clip";
+            min: ICMIN ICMIN;
          }
       }
 

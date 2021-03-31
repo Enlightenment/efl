@@ -67,32 +67,7 @@ group { name: "elm/radio/base/default";
             rel2.offset: -5 -5;
             rel2.to_x: "";
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "base"; type: RECT;
@@ -152,6 +127,7 @@ group { name: "elm/radio/base/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          desc { "visible"; inherit;
             fixed: 0 0;
@@ -315,14 +291,12 @@ group { name: "elm/radio/base/plain";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                if (s) set_state(PART:"elm.text", "selected", 0.0);
                else set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -330,13 +304,11 @@ group { name: "elm/radio/base/plain";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -344,14 +316,12 @@ group { name: "elm/radio/base/plain";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                if (s) set_state(PART:"elm.text", "selected", 0.0);
                else set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -359,13 +329,11 @@ group { name: "elm/radio/base/plain";
          } else {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -429,8 +397,8 @@ group { name: "elm/radio/base/plain";
            inherit: "default" 0.0;
             visible: 1;
             align: 0.5 0.5;
-            max: 9999 9999;
-            min: 16 16;
+            min: ICMIN ICMIN;
+            max: -1 -1;
             rel1.offset: 8 8;
             rel2.relative: 1.0 1.0;
             rel2.offset: -9 -9;
@@ -442,39 +410,8 @@ group { name: "elm/radio/base/plain";
             aspect: 1.0 1.0;
             rel1.offset: 8 8;
             rel2.offset: 8 -9;
-            max: 9999 9999;
-            min: 16 16;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "radio_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: "M";
-            }
-         }
-         description { state: "icononly" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: "M";
-            }
+            min: ICMIN ICMIN;
+            max: -1 -1;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -492,6 +429,7 @@ group { name: "elm/radio/base/plain";
               text_class: "radio";
             }
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -656,14 +594,12 @@ group { name: "elm/radio/base/icon";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                if (s) set_state(PART:"elm.text", "selected", 0.0);
                else set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -671,13 +607,11 @@ group { name: "elm/radio/base/icon";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -685,14 +619,12 @@ group { name: "elm/radio/base/icon";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                if (s) set_state(PART:"elm.text", "selected", 0.0);
                else set_state(PART:"elm.text", "visible", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "disabled_visible", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -700,13 +632,11 @@ group { name: "elm/radio/base/icon";
          } else {
             if (!d) {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -770,8 +700,8 @@ group { name: "elm/radio/base/icon";
            inherit: "default" 0.0;
             visible: 1;
             align: 0.5 0.5;
-            max: 9999 9999;
-            min: 16 16;
+            min: ICMIN ICMIN;
+            max: -1 -1;
             rel1.offset: 8 8;
             rel2.offset: -9 -9;
             rel2.relative: 1.0 1.0;
@@ -783,40 +713,9 @@ group { name: "elm/radio/base/icon";
             aspect: 1.0 1.0;
             rel1.offset: 8 8;
             rel2.offset: -9 8;
-            max: 9999 9999;
-            min: 16 16;
+            min: ICMIN ICMIN;
+            max: -1 -1;
             fixed: 1 1;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "radio_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: "M";
-            }
-         }
-         description { state: "icononly" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: "M";
-            }
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -834,6 +733,7 @@ group { name: "elm/radio/base/icon";
               text_class: "radio";
             }
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;

@@ -91,17 +91,13 @@ group { name: "elm/slider/horizontal/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -181,6 +177,7 @@ group { name: "elm/slider/horizontal/default";
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 1 0;
             visible: 0;
@@ -196,27 +193,7 @@ group { name: "elm/slider/horizontal/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2.offset: 4 -5;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -238,6 +215,7 @@ group { name: "elm/slider/horizontal/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -255,6 +233,7 @@ group { name: "elm/slider/horizontal/default";
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 1 0;
             visible: 0;
@@ -271,27 +250,7 @@ group { name: "elm/slider/horizontal/default";
             aspect_preference: VERTICAL;
             rel1.offset: -5 4;
             rel2.offset: -5 -5;
-         }
-      }
-      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.end";
-            rel2.to: "elm.swallow.end";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       alias: "elm.units.min" "limits:elm.units.min";
@@ -773,17 +732,13 @@ group { name: "elm/slider/vertical/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -863,6 +818,7 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 0 1;
             visible: 0;
@@ -880,27 +836,7 @@ group { name: "elm/slider/vertical/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2.offset: -5 4;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -922,6 +858,7 @@ group { name: "elm/slider/vertical/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -938,6 +875,7 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 0 1;
             visible: 0;
@@ -956,27 +894,7 @@ group { name: "elm/slider/vertical/default";
             aspect_preference: VERTICAL;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-         }
-      }
-      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.end";
-            rel2.to: "elm.swallow.end";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       alias: "elm.units.min" "limits:elm.units.min";
@@ -1492,17 +1410,13 @@ group { name: "elm/slider/range/horizontal/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -1610,6 +1524,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 1 0;
             visible: 0;
@@ -1625,27 +1540,7 @@ group { name: "elm/slider/range/horizontal/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2.offset: 4 -5;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -1667,6 +1562,7 @@ group { name: "elm/slider/range/horizontal/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -1684,6 +1580,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 1 0;
             visible: 0;
@@ -1700,27 +1597,7 @@ group { name: "elm/slider/range/horizontal/default";
             aspect_preference: VERTICAL;
             rel1.offset: -5 4;
             rel2.offset: -5 -5;
-         }
-      }
-      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.end";
-            rel2.to: "elm.swallow.end";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       alias: "elm.units.min" "limits:elm.units.min";
@@ -2241,17 +2118,13 @@ group { name: "elm/slider/range/vertical/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -2359,6 +2232,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 0 1;
             visible: 0;
@@ -2376,27 +2250,7 @@ group { name: "elm/slider/range/vertical/default";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2.offset: -5 4;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -2418,6 +2272,7 @@ group { name: "elm/slider/range/vertical/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -2434,6 +2289,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
          clip_to: "dis_clip";
+         scale;
          description { state: "default" 0.0;
             fixed: 0 1;
             visible: 0;
@@ -2452,27 +2308,7 @@ group { name: "elm/slider/range/vertical/default";
             aspect_preference: VERTICAL;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-         }
-      }
-      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.end";
-            rel2.to: "elm.swallow.end";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       alias: "elm.units.min" "limits:elm.units.min";

@@ -58,7 +58,7 @@ group { name: "e/widgets/button";
             rel2.offset: 4 -5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             visible: 1;
-            min: 16 16;
+            min: ICMIN ICMIN;
          }
          description { state: "icon" 0.0;
             fixed: 0 0;
@@ -67,7 +67,7 @@ group { name: "e/widgets/button";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             visible: 1;
-            min: 16 16;
+            min: ICMIN ICMIN;
          }
       }
       part { name: "label_clip"; type: RECT;
@@ -96,6 +96,7 @@ group { name: "e/widgets/button";
                ellipsis: -1;
             }
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;

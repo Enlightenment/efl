@@ -301,7 +301,6 @@
          if (m1 == (ICON | LABEL)) { \
             if (!d) { \
                set_state(PART:"elm.swallow.content", "visible", 0.0); \
-               set_state(PART:"sizer_content", "visible", 0.0); \
                set_state(PART:"event", "default", 0.0); \
                if (!p) { \
                   set_state(PART:"elm.text", "visible", 0.0); \
@@ -312,7 +311,6 @@
                } \
             } else { \
                set_state(PART:"elm.swallow.content", "visible", 0.0); \
-               set_state(PART:"sizer_content", "visible", 0.0); \
                set_state(PART:"elm.text", "disabled_visible", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
@@ -320,7 +318,6 @@
          } else if (m1 == (ICON)) { \
             if (!d) { \
                set_state(PART:"elm.swallow.content", "icononly", 0.0); \
-               set_state(PART:"sizer_content", "icononly", 0.0); \
                set_state(PART:"event", "default", 0.0); \
                set_state(PART:"elm.text", "default", 0.0); \
                if (!p) \
@@ -329,7 +326,6 @@
                   set_state(PART:"icon_clip", "pressed", 0.0); \
             } else { \
                set_state(PART:"elm.swallow.content", "icononly", 0.0); \
-               set_state(PART:"sizer_content", "icononly", 0.0); \
                set_state(PART:"elm.text", "default", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
@@ -337,7 +333,6 @@
          } else if (m1 == (LABEL)) { \
             if (!d) { \
                set_state(PART:"elm.swallow.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"icon_clip", "default", 0.0); \
                set_state(PART:"event", "default", 0.0); \
                if (!p) \
@@ -346,7 +341,6 @@
                   set_state(PART:"elm.text", "pressed_textonly", 0.0); \
             } else { \
                set_state(PART:"elm.swallow.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"elm.text", "disabled_textonly", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
@@ -354,12 +348,10 @@
          } else { \
             if (!d) { \
                set_state(PART:"elm.swallow.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"icon_clip", "default", 0.0); \
                set_state(PART:"event", "default", 0.0); \
             } else { \
                set_state(PART:"elm.swallow.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
             } \
@@ -401,7 +393,6 @@
          if (m1 == (ICON | LABEL)) { \
             if (!d) { \
                set_state(PART:"efl.content", "visible", 0.0); \
-               set_state(PART:"sizer_content", "visible", 0.0); \
                set_state(PART:"event", "default", 0.0); \
                if (!p) { \
                   set_state(PART:"efl.text", "visible", 0.0); \
@@ -412,7 +403,6 @@
                } \
             } else { \
                set_state(PART:"efl.content", "visible", 0.0); \
-               set_state(PART:"sizer_content", "visible", 0.0); \
                set_state(PART:"efl.text", "disabled_visible", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
@@ -420,7 +410,6 @@
          } else if (m1 == (ICON)) { \
             if (!d) { \
                set_state(PART:"efl.content", "icononly", 0.0); \
-               set_state(PART:"sizer_content", "icononly", 0.0); \
                set_state(PART:"event", "default", 0.0); \
                set_state(PART:"efl.text", "default", 0.0); \
                if (!p) \
@@ -429,7 +418,6 @@
                   set_state(PART:"icon_clip", "pressed", 0.0); \
             } else { \
                set_state(PART:"efl.content", "icononly", 0.0); \
-               set_state(PART:"sizer_content", "icononly", 0.0); \
                set_state(PART:"efl.text", "default", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
@@ -437,7 +425,6 @@
          } else if (m1 == (LABEL)) { \
             if (!d) { \
                set_state(PART:"efl.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"icon_clip", "default", 0.0); \
                set_state(PART:"event", "default", 0.0); \
                if (!p) \
@@ -446,7 +433,6 @@
                   set_state(PART:"efl.text", "pressed_textonly", 0.0); \
             } else { \
                set_state(PART:"efl.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"efl.text", "disabled_textonly", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
@@ -454,12 +440,10 @@
          } else { \
             if (!d) { \
                set_state(PART:"efl.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"icon_clip", "default", 0.0); \
                set_state(PART:"event", "default", 0.0); \
             } else { \
                set_state(PART:"efl.content", "default", 0.0); \
-               set_state(PART:"sizer_content", "default", 0.0); \
                set_state(PART:"icon_clip", "disabled", 0.0); \
                set_state(PART:"event", "disabled", 0.0); \
             } \

@@ -61,6 +61,7 @@ group { name: "e/widgets/check";
                text_class: "check_button";
             }
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;

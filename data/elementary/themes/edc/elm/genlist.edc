@@ -95,6 +95,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
                text_class: "list_group_item";
             }
             link.base: "elm,state,enabled";
+            min: 0 ICMIN;
          }
          desc { "disabled";
             inherit: "default";
@@ -268,6 +269,7 @@ group { "elm/genlist/item/default/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -444,6 +446,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
                text_class: "list_item";
                style: "genlist_style";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -623,6 +626,7 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -756,6 +760,7 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -883,6 +888,7 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -1534,6 +1540,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
                align: 0.5 0.5;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -1596,27 +1603,6 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          target: "elm.text.flip";
       }
       //##//
-      text { "sizer_content";
-         scale;
-         desc { "default";
-            offscale;
-            fixed: 1 1;
-            rel1.to_x: "elm.swallow.pad";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 0 4;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -5 4;
-            align: 0.5 0.0;
-            text { font: FN; size: 10;
-               min: 1 1;
-               ellipsis: -1;
-               align: 0.5 0.5;
-               text_class: "list_item";
-               text: SPACER_TEXT;
-            }
-            hid;
-         }
-      }
       swallow { "elm.swallow.pad"; mouse;
          scale;
          desc { "default";
@@ -1635,8 +1621,12 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 1;
             aspect: 1.0 1.0;
-            rel1.to: "sizer_content";
-            rel2.to: "sizer_content";
+            rel1.to_x: "elm.swallow.pad";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 0 4;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 4;
+            align: 0.5 0.0;
             link.base: "elm,state,flip,disabled";
          }
          desc { "flip_enabled";
@@ -1657,7 +1647,7 @@ COMPRESS_ODD("elm/genlist/item_compress_odd/icon_top_text_bottom/default", "elm/
 group { "elm/genlist/tree/icon_top_text_bottom/default";
    inherit: "elm/genlist/item/icon_top_text_bottom/default";
    parts {
-      image { "sizer_content";
+      image { "elm.swallow.icon";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 4 4;
@@ -1784,6 +1774,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
                align: 0.0 0.0;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -2095,6 +2086,7 @@ group { "elm/genlist/item/message/default"; nomouse;
                text_class: "list_item";
             }
             fixed: 0 1;
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -2144,6 +2136,7 @@ group { "elm/genlist/item/message/default"; nomouse;
                align: 0.0 0.5;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -2177,6 +2170,7 @@ group { "elm/genlist/item/message/default"; nomouse;
                text_class: "list_item";
             }
             fixed: 0 1;
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";
@@ -2762,6 +2756,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
                align: 0.0 0.0;
                text_class: "list_item";
             }
+            min: 0 ICMIN;
          }
          desc { "selected";
             inherit: "default";

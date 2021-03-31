@@ -9,42 +9,23 @@ group { name: "elm/bubble/top_left/default";
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 1;
+         fixed: 1 1;
             visible: 0;
             align: 0.0 0.0;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2 {
                to_y: "elm.text";
                relative: 0.0 1.0;
                offset: 4 -5;
             }
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "bubble";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -63,6 +44,7 @@ group { name: "elm/bubble/top_left/default";
                offset: -5 4;
             }
             color: 255 255 255 255;
+            offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -81,6 +63,7 @@ group { name: "elm/bubble/top_left/default";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 4;
             color: 160 160 160 255;
+            offscale;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -91,6 +74,7 @@ group { name: "elm/bubble/top_left/default";
          }
       }
       part { name: "base"; mouse_events:  0;
+         scale: 1;
          description { state: "default" 0.0;
             color: 48 48 48 255;
             rel1 {
@@ -111,36 +95,31 @@ group { name: "elm/bubble/top_left/default";
             image.border: 0 24 12 0;
          }
       }
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "base";
             rel1.offset: 5 9;
             rel2.to: "base";
             rel2.offset: -6 -7;
+            offscale;
          }
       }
    }
    programs {
-      program {
-         signal: "elm,state,icon,visible"; source: "elm";
+      program { signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "elm,state,icon,hidden"; source: "elm";
+      program { signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "edje,state,rtl"; source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          action: STATE_SET "rtl" 0.0;
          target: "base";
       }
-      program {
-         signal: "edje,state,ltr"; source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -157,6 +136,7 @@ group { name: "elm/bubble/top_right/default";
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
@@ -169,31 +149,12 @@ group { name: "elm/bubble/top_right/default";
                relative: 1.0 1.0;
                offset: -5 -1;
             }
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "bubble";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -208,6 +169,7 @@ group { name: "elm/bubble/top_right/default";
                offset: -5 4;
             }
             color: 255 255 255 255;
+            offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -227,6 +189,7 @@ group { name: "elm/bubble/top_right/default";
             rel2.relative: 0.0 0.0;
             rel2.offset: -5 4;
             color: 160 160 160 255;
+            offscale;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -237,6 +200,7 @@ group { name: "elm/bubble/top_right/default";
          }
       }
       part { name: "base"; mouse_events:  0;
+         scale: 1;
          description { state: "default" 0.0;
             color: 48 48 48 255;
             rel1 {
@@ -257,36 +221,31 @@ group { name: "elm/bubble/top_right/default";
             image.border: 24 0 12 0;
          }
       }
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
+      part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "base";
             rel1.offset: 5 9;
             rel2.to: "base";
             rel2.offset: -6 -7;
+            offscale;
          }
       }
    }
    programs {
-      program {
-         signal: "elm,state,icon,visible"; source: "elm";
+      program { signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "elm,state,icon,hidden"; source: "elm";
+      program { signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "edje,state,rtl"; source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          action: STATE_SET "rtl" 0.0;
          target: "base";
       }
-      program {
-         signal: "edje,state,ltr"; source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -320,27 +279,7 @@ group { name: "elm/bubble/bottom_left/default";
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "bubble";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -417,25 +356,19 @@ group { name: "elm/bubble/bottom_left/default";
       }
    }
    programs {
-      program {
-         signal: "elm,state,icon,visible"; source: "elm";
+      program { signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "elm,state,icon,hidden"; source: "elm";
+      program { signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "edje,state,rtl"; source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          action: STATE_SET "rtl" 0.0;
          target: "base";
       }
-      program {
-         signal: "edje,state,ltr"; source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
@@ -452,6 +385,7 @@ group { name: "elm/bubble/bottom_right/default";
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
@@ -465,31 +399,12 @@ group { name: "elm/bubble/bottom_right/default";
                relative: 1.0 1.0;
                offset: -5 -5;
             }
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "bubble";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -507,6 +422,7 @@ group { name: "elm/bubble/bottom_right/default";
                offset: -5 -5;
             }
             color: 255 255 255 255;
+            offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -525,6 +441,7 @@ group { name: "elm/bubble/bottom_right/default";
             rel2.to_x: "elm.swallow.icon";
             rel2.relative: 0.0 1.0;
             rel2.offset: -5 -5;
+            offscale;
             color: 160 160 160 255;
             text { font: FNBD; size: 10;
                min: 1 1;
@@ -566,25 +483,19 @@ group { name: "elm/bubble/bottom_right/default";
       }
    }
    programs {
-      program {
-         signal: "elm,state,icon,visible"; source: "elm";
+      program { signal: "elm,state,icon,visible"; source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "elm,state,icon,hidden"; source: "elm";
+      program { signal: "elm,state,icon,hidden"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.icon";
-         target: "sizer_content";
       }
-      program {
-         signal: "edje,state,rtl"; source: "edje";
+      program { signal: "edje,state,rtl"; source: "edje";
          action: STATE_SET "rtl" 0.0;
          target: "base";
       }
-      program {
-         signal: "edje,state,ltr"; source: "edje";
+      program { signal: "edje,state,ltr"; source: "edje";
          action: STATE_SET "default" 0.0;
          target: "base";
       }

@@ -1,3 +1,4 @@
+
 group { name: "elm/check/base/default";
    script {
       BUTTONMODE_SCRIPT
@@ -48,8 +49,8 @@ group { name: "elm/check/base/default";
          desc { "visible"; inherit;
             fixed: 1 0;
             aspect: 1.0 1.0;
-            min: ICMIN ICMIN;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly"; inherit;
             fixed: 0 0;
@@ -58,33 +59,7 @@ group { name: "elm/check/base/default";
             rel2.offset: -5 -5;
             rel2.to_x: "";
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "base"; type: RECT;
@@ -155,6 +130,7 @@ group { name: "elm/check/base/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          desc { "visible"; inherit;
             fixed: 0 0;
@@ -368,6 +344,7 @@ group { name: "elm/check/base/toggle";
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly"; inherit;
             fixed: 0 0;
@@ -377,32 +354,7 @@ group { name: "elm/check/base/toggle";
             rel2.to_x: "tog";
             rel2.relative: 0.0 1.0;
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly"; inherit;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       spacer { name: "tog"; scale: 1;
@@ -555,6 +507,7 @@ group { name: "elm/check/base/toggle";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          desc { "visible"; inherit;
             fixed: 0 0;

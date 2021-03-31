@@ -114,6 +114,7 @@ group { name: "efl/button";
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly"; inherit;
             fixed: 0 0;
@@ -121,40 +122,12 @@ group { name: "efl/button";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "efl.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly"; inherit;
-            fixed: 0 0;
-            rel.to: "efl.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       text { "efl.text"; nomouse; required;
          scale: 1;
          desc { "default";
-            fixed: 0 0;
             color: 192 192 192 255;
             rel1.offset: 0 6;
             rel1.relative: 1.0 0.0;
@@ -166,16 +139,15 @@ group { name: "efl/button";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          desc { "visible"; inherit;
-            fixed: 0 0;
             rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "pressed_visible"; inherit;
-            fixed: 0 0;
             color: 255 255 255 255;
             rel1.offset: 6 6;
             text.min: 1 1;
@@ -183,20 +155,17 @@ group { name: "efl/button";
             visible: 1;
          }
          desc { "textonly"; inherit;
-            fixed: 0 0;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "pressed_textonly"; inherit;
-            fixed: 0 0;
             color: 255 255 255 255;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_visible"; inherit;
-            fixed: 0 0;
             color: 96 96 96 255;
             rel1.offset: 6 6;
             text.min: 1 1;
@@ -204,7 +173,6 @@ group { name: "efl/button";
             visible: 1;
          }
          desc { "disabled_textonly"; inherit;
-            fixed: 0 0;
             color: 96 96 96 255;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -296,7 +264,6 @@ group { name: "efl/button:anchor";
          if (m1 == (ICON | LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                if (!p) {
                   set_state(PART:"efl.text", "visible", 0.0);
                } else {
@@ -306,7 +273,6 @@ group { name: "efl/button:anchor";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "visible", 0.0);
-               set_state(PART:"sizer_content", "visible", 0.0);
                set_state(PART:"efl.text", "disabled_visible", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -314,13 +280,11 @@ group { name: "efl/button:anchor";
          } else if (m1 == (ICON)) {
             if (!d) {
                set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "icononly", 0.0);
-               set_state(PART:"sizer_content", "icononly", 0.0);
                set_state(PART:"efl.text", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -328,7 +292,6 @@ group { name: "efl/button:anchor";
          } else if (m1 == (LABEL)) {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                if (!p) {
                   set_state(PART:"efl.text", "textonly", 0.0);
                } else {
@@ -338,7 +301,6 @@ group { name: "efl/button:anchor";
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"efl.text", "disabled_textonly", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
@@ -346,12 +308,10 @@ group { name: "efl/button:anchor";
          } else {
             if (!d) {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
             } else {
                set_state(PART:"efl.content", "default", 0.0);
-               set_state(PART:"sizer_content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
             }
@@ -408,6 +368,7 @@ group { name: "efl/button:anchor";
             fixed: 1 0;
             aspect: 1.0 1.0;
             visible: 1;
+            min: ICMIN ICMIN;
          }
          desc { "icononly";
             inherit: "default";
@@ -416,34 +377,7 @@ group { name: "efl/button:anchor";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
             visible: 1;
-         }
-      }
-      text { "sizer_content"; nomouse;
-         scale: 1;
-         desc { "default";
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "button_text";
-            }
-         }
-         desc { "visible"; inherit;
-            rel.to: "efl.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-         desc { "icononly";  inherit;
-            fixed: 0 0;
-            rel.to: "efl.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       text { "efl.text"; nomouse; required;
@@ -461,6 +395,7 @@ group { name: "efl/button:anchor";
                min: 0 0;
             }
             visible: 0;
+            min: 0 ICMIN;
          }
          desc { "visible";
             inherit: "default";
@@ -476,7 +411,6 @@ group { name: "efl/button:anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
          desc { "textonly";
             inherit: "default";
@@ -491,7 +425,6 @@ group { name: "efl/button:anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
-            fixed: 0 0;
          }
          desc { "disabled_visible";
             inherit: "default";

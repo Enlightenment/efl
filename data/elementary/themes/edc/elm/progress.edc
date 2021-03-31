@@ -19,11 +19,9 @@ group { name: "elm/progressbar/horizontal/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.content", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
             set_state(PART:"bg", "iclabel", 0.0);
          } else {
             set_state(PART:"elm.swallow.content", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
             if (l) {
               set_state(PART:"bg", "iclabel", 0.0);
             }
@@ -87,26 +85,7 @@ group { name: "elm/progressbar/horizontal/default";
 //            aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel1.offset: 4 4;
             rel2.offset: 4 -5;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "progressbar_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -128,6 +107,7 @@ group { name: "elm/progressbar/horizontal/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -387,11 +367,9 @@ group { name: "elm/progressbar/vertical/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.content", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
             set_state(PART:"bg", "iclabel", 0.0);
          } else {
             set_state(PART:"elm.swallow.content", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
             if (l) {
                set_state(PART:"bg", "iclabel", 0.0);
             }
@@ -456,28 +434,7 @@ group { name: "elm/progressbar/vertical/default";
 //            aspect: 1.0 1.0; aspect_preference: HORIZONTAL;
             rel1.offset: 4 4;
             rel2.offset: -5 4;
-         }
-      }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 0 0;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "progressbar_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
+            min: ICMIN ICMIN;
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
@@ -499,6 +456,7 @@ group { name: "elm/progressbar/vertical/default";
             }
             visible: 0;
             offscale;
+            min: 0 ICMIN;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
