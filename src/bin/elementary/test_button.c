@@ -147,6 +147,72 @@ test_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "overlay");
+   elm_object_text_set(bt, "Overlay style");
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)77);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)77);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "overlay");
+   elm_object_part_content_set(bt, "icon", ic);
+   elm_object_text_set(bt, "Overlay style");
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)77);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)77);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "overlay");
+   elm_object_part_content_set(bt, "icon", ic);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)77);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)77);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "blank");
+   elm_object_text_set(bt, "Blank style");
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)88);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)88);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "blank");
+   elm_object_part_content_set(bt, "icon", ic);
+   elm_object_text_set(bt, "Blank style");
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)88);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)88);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   bt = elm_button_add(win);
+   elm_object_style_set(bt, "blank");
+   elm_object_part_content_set(bt, "icon", ic);
+   evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)88);
+   evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)88);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);

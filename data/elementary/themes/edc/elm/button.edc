@@ -618,6 +618,68 @@ group { name: "elm/button/base/anchor";
    }
 }
 
+group { name: "elm/button/base/blank";
+   inherit: "elm/button/base/default";
+   parts {
+      part { name: "shadow";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "pressed" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "base";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "pressed" 0.0;
+            color: 0 0 0 0;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+      }
+   }
+}
+
+group { name: "elm/button/base/overlay";
+   inherit: "elm/button/base/default";
+   parts {
+      part { name: "shadow";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "pressed" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "base";
+         description { state: "default" 0.0;
+            color: 0 0 0 64;
+            visible: 1;
+         }
+         description { state: "pressed" 0.0;
+            color: 0 0 0 192;
+            visible: 1;
+         }
+         description { state: "disabled" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+      }
+   }
+}
+
 group { name: "elm/button/base/colorselector/left/default";
    inherit: "elm/button/base/default";
    parts {
