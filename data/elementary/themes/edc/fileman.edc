@@ -1653,8 +1653,8 @@ group { name: "e/modules/efm_navigation/pathbar_scrollframe";
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
-            rel1.offset: -50 -50;
-            rel2.offset: 49 49;
+            rel1.offset: -0 -50;
+            rel2.offset: -1 49;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
