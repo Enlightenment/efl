@@ -315,8 +315,9 @@ static void
 _process_events(Elput_Manager *em)
 {
    struct libinput_event *event;
-   Elput_Input *ei = &em->input;
+   Elput_Input *ei;
 
+   ei = &em->input;
    while ((ei->lib) && (event = libinput_get_event(ei->lib)))
      {
         _process_event(em, event);
@@ -342,8 +343,9 @@ _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 static void
 _elput_input_init_cancel(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
-   Elput_Manager *manager = data;
+   Elput_Manager *manager;
 
+   manager = data;
    manager->input.thread = NULL;
    if (manager->input.current_pending)
      {
@@ -358,8 +360,9 @@ _elput_input_init_cancel(void *data, Ecore_Thread *eth EINA_UNUSED)
 static void
 _elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
-   Elput_Manager *manager = data;
+   Elput_Manager *manager;
 
+   manager = data;
    manager->input.thread = NULL;
    if (!manager->input.lib) return;
 
@@ -389,8 +392,9 @@ _elput_input_init_end(void *data, Ecore_Thread *eth EINA_UNUSED)
 static void
 _elput_input_init_notify(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, void *msg_data)
 {
-   Elput_Async_Open *ao = msg_data;
+   Elput_Async_Open *ao;
 
+   ao = msg_data;
    ao->manager->interface->open_async(ao->manager, ao->path, ao->flags);
    free(ao->path);
    free(ao);
@@ -399,9 +403,10 @@ _elput_input_init_notify(void *data EINA_UNUSED, Ecore_Thread *eth EINA_UNUSED, 
 static void
 _elput_input_init_thread(void *data, Ecore_Thread *eth EINA_UNUSED)
 {
-   Elput_Manager *manager = data;
+   Elput_Manager *manager;
    struct udev *udev;
 
+   manager = data;
    udev = udev_new();
 
    manager->input.lib =

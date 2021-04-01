@@ -56,6 +56,7 @@ extern int _elput_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_elput_log_dom, __VA_ARGS__)
 #endif
+
 typedef struct _Elput_Interface
 {
    Eina_Bool (*connect)(Elput_Manager **manager, const char *seat, unsigned int tty);
@@ -246,11 +247,12 @@ struct _Elput_Device
    Eina_Bool invert_y : 1;
 };
 
-struct _Elput_Swipe_Gesture {
-  double dx, dy;
-  int finger_count;
-  int window;
-  Elput_Device *device;
+struct _Elput_Swipe_Gesture
+{
+   double dx, dy;
+   int finger_count;
+   int window;
+   Elput_Device *device;
 };
 
 struct _Elput_Manager

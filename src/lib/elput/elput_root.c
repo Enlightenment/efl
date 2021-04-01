@@ -12,11 +12,15 @@
 static Eina_Bool
 _user_part_of_input(void)
 {
-   uid_t user = getuid();
-   struct passwd *user_pw = getpwuid(user);
+   uid_t user;
+   struct passwd *user_pw;
    gid_t *gids = NULL;
    int number_of_groups = 0;
-   struct group *input_group = getgrnam("input");
+   struct group *input_group;
+
+   user = getuid();
+   user_pw = getpwuid(user);
+   input_group = getgrnam("input");
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(user_pw, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(input_group, EINA_FALSE);
@@ -104,9 +108,9 @@ err:
 static void
 _root_open_async(Elput_Manager *em, const char *path, int flags)
 {
-   int fd = _root_open(em, path, flags);
-   int ret;
+   int fd, ret;
 
+   fd = _root_open(em, path, flags);
    while (1)
      {
         ret = write(em->input.pipe, &fd, sizeof(int));
