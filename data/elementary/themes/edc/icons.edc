@@ -1,6 +1,6 @@
 // regular icons
 #define ICON(_NAME, _ICON) \
-   group { name: "e/icons/"_NAME; \
+   group { name: "e/icons/"_NAME; min: ICMIN ICMIN; \
       parts { \
          part { name: "icon/"_NAME; mouse_events: 0; \
             description { state: "default" 0.0; \
@@ -150,7 +150,7 @@ ICON("gadgets",  "i-gadgets")
 
 // mono color default fg color icons
 #define ICON(_NAME, _ICON) \
-   group { name: "e/icons/"_NAME; \
+   group { name: "e/icons/"_NAME; min: ICMIN ICMIN; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
             description { state: "default" 0.0; \
@@ -217,7 +217,7 @@ ICON("preferences-position-right-bottom", "i-shelf-rb")
 
 // mono border action icons
 #define ICON(_NAME, _ICON) \
-   group { name: "e/widgets/border/default/"_NAME; \
+   group { name: "e/widgets/border/default/"_NAME; min: ICMIN ICMIN; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
             description { state: "default" 0.0; \
@@ -257,7 +257,7 @@ ICON("sendto", "i-sendto")
 
 // mime icons
 #define ICON(_NAME, _ICON) \
-   group { name: "e/icons/fileman/mime/"_NAME; \
+   group { name: "e/icons/fileman/mime/"_NAME; min: ICMIN ICMIN; \
       alias: "e/icons/mimetypes/"_NAME; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
@@ -529,7 +529,7 @@ ICON("application/x-partial-download", "i-download")
 // elm icons
 // mono color default fg color icons
 #define ICON(_NAME, _ICON) \
-   group { name: "elm/icon/"_NAME"/default"; \
+   group { name: "elm/icon/"_NAME"/default"; min: ICMIN ICMIN; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
             description { state: "default" 0.0; \
@@ -717,7 +717,7 @@ ICON("non-starred", "i-star-off")
 
 // regular icons
 #define ICON(_NAME, _ICON) \
-   group { name: "elm/icon/"_NAME"/default"; \
+   group { name: "elm/icon/"_NAME"/default"; min: ICMIN ICMIN; \
       parts { \
          part { name: "icon/"_NAME; mouse_events: 0; \
             description { state: "default" 0.0; \
@@ -1033,7 +1033,7 @@ ICON("emblem-synchronizing", "i-emblem-synchronizing")
 
 // flags
 #define FLAG(_NAME) \
-   group { name: "elm/icon/"_NAME"/default"; \
+   group { name: "elm/icon/"_NAME"/default"; min: ICMIN ICMIN; \
       images.image: "flags/"##_NAME##".png" COMP; \
       parts { \
          part { name: "icon"; mouse_events: 0; \
