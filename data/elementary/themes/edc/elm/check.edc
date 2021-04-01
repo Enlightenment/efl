@@ -87,7 +87,6 @@ group { name: "elm/check/base/default";
          clip_to: "ck_selected";
          scale: 1;
          description { state: "default" 0.0;
-            fixed: 0 0;
             rel.to: "base";
             image.normal: "i-check";
             min: 15 15;
