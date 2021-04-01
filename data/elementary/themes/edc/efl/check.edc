@@ -224,7 +224,7 @@ group { name: "efl/check";
       }
    }
    programs {
-      EFL_UI_CLICKABLE_PART_BIND("event")
+      EFL_UI_CLICKABLE_PART_BIND(event)
       program { signal: "mouse,down,1"; source: "event";
          script {
             new buf[32]; new Float:val;
@@ -248,7 +248,6 @@ group { name: "efl/check";
          action: PLAY_SAMPLE "wood-tap2" 1.0 INPUT;
       }
       program { signal: "mouse,down,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,press" "efl";
          after: "button_click_anim";
       }
       program { signal: "mouse,down,1"; source: "event";
