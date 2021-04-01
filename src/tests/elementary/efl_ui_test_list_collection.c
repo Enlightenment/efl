@@ -64,9 +64,9 @@ EFL_START_TEST(placement_test_only_items)
      {
         Eina_Rect r = efl_gfx_entity_geometry_get(item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+(i+2)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, (i+2)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
      }
 
@@ -76,9 +76,9 @@ EFL_START_TEST(placement_test_only_items)
      {
         Eina_Rect r = efl_gfx_entity_geometry_get(item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+i*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, i*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
      }
 
@@ -127,9 +127,9 @@ EFL_START_TEST(placement_test_group)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+(i+1)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, 0+(i+1)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
      }
 
@@ -140,9 +140,9 @@ EFL_START_TEST(placement_test_group)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+i*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, i*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
      }
 
@@ -151,18 +151,18 @@ EFL_START_TEST(placement_test_group)
 
    r = efl_gfx_entity_geometry_get(core_item[0]);
 
-   ck_assert_int_eq(r.x, 1);
-   ck_assert_int_eq(r.y, 1);
-   ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+   ck_assert_int_eq(r.x, 0);
+   ck_assert_int_eq(r.y, 0);
+   ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
    ck_assert_int_eq(r.h, 40);
 
    for (int i = 1; i < 4; ++i)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 22+(i - 1)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, 20+(i - 1)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
      }
 
@@ -171,18 +171,18 @@ EFL_START_TEST(placement_test_group)
 
    r = efl_gfx_entity_geometry_get(core_item[0]);
 
-   ck_assert_int_eq(r.x, 1);
-   ck_assert_int_eq(r.y, 1);
-   ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+   ck_assert_int_eq(r.x, 0);
+   ck_assert_int_eq(r.y, 0);
+   ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
    ck_assert_int_eq(r.h, 40);
 
    for (int i = 2; i < 4; ++i)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 2+(i-2)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, (i-2)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
      }
 
@@ -237,9 +237,9 @@ EFL_START_TEST(placement_test_group_crazy)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+(i+1)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, (i+1)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
         ck_assert_int_eq(efl_gfx_entity_visible_get(core_item[i]), EINA_TRUE);
      }
@@ -251,9 +251,9 @@ EFL_START_TEST(placement_test_group_crazy)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+i*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, i*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
         ck_assert_int_eq(efl_gfx_entity_visible_get(core_item[i]), EINA_TRUE);
      }
@@ -263,9 +263,9 @@ EFL_START_TEST(placement_test_group_crazy)
 
    r = efl_gfx_entity_geometry_get(core_item[0]);
 
-   ck_assert_int_eq(r.x, 1);
-   ck_assert_int_eq(r.y, 1);
-   ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+   ck_assert_int_eq(r.x, 0);
+   ck_assert_int_eq(r.y, 0);
+   ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
    ck_assert_int_eq(r.h, 40);
    ck_assert_int_eq(efl_gfx_entity_visible_get(core_item[0]), EINA_TRUE);
 
@@ -273,9 +273,9 @@ EFL_START_TEST(placement_test_group_crazy)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 21+(i - 1)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, 20+(i - 1)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
         ck_assert_int_eq(efl_gfx_entity_visible_get(core_item[i]), EINA_TRUE);
      }
@@ -285,9 +285,9 @@ EFL_START_TEST(placement_test_group_crazy)
 
    r = efl_gfx_entity_geometry_get(core_item[0]);
 
-   ck_assert_int_eq(r.x, 1);
-   ck_assert_int_eq(r.y, 1);
-   ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+   ck_assert_int_eq(r.x, 0);
+   ck_assert_int_eq(r.y, 0);
+   ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
    ck_assert_int_eq(r.h, 40);
    ck_assert_int_eq(efl_gfx_entity_visible_get(core_item[0]), EINA_TRUE);
 
@@ -295,9 +295,9 @@ EFL_START_TEST(placement_test_group_crazy)
      {
         r = efl_gfx_entity_geometry_get(core_item[i]);
 
-        ck_assert_int_eq(r.x, 1);
-        ck_assert_int_eq(r.y, 1+(i-2)*40);
-        ck_assert_int_eq(r.w, 183); // 200 - 2px border - X for the width of the scrollbar.
+        ck_assert_int_eq(r.x, 0);
+        ck_assert_int_eq(r.y, (i-2)*40);
+        ck_assert_int_eq(r.w, 200); // 200 - 2px border - X for the width of the scrollbar.
         ck_assert_int_eq(r.h, 40);
         ck_assert_int_eq(efl_gfx_entity_visible_get(core_item[i]), EINA_TRUE);
      }
