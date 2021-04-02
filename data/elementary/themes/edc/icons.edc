@@ -590,6 +590,8 @@ ICON("user-trash", "i-trash")
 
 ICON("dialog-info", "i-info")
 
+ICON("menu", "i-hamburger-menu")
+
 ICON("media_player/info", "i-info")
 ICON("media_player/info/default", "i-info")
 ICON("media_player/prev", "i-media-prev")
