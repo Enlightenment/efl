@@ -84,6 +84,7 @@ static const char *_shader_flags[SHADER_FLAG_COUNT] = {
 };
 
 static Eina_Bool compiler_released = EINA_FALSE;
+static Eina_Bool _do_dither = EINA_TRUE;
 
 static void
 gl_compile_link_error(GLuint target, const char *action, Eina_Bool is_shader)
@@ -553,17 +554,18 @@ evas_gl_common_shader_precompile_list(Evas_GL_Shared *shared)
 {
    int bgra, mask, sam, masksam, img, nomul, afill, yuv;
    Eina_List *li = NULL;
+   unsigned int baseflags = 0;
 
    if (!shared) return NULL;
-
+   if (_do_dither) baseflags |= BASEFLAG;
    // rect
-   li = eina_list_append(li, P(BASEFLAG));
+   li = eina_list_append(li, P(baseflags));
 
    // text
    for (mask = 0; mask <= 1; mask++)
      for (masksam = SHD_SAM11; masksam < (mask ? SHD_SAM_LAST : 1); masksam++)
        {
-          int           flags  = BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_ALPHA;
+          int           flags  = baseflags | SHADER_FLAG_TEX | SHADER_FLAG_ALPHA;
           if (mask)     flags |= SHADER_FLAG_MASK;
           if (masksam)  flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
           li = eina_list_append(li, P(flags));
@@ -578,7 +580,7 @@ evas_gl_common_shader_precompile_list(Evas_GL_Shared *shared)
              for (nomul = 0; nomul <= 1; nomul++)
                for (afill = 0; afill <= (mask ? 0 : 1); afill++)
                  {
-                    int           flags  = BASEFLAG | SHADER_FLAG_TEX;
+                    int           flags  = baseflags | SHADER_FLAG_TEX;
                     if (mask)     flags |= SHADER_FLAG_MASK;
                     if (masksam)  flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
                     if (sam)      flags |= (1 << (SHADER_FLAG_SAM_BITSHIFT + sam - 1));
@@ -595,7 +597,7 @@ evas_gl_common_shader_precompile_list(Evas_GL_Shared *shared)
        for (masksam = SHD_SAM11; masksam < (mask ? SHD_SAM_LAST : 1); masksam++)
          for (nomul = 0; nomul <= 1; nomul++)
            {
-              int           flags  = BASEFLAG | SHADER_FLAG_TEX | yuv;
+              int           flags  = baseflags | SHADER_FLAG_TEX | yuv;
               if (mask)     flags |= SHADER_FLAG_MASK;
               if (masksam)  flags |= (1 << (SHADER_FLAG_MASKSAM_BITSHIFT + masksam - 1));
               if (yuv == SHADER_FLAG_YUV_709) flags |= SHADER_FLAG_YUV;
@@ -666,15 +668,25 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
 {
    /* most popular shaders */
    const int BGRA = (shared->info.bgra ? SHADER_FLAG_BGRA : 0);
-   const int autoload[] = {
-      /* rect */ BASEFLAG,
-      /* text */ BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_ALPHA,
-      /* img1 */ BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_IMG | BGRA,
-      /* img2 */ BASEFLAG | SHADER_FLAG_TEX | SHADER_FLAG_IMG | SHADER_FLAG_NOMUL | BGRA,
+   unsigned int autoload[] = {
+      /* rect */ 0,
+      /* text */ 0 | SHADER_FLAG_TEX | SHADER_FLAG_ALPHA,
+      /* img1 */ 0 | SHADER_FLAG_TEX | SHADER_FLAG_IMG | BGRA,
+      /* img2 */ 0 | SHADER_FLAG_TEX | SHADER_FLAG_IMG | SHADER_FLAG_NOMUL | BGRA,
    };
    Evas_GL_Program *p;
    unsigned i;
 
+   if (getenv("EVAS_GL_RENDER_DISABLE_DITHER"))
+     _do_dither = EINA_FALSE;
+
+   if (_do_dither)
+     {
+        autoload[0] |= BASEFLAG;
+        autoload[1] |= BASEFLAG;
+        autoload[2] |= BASEFLAG;
+        autoload[3] |= BASEFLAG;
+     }
    shared->shaders_hash = eina_hash_int32_new(_shaders_hash_free_cb);
    if (_evas_gl_common_shader_binary_init(shared))
      {
@@ -770,8 +782,9 @@ evas_gl_common_shader_flags_get(Evas_GL_Shared *shared, Shader_Type type,
 {
    Shader_Sampling sam = SHD_SAM11, masksam = SHD_SAM11;
    int nomul = 1, bgra = 0, k;
-   unsigned int flags = BASEFLAG;
+   unsigned int flags = 0;
 
+   if (_do_dither) flags |= BASEFLAG;
    // image downscale sampling
    if (smooth && ((type == SHD_IMAGE) || (type == SHD_IMAGENATIVE)))
      {
