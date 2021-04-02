@@ -2,7 +2,7 @@ group { name: "elm/notify/block_events/popup/default";
    inherit: "elm/notify/block_events/default";
    parts.part { "block_events";
       desc { "visible";
-         color: 0 0 0 128; /* FIXME: color_class */
+         color: 0 0 0 128;
       }
    }
 }

@@ -30,13 +30,13 @@ group { name: "elm/radio/base/default";
       }
       rect { "icon_clip";
          desc { "default";
-            color_class: "button_icon";
+            color: 255 255 255 255;
          }
          desc { "pressed"; inherit;
-            color_class: "button_icon_pressed";
+            color: 255 255 255 255;
          }
          desc { "disabled"; inherit;
-            color_class: "button_icon_disabled";
+            color: 255 255 255 64;
          }
       }
       swallow { "elm.swallow.content"; nomouse;

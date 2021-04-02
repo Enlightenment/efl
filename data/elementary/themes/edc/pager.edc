@@ -72,7 +72,7 @@ group { name: "e/modules/pager/desk";
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          desc { "default";
             rel.to: "e.swallow.content";
-            color3: 255 255 255 255;
+            color: FN_COL_DEFAULT;
             text { font: "Sans"; size: 10;
                text_class: "module_small";
                align: 0.5 0.5;
@@ -80,7 +80,6 @@ group { name: "e/modules/pager/desk";
             visible: 0;
          }
          desc { "active"; inherit;
-            color_class: "module_label";
             visible: 1;
          }
       }

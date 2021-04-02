@@ -541,23 +541,23 @@ group { name: "elm/entry/anchor/default";
 group { name: "elm/entry/base/default";
    styles {
       style { name: "entry_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=word text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=word text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style";
-         base: "font="FN" font_size=10 color=#707070 wrap=word text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=word text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_disabled_style";
-         base: "font="FN" font_size=10 color=#707070 text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
-         base: "font="FN" font_size=10 color=#505050 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -667,15 +667,15 @@ group { name: "elm/entry/base-mixedwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=mixed text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=mixed text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#707070 wrap=mixed text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=mixed text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#505050 wrap=mixed text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=mixed text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -708,15 +708,15 @@ group { name: "elm/entry/base-charwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_charwrap";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=char text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=char text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_charwrap";
-         base: "font="FN" font_size=10 color=#707070 wrap=char text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=char text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_charwrap";
-         base: "font="FN" font_size=10 color=#505050 wrap=char text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=char text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -782,15 +782,15 @@ group { name: "elm/entry/base-single/default";
    alias: "elm/entry/base-single/combobox_vertical/entry";
    styles {
       style { name: "entry_single_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 wrap=none text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_disabled_style";
-         base: "font="FN" font_size=10 color=#707070 wrap=none text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#707070 wrap=none text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_guide_style";
-         base: "font="FN" font_size=10 color=#505050 wrap=none text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=#505050 wrap=none text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -830,7 +830,7 @@ group { name: "elm/entry/base-single/spinner/default";
    inherit: "elm/entry/base-single/default";
    styles {
       style { name: "entry_single_spinner_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 align=center wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color=#a0a0a0 align=center wrap=none text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
    }

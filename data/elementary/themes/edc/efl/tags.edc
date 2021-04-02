@@ -7,7 +7,7 @@ group { "efl/tags";
       rect { "bg";
          scale;
          desc { "default";
-            color_class: "tags_bg";
+            color: 0 0 0 0;
          }
       }
       swallow { "efl.background";
@@ -158,7 +158,7 @@ group { "efl/tags/btn";
          nomouse;
          scale;
          desc { "default";
-            color_class: "tags_item_text";
+            color: FN_COL_DEFAULT;
             text { style: "efl_tags_textblock_style";
                min: 1 1;
                ellipsis: -1;

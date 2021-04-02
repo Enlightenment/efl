@@ -591,7 +591,6 @@ group { name: "e/modules/everything/thumbview/main/scrollframe";
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
             color: 0 0 0 0;
-            color_class: "scroller_bg";
          }
       }
       part { name: "clipper"; type: RECT;

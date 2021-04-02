@@ -148,7 +148,6 @@ group { name: "elm/naviframe/item/basic/default";
       part { name: "title2"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "border_title_active";
             rel1.to_y: "title1";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 0;

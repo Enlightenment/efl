@@ -176,13 +176,10 @@ group { name: "e/widgets/ilist_odd";
       }
       part { name: "e.text.label";
          description { state: "default" 0.0;
-//            color_class: "ilist_item_odd";
          }
          description { state: "selected" 0.0;
-//            color_class: "ilist_item_odd";
          }
          description { state: "disabled" 0.0;
-//            color_class: "ilist_item_odd";
          }
       }
    }

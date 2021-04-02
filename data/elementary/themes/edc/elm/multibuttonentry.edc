@@ -5,7 +5,7 @@ group { name: "elm/multibuttonentry/base/default";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "multibuttonentry_bg";
+            color: 0 0 0 0;
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;

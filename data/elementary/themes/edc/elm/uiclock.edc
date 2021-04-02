@@ -35,7 +35,6 @@
    part { \
       name: "elm.separator"#_pos; type: TEXT; \
       scale: 1; \
-      effect: SHADOW BOTTOM; \
       clip_to: "disclip"; \
       description { state: "default" 0.0; \
          visible: 0; \
@@ -50,7 +49,7 @@
             relative: 1.0 1.0; \
             to: "elm.field"#_after; \
          } \
-         color_class: "datetime_separator_text"; \
+         color: FN_COL_DEFAULT; \
          text { \
             font: "Sans"; size: 10; \
             min: 1 0; \
@@ -68,13 +67,12 @@
    part { \
       name: "separator"#_pos"d"; type: TEXT; \
       scale: 1; \
-      effect: SHADOW BOTTOM; \
       clip_to: "disclip2"; \
       description { state: "default" 0.0; \
          visible: 0; \
          rel1.to: "elm.separator"#_pos; \
          rel2.to: "elm.separator"#_pos; \
-         color_class: "datetime_separator_text_disabled"; \
+         color: FN_COL_DISABLE; \
          text { \
             text_source: "elm.separator"#_pos; \
             font: "Sans"; size: 10; \
@@ -104,7 +102,7 @@ group { name: "elm/uiclock/base/default";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "datetime_bg";
+            color: 0 0 0 0;
          }
       }
       part { name: "clip"; type: RECT;

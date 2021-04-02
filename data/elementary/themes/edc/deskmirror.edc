@@ -275,7 +275,7 @@ group { name: "e/deskmirror/frame/noresize";
       }
       part { name: "bottom"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "border_bottom";
+            color: 64 64 64 255;
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -1;
             rel2.relative: 1.0 1.0;
@@ -298,7 +298,7 @@ group { name: "e/deskmirror/frame/noresize_dialog";
       }
       part { name: "bottom"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "border_bottom";
+            color: 64 64 64 255;
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -1;
             rel2.relative: 1.0 1.0;

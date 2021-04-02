@@ -6,7 +6,7 @@ group { name: "elm/notify/block_events/default";
             color: 0 0 0 0;
          }
          desc { "visible";
-            color: 0 0 0 128; /* FIXME: color_class */
+            color: 0 0 0 128;
          }
       }
       program { signal: "mouse,clicked,1"; source: "block_events";

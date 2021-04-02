@@ -16,7 +16,6 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
       rect { "list_bg";
          desc {
             color: 64 64 64 255;
-            color_class: "dialog_base";
             rel1.to: "elm.swallow.list";
             rel2.to: "elm.swallow.list";
          }
@@ -93,14 +92,12 @@ group { "elm/layout/colorclass/base"; program_source: "elm"; nobroadcast;
       rect { "text_bg";
          desc { hid;
             color: 64 64 64 255;
-            color_class: "dialog_base";
             fixed: 1 1;
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
          }
          desc { "vis";
             color: 64 64 64 255;
-            color_class: "dialog_base";
             rel1.to: "elm.swallow.list";
             rel2.to: "elm.swallow.list";
          }

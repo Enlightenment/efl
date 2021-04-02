@@ -104,9 +104,7 @@ group { "efl/border"; data.item: "version" "123";
          required; // @since 1.19
          clip: "bg_clip";
          desc { "default";
-//            color: 64 64 64 255;
-            color: 255 255 255 255;
-            color_class: "elm/win/background"; // FIXME: color_class naming scheme
+            color: 64 64 64 255;
             rel.to: "efl.spacer.content";
             visible: 0;
          }
@@ -138,7 +136,7 @@ group { "efl/border"; data.item: "version" "123";
       /* main menu */
       rect { "menu_bg";
          desc { "default";
-            color: 64 64 64 255; // FIXME: color_class
+            color: 64 64 64 255;
             align: 0.5 0.0;
             rel.to: "efl.menu";
             fixed: 1 1;
@@ -204,8 +202,7 @@ group { "efl/border"; data.item: "version" "123";
          }
          desc { "visible";
             inherit: "default";
-            color_class: "elm/win/blocker";
-            color: 255 255 255 255;
+            color: 32 32 32 255;
             vis;
          }
       }

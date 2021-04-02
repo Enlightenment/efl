@@ -137,7 +137,7 @@ group { name: "elm/border/base/default";
       /* main menu */
       rect { "menu_bg";
          desc { "default";
-            color: 64 64 64 255; // FIXME: color_class
+            color: 64 64 64 255;
             align: 0.5 0.0;
             rel.to: "elm.swallow.menu";
             fixed: 1 1;
@@ -201,8 +201,7 @@ group { name: "elm/border/base/default";
          }
          desc { "visible";
             inherit: "default";
-            color_class: "elm/win/blocker";
-            color: 255 255 255 255;
+            color: 32 32 32 255;
             vis;
          }
       }
