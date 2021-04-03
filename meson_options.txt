@@ -46,6 +46,12 @@ option('drm',
   description : 'DRM/KMS advanced framebuffer/console support in efl'
 )
 
+option('input',
+  type : 'boolean',
+  value : true,
+  description : 'libinput abstraction in efl'
+)
+
 option('cocoa',
   type : 'boolean',
   value : false,

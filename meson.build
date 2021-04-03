@@ -330,7 +330,7 @@ subprojects = [
   ['ecore_ipc'        ,[]                    , false,  true, false,  false,  false,     false,  true, ['eina'], []],
   ['ecore_buffer'     ,['buffer']            ,  true,  true,  true,  false,  false,     false,  true, ['eina'], []],
   ['ector'            ,[]                    , false,  true, false,  false,   true,     false,  true, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
-  ['elput'            ,['drm']               , false,  true, false,  false,   true,     false,  true, ['eina', 'eldbus'], []],
+  ['elput'            ,['input']             , false,  true, false,  false,   true,     false,  true, ['eina', 'eldbus'], []],
   ['ecore_drm2'       ,['drm']               , false,  true, false,  false,  false,     false,  true, ['ecore'], ['libdrm']],
   ['ecore_cocoa'      ,['cocoa']             , false,  true, false,  false,  false,     false,  true, ['eina'], []],
   ['evas'             ,[]                    ,  true,  true, false,  false,   true,      true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
