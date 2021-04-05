@@ -2389,6 +2389,9 @@ _elm_code_widget_theme_refresh(Eo *obj, Elm_Code_Widget_Data *pd)
    edje_object_color_class_get(edje, "elm/code/status/default", &r, &g, &b, &a,
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+   r = (r * a) / 255;
+   g = (g * a) / 255;
+   b = (b * a) / 255;
    fade = (double) pd->alpha / 255;
    evas_object_color_set(pd->background, r * fade, g * fade, b * fade, a * fade);
 
