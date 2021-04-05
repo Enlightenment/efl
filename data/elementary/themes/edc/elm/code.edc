@@ -44,7 +44,7 @@ color_classes {
     color_class { name: "elm/code/token/added"; color: 54 255 54 255; }
     color_class { name: "elm/code/token/removed"; color: 255 54 54 255; }
     color_class { name: "elm/code/token/changed"; color: 54 54 255 255; }
-    color_class { name: "elm/code/token/match"; color: 187 187 51 255; }
+    color_class { name: "elm/code/token/match"; color: 187 187 51 128; }
 
     color_class { name: "elm/code/widget/color/selection"; color: 51 153 255 128; }
     color_class { name: "elm/code/widget/color/gutter/bg"; color: 64 64 64 255; }
