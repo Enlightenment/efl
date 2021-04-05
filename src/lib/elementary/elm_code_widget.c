@@ -1951,6 +1951,9 @@ _elm_code_widget_setup_palette_item(Evas_Object *grid, int type, const char *nam
                                     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL))
      return;
 
+   r = (r * a) / 255;
+   g = (g * a) / 255;
+   b = (b * a) / 255;
    evas_object_textgrid_palette_set(grid, EVAS_TEXTGRID_PALETTE_STANDARD, type,
                                     r * fade, g * fade, b * fade, a * fade);
 }
