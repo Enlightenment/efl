@@ -715,6 +715,8 @@ ICON("network-wireless-signal-none", "i-net-wifi-sig-0")
 ICON("starred", "i-star")
 ICON("non-starred", "i-star-off")
 
+ICON("utilities-terminal", "i-termprompt")
+
 #undef ICON
 
 // regular icons

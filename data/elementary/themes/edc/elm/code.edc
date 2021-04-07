@@ -19,16 +19,16 @@ color_classes {
     color_class { name: "elm/code/status/default"; color: 48 48 48 255; }
     color_class { name: "elm/code/status/current"; color: 32 32 32 255; }
     color_class { name: "elm/code/status/ignored"; color: 36 36 36 255; }
-    color_class { name: "elm/code/status/note"; color: 221 119 17 255;  }
-    color_class { name: "elm/code/status/warning"; color: 221 119 17 255; }
-    color_class { name: "elm/code/status/error"; color: 204 17 17 255; }
-    color_class { name: "elm/code/status/fatal"; color: 204 17 17 255; }
+    color_class { name: "elm/code/status/note"; color: 160 80 17 255;  }
+    color_class { name: "elm/code/status/warning"; color: 160 80 17 255; }
+    color_class { name: "elm/code/status/error"; color: 160 32 17 255; }
+    color_class { name: "elm/code/status/fatal"; color: 160 32 17 255; }
     color_class { name: "elm/code/status/added"; color: 36 96 36 255; }
     color_class { name: "elm/code/status/removed"; color: 96 36 36 255; }
     color_class { name: "elm/code/status/changed"; color: 36 36 96 255; }
     color_class { name: "elm/code/status/passed"; color: 54 96 54 255; }
     color_class { name: "elm/code/status/failed"; color: 96 54 54 255; }
-    color_class { name: "elm/code/status/todo"; color: 51 85 187 255; }
+    color_class { name: "elm/code/status/todo"; color: 48 80 160 255; }
 
     color_class { name: "elm/code/token/default"; color: 160 160 160 255; }
     color_class { name: "elm/code/token/comment"; color: 255 255 255 48; }
