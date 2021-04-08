@@ -1148,6 +1148,7 @@ typedef struct _Base_Ctx {
    Eina_Promise *promise;
    Eina_Future **futures;
    unsigned int futures_len;
+   unsigned char inside_free;
 } Base_Ctx;
 
 typedef struct _All_Promise_Ctx {
@@ -1161,21 +1162,30 @@ typedef struct _Race_Promise_Ctx {
    Eina_Bool dispatching;
 } Race_Promise_Ctx;
 
-static void
+static short
 _base_ctx_clean(Base_Ctx *ctx)
 {
    unsigned int i;
-   for (i = 0; i < ctx->futures_len; i++)
+
+   ctx->inside_free++;
+   for (i = 0; i < ctx->futures_len && ctx->futures; i++)
      if (ctx->futures[i]) _eina_future_cancel(ctx->futures[i], ECANCELED);
-   free(ctx->futures);
+   //prepare against double free
+   Eina_Future **futures = ctx->futures;
+   ctx->futures = NULL;
+   if (futures)
+     free(futures);
+   ctx->inside_free--;
+   return ctx->inside_free;
 }
 
 static void
 _all_promise_ctx_free(All_Promise_Ctx *ctx)
 {
-   _base_ctx_clean(&ctx->base);
+   int depth = _base_ctx_clean(&ctx->base);
    eina_value_flush(&ctx->values);
-   free(ctx);
+   if (depth == 0)
+     free(ctx);
 }
 
 static void
@@ -1187,8 +1197,9 @@ _all_promise_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
 static void
 _race_promise_ctx_free(Race_Promise_Ctx *ctx)
 {
-   _base_ctx_clean(&ctx->base);
-   free(ctx);
+   int depth = _base_ctx_clean(&ctx->base);
+   if (depth == 0)
+     free(ctx);
 }
 
 static void
