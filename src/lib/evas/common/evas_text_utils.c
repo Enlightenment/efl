@@ -1362,8 +1362,8 @@ Eina_Bool read_byte_color_component(const char* source,char ** next,unsigned cha
  * 3. "#RGB"
  * 4. "#RGBA"
  * 5. "color names"
- * 6. "rgb(r,g,b)"
- * 7. "rgba(r,g,b,a)"
+ * 6. "rgb(0-255,0-255,0-255)"
+ * 7. "rgba(0-255,0-255,0-255,0.0-1.0)"
  * TODO (we may use specific color parser)
  * 8. "hsl(H,S,L)"
  * 9. "hsla(H,S,L,A)"
@@ -1422,7 +1422,7 @@ evas_common_format_color_parse(const char *str, int slen,
           }
         else v = EINA_FALSE;
       }
-    else if (slen <= 21)/* search for rgb(),hsv(),colorname, 20 is length of rgba(255,255,255,255) */
+    else if (slen <= 25)/* search for rgb(),hsv(),colorname, 25 is length of rgba(255,255,255,1.0) */
       {
          /*remove spaces and convert name to lowercase*/
          char color_name[0xFF] = {0};
@@ -1446,19 +1446,22 @@ evas_common_format_color_parse(const char *str, int slen,
                    *a = 0xff;
                 }
            }
-         else if ((strncmp(color_name,"rgba(",4) == 0) && color_name[slen-1] == ')'&& slen >= 13 && slen <=21) /* rgba() */
+         else if ((strncmp(color_name,"rgba(",4) == 0) && color_name[slen-1] == ')'&& slen >= 13 && slen <=25) /* rgba() */
            {
               char * p_color = &color_name[4];
 
               if (
                   (!read_byte_color_component(++p_color,&p_color,r)  || !p_color   || *p_color != ',') ||
                   (!read_byte_color_component(++p_color,&p_color,g)  || !p_color   || *p_color != ',') ||
-                  (!read_byte_color_component(++p_color,&p_color,b)  || !p_color   || *p_color != ',') ||
-                  (!read_byte_color_component(++p_color,&p_color,a)  || !p_color   || *p_color != ')')
+                  (!read_byte_color_component(++p_color,&p_color,b)  || !p_color   || *p_color != ',')
                  )
                 {
                    *r = *g = *b = *a = 0;
                    v = EINA_FALSE;
+                }
+              else
+                {
+                   *a = (unsigned char)(strtof(++p_color, NULL) * 255);
                 }
            }
          else
