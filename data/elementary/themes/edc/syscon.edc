@@ -6,31 +6,37 @@ group { name: "e/widgets/syscon/main";
          }
       }
       part { name: "e.swallow.main"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 8 8;
             rel2.offset: -9 8;
             rel2.relative: 1.0 0.0;
             align: 0.5 0.0;
             fixed: 0 1;
-        }
+            offscale;
+         }
       }
       part { name: "e.swallow.secondary"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "e.swallow.main";
             rel1.relative: 0.0 1.0;
             rel2.to: "e.swallow.main";
             align: 0.5 0.0;
             fixed: 0 1;
+            offscale;
          }
       }
       part { name: "e.swallow.extra"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "e.swallow.secondary";
             rel1.relative: 0.0 1.0;
             rel2.to: "e.swallow.secondary";
             align: 0.5 0.0;
             fixed: 0 1;
-        }
+            offscale;
+         }
       }
       part { name: "e.text.label"; type: TEXT;
          scale: 1;
@@ -49,6 +55,7 @@ group { name: "e/widgets/syscon/main";
                text_class: "button";
             }
             fixed: 1 0;
+            offscale;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -56,28 +63,27 @@ group { name: "e/widgets/syscon/main";
          }
       }
       part { name: "button"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "e.text.label";
             rel1.offset: -12 -12;
             rel2.to: "e.text.label";
             rel2.offset: 11 11;
             color: 255 255 255 0;
+            offscale;
          }
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1*"; source: "button";
+      program { signal: "mouse,down,1*"; source: "button";
          action: STATE_SET "clicked" 0.0;
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,up,1"; source: "button";
+      program { signal: "mouse,up,1"; source: "button";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,clicked,1*"; source: "button";
+      program { signal: "mouse,clicked,1*"; source: "button";
          action: SIGNAL_EMIT "e,action,close" "";
       }
    }
@@ -100,6 +106,7 @@ group { name: "e/widgets/syscon/item/button";
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          clip_to: "icon_clip";
+         scale: 1;
          description { state: "default" 0.0;
             align: 0.5 0.0;
             rel1.offset: 5 5;
@@ -107,6 +114,7 @@ group { name: "e/widgets/syscon/item/button";
             rel2.offset: -6 -6;
             rel2.to_y: "e.text.label";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            offscale;
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
@@ -123,6 +131,7 @@ group { name: "e/widgets/syscon/item/button";
                align: 0.5 0.5;
                text_class: "button";
             }
+            offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -147,6 +156,7 @@ group { name: "e/widgets/syscon/item/button";
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
             max: 99999 6;
+            offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
@@ -166,29 +176,24 @@ group { name: "e/widgets/syscon/item/button";
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          action: STATE_SET "clicked" 0.0;
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,up,1"; source: "event";
+      program { signal: "mouse,up,1"; source: "event";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
       }
-      program {
-         signal: "mouse,clicked,1*"; source: "event";
+      program { signal: "mouse,clicked,1*"; source: "event";
          action: SIGNAL_EMIT "e,action,click" "";
       }
-      program {
-         signal: "e,state,disabled"; source: "e";
+      program { signal: "e,state,disabled"; source: "e";
          action: STATE_SET "disabled" 0.0;
          target: "event";
          target: "icon_clip";
          target: "e.text.label";
       }
-      program {
-         signal: "e,state,enabled"; source: "e";
+      program { signal: "e,state,enabled"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "event";
          target: "icon_clip";
@@ -212,12 +217,14 @@ group { name: "e/widgets/syscon/item/button";
 group { name: "e/modules/syscon/button";
    parts {
       part { name: "base";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.relative: 0.1 0.1;
-            rel2.relative: 0.9 0.9;
+            rel1.relative: 0.05 0.05;
+            rel2.relative: 0.95 0.95;
             image.normal: "i-system-shutdown";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             color: 160 160 160 255;
+            offscale;
          }
          description { state: "hilight" 0.0;
             inherit: "default" 0.0;
@@ -225,33 +232,32 @@ group { name: "e/modules/syscon/button";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            rel1.relative: 0.07 0.07;
+            rel2.relative: 0.93 0.93;
+            rel1.offset: 1 1;
+            rel2.offset: -2 -2;
             color: 200 200 200 255;
          }
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "base";
+      program { signal: "mouse,down,1"; source: "base";
          action: STATE_SET "clicked" 0.0;
          target: "base";
       }
-      program {
-         signal: "mouse,up,1"; source: "base";
+      program { signal: "mouse,up,1"; source: "base";
          action: STATE_SET "hilight" 0.0;
          target: "base";
       }
-      program {
-         signal: "mouse,in"; source: "base";
+      program { signal: "mouse,in"; source: "base";
          action: STATE_SET "hilight" 0.0;
          target: "base";
       }
-      program {
-         signal: "mouse,out"; source: "base";
+      program { signal: "mouse,out"; source: "base";
          action: STATE_SET "default" 0.0;
          target: "base";
       }
-      program {
-         signal: "mouse,clicked,1*"; source: "base";
+      program { signal: "mouse,clicked,1*"; source: "base";
          action: SIGNAL_EMIT "e,action,shutdown,show" "e";
       }
    }
