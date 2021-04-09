@@ -47,6 +47,8 @@ struct _Elm_Entry_Data
    char                                 *prediction_hint;
    int                                   append_text_position;
    int                                   append_text_len;
+   int                                   append_text_chunk;
+   double                                append_text_last_time;
    /* Only for clipboard */
    const char                           *cut_sel;
    const char                           *text;

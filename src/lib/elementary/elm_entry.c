@@ -31,7 +31,8 @@
  * FIXME: This size is arbitrary, should probably choose a better size.
  * Possibly also find a way to set it to a low value for weak computers,
  * and to a big value for better computers. */
-#define ELM_ENTRY_CHUNK_SIZE 10000
+#define ELM_ENTRY_CHUNK_SIZE 100000
+#define ELM_ENTRY_CHUNK_SIZE_MAX 1000000
 #define ELM_ENTRY_DELAY_WRITE_TIME 2.0
 
 #define ELM_PRIV_ENTRY_SIGNALS(cmd) \
@@ -2982,12 +2983,18 @@ _markup_filter_cb(void *data,
      }
 }
 
+static void
+_append_wakeup_job_cb(void *data EINA_UNUSED)
+{
+}
+
 /* This function is used to insert text by chunks in jobs */
 static Eina_Bool
 _text_append_idler(void *data)
 {
    int start;
    char backup;
+   double t, tnow;
    Evas_Object *obj = (Evas_Object *)data;
 
    ELM_ENTRY_DATA_GET(obj, sd);
@@ -2998,7 +3005,13 @@ _text_append_idler(void *data)
    sd->changed = EINA_TRUE;
 
    start = sd->append_text_position;
-   if ((start + ELM_ENTRY_CHUNK_SIZE) < sd->append_text_len)
+   if (sd->append_text_chunk <= 0)
+     {
+        sd->append_text_chunk = ELM_ENTRY_CHUNK_SIZE;
+        sd->append_text_last_time = ecore_time_get();
+     }
+   t = sd->append_text_last_time;
+   if ((start + sd->append_text_chunk) < sd->append_text_len)
      {
         int pos = start;
         int tag_start, esc_start;
@@ -3057,6 +3070,30 @@ _text_append_idler(void *data)
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
    _elm_entry_guide_update(obj, EINA_TRUE);
+   tnow = ecore_time_get();
+   t = tnow - sd->append_text_last_time;
+   sd->append_text_last_time = tnow;
+// for debugging/tuning
+//   printf("append %i in %1.5f\n", sd->append_text_chunk, t);
+   if (t > 0.0)
+     {
+        const double maxtime = 1.0 / 5.0;
+        int new_size;
+
+        if (t > (maxtime / 1000.0))
+          {
+             new_size = ((double)sd->append_text_chunk * maxtime) / t;
+             if (new_size > ELM_ENTRY_CHUNK_SIZE_MAX)
+               new_size = ELM_ENTRY_CHUNK_SIZE_MAX;
+             else if (new_size < ELM_ENTRY_CHUNK_SIZE)
+               new_size = ELM_ENTRY_CHUNK_SIZE;
+          }
+        else
+          new_size = ELM_ENTRY_CHUNK_SIZE_MAX;
+
+        sd->append_text_chunk = new_size;
+     }
+   ecore_job_add(_append_wakeup_job_cb, NULL);
 
    /* If there's still more to go, renew the idler, else, cleanup */
    if (sd->append_text_position < sd->append_text_len)
@@ -3065,8 +3102,9 @@ _text_append_idler(void *data)
      }
    else
      {
+        sd->append_text_chunk = 0;
         edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
-              EDJE_CURSOR_MAIN, sd->cursor_pos);
+                                             EDJE_CURSOR_MAIN, sd->cursor_pos);
         free(sd->append_text_left);
         sd->append_text_left = NULL;
         sd->append_text_idler = NULL;
