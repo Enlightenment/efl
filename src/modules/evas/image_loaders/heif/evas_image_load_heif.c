@@ -1,28 +1,19 @@
-#define _XOPEN_SOURCE 600
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-
-#include <math.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
 #include <libheif/heif.h>
 
+#include "Evas_Loader.h"
 #include "evas_common_private.h"
-#include "evas_private.h"
+
+typedef struct _Evas_Loader_Internal Evas_Loader_Internal;
+struct _Evas_Loader_Internal
+{
+   Eina_File *f;
+   Evas_Image_Load_Opts *opts;
+   struct heif_context* ctx;
+};
 
 static int _evas_loader_heif_log_dom = -1;
 
@@ -36,170 +27,159 @@ static int _evas_loader_heif_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_loader_heif_log_dom, __VA_ARGS__)
 
-
-static void *
-evas_image_load_file_open_heif(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
-			      Evas_Image_Load_Opts *opts EINA_UNUSED,
-			      Evas_Image_Animated *animated EINA_UNUSED,
-			      int *error EINA_UNUSED)
-{
-   return f;
-}
-
-static void
-evas_image_load_file_close_heif(void *loader_data EINA_UNUSED)
-{
-}
-
 static Eina_Bool
-evas_image_load_file_head_heif(void *loader_data,
-			      Emile_Image_Property *prop,
-			      int *error)
+evas_image_load_file_head_heif_internal(Evas_Loader_Internal *loader EINA_UNUSED,
+                                        Emile_Image_Property *prop,
+                                        void *map, size_t length,
+                                        int *error)
 {
-   Eina_File *f = loader_data;
-   void *map;
-   size_t length;
+   struct heif_context *ctx;
+   struct heif_image_handle *handle;
    struct heif_error err;
-   struct heif_context* hc = NULL;
-   struct heif_image_handle* hdl = NULL;
-   struct heif_image* img = NULL;
-   Eina_Bool r = EINA_FALSE;
+   Eina_Bool ret;
 
-   *error = EVAS_LOAD_ERROR_NONE;
-
-   map = eina_file_map_all(f, EINA_FILE_RANDOM);
-   length = eina_file_size_get(f);
-
-   // init prop struct with some default null values
+   ret = EINA_FALSE;
    prop->w = 0;
    prop->h = 0;
+   prop->alpha = EINA_FALSE;
 
-   if (!map || length < 1)
+   /* heif file must have a 12 bytes long header */
+   if ((length < 12) ||
+       (heif_check_filetype(map, length) == heif_filetype_no))
      {
-        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-	goto on_error;
+        INF("HEIF header invalid");
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        return ret;
      }
 
-   hc = heif_context_alloc();
-   if (!hc) {
-     INF("cannot allocate heif_context");
-     *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-     goto on_error;
+   ctx = heif_context_alloc();
+   if (!ctx)
+     {
+        INF("cannot allocate heif_context");
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return ret;
+     }
+
+   err = heif_context_read_from_memory_without_copy(ctx, map, length, NULL);
+   if (err.code != heif_error_Ok)
+     {
+        INF("%s", err.message);
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto free_ctx;
    }
 
-   err = heif_context_read_from_memory_without_copy(hc, map, length, NULL);
-   if (err.code != heif_error_Ok) {
-     INF("%s", err.message);
-     *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-     goto on_error;
-   }
+   err = heif_context_get_primary_image_handle(ctx, &handle);
+   if (err.code != heif_error_Ok)
+     {
+        INF("%s", err.message);
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto free_ctx;
+     }
 
-   err = heif_context_get_primary_image_handle(hc, &hdl);
-   if (err.code != heif_error_Ok) {
-     INF("%s", err.message);
-     *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-     goto on_error;
-   }
+   prop->w = heif_image_handle_get_width(handle);
+   prop->h = heif_image_handle_get_height(handle);
 
-   int has_alpha = heif_image_handle_has_alpha_channel(hdl);
+   /* if size is invalid, we exit */
+   if ((prop->w < 1) || (prop->h < 1) ||
+       (prop->w > IMG_MAX_SIZE) || (prop->h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(prop->w, prop->h))
+     {
+        if (IMG_TOO_BIG(prop->w, prop->h))
+          *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        else
+          *error= EVAS_LOAD_ERROR_GENERIC;
+        goto release_handle;
+     }
 
-   err = heif_decode_image(hdl, &img, heif_colorspace_RGB,
-                           has_alpha ? heif_chroma_interleaved_RGBA : heif_chroma_interleaved_RGB,
-                           NULL);
-   if (err.code != heif_error_Ok) {
-     INF("%s", err.message);
-     *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-     goto on_error;
-   }
+   prop->alpha = !!heif_image_handle_has_alpha_channel(handle);
 
-   prop->w = heif_image_get_width(img, heif_channel_interleaved);
-   prop->h = heif_image_get_height(img, heif_channel_interleaved);
-   if (has_alpha != 3)
-     prop->alpha = 1;
+   *error = EVAS_LOAD_ERROR_NONE;
+   ret = EINA_TRUE;
 
-   r = EINA_TRUE;
+ release_handle:
+   heif_image_handle_release(handle);
+ free_ctx:
+   heif_context_free(ctx);
 
- on_error:
-   if (img) {
-     heif_image_release(img);
-   }
-
-   if (hdl) {
-     heif_image_handle_release(hdl);
-   }
-
-   if (hc) {
-     heif_context_free(hc);
-   }
-   eina_file_map_free(f, map);
-   return r;
+   return ret;
 }
 
 static Eina_Bool
-evas_image_load_file_data_heif(void *loader_data,
-			      Emile_Image_Property *prop,
-			      void *pixels,
-			      int *error)
+evas_image_load_file_data_heif_internal(Evas_Loader_Internal *loader,
+                                        Emile_Image_Property *prop,
+                                        void *pixels,
+                                        void *map, size_t length,
+                                        int *error)
 {
-   Eina_File *f = loader_data;
-
-   void *map;
-   size_t length;
+   struct heif_context *ctx;
+   struct heif_image_handle *handle;
+   struct heif_image *img;
    struct heif_error err;
-   struct heif_context* hc = NULL;
-   struct heif_image_handle* hdl = NULL;
-   struct heif_image* img = NULL;
-   unsigned int x, y;
-   int stride, bps = 3;
-   const uint8_t* data;
-   uint8_t* dd = (uint8_t*)pixels, *ds = NULL;
-   Eina_Bool result = EINA_FALSE;
+   const unsigned char *data;
+   unsigned char *dd;
+   unsigned char *ds;
+   int stride;
+   unsigned int x;
+   unsigned int y;
+   Eina_Bool ret;
 
-   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
-   length = eina_file_size_get(f);
-   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!map || length < 1)
-     goto on_error;
+   ret = EINA_FALSE;
 
-   *error = EVAS_LOAD_ERROR_GENERIC;
-   result = EINA_FALSE;
+   ctx = loader->ctx;
+   if (!ctx)
+     {
+        ctx = heif_context_alloc();
+        if (!ctx)
+          {
+            INF("cannot allocate heif_context");
+            *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+            return ret;
+          }
 
-   hc = heif_context_alloc();
-   if (!hc) {
-     INF("cannot allocate heif_context");
-     *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-     goto on_error;
-   }
+        err = heif_context_read_from_memory_without_copy(ctx,
+                                                         map, length, NULL);
+        if (err.code != heif_error_Ok)
+          {
+             INF("%s", err.message);
+             *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+             heif_context_free(ctx);
+             return ret;
+          }
 
-   err = heif_context_read_from_memory_without_copy(hc, map, length, NULL);
-   if (err.code != heif_error_Ok) {
-     INF("%s", err.message);
-     *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-     goto on_error;
-   }
+        err = heif_context_get_primary_image_handle(ctx, &handle);
+        if (err.code != heif_error_Ok)
+          {
+             INF("%s", err.message);
+             *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+             heif_image_handle_release(handle);
+             heif_context_free(ctx);
+             return ret;
+          }
 
-   err = heif_context_get_primary_image_handle(hc, &hdl);
-   if (err.code != heif_error_Ok) {
-     INF("%s", err.message);
-     *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-     goto on_error;
-   }
+        loader->ctx = ctx;
+     }
 
-   err = heif_decode_image(hdl, &img, heif_colorspace_RGB,
-                           prop->alpha ? heif_chroma_interleaved_RGBA : heif_chroma_interleaved_RGB,
+   err = heif_decode_image(handle, &img, heif_colorspace_RGB,
+                           prop->alpha ? heif_chroma_interleaved_RGBA
+                                       : heif_chroma_interleaved_RGB,
                            NULL);
-   if (err.code != heif_error_Ok) {
-     INF("%s", err.message);
-     *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-     goto on_error;
-   }
-   if (prop->alpha) bps = 4;
+
+   if (err.code != heif_error_Ok)
+     {
+        INF("%s", err.message);
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto on_error;
+     }
+
    data = heif_image_get_plane_readonly(img, heif_channel_interleaved, &stride);
-   ds = (uint8_t*)data;
-   for (y = 0; y < prop->h; y++)
-      for (x = 0; x < prop->w; x++)
-        {
-           if (bps == 3)
+
+   dd  = (unsigned char *)pixels;
+   ds = (unsigned char *)data;
+   if (!prop->alpha)
+     {
+       for (y = 0; y < prop->h; y++)
+         {
+           for (x = 0; x < prop->w; x++)
              {
                dd[3] = 0xff;
                dd[0] = ds[2];
@@ -208,7 +188,13 @@ evas_image_load_file_data_heif(void *loader_data,
                ds+=3;
                dd+=4;
              }
-           else
+         }
+     }
+   else
+     {
+       for (y = 0; y < prop->h; y++)
+         {
+           for (x = 0; x < prop->w; x++)
              {
                dd[0] = ds[2];
                dd[1] = ds[1];
@@ -217,50 +203,135 @@ evas_image_load_file_data_heif(void *loader_data,
                ds+=4;
                dd+=4;
              }
-        }
-  result = EINA_TRUE;
+         }
+     }
+
+   ret = EINA_TRUE;
 
   *error = EVAS_LOAD_ERROR_NONE;
   prop->premul = EINA_TRUE;
 
-on_error:
+ on_error:
+   return ret;
+}
 
-  if (map) eina_file_map_free(f, map);
 
-  if (img) {
-    // Do not free the image here when we pass it to gdk-pixbuf, as its memory will still be used by gdk-pixbuf.
-    heif_image_release(img);
-  }
+static void *
+evas_image_load_file_open_heif(Eina_File *f, Eina_Stringshare *key EINA_UNUSED,
+			       Evas_Image_Load_Opts *opts,
+			       Evas_Image_Animated *animated EINA_UNUSED,
+			       int *error)
+{
+   Evas_Loader_Internal *loader;
 
-  if (hdl) {
-    heif_image_handle_release(hdl);
-  }
+   loader = calloc(1, sizeof (Evas_Loader_Internal));
+   if (!loader)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
 
-  if (hc) {
-    heif_context_free(hc);
-  }
+   loader->f = f;
+   loader->opts = opts;
 
-  return result;
+   return loader;
+}
+
+static void
+evas_image_load_file_close_heif(void *loader_data)
+{
+   Evas_Loader_Internal *loader;
+
+   loader = loader_data;
+   /*
+    * in case _head() fails (because the file is not an heif one),
+    * loader is not filled and loader->ctx is NULL
+    */
+   if (loader->ctx)
+     heif_context_free(loader->ctx);
+   free(loader_data);
+}
+
+static Eina_Bool
+evas_image_load_file_head_heif(void *loader_data,
+                               Evas_Image_Property *prop,
+                               int *error)
+{
+   Evas_Loader_Internal *loader = loader_data;
+   Eina_File *f;
+   void *map;
+   Eina_Bool val;
+
+   f = loader->f;
+
+   map = eina_file_map_all(f, EINA_FILE_RANDOM);
+   if (!map)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
+     }
+
+   val = evas_image_load_file_head_heif_internal(loader,
+                                                 (Emile_Image_Property *)prop,
+                                                 map, eina_file_size_get(f),
+                                                 error);
+
+   eina_file_map_free(f, map);
+
+   return val;
+}
+
+static Eina_Bool
+evas_image_load_file_data_heif(void *loader_data,
+                               Evas_Image_Property *prop,
+			       void *pixels,
+			       int *error)
+{
+   Evas_Loader_Internal *loader;
+   Eina_File *f;
+   void *map;
+   Eina_Bool val = EINA_FALSE;
+
+   loader = (Evas_Loader_Internal *)loader_data;
+   f = loader->f;
+
+   map = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (!map)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        goto on_error;
+     }
+
+   val = evas_image_load_file_data_heif_internal(loader,
+                                                 (Emile_Image_Property *)prop,
+                                                 pixels,
+                                                 map, eina_file_size_get(f),
+                                                 error);
+
+   eina_file_map_free(f, map);
+
+ on_error:
+   return val;
 }
 
 static const Evas_Image_Load_Func evas_image_load_heif_func = {
-  EVAS_IMAGE_LOAD_VERSION,
-  evas_image_load_file_open_heif,
-  evas_image_load_file_close_heif,
-  (void*) evas_image_load_file_head_heif,
-  NULL,
-  (void*) evas_image_load_file_data_heif,
-  NULL,
-  EINA_TRUE,
-  EINA_FALSE
+   EVAS_IMAGE_LOAD_VERSION,
+   evas_image_load_file_open_heif,
+   evas_image_load_file_close_heif,
+   evas_image_load_file_head_heif,
+   NULL,
+   evas_image_load_file_data_heif,
+   NULL,
+   EINA_FALSE,
+   EINA_FALSE
 };
 
 static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   _evas_loader_heif_log_dom = eina_log_domain_register
-     ("evas-heif", EVAS_DEFAULT_LOG_COLOR);
+
+   _evas_loader_heif_log_dom = eina_log_domain_register("evas-heif", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_loader_heif_log_dom < 0)
      {
         EINA_LOG_ERR("Can not create a module log domain.");
@@ -268,6 +339,7 @@ module_open(Evas_Module *em)
      }
 
    em->functions = (void *)(&evas_image_load_heif_func);
+
    return 1;
 }
 
