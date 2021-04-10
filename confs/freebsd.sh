@@ -1,3 +1,3 @@
 #!/bin/sh -e
-meson -Dsystemd=false -Dv4l2=false -Deeze=false \
+meson -Dsystemd=false -Dv4l2=false -Deeze=false -Dinput=false \
  $@ . build

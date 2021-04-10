@@ -3,7 +3,7 @@
 #endif
 
 /*FIXME: change OS specific value */
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 # include <linux/joystick.h>
 #endif
 
