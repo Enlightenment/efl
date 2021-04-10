@@ -34,3 +34,82 @@ group { name: "elm/bg/base/default";
       }
    }
 }
+
+#define PAT_FILL_SCALE(_w, _h) \
+   part { name: "_pat_sizer"; type: SPACER; \
+      scale: 1; \
+      description { state: "default" 0.0; \
+         rel2.relative: 0.0 0.0; \
+         fixed: 1 1; \
+         min: 100 100; max: 100 100; \
+      } \
+   } \
+   program { signal: "resize"; source: ""; \
+      script { \
+         new x, y, w, h; \
+         get_geometry(PART:"_pat_sizer", x, y, w, h); \
+         custom_state(PART:"pat", "default", 0.0); \
+         set_state_val(PART:"pat", STATE_FILL_SIZE, 0, 0, (w*_w)/100, (h*_h)/100); \
+         set_state(PART:"pat", "custom", 0.0); \
+      } \
+   }
+
+#define BG_PAT(_name, _img, _w, _h, _colbg, _colfg) \
+group { name: _name; \
+   data.item: "version" "119"; \
+   images.image: _img COMP; \
+   parts { \
+      PAT_FILL_SCALE(_w, _h) \
+      part { name: "clipper"; type: RECT; \
+         description { state: "default" 0.0; \
+         } \
+      } \
+      part { name: "base"; type: RECT; \
+         description { state: "default" 0.0; \
+            color: _colbg; \
+         } \
+      } \
+      part { name: "pat"; \
+         scale: 1; \
+         description { state: "default" 0.0; \
+            image.normal: _img; \
+            color: _colfg; \
+         } \
+      } \
+      part { name: "elm.swallow.rectangle"; type: SWALLOW; \
+         description { state: "default" 0.0; \
+         } \
+      } \
+      part { name: "elm.swallow.background"; type: SWALLOW; \
+         clip_to: "clipper"; \
+         description { state: "default" 0.0; \
+            fixed: 1 1; \
+         } \
+      } \
+      part { name: "elm.swallow.content"; type: SWALLOW; \
+         description { state: "default" 0.0; \
+         } \
+      } \
+   } \
+}
+
+BG_PAT("elm/bg/base/stripes",     "stripes-diag.png",     160, 160,  64 64 64 255,  80 80 80 255)
+BG_PAT("elm/bg/base/stripes_big", "stripes-diag-big.png", 160, 160,  64 64 64 255,  80 80 80 255)
+
+BG_PAT("elm/bg/base/stripes_dark",     "stripes-diag.png",     160, 160,  32 32 32 255,  48 48 48 255)
+BG_PAT("elm/bg/base/stripes_big_dark", "stripes-diag-big.png", 160, 160,  32 32 32 255,  48 48 48 255)
+
+BG_PAT("elm/bg/base/stripes_light",     "stripes-diag.png",     160, 160, 192 192 192 255,  208 208 208 255)
+BG_PAT("elm/bg/base/stripes_big_light", "stripes-diag-big.png", 160, 160, 192 192 192 255,  208 208 208 255)
+
+BG_PAT("elm/bg/base/checks",       "checks.png", 160, 160,  64 64 64 255,  80 80 80 255)
+BG_PAT("elm/bg/base/checks_big",   "checks.png", 320, 320,  64 64 64 255,  80 80 80 255)
+BG_PAT("elm/bg/base/checks_small", "checks.png",  80,  80,  64 64 64 255,  80 80 80 255)
+
+BG_PAT("elm/bg/base/checks_dark",       "checks.png", 160, 160,  32 32 32 255,  48 48 48 255)
+BG_PAT("elm/bg/base/checks_big_dark",   "checks.png", 320, 320,  32 32 32 255,  48 48 48 255)
+BG_PAT("elm/bg/base/checks_small_dark", "checks.png",  80,  80,  32 32 32 255,  48 48 48 255)
+
+BG_PAT("elm/bg/base/checks_light",       "checks.png", 160, 160, 192 192 192 255,  208 208 208 255)
+BG_PAT("elm/bg/base/checks_big_light",   "checks.png", 320, 320, 192 192 192 255,  208 208 208 255)
+BG_PAT("elm/bg/base/checks_small_light", "checks.png",  80,  80, 192 192 192 255,  208 208 208 255)
