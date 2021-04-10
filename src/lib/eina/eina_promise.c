@@ -1148,6 +1148,7 @@ typedef struct _Base_Ctx {
    Eina_Promise *promise;
    Eina_Future **futures;
    unsigned int futures_len;
+   Eina_Bool cancelled : 1;
 } Base_Ctx;
 
 typedef struct _All_Promise_Ctx {
@@ -1173,6 +1174,7 @@ _base_ctx_clean(Base_Ctx *ctx)
 static void
 _all_promise_ctx_free(All_Promise_Ctx *ctx)
 {
+   DBG("Cleaning base_ctx for %p", ctx);
    _base_ctx_clean(&ctx->base);
    eina_value_flush(&ctx->values);
    free(ctx);
@@ -1181,12 +1183,16 @@ _all_promise_ctx_free(All_Promise_Ctx *ctx)
 static void
 _all_promise_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
 {
-   _all_promise_ctx_free(data);
+   All_Promise_Ctx *ctx = data;
+
+   ctx->base.cancelled = 1;
+   _all_promise_ctx_free(ctx);
 }
 
 static void
 _race_promise_ctx_free(Race_Promise_Ctx *ctx)
 {
+   DBG("Cleaning base_ctx for %p", ctx);
    _base_ctx_clean(&ctx->base);
    free(ctx);
 }
@@ -1194,6 +1200,9 @@ _race_promise_ctx_free(Race_Promise_Ctx *ctx)
 static void
 _race_promise_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
 {
+   Race_Promise_Ctx *ctx = data;
+
+   ctx->base.cancelled = 1;
    _race_promise_ctx_free(data);
 }
 
@@ -1233,7 +1242,8 @@ _race_then_cb(void *data, const Eina_Value v,
    ctx->dispatching = EINA_TRUE;
 
    //By freeing the race_ctx all the other futures will be cancelled.
-   _race_promise_ctx_free(ctx);
+   if (!ctx->base.cancelled)
+     _race_promise_ctx_free(ctx);
 
    r = eina_value_struct_setup(&result, &RACE_STRUCT_DESC);
    EINA_SAFETY_ON_FALSE_GOTO(r, err_setup);
@@ -1275,7 +1285,8 @@ _all_then_cb(void *data, const Eina_Value v,
         //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
         _eina_promise_clean_dispatch(ctx->base.promise, ctx->values);
         ctx->values = EINA_VALUE_EMPTY; /* flushed in _eina_promise_clean_dispatch() */
-        _all_promise_ctx_free(ctx);
+        if (!ctx->base.cancelled)
+          _all_promise_ctx_free(ctx);
      }
    return v;
 }
