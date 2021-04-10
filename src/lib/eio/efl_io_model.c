@@ -82,7 +82,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    Eio_Monitor_Event *ev = event;
    Efl_Io_Model *obj = data;
    Efl_Io_Model_Data *pd;
-   Efl_Model_Children_Event cevt;
+   Efl_Model_Children_Event cevt = {0};
    Efl_Io_Model_Info *mi;
    Eina_List *l;
    Eina_Stringshare *spath = NULL;
