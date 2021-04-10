@@ -21,7 +21,7 @@
 #define MY_CLASS_NAME "Efl_Io_Model"
 
 static void _efl_io_model_info_free(Efl_Io_Model_Info *info, Eina_Bool model);
-static void _efl_io_model_efl_model_monitor_add(Efl_Io_Model_Data *priv);
+static void _efl_io_model_efl_model_monitor_add(const Eo *obj, Efl_Io_Model_Data *priv);
 
 EINA_VALUE_STRUCT_DESC_DEFINE(_eina_file_direct_info_desc,
                               NULL,
@@ -80,13 +80,16 @@ static Eina_Bool
 _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
 {
    Eio_Monitor_Event *ev = event;
-   Efl_Io_Model *obj;
-   Efl_Io_Model_Data *pd = data;
+   Efl_Io_Model *obj = data;
+   Efl_Io_Model_Data *pd;
    Efl_Model_Children_Event cevt;
    Efl_Io_Model_Info *mi;
    Eina_List *l;
    Eina_Stringshare *spath = NULL;
    char *path = NULL;
+
+   pd = efl_data_scope_get(obj, EFL_IO_MODEL_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_TRUE);
 
    if (type != EIO_MONITOR_DIRECTORY_CREATED && type != EIO_MONITOR_FILE_CREATED)
      return EINA_TRUE;
@@ -95,8 +98,6 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
 
    if (_already_added(pd, ev->filename))
      return EINA_TRUE;
-
-   obj = pd->self;
 
    path = ecore_file_dir_get(ev->filename);
    if (!eina_streq(pd->path, path))
@@ -155,11 +156,10 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
 }
 
 static void
-_model_child_remove(Efl_Io_Model_Data *pd, Eina_Stringshare *path)
+_model_child_remove(Efl_Io_Model *obj, Efl_Io_Model_Data *pd, Eina_Stringshare *path)
 {
    Efl_Io_Model_Info *mi;
    Eina_List *l;
-   Efl_Io_Model *obj = pd->self;
    Efl_Model_Children_Event cevt = { 0 };
    unsigned int i = 0;
 
@@ -191,8 +191,12 @@ static Eina_Bool
 _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
 {
    Eio_Monitor_Event *ev = event;
-   Efl_Io_Model_Data *pd = data;
+   Efl_Io_Model *obj = data;
+   Efl_Io_Model_Data *pd;
    Eina_Stringshare *spath = NULL;
+
+   pd = efl_data_scope_get(obj, EFL_IO_MODEL_CLASS);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(pd, EINA_TRUE);
 
    if (type != EIO_MONITOR_DIRECTORY_DELETED && type != EIO_MONITOR_FILE_DELETED)
      return EINA_TRUE;
@@ -200,7 +204,7 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
    if (ev->monitor != pd->monitor) return EINA_TRUE;
 
    spath = eina_stringshare_add(ev->filename);
-   _model_child_remove(pd, spath);
+   _model_child_remove(obj, pd, spath);
    eina_stringshare_del(spath);
 
    return EINA_TRUE;
@@ -222,13 +226,17 @@ _eio_del_cleanup(Efl_Io_Model *obj)
 static void
 _eio_done_unlink_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
-   Efl_Io_Model *child = data;
+   Efl_Io_Model *child = data, *parent;
    Efl_Io_Model_Data *child_pd, *pd;
 
+   parent = efl_parent_get(child);
+   EINA_SAFETY_ON_NULL_RETURN(parent);
    child_pd = efl_data_scope_get(child, MY_CLASS);
-   pd = efl_data_scope_get(efl_parent_get(child), MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(child_pd);
+   pd = efl_data_scope_get(parent, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(parent);
 
-   _model_child_remove(pd, child_pd->path);
+   _model_child_remove(parent, pd, child_pd->path);
    _eio_del_cleanup(child);
 }
 
@@ -342,7 +350,7 @@ _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *s
    if (eio_file_is_dir(pd->st))
      {
         // Now that we know we are a directory, we should whatch it
-        _efl_io_model_efl_model_monitor_add(pd);
+        _efl_io_model_efl_model_monitor_add(model, pd);
 
         // And start listing its child
         efl_model_children_count_get(model);
@@ -861,7 +869,7 @@ _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
 
         //start monitoring before listing is done
         //we will filter later on if we already published a file or not
-        _efl_io_model_efl_model_monitor_add(pd);
+        _efl_io_model_efl_model_monitor_add(obj, pd);
         pd->request.listing = efl_future_then(obj, f,
                                               .free = _efl_io_model_children_list_cleanup,
                                               .data = pd);
@@ -871,7 +879,7 @@ _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
 }
 
 static void
-_efl_io_model_efl_model_monitor_add(Efl_Io_Model_Data *priv)
+_efl_io_model_efl_model_monitor_add(const Eo *obj, Efl_Io_Model_Data *priv)
 {
    if (!priv->monitor)
      {
@@ -881,11 +889,11 @@ _efl_io_model_efl_model_monitor_add(Efl_Io_Model_Data *priv)
 
         for (i = 0; priv->mon.mon_event_child_add[i] != EIO_MONITOR_ERROR ; ++i)
           priv->mon.ecore_child_add_handler[i] =
-            ecore_event_handler_add(priv->mon.mon_event_child_add[i], _efl_model_evt_added_ecore_cb, priv);
+            ecore_event_handler_add(priv->mon.mon_event_child_add[i], _efl_model_evt_added_ecore_cb, obj);
 
         for (i = 0; priv->mon.mon_event_child_del[i] != EIO_MONITOR_ERROR ; ++i)
           priv->mon.ecore_child_del_handler[i] =
-            ecore_event_handler_add(priv->mon.mon_event_child_del[i], _efl_model_evt_deleted_ecore_cb, priv);
+            ecore_event_handler_add(priv->mon.mon_event_child_del[i], _efl_model_evt_deleted_ecore_cb, obj);
      }
 }
 
@@ -1058,8 +1066,6 @@ _efl_io_model_efl_object_finalize(Eo *obj, Efl_Io_Model_Data *pd)
    pd->mon.mon_event_child_del[0] = EIO_MONITOR_DIRECTORY_DELETED;
    pd->mon.mon_event_child_del[1] = EIO_MONITOR_FILE_DELETED;
    pd->mon.mon_event_child_del[2] = EIO_MONITOR_ERROR;
-
-   pd->self = obj;
 
    return obj;
 }
