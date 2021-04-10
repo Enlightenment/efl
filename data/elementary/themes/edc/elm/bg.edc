@@ -113,3 +113,52 @@ BG_PAT("elm/bg/base/checks_small_dark", "checks.png",  80,  80,  32 32 32 255,  
 BG_PAT("elm/bg/base/checks_light",       "checks.png", 160, 160, 192 192 192 255,  208 208 208 255)
 BG_PAT("elm/bg/base/checks_big_light",   "checks.png", 320, 320, 192 192 192 255,  208 208 208 255)
 BG_PAT("elm/bg/base/checks_small_light", "checks.png",  80,  80, 192 192 192 255,  208 208 208 255)
+
+#undef BG_PAT
+#undef PAT_FILL_SCALE
+
+#define BG_GRADV(_name, _colbg, _colfg) \
+group { name: _name; \
+   data.item: "version" "119"; \
+   images.image: "grad_v.png" COMP; \
+   parts { \
+      part { name: "clipper"; type: RECT; \
+         description { state: "default" 0.0; \
+         } \
+      } \
+      part { name: "base"; type: RECT; \
+         description { state: "default" 0.0; \
+            color: _colbg; \
+         } \
+      } \
+      part { name: "grad"; \
+         description { state: "default" 0.0; \
+            image.normal: "grad_v.png"; \
+            fill.size.relative: 0.0 1.0; \
+            fill.size.offset: 256 0; \
+            color: _colfg; \
+         } \
+      } \
+      part { name: "elm.swallow.rectangle"; type: SWALLOW; \
+         description { state: "default" 0.0; \
+         } \
+      } \
+      part { name: "elm.swallow.background"; type: SWALLOW; \
+         clip_to: "clipper"; \
+         description { state: "default" 0.0; \
+            fixed: 1 1; \
+         } \
+      } \
+      part { name: "elm.swallow.content"; type: SWALLOW; \
+         description { state: "default" 0.0; \
+         } \
+      } \
+   } \
+}
+
+BG_GRADV("elm/bg/base/grad_vert",  80  80  80 255,  64  64  64 255)
+BG_GRADV("elm/bg/base/grad_vert_focus_title_match",  64  64  64 255,  32  32  32 255)
+BG_GRADV("elm/bg/base/grad_vert_dark",  48  48  48 255,  32  32  32 255)
+BG_GRADV("elm/bg/base/grad_vert_light",  64  64  64 255, 192 192 192 255)
+
+#undef BG_GRADV
