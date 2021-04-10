@@ -608,11 +608,11 @@ group { name: "elm/button/base/overlay";
       }
       part { name: "base";
          description { state: "default" 0.0;
-            color: 0 0 0 64;
+            color: 0 0 0 160;
             visible: 1;
          }
          description { state: "pressed" 0.0;
-            color: 0 0 0 192;
+            color: 0 0 0 200;
             visible: 1;
          }
          description { state: "disabled" 0.0;
