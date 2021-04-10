@@ -4435,6 +4435,7 @@ _item_mouse_down_cb(void *data,
    // NOTE: keep this code at the bottom, as the user can change the
    //       list at this point (clear, delete, etc...)
    _item_highlight(it);
+   efl_ref(EO_OBJ(it));
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         evas_object_smart_callback_call
@@ -4443,7 +4444,8 @@ _item_mouse_down_cb(void *data,
               (WIDGET(it), ELM_GENLIST_EVENT_ACTIVATED, eo_it);
      }
    evas_object_smart_callback_call
-         (WIDGET(it), "pressed", eo_it);
+        (WIDGET(it), "pressed", eo_it);
+   efl_unref(EO_OBJ(it));
 }
 
 static Item_Block *
