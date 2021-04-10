@@ -66,6 +66,7 @@ group { name: "e/widgets/about/main";
                min: 0 1;
                align: 0.5 0.0;
             }
+            offscale;
          }
          description { state: "up" 0.0;
             inherit: "default" 0.0;
@@ -104,6 +105,7 @@ group { name: "e/widgets/about/main";
                min: 0 1;
                align: 0.5 0.0;
             }
+            offscale;
          }
          description { state: "up" 0.0;
             inherit: "default" 0.0;
@@ -154,6 +156,7 @@ group { name: "e/widgets/about/main";
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 0.0;
             FIXED_SIZE(75, 75)
+            offscale;
          }
       }
       ////////////////////////////////////////////////////////////////
@@ -173,6 +176,7 @@ group { name: "e/widgets/about/main";
                ellipsis: -1;
                text_class: "about_title";
             }
+            offscale;
          }
       }
       ////////////////////////////////////////////////////////////////
@@ -192,6 +196,7 @@ group { name: "e/widgets/about/main";
                ellipsis: -1;
                text_class: "about_version";
             }
+            offscale;
          }
       }
       ////////////////////////////////////////////////////////////////
@@ -205,6 +210,7 @@ group { name: "e/widgets/about/main";
             aspect: (255/180) (255/180); aspect_preference: HORIZONTAL; \
             rel1.relative: 0.0 1.0; \
             color: 64 64 64 255; \
+            offscale; \
          } \
       }
       TRI("t1", 127, 0.5)
@@ -222,6 +228,7 @@ group { name: "e/widgets/about/main";
          description { state: "default" 0.0;
             rel.to: "base";
             WIN_SHADOW_SMALL;
+            offscale;
          }
          description { state: "clicked" 0.0;
             inherit;
@@ -231,12 +238,14 @@ group { name: "e/widgets/about/main";
          }
       }
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -6 -6;
             rel1.to: "e.text.label";
             rel2.offset: 5 5;
             rel2.to: "e.text.label";
             color: 51 153 255 255;
+            offscale;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -258,35 +267,31 @@ group { name: "e/widgets/about/main";
                ellipsis: -1;
                text_class: "button";
             }
+            offscale;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             color: 255 255 255 255;
          }
       }
-      program {
-         signal: "mouse,down,1*"; source: "base";
+      program { signal: "mouse,down,1*"; source: "base";
          action: STATE_SET "clicked" 0.0;
          target: "base";
          target: "shadow";
       }
-      program {
-         signal: "mouse,up,1"; source: "base";
+      program { signal: "mouse,up,1"; source: "base";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "shadow";
       }
-      program {
-         signal: "mouse,clicked,1*"; source: "base";
+      program { signal: "mouse,clicked,1*"; source: "base";
          action: SIGNAL_EMIT "e,action,close" "";
       }
-      program {
-         signal: "e,state,focused"; source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
          target: "lines";
       }
-      program {
-         signal: "e,state,unfocused"; source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "lines";
       }
