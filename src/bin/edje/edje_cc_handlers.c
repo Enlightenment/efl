@@ -2494,6 +2494,7 @@ st_images_set_image_image(void)
    set = edje_file->image_dir->sets + edje_file->image_dir->sets_count - 1;
    entry = eina_list_data_get(eina_list_last(set->entries));
 
+   entry->id = 0;
    /* Add the image to the global pool with the same syntax. */
    st_images_image();
 

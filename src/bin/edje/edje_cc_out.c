@@ -1469,8 +1469,18 @@ data_image_sets_init(void)
         if (!set->entries) continue;
         EINA_LIST_FOREACH(set->entries, ll, set_entry)
           {
-             img = &edje_file->image_dir->entries[set_entry->id];
-             set_entry->name = img->entry;
+             if (set_entry->id < (int)edje_file->image_dir->entries_count)
+               {
+                  img = &edje_file->image_dir->entries[set_entry->id];
+                  set_entry->name = img->entry;
+               }
+             else
+               {
+                  ERR("set %i / %i, entry %i / %i\n",
+                      i, edje_file->image_dir->sets_count,
+                      set_entry->id, edje_file->image_dir->entries_count);
+                  abort();
+               }
           }
      }
 }
@@ -3606,6 +3616,7 @@ _data_image_sets_size_set(void)
      }
 }
 
+/*
 static void
 _data_image_id_update(Eina_List *images_unused_list)
 {
@@ -3676,6 +3687,7 @@ _data_image_id_update(Eina_List *images_unused_list)
           }
      }
 }
+ */
 
 void
 data_process_lookups(void)
@@ -3691,7 +3703,7 @@ data_process_lookups(void)
    Eina_Hash *images_in_use;
    char *group_name;
    Eina_Bool is_lua = EINA_FALSE;
-   Image_Unused_Ids *iui;
+//   Image_Unused_Ids *iui;
 
    /* remove all unreferenced Edje_Part_Collection */
    EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
@@ -4013,10 +4025,10 @@ free_group:
 
    if (edje_file->image_dir && !is_lua)
      {
-        Edje_Image_Directory_Entry *de, *de_last, *img;
+        Edje_Image_Directory_Entry *de/*, *de_last, *img*/;
         Edje_Image_Directory_Set *set;
         Edje_Image_Directory_Set_Entry *set_e;
-        Eina_List *images_unused_list = NULL;
+//        Eina_List *images_unused_list = NULL;
         unsigned int i;
 
         for (i = 0; i < edje_file->image_dir->entries_count; ++i)
@@ -4032,6 +4044,7 @@ free_group:
 
              // so as not to write the unused images, moved last image in the
              // list to unused image position and check it
+/*
              free((void *)de->entry);
              de->entry = NULL;
              de_last = edje_file->image_dir->entries + edje_file->image_dir->entries_count - 1;
@@ -4046,6 +4059,7 @@ free_group:
              img = realloc(edje_file->image_dir->entries,
                            sizeof (Edje_Image_Directory_Entry) * edje_file->image_dir->entries_count);
              edje_file->image_dir->entries = img;
+ */
           }
 
         for (i = 0; i < edje_file->image_dir->sets_count; ++i)
@@ -4091,9 +4105,9 @@ free_group:
           }
 
         /* update image id in parts */
-        if (images_unused_list) _data_image_id_update(images_unused_list);
-        EINA_LIST_FREE(images_unused_list, iui)
-          free(iui);
+//        if (images_unused_list) _data_image_id_update(images_unused_list);
+//        EINA_LIST_FREE(images_unused_list, iui)
+//          free(iui);
 
         _data_image_sets_size_set();
      }
