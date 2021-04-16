@@ -367,6 +367,7 @@ struct _Evas_Engine_GL_Context
    Eina_List     *font_glyph_textures;
    Eina_List     *font_glyph_images;
    Evas_GL_Image *def_surface;
+   Evas_GL_Image *err_img;
    RGBA_Image    *font_surface;
    int            font_glyph_textures_size;
    int            font_glyph_atlas_size;
@@ -479,6 +480,7 @@ struct _Evas_GL_Image
       Eina_Bool       yinvert : 1;
       Eina_Bool       mipmap  : 1;
       Eina_Bool       loose   : 1;
+      Eina_Bool       invalid : 1;
    } native;
 
    struct {

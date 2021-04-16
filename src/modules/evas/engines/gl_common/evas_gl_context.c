@@ -1180,6 +1180,7 @@ evas_gl_common_context_new(void)
    _evas_gl_common_viewport_set(gc);
 
    gc->def_surface = evas_gl_common_image_surface_new(gc, 1, 1, 1, EINA_FALSE);
+   gc->err_img = evas_gl_common_image_surface_new(gc, 1, 1, 0, EINA_FALSE);
 
    return gc;
 
@@ -1428,6 +1429,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
    if (gc->references > 0) return;
    if (gc->shared) gc->shared->references--;
 
+   if (gc->err_img) evas_gl_common_image_free(gc->err_img);
    if (gc->def_surface) evas_gl_common_image_free(gc->def_surface);
 
    if (gc->font_surface)
@@ -4035,7 +4037,27 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   if (!gc->pipe[i].array.im->native.loose)
                     {
                        if (gc->pipe[i].array.im->native.func.bind)
-                         gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im);
+                         {
+                            gc->pipe[i].array.im->native.func.bind(gc->pipe[i].array.im);
+                            if (gc->pipe[i].array.im->native.invalid)
+                              {
+                                 fprintf(stderr,
+                                         "Evas GL: native bind failed for %ix%i image\n",
+                                         gc->pipe[i].array.im->w,
+                                         gc->pipe[i].array.im->h);
+                                 if ((gc->err_img) &&
+                                     (gc->err_img->tex) &&
+                                     (gc->err_img->tex->pt))
+                                   {
+                                      glActiveTexture(GL_TEXTURE0);
+                                      glBindTexture
+                                        (GL_TEXTURE_2D,
+                                         gc->err_img->tex->pt->texture);
+                                      gc->pipe[i].shader.cur_tex =
+                                        gc->err_img->tex->pt->texture;
+                                   }
+                              }
+                         }
                     }
                }
           }
