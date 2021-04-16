@@ -346,6 +346,7 @@ extern int                    annotate;
 extern Eina_Bool current_group_inherit;
 extern Eina_List             *color_tree_root;
 extern int                    beta;
+extern int                    no_warn_unused_images;
 
 extern int had_quote;
 

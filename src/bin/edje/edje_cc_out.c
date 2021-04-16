@@ -4038,9 +4038,10 @@ free_group:
              if (de->entry && eina_hash_find(images_in_use, de->entry))
                continue;
 
-             printf("Warning: Image '%s' not used\n", de->entry);
-             INF("Image '%s' in resource 'edje/image/%i' will not be included as it is unused.",
-                 de->entry, de->id);
+             if (!no_warn_unused_images)
+               printf("Warning: Image '%s' not used\n", de->entry);
+//             INF("Image '%s' in resource 'edje/image/%i' will not be included as it is unused.",
+//                 de->entry, de->id);
 
              // so as not to write the unused images, moved last image in the
              // list to unused image position and check it
@@ -4069,13 +4070,16 @@ free_group:
              if (set->name && eina_hash_find(images_in_use, set->name))
                continue;
 
-             printf("Warning: Image set '%s' not used\n", set->name);
-             EINA_LIST_FOREACH(set->entries, l, set_e)
+             if (!no_warn_unused_images)
                {
-                  printf("  Contains '%s' size %ix%i -> %ix%i\n",
-                         set_e->name,
-                         set_e->size.min.w, set_e->size.min.h,
-                         set_e->size.max.w, set_e->size.max.h);
+                  printf("Warning: Image set '%s' not used\n", set->name);
+                  EINA_LIST_FOREACH(set->entries, l, set_e)
+                    {
+                       printf("  Contains '%s' size %ix%i -> %ix%i\n",
+                              set_e->name,
+                              set_e->size.min.w, set_e->size.min.h,
+                              set_e->size.max.w, set_e->size.max.h);
+                    }
                }
 /* No need to redo id's - we will warn of unused images - fix in src
  * Also .. this is broken and messes up id's ... so easyer - complain

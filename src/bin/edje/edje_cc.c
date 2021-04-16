@@ -52,6 +52,7 @@ int annotate = 0;
 int no_etc1 = 0;
 int no_etc2 = 0;
 int beta = 0;
+int no_warn_unused_images = 0;
 Eina_Bool namespace_verify;
 
 unsigned int max_open_files;
@@ -314,6 +315,10 @@ main(int argc, char **argv)
         else if (!strcmp(argv[i], "-annotate"))
           {
              annotate = 1;
+          }
+        else if (!strcmp(argv[i], "-no-warn-unused-images"))
+          {
+             no_warn_unused_images = 1;
           }
         else if ((!strcmp(argv[i], "-deps")) && (i < (argc - 1)))
           {
