@@ -52,6 +52,12 @@ typedef uintptr_t Eina_Thread;
 typedef void *(*Eina_Thread_Cb)(void *data, Eina_Thread t);
 
 /**
+ * @typedef Eina_Thread_Cleanup_Cb
+ * Type for the definition of a thread cleanup function
+ */
+typedef void (*Eina_Thread_Cleanup_Cb) (void *data);
+
+/**
  * @typedef Eina_Thread_Priority
  * Type to enumerate different thread priorities
  */
@@ -248,8 +254,16 @@ EINA_API void eina_thread_cancel_checkpoint(void);
  *
  * @since 1.19
  */
+#ifdef _WIN32
+EINA_API Eina_Bool
+eina_thread_cleanup_push(Eina_Thread_Cleanup_Cb fn, void *data);
+
+#define EINA_THREAD_CLEANUP_PUSH(cleanup, data) \
+  eina_thread_cleanup_push(cleanup, data)
+#else
 #define EINA_THREAD_CLEANUP_PUSH(cleanup, data) \
   pthread_cleanup_push(cleanup, data)
+#endif
 
 /**
  * @def EINA_THREAD_CLEANUP_POP(exec_cleanup)
@@ -278,8 +292,16 @@ EINA_API void eina_thread_cancel_checkpoint(void);
  *
  * @since 1.19
  */
+#ifdef _WIN32
+EINA_API void
+eina_thread_cleanup_pop(int execute);
+
+#define EINA_THREAD_CLEANUP_POP(exec_cleanup) \
+  eina_thread_cleanup_pop(exec_cleanup)
+#else
 #define EINA_THREAD_CLEANUP_POP(exec_cleanup) \
   pthread_cleanup_pop(exec_cleanup)
+#endif
 
 /**
  * @typedef Eina_Thread_Cancellable_Run_Cb
@@ -332,6 +354,20 @@ typedef void *(*Eina_Thread_Cancellable_Run_Cb)(void *data);
  * @since 1.19
  */
 EINA_API void *eina_thread_cancellable_run(Eina_Thread_Cancellable_Run_Cb cb, Eina_Free_Cb cleanup_cb, void *data);
+
+/**
+ * @brief Lowers the priority of the current thread.
+ *
+ * @details It's used by worker threads so that they use up the background CPU and do not stall
+ *          the main thread. If the current thread is running with real-time priority, we
+ *          decrease our priority by @c RTNICENESS. This is done in a portable way.
+ *
+ *          Otherwise, (we are running with the SCHED_OTHER policy) there's no portable way to
+ *          set the nice level on the current thread. In Linux, it does work and it's the
+ *          only one that is implemented as of now. In this case, the nice level is
+ *          incremented on this thread by @c NICENESS.
+ */
+EINA_API void eina_sched_prio_drop(void);
 
 /**
  * @}
