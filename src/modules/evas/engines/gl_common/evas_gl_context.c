@@ -87,7 +87,7 @@ sym_missing(void)
  * Previously we used strstr(), however there are some extensions
  * whose names are subsets of others.
  */
-EAPI Eina_Bool
+EMODAPI Eina_Bool
 evas_gl_extension_string_check(const char *exts, const char *ext)
 {
    const char *ptr;
@@ -155,7 +155,7 @@ _has_ext(const char *ext, const char **pexts, int *pnum)
 
 #ifdef GL_GLES
 
-EAPI void *
+EMODAPI void *
 evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list)
 {
    if (eglsym_eglCreateImageKHR)
@@ -178,7 +178,7 @@ evas_gl_common_eglCreateImage(EGLDisplay dpy, EGLContext ctx, EGLenum target, EG
    return NULL;
 }
 
-EAPI int
+EMODAPI int
 evas_gl_common_eglDestroyImage(EGLDisplay dpy, void *im)
 {
    if (eglsym_eglDestroyImage)
@@ -189,7 +189,7 @@ evas_gl_common_eglDestroyImage(EGLDisplay dpy, void *im)
 #endif
 
 /* FIXME: return error if a required symbol was not found */
-EAPI void
+EMODAPI void
 evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
 {
    int failed = 0, num = 0;
@@ -442,7 +442,7 @@ static void shader_array_flush(Evas_Engine_GL_Context *gc);
 static Evas_Engine_GL_Context *_evas_gl_common_context = NULL;
 static Evas_GL_Shared *shared = NULL;
 
-EAPI void
+EMODAPI void
 __evas_gl_err(int err, const char *file, const char *func, int line, const char *op)
 {
    const char *errmsg;
@@ -863,7 +863,7 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
      }
 }
 
-EAPI Evas_Engine_GL_Context *
+EMODAPI Evas_Engine_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_Engine_GL_Context *gc;
@@ -1419,7 +1419,7 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
 #undef RALOC
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
 {
    int i, j;
@@ -1507,7 +1507,7 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
      }
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
 {
    if (_evas_gl_common_context == gc) return;
@@ -1515,7 +1515,7 @@ evas_gl_common_context_use(Evas_Engine_GL_Context *gc)
    if (gc) _evas_gl_common_viewport_set(gc);
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
 {
    int i;
@@ -1608,7 +1608,7 @@ evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc)
    _evas_gl_common_viewport_set(gc);
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot)
 {
    if ((gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
@@ -1659,7 +1659,7 @@ evas_gl_common_tiling_done(Evas_Engine_GL_Context *gc EINA_UNUSED)
 }
 
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_done(Evas_Engine_GL_Context *gc)
 {
    if (gc->master_clip.used)
@@ -3909,7 +3909,7 @@ evas_gl_common_filter_inverse_color_push(Evas_Engine_GL_Context *gc,
 }
 // ----------------------------------------------------------------------------
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_flush(Evas_Engine_GL_Context *gc)
 {
    shader_array_flush(gc);
@@ -4712,7 +4712,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
    gc->havestuff = EINA_FALSE;
 }
 
-EAPI int
+EMODAPI int
 evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* buf_name, int frame, const char *suffix)
 {
    RGBA_Image *im = NULL;

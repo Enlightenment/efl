@@ -27,27 +27,23 @@
 #include "ecore_evas_private.h"
 #include "ecore_evas_x11.h"
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI
-# endif /* ! DLL_EXPORT */
+#  define EMODAPI
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
+#   define EMODAPI __attribute__ ((visibility("default")))
 #  endif
-# else
-#  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
+#endif
 
 #define ECORE_EVAS_X11_SELECTION 0x7F
 
@@ -1943,7 +1939,7 @@ _ecore_evas_x_layer_update(Ecore_Evas *ee)
    /* FIXME: Set gnome layer */
 }
 
-EAPI void ecore_x_window_root_properties_select(void);
+EMODAPI void ecore_x_window_root_properties_select(void);
 
 static int
 _ecore_evas_x_init(void)
@@ -4760,7 +4756,7 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 #endif
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window parent,
 				     int x, int y, int w, int h)
 {
@@ -4963,7 +4959,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    return ee;
 }
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window parent,
                                             int x, int y, int w, int h)
 {
@@ -5277,7 +5273,7 @@ _ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window w
 #endif
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window parent,
 				       int x, int y, int w, int h, const int *opt)
 {
@@ -5401,14 +5397,14 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    return ee;
 }
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_gl_x11_new_internal(const char *disp_name, Ecore_X_Window parent,
                       int x, int y, int w, int h)
 {
    return ecore_evas_gl_x11_options_new_internal(disp_name, parent, x, y, w, h, NULL);
 }
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window parent,
                                       int x, int y, int w, int h)
 {

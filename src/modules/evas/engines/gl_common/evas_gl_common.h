@@ -74,29 +74,25 @@ typedef struct _Evas_GL_Filter                Evas_GL_Filter;
 
 typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI __declspec(dllimport)
+#  define EMODAPI
 # endif
+# define EMODAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
+#   define EMODAPI __attribute__ ((visibility("default")))
+#   define EMODAPI_WEAK __attribute__ ((weak))
 #  else
-#   define EAPI
+#   define EMODAPI
+#   define EMODAPI_WEAK
 #  endif
 # else
-#  define EAPI
+#  define EMODAPI
+#  define EMODAPI_WEAK
 # endif
 #endif
 
@@ -544,38 +540,38 @@ struct _Evas_GL_Image_Data_Map
 };
 
 /* GL_Common function that are used by gl_generic inherited module */
-EAPI void         evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
-EAPI void         evas_gl_common_image_ref(Evas_GL_Image *im);
-EAPI void         evas_gl_common_image_unref(Evas_GL_Image *im);
-EAPI Evas_GL_Image *evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
-EAPI void         evas_gl_common_image_native_disable(Evas_GL_Image *im);
-EAPI void         evas_gl_common_image_free(Evas_GL_Image *im);
-EAPI void         evas_gl_common_image_native_enable(Evas_GL_Image *im);
+EMODAPI void         evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc);
+EMODAPI void         evas_gl_common_image_ref(Evas_GL_Image *im);
+EMODAPI void         evas_gl_common_image_unref(Evas_GL_Image *im);
+EMODAPI Evas_GL_Image *evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
+EMODAPI void         evas_gl_common_image_native_disable(Evas_GL_Image *im);
+EMODAPI void         evas_gl_common_image_free(Evas_GL_Image *im);
+EMODAPI void         evas_gl_common_image_native_enable(Evas_GL_Image *im);
 
-EAPI int          evas_gl_preload_init(void);
-EAPI int          evas_gl_preload_shutdown(void);
-EAPI Eina_Bool    evas_gl_preload_enabled(void);
+EMODAPI int          evas_gl_preload_init(void);
+EMODAPI int          evas_gl_preload_shutdown(void);
+EMODAPI Eina_Bool    evas_gl_preload_enabled(void);
 
-EAPI Evas_Engine_GL_Context  *evas_gl_common_context_new(void);
+EMODAPI Evas_Engine_GL_Context  *evas_gl_common_context_new(void);
 
-EAPI void         evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
-EAPI void         evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
-EAPI void         evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
-EAPI void         evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc);
-EAPI void         evas_gl_common_context_done(Evas_Engine_GL_Context *gc);
+EMODAPI void         evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
+EMODAPI void         evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
+EMODAPI void         evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
+EMODAPI void         evas_gl_common_context_newframe(Evas_Engine_GL_Context *gc);
+EMODAPI void         evas_gl_common_context_done(Evas_Engine_GL_Context *gc);
 
-EAPI void         evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot);
-EAPI int          evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* fname, int frame, const char* suffix);
+EMODAPI void         evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h, int rot);
+EMODAPI int          evas_gl_common_buffer_dump(Evas_Engine_GL_Context *gc, const char* dname, const char* fname, int frame, const char* suffix);
 
-EAPI void         evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data);
-EAPI void         evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data);
-EAPI void         evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
-EAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn);
-EAPI Eina_Bool    evas_gl_extension_string_check(const char *ext, const char *exts);
+EMODAPI void         evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data);
+EMODAPI void         evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data);
+EMODAPI void         evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
+EMODAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn);
+EMODAPI Eina_Bool    evas_gl_extension_string_check(const char *ext, const char *exts);
 
-EAPI void         evas_gl_common_error_set(int error_enum);
-EAPI int          evas_gl_common_error_get(void);
-EAPI void        *evas_gl_common_current_context_get(void);
+EMODAPI void         evas_gl_common_error_set(int error_enum);
+EMODAPI int          evas_gl_common_error_get(void);
+EMODAPI void        *evas_gl_common_current_context_get(void);
 
 typedef int (*Evas_GL_Preload)(void);
 typedef void (*Evas_GL_Common_Image_Call)(Evas_GL_Image *im);
@@ -588,7 +584,7 @@ typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const 
 typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym), const char *extsn);
 typedef Eina_Bool (*Evas_Gl_Extension_String_Check)(const char *exts, const char *ext);
 
-EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
+EMODAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
 
 int               evas_gl_common_version_check(int *minor_version);
 void              evas_gl_common_tiling_start(Evas_Engine_GL_Context *gc,
@@ -692,7 +688,7 @@ void              evas_gl_common_filter_inverse_color_push(Evas_Engine_GL_Contex
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);
-EAPI void         evas_gl_common_shaders_flush(Evas_GL_Shared *shared);
+EMODAPI void         evas_gl_common_shaders_flush(Evas_GL_Shared *shared);
 
 Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                                     Shader_Type type,
@@ -788,8 +784,8 @@ extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
 extern void       (*glsym_glRenderbufferStorageMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
 
 #ifdef GL_GLES
-EAPI void *           evas_gl_common_eglCreateImage          (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
-EAPI int              evas_gl_common_eglDestroyImage         (EGLDisplay dpy, void *im);
+EMODAPI void *           evas_gl_common_eglCreateImage          (EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLAttrib *attrib_list);
+EMODAPI int              evas_gl_common_eglDestroyImage         (EGLDisplay dpy, void *im);
 extern unsigned int   (*eglsym_eglDestroyImage)              (void *a, void *b);
 extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
 extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d);
@@ -983,9 +979,6 @@ _comp_tex_sub_2d(Evas_Engine_GL_Context *gc, int x, int y, int w, int h, int fmt
 }
 
 #endif
-
-#undef EAPI
-#define EAPI
 
 extern Eina_Bool _need_context_restore;
 extern void _context_restore(void);

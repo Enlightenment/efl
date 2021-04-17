@@ -17,27 +17,23 @@
 #include "ecore_evas_private.h"
 #include <Evas_Engine_FB.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
 #ifdef _WIN32
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI
-# endif /* ! DLL_EXPORT */
+#  define EMODAPI
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
+#   define EMODAPI __attribute__ ((visibility("default")))
 #  endif
-# else
-#  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
+#endif
 
 static int _ecore_evas_init_count = 0;
 
@@ -564,7 +560,7 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL, //fn_last_tick_get
 };
 
-EAPI Ecore_Evas *
+EMODAPI Ecore_Evas *
 ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
 {
    Evas_Engine_Info_FB *einfo;

@@ -1,43 +1,28 @@
-/* A small helper header defining EAPI for elementary modules, it should be
+/* A small helper header defining ELM_API for elementary modules, it should be
  * included last in the modules C files.
  */
 
 #ifndef ELM_MODULE_HELPER_H
 #define ELM_MODULE_HELPER_H
 
-#ifdef EAPI
-# undef EAPI
-#endif
-#ifdef EWAPI
-# undef EWAPI
-#endif
-
 #ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
 # else
-#  define EAPI __declspec(dllimport)
+#  define EMODAPI
 # endif
-# define EAPI_WEAK
+# define EMODAPI_WEAK
+#elif defined(__GNUC__)
+# if __GNUC__ >= 4
+#  define EMODAPI __attribute__ ((visibility("default")))
+#  define EMODAPI_WEAK __attribute__ ((weak))
+# else
+#  define EMODAPI
+#  define EMODAPI_WEAK
+# endif
 #else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-#  endif
-# else
-#  define EAPI
-#  define EAPI_WEAK
-# endif
+# define EMODAPI
+# define EMODAPI_WEAK
 #endif
-
-#define EWAPI EAPI EAPI_WEAK
 
 #endif

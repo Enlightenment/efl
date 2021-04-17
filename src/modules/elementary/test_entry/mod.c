@@ -11,32 +11,32 @@
 #include "elm_module_helper.h"
 
 // module api funcs needed
-EAPI int
+EMODAPI int
 elm_modapi_init(void *m EINA_UNUSED)
 {
    return 1; // succeed always
 }
 
-EAPI int
+EMODAPI int
 elm_modapi_shutdown(void *m EINA_UNUSED)
 {
    return 1; // succeed always
 }
 
 // module fucns for the specific module type
-EAPI void
+EMODAPI void
 obj_hook(Evas_Object *obj)
 {
    printf("hook: %p\n", obj);
 }
 
-EAPI void
+EMODAPI void
 obj_unhook(Evas_Object *obj)
 {
    printf("unhook: %p\n", obj);
 }
 
-EAPI void
+EMODAPI void
 obj_longpress(Evas_Object *obj)
 {
    printf("longpress: %p\n", obj);

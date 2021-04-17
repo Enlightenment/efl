@@ -1721,7 +1721,7 @@ _evgl_tls_resource_destroy(void *eng_data)
    evgl_engine->resource_key = 0;
 }
 
-EAPI void * /* EVGL_Context */
+EMODAPI void * /* EVGL_Context */
 evas_gl_common_current_context_get(void)
 {
    EVGL_Resource *rsc;
@@ -1735,7 +1735,7 @@ evas_gl_common_current_context_get(void)
      return rsc->current_ctx;
 }
 
-EAPI void *
+EMODAPI void *
 evgl_current_native_context_get(EVGL_Context *ctx)
 {
    EVGLNative_Context context;
@@ -1787,7 +1787,7 @@ _evgl_direct_enabled(void)
    return _evgl_direct_renderable(rsc, sfc);
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_error_set(int error_enum)
 {
    EVGL_Resource *rsc;
@@ -1801,7 +1801,7 @@ evas_gl_common_error_set(int error_enum)
    rsc->error_state = error_enum;
 }
 
-EAPI int
+EMODAPI int
 evas_gl_common_error_get(void)
 {
    EVGL_Resource *rsc;
@@ -3266,7 +3266,7 @@ evgl_direct_partial_render_end()
      }
 }
 
-EAPI void
+EMODAPI void
 evas_gl_common_context_restore_set(Eina_Bool enable)
 {
    _need_context_restore = enable;

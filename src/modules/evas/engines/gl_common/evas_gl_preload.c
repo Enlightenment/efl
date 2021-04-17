@@ -231,7 +231,7 @@ _evas_gl_preload_tile_async(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 
 
 // Put the async preloader on standby
-EAPI void
+EMODAPI void
 evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_data)
 {
    if (!async_loader_init) return ;
@@ -251,7 +251,7 @@ evas_gl_preload_render_lock(evas_gl_make_current_cb make_current, void *engine_d
 }
 
 // Let the async preloader run !
-EAPI void
+EMODAPI void
 evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data)
 {
    if (!async_loader_init) return ;
@@ -272,7 +272,7 @@ evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine
 }
 
 // add a way to destroy surface and temporarily stop the rendering of the image
-EAPI void
+EMODAPI void
 evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data)
 {
    if (engine_data != async_engine_data) return ;
@@ -324,7 +324,7 @@ evas_gl_preload_target_unregister(Evas_GL_Texture *tex, Eo *target)
        }
 }
 
-EAPI int
+EMODAPI int
 evas_gl_preload_init(void)
 {
    const char *s = getenv("EVAS_GL_PRELOAD");
@@ -342,7 +342,7 @@ evas_gl_preload_init(void)
    return async_loader_init;
 }
 
-EAPI int
+EMODAPI int
 evas_gl_preload_shutdown(void)
 {
    const char *s = getenv("EVAS_GL_PRELOAD");
@@ -360,7 +360,7 @@ evas_gl_preload_shutdown(void)
    return async_loader_init;
 }
 
-EAPI Eina_Bool
+EMODAPI Eina_Bool
 evas_gl_preload_enabled(void)
 {
    return (async_loader_init >= 1);
