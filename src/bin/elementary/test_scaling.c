@@ -89,6 +89,21 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(fr);
 
    fr = elm_frame_add(win);
+   elm_object_style_set(fr, "icon");
+   elm_object_text_set(fr, "Scale: 0.75");
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "Parent frame scale<br/>"
+                       "is 0.75. Child should<br/>"
+                       "inherit it.");
+   elm_object_content_set(fr, lb);
+   elm_object_scale_set(fr, 0.75);
+   evas_object_show(lb);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   fr = elm_frame_add(win);
+   elm_object_style_set(fr, "border");
    elm_object_text_set(fr, "Scale: 1.0");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
@@ -102,6 +117,21 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(fr);
 
    fr = elm_frame_add(win);
+   elm_object_style_set(fr, "overlay");
+   elm_object_text_set(fr, "Scale: 1.5");
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "Parent frame scale<br/>"
+                       "is 1.5. Child should<br/>"
+                       "inherit it.");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+   elm_object_scale_set(fr, 1.5);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   fr = elm_frame_add(win);
+   elm_object_style_set(fr, "icon_overlay");
    elm_object_text_set(fr, "Scale: 2.0");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
@@ -111,6 +141,20 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
    elm_object_scale_set(fr, 2.0);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   fr = elm_frame_add(win);
+   elm_object_style_set(fr, "border_overlay");
+   elm_object_text_set(fr, "Scale: 3.0");
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "Parent frame scale<br/>"
+                       "is 3.0. Child should<br/>"
+                       "inherit it.");
+   elm_object_content_set(fr, lb);
+   evas_object_show(lb);
+   elm_object_scale_set(fr, 3.0);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 

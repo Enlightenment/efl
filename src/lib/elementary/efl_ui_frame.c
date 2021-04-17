@@ -94,6 +94,15 @@ _on_frame_clicked(void *data,
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
+static void
+_on_frame_close(void *data,
+                Evas_Object *obj EINA_UNUSED,
+                const char *sig EINA_UNUSED,
+                const char *src EINA_UNUSED)
+{
+   evas_object_smart_callback_call(data, "close", NULL);
+}
+
 /* using deferred sizing evaluation, just like the parent */
 EOLIAN static void
 _efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
@@ -139,6 +148,9 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
         edje_object_signal_callback_add
            (wd->resize_obj, "elm,action,click", "elm",
             _on_frame_clicked, obj);
+        edje_object_signal_callback_add
+           (wd->resize_obj, "elm,action,close", "elm",
+            _on_frame_close, obj);
      }
    else
      {

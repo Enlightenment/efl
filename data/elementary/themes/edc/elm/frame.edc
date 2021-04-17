@@ -11,13 +11,18 @@ group { name: "elm/frame/base/default";
          }
       }
       WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
-      part { name: "base"; type: RECT;
+      part { name: "base"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 6 6;
             rel2.offset: -7 -7;
-            color: 80 80 80 255;
             offscale;
+         }
+      }
+      part { name: "top_bg"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "top";
+            color: 80 80 80 255;
          }
       }
       part { name: "top"; type: SPACER;
@@ -33,15 +38,14 @@ group { name: "elm/frame/base/default";
       part { name: "elm.text"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "base";
             rel1.offset: 4 4;
-            rel1.to: "base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 4;
-            rel2.to: "base";
             align: 0.0 0.0;
             color: 255 255 255 255;
             text { font: FNBD; size: 10;
-               align: 0.0 0.0;
+               align: 0.0 0.5;
                min: 0 1;
             }
             fixed: 0 1;
@@ -129,6 +133,117 @@ group { name: "elm/frame/base/default";
       }
       program { name: "signal";
          action: SIGNAL_EMIT "elm,anim,done" "elm";
+      }
+   }
+}
+
+group { name: "elm/frame/base/icon";
+   inherit: "elm/frame/base/default";
+   parts {
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         insert_after: "top_bg";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+            rel1.offset: 4 0;
+            rel2.relative: 0.0 0.0;
+            rel2.offset: 4 -1;
+            align: 0.0 0.5;
+            min: 15 15;
+            offscale;
+         }
+      }
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel1.relative: 1.0 0.0;
+            min: 0 15;
+         }
+      }
+   }
+}
+
+group { name: "elm/frame/base/border";
+   inherit: "elm/frame/base/icon";
+   parts {
+      part { name: "top_bg";
+         description { state: "default" 0.0;
+            color: 32 32 32 255;
+         }
+      }
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            rel2.to_x: "close";
+            rel2.relative: 0.0 0.0;
+            min: 0 15;
+         }
+      }
+      part { name: "close";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
+            rel1.offset: -5 0;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -5 -1;
+            align: 1.0 0.5;
+            min: 15 15;
+            max: 15 15;
+            offscale;
+            image.normal: "i-close";
+            color: 255 255 255 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 220 220 220 255;
+         }
+      }
+      program { signal:  "mouse,down,1"; source:  "close";
+         action:  STATE_SET "clicked" 0.0;
+         target: "close";
+      }
+      program { signal:  "mouse,up,1"; source:  "close";
+         action:  STATE_SET "default" 0.0;
+         target: "close";
+      }
+      program { signal:  "mouse,clicked,1"; source:  "close";
+         action: SIGNAL_EMIT "elm,action,click,close" "elm";
+      }
+   }
+}
+
+group { name: "elm/frame/base/overlay";
+   inherit: "elm/frame/base/default";
+   parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            color: 0 0 0 160;
+         }
+      }
+   }
+}
+
+group { name: "elm/frame/base/icon_overlay";
+   inherit: "elm/frame/base/icon";
+   parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            color: 0 0 0 160;
+         }
+      }
+   }
+}
+
+group { name: "elm/frame/base/border_overlay";
+   inherit: "elm/frame/base/border";
+   parts {
+      part { name: "bg";
+         description { state: "default" 0.0;
+            color: 0 0 0 160;
+         }
       }
    }
 }
