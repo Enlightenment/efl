@@ -829,6 +829,8 @@ ICON("scanner", "i-scanner")
 ICON("health", "i-health")
 ICON("tech", "i-tech")
 
+ICON("magnifying-glass", "i-magnifying-glass")
+
 ICON("media-optical", "i-drive-cd")
 ICON("media-optical-cd", "i-drive-cd")
 ICON("media-optical-audio", "i-drive-cd")

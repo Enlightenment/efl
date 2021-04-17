@@ -471,6 +471,8 @@ I160("i-printer-error", "printer-error")
 
 I160("i-addressbook", "addressbook")
 
+I160("i-magnifying-glass", "magnifying-glass")
+
 I160("i-person", "person")
 I160("i-person-plus", "person-plus")
 I160("i-person-smile", "person-smile")
