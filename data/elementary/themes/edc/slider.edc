@@ -227,6 +227,7 @@ group { name: "e/widgets/slider_vertical";
          }
       }
       part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "bg";
             rel2.to: "bg";
@@ -317,6 +318,7 @@ group { name: "e/widgets/slider_vertical";
          }
       }
       part { name: "knob";
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: -1 -1;
             rel1.to: "e.dragable.slider";
