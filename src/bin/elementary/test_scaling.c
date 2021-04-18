@@ -161,6 +161,8 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    fr = elm_frame_add(win);
    elm_object_style_set(fr, "border_overlay");
    elm_object_text_set(fr, "Scale: 3.0");
+   evas_object_smart_callback_add(fr, "clicked", _fr_clicked, NULL);
+   evas_object_smart_callback_add(fr, "close", _fr_close, NULL);
    lb = elm_label_add(win);
    elm_object_text_set(lb,
                        "Parent frame scale<br/>"
