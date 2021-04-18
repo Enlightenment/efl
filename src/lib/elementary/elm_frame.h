@@ -19,6 +19,11 @@
  * @li pad_huge
  * @li outdent_top
  * @li outdent_bottom
+ * @li overlay
+ * @li icon
+ * @li icon_overlay
+ * @li border
+ * @li border_overlay
  *
  * Of all this styles only default shows the title.
  *
