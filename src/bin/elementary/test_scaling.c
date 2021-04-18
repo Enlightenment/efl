@@ -3,6 +3,18 @@
 #endif
 #include <Elementary.h>
 
+static void
+_fr_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("clicked\n");
+}
+
+static void
+_fr_close(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("close\n");
+}
+
 void
 test_scaling(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -105,6 +117,8 @@ test_scaling2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    fr = elm_frame_add(win);
    elm_object_style_set(fr, "border");
    elm_object_text_set(fr, "Scale: 1.0");
+   evas_object_smart_callback_add(fr, "clicked", _fr_clicked, NULL);
+   evas_object_smart_callback_add(fr, "close", _fr_close, NULL);
    lb = elm_label_add(win);
    elm_object_text_set(lb,
                        "Parent frame scale<br/>"

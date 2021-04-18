@@ -210,7 +210,7 @@ group { name: "elm/frame/base/border";
          target: "close";
       }
       program { signal:  "mouse,clicked,1"; source:  "close";
-         action: SIGNAL_EMIT "elm,action,click,close" "elm";
+         action: SIGNAL_EMIT "elm,action,close" "elm";
       }
    }
 }
