@@ -32,6 +32,24 @@
 # include "ecore_evas_private.h"
 # include "ecore_evas_wayland.h"
 
+#ifdef _WIN32
+# ifndef EFL_MODULE_STATIC
+#  define EMODAPI __declspec(dllexport)
+# else
+#  define EMODAPI
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EMODAPI __attribute__ ((visibility("default")))
+#  endif
+# endif
+#endif /* ! _WIN32 */
+
+#ifndef EMODAPI
+# define EMODAPI
+#endif
+
 typedef struct _Ecore_Evas_Engine_Wl_Data Ecore_Evas_Engine_Wl_Data;
 
 typedef struct _Ecore_Evas_Wl_Selection_Data Ecore_Evas_Wl_Selection_Data;
