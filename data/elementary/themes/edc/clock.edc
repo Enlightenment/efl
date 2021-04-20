@@ -492,6 +492,29 @@ group { name: "e/modules/clock/digital";
       DIGPRGS("s1")
 #undef DIGPRG
 #undef DIGPRGS
+      program { signal: "e,state,freeze"; source: "e";
+         script {
+            new tim;
+
+            tim = get_int(tick_timer);
+            if (tim) {
+               cancel_timer(tim);
+               set_int(tick_timer, 0);
+            }
+         }
+      }
+      program { signal: "e,state,thaw"; source: "e";
+         script {
+            new tim;
+
+            tim = get_int(tick_timer);
+            if (tim) {
+               cancel_timer(tim);
+               set_int(tick_timer, 0);
+            }
+            clock_cb(0);
+         }
+      }
    }
 }
 
@@ -605,14 +628,12 @@ group { name: "e/modules/clock/main";
       }
    }
    programs {
-      program {
-         signal: "load"; source: "";
+      program { signal: "load"; source: "";
          script {
             clock_cb(0);
          }
       }
-      program {
-         signal: "e,state,seconds,on"; source: "e";
+      program { signal: "e,state,seconds,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "seconds";
          after: "sec2";
@@ -630,8 +651,7 @@ group { name: "e/modules/clock/main";
             clock_cb(0);
          }
       }
-      program {
-         signal: "e,state,seconds,off"; source: "e";
+      program { signal: "e,state,seconds,off"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "seconds";
          after: "sec3";
@@ -641,6 +661,29 @@ group { name: "e/modules/clock/main";
             new tim;
 
             set_int(do_seconds, 0);
+            tim = get_int(tick_timer);
+            if (tim) {
+               cancel_timer(tim);
+               set_int(tick_timer, 0);
+            }
+            clock_cb(0);
+         }
+      }
+      program { signal: "e,state,freeze"; source: "e";
+         script {
+            new tim;
+
+            tim = get_int(tick_timer);
+            if (tim) {
+               cancel_timer(tim);
+               set_int(tick_timer, 0);
+            }
+         }
+      }
+      program { signal: "e,state,thaw"; source: "e";
+         script {
+            new tim;
+
             tim = get_int(tick_timer);
             if (tim) {
                cancel_timer(tim);
