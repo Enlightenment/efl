@@ -90,12 +90,12 @@ group "Elm_Config" struct {
   value "year_min" int: 2;
   value "year_max" int: 137;
   value "softcursor_mode" uchar: 0;
-  value "auto_norender_withdrawn" uchar: 0;
-  value "auto_norender_iconified_same_as_withdrawn" uchar: 0;
-  value "auto_flush_withdrawn" uchar: 0;
+  value "auto_norender_withdrawn" uchar: 1;
+  value "auto_norender_iconified_same_as_withdrawn" uchar: 1;
+  value "auto_flush_withdrawn" uchar: 1;
   value "auto_dump_withdrawn" uchar: 0;
   value "auto_throttle" uchar: 0;
-  value "auto_throttle_amount" double: 0.1;
+  value "auto_throttle_amount" double: 0.03333333333;
   value "magnifier_enable" uchar: 1;
   value "magnifier_scale" double: 1.5;
   value "audio_mute_effect" uchar: 0;

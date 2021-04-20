@@ -371,6 +371,7 @@ static int _elm_win_count = 0;
 
 static Eina_Bool _elm_win_auto_throttled = EINA_FALSE;
 
+static Eina_Bool _elm_win_state_eval_timer_now = EINA_FALSE;
 static Ecore_Timer *_elm_win_state_eval_timer = NULL;
 
 static void _elm_win_legacy_init(Efl_Ui_Win_Data *sd);
@@ -658,6 +659,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
    int _elm_win_count_withdrawn = 0;
    Eina_Bool throttle = EINA_FALSE;
 
+   _elm_win_state_eval_timer_now = EINA_FALSE;
    _elm_win_state_eval_timer = NULL;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
@@ -674,7 +676,6 @@ _elm_win_state_eval(void *data EINA_UNUSED)
 
                        elm_win_norender_push(obj);
                        evas_object_data_set(obj, "__win_auto_norender", obj);
-
                        if (_elm_config->auto_flush_withdrawn)
                          {
                             edje_file_cache_flush();
@@ -779,10 +780,15 @@ _elm_win_flush_cache_and_exit(Eo *obj)
 }
 
 static void
-_elm_win_state_eval_queue(void)
+_elm_win_state_eval_queue(Eina_Bool now)
 {
+   if ((_elm_win_state_eval_timer_now) && (_elm_win_state_eval_timer)) return;
    if (_elm_win_state_eval_timer) ecore_timer_del(_elm_win_state_eval_timer);
-   _elm_win_state_eval_timer = ecore_timer_add(0.5, _elm_win_state_eval, NULL);
+   if (now)
+     _elm_win_state_eval_timer = ecore_timer_add(0.0, _elm_win_state_eval, NULL);
+   else
+     _elm_win_state_eval_timer = ecore_timer_add(0.5, _elm_win_state_eval, NULL);
+   _elm_win_state_eval_timer_now = now;
 }
 
 // example shot spec (wait 0.1 sec then save as my-window.png):
@@ -1850,7 +1856,7 @@ _elm_win_state_change(Ecore_Evas *ee)
           }
      }
 
-   _elm_win_state_eval_queue();
+   _elm_win_state_eval_queue(EINA_TRUE);
 
    if ((ch_withdrawn) || (ch_minimized))
      {
@@ -2618,7 +2624,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
         return;
      }
 
-   _elm_win_state_eval_queue();
+   _elm_win_state_eval_queue(EINA_FALSE);
 
    if ((sd->modal) && (evas_object_visible_get(obj)))
      _elm_win_modality_decrement(sd);
@@ -3113,7 +3119,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    _elm_win_list = eina_list_remove(_elm_win_list, obj);
    _elm_win_count--;
-   _elm_win_state_eval_queue();
+   _elm_win_state_eval_queue(EINA_FALSE);
 
    if (_elm_win_count == _paused_windows)
      efl_event_callback_call(efl_loop_get(obj), EFL_APP_EVENT_PAUSE, NULL);
@@ -5003,7 +5009,7 @@ _elm_win_cb_hide(void *data EINA_UNUSED,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
-   _elm_win_state_eval_queue();
+   _elm_win_state_eval_queue(EINA_FALSE);
 }
 
 static void
@@ -5012,7 +5018,7 @@ _elm_win_cb_show(void *data EINA_UNUSED,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
-   _elm_win_state_eval_queue();
+   _elm_win_state_eval_queue(EINA_TRUE);
 }
 
 static inline Eina_Bool
