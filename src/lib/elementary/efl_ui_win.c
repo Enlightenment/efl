@@ -8543,7 +8543,11 @@ elm_win_withdrawn_get(const Evas_Object *obj)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
-
+   if (ecore_evas_override_get(sd->ee))
+     {
+        if (evas_object_visible_get(obj)) return EINA_FALSE;
+        return EINA_FALSE;
+     }
    return sd->withdrawn;
 }
 
