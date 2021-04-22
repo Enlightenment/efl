@@ -1459,21 +1459,66 @@ group { name: "elm/button/base/combobox_vertical/default";
             visible: 0;
          }
       }
+      rect { "icon_clip";
+         desc { "default";
+         }
+         desc { "disabled";
+            inherit: "default";
+            color: 255 255 255 64;
+         }
+      }
       swallow { "elm.swallow.content";
          scale: 1;
+         clip_to: "icon_clip";
          desc { "default";
             rel.to: "base";
             rel1.offset: 4 4;
-            rel2.to_x: "select_line";
+            rel2.to_x: "event2";
             rel2.relative: 0.0 1.0;
             rel2.offset: -5 -5;
             offscale;
+         }
+      }
+      image { name: "expand1";
+         scale: 1;
+         clip_to: "icon_clip";
+         desc { "default";
+            image.normal: "i-arrow-u";
+            min: 15 15;
+            max: 15 15;
+            rel.to: "event2";
+            rel2.relative: 1.0 0.5;
+            fixed: 1 1;
+            color: 160 160 160 255;
+         }
+         desc { "pressed";
+            inherit;
+            color: 255 255 255 255;
+         }
+      }
+      image { name: "expand2";
+         scale: 1;
+         clip_to: "icon_clip";
+         desc { "default";
+            image.normal: "i-arrow-d";
+            min: 15 15;
+            max: 15 15;
+            rel.to: "event2";
+            rel1.relative: 0.0 0.5;
+            fixed: 1 1;
+            color: 160 160 160 255;
+         }
+         desc { "pressed";
+            inherit;
+            color: 255 255 255 255;
          }
       }
       rect { name: "event2";
          desc { "default";
             color: 0 0 0 0;
             rel.to: "base";
+            rel2.to_x: "select_line";
+            rel2.relative: 0.0 1.0;
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
@@ -1539,12 +1584,23 @@ group { name: "elm/button/base/combobox_vertical/default";
       program { signal: "mouse,clicked,1"; source: "event*";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
+      program { signal: "mouse,down,1"; source: "event2";
+         action: STATE_SET "pressed" 0.0;
+         target: "expand1";
+         target: "expand2";
+      }
+      program { signal: "mouse,up,1"; source: "event2";
+         action: STATE_SET "default" 0.0;
+         target: "expand1";
+         target: "expand2";
+      }
       program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "base";
          target: "event";
          target: "event2";
          target: "select_line";
+         target: "icon_clip";
       }
       program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
@@ -1552,6 +1608,7 @@ group { name: "elm/button/base/combobox_vertical/default";
          target: "event";
          target: "event2";
          target: "select_line";
+         target: "icon_clip";
       }
    }
 }
