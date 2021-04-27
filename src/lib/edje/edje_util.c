@@ -5877,6 +5877,32 @@ _edje_color_class_find(const Edje *ed, const char *color_class)
      cc = eina_hash_find(ed->file->color_hash, color_class);
    if (cc) return cc;
 
+   // fall back to parent class. expecting classes like:
+   // /bg <- fallback for /bg/*
+   // /bg/normal <- fallback for /bg/normal/*
+   // /bg/normal/button <- mid grey
+   // etc.
+   if (color_class[0] == '/')
+     {
+        size_t len = strlen(color_class);
+        char *color_class_parent = alloca(len + 1);
+        const char *src = color_class;
+        char *last_slash = NULL, *dst = color_class_parent;
+
+        for (;; src++, dst++)
+          {
+             *dst = *src;
+             if (*dst == '/') last_slash = dst;
+             if (*dst == 0) break;
+          }
+        if (last_slash)
+          {
+             if (last_slash == color_class_parent)
+               return NULL;
+             *last_slash = 0;
+          }
+        return _edje_color_class_find(ed, color_class_parent);
+     }
    return NULL;
 }
 
@@ -5924,6 +5950,32 @@ _edje_color_class_recursive_find(const Edje *ed, const char *color_class)
      cc = _edje_color_class_recursive_find_helper(ed, ed->file->color_hash, color_class);
    if (cc) return cc;
 
+   // fall back to parent class. expecting classes like:
+   // /bg <- fallback for /bg/*
+   // /bg/normal <- fallback for /bg/normal/*
+   // /bg/normal/button <- mid grey
+   // etc.
+   if (color_class[0] == '/')
+     {
+        size_t len = strlen(color_class);
+        char *color_class_parent = alloca(len + 1);
+        const char *src = color_class;
+        char *last_slash = NULL, *dst = color_class_parent;
+
+        for (;; src++, dst++)
+          {
+             *dst = *src;
+             if (*dst == '/') last_slash = dst;
+             if (*dst == 0) break;
+          }
+        if (last_slash)
+          {
+             if (last_slash == color_class_parent)
+               return NULL;
+             *last_slash = 0;
+          }
+        return _edje_color_class_recursive_find(ed, color_class_parent);
+     }
    return NULL;
 }
 
