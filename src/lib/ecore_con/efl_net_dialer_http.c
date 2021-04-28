@@ -1198,6 +1198,8 @@ _efl_net_dialer_http_efl_object_destructor(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    _secure_free(&pd->authentication.password);
    eina_stringshare_replace(&pd->ssl.ca, NULL);
    eina_stringshare_replace(&pd->ssl.crl, NULL);
+
+   _c_shutdown();
 }
 
 static void
