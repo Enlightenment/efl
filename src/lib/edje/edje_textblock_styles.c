@@ -145,11 +145,22 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
              else if (_IS_STRINGS_EQUAL(key, key_len, "text_class", 10))
                {
                   if (tag_ret)
-                    tag_ret->text_class = eina_stringshare_add(val);
+                    eina_stringshare_replace(&(tag_ret->text_class), val);
 
                   // no need to add text_class tag to style
                   // as evas_textblock_style has no idea about
                   // text_class tag.
+                  free(item);
+                  continue;
+               }
+             else if (_IS_STRINGS_EQUAL(key, key_len, "color_class", 11))
+               {
+                  if (tag_ret)
+                    eina_stringshare_replace(&(tag_ret->color_class), val);
+
+                  // no need to add color_class tag to style
+                  // as evas_textblock_style has no idea about
+                  // color_class tag.
                   free(item);
                   continue;
                }
@@ -166,7 +177,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
                          {
                             char buffer[120];
                             snprintf(buffer, sizeof(buffer), "edje/fonts/%s", val);
-                            tag_ret->font = eina_stringshare_add(buffer);
+                            eina_stringshare_replace(&tag_ret->font, buffer);
                             if (eina_strbuf_length_get(result)) eina_strbuf_append(result, " ");
                             eina_strbuf_append(result, "font=");
                             eina_strbuf_append(result, buffer);
@@ -178,6 +189,63 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
                          }
                     }
                }
+             // handle colorclass replacements of color like: color=cc:/fg/normal
+             else if ((_IS_STRINGS_EQUAL(key, key_len, "color", 5)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "outline_color", 13)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "shadow_color", 12)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "underline_color", 15)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "underline2_color", 16)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "secondary_underline_color", 25)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "underline_dash_color", 20)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "underline_dashed_color", 22)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "glow_color", 10)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "glow2_color", 11)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "secondary_glow_color", 20)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "backing_color", 13)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "background_color", 16)) ||
+                      (_IS_STRINGS_EQUAL(key, key_len, "strikethrough_color", 19)))
+               {
+                  if (!strncmp(val, "cc:", 3))
+                    {
+                       if ((_IS_STRINGS_EQUAL(key, key_len, "color", 5)))
+                         eina_stringshare_replace(&(tag_ret->color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "outline_color", 13)))
+                         eina_stringshare_replace(&(tag_ret->outline_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "shadow_color", 12)))
+                         eina_stringshare_replace(&(tag_ret->shadow_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "underline_color", 15)))
+                         eina_stringshare_replace(&(tag_ret->underline_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "underline2_color", 16)) ||
+                                (_IS_STRINGS_EQUAL(key, key_len, "secondary_underline_color", 25)))
+                         eina_stringshare_replace(&(tag_ret->underline2_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "underline_dash_color", 20)) ||
+                                (_IS_STRINGS_EQUAL(key, key_len, "underline_dashed_color", 22)))
+                         eina_stringshare_replace(&(tag_ret->underline_dash_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "glow_color", 10)))
+                         eina_stringshare_replace(&(tag_ret->glow_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "glow2_color", 11)) ||
+                                (_IS_STRINGS_EQUAL(key, key_len, "secondary_glow_color", 20)))
+                         eina_stringshare_replace(&(tag_ret->glow2_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "backing_color", 13)) ||
+                                (_IS_STRINGS_EQUAL(key, key_len, "background_color", 16)))
+                         eina_stringshare_replace(&(tag_ret->backing_color_class), val + 3);
+                       else if ((_IS_STRINGS_EQUAL(key, key_len, "strikethrough_color", 19)))
+                         eina_stringshare_replace(&(tag_ret->strikethrough_color_class), val + 3);
+                    }
+               }
+             // XXX: how do we do better for:
+             // color
+             // outline_color
+             // shadow_color
+             // 
+             // XXX: and do these too:
+             // underline_color
+             // underline2_color | secondary_underline_color
+             // underline_dash_color | underline_dashed_color
+             // glow_color
+             // glow2_color | secondary_glow_color
+             // backing_color | background_color
+             // strikethrough_color
              s2 = eina_str_escape(item);
              if (s2)
                {
@@ -261,6 +329,7 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
    Eina_Strbuf *txt = NULL;
    Edje_Style_Tag *tag;
    Edje_Text_Class *tc;
+   Edje_Color_Class *cc;
    char *fontset = _edje_fontset_append_escaped, *fontsource = NULL;
 
    if (!ed->file) return;
@@ -298,7 +367,8 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
         eina_strbuf_append(txt, "='");
 
         /* Configure fonts from text class if it exists */
-        tc = _edje_text_class_find(ed, tag->text_class);
+        if (tag->text_class) tc = _edje_text_class_find(ed, tag->text_class);
+        else tc = NULL;
 
         /* Add and Handle tag parsed data */
         eina_strbuf_append(txt, tag->value);
@@ -335,6 +405,56 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
 
              if (sfont) free(sfont);
           }
+        if (tag->color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->color_class)))
+               eina_strbuf_append_printf(txt, " color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->outline_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->outline_color_class)))
+               eina_strbuf_append_printf(txt, " outline_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->shadow_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->shadow_color_class)))
+               eina_strbuf_append_printf(txt, " shadow_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->underline_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->underline_color_class)))
+               eina_strbuf_append_printf(txt, " underline_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->underline2_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->underline2_color_class)))
+               eina_strbuf_append_printf(txt, " underline2_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->underline_dash_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->underline_dash_color_class)))
+               eina_strbuf_append_printf(txt, " underline_dash_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->glow_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->glow_color_class)))
+               eina_strbuf_append_printf(txt, " glow_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->glow2_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->glow2_color_class)))
+               eina_strbuf_append_printf(txt, " glow2_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->backing_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->backing_color_class)))
+               eina_strbuf_append_printf(txt, " backing_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
+        if (tag->strikethrough_color_class)
+          {
+             if ((cc = _edje_color_class_recursive_find(ed, tag->strikethrough_color_class)))
+               eina_strbuf_append_printf(txt, " strikethrough_color=#%02x%02x%02x%02x", cc->r,  cc->g,  cc->b,  cc->a);
+          }
 
         eina_strbuf_append(txt, "'");
      }
@@ -343,8 +463,7 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
    /* Configure the style */
    stl->cache = EINA_TRUE;
    evas_textblock_style_set(stl->style, eina_strbuf_string_get(txt));
-   if (txt)
-     eina_strbuf_free(txt);
+   if (txt) eina_strbuf_free(txt);
 }
 
 static inline Edje_Style *
@@ -630,6 +749,16 @@ _edje_file_textblock_style_parse_and_fix(Edje_File *edf)
              eina_strbuf_append(styleBuffer, "'");
 
              if (tag->text_class) stl->readonly = EINA_FALSE;
+             else if (tag->color_class) stl->readonly = EINA_FALSE;
+             else if (tag->outline_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->shadow_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->underline_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->underline2_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->underline_dash_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->glow_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->glow2_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->backing_color_class) stl->readonly = EINA_FALSE;
+             else if (tag->strikethrough_color_class) stl->readonly = EINA_FALSE;
           }
         /* Configure the style  only if it will never change again*/
         if (stl->readonly)
@@ -658,10 +787,21 @@ _edje_file_textblock_style_cleanup(Edje_File *edf)
                eina_stringshare_del(tag->value);
              if (edf->free_strings)
                {
-                  if (tag->key) eina_stringshare_del(tag->key);
+#define STRSHRDEL(_x) if (tag->_x) eina_stringshare_del(tag->_x)
+                  STRSHRDEL(key);
 /*                FIXME: Find a proper way to handle it. */
-                  if (tag->text_class) eina_stringshare_del(tag->text_class);
-                  if (tag->font) eina_stringshare_del(tag->font);
+                  STRSHRDEL(text_class);
+                  STRSHRDEL(color_class);
+                  STRSHRDEL(outline_color_class);
+                  STRSHRDEL(shadow_color_class);
+                  STRSHRDEL(underline_color_class);
+                  STRSHRDEL(underline2_color_class);
+                  STRSHRDEL(underline_dash_color_class);
+                  STRSHRDEL(glow_color_class);
+                  STRSHRDEL(glow2_color_class);
+                  STRSHRDEL(backing_color_class);
+                  STRSHRDEL(strikethrough_color_class);
+                  STRSHRDEL(font);
                }
              free(tag);
           }

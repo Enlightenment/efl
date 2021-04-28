@@ -618,6 +618,16 @@ struct _Edje_Style_Tag
    const char                     *value;
    const char                     *font;
    const char                     *text_class;
+   const char                     *color_class;
+   const char                     *outline_color_class;
+   const char                     *shadow_color_class;
+   const char                     *underline_color_class;
+   const char                     *underline2_color_class;
+   const char                     *underline_dash_color_class;
+   const char                     *glow_color_class;
+   const char                     *glow2_color_class;
+   const char                     *backing_color_class;
+   const char                     *strikethrough_color_class;
    double                          font_size;
 };
 
