@@ -11,27 +11,6 @@ group { name: "e/theme/about";
             min: 220 320;
          }
       }
-/*
-      part { name: "bg"; type: RECT;
-         description { state: "default" 0.0;
-            color: 64 64 64 255;
-         }
-      }
-      part { name: "check";
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            color: 56 56 56 255;
-            image.normal: "check_fill.png";
-            min: 5120 5120;
-            align: 0.0 0.0;
-            fill {
-              size.relative: 0.05 0.05;
-              smooth: 0;
-            }
-         }
-      }
- */
       part { name: "image";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -43,7 +22,7 @@ group { name: "e/theme/about";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
             text { font: FNBD; size: 48;
@@ -59,7 +38,7 @@ group { name: "e/theme/about";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 255 255 255 192;
+            color: 255 255 255 192; // no cc
             rel.to: "name";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 16;
@@ -81,13 +60,15 @@ group { name: "e/theme/about";
          description { state: "default" 0.0;
             rel.to: "base";
             WIN_SHADOW_SMALL;
+            color_class: "/shadow/normal";
             offscale;
          }
          description { state: "clicked" 0.0;
             inherit;
-            image.border_scale_by: 0.25;
-            rel1.offset: -5 -3;
-            rel2.offset: 4 6;
+            image.border_scale_by: 0.125;
+            rel1.offset: -2 -1;
+            rel2.offset: 1 2;
+            color_class: "/shadow/pressed";
          }
       }
       part { name: "base"; type: RECT;
@@ -96,12 +77,14 @@ group { name: "e/theme/about";
             rel.to: "e.text.label";
             rel1.offset: -6 -6;
             rel2.offset: 5 5;
-            color: 51 153 255 255;
+            color_class: "/bg/normal/button";
             offscale;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 153 51 255;
+            rel1.offset: -5 -5;
+            rel2.offset: 4 4;
+            color_class: "/bg/pressed/button";
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
@@ -111,7 +94,7 @@ group { name: "e/theme/about";
             rel1.relative: 1.0 1.0;
             rel2.offset: -14 -14;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/button";
             align: 1.0 1.0;
             min: 85 0;
             text { font: FN; size: 10;
@@ -125,7 +108,7 @@ group { name: "e/theme/about";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
          }
       }
       program { signal: "mouse,down,1*"; source: "base";
@@ -149,13 +132,15 @@ group { name: "e/theme/about";
          description { state: "default" 0.0;
             rel.to: "base2";
             WIN_SHADOW_SMALL;
+            color_class: "/shadow/normal";
             offscale;
          }
          description { state: "clicked" 0.0;
             inherit;
-            image.border_scale_by: 0.25;
-            rel1.offset: -5 -3;
-            rel2.offset: 4 6;
+            image.border_scale_by: 0.125;
+            rel1.offset: -2 -1;
+            rel2.offset: 1 2;
+            color_class: "/shadow/pressed";
          }
       }
       part { name: "base2"; type: RECT;
@@ -163,11 +148,13 @@ group { name: "e/theme/about";
             rel.to: "e.text.theme";
             rel1.offset: -6 -6;
             rel2.offset: 5 5;
-            color: 51 153 255 255;
+            color_class: "/bg/normal/button";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 153 51 255;
+            rel1.offset: -5 -5;
+            rel2.offset: 4 4;
+            color_class: "/bg/pressed/button";
          }
       }
       part { name: "e.text.theme"; type: TEXT; mouse_events: 0;
@@ -177,7 +164,7 @@ group { name: "e/theme/about";
             rel1.relative: 0.0 1.0;
             rel2.offset: 13 -14;
             rel2.relative: 0.0 1.0;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/button";
             align: 0.0 1.0;
             min: 85 0;
             text { font: FN; size: 10;
@@ -191,17 +178,19 @@ group { name: "e/theme/about";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
          }
       }
       program { signal: "mouse,down,1*"; source: "base2";
          action: STATE_SET "clicked" 0.0;
          target: "base2";
+         target: "shadow2";
          target: "e.text.theme";
       }
       program { signal: "mouse,up,1"; source: "base2";
          action: STATE_SET "default" 0.0;
          target: "base2";
+         target: "shadow2";
          target: "e.text.theme";
       }
       program { signal: "mouse,clicked,1*"; source: "base2";

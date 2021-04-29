@@ -2,7 +2,7 @@ group { name: "elm/access/base/default";
    parts {
       part { name: "block1"; type: RECT; mouse_events:  0;
          description { state: "default" 0.0;
-            color: 0 0 0 200;
+            color_class: "/dim/normal/access";
             fixed: 0 1;
             rel1.to: "base";
             rel1.offset: -100000 -100000;
@@ -13,7 +13,7 @@ group { name: "elm/access/base/default";
       }
       part { name: "block2"; type: RECT; mouse_events:  0;
          description { state: "default" 0.0;
-            color: 0 0 0 200;
+            color_class: "/dim/normal/access";
             fixed: 0 1;
             rel1.to: "base";
             rel1.relative: 0.0 1.0;
@@ -24,7 +24,7 @@ group { name: "elm/access/base/default";
       }
       part { name: "block3"; type: RECT; mouse_events:  0;
          description { state: "default" 0.0;
-            color: 0 0 0 200;
+            color_class: "/dim/normal/access";
             rel1.to: "block1";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 0;
@@ -36,7 +36,7 @@ group { name: "elm/access/base/default";
       }
       part { name: "block4"; type: RECT; mouse_events:  0;
          description { state: "default" 0.0;
-            color: 0 0 0 200;
+            color_class: "/dim/normal/access";
             rel1.to_x: "base";
             rel1.to_y: "block1";
             rel1.relative: 1.0 1.0;
@@ -50,7 +50,7 @@ group { name: "elm/access/base/default";
          description { state: "default" 0.0;
             rel1.offset: -20 -20;
             rel2.offset:  19 19;
-            color: 255 153 51 64;
+            color_class: "/bg/normal/access";
          }
       }
    }

@@ -4,11 +4,12 @@ group { name: "e/modules/appmenu/item";
    parts {
       part { name: "background"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/normal/menu/item";
             visible: 0;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
+            color_class: "/bg/selected/menu/item";
             visible: 1;
          }
       }
@@ -17,7 +18,7 @@ group { name: "e/modules/appmenu/item";
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/menu/item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -27,12 +28,12 @@ group { name: "e/modules/appmenu/item";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/menu/item";
          }
       }
       part { name: "event_area"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }

@@ -15,7 +15,7 @@ group { name: "elm/bg/base/default";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/background";
          }
       }
       part { name: "elm.swallow.rectangle"; type: SWALLOW;
@@ -66,14 +66,14 @@ group { name: _name; \
       } \
       part { name: "base"; type: RECT; \
          description { state: "default" 0.0; \
-            color: _colbg; \
+            color_class: _colbg; \
          } \
       } \
       part { name: "pat"; \
          scale: 1; \
          description { state: "default" 0.0; \
             image.normal: _img; \
-            color: _colfg; \
+            color_class: _colfg; \
          } \
       } \
       part { name: "elm.swallow.rectangle"; type: SWALLOW; \
@@ -93,26 +93,26 @@ group { name: _name; \
    } \
 }
 
-BG_PAT("elm/bg/base/stripes",     "stripes-diag.png",     160, 160,  64 64 64 255,  80 80 80 255)
-BG_PAT("elm/bg/base/stripes_big", "stripes-diag-big.png", 160, 160,  64 64 64 255,  80 80 80 255)
+BG_PAT("elm/bg/base/stripes",     "stripes-diag.png",     160, 160, "/bg/normal/background", "/bg-alt/normal/background")
+BG_PAT("elm/bg/base/stripes_big", "stripes-diag-big.png", 160, 160, "/bg/normal/background", "/bg-alt/normal/background")
 
-BG_PAT("elm/bg/base/stripes_dark",     "stripes-diag.png",     160, 160,  32 32 32 255,  48 48 48 255)
-BG_PAT("elm/bg/base/stripes_big_dark", "stripes-diag-big.png", 160, 160,  32 32 32 255,  48 48 48 255)
+BG_PAT("elm/bg/base/stripes_dark",     "stripes-diag.png",     160, 160, "/bg-dark/normal/background", "/bg-dark-alt/normal/background")
+BG_PAT("elm/bg/base/stripes_big_dark", "stripes-diag-big.png", 160, 160, "/bg-dark/normal/background", "/bg-dark-alt/normal/background")
 
-BG_PAT("elm/bg/base/stripes_light",     "stripes-diag.png",     160, 160, 192 192 192 255,  208 208 208 255)
-BG_PAT("elm/bg/base/stripes_big_light", "stripes-diag-big.png", 160, 160, 192 192 192 255,  208 208 208 255)
+BG_PAT("elm/bg/base/stripes_light",     "stripes-diag.png",     160, 160, "/bg-light/normal/background", "/bg-light-alt/normal/background")
+BG_PAT("elm/bg/base/stripes_big_light", "stripes-diag-big.png", 160, 160, "/bg-light/normal/background", "/bg-light-alt/normal/background")
 
-BG_PAT("elm/bg/base/checks",       "checks.png", 160, 160,  64 64 64 255,  80 80 80 255)
-BG_PAT("elm/bg/base/checks_big",   "checks.png", 320, 320,  64 64 64 255,  80 80 80 255)
-BG_PAT("elm/bg/base/checks_small", "checks.png",  80,  80,  64 64 64 255,  80 80 80 255)
+BG_PAT("elm/bg/base/checks",       "checks.png", 160, 160, "/bg/normal/background", "/bg-alt/normal/background")
+BG_PAT("elm/bg/base/checks_big",   "checks.png", 320, 320, "/bg/normal/background", "/bg-alt/normal/background")
+BG_PAT("elm/bg/base/checks_small", "checks.png",  80,  80, "/bg/normal/background", "/bg-alt/normal/background")
 
-BG_PAT("elm/bg/base/checks_dark",       "checks.png", 160, 160,  32 32 32 255,  48 48 48 255)
-BG_PAT("elm/bg/base/checks_big_dark",   "checks.png", 320, 320,  32 32 32 255,  48 48 48 255)
-BG_PAT("elm/bg/base/checks_small_dark", "checks.png",  80,  80,  32 32 32 255,  48 48 48 255)
+BG_PAT("elm/bg/base/checks_dark",       "checks.png", 160, 160, "/bg-dark/normal/background", "/bg-dark-alt/normal/background")
+BG_PAT("elm/bg/base/checks_big_dark",   "checks.png", 320, 320, "/bg-dark/normal/background", "/bg-dark-alt/normal/background")
+BG_PAT("elm/bg/base/checks_small_dark", "checks.png",  80,  80, "/bg-dark/normal/background", "/bg-dark-alt/normal/background")
 
-BG_PAT("elm/bg/base/checks_light",       "checks.png", 160, 160, 192 192 192 255,  208 208 208 255)
-BG_PAT("elm/bg/base/checks_big_light",   "checks.png", 320, 320, 192 192 192 255,  208 208 208 255)
-BG_PAT("elm/bg/base/checks_small_light", "checks.png",  80,  80, 192 192 192 255,  208 208 208 255)
+BG_PAT("elm/bg/base/checks_light",       "checks.png", 160, 160, "/bg-light/normal/background", "/bg-light-alt/normal/background")
+BG_PAT("elm/bg/base/checks_big_light",   "checks.png", 320, 320, "/bg-light/normal/background", "/bg-light-alt/normal/background")
+BG_PAT("elm/bg/base/checks_small_light", "checks.png",  80,  80, "/bg-light/normal/background", "/bg-light-alt/normal/background")
 
 #undef BG_PAT
 #undef PAT_FILL_SCALE
@@ -128,7 +128,7 @@ group { name: _name; \
       } \
       part { name: "base"; type: RECT; \
          description { state: "default" 0.0; \
-            color: _colbg; \
+            color_class: _colbg; \
          } \
       } \
       part { name: "grad"; \
@@ -136,7 +136,7 @@ group { name: _name; \
             image.normal: "grad_v.png"; \
             fill.size.relative: 0.0 1.0; \
             fill.size.offset: 256 0; \
-            color: _colfg; \
+            color_class: _colfg; \
          } \
       } \
       part { name: "elm.swallow.rectangle"; type: SWALLOW; \
@@ -156,9 +156,9 @@ group { name: _name; \
    } \
 }
 
-BG_GRADV("elm/bg/base/grad_vert",  80  80  80 255,  64  64  64 255)
-BG_GRADV("elm/bg/base/grad_vert_focus_title_match",  64  64  64 255,  32  32  32 255)
-BG_GRADV("elm/bg/base/grad_vert_dark",  48  48  48 255,  32  32  32 255)
-BG_GRADV("elm/bg/base/grad_vert_light",  64  64  64 255, 192 192 192 255)
+BG_GRADV("elm/bg/base/grad_vert", "/bg-alt/normal/background", "/bg/normal/background")
+BG_GRADV("elm/bg/base/grad_vert_focus_title_match", "/bg/normal/background", "/bg/selected/titlebar")
+BG_GRADV("elm/bg/base/grad_vert_dark", "/bg-light/normal/background", "/bg-dark-alt/normal/background")
+BG_GRADV("elm/bg/base/grad_vert_light", "/bg/normal/background", "/bg-light-alt/normal/background")
 
 #undef BG_GRADV

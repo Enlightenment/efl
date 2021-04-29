@@ -18,29 +18,27 @@ group { name: "e/modules/backlight/main";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "bulb_middle.png";
-            color: 32 32 32 255;
+            color_class: "/bg-dark/normal/gadgets/backlight";
          }
       }
       part { name: "glow";
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.relative: 0.5 0.5;
-            rel2.to: "base";
             rel2.relative: 0.5 0.5;
             image.normal: "bulb_middle.png";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
          description { state: "full" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "over";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             image.normal: "bulb_over.png";
          }
       }
