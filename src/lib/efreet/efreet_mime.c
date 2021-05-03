@@ -6,7 +6,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <fnmatch.h>
 
 #include <Ecore.h>
 #include <Ecore_File.h>
@@ -1237,7 +1236,7 @@ efreet_mime_glob_match(const char *str, const char *glob)
         if (str[0] == 0) return 1;
         return 0;
      }
-   if (!fnmatch(glob, str, 0)) return 1;
+   if (eina_fnmatch(glob, str, 0)) return 1;
    return 0;
 }
 
@@ -1263,7 +1262,7 @@ efreet_mime_glob_case_match(char *str, const char *glob)
    tglob = alloca(strlen(glob) + 1);
    for (tp = tglob, p = glob; *p; p++, tp++) *tp = tolower(*p);
    *tp = 0;
-   if (!fnmatch(str, tglob, 0)) return 1;
+   if (eina_fnmatch(str, tglob, 0)) return 1;
    return 0;
 }
 

@@ -12,7 +12,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 /* get the casefold feature! */
-#include <fnmatch.h>
 #include <unistd.h>
 #include <sys/param.h>
 
@@ -98,11 +97,10 @@ evas_file_path_list(char *path, const char *match, int match_case)
    Eina_List *files = NULL;
    int flags;
 
-   flags = FNM_PATHNAME;
-#ifdef FNM_CASEFOLD
+   flags = EINA_FNMATCH_PATHNAME;
    if (!match_case)
-     flags |= FNM_CASEFOLD;
-#elif defined FNM_IGNORECASE
+     flags |= EINA_FNMATCH_CASEFOLD;
+#if defined FNM_IGNORECASE
    if (!match_case)
      flags |= FNM_IGNORECASE;
 #else
@@ -114,7 +112,7 @@ evas_file_path_list(char *path, const char *match, int match_case)
      {
         if (match)
           {
-             if (fnmatch(match, info->path + info->name_start, flags) == 0)
+             if (eina_fnmatch(match, info->path + info->name_start, flags))
                files = eina_list_append(files, strdup(info->path + info->name_start));
           }
         else

@@ -418,12 +418,10 @@ _elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
    if (!pattern) return NULL;
    if (!sd->items) return NULL;
 
-   if (flags & ELM_GLOB_MATCH_NO_ESCAPE) fnflags |= FNM_NOESCAPE;
-   if (flags & ELM_GLOB_MATCH_PATH) fnflags |= FNM_PATHNAME;
-   if (flags & ELM_GLOB_MATCH_PERIOD) fnflags |= FNM_PERIOD;
-#ifdef FNM_CASEFOLD
-   if (flags & ELM_GLOB_MATCH_NOCASE) fnflags |= FNM_CASEFOLD;
-#endif
+   if (flags & ELM_GLOB_MATCH_NO_ESCAPE) fnflags |= EINA_FNMATCH_NOESCAPE;
+   if (flags & ELM_GLOB_MATCH_PATH) fnflags |= EINA_FNMATCH_PATHNAME;
+   if (flags & ELM_GLOB_MATCH_PERIOD) fnflags |= EINA_FNMATCH_PERIOD;
+   if (flags & ELM_GLOB_MATCH_NOCASE) fnflags |= EINA_FNMATCH_CASEFOLD;
 
    ELM_GENGRID_ITEM_DATA_GET(eo_item_to_search_from, item_to_search_from);
    start = (item_to_search_from) ?
@@ -435,7 +433,7 @@ _elm_gengrid_search_by_text_item_get(Eo *obj EINA_UNUSED,
         str = it->itc->func.text_get((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
                                      WIDGET(it), part_name ? part_name : "elm.text");
         if (!str) continue;
-        if (!fnmatch(pattern, str, fnflags))
+        if (eina_fnmatch(pattern, str, fnflags))
           {
              free(str);
              return EO_OBJ(it);
@@ -1021,7 +1019,7 @@ _item_text_realize(Elm_Gen_Item *it,
         (edje_object_data_get(target, "texts"));
    EINA_LIST_FOREACH(*source, l, key)
      {
-        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
+        if (parts && !eina_fnmatch(parts, key, EINA_FNMATCH_PERIOD)) continue;
 
         s = it->itc->func.text_get
            ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);
@@ -1070,7 +1068,7 @@ _item_content_realize(Elm_Gen_Item *it,
 
    EINA_LIST_FREE(source, key)
      {
-        if (parts && fnmatch(parts, key, FNM_PERIOD))
+        if (parts && !eina_fnmatch(parts, key, EINA_FNMATCH_PERIOD))
           continue;
 
         Evas_Object *old = edje_object_part_swallow_get(target, key);
@@ -1137,7 +1135,7 @@ _item_state_realize(Elm_Gen_Item *it, Evas_Object *target, const char *parts)
    src = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
    EINA_LIST_FREE(src, key)
      {
-        if (parts && fnmatch(parts, key, FNM_PERIOD)) continue;
+        if (parts && !eina_fnmatch(parts, key, EINA_FNMATCH_PERIOD)) continue;
 
         Eina_Bool on = it->itc->func.state_get
            ((void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)), WIDGET(it), key);

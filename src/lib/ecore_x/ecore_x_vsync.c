@@ -15,7 +15,6 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <fcntl.h>
-#include <fnmatch.h>
 
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>
@@ -648,7 +647,7 @@ glob_match(const char *glob, const char *str)
 {
    if (!glob) return EINA_TRUE;
    if (!str) return EINA_FALSE;
-   if (!fnmatch(glob, str, 0)) return EINA_TRUE;
+   if (eina_fnmatch(glob, str, 0)) return EINA_TRUE;
    return EINA_FALSE;
 }
 

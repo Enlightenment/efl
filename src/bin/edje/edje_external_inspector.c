@@ -3,7 +3,6 @@
 #endif
 
 #include <locale.h>
-#include <fnmatch.h>
 
 #include <Ecore.h>
 #include <Ecore_Getopt.h>
@@ -56,7 +55,7 @@ module_matches(const char *name)
    if (!module_patterns) return EINA_TRUE;
 
    for (itr = module_patterns; *itr != NULL; itr++)
-     if (fnmatch(*itr, name, 0) == 0) return EINA_TRUE;
+     if (eina_fnmatch(*itr, name, 0)) return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -65,7 +64,7 @@ static inline Eina_Bool
 type_matches(const char *name)
 {
    if (!type_glob) return EINA_TRUE;
-   return fnmatch(type_glob, name, 0) == 0;
+   return eina_fnmatch(type_glob, name, 0);
 }
 
 static int

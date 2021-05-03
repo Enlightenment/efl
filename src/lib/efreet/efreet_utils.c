@@ -4,7 +4,6 @@
 
 /* TODO: add no_display check, as we might want only displayable items */
 
-#include <fnmatch.h>
 #include <ctype.h>
 
 #include <Ecore_File.h>
@@ -450,7 +449,7 @@ efreet_util_glob_match(const char *str, const char *glob)
         return 0;
     }
     if (!strcmp(glob, "*")) return 1;
-    if (!fnmatch(glob, str, 0)) return 1;
+    if (eina_fnmatch(glob, str, 0)) return 1;
     return 0;
 }
 
