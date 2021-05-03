@@ -28,8 +28,8 @@ typedef struct TIFFRGBAMap TIFFRGBAMap;
 struct TIFFRGBAImage_Extra {
    TIFFRGBAImage       rgba;
    char                pper;
-   uint32              num_pixels;
-   uint32              py;
+   uint32_t            num_pixels;
+   uint32_t            py;
 };
 
 struct TIFFRGBAMap {
@@ -112,7 +112,7 @@ evas_image_load_file_head_tiff(void *loader_data,
    TIFFRGBAMap    tiff_map;
    TIFF          *tif = NULL;
    unsigned char *map;
-   uint16         magic_number;
+   uint16_t       magic_number;
    Eina_Bool      r = EINA_FALSE;
 
    map = eina_file_map_all(f, EINA_FILE_RANDOM);
@@ -122,7 +122,7 @@ evas_image_load_file_head_tiff(void *loader_data,
         goto on_error;
      }
 
-   magic_number = *((uint16*) map);
+   magic_number = *((uint16_t *)map);
 
    if ((magic_number != TIFF_BIGENDIAN) /* Checks if actually tiff file */
        && (magic_number != TIFF_LITTLEENDIAN))
@@ -196,10 +196,10 @@ evas_image_load_file_data_tiff(void *loader_data,
    TIFFRGBAMap         rgba_map;
    TIFF               *tif = NULL;
    unsigned char      *map;
-   uint32             *rast = NULL;
-   uint32              num_pixels;
+   uint32_t           *rast = NULL;
+   uint32_t            num_pixels;
    int                 x, y;
-   uint16              magic_number;
+   uint16_t            magic_number;
    Eina_Bool           res = EINA_FALSE;
 
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
@@ -209,7 +209,7 @@ evas_image_load_file_data_tiff(void *loader_data,
         goto on_error;
      }
 
-   magic_number = *((uint16*) map);
+   magic_number = *((uint16_t *)map);
 
    if ((magic_number != TIFF_BIGENDIAN) /* Checks if actually tiff file */
        && (magic_number != TIFF_LITTLEENDIAN))
@@ -257,7 +257,7 @@ evas_image_load_file_data_tiff(void *loader_data,
    rgba_image.num_pixels = num_pixels = prop->w * prop->h;
 
    rgba_image.pper = rgba_image.py = 0;
-   rast = (uint32 *) _TIFFmalloc(sizeof(uint32) * num_pixels);
+   rast = (uint32_t *) _TIFFmalloc(sizeof(uint32_t) * num_pixels);
 
    if (!rast)
      {
@@ -284,7 +284,7 @@ evas_image_load_file_data_tiff(void *loader_data,
    for (y = 0; y < (int)prop->h; y++)
      {
         DATA32 *pix, *pd;
-        uint32 *ps, pixel;
+        uint32_t *ps, pixel;
         unsigned int a, r, g, b;
 	unsigned int nas = 0;
 
