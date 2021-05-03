@@ -14,11 +14,11 @@ static int
 save_image_tiff(RGBA_Image *im, const char *file, int compress EINA_UNUSED, int interlace EINA_UNUSED)
 {
    TIFF               *tif = NULL;
-   uint8              *buf = NULL;
+   uint8_t            *buf = NULL;
    DATA32              pixel;
    DATA32             *data;
-   uint32              x, y;
-   uint8               r, g, b, a = 0;
+   uint32_t            x, y;
+   uint8_t             r, g, b, a = 0;
    int                 i = 0;
    int                 has_alpha;
 
@@ -48,7 +48,7 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress EINA_UNUSED, int 
 
    if (has_alpha)
      {
-        uint16 extras[] = { EXTRASAMPLE_ASSOCALPHA };
+        uint16_t extras[] = { EXTRASAMPLE_ASSOCALPHA };
         TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL, 4);
         TIFFSetField(tif, TIFFTAG_EXTRASAMPLES, 1, extras);
      }
@@ -60,7 +60,7 @@ save_image_tiff(RGBA_Image *im, const char *file, int compress EINA_UNUSED, int 
    TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE, 8);
    TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(tif, 0));
 
-   buf = (uint8 *) _TIFFmalloc(TIFFScanlineSize(tif));
+   buf = (uint8_t *) _TIFFmalloc(TIFFScanlineSize(tif));
    if (!buf)
      {
         TIFFClose(tif);
