@@ -216,15 +216,12 @@ endif
 regexp = []
 if sys_windows == true
    regexp = cc.find_library('regex',
-                            has_headers: ['regex.h', 'fnmatch.h'],
+                            has_headers: ['regex.h'],
                             required: true)
    if regexp.found() == false
       error('regex can not be found')
    endif
 else
-   if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
-      error('fnmatch can not be found')
-   endif
    if cc.has_header_symbol('regex.h', 'regcomp') == false
       error('regcomp can not be found')
    endif
