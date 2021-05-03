@@ -214,6 +214,7 @@ extern "C" {
 #include <eina_types.h>
 #include <eina_alloca.h>
 #include <eina_main.h>
+#include <eina_fnmatch.h>
 #include <eina_fp.h>
 #include <eina_rectangle.h>
 #include <eina_range.h>
