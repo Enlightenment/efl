@@ -8,6 +8,11 @@ _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!obj)
+     {
+        WRN("Image source %p not valid", eo_obj);
+        return EINA_FALSE;
+     }
    if (obj->delete_me && eo_src)
      {
         WRN("Setting deleted object %p as image source %p", eo_src, eo_obj);
@@ -16,6 +21,11 @@ _evas_image_proxy_source_set(Eo *eo_obj, Evas_Object *eo_src)
    if (eo_src)
      {
         Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
+        if (!src)
+          {
+             WRN("Setting object %p not valid", eo_src);
+             return EINA_FALSE;
+          }
         if (src->delete_me)
           {
              WRN("Setting object %p to deleted image source %p", eo_src, eo_obj);
