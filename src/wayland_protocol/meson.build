@@ -39,7 +39,7 @@ foreach item : wl_protocol_local
   gen_obj_c += custom_target('wl_code_'+item.underscorify(),
     input: item,
     output : ['@BASENAME@-protocol.c'],
-    command: [wayland_scanner_bin, ['code','@INPUT@','@OUTPUT@']]
+    command: [wayland_scanner_bin, ['private-code','@INPUT@','@OUTPUT@']]
   )
   gen_obj_header += custom_target('wl_client_header_'+item.underscorify(),
     input: item,
