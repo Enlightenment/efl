@@ -1,6 +1,7 @@
 subdir('config')
 subdir('desktop')
 subdir('themes')
+subdir('colors')
 subdir('objects')
 subdir('edje_externals')
 
