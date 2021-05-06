@@ -420,42 +420,6 @@ group { name: "elm/colorselector/base/default";
          }
          dragable.events: "elm.arrow";
       }
-      part { name: "elm.arrow_icon"; type: SWALLOW; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 24 24;
-            max: 24 24;
-            align: 0.5 1.0;
-            rel1.to_x: "elm.arrow";
-            rel1.to_y: "elm.bar";
-            rel2.relative: 1.0 0.0;
-            rel2.to_x: "elm.arrow";
-            rel2.to_y: "elm.bar";
-         }
-      }
-      part { name: "cursor"; type: RECT;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 1 1;
-            rel1.to_x: "elm.arrow_icon";
-            rel1.to_y: "elm.bar";
-            rel1.relative: 0.5 0.0;
-            rel2.to_x: "elm.arrow_icon";
-            rel2.to_y: "elm.bar";
-            rel2.relative: 0.5 1.0;
-            rel2.offset: 0 -1;
-            color: 255 255 255 255;
-         }
-         dragable.events: "elm.arrow";
-      }
-      part { name: "elm.arrow_bg_access"; type: RECT;
-         repeat_events: 1;
-         description { state: "default" 0.0;
-            rel.to: "elm.arrow_bg";
-            color: 0 0 0 0;
-         }
-      }
       part { name: "elm.l_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
@@ -478,6 +442,84 @@ group { name: "elm/colorselector/base/default";
             rel2.relative: 1.0 1.0;
             rel2.to_y: "elm.bar_bg";
             align: 1.0 0.5;
+         }
+      }
+      part { name: "arrow_bg";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "elm.arrow_icon";
+            image.normal: "i-radio";
+            min: 24 24;
+            max: 24 24;
+            fixed: 1 1;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "arrow_base"; type: RECT;
+         clip_to: "arrow_clip";
+         description { state: "default" 0.0;
+            rel.to: "arrow_bg";
+            color: 32 32 32 255;
+         }
+      }
+      part { name: "arrow_pat";
+         clip_to: "arrow_clip";
+         description { state: "default" 0.0;
+            rel.to: "arrow_bg";
+            image.normal: "diagonal_stripes.png";
+            color: 255 255 255 16;
+            TILED_PATTERN(240, 240)
+         }
+      }
+      part { name: "arrow_clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "arrow_bg";
+            image.normal: "i-radio";
+            min: 20 20;
+            max: 20 20;
+            fixed: 1 1;
+         }
+      }
+      part { name: "elm.arrow_icon"; type: SWALLOW; mouse_events: 0;
+         scale: 1;
+         clip_to: "arrow_clip";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 24 24;
+            max: 24 24;
+            align: 0.5 1.0;
+            rel1.to_x: "elm.arrow";
+            rel1.to_y: "elm.bar";
+            rel2.relative: 1.0 0.0;
+            rel1.offset: 0 1;
+            rel2.to_x: "elm.arrow";
+            rel2.to_y: "elm.bar";
+            rel2.offset: -1 1;
+            offscale;
+         }
+      }
+      part { name: "cursor"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 2 2;
+            rel1.to_x: "elm.arrow_icon";
+            rel1.to_y: "elm.bar";
+            rel1.relative: 0.5 0.0;
+            rel2.to_x: "elm.arrow_icon";
+            rel2.to_y: "elm.bar";
+            rel2.relative: 0.5 1.0;
+            rel2.offset: 0 -1;
+            color: 255 255 255 255;
+         }
+         dragable.events: "elm.arrow";
+      }
+      part { name: "elm.arrow_bg_access"; type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel.to: "elm.arrow_bg";
+            color: 0 0 0 0;
          }
       }
    }
