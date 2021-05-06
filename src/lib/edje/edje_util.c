@@ -712,6 +712,22 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
    return result;
 }
 
+EAPI void
+edje_color_class_apply(void)
+{
+   Edje *ed;
+
+   EINA_INLIST_FOREACH(_edje_edjes, ed)
+     {
+        ed->dirty = EINA_TRUE;
+        ed->recalc_call = EINA_TRUE;
+#ifdef EDJE_CALC_CACHE
+        ed->all_part_change = EINA_TRUE;
+#endif
+        _edje_recalc(ed);
+     }
+}
+
 EOLIAN Eina_Bool
 _edje_global_efl_gfx_color_class_color_class_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                                                  const char *color_class, Efl_Gfx_Color_Class_Layer layer, int r, int g, int b, int a)

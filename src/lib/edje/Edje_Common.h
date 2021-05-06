@@ -1453,6 +1453,16 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
 EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
 
 /**
+ * @brief Applies changes mad when setting Edje color classes.
+ *
+ * This forces all changes to color classes made by (for example)
+ * edje_color_class_set() to actually take effect.
+ * 
+ * @since 1.26
+ */
+EAPI void         edje_color_class_apply          (void);
+
+/**
  * @brief Gets Edje color class.
  *
  * @param color_class
