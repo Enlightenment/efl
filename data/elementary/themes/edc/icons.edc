@@ -666,6 +666,9 @@ ICON("edit-select-all", "i-select-all")
 ICON("list-add", "i-list-add")
 ICON("list-remove", "i-list-del")
 
+ICON("add", "i-plus")
+ICON("sub", "i-minus")
+
 ICON("go-home", "i-home")
 ICON("go-up", "i-arrow-u")
 ICON("go-down", "i-arrow-d")
