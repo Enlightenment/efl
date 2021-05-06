@@ -602,6 +602,7 @@ struct _Elm_Config
    int           gl_stencil;
    int           gl_msaa;
    const char   *icon_theme;
+   const char   *palette;
    unsigned char entry_select_allow;
    Eina_Bool     offline;
    int  powersave;

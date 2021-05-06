@@ -1116,6 +1116,32 @@ EAPI const char *elm_config_icon_theme_get(void);
  */
 EAPI void elm_config_icon_theme_set(const char *theme);
 
+/** new palette code - nbot sure if this should be final yet **/
+typedef struct _Elm_Palette_Color
+{
+   const char    *name;
+   unsigned char  r, g, b, a;
+} Elm_Palette_Color;
+
+typedef struct _Elm_Palette
+{
+   int        version;
+   Eina_List *colors;
+} Elm_Palette;
+
+EAPI const char *elm_config_palette_get(void);
+EAPI void        elm_config_palette_set(const char *palette);
+
+EAPI Elm_Palette *elm_config_palette_load(const char *palette);
+EAPI void         elm_config_palette_color_set(Elm_Palette *pal, const char *name, int r, int g, int b, int a);
+EAPI void         elm_config_palette_color_unset(Elm_Palette *pal, const char *name);
+EAPI void         elm_config_palette_save(Elm_Palette *pal, const char *palette);
+EAPI void         elm_config_palette_free(Elm_Palette *pal);
+EAPI void         elm_config_palette_delete(const char *palette);
+EAPI Eina_List   *elm_config_palette_list(void);
+EAPI void         elm_config_palette_list_free(Eina_List *list);
+/** end new palette code **/
+
 /**
  * @defgroup Elm_Password_last_show Password show last
  * @ingroup Elementary

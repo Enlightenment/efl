@@ -14,6 +14,8 @@ EAPI void __efl_internal_elm_config_set(Efl_Config *cfg);
 Elm_Config *_elm_config = NULL;
 Efl_Config *_efl_config_obj = NULL;
 static char *_elm_profile = NULL;
+static Eet_Data_Descriptor *_config_palette_color_edd = NULL;
+static Eet_Data_Descriptor *_config_palette_edd = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 static Eet_Data_Descriptor *_config_color_edd = NULL;
@@ -94,91 +96,6 @@ static const Elm_Text_Class _elm_text_classes[] = {
    {NULL, NULL}
 };
 
-/* whenever you want to add a new class class support into Elementary,
-   declare it both here and in the (default) theme */
-static const Elm_Color_Class _elm_color_classes[] = {
-   {"button_text", "Button Text"},
-   {"button_text_disabled", "Button Disabled Text"},
-   {"button_text_anchor", "Anchor Button Text"},
-   {"button_text_anchor_disabled", "Anchor Button Disabled Text"},
-   {"calendar_year_text", "Year Text in Title Area"},
-   {"calendar_month_text", "Month Text in Title Area"},
-   {"calendar_weekday_text", "Weekday Text"},
-   {"calendar_day_text", "Day Text"},
-   {"calendar_day_text_holiday", "Holiday Text"},
-   {"calendar_day_text_today", "Today Text"},
-   {"calendar_day_text_disabled", "Disabled Day Text"},
-   {"calendar_day_selected", "Selected Day Effect"},
-   {"calendar_day_highlighted", "Highlighted Day Effect"},
-   {"calendar_day_checked", "Checked Day Effect"},
-   {"datetime_bg", "Datetime Background"},
-   {"datepicker_bg", "Datepicker Background"},
-   {"timepicker_bg", "Timepicker Background"},
-   {"datetime_separator_text", "Datetime Separator Text"},
-   {"datetime_separator_text_disabled", "Datetime Separator Disabled Text"},
-   {"hoversel_item_active", "Hoversel Item Text"},
-   {"hoversel_text_disabled", "Hoversel Item Disabled Text"},
-   {"radio_text", "Radio Text"},
-   {"frame", "Frame Text"},
-   {"entry_text", "Entry Text"},
-   {"entry_text_disabled", "Entry Disabled Text"},
-   {"entry_guide_text", "Entry Guide Text"},
-   {"entry_cursor", "Entry Cursor"},
-   {"entry_selection_handler", "Entry Selection Handler"},
-   {"entry_scrollframe_base", "Entry Scrollframe Base"},
-   {"check_text", "Check Text"},
-   {"check_on_text", "Check On Text"},
-   {"check_off_text", "Check Off Text"},
-   {"list_item_base", "List Item Base"},
-   {"list_item_base_odd", "List Odd Item Base"},
-   {"list_item_disabled", "List Item Disabled Base"},
-   {"list_item_selected", "List Item Selected Base"},
-   {"grid_item", "Grid Item Text"},
-   {"grid_item_disabled", "Grid Item Disabled Text"},
-   {"grid_item_selected", "Grid Item Selected Text"},
-   {"index_bg", "Index Background"},
-   {"index_item_bg", "Index Item Background"},
-   {"index_highlight_text", "Index Highlight Text"},
-   {"index_item_text", "Index Items Text"},
-   {"index_item_text_selected", "Index Selected Items Text"},
-   {"toolbar_item", "Toolbar Item Text"},
-   {"toolbar_item_disabled", "Toolbar Item Disabled Text"},
-   {"toolbar_item_selected", "Toolbar Item Selected Text"},
-   {"toolbar_item_active", "Toolbar Item Active Text"},
-   {"slider_text", "Slider Text"},
-   {"slider_text_disabled", "Slider Disabled Text"},
-   {"slider_indicator", "Slider Indicator Text"},
-   {"spinner_bg", "Spinner Background"},
-   {"progressbar_text", "Progressbar Text"},
-   {"progressbar_text_disabled", "Progressbar Disabled Text"},
-   {"progressbar_status", "Progressbar Status Text"},
-   {"bubble_text", "Bubble Text"},
-   {"bubble_info", "Bubble Info Text"},
-   {"menu_item_active", "Menu Item Text"},
-   {"menu_item_disabled", "Menu Item Disabled Text"},
-   {"multibuttonentry_bg", "Multibuttonentry Background"},
-   {"multibuttonentry_item_bg", "Multibuttonentry Item Background"},
-   {"multibuttonentry_item_bg_selected", "Multibuttonentry Item Selected Background"},
-   {"multibuttonentry_item_text", "Multibuttonentry Item Text"},
-   {"multibuttonentry_item_text_pressed", "Multibuttonentry Item Pressed Text"},
-   {"multibuttonentry_item_text_disabled", "Multibuttonentry Item Disabled Text"},
-   {"tags_bg", "Tags Background"},
-   {"tags_item_bg", "Tags Item Background"},
-   {"tags_item_bg_selected", "Tags Item Selected Background"},
-   {"tags_item_text", "Tags Item Text"},
-   {"tags_item_text_pressed", "Tags Item Pressed Text"},
-   {"tags_item_text_disabled", "Tags Item Disabled Text"},
-   {"border_title", "Border Title Text"},
-   {"border_title_active", "Border Title Active Text"},
-   {"datetime_text", "Datetime Text"},
-   {"multibuttonentry_label", "Multibuttonentry Text"},
-   {"tags_label", "Tags Text"},
-   {"tags_number", "Tags Number Text"},
-   {"spinner", "Spinner Text"},
-   {"spinner_disabled", "Spinner Disabled Text"},
-   {NULL, NULL}
-};
-
 static void        _config_free(Elm_Config *cfg);
 static void        _config_apply(void);
 static void        _config_sub_apply(void);
@@ -215,6 +132,32 @@ _desc_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
 
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Palette_Color);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_palette_color_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_palette_color_edd)
+     {
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
+        return;
+     }
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Palette);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_palette_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_palette_edd)
+     {
+        ERR("EEEK! eet_data_descriptor_stream_new() failed.");
+        eet_data_descriptor_free(_config_palette_color_edd);
+        return;
+     }
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config);
    eddc.func.str_direct_alloc = NULL;
    eddc.func.str_direct_free = NULL;
@@ -322,8 +265,29 @@ _desc_init(void)
 #define T_STRING EET_T_STRING
 #define T_UCHAR  EET_T_UCHAR
 
-#define T        Elm_Font_Overlay
-#define D        _config_font_overlay_edd
+//////////////////////////////////////////////////////////////////////////////
+
+#define T Elm_Palette_Color
+#define D _config_palette_color_edd
+   ELM_CONFIG_VAL(D, T, name, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, r, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, g, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, b, EET_T_UCHAR);
+   ELM_CONFIG_VAL(D, T, a, EET_T_UCHAR);
+#undef T
+#undef D
+
+#define T Elm_Palette
+#define D _config_palette_edd
+   ELM_CONFIG_VAL(D, T, version, EET_T_INT);
+   ELM_CONFIG_LIST(D, T, colors, _config_palette_color_edd);
+#undef T
+#undef D
+
+//////////////////////////////////////////////////////////////////////////////
+
+#define T Elm_Font_Overlay
+#define D _config_font_overlay_edd
    ELM_CONFIG_VAL(D, T, text_class, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, font, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, size, EET_T_INT);
@@ -364,15 +328,15 @@ _desc_init(void)
 #undef T
 #undef D
 
-#define T        Elm_Config_Bindings_Widget
-#define D        _config_bindings_widget_edd
+#define T Elm_Config_Bindings_Widget
+#define D _config_bindings_widget_edd
    ELM_CONFIG_VAL(D, T, name, EET_T_STRING);
    ELM_CONFIG_LIST(D, T, key_bindings, _config_binding_key_edd);
 #undef T
 #undef D
 
-#define T        Elm_Config_Binding_Key
-#define D        _config_binding_key_edd
+#define T Elm_Config_Binding_Key
+#define D _config_binding_key_edd
    ELM_CONFIG_VAL(D, T, context, EET_T_INT);
    ELM_CONFIG_VAL(D, T, key, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, action, EET_T_STRING);
@@ -381,8 +345,8 @@ _desc_init(void)
 #undef T
 #undef D
 
-#define T        Elm_Config_Binding_Modifier
-#define D        _config_binding_modifier_edd
+#define T Elm_Config_Binding_Modifier
+#define D _config_binding_modifier_edd
    ELM_CONFIG_VAL(D, T, mod, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, flag, EET_T_UCHAR);
 #undef T
@@ -526,6 +490,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, popup_scrollable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, spinner_min_max_filter_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, icon_theme, T_STRING);
+   ELM_CONFIG_VAL(D, T, palette, T_STRING);
    ELM_CONFIG_VAL(D, T, entry_select_allow, T_UCHAR);
    ELM_CONFIG_VAL(D, T, offline, T_UCHAR);
    ELM_CONFIG_VAL(D, T, powersave, T_INT);
@@ -542,10 +507,16 @@ _desc_init(void)
 static void
 _desc_shutdown(void)
 {
-   if (_config_edd)
+   if (_config_palette_edd)
      {
-        eet_data_descriptor_free(_config_edd);
-        _config_edd = NULL;
+        eet_data_descriptor_free(_config_palette_edd);
+        _config_palette_edd = NULL;
+     }
+
+   if (_config_palette_color_edd)
+     {
+        eet_data_descriptor_free(_config_palette_color_edd);
+        _config_palette_color_edd = NULL;
      }
 
    if (_config_font_overlay_edd)
@@ -627,6 +598,262 @@ _elm_data_dir_snprintf(char       *dst,
 
 end:
    return off;
+}
+
+static Elm_Palette *
+_palette_load(const char *file)
+{
+   Elm_Palette *pal;
+   Eet_File *ef = eet_open(file, EET_FILE_MODE_READ);
+
+   if (!ef) return NULL;
+   pal = eet_data_read(ef, _config_palette_edd, "palette");
+   eet_close(ef);
+   return pal;
+}
+
+static void
+_palette_free(Elm_Palette *pal)
+{
+   Elm_Palette_Color *col;
+
+   EINA_LIST_FREE(pal->colors, col)
+     {
+        eina_stringshare_del(col->name);
+        free(col);
+     }
+   free(pal);
+}
+
+static Eina_Bool
+_palette_save(Elm_Palette *pal, const char *file)
+{
+   Eina_Bool ok = EINA_FALSE;
+   Eet_File *ef = eet_open(file, EET_FILE_MODE_WRITE);
+   if (!ef) return EINA_FALSE;
+   if (eet_data_write(ef, _config_palette_edd, "palette",
+                      pal, EET_COMPRESSION_VERYFAST) > 0)
+     ok = EINA_TRUE;
+   eet_close(ef);
+   return ok;
+}
+
+static Elm_Palette *
+_palette_find(const char *name)
+{
+   Elm_Palette *pal;
+   char buf[PATH_MAX];
+
+   if (!name) return NULL;
+   if (strchr(name, '/')) return NULL;
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "colors/%s.pal", name);
+   pal = _palette_load(buf);
+   if (!pal)
+     {
+        _elm_data_dir_snprintf(buf, sizeof(buf), "colors/%s.pal", name);
+        pal = _palette_load(buf);
+     }
+   return pal;
+}
+
+static Elm_Palette *
+_palette_new(void)
+{
+   Elm_Palette *pal = calloc(1, sizeof(*pal));
+   if (!pal) return NULL;
+   pal->version = 1000;
+   return pal;
+}
+
+static Eina_Bool
+_palette_store(Elm_Palette *pal, const char *name)
+{
+   char buf[PATH_MAX];
+
+   if (!pal) return EINA_FALSE;
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "colors");
+   ecore_file_mkpath(buf);
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "colors/%s.pal", name);
+   return _palette_save(pal, buf);
+}
+
+static void
+_palette_set(Elm_Palette *pal, const char *clas, int r, int g, int b, int a)
+{
+   Eina_List *l;
+   Elm_Palette_Color *c;
+
+   if (!pal) return;
+   EINA_LIST_FOREACH(pal->colors, l, c)
+     {
+        if ((c->name) && (!strcmp(c->name, clas)))
+          {
+             c->r = r;
+             c->g = g;
+             c->b = b;
+             c->a = a;
+             return;
+          }
+     }
+   c = calloc(1, sizeof(*c));
+   if (!c) return;
+   c->name = eina_stringshare_add(clas);
+   c->r = r;
+   c->g = g;
+   c->b = b;
+   c->a = a;
+   pal->colors = eina_list_append(pal->colors, c);
+}
+
+static void
+_palette_unset(Elm_Palette *pal, const char *clas)
+{
+   Eina_List *l;
+   Elm_Palette_Color *c;
+
+   if (!pal) return;
+   EINA_LIST_FOREACH(pal->colors, l, c)
+     {
+        if ((c->name) && (!strcmp(c->name, clas)))
+          {
+             pal->colors = eina_list_remove_list(pal->colors, l);
+             if (c->name) eina_stringshare_del(c->name);
+             free(c);
+          }
+     }
+}
+
+EAPI Elm_Palette *
+elm_config_palette_load(const char *palette)
+{
+   Elm_Palette *pal;
+
+   pal = _palette_find(palette);
+   if (!pal) pal = _palette_new();
+   return pal;
+}
+
+EAPI void
+elm_config_palette_color_set(Elm_Palette *pal, const char *name, int r, int g, int b, int a)
+{
+   _palette_set(pal, name, r, g, b, a);
+}
+
+EAPI void
+elm_config_palette_color_unset(Elm_Palette *pal, const char *name)
+{
+   _palette_unset(pal, name);
+}
+
+EAPI void
+elm_config_palette_save(Elm_Palette *pal, const char *palette)
+{
+   _palette_store(pal, palette);
+}
+
+EAPI void
+elm_config_palette_free(Elm_Palette *pal)
+{
+   _palette_free(pal);
+}
+
+EAPI void
+elm_config_palette_delete(const char *palette)
+{
+   char buf[PATH_MAX];
+
+   if (!palette) return;
+   if (strchr(palette, '/')) return;
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "colors/%s.pal", palette);
+   ecore_file_unlink(buf);
+}
+
+EAPI Eina_List *
+elm_config_palette_list(void)
+{
+   Eina_List *list = NULL, *files, *l;
+   char buf[PATH_MAX], *s, *s2;
+
+   _elm_data_dir_snprintf(buf, sizeof(buf), "colors");
+   files = ecore_file_ls(buf);
+   EINA_LIST_FREE(files, s)
+     {
+        char *ext = strrchr(s, '.');
+
+        if ((ext) && (!strcmp(ext, ".pal")))
+          {
+             *ext = 0;
+             list = eina_list_append(list, eina_stringshare_add(s));
+          }
+        free(s);
+     }
+   _elm_config_user_dir_snprintf(buf, sizeof(buf), "colors");
+   files = ecore_file_ls(buf);
+   EINA_LIST_FREE(files, s)
+     {
+        char *ext = strrchr(s, '.');
+
+        if ((ext) && (!strcmp(ext, ".pal")))
+          {
+             Eina_Bool found = EINA_FALSE;
+
+             *ext = 0;
+             EINA_LIST_FOREACH(list, l, s2)
+               {
+                  if (!strcmp(s, s2))
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
+               }
+             if (!found)
+               list = eina_list_append(list, eina_stringshare_add(s));
+          }
+        free(s);
+     }
+   return list;
+}
+
+EAPI void
+elm_config_palette_list_free(Eina_List *list)
+{
+   const char *s;
+
+   EINA_LIST_FREE(list, s) eina_stringshare_del(s);
+}
+
+static void
+_palette_apply(const char *name)
+{
+   Elm_Palette *pal;
+   Elm_Palette_Color *col;
+   Eina_List *l;
+   char *s;
+
+   // clear old colors
+   l = edje_color_class_list();
+   EINA_LIST_FREE(l, s)
+     {
+        if ((s) && (s[0] == '/')) edje_color_class_del(s);
+        free(s);
+     }
+   pal = _palette_find(name);
+   if (!pal) return;
+   // if version new enough...
+   if (pal->version >= 1000)
+     {
+        // for each color - set that colorclass
+        EINA_LIST_FOREACH(pal->colors, l, col)
+          {
+             if (!col->name) continue;
+             edje_color_class_set(col->name,
+                                  col->r, col->g, col->b, col->a,
+                                  col->r, col->g, col->b, col->a,
+                                  col->r, col->g, col->b, col->a);
+          }
+     }
+   edje_color_class_apply();
+   _palette_free(pal);
 }
 
 static Eina_Hash *_getenv_once_envs = NULL;
@@ -1165,21 +1392,7 @@ _elm_config_text_classes_free(Eina_List *l)
 Eina_List *
 _elm_config_color_classes_get(void)
 {
-   Eina_List *ret = NULL;
-   int i;
-
-   for (i = 0; _elm_color_classes[i].desc; i++)
-     {
-        Elm_Color_Class *cc;
-        cc = malloc(sizeof(*cc));
-        if (!cc) continue;
-
-        *cc = _elm_color_classes[i];
-
-        ret = eina_list_append(ret, cc);
-     }
-
-   return ret;
+   return NULL;
 }
 
 void
@@ -1204,118 +1417,6 @@ Eina_List *
 _elm_config_color_overlays_list(void)
 {
    return _elm_config->color_overlays;
-}
-
-void
-_elm_config_color_overlay_set(const char *color_class,
-                              int r, int g, int b, int a,
-                              int r2, int g2, int b2, int a2,
-                              int r3, int g3, int b3, int a3)
-{
-   Elm_Color_Overlay *ecd;
-   Eina_List *l;
-
-#define CHECK_COLOR_VAL(v) v = (v > 255)? 255 : (v < 0)? 0: v
-   CHECK_COLOR_VAL(r);
-   CHECK_COLOR_VAL(g);
-   CHECK_COLOR_VAL(b);
-   CHECK_COLOR_VAL(a);
-   CHECK_COLOR_VAL(r2);
-   CHECK_COLOR_VAL(g2);
-   CHECK_COLOR_VAL(b2);
-   CHECK_COLOR_VAL(a2);
-   CHECK_COLOR_VAL(r3);
-   CHECK_COLOR_VAL(g3);
-   CHECK_COLOR_VAL(b3);
-   CHECK_COLOR_VAL(a3);
-#undef CHECK_COLOR_VAL
-
-   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
-     {
-        if (!eina_streq(ecd->color_class, color_class))
-          continue;
-
-        ecd->color.r = r;
-        ecd->color.g = g;
-        ecd->color.b = b;
-        ecd->color.a = a;
-        ecd->outline.r = r2;
-        ecd->outline.g = g2;
-        ecd->outline.b = b2;
-        ecd->outline.a = a2;
-        ecd->shadow.r = r3;
-        ecd->shadow.g = g3;
-        ecd->shadow.b = b3;
-        ecd->shadow.a = a3;
-
-        _elm_config->color_overlays =
-           eina_list_promote_list(_elm_config->color_overlays, l);
-        return;
-     }
-
-   /* the color class doesn't exist */
-   ecd = calloc(1, sizeof(Elm_Color_Overlay));
-   if (!ecd) return;
-
-   ecd->color_class = eina_stringshare_add(color_class);
-   ecd->color.r = r;
-   ecd->color.g = g;
-   ecd->color.b = b;
-   ecd->color.a = a;
-   ecd->outline.r = r2;
-   ecd->outline.g = g2;
-   ecd->outline.b = b2;
-   ecd->outline.a = a2;
-   ecd->shadow.r = r3;
-   ecd->shadow.g = g3;
-   ecd->shadow.b = b3;
-   ecd->shadow.a = a3;
-
-   _elm_config->color_overlays =
-      eina_list_prepend(_elm_config->color_overlays, ecd);
-}
-
-void
-_elm_config_color_overlay_remove(const char *color_class)
-{
-   Elm_Color_Overlay *ecd;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
-     {
-        if (!ecd->color_class) continue;
-        if (!eina_streq(ecd->color_class, color_class)) continue;
-
-        _color_overlays_del =
-           eina_list_append(_color_overlays_del,
-                            eina_stringshare_add(color_class));
-        _elm_config->color_overlays =
-          eina_list_remove_list(_elm_config->color_overlays, l);
-        eina_stringshare_del(ecd->color_class);
-        free(ecd);
-
-        return;
-     }
-}
-
-void
-_elm_config_color_overlay_apply(void)
-{
-   Elm_Color_Overlay *ecd;
-   Eina_List *l;
-   char *color_class;
-
-   EINA_LIST_FREE(_color_overlays_del, color_class)
-     {
-        edje_color_class_del(color_class);
-        eina_stringshare_del(color_class);
-     }
-
-   EINA_LIST_FOREACH(_elm_config->color_overlays, l, ecd)
-     edje_color_class_set(ecd->color_class,
-                ecd->color.r, ecd->color.g, ecd->color.b, ecd->color.a,
-                ecd->outline.r, ecd->outline.g, ecd->outline.b, ecd->outline.a,
-                ecd->shadow.r, ecd->shadow.g, ecd->shadow.b, ecd->shadow.a);
 }
 
 Eina_List *
@@ -1592,6 +1693,7 @@ _config_free(Elm_Config *cfg)
    eina_stringshare_del(cfg->indicator_service_180);
    eina_stringshare_del(cfg->indicator_service_270);
    eina_stringshare_del(cfg->icon_theme);
+   eina_stringshare_del(cfg->palette);
    free(cfg);
 }
 
@@ -1782,6 +1884,7 @@ _config_load(void)
                   if (_elm_config->config_version < ELM_CONFIG_VERSION)
                     _config_update();
                   _env_get();
+                  _palette_apply(_elm_config->palette);
                   return;
                }
           }
@@ -1793,6 +1896,7 @@ _config_load(void)
    _elm_config = _config_system_load();
    if (_elm_config)
      {
+        _palette_apply(_elm_config->palette);
         _env_get();
         return;
      }
@@ -2041,7 +2145,6 @@ _config_flush_get(void)
    _config_sub_apply();
    evas_font_reinit();
    _elm_config_font_overlay_apply();
-   _elm_config_color_overlay_apply();
    if (!EINA_DBL_EQ(pre_scale, _elm_config->scale))
      _elm_rescale();
    _elm_old_clouseau_reload();
@@ -2860,6 +2963,9 @@ _env_get(void)
 
    s = _getenv_once("ELM_WIN_NO_BORDER");
    if (s) _elm_config->win_no_border = EINA_TRUE;
+
+   s = _getenv_once("ELM_PALETTE");
+   if (s) eina_stringshare_replace(&_elm_config->palette, s);
 }
 
 static void
@@ -3014,6 +3120,19 @@ elm_config_icon_theme_set(const char *theme)
      _elm_config->icon_theme = eina_stringshare_add(theme);
    else
      _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
+}
+
+EAPI const char *
+elm_config_palette_get(void)
+{
+   return _elm_config->palette;
+}
+
+EAPI void
+elm_config_palette_set(const char *palette)
+{
+   eina_stringshare_replace(&(_elm_config->palette), palette);
+   _palette_apply(_elm_config->palette);
 }
 
 EAPI Eina_Bool
@@ -3252,31 +3371,21 @@ elm_config_color_overlay_list_get(void)
 }
 
 EAPI void
-elm_config_color_overlay_set(const char *color_class,
-                             int r, int g, int b, int a,
-                             int r2, int g2, int b2, int a2,
-                             int r3, int g3, int b3, int a3)
+elm_config_color_overlay_set(const char *color_class EINA_UNUSED,
+                             int r EINA_UNUSED, int g EINA_UNUSED, int b EINA_UNUSED, int a EINA_UNUSED,
+                             int r2 EINA_UNUSED, int g2 EINA_UNUSED, int b2 EINA_UNUSED, int a2 EINA_UNUSED,
+                             int r3 EINA_UNUSED, int g3 EINA_UNUSED, int b3 EINA_UNUSED, int a3 EINA_UNUSED)
 {
-   _elm_config->priv.color_overlays = EINA_TRUE;
-   EINA_SAFETY_ON_NULL_RETURN(color_class);
-   _elm_config_color_overlay_set(color_class,
-                                 r, g, b, a,
-                                 r2, g2, b2, a2,
-                                 r3, g3, b3, a3);
 }
 
 EAPI void
-elm_config_color_overlay_unset(const char *color_class)
+elm_config_color_overlay_unset(const char *color_class EINA_UNUSED)
 {
-   _elm_config->priv.color_overlays = EINA_TRUE;
-   EINA_SAFETY_ON_NULL_RETURN(color_class);
-   _elm_config_color_overlay_remove(color_class);
 }
 
 EAPI void
 elm_config_color_overlay_apply(void)
 {
-   _elm_config_color_overlay_apply();
 }
 
 EAPI Evas_Coord
@@ -4301,7 +4410,6 @@ _elm_config_init(void)
    _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
-   _elm_config_color_overlay_apply();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
@@ -4475,7 +4583,6 @@ _elm_config_reload(void)
    _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
-   _elm_config_color_overlay_apply();
 #define CMP(x) (p##x != _elm_config->x)
 #define DBL_CMP(x) !EINA_DBL_EQ(p##x, _elm_config->x)
    if (
@@ -4780,7 +4887,6 @@ _elm_config_profile_set(const char *profile)
    _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
-   _elm_config_color_overlay_apply();
    _elm_rescale();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
