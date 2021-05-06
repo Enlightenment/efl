@@ -99,18 +99,6 @@
       SHAD(_to, "_shcl4", _img, _l, _r, _t, _b, _scale) \
    }
 
-// XXX: below - remove these in favor of WIN_SHAD() above in the edc
-#define WIN_SHADOW_SMALL \
-   image.normal: "win_shadow.png"; \
-   image.border: 32 32 32 32; \
-   image.border_scale: 1; \
-   image.border_scale_by: 0.5; \
-   image.middle: 0; \
-   rel1.offset: -10 -7; \
-   rel2.offset: 9 10; \
-   fill.smooth: 0; \
-   offscale
-
 #define WIN_SHADOW \
    image.normal: "win_shadow.png"; \
    image.border: 32 32 32 32; \

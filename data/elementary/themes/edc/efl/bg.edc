@@ -20,7 +20,7 @@ group { "efl/bg";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/background";
          }
       }
       part { name: "efl.rectangle"; type: SWALLOW; required;

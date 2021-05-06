@@ -4,6 +4,7 @@ group { name: "elm/frame/base/default";
       part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "_sh1";
+            color_class: "/shadow/normal/frame";
          }
          description { state: "hidden" 0.0;
             inherit;
@@ -22,7 +23,7 @@ group { name: "elm/frame/base/default";
       part { name: "top_bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "top";
-            color: 80 80 80 255;
+            color_class: "/bg/normal/frame/title";
          }
       }
       part { name: "top"; type: SPACER;
@@ -43,6 +44,7 @@ group { name: "elm/frame/base/default";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 4;
             align: 0.0 0.0;
+            color_class: "/fg/normal/frame/title";
             color: 255 255 255 255;
             text { font: FNBD; size: 10;
                align: 0.0 0.5;
@@ -59,7 +61,7 @@ group { name: "elm/frame/base/default";
             rel1.to_y: "top";
             rel1.relative: 0.0 1.0;
             rel2.to: "base";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/frame";
          }
       }
       part { name: "clip"; type: RECT;
@@ -388,6 +390,7 @@ group { name: "elm/frame/base/outline";
       part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "_sh1";
+            color_class: "/shadow/normal/frame";
          }
          description { state: "hidden" 0.0;
             inherit;
@@ -400,7 +403,7 @@ group { name: "elm/frame/base/outline";
          description { state: "default" 0.0;
             rel1.offset: 6 6;
             rel2.offset: -7 -7;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/frame";
             offscale;
          }
       }
@@ -408,8 +411,6 @@ group { name: "elm/frame/base/outline";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
-            rel1.offset: 4 4;
-            rel2.offset: -5 -5;
             offscale;
          }
       }

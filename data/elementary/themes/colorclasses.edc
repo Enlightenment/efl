@@ -17,13 +17,21 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg";
       color: 160 160 160 255; description: "Base foreground"; }
+   color_class { name: "/fg/disabled";
+      color:  80  80  80 255; description: "Base foreground - disabled"; }
+   color_class { name: "/fg/pressed";
+      color: 255 255 255 255; description: "Base foreground - pressed"; }
    color_class { name: "/fg/selected";
       color: 255 255 255 255; description: "Base foreground - selected"; }
+   color_class { name: "/fg/selected-pressed";
+      color: 220 220 220 255; description: "Base foreground - selected pressed"; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/shadow";
       color:   0   0   0 128; description: "Base shadow"; }
    color_class { name: "/shadow/pressed";
       color:   0   0   0 255; description: "Base shadow - pressed"; }
+   color_class { name: "/shadow/disabled";
+      color:   0   0   0  64; description: "Base shadow - disabled"; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/dim";
       color:   0   0   0 200; description: "Base dimming area"; }
@@ -35,6 +43,14 @@ color_classes {
       color:  64  64  64 255; description: "Titlebar background"; }
    color_class { name: "/bg/selected/titlebar";
       color:  32  32  32 255; description: "Titlebar background - selected"; }
+   color_class { name: "/bg/normal/border";
+      color:  64  64  64 255; description: "Border background"; }
+   color_class { name: "/bg/selected/border";
+      color:  64  64  64 255; description: "Border background - selected"; }
+   color_class { name: "/bg/normal/win-blocker";
+      color:  64  64  64 255; description: "Window blocker"; }
+   color_class { name: "/bg/selected/win-blocker";
+      color:  64  64  64 255; description: "Window blocker - selected"; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; description: "Entry background"; }
@@ -58,10 +74,20 @@ color_classes {
       color:  96  96  96 255; description: "Button background"; }
    color_class { name: "/bg/pressed/button";
       color:  80  80  80 255; description: "Button background - pressed"; }
+   color_class { name: "/bg/disabled/button";
+      color:  64  64  64 255; description: "Button background - disabled"; }
    color_class { name: "/fg/normal/button";
       color: 192 192 192 255; description: "Button foreground"; }
    color_class { name: "/fg/pressed/button";
       color: 255 255 255 255; description: "Button foreground - pressed"; }
+   color_class { name: "/fg/disabled/button";
+      color:  97  96  96 255; description: "Button foreground - disabled"; }
+   color_class { name: "/bg/normal/button-overlay";
+      color:   0   0   0 160; description: "Button (overlay) background"; }
+   color_class { name: "/bg/pressed/button-overlay";
+      color:   0   0   0 200; description: "Button (overlay) background - pressed"; }
+   color_class { name: "/bg/disabled/button-overlay";
+      color:   0   0   0  80; description: "Button (overlay) background - disabled"; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/menu/item";
       color:  32  32  32   0; description: "Menu item background"; }
@@ -70,8 +96,17 @@ color_classes {
    color_class { name: "/fg/normal/menu/item";
       color: 160 160 160 255; description: "Menu item foreground"; }
    color_class { name: "/fg/selected/menu/item";
-      color: 255 255 255 255; description: "Menu item foreground"; }
-
+      color: 255 255 255 255; description: "Menu item foreground - selected"; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg-alt/normal/list/group";
+      color:  32  32  32 255; description: "List group background"; }
+   color_class { name: "/fg-alt/normal/list/group";
+      color: 255 255 255 255; description: "List group foreground"; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/frame/title";
+      color:  80  80  80 255; description: "Frame title background"; }
+   color_class { name: "/fg/normal/frame/title";
+      color: 255 255 255 255; description: "Frame title foreground"; }
 
 
 

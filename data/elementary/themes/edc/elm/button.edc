@@ -11,34 +11,37 @@ group { name: "elm/button/base/default";
          description { state: "default" 0.0;
             rel.to: "base";
             WIN_SHADOW_SMALL;
+            color_class: "/shadow/normal/button";
          }
          description { state: "pressed" 0.0; inherit;
             image.border_scale_by: 0.1;
             rel1.offset: -2 -1;
             rel2.offset: 0 1;
+            color_class: "/shadow/pressed/button";
          }
          description { state: "disabled" 0.0; inherit;
             image.border_scale_by: 0.1;
             rel1.offset: -2 -1;
             rel2.offset: 0 1;
+            color_class: "/shadow/disabled/button";
          }
       }
       rect { "base";
          scale: 1;
          desc { "default";
-            color: 96 96 96 255;
+            color_class: "/bg/normal/button";
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             offscale;
          }
          desc { "pressed"; inherit;
-            color: 128 128 128 255;
+            color_class: "/bg/pressed/button";
             rel1.offset: 3 3;
             rel2.offset: -4 -4;
             offscale;
          }
          desc { "disabled"; inherit;
-            color: 72 72 72 255;
+            color_class: "/bg/disabled/button";
          }
          desc { "hidden"; inherit;
             visible: 0;
@@ -94,7 +97,7 @@ group { name: "elm/button/base/default";
       text { "elm.text"; nomouse;
          scale: 1;
          desc { "default";
-            color: 192 192 192 255;
+            color_class: "/fg/normal/button";
             rel1.offset: 0 6;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.content";
@@ -116,7 +119,7 @@ group { name: "elm/button/base/default";
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
             rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -130,14 +133,14 @@ group { name: "elm/button/base/default";
          }
          desc { "pressed_textonly"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_visible"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button";
             rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -145,7 +148,7 @@ group { name: "elm/button/base/default";
          }
          desc { "disabled_textonly"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -608,15 +611,15 @@ group { name: "elm/button/base/overlay";
       }
       part { name: "base";
          description { state: "default" 0.0;
-            color: 0 0 0 160;
+            color_class: "/bg/normal/button-overlay";
             visible: 1;
          }
          description { state: "pressed" 0.0;
-            color: 0 0 0 200;
+            color_class: "/bg/pressed/button-overlay";
             visible: 1;
          }
          description { state: "disabled" 0.0;
-            color: 0 0 0 0;
+            color_class: "/bg/disabled/button-overlay";
             visible: 0;
          }
       }
@@ -861,7 +864,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             text { font: FN; size: 10;
                align: 0.0 0.5;
                min: 1 1;
-               text_class: "button";
+               text_class: "butt";
             }
             min: 0 ICMIN;
          }
@@ -1431,23 +1434,32 @@ group { name: "elm/button/base/combobox_vertical/default";
          description { state: "default" 0.0;
             rel.to: "base";
             WIN_SHADOW_SMALL;
+            color_class: "/shadow/normal/button";
+         }
+         desc { "pressed";
+            inherit;
+            color_class: "/shadow/pressed/button";
+         }
+         desc { "disabled";
+            inherit;
+            color_class: "/shadow/disabled/button";
          }
       }
       rect { "base";
          scale: 1;
          desc { "default";
-            color: 96 96 96 255;
+            color_class: "/bg/normal/button";
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             offscale;
          }
          desc { "pressed";
             inherit;
-            color: 128 128 128 255;
+            color_class: "/bg/pressed/button";
          }
          desc { "disabled";
             inherit;
-            color: 72 72 72 255;
+            color_class: "/bg/disabled/button";
          }
       }
       rect { name: "event";
@@ -1489,11 +1501,15 @@ group { name: "elm/button/base/combobox_vertical/default";
             rel.to: "event2";
             rel2.relative: 1.0 0.5;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/button";
          }
          desc { "pressed";
             inherit;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
+         }
+         desc { "disabled";
+            inherit;
+            color_class: "/fg/disabled/button";
          }
       }
       image { name: "expand2";
@@ -1506,11 +1522,15 @@ group { name: "elm/button/base/combobox_vertical/default";
             rel.to: "event2";
             rel1.relative: 0.0 0.5;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/button";
          }
          desc { "pressed";
             inherit;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
+         }
+         desc { "disabled";
+            inherit;
+            color_class: "/fg/disabled/button";
          }
       }
       rect { name: "event2";
@@ -1557,6 +1577,9 @@ group { name: "elm/button/base/combobox_vertical/default";
       program { name: "button_click_anim";
          action: STATE_SET "pressed" 0.0;
          target: "base";
+         target: "shadow";
+         target: "expand1";
+         target: "expand2";
          target: "select_line";
       }
       program { name: "button_unclick";
@@ -1567,11 +1590,17 @@ group { name: "elm/button/base/combobox_vertical/default";
       program { name: "button_unclick_anim";
          action: STATE_SET "default" 0.0;
          target: "base";
+         target: "shadow";
+         target: "expand1";
+         target: "expand2";
          target: "select_line";
       }
       program { signal: "elm,anim,activate"; source: "elm";
          action: STATE_SET "pressed" 0.0;
          target: "base";
+         target: "shadow";
+         target: "expand1";
+         target: "expand2";
          target: "select_line";
          after: "button_unpressed_anim";
       }
@@ -1579,26 +1608,22 @@ group { name: "elm/button/base/combobox_vertical/default";
          action: STATE_SET "default" 0.0;
          in: 0.5 0.0;
          target: "base";
+         target: "shadow";
+         target: "expand1";
+         target: "expand2";
          target: "select_line";
       }
       program { signal: "mouse,clicked,1"; source: "event*";
          action: SIGNAL_EMIT "elm,action,click" "elm";
-      }
-      program { signal: "mouse,down,1"; source: "event2";
-         action: STATE_SET "pressed" 0.0;
-         target: "expand1";
-         target: "expand2";
-      }
-      program { signal: "mouse,up,1"; source: "event2";
-         action: STATE_SET "default" 0.0;
-         target: "expand1";
-         target: "expand2";
       }
       program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "base";
          target: "event";
          target: "event2";
+         target: "shadow";
+         target: "expand1";
+         target: "expand2";
          target: "select_line";
          target: "icon_clip";
       }
@@ -1607,6 +1632,9 @@ group { name: "elm/button/base/combobox_vertical/default";
          target: "base";
          target: "event";
          target: "event2";
+         target: "shadow";
+         target: "expand1";
+         target: "expand2";
          target: "select_line";
          target: "icon_clip";
       }
