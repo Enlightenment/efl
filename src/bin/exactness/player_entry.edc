@@ -1,3 +1,5 @@
+efl_version: 1 25;
+
 collections {
    #include "../../../data/elementary/themes/fonts.edc"
    group { name: "elm/entry/cursor/default";
