@@ -34,7 +34,7 @@
       description { state: "default" 0.0; \
          rel.to: _to; \
          image.normal: _img; \
-         image.border: 44 44 44 44; \
+         image.border: 75 75 75 75; \
          image.border_scale: 1; \
          image.border_scale_by: _scale; \
          rel1.offset: (-_l) (-_t); \
