@@ -5,7 +5,7 @@ group { name: "elm/bubble/top_left/default";
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
@@ -43,7 +43,7 @@ group { name: "elm/bubble/top_left/default";
                relative: 0.0 0.0;
                offset: -5 4;
             }
-            color: 255 255 255 255;
+            color_class: "/fg/normal/bubble/text";
             offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
@@ -62,7 +62,7 @@ group { name: "elm/bubble/top_left/default";
             rel1.offset: -5 4;
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 4;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/bubble/info";
             offscale;
             text { font: FNBD; size: 10;
                min: 1 1;
@@ -76,7 +76,7 @@ group { name: "elm/bubble/top_left/default";
       part { name: "base"; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/bubble";
             rel1 {
                to_y: "elm.swallow.icon";
                relative: 0.0 1.0;
@@ -98,9 +98,8 @@ group { name: "elm/bubble/top_left/default";
       part { name: "elm.swallow.content"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 5 9;
-            rel2.to: "base";
             rel2.offset: -6 -7;
             offscale;
          }
@@ -132,7 +131,7 @@ group { name: "elm/bubble/top_right/default";
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
@@ -168,7 +167,7 @@ group { name: "elm/bubble/top_right/default";
                relative: 0.0 0.0;
                offset: -5 4;
             }
-            color: 255 255 255 255;
+            color_class: "/fg/normal/bubble/text";
             offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
@@ -188,7 +187,7 @@ group { name: "elm/bubble/top_right/default";
             rel2.to_x: "elm.swallow.icon";
             rel2.relative: 0.0 0.0;
             rel2.offset: -5 4;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/bubble/info";
             offscale;
             text { font: FNBD; size: 10;
                min: 1 1;
@@ -202,7 +201,7 @@ group { name: "elm/bubble/top_right/default";
       part { name: "base"; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/bubble";
             rel1 {
                to_y: "elm.swallow.icon";
                relative: 0.0 1.0;
@@ -224,9 +223,8 @@ group { name: "elm/bubble/top_right/default";
       part { name: "elm.swallow.content"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 5 9;
-            rel2.to: "base";
             rel2.offset: -6 -7;
             offscale;
          }
@@ -258,7 +256,7 @@ group { name: "elm/bubble/bottom_left/default";
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
@@ -297,7 +295,8 @@ group { name: "elm/bubble/bottom_left/default";
                relative: 0.0 1.0;
                offset: -5 -5;
             }
-            color: 255 255 255 255;
+            offscale;
+            color_class: "/fg/normal/bubble/text";
             text { font: FNBD; size: 10;
                min: 0 1;
                max: 0 1;
@@ -315,7 +314,8 @@ group { name: "elm/bubble/bottom_left/default";
             rel1.offset: -5 -5;
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            offscale;
+            color_class: "/fg/normal/bubble/info";
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -326,8 +326,9 @@ group { name: "elm/bubble/bottom_left/default";
          }
       }
       part { name: "base"; mouse_events:  0;
+         scale: 1;
          description { state: "default" 0.0;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/bubble";
             rel1.offset: 4 4;
             rel2 {
                to_y: "elm.swallow.icon";
@@ -338,6 +339,7 @@ group { name: "elm/bubble/bottom_left/default";
             image.border: 24 0 0 13;
             image.middle: SOLID;
             fill.smooth: 0;
+            offscale;
          }
          description { state: "rtl" 0.0;
             inherit: "default" 0.0;
@@ -348,9 +350,8 @@ group { name: "elm/bubble/bottom_left/default";
       part { name: "elm.swallow.content";
          type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 5 4;
-            rel2.to: "base";
             rel2.offset: -6 -12;
          }
       }
@@ -381,7 +382,7 @@ group { name: "elm/bubble/bottom_right/default";
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.swallow.icon"; type: SWALLOW;
@@ -421,7 +422,7 @@ group { name: "elm/bubble/bottom_right/default";
                relative: 0.0 1.0;
                offset: -5 -5;
             }
-            color: 255 255 255 255;
+            color_class: "/fg/normal/bubble/text";
             offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
@@ -442,7 +443,7 @@ group { name: "elm/bubble/bottom_right/default";
             rel2.relative: 0.0 1.0;
             rel2.offset: -5 -5;
             offscale;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/bubble/info";
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -453,8 +454,9 @@ group { name: "elm/bubble/bottom_right/default";
          }
       }
       part { name: "base"; mouse_events:  0;
+         scale: 1;
          description { state: "default" 0.0;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/bubble";
             rel1.offset: 4 4;
             rel2 {
                to_y: "elm.swallow.icon";
@@ -465,6 +467,7 @@ group { name: "elm/bubble/bottom_right/default";
             image.border: 0 24 0 13;
             image.middle: SOLID;
             fill.smooth: 0;
+            offscale;
          }
          description { state: "rtl" 0.0;
             inherit: "default" 0.0;
@@ -475,9 +478,8 @@ group { name: "elm/bubble/bottom_right/default";
       part { name: "elm.swallow.content";
          type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.offset: 5 4;
-            rel2.to: "base";
             rel2.offset: -6 -12;
          }
       }

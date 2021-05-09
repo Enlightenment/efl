@@ -413,7 +413,7 @@ group { name: "elm/border/base/default";
             rel2.to: "top_clip";
             align: 0.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "elm.event.titlebar";
@@ -425,7 +425,7 @@ group { name: "elm/border/base/default";
             rel2.offset: 0 -1;
             rel2.to_x: "elm.event.minimize";
             rel2.to_y: "top_clip";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "elm.event.close";
@@ -435,7 +435,7 @@ group { name: "elm/border/base/default";
             rel2.relative: 1.0 1.0;
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "elm.event.maximize";
@@ -449,7 +449,7 @@ group { name: "elm/border/base/default";
             rel2.to_y: "top_clip";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "elm.event.minimize";
@@ -463,7 +463,7 @@ group { name: "elm/border/base/default";
             rel2.to_x: "elm.event.maximize";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect { "top_resize_clip";
@@ -485,7 +485,7 @@ group { name: "elm/border/base/default";
             rel2.offset: 31 3;
             min: 40 6;
             align: 1.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
          desc { "hidden"; inherit: "default"; hid; }
@@ -500,7 +500,7 @@ group { name: "elm/border/base/default";
             rel2.relative: 0.0 1.0;
             min: 0 6;
             align: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
          desc { "hidden"; inherit: "default"; hid; }
@@ -516,7 +516,7 @@ group { name: "elm/border/base/default";
             rel2.offset: -1 3;
             min: 40 6;
             align: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
          desc { "hidden"; inherit: "default"; hid; }
@@ -568,7 +568,7 @@ group { name: "elm/border/base/default";
             rel2.offset: 31 -1;
             min: 40 10;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -584,7 +584,7 @@ group { name: "elm/border/base/default";
             rel2.relative: 0.0 1.0;
             min: 0 10;
             align: 0.5 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -599,7 +599,7 @@ group { name: "elm/border/base/default";
             rel1.offset: -32 0;
             min: 40 10;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -608,12 +608,12 @@ group { name: "elm/border/base/default";
       rect { "indicator_bg";
          clip: "bg_clip";
          desc { "default";
-            color: 148 23 45 255;
+            color: 148 23 45 255; // never see this...
             rel.to: "elm.swallow.indicator";
          }
          desc { "bg_transparent";
             inherit: "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // never see this...
          }
       }
       swallow { "elm.swallow.indicator";
