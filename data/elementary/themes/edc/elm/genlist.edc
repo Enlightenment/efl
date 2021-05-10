@@ -80,8 +80,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
    parts {
       rect { "base";
          desc { "default";
-             color_class: "/bg-alt/normal/list/group";
-             color: 32 32 32 255;
+             color_class: "/bg/normal/list/group";
          }
       }
       text { "elm.text";
@@ -96,7 +95,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
             align: 0.0 0.5;
-            color_class: "/fg-alt/normal/list/group";
+            color_class: "/fg/normal/list/group";
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -108,7 +107,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/group";
             link.base: "elm,state,disabled";
          }
       }
@@ -177,7 +176,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
    parts {
        rect { "event"; mouse;
           desc { "default";
-             color: 0 0 0 0;
+             color: 0 0 0 0; // no cc
              link.base: "elm,state,enabled";
           }
           desc { "disabled";
@@ -188,7 +187,7 @@ group { "genlist_base"; inherit_only: 1; nomouse; program_source: "elm";
        }
        rect { "base";
           desc { "default";
-             color_class: "/bg/normal/list/group";
+             color_class: "/bg/normal/list/item";
              link.base: "elm,state,even";
           }
           desc { "odd";
@@ -215,7 +214,7 @@ group { "genlist_top"; inherit_only: 1; nomouse; program_source: "elm";
     parts {
        rect { "event_block"; mouse;
           desc { "default";
-             color: 0 0 0 0;
+             color: 0 0 0 0; // no cc
              hid;
              link.base: "elm,state,enabled";
           }
@@ -244,7 +243,7 @@ group { "genlist_noarrow"; inherit_only: 1; program_source: "elm";
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
             rel2.offset: 0 -5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -287,7 +286,6 @@ group { "elm/genlist/item/default/default"; nomouse;
          desc { "disabled";
             inherit: "default";
             color_class: "/fg/disabled/list/item";
-            color: 80 80 80 255;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -360,7 +358,6 @@ group { "elm/genlist/item/default/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 4;
@@ -382,7 +379,6 @@ group { "elm/genlist/item/default/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
-            aspect: 1.0 1.0;
             rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
@@ -537,7 +533,6 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 4;
@@ -559,7 +554,6 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
-            aspect: 1.0 1.0;
             rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
@@ -717,7 +711,6 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 4;
@@ -851,7 +844,6 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
-            aspect: 1.0 1.0;
             rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
@@ -1004,6 +996,7 @@ group { "elm/genlist/item/full/default"; nomouse;
                text_class: "list_item";
             }
             hid;
+            offscale;
          }
       }
       //##//
@@ -1012,11 +1005,11 @@ group { "elm/genlist/item/full/default"; nomouse;
          desc { "default";
             offscale;
             min: ICMIN ICMIN;
-            aspect: 1.0 1.0;
             rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
             rel2.offset: -5 -5;
+            offscale;
          }
       }
       //##//
@@ -1029,6 +1022,7 @@ group { "elm/genlist/item/full/default"; nomouse;
             rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
             rel2.offset: 4 -5;
+            offscale;
          }
       }
       //##//
@@ -1045,9 +1039,9 @@ group { "elm/genlist/item_compress_odd/full/default";
 }
 
 group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
-   images.image: "big_arrow_left.png" COMP;
-   images.image: "big_arrow_right.png" COMP;
-   images.image: "big_arrow_down.png" COMP;
+//   images.image: "big_arrow_left.png" COMP;
+//   images.image: "big_arrow_right.png" COMP;
+//   images.image: "big_arrow_down.png" COMP;
 
    parts {
       image { "arrow_img_l";
@@ -1056,11 +1050,10 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          ignore_flags: ON_HOLD;
          desc { "default";
             fixed: 1 1;
-            min: 14 17;
-            max: 14 17;
-            rel1.to: "arrow";
-            rel2.to: "arrow";
-            image.normal: "big_arrow_right.png";
+            min: 15 15;
+            max: 15 15;
+            rel.to: "arrow";
+            image.normal: "i-arrow-r";
             color_class: "/fg/normal/list/item";
          }
          desc { "selected";
@@ -1073,23 +1066,17 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          }
          desc { "default" 1.0;
             inherit: "default";
-            min: 17 14;
-            max: 17 14;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
             color_class: "/fg/normal/list/item";
          }
          desc { "selected" 1.0;
             inherit: "default";
-            min: 17 14;
-            max: 17 14;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
             color_class: "/fg/selected/list/item";
          }
          desc { "disabled" 1.0;
             inherit: "default";
-            min: 17 14;
-            max: 17 14;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
             color_class: "/fg/disabled/list/item";
          }
       }
@@ -1099,11 +1086,10 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          ignore_flags: ON_HOLD;
          desc { "default";
             fixed: 1 1;
-            min: 14 17;
-            max: 14 17;
-            rel1.to: "arrow";
-            rel2.to: "arrow";
-            image.normal: "big_arrow_left.png";
+            min: 15 15;
+            max: 15 15;
+            rel.to: "arrow";
+            image.normal: "i-arrow-l";
             color_class: "/fg/normal/list/item";
          }
          desc { "selected";
@@ -1116,23 +1102,17 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          }
          desc { "default" 1.0;
             inherit: "default";
-            min: 17 14;
-            max: 17 14;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
             color_class: "/fg/normal/list/item";
          }
          desc { "selected" 1.0;
             inherit: "default";
-            min: 17 14;
-            max: 17 14;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
             color_class: "/fg/selected/list/item";
          }
          desc { "disabled" 1.0;
             inherit: "default";
-            min: 17 14;
-            max: 17 14;
-            image.normal: "big_arrow_down.png";
+            image.normal: "i-arrow-d";
             color_class: "/fg/disabled/list/item";
          }
       }
@@ -1141,13 +1121,12 @@ group { "genlist_arrow"; inherit_only: 1; program_source: "elm";
          desc { "default";
             fixed: 1 0;
             min: 15 15;
-//            aspect: 1.0 1.0;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel2.to_x: "elm.swallow.pad";
             rel2.relative: 1.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect { "arrow_clip_l";
@@ -1439,13 +1418,14 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          scale;
          desc { "default";
             fixed: 1 1;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 0.0;
          }
       }
       rect { "event"; mouse;
-         desc { color: 0 0 0 0; }
+         desc { color: 0 0 0 0; // no cc
+         }
       }
       group { "group"; mouse;
          source: "elm/genlist/tree/default/default";
@@ -1471,7 +1451,7 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          }
          desc { "map_transition";
             inherit: "default";
-            color: 0 0 0 255;
+            color: 0 0 0 255; // fixed color
             map.rotation.x: -90;
             link { base: "elm,action,flip_item";
                after: "rot2";
@@ -1543,7 +1523,7 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             rel1.to_x: "elm.swallow.pad";
             rel1.to_y: "elm.swallow.icon";
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -1554,11 +1534,11 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1630,7 +1610,6 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             offscale;
             min: ICMIN ICMIN;
             fixed: 1 1;
-            aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 4;
@@ -1764,7 +1743,7 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
          } \
          rect { "base"; \
             desc { "default"; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list/item"; \
             } \
          } \
       } \
@@ -1792,7 +1771,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             rel2.relative: 0.0 0.0;
             rel2.to_x: "elm.swallow.end";
             rel2.to_y: "elm.text.sub";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -1804,11 +1783,11 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1841,7 +1820,7 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color: 160 160 160 255;
+            color_class: "/fg/disabled/list/item/sub";
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -1852,11 +1831,11 @@ group { "elm/genlist/item/double_label/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item/sub";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item/sub";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1915,7 +1894,6 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 4;
@@ -1937,7 +1915,6 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
-            aspect: 1.0 1.0;
             rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
@@ -2078,7 +2055,7 @@ COMPRESS_SUB_ODD("elm/genlist/tree_compress_odd/double_label/default", "elm/genl
          } \
          rect { "base"; \
             desc { "default"; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list/item"; \
             } \
          } \
       } \
@@ -2096,14 +2073,13 @@ group { "elm/genlist/item/message/default"; nomouse;
       text { "elm.text";
          scale;
          desc { "default";
-            offscale;
             min: 0 ICMIN;
             rel1.offset: 4 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
             rel2.offset: -5 4;
             rel2.relative: 1.0 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2116,11 +2092,11 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2155,7 +2131,7 @@ group { "elm/genlist/item/message/default"; nomouse;
             rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.title.2";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item/title";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -2166,11 +2142,11 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item/title";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item/title";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2187,7 +2163,7 @@ group { "elm/genlist/item/message/default"; nomouse;
             rel1.relative: 1.0 1.0;
             rel1.to_x: "elm.swallow.pad";
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item/title2";
             align: 0.0 1.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2200,11 +2176,11 @@ group { "elm/genlist/item/message/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item/title2";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item/title2";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2285,7 +2261,7 @@ group { "elm/genlist/item/media/default"; nomouse;
             rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.text.album-artist";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2296,11 +2272,11 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2332,7 +2308,7 @@ group { "elm/genlist/item/media/default"; nomouse;
             rel1.to_x: "elm.swallow.pad";
             rel2.offset: -5 -5;
             rel2.relative: 1.0 1.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/album";
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -2343,11 +2319,11 @@ group { "elm/genlist/item/media/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/album";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/album";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2503,7 +2479,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             rel2.relative: 1.0 0.0;
             rel2.to_x: "elm.swallow.pad";
             rel2.to_y: "elm.text.length";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/track";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2515,11 +2491,11 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/track";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/track";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2554,7 +2530,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             rel1.offset: 4 0;
             rel2.to: "elm.text.trackno";
             rel2.offset: 4 -1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/track";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -2579,7 +2555,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             rel2.offset: -5 -1;
             rel2.relative: 1.0 1.0;
             rel2.to_y: "elm.text.trackno";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/track-title";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2590,11 +2566,11 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/track-title";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/track-title";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2612,7 +2588,7 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             rel1.to_x: "elm.swallow.pad";
             rel2.offset: -4 -5;
             rel2.relative: 1.0 1.0;
-            color: 160 160 160 255;
+            color_class: "/fg/disabled/list/track-length";
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -2623,11 +2599,11 @@ group { "elm/genlist/item/media-album/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/track-length";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/track-length";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2774,7 +2750,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.text.artist";
-            color: 160 160 160 255;
+            color_class: "/fg/disabled/list/title";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -2786,11 +2762,11 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/title";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/title";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2822,7 +2798,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             rel1.to_x: "elm.swallow.preview";
             rel2.offset: -5 -5;
             rel2.relative: 1.0 1.0;
-            color: 160 160 160 255;
+            color_class: "/fg/disabled/list/artist";
             align: 0.0 1.0;
             text { font: FN; size: 8;
                min: 1 1;
@@ -2833,11 +2809,11 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/artist";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/artist";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2895,7 +2871,7 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             offscale;
             fixed: 1 0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
+            min: ICMIN ICMIN;
             rel1.to_x: "elm.swallow.pad";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 4;
@@ -3048,7 +3024,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.pad";
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/mode";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -3058,11 +3034,11 @@ group { "elm/genlist/item/mode/default"; nomouse;
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/mode";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/mode";
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -3247,10 +3223,12 @@ group { "elm/genlist/tree/mode/default";
          desc { "default";
             rel1.to_x: "arrow";
             rel1.offset: 4 4;
+            offscale;
          }
          desc { "flip_enabled";
             rel1.to_x: "arrow";
             rel1.offset: 4 4;
+            offscale;
          }
       }
    }
@@ -3289,7 +3267,7 @@ COMPRESS_MODE_ODD("elm/genlist/tree_compress_odd/mode/default", "elm/genlist/tre
       parts { \
          rect { "base"; \
             desc { "default"; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list"; \
             } \
          } \
       } \
@@ -3302,10 +3280,10 @@ group { "elm/genlist/item/edit/default"; nomouse;
    parts {
       rect { "base";
          desc { "default";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/list";
          }
          desc { "odd";
-            color: 56 56 56 255;
+            color_class: "/bg-alt/normal/list";
          }
       }
       program {
@@ -3320,7 +3298,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
       }
       rect { "sel_base";
          desc { "default";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/list/item";
             hid;
          }
          desc { "selected";

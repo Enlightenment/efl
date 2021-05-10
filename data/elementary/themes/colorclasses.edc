@@ -25,6 +25,14 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/selected-pressed";
       color: 220 220 220 255; }
+   color_class { name: "/fg-alt/disabled";
+      color:  80  80  80 255; }
+   color_class { name: "/fg-alt/pressed";
+      color: 255 255 255 255; }
+   color_class { name: "/fg-alt/selected";
+      color: 255 255 255 255; }
+   color_class { name: "/fg-alt/selected-pressed";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/shadow";
       color:   0   0   0 128; }
@@ -98,10 +106,12 @@ color_classes {
    color_class { name: "/fg/selected/menu/item";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg-alt/normal/list/group";
+   color_class { name: "/bg/normal/list/group";
       color:  32  32  32 255; }
-   color_class { name: "/fg-alt/normal/list/group";
+   color_class { name: "/fg/normal/list/group";
       color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/list/group";
+      color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/frame/title";
       color:  80  80  80 255; }
