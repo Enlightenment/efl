@@ -4,7 +4,7 @@
       parts { \
          part { name: "base"; \
             description { state: "default" 0.0; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list/item"; \
             } \
          } \
       } \
@@ -49,7 +49,7 @@
          } \
          part { name: "base"; \
             description { state: "default" 0.0; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list/item"; \
             } \
          } \
       } \
@@ -80,10 +80,10 @@ group { name: "elm/list/item/default";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/list/item";
          }
          description { state: "odd" 0.0;
-            color: 56 56 56 255;
+            color_class: "/bg-alt/normal/list/item";
          }
       }
       program {
@@ -99,7 +99,7 @@ group { name: "elm/list/item/default";
       part { name: "sel"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/list/item";
             visible: 0;
          }
          description { state: "selected" 0.0;
@@ -130,7 +130,7 @@ group { name: "elm/list/item/default";
             rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "elm.swallow.end";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -140,11 +140,11 @@ group { name: "elm/list/item/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
       }
       program {
@@ -172,10 +172,9 @@ group { name: "elm/list/item/default";
          scale;
          description { state: "default" 0.0;
             offscale;
-            min: 15 15;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
             rel1.offset: 4 4;
             rel2.relative: 0.0 1.0;
             rel2.offset: 4 -5;
@@ -185,10 +184,9 @@ group { name: "elm/list/item/default";
          scale;
          description { state: "default" 0.0;
             offscale;
-            min: 15 15;
+            min: ICMIN ICMIN;
             fixed: 1 0;
             align: 1.0 0.5;
-            aspect: 1.0 1.0;
             rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
@@ -244,10 +242,10 @@ group { name: "elm/list/h_item/default";
       }
       part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/list/item";
          }
          description { state: "odd" 0.0;
-            color: 56 56 56 255;
+            color_class: "/bg-alt/normal/list/item";
          }
       }
       program {
@@ -263,7 +261,7 @@ group { name: "elm/list/h_item/default";
       part { name: "sel"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/list/item";
             visible: 0;
          }
          description { state: "selected" 0.0;
@@ -293,7 +291,7 @@ group { name: "elm/list/h_item/default";
             rel2.offset: -5 -5;
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.swallow.end";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -303,11 +301,11 @@ group { name: "elm/list/h_item/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
       }
       program {
@@ -332,9 +330,11 @@ group { name: "elm/list/h_item/default";
       }
       //##//
       part { name: "elm.swallow.icon"; type: SWALLOW;
+         scale;
          description { state: "default" 0.0;
+            offscale;
             fixed: 0 1;
-            aspect: 1.0 1.0;
+            min: ICMIN ICMIN;
             align: 0.5 0.0;
             rel1.offset: 4 4;
             rel2.relative: 1.0 0.0;
@@ -342,9 +342,11 @@ group { name: "elm/list/h_item/default";
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
+         scale;
          description { state: "default" 0.0;
+            offscale;
             fixed: 0 1;
-            aspect: 1.0 1.0;
+            min: ICMIN ICMIN;
             align: 0.5 1.0;
             rel1.offset: 4 -5;
             rel1.relative: 0.0 1.0;
