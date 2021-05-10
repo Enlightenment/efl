@@ -23,15 +23,19 @@
          text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "selected"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "disabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "flip_enabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
       } \
@@ -43,15 +47,19 @@
          text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "selected"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "disabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "flip_enabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          rect { "base"; \
@@ -1679,29 +1687,37 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
          text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "selected"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "disabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "flip_enabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          text { "elm.text.sub"; \
             desc { "default"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "selected"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "disabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "flip_enabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
       } \
@@ -1713,29 +1729,37 @@ COMPRESS_ODD("elm/genlist/tree_compress_odd/icon_top_text_bottom/default", "elm/
          text { "elm.text"; \
             desc { "default"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "selected"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "disabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "flip_enabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          text { "elm.text.sub"; \
             desc { "default"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "selected"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "disabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
             desc { "flip_enabled"; \
                text.min: 0 1; \
+               text.ellipsis: 0.0; \
             } \
          } \
          rect { "base"; \
