@@ -290,44 +290,42 @@ _efl_canvas_vg_container_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
      {
         Eina_Position2D pos = efl_gfx_entity_position_get(child);
         double miterlimit = 0.0, stroke_gap = 0.0;
+        int stroke_gap_int;
+
         if (efl_isa(child, EFL_CANVAS_VG_SHAPE_CLASS))
           {
              miterlimit = efl_gfx_shape_stroke_miterlimit_get(child);
              stroke_gap = efl_gfx_shape_stroke_width_get(child) * (miterlimit <= 0 ? 1 : miterlimit);
           }
+        // convert stroke_gap to an int and round it up to the 
+        stroke_gap_int = 2 * ((stroke_gap + 1.0000) / 2);
         if (first)
           {
              efl_gfx_path_bounds_get(child, r);
-             if (r->size.w != 0 && r->size.h != 0)
+             r->pos.x += pos.x;
+             r->pos.y += pos.y;
+             if (stroke_gap_int > 0)
                {
-                  r->pos.x += pos.x;
-                  r->pos.y += pos.y;
-                  if (stroke_gap > 1.0)
-                    {
-                       r->pos.x -= (int)(stroke_gap/2.0);
-                       r->pos.y -= (int)(stroke_gap/2.0);
-                       r->size.w += (int)(stroke_gap);
-                       r->size.h += (int)(stroke_gap);
-                    }
-                  first = EINA_FALSE;
+                  r->pos.x -= stroke_gap_int / 2;
+                  r->pos.y -= stroke_gap_int / 2;
+                  r->size.w += stroke_gap_int;
+                  r->size.h += stroke_gap_int;
                }
+             first = EINA_FALSE;
           }
         else
           {
              efl_gfx_path_bounds_get(child, &s);
-             if (s.size.w != 0 && s.size.h != 0)
+             s.pos.x += pos.x;
+             s.pos.y += pos.y;
+             if (stroke_gap_int > 0)
                {
-                  s.pos.x += pos.x;
-                  s.pos.y += pos.y;
-                  if (stroke_gap > 1.0)
-                    {
-                       s.pos.x -= (int)(stroke_gap/2.0);
-                       s.pos.y -= (int)(stroke_gap/2.0);
-                       s.size.w += (int)(stroke_gap);
-                       s.size.h += (int)(stroke_gap);
-                    }
-                  eina_rectangle_union(&r->rect, &s.rect);
+                  s.pos.x -= stroke_gap_int / 2;
+                  s.pos.y -= stroke_gap_int / 2;
+                  s.size.w += stroke_gap_int;
+                  s.size.h += stroke_gap_int;
                }
+             eina_rectangle_union(&r->rect, &s.rect);
           }
      }
 }
