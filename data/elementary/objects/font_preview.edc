@@ -1,38 +1,32 @@
 color_classes {
-   color_class {
-      name: "entry_text";
-      color: 0 0 0 255;
+   color_class { name: "/fg/normal/text";
+     color: 160 160 160 255;
    }
 }
 
-collections {
-
-   group { name: "font_preview";
+collections { group { name: "font_preview";
       parts {
-
          /* some fonts have weird alignments, thus they overflow badly */
-         part { name: "clipper";
-            type: RECT;
+         part { name: "clipper"; type: RECT;
             description {
                state: "default" 0.0;
             }
          }
-
-         part { name: "elm.text";
-            type: TEXT;
-            mouse_events: 0;
+         part { name: "elm.text"; type: TEXT;
             scale: 1;
+            mouse_events: 0;
             clip_to: "clipper";
-            description {
-               state: "default" 0.0;
-               color_class: "entry_text";
-               text {
-                  font: "Sans";
+            description { state: "default" 0.0;
+               color_class: "/fg/normal/text";
+               text { font: "Sans";
                   min: 0 1;
                   size: 10;
                   align: 0.5 0.5;
                   text_class: "font_preview";
                }
+               rel1.offset: 16 16;
+               rel2.offset: -17 -17;
+               offscale;
             }
          }
       }

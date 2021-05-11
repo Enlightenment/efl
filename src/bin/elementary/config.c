@@ -1090,6 +1090,14 @@ _cf_fonts(void            *data,
 }
 
 static void
+_cf_colors(void            *data,
+          Evas_Object *obj EINA_UNUSED,
+          void *event_info EINA_UNUSED)
+{
+   _flip_to(data, "colors");
+}
+
+static void
 _cf_profiles(void            *data,
              Evas_Object *obj EINA_UNUSED,
              void *event_info EINA_UNUSED)
@@ -3142,6 +3150,67 @@ _status_config_fonts(Evas_Object *win,
    elm_naviframe_item_simple_push(naviframe, base);
 }
 
+// singleton only initted once so .. don't care
+static Eina_List *colors = NULL;
+
+static void
+_color_sel(void            *data EINA_UNUSED,
+           Evas_Object     *obj,
+           void *event_info EINA_UNUSED)
+{
+   Elm_Widget_Item *it = elm_list_selected_item_get(obj);
+   if (it)
+     {
+        char *s2 = elm_object_item_data_get(it);
+        if (s2) elm_config_palette_set(s2);
+     }
+}
+
+static void
+_status_config_colors(Evas_Object *win,
+                      Evas_Object *naviframe)
+{
+   Evas_Object *base, *li;
+   Eina_List *list, *l;
+   const char *s, *pal;
+   char *s2;
+   Elm_Widget_Item *it;
+
+   base = elm_table_add(win);
+   evas_object_size_hint_weight_set(base, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(base, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(base, li, 0, 0, 1, 1);
+   evas_object_show(li);
+
+   list = elm_config_palette_list();
+   pal = elm_config_palette_get();
+   EINA_LIST_FOREACH(list, l, s)
+     {
+        if (s)
+          {
+             s2 = strdup(s);
+             if (s2)
+               {
+                  colors = eina_list_append(colors, s2);
+                  it = elm_list_item_append(li, s2, NULL, NULL, NULL, s2);
+                  if ((pal) && (!strcmp(s2, pal)))
+                    elm_list_item_selected_set(it, EINA_TRUE);
+               }
+          }
+     }
+   evas_object_smart_callback_add(li, "selected", _color_sel, NULL);
+   elm_list_go(li);
+   elm_config_palette_list_free(list);
+
+   evas_object_data_set(win, "colors", base);
+
+   elm_naviframe_item_simple_push(naviframe, base);
+}
+
 static void
 _profiles_list_item_del_cb(void            *data,
                            Evas_Object *obj EINA_UNUSED,
@@ -4299,14 +4368,16 @@ _status_config_full(Evas_Object *win,
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   tb_it = elm_toolbar_item_append(tb, "preferences-desktop-display",
+   tb_it = elm_toolbar_item_append(tb, "preferences-scale",
                                    "Sizing", _cf_sizing, win);
    elm_toolbar_item_append(tb, "preferences-desktop-theme",
                            "Theme", _cf_themes, win);
-   elm_toolbar_item_append(tb, "preferences-color",
+   elm_toolbar_item_append(tb, "preferences-icons",
                            "Icons", _cf_icons, win);
-   elm_toolbar_item_append(tb, "preferences-desktop-font",
+   elm_toolbar_item_append(tb, "preferences-fonts",
                            "Fonts", _cf_fonts, win);
+   elm_toolbar_item_append(tb, "preferences-color",
+                           "Colors", _cf_colors, win);
    elm_toolbar_item_append(tb, "preferences-desktop-multimedia",
                            "Audio", _cf_audio, win);
    elm_toolbar_item_append(tb, "preferences-profile",
@@ -4328,6 +4399,7 @@ _status_config_full(Evas_Object *win,
    _status_config_themes(win, naviframe);
    _status_config_icons(win, naviframe);
    _status_config_fonts(win, naviframe);
+   _status_config_colors(win, naviframe);
    _status_config_profiles(win, naviframe);
    _status_config_rendering(win, naviframe);
    _status_config_scrolling(win, naviframe);
