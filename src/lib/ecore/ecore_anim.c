@@ -136,11 +136,10 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    struct epoll_event pollincoming[2];
    uint64_t timerfdbuf;
    int i;
-   unsigned int t_ft;
-   double pframetime = -1.0;
    struct itimerspec tspec_new;
    struct itimerspec tspec_old;
 #endif
+   double t_out, t_gap, t_target;
    fd_set rfds, wfds, exfds;
    struct timeval tv;
    Eina_Bool data_control;
@@ -203,6 +202,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 
    if (pollfd >= 0)
      {
+
         while (!ecore_thread_check(thread))
           {
              data_control = EINA_FALSE;
@@ -213,21 +213,23 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 
              t0 = ecore_time_get();
              d = fmod(t0, ft);
+             t_target = t0 - d + ft;
              if (tick)
                {
-                  if (!EINA_DBL_EQ(pframetime, ft))
-                    {
-                       t = (ft - d) * 1000000000.0;
-                       t_ft = ft * 1000000000.0;
-                       tspec_new.it_value.tv_sec = t / 1000000000;
-                       tspec_new.it_value.tv_nsec = t % 1000000000;
-                       tspec_new.it_interval.tv_sec = t_ft / 1000000000;
-                       tspec_new.it_interval.tv_nsec = t_ft % 1000000000;
-                       timerfd_settime(timerfd, 0, &tspec_new, &tspec_old);
-                       pframetime = ft;
-                    }
-                  DBG("sleep...");
-                  ret = epoll_wait(pollfd, pollincoming, 2, -1);
+
+                  t = (ft - d) * 1000000000.0;
+                  tspec_new.it_value.tv_sec = t / 1000000000;
+                  tspec_new.it_value.tv_nsec = t % 1000000000;
+                  tspec_new.it_interval.tv_sec = 0;
+                  tspec_new.it_interval.tv_nsec = 0;
+                  timerfd_settime(timerfd, 0, &tspec_new, &tspec_old);
+                  ret = epoll_wait(pollfd, pollincoming, 2, 200);
+                  t_out = ecore_time_get();
+                  t_gap = t_out - t0;
+                  if (t_gap > (ft * 2.0))
+                    fprintf(stderr,
+                            "ERROR: ecore_animator thread - epoll_wait(..., 200) at %1.5f should have slept ~ %1.5fs but took %1.5fs!\n",
+                            t0, ft, t_out - t0);
                }
              else
                {
@@ -235,9 +237,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                   tspec_new.it_value.tv_nsec = 0;
                   tspec_new.it_interval.tv_sec = 0;
                   tspec_new.it_interval.tv_nsec = 0;
-                  pframetime = -1.0;
                   timerfd_settime(timerfd, 0, &tspec_new, &tspec_old);
-                  DBG("wait...");
                   ret = epoll_wait(pollfd, pollincoming, 2, -1);
                }
 
@@ -263,12 +263,11 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                     {
                        ERR("Cannot read from animator control fd");
                     }
-                  DBG("tick = %i", tick);
                   if (tick == -1) goto done;
                }
              else if (data_timeout)
                {
-                  if (tick) _timer_send_time(t0 - d + ft, thread);
+                  if (tick) _timer_send_time(t_target, thread);
                }
           }
      }
@@ -289,17 +288,22 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 
              t0 = ecore_time_get();
              d = fmod(t0, ft);
+             t_target = t0 - d + ft;
              if (tick)
                {
-                  DBG("sleep...");
-                  t = (animators_frametime - d) * 1000000.0;
+                  t = (ft - d) * 1000000.0;
                   tv.tv_sec = t / 1000000;
                   tv.tv_usec = t % 1000000;
                   ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, &tv);
+                  t_out = ecore_time_get();
+                  t_gap = t_out - t0;
+                  if (t_gap > (ft * 2.0))
+                    fprintf(stderr,
+                            "ERROR: ecore_animator thread - select() at %1.5f should have slept ~ %1.5fs but took %1.5fs!\n",
+                            t0, ft, t_out - t0);
                }
              else
                {
-                  DBG("wait...");
                   ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, NULL);
                }
              if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
@@ -317,7 +321,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                }
              else if (data_timeout)
                {
-                  if (tick) _timer_send_time(t0 - d + ft, thread);
+                  if (tick) _timer_send_time(t_target, thread);
                }
           }
      }
