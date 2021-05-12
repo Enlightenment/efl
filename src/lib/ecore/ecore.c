@@ -445,13 +445,13 @@ ecore_shutdown(void)
           #ifdef HAVE_MALLINFO2
           ERR("[%i] Memory MAX total: %lu, free: %lu",
               _ecore_memory_pid,
-              _ecore_memory_max_total,
-              _ecore_memory_max_free);
+              (unsigned long)_ecore_memory_max_total,
+              (unsigned long)_ecore_memory_max_free);
           #else
           ERR("[%i] Memory MAX total: %i, free: %i",
               _ecore_memory_pid,
-              _ecore_memory_max_total,
-              _ecore_memory_max_free);
+              (unsigned long)_ecore_memory_max_total,
+              (unsigned long)_ecore_memory_max_free);
           #endif
 
 #ifdef HAVE_MALLOC_INFO
@@ -1014,13 +1014,13 @@ _ecore_memory_statistic(EINA_UNUSED void *data)
 #ifdef HAVE_MALLINFO2
         ERR("[%i] Memory total: %lu, free: %lu",
             _ecore_memory_pid,
-            mi.uordblks,
-            mi.fordblks);
+            (unsigned long)mi.uordblks,
+            (unsigned long)mi.fordblks);
 #else
         ERR("[%i] Memory total: %i, free: %i",
             _ecore_memory_pid,
-            mi.uordblks,
-            mi.fordblks);
+            (unsigned long)mi.uordblks,
+            (unsigned long)mi.fordblks);
 #endif
      }
 
