@@ -234,11 +234,11 @@ _shot_do(Evas *e)
                    !efl_isa(obj, EFL_CANVAS_SCENE_INTERFACE)) continue;
              Exactness_Object *e_obj = calloc(1, sizeof(*e_obj));
              Eo *parent = efl_parent_get(obj);
-             e_obj->id = (long long) obj;
+             e_obj->id = (long long)(intptr_t)obj;
              if (efl_isa(parent, EFL_CANVAS_OBJECT_CLASS) ||
                    efl_isa(parent, EFL_CANVAS_SCENE_INTERFACE))
                {
-                  e_obj->parent_id = (long long) efl_parent_get(obj);
+                  e_obj->parent_id = (long long)(intptr_t)efl_parent_get(obj);
                }
              else
                {
