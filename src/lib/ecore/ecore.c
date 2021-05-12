@@ -448,7 +448,7 @@ ecore_shutdown(void)
               (unsigned long)_ecore_memory_max_total,
               (unsigned long)_ecore_memory_max_free);
           #else
-          ERR("[%i] Memory MAX total: %i, free: %i",
+          ERR("[%i] Memory MAX total: %lu, free: %lu",
               _ecore_memory_pid,
               (unsigned long)_ecore_memory_max_total,
               (unsigned long)_ecore_memory_max_free);
@@ -1017,7 +1017,7 @@ _ecore_memory_statistic(EINA_UNUSED void *data)
             (unsigned long)mi.uordblks,
             (unsigned long)mi.fordblks);
 #else
-        ERR("[%i] Memory total: %i, free: %i",
+        ERR("[%i] Memory total: %lu, free: %lu",
             _ecore_memory_pid,
             (unsigned long)mi.uordblks,
             (unsigned long)mi.fordblks);
