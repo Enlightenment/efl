@@ -105,7 +105,6 @@ static Ecore_Evas_Object_Animator_Interface _anim_iface;
 static void
 _tick_send(signed char val)
 {
-   DBG("_tick_send(%i)", val);
    if (pipe_write(timer_fd_write, &val, 1) != 1)
      {
         ERR("Cannot write to animator control fd");
@@ -119,7 +118,6 @@ _timer_send_time(double t, Ecore_Thread *thread)
    if (tim)
      {
         *tim = t;
-        DBG("   ... send %1.8f", t);
         eina_spinlock_take(&tick_queue_lock);
         tick_queue_count++;
         eina_spinlock_release(&tick_queue_lock);
@@ -209,8 +207,6 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              data_timeout = EINA_FALSE;
              ft = animators_frametime;
 
-             DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
-
              t0 = ecore_time_get();
              d = fmod(t0, ft);
              t_target = t0 - d + ft;
@@ -280,7 +276,6 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              data_timeout = EINA_FALSE;
              ft = animators_frametime;
 
-             DBG("------- timer_event_is_busy=%i", timer_event_is_busy);
              FD_ZERO(&rfds);
              FD_ZERO(&wfds);
              FD_ZERO(&exfds);
@@ -316,7 +311,6 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                     {
                        ERR("Cannot read from animator control fd");
                     }
-                  DBG("tick = %i", tick);
                   if (tick == -1) goto done;
                }
              else if (data_timeout)
