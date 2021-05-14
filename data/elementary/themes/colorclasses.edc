@@ -59,6 +59,10 @@ color_classes {
       color:  64  64  64 255; }
    color_class { name: "/bg/selected/win-blocker";
       color:  64  64  64 255; }
+   color_class { name: "/bg/normal/border/outline";
+      color:   0   0   0 255; }
+   color_class { name: "/bg/selected/border/outline";
+      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; }

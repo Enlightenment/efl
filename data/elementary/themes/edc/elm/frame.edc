@@ -6,10 +6,6 @@ group { name: "elm/frame/base/default";
             rel.to: "_sh1";
             color_class: "/shadow/normal/frame";
          }
-         description { state: "hidden" 0.0;
-            inherit;
-            visible: 0;
-         }
       }
       WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       part { name: "base"; type: SPACER;
@@ -391,10 +387,6 @@ group { name: "elm/frame/base/outline";
          description { state: "default" 0.0;
             rel.to: "_sh1";
             color_class: "/shadow/normal/frame";
-         }
-         description { state: "hidden" 0.0;
-            inherit;
-            visible: 0;
          }
       }
       WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
