@@ -66,6 +66,22 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; }
+   color_class { name: "/bg/normal/entry/focus";
+      color:  51 153 255   0; }
+   color_class { name: "/bg/selected/entry/focus";
+      color:  51 153 255 255; }
+   color_class { name: "/bg/selected/entry/validate-fail";
+      color: 255  32  16  80; }
+   color_class { name: "/bg/selected/entry/validate-pass";
+      color:  32 255  16  80; }
+   color_class { name: "/fg/entry/anchor";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/entry/text";
+      color: 112 112 112 255; }
+   color_class { name: "/fg/disabled/entry/text/guide";
+      color:  80  80  80 255; }
+   color_class { name: "/fg/normal/entry/handler/end";
+      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-heading";
       color: 255 255 255 255; }

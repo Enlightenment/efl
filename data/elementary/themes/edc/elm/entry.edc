@@ -3,19 +3,19 @@ group { name: "elm/scroller/entry/default";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/entry";
          }
       }
       part { name: "validation_glow"; type: RECT; mouse_events: 0;
          insert_after: "elm.swallow.background";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "pass" 0.0;
-            color: 0 255 0 90;
+            color_class: "/bg/selected/entry/validate-pass";
          }
          description { state: "fail" 0.0;
-            color: 255 0 0 90;
+            color_class: "/bg/selected/entry/validate-fail";
          }
       }
       program { name: "validation_fail";
@@ -43,14 +43,14 @@ group { name: "elm/scroller/entry/default";
             rel.to: "bg";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 0;
-            color: 51 153 255 0;
+            color_class: "/bg/normal/entry/focus";
             visible: 0;
             offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             rel1.offset: 0 -3;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/entry/focus";
             visible: 1;
          }
       }
@@ -196,7 +196,7 @@ group { name: "elm/scroller/entry_single/default";
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "elm.swallow.background";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/entry";
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;
@@ -206,13 +206,13 @@ group { name: "elm/scroller/entry_single/default";
       }
       part { name: "validation_glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "pass" 0.0;
-            color: 0 255 0 90;
+            color_class: "/bg/selected/entry/validate-pass";
          }
          description { state: "fail" 0.0;
-            color: 255 0 0 90;
+            color_class: "/bg/selected/entry/validate-fail";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
@@ -221,14 +221,14 @@ group { name: "elm/scroller/entry_single/default";
             rel.to: "bg";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 0;
-            color: 51 153 255 0;
+            color_class: "/bg/normal/entry/focus";
             visible: 0;
             offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             rel1.offset: 0 -3;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/entry/focus";
             visible: 1;
          }
       }
@@ -330,7 +330,8 @@ group { name: "elm/scroller/entry_single/default";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 255; // no cc
+            color_class: "/shadow/normal/entry";
             rel.to: "bg";
             rel1.offset: -1 0;
             rel2.offset: -1 -1;
@@ -361,7 +362,8 @@ group { name: "elm/scroller/entry_single/default";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
+            color_class: "/shadow/normal/entry";
             rel.to: "bg";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 0;
@@ -372,7 +374,7 @@ group { name: "elm/scroller/entry_single/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: -16 0;
             rel2.offset: 15 -1;
             visible: 1;
@@ -445,23 +447,19 @@ group { name: "elm/entry/cursor/default";
       }
    }
    programs {
-      program {
-         signal: "selection,changed"; source: "elm.text";
+      program { signal: "selection,changed"; source: "elm.text";
          action: STATE_SET "hidden" 0.0;
          target: "clipper";
       }
-      program {
-         signal: "selection,cleared"; source: "elm.text";
+      program { signal: "selection,cleared"; source: "elm.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
-      program {
-         signal: "selection,reset"; source: "elm.text";
+      program { signal: "selection,reset"; source: "elm.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
-      program {
-         signal: "elm,action,focus"; source: "elm";
+      program { signal: "elm,action,focus"; source: "elm";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -469,8 +467,7 @@ group { name: "elm/entry/cursor/default";
          target: "cursor_hide_timer";
          after: "cursor_show";
       }
-      program {
-         signal: "elm,action,unfocus"; source: "elm";
+      program { signal: "elm,action,unfocus"; source: "elm";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -478,8 +475,7 @@ group { name: "elm/entry/cursor/default";
          target: "cursor_hide_timer";
          after: "cursor_hide_stop";
       }
-      program {
-         signal: "elm,action,show,cursor"; source: "elm";
+      program { signal: "elm,action,show,cursor"; source: "elm";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -527,7 +523,7 @@ group { name: "elm/entry/anchor/default";
       part { name: "bar"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/entry/anchor";
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
             rel1.offset: -1 -1;
@@ -541,23 +537,23 @@ group { name: "elm/entry/anchor/default";
 group { name: "elm/entry/base/default";
    styles {
       style { name: "entry_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=word text_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/normal/entry/text wrap=word text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 text_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/normal/entry/text text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style";
-         base: "font="FN" font_size=10 color=#707070 wrap=word text_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text wrap=word text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_nowrap_disabled_style";
-         base: "font="FN" font_size=10 color=#707070 text_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
-         base: "font="FN" font_size=10 color=#505050 wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text/guide wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -612,33 +608,27 @@ group { name: "elm/entry/base/default";
       }
    }
    programs {
-      program {
-         signal: "load"; source: "";
+      program { signal: "load"; source: "";
          action: FOCUS_SET;
          target: "elm.text";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
       }
-      program {
-         signal: "elm,guide,disabled"; source: "elm";
+      program { signal: "elm,guide,disabled"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "elm.guide";
       }
-      program {
-         signal: "elm,guide,enabled"; source: "elm";
+      program { signal: "elm,guide,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.guide";
       }
-      program { name: "key-down";
-         signal: "entry,keydown"; source: "elm.text";
+      program { signal: "entry,keydown"; source: "elm.text";
          script {
             new buf[32];
             snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
@@ -667,15 +657,15 @@ group { name: "elm/entry/base-mixedwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=mixed text_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/normal/entry/text wrap=mixed text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#707070 wrap=mixed text_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text wrap=mixed text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_mixedwrap";
-         base: "font="FN" font_size=10 color=#505050 wrap=mixed text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text/guide wrap=mixed text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -708,15 +698,15 @@ group { name: "elm/entry/base-charwrap/default";
    inherit: "elm/entry/base/default";
    styles {
       style { name: "entry_style_charwrap";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=char text_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/normal/entry/text wrap=char text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_disabled_style_charwrap";
-         base: "font="FN" font_size=10 color=#707070 wrap=char text_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text wrap=char text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style_charwrap";
-         base: "font="FN" font_size=10 color=#505050 wrap=char text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text/guide wrap=char text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -782,15 +772,15 @@ group { name: "elm/entry/base-single/default";
    alias: "elm/entry/base-single/combobox_vertical/entry";
    styles {
       style { name: "entry_single_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 wrap=none text_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/normal/entry/text wrap=none text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_disabled_style";
-         base: "font="FN" font_size=10 color=#707070 wrap=none text_class=entry_text_disabled left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text wrap=none text_class=entry_text_disabled left_margin=2 right_margin=2";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_single_guide_style";
-         base: "font="FN" font_size=10 color=#505050 wrap=none text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color_class=/fg/disabled/entry/text/guide wrap=none text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -830,7 +820,7 @@ group { name: "elm/entry/base-single/spinner/default";
    inherit: "elm/entry/base-single/default";
    styles {
       style { name: "entry_single_spinner_style";
-         base: "font="FN" font_size=10 color=#a0a0a0 align=center wrap=none text_class=entry_text left_margin=2 right_margin=2";
+         base: "font="FN" font_size=10 color_class=/fg/normal/entry/text align=center wrap=none text_class=entry_text left_margin=2 right_margin=2";
          ENABLED_TEXTBLOCK_TAGS
       }
    }
@@ -1005,7 +995,7 @@ group { name: "elm/entry/magnifier/default";
             min: 80 40;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/entry";
             offscale;
          }
          description { state: "hidden" 0.0;
@@ -1048,7 +1038,7 @@ group { name: "elm/entry/handler/start/default";
             image.normal: "handle_pick_up_left.png";
             min: 21 27; // 42 54
             align: (29/42) (11/54);
-            color: 51 153 255 255;
+            color_class: "/fg/normal/entry/handler/start";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1093,7 +1083,7 @@ group { name: "elm/entry/handler/end/default";
             image.normal: "handle_pick_up_right.png";
             min: 21 27; // 42 54
             align: (12/42) (11/54);
-            color: 51 153 255 255;
+            color_class: "/fg/normal/entry/handler/end";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -1134,8 +1124,6 @@ group { name: "elm/efl_ui_text/base/default";
    parts {
       part { name: "elm.swallow.background"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
          }
       }
       part { name: "elm.text"; type: SWALLOW;
@@ -1164,35 +1152,29 @@ group { name: "elm/efl_ui_text/base/default";
       }
    }
    programs {
-      program {
-         signal: "load"; source: "";
+      program { signal: "load"; source: "";
          action: FOCUS_SET;
          target: "elm.text";
       }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "elm.text";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
       }
 #if 0
-      program {
-         signal: "elm,guide,disabled"; source: "elm";
+      program { signal: "elm,guide,disabled"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          target: "elm.guide";
       }
-      program {
-         signal: "elm,guide,enabled"; source: "elm";
+      program { signal: "elm,guide,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.guide";
       }
 #endif
-      program { name: "key-down";
-         signal: "entry,keydown"; source: "elm.text";
+      program { signal: "entry,keydown"; source: "elm.text";
          script {
             new buf[32];
             snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
