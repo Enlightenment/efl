@@ -75,8 +75,19 @@ group { name: "elm/border/base/default";
          }
       }
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
+         clip_to: "shadow_clip2";
          description { state: "default";
             rel.to: "_sh1";
+            color_class: "/shadow/normal/border";
+         }
+         description { state: "focused";
+            inherit: "default";
+            color_class: "/shadow/selected/border";
+         }
+      }
+      part { name: "shadow_clip2"; type: RECT; mouse_events: 0;
+         description { state: "default";
+            rel.to: "shadow_clip";
          }
          description { state: "hidden";
             visible: 0;
@@ -715,6 +726,7 @@ group { name: "elm/border/base/default";
          target: "elm.text.title";
          target: "clip1";
          target: "clip2";
+         target: "shadow_clip";
       }
       program { signal: "elm,action,unfocus"; source: "elm";
          action: STATE_SET "default";
@@ -723,6 +735,7 @@ group { name: "elm/border/base/default";
          target: "elm.text.title";
          target: "clip1";
          target: "clip2";
+         target: "shadow_clip";
       }
       program { signal: "elm,state,urgent"; source: "elm";
          action: STATE_SET "bounce1";
