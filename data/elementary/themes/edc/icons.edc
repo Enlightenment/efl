@@ -156,7 +156,7 @@ ICON("gadgets",  "i-gadgets")
             description { state: "default" 0.0; \
                aspect: 1.0 1.0; aspect_preference: BOTH; \
                image.normal: _ICON; \
-               color: 160 160 160 255; \
+               color_class: "/fg/normal/icon"; \
             } \
          } \
       } \
@@ -224,7 +224,7 @@ ICON("preferences-position-right-bottom", "i-shelf-rb")
             description { state: "default" 0.0; \
                aspect: 1.0 1.0; aspect_preference: BOTH; \
                image.normal: _ICON; \
-               color: 160 160 160 255; \
+               color_class: "/fg/normal/icon"; \
             } \
          } \
       } \
@@ -536,7 +536,7 @@ ICON("application/x-partial-download", "i-download")
             description { state: "default" 0.0; \
                aspect: 1.0 1.0; aspect_preference: BOTH; \
                image.normal: _ICON; \
-               color: 160 160 160 255; \
+               color_class: "/fg/normal/icon"; \
             } \
          } \
       } \
