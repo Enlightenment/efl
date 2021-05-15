@@ -28,13 +28,13 @@ group { name: "elm/label/base/default";
    }
    styles {
       style { name: "label_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#a0a0a0";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color_class=/fg/normal/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "label_style_disabled";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#606060";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color_class=/fg/disabled/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          DISABLED_TEXTBLOCK_TAGS
@@ -99,13 +99,13 @@ group { name: "elm/label/base/default/left";
    }
    styles {
       style { name: "label_style_left";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#a0a0a0";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color_class=/fg/normal/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "label_style_left_disabled";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#606060";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color_class=/fg/disabled/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          DISABLED_TEXTBLOCK_TAGS
@@ -128,13 +128,13 @@ group { name: "elm/label/base/default/right";
    }
    styles {
       style { name: "label_style_right";
-         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#a0a0a0";
+         base: "font="FN" font_size=10 text_class=tb_plain align=right color_class=/fg/normal/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
       }
       style { name: "label_style_right_disabled";
-         base: "font="FN" font_size=10 text_class=tb_plain align=right color=#606060";
+         base: "font="FN" font_size=10 text_class=tb_plain align=right color_class=/fg/disabled/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          DISABLED_TEXTBLOCK_TAGS
@@ -157,16 +157,16 @@ group { name: "elm/label/base/marker";
    }
    styles {
       style { name: "label_style2";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#a0a0a0";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color_class=/fg/normal/text";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
-         tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
+         tag: "hilight" "+ font="FNBD" color_class=/fg/normal/text/hilight text_class=tb_light";
+         tag: "b" "+ font="FNBD" color_class=/fg/normal/text/hilight text_class=tb_light";
       }
       style { name: "label_style2_disabled";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color=#606060";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=center color_class=/fg/disabled/text";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" color=#2060a0 text_class=tb_light";
-         tag: "b" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+         tag: "hilight" "+ font="FNBD" color_class=/fg/disabled/text/hilight text_class=tb_light";
+         tag: "b" "+ font="FNBD" color_class=/fg/disabled/text/hilight text_class=tb_light";
       }
    }
    parts {
@@ -186,16 +186,16 @@ group { "elm/label/base/marker/left";
    }
    styles {
       style { name: "label_style3";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#a0a0a0";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color_class=/fg/normal/text";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
-         tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
+         tag: "hilight" "+ font="FNBD" color_class=/fg/normal/text/hilight text_class=tb_light";
+         tag: "b" "+ font="FNBD" color_class=/fg/normal/text/hilight text_class=tb_light";
       }
       style { name: "label_style3_disabled";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color=#606060";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=left color_class=/fg/disabled/text";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" color=#2060a0 text_class=tb_light";
-         tag: "b" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+         tag: "hilight" "+ font="FNBD" color_class=/fg/disabled/text/hilight text_class=tb_light";
+         tag: "b" "+ font="FNBD" color_class=/fg/disabled/text/hilight text_class=tb_light";
       }
    }
    parts {
@@ -215,16 +215,16 @@ group { "elm/label/base/marker/right";
    }
    styles {
       style { name: "label_style4";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#a0a0a0";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color_class=/fg/normal/text";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" color=#3399ff text_class=tb_light";
-         tag: "b" "+ font="FNBD" color=#3399ff text_class=tb_light";
+         tag: "hilight" "+ font="FNBD" color_class=/fg/normal/text/hilight text_class=tb_light";
+         tag: "b" "+ font="FNBD" color_class=/fg/normal/text/hilight text_class=tb_light";
       }
       style { name: "label_style4_disabled";
-         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color=#606060";
+         base: "font="FNBD" font_size=10 text_class=tb_plain align=right color_class=/fg/disabled/text";
          tag: "br" "\n";
-         tag: "hilight" "+ font="FNBD" color=#2060a0 text_class=tb_light";
-         tag: "b" "+ font="FNBD" color=#2060a0 text_class=tb_light";
+         tag: "hilight" "+ font="FNBD" color_class=/fg/disabled/text/hilight text_class=tb_light";
+         tag: "b" "+ font="FNBD" color_class=/fg/disabled/text/hilight text_class=tb_light";
       }
    }
    parts {

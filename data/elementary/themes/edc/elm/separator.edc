@@ -7,7 +7,7 @@ group { name: "elm/separator/horizontal/default";
             max: 99999 1;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 72 72 72 255;
+            color_class: "/fg/normal/separator/horizontal";
             offscale;
          }
       }
@@ -19,6 +19,7 @@ group { name: "elm/separator/vertical/default";
       part { name: "base";
          description { state: "default" 0.0;
             max: 1 99999;
+            color_class: "/fg/normal/separator/vertical";
          }
       }
    }

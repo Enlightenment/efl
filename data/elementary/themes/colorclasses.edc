@@ -64,6 +64,9 @@ color_classes {
    color_class { name: "/bg/selected/border/outline";
       color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/separator";
+      color:  80  80  80 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; }
    color_class { name: "/bg/normal/entry/focus";
@@ -85,18 +88,18 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-heading";
       color: 255 255 255 255; }
-///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-heading-sub";
       color: 255 255 255 255; }
-///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-hilight";
       color: 255 255 255 255; }
-///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-overlay";
       color: 160 160 160 255; }
-///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-subtle";
       color:   0   0   0  64; }
+   color_class { name: "/fg/normal/text/hilight";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/text/hilight";
+      color:  25  76 128 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/button";
       color:  96  96  96 255; }
