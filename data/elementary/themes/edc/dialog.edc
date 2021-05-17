@@ -105,7 +105,7 @@ group { name: "e/widgets/dialog/main";
 group { name: "e/widgets/dialog/text";
    styles {
       style { name: "dialog_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color_class=/bg/normal/text wrap=word";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color_class=/fg/normal/text wrap=word";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
       }
