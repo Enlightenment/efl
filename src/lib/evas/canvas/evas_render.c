@@ -2769,7 +2769,7 @@ evas_all_sync(void)
 {
    int loops = 0;
 
-   while (!_rendering_evases)
+   while (_rendering_evases)
      {
         Evas_Public_Data *evas;
 
