@@ -1,26 +1,28 @@
 group { name: "e/modules/pager/popup";
    parts {
-      part { name: "base"; type: RECT; mouse_events: 0;
+      part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             color: 64 64 64 255;
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to_y: "e.text.label";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 8;
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -9;
+            offscale;
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
-            rel1.offset: 0 1;
+            rel1.offset: 8 8;
             rel2.relative: 1.0 0.0;
-            rel2.offset: -1 1;
+            rel2.offset: -9 8;
             align: 0.5 0.0;
             color: 160 160 160 255;
             text { font: FNBD; size: 10;
@@ -28,6 +30,7 @@ group { name: "e/modules/pager/popup";
                align: 0.5 0.0;
                min: 0 1;
             }
+            offscale;
             fixed: 0 1;
          }
       }
