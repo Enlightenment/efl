@@ -2767,14 +2767,21 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
 void
 evas_all_sync(void)
 {
-   Evas_Public_Data *evas;
+   int loops = 0;
 
-   if (!_rendering_evases) return;
+   while (!_rendering_evases)
+     {
+        Evas_Public_Data *evas;
 
-   evas = eina_list_data_get(eina_list_last(_rendering_evases));
-   evas_render_rendering_wait(evas);
-
-   assert(_rendering_evases == NULL);
+        evas = eina_list_data_get(eina_list_last(_rendering_evases));
+        evas_render_rendering_wait(evas);
+        loops++;
+        if (loops > 100)
+          {
+             fprintf(stderr, "ERROR: evas_all_sync did %i loops\n", loops);
+             break;
+          }
+     }
 }
 
 static Eina_Bool
