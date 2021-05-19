@@ -2767,18 +2767,24 @@ evas_render_rendering_wait(Evas_Public_Data *evas)
 void
 evas_all_sync(void)
 {
-   int loops = 0;
+   int retries = 0, count_before, count;
 
    while (_rendering_evases)
      {
         Evas_Public_Data *evas;
 
+        count_before = eina_list_count(_rendering_evases);
         evas = eina_list_data_get(eina_list_last(_rendering_evases));
         evas_render_rendering_wait(evas);
-        loops++;
-        if (loops > 100)
+        count = eina_list_count(_rendering_evases);
+        if (count < count_before) continue;
+        // this is an error case we never expct - a canvas is busy but waiting
+        // ont it to finish doesnt remove it from the list or somehow the
+        // list grows again so do this retry up to 100 times and then complain
+        retries++;
+        if (retries > 100)
           {
-             fprintf(stderr, "ERROR: evas_all_sync did %i loops\n", loops);
+             ERR("Did %i retries while waiting\n", retries);
              break;
           }
      }
