@@ -170,6 +170,9 @@ color_classes {
       color: 160 160 160 255; }
    color_class { name: "/bg/normal/bubble";
       color:  48  48  48 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/shelf/translucent";
+      color:  64  64  64 128; }
 
 
 
