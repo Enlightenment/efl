@@ -994,25 +994,25 @@ fail:
    return NULL;
 }
 
-EAPI Eldbus_Service_Interface *
+ELDBUS_API Eldbus_Service_Interface *
 eldbus_service_interface_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
 {
    return _eldbus_service_interface_register(conn, path, desc, EINA_FALSE, 1u);
 }
 
-EAPI Eldbus_Service_Interface *
+ELDBUS_API Eldbus_Service_Interface *
 eldbus_service_interface_register2(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc2 *desc)
 {
    return _eldbus_service_interface_register(conn, path, &desc->description, EINA_FALSE, desc->version);
 }
 
-EAPI Eldbus_Service_Interface *
+ELDBUS_API Eldbus_Service_Interface *
 eldbus_service_interface_fallback_register(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc *desc)
 {
    return _eldbus_service_interface_register(conn, path, desc, EINA_TRUE, 1u);
 }
 
-EAPI Eldbus_Service_Interface *
+ELDBUS_API Eldbus_Service_Interface *
 eldbus_service_interface_fallback_register2(Eldbus_Connection *conn, const char *path, const Eldbus_Service_Interface_Desc2 *desc)
 {
    return _eldbus_service_interface_register(conn, path, &desc->description, EINA_TRUE, desc->version);
@@ -1273,7 +1273,7 @@ _on_connection_free(void *data, const void *dead_pointer EINA_UNUSED)
    dbus_connection_unregister_object_path(obj->conn->dbus_conn, obj->path);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_service_interface_unregister(Eldbus_Service_Interface *iface)
 {
    Eldbus_Service_Object *obj;
@@ -1284,7 +1284,7 @@ eldbus_service_interface_unregister(Eldbus_Service_Interface *iface)
    obj->introspection_dirty = EINA_TRUE;
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_service_object_unregister(Eldbus_Service_Interface *iface)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK(iface);
@@ -1384,21 +1384,21 @@ _object_handler(DBusConnection *dbus_conn EINA_UNUSED, DBusMessage *msg, void *u
    return DBUS_HANDLER_RESULT_HANDLED;
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_service_connection_get(const Eldbus_Service_Interface *iface)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, NULL);
    return iface->obj->conn;
 }
 
-EAPI const char *
+ELDBUS_API const char *
 eldbus_service_object_path_get(const Eldbus_Service_Interface *iface)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, NULL);
    return iface->obj->path;
 }
 
-EAPI Eldbus_Message *
+ELDBUS_API Eldbus_Message *
 eldbus_service_signal_new(const Eldbus_Service_Interface *iface, unsigned int signal_id)
 {
    unsigned size;
@@ -1410,7 +1410,7 @@ eldbus_service_signal_new(const Eldbus_Service_Interface *iface, unsigned int si
                                    iface->signals[signal_id].name);
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_service_signal_emit(const Eldbus_Service_Interface *iface, unsigned int signal_id, ...)
 {
    Eldbus_Message *sig;
@@ -1440,7 +1440,7 @@ eldbus_service_signal_emit(const Eldbus_Service_Interface *iface, unsigned int s
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_service_signal_send(const Eldbus_Service_Interface *iface, Eldbus_Message *signal_msg)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, EINA_FALSE);
@@ -1449,7 +1449,7 @@ eldbus_service_signal_send(const Eldbus_Service_Interface *iface, Eldbus_Message
    return EINA_TRUE;
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_service_object_data_set(Eldbus_Service_Interface *iface, const char *key, const void *data)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK(iface);
@@ -1458,7 +1458,7 @@ eldbus_service_object_data_set(Eldbus_Service_Interface *iface, const char *key,
    eldbus_data_set(&(iface->obj->data), key, data);
 }
 
-EAPI void *
+ELDBUS_API void *
 eldbus_service_object_data_get(const Eldbus_Service_Interface *iface, const char *key)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, NULL);
@@ -1466,7 +1466,7 @@ eldbus_service_object_data_get(const Eldbus_Service_Interface *iface, const char
    return eldbus_data_get(&(((Eldbus_Service_Object *)iface->obj)->data), key);
 }
 
-EAPI void *
+ELDBUS_API void *
 eldbus_service_object_data_del(Eldbus_Service_Interface *iface, const char *key)
 {
    ELDBUS_SERVICE_INTERFACE_CHECK_RETVAL(iface, NULL);
@@ -1474,7 +1474,7 @@ eldbus_service_object_data_del(Eldbus_Service_Interface *iface, const char *key)
    return eldbus_data_del(&(((Eldbus_Service_Object *)iface->obj)->data), key);
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_service_property_changed(const Eldbus_Service_Interface *interface, const char *name)
 {
    Property *prop;
@@ -1493,7 +1493,7 @@ eldbus_service_property_changed(const Eldbus_Service_Interface *interface, const
    return eina_array_push(iface->props_changed, prop);
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_service_property_invalidate_set(const Eldbus_Service_Interface *interface, const char *name, Eina_Bool is_invalidate)
 {
    Property *prop;
@@ -1525,7 +1525,7 @@ eldbus_service_property_invalidate_set(const Eldbus_Service_Interface *interface
    return eina_array_push(iface->prop_invalidated, prop);
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_service_object_manager_attach(Eldbus_Service_Interface *iface)
 {
    Eldbus_Service_Object *obj;
@@ -1558,7 +1558,7 @@ eldbus_service_object_manager_attach(Eldbus_Service_Interface *iface)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_service_object_manager_detach(Eldbus_Service_Interface *iface)
 {
    Eldbus_Service_Object *obj, *children;

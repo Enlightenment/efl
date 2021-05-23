@@ -204,7 +204,7 @@ _on_object_free(void *data, const void *dead_pointer EINA_UNUSED)
    _eldbus_proxy_free(proxy);
 }
 
-EAPI Eldbus_Proxy *
+ELDBUS_API Eldbus_Proxy *
 eldbus_proxy_get(Eldbus_Object *obj, const char *interface)
 {
    Eldbus_Proxy *proxy;
@@ -249,7 +249,7 @@ _eldbus_proxy_unref(Eldbus_Proxy *proxy)
    _eldbus_proxy_free(proxy);
 }
 
-EAPI Eldbus_Proxy *
+ELDBUS_API Eldbus_Proxy *
 eldbus_proxy_ref(Eldbus_Proxy *proxy)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -259,7 +259,7 @@ eldbus_proxy_ref(Eldbus_Proxy *proxy)
    return proxy;
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_proxy_unref(Eldbus_Proxy *proxy)
 {
    ELDBUS_PROXY_CHECK(proxy);
@@ -268,7 +268,7 @@ eldbus_proxy_unref(Eldbus_Proxy *proxy)
    _eldbus_proxy_unref(proxy);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_proxy_free_cb_add(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_PROXY_CHECK(proxy);
@@ -276,7 +276,7 @@ eldbus_proxy_free_cb_add(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *dat
    proxy->cbs_free = eldbus_cbs_free_add(proxy->cbs_free, cb, data);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_proxy_free_cb_del(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_PROXY_CHECK(proxy);
@@ -284,7 +284,7 @@ eldbus_proxy_free_cb_del(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *dat
    proxy->cbs_free = eldbus_cbs_free_del(proxy->cbs_free, cb, data);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_proxy_data_set(Eldbus_Proxy *proxy, const char *key, const void *data)
 {
    ELDBUS_PROXY_CHECK(proxy);
@@ -293,7 +293,7 @@ eldbus_proxy_data_set(Eldbus_Proxy *proxy, const char *key, const void *data)
    eldbus_data_set(&(proxy->data), key, data);
 }
 
-EAPI void *
+ELDBUS_API void *
 eldbus_proxy_data_get(const Eldbus_Proxy *proxy, const char *key)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -301,7 +301,7 @@ eldbus_proxy_data_get(const Eldbus_Proxy *proxy, const char *key)
    return eldbus_data_get(&(((Eldbus_Proxy *)proxy)->data), key);
 }
 
-EAPI void *
+ELDBUS_API void *
 eldbus_proxy_data_del(Eldbus_Proxy *proxy, const char *key)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -385,7 +385,7 @@ _props_cache_free(void *data)
    eina_value_free(value);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_proxy_event_callback_add(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, Eldbus_Proxy_Event_Cb cb, const void *cb_data)
 {
    Eldbus_Proxy_Context_Event *ce;
@@ -431,7 +431,7 @@ _eldbus_proxy_context_event_cb_del(Eldbus_Proxy_Context_Event *ce, Eldbus_Proxy_
    free(ctx);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_proxy_event_callback_del(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, Eldbus_Proxy_Event_Cb cb, const void *cb_data)
 {
    Eldbus_Proxy_Context_Event *ce;
@@ -516,14 +516,14 @@ _eldbus_proxy_event_callback_call(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type t
      _eldbus_proxy_context_event_cb_del(ce, iter);
 }
 
-EAPI Eldbus_Object *
+ELDBUS_API Eldbus_Object *
 eldbus_proxy_object_get(const Eldbus_Proxy *proxy)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
    return proxy->obj;
 }
 
-EAPI const char *
+ELDBUS_API const char *
 eldbus_proxy_interface_get(const Eldbus_Proxy *proxy)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -570,7 +570,7 @@ _eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double ti
    return _eldbus_connection_send_and_block(proxy->obj->conn, msg, timeout);
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -579,7 +579,7 @@ eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb
    return _eldbus_proxy_send(proxy, msg, cb, cb_data, timeout);
 }
 
-EAPI Eldbus_Message *
+ELDBUS_API Eldbus_Message *
 eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double timeout)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -588,7 +588,7 @@ eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double tim
    return _eldbus_proxy_send_and_block(proxy, msg, timeout);
 }
 
-EAPI Eldbus_Message *
+ELDBUS_API Eldbus_Message *
 eldbus_proxy_method_call_new(Eldbus_Proxy *proxy, const char *member)
 {
    Eldbus_Message *msg;
@@ -617,7 +617,7 @@ _eldbus_proxy_vcall(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb c
    return _eldbus_proxy_send(proxy, msg, cb, cb_data, timeout);
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_call(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, ...)
 {
    Eldbus_Pending *pending;
@@ -635,7 +635,7 @@ eldbus_proxy_call(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb,
    return pending;
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_vcall(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, va_list ap)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -654,7 +654,7 @@ _on_signal_handler_free(void *data, const void *dead_pointer)
    proxy->handlers = eina_list_remove(proxy->handlers, dead_pointer);
 }
 
-EAPI Eldbus_Signal_Handler *
+ELDBUS_API Eldbus_Signal_Handler *
 eldbus_proxy_signal_handler_add(Eldbus_Proxy *proxy, const char *member, Eldbus_Signal_Cb cb, const void *cb_data)
 {
    Eldbus_Signal_Handler *handler;
@@ -677,7 +677,7 @@ eldbus_proxy_signal_handler_add(Eldbus_Proxy *proxy, const char *member, Eldbus_
    return handler;
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_property_get(Eldbus_Proxy *proxy, const char *name, Eldbus_Message_Cb cb, const void *data)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -700,7 +700,7 @@ _type_is_number(char sig)
    return EINA_FALSE;
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const void *value, Eldbus_Message_Cb cb, const void *data)
 {
    Eldbus_Message *msg;
@@ -732,7 +732,7 @@ eldbus_proxy_property_set(Eldbus_Proxy *proxy, const char *name, const char *sig
    return eldbus_proxy_send(proxy->obj->properties, msg, cb, data, -1);
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_property_value_set(Eldbus_Proxy *proxy, const char *name, const char *sig, const Eina_Value *value, Eldbus_Message_Cb cb, const void *data)
 {
    Eldbus_Message *msg;
@@ -768,7 +768,7 @@ error:
    return NULL;
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, Eldbus_Message_Cb cb, const void *data)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -776,7 +776,7 @@ eldbus_proxy_property_get_all(Eldbus_Proxy *proxy, Eldbus_Message_Cb cb, const v
                             "s", proxy->interface);
 }
 
-EAPI Eldbus_Signal_Handler *
+ELDBUS_API Eldbus_Signal_Handler *
 eldbus_proxy_properties_changed_callback_add(Eldbus_Proxy *proxy, Eldbus_Signal_Cb cb, const void *data)
 {
    Eldbus_Signal_Handler *sh;
@@ -839,7 +839,7 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
                                      &event);
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable)
 {
    Eldbus_Pending *pending;
@@ -883,7 +883,7 @@ eldbus_proxy_properties_monitor(Eldbus_Proxy *proxy, Eina_Bool enable)
    return !!eina_hash_population(proxy->props);
 }
 
-EAPI Eina_Value *
+ELDBUS_API Eina_Value *
 eldbus_proxy_property_local_get(Eldbus_Proxy *proxy, const char *name)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);
@@ -892,7 +892,7 @@ eldbus_proxy_property_local_get(Eldbus_Proxy *proxy, const char *name)
    return eina_hash_find(proxy->props, name);
 }
 
-EAPI const Eina_Hash *
+ELDBUS_API const Eina_Hash *
 eldbus_proxy_property_local_get_all(Eldbus_Proxy *proxy)
 {
    ELDBUS_PROXY_CHECK_RETVAL(proxy, NULL);

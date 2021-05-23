@@ -184,7 +184,7 @@ _on_connection_free(void *data, const void *dead_pointer EINA_UNUSED)
    _eldbus_object_free(obj);
 }
 
-EAPI Eldbus_Object *
+ELDBUS_API Eldbus_Object *
 eldbus_object_get(Eldbus_Connection *conn, const char *bus, const char *path)
 {
    Eldbus_Object *obj;
@@ -236,7 +236,7 @@ _eldbus_object_unref(Eldbus_Object *obj)
    _eldbus_object_free(obj);
 }
 
-EAPI Eldbus_Object *
+ELDBUS_API Eldbus_Object *
 eldbus_object_ref(Eldbus_Object *obj)
 {
    ELDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
@@ -246,7 +246,7 @@ eldbus_object_ref(Eldbus_Object *obj)
    return obj;
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_object_unref(Eldbus_Object *obj)
 {
    ELDBUS_OBJECT_CHECK(obj);
@@ -255,7 +255,7 @@ eldbus_object_unref(Eldbus_Object *obj)
    _eldbus_object_unref(obj);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_object_free_cb_add(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_OBJECT_CHECK(obj);
@@ -263,7 +263,7 @@ eldbus_object_free_cb_add(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *dat
    obj->cbs_free = eldbus_cbs_free_add(obj->cbs_free, cb, data);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_object_free_cb_del(Eldbus_Object *obj, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_OBJECT_CHECK(obj);
@@ -376,7 +376,7 @@ end:
    eldbus_proxy_unref(proxy);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_object_event_callback_add(Eldbus_Object *obj, Eldbus_Object_Event_Type type, Eldbus_Object_Event_Cb cb, const void *cb_data)
 {
    Eldbus_Object_Context_Event *ce;
@@ -451,7 +451,7 @@ _eldbus_object_context_event_cb_del(Eldbus_Object_Context_Event *ce, Eldbus_Obje
    free(ctx);
 }
 
-EAPI void
+ELDBUS_API void
 eldbus_object_event_callback_del(Eldbus_Object *obj, Eldbus_Object_Event_Type type, Eldbus_Object_Event_Cb cb, const void *cb_data)
 {
    Eldbus_Object_Context_Event *ce;
@@ -538,21 +538,21 @@ _eldbus_object_event_callback_call(Eldbus_Object *obj, Eldbus_Object_Event_Type 
      _eldbus_object_context_event_cb_del(ce, iter);
 }
 
-EAPI Eldbus_Connection *
+ELDBUS_API Eldbus_Connection *
 eldbus_object_connection_get(const Eldbus_Object *obj)
 {
    ELDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    return obj->conn;
 }
 
-EAPI const char *
+ELDBUS_API const char *
 eldbus_object_bus_name_get(const Eldbus_Object *obj)
 {
    ELDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
    return obj->name;
 }
 
-EAPI const char *
+ELDBUS_API const char *
 eldbus_object_path_get(const Eldbus_Object *obj)
 {
    ELDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
@@ -571,7 +571,7 @@ _on_object_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pen
    cb(data, msg, pending);
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_object_send(Eldbus_Object *obj, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout)
 {
    Eldbus_Pending *pending;
@@ -603,7 +603,7 @@ _on_signal_handler_free(void *data, const void *dead_pointer)
    obj->signal_handlers = eina_list_remove(obj->signal_handlers, dead_pointer);
 }
 
-EAPI Eldbus_Signal_Handler *
+ELDBUS_API Eldbus_Signal_Handler *
 eldbus_object_signal_handler_add(Eldbus_Object *obj, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data)
 {
    Eldbus_Signal_Handler *handler;
@@ -621,7 +621,7 @@ eldbus_object_signal_handler_add(Eldbus_Object *obj, const char *interface, cons
    return handler;
 }
 
-EAPI Eldbus_Message *
+ELDBUS_API Eldbus_Message *
 eldbus_object_method_call_new(Eldbus_Object *obj, const char *interface, const char *member)
 {
    ELDBUS_OBJECT_CHECK_RETVAL(obj, NULL);
@@ -649,7 +649,7 @@ eldbus_object_proxy_del(Eldbus_Object *obj, Eldbus_Proxy *proxy, const char *int
    return eina_hash_del(obj->proxies, interface, proxy);
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_object_peer_ping(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data)
 {
    Eldbus_Message *msg;
@@ -660,7 +660,7 @@ eldbus_object_peer_ping(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *da
    return p;
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_object_peer_machine_id_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data)
 {
    Eldbus_Message *msg;
@@ -672,7 +672,7 @@ eldbus_object_peer_machine_id_get(Eldbus_Object *obj, Eldbus_Message_Cb cb, cons
    return p;
 }
 
-EAPI Eldbus_Pending *
+ELDBUS_API Eldbus_Pending *
 eldbus_object_introspect(Eldbus_Object *obj, Eldbus_Message_Cb cb, const void *data)
 {
    Eldbus_Message *msg;

@@ -371,7 +371,7 @@ _message_iter_from_eina_value_struct(const char *signature, Eldbus_Message_Iter 
    return r;
 }
 
-EAPI Eina_Bool
+ELDBUS_API Eina_Bool
 eldbus_message_from_eina_value(const char *signature, Eldbus_Message *msg, const Eina_Value *value)
 {
    Eldbus_Message_Iter *iter;
