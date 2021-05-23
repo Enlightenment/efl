@@ -167,7 +167,7 @@ _efl_file_efl_object_finalize(Eo *obj, Efl_File_Data *pd)
 
 ////////////////////////////////////////////////////////////////////////////
 
-EAPI Eina_Bool
+EFL_API Eina_Bool
 efl_file_simple_load(Eo *obj, const char *file, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -192,7 +192,7 @@ fail:
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
+EFL_API Eina_Bool
 efl_file_simple_mmap_load(Eo *obj, const Eina_File *file, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -213,7 +213,7 @@ fail:
    return EINA_FALSE;
 }
 
-EAPI void
+EFL_API void
 efl_file_simple_get(const Eo *obj, const char **file, const char **key)
 {
    efl_ref((Eo*)obj);
@@ -222,7 +222,7 @@ efl_file_simple_get(const Eo *obj, const char **file, const char **key)
    efl_unref((Eo*)obj);
 }
 
-EAPI void
+EFL_API void
 efl_file_simple_mmap_get(const Eo *obj, const Eina_File **file, const char **key)
 {
    efl_ref((Eo*)obj);
