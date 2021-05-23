@@ -11,7 +11,7 @@
 static int app_argc = 0;
 static char **app_argv = NULL;
 
-EAPI void
+ECORE_API void
 ecore_app_args_set(int          argc,
                    const char **argv)
 {
@@ -25,7 +25,7 @@ ecore_app_args_set(int          argc,
    app_argv = (char **)argv;
 }
 
-EAPI void
+ECORE_API void
 ecore_app_args_get(int    *argc,
                    char ***argv)
 {
@@ -35,7 +35,7 @@ ecore_app_args_get(int    *argc,
    if (argv) *argv = app_argv;
 }
 
-EAPI void
+ECORE_API void
 ecore_app_restart(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;

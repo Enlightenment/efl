@@ -65,14 +65,14 @@ static void _efl_loop_timer_set(Efl_Loop_Timer_Data *timer, double at, double in
 
 static double precision = 10.0 / 1000000.0;
 
-EAPI double
+ECORE_API double
 ecore_timer_precision_get(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    return precision;
 }
 
-EAPI void
+ECORE_API void
 ecore_timer_precision_set(double value)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -185,7 +185,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(legacy_timer,
                           { EFL_LOOP_TIMER_EVENT_TIMER_TICK, _ecore_timer_legacy_tick },
                           { EFL_EVENT_DEL, _ecore_timer_legacy_del });
 
-EAPI Ecore_Timer *
+ECORE_API Ecore_Timer *
 ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
 {
    Ecore_Timer_Legacy *legacy;
@@ -209,7 +209,7 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
    return timer;
 }
 
-EAPI Ecore_Timer *
+ECORE_API Ecore_Timer *
 ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
 {
    Ecore_Timer_Legacy *legacy;
@@ -234,7 +234,7 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
    return timer;
 }
 
-EAPI void *
+ECORE_API void *
 ecore_timer_del(Ecore_Timer *timer)
 {
    void *data;
@@ -330,7 +330,7 @@ _efl_loop_timer_time_pending_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data 
    return ret;
 }
 
-EAPI void
+ECORE_API void
 ecore_timer_freeze(Ecore_Timer *timer)
 {
    ECORE_TIMER_CHECK(timer);
@@ -360,7 +360,7 @@ _efl_loop_timer_efl_object_event_freeze(Eo *obj, Efl_Loop_Timer_Data *timer)
    _efl_loop_timer_util_instanciate(timer->loop_data, timer);
 }
 
-EAPI Eina_Bool
+ECORE_API Eina_Bool
 ecore_timer_freeze_get(Ecore_Timer *timer)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
@@ -373,7 +373,7 @@ _efl_loop_timer_efl_object_event_freeze_count_get(const Eo *obj EINA_UNUSED, Efl
    return timer->frozen;
 }
 
-EAPI void
+ECORE_API void
 ecore_timer_thaw(Ecore_Timer *timer)
 {
    ECORE_TIMER_CHECK(timer);
@@ -399,7 +399,7 @@ _efl_loop_timer_efl_object_event_thaw(Eo *obj, Efl_Loop_Timer_Data *timer)
    _efl_loop_timer_set(timer, timer->pending + now, timer->in);
 }
 
-EAPI char *
+ECORE_API char *
 ecore_timer_dump(void)
 {
    return NULL;
