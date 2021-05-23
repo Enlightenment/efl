@@ -4243,6 +4243,23 @@ EFL_START_TEST(evas_textblock_fit)
    fail_if(n_ret != EVAS_ERROR_SUCCESS);
    evas_object_textblock_size_formatted_get(tb, &fw, &fh);
    fail_if(fw_new == fw && fh_new == fh);
+
+   const char *buf1 = "<font_size=20>AAAA</font_size>";
+   evas_object_textblock_text_markup_set(tb, buf1);
+   evas_object_resize(tb, 300, 4);
+   n_ret = evas_textblock_fit_options_set(tb,TEXTBLOCK_FIT_MODE_ALL);
+   fail_if(n_ret != EVAS_ERROR_SUCCESS);
+   n_ret = evas_textblock_fit_size_range_set(tb,1,255);
+   fail_if(n_ret != EVAS_ERROR_SUCCESS);
+   evas_object_textblock_size_formatted_get(tb, &fw, &fh);
+
+
+   const char *buf2 = "AAAAA<font_size=20>AAAA</font_size>";
+   evas_object_textblock_text_markup_set(tb, buf2);
+   evas_object_resize(tb, 300, 4);
+   evas_object_textblock_size_formatted_get(tb, &fw_new, &fh_new);
+   fail_if(fw_new < (fw * 2));
+
    END_TB_TEST();
 }
 EFL_END_TEST;

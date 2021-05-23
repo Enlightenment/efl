@@ -17723,6 +17723,45 @@ Eina_Bool fit_is_fitting(const Evas_Object *eo_obj)
    return o->fit_in_progress;
 }
 
+// Calculate text size for specific font size
+// by appending styles at end of textblock style
+void
+get_text_size_for_font( Evas_Object *eo_obj,
+                        size_t font_size,
+                        TEXT_FIT_CONTENT_CONFIG * fc,
+                        Evas_Coord *wf_new, //output
+                        Evas_Coord *hf_new  //output
+                      )
+{
+   Eina_Bool bwrap = EINA_FALSE;
+   if (fc->options == TEXTBLOCK_FIT_MODE_WIDTH)
+     {
+        bwrap = EINA_TRUE;
+     }
+   // We cache upto 255 font sizes, for fast text fit calculation
+   if (font_size <= 0xFF && (fc->size_cache[font_size].w != 0 && fc->size_cache[font_size].h != 0))
+      {
+        *wf_new = fc->size_cache[font_size].w;
+        *hf_new = fc->size_cache[font_size].h;
+      }
+   else
+      {
+         int pad_l, pad_r, pad_t, pad_b;
+
+         fit_style_update(eo_obj, font_size, EINA_TRUE, bwrap);
+         Eina_Size2D size = efl_canvas_textblock_size_formatted_get(eo_obj);
+         efl_canvas_textblock_style_insets_get(eo_obj, &pad_l, &pad_r, &pad_t, &pad_b);
+         *wf_new = size.w + pad_l + pad_r;
+         *hf_new = size.h + pad_t + pad_b;
+         if (font_size < 255)
+            {
+               // cache these values
+               fc->size_cache[font_size].w = *wf_new;
+               fc->size_cache[font_size].h = *hf_new;
+            }
+      }
+}
+
 int fit_text_block(Evas_Object *eo_obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, EVAS_ERROR_INVALID_PARAM);
@@ -17783,37 +17822,46 @@ int fit_text_block(Evas_Object *eo_obj)
              int r = fc->size_list_length;
              int l = 0;
 
-             Eina_Bool bwrap = EINA_FALSE;
-             if (fc->options == TEXTBLOCK_FIT_MODE_WIDTH)
-               {
-                  bwrap = EINA_TRUE;
-               }
+             // These values used to test if size is not changing
+             // due markup specified fonts
+             int prev_height = 0;
+             int prev_font_index = 0;
+             Eina_Bool finished = EINA_FALSE;
+
 
              while(r > l)
                {
                   int mid = (r + l) / 2;
-                  /*cache font sizes vaules from 0-255 in size_cache array*/
+                  /*get fontsize from p_size_array array*/
                   size_t font_size = fc->p_size_array[mid];
-                  if (font_size <= 0xFF && (fc->size_cache[font_size].w != 0 && fc->size_cache[font_size].h != 0))
-                    {
-                        wf_new = fc->size_cache[font_size].w;
-                        hf_new = fc->size_cache[font_size].h;
-                    }
-                  else
-                    {
-                       int pad_l, pad_r, pad_t, pad_b;
+                  get_text_size_for_font(eo_obj, font_size, fc, &wf_new, &hf_new);
 
-                       fit_style_update(eo_obj,fc->p_size_array[mid],EINA_TRUE,bwrap);
-                       Eina_Size2D size = efl_canvas_textblock_size_formatted_get(eo_obj);
-                       efl_canvas_textblock_style_insets_get(eo_obj, &pad_l, &pad_r, &pad_t, &pad_b);
-                       wf_new = size.w + pad_l + pad_r;
-                       hf_new = size.h + pad_t + pad_b;
-                       if (fc->p_size_array[mid]<255)
+                  //Special handle for height does not change(markup has fixed sizes)
+                  if((hf_new == prev_height) & ((fc->options & TEXTBLOCK_FIT_MODE_HEIGHT) == TEXTBLOCK_FIT_MODE_HEIGHT))
+                    {
+                       unsigned int start_index = prev_font_index;
+                       size_t font_size = (start_index < fc->size_list_length - 1) ? fc->p_size_array[start_index] : 0xFF;
+                       while ((start_index < fc->size_list_length - 1) && // still valid font index
+                              (font_size < 0xff) &&                   // still cache-able font size 
+                              ((fc->size_cache[font_size].h == prev_height) || fc->size_cache[font_size].h == 0))
+                              /*text height is the same, or not calculated yet*/
                          {
-                             fc->size_cache[font_size].w = wf_new;
-                             fc->size_cache[font_size].h = hf_new;
+                            if(fc->size_cache[font_size].h == 0)
+                              {
+                                 get_text_size_for_font(eo_obj, font_size, fc, &wf_new, &hf_new);
+                                 if(hf_new != prev_height)
+                                   {
+                                      break;
+                                   }
+                              }
+                            start_index++;
+                            l = start_index;
+                            font_size = (start_index < fc->size_list_length - 1) ? fc->p_size_array[start_index] : 0xFF;
                          }
+                       finished = EINA_TRUE;
                     }
+
+                  if (finished) break;
 
                   if (
                       ((wf_new > w) & ((fc->options & TEXTBLOCK_FIT_MODE_WIDTH) == TEXTBLOCK_FIT_MODE_WIDTH)) ||
@@ -17825,6 +17873,9 @@ int fit_text_block(Evas_Object *eo_obj)
                     {
                        l = mid + 1;
                     }
+
+                  prev_height = hf_new;
+                  prev_font_index = mid;
                 }
 
                 /*Lower bound founded, subtract one to move for nearest value*/
