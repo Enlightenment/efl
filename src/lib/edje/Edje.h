@@ -219,6 +219,9 @@ param in edje programs
 #ifdef EAPI
 # undef EAPI
 #endif
+#ifdef EAPI_WEAK
+# undef EAPI_WEAK
+#endif
 
 #ifdef _WIN32
 # ifdef EFL_BUILD
