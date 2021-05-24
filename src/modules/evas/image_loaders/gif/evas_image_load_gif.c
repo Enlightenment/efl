@@ -252,8 +252,9 @@ _decode_image(GifFileType *gif, DATA32 *data, int rowpix, int xin, int yin,
      {
         for (yy = 0; yy < fh; yy++)
           {
-             if (DGifGetLine(gif, rows[yy], fw) != GIF_OK)
-               goto on_error;
+             // current frame image should be shown
+             // even if the current line is not complete.
+             DGifGetLine(gif, rows[yy], fw);
           }
      }
 
@@ -659,8 +660,9 @@ open_file:
    // walk through gif records in file to figure out info
    do
      {
-        if (DGifGetRecordType(gif, &rec) == GIF_ERROR)
-          LOADERR(EVAS_LOAD_ERROR_UNKNOWN_FORMAT);
+        // if getting the recored value is failed,
+        // it will be retried until the termination
+        DGifGetRecordType(gif, &rec);
         if (rec == EXTENSION_RECORD_TYPE)
           {
              int                 ext_code;
