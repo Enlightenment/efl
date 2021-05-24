@@ -95,7 +95,11 @@ eeze_udev_find_unlisted_similar(Eina_List *list)
           return NULL;
 
         device = _new_device(dev);
-        if (!device) continue;
+        if (!device)
+          {
+             udev_enumerate_unref(en);
+             continue;
+          }
 
         if ((vendor = udev_device_get_property_value(device, "ID_VENDOR_ID")))
           udev_enumerate_add_match_property(en, "ID_VENDOR_ID", vendor);

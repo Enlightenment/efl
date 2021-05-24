@@ -77,10 +77,15 @@ eeze_net_new(const char *name)
         syspath = eina_stringshare_add(name);
         break;
      }
-   if (!device) return NULL;
+   if (!device)
+     {
+        udev_enumerate_unref(en);
+        return NULL;
+     }
    net = calloc(1, sizeof(Eeze_Net));
    if (!net)
      {
+        udev_enumerate_unref(en);
         udev_device_unref(device);
         return NULL;
      }
@@ -91,6 +96,7 @@ eeze_net_new(const char *name)
    idx = udev_device_get_sysattr_value(net->device, "ifindex");
    if (!idx)
      {
+        udev_enumerate_unref(en);
         udev_device_unref(net->device);
         eina_stringshare_del(net->syspath);
         eina_stringshare_del(net->name);
