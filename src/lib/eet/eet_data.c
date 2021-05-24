@@ -1945,6 +1945,8 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    eddc->func.hash_foreach = (void (*)(void *, int (*)(void *, const char *, void *, void *), void *))_eet_eina_hash_foreach;
    eddc->func.hash_add = (void *(*)(void *, const char *, void *))_eet_eina_hash_add_alloc;
    eddc->func.hash_free = (void (*)(void *))_eet_eina_hash_free;
+   eddc->func.type_get = NULL;
+   eddc->func.type_set = NULL;
 
    /* This will cause an ABI incompatibility */
    eddc->func.array_alloc = _eet_mem_alloc;
