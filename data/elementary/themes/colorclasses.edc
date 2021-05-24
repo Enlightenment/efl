@@ -173,6 +173,15 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/shelf/translucent";
       color:  64  64  64 128; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/gadgets/backlight/light/off";
+      color: 255 255 255 0; }
+   color_class { name: "/fg/normal/gadgets/backlight/light/on";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/backlight/filament/off";
+      color:  64  64  64 255; }
+   color_class { name: "/fg/normal/gadgets/backlight/filament/on";
+      color: 255 220 160 255; }
 
 
 

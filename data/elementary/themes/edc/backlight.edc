@@ -2,6 +2,7 @@ group { name: "e/modules/backlight/main";
    alias: "e/modules/backlight/main_vert";
    images.image: "bulb_middle.png" COMP;
    images.image: "bulb_over.png" COMP;
+   images.image: "bulb_filament.png" COMP;
    min: 16 16;
    max: 160 160;
    script {
@@ -10,6 +11,7 @@ group { name: "e/modules/backlight/main";
             new Float:val;
             val = getfarg(2);
             set_tween_state(PART:"glow", val, "default", 0.0, "full", 0.0);
+            set_tween_state(PART:"filament", val, "default", 0.0, "full", 0.0);
          }
       }
    }
@@ -27,19 +29,31 @@ group { name: "e/modules/backlight/main";
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
             image.normal: "bulb_middle.png";
-            color: 255 255 255 0; // no cc
+            color_class: "/fg/normal/gadgets/backlight/light/off";
          }
          description { state: "full" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255; // no cc
+            color_class: "/fg/normal/gadgets/backlight/light/on";
+         }
+      }
+      part { name: "filament";
+         description { state: "default" 0.0;
+            rel.to: "base";
+            image.normal: "bulb_filament.png";
+            color_class: "/fg/normal/gadgets/backlight/filament/off";
+         }
+         description { state: "full" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/normal/gadgets/backlight/filament/on";
          }
       }
       part { name: "over";
          description { state: "default" 0.0;
             rel.to: "base";
             image.normal: "bulb_over.png";
+            color_class: "/fg/normal/gadgets/backlight/base";
          }
       }
    }
