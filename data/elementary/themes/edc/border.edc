@@ -376,7 +376,7 @@ group { name: "e/widgets/border/default/border";
       }
       part { name: "e.event.titlebar"; type: RECT;
          description { rel.to: "top";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.icon"; type: RECT;
@@ -387,7 +387,7 @@ group { name: "e/widgets/border/default/border";
             rel2.to_y: "top";
             align: 0.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.close"; type: RECT;
@@ -398,7 +398,7 @@ group { name: "e/widgets/border/default/border";
             rel2.to_y: "top";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.maximize"; type: RECT;
@@ -411,7 +411,7 @@ group { name: "e/widgets/border/default/border";
             rel2.to_x: "e.event.close";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.minimize"; type: RECT;
@@ -424,7 +424,7 @@ group { name: "e/widgets/border/default/border";
             rel2.to_x: "e.event.maximize";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.tl"; type: RECT;
@@ -435,7 +435,7 @@ group { name: "e/widgets/border/default/border";
             rel2.offset: 31 3;
             min: 40 6;
             align: 1.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -449,7 +449,7 @@ group { name: "e/widgets/border/default/border";
             rel2.to: "e.event.resize.tr";
             min: 0 6;
             align: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
       }
@@ -463,7 +463,7 @@ group { name: "e/widgets/border/default/border";
             rel2.offset: -1 3;
             min: 40 6;
             align: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -508,7 +508,7 @@ group { name: "e/widgets/border/default/border";
             rel2.offset: 31 -1;
             min: 40 10;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -532,7 +532,7 @@ group { name: "e/widgets/border/default/border";
             rel2.relative: 0.0 1.0;
             min: 0 10;
             align: 0.5 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -555,7 +555,7 @@ group { name: "e/widgets/border/default/border";
             rel1.offset: -32 0;
             min: 40 10;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -591,7 +591,7 @@ group { name: "e/widgets/border/default/border";
             rel2.to_x: "e.procstats.swallow";
             rel1.to_y: "top";
             rel2.to_y: "top";
-            color:  0 0 0 0;
+            color:  0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible";
@@ -996,7 +996,7 @@ group { name: "e/widgets/border/pixel/border";
             rel2.relative: 0.0 0.0;
             min: 32 4;
             align: 0.0 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.t"; type: RECT;
@@ -1007,7 +1007,7 @@ group { name: "e/widgets/border/pixel/border";
             rel2.to_x: "e.event.resize.tr";
             min: 0 4;
             align: 0.5 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.tr"; type: RECT;
@@ -1016,7 +1016,7 @@ group { name: "e/widgets/border/pixel/border";
             rel2.relative: 1.0 0.0;
             min: 32 4;
             align: 1.0 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.bl"; type: RECT;
@@ -1025,7 +1025,7 @@ group { name: "e/widgets/border/pixel/border";
             rel2.relative: 0.0 1.0;
             min: 32 5;
             align: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
       }
@@ -1037,7 +1037,7 @@ group { name: "e/widgets/border/pixel/border";
             rel2.to_x: "e.event.resize.tr";
             min: 0 5;
             align: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 0 1;
          }
       }
@@ -1047,7 +1047,7 @@ group { name: "e/widgets/border/pixel/border";
             rel2.relative: 1.0 1.0;
             min: 32 5;
             align: 1.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
       }
@@ -1118,7 +1118,7 @@ group { name: "e/widgets/border/tiling/border";
       part { name: "top"; type: RECT;
          description { state: "default" 0.0;
             color_class: "/bg/selected/border/outline";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             align: 0.0 0.0;
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
@@ -1126,13 +1126,13 @@ group { name: "e/widgets/border/tiling/border";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "bottom"; type: RECT;
          description { state: "default" 0.0;
             color_class: "/bg/selected/border/outline";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             align: 0.0 1.0;
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
@@ -1140,13 +1140,13 @@ group { name: "e/widgets/border/tiling/border";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "left"; type: RECT;
          description { state: "default" 0.0;
             color_class: "/bg/selected/border/outline";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             align: 0.0 0.0;
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
@@ -1154,13 +1154,13 @@ group { name: "e/widgets/border/tiling/border";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "right"; type: RECT;
          description { state: "default" 0.0;
             color_class: "/bg/selected/border/outline";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             align: 1.0 0.0;
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
@@ -1168,7 +1168,7 @@ group { name: "e/widgets/border/tiling/border";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "e.event.resize.tl"; type: RECT;
@@ -1178,7 +1178,7 @@ group { name: "e/widgets/border/tiling/border";
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
             align: 0.0 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.t"; type: RECT;
@@ -1191,7 +1191,7 @@ group { name: "e/widgets/border/tiling/border";
             rel2.offset: 0 0;
             min: 0 4;
             align: 0.5 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.tr"; type: RECT;
@@ -1202,7 +1202,7 @@ group { name: "e/widgets/border/tiling/border";
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
             align: 1.0 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.event.resize.bl"; type: RECT;
@@ -1213,7 +1213,7 @@ group { name: "e/widgets/border/tiling/border";
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
             align: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
       }
@@ -1227,7 +1227,7 @@ group { name: "e/widgets/border/tiling/border";
             rel2.offset: 0 0;
             min: 0 5;
             align: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 0 1;
          }
       }
@@ -1239,7 +1239,7 @@ group { name: "e/widgets/border/tiling/border";
             rel2.offset: 0 0;
             min: 32 5;
             align: 1.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
       }
