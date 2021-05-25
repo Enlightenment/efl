@@ -1134,7 +1134,7 @@ EVAS_API int evas_textblock_fit_size_array_get(const Evas_Object *obj,  unsigned
 
 /** Set the object's fitting font size array that will be used internally
  *  Changing fitting step_size,min_font_size,max_font size will generate new array
- *  Internall array will be sorted
+ *  Setting array will make content fit algorithm ignore step_size,min_font_size,max_font size, and use passed array only
  *
  * @param obj The textblock object.
  * @param[in] p_size_array pointer to font sizes array.
