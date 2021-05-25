@@ -182,6 +182,19 @@ color_classes {
       color:  64  64  64 255; }
    color_class { name: "/fg/normal/gadgets/backlight/filament/on";
       color: 255 220 160 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/gadgets/battery/text/info";
+      color: 255 255 255 0; }
+   color_class { name: "/fg/selected/gadgets/battery/text/info";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/battery/level/discharge";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/battery/level/charge";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/battery/text/reading";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/battery/text/time";
+      color: 255 255 255 255; }
 
 
 
