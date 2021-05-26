@@ -1447,7 +1447,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
              if ((!day) && (i == sd->first_day_it)) day = 1;
              if ((day) && (day <= maxdays))
                {
-                  char pname[18];
+                  char pname[32];
                   _part_name_snprintf(pname, sizeof(pname),
                      obj, ELM_CALENDAR_CIT_ACCESS_PART_STR, i);
 
