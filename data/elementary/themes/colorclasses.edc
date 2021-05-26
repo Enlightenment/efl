@@ -195,6 +195,13 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/gadgets/battery/text/time";
       color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/gadgets/bluez/off";
+      color: 160 160 160 128; }
+   color_class { name: "/fg/normal/gadgets/bluez/visible";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/bluez/scan";
+      color: 255 153  51 255; }
 
 
 

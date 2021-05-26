@@ -53,17 +53,17 @@ group { name: "e/modules/bluez5/main";
             rel2.relative: (365/380) (365/380);
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "bz5_none.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/bluez/on";
          }
          description { state: "exist" 0.0;
             inherit;
             image.normal: "bz5_logo.png";
-            color: 160 160 160 128;
+            color_class: "/fg/normal/gadgets/bluez/off";
          }
          description { state: "on" 0.0;
             inherit;
             image.normal: "bz5_logo.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/bluez/on";
          }
       }
       part { name: "visible";
@@ -73,7 +73,7 @@ group { name: "e/modules/bluez5/main";
             rel2.relative: 0.2 1.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "radio.png";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/gadgets/bluez/visible";
             visible: 0;
             min: 1 1;
          }
@@ -89,7 +89,7 @@ group { name: "e/modules/bluez5/main";
             rel2.relative: 1.0 1.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "radio.png";
-            color: 255 153 51 255;
+            color_class: "/fg/normal/gadgets/bluez/scan";
             visible: 0;
             min: 1 1;
          }

@@ -8,7 +8,7 @@ group { name: "e/modules/bluez4/main";
             rel2.relative: (365/380) (365/380);
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "bz5_logo.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/bluez/on";
          }
       }
    }
@@ -24,7 +24,7 @@ group { name: "e/modules/bluez4/inactive";
             rel2.relative: (365/380) (365/380);
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "bz5_logo.png";
-            color: 160 160 160 128;
+            color_class: "/fg/normal/gadgets/bluez/off";
          }
       }
    }
