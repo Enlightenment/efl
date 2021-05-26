@@ -131,9 +131,13 @@ emile_pbkdf2_sha1(const char *key, unsigned int key_len, const unsigned char *sa
    unsigned int tmp_len;
    unsigned int i, j, k;
 
+// this warning is wrong here so disable it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
    buf = alloca(salt_len + 4);
-
    step1 = eina_binbuf_manage_new(buf, salt_len + 4, EINA_TRUE);
+#pragma GCC diagnostic pop
+
    if (!step1)
      return EINA_FALSE;
    step2 = eina_binbuf_manage_new(digest, 20, EINA_TRUE);

@@ -139,11 +139,14 @@ emile_decompress(const Eina_Binbuf *data,
    Eina_Binbuf *out;
    void *expanded;
 
+// this warning is wrong here so disable it
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
    expanded = malloc(dest_length);
    if (!expanded)
      return NULL;
-
    out = eina_binbuf_manage_new(expanded, dest_length, EINA_FALSE);
+#pragma GCC diagnostic pop
    if (!out)
      goto on_error;
 
