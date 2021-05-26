@@ -85,7 +85,7 @@ _noref_death(void *data EINA_UNUSED, const Efl_Event *event)
    efl_del(event->object);
 }
 
-EFL_API Efl_Object *
+EAPI Efl_Object *
 efl_part(const Eo *obj, const char *name)
 {
    Efl_Object *r;
@@ -105,7 +105,7 @@ efl_part(const Eo *obj, const char *name)
    return efl_ref(r);
 }
 
-EFL_API void
+EAPI void
 __efl_internal_init(void)
 {
    efl_model_init();

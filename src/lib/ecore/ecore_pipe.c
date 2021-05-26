@@ -89,14 +89,14 @@ GENERIC_ALLOC_SIZE_DECLARE(Ecore_Pipe);
 static Eina_Bool _ecore_pipe_read(void             *data,
                                   Ecore_Fd_Handler *fd_handler);
 
-ECORE_API Ecore_Pipe *
+EAPI Ecore_Pipe *
 ecore_pipe_add(Ecore_Pipe_Cb handler,
                const void   *data)
 {
    return _ecore_pipe_add(handler, data);
 }
 
-ECORE_API void *
+EAPI void *
 ecore_pipe_del(Ecore_Pipe *p)
 {
    if (!p) return NULL;
@@ -104,7 +104,7 @@ ecore_pipe_del(Ecore_Pipe *p)
    return _ecore_pipe_del(p);
 }
 
-ECORE_API void
+EAPI void
 ecore_pipe_read_close(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -125,7 +125,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
      }
 }
 
-ECORE_API int
+EAPI int
 ecore_pipe_read_fd(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
@@ -133,7 +133,7 @@ ecore_pipe_read_fd(Ecore_Pipe *p)
    return p->fd_read;
 }
 
-ECORE_API void
+EAPI void
 ecore_pipe_freeze(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -149,7 +149,7 @@ ecore_pipe_freeze(Ecore_Pipe *p)
      }
 }
 
-ECORE_API void
+EAPI void
 ecore_pipe_thaw(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -164,7 +164,7 @@ ecore_pipe_thaw(Ecore_Pipe *p)
                                                NULL, NULL);
 }
 
-ECORE_API int
+EAPI int
 ecore_pipe_wait(Ecore_Pipe *p,
                 int         message_count,
                 double      wait)
@@ -172,7 +172,7 @@ ecore_pipe_wait(Ecore_Pipe *p,
    return _ecore_pipe_wait(p, message_count, wait);
 }
 
-ECORE_API void
+EAPI void
 ecore_pipe_write_close(Ecore_Pipe *p)
 {
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
@@ -187,7 +187,7 @@ ecore_pipe_write_close(Ecore_Pipe *p)
      }
 }
 
-ECORE_API int
+EAPI int
 ecore_pipe_write_fd(Ecore_Pipe *p)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(PIPE_FD_INVALID);
@@ -195,7 +195,7 @@ ecore_pipe_write_fd(Ecore_Pipe *p)
    return p->fd_write;
 }
 
-ECORE_API Eina_Bool
+EAPI Eina_Bool
 ecore_pipe_write(Ecore_Pipe  *p,
                  const void  *buffer,
                  unsigned int nbytes)
@@ -289,7 +289,7 @@ out:
    return ok;
 }
 
-ECORE_API Ecore_Pipe *
+EAPI Ecore_Pipe *
 ecore_pipe_full_add(Ecore_Pipe_Cb handler,
                     const void   *data,
                     int fd_read,

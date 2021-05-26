@@ -15,9 +15,6 @@ typedef struct {
 
 } Efl_App_Test_CML_Data;
 
-#define ECORETEST_API
-#define ECORETEST_API_WEAK
-
 #include "efl_app_test_cml.eo.h"
 #include "efl_app_test_cml.eo.c"
 

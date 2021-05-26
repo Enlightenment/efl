@@ -34,7 +34,7 @@ typedef enum
  *
  * @return connection with bus
  */
-ELDBUS_API Eldbus_Connection *eldbus_connection_get(Eldbus_Connection_Type type);
+EAPI Eldbus_Connection *eldbus_connection_get(Eldbus_Connection_Type type);
 
 /**
  * Always create and establish a new connection to bus and integrate it with
@@ -47,7 +47,7 @@ ELDBUS_API Eldbus_Connection *eldbus_connection_get(Eldbus_Connection_Type type)
  *
  * @return connection with bus
  */
-ELDBUS_API Eldbus_Connection *eldbus_private_connection_get(Eldbus_Connection_Type type);
+EAPI Eldbus_Connection *eldbus_private_connection_get(Eldbus_Connection_Type type);
 
 /**
  * Establish a connection to bus and integrate it with the ecore main
@@ -58,7 +58,7 @@ ELDBUS_API Eldbus_Connection *eldbus_private_connection_get(Eldbus_Connection_Ty
  *
  * @return connection with bus
  */
-ELDBUS_API Eldbus_Connection *eldbus_address_connection_get(const char *address) EINA_ARG_NONNULL(1);
+EAPI Eldbus_Connection *eldbus_address_connection_get(const char *address) EINA_ARG_NONNULL(1);
 
 /**
  * Always create and establish a new connection to bus and integrate it with
@@ -70,7 +70,7 @@ ELDBUS_API Eldbus_Connection *eldbus_address_connection_get(const char *address)
  *
  * @return connection with bus
  */
-ELDBUS_API Eldbus_Connection *eldbus_private_address_connection_get(const char *address) EINA_ARG_NONNULL(1);
+EAPI Eldbus_Connection *eldbus_private_address_connection_get(const char *address) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Increment connection reference count.
@@ -78,7 +78,7 @@ ELDBUS_API Eldbus_Connection *eldbus_private_address_connection_get(const char *
  * @param conn The given Eldbus_Connection object to reference.
  * @return The Eldbus_Connection object given as parameter.
  */
-ELDBUS_API Eldbus_Connection *eldbus_connection_ref(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
+EAPI Eldbus_Connection *eldbus_connection_ref(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Decrement connection reference count.
@@ -88,7 +88,7 @@ ELDBUS_API Eldbus_Connection *eldbus_connection_ref(Eldbus_Connection *conn) EIN
  *
  * @param conn The given Eldbus_Connection object to unreference.
  */
-ELDBUS_API void              eldbus_connection_unref(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
+EAPI void              eldbus_connection_unref(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Add a callback function to be called when connection is freed
@@ -97,7 +97,7 @@ ELDBUS_API void              eldbus_connection_unref(Eldbus_Connection *conn) EI
  * @param cb The callback to be called when the connection is free.
  * @param data The data passed to the callback.
  */
-ELDBUS_API void              eldbus_connection_free_cb_add(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void              eldbus_connection_free_cb_add(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Remove callback registered in eldbus_connection_free_cb_add().
@@ -106,7 +106,7 @@ ELDBUS_API void              eldbus_connection_free_cb_add(Eldbus_Connection *co
  * @param cb The callback that was called when the connection was free.
  * @param data The data that was passed to the callback.
  */
-ELDBUS_API void              eldbus_connection_free_cb_del(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void              eldbus_connection_free_cb_del(Eldbus_Connection *conn, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Set an attached data pointer to an object with a given string key.
@@ -115,7 +115,7 @@ ELDBUS_API void              eldbus_connection_free_cb_del(Eldbus_Connection *co
  * @param key to identify data
  * @param data data that will be stored
  */
-ELDBUS_API void              eldbus_connection_data_set(Eldbus_Connection *conn, const char *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+EAPI void              eldbus_connection_data_set(Eldbus_Connection *conn, const char *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Get data stored in connection.
@@ -125,7 +125,7 @@ ELDBUS_API void              eldbus_connection_data_set(Eldbus_Connection *conn,
  *
  * @return pointer to data if found otherwise NULL
  */
-ELDBUS_API void             *eldbus_connection_data_get(const Eldbus_Connection *conn, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI void             *eldbus_connection_data_get(const Eldbus_Connection *conn, const char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Del data stored in connection.
@@ -135,7 +135,7 @@ ELDBUS_API void             *eldbus_connection_data_get(const Eldbus_Connection 
  *
  * @return pointer to data if found otherwise NULL
  */
-ELDBUS_API void             *eldbus_connection_data_del(Eldbus_Connection *conn, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI void             *eldbus_connection_data_del(Eldbus_Connection *conn, const char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @typedef Eldbus_Connection_Event_Type
@@ -164,7 +164,7 @@ typedef void (*Eldbus_Connection_Event_Cb)(void *data, Eldbus_Connection *conn, 
  * @param cb The callback to be called when the event is triggered.
  * @param cb_data The data passed to the callback.
  */
-ELDBUS_API void                  eldbus_connection_event_callback_add(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+EAPI void                  eldbus_connection_event_callback_add(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @brief Remove callback registered in eldbus_connection_event_callback_add().
@@ -174,7 +174,7 @@ ELDBUS_API void                  eldbus_connection_event_callback_add(Eldbus_Con
  * @param cb The callback that was called when the event was triggered.
  * @param cb_data The data that was passed to the callback.
  */
-ELDBUS_API void                  eldbus_connection_event_callback_del(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+EAPI void                  eldbus_connection_event_callback_del(Eldbus_Connection *conn, Eldbus_Connection_Event_Type type, Eldbus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @brief Send a message.
@@ -188,7 +188,7 @@ ELDBUS_API void                  eldbus_connection_event_callback_del(Eldbus_Con
  * ELDBUS_TIMEOUT_INFINITE for no timeout
  * @return A Eldbus_Pending struct.
  */
-ELDBUS_API Eldbus_Pending *eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
+EAPI Eldbus_Pending *eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Gets unique name assigned by the message bus.
@@ -198,7 +198,7 @@ ELDBUS_API Eldbus_Pending *eldbus_connection_send(Eldbus_Connection *conn, Eldbu
  * @return pointer to unique name string or NULL or error. Returned value
  * remains valid until connection is free.
  */
-ELDBUS_API const char *eldbus_connection_unique_name_get(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
+EAPI const char *eldbus_connection_unique_name_get(Eldbus_Connection *conn) EINA_ARG_NONNULL(1);
 /**
  * @}
  */

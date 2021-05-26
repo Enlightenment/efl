@@ -90,7 +90,7 @@ _on_conn_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pendi
    cb(data, msg, pending);
 }
 
-ELDBUS_API Eldbus_Pending *
+EAPI Eldbus_Pending *
 eldbus_connection_send(Eldbus_Connection *conn, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout)
 {
    Eldbus_Pending *pending;
@@ -222,7 +222,7 @@ fail:
     return reply;
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_pending_data_set(Eldbus_Pending *pending, const char *key, const void *data)
 {
    ELDBUS_PENDING_CHECK(pending);
@@ -231,7 +231,7 @@ eldbus_pending_data_set(Eldbus_Pending *pending, const char *key, const void *da
    eldbus_data_set(&(pending->data), key, data);
 }
 
-ELDBUS_API void *
+EAPI void *
 eldbus_pending_data_get(const Eldbus_Pending *pending, const char *key)
 {
    ELDBUS_PENDING_CHECK_RETVAL(pending, NULL);
@@ -239,7 +239,7 @@ eldbus_pending_data_get(const Eldbus_Pending *pending, const char *key)
    return eldbus_data_get(&(((Eldbus_Pending *)pending)->data), key);
 }
 
-ELDBUS_API void *
+EAPI void *
 eldbus_pending_data_del(Eldbus_Pending *pending, const char *key)
 {
    ELDBUS_PENDING_CHECK_RETVAL(pending, NULL);
@@ -272,7 +272,7 @@ eldbus_pending_dispatch(Eldbus_Pending *pending, Eldbus_Message *msg)
    free(pending);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_pending_cancel(Eldbus_Pending *pending)
 {
    Eldbus_Message *error_message;
@@ -288,7 +288,7 @@ eldbus_pending_cancel(Eldbus_Pending *pending)
    eldbus_pending_dispatch(pending, error_message);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_pending_free_cb_add(Eldbus_Pending *pending, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_PENDING_CHECK(pending);
@@ -296,7 +296,7 @@ eldbus_pending_free_cb_add(Eldbus_Pending *pending, Eldbus_Free_Cb cb, const voi
    pending->cbs_free = eldbus_cbs_free_add(pending->cbs_free, cb, data);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_pending_free_cb_del(Eldbus_Pending *pending, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_PENDING_CHECK(pending);
@@ -304,28 +304,28 @@ eldbus_pending_free_cb_del(Eldbus_Pending *pending, Eldbus_Free_Cb cb, const voi
    pending->cbs_free = eldbus_cbs_free_del(pending->cbs_free, cb, data);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_pending_destination_get(const Eldbus_Pending *pending)
 {
    ELDBUS_PENDING_CHECK_RETVAL(pending, NULL);
    return pending->dest;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_pending_path_get(const Eldbus_Pending *pending)
 {
    ELDBUS_PENDING_CHECK_RETVAL(pending, NULL);
    return pending->path;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_pending_interface_get(const Eldbus_Pending *pending)
 {
    ELDBUS_PENDING_CHECK_RETVAL(pending, NULL);
    return pending->interface;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_pending_method_get(const Eldbus_Pending *pending)
 {
    ELDBUS_PENDING_CHECK_RETVAL(pending, NULL);

@@ -39,7 +39,7 @@ _ecore_job_shutdown(void)
    _ecore_job_handler = NULL;
 }
 
-ECORE_API Ecore_Job *
+EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
@@ -69,7 +69,7 @@ ecore_job_add(Ecore_Cb    func,
    return job;
 }
 
-ECORE_API void *
+EAPI void *
 ecore_job_del(Ecore_Job *job)
 {
    void *data;

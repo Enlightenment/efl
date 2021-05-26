@@ -105,14 +105,14 @@ EFL_CALLBACKS_ARRAY_DEFINE(ecore_idler_callbacks,
                           { EFL_LOOP_EVENT_IDLE, _ecore_factorized_idle_process },
                           { EFL_EVENT_DEL, _ecore_factorized_idle_event_del });
 
-ECORE_API Ecore_Idler *
+EAPI Ecore_Idler *
 ecore_idler_add(Ecore_Task_Cb func,
                 const void   *data)
 {
    return _ecore_factorized_idle_add(ecore_idler_callbacks(), func, data);
 }
 
-ECORE_API void *
+EAPI void *
 ecore_idler_del(Ecore_Idler *idler)
 {
    return _ecore_factorized_idle_del(idler);

@@ -276,7 +276,32 @@
 #include <Eina.h>
 #include <Eo.h>
 #include <Efl.h>
-#include <ecore_api.h>
+
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EFL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
 
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
@@ -306,10 +331,13 @@ extern "C" {
 #endif
 #include "Ecore_Eo.h"
 
-ECORE_API double _ecore_main_loop_wakeup_time_get(void);
+EAPI double _ecore_main_loop_wakeup_time_get(void);
 
 #ifdef __cplusplus
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif

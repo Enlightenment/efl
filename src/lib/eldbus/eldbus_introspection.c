@@ -26,7 +26,7 @@ static void _eldbus_introspection_argument_free(Eldbus_Introspection_Argument *)
 static void _eldbus_introspection_property_free(Eldbus_Introspection_Property *);
 static void _eldbus_introspection_annotation_free(Eldbus_Introspection_Annotation *);
 
-ELDBUS_API Eldbus_Introspection_Node *
+EAPI Eldbus_Introspection_Node *
 eldbus_introspection_parse(const char *xml)
 {
    Eldbus_Introspection_Node *node;
@@ -75,7 +75,7 @@ _eldbus_introspection_parse_node(Eina_Simple_XML_Node_Tag *tag)
    return node;
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_introspection_node_free(Eldbus_Introspection_Node *node)
 {
    Eldbus_Introspection_Node *child_node;
@@ -427,7 +427,7 @@ _eldbus_introspection_parse_children(Eina_Inlist *children, const Eldbus_Introsp
      }
 }
 
-ELDBUS_API Eldbus_Introspection_Interface *
+EAPI Eldbus_Introspection_Interface *
 eldbus_introspection_interface_find(Eina_List *interfaces, const char *name)
 {
    Eina_List *it;
@@ -442,7 +442,7 @@ eldbus_introspection_interface_find(Eina_List *interfaces, const char *name)
    return NULL;
 }
 
-ELDBUS_API Eldbus_Introspection_Property *
+EAPI Eldbus_Introspection_Property *
 eldbus_introspection_property_find(Eina_List *properties, const char *name)
 {
    Eina_List *it;
@@ -457,7 +457,7 @@ eldbus_introspection_property_find(Eina_List *properties, const char *name)
    return NULL;
 }
 
-ELDBUS_API Eldbus_Introspection_Argument *
+EAPI Eldbus_Introspection_Argument *
 eldbus_introspection_argument_find(Eina_List *arguments, const char *name)
 {
    Eina_List *it;

@@ -20,6 +20,8 @@
 #  endif
 # endif
 
+#define EWAPI EAPI EAPI_WEAK
+
 #ifdef WAYLAND_UTIL_H
 typedef struct wl_surface Efl_Canvas_Wl_Wl_Surface;
 typedef struct wl_global Efl_Canvas_Wl_Wl_Global;

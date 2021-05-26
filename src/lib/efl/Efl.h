@@ -7,7 +7,44 @@ extern "C" {
 
 #include <Eo.h>
 
-#include <efl_api.h>
+#ifdef EAPI
+# undef EAPI
+#endif
+#ifdef EWAPI
+# undef EWAPI
+#endif
+#ifdef EOAPI
+# undef EOAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EFL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+# define EAPI_WEAK
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
+#  else
+#   define EAPI
+#   define EAPI_WEAK
+#  endif
+# else
+#  define EAPI
+#  define EAPI_WEAK
+# endif
+#endif
+
+#define EWAPI EAPI EAPI_WEAK
+#define EOAPI EAPI EAPI_WEAK
 
 #define EFL_VERSION_1_18 1
 #define EFL_VERSION_1_19 1
@@ -46,39 +83,39 @@ typedef struct _Efl_Text_Attribute_Handle Efl_Text_Attribute_Handle;
 
 #ifdef EFL_BETA_API_SUPPORT
 /** No error on load */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_NONE;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 
 /** A non-specific error occurred */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 
 /** File (or file path) does not exist */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 
 /** Permission denied to an existing file (or path) */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED;
 
 /** Allocation of resources failure prevented load */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 
 /** File corrupt (but was detected as a known format) */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE;
 
 /** File is not a known format */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
 
 /** Reading operation has been cancelled during decoding */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED;
 
 /** (Edje only) The file pointed to is incompatible, i.e., it doesn't
  * match the library's current version's format. */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
 
 /** (Edje only) The group/collection set to load from was not found in the file */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
 
 /** (Edje only) The group/collection set to load from had recursive references
  * on its components */
-EFL_API EFL_API_WEAK extern Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
 #endif /* EFL_BETA_API_SUPPORT */
 
 #include "interfaces/efl_gfx_types.eot.h"
@@ -194,11 +231,11 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
  *
  * @since 1.21
  */
-EFL_API Efl_Object *efl_part(const Eo *obj, const char *name);
+EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
 
 #ifdef EFL_BETA_API_SUPPORT
 
-EFL_API void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
+EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
 
 
 
@@ -305,10 +342,13 @@ efl_config_string_get(const Efl_Config *obj, const char *name)
 #endif
 
 /* work-around bug in gcc --as-needed link optimization */
-EFL_API void __efl_internal_init(void);
+EAPI void __efl_internal_init(void);
 
 #if defined ( __cplusplus )
 }
 #endif
+
+#undef EAPI
+#define EAPI
 
 #endif

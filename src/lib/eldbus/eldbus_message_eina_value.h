@@ -10,7 +10,7 @@
  * @param msg Message
  * @return Eina_Value of type Eina_Value_Type_Struct
  */
-ELDBUS_API Eina_Value *eldbus_message_to_eina_value(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Value *eldbus_message_to_eina_value(const Eldbus_Message *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Convert Eldbus_Message_Iter of type variant, struct or dict entry to
@@ -19,7 +19,7 @@ ELDBUS_API Eina_Value *eldbus_message_to_eina_value(const Eldbus_Message *msg) E
  * @param iter Message iterator
  * @return Eina_Value of type Eina_Value_Type_Struct
  */
-ELDBUS_API Eina_Value *eldbus_message_iter_struct_like_to_eina_value(const Eldbus_Message_Iter *iter);
+EAPI Eina_Value *eldbus_message_iter_struct_like_to_eina_value(const Eldbus_Message_Iter *iter);
 
 /**
  * Convert Eina_Value to Eldbus_Message
@@ -29,7 +29,7 @@ ELDBUS_API Eina_Value *eldbus_message_iter_struct_like_to_eina_value(const Eldbu
  * @param value source of data, must be of type Eina_Value_Type_Struct
  * @return success or not
  */
-ELDBUS_API Eina_Bool eldbus_message_from_eina_value(const char *signature, Eldbus_Message *msg, const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_Bool eldbus_message_from_eina_value(const char *signature, Eldbus_Message *msg, const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @}

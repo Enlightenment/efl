@@ -4,8 +4,6 @@
 #include <Eina.h>
 #include <Eo.h>
 
-#include <eldbus_api.h>
-
 /* FIXME: these are duplicated as @extern in eldbus_types.eot */
 
 /** Argument direction
@@ -118,7 +116,7 @@ typedef struct _Eldbus_Introspection_Signal
  *
  * @since 1.17
  */
-ELDBUS_API Eldbus_Introspection_Node *eldbus_introspection_parse(const char *xml);
+EAPI Eldbus_Introspection_Node *eldbus_introspection_parse(const char *xml);
 
 /**
  * @brief Frees the introspection object tree
@@ -127,7 +125,7 @@ ELDBUS_API Eldbus_Introspection_Node *eldbus_introspection_parse(const char *xml
  *
  * @since 1.17
  */
-ELDBUS_API void eldbus_introspection_node_free(Eldbus_Introspection_Node *node);
+EAPI void eldbus_introspection_node_free(Eldbus_Introspection_Node *node);
 
 /**
  * @brief Finds an interface by name
@@ -138,7 +136,7 @@ ELDBUS_API void eldbus_introspection_node_free(Eldbus_Introspection_Node *node);
  *
  * @since 1.17
  */
-ELDBUS_API Eldbus_Introspection_Interface *eldbus_introspection_interface_find(Eina_List *interfaces, const char *name);
+EAPI Eldbus_Introspection_Interface *eldbus_introspection_interface_find(Eina_List *interfaces, const char *name);
 
 /**
  * @brief Finds a property by name
@@ -149,7 +147,7 @@ ELDBUS_API Eldbus_Introspection_Interface *eldbus_introspection_interface_find(E
  *
  * @since 1.17
  */
-ELDBUS_API Eldbus_Introspection_Property *eldbus_introspection_property_find(Eina_List *properties, const char *name);
+EAPI Eldbus_Introspection_Property *eldbus_introspection_property_find(Eina_List *properties, const char *name);
 
 /**
  * @brief Finds an argument by name
@@ -160,6 +158,6 @@ ELDBUS_API Eldbus_Introspection_Property *eldbus_introspection_property_find(Ein
  *
  * @since 1.17
  */
-ELDBUS_API Eldbus_Introspection_Argument *eldbus_introspection_argument_find(Eina_List *arguments, const char *name);
+EAPI Eldbus_Introspection_Argument *eldbus_introspection_argument_find(Eina_List *arguments, const char *name);
 
 #endif

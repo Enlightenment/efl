@@ -98,7 +98,7 @@ fail:
    return NULL;
 }
 
-ELDBUS_API Eldbus_Message *
+EAPI Eldbus_Message *
 eldbus_message_method_call_new(const char *dest, const char *path, const char *iface, const char *method)
 {
    Eldbus_Message *msg;
@@ -141,7 +141,7 @@ fail:
    return NULL;
 }
 
-ELDBUS_API Eldbus_Message *
+EAPI Eldbus_Message *
 eldbus_message_ref(Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
@@ -168,7 +168,7 @@ _message_iterator_free(Eldbus_Message_Iter *iter)
    free(iter);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_message_unref(Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK(msg);
@@ -187,49 +187,49 @@ eldbus_message_unref(Eldbus_Message *msg)
    free(msg);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_message_path_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    return dbus_message_get_path(msg->dbus_msg);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_message_interface_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    return dbus_message_get_interface(msg->dbus_msg);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_message_member_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    return dbus_message_get_member(msg->dbus_msg);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_message_destination_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    return dbus_message_get_destination(msg->dbus_msg);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_message_sender_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    return dbus_message_get_sender(msg->dbus_msg);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_message_signature_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
    return dbus_message_get_signature(msg->dbus_msg);
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_error_get(const Eldbus_Message *msg, const char **name, const char **text)
 {
    if (name) *name = NULL;
@@ -260,7 +260,7 @@ _eldbus_message_arguments_vget(Eldbus_Message *msg, const char *signature, va_li
    return eldbus_message_iter_arguments_vget(iter, signature, ap);
 }
 
-ELDBUS_API Eldbus_Message_Iter *
+EAPI Eldbus_Message_Iter *
 eldbus_message_iter_get(const Eldbus_Message *msg)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, NULL);
@@ -270,7 +270,7 @@ eldbus_message_iter_get(const Eldbus_Message *msg)
    return msg->iterator;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_arguments_get(const Eldbus_Message *msg, const char *signature, ...)
 {
    Eina_Bool ret;
@@ -285,7 +285,7 @@ eldbus_message_arguments_get(const Eldbus_Message *msg, const char *signature, .
    return ret;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_arguments_vget(const Eldbus_Message *msg, const char *signature, va_list ap)
 {
    ELDBUS_MESSAGE_CHECK_RETVAL(msg, EINA_FALSE);
@@ -362,7 +362,7 @@ next:
 
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_arguments_vappend(Eldbus_Message_Iter *iter, const char *signature, va_list ap)
 {
    va_list aq;
@@ -375,7 +375,7 @@ eldbus_message_iter_arguments_vappend(Eldbus_Message_Iter *iter, const char *sig
    return ret;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_arguments_append(Eldbus_Message_Iter *iter, const char *signature, ...)
 {
    Eina_Bool r;
@@ -491,7 +491,7 @@ _eldbus_message_arguments_vappend(Eldbus_Message *msg, const char *signature, va
    return r;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_arguments_append(Eldbus_Message *msg, const char *signature, ...)
 {
    Eina_Bool ret;
@@ -506,7 +506,7 @@ eldbus_message_arguments_append(Eldbus_Message *msg, const char *signature, ...)
    return ret;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_arguments_vappend(Eldbus_Message *msg, const char *signature, va_list ap)
 {
    va_list aq;
@@ -522,7 +522,7 @@ eldbus_message_arguments_vappend(Eldbus_Message *msg, const char *signature, va_
    return ret;
 }
 
-ELDBUS_API Eldbus_Message_Iter *
+EAPI Eldbus_Message_Iter *
 eldbus_message_iter_container_new(Eldbus_Message_Iter *iter, int type, const char* contained_signature)
 {
    Eldbus_Message_Iter *sub;
@@ -544,7 +544,7 @@ cleanup:
    return NULL;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_container_close(Eldbus_Message_Iter *iter, Eldbus_Message_Iter *sub)
 {
    ELDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
@@ -554,7 +554,7 @@ eldbus_message_iter_container_close(Eldbus_Message_Iter *iter, Eldbus_Message_It
                                             &sub->dbus_iterator);
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_basic_append(Eldbus_Message_Iter *iter, int type, ...)
 {
    Eina_Bool r;
@@ -569,7 +569,7 @@ eldbus_message_iter_basic_append(Eldbus_Message_Iter *iter, int type, ...)
    return r;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_fixed_array_append(Eldbus_Message_Iter *iter, int type, const void *array, unsigned int size)
 {
    ELDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
@@ -579,7 +579,7 @@ eldbus_message_iter_fixed_array_append(Eldbus_Message_Iter *iter, int type, cons
    return dbus_message_iter_append_fixed_array(&iter->dbus_iterator, type, &array, (int)size);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_message_iter_basic_get(Eldbus_Message_Iter *iter, void *value)
 {
    ELDBUS_MESSAGE_ITERATOR_CHECK(iter);
@@ -601,14 +601,14 @@ eldbus_message_iter_sub_iter_get(Eldbus_Message_Iter *iter)
    return sub;
 }
 
-ELDBUS_API char *
+EAPI char *
 eldbus_message_iter_signature_get(Eldbus_Message_Iter *iter)
 {
    ELDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, NULL);
    return dbus_message_iter_get_signature(&iter->dbus_iterator);
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_next(Eldbus_Message_Iter *iter)
 {
    ELDBUS_MESSAGE_ITERATOR_CHECK_RETVAL(iter, EINA_FALSE);
@@ -705,7 +705,7 @@ get_basic(char type, DBusMessageIter *iter, va_list *vl)
      }
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_fixed_array_get(Eldbus_Message_Iter *iter, int signature, void *value, int *n_elements)
 {
    int iter_type;
@@ -732,7 +732,7 @@ eldbus_message_iter_fixed_array_get(Eldbus_Message_Iter *iter, int signature, vo
 /**
  * Useful when iterating over arrays
  */
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_get_and_next(Eldbus_Message_Iter *iter, char signature, ...)
 {
    char type;
@@ -838,7 +838,7 @@ _eldbus_message_iter_arguments_vget(Eldbus_Message_Iter *iter, const char *signa
 
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_arguments_get(Eldbus_Message_Iter *iter, const char *signature, ...)
 {
    va_list ap;
@@ -851,7 +851,7 @@ eldbus_message_iter_arguments_get(Eldbus_Message_Iter *iter, const char *signatu
    return ret;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_message_iter_arguments_vget(Eldbus_Message_Iter *iter, const char *signature, va_list ap)
 {
    va_list aq;
@@ -864,14 +864,14 @@ eldbus_message_iter_arguments_vget(Eldbus_Message_Iter *iter, const char *signat
    return ret;
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_message_iter_del(Eldbus_Message_Iter *iter)
 {
    ELDBUS_MESSAGE_ITERATOR_CHECK(iter);
    _message_iterator_free(iter);
 }
 
-ELDBUS_API Eldbus_Message *
+EAPI Eldbus_Message *
 eldbus_message_error_new(const Eldbus_Message *msg, const char *error_name, const char *error_msg)
 {
    Eldbus_Message *reply;
@@ -891,7 +891,7 @@ eldbus_message_error_new(const Eldbus_Message *msg, const char *error_name, cons
    return reply;
 }
 
-ELDBUS_API Eldbus_Message *
+EAPI Eldbus_Message *
 eldbus_message_method_return_new(const Eldbus_Message *msg)
 {
    Eldbus_Message *reply;
@@ -908,7 +908,7 @@ eldbus_message_method_return_new(const Eldbus_Message *msg)
    return reply;
 }
 
-ELDBUS_API Eldbus_Message *
+EAPI Eldbus_Message *
 eldbus_message_signal_new(const char *path, const char *interface, const char *name)
 {
    Eldbus_Message *msg;

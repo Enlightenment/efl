@@ -15,7 +15,7 @@
  * @param interface The interface name of the proxy.
  * @return The corresponding Eldbus_Proxy object.
  */
-ELDBUS_API Eldbus_Proxy          *eldbus_proxy_get(Eldbus_Object *obj, const char *interface) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+EAPI Eldbus_Proxy          *eldbus_proxy_get(Eldbus_Object *obj, const char *interface) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Increase proxy reference.
@@ -23,7 +23,7 @@ ELDBUS_API Eldbus_Proxy          *eldbus_proxy_get(Eldbus_Object *obj, const cha
  * @param proxy The Eldbus_Proxy on which to increase the refcount.
  * @return The Eldbus_Proxy with an increased refcount.
  */
-ELDBUS_API Eldbus_Proxy          *eldbus_proxy_ref(Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1);
+EAPI Eldbus_Proxy          *eldbus_proxy_ref(Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Decrease proxy reference.
@@ -31,7 +31,7 @@ ELDBUS_API Eldbus_Proxy          *eldbus_proxy_ref(Eldbus_Proxy *proxy) EINA_ARG
  *
  * @param proxy The Eldbus_Proxy on which to decrease the refcount.
  */
-ELDBUS_API void                  eldbus_proxy_unref(Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1);
+EAPI void                  eldbus_proxy_unref(Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the Eldbus_Object associated with a proxy object.
@@ -39,7 +39,7 @@ ELDBUS_API void                  eldbus_proxy_unref(Eldbus_Proxy *proxy) EINA_AR
  * @param proxy The Eldbus_Proxy on which to do the query.
  * @return The corresponding Eldbus_Object.
  */
-ELDBUS_API Eldbus_Object         *eldbus_proxy_object_get(const Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eldbus_Object         *eldbus_proxy_object_get(const Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Get the interface name associated with a proxy object.
@@ -47,7 +47,7 @@ ELDBUS_API Eldbus_Object         *eldbus_proxy_object_get(const Eldbus_Proxy *pr
  * @param proxy The Eldbus_Proxy on which to do the query.
  * @return The string corresponding to the interface name.
  */
-ELDBUS_API const char           *eldbus_proxy_interface_get(const Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI const char           *eldbus_proxy_interface_get(const Eldbus_Proxy *proxy) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Set data to an Eldbus_Proxy object.
@@ -56,7 +56,7 @@ ELDBUS_API const char           *eldbus_proxy_interface_get(const Eldbus_Proxy *
  * @param key A string to which the data will be associated.
  * @param data The data to set to the proxy object.
  */
-ELDBUS_API void                  eldbus_proxy_data_set(Eldbus_Proxy *proxy, const char *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+EAPI void                  eldbus_proxy_data_set(Eldbus_Proxy *proxy, const char *key, const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Get data of an Eldbus_Proxy object.
@@ -65,7 +65,7 @@ ELDBUS_API void                  eldbus_proxy_data_set(Eldbus_Proxy *proxy, cons
  * @param key The string to which the data is associated.
  * @return The data set to the proxy object associated with the provided key.
  */
-ELDBUS_API void                 *eldbus_proxy_data_get(const Eldbus_Proxy *proxy, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI void                 *eldbus_proxy_data_get(const Eldbus_Proxy *proxy, const char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Delete data of an Eldbus_Proxy object.
@@ -73,7 +73,7 @@ ELDBUS_API void                 *eldbus_proxy_data_get(const Eldbus_Proxy *proxy
  * @param proxy The Eldbus_Proxy on which to delete the data.
  * @param key The string to which the data is associated.
  */
-ELDBUS_API void                 *eldbus_proxy_data_del(Eldbus_Proxy *proxy, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI void                 *eldbus_proxy_data_del(Eldbus_Proxy *proxy, const char *key) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Add a callback function to be called when an event of the
@@ -83,7 +83,7 @@ ELDBUS_API void                 *eldbus_proxy_data_del(Eldbus_Proxy *proxy, cons
  * @param cb The callback to add.
  * @param data The data to pass to the callback.
  */
-ELDBUS_API void                  eldbus_proxy_free_cb_add(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                  eldbus_proxy_free_cb_add(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Remove callback registered in eldbus_proxy_free_cb_add().
@@ -92,7 +92,7 @@ ELDBUS_API void                  eldbus_proxy_free_cb_add(Eldbus_Proxy *proxy, E
  * @param cb The callback to delete.
  * @param data The data passed to the callback.
  */
-ELDBUS_API void                  eldbus_proxy_free_cb_del(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                  eldbus_proxy_free_cb_del(Eldbus_Proxy *proxy, Eldbus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Constructs a new message to invoke a method on a remote interface.
@@ -101,7 +101,7 @@ ELDBUS_API void                  eldbus_proxy_free_cb_del(Eldbus_Proxy *proxy, E
  * @param member The name of the method to invoke.
  * @return An Eldbus_Message object.
  */
-ELDBUS_API Eldbus_Message        *eldbus_proxy_method_call_new(Eldbus_Proxy *proxy, const char *member) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+EAPI Eldbus_Message        *eldbus_proxy_method_call_new(Eldbus_Proxy *proxy, const char *member) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Send a message.
@@ -114,7 +114,7 @@ ELDBUS_API Eldbus_Message        *eldbus_proxy_method_call_new(Eldbus_Proxy *pro
  * ELDBUS_TIMEOUT_INFINITE for no timeout
  * @return A Eldbus_Pending object on the sent message.
  */
-ELDBUS_API Eldbus_Pending        *eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
+EAPI Eldbus_Pending        *eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_Message *msg, Eldbus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Send a message and block while waiting for the reply.
@@ -128,7 +128,7 @@ ELDBUS_API Eldbus_Pending        *eldbus_proxy_send(Eldbus_Proxy *proxy, Eldbus_
  * The returned Eldbus_Message need to be unref after read.
  * @since 1.13
  */
-ELDBUS_API Eldbus_Message        *eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double timeout) EINA_ARG_NONNULL(1, 2);
+EAPI Eldbus_Message        *eldbus_proxy_send_and_block(Eldbus_Proxy *proxy, Eldbus_Message *msg, double timeout) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Call a method in proxy.
@@ -148,7 +148,7 @@ ELDBUS_API Eldbus_Message        *eldbus_proxy_send_and_block(Eldbus_Proxy *prox
  * @note This function only support basic type to complex types use
  * eldbus_message_iter_* functions.
  */
-ELDBUS_API Eldbus_Pending        *eldbus_proxy_call(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, ...) EINA_ARG_NONNULL(1, 2, 6);
+EAPI Eldbus_Pending        *eldbus_proxy_call(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, ...) EINA_ARG_NONNULL(1, 2, 6);
 
 /**
  * @brief Call a method in proxy.
@@ -167,7 +167,7 @@ ELDBUS_API Eldbus_Pending        *eldbus_proxy_call(Eldbus_Proxy *proxy, const c
  * @note This function only support basic type to complex types use
  * eldbus_message_iter_* functions.
  */
-ELDBUS_API Eldbus_Pending        *eldbus_proxy_vcall(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 6);
+EAPI Eldbus_Pending        *eldbus_proxy_vcall(Eldbus_Proxy *proxy, const char *member, Eldbus_Message_Cb cb, const void *cb_data, double timeout, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2, 6);
 
 /**
  * @brief Add a signal handler.
@@ -178,7 +178,7 @@ ELDBUS_API Eldbus_Pending        *eldbus_proxy_vcall(Eldbus_Proxy *proxy, const 
  * @param cb_data data that will be passed to callback
  * @return A listener to the desired signal.
  */
-ELDBUS_API Eldbus_Signal_Handler *eldbus_proxy_signal_handler_add(Eldbus_Proxy *proxy, const char *member, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+EAPI Eldbus_Signal_Handler *eldbus_proxy_signal_handler_add(Eldbus_Proxy *proxy, const char *member, Eldbus_Signal_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @typedef Eldbus_Proxy_Event_Type
@@ -247,7 +247,7 @@ typedef void (*Eldbus_Proxy_Event_Cb)(void *data, Eldbus_Proxy *proxy, void *eve
  * @param cb The callback function to register.
  * @param cb_data The data to pass to the callback.
  */
-ELDBUS_API void eldbus_proxy_event_callback_add(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, Eldbus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+EAPI void eldbus_proxy_event_callback_add(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, Eldbus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @brief Remove callback registered in eldbus_proxy_event_callback_add().
@@ -257,7 +257,7 @@ ELDBUS_API void eldbus_proxy_event_callback_add(Eldbus_Proxy *proxy, Eldbus_Prox
  * @param cb The callback function to delete.
  * @param cb_data The data passed to the callback.
  */
-ELDBUS_API void eldbus_proxy_event_callback_del(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, Eldbus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
+EAPI void eldbus_proxy_event_callback_del(Eldbus_Proxy *proxy, Eldbus_Proxy_Event_Type type, Eldbus_Proxy_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 
 /**
  * @}

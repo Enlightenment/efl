@@ -68,7 +68,7 @@ _sort_arg(const void *d1, const void *d2)
 }
 
 #define ARGX "arg"
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_signal_handler_match_extra_vset(Eldbus_Signal_Handler *sh, va_list ap)
 {
    const char *key = NULL, *read;
@@ -120,7 +120,7 @@ error:
    return EINA_FALSE;
 }
 
-ELDBUS_API Eina_Bool
+EAPI Eina_Bool
 eldbus_signal_handler_match_extra_set(Eldbus_Signal_Handler *sh, ...)
 {
    Eina_Bool ret;
@@ -149,7 +149,7 @@ _on_handler_of_conn_free(void *data, const void *dead_pointer)
    eldbus_connection_free_cb_del(conn, _on_connection_free, dead_pointer);
 }
 
-ELDBUS_API Eldbus_Signal_Handler *
+EAPI Eldbus_Signal_Handler *
 eldbus_signal_handler_add(Eldbus_Connection *conn, const char *sender, const char *path, const char *interface, const char *member, Eldbus_Signal_Cb cb, const void *cb_data)
 {
    Eldbus_Signal_Handler *sh;
@@ -258,7 +258,7 @@ _eldbus_signal_handler_del(Eldbus_Signal_Handler *handler)
    free(handler);
 }
 
-ELDBUS_API Eldbus_Signal_Handler *
+EAPI Eldbus_Signal_Handler *
 eldbus_signal_handler_ref(Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
@@ -268,7 +268,7 @@ eldbus_signal_handler_ref(Eldbus_Signal_Handler *handler)
    return handler;
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_signal_handler_unref(Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK(handler);
@@ -281,7 +281,7 @@ eldbus_signal_handler_unref(Eldbus_Signal_Handler *handler)
    _eldbus_signal_handler_del(handler);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_signal_handler_del(Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK(handler);
@@ -289,7 +289,7 @@ eldbus_signal_handler_del(Eldbus_Signal_Handler *handler)
    eldbus_signal_handler_unref(handler);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_signal_handler_free_cb_add(Eldbus_Signal_Handler *handler, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK(handler);
@@ -297,7 +297,7 @@ eldbus_signal_handler_free_cb_add(Eldbus_Signal_Handler *handler, Eldbus_Free_Cb
    handler->cbs_free = eldbus_cbs_free_add(handler->cbs_free, cb, data);
 }
 
-ELDBUS_API void
+EAPI void
 eldbus_signal_handler_free_cb_del(Eldbus_Signal_Handler *handler, Eldbus_Free_Cb cb, const void *data)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK(handler);
@@ -305,42 +305,42 @@ eldbus_signal_handler_free_cb_del(Eldbus_Signal_Handler *handler, Eldbus_Free_Cb
    handler->cbs_free = eldbus_cbs_free_del(handler->cbs_free, cb, data);
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_signal_handler_sender_get(const Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
    return handler->sender;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_signal_handler_path_get(const Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
    return handler->path;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_signal_handler_interface_get(const Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
    return handler->interface;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_signal_handler_member_get(const Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
    return handler->member;
 }
 
-ELDBUS_API const char *
+EAPI const char *
 eldbus_signal_handler_match_get(const Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);
    return eina_strbuf_string_get(handler->match);
 }
 
-ELDBUS_API Eldbus_Connection *
+EAPI Eldbus_Connection *
 eldbus_signal_handler_connection_get(const Eldbus_Signal_Handler *handler)
 {
    ELDBUS_SIGNAL_HANDLER_CHECK_RETVAL(handler, NULL);

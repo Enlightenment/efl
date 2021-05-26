@@ -10,7 +10,7 @@
 
 static int throttle_val = 0;
 
-ECORE_API void
+EAPI void
 ecore_throttle_adjust(double amount)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
@@ -19,7 +19,7 @@ ecore_throttle_adjust(double amount)
    if (throttle_val < 0) throttle_val = 0;
 }
 
-ECORE_API double
+EAPI double
 ecore_throttle_get(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
