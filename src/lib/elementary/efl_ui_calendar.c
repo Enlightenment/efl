@@ -185,7 +185,7 @@ static void
 _access_calendar_item_register(Evas_Object *obj)
 {
    unsigned int maxdays, i;
-   char day_s[13], pname[18];
+   char day_s[13], pname[32];
    unsigned day = 0;
    Evas_Object *ao;
 
@@ -830,7 +830,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
              if ((!day) && (i == sd->first_day_it)) day = 1;
              if ((day) && (day <= maxdays))
                {
-                  char pname[18];
+                  char pname[32];
                   snprintf(pname, sizeof(pname), "efl.cit_%d.access", i);
 
                   _elm_access_edje_object_part_object_unregister
@@ -1163,7 +1163,7 @@ typedef struct {
 EOLIAN static void
 _efl_ui_calendar_item_day_number_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, int i)
 {
-   char pname[18];
+   char pname[32];
    Evas_Object *po, *o;
 
    pd->v = i;
