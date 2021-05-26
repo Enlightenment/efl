@@ -58,13 +58,13 @@ group { name: "elm/button/base/default";
       }
       rect { "icon_clip";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "pressed"; inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "disabled"; inherit;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "elm.swallow.content"; nomouse;
@@ -157,7 +157,7 @@ group { name: "elm/button/base/default";
       rect { "event";
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled"; inherit;
             visible: 0;
@@ -310,7 +310,7 @@ group { name: "elm/button/base/anchor";
    parts {
       rect { "base";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "pressed"; inherit;
             inherit: "default";
@@ -327,13 +327,12 @@ group { name: "elm/button/base/anchor";
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "elm.swallow.background"; nomouse;
          desc { "default";
-            rel1.to: "base";
-            rel2.to: "base";
+            rel.to: "base";
             visible: 0;
          }
          desc { "visible";
@@ -381,13 +380,14 @@ group { name: "elm/button/base/anchor";
             rel1.to_y: "base";
             rel2.offset: -5 -5;
             rel2.to: "base";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/button-anchor";
             text { font: FN; size: 10;
                align: 0.5 0.5;
                min: 0 0;
             }
             min: 0 ICMIN;
             visible: 0;
+            offscale;
          }
          desc { "visible";
             inherit: "default";
@@ -398,7 +398,7 @@ group { name: "elm/button/base/anchor";
          }
          desc { "pressed_visible";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-anchor";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -414,7 +414,7 @@ group { name: "elm/button/base/anchor";
          }
          desc { "pressed_textonly";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -423,7 +423,7 @@ group { name: "elm/button/base/anchor";
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button-anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -431,7 +431,7 @@ group { name: "elm/button/base/anchor";
          desc { "disabled_textonly";
             inherit: "default";
             rel1.offset: 0 4;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button-anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -439,18 +439,18 @@ group { name: "elm/button/base/anchor";
       }
       rect { "bar"; nomouse;
          desc { "default";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/button-anchor";
             rel1.relative: 0.0 1.0;
             rel1.offset: 2 -3;
             rel2.offset: -3 -3;
          }
          desc { "pressed";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-anchor";
          }
          desc { "disabled";
             inherit: "default";
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button-anchor";
          }
       }
       rect { "event";
@@ -636,7 +636,7 @@ group { name: "elm/button/base/colorselector/left/default";
             min: 15 15;
             max: 15 15;
             image.normal: "i-arrow-l";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/icon";
          }
       }
    }
@@ -652,7 +652,7 @@ group { name: "elm/button/base/colorselector/right/default";
             min: 15 15;
             max: 15 15;
             image.normal: "i-arrow-r";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/icon";
          }
       }
    }
@@ -663,12 +663,11 @@ group { name: "elm/button/base/media_player/prev/default";
    parts {
       rect { "base";
          desc { "default";
-            color: 96 96 96 255;
-            visible: 0;
+            color_class: "/bg/normal/button-media";
          }
          desc { "selected";
             inherit: "default";
-            visible: 1;
+            color_class: "/bg/pressed/button-media";
          }
       }
       image { "ic"; nomouse;
@@ -677,17 +676,17 @@ group { name: "elm/button/base/media_player/prev/default";
             min: 15 15;
             max: 15 15;
             image.normal: "i-media-prev";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/button-media";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-media";
          }
       }
       rect { "event";
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -782,26 +781,33 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"icon_clip", "default", 0.0);
                set_state(PART:"event", "default", 0.0);
+               set_state(PART:"base", "default", 0.0);
             } else {
                set_state(PART:"elm.swallow.content", "default", 0.0);
                set_state(PART:"icon_clip", "disabled", 0.0);
                set_state(PART:"event", "disabled", 0.0);
+               set_state(PART:"base", "disabled", 0.0);
             }
          }
       }
    }
    parts {
       image { "base"; type: RECT; nomouse;
+         scale: 1;
          desc { "default";
             fixed: 1 1;
-            color: 56 56 56 255;
-            visible: 0;
-            rel1.offset: 2 0;
-            rel2.offset: -9 -1;
+            rel1.offset: 5 0;
+            rel2.offset: -6 -1;
+            color_class: "/bg/normal/hoversel/item";
+            offscale;
          }
          desc { "clicked";
             inherit: "default";
-            visible: 1;
+            color_class: "/bg/selected/hoversel/item";
+         }
+         desc { "disabled";
+            inherit: "default";
+            color_class: "/bg/selected/hoversel/item";
          }
       }
       rect { "icon_clip";
@@ -809,7 +815,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "elm.swallow.content"; nomouse;
@@ -860,7 +866,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             rel2.to: "base";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/hoversel/item";
             text { font: FN; size: 10;
                align: 0.0 0.5;
                min: 1 1;
@@ -870,21 +876,21 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          }
          desc { "clicked";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/hoversel/item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/hoversel/item";
          }
       }
       rect { name: "block_events";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect { name: "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled";
             inherit: "default";
@@ -893,8 +899,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
       }
    }
    programs {
-      program {
-         signal: "mouse,down,1"; source: "event";
+      program { signal: "mouse,down,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,press" "elm";
          after: "button_click_anim";
       }
@@ -931,8 +936,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
               set_state(PART:"elm.text", "default", 0.0);
          }
       }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
+      program { signal: "mouse,clicked,1"; source: "event";
          action: SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name:   "button_text_visible";
@@ -985,8 +989,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          }
       }
       program { "selected";
-         signal: "elm,state,selected";
-         source: "elm";
+         signal: "elm,state,selected"; source: "elm";
          script {
             set_int(is_selected, 1);
             set_state(PART:"elm.text", "clicked", 0.0);
@@ -994,8 +997,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          }
       }
       program { "unselected";
-         signal: "elm,state,unselected";
-         source: "elm";
+         signal: "elm,state,unselected"; source: "elm";
          script {
             set_int(is_selected, 0);
             set_state(PART:"elm.text", "default", 0.0);
@@ -1015,6 +1017,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
       text { "elm.text";
          scale: 1;
          desc { "default";
+            color_class: "/fg/normal/hoversel/button";
             rel2.to_y: "base";
             rel2.to_x: "select_line";
             rel2.offset: -5 -5;
@@ -1025,6 +1028,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "visible"; inherit;
             fixed: 0 0;
+            color_class: "/fg/normal/hoversel/button";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -1036,7 +1040,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/hoversel/button";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -1047,6 +1051,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "textonly"; inherit;
             fixed: 0 0;
+            color_class: "/fg/normal/hoversel/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -1057,7 +1062,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "pressed_textonly"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/hoversel/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -1068,7 +1073,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "disabled_visible"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/hoversel/button";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -1080,7 +1085,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          desc { "disabled_textonly"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/hoversel/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -1101,15 +1106,15 @@ group { name: "elm/button/base/hoversel_vertical/default";
             rel1.offset: -1 0;
             rel2.to: "base";
             rel2.offset: -1 -1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/hoversel/selector";
          }
          desc { "pressed";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/hoversel/selector";
          }
          desc { "disabled";
             inherit: "default";
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/hoversel/selector";
          }
       }
    }
@@ -1175,26 +1180,26 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             description { state: "default" 0.0;
                FIXED_SIZE(15, 15)
                image.normal: "i-arrow-r";
-               color: 160 160 160 255;
+               color_class: "/fg/normal/spinner/arrow";
             }
             description { state: "pressed" 0.0;
                inherit: "default" 0.0;
-               color: 255 255 255 255;
+               color_class: "/fg/pressed/spinner/arrow";
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0;
-               color: 96 96 96 255;
+               color_class: "/fg/disabled/spinner/arrow";
             }
          }
          part { name: "over"; type: RECT;
             repeat_events: 1;
             description { state: "default" 0.0;
-               color: 0 0 0 0;
+               color: 0 0 0 0; // no cc
             }
          }
          part { name: "disabler"; type: RECT;
             description { state: "default" 0.0;
-               color: 0 0 0 0;
+               color: 0 0 0 0; // no cc
                visible: 0;
             }
             description { state: "disabled" 0.0;
@@ -1331,7 +1336,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
          part { name: "elm.text"; type: TEXT;
             scale: 1;
             description { state: "default" 0.0;
-               color: 160 160 160 255;
+               color_class: "/fg/normal/spinner/text";
                rel.to: "bg";
                text { font: FN; size: 10;
                   min: 1 1;
@@ -1342,13 +1347,13 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0 ;
-               color: 96 96 96 255;
+               color_class: "/fg/disabled/spinner/text";
             }
          }
          part { name: "over"; type: RECT;
             repeat_events: 1;
             description { state: "default" 0.0;
-               color: 0 0 0 0;
+               color: 0 0 0 0; // no cc
             }
          }
          part { name: "disabler"; type: RECT;
@@ -1367,7 +1372,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
             signal: "mouse,clicked,1";
             source: "over";
             script {
-                 run_program(PROGRAM:"button_click2");
+               run_program(PROGRAM:"button_click2");
             }
          }
          program { name: "button_click2";
@@ -1476,7 +1481,7 @@ group { name: "elm/button/base/combobox_vertical/default";
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "elm.swallow.content";
@@ -1493,7 +1498,6 @@ group { name: "elm/button/base/combobox_vertical/default";
       }
       image { name: "expand1";
          scale: 1;
-         clip_to: "icon_clip";
          desc { "default";
             image.normal: "i-arrow-u";
             min: 15 15;
@@ -1501,20 +1505,19 @@ group { name: "elm/button/base/combobox_vertical/default";
             rel.to: "event2";
             rel2.relative: 1.0 0.5;
             fixed: 1 1;
-            color_class: "/fg/normal/button";
+            color_class: "/fg/normal/combobox/button";
          }
          desc { "pressed";
             inherit;
-            color_class: "/fg/pressed/button";
+            color_class: "/fg/pressed/combobox/button";
          }
          desc { "disabled";
             inherit;
-            color_class: "/fg/disabled/button";
+            color_class: "/fg/disabled/combobox/button";
          }
       }
       image { name: "expand2";
          scale: 1;
-         clip_to: "icon_clip";
          desc { "default";
             image.normal: "i-arrow-d";
             min: 15 15;
@@ -1522,15 +1525,15 @@ group { name: "elm/button/base/combobox_vertical/default";
             rel.to: "event2";
             rel1.relative: 0.0 0.5;
             fixed: 1 1;
-            color_class: "/fg/normal/button";
+            color_class: "/fg/normal/combobox/button";
          }
          desc { "pressed";
             inherit;
-            color_class: "/fg/pressed/button";
+            color_class: "/fg/pressed/combobox/button";
          }
          desc { "disabled";
             inherit;
-            color_class: "/fg/disabled/button";
+            color_class: "/fg/disabled/combobox/button";
          }
       }
       rect { name: "event2";
@@ -1557,15 +1560,15 @@ group { name: "elm/button/base/combobox_vertical/default";
             rel1.relative: 1.0 0.0;
             rel1.offset: -1 0;
             rel2.offset: -1 -1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/combobox/selector";
          }
          desc { "pressed";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/combobox/selector";
          }
          desc { "disabled";
             inherit: "default";
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/combobox/selector";
          }
       }
    }

@@ -119,6 +119,20 @@ color_classes {
       color:   0   0   0 200; }
    color_class { name: "/bg/disabled/button-overlay";
       color:   0   0   0  80; }
+   color_class { name: "/fg/normal/button-anchor";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/pressed/button-anchor";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/button-anchor";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/normal/button-media";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/pressed/button-media";
+      color: 255 255 255 255; }
+   color_class { name: "/bg/normal/button-media";
+      color:  96  96  96   0; }
+   color_class { name: "/bg/pressed/button-media";
+      color:  96  96  96 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/menu/item";
       color:  32  32  32   0; }
@@ -170,6 +184,67 @@ color_classes {
       color: 160 160 160 255; }
    color_class { name: "/bg/normal/bubble";
       color:  48  48  48 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/hoversel/button";
+      color:  96  96  96 255; }
+   color_class { name: "/bg/pressed/hoversel/button";
+      color:  80  80  80 255; }
+   color_class { name: "/bg/disabled/hoversel/button";
+      color:  64  64  64 255; }
+   color_class { name: "/fg/normal/hoversel/button";
+      color: 192 192 192 255; }
+   color_class { name: "/fg/pressed/hoversel/button";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/hoversel/button";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/normal/hoversel/selector";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/pressed/hoversel/selector";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/hoversel/selector";
+      color:  96  96  96 255; }
+   color_class { name: "/bg/normal/hoversel/item";
+      color:  32  32  32   0; }
+   color_class { name: "/bg/disabled/hoversel/item";
+      color:  32  32  32   0; }
+   color_class { name: "/bg/selected/hoversel/item";
+      color:  32  32  32 255; }
+   color_class { name: "/fg/normal/hoversel/item";
+      color: 192 192 192 255; }
+   color_class { name: "/fg/disabled/hoversel/item";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/selected/hoversel/item";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/combobox/button";
+      color:  96  96  96 255; }
+   color_class { name: "/bg/pressed/combobox/button";
+      color:  80  80  80 255; }
+   color_class { name: "/bg/disabled/combobox/button";
+      color:  64  64  64 255; }
+   color_class { name: "/fg/normal/combobox/button";
+      color: 192 192 192 255; }
+   color_class { name: "/fg/pressed/combobox/button";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/combobox/button";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/normal/combobox/selector";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/pressed/combobox/selector";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/combobox/selector";
+      color:  96  96  96 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/spinner/arrow";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/pressed/spinner/arrow";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/spinner/arrow";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/normal/spinner/text";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/disabled/spinner/text";
+      color:  96  96  96 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/shelf/translucent";
       color:  64  64  64 128; }
