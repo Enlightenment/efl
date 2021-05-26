@@ -3032,22 +3032,21 @@ insert_constval(constvalue * prev, constvalue * next, char *name,
 		cell val, short idx)
 {
    constvalue         *cur;
-//   char               *s, *d;
+   char *s, *d;
 
    if (!(cur = calloc(1, sizeof(constvalue))))
       error(103);		/* insufficient memory (fatal error) */
-   strncpy(cur->name, name, sizeof(cur->name) - 1);
-// I'm forced to do the below as new gcc warnings I can't seem to shut up
-// complain so implement in full to get some silence.
-//   for (d = cur->name, s = name; ; )
-//     {
-//        *d++ = *s;
-//        if ((size_t)(s - name) < (size_t)(sizeof(cur->name) - 1))
-//          {
-//             if (*s) s++;
-//          }
-//        else break;
-//     }
+
+// new gcc's want to warn about this.. it doesn't make sense... but if i
+// implement strncpy inline to get some peace and quiet
+//   strncpy(cur->name, name, sizeof(cur->name) - 1);
+   for (s = name, d = cur->name; ; )
+     {
+        *d = *s;
+        if (*s) s++;
+        if ((d - cur->name) == (sizeof(cur->name) - 1)) break;
+        d++;
+     }
    cur->name[sizeof(cur->name) - 1] = 0;
    cur->value = val;
    cur->index = idx;
