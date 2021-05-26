@@ -1323,7 +1323,7 @@ eina_file_close_from(int fd, int *except_fd)
 # if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__linux__)
    int dirfd;
    Dirent *d;
-   char buf[4096];
+   char buf[4096 + 128];
    int *closes = NULL;
    int num_closes = 0, i, j, clo, num;
    const char *fname;
@@ -1347,7 +1347,7 @@ skip:
              if (do_read)
                {
                   pos = 0;
-                  ret = do_getdents(dirfd, buf, sizeof(buf));
+                  ret = do_getdents(dirfd, buf, 4096);
                   if (ret <= 0) break;
                   do_read = EINA_FALSE;
                }
@@ -1381,7 +1381,7 @@ skip2:
                   if (do_read)
                     {
                        pos = 0;
-                       ret = do_getdents(dirfd, buf, sizeof(buf));
+                       ret = do_getdents(dirfd, buf, 4096);
                        if (ret <= 0) break;
                        do_read = EINA_FALSE;
                     }
