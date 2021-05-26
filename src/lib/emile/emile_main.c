@@ -132,8 +132,6 @@ emile_pbkdf2_sha1(const char *key, unsigned int key_len, const unsigned char *sa
    unsigned int i, j, k;
 
    buf = alloca(salt_len + 4);
-   if (!buf)
-     return EINA_FALSE;
 
    step1 = eina_binbuf_manage_new(buf, salt_len + 4, EINA_TRUE);
    if (!step1)
