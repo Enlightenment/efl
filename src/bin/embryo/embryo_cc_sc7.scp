@@ -29,7 +29,7 @@ int         strexpand(char *dest, unsigned char *source, int maxlen,
 
 #define SCPACK_TABLE sequences_table
 /*-*SCPACK start of pair table, do not change or remove this line */
-unsigned char       sequences_table[][2] = {
+unsigned char       sequences_table[128][2] = {
    {32, 37}, {114, 105}, {112, 129}, {46, 130}, {49, 33}, {128, 132}, {97, 100},
       {46, 97}, {135, 108}, {136, 116}, {111, 134}, {108, 138}, {50, 33}, {115,
 									   104},
