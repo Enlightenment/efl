@@ -271,7 +271,7 @@ elm_main(int argc, char **argv)
      }
    evas = evas_object_evas_get(win);
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_title_set(win, "Elementary Performace Test");
+   elm_win_title_set(win, "Elementary Performance Test");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    bg = evas_object_rectangle_add(evas);
