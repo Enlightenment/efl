@@ -246,6 +246,13 @@ color_classes {
    color_class { name: "/fg/disabled/spinner/text";
       color:  96  96  96 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/progress/busy/1";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/progress/busy/2";
+      color: 255 255 255 128; }
+   color_class { name: "/fg/normal/progress/busy/3";
+      color:  51 153 255 128; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/shelf/translucent";
       color:  64  64  64 128; }
 ///////////////////////////////////////////////////////////////////////////////

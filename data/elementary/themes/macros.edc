@@ -181,17 +181,17 @@
    part { name: "busy"; type: RECT; \
       description { state: "default" 0.0; \
          rel1.to: x; rel2.to: x; \
-         color: 255 255 255 0; visible: 0; } \
+         color: 255 255 255 0; /* no cc */ visible: 0; } \
       description { state: "visible" 0.0; \
          inherit: "default" 0.0; \
-         color: 255 255 255 255; visible: 1; } } \
+         color: 255 255 255 255; /* no cc */ visible: 1; } } \
    part { name: "busy1"; \
       clip_to: "busy"; \
       description { state: "default" 0.0; \
          rel1.to: "busy"; rel2.to: "busy"; \
          aspect: 1.0 1.0; aspect_preference: BOTH; \
          image.normal: "ringa"; \
-         color: 255 255 255 255; \
+         color_class: "/fg/normal/progress/busy/1"; \
          map.on: 1; \
          map.smooth: 1; \
          map.rotation.center: "busy"; \
@@ -214,7 +214,7 @@
          rel1.to: "busy"; rel2.to: "busy"; \
          aspect: 1.0 1.0; aspect_preference: BOTH; \
          image.normal: "ringb"; \
-         color: 255 255 255 128; \
+         color_class: "/fg/normal/progress/busy/2"; \
          map.on: 1; \
          map.smooth: 1; \
          map.rotation.center: "busy"; \
@@ -237,7 +237,7 @@
          rel1.to: "busy"; rel2.to: "busy"; \
          aspect: 1.0 1.0; aspect_preference: BOTH; \
          image.normal: "ringc"; \
-         color: 51 153 255 128; \
+         color_class: "/fg/normal/progress/busy/3"; \
          map.on: 1; \
          map.smooth: 1; \
          map.rotation.center: "busy"; \
