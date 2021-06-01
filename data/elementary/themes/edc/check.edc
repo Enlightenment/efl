@@ -28,6 +28,7 @@ group { name: "e/widgets/check";
       }
       part { name: "indicator"; mouse_events: 0;
          clip_to: "clip";
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
             image.normal: "i-check";

@@ -1,4 +1,3 @@
-
 group { name: "elm/check/base/default";
    script {
       BUTTONMODE_SCRIPT
