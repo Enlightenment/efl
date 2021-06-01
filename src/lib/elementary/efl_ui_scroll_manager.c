@@ -827,6 +827,9 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    if (delta_t > 0.2) delta_t = 0.2;
    mul = 1.0 + (_elm_config->scroll_accel_factor * ((0.2 - delta_t) / 0.2));
    mul = mul * (1.0 + (0.15 * sd->last_wheel_mul));
+   if (d > 10) d = 10;
+   else if (d < -10) d = -10;
+   if (mul > 1000.0) mul = 1000.0;
    d *= mul;
    sd->last_wheel = ev->timestamp;
    sd->last_wheel_mul = mul;
