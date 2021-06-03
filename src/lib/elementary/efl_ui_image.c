@@ -2067,7 +2067,6 @@ _efl_ui_image_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, E
 EOLIAN static Eina_Rect
 _efl_ui_image_efl_access_component_extents_get(const Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
 {
-   int ee_x, ee_y;
    Eina_Rect r;
    Evas_Object *image = elm_image_object_get(obj);
 
@@ -2077,11 +2076,7 @@ _efl_ui_image_efl_access_component_extents_get(const Eo *obj, Efl_Ui_Image_Data 
    evas_object_geometry_get(image, &r.x, &r.y, NULL, NULL);
    if (screen_coords)
      {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(image));
-        if (!ee) return r;
-        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-        r.x += ee_x;
-        r.y += ee_y;
+        r = _efl_access_component_screen_coords_extents_get(obj, r);
      }
    elm_image_object_size_get(obj, &r.w, &r.h);
    return r;

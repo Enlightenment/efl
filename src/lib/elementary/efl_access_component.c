@@ -64,6 +64,21 @@ _efl_access_component_accessible_at_point_get(Eo *obj, void *_pd EINA_UNUSED, Ei
    return ret;
 }
 
+Eina_Rect
+_efl_access_component_screen_coords_extents_get(const Eo *obj, Eina_Rect r)
+{
+   Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+   if (ee)
+     {
+        int ee_x = 0, ee_y = 0;
+        ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+        r.x += ee_x;
+        r.y += ee_y;
+     }
+
+   return r;
+}
+
 EOLIAN static Eina_Rect
 _efl_access_component_extents_get(const Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
 {
@@ -72,14 +87,7 @@ _efl_access_component_extents_get(const Eo *obj, void *_pd EINA_UNUSED, Eina_Boo
    r = efl_gfx_entity_geometry_get(obj);
    if (screen_coords)
      {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        if (ee)
-          {
-             int ee_x = 0, ee_y = 0;
-             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-             r.x += ee_x;
-             r.y += ee_y;
-          }
+        r = _efl_access_component_screen_coords_extents_get(obj, r);
      }
    return r;
 }

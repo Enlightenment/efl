@@ -848,6 +848,7 @@ EOAPI void efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Object *
 
 
 void _efl_access_shutdown(void);
+Eina_Rect _efl_access_component_screen_coords_extents_get(const Eo *obj, Eina_Rect r);
 
 /* Combobox: no proper support for Efl.Part API yet. */
 void        _elm_combobox_part_text_set(Eo *obj, const char * part, const char *label);

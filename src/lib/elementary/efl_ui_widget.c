@@ -5107,20 +5107,13 @@ EOLIAN static Eina_Rect
 _elm_widget_item_efl_access_component_extents_get(const Eo *obj EINA_UNUSED, Elm_Widget_Item_Data *sd EINA_UNUSED, Eina_Bool screen_coords)
 {
    Eina_Rect r = EINA_RECT(-1, -1, -1, -1);
-   int ee_x, ee_y;
 
    if (!sd->view) return r;
 
    r = efl_gfx_entity_geometry_get(sd->view);
    if (screen_coords)
      {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(sd->view));
-        if (ee)
-          {
-             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-             r.x += ee_x;
-             r.y += ee_y;
-          }
+        r = _efl_access_component_screen_coords_extents_get(obj, r);
      }
    return r;
 }
