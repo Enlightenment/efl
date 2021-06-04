@@ -80,6 +80,9 @@ group { name: "elm/border/base/default";
             rel.to: "_sh1";
             color_class: "/shadow/normal/border";
          }
+         description { state: "hidden"; inherit;
+            visible: 0;
+         }
          description { state: "focused";
             inherit: "default";
             color_class: "/shadow/selected/border";
