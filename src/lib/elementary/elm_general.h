@@ -491,6 +491,28 @@ typedef enum
   ELM_FOCUS_REGION_SHOW_ITEM /**< As an item. */
 } Elm_Focus_Region_Show_Mode;
 
+/** Possible values for the atspi bridge state.
+ *
+ * @since 1.26
+ *
+ * @ingroup Elm_Atspi_Bridge
+ */
+typedef enum
+{
+  ELM_ATSPI_BRIDGE_CONNECTED = 0, /**< when atspi bridge is ready */
+  ELM_ATSPI_BRIDGE_DISCONNECTED, /**< when atspi bridge is shutdown */
+} Elm_Atspi_Bridge_State;
+
+/** Data on event when atspi bridge state is changed
+ *
+ * @since 1.26
+ *
+ * @ingroup Elm_Atspi_Bridge
+ */
+typedef struct _Elm_Event_Atspi_Bridge_State_Changed
+{
+  Elm_Atspi_Bridge_State state;
+} Elm_Event_Atspi_Bridge_State_Changed;
 
 /**************************************************************************/
 EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;
@@ -519,6 +541,12 @@ EAPI extern int ELM_EVENT_PROCESS_BACKGROUND;
  * @since 1.12
  */
 EAPI extern int ELM_EVENT_PROCESS_FOREGROUND;
+
+/**
+ * Emitted when atspi bridge state is changed.
+ * @since 1.26
+ */
+EAPI extern int ELM_EVENT_ATSPI_BRIDGE_STATE_CHANGED;
 
 typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info); /**< Function prototype definition for callbacks on input events happening on Elementary widgets. @a data will receive the user data pointer passed to elm_object_event_callback_add(). @a src will be a pointer to the widget on which the input event took place. @a type will get the type of this event and @a event_info, the struct with details on this event. */
 

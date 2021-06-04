@@ -118,6 +118,8 @@ struct collection_match_rule {
 static Eo *_instance;
 static int _init_count = 0;
 
+EAPI int ELM_EVENT_ATSPI_BRIDGE_STATE_CHANGED = -1;
+
 // Object Event handlers
 static void _state_changed_signal_send(void *data, const Efl_Event *event);
 static void _bounds_changed_signal_send(void *data, const Efl_Event *event);
@@ -4305,6 +4307,7 @@ end:
 static void
 _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
+   Elm_Event_Atspi_Bridge_State_Changed *e;
    const char *event, *bus;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
    pd->pending_requests = eina_list_remove(pd->pending_requests, pending);
@@ -4335,7 +4338,16 @@ _registered_listeners_get(void *data, const Eldbus_Message *msg, Eldbus_Pending 
      }
 
    if (!pd->connected)
-      efl_event_callback_legacy_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
+     {
+        efl_event_callback_legacy_call(data, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, NULL);
+        e = calloc(1, sizeof(Elm_Event_Atspi_Bridge_State_Changed));
+        if (e)
+          {
+             e->state = ELM_ATSPI_BRIDGE_CONNECTED;
+             ecore_event_add(ELM_EVENT_ATSPI_BRIDGE_STATE_CHANGED, e, NULL, NULL);
+          }
+     }
+
    pd->connected = EINA_TRUE;
 }
 
@@ -4810,6 +4822,7 @@ _interfaces_unregister(Eo *bridge)
 static void
 _a11y_connection_shutdown(Eo *bridge)
 {
+   Elm_Event_Atspi_Bridge_State_Changed *e;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
    Eldbus_Pending *pending;
 
@@ -4852,6 +4865,13 @@ _a11y_connection_shutdown(Eo *bridge)
    pd->event_hdlr = NULL;
 
    efl_event_callback_legacy_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
+   e = calloc(1, sizeof(Elm_Event_Atspi_Bridge_State_Changed));
+   if (e)
+     {
+        e->state = ELM_ATSPI_BRIDGE_DISCONNECTED;
+        ecore_event_add(ELM_EVENT_ATSPI_BRIDGE_STATE_CHANGED, e, NULL, NULL);
+     }
+
    pd->connected = EINA_FALSE;
 }
 

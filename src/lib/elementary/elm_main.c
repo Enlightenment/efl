@@ -438,6 +438,7 @@ elm_init(int argc, char **argv)
      ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
 
    ELM_CNP_EVENT_SELECTION_CHANGED = ecore_event_type_new();
+   ELM_EVENT_ATSPI_BRIDGE_STATE_CHANGED = ecore_event_type_new();
 
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
