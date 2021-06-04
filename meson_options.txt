@@ -376,3 +376,9 @@ option('efl-one',
   value : false,
   description : 'Build special set of .so´s as a single .so'
 )
+
+option('max-fd-size',
+  type : 'string',
+  value : '8192',
+  description : 'This is the maximim set of fds and thus maximum fd value allowed +1 in the ecore main loop handler'
+)

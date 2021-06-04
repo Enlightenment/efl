@@ -4,6 +4,19 @@
 
 #define EINA_SLSTR_INTERNAL
 
+// as per:
+//
+// https://forums.freebsd.org/threads/solved-enlightenment-application-menu-icons-missing-due-to-efreetd-crashing.80743/
+//
+// from ethorns - can't find more user info...
+//
+// normal fd set size (maximum fd num allowed) is limited to 1024. raise this
+// to something more useful than the default 1024 ... this doesn't affect
+// linux as it will use epoll. beware that this also will be a performance
+// hit - the higher this number the more it costs to zero and re-fill the fd
+// set every time we go into select.
+#define FD_SETSIZE EFL_MAX_FD_SIZE
+
 #ifdef _WIN32
 # ifndef USER_TIMER_MINIMUM
 #  define USER_TIMER_MINIMUM 0x0a
@@ -1768,6 +1781,25 @@ _ecore_main_prepare_handlers(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
      }
 }
 
+static void
+_ecore_main_select_fd_too_big_check(int fd)
+{
+   if (fd < FD_SETSIZE) return;
+   int newsize = fd + 1 - 1;
+   newsize |= newsize >> 1;
+   newsize |= newsize >> 2;
+   newsize |= newsize >> 4;
+   newsize |= newsize >> 8;
+   newsize |= newsize >> 16;
+   newsize++;
+   fprintf(stderr,
+           "ERROR: ecore main loop, fd %i >= max possible fd %i.   "
+           "If this continues to be an issue with lots of high value fds "
+           "being needed, perhaps consider recompiling EFL with the option:   "
+           "-Dmax-fd-size=%i\n"
+           , fd, FD_SETSIZE, newsize);
+}
+
 #if !defined(USE_G_MAIN_LOOP)
 static int
 _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
@@ -1820,6 +1852,7 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
           {
              if (!fdh->delete_me)
                {
+                  _ecore_main_select_fd_too_big_check(fdh->fd);
                   if ((fdh->flags & ECORE_FD_READ) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
                        FD_SET(fdh->fd, &rfds);
@@ -1851,6 +1884,7 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
      {
         if (!fdh->delete_me)
           {
+             _ecore_main_select_fd_too_big_check(fdh->fd);
              if ((fdh->flags & ECORE_FD_READ) || (fdh->flags & ECORE_FD_ALWAYS))
                {
                   FD_SET(fdh->fd, &rfds);

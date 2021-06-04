@@ -637,6 +637,8 @@ efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
 # FIXME placeholder
 efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
 
+config_h.set('EFL_MAX_FD_SIZE', get_option('max-fd-size'))
+
 configure_file(
   output: 'config.h',
   configuration: config_h
