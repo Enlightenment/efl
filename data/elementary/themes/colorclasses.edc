@@ -253,6 +253,26 @@ color_classes {
    color_class { name: "/fg/normal/progress/busy/3";
       color:  51 153 255 128; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/check/base";
+      color:  48  48  48 255; }
+   color_class { name: "/bg/pressed/check/base";
+      color:  32  32  32 255; }
+   color_class { name: "/bg/disabled/check/base";
+      color:  56  56  56 255; }
+   color_class { name: "/fg/selected/check/check";
+      color: 160 160 160 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/toggle/base";
+      color:  48  48  48 255; }
+   color_class { name: "/bg/pressed/toggle/base";
+      color:  32  32  32 255; }
+   color_class { name: "/bg/disabled/toggle/base";
+      color:  56  56  56 255; }
+   color_class { name: "/fg/normal/toggle/text/on";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/toggle/button";
+      color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/shelf/translucent";
       color:  64  64  64 128; }
 ///////////////////////////////////////////////////////////////////////////////

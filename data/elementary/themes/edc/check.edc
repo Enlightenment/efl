@@ -3,27 +3,28 @@ group { name: "e/widgets/check";
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
+            color_class: "/bg/normal/check/base";
+            align: 0.0 0.5;
             min: 13 13;
             max: 13 13;
             rel1.offset: 4 4;
             rel2.offset: 4 -5;
             rel2.relative: 0.0 1.0;
-            align: 0.0 0.5;
-            color: 0 0 0 64;
             offscale;
             fixed: 1 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 16;
+            color_class: "/bg/disabled/check/base";
          }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
+            rel.to: "base";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 153 153 153 255;
+            color: 255 255 255 153; // no cc
          }
       }
       part { name: "indicator"; mouse_events: 0;
@@ -35,15 +36,17 @@ group { name: "e/widgets/check";
             min: 15 15;
             max: 15 15;
             visible: 0;
-            color: 160 160 160 255;
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
+            color_class: "/fg/normal/check/check";
+            fixed: 1 1;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/check/check";
+            visible: 1;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/check/check";
             visible: 1;
          }
       }
@@ -54,7 +57,7 @@ group { name: "e/widgets/check";
             rel1.to_x: "base";
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/check/text";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -66,17 +69,17 @@ group { name: "e/widgets/check";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/check/text";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/check/text";
          }
       }
       part { name: "event"; type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -148,7 +151,7 @@ group { name: "e/widgets/check_icon";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/check/text";
          }
       }
    }
