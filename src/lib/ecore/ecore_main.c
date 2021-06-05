@@ -8,7 +8,7 @@
 //
 // https://forums.freebsd.org/threads/solved-enlightenment-application-menu-icons-missing-due-to-efreetd-crashing.80743/
 //
-// from ethorns - can't find more user info...
+// from Euan Thoms (ethomas) <euan@potensol.com>
 //
 // normal fd set size (maximum fd num allowed) is limited to 1024. raise this
 // to something more useful than the default 1024 ... this doesn't affect
