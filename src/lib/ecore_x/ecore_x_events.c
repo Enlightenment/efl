@@ -286,6 +286,7 @@ _ecore_mouse_move(unsigned int timestamp,
 
    _ecore_x_last_event_mouse_move_event = event;
    _ecore_x_last_event_mouse_move_event_e = e;
+   _ecore_x_last_event_mouse_move = EINA_TRUE;
 }
 
 static void
