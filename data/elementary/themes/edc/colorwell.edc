@@ -6,7 +6,7 @@ group { name: "e/widgets/color_well";
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg-dark/normal/color";
             min: 18 18;
             offscale;
          }
@@ -18,9 +18,8 @@ group { name: "e/widgets/color_well";
               rel.to: "bg";
               rel1.offset: 2 2;
               rel2.offset: -3 -3;
-              image.normal:
-              "diagonal_stripes.png";
-              color: 255 255 255 64;
+              image.normal: "diagonal_stripes.png";
+              color_class: "/bg-dark-alt/normal/color";
               TILED_PATTERN(240, 240)
               offscale;
            }
@@ -31,7 +30,7 @@ group { name: "e/widgets/color_well";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW; mouse_events: 0;
