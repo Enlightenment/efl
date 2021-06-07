@@ -304,6 +304,29 @@ color_classes {
       color:  51 153 255 255; }
    color_class { name: "/fg/normal/gadgets/bluez/scan";
       color: 255 153  51 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/gadgets/clock/digital/separator";
+      color: 160 160 160 255; }
+   color_class { name: "/bg/normal/gadgets/clock/analog/base";
+      color:  32  32  32 255; }
+   color_class { name: "/fg/normal/gadgets/clock/analog/hands/secs";
+      color: 255  64  32 255; }
+   color_class { name: "/fg/normal/gadgets/clock/analog/hands/mins";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/clock/analog/hands/hours";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/clock/cal/day/name/weekend";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/clock/cal/day/date/weekend";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/clock/cal/day/date/hidden";
+      color:  40  40  40 255; }
+   color_class { name: "/bg/normal/gadgets/clock/cal/day/date/today";
+      color:   0   0   0  64; }
+   color_class { name: "/fg/normal/gadgets/clock/cal/day/date/today";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/clock/cal/daydate-sep";
+      color: 255 255 255  32; }
 
 
 
