@@ -7,7 +7,7 @@ group { name: "e/comp/preview";
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/comp/preview/text";
             text { font: FNBD; size: 10;
                text_class: "fileman_icon";
                align: 0.5 0.5;
@@ -51,36 +51,36 @@ group { name: "e/comp/screen/overlay/default";
             rel2.relative: 2.0 2.0;
             image.normal: "screen_circular_shadow.png";
             fill.smooth: 0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
       part { name: "blanker"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
             visible: 1;
          }
       }
       part { name: "suspender"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
             visible: 1;
          }
       }
@@ -212,12 +212,12 @@ group { name: "e/comp/frame/default";
             rel1.offset: -9999 -9999;
             rel2.relative: 2.0   2.0;
             rel2.offset: 9999  9999;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -231,7 +231,18 @@ group { name: "e/comp/frame/default";
             visible: 0;
          }
       }
-      WIN_SHAD("e.swallow.content", "shadow", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
+      part { name: "focus-shadow"; type: RECT;
+         clip_to: "shadow";
+         description { state: "default" 0.0;
+            rel.to: "clipper";
+            color_class: "/shadow/normal/comp/win";
+         }
+         description { state: "focused" 0.0;
+            inherit;
+            color_class: "/shadow/selected/comp/win";
+         }
+      }
+      WIN_SHAD("e.swallow.content", "focus-shadow", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
       part { name: "shower"; type: SPACER;
          description { state: "default" 0.0;
             rel1.relative: 0.05 0.05;
@@ -249,10 +260,11 @@ group { name: "e/comp/frame/default";
          mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "clipper";
+            color_class: "/bg/normal/comp/win";
          }
          description { state: "focused" 0.0;
             inherit;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/comp/win";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
@@ -304,30 +316,17 @@ group { name: "e/comp/frame/default";
              action: SIGNAL_EMIT "e,action,hide,done" "e";
          }
       }
-/*
-      program {
-         name: "focus_on";
-         signal: "e,state,focused"; source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.1 USE_DURATION_FACTOR 1;
-         targets: "glow" "focus-clipper";
-         sequence {
-             action: STATE_SET "default" 0.0;
-             transition: SINUSOIDAL 0.4 USE_DURATION_FACTOR 1;
-             target: "glow";
-         }
+         targets: "focus-clipper" "focus-shadow";
       }
-      program {
-         name: "focus_off";
-         signal: "e,state,unfocused"; source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.1 USE_DURATION_FACTOR 1;
-         target: "focus-clipper";
-         sequence {
-             action: STATE_SET "default" 0.0;
-             target: "glow";
-         }
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         targets: "focus-clipper" "focus-shadow";
       }
+/*
       program { name: "urgent1";
          signal: "e,state,urgent"; source: "e";
          action: STATE_SET "focused" 0.0;
@@ -470,7 +469,12 @@ group { name: "e/comp/frame/menu";
    inherit: "e/comp/frame/popup";
    images.image: "win_shad_angle.png" COMP;
    parts {
-      WIN_SHAD("e.swallow.content", "shadow", "win_shad_angle.png", 21, 21, 14, 28, 0.5)
+      part { name: "focus-shadow"; type: RECT;
+         description { state: "default" 0.0;
+            color_class: "/shadow/selected/comp/win";
+         }
+      }
+      WIN_SHAD("e.swallow.content", "focus-shadow", "win_shad_angle.png", 21, 21, 14, 28, 0.5)
       part { name: "shower";
          description { state: "default" 0.0;
             rel1.relative: 0.05 0.0;
@@ -509,17 +513,17 @@ group { name: "e/comp/frame/fullscreen";
             rel1.offset: -9999 -9999;
             rel2.relative: 2.0   2.0;
             rel2.offset: 9999  9999;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible1" 0.0;
             inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
          description { state: "visible2" 0.0;
             inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -534,25 +538,25 @@ group { name: "e/comp/frame/fullscreen";
             rel2.relative: 2.0 2.0;
             image.normal: "screen_circular_shadow.png";
             fill.smooth: 0;
-            color: 255 255 255 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
+            color: 0 0 0 255; // no cc
             visible: 1;
          }
       }
       part { name: "scr_shade"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
             visible: 1;
          }
       }
@@ -577,25 +581,23 @@ group { name: "e/comp/frame/fullscreen";
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "shower";
-            rel2.to: "shower";
+            rel.to: "shower";
          }
       }
       part { name: "fader"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
-            color: 255 255 255 0;
+            rel.to: "e.swallow.content";
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible1" 0.0;
             inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
          description { state: "visible2" 0.0;
             inherit;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
       }

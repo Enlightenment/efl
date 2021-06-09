@@ -36,6 +36,8 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/shadow";
       color:   0   0   0 128; }
+   color_class { name: "/shadow/selected";
+      color:   0   0   0 255; }
    color_class { name: "/shadow/pressed";
       color:   0   0   0 255; }
    color_class { name: "/shadow/disabled";
@@ -63,6 +65,11 @@ color_classes {
       color:   0   0   0 255; }
    color_class { name: "/bg/selected/border/outline";
       color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/comp/win";
+      color: 255 255 255 255; }
+   color_class { name: "/bg/selected/comp/win";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/separator";
       color:  80  80  80 255; }
