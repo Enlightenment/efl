@@ -41,15 +41,15 @@ group { name: "e/modules/connman/main";
             rel1.relative: (50/160) (15/160);
             rel2.relative: (110/160) (145/160);
             image.normal: "eth-base.png";
-            color: 160 160 160 128;
+            color_class: "/fg/disabled/gadgets/connman/eth/cable";
          }
          description { state: "connected" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/eth/cable";
          }
          description { state: "online" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/gadgets/connman/eth/cable";
          }
       }
       part { name: "eth"; mouse_events: 0;
@@ -58,15 +58,15 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "eth-base";
             image.normal: "eth-top.png";
-            color: 160 160 160 128;
+            color_class: "/fg/disabled/gadgets/connman/eth/connector";
          }
          description { state: "connected" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/eth/connector";
          }
          description { state: "online" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/selected/gadgets/connman/eth/connector";
          }
       }
 ///////////////////////
@@ -74,15 +74,15 @@ group { name: "e/modules/connman/main";
          clip_to: "clip_wifi";
          description { state: "default" 0.0;
             image.normal: "wifi-1.png";
-            color: 160 160 160 255;
+            color_class: "/fg/disabled/gadgets/connman/wifi/connected";
          }
          description { state: "connected" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/wifi/connected";
          }
          description { state: "online" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/gadgets/connman/wifi/connected";
          }
       }
       part { name: "wifi"; mouse_events: 0;
@@ -90,27 +90,28 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "wifi-base";
             image.normal: "wifi-1.png";
-            color: 0 0 0 0;
+            color_class: "/fg/normal/gadgets/connman/wifi/signal";
+            color: 0 0 0 0; // no cc
          }
          description { state: "default" 0.25;
             inherit: "default" 0.0;
             image.normal: "wifi-2.png";
-            color: 160 160 160 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "default" 0.5;
             inherit: "default" 0.0;
             image.normal: "wifi-3.png";
-            color: 160 160 160 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "default" 0.75;
             inherit: "default" 0.0;
             image.normal: "wifi-4.png";
-            color: 160 160 160 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "default" 1.0;
             inherit: "default" 0.0;
             image.normal: "wifi-5.png";
-            color: 160 160 160 255;
+            color: 255 255 255 255; // no cc
          }
       }
 ///////////////////////
@@ -118,7 +119,7 @@ group { name: "e/modules/connman/main";
          clip_to: "clip_bt";
          description { state: "default" 0.0;
             image.normal: "bt-base.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/bt/base";
          }
       }
       part { name: "bt_1"; mouse_events: 0;
@@ -126,12 +127,12 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "bt_base";
             image.normal: "bt-1.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/bt/signal";
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 128;
+            color: 255 255 255 128; // no cc
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -144,12 +145,12 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "bt_base";
             image.normal: "bt-2.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/bt/signal";
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 128;
+            color: 255 255 255 128; // no cc
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -162,7 +163,7 @@ group { name: "e/modules/connman/main";
          clip_to: "clip_cell";
          description { state: "default" 0.0;
             image.normal: "cell-base.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/cell/base";
          }
       }
       part { name: "cell_1"; mouse_events: 0;
@@ -170,12 +171,12 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "cell_base";
             image.normal: "cell-1.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/cell/signal";
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 128;
+            color: 255 255 255 128; // no cc
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -188,12 +189,12 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "cell_base";
             image.normal: "cell-2.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/cell/signal";
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 128;
+            color: 255 255 255 128; // no cc
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -206,12 +207,12 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "cell_base";
             image.normal: "cell-3.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/cell/signal";
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 128;
+            color: 255 255 255 128; // no cc
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -224,12 +225,12 @@ group { name: "e/modules/connman/main";
          description { state: "default" 0.0;
             rel.to: "cell_base";
             image.normal: "cell-4.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/cell/signal";
             visible: 0;
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 128;
+            color: 255 255 255 128; // no cc
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -578,25 +579,25 @@ group { name: "e/modules/connman/end";
          description { state: "default" 0.0;
             image.normal: "i-unlock";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/security/none";
             visible: 0;
          }
          description { state: "none" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-unlock";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/security/none";
             visible: 1;
          }
          description { state: "wep" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-lock";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/security/secure/low";
             visible: 1;
          }
          description { state: "psk" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-lock-double";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
             visible: 1;
          }
       }

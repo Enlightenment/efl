@@ -280,12 +280,12 @@ group { name: "e/comp/effects/auto/zoom";
             rel1.offset: -20 -20;
             rel2.to: "mover";
             rel2.offset: 20 20;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "hidden";
             rel1.to: "mover";
             rel2.to: "mover";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "e.swallow.content"; clip_to: "clip";
@@ -338,11 +338,11 @@ group { name: "e/comp/effects/auto/blend";
             rel1.offset: -20 -20;
             rel2.to: "e.swallow.content";
             rel2.offset: 20 20;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "hidden";
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;

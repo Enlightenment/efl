@@ -305,6 +305,37 @@ color_classes {
    color_class { name: "/fg/normal/gadgets/battery/text/time";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/disabled/gadgets/connman/eth/cable";
+      color: 160 160 160 128; }
+   color_class { name: "/fg/normal/gadgets/connman/eth/cable";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/selected/gadgets/connman/eth/cable";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/gadgets/connman/eth/connector";
+      color: 160 160 160 128; }
+   color_class { name: "/fg/normal/gadgets/connman/eth/connector";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/selected/gadgets/connman/eth/connector";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/disabled/gadgets/connman/wifi/connected";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/connman/wifi/connected";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/selected/gadgets/connman/wifi/connected";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/connman/wifi/signal";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/connman/bt/base";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/connman/bt/signal";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/connman/cell/base";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/connman/cell/signal";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/gadgets/connman/security";
+      color: 160 160 160 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/gadgets/bluez/off";
       color: 160 160 160 128; }
    color_class { name: "/fg/normal/gadgets/bluez/visible";
