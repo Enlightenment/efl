@@ -516,29 +516,29 @@ group { name: "e/modules/clock/digital";
 
 group { name: "e/modules/clock/main";
    set { name: "clock_base";
-      image { image: "clock_base-040.png" COMP; size: 81 81 99999 99999; }
+      image { image: "clock_base-160.png" COMP; size: 81 81 99999 99999; }
       image { image: "clock_base-080.png" COMP; size: 41 41 80 80; }
-      image { image: "clock_base-160.png" COMP; size: 0 0 40 40; }
+      image { image: "clock_base-040.png" COMP; size: 0 0 40 40; }
    }
    set { name: "clock_base_digits";
-      image { image: "clock_base_digits-040.png" COMP; size: 81 81 99999 99999; }
+      image { image: "clock_base_digits-160.png" COMP; size: 81 81 99999 99999; }
       image { image: "clock_base_digits-080.png" COMP; size: 41 41 80 80; }
-      image { image: "clock_base_digits-160.png" COMP; size: 0 0 40 40; }
+      image { image: "clock_base_digits-040.png" COMP; size: 0 0 40 40; }
    }
    set { name: "clock_hand_secs";
-      image { image: "clock_hand_secs-040.png" COMP; size: 81 81 99999 99999; }
+      image { image: "clock_hand_secs-160.png" COMP; size: 81 81 99999 99999; }
       image { image: "clock_hand_secs-080.png" COMP; size: 41 41 80 80; }
-      image { image: "clock_hand_secs-160.png" COMP; size: 0 0 40 40; }
+      image { image: "clock_hand_secs-040.png" COMP; size: 0 0 40 40; }
    }
    set { name: "clock_hand_mins";
-      image { image: "clock_hand_mins-040.png" COMP; size: 81 81 99999 99999; }
+      image { image: "clock_hand_mins-160.png" COMP; size: 81 81 99999 99999; }
       image { image: "clock_hand_mins-080.png" COMP; size: 41 41 80 80; }
-      image { image: "clock_hand_mins-160.png" COMP; size: 0 0 40 40; }
+      image { image: "clock_hand_mins-040.png" COMP; size: 0 0 40 40; }
    }
    set { name: "clock_hand_hours";
-      image { image: "clock_hand_hours-040.png" COMP; size: 81 81 99999 99999; }
+      image { image: "clock_hand_hours-160.png" COMP; size: 81 81 99999 99999; }
       image { image: "clock_hand_hours-080.png" COMP; size: 41 41 80 80; }
-      image { image: "clock_hand_hours-160.png" COMP; size: 0 0 40 40; }
+      image { image: "clock_hand_hours-040.png" COMP; size: 0 0 40 40; }
    }
    min: 16 16;
    max: 160 160;

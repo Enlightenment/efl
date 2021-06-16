@@ -365,6 +365,19 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/gadgets/clock/cal/daydate-sep";
       color: 255 255 255  32; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/gadgets/cpufreq/base";
+      color:  32  32  32 255; }
+   color_class { name: "/bg/normal/gadgets/cpufreq/detail";
+      color:  56  56  56 255; }
+   color_class { name: "/fg/normal/gadgets/cpufreq/text";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/cpufreq/hands/min";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/cpufreq/hands/max";
+      color: 255  51 153 255; }
+   color_class { name: "/fg/normal/gadgets/cpufreq/hands/average";
+      color: 255 153  51 255; }
 
 
 
