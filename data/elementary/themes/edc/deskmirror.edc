@@ -59,7 +59,7 @@ group { name: "e/deskmirror/frame/default";
             rel2.to: "bottom";
             rel2.offset: 4 4;
             fill.smooth: 0;
-            color: 255 255 255 128;
+            color_class: "/shadow/normal/border";
          }
          description { state: "off";
             inherit: "default" 0.0;
@@ -87,27 +87,25 @@ group { name: "e/deskmirror/frame/default";
 
       part { name: "top"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "top_spacer";
-            rel2.to: "top_spacer";
-            color: 64 64 64 255;
+            rel.to: "top_spacer";
+            color_class: "/bg/normal/titlebar";
             min: 0 1;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/selected/titlebar";
          }
       }
 
       part { name: "e.text.title"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "spacer";
             rel1.offset: 1 3;
-            rel1.to: "spacer";
             rel2.relative: 1.0 0.0;
             rel2.offset: -2 3;
-            rel2.to: "spacer";
             align: 0.5 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/titlebar";
             text { font: FNBD; size: 10;
                text_class: "title_bar";
                align: 0.5 0.0;
@@ -118,15 +116,14 @@ group { name: "e/deskmirror/frame/default";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/titlebar";
          }
       }
 
       part { name: "bottom"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "bottom_size";
-            rel2.to: "bottom_size";
-            color: 64 64 64 255;
+            rel.to: "bottom_size";
+            color_class: "/bg/normal/border";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -138,16 +135,15 @@ group { name: "e/deskmirror/frame/default";
       part { name: "clone"; type: PROXY; mouse_events: 0;
          description { state: "default";
             source: "e.swallow.client";
-            rel1.to: "e.swallow.client";
-            rel2.to: "e.swallow.client";
+            rel.to: "e.swallow.client";
             visible: 0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             proxy.source_clip: 0;
          }
          description { state: "urgent1";
             inherit: "default" 0.0;
             visible: 1;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             proxy.source_clip: 0;
          }
          description { state: "urgent2" 0.0;
@@ -155,14 +151,13 @@ group { name: "e/deskmirror/frame/default";
             visible: 1;
             rel1.relative: -2.0  -2.0;
             rel2.relative: 3.0  3.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             proxy.source_clip: 0;
          }
       }
    }
    programs {
-      program { name: "urgent";
-         signal: "e,state,urgent"; source: "e";
+      program { signal: "e,state,urgent"; source: "e";
          action: ACTION_STOP;
          target: "go_big";
          target: "go_big2";
@@ -179,8 +174,7 @@ group { name: "e/deskmirror/frame/default";
          target: "clone";
          after: "go_big";
       }
-      program { name: "not_urgent";
-         signal: "e,state,not_urgent"; source: "e";
+      program { signal: "e,state,not_urgent"; source: "e";
          action: ACTION_STOP;
          target: "go_big";
          target: "go_big2";
@@ -191,51 +185,39 @@ group { name: "e/deskmirror/frame/default";
          transition: LINEAR 0.5 USE_DURATION_FACTOR 1;
          target: "clone";
       }
-      program { name: "shon";
-         signal: "e,state,shadow,on"; source: "e";
+      program { signal: "e,state,shadow,on"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "shadow";
       }
-      program { name: "shoff";
-         signal: "e,state,shadow,off"; source: "e";
+      program { signal: "e,state,shadow,off"; source: "e";
          action: STATE_SET "off" 0.0;
          target: "shadow";
       }
-      program {
-         name: "focus";
-         signal: "e,state,focused"; source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
          target: "e.text.title";
          target: "top";
       }
-      program {
-         name: "unfocus";
-         signal: "e,state,unfocused"; source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.title";
          target: "top";
       }
-      program {
-         name: "shade";
-         signal: "e,state,shaded"; source: "e";
+      program { signal: "e,state,shaded"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "bottom";
       }
-      program {
-         signal: "e,state,maximize*"; source: "e";
+      program { signal: "e,state,maximize*"; source: "e";
          action: STATE_SET "hidden" 0.0;
          target: "bottom";
       }
-      program {
-         signal: "e,state,unmaximize*"; source: "e";
+      program { signal: "e,state,unmaximize*"; source: "e";
          after: "unshade";
       }
-      program {
-         signal: "e,state,unshaded"; source: "e";
+      program { signal: "e,state,unshaded"; source: "e";
          after: "unshade";
       }
-      program {
-         name: "unshade";
+      program { name: "unshade";
          signal: "e,state,unshading"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "bottom";
@@ -250,14 +232,12 @@ group { name: "e/deskmirror/frame/default";
          transition: DECELERATE 0.2 CURRENT USE_DURATION_FACTOR 1;
          target: "spacer";
       }
-      program {
-         signal: "e,action,uniconify"; source: "e";
+      program { signal: "e,action,uniconify"; source: "e";
          action: ACTION_STOP;
          target: "iconify";
          after: "uniconify";
       }
-      program {
-         signal: "e,action,iconify"; source: "e";
+      program { signal: "e,action,iconify"; source: "e";
          action: ACTION_STOP;
          target: "uniconify";
          after: "iconify";
@@ -275,7 +255,7 @@ group { name: "e/deskmirror/frame/noresize";
       }
       part { name: "bottom"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/border";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -1;
             rel2.relative: 1.0 1.0;
@@ -298,7 +278,7 @@ group { name: "e/deskmirror/frame/noresize_dialog";
       }
       part { name: "bottom"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/border";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -1;
             rel2.relative: 1.0 1.0;
@@ -315,17 +295,16 @@ group { name: "e/deskmirror/frame/pixel";
    parts {
       part { name: "client_clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.client";
-            rel2.to: "e.swallow.client";
+            rel.to: "e.swallow.client";
          }
       }
       part { name: "frame"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 255;
+            color_class: "/bg/normal/border/outline";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/border/outline";
          }
       }
       part { name: "e.swallow.client"; type: SWALLOW;
@@ -337,15 +316,11 @@ group { name: "e/deskmirror/frame/pixel";
       }
    }
    programs {
-      program {
-         name: "focus";
-         signal: "e,state,focused"; source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
          target: "frame";
       }
-      program {
-         name: "unfocus";
-         signal: "e,state,unfocused"; source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "frame";
       }
@@ -356,8 +331,7 @@ group { name: "e/deskmirror/frame/tiling";
    parts {
       part { name: "client_clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.client";
-            rel2.to: "e.swallow.client";
+            rel.to: "e.swallow.client";
          }
       }
       part { name: "frame"; type: RECT;
@@ -365,10 +339,12 @@ group { name: "e/deskmirror/frame/tiling";
             color: 0 0 0 0;
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
+            color_class: "/bg/selected/border/outline";
+            color: 255 255 255 0; // no cc
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "e.swallow.client"; type: SWALLOW;
@@ -378,15 +354,11 @@ group { name: "e/deskmirror/frame/tiling";
       }
    }
    programs {
-      program {
-         name: "focus";
-         signal: "e,state,focused"; source: "e";
+      program { signal: "e,state,focused"; source: "e";
          action: STATE_SET "focused" 0.0;
          target: "frame";
       }
-      program {
-         name: "unfocus";
-         signal: "e,state,unfocused"; source: "e";
+      program { signal: "e,state,unfocused"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "frame";
       }
@@ -411,17 +383,17 @@ group { "e/deskmirror/frame/borderless";
          desc {
             source: "e.swallow.client";
             hid;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
          desc { "urgent1"; inherit: "default";
             vis;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "urgent2"; inherit: "default";
             vis;
             rel1.relative: -2.0  -2.0;
             rel2.relative: 3.0  3.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       program { name: "iconify";
@@ -434,20 +406,17 @@ group { "e/deskmirror/frame/borderless";
          transition: DECELERATE 0.2 CURRENT USE_DURATION_FACTOR 1;
          target: "spacer";
       }
-      program {
-         signal: "e,action,uniconify"; source: "e";
+      program { signal: "e,action,uniconify"; source: "e";
          action: ACTION_STOP;
          target: "iconify";
          after: "uniconify";
       }
-      program {
-         signal: "e,action,iconify"; source: "e";
+      program { signal: "e,action,iconify"; source: "e";
          action: ACTION_STOP;
          target: "uniconify";
          after: "iconify";
       }
-      program { name: "urgent";
-         signal: "e,state,urgent"; source: "e";
+      program { signal: "e,state,urgent"; source: "e";
          action: ACTION_STOP;
          target: "go_big";
          target: "go_big2";
@@ -464,8 +433,7 @@ group { "e/deskmirror/frame/borderless";
          target: "clone";
          after: "go_big";
       }
-      program { name: "not_urgent";
-         signal: "e,state,not_urgent"; source: "e";
+      program { signal: "e,state,not_urgent"; source: "e";
          action: ACTION_STOP;
          target: "go_big";
          target: "go_big2";
