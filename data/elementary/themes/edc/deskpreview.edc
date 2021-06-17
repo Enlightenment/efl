@@ -4,7 +4,7 @@ group { name: "e/widgets/deskpreview/desk";
       part { name: "e.event.menu"; type: RECT;
          insert_after: "e.swallow.content";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
