@@ -3,18 +3,18 @@ group { name: "e/desklock/background";
    parts {
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
       part { name: "bg"; type: RECT;
          clip_to: "clip";
          description { state: "default" 0.0;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/desklock/background";
          }
       }
       program { signal: "show"; source: "";
@@ -78,6 +78,7 @@ group { name: "e/desklock/login_box";
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
             FIXED_SIZE(150, 150)
+            color_class: "/fg/normal/desklock/logo";
          }
       }
       part { name: "e.text.title"; type: TEXT;
@@ -89,7 +90,7 @@ group { name: "e/desklock/login_box";
             rel2.relative: 1.0 1.0;
             rel2.offset: -4 3;
             rel2.to_y: "logo";
-            color: FN_COL_DEFAULT;
+            color_class: "/fg/normal/desklock/text/title";
             align: 0.5 0.0;
             text { font: FNBD; size: 10;
                min: 1 1;
@@ -109,7 +110,7 @@ group { name: "e/desklock/login_box";
             rel2.relative: 1.0 1.0;
             rel2.offset: -4 3;
             rel2.to_y: "e.text.password";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/desklock/text/hint";
             align: 0.5 0.0;
             text { font: FNBD; size: 10;
                min: 1 1;
@@ -122,9 +123,8 @@ group { name: "e/desklock/login_box";
       }
       part { name: "selection"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "e.text.password";
-            rel2.to: "e.text.password";
-            color: 51 153 255 255;
+            rel.to: "e.text.password";
+            color_class: "/fg/normal/desklock/selection";
             visible: 0;
          }
          description { state: "active" 0.0;
@@ -144,7 +144,7 @@ group { name: "e/desklock/login_box";
             rel2.offset: 3 10;
             rel2.to_x: "clipper";
             rel2.to_y: "e.text.title";
-            color: 255 255 255 255;
+            color_class: "/fg/normal/desklock/text/password";
             align: 0.0 0.0;
             text { font: FN; size: 10;
                min: 1 1;
@@ -156,17 +156,18 @@ group { name: "e/desklock/login_box";
          }
       }
       part { name: "cursor"; type: RECT; mouse_events: 0;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "e.text.password";
+            rel.to: "e.text.password";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 -4;
-            rel2.to: "e.text.password";
             rel2.offset: -1 3;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/desklock/text/cursor";
             min: 1 10;
             fixed: 1 1;
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -174,12 +175,12 @@ group { name: "e/desklock/login_box";
          }
       }
       part { name: "busy_area"; type: SPACER;
+         scale: 1;
          description { state: "default" 0.0;
             min: 20 20;
             max: 160 160;
-            rel1.to: "clipper";
+            rel.to: "clipper";
             rel1.relative: 0.0 0.5;
-            rel2.to: "clipper";
             align: 0.5 0.0;
          }
       }
@@ -236,7 +237,7 @@ group { name: "e/desklock/pin_box";
             rel1.relative: 0.0 1.0;
             rel1.to_y: "e.swallow.buttons";
             rel2.offset: -4 -3;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/desklock/text/title/pin";
             align: 0.5 0.0;
             text { font: "Sans:style=Bold"; size: 10;
                min: 0 1;
@@ -249,9 +250,8 @@ group { name: "e/desklock/pin_box";
       }
       part { name: "selection"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "e.text.password";
-            rel2.to: "e.text.password";
-            color: 51 153 255 255;
+            rel.to: "e.text.password";
+            color_class: "/fg/normal/desklock/selection";
             visible: 0;
          }
          description { state: "active" 0.0;
@@ -266,35 +266,34 @@ group { name: "e/desklock/pin_box";
             rel1.offset: 3 2;
             rel2.relative: 0.5 0.0;
             rel2.offset: 3 -2;
-            color: 255 255 255 255;
-            text { font: "Sans"; size: 10;
+            color_class: "/fg/normal/desklock/text/password";
+            text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 1.0 0.5;
                text_class: "desklock_passwd";
             }
             fixed: 1 1;
+            offscale;
          }
       }
       part { name: "cursor"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "e.text.password";
+            rel.to: "e.text.password";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 0;
-            rel2.to: "e.text.password";
-            rel2.offset: 1 -1;
-            color: 255 255 255 0;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 3;
+            color_class: "/fg/normal/desklock/text/cursor";
             min: 1 3;
             fixed: 1 1;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
          }
       }
       part { name: "button_clip"; type: RECT;
          description { state: "default";
-            color: 255 255 255 255;
          }
       }
       part { name: "e.swallow.buttons"; type: SWALLOW;
