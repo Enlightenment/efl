@@ -337,7 +337,7 @@ _color_parser(const char *value, char **end)
 {
    double r;
 
-   r = eina_convert_strtod_c(value + 4, end);
+   r = eina_convert_strtod_c(value, end);
    *end = _skip_space(*end, NULL);
    if (**end == '%')
      r = 255 * r / 100;
