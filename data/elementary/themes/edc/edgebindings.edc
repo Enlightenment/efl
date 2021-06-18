@@ -5,7 +5,7 @@ group { name: "e/modules/conf_edgebindings/selection";
    images.image: "mini_blue_glow_arrow_3.png" COMP;
    styles {
       style { name: "edge_binding_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color=#a0a0a0 wrap=word";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color_class=/fg/normal/text wrap=word";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
       }
@@ -14,7 +14,7 @@ group { name: "e/modules/conf_edgebindings/selection";
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg-dark/normal/edgebindings";
          }
       }
       part { name: "e.swallow.background"; type: SWALLOW;
@@ -33,94 +33,112 @@ group { name: "e/modules/conf_edgebindings/selection";
             rel.to: "e.swallow.background";
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
-            color: 255 255 255 255;
             fixed: 1 1;
             text { font: FNBD; size: 10;
                text_class: "label";
                min: 1 1;
                ellipsis: -1;
             }
+            color_class: "/fg/normal/text-hilight";
+            offscale;
          }
       }
       part { name: "e.edge.left"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             rel1.offset: 0 10;
             rel2.offset: -1 -11;
             align: 0.0 0.5;
             max: 5 99999;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
       part { name: "e.edge.right"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             rel1.offset: 0 10;
             rel2.offset: -1 -11;
             align: 1.0 0.5;
             max: 5 99999;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
       part { name: "e.edge.top"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             rel1.offset: 10 0;
             rel2.offset: -11 -1;
             align: 0.5 0.0;
             max: 99999 5;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
       part { name: "e.edge.bottom"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             rel1.offset: 10 0;
             rel2.offset: -11 -1;
             align: 0.5 1.0;
             max: 99999 5;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
 
       part { name: "e.edge.top_left";
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             max: 10 10;
             image.normal: "mini_blue_glow_arrow_2.png";
             align: 0.0 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
       part { name: "e.edge.top_right";
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             max: 10 10;
             image.normal: "mini_blue_glow_arrow_3.png";
             align: 1.0 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
       part { name: "e.edge.bottom_right";
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             max: 10 10;
             image.normal: "mini_blue_glow_arrow_0.png";
             align: 1.0 1.0;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
       part { name: "e.edge.bottom_left";
+         scale: 1;
          description { state: "default" 0.0;
             rel.to: "e.swallow.background";
             max: 10 10;
             image.normal: "mini_blue_glow_arrow_1.png";
             align: 0.0 1.0;
-            color: 51 153 255 255;
+            color_class: "/fg/selected/edgebindings/edge";
+            offscale;
          }
       }
 
       part { name: "e.box"; type: BOX;
+         scale: 1;
          description { state: "default" 0.0;
             rel1 {
                relative: 1 1;
@@ -137,9 +155,11 @@ group { name: "e/modules/conf_edgebindings/selection";
                align: 0.5 0.5;
                min: 1 1;
             }
+            offscale;
          }
       }
       part { name: "e.swallow.slider"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             align: 0 0.0;
             rel1 {
@@ -148,9 +168,8 @@ group { name: "e/modules/conf_edgebindings/selection";
                to_x: "e.edge.bottom_right";
                to_y: "e.box";
             }
-            rel2 {
-               offset: -5 -1;
-            }
+            rel2.offset: -5 -1;
+            offscale;
          }
       }
       part { name: "e.text.description"; type: TEXTBLOCK; mouse_events: 0;
@@ -161,14 +180,13 @@ group { name: "e/modules/conf_edgebindings/selection";
                offset: 80 4;
                to_x: "e.edge.right";
             }
-            rel2 {
-               offset: -80 -45;
-            }
+            rel2.offset: -80 -45;
             text {
                style: "edge_binding_style";
                min: 1 1;
                ellipsis: -1;
             }
+            offscale;
          }
       }
    }
