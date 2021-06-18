@@ -398,21 +398,15 @@ group { name: "elm/scroller/entry_single/default";
       }
    }
    programs {
-      program { name: "validation_fail";
-         signal: "validation,default,fail";
-         source: "elm";
+      program { signal: "validation,default,fail"; source: "elm";
          action: STATE_SET "fail" 0.0;
          target: "validation_glow";
       }
-      program { name: "validation_pass";
-         signal: "validation,default,pass";
-         source: "elm";
+      program { signal: "validation,default,pass"; source: "elm";
          action: STATE_SET "pass" 0.0;
          target: "validation_glow";
       }
-      program { name: "validation_off";
-         signal: "validation,default";
-         source: "elm";
+      program { signal: "validation,default"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
@@ -427,6 +421,7 @@ group { name: "elm/entry/cursor/default";
          clip_to: "clipper";
          description { state: "default" 0.0;
             min: 1 10;
+            color_class: "/fg/normal/entry/cursor";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -436,8 +431,7 @@ group { name: "elm/entry/cursor/default";
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "cursor";
-            rel2.to: "cursor";
+            rel.to: "cursor";
             fixed: 1 1;
          }
          description { state: "hidden" 0.0;
@@ -512,7 +506,7 @@ group { name: "elm/entry/selection/default";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 51 153 255 128;
+            color_class: "/bg/normal/entry/selection";
          }
       }
    }
@@ -523,7 +517,7 @@ group { name: "elm/entry/anchor/default";
       part { name: "bar"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "/fg/entry/anchor";
+            color_class: "/fg/normal/entry/anchor";
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
             rel1.offset: -1 -1;

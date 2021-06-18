@@ -2,21 +2,21 @@ group { name: "e/widgets/entry/scrollframe";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/entry";
          }
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
-         mouse_events: 1;
+         scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
+            offscale;
          }
       }
    }
@@ -25,10 +25,10 @@ group { name: "e/widgets/entry/scrollframe";
 group { name: "e/widgets/entry/text";
       styles {
          style { name: "entry_textblock_style";
-            base: "font="FN" font_size=10 color=#a0a0a0 text_class=entry left_margin=2 right_margin=2";
+            base: "font="FN" font_size=10 color_class=/fg/normal/entry text_class=entry left_margin=2 right_margin=2";
          }
          style { name: "entry_textblock_disabled_style";
-            base: "font="FN" font_size=10 color=#707070 text_class=entry left_margin=2 right_margin=2";
+            base: "font="FN" font_size=10 color_class=/fg/disabled/entry text_class=entry left_margin=2 right_margin=2";
          }
       }
    parts {
@@ -41,7 +41,6 @@ group { name: "e/widgets/entry/text";
          source: "e/widgets/entry/selection"; // selection under
          source4: "e/widgets/entry/cursor"; // cursorover
          description { state: "default" 0.0;
-            color: FN_COL_DEFAULT;
             align: 0.0 0.5;
             text {
                style: "entry_textblock_style";
@@ -53,24 +52,19 @@ group { name: "e/widgets/entry/text";
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
             text.style: "entry_textblock_disabled_style";
-            color: FN_COL_DISABLE;
          }
       }
    }
    programs {
-      program { name: "focus";
-         signal: "load";
-         source: "";
+      program { signal: "load"; source: "";
          action: FOCUS_SET;
          target: "e.text.text";
       }
-      program {
-         signal: "e,state,disabled"; source: "e";
+      program { signal: "e,state,disabled"; source: "e";
          action: STATE_SET "disabled" 0.0;
          target: "e.text.text";
       }
-      program {
-         signal: "e,state,enabled"; source: "e";
+      program { signal: "e,state,enabled"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.text";
       }
@@ -102,6 +96,7 @@ group { name: "e/widgets/entry/cursor";
          scale: 1;
          description { state: "default" 0.0;
             min: 1 10;
+            color_class: "/fg/normal/entry/cursor";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -162,7 +157,7 @@ group { name: "e/widgets/entry/selection";
    parts {
       part { name: "selection"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/normal/entry/selection";
          }
       }
    }

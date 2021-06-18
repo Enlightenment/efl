@@ -84,7 +84,9 @@ color_classes {
       color: 255  32  16  80; }
    color_class { name: "/bg/selected/entry/validate-pass";
       color:  32 255  16  80; }
-   color_class { name: "/fg/entry/anchor";
+   color_class { name: "/bg/normal/entry/selection";
+      color:  51 153 255 128; }
+   color_class { name: "/fg/normal/entry/anchor";
       color:  51 153 255 255; }
    color_class { name: "/fg/disabled/entry/text";
       color: 112 112 112 255; }
@@ -92,6 +94,8 @@ color_classes {
       color:  80  80  80 255; }
    color_class { name: "/fg/normal/entry/handler/end";
       color:  51 153 255 255; }
+   color_class { name: "/fg/normal/entry/cursor";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-heading";
       color: 255 255 255 255; }
