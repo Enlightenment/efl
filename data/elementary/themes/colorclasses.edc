@@ -111,6 +111,8 @@ color_classes {
       color:  51 153 255 255; }
    color_class { name: "/fg/disabled/text/hilight";
       color:  25  76 128 255; }
+   color_class { name: "/fg/disabled/text-urgent";
+      color: 255  51  51 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/button";
       color:  96  96  96 255; }
@@ -294,6 +296,16 @@ color_classes {
       color:  51 153 255 255; }
    color_class { name: "/fg/normal/toggle/button";
       color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/everything/entry/cursor";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/scroller/bar";
+      color:  51 153 255 255; }
+   color_class { name: "/bg/disabled/scroller/bar";
+      color:  96  96  96 255; }
+   color_class { name: "/bg/pressed/scroller/bar";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/shelf/translucent";
       color:  64  64  64 128; }
