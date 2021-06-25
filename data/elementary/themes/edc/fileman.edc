@@ -1396,7 +1396,7 @@ group { name: "e/fileman/default/progress";
             rel1.relative: 1.0 0.0;
             rel1.offset: -9 8;
             rel2.offset: -9 -9;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             FIXED_SIZE(15, 15)
             fixed: 1 1;
             offscale;
@@ -1544,7 +1544,7 @@ group { name: "e/modules/efm_navigation/main";
             rel2.relative: 0.0 1.0;
             rel2.offset: 6 -1;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             fixed: 0 1;
          }
@@ -1555,7 +1555,7 @@ group { name: "e/modules/efm_navigation/main";
             rel1.relative: 1.0 0.0;
             rel2.to: "back";
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             fixed: 0 1;
          }
@@ -1566,7 +1566,7 @@ group { name: "e/modules/efm_navigation/main";
             rel1.relative: 1.0 0.0;
             rel2.to: "forward";
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             fixed: 0 1;
          }
@@ -1576,7 +1576,7 @@ group { name: "e/modules/efm_navigation/main";
             rel.to: "parent";
             rel1.relative: 1.0 0.0;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             fixed: 0 1;
          }
@@ -1586,7 +1586,7 @@ group { name: "e/modules/efm_navigation/main";
             rel.to: "reload";
             rel1.relative: 1.0 0.0;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             fixed: 0 1;
          }
