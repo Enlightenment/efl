@@ -3,7 +3,7 @@ group { name: "e/widgets/fontpreview";
       part { name: "e.fontpreview.text"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color: FN_COL_DEFAULT;
+            color_class: "/fg/normal/text/fontpreview";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             text { font: FN; size: 10;
