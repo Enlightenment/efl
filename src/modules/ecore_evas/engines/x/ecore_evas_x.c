@@ -3788,27 +3788,45 @@ _search_fitting_type(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Ev
 
    EINA_SAFETY_ON_NULL_RETURN(edata->selection_data[selection].acceptable_type);
 
+   // first pass - try find an EXACT mime type match
    for (unsigned int i = 0; i < eina_array_count(arr) && !found_conversion; ++i)
      {
         const char *x11_name = eina_array_data_get(arr, i);
+
         mime_type = _decrypt_type(x11_name);
 
         for (unsigned int j = 0; j < eina_array_count(edata->selection_data[selection].acceptable_type) && !found_conversion; ++j)
           {
-             const char *acceptable_type = (const char*) eina_array_data_get(edata->selection_data[selection].acceptable_type, j);
+             const char *acceptable_type = (const char *)eina_array_data_get(edata->selection_data[selection].acceptable_type, j);
 
              if (mime_type == acceptable_type)
-               HANDLE_TYPE()
-
-             //if there is no available type yet, check if we can convert to the desired type via this type
-             if (!found_conversion)
                {
+                  HANDLE_TYPE()
+               }
+          }
+        eina_stringshare_del(mime_type);
+     }
+   // second pass - exact match not found - look for conversions instead
+   if (!found_conversion)
+     {
+        for (unsigned int i = 0; i < eina_array_count(arr) && !found_conversion; ++i)
+          {
+             const char *x11_name = eina_array_data_get(arr, i);
+
+             mime_type = _decrypt_type(x11_name);
+
+             for (unsigned int j = 0; j < eina_array_count(edata->selection_data[selection].acceptable_type) && !found_conversion; ++j)
+               {
+                  const char *acceptable_type = (const char *)eina_array_data_get(edata->selection_data[selection].acceptable_type, j);
                   const char *convertion_type = NULL;
+
                   Eina_Iterator *iter = eina_content_converter_possible_conversions(mime_type);
                   EINA_ITERATOR_FOREACH(iter, convertion_type)
                     {
                        if (convertion_type == acceptable_type)
-                         HANDLE_TYPE()
+                         {
+                            HANDLE_TYPE()
+                         }
                     }
                   eina_iterator_free(iter);
                }
