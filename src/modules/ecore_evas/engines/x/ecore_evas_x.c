@@ -3830,8 +3830,8 @@ _search_fitting_type(Ecore_Evas *ee, Ecore_Evas_Engine_Data_X11 *edata, Ecore_Ev
                     }
                   eina_iterator_free(iter);
                }
+             eina_stringshare_del(mime_type);
           }
-        eina_stringshare_del(mime_type);
      }
    if (found_conversion)
      {
