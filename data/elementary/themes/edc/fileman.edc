@@ -77,18 +77,6 @@ group { name: "e/fileman/default/list/variable";
             inherit: "default" 0.0;
          }
       }
-      part { name: "icon_base"; type: RECT; mouse_events: 0;
-         clip_to: "icon";
-         description { state: "default" 0.0;
-            color_class: "/bg-dark/normal/fileman/icon/base";
-            rel.to: "e.swallow.icon";
-            visible: 0;
-         }
-         description { state: "start" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          clip_to: "icon";
          description { state: "default" 0.0;
@@ -227,14 +215,12 @@ group { name: "e/fileman/default/list/variable";
       program { signal: "e,action,thumb,gen"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
-         target: "icon_base";
          target: "icon_over";
          after: "gen";
       }
       program { signal: "e,action,thumb,gen,alpha"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
-         target: "icon_base";
          target: "icon_over";
          after: "gen";
       }
@@ -392,18 +378,6 @@ group { name: "e/fileman/default/icon/fixed";
             inherit: "default" 0.0;
          }
       }
-      part { name: "icon_base"; type: RECT; mouse_events: 0;
-         clip_to: "icon";
-         description { state: "default" 0.0;
-            color_class: "/bg-dark/normal/fileman/icon/base";
-            rel.to: "e.swallow.icon";
-            visible: 0;
-         }
-         description { state: "start" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          clip_to: "icon";
          description { state: "default" 0.0;
@@ -547,14 +521,12 @@ group { name: "e/fileman/default/icon/fixed";
       program { signal: "e,action,thumb,gen"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
-         target: "icon_base";
          target: "icon_over";
          after: "gen";
       }
       program { signal: "e,action,thumb,gen,alpha"; source: "e";
          action: STATE_SET "start" 0.0;
          target: "icon";
-         target: "icon_base";
          target: "icon_over";
          after: "gen";
       }
