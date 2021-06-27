@@ -49,6 +49,8 @@ color_classes {
    color_class { name: "/bg/normal/access";
       color: 255 153  51  64; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg-dark/normal/fileman/icon/base";
+      color:  48  48  48 255; }
    color_class { name: "/fg/normal/fileman/icon/over";
       color:  51 153 255 255; }
    color_class { name: "/fg/normal/fileman/mount/off";
