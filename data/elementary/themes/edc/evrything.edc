@@ -1428,12 +1428,12 @@ group { name: "e/modules/everything/thumbview/item/list";
 group { name: "e/modules/everything/textblock";
    styles {
       style { name: "everything_textblock_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color_class=/fg/normal/text wrap=word";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color=cc:/fg/normal/text wrap=word";
          tag: "br"      "\n";
          tag: "b"       "+ font="FNBD"";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
-         tag: "urgent"  "+ font="FNBD" color_class=/fg/normal/text-urgent";
-         tag: "title"   "+ font="FNBD" color_class=/fg/normal/text-heading font_size=16 underline=on underline_color=#fff";
+         tag: "urgent"  "+ font="FNBD" color=cc:/fg/normal/text-urgent";
+         tag: "title"   "+ font="FNBD" color=cc:/fg/normal/text-heading font_size=16 underline=on underline_color=#fff";
       }
    }
    parts {

@@ -42,9 +42,9 @@ group { name: "e/modules/music-control/popup";
    min: 160 160;
    styles {
       style { name: "music_control_metadata_style";
-         base: "font="FN" font_size=10 align=left text_class=tb_plain color=#eee";
-         tag: "title" "+ font_size=10 font="FNBD" text_class=tb_big color=#fff";
-         tag: "tag" "+ font_size=8 color=#33399ff";
+         base: "font="FN" font_size=10 align=left text_class=tb_plain color=cc:/fg/normal/gadgets/music_control/text";
+         tag: "title" "+ font_size=10 font="FNBD" text_class=tb_big color=cc:/fg/normal/gadgets/music_control/text/title";
+         tag: "tag" "+ font_size=8 color_class=/fg/normal/gadgets/music_control/text/tag";
          tag: "br" "\n";
       }
    }
@@ -113,7 +113,7 @@ group { name: "e/modules/music-control/popup";
             rel1.relative: 0.25 0.25;
             rel2.relative: 0.75 0.75;
             image.normal: "efm_drive_cd_icon";
-            color: 255 255 255 128;
+            color: 255 255 255 128; // no cc
          }
       }
       part { name: "e.cover_swallow"; type: SWALLOW;
@@ -127,7 +127,7 @@ group { name: "e/modules/music-control/popup";
       part { name: "player_name_back"; type: RECT;
          scale: 1;
          description { state: "default" 0;
-            color: 0 0 0 128;
+            color_class: "/bg/normal/gadgets/music_control/base";
             rel1.offset: -4 -4;
             rel2.offset: 3 3;
             rel2.to_y: "player_name";
@@ -137,7 +137,7 @@ group { name: "e/modules/music-control/popup";
       part { name: "player_mid";
          scale: 1;
          description { state: "default" 0;
-            color: 0 0 0 128;
+            color_class: "/bg/normal/gadgets/music_control/base";
             rel1.to: "player_name_back";
             rel1.relative: 0.0 1.0;
             rel2.to: "btn_back";
@@ -145,11 +145,25 @@ group { name: "e/modules/music-control/popup";
             image.normal: "grad-v-bi.png";
          }
       }
+      part { name: "btn_back"; type: RECT;
+         scale: 1;
+         description { state: "default" 0;
+            color_class: "/bg/normal/gadgets/music_control/base";
+            rel1.to_y: "previous_btn";
+            rel1.offset: -4 -4;
+            rel2.offset: 3 3;
+            offscale;
+         }
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/bg/pressed/gadgets/music_control/base";
+         }
+      }
       part { name: "player_name"; type: TEXT;
          scale : 1;
          description { state: "default" 0;
             align: 0.5 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/music_control/text/title";
             text.size: 10;
             text.text: "Music player";
             text.min: 0 1;
@@ -165,8 +179,7 @@ group { name: "e/modules/music-control/popup";
          scale : 1;
          description { state: "default" 0;
             align: 0.5 0.0;
-            text {
-               style: "music_control_metadata_style";
+            text { style: "music_control_metadata_style";
                text: "Song Title";
                align: 0.0 0.0;
                min: 0 0;
@@ -179,26 +192,12 @@ group { name: "e/modules/music-control/popup";
             offscale;
          }
       }
-      part { name: "btn_back"; type: RECT;
-         scale: 1;
-         description { state: "default" 0;
-            color: 0 0 0 128;
-            rel1.to_y: "previous_btn";
-            rel1.offset: -4 -4;
-            rel2.offset: 3 3;
-            offscale;
-         }
-         description { state: "pressed" 0.0;
-            inherit: "default" 0.0;
-            color: 0 0 0 220;
-         }
-      }
       part { name: "pos_txt"; type: TEXT;
          scale : 1;
          description { state: "default" 0;
             min: 64 15;
             rel.to: "btn_back";
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/music_control/text/position";
             align: 0.5 1.0;
             text.size: 10;
             text.font: FN;
@@ -215,7 +214,7 @@ group { name: "e/modules/music-control/popup";
          description { state: "default" 0;
             min: 64 15;
             rel.to: "btn_back";
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/music_control/text/length";
             align: 0.5 1.0;
             text.size: 10;
             text.font: FN;
@@ -235,10 +234,12 @@ group { name: "e/modules/music-control/popup";
             max: 15 15;
             align: 0.5 1.0;
             image.normal: "i-media-pause";
+            color_class: "/fg/normal/gadgets/music_control/button/pause";
          }
          description { state: "play" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-media-play";
+            color_class: "/fg/normal/gadgets/music_control/button/play";
          }
       }
       part { name: "loop";
@@ -254,6 +255,7 @@ group { name: "e/modules/music-control/popup";
             offscale;
             image.normal: "i-reload";
             visible: 0;
+            color_class: "/fg/normal/gadgets/music_control/button/loop";
          }
          description { state: "loop" 0.0;
             inherit: "default" 0.0;
@@ -270,6 +272,7 @@ group { name: "e/modules/music-control/popup";
             rel1.relative: -2.0 0.0;
             rel2.relative: -1.0  1.0;
             image.normal: "i-media-prev";
+            color_class: "/fg/normal/gadgets/music_control/button/prev";
          }
       }
       part { name: "next_btn";
@@ -282,6 +285,7 @@ group { name: "e/modules/music-control/popup";
             rel1.relative: 2.0 0.0;
             rel2.relative: 3.0 1.0;
             image.normal: "i-media-next";
+            color_class: "/fg/normal/gadgets/music_control/button/next";
          }
       }
       part { name: "pos"; type: RECT;
@@ -289,7 +293,7 @@ group { name: "e/modules/music-control/popup";
          mouse_events: 0;
          description { state: "default" 0;
             fixed: 1 1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/gadgets/music_control/progress";
             rel.to: "btn_back";
             rel1.offset: 0 -1;
             rel1.relative: 0.0 1.0;

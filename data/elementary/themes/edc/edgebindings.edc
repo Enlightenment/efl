@@ -5,7 +5,7 @@ group { name: "e/modules/conf_edgebindings/selection";
    images.image: "mini_blue_glow_arrow_3.png" COMP;
    styles {
       style { name: "edge_binding_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=center color_class=/fg/normal/text wrap=word";
+         base: "font="FN" font_size=10 text_class=tb_plain align=center color=cc:/fg/normal/text wrap=word";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
       }

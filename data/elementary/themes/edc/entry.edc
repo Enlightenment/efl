@@ -25,10 +25,10 @@ group { name: "e/widgets/entry/scrollframe";
 group { name: "e/widgets/entry/text";
       styles {
          style { name: "entry_textblock_style";
-            base: "font="FN" font_size=10 color_class=/fg/normal/entry text_class=entry left_margin=2 right_margin=2";
+            base: "font="FN" font_size=10 color=cc:/fg/normal/entry text_class=entry left_margin=2 right_margin=2";
          }
          style { name: "entry_textblock_disabled_style";
-            base: "font="FN" font_size=10 color_class=/fg/disabled/entry text_class=entry left_margin=2 right_margin=2";
+            base: "font="FN" font_size=10 color=cc:/fg/disabled/entry text_class=entry left_margin=2 right_margin=2";
          }
       }
    parts {

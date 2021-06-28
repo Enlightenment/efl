@@ -290,10 +290,10 @@ group { name: "e/fileman/default/icon/fixed";
    images.image: "sym_icon_op_move.png" COMP;
    styles {
       style { name: "fileman_icon_name";
-         base: "font="FN" font_size=10 text_class=fileman_icon align=center color_class=/fg/normal/grid/item/fileman wrap=mixed ellipsis=1.0";
+         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=cc:/fg/normal/grid/item/fileman wrap=mixed ellipsis=1.0";
       }
       style { name: "fileman_icon_name_selected";
-         base: "font="FN" font_size=10 text_class=fileman_icon align=center color_class=/fg/selected/grid/item/fileman wrap=mixed ellipsis=1.0";
+         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=cc:/fg/selected/grid/item/fileman wrap=mixed ellipsis=1.0";
       }
    }
    script {
