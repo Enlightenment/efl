@@ -1,7 +1,9 @@
 group { name: "e/modules/mixer/main";
-   images.image: "speaker.png" COMP;
-   images.image: "speaker_clip.png" COMP;
-   images.image: "speaker_vol.png" COMP;
+   set { name: "speaker_clip";
+      image { image: "speaker-clip-160.png"  COMP; size: 81 81 99999 99999; }
+      image { image: "speaker-clip-080.png"  COMP; size: 41 41 80 80 99999; }
+      image { image: "speaker-clip-040.png"  COMP; size:  0  0 40 40; }
+   }
    max: 160 160;
    min: 16 16;
    script {
@@ -42,19 +44,27 @@ group { name: "e/modules/mixer/main";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
-            rel1.relative: (25/380) (25/380);
-            rel2.relative: (365/380) (365/380);
+            image.normal: "clock_base";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "speaker.png";
+            color_class: "/bg/normal/gadgets/mixer/base";
+         }
+      }
+      part { name: "middle";
+         description { state: "default" 0.0;
+            rel.to: "base";
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.7 0.7;
+            image.normal: "clock_base";
+            color_class: "/bg/normal/gadgets/mixer/middle";
          }
       }
       part { name: "state"; type: RECT;
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/gadgets/mixer/volume/normal";
          }
          description { state: "mute" 0.0;
             inherit: "default" 0.0;
-            color: 255 153 51 255;
+            color_class: "/fg/normal/gadgets/mixer/volume/mute";
          }
       }
       part { name: "state-l"; type: RECT;
@@ -74,39 +84,34 @@ group { name: "e/modules/mixer/main";
       part { name: "vclip-l";
          clip_to: "state-l";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "speaker_clip.png";
+            rel.to: "base";
+            image.normal: "speaker_clip";
          }
       }
       part { name: "vclip-r";
          clip_to: "state-r";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "speaker_clip.png";
+            rel.to: "base";
+            image.normal: "speaker_clip";
          }
       }
       part { name: "vol-l";
          clip_to: "vclip-l";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "speaker_vol.png";
+            rel.to: "base";
+            image.normal: "clock_base";
          }
       }
       part { name: "vol-r";
          clip_to: "vclip-r";
          description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            rel2.offset: 0 0;
-            image.normal: "speaker_vol.png";
+            rel.to: "base";
+            image.normal: "clock_base";
          }
       }
       part { name: "over"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
