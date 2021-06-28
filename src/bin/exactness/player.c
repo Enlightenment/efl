@@ -206,9 +206,13 @@ _shot_do(Evas *e)
         else if (_dest_type == FTYPE_EXU)
           {
              Exactness_Image *ex_img = malloc(sizeof(*ex_img));
-             _dest_unit->imgs = eina_list_append(_dest_unit->imgs, ex_img);
-             _dest_unit->nb_shots++;
-             e_data = ex_img;
+
+             if (ex_img)
+               {
+                  _dest_unit->imgs = eina_list_append(_dest_unit->imgs, ex_img);
+                  _dest_unit->nb_shots++;
+                  e_data = ex_img;
+               }
           }
         else if (_dest_type == FTYPE_REMOTE)
           {
