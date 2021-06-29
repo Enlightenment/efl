@@ -31,13 +31,13 @@ group { name: "e/widgets/radio";
          clip_to: "clip";
          description { state: "default" 0.0;
             rel.to: "base";
-            image.normal: "radio.png";
+            image.normal: "i-radio";
             color_class: "/fg/normal/radio/radio";
             visible: 0;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color_class: "/fg/pressed/radio/radio";
+            color_class: "/fg/normal/radio/radio";
             visible: 1;
          }
          description { state: "pressed" 0.0;
