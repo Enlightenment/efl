@@ -368,6 +368,25 @@ color_classes {
    color_class { name: "/bg/pressed/scroller/bar";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/notification";
+      color:   0   0   0 200; }
+   color_class { name: "/fg/normal/notification/button/close";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/pressed/notification/button/close";
+      color: 200 200 200 255; }
+   color_class { name: "/fg/normal/notification/logo";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/notification/text/title";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/notification/text";
+      color: 160 160 160 255; }
+   color_class { name: "/fg/normal/notification/text/subject";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/notification/text/bold";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/notification/text/underline";
+      color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/shelf/translucent";
       color:  64  64  64 128; }
 ///////////////////////////////////////////////////////////////////////////////
@@ -505,24 +524,24 @@ color_classes {
    color_class { name: "/fg/normal/gadgets/music_control/text/tag";
       color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/notification";
-      color:   0   0   0 200; }
-   color_class { name: "/fg/normal/notification/button/close";
+   color_class { name: "/fg/normal/gadgets/packagekit/label";
       color: 255 255 255 255; }
-   color_class { name: "/fg/pressed/notification/button/close";
-      color: 200 200 200 255; }
-   color_class { name: "/fg/normal/notification/logo";
+   color_class { name: "/fg/normal/gadgets/packagekit/text";
       color: 255 255 255 255; }
-   color_class { name: "/fg/normal/notification/text/title";
+   color_class { name: "/fg/normal/gadgets/packagekit/status";
       color: 255 255 255 255; }
-   color_class { name: "/fg/normal/notification/text";
-      color: 160 160 160 255; }
-   color_class { name: "/fg/normal/notification/text/subject";
-      color:  51 153 255 255; }
-   color_class { name: "/fg/normal/notification/text/bold";
+   color_class { name: "/fg/normal/gadgets/packagekit/pkg/bug";
+      color: 255 153  51 255; }
+   color_class { name: "/fg/normal/gadgets/packagekit/pkg/enhancement";
+      color: 255 153  51 255; }
+   color_class { name: "/fg/normal/gadgets/packagekit/pkg/important";
+      color: 255  51 153 255; }
+   color_class { name: "/fg/normal/gadgets/packagekit/pkg/low-priority";
+      color: 255 255 255 128; }
+   color_class { name: "/fg/normal/gadgets/packagekit/pkg/normal";
       color: 255 255 255 255; }
-   color_class { name: "/fg/normal/notification/text/underline";
-      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/packagekit/pkg/security";
+      color: 255 153  51 255; }
 
 
 

@@ -5,7 +5,7 @@ group { name: "e/modules/packagekit/icon/bugfix";
          description { state: "default" 0.0;
             image.normal: "pkg-bug.png";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/gadgets/packagekit/pkg/bug";
          }
       }
    }
@@ -18,7 +18,7 @@ group { name: "e/modules/packagekit/icon/enhancement";
          description { state: "default" 0.0;
             image.normal: "pkg-enhance.png";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 153 255 51 255;
+            color_class: "/fg/normal/gadgets/packagekit/pkg/enhancement";
          }
       }
    }
@@ -31,7 +31,7 @@ group { name: "e/modules/packagekit/icon/important";
          description { state: "default" 0.0;
             image.normal: "pkg-important.png";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 255 153 51 255;
+            color_class: "/fg/normal/gadgets/packagekit/pkg/important";
          }
       }
    }
@@ -44,7 +44,7 @@ group { name: "e/modules/packagekit/icon/low";
          description { state: "default" 0.0;
             image.normal: "pkg-low.png";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 255 255 255 128;
+            color_class: "/fg/normal/gadgets/packagekit/pkg/low-priority";
          }
       }
    }
@@ -57,7 +57,7 @@ group { name: "e/modules/packagekit/icon/normal";
          description { state: "default" 0.0;
             image.normal: "pkg-normal.png";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 255 255 255 128;
+            color_class: "/fg/normal/gadgets/packagekit/pkg/normal";
          }
       }
    }
@@ -70,7 +70,7 @@ group { name: "e/modules/packagekit/icon/security";
          description { state: "default" 0.0;
             image.normal: "pkg-security.png";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/packagekit/pkg/security";
          }
       }
    }
@@ -78,9 +78,24 @@ group { name: "e/modules/packagekit/icon/security";
 
 group { name: "e/modules/packagekit/main";
    max: 160 160;
-   images.image: "pkg-base.png" COMP;
+   set { name: "pkg_base";
+      image { image: "pkg-base-160.png"  COMP; size: 81 81 99999 99999; }
+      image { image: "pkg-base-080.png"  COMP; size: 41 41 80 80 99999; }
+      image { image: "pkg-base-040.png"  COMP; size:  0  0 40 40; }
+   }
+   set { name: "pkg_shade";
+      image { image: "pkg-shade-160.png"  COMP; size: 81 81 99999 99999; }
+      image { image: "pkg-shade-080.png"  COMP; size: 41 41 80 80 99999; }
+      image { image: "pkg-shade-040.png"  COMP; size:  0  0 40 40; }
+   }
+   set { name: "pkg_label";
+      image { image: "pkg-label-160.png"  COMP; size: 81 81 99999 99999; }
+      image { image: "pkg-label-080.png"  COMP; size: 41 41 80 80 99999; }
+      image { image: "pkg-label-040.png"  COMP; size:  0  0 40 40; }
+   }
    images.image: "pkg-ok.png" COMP;
    images.image: "pkg-err.png" COMP;
+
    images.image: "pkg-busy1.png" COMP;
    images.image: "pkg-busy2.png" COMP;
    images.image: "pkg-busy3.png" COMP;
@@ -89,7 +104,21 @@ group { name: "e/modules/packagekit/main";
       part { name: "base";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "pkg-base.png";
+            color_class: "/fg/normal/gadgets/packagekit/base";
+            image.normal: "pkg_base";
+         }
+      }
+      part { name: "shade";
+         description { state: "default" 0.0;
+            rel.to: "base";
+            image.normal: "pkg_shade";
+         }
+      }
+      part { name: "label";
+         description { state: "default" 0.0;
+            rel.to: "base";
+            image.normal: "pkg_label";
+            color_class: "/fg/normal/gadgets/packagekit/label";
          }
       }
       part { name: "num_updates"; type: TEXT;
@@ -97,7 +126,7 @@ group { name: "e/modules/packagekit/main";
          description { state: "default" 0.0;
             rel1.relative: (8/40) (8/40);
             rel2.relative: (32/40) (32/40);
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/packagekit/text/updates";
             text { font: FN; size: 10;
             }
          }
@@ -121,7 +150,7 @@ group { name: "e/modules/packagekit/main";
             rel1.relative: (15/40) (15/40);
             rel2.relative: (25/40) (25/40);
             image.normal: "pkg-ok.png";
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/packagekit/status/ok";
          }
          description { state: "error" 0.0;
             inherit: "default" 0.0;
@@ -129,17 +158,17 @@ group { name: "e/modules/packagekit/main";
             rel1.relative: (15/40) (15/40);
             rel2.relative: (25/40) (25/40);
             image.normal: "pkg-err.png";
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/packagekit/status/error";
          }
       }
       part { name: "busy_clip"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "busy" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -153,6 +182,7 @@ group { name: "e/modules/packagekit/main";
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "busy1";
+            color_class: "/fg/normal/gadgets/packagekit/status/busy/1";
          }
          description { state: "spin" 0.0;
             inherit: "default" 0.0;
@@ -169,6 +199,7 @@ group { name: "e/modules/packagekit/main";
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "busy1";
+            color_class: "/fg/normal/gadgets/packagekit/status/busy/2";
          }
          description { state: "spin" 0.0;
             inherit: "default" 0.0;
@@ -185,6 +216,7 @@ group { name: "e/modules/packagekit/main";
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "busy1";
+            color_class: "/fg/normal/gadgets/packagekit/status/busy/3";
          }
          description { state: "spin" 0.0;
             inherit: "default" 0.0;
@@ -201,6 +233,7 @@ group { name: "e/modules/packagekit/main";
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "busy1";
+            color_class: "/fg/normal/gadgets/packagekit/status/busy/4";
          }
          description { state: "spin" 0.0;
             inherit: "default" 0.0;
