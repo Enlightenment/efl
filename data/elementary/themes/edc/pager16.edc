@@ -2,7 +2,7 @@ group { name: "e/modules/pager16/popup";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/popup/pager";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
@@ -24,7 +24,7 @@ group { name: "e/modules/pager16/popup";
             rel2.relative: 1.0 0.0;
             rel2.offset: -9 8;
             align: 0.5 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/popup/pager/text/title";
             text { font: FNBD; size: 10;
                text_class: "title_bar";
                align: 0.5 0.0;
@@ -121,7 +121,7 @@ group { name: "e/modules/pager16/desk";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "clip"; type: RECT; mouse_events: 0;
@@ -153,8 +153,8 @@ group { name: "e/modules/pager16/desk";
          scale: 1;
          desc { "default";
             rel.to: "e.swallow.content";
-            color: FN_COL_DEFAULT;
-            text { font: "Sans"; size: 10;
+            color_class: "/fg/normal/gadgets/pager/desk/text";
+            text { font: FN; size: 10;
                text_class: "module_small";
                align: 0.5 0.5;
             }
@@ -168,7 +168,7 @@ group { name: "e/modules/pager16/desk";
          scale: 1;
          clip_to: "clip";
          desc { "default";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/gadgets/pager/desk";
             visible: 0;
             rel.to: "e.swallow.content";
             rel1.relative: 0.0 1.0;
@@ -182,9 +182,10 @@ group { name: "e/modules/pager16/desk";
          }
       }
       part { name: "drop0"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_0.png";
-            rel.to: "e.swallow.content";
+            rel.to: "base";
             rel1.offset: -1 -1;
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.0 0.0;
@@ -193,6 +194,8 @@ group { name: "e/modules/pager16/desk";
             min: 10 10;
             fixed: 1 1;
             visible: 0;
+            offscale;
+            color_class: "/fg/selected/gadgets/pager/desk/drop/arrows";
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
@@ -203,13 +206,14 @@ group { name: "e/modules/pager16/desk";
             rel1.offset: 11 11;
             rel2.offset: 11 11;
             min: 1 1;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "drop1"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_1.png";
-            rel.to: "e.swallow.content";
+            rel.to: "base";
             rel1.offset: 0 -1;
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 0.0;
@@ -218,6 +222,8 @@ group { name: "e/modules/pager16/desk";
             min: 10 10;
             fixed: 1 1;
             visible: 0;
+            offscale;
+            color_class: "/fg/selected/gadgets/pager/desk/drop/arrows";
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
@@ -228,13 +234,14 @@ group { name: "e/modules/pager16/desk";
             rel1.offset: -12 11;
             rel2.offset: -12 11;
             min: 1 1;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "drop2"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_2.png";
-            rel.to: "e.swallow.content";
+            rel.to: "base";
             rel1.offset: 0 0;
             rel1.relative: 1.0 1.0;
             rel2.relative: 1.0 1.0;
@@ -243,6 +250,8 @@ group { name: "e/modules/pager16/desk";
             min: 10 10;
             fixed: 1 1;
             visible: 0;
+            offscale;
+            color_class: "/fg/selected/gadgets/pager/desk/drop/arrows";
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
@@ -253,13 +262,14 @@ group { name: "e/modules/pager16/desk";
             rel1.offset: -12 -12;
             rel2.offset: -12 -12;
             min: 1 1;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "drop3"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "mini_blue_glow_arrow_3.png";
-            rel.to: "e.swallow.content";
+            rel.to: "base";
             rel1.offset: -1 0;
             rel1.relative: 0.0 1.0;
             rel2.relative: 0.0 1.0;
@@ -268,6 +278,8 @@ group { name: "e/modules/pager16/desk";
             min: 10 10;
             fixed: 1 1;
             visible: 0;
+            offscale;
+            color_class: "/fg/selected/gadgets/pager/desk/drop/arrows";
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
@@ -278,13 +290,13 @@ group { name: "e/modules/pager16/desk";
             rel1.offset: 11 -12;
             rel2.offset: 11 -12;
             min: 1 1;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "e.eventarea"; type: RECT; mouse_events: 1;
          repeat_events: 1;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
    }
