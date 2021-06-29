@@ -3,6 +3,7 @@ group { name: "e/widgets/radio";
       part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
+            color_class: "/bg/normal/radio/base";
             min: 15 15;
             max: 15 15;
             rel1.offset: 3 3;
@@ -10,13 +11,12 @@ group { name: "e/widgets/radio";
             rel2.relative: 0.0 1.0;
             image.normal: "i-radio";
             align: 0.0 0.5;
-            color: 0 0 0 64;
             offscale;
             fixed: 1 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 16;
+            color_class: "/bg/disabled/radio/base";
          }
       }
       part { name: "clip"; type: RECT;
@@ -24,7 +24,7 @@ group { name: "e/widgets/radio";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 153 153 153 255;
+            color: 255 255 255 153; // no cc
          }
       }
       part { name: "indicator"; mouse_events: 0;
@@ -32,16 +32,17 @@ group { name: "e/widgets/radio";
          description { state: "default" 0.0;
             rel.to: "base";
             image.normal: "radio.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/radio/radio";
             visible: 0;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
+            color_class: "/fg/pressed/radio/radio";
             visible: 1;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/radio/radio";
             visible: 1;
          }
       }
@@ -52,7 +53,7 @@ group { name: "e/widgets/radio";
             rel1.to_x: "base";
             rel1.relative: 1.0 0.0;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/radio/text";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -63,17 +64,17 @@ group { name: "e/widgets/radio";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/radio/text";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/radio/text";
          }
       }
       part { name: "event"; type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -145,7 +146,7 @@ group { name: "e/widgets/radio_icon";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/radio/text";
          }
       }
    }

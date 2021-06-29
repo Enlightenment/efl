@@ -5,14 +5,14 @@ group { name: "e/pointer/enlightenment/default/color";
       part { name: "parent"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             FIXED_SIZE(32, 32)
          }
          description { state: "suspend" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "base";
@@ -20,10 +20,11 @@ group { name: "e/pointer/enlightenment/default/color";
          description { state: "default" 0.0;
             image.normal: "pointer.png";
             rel.to: "parent";
+            color_class: "/fg/normal/pointer/base";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/pressed/pointer/base";
          }
       }
       part { name: "e.swallow.hotspot"; type: SWALLOW;
@@ -121,10 +122,9 @@ group { name: "e/pointer/enlightenment/default/mono";
       part { name: "e.swallow.hotspot"; type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
+            rel.to: "base";
             rel1.offset: 6 8;
-            rel1.to: "base";
             rel2.offset: 6 8;
-            rel2.to: "base";
             rel2.relative: 0.0 0.0;
          }
       }
@@ -137,7 +137,7 @@ group { name: "e/pointer/enlightenment/resize_br/color";
       part { name: "box"; type: RECT;
          insert_after: "base";
          description { state: "default" 0.0;
-            color: 51 153 255 192;
+            color_class: "/fg/normal/pointer/manipulator";
             rel1.relative: 0.3 0.3;
             rel2.relative: 0.7 0.7;
          }
@@ -283,7 +283,7 @@ group { name: "e/pointer/enlightenment/hand/color";
       part { name: "box"; type: RECT;
          insert_after: "base";
          description { state: "default" 0.0;
-            color: 51 153 255 192;
+            color_class: "/fg/normal/pointer/manipulator";
             rel1.relative: 0.5 0.5;
             rel2.relative: 1.0 1.0;
          }
@@ -354,7 +354,7 @@ group { name: "e/pointer/enlightenment/rotate/color";
       part { name: "box"; type: RECT;
          insert_after: "base";
          description { state: "default" 0.0;
-            color: 51 153 255 192;
+            color_class: "/fg/normal/pointer/manipulator";
             rel1.relative: 0.3 0.3;
             rel2.relative: 0.8 0.8;
             map.on: 1;
@@ -405,11 +405,11 @@ group { name: "e/pointer/enlightenment/plus/color";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             rel1.relative: (40/128) (40/128);
             rel2.relative: (76/128) (76/128);
-            color: 53 153 255 255;
+            color_class: "/fg/normal/pointer/manipulator";
          }
          description { state: "faded" 0.0;
             inherit: "default" 0.0;
-            color: 53 153 255 128;
+            color: 255 255 255 128; // no cc
          }
       }
    }
@@ -436,6 +436,7 @@ group { name: "e/pointer/enlightenment/entry/color";
       part { name: "base";
          scale: 1;
          description { state: "default" 0.0;
+            color_class: "/fg/normal/pointer/base";
             image.normal: "pointer_entry.png";
             aspect: (44/88) (44/88); aspect_preference: VERTICAL;
             FIXED_SIZE(32, 32)

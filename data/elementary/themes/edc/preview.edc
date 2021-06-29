@@ -2,15 +2,13 @@ group { name: "e/widgets/preview";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
-            color: 64 64 64 255;
+            rel.to: "e.swallow.content";
+            color_class: "/bg/normal/preview";
          }
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
+            rel.to: "e.swallow.content";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
