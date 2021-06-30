@@ -66,7 +66,7 @@ group { name: "e/widgets/scrollframe";
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "clipper"; type: RECT;
@@ -111,7 +111,7 @@ group { name: "e/widgets/scrollframe";
       part { name: "sb_vbar_p1"; type: RECT;
          clip_to: "sb_vbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "sb_vbar";
             rel2.relative: 1.0 0.0;
             rel2.to: "e.dragable.vbar";
@@ -121,7 +121,7 @@ group { name: "e/widgets/scrollframe";
       part { name: "sb_vbar_p2"; type: RECT;
          clip_to: "sb_vbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.relative: 0.0 1.0;
             rel1.to: "e.dragable.vbar";
             rel2.to: "sb_vbar";
@@ -141,7 +141,7 @@ group { name: "e/widgets/scrollframe";
             rel1.to: "sb_vbar";
             rel2.relative: 0.5  0.5;
             rel2.to: "sb_vbar";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -155,7 +155,7 @@ group { name: "e/widgets/scrollframe";
          repeat_events: 1;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "sb_vbar";
             rel1.offset: -45 0;
             rel2.to: "sb_vbar";
@@ -309,7 +309,7 @@ group { name: "e/widgets/scrollframe";
       part { name: "sb_hbar_p1"; type: RECT;
          clip_to: "sb_hbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "sb_hbar";
             rel2.relative: 0.0 1.0;
             rel2.to: "e.dragable.hbar";
@@ -319,7 +319,7 @@ group { name: "e/widgets/scrollframe";
       part { name: "sb_hbar_p2"; type: RECT;
          clip_to: "sb_hbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.relative: 1.0 0.0;
             rel1.to: "e.dragable.hbar";
             rel2.to: "sb_hbar";
@@ -339,7 +339,7 @@ group { name: "e/widgets/scrollframe";
             rel1.to: "sb_hbar";
             rel2.relative: 0.5  0.5;
             rel2.to: "sb_hbar";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -353,7 +353,7 @@ group { name: "e/widgets/scrollframe";
          repeat_events: 1;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "sb_hbar";
             rel1.offset: 0 -45;
             rel2.to: "sb_hbar";
@@ -485,15 +485,15 @@ group { name: "e/widgets/scrollframe";
          clip_to: "sb_vbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/scroller/bar/horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/scroller/bar/horizontal";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/scroller/bar/horizontal";
          }
       }
 
@@ -519,15 +519,15 @@ group { name: "e/widgets/scrollframe";
          clip_to: "sb_hbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/scroller/bar/horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/scroller/bar/horizontal";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/scroller/bar/horizontal";
          }
       }
 
@@ -547,58 +547,39 @@ group { name: "e/widgets/scrollframe";
             max: 999999 15;
          }
       }
-
-      //////////////////////////////////////////////////////////////////////
-
-      part { name: "dim_effect"; type: RECT; mouse_events: 0;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-         description { state: "effect" 0.0;
-            color: 32 32 32 255;
-         }
-      }
    }
    programs {
-      program {
-         signal: "mouse,down,1*"; source: "e.dragable.vbar";
+      program { signal: "mouse,down,1*"; source: "e.dragable.vbar";
          action: STATE_SET "clicked" 0.0;
          target: "e.dragable.vbar";
          target: "color_vbar";
       }
-      program {
-         signal: "mouse,down,*"; source: "e.dragable.vbar";
+      program { signal: "mouse,down,*"; source: "e.dragable.vbar";
          action: SIGNAL_EMIT "e,vbar,press" "e";
       }
-      program {
-         signal: "mouse,up,1"; source: "e.dragable.vbar";
+      program { signal: "mouse,up,1"; source: "e.dragable.vbar";
          action: STATE_SET "default" 0.0;
          target: "e.dragable.vbar";
          target: "color_vbar";
       }
-      program {
-         signal: "mouse,up,*"; source: "e.dragable.vbar";
+      program { signal: "mouse,up,*"; source: "e.dragable.vbar";
          action: SIGNAL_EMIT "e,vbar,unpress" "e";
       }
 
-      program {
-         signal: "mouse,down,1*"; source: "e.dragable.hbar";
+      program { signal: "mouse,down,1*"; source: "e.dragable.hbar";
          action: STATE_SET "clicked" 0.0;
          target: "e.dragable.hbar";
          target: "color_hbar";
       }
-      program {
-         signal: "mouse,down,*"; source: "e.dragable.hbar";
+      program { signal: "mouse,down,*"; source: "e.dragable.hbar";
          action: SIGNAL_EMIT "e,hbar,press" "e";
       }
-      program {
-         signal: "mouse,up,1"; source: "e.dragable.hbar";
+      program { signal: "mouse,up,1"; source: "e.dragable.hbar";
          action: STATE_SET "default" 0.0;
          target: "e.dragable.hbar";
          target: "color_hbar";
       }
-      program {
-         signal: "mouse,up,*"; source: "e.dragable.hbar";
+      program { signal: "mouse,up,*"; source: "e.dragable.hbar";
          action: SIGNAL_EMIT "e,hbar,unpress" "e";
       }
    }
