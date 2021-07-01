@@ -146,6 +146,9 @@ ICON("enlightenment/wallpaper_pan",  "i-fill-pan")
 
 ICON("battery",  "i-battery")
 ICON("gadgets",  "i-gadgets")
+
+ICON("lock",  "i-padlock-lock")
+ICON("unlock",  "i-padlock-unlock")
 #undef ICON
 
 // mono color default fg color icons
