@@ -279,6 +279,10 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/desklock/selection";
       color:  51 153 255 255; }
+   color_class { name: "/fg/normal/desklock/fprint/success";
+      color: 153 255  51 255; }
+   color_class { name: "/fg/normal/desklock/fprint/fail";
+      color: 255 153  51 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/hoversel/button";
       color:  96  96  96 255; }

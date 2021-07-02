@@ -174,11 +174,43 @@ group { name: "e/desklock/login_box";
             visible: 1;
          }
       }
+      part { name: "fprint";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "i-fingerprint";
+            min: 40 40;
+            max: 40 40;
+            rel.to_x: "clipper";
+            rel.to_y: "e.text.password";
+            rel1.relative: 0.0 1.0;
+            align: 0.5 0.0;
+            color: 255 255 255 0; // no cc
+            color_class: "/fg/normal/desklock/fprint/normal";
+            visible: 0;
+         }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255; // no cc
+            visible: 1;
+         }
+         description { state: "auth-success" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/normal/desklock/fprint/success";
+            color: 255 255 255 255; // no cc
+            visible: 1;
+         }
+         description { state: "auth-fail" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/normal/desklock/fprint/fail";
+            color: 255 255 255 255; // no cc
+            visible: 1;
+         }
+      }
       part { name: "busy_area"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
-            min: 20 20;
-            max: 160 160;
+            min: 40 40;
+            max: 40 40;
             rel.to: "clipper";
             rel1.relative: 0.0 0.5;
             align: 0.5 0.0;
@@ -224,6 +256,75 @@ group { name: "e/desklock/login_box";
       program { signal: "e,state,logo,visible"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "logo_clip";
+      }
+
+      program { signal: "e,fprint,unknown"; source: "e";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
+         target: "fprint";
+      }
+      program { signal: "e,fprint,press"; source: "e";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
+         target: "fprint";
+      }
+      program { signal: "e,fprint,swipe"; source: "e";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
+         target: "fprint";
+      }
+
+      program { signal: "e,fprint,auth,success"; source: "e";
+         action: STATE_SET "auth-success" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+      }
+      program { signal: "e,fprint,auth,fail"; source: "e";
+         action: STATE_SET "auth-fail" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         after: "fprint-reset";
+      }
+      program { signal: "e,fprint,auth,short"; source: "e";
+         action: STATE_SET "auth-fail" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         after: "fprint-reset";
+      }
+      program { signal: "e,fprint,auth,nocenter"; source: "e";
+         action: STATE_SET "auth-fail" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         after: "fprint-reset";
+      }
+      program { signal: "e,fprint,auth,removeretry"; source: "e";
+         action: STATE_SET "auth-fail" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         after: "fprint-reset";
+      }
+      program { signal: "e,fprint,auth,retry"; source: "e";
+         action: STATE_SET "auth-fail" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         after: "fprint-reset";
+      }
+      program { signal: "e,fprint,auth,disconnect"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+      }
+      program { signal: "e,fprint,auth,error"; source: "e";
+         action: STATE_SET "auth-fail" 0.0;
+         transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         after: "fprint-reset";
+      }
+      program { name: "fprint-reset";
+         action: STATE_SET "active" 0.0;
+         transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
+         target: "fprint";
+         in: 0.5 0.0;
       }
    }
 }
