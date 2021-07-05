@@ -991,7 +991,7 @@ _keyboard_cb_repeat(void *data)
    Ecore_Wl2_Window *window;
 
    input = data;
-   if (!input) return ECORE_CALLBACK_RENEW;
+   if (!input || !input->repeat.timer) return ECORE_CALLBACK_CANCEL;
 
    window = input->focus.keyboard;
    if (!window) goto out;
