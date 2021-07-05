@@ -141,7 +141,6 @@ evas_image_load_file_head_tga(void *loader_data,
    // x origin gerater that width, y origin greater than height - wrong file
 //   if ((x >= w) || (y >= h))
 //     goto close_file;
-   printf("x\n");
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
      goto close_file;
