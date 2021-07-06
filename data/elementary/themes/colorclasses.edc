@@ -416,6 +416,15 @@ color_classes {
    color_class { name: "/fg/selected/edgebindings/edge";
       color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/gadgets/control/base";
+      color:  51 153 255 255; }
+   color_class { name: "/bg/normal/gadgets/control/outline";
+      color:  51 153 255 255; }
+   color_class { name: "/bg/selected/gadgets/control/outline";
+      color: 255 255 255 255; }
+   color_class { name: "/bg/selected/gadgets/control/arrow";
+      color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/gadgets/ibar/text/text";
       color: 255 255 255 255; }
    color_class { name: "/bg/normal/gadgets/ibar/drop/base";

@@ -169,7 +169,7 @@ group { name: "e/modules/notification/main";
             rel2.offset: -13 12;
             align: 1.0 0.0;
             min: 15 15;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }

@@ -855,13 +855,13 @@ group { name: "e/modules/ibar/menu/item";
          }
          description { state: "otherdesk";
             inherit: "default" 0.0;
-            color: 32 32 32 255;
+            color: 32 32 32 255; // no cc // commented out
             link.base: "e,state,other,desk" "e";
             link.transition: ACCEL 0.1;
          }
          description { state: "otherscreen";
             inherit: "default" 0.0;
-            color: 32 32 32 255;
+            color: 32 32 32 255; // no cc // commented out
             link.base: "e,state,other,screen" "e";
             link.transition: ACCEL 0.1;
          }

@@ -122,7 +122,7 @@ group { name: "e/widgets/button";
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;

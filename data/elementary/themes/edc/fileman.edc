@@ -876,7 +876,7 @@ group { name: "e/fileman/default/overlay";
          }
          description { state: "active" 0.0;
             visible: 1;
-            color: 255 255 255 255; // mo cc
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "busy_clip"; type: RECT;

@@ -48,7 +48,7 @@ group { name: "e/widgets/cslider";
             rel1.to_y: "e.swallow.content";
             rel2.to_x: "e.dragable.cursor";
             rel2.to_y: "e.swallow.content";
-            color: 255 255 255 192;
+            color: 255 255 255 192; // no cc
          }
          description { state: "vertical" 0.0;
             inherit: "default" 0.0;

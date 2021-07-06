@@ -321,12 +321,12 @@ group { name: "e/comp/border/fullscreen";
       }
       part { name: "scr_shade"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
             visible: 1;
          }
       }
@@ -358,17 +358,17 @@ group { name: "e/comp/border/fullscreen";
       part { name: "fader"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible1" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
          description { state: "visible2" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
       }

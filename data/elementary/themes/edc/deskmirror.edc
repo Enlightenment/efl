@@ -336,7 +336,7 @@ group { name: "e/deskmirror/frame/tiling";
       }
       part { name: "frame"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.offset: -1 -1;
             rel2.offset: 0 0;
             color_class: "/bg/selected/border/outline";
