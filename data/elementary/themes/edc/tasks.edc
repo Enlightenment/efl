@@ -23,41 +23,44 @@ group { name:"e/modules/tasks/item";
          clip_to: "clip";
          scale: 1;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/gadgets/tasks/base/normal";
             rel1.offset: 0 (0 - SHELFPAD);
             rel2.offset: -1 (SHELFPAD - 1);
             offscale;
          }
          description { state: "iconic" 0.0;
             inherit: "default" 0.0;
+            color_class: "/bg/normal/gadgets/tasks/base/iconified";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 40 40 40 255;
+            color_class: "/bg/normal/gadgets/tasks/base/focused";
          }
       }
       part { name: "click"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          scale: 1;
          description { state: "default" 0.0;
-            color: 32 32 32 0;
+            color_class: "/bg/pressed/gadgets/tasks/base";
+            color: 255 255 255 0; // no cc
             rel1.offset: 0 (0 - SHELFPAD);
             rel2.offset: -1 (SHELFPAD - 1);
             offscale;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 32 32 32 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "urgent"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
-            color: 51 153 255 0;
+            color_class: "/bg/selected/gadgets/tasks/urgent";
+            color: 255 255 255 0; // no cc
          }
          description { state: "urgent" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "label_clip"; type: RECT; mouse_events: 0;
@@ -107,7 +110,7 @@ group { name:"e/modules/tasks/item";
             rel1.relative: 1.0 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/tasks/text/normal";
             offscale;
             text { font: FN; size: 10;
                min: 0 1;
@@ -117,7 +120,7 @@ group { name:"e/modules/tasks/item";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/gadgets/tasks/text/normal";
          }
       }
       part { name: "focused_clip"; type: RECT; mouse_events: 0;
@@ -142,7 +145,7 @@ group { name:"e/modules/tasks/item";
             rel1.relative: 1.0 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/gadgets/tasks/text/focused";
             offscale;
             text { font: FNBD; size: 10;
                min: 0 1;
@@ -153,7 +156,7 @@ group { name:"e/modules/tasks/item";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 220 220 220 255;
+            color_class: "/fg/pressed/gadgets/tasks/text/focused";
          }
       }
       part { name: "iconic_clip"; type: RECT; mouse_events: 0;
@@ -178,7 +181,7 @@ group { name:"e/modules/tasks/item";
             rel1.relative: 1.0 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 128 128 128 255;
+            color_class: "/fg/normal/gadgets/tasks/text/iconified";
             offscale;
             text { font: FN; size: 10;
                min: 0 1;
@@ -189,7 +192,7 @@ group { name:"e/modules/tasks/item";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/gadgets/tasks/text/iconified";
          }
       }
       part { name: "icon"; type: SPACER;
@@ -237,7 +240,7 @@ group { name:"e/modules/tasks/item";
          scale: 1;
          clip_to: "clip";
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/gadgets/tasks/bar";
             align: 0.5 1.0;
             rel1.offset: 0 (SHELFPAD - 1);
             rel1.relative: 0.0 1.0;
@@ -263,7 +266,7 @@ group { name:"e/modules/tasks/item";
       part { name: "event"; type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "clip"; type: RECT;
@@ -448,10 +451,11 @@ group { name:"e/modules/tasks/item_vert";
          }
          description { state: "iconic" 0.0;
             inherit: "default" 0.0;
+            color_class: "/bg/selected/gadgets/tasks/base/iconified";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 40 40 40 255;
+            color_class: "/bg/selected/gadgets/tasks/base/focused";
          }
       }
       part { name: "e.text.label";
@@ -463,7 +467,7 @@ group { name:"e/modules/tasks/item_vert";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/gadgets/tasks/text/normal";
          }
       }
       part { name: "label_focused";
@@ -475,7 +479,7 @@ group { name:"e/modules/tasks/item_vert";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 220 220 220 255;
+            color_class: "/fg/pressed/gadgets/tasks/text/focused";
          }
       }
       part { name: "label_iconic";
@@ -487,7 +491,7 @@ group { name:"e/modules/tasks/item_vert";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/gadgets/tasks/text/iconified";
          }
       }
       part { name: "icon";

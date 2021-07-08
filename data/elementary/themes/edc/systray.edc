@@ -1,19 +1,11 @@
 group { name: "e/modules/systray/main";
    alias: "e/modules/systray/main/default";
    alias: "e/modules/systray/main/invisible";
-   data.item: "default" "64 64 64";
-   data.item: "inset" "64 64 64";
-   data.item: "plain" "64 64 64";
    parts {
       alias: "box" "e.box";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
-            align: 0 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "e.box"; type: BOX;

@@ -45,17 +45,16 @@ group { name: "e/transitions/crossfade";
       }
       part { name: "bg_new_clip"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
          description { state: "done" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
    }
    programs {
-      program {
-         signal: "e,action,start"; source: "e";
+      program { signal: "e,action,start"; source: "e";
          action: STATE_SET "done" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "bg_new_clip";
@@ -82,11 +81,11 @@ group { name: "e/transitions/vswipe";
       }
       part { name: "divideold";
          clip_to: "bg_prev_clip";
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "vgrad_shadow_bi.png";
-            rel1.to: "bg_prev_clip";
+            rel.to: "bg_prev_clip";
             rel1.relative: 0.0 0.0;
-            rel2.to: "bg_prev_clip";
             rel2.relative: 1.0 0.0;
             min: 0 80;
             max: 99999 80;
@@ -95,11 +94,11 @@ group { name: "e/transitions/vswipe";
       }
       part { name: "dividenew";
          clip_to: "bg_new_clip";
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "vgrad_shadow_bi.png";
-            rel1.to: "bg_new_clip";
+            rel.to: "bg_new_clip";
             rel1.relative: 0.0 1.0;
-            rel2.to: "bg_new_clip";
             rel2.relative: 1.0 1.0;
             min: 0 80;
             max: 99999 80;
@@ -107,9 +106,11 @@ group { name: "e/transitions/vswipe";
          }
       }
       part { name: "bg_prev_clip"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 0 -40;
             rel2.offset: -1 39;
+            offscale;
          }
          description { state: "done" 0.0;
             inherit: "default" 0.0;
@@ -118,10 +119,12 @@ group { name: "e/transitions/vswipe";
          }
       }
       part { name: "bg_new_clip"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             rel2.relative: 1.0 0.0;
             rel1.offset: 0 -40;
             rel2.offset: -1 -40;
+            offscale;
          }
          description { state: "done" 0.0;
             inherit: "default" 0.0;
@@ -130,8 +133,7 @@ group { name: "e/transitions/vswipe";
          }
       }
       programs {
-         program {
-            signal: "e,action,start"; source: "e";
+         program { signal: "e,action,start"; source: "e";
             action: STATE_SET "done" 0.0;
             transition: SINUSOIDAL 1.0;
             target: "bg_new_clip";

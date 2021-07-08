@@ -71,6 +71,11 @@ color_classes {
    color_class { name: "/bg/normal/access";
       color: 255 153  51  64; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/tiling/position/base";
+      color:  51 153 255  25; }
+   color_class { name: "/bg/normal/tiling/position/outline";
+      color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/init/logo";
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/init/text/version";
@@ -427,6 +432,34 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/selected/edgebindings/edge";
       color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/gadgets/temperature/low";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/temperature/medium";
+      color: 255 153  51 255; }
+   color_class { name: "/fg/normal/gadgets/temperature/hi";
+      color: 255  51  51 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/gadgets/tasks/base/normal";
+      color:  64  64  64 255; }
+   color_class { name: "/bg/normal/gadgets/tasks/base/iconified";
+      color:  64  64  64 255; }
+   color_class { name: "/bg/normal/gadgets/tasks/base/focused";
+      color:  32  32  32 255; }
+   color_class { name: "/bg/pressed/gadgets/tasks/base";
+      color:  16  16  16 255; }
+   color_class { name: "/bg/selected/gadgets/tasks/bar";
+      color:  51 153 255 255; }
+   color_class { name: "/bg/selected/gadgets/tasks/urgent";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/tasks/text/focused";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/pressed/gadgets/tasks/text/focused";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/gadgets/tasks/text/iconified";
+      color: 128 128 128 255; }
+   color_class { name: "/fg/pressed/gadgets/tasks/text/iconified";
+      color: 160 160 160 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/gadgets/control/base";
       color:  51 153 255 255; }
