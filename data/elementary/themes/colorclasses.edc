@@ -65,6 +65,9 @@ color_classes {
    color_class { name: "/fg/normal/scroller/bar";
       color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/color/cursor";
+      color: 255 255 255 192; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/access";
       color: 255 153  51  64; }
 ///////////////////////////////////////////////////////////////////////////////
@@ -139,6 +142,15 @@ color_classes {
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/separator";
+      color:  80  80  80 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/slider/base";
+      color:  48  48  48 255; }
+   color_class { name: "/bg/disabled/slider/base";
+      color:  56  56  56 255; }
+   color_class { name: "/fg/normal/slider/bar";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/slider/bar";
       color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";

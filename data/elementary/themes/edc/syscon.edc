@@ -2,7 +2,7 @@ group { name: "e/widgets/syscon/main";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/syscon";
          }
       }
       part { name: "e.swallow.main"; type: SWALLOW;
@@ -19,9 +19,8 @@ group { name: "e/widgets/syscon/main";
       part { name: "e.swallow.secondary"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.main";
+            rel.to: "e.swallow.main";
             rel1.relative: 0.0 1.0;
-            rel2.to: "e.swallow.main";
             align: 0.5 0.0;
             fixed: 0 1;
             offscale;
@@ -47,7 +46,7 @@ group { name: "e/widgets/syscon/main";
             rel2.offset: -1 -17;
             rel2.relative: 0.5 1.0;
             align: 0.5 1.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/syscon/text";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -59,7 +58,7 @@ group { name: "e/widgets/syscon/main";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/syscon/text";
          }
       }
       part { name: "button"; type: RECT;
@@ -69,7 +68,7 @@ group { name: "e/widgets/syscon/main";
             rel1.offset: -12 -12;
             rel2.to: "e.text.label";
             rel2.offset: 11 11;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             offscale;
          }
       }
@@ -98,10 +97,11 @@ group { name: "e/widgets/syscon/item/button";
       }
       part { name: "icon_clip"; type: RECT;
          description { state: "default" 0.0;
+            color: 255 255 255 255; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
@@ -124,7 +124,7 @@ group { name: "e/widgets/syscon/item/button";
             rel1.offset: 8 -9;
             rel2.offset: -9 -9;
             align: 0.5 1.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/syscon/button/text";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -135,22 +135,22 @@ group { name: "e/widgets/syscon/item/button";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/syscon/button/text";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/syscon/button/text";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/syscon/button/text";
          }
       }
       part { name: "sel"; type: RECT; mouse_events: 0;
          scale: 1;
          clip_to: "clip";
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/syscon/button/bar";
             visible: 0;
             rel2.offset: -1 0;
             rel1.relative: 0.0 1.0;
@@ -167,7 +167,7 @@ group { name: "e/widgets/syscon/item/button";
       part { name: "event"; type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -223,12 +223,12 @@ group { name: "e/modules/syscon/button";
             rel2.relative: 0.95 0.95;
             image.normal: "i-system-shutdown";
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/gadgets/syscon";
             offscale;
          }
          description { state: "hilight" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/gadgets/syscon";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
@@ -236,7 +236,7 @@ group { name: "e/modules/syscon/button";
             rel2.relative: 0.93 0.93;
             rel1.offset: 1 1;
             rel2.offset: -2 -2;
-            color: 200 200 200 255;
+            color_class: "/fg/pressed/gadgets/syscon";
          }
       }
    }

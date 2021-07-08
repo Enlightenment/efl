@@ -6,7 +6,7 @@ group { name: "e/widgets/spectrum";
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg-dark/normal/color";
             offscale;
          }
       }
@@ -17,7 +17,7 @@ group { name: "e/widgets/spectrum";
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             image.normal: "diagonal_stripes.png";
-            color: 255 255 255 64;
+            color_class: "/bg-dark-alt/normal/color";
             TILED_PATTERN(240, 240)
             offscale;
          }
@@ -28,7 +28,7 @@ group { name: "e/widgets/spectrum";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW;
@@ -57,7 +57,7 @@ group { name: "e/widgets/spectrum";
             rel1.to_y: "e.swallow.content";
             rel2.to_x: "e.dragable.cursor";
             rel2.to_y: "e.swallow.content";
-            color: 255 255 255 192;
+            color_class: "/fg/normal/color/cursor";
          }
       }
       part { name: "cursor_y"; type: RECT;
@@ -66,7 +66,7 @@ group { name: "e/widgets/spectrum";
             rel1.to_y: "e.dragable.cursor";
             rel2.to_x: "e.swallow.content";
             rel2.to_y: "e.dragable.cursor";
-            color: 255 255 255 192;
+            color_class: "/fg/normal/color/cursor";
          }
       }
    }
