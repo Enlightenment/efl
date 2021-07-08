@@ -44,7 +44,11 @@ color_classes {
       color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/dim";
+      color:   0   0   0 160; }
+   color_class { name: "/dim/pressed";
       color:   0   0   0 200; }
+   color_class { name: "/dim/disabled";
+      color:   0   0   0  80; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/menu/title";
       color: 255 255 255 255; }
@@ -210,12 +214,6 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/disabled/button";
       color:  97  96  96 255; }
-   color_class { name: "/bg/normal/button-overlay";
-      color:   0   0   0 160; }
-   color_class { name: "/bg/pressed/button-overlay";
-      color:   0   0   0 200; }
-   color_class { name: "/bg/disabled/button-overlay";
-      color:   0   0   0  80; }
    color_class { name: "/fg/normal/button-anchor";
       color:  51 153 255 255; }
    color_class { name: "/fg/pressed/button-anchor";
@@ -432,6 +430,9 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/selected/edgebindings/edge";
       color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/selected/toolbar/base";
+      color:  32  32  32 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/gadgets/temperature/low";
       color:  51 153 255 255; }

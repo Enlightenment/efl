@@ -611,15 +611,15 @@ group { name: "elm/button/base/overlay";
       }
       part { name: "base";
          description { state: "default" 0.0;
-            color_class: "/bg/normal/button-overlay";
+            color_class: "/dim/normal/button-overlay";
             visible: 1;
          }
          description { state: "pressed" 0.0;
-            color_class: "/bg/pressed/button-overlay";
+            color_class: "/dim/pressed/button-overlay";
             visible: 1;
          }
          description { state: "disabled" 0.0;
-            color_class: "/bg/disabled/button-overlay";
+            color_class: "/dim/disabled/button-overlay";
             visible: 0;
          }
       }

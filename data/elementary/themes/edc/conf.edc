@@ -23,7 +23,6 @@ group { name: "e/widgets/configure/main";
       part { name: "e.swallow.content"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 0 8;
             rel1.to_x: "base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -1 -17;
