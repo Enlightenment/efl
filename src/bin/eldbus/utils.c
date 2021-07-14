@@ -89,6 +89,7 @@ dbus_name_to_c(const char *dbus)
           eina_strbuf_append_char(buffer, tolower(ret[i]));
      }
    free(ret);
+   eina_strbuf_replace_all(buffer, "-", "_");
    ret = eina_strbuf_string_steal(buffer);
 end:
    free(str_cpy);
