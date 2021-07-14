@@ -428,23 +428,11 @@ prop_cb_get(const DBus_Property *prop)
      }
 }
 
-static char*
-_escape(const char *name) {
-  Eina_Strbuf *buf = eina_strbuf_new();
-
-  eina_strbuf_append(buf, name);
-  eina_strbuf_replace_all(buf, "-", "_");
-
-  return eina_strbuf_release(buf);
-}
-
-
 static void
 source_client_property_generate_get(const DBus_Property *prop, Eina_Strbuf *c_code, Eina_Strbuf *h)
 {
-   char *cb_name_escaped = _escape(prop->cb_name);
    //callback
-   eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)\n{\n", cb_name_escaped);
+   eina_strbuf_append_printf(c_code, "\nstatic void\n%s(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)\n{\n", prop->cb_name);
    eina_strbuf_append_printf(c_code, "   void *user_data = eldbus_pending_data_del(pending, \"__user_data\");\n");
    eina_strbuf_append_printf(c_code, "   const char *error, *error_msg;\n");
    eina_strbuf_append_printf(c_code, "   %s cb = data;\n", prop_cb_get(prop));
@@ -500,8 +488,6 @@ source_client_property_generate_get(const DBus_Property *prop, Eina_Strbuf *c_co
    eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_proxy\", proxy);\n");
    eina_strbuf_append_printf(c_code, "   return p;\n");
    eina_strbuf_append_printf(c_code, "}\n");
-
-   free(cb_name_escaped);
 }
 
 static void
