@@ -434,6 +434,18 @@ color_classes {
    color_class { name: "/bg/selected/toolbar/base";
       color:  32  32  32 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/winlist/text/title";
+      color: 255 255 255 255; }
+   color_class { name: "/bg/selected/winlist/item/base";
+      color:  32  32  32 255; }
+   color_class { name: "/fg/normal/winlist/item/text/iconified";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/selected/winlist/item/text/iconified";
+      color: 160 160 160 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/wizard/text/title";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/gadgets/temperature/low";
       color:  51 153 255 255; }
    color_class { name: "/fg/normal/gadgets/temperature/medium";

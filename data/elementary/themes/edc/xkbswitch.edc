@@ -3,31 +3,33 @@ group { name: "e/modules/xkbswitch/main";
    max: 128 128;
    parts {
       part { name: "e.swallow.flag"; type: SWALLOW; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
+            offscale;
          }
       }
       part { name: "over"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "e.swallow.flag";
-            rel2.to: "e.swallow.flag";
-            color: 0 0 0 0;;
+            rel.to: "e.swallow.flag";
+            color_class: "/dim/normal/gadgets/xkbswitch/base";
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            color: 0 0 0 128;
+            color: 0 0 0 255; // no cc
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color_class: "/fg/selected/gadgets/xkbswitch/text";
+            color: 255 255 255 0; // no cc
             visible: 0;
-            rel1.to: "e.swallow.flag";
+            rel.to: "e.swallow.flag";
             rel1.relative: 0.0 0.5;
-            rel2.to: "e.swallow.flag";
             rel2.relative: 1.0 0.5;
             text { font: FN; size: 10;
                min: 0 1;
@@ -37,26 +39,24 @@ group { name: "e/modules/xkbswitch/main";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
    programs {
-      program {
-         signal: "mouse,in"; source: "event";
+      program { signal: "mouse,in"; source: "event";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.25;
          target: "e.text.label";
          target: "over";
       }
-      program {
-         signal: "mouse,out"; source: "event";
+      program { signal: "mouse,out"; source: "event";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 1.0;
          target: "e.text.label";
@@ -69,19 +69,20 @@ group { name: "e/modules/xkbswitch/noflag";
    max: 128 128;
    parts {
       part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
+            offscale;
             aspect: 1.8 1.8; aspect_preference: BOTH;
-            color: 32 32 32 255;
+            color_class: "/bg-dark/normal/gadgets/xkbswitch/text";
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 160 160 160 255;;
-            rel1.to: "base";
+            color_class: "/fg/selected/gadgets/xkbswitch/text";
+            rel.to: "base";
             rel1.relative: 0.0 0.5;
-            rel2.to: "base";
             rel2.relative: 1.0 0.5;
             text { font: FNBD; size: 10;
                min: 0 1;
@@ -89,14 +90,10 @@ group { name: "e/modules/xkbswitch/noflag";
             }
             fixed: 0 1;
          }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
-         }
       }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
