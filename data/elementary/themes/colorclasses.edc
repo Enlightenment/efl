@@ -605,7 +605,7 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/pressed/gadgets/music_control/button";
       color: 255 255 255 255; }
-   color_class { name: "/fg/pressed/gadgets/music_control/progress";
+   color_class { name: "/fg/normal/gadgets/music_control/progress";
       color:  51 153 255 255; }
    color_class { name: "/fg/normal/gadgets/music_control/text";
       color: 220 220 220 255; }
