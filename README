@@ -418,6 +418,9 @@ able to use the efl.
 COMPILING AND INSTALLING
 ------------------------
 
+For sample configuration options please look in the ./confs/ directory
+for scripts that pass in commonly used options.
+
 See the INSTALL file: https://git.enlightenment.org/core/efl.git/tree/INSTALL
 
 
