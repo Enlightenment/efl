@@ -49,9 +49,9 @@
             relative: 1.0 1.0; \
             to: "elm.field"#_after; \
          } \
-         color: FN_COL_DEFAULT; \
+         color_class: "/fg/normal/clock/separator"; \
          text { \
-            font: "Sans"; size: 10; \
+            font: FN; size: 10; \
             min: 1 0; \
             ellipsis: -1; \
             align: 0.5 0.5; \
@@ -72,10 +72,10 @@
          visible: 0; \
          rel1.to: "elm.separator"#_pos; \
          rel2.to: "elm.separator"#_pos; \
-         color: FN_COL_DISABLE; \
+         color_class: "/fg/disabled/clock/separator"; \
          text { \
             text_source: "elm.separator"#_pos; \
-            font: "Sans"; size: 10; \
+            font: FN; size: 10; \
             text_class: "datetime_separator_text_disabled"; \
          } \
       } \
@@ -102,7 +102,7 @@ group { name: "elm/uiclock/base/default";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "clip"; type: RECT;
@@ -171,7 +171,7 @@ group { name: "elm/uiclock/base/default";
             rel1.to: "elm.separator0";
             rel2.to: "elm.separator7";
             visible: 0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -180,20 +180,18 @@ group { name: "elm/uiclock/base/default";
       }
       part { name: "elm.access"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
    programs {
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "disclip";
          target: "disclip2";
          target: "discover";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "disclip";
          target: "disclip2";

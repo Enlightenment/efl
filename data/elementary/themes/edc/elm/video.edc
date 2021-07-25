@@ -2,10 +2,10 @@ group { name: "elm/video/base/default";
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "darker" 0.0;
-            color: 128 128 128 255;
+            color: 128 128 128 255; // no cc
          }
       }
       part { name: "elm.swallow.video"; type: SWALLOW;

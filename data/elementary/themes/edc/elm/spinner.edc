@@ -9,14 +9,14 @@ group { name: "elm/spinner/base/default";
       part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg-dark/normal/spinner/base";
          }
       }
       part { name: "access"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "active" 0.0;
@@ -82,14 +82,14 @@ group { name: "elm/spinner/base/default";
          description { state: "default" 0.0;
             fixed: 1 0;
             rel.to: "elm.swallow.text_button";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "disabler"; type: RECT;
          repeat_events: 0;
          mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
@@ -192,7 +192,7 @@ group { name: "elm/spinner/base/vertical";
          description { state: "default" 0.0;
             fixed: 1 0;
             rel.to: "elm.swallow.text_button";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }

@@ -455,7 +455,7 @@ group { name: "elm/button/base/anchor";
       }
       rect { "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled";
             inherit: "default";
@@ -580,15 +580,15 @@ group { name: "elm/button/base/blank";
       }
       part { name: "base";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "pressed" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 1;
          }
          description { state: "disabled" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
       }
@@ -1358,7 +1358,7 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
          }
          part { name: "disabler"; type: RECT;
             description { state: "default" 0.0;
-               color: 0 0 0 0;
+               color: 0 0 0 0; // no cc
                visible: 0;
             }
             description { state: "disabled" 0.0;
@@ -1469,7 +1469,7 @@ group { name: "elm/button/base/combobox_vertical/default";
       }
       rect { name: "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled";
             inherit: "default";
@@ -1538,7 +1538,7 @@ group { name: "elm/button/base/combobox_vertical/default";
       }
       rect { name: "event2";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel.to: "base";
             rel2.to_x: "select_line";
             rel2.relative: 0.0 1.0;

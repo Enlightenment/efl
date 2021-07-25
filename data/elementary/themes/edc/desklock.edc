@@ -340,7 +340,7 @@ group { name: "e/desklock/pin_box";
             rel2.offset: -4 -3;
             color_class: "/fg/normal/desklock/text/title/pin";
             align: 0.5 0.0;
-            text { font: "Sans:style=Bold"; size: 10;
+            text { font: FNBD; size: 10;
                min: 0 1;
                align: 0.5 0.5;
                text_class: "desklock_title";

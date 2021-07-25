@@ -146,14 +146,14 @@ group { name: "elm/tooltip/base/default";
       part { name: "clipper"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             rel1 { to: "pop"; offset: -500 -500; }
             rel2 { to: "pop"; offset: 499 499; }
             offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "shadow"; mouse_events: 0;
@@ -232,7 +232,7 @@ group { name: "elm/tooltip/base/default";
       part { name: "edge-area-"name_; type: RECT; mouse_events: 0; \
          clip_to: "clipper-edge-"name_;                            \
          description { state: "default" 0.0;                       \
-            color: 0 0 0 0;                                        \
+            color: 0 0 0 0; /* no cc */                            \
             min: 12 11;                                            \
             align: ax 0.5;                                         \
             fixed: 1 1;                                            \
@@ -256,7 +256,7 @@ group { name: "elm/tooltip/base/default";
             confine: "edge-area-"name_;                            \
          }                                                         \
          description { state: "default" 0.0;                       \
-            color: 0 0 0 0;                                        \
+            color: 0 0 0 0; /* no cc */                            \
             min: 12 11;                                            \
             rel.to: "edge-area-"name_;                             \
          }                                                         \
@@ -302,7 +302,7 @@ group { name: "elm/tooltip/base/default";
       part { name: "edge-area-"name_; type: RECT; mouse_events: 0; \
          clip_to: "clipper-edge-"name_;                            \
          description { state: "default" 0.0;                       \
-            color: 0 0 0 0;                                        \
+            color: 0 0 0 0; /* no cc */                            \
             min: 11 12;                                            \
             align: 0.5 ay;                                         \
             fixed: 1 1;                                            \
@@ -317,7 +317,7 @@ group { name: "elm/tooltip/base/default";
             confine: "edge-area-"name_;                            \
          }                                                         \
          description { state: "default" 0.0;                       \
-            color: 0 0 0 0;                                        \
+            color: 0 0 0 0; /* no cc */                            \
             min: 11 12;                                            \
             rel.to: "edge-area-"name_;                             \
          }                                                         \
@@ -338,12 +338,12 @@ group { name: "elm/tooltip/base/default";
 
       part { name: "clipper_content"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             rel.to: "elm.swallow.content";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;

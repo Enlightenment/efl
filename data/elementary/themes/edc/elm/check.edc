@@ -465,7 +465,7 @@ group { name: "elm/check/base/toggle";
             rel.to: "tog";
             min: 15 15;
             max: 15 99999;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect { name: "base_but"; nomouse;
@@ -485,7 +485,7 @@ group { name: "elm/check/base/toggle";
       rect { name: "button_events";
          dragable.events: "button";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       text { "elm.text"; nomouse;
@@ -553,7 +553,7 @@ group { name: "elm/check/base/toggle";
       }
       rect { "event2";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          desc { "disabled"; inherit;
@@ -563,7 +563,7 @@ group { name: "elm/check/base/toggle";
       rect { "event"; repeat;
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled"; inherit;
             visible: 0;

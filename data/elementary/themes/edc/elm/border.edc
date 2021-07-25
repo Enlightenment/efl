@@ -622,12 +622,12 @@ group { name: "elm/border/base/default";
       rect { "indicator_bg";
          clip: "bg_clip";
          desc { "default";
-            color: 148 23 45 255; // never see this...
+            color: 148 23 45 255; // no cc never see this...
             rel.to: "elm.swallow.indicator";
          }
          desc { "bg_transparent";
             inherit: "default";
-            color: 0 0 0 0; // never see this...
+            color: 0 0 0 0; // no cc never see this...
          }
       }
       swallow { "elm.swallow.indicator";
