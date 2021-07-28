@@ -2954,6 +2954,13 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    int nomul = 0, yinvert = 0;
    Eina_Bool flat = EINA_FALSE;
    Eina_Bool blend = EINA_FALSE;
+   int tex_target = GL_TEXTURE_2D;
+
+   if (tex->im)
+     {
+        if (tex->im->native.target == GL_TEXTURE_EXTERNAL_OES)
+          tex_target = GL_TEXTURE_EXTERNAL_OES;
+     }
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
        ((a < 255) || (tex->alpha) || (!!mtex))) blend = EINA_TRUE;
@@ -3071,7 +3078,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         gc->pipe[pn].region.type = SHD_MAP;
         gc->pipe[pn].shader.prog = prog;
         gc->pipe[pn].shader.cur_tex = tex->pt->texture;
-        gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+        gc->pipe[pn].shader.tex_target = tex_target;
 
         if (utexture)
           {
