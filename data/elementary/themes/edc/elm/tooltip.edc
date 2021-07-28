@@ -3,10 +3,10 @@ group { name: "elm/label/base/tooltip/default";
    alias: "elm/label/base/tooltip/transparent";
    styles {
       style { name: "tooltip_style";
-         base: "font="FNBD" font_size=10 color=#ffffff text_class=bubble align=0.5";
+         base: "font="FNBD" font_size=10 color=cc:/fg/normal/tooltip/text text_class=bubble align=0.5";
          tag:  "br" "\n";
-         tag:  "hilight" "+ font="FNBD" text_class=bubble color=#ff9933";
-         tag:  "b" "+ font="FNBD" text_class=bubble color=#3399ff";
+         tag:  "hilight" "+ font="FNBD" text_class=bubble color=cc:/fg/normal/toolip/text/hilight";
+         tag:  "b" "+ font="FNBD" text_class=bubble";
          tag:  "tab" "\t";
       }
    }
@@ -170,7 +170,7 @@ group { name: "elm/tooltip/base/default";
             rel.to: "elm.swallow.content";
             rel1.offset: -10 -10;
             rel2.offset: 9 9;
-            color: 0 0 0 192;
+            color_class: "/dim/normal/tooltip";
             offscale;
          }
       }
@@ -192,7 +192,7 @@ group { name: "elm/tooltip/base/default";
                to: "pop";                                          \
             }                                                      \
             image.normal: "tooltip-corner-"name_"-tip.png";        \
-            color: 0 0 0 192;                                      \
+            color_class: "/dim/normal/tooltip";                    \
          }                                                         \
          description { state: "visible" 0.0;                       \
             inherit: "default" 0.0;                                \
@@ -268,7 +268,7 @@ group { name: "elm/tooltip/base/default";
             align: ax 0.5;                                         \
             rel.to: "edge-drag-"name_;                             \
             image.normal: "tooltip-edge-"name_"-tip.png";          \
-            color: 0 0 0 192;                                      \
+            color_class: "/dim/normal/tooltip";                    \
          }                                                         \
       }
       TT_EDGE_VERT("left", 0, 0, -6);
@@ -329,7 +329,7 @@ group { name: "elm/tooltip/base/default";
             align: 0.5 ay;                                         \
             rel.to: "edge-drag-"name_;                             \
             image.normal: "tooltip-edge-"name_"-tip.png";          \
-            color: 0 0 0 192;                                      \
+            color_class: "/dim/normal/tooltip";                    \
          }                                                         \
       }
       TT_EDGE_HORIZ("top", 0, 0, -6);

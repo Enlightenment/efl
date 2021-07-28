@@ -204,16 +204,22 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/button";
       color:  96  96  96 255; }
+   color_class { name: "/bg/selected/button";
+      color: 128 128 128 255; }
    color_class { name: "/bg/pressed/button";
       color:  80  80  80 255; }
    color_class { name: "/bg/disabled/button";
       color:  64  64  64 255; }
    color_class { name: "/fg/normal/button";
       color: 192 192 192 255; }
+   color_class { name: "/fg/selected/button";
+      color: 255 255 255 255; }
    color_class { name: "/fg/pressed/button";
       color: 255 255 255 255; }
    color_class { name: "/fg/disabled/button";
       color:  97  96  96 255; }
+   color_class { name: "/fg/selected/button/bar";
+      color:  51 153 255 255; }
    color_class { name: "/fg/normal/button-anchor";
       color:  51 153 255 255; }
    color_class { name: "/fg/pressed/button-anchor";
@@ -445,6 +451,11 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/wizard/text/title";
       color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/tooltip/text";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/toolip/text/hilight";
+      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/gadgets/temperature/low";
       color:  51 153 255 255; }

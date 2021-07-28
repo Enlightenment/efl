@@ -6,7 +6,7 @@ group { name: "elm/slideshow/base/default";
    parts {
       part { name: "whole"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
          }
       }
       part { name: "image_1_whole"; type: RECT;
@@ -14,15 +14,15 @@ group { name: "elm/slideshow/base/default";
          }
          description { state: "fade_prev_next" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
          description { state: "black_fade_prev_next_init" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "black_fade_prev_next" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
          }
          description { state: "horizontal_next_init" 0.0;
             inherit: "default" 0.0;
@@ -58,129 +58,122 @@ group { name: "elm/slideshow/base/default";
          }
          description { state: "square_prev_next" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
       }
       part { name: "image_2_whole"; type: RECT;
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
          }
          description { state: "fade_prev_next" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "black_fade_prev_next_init" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "black_fade_prev_next" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "horizontal_next_init" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 1.0 0.0;
             rel2.relative: 2.0 1.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "horizontal_next" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "horizontal_prev_init" 0.0;
             inherit: "default" 0.0;
             rel1.relative: -1.0 0.0;
             rel2.relative: 0.0 1.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "horizontal_prev" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "vertical_next_init" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 1.0;
             rel2.relative: 1.0 2.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "vertical_next" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "vertical_prev_init" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 -1.0;
             rel2.relative: 1.0 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "vertical_prev" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "square_prev_next_init" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          description { state: "square_prev_next" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "elm.swallow.1"; type: SWALLOW;
          clip_to: "image_1_whole";
          description { state: "default" 0.0;
-            rel1.to: "image_1_whole";
-            rel2.to: "image_1_whole";
+            rel.to: "image_1_whole";
          }
          description { state: "not_fullscreen" 0.0;
+            rel.to: "image_1_whole";
             rel1.relative: 0.1 0.1;
-            rel1.to: "image_1_whole";
             rel2.relative: 0.9 0.9;
-            rel2.to: "image_1_whole";
          }
       }
       part { name: "elm.swallow.2"; type: SWALLOW;
          clip_to: "image_2_whole";
          description {
             state: "default" 0.0;
-            rel1.to: "image_2_whole";
-            rel2.to: "image_2_whole";
+            rel.to: "image_2_whole";
          }
          description { state: "not_fullscreen" 0.0;
+            rel.to: "image_2_whole";
             rel1.relative: 0.1 0.1;
-            rel1.to: "image_2_whole";
             rel2.relative: 0.9 0.9;
-            rel2.to: "image_2_whole";
          }
       }
       part { name: "events_catcher"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
    programs {
-      program {
-         signal: "elm,layout,fullscreen"; source: "elm";
+      program { signal: "elm,layout,fullscreen"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.1";
          target: "elm.swallow.2";
          transition: SINUSOIDAL 1.0;
       }
-      program {
-         signal: "elm,layout,not_fullscreen"; source: "elm";
+      program { signal: "elm,layout,not_fullscreen"; source: "elm";
          action: STATE_SET "not_fullscreen" 0.0;
          target: "elm.swallow.1";
          target: "elm.swallow.2";
          transition: SINUSOIDAL 1.0;
       }
       //
-      program {
-         signal: "elm,fade,next"; source: "elm";
+      program { signal: "elm,fade,next"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -193,8 +186,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 1.5;
          after: "end";
       }
-      program {
-         signal: "elm,fade,previous"; source: "elm";
+      program { signal: "elm,fade,previous"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -207,8 +199,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 1.5;
          after: "end";
       }
-      program {
-         signal: "elm,black_fade,next"; source: "elm";
+      program { signal: "elm,black_fade,next"; source: "elm";
          action: STATE_SET "black_fade_prev_next_init" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -226,8 +217,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 0.75;
          after: "end";
       }
-      program {
-         signal: "elm,black_fade,previous"; source: "elm";
+      program { signal: "elm,black_fade,previous"; source: "elm";
          action: STATE_SET "black_fade_prev_next_init" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -245,8 +235,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 0.75;
          after: "end";
       }
-      program {
-         signal: "elm,horizontal,next"; source: "elm";
+      program { signal: "elm,horizontal,next"; source: "elm";
          action: STATE_SET "horizontal_next_init" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -273,8 +262,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 1.5;
          after: "end";
       }
-      program {
-         signal: "elm,vertical,next"; source: "elm";
+      program { signal: "elm,vertical,next"; source: "elm";
          action: STATE_SET "vertical_next_init" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -287,8 +275,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 1.5;
          after: "end";
       }
-      program {
-         signal: "elm,vertical,previous"; source: "elm";
+      program { signal: "elm,vertical,previous"; source: "elm";
          action: STATE_SET "vertical_prev_init" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -301,8 +288,7 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 1.5;
          after: "end";
       }
-      program {
-         signal: "elm,square,next"; source: "elm";
+      program { signal: "elm,square,next"; source: "elm";
          action: STATE_SET "square_prev_next_init" 0.0;
          target: "image_2_whole";
          after: "square_next_2";
@@ -314,21 +300,18 @@ group { name: "elm/slideshow/base/default";
          transition: SINUSOIDAL 1.5;
          after: "end";
       }
-      program {
-         signal: "elm,square,previous"; source: "elm";
+      program { signal: "elm,square,previous"; source: "elm";
          action: STATE_SET "square_prev_next_init" 0.0;
          target: "image_2_whole";
          after: "square_next_2";
       }
-      program {
-         signal: "elm,none,next"; source: "elm";
+      program { signal: "elm,none,next"; source: "elm";
          action: STATE_SET "fade_prev_next" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
          after: "end";
       }
-      program {
-         signal: "elm,none,previous"; source: "elm";
+      program { signal: "elm,none,previous"; source: "elm";
          action: STATE_SET "fade_prev_next" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
@@ -337,8 +320,7 @@ group { name: "elm/slideshow/base/default";
       program { name: "end";
          action: SIGNAL_EMIT "elm,end" "elm";
       }
-      program {
-         signal: "elm,anim,end"; source: "elm";
+      program { signal: "elm,anim,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "image_1_whole";
          target: "image_2_whole";
