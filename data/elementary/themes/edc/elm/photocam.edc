@@ -8,10 +8,10 @@ group { name: "elm/photocam/base/default";
       part { name: "base"; type: RECT;
         scale: 1;
         description { state: "default" 0.0;
-          color: 0 0 0 0;
+          color: 0 0 0 0; // no cc
           rel1.offset: 4 4;
-          rel2.offset: 4 4;
-          align: 0.0 0.0;
+          rel2.offset: -5 -5;
+          align: 1.0 1.0;
           min: 40 40;
           max: 40 40;
           offscale;

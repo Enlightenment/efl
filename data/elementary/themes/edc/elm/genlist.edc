@@ -1451,7 +1451,7 @@ group { "elm/genlist/tree/tree_effect/default"; nomouse;
          }
          desc { "map_transition";
             inherit: "default";
-            color: 0 0 0 255; // fixed color
+            color: 0 0 0 255; // no cc - fixed color
             map.rotation.x: -90;
             link { base: "elm,action,flip_item";
                after: "rot2";
@@ -2448,7 +2448,7 @@ group { "elm/genlist/item/media/default"; nomouse;
          } \
          rect { "base"; \
             desc { "default"; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list/item"; \
             } \
          } \
       } \
@@ -2999,7 +2999,7 @@ group { "elm/genlist/item_odd_compress/media-preview/default";
          } \
          rect { "base"; \
             desc { "default"; \
-               color: 56 56 56 255; \
+               color_class: "/bg-alt/normal/list/item"; \
             } \
          } \
       } \
@@ -3110,7 +3110,7 @@ group { "elm/genlist/item/mode/default"; nomouse;
          desc { "default";
             rel1.to: "base";
             rel2.to: "base";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "repeat_events";
             inherit: "default";

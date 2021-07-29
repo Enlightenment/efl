@@ -330,7 +330,7 @@ group { name: "elm/scroller/entry_single/default";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 255; // no cc
+            color: 255 255 255 0; // no cc
             color_class: "/shadow/normal/entry";
             rel.to: "bg";
             rel1.offset: -1 0;
@@ -342,7 +342,7 @@ group { name: "elm/scroller/entry_single/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: -16 0;
             rel2.offset: 15 -1;
             visible: 1;
@@ -1044,7 +1044,7 @@ group { name: "elm/entry/handler/start/default";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 32 32;
             visible: 0;
          }
@@ -1089,7 +1089,7 @@ group { name: "elm/entry/handler/end/default";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 0 0 0 0;
+            color: 0 0 0 0; //no cc
             min: 32 32;
             visible: 0;
          }

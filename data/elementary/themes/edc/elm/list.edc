@@ -61,7 +61,7 @@ group { name: "elm/list/item/default";
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -223,7 +223,7 @@ group { name: "elm/list/h_item/default";
    parts {
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;

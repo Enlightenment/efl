@@ -16,9 +16,8 @@ group { name: "elm/pointer/base/default";
             /* both axes control aspect - thus it
              * will be WITHIN the bounds the axes
              * of thre part describe */
-            image {
-               normal: "pointer.png";
-            }
+            image.normal: "pointer.png";
+            color_class: "/fg/normal/pointer/base";
          }
       }
       part { name: "elm.swallow.hotspot"; type: SWALLOW;
@@ -269,7 +268,7 @@ group { name: "elm/pointer/base/rotate";
       part { name: "box"; type: RECT;
          insert_after: "base";
          description { state: "default" 0.0;
-            color: 51 153 255 192;
+            color_class: "/fg/normal/pointer/manipulator";
             rel1.relative: 0.3 0.3;
             rel2.relative: 0.8 0.8;
             map.on: 1;
@@ -311,12 +310,14 @@ group { name: "elm/pointer/base/rotate";
 
 group { name: "elm/pointer/base/plus";
    inherit: "elm/pointer/base/default";
-   images.image: "therm_base.png" COMP;
+   images.image: "pointer_plus.png" COMP;
    parts {
       part { name: "add";
          insert_after: "base";
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "therm_base.png";
+            image.normal: "pointer_plus.png";
+            color_class: "/fg/normal/pointer/manipulator";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             rel1.relative: 0.3 0.3;
             rel2.relative: 1.0 1.0;
@@ -325,7 +326,7 @@ group { name: "elm/pointer/base/plus";
          }
          description { state: "faded" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 128; // no cc
          }
       }
    }
@@ -352,6 +353,7 @@ group { name: "elm/pointer/base/xterm";
       part { name: "base";
          scale: 1;
          description { state: "default" 0.0;
+            color_class: "/fg/normal/pointer/base";
             image.normal: "pointer_entry.png";
             aspect: (44/88) (44/88); aspect_preference: VERTICAL;
             FIXED_SIZE(32, 32)
@@ -361,9 +363,8 @@ group { name: "elm/pointer/base/xterm";
          description { state: "default" 0.0;
             fixed: 1 1;
             visible: 0;
-            rel1.to: "base";
+            rel.to: "base";
             rel1.relative: 0.5 0.5;
-            rel2.to: "base";
             rel2.relative: 0.5 0.5;
             rel2.offset: 0 0;
         }
