@@ -66,7 +66,7 @@ group { name: "e/widgets/scrollframe";
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
-            color: 0 0 0 0; // no cc
+            color_class: "/bg/normal/scroller/base";
          }
       }
       part { name: "clipper"; type: RECT;

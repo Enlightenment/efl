@@ -66,6 +66,8 @@ color_classes {
    color_class { name: "/fg/normal/pointer/manipulator";
       color:  51 153 255 192; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/scroller/base";
+      color:   0   0   0   0; }
    color_class { name: "/fg/normal/scroller/bar";
       color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
