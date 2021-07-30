@@ -406,7 +406,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
    data.item: "treesize" TREEPAD;
    data.item: "flips" "elm.text.flip";
    styles.style { "genlist_style";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#a0a0a0 text_class=list_item";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=cc:/fg/normal/list/item text_class=list_item";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -414,7 +414,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       tag: "tab" "\t";
    }
    styles.style { "genlist_style_selected";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#ffffff text_class=list_item_selected";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=cc:/fg/selected/list/item text_class=list_item_selected";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -422,7 +422,7 @@ group { "elm/genlist/item/default_style/default"; nomouse;
       tag: "tab" "\t";
    }
    styles.style { "genlist_style_disabled";
-      base: "font="FN" font_size=10 align=left valign=0.5 color=#505050 text_class=list_item";
+      base: "font="FN" font_size=10 align=left valign=0.5 color=cc:/fg/disabled/list/item text_class=list_item";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";

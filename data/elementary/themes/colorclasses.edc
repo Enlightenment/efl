@@ -161,6 +161,8 @@ color_classes {
       color:  51 153 255 255; }
    color_class { name: "/fg/disabled/slider/bar";
       color:  80  80  80 255; }
+   color_class { name: "/fg/normal/slider/indicator";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; }
@@ -243,6 +245,9 @@ color_classes {
       color: 160 160 160 255; }
    color_class { name: "/fg/selected/menu/item";
       color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/selected/thumb/bar";
+      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/list/group";
       color:  32  32  32 255; }
@@ -439,6 +444,8 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/selected/toolbar/base";
       color:  32  32  32 255; }
+   color_class { name: "/fg/selected/toolbar/separator";
+      color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/winlist/text/title";
       color: 255 255 255 255; }
