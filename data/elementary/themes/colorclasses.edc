@@ -55,6 +55,11 @@ color_classes {
    color_class { name: "/fg/normal/popup/text/title";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/photo/outline";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/photo/base";
+      color:  48  48  48 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/menu/title";
       color: 255 255 255 255; }
    color_class { name: "/bg/selected/menu/item/base";

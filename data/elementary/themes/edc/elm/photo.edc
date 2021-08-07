@@ -1,12 +1,11 @@
 group { name: "elm/photo/base/default";
-   images.image: "win_shadow.png" COMP;
    parts {
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 255 255 255 255;
+            color_class: "/bg/normal/photo/outline";
             offscale;
          }
       }
@@ -22,7 +21,7 @@ group { name: "elm/photo/base/default";
       part { name: "bg"; type: RECT;
          description { state:    "default" 0.0;
             rel.to: "clip";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/photo/base";
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
@@ -69,6 +68,7 @@ group { name: "elm/photo/base/shadow";
             rel.to: "size";
             rel1.offset: 0 0;
             rel2.offset: -1 -1;
+            visible: 0;
          }
       }
       part { name: "clip";
