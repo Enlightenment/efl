@@ -858,7 +858,7 @@ group { name: "elm/progressbar/horizontal/hidden_bare";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -1053,7 +1053,7 @@ group { name: "elm/progressbar/horizontal/hidden_wheel";
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             min: 40 40;
@@ -1078,7 +1078,7 @@ group { name: "elm/progressbar/horizontal/wheel";
          }
          description { state: "hidden" 0.0;
             inherit;
-            color: 48 48 48 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
       }
@@ -1222,7 +1222,7 @@ group { name: "elm/progressbar/horizontal/bar";
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             min: 100 20;
