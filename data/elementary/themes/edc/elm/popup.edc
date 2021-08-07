@@ -44,6 +44,7 @@ group { name: "elm/notify/top/popup/default";
          description { state: "default" 0.0; \
             rel.to: "base"; \
             WIN_SHADOW; \
+            color_class: "/shadow/normal/popup"; \
          } \
       } \
       part { name: "base"; type: RECT; \

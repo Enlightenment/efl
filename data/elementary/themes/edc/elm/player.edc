@@ -4,12 +4,12 @@ group { name: "elm/player/base/default";
       public in_control;
       public in_volume;
       public inside;
-      
+
       public eval_in() {
          new v1 = get_int(in_control);
          new v2 = get_int(in_volume);
          new isin = get_int(inside);
-         
+
          if (isin) {
             if ((!v1) && (!v2)) {
                emit("conhide", "");
@@ -26,7 +26,7 @@ group { name: "elm/player/base/default";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
          }
       }
       part { name: "clipper"; type: RECT;
@@ -49,7 +49,7 @@ group { name: "elm/player/base/default";
             rel1.to_y: "elm.swallow.media_player.prev";
             rel2.to_y: "elm.swallow.media_player.positionslider";
             rel2.offset: -1 4;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/player/bar";
             offscale;
          }
       }
@@ -57,12 +57,12 @@ group { name: "elm/player/base/default";
       part { name: "volclip"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "bg";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -73,7 +73,7 @@ group { name: "elm/player/base/default";
             rel1.offset: -1 -1;
             rel2.to: "elm.swallow.media_player.volumeslider";
             rel2.offset: 0 0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/player/bar";
          }
       }
 
@@ -296,7 +296,7 @@ group { name: "elm/player/base/default";
             min: BSZ BSZ;
             align: 0.5 1.0;
             rel1.relative: 0.0 0.8;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
 
@@ -321,7 +321,7 @@ group { name: "elm/player/base/default";
             rel2.to: "elm.swallow.media_player.volume";
             rel2.relative: 2.0 1.0;
             align: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
