@@ -43,7 +43,7 @@ group { name: "elm/progressbar/horizontal/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "pulse_clip"; type: RECT;
@@ -99,7 +99,7 @@ group { name: "elm/progressbar/horizontal/default";
             rel2.to_x: "elm.swallow.content";
             rel2.relative: 1.0 1.0;
             rel2.offset: -1 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/text";
             text { font: FN; size: 10;
                text_class: "progressbar";
                min: 0 0;
@@ -120,7 +120,7 @@ group { name: "elm/progressbar/horizontal/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/progress/text";
          }
       }
       part { name: "bg"; type: RECT;
@@ -130,7 +130,7 @@ group { name: "elm/progressbar/horizontal/default";
             max: -1 16;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/progress/base";
             offscale;
          }
          description { state: "iclabel" 0.0;
@@ -175,7 +175,7 @@ group { name: "elm/progressbar/horizontal/default";
             rel1.to: "bg";
             rel2.to_x: "barend";
             rel2.to_y: "bg";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/bar";
             offscale;
          }
          description { state: "inv" 0.0;
@@ -193,7 +193,7 @@ group { name: "elm/progressbar/horizontal/default";
             max: 16 9999;
             rel.to: "elm.swallow.bar";
             align: 0.0 0.5;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/pulse";
          }
          description { state: "end" 0.0;
             inherit: "default" 0.0;
@@ -213,7 +213,7 @@ group { name: "elm/progressbar/horizontal/default";
                text_class: "progress_status";
                align: 1.0 0.5;
             }
-            color: 255 255 255 255;
+            color_class: "/fg/normal/progress/text/status";
             offscale;
          }
          description { state: "hidden" 0.0;
@@ -387,12 +387,11 @@ group { name: "elm/progressbar/vertical/default";
    parts {
       part { name: "dis_clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel.to: "elm.swallow.content";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "pulse_clip"; type: RECT;
@@ -448,7 +447,7 @@ group { name: "elm/progressbar/vertical/default";
             rel2.to_y: "elm.swallow.content";
             rel2.relative: 1.0 1.0;
             rel2.offset: -5 -1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/text";
             text { font: FN; size: 10;
                text_class: "progressbar";
                min: 0 0;
@@ -468,7 +467,7 @@ group { name: "elm/progressbar/vertical/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/progress/text";
          }
       }
       part { name: "bg"; type: RECT;
@@ -478,7 +477,7 @@ group { name: "elm/progressbar/vertical/default";
             max: 16 -1;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/progress/base";
             offscale;
          }
          description { state: "iclabel" 0.0;
@@ -489,8 +488,7 @@ group { name: "elm/progressbar/vertical/default";
       }
       part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;
@@ -501,8 +499,7 @@ group { name: "elm/progressbar/vertical/default";
             fixed: 1 1;
             min: 1 1;
             max: 9999 1;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
          }
       }
       part { name: "barend"; type: SPACER;
@@ -525,7 +522,7 @@ group { name: "elm/progressbar/vertical/default";
             rel1.to: "bg";
             rel2.to_y: "barend";
             rel2.to_x: "bg";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/bar";
             offscale;
          }
          description { state: "inv" 0.0;
@@ -541,10 +538,9 @@ group { name: "elm/progressbar/vertical/default";
             fixed: 1 1;
             min: 8 16;
             max: 9999 16;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
             align: 0.5 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/pulse";
          }
          description { state: "end" 0.0;
             inherit: "default" 0.0;
@@ -555,8 +551,7 @@ group { name: "elm/progressbar/vertical/default";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
             aspect: 1.0 1.0; aspect_preference: NONE;
          }
       }
@@ -564,8 +559,7 @@ group { name: "elm/progressbar/vertical/default";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "statbox";
-            rel2.to: "statbox";
+            rel.to: "statbox";
             rel1.offset: 4 0;
             rel2.offset: -5 -1;
             align: 1.0 0.5;
@@ -745,13 +739,12 @@ group { name: "elm/progressbar/horizontal/bare";
          description { state: "default" 0.0;
             min: 10 5;
             max: -1 5;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/progress/base";
          }
       }
       part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;
@@ -762,8 +755,7 @@ group { name: "elm/progressbar/horizontal/bare";
             fixed: 1 1;
             min: 1 1;
             max: 1 9999;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
          }
       }
       part { name: "barend"; type: SPACER;
@@ -785,7 +777,7 @@ group { name: "elm/progressbar/horizontal/bare";
             rel1.to: "bg";
             rel2.to_x: "barend";
             rel2.to_y: "bg";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/bar";
          }
          description { state: "inv" 0.0;
             inherit: "default" 0.0;
@@ -800,10 +792,9 @@ group { name: "elm/progressbar/horizontal/bare";
             fixed: 1 1;
             min: 5 5;
             max: 5 9999;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
             align: 0.0 0.5;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/pulse";
          }
          description { state: "end" 0.0;
             inherit: "default" 0.0;
@@ -909,13 +900,12 @@ group { name: "elm/progressbar/vertical/bare";
          description { state: "default" 0.0;
             min: 5 10;
             max: 5 -1;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/progress/base";
          }
       }
       part { name: "elm.swallow.bar"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "elm.cur.progressbar"; mouse_events: 0; type: SPACER;
@@ -926,8 +916,7 @@ group { name: "elm/progressbar/vertical/bare";
             fixed: 1 1;
             min: 1 1;
             max: 9999 1;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
          }
       }
       part { name: "barend"; type: SPACER;
@@ -950,7 +939,7 @@ group { name: "elm/progressbar/vertical/bare";
             rel1.to: "bg";
             rel2.to_y: "barend";
             rel2.to_x: "bg";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/bar";
             offscale;
          }
          description { state: "inv" 0.0;
@@ -966,10 +955,9 @@ group { name: "elm/progressbar/vertical/bare";
             fixed: 1 1;
             min: 5 10;
             max: 9999 10;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
             align: 0.5 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/progress/pulse";
          }
          description { state: "end" 0.0;
             inherit: "default" 0.0;
@@ -1033,7 +1021,7 @@ group { name: "elm/progressbar/vertical/hidden_bare";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -1086,7 +1074,7 @@ group { name: "elm/progressbar/horizontal/wheel";
          description { state: "default" 0.0;
             image.normal: "speaker_vol.png";
             rel.to:"base";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/progress/base/wheel";
          }
          description { state: "hidden" 0.0;
             inherit;
@@ -1094,14 +1082,12 @@ group { name: "elm/progressbar/horizontal/wheel";
             visible: 0;
          }
       }
-      program {
-         signal: "elm,state,pulse,start"; source: "elm";
+      program { signal: "elm,state,pulse,start"; source: "elm";
          action: STATE_SET "hidden" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "bg";
       }
-      program {
-         signal: "elm,state,pulse,stop"; source: "elm";
+      program { signal: "elm,state,pulse,stop"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "bg";
@@ -1137,7 +1123,7 @@ group { name: "elm/progressbar/horizontal/bar";
          scale: 1;
          description { state: "default" 0.0;
             image.normal: "spinner";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/spin";
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.2 1.0;
             rel1.to: "base";
@@ -1157,7 +1143,7 @@ group { name: "elm/progressbar/horizontal/bar";
          scale: 1;
          description { state: "default" 0.0;
             image.normal: "spinner";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/spin";
             rel1.relative: 0.2 0.0;
             rel2.relative: 0.4 1.0;
             rel1.to: "base";
@@ -1177,7 +1163,7 @@ group { name: "elm/progressbar/horizontal/bar";
          scale: 1;
          description { state: "default" 0.0;
             image.normal: "spinner";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/spin";
             rel1.relative: 0.4 0.0;
             rel2.relative: 0.6 1.0;
             rel1.to: "base";
@@ -1197,7 +1183,7 @@ group { name: "elm/progressbar/horizontal/bar";
          scale: 1;
          description { state: "default" 0.0;
             image.normal: "spinner";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/spin";
             rel1.relative: 0.6 0.0;
             rel2.relative: 0.8 1.0;
             rel1.to: "base";
@@ -1217,7 +1203,7 @@ group { name: "elm/progressbar/horizontal/bar";
          scale: 1;
          description { state: "default" 0.0;
             image.normal: "spinner";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/progress/spin";
             rel1.relative: 0.8 0.0;
             rel2.relative: 1.0 1.0;
             rel1.to: "base";
@@ -1331,8 +1317,7 @@ group { name: "elm/progressbar/horizontal/bar";
          target: "spin5";
          after: "spin5.1";
       }
-      program {
-         signal: "elm,state,pulse,stop"; source: "elm";
+      program { signal: "elm,state,pulse,stop"; source: "elm";
          action: ACTION_STOP;
          target: "spin-1";
          target: "spin-2";
@@ -1433,8 +1418,7 @@ group { name: "elm/progressbar/horizontal/double";
             fixed: 1 0;
             min: 1 1;
             max: 1 9999;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
          }
       }
       part { name: "barend1"; type: SPACER;
@@ -1459,7 +1443,7 @@ group { name: "elm/progressbar/horizontal/double";
             rel1.to: "bg";
             rel2.to_x: "barend1";
             rel2.to_y: "bg";
-            color: 80 80 80 255;
+            color_class: "/fg/normal/progress/bar1";
             offscale;
          }
          description { state: "inv" 0.0;
@@ -1502,8 +1486,7 @@ group { name: "elm/progressbar/vertical/double";
          description { state: "default" 0.0;
             fixed: 0 1;
             max: 1 9999;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
+            rel.to: "elm.swallow.bar";
          }
       }
       part { name: "barend1"; type: SPACER;
@@ -1528,7 +1511,7 @@ group { name: "elm/progressbar/vertical/double";
             rel1.to: "bg";
             rel2.to_y: "barend1";
             rel2.to_x: "bg";
-            color: 80 80 80 255;
+            color_class: "/fg/normal/progress/bar1";
             offscale;
          }
          description { state: "inv" 0.0;

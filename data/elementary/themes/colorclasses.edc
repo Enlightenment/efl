@@ -171,6 +171,17 @@ color_classes {
    color_class { name: "/fg/normal/slider/indicator";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/progress/base";
+      color:  48  48  48 255; }
+   color_class { name: "/fg/normal/progress/bar";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/progress/bar1";
+      color:  80  80  80 255; }
+   color_class { name: "/fg/normal/progress/pulse";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/normal/progress/text/status";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; }
    color_class { name: "/bg/normal/entry/focus";
