@@ -2,7 +2,7 @@ group { name: "elm/notify/block_events/popup/default";
    inherit: "elm/notify/block_events/default";
    parts.part { "block_events";
       desc { "visible";
-         color: 0 0 0 128;
+         color_class: "/dim/normal/popup";
       }
    }
 }
@@ -11,10 +11,12 @@ group { name: "elm/notify/block_events/popup/transparent";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color_class: "/dim/normal/popup";
+            color: 255 255 255 0; // no cc
          }
          description { state: "clicked" 0.0;
-            color: 0 0 0 192;
+            color_class: "/dim/normal/popup";
+            color: 255 255 255 255; // no cc
          }
       }
       program { signal: "mouse,down,1"; source: "base";
@@ -46,10 +48,10 @@ group { name: "elm/notify/top/popup/default";
       } \
       part { name: "base"; type: RECT; \
          description { state: "default" 0.0; \
-            color: 48 48 48 255; \
+            color_class: "/bg/normal/popup/base"; \
          } \
          description { state: "visible" 0.0; \
-            color: 48 48 48 255; \
+            color_class: "/bg/normal/popup/base"; \
          } \
       } \
    }
@@ -137,7 +139,7 @@ group { name: "elm/label/base/popup/default";
    alias: "elm/label/base/popup/transparent";
    styles {
       style { name: "popup_desc_style";
-         base: "font="FN" font_size=10 text_class=label align=center color=#a0a0a0 wrap=mixed";
+         base: "font="FN" font_size=10 text_class=label align=center color=cc:/fg/normal/popup/text wrap=mixed";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
@@ -145,7 +147,7 @@ group { name: "elm/label/base/popup/default";
          tag: "tab" "\t";
       }
       style { name: "popup_title_style_ellipsis";
-         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff ellipsis=1.0 wrap=mixed";
+         base: "font="FNBD" font_size=10 text_class=label align=center color=cc:/fg/normal/popup/text/title ellipsis=1.0 wrap=mixed";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
@@ -181,7 +183,7 @@ group { name: "elm/popup/base/default";
    alias: "elm/popup/base/transparent";
    styles {
       style { name: "popup_title_style";
-         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff wrap=mixed";
+         base: "font="FNBD" font_size=10 text_class=label align=center color=cc:/fg/normal/popup/text/title wrap=mixed";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
@@ -194,7 +196,7 @@ group { name: "elm/popup/base/default";
          scale: 1;
          description { state: "default" 0.0;
             min: 240 0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;
@@ -208,7 +210,7 @@ group { name: "elm/popup/base/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "elm.text.title";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.text.title"; type: TEXTBLOCK;
@@ -294,14 +296,14 @@ group { name: "elm/popup/base/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "elm.bg.title";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "access.body"; type: RECT; repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             rel.to: "elm.swallow.content";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
