@@ -84,6 +84,13 @@ color_classes {
    color_class { name: "/fg/normal/color/cursor";
       color: 255 255 255 192; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/panes/flush";
+      color:  51 163 255 255; }
+   color_class { name: "/fg/normal/panes/fold/arrow";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/pressed/panes/fold/arrow";
+      color: 220 220 220 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/access";
       color: 255 153  51  64; }
 ///////////////////////////////////////////////////////////////////////////////

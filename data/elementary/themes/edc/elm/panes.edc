@@ -75,6 +75,7 @@ group { name: "elm/panes/vertical/default";
          }
       }
       part { name: "elm.bar"; type: SPACER;
+         scale: 1;
          dragable { confine: "sub_whole";
             x: 1 1 1;
             y: 0 0 0;
@@ -88,15 +89,20 @@ group { name: "elm/panes/vertical/default";
          }
       }
       part { name: "dots"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             FIXED_SIZE(8, 24)
             image.normal: "pane_handle_v.png";
-            fill.smooth: 0;
             rel.to: "elm.bar";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/panes/handle";
+         }
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/pressed/panes/handle";
          }
       }
       part { name: "elm.swallow.event"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN PANEMIN2;
@@ -105,6 +111,7 @@ group { name: "elm/panes/vertical/default";
          }
       }
       part { name: "bar"; type: RECT;
+         scale: 1;
          dragable.events: "elm.bar";
          description { state: "default" 0.0;
             min: PANEMIN PANEWID;
@@ -112,7 +119,7 @@ group { name: "elm/panes/vertical/default";
             fixed: 1 1;
             rel1.to_x: "elm.swallow.event";
             rel2.to_x: "elm.swallow.event";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -121,11 +128,21 @@ group { name: "elm/panes/vertical/default";
       }
    }
    programs {
-      program {signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
+      program { signal: "mouse,down,1"; source: "bar"; // for "press" smart callback
          action: SIGNAL_EMIT "elm,action,press" "elm";
       }
       program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
+      }
+      program { name: "bar_down";
+         signal: "mouse,down,1"; source: "bar";
+         action: STATE_SET "pressed" 0.0;
+         target: "dots";
+      }
+      program { name: "bar_up";
+         signal: "mouse,up,1"; source: "bar";
+         action: STATE_SET "default" 0.0;
+         target: "dots";
       }
       program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
@@ -206,6 +223,7 @@ group { name: "elm/panes/horizontal/default";
          }
       }
       part { name: "elm.bar"; type: SPACER;
+         scale: 1;
          dragable { confine: "sub_whole";
             x: 0 0 0;
             y: 1 1 1;
@@ -219,12 +237,17 @@ group { name: "elm/panes/horizontal/default";
          }
       }
       part { name: "dots"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             FIXED_SIZE(24, 8)
             image.normal: "pane_handle_h.png";
             fill.smooth: 0;
             rel.to: "elm.bar";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/panes/handle";
+         }
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/pressed/panes/handle";
          }
       }
       part { name: "elm.swallow.event"; type: SWALLOW;
@@ -236,6 +259,7 @@ group { name: "elm/panes/horizontal/default";
          }
       }
       part { name: "bar"; type: RECT;
+         scale: 1;
          dragable.events: "elm.bar";
          description { state: "default" 0.0;
             min: PANEWID PANEMIN;
@@ -243,7 +267,7 @@ group { name: "elm/panes/horizontal/default";
             fixed: 1 1;
             rel1.to_y: "elm.swallow.event";
             rel2.to_y: "elm.swallow.event";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -257,6 +281,16 @@ group { name: "elm/panes/horizontal/default";
       }
       program { signal: "mouse,up,1"; source: "bar"; // for "unpress" smart callback
          action: SIGNAL_EMIT "elm,action,unpress" "elm";
+      }
+      program { name: "bar_down";
+         signal: "mouse,down,1"; source: "bar";
+         action: STATE_SET "pressed" 0.0;
+         target: "dots";
+      }
+      program { name: "bar_up";
+         signal: "mouse,up,1"; source: "bar";
+         action: STATE_SET "default" 0.0;
+         target: "dots";
       }
       program { signal: "mouse,clicked,1"; source: "bar"; // for "clicked" smart callback
          action: SIGNAL_EMIT "elm,action,click" "elm";
@@ -341,6 +375,7 @@ group { name: "elm/panes/vertical/flush";
          }
       }
       part { name: "elm.bar"; type: SPACER;
+         scale: 1;
          dragable { confine: "sub_whole";
             x: 1 1 1;
             y: 0 0 0;
@@ -354,6 +389,7 @@ group { name: "elm/panes/vertical/flush";
          }
       }
       part { name: "elm.swallow.event"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN PANEMIN2;
@@ -362,6 +398,7 @@ group { name: "elm/panes/vertical/flush";
          }
       }
       part { name: "bar"; type: RECT;
+         scale: 1;
          dragable.events: "elm.bar";
          description { state: "default" 0.0;
             min: PANEMIN PANEWID;
@@ -371,7 +408,7 @@ group { name: "elm/panes/vertical/flush";
             rel1.relative: 0.0 0.25;
             rel2.to_x: "elm.swallow.event";
             rel2.relative: 1.0 0.75;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -385,13 +422,14 @@ group { name: "elm/panes/vertical/flush";
             image.normal: "shadow_circle_vert.png";
             rel1.to_x: "elm.bar";
             rel2.to_x: "elm.bar";
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/panes/flush";
+            color: 255 255 255 0; // no cc
             offscale;
             visible: 0;
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: -16 0;
             rel2.offset: 15 -1;
             visible: 1;
@@ -404,13 +442,14 @@ group { name: "elm/panes/vertical/flush";
             image.normal: "shadow_circle_vert.png";
             rel1.to_x: "elm.bar";
             rel2.to_x: "elm.bar";
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/panes/flush";
+            color: 255 255 255 0; // no cc
             offscale;
             visible: 0;
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: -16 0;
             rel2.offset: 15 -1;
             visible: 1;
@@ -422,7 +461,7 @@ group { name: "elm/panes/vertical/flush";
          description { state: "default" 0.0;
             rel1.to_x: "elm.bar";
             rel2.to_x: "elm.bar";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/panes/flush";
             offscale;
             visible: 0;
          }
@@ -439,7 +478,7 @@ group { name: "elm/panes/vertical/flush";
          description { state: "default" 0.0;
             rel1.to_x: "elm.bar";
             rel2.to_x: "elm.bar";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/panes/flush";
             offscale;
             visible: 0;
          }
@@ -455,7 +494,7 @@ group { name: "elm/panes/vertical/flush";
             fixed: 1 1;
             rel.to: "bar";
             rel2.relative: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "bar2"; type: RECT; repeat_events: 1;
@@ -463,7 +502,7 @@ group { name: "elm/panes/vertical/flush";
             fixed: 1 1;
             rel.to: "bar";
             rel1.relative: 0.5 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -490,29 +529,25 @@ group { name: "elm/panes/vertical/flush";
          action: STATE_SET "default" 0.0;
          target: "bar";
       }
-      program {
-         signal: "mouse,in"; source: "bar1";
+      program { signal: "mouse,in"; source: "bar1";
          action: STATE_SET "active" 0.0;
          transition: DECELERATE 0.2;
          target: "glow1a";
          target: "glowbar1a";
       }
-      program {
-         signal: "mouse,out"; source: "bar1";
+      program { signal: "mouse,out"; source: "bar1";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "glow1a";
          target: "glowbar1a";
       }
-      program {
-         signal: "mouse,in"; source: "bar2";
+      program { signal: "mouse,in"; source: "bar2";
          action: STATE_SET "active" 0.0;
          transition: DECELERATE 0.2;
          target: "glow2a";
          target: "glowbar2a";
       }
-      program {
-         signal: "mouse,out"; source: "bar2";
+      program { signal: "mouse,out"; source: "bar2";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "glow2a";
@@ -583,6 +618,7 @@ group { name: "elm/panes/horizontal/flush";
          }
       }
       part { name: "elm.bar"; type: SPACER;
+         scale: 1;
          dragable { confine: "sub_whole";
             x: 0 0 0;
             y: 1 1 1;
@@ -596,6 +632,7 @@ group { name: "elm/panes/horizontal/flush";
          }
       }
       part { name: "elm.swallow.event"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             visible: 0;
             min: PANEMIN2 PANEMIN;
@@ -604,6 +641,7 @@ group { name: "elm/panes/horizontal/flush";
          }
       }
       part { name: "bar"; type: RECT;
+         scale: 1;
          dragable.events: "elm.bar";
          description { state: "default" 0.0;
             min: PANEWID PANEMIN;
@@ -613,7 +651,7 @@ group { name: "elm/panes/horizontal/flush";
             rel1.relative: 0.25 0.0;
             rel2.to_y: "elm.swallow.event";
             rel2.relative: 0.75 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -627,13 +665,14 @@ group { name: "elm/panes/horizontal/flush";
             image.normal: "shadow_circle_horiz.png";
             rel1.to_y: "elm.bar";
             rel2.to_y: "elm.bar";
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/panes/flush";
+            color: 255 255 255 0; // no cc
             offscale;
             visible: 0;
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: 0 -16;
             rel2.offset: -1 15;
             visible: 1;
@@ -646,13 +685,14 @@ group { name: "elm/panes/horizontal/flush";
             image.normal: "shadow_circle_horiz.png";
             rel1.to_y: "elm.bar";
             rel2.to_y: "elm.bar";
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/panes/flush";
+            color: 255 255 255 0; // no cc
             offscale;
             visible: 0;
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: 0 -16;
             rel2.offset: -1 15;
             visible: 1;
@@ -664,7 +704,7 @@ group { name: "elm/panes/horizontal/flush";
          description { state: "default" 0.0;
             rel1.to_y: "elm.bar";
             rel2.to_y: "elm.bar";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/panes/flush";
             offscale;
             visible: 0;
          }
@@ -681,7 +721,7 @@ group { name: "elm/panes/horizontal/flush";
          description { state: "default" 0.0;
             rel1.to_y: "elm.bar";
             rel2.to_y: "elm.bar";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/panes/flush";
             offscale;
             visible: 0;
          }
@@ -697,7 +737,7 @@ group { name: "elm/panes/horizontal/flush";
             fixed: 1 1;
             rel.to: "bar";
             rel2.relative: 1.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "bar2"; type: RECT; repeat_events: 1;
@@ -705,7 +745,7 @@ group { name: "elm/panes/horizontal/flush";
             fixed: 1 1;
             rel.to: "bar";
             rel1.relative: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -732,29 +772,25 @@ group { name: "elm/panes/horizontal/flush";
          action: STATE_SET "default" 0.0;
          target: "bar";
       }
-      program {
-         signal: "mouse,in"; source: "bar1";
+      program { signal: "mouse,in"; source: "bar1";
          action: STATE_SET "active" 0.0;
          transition: DECELERATE 0.2;
          target: "glow1a";
          target: "glowbar1a";
       }
-      program {
-         signal: "mouse,out"; source: "bar1";
+      program { signal: "mouse,out"; source: "bar1";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "glow1a";
          target: "glowbar1a";
       }
-      program {
-         signal: "mouse,in"; source: "bar2";
+      program { signal: "mouse,in"; source: "bar2";
          action: STATE_SET "active" 0.0;
          transition: DECELERATE 0.2;
          target: "glow2a";
          target: "glowbar2a";
       }
-      program {
-         signal: "mouse,out"; source: "bar2";
+      program { signal: "mouse,out"; source: "bar2";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "glow2a";
@@ -775,18 +811,28 @@ group { name: "elm/panes/vertical/left-fold";
          desc { "default";
             image.normal: "i-arrow-l";
             FIXED_SIZE(15, 15)
-            fill.smooth: 1;
+            color_class: "/fg/normal/panes/fold/arrow";
+         }
+         desc { "pressed";
+            image.normal: "i-arrow-l";
+            FIXED_SIZE(15, 15)
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
          desc { "closed";
             inherit: "default" 0.0;
             image.normal: "i-arrow-r";
+         }
+         desc { "closed-pressed";
+            inherit: "pressed" 0.0;
+            image.normal: "i-arrow-r";
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
       }
       rect { "event";
          repeat;
          desc { "default";
             rel.to: "dots";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -794,6 +840,24 @@ group { name: "elm/panes/vertical/left-fold";
       program { signal: "load"; source: "";
          script {
             set_int(open, 1);
+         }
+      }
+      program { name: "bar_down";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "pressed", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed-pressed", 0.0);
+            }
+         }
+      }
+      program { name: "bar_up";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "default", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed", 0.0);
+            }
          }
       }
       program { signal: "mouse,clicked,1"; source: "event";
@@ -825,21 +889,32 @@ group { name: "elm/panes/vertical/right-fold";
    }
    parts {
       image { "dots";
+         scale;
          desc { "default";
             image.normal: "i-arrow-r";
             FIXED_SIZE(15, 15)
-            fill.smooth: 1;
+            color_class: "/fg/normal/panes/fold/arrow";
+         }
+         desc { "pressed";
+            image.normal: "i-arrow-r";
+            FIXED_SIZE(15, 15)
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
          desc { "closed";
             inherit: "default" 0.0;
             image.normal: "i-arrow-l";
+         }
+         desc { "closed-pressed";
+            inherit: "pressed" 0.0;
+            image.normal: "i-arrow-r";
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
       }
       rect { "event";
          repeat;
          desc { "default";
             rel.to: "dots";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -847,6 +922,24 @@ group { name: "elm/panes/vertical/right-fold";
       program { signal: "load"; source: "";
          script {
             set_int(open, 1);
+         }
+      }
+      program { name: "bar_down";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "pressed", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed-pressed", 0.0);
+            }
+         }
+      }
+      program { name: "bar_up";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "default", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed", 0.0);
+            }
          }
       }
       program { signal: "mouse,clicked,1"; source: "event";
@@ -878,21 +971,32 @@ group { name: "elm/panes/horizontal/up-fold";
    }
    parts {
       image { "dots";
+         scale;
          desc { "default";
             image.normal: "i-arrow-u";
             FIXED_SIZE(15, 15)
-            fill.smooth: 1;
+            color_class: "/fg/normal/panes/fold/arrow";
+         }
+         desc { "pressed";
+            image.normal: "i-arrow-u";
+            FIXED_SIZE(15, 15)
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
          desc { "closed";
             inherit: "default" 0.0;
             image.normal: "i-arrow-d";
+         }
+         desc { "closed-pressed";
+            inherit: "pressed" 0.0;
+            image.normal: "i-arrow-r";
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
       }
       rect { "event";
          repeat;
          desc { "default";
             rel.to: "dots";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -900,6 +1004,24 @@ group { name: "elm/panes/horizontal/up-fold";
       program { signal: "load"; source: "";
          script {
             set_int(open, 1);
+         }
+      }
+      program { name: "bar_down";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "pressed", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed-pressed", 0.0);
+            }
+         }
+      }
+      program { name: "bar_up";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "default", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed", 0.0);
+            }
          }
       }
       program { signal: "mouse,clicked,1"; source: "event";
@@ -931,21 +1053,32 @@ group { name: "elm/panes/horizontal/down-fold";
    }
    parts {
       image { "dots";
+         scale;
          desc { "default";
             image.normal: "i-arrow-d";
             FIXED_SIZE(15, 15)
-            fill.smooth: 1;
+            color_class: "/fg/normal/panes/fold/arrow";
+         }
+         desc { "pressed";
+            image.normal: "i-arrow-d";
+            FIXED_SIZE(15, 15)
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
          desc { "closed";
             inherit: "default" 0.0;
             image.normal: "i-arrow-u";
+         }
+         desc { "closed-pressed";
+            inherit: "pressed" 0.0;
+            image.normal: "i-arrow-r";
+            color_class: "/fg/pressed/panes/fold/arrow";
          }
       }
       rect { "event";
          repeat;
          desc { "default";
             rel.to: "dots";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -953,6 +1086,24 @@ group { name: "elm/panes/horizontal/down-fold";
       program { signal: "load"; source: "";
          script {
             set_int(open, 1);
+         }
+      }
+      program { name: "bar_down";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "pressed", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed-pressed", 0.0);
+            }
+         }
+      }
+      program { name: "bar_up";
+         script {
+            if (get_int(open) == 1) {
+               set_state(PART:"dots", "default", 0.0);
+            } else if (get_int(open) == 0) {
+               set_state(PART:"dots", "closed", 0.0);
+            }
          }
       }
       program { signal: "mouse,clicked,1"; source: "event";
