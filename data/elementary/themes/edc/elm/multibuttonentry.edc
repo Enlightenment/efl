@@ -5,7 +5,7 @@ group { name: "elm/multibuttonentry/base/default";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.swallow.background"; type: SWALLOW;
@@ -29,7 +29,7 @@ group { name: "elm/multibuttonentry/label/default";
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/multibuttonentry/text";
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -51,7 +51,7 @@ group { name: "elm/multibuttonentry/guidetext/default";
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 80 80 80 255;;
+            color_class: "/fg/normal/multibuttonentry/text/guide";
             text { font: FNBD; size: 10;
                min: 0 1;
                align: 0.0 0.5;
@@ -65,7 +65,7 @@ group { name: "elm/multibuttonentry/guidetext/default";
 group { name: "elm/multibuttonentry/btn/default";
    styles {
       style { name: "multibuttonentry_textblock_style";
-         base: "font="FN" align=0.5 font_size=10 color=#ffff text_class=multibuttonentry_item ellipsis=1.0";
+         base: "font="FN" align=0.5 font_size=10 color=#fff text_class=multibuttonentry_item ellipsis=1.0"; // no cc for color
          tag: "br" "\n";
          tag: "ps" "ps";
          tag: "hilight" "+ font="FNBD;
@@ -82,14 +82,14 @@ group { name: "elm/multibuttonentry/btn/default";
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 64;
+            color_class: "/bg/normal/multibuttonentry/button";
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             offscale;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 192;
+            color_class: "/bg/pressed/multibuttonentry/button";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
@@ -98,7 +98,7 @@ group { name: "elm/multibuttonentry/btn/default";
             rel1.offset: 0 -1;
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/multibuttonentry/button";
             visible: 0;
          }
          description { state: "focused" 0.0;
@@ -111,17 +111,18 @@ group { name: "elm/multibuttonentry/btn/default";
          }
       }
       part { name: "close"; mouse_events: 0;
+         scale;
          description { state: "default" 0.0;
             image.normal: "i-close";
             rel.to: "del";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/multibuttonentry/button/delete";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/multibuttonentry/button/delete";
          }
       }
       part { name: "del"; type: RECT;
@@ -135,7 +136,7 @@ group { name: "elm/multibuttonentry/btn/default";
             rel1.relative: 1.0 0.0;
             rel1.offset: -5 4;
             rel2.offset: -5 -5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             offscale;
          }
       }
@@ -168,15 +169,15 @@ group { name: "elm/multibuttonentry/btn/default";
                align: 0.0 0.5;
                text_class: "multibuttonentry_item_text";
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/multibuttonentry/text/button";
          }
          description { state: "pressed" 0.0;
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/multibuttonentry/text/button";
          }
          description { state: "disabled" 0.0;
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/multibuttonentry/text/button";
          }
       }
    }
@@ -252,7 +253,7 @@ group { name: "elm/multibuttonentry/btn/default";
 group { name: "elm/multibuttonentry/closedbutton/default";
    styles {
       style { name: "textblock_style_multibuttonentry_default";
-         base: "font="FNBD" font_size=10 text_class=multibuttonentry_closed color=#a0a0a0ff align=center wrap=char";
+         base: "font="FNBD" font_size=10 text_class=multibuttonentry_closed color=#fff align=center wrap=char";
          tag: "br" "\n";
          tag: "ps" "ps";
          tag: "hilight" "+ font="FNBD;
@@ -263,7 +264,7 @@ group { name: "elm/multibuttonentry/closedbutton/default";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "elm.text"; type: TEXTBLOCK; mouse_events: 0;
@@ -276,6 +277,8 @@ group { name: "elm/multibuttonentry/closedbutton/default";
                min: 1 1;
                ellipsis: -1;
             }
+            offscale;
+            color_class: "/fg/normal/multibuttonentry/button/text";
          }
       }
    }
