@@ -76,6 +76,9 @@ color_classes {
    color_class { name: "/fg/normal/naviframe/top/overlap";
       color: 255 255 255 200; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/layout/content-back/title";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/menu/title";
       color: 255 255 255 255; }
    color_class { name: "/bg/selected/menu/item/base";
