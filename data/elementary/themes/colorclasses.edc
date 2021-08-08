@@ -60,6 +60,13 @@ color_classes {
    color_class { name: "/fg/normal/photo/base";
       color:  48  48  48 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/naviframe/top";
+      color:  32  32  32 255; }
+   color_class { name: "/fg/normal/naviframe/text/title";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/normal/naviframe/top/overlap";
+      color: 255 255 255 200; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/menu/title";
       color: 255 255 255 255; }
    color_class { name: "/bg/selected/menu/item/base";
@@ -90,6 +97,9 @@ color_classes {
       color: 255 255 255 255; }
    color_class { name: "/fg/pressed/panes/fold/arrow";
       color: 220 220 220 255; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/panel/arrow";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/access";
       color: 255 153  51  64; }

@@ -238,7 +238,7 @@ group { name: "elm/naviframe/item/basic/default";
          scale: 1;
          clip_to: "top_clip";
          description { state: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/normal/naviframe/top";
             rel1.to: "base";
             rel2.to_x: "base";
             rel2.to_y: "bottom";
@@ -254,7 +254,7 @@ group { name: "elm/naviframe/item/basic/default";
          clip_to: "clip";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel.to: "top";
          }
       }
@@ -262,7 +262,7 @@ group { name: "elm/naviframe/item/basic/default";
          scale: 1;
          clip_to: "elements_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/naviframe/text/title";
             rel1.offset: 4 14;
             rel1.to_x: "base";
             rel1.to_y: "top";
@@ -287,7 +287,7 @@ group { name: "elm/naviframe/item/basic/default";
          scale: 1;
          clip_to: "elements_clip";
          description { state: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/naviframe/text/subtitle";
             rel1.to_x: "base";
             rel1.to_y: "top";
             rel1.relative: 0.0 1.0;
@@ -391,7 +391,7 @@ group { name: "elm/naviframe/item/basic/default";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "next" 0.0;
@@ -579,7 +579,7 @@ group { name: "elm/naviframe/item/overlap/default";
       }
       part { name: "top_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 224;
+            color_class: "/fg/normal/naviframe/top/overlap";
          }
       }
    }
