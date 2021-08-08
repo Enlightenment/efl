@@ -1,29 +1,29 @@
 group { name: "elm/win/inwin/default";
-   images.image: "win_shadow.png" COMP;
+   images.image: "win_shad_flat.png" COMP;
    parts {
       part { name: "bg"; type: RECT; mouse_events: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color_class: "dim/normal/inwin";
+            color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 128;
+            color: 255 255 255 255; // no cc
          }
       }
-      part { name: "shadow"; mouse_events: 0;
-         scale: 1;
+      part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
-            rel.to: "base";
-            WIN_SHADOW_SMALL;
+            rel.to: "_sh1";
+            color_class: "/shadow/normal/inwin";
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/inwin";
             offscale;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel.to: "elm.swallow.content";
             rel1.offset: -8 -8;
             rel2.offset: 7 7;
          }
