@@ -98,7 +98,7 @@ group { name: "elm/multibuttonentry/btn/default";
             rel1.offset: 0 -1;
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
-            color_class: "/bg/selected/multibuttonentry/button";
+            color_class: "/bg/selected/multibuttonentry/button/bar";
             visible: 0;
          }
          description { state: "focused" 0.0;

@@ -60,6 +60,15 @@ color_classes {
    color_class { name: "/fg/normal/photo/base";
       color:  48  48  48 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/multibuttonentry/text/guide";
+      color:  80  80  80 255; }
+   color_class { name: "/bg/normal/multibuttonentry/button";
+      color:   0   0   0  64; }
+   color_class { name: "/bg/pressed/multibuttonentry/button";
+      color:   0   0   0 200; }
+   color_class { name: "/bg/selected/multibuttonentry/button/bar";
+      color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/naviframe/top";
       color:  32  32  32 255; }
    color_class { name: "/fg/normal/naviframe/text/title";
