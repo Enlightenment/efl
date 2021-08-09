@@ -834,7 +834,7 @@ _palette_apply(const char *name)
    l = edje_color_class_list();
    EINA_LIST_FREE(l, s)
      {
-        if ((s) && (s[0] == '/')) edje_color_class_del(s);
+        if ((s) && ((s[0] == '/') || s[0] == ':')) edje_color_class_del(s);
         free(s);
      }
    pal = _palette_find(name);
