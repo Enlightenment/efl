@@ -283,7 +283,7 @@ main(int argc, char **argv)
    // This is a funny hack to call an external tool to generate a pdf that will then be processed by poppler
    extension = strrchr(file, '.');
    dir = dirname(argv[0]);
-   if (extension && dir && strcmp(extension, ".pdf"))
+   if (extension && dir && (!(!strcasecmp(extension, ".pdf"))))
      {
 #ifndef _WIN32
         signal(SIGSEGV, _crash);
