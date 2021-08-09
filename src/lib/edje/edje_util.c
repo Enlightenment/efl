@@ -5812,7 +5812,6 @@ _edje_real_part_get(const Edje *ed, const char *part)
 void *
 _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
 {
-   static const char *remember_key = NULL;
    void *data;
    int i, j;
    char **tokens;
@@ -5821,20 +5820,6 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
    data = eina_hash_find(hash, key);
    if (data)
      return data;
-
-   // We only receive pointer from Eet files as key, we can
-   // assume them constant over the life time of the program.
-   if (remember_key == key)
-     return NULL;
-
-   // It is usually faster to walk the string once to check
-   // if there will be any tokens to process, that to allocate
-   // an array, copy one token, and then just free it.
-   if (strchr(key, '/') == NULL)
-     {
-        remember_key = key;
-        return NULL;
-     }
 
    tokens = eina_str_split_full(key, "/", 0, &tokens_count);
    if ((tokens) && (tokens_count > 1))
@@ -5859,10 +5844,6 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
           }
 
         eina_strbuf_free(buf);
-     }
-   else
-     {
-        remember_key = key;
      }
 
    if (tokens)
