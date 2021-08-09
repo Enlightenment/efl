@@ -4,7 +4,7 @@ group { name: "e/gadman/popup";
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color_class: "/bg/normal/gadgets/popup";
+            color_class: "/bg/normal/gadgets/pop";
          }
       }
       part { name: "e.swallow.content"; type: SWALLOW; clip_to: "clip";
