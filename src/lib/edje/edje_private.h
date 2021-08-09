@@ -2538,7 +2538,6 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
-Edje_Color_Class *_edje_color_class_find(const Edje *ed, const char *color_class);
 // The color_class has to be a pointer to an Eet owned string.
 Edje_Color_Class *_edje_color_class_recursive_find(const Edje *ed, const char *color_class);
 void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);

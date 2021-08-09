@@ -2560,7 +2560,7 @@ _edje_part_recalc_single_filter(Edje *ed,
                        if (r && (r[1] == ')') && (r[2] == '\0'))
                          {
                             *r = '\0';
-                            cc = _edje_color_class_find(ed, ccname);
+                            cc = _edje_color_class_recursive_find(ed, ccname);
                             if (cc)
                               {
                                  static const char fmt[] =

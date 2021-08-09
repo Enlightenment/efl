@@ -1458,7 +1458,7 @@ _elua_color_class(lua_State *L) // Stack usage [-(10|14), +(11|15), ?]
         edje_color_class_set(class, r, g, b, a, r, g, b, a, r, g, b, a);
      }
 
-   c_class = _edje_color_class_find(ed, class);
+   c_class = _edje_color_class_recursive_find(ed, class);
    if (!c_class) return 0;
 
    _elua_ret(L, "%r %g %b %a", c_class->r, c_class->g, c_class->b, c_class->a);

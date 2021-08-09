@@ -1619,7 +1619,7 @@ _edje_embryo_fn_get_color_class(Embryo_Program *ep, Embryo_Cell *params)
    ed = embryo_program_data_get(ep);
    GETSTR(class, params[1]);
    if (!class) return 0;
-   c_class = _edje_color_class_find(ed, class);
+   c_class = _edje_color_class_recursive_find(ed, class);
    if (!c_class) return 0;
    SETINT(c_class->r, params[2]);
    SETINT(c_class->g, params[3]);
