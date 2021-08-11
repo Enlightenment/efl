@@ -161,6 +161,8 @@ _efl_ui_focus_composition_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_
        configured_state->parent == current_state.parent)
      return !!current_state.manager;
 
+   if (!redirect) return EINA_FALSE;
+
    registered = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    if (registered)

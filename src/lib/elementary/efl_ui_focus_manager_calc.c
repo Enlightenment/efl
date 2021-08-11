@@ -645,7 +645,7 @@ _efl_ui_focus_manager_calc_update_parent(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manag
    Node *node;
    Node *parent;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent_obj, EINA_FALSE);
+   if (!parent_obj) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(child, EINA_FALSE);
 
    node = node_get(obj, pd, child);
