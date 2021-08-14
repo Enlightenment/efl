@@ -33,6 +33,8 @@ color_tree {
       "/fg/normal/gadgets/bluez/off";
       "/fg/normal/gadgets/clock/digital/separator";
       "/fg/normal/gadgets/clock/analog/hands/hours";
+      "/fg/normal/index/item/text";
+      "/fg-alt";
    }
    ":selected" {
       "/bg/selected";
@@ -121,6 +123,12 @@ color_classes {
       color:   0   0   0 200; }
    color_class { name: "/dim/disabled";
       color:   0   0   0  80; }
+   color_class { name: "/dim-alt";
+      color:   0   0   0 160; }
+   color_class { name: "/dim-alt/pressed";
+      color:   0   0   0 200; }
+   color_class { name: "/dim-alt/disabled";
+      color:   0   0   0  80; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/popup";
       color:  48  48   48 255; }
@@ -174,6 +182,9 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/color/cursor";
       color: 255 255 255 192; }
+///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/index/base/text";
+      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
 //   color_class { name: "/fg/normal/panes/flush";
 //      color:  51 163 255 255; }
