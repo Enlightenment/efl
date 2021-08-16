@@ -5828,15 +5828,15 @@ _edje_hash_find_helper(const Eina_Hash *hash, const char *key)
 
         buf = eina_strbuf_new();
 
-        for (i = tokens_count - 2; i >= 0; i--)
+        for (i = tokens_count - 1; i >= 0; i--)
           {
              for (j = 0; j < i; j++)
                {
                   eina_strbuf_append(buf, tokens[j]);
                   eina_strbuf_append(buf, "/");
                }
-             eina_strbuf_append(buf, tokens[tokens_count - 1]);
-
+             if (i == 0) eina_strbuf_append(buf, "/");
+             eina_strbuf_append(buf, tokens[i]);
              data = eina_hash_find(hash, eina_strbuf_string_get(buf));
              if (data) break;
 
