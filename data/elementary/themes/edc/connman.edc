@@ -66,7 +66,7 @@ group { name: "e/modules/connman/main";
          }
          description { state: "online" 0.0;
             inherit: "default" 0.0;
-            color_class: "/fg/selected/gadgets/connman/eth/connector";
+            color_class: "/fg/normal/gadgets/connman/eth/connector";
          }
       }
 ///////////////////////
