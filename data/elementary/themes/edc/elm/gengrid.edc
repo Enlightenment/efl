@@ -12,7 +12,7 @@ group { name: "elm/gengrid/item/default/default";
 #define BASEP() \
    part { name: "event"; type: RECT; \
       description { state: "default" 0.0; \
-         color: 0 0 0 0; \
+         color: 0 0 0 0; /* no cc */ \
       } \
       description { state: "disabled" 0.0; \
          inherit: "default" 0.0; \
@@ -21,10 +21,10 @@ group { name: "elm/gengrid/item/default/default";
    } \
    part { name: "base"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
-         color: 64 64 64 255; \
+         color_class: "/bg/normal/grid/item"; \
       } \
       description { state: "odd" 0.0; \
-         color: 56 56 56 255; \
+         color_class: "/bg-alt/normal/grid/item"; \
       } \
    } \
    program { signal: "elm,state,odd"; source: "elm"; \
@@ -37,7 +37,7 @@ group { name: "elm/gengrid/item/default/default";
    } \
    part { name: "sel_base"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
-         color: 51 153 255 255; \
+         color_class: "/bg/selected/grid/item"; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
@@ -64,7 +64,7 @@ group { name: "elm/gengrid/item/default/default";
 #define TOPP() \
    part { name: "event_block"; type: RECT; \
       description { state: "default" 0.0; \
-         color: 0 0 0 0; \
+         color: 0 0 0 0; /* no cc */ \
          visible: 0; \
       } \
       description { state: "disabled" 0.0; \
@@ -91,7 +91,7 @@ group { name: "elm/gengrid/item/default/default";
             rel1.relative: 0.0 1.0;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/grid/item";
             align: 0.5 1.0;
             offscale;
             text { font: FN; size: 10;
@@ -102,11 +102,11 @@ group { name: "elm/gengrid/item/default/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/grid/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/grid/item";
          }
       }
       program { signal: "elm,state,selected"; source: "elm";
@@ -135,11 +135,12 @@ group { name: "elm/gengrid/item/default/default";
             rel2.to_y: "elm.swallow.pad";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
+            color: 255 255 255 255; // no cc
             offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW;
@@ -187,7 +188,7 @@ group { name: "elm/gengrid/item/default_style/default";
    data.item: "texts" "elm.text";
    data.item: "contents" "elm.swallow.icon elm.swallow.end";
    styles.style {    name: "gengrid_style";
-      base: "font="FN" font_size=10 align=left color=#a0a0a0 text_class=list_item ellipsis=1.0";
+      base: "font="FN" font_size=10 align=left color=cc:/fg/normal/list/item text_class=list_item ellipsis=1.0";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -195,7 +196,7 @@ group { name: "elm/gengrid/item/default_style/default";
       tag: "tab" "\t";
    }
    styles.style { name: "gengrid_style_selected";
-      base: "font="FN" font_size=10 align=left color=#fff text_class=list_item_selected ellipsis=1.0";
+      base: "font="FN" font_size=10 align=left color=cc:/fg/selected/list/item text_class=list_item_selected ellipsis=1.0";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -203,7 +204,7 @@ group { name: "elm/gengrid/item/default_style/default";
       tag: "tab" "\t";
    }
    styles.style { name: "gengrid_style_disabled";
-      base: "font="FN" font_size=10 align=left color=#505050 text_class=list_item ellipsis=1.0";
+      base: "font="FN" font_size=10 align=left color=cc:/fg/disabled/list/item text_class=list_item ellipsis=1.0";
       tag: "br" "\n";
       tag: "ps" "ps";
       tag: "hilight" "+ font_weight=Bold";
@@ -268,10 +269,11 @@ group { name: "elm/gengrid/item/default_style/default";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
             offscale;
+            color: 255 255 255 255; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW;
@@ -338,15 +340,15 @@ group { name: "elm/gengrid/item/up/default";
             aspect: 1.0 1.0; aspect_preference: BOTH;
             rel.to: "icon_area";
             image.normal: "ic-arrow-u";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/grid/item";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/grid/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/grid/item";
          }
       }
       program { signal: "elm,state,selected"; source: "elm";
@@ -386,7 +388,7 @@ group { name: "elm/gengrid/item/album-preview/default";
             rel1.relative: 0.0 1.0;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/grid/item";
             align: 0.5 1.0;
             offscale;
             text { font: FN; size: 10;
@@ -397,11 +399,11 @@ group { name: "elm/gengrid/item/album-preview/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/grid/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/grid/item";
          }
       }
       program { signal: "elm,state,selected"; source: "elm";
@@ -431,15 +433,17 @@ group { name: "elm/gengrid/item/album-preview/default";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
             offscale;
+            color: 255 255 255 255; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
             visible: 1;
          }
       }
@@ -550,12 +554,12 @@ group { name: "elm/gengrid/item/thumb/default";
             rel1.offset: -4 -4;
             rel2.offset: 4 4;
             rel2.to: "icon_area";
-            color: 255 255 255 255;
+            color_class: "/bg/normal/grid/item/thumb";
             offscale;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/grid/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -566,7 +570,7 @@ group { name: "elm/gengrid/item/thumb/default";
          scale: 1;
          description { state: "default" 0.0;
             rel1.relative: 0.0 1.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/grid/item";
             offscale;
          }
          description { state: "selected" 0.0;
@@ -621,7 +625,7 @@ group { name: "elm/gengrid/item/thumb/default";
             rel1.relative: 0.0 1.0;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/grid/item";
             align: 0.5 1.0;
             offscale;
             text { font: FN; size: 10;
@@ -632,11 +636,11 @@ group { name: "elm/gengrid/item/thumb/default";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/grid/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/grid/item";
          }
       }
       program { signal: "elm,state,selected"; source: "elm";
@@ -666,10 +670,11 @@ group { name: "elm/gengrid/item/thumb/default";
             rel2.relative: 1.0 0.0;
             rel2.offset: -9 -9;
             offscale;
+            color: 255 255 255 255; // no cc
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "elm.swallow.pad"; type: SWALLOW;

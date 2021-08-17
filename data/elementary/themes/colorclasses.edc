@@ -401,6 +401,9 @@ color_classes {
    color_class { name: "/fg/normal/list/typebuf/text";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/grid/item/thumb";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/frame/title";
       color:  80  80  80 255; }
    color_class { name: "/fg/normal/frame/title";
