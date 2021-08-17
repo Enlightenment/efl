@@ -25,12 +25,12 @@ group { name: "elm/hover/base/default";
       }
       part { name: "base"; type: RECT; mouse_events: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 64;
+            color_class: "/dim/normal/hover";
          }
       }
       part { name: "box"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "elm.swallow.size";
             rel1.offset: -2 -2;
             rel2.to: "elm.swallow.size";
@@ -189,11 +189,12 @@ group { name: "elm/hover/base/popout";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 255 255 255 0; // no cc
+            color_class: "/dim/normal/hover";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 64;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "leftclip"; type: RECT;
@@ -210,10 +211,13 @@ group { name: "elm/hover/base/popout";
             visible: 0;
             rel.to: "left";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_l.png");
+            color_class: "/shadow/normal/hover";
+            color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "shad_right"; nomouse;
@@ -223,10 +227,13 @@ group { name: "elm/hover/base/popout";
             visible: 0;
             rel.to: "right";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_r.png");
+            color_class: "/shadow/normal/hover";
+            color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "shad_top"; nomouse;
@@ -236,10 +243,13 @@ group { name: "elm/hover/base/popout";
             visible: 0;
             rel.to: "top";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_t.png");
+            color_class: "/shadow/normal/hover";
+            color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "shad_bottom"; nomouse;
@@ -249,10 +259,13 @@ group { name: "elm/hover/base/popout";
             visible: 0;
             rel.to: "bottom";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_b.png");
+            color_class: "/shadow/normal/hover";
+            color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "left"; type: RECT;
@@ -262,11 +275,13 @@ group { name: "elm/hover/base/popout";
             rel.to: "elm.swallow.slot.left";
             rel1.offset: -6 -6;
             rel2.offset: -1 5;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/hover";
+            color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "elm.swallow.slot.left"; type: SWALLOW;
@@ -299,7 +314,7 @@ group { name: "elm/hover/base/popout";
             rel.to: "elm.swallow.slot.right";
             rel1.offset: 0 -6;
             rel2.offset: 5 5;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/hover/base";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -336,7 +351,7 @@ group { name: "elm/hover/base/popout";
             rel.to: "elm.swallow.slot.top";
             rel1.offset: -6 -6;
             rel2.offset: 5 -1;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/hover/base";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -373,7 +388,7 @@ group { name: "elm/hover/base/popout";
             rel.to: "elm.swallow.slot.bottom";
             rel1.offset: -6 0;
             rel2.offset: 5 5;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/hover/base";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -401,7 +416,7 @@ group { name: "elm/hover/base/popout";
             rel.to: "elm.swallow.slot.middle";
             rel1.offset: -6 -6;
             rel2.offset: 5 5;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/hover/base";
          }
       }
       part { name: "elm.swallow.slot.middle"; type: SWALLOW;
@@ -554,11 +569,10 @@ group { name: "elm/hover/base/hoversel_vertical/default";
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 0;
          }
       }
       part { name: "shad"; nomouse;
@@ -566,10 +580,12 @@ group { name: "elm/hover/base/hoversel_vertical/default";
          description { state: "default" 0.0;
             rel.to: "button_image";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_t.png");
+            color_class: "/bg/normal/hoversel";
          }
          description { state: "bottom" 0.0;
             rel.to: "button_image";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_b.png");
+            color_class: "/bg/normal/hoversel";
          }
       }
       part { name: "button_image"; type: RECT;
@@ -580,7 +596,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             rel1.to_y: "elm.swallow.slot.top";
             rel2.to_y: "elm.swallow.slot.middle";
             rel2.relative: 1.0 0.0;
-            color: 96 96 96 255;
+            color_class: "/bg/normal/hoversel/menu";
             offscale;
             rel1.offset: -5 -4;
             rel2.offset: 9 1;
@@ -639,7 +655,7 @@ group { name: "elm/hover/base/hoversel_vertical/default";
             min: 5 0;
             rel.to: "button_image";
             rel1.relative: 1.0 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/hoversel/menu/bar";
          }
       }
       part { name: "topclip"; type: RECT;
@@ -889,19 +905,17 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
          description { state: "default" 0.0;
             align: 0.0 0.0;
             fixed: 1 1;
-            rel1.to: "elm.swallow.offset";
+            rel.to: "elm.swallow.offset";
             rel1.relative: 1.0 1.0;
-            rel2.to: "elm.swallow.offset";
             rel2.relative: 1.0 1.0;
          }
       }
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 0;
          }
       }
       part { name: "shad"; nomouse;
@@ -909,10 +923,12 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
          description { state: "default" 0.0;
             rel.to: "button_image";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_l.png");
+            color_class: "/shadow/normal/hoversel";
          }
          description { state: "right" 0.0;
             rel.to: "button_image";
             WIN_SHADOW_ANGLE_SMALL("shad_angle_r.png");
+            color_class: "/shadow/normal/hoversel";
          }
       }
       part { name: "button_image"; type: RECT; nomouse;
@@ -924,7 +940,7 @@ group { name: "elm/hover/base/hoversel_horizontal/default";
             rel2.relative: 0.0 1.0;
             rel1.offset: -4 0;
             rel2.offset: 1 -1;
-            color: 80 80 80 255;
+            color_class: "/bg/normal/hoversel";
          }
          description { state: "right" 0.0;
             inherit: "default"  0.0;

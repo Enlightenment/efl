@@ -39,7 +39,6 @@ color_tree {
    ":selected" {
       "/bg/selected";
       "/fg/normal/panes/flush";
-      "/bg/selected/multibuttonentry/button/bar";
    }
 }
 
@@ -129,6 +128,8 @@ color_classes {
       color:   0   0   0 200; }
    color_class { name: "/dim-alt/disabled";
       color:   0   0   0  80; }
+   color_class { name: "/dim/normal/hover";
+      color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/popup";
       color:  48  48   48 255; }
@@ -450,6 +451,8 @@ color_classes {
    color_class { name: "/fg/normal/desklock/fprint/fail";
       color: 255 153  51 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/hoversel/menu";
+      color:  96  96  96 255; }
    color_class { name: "/bg/normal/hoversel/button";
       color:  96  96  96 255; }
    color_class { name: "/bg/pressed/hoversel/button";
