@@ -633,7 +633,7 @@ color_classes {
 //      color: 160 160 160 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/gadgets/control/base";
-      color:  51 153 255 255; }
+      color:  51 153 255  25; }
    color_class { name: "/bg/normal/gadgets/control/outline";
       color:  51 153 255 255; }
    color_class { name: "/bg/selected/gadgets/control/outline";
