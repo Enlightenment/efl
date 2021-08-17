@@ -83,7 +83,7 @@ group { name: "elm/frame/base/default";
       }
       part { name: "event"; type: RECT; ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
          }
@@ -166,7 +166,7 @@ group { name: "elm/frame/base/border";
    parts {
       part { name: "top_bg";
          description { state: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/selected/titlebar";
          }
       }
       part { name: "elm.text";
@@ -174,6 +174,7 @@ group { name: "elm/frame/base/border";
             rel2.to_x: "close";
             rel2.relative: 0.0 0.0;
             min: 0 15;
+            color_class: "/fg/selected/titlebar";
          }
       }
       part { name: "close";
@@ -190,11 +191,11 @@ group { name: "elm/frame/base/border";
             max: 15 15;
             offscale;
             image.normal: "i-close";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/titlebar/buttons/close";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 220 220 220 255;
+            color_class: "/fg/pressed/titlebar/buttons/close";
          }
       }
       program { signal:  "mouse,down,1"; source:  "close";
@@ -216,7 +217,7 @@ group { name: "elm/frame/base/overlay";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 0 0 0 160;
+            color_class: "/dim/normal/frame-overlay";
          }
       }
    }
@@ -227,7 +228,7 @@ group { name: "elm/frame/base/icon_overlay";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 0 0 0 160;
+            color_class: "/dim/normal/frame-overlay";
          }
       }
    }
@@ -238,7 +239,7 @@ group { name: "elm/frame/base/border_overlay";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: 0 0 0 160;
+            color_class: "/dim/normal/frame-overlay";
          }
       }
    }
@@ -345,7 +346,7 @@ group { name: "elm/frame/base/outdent_top";
             rel2.offset: -5 2;
             rel2.relative: 1.0 0.0;
             min: 0 1;
-            color: 72 72 72 255;
+            color_class: "/fg/normal/frame/separator";
             offscale;
          }
       }
@@ -372,7 +373,7 @@ group { name: "elm/frame/base/outdent_bottom";
             rel1.relative: 0.0 1.0;
             rel2.offset: -5 -3;
             min: 0 1;
-            color: 72 72 72 255;
+            color_class: "/fg/normal/frame/separator";
             offscale;
          }
       }

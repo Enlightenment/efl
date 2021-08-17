@@ -1262,7 +1262,7 @@ group { name: "elm/toolbar/separator/default";
             max: 1 99999;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color_class: "/fg/selected/toolbar/separator";
+            color_class: "/fg/normal/toolbar/separator";
             offscale;
          }
          description { state: "vert" 0.0;

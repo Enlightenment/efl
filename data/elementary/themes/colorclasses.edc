@@ -405,6 +405,8 @@ color_classes {
       color:  80  80  80 255; }
    color_class { name: "/fg/normal/frame/title";
       color: 255 255 255 255; }
+   color_class { name: "/fg/normal/frame/separator";
+      color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/actionslider/base";
       color:   0   0   0  64; }
@@ -587,7 +589,7 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/selected/toolbar/base";
       color:  32  32  32 255; }
-   color_class { name: "/fg/selected/toolbar/separator";
+   color_class { name: "/fg/normal/toolbar/separator";
       color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/winlist/text/title";
