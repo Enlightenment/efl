@@ -53,7 +53,7 @@ group { name: "elm/clock/flipdigit/default";
          description { state: "default" 0.0;
             visible: 0;
             rel1.relative: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 20 20;
          }
          description { state: "visible" 0.0;
@@ -66,7 +66,7 @@ group { name: "elm/clock/flipdigit/default";
          description { state: "default" 0.0;
             visible: 0;
             rel2.relative: 1.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 20 20;
          }
          description { state: "visible" 0.0;
@@ -83,7 +83,7 @@ group { name: "elm/clock/flipdigit/default";
             rel2.relative: 1.0 0.0;
             aspect: (52/72) (52/72); aspect_preference: BOTH;
             image.normal: "digit_0.png";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/clock";
          }
 #define DIGIT_DESC(_DIGIT) \
    description { state: _DIGIT 0.0; \
@@ -111,7 +111,7 @@ group { name: "elm/clock/flipdigit/default";
             align: 0.5 0.0;
             aspect: 1 1; aspect_preference: BOTH;
             image.normal: "ic-arrow-u";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/clock/arrow";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -126,7 +126,7 @@ group { name: "elm/clock/flipdigit/default";
             align: 0.5 0.0;
             aspect: 1 1; aspect_preference: BOTH;
             image.normal: "ic-arrow-d";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/clock/arrow";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -137,7 +137,7 @@ group { name: "elm/clock/flipdigit/default";
          type: RECT;
          description { state: "default" 0.0;
             rel.to: "t";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -149,7 +149,7 @@ group { name: "elm/clock/flipdigit/default";
          type: RECT;
          description { state: "default" 0.0;
             rel.to: "b";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -263,7 +263,7 @@ group { name: "elm/clock/flipampm/default";
             max: _W _H; \
             fixed: 1 1; \
             image.normal: "digit_sep.png"; \
-            color: 160 160 160 255; \
+            color_class: "/fg/normal/clock/separator"; \
          } \
       }
 
@@ -318,7 +318,7 @@ group { name: "elm/clock/base/default";
       part { name: "base"; type: RECT;
          scale : 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
