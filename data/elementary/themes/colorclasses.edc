@@ -649,6 +649,8 @@ color_classes {
       color:  51 153 255 255; }
    color_class { name: "/fg/normal/gadgets/ibar/drop/arrow";
       color:  51 153 255 255; }
+   color_class { name: "/fg/normal/gadgets/ibar/separator";
+      color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/gadgets/backlight/light/off";
       color: 255 255 255 0; }
