@@ -2,8 +2,6 @@
 #define FLIP_PICKER_MAX_LEN_STR "50"
 
 group { name: "elm/flipselector/base/default";
-   images.image: "big_arrow_up.png" COMP;
-   images.image: "big_arrow_down.png" COMP;
    images.image: "flip_shad.png" COMP;
    images.image: "win_shadow.png" COMP;
 
@@ -143,11 +141,15 @@ group { name: "elm/flipselector/base/default";
       }
    }
    parts {
-      part { name: "base_shadow"; mouse_events: 0;
+      part { name: "shadow"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
             WIN_SHADOW_SMALL;
+            color_class: "/shadow/normal/flipselector";
+         }
+         description { state: "disabled" 0.0; inherit;
+            color_class: "/shadow/disabled/flipselector";
          }
       }
       part { name: "base"; type: RECT;
@@ -162,6 +164,7 @@ group { name: "elm/flipselector/base/default";
          description { state: "default" 0.0;
             rel1 { to: "base"; relative: 0.0 0.5; }
             rel2.to: "base";
+            color: 0 0 0 0; // no cc
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -172,7 +175,7 @@ group { name: "elm/flipselector/base/default";
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2 { to: "base"; relative: 1.0 0.5; }
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -183,7 +186,7 @@ group { name: "elm/flipselector/base/default";
          mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "bottom";
-            color: 96 96 96 255;
+            color_class: "/bg/normal/flipselector/down";
          }
       }
       part { name: "bottom_text_prev"; type: TEXT; mouse_events: 0;
@@ -203,12 +206,12 @@ group { name: "elm/flipselector/base/default";
                ellipsis: -1;
                align: 0.5 0.5;
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/flipselector/down";
             offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 112 112 112 255;
+            color_class: "/fg/disabled/flipselector/down";
          }
       }
       part { name: "bottom_shadow"; mouse_events: 0;
@@ -219,6 +222,7 @@ group { name: "elm/flipselector/base/default";
             rel2 { to: "bottom"; relative: 1.0 0.0; }
             image.normal: "flip_shad.png";
             fill.smooth: 0;
+            color_class: "/shadow/normal/flipselector";
          }
          description { state: "half" 0.0;
             inherit: "default" 0.0;
@@ -234,7 +238,7 @@ group { name: "elm/flipselector/base/default";
       part { name: "bottom_cur"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "bottom";
-            color: 96 96 96 255;
+            color_class: "/bg/normal/flipselector/down";
          }
          description { state: "shrink" 0.0;
             inherit: "default" 0.0;
@@ -259,24 +263,25 @@ group { name: "elm/flipselector/base/default";
                ellipsis: -1;
                align: 0.5 0.5;
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/flipselector/down";
             offscale;
          }
          description { state: "shrink" 0.0;
             inherit: "default" 0.0;
-            color: 128 128 128 255;
+            color_class: "/fg/normal/flipselector/down";
+            color: 255 255 255 128; // no cc
             visible: 0;
             rel2.relative: 1.0 0.5; /* FIXME: same visual effect? --> MAP! */
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 112 112 112 255;
+            color_class: "/fg/disabled/flipselector/down";
          }
       }
       part { name: "top_prev"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "top";
-            color: 72 72 72 255;
+            color_class: "/bg/normal/flipselector/up";
          }
       }
       part { name: "top_text_prev"; type: TEXT; mouse_events: 0;
@@ -297,24 +302,24 @@ group { name: "elm/flipselector/base/default";
                align: 0.5 0.5;
                source: "elm.top";
             }
-            color: 144 144 144 255;
+            color_class: "/fg/normal/flipselector/up";
             offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/flipselector/up";
          }
       }
       part { name: "top_cur"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "top";
-            color: 72 72 72 255;
+            color_class: "/bg/normal/flipselector/up";
          }
          description { state: "shrink" 0.0;
             inherit: "default" 0.0;
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
-            color: 32 32 32 255;
+            color: 128 128 128 255; // no cc
          }
       }
       part { name: "elm.top"; type: TEXT; mouse_events: 0;
@@ -334,30 +339,30 @@ group { name: "elm/flipselector/base/default";
                ellipsis: -1;
                align: 0.5 0.5;
             }
-            color: 144 144 144 255;
+            color_class: "/fg/normal/flipselector/up";
             offscale;
          }
          description { state: "shrink" 0.0;
             inherit: "default" 0.0;
             visible: 0;
             rel1.relative: 0.0 0.5;
-            color: 48 48 48 255;
+            color: 255 255 255 128; // no cc
         }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/flipselector/up";
          }
       }
       part { name: "arrow_top"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 17 14;
-            max: 17 14;
+            min: 15 15;
+            max: 15 15;
             align: 0.5 0.0;
             rel.to: "top";
             rel1.offset: 0 2;
-            image.normal: "big_arrow_up.png";
-            color: 144 144 144 255;
+            image.normal: "i-arrow-u";
+            color_class: "/fg/normal/flipselector/up";
             offscale;
          }
          description { state: "hidden" 0.0;
@@ -366,23 +371,23 @@ group { name: "elm/flipselector/base/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-             color: 96 96 96 255;
+            color_class: "/fg/disabled/flipselector/up";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-             color: 255 255 255 255;
+            color_class: "/fg/pressed/flipselector/up";
          }
       }
       part { name: "arrow_bottom"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 17 14;
-            max: 17 14;
+            min: 15 15;
+            max: 15 15;
             align: 0.5 1.0;
             rel.to: "bottom";
             rel2.offset: -1 -3;
-            image.normal: "big_arrow_down.png";
-            color: 160 160 160 255;
+            image.normal: "i-arrow-d";
+            color_class: "/fg/normal/flipselector/down";
             offscale;
          }
          description { state: "hidden" 0.0;
@@ -391,11 +396,11 @@ group { name: "elm/flipselector/base/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 112 112 112 255;
+            color_class: "/fg/disabled/flipselector/down";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-             color: 255 255 255 255;
+            color_class: "/fg/pressed/flipselector/down";
          }
       }
       part { name: "top_clipper"; type: RECT;
@@ -410,7 +415,7 @@ group { name: "elm/flipselector/base/default";
       }
       part { name: "event_blocker"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
@@ -479,6 +484,7 @@ group { name: "elm/flipselector/base/default";
             set_state(PART:"elm.top", "disabled", 0.0);
             set_state(PART:"bottom_text_prev", "disabled", 0.0);
             set_state(PART:"top_text_prev", "disabled", 0.0);
+            set_state(PART:"shadow", "disabled", 0.0);
 
             get_state(PART:"arrow_bottom", st, 30, vl);
             if (strcmp(st, "hidden"))
@@ -500,6 +506,7 @@ group { name: "elm/flipselector/base/default";
             set_state(PART:"elm.top", "default", 0.0);
             set_state(PART:"bottom_text_prev", "default", 0.0);
             set_state(PART:"top_text_prev", "default", 0.0);
+            set_state(PART:"shadow", "default", 0.0);
 
             get_state(PART:"arrow_bottom", st, 30, vl);
             if (strcmp(st, "hidden"))
