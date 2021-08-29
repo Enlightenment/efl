@@ -73,17 +73,17 @@ group { name: "elm/dayselector/base/default";
             rel1.to: "elm.swallow.day0";
             rel2.to: "elm.swallow.day6";
          }
-         description { state: "visible" 0.0;
+         description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 128; // no cc
          }
       }
       part { name: "disabler"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
-         description { state: "visible" 0.0;
+         description { state: "disabled" 0.0;
             inherit: "default" 0.0;
             visible: 1;
          }
@@ -91,7 +91,7 @@ group { name: "elm/dayselector/base/default";
    }
    programs {
       program { signal: "elm,state,disabled"; source: "elm";
-         action: STATE_SET "visible" 0.0;
+         action: STATE_SET "disabled" 0.0;
          target: "disabler";
          target: "clipper";
       }
@@ -164,7 +164,7 @@ group { name: "elm/check/base/dayselector/default";
       part { name: "bg"; type: RECT;
          mouse_events: 0;
          description { state: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/bg-alt/normal/dayselector";
          }
          /* default */
          description { state: "default_left" 0.0;
@@ -179,35 +179,35 @@ group { name: "elm/check/base/dayselector/default";
          /* pressed */
          description { state: "pressed_left" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/dayselector";
          }
          description { state: "pressed_right" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/dayselector";
          }
          description { state: "pressed_middle" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/dayselector";
          }
          /* selected */
          description { state: "selected_left" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/dayselector";
          }
          description { state: "selected_right" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/dayselector";
          }
          description { state: "selected_middle" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/dayselector";
          }
       }
       part { name: "elm.text"; type: TEXT;
          mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/dayselector";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             offscale;
@@ -221,25 +221,25 @@ group { name: "elm/check/base/dayselector/default";
          }
          description { state: "weekend_default" 0.0;
             inherit: "default" 0.0;
-            color: 128 128 128 255;
+            color_class: "/fg/normal/dayselector/weekend";
          }
          description { state: "weekend_style1" 0.0;
             inherit: "default" 0.0;
-            color: 128 128 128 255;
+            color_class: "/fg/normal/dayselector/weekend";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/dayselector";
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/dayselector";
          }
       }
       part { name: "events"; type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }

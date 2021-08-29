@@ -210,6 +210,9 @@ color_classes {
    color_class { name: "/bg/pressed/segmentcontrol/item";
       color:  32  32  32 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/dayselector/weekend";
+      color:  96  96  96 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/init/logo";
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/init/text/version";
