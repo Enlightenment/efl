@@ -195,6 +195,7 @@ test_fileselector_button(void *data       EINA_UNUSED,
    elm_object_text_set(fs_bt, "Select a file");
    elm_object_part_content_set(fs_bt, "icon", ic);
    elm_fileselector_path_set(fs_bt, "/tmp/test_fs_bt");
+   evas_object_show(ic);
 
    elm_box_pack_end(vbox, fs_bt);
    evas_object_show(fs_bt);

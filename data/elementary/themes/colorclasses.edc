@@ -365,6 +365,9 @@ color_classes {
    color_class { name: "/fg/disabled/flipselector/up";
       color:  96  96  96 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/nmormal/fileselector/pathsep";
+      color:  51 153 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/button";
       color:  96  96  96 255; }
    color_class { name: "/bg/selected/button";
