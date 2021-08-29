@@ -308,6 +308,9 @@ color_classes {
    color_class { name: "/bg/selected/focus/hilight";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/diskselector";
+      color:  48  48  48 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/entry";
       color:  48  48  48 255; }
    color_class { name: "/bg/normal/entry/focus";
