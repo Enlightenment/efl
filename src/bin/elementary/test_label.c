@@ -469,12 +469,14 @@ char * get_fit_status(Eo * textblock)
 
    sprintf(status + strlen(status),"<br>");
    sprintf(status + strlen(status),"%s<br>",styles_names[app->i_style]);
-   if (current_fitting_fontsize == -1) {
-      sprintf(status + strlen(status),"Current Font Size = No Fitting");
-   }
-   else {
-      sprintf(status + strlen(status),"Current Font Size = %d", current_fitting_fontsize);
-   }
+   if (current_fitting_fontsize == -1)
+     {
+        sprintf(status + strlen(status),"Current Font Size = No Fitting");
+     }
+   else
+     {
+        sprintf(status + strlen(status),"Current Font Size = %d", current_fitting_fontsize);
+     }
 
 
    return status;
