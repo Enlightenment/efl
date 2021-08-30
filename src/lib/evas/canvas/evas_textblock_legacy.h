@@ -1143,6 +1143,13 @@ EVAS_API int evas_textblock_fit_size_array_get(const Evas_Object *obj,  unsigned
  */
 EVAS_API int evas_textblock_fit_size_array_set(Evas_Object *obj,  const unsigned int *p_size_array, size_t size_array_len);
 
+/** Get the object fitting font size that is currently used.
+ *
+ * @param obj The textblock object.
+ * @return Returns current used font size for fitting, or -1 if there is no fitting.
+ * @since 1.26
+ */
+EVAS_API int evas_textblock_fit_font_size_get(Evas_Object *obj);
 
 
 

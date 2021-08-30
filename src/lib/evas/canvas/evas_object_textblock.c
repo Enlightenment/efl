@@ -431,6 +431,7 @@ struct _TEXT_FIT_CONTENT_CONFIG
       unsigned int min_font_size,max_font_size;
       unsigned int step_size;
       unsigned int *p_size_array;
+      int font_size;
       size_t size_list_length;
       Eina_Size2D size_cache[256+1]; /** used hash font sizes 1-255 */
       Eina_Size2D last_size;
@@ -17881,6 +17882,7 @@ int fit_text_block(Evas_Object *eo_obj)
                 /*Lower bound founded, subtract one to move for nearest value*/
                 fc->last_size_index = MAX(l-1, 0);
                 fit_style_update(eo_obj,fc->p_size_array[fc->last_size_index],(fc->last_size_index != 0) && fc->options != TEXTBLOCK_FIT_MODE_HEIGHT ,EINA_FALSE);
+                fc->font_size = fc->p_size_array[fc->last_size_index];
                 fit_finish_fitting(eo_obj);
           }
      }
@@ -18050,6 +18052,20 @@ int compareUINT(const void * a, const void * b)
    if(a_value > b_value) return 1;
    else if(a_value < b_value) return -1;
    else return 0;
+}
+
+EVAS_API int evas_textblock_fit_font_size_get(Evas_Object *obj){
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
+   Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
+   TEXT_FIT_CONTENT_CONFIG *fc = &o->fit_content_config;
+   if (fc->options == TEXTBLOCK_FIT_MODE_NONE)
+     {
+        return -1;
+     }
+   else
+     {
+        return fc->font_size;
+     }
 }
 
 EVAS_API int evas_textblock_fit_size_array_set(Evas_Object *obj, const unsigned int *p_size_array, size_t size_array_len)
