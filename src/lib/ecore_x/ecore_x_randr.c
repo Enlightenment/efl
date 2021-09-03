@@ -44,7 +44,14 @@ typedef enum _Ecore_X_Randr_Edid_Aspect_Ratio_Preferred
 
 static int _randr_major, _randr_minor, _randr_version;
 
-XRRScreenResources *(*_ecore_x_randr_screen_resources_get)(Display *disp, Window win);
+static XRRScreenResources *
+_ecore_x_randr_screen_resources_get_dummy(Display *disp EINA_UNUSED, Window win EINA_UNUSED)
+{
+   return NULL;
+}
+
+XRRScreenResources *(*_ecore_x_randr_screen_resources_get)(Display *disp, Window win) = _ecore_x_randr_screen_resources_get_dummy;
+XRRScreenResources *(*_ecore_x_randr_screen_resources_get_slow)(Display *disp, Window win) = _ecore_x_randr_screen_resources_get_dummy;
 
 #endif
 
@@ -63,9 +70,15 @@ _ecore_x_randr_init(void)
         _randr_version = (_randr_major << 16) | _randr_minor;
 
         if (_randr_version >= RANDR_VERSION_1_3)
-          _ecore_x_randr_screen_resources_get = XRRGetScreenResourcesCurrent;
+          {
+             _ecore_x_randr_screen_resources_get = XRRGetScreenResourcesCurrent;
+             _ecore_x_randr_screen_resources_get_slow = XRRGetScreenResources;
+          }
         else if (_randr_version == RANDR_VERSION_1_2)
-          _ecore_x_randr_screen_resources_get = XRRGetScreenResources;
+          {
+             _ecore_x_randr_screen_resources_get = XRRGetScreenResources;
+             _ecore_x_randr_screen_resources_get_slow = XRRGetScreenResources;
+          }
 
         _randr_avail = EINA_TRUE;
 
@@ -536,6 +549,22 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, i
           }
      }
 #endif
+}
+
+/**
+ * @brief forces a hardware monitor info etc. refresh on the server side
+ * @param root the window's screen which will be reset.
+ */
+EAPI void
+ecore_x_randr_screen_refresh(Ecore_X_Window root)
+{
+   XRRScreenResources *res = NULL;
+
+   if (_randr_version < RANDR_VERSION_1_2) return;
+   if ((res = _ecore_x_randr_screen_resources_get_slow(_ecore_x_disp, root)))
+     {
+        XRRFreeScreenResources(res);
+     }
 }
 
 /**

@@ -2166,6 +2166,7 @@ EAPI void                                      ecore_x_randr_events_select(Ecore
 EAPI void                                      ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *w_mm, int *h_mm);
 EAPI void                                      ecore_x_randr_screen_size_range_get(Ecore_X_Window root, int *wmin, int *hmin, int *wmax, int *hmax);
 EAPI void                                      ecore_x_randr_screen_reset(Ecore_X_Window root);
+EAPI void                                      ecore_x_randr_screen_refresh(Ecore_X_Window root); /**< @since 1.26 */
 EAPI Eina_Bool                                 ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_mm, int h_mm);
 EAPI Ecore_X_Randr_Mode_Info                 **ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num);
 EAPI Ecore_X_Randr_Mode                        ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_info);
