@@ -24,9 +24,10 @@ if target_machine.system() == 'windows'
   ole32 = cc.find_library('ole32')
   ws2_32 = cc.find_library('ws2_32')
   secur32 = cc.find_library('secur32')
+  winmm = cc.find_library('winmm')
   uuid = cc.find_library('uuid')
 
-  evil_ext_deps += [psapi, ole32, ws2_32, secur32, uuid, regexp]
+  evil_ext_deps += [psapi, ole32, ws2_32, secur32, winmm, uuid, regexp]
 
   evil_lib = library('evil', evil_src,
     c_args : [package_c_args, '-DEVIL_BUILD'],

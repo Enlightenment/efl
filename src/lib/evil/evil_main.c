@@ -4,8 +4,11 @@
 
 #include <stdio.h>
 
+#include <windows.h>
+
 #include "evil_private.h"
 
+static UINT     _evil_time_period = 1;
 
 static int      _evil_init_count = 0;
 
@@ -19,9 +22,20 @@ evil_init(void)
 {
    LARGE_INTEGER freq;
    LARGE_INTEGER count;
+   TIMECAPS tc;
+   MMRESULT res;
 
    if (++_evil_init_count != 1)
      return _evil_init_count;
+
+   res = timeGetDevCaps(&tc, sizeof(TIMECAPS));
+   if (res  != MMSYSERR_NOERROR)
+     return --_evil_init_count;
+
+   _evil_time_period = tc.wPeriodMin;
+   res = timeBeginPeriod(_evil_time_period);
+   if (res  != TIMERR_NOERROR)
+     return --_evil_init_count;
 
    QueryPerformanceFrequency(&freq);
 
@@ -51,6 +65,8 @@ evil_shutdown(void)
      return _evil_init_count;
 
    evil_sockets_shutdown();
+
+   timeEndPeriod(_evil_time_period);
 
    return _evil_init_count;
 }
