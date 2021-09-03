@@ -131,6 +131,9 @@ color_classes {
    color_class { name: "/dim/normal/hover";
       color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/colorclass/color";
+      color:  48  48   48 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/popup";
       color:  48  48   48 255; }
    color_class { name: "/fg/normal/popup/text/title";
@@ -161,6 +164,8 @@ color_classes {
       color:  32  32  32 255; }
    color_class { name: "/bg/normal/colorselector/pattern";
       color:  48  48  48 255; }
+   color_class { name: "/bg/normal/colorselector/cursor";
+      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/layout/content-back/title";
       color: 255 255 255 255; }
