@@ -1,21 +1,21 @@
 #define CIT_STYLES\
       style { name: "calendar_date_style";\
-         base: "font="FN" font_size=10 color=#a0a0a0 align=center text_class=calendar_day_text";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day align=center text_class=calendar_day_text";\
       }\
       style { name: "calendar_date_holiday_style";\
-         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_holiday";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/holiday align=center text_class=calendar_day_text_holiday";\
       }\
       style { name: "calendar_date_today_style";\
-         base: "font="FN" font_size=10 color=#ffffff align=center text_class=calendar_day_text_today";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/today align=center text_class=calendar_day_text_today";\
       }\
       style { name: "calendar_date_disabled_style";\
-         base: "font="FN" font_size=10 color=#282828 align=center text_class=calendar_day_text_disabled";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/disabled align=center text_class=calendar_day_text_disabled";\
       }\
       style { name: "calendar_date_weekend1_style";\
-         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_weekend1";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/weekend1 align=center text_class=calendar_day_text_weekend1";\
       }\
       style { name: "calendar_date_weekend2_style";\
-         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_weekend2";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/weekend2 align=center text_class=calendar_day_text_weekend2";\
       }\
 
 #define CAL_SPIN(_sufix, _text, _relative)\
@@ -34,7 +34,7 @@
             max: 25 25;\
          }\
       }\
-      part { name: "right_bt"#_sufix; type: RECT;\
+      part { name: "right_bt"#_sufix; type: SPACER;\
          scale: 1;\
          description { state: "default" 0.0;\
             fixed: 1 1;\
@@ -47,7 +47,6 @@
             align: 1.0 0.5;\
             min: 25 25;\
             max: 25 25;\
-            color: 0 0 0 0;\
          }\
       }\
       part { name: "elm,calendar,button"#_sufix",left"; type: SWALLOW;\
@@ -93,7 +92,7 @@
                min: 0 1;\
                text_class: "calendar_"#_text; \
             }\
-            color: 160 160 160 255; \
+            color_class: "/fg/normal/calendar/text/title"; \
          }\
       }
 
@@ -118,7 +117,7 @@
             ellipsis: -1; \
             text_class: "calendar_weekday_text"; \
          } \
-         color: 160 160 160 255; \
+         color_class: "/fg/normal/calendar/text/day"; \
       } \
    } \
    part { name: "ch_"#_pos"_clipper"; type: RECT; \
@@ -138,17 +137,17 @@
    part { name: "cit_"#_pos"_event"; type: RECT; repeat_events: 1; \
       description { state: "default" 0.0; \
          rel.to: "cit_"#_pos"_rect"; \
-         color: 0 0 0 0; \
+         color_class: "/bg/normal/calendar/day/normal"; \
       } \
       description { state: "today" 0.0; \
          inherit: "default" 0.0; \
-         color: 0 0 0 64; \
+         color_class: "/bg/normal/calendar/day/today"; \
       } \
    } \
    part { name: "cit_"#_pos"_selected"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
          rel.to: "cit_"#_pos"_rect"; \
-         color: 51 153 255 128; \
+         color_class: "/bg/selected/calendar/day"; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
@@ -159,7 +158,7 @@
    part { name: "cit_"#_pos"_focus"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
          rel.to: "cit_"#_pos"_rect"; \
-         color: 255 153 51 128; \
+         color_class: "/bg/selected/calendar/day/focused"; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
@@ -209,7 +208,7 @@
          max: 15 15; \
          align: 0.0 1.0;\
          image.normal: "i-check"; \
-         color: 53 153 255 255; \
+         color_class: "/fg/normal/calendar/day/checked"; \
          visible: 0; \
       } \
       description { state: "visible" 0.0; \
@@ -220,7 +219,7 @@
    part { name: "elm.cit_"#_pos".access"; type: RECT; repeat_events: 1; \
       description { state: "default" 0.0; \
          rel.to: "cit_"#_pos"_event"; \
-         color: 0 0 0 0; \
+         color: 0 0 0 0; /* no cc */ \
       } \
    } \
    programs { \
@@ -451,7 +450,7 @@ group { name: "elm/calendar/base/default";
             rel1.relative: 0.0 1.0;
             rel1.offset: 8 -1;
             rel2.offset: -9 -1;
-            color: 80 80 80 255;
+            color_class: "/fg/normal/separator";
             offscale;
          }
       }
