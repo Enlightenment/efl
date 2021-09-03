@@ -157,6 +157,11 @@ color_classes {
    color_class { name: "/fg/normal/naviframe/top/overlap";
       color: 255 255 255 200; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/bg/normal/colorselector";
+      color:  32  32  32 255; }
+   color_class { name: "/bg/normal/colorselector/pattern";
+      color:  48  48  48 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/layout/content-back/title";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////

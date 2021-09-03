@@ -22,7 +22,7 @@ group { name: "elm/colorselector/palette/default";
             rel2.offset: -6 2;
             min: 64 1;
             max: 99999 1;
-            color: 72 72 72 255;
+            color_class: "/fg/normal/separator/horizontal";
             offscale;
          }
          description { state: "off" 0.0;
@@ -62,7 +62,7 @@ group { name: "elm/colorselector/palette/default";
             rel2.relative: 1.0 0.0;
             min: 64 1;
             max: 99999 1;
-            color: 72 72 72 255;
+            color_class: "/fg/normal/separator/horizontal";
             offscale;
          }
          description { state: "off" 0.0;
@@ -126,6 +126,7 @@ group { name: "elm/colorselector/palette/default";
 group { name: "elm/colorselector/picker/base/default";
    parts {
       part { name: "elm.swallow.picker"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             min: 80 80;
             rel2 {
@@ -173,7 +174,7 @@ group { name: "elm/colorselector/picker/base/default";
                font: FN; size: 10;
                ellipsis: -1;
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/colorselector/text/r";
             offscale;
          }
       }
@@ -203,7 +204,7 @@ group { name: "elm/colorselector/picker/base/default";
                font: FN; size: 10;
                ellipsis: -1;
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/colorselector/text/g";
             offscale;
          }
       }
@@ -237,7 +238,7 @@ group { name: "elm/colorselector/picker/base/default";
                font: FN; size: 10;
                ellipsis: -1;
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/colorselector/text/b";
             offscale;
          }
       }
@@ -271,7 +272,7 @@ group { name: "elm/colorselector/picker/base/default";
                font: FN; size: 10;
                ellipsis: -1;
             }
-            color: 160 160 160 255;
+            color_class: "/fg/normal/colorselector/text/a";
             offscale;
          }
       }
@@ -291,22 +292,22 @@ group { name: "elm/colorselector/picker/base/default";
 }
 
 group { name: "elm/colorselector/picker/default";
-   images.image: "diagonal_stripes.png" COMP;
+   images.image: "stripes-diag.png" COMP;
    parts {
       part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            min: 16 16;
+            min: 40 40;
             rel.to: "elm.picker";
-            color: 32 32 32 255;
+            color_class: "/bg/normal/colorselector";
          }
       }
+      PAT_FILL_SCALE(160, 160)
       part { name: "pat";
          description { state: "default" 0.0;
             rel.to: "bg";
-            image.normal: "diagonal_stripes.png";
-            color: 255 255 255 16;
-            TILED_PATTERN(240, 240)
+            image.normal: "stripes-diag.png";
+            color_class: "/bg/normal/colorselector/pattern";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -367,6 +368,7 @@ group { name: "elm/colorselector/bg/default";
 }
 
 group { name: "elm/colorselector/base/default";
+   images.image: "stripes-diag.png" COMP;
    parts {
       part { name: "elm.bar_bg"; type: SWALLOW; mouse_events: 0;
          scale: 1;
@@ -416,7 +418,7 @@ group { name: "elm/colorselector/base/default";
             rel1.to: "elm.arrow_icon";
             rel2.to_x: "elm.arrow_icon";
             rel2.to_y: "elm.arrow_bg";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          dragable.events: "elm.arrow";
       }
@@ -452,23 +454,23 @@ group { name: "elm/colorselector/base/default";
             min: 24 24;
             max: 24 24;
             fixed: 1 1;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/colorselector/cursor";
          }
       }
       part { name: "arrow_base"; type: RECT;
          clip_to: "arrow_clip";
          description { state: "default" 0.0;
             rel.to: "arrow_bg";
-            color: 32 32 32 255;
+            color_class: "/bg/normal/colorselector";
          }
       }
-      part { name: "arrow_pat";
+      PAT_FILL_SCALE(160, 160)
+      part { name: "pat";
          clip_to: "arrow_clip";
          description { state: "default" 0.0;
             rel.to: "arrow_bg";
-            image.normal: "diagonal_stripes.png";
-            color: 255 255 255 16;
-            TILED_PATTERN(240, 240)
+            image.normal: "stripes-diag.png";
+            color_class: "/bg/normal/colorselector/pattern";
          }
       }
       part { name: "arrow_clip";
@@ -511,7 +513,7 @@ group { name: "elm/colorselector/base/default";
             rel2.to_y: "elm.bar";
             rel2.relative: 0.5 1.0;
             rel2.offset: 0 -1;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/colorselector/cursor";
          }
          dragable.events: "elm.arrow";
       }
@@ -519,7 +521,7 @@ group { name: "elm/colorselector/base/default";
          repeat_events: 1;
          description { state: "default" 0.0;
             rel.to: "elm.arrow_bg";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -530,7 +532,7 @@ group { name: "elm/colorselector/arrow/default";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
    }
@@ -581,50 +583,51 @@ group { name: "elm/colorselector/image/colorbar_3/default";
 }
 
 group { name: "elm/colorselector/bg_image/colorbar_3/default";
-   images.image: "diagonal_stripes.png" COMP;
+   images.image: "stripes-diag.png" COMP;
    parts {
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/normal/colorselector";
          }
       }
+      PAT_FILL_SCALE(160, 160)
       part { name: "pat";
          description { state: "default" 0.0;
             rel.to: "bg";
-            image.normal: "diagonal_stripes.png";
-            color: 255 255 255 16;
-            TILED_PATTERN(240, 240)
+            image.normal: "stripes-diag.png";
+            color_class: "/bg/normal/colorselector/pattern";
          }
       }
    }
 }
 
 group { name: "elm/colorselector/item/default";
-   images.image: "diagonal_stripes.png" COMP;
+   images.image: "stripes-diag.png" COMP;
    parts {
       part { name: "sel"; type: RECT;
          description { state: "default" 0.0;
-            color: 51 153 255 0;
+            color_class: "/bg/selected/colorselector";
+            color: 255 255 255 0; // no cc
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            min: 16 16;
+            min: 20 20;
             rel.to: "color_obj";
-            color: 32 32 32 255;
+            color_class: "/bg/normal/colorselector";
          }
       }
+      PAT_FILL_SCALE(160, 160)
       part { name: "pat";
          description { state: "default" 0.0;
             rel.to: "bg";
-            image.normal: "diagonal_stripes.png";
-            color: 255 255 255 16;
-            TILED_PATTERN(240, 240)
+            image.normal: "stripes-diag.png";
+            color_class: "/bg/normal/colorselector/pattern";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -633,7 +636,7 @@ group { name: "elm/colorselector/item/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       alias: "color_obj" "elm.swallow.color_obj";
@@ -641,7 +644,7 @@ group { name: "elm/colorselector/item/default";
          scale: 1;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            min: 16 16;
+            min: 20 20;
             rel1.offset: 5 5;
             rel2.offset: -6 -6;
             offscale;

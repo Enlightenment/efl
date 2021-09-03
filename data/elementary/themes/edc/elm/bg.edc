@@ -35,25 +35,6 @@ group { name: "elm/bg/base/default";
    }
 }
 
-#define PAT_FILL_SCALE(_w, _h) \
-   part { name: "_pat_sizer"; type: SPACER; \
-      scale: 1; \
-      description { state: "default" 0.0; \
-         rel2.relative: 0.0 0.0; \
-         fixed: 1 1; \
-         min: 100 100; max: 100 100; \
-      } \
-   } \
-   program { signal: "resize"; source: ""; \
-      script { \
-         new x, y, w, h; \
-         get_geometry(PART:"_pat_sizer", x, y, w, h); \
-         custom_state(PART:"pat", "default", 0.0); \
-         set_state_val(PART:"pat", STATE_FILL_SIZE, 0, 0, (w*_w)/100, (h*_h)/100); \
-         set_state(PART:"pat", "custom", 0.0); \
-      } \
-   }
-
 #define BG_PAT(_name, _img, _w, _h, _colbg, _colfg) \
 group { name: _name; \
    data.item: "version" "119"; \
@@ -115,7 +96,6 @@ BG_PAT("elm/bg/base/checks_big_light",   "checks.png", 320, 320, "/bg-light/norm
 BG_PAT("elm/bg/base/checks_small_light", "checks.png",  80,  80, "/bg-light/normal/background", "/bg-light-alt/normal/background")
 
 #undef BG_PAT
-#undef PAT_FILL_SCALE
 
 #define BG_GRADV(_name, _colbg, _colfg) \
 group { name: _name; \

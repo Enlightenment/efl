@@ -26,6 +26,25 @@
      image { image: "p-1280.png" BACKGROUND_COMP; size:    0    0  1280   720; } \
    }
 
+#define PAT_FILL_SCALE(_w, _h) \
+   part { name: "_pat_sizer"; type: SPACER; \
+      scale: 1; \
+      description { state: "default" 0.0; \
+         rel2.relative: 0.0 0.0; \
+         fixed: 1 1; \
+         min: 100 100; max: 100 100; \
+      } \
+   } \
+   program { signal: "resize"; source: ""; \
+      script { \
+         new x, y, w, h; \
+         get_geometry(PART:"_pat_sizer", x, y, w, h); \
+         custom_state(PART:"pat", "default", 0.0); \
+         set_state_val(PART:"pat", STATE_FILL_SIZE, 0, 0, (w*_w)/100, (h*_h)/100); \
+         set_state(PART:"pat", "custom", 0.0); \
+      } \
+   }
+
 #define DARK_GREY_BG_COLOR 48 48 48 255
 #define DARK_GREY_BG_DISABLED_COLOR 64 64 64 255
 
