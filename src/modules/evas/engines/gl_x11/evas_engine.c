@@ -1965,7 +1965,6 @@ _native_bind_cb(void *image)
                                                           NULL);
                  if (!n->ns_data.x11.surface)
                    WRN("eglCreateImage() for Pixmap 0x%#lx failed: %#x", n->ns_data.x11.pixmap, eglGetError());
-
               }
             if (glsym_glEGLImageTargetTexture2DOES)
               {
@@ -2119,6 +2118,7 @@ _native_free_cb(void *image)
               {
                  glsym_evas_gl_common_eglDestroyImage(im->native.disp,
                                                       n->ns_data.x11.surface);
+                 n->ns_data.x11.surface = 0;
                  if ((err = eglGetError()) != EGL_SUCCESS)
                    {
                       ERR("eglDestroyImage() failed.");
@@ -2170,6 +2170,7 @@ _native_free_cb(void *image)
               {
                  glsym_evas_gl_common_eglDestroyImage(im->native.disp,
                                                       n->ns_data.tbm.surface);
+                 n->ns_data.tbm.surface = 0;
                  if ((err = eglGetError()) != EGL_SUCCESS)
                    {
                       ERR("eglDestroyImage() failed.");
@@ -2197,6 +2198,7 @@ _native_free_cb(void *image)
                {
                   glsym_evas_gl_common_eglDestroyImage(im->native.disp,
                                                        n->ns_data.wl_surface.surface);
+                  n->ns_data.wl_surface.surface = 0;
                   if (eglGetError() != EGL_SUCCESS)
                     ERR("eglDestroyImage() failed.");
                }
