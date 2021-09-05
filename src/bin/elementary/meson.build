@@ -86,7 +86,6 @@ elementary_test_src = [
   'test_launcher.c',
   'test_layout.c',
   'test_list.c',
-  'test_map.c',
   'test_main_menu.c',
   'test_menu.c',
   'test_multi.c',
