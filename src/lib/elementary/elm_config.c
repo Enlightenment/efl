@@ -108,6 +108,274 @@ static void        _color_overlays_cancel(void);
 #define ELM_CONFIG_LIST(edd, type, member, eddtype) \
   EET_DATA_DESCRIPTOR_ADD_LIST(edd, type, #member, member, eddtype)
 
+#ifdef _WIN32
+
+# include <windows.h>
+# include <shtypes.h>
+
+# define ELM_CONFIG_WIN32_CLASS "Elm_Config_Win32_Class"
+
+/* Default message procedure for the window - mandatory */
+static LRESULT CALLBACK
+_elm_config_win32_proc(HWND   window,
+                       UINT   message,
+                       WPARAM window_param,
+                       LPARAM data_param)
+{
+
+   switch (message)
+     {
+     default:
+       return DefWindowProc(window, message, window_param, data_param);
+     }
+}
+
+/* Create a hidden window and retrieve the monitor from it */
+static HMONITOR
+_elm_config_win32_monitor_get(void)
+{
+   HINSTANCE instance;
+   WNDCLASS wc;
+   HWND win;
+   HMONITOR mon;
+   DWORD style;
+
+   instance = GetModuleHandle(NULL);
+   if (!instance)
+     return NULL;
+
+   memset (&wc, 0, sizeof (WNDCLASS));
+   wc.style = 0;
+   wc.lpfnWndProc = _elm_config_win32_proc;
+   wc.cbClsExtra = 0;
+   wc.cbWndExtra = 0;
+   wc.hInstance = instance;
+   wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+   wc.hCursor = LoadCursor (NULL, IDC_ARROW);
+   wc.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
+   wc.lpszMenuName =  NULL;
+   wc.lpszClassName = ELM_CONFIG_WIN32_CLASS;
+
+   if(!RegisterClass(&wc))
+     {
+        FreeLibrary(instance);
+        return NULL;
+     }
+
+   style = WS_POPUP & ~(WS_CAPTION | WS_THICKFRAME);
+   win = CreateWindow(ELM_CONFIG_WIN32_CLASS, "",
+                      style,
+                      0, 0, 800, 600,
+                      NULL, NULL,
+                      instance, NULL);
+   if (!win)
+     {
+        UnregisterClass(ELM_CONFIG_WIN32_CLASS, instance);
+        FreeLibrary(instance);
+        return NULL;
+     }
+
+   mon = MonitorFromWindow(win, MONITOR_DEFAULTTONEAREST);
+
+   DestroyWindow(win);
+   UnregisterClass(ELM_CONFIG_WIN32_CLASS, instance);
+   FreeLibrary(instance);
+
+   return mon;
+}
+
+static void
+_elm_config_win32_awareness(void)
+{
+   HMODULE mod;
+
+   /*
+    * Several API can make an application DPI aware :
+    * SetProcessDpiAwarenessContext() (Windows 10 version 1607)
+    * SetProcessDpiAwareness() (Windows 8.1)
+    * SetProcessDpiAware() (Windows Vista)
+    *
+    * We check these functions in that order:
+    */
+
+   /* Windows 10 */
+   typedef BOOL (*SetProcessDpiAwarenessContext_t)(void *);
+   SetProcessDpiAwarenessContext_t SetProcessDpiAwarenessContext_;
+
+   /* Windows 8.1 */
+   typedef enum PROCESS_DPI_AWARENESS_
+   {
+      PROCESS_DPI_UNAWARE_,
+      PROCESS_SYSTEM_DPI_AWARE_,
+      PROCESS_PER_MONITOR_DPI_AWARE_
+   } PROCESS_DPI_AWARENESS_;
+   typedef HRESULT (*SetProcessDpiAwareness_t)(PROCESS_DPI_AWARENESS_);
+   SetProcessDpiAwareness_t SetProcessDpiAwareness_;
+
+   /* Windows Vista */
+   typedef BOOL (*SetProcessDpiAware_t)(void);
+   SetProcessDpiAware_t SetProcessDpiAware_;
+
+   mod = LoadLibrary("user32.dll");
+   if (!mod)
+     goto win8;
+
+   SetProcessDpiAwarenessContext_ = (SetProcessDpiAwarenessContext_t)GetProcAddress(mod, "SetProcessDpiAwarenessContext");
+
+   FreeLibrary(mod);
+
+   if (!SetProcessDpiAwarenessContext_)
+     goto win8;
+
+   if (!SetProcessDpiAwarenessContext_((void *)-2))
+     goto win8;
+
+   return;
+
+ win8:
+
+   mod = LoadLibrary("shcore.dll");
+   if (!mod)
+     goto vista;
+
+   SetProcessDpiAwareness_ = (SetProcessDpiAwareness_t)GetProcAddress(mod, "SetProcessDpiAwareness");
+
+   FreeLibrary(mod);
+
+   if (!SetProcessDpiAwareness_)
+     goto vista;
+
+   if (!SetProcessDpiAwareness_(PROCESS_SYSTEM_DPI_AWARE_))
+     goto vista;
+
+   return;
+
+ vista:
+
+   mod = LoadLibrary("user32.dll");
+   if (!mod)
+     return;
+
+   SetProcessDpiAware_ = (SetProcessDpiAware_t)GetProcAddress(mod, "SetProcessDPIAware");
+
+   FreeLibrary(mod);
+
+   if (!SetProcessDpiAware_)
+     return;
+
+   SetProcessDpiAware_();
+}
+
+static void
+_elm_config_win32_dpi_awareness_set(Elm_Config *cfg)
+{
+   typedef HRESULT (*GetScaleFactorForMonitor_t)(HMONITOR, DEVICE_SCALE_FACTOR *);
+   typedef enum
+     {
+       DEVICE_PRIMARY_,
+       DEBICE_IMMERSIVE_
+     } DISPLAY_DEVICE_TYPE_;
+
+   typedef DEVICE_SCALE_FACTOR (*GetScaleFactorForDevice_t)(DISPLAY_DEVICE_TYPE_ deviceType);
+
+   HMODULE mod;
+   HMONITOR mon;
+   DEVICE_SCALE_FACTOR scale;
+   HRESULT res;
+   HDC dc;
+   int ppi;
+
+   GetScaleFactorForMonitor_t GetScaleFactorForMonitor_;
+   GetScaleFactorForDevice_t GetScaleFactorForDevice_;
+
+   /*
+    * First, get the scale factor. We try in that order :
+    * - GetScaleFactorForMonitor() (appeared in Windows 8.1)
+    * - GetScaleFactorForDevice()  (appeared in Windows 8)
+    *
+    * We need to get the functions from shcore.dll, so we
+    * load that DLL first. If not, we will use the GDI functions
+    */
+
+   mod = LoadLibrary("shcore.dll");
+   if (!mod)
+     goto gdi;
+
+   /*
+    * First, try GetScaleFactorForMonitor().
+    * It needs a monitor. We can retrieve a monitor from a hidden window.
+    */
+
+   mon = _elm_config_win32_monitor_get();
+   if (!mon)
+     {
+        /* Try GetScaleFactorForDevice() */
+        FreeLibrary(mod);
+        goto _next;
+     }
+
+   GetScaleFactorForMonitor_ = (GetScaleFactorForMonitor_t)GetProcAddress(mod, "GetScaleFactorForMonitor");
+   if (!GetScaleFactorForMonitor_)
+     {
+        /* Try GetScaleFactorForDevice() */
+        FreeLibrary(mod);
+        goto _next;
+     }
+
+   res = GetScaleFactorForMonitor_(mon, &scale);
+
+   FreeLibrary(mod);
+
+   if ((res != S_OK) || (scale == DEVICE_SCALE_FACTOR_INVALID))
+     {
+        /* Try GetScaleFactorForDevice() */
+        goto _next;
+     }
+
+   cfg->scale = (double)scale / 100.0;
+   _elm_config_win32_awareness();
+
+   return;
+
+ _next:
+
+   GetScaleFactorForDevice_ = (GetScaleFactorForDevice_t)GetProcAddress(mod, "GetScaleFactorForDevice");
+
+   FreeLibrary(mod);
+
+   if (!GetScaleFactorForDevice_)
+     {
+        /* Try GDI */
+        goto gdi;
+     }
+
+   scale = GetScaleFactorForDevice_(DEVICE_PRIMARY_);
+   if (scale == DEVICE_SCALE_FACTOR_INVALID)
+     {
+        /* Try GDI */
+        goto gdi;
+     }
+
+   cfg->scale = (double)scale / 100.0;
+   _elm_config_win32_awareness();
+
+   return;
+
+ gdi:
+   dc = GetDC(NULL);
+   if (dc)
+     {
+        ppi = GetDeviceCaps(dc, LOGPIXELSY);
+        cfg->scale = (double)ppi / 96.0;
+        ReleaseDC(NULL, dc);
+        _elm_config_win32_awareness();
+     }
+
+   return;
+}
+
+#endif
+
 static void
 _elm_font_overlays_del_free(void)
 {
@@ -1883,6 +2151,9 @@ _config_load(void)
                {
                   if (_elm_config->config_version < ELM_CONFIG_VERSION)
                     _config_update();
+#ifdef _WIN32
+                  _elm_config_win32_dpi_awareness_set(_elm_config);
+#endif
                   _env_get();
                   _palette_apply(_elm_config->palette);
                   return;
@@ -1897,6 +2168,9 @@ _config_load(void)
    if (_elm_config)
      {
         _palette_apply(_elm_config->palette);
+#ifdef _WIN32
+        _elm_config_win32_dpi_awareness_set(_elm_config);
+#endif
         _env_get();
         return;
      }
