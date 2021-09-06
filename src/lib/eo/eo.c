@@ -1488,7 +1488,7 @@ eo_class_free(_Efl_Class *klass)
    eina_freeq_ptr_main_add(klass, free, 0);
 }
 
-int _eo_no_anon = -1;
+EO_API int _eo_no_anon = -1;
 
 static inline void
 _eo_classes_release(void)

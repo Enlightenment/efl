@@ -153,7 +153,7 @@ typedef struct _Mem_Header
    size_t magic;
 } Mem_Header;
 
-extern int _eo_no_anon;
+EO_API extern int _eo_no_anon;
 
 static void *
 _eo_id_mem_alloc(size_t size)
