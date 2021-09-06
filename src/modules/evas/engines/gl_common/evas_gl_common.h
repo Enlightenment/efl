@@ -277,6 +277,8 @@ struct _Evas_Engine_GL_Context
    int                foc, z0, px, py;
    RGBA_Draw_Context *dc;
 
+   unsigned long long frame_cnt;
+
    Evas_GL_Shared     *shared;
 
    int flushnum;

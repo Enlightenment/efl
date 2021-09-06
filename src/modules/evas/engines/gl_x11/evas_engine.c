@@ -1941,15 +1941,17 @@ _native_bind_cb(void *image)
 #ifdef GL_GLES
        if (n->ns_data.x11.surface)
          {
-            if (n->ns_data.x11.multiple_buffer)
+            if ((n->frame_cnt != im->gc->frame_cnt) &&
+                (n->ns_data.x11.multiple_buffer))
               {
                  EGLint err;
+
                  if (!glsym_evas_gl_common_eglDestroyImage)
                    {
                       ERR("Try eglDestroyImage()/eglCreateImage() on EGL with no support");
                       return;
                    }
-
+                 n->frame_cnt = im->gc->frame_cnt;
                  glsym_evas_gl_common_eglDestroyImage(im->native.disp,
                                                       n->ns_data.x11.surface);
                  if ((err = eglGetError()) != EGL_SUCCESS)

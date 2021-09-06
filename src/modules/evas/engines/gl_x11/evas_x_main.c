@@ -1706,6 +1706,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
    // clear out rects after swap as we may use them during swap
 
    ob->frame_cnt++;
+   ob->gl_context->frame_cnt++;
 
  end:
    glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);

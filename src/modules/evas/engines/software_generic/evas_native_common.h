@@ -49,6 +49,7 @@ typedef struct _Native Native;
 struct _Native
 {
    Evas_Native_Surface ns;
+   unsigned long long  frame_cnt;
    union {
       /*  EVAS_NATIVE_SURFACE_X11 */
       struct
