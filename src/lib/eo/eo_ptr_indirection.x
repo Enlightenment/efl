@@ -153,6 +153,8 @@ typedef struct _Mem_Header
    size_t magic;
 } Mem_Header;
 
+extern int _eo_no_anon;
+
 static void *
 _eo_id_mem_alloc(size_t size)
 {
@@ -162,23 +164,32 @@ _eo_id_mem_alloc(size_t size)
    else
 # endif
      {
-        void *ptr;
-        Mem_Header *hdr;
-        size_t newsize;
-        newsize = MEM_PAGE_SIZE * ((size + MEM_HEADER_SIZE + MEM_PAGE_SIZE - 1) / 
-                                   MEM_PAGE_SIZE);
-        ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-                   MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (ptr == MAP_FAILED)
+        if (_eo_no_anon == -1)
           {
-             ERR("mmap of eo id table region failed!");
-             return NULL;
+             if (getenv("EFL_NO_MMAP_ANON")) _eo_no_anon = 1;
+             else _eo_no_anon = 0;
           }
-        hdr = ptr;
-        hdr->size = newsize;
-        hdr->magic = MEM_MAGIC;
-        /* DBG("asked:%lu allocated:%lu wasted:%lu bytes", size, newsize, (newsize - size)); */
-        return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
+        if (_eo_no_anon == 1) return malloc(size);
+        else
+          {
+             void *ptr;
+             Mem_Header *hdr;
+             size_t newsize;
+             newsize = MEM_PAGE_SIZE * ((size + MEM_HEADER_SIZE + MEM_PAGE_SIZE - 1) / 
+                                        MEM_PAGE_SIZE);
+             ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANON, -1, 0);
+             if (ptr == MAP_FAILED)
+               {
+                  ERR("mmap of eo id table region failed!");
+                  return NULL;
+               }
+             hdr = ptr;
+             hdr->size = newsize;
+             hdr->magic = MEM_MAGIC;
+             /* DBG("asked:%lu allocated:%lu wasted:%lu bytes", size, newsize, (newsize - size)); */
+             return (void *)(((unsigned char *)ptr) + MEM_HEADER_SIZE);
+          }
      }
 #else
    return malloc(size);
@@ -203,15 +214,19 @@ _eo_id_mem_free(void *ptr)
    else
 # endif
      {
-        Mem_Header *hdr;
-        if (!ptr) return;
-        hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
-        if (hdr->magic != MEM_MAGIC)
+        if (_eo_no_anon == 1) free(ptr);
+        else
           {
-             ERR("unmap of eo table region has bad magic!");
-             return;
+             Mem_Header *hdr;
+             if (!ptr) return;
+             hdr = (Mem_Header *)(((unsigned char *)ptr) - MEM_HEADER_SIZE);
+             if (hdr->magic != MEM_MAGIC)
+               {
+                  ERR("unmap of eo table region has bad magic!");
+                  return;
+               }
+             munmap(hdr, hdr->size);
           }
-        munmap(hdr, hdr->size);
      }
 #else
    free(ptr);

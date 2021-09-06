@@ -103,10 +103,14 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
 
    if (EINA_UNLIKELY(evas_image_no_mmap == -1))
      {
-        const char *s = getenv("EVAS_IMAGE_NO_MMAP");
-        evas_image_no_mmap = s && (atoi(s));
-        if (evas_image_no_mmap)
-          WRN("EVAS_IMAGE_NO_MMAP is set, use this only for debugging!");
+        if (getenv("EFL_NO_MMAP_ANON")) evas_image_no_mmap = 1;
+        else
+          {
+             const char *s = getenv("EVAS_IMAGE_NO_MMAP");
+             evas_image_no_mmap = s && (atoi(s));
+             if (evas_image_no_mmap)
+               WRN("EVAS_IMAGE_NO_MMAP is set, use this only for debugging!");
+          }
      }
 
    switch (cspace)

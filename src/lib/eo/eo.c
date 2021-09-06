@@ -1488,6 +1488,8 @@ eo_class_free(_Efl_Class *klass)
    eina_freeq_ptr_main_add(klass, free, 0);
 }
 
+int _eo_no_anon = -1;
+
 static inline void
 _eo_classes_release(void)
 {
@@ -1497,10 +1499,14 @@ _eo_classes_release(void)
    else
 # endif
      {
-        size_t size;
+        if (_eo_no_anon == 1) free(_eo_classes);
+        else
+          {
+             size_t size;
 
-        size = _eo_classes_alloc * sizeof(_Efl_Class *);
-        if (_eo_classes) munmap(_eo_classes, size);
+             size = _eo_classes_alloc * sizeof(_Efl_Class *);
+             if (_eo_classes) munmap(_eo_classes, size);
+          }
      }
 #else
    free(_eo_classes);
@@ -1535,17 +1541,36 @@ _eo_classes_expand(void)
    else
 # endif
      {
-        _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Efl_Class *));
-        newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
-        ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-                   MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (ptr == MAP_FAILED)
+        if (_eo_no_anon == -1)
           {
-             ERR("mmap of eo class table region failed!");
-             abort();
+             if (getenv("EFL_NO_MMAP_ANON")) _eo_no_anon = 1;
+             else _eo_no_anon = 0;
           }
-        if (psize > 0) memcpy(ptr, _eo_classes, psize);
-        if (_eo_classes) munmap(_eo_classes, psize);
+        if (_eo_no_anon == 1)
+          {
+             _eo_classes_alloc += 128;
+             newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
+             ptr = realloc(_eo_classes, newsize);
+             if (!ptr)
+               {
+                  ERR("realloc of eo class table region faile!!");
+                  abort();
+               }
+          }
+        else
+          {
+             _eo_classes_alloc += (MEM_PAGE_SIZE / sizeof(_Efl_Class *));
+             newsize = _eo_classes_alloc * sizeof(_Efl_Class *);
+             ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANON, -1, 0);
+             if (ptr == MAP_FAILED)
+               {
+                  ERR("mmap of eo class table region failed!");
+                  abort();
+               }
+             if (psize > 0) memcpy(ptr, _eo_classes, psize);
+             if (_eo_classes) munmap(_eo_classes, psize);
+          }
      }
 #else
    _eo_classes_alloc += 128;

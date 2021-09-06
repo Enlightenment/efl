@@ -42,20 +42,29 @@ _eo_call_stack_mem_alloc(size_t size)
    else
 # endif
      {
-        // allocate eo call stack via mmped anon segment if on linux - more
-        // secure and safe. also gives page aligned memory allowing madvise
-        void *ptr;
-        size_t newsize;
-        newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
-                                   MEM_PAGE_SIZE);
-        ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-                   MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (ptr == MAP_FAILED)
+        if (_eo_no_anon == -1)
           {
-             ERR("eo call stack mmap failed.");
-             return NULL;
+             if (getenv("EFL_NO_MMAP_ANON")) _eo_no_anon = 1;
+             else _eo_no_anon = 0;
           }
-        return ptr;
+        if (_eo_no_anon == 1) return calloc(1, size);
+        else
+          {
+             // allocate eo call stack via mmped anon segment if on linux - more
+             // secure and safe. also gives page aligned memory allowing madvise
+             void *ptr;
+             size_t newsize;
+             newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
+                                        MEM_PAGE_SIZE);
+             ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANON, -1, 0);
+             if (ptr == MAP_FAILED)
+               {
+                  ERR("eo call stack mmap failed.");
+                  return NULL;
+               }
+             return ptr;
+          }
      }
 #else
    //in regular cases just use malloc
@@ -71,7 +80,10 @@ _eo_call_stack_mem_free(void *ptr, size_t size)
    if (RUNNING_ON_VALGRIND) free(ptr);
    else
 # endif
-   munmap(ptr, size);
+     {
+        if (_eo_no_anon == 1) free(ptr);
+        else munmap(ptr, size);
+     }
 #else
    (void) size;
    free(ptr);

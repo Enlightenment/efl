@@ -94,6 +94,8 @@ get_time(void)
 #endif
 }
 
+static int no_anon = -1;
+
 static void
 alloc_buf(Eina_Evlog_Buf *b, unsigned int size)
 {
@@ -106,9 +108,18 @@ alloc_buf(Eina_Evlog_Buf *b, unsigned int size)
    else
 # endif
      {
-        b->buf = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                      MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (b->buf == MAP_FAILED) b->buf = NULL;
+        if (no_anon == -1)
+          {
+             if (getenv("EFL_NO_MMAP_ANON")) no_anon = 1;
+             else no_anon = 0;
+          }
+        if (no_anon == 1) b->buf = malloc(size);
+        else
+          {
+             b->buf = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                           MAP_PRIVATE | MAP_ANON, -1, 0);
+             if (b->buf == MAP_FAILED) b->buf = NULL;
+          }
      }
 #else
    b->buf = malloc(size);
@@ -125,7 +136,10 @@ free_buf(Eina_Evlog_Buf *b)
    if (RUNNING_ON_VALGRIND) free(b->buf);
    else
 # endif
-   munmap(b->buf, b->size);
+     {
+        if (no_anon == 1) free(b->buf);
+        else munmap(b->buf, b->size);
+     }
 #else
    free(b->buf);
 #endif

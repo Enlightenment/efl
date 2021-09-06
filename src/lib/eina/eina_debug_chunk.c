@@ -54,6 +54,8 @@ static int chunk2_num = 0;
 static int chunk3_size = 0;
 static int chunk3_num = 0;
 
+static int no_anon = -1;
+
 // get a new chunk of "anonymous mmaped memory"
 static void *
 _eina_debug_chunk_need(int size)
@@ -65,9 +67,18 @@ _eina_debug_chunk_need(int size)
    else
 #endif
      {
-        ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                   MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (ptr == MAP_FAILED) return NULL;
+        if (no_anon == -1)
+          {
+             if (getenv("EFL_NO_MMAP_ANON")) no_anon = 1;
+             else no_anon = 0;
+          }
+        if (no_anon == 1) ptr = malloc(size);
+        else
+          {
+             ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANON, -1, 0);
+             if (ptr == MAP_FAILED) return NULL;
+          }
      }
    return ptr;
 }
@@ -80,7 +91,10 @@ _eina_debug_chunk_noneed(void *ptr, int size)
    if (RUNNING_ON_VALGRIND) free(ptr);
    else
 #endif
-     munmap(ptr, size);
+     {
+        if (no_anon == 1) free(ptr);
+        else munmap(ptr, size);
+     }
 }
 
 // push a new bit of mem on our growing stack of mem - given our workload,
