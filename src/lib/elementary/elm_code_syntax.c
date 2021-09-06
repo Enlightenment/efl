@@ -156,6 +156,19 @@ static Elm_Code_Syntax _elm_code_syntax_csharp =
      "orderby","select","where","unmanaged","var", NULL }
 };
 
+static Elm_Code_Syntax _elm_code_syntax_shell =
+{
+   "{}()[]:;%^/*+&|~!=<->,.",
+   "",
+   NULL,
+   "#",
+   NULL,
+   NULL,
+   _elm_code_syntax_scope_change_braces,
+   { "if", "then", "else", "elif", "fi", "case", "esac", "for", "select", "while", "until", "do" \
+     "done", "in", "function", "time", "coproc", NULL }
+};
+
 EAPI Elm_Code_Syntax *
 elm_code_syntax_for_mime_get(const char *mime)
 {
@@ -175,6 +188,8 @@ elm_code_syntax_for_mime_get(const char *mime)
      return &_elm_code_syntax_go;
    if (!strcmp("text/x-csharp", mime))
      return &_elm_code_syntax_csharp;
+   if (!strcmp("application/x-shellscript", mime))
+     return &_elm_code_syntax_shell;
 
    return NULL;
 }
