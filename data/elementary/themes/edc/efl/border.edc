@@ -76,9 +76,14 @@ group { "efl/border"; data.item: "version" "123";
       part { name: "shadow_clip"; type: RECT; mouse_events: 0;
          description { state: "default";
             rel.to: "_sh1";
+            color_class: "/shadow/normal/border";
          }
          description { state: "hidden";
             visible: 0;
+         }
+         description { state: "focused";
+            inherit: "default";
+            color_class: "/shadow/selected/border";
          }
       }
       part { name: "shadow_base"; type: SPACER;
@@ -104,7 +109,7 @@ group { "efl/border"; data.item: "version" "123";
          required; // @since 1.19
          clip: "bg_clip";
          desc { "default";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/background";
             rel.to: "efl.spacer.content";
             visible: 0;
          }
@@ -136,7 +141,7 @@ group { "efl/border"; data.item: "version" "123";
       /* main menu */
       rect { "menu_bg";
          desc { "default";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/menu/bar";
             align: 0.5 0.0;
             rel.to: "efl.menu";
             fixed: 1 1;
@@ -197,12 +202,13 @@ group { "efl/border"; data.item: "version" "123";
             rel1.relative: 0.0 1.0;
             rel2.to: "bottom_clip";
             rel2.relative: 1.0 0.0;
-            color: 0 0 0 0;
+            color_class: "/dim/normal/win/modal";
+            color: 255 255 255 0; // no cc
             hid;
          }
          desc { "visible";
             inherit: "default";
-            color: 32 32 32 255;
+            color: 255 255 255 255; // no cc
             vis;
          }
       }
@@ -237,11 +243,11 @@ group { "efl/border"; data.item: "version" "123";
          clip: "top_clip";
          description { state: "default" 0.0;
             rel.to: "top_clip";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/titlebar";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/selected/titlebar";
          }
       }
       part { name: "efl.text.title"; type: TEXT; mouse_events: 0;
@@ -257,7 +263,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.to_x: "event.minimize";
             rel2.to_y: "shadow_base";
             align: 0.5 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/noemal/titlebar";
             min: 0 16;
             text { font: FNBD; size: 10;
                text_class: "title_bar";
@@ -269,7 +275,7 @@ group { "efl/border"; data.item: "version" "123";
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/titlebar";
          }
       }
       spacer {  "icon";
@@ -324,11 +330,11 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color_class: "/fg/noemal/titlebar/close";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/titlebar/close";
          }
       }
       image { "max1"; nomouse;
@@ -339,11 +345,11 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color_class: "/fg/noemal/titlebar/maximize";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/titlebar/maximize";
          }
       }
       image { "min1"; nomouse;
@@ -354,11 +360,11 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.minimize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/titlebar/minimize";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/titlebar/minimize";
          }
       }
       image { "close2";  nomouse;
@@ -369,11 +375,11 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/titlebar/close";
          }
          desc { "selected";
             inherit: "default";
-            color: 220 220 220 255;
+            color_class: "/fg/selected-pressed/titlebar/close";
          }
       }
       image { "max2"; nomouse;
@@ -384,11 +390,11 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/titlebar/maximize";
          }
          desc { "selected";
             inherit: "default";
-            color: 220 220 220 255;
+            color_class: "/fg/selected-pressed/titlebar/maximize";
          }
       }
       image { "min2"; nomouse;
@@ -399,11 +405,11 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.minimize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/titlebar/minimize";
          }
          desc { "selected";
             inherit: "default";
-            color: 220 220 220 255;
+            color_class: "/fg/selected-pressed/titlebar/minimize";
          }
       }
       rect {  "event.icon";
@@ -414,7 +420,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.to: "top_clip";
             align: 0.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "event.titlebar";
@@ -426,7 +432,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.offset: 0 -1;
             rel2.to_x: "event.minimize";
             rel2.to_y: "top_clip";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "event.close";
@@ -436,7 +442,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.relative: 1.0 1.0;
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "event.maximize";
@@ -450,7 +456,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.to_y: "top_clip";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect {  "event.minimize";
@@ -464,7 +470,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.to_x: "event.maximize";
             align: 1.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect { "top_resize_clip";
@@ -486,7 +492,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.offset: 31 3;
             min: 40 6;
             align: 1.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
          desc { "hidden"; inherit: "default"; hid; }
@@ -501,7 +507,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.relative: 0.0 1.0;
             min: 0 6;
             align: 0.5 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
          desc { "hidden"; inherit: "default"; hid; }
@@ -517,7 +523,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.offset: -1 3;
             min: 40 6;
             align: 0.0 1.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
          }
          desc { "hidden"; inherit: "default"; hid; }
@@ -551,8 +557,12 @@ group { "efl/border"; data.item: "version" "123";
       part { name: "bottom"; type: RECT; mouse_events: 0;
          clip: "bottom_clip";
          description { state: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/border";
             rel.to: "bottom_clip";
+         }
+         description { state: "focused" 0.0;
+            inherit: "default";
+            color_class: "/bg/selected/border";
          }
       }
 
@@ -565,7 +575,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.offset: 31 -1;
             min: 40 10;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -581,7 +591,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.relative: 0.0 1.0;
             min: 0 10;
             align: 0.5 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -596,7 +606,7 @@ group { "efl/border"; data.item: "version" "123";
             rel1.offset: -32 0;
             min: 40 10;
             align: 0.0 0.5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             fixed: 1 1;
             offscale;
          }
@@ -605,12 +615,12 @@ group { "efl/border"; data.item: "version" "123";
       rect { "indicator_bg";
          clip: "bg_clip";
          desc { "default";
-            color: 148 23 45 255;
+            color: 148 23 45 255; // no cc never see this...
             rel.to: "efl.indicator";
          }
          desc { "bg_transparent";
             inherit: "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc never see this...
          }
       }
       swallow { "efl.indicator";
@@ -706,16 +716,20 @@ group { "efl/border"; data.item: "version" "123";
       program { signal: "efl,action,focus"; source: "efl";
          action: STATE_SET "focused";
          target: "top";
+         target: "bottom";
          target: "efl.text.title";
          target: "clip1";
          target: "clip2";
+         target: "shadow_clip";
       }
       program { signal: "efl,action,unfocus"; source: "efl";
          action: STATE_SET "default";
          target: "top";
+         target: "bottom";
          target: "efl.text.title";
          target: "clip1";
          target: "clip2";
+         target: "shadow_clip";
       }
       program { signal: "efl,state,urgent"; source: "efl";
          action: STATE_SET "bounce1";
