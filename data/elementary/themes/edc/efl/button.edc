@@ -45,34 +45,37 @@ group { name: "efl/button";
          description { state: "default" 0.0;
             rel.to: "base";
             WIN_SHADOW_SMALL;
+            color_class: "/shadow/normal/button";
          }
          description { state: "pressed" 0.0; inherit;
             image.border_scale_by: 0.1;
             rel1.offset: -2 -1;
             rel2.offset: 0 1;
+            color_class: "/shadow/pressed/button";
          }
          description { state: "disabled" 0.0; inherit;
             image.border_scale_by: 0.1;
             rel1.offset: -2 -1;
             rel2.offset: 0 1;
+            color_class: "/shadow/disabled/button";
          }
       }
       rect { "base";
          scale: 1;
          desc { "default";
-            color: 96 96 96 255;
+            color_class: "/bg/normal/button";
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             offscale;
          }
          desc { "pressed"; inherit;
-            color: 128 128 128 255;
+            color_class: "/bg/pressed/button";
             rel1.offset: 3 3;
             rel2.offset: -4 -4;
             offscale;
          }
          desc { "disabled"; inherit;
-            color: 72 72 72 255;
+            color_class: "/bg/disabled/button";
          }
          desc { "hidden"; inherit;
             visible: 0;
@@ -89,13 +92,13 @@ group { name: "efl/button";
       }
       rect { "icon_clip";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "pressed"; inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "disabled"; inherit;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "efl.content"; nomouse; required;
@@ -128,7 +131,7 @@ group { name: "efl/button";
       text { "efl.text"; nomouse; required;
          scale: 1;
          desc { "default";
-            color: 192 192 192 255;
+            color_class: "/fg/normal/button";
             rel1.offset: 0 6;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "efl.content";
@@ -148,7 +151,7 @@ group { name: "efl/button";
             visible: 1;
          }
          desc { "pressed_visible"; inherit;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
             rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -160,20 +163,20 @@ group { name: "efl/button";
             visible: 1;
          }
          desc { "pressed_textonly"; inherit;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_visible"; inherit;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button";
             rel1.offset: 6 6;
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_textonly"; inherit;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -182,7 +185,7 @@ group { name: "efl/button";
       rect { "event";
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled"; inherit;
             visible: 0;
@@ -321,7 +324,7 @@ group { name: "efl/button:anchor";
    parts {
       rect { "base";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "pressed"; inherit;
             inherit: "default";
@@ -338,7 +341,7 @@ group { name: "efl/button:anchor";
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "efl.background"; nomouse; required;
@@ -389,7 +392,7 @@ group { name: "efl/button:anchor";
             rel1.to_y: "base";
             rel2.offset: -5 -5;
             rel2.to: "base";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/button-anchor";
             text { font: FN; size: 10;
                align: 0.5 0.5;
                min: 0 0;
@@ -406,7 +409,7 @@ group { name: "efl/button:anchor";
          }
          desc { "pressed_visible";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-anchor";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -421,7 +424,7 @@ group { name: "efl/button:anchor";
          }
          desc { "pressed_textonly";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -429,7 +432,7 @@ group { name: "efl/button:anchor";
          desc { "disabled_visible";
             inherit: "default";
             rel1.offset: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button-anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -437,7 +440,7 @@ group { name: "efl/button:anchor";
          desc { "disabled_textonly";
             inherit: "default";
             rel1.offset: 0 4;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button-anchor";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -445,23 +448,23 @@ group { name: "efl/button:anchor";
       }
       rect { "bar"; nomouse;
          desc { "default";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/button-anchor";
             rel1.relative: 0.0 1.0;
             rel1.offset: 2 -3;
             rel2.offset: -3 -3;
          }
          desc { "pressed";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/button-anchor";
          }
          desc { "disabled";
             inherit: "default";
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/button-anchor";
          }
       }
       rect { "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled";
             inherit: "default";
