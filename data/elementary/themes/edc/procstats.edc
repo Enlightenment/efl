@@ -58,7 +58,7 @@ group { name: "e/modules/procstats/border";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            color_class: "/dim/normal/procstats/border";
+            color_class: "/bg/normal/gadgets/procstats/base";
          }
       }
       part { name: "area"; type: SPACER;
@@ -75,7 +75,7 @@ group { name: "e/modules/procstats/border";
             rel.to: "area";
             rel1.relative: 0.0 0.00;
             rel2.relative: 1.0 0.25;
-            color: 255 51 153 255;
+            color_class: "/fg/normal/gadgets/procstats/cpu/one";
          }
       }
       part { name: "cpu_num"; type: RECT;
@@ -83,7 +83,7 @@ group { name: "e/modules/procstats/border";
             rel.to: "area";
             rel1.relative: 0.0 0.25;
             rel2.relative: 1.0 0.50;
-            color: 255 153 51 255;
+            color_class: "/fg/normal/gadgets/procstats/cpu/all";
          }
       }
       part { name: "mem_500"; type: RECT;
@@ -91,7 +91,7 @@ group { name: "e/modules/procstats/border";
             rel.to: "area";
             rel1.relative: 0.0 0.50;
             rel2.relative: 1.0 0.75;
-            color: 153 255 51 255;
+            color_class: "/fg/normal/gadgets/procstats/mem/limit";
          }
       }
       part { name: "mem_total"; type: RECT;
@@ -99,7 +99,7 @@ group { name: "e/modules/procstats/border";
             rel.to: "area";
             rel1.relative: 0.0 0.75;
             rel2.relative: 1.0 1.00;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/gadgets/procstats/mem/all";
          }
       }
       part { name: "over"; type: RECT;
