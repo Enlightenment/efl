@@ -4,17 +4,15 @@ group { "efl/spin";
       rect { "bg";
          scale;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       text { "efl.text";
          nomouse;
          scale;
          desc { "default";
-            color: 160 160 160 255;
-            text {
-               font: FN;
-               size: 10;
+            color_class: "/fg/normal/spinner/text";
+            text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;

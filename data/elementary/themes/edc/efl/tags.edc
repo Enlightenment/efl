@@ -5,9 +5,8 @@ group { "efl/tags";
    data.item: "closed_height" 0;
    parts {
       rect { "bg";
-         scale;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       swallow { "efl.background";
@@ -31,7 +30,7 @@ group { "efl/tags/label";
          nomouse;
          scale;
          desc { "default";
-            color: 255 255 255 255;
+            color_class: "/fg/normal/multibuttonentry/text";
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -47,30 +46,13 @@ group { "efl/tags/label";
 
 group { "efl/tags/btn";
    data.item: "version" "123";
-   images.image: "win_shadow.png" COMP;
 
    styles {
       style { name: "efl_tags_textblock_style";
-         base: "font="FN" align=0.5 font_size=10 color=#a0a0a0 text_class=tags_item ellipsis=1.0";
+         base: "font="FN" align=0.5 font_size=10 color=#fff text_class=tags_item ellipsis=1.0";
          tag: "br" "\n";
          tag: "ps" "ps";
          tag: "hilight" "+ color=#ffffff font="FNBD;
-         tag: "b" "+ font="FNBD;
-         tag: "tab" "\t";
-      }
-      style { name: "efl_tags_textblock_style_pressed";
-         base: "font="FN" align=0.5 font_size=10 color=#ffffff text_class=tags_item ellipsis=1.0";
-         tag: "br" "\n";
-         tag: "ps" "ps";
-         tag: "hilight" "+ color=#ffffff font="FNBD;
-         tag: "b" "+ font="FNBD;
-         tag: "tab" "\t";
-      }
-      style { name: "efl_tags_textblock_style_disabled";
-         base: "font="FN" align=0.5 font_size=10 color=#606060 text_class=tags_item ellipsis=1.0";
-         tag: "br" "\n";
-         tag: "ps" "ps";
-         tag: "hilight" "+ color=#808080 font="FNBD;
          tag: "b" "+ font="FNBD;
          tag: "tab" "\t";
       }
@@ -81,44 +63,31 @@ group { "efl/tags/btn";
    }
 
    parts {
-      part { name: "shadow"; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel.to: "base";
-            WIN_SHADOW_SMALL;
-         }
-         description { state: "pressed" 0.0; inherit;
-            image.border_scale_by: 0.1;
-            rel1.offset: -2 -1;
-            rel2.offset: 0 1;
-         }
-      }
       rect { "base";
          scale: 1;
          desc { "default";
-            color: 96 96 96 255;
+            color_class: "/bg/normal/multibuttonentry/button";
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             offscale;
          }
          desc { "pressed";
-            color: 128 128 128 255;
-            rel1.offset: 3 3;
-            rel2.offset: -4 -4;
-            offscale;
+            color_class: "/bg/pressed/multibuttonentry/button";
          }
       }
-      rect { "glow";
-         nomouse;
-         desc { "default";
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
             rel.to: "base";
-            color: 51 153 255 0;
-            hid;
+            rel1.offset: 0 -1;
+            rel1.relative: 0.0 1.0;
+            align: 0.5 1.0;
+            color_class: "/bg/selected/multibuttonentry/button/bar";
+            visible: 0;
          }
-         desc { "focused";
-            inherit: "default";
-            color: 51 153 255 255;
-            vis;
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            min: 0 5;
+            visible: 1;
          }
       }
       image { "close";
@@ -128,16 +97,16 @@ group { "efl/tags/btn";
             rel.to: "del";
             min: 15 15;
             max: 15 15;
-            color: 160 160 160 255;
             fixed: 1 1;
+            color_class: "/fg/normal/multibuttonentry/button/delete";
          }
          desc { "pressed";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/multibuttonentry/button/delete";
          }
          desc { "clicked";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/multibuttonentry/button/delete";
          }
       }
       rect { "del";
@@ -150,7 +119,7 @@ group { "efl/tags/btn";
             rel1.relative: 1.0 0.0;
             rel1.offset: -5 4;
             rel2.offset: -5 -5;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             offscale;
          }
       }
@@ -158,7 +127,6 @@ group { "efl/tags/btn";
          nomouse;
          scale;
          desc { "default";
-            color: FN_COL_DEFAULT;
             text { style: "efl_tags_textblock_style";
                min: 1 1;
                ellipsis: -1;
@@ -171,14 +139,15 @@ group { "efl/tags/btn";
             rel2.offset: -5 -5;
             min: 30 15;
             offscale;
+            color_class: "/fg/normal/multibuttonentry/text/button";
          }
          desc { "pressed";
             inherit: "default";
-            text.style: "efl_tags_textblock_style_pressed";
+            color_class: "/fg/pressed/multibuttonentry/text/button";
          }
          desc { "disabled";
             inherit: "default";
-            text.style: "efl_tags_textblock_style_disabled";
+            color_class: "/fg/disabled/multibuttonentry/text/button";
          }
       }
    }
@@ -224,7 +193,6 @@ group { "efl/tags/btn";
             if (get_int(disabled) == 0) {
                set_state(PART:"close", "pressed", 0.0);
                set_state(PART:"base", "pressed", 0.0);
-               set_state(PART:"shadow", "pressed", 0.0);
                set_state(PART:"efl.btn.text", "pressed", 0.0);
             }
          }
@@ -234,7 +202,6 @@ group { "efl/tags/btn";
             if (get_int(disabled) == 0) {
                set_state(PART:"close", "default", 0.0);
                set_state(PART:"base", "default", 0.0);
-               set_state(PART:"shadow", "default", 0.0);
                set_state(PART:"efl.btn.text", "default", 0.0);
             }
          }
@@ -260,7 +227,7 @@ group { "efl/tags/number";
          nomouse;
          scale;
          desc { "default";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/multibuttonentry/number";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;

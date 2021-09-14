@@ -73,17 +73,18 @@ group { "efl/tab_bar/tab";
             rel1.to_y: "_sh1";
             rel2.to_x: "_sh1";
             rel2.to_y: "";
-            color: 255 255 255 128;
+            color: 255 255 255 128; // no cc
+            color_class: "/shadow/normal/tab";
          }
          desc { "selected";
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
       }
       WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25)
       rect { "base";
          desc { "default";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/tab";
          }
          desc { "vert";
             inherit: "default" 0.0;
@@ -92,7 +93,7 @@ group { "efl/tab_bar/tab";
       rect { "inset_clip";
          desc { "default";
             rel.to: "base";
-            color: 255 255 255 128;
+            color: 255 255 255 128; // no cc
          }
          desc { "selected";
             inherit;
@@ -112,6 +113,7 @@ group { "efl/tab_bar/tab";
             rel1.relative: 0.0 1.0;
             rel1.offset: -22 -11;
             rel2.offset: 21 20;
+            color_class: "/shadow/normal/tab";
             offscale;
          }
       }
@@ -119,7 +121,7 @@ group { "efl/tab_bar/tab";
          desc { "default";
             rel.to: "base";
             hid;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/tab/hilight";
          }
          desc { "selected";
             inherit: "default" 0.0;
@@ -131,18 +133,18 @@ group { "efl/tab_bar/tab";
          }
          desc { "disabled";
             inherit: "default";
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       rect { "icon_clip1";
          clip_to: "icon_clip";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             vis;
          }
          desc { "animation";
             inherit: "default";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             hid;
          }
       }
@@ -175,12 +177,12 @@ group { "efl/tab_bar/tab";
       rect { "icon_clip2";
          clip_to: "icon_clip";
          desc { "default";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             hid;
          }
          desc { "animation";
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             vis;
          }
       }
@@ -213,12 +215,12 @@ group { "efl/tab_bar/tab";
       }
       rect { "text_clip1";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             vis;
          }
          desc { "animation";
             inherit: "default";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             hid;
          }
       }
@@ -231,7 +233,7 @@ group { "efl/tab_bar/tab";
             rel1.relative: 0.0 1.0;
             rel2.offset: -5 -5;
             align: 0.5 1.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/tab/text";
             offscale;
             text { font: FN; size: 10;
                min: 1 1;
@@ -243,11 +245,11 @@ group { "efl/tab_bar/tab";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/tab/text";
          }
          desc { "disabled";
             inherit: "default";
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/tab/text";
          }
          desc { "noicon";
             inherit: "default";
@@ -257,7 +259,7 @@ group { "efl/tab_bar/tab";
          }
          desc { "noicon_disabled";
             inherit: "noicon";
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/tab/text";
          }
          desc { "icononly";
             inherit: "default";
@@ -268,12 +270,12 @@ group { "efl/tab_bar/tab";
       }
       rect { "text_clip2";
          desc { "default";
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             hid;
          }
          desc { "animation";
             inherit: "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             vis;
          }
       }
@@ -286,7 +288,7 @@ group { "efl/tab_bar/tab";
             min: 0 0;
             max: -1 0;
             align: 0.5 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/tab/bar";
             hid;
          }
          desc { "selected";
@@ -298,7 +300,7 @@ group { "efl/tab_bar/tab";
       }
       rect { "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       swallow { "efl.extra";

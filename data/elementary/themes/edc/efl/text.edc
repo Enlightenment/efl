@@ -4,19 +4,19 @@ group { "efl/text/scroller";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/entry";
          }
       }
       part { name: "validation_glow"; type: RECT; mouse_events: 0;
          insert_after: "efl.background";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "pass" 0.0;
-            color: 0 255 0 90;
+            color_class: "/bg/selected/entry/validate-pass";
          }
          description { state: "fail" 0.0;
-            color: 255 0 0 90;
+            color_class: "/bg/selected/entry/validate-fail";
          }
       }
       program { name: "validation_fail";
@@ -43,14 +43,16 @@ group { "efl/text/scroller";
          description { state: "default" 0.0;
             rel.to: "bg";
             rel1.relative: 0.0 1.0;
-            color: 51 153 255 0;
+            color_class: "/bg/normal/entry/focus";
+            color: 255 255 255 0; // no cc
             visible: 0;
             offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
             rel1.offset: 0 -3;
+            color_class: "/bg/selected/entry/focus";
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -82,8 +84,8 @@ group { "efl/text/scroller";
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: -1 2;
+            rel2.offset: -1 -3;
             rel2.relative: 0.0 1.0;
             visible: 0;
             align: 1.0 0.5;
@@ -91,6 +93,8 @@ group { "efl/text/scroller";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
             visible: 1;
             align: 0.0 0.5;
          }
@@ -108,15 +112,17 @@ group { "efl/text/scroller";
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel1.offset: 0 2;
+            rel2.offset: 0 -3;
             visible: 0;
             align: 0.0 0.5;
             offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
             visible: 1;
             align: 1.0 0.5;
          }
@@ -185,7 +191,7 @@ group { "efl/text/single/scroller";
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "efl.background";
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg/normal/entry";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -201,13 +207,13 @@ group { "efl/text/single/scroller";
       part { name: "validation_glow"; type: RECT;
          mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          description { state: "pass" 0.0;
-            color: 0 255 0 90;
+            color_class: "/bg/selected/entry/validate-pass";
          }
          description { state: "fail" 0.0;
-            color: 255 0 0 90;
+            color_class: "/bg/selected/entry/validate-fail";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
@@ -216,13 +222,15 @@ group { "efl/text/single/scroller";
          description { state: "default" 0.0;
             rel.to: "bg";
             rel1.relative: 0.0 1.0;
-            color: 51 153 255 0;
+            color_class: "/bg/normal/entry/focus";
+            color: 255 255 255 0; // no cc
             visible: 0;
             offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/bg/selected/entry/focus";
+            color: 255 255 255 255; // no cc
             rel1.offset: 0 -3;
             visible: 1;
          }
@@ -245,8 +253,8 @@ group { "efl/text/single/scroller";
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: -1 2;
+            rel2.offset: -1 -3;
             rel2.relative: 0.0 1.0;
             visible: 0;
             align: 1.0 0.5;
@@ -254,6 +262,8 @@ group { "efl/text/single/scroller";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
             visible: 1;
             align: 0.0 0.5;
          }
@@ -271,9 +281,9 @@ group { "efl/text/single/scroller";
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.offset: -3 2;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -3 -3;
+            rel1.offset: 0 2;
+            rel2.offset: 0 -3;
             visible: 0;
             align: 0.0 0.5;
             offscale;
@@ -281,6 +291,8 @@ group { "efl/text/single/scroller";
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
+            rel1.offset: -3 2;
+            rel2.offset: -3 -3;
             align: 1.0 0.5;
          }
       }
@@ -341,6 +353,7 @@ group { "efl/text/cursor";
          clip_to: "clipper";
          description { state: "default" 0.0;
             min: 1 10;
+            color_class: "/fg/normal/entry/cursor";
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -350,8 +363,7 @@ group { "efl/text/cursor";
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "cursor";
-            rel2.to: "cursor";
+            rel.to: "cursor";
             fixed: 1 1;
          }
          description { state: "hidden" 0.0;
@@ -428,7 +440,7 @@ group { "efl/text/selection";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
-            color: 51 153 255 128;
+            color_class: "/bg/normal/entry/selection";
          }
       }
    }
@@ -440,7 +452,7 @@ group { "efl/text/anchor";
       part { name: "bar"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/entry/anchor";
             fixed: 0 1;
             rel1.relative: 0.0 1.0;
             rel1.offset: -1 -1;
@@ -456,16 +468,16 @@ group { "efl/text";
    data {
       item: "font.name" "Sans";
       item: "font.size" "10";
-      item: "style.color" "#a0a0a0";
-      item: "style.color_disabled" "#707070";
+      item: "style.color" "cc:/fg/normal/entry/text";
+      item: "style.color_disabled" "cc:/fg/disabled/entry/text";
 
       item: "guide.font.name" "Sans";
       item: "guide.font.size" "10";
-      item: "guide.style.color" "#505050";
+      item: "guide.style.color" "cc:/fg/normal/entry/text/guide";
    }
    styles {
       style { name: "efl_ui_text_guide_style";
-         base: "font="FN" font_size=10 color=#505050 wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=cc:/fg/normal/entry/text/guide wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -555,6 +567,7 @@ group { "efl/text/magnifier";
          description { state: "default" 0.0;
             rel.to: "bg";
             WIN_SHADOW;
+            color_class: "/shadow/normal/entry/magnifier";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -567,7 +580,7 @@ group { "efl/text/magnifier";
             min: 80 40;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
-            color: 48 48 48 255;
+            color_class: "/bg/normal/entry";
             offscale;
          }
          description { state: "hidden" 0.0;
@@ -603,54 +616,57 @@ group { "efl/text/magnifier";
 
 group { "efl/text/handler/start";
    data.item: "version" "123";
+   images.image: "handle_pick_up_left.png" COMP;
    parts {
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel.to: "bg";
-            WIN_SHADOW;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "bg"; type: RECT; mouse_events: 0;
+      part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 80 40;
-            rel1.offset: 4 4;
-            rel2.offset: -5 -5;
-            color: 48 48 48 255;
-            offscale;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
+            image.normal: "handle_pick_up_left.png";
+            min: 21 27; // 42 54
+            align: (29/42) (11/54);
+            color_class: "/fg/normal/entry/handler/start";
             visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel.to: "bg";
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
+            rel.to: "base";
             visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "event"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            color: 0 0 0 0; // no cc
+            min: 32 32;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
    }
    programs {
-      program {
-         signal: "efl,handler,show"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "shadow";
-         target: "bg";
+      program { signal: "efl,handler,show"; source: "efl";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         target: "event";
          target: "elm.swallow.content";
       }
-      program {
-         signal: "efl,handler,hide"; source: "efl";
-         action: STATE_SET "hidden" 0.0;
-         target: "shadow";
-         target: "bg";
+      program { signal: "efl,handler,hide"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "event";
          target: "elm.swallow.content";
       }
    }
@@ -658,54 +674,57 @@ group { "efl/text/handler/start";
 
 group { "efl/text/handler/end";
    data.item: "version" "123";
+   images.image: "handle_pick_up_right.png" COMP;
    parts {
-      part { name: "shadow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel.to: "bg";
-            WIN_SHADOW;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "bg"; type: RECT; mouse_events: 0;
+      part { name: "base"; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            min: 80 40;
-            rel1.offset: 4 4;
-            rel2.offset: -5 -5;
-            color: 48 48 48 255;
-            offscale;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
+            image.normal: "handle_pick_up_right.png";
+            min: 21 27; // 42 54
+            align: (29/42) (11/54);
+            color_class: "/fg/normal/entry/handler/end";
             visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            rel.to: "bg";
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
+            rel.to: "base";
             visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "event"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            color: 0 0 0 0; // no cc
+            min: 32 32;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
    }
    programs {
-      program {
-         signal: "efl,handler,show"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "shadow";
-         target: "bg";
+      program { signal: "efl,handler,show"; source: "efl";
+         action: STATE_SET "visible" 0.0;
+         target: "base";
+         target: "event";
          target: "elm.swallow.content";
       }
-      program {
-         signal: "efl,handler,hide"; source: "efl";
-         action: STATE_SET "hidden" 0.0;
-         target: "shadow";
-         target: "bg";
+      program { signal: "efl,handler,hide"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "event";
          target: "elm.swallow.content";
       }
    }

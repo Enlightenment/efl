@@ -101,7 +101,7 @@ group { "efl/timepicker";
       rect { "bg";
          desc { "default";
             rel.to: "base";
-            color: 64 64 64 255;
+            color: 0 0 0 0; // no cc
          }
       }
       text { "colon";
@@ -109,20 +109,22 @@ group { "efl/timepicker";
          desc { "default";
             rel1.to: "efl.field1";
             rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
             rel2.to: "efl.field2";
             rel2.relative: 0.0 1.0;
-            color: 160 160 160 255;
-            text {
-               font: FN;
-               size: 10;
+            rel2.offset: -5 -5;
+            offscale;
+            color_class: "/fg/normal/timepicker";
+            text { font: FN; size: 10;
                min: 1 1;
                text: ":";
                align: 0.5 0.5;
             }
             vis;
+            fixed: 1 1;
          }
          desc { "invisible";
-            inherit: default 0.0;
+            inherit: "default" 0.0;
             hid;
          }
       }
@@ -131,7 +133,7 @@ group { "efl/timepicker";
          desc { "default";
             min: 23 69;
             rel1.offset: 4 4;
-            rel2.offset: -3 -5;
+            rel2.offset: -5 -5;
             rel2.relative: (1/3) 1.0;
             offscale;
          }
@@ -144,9 +146,9 @@ group { "efl/timepicker";
          scale;
          desc { "default";
             min: 23 69;
-            rel1.offset: 2 4;
+            rel1.offset: 4 4;
             rel1.relative: (1/3) 0.0;
-            rel2.offset: -3 -5;
+            rel2.offset: -5 -5;
             rel2.relative: (2/3) 1.0;
             offscale;
          }
@@ -173,7 +175,7 @@ group { "efl/timepicker";
          repeat;
          desc { "default";
             rel.to: "base";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }

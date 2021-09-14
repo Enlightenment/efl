@@ -222,6 +222,7 @@ group { name: "elm/scroller/entry_single/default";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 0;
             color_class: "/bg/normal/entry/focus";
+            color: 255 255 255 0; // no cc
             visible: 0;
             offscale;
          }
@@ -229,6 +230,7 @@ group { name: "elm/scroller/entry_single/default";
             inherit: "default" 0.0;
             rel1.offset: 0 -3;
             color_class: "/bg/selected/entry/focus";
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -547,7 +549,7 @@ group { name: "elm/entry/base/default";
          DISABLED_TEXTBLOCK_TAGS
       }
       style { name: "entry_guide_style";
-         base: "font="FN" font_size=10 color=cc:/fg/disabled/entry/text/guide wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+         base: "font="FN" font_size=10 color=cc:/fg/normal/entry/text/guide wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
          DISABLED_TEXTBLOCK_TAGS
       }
    }
@@ -977,6 +979,7 @@ group { name: "elm/entry/magnifier/default";
          description { state: "default" 0.0;
             rel.to: "bg";
             WIN_SHADOW;
+            color_class: "/shadow/normal/entry/magnifier";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;

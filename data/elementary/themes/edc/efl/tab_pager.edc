@@ -5,6 +5,7 @@ group { "efl/tab_pager";
       part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "_sh1";
+            color_class: "/shadow/normal/tab";
          }
       }
       WIN_SHAD("bg", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25)
@@ -27,7 +28,7 @@ group { "efl/tab_pager";
          description { state: "default" 0.0;
             rel1.to_y: "efl.tab_root";
             rel1.relative: 0.0 1.0;
-            color: 64 64 64 255;
+            color_class: "/bg/normal/tab";
             rel1.offset: 4 0;
             rel2.offset: -5 -5;
             offscale;
