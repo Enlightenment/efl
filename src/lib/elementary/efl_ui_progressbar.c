@@ -911,6 +911,7 @@ typedef struct
 {
    progressbar_func_type format_cb;
    progressbar_freefunc_type format_free_cb;
+   void *format_func_data;
 } Pb_Format_Wrapper_Data;
 
 static Eina_Bool
@@ -925,7 +926,7 @@ _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value va
      eina_value_get(&value, &val);
 
    if (pfwd->format_cb)
-     buf = pfwd->format_cb(val);
+     buf = pfwd->format_cb(val,pfwd->format_func_data);
    if (buf)
      eina_strbuf_append(str, buf);
    if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
@@ -941,7 +942,7 @@ _format_legacy_to_format_eo_free_cb(void *data)
 }
 
 EAPI void
-elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
+elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func, void* data)
 {
    EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
    Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
@@ -949,6 +950,7 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type
 
    pfwd->format_cb = func;
    pfwd->format_free_cb = free_func;
+   pfwd->format_func_data = data;
    sd->is_legacy_format_cb = EINA_TRUE;
 
    efl_ui_format_func_set(obj, pfwd, _format_legacy_to_format_eo_cb,
