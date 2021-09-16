@@ -64,19 +64,19 @@ group { name: "efl/slider/horizontal";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "efl.bar";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/slider/base";
             min: 8 4;
             max: 99999 4;
             fixed: 0 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 56 56 56 255;
+            color_class: "/bg/disabled/slider/base";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.to: "base";
             rel2.relative: 0.5 1.0;
             rel2.to_x: "knob";
@@ -84,10 +84,10 @@ group { name: "efl/slider/horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
          description { state: "inverted" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.relative: 0.5 0.0;
             rel1.to_x: "knob";
             rel1.to_y: "base";
@@ -95,7 +95,7 @@ group { name: "efl/slider/horizontal";
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
@@ -104,7 +104,7 @@ group { name: "efl/slider/horizontal";
          dragable.y: 0 0 0;
          dragable.confine: "efl.bar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 16 16;
             max: 16 16;
             fixed: 1 1;
@@ -122,20 +122,20 @@ group { name: "efl/slider/horizontal";
             image.normal: "i-radio";
             min: 16 16;
             max: 16 16;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/slider/knob";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/slider/knob";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/slider/knob";
          }
       }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
@@ -235,19 +235,19 @@ group { name: "efl/slider/vertical";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "efl.bar";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/slider/base";
             min: 4 8;
             max: 4 99999;
             fixed: 1 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 56 56 56 255;
+            color_class: "/bg/disabled/slider/base";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.to: "base";
             rel2.relative: 1.0 0.5;
             rel2.to_y: "knob";
@@ -255,10 +255,10 @@ group { name: "efl/slider/vertical";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
          description { state: "inverted" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/disabled/slider/bar";
             rel1.relative: 0.0 0.5;
             rel1.to_y: "knob";
             rel1.to_x: "base";
@@ -266,7 +266,7 @@ group { name: "efl/slider/vertical";
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
@@ -275,7 +275,7 @@ group { name: "efl/slider/vertical";
          dragable.y: 1 1 0;
          dragable.confine: "efl.bar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 16 16;
             max: 16 16;
             fixed: 1 1;
@@ -293,20 +293,20 @@ group { name: "efl/slider/vertical";
             image.normal: "i-radio";
             min: 16 16;
             max: 16 16;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/slider/knob";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/slider/knob";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/slider/knob";
          }
       }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
@@ -406,19 +406,19 @@ group { name: "efl/slider_interval/horizontal";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "efl.bar";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/slider/base";
             min: 8 4;
             max: 99999 4;
             fixed: 0 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 56 56 56 255;
+            color_class: "/bg/disabled/slider/base";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.relative: 0.5 0.0;
             rel2.relative: 0.5 1.0;
             rel1.to_x: "knob";
@@ -428,17 +428,17 @@ group { name: "efl/slider_interval/horizontal";
          }
          description { state: "disabled_range" 0.0;
             inherit: "default" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
          description { state: "range_reverse" 0.0;
             inherit: "default" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.to_x: "knob2";
             rel2.to_x: "knob";
          }
          description { state: "disabled_range_reverse" 0.0;
             inherit: "range_reverse" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
@@ -447,7 +447,7 @@ group { name: "efl/slider_interval/horizontal";
          dragable.y: 0 0 0;
          dragable.confine: "efl.bar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 16 16;
             max: 16 16;
             fixed: 1 1;
@@ -465,15 +465,15 @@ group { name: "efl/slider_interval/horizontal";
             image.normal: "i-radio";
             min: 16 16;
             max: 16 16;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/slider/knob";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/slider/knob";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/slider/knob";
          }
       }
       part { name: "efl.draggable2.slider"; type: RECT;
@@ -482,7 +482,7 @@ group { name: "efl/slider_interval/horizontal";
          dragable.y: 0 0 0;
          dragable.confine: "efl.bar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 16 16;
             max: 16 16;
             fixed: 1 1;
@@ -500,20 +500,20 @@ group { name: "efl/slider_interval/horizontal";
             image.normal: "i-radio";
             min: 16 16;
             max: 16 16;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/slider/knob";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/slider/knob";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/slider/knob";
          }
       }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
@@ -609,19 +609,19 @@ group { name: "efl/slider_interval/vertical";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "efl.bar";
-            color: 48 48 48 255;
+            color_class: "/bg/normal/slider/base";
             min: 4 8;
             max: 4 99999;
             fixed: 1 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 56 56 56 255;
+            color_class: "/bg/disabled/slider/base";
          }
       }
       part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.relative: 0.0 0.5;
             rel2.relative: 1.0 0.5;
             rel1.to_x: "base";
@@ -631,17 +631,17 @@ group { name: "efl/slider_interval/vertical";
          }
          description { state: "disabled_range" 0.0;
             inherit: "default" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
          description { state: "range_reverse" 0.0;
             inherit: "default" 0.0;
-            color: 53 153 255 255;
+            color_class: "/fg/normal/slider/bar";
             rel1.to_y: "knob2";
             rel2.to_y: "knob";
          }
          description { state: "disabled_range_reverse" 0.0;
             inherit: "range_reverse" 0.0;
-            color: 192 192 192 64;
+            color_class: "/fg/disabled/slider/bar";
          }
       }
       part { name: "efl.draggable.slider"; type: RECT;
@@ -650,7 +650,7 @@ group { name: "efl/slider_interval/vertical";
          dragable.y: 1 1 0;
          dragable.confine: "efl.bar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 16 16;
             max: 16 16;
             fixed: 1 1;
@@ -668,15 +668,15 @@ group { name: "efl/slider_interval/vertical";
             image.normal: "i-radio";
             min: 16 16;
             max: 16 16;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/slider/knob";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/slider/knob";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/slider/knob";
          }
       }
       part { name: "efl.draggable2.slider"; type: RECT;
@@ -685,7 +685,7 @@ group { name: "efl/slider_interval/vertical";
          dragable.y: 1 1 0;
          dragable.confine: "efl.bar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 16 16;
             max: 16 16;
             fixed: 1 1;
@@ -703,20 +703,20 @@ group { name: "efl/slider_interval/vertical";
             image.normal: "i-radio";
             min: 16 16;
             max: 16 16;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/slider/knob";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/slider/knob";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/slider/knob";
          }
       }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
