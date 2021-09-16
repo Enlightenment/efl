@@ -78,14 +78,14 @@ group { "efl/spin_button/horizontal";
       }
       rect { "bg";
          desc { "default";
-            color: DARK_GREY_BG_COLOR;
+            color_class: "/bg-dark/normal/spinner/base";
          }
       }
       rect { "access";
          repeat;
          desc { "default";
             fixed: 1 1;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel.to: "bg";
             hid;
          }
@@ -149,7 +149,7 @@ group { "efl/spin_button/horizontal";
          norepeat;
          nomouse;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             hid;
          }
          desc { "disabled";
@@ -256,31 +256,31 @@ group { "efl/spin_button/horizontal/inc_button";
             min: 15 15;
             max: 15 15;
             image.normal: "i-arrow-r";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/spinner/arrow";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             offscale;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/spinner/arrow";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/spinner/arrow";
          }
       }
       part { name: "over"; type: RECT;
          repeat_events: 1;
          scale;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             min: 23 23;
          }
       }
       part { name: "disabler"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
@@ -409,7 +409,7 @@ group { "efl/spin_button/horizontal/text_button";
       part { name: "efl.text"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/spinner/text";
             rel.to: "bg";
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
@@ -422,18 +422,18 @@ group { "efl/spin_button/horizontal/text_button";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0 ;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/spinner/text";
          }
       }
       part { name: "over"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       part { name: "disabler"; type: RECT;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          description { state: "disabled" 0.0;
