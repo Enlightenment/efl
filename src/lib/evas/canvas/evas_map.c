@@ -1377,6 +1377,12 @@ evas_object_map_update(Evas_Object *eo_obj,
    pts[0].py = obj->map->cur.map->persp.py << FP;
    pts[0].foc = obj->map->cur.map->persp.foc << FP;
    pts[0].z0 = obj->map->cur.map->persp.z0 << FP;
+
+   double uscale = 1.0, vscale = 1.0;
+   if (obj->is_image_object)
+     {
+        _evas_image_proxy_source_scale_get(eo_obj, &uscale, &vscale);
+     }
    // draw geom +x +y
    for (; p < p_end; p++, pt++)
      {
@@ -1387,9 +1393,9 @@ evas_object_map_update(Evas_Object *eo_obj,
         pt->fy = p->y + (float) y;
         pt->fz = p->z;
         if ((uvw == 0) || (imagew == 0)) pt->u = 0;
-        else pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
+        else pt->u = ((lround(p->u * uscale) * imagew) / uvw) * FP1;
         if ((uvh == 0) || (imageh == 0)) pt->v = 0;
-        else pt->v = ((lround(p->v) * imageh) / uvh) * FP1;
+        else pt->v = ((lround(p->v * vscale) * imageh) / uvh) * FP1;
         if      (pt->u < 0) pt->u = 0;
         else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
         if      (pt->v < 0) pt->v = 0;

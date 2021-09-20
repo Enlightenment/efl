@@ -159,6 +159,26 @@ _efl_canvas_proxy_source_events_get(const Eo *eo_obj, void *_pd EINA_UNUSED)
    return _evas_image_proxy_source_events_get(eo_obj);
 }
 
+void
+_evas_image_proxy_source_scale_get(const Eo *eo_obj, double *sw, double *sh)
+{
+   *sw = 1.0;
+   *sh = 1.0;
+   Evas_Object_Protected_Data *source = NULL;
+
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+   if (!o->cur->source) return;
+
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   source = efl_data_scope_get(o->cur->source, EFL_CANVAS_OBJECT_CLASS);
+
+   if (obj->cur->geometry.w > 0)
+     *sw = (double) source->cur->geometry.w / obj->cur->geometry.w;
+
+   if (obj->cur->geometry.h > 0)
+     *sh = (double) source->cur->geometry.h / obj->cur->geometry.h;
+}
+
 Evas_Object *
 _evas_object_image_source_get(Evas_Object *eo_obj)
 {
