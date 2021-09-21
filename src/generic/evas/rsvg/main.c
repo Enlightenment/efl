@@ -98,9 +98,18 @@ static int
 read_svg_header(int scale_down, double dpi, int size_w, int size_h)
 {
    rsvg_handle_set_dpi(rsvg, 75.0);
+
+#ifndef HAVE_SVG_2_36
    rsvg_handle_get_dimensions(rsvg, &dim);
    width = dim.width;
    height = dim.height;
+#else
+   double owidth, oheight;
+
+   rsvg_handle_get_intrinsic_size_in_pixels(rsvg, &owidth, &oheight);
+   width = ceil(owidth);
+   height = ceil(oheight);
+#endif
 
    if ((width < 1) || (height < 1)) return 0;
 
@@ -152,7 +161,21 @@ read_svg_data(void)
    if (!cr) return 0;
 
    cairo_scale(cr, (double) width / dim.em, (double) height / dim.ex);
+
+#ifndef HAVE_SVG_2_36
    rsvg_handle_render_cairo(rsvg, cr);
+#else
+   RsvgRectangle vp =
+     {
+        .x = 0,
+        .y = 0,
+        .width = width,
+        .height = height,
+     };
+
+   rsvg_handle_render_document(rsvg, cr, &vp, NULL);
+#endif
+
    cairo_surface_destroy(surface);
    cairo_destroy(cr);
 
