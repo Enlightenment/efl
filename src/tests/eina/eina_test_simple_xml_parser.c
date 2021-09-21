@@ -237,7 +237,7 @@ EFL_START_TEST(eina_simple_xml_parser_parse_with_custom_callback)
 
             if (buf)
               {
-                if (fread(buf, 1, sz, f))
+                if (fread(buf, 1, sz, f) > 0)
                   {
                     int parse_current_state = simple_xml_parser_current_state_begin;
                     eina_simple_xml_parse(buf,
