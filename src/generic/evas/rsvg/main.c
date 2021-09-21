@@ -23,7 +23,8 @@ static int width = 0;
 static int height = 0;
 static RsvgDimensionData dim;
 
-static inline Eina_Bool evas_image_load_file_is_svg(const char *file)
+static inline Eina_Bool
+evas_image_load_file_is_svg(const char *file)
 {
    int i, len = strlen(file);
    Eina_Bool is_gz = EINA_FALSE;
@@ -158,7 +159,8 @@ read_svg_data(void)
    return 1;
 }
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
    char *file;
    int i;
@@ -236,6 +238,5 @@ int main(int argc, char **argv)
    _svg_shutdown();
    fflush(stdout);
    return 0;
-
 }
 
