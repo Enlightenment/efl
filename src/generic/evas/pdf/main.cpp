@@ -348,8 +348,8 @@ main(int argc, char **argv)
    D("poppler_file_init\n");
    if (!poppler_init(file, page_num, size_w, size_h))
      {
-        goto cleanup;
         ret = 1;
+        goto cleanup;
      }
    D("poppler_file_init done\n");
 
