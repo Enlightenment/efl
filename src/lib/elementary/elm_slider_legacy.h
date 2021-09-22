@@ -156,11 +156,23 @@ EAPI const char *elm_slider_unit_format_get(const Evas_Object *obj);
  *
  * @param[in] func The units format function.
  * @param[in] free_func The freeing function for the format string.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
+
+/**
+ * @brief Set the format function pointer for the units label
+ *
+ * Set the callback function to format the units string.
+ *
+ * @param[in] func The units format function.
+ * @param[in] free_func The freeing function for the format string.
  * @param[in] The data pointer to be passed to @p func
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func, void *data);
+EAPI void elm_slider_units_format_function_set_full(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func, void *data);
 
 /**
  * @brief Set the minimum and maximum values for the slider.
@@ -281,11 +293,24 @@ EAPI void elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
  * @param[in] obj The object.
  * @param[in] func The indicator format function.
  * @param[in] free_func The freeing function for the format string.
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func);
+
+/**
+ * @brief Set the format function pointer for the indicator label
+ *
+ * Set the callback function to format the indicator string.
+ *
+ * @param[in] obj The object.
+ * @param[in] func The indicator format function.
+ * @param[in] free_func The freeing function for the format string.
  * @param[in] The data pointer to be passed to @p func
  *
  * @ingroup Elm_Slider
  */
-EAPI void elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func, void *data);
+EAPI void elm_slider_indicator_format_function_set_full(Evas_Object *obj, slider_func_type func, slider_freefunc_type free_func, void *data);
 
 /**
  * @brief Show the indicator of slider on focus.

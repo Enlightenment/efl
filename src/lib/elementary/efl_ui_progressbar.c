@@ -926,6 +926,26 @@ _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value va
      eina_value_get(&value, &val);
 
    if (pfwd->format_cb)
+     buf = pfwd->format_cb(val, NULL);
+   if (buf)
+     eina_strbuf_append(str, buf);
+   if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_format_legacy_to_format_eo_cb_full(void *data, Eina_Strbuf *str, const Eina_Value value)
+{
+   Pb_Format_Wrapper_Data *pfwd = data;
+   char *buf = NULL;
+   double val = 0;
+   const Eina_Value_Type *type = eina_value_type_get(&value);
+
+   if (type == EINA_VALUE_TYPE_DOUBLE)
+     eina_value_get(&value, &val);
+
+   if (pfwd->format_cb)
      buf = pfwd->format_cb(val,pfwd->format_func_data);
    if (buf)
      eina_strbuf_append(str, buf);
@@ -942,7 +962,22 @@ _format_legacy_to_format_eo_free_cb(void *data)
 }
 
 EAPI void
-elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func, void* data)
+elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func)
+{
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+   Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
+   if (!pfwd) return;
+
+   pfwd->format_cb = func;
+   pfwd->format_free_cb = free_func;
+   sd->is_legacy_format_cb = EINA_TRUE;
+
+   efl_ui_format_func_set(obj, pfwd, _format_legacy_to_format_eo_cb,
+                          _format_legacy_to_format_eo_free_cb);
+}
+
+EAPI void
+elm_progressbar_unit_format_function_set_full(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func, void* data)
 {
    EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
    Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
@@ -953,7 +988,7 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type
    pfwd->format_func_data = data;
    sd->is_legacy_format_cb = EINA_TRUE;
 
-   efl_ui_format_func_set(obj, pfwd, _format_legacy_to_format_eo_cb,
+   efl_ui_format_func_set(obj, pfwd, _format_legacy_to_format_eo_cb_full,
                           _format_legacy_to_format_eo_free_cb);
 }
 
