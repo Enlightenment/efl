@@ -94,7 +94,7 @@ _progressbar_destroy_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUS
 }
 
 static char *
-my_progressbar_format_cb(double val, void *data)
+my_progressbar_format_cb(double val)
 {
    char buf[1024];
    int files;
@@ -130,7 +130,7 @@ test_progressbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    //elm_progressbar_horizontal_set(pb, EINA_TRUE);
    //elm_object_text_set(pb, "Progression %");
    elm_progressbar_unit_format_function_set(pb, my_progressbar_format_cb,
-                                            (void (*)(char *)) free, NULL);
+                                            (void (*)(char *)) free);
    evas_object_show(pb);
    pd->pb1 = pb;
 
