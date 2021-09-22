@@ -26,7 +26,7 @@ _delay_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EIN
 }
 
 static char*
-_indicator_format(double val, void *data)
+_indicator_format(double val)
 {
    char *indicator = malloc(sizeof(char) * 32);
    snprintf(indicator, 32, "%1.2f u", val);
@@ -111,7 +111,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    sl = elm_slider_add(win);
    elm_slider_horizontal_set(sl, EINA_FALSE);
    elm_slider_indicator_format_function_set(sl, _indicator_format,
-                                            _indicator_free, NULL);
+                                            _indicator_free);
    evas_object_size_hint_align_set(sl, 0.5, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(sl, 0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, sl);

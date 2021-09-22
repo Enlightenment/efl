@@ -88,7 +88,7 @@ _progressbar_example_stop(void        *data EINA_UNUSED,
 
 /* Format callback */
 static char *
-_progress_format_cb(double val, void *data)
+_progress_format_cb(double val)
 {
    static char buf[30];
    int files = (1-val)*14000;
@@ -192,7 +192,7 @@ elm_main(int    argc EINA_UNUSED,
    elm_object_part_content_set(pb, "icon", ic1);
    elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_function_set(pb, _progress_format_cb,
-                                            _progress_format_free, NULL);
+                                            _progress_format_free);
    elm_progressbar_span_size_set(pb, 200);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
