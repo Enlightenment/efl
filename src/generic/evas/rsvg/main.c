@@ -99,7 +99,7 @@ read_svg_header(int scale_down, double dpi, int size_w, int size_h)
 {
    rsvg_handle_set_dpi(rsvg, 75.0);
 
-#ifndef HAVE_SVG_2_36
+#ifndef HAVE_SVG_2_51
    rsvg_handle_get_dimensions(rsvg, &dim);
    width = dim.width;
    height = dim.height;
@@ -162,7 +162,7 @@ read_svg_data(void)
 
    cairo_scale(cr, (double) width / dim.em, (double) height / dim.ex);
 
-#ifndef HAVE_SVG_2_36
+#ifndef HAVE_SVG_2_51
    rsvg_handle_render_cairo(rsvg, cr);
 #else
    RsvgRectangle vp =
