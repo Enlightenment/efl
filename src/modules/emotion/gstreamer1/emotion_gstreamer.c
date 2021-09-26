@@ -922,15 +922,13 @@ em_spu_channel_mute_set(void *video, int mute)
    Emotion_Gstreamer *ev = video;
    gint flags;
 
+   ev->spu_mute = !!mute;
+
    if (!ev->pipeline) return;
 
    g_object_get(ev->pipeline, "flags", &flags, NULL);
-
-   if (mute)
-     flags &= ~GST_PLAY_FLAG_TEXT;
-   else
-     flags |= GST_PLAY_FLAG_TEXT;
-
+   if (ev->spu_mute) flags &= ~GST_PLAY_FLAG_TEXT;
+   else flags |= GST_PLAY_FLAG_TEXT;
    g_object_set(ev->pipeline, "flags", flags, NULL);
 }
 
@@ -1113,10 +1111,11 @@ em_add(const Emotion_Engine *api,
 
    /* Default values */
    ev->vis = EMOTION_VIS_NONE;
-   ev->volume = 0.8;
+   ev->volume = 1.0;
    ev->ready = EINA_FALSE;
    ev->shutdown = EINA_FALSE;
    ev->threads = NULL;
+   ev->spu_mute = EINA_TRUE;
 
    return ev;
 }
@@ -1772,8 +1771,9 @@ _create_pipeline(Emotion_Gstreamer *ev,
    g_object_set(G_OBJECT(vsink), "emotion-object", o, NULL);
 
    g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
-   g_object_set(G_OBJECT(playbin), "flags",
-                (flags | GST_PLAY_FLAG_DOWNLOAD) & ~GST_PLAY_FLAG_TEXT, NULL);
+   if (ev->spu_mute) flags &= ~GST_PLAY_FLAG_TEXT;
+   else flags |= GST_PLAY_FLAG_TEXT;
+   g_object_set(G_OBJECT(playbin), "flags", (flags | GST_PLAY_FLAG_DOWNLOAD), NULL);
    g_object_set(G_OBJECT(playbin), "video-sink", vsink, NULL);
    g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
    if (suburi)

@@ -242,11 +242,16 @@ emotion_object_add(Evas *evas)
 }
 
 EOLIAN static Eo *
-_efl_canvas_video_efl_object_constructor(Eo *obj, Efl_Canvas_Video_Data *pd EINA_UNUSED)
+_efl_canvas_video_efl_object_constructor(Eo *obj, Efl_Canvas_Video_Data *pd)
 {
    efl_canvas_group_clipped_set(obj, EINA_TRUE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, E_OBJ_NAME);
+
+   eina_stringshare_replace(&(pd->engine), "gstreamer1");
+   pd->spu.button = -1;
+   pd->ratio = 1.0;
+   _engine_init(obj, pd);
 
    return obj;
 }
