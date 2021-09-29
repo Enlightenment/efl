@@ -48,13 +48,13 @@ group { name: "efl/radio";
       }
       rect { "icon_clip";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "pressed"; inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "disabled"; inherit;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "efl.content"; nomouse;
@@ -108,7 +108,7 @@ group { name: "efl/radio";
          desc { "disabled"; inherit;
          }
       }
-      part { name: "ck_check";
+      part { name: "ck_bg";
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -116,18 +116,45 @@ group { name: "efl/radio";
             image.normal: "i-radio";
             min: 15 15;
             max: 15 15;
-            color: 0 0 0 64;
+            color_class: "/bg/normal/radio/base";
          }
-         description { state: "pressed" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 255;
+         desc { "disabled"; inherit;
+            color_class: "/bg/disabled/radio/base";
+         }
+      }
+      part { name: "ck_check";
+         scale: 1;
+         description { state: "default" 0.0;
+            color_class: "/fg/selected/radio/radio";
+            fixed: 1 1;
+            rel.to: "base";
+            image.normal: "i-radio";
+            min: 15 15;
+            max: 15 15;
+            visible: 0;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 160 160 160 255;
+            visible: 1;
          }
          desc { "disabled"; inherit;
-            color: 0 0 0 16;
+            visible: 0;
+         }
+      }
+      part { name: "ck_press";
+         scale: 1;
+         description { state: "default" 0.0;
+            color_class: "/fg/pressed/radio/radio";
+            fixed: 1 1;
+            rel.to: "base";
+            image.normal: "i-radio";
+            min: 15 15;
+            max: 15 15;
+            visible: 0;
+         }
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
       text { "efl.text"; nomouse;
@@ -135,7 +162,7 @@ group { name: "efl/radio";
          scale: 1;
          desc { "default";
             fixed: 0 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/radio/text";
             rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "efl.content";
@@ -157,7 +184,7 @@ group { name: "efl/radio";
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/radio/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -171,14 +198,14 @@ group { name: "efl/radio";
          }
          desc { "pressed_textonly"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/radio/text";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_visible"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/radio/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -186,7 +213,7 @@ group { name: "efl/radio";
          }
          desc { "disabled_textonly"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/radio/text";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -195,7 +222,7 @@ group { name: "efl/radio";
       rect { "event";
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled"; inherit;
             visible: 0;
@@ -239,10 +266,20 @@ group { name: "efl/radio";
       program { signal: "efl,state,disabled"; source: "efl";
          action:  STATE_SET "disabled" 0.0;
          target: "ck_check";
+         target: "ck_bg";
       }
       program { signal: "efl,state,enabled"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "ck_check";
+         target: "ck_bg";
+      }
+      program { signal: "mouse,down,1"; source: "event";
+         action: STATE_SET "pressed" 0.0;
+         target: "ck_press";
+      }
+      program { signal: "mouse,up,1"; source: "event";
+         action: STATE_SET "default" 0.0;
+         target: "ck_press";
       }
    }
 }

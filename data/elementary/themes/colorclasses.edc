@@ -604,12 +604,10 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/radio/base";
       color:  48  48  48 255; }
-   color_class { name: "/bg/pressed/radio/base";
-      color:  32  32  32 255; }
    color_class { name: "/bg/disabled/radio/base";
       color:  56  56  56 255; }
-//   color_class { name: "/fg/selected/radio/radio";
-//      color: 160 160 160 255; }
+   color_class { name: "/fg/selected/radio/radio";
+      color: 160 160 160 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/toggle/base";
       color:  48  48  48 255; }

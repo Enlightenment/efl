@@ -71,19 +71,20 @@ Group: efl/alert_popup/left_button (@since 1.23)
 */
 group { "efl/popup";
    data.item: "version" "123";
+   images.image: "win_shad_flat.png" COMP;
    parts {
-      image { "shadow";
-         scale;
-         desc { "default";
-            rel.to: "base";
-            WIN_SHADOW;
+      part { name: "shadow"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "_sh1";
+            color_class: "/shadow/normal/frame";
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       rect { "base";
          scale;
          desc { "default";
             min: 100 100;
-            color: 0 0 0 192;
+            color_class: "/dim/normal/popup";
             rel1.offset: 16 16;
             rel2.offset: -17 -17;
             offscale;
@@ -108,19 +109,20 @@ group { "efl/popup";
 
 group { "efl/alert_popup";
    data.item: "version" "123";
+   images.image: "win_shad_flat.png" COMP;
    parts {
-      image { "shadow";
-         scale;
-         desc { "default";
-            rel.to: "base";
-            WIN_SHADOW;
+      part { name: "shadow"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "_sh1";
+            color_class: "/shadow/normal/frame";
          }
       }
+      WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
       rect { "base";
          scale;
          desc { "default";
             min: 100 100;
-            color: 0 0 0 192;
+            color_class: "/dim/normal/popup";
             rel1.offset: 16 16;
             rel2.offset: -17 -17;
             offscale;
@@ -153,7 +155,7 @@ group { "efl/alert_popup";
             rel.to: "base";
             rel2.relative: 1.0 0.0;
             align: 0.0 0.0;
-            color: 32 32 32 255;
+            color_class: "/bg/normal/popup";
          }
          desc { "title_visible";
             inherit: "default";
@@ -222,7 +224,7 @@ group { "efl/popup/backwall";
    parts {
       rect { "base";
          desc { "default";
-            color: 0 0 0 64;
+            color_class: "/dim/normal/hover";
          }
          desc { "content_visible";
             inherit: "default";
@@ -246,7 +248,7 @@ group { "efl/popup/backwall";
       rect { "block";
          desc { "default";
             rel.to: "base";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }

@@ -37,7 +37,7 @@ group { "efl/spotlight/indicator";
          scale;
          desc { "default";
             image.normal: "i-radio";
-            color: 0 0 0 255;
+            color: 0 0 0 255; // no cc
             min: 8 8;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
@@ -45,7 +45,7 @@ group { "efl/spotlight/indicator";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 0 0 255;
+            color: 255 0 0 255; // no cc
          }
       }
    }

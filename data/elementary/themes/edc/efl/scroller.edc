@@ -52,7 +52,7 @@ group { name: "efl/scroller";
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "efl.background";
-            color: 0 0 0 0;
+            color_class: "/bg/normal/scroller/base";
          }
       }
       part { name: "clipper"; type: RECT;
@@ -82,7 +82,8 @@ group { name: "efl/scroller";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/scroller";
+            color: 255 255 255 0; // no cc
             rel.to: "efl.content";
             rel1.offset: 0 -1;
             rel2.offset: -1 -1;
@@ -93,7 +94,7 @@ group { name: "efl/scroller";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: 0 -16;
             rel2.offset: -1 15;
             visible: 1;
@@ -114,7 +115,8 @@ group { name: "efl/scroller";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/scroller";
+            color: 255 255 255 0; // no cc
             rel.to: "efl.content";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 0;
@@ -125,7 +127,7 @@ group { name: "efl/scroller";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: 0 -16;
             rel2.offset: -1 15;
             visible: 1;
@@ -146,7 +148,8 @@ group { name: "efl/scroller";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/scroller";
+            color: 255 255 255 0; // no cc
             rel.to: "efl.content";
             rel1.offset: -1 0;
             rel2.offset: -1 -1;
@@ -157,7 +160,7 @@ group { name: "efl/scroller";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: -16 0;
             rel2.offset: 15 -1;
             visible: 1;
@@ -178,7 +181,8 @@ group { name: "efl/scroller";
          scale: 1;
          clip_to: "sh_clip";
          description { state: "default" 0.0;
-            color: 255 255 255 0;
+            color_class: "/shadow/normal/scroller";
+            color: 255 255 255 0; // no cc
             rel.to: "efl.content";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 0;
@@ -189,7 +193,7 @@ group { name: "efl/scroller";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+            color: 255 255 255 255; // no cc
             rel1.offset: -16 0;
             rel2.offset: 15 -1;
             visible: 1;
@@ -242,7 +246,7 @@ group { name: "efl/scroller";
       part { name: "sb_vbar_p1"; type: RECT;
          clip_to: "sb_vbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "sb_vbar";
             rel2.relative: 1.0 0.0;
             rel2.to: "efl.draggable.vertical_bar";
@@ -252,7 +256,7 @@ group { name: "efl/scroller";
       part { name: "sb_vbar_p2"; type: RECT;
          clip_to: "sb_vbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.relative: 0.0 1.0;
             rel1.to: "efl.draggable.vertical_bar";
             rel2.to: "sb_vbar";
@@ -269,10 +273,9 @@ group { name: "efl/scroller";
             fixed: 1 1;
             min: 15 15;
             rel1.relative: 0.5  0.5;
-            rel1.to: "sb_vbar";
             rel2.relative: 0.5  0.5;
-            rel2.to: "sb_vbar";
-            color: 0 0 0 0;
+            rel.to: "sb_vbar";
+            color: 0 0 0 0; // no cc
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -286,10 +289,9 @@ group { name: "efl/scroller";
          repeat_events: 1;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
-            rel1.to: "sb_vbar";
+            color: 0 0 0 0; // no cc
             rel1.offset: -45 0;
-            rel2.to: "sb_vbar";
+            rel.to: "sb_vbar";
             fixed: 1 1;
             offscale;
          }
@@ -312,8 +314,7 @@ group { name: "efl/scroller";
             max: 4 2;
             fixed: 1 1;
             align: 0.0 0.0;
-            rel1.to: "sb_vbar";
-            rel2.to: "sb_vbar";
+            rel.to: "sb_vbar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -329,8 +330,7 @@ group { name: "efl/scroller";
             max: 4 2;
             fixed: 1 1;
             align: 0.0 0.0;
-            rel1.to: "efl.draggable.vertical_bar";
-            rel2.to: "efl.draggable.vertical_bar";
+            rel.to: "efl.draggable.vertical_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -346,8 +346,7 @@ group { name: "efl/scroller";
             max: 4 2;
             fixed: 1 1;
             align: 0.0 1.0;
-            rel1.to: "sb_vbar";
-            rel2.to: "sb_vbar";
+            rel.to: "sb_vbar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -363,8 +362,7 @@ group { name: "efl/scroller";
             max: 4 2;
             fixed: 1 1;
             align: 0.0 1.0;
-            rel1.to: "efl.draggable.vertical_bar";
-            rel2.to: "efl.draggable.vertical_bar";
+            rel.to: "efl.draggable.vertical_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -444,7 +442,7 @@ group { name: "efl/scroller";
       part { name: "sb_hbar_p1"; type: RECT;
          clip_to: "sb_hbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to: "sb_hbar";
             rel2.relative: 0.0 1.0;
             rel2.to: "efl.draggable.horizontal_bar";
@@ -454,7 +452,7 @@ group { name: "efl/scroller";
       part { name: "sb_hbar_p2"; type: RECT;
          clip_to: "sb_hbar";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.relative: 1.0 0.0;
             rel1.to: "efl.draggable.horizontal_bar";
             rel2.to: "sb_hbar";
@@ -471,10 +469,9 @@ group { name: "efl/scroller";
             fixed: 1 1;
             min: 15 15;
             rel1.relative: 0.5  0.5;
-            rel1.to: "sb_hbar";
             rel2.relative: 0.5  0.5;
-            rel2.to: "sb_hbar";
-            color: 0 0 0 0;
+            rel.to: "sb_hbar";
+            color: 0 0 0 0; // no cc
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -488,10 +485,9 @@ group { name: "efl/scroller";
          repeat_events: 1;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
-            rel1.to: "sb_hbar";
+            color: 0 0 0 0; // no cc
             rel1.offset: 0 -45;
-            rel2.to: "sb_hbar";
+            rel.to: "sb_hbar";
             fixed: 1 1;
             offscale;
          }
@@ -514,8 +510,7 @@ group { name: "efl/scroller";
             max: 2 4;
             fixed: 1 1;
             align: 0.0 1.0;
-            rel1.to: "sb_hbar";
-            rel2.to: "sb_hbar";
+            rel.to: "sb_hbar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -531,8 +526,7 @@ group { name: "efl/scroller";
             max: 2 4;
             fixed: 1 1;
             align: 0.0 1.0;
-            rel1.to: "efl.draggable.horizontal_bar";
-            rel2.to: "efl.draggable.horizontal_bar";
+            rel.to: "efl.draggable.horizontal_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -548,8 +542,7 @@ group { name: "efl/scroller";
             max: 2 4;
             fixed: 1 1;
             align: 1.0 1.0;
-            rel1.to: "sb_hbar";
-            rel2.to: "sb_hbar";
+            rel.to: "sb_hbar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -565,8 +558,7 @@ group { name: "efl/scroller";
             max: 2 4;
             fixed: 1 1;
             align: 1.0 1.0;
-            rel1.to: "efl.draggable.horizontal_bar";
-            rel2.to: "efl.draggable.horizontal_bar";
+            rel.to: "efl.draggable.horizontal_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -622,15 +614,15 @@ group { name: "efl/scroller";
          clip_to: "sb_vbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/scroller/bar/vertical";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/scroller/bar/vertical";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/scroller/bar/vertical";
          }
       }
 
@@ -656,15 +648,15 @@ group { name: "efl/scroller";
          clip_to: "sb_hbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/scroller/bar/horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/scroller/bar/horizontal";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/scroller/bar/horizontal";
          }
       }
 
@@ -689,10 +681,10 @@ group { name: "efl/scroller";
 
       part { name: "dim_effect"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 32 32 32 0; // no cc
          }
          description { state: "effect" 0.0;
-            color: 32 32 32 255;
+            color: 32 32 32 255; // no cc
          }
       }
    }

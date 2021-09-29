@@ -90,26 +90,53 @@ group { name: "elm/radio/base/default";
          desc { "disabled"; inherit;
          }
       }
-      part { name: "ck_check";
+      part { name: "ck_bg";
          scale: 1;
          description { state: "default" 0.0;
+            fixed: 1 1;
             rel.to: "base";
             image.normal: "i-radio";
             min: 15 15;
             max: 15 15;
             color_class: "/bg/normal/radio/base";
-            fixed: 1 1;
-         }
-         description { state: "pressed" 0.0;
-            inherit: "default" 0.0;
-            color_class: "/fg/pressed/radio/base";
-         }
-         description { state: "selected" 0.0;
-            inherit: "default" 0.0;
-            color_class: "/fg/selected/radio/base";
          }
          desc { "disabled"; inherit;
             color_class: "/bg/disabled/radio/base";
+         }
+      }
+      part { name: "ck_check";
+         scale: 1;
+         description { state: "default" 0.0;
+            color_class: "/fg/selected/radio/radio";
+            rel.to: "base";
+            image.normal: "i-radio";
+            min: 15 15;
+            max: 15 15;
+            fixed: 1 1;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         desc { "disabled"; inherit;
+            visible: 0;
+         }
+      }
+      part { name: "ck_press";
+         scale: 1;
+         description { state: "default" 0.0;
+            color_class: "/fg/pressed/radio/radio";
+            fixed: 1 1;
+            rel.to: "base";
+            image.normal: "i-radio";
+            min: 15 15;
+            max: 15 15;
+            visible: 0;
+         }
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
       text { "elm.text"; nomouse;
@@ -138,7 +165,7 @@ group { name: "elm/radio/base/default";
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
-            color_class: "/fg/prssed/radio/text";
+            color_class: "/fg/pressed/radio/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -251,10 +278,20 @@ group { name: "elm/radio/base/default";
       program { signal: "elm,state,disabled"; source: "elm";
          action:  STATE_SET "disabled" 0.0;
          target: "ck_check";
+         target: "ck_bg";
       }
       program { signal: "elm,state,enabled"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "ck_check";
+         target: "ck_bg";
+      }
+      program { signal: "mouse,down,1"; source: "event";
+         action: STATE_SET "pressed" 0.0;
+         target: "ck_press";
+      }
+      program { signal: "mouse,up,1"; source: "event";
+         action: STATE_SET "default" 0.0;
+         target: "ck_press";
       }
    }
 }

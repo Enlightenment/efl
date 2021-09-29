@@ -14,10 +14,11 @@ group { name: "efl/pointer";
              * will be WITHIN the bounds the axes
              * of thre part describe */
             image.normal: "pointer.png";
+            color_class: "/fg/normal/pointer/base";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 51 153 255 255;
+            color_class: "/fg/pressed/pointer/base";
          }
       }
       part { name: "efl.hotspot"; type: SWALLOW;
@@ -64,7 +65,7 @@ group { name: "efl/pointer:bottom_right_corner";
       part { name: "box"; type: RECT;
          insert_after: "base";
          description { state: "default" 0.0;
-            color: 51 153 255 192;
+            color_class: "/fg/normal/pointer/manipulator";
             rel1.relative: 0.3 0.3;
             rel2.relative: 0.7 0.7;
          }

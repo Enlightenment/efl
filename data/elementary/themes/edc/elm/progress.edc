@@ -572,6 +572,8 @@ group { name: "elm/progressbar/vertical/default";
             map.smooth: 0;
             map.rotation.center: "elm.swallow.bar";
             map.rotation.z: 90;
+            color_class: "/fg/normal/progress/text/status";
+            offscale;
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
