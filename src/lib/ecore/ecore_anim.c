@@ -423,6 +423,7 @@ static void
 _timer_tick_quit(void)
 {
    if (timer_fd_read < 0) return;
+   ecore_thread_cancel(timer_thread);
    _tick_send(-1);
    if (timer_thread) ecore_thread_wait(timer_thread, 0.5);
 }
