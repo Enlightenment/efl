@@ -99,16 +99,26 @@ read_svg_header(int scale_down, double dpi, int size_w, int size_h)
 {
    rsvg_handle_set_dpi(rsvg, 75.0);
 
-#ifndef HAVE_SVG_2_51
-   rsvg_handle_get_dimensions(rsvg, &dim);
-   width = dim.width;
-   height = dim.height;
-#else
+#ifdef HAVE_SVG_2_51
    double owidth, oheight;
 
    rsvg_handle_get_intrinsic_size_in_pixels(rsvg, &owidth, &oheight);
    width = ceil(owidth);
    height = ceil(oheight);
+   if ((width == 0) || (height == 0))
+     {
+        RsvgLength l1, l2;
+        gboolean has_l1, has_l2, has_vb;
+        RsvgRectangle vb;
+
+        rsvg_handle_get_intrinsic_dimensions(rsvg, &has_l1, &l1, &has_l2, &l2, &has_vb, &vb);
+        width = ceil(vb.width);
+        height = ceil(vb.height);
+     }
+#else
+   rsvg_handle_get_dimensions(rsvg, &dim);
+   width = dim.width;
+   height = dim.height;
 #endif
 
    if ((width < 1) || (height < 1)) return 0;
@@ -153,18 +163,21 @@ read_svg_data(void)
    if (!shm_addr) return 0;
 
    memset(shm_addr, 0, width * height * sizeof (DATA32));
-   surface = cairo_image_surface_create_for_data((unsigned char *)shm_addr, CAIRO_FORMAT_ARGB32,
-                                                 width, height, width * sizeof(DATA32));;
+   surface = cairo_image_surface_create_for_data((unsigned char *)shm_addr,
+                                                 CAIRO_FORMAT_ARGB32,
+                                                 width, height,
+                                                 width * sizeof(DATA32));;
    if (!surface) return 0;
 
    cr = cairo_create(surface);
    if (!cr) return 0;
 
-   cairo_scale(cr, (double) width / dim.em, (double) height / dim.ex);
+   if ((dim.em > 0.0) && (dim.ex > 0.0))
+     cairo_scale(cr, (double) width / dim.em, (double) height / dim.ex);
+   else
+     cairo_scale(cr, (double)1, (double)1);
 
-#ifndef HAVE_SVG_2_51
-   rsvg_handle_render_cairo(rsvg, cr);
-#else
+#ifdef HAVE_SVG_2_51
    RsvgRectangle vp =
      {
         .x = 0,
@@ -172,8 +185,9 @@ read_svg_data(void)
         .width = width,
         .height = height,
      };
-
    rsvg_handle_render_document(rsvg, cr, &vp, NULL);
+#else
+   rsvg_handle_render_cairo(rsvg, cr);
 #endif
 
    cairo_surface_destroy(surface);
