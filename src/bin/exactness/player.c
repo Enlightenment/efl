@@ -209,6 +209,7 @@ _shot_do(Evas *e)
 
              if (ex_img)
                {
+                  memset(ex_img, 0, sizeof(*ex_img));
                   _dest_unit->imgs = eina_list_append(_dest_unit->imgs, ex_img);
                   _dest_unit->nb_shots++;
                   e_data = ex_img;
