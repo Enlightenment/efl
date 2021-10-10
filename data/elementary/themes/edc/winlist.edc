@@ -411,6 +411,43 @@ group { name: "e/widgets/winlist/item_large";
             rel2.relative: 0.75 0.75;
         }
       }
+      part { name: "backing"; type: RECT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "e.text.label";
+            rel2.to: "e.swallow.icon";
+            rel1.offset: -8 -8;
+            rel2.offset: 7 7;
+            color_class: "/dim/normal/winlist/item/text";
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/dim/selected/winlist/item/text";
+         }
+      }
+      part { name: "e.text.label"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 8 0;
+            rel1.relative: 0.0 0.0;
+            rel1.to_x: "e.swallow.win";
+            rel1.to_y: "icon";
+            rel2.offset: -9 -1;
+            rel2.relative: 0.0 1.0;
+            rel2.to: "icon";
+            color_class: "/fg/normal/winlist/item/text/normal";
+            offscale;
+            text { font: FNBD; size: 10;
+               min: 0 1;
+               align: 0.0 0.5;
+               text_class: "winlist_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/winlist/item/text/normal";
+         }
+      }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "icon";
@@ -435,10 +472,14 @@ group { name: "e/widgets/winlist/item_large";
       program { signal: "e,state,selected"; source: "e";
          action: STATE_SET "selected" 0.0;
          target: "sel_base";
+         target: "e.text.label";
+         target: "backing";
       }
       program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "sel_base";
+         target: "e.text.label";
+         target: "backing";
       }
       program { signal: "e,state,iconified"; source: "e";
          action: STATE_SET "iconified" 0.0;
