@@ -88,7 +88,7 @@ group { name: "efl/frame";
       }
       part { name: "event"; type: RECT; ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.to_y: "efl.text";
             rel2.to_y: "efl.text";
          }
