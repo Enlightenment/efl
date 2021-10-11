@@ -1302,8 +1302,8 @@ group { name: "elm/button/base/hoversel_horizontal_entry/default";
    }
 
    group { name: "elm/button/base/spinner/decrease/default";
-      alias: "elm/button/base/spinner/decrease/colorselector/default";
       inherit: "elm/button/base/spinner/increase/default";
+      alias: "elm/button/base/spinner/decrease/colorselector/default";
       alias: "elm/button/base/spin_button/decrease/default";
       alias: "elm/button/base/calendar/decrease/default";
       alias: "elm/button/base/calendar/decrease/double_spinners";

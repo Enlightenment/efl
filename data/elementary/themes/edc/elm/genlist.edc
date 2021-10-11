@@ -80,7 +80,7 @@ group { "elm/genlist/item/group_index/default"; nomouse; program_source: "elm";
    parts {
       rect { "base";
          desc { "default";
-             color_class: "/bg/normal/list/group";
+            color_class: "/bg/normal/list/group";
          }
       }
       text { "elm.text";
