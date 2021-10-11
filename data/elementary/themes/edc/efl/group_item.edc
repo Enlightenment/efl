@@ -14,7 +14,7 @@ group { "efl/group_item";
    parts {
       rect { "base";
          desc { "default";
-             color: 32 32 32 255;
+            color_class: "/bg/normal/list/group";
          }
       }
       text { "efl.text";
@@ -29,7 +29,7 @@ group { "efl/group_item";
             rel2.relative: 0.0 1.0;
             rel2.to_x: "efl.extra";
             align: 0.0 0.5;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/list/group";
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -40,7 +40,7 @@ group { "efl/group_item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/group";
             link.base: "efl,state,disabled";
          }
       }
