@@ -380,6 +380,8 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-heading";
       color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/text-heading";
+      color: 160 160 160 255; }
    color_class { name: "/fg/normal/text-heading-sub";
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/text-hilight";
@@ -388,12 +390,16 @@ color_classes {
 //      color: 160 160 160 255; }
    color_class { name: "/fg/normal/text-subtle";
       color:   0   0   0  64; }
-   color_class { name: "/fg/normal/text/hilight";
+   color_class { name: "/fg/normal/text-standout";
       color:  51 153 255 255; }
-   color_class { name: "/fg/disabled/text/hilight";
+   color_class { name: "/fg/disabled/text-standout";
       color:  25  76 128 255; }
-   color_class { name: "/fg/disabled/text-urgent";
+   color_class { name: "/fg/normal/text-urgent";
       color: 255  51  51 255; }
+   color_class { name: "/fg/normal/text-link";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/text-link";
+      color:  96 112 128 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/flipselector/down";
       color:  96  96  96 255; }

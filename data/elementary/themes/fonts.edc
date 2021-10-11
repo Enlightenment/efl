@@ -49,9 +49,9 @@
 
 #define ENABLED_TEXTBLOCK_TAGS                                             \
    tag: "em" "+ font_style=Oblique";                                       \
-   tag: "hilight" "+ font_weight=Bold color=#3399ff";                      \
-   tag: "heading" "+ font_weight=Bold color=#ffffff font_size=11";         \
-   tag: "link" "+ color=#3399ff underline=on underline_color=#3399ff";     \
+   tag: "hilight" "+ font_weight=Bold color=cc:/fg/normal/text-standout";  \
+   tag: "heading" "+ font_weight=Bold color=cc:/fg/normal/text-heading font_size=11"; \
+   tag: "link" "+ color=cc:/fg/normal/text-link underline=on underline_color=cc:/fg/normal/text-link"; \
    tag: "preedit" "+ underline=on underline_color=#3399ff";                \
    tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";  \
    tag: "title" "+ font_size=26";                                          \
@@ -83,9 +83,9 @@
 
 #define DISABLED_TEXTBLOCK_TAGS                                            \
    tag: "em" "+ font_style=Oblique";                                       \
-   tag: "hilight" "+ font_weight=Bold color=#3399ff";                      \
-   tag: "heading" "+ font_weight=Bold color=#a0a0a0 font_size=11";         \
-   tag: "link" "+ color=#607080 underline=on underline_color=#3399ff";     \
+   tag: "hilight" "+ font_weight=Bold color=cc:/fg/disabled/text-standout"; \
+   tag: "heading" "+ font_weight=Bold color=cc:/fg/disabled/text-heading font_size=11";         \
+   tag: "link" "+ color=cc:/fg/disabled/text-link underline=on underline_color=cc:/fg/disabled/text-link";     \
    tag: "preedit" "+ underline=on underline_color=#3399ff88";              \
    tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#888888";  \
    tag: "title" "+ font_size=26";                                          \
