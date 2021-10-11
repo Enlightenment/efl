@@ -155,7 +155,7 @@ group { "efl/datepicker";
          desc { "default";
             fixed: 1 1;
             rel.to: "bg";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
    }
@@ -179,7 +179,7 @@ group { "efl/datepicker/spin_button";
          repeat;
          desc { "default";
             fixed: 1 1;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel.to: "base";
             hid;
          }
@@ -243,7 +243,7 @@ group { "efl/datepicker/spin_button";
          norepeat;
          nomouse;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             hid;
          }
          desc { "disabled";

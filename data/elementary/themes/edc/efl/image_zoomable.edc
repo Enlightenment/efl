@@ -25,7 +25,7 @@ group { name: "efl/image_zoomable";
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             align: 1.0 1.0;

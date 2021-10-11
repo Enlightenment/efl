@@ -5,6 +5,7 @@ group { name: "efl/frame";
       part { name: "shadow"; type: RECT;
          description { state: "default" 0.0;
             rel.to: "_sh1";
+            color_class: "/shadow/normal/frame";
          }
          description { state: "hidden" 0.0;
             inherit;
@@ -12,13 +13,18 @@ group { name: "efl/frame";
          }
       }
       WIN_SHAD("base", "shadow", "win_shad_flat.png", 10, 10, 7, 14, 0.25);
-      part { name: "base"; type: RECT;
+      part { name: "base"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 6 6;
             rel2.offset: -7 -7;
-            color: 80 80 80 255;
             offscale;
+         }
+      }
+      part { name: "top_bg"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "top";
+            color_class: "/bg/normal/frame/title";
          }
       }
       part { name: "top"; type: SPACER;
@@ -34,13 +40,12 @@ group { name: "efl/frame";
       part { name: "efl.text"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
+            rel.to: "base";
             rel1.offset: 4 4;
-            rel1.to: "base";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 4;
-            rel2.to: "base";
             align: 0.0 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/normal/frame/title";
             text { font: FNBD; size: 10;
                align: 0.0 0.0;
                min: 0 1;
@@ -56,13 +61,12 @@ group { name: "efl/frame";
             rel1.to_y: "top";
             rel1.relative: 0.0 1.0;
             rel2.to: "base";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/frame";
          }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            rel.to: "bg";
          }
       }
       part { name: "efl.content"; type: SWALLOW;
