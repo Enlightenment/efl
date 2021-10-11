@@ -61,17 +61,17 @@ group { name: "e/conf/randr/main/monitor";
 group { name: "e/conf/randr/main/frame";
    styles {
       style { name: "randr_name_style";
-         base: "font="FNBD" font_size=10 text_class=randr_monitor align=center color=#fff wrap=word";
+         base: "font="FNBD" font_size=10 text_class=randr_monitor align=center color=cc:/fg/normal/text wrap=word";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD"";
       }
       style { name: "randr_resolution_style";
-         base: "font="FN" font_size=10 text_class=randr_resolution align=center color=#ff9933 wrap=mixed align=center";
+         base: "font="FN" font_size=10 text_class=randr_resolution align=center color=cc:/fg/normal/tex wrap=mixed align=center";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD"";
       }
       style { name: "randr_position_style";
-         base: "font="FN" font_size=10 text_class=randr_position align=center color=#3399ff wrap=mixed align=center";
+         base: "font="FN" font_size=10 text_class=randr_position align=center color=cc:/fg/normal/tex wrap=mixed align=center";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD"";
       }

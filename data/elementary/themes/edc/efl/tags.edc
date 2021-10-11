@@ -49,10 +49,10 @@ group { "efl/tags/btn";
 
    styles {
       style { name: "efl_tags_textblock_style";
-         base: "font="FN" align=0.5 font_size=10 color=#fff text_class=tags_item ellipsis=1.0";
+         base: "font="FN" align=0.5 font_size=10 color=#fff text_class=tags_item ellipsis=1.0"; // no cc
          tag: "br" "\n";
          tag: "ps" "ps";
-         tag: "hilight" "+ color=#ffffff font="FNBD;
+         tag: "hilight" "+ font="FNBD; // no cc
          tag: "b" "+ font="FNBD;
          tag: "tab" "\t";
       }

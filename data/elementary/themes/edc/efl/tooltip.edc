@@ -4,10 +4,10 @@ group { name: "efl/label/tooltip";
    alias: "efl/label/base/tooltip/transparent";
    styles {
       style { name: "tooltip_style2";
-         base: "font="FNBD" font_size=10 color=#ffffff text_class=bubble align=0.5";
+         base: "font="FNBD" font_size=10 color=cc:/fg/normal/tooltip/text text_class=bubble align=0.5";
          tag:  "br" "\n";
-         tag:  "hilight" "+ font="FNBD" text_class=bubble color=#ff9933";
-         tag:  "b" "+ font="FNBD" text_class=bubble color=#3399ff";
+         tag:  "hilight" "+ font="FNBD" text_class=bubble color=cc:/fg/normal/toolip/text/hilight";
+         tag:  "b" "+ font="FNBD" text_class=bubble";
          tag:  "tab" "\t";
       }
    }

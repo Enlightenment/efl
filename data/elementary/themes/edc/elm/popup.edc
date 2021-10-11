@@ -144,7 +144,7 @@ group { name: "elm/label/base/popup/default";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
-         tag: "whitecolor" "+ color=#fff";
+         tag: "whitecolor" "+ color=#fff"; // no cc
          tag: "tab" "\t";
       }
       style { name: "popup_title_style_ellipsis";
@@ -152,7 +152,7 @@ group { name: "elm/label/base/popup/default";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
-         tag: "whitecolor" "+ color=#fff";
+         tag: "whitecolor" "+ color=#fff"; // no cc
          tag: "tab" "\t";
       }
    }
@@ -188,7 +188,7 @@ group { name: "elm/popup/base/default";
          tag: "br" "\n";
          tag: "hilight" "+ font="FNBD" text_class=label_light";
          tag: "b" "+ font="FNBD" text_class=label_light";
-         tag: "whitecolor" "+ color=#fff";
+         tag: "whitecolor" "+ color=#fff"; // no cc
          tag: "tab" "\t";
       }
    }

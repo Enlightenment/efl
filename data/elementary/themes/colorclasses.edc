@@ -111,6 +111,9 @@ color_classes {
    color_class { name: "/fg-alt/selected-pressed";
       color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
+   color_class { name: "/fg/normal/navigation/title";
+      color: 255 255 255 255; }
+///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/shadow";
       color:   0   0   0 128; }
    color_class { name: "/shadow/selected";

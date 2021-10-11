@@ -1433,7 +1433,7 @@ group { name: "e/modules/everything/textblock";
          tag: "b"       "+ font="FNBD"";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
          tag: "urgent"  "+ font="FNBD" color=cc:/fg/normal/text-urgent";
-         tag: "title"   "+ font="FNBD" color=cc:/fg/normal/text-heading font_size=16 underline=on underline_color=#fff";
+         tag: "title"   "+ font="FNBD" color=cc:/fg/normal/text-heading font_size=16 underline=on underline_color=cc:/fg/normal/text-heading";
       }
    }
    parts {

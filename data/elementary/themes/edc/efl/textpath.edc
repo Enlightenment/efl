@@ -2,15 +2,14 @@ group { name: "efl/textpath";
    data.item: "version" "123";
    styles {
       style { name: "textpath_style2";
-         base: "font="FN" font_size=10 text_class=tb_plain wrap=none align=left color=#a0a0a0";
+         base: "font="FN" font_size=10 text_class=tb_plain wrap=none align=left color=cc:/fg/normal/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
       }
    }
    parts {
-      part { name: "efl.text";
-         type: TEXTBLOCK;
+      part { name: "efl.text"; type: TEXTBLOCK;
          scale: 1;
          description { state: "default" 0.0;
             align: 0.0 0.0;

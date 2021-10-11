@@ -252,7 +252,7 @@ group { name: "elm/multibuttonentry/btn/default";
 group { name: "elm/multibuttonentry/closedbutton/default";
    styles {
       style { name: "textblock_style_multibuttonentry_default";
-         base: "font="FNBD" font_size=10 text_class=multibuttonentry_closed color=#fff align=center wrap=char";
+         base: "font="FNBD" font_size=10 text_class=multibuttonentry_closed color=#fff align=center wrap=char"; /// no cc for color
          tag: "br" "\n";
          tag: "ps" "ps";
          tag: "hilight" "+ font="FNBD;

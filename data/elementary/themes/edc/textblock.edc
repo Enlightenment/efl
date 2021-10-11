@@ -1,12 +1,12 @@
 group { name: "e/widgets/textblock";
    styles {
       style { name: "textblock_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#a0a0a0 wrap=word";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color=cc:/fg/normal wrap=word";
          tag: "br"      "\n";
          tag: "b"       "+ font="FNBD"";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
-         tag: "urgent"  "+ font="FNBD" color=#f40f";
-         tag: "title"   "+ font="FNBD" font_size=16 underline=on underline_color=#3399ff";
+         tag: "urgent"  "+ font="FNBD" color=cc:/fg/normal/text-urgent";
+         tag: "title"   "+ font="FNBD" font_size=16 underline=on underline_color=cc:/fg/normal/text";
       }
    }
    parts {

@@ -1,21 +1,21 @@
 #define CIT_STYLES\
       style { name: "efl_ui_calendar_date_style";\
-         base: "font="FN" font_size=10 color=#a0a0a0 align=center text_class=calendar_day_text";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day align=center text_class=calendar_day_text";\
       }\
       style { name: "efl_ui_calendar_date_holiday_style";\
-         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_holiday";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/holiday align=center text_class=calendar_day_text_holiday";\
       }\
       style { name: "efl_ui_calendar_date_today_style";\
-         base: "font="FN" font_size=10 color=#ffffff align=center text_class=calendar_day_text_today";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/today align=center text_class=calendar_day_text_today";\
       }\
       style { name: "efl_ui_calendar_date_disabled_style";\
-         base: "font="FN" font_size=10 color=#282828 align=center text_class=calendar_day_text_disabled";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/disabled align=center text_class=calendar_day_text_disabled";\
       }\
       style { name: "efl_ui_calendar_date_weekend1_style";\
-         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_weekend1";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/weekend1 align=center text_class=calendar_day_text_weekend1";\
       }\
       style { name: "efl_ui_calendar_date_weekend2_style";\
-         base: "font="FN" font_size=10 color=#3399ff align=center text_class=calendar_day_text_weekend2";\
+         base: "font="FN" font_size=10 color=cc:/fg/normal/calendar/day/weekend2 align=center text_class=calendar_day_text_weekend2";\
       }\
 
 #define CAL_SPIN(_sufix, _text, _relative)\

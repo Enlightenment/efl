@@ -1,7 +1,7 @@
 group { name: "elm/textpath/base/default";
    styles {
       style { name: "textpath_style";
-         base: "font="FN" font_size=16 text_class=tb_plain wrap=none align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         base: "font="FN" font_size=16 text_class=tb_plain wrap=none align=left color=cc:/fg/normal/text";
          tag: "br" "\n";
          tag: "b" "+ font="FNBD" text_class=tb_light";
          ENABLED_TEXTBLOCK_TAGS
