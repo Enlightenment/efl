@@ -63,15 +63,15 @@ group { "efl/list_item";
    parts {
       rect { "base"; nomouse;
          desc { "default";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/list/item";
          }
          desc { "odd";
-            color: 56 56 56 255;
+            color_class: "/bg-alt/normal/list/item";
          }
       }
       rect { "sel_base"; nomouse;
          desc { "default";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/list/item";
             hid;
          }
          desc { "selected";
@@ -95,7 +95,7 @@ group { "efl/list_item";
             rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "efl.extra";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/list/item";
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
@@ -106,16 +106,16 @@ group { "efl/list_item";
          }
          desc { "selected";
             inherit: "default";
-            color: 255 255 255 255;
+            color_class: "/fg/selected/list/item";
          }
          desc { "disabled";
             inherit: "default";
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/list/item";
          }
       }
       rect { "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled";
             inherit: "default";
@@ -149,7 +149,7 @@ group { "efl/list_item";
       }
       rect { "event_block";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             hid;
          }
          desc { "disabled";
@@ -208,15 +208,15 @@ group { "efl/list_item:placeholder";
    parts {
       rect { "base"; nomouse;
          desc { "default";
-            color: 64 64 64 255;
+            color_class: "/bg/normal/list/item";
          }
          desc { "odd";
-            color: 56 56 56 255;
+            color_class: "/bg-alt/normal/list/item";
          }
       }
       rect { "sel_base"; nomouse;
          desc { "default";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/list/item";
             hid;
          }
          desc { "selected";
@@ -233,7 +233,7 @@ group { "efl/list_item:placeholder";
       //##//
       rect { "event";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled";
             inherit: "default";
@@ -252,7 +252,7 @@ group { "efl/list_item:placeholder";
       }
       rect { "event_block";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             hid;
          }
          desc { "disabled";
