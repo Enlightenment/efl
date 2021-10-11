@@ -47,13 +47,13 @@ group { name: "efl/check";
       }
       rect { "icon_clip";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "pressed"; inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "disabled"; inherit;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "efl.background"; nomouse;
@@ -103,7 +103,7 @@ group { name: "efl/check";
          scale: 1;
          description { state: "default";
             fixed: 1 0;
-            color: 0 0 0 64;
+            color_class: "/bg/normal/check/base";
             align: 0.0 0.5;
             min: 13 13;
             max: 13 13;
@@ -114,10 +114,10 @@ group { name: "efl/check";
             offscale;
          }
          desc { "pressed"; inherit;
-            color: 0 0 0 128;
+            color_class: "/bg/pressed/check/base";
          }
          desc { "disabled"; inherit;
-            color: 0 0 0 16;
+            color_class: "/bg/disabled/check/base";
          }
       }
       part { name: "ck_check";
@@ -130,16 +130,17 @@ group { name: "efl/check";
             min: 15 15;
             max: 15 15;
             visible: 0;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/check/check";
             fixed: 1 1;
          }
          description { state: "pressed" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/check/check";
             visible: 1;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
+            color_class: "/fg/selected/check/check";
             visible: 1;
          }
       }
@@ -149,14 +150,14 @@ group { name: "efl/check";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 153 153 153 255;
+            color: 255 255 255 153; // no cc
          }
       }
       text { "efl.text"; nomouse;
          scale: 1;
          desc { "default";
             fixed: 0 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/check/text";
             rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "efl.content";
@@ -178,7 +179,7 @@ group { name: "efl/check";
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/check/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -192,14 +193,14 @@ group { name: "efl/check";
          }
          desc { "pressed_textonly"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/check/text";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_visible"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/check/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -207,7 +208,7 @@ group { name: "efl/check";
          }
          desc { "disabled_textonly"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/check/text";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -216,7 +217,7 @@ group { name: "efl/check";
       rect { "event";
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled"; inherit;
             visible: 0;
@@ -323,13 +324,13 @@ group { name: "efl/check:toggle";
       }
       rect { "icon_clip";
          desc { "default";
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "pressed"; inherit;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
          }
          desc { "disabled"; inherit;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       swallow { "efl.content"; nomouse;
@@ -376,14 +377,14 @@ group { name: "efl/check:toggle";
       rect { name: "base";
          description { state: "default";
             fixed: 1 1;
-            color: 0 0 0 64;
+            color_class: "/bg/normal/toggle/base";
             rel.to: "tog";
          }
          desc { "pressed"; inherit;
-            color: 0 0 0 128;
+            color_class: "/bg/pressed/toggle/base";
          }
          desc { "disabled"; inherit;
-            color: 0 0 0 16;
+            color_class: "/bg/disabled/toggle/base";
          }
       }
       spacer { name: "onrect";
@@ -410,7 +411,7 @@ group { name: "efl/check:toggle";
             rel2.to: "offrect";
             rel2.offset: -5 -1;
             offscale;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/toggle/text/off";
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.5 0.5;
@@ -420,11 +421,11 @@ group { name: "efl/check:toggle";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/toggle/text/off";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/toggle/text/off";
          }
       }
       text { name: "efl.ontext"; nomouse; scale: 1;
@@ -437,7 +438,7 @@ group { name: "efl/check:toggle";
             rel2.relative: 0.0 1.0;
             rel2.offset: -5 -1;
             offscale;
-            color: 51 153 255 255;
+            color_class: "/fg/normal/toggle/text/on";
             text { font: FN; size: 10;
                min: 0 1;
                align: 0.5 0.5;
@@ -447,11 +448,11 @@ group { name: "efl/check:toggle";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/toggle/text/on";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/toggle/text/on";
          }
       }
       part { name: "tog_clip"; type: RECT;
@@ -471,34 +472,34 @@ group { name: "efl/check:toggle";
             rel.to: "tog";
             min: 15 15;
             max: 15 99999;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       rect { name: "base_but"; nomouse;
          description { state: "default" 0.0;
             rel.to: "button";
-            color: 51 153 255 255;
+            color_class: "/fg/normal/toggle/button";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/toggle/button";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 64 64 64 255;
+            color_class: "/fg/disabled/toggle/button";
          }
       }
       rect { name: "button_events";
          dragable.events: "button";
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
       }
       text { "efl.text"; nomouse;
          scale: 1;
          desc { "default";
             fixed: 0 1;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/toggle/text";
             rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "efl.content";
@@ -522,7 +523,7 @@ group { name: "efl/check:toggle";
          }
          desc { "pressed_visible"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/toggle/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -536,14 +537,14 @@ group { name: "efl/check:toggle";
          }
          desc { "pressed_textonly"; inherit;
             fixed: 0 0;
-            color: 255 255 255 255;
+            color_class: "/fg/pressed/toggle/text";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
          }
          desc { "disabled_visible"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/toggle/text";
             rel1.offset: 4 4;
             text.min: 1 1;
             text.ellipsis: -1;
@@ -551,7 +552,7 @@ group { name: "efl/check:toggle";
          }
          desc { "disabled_textonly"; inherit;
             fixed: 0 0;
-            color: 96 96 96 255;
+            color_class: "/fg/disabled/toggle/text";
             text.min: 1 1;
             text.ellipsis: -1;
             visible: 1;
@@ -559,7 +560,7 @@ group { name: "efl/check:toggle";
       }
       rect { "event2";
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
             visible: 0;
          }
          desc { "disabled"; inherit;
@@ -569,7 +570,7 @@ group { name: "efl/check:toggle";
       rect { "event"; repeat;
          ignore_flags: ON_HOLD;
          desc { "default";
-            color: 0 0 0 0;
+            color: 0 0 0 0; // no cc
          }
          desc { "disabled"; inherit;
             visible: 0;
