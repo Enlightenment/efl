@@ -88,12 +88,12 @@ group { name: "efl/focus_highlight/top";
             rel1.offset: -999 -999;
             rel2.relative: 2.0 2.0;
             rel2.offset: 999 999;
-            color: 255 255 255 0;
+            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
@@ -102,13 +102,13 @@ group { name: "efl/focus_highlight/top";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/focus";
             rel2.relative: 1.0 0.0;
             min: 4 4;
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/focus/hilight";
          }
       }
       part { name: "topl"; type: RECT;
@@ -116,7 +116,7 @@ group { name: "efl/focus_highlight/top";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "top";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/focus";
             rel1.relative: 0.0 1.0;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.0;
@@ -124,7 +124,7 @@ group { name: "efl/focus_highlight/top";
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/focus/hilight";
          }
       }
       part { name: "topr"; type: RECT;
@@ -132,7 +132,7 @@ group { name: "efl/focus_highlight/top";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "top";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/focus";
             rel1.relative: 1.0 1.0;
             rel2.relative: 1.0 1.0;
             align: 1.0 0.0;
@@ -140,7 +140,7 @@ group { name: "efl/focus_highlight/top";
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/focus/hilight";
          }
       }
       part { name: "bot"; type: RECT;
@@ -148,13 +148,13 @@ group { name: "efl/focus_highlight/top";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "base";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/focus";
             rel1.relative: 0.0 1.0;
             min: 4 4;
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/focus/hilight";
          }
       }
       part { name: "botl"; type: RECT;
@@ -162,7 +162,7 @@ group { name: "efl/focus_highlight/top";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "bot";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/focus";
             rel1.relative: 0.0 0.0;
             rel2.relative: 0.0 0.0;
             align: 0.0 1.0;
@@ -170,7 +170,7 @@ group { name: "efl/focus_highlight/top";
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/focus/hilight";
          }
       }
       part { name: "botr"; type: RECT;
@@ -178,7 +178,7 @@ group { name: "efl/focus_highlight/top";
          scale: 1;
          description { state: "default" 0.0;
             rel.to: "bot";
-            color: 51 153 255 255;
+            color_class: "/bg/selected/focus";
             rel1.relative: 1.0 0.0;
             rel2.relative: 1.0 0.0;
             align: 1.0 1.0;
@@ -186,7 +186,7 @@ group { name: "efl/focus_highlight/top";
          }
          description { state: "hi" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/bg/selected/focus/hilight";
          }
       }
    }
