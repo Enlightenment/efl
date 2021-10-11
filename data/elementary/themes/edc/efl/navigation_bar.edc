@@ -103,7 +103,7 @@ group { name: "efl/navigation_bar/back_button";
          insert_before: "efl.content";
          desc { "default";
             image.normal: "i-arrow-l";
-            color: 160 160 160 255;
+            color_class: "/fg/normal/navigation/back/arrow";
          }
       }
    }
