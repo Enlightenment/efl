@@ -51,12 +51,12 @@ group { "efl/grid_item";
 #define BASEP() \
    part { name: "base"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
-         color: 64 64 64 255; \
+         color_class: "/bg/normal/grid/item"; \
       } \
    } \
    part { name: "sel_base"; type: RECT; mouse_events: 0; \
       description { state: "default" 0.0; \
-         color: 51 153 255 255; \
+         color_class: "/bg/selected/grid/item"; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
@@ -84,7 +84,7 @@ group { "efl/grid_item";
    part { name: "event"; type: RECT; \
       repeat_events: 1; \
       description { state: "default" 0.0; \
-         color: 0 0 0 0; \
+         color: 0 0 0 0; /* no cc */ \
       } \
       description { state: "disabled" 0.0; \
          inherit: "default" 0.0; \
@@ -93,7 +93,7 @@ group { "efl/grid_item";
    } \
    part { name: "event_block"; type: RECT; \
       description { state: "default" 0.0; \
-         color: 0 0 0 0; \
+         color: 0 0 0 0; /* no cc */ \
          visible: 0; \
       } \
       description { state: "disabled" 0.0; \
@@ -120,7 +120,7 @@ group { "efl/grid_item";
             rel1.relative: 0.0 1.0;
             rel1.offset: 4 -5;
             rel2.offset: -5 -5;
-            color: 160 160 160 255;
+            color_class: "/fg/normal/grid/item";
             align: 0.5 1.0;
             offscale;
             text { font: FN; size: 10;
@@ -131,11 +131,11 @@ group { "efl/grid_item";
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 255;
+            color_class: "/fg/selected/grid/item";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 80 80 80 255;
+            color_class: "/fg/disabled/grid/item";
          }
       }
       program { signal: "efl,state,selected"; source: "efl";
@@ -164,11 +164,12 @@ group { "efl/grid_item";
             rel2.to_y: "efl.text";
             rel2.relative: 1.0 0.0;
             rel2.offset: -5 -5;
+            color: 255 255 255 255; // no cc
             offscale;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 255 255 255 64; // no cc
          }
       }
       part { name: "efl.icon"; type: SWALLOW;
