@@ -380,8 +380,6 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/fg/normal/text-heading";
       color: 255 255 255 255; }
-   color_class { name: "/fg/disabled/text-heading";
-      color: 160 160 160 255; }
    color_class { name: "/fg/normal/text-heading-sub";
       color: 255 255 255 255; }
    color_class { name: "/fg/normal/text-hilight";
@@ -390,16 +388,111 @@ color_classes {
 //      color: 160 160 160 255; }
    color_class { name: "/fg/normal/text-subtle";
       color:   0   0   0  64; }
+   color_class { name: "/fg/normal/text-urgent";
+      color: 255  51  51 255; }
+   color_class { name: "/fg/disabled/text-heading";
+      color: 160 160 160 255; }
+
    color_class { name: "/fg/normal/text-standout";
       color:  51 153 255 255; }
    color_class { name: "/fg/disabled/text-standout";
       color:  25  76 128 255; }
-   color_class { name: "/fg/normal/text-urgent";
-      color: 255  51  51 255; }
    color_class { name: "/fg/normal/text-link";
       color:  51 153 255 255; }
    color_class { name: "/fg/disabled/text-link";
       color:  96 112 128 255; }
+   color_class { name: "/fg/normal/text-preedit";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/text-preedit";
+      color:  96 112 128 255; }
+   color_class { name: "/fg/normal/text-preedit-sel";
+      color:   0   0   0 255; }
+   color_class { name: "/fg/disabled/text-preedit-sel";
+      color:  32  32  32 255; }
+   color_class { name: "/bg/normal/text-preedit-sel";
+      color: 220 220 220 255; }
+   color_class { name: "/bg/disabled/text-preedit-sel";
+      color:  80  80  80 255; }
+   color_class { name: "/fg/normal/text-name";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/disabled/text-name";
+      color:  80  80  80 255; }
+   color_class { name: "/fg/normal/text-val";
+      color: 220 220 220 255; }
+   color_class { name: "/fg/disabled/text-val";
+      color:  80  80  80 255; }
+   color_class { name: "/fg/normal/text-info";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/text-info";
+      color:  96 112 128 255; }
+   color_class { name: "/fg/normal/text-success";
+      color:  51 255  51 255; }
+   color_class { name: "/fg/disabled/text-success";
+      color:  51 153  51 255; }
+   color_class { name: "/fg/normal/text-warning";
+      color: 255 153  51 255; }
+   color_class { name: "/fg/disabled/text-warning";
+      color: 153  51  34 255; }
+   color_class { name: "/fg/normal/text-failure";
+      color: 255  51  51 255; }
+   color_class { name: "/fg/disabled/text-failure";
+      color: 153  34  34 255; }
+   color_class { name: "/fg/normal/text-code";
+      color: 255 255 255 255; }
+   color_class { name: "/fg/disabled/text-code";
+      color: 128 128 128 255; }
+   color_class { name: "/fg/normal/text-comment";
+      color:  51 153 153 255; }
+   color_class { name: "/fg/disabled/text-comment";
+      color:  51  96  96 255; }
+   color_class { name: "/fg/normal/text-string";
+      color:  51 255 153 255; }
+   color_class { name: "/fg/disabled/text-string";
+      color:  96 128 112 255; }
+   color_class { name: "/fg/normal/text-number";
+      color: 220 220  48 255; }
+   color_class { name: "/fg/disabled/text-number";
+      color:  96  96  32 255; }
+   color_class { name: "/fg/normal/text-brace";
+      color: 128 128 128 255; }
+   color_class { name: "/fg/disabled/text-brace";
+      color:  80  80  80 255; }
+   color_class { name: "/fg/normal/text-type";
+      color:  51 153 255 255; }
+   color_class { name: "/fg/disabled/text-type";
+      color:  96 112 128 255; }
+   color_class { name: "/fg/normal/text-class";
+      color: 119 170 221 255; }
+   color_class { name: "/fg/disabled/text-class";
+      color:  59  85 110 255; }
+   color_class { name: "/fg/normal/text-function";
+      color: 153  51 255 255; }
+   color_class { name: "/fg/disabled/text-function";
+      color:  76  25 127 255; }
+   color_class { name: "/fg/normal/text-param";
+      color: 220 220 220 255; }
+   color_class { name: "/fg/disabled/text-param";
+      color:  96  96  96 255; }
+   color_class { name: "/fg/normal/text-keyword";
+      color: 255 153 153 255; }
+   color_class { name: "/fg/disabled/text-keyword";
+      color: 128  80  80 255; }
+   color_class { name: "/fg/normal/text-preprocessor";
+      color: 153  51 255 255; }
+   color_class { name: "/fg/disabled/text-preprocessor";
+      color: 128  37 128 255; }
+   color_class { name: "/fg/normal/text-line-added";
+      color: 153 255  51 255; }
+   color_class { name: "/fg/disabled/text-line-added";
+      color:  76 128  25 255; }
+   color_class { name: "/fg/normal/text-line-removed";
+      color: 255  51  51 255; }
+   color_class { name: "/fg/disabled/text-line-removed";
+      color: 128  25  25 255; }
+   color_class { name: "/fg/normal/text-line-changed";
+      color: 255 153  51 255; }
+   color_class { name: "/fg/disabled/text-line-changed";
+      color: 128  76  25 255; }
 ///////////////////////////////////////////////////////////////////////////////
    color_class { name: "/bg/normal/flipselector/down";
       color:  96  96  96 255; }

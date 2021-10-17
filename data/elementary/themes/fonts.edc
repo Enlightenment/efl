@@ -20,65 +20,65 @@
    tag: "hilight" "+ font_weight=Bold color=cc:/fg/normal/text-standout";  \
    tag: "heading" "+ font_weight=Bold color=cc:/fg/normal/text-heading font_size=11"; \
    tag: "link" "+ color=cc:/fg/normal/text-link underline=on underline_color=cc:/fg/normal/text-link"; \
-   tag: "preedit" "+ underline=on underline_color=#3399ff";                \
-   tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#ffffff";  \
+   tag: "preedit" "+ underline=on underline_color=cc:/fg/normal/text-preedit"; \
+   tag: "preedit_sel" "+ backing=on backing_color=cc:/bg/normal/text-preedit-sel color=cc:/fg/normal/text-preedit-sel"; \
    tag: "title" "+ font_size=26";                                          \
    tag: "subtitle" "+ font_size=18";                                       \
    tag: "bigger" "+ font_size=12";                                         \
    tag: "big" "+ font_size=11";                                            \
    tag: "small" "+ font_size=8";                                           \
    tag: "smaller" "+ font_size=7";                                         \
-   tag: "name" "+ color=#888888 font_weight=Bold";                         \
-   tag: "val" "+ color=#ffffff";                                           \
-   tag: "info" "+ color=#3399ff";                                          \
-   tag: "success" "+ color=#00ff00";                                       \
-   tag: "warning" "+ color=#ff7c00";                                       \
-   tag: "failure" "+ color=#ff0000";                                       \
-   tag: "code" "+ font=Mono color=#ffffff";                                \
-   tag: "comment" "+ color=#00B000";                                       \
-   tag: "string" "+ color=#ff3a35";                                        \
-   tag: "number" "+ color=#D4D42A font_weight=Bold";                       \
-   tag: "brace" "+ color=#656565";                                         \
-   tag: "type" "+ color=#3399ff";                                          \
-   tag: "class" "+ color=#72AAD4 font_weight=Bold";                        \
-   tag: "function" "+ color=#72AAD4 font_weight=Bold";                     \
-   tag: "param" "+ color=#ffffff";                                         \
-   tag: "keyword" "+ color=#ff9900 font_weight=Bold";                      \
-   tag: "preprocessor" "+ color=#3399ff font_weight=Bold";                 \
-   tag: "line_added" "+ color=#00B000";                                    \
-   tag: "line_removed" "+ color=#ff3a35";                                  \
-   tag: "line_changed" "+ color=#ff9900";
+   tag: "name" "+ color=cc:/fg/normal/text-name font_weight=Bold";         \
+   tag: "val" "+ color=cc:/fg/normal/text-val";                            \
+   tag: "info" "+ color=cc:/fg/normal/text-info";                          \
+   tag: "success" "+ color=cc:/fg/normal/text-success";                    \
+   tag: "warning" "+ color=cc:/fg/normal/text-warning";                    \
+   tag: "failure" "+ color=cc:/fg/normal/text-failure";                    \
+   tag: "code" "+ font=Mono color=cc:/fg/normal/text-code";                \
+   tag: "comment" "+ color=cc:/fg/normal/text-comment";                    \
+   tag: "string" "+ color=cc:/fg/normal/text-string";                      \
+   tag: "number" "+ color=cc:/fg/normal/text-number font_weight=Bold";     \
+   tag: "brace" "+ color=cc:/fg/normal/text-brace";                        \
+   tag: "type" "+ color=cc:/fg/normal/text-type";                          \
+   tag: "class" "+ color=cc:/fg/normal/text-class font_weight=Bold";       \
+   tag: "function" "+ color=cc:/fg/normal/text-function font_weight=Bold"; \
+   tag: "param" "+ color=cc:/fg/normal/text-param";                        \
+   tag: "keyword" "+ color=cc:/fg/normal/text-keyword font_weight=Bold";   \
+   tag: "preprocessor" "+ color=cc:/fg/normal/text-preprocessor font_weight=Bold"; \
+   tag: "line_added" "+ color=cc:/fg/normal/text-line-added";              \
+   tag: "line_removed" "+ color=cc:/fg/normal/text-line-removed";          \
+   tag: "line_changed" "+ color=cc:/fg/normal/text-line-changed";
 
 #define DISABLED_TEXTBLOCK_TAGS                                            \
    tag: "em" "+ font_style=Oblique";                                       \
    tag: "hilight" "+ font_weight=Bold color=cc:/fg/disabled/text-standout"; \
-   tag: "heading" "+ font_weight=Bold color=cc:/fg/disabled/text-heading font_size=11";         \
-   tag: "link" "+ color=cc:/fg/disabled/text-link underline=on underline_color=cc:/fg/disabled/text-link";     \
-   tag: "preedit" "+ underline=on underline_color=#3399ff88";              \
-   tag: "preedit_sel" "+ backing=on backing_color=#000000 color=#888888";  \
+   tag: "heading" "+ font_weight=Bold color=cc:/fg/disabled/text-heading font_size=11"; \
+   tag: "link" "+ color=cc:/fg/disabled/text-link underline=on underline_color=cc:/fg/disabled/text-link"; \
+   tag: "preedit" "+ underline=on underline_color=cc:/fg/normal/text-preedit"; \
+   tag: "preedit_sel" "+ backing=on backing_color=cc:/bg/disabled/text-preedit-sel color=cc:/fg/disabled/text-preedit-sel"; \
    tag: "title" "+ font_size=26";                                          \
    tag: "subtitle" "+ font_size=18";                                       \
    tag: "bigger" "+ font_size=12";                                         \
    tag: "big" "+ font_size=11";                                            \
    tag: "small" "+ font_size=8";                                           \
    tag: "smaller" "+ font_size=7";                                         \
-   tag: "name" "+ color=#151515 font_weight=Bold";                         \
-   tag: "val" "+ color=#151515";                                           \
-   tag: "info" "+ color=#3399ff60";                                        \
-   tag: "success" "+ color=#00ff0060";                                     \
-   tag: "warning" "+ color=#ff7c0060";                                     \
-   tag: "failure" "+ color=#ff000060";                                     \
-   tag: "code" "+ font=Mono color=#505050";                                \
-   tag: "comment" "+ color=#002800";                                       \
-   tag: "string" "+ color=#300504";                                        \
-   tag: "number" "+ color=#202008 font_weight=Bold";                       \
-   tag: "brace" "+ color=#000000";                                         \
-   tag: "type" "+ color=#101820";                                          \
-   tag: "class" "+ color=#121c20 font_weight=Bold";                        \
-   tag: "function" "+ color=#121c20 font_weight=Bold";                     \
-   tag: "param" "+ color=#151515";                                         \
-   tag: "keyword" "+ color=#201200 font_weight=Bold";                      \
-   tag: "preprocessor" "+ color=#101820 font_weight=Bold";                 \
-   tag: "line_added" "+ color=#002800";                                    \
-   tag: "line_removed" "+ color=#300504";                                  \
-   tag: "line_changed" "+ color=#201200";
+   tag: "name" "+ color=cc:/fg/disabled/text-name font_weight=Bold";       \
+   tag: "val" "+ color=cc:/fg/disabled/text-val";                          \
+   tag: "info" "+ color=cc:/fg/disabled/text-info";                        \
+   tag: "success" "+ color=cc:/fg/disabled/text-success";                  \
+   tag: "warning" "+ color=cc:/fg/disabled/text-warning";                  \
+   tag: "failure" "+ color=cc:/fg/disabled/text-failure";                  \
+   tag: "code" "+ font=Mono color=cc:/fg/disabled/text-code";              \
+   tag: "comment" "+ color=cc:/fg/disabled/text-comment";                  \
+   tag: "string" "+ color=cc:/fg/disabled/text-string";                    \
+   tag: "number" "+ color=cc:/fg/disabled/text-number font_weight=Bold";   \
+   tag: "brace" "+ color=cc:/fg/disabled/text-brace";                      \
+   tag: "type" "+ color=cc:/fg/disabled/text-type";                        \
+   tag: "class" "+ color=cc:/fg/disabled/text-type font_weight=Bold";      \
+   tag: "function" "+ color=cc:/fg/disabled/text-function font_weight=Bold"; \
+   tag: "param" "+ color=cc:/fg/disabled/text-param";                      \
+   tag: "keyword" "+ color=cc:/fg/disabled/text-keyword font_weight=Bold"; \
+   tag: "preprocessor" "+ color=cc:/fg/disabled/text-preprocessor font_weight=Bold"; \
+   tag: "line_added" "+ color=cc:/fg/disabled/text-line-added";            \
+   tag: "line_removed" "+ color=cc:/fg/disabled/text-line-removed";        \
+   tag: "line_changed" "+ color=cc:/fg/disabled/text-line-changed";
