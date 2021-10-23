@@ -358,6 +358,7 @@ eet_flush2(Eet_File *ef)
      }
    if (ef->ed)
      {
+        eet_dictionary_write_prepare(ef->ed);
         num_dictionary_entries = ef->ed->count;
 
         for (i = 0; i < num_dictionary_entries; ++i)

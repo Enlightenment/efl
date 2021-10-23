@@ -43,33 +43,8 @@ eet_dictionary_free(Eet_Dictionary *ed)
    free(ed->all_allocated);
 
    if (ed->converts) eina_hash_free(ed->converts);
+   if (ed->add_hash) eina_hash_free(ed->add_hash);
    eet_dictionary_mp_free(ed);
-}
-
-static int
-_eet_dictionary_lookup(Eet_Dictionary *ed,
-                       const char     *string,
-                       int             len,
-                       int             hash,
-                       int            *previous)
-{
-   int prev = -1, current;
-
-   current = ed->hash[hash];
-   while (current != -1)
-     {
-        if ((ed->all[current].str) &&
-            ((ed->all[current].str == string) ||
-             ((ed->all[current].len == len) &&
-              (!strcmp(ed->all[current].str, string)))))
-          {
-             break;
-          }
-        prev = current;
-        current = ed->all[current].next;
-     }
-   if (previous) *previous = prev;
-   return current;
 }
 
 void
@@ -90,6 +65,102 @@ eet_dictionary_unlock(const Eet_Dictionary *ed)
    eina_rwlock_release((Eina_RWLock *)&ed->rwlock);
 }
 
+static Eina_Bool
+_eet_dictionary_write_prepare_hash_cb(const Eina_Hash *hashtab EINA_UNUSED, const void *key, void *value, void *data)
+{
+   Eet_Dictionary *ed = data;
+   const char *str, *string = key;
+   Eet_String *current;
+   int hash, len, idx = (int)((uintptr_t)value) - 1;
+
+   hash = _eet_hash_gen_len(string, 8, &len);
+   len++;
+
+   str = eina_stringshare_add(string);
+   if (!str) goto on_error;
+
+   current = ed->all + idx;
+
+   ed->all_allocated[idx >> 3] |= (1 << (idx & 0x7));
+   ed->all_hash[idx] = hash;
+
+   current->str = str;
+   current->len = len;
+
+   current->next = ed->hash[hash];
+   ed->hash[hash] = idx;
+
+on_error:
+   return EINA_TRUE;
+}
+
+void
+eet_dictionary_write_prepare(Eet_Dictionary *ed)
+{
+   eina_rwlock_take_write(&ed->rwlock);
+   if (!ed->add_hash)
+     {
+        eina_rwlock_release(&ed->rwlock);
+        return;
+     }
+
+   ed->all = malloc(ed->count * sizeof(Eet_String));
+   ed->all_hash = malloc(ed->count);
+   ed->all_allocated = malloc(((ed->count >> 3) + 1));
+
+   eina_hash_foreach(ed->add_hash, _eet_dictionary_write_prepare_hash_cb, ed);
+   eina_hash_free(ed->add_hash);
+   ed->add_hash = NULL;
+   eina_rwlock_release(&ed->rwlock);
+}
+
+static int
+_eet_dictionary_lookup(Eet_Dictionary *ed,
+                       const char     *string,
+                       int             len,
+                       int             hash,
+                       int            *previous)
+{
+   int prev = -1, current, i;
+
+   for (i = 0; i < 16; i++)
+     {
+        if ((ed->cache[i].hash == hash) &&
+            (((ed->cache[i].str) &&
+              (ed->cache[i].str == string)) ||
+            ((ed->cache[i].len == len) &&
+             (!strcmp(ed->cache[i].str, string)))))
+          {
+             if (previous) *previous = ed->cache[i].previous;
+             current = ed->cache[i].current;
+             return current;
+          }
+     }
+
+   current = ed->hash[hash];
+   while (current != -1)
+     {
+        if ((ed->all[current].str) &&
+            ((ed->all[current].str == string) ||
+             ((ed->all[current].len == len) &&
+              (!strcmp(ed->all[current].str, string)))))
+          {
+             ed->cache[ed->cache_id].hash = hash;
+             ed->cache[ed->cache_id].current = current;
+             ed->cache[ed->cache_id].previous = prev;
+             ed->cache[ed->cache_id].str = ed->all[current].str;
+             ed->cache[ed->cache_id].len = len;
+             ed->cache_id++;
+             if (ed->cache_id >= 16) ed->cache_id = 0;
+             break;
+          }
+        prev = current;
+        current = ed->all[current].next;
+     }
+   if (previous) *previous = prev;
+   return current;
+}
+
 int
 eet_dictionary_string_add(Eet_Dictionary *ed,
                           const char     *string)
@@ -97,11 +168,38 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    Eet_String *current;
    const char *str;
    int hash, idx, pidx, len, cnt;
+   uintptr_t ret;
 
    if (!ed) return -1;
 
-   hash = _eet_hash_gen(string, 8);
-   len = strlen(string) + 1;
+   // fast path in initial dict build - add hashes to eina hash not eet one
+   // as eina is much faster - prepare for write later
+   eina_rwlock_take_write(&ed->rwlock);
+   if (ed->count == 0)
+     {
+        if (!ed->add_hash) ed->add_hash = eina_hash_string_superfast_new(NULL);
+     }
+   if (ed->add_hash)
+     {
+        ret = (uintptr_t)eina_hash_find(ed->add_hash, string);
+        if (ret > 0)
+          {
+             idx = (int)(ret - 1);
+             eina_rwlock_release(&ed->rwlock);
+             return idx;
+          }
+        ret = ed->count + 1;
+        eina_hash_add(ed->add_hash, string, (void *)ret);
+        ed->count++;
+        eina_rwlock_release(&ed->rwlock);
+        return (int)(ret - 1);
+     }
+   eina_rwlock_release(&ed->rwlock);
+
+   // fall back - we converted/prepared the dict for writing so go to slow
+   // mode - we still have a little cache for looking it up though
+   hash = _eet_hash_gen_len(string, 8, &len);
+   len++;
 
    eina_rwlock_take_read(&ed->rwlock);
 
@@ -175,11 +273,12 @@ done:
 }
 
 int
-eet_dictionary_string_get_size(const Eet_Dictionary *ed,
-                               int                   idx)
+eet_dictionary_string_get_size(Eet_Dictionary *ed,
+                               int             idx)
 {
    int length;
 
+   eet_dictionary_write_prepare(ed);
    eina_rwlock_take_read((Eina_RWLock *)&ed->rwlock);
    length = eet_dictionary_string_get_size_unlocked(ed, idx);
    eina_rwlock_release((Eina_RWLock *)&ed->rwlock);
@@ -214,11 +313,12 @@ done:
 }
 
 int
-eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
-                               int                   idx)
+eet_dictionary_string_get_hash(Eet_Dictionary *ed,
+                               int             idx)
 {
    int hash;
 
+   eet_dictionary_write_prepare(ed);
    eina_rwlock_take_read((Eina_RWLock *)&ed->rwlock);
    hash = eet_dictionary_string_get_hash_unlocked(ed, idx);
    eina_rwlock_release((Eina_RWLock *)&ed->rwlock);
@@ -251,11 +351,12 @@ done:
 }
 
 const char *
-eet_dictionary_string_get_char(const Eet_Dictionary *ed,
-                               int                   idx)
+eet_dictionary_string_get_char(Eet_Dictionary *ed,
+                               int             idx)
 {
    const char *s = NULL;
 
+   eet_dictionary_write_prepare(ed);
    eina_rwlock_take_read((Eina_RWLock *)&ed->rwlock);
    s = eet_dictionary_string_get_char_unlocked(ed, idx);
    eina_rwlock_release((Eina_RWLock *)&ed->rwlock);
@@ -497,6 +598,7 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
 
    if ((!ed) || (!string)) return 0;
 
+   eet_dictionary_write_prepare(ed);
    eina_rwlock_take_read((Eina_RWLock *)&ed->rwlock);
    if ((ed->start <= string) && (string < ed->end)) res = 1;
 

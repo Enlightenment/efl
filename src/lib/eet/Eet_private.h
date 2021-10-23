@@ -40,19 +40,29 @@ struct _Eet_Dictionary
    unsigned char *all_hash;
    unsigned char *all_allocated;
 
+   const char    *start;
+   const char    *end;
+
    Eina_Hash     *converts;
    Eina_RWLock    rwlock;
 
    int         size;
    int         offset;
-
-   int         hash[256];
-
    int         count;
    int         total;
 
-   const char *start;
-   const char *end;
+   int         hash[256];
+
+   Eina_Hash *add_hash;
+
+   // This is a quick and dirty speedup when building a dictionary
+   // or looking stuff up especially when looking up the same set of
+   // strings again and again one after the other
+   struct {
+      int hash, len, current, previous;
+      const char *str;
+   } cache[16];
+   int cache_id;
 };
 
 struct _Eet_Node
@@ -240,13 +250,13 @@ int
 eet_dictionary_string_get_size_unlocked(const Eet_Dictionary *ed,
                                         int index);
 int
-eet_dictionary_string_get_size(const Eet_Dictionary *ed,
+eet_dictionary_string_get_size(Eet_Dictionary *ed,
                                int index);
 const char *
 eet_dictionary_string_get_char_unlocked(const Eet_Dictionary *ed,
                                         int index);
 const char *
-eet_dictionary_string_get_char(const Eet_Dictionary *ed,
+eet_dictionary_string_get_char(Eet_Dictionary *ed,
                                int index);
 Eina_Bool
 eet_dictionary_string_get_float_unlocked(const Eet_Dictionary *ed,
@@ -276,9 +286,16 @@ int
 eet_dictionary_string_get_hash_unlocked(const Eet_Dictionary *ed,
                                         int index);
 int
-eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
+eet_dictionary_string_get_hash(Eet_Dictionary *ed,
                                int index);
 
+void
+eet_dictionary_write_prepare(Eet_Dictionary *ed);
+
+int
+_eet_hash_gen_len(const char *key,
+                  int         hash_size,
+                  int         *len_ret);
 int _eet_hash_gen(const char *key,
                   int hash_size);
 
