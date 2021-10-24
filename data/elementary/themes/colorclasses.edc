@@ -23,7 +23,6 @@ color_tree {
       "/bg/normal/gadgets/cpufreq/detail";
    }
    ":bg-dim" {
-      "/fg/normal/photo/base";
       "/bg/normal/colorselector/pattern";
       "/bg/normal/menu/item/check/base";
       "/bg/normal/menu/item/radio/base";
@@ -38,6 +37,9 @@ color_tree {
       "/bg/normal/radio/base";
       "/bg/normal/toggle/base";
       "/bg/normal/gadgets/mixer/middle";
+      "/bg/normal/colorclass/color";
+      "/bg/normal/popup";
+      "/fg/normal/photo/base";
       "/fg/disabled/text-current";
    }
    ":bg-dark" {
@@ -474,11 +476,11 @@ color_classes {
    color_class { name: "/dim/normal/hover";
       color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/colorclass/color";
-      color:  48  48   48 255; }
+//   color_class { name: "/bg/normal/colorclass/color";
+//      color:  48  48  48 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/popup";
-      color:  48  48   48 255; }
+//   color_class { name: "/bg/normal/popup";
+//      color:  48  48  48 255; }
 //   color_class { name: "/fg/normal/popup/text/title";
 //      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
