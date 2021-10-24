@@ -1,9 +1,3 @@
 group "Elm_Palette" struct {
   value "version" int: 1000;
-  group "colors" list {
-group "Elm_Palette_Color" struct { value "name" string: "/bg";
-value "r" uchar:  64; value "g" uchar:  64; value "b" uchar:  64; value "a" uchar: 255; }
-group "Elm_Palette_Color" struct { value "name" string: "/fg";
-value "r" uchar: 160; value "g" uchar: 160; value "b" uchar: 160; value "a" uchar: 255; }
-  }
 }
