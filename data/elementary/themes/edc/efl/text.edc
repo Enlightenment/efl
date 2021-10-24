@@ -43,7 +43,7 @@ group { "efl/text/scroller";
          description { state: "default" 0.0;
             rel.to: "bg";
             rel1.relative: 0.0 1.0;
-            color_class: "/bg/normal/entry/focus";
+            color_class: "/bg/selected/entry/focus";
             color: 255 255 255 0; // no cc
             visible: 0;
             offscale;
@@ -51,7 +51,6 @@ group { "efl/text/scroller";
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
             rel1.offset: 0 -3;
-            color_class: "/bg/selected/entry/focus";
             color: 255 255 255 255; // no cc
             visible: 1;
          }
@@ -222,14 +221,13 @@ group { "efl/text/single/scroller";
          description { state: "default" 0.0;
             rel.to: "bg";
             rel1.relative: 0.0 1.0;
-            color_class: "/bg/normal/entry/focus";
+            color_class: "/bg/selected/entry/focus";
             color: 255 255 255 0; // no cc
             visible: 0;
             offscale;
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
-            color_class: "/bg/selected/entry/focus";
             color: 255 255 255 255; // no cc
             rel1.offset: 0 -3;
             visible: 1;

@@ -693,8 +693,6 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
 //   color_class { name: "/bg/normal/entry";
 //      color:  48  48  48 255; }
-   color_class { name: "/bg/normal/entry/focus";
-      color:  51 153 255   0; }
 //   color_class { name: "/bg/selected/entry/focus";
 //      color:  51 153 255 255; }
    color_class { name: "/bg/selected/entry/validate-fail";
