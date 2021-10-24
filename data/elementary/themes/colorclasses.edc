@@ -181,6 +181,7 @@ color_tree {
    ":fg-high" {
       "/fg/pressed/fileman/overlay/progress/close";
       "/fg/pressed/notification/button/close";
+      "/fg/normal/gadgets/packagekit/pkg/normal";
    }
    ":fg-higher" {
       "/bg/normal/text-preedit-sel";
@@ -266,7 +267,6 @@ color_tree {
       "/fg/normal/gadgets/packagekit/label";
       "/fg/normal/gadgets/packagekit/text";
       "/fg/normal/gadgets/packagekit/status";
-      "/fg/normal/gadgets/packagekit/pkg/normal";
       "/fg-alt/pressed";
       "/fg-alt/selected";
       "/fg-alt/selected-pressed";
@@ -1363,7 +1363,7 @@ color_classes {
    color_class { name: "/fg/normal/gadgets/packagekit/pkg/low-priority";
       color: 255 255 255 128; }
 //   color_class { name: "/fg/normal/gadgets/packagekit/pkg/normal";
-//      color: 255 255 255 255; }
+//      color: 200 200 200 255; }
    color_class { name: "/fg/normal/gadgets/packagekit/pkg/security";
       color: 255 153  51 255; }
 }
