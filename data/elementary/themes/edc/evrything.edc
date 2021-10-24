@@ -969,15 +969,15 @@ group { name: "e/modules/everything/thumbview/main/scrollframe";
          clip_to: "sb_vbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color_class: "/bg/normal/scroller/bar/vertical";
+            color_class: "/fg/normal/scroller/bar/vertical";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "/bg/disabled/scroller/bar/vertical";
+            color_class: "/fg/disabled/scroller/bar/vertical";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color_class: "/bg/pressed/scroller/bar/vertical";
+            color_class: "/fg/pressed/scroller/bar/vertical";
          }
       }
 
@@ -1003,15 +1003,15 @@ group { name: "e/modules/everything/thumbview/main/scrollframe";
          clip_to: "sb_hbar_show";
          description { state: "default" 0.0;
             fixed: 1 1;
-            color_class: "/bg/normal/scroller/bar/horizontal";
+            color_class: "/fg/normal/scroller/bar/horizontal";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color_class: "/bg/disabled/scroller/bar/horizontal";
+            color_class: "/fg/disabled/scroller/bar/horizontal";
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color_class: "/bg/pressed/scroller/bar/horizontal";
+            color_class: "/fg/pressed/scroller/bar/horizontal";
          }
       }
 

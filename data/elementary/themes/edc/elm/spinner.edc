@@ -9,7 +9,7 @@ group { name: "elm/spinner/base/default";
       part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "/bg-dark/normal/spinner/base";
+            color_class: "/bg/normal/spinner/base";
          }
       }
       part { name: "access"; type: RECT;

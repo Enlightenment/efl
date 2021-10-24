@@ -78,7 +78,7 @@ group { "efl/spin_button/horizontal";
       }
       rect { "bg";
          desc { "default";
-            color_class: "/bg-dark/normal/spinner/base";
+            color_class: "/bg/normal/spinner/base";
          }
       }
       rect { "access";
