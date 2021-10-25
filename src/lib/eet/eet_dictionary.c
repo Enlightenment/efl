@@ -104,6 +104,8 @@ eet_dictionary_write_prepare(Eet_Dictionary *ed)
         return;
      }
 
+   ed->total = ed->count;
+
    ed->all = malloc(ed->count * sizeof(Eet_String));
    ed->all_hash = malloc(ed->count);
    ed->all_allocated = malloc(((ed->count >> 3) + 1));
