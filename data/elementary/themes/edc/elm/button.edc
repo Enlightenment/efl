@@ -663,11 +663,12 @@ group { name: "elm/button/base/media_player/prev/default";
    parts {
       rect { "base";
          desc { "default";
-            color_class: "/bg/normal/button-media";
+            color_class: "/bg/pressed/button-media";
+            color: 255 255 255 0; // no cc
          }
          desc { "selected";
             inherit: "default";
-            color_class: "/bg/pressed/button-media";
+            color: 255 255 255 255; // no cc
          }
       }
       image { "ic"; nomouse;

@@ -347,6 +347,53 @@ color_tree {
    ":light-on" {
       "/fg/normal/gadgets/backlight/light/on";
    }
+   ":dim-dark" {
+      "/dim/pressed";
+      "/dim-alt/pressed";
+      "/bg/pressed/multibuttonentry/button";
+      "/bg/selected/fileman/desk/base";
+      "/bg/normal/fileman/overlay/busy/base";
+      "/bg/normal/fileman/overlay/typebuf/base";
+      "/bg/normal/fileman/overlay/progress/base";
+      "/bg/normal/notification";
+      "/bg/pressed/gadgets/music_control/base";
+   }
+   ":dim" {
+      "/dim";
+      "/dim-alt";
+      "/bg/normal/fileman/desk/base";
+      "/bg/normal/gadgets/music_control/base";
+   }
+   ":dim-light" {
+      "/dim/disabled";
+      "/dim-alt/disabled";
+   }
+   ":dim-lighter" {
+      "/dim/normal/hover";
+      "/bg/normal/multibuttonentry/button";
+      "/bg/normal/calendar/day/today";
+      "/fg/normal/text-subtle";
+      "/bg/normal/actionslider/base";
+      "/bg/normal/gadgets/clock/cal/day/date/today";
+   }
+   ":dim-lightest" {
+      "/bg/disabled/actionslider/base";
+      "/fg/disabled/text-subtle";
+   }
+   ":dim-invisible" {
+      "/bg/normal/calendar/day/normal";
+      "/bg/normal/scroller/base";
+   }
+   ":shadow" {
+      "/shadow";
+   }
+   ":shadow-selected" {
+      "/shadow/selected";
+      "/shadow/pressed";
+   }
+   ":shadow-disabled" {
+      "/shadow/disabled";
+   }
 }
 
 
@@ -402,6 +449,24 @@ color_classes {
       color: 255 255 255   0; }
    color_class { name: ":light-on";
       color: 255 255 255 255; }
+   color_class { name: ":dim-invisible";
+      color:   0   0   0   0; }
+   color_class { name: ":dim-lightest";
+      color:   0   0   0  32; }
+   color_class { name: ":dim-lighter";
+      color:   0   0   0  64; }
+   color_class { name: ":dim-light";
+      color:   0   0   0  80; }
+   color_class { name: ":dim";
+      color:   0   0   0 160; }
+   color_class { name: ":dim-dark";
+      color:   0   0   0 200; }
+   color_class { name: ":shadow";
+      color:   0   0   0 128; }
+   color_class { name: ":shadow-selected";
+      color:   0   0   0 255; }
+   color_class { name: ":shadow-disabled";
+      color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -452,29 +517,29 @@ color_classes {
 //   color_class { name: "/fg/normal/navigation/title";
 //      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/shadow";
-      color:   0   0   0 128; }
-   color_class { name: "/shadow/selected";
-      color:   0   0   0 255; }
-   color_class { name: "/shadow/pressed";
-      color:   0   0   0 255; }
-   color_class { name: "/shadow/disabled";
-      color:   0   0   0  64; }
+//   color_class { name: "/shadow";
+//      color:   0   0   0 128; }
+//   color_class { name: "/shadow/selected";
+//      color:   0   0   0 255; }
+//   color_class { name: "/shadow/pressed";
+//      color:   0   0   0 255; }
+//   color_class { name: "/shadow/disabled";
+//      color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/dim";
-      color:   0   0   0 160; }
-   color_class { name: "/dim/pressed";
-      color:   0   0   0 200; }
-   color_class { name: "/dim/disabled";
-      color:   0   0   0  80; }
-   color_class { name: "/dim-alt";
-      color:   0   0   0 160; }
-   color_class { name: "/dim-alt/pressed";
-      color:   0   0   0 200; }
-   color_class { name: "/dim-alt/disabled";
-      color:   0   0   0  80; }
-   color_class { name: "/dim/normal/hover";
-      color:   0   0   0  64; }
+//   color_class { name: "/dim";
+//      color:   0   0   0 160; }
+//   color_class { name: "/dim/pressed";
+//      color:   0   0   0 200; }
+//   color_class { name: "/dim/disabled";
+//      color:   0   0   0  80; }
+//   color_class { name: "/dim-alt";
+//      color:   0   0   0 160; }
+//   color_class { name: "/dim-alt/pressed";
+//      color:   0   0   0 200; }
+//   color_class { name: "/dim-alt/disabled";
+//      color:   0   0   0  80; }
+//   color_class { name: "/dim/normal/hover";
+//      color:   0   0   0  64; }
 ///////////////////////////////////////////////////////////////////////////////
 //   color_class { name: "/bg/normal/colorclass/color";
 //      color:  48  48  48 255; }
@@ -491,10 +556,10 @@ color_classes {
 ///////////////////////////////////////////////////////////////////////////////
 //   color_class { name: "/fg/normal/multibuttonentry/text/guide";
 //      color:  80  80  80 255; }
-   color_class { name: "/bg/normal/multibuttonentry/button";
-      color:   0   0   0  64; }
-   color_class { name: "/bg/pressed/multibuttonentry/button";
-      color:   0   0   0 200; }
+//   color_class { name: "/bg/normal/multibuttonentry/button";
+//      color:   0   0   0  64; }
+//   color_class { name: "/bg/pressed/multibuttonentry/button";
+//      color:   0   0   0 200; }
 //   color_class { name: "/bg/selected/multibuttonentry/button/bar";
 //      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
@@ -534,8 +599,8 @@ color_classes {
 //   color_class { name: "/fg/normal/ctxpopup/arrow";
 //      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/scroller/base";
-      color:   0   0   0   0; }
+//   color_class { name: "/bg/normal/scroller/base";
+//      color:   0   0   0   0; }
 //   color_class { name: "/fg/normal/scroller/bar";
 //      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
@@ -552,10 +617,10 @@ color_classes {
 //   color_class { name: "/fg/pressed/panes/fold/arrow";
 //      color: 220 220 220 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/calendar/day/normal";
-      color:   0   0   0   0; }
-   color_class { name: "/bg/normal/calendar/day/today";
-      color:   0   0   0  64; }
+//   color_class { name: "/bg/normal/calendar/day/normal";
+//      color:   0   0   0   0; }
+//   color_class { name: "/bg/normal/calendar/day/today";
+//      color:   0   0   0  64; }
    color_class { name: "/bg/selected/calendar/day";
       color:  51 153 255 128; }
 //   color_class { name: "/fg/normal/calendar/day/checked";
@@ -603,16 +668,16 @@ color_classes {
       color: 255 153  51 255; }
 //   color_class { name: "/fg/normal/fileman/operation";
 //      color: 255 255 255 255; }
-   color_class { name: "/bg/normal/fileman/desk/base";
-      color:   0   0   0 128; }
-   color_class { name: "/bg/selected/fileman/desk/base";
-      color:   0   0   0 200; }
-   color_class { name: "/bg/normal/fileman/overlay/busy/base";
-      color:   0   0   0 200; }
+//   color_class { name: "/bg/normal/fileman/desk/base";
+//      color:   0   0   0 160; }
+//   color_class { name: "/bg/selected/fileman/desk/base";
+//      color:   0   0   0 200; }
+//   color_class { name: "/bg/normal/fileman/overlay/busy/base";
+//      color:   0   0   0 200; }
 //   color_class { name: "/fg/normal/fileman/overlay/busy/text";
 //      color: 255 255 255 255; }
-   color_class { name: "/bg/normal/fileman/overlay/typebuf/base";
-      color:   0   0   0 200; }
+//   color_class { name: "/bg/normal/fileman/overlay/typebuf/base";
+//      color:   0   0   0 200; }
 //   color_class { name: "/fg/normal/fileman/overlay/typebuf/text";
 //      color: 255 255 255 255; }
 //   color_class { name: "/fg/normal/fileman/drop/arrows";
@@ -625,8 +690,8 @@ color_classes {
       color:  51 153 255  25; }
 //   color_class { name: "/bg/normal/fileman/selection/outline";
 //      color:  51 153 255 255; }
-   color_class { name: "/bg/normal/fileman/overlay/progress/base";
-      color:   0   0   0 200; }
+//   color_class { name: "/bg/normal/fileman/overlay/progress/base";
+//      color:   0   0   0 200; }
 //   color_class { name: "/fg/normal/fileman/overlay/progress/bar";
 //      color:  51 153 255 255; }
 //   color_class { name: "/fg/normal/fileman/overlay/progress/text";
@@ -730,10 +795,10 @@ color_classes {
 //      color: 220 220 220 255; }
 //   color_class { name: "/fg/disabled/text-overlay";
 //      color: 128 128 128 255; }
-   color_class { name: "/fg/normal/text-subtle";
-      color:   0   0   0  64; }
-   color_class { name: "/fg/disabled/text-subtle";
-      color:   0   0   0  48; }
+//   color_class { name: "/fg/normal/text-subtle";
+//      color:   0   0   0  64; }
+//   color_class { name: "/fg/disabled/text-subtle";
+//      color:   0   0   0  32; }
    color_class { name: "/fg/normal/text-urgent";
       color: 255  51  51 255; }
 //   color_class { name: "/fg/normal/text-standout";
@@ -937,8 +1002,6 @@ color_classes {
 //      color: 160 160 160 255; }
 //   color_class { name: "/fg/pressed/button-media";
 //      color: 255 255 255 255; }
-   color_class { name: "/bg/normal/button-media";
-      color:  96  96  96   0; }
 //   color_class { name: "/bg/pressed/button-media";
 //      color:  96  96  96 255; }
 ///////////////////////////////////////////////////////////////////////////////
@@ -975,10 +1038,10 @@ color_classes {
 //   color_class { name: "/fg/normal/frame/separator";
 //      color:  80  80  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/actionslider/base";
-      color:   0   0   0  64; }
-   color_class { name: "/bg/disabled/actionslider/base";
-      color:   0   0   0  32; }
+//   color_class { name: "/bg/normal/actionslider/base";
+//      color:   0   0   0  64; }
+//   color_class { name: "/bg/disabled/actionslider/base";
+//      color:   0   0   0  32; }
 //   color_class { name: "/fg/normal/actionslider";
 //      color: 160 160 160 255; }
 //   color_class { name: "/fg/disabled/actionslider";
@@ -1122,8 +1185,8 @@ color_classes {
 //   color_class { name: "/fg/normal/everything/entry/cursor";
 //      color: 255 255 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/notification";
-      color:   0   0   0 200; }
+//   color_class { name: "/bg/normal/notification";
+//      color:   0   0   0 200; }
 //   color_class { name: "/fg/normal/notification/button/close";
 //      color: 255 255 255 255; }
 //   color_class { name: "/fg/pressed/notification/button/close";
@@ -1302,8 +1365,8 @@ color_classes {
 //      color:  51 153 255 255; }
    color_class { name: "/fg/normal/gadgets/clock/cal/day/date/hidden";
       color:  40  40  40 255; }
-   color_class { name: "/bg/normal/gadgets/clock/cal/day/date/today";
-      color:   0   0   0  64; }
+//   color_class { name: "/bg/normal/gadgets/clock/cal/day/date/today";
+//      color:   0   0   0  64; }
 //   color_class { name: "/fg/normal/gadgets/clock/cal/day/date/today";
 //      color: 255 255 255 255; }
    color_class { name: "/fg/normal/gadgets/clock/cal/daydate-sep";
@@ -1331,10 +1394,10 @@ color_classes {
    color_class { name: "/fg/normal/gadgets/mixer/volume/mute";
       color: 255 153  51 255; }
 ///////////////////////////////////////////////////////////////////////////////
-   color_class { name: "/bg/normal/gadgets/music_control/base";
-      color:   0   0   0 128; }
-   color_class { name: "/bg/pressed/gadgets/music_control/base";
-      color:   0   0   0 220; }
+//   color_class { name: "/bg/normal/gadgets/music_control/base";
+//      color:   0   0   0 160; }
+//   color_class { name: "/bg/pressed/gadgets/music_control/base";
+//      color:   0   0   0 200; }
 //   color_class { name: "/fg/pressed/gadgets/music_control/text";
 //      color: 255 255 255 255; }
 //   color_class { name: "/fg/pressed/gadgets/music_control/button";
