@@ -4921,7 +4921,6 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
                redraw_debug = 0;
           }
 
-        einfo->info.backend = EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB;
         einfo->info.connection = ecore_x_display_get();
         einfo->info.screen = NULL;
         einfo->info.drawable = ee->prop.window;
@@ -5120,7 +5119,6 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
                redraw_debug = 0;
           }
 
-        einfo->info.backend = EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB;
         einfo->info.connection = ecore_x_display_get();
         einfo->info.screen = NULL;
 

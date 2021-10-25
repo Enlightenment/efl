@@ -1,11 +1,6 @@
 #ifndef _EVAS_ENGINE_SOFTWARE_X11_H
 # define _EVAS_ENGINE_SOFTWARE_X11_H
 
-typedef enum
-{
-   EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB
-} Evas_Engine_Info_Software_X11_Backend;
-
 typedef struct _Evas_Engine_Info_Software_X11 Evas_Engine_Info_Software_X11;
 
 struct _Evas_Engine_Info_Software_X11
@@ -17,8 +12,6 @@ struct _Evas_Engine_Info_Software_X11
    /* engine specific data & parameters it needs to set up */
    struct
      {
-        Evas_Engine_Info_Software_X11_Backend backend;
-
         void *connection, *screen;
         unsigned int drawable, mask;
         void *visual;
@@ -37,9 +30,9 @@ struct _Evas_Engine_Info_Software_X11
    /* engine specific function calls to query stuff about the destination */
    struct
      {
-        void *(*best_visual_get) (int backend, void *connection, int screen);
-        unsigned int (*best_colormap_get) (int backend, void *connection, int screen);
-        int (*best_depth_get) (int backend, void *connection, int screen);
+        void *(*best_visual_get) (void *connection, int screen);
+        unsigned int (*best_colormap_get) (void *connection, int screen);
+        int (*best_depth_get) (void *connection, int screen);
      } func;
 
    unsigned char mask_changed : 1;

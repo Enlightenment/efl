@@ -45,9 +45,9 @@ struct _Render_Engine
 };
 
 /* prototypes we will use here */
-static void        *_best_visual_get(int backend, void *connection, int screen);
-static unsigned int _best_colormap_get(int backend, void *connection, int screen);
-static int          _best_depth_get(int backend, void *connection, int screen);
+static void        *_best_visual_get(void *connection, int screen);
+static unsigned int _best_colormap_get(void *connection, int screen);
+static int          _best_depth_get(void *connection, int screen);
 
 static Eina_List *_outbufs = NULL;
 
@@ -165,34 +165,27 @@ on_error:
 }
 
 static void *
-_best_visual_get(int backend, void *connection, int screen)
+_best_visual_get(void *connection, int screen)
 {
    if (!connection) return NULL;
 
-   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
-     return DefaultVisual((Display *)connection, screen);
-
-   return NULL;
+   return DefaultVisual((Display *)connection, screen);
 }
 
 static unsigned int
-_best_colormap_get(int backend, void *connection, int screen)
+_best_colormap_get(void *connection, int screen)
 {
    if (!connection) return 0;
 
-   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
-     return DefaultColormap((Display *)connection, screen);
-   return 0;
+   return DefaultColormap((Display *)connection, screen);
 }
 
 static int
-_best_depth_get(int backend, void *connection, int screen)
+_best_depth_get(void *connection, int screen)
 {
    if (!connection) return 0;
 
-   if (backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
-     return DefaultDepth((Display *)connection, screen);
-   return 0;
+   return DefaultDepth((Display *)connection, screen);
 }
 
 static void
@@ -234,9 +227,6 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
    Render_Engine *re = NULL;
    static int try_swapbuf = -1;
    char *s;
-
-   if (info->info.backend != EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
-     return NULL;
 
    if (try_swapbuf == -1)
      {
@@ -284,9 +274,6 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
    Evas_Engine_Info_Software_X11 *info = in;
    Render_Engine *re = data;
    Outbuf *ob = NULL;
-
-   if (info->info.backend != EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
-     return 0;
 
    _outbufs = eina_list_remove(_outbufs, re->generic.ob);
 
