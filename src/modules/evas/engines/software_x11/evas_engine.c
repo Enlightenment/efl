@@ -10,7 +10,6 @@
 #include "evas_xlib_color.h"
 #include "evas_xlib_image.h"
 #include "evas_xlib_dri_image.h"
-#include "evas_x_egl.h"
 
 #include "../software_generic/evas_native_common.h"
 
@@ -52,14 +51,6 @@ static int          _best_depth_get(void *connection, int screen);
 static Eina_List *_outbufs = NULL;
 
 /* internal engine routines */
-static void
-_output_egl_shutdown(Render_Engine *re)
-{
-   if (!re->egl.disp) return;
-   _egl_x_win_surf_free(re->egl.disp, re->egl.surface);
-   _egl_x_disp_terminate(re->egl.disp);
-}
-
 static void *
 _output_xlib_setup(void *engine, int w, int h, int rot, Display *disp, Drawable draw,
                    Visual *vis, Colormap cmap, int depth, int debug,
@@ -333,7 +324,6 @@ eng_output_free(void *engine, void *data)
      {
         _outbufs = eina_list_remove(_outbufs, re->generic.ob);
         evas_render_engine_software_generic_clean(engine, &re->generic);
-        _output_egl_shutdown(re);
         free(re);
      }
 }
