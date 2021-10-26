@@ -293,26 +293,6 @@ evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const ch
 {
    RGBA_Image *im_im;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        im_im = (RGBA_Image *) evas_cache2_image_open
-          (evas_common_image_cache2_get(), file, key, lo, error);
-        if (im_im)
-          {
-             *error = evas_cache2_image_open_wait(&im_im->cache_entry);
-             if ((*error != EVAS_LOAD_ERROR_NONE)
-                 && im_im->cache_entry.animated.animated)
-               {
-                  evas_cache2_image_close(&im_im->cache_entry);
-                  im_im = NULL;
-               }
-             else
-               return evas_gl_common_image_new_from_rgbaimage(gc, im_im, lo, error);
-          }
-     }
-#endif
-
    im_im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im_im) return NULL;
 
