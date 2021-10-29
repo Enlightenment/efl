@@ -403,10 +403,16 @@ color_tree {
    ":selected-alt-trans" {
       "/bg/normal/access";
    }
+   ":selected-alt-dim" {
+      "/fg/disabled/text-line-changed";
+   }
    ":selected2" {
       "/fg/normal/text-line-added";
       "/fg/normal/desklock/fprint/success";
       "/fg/normal/gadgets/procstats/mem/all";
+   }
+   ":selected2-dim" {
+      "/fg/disabled/text-line-added";
    }
    ":selected3" {
       "/fg/normal/gadgets/procstats/cpu/all";
@@ -427,6 +433,21 @@ color_tree {
       "/fg/disabled/text-failure";
       "/fg/disabled/text-error";
       "/fg/disabled/text-fatal";
+      "/fg/disabled/text-line-removed";
+   }
+   ":selected5" {
+      "/fg/normal/text-function";
+      "/fg/normal/text-preprocessor";
+   }
+   ":selected5-dim" {
+      "/fg/disabled/text-function";
+      "/fg/disabled/text-preprocessor";
+   }
+   ":selected6" {
+      "/fg/normal/text-string";
+   }
+   ":selected6-dim" {
+      "/fg/disabled/text-string";
    }
    ":win-normal" {
       "/bg/normal/comp/win";
@@ -527,6 +548,48 @@ color_tree {
    ":success-dim" {
       "/fg/disabled/text-success";
    }
+   ":keyword" {
+      "/fg/normal/text-keyword";
+   }
+   ":keyword-dim" {
+      "/fg/disabled/text-keyword";
+   }
+   ":match" {
+      "/fg/normal/text-match";
+   }
+   ":match-dim" {
+      "/fg/disabled/text-match";
+   }
+   ":comment" {
+      "/fg/normal/text-comment";
+   }
+   ":comment-dim" {
+      "/fg/disabled/text-comment";
+   }
+   ":number" {
+      "/fg/normal/text-number";
+   }
+   ":number-dim" {
+      "/fg/disabled/text-number";
+   }
+   ":class" {
+      "/fg/normal/text-class";
+   }
+   ":class-dim" {
+      "/fg/disabled/text-class";
+   }
+   ":note" {
+      "/fg/normal/text-note";
+   }
+   ":note-dim" {
+      "/fg/disabled/text-note";
+   }
+   ":todo" {
+      "/fg/normal/text-todo";
+   }
+   ":todo-dim" {
+      "/fg/disabled/text-todo";
+   }
 }
 
 color_classes {
@@ -603,16 +666,28 @@ color_classes {
       color: 255 153  51 255; }
    color_class { name: ":selected-alt-trans";
       color: 255 153  51  64; }
+   color_class { name: ":selected-alt-dim";
+      color: 128  76  25 255; }
    color_class { name: ":selected-dim";
       color:  25  76 128 255; }
    color_class { name: ":selected2";
       color: 153 255  51 255; }
+   color_class { name: ":selected2-dim";
+      color:  76 128  25 255; }
    color_class { name: ":selected3";
       color: 255  51 153 255; }
    color_class { name: ":selected4";
       color: 255  51  51 255; }
    color_class { name: ":selected4-dim";
       color: 153  34  34 255; }
+   color_class { name: ":selected5";
+      color: 153  51 255 255; }
+   color_class { name: ":selected5-dim";
+      color:  76  25 127 255; }
+   color_class { name: ":selected6";
+      color:  51 255 153 255; }
+   color_class { name: ":selected6-dim";
+      color:  56 160  96 255; }
    color_class { name: ":win-normal";
       color: 255 255 255 255; }
    color_class { name: ":win-selected";
@@ -655,8 +730,35 @@ color_classes {
       color:  51 255  51 255; }
    color_class { name: ":success-dim";
       color:  51 153  51 255; }
+   color_class { name: ":keyword";
+      color: 255 153 153 255; }
+   color_class { name: ":keyword-dim";
+      color: 128  80  80 255; }
+   color_class { name: ":match";
+      color: 255 187  51 255; }
+   color_class { name: ":match-dim";
+      color: 128  96  25 255; }
+   color_class { name: ":comment";
+      color:  51 153 153 255; }
+   color_class { name: ":comment-dim";
+      color:  56  96  96 255; }
+   color_class { name: ":number";
+      color: 220 220  48 255; }
+   color_class { name: ":number-dim";
+      color: 128 128  56 255; }
+   color_class { name: ":class";
+      color: 119 170 221 255; }
+   color_class { name: ":class-dim";
+      color:  59  85 110 255; }
+   color_class { name: ":note";
+      color: 160  80  17 255; }
+   color_class { name: ":note-dim";
+      color:  80  40   8 255; }
+   color_class { name: ":todo";
+      color:  40  80 160 255; }
+   color_class { name: ":todo-dim";
+      color:  20  40  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // specific element color classes. they fall abck like a directory search to
@@ -1045,18 +1147,18 @@ color_classes {
 //      color: 255 255 255 255; }
 //   color_class { name: "/fg/disabled/text-code";
 //      color: 128 128 128 255; }
-   color_class { name: "/fg/normal/text-comment";
-      color:  51 153 153 255; }
-   color_class { name: "/fg/disabled/text-comment";
-      color:  51  96  96 255; }
-   color_class { name: "/fg/normal/text-string";
-      color:  51 255 153 255; }
-   color_class { name: "/fg/disabled/text-string";
-      color:  96 128 112 255; }
-   color_class { name: "/fg/normal/text-number";
-      color: 220 220  48 255; }
-   color_class { name: "/fg/disabled/text-number";
-      color:  96  96  32 255; }
+//   color_class { name: "/fg/normal/text-comment";
+//      color:  51 153 153 255; }
+//   color_class { name: "/fg/disabled/text-comment";
+//      color:  56  96  96 255; }
+//   color_class { name: "/fg/normal/text-string";
+//      color:  51 255 153 255; }
+//   color_class { name: "/fg/disabled/text-string";
+//      color:  56 160  96 255; }
+//   color_class { name: "/fg/normal/text-number";
+//      color: 220 220  48 255; }
+//   color_class { name: "/fg/disabled/text-number";
+//      color: 128 128  56 255; }
 //   color_class { name: "/fg/normal/text-brace";
 //      color: 128 128 128 255; }
 //   color_class { name: "/fg/disabled/text-brace";
@@ -1065,46 +1167,46 @@ color_classes {
 //      color:  51 153 255 255; }
 //   color_class { name: "/fg/disabled/text-type";
 //      color:  25  76 128 255; }
-   color_class { name: "/fg/normal/text-class";
-      color: 119 170 221 255; }
-   color_class { name: "/fg/disabled/text-class";
-      color:  59  85 110 255; }
-   color_class { name: "/fg/normal/text-function";
-      color: 153  51 255 255; }
-   color_class { name: "/fg/disabled/text-function";
-      color:  76  25 127 255; }
+//   color_class { name: "/fg/normal/text-class";
+//      color: 119 170 221 255; }
+//   color_class { name: "/fg/disabled/text-class";
+//      color:  59  85 110 255; }
+//   color_class { name: "/fg/normal/text-function";
+//      color: 153  51 255 255; }
+//   color_class { name: "/fg/disabled/text-function";
+//      color:  76  25 127 255; }
 //   color_class { name: "/fg/normal/text-param";
 //      color: 220 220 220 255; }
 //   color_class { name: "/fg/disabled/text-param";
 //      color:  96  96  96 255; }
-   color_class { name: "/fg/normal/text-keyword";
-      color: 255 153 153 255; }
-   color_class { name: "/fg/disabled/text-keyword";
-      color: 128  80  80 255; }
-   color_class { name: "/fg/normal/text-preprocessor";
-      color: 153  51 255 255; }
-   color_class { name: "/fg/disabled/text-preprocessor";
-      color: 128  37 128 255; }
+//   color_class { name: "/fg/normal/text-keyword";
+//      color: 255 153 153 255; }
+//   color_class { name: "/fg/disabled/text-keyword";
+//      color: 128  80  80 255; }
+//   color_class { name: "/fg/normal/text-preprocessor";
+//      color: 153  51 255 255; }
+//   color_class { name: "/fg/disabled/text-preprocessor";
+//      color:  76  25 127 255; }
 //   color_class { name: "/fg/normal/text-line-added";
 //      color: 153 255  51 255; }
-   color_class { name: "/fg/disabled/text-line-added";
-      color:  76 128  25 255; }
+//   color_class { name: "/fg/disabled/text-line-added";
+//      color:  76 128  25 255; }
 //   color_class { name: "/fg/normal/text-line-removed";
 //      color: 255  51  51 255; }
-   color_class { name: "/fg/disabled/text-line-removed";
-      color: 128  25  25 255; }
+//   color_class { name: "/fg/disabled/text-line-removed";
+//      color: 153  34  34 255; }
 //   color_class { name: "/fg/normal/text-line-changed";
 //      color: 255 153  51 255; }
-   color_class { name: "/fg/disabled/text-line-changed";
-      color: 128  76  25 255; }
+//   color_class { name: "/fg/disabled/text-line-changed";
+//      color: 128  76  25 255; }
 //   color_class { name: "/fg/normal/text-status";
 //      color:  48  48  48 255; }
 //   color_class { name: "/fg/disabled/text-status";
 //      color:  56  56  56 255; }
-   color_class { name: "/fg/normal/text-match";
-      color: 187 187  51 255; }
-   color_class { name: "/fg/disabled/text-match";
-      color:  96  96  25 255; }
+//   color_class { name: "/fg/normal/text-match";
+//      color: 255 187  51 255; }
+//   color_class { name: "/fg/disabled/text-match";
+//      color: 128  96  25 255; }
 //   color_class { name: "/fg/normal/text-current";
 //      color:  32  32  32 255; }
 //   color_class { name: "/fg/disabled/text-current";
@@ -1113,14 +1215,14 @@ color_classes {
 //      color:  36  36  36 255; }
 //   color_class { name: "/fg/disabled/text-ignored";
 //      color:  44  44  44 255; }
-   color_class { name: "/fg/normal/text-note";
-      color: 160  80  17 255; }
-   color_class { name: "/fg/disabled/text-note";
-      color:  80  40   8 255; }
-   color_class { name: "/fg/normal/text-todo";
-      color:  40  80 160 255; }
-   color_class { name: "/fg/disabled/text-todo";
-      color:  20  40  80 255; }
+//   color_class { name: "/fg/normal/text-note";
+//      color: 160  80  17 255; }
+//   color_class { name: "/fg/disabled/text-note";
+//      color:  80  40   8 255; }
+//   color_class { name: "/fg/normal/text-todo";
+//      color:  40  80 160 255; }
+//   color_class { name: "/fg/disabled/text-todo";
+//      color:  20  40  80 255; }
 //   color_class { name: "/fg/normal/text-gutter";
 //      color: 128 128 128 255; }
 //   color_class { name: "/fg/disabled/text-gutter";
