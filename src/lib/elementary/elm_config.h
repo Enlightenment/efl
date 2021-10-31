@@ -1138,6 +1138,7 @@ EAPI void         elm_config_palette_color_unset(Elm_Palette *pal, const char *n
 EAPI void         elm_config_palette_save(Elm_Palette *pal, const char *palette);
 EAPI void         elm_config_palette_free(Elm_Palette *pal);
 EAPI void         elm_config_palette_delete(const char *palette);
+EAPI Eina_Bool    elm_config_palette_system_has(const char *palette);
 EAPI Eina_List   *elm_config_palette_list(void);
 EAPI void         elm_config_palette_list_free(Eina_List *list);
 /** end new palette code **/

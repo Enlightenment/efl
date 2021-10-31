@@ -1036,6 +1036,17 @@ elm_config_palette_delete(const char *palette)
    ecore_file_unlink(buf);
 }
 
+EAPI Eina_Bool
+elm_config_palette_system_has(const char *palette)
+{
+   char buf[PATH_MAX];
+
+   if (!palette) return EINA_TRUE;
+   if (strchr(palette, '/')) return EINA_FALSE;
+   _elm_data_dir_snprintf(buf, sizeof(buf), "colors/%s.pal", palette);
+   return ecore_file_exists(buf);
+}
+
 EAPI Eina_List *
 elm_config_palette_list(void)
 {
