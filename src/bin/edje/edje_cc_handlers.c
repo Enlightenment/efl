@@ -190,6 +190,8 @@ struct _Edje_Cc_Handlers_Hierarchy_Info /* Struct that keeps globals value to im
 };
 typedef struct _Edje_Cc_Handlers_Hierarchy_Info Edje_Cc_Handlers_Hierarchy_Info;
 
+static void       color_class_register_color_tag(const char *tag);
+
 static Eina_Array *part_hierarchy = NULL; /* stack parts,support nested parts */
 static void       edje_cc_handlers_hierarchy_set(Edje_Part *src);
 static Edje_Part *edje_cc_handlers_hierarchy_parent_get(void);
@@ -1130,6 +1132,70 @@ New_Statement_Handler statement_handlers_short_single[] =
    {"collections.group.noinherit_script", st_collections_group_noinherit_script},
    {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
 };
+
+void
+color_class_register(const char *name)
+{
+   if (!color_class_reg) color_class_reg = eina_hash_string_superfast_new(NULL);
+   if (!color_class_reg)
+     {
+        ERR("Out of memory");
+        exit(-1);
+     }
+   if (eina_hash_find(color_class_reg, name)) return;
+   eina_hash_add(color_class_reg, name, color_class_reg);
+}
+
+static void
+color_class_register_color_tag_span(const char *start, const char *end)
+{
+   const char *s;
+   char *ts;
+
+   if (!start) return;
+   char *tmps = malloc(end - start + 1);
+   if (!tmps)
+     {
+        ERR("out of memory");
+        exit(-1);
+     }
+   for (ts = tmps, s = start; s < end; s++, ts++) *ts = *s;
+   *ts = 0;
+   color_class_register(tmps);
+   free(tmps);
+}
+
+static void
+color_class_register_color_tag(const char *tag)
+{
+   // find in tag string "xxx=cc:yyy and pass to color_class_register()
+   const char *s, *cc_start = NULL, *cc_end = NULL;
+
+   for (s = tag; *s; s++)
+     {
+        if (!cc_start)
+          {
+             if ((s[0] == '=') && (s[1] == 'c') && (s[2] == 'c') && (s[3] == ':'))
+               {
+                  cc_end = NULL;
+                  cc_start = s + 4;
+                  s += 3;
+               }
+          }
+        else
+          {
+             if (isblank(s[0]))
+               {
+                  cc_end = s;
+                  color_class_register_color_tag_span(cc_start, cc_end);
+                  cc_start = NULL;
+                  cc_end = NULL;
+               }
+          }
+     }
+   if (cc_start && !cc_end) cc_end = s;
+   color_class_register_color_tag_span(cc_start, cc_end);
+}
 
 /** @edcsubsection{lazedc_external_params,
  *                 LazEDC Group.Parts.External.Desc.Params} */
@@ -3202,6 +3268,7 @@ st_styles_style_base(void)
    tag->key = mem_strdup("DEFAULT");
    tag->value = parse_str(0);
    stl->tags = eina_list_append(stl->tags, tag);
+   color_class_register_color_tag(tag->value);
 }
 
 /**
@@ -3228,6 +3295,7 @@ st_styles_style_tag(void)
    tag->key = parse_str(0);
    tag->value = parse_str(1);
    stl->tags = eina_list_append(stl->tags, tag);
+   color_class_register_color_tag(tag->value);
 }
 
 /** @edcsubsection{toplevel_text_classes,
@@ -9084,6 +9152,7 @@ st_collections_group_parts_part_description_color_class(void)
      }
 
    current_desc->color_class = parse_str(0);
+   color_class_register(current_desc->color_class);
 }
 
 /**

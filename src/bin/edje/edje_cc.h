@@ -270,6 +270,8 @@ int     statement_handler_short_single_num(void);
 int     nested_handler_num(void);
 int     nested_handler_short_num(void);
 
+void    color_class_register(const char *name);
+
 void    reorder_parts(void);
 void    source_edd(void);
 void    source_fetch(void);
@@ -347,6 +349,8 @@ extern Eina_Bool current_group_inherit;
 extern Eina_List             *color_tree_root;
 extern int                    beta;
 extern int                    no_warn_unused_images;
+
+extern Eina_Hash             *color_class_reg;
 
 extern int had_quote;
 

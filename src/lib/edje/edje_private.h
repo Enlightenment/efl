@@ -327,7 +327,7 @@ typedef struct _Edje_Gfx_Filter                      Edje_Gfx_Filter;
 typedef struct _Edje_Gfx_Filter_Directory            Edje_Gfx_Filter_Directory;
 typedef struct _Edje_Color_Tree_Node                 Edje_Color_Tree_Node;
 typedef struct _Edje_Vector_Directory_Entry          Edje_Vector_Directory_Entry;
-
+typedef struct _Edje_Color_Class_Info                Edje_Color_Class_Info;
 
 typedef struct _Edje_Vibration_Sample                Edje_Vibration_Sample;
 typedef struct _Edje_Vibration_Directory             Edje_Vibration_Directory;
@@ -656,7 +656,12 @@ struct _Edje_External_Directory_Entry
 
 /*----------*/
 
-
+/*----------*/
+struct _Edje_Color_Class_Info
+{
+   Eina_List *colors;
+};
+/*----------*/
 
 /*----------*/
 
@@ -2334,6 +2339,7 @@ EAPI void _edje_edd_shutdown(void);
 
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_color_class_info;
 
 extern Eina_Inlist     *_edje_edjes;
 

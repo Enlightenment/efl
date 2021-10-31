@@ -224,6 +224,7 @@ Eina_List *codes = NULL;
 Eina_List *code_lookups = NULL;
 Eina_List *aliases = NULL;
 Eina_List *color_tree_root = NULL;
+Eina_Hash *color_class_reg = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_part_collection = NULL;
@@ -2781,6 +2782,44 @@ data_thread_fontmap_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED
    thread_end(0);
 }
 
+static Eina_Bool
+data_write_color_class_register_each_cb(const Eina_Hash *hash EINA_UNUSED,
+                                        const void *key,
+                                        void *data EINA_UNUSED,
+                                        void *fdata)
+{
+   Edje_Color_Class_Info *cc_info = fdata;
+   cc_info->colors = eina_list_append(cc_info->colors,
+                                      eina_stringshare_add(key));
+   return EINA_TRUE;
+}
+
+static void
+data_write_color_class_register(Eet_File *ef)
+{
+   Edje_Color_Class_Info *cc_info;
+   const char *s;
+
+   if (!color_class_reg) return;
+   cc_info = calloc(1, sizeof(Edje_Color_Class_Info));
+   if (!cc_info)
+     {
+        ERR("Out of Memory");
+        exit(-1);
+     }
+   eina_hash_foreach(color_class_reg,
+                     data_write_color_class_register_each_cb,
+                     cc_info);
+
+   eet_data_write(ef, _edje_edd_edje_color_class_info,
+                  "edje/color_class_info", cc_info, compress_mode);
+
+   eina_hash_free(color_class_reg);
+   color_class_reg = NULL;
+   EINA_LIST_FREE(cc_info->colors, s) eina_stringshare_del(s);
+   free(cc_info);
+}
+
 void
 data_write(void)
 {
@@ -2893,6 +2932,7 @@ data_write(void)
              data_thread_authors_end(ef, NULL);
           }
      }
+   data_write_color_class_register(ef);
    data_write_images();
    data_image_sets_init();
    INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
@@ -4458,6 +4498,7 @@ process_color_tree(char *s, const char *f_in, int ln)
 
              ctn = mem_alloc(SZ(Edje_Color_Tree_Node));
              ctn->name = strdup(token[!id]);
+             color_class_register(ctn->name);
              ctn->color_classes = NULL;
 
              edje_file->color_tree = eina_list_append(edje_file->color_tree, ctn);

@@ -79,6 +79,31 @@
 typedef struct _Elm_Theme Elm_Theme;
 
 /**
+ * Return a list of strings of color classes used in the given theme
+ *
+ * @param th The theme to get the reference from (NULL will be default)
+ * @return The list of color classes
+ *
+ * Free the returned list using elm_theme_color_class_list_free() when done.
+ *
+ * @ingroup Elm_Theme
+ * @sizne 1.26
+ */
+EAPI Eina_List *elm_theme_color_class_list(Elm_Theme *th);
+
+/**
+ * Free list of color classes used in the themes
+ *
+ * @param list The list to free
+ *
+ * Free the returned list returned from elm_theme_color_class_list()
+ *
+ * @ingroup Elm_Theme
+ * @sizne 1.26
+ */
+EAPI void       elm_theme_color_class_list_free(Eina_List *list);
+
+/**
  * Create a new specific theme
  *
  * This creates an empty specific theme that only uses the default theme. A

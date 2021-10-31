@@ -521,6 +521,80 @@ _elm_theme_shutdown(void)
      }
 }
 
+
+
+
+
+static Eina_List *
+_elm_theme_file_color_class_list(Eina_List *list,
+                                 Eina_Inlist *handles)
+{
+   Eina_Stringshare *c;
+   Eina_List *ccl;
+   Eina_List *ll;
+   Elm_Theme_File *etf;
+
+   EINA_INLIST_FOREACH(handles, etf)
+     {
+        ccl = edje_mmap_color_class_used_list(etf->handle);
+        EINA_LIST_FOREACH(ccl, ll, c)
+          {
+             list = eina_list_append(list, eina_stringshare_add(c));
+          }
+        edje_file_color_class_used_free(ccl);
+     }
+   return list;
+}
+
+static Eina_Bool
+_elm_theme_color_class_list_hash_cb(const Eina_Hash *hash EINA_UNUSED,
+                                    const void *key,
+                                    void *data EINA_UNUSED,
+                                    void *fdata)
+{
+   Eina_List **list = fdata;
+
+   *list = eina_list_append(*list, eina_stringshare_add(key));
+   return EINA_TRUE;
+}
+
+EAPI Eina_List *
+elm_theme_color_class_list(Elm_Theme *th)
+{
+   Eina_List *list;
+   Eina_Hash *hash;
+   const char *s;
+
+   if (!th) th = theme_default;
+   if (!th) return NULL;
+
+   // go through all possible theme files and find collections that match
+   list = _elm_theme_file_color_class_list(NULL, th->overlay);
+   list = _elm_theme_file_color_class_list(list, th->themes);
+   list = _elm_theme_file_color_class_list(list, th->extension);
+
+   hash = eina_hash_string_superfast_new(NULL);
+   EINA_LIST_FREE(list, s)
+     {
+        if (!eina_hash_find(hash, s)) eina_hash_add(hash, s, hash);
+        eina_stringshare_del(s);
+     }
+   eina_hash_foreach(hash, _elm_theme_color_class_list_hash_cb, &list);
+   eina_hash_free(hash);
+
+   // sort the list nicely at the end
+   list = eina_list_sort(list, 0, EINA_COMPARE_CB(strcmp));
+   return list;
+}
+
+EAPI void
+elm_theme_color_class_list_free(Eina_List *list)
+{
+   const char *s;
+
+   EINA_LIST_FREE(list, s) eina_stringshare_del(s);
+}
+
 EAPI Elm_Theme *
 elm_theme_new(void)
 {

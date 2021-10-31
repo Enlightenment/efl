@@ -2,6 +2,7 @@
 
 EAPI Eet_Data_Descriptor * _edje_edd_edje_file = NULL;
 EAPI Eet_Data_Descriptor * _edje_edd_edje_part_collection = NULL;
+EAPI Eet_Data_Descriptor * _edje_edd_edje_color_class_info = NULL;
 
 Eet_Data_Descriptor *_edje_edd_edje_string = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
@@ -310,6 +311,7 @@ _edje_edd_shutdown(void)
 
    FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_part_collection);
+   FREED(_edje_edd_edje_color_class_info);
 }
 
 #define EDJE_DEFINE_POINTER_TYPE(Type, Name)                                                                                         \
@@ -409,6 +411,11 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "entries", entries, _edje_edd_edje_image_directory_entry);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "sets", sets, _edje_edd_edje_image_directory_set);
    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(_edje_edd_edje_image_directory, Edje_Image_Directory, "vectors", vectors, _edje_edd_edje_vector_directory_entry);
+
+   /* collection directory */
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Color_Class_Info);
+   _edje_edd_edje_color_class_info = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_LIST_STRING(_edje_edd_edje_color_class_info, Edje_Color_Class_Info, "colors", colors);
 
    /*MO*/
 

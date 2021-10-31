@@ -1808,6 +1808,37 @@ EAPI Eina_List        *edje_mmap_collection_list(Eina_File *f);
 EAPI void              edje_mmap_collection_list_free(Eina_List *lst);
 
 /**
+ * @brief Returns a list of colorclasses used in this edje file
+ * @param f The mapped file
+ *
+ * @return A list of strings freed by edje_file_color_class_used_free()
+ *
+ * @since 1.26
+ */
+EAPI Eina_List        *edje_mmap_color_class_used_list(Eina_File *f);
+
+/**
+ * @brief Returns a list of colorclasses used in this edje file
+ * @param file The file path
+ *
+ * @return A list of strings freed by edje_file_color_class_used_free()
+ *
+ * @since 1.26
+ */
+EAPI Eina_List        *edje_file_color_class_used_list(const char *file);
+
+/**
+ * @brief Frees a list of color classes used
+ * @param The list
+ *
+ * This frees the list returned by edje_mmap_color_class_used_list() or 
+ * edje_file_color_class_used_list() when you no longer need it.
+ *
+ * @since 1.26
+ */
+EAPI void              edje_file_color_class_used_free(Eina_List *lst);
+
+/**
  * @brief Determines whether a group matching glob exists in an edje mapped file.
  * @param f The mapped file
  * @param glob A glob to match on

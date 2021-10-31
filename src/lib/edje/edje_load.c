@@ -207,6 +207,62 @@ edje_mmap_collection_list_free(Eina_List *lst)
    edje_file_collection_list_free(lst);
 }
 
+EAPI Eina_List *
+edje_mmap_color_class_used_list(Eina_File *f)
+{
+   Eina_List *lst = NULL, *l;
+   Edje_File *edf;
+   int error_ret = 0;
+   const char *s;
+
+   if (!f) return NULL;
+   edf = _edje_cache_file_coll_open(f, NULL, &error_ret, NULL, NULL);
+   if (edf)
+     {
+        Edje_Color_Class_Info *cc_info;
+
+        cc_info = eet_data_read(edf->ef, _edje_edd_edje_color_class_info,
+                                "edje/color_class_info");
+        if (cc_info)
+          {
+             EINA_LIST_FOREACH(cc_info->colors, l, s)
+               lst = eina_list_append(lst, eina_stringshare_add(s));
+             eina_list_free(cc_info->colors);
+             free(cc_info);
+          }
+        _edje_cache_file_unref(edf);
+     }
+
+   return lst;
+}
+
+EAPI Eina_List *
+edje_file_color_class_used_list(const char *file)
+{
+   Eina_File *f;
+   Eina_List *lst = NULL;
+   char *tmp;
+
+   if ((!file) || (!*file)) return NULL;
+   tmp = eina_vpath_resolve(file);
+   f = eina_file_open(tmp, EINA_FALSE);
+   if (!f) goto err;
+
+   lst = edje_mmap_collection_list(f);
+
+   eina_file_close(f); // close matching open OK
+err:
+   free(tmp);
+   return lst;
+}
+
+EAPI void
+edje_file_color_class_used_free(Eina_List *lst)
+{
+   eina_list_free(lst);
+}
+
+
 EAPI Eina_Bool
 edje_mmap_group_exists(Eina_File *f, const char *glob)
 {
