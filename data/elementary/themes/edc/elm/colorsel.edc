@@ -456,6 +456,7 @@ group { name: "elm/colorselector/base/default";
             fixed: 1 1;
             color_class: "/fg/normal/colorselector/cursor";
          }
+         dragable.events: "elm.arrow";
       }
       part { name: "arrow_base"; type: RECT;
          clip_to: "arrow_clip";
@@ -463,6 +464,7 @@ group { name: "elm/colorselector/base/default";
             rel.to: "arrow_bg";
             color_class: "/bg/normal/colorselector";
          }
+         dragable.events: "elm.arrow";
       }
       PAT_FILL_SCALE(160, 160)
       part { name: "pat";
@@ -500,6 +502,13 @@ group { name: "elm/colorselector/base/default";
             rel2.offset: -1 1;
             offscale;
          }
+      }
+      part { name: "arrow_event"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "elm.arrow_icon";
+            color: 0 0 0 0; // no cc
+         }
+         dragable.events: "elm.arrow";
       }
       part { name: "cursor"; type: RECT;
          scale: 1;
