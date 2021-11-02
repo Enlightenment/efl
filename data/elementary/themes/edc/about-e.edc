@@ -148,6 +148,7 @@ group { name: "e/widgets/about/main";
             rel2.relative: 1.0 0.0;
             FIXED_SIZE(75, 75)
             offscale;
+            color_class: "/fg/normal/about/logo";
          }
       }
       ////////////////////////////////////////////////////////////////

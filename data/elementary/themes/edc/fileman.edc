@@ -566,6 +566,14 @@ group { name: "e/fileman/default/icon/fixed";
 group { name: "e/fileman/desktop/icon/fixed";
    inherit: "e/fileman/default/icon/fixed";
    alias: "e/fileman/desktop/icon/variable";
+   styles {
+      style { name: "fileman_icon_name_desktop";
+         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=cc:/fg/normal/grid/item/fileman/desktop wrap=mixed ellipsis=1.0";
+      }
+      style { name: "fileman_icon_name_selected_desktop";
+         base: "font="FN" font_size=10 text_class=fileman_icon align=center color=cc:/fg/selected/grid/item/fileman/desktop wrap=mixed ellipsis=1.0";
+      }
+   }
    parts {
       part { name: "base"; type: RECT; mouse_events: 0;
          description { state: "selected" 0.0;
@@ -587,6 +595,14 @@ group { name: "e/fileman/desktop/icon/fixed";
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
             color_class: "/bg/selected/fileman/desk/base";
+         }
+      }
+      part { name: "e.text.label";
+         description { state: "default" 0.0;
+            text.style: "fileman_icon_name_desktop";
+         }
+         description { state: "selected" 0.0;
+            text.style: "fileman_icon_name_selected_desktop";
          }
       }
       part { name: "labelmin"; type: TEXTBLOCK; mouse_events: 0;
