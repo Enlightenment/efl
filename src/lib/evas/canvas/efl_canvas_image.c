@@ -599,8 +599,7 @@ _evas_image_animated_frame_set(Eo *eo_obj, int frame_index)
    evas_object_async_block(obj);
    frame_count = evas_object_image_animated_frame_count_get(eo_obj);
 
-   /* limit the size of frame to FRAME_MAX */
-   if ((frame_count > FRAME_MAX) || (frame_count < 0) || (frame_index > frame_count))
+   if ((frame_count < 0) || (frame_index > frame_count))
      return EINA_FALSE;
 
    if (!ENFN->image_animated_frame_set) return EINA_FALSE;

@@ -254,6 +254,4 @@ void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
        EINA_COW_IMAGE_STATE_WRITE_END(Obj, cur_write);                  \
     }
 
-#define FRAME_MAX 1024
-
 #endif // EVAS_IMAGE_PRIVATE_H
