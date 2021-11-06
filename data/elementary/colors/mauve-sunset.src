@@ -1,0 +1,558 @@
+group "Elm_Palette" struct {
+  value "version" int: 1000;
+  group "colors" list {
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg";
+      value "r" uchar: 62;
+      value "g" uchar: 55;
+      value "b" uchar: 73;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-semi";
+      value "r" uchar: 62;
+      value "g" uchar: 55;
+      value "b" uchar: 78;
+      value "a" uchar: 182;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-trans";
+      value "r" uchar: 62;
+      value "g" uchar: 55;
+      value "b" uchar: 78;
+      value "a" uchar: 192;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-dimmest";
+      value "r" uchar: 37;
+      value "g" uchar: 30;
+      value "b" uchar: 42;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-dimmer";
+      value "r" uchar: 43;
+      value "g" uchar: 35;
+      value "b" uchar: 53;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-alt-dark";
+      value "r" uchar: 51;
+      value "g" uchar: 45;
+      value "b" uchar: 63;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-alt-light";
+      value "r" uchar: 53;
+      value "g" uchar: 45;
+      value "b" uchar: 71;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-alt";
+      value "r" uchar: 55;
+      value "g" uchar: 48;
+      value "b" uchar: 64;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-dim";
+      value "r" uchar: 46;
+      value "g" uchar: 39;
+      value "b" uchar: 57;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-dark";
+      value "r" uchar: 28;
+      value "g" uchar: 25;
+      value "b" uchar: 39;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-dark-invisible";
+      value "r" uchar: 28;
+      value "g" uchar: 25;
+      value "b" uchar: 39;
+      value "a" uchar: 0;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-darkest";
+      value "r" uchar: 16;
+      value "g" uchar: 13;
+      value "b" uchar: 19;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-dark-alt";
+      value "r" uchar: 26;
+      value "g" uchar: 24;
+      value "b" uchar: 32;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-medium";
+      value "r" uchar: 70;
+      value "g" uchar: 61;
+      value "b" uchar: 83;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-high";
+      value "r" uchar: 78;
+      value "g" uchar: 67;
+      value "b" uchar: 93;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-higher";
+      value "r" uchar: 99;
+      value "g" uchar: 79;
+      value "b" uchar: 113;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-highest";
+      value "r" uchar: 113;
+      value "g" uchar: 92;
+      value "b" uchar: 132;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-light";
+      value "r" uchar: 194;
+      value "g" uchar: 182;
+      value "b" uchar: 202;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":bg-light-alt";
+      value "r" uchar: 185;
+      value "g" uchar: 174;
+      value "b" uchar: 194;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":fg-dim";
+      value "r" uchar: 138;
+      value "g" uchar: 120;
+      value "b" uchar: 75;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":fg";
+      value "r" uchar: 224;
+      value "g" uchar: 222;
+      value "b" uchar: 202;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":fg-prehigh";
+      value "r" uchar: 204;
+      value "g" uchar: 202;
+      value "b" uchar: 180;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":fg-high";
+      value "r" uchar: 239;
+      value "g" uchar: 239;
+      value "b" uchar: 234;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":fg-higher";
+      value "r" uchar: 238;
+      value "g" uchar: 237;
+      value "b" uchar: 232;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":fg-light";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected";
+      value "r" uchar: 242;
+      value "g" uchar: 180;
+      value "b" uchar: 0;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-light";
+      value "r" uchar: 242;
+      value "g" uchar: 180;
+      value "b" uchar: 0;
+      value "a" uchar: 25;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-medium";
+      value "r" uchar: 242;
+      value "g" uchar: 180;
+      value "b" uchar: 0;
+      value "a" uchar: 128;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-heavy";
+      value "r" uchar: 242;
+      value "g" uchar: 180;
+      value "b" uchar: 0;
+      value "a" uchar: 192;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-alt";
+      value "r" uchar: 255;
+      value "g" uchar: 86;
+      value "b" uchar: 51;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-alt-trans";
+      value "r" uchar: 255;
+      value "g" uchar: 90;
+      value "b" uchar: 51;
+      value "a" uchar: 64;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-alt-dim";
+      value "r" uchar: 128;
+      value "g" uchar: 43;
+      value "b" uchar: 25;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected-dim";
+      value "r" uchar: 121;
+      value "g" uchar: 76;
+      value "b" uchar: 2;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected2";
+      value "r" uchar: 153;
+      value "g" uchar: 255;
+      value "b" uchar: 51;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected2-dim";
+      value "r" uchar: 76;
+      value "g" uchar: 128;
+      value "b" uchar: 25;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected3";
+      value "r" uchar: 255;
+      value "g" uchar: 51;
+      value "b" uchar: 153;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected4";
+      value "r" uchar: 255;
+      value "g" uchar: 51;
+      value "b" uchar: 51;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected4-dim";
+      value "r" uchar: 153;
+      value "g" uchar: 34;
+      value "b" uchar: 34;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected5";
+      value "r" uchar: 153;
+      value "g" uchar: 51;
+      value "b" uchar: 255;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected5-dim";
+      value "r" uchar: 76;
+      value "g" uchar: 25;
+      value "b" uchar: 127;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected6";
+      value "r" uchar: 51;
+      value "g" uchar: 255;
+      value "b" uchar: 153;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":selected6-dim";
+      value "r" uchar: 56;
+      value "g" uchar: 160;
+      value "b" uchar: 96;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":win-normal";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":win-selected";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":light-off";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 0;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":light-medium";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 128;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":light-high";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 200;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":light-on";
+      value "r" uchar: 255;
+      value "g" uchar: 255;
+      value "b" uchar: 255;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":light-glow";
+      value "r" uchar: 255;
+      value "g" uchar: 220;
+      value "b" uchar: 160;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":dim-invisible";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 0;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":dim-lightest";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 32;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":dim-lighter";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 64;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":dim-light";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 80;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":dim";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 160;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":dim-dark";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 200;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":shadow";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 128;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":shadow-selected";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":shadow-disabled";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 64;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":outline";
+      value "r" uchar: 0;
+      value "g" uchar: 0;
+      value "b" uchar: 0;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":validate-fail";
+      value "r" uchar: 255;
+      value "g" uchar: 32;
+      value "b" uchar: 16;
+      value "a" uchar: 80;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":validate-pass";
+      value "r" uchar: 32;
+      value "g" uchar: 255;
+      value "b" uchar: 16;
+      value "a" uchar: 80;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":success";
+      value "r" uchar: 51;
+      value "g" uchar: 255;
+      value "b" uchar: 51;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":success-dim";
+      value "r" uchar: 51;
+      value "g" uchar: 153;
+      value "b" uchar: 51;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":keyword";
+      value "r" uchar: 255;
+      value "g" uchar: 153;
+      value "b" uchar: 153;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":keyword-dim";
+      value "r" uchar: 128;
+      value "g" uchar: 80;
+      value "b" uchar: 80;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":match";
+      value "r" uchar: 255;
+      value "g" uchar: 187;
+      value "b" uchar: 51;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":match-dim";
+      value "r" uchar: 128;
+      value "g" uchar: 96;
+      value "b" uchar: 25;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":comment";
+      value "r" uchar: 51;
+      value "g" uchar: 153;
+      value "b" uchar: 153;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":comment-dim";
+      value "r" uchar: 56;
+      value "g" uchar: 96;
+      value "b" uchar: 96;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":number";
+      value "r" uchar: 220;
+      value "g" uchar: 220;
+      value "b" uchar: 48;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":number-dim";
+      value "r" uchar: 128;
+      value "g" uchar: 128;
+      value "b" uchar: 56;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":class";
+      value "r" uchar: 119;
+      value "g" uchar: 170;
+      value "b" uchar: 221;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":class-dim";
+      value "r" uchar: 59;
+      value "g" uchar: 85;
+      value "b" uchar: 110;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":note";
+      value "r" uchar: 160;
+      value "g" uchar: 80;
+      value "b" uchar: 17;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":note-dim";
+      value "r" uchar: 80;
+      value "g" uchar: 40;
+      value "b" uchar: 8;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":todo";
+      value "r" uchar: 40;
+      value "g" uchar: 80;
+      value "b" uchar: 160;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: ":todo-dim";
+      value "r" uchar: 20;
+      value "g" uchar: 40;
+      value "b" uchar: 80;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: "/bg/selected/titlebar";
+      value "r" uchar: 242;
+      value "g" uchar: 180;
+      value "b" uchar: 0;
+      value "a" uchar: 255;
+    }
+    group "Elm_Palette_Color" struct {
+      value "name" string: "/bg/selected/menu/item";
+      value "r" uchar: 242;
+      value "g" uchar: 180;
+      value "b" uchar: 0;
+      value "a" uchar: 255;
+    }
+  }
+}
