@@ -1,7 +1,8 @@
 pals = [
   'default',
   'light',
-  'mauve-sunset'
+  'mauve-sunset',
+  'candy-mint'
 ]
 
 foreach p: pals
