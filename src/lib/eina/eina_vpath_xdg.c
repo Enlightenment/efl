@@ -19,6 +19,11 @@ eina_xdg_env_init(void)
    Eina_Vpath_Interface_User user;
 
    eina_vpath_resolve_snprintf(home, sizeof(home), "(:home:)/");
+   // last char is / - we won't want it
+   for (s = home; *s; s++)
+     {
+        if (s[1] == 0) s[0] = 0;
+     }
    memset(&user, 0, sizeof(Eina_Vpath_Interface_User));
 
 #define FATAL_SNPRINTF(_buf, _err, _fmt, ...) \
