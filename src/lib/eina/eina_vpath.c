@@ -408,7 +408,9 @@ eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user)
    ADD(downloads);
    ADD(music);
    ADD(pictures);
-   ADD(pub);
+// should be public ain path string
+//   ADD(pub);
+   _eina_vpath_data_add("usr.public", user->pub);
    ADD(templates);
    ADD(videos);
    ADD(data);
