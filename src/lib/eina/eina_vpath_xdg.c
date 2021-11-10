@@ -42,6 +42,7 @@ eina_xdg_env_init(void)
       if (!s) s = home; \
    } else s = home; \
    FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\%s", s, (char *)_dir); \
+   EINA_PATH_TO_UNIX(_meta); \
    (&user)->_meta = _meta;
 
 # define ENV_SET(_env, _meta) \
@@ -50,7 +51,8 @@ eina_xdg_env_init(void)
       s = getenv(_env); \
       if (!s) s = home; \
    } else s = home; \
-   FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\", s); \
+   FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s", s); \
+   EINA_PATH_TO_UNIX(_meta); \
    (&user)->_meta = _meta;
 
    ENV_DIR_SET(NULL, "Desktop", desktop);
@@ -68,7 +70,10 @@ eina_xdg_env_init(void)
    if (!(s = getenv("APPDATA")))
      user.run = NULL;
    else
-     user.run = s;
+     {
+        EINA_PATH_TO_UNIX(s);
+        user.run = s;
+     }
 #else /* _WIN32 */
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
 #  define ENV_HOME_SET(_env, _dir, _meta) \

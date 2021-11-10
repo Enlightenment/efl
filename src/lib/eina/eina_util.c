@@ -91,6 +91,9 @@ eina_environment_home_get(void)
      }
 #endif
    home = strdup(home);
+#ifdef _WIN32
+   EINA_PATH_TO_UNIX(home);
+#endif
    return home;
 }
 
@@ -130,5 +133,8 @@ eina_environment_tmp_get(void)
 #endif
 
    tmp = strdup(tmp);
+#ifdef _WIN32
+   EINA_PATH_TO_UNIX(tmp);
+#endif
    return tmp;
 }

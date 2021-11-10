@@ -126,7 +126,7 @@ _eina_file_escape(char *path, size_t len)
      return NULL;
 
 #ifdef _WIN32
-   EVIL_PATH_SEP_WIN32_TO_UNIX(path);
+   EINA_PATH_TO_UNIX(path);
 #endif
 
    while ((p = strchr(p, '/')))

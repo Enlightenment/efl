@@ -550,7 +550,7 @@ eina_file_cleanup(Eina_Tmpstr *path)
    if (!result)
      return NULL;
 
-   EVIL_PATH_SEP_WIN32_TO_UNIX(result);
+   EINA_PATH_TO_UNIX(result);
 
    return result;
 }

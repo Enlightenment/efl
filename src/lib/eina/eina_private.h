@@ -35,6 +35,23 @@
 #include "eina_accessor.h"
 #include "eina_stringshare.h"
 
+#ifdef _WIN32
+
+# define EINA_PATH_SEP_SWAP(p, s1, s2) \
+   do { \
+     char *iter = p; \
+     while (*iter) \
+       { \
+          if (*iter == s1) \
+            *iter = s2; \
+          iter++; \
+       } \
+   } while (0)
+
+# define EINA_PATH_TO_UNIX(p) EINA_PATH_SEP_SWAP(p, '\\', '/')
+# define EINA_PATH_TO_WIN32(p) EINA_PATH_SEP_SWAP(p, '/', '\\')
+#endif
+
 #ifndef ABS
 # define ABS(x) ((x) < 0 ? -(x) : (x))
 #endif
