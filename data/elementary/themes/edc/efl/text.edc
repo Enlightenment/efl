@@ -473,12 +473,6 @@ group { "efl/text";
       item: "guide.font.size" "10";
       item: "guide.style.color" "cc:/fg/normal/entry/text/guide";
    }
-   styles {
-      style { name: "efl_ui_text_guide_style";
-         base: "font="FN" font_size=10 color=cc:/fg/normal/entry/text/guide wrap=word text_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
-         DISABLED_TEXTBLOCK_TAGS
-      }
-   }
    parts {
       part { name: "efl.background"; type: SWALLOW;
          description { state: "default" 0.0;
