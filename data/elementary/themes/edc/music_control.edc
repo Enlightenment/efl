@@ -108,6 +108,12 @@ group { name: "e/modules/music-control/popup";
    }
    parts {
       alias: "cover_swallow" "e.cover_swallow";
+      part { name: "min"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0;
+            min: 160 160;
+         }
+      }
       part { name: "cover_bg";
          description { state: "default" 0;
             rel1.relative: 0.25 0.25;
