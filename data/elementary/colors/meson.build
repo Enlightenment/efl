@@ -3,7 +3,8 @@ pals = [
   'light',
   'mauve-sunset',
   'candy-mint',
-  'ebony-brass'
+  'ebony-brass',
+  'white-pill'
 ]
 
 foreach p: pals
