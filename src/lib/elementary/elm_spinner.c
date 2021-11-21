@@ -126,7 +126,7 @@ _is_label_format_integer(const char *fmt)
 }
 
 static void
-_entry_show(Elm_Spinner_Data *sd)
+_entry_show(Evas_Object *obj, Elm_Spinner_Data *sd)
 {
    Eina_List *l;
    Elm_Spinner_Special_Value *sv;
@@ -182,6 +182,7 @@ _entry_show(Elm_Spinner_Data *sd)
      snprintf(buf, sizeof(buf), fmt, sd->val);
 
 apply:
+   elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
    elm_object_text_set(sd->ent, buf);
 }
 
@@ -220,7 +221,7 @@ apply:
      elm_layout_text_set(obj, "elm.text", buf);
 
    efl_access_i18n_name_changed_signal_emit(obj);
-   if (sd->entry_visible) _entry_show(sd);
+   if (sd->entry_visible) _entry_show(obj, sd);
 }
 
 static Eina_Bool
@@ -394,9 +395,7 @@ _entry_hide(Evas_Object *obj)
    if (sd->button_layout)
      {
         elm_layout_signal_emit(obj, "elm,state,button,active", "elm");
-        evas_object_show(sd->text_button);
         elm_layout_signal_emit(obj, "elm,state,entry,inactive", "elm");
-        evas_object_hide(sd->ent);
      }
    else
      elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
@@ -601,9 +600,8 @@ _entry_show_cb(void *data,
 {
    ELM_SPINNER_DATA_GET(data, sd);
 
-   _entry_show(sd);
+   _entry_show(obj, sd);
    elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
-   evas_object_hide(sd->text_button);
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
@@ -648,7 +646,7 @@ _toggle_entry(Evas_Object *obj)
         if (!sd->button_layout)
           {
              elm_layout_signal_emit(obj, "elm,state,active", "elm");
-             _entry_show(sd);
+             _entry_show(obj, sd);
              elm_entry_select_all(sd->ent);
              sd->entry_visible = EINA_TRUE;
           }
@@ -657,7 +655,6 @@ _toggle_entry(Evas_Object *obj)
            (sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _entry_focus_change, obj);
         sd->entry_visible = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,entry,active", "elm");
-        evas_object_show(sd->ent);
         {
            Eina_List *items = NULL;
 
