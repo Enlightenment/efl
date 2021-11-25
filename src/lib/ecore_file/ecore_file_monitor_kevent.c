@@ -121,7 +121,6 @@ _ecore_file_monitor_kevent_ls(const char *directory)
 
    it = eina_file_direct_ls(directory);
    if (!it) return NULL;
-
    EINA_ITERATOR_FOREACH(it, info)
      {
         File_Info *file = malloc(sizeof(File_Info));
@@ -191,7 +190,10 @@ _ecore_file_monitor_kevent_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh
           }
         if ((evs[i].fflags & NOTE_WRITE) || (evs[i].fflags & NOTE_ATTRIB))
           {
-             _ecore_file_monitor_kevent_find(em);
+             if (ecore_file_is_dir(em->path))
+               _ecore_file_monitor_kevent_find(em);
+             else
+               em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, em->path);
           }
      }
 
@@ -206,7 +208,6 @@ _ecore_file_monitor_kevent_find(Ecore_File_Monitor *em)
    Eina_List *files;
 
    files = _ecore_file_monitor_kevent_ls(em->path);
-
    EINA_LIST_FOREACH(ECORE_FILE_MONITOR_KEVENT(em)->prev, l, file)
      {
         Eina_Bool exists = EINA_FALSE;
@@ -262,7 +263,7 @@ _ecore_file_monitor_kevent_monitor(Ecore_File_Monitor *em, const char *path)
    struct kevent ev;
    int fd, res = 0;
 
-   if ((!ecore_file_exists(path)) || (!ecore_file_is_dir(path)))
+   if (!ecore_file_exists(path))
      return 0;
 
    fd = open(path, O_RDONLY);
@@ -276,7 +277,8 @@ _ecore_file_monitor_kevent_monitor(Ecore_File_Monitor *em, const char *path)
    eina_file_close_on_exec(fd, EINA_TRUE);
 
    ECORE_FILE_MONITOR_KEVENT(em)->fd = fd;
-   ECORE_FILE_MONITOR_KEVENT(em)->prev = _ecore_file_monitor_kevent_ls(em->path);
+   if (ecore_file_is_dir(em->path))
+     ECORE_FILE_MONITOR_KEVENT(em)->prev = _ecore_file_monitor_kevent_ls(em->path);
 
    eina_hash_direct_add(_kevent_monitors, &(ECORE_FILE_MONITOR_KEVENT(em)->fd), em);
 
