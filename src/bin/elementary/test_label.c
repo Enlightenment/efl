@@ -86,7 +86,8 @@ test_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
 
    evas_object_show(bx);
    evas_object_show(win);
@@ -305,7 +306,8 @@ test_label_slide(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    evas_object_smart_callback_add(bt, "clicked", _label_slide_stop_cb, lbs);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -739,7 +741,8 @@ test_label_ellipsis(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
-   evas_object_resize(win, 300, 100);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           100 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -908,6 +911,7 @@ test_label_emoji(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    _font_set(txt, "Sans");
    evas_object_show(cmb);
 
-   evas_object_resize(win, 300, 400);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

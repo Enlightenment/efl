@@ -12,7 +12,8 @@ static Evas_Object *_test_code_win_create(const char *id, const char *name)
    elm_win_title_set(win, name);
    elm_win_autodel_set(win, EINA_TRUE);
 
-   evas_object_resize(win, 360 * elm_config_scale_get(), 220 * elm_config_scale_get());
+   evas_object_resize(win, 360 * elm_config_scale_get(),
+                           220 * elm_config_scale_get());
    return win;
 }
 

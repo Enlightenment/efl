@@ -95,6 +95,7 @@ test_photo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(tb);
    evas_object_show(sc);
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }

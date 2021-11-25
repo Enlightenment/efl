@@ -19,6 +19,8 @@ test_colorclass(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    evas_object_show(cc);
 
    evas_object_show(win);
-   evas_object_size_hint_min_set(win, 400, 280);
-   evas_object_resize(win, 400, 280);
+   evas_object_size_hint_min_set(win, 400 * elm_config_scale_get(),
+                                      280 * elm_config_scale_get());
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           280 * elm_config_scale_get());
 }

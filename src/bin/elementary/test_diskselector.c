@@ -350,6 +350,7 @@ test_diskselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

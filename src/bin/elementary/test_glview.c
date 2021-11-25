@@ -728,7 +728,8 @@ _test_glview_do(Evas_GL_Context_Version version)
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _on_done, win);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 

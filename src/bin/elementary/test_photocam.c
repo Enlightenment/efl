@@ -455,7 +455,8 @@ test_photocam(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(box);
    evas_object_show(tb2);
 
-   evas_object_resize(win, 800, 800);
+   evas_object_resize(win, 800 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -626,7 +627,8 @@ test_photocam_remote(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    evas_object_show(box);
    evas_object_show(tb2);
 
-   evas_object_resize(win, 800, 800);
+   evas_object_resize(win, 800 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -743,7 +745,8 @@ test_photocam_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
         evas_object_show(rd);
      }
 
-   evas_object_resize(win, 150, 150);
+   evas_object_resize(win, 150 * elm_config_scale_get(),
+                           150 * elm_config_scale_get());
    evas_object_show(win);
 }
 

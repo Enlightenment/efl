@@ -371,7 +371,8 @@ test_launcher(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 480, 400);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -496,7 +497,8 @@ test_launcher2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 555, 410);
+   evas_object_resize(win, 555 * elm_config_scale_get(),
+                           410 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -916,6 +918,7 @@ test_launcher3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 480, 400);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

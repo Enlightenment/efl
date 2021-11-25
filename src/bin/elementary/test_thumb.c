@@ -58,6 +58,7 @@ test_thumb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(tb);
    evas_object_show(sc);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }

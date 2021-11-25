@@ -440,7 +440,8 @@ test_list(void        *data EINA_UNUSED,
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 
    evas_object_smart_callback_add(li, "edge,top", scroll_top, NULL);
@@ -568,7 +569,8 @@ test_list_horizontal(void        *data EINA_UNUSED,
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -693,7 +695,8 @@ test_list2(void        *data EINA_UNUSED,
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -819,7 +822,8 @@ test_list3(void        *data EINA_UNUSED,
 
    evas_object_show(li);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -968,7 +972,8 @@ test_list4(void        *data EINA_UNUSED,
    elm_list_go(li);
 
    evas_object_show(li);
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1029,7 +1034,8 @@ test_list5(void        *data EINA_UNUSED,
    elm_list_item_append(li, "Audio", NULL, NULL, NULL, &info);
 
    elm_list_go(li);
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1175,7 +1181,8 @@ test_list6(void        *data EINA_UNUSED,
    evas_object_data_set(li, "label", lb);
 
    evas_object_show(gd);
-   evas_object_resize(win, 480, 480);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1226,7 +1233,8 @@ test_list7(void        *data EINA_UNUSED,
    elm_list_go(li);
    evas_object_show(li);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1698,7 +1706,8 @@ _test_list_focus(const char *name, const char *title, Eina_Bool horiz)
    elm_list_go(li);
    evas_object_show(li);
 
-   evas_object_resize(win, 420, 600);
+   evas_object_resize(win, 420 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1823,7 +1832,8 @@ test_list_separator(void        *data EINA_UNUSED,
 
    evas_object_show(li);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1948,6 +1958,7 @@ test_list_multi_select(void *data EINA_UNUSED,
 
    elm_list_go(li);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }

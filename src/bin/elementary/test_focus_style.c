@@ -112,7 +112,8 @@ test_focus_style(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -174,7 +175,8 @@ test_focus_part(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -231,6 +233,7 @@ test_focus_object_style(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }

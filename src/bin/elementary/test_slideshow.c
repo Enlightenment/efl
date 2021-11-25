@@ -231,6 +231,7 @@ test_slideshow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_MOVE,
                                   _notify_show, notify);
 
-   evas_object_resize(win, 500, 400);
+   evas_object_resize(win, 500 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

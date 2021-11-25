@@ -216,7 +216,8 @@ test_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_content_set(fr, combobox);
    evas_object_show(combobox);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 
    elm_genlist_item_class_free(itc);

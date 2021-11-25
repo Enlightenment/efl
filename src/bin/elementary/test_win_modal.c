@@ -78,6 +78,7 @@ test_win_modal(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    /* make the window modal */
    elm_win_modal_set(win, EINA_TRUE);
 
-   evas_object_resize(win, 250, 150);
+   evas_object_resize(win, 250 * elm_config_scale_get(),
+                           150 * elm_config_scale_get());
    evas_object_show(win);
 }

@@ -100,7 +100,8 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    win = elm_win_util_standard_add("focus", "Focus");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   evas_object_resize(win, 800, 600);
+   evas_object_resize(win, 800 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    elm_object_event_callback_add(win, _event, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
    my_show(win);
@@ -671,7 +672,8 @@ test_focus2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    elm_object_focus_next_object_set(bt2, en, ELM_FOCUS_DOWN);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -774,7 +776,8 @@ test_focus_hide_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -898,7 +901,8 @@ test_focus3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(box, ck);
    evas_object_show(ck);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -965,7 +969,8 @@ test_focus4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(btn, "clicked", btn_clicked, btn2);
    evas_object_smart_callback_add(btn2, "clicked", btn_clicked2, btn2);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1076,7 +1081,8 @@ test_focus5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(btn, "clicked", _focus5_btn_clicked, grid);
    evas_object_show(btn);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1221,7 +1227,8 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(btn);
 
    // size and show the window
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1281,6 +1288,7 @@ test_focus7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_show(btn);
 
    // size and show the window
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

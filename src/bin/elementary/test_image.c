@@ -78,7 +78,8 @@ test_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *event_in
           }
      }
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -172,7 +173,8 @@ test_image_scale_type(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, voi
           }
      }
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -227,7 +229,8 @@ test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, 
    evas_object_show(sl);
    evas_object_data_set(win, "v_sl", sl);
 
-   evas_object_resize(win, 300, 600);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -395,8 +398,9 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
    // set file now
    _url_activate_cb(win, o, NULL);
 
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
-   evas_object_resize(win, 320, 480);
 }
 
 static void
@@ -438,7 +442,8 @@ test_click_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *ev
    elm_box_pack_end(box, label);
    evas_object_show(label);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -640,7 +645,8 @@ test_load_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *eve
    evas_object_show(hbox);
    elm_box_pack_end(box, hbox);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -715,6 +721,7 @@ test_image_prescale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(box, hbox);
    evas_object_show(hbox);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }

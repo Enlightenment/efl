@@ -94,7 +94,8 @@ test_inwin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_win_inwin_content_set(inwin, bxx);
    evas_object_show(lb);
 
-   evas_object_resize(win, 320, 240);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           240 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -124,7 +125,8 @@ test_inwin2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_inwin_content_set(inwin, lb);
    evas_object_show(lb);
 
-   evas_object_resize(win, 320, 240);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           240 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -156,6 +158,7 @@ test_inwin3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(box, lb);
    evas_object_show(lb);
 
-   evas_object_resize(win, 320, 240);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           240 * elm_config_scale_get());
    evas_object_show(win);
 }

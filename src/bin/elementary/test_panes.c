@@ -102,7 +102,8 @@ _test_panes(const char *style)
    evas_object_show(bt);
    elm_object_part_content_set(panes_h, "bottom", bt);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 

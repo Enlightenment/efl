@@ -307,9 +307,12 @@ _inlined_add(Evas_Object *parent)
    evas_object_data_set(win, "lb", lb);
 
    evas_object_move(win, 10, 100);
-   evas_object_resize(win, 150, 70);
+   evas_object_resize(win, 150 * elm_config_scale_get(),
+                           70  * elm_config_scale_get());
    evas_object_move(elm_win_inlined_image_object_get(win), 10, 100);
-   evas_object_resize(elm_win_inlined_image_object_get(win), 150, 70);
+   evas_object_resize(elm_win_inlined_image_object_get(win),
+                      150 * elm_config_scale_get(),
+                      70   * elm_config_scale_get());
 
    evas_object_smart_callback_add(win, "profile,changed", _win_profile_changed_cb, NULL);
    evas_object_show(win);
@@ -350,7 +353,8 @@ _socket_add(const char *name)
         _inlined_add(win);
 
         evas_object_move(win, 0, 0);
-        evas_object_resize(win, 150, 200);
+        evas_object_resize(win, 150 * elm_config_scale_get(),
+                                200 * elm_config_scale_get());
 
         evas_object_smart_callback_add(win, "profile,changed", _win_profile_changed_cb, NULL);
         evas_object_show(win);
@@ -531,7 +535,8 @@ test_config(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_show(bx);
    evas_object_show(sc);
 
-   evas_object_resize(win, 400, 500);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -650,6 +655,7 @@ test_config_font_overlay(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    it = elm_naviframe_item_push(nf, "Font Overlay", NULL, btn, box, NULL);
    evas_object_data_set(nf, "page1", it);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

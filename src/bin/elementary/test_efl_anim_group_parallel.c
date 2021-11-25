@@ -125,6 +125,7 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    evas_object_move(btn2, 50, 300);
    evas_object_show(btn2);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

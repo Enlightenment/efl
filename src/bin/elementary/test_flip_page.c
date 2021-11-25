@@ -905,6 +905,7 @@ test_flip_page(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_event_callback_add(rc, EVAS_CALLBACK_MOUSE_UP,   im_up_cb,   im);
    evas_object_event_callback_add(rc, EVAS_CALLBACK_MOUSE_MOVE, im_move_cb, im);
 
-   evas_object_resize(win, 480, 480);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

@@ -145,6 +145,7 @@ test_focus_object_policy(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         evas_object_smart_callback_add(rd, "changed", _rdg_changed_cb, test_bt);
      }
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }

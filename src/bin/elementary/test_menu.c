@@ -137,7 +137,8 @@ test_menu(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN,
                                   _menu_show_cb, menu);
 
-   evas_object_resize(win, 350, 200);
+   evas_object_resize(win, 350 * elm_config_scale_get(),
+                           200 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -309,6 +310,7 @@ test_menu2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_smart_callback_add(bt, "clicked", _close_bt_clicked, mn);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }

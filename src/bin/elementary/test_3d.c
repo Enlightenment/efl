@@ -327,7 +327,8 @@ test_3d(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info E
    evas_object_smart_callback_add(sl, "changed", _ch_z0, win);
    evas_object_show(sl);
 
-   evas_object_resize(win, 480, 480);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    _cube_update(win, cube);
    evas_object_show(win);
 }

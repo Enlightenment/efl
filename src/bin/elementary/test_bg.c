@@ -78,14 +78,17 @@ test_bg_plain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    /* set size hints. a minimum size for the bg. this should propagate back
     * to the window thus limiting its size based off the bg as the bg is one
     * of the window's resize objects. */
-   evas_object_size_hint_min_set(bg, 160, 160);
+   evas_object_size_hint_min_set(bg, 160 * elm_config_scale_get(),
+                                     160 * elm_config_scale_get());
    /* and set a maximum size. not needed very often. normally used together
     * with evas_object_size_hint_min_set() at the same size to make a
     * window not resizable */
-   evas_object_size_hint_max_set(bg, 640, 640);
+   evas_object_size_hint_max_set(bg, 640 * elm_config_scale_get(),
+                                     640 * elm_config_scale_get());
    /* and now just resize the window to a size you want. normally widgets
     * will determine the initial size though */
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    /* and show the window */
    evas_object_show(win);
 }
@@ -157,9 +160,12 @@ test_bg_image(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(hbox);
 
    evas_object_show(o_bg);
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 320, 320);
+   evas_object_size_hint_min_set(bg, 160 * elm_config_scale_get(),
+                                     160 * elm_config_scale_get());
+   evas_object_size_hint_max_set(bg, 640 * elm_config_scale_get(),
+                                     640 * elm_config_scale_get());
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -266,9 +272,12 @@ test_bg_options(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_box_pack_end(box, hbox);
    evas_object_show(hbox);
 
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 320, 320);
+   evas_object_size_hint_min_set(bg, 160 * elm_config_scale_get(),
+                                     160 * elm_config_scale_get());
+   evas_object_size_hint_max_set(bg, 640 * elm_config_scale_get(),
+                                     640 * elm_config_scale_get());
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 

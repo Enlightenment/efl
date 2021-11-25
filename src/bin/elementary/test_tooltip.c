@@ -631,7 +631,8 @@ test_tooltip(void *data       EINA_UNUSED,
    elm_box_pack_end(bx, lst);
    evas_object_show(lst);
 
-   evas_object_resize(win, 320, 580);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           580 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -727,7 +728,8 @@ test_tooltip2(void *data       EINA_UNUSED,
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -755,7 +757,8 @@ test_tooltip3(void *data       EINA_UNUSED,
    evas_object_show(rect);
    evas_object_layer_set(rect, 100);
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -768,8 +771,6 @@ test_tooltip4(void *data       EINA_UNUSED,
 
    win = elm_win_util_standard_add("tooltip4", "Tooltip 4");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 300);
-   evas_object_show(win);
 
    bt = elm_button_add(win);
    elm_object_tooltip_text_set(bt, "Tooltip!!!!!!!!!!!!!!!!!!");
@@ -814,4 +815,8 @@ test_tooltip4(void *data       EINA_UNUSED,
    evas_object_resize(bt, 30, 30);
    evas_object_move(bt, 135, 255);
    evas_object_show(bt);
+
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
+   evas_object_show(win);
 }

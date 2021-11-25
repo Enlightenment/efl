@@ -240,6 +240,7 @@ test_eio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 
    evas_object_smart_callback_add(fs_bt, "file,chosen", _file_chosen, gl);
 
-   evas_object_resize(win, 300, 500);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }

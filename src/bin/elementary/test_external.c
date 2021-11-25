@@ -20,7 +20,8 @@ test_external_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -40,7 +41,8 @@ test_external_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -60,7 +62,8 @@ test_external_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -203,7 +206,8 @@ test_external_pbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    bt = edje_object_part_external_object_get(edje, "ext_button3");
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, edje);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -223,7 +227,8 @@ test_external_video(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -245,7 +250,8 @@ test_external_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    elm_layout_signal_emit(ly, "elm_test,animations,start", "elm_test");
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -320,6 +326,7 @@ test_external_combobox(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 
    elm_genlist_item_class_free(itc);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

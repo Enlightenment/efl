@@ -108,6 +108,7 @@ test_win_wm_rotation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
 
    lb = elm_label_add(win);
    elm_object_text_set(lb, "<b>Window manager rotation test</b>");
@@ -208,7 +209,7 @@ test_win_wm_rotation(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    evas_object_smart_callback_add(win, "delete,request", _win_del_cb, NULL);
 
-   evas_object_resize(win, 480, 400);
-   evas_object_show(bx);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

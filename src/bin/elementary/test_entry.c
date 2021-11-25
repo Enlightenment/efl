@@ -740,7 +740,8 @@ test_entry_scrolled(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_show(bx3);
 
    elm_object_focus_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -872,7 +873,8 @@ test_entry_on_page_scroll(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    elm_box_pack_end(bx, ly);
    evas_object_show(ly);
 
-   evas_object_resize(win, 400, 550);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           550 * elm_config_scale_get());
    evas_object_show(win);
 
 }
@@ -1172,7 +1174,8 @@ test_entry_style_user(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_object_focus_allow_set(bt2, EINA_FALSE);
    evas_object_show(bt2);
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1269,7 +1272,6 @@ test_entry_style_default(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 
    win = elm_win_util_standard_add("entry-style", "Entry Default Style");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1319,6 +1321,8 @@ test_entry_style_default(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    elm_box_pack_end(vbx, o);
    evas_object_show(o);
 
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1819,9 +1823,9 @@ test_entry3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   evas_object_resize(win, 320, 480);
-
    elm_object_focus_set(win, EINA_TRUE);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2147,9 +2151,9 @@ test_entry5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   evas_object_resize(win, 320, 480);
-
    elm_object_focus_set(win, EINA_TRUE);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2191,9 +2195,9 @@ test_entry6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, en);
    evas_object_show(en);
 
-   evas_object_resize(win, 320, 300);
-
    elm_object_focus_set(win, EINA_TRUE);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2422,7 +2426,8 @@ test_entry7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_smart_callback_add(bt, "clicked", remove_bt_clicked, en2);
    evas_object_show(bt);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2636,7 +2641,8 @@ test_entry8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_grid_pack(gd, ch, 50, 85, 45, 10);
    evas_object_show(ch);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2798,7 +2804,8 @@ test_entry_regex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_event_callback_add(test_data->en_single, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
    efl_event_callback_add(test_data->en_multi, ELM_ENTRY_EVENT_VALIDATE, elm_validator_regexp_helper, test_data->re);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 
 #undef REGEX
@@ -2882,7 +2889,8 @@ test_entry_notepad(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
 
    elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);
@@ -2943,7 +2951,8 @@ test_entry_emoticon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(en);
    elm_object_focus_set(en, EINA_TRUE);
 
-   evas_object_resize(win, 400, 500);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -3007,7 +3016,8 @@ test_entry_password(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
-   evas_object_resize(win, 300, 100);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           100 * elm_config_scale_get());
    evas_object_show(win);
 }
 

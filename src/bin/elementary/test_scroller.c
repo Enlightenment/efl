@@ -455,7 +455,8 @@ test_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_resize(tb2, w, h);
    evas_object_show(tb2);
 
-   evas_object_resize(win, 320, 420);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           420 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -677,7 +678,8 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    bounce->scroller = sc;
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _scroll2_del_cb, bounce);
@@ -745,7 +747,8 @@ test_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         elm_box_pack_end(bx, bt);
         evas_object_show(bt);
      }
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -908,7 +911,8 @@ test_scroller3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_smart_callback_add(bt3, "clicked", _append_items, bx4);
    evas_object_smart_callback_add(sl, "changed", _changed_cb, sc);
 
-   evas_object_resize(win, 500, 500);
+   evas_object_resize(win, 500 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -972,7 +976,8 @@ test_scroller4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_box_pack_end(bx, ly);
    evas_object_show(ly);
 
-   evas_object_resize(win, 400, 550);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           550 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1072,7 +1077,8 @@ test_scroller5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    elm_object_focus_set(btn, EINA_TRUE);
 
-   evas_object_resize(win, 400, 550);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           550 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1116,7 +1122,8 @@ test_scroller6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_table_pack(table, btn2, 1, 0, 1, 1);
    evas_object_show(btn2);
 
-   evas_object_resize(win, 400, 550);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           550 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1188,6 +1195,7 @@ test_scroller7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    elm_table_pack(table, btn2, 1, 0, 1, 1);
    evas_object_show(btn2);
 
-   evas_object_resize(win, 400, 550);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           550 * elm_config_scale_get());
    evas_object_show(win);
 }

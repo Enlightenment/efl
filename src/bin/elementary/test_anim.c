@@ -89,7 +89,8 @@ test_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
         evas_object_data_set(win, names[(i * 2)], bub);
      }
 
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 
    efl_event_callback_add(win, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _anim_tick, NULL);

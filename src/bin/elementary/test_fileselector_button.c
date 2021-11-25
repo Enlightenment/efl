@@ -248,6 +248,7 @@ test_fileselector_button(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, en);
    evas_object_show(en);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

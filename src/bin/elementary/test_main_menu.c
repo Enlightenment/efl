@@ -74,6 +74,7 @@ test_main_menu(void *data EINA_UNUSED,
    menu_it1 = elm_menu_item_add(menu, menu_it, NULL, "sub menu", NULL, NULL);
    elm_menu_item_add(menu, menu_it1, NULL, "first item", NULL, NULL);
 
-   evas_object_resize(win, 250, 350);
+   evas_object_resize(win, 250 * elm_config_scale_get(),
+                           350 * elm_config_scale_get());
    evas_object_show(win);
 }

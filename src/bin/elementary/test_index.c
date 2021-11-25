@@ -259,7 +259,8 @@ test_index(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_smart_callback_add(id, "selected", _index_selected_cb, NULL);
    elm_index_level_go(id, 0);
 
-   evas_object_resize(win, 320, 270);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           270 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -430,7 +431,8 @@ test_index2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_list_go(gui->lst);
    evas_object_show(gui->lst);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -523,7 +525,8 @@ test_index3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    elm_index_level_go(index, 0);
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -580,6 +583,7 @@ test_index_horizontal(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_smart_callback_add(id, "changed", _index_list_changed_cb, NULL);
    elm_index_level_go(id, 0);
 
-   evas_object_resize(win, 480, 320);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }

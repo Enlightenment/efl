@@ -204,6 +204,7 @@ test_actionslider(void *data EINA_UNUSED, Evas_Object * obj EINA_UNUSED, void *e
    evas_object_show(as);
    elm_box_pack_end(bx, as);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

@@ -173,7 +173,8 @@ test_win_socket(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
 
    evas_object_show(bx);
    evas_object_show(win);
@@ -194,7 +195,8 @@ test_win_socket(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 
    fill(win_socket, EINA_TRUE);
 
-   evas_object_resize(win_socket, 400, 600);
+   evas_object_resize(win_socket, 400 * elm_config_scale_get(),
+                                  600 * elm_config_scale_get());
    evas_object_show(win_socket);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _win_del,

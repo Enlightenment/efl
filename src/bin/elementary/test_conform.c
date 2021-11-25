@@ -76,7 +76,8 @@ test_conformant(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
-   evas_object_resize(win, 240, 240);
+   evas_object_resize(win, 240 * elm_config_scale_get(),
+                           240 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -190,6 +191,7 @@ test_conformant2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
-   evas_object_resize(win, 240, 480);
+   evas_object_resize(win, 240 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

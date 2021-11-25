@@ -219,7 +219,8 @@ test_access(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    elm_genlist_item_class_free(itc1);
    elm_genlist_item_class_free(itc2);
-   evas_object_resize(win, 500, 400);
+   evas_object_resize(win, 500 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -297,7 +298,8 @@ test_access2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
         elm_box_pack_end(bx, ly);
      }
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -403,6 +405,7 @@ test_access3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _key_down_cb, win);
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }

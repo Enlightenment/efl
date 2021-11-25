@@ -256,7 +256,8 @@ test_multibuttonentry(void *data EINA_UNUSED,
    sc = _add_multibuttonentry(ly);
    elm_object_part_content_set(ly, "multibuttonentry", sc);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -342,6 +343,7 @@ test_multibuttonentry2(void *data EINA_UNUSED,
    sc = _add_multibuttonentry_shrink(ly);
    elm_object_part_content_set(ly, "multibuttonentry", sc);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

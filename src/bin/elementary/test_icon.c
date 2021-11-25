@@ -45,7 +45,8 @@ bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_image_prescale_set(ic, EINA_TRUE);
    evas_object_show(ic);
 
-   evas_object_resize(win, 350, 350);
+   evas_object_resize(win, 350 * elm_config_scale_get(),
+                           350 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -114,7 +115,8 @@ test_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    elm_win_icon_object_set(win, ic);
    evas_object_show(ic);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -693,7 +695,8 @@ _std_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_part_content_set(panes, "right", icon);
    evas_object_show(icon);
 
-   evas_object_resize(win, 300, 200);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           200 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -852,6 +855,7 @@ test_icon_standard(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(bt);
 
    // show the win
-   evas_object_resize(win, 300, 500);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }

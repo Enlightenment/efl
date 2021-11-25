@@ -443,6 +443,7 @@ test_notify(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_table_pack(tb, bt, 4, 1, 1, 3);
    evas_object_show(bt);
 
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

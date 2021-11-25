@@ -936,6 +936,7 @@ test_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         is_popup_scroll = EINA_TRUE;
      }
 
-   evas_object_resize(win, 480, 400);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

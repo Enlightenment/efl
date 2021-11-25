@@ -120,6 +120,7 @@ test_dayselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_show(dayselector);
    elm_object_disabled_set(dayselector, EINA_TRUE);
 
-   evas_object_resize(win, 350, 150);
+   evas_object_resize(win, 350 * elm_config_scale_get(),
+                           150 * elm_config_scale_get());
    evas_object_show(win);
 }

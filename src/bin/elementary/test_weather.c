@@ -163,6 +163,7 @@ test_weather(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
     evas_object_show(lbl);
 #endif
 
-    evas_object_resize(win, 244, 388);
+    evas_object_resize(win, 244 * elm_config_scale_get(),
+                            388 * elm_config_scale_get());
     evas_object_show(win);
 }

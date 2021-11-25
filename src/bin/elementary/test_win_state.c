@@ -69,7 +69,8 @@ static void
 my_bt_38_massive(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win = data;
-   evas_object_resize(win, 4000, 2400);
+   evas_object_resize(win, 4000 * elm_config_scale_get(),
+                           2400 * elm_config_scale_get());
 }
 
 static void
@@ -677,7 +678,8 @@ test_win_state(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    elm_box_pack_end(bx, tb);
 
-   evas_object_resize(win, 280, 400);
+   evas_object_resize(win, 280 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -826,6 +828,7 @@ test_win_state2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

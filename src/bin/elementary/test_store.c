@@ -262,6 +262,7 @@ test_store(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_genlist_item_class_ref(itc1);
    elm_genlist_item_class_free(itc1);
 
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }

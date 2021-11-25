@@ -213,6 +213,7 @@ test_win_plug(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UN
 
    create_handles(elm_plug_image_object_get(plug));
 
-   evas_object_resize(win, 400, 600);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }

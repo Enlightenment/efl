@@ -93,7 +93,8 @@ test_floating(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                                 gl_sel/* func */,
                                 (void *)(uintptr_t)(i * 10)/* func data */);
      }
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 
    ani = ecore_animator_add(anim, gl);

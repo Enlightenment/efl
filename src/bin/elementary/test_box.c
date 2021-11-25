@@ -553,7 +553,8 @@ test_box_pack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(rbox, bt);
    evas_object_smart_callback_add(bt, "clicked", _unpack_all_btn_cb, lbox);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -598,7 +599,8 @@ test_box_homo(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_show(rd);
    evas_object_show(o_bg);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -697,7 +699,8 @@ test_box_transition(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
    _test_box_transition_change(tdata);
 
-   evas_object_resize(win, 300, 300);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -879,6 +882,7 @@ test_box_align(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    _description_add(bx_out, bdata);
    _align_box_add(bx_out, bdata);
 
-   evas_object_resize(win, 300, 400);
+   evas_object_resize(win, 300 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }

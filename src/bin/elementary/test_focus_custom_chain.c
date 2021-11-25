@@ -99,7 +99,8 @@ create_win_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_grid_pack(gd, bt, 10, 70, 80, 20);
    evas_object_show(bt);
 
-   evas_object_resize(win, 160, 160);
+   evas_object_resize(win, 160 * elm_config_scale_get(),
+                           160 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -238,6 +239,7 @@ test_focus_custom_chain(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           320 * elm_config_scale_get());
    evas_object_show(win);
 }

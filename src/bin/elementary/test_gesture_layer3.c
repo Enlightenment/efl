@@ -555,7 +555,6 @@ void
 test_gesture_layer3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
       void *event_info EINA_UNUSED)
 {
-   Evas_Coord w, h;
    Evas_Object *win, *bg;
    char buf[PATH_MAX];
    int ind = 0;
@@ -563,13 +562,9 @@ test_gesture_layer3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    photo_array = calloc(4, sizeof(*photo_array));
    if (!photo_array) return;
 
-   w = 480;
-   h = 800;
-
    win = elm_win_add(NULL, "gesture-layer3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Gesture Layer 3");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, w, h);
 
    bg = elm_bg_add(win);
    snprintf(buf, sizeof(buf), "%s/images/wood_01.jpg", elm_app_data_dir_get());
@@ -584,5 +579,8 @@ test_gesture_layer3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    photo_array[ind] = NULL;
    evas_object_smart_callback_add(win, "delete,request", _win_del_req,
          photo_array);
+
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }

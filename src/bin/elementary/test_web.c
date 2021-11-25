@@ -631,7 +631,8 @@ test_web(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 
    elm_web_window_create_hook_set(web, _new_window_hook, wt);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -688,6 +689,7 @@ test_web_ui(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
                             "<!doctype html><body>Hello, WebKit/Efl</body>",
                             NULL, NULL);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

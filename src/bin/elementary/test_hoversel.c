@@ -313,7 +313,8 @@ test_hoversel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, hoversel);
    evas_object_show(hoversel);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
 
    evas_object_show(win);
 }
@@ -411,6 +412,7 @@ test_hoversel_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    evas_object_smart_callback_add(hoversel, "expanded",
                                   _hoversel_expanded_cb2, it);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }

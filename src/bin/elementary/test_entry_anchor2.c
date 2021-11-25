@@ -102,8 +102,8 @@ test_entry_anchor2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    elm_win_resize_object_add(win, en);
    evas_object_show(en);
 
-   evas_object_resize(win, 320, 300);
-
    elm_object_focus_set(win, EINA_TRUE);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }

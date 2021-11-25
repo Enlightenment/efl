@@ -466,7 +466,8 @@ filled_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_box_pack_end(box, tg);
    evas_object_show(tg);
 
-   evas_object_resize(win, 450, 200);
+   evas_object_resize(win, 450 * elm_config_scale_get(),
+                           200 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -520,7 +521,8 @@ cursor_bt_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_box_pack_end(box, hbox);
    evas_object_show(hbox);
 
-   evas_object_resize(win, 450, 450);
+   evas_object_resize(win, 450 * elm_config_scale_get(),
+                           450 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -691,7 +693,8 @@ test_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -957,7 +960,8 @@ test_gengrid2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_gengrid_item_class_ref(gic);
    elm_gengrid_item_class_free(gic);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1022,7 +1026,8 @@ test_gengrid3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    evas_object_show(grid);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1157,7 +1162,8 @@ test_gengrid_item_styles(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_box_pack_end(box, gengrid);
    evas_object_show(gengrid);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1566,7 +1572,8 @@ test_gengrid5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
      }
    elm_gengrid_item_class_free(itc);
 
-   evas_object_resize(win, 320, 500);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1595,13 +1602,15 @@ test_gengrid_speed(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    evas_object_show(fr);
 
    api->grid = create_gengrid(win, 5000);
+   /* should we scale ? */
    evas_object_size_hint_min_set(api->grid, 600, 600);
    elm_gengrid_item_size_set(api->grid,
                              ELM_SCALE_SIZE(30),
                              ELM_SCALE_SIZE(36));
    elm_object_content_set(fr, api->grid);
    evas_object_show(api->grid);
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2014,7 +2023,8 @@ test_gengrid_focus(void *data EINA_UNUSED,
      }
    elm_gengrid_item_class_free(ic);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2275,7 +2285,8 @@ test_gengrid_update(void *data EINA_UNUSED,
      }
    elm_gengrid_item_class_free(ic);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2347,7 +2358,8 @@ test_gengrid_disabled_item_focus(void *data EINA_UNUSED,
 
    elm_gengrid_item_class_free(ic);
 
-   evas_object_resize(win, 600, 600);
+   evas_object_resize(win, 600 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -2553,6 +2565,7 @@ test_gengrid_item_custom_size(void *data EINA_UNUSED,
      }
    elm_gengrid_item_class_free(ic);
 
-   evas_object_resize(win, 800, 600);
+   evas_object_resize(win, 800 * elm_config_scale_get(),
+                           600 * elm_config_scale_get());
 }
 

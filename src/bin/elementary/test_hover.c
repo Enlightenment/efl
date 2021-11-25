@@ -96,7 +96,8 @@ test_hover(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 440, 440);
+   evas_object_resize(win, 440 * elm_config_scale_get(),
+                           440 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -168,7 +169,8 @@ test_hover2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
 
-   evas_object_resize(win, 440, 440);
+   evas_object_resize(win, 440 * elm_config_scale_get(),
+                           440 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -244,6 +246,7 @@ test_hover3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _dismiss_hover, hv);
 
-   evas_object_resize(win, 440, 440);
+   evas_object_resize(win, 440 * elm_config_scale_get(),
+                           440 * elm_config_scale_get());
    evas_object_show(win);
 }

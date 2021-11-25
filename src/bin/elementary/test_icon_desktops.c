@@ -101,6 +101,7 @@ test_icon_desktops(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 #endif
 
    elm_genlist_item_class_free(it_desk);
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

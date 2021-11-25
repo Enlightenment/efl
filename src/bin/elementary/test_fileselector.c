@@ -607,6 +607,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_box_pack_end(vbox, _sort_option_create(win, vbox, fs));
    elm_box_pack_end(vbox, _thumbnail_size_option_create(vbox, fs));
 
-   evas_object_resize(win, 550, 500);
+   evas_object_resize(win, 550 * elm_config_scale_get(),
+                           500 * elm_config_scale_get());
    evas_object_show(win);
 }

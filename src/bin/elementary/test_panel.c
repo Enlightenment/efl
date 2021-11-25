@@ -295,7 +295,8 @@ test_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_object_content_set(panel, toolbar);
    evas_object_show(toolbar);
 
-   evas_object_resize(win, 320, 400);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -344,8 +345,6 @@ test_panel2(void *data EINA_UNUSED,
    // Left Panel
    win = elm_win_util_standard_add("panel", "Left Panel");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 320, 400);
-   evas_object_show(win);
 
    // box for button and table
    box = elm_box_add(win);
@@ -419,4 +418,8 @@ test_panel2(void *data EINA_UNUSED,
 
    evas_object_smart_callback_add(panel, "toggled", _toggled_cb, check);
    evas_object_smart_callback_add(button, "clicked", _clicked_cb, panel);
+
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
+   evas_object_show(win);
 }

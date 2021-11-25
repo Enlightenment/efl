@@ -125,8 +125,10 @@ test_multi(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_resize(win, 480, 800);
+   evas_object_size_hint_min_set(bg, 160 * elm_config_scale_get(),
+                                     160 * elm_config_scale_get());
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
 
    evas_object_show(win);
 }

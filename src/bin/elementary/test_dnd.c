@@ -819,7 +819,8 @@ test_dnd_genlist_default_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUS
           }
      }
 
-   evas_object_resize(win, 680, 800);
+   evas_object_resize(win, 680 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -884,7 +885,8 @@ test_dnd_genlist_user_anim(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
           }
      }
 
-   evas_object_resize(win, 680, 800);
+   evas_object_resize(win, 680 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -971,7 +973,8 @@ test_dnd_genlist_gengrid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
         evas_object_show(grid);
      }
 
-   evas_object_resize(win, 680, 800);
+   evas_object_resize(win, 680 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1163,7 +1166,8 @@ test_dnd_multi_features(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
         evas_object_show(bt);
         evas_object_show(ic);
      }
-   evas_object_resize(win, 680, 800);
+   evas_object_resize(win, 680 * elm_config_scale_get(),
+                           800 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1381,5 +1385,6 @@ test_dnd_types(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
      }
 
    evas_object_show(win);
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
 }

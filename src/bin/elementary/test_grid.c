@@ -184,6 +184,7 @@ test_grid(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
    elm_grid_pack(gd, rc, 60, 80, 10, 10);
    evas_object_show(rc);
 
-   evas_object_resize(win, 480, 480);
+   evas_object_resize(win, 480 * elm_config_scale_get(),
+                           480 * elm_config_scale_get());
    evas_object_show(win);
 }

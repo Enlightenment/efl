@@ -151,6 +151,7 @@ test_segment_control(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         elm_box_pack_end(bx, sc);
      }
 
-   evas_object_resize(win, 400, 300);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }

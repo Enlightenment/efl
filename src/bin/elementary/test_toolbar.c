@@ -196,7 +196,8 @@ test_toolbar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -300,7 +301,8 @@ test_toolbar2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -403,7 +405,8 @@ test_toolbar3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -507,7 +510,8 @@ test_toolbar4(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -616,7 +620,8 @@ test_toolbar5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -720,7 +725,8 @@ test_toolbar_vertical(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -825,7 +831,8 @@ test_toolbar6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 320, 300);
+   evas_object_resize(win, 320 * elm_config_scale_get(),
+                           300 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -964,7 +971,8 @@ test_toolbar7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 420, 250);
+   evas_object_resize(win, 420 * elm_config_scale_get(),
+                           250 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1054,7 +1062,8 @@ test_toolbar8(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   evas_object_resize(win, 420, 250);
+   evas_object_resize(win, 420 * elm_config_scale_get(),
+                           250 * elm_config_scale_get());
    evas_object_show(win);
 }
 
@@ -1309,6 +1318,7 @@ test_toolbar_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                                   _test_toolbar_focus_disable_item_btn_cb,
                                   it_0);
 
-   evas_object_resize(win, 420, 200);
+   evas_object_resize(win, 420 * elm_config_scale_get(),
+                           200 * elm_config_scale_get());
    evas_object_show(win);
 }

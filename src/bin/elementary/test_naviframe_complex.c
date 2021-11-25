@@ -362,6 +362,7 @@ test_naviframe_complex(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
      }
 
    elm_toolbar_item_selected_set(elm_toolbar_last_item_get(tb), EINA_TRUE);
-   evas_object_resize(win, 400, 400);
+   evas_object_resize(win, 400 * elm_config_scale_get(),
+                           400 * elm_config_scale_get());
    evas_object_show(win);
 }
