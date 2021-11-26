@@ -178,7 +178,7 @@ _fallback_timeout(void *data EINA_UNUSED)
 {
    if (drm_event_is_busy)
      {
-        _drm_send_time(ecore_loop_time_get());
+        _drm_send_time(ecore_time_get());
         return EINA_TRUE;
      }
    fallback_timer = NULL;
@@ -198,7 +198,7 @@ _fail_timeout(void *data EINA_UNUSED)
             (1.0 / 60.0, _fallback_timeout, NULL);
      }
    if (drm_event_is_busy)
-     _drm_send_time(ecore_loop_time_get());
+     _drm_send_time(ecore_time_get());
    return EINA_FALSE;
 }
 
@@ -383,46 +383,32 @@ _drm_vblank_handler(int fd EINA_UNUSED,
         if (pframe != frame)
           {
 #define DELTA_COUNT 10
-             double tnow = ecore_time_get();
              double t = (double)sec + ((double)usec / 1000000);
-             unsigned long long tusec, ptusec;
-             static double tdelta[DELTA_COUNT];
-             static double tdelta_avg = 0.0;
-             static int tdelta_n = 0;
+             unsigned long long tusec, ptusec, tdelt = 0;
              static unsigned int psec = 0, pusec = 0;
 
              tusec = ((unsigned long long)sec) * 1000000 + usec;
              ptusec = ((unsigned long long)psec) * 1000000 + pusec;
              if (tusec <= ptusec)
-               fprintf(stderr,
-                       "EEEEEEK! drm time went backwards! %u.%06u -> %u.%06u\n",
-                       psec, pusec, sec, usec);
-             if (t > tnow)
                {
-                  if (tdelta_n > DELTA_COUNT)
-                    {
-                       t = t + tdelta_avg;
-                    }
-                  else if (tdelta_n < DELTA_COUNT)
-                    {
-                       tdelta[tdelta_n] = tnow - t;
-                       tdelta_n++;
-                       t = tnow;
-                    }
-                  else if (tdelta_n == DELTA_COUNT)
-                    {
-                       int i;
-
-                       for (i = 0; i < DELTA_COUNT; i++)
-                         tdelta_avg += tdelta[i];
-                       tdelta_avg /= (double)(DELTA_COUNT);
-                       tdelta_n++;
-                    }
+                  fprintf(stderr,
+                          "EEEEEEK! drm time went backwards! %u.%06u -> %u.%06u\n",
+                          psec, pusec, sec, usec);
                }
              else
                {
-                  tdelta_avg = 0.0;
-                  tdelta_n = 0;
+                  if (frame > pframe)
+                    {
+                       tdelt = (tusec - ptusec) / (frame - pframe);
+                       // go back in time 1/8th of a frame to account for
+                       // vlnbak gap - this should be enough for now.
+                       // probably need to be a bit more accurate.
+                       // 
+                       // why do this? because the timestamp is the time
+                       // the top-left pixel is first displayed which is
+                       // after the vlbank gap time
+                       t -= (double)(tdelt / 8) / 1000000.0;
+                    }
                }
              _drm_fail_count = 0;
              _drm_send_time(t);

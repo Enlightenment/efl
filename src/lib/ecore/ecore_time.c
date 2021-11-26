@@ -79,6 +79,16 @@ ecore_loop_time_get(void)
 EAPI void
 ecore_loop_time_set(double t)
 {
+   double tnow = ecore_time_get();
+   double tdelta = t - tnow;
+
+   if (tdelta > 0.0)
+     {
+        fprintf(stderr,
+                "Eccore: Trying to set loop time (%1.8f) %1.8fs too far in the future\n",
+                t, tdelta);
+        return;
+     }
    efl_loop_time_set(ML_OBJ, t);
 }
 
