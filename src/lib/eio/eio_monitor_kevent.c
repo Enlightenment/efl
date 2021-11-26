@@ -189,10 +189,13 @@ _eio_kevent_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
         if(evs[i].fflags & NOTE_WRITE || evs[i].fflags & NOTE_ATTRIB)
           {
              /* Handle directory/file creation and deletion */
-             _eio_kevent_event_find(backend);
-             /* Old default behaviour */
-             event_code = EIO_MONITOR_FILE_MODIFIED;
-             _eio_monitor_send(backend->parent, backend->parent->path, event_code);
+             if (ecore_file_is_dir(backend->parent->path))
+               _eio_kevent_event_find(backend);
+             else
+               {
+                  event_code = EIO_MONITOR_FILE_MODIFIED;
+                  _eio_monitor_send(backend->parent, backend->parent->path, event_code);
+               }
           }
      }
 
@@ -279,7 +282,8 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    backend->parent = monitor;
    monitor->backend = backend;
 
-   backend->prev_list = _eio_kevent_ls(backend->parent->path);
+   if (ecore_file_is_dir(backend->parent->path))
+     backend->prev_list = _eio_kevent_ls(backend->parent->path);
 
    eina_hash_direct_add(_kevent_monitors, &backend->fd, backend);
 
