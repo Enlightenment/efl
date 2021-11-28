@@ -571,6 +571,9 @@ ICON("arrow-up-right", "i-arrow-ru")
 ICON("arrow-down-left", "i-arrow-ld")
 ICON("arrow-down-right", "i-arrow-rd")
 
+ICON("split-h", "i-split-h")
+ICON("split-v", "i-split-v")
+
 ICON("toolbar/more_menu", "i-hamburger-menu")
 ICON("toolbar/home", "i-home")
 ICON("toolbar/close", "i-close")
