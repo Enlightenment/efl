@@ -491,12 +491,15 @@ _elua_scan_params(lua_State *L, int i, char *params, ...) // Stack usage -
                    size_t len;
                    char *temp = (char *)lua_tolstring(L, j, &len);       // Stack usage [-0, +0, m]
 
-                   len++;      // Cater for the null at the end.
-                   *v = malloc(len);
-                   if (*v)
+                   if (temp)
                      {
-                        memcpy(*v, temp, len);
-                        n++;
+                       len++;      // Cater for the null at the end.
+                       *v = malloc(len);
+                       if (*v)
+                         {
+                            memcpy(*v, temp, len);
+                            n++;
+                         }
                      }
                 }
               break;
