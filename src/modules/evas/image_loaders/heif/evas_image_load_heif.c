@@ -322,7 +322,7 @@ static const Evas_Image_Load_Func evas_image_load_heif_func = {
    NULL,
    evas_image_load_file_data_heif,
    NULL,
-   EINA_FALSE,
+   EINA_TRUE,
    EINA_FALSE
 };
 

@@ -355,7 +355,7 @@ static Evas_Image_Load_Func evas_image_load_avif_func =
    NULL,
    evas_image_load_file_data_avif,
    evas_image_load_frame_duration_avif,
-   EINA_FALSE,
+   EINA_TRUE,
    EINA_FALSE
 };
 
