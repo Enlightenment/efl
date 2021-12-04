@@ -1238,6 +1238,19 @@ ecore_thread_available_get(void)
 }
 
 EAPI Eina_Bool
+ecore_thread_name_set(Ecore_Thread *thread, const char *name)
+{
+   Ecore_Pthread_Worker *work = (Ecore_Pthread_Worker *) thread;
+
+   if ((!work) || (!work->self) || (!name))
+     return EINA_FALSE;
+
+   if (eina_thread_self() != work->self) return EINA_FALSE;
+
+   return eina_thread_name_set(work->self, name);
+}
+
+EAPI Eina_Bool
 ecore_thread_local_data_add(Ecore_Thread *thread,
                             const char *key,
                             void *value,

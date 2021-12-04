@@ -2081,6 +2081,20 @@ EAPI void ecore_thread_max_reset(void);
 EAPI int ecore_thread_available_get(void);
 
 /**
+ * Sets the name of a given thread for debugging purposes.
+ *
+ * This function will only succeed if called from the named thread.
+ *
+ * @param thread The thread context to set the name of
+ * @param name The string to name the thread - this cannot be NULL
+ *
+ * @return EINA_TRUE if it succeeds setting the name or EINA_FALSE otherwise.
+ *
+ * @since 1.26
+ */
+EAPI Eina_Bool ecore_thread_name_set(Ecore_Thread *thread, const char *name);
+
+/**
  * Adds some data to a hash local to the thread.
  *
  * @param thread The thread context the data belongs to
