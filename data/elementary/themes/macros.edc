@@ -174,7 +174,7 @@
 #define BUSY(x, start1, start2, stop1, stop2) \
    program { signal: start1; source: start2; \
       action: STATE_SET "visible" 0.0; \
-      transition: SINUSOIDAL 1.0; \
+      transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1; \
       target: "busy"; } \
    program { signal: start1; source: start2; \
       action: STATE_SET "default" 0.0; \
@@ -186,7 +186,7 @@
       after: "busy-p31"; } \
    program { signal: stop1; source: stop2; \
       action: STATE_SET "default" 0.0; \
-      transition: SINUSOIDAL 1.0; \
+      transition: SINUSOIDAL 1.0 USE_DURATION_FACTOR 1; \
       target: "busy"; \
       after: "busy_stop2"; } \
    program { name: "busy_stop2"; \
