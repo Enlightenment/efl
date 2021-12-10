@@ -42,12 +42,20 @@ _anim_cb_tick(Ecore_Wl2_Window *win EINA_UNUSED, uint32_t timestamp, void *data)
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Wl_Data *edata;
    double t;//, rt;
+   double tnow = ecore_time_get();
    /* static double pt = 0.0, prt = 0.0; */
 
    edata = ee->engine.data;
 
    if (!edata->ticking) return;
    t = ((double)timestamp / 1000.0);
+   if ((t - tnow) < -0.1)
+     {
+        fprintf(stderr,
+                "ecore_evas: _anim_cb_tick() -> tick too far in past - %1.5f sec behind\n",
+                tnow - t);
+        t = tnow;
+     }
    ecore_loop_time_set(t);
    /* rt = ecore_time_get(); */
    /* printf("ECORE_EVAS: wl client anim tick %p | %p - %1.5f @ %1.5f delt=%1.5f | %1.5f\n", ee, edata, t, ecore_time_get(), t - pt, rt - prt); */
