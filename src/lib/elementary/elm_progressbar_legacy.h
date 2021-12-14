@@ -189,6 +189,23 @@ EAPI const char *elm_progressbar_unit_format_get(const Evas_Object *obj);
 EAPI void elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type func, progressbar_freefunc_type free_func);
 
 /**
+ * @brief Set the format function pointer for the units label
+ *
+ * Set the callback function to format the unit string.
+ *
+ * See: @ref elm_progressbar_unit_format_set for more info on how this works.
+ *
+ * @param[in] func The unit format function
+ * @param[in] free_func The freeing function for the format string.
+ * @param[in] The data pointer to be passed to @p func
+ *
+ * @since 1.7
+ *
+ * @ingroup Elm_Progressbar
+ */
+EAPI void elm_progressbar_unit_format_function_set_full(Evas_Object *obj, progressbar_func_full_type func, progressbar_freefunc_type free_func, void *data);
+
+/**
  * @brief Control whether a given progress bar widget is at "pulsing mode" or
  * not.
  *

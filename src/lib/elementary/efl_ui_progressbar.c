@@ -955,6 +955,56 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type
                           _format_legacy_to_format_eo_free_cb);
 }
 
+typedef struct
+{
+   progressbar_func_full_type format_cb;
+   progressbar_freefunc_type format_free_cb;
+   void *format_func_data;
+} Pb_Full_Format_Wrapper_Data;
+
+static Eina_Bool
+_format_legacy_to_format_eo_cb_full(void *data, Eina_Strbuf *str, const Eina_Value value)
+{
+   Pb_Full_Format_Wrapper_Data *pfwd = data;
+   char *buf = NULL;
+   double val = 0;
+   const Eina_Value_Type *type = eina_value_type_get(&value);
+
+   if (type == EINA_VALUE_TYPE_DOUBLE)
+     eina_value_get(&value, &val);
+
+   if (pfwd->format_cb)
+     buf = pfwd->format_cb(val,pfwd->format_func_data);
+   if (buf)
+     eina_strbuf_append(str, buf);
+   if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
+
+   return EINA_TRUE;
+}
+
+static void
+_format_legacy_to_format_eo_full_free_cb(void *data)
+{
+   Pb_Full_Format_Wrapper_Data *pfwd = data;
+   free(pfwd);
+}
+
+EAPI void
+elm_progressbar_unit_format_function_set_full(Evas_Object *obj, progressbar_func_full_type func, progressbar_freefunc_type free_func, void* data)
+{
+   EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
+   Pb_Full_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Full_Format_Wrapper_Data));
+   if (!pfwd) return;
+
+   pfwd->format_cb = func;
+   pfwd->format_free_cb = free_func;
+   pfwd->format_func_data = data;
+   sd->is_legacy_format_cb = EINA_TRUE;
+
+   efl_ui_format_func_set(obj, pfwd, _format_legacy_to_format_eo_cb_full,
+                          _format_legacy_to_format_eo_full_free_cb);
+}
+
 EAPI void
 elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
