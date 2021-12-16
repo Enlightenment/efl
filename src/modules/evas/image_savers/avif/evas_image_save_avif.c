@@ -122,7 +122,7 @@ save_image_avif(RGBA_Image *im, const char *file, int quality)
      goto destroy_encoder;
 
    size = fwrite(output.data, output.size, 1, f);
-   if (size != output.size)
+   if (size != 1)
      goto destroy_encoder;
 
    ret = 1;
