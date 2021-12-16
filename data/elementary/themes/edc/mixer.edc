@@ -26,7 +26,7 @@ group { name: "e/modules/mixer/main";
                           (float(100 - l) * 0.5) / 100.0,
                           (float(100 - l) * 1.0) / 100.0);
             set_state_val(PART:"vol-l", STATE_REL2,
-                          0.5 + ((float(l) * 0.5) / 100.0),
+                          float(50 + ((l + 1) / 2)) / 100.0,
                           1.0);
             set_state(PART:"vol-l", "custom", 0.0);
 
@@ -35,7 +35,7 @@ group { name: "e/modules/mixer/main";
                           (float(100 - r) * 0.5) / 100.0,
                           (float(100 - r) * 1.0) / 100.0);
             set_state_val(PART:"vol-r", STATE_REL2,
-                          0.5 + ((float(r) * 0.5) / 100.0),
+                          float(50 + ((r + 1) / 2)) / 100.0,
                           1.0);
             set_state(PART:"vol-r", "custom", 0.0);
          }
