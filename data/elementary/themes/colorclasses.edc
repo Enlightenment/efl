@@ -759,6 +759,21 @@ color_classes {
    color_class { name: ":todo-dim";
       color:  20  40  80 255; }
 ///////////////////////////////////////////////////////////////////////////////
+// some specialty color classes wallpapers/backgrounds can optionally
+// use to match a color palette/scheme with advanced usage of these
+   color_class { name: "/bg/normal/background/recolor";
+      color:   6  27  44 255; }
+   color_class { name: "/bg-alt/normal/background/recolor";
+      color:  22  48  61 255; }
+   color_class { name: "/fg/normal/background/recolor";
+      color: 147 111  76 255; }
+   color_class { name: "/fg/disabled/background/recolor";
+      color:   1   4  21 255; }
+   color_class { name: "/shadow/normal/background/recolor";
+      color:   0   0   0 128; }
+   color_class { name: "/dim/normal/background/recolor";
+      color:   0   0   0 192; }
+///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 // specific element color classes. they fall abck like a directory search to
