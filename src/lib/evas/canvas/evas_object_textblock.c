@@ -18016,7 +18016,7 @@ EVAS_API int evas_textblock_fit_step_size_set(Evas_Object *obj,  unsigned int st
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EVAS_ERROR_INVALID_PARAM);
    Efl_Canvas_Textblock_Data *o = efl_data_scope_get(obj, MY_CLASS);
-   TEXT_FIT_CONTENT_CONFIG * fc = &o->fit_content_config;
+   TEXT_FIT_CONTENT_CONFIG *fc = &o->fit_content_config;
    if (fc->step_size == step_size)
      return EVAS_ERROR_SUCCESS;
 
