@@ -5,7 +5,7 @@ group { "efl/win";
       swallow { "efl.menu";
          clip_to: "client_clip";
          desc { "default";
-            rel2.relative: 1 0;
+            rel2.relative: 1.0 0.0;
             link.base: "efl,action,hide" "efl";
             align: 0.5 0.0;
             hid;
@@ -23,7 +23,7 @@ group { "efl/win";
          }
          desc { "with_menu";
             rel1.to: "efl.menu";
-            rel1.relative: 0 1;
+            rel1.relative: 0.0 1.0;
             link.base: "efl,action,show_menu" "efl";
          }
       }
