@@ -3,7 +3,7 @@ group { name: "elm/win/inwin/default";
    parts {
       part { name: "bg"; type: RECT; mouse_events: 1;
          description { state: "default" 0.0;
-            color_class: "dim/normal/inwin";
+            color_class: "/dim/normal/inwin";
             color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
