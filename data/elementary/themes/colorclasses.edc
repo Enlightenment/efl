@@ -496,6 +496,7 @@ color_tree {
    }
    ":dim-lighter" {
       "/dim/normal/hover";
+      "/dim/normal/inwin";
       "/bg/normal/multibuttonentry/button";
       "/bg/normal/calendar/day/today";
       "/fg/normal/text-subtle";
