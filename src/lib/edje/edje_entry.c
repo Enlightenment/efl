@@ -2083,9 +2083,9 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
-   else if ((super) && (!shift) && (!strcmp(ev->key, "v")))
+   else if (((super) && (!shift) && (!strcmp(ev->key, "v"))) || ((shift) && (!super) && (!strcmp(ev->key, "Insert"))))
 #else
-   else if ((control) && (!shift) && (!strcmp(ev->key, "v")))
+   else if (((control) && (!shift) && (!strcmp(ev->key, "v"))) || ((shift) && (!control) && (!strcmp(ev->key, "Insert"))))
 #endif
      {
         _compose_seq_reset(en);
