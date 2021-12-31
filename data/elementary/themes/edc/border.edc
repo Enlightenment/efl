@@ -590,9 +590,8 @@ group { name: "e/widgets/border/default/border";
          repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 0;
-            rel1.to: "e.swallow.volume";
+            rel.to: "e.event.icon";
             rel1.relative: 1.0 0.0;
-            rel2.to: "e.swallow.volume";
             rel2.relative: 1.0 1.0;
             rel2.offset: 0 -1;
             align: 0.0 0.5;
@@ -607,13 +606,19 @@ group { name: "e/widgets/border/default/border";
          source: "e/widgets/border/volume";
          description { state: "default" 0.0;
             fixed: 1 0;
-            rel1.to: "e.event.icon";
+            rel1.to_x: "e.event.icon";
+            rel2.to_x: "e.event.icon";
+            rel1.to_y: "top";
+            rel2.to_y: "top";
             rel1.relative: 1.0 0.0;
-            rel2.to: "e.event.icon";
             rel2.relative: 1.0 1.0;
             rel2.offset: 0 -1;
             align: 0.0 0.5;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
+         }
+         description { state: "visible";
+            inherit: "default" 0.0;
+            rel.to_x: "e.procstats.swallow";
          }
       }
    }
@@ -709,11 +714,13 @@ group { name: "e/widgets/border/default/border";
       program { signal: "e,state,procstats,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          target: "e.procstats.swallow";
+         target: "e.swallow.volume";
          target: "procstats";
       }
       program { signal: "e,state,procstats,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.procstats.swallow";
+         target: "e.swallow.volume";
          target: "procstats";
       }
 //      program {
