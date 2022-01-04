@@ -135,7 +135,7 @@ static const Simple_Test_Widget simple_widgets[] = {
   {elm_colorselector_add, "colorselector"},
   {_custom_colorselector_add, "colorselector2"},
   {elm_slideshow_add, "slideshow"},
-  {elm_map_add, "map"},
+//  {elm_map_add, "map"},
   {NULL, NULL},
 };
 
