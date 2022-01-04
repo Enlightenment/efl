@@ -290,6 +290,8 @@ eet_dictionary_string_get_hash(Eet_Dictionary *ed,
                                int index);
 
 void
+eet_dictionary_write_prepare_unlocked(Eet_Dictionary *ed);
+void
 eet_dictionary_write_prepare(Eet_Dictionary *ed);
 
 int

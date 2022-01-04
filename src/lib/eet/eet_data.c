@@ -3481,6 +3481,8 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
    Eet_Data_Chunk chnk;
    Eina_Bool need_free = EINA_FALSE;
 
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
+
    if (_eet_data_words_bigendian == -1)
      {
         unsigned long int v;
@@ -3732,6 +3734,8 @@ eet_data_get_list(Eet_Free_Context     *context,
    list = *ptr;
    data_ret = NULL;
 
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
+
    if (IS_POINTER_TYPE(type))
      POINTER_TYPE_DECODE(context,
                          ed,
@@ -3796,6 +3800,8 @@ eet_data_get_hash(Eet_Free_Context     *context,
 
    ptr = (void **)data;
    hash = *ptr;
+
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
 
    /* Read key */
    ret = eet_data_get_type(ed,
@@ -3898,6 +3904,8 @@ eet_data_get_array(Eet_Free_Context     *context,
    int i;
 
    EET_ASSERT(!((type > EET_T_UNKNOW) && (type < EET_T_STRING)), return 0);
+
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
 
    ptr = data;
    /* read the number of elements */
@@ -4116,6 +4124,8 @@ eet_data_get_union(Eet_Free_Context     *context,
    void *data_ret = NULL;
    int ret = 0;
    int i;
+
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
 
    /* Read type */
    ret = eet_data_get_type(ed,
@@ -4344,6 +4354,8 @@ eet_data_get_variant(Eet_Free_Context     *context,
    int ret = 0;
    int i;
 
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
+
    /* Read type */
    ret = eet_data_get_type(ed,
                            EET_T_STRING,
@@ -4531,6 +4543,8 @@ eet_data_get_unknown(Eet_Free_Context     *context,
 {
    int ret;
    void *data_ret;
+
+   if (ed) eet_dictionary_write_prepare_unlocked((Eet_Dictionary *)ed);
 
    if (IS_SIMPLE_TYPE(type))
      {
@@ -4829,6 +4843,8 @@ eet_data_dump_cipher(Eet_File         *ef,
    int size;
 
    ed = eet_dictionary_get(ef);
+
+   if (ed) eet_dictionary_write_prepare((Eet_Dictionary *)ed);
 
    if (!cipher_key)
      data = eet_read_direct(ef, name, &size);

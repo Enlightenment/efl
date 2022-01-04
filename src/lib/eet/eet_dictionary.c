@@ -95,14 +95,9 @@ on_error:
 }
 
 void
-eet_dictionary_write_prepare(Eet_Dictionary *ed)
+eet_dictionary_write_prepare_unlocked(Eet_Dictionary *ed)
 {
-   eina_rwlock_take_write(&ed->rwlock);
-   if (!ed->add_hash)
-     {
-        eina_rwlock_release(&ed->rwlock);
-        return;
-     }
+   if (!ed->add_hash) return;
 
    ed->total = ed->count;
 
@@ -113,6 +108,13 @@ eet_dictionary_write_prepare(Eet_Dictionary *ed)
    eina_hash_foreach(ed->add_hash, _eet_dictionary_write_prepare_hash_cb, ed);
    eina_hash_free(ed->add_hash);
    ed->add_hash = NULL;
+}
+
+void
+eet_dictionary_write_prepare(Eet_Dictionary *ed)
+{
+   eina_rwlock_take_write(&ed->rwlock);
+   eet_dictionary_write_prepare_unlocked(ed);
    eina_rwlock_release(&ed->rwlock);
 }
 
