@@ -16,7 +16,7 @@ static const Simple_Test_Widget simple_widgets[] = {
   {elm_flip_add, "flip"},
   {elm_frame_add, "frame"},
   {elm_player_add, "player"},
-  {elm_video_add, "video"},
+//  {elm_video_add, "video"},
   {elm_ctxpopup_add, "ctxpopup"},
   {elm_fileselector_add, "fileselector"},
   {elm_hoversel_add, "hoversel"},
