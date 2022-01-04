@@ -44,5 +44,5 @@ EFL_END_TEST
 void elm_test_video(TCase *tc)
 {
    tcase_add_test(tc, elm_video_legacy_type_check);
-   tcase_add_test(tc, elm_atspi_role_get);
+//   tcase_add_test(tc, elm_atspi_role_get);
 }

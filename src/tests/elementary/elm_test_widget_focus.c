@@ -114,7 +114,7 @@ static const Simple_Test_Widget simple_widgets[] = {
   {elm_diskselector_add, "diskselector"},
   {elm_entry_add, "entry"},
   {elm_flipselector_add, "flipselector"},
-  {elm_video_add, "video"},
+//  {elm_video_add, "video"},
   {elm_spinner_add, "spinner"},
   {elm_multibuttonentry_add, "mbe"},
   {elm_fileselector_add, "fileselector"},
