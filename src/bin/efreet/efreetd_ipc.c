@@ -2,10 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef _WIN32
-# include <evil_private.h> /* setenv */
-#endif
-
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
 
@@ -155,7 +151,16 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         fflush(efreetd_log_file);
         if ((s = _parse_str(e->data, e->size)))
           {
-             setenv("LANG", s, 1);
+             char envlang[128], *env;
+
+             env = getenv("LANG");
+             if (!((env) && (!strcmp(env, s))))
+               {
+                  snprintf(envlang, sizeof(envlang), "LANG=%s", s);
+                  env = strdup(envlang);
+                  putenv(env);
+                  /* leak env intentionnally */
+               }
              free(s);
           }
         // return if desktop cache exists (bool as minor)
@@ -179,7 +184,16 @@ _cb_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         fflush(efreetd_log_file);
         if ((s = _parse_str(e->data, e->size)))
           {
-             setenv("LANG", s, 1);
+             char envlang[128], *env;
+
+             env = getenv("LANG");
+             if (!((env) && (!strcmp(env, s))))
+               {
+                  snprintf(envlang, sizeof(envlang), "LANG=%s", s);
+                  env = strdup(envlang);
+                  putenv(env);
+                  /* leak env intentionnally */
+               }
              free(s);
           }
         cache_desktop_update();
