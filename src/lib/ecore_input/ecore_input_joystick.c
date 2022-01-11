@@ -2,17 +2,15 @@
 # include "config.h"
 #endif
 
-/*FIXME: change OS specific value */
-#if defined(__linux__) || defined(__FreeBSD__)
-# include <linux/joystick.h>
-#endif
-
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
 
 #ifdef HAVE_EEZE
- #include "Eeze.h"
+# if defined(__linux__)
+#  include <linux/joystick.h>
+# endif
+# include "Eeze.h"
 #endif
 #include "Ecore.h"
 #include "Ecore_Input.h"
