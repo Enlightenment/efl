@@ -181,11 +181,22 @@ static inline double
 _to_offset(const char *str)
 {
    char *end = NULL;
-
+   const char* str_end = str + strlen(str);
    double parsed_value = eina_convert_strtod_c(str, &end);
+   char *ptr = strstr(str, "%");
 
-   if (strstr(str, "%"))
-     parsed_value = parsed_value / 100.0;
+   end = _skip_space(end, NULL);
+
+   if (ptr)
+     {
+        parsed_value = parsed_value / 100.0;
+        if (end != ptr || (end + 1) != str_end)
+          return 0;
+     }
+   else if (end != str_end)
+     {
+        return 0;
+     }
 
    return parsed_value;
 }

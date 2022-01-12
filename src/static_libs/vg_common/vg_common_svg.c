@@ -696,6 +696,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
         double fopacity = ((double) fill_opacity) / 255;   //fill opacity if any exists.
         stops = calloc(stop_count, sizeof(Efl_Gfx_Gradient_Stop));
         i = 0;
+        double prevOffset = 0;
         EINA_LIST_FOREACH(g->stops, l, stop)
           {
              // Use premultiplied color
@@ -705,6 +706,16 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
              stops[i].b = (stop->b * opacity);
              stops[i].a = (stop->a * fopacity);
              stops[i].offset = stop->offset;
+             //NOTE: check the offset corner cases - refer to: https://svgwg.org/svg2-draft/pservers.html#StopNotes
+             if (stop->offset < prevOffset)
+               {
+                  stops[i].offset = prevOffset;
+               }
+             else if (stop->offset > 1)
+               {
+                  stops[i].offset = 1;
+               }
+             prevOffset = stops[i].offset;
              i++;
           }
         efl_gfx_gradient_stop_set(grad_obj, stops, stop_count);
