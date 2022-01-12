@@ -267,6 +267,8 @@ _PARSE_TAG(Efl_Gfx_Fill_Rule, fill_rule, fill_rule_tags, EFL_GFX_FILL_RULE_WINDI
 static inline void
 _parse_dash_array(const char *str, Efl_Gfx_Dash** dash, int *length)
 {
+   if (strlen(str) >= 4 && !strncmp(str, "none", 4)) return;
+
    // It is assumed that the length of the dasharray string is 255 or less.
    double tmp[255];
    char *end = NULL;
