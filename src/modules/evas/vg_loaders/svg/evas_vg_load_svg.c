@@ -2276,12 +2276,12 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
      {
         // find out the tag name starting from content till sz length
         sz = attrs - content;
-        attrs_length = length - sz;
         while ((sz > 0) && (isspace(content[sz - 1])))
           sz--;
         if ((unsigned int)sz >= sizeof(tag_name)) return;
         strncpy(tag_name, content, sz);
         tag_name[sz] = '\0';
+        attrs_length = length - sz;
      }
 
    if ((method = _find_group_factory(tag_name)))
