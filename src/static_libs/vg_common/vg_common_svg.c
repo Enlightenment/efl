@@ -832,7 +832,7 @@ _add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
    if (size < 2) return;
 
    efl_gfx_path_append_move_to(vg, array[0], array[1]);
-   for (i=2; i < size; i+=2)
+   for (i = 2; i < size - 1; i += 2)
      efl_gfx_path_append_line_to(vg, array[i], array[i+1]);
 
    if (polygon)
