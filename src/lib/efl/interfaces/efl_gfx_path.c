@@ -607,11 +607,6 @@ _efl_gfx_path_append_arc_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    // Correction of out-of-range radii, see F6.6.1 (step 2)
    rx = fabs(rx);
    ry = fabs(ry);
-   if ((rx < 0.5) || (ry < 0.5))
-     {
-        _efl_gfx_path_append_line_to(obj, pd, x, y);
-        return;
-     }
 
    angle = angle * M_PI / 180.0;
    cos_phi = cos(angle);
