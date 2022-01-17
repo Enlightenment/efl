@@ -6,7 +6,7 @@ group { name: "e/pointer/enlightenment/default/color";
          scale: 1;
          description { state: "default" 0.0;
             color: 255 255 255 255; // no cc
-            FIXED_SIZE(32, 32)
+//            FIXED_SIZE(32, 32)
          }
          description { state: "suspend" 0.0;
             inherit: "default" 0.0;
