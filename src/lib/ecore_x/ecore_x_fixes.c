@@ -465,7 +465,14 @@ ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num)
    static int bar_num = 0;
    static int bar_alloc = 0;
    Region reg, reg2, reg3;
+   Window rwin, cwin;
+   int rx, ry, wx, wy;
    int i, j;
+   int closest_dist, dist;
+   int sx, sy, dx, dy;
+   unsigned int mask;
+   Eina_Bool inside = EINA_FALSE;
+   Ecore_X_Rectangle *closest_screen = NULL;
 
    // clear out old root screen barriers....
    if (bar)
@@ -476,6 +483,55 @@ ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num)
           }
         free(bar);
      }
+   // ensure mouse pointer is insude the new set of screens if it is not
+   // inside them right now
+   XQueryPointer(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp),
+                 &rwin, &cwin, &rx, &ry, &wx, &wy, &mask);
+   for (i = 0; i < num; i++)
+     {
+        if ((rx >= screens[i].x) &&
+            (rx < (screens[i].x + (int)screens[i].width)) &&
+            (ry >= screens[i].y) &&
+            (ry < (screens[i].y + (int)screens[i].height)))
+          {
+             inside = EINA_TRUE;
+             break;
+          }
+        if (!closest_screen) closest_screen = &(screens[i]);
+        else
+          {
+             // screen center
+             sx = closest_screen->x + (closest_screen->width / 2);
+             sy = closest_screen->y + (closest_screen->height / 2);
+             dx = rx - sx;
+             dy = ry - sy;
+             // square dist to center
+             closest_dist = ((dx * dx) + (dy * dy));
+             // screen center
+             sx = screens[i].x + (screens[i].width / 2);
+             sy = screens[i].y + (screens[i].height / 2);
+             dx = rx - sx;
+             dy = ry - sy;
+             // square dist to center
+             dist = ((dx * dx) + (dy * dy));
+             // if closer than previous closest, then this screen is closer
+             if (dist < closest_dist) closest_screen = &(screens[i]);
+          }
+     }
+   // if the pointer is not inside oneof the new screen areas then
+   // move it to the center of the closest one to ensure it doesn't get
+   // stuck outside
+   if ((!inside) && (closest_screen))
+     {
+        // screen center
+        sx = closest_screen->x + (closest_screen->width / 2);
+        sy = closest_screen->y + (closest_screen->height / 2);
+        // move pointer there
+        XWarpPointer(_ecore_x_disp, None,
+                     DefaultRootWindow(_ecore_x_disp),
+                     0, 0, 0, 0, sx, sy);
+     }
+
    bar = NULL;
    bar_num = 0;
    bar_alloc = 0;
