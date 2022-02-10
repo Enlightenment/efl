@@ -331,11 +331,9 @@ _dri3_pixmap_from_fd(Ecore_X_Display *dpy, Ecore_X_Drawable draw, int width, int
    if (!dpy)
      return 0;
 
-   c = XGetXCBConnection(dpy);
    if (!c)
      return 0;
 
-   pixmap = xcb_generate_id(c);
    if (!pixmap)
      return 0;
 
