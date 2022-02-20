@@ -21,6 +21,7 @@ group { name: "e/ilist";
             offscale;
          }
       }
+      alias: "e.text.typebuf_label" "e.text.label";
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          clip_to: "typebuf_clip";
          scale: 1;
