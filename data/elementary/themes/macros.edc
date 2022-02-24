@@ -9,6 +9,10 @@
 
 #define SHELFPAD 3
 #define ICMIN 15
+#define RSZCOL  0 0 0 0
+#define RSZCOL2 0 0 0 0
+#define RSZMINW 44
+#define RSZMINH 10
 
 #define SPACER_TEXT "NN";
 
