@@ -3712,8 +3712,13 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
                                                    sd->wm_rot.preferred_rot);
 
 #ifdef HAVE_ELEMENTARY_X
+   const char *engine_name = ecore_evas_engine_name_get(sd->ee);
+   if (engine_name) _elm_win_need_frame_adjust(sd, engine_name);
    if (sd->csd.need && sd->x.xwin)
-     TRAP(sd, borderless_set, EINA_TRUE);
+     {
+        TRAP(sd, borderless_set, EINA_TRUE);
+        ecore_x_mwm_borderless_set(sd->x.xwin, EINA_TRUE);
+     }
 #endif
 }
 

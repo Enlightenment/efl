@@ -1636,7 +1636,7 @@ ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
    xev.xclient.data.l[3] = button;
    xev.xclient.data.l[4] = 1;
 
-   XSendEvent(_ecore_x_disp, win, False,
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
    if (_ecore_xlib_sync) ecore_x_sync();
 }
