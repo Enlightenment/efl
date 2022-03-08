@@ -319,7 +319,7 @@ group { name: "e/comp/border/fullscreen";
             visible: 1;
          }
       }
-      part { name: "scr_shade"; type: RECT;
+      part { name: "scr_shade"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 0 0 0 0; // no cc
             visible: 0;
@@ -355,7 +355,7 @@ group { name: "e/comp/border/fullscreen";
             rel2.to: "shower";
          }
       }
-      part { name: "fader"; type: RECT;
+      part { name: "fader"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
             color: 255 255 255 0; // no cc
