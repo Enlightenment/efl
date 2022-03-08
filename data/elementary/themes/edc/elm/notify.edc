@@ -7,6 +7,7 @@ group { name: "elm/notify/block_events/default";
             color: 255 255 255 0; // no cc
          }
          desc { "visible";
+            inherit: "default" 0.0;
             color: 255 255 255 255; // no cc
          }
       }
