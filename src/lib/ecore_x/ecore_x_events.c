@@ -2479,20 +2479,15 @@ free_hash(void *data, void *ev)
 void
 _ecore_x_event_handle_xkb(XEvent *xevent)
 {
-   XkbEvent *xkbev;
-
-   xkbev = (XkbEvent *) xevent;
-
+   XkbEvent *xkbev = (XkbEvent *)xevent;
+   Ecore_X_Event_Xkb *e;
 
    if (xkbev->any.xkb_type == XkbStateNotify)
      {
-        Ecore_X_Event_Xkb *e;
-
         if (eina_hash_find(emitted_events, &xkbev->state.serial)) return;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xkb));
-        if (!e)
-          return;
+        if (!e) return;
 
         e->group = xkbev->state.group;
         e->base_group = xkbev->state.base_group;
@@ -2512,6 +2507,9 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
      {
         if (eina_hash_find(emitted_events, &xkbev->state.serial)) return;
 
+        e = calloc(1, sizeof(Ecore_X_Event_Xkb));
+        if (!e) return;
+
         if (xkbev->any.xkb_type == XkbMapNotify)
           {
              XkbMapNotifyEvent *xkbmapping = (XkbMapNotifyEvent *)xkbev;
@@ -2524,13 +2522,14 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
              _ecore_x_modifiers_get();
              _ecore_x_window_grab_resume();
              _ecore_x_key_grab_resume();
+             e->map_notify = EINA_TRUE;
           }
         else
           {
              XkbNewKeyboardNotifyEvent *xkbnkn = (void*)xkbev;
              if (!(xkbnkn->changed & XkbNKN_KeycodesMask)) return;
           }
-        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, NULL, free_hash,
+        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, e, free_hash,
                         (void *)(intptr_t)xkbev->new_kbd.serial);
         eina_hash_add(emitted_events, &xkbev->new_kbd.serial, (void *)1);
      }
