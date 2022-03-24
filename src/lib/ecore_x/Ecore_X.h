@@ -2530,10 +2530,11 @@ struct _Ecore_X_Event_Xkb
    int base_group; /** @since 1.21 */
    int latched_group; /** @since 1.21 */
    int locked_group; /** @since 1.21 */
-   unsigned int	mods; /** @since 1.21 */
+   unsigned int mods; /** @since 1.21 */
    unsigned int base_mods; /** @since 1.21 */
-   unsigned int	latched_mods; /** @since 1.21 */
-   unsigned int	locked_mods; /** @since 1.21 */
+   unsigned int latched_mods; /** @since 1.21 */
+   unsigned int locked_mods; /** @since 1.21 */
+   Eina_Bool map_notify; /** @since 1.27 */
 };
 typedef struct _Ecore_X_Event_Xkb Ecore_X_Event_Xkb; /** @since 1.7 */
 typedef struct _Ecore_X_Event_Xkb Ecore_X_Xkb_State; /** @since 1.21 */
