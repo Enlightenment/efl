@@ -2470,9 +2470,10 @@ _ecore_x_event_handle_generic_event(XEvent *event)
 #ifdef ECORE_XKB
 
 void
-free_hash(void *userdata EINA_UNUSED, void *funcdata EINA_UNUSED)
+free_hash(void *data, void *ev)
 {
-   eina_hash_del_by_data(emitted_events, (void*) 1);
+   eina_hash_del_by_key(emitted_events, (void *)&data);
+   if (ev) free(ev);
 }
 
 void
@@ -2502,8 +2503,9 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
         e->base_mods = xkbev->state.base_mods;
         e->latched_mods = xkbev->state.latched_mods;
         e->locked_mods = xkbev->state.locked_mods;
-        ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, free_hash, NULL);
-        eina_hash_add(emitted_events, &xkbev->state.serial, (void*) 1);
+        ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, free_hash,
+                        (void *)(intptr_t)xkbev->new_kbd.serial);
+        eina_hash_add(emitted_events, &xkbev->state.serial, (void *)1);
      }
    else if ((xkbev->any.xkb_type == XkbNewKeyboardNotify) ||
             (xkbev->any.xkb_type == XkbMapNotify))
@@ -2528,8 +2530,9 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
              XkbNewKeyboardNotifyEvent *xkbnkn = (void*)xkbev;
              if (!(xkbnkn->changed & XkbNKN_KeycodesMask)) return;
           }
-        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, NULL, free_hash, NULL);
-        eina_hash_add(emitted_events, &xkbev->new_kbd.serial, (void*) 1);
+        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, NULL, free_hash,
+                        (void *)(intptr_t)xkbev->new_kbd.serial);
+        eina_hash_add(emitted_events, &xkbev->new_kbd.serial, (void *)1);
      }
 }
 #endif /* ifdef ECORE_XKB */
