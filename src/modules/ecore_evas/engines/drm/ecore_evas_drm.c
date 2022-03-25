@@ -173,6 +173,9 @@ _ecore_evas_drm_init(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata, const ch
    if (edata->output) ecore_drm2_output_user_data_set(edata->output, ee);
    else WRN("Could not find output at %d %d", edata->x, edata->y);
 
+   ecore_drm2_device_preferred_depth_get(edata->dev,
+                                         &edata->depth, &edata->bpp);
+
    ecore_event_evas_init();
    if (!handlers)
      {
@@ -1017,12 +1020,11 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
         edata->once = EINA_TRUE;
         edata->offset = 0.0;
      }
+
    edata->x = x;
    edata->y = y;
    edata->w = w;
    edata->h = h;
-   edata->depth = 24; // FIXME: Remove hardcode
-   edata->bpp = 32; // FIXME: Remove hardcode
    edata->format = DRM_FORMAT_XRGB8888;
 
    if (_ecore_evas_drm_init(ee, edata, device) < 1)
