@@ -9226,6 +9226,7 @@ _ui_buffer_get(Ecore_Evas_Selection_Buffer buffer)
 void
 _register_selection_changed(Efl_Ui_Selection *selection)
 {
+   if (!selection) return;
    ELM_WIN_DATA_GET(efl_provider_find(selection, EFL_UI_WIN_CLASS), pd);
 
    eina_array_push(pd->planned_changes, selection);
