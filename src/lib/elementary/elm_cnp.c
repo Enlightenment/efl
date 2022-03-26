@@ -127,6 +127,18 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
    Eina_Array *tmp;
    unsigned char *mem_buf = NULL;
 
+   if (!obj)
+     {
+        ERR("elm_cnp_selection_set() passed NULL object");
+        return EINA_FALSE;
+     }
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+   if (!ee)
+     {
+        ERR("elm_cnp_selection_set() can't fine ecore_evas for obj %p", obj);
+        return EINA_FALSE;
+     }
+
    if (format == ELM_SEL_FORMAT_TEXT && ((char*)buf)[buflen - 1] != '\0')
      {
         mem_buf = eina_memdup((unsigned char *)buf, buflen, EINA_TRUE);
@@ -138,8 +150,6 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
         data.mem = buf;
         data.len = buflen;
      }
-
-   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
 
    if (format == ELM_SEL_FORMAT_IMAGE)
      {
