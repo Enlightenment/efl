@@ -1462,6 +1462,7 @@ evas_object_smart_del(Evas_Object *eo_obj)
    free(sobj->interface_privates);
    sobj->interface_privates = NULL;
 
+   sobj->data = NULL;
    if (s) evas_object_smart_unuse(s);
 }
 
