@@ -1674,6 +1674,12 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
                     }
                }
              else evas_object_smart_member_del(contained_obj);
+             // EEK ... it qasn't removed? remove it forcibly...
+             if ((Evas_Object_Protected_Data *)o->contained == contained)
+               {
+                  o->contained = eina_inlist_remove
+                    (o->contained, EINA_INLIST_GET(contained));
+               }
           }
 
         while (o->callbacks)
