@@ -132,11 +132,14 @@ _format_to_mime_array(Elm_Sel_Format format)
 {
    Eina_Array *ret = eina_array_new(10);
 
+   if (format & ELM_SEL_FORMAT_URILIST)
+     eina_array_push(ret, "text/uri-list");
    if (format & ELM_SEL_FORMAT_TEXT)
      {
         eina_array_push(ret, "text/plain");
         eina_array_push(ret, "text/plain;charset=utf-8");
-        eina_array_push(ret, "text/uri-list");
+        if (!(format & ELM_SEL_FORMAT_URILIST))
+          eina_array_push(ret, "text/uri-list");
      }
    if (format & ELM_SEL_FORMAT_MARKUP)
      eina_array_push(ret, "application/x-elementary-markup");

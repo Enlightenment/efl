@@ -31,6 +31,7 @@ _selection(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data *ev)
         case ELM_SEL_FORMAT_IMAGE: fmt = "IMAGE"; break;
         case ELM_SEL_FORMAT_VCARD: fmt = "VCARD"; break;
         case ELM_SEL_FORMAT_HTML: fmt = "HTML"; break;
+        case ELM_SEL_FORMAT_URILIST: fmt = "URILIST"; break;
      }
    fprintf(stderr, "got selection type '%s': length %zu\n", fmt, ev->len);
 

@@ -80,7 +80,8 @@ typedef enum
                                        * inline images */
   ELM_SEL_FORMAT_IMAGE = 4, /**< Images */
   ELM_SEL_FORMAT_VCARD = 8, /**< Vcards */
-  ELM_SEL_FORMAT_HTML = 16 /**< Raw HTML-like data (eg. webkit) */
+  ELM_SEL_FORMAT_HTML = 16, /**< Raw HTML-like data (eg. webkit) */
+  ELM_SEL_FORMAT_URILIST = 32 /**< URI List for file DND @since 1.27 */
 } Elm_Sel_Format;
 
 /**
