@@ -4038,7 +4038,10 @@ _force_stop_self_dnd(Ecore_Evas *ee)
    //Selection buffer is freed as a response to the FINISHED event.
    ecore_x_pointer_ungrab();
    ecore_x_dnd_self_drop();
-   ecore_x_dnd_aware_set(ee->prop.window, EINA_FALSE);
+   if ((!ee->func.fn_dnd_drop) &&
+       (!ee->func.fn_dnd_state_change) &&
+       (!ee->func.fn_dnd_motion))
+     ecore_x_dnd_aware_set(ee->prop.window, EINA_FALSE);
    ecore_event_handler_del(edata->mouse_up_handler);
    edata->mouse_up_handler = NULL;
 
