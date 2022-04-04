@@ -9309,7 +9309,7 @@ _enter_state_change_cb(Ecore_Evas *ee, unsigned int seat EINA_UNUSED, Eina_Posit
              target->currently_inside = EINA_TRUE;
              efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_ENTERED, &ev);
           }
-        else if (!move_inside && !target->currently_inside)
+        else if (!move_inside && target->currently_inside)
           {
              target->currently_inside = EINA_FALSE;
              efl_event_callback_call(target->obj, EFL_UI_DND_EVENT_DROP_LEFT, &ev);
