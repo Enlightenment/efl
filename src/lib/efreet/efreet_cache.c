@@ -108,6 +108,8 @@ EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_BUILD = 0;
 
+extern Eina_Prefix *_efreet_pfx;
+
 #define IPC_HEAD(_type) \
    Ecore_Ipc_Event_Server_##_type *e = event; \
    if (e->server != ipc) \
@@ -147,7 +149,13 @@ _ipc_launch(void)
    if (run_in_tree)
      bs_binary_get(buf, sizeof(buf), "efreet", "efreetd");
    else
-     snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
+     {
+        const char *bindir = NULL;
+
+        if (_efreet_pfx) bindir = eina_prefix_bin_get(_efreet_pfx);
+        if (bindir) snprintf(buf, sizeof(buf), "%s/efreetd", bindir);
+        else snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
+     }
    ecore_exe_run(buf, NULL);
    num = 0;
    while ((!ipc) && (num < tries))

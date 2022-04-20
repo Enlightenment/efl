@@ -51,7 +51,7 @@ static const char *xdg_pictures_dir = NULL;
 static const char *xdg_videos_dir = NULL;
 static const char *hostname = NULL;
 
-static Eina_Prefix *pfx= NULL;
+Eina_Prefix *_efreet_pfx= NULL;
 
 static void efreet_dirs_init(void);
 static const char *efreet_dir_get(const char *key, const char *fallback);
@@ -74,7 +74,7 @@ efreet_base_init(void)
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_base.\n");
         return 0;
     }
-    if (!pfx) pfx = eina_prefix_new
+    if (!_efreet_pfx) _efreet_pfx = eina_prefix_new
         (NULL, efreet_init, "EFREET", "efreet", "checkme",
          PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
     efreet_dirs_init();
@@ -110,10 +110,10 @@ efreet_base_shutdown(void)
 
     IF_RELEASE(hostname);
 
-    if (pfx)
+    if (_efreet_pfx)
     {
-        eina_prefix_free(pfx);
-        pfx = NULL;
+        eina_prefix_free(_efreet_pfx);
+        _efreet_pfx = NULL;
     }
     eina_log_domain_unregister(_efreet_base_log_dom);
     _efreet_base_log_dom = -1;
@@ -340,9 +340,9 @@ efreet_dirs_init(void)
     xdg_cache_home = efreet_dir_get("XDG_CACHE_HOME", "/.cache");
 
     /* xdg_data_dirs */
-    if (pfx)
+    if (_efreet_pfx)
     {
-        const char *dir = eina_prefix_get(pfx);
+        const char *dir = eina_prefix_get(_efreet_pfx);
         if (dir)
         {
             size_t len = strlen(dir);
