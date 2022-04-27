@@ -24,6 +24,8 @@ static inline Eina_Array*
 _elm_sel_format_to_mime_type(Elm_Sel_Format format)
 {
    Eina_Array *ret = eina_array_new(10);
+   if (format & ELM_SEL_FORMAT_URILIST)
+     eina_array_push(ret, "text/uri-list");
    if (format & ELM_SEL_FORMAT_TEXT)
      eina_array_push(ret, "text/plain;charset=utf-8");
    if (format & ELM_SEL_FORMAT_MARKUP)
@@ -101,6 +103,8 @@ _mime_type_to_elm_sel_format(const char *mime_type)
      return ELM_SEL_FORMAT_MARKUP;
    else if (eina_streq(mime_type, "application/xhtml+xml"))
      return ELM_SEL_FORMAT_HTML;
+   else if (eina_streq(mime_type, "text/uri-list"))
+     return ELM_SEL_FORMAT_URILIST;
    else if (!strncmp(mime_type, "text/", strlen("text/")))
      return ELM_SEL_FORMAT_TEXT;
    else if (!strncmp(mime_type, "image/", strlen("image/")))
@@ -139,7 +143,8 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
         return EINA_FALSE;
      }
 
-   if (format == ELM_SEL_FORMAT_TEXT && ((char*)buf)[buflen - 1] != '\0')
+   if (((format == ELM_SEL_FORMAT_TEXT) && ((char *)buf)[buflen - 1] != '\0') ||
+       ((format == ELM_SEL_FORMAT_URILIST) && ((char *)buf)[buflen - 1] != '\0'))
      {
         mem_buf = eina_memdup((unsigned char *)buf, buflen, EINA_TRUE);
         data.mem = mem_buf;
