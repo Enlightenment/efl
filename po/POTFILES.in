@@ -3164,6 +3164,7 @@ src/modules/evas/image_loaders/heif/evas_image_load_heif.c
 src/modules/evas/image_loaders/ico/evas_image_load_ico.c
 src/modules/evas/image_loaders/jp2k/evas_image_load_jp2k.c
 src/modules/evas/image_loaders/jpeg/evas_image_load_jpeg.c
+src/modules/evas/image_loaders/jxl/evas_image_load_jxl.c
 src/modules/evas/image_loaders/pmaps/evas_image_load_pmaps.c
 src/modules/evas/image_loaders/png/evas_image_load_png.c
 src/modules/evas/image_loaders/psd/evas_image_load_psd.c

@@ -12,6 +12,8 @@ webpdemux = dependency('libwebpdemux', version: ['>=0.5.0'], required: get_optio
 libopenjp2 = dependency('libopenjp2', required: get_option('evas-loaders-disabler').contains('jp2k') == false)
 libavif = dependency('libavif', required: get_option('evas-loaders-disabler').contains('avif') == false, version: '>= 0.8.2')
 heif= dependency('libheif', required: get_option('evas-loaders-disabler').contains('heif') == false)
+libjxl = dependency('libjxl', required: get_option('evas-loaders-disabler').contains('jxl') == false, version: '>= 0.6.1')
+libjxl_threads = dependency('libjxl_threads', required: get_option('evas-loaders-disabler').contains('jxl') == false, version: '>= 0.6.1')
 
 evas_image_loaders_file = [
      ['avif',    'shared', [libavif]],
@@ -23,6 +25,7 @@ evas_image_loaders_file = [
      ['ico',     'shared', []],
      ['jpeg',    'static', [jpeg]],
      ['jp2k',    'shared', [libopenjp2]],
+     ['jxl',     'shared', [libjxl, libjxl_threads]],
      ['pmaps',   'shared', []],
      ['png',     'static', [png]],
      ['psd',     'shared', []],
@@ -38,6 +41,7 @@ evas_image_savers_file = [
      ['avif',    'shared', [libavif]],
      ['eet',     'static', [eet]],
      ['jpeg',    'static', [jpeg]],
+     ['jxl' ,    'shared', [libjxl, libjxl_threads]],
      ['png',     'static', [png]],
      ['tgv',     'shared', [rg_etc, lz4]],
      ['tiff',    'shared', [tiff]],

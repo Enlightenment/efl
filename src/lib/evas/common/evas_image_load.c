@@ -66,6 +66,8 @@ static const struct ext_loader_s loaders[] =
 
    MATCHING(".dds", "dds"),
 
+   MATCHING(".jxl", "jxl"),
+
    MATCHING(".avif", "avif"),
    MATCHING(".avifs", "avif"),
 
@@ -193,7 +195,7 @@ static const struct ext_loader_s loaders[] =
 static const char *loaders_name[] =
 { /* in order of most likely needed */
   "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps",
-  "bmp", "tga", "wbmp", "ico", "psd", "jp2k", "dds", "avif", "heif",
+  "bmp", "tga", "wbmp", "ico", "psd", "jp2k", "dds", "jxl", "avif", "heif",
   "generic"
 };
 
