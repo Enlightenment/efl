@@ -138,8 +138,8 @@ _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
           }
         // rely on normal libc buffering for file ops to avoid syscalls.
         // may or may not be a good idea. good enough for now.
-        if (file) fprintf(f, "%s\t 0x%llx 0x%llx\n", file, offset, base);
-        else fprintf(f, "??\t -\n");
+        if (file) fprintf(f, "%s 0x%llx 0x%llx\n", file, offset, base);
+        else fprintf(f, "?? -\n");
      }
 #else
    (void)f;
