@@ -204,9 +204,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
    size_t buffer_size;
    Eina_Bool ret = EINA_FALSE;
 
-   double t1, t2;
-   t1 = ecore_time_get();
-
    animated = loader->animated;
 
    runner = loader->runner;
@@ -331,8 +328,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
      }
 
    _rgba_to_bgra(pixels, prop->w * prop->h);
-   t2 = ecore_time_get();
-   printf("time: %e\n", t2 - t1);
 
  on_success:
    *error = EVAS_LOAD_ERROR_NONE;
