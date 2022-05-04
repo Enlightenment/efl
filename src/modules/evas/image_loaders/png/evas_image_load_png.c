@@ -596,6 +596,17 @@ evas_image_load_file_head_with_data_png(void *loader_data,
      }
    free(pixels2);
 
+   if ((epi.hasa) && (pack_offset == sizeof(DATA32)))
+     {
+        DATA32 *dst_ptr = (DATA32 *) surface;
+        int total = w * h;
+
+        for (i = 0; i < total; i++)
+          {
+             if (A_VAL(dst_ptr) == 0) *dst_ptr = 0;
+             dst_ptr++;
+          }
+     }
    prop->info.premul = EINA_TRUE;
 
    *error = EVAS_LOAD_ERROR_NONE;
@@ -882,6 +893,17 @@ evas_image_load_file_data_png(void *loader_data,
           }
      }
 
+   if ((epi.hasa) && (pack_offset == sizeof(DATA32)))
+     {
+        DATA32 *dst_ptr = (DATA32 *) surface;
+        int total = w * h;
+
+        for (i = 0; i < total; i++)
+          {
+             if (A_VAL(dst_ptr) == 0) *dst_ptr = 0;
+             dst_ptr++;
+          }
+     }
    prop->info.premul = EINA_TRUE;
 
    *error = EVAS_LOAD_ERROR_NONE;
