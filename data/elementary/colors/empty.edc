@@ -1,0 +1,3 @@
+group "Elm_Palette" struct {
+  value "version" int: 1000;
+}

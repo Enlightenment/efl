@@ -1,5 +1,6 @@
 pals = [
   'default',
+  'empty',
   'light',
   'mauve-sunset',
   'candy-mint',
