@@ -198,17 +198,6 @@ the Ecore main-loop and event queue.
 
 
 
-**Ecore WinCE:**
-
-//BSD 2-Clause license//
-
-This acts as glue/wrapper around Windows CE APIs to tie them into the
-Ecore main-loop and event queue.
-
-This library is deprecated
-
-
-
 **Ecore X:**
 
 //BSD 2-Clause license//
