@@ -205,6 +205,8 @@ the Ecore main-loop and event queue.
 This acts as glue/wrapper around Windows CE APIs to tie them into the
 Ecore main-loop and event queue.
 
+This library is deprecated
+
 
 
 **Ecore X:**
@@ -402,7 +404,8 @@ implementations that are fast and accurate.
 //BSD 2-Clause license//
 
 This library acts as a porting library for Windows to provide missing
-libc calls not in Mingw32 that EFL needs.
+libc calls not in Mingw32 that EFL needs. It is used internally and
+no symbol is public.
 
 
 **Heif:**
