@@ -693,6 +693,23 @@ eet_sync(Eet_File *ef);
 
 /**
  * @ingroup Eet_File_Group
+ * @brief does exactly what eet_xunc() does but also fsyncs file data
+ * @param ef A valid eet file handle.
+ * @return An eet error identifier.
+ *
+ * This function does everything eet_xunc() does with one addition - it
+ * ensures data is written to/synced to disk (as best is possible) by
+ * calling fdatasync() on the file before writes are all queued/done.
+ *
+ * If the eet file handle is not valid nothing will be done.
+ *
+ * @since 1.27
+ */
+EAPI Eet_Error
+eet_sync_sync(Eet_File *ef);
+
+/**
+ * @ingroup Eet_File_Group
  * @brief Returns a handle to the shared string dictionary of the Eet file
  * @param ef A valid eet file handle.
  * @return A handle to the dictionary of the file

@@ -71,7 +71,7 @@ static Eet_Error
 eet_flush(Eet_File *ef);
 #endif /* if 0 */
 static Eet_Error
- eet_flush2(Eet_File *ef);
+ eet_flush2(Eet_File *ef, Eina_Bool sync);
 static Eet_File_Node *
  find_node_by_name(Eet_File  *ef,
                   const char *name);
@@ -288,7 +288,7 @@ eet_string_match(const char *s1,
 
 /* flush out writes to a v2 eet file */
 static Eet_Error
-eet_flush2(Eet_File *ef)
+eet_flush2(Eet_File *ef, Eina_Bool sync)
 {
    Eet_File_Node *efn;
    FILE *fp;
@@ -509,6 +509,9 @@ eet_flush2(Eet_File *ef)
    /* no more writes pending */
    ef->writes_pending = 0;
 
+#ifndef _WIN32
+   if (sync) fdatasync(fileno(fp));
+#endif
    fclose(fp);
 
    return EET_ERROR_NONE;
@@ -664,7 +667,30 @@ eet_sync(Eet_File *ef)
 
    LOCK_FILE(ef);
 
-   ret = eet_flush2(ef);
+   ret = eet_flush2(ef, EINA_FALSE);
+
+   UNLOCK_FILE(ef);
+   return ret;
+}
+
+EAPI Eet_Error
+eet_sync_sync(Eet_File *ef)
+{
+   Eet_Error ret;
+
+   if (eet_check_pointer(ef))
+     return EET_ERROR_BAD_OBJECT;
+
+   if ((ef->mode != EET_FILE_MODE_WRITE) &&
+       (ef->mode != EET_FILE_MODE_READ_WRITE))
+     return EET_ERROR_NOT_WRITABLE;
+
+   if (!ef->writes_pending)
+     return EET_ERROR_NONE;
+
+   LOCK_FILE(ef);
+
+   ret = eet_flush2(ef, EINA_TRUE);
 
    UNLOCK_FILE(ef);
    return ret;
@@ -1283,7 +1309,7 @@ eet_internal_close(Eet_File *ef,
          goto on_error;
      }
 
-   err = eet_flush2(ef);
+   err = eet_flush2(ef, EINA_FALSE);
 
    eet_identity_unref(ef->key);
    ef->key = NULL;
