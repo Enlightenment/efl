@@ -379,7 +379,8 @@ _drop_glyphs_ref(const void *container EINA_UNUSED, void *data, void *fdata)
    Evas_Font_Array_Data *fad = data;
    Evas_Public_Data     *pd = fdata;
 
-   evas_common_font_glyphs_unref(fad->glyphs);
+   if (fad->glyphs)
+     evas_common_font_glyphs_unref(fad->glyphs);
    eina_array_pop(&pd->glyph_unref_queue);
 
    return EINA_TRUE;
@@ -553,10 +554,12 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
 
                             props = &text->text_props;
                             evas_common_font_draw_prepare(props);
-
-                            evas_common_font_glyphs_ref(props->glyphs);
-                            evas_unref_queue_glyph_put(obj->layer->evas,
-                                                       props->glyphs);
+                            if (props->glyphs)
+                              {
+                                 evas_common_font_glyphs_ref(props->glyphs);
+                                 evas_unref_queue_glyph_put(obj->layer->evas,
+                                                            props->glyphs);
+                              }
 
                             fad = eina_inarray_grow(texts->array, 1);
                             if (!fad)
