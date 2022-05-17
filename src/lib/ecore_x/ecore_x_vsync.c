@@ -382,7 +382,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
         D("    @%1.5f vblank %i\n", ecore_time_get(), frame);
         if (pframe != frame)
           {
-#define DELTA_COUNT 10
+#if 0 // disable timestamp from vblank and use time event arrived
              double t = (double)sec + ((double)usec / 1000000);
              unsigned long long tusec, ptusec, tdelt = 0;
              static unsigned int psec = 0, pusec = 0;
@@ -411,10 +411,15 @@ _drm_vblank_handler(int fd EINA_UNUSED,
                     }
                }
              _drm_fail_count = 0;
-             _drm_send_time(t);
-             pframe = frame;
-             psec = sec;
              pusec = usec;
+             psec = sec;
+#else
+             double t = ecore_time_get();
+             _drm_send_time(t);
+             sec = 0;
+             usec = 0;
+#endif
+             pframe = frame;
           }
      }
    else
