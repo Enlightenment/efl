@@ -44,6 +44,7 @@ emile_compress(const Eina_Binbuf *data,
    Eina_Bool ok = EINA_FALSE;
 
    length = _emile_compress_buffer_size(data, t);
+   if (length < 0) return NULL;
 
    compact = malloc(length);
    if (!compact)
