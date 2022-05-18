@@ -13731,6 +13731,21 @@ _edje_source_with_double_values_append(const char *param_name, char val_num, dou
 
 #define INHERIT_CHECK_STRING(ATTRIBUTE_STR) (strcmp(inherit_pd->ATTRIBUTE_STR, pd->ATTRIBUTE_STR))
 
+static inline char *
+gen_indent_relative_str(int indent_space)
+{
+   size_t str_len = strlen("relative") + indent_space + 1;
+   char *relative_str =  malloc(str_len);
+
+   if (!relative_str)
+     {
+        ERR("Out of memory");
+        abort();
+     }
+   snprintf(relative_str, str_len, "%*srelative", indent_space, "");
+   return relative_str;
+}
+
 static void
 _edje_generate_source_state_relative(Edje *ed,
                                      Edje_Part_Description_Common *pd,
@@ -13826,13 +13841,14 @@ _edje_generate_source_state_relative(Edje *ed,
 
         if (relative)
           {
-             char relative_str[strlen("relative") + indent_space + 1];
-             snprintf(relative_str, strlen("relative") + indent_space + 1,
-                      "%*srelative", indent_space, "");
-             _edje_source_with_double_values_append(relative_str, 2,
-                                                  TO_DOUBLE(pd->rel1.relative_x),
-                                                  TO_DOUBLE(pd->rel1.relative_y),
-                                                  buf, &ret);
+             char *relative_str = gen_indent_relative_str(indent_space);
+
+             _edje_source_with_double_values_append
+               (relative_str, 2,
+                TO_DOUBLE(pd->rel1.relative_x),
+                TO_DOUBLE(pd->rel1.relative_y),
+                buf, &ret);
+             free(relative_str);
           }
 
         if (offset)
@@ -13945,13 +13961,14 @@ _edje_generate_source_state_relative(Edje *ed,
 
         if (relative)
           {
-             char relative_str[strlen("relative") + indent_space + 1];
-             snprintf(relative_str, strlen("relative") + indent_space + 1,
-                      "%*srelative", indent_space, "");
-             _edje_source_with_double_values_append(relative_str, 2,
-                                                  TO_DOUBLE(pd->rel2.relative_x),
-                                                  TO_DOUBLE(pd->rel2.relative_y),
-                                                  buf, &ret);
+             char *relative_str = gen_indent_relative_str(indent_space);
+
+             _edje_source_with_double_values_append
+               (relative_str, 2,
+                TO_DOUBLE(pd->rel2.relative_x),
+                TO_DOUBLE(pd->rel2.relative_y),
+                buf, &ret);
+             free(relative_str);
           }
 
         if (offset)
@@ -14196,13 +14213,14 @@ fill:
 
            if (orig_rel)
              {
-               char relative[strlen("relative") + indent_space + 1];
-               snprintf(relative, strlen("relative") + indent_space + 1,
-                        "%*srelative", indent_space, "");
-               _edje_source_with_double_values_append(relative, 2,
-                        TO_DOUBLE(img->image.fill.pos_rel_x),
-                        TO_DOUBLE(img->image.fill.pos_rel_y),
-                        buf, &ret);
+                char *relative_str = gen_indent_relative_str(indent_space);
+
+                _edje_source_with_double_values_append
+                  (relative_str, 2,
+                   TO_DOUBLE(img->image.fill.pos_rel_x),
+                   TO_DOUBLE(img->image.fill.pos_rel_y),
+                   buf, &ret);
+                free(relative_str);
              }
 
            if (orig_abs)
@@ -14226,13 +14244,14 @@ fill:
 
            if (size_rel)
              {
-               char relative[strlen("relative") + indent_space + 1];
-               snprintf(relative, strlen("relative") + indent_space + 1,
-                        "%*srelative", indent_space, "");
-               _edje_source_with_double_values_append(relative, 2,
-                        TO_DOUBLE(img->image.fill.rel_x),
-                        TO_DOUBLE(img->image.fill.rel_y),
-                        buf, &ret);
+                char *relative_str = gen_indent_relative_str(indent_space);
+
+                _edje_source_with_double_values_append
+                  (relative_str, 2,
+                   TO_DOUBLE(img->image.fill.rel_x),
+                   TO_DOUBLE(img->image.fill.rel_y),
+                   buf, &ret);
+                free(relative_str);
              }
 
            if (size_abs)
@@ -14539,13 +14558,14 @@ fill_proxy:
 
            if (orig_rel)
              {
-               char relative[strlen("relative") + indent_space + 1];
-               snprintf(relative, strlen("relative") + indent_space + 1,
-                        "%*srelative", indent_space, "");
-               _edje_source_with_double_values_append(relative, 2,
-                        TO_DOUBLE(pro->proxy.fill.pos_rel_x),
-                        TO_DOUBLE(pro->proxy.fill.pos_rel_y),
-                        buf, &ret);
+                char *relative_str = gen_indent_relative_str(indent_space);
+
+                _edje_source_with_double_values_append
+                  (relative_str, 2,
+                   TO_DOUBLE(pro->proxy.fill.pos_rel_x),
+                   TO_DOUBLE(pro->proxy.fill.pos_rel_y),
+                   buf, &ret);
+                free(relative_str);
              }
 
            if (orig_abs)
@@ -14569,13 +14589,14 @@ fill_proxy:
 
            if (size_rel)
              {
-               char relative[strlen("relative") + indent_space + 1];
-               snprintf(relative, strlen("relative") + indent_space + 1,
-                        "%*srelative", indent_space, "");
-               _edje_source_with_double_values_append(relative, 2,
-                        TO_DOUBLE(pro->proxy.fill.rel_x),
-                        TO_DOUBLE(pro->proxy.fill.rel_y),
-                        buf, &ret);
+                char *relative_str = gen_indent_relative_str(indent_space);
+
+                _edje_source_with_double_values_append
+                  (relative_str, 2,
+                   TO_DOUBLE(pro->proxy.fill.rel_x),
+                   TO_DOUBLE(pro->proxy.fill.rel_y),
+                   buf, &ret);
+                free(relative_str);
              }
 
            if (size_abs)
