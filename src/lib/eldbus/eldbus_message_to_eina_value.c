@@ -274,7 +274,7 @@ _message_iter_struct_to_eina_value(Eldbus_Message_Iter *iter)
    Eina_Value *value_st = NULL;
    Eina_Array *st_members = eina_array_new(1);
    unsigned int offset = 0, z;
-   char name[7];//arg000 + \0
+   char name[16];//arg000 + \0
    Eina_Value_Struct_Member *members;
    Eldbus_Struct_Desc *st_desc;
    Eina_Array *st_values = eina_array_new(1);
