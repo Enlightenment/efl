@@ -2197,7 +2197,7 @@ comp_surface_mouse_move(void *data, Evas *e EINA_UNUSED, Eo *obj EINA_UNUSED, vo
    Evas_Event_Mouse_Move *ev = event_info;
    Comp_Surface *cs = data;
    Eina_List *l = NULL, *ll;
-   struct wl_resource *res;
+   struct wl_resource *res = NULL;
    int x, y;
    Comp_Seat *s;
 
