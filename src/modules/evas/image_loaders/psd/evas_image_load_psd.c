@@ -457,22 +457,28 @@ psd_get_data(PSD_Header *head,
      {
         for (x = 0; x < pixels_count; x++)
           {
-             buffer[x * 4 + 0] = data[x * 3 + 2];
-             buffer[x * 4 + 1] = data[x * 3 + 1];
-             buffer[x * 4 + 2] = data[x * 3 + 0];
+             buffer[x * 4 + 0] = data[(x * 3) + 2];
+             buffer[x * 4 + 1] = data[(x * 3) + 1];
+             buffer[x * 4 + 2] = data[(x * 3) + 0];
              buffer[x * 4 + 3] = 255;
           }
      }
-   else
+   else if (bpp == 4)
      {
         // BRGA to RGBA
         for (x= 0; x < pixels_count; x++)
           {
-             buffer[x * 4 + 0] = data[x * 4 + 2];
-             buffer[x * 4 + 1] = data[x * 4 + 1];
-             buffer[x * 4 + 2] = data[x * 4 + 0];
-             buffer[x * 4 + 3] = data[x * 4 + 3];
+             buffer[x * 4 + 0] = data[(x * 4) + 2];
+             buffer[x * 4 + 1] = data[(x * 4) + 1];
+             buffer[x * 4 + 2] = data[(x * 4) + 0];
+             buffer[x * 4 + 3] = data[(x * 4) + 3];
           }
+     }
+   else
+     {
+        // can;'t handle non rgb formats
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto file_read_error;
      }
 
    free(channel);
