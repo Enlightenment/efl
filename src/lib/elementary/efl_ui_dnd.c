@@ -65,6 +65,12 @@ _efl_ui_dnd_drag_start(Eo *obj, Efl_Ui_Dnd_Data *pd, Eina_Content *content, cons
 }
 
 EOLIAN static void
+_efl_ui_dnd_drag_offset_set(Eo *obj EINA_UNUSED, Efl_Ui_Dnd_Data *pd, unsigned int seat, Eina_Size2D size)
+{
+   ecore_evas_drag_offset_set(pd->ee, seat, size);
+}
+
+EOLIAN static void
 _efl_ui_dnd_drag_cancel(Eo *obj EINA_UNUSED, Efl_Ui_Dnd_Data *pd, unsigned int seat)
 {
    ecore_evas_drag_cancel(pd->ee, seat);

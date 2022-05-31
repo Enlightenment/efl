@@ -404,6 +404,7 @@ struct _Ecore_Evas
    struct
      {
         Ecore_Evas *rep;
+        Eina_Size2D offset;
         void *data;
         Ecore_Evas_Drag_Finished_Cb free;
         Eina_Bool accepted;

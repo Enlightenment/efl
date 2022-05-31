@@ -53,6 +53,17 @@ mixin @beta Efl.Ui.Dnd requires Efl.Object {
                                  of the content being dragged (like a thumbnail, for example).
                                  Use @Efl.Content.content.set on it to do so.]]
       }
+      @property drag_offset {
+        [[Set the offset during a drag that was initiated through drag_start]]
+        keys {
+          seat: uint; [[Seat setting the offset on.]]
+        }
+        values {
+          offset : Eina.Size2D; [[The offset for which the window will be shifted. The upper left of the window is
+                                calculated by adding this offset to the cursor position]]
+        }
+        set {}
+      }
       drag_cancel {
          [[Cancels an on-going drag operation.]]
          params {

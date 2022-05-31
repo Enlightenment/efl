@@ -5645,8 +5645,26 @@ ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, 
    ee->drag.free = terminate_cb;
    ee->drag.data = data;
    ee->drag.accepted = EINA_FALSE;
+   ee->drag.offset = EINA_SIZE2D(INT_MAX, INT_MAX);
 
    return success;
+}
+
+EAPI void
+ecore_evas_drag_offset_set(Ecore_Evas *ee, unsigned int seat, Eina_Size2D offset) {
+   Ecore_Evas_Selection_Seat_Buffers *buffers;
+
+   EINA_SAFETY_ON_NULL_RETURN(ee);
+   buffers = _fetch_selection_buffers_of_seat(ee, seat, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN(buffers);
+   EINA_SAFETY_ON_TRUE_RETURN(buffers->selection_buffer[ECORE_EVAS_SELECTION_BUFFER_DRAG_AND_DROP_BUFFER] == NULL);
+   if (offset.w == INT_MAX || offset.h == INT_MAX)
+     {
+        ERR("Offset is INT_MAX, this is a reserved value! Executing Fallback!");
+     }
+
+   INF("Set offset to %d %d", offset.w, offset.h);
+   ee->drag.offset = offset;
 }
 
 EAPI Eina_Bool

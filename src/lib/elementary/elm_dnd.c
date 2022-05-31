@@ -776,10 +776,11 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
    Eina_Array *mime_types;
    Eina_Content *content;
    Efl_Content *ui;
-   int x, y, w, h;
+   int x = 0, y = 0, w, h;
    Efl_Ui_Widget *widget;
    Elm_Drag_Data *dd;
    const char *str_action;
+   Eina_Position2D pointer;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
@@ -803,6 +804,9 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format,
    content = eina_content_new((Eina_Slice) EINA_SLICE_STR_FULL(data), eina_array_data_get(mime_types, 0));
    ui = efl_ui_dnd_drag_start(obj, content, str_action, _default_seat(obj));
    widget = createicon(createdata, ui, &x, &y);
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &pointer.x, &pointer.y);
+   efl_ui_dnd_drag_offset_set(obj, _default_seat(obj), EINA_SIZE2D(x - pointer.x, y - pointer.y));
    evas_object_geometry_get(widget, NULL, NULL, &w, &h);
    evas_object_show(widget);
    efl_content_set(ui, widget);

@@ -3816,6 +3816,19 @@ typedef void (*Ecore_Evas_Drag_Finished_Cb)(Ecore_Evas *ee, unsigned int seat, v
  */
 EAPI Eina_Bool ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, Ecore_Evas *drag_rep,
                                      const char* action, Ecore_Evas_Drag_Finished_Cb terminate_cb, void *data);
+/**
+ * @brief Set the offset of the dragged symbol. Only valid during a drag
+ *
+ * @param[in] ee The Ecore Evas the drag operation started on.
+ * @param[in] seat The seat to use
+ * @param[in] offset The offset to apply to the upper left corner ofthe dragged window
+ *
+ * This must be called on the ee where ecore_evas_drag_start is called on, NOT on the drag representation
+ *
+ * @since 1.24
+ */
+EAPI void ecore_evas_drag_offset_set(Ecore_Evas *ee, unsigned int seat, Eina_Size2D offset);
+
 
 /**
  * @brief Cancels an ongoing drag operation.
