@@ -4451,11 +4451,22 @@ static void
 _x11_drag_move(void *data, Ecore_X_Xdnd_Position *pos)
 {
    Ecore_Evas *ee = data;
-   Eina_Rect rect;
+   Eina_Size2D offset;
 
+   Eina_Rect rect;
    ecore_evas_geometry_get(ee->drag.rep, &rect.x, &rect.y, &rect.w, &rect.h);
 
-   ecore_evas_move(ee->drag.rep, pos->position.x - rect.w / 2, pos->position.y - rect.h/2);
+   if (ee->drag.offset.w == INT_MAX)
+     offset.w = rect.size.w / -2;
+   else
+     offset.w = ee->drag.offset.w;
+
+   if (ee->drag.offset.h == INT_MAX)
+     offset.h = rect.size.h / -2;
+   else
+     offset.h = ee->drag.offset.h;
+
+   ecore_evas_move(ee->drag.rep, pos->position.x + offset.w, pos->position.y + offset.h);
 }
 
 static Eina_Bool
