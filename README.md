@@ -30,7 +30,7 @@ For more documentation please see:
 
 ## Platforms
 
-EFL is primarily developerd on Linux (GNU/Linux) and should work on
+EFL is primarily developed on Linux (GNU/Linux) and should work on
 most distributions as long as dependencies are provided. It has been
 compiled and run also on Windows (using MSYS2 + mingw-w64 - please see
 [Phabricator windows docs](https://phab.enlightenment.org/w/windows)),
@@ -424,9 +424,9 @@ use prefixes like /opt/e or /opt/efl or /home/USERNAME/software etc.
 ### Compiler flags
 
 You can affect compilation optimization, debugging and other factors
-by setting your CFLAGS environment variable (and CXXFLAGS). Be aware
-that to ensure ABI stability you should use the exact same CFLAGS /
-CXXFLAGS for all the build of EFL and any applications/libraries that
+by setting your `CFLAGS` environment variable (and `CXXFLAGS`). Be aware
+that to ensure ABI stability you should use the exact same `CFLAGS` /
+`CXXFLAGS` for all the build of EFL and any applications/libraries that
 depend on them.
 
 There are many other configure options that can be used, but in
@@ -438,7 +438,6 @@ breaking EFL functionality, so it is not recommended to mess with
 these without understanding the implications. The defaults
 have been carefully considered to provide full functionality so users
 will not be missing anything.
-
 
 ### Cryptography
 
