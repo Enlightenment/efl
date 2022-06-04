@@ -405,7 +405,7 @@ do this provide:
 -Ddrm=true
 ```
 
-Legacy fbcon support also exist6s, but yuou probably no longer want to
+Legacy fbcon support also exists, but yuou probably no longer want to
 use this as it is not maintained anymore. This supports basic frame-buffers
 like /dev/fb as well as input via /dev/input for keyboards and mice in a
 basic way. Enable this with:
