@@ -461,8 +461,8 @@ or clang for example), pkg-config, ninja, any relevant package-dev or
 package-devel packages if your distribution splits out development
 headers (e.g. libc6-dev) etc.
 
-Depending on where dependencies (like efl) are installed, you might have to
-set your `PKG_CONFIG_PATH` environment variable like:
+Depending on where dependencies,  you might have to set your
+`PKG_CONFIG_PATH` environment variable like:
 ```sh
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig
 ```
