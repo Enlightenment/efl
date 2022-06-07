@@ -450,7 +450,7 @@ msgstr "Отмена"
 #~ msgstr "С меню"
 
 #~ msgid "Unselected"
-#~ msgstr "Не выбрано"ы
+#~ msgstr "Не выбраноы"
 
 #~ msgid "Toolbar Item"
 #~ msgstr "Элемент панели инструментов"
