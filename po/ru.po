@@ -3,15 +3,15 @@
 # This file is put in the public domain.
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 # Igor Murzov <garik@efl.so>, 2015.
+# Dmitri Chudinov <dmitri.chudinov@gmail.com>, 2022.
 #
-#: src/lib/elementary/elm_config.c:4267
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:13+0200\n"
-"PO-Revision-Date: 2015-02-07 15:16+0300\n"
-"Last-Translator: Игорь Мурзов <garik@efl.so>\n"
+"PO-Revision-Date: 2022-06-07 11:55+0500\n"
+"Last-Translator: Дмитрий Чудинов <dmitri.chudinov@gmail.com>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -22,191 +22,192 @@ msgstr ""
 
 #: src/lib/ecore/ecore_getopt.c:85
 msgid "Version:"
-msgstr ""
+msgstr "Версия:"
 
 #: src/lib/ecore/ecore_getopt.c:94
 msgid "Usage:"
-msgstr ""
+msgstr "Пример использования:"
 
 #: src/lib/ecore/ecore_getopt.c:101
 #, c-format
 msgid "%s [options]"
-msgstr ""
+msgstr "%s [опций]"
 
 #: src/lib/ecore/ecore_getopt.c:301
 msgid "Copyright:"
-msgstr ""
+msgstr "Копирайт:"
 
 #: src/lib/ecore/ecore_getopt.c:313
 msgid "License:"
-msgstr ""
+msgstr "Лицензия:"
 
 #: src/lib/ecore/ecore_getopt.c:499
 msgid "Type: "
-msgstr ""
+msgstr "Тип: "
 
 #: src/lib/ecore/ecore_getopt.c:575
 msgid "Default: "
-msgstr ""
+msgstr "По умолчанию: "
 
 #: src/lib/ecore/ecore_getopt.c:602
 msgid "Choices: "
-msgstr ""
+msgstr "Варианты: "
 
 #: src/lib/ecore/ecore_getopt.c:640 src/lib/ecore/ecore_getopt.c:641
 msgid "No categories available."
-msgstr ""
+msgstr "Нет доступных категорий."
 
 #: src/lib/ecore/ecore_getopt.c:645
 msgid "Categories: "
-msgstr ""
+msgstr "Категории: "
 
 #: src/lib/ecore/ecore_getopt.c:767
 msgid "Options:\n"
-msgstr ""
+msgstr "Опции:\n"
 
 #: src/lib/ecore/ecore_getopt.c:776
 msgid "Positional arguments:\n"
-msgstr ""
+msgstr "Позиционные аргументы:\n"
 
 #: src/lib/ecore/ecore_getopt.c:843
 #, c-format
 msgid "ERROR: unknown category '%s'.\n"
-msgstr ""
+msgstr "ОШИБКА: неизвестная категория '%s'.\n"
 
 #: src/lib/ecore/ecore_getopt.c:947
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
-msgstr ""
+msgstr "ОШИБКА: неизвестная опция --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:949
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
-msgstr ""
+msgstr "ОШИБКА: неизвестная опция -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1012
 msgid "ERROR: "
-msgstr ""
+msgstr "ОШИБКА: "
 
 #: src/lib/ecore/ecore_getopt.c:1108 src/lib/ecore/ecore_getopt.c:1245
 #: src/lib/ecore/ecore_getopt.c:1261 src/lib/ecore/ecore_getopt.c:1276
 #: src/lib/ecore/ecore_getopt.c:1296 src/lib/ecore/ecore_getopt.c:1343
 #: src/lib/ecore/ecore_getopt.c:1463 src/lib/ecore/ecore_getopt.c:1504
 msgid "value has no pointer set.\n"
-msgstr ""
+msgstr "значение не имеет установленного указателя.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1140 src/lib/ecore/ecore_getopt.c:1363
 #, c-format
 msgid "unknown boolean value %s.\n"
-msgstr ""
+msgstr "неизвестное булево значение %s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1191 src/lib/ecore/ecore_getopt.c:1451
 #, c-format
 msgid "invalid number format %s\n"
-msgstr ""
+msgstr "неверный формат числа %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:1309
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr ""
+msgstr "недопустимый выбор \"%s\". Допустимыми значениями являются: "
 
 #: src/lib/ecore/ecore_getopt.c:1337
 msgid "missing parameter to append.\n"
-msgstr ""
+msgstr "недостающий параметр для добавления.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1441
 msgid "could not parse value.\n"
-msgstr ""
+msgstr "не удалось разобрать значение.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1498
 msgid "missing parameter.\n"
-msgstr ""
+msgstr "отсутствует параметр\n"
 
 #: src/lib/ecore/ecore_getopt.c:1511
 msgid "missing callback function!\n"
-msgstr ""
+msgstr "отсутствует функция вызова (callback)\n"
 
 #: src/lib/ecore/ecore_getopt.c:1542
 msgid "no version was defined.\n"
-msgstr ""
+msgstr "версия не определена\n"
 
 #: src/lib/ecore/ecore_getopt.c:1559
 msgid "no copyright was defined.\n"
-msgstr ""
+msgstr "копирайт не определен\n"
 
 #: src/lib/ecore/ecore_getopt.c:1576
 msgid "no license was defined.\n"
-msgstr ""
+msgstr "лицензия не определена\n"
 
 #: src/lib/ecore/ecore_getopt.c:1666
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr ""
+msgstr "ОШИБКА: неизвестная опция --%s, проигнорировано\n"
 
 #: src/lib/ecore/ecore_getopt.c:1706
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr ""
+msgstr "ОШИБКА: для опции --%s требуется указать аргумент!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1748
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
-msgstr ""
+msgstr "ОШИБКА: неизвестная опция -%c, проигнорировано.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1793
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr ""
+msgstr "ОШИБКА: для опции -%c требуется указать аргумент!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1888
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
-msgstr ""
+msgstr "ОШИБКА: отсутствует необходимый позиционный аргумент %s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1920
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
 msgstr ""
+"ОШИБКА: неподдерживаемый тип действия %d для позиционного аргумента %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:2041 src/lib/ecore/ecore_getopt.c:2107
 msgid "ERROR: no parser provided.\n"
-msgstr ""
+msgstr "ОШИБКА: не предоставлен анализатор (parser).\n"
 
 #: src/lib/ecore/ecore_getopt.c:2046 src/lib/ecore/ecore_getopt.c:2112
 msgid "ERROR: no values provided.\n"
-msgstr ""
+msgstr "ОШИБКА: не предоставлены значения.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2055 src/lib/ecore/ecore_getopt.c:2121
 msgid "ERROR: no arguments provided.\n"
-msgstr ""
+msgstr "ОШИБКА: не предоставлены аргументы.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2081
 msgid "ERROR: invalid options found."
-msgstr ""
+msgstr "ОШИБКА: обнаружены недопустимые опции."
 
 #: src/lib/ecore/ecore_getopt.c:2087 src/lib/ecore/ecore_getopt.c:2154
 #, c-format
 msgid " See --%s.\n"
-msgstr ""
+msgstr " Смотри --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2089 src/lib/ecore/ecore_getopt.c:2156
 #, c-format
 msgid " See -%c.\n"
-msgstr ""
+msgstr " Смотри --%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2148
 msgid "ERROR: invalid positional arguments found."
-msgstr ""
+msgstr "ОШИБКА: найдены недопустимые позиционные аргументы."
 
 #: src/lib/ecore/ecore_getopt.c:2183
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
-msgstr ""
+msgstr "ОШИБКА: некорректное значение геометрии '%s'\n"
 
 #: src/lib/ecore/ecore_getopt.c:2201
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
-msgstr ""
+msgstr "ОШИБКА: некорректное значение размера '%s'\n"
 
 #: src/lib/efreet/efreet_base.c:127
 msgid "Desktop"
@@ -222,7 +223,7 @@ msgstr "Шаблоны"
 
 #: src/lib/efreet/efreet_base.c:153
 msgid "Public"
-msgstr "Общий каталог"
+msgstr "Открытый"
 
 #: src/lib/efreet/efreet_base.c:162
 msgid "Documents"
@@ -249,9 +250,8 @@ msgid "Title"
 msgstr "Заголовок"
 
 #: src/lib/elementary/elc_naviframe.c:415
-#, fuzzy
 msgid "Subtitle"
-msgstr "Заголовок"
+msgstr "Подзаголовок"
 
 #: src/lib/elementary/elc_naviframe.c:966
 msgid "Back"
@@ -263,7 +263,7 @@ msgstr "Вверх"
 
 #: src/lib/elementary/elc_fileselector.c:1769
 msgid "Home"
-msgstr "Дом"
+msgstr "Главная"
 
 #: src/lib/elementary/elc_fileselector.c:1787
 msgid "Search"
@@ -281,16 +281,16 @@ msgstr "Отмена"
 #~ msgstr "Состояние: Отключено"
 
 #~ msgid "multi button entry label"
-#~ msgstr "метка многокопочного элемента"
+#~ msgstr "метка многокнопочного элемента"
 
 #~ msgid "multi button entry item"
-#~ msgstr "кнопка многокопочного элемента"
+#~ msgstr "кнопка многокнопочного элемента"
 
 #~ msgid "multi button entry"
 #~ msgstr "многокнопочный элемент"
 
 #~ msgid "Next"
-#~ msgstr "Вперёд"
+#~ msgstr "Далее"
 
 #~ msgid "Popup Title"
 #~ msgstr "Заголовок всплывающего окна"
@@ -368,7 +368,7 @@ msgstr "Отмена"
 #~ msgstr "элемент выбора дня"
 
 #~ msgid "diskselector item"
-#~ msgstr "элемент диска выбора"
+#~ msgstr "элемент выбора диска"
 
 #~ msgid "Cut"
 #~ msgstr "Вырезать"
@@ -383,7 +383,7 @@ msgstr "Отмена"
 #~ msgstr "Выбрать"
 
 #~ msgid "Entry"
-#~ msgstr "Запись"
+#~ msgstr "Ввод"
 
 #~ msgid "Index"
 #~ msgstr "Алфавитный указатель"
@@ -419,7 +419,7 @@ msgstr "Отмена"
 #~ msgstr "Состояние: Выбрано"
 
 #~ msgid "State: Unselected"
-#~ msgstr "Состояние: Невыбрано"
+#~ msgstr "Состояние: Не выбрано"
 
 #~ msgid "Segment Control Item"
 #~ msgstr "Элемент сегментного элемента управления"
@@ -438,7 +438,7 @@ msgstr "Отмена"
 
 #, fuzzy
 #~ msgid "spinner text"
-#~ msgstr "счётчик"
+#~ msgstr "текст счётчика"
 
 #~ msgid "Selected"
 #~ msgstr "Выбрано"
@@ -450,7 +450,7 @@ msgstr "Отмена"
 #~ msgstr "С меню"
 
 #~ msgid "Unselected"
-#~ msgstr "Невыбрано"
+#~ msgstr "Не выбрано"ы
 
 #~ msgid "Toolbar Item"
 #~ msgstr "Элемент панели инструментов"
