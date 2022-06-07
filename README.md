@@ -388,7 +388,7 @@ Required by default:
 ### Wayland support
 
 You may also want wayland support when on Linux. This enables support
-for EFL to trget wayland support for client applications. To do this
+for EFL to target wayland support for client applications. To do this
 supply:
 ``` sh
 -Dwl=true
@@ -399,7 +399,7 @@ supply:
 For more modern framebuffer support you may want drm/kms rendering
 support so enable this. This is what you also want for wayland
 compositor support in enlightenment as it will want to be able to
-render to a moder framebuffer tarbet with atomic buffer swapping. To
+render to a modern framebuffer target with atomic buffer swapping. To
 do this provide:
 ``` sh
 -Ddrm=true
