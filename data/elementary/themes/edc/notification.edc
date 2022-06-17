@@ -33,8 +33,7 @@ group { name: "e/modules/notification/main";
          tag:  "b" "+ font="FNBD" text_class=module_bold color=cc:/fg/normal/notification/text/bold";
          tag:  "i" "+ font="FNIT" text_class=module_italic";
          tag:  "u" "+ underline=on underline_color=cc:/fg/normal/notification/text/underline";
-         tag:  "img" ""; // images not supported
-         tag:  "a" ""; // links not supported
+         tag:  "link" "+ color=cc:/fg/normal/text-link underline=on underline_color=cc:/fg/normal/text-link";
       }
    }
 
@@ -72,10 +71,10 @@ group { name: "e/modules/notification/main";
          scale: 1;
          description { state: "default" 0.0;
             align: 0.0 0.5;
-            aspect: 1.0 1.0;
-            aspect_preference: BOTH;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
             rel.to: "base";
-            rel1.offset: 12 12;
+            rel1.to_y: "notification.textblock.message";
+            rel1.offset: 12 0;
             rel2.offset: 12 -13;
             rel2.relative: 0.0 1.0;
             min: 24 24;
@@ -83,26 +82,11 @@ group { name: "e/modules/notification/main";
             offscale;
          }
       }
-      part { name: "notification.textblock.message"; type: TEXTBLOCK; mouse_events: 0;
-         clip_to: "bodyclip";
-         scale: 1;
-         description { state: "default" 0.0;
-            align: 0.0 0.0;
-            rel.to: "base";
-            rel1.to_x: "notification.swallow.app_icon";
-            rel1.to_y: "notification.text.title";
-            rel1.relative: 1.0 1.0;
-            rel1.offset: 4 4;
-            rel2.offset: -27 -13;
-            text { style: "notification_style";
-               min: 0 1;
-            }
-            fixed: 1 1;
-            offscale;
-         }
-      }
       part { name: "message"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
+         entry_mode: EDITABLE;
+         select_mode: EXPLICIT;
+         multiline: 1;
          description { state: "default" 0.0;
             align: 0.0 0.0;
             min: 200 20;
@@ -112,12 +96,53 @@ group { name: "e/modules/notification/main";
             rel1.to_y: "notification.text.title";
             rel1.relative: 1.0 1.0;
             rel1.offset: 4 4;
-            rel2.offset: -27 -13;
+            rel2.offset: -27 -5;
+            rel2.to_y: "notification.swallow.actions";
+            rel2.relative: 1.0 0.0;
             text { style: "notification_style";
                text_source: "notification.textblock.message";
                min: 0 1;
             }
             visible: 0;
+            offscale;
+         }
+      }
+      part { name: "notification.textblock.message"; type: TEXTBLOCK;
+         clip_to: "bodyclip";
+         scale: 1;
+         entry_mode: EDITABLE;
+         select_mode: EXPLICIT;
+         multiline: 1;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            rel.to: "base";
+            rel1.to_x: "notification.swallow.app_icon";
+            rel1.to_y: "notification.text.title";
+            rel1.relative: 1.0 1.0;
+            rel1.offset: 4 4;
+            rel2.offset: -27 -5;
+            rel2.to_y: "notification.swallow.actions";
+            rel2.relative: 1.0 0.0;
+            text { style: "notification_style";
+               min: 0 1;
+            }
+            fixed: 1 1;
+            offscale;
+         }
+      }
+      part { name: "notification.swallow.desktop_icon"; type: SWALLOW; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            rel1.to_x: "base";
+            rel1.to_y: "notification.text.title";
+            rel1.offset: 12 0;
+            rel2.to: "notification.text.title";
+            rel2.offset: 12 -1;
+            rel2.relative: 0.0 1.0;
+            min: 15 15;
+            fixed: 1 1;
             offscale;
          }
       }
@@ -141,6 +166,24 @@ group { name: "e/modules/notification/main";
             }
             fixed: 0 1;
             offscale;
+         }
+      }
+
+      part { name: "notification.swallow.actions"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 1.0;
+            rel.to: "base";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 12 -13;
+            rel2.offset: -13 -13;
+            offscale;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            min: 40 20;
          }
       }
 
@@ -190,6 +233,14 @@ group { name: "e/modules/notification/main";
       program { signal: "mouse,clicked,1"; source: "base";
          action: SIGNAL_EMIT "notification,find" "theme";
       }
+      program { signal: "e,state,actions,show"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         target: "notification.swallow.actions";
+      }
+      program { signal: "e,state,actions,hide"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "notification.swallow.actions";
+      }
 //      program {
 //         signal: "notification,new"; source: "notification";
 //      }
@@ -199,5 +250,47 @@ group { name: "e/modules/notification/main";
 //      program {
 //         signal: "notification,deleted"; source: "notification";
 //      }
+   }
+}
+
+group { name: "e/modules/notification/action";
+   parts {
+      part { name: "e.text.label"; type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color_class: "/fg/normal/notification/text/title";
+            text { font: FNBD; size: 10;
+               min: 1 1;
+               text_class: "notification_title";
+            }
+            offscale;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/pressed/notification/text/title";
+         }
+      }
+      part { name: "event"; type: RECT;
+         scale : 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0; // no cc
+            min: 40 20;
+         }
+      }
+   }
+   programs {
+      program { signal: "mouse,down,1"; source: "event";
+         action: STATE_SET "selected" 0.0;
+         target: "e.text.label";
+      }
+      program { signal: "mouse,up,1"; source: "event";
+         action: STATE_SET "default" 0.0;
+         target: "e.text.label";
+      }
+      program { signal: "mouse,clicked,1"; source: "event";
+         action: SIGNAL_EMIT "e,action,clicked" "e";
+      }
    }
 }

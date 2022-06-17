@@ -172,6 +172,7 @@ color_tree {
       "/fg/normal/spinner/arrow";
       "/fg/normal/spinner/text";
       "/fg/normal/notification/text";
+      "/fg/pressed/notification/text/title";
       "/fg/selected/winlist/item/text/iconified";
       "/fg/pressed/gadgets/tasks/text/iconified";
       "/fg/normal/gadgets/battery/level/discharge";
