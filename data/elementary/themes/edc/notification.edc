@@ -241,15 +241,32 @@ group { name: "e/modules/notification/main";
          action: STATE_SET "default" 0.0;
          target: "notification.swallow.actions";
       }
-//      program {
-//         signal: "notification,new"; source: "notification";
-//      }
-//      program {
-//         signal: "notification,del"; source: "notification";
-//      }
-//      program {
-//         signal: "notification,deleted"; source: "notification";
-//      }
+//      program { signal: "e,category,device"; source: "e"; }
+//      program { signal: "e,category,device.added"; source: "e"; }
+//      program { signal: "e,category,device.error"; source: "e"; }
+//      program { signal: "e,category,device.removed"; source: "e"; }
+//      program { signal: "e,category,email"; source: "e"; }
+//      program { signal: "e,category,email.arrived"; source: "e"; }
+//      program { signal: "e,category,email.bounced"; source: "e"; }
+//      program { signal: "e,category,im"; source: "e"; }
+//      program { signal: "e,category,im.error"; source: "e"; }
+//      program { signal: "e,category,im.received"; source: "e"; }
+//      program { signal: "e,category,network"; source: "e"; }
+//      program { signal: "e,category,network.connected"; source: "e"; }
+//      program { signal: "e,category,network.disconnected"; source: "e"; }
+//      program { signal: "e,category,network.error"; source: "e"; }
+//      program { signal: "e,category,presence"; source: "e"; }
+//      program { signal: "e,category,presence.offline"; source: "e"; }
+//      program { signal: "e,category,presence.online"; source: "e"; }
+//      program { signal: "e,category,transfer"; source: "e"; }
+//      program { signal: "e,category,transfer.complete"; source: "e"; }
+//      program { signal: "e,category,transfer.error"; source: "e"; }
+//      program { signal: "e,urgency,low"; source: "e"; }
+//      program { signal: "e,urgency,normal"; source: "e"; }
+//      program { signal: "e,urgency,critical"; source: "e"; }
+//      program { signal: "notification,new"; source: "notification"; }
+//      program { signal: "notification,del"; source: "notification"; }
+//      program { signal: "notification,deleted"; source: "notification"; }
    }
 }
 
