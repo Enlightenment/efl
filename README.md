@@ -544,3 +544,15 @@ How to build with verbose output (full commands run):
 ```sh
 ninja -C build -v
 ```
+
+-----
+
+**NOTE:** Nvidia OpenGL-ES/EGL seems to have bugs and performance issues.
+All other drivers work just fine except Nvidia with OpenGL-ES/EGL. Users have
+reported stuttering and graphical glitches and sometimes windows not
+updating. If you want the best results and are stuck on Nvidia and unable to
+change that, then:
+
+  * Make sure you do not enable **Wayland** i.e. Meson option `-Dwl=false` (this is default anyway if not provided)
+  * Make sure you do not enable **DRM** i.e. Meson option `-Ddrm=false` (this is default anyway if not provided)
+  * Make sure **OpenGL** is **full** i.e. Meson option `-Dopengl=full`
