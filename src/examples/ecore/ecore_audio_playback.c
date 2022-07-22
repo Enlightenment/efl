@@ -193,7 +193,8 @@ handle_input(void *data EINA_UNUSED, Ecore_Fd_Handler *handler)
    return EINA_TRUE;
 }
 
-static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
+static void 
+_play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
   const char *name;
   Eina_Bool ret;
@@ -225,8 +226,6 @@ static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
       printf("Stream done\n");
       ecore_main_loop_quit();
     }
-
-  return EINA_TRUE;
 }
 
 int
