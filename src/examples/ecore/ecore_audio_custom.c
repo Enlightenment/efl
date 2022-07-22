@@ -1,5 +1,6 @@
 // Compile with:
 // gcc -o ecore_audio_custom ecore_audio_custom.c `pkg-config --libs --cflags ecore ecore-audio`
+#define EFL_BETA_API_SUPPORT
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -25,7 +26,7 @@ int read_cb(void *data EINA_UNUSED, Eo *eo_obj, void *buf, int len)
   float *val = buf;
   int i;
 
-  ecore_audio_obj_volume_get(eo_obj, &volume);
+  volume = ecore_audio_obj_volume_get(eo_obj);
 
   for(i=0; i<len/4; i++, phase1++)
     {
@@ -56,9 +57,9 @@ main(int argc, const char *argv[])
 
    ecore_app_args_set(argc, argv);
 
-   out = efl_add_ref(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_PULSE_CLASS, NULL);
 
-   in = efl_add_ref(ECORE_AUDIO_OBJ_IN_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
    if (!in)
      {
         printf("error when creating ecore audio source.\n");

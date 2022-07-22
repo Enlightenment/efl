@@ -1,5 +1,6 @@
 // Compile with:
 // gcc -o ecore_audio_to_ogg ecore_audio_to_ogg.c `pkg-config --libs --cflags ecore eina ecore-audio`
+#define EFL_BETA_API_SUPPORT
 
 #include <stdio.h>
 #include <libgen.h>
@@ -15,21 +16,20 @@
 double volume = 1;
 Eina_List *inputs = NULL;
 
-static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
+static void 
+_play_finished(void *data EINA_UNUSED, const Efl_Event *event)
 {
   const char *name;
   Eo *out;
 
-  ecore_audio_obj_name_get(event->object, &name);
+  name = ecore_audio_obj_name_get(event->object);
   printf("Done: %s\n", name);
 
-  ecore_audio_obj_in_output_get(event->object, &out);
+  out = ecore_audio_obj_in_output_get(event->object);
   efl_unref(event->object);
   efl_unref(out);
 
   ecore_main_loop_quit();
-
-  return EINA_TRUE;
 }
 
 int
@@ -49,7 +49,7 @@ main(int argc, char *argv[])
    ecore_audio_init();
 
 
-   in = efl_add_ref(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
    efl_name_set(in, basename(argv[1]));
    ret = ecore_audio_obj_source_set(in, argv[1]);
    if (!ret) {
@@ -58,9 +58,9 @@ main(int argc, char *argv[])
      return 1;
    }
 
-   efl_event_callback_add(in, ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL);
+   efl_event_callback_add(in, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL);
 
-   out = efl_add_ref(ECORE_AUDIO_OBJ_OUT_SNDFILE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    ret = ecore_audio_obj_source_set(out, argv[2]);
    if (!ret) {
      printf("Could not set %s as output\n", argv[2]);

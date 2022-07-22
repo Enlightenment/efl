@@ -1,5 +1,6 @@
 // Compile with:
 // gcc -o ecore_audio_playback ecore_audio_playback.c `pkg-config --libs --cflags ecore eina ecore-audio`
+#define EFL_BETA_API_SUPPORT
 
 #include <stdio.h>
 #include <string.h>
@@ -10,6 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <Ecore.h>
+#include <Ecore_Eo.h>
 #include <Ecore_Audio.h>
 #include <Eina.h>
 
@@ -30,19 +32,19 @@ handle_cmd(char *cmd, size_t bread)
    if (!out)
      return;
 
-   ecore_audio_obj_out_inputs_get(out, &out_inputs);
+   out_inputs = ecore_audio_obj_out_inputs_get(out);
    EINA_LIST_FOREACH(out_inputs, input, in)
      {
-        ecore_audio_obj_in_seek(in, 0, SEEK_CUR, &pos);
+        pos = ecore_audio_obj_in_seek(in, 0, SEEK_CUR);
         if (!strncmp(cmd, "<", bread))
-          ecore_audio_obj_in_seek(in, -10, SEEK_CUR, &pos);
+          pos = ecore_audio_obj_in_seek(in, -10, SEEK_CUR);/*  */
         else if (!strncmp(cmd, ">", bread))
-          ecore_audio_obj_in_seek(in, 10, SEEK_CUR, &pos);
+          pos = ecore_audio_obj_in_seek(in, 10, SEEK_CUR);
 
         min = pos / 60;
 
-        ecore_audio_obj_name_get(in, &name);
-        ecore_audio_obj_in_length_get(in, &length);
+        name = ecore_audio_obj_name_get(in);
+        length = ecore_audio_obj_in_length_get(in);
         printf("Position: %2im %5.02fs (%0.2f%%) - %s\n", min, pos - min * 60, pos/length*100, name);
 
      }
@@ -63,8 +65,8 @@ handle_cmd(char *cmd, size_t bread)
           {
              in = (Eo *)eina_list_data_get(inputs);
 
-             ecore_audio_obj_name_get(in, &name);
-             ecore_audio_obj_in_length_get(in, &length);
+             name = ecore_audio_obj_name_get(in);
+             length = ecore_audio_obj_in_length_get(in);
 
              printf("Start: %s (%0.2fs)\n", name, length);
              ret = ecore_audio_obj_out_input_attach(out, in);
@@ -84,8 +86,8 @@ handle_cmd(char *cmd, size_t bread)
           {
              in = (Eo *)eina_list_data_get(inputs);
 
-             ecore_audio_obj_name_get(in, &name);
-             ecore_audio_obj_in_length_get(in, &length);
+             name = ecore_audio_obj_name_get(in);
+             length = ecore_audio_obj_in_length_get(in);
 
              printf("Start: %s (%0.2fs)\n", name, length);
              ret = ecore_audio_obj_out_input_attach(out, in);
@@ -98,8 +100,8 @@ handle_cmd(char *cmd, size_t bread)
         EINA_LIST_FOREACH(out_inputs, input, in)
           {
              Eina_Bool loop;
-             ecore_audio_obj_in_looped_get(in, &loop);
-             ecore_audio_obj_name_get(in, &name);
+             loop = ecore_audio_obj_in_looped_get(in);
+             name = ecore_audio_obj_name_get(in);
 
              printf("%s song %s\n", !loop?"Looping":"Not looping", name);
              ecore_audio_obj_in_looped_set(in, !loop);
@@ -124,11 +126,11 @@ handle_cmd(char *cmd, size_t bread)
         double speed;
         EINA_LIST_FOREACH(out_inputs, input, in)
           {
-             ecore_audio_obj_in_speed_get(in, &speed);
+             speed = ecore_audio_obj_in_speed_get(in);
              if (speed < 2.0)
                speed += 0.01;
              ecore_audio_obj_in_speed_set(in, speed);
-             ecore_audio_obj_name_get(in, &name);
+             name = ecore_audio_obj_name_get(in);
              printf("Speed: %3.0f%% (%s)\n", speed * 100, name);
           }
      }
@@ -137,11 +139,11 @@ handle_cmd(char *cmd, size_t bread)
         double speed;
         EINA_LIST_FOREACH(out_inputs, input, in)
           {
-             ecore_audio_obj_in_speed_get(in, &speed);
+             speed = ecore_audio_obj_in_speed_get(in);
              if (speed > 0.5)
                speed -= 0.01;
              ecore_audio_obj_in_speed_set(in, speed);
-             ecore_audio_obj_name_get(in, &name);
+             name = ecore_audio_obj_name_get(in);
              printf("Speed: %3.0f%% (%s)\n", speed * 100, name);
           }
      }
@@ -149,9 +151,9 @@ handle_cmd(char *cmd, size_t bread)
      {
         EINA_LIST_FOREACH(out_inputs, input, in)
           {
-             ecore_audio_obj_paused_get(in, &paused);
-             ecore_audio_obj_name_get(in, &name);
-             ecore_audio_obj_in_remaining_get(in, &length);
+             paused = ecore_audio_obj_paused_get(in);
+             name = ecore_audio_obj_name_get(in);
+             length = ecore_audio_obj_in_remaining_get(in);
              printf("%s %s\n%0.2f remaining\n", !paused ? "Paused" : "Unpaused", name, length);
              ecore_audio_obj_paused_set(in, !paused);
           }
@@ -196,7 +198,7 @@ static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
   const char *name;
   Eina_Bool ret;
 
-  ecore_audio_obj_name_get(event->object, &name);
+  name = ecore_audio_obj_name_get(event->object);
   printf("Done: %s\n", name);
 
   inputs = eina_list_remove(inputs, event->object);
@@ -212,7 +214,7 @@ static void _play_finished(void *data EINA_UNUSED, const Efl_Event *event)
       const char *name;
       Eo *in = (Eo *)eina_list_data_get(inputs);
 
-      ecore_audio_obj_name_get(in, &name);
+      name = ecore_audio_obj_name_get(in);
       printf("Start: %s\n", name);
       ret = ecore_audio_obj_out_input_attach(out, in);
       if (!ret)
@@ -252,7 +254,7 @@ main(int argc, const char *argv[])
      {
        if (!strncmp(argv[i], "tone:", 5))
          {
-            in = efl_add_ref(ECORE_AUDIO_OBJ_IN_TONE_CLASS, NULL);
+            in = efl_add_ref(ECORE_AUDIO_IN_TONE_CLASS, NULL);
             if (!in)
               {
                  printf("error when creating ecore audio source.\n");
@@ -276,7 +278,7 @@ main(int argc, const char *argv[])
          }
        else
          {
-            in = efl_add_ref(ECORE_AUDIO_OBJ_IN_SNDFILE_CLASS, NULL);
+            in = efl_add_ref(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
             if (!in)
               {
                  printf("error when creating ecore audio source.\n");
@@ -291,7 +293,7 @@ main(int argc, const char *argv[])
               continue;
             }
          }
-       efl_event_callback_add(in, ECORE_AUDIO_EV_IN_STOPPED, _play_finished, NULL);
+       efl_event_callback_add(in, ECORE_AUDIO_IN_EVENT_IN_STOPPED, _play_finished, NULL);
        inputs = eina_list_append(inputs, in);
      }
 
@@ -302,12 +304,12 @@ main(int argc, const char *argv[])
    if (!in)
      return 1;
 
-   ecore_audio_obj_name_get(in, &name);
-   ecore_audio_obj_in_length_get(in, &length);
+   name = ecore_audio_obj_name_get(in);
+   length = ecore_audio_obj_in_length_get(in);
 
    printf("Start: %s (%0.2fs)\n", name, length);
 
-   out = efl_add_ref(ECORE_AUDIO_OBJ_OUT_PULSE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_PULSE_CLASS, NULL);
    ret = ecore_audio_obj_out_input_attach(out, in);
    if (!ret)
      printf("Could not attach input %s\n", name);

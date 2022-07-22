@@ -39,9 +39,9 @@ endif
 
 
 examples = [
-#  'ecore_audio_custom',
-#  'ecore_audio_playback',
-#  'ecore_audio_to_ogg',
+  'ecore_audio_custom',
+  'ecore_audio_playback',
+  'ecore_audio_to_ogg',
 ]
 
 foreach example : examples
