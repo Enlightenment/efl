@@ -10,8 +10,8 @@
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
+
 #include <Ecore.h>
-#include <Ecore_Eo.h>
 #include <Ecore_Audio.h>
 #include <Eina.h>
 
