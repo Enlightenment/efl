@@ -14896,7 +14896,7 @@ _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
         source = (txt->text.id_source == -1) ? EINA_FALSE : EINA_TRUE;
         text_source = (txt->text.id_text_source == -1) ? EINA_FALSE : EINA_TRUE;
         ellipsis = EQ(txt->text.ellipsis, ZERO) ? EINA_FALSE : EINA_TRUE;
-        style = (edje_string_id_get(&txt->text.style) == 0) ? EINA_FALSE : EINA_TRUE;
+        style = (edje_string_id_get(&txt->text.style) == NULL) ? EINA_FALSE : EINA_TRUE;
         color_3 = ((txt->text.color3.r == 0) && (txt->text.color3.g == 0) &&
                    (txt->text.color3.b == 0) && (txt->text.color3.a == 128)) ? EINA_FALSE : EINA_TRUE;
      }
