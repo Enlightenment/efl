@@ -4151,7 +4151,7 @@ do_xifdef(cpp_reader * pfile, struct directive *keyword,
    int                 c;
 
    /* Detect a #ifndef at start of file (not counting comments).  */
-   if (ip->fname != 0 && keyword->type == T_IFNDEF)
+   if (ip->fname != NULL && keyword->type == T_IFNDEF)
       start_of_file = pfile->only_seen_white == 2;
 
    pfile->no_macro_expand++;
