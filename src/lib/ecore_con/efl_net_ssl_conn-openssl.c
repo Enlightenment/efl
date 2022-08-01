@@ -27,7 +27,7 @@
 static int
 efl_net_socket_bio_create(BIO *b)
 {
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    BIO_set_init(b, 1);
    BIO_set_data(b, NULL);
    BIO_set_flags(b, 0);
@@ -44,7 +44,7 @@ static int
 efl_net_socket_bio_destroy(BIO *b)
 {
    if (!b) return 0;
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    BIO_set_init(b, 0);
    BIO_set_data(b, NULL);
    BIO_set_flags(b, 0);
@@ -63,7 +63,7 @@ efl_net_socket_bio_read(BIO *b, char *buf, int len)
      .mem = buf,
      .len = len
    };
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    Eo *sock = BIO_get_data(b);
 #else
    Eo *sock = b->ptr;
@@ -99,7 +99,7 @@ efl_net_socket_bio_write(BIO *b, const char *buf, int len)
      .mem = buf,
      .len = len
    };
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    Eo *sock = BIO_get_data(b);
 #else
    Eo *sock = b->ptr;
@@ -146,7 +146,7 @@ efl_net_socket_bio_puts(BIO *b, const char *str)
 static BIO_METHOD *
 __efl_net_socket_bio_get(void)
 {
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    static BIO_METHOD *efl_net_socket_bio = NULL;
 
    if (efl_net_socket_bio) return efl_net_socket_bio;
@@ -359,7 +359,7 @@ efl_net_ssl_conn_setup(Efl_Net_Ssl_Conn *conn, Eina_Bool is_dialer, Efl_Net_Sock
    conn->bio = BIO_new(__efl_net_socket_bio_get());
    EINA_SAFETY_ON_NULL_GOTO(conn->bio, error_bio);
 
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    BIO_set_data(conn->bio, sock);
 #else
    conn->bio->ptr = sock;

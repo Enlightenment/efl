@@ -472,7 +472,7 @@ eet_identity_sign(FILE    *fp,
    gnutls_datum_t signum = { NULL, 0 };
    gnutls_privkey_t privkey;
 # else /* ifdef HAVE_GNUTLS */
-#  if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#  if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    EVP_MD_CTX *md_ctx;
 #  else
    EVP_MD_CTX md_ctx;
@@ -562,7 +562,7 @@ eet_identity_sign(FILE    *fp,
      }
 
    /* Do the signature. */
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && (!defined(LIBRESSL_VERSION_NUMBER)))
    md_ctx = EVP_MD_CTX_new();
    if (!md_ctx)
      {
@@ -756,7 +756,7 @@ eet_identity_check(const void   *data_base,
    const unsigned char *tmp;
    EVP_PKEY *pkey;
    X509 *x509;
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    EVP_MD_CTX *md_ctx;
 #else
    EVP_MD_CTX md_ctx;
@@ -779,7 +779,7 @@ eet_identity_check(const void   *data_base,
      }
 
    /* Verify the signature */
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    md_ctx = EVP_MD_CTX_new();
    if (!md_ctx)
      {

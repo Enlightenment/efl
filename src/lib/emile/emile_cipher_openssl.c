@@ -45,7 +45,7 @@ struct _Emile_SSL
 Eina_Bool
 _emile_cipher_init(void)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER < 0x3050000fL
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
    ERR_load_crypto_strings();
    SSL_library_init();
    SSL_load_error_strings();
@@ -73,7 +73,7 @@ emile_binbuf_sha1(const Eina_Binbuf * data, unsigned char digest[20])
 {
    const EVP_MD *md = EVP_sha1();
    Eina_Slice slice = eina_binbuf_slice_get(data);
-#if LIBRESSL_VERSION_NUMBER >= 0x3050000fL || OPENSSL_VERSION_NUMBER >= 0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#if (LIBRESSL_VERSION_NUMBER >= 0x3050000fL) || ((OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(LIBRESSL_VERSION_NUMBER))
    EVP_MD_CTX *ctx = EVP_MD_CTX_new();
    if (!ctx) return EINA_FALSE;
 
@@ -196,7 +196,7 @@ on_error:
    memset(ik, 0, sizeof (ik));
 
    /* Openssl error */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER < 0x3050000fL
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
    if (ctx)
      EVP_CIPHER_CTX_cleanup(ctx);
 #else
@@ -331,7 +331,7 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
          SSL_CTX_set_options(r->ssl_ctx,
                              options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
          break;
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER < 0x3050000fL
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
       case EMILE_TLSv1:
          r->ssl_ctx = SSL_CTX_new(TLSv1_server_method());
          break;
@@ -780,7 +780,7 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
                              options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
          break;
       case EMILE_TLSv1:
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || LIBRESSL_VERSION_NUMBER < 0x3050000fL
+#if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
          r->ssl_ctx = SSL_CTX_new(TLSv1_client_method());
          break;
 #endif
