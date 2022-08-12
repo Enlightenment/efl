@@ -333,7 +333,7 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
          break;
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
       case EMILE_TLSv1:
-         r->ssl_ctx = SSL_CTX_new(TLSv1_server_method());
+         r->ssl_ctx = SSL_CTX_new(TLS_server_method());
          break;
 #endif
       default:
@@ -781,7 +781,7 @@ emile_cipher_server_connect(Emile_Cipher_Type t)
          break;
       case EMILE_TLSv1:
 #if (OPENSSL_VERSION_NUMBER < 0x10100000L) || (LIBRESSL_VERSION_NUMBER < 0x3050000fL)
-         r->ssl_ctx = SSL_CTX_new(TLSv1_client_method());
+         r->ssl_ctx = SSL_CTX_new(TLS_client_method());
          break;
 #endif
       default:
