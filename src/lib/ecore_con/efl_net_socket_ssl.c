@@ -96,11 +96,9 @@ static Eina_Error efl_net_ssl_conn_hostname_verify_set(Efl_Net_Ssl_Conn *conn, E
 static Eina_Error efl_net_ssl_conn_hostname_override_set(Efl_Net_Ssl_Conn *conn, const char *hostname);
 
 #if HAVE_OPENSSL
-#include "efl_net_ssl_conn-openssl.c"
-#elif HAVE_GNUTLS
-#include "efl_net_ssl_conn-gnutls.c"
+# include "efl_net_ssl_conn-openssl.c"
 #else
-#include "efl_net_ssl_conn-none.c"
+# include "efl_net_ssl_conn-none.c"
 #endif
 
 #define MY_CLASS EFL_NET_SOCKET_SSL_CLASS

@@ -108,7 +108,7 @@ option('build-tests',
 
 option('crypto',
   type : 'combo',
-  choices : ['gnutls', 'openssl'],
+  choices : ['openssl'],
   value : 'openssl',
   description : 'Which SSL Crypto library used in efl'
 )

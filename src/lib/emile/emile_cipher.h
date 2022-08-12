@@ -20,7 +20,7 @@ typedef enum _Emile_Cipher_Backend
 {
   EMILE_NONE,
   EMILE_OPENSSL,
-  EMILE_GNUTLS
+  EMILE_GNUTLS /* < deprecated since 1.27 */
 } Emile_Cipher_Backend;
 
 /**
@@ -38,7 +38,7 @@ typedef enum _Emile_Cipher_Algorithm
 /**
  * Force the initialization of the underlying cipher library.
  *
- * This call force the initialisation of GNUTLS or OpenSSL, so
+ * This call force the initialisation of OpenSSL, so
  * that you get the same setup for everyone.
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise.

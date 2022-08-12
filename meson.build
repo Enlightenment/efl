@@ -223,10 +223,6 @@ if host_os == 'freebsd' or host_os == 'dragonfly'
   # can cause major issues (2 copies of the same library).
   crypto = declare_dependency(link_args : [ '-lssl', '-lcrypto'])
   config_h.set('HAVE_OPENSSL', '1')
-elif get_option('crypto') == 'gnutls'
-  # gcrypt does not want to provide a pkg config file so we try the lib
-  crypto = [dependency('gnutls'), cc.find_library('gcrypt')]
-  config_h.set('HAVE_GNUTLS', '1')
 elif get_option('crypto') == 'openssl'
   crypto = dependency('openssl')
   config_h.set('HAVE_OPENSSL', '1')

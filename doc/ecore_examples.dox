@@ -949,11 +949,6 @@
  */
 
 /**
- * @example ecore_fd_handler_gnutls_example.c
- * Shows how to use fd handlers.
- */
-
-/**
  * @example ecore_con_lookup_example.c
  * Shows how to make a simple DNS lookup. See the complete example description
  * at @ref ecore_con_lookup_example_c

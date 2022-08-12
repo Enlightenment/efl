@@ -18,13 +18,8 @@ if config_h.has('HAVE_FORK')
   examples += 'ecore_pipe_simple_example'
 endif
 
-gnutls = dependency('gnutls', required : false)
-if gnutls.found()
-examples += ['ecore_fd_handler_gnutls_example']
-endif
-
 foreach example : examples
-  executable(example, example + '.c', dependencies: [eina, ecore, ecore_file, gnutls])
+  executable(example, example + '.c', dependencies: [eina, ecore, ecore_file])
 endforeach
 
 if get_option('gstreamer') == true

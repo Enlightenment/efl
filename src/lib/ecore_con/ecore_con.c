@@ -165,9 +165,7 @@ ecore_con_shutdown(void)
 ECORE_CON_API int
 ecore_con_ssl_available_get(void)
 {
-#if HAVE_GNUTLS
-   return 1;
-#elif HAVE_OPENSSL
+#ifdef HAVE_OPENSSL
    return 2;
 #else
    return 0;

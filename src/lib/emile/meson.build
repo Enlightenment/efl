@@ -18,9 +18,7 @@ emile_src = files([
   'emile_base64.c',
 ])
 
-if (get_option('crypto') == 'gnutls')
-  emile_src += files('emile_cipher_gnutls.c')
-elif (get_option('crypto') == 'openssl')
+if (get_option('crypto') == 'openssl')
   emile_src += files('emile_cipher_openssl.c')
 endif
 

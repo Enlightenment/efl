@@ -720,8 +720,7 @@ ECORE_CON_API Eina_Bool ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done
 
 /**
  * @brief Returns if SSL support is available.
- * @return @c 1 if SSL is available and provided by gnutls,
- *         @c 2 if SSL is available and provided by openssl,
+ * @return @c 2 if SSL is available and provided by openssl,
  *         @c 0 if it is not available.
  */
 ECORE_CON_API int               ecore_con_ssl_available_get(void);

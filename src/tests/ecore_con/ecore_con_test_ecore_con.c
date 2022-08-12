@@ -454,9 +454,7 @@ EFL_END_TEST
 EFL_START_TEST(ecore_test_ecore_con_ssl_available)
 {
    int ret = ecore_con_ssl_available_get();
-#ifdef HAVE_GNUTLS
-   fail_if(ret != 1);
-#elif HAVE_OPENSSL
+#ifdef HAVE_OPENSSL
    fail_if(ret != 2);
 #else
    fail_if(!ret);

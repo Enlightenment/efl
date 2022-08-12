@@ -406,7 +406,6 @@ src/examples/ecore/ecore_event_example_02.c
 src/examples/ecore/ecore_exe_example.c
 src/examples/ecore/ecore_exe_example_child.c
 src/examples/ecore/ecore_fd_handler_example.c
-src/examples/ecore/ecore_fd_handler_gnutls_example.c
 src/examples/ecore/ecore_file_download_example.c
 src/examples/ecore/ecore_getopt_example.c
 src/examples/ecore/ecore_idler_example.c
@@ -861,11 +860,9 @@ src/lib/ecore_con/efl_net_socket_tcp.c
 src/lib/ecore_con/efl_net_socket_udp.c
 src/lib/ecore_con/efl_net_socket_unix.c
 src/lib/ecore_con/efl_net_socket_windows.c
-src/lib/ecore_con/efl_net_ssl_conn-gnutls.c
 src/lib/ecore_con/efl_net_ssl_conn-none.c
 src/lib/ecore_con/efl_net_ssl_conn-openssl.c
 src/lib/ecore_con/efl_net_ssl_context.c
-src/lib/ecore_con/efl_net_ssl_ctx-gnutls.c
 src/lib/ecore_con/efl_net_ssl_ctx-none.c
 src/lib/ecore_con/efl_net_ssl_ctx-openssl.c
 src/lib/ecore_drm2/ecore_drm2.c
@@ -2484,7 +2481,6 @@ src/lib/embryo/embryo_time.c
 src/lib/emile/emile_base64.c
 src/lib/emile/emile_base64.h
 src/lib/emile/emile_cipher.c
-src/lib/emile/emile_cipher_gnutls.c
 src/lib/emile/emile_cipher.h
 src/lib/emile/emile_cipher_openssl.c
 src/lib/emile/emile_compress.c

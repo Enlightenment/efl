@@ -439,16 +439,6 @@ these without understanding the implications. The defaults
 have been carefully considered to provide full functionality so users
 will not be missing anything.
 
-### Cryptography
-
-EFL officially offers openssl or gnutls as cryptography backends. By
-default it uses "openssl" to do signature, cipher and related. Alternatively
-one can use "gnutls" (some distros are strict about licenses and want gnutls
-instead of openssl) You can switch to gnutls with:
-``` sh
--Dcrypto=gnutls
-```
-
 -----
 
 ## Compiling and Installing

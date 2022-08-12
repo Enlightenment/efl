@@ -81,11 +81,9 @@ static Eina_Error efl_net_ssl_ctx_hostname_verify_set(Efl_Net_Ssl_Ctx *ctx, Eina
 static Eina_Error efl_net_ssl_ctx_hostname_set(Efl_Net_Ssl_Ctx *ctx, const char *hostname);
 
 #if HAVE_OPENSSL
-#include "efl_net_ssl_ctx-openssl.c"
-#elif HAVE_GNUTLS
-#include "efl_net_ssl_ctx-gnutls.c"
+# include "efl_net_ssl_ctx-openssl.c"
 #else
-#include "efl_net_ssl_ctx-none.c"
+# include "efl_net_ssl_ctx-none.c"
 #endif
 
 #define MY_CLASS EFL_NET_SSL_CONTEXT_CLASS

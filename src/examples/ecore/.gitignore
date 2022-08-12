@@ -33,7 +33,6 @@
 /ecore_exe_example
 /ecore_exe_example_child
 /ecore_fd_handler_example
-/ecore_fd_handler_gnutls_example
 /ecore_file_download_example
 /ecore_getopt_example
 /ecore_idler_example
