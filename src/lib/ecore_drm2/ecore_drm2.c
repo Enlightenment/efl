@@ -2,10 +2,59 @@
 
 /* local variables */
 static int _ecore_drm2_init_count = 0;
+static void *_drm_lib = NULL;
 
 /* external variables */
 int _ecore_drm2_log_dom = -1;
 
+/* local static functions */
+static Eina_Bool
+_ecore_drm2_link(void)
+{
+   int i;
+   Eina_Bool fail = EINA_FALSE;
+   const char *drm_libs[] =
+     {
+        "libdrm.so.2",
+        "libdrm.so.1",
+        "libdrm.so.0",
+        "libdrm.so",
+        NULL,
+     };
+
+#define SYM(lib, xx)                         \
+   do {                                      \
+      sym_ ## xx = dlsym(lib, #xx);          \
+      if (!(sym_ ## xx)) {                   \
+         fail = EINA_TRUE;                   \
+      }                                      \
+   } while (0)
+
+   if (_drm_lib) return EINA_TRUE;
+
+   for (i = 0; drm_libs[i]; i++)
+     {
+        _drm_lib = dlopen(drm_libs[i], RTLD_LOCAL | RTLD_LAZY);
+        if (!_drm_lib) continue;
+
+        fail = EINA_FALSE;
+
+        /* TODO: Sym needed libdrm functions */
+
+        if (fail)
+          {
+             dlclose(_drm_lib);
+             _drm_lib = NULL;
+          }
+        else
+          break;
+     }
+
+   if (!_drm_lib) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+/* API functions */
 EAPI int
 ecore_drm2_init(void)
 {
@@ -39,8 +88,13 @@ ecore_drm2_init(void)
         goto log_err;
      }
 
+   if (!_ecore_drm2_link()) goto link_err;
+
    return _ecore_drm2_init_count;
 
+link_err:
+   eina_log_domain_unregister(_ecore_drm2_log_dom);
+   _ecore_drm2_log_dom = -1;
 log_err:
    elput_shutdown();
 elput_err:
@@ -63,6 +117,8 @@ ecore_drm2_shutdown(void)
      }
 
    if (--_ecore_drm2_init_count != 0) return _ecore_drm2_init_count;
+
+   dlclose(_drm_lib);
 
    eina_log_domain_unregister(_ecore_drm2_log_dom);
    _ecore_drm2_log_dom = -1;
