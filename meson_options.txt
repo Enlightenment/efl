@@ -96,7 +96,7 @@ option('debug-threads',
 
 option('build-examples',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Compile examples'
 )
 
