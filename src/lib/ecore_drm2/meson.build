@@ -7,10 +7,6 @@ ecore_drm2_header_src = [
 ]
 
 ecore_drm2_src = files([
-  'ecore_drm2_plane.c',
-  'ecore_drm2_fb.c',
-  'ecore_drm2_outputs.c',
-  'ecore_drm2_device.c',
   'ecore_drm2.c',
   'ecore_drm2_private.h'
 ])
