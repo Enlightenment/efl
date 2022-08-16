@@ -1,7 +1,7 @@
 engines = [
  ['buffer', []],
  ['fb', ['fb']],
- ['drm', ['drm']],
+# ['drm', ['drm']],
  ['software_x11', ['x11']],
  ['wayland_shm', ['wl']],
 ]
@@ -28,7 +28,7 @@ endif
 if get_option('opengl') == 'es-egl'
   engines += [
    ['wayland_egl', ['wl']],
-   ['gl_drm', ['drm']]
+#   ['gl_drm', ['drm']]
  ]
   have_gl_engine = true
 endif
