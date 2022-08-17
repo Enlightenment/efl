@@ -7,6 +7,10 @@ static void *_drm_lib = NULL;
 /* external variables */
 int _ecore_drm2_log_dom = -1;
 
+/* external drm function prototypes (for dlopen) */
+void *(*sym_drmModeGetResources)(int fd) = NULL;
+void (*sym_drmModeFreeResources)(drmModeResPtr ptr) = NULL;
+
 /* local static functions */
 static Eina_Bool
 _ecore_drm2_link(void)
@@ -40,6 +44,8 @@ _ecore_drm2_link(void)
         fail = EINA_FALSE;
 
         /* TODO: Sym needed libdrm functions */
+        SYM(_drm_lib, drmModeGetResources);
+        SYM(_drm_lib, drmModeFreeResources);
 
         if (fail)
           {
@@ -118,7 +124,7 @@ ecore_drm2_shutdown(void)
 
    if (--_ecore_drm2_init_count != 0) return _ecore_drm2_init_count;
 
-   dlclose(_drm_lib);
+   if (_drm_lib) dlclose(_drm_lib);
 
    eina_log_domain_unregister(_ecore_drm2_log_dom);
    _ecore_drm2_log_dom = -1;
