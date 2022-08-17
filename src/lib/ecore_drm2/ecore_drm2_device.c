@@ -1,6 +1,25 @@
 #include "ecore_drm2_private.h"
 
+/* external variable for using atomic */
+Eina_Bool _ecore_drm2_atomic_use = EINA_FALSE;
+
 /* local functions */
+static Eina_Bool
+_ecore_drm2_device_atomic_capable_get(int fd)
+{
+   Eina_Bool ret = EINA_TRUE;
+
+   if (sym_drmSetClientCap(fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
+     ret = EINA_FALSE;
+   else
+     {
+        if (sym_drmSetClientCap(fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
+          ret = EINA_FALSE;
+     }
+
+   return ret;
+}
+
 static Eina_Bool
 _ecore_drm2_device_modeset_capable_get(int fd)
 {
@@ -124,7 +143,15 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto open_err;
      }
 
-   /* TODO: elput_input_init, check atomic capable, etc */
+   /* TODO: elput_input_init, etc */
+
+   /* NB: For now, we will ONLY support Atomic */
+   _ecore_drm2_atomic_use = _ecore_drm2_device_atomic_capable_get(dev->fd);
+   if (!_ecore_drm2_atomic_use)
+     {
+        WRN("Could not enable Atomic Modesetting support");
+        goto open_err;
+     }
 
    return dev;
 

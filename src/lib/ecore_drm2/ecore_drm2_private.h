@@ -31,6 +31,9 @@
 /* define necessary vars/macros for ecore_drm2 log domain */
 extern int _ecore_drm2_log_dom;
 
+/* define externval variable for atomic */
+extern Eina_Bool _ecore_drm2_atomic_use;
+
 # ifdef ECORE_DRM2_DEFAULT_LOG_COLOR
 #  undef ECORE_DRM2_DEFAULT_LOG_COLOR
 # endif
@@ -72,5 +75,6 @@ struct _Ecore_Drm2_Device
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);
 extern void (*sym_drmModeFreeResources)(drmModeResPtr ptr);
+extern int (*sym_drmSetClientCap)(int fd, uint64_t capability, uint64_t value);
 
 #endif

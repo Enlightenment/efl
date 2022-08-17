@@ -10,6 +10,7 @@ int _ecore_drm2_log_dom = -1;
 /* external drm function prototypes (for dlopen) */
 void *(*sym_drmModeGetResources)(int fd) = NULL;
 void (*sym_drmModeFreeResources)(drmModeResPtr ptr) = NULL;
+int (*sym_drmSetClientCap)(int fd, uint64_t capability, uint64_t value) = NULL;
 
 /* local static functions */
 static Eina_Bool
@@ -46,6 +47,7 @@ _ecore_drm2_link(void)
         /* TODO: Sym needed libdrm functions */
         SYM(_drm_lib, drmModeGetResources);
         SYM(_drm_lib, drmModeFreeResources);
+        SYM(_drm_lib, drmSetClientCap);
 
         if (fail)
           {
