@@ -61,4 +61,16 @@ extern int _ecore_drm2_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm2_log_dom, __VA_ARGS__)
 
+/* internal structures */
+struct _Ecore_Drm2_Device
+{
+   Elput_Manager *em;
+
+   int fd;
+};
+
+/* external drm function prototypes (for dlopen) */
+extern void *(*sym_drmModeGetResources)(int fd);
+extern void (*sym_drmModeFreeResources)(drmModeResPtr ptr);
+
 #endif
