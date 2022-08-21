@@ -143,18 +143,36 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto open_err;
      }
 
-   /* TODO: elput_input_init, etc */
+   /* try to enable elput input */
+   if (!elput_input_init(dev->em))
+     {
+        ERR("Could not initialize Elput Input");
+        goto input_err;
+     }
 
    /* NB: For now, we will ONLY support Atomic */
    _ecore_drm2_atomic_use = _ecore_drm2_device_atomic_capable_get(dev->fd);
    if (!_ecore_drm2_atomic_use)
      {
         WRN("Could not enable Atomic Modesetting support");
-        goto open_err;
+        goto atomic_err;
      }
+
+   /* TODO: Fill atomic state */
+
+   /* TODO: event handlers for session_active & device_change */
+
+   DBG("Opened DRM Device: %s", path);
+
+   /* cleanup path variable */
+   eina_stringshare_del(path);
 
    return dev;
 
+atomic_err:
+   elput_input_shutdown(dev->em);
+input_err:
+   elput_manager_close(dev->em, dev->fd);
 open_err:
    eina_stringshare_del(path);
 path_err:
@@ -169,12 +187,11 @@ ecore_drm2_device_close(Ecore_Drm2_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN(dev);
 
-   /* TODO: elput_input_shutdown */
+   /* TODO: atomic state free */
 
+   elput_input_shutdown(dev->em);
    elput_manager_close(dev->em, dev->fd);
    elput_manager_disconnect(dev->em);
-
-   /* TODO: atomic state free */
 
    free(dev);
 }
