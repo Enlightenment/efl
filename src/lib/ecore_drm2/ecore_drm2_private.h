@@ -172,6 +172,7 @@ struct _Ecore_Drm2_Output
 
 /* internal function prototypes */
 Eina_Bool _ecore_drm2_atomic_state_fill(Ecore_Drm2_Atomic_State *state, int fd);
+void _ecore_drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state);
 
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);
