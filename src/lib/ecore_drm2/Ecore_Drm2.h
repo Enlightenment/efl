@@ -17,6 +17,17 @@
 
 # ifdef EFL_BETA_API_SUPPORT
 
+/* public enum for rotation */
+typedef enum _Ecore_Drm2_Rotation
+{
+   ECORE_DRM2_ROTATION_NORMAL = 1,
+   ECORE_DRM2_ROTATION_90 = 2,
+   ECORE_DRM2_ROTATION_180 = 4,
+   ECORE_DRM2_ROTATION_270 = 8,
+   ECORE_DRM2_ROTATION_REFLECT_X = 16,
+   ECORE_DRM2_ROTATION_REFLECT_Y = 32
+} Ecore_Drm2_Rotation;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 
