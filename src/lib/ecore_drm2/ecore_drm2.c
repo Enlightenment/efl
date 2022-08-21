@@ -11,6 +11,19 @@ int _ecore_drm2_log_dom = -1;
 void *(*sym_drmModeGetResources)(int fd) = NULL;
 void (*sym_drmModeFreeResources)(drmModeResPtr ptr) = NULL;
 int (*sym_drmSetClientCap)(int fd, uint64_t capability, uint64_t value) = NULL;
+void *(*sym_drmModeGetProperty)(int fd, uint32_t propertyId);
+void (*sym_drmModeFreeProperty)(drmModePropertyPtr ptr);
+void *(*sym_drmModeGetPropertyBlob)(int fd, uint32_t blob_id);
+void (*sym_drmModeFreePropertyBlob)(drmModePropertyBlobPtr ptr);
+int (*sym_drmModeCreatePropertyBlob)(int fd, const void *data, size_t size, uint32_t *id);
+int (*sym_drmModeDestroyPropertyBlob)(int fd, uint32_t id);
+void *(*sym_drmModeObjectGetProperties)(int fd, uint32_t object_id, uint32_t object_type);
+void (*sym_drmModeFreeObjectProperties)(drmModeObjectPropertiesPtr ptr);
+
+void *(*sym_drmModeGetPlaneResources)(int fd);
+void (*sym_drmModeFreePlaneResources)(drmModePlaneResPtr ptr);
+void *(*sym_drmModeGetPlane)(int fd, uint32_t plane_id);
+void (*sym_drmModeFreePlane)(drmModePlanePtr ptr);
 
 /* local static functions */
 static Eina_Bool
@@ -48,6 +61,18 @@ _ecore_drm2_link(void)
         SYM(_drm_lib, drmModeGetResources);
         SYM(_drm_lib, drmModeFreeResources);
         SYM(_drm_lib, drmSetClientCap);
+        SYM(_drm_lib, drmModeGetProperty);
+        SYM(_drm_lib, drmModeFreeProperty);
+        SYM(_drm_lib, drmModeGetPropertyBlob);
+        SYM(_drm_lib, drmModeFreePropertyBlob);
+        SYM(_drm_lib, drmModeCreatePropertyBlob);
+        SYM(_drm_lib, drmModeDestroyPropertyBlob);
+        SYM(_drm_lib, drmModeObjectGetProperties);
+        SYM(_drm_lib, drmModeFreeObjectProperties);
+        SYM(_drm_lib, drmModeGetPlaneResources);
+        SYM(_drm_lib, drmModeFreePlaneResources);
+        SYM(_drm_lib, drmModeGetPlane);
+        SYM(_drm_lib, drmModeFreePlane);
 
         if (fail)
           {
