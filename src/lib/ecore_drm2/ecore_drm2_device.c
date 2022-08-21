@@ -115,7 +115,7 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
    const char *path;
    Ecore_Drm2_Device *dev;
 
-   /* try to allocate space for return structure */
+   /* try to allocate space for device structure */
    dev = calloc(1, sizeof(Ecore_Drm2_Device));
    if (!dev) return NULL;
 
@@ -143,6 +143,8 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto open_err;
      }
 
+   DBG("Opened DRM Device: %s", path);
+
    /* try to enable elput input */
    if (!elput_input_init(dev->em))
      {
@@ -150,7 +152,7 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto input_err;
      }
 
-   /* NB: For now, we will ONLY support Atomic */
+   /* test if this device can do Atomic Modesetting */
    _ecore_drm2_atomic_use = _ecore_drm2_device_atomic_capable_get(dev->fd);
    if (!_ecore_drm2_atomic_use)
      {
@@ -158,17 +160,30 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto atomic_err;
      }
 
-   /* TODO: Fill atomic state */
+   /* try to allocate space for Atomic State */
+   dev->atomic_state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
+   if (!dev->atomic_state)
+     {
+        ERR("Failed to allocate device atomic state");
+        goto atomic_err;
+     }
+
+   /* try to fill atomic state */
+   if (!_ecore_drm2_atomic_state_fill(dev->atomic_state, dev->fd))
+     {
+        ERR("Failed to fill Atomic State");
+        goto atomic_fill_err;
+     }
 
    /* TODO: event handlers for session_active & device_change */
-
-   DBG("Opened DRM Device: %s", path);
 
    /* cleanup path variable */
    eina_stringshare_del(path);
 
    return dev;
 
+atomic_fill_err:
+   free(dev->atomic_state);
 atomic_err:
    elput_input_shutdown(dev->em);
 input_err:
