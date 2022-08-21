@@ -20,6 +20,9 @@
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 
+/* opaque structure to represent a drm output */
+typedef struct _Ecore_Drm2_Output Ecore_Drm2_Output;
+
 /* API functions */
 EAPI int ecore_drm2_init(void);
 EAPI int ecore_drm2_shutdown(void);

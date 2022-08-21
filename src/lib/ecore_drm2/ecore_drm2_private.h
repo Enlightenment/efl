@@ -72,6 +72,11 @@ struct _Ecore_Drm2_Device
    int fd;
 };
 
+struct _Ecore_Drm2_Output
+{
+   Eina_Stringshare *name, *make, *model, *serial;
+};
+
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);
 extern void (*sym_drmModeFreeResources)(drmModeResPtr ptr);
