@@ -440,3 +440,12 @@ crtc_err:
    sym_drmModeFreeResources(res);
    return EINA_FALSE;
 }
+
+void
+_ecore_drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state)
+{
+   free(state->plane_states);
+   free(state->conn_states);
+   free(state->crtc_states);
+   free(state);
+}

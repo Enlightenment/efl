@@ -202,7 +202,7 @@ ecore_drm2_device_close(Ecore_Drm2_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN(dev);
 
-   /* TODO: atomic state free */
+   _ecore_drm2_atomic_state_free(dev->atomic_state);
 
    elput_input_shutdown(dev->em);
    elput_manager_close(dev->em, dev->fd);
