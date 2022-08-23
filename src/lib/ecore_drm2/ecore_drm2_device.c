@@ -210,3 +210,26 @@ ecore_drm2_device_close(Ecore_Drm2_Device *dev)
 
    free(dev);
 }
+
+EAPI void
+ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *height)
+{
+   uint64_t caps;
+   int ret = -1;
+
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+
+   if (width)
+     {
+        *width = 64;
+        ret = sym_drmGetCap(dev->fd, DRM_CAP_CURSOR_WIDTH, &caps);
+        if (ret == 0) *width = caps;
+     }
+
+   if (height)
+     {
+        *height = 64;
+        ret = sym_drmGetCap(dev->fd, DRM_CAP_CURSOR_HEIGHT, &caps);
+        if (ret == 0) *height = caps;
+     }
+}

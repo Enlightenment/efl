@@ -177,6 +177,7 @@ void _ecore_drm2_atomic_state_free(Ecore_Drm2_Atomic_State *state);
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);
 extern void (*sym_drmModeFreeResources)(drmModeResPtr ptr);
+extern int (*sym_drmGetCap)(int fd, uint64_t capability, uint64_t *value);
 extern int (*sym_drmSetClientCap)(int fd, uint64_t capability, uint64_t value);
 extern void *(*sym_drmModeGetProperty)(int fd, uint32_t propertyId);
 extern void (*sym_drmModeFreeProperty)(drmModePropertyPtr ptr);
