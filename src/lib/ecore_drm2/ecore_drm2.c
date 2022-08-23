@@ -10,6 +10,7 @@ int _ecore_drm2_log_dom = -1;
 /* external drm function prototypes (for dlopen) */
 void *(*sym_drmModeGetResources)(int fd) = NULL;
 void (*sym_drmModeFreeResources)(drmModeResPtr ptr) = NULL;
+int (*sym_drmGetCap)(int fd, uint64_t capability, uint64_t *value);
 int (*sym_drmSetClientCap)(int fd, uint64_t capability, uint64_t value) = NULL;
 void *(*sym_drmModeGetProperty)(int fd, uint32_t propertyId);
 void (*sym_drmModeFreeProperty)(drmModePropertyPtr ptr);
@@ -19,7 +20,6 @@ int (*sym_drmModeCreatePropertyBlob)(int fd, const void *data, size_t size, uint
 int (*sym_drmModeDestroyPropertyBlob)(int fd, uint32_t id);
 void *(*sym_drmModeObjectGetProperties)(int fd, uint32_t object_id, uint32_t object_type);
 void (*sym_drmModeFreeObjectProperties)(drmModeObjectPropertiesPtr ptr);
-
 void *(*sym_drmModeGetPlaneResources)(int fd);
 void (*sym_drmModeFreePlaneResources)(drmModePlaneResPtr ptr);
 void *(*sym_drmModeGetPlane)(int fd, uint32_t plane_id);
@@ -60,6 +60,7 @@ _ecore_drm2_link(void)
         /* TODO: Sym needed libdrm functions */
         SYM(_drm_lib, drmModeGetResources);
         SYM(_drm_lib, drmModeFreeResources);
+        SYM(_drm_lib, drmGetCap);
         SYM(_drm_lib, drmSetClientCap);
         SYM(_drm_lib, drmModeGetProperty);
         SYM(_drm_lib, drmModeFreeProperty);
