@@ -40,6 +40,7 @@ EAPI int ecore_drm2_shutdown(void);
 EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tty);
 EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *height);
+EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *bpp);
 
 # endif
 
