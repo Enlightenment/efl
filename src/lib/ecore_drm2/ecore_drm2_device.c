@@ -233,3 +233,19 @@ ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *heigh
         if (ret == 0) *height = caps;
      }
 }
+
+EAPI void
+ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *bpp)
+{
+   uint64_t caps;
+   int ret = -1;
+
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+
+   ret = sym_drmGetCap(dev->fd, DRM_CAP_DUMB_PREFERRED_DEPTH, &caps);
+   if (ret == 0)
+     {
+        if (depth) *depth = caps;
+        if (bpp) *bpp = caps;
+     }
+}
