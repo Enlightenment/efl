@@ -152,6 +152,7 @@ I060("i-net-wifi-sig-3", "net-wifi-sig-3")
 I060("i-net-wifi-sig-4", "net-wifi-sig-4")
 I060("i-star", "star")
 I060("i-star-off", "star-off")
+I060("i-person-bust", "person-bust")
 
 ///////////////////////////////////////////////////////////////////////////////
 // larger color icons (mostly efm or settings)

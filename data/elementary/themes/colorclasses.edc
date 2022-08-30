@@ -198,6 +198,7 @@ color_tree {
       "/fg/selected/radio/radio";
       "/fg/normal/gadgets/backlight/base";
       "/fg-alt";
+      "/fg/normal/fileman/filesize/0";
    }
    ":fg-prehigh" {
       "/fg/normal/flipselector/down";
@@ -299,6 +300,7 @@ color_tree {
       "/fg-alt/pressed";
       "/fg-alt/selected";
       "/fg-alt/selected-pressed";
+      "/fg/selected/fileman/filesize/0";
    }
    ":selected" {
       "/bg/selected";
@@ -361,6 +363,7 @@ color_tree {
       "/fg/normal/gadgets/mixer/volume/normal";
       "/fg/normal/gadgets/music_control/progress";
       "/fg/normal/gadgets/music_control/text/tag";
+      "/fg/normal/fileman/filesize/1";
    }
    ":selected-light" {
       "/bg/normal/tiling/position/base";
@@ -400,6 +403,9 @@ color_tree {
       "/fg/normal/gadgets/packagekit/pkg/bug";
       "/fg/normal/gadgets/packagekit/pkg/enhancement";
       "/fg/normal/gadgets/packagekit/pkg/security";
+      "/fg/normal/fileman/filesize/2";
+      "/fg/selected/fileman/filesize/2";
+      "/fg/normal/fileperm/execute";
    }
    ":selected-alt-trans" {
       "/bg/normal/access";
@@ -411,6 +417,8 @@ color_tree {
       "/fg/normal/text-line-added";
       "/fg/normal/desklock/fprint/success";
       "/fg/normal/gadgets/procstats/mem/all";
+      "/fg/normal/fileman/filesize/3";
+      "/fg/selected/fileman/filesize/3";
    }
    ":selected2-dim" {
       "/fg/disabled/text-line-added";
@@ -419,6 +427,8 @@ color_tree {
       "/fg/normal/gadgets/procstats/cpu/all";
       "/fg/normal/gadgets/cpufreq/hands/max";
       "/fg/normal/gadgets/packagekit/pkg/important";
+      "/fg/normal/fileman/filesize/4";
+      "/fg/selected/fileman/filesize/4";
    }
    ":selected4" {
       "/fg/normal/text-urgent";
@@ -428,6 +438,7 @@ color_tree {
       "/fg/normal/text-line-removed";
       "/fg/normal/gadgets/temperature/hi";
       "/fg/normal/gadgets/clock/analog/hands/secs";
+      "/fg/normal/fileperm/write";
    }
    ":selected4-dim" {
       "/fg/disabled/text-warning";
@@ -446,6 +457,7 @@ color_tree {
    }
    ":selected6" {
       "/fg/normal/text-string";
+      "/fg/selected/fileman/filesize/1";
    }
    ":selected6-dim" {
       "/fg/disabled/text-string";
@@ -546,6 +558,7 @@ color_tree {
    }
    ":success" {
       "/fg/normal/text-success";
+      "/fg/normal/fileperm/read";
    }
    ":success-dim" {
       "/fg/disabled/text-success";
@@ -570,6 +583,7 @@ color_tree {
    }
    ":number" {
       "/fg/normal/text-number";
+      "/fg/normal/fileperm/setuid";
    }
    ":number-dim" {
       "/fg/disabled/text-number";

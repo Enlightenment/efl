@@ -732,6 +732,8 @@ ICON("utilities-terminal", "i-termprompt")
 
 ICON("fprint", "i-fingerprint")
 
+ICON("person-bust", "i-person-bust")
+
 #undef ICON
 
 // regular icons
