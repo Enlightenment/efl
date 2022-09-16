@@ -1476,6 +1476,7 @@ _ecore_evas_x_event_window_damage(void *data EINA_UNUSED, int type EINA_UNUSED, 
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   ee->draw_block = EINA_FALSE;
    if (edata->using_bg_pixmap) return ECORE_CALLBACK_PASS_ON;
 //   printf("EXPOSE %p [%i] %i %i %ix%i\n", ee, ee->prop.avoid_damage, e->x, e->y, e->w, e->h);
    if (ee->prop.avoid_damage)
