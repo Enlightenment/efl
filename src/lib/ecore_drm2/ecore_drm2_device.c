@@ -9,12 +9,12 @@
 
 /* local functions */
 static Eina_Bool
-_ecore_drm2_device_cb_session_active(void *data, int type EINA_UNUSED, void *event)
+_ecore_drm2_device_cb_session_active(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_Drm2_Device *dev;
+   /* Ecore_Drm2_Device *dev; */
    Elput_Event_Session_Active *ev;
 
-   dev = data;
+   /* dev = data; */
    ev = event;
 
    if (ev->active)
