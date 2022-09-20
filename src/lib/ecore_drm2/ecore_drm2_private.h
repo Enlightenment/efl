@@ -166,6 +166,13 @@ struct _Ecore_Drm2_Plane
    Ecore_Thread *thread;
 };
 
+struct _Ecore_Drm2_Display_Mode
+{
+   uint32_t id, flags, refresh;
+   int32_t width, height;
+   drmModeModeInfo info;
+};
+
 struct _Ecore_Drm2_Display
 {
    int fd;

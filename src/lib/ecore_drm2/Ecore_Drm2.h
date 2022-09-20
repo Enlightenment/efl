@@ -34,6 +34,9 @@ typedef struct _Ecore_Drm2_Crtc Ecore_Drm2_Crtc;
 /* opaque structure to represent a drm connector */
 typedef struct _Ecore_Drm2_Connector Ecore_Drm2_Connector;
 
+/* opaque structure to represent a drm display mode */
+typedef struct _Ecore_Drm2_Display_Mode Ecore_Drm2_Display_Mode;
+
 /* opaque structure to represent a drm display */
 typedef struct _Ecore_Drm2_Display Ecore_Drm2_Display;
 
