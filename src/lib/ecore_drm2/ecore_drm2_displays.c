@@ -265,6 +265,11 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    /* get backlight values */
    _ecore_drm2_display_backlight_get(disp);
 
+   /* TODO: create 'modes' */
+
+   /* get gamma from crtc */
+   disp->gamma = display->crtc->dcrtc->gamma_size;
+
    /* get connected state */
    disp->connected = (disp->conn->conn->connection == DRM_MODE_CONNECTED);
 }
