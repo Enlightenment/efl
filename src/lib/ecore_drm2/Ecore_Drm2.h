@@ -28,11 +28,20 @@ typedef enum _Ecore_Drm2_Rotation
    ECORE_DRM2_ROTATION_REFLECT_Y = 32
 } Ecore_Drm2_Rotation;
 
+/* opaque structure to represent a drm crtc */
+typedef struct _Ecore_Drm2_Crtc Ecore_Drm2_Crtc;
+
+/* opaque structure to represent a drm connector */
+typedef struct _Ecore_Drm2_Connector Ecore_Drm2_Connector;
+
+/* opaque structure to represent a drm display */
+typedef struct _Ecore_Drm2_Display Ecore_Drm2_Display;
+
+/* opaque structure to represent a drm plane */
+typedef struct _Ecore_Drm2_Plane Ecore_Drm2_Plane;
+
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
-
-/* opaque structure to represent a drm output */
-typedef struct _Ecore_Drm2_Output Ecore_Drm2_Output;
 
 /* API functions */
 EAPI int ecore_drm2_init(void);
