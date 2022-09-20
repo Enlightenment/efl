@@ -24,6 +24,12 @@ void *(*sym_drmModeGetPlaneResources)(int fd);
 void (*sym_drmModeFreePlaneResources)(drmModePlaneResPtr ptr);
 void *(*sym_drmModeGetPlane)(int fd, uint32_t plane_id);
 void (*sym_drmModeFreePlane)(drmModePlanePtr ptr);
+void *(*sym_drmModeGetConnector)(int fd, uint32_t connectorId);
+void (*sym_drmModeFreeConnector)(drmModeConnectorPtr ptr);
+void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id);
+void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr);
+void *(*sym_drmModeGetCrtc)(int fd, uint32_t crtcId);
+void (*sym_drmModeFreeCrtc)(drmModeCrtcPtr ptr);
 
 /* local static functions */
 static Eina_Bool
@@ -74,6 +80,12 @@ _ecore_drm2_link(void)
         SYM(_drm_lib, drmModeFreePlaneResources);
         SYM(_drm_lib, drmModeGetPlane);
         SYM(_drm_lib, drmModeFreePlane);
+        SYM(_drm_lib, drmModeGetConnector);
+        SYM(_drm_lib, drmModeFreeConnector);
+        SYM(_drm_lib, drmModeGetEncoder);
+        SYM(_drm_lib, drmModeFreeEncoder);
+        SYM(_drm_lib, drmModeGetCrtc);
+        SYM(_drm_lib, drmModeFreeCrtc);
 
         if (fail)
           {
