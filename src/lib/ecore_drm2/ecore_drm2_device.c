@@ -1,23 +1,36 @@
 #include "ecore_drm2_private.h"
 
-/* external variable for using atomic */
-Eina_Bool _ecore_drm2_atomic_use = EINA_FALSE;
+#ifndef DRM_CLIENT_CAP_ASPECT_RATIO
+# define DRM_CLIENT_CAP_ASPECT_RATIO 4
+#endif
+#ifndef DRM_CLIENT_CAP_WRITEBACK_CONNECTORS
+# define DRM_CLIENT_CAP_WRITEBACK_CONNECTORS 5
+#endif
 
 /* local functions */
 static Eina_Bool
-_ecore_drm2_device_atomic_capable_get(int fd)
+_ecore_drm2_device_cb_session_active(void *data, int type EINA_UNUSED, void *event)
 {
-   Eina_Bool ret = EINA_TRUE;
+   Ecore_Drm2_Device *dev;
+   Elput_Event_Session_Active *ev;
 
-   if (sym_drmSetClientCap(fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) < 0)
-     ret = EINA_FALSE;
+   dev = data;
+   ev = event;
+
+   if (ev->active)
+     {
+        /* TODO: wake compositor, compositor damage all, set state_invalid = true */
+        /* NB: Input enable is already done inside elput */
+     }
    else
      {
-        if (sym_drmSetClientCap(fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0)
-          ret = EINA_FALSE;
+        /* TODO: compositor offscreen, output->repaint_needed = false */
+        /* NB: Input disable is already done inside elput */
      }
 
-   return ret;
+   /* TODO: raise ecore_drm2_event_active ?? */
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -108,6 +121,60 @@ cont:
    return ret;
 }
 
+static Eina_Bool
+_ecore_drm2_device_kms_caps_get(Ecore_Drm2_Device *dev)
+{
+   uint64_t cap;
+   int ret = 0;
+
+   /* get drm presentation clock */
+   ret = sym_drmGetCap(dev->fd, DRM_CAP_TIMESTAMP_MONOTONIC, &cap);
+   if ((ret == 0) && (cap == 1))
+     dev->clock_id = CLOCK_MONOTONIC;
+   else
+     dev->clock_id = CLOCK_REALTIME;
+
+   /* get drm cursor width & height */
+   dev->cursor.width = 64;
+   dev->cursor.height = 64;
+   ret = sym_drmGetCap(dev->fd, DRM_CAP_CURSOR_WIDTH, &cap);
+   if (ret == 0) dev->cursor.width = cap;
+   ret = sym_drmGetCap(dev->fd, DRM_CAP_CURSOR_HEIGHT, &cap);
+   if (ret == 0) dev->cursor.height = cap;
+
+   /* try to enable universal planes ... without This, not even Atomic works */
+   ret = sym_drmSetClientCap(dev->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+   if (ret)
+     {
+        ERR("Drm card does not support universal planes");
+        return EINA_FALSE;
+     }
+
+   /* test if crtc_in_vblank_event is supported */
+   /* NB: our callbacks do not check for this yet, but it's new.
+    * Very useful tho. tells us when crtc is vblank */
+   /* NB: This is NOT necessarily needed for ATOMIC support */
+   ret = sym_drmGetCap(dev->fd, DRM_CAP_CRTC_IN_VBLANK_EVENT, &cap);
+   if (ret != 0) cap = 0;
+
+   /* try to enable atomic modesetting support */
+   ret = sym_drmSetClientCap(dev->fd, DRM_CLIENT_CAP_ATOMIC, 1);
+   dev->atomic = ((ret == 0) && (cap == 1));
+
+   /* test if gbm can do modifiers */
+   /* ret = sym_drmGetCap(dev->fd, DRM_CAP_ADDFB2_MODIFIERS, &cap); */
+   /* if (ret == 0) dev->gbm_mods = cap; */
+
+   /* set writeback connector support */
+   sym_drmSetClientCap(dev->fd, DRM_CLIENT_CAP_WRITEBACK_CONNECTORS, 1);
+
+   /* test to see if aspect ratio is supported */
+   ret = sym_drmSetClientCap(dev->fd, DRM_CLIENT_CAP_ASPECT_RATIO, 1);
+   dev->aspect_ratio = (ret == 0);
+
+   return EINA_TRUE;
+}
+
 /* API functions */
 EAPI Ecore_Drm2_Device *
 ecore_drm2_device_open(const char *seat, unsigned int tty)
@@ -152,39 +219,81 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto input_err;
      }
 
-   /* test if this device can do Atomic Modesetting */
-   _ecore_drm2_atomic_use = _ecore_drm2_device_atomic_capable_get(dev->fd);
-   if (!_ecore_drm2_atomic_use)
+   /* try to get the kms capabilities of this device */
+   if (!_ecore_drm2_device_kms_caps_get(dev))
      {
-        WRN("Could not enable Atomic Modesetting support");
-        goto atomic_err;
+        ERR("Could not get kms capabilities for device");
+        goto caps_err;
      }
 
-   /* try to allocate space for Atomic State */
-   dev->atomic_state = calloc(1, sizeof(Ecore_Drm2_Atomic_State));
-   if (!dev->atomic_state)
+   /* try to create crtcs */
+   if (!_ecore_drm2_crtcs_create(dev))
      {
-        ERR("Failed to allocate device atomic state");
-        goto atomic_err;
+        ERR("Could not create crtcs");
+        goto caps_err;
      }
 
-   /* try to fill atomic state */
-   if (!_ecore_drm2_atomic_state_fill(dev->atomic_state, dev->fd))
+   /* try to create planes */
+   if (!_ecore_drm2_planes_create(dev))
      {
-        ERR("Failed to fill Atomic State");
-        goto atomic_fill_err;
+        ERR("Could not create planes");
+        goto plane_err;
      }
 
-   /* TODO: event handlers for session_active & device_change */
+   /* try to create connectors */
+   if (!_ecore_drm2_connectors_create(dev))
+     {
+        ERR("Could not create connectors");
+        goto conn_err;
+     }
+
+   /* try to create displays */
+   if (!_ecore_drm2_displays_create(dev))
+     {
+        ERR("Could not create displays");
+        goto disp_err;
+     }
+
+   /* TODO: check dmabuf import capable ?
+    *
+    * NB: This will require EGL extension: EGL_EXT_image_dma_buf_import
+    * so will likely need to be done in the compositor
+    */
+
+   /* TODO: check explicit sync support
+    *
+    * NB: requires native_fence_sync & wait_sync
+    * NB: native_fence_sync requires EGL_KHR_fence_sync
+    * NB: wait_sync requires EGL_KHR_wait_sync
+    *
+    * NB: These need to be done in the compositor
+    */
+
+   /* TODO: enable content protection if atomic ?
+    *
+    * NB: This should be done in the compositor
+    */
+
+   dev->session_hdlr =
+     ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
+                             _ecore_drm2_device_cb_session_active, dev);
+
+   /* TODO: event handler for device_change */
 
    /* cleanup path variable */
    eina_stringshare_del(path);
 
    return dev;
 
-atomic_fill_err:
-   free(dev->atomic_state);
-atomic_err:
+/* atomic_fill_err: */
+/*    free(dev->atomic_state); */
+disp_err:
+   _ecore_drm2_connectors_destroy(dev);
+plane_err:
+   _ecore_drm2_crtcs_destroy(dev);
+conn_err:
+   _ecore_drm2_planes_destroy(dev);
+caps_err:
    elput_input_shutdown(dev->em);
 input_err:
    elput_manager_close(dev->em, dev->fd);
@@ -202,7 +311,14 @@ ecore_drm2_device_close(Ecore_Drm2_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN(dev);
 
-   _ecore_drm2_atomic_state_free(dev->atomic_state);
+   /* _ecore_drm2_atomic_state_free(dev->atomic_state); */
+
+   _ecore_drm2_displays_destroy(dev);
+   _ecore_drm2_connectors_destroy(dev);
+   _ecore_drm2_planes_destroy(dev);
+   _ecore_drm2_crtcs_destroy(dev);
+
+   ecore_event_handler_del(dev->session_hdlr);
 
    elput_input_shutdown(dev->em);
    elput_manager_close(dev->em, dev->fd);
@@ -214,24 +330,10 @@ ecore_drm2_device_close(Ecore_Drm2_Device *dev)
 EAPI void
 ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *height)
 {
-   uint64_t caps;
-   int ret = -1;
-
    EINA_SAFETY_ON_NULL_RETURN(dev);
 
-   if (width)
-     {
-        *width = 64;
-        ret = sym_drmGetCap(dev->fd, DRM_CAP_CURSOR_WIDTH, &caps);
-        if (ret == 0) *width = caps;
-     }
-
-   if (height)
-     {
-        *height = 64;
-        ret = sym_drmGetCap(dev->fd, DRM_CAP_CURSOR_HEIGHT, &caps);
-        if (ret == 0) *height = caps;
-     }
+   if (width) *width = dev->cursor.width;
+   if (height) *height = dev->cursor.height;
 }
 
 EAPI void
