@@ -217,6 +217,68 @@ _ecore_drm2_display_backlight_get(Ecore_Drm2_Display *disp)
      eina_stringshare_del(dev);
 }
 
+static Ecore_Drm2_Display_Mode *
+_ecore_drm2_display_mode_create(const drmModeModeInfo *info)
+{
+   Ecore_Drm2_Display_Mode *mode;
+   uint64_t refresh;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(info, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((info->htotal > 0), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((info->vtotal > 0), NULL);
+
+   mode = calloc(1, sizeof(Ecore_Drm2_Display_Mode));
+   if (!mode) return NULL;
+
+   mode->flags = 0;
+   mode->width = info->hdisplay;
+   mode->height = info->vdisplay;
+
+   refresh = (info->clock * 1000LL / info->htotal + info->vtotal / 2) /
+     info->vtotal;
+
+   if (info->flags & DRM_MODE_FLAG_INTERLACE)
+     refresh *= 2;
+   if (info->flags & DRM_MODE_FLAG_DBLSCAN)
+     refresh /= 2;
+   if (info->vscan > 1)
+     refresh /= info->vscan;
+
+   mode->refresh = refresh;
+   mode->info = *info;
+
+   if (info->type & DRM_MODE_TYPE_PREFERRED)
+     mode->flags |= DRM_MODE_TYPE_PREFERRED;
+
+   return mode;
+}
+
+static void
+_ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp)
+{
+   int i = 0;
+   drmModeModeInfo crtc_mode;
+   Ecore_Drm2_Display_Mode *dmode;
+
+   memset(&crtc_mode, 0, sizeof(crtc_mode));
+
+   if (disp->crtc->dcrtc->mode_valid)
+     crtc_mode = disp->crtc->dcrtc->mode;
+
+   /* loop through connector modes and try to create mode */
+   for (; i < disp->conn->conn->count_modes; i++)
+     {
+        dmode =
+          _ecore_drm2_display_mode_create(&disp->conn->conn->modes[i]);
+        if (!dmode) continue;
+
+        /* append mode to display mode list */
+        disp->modes = eina_list_append(disp->modes, dmode);
+     }
+
+   /* TODO: select current mode */
+}
+
 static void
 _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
 {
@@ -265,10 +327,11 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    /* get backlight values */
    _ecore_drm2_display_backlight_get(disp);
 
-   /* TODO: create 'modes' */
+   /* get available display modes */
+   _ecore_drm2_display_modes_get(disp);
 
    /* get gamma from crtc */
-   disp->gamma = display->crtc->dcrtc->gamma_size;
+   disp->gamma = disp->crtc->dcrtc->gamma_size;
 
    /* get connected state */
    disp->connected = (disp->conn->conn->connection == DRM_MODE_CONNECTED);
