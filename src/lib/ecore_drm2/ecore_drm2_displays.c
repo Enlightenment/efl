@@ -131,11 +131,6 @@ _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
    DBG("\tCrtc Pos: %d %d", disp->crtc->dcrtc->x, disp->crtc->dcrtc->y);
    DBG("\tConnector: %d", disp->conn->id);
 
-   /* DBG("\tCloned: %d", disp->cloned); */
-   DBG("\tPrimary: %d", disp->primary);
-   DBG("\tEnabled: %d", disp->enabled);
-   DBG("\tConnected: %d", disp->connected);
-
    if (disp->backlight.path)
      {
         DBG("\tBacklight");
@@ -153,6 +148,73 @@ _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
           }
         DBG("\t\tPath: %s", disp->backlight.path);
      }
+
+   /* DBG("\tCloned: %d", disp->cloned); */
+   DBG("\tPrimary: %d", disp->primary);
+   DBG("\tEnabled: %d", disp->enabled);
+   DBG("\tConnected: %d", disp->connected);
+}
+
+static double
+_ecore_drm2_display_backlight_value_get(Ecore_Drm2_Display *disp, const char *attr)
+{
+   const char *b = NULL;
+   double ret = 0.0;
+
+   if ((!disp) || (!disp->backlight.path)) return 0.0;
+
+   b = eeze_udev_syspath_get_sysattr(disp->backlight.path, attr);
+   if (!b) return 0.0;
+
+   ret = strtod(b, NULL);
+   if (ret < 0) ret = 0.0;
+
+   return ret;
+}
+
+static void
+_ecore_drm2_display_backlight_get(Ecore_Drm2_Display *disp)
+{
+   Eina_List *devs, *l;
+   const char *dev, *t;
+   Ecore_Drm2_Backlight_Type type = 0;
+   Eina_Bool found = EINA_FALSE;
+
+   devs = eeze_udev_find_by_filter("backlight", NULL, NULL);
+
+   EINA_LIST_FOREACH(devs, l, dev)
+     {
+        t = eeze_udev_syspath_get_sysattr(dev, "type");
+        if (!t) continue;
+
+        if (!strcmp(t, "raw"))
+          type = ECORE_DRM2_BACKLIGHT_RAW;
+        else if (!strcmp(t, "platform"))
+          type = ECORE_DRM2_BACKLIGHT_PLATFORM;
+        else if (!strcmp(t, "firmware"))
+          type = ECORE_DRM2_BACKLIGHT_FIRMWARE;
+
+        if ((disp->conn->type == DRM_MODE_CONNECTOR_LVDS) ||
+            (disp->conn->type == DRM_MODE_CONNECTOR_eDP) ||
+            (type == ECORE_DRM2_BACKLIGHT_RAW))
+          found = EINA_TRUE;
+
+        eina_stringshare_del(t);
+        if (found) break;
+     }
+
+   if (found)
+     {
+        disp->backlight.type = type;
+        disp->backlight.path = eina_stringshare_add(dev);
+        disp->backlight.max =
+          _ecore_drm2_display_backlight_value_get(disp, "max_brightness");
+        disp->backlight.value =
+          _ecore_drm2_display_backlight_value_get(disp, "brightness");
+     }
+
+   EINA_LIST_FREE(devs, dev)
+     eina_stringshare_del(dev);
 }
 
 static void
@@ -200,6 +262,9 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
         break;
      }
 
+   /* get backlight values */
+   _ecore_drm2_display_backlight_get(disp);
+
    /* get connected state */
    disp->connected = (disp->conn->conn->connection == DRM_MODE_CONNECTED);
 }
@@ -210,7 +275,6 @@ _ecore_drm2_display_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
    Ecore_Drm2_Display *disp;
 
    disp = data;
-   /* TODO: FIXME: Should this check for disp->state ? */
    if (!disp->name)
      _ecore_drm2_display_state_fill(disp);
    else
