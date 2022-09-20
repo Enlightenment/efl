@@ -201,6 +201,8 @@ struct _Ecore_Drm2_Display
    Ecore_Drm2_Crtc *crtc;
    Ecore_Drm2_Connector *conn;
 
+   Eina_List *modes;
+
    Ecore_Thread *thread;
 
    Eina_Bool primary : 1;
