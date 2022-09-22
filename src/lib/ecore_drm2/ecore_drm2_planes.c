@@ -38,7 +38,7 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
         return;
      }
 
-   p = plane->dplane;
+   p = plane->drmPlane;
    pstate = plane->state;
 
    pstate->obj_id = plane->id;
@@ -205,7 +205,7 @@ _ecore_drm2_plane_create(Ecore_Drm2_Device *dev, drmModePlanePtr p, uint32_t ind
 
    plane->fd = dev->fd;
    plane->id = index;
-   plane->dplane = p;
+   plane->drmPlane = p;
 
    /* append this plane to the list */
    dev->planes = eina_list_append(dev->planes, plane);
@@ -256,7 +256,7 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->planes, plane)
      {
-        if (plane->dplane) sym_drmModeFreePlane(plane->dplane);
+        if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
         free(plane->state);
         free(plane);
      }

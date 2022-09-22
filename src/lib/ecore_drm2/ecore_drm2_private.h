@@ -159,7 +159,7 @@ struct _Ecore_Drm2_Plane
    int fd;
    uint32_t id;
 
-   drmModePlanePtr dplane;
+   drmModePlanePtr drmPlane;
 
    Ecore_Drm2_Plane_State *state;
 
@@ -216,7 +216,7 @@ struct _Ecore_Drm2_Connector
    uint32_t type;
    int fd;
 
-   drmModeConnector *conn;
+   drmModeConnector *drmConn;
 
    Ecore_Drm2_Connector_State *state;
 
@@ -231,7 +231,7 @@ struct _Ecore_Drm2_Crtc
    uint32_t pipe;
    int fd;
 
-   drmModeCrtcPtr dcrtc;
+   drmModeCrtcPtr drmCrtc;
 
    /* TODO: store FBs */
 
