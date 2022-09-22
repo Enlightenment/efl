@@ -152,7 +152,7 @@ _ecore_drm2_connector_create(Ecore_Drm2_Device *dev, drmModeConnector *conn, uin
 
    c->id = id;
    c->fd = dev->fd;
-   c->conn = conn;
+   c->drmConn = conn;
    c->type = conn->connector_type;
 
    /* check if this connector is a writeback */
@@ -221,7 +221,7 @@ _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev)
    EINA_LIST_FREE(dev->conns, conn)
      {
         if (conn->thread) ecore_thread_cancel(conn->thread);
-        if (conn->conn) sym_drmModeFreeConnector(conn->conn);
+        if (conn->drmConn) sym_drmModeFreeConnector(conn->drmConn);
         free(conn->state);
         free(conn);
      }

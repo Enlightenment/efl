@@ -25,7 +25,7 @@ _ecore_drm2_crtc_state_fill(Ecore_Drm2_Crtc *crtc)
      }
 
    cstate = crtc->state;
-   cstate->obj_id = crtc->dcrtc->crtc_id;
+   cstate->obj_id = crtc->drmCrtc->crtc_id;
 
    /* get the properties of this crtc from drm */
    oprops =
@@ -144,7 +144,7 @@ _ecore_drm2_crtc_create(Ecore_Drm2_Device *dev, drmModeCrtcPtr dcrtc, uint32_t p
    crtc->id = dcrtc->crtc_id;
    crtc->fd = dev->fd;
    crtc->pipe = pipe;
-   crtc->dcrtc = dcrtc;
+   crtc->drmCrtc = dcrtc;
 
    /* add this crtc to the list */
    dev->crtcs = eina_list_append(dev->crtcs, crtc);
@@ -204,7 +204,7 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
    EINA_LIST_FREE(dev->crtcs, crtc)
      {
         if (crtc->thread) ecore_thread_cancel(crtc->thread);
-        if (crtc->dcrtc) sym_drmModeFreeCrtc(crtc->dcrtc);
+        if (crtc->drmCrtc) sym_drmModeFreeCrtc(crtc->drmCrtc);
         free(crtc->state);
         free(crtc);
      }

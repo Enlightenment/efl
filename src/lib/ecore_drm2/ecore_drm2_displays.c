@@ -26,7 +26,7 @@ _ecore_drm2_display_name_get(Ecore_Drm2_Connector *conn)
    else
      type = "UNKNOWN";
 
-   snprintf(name, sizeof(name), "%s-%d", type, conn->conn->connector_type_id);
+   snprintf(name, sizeof(name), "%s-%d", type, conn->drmConn->connector_type_id);
    return strdup(name);
 }
 
@@ -128,7 +128,7 @@ _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
    DBG("\tSerial: %s", disp->serial);
 
    DBG("\tCrtc: %d", disp->crtc->id);
-   DBG("\tCrtc Pos: %d %d", disp->crtc->dcrtc->x, disp->crtc->dcrtc->y);
+   DBG("\tCrtc Pos: %d %d", disp->crtc->drmCrtc->x, disp->crtc->drmCrtc->y);
    DBG("\tConnector: %d", disp->conn->id);
 
    if (disp->backlight.path)
@@ -262,14 +262,14 @@ _ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp)
 
    memset(&crtc_mode, 0, sizeof(crtc_mode));
 
-   if (disp->crtc->dcrtc->mode_valid)
-     crtc_mode = disp->crtc->dcrtc->mode;
+   if (disp->crtc->drmCrtc->mode_valid)
+     crtc_mode = disp->crtc->drmCrtc->mode;
 
    /* loop through connector modes and try to create mode */
-   for (; i < disp->conn->conn->count_modes; i++)
+   for (; i < disp->conn->drmConn->count_modes; i++)
      {
         dmode =
-          _ecore_drm2_display_mode_create(&disp->conn->conn->modes[i]);
+          _ecore_drm2_display_mode_create(&disp->conn->drmConn->modes[i]);
         if (!dmode) continue;
 
         /* append mode to display mode list */
@@ -297,11 +297,11 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    _ecore_drm2_display_edid_get(disp);
 
    /* get physical dimensions */
-   disp->pw = disp->conn->conn->mmWidth;
-   disp->ph = disp->conn->conn->mmHeight;
+   disp->pw = disp->conn->drmConn->mmWidth;
+   disp->ph = disp->conn->drmConn->mmHeight;
 
    /* get subpixel */
-   switch (disp->conn->conn->subpixel)
+   switch (disp->conn->drmConn->subpixel)
      {
       case DRM_MODE_SUBPIXEL_NONE:
         disp->subpixel = 1;
@@ -331,10 +331,10 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    _ecore_drm2_display_modes_get(disp);
 
    /* get gamma from crtc */
-   disp->gamma = disp->crtc->dcrtc->gamma_size;
+   disp->gamma = disp->crtc->drmCrtc->gamma_size;
 
    /* get connected state */
-   disp->connected = (disp->conn->conn->connection == DRM_MODE_CONNECTED);
+   disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
 }
 
 static void
@@ -385,7 +385,7 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
         drmModeCrtc *dcrtc;
 
         /* try to get the encoder from drm */
-        encoder = sym_drmModeGetEncoder(dev->fd, c->conn->encoder_id);
+        encoder = sym_drmModeGetEncoder(dev->fd, c->drmConn->encoder_id);
         if (!encoder) continue;
 
         /* try to get the crtc from drm */
