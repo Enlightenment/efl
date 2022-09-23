@@ -120,6 +120,9 @@ _ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
 static void
 _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
 {
+   Eina_List *l = NULL;
+   Ecore_Drm2_Display_Mode *mode;
+
    DBG("Display Atomic State Fill Complete");
 
    DBG("\tName: %s", disp->name);
@@ -147,6 +150,16 @@ _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
              break;
           }
         DBG("\t\tPath: %s", disp->backlight.path);
+     }
+
+   EINA_LIST_FOREACH(disp->modes, l, mode)
+     {
+        DBG("\tAdded Mode: %dx%d@%.1f%s%s%s, %.1f MHz",
+            mode->width, mode->height, mode->refresh / 1000.0,
+            (mode->flags & DRM_MODE_TYPE_PREFERRED) ? ", preferred" : "",
+            (mode->flags & DRM_MODE_TYPE_DEFAULT) ? ", current" : "",
+            (disp->conn->drmConn->count_modes == 0) ? ", built-in" : "",
+            mode->info.clock / 1000.0);
      }
 
    /* DBG("\tCloned: %d", disp->cloned); */
@@ -234,8 +247,8 @@ _ecore_drm2_display_mode_create(const drmModeModeInfo *info)
    mode->width = info->hdisplay;
    mode->height = info->vdisplay;
 
-   refresh = (info->clock * 1000LL / info->htotal + info->vtotal / 2) /
-     info->vtotal;
+   refresh = (info->clock * 1000000LL / info->htotal +
+              info->vtotal / 2) / info->vtotal;
 
    if (info->flags & DRM_MODE_FLAG_INTERLACE)
      refresh *= 2;
@@ -259,6 +272,8 @@ _ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp)
    int i = 0;
    drmModeModeInfo crtc_mode;
    Ecore_Drm2_Display_Mode *dmode;
+   Ecore_Drm2_Display_Mode *current = NULL, *pref = NULL, *best = NULL;
+   Eina_List *l = NULL;
 
    memset(&crtc_mode, 0, sizeof(crtc_mode));
 
@@ -276,7 +291,36 @@ _ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp)
         disp->modes = eina_list_append(disp->modes, dmode);
      }
 
-   /* TODO: select current mode */
+   /* try to select current mode */
+   EINA_LIST_REVERSE_FOREACH(disp->modes, l, dmode)
+     {
+        if (!memcmp(&crtc_mode, &dmode->info, sizeof(crtc_mode)))
+          current = dmode;
+        if (dmode->flags & DRM_MODE_TYPE_PREFERRED)
+          pref = dmode;
+        best = dmode;
+     }
+
+   if ((!current) && (crtc_mode.clock != 0))
+     {
+        current = _ecore_drm2_display_mode_create(&crtc_mode);
+        if (!current) goto err;
+        disp->modes = eina_list_append(disp->modes, current);
+     }
+
+   if (current) disp->current_mode = current;
+   else if (pref) disp->current_mode = pref;
+   else if (best) disp->current_mode = best;
+
+   if (!disp->current_mode) goto err;
+
+   disp->current_mode->flags |= DRM_MODE_TYPE_DEFAULT;
+
+   return;
+
+err:
+   EINA_LIST_FREE(disp->modes, dmode)
+     free(dmode);
 }
 
 static void
