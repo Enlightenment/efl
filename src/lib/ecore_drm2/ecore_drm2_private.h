@@ -168,7 +168,7 @@ struct _Ecore_Drm2_Plane
 
 struct _Ecore_Drm2_Display_Mode
 {
-   uint32_t id, flags, refresh;
+   uint32_t flags, refresh;
    int32_t width, height;
    drmModeModeInfo info;
 };
@@ -202,6 +202,7 @@ struct _Ecore_Drm2_Display
    Ecore_Drm2_Connector *conn;
 
    Eina_List *modes;
+   Ecore_Drm2_Display_Mode *current_mode;
 
    Ecore_Thread *thread;
 
