@@ -1929,15 +1929,15 @@ evas_font_object_rehint(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (obj->is_smart)
      {
-  EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj)
-    evas_font_object_rehint(obj->object);
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj)
+          evas_font_object_rehint(obj->object);
      }
    else
      {
-  if (!strcmp(obj->type, "text"))
-    _evas_object_text_rehint(eo_obj);
-  if (!strcmp(obj->type, "textblock"))
-    _evas_object_textblock_rehint(eo_obj);
+        if (!strcmp(obj->type, "text"))
+          _evas_object_text_rehint(eo_obj);
+        if (!strcmp(obj->type, "textblock"))
+          _evas_object_textblock_rehint(eo_obj);
      }
 }
 
@@ -1953,10 +1953,10 @@ evas_font_hinting_set(Eo *eo_e, Evas_Font_Hinting_Flags hinting)
 
    EINA_INLIST_FOREACH(e->layers, lay)
      {
-  Evas_Object_Protected_Data *obj;
+        Evas_Object_Protected_Data *obj;
 
-  EINA_INLIST_FOREACH(lay->objects, obj)
-    evas_font_object_rehint(obj->object);
+        EINA_INLIST_FOREACH(lay->objects, obj)
+          evas_font_object_rehint(obj->object);
      }
 }
 
