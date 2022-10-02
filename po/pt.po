@@ -1,22 +1,23 @@
 # Portuguese translation for Efl.
 # Copyright (C) 2012 Enlightenment development team
 # This file is public domain.
-# Sérgio Marques <smarquespt@gmail.com>, 2010-2014
+# Sérgio Marques <smarquespt@gmail.com>, 2010-2014.
+# Hugo Carvalho <hugokarvalho@hotmail.com> 2021-2022.
 #
-#: src/lib/elementary/elm_config.c:4267
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:13+0200\n"
-"PO-Revision-Date: 2013-11-05 14:11-0000\n"
-"Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
-"Language-Team: General\n"
+"PO-Revision-Date: 2022-10-02 22:21+0100\n"
+"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
+"Language-Team: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-Launchpad-Export-Date: 2012-12-07 16:20+0000\n"
 
 #: src/lib/ecore/ecore_getopt.c:85
@@ -30,7 +31,7 @@ msgstr "Utilização:"
 #: src/lib/ecore/ecore_getopt.c:101
 #, c-format
 msgid "%s [options]"
-msgstr "%s [opções]"
+msgstr "%s [options]"
 
 #: src/lib/ecore/ecore_getopt.c:301
 msgid "Copyright:"
@@ -42,15 +43,15 @@ msgstr "Licença:"
 
 #: src/lib/ecore/ecore_getopt.c:499
 msgid "Type: "
-msgstr "Tipo:"
+msgstr "Tipo: "
 
 #: src/lib/ecore/ecore_getopt.c:575
 msgid "Default: "
-msgstr "Padrão:"
+msgstr "Padrão: "
 
 #: src/lib/ecore/ecore_getopt.c:602
 msgid "Choices: "
-msgstr "Escolhas:"
+msgstr "Escolhas: "
 
 #: src/lib/ecore/ecore_getopt.c:640 src/lib/ecore/ecore_getopt.c:641
 msgid "No categories available."
@@ -58,7 +59,7 @@ msgstr "Nenhuma categoria disponível."
 
 #: src/lib/ecore/ecore_getopt.c:645
 msgid "Categories: "
-msgstr "Categorias:"
+msgstr "Categorias: "
 
 #: src/lib/ecore/ecore_getopt.c:767
 msgid "Options:\n"
@@ -107,7 +108,7 @@ msgstr "formato numérico inválido %s\n"
 #: src/lib/ecore/ecore_getopt.c:1309
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr "escolha inválida \"%s\". O valores possíveis são:"
+msgstr "escolha inválida \"%s\". O valores possíveis são: "
 
 #: src/lib/ecore/ecore_getopt.c:1337
 msgid "missing parameter to append.\n"
@@ -186,12 +187,12 @@ msgstr "ERRO: encontradas opções inválidas."
 #: src/lib/ecore/ecore_getopt.c:2087 src/lib/ecore/ecore_getopt.c:2154
 #, c-format
 msgid " See --%s.\n"
-msgstr "Consulte --%s.\n"
+msgstr " Veja --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2089 src/lib/ecore/ecore_getopt.c:2156
 #, c-format
 msgid " See -%c.\n"
-msgstr "Consulte -%c.\n"
+msgstr " Veja -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2148
 msgid "ERROR: invalid positional arguments found."
@@ -241,20 +242,19 @@ msgstr "Vídeos"
 
 #: src/lib/evas/common/language/evas_language_utils.c:205
 msgid "default:LTR"
-msgstr "default:LTR"
+msgstr "padrão: LTR (da esquerda para a direita)"
 
 #: src/lib/elementary/elc_naviframe.c:408
 msgid "Title"
 msgstr "Título"
 
 #: src/lib/elementary/elc_naviframe.c:415
-#, fuzzy
 msgid "Subtitle"
-msgstr "Título"
+msgstr "Legenda"
 
 #: src/lib/elementary/elc_naviframe.c:966
 msgid "Back"
-msgstr "Recuar"
+msgstr "Voltar"
 
 #: src/lib/elementary/elc_fileselector.c:1755
 msgid "Up"
@@ -266,7 +266,7 @@ msgstr "Pasta pessoal"
 
 #: src/lib/elementary/elc_fileselector.c:1787
 msgid "Search"
-msgstr ""
+msgstr "Procurar"
 
 #: src/lib/elementary/elc_fileselector.c:2061
 msgid "OK"
