@@ -278,6 +278,8 @@ void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
 Eina_Bool _ecore_drm2_planes_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev);
 
+void _ecore_drm2_crtc_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode, int x, int y);
+
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);
 extern void (*sym_drmModeFreeResources)(drmModeResPtr ptr);

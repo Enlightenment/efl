@@ -491,3 +491,13 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
         free(disp);
      }
 }
+
+EAPI void
+ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   EINA_SAFETY_ON_NULL_RETURN(mode);
+   EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
+
+   _ecore_drm2_crtc_mode_set(disp->crtc, mode, x, y);
+}
