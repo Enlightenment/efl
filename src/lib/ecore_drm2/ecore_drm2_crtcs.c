@@ -1,5 +1,28 @@
 #include "ecore_drm2_private.h"
 
+static Eina_Thread_Queue *thq = NULL;
+
+typedef struct
+{
+   Eina_Thread_Queue_Msg head;
+   Eina_Bool fill : 1;
+   Eina_Bool commit : 1;
+   Eina_Bool debug : 1;
+} Thread_Msg;
+
+static void
+_ecore_drm2_crtc_state_thread_send(Eina_Bool fill, Eina_Bool commit, Eina_Bool debug)
+{
+   Thread_Msg *msg;
+   void *ref;
+
+   msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
+   msg->fill = fill;
+   msg->commit = commit;
+   msg->debug = debug;
+   eina_thread_queue_send_done(thq, ref);
+}
+
 static void
 _ecore_drm2_crtc_state_debug(Ecore_Drm2_Crtc *crtc)
 {
@@ -93,39 +116,52 @@ cont:
      }
 
    sym_drmModeFreeObjectProperties(oprops);
+
+   /* send message to thread for debug printing crtc state */
+   _ecore_drm2_crtc_state_thread_send(EINA_FALSE, EINA_FALSE, EINA_TRUE);
 }
 
 static void
-_ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_crtc_state_commit(Ecore_Drm2_Crtc *crtc EINA_UNUSED)
+{
+   /* Ecore_Drm2_Crtc_State *cstate; */
+
+   /* cstate = crtc->state; */
+   /* DBG("CRTC State Commit"); */
+}
+
+static void
+_ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread)
 {
    Ecore_Drm2_Crtc *crtc;
+   Thread_Msg *msg;
+   void *ref;
 
    crtc = data;
-   if (!crtc->state)
-     _ecore_drm2_crtc_state_fill(crtc);
-   else
+
+   eina_thread_name_set(eina_thread_self(), "Ecore-drm2-crtc");
+
+   while (!ecore_thread_check(thread))
      {
-        /* TODO: update atomic state for commit */
+        msg = eina_thread_queue_wait(thq, &ref);
+        if (msg)
+          {
+             if (msg->fill) _ecore_drm2_crtc_state_fill(crtc);
+             if (msg->commit) _ecore_drm2_crtc_state_commit(crtc);
+             if (msg->debug) _ecore_drm2_crtc_state_debug(crtc);
+             eina_thread_queue_wait_done(thq, ref);
+          }
      }
 }
 
 static void
-_ecore_drm2_crtc_state_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_crtc_state_thread_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   Ecore_Drm2_Crtc *crtc;
+   /* Ecore_Drm2_Crtc *crtc; */
 
-   crtc = data;
-   /* crtc->thread = NULL; */
-   _ecore_drm2_crtc_state_debug(crtc);
-}
+   /* crtc = data; */
 
-static void
-_ecore_drm2_crtc_state_thread_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
-{
-   Ecore_Drm2_Crtc *crtc;
-
-   crtc = data;
-   crtc->thread = NULL;
+   free(msg);
 }
 
 static Ecore_Drm2_Crtc *
@@ -178,12 +214,11 @@ _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev)
         if (!crtc) goto err;
 
         /* NB: Use an explicit thread to fill crtc atomic state */
+        thq = eina_thread_queue_new();
         crtc->thread =
           ecore_thread_feedback_run(_ecore_drm2_crtc_state_thread,
-                                    NULL, //_ecore_drm2_crtc_state_thread_notify,
-                                    _ecore_drm2_crtc_state_thread_end,
-                                    _ecore_drm2_crtc_state_thread_cancel,
-                                    crtc, EINA_TRUE);
+                                    _ecore_drm2_crtc_state_thread_notify,
+                                    NULL, NULL, crtc, EINA_TRUE);
      }
 
    sym_drmModeFreeResources(res);
@@ -208,4 +243,13 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
         free(crtc->state);
         free(crtc);
      }
+}
+
+void
+_ecore_drm2_crtc_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
+{
+   /* TODO: add code to actually set crtc mode */
+
+   /* send message to thread queue that we have work to do */
+   _ecore_drm2_crtc_state_thread_send(EINA_FALSE, EINA_TRUE, EINA_FALSE);
 }
