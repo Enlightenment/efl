@@ -2029,7 +2029,7 @@ _status_config_etc(Evas_Object *win,
    elm_check_state_set(ck, elm_config_desktop_entry_get());
 
    // desktop_entry
-   CHECK_ADD("Entry Mangifiers", "Set popup magnifiers on start/end selection handles in entries", mag_change, NULL);
+   CHECK_ADD("Entry Magnifiers", "Set popup magnifiers on start/end selection handles in entries", mag_change, NULL);
    elm_check_state_set(ck, elm_config_magnifier_enable_get());
 
    // access
