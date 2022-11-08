@@ -4,6 +4,25 @@
 # define DRM_MODE_CONNECTOR_WRITEBACK 18
 #endif
 
+static Eina_Thread_Queue *thq = NULL;
+
+typedef struct
+{
+   Eina_Thread_Queue_Msg head;
+   Ecore_Drm2_Thread_Op_Code code;
+} Thread_Msg;
+
+static void
+_ecore_drm2_connector_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+{
+   Thread_Msg *msg;
+   void *ref;
+
+   msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
+   msg->code = code;
+   eina_thread_queue_send_done(thq, ref);
+}
+
 static void
 _ecore_drm2_connector_state_debug(Ecore_Drm2_Connector *conn)
 {
@@ -106,39 +125,56 @@ cont:
      }
 
    sym_drmModeFreeObjectProperties(oprops);
+
+   /* send message to thread for debug printing connector state */
+   _ecore_drm2_connector_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
 }
 
 static void
-_ecore_drm2_connector_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_connector_state_commit(Ecore_Drm2_Connector *conn EINA_UNUSED)
+{
+   DBG("Connector State Commit");
+}
+
+static void
+_ecore_drm2_connector_state_thread(void *data, Ecore_Thread *thread)
 {
    Ecore_Drm2_Connector *conn;
+   Thread_Msg *msg;
+   void *ref;
 
    conn = data;
-   if (!conn->state)
-     _ecore_drm2_connector_state_fill(conn);
-   else
+
+   eina_thread_name_set(eina_thread_self(), "Ecore-drm2-connector");
+
+   while (!ecore_thread_check(thread))
      {
-        /* TODO: update atomic state for commit */
+        msg = eina_thread_queue_wait(thq, &ref);
+        if (msg)
+          {
+             switch (msg->code)
+               {
+                case ECORE_DRM2_THREAD_CODE_FILL:
+                  _ecore_drm2_connector_state_fill(conn);
+                  break;
+                case ECORE_DRM2_THREAD_CODE_COMMIT:
+                  _ecore_drm2_connector_state_commit(conn);
+                  break;
+                case ECORE_DRM2_THREAD_CODE_DEBUG:
+                  _ecore_drm2_connector_state_debug(conn);
+                  break;
+                default:
+                  break;
+               }
+             eina_thread_queue_wait_done(thq, ref);
+          }
      }
 }
 
 static void
-_ecore_drm2_connector_state_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_connector_state_thread_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   Ecore_Drm2_Connector *conn;
-
-   conn = data;
-   /* conn->thread = NULL; */
-   _ecore_drm2_connector_state_debug(conn);
-}
-
-static void
-_ecore_drm2_connector_state_thread_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
-{
-   Ecore_Drm2_Connector *conn;
-
-   conn = data;
-   conn->thread = NULL;
+   free(msg);
 }
 
 static Ecore_Drm2_Connector *
@@ -179,6 +215,8 @@ _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev)
 
    /* TOOD: set dev->min/max width & height ? */
 
+   thq = eina_thread_queue_new();
+
    for (; i < res->count_connectors; i++)
      {
         uint32_t conn_id;
@@ -196,10 +234,8 @@ _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev)
         /* NB: Use an explicit thread to fill crtc atomic state */
         c->thread =
           ecore_thread_feedback_run(_ecore_drm2_connector_state_thread,
-                                    NULL, //_ecore_drm2_connector_state_thread_notify,
-                                    _ecore_drm2_connector_state_thread_end,
-                                    _ecore_drm2_connector_state_thread_cancel,
-                                    c, EINA_TRUE);
+                                    _ecore_drm2_connector_state_thread_notify,
+                                    NULL, NULL, c, EINA_TRUE);
 
      }
 
@@ -225,4 +261,7 @@ _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev)
         free(conn->state);
         free(conn);
      }
+
+   eina_thread_queue_free(thq);
+   thq = NULL;
 }
