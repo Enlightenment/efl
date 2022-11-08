@@ -61,6 +61,13 @@ extern int _ecore_drm2_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm2_log_dom, __VA_ARGS__)
 
+typedef enum _Ecore_Drm2_Thread_Op_Code
+{
+   ECORE_DRM2_THREAD_CODE_FILL,
+   ECORE_DRM2_THREAD_CODE_COMMIT,
+   ECORE_DRM2_THREAD_CODE_DEBUG
+} Ecore_Drm2_Thread_Op_Code;
+
 typedef enum _Ecore_Drm2_Backlight_Type
 {
    ECORE_DRM2_BACKLIGHT_RAW,
