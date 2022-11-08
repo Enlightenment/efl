@@ -181,7 +181,7 @@ _ecore_drm2_crtc_create(Ecore_Drm2_Device *dev, drmModeCrtcPtr dcrtc, uint32_t p
    if (!crtc)
      {
         ERR("Could not allocate space for CRTC");
-        goto err;
+        return NULL;
      }
 
    crtc->id = dcrtc->crtc_id;
@@ -193,10 +193,6 @@ _ecore_drm2_crtc_create(Ecore_Drm2_Device *dev, drmModeCrtcPtr dcrtc, uint32_t p
    dev->crtcs = eina_list_append(dev->crtcs, crtc);
 
    return crtc;
-
-err:
-   free(crtc);
-   return NULL;
 }
 
 Eina_Bool
@@ -211,6 +207,8 @@ _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev)
    res = sym_drmModeGetResources(dev->fd);
    if (!res) return EINA_FALSE;
 
+   thq = eina_thread_queue_new();
+
    for (; i < res->count_crtcs; i++)
      {
         /* try to get this crtc from drm */
@@ -221,7 +219,6 @@ _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev)
         if (!crtc) goto err;
 
         /* NB: Use an explicit thread to fill crtc atomic state */
-        thq = eina_thread_queue_new();
         crtc->thread =
           ecore_thread_feedback_run(_ecore_drm2_crtc_state_thread,
                                     _ecore_drm2_crtc_state_thread_notify,
