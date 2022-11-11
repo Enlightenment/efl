@@ -8,12 +8,31 @@
 #define EDID_OFFSET_PNPID 0x08
 #define EDID_OFFSET_SERIAL 0x0c
 
+static Eina_Thread_Queue *thq = NULL;
+
+typedef struct
+{
+   Eina_Thread_Queue_Msg head;
+   Ecore_Drm2_Thread_Op_Code code;
+} Thread_Msg;
+
 static const char *conn_types[] =
 {
    "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
    "Composite", "S-Video", "LVDS", "Component", "DIN",
    "DisplayPort", "HDMI-A", "HDMI-B", "TV", "eDP", "Virtual", "DSI",
 };
+
+static void
+_ecore_drm2_display_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+{
+   Thread_Msg *msg;
+   void *ref;
+
+   msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
+   msg->code = code;
+   eina_thread_queue_send_done(thq, ref);
+}
 
 static char *
 _ecore_drm2_display_name_get(Ecore_Drm2_Connector *conn)
@@ -379,39 +398,59 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
 
    /* get connected state */
    disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
+
+   /* send message to thread for debug printing display state */
+   _ecore_drm2_display_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
+}
+
+static void
+_ecore_drm2_display_state_commit(Ecore_Drm2_Display *disp EINA_UNUSED)
+{
+   /* Ecore_Drm2_Display_State *state; */
+
+   /* state = disp->state; */
+   DBG("Display State Commit");
 }
 
 static void
 _ecore_drm2_display_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Ecore_Drm2_Display *disp;
+   Thread_Msg *msg;
+   void *ref;
 
    disp = data;
-   if (!disp->name)
-     _ecore_drm2_display_state_fill(disp);
-   else
+
+   eina_thread_name_set(eina_thread_self(), "Ecore-drm2-display");
+
+   while (!ecore_thread_check(thread))
      {
-        /* TODO: update atomic state for commit */
+        msg = eina_thread_queue_wait(thq, &ref);
+        if (msg)
+          {
+             switch (msg->code)
+               {
+                case ECORE_DRM2_THREAD_CODE_FILL:
+                  _ecore_drm2_display_state_fill(disp);
+                  break;
+                case ECORE_DRM2_THREAD_CODE_COMMIT:
+                  _ecore_drm2_display_state_commit(disp);
+                  break;
+                case ECORE_DRM2_THREAD_CODE_DEBUG:
+                  _ecore_drm2_display_state_debug(disp);
+                  break;
+                default:
+                  break;
+               }
+             eina_thread_queue_wait_done(thq, ref);
+          }
      }
 }
 
 static void
-_ecore_drm2_display_state_thread_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_display_state_thread_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   Ecore_Drm2_Display *disp;
-
-   disp = data;
-   /* disp->thread = NULL; */
-   _ecore_drm2_display_state_debug(disp);
-}
-
-static void
-_ecore_drm2_display_state_thread_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
-{
-   Ecore_Drm2_Display *disp;
-
-   disp = data;
-   disp->thread = NULL;
+   free(msg);
 }
 
 Eina_Bool
@@ -465,10 +504,8 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 
         disp->thread =
           ecore_thread_feedback_run(_ecore_drm2_display_state_thread,
-                                    NULL, // _ecore_drm2_display_state_thread_notify
-                                    _ecore_drm2_display_state_thread_end,
-                                    _ecore_drm2_display_state_thread_cancel,
-                                    disp, EINA_TRUE);
+                                    _ecore_drm2_display_state_thread_notify,
+                                    NULL, NULL, disp, EINA_TRUE);
 
 cont:
         sym_drmModeFreeEncoder(encoder);
@@ -484,12 +521,16 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->displays, disp)
      {
+        if (disp->thread) ecore_thread_cancel(disp->thread);
         eina_stringshare_del(disp->serial);
         eina_stringshare_del(disp->model);
         eina_stringshare_del(disp->make);
         eina_stringshare_del(disp->name);
         free(disp);
      }
+
+   eina_thread_queue_free(thq);
+   thq = NULL;
 }
 
 EAPI void
