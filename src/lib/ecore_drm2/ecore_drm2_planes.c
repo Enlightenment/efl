@@ -8,7 +8,8 @@ typedef struct
    Ecore_Drm2_Thread_Op_Code code;
 } Thread_Msg;
 
-static void _ecore_drm2_plane_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+static void
+_ecore_drm2_plane_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
 {
    Thread_Msg *msg;
    void *ref;
