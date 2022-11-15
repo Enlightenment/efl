@@ -1,5 +1,23 @@
 #include "ecore_drm2_private.h"
 
+static Eina_Thread_Queue *thq = NULL;
+
+typedef struct
+{
+   Eina_Thread_Queue_Msg head;
+   Ecore_Drm2_Thread_Op_Code code;
+} Thread_Msg;
+
+static void _ecore_drm2_plane_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+{
+   Thread_Msg *msg;
+   void *ref;
+
+   msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
+   msg->code = code;
+   eina_thread_queue_send_done(thq, ref);
+}
+
 static void
 _ecore_drm2_plane_state_debug(Ecore_Drm2_Plane *plane)
 {
@@ -156,38 +174,59 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
      }
 
    sym_drmModeFreeObjectProperties(oprops);
+
+   /* send message to thread for debug printing plane state */
+   _ecore_drm2_plane_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
+}
+
+static void
+_ecore_drm2_plane_state_commit(Ecore_Drm2_Plane *plane EINA_UNUSED)
+{
+   /* Ecore_Drm2_Plane_State *pstate; */
+
+   /* pstate = plane->state; */
+   DBG("Plane Commit");
 }
 
 static void
 _ecore_drm2_plane_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Ecore_Drm2_Plane *plane;
+   Thread_Msg *msg;
+   void *ref;
 
    plane = data;
-   if (!plane->state)
-     _ecore_drm2_plane_state_fill(plane);
-   else
+
+   eina_thread_name_set(eina_thread_self(), "Ecore-drm2-plane");
+
+   while (!ecore_thread_check(thread))
      {
-        /* TODO: update atomic state for commit */
+        msg = eina_thread_queue_wait(thq, &ref);
+        if (msg)
+          {
+             switch (msg->code)
+               {
+                case ECORE_DRM2_THREAD_CODE_FILL:
+                  _ecore_drm2_plane_state_fill(plane);
+                  break;
+                case ECORE_DRM2_THREAD_CODE_COMMIT:
+                  _ecore_drm2_plane_state_commit(plane);
+                  break;
+                case ECORE_DRM2_THREAD_CODE_DEBUG:
+                  _ecore_drm2_plane_state_debug(plane);
+                  break;
+                default:
+                  break;
+               }
+             eina_thread_queue_wait_done(thq, ref);
+          }
      }
 }
 
 static void
-_ecore_drm2_plane_state_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_plane_state_thread_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   Ecore_Drm2_Plane *plane;
-
-   plane = data;
-   _ecore_drm2_plane_state_debug(plane);
-}
-
-static void
-_ecore_drm2_plane_state_thread_cancel(void *data, Ecore_Thread *thread EINA_UNUSED)
-{
-   Ecore_Drm2_Plane *plane;
-
-   plane = data;
-   plane->thread = NULL;
+   free(msg);
 }
 
 static Ecore_Drm2_Plane *
@@ -217,6 +256,7 @@ Eina_Bool
 _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
 {
    Ecore_Drm2_Plane *plane;
+   drmModePlanePtr p;
    drmModePlaneResPtr pres;
    uint32_t i = 0;
 
@@ -226,27 +266,29 @@ _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
 
    for (; i < pres->count_planes; i++)
      {
-        drmModePlanePtr p;
-
         /* try to get this plane from drm */
         p = sym_drmModeGetPlane(dev->fd, pres->planes[i]);
         if (!p) continue;
 
         /* try to create a plane */
         plane = _ecore_drm2_plane_create(dev, p, pres->planes[i]);
-        if (!plane) continue;
+        if (!plane) goto err;
 
         /* NB: Use an explicit thread to fill plane atomic state */
         plane->thread =
           ecore_thread_feedback_run(_ecore_drm2_plane_state_thread,
-                                    NULL, // _ecore_drm2_plane_state_thread_notify
-                                    _ecore_drm2_plane_state_thread_end,
-                                    _ecore_drm2_plane_state_thread_cancel,
-                                    plane, EINA_TRUE);
+                                    _ecore_drm2_plane_state_thread_notify,
+                                    NULL, NULL, plane, EINA_TRUE);
      }
 
    sym_drmModeFreePlaneResources(pres);
    return EINA_TRUE;
+
+err:
+   _ecore_drm2_planes_destroy(dev);
+   sym_drmModeFreePlane(p);
+   sym_drmModeFreePlaneResources(pres);
+   return EINA_FALSE;
 }
 
 void
@@ -256,8 +298,12 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->planes, plane)
      {
+        if (plane->thread) ecore_thread_cancel(plane->thread);
         if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
         free(plane->state);
         free(plane);
      }
+
+   eina_thread_queue_free(thq);
+   thq = NULL;
 }
