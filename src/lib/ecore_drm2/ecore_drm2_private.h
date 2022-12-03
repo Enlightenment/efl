@@ -64,7 +64,6 @@ extern int _ecore_drm2_log_dom;
 typedef enum _Ecore_Drm2_Thread_Op_Code
 {
    ECORE_DRM2_THREAD_CODE_FILL,
-   ECORE_DRM2_THREAD_CODE_COMMIT,
    ECORE_DRM2_THREAD_CODE_DEBUG
 } Ecore_Drm2_Thread_Op_Code;
 

@@ -404,15 +404,6 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
 }
 
 static void
-_ecore_drm2_display_state_commit(Ecore_Drm2_Display *disp EINA_UNUSED)
-{
-   /* Ecore_Drm2_Display_State *state; */
-
-   /* state = disp->state; */
-   DBG("Display State Commit");
-}
-
-static void
 _ecore_drm2_display_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Ecore_Drm2_Display *disp;
@@ -432,9 +423,6 @@ _ecore_drm2_display_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
                   _ecore_drm2_display_state_fill(disp);
-                  break;
-                case ECORE_DRM2_THREAD_CODE_COMMIT:
-                  _ecore_drm2_display_state_commit(disp);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
                   _ecore_drm2_display_state_debug(disp);

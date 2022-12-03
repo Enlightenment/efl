@@ -131,12 +131,6 @@ cont:
 }
 
 static void
-_ecore_drm2_connector_state_commit(Ecore_Drm2_Connector *conn EINA_UNUSED)
-{
-   DBG("Connector State Commit");
-}
-
-static void
 _ecore_drm2_connector_state_thread(void *data, Ecore_Thread *thread)
 {
    Ecore_Drm2_Connector *conn;
@@ -156,9 +150,6 @@ _ecore_drm2_connector_state_thread(void *data, Ecore_Thread *thread)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
                   _ecore_drm2_connector_state_fill(conn);
-                  break;
-                case ECORE_DRM2_THREAD_CODE_COMMIT:
-                  _ecore_drm2_connector_state_commit(conn);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
                   _ecore_drm2_connector_state_debug(conn);
