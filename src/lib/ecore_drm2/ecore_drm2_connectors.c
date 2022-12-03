@@ -238,6 +238,8 @@ _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev)
    return EINA_TRUE;
 
 err:
+   eina_thread_queue_free(thq);
+   thq = NULL;
    _ecore_drm2_connectors_destroy(dev);
    sym_drmModeFreeConnector(conn);
    sym_drmModeFreeResources(res);
@@ -257,6 +259,9 @@ _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev)
         free(conn);
      }
 
-   eina_thread_queue_free(thq);
-   thq = NULL;
+   if (thq)
+     {
+        eina_thread_queue_free(thq);
+        thq = NULL;
+     }
 }

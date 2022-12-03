@@ -265,6 +265,8 @@ _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
    pres = sym_drmModeGetPlaneResources(dev->fd);
    if (!pres) return EINA_FALSE;
 
+   thq = eina_thread_queue_new();
+
    for (; i < pres->count_planes; i++)
      {
         /* try to get this plane from drm */
@@ -286,6 +288,8 @@ _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
    return EINA_TRUE;
 
 err:
+   eina_thread_queue_free(thq);
+   thq = NULL;
    _ecore_drm2_planes_destroy(dev);
    sym_drmModeFreePlane(p);
    sym_drmModeFreePlaneResources(pres);
@@ -305,6 +309,9 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
         free(plane);
      }
 
-   eina_thread_queue_free(thq);
-   thq = NULL;
+   if (thq)
+     {
+        eina_thread_queue_free(thq);
+        thq = NULL;
+     }
 }
