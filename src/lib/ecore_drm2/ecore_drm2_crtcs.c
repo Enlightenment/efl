@@ -118,15 +118,6 @@ cont:
 }
 
 static void
-_ecore_drm2_crtc_state_commit(Ecore_Drm2_Crtc *crtc EINA_UNUSED)
-{
-   /* Ecore_Drm2_Crtc_State *cstate; */
-
-   /* cstate = crtc->state; */
-   DBG("CRTC State Commit");
-}
-
-static void
 _ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread)
 {
    Ecore_Drm2_Crtc *crtc;
@@ -146,9 +137,6 @@ _ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
                   _ecore_drm2_crtc_state_fill(crtc);
-                  break;
-                case ECORE_DRM2_THREAD_CODE_COMMIT:
-                  _ecore_drm2_crtc_state_commit(crtc);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
                   _ecore_drm2_crtc_state_debug(crtc);
@@ -256,7 +244,4 @@ void
 _ecore_drm2_crtc_mode_set(Ecore_Drm2_Crtc *crtc EINA_UNUSED, Ecore_Drm2_Display_Mode *mode EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
 {
    /* TODO: add code to actually set crtc mode */
-
-   /* send message to thread queue that we have work to do */
-   _ecore_drm2_crtc_state_thread_send(ECORE_DRM2_THREAD_CODE_COMMIT);
 }

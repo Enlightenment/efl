@@ -181,15 +181,6 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
 }
 
 static void
-_ecore_drm2_plane_state_commit(Ecore_Drm2_Plane *plane EINA_UNUSED)
-{
-   /* Ecore_Drm2_Plane_State *pstate; */
-
-   /* pstate = plane->state; */
-   DBG("Plane Commit");
-}
-
-static void
 _ecore_drm2_plane_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Ecore_Drm2_Plane *plane;
@@ -209,9 +200,6 @@ _ecore_drm2_plane_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
                   _ecore_drm2_plane_state_fill(plane);
-                  break;
-                case ECORE_DRM2_THREAD_CODE_COMMIT:
-                  _ecore_drm2_plane_state_commit(plane);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
                   _ecore_drm2_plane_state_debug(plane);
