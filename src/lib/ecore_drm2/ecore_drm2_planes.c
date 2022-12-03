@@ -40,6 +40,9 @@ _ecore_drm2_plane_state_debug(Ecore_Drm2_Plane *plane)
       default:
         break;
      }
+   DBG("\t\tZPos: %lu", (long)plane->state->zpos.value);
+   DBG("\t\t\tMin: %lu", (long)plane->state->zpos.min);
+   DBG("\t\t\tMax: %lu", (long)plane->state->zpos.max);
 }
 
 static void
@@ -180,6 +183,18 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
                        pstate->rotation_map[ffs(r)] =
                          1ULL << prop->enums[k].value;
                     }
+               }
+          }
+        else if (!strcmp(prop->name, "zpos"))
+          {
+             pstate->zpos.id = prop->prop_id;
+             pstate->zpos.flags = prop->flags;
+             pstate->zpos.value = oprops->prop_values[i];
+             if ((prop->flags & DRM_MODE_PROP_RANGE) ||
+                 (prop->flags & DRM_MODE_PROP_SIGNED_RANGE))
+               {
+                  pstate->zpos.min = prop->values[0];
+                  pstate->zpos.max = prop->values[1];
                }
           }
 

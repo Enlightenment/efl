@@ -88,6 +88,12 @@ typedef struct _Ecore_Drm2_Atomic_Property
    uint64_t value;
 } Ecore_Drm2_Atomic_Property;
 
+typedef struct _Ecore_Drm2_Atomic_Range
+{
+   uint32_t id, flags;
+   uint64_t min, max, value;
+} Ecore_Drm2_Atomic_Range;
+
 typedef struct _Ecore_Drm2_Connector_State
 {
    uint32_t obj_id;
@@ -142,6 +148,7 @@ typedef struct _Ecore_Drm2_Plane_State
    Ecore_Drm2_Atomic_Property sx, sy, sw, sh;
    Ecore_Drm2_Atomic_Property cx, cy, cw, ch;
    Ecore_Drm2_Atomic_Property rotation;
+   Ecore_Drm2_Atomic_Range zpos;
 
    /* TODO ?? */
    /* Ecore_Drm2_Atomic_Property IN_FENCE_FD; */
@@ -149,7 +156,6 @@ typedef struct _Ecore_Drm2_Plane_State
    /* Ecore_Drm2_Atomic_Property COLOR_ENCODING; */
    /* Ecore_Drm2_Atomic_Property COLOR_RANGE; */
    /* Ecore_Drm2_Atomic_Blob FB_DAMAGE_CLIPS; */
-   /* Ecore_Drm2_Atomic_Property zpos; */
 
    /* NB: these are not part of an atomic state, but we store these here
     * so that we do not have to refetch properties when iterating planes */
