@@ -98,12 +98,14 @@ _ecore_drm2_crtc_state_fill(Ecore_Drm2_Crtc *crtc)
         else if (!strcmp(prop->name, "ACTIVE"))
           {
              cstate->active.id = prop->prop_id;
+             cstate->active.flags = prop->flags;
              cstate->active.value = oprops->prop_values[i];
           }
         /* TODO: We don't actually use this value yet */
         /* else if (!strcmp(prop->name, "BACKGROUND_COLOR")) */
         /*   { */
         /*      cstate->background.id = prop->prop_id; */
+        /*      cstate->background.flags = prop->flags; */
         /*      cstate->background.value = oprops->prop_values[i]; */
         /*   } */
 
