@@ -285,8 +285,6 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
 
    return dev;
 
-/* atomic_fill_err: */
-/*    free(dev->atomic_state); */
 disp_err:
    _ecore_drm2_connectors_destroy(dev);
 plane_err:
@@ -310,8 +308,6 @@ EAPI void
 ecore_drm2_device_close(Ecore_Drm2_Device *dev)
 {
    EINA_SAFETY_ON_NULL_RETURN(dev);
-
-   /* _ecore_drm2_atomic_state_free(dev->atomic_state); */
 
    _ecore_drm2_displays_destroy(dev);
    _ecore_drm2_connectors_destroy(dev);
