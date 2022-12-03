@@ -449,6 +449,8 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
    Ecore_Drm2_Crtc *crtc;
    Eina_List *l = NULL, *ll = NULL;
 
+   thq = eina_thread_queue_new();
+
    /* go through list of connectors and create displays */
    EINA_LIST_FOREACH(dev->conns, l, c)
      {
@@ -517,8 +519,11 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
         free(disp);
      }
 
-   eina_thread_queue_free(thq);
-   thq = NULL;
+   if (thq)
+     {
+        eina_thread_queue_free(thq);
+        thq = NULL;
+     }
 }
 
 EAPI void

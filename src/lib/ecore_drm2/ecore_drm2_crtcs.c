@@ -219,6 +219,8 @@ _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev)
    return EINA_TRUE;
 
 err:
+   eina_thread_queue_free(thq);
+   thq = NULL;
    _ecore_drm2_crtcs_destroy(dev);
    sym_drmModeFreeCrtc(c);
    sym_drmModeFreeResources(res);
@@ -238,8 +240,11 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
         free(crtc);
      }
 
-   eina_thread_queue_free(thq);
-   thq = NULL;
+   if (thq)
+     {
+        eina_thread_queue_free(thq);
+        thq = NULL;
+     }
 }
 
 void
