@@ -85,56 +85,67 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
         if (!strcmp(prop->name, "CRTC_ID"))
           {
              pstate->cid.id = prop->prop_id;
+             pstate->cid.flags = prop->flags;
              pstate->cid.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "FB_ID"))
           {
              pstate->fid.id = prop->prop_id;
+             pstate->fid.flags = prop->flags;
              pstate->fid.value = oprops->prop_values[i];
          }
         else if (!strcmp(prop->name, "CRTC_X"))
           {
              pstate->cx.id = prop->prop_id;
+             pstate->cx.flags = prop->flags;
              pstate->cx.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "CRTC_Y"))
           {
              pstate->cy.id = prop->prop_id;
+             pstate->cy.flags = prop->flags;
              pstate->cy.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "CRTC_W"))
           {
              pstate->cw.id = prop->prop_id;
+             pstate->cw.flags = prop->flags;
              pstate->cw.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "CRTC_H"))
           {
              pstate->ch.id = prop->prop_id;
+             pstate->ch.flags = prop->flags;
              pstate->ch.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "SRC_X"))
           {
              pstate->sx.id = prop->prop_id;
+             pstate->sx.flags = prop->flags;
              pstate->sx.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "SRC_Y"))
           {
              pstate->sy.id = prop->prop_id;
+             pstate->sy.flags = prop->flags;
              pstate->sy.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "SRC_W"))
           {
              pstate->sw.id = prop->prop_id;
+             pstate->sw.flags = prop->flags;
              pstate->sw.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "SRC_H"))
           {
              pstate->sh.id = prop->prop_id;
+             pstate->sh.flags = prop->flags;
              pstate->sh.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "type"))
           {
              pstate->type.id = prop->prop_id;
+             pstate->type.flags = prop->flags;
              pstate->type.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "rotation"))
@@ -142,6 +153,7 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
              int k = 0;
 
              pstate->rotation.id = prop->prop_id;
+             pstate->rotation.flags = prop->flags;
              pstate->rotation.value = oprops->prop_values[i];
 
              for (k = 0; k < prop->count_enums; k++)

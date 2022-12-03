@@ -84,7 +84,7 @@ typedef struct _Ecore_Drm2_Atomic_Blob
 
 typedef struct _Ecore_Drm2_Atomic_Property
 {
-   uint32_t id;
+   uint32_t id, flags;
    uint64_t value;
 } Ecore_Drm2_Atomic_Property;
 

@@ -74,11 +74,13 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
         if (!strcmp(prop->name, "CRTC_ID"))
           {
              cstate->crtc.id = prop->prop_id;
+             cstate->crtc.flags = prop->flags;
              cstate->crtc.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "DPMS"))
           {
              cstate->dpms.id = prop->prop_id;
+             cstate->dpms.flags = prop->flags;
              cstate->dpms.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "EDID"))
@@ -112,11 +114,13 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
         else if (!strcmp(prop->name, "aspect ratio"))
           {
              cstate->aspect.id = prop->prop_id;
+             cstate->aspect.flags = prop->flags;
              cstate->aspect.value = oprops->prop_values[i];
           }
         else if (!strcmp(prop->name, "scaling mode"))
           {
              cstate->scaling.id = prop->prop_id;
+             cstate->scaling.flags = prop->flags;
              cstate->scaling.value = oprops->prop_values[i];
           }
 
