@@ -180,6 +180,7 @@ struct _Ecore_Drm2_Plane
 
 struct _Ecore_Drm2_Display_Mode
 {
+   uint32_t id;
    uint32_t flags, refresh;
    int32_t width, height;
    drmModeModeInfo info;
@@ -290,7 +291,7 @@ void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
 Eina_Bool _ecore_drm2_planes_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev);
 
-void _ecore_drm2_crtc_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode, int x, int y);
+Eina_Bool _ecore_drm2_crtc_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode, int x, int y);
 
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);
@@ -315,5 +316,10 @@ extern void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id);
 extern void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr);
 extern void *(*sym_drmModeGetCrtc)(int fd, uint32_t crtcId);
 extern void (*sym_drmModeFreeCrtc)(drmModeCrtcPtr ptr);
+extern void *(*sym_drmModeAtomicAlloc)(void);
+extern void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req);
+extern int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value);
+extern int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data);
+extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
 
 #endif

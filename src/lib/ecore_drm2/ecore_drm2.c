@@ -30,6 +30,11 @@ void *(*sym_drmModeGetEncoder)(int fd, uint32_t encoder_id);
 void (*sym_drmModeFreeEncoder)(drmModeEncoderPtr ptr);
 void *(*sym_drmModeGetCrtc)(int fd, uint32_t crtcId);
 void (*sym_drmModeFreeCrtc)(drmModeCrtcPtr ptr);
+void *(*sym_drmModeAtomicAlloc)(void) = NULL;
+void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req) = NULL;
+int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value) = NULL;
+int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data) = NULL;
+void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor) = NULL;
 
 /* local static functions */
 static Eina_Bool
@@ -86,6 +91,11 @@ _ecore_drm2_link(void)
         SYM(_drm_lib, drmModeFreeEncoder);
         SYM(_drm_lib, drmModeGetCrtc);
         SYM(_drm_lib, drmModeFreeCrtc);
+        SYM(_drm_lib, drmModeAtomicAlloc);
+        SYM(_drm_lib, drmModeAtomicFree);
+        SYM(_drm_lib, drmModeAtomicAddProperty);
+        SYM(_drm_lib, drmModeAtomicCommit);
+        SYM(_drm_lib, drmModeAtomicSetCursor);
 
         if (fail)
           {
