@@ -527,7 +527,7 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
 }
 
 EAPI void
-ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y)
+ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x EINA_UNUSED, int y EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
