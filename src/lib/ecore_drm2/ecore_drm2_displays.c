@@ -526,6 +526,14 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
      }
 }
 
+EAPI char *
+ecore_drm2_display_name_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->name, NULL);
+   return strdup(disp->name);
+}
+
 EAPI void
 ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x EINA_UNUSED, int y EINA_UNUSED)
 {
