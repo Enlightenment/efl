@@ -532,6 +532,4 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
    EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
-
-   _ecore_drm2_crtc_mode_set(disp->crtc, mode, x, y);
 }

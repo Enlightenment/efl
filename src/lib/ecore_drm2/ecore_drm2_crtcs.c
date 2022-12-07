@@ -246,9 +246,3 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
         thq = NULL;
      }
 }
-
-void
-_ecore_drm2_crtc_mode_set(Ecore_Drm2_Crtc *crtc EINA_UNUSED, Ecore_Drm2_Display_Mode *mode EINA_UNUSED, int x EINA_UNUSED, int y EINA_UNUSED)
-{
-   /* TODO: add code to actually set crtc mode */
-}
