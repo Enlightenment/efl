@@ -347,3 +347,26 @@ ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *b
         if (bpp) *bpp = caps;
      }
 }
+
+EAPI void
+ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *dev, int *minw, int *minh, int *maxw, int *maxh)
+{
+   drmModeRes *res;
+
+   if (minw) *minw = 0;
+   if (minh) *minh = 0;
+   if (maxw) *maxw = 0;
+   if (maxh) *maxh = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+
+   res = sym_drmModeGetResources(dev->fd);
+   if (!res) return;
+
+   if (minw) *minw = res->min_width;
+   if (minh) *minh = res->min_height;
+   if (maxw) *maxw = res->max_width;
+   if (maxh) *maxh = res->max_height;
+
+   sym_drmModeFreeResources(res);
+}

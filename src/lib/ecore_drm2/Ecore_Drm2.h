@@ -53,7 +53,9 @@ EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tt
 EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *height);
 EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *bpp);
+EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
 
+/* XXX: These are 'test' APIs */
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
 
 # endif
