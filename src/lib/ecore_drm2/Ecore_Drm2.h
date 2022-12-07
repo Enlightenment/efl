@@ -49,11 +49,16 @@ typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 /* API functions */
 EAPI int ecore_drm2_init(void);
 EAPI int ecore_drm2_shutdown(void);
+
+/* Device API functions */
 EAPI Ecore_Drm2_Device *ecore_drm2_device_open(const char *seat, unsigned int tty);
 EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *height);
 EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *bpp);
 EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
+
+/* Display API functions */
+EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);
 
 /* XXX: These are 'test' APIs */
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
