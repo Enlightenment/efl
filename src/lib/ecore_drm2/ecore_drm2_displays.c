@@ -556,3 +556,10 @@ ecore_drm2_display_backlight_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
    return (disp->backlight.path != NULL);
 }
+
+EAPI Eina_Bool
+ecore_drm2_display_connected_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   return disp->connected;
+}
