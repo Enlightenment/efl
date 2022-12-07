@@ -534,6 +534,14 @@ ecore_drm2_display_name_get(Ecore_Drm2_Display *disp)
    return strdup(disp->name);
 }
 
+EAPI char *
+ecore_drm2_display_model_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->model, NULL);
+   return strdup(disp->model);
+}
+
 EAPI void
 ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x EINA_UNUSED, int y EINA_UNUSED)
 {
