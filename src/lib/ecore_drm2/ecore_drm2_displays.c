@@ -578,3 +578,15 @@ ecore_drm2_display_subpixel_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, 0);
    return disp->subpixel;
 }
+
+EAPI void
+ecore_drm2_display_physical_size_get(Ecore_Drm2_Display *disp, int *w, int *h)
+{
+   if (w) *w = 0;
+   if (h) *h = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+
+   if (w) *w = disp->pw;
+   if (h) *h = disp->ph;
+}
