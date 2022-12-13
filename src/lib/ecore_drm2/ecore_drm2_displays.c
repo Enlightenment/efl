@@ -563,3 +563,11 @@ ecore_drm2_display_connected_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
    return disp->connected;
 }
+
+EAPI unsigned int
+ecore_drm2_display_connector_type_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, 0);
+   return disp->conn->type;
+}

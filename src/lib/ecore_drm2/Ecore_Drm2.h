@@ -62,6 +62,7 @@ EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);
 EAPI char *ecore_drm2_display_model_get(Ecore_Drm2_Display *disp);
 EAPI Eina_Bool ecore_drm2_display_backlight_get(Ecore_Drm2_Display *disp);
 EAPI Eina_Bool ecore_drm2_display_connected_get(Ecore_Drm2_Display *disp);
+EAPI unsigned int ecore_drm2_display_connector_type_get(Ecore_Drm2_Display *disp);
 
 /* XXX: These are 'test' APIs */
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
