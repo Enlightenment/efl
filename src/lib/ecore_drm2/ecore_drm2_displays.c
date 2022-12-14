@@ -590,3 +590,11 @@ ecore_drm2_display_physical_size_get(Ecore_Drm2_Display *disp, int *w, int *h)
    if (w) *w = disp->pw;
    if (h) *h = disp->ph;
 }
+
+EAPI int
+ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, -1);
+   return disp->conn->state->dpms.value;
+}

@@ -65,6 +65,7 @@ EAPI Eina_Bool ecore_drm2_display_connected_get(Ecore_Drm2_Display *disp);
 EAPI unsigned int ecore_drm2_display_connector_type_get(Ecore_Drm2_Display *disp);
 EAPI unsigned int ecore_drm2_display_subpixel_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_physical_size_get(Ecore_Drm2_Display *disp, int *w, int *h);
+EAPI int ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp);
 
 /* XXX: These are 'test' APIs */
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
