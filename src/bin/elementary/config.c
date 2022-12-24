@@ -2455,7 +2455,8 @@ _status_config_icons(Evas_Object *win,
         ic = elm_icon_add(li);
         elm_image_file_set(ic, efreet_icon_path_find(th->name.internal, "folder", 48), NULL);
         list_it = elm_list_item_append(li, th->name.name, ic, NULL,
-                                       _icon_theme_sel, th->name.internal);
+                                       _icon_theme_sel,
+                                       eina_stringshare_add(th->name.internal));
 
         if (!strcmp(th->name.internal, "hicolor"))
           def_it = list_it;
