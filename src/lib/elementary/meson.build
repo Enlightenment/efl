@@ -702,6 +702,7 @@ elementary_pub_headers = [
   'elm_view_form_eo.h',
   'elm_view_list_eo.h',
   'elm_web_eo.legacy.h',
+  'elm_widget_item_container_eo.h',
   'elm_widget_item_container_eo.legacy.h',
   'elm_widget_item_eo.legacy.h',
   'elm_widget_item_static_focus_eo.legacy.h',
