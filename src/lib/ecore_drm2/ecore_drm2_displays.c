@@ -672,3 +672,17 @@ ecore_drm2_display_mode_info_get(Ecore_Drm2_Display_Mode *mode, int *w, int *h, 
    if (refresh) *refresh = mode->refresh;
    if (flags) *flags = mode->flags;
 }
+
+EAPI Eina_Bool
+ecore_drm2_display_primary_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   return disp->primary;
+}
+
+EAPI void
+ecore_drm2_display_primary_set(Ecore_Drm2_Display *disp, Eina_Bool primary)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   disp->primary = primary;
+}
