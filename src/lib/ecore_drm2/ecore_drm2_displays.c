@@ -613,3 +613,39 @@ ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, 0);
    return disp->crtc->id;
 }
+
+EAPI char *
+ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
+{
+   char *edid_str = NULL;
+   unsigned char *blob;
+   unsigned char fblob[128];
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn->state, NULL);
+
+   blob = disp->conn->state->edid.data;
+   if (!blob)
+     {
+        memset(fblob, 0, sizeof(fblob));
+        blob = fblob;
+     }
+
+   edid_str = malloc((128 * 2) + 1);
+   if (edid_str)
+     {
+        unsigned int k, kk;
+        const char *hexch = "0123456789abcdef";
+
+        for (kk = 0, k = 0; k < 128; k++)
+          {
+             edid_str[kk] = hexch[(blob[k] >> 4) & 0xf];
+             edid_str[kk + 1] = hexch[blob[k] & 0xf];
+             kk += 2;
+          }
+        edid_str[kk] = 0;
+     }
+
+   return edid_str;
+}
