@@ -605,3 +605,11 @@ ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
    return disp->enabled;
 }
+
+EAPI unsigned int
+ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, 0);
+   return disp->crtc->id;
+}
