@@ -686,3 +686,10 @@ ecore_drm2_display_primary_set(Ecore_Drm2_Display *disp, Eina_Bool primary)
    EINA_SAFETY_ON_NULL_RETURN(disp);
    disp->primary = primary;
 }
+
+EAPI const Eina_List *
+ecore_drm2_displays_get(Ecore_Drm2_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   return dev->displays;
+}
