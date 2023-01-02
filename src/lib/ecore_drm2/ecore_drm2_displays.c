@@ -649,3 +649,10 @@ ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
 
    return edid_str;
 }
+
+EAPI const Eina_List *
+ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+   return disp->modes;
+}
