@@ -598,3 +598,10 @@ ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, -1);
    return disp->conn->state->dpms.value;
 }
+
+EAPI Eina_Bool
+ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   return disp->enabled;
+}
