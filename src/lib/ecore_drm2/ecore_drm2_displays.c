@@ -693,3 +693,37 @@ ecore_drm2_displays_get(Ecore_Drm2_Device *dev)
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
    return dev->displays;
 }
+
+EAPI void
+ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, int *h, unsigned int *refresh)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (refresh) *refresh = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   EINA_SAFETY_ON_TRUE_RETURN(!disp->current_mode);
+
+   if (x) *x = disp->x;
+   if (y) *y = disp->y;
+
+   /* FIXME !! */
+   /* switch (disp->rotation) */
+   /*   { */
+   /*    case ECORE_DRM2_ROTATION_90: */
+   /*    case ECORE_DRM2_ROTATION_270: */
+   /*      if (w) *w = disp->current_mode->height; */
+   /*      if (h) *h = disp->current_mode->width; */
+   /*      break; */
+   /*    case ECORE_DRM2_ROTATION_NORMAL: */
+   /*    case ECORE_DRM2_ROTATION_180: */
+   /*    default: */
+        if (w) *w = disp->current_mode->width;
+        if (h) *h = disp->current_mode->height;
+   /*      break; */
+   /*   } */
+
+   if (refresh) *refresh = disp->current_mode->refresh;
+}
