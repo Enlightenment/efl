@@ -454,6 +454,7 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
    /* go through list of connectors and create displays */
    EINA_LIST_FOREACH(dev->conns, l, c)
      {
+        Ecore_Drm2_Plane *plane;
         drmModeEncoder *encoder;
         drmModeCrtc *dcrtc;
 
@@ -481,6 +482,46 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
                {
                   disp->crtc = crtc;
                   break;
+               }
+          }
+
+        /* try to find primary plane for this display */
+        plane = _ecore_drm2_planes_primary_find(dev, disp->crtc->id);
+        if (plane)
+          {
+             if (plane->state)
+               disp->rotation = plane->state->rotation.value;
+             else
+               {
+                  drmModeObjectPropertiesPtr oprops;
+
+                  /* NB: Sadly we cannot rely on plane->state being already filled
+                   * by the time we reach this (due to threading), so we will query
+                   * the plane properties we want directly */
+
+                  /* query plane for rotations */
+                  oprops =
+                    sym_drmModeObjectGetProperties(plane->fd,
+                                                   plane->drmPlane->plane_id,
+                                                   DRM_MODE_OBJECT_PLANE);
+                  if (oprops)
+                    {
+                       unsigned int i = 0;
+
+                       for (; i < oprops->count_props; i++)
+                         {
+                            drmModePropertyPtr prop;
+
+                            prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
+                            if (!prop) continue;
+
+                            if (!strcmp(prop->name, "rotation"))
+                              disp->rotation = oprops->prop_values[i];
+
+                            sym_drmModeFreeProperty(prop);
+                         }
+                       sym_drmModeFreeObjectProperties(oprops);
+                    }
                }
           }
 
@@ -709,21 +750,20 @@ ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, in
    if (x) *x = disp->x;
    if (y) *y = disp->y;
 
-   /* FIXME !! */
-   /* switch (disp->rotation) */
-   /*   { */
-   /*    case ECORE_DRM2_ROTATION_90: */
-   /*    case ECORE_DRM2_ROTATION_270: */
-   /*      if (w) *w = disp->current_mode->height; */
-   /*      if (h) *h = disp->current_mode->width; */
-   /*      break; */
-   /*    case ECORE_DRM2_ROTATION_NORMAL: */
-   /*    case ECORE_DRM2_ROTATION_180: */
-   /*    default: */
+   switch (disp->rotation)
+     {
+      case ECORE_DRM2_ROTATION_90:
+      case ECORE_DRM2_ROTATION_270:
+        if (w) *w = disp->current_mode->height;
+        if (h) *h = disp->current_mode->width;
+        break;
+      case ECORE_DRM2_ROTATION_NORMAL:
+      case ECORE_DRM2_ROTATION_180:
+      default:
         if (w) *w = disp->current_mode->width;
         if (h) *h = disp->current_mode->height;
-   /*      break; */
-   /*   } */
+        break;
+     }
 
    if (refresh) *refresh = disp->current_mode->refresh;
 }
