@@ -196,6 +196,9 @@ struct _Ecore_Drm2_Display
    uint32_t subpixel;
    uint16_t gamma;
 
+   uint32_t supported_rotations;
+   uint64_t rotation;
+
    struct
      {
         char eisa[13];
@@ -290,6 +293,7 @@ void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
 
 Eina_Bool _ecore_drm2_planes_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev);
+Ecore_Drm2_Plane *_ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id);
 
 /* external drm function prototypes (for dlopen) */
 extern void *(*sym_drmModeGetResources)(int fd);

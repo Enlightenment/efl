@@ -330,3 +330,62 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
         thq = NULL;
      }
 }
+
+Ecore_Drm2_Plane *
+_ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id)
+{
+   drmModeObjectPropertiesPtr oprops;
+   Ecore_Drm2_Plane *plane;
+   Eina_List *l;
+   unsigned int i = 0;
+
+   if (!dev) return NULL;
+
+   EINA_LIST_FOREACH(dev->planes, l, plane)
+     {
+        Ecore_Drm2_Plane_State *pstate;
+
+        pstate = plane->state;
+        if (pstate)
+          {
+             if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+             if (pstate->cid.value != crtc_id) continue;
+             return plane;
+          }
+        else
+          {
+             uint64_t cid = 0, type = 0;
+
+             /* We need to manually query plane properties here */
+             oprops =
+               sym_drmModeObjectGetProperties(plane->fd,
+                                              plane->drmPlane->plane_id,
+                                              DRM_MODE_OBJECT_PLANE);
+             if (!oprops) continue;
+
+             for (i = 0; i < oprops->count_props; i++)
+               {
+                  drmModePropertyPtr prop;
+
+                  prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
+                  if (!prop) continue;
+
+                  if (!strcmp(prop->name, "CRTC_ID"))
+                    cid = oprops->prop_values[i];
+                  else if (!strcmp(prop->name, "type"))
+                    type = oprops->prop_values[i];
+
+                  sym_drmModeFreeProperty(prop);
+               }
+
+             sym_drmModeFreeObjectProperties(oprops);
+
+             if (type != DRM_PLANE_TYPE_PRIMARY) continue;
+             if (cid != crtc_id) continue;
+
+             return plane;
+          }
+     }
+
+   return NULL;
+}
