@@ -767,3 +767,10 @@ ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, in
 
    if (refresh) *refresh = disp->current_mode->refresh;
 }
+
+EAPI int
+ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, -1);
+   return disp->rotation;
+}
