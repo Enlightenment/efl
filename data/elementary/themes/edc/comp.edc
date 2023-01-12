@@ -271,6 +271,12 @@ group { name: "e/comp/frame/default";
          clip_to: "focus-clipper";
          description { state: "default" 0.0;
             rel.to: "shower";
+          }
+         description { state: "active" 0.0;
+            inherit: "default" 0.0;
+            offscale;
+            rel1.offset: -5 -5;
+            rel2.offset: 4 4;
          }
       }
       spacer { "gspacer";
@@ -325,6 +331,21 @@ group { name: "e/comp/frame/default";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.2 USE_DURATION_FACTOR 1;
          targets: "focus-clipper" "focus-shadow";
+      }
+      program { name: "focusbounce";
+         signal: "e,state,focused"; source: "e";
+         action: STATE_SET "active" 0.0;
+         target: "e.swallow.content";
+         sequence {
+            action: STATE_SET "default" 0.0;
+            target: "e.swallow.content";
+            transition: SPRING 0.3 0.2 3 USE_DURATION_FACTOR 1;
+         }
+      }
+      program { name: "focusbounceoff";
+         signal: "e,state,unfocused"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
       }
 /*
       program { name: "urgent1";
@@ -394,6 +415,12 @@ group { name: "e/comp/frame/rotate";
          target: "e.swallow.content";
          transition: LINEAR 0.3 USE_DURATION_FACTOR 1;
       }
+      program { name: "focusbounce";
+         signal: "xxx";
+      }
+      program { name: "focusbounceoff";
+         signal: "xxx";
+      }
    }
 }
 
@@ -432,6 +459,14 @@ group { name: "e/comp/frame/popup";
          }
       }
    }
+   programs {
+      program { name: "focusbounce";
+         signal: "xxx";
+      }
+      program { name: "focusbounceoff";
+         signal: "xxx";
+      }
+   }
 }
 
 group { name: "e/comp/frame/none";
@@ -460,6 +495,14 @@ group { name: "e/comp/frame/still";
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
          }
+      }
+   }
+   programs {
+      program { name: "focusbounce";
+         signal: "xxx";
+      }
+      program { name: "focusbounceoff";
+         signal: "xxx";
       }
    }
 }
