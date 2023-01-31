@@ -269,6 +269,7 @@ group { name: "e/comp/frame/default";
       }
 #define FOCUSGLOWSZ 20
       part { name: "focusglow"; type: RECT;
+         mouse_events: 0;
          description { state: "default" 0.0;
             rel.to: "e.swallow.content";
          }
@@ -281,6 +282,7 @@ group { name: "e/comp/frame/default";
         }
       }
       part { name: "focusglow1"; type: RECT;
+         mouse_events: 0;
          description { state: "default" 0.0;
             clip_to: "focusglow";
             offscale;
@@ -291,6 +293,7 @@ group { name: "e/comp/frame/default";
          }
       }
       part { name: "focusglow2"; type: RECT;
+         mouse_events: 0;
          description { state: "default" 0.0;
             clip_to: "focusglow";
             offscale;
@@ -301,6 +304,7 @@ group { name: "e/comp/frame/default";
          }
       }
       part { name: "focusglow3"; type: RECT;
+         mouse_events: 0;
          description { state: "default" 0.0;
             clip_to: "focusglow";
             offscale;
@@ -311,6 +315,7 @@ group { name: "e/comp/frame/default";
          }
       }
       part { name: "focusglow4"; type: RECT;
+         mouse_events: 0;
          description { state: "default" 0.0;
             clip_to: "focusglow";
             offscale;
