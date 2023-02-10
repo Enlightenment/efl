@@ -17,7 +17,7 @@ group { name: "e/desklock/background";
             color_class: "/bg/normal/desklock/background";
          }
       }
-      program { signal: "show"; source: "";
+      program { name: "shower"; signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
          transition: SINUSOIDAL 0.5 USE_DURATION_FACTOR 1;
          target: "clip";
@@ -28,6 +28,14 @@ group { name: "e/desklock/background";
          target: "clip";
          sequence {
             action: SIGNAL_EMIT "e,action,hide,done" "e";
+         }
+      }
+      program { signal: "e,action,show,immediate"; source: "e";
+         action: ACTION_STOP;
+         target: "shower";
+         sequence {
+            action: STATE_SET "visible" 0.0;
+            target: "clip";
          }
       }
       part { name: "e.swallow.login_box"; type: SWALLOW;
