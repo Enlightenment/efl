@@ -423,26 +423,36 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
                        Eina_Bool *fdo)
 {
    char *tmp;
+   const char *stdtmp;
    Eina_Bool ret = EINA_FALSE;
 
    ELM_ICON_DATA_GET(obj, sd);
 
    /* try locating the icon using the specified theme */
-   if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
+   stdtmp = sd->stdicon;
+   sd->stdicon = NULL;
+   ret = _icon_standard_set(obj, name);
+   sd->stdicon = stdtmp;
+   if (ret && fdo) *fdo = EINA_FALSE;
+   if (!ret)
      {
-        ret = _icon_standard_set(obj, name);
-        if (ret && fdo) *fdo = EINA_FALSE;
-
-        if (!ret)
+        /* try locating the icon using the specified theme */
+        if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
           {
-             ret = _icon_freedesktop_set(obj, "hicolor", name, _icon_size_min_get(obj));
+             ret = _icon_standard_set(obj, name);
+             if (ret && fdo) *fdo = EINA_FALSE;
+
+             if (!ret)
+               {
+                  ret = _icon_freedesktop_set(obj, "hicolor", name, _icon_size_min_get(obj));
+                  if (ret && fdo) *fdo = EINA_TRUE;
+               }
+          }
+        else
+          {
+             ret = _icon_freedesktop_set(obj, NULL, name, _icon_size_min_get(obj));
              if (ret && fdo) *fdo = EINA_TRUE;
           }
-     }
-   else
-     {
-        ret = _icon_freedesktop_set(obj, NULL, name, _icon_size_min_get(obj));
-        if (ret && fdo) *fdo = EINA_TRUE;
      }
 
    if (ret)
