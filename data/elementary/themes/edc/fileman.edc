@@ -498,44 +498,37 @@ group { name: "e/fileman/default/fileperms";
       part { name: "type";
          scale: 1;
          description { state: "default" 0.0;
-            image.normal: "i-folder";
+            image.normal: "i-file";
             min: 15 15; max: 15 15;
             rel1.offset: 0 2;
             rel2.relative: 0.0 1.0;
             rel2.to_x: "user-setuid";
             rel2.offset: -5 -3;
-            visible: 0;
             offscale;
          }
          description { state: "dir" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-folder";
-            visible: 1;
          }
          description { state: "link" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-arrow-r";
-            visible: 1;
          }
          description { state: "pipe" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-device-pipe";
-            visible: 1;
          }
          description { state: "socket" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-device-socket";
-            visible: 1;
          }
          description { state: "block" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-device-block";
-            visible: 1;
          }
          description { state: "char" 0.0;
             inherit: "default" 0.0;
             image.normal: "i-device-char";
-            visible: 1;
          }
       }
       part { name: "user-middle"; type: SPACER;
