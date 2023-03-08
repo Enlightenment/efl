@@ -23,10 +23,10 @@ static void
 _ecore_drm2_plane_state_debug(Ecore_Drm2_Plane *plane)
 {
    DBG("Plane Atomic State Fill Complete");
-   DBG("\tPlane: %d", plane->state->obj_id);
-   DBG("\t\tCrtc: %lu", (long)plane->state->cid.value);
-   DBG("\t\tFB: %lu", (long)plane->state->fid.value);
-   switch (plane->state->type.value)
+   DBG("\tPlane: %d", plane->state.current->obj_id);
+   DBG("\t\tCrtc: %lu", (long)plane->state.current->cid.value);
+   DBG("\t\tFB: %lu", (long)plane->state.current->fid.value);
+   switch (plane->state.current->type.value)
      {
       case DRM_PLANE_TYPE_OVERLAY:
         DBG("\t\tType: Overlay Plane");
@@ -40,9 +40,9 @@ _ecore_drm2_plane_state_debug(Ecore_Drm2_Plane *plane)
       default:
         break;
      }
-   DBG("\t\tZPos: %lu", (long)plane->state->zpos.value);
-   DBG("\t\t\tMin: %lu", (long)plane->state->zpos.min);
-   DBG("\t\t\tMax: %lu", (long)plane->state->zpos.max);
+   DBG("\t\tZPos: %lu", (long)plane->state.current->zpos.value);
+   DBG("\t\t\tMin: %lu", (long)plane->state.current->zpos.min);
+   DBG("\t\t\tMax: %lu", (long)plane->state.current->zpos.max);
 }
 
 static void
@@ -53,15 +53,15 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
    drmModePlanePtr p;
    unsigned int i = 0;
 
-   plane->state = calloc(1, sizeof(Ecore_Drm2_Plane_State));
-   if (!plane->state)
+   plane->state.current = calloc(1, sizeof(Ecore_Drm2_Plane_State));
+   if (!plane->state.current)
      {
         ERR("Could not allocate space for plane state");
         return;
      }
 
    p = plane->drmPlane;
-   pstate = plane->state;
+   pstate = plane->state.current;
 
    pstate->obj_id = plane->id;
    pstate->mask = p->possible_crtcs;
@@ -320,7 +320,8 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
      {
         if (plane->thread) ecore_thread_cancel(plane->thread);
         if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
-        free(plane->state);
+        free(plane->state.pending);
+        free(plane->state.current);
         free(plane);
      }
 
@@ -345,7 +346,7 @@ _ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id)
      {
         Ecore_Drm2_Plane_State *pstate;
 
-        pstate = plane->state;
+        pstate = plane->state.current;
         if (pstate)
           {
              if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;

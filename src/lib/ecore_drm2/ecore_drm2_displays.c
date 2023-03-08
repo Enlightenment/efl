@@ -122,7 +122,7 @@ _ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
    Ecore_Drm2_Connector_State *cstate;
    int ret = 0;
 
-   cstate = disp->conn->state;
+   cstate = disp->conn->state.current;
 
    ret = _ecore_drm2_display_edid_parse(disp, cstate->edid.data, cstate->edid.len);
    if (!ret)
@@ -182,8 +182,8 @@ _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
      }
 
    /* DBG("\tCloned: %d", disp->cloned); */
-   DBG("\tPrimary: %d", disp->primary);
-   DBG("\tEnabled: %d", disp->enabled);
+   DBG("\tPrimary: %d", disp->state.current->primary);
+   DBG("\tEnabled: %d", disp->state.current->enabled);
    DBG("\tConnected: %d", disp->connected);
 }
 
@@ -241,7 +241,7 @@ _ecore_drm2_display_backlight_get(Ecore_Drm2_Display *disp)
         disp->backlight.path = eina_stringshare_add(dev);
         disp->backlight.max =
           _ecore_drm2_display_backlight_value_get(disp, "max_brightness");
-        disp->backlight.value =
+        disp->state.current->backlight =
           _ecore_drm2_display_backlight_value_get(disp, "brightness");
      }
 
@@ -327,13 +327,13 @@ _ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp)
         disp->modes = eina_list_append(disp->modes, current);
      }
 
-   if (current) disp->current_mode = current;
-   else if (pref) disp->current_mode = pref;
-   else if (best) disp->current_mode = best;
+   if (current) disp->state.current->mode = current;
+   else if (pref) disp->state.current->mode = pref;
+   else if (best) disp->state.current->mode = best;
 
-   if (!disp->current_mode) goto err;
+   if (!disp->state.current->mode) goto err;
 
-   disp->current_mode->flags |= DRM_MODE_TYPE_DEFAULT;
+   disp->state.current->mode->flags |= DRM_MODE_TYPE_DEFAULT;
 
    return;
 
@@ -343,9 +343,66 @@ err:
 }
 
 static void
+_ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
+{
+   Ecore_Drm2_Plane *plane;
+
+   /* try to find primary plane for this display */
+   plane = _ecore_drm2_planes_primary_find(disp->dev, disp->crtc->id);
+   if (plane)
+     {
+        if (plane->state.current)
+          disp->state.current->rotation = plane->state.current->rotation.value;
+        else
+          {
+             drmModeObjectPropertiesPtr oprops;
+
+             /* NB: Sadly we cannot rely on plane->state.current being already 
+              * filled by the time we reach this (due to threading), 
+              * so we will query the plane properties we want directly */
+
+             /* query plane for rotations */
+             oprops =
+               sym_drmModeObjectGetProperties(plane->fd,
+                                              plane->drmPlane->plane_id,
+                                              DRM_MODE_OBJECT_PLANE);
+             if (oprops)
+               {
+                  unsigned int i = 0;
+
+                  for (; i < oprops->count_props; i++)
+                    {
+                       drmModePropertyPtr prop;
+
+                       prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
+                       if (!prop) continue;
+
+                       if (!strcmp(prop->name, "rotation"))
+                         disp->state.current->rotation = oprops->prop_values[i];
+
+                       sym_drmModeFreeProperty(prop);
+                    }
+                  sym_drmModeFreeObjectProperties(oprops);
+               }
+          }
+     }
+}
+
+static void
 _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
 {
+   Ecore_Drm2_Display_State *dstate;
    char *name = NULL;
+
+   /* try to allocate space for current Display state */
+   disp->state.current = calloc(1, sizeof(Ecore_Drm2_Display_State));
+   if (!disp->state.current)
+     {
+        ERR("Could not allocate space for Display state");
+        return;
+     }
+
+   dstate = disp->state.current;
 
    /* get display name */
    name = _ecore_drm2_display_name_get(disp->conn);
@@ -387,6 +444,9 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
         break;
      }
 
+   /* get current rotation value */
+   _ecore_drm2_display_rotation_get(disp);
+
    /* get backlight values */
    _ecore_drm2_display_backlight_get(disp);
 
@@ -394,7 +454,7 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    _ecore_drm2_display_modes_get(disp);
 
    /* get gamma from crtc */
-   disp->gamma = disp->crtc->drmCrtc->gamma_size;
+   dstate->gamma = disp->crtc->drmCrtc->gamma_size;
 
    /* get connected state */
    disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
@@ -454,7 +514,6 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
    /* go through list of connectors and create displays */
    EINA_LIST_FOREACH(dev->conns, l, c)
      {
-        Ecore_Drm2_Plane *plane;
         drmModeEncoder *encoder;
         drmModeCrtc *dcrtc;
 
@@ -475,6 +534,8 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
              goto cont;
           }
 
+        disp->dev = dev;
+
         /* try to find crtc matching dcrtc->crtc_id and assign to display */
         EINA_LIST_FOREACH(dev->crtcs, ll, crtc)
           {
@@ -482,46 +543,6 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
                {
                   disp->crtc = crtc;
                   break;
-               }
-          }
-
-        /* try to find primary plane for this display */
-        plane = _ecore_drm2_planes_primary_find(dev, disp->crtc->id);
-        if (plane)
-          {
-             if (plane->state)
-               disp->rotation = plane->state->rotation.value;
-             else
-               {
-                  drmModeObjectPropertiesPtr oprops;
-
-                  /* NB: Sadly we cannot rely on plane->state being already filled
-                   * by the time we reach this (due to threading), so we will query
-                   * the plane properties we want directly */
-
-                  /* query plane for rotations */
-                  oprops =
-                    sym_drmModeObjectGetProperties(plane->fd,
-                                                   plane->drmPlane->plane_id,
-                                                   DRM_MODE_OBJECT_PLANE);
-                  if (oprops)
-                    {
-                       unsigned int i = 0;
-
-                       for (; i < oprops->count_props; i++)
-                         {
-                            drmModePropertyPtr prop;
-
-                            prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
-                            if (!prop) continue;
-
-                            if (!strcmp(prop->name, "rotation"))
-                              disp->rotation = oprops->prop_values[i];
-
-                            sym_drmModeFreeProperty(prop);
-                         }
-                       sym_drmModeFreeObjectProperties(oprops);
-                    }
                }
           }
 
@@ -557,6 +578,8 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
         eina_stringshare_del(disp->model);
         eina_stringshare_del(disp->make);
         eina_stringshare_del(disp->name);
+        free(disp->state.pending);
+        free(disp->state.current);
         free(disp);
      }
 
@@ -589,6 +612,8 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
    EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
+
+   /* TODO, FIXME */
 }
 
 EAPI Eina_Bool
@@ -637,14 +662,14 @@ ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, -1);
-   return disp->conn->state->dpms.value;
+   return disp->conn->state.current->dpms.value;
 }
 
 EAPI Eina_Bool
 ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
-   return disp->enabled;
+   return disp->state.current->enabled;
 }
 
 EAPI unsigned int
@@ -664,9 +689,9 @@ ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn->state, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn->state.current, NULL);
 
-   blob = disp->conn->state->edid.data;
+   blob = disp->conn->state.current->edid.data;
    if (!blob)
      {
         memset(fblob, 0, sizeof(fblob));
@@ -718,14 +743,15 @@ EAPI Eina_Bool
 ecore_drm2_display_primary_get(Ecore_Drm2_Display *disp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
-   return disp->primary;
+   return disp->state.current->primary;
 }
 
 EAPI void
 ecore_drm2_display_primary_set(Ecore_Drm2_Display *disp, Eina_Bool primary)
 {
    EINA_SAFETY_ON_NULL_RETURN(disp);
-   disp->primary = primary;
+   if (disp->state.current->primary == primary) return;
+   /* TODO, FIXME */
 }
 
 EAPI const Eina_List *
@@ -745,32 +771,43 @@ ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, in
    if (refresh) *refresh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(disp);
-   EINA_SAFETY_ON_TRUE_RETURN(!disp->current_mode);
+   EINA_SAFETY_ON_TRUE_RETURN(!disp->state.current->mode);
 
    if (x) *x = disp->x;
    if (y) *y = disp->y;
 
-   switch (disp->rotation)
+   switch (disp->state.current->rotation)
      {
       case ECORE_DRM2_ROTATION_90:
       case ECORE_DRM2_ROTATION_270:
-        if (w) *w = disp->current_mode->height;
-        if (h) *h = disp->current_mode->width;
+        if (w) *w = disp->state.current->mode->height;
+        if (h) *h = disp->state.current->mode->width;
         break;
       case ECORE_DRM2_ROTATION_NORMAL:
       case ECORE_DRM2_ROTATION_180:
       default:
-        if (w) *w = disp->current_mode->width;
-        if (h) *h = disp->current_mode->height;
+        if (w) *w = disp->state.current->mode->width;
+        if (h) *h = disp->state.current->mode->height;
         break;
      }
 
-   if (refresh) *refresh = disp->current_mode->refresh;
+   if (refresh) *refresh = disp->state.current->mode->refresh;
 }
 
 EAPI int
 ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, -1);
-   return disp->rotation;
+   return disp->state.current->rotation;
+}
+
+EAPI Eina_Bool
+ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+
+   if (disp->state.current->rotation == rotation) return EINA_TRUE;
+
+   /* TODO, FIXME */
+   return EINA_FALSE;
 }

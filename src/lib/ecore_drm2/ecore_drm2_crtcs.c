@@ -23,9 +23,9 @@ static void
 _ecore_drm2_crtc_state_debug(Ecore_Drm2_Crtc *crtc)
 {
    DBG("CRTC Atomic State Fill Complete");
-   DBG("\tCrtc: %d", crtc->state->obj_id);
-   DBG("\t\tMode: %d", crtc->state->mode.value);
-   DBG("\t\tActive: %lu", (long)crtc->state->active.value);
+   DBG("\tCrtc: %d", crtc->state.current->obj_id);
+   DBG("\t\tMode: %d", crtc->state.current->mode.value);
+   DBG("\t\tActive: %lu", (long)crtc->state.current->active.value);
 }
 
 static void
@@ -35,15 +35,15 @@ _ecore_drm2_crtc_state_fill(Ecore_Drm2_Crtc *crtc)
    drmModeObjectPropertiesPtr oprops;
    unsigned int i = 0;
 
-   /* try to allocate space for CRTC Atomic state */
-   crtc->state = calloc(1, sizeof(Ecore_Drm2_Crtc_State));
-   if (!crtc->state)
+   /* try to allocate space for current CRTC Atomic state */
+   crtc->state.current = calloc(1, sizeof(Ecore_Drm2_Crtc_State));
+   if (!crtc->state.current)
      {
         ERR("Could not allocate space for CRTC state");
         return;
      }
 
-   cstate = crtc->state;
+   cstate = crtc->state.current;
    cstate->obj_id = crtc->drmCrtc->crtc_id;
 
    /* get the properties of this crtc from drm */
@@ -52,7 +52,7 @@ _ecore_drm2_crtc_state_fill(Ecore_Drm2_Crtc *crtc)
                                     DRM_MODE_OBJECT_CRTC);
    if (!oprops)
      {
-        free(crtc->state);
+        free(crtc->state.current);
         return;
      }
 
@@ -236,7 +236,8 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
      {
         if (crtc->thread) ecore_thread_cancel(crtc->thread);
         if (crtc->drmCrtc) sym_drmModeFreeCrtc(crtc->drmCrtc);
-        free(crtc->state);
+        free(crtc->state.pending);
+        free(crtc->state.current);
         free(crtc);
      }
 
