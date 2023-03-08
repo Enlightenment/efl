@@ -810,17 +810,15 @@ ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
    return disp->state.current->rotation;
 }
 
-EAPI Eina_Bool
+EAPI void
 ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN(disp);
 
-   if (disp->state.current->rotation == rotation) return EINA_TRUE;
+   if (disp->state.current->rotation == rotation) return;
 
    /* TODO, FIXME */
 
    disp->state.pending->rotation = rotation;
    disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ROTATION;
-
-   return EINA_FALSE;
 }
