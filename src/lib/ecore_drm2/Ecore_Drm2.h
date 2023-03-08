@@ -66,6 +66,7 @@ EAPI unsigned int ecore_drm2_display_connector_type_get(Ecore_Drm2_Display *disp
 EAPI unsigned int ecore_drm2_display_subpixel_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_physical_size_get(Ecore_Drm2_Display *disp, int *w, int *h);
 EAPI int ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp);
+EAPI void ecore_drm2_display_dpms_set(Ecore_Drm2_Display *disp, uint64_t level);
 EAPI Eina_Bool ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled);
 EAPI unsigned int ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp);

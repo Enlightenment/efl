@@ -670,6 +670,22 @@ ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp)
    return disp->conn->state.current->dpms.value;
 }
 
+EAPI void
+ecore_drm2_display_dpms_set(Ecore_Drm2_Display *disp, uint64_t level)
+{
+   Ecore_Drm2_Connector_State *cstate, *pstate;
+
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   EINA_SAFETY_ON_NULL_RETURN(disp->conn);
+
+   cstate = disp->conn->state.current;
+   if (cstate->dpms.value == level) return;
+
+   pstate = disp->conn->state.pending;
+   pstate->dpms.value = level;
+   pstate->changes |= ECORE_DRM2_CONNECTOR_STATE_DPMS;
+}
+
 EAPI Eina_Bool
 ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
 {
