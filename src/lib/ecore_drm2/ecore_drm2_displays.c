@@ -677,6 +677,19 @@ ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
    return disp->state.current->enabled;
 }
 
+EAPI void
+ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+
+   if (disp->state.current->enabled == enabled) return;
+
+   /* TODO, FIXME */
+
+   disp->state.pending->enabled = enabled;
+   disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ENABLED;
+}
+
 EAPI unsigned int
 ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp)
 {
