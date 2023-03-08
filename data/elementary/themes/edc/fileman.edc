@@ -77,6 +77,21 @@ group { name: "e/fileman/default/list/variable";
             inherit: "default" 0.0;
          }
       }
+      part { name: "icon_mono"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "icon";
+            color_class: "/fg/normal/grid/item";
+         }
+         description { state: "selected" 0.0;
+            color_class: "/fg/selected/grid/item";
+         }
+      }
+      part { name: "e.swallow.icon_mono"; type: SWALLOW; mouse_events: 0;
+         clip_to: "icon_mono";
+         description { state: "default" 0.0;
+            rel.to: "icon0";
+         }
+      }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          clip_to: "icon";
          description { state: "default" 0.0;
@@ -217,11 +232,13 @@ group { name: "e/fileman/default/list/variable";
          action: STATE_SET "selected" 0.0;
          target: "sel_base";
          target: "e.text.label";
+         target: "icon_mono";
       }
       program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "sel_base";
          target: "e.text.label";
+         target: "icon_mono";
       }
       program { signal: "mouse,down,1"; source: "label_event";
          script {
@@ -1299,6 +1316,21 @@ group { name: "e/fileman/default/icon/fixed";
             inherit: "default" 0.0;
          }
       }
+      part { name: "icon_mono"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "icon";
+            color_class: "/fg/normal/grid/item";
+         }
+         description { state: "selected" 0.0;
+            color_class: "/fg/selected/grid/item";
+         }
+      }
+      part { name: "e.swallow.icon_mono"; type: SWALLOW; mouse_events: 0;
+         clip_to: "icon_mono";
+         description { state: "default" 0.0;
+            rel.to: "icon0";
+         }
+      }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
          clip_to: "icon";
          description { state: "default" 0.0;
@@ -1444,11 +1476,13 @@ group { name: "e/fileman/default/icon/fixed";
          action: STATE_SET "selected" 0.0;
          target: "e.text.label";
          target: "base";
+         target: "icon_mono";
       }
       program { signal: "e,state,unselected"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "e.text.label";
          target: "base";
+         target: "icon_mono";
       }
       program { signal: "mouse,down,1"; source: "label_event";
          script {
