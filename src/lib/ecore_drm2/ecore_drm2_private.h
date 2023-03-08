@@ -165,6 +165,18 @@ typedef struct _Ecore_Drm2_Plane_State
    Eina_Bool in_use : 1;
 } Ecore_Drm2_Plane_State;
 
+typedef struct _Ecore_Drm2_Display_State
+{
+   uint16_t gamma;
+   uint64_t rotation;
+   double backlight;
+
+   Ecore_Drm2_Display_Mode *mode;
+
+   Eina_Bool primary : 1;
+   Eina_Bool enabled : 1;
+} Ecore_Drm2_Display_State;
+
 /* opaque API structures */
 struct _Ecore_Drm2_Plane
 {
@@ -173,7 +185,11 @@ struct _Ecore_Drm2_Plane
 
    drmModePlanePtr drmPlane;
 
-   Ecore_Drm2_Plane_State *state;
+   struct
+     {
+        Ecore_Drm2_Plane_State *current;
+        Ecore_Drm2_Plane_State *pending;
+     } state;
 
    Ecore_Thread *thread;
 };
@@ -194,10 +210,8 @@ struct _Ecore_Drm2_Display
    Eina_Stringshare *name, *make, *model, *serial;
 
    uint32_t subpixel;
-   uint16_t gamma;
 
    uint32_t supported_rotations;
-   uint64_t rotation;
 
    struct
      {
@@ -210,20 +224,24 @@ struct _Ecore_Drm2_Display
    struct
      {
         const char *path;
-        double value, max;
+        double max;
         Ecore_Drm2_Backlight_Type type;
      } backlight;
 
+   struct
+     {
+        Ecore_Drm2_Display_State *current;
+        Ecore_Drm2_Display_State *pending;
+     } state;
+
+   Ecore_Drm2_Device *dev;
    Ecore_Drm2_Crtc *crtc;
    Ecore_Drm2_Connector *conn;
 
    Eina_List *modes;
-   Ecore_Drm2_Display_Mode *current_mode;
 
    Ecore_Thread *thread;
 
-   Eina_Bool primary : 1;
-   Eina_Bool enabled : 1;
    Eina_Bool connected : 1;
 };
 
@@ -235,7 +253,11 @@ struct _Ecore_Drm2_Connector
 
    drmModeConnector *drmConn;
 
-   Ecore_Drm2_Connector_State *state;
+   struct
+     {
+        Ecore_Drm2_Connector_State *current;
+        Ecore_Drm2_Connector_State *pending;
+     } state;
 
    Ecore_Thread *thread;
 
@@ -252,7 +274,11 @@ struct _Ecore_Drm2_Crtc
 
    /* TODO: store FBs */
 
-   Ecore_Drm2_Crtc_State *state;
+   struct
+     {
+        Ecore_Drm2_Crtc_State *current;
+        Ecore_Drm2_Crtc_State *pending;
+     } state;
 
    Ecore_Thread *thread;
 };

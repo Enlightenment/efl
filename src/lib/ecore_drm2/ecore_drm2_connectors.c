@@ -27,11 +27,11 @@ static void
 _ecore_drm2_connector_state_debug(Ecore_Drm2_Connector *conn)
 {
    DBG("Connector Atomic State Fill Complete");
-   DBG("\tConnector: %d", conn->state->obj_id);
-   DBG("\t\tCrtc Id: %lu", (long)conn->state->crtc.value);
-   DBG("\t\tDPMS: %lu", (long)conn->state->dpms.value);
-   DBG("\t\tAspect Ratio: %lu", (long)conn->state->aspect.value);
-   DBG("\t\tScaling Mode: %lu", (long)conn->state->scaling.value);
+   DBG("\tConnector: %d", conn->state.current->obj_id);
+   DBG("\t\tCrtc Id: %lu", (long)conn->state.current->crtc.value);
+   DBG("\t\tDPMS: %lu", (long)conn->state.current->dpms.value);
+   DBG("\t\tAspect Ratio: %lu", (long)conn->state.current->aspect.value);
+   DBG("\t\tScaling Mode: %lu", (long)conn->state.current->scaling.value);
 }
 
 static void
@@ -42,14 +42,14 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
    unsigned int i = 0;
 
    /* try to allocate space for connector Atomic state */
-   conn->state = calloc(1, sizeof(Ecore_Drm2_Connector_State));
-   if (!conn->state)
+   conn->state.current = calloc(1, sizeof(Ecore_Drm2_Connector_State));
+   if (!conn->state.current)
      {
         ERR("Could not allocate space for Connector state");
         return;
      }
 
-   cstate = conn->state;
+   cstate = conn->state.current;
    cstate->obj_id = conn->id;
 
    /* get the properties of this connector from drm */
@@ -58,7 +58,7 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
                                     DRM_MODE_OBJECT_CONNECTOR);
    if (!oprops)
      {
-        free(conn->state);
+        free(conn->state.current);
         return;
      }
 
@@ -255,7 +255,8 @@ _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev)
      {
         if (conn->thread) ecore_thread_cancel(conn->thread);
         if (conn->drmConn) sym_drmModeFreeConnector(conn->drmConn);
-        free(conn->state);
+        free(conn->state.pending);
+        free(conn->state.current);
         free(conn);
      }
 

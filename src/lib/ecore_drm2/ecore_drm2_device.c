@@ -287,10 +287,10 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
 
 disp_err:
    _ecore_drm2_connectors_destroy(dev);
-plane_err:
-   _ecore_drm2_crtcs_destroy(dev);
 conn_err:
    _ecore_drm2_planes_destroy(dev);
+plane_err:
+   _ecore_drm2_crtcs_destroy(dev);
 caps_err:
    elput_input_shutdown(dev->em);
 input_err:
