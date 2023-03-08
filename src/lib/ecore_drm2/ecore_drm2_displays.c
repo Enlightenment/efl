@@ -459,6 +459,11 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    /* get connected state */
    disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
 
+   /* duplicate current state into pending so we can handle changes */
+   disp->state.pending = calloc(1, sizeof(Ecore_Drm2_Display_State));
+   if (disp->state.pending)
+     memcpy(disp->state.pending, disp->state.current, sizeof(Ecore_Drm2_Display_State));
+
    /* send message to thread for debug printing display state */
    _ecore_drm2_display_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
 }
@@ -751,7 +756,11 @@ ecore_drm2_display_primary_set(Ecore_Drm2_Display *disp, Eina_Bool primary)
 {
    EINA_SAFETY_ON_NULL_RETURN(disp);
    if (disp->state.current->primary == primary) return;
+
    /* TODO, FIXME */
+
+   disp->state.pending->primary = primary;
+   disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_PRIMARY;
 }
 
 EAPI const Eina_List *
@@ -809,5 +818,9 @@ ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation)
    if (disp->state.current->rotation == rotation) return EINA_TRUE;
 
    /* TODO, FIXME */
+
+   disp->state.pending->rotation = rotation;
+   disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ROTATION;
+
    return EINA_FALSE;
 }
