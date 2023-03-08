@@ -130,6 +130,11 @@ cont:
 
    sym_drmModeFreeObjectProperties(oprops);
 
+   /* duplicate current state into pending so we can handle changes */
+   conn->state.pending = calloc(1, sizeof(Ecore_Drm2_Connector_State));
+   if (conn->state.pending)
+     memcpy(conn->state.pending, conn->state.current, sizeof(Ecore_Drm2_Connector_State));
+
    /* send message to thread for debug printing connector state */
    _ecore_drm2_connector_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
 }

@@ -115,6 +115,11 @@ cont:
 
    sym_drmModeFreeObjectProperties(oprops);
 
+   /* duplicate current state into pending so we can handle changes */
+   crtc->state.pending = calloc(1, sizeof(Ecore_Drm2_Crtc_State));
+   if (crtc->state.pending)
+     memcpy(crtc->state.pending, crtc->state.current, sizeof(Ecore_Drm2_Crtc_State));
+
    /* send message to thread for debug printing crtc state */
    _ecore_drm2_crtc_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
 }

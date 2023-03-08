@@ -61,12 +61,7 @@ extern int _ecore_drm2_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_drm2_log_dom, __VA_ARGS__)
 
-typedef enum _Ecore_Drm2_Thread_Op_Code
-{
-   ECORE_DRM2_THREAD_CODE_FILL,
-   ECORE_DRM2_THREAD_CODE_DEBUG
-} Ecore_Drm2_Thread_Op_Code;
-
+/* internal structures & enums (not exposed) */
 typedef enum _Ecore_Drm2_Backlight_Type
 {
    ECORE_DRM2_BACKLIGHT_RAW,
@@ -74,7 +69,43 @@ typedef enum _Ecore_Drm2_Backlight_Type
    ECORE_DRM2_BACKLIGHT_FIRMWARE
 } Ecore_Drm2_Backlight_Type;
 
-/* internal structures (not exposed) */
+typedef enum _Ecore_Drm2_Thread_Op_Code
+{
+   ECORE_DRM2_THREAD_CODE_FILL,
+   ECORE_DRM2_THREAD_CODE_DEBUG
+} Ecore_Drm2_Thread_Op_Code;
+
+typedef enum _Ecore_Drm2_Connector_State_Changes
+{
+   ECORE_DRM2_CONNECTOR_STATE_CRTC = (1 << 0),
+   ECORE_DRM2_CONNECTOR_STATE_DPMS = (1 << 1),
+   ECORE_DRM2_CONNECTOR_STATE_ASPECT = (1 << 2),
+   ECORE_DRM2_CONNECTOR_STATE_SCALING = (1 << 3),
+} Ecore_Drm2_Connector_State_Changes;
+
+typedef enum _Ecore_Drm2_Crtc_State_Changes
+{
+   ECORE_DRM2_CRTC_STATE_ACTIVE = (1 << 0),
+   ECORE_DRM2_CRTC_STATE_MODE = (1 << 1),
+} Ecore_Drm2_Crtc_State_Changes;
+
+typedef enum _Ecore_Drm2_Plane_State_Changes
+{
+   ECORE_DRM2_PLANE_STATE_CID = (1 << 0),
+   ECORE_DRM2_PLANE_STATE_FID = (1 << 1),
+   ECORE_DRM2_PLANE_STATE_ROTATION = (1 << 2),
+} Ecore_Drm2_Plane_State_Changes;
+
+typedef enum _Ecore_Drm2_Display_State_Changes
+{
+   ECORE_DRM2_DISPLAY_STATE_GAMMA = (1 << 0),
+   ECORE_DRM2_DISPLAY_STATE_ROTATION = (1 << 1),
+   ECORE_DRM2_DISPLAY_STATE_BACKLIGHT = (1 << 2),
+   ECORE_DRM2_DISPLAY_STATE_MODE = (1 << 3),
+   ECORE_DRM2_DISPLAY_STATE_PRIMARY = (1 << 4),
+   ECORE_DRM2_DISPLAY_STATE_ENABLED = (1 << 5),
+} Ecore_Drm2_Display_State_Changes;
+
 typedef struct _Ecore_Drm2_Atomic_Blob
 {
    uint32_t id, value;
@@ -96,7 +127,7 @@ typedef struct _Ecore_Drm2_Atomic_Range
 
 typedef struct _Ecore_Drm2_Connector_State
 {
-   uint32_t obj_id;
+   uint32_t obj_id, changes;
    Ecore_Drm2_Atomic_Property crtc;
    Ecore_Drm2_Atomic_Property dpms;
    Ecore_Drm2_Atomic_Property aspect;
@@ -121,7 +152,7 @@ typedef struct _Ecore_Drm2_Connector_State
 
 typedef struct _Ecore_Drm2_Crtc_State
 {
-   uint32_t obj_id;
+   uint32_t obj_id, changes;
    /* int index; */
    Ecore_Drm2_Atomic_Property active;
    Ecore_Drm2_Atomic_Blob mode;
@@ -139,9 +170,8 @@ typedef struct _Ecore_Drm2_Crtc_State
 
 typedef struct _Ecore_Drm2_Plane_State
 {
-   uint32_t obj_id, mask;
-   uint32_t num_formats;
-   uint32_t *formats;
+   uint32_t obj_id, mask, changes;
+   uint32_t num_formats, *formats;
 
    Ecore_Drm2_Atomic_Property type;
    Ecore_Drm2_Atomic_Property cid, fid;
@@ -167,6 +197,7 @@ typedef struct _Ecore_Drm2_Plane_State
 
 typedef struct _Ecore_Drm2_Display_State
 {
+   uint32_t changes;
    uint16_t gamma;
    uint64_t rotation;
    double backlight;

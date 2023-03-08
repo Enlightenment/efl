@@ -203,6 +203,11 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
 
    sym_drmModeFreeObjectProperties(oprops);
 
+   /* duplicate current state into pending so we can handle changes */
+   plane->state.pending = calloc(1, sizeof(Ecore_Drm2_Plane_State));
+   if (plane->state.pending)
+     memcpy(plane->state.pending, plane->state.current, sizeof(Ecore_Drm2_Plane_State));
+
    /* send message to thread for debug printing plane state */
    _ecore_drm2_plane_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
 }
