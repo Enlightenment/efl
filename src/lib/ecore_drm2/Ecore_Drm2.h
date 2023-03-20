@@ -79,8 +79,6 @@ EAPI const Eina_List *ecore_drm2_displays_get(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, int *h, unsigned int *refresh);
 EAPI int ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation);
-
-/* XXX: These are 'test' APIs */
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
 
 # endif
