@@ -104,6 +104,7 @@ typedef enum _Ecore_Drm2_Display_State_Changes
    ECORE_DRM2_DISPLAY_STATE_MODE = (1 << 3),
    ECORE_DRM2_DISPLAY_STATE_PRIMARY = (1 << 4),
    ECORE_DRM2_DISPLAY_STATE_ENABLED = (1 << 5),
+   ECORE_DRM2_DISPLAY_STATE_POSITION = (1 << 6),
 } Ecore_Drm2_Display_State_Changes;
 
 typedef struct _Ecore_Drm2_Atomic_Blob
@@ -198,6 +199,9 @@ typedef struct _Ecore_Drm2_Plane_State
 typedef struct _Ecore_Drm2_Display_State
 {
    uint32_t changes;
+
+   int x, y;
+
    uint16_t gamma;
    uint64_t rotation;
    double backlight;
