@@ -218,6 +218,10 @@ else
   error('System ' + host_machine.system() + ' not known')
 endif
 
+if sys_linux or sys_bsd or sys_sun
+  config_h.set('_STAT_VER_LINUX', '1')
+endif
+
 if host_os == 'freebsd' or host_os == 'dragonfly'
   # This is necessary. We MUST use OpenSSL in base as bringing in from ports
   # can cause major issues (2 copies of the same library).
