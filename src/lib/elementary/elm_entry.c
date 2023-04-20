@@ -3557,9 +3557,6 @@ _entry_selection_callbacks_unregister(Evas_Object *obj)
      (sd->entry_edje, "selection,cleared", "elm.text",
      _entry_selection_cleared_signal_cb, obj);
    edje_object_signal_callback_del_full
-     (sd->entry_edje, "entry,paste,request,*", "elm.text",
-     _entry_paste_request_signal_cb, obj);
-   edje_object_signal_callback_del_full
      (sd->entry_edje, "entry,copy,notify", "elm.text",
      _entry_copy_notify_signal_cb, obj);
    edje_object_signal_callback_del_full
@@ -3587,9 +3584,6 @@ _entry_selection_callbacks_register(Evas_Object *obj)
    edje_object_signal_callback_add
      (sd->entry_edje, "selection,cleared", "elm.text",
      _entry_selection_cleared_signal_cb, obj);
-   edje_object_signal_callback_add
-     (sd->entry_edje, "entry,paste,request,*", "elm.text",
-     _entry_paste_request_signal_cb, obj);
    edje_object_signal_callback_add
      (sd->entry_edje, "entry,copy,notify", "elm.text",
      _entry_copy_notify_signal_cb, obj);
@@ -3919,6 +3913,10 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
    edje_object_signal_callback_add
      (priv->entry_edje, "preedit,changed", "elm.text",
      _entry_preedit_changed_signal_cb, obj);
+
+   edje_object_signal_callback_add
+     (priv->entry_edje, "entry,paste,request,*", "elm.text",
+     _entry_paste_request_signal_cb, obj);
 
    _entry_selection_callbacks_register(obj);
 
