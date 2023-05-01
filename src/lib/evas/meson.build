@@ -21,7 +21,7 @@ evas_image_loaders_file = [
      ['eet',     'static', [eet]],
      ['generic', 'shared', [rt]],
      ['gif',     'shared', [giflib]],
-     ['heif',    'shared', [heif]],
+     ['heif',    'shared', []],
      ['ico',     'shared', []],
      ['jpeg',    'static', [jpeg]],
      ['jp2k',    'shared', [libopenjp2]],
