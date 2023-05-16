@@ -65,7 +65,6 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
    codec_name = avifCodecName(decoder->codecChoice, AVIF_CODEC_FLAG_CAN_DECODE);
    if (!codec_name)
      {
-        ERR("AV1 codec not  available");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto destroy_decoder;
      }
@@ -76,14 +75,12 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
    res = avifDecoderParse(decoder);
    if (res != AVIF_RESULT_OK)
      {
-        ERR("avif file format invalid");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto destroy_decoder;
      }
 
    if (decoder->imageCount < 1)
      {
-        ERR("avif file format invalid");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto destroy_decoder;
      }
@@ -91,7 +88,6 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
    res = avifDecoderNextImage(decoder);
    if (res != AVIF_RESULT_OK)
      {
-        ERR("avif file format invalid");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto destroy_decoder;
      }
@@ -162,7 +158,6 @@ evas_image_load_file_data_avif_internal(Evas_Loader_Internal *loader,
                                    AVIF_CODEC_FLAG_CAN_DECODE);
         if (!codec_name)
           {
-             ERR("AV1 codec not  available");
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto on_error;
           }
