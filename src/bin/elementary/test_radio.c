@@ -217,5 +217,14 @@ test_radio(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    _group_1_create(bx, "icon");
    _group_2_create(bx, "icon");
 
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_pack_end(bx0, bx);
+   evas_object_show(bx);
+
+   _group_1_create(bx, "sort_header");
+   _group_2_create(bx, "sort_header");
+
    evas_object_show(win);
 }
