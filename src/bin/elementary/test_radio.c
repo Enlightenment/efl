@@ -36,7 +36,8 @@ _group_1_create(Evas_Object *bx, const char *style)
 
    // radio 1
    ic = elm_icon_add(bx2);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   elm_icon_standard_set(ic, "menu/folder");
+//   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
