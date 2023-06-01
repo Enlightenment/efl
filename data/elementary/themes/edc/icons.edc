@@ -734,6 +734,9 @@ ICON("fprint", "i-fingerprint")
 
 ICON("person-bust", "i-person-bust")
 
+ICON("state-radio", "i-radio")
+ICON("state-check", "i-check")
+
 #undef ICON
 
 // regular icons
@@ -748,6 +751,7 @@ ICON("person-bust", "i-person-bust")
          } \
       } \
    }
+
 ICON("folder", "i-folder")
 ICON("file", "i-file")
 ICON("clock", "i-clock")
