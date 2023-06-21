@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#if !WIN32
+
 using System;
 using System.Runtime.InteropServices;
 
@@ -98,3 +100,5 @@ internal partial class NativeModule
 }
 
 }
+
+#endif

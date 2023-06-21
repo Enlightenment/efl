@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#if WIN32
+
 using System;
 using System.Runtime.InteropServices;
 
 namespace Efl.Eo
 {
 
-static partial class FunctionInterop
+internal static partial class FunctionInterop
 {
-    [DllImport(efl.Libs.Libdl)]
+    [DllImport(efl.Libs.Kernel32, CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
     internal static extern IntPtr GetProcAddress(IntPtr handle, string symbol);
 
-    private static IntPtr LoadFunctionPointer(IntPtr nativeLibraryHandle, string functionName)
-        => FunctionInterop.GetProcAddress(nativeLibraryHandle, functionName);
+    private static IntPtr dlsym(IntPtr handle, string symbol) => FunctionInterop.GetProcAddress(handle, symbol);
+
+    internal static IntPtr LoadFunctionPointer(IntPtr nativeLibraryHandle, string functionName) =>
+        FunctionInterop.GetProcAddress(nativeLibraryHandle, functionName);
 }
 
 }
+
+#endif

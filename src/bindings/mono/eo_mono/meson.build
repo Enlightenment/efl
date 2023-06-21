@@ -4,11 +4,9 @@ mono_files += files(
   'FunctionWrapper.cs',
   'NativeModule.cs',
   'EoWrapper.cs',
-  'WrapperSupervisor.cs'
+  'WrapperSupervisor.cs',
+  'FunctionWrapper_Windows.cs',
+  'NativeModule_Windows.cs',
+  'FunctionWrapper_Unix.cs',
+  'NativeModule_Unix.cs'
 )
-
-if host_machine.system() == 'windows'
-   mono_files += files('FunctionWrapper_Windows.cs', 'NativeModule_Windows.cs')
-else
-   mono_files += files('FunctionWrapper_Unix.cs', 'NativeModule_Unix.cs')
-endif

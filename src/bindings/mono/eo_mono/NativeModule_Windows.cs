@@ -13,16 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#if WIN32
+
 using System;
 using System.Runtime.InteropServices;
 
 namespace Efl.Eo
 {
 
-internal class partial NativeModule
+internal partial class NativeModule
 {
-   [DllImport(efl.Libs.Kernel32, CharSet = CharSet.Unicode, SetLastError = true)]
-   internal static extern IntPtr LoadLibrary(string libFilename);
+    [DllImport(efl.Libs.Kernel32, EntryPoint = "LoadLibrary", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr _LoadLibrary(string libFilename);
+
+    internal static IntPtr LoadLibrary(string libFilename)
+    {
+        if (!libFilename.StartsWith("lib"))
+        {
+                libFilename = "lib" + libFilename + "-1";
+        }
+        return NativeModule._LoadLibrary(libFilename);
+    }
+
+    [DllImport(efl.Libs.Kernel32, CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern void UnloadLibrary(IntPtr handle);
 }
 
 }
+
+#endif
