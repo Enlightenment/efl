@@ -22,7 +22,7 @@
   <ItemGroup>
     <Compile Include="@BINDING_SRC@/efl_mono/*.cs" />
     <!-- FIXME Windows support -->
-    <Compile Include="@BINDING_SRC@/eo_mono/*.cs" Exclude="@BINDING_SRC@/eo_mono/*Windows.cs" />
+    <Compile Include="@BINDING_SRC@/eo_mono/*.cs" />
     <Compile Include="@BINDING_SRC@/eina_mono/*.cs" />
     <Compile Include="@BINDING_SRC@/eolian_mono/*.cs" />
     <Compile Include="@BINDING_SRC@/eldbus_mono/*.cs" />
