@@ -92,7 +92,6 @@ evas_image_load_file_head_jxl_internal(Evas_Loader_Internal *loader,
                                   JXL_DEC_FRAME);
    if (st != JXL_DEC_SUCCESS)
      {
-        ERR("Can not subscribe to JXL events");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto destroy_decoder;
      }
@@ -100,7 +99,6 @@ evas_image_load_file_head_jxl_internal(Evas_Loader_Internal *loader,
    st = JxlDecoderSetInput(decoder, map, length);
    if (st != JXL_DEC_SUCCESS)
      {
-        ERR("Can not set JXL input");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto destroy_decoder;
      }
@@ -111,7 +109,6 @@ evas_image_load_file_head_jxl_internal(Evas_Loader_Internal *loader,
    st = JxlDecoderProcessInput(decoder);
    if (st != JXL_DEC_BASIC_INFO)
      {
-        ERR("Can not set JXL input (JXL_DEC_BASIC_INFO): %d", st);
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto release_input;
      }
@@ -119,7 +116,6 @@ evas_image_load_file_head_jxl_internal(Evas_Loader_Internal *loader,
    s = JxlDecoderGetBasicInfo(decoder, &basic_info);
    if (s != JXL_DEC_SUCCESS)
      {
-        ERR("Can not retrieve basic info");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto release_input;
      }
@@ -164,7 +160,6 @@ evas_image_load_file_head_jxl_internal(Evas_Loader_Internal *loader,
    st = JxlDecoderProcessInput(decoder);
    if (st != JXL_DEC_SUCCESS)
      {
-        ERR("Can not set JXL input (JXL_DEC_SUCCESS)");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto release_input;
      }
@@ -229,7 +224,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
                                          runner);
         if (st != JXL_DEC_SUCCESS)
           {
-             ERR("Can not set JXL runner");
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto on_error;
           }
@@ -242,7 +236,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
         st = JxlDecoderSetInput(decoder, map, length);
         if (st != JXL_DEC_SUCCESS)
           {
-             ERR("Can not set JXL input");
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto on_error;
           }
@@ -253,7 +246,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
                                        JXL_DEC_FULL_IMAGE);
         if (st != JXL_DEC_SUCCESS)
           {
-             ERR("Can not subscribe to JXL events");
              *error = EVAS_LOAD_ERROR_GENERIC;
              goto on_error;
           }
@@ -286,7 +278,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
 
    if (st != JXL_DEC_NEED_IMAGE_OUT_BUFFER)
      {
-        ERR("Can not process JXL_DEC_NEED_IMAGE_OUT_BUFFER events (st=%d)", st);
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto on_error;
      }
@@ -296,7 +287,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
                                      &buffer_size);
    if (st != JXL_DEC_SUCCESS)
      {
-        ERR("JxlDecoderImageOutBufferSize failed");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto on_error;
      }
@@ -314,7 +304,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
                                     buffer_size);
    if (st != JXL_DEC_SUCCESS)
      {
-        ERR("Can not set image output buffer");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto on_error;
      }
@@ -322,7 +311,6 @@ evas_image_load_file_data_jxl_internal(Evas_Loader_Internal *loader,
    st = JxlDecoderProcessInput(decoder);
    if (st != JXL_DEC_FULL_IMAGE)
      {
-        ERR("Can not process JXL_DEC_FULL_IMAGE events");
         *error = EVAS_LOAD_ERROR_GENERIC;
         goto on_error;
      }
