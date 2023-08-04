@@ -81,6 +81,11 @@ foreach lib : mono_sublibs
   package_name = lib[0].to_lower()
   eo_file_subdirs = get_variable(package_name + '_eo_subdirs')
   file_location = join_paths('..', '..', 'lib', package_name)
+  dllimport = package_name
+
+  if target_machine.system() == 'windows'
+    dllimport = 'lib' + dllimport + '-1'
+  endif
 
   if (package_name != 'eldbus')
     foreach eo_file_subdir : eo_file_subdirs
@@ -101,7 +106,7 @@ foreach lib : mono_sublibs
             input : join_paths(subdir_file_location, mono_gen_file),
             output : [mono_gen_file + '.cs'],
             command : [eolian_mono_gen, beta_option, '-I', meson.current_source_dir(), eolian_include_directories,
-                                       '--dllimport', package_name,
+                                       '--dllimport', dllimport,
                                        '-o', join_paths(meson.current_build_dir(), mono_gen_file + '.cs'),
                                        '-e', get_option('mono-examples-dir'), partial,
                                        '@INPUT@'])
@@ -211,7 +216,22 @@ if (get_option('dotnet'))
   # The major version should be enough for now while we don't have to deal
   # with minor differences and dotnet core is far from version 10
   dotnet_major_version = dotnet_version.stdout().strip()[0].to_int()
-  if dotnet_major_version == 3
+  if dotnet_major_version == 8
+    dotnet_core_app_version = '8.0'
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 7
+    dotnet_core_app_version = '7.0'
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 6
+    dotnet_core_app_version = '6.0'
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 5
+    dotnet_core_app_version = '5.0'
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 4
+    dotnet_core_app_version = '4.0'
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 3
     dotnet_core_app_version = '3.0'
     dotnet_standard_version = '2.1'
   elif dotnet_major_version == 2
@@ -231,6 +251,13 @@ if (get_option('dotnet'))
   else
     lib_csproj_conf_data.set('EFL_BETA', '')
   endif
+
+  if target_machine.system() == 'windows'
+    lib_csproj_conf_data.set('EFL_WIN32', 'WIN32')
+  else
+    lib_csproj_conf_data.set('EFL_WIN32', '')
+  endif
+
 
   lib_csproj = configure_file(input: 'efl_sharp.csproj.in',
                               output: 'efl_sharp.csproj',

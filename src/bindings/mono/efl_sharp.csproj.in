@@ -17,6 +17,7 @@
   <!-- </PropertyGroup> -->
   <PropertyGroup>
     <DefineConstants>@EFL_BETA@</DefineConstants>
+    <DefineConstants>@EFL_WIN32@</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
