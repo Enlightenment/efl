@@ -84,7 +84,7 @@ foreach lib : mono_sublibs
   dllimport = package_name
 
   if target_machine.system() == 'windows'
-    dllimport = 'lib' + dllimport + '-1'
+    dllimport = 'lib' + dllimport + '-' + version_major
   endif
 
   if (package_name != 'eldbus')
