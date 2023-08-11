@@ -25,7 +25,7 @@ endif
 foreach mono_libs : mono_sublibs
   key = mono_libs[0].to_upper()+'_DL_MONO'
   if target_machine.system() == 'windows'
-    efl_libs.set(key, 'lib' + mono_libs[0].to_lower() + '-1')
+    efl_libs.set(key, 'lib' + mono_libs[0].to_lower() + '-' + version_major)
   else
     efl_libs.set(key, mono_libs[0].to_lower())
   endif
