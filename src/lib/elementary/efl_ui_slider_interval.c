@@ -329,7 +329,7 @@ _drag_start(void *data,
      elm_object_focus_set(data, EINA_TRUE);
    _slider_update(data, EINA_TRUE);
    efl_event_callback_call(data, EFL_UI_SLIDER_INTERVAL_EVENT_SLIDER_DRAG_START, NULL);
-   elm_widget_scroll_freeze_push(data);
+   efl_ui_widget_scroll_freeze_push(data);
 }
 
 static void
@@ -340,7 +340,7 @@ _drag_stop(void *data,
 {
    _slider_update(data, EINA_TRUE);
    efl_event_callback_call(data, EFL_UI_SLIDER_INTERVAL_EVENT_SLIDER_DRAG_STOP, NULL);
-   elm_widget_scroll_freeze_pop(data);
+   efl_ui_widget_scroll_freeze_pop(data);
 }
 
 static void
@@ -413,7 +413,7 @@ _spacer_move_cb(void *data,
           {
              if (!sd->frozen)
                {
-                  elm_widget_scroll_freeze_push(data);
+                  efl_ui_widget_scroll_freeze_push(data);
                   sd->frozen = EINA_TRUE;
                }
              ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
@@ -427,7 +427,7 @@ _spacer_move_cb(void *data,
                (data, EFL_UI_SLIDER_INTERVAL_EVENT_SLIDER_DRAG_STOP, NULL);
              if (sd->frozen)
                {
-                  elm_widget_scroll_freeze_pop(data);
+                  efl_ui_widget_scroll_freeze_pop(data);
                   sd->frozen = EINA_FALSE;
                }
              return;
@@ -466,7 +466,7 @@ _spacer_up_cb(void *data,
 
    if (sd->frozen)
      {
-        elm_widget_scroll_freeze_pop(data);
+        efl_ui_widget_scroll_freeze_pop(data);
         sd->frozen = EINA_FALSE;
      }
 }
@@ -492,7 +492,7 @@ _mouse_out_cb(void *data EINA_UNUSED,
 static char *
 _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
-   const char *txt = elm_widget_access_info_get(obj);
+   const char *txt = efl_ui_widget_access_info_get(obj);
 
    if (!txt) txt = elm_layout_text_get(obj, NULL);
    if (txt) return strdup(txt);
@@ -506,7 +506,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
    char *ret;
    Eina_Strbuf *buf = eina_strbuf_new();
 
-   if (elm_widget_disabled_get(obj))
+   if (efl_ui_widget_disabled_get(obj))
      eina_strbuf_append(buf, " state: disabled");
 
    if (eina_strbuf_length_get(buf))
@@ -713,7 +713,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
 EOLIAN static Eina_Bool
 _efl_ui_slider_interval_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Interval_Data *sd, Efl_Ui_Activate act)
 {
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (efl_ui_widget_disabled_get) return EINA_FALSE;
    if (act == EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    if ((act == EFL_UI_ACTIVATE_UP) ||
