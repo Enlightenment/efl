@@ -32,8 +32,7 @@ For more documentation please see:
 
 EFL is primarily developed on Linux (GNU/Linux) and should work on
 most distributions as long as dependencies are provided. It has been
-compiled and run also on Windows (using MSYS2 + mingw-w64 - please see
-[Phabricator windows docs](https://phab.enlightenment.org/w/windows)),
+compiled and run also on Windows (using MSYS2 + mingw-w64)),
 Mac OS X, FreeBSD and NetBSD.
 
 ## Components
