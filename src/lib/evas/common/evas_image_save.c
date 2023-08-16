@@ -37,6 +37,8 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
           saver = "avif";
         if (!strcasecmp(p, "jxl"))
           saver = "jxl";
+        if (!strcasecmp(p, "qoi"))
+          saver = "qoi";
      }
 
    if (saver)

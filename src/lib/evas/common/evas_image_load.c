@@ -68,6 +68,8 @@ static const struct ext_loader_s loaders[] =
 
    MATCHING(".jxl", "jxl"),
 
+   MATCHING(".qoi", "qoi"),
+
    MATCHING(".avif", "avif"),
    MATCHING(".avifs", "avif"),
 
@@ -195,8 +197,8 @@ static const struct ext_loader_s loaders[] =
 static const char *loaders_name[] =
 { /* in order of most likely needed */
   "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps",
-  "bmp", "tga", "wbmp", "ico", "psd", "jp2k", "dds", "jxl", "avif", "heif",
-  "generic"
+  "bmp", "tga", "wbmp", "ico", "psd", "jp2k", "dds", "jxl", "qoi", "avif",
+  "heif", "generic"
 };
 
 struct evas_image_foreach_loader_data
