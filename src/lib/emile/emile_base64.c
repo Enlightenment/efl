@@ -94,7 +94,7 @@ emile_base64_encode_common(const Eina_Binbuf *in, Eina_Bool is_base64url_encode)
 
    dest[k] = '\0';
 
-   return eina_strbuf_manage_new(dest);
+   return eina_strbuf_manage_new_length(dest, k);
 }
 
 static Eina_Binbuf *
