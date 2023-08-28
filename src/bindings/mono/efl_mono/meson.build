@@ -14,12 +14,16 @@ map = run_command('map_generate.sh').stdout()
 
 efl_libs = configuration_data()
 efl_libs.set('EFL_MONO_LIBRARY_MAP', map)
-efl_libs.set('CUSTOM_EXPORTS_MONO_DL_MONO', 'eflcustomexportsmono')
 efl_libs.set('EVIL_DL_MONO', 'dl')
 if sys_osx
   efl_libs.set('LIBDL_DL_MONO', 'dl.dylib')
+  efl_libs.set('CUSTOM_EXPORTS_MONO_DL_MONO', 'eflcustomexportsmono')
+elif sys_windows
+  efl_libs.set('LIBDL_DL_MONO', 'libdl.dll')
+  efl_libs.set('CUSTOM_EXPORTS_MONO_DL_MONO', 'libeflcustomexportsmono' + '-' + version_major)
 else
   efl_libs.set('LIBDL_DL_MONO', 'libdl.so')
+  efl_libs.set('CUSTOM_EXPORTS_MONO_DL_MONO', 'eflcustomexportsmono')
 endif
 
 foreach mono_libs : mono_sublibs
