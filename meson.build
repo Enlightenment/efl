@@ -118,6 +118,7 @@ if sys_windows
     error('Version of targetted Windows incorrect')
   endif
   add_project_arguments('-D__USE_MINGW_ANSI_STDIO', language: langs)
+  add_global_arguments('-define:WIN32', language: 'cs')
 endif
 
 if sys_sun
