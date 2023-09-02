@@ -1,3 +1,7 @@
+cmake = import('cmake')
+opt_var = cmake.subproject_options()
+opt_var.set_override_option('cpp_std', 'c++17')
+
 inc_dir = include_directories(join_paths('..', '..', '..', 'bin', 'eolian_mono'))
 
 eolian_mono_gen_bin = executable('eolian_mono',

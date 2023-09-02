@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifdef _WIN32
+# include "evil_private.h" /* setenv */
+#endif
+
 #include "Eo.h"
 #include "Eina.h"
 #include "Ecore.h"
