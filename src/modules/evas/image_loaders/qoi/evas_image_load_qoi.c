@@ -262,7 +262,16 @@ evas_image_load_file_data_qoi_internal(Evas_Loader_Internal *loader EINA_UNUSED,
              index[QOI_COLOR_HASH(px) % 64] = px;
           }
 
-        *iter = ((prop->alpha ? px.rgba.a : 255) << 24) | (px.rgba.r << 16) | (px.rgba.g << 8) | px.rgba.b;
+        if (prop->alpha)
+          *iter = (px.rgba.a << 24) |
+                  (((px.rgba.r * px.rgba.a) / 255) << 16) |
+                  (((px.rgba.g * px.rgba.a) / 255) << 8) |
+                  (((px.rgba.b * px.rgba.a) / 255));
+        else
+          *iter = (255 << 24) |
+                  (px.rgba.r << 16) |
+                  (px.rgba.g << 8) |
+                  (px.rgba.b);
      }
 
    *error = EVAS_LOAD_ERROR_NONE;

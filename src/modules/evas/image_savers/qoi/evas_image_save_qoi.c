@@ -115,10 +115,10 @@ save_image_qoi(RGBA_Image *im, const char *file, int quality EINA_UNUSED)
    iter = (unsigned char *)im->image.data;
    for (px_pos = 0; px_pos < px_len; px_pos += channels, iter +=4)
      {
-        px.rgba.b = *(iter + 0);
-        px.rgba.g = *(iter + 1);
-        px.rgba.r = *(iter + 2);
         px.rgba.a = *(iter + 3);
+        px.rgba.b = *(iter + 0) * 255 / px.rgba.a;
+        px.rgba.g = *(iter + 1) * 255 / px.rgba.a;
+        px.rgba.r = *(iter + 2) * 255 / px.rgba.a;
 
         if (px.v == px_prev.v)
           {
