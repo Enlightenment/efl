@@ -467,7 +467,7 @@ ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num)
    Region reg, reg2, reg3;
    Window rwin, cwin;
    int rx, ry, wx, wy;
-   int i, j;
+   int i;
    int closest_dist, dist;
    int sx, sy, dx, dy;
    unsigned int mask;
@@ -537,50 +537,48 @@ ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num)
    bar_alloc = 0;
    if ((!screens) || (num <= 0)) return;
 
-   // set up new ones given the screen list given
+   // new region
+   reg = XCreateRegion();
+   // add each screen rect + 1 pixel around it to reg
    for (i = 0; i < num; i++)
      {
         XRectangle xrect;
 
-        reg = XCreateRegion();
         reg2 = XCreateRegion();
-        xrect.x = screens[i].x - 1;
-        xrect.y = screens[i].y - 1;
-        xrect.width = screens[i].width + 2;
+        xrect.x      = screens[i].x - 1;
+        xrect.y      = screens[i].y - 1;
+        xrect.width  = screens[i].width + 2;
         xrect.height = screens[i].height + 2;
         XUnionRectWithRegion(&xrect, reg, reg2);
         XDestroyRegion(reg);
         reg = reg2;
+     }
+   // del the content of each screen from the above
+   for (i = 0; i < num; i++)
+     {
+        XRectangle xrect;
 
-        // reg == screen i + 1 pixel surrounding it
-        for (j = 0; j < num; j++)
-          {
-             // create a region representing screen j
-             reg2 = XCreateRegion();
-             reg3 = XCreateRegion();
-             xrect.x = screens[j].x;
-             xrect.y = screens[j].y;
-             xrect.width = screens[j].width;
-             xrect.height = screens[j].height;
-             XUnionRectWithRegion(&xrect, reg2, reg3);
-             XDestroyRegion(reg2);
-             reg2 = reg3;
-             // reg2 == screen j
+        // create just a rect with the screen in it
+        reg2 = XCreateRegion();
+        reg3 = XCreateRegion();
+        xrect.x      = screens[i].x;
+        xrect.y      = screens[i].y;
+        xrect.width  = screens[i].width;
+        xrect.height = screens[i].height;
+        XUnionRectWithRegion(&xrect, reg3, reg2);
+        XDestroyRegion(reg3);
 
-             reg3 = XCreateRegion();
-             XSubtractRegion(reg, reg2, reg3);
-             XDestroyRegion(reg);
-             XDestroyRegion(reg2);
-             reg = reg3;
-             // reg now has had screen j cut out of the boundary
-          }
-        // reg is the result of starting with screen i and then with a
-        // 1 pixel boundary around it havnig adjacent screens "cut out"
-        // of that boundary leaving only extra bounds where no screens
-        // are adjacent
-
+        // now subtract it
+        reg3 = XCreateRegion();
+        XSubtractRegion(reg, reg2, reg3);
+        XDestroyRegion(reg);
+        XDestroyRegion(reg2);
+        reg = reg3;
+     }
+   if (reg)
+     {
         // walk rects and create barriers
-        for (j = 0; j < reg->numRects; j++)
+        for (i = 0; i < reg->numRects; i++)
           {
              int x1, y1, x2, y2;
 
@@ -592,14 +590,15 @@ ecore_x_root_screen_barriers_set(Ecore_X_Rectangle *screens, int num)
                   if (!t)
                     {
                        bar_num--;
+                       XDestroyRegion(reg);
                        return;
                     }
                   bar = t;
                }
-             x1 = reg->rects[j].x1;
-             y1 = reg->rects[j].y1;
-             x2 = reg->rects[j].x2 - 1;
-             y2 = reg->rects[j].y2 - 1;
+             x1 = reg->rects[i].x1;
+             y1 = reg->rects[i].y1;
+             x2 = reg->rects[i].x2 - 1;
+             y2 = reg->rects[i].y2 - 1;
              bar[bar_num - 1] =
                XFixesCreatePointerBarrier(_ecore_x_disp,
                                           DefaultRootWindow(_ecore_x_disp),
