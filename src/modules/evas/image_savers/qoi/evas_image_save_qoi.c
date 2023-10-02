@@ -117,11 +117,17 @@ save_image_qoi(RGBA_Image *im, const char *file, int quality EINA_UNUSED)
      {
         px.rgba.a = *(iter + 3);
         if (px.rgba.a == 0)
-          goto close_f;
-
-        px.rgba.b = *(iter + 0) * 255 / px.rgba.a;
-        px.rgba.g = *(iter + 1) * 255 / px.rgba.a;
-        px.rgba.r = *(iter + 2) * 255 / px.rgba.a;
+          {
+             px.rgba.b = *(iter + 0);
+             px.rgba.g = *(iter + 1);
+             px.rgba.r = *(iter + 2);
+          }
+        else
+          {
+             px.rgba.b = *(iter + 0) * 255 / px.rgba.a;
+             px.rgba.g = *(iter + 1) * 255 / px.rgba.a;
+             px.rgba.r = *(iter + 2) * 255 / px.rgba.a;
+          }
 
         if (px.v == px_prev.v)
           {
