@@ -1065,6 +1065,56 @@ group { name: "e/fileman/default/filedate";
    }
 }
 
+group { name: "e/fileman/default/check";
+   parts {
+      part { name: "base";
+         clip_to: "selected";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "i-check";
+            rel1.offset: 3 3;
+            rel2.offset: -4 -4;
+            min: 15 15;
+            max: 15 15;
+            visible: 0;
+            offscale;
+         }
+         description { state: "on" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "selected"; type: RECT;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            color_class: "/fg/normal/fileman/item/check/check";
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/selected/fileman/item/check/check";
+         }
+      }
+   }
+   programs {
+      program { signal: "e,state,selected"; source: "e";
+         action: STATE_SET "selected" 0.0;
+         target: "selected";
+      }
+      program { signal: "e,state,unselected"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "selected";
+      }
+      program { signal: "e,state,on"; source: "e";
+         action: STATE_SET "on" 0.0;
+         target: "base";
+      }
+      program { signal: "e,state,off"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+   }
+}
+
 group { name: "e/fileman/default/list/detailed";
    inherit: "e/fileman/default/list/variable";
    parts {
