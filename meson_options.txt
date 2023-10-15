@@ -382,3 +382,9 @@ option('max-fd-size',
   value : '8192',
   description : 'This is the maximim set of fds and thus maximum fd value allowed +1 in the ecore main loop handler'
 )
+
+option('docs',
+  type: 'boolean',
+  value: false,
+  description: 'Enable building C of documentation (Requires doxygen)'
+)
