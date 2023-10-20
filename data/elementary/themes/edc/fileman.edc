@@ -1115,6 +1115,110 @@ group { name: "e/fileman/default/check";
    }
 }
 
+group { name: "e/fileman/default/circle";
+  script {
+   hex(str[], len) {
+     new i, val = 0;
+
+     for (i = 0; i < len; i++) {
+       val <<= 4;
+       if        ((str[i] >= '0') && (str[i] <= '9')) {
+         val += str[i] - '0';
+       } else if ((str[i] >= 'a') && (str[i] <= 'f')) {
+         val += 10 + str[i] - 'a';
+       } else if ((str[i] >= 'A') && (str[i] <= 'F')) {
+         val += 10 + str[i] - 'A';
+       }
+     }
+     return val;
+   }
+   public message(Msg_Type:type, id, ...) {
+     if ((type == MSG_STRING) && (id == 1)) {
+       new cc[256];
+
+       getsarg(2, cc, 255);
+       custom_state(PART:"base", "default", 0.0);
+       if (!strncmp(cc, "cc:", 3)) {
+         strcpy(cc, cc[3]);
+         set_state_val(PART:"base", STATE_COLOR, 255, 255, 255, 255);
+         set_state_val(PART:"base", STATE_COLOR_CLASS, cc);
+       } else if (!strncmp(cc, "#", 1)) {
+         new r = 255, g = 255, b = 255, a = 255;
+
+         strcpy(cc, cc[1]);
+         if        (strlen(cc) == 3) { // #35a
+           r = hex(cc[0], 1);
+           g = hex(cc[1], 1);
+           b = hex(cc[2], 1);
+         } else if (strlen(cc) == 4) { // #35af
+           r = hex(cc[0], 1);
+           g = hex(cc[1], 1);
+           b = hex(cc[2], 1);
+           a = hex(cc[3], 1);
+         } else if (strlen(cc) == 6) { // #3355aa
+           r = hex(cc[0], 2);
+           g = hex(cc[2], 2);
+           b = hex(cc[4], 2);
+         } else if (strlen(cc) == 8) { // #3355aaff
+           r = hex(cc[0], 2);
+           g = hex(cc[2], 2);
+           b = hex(cc[4], 2);
+           a = hex(cc[6], 2);
+         }
+         set_state_val(PART:"base", STATE_COLOR, r, g, b, a);
+         set_state_val(PART:"base", STATE_COLOR_CLASS, "");
+       }
+       set_state(PART:"base", "custom", 0.0);
+     }
+   }
+  }
+  parts {
+    set { name: "file-circle-outline";
+      image { image: "speaker-clip-160.png"  COMP; size: 81 81 99999 99999; }
+      image { image: "speaker-clip-080.png"  COMP; size: 41 41 80 80 99999; }
+      image { image: "speaker-clip-040.png"  COMP; size:  0  0 40 40; }
+    }
+    part { name: "base"; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        min: 15 15;
+        max: 15 15;
+        rel1.offset: 3 3;
+        rel2.offset: -4 -4;
+        image.normal: "i-radio";
+        offscale;
+        fixed: 1 1;
+      }
+    }
+    part { name: "circle"; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        min: 17 17;
+        max: 17 17;
+        rel.to: "base";
+        image.normal: "file-circle-outline";
+        fixed: 1 1;
+        color_class: "/fg/selected/list/item";
+        visible: 0;
+      }
+      description { state: "selected" 0.0;
+        inherit: "default" 0.0;
+        visible: 1;
+      }
+    }
+  }
+  programs {
+    program { signal: "e,state,selected"; source: "e";
+      action: STATE_SET "selected" 0.0;
+      target: "circle";
+    }
+    program { signal: "e,state,unselected"; source: "e";
+      action: STATE_SET "default" 0.0;
+      target: "circle";
+    }
+  }
+}
+
 group { name: "e/fileman/default/list/detailed";
    inherit: "e/fileman/default/list/variable";
    parts {
@@ -1144,6 +1248,20 @@ group { name: "e/fileman/default/list/detailed";
             color_class: "/fg/disabled/list/item"; \
          } \
       }
+      part { name: "e.text.label";
+         description { state: "default" 0.0;
+            rel2.to_x: "e.swallow.detail1";
+            rel2.relative: 0.0 1.0;
+         }
+         description { state: "selected" 0.0;
+            rel2.to_x: "e.swallow.detail1";
+            rel2.relative: 0.0 1.0;
+         }
+         description { state: "disabled" 0.0;
+            rel2.to_x: "e.swallow.detail1";
+            rel2.relative: 0.0 1.0;
+         }
+      }
       DETAILTEXT("e.text.detail1", "e.swallow.detail1", "e.text.label")
       DETAILTEXT("e.text.detail2", "e.swallow.detail2", "e.text.detail1")
       DETAILTEXT("e.text.detail3", "e.swallow.detail3", "e.text.detail2")
@@ -1169,15 +1287,15 @@ group { name: "e/fileman/default/list/detailed";
          target: "e.text.detail5";
          target: "e.text.detail6";
       }
-      part { name: "e.swallow.detail6"; type: SWALLOW; nomouse; scale;
-         insert_after: "e.text.detail6";
+      part { name: "e.swallow.detail6"; type: SWALLOW; scale;
+         insert_after: "e.swallow.entry";
          description { state: "default" 0.0; offscale;
             align: 1.0 0.5; min: 15 5;
             rel1 { offset: -5  0; relative: 1.0 0.0; }
             rel2 { offset: -5 -1; relative: 1.0 1.0; }
          }
       }
-      part { name: "e.swallow.detail5"; type: SWALLOW; nomouse; scale;
+      part { name: "e.swallow.detail5"; type: SWALLOW; scale;
          insert_after: "e.swallow.detail6";
          description { state: "default" 0.0; offscale;
             align: 1.0 0.5; min: 20 5;
@@ -1185,7 +1303,7 @@ group { name: "e/fileman/default/list/detailed";
             rel2 { to_x: "e.swallow.detail6"; offset: -1 -1; relative: 0.0 1.0; }
          }
       }
-      part { name: "e.swallow.detail4"; type: SWALLOW; nomouse; scale;
+      part { name: "e.swallow.detail4"; type: SWALLOW; scale;
          insert_after: "e.swallow.detail5";
          description { state: "default" 0.0; offscale;
             align: 1.0 0.5; min: 20 5;
@@ -1193,7 +1311,7 @@ group { name: "e/fileman/default/list/detailed";
             rel2 { to_x: "e.swallow.detail5"; offset: -1 -1; relative: 0.0 1.0; }
          }
       }
-      part { name: "e.swallow.detail3"; type: SWALLOW; nomouse; scale;
+      part { name: "e.swallow.detail3"; type: SWALLOW; scale;
          insert_after: "e.swallow.detail4";
          description { state: "default" 0.0; offscale;
             align: 1.0 0.5; min: 20 5;
@@ -1201,7 +1319,7 @@ group { name: "e/fileman/default/list/detailed";
             rel2 { to_x: "e.swallow.detail4"; offset: -1 -1; relative: 0.0 1.0; }
          }
       }
-      part { name: "e.swallow.detail2"; type: SWALLOW; nomouse; scale;
+      part { name: "e.swallow.detail2"; type: SWALLOW; scale;
          insert_after: "e.swallow.detail3";
          description { state: "default" 0.0; offscale;
             align: 1.0 0.5; min: 20 5;
@@ -1209,26 +1327,12 @@ group { name: "e/fileman/default/list/detailed";
             rel2 { to_x: "e.swallow.detail3"; offset: -1 -1; relative: 0.0 1.0; }
          }
       }
-      part { name: "e.swallow.detail1"; type: SWALLOW; nomouse; scale;
+      part { name: "e.swallow.detail1"; type: SWALLOW; scale;
          insert_after: "e.swallow.detail2";
          description { state: "default" 0.0; offscale;
             align: 1.0 0.5; min: 20 5;
             rel1 { to_x: "e.swallow.detail2"; offset: -1  0; relative: 0.0 0.0; }
             rel2 { to_x: "e.swallow.detail2"; offset: -1 -1; relative: 0.0 1.0; }
-         }
-      }
-      part { name: "e.text.label";
-         description { state: "default" 0.0;
-            rel2.to_x: "e.swallow.detail1";
-            rel2.relative: 0.0 1.0;
-         }
-         description { state: "selected" 0.0;
-            rel2.to_x: "e.swallow.detail1";
-            rel2.relative: 0.0 1.0;
-         }
-         description { state: "disabled" 0.0;
-            rel2.to_x: "e.swallow.detail1";
-            rel2.relative: 0.0 1.0;
          }
       }
    }
