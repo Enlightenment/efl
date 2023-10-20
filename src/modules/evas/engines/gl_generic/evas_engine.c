@@ -788,6 +788,10 @@ _rotate_image_data(Render_Engine_GL_Generic *re, Evas_GL_Image *im1)
 
    // Create a new and temporary context
    dc = evas_common_draw_context_new();
+   evas_common_draw_context_cutout_max_set
+     (dc, gl_context->shared->info.tune.cutout.max);
+   evas_common_draw_context_cutout_size_min_set
+     (dc, gl_context->shared->info.tune.cutout_size.min);
    evas_common_draw_context_set_clip(dc, 0, 0, im2->w, im2->h);
    gl_context->dc = dc;
 
@@ -2317,6 +2321,23 @@ eng_pixel_alpha_get(void *image, int x, int y, DATA8 *alpha, int src_region_x, i
    return EINA_TRUE;
 }
 
+static void *
+eng_context_new(void *engine)
+{
+   Render_Engine_GL_Generic *re = engine;
+   Evas_Engine_GL_Context *gl_context;
+   void *ctx;
+
+   gl_context = gl_generic_context_find(re, 1);
+
+   ctx = pfunc.context_new(&re->software);
+   evas_common_draw_context_cutout_max_set
+     (ctx, gl_context->shared->info.tune.cutout.max);
+   evas_common_draw_context_cutout_size_min_set
+     (ctx, gl_context->shared->info.tune.cutout_size.min);
+   return ctx;
+}
+
 static void
 eng_context_flush(void *engine)
 {
@@ -3110,6 +3131,7 @@ module_open(Evas_Module *em)
    ORD(engine_new);
    ORD(engine_free);
 
+   ORD(context_new);
    ORD(context_clip_image_set);
    ORD(context_clip_image_unset);
    ORD(context_clip_image_get);

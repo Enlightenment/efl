@@ -1004,6 +1004,7 @@ evas_gl_common_context_new(void)
         // magic numbers that are a result of imperical testing and getting
         // "best case" performance across a range of systems
         shared->info.tune.cutout.max                 = DEF_CUTOUT;
+        shared->info.tune.cutout_size.min            = DEF_CUTOUT_SIZE_MIN;
         shared->info.tune.pipes.max                  = DEF_PIPES;
         shared->info.tune.atlas.max_alloc_size       = DEF_ATLAS_ALLOC;
         shared->info.tune.atlas.max_alloc_alpha_size = DEF_ATLAS_ALLOC_ALPHA;
@@ -1040,6 +1041,7 @@ evas_gl_common_context_new(void)
         } while (0)
 
         GETENVOPT("EVAS_GL_CUTOUT_MAX", cutout.max, -1, 0x7fffffff);
+        GETENVOPT("EVAS_GL_CUTOUT_SIZE_MIN", cutout_size.min, -1, 0x7fffffff);
         GETENVOPT("EVAS_GL_PIPES_MAX", pipes.max, 1, MAX_PIPES);
         GETENVOPT("EVAS_GL_ATLAS_ALLOC_SIZE", atlas.max_alloc_size, MIN_ATLAS_ALLOC, MAX_ATLAS_ALLOC);
         GETENVOPT("EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE", atlas.max_alloc_alpha_size, MIN_ATLAS_ALLOC_ALPHA, MAX_ATLAS_ALLOC_ALPHA);
@@ -1109,6 +1111,7 @@ evas_gl_common_context_new(void)
                    "\n"
                    "EVAS_GL_GET_PROGRAM_BINARY: %i\n"
                    "EVAS_GL_CUTOUT_MAX: %i\n"
+                   "EVAS_GL_CUTOUT_SIZE_MIN: %i\n"
                    "EVAS_GL_PIPES_MAX: %i\n"
                    "EVAS_GL_ATLAS_ALLOC_SIZE: %i\n"
                    "EVAS_GL_ATLAS_ALLOC_ALPHA_SIZE: %i\n"
@@ -1128,6 +1131,7 @@ evas_gl_common_context_new(void)
 
                    (int)shared->info.bin_program,
                    (int)shared->info.tune.cutout.max,
+                   (int)shared->info.tune.cutout_size.min,
                    (int)shared->info.tune.pipes.max,
                    (int)shared->info.tune.atlas.max_alloc_size,
                    (int)shared->info.tune.atlas.max_alloc_alpha_size,
