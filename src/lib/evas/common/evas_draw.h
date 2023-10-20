@@ -25,6 +25,8 @@ EVAS_API Cutout_Rects      *evas_common_draw_context_cutouts_new             (vo
 EVAS_API void               evas_common_draw_context_cutouts_free            (Cutout_Rects* rects);
 EVAS_API void               evas_common_draw_context_cutouts_real_free       (Cutout_Rects* rects);
 EVAS_API void               evas_common_draw_context_cutouts_del             (Cutout_Rects* rects, int idx);
+EVAS_API void               evas_common_draw_context_cutout_max_set          (RGBA_Draw_Context *dc, int max);
+EVAS_API void               evas_common_draw_context_cutout_size_min_set     (RGBA_Draw_Context *dc, int min);
 EVAS_API void               evas_common_draw_context_add_cutout              (RGBA_Draw_Context *dc, int x, int y, int w, int h);
 EVAS_API void               evas_common_draw_context_clear_cutouts           (RGBA_Draw_Context *dc);
 EVAS_API Cutout_Rects      *evas_common_draw_context_apply_cutouts           (RGBA_Draw_Context *dc, Cutout_Rects *recycle);

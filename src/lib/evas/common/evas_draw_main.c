@@ -174,6 +174,8 @@ evas_common_draw_context_new(void)
    dc = _evas_common_draw_context_find();
    if (!dc) return NULL;
    memset(dc, 0, sizeof(RGBA_Draw_Context));
+   dc->cutout.count_max = 0x7fffffff;
+   dc->cutout.size_min = 8 * 8;
    return dc;
 }
 
@@ -296,11 +298,23 @@ evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
    dc->mul.use = 0;
 }
 
+EVAS_API void
+evas_common_draw_context_cutout_max_set(RGBA_Draw_Context *dc, int max)
+{
+   dc->cutout.count_max = max;
+}
+
+EVAS_API void
+evas_common_draw_context_cutout_size_min_set(RGBA_Draw_Context *dc, int min)
+{
+  dc->cutout.size_min = min;
+}
 
 EVAS_API void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
-//   if (dc->cutout.rects > 512) return;
+   if (dc->cutout.active >= dc->cutout.count_max) return;
+   if ((w * h) < dc->cutout.size_min) return;
    if (dc->clip.use)
      {
 #if 1 // this is a bit faster
@@ -335,8 +349,8 @@ evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, 
         RECTS_CLIP_TO_RECT(x, y, w, h,
                            dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
 #endif
+       if ((w * h) < dc->cutout.size_min) return;
      }
-   if ((w * h) <= (8 * 8)) return;
    if (dc->cutout.last_add.w > 0)
      {
         if ((dc->cutout.last_add.x == x) && (dc->cutout.last_add.y == y) &&

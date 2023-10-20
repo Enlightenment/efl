@@ -645,6 +645,8 @@ struct _Cutout_Rects
    Cutout_Rect      *rects;
    int               active;
    int               max;
+   int               count_max;
+   int               size_min;
    struct {
       int            x, w, y, h;
    } last_add;
