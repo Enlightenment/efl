@@ -1526,7 +1526,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           }
         else
           {
-             ERR("Could not fetch a node located at %p", node->focusable);
+             F_DBG("Could not fetch a node located at %p", node->focusable);
              goto end;
           }
      }
