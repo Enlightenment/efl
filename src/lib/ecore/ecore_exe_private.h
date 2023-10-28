@@ -133,6 +133,10 @@ struct _Ecore_Exe_Data
 
 typedef struct _Ecore_Exe_Data Ecore_Exe_Data;
 
+#ifdef _WIN32
+extern HANDLE _ecore_exe_win32_job;
+#endif
+
 EAPI extern int ECORE_EXE_EVENT_ADD;
 EAPI extern int ECORE_EXE_EVENT_DEL;
 EAPI extern int ECORE_EXE_EVENT_DATA;

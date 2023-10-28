@@ -33,6 +33,14 @@ struct _ecore_exe_dead_exe
    char *cmd;
 };
 
+#ifdef _WIN32
+/*
+ * this job is used to close child processes when parent one is closed
+ * see https://stackoverflow.com/a/53214/688348
+ */
+HANDLE _ecore_exe_win32_job = NULL;
+#endif
+
 EAPI int ECORE_EXE_EVENT_ADD = 0;
 EAPI int ECORE_EXE_EVENT_DEL = 0;
 EAPI int ECORE_EXE_EVENT_DATA = 0;
@@ -338,6 +346,21 @@ ecore_exe_hup(Ecore_Exe *obj)
 void
 _ecore_exe_init(void)
 {
+#ifdef _WIN32
+   _ecore_exe_win32_job = CreateJobObject( NULL, NULL);
+   if (_ecore_exe_win32_job)
+     {
+        JOBOBJECT_EXTENDED_LIMIT_INFORMATION jeli;
+
+        memset (&jeli, 0, sizeof(jeli));
+        jeli.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+        if (!SetInformationJobObject(_ecore_exe_win32_job, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli)))
+          {
+             CloseHandle(_ecore_exe_win32_job);
+             _ecore_exe_win32_job = NULL;
+          }
+     }
+#endif
    ECORE_EXE_EVENT_ADD = ecore_event_type_new();
    ECORE_EXE_EVENT_DEL = ecore_event_type_new();
    ECORE_EXE_EVENT_DATA = ecore_event_type_new();
@@ -358,6 +381,11 @@ _ecore_exe_shutdown(void)
                           ECORE_EXE_EVENT_DEL,
                           ECORE_EXE_EVENT_DATA,
                           ECORE_EXE_EVENT_ERROR);
+
+#ifdef _WIN32
+   if (_ecore_exe_win32_job)
+     CloseHandle(_ecore_exe_win32_job);
+#endif
 }
 
 Ecore_Exe *
