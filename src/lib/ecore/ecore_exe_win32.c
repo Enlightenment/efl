@@ -512,6 +512,13 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
         goto error;
      }
 
+   if ((flags & ECORE_EXE_TERM_WITH_PARENT) && _ecore_exe_win32_job)
+     {
+        if (!AssignProcessToJobObject(_ecore_exe_win32_job, pi.hProcess))
+          WRN("AssignProcessToJobObject failed (job: %p, process: %p",
+              _ecore_exe_win32_job, pi.hProcess);
+     }
+
    /*
     * Close pipe handles (do not continue to modify the parent).
     * We need to make sure that no handles to the write end of the
