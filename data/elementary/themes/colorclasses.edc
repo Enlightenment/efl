@@ -406,6 +406,7 @@ color_tree {
       "/fg/normal/fileman/filesize/2";
       "/fg/selected/fileman/filesize/2";
       "/fg/normal/fileperm/execute";
+      "/fg/normal/filegraph/bar";
    }
    ":selected-alt-trans" {
       "/bg/normal/access";
@@ -475,6 +476,7 @@ color_tree {
       "/fg/normal/fileman/mount/off";
       "/fg/normal/progress/busy/2";
       "/fg/normal/gadgets/packagekit/pkg/low-priority";
+      "/fg/normal/filegraph/bartop";
    }
    ":light-high" {
       "/fg/normal/naviframe/top/overlap";
