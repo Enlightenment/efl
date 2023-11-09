@@ -81,7 +81,7 @@ internal static class Globals
         efl_ref(IntPtr eo);
     internal delegate  void
         efl_unref_delegate(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] internal static extern void
+    [DllImport(efl.Libs.Eo)] internal static extern void
         efl_unref(IntPtr eo);
     internal delegate  int
         efl_ref_count_delegate(IntPtr eo);
