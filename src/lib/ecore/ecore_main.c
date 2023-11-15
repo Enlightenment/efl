@@ -447,7 +447,11 @@ _ecore_main_fdh_poll_add(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh)
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
         DBG("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
-        g_source_add_poll(ecore_glib_source, &fdh->gfd);
+        if (ecore_glib_source)
+           g_source_add_poll(ecore_glib_source, &fdh->gfd);
+        else
+           ERR("Failed to add gpoll on %d %08x. GSource is NULL",
+                           fdh->fd, fdh->gfd.events); 
 #endif
      }
    return r;
@@ -939,29 +943,6 @@ quit:
 static void
 _ecore_main_loop_setup(Eo *obj, Efl_Loop_Data *pd)
 {
-   // Please note that this function is being also called in case of a bad
-   // fd to reset the main loop.
-#ifdef HAVE_SYS_EPOLL_H
-   pd->epoll_fd = epoll_create(1);
-   if (pd->epoll_fd < 0) WRN("Failed to create epoll fd!");
-   else
-     {
-        eina_file_close_on_exec(pd->epoll_fd, EINA_TRUE);
-
-        pd->epoll_pid = getpid();
-
-        // add polls on all our file descriptors
-        Ecore_Fd_Handler *fdh;
-        EINA_INLIST_FOREACH(pd->fd_handlers, fdh)
-          {
-             if (fdh->delete_me) continue;
-             _ecore_epoll_add(pd->epoll_fd, fdh->fd,
-                              _ecore_poll_events_from_fdh(fdh), fdh);
-             _ecore_main_fdh_poll_add(pd, fdh);
-          }
-     }
-#endif
-
    if (obj == ML_OBJ)
      {
 #ifdef HAVE_LIBUV
@@ -1072,6 +1053,30 @@ _ecore_main_loop_setup(Eo *obj, Efl_Loop_Data *pd)
           }
 #endif
      }
+
+   // Please note that this function is being also called in case of a bad
+   // fd to reset the main loop.
+#ifdef HAVE_SYS_EPOLL_H
+   pd->epoll_fd = epoll_create(1);
+   if (pd->epoll_fd < 0) WRN("Failed to create epoll fd!");
+   else
+     {
+        eina_file_close_on_exec(pd->epoll_fd, EINA_TRUE);
+
+        pd->epoll_pid = getpid();
+
+        // add polls on all our file descriptors
+        Ecore_Fd_Handler *fdh;
+        EINA_INLIST_FOREACH(pd->fd_handlers, fdh)
+          {
+             if (fdh->delete_me) continue;
+             _ecore_epoll_add(pd->epoll_fd, fdh->fd,
+                              _ecore_poll_events_from_fdh(fdh), fdh);
+             _ecore_main_fdh_poll_add(pd, fdh);
+          }
+     }
+#endif
+
    _ecore_main_timechanges_start(obj);
 }
 
