@@ -3376,7 +3376,7 @@ _profiles_list_unselect_cb(void *data       EINA_UNUSED,
                            Evas_Object     *obj,
                            void *event_info EINA_UNUSED)
 {
-   if (elm_list_selected_item_get(obj)) return;
+   if (!elm_list_selected_item_get(obj)) return;
    elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
                            EINA_TRUE);
    elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
