@@ -4383,11 +4383,16 @@ _status_config_full(Evas_Object *win,
                            "Audio", _cf_audio, win);
    elm_toolbar_item_append(tb, "preferences-profile",
                            "Profiles", _cf_profiles, win);
-   elm_toolbar_item_append(tb, NULL, "Scrolling", _cf_scrolling, win);
-   elm_toolbar_item_append(tb, NULL, "Rendering", _cf_rendering, win);
-   elm_toolbar_item_append(tb, NULL, "Caches", _cf_caches, win);
-   elm_toolbar_item_append(tb, NULL, "Focus", _cf_focus, win);
-   elm_toolbar_item_append(tb, NULL, "Etc", _cf_etc, win);
+   elm_toolbar_item_append(tb, "system-run", 
+                           "Scrolling", _cf_scrolling, win);
+   elm_toolbar_item_append(tb, "preferences-desktop", 
+                           "Rendering", _cf_rendering, win);
+   elm_toolbar_item_append(tb, "appointment-new", 
+                           "Caches", _cf_caches, win);
+   elm_toolbar_item_append(tb, "magnifying-glass", 
+                           "Focus", _cf_focus, win);
+   elm_toolbar_item_append(tb, "preferences-etc", 
+                           "Etc", _cf_etc, win);
 
    elm_box_pack_end(bx0, tb);
    evas_object_show(tb);
