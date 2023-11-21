@@ -370,3 +370,10 @@ ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *dev, int *minw, int *
 
    sym_drmModeFreeResources(res);
 }
+
+EAPI const Eina_List *
+ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   return dev->crtcs;
+}
