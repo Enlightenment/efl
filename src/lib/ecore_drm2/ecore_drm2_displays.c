@@ -725,14 +725,6 @@ ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled)
    disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ENABLED;
 }
 
-EAPI unsigned int
-ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, 0);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, 0);
-   return disp->crtc->id;
-}
-
 EAPI char *
 ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
 {
@@ -869,4 +861,11 @@ ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation)
 
    disp->state.pending->rotation = rotation;
    disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ROTATION;
+}
+
+EAPI Ecore_Drm2_Crtc *
+ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+   return disp->crtc;
 }
