@@ -391,7 +391,6 @@ _ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
 static void
 _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
 {
-   Ecore_Drm2_Display_State *dstate;
    char *name = NULL;
 
    /* try to allocate space for current Display state */
@@ -401,8 +400,6 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
         ERR("Could not allocate space for Display state");
         return;
      }
-
-   dstate = disp->state.current;
 
    /* get display name */
    name = _ecore_drm2_display_name_get(disp->conn);
@@ -454,7 +451,7 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    _ecore_drm2_display_modes_get(disp);
 
    /* get gamma from crtc */
-   dstate->gamma = disp->crtc->drmCrtc->gamma_size;
+   disp->state.current->gamma = disp->crtc->drmCrtc->gamma_size;
 
    /* get connected state */
    disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
@@ -614,22 +611,26 @@ ecore_drm2_display_model_get(Ecore_Drm2_Display *disp)
 EAPI void
 ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y)
 {
+   Ecore_Drm2_Display_State *cstate, *pstate;
+
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
    EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
 
-   if ((disp->state.current->x != x) ||
-       (disp->state.current->y != y))
+   cstate = disp->state.current;
+   pstate = disp->state.pending;
+
+   if ((cstate->x != x) || (cstate->y != y))
      {
-        disp->state.pending->x = x;
-        disp->state.pending->y = y;
-        disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
+        pstate->x = x;
+        pstate->y = y;
+        pstate->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
 
-   if (disp->state.current->mode != mode)
+   if (cstate->mode != mode)
      {
-        disp->state.pending->mode = mode;
-        disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_MODE;
+        pstate->mode = mode;
+        pstate->changes |= ECORE_DRM2_DISPLAY_STATE_MODE;
      }
 }
 
@@ -708,14 +709,19 @@ ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
 EAPI void
 ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled)
 {
+   Ecore_Drm2_Display_State *cstate, *pstate;
+
    EINA_SAFETY_ON_NULL_RETURN(disp);
 
-   if (disp->state.current->enabled == enabled) return;
+   cstate = disp->state.current;
+   pstate = disp->state.pending;
+
+   if (cstate->enabled == enabled) return;
 
    /* TODO, FIXME */
 
-   disp->state.pending->enabled = enabled;
-   disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ENABLED;
+   pstate->enabled = enabled;
+   pstate->changes |= ECORE_DRM2_DISPLAY_STATE_ENABLED;
 }
 
 EAPI char *
@@ -787,13 +793,19 @@ ecore_drm2_display_primary_get(Ecore_Drm2_Display *disp)
 EAPI void
 ecore_drm2_display_primary_set(Ecore_Drm2_Display *disp, Eina_Bool primary)
 {
+   Ecore_Drm2_Display_State *cstate, *pstate;
+
    EINA_SAFETY_ON_NULL_RETURN(disp);
-   if (disp->state.current->primary == primary) return;
+
+   cstate = disp->state.current;
+   pstate = disp->state.pending;
+
+   if (cstate->primary == primary) return;
 
    /* TODO, FIXME */
 
-   disp->state.pending->primary = primary;
-   disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_PRIMARY;
+   pstate->primary = primary;
+   pstate->changes |= ECORE_DRM2_DISPLAY_STATE_PRIMARY;
 }
 
 EAPI const Eina_List *
@@ -806,6 +818,8 @@ ecore_drm2_displays_get(Ecore_Drm2_Device *dev)
 EAPI void
 ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, int *h, unsigned int *refresh)
 {
+   Ecore_Drm2_Display_State *cstate;
+
    if (x) *x = 0;
    if (y) *y = 0;
    if (w) *w = 0;
@@ -818,22 +832,24 @@ ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, in
    if (x) *x = disp->x;
    if (y) *y = disp->y;
 
-   switch (disp->state.current->rotation)
+   cstate = disp->state.current;
+
+   switch (cstate->rotation)
      {
       case ECORE_DRM2_ROTATION_90:
       case ECORE_DRM2_ROTATION_270:
-        if (w) *w = disp->state.current->mode->height;
-        if (h) *h = disp->state.current->mode->width;
+        if (w) *w = cstate->mode->height;
+        if (h) *h = cstate->mode->width;
         break;
       case ECORE_DRM2_ROTATION_NORMAL:
       case ECORE_DRM2_ROTATION_180:
       default:
-        if (w) *w = disp->state.current->mode->width;
-        if (h) *h = disp->state.current->mode->height;
+        if (w) *w = cstate->mode->width;
+        if (h) *h = cstate->mode->height;
         break;
      }
 
-   if (refresh) *refresh = disp->state.current->mode->refresh;
+   if (refresh) *refresh = cstate->mode->refresh;
 }
 
 EAPI int
@@ -846,14 +862,19 @@ ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
 EAPI void
 ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation)
 {
+   Ecore_Drm2_Display_State *cstate, *pstate;
+
    EINA_SAFETY_ON_NULL_RETURN(disp);
 
-   if (disp->state.current->rotation == rotation) return;
+   cstate = disp->state.current;
+   pstate = disp->state.pending;
+
+   if (cstate->rotation == rotation) return;
 
    /* TODO, FIXME */
 
-   disp->state.pending->rotation = rotation;
-   disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_ROTATION;
+   pstate->rotation = rotation;
+   pstate->changes |= ECORE_DRM2_DISPLAY_STATE_ROTATION;
 }
 
 EAPI Ecore_Drm2_Crtc *
