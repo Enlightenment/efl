@@ -915,3 +915,22 @@ next:
 
    return ret;
 }
+
+EAPI int
+ecore_drm2_display_supported_rotations_get(Ecore_Drm2_Display *disp)
+{
+   Ecore_Drm2_Plane *plane;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, -1);
+
+   /* get the primary plane for this output */
+   plane = _ecore_drm2_planes_primary_find(disp->dev, disp->crtc->id);
+   if (!plane) return -1;
+
+   /* if plane state has not been filled yet, bail out */
+   /* NB: We could modify this to get the plane rotations directly from drm */
+   if (!plane->state.current) return -1;
+
+   /* return primary plane state supported_rotations */
+   return plane->state.current->supported_rotations;
+}
