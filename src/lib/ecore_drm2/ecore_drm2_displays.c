@@ -614,13 +614,10 @@ ecore_drm2_display_model_get(Ecore_Drm2_Display *disp)
 EAPI void
 ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y)
 {
-   Ecore_Drm2_Crtc_State *cstate;
-
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
    EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
 
-   /* TODO, FIXME */
    if ((disp->state.current->x != x) ||
        (disp->state.current->y != y))
      {
@@ -629,14 +626,10 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
         disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
 
-   cstate = disp->crtc->state.current;
-   if (cstate->mode != mode)
+   if (disp->state.current->mode != mode)
      {
-        Ecore_Drm2_Crtc_State *pstate;
-
-        pstate = disp->crtc->state.pending;
-        pstate->mode = mode;
-        pstate->changes |= ECORE_DRM2_CRTC_STATE_MODE;
+        disp->state.pending->mode = mode;
+        disp->state.pending->changes |= ECORE_DRM2_DISPLAY_STATE_MODE;
      }
 }
 
