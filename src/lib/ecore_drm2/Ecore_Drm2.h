@@ -81,6 +81,7 @@ EAPI int ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation);
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
 EAPI Ecore_Drm2_Crtc *ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp);
+EAPI Eina_Bool ecore_drm2_display_possible_crtc_get(Ecore_Drm2_Display *disp, Ecore_Drm2_Crtc *crtc);
 
 # endif
 

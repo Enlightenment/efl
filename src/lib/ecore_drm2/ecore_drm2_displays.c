@@ -883,3 +883,35 @@ ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
    return disp->crtc;
 }
+
+EAPI Eina_Bool
+ecore_drm2_display_possible_crtc_get(Ecore_Drm2_Display *disp, Ecore_Drm2_Crtc *crtc)
+{
+   drmModeConnector *conn;
+   drmModeEncoder *enc;
+   int i = 0;
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn->drmConn, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(crtc, EINA_FALSE);
+
+   conn = disp->conn->drmConn;
+   for (; i < conn->count_encoders; i++)
+     {
+        enc = sym_drmModeGetEncoder(disp->conn->fd, conn->encoders[i]);
+        if (!enc) continue;
+
+        if (enc->crtc_id != crtc->id) goto next;
+
+        if (enc->possible_crtcs & (1 << crtc->pipe))
+          ret = EINA_TRUE;
+
+next:
+        sym_drmModeFreeEncoder(enc);
+        if (ret) break;
+     }
+
+   return ret;
+}
