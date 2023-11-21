@@ -239,7 +239,7 @@ struct _Ecore_Drm2_Display_Mode
 
 struct _Ecore_Drm2_Display
 {
-   int fd;
+   /* int fd; */
    int x, y, w, h;
    int pw, ph; // physical dimensions
    Eina_Stringshare *name, *make, *model, *serial;

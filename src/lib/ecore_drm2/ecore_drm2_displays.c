@@ -550,7 +550,7 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 
         sym_drmModeFreeCrtc(dcrtc);
 
-        disp->fd = dev->fd;
+        /* disp->fd = dev->fd; */
         disp->conn = c;
 
         /* append this display to the list */
