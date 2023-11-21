@@ -70,7 +70,6 @@ EAPI int ecore_drm2_display_dpms_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_dpms_set(Ecore_Drm2_Display *disp, uint64_t level);
 EAPI Eina_Bool ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled);
-EAPI unsigned int ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp);
 EAPI char *ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp);
 EAPI const Eina_List *ecore_drm2_display_modes_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_mode_info_get(Ecore_Drm2_Display_Mode *mode, int *w, int *h, unsigned int *refresh, unsigned int *flags);
@@ -81,6 +80,8 @@ EAPI void ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, 
 EAPI int ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation);
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
+EAPI Ecore_Drm2_Crtc *ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp);
+
 # endif
 
 #endif
