@@ -56,6 +56,7 @@ EAPI void ecore_drm2_device_close(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_device_cursor_size_get(Ecore_Drm2_Device *dev, int *width, int *height);
 EAPI void ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *bpp);
 EAPI void ecore_drm2_device_screen_size_range_get(Ecore_Drm2_Device *dev, int *minw, int *minh, int *maxw, int *maxh);
+EAPI const Eina_List *ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *dev);
 
 /* Display API functions */
 EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);
@@ -80,7 +81,6 @@ EAPI void ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, 
 EAPI int ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation);
 EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y);
-
 # endif
 
 #endif
