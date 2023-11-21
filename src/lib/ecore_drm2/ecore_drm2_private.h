@@ -246,7 +246,7 @@ struct _Ecore_Drm2_Display
 
    uint32_t subpixel;
 
-   uint32_t supported_rotations;
+   /* uint32_t supported_rotations; */
 
    struct
      {
