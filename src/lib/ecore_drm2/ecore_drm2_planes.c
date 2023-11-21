@@ -362,7 +362,8 @@ _ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id)
           {
              uint64_t cid = 0, type = 0;
 
-             /* We need to manually query plane properties here */
+             /* We need to manually query plane properties here as
+              * plane->state.current may not be filled yet due to threading */
              oprops =
                sym_drmModeObjectGetProperties(plane->fd,
                                               plane->drmPlane->plane_id,
