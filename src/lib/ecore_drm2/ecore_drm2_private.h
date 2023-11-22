@@ -337,6 +337,7 @@ struct _Ecore_Drm2_Device
      } cursor;
 
    Ecore_Event_Handler *session_hdlr;
+   Ecore_Event_Handler *device_hdlr;
 
    Eina_List *crtcs;
    Eina_List *conns;

@@ -34,6 +34,45 @@ _ecore_drm2_device_cb_session_active(void *data EINA_UNUSED, int type EINA_UNUSE
 }
 
 static Eina_Bool
+_ecore_drm2_device_cb_device_change(void *data, int type EINA_UNUSED, void *event)
+{
+   Elput_Event_Device_Change *ev;
+   Ecore_Drm2_Device *dev;
+
+   ev = event;
+   dev = data;
+
+   if (ev->type == ELPUT_DEVICE_ADDED)
+     {
+        Eina_Stringshare *name;
+        Ecore_Drm2_Display *disp;
+
+        name = elput_device_output_name_get(ev->device);
+        if (!name)
+          {
+             disp = eina_list_data_get(dev->displays);
+             if (disp)
+               ecore_drm2_device_calibrate(dev, disp->w, disp->h);
+          }
+        else
+          {
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(dev->displays, l, disp)
+               {
+                  if (eina_streq(disp->name, name))
+                    {
+                       ecore_drm2_device_calibrate(dev, disp->w, disp->h);
+                       break;
+                    }
+               }
+          }
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _ecore_drm2_device_modeset_capable_get(int fd)
 {
    Eina_Bool ret = EINA_TRUE;
@@ -278,7 +317,9 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
      ecore_event_handler_add(ELPUT_EVENT_SESSION_ACTIVE,
                              _ecore_drm2_device_cb_session_active, dev);
 
-   /* TODO: event handler for device_change */
+   dev->device_hdlr =
+     ecore_event_handler_add(ELPUT_EVENT_DEVICE_CHANGE,
+                             _ecore_drm2_device_cb_device_change, dev);
 
    /* cleanup path variable */
    eina_stringshare_del(path);
@@ -314,6 +355,7 @@ ecore_drm2_device_close(Ecore_Drm2_Device *dev)
    _ecore_drm2_planes_destroy(dev);
    _ecore_drm2_crtcs_destroy(dev);
 
+   ecore_event_handler_del(dev->device_hdlr);
    ecore_event_handler_del(dev->session_hdlr);
 
    elput_input_shutdown(dev->em);
