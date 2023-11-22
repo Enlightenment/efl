@@ -401,3 +401,11 @@ ecore_drm2_device_calibrate(Ecore_Drm2_Device *dev, int w, int h)
    EINA_SAFETY_ON_NULL_RETURN(dev->em);
    elput_input_devices_calibrate(dev->em, w, h);
 }
+
+EAPI Eina_Bool
+ecore_drm2_device_vt_set(Ecore_Drm2_Device *dev, int vt)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev->em, EINA_FALSE);
+   return elput_manager_vt_set(dev->em, vt);
+}
