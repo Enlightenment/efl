@@ -385,3 +385,11 @@ ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *dev, int w, int h)
    EINA_SAFETY_ON_NULL_RETURN(dev->em);
    elput_input_pointer_max_set(dev->em, w, h);
 }
+
+EAPI Eina_Bool
+ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *dev, int rotation)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev->em, EINA_FALSE);
+   return elput_input_pointer_rotation_set(dev->em, rotation);
+}
