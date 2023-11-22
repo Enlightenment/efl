@@ -58,6 +58,15 @@ typedef struct _Ecore_Drm2_Plane Ecore_Drm2_Plane;
 /* opaque structure to represent a drm device */
 typedef struct _Ecore_Drm2_Device Ecore_Drm2_Device;
 
+/* public structure to represent an event for session state changes */
+typedef struct _Ecore_Drm2_Event_Activate
+{
+   Eina_Bool active : 1;
+} Ecore_Drm2_Event_Activate;
+
+/* API events */
+EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
+
 /* API functions */
 EAPI int ecore_drm2_init(void);
 EAPI int ecore_drm2_shutdown(void);
