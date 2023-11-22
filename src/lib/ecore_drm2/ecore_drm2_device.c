@@ -377,3 +377,11 @@ ecore_drm2_device_crtcs_get(Ecore_Drm2_Device *dev)
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
    return dev->crtcs;
 }
+
+EAPI void
+ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *dev, int w, int h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(dev->em);
+   elput_input_pointer_max_set(dev->em, w, h);
+}
