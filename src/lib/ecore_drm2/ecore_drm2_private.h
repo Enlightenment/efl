@@ -265,6 +265,12 @@ struct _Ecore_Drm2_Display
 
    struct
      {
+        const char *to;
+        Ecore_Drm2_Relative_Mode mode;
+     } relative;
+
+   struct
+     {
         Ecore_Drm2_Display_State *current;
         Ecore_Drm2_Display_State *pending;
      } state;

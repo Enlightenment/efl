@@ -28,6 +28,18 @@ typedef enum _Ecore_Drm2_Rotation
    ECORE_DRM2_ROTATION_REFLECT_Y = 32
 } Ecore_Drm2_Rotation;
 
+/* public enum for relative mode */
+typedef enum _Ecore_Drm2_Relative_Mode
+{
+   ECORE_DRM2_RELATIVE_MODE_UNKNOWN,
+   ECORE_DRM2_RELATIVE_MODE_NONE,
+   ECORE_DRM2_RELATIVE_MODE_CLONE,
+   ECORE_DRM2_RELATIVE_MODE_TO_LEFT,
+   ECORE_DRM2_RELATIVE_MODE_TO_RIGHT,
+   ECORE_DRM2_RELATIVE_MODE_TO_ABOVE,
+   ECORE_DRM2_RELATIVE_MODE_TO_BELOW
+} Ecore_Drm2_Relative_Mode;
+
 /* opaque structure to represent a drm crtc */
 typedef struct _Ecore_Drm2_Crtc Ecore_Drm2_Crtc;
 
@@ -83,6 +95,7 @@ EAPI void ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Displ
 EAPI Ecore_Drm2_Crtc *ecore_drm2_display_crtc_get(Ecore_Drm2_Display *disp);
 EAPI Eina_Bool ecore_drm2_display_possible_crtc_get(Ecore_Drm2_Display *disp, Ecore_Drm2_Crtc *crtc);
 EAPI int ecore_drm2_display_supported_rotations_get(Ecore_Drm2_Display *disp);
+EAPI void ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relative);
 
 # endif
 

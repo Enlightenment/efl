@@ -576,6 +576,7 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
    EINA_LIST_FREE(dev->displays, disp)
      {
         if (disp->thread) ecore_thread_cancel(disp->thread);
+        eina_stringshare_del(disp->relative.to);
         eina_stringshare_del(disp->serial);
         eina_stringshare_del(disp->model);
         eina_stringshare_del(disp->make);
@@ -933,4 +934,18 @@ ecore_drm2_display_supported_rotations_get(Ecore_Drm2_Display *disp)
 
    /* return primary plane state supported_rotations */
    return plane->state.current->supported_rotations;
+}
+
+EAPI void
+ecore_drm2_display_relative_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Relative_Mode mode)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   disp->relative.mode = mode;
+}
+
+EAPI void
+ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relative)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   eina_stringshare_replace(&disp->relative.to, relative);
 }
