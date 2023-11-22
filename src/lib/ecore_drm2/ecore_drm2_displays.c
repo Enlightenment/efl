@@ -576,6 +576,7 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
    EINA_LIST_FREE(dev->displays, disp)
      {
         if (disp->thread) ecore_thread_cancel(disp->thread);
+        eina_stringshare_del(disp->backlight.path);
         eina_stringshare_del(disp->relative.to);
         eina_stringshare_del(disp->serial);
         eina_stringshare_del(disp->model);
