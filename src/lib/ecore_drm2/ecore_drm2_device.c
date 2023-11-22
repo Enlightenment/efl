@@ -9,26 +9,29 @@
 
 /* local functions */
 static Eina_Bool
-_ecore_drm2_device_cb_session_active(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_ecore_drm2_device_cb_session_active(void *data, int type EINA_UNUSED, void *event)
 {
-   /* Ecore_Drm2_Device *dev; */
+   Ecore_Drm2_Device *dev;
    Elput_Event_Session_Active *ev;
+   Ecore_Drm2_Event_Activate *eevent;
 
-   /* dev = data; */
+   dev = data;
    ev = event;
 
    if (ev->active)
      {
-        /* TODO: wake compositor, compositor damage all, set state_invalid = true */
-        /* NB: Input enable is already done inside elput */
-     }
-   else
-     {
-        /* TODO: compositor offscreen, output->repaint_needed = false */
-        /* NB: Input disable is already done inside elput */
+        Eina_List *l;
+        Ecore_Drm2_Display *disp;
+
+        EINA_LIST_FOREACH(dev->displays, l, disp)
+          ecore_drm2_display_dpms_set(disp, DRM_MODE_DPMS_ON);
      }
 
-   /* TODO: raise ecore_drm2_event_active ?? */
+   eevent = calloc(1, sizeof(Ecore_Drm2_Event_Activate));
+   if (!eevent) return ECORE_CALLBACK_RENEW;
+
+   eevent->active = ev->active;
+   ecore_event_add(ECORE_DRM2_EVENT_ACTIVATE, eevent, NULL, NULL);
 
    return ECORE_CALLBACK_RENEW;
 }

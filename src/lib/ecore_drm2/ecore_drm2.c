@@ -36,6 +36,8 @@ int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id,
 int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data) = NULL;
 void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor) = NULL;
 
+EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
+
 /* local static functions */
 static Eina_Bool
 _ecore_drm2_link(void)
@@ -144,6 +146,8 @@ ecore_drm2_init(void)
         goto log_err;
      }
 
+   ECORE_DRM2_EVENT_ACTIVATE = ecore_event_type_new();
+
    if (!_ecore_drm2_link()) goto link_err;
 
    return _ecore_drm2_init_count;
@@ -175,6 +179,8 @@ ecore_drm2_shutdown(void)
    if (--_ecore_drm2_init_count != 0) return _ecore_drm2_init_count;
 
    if (_drm_lib) dlclose(_drm_lib);
+
+   ECORE_DRM2_EVENT_ACTIVATE = -1;
 
    eina_log_domain_unregister(_ecore_drm2_log_dom);
    _ecore_drm2_log_dom = -1;
