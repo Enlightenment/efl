@@ -15,10 +15,6 @@
 #include <unistd.h>
 #include <sys/param.h>
 
-#ifdef _WIN32
-# include <evil_private.h> /* evil_path_is_absolute */
-#endif
-
 #include "evas_common_private.h"
 #include "evas_private.h"
 
@@ -27,18 +23,6 @@
 #else
 # define EVAS_PATH_SEPARATOR "/"
 #endif
-
-int
-evas_file_path_is_full_path(const char *path)
-{
-   if (!path) return 0;
-#ifdef _WIN32
-   if (evil_path_is_absolute(path)) return 1;
-#else
-   if (path[0] == '/') return 1;
-#endif
-   return 0;
-}
 
 char *
 evas_file_path_join(const char *path, const char *end)

@@ -81,27 +81,4 @@ EVIL_API const char *evil_format_message(long err);
 
 EVIL_API const char *evil_last_error_get(void);
 
-/**
- * @brief check if the given path is absolute.
- *
- * @param path The path to check.
- * @return 1 if the given path is absolute, 0 otherwise.
- *
- * Check if the path @p path is absolute or not. An absolute path must
- * begin with a letter (upper or lower case), followed by by the char
- * ':', followed by the char '/' or '\'. If @p path is absolute this
- * function returns 1, otherwise it returns 0. If @p path is @c NULL,
- * it returns 0.
- *
- * Conformity: Non applicable.
- *
- * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
- * Windows XP.
- *
- * @since 1.7
- *
- * @ingroup Evil
- */
-EVIL_API int evil_path_is_absolute(const char *path);
-
 #endif /* __EVIL_UTIL_H__ */

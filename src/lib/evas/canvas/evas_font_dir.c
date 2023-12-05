@@ -2,10 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef _WIN32
-# include <evil_private.h> /* evil_path_is_absolute */
-#endif
-
 #include <Eet.h>
 
 #ifdef HAVE_FONTCONFIG
@@ -67,17 +63,6 @@ static FcConfig *fc_config = NULL;
 /* get the casefold feature! */
 #include <unistd.h>
 #include <sys/param.h>
-int
-_file_path_is_full_path(const char *path)
-{
-   if (!path) return 0;
-#ifdef _WIN32
-   if (evil_path_is_absolute(path)) return 1;
-#else
-   if (path[0] == '/') return 1;
-#endif
-   return 0;
-}
 
 static DATA64
 _file_modified_time(const char *file)
@@ -787,7 +772,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
                }
              if (!font) /* Source load failed */
                {
-                  if (_file_path_is_full_path((char *)nm)) /* Try filename */
+                  if (!eina_file_path_relative((char *)nm)) /* Try filename */
                     font = (Evas_Font_Set *)evas_common_font_load((char *)nm, size, wanted_rend, bitmap_scalable);
                   else /* search font path */
                     {
@@ -856,7 +841,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
                }
              if (!ok)
                {
-                  if (_file_path_is_full_path((char *)nm))
+                  if (!eina_file_path_relative((char *)nm))
                     evas_common_font_add((RGBA_Font *)font, (char *)nm, size, wanted_rend, bitmap_scalable);
                   else
                     {

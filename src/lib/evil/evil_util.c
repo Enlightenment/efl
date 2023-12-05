@@ -188,25 +188,3 @@ _evil_last_error_display(const char *fct)
 {
    fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, evil_last_error_get());
 }
-
-EVIL_API int
-evil_path_is_absolute(const char *path)
-{
-   size_t length;
-
-   if (!path)
-     return 0;
-
-   if (*path == '/' || *path == '\\') return 1;
-
-   length = strlen(path);
-   if (length < 3) return 0;
-
-   if ((((*path >= 'a') && (*path <= 'z')) ||
-        ((*path >= 'A') && (*path <= 'Z'))) &&
-       (path[1] == ':') &&
-       ((path[2] == '/') || (path[2] == '\\')))
-     return 1;
-
-   return 0;
-}

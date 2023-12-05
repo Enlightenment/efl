@@ -3125,7 +3125,7 @@ efreet_menu_path_get(Efreet_Menu_Internal *internal, const char *suffix)
     size_t len;
 
     /* see if we've got an absolute or relative path */
-    if (suffix[0] == '/')
+    if (!eina_file_path_relative(suffix))
         snprintf(path, sizeof(path), "%s", suffix);
 
     else

@@ -203,7 +203,7 @@ _elm_module_add(const char *name, const char *as)
 {
    Elm_Module *m;
 
-   if (name[0] == '/') return NULL;
+   if (!eina_file_path_relative(name)) return NULL;
 
    m = eina_hash_find(modules, name);
    if (m)

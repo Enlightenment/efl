@@ -43,7 +43,7 @@
 
 #ifdef _WIN32
 # include <direct.h> /* getcwd */
-# include <evil_private.h> /* path_is_absolute realpath dladdr */
+# include <evil_private.h> /* realpath dladdr */
 #endif
 
 #include "eina_config.h"
@@ -166,16 +166,6 @@ _path_sep_fix(char *buf)
 #endif
 }
 
-static Eina_Bool
-_path_absolute_check(const char *path)
-{
-#ifdef _WIN32
-   return evil_path_is_absolute(path);
-#else
-   return (path[0] == EINA_PATH_SEP_C);
-#endif
-}
-
 static int
 _fallback(Eina_Prefix *pfx, const char *pkg_bin, const char *pkg_lib,
           const char *pkg_data, const char *pkg_locale, const char *envprefix)
@@ -284,7 +274,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
    char buf[PATH_MAX], buf2[PATH_MAX];
 
    /* 1. is argv0 abs path? */
-   if (_path_absolute_check(argv0))
+   if (!eina_file_path_relative(argv0))
      {
         if (access(argv0, X_OK) == 0)
           {
@@ -579,7 +569,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
           {
              if (info_dl.dli_fname)
                {
-                  if (_path_absolute_check(info_dl.dli_fname))
+                  if (!eina_file_path_relative(info_dl.dli_fname))
                     {
                        INF("dladdr for symbol=%p: %s", symbol, info_dl.dli_fname);
                        char *rlink = realpath(info_dl.dli_fname, NULL);
