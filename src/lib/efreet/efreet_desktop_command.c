@@ -833,7 +833,7 @@ efreet_desktop_command_path_absolute(const char *path)
     int len = 0;
 
     /* relative url */
-    if (path[0] != '/')
+    if (eina_file_path_relative(path))
     {
         if (!(buf = malloc(size))) return NULL;
         if (!getcwd(buf, size))

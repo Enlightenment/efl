@@ -245,6 +245,19 @@ struct _Eina_File_Line
  */
 #define EINA_FILE_DIR_LIST_CB(function) ((Eina_File_Dir_List_Cb)function)
 
+/**
+ * @brief Determines if a path is relative or absolute.
+ *
+ * @param[in] path The path to check.
+ *
+ * @return #EINA_TRUE if the path is relative, #EINA_FALSE otherwise.
+ *
+ * The implementation simply checks if the first char in the path is
+ * '/' on POSIX systems. On Windows, absolute paths begin with '\' or
+ * 'C:\' (or other letter). If it is not, the path is considered relative.
+ * If @p path is @c NULL, this function returns #EINA_FALSE.
+ */
+EINA_API Eina_Bool eina_file_path_relative(const char *path);
 
 /**
  * @brief Lists all the files on the directory by calling the function for every file found.

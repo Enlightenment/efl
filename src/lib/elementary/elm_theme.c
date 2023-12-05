@@ -107,10 +107,9 @@ _elm_theme_file_item_add(Eina_Inlist **files, const char *item, Eina_Bool prepen
    home = eina_environment_home_get();
    buf = eina_strbuf_new();
 
-   if ((item[0] == '/') ||
+   if (!eina_file_path_relative(item) ||
        ((item[0] == '.') && (item[1] == '/')) ||
-       ((item[0] == '.') && (item[1] == '.') && (item[2] == '/')) ||
-       ((isalpha(item[0])) && (item[1] == ':')))
+       ((item[0] == '.') && (item[1] == '.') && (item[2] == '/')))
      {
         f = eina_file_open(item, EINA_FALSE);
         if (!f) goto on_error;
@@ -898,9 +897,9 @@ elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
         if (!home) home = "";
      }
 
-   if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
-       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')) ||
-       ((isalpha(f[0])) && (f[1] == ':')))
+   if (!eina_file_path_relative(f) ||
+       ((f[0] == '.') && (f[1] == '/')) ||
+       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')))
      {
         if (in_search_path) *in_search_path = EINA_FALSE;
         return strdup(f);

@@ -179,18 +179,6 @@ struct _Eina_Lines_Iterator
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
 
 /**
- * @brief Determines if a path is relative or absolute.
- * The implementation simply checks if the first char in the path is '/'.  If it
- * is not, the path is considered relative.
- *
- * @param[in] path The path to check.
- *
- * @return EINA_TRUE if the path is relative, EINA_FALSE otherwise.
- *
- */
-Eina_Bool eina_file_path_relative(const char *path);
-
-/**
  * @brief Gets the current directory and optionally appends a path to it.
  * If a string was passed in via the @p path parameter, it will
  * be appended to the current working directory.  Presumably, this will be a

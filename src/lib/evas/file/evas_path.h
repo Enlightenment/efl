@@ -2,7 +2,6 @@
 #define _EVAS_PATH_H
 
 
-int        evas_file_path_is_full_path (const char *path);
 char      *evas_file_path_join         (const char *path, const char *end);
 int        evas_file_path_exists       (const char *path);
 int        evas_file_path_is_file      (const char *path);

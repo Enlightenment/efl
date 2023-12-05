@@ -515,12 +515,6 @@ _eina_file_mkdtemp(char *__template)
  *   Simplified logic for portability layer with eina_file_common   *
  * ================================================================ */
 
-Eina_Bool
-eina_file_path_relative(const char *path)
-{
-   return !evil_path_is_absolute(path);
-}
-
 Eina_Tmpstr *
 eina_file_current_directory_get(const char *path, size_t len)
 {
@@ -558,6 +552,29 @@ eina_file_cleanup(Eina_Tmpstr *path)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+EINA_API Eina_Bool
+eina_file_path_relative(const char *path)
+{
+   /* see
+    * https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#paths
+    * absolute path if:
+    * - is an UNC path (begins with \\)
+    * - has a drive letter (C:\). \ is important here, otherwise it is relative
+    * - begins with \
+    */
+
+   if (!path || *path == '\\')
+     return EINA_FALSE;
+
+   if ((((*path >= 'a') && (*path <= 'z')) ||
+        ((*path >= 'A') && (*path <= 'Z'))) &&
+       (path[1] == ':') &&
+       ((path[2] == '\\') || (path[2] == '/')))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
 
 EINA_API Eina_Bool
 eina_file_dir_list(const char *dir,

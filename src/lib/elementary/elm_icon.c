@@ -28,25 +28,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-/* FIXME: move this code to ecore */
-#ifdef _WIN32
-static Eina_Bool
-_path_is_absolute(const char *path)
-{
-   //TODO: Check if this works with all absolute paths in windows
-   return (isalpha(*path)) && (*(path + 1) == ':') &&
-          ((*(path + 2) == '\\') || (*(path + 2) == '/'));
-}
-
-#else
-static Eina_Bool
-_path_is_absolute(const char *path)
-{
-   return *path == '/';
-}
-
-#endif
-
 static inline int
 _icon_size_min_get(Evas_Object *icon)
 {
@@ -462,7 +443,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
         return EINA_TRUE;
      }
 
-   if (_path_is_absolute(name))
+   if (!eina_file_path_relative(name))
      {
         if (fdo)
           *fdo = EINA_FALSE;

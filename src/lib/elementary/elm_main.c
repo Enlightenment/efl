@@ -1308,7 +1308,7 @@ elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
    const char *pathitr;
    const Eina_List *l;
    char buf[PATH_MAX];
-   if (exe[0] == '/') return strdup(exe);
+   if (!eina_file_path_relative(exe)) return strdup(exe);
    if (cwd)
      pathlist = eina_list_append(pathlist, eina_stringshare_add(cwd));
    else

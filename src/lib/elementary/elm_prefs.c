@@ -3,7 +3,7 @@
 #endif
 
 #ifdef _WIN32
-# include <evil_private.h> /* strsep evil_path_absolute */
+# include <evil_private.h> /* strsep */
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
@@ -1816,11 +1816,7 @@ elm_prefs_file_set(Eo *obj, const char *file, const char *page)
      sd->file = eina_stringshare_printf("%s/%s", prefix, "preferences.epb");
    else
      {
-#ifndef _WIN32
-        if (*file != '/') /* relative */
-#else
-        if (!evil_path_is_absolute(file)) /* relative */
-#endif
+        if (eina_file_path_relative(file))
           sd->file = eina_stringshare_printf("%s/%s", prefix, file);
         else
           sd->file = eina_stringshare_add(file);

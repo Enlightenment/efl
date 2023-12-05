@@ -521,13 +521,6 @@ eina_file_mmap_faulty(void *addr, long page_size)
  *   Simplified logic for portability layer with eina_file_common   *
  * ================================================================ */
 
-Eina_Bool
-eina_file_path_relative(const char *path)
-{
-   if (*path != '/') return EINA_TRUE;
-   return EINA_FALSE;
-}
-
 Eina_Tmpstr *
 eina_file_current_directory_get(const char *path, size_t len)
 {
@@ -561,6 +554,15 @@ eina_file_cleanup(Eina_Tmpstr *path)
  *============================================================================*/
 
 
+
+EINA_API Eina_Bool
+eina_file_path_relative(const char *path)
+{
+   if (!path)
+     return EINA_FALSE;
+
+   return *path != '/';
+}
 
 EINA_API Eina_Bool
 eina_file_dir_list(const char *dir,
