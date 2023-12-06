@@ -21,9 +21,9 @@ EFL_START_TEST(elua_api)
     lua_State *lst;
     FILE *f;
     int fd;
-    char *cargv[2];
-    char arg1[] = "test";
-    char arg2[] = "test";
+    const char *cargv[2];
+    const char arg1[] = "test";
+    const char arg2[] = "test";
     int quit = 0;
     cargv[0] = arg1;
     cargv[1] = arg2;
@@ -106,14 +106,14 @@ EFL_START_TEST(elua_api)
     fprintf(f, "return true");
     fclose(f);
     cargv[1] = tmpf;
-    fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
+    fail_if(!elua_util_script_run(st, 2, (char **)cargv, 1, &quit));
     fail_if(quit != 1);
 
     f = fopen(tmpf, "wb");
     fail_if(!f);
     fprintf(f, "return false");
     fclose(f);
-    fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
+    fail_if(!elua_util_script_run(st, 2, (char **)cargv, 1, &quit));
     fail_if(quit != 0);
     fail_if(remove(tmpf));
 
