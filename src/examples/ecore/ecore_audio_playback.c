@@ -1,6 +1,8 @@
 // Compile with:
 // gcc -o ecore_audio_playback ecore_audio_playback.c `pkg-config --libs --cflags ecore eina ecore-audio`
-#define EFL_BETA_API_SUPPORT
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include <stdio.h>
 #include <string.h>
