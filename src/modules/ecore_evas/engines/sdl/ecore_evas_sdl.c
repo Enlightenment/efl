@@ -458,7 +458,7 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
 };
 
 static Ecore_Evas*
-_ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
+_ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fullscreen, int hwsurface, int noframe EINA_UNUSED, int alpha)
 {
    Ecore_Evas_SDL_Switch_Data *swd;
    Ecore_Evas *ee;
