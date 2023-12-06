@@ -193,11 +193,13 @@ elua_state_new(const char *progname)
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr1");
    lua_setfield(L, LUA_REGISTRYINDEX, "elua_ptr2");
    return ret;
+#ifdef ENABLE_LUA_OLD
 err:
    lua_close(L);
    eina_stringshare_del(ret->progname);
    free(ret);
    return NULL;
+#endif
 }
 
 EAPI void
