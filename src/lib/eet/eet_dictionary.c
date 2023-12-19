@@ -31,11 +31,14 @@ eet_dictionary_free(Eet_Dictionary *ed)
    if (!ed) return;
    eina_rwlock_free(&ed->rwlock);
 
-   for (i = 0; i < ed->count; i++)
+   if ((ed->all_allocated) && (ed->all))
      {
-        if (ed->all_allocated[i >> 3] & (1 << (i & 0x7)))
+        for (i = 0; i < ed->count; i++)
           {
-             eina_stringshare_del(ed->all[i].str);
+             if (ed->all_allocated[i >> 3] & (1 << (i & 0x7)))
+               {
+                  eina_stringshare_del(ed->all[i].str);
+               }
           }
      }
    free(ed->all);
