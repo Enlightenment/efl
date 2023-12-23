@@ -497,7 +497,7 @@ test_focus(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
      }
 
      {
-        Evas_Object *rd, *rdg;
+        Evas_Object *rd, *rdg = NULL;
 
         for (i = 0; i < 3; i++)
           {
