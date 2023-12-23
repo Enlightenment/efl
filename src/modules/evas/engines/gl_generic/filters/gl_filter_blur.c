@@ -53,6 +53,7 @@ _gaussian_interpolate(double **weights, double **offsets, double radius)
    max_index = (int) ceil(radius);
    if (max_index & 0x1) max_index++;
    values = alloca((max_index + 1) * sizeof(*values));
+   values[0] = 0.0;
     _gaussian_calc(values, max_index, radius);
 
    count = (max_index / 2) + 1;
