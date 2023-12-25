@@ -68,7 +68,7 @@ do
     if [ $? -ne 0 ]; then
         echo "Failed compiling eet file."
         echo "Press 'Return' to reopen the editor, or ^C to abort."
-        read
+        read _dummy
     else
         DONE=1
     fi
