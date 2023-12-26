@@ -976,7 +976,7 @@ struct _Escape_Value
    size_t value_len;
 };
 
-#define ESCAPE_VALUE(e,v) {e,v,strlen(e),strlen(v)}
+#define ESCAPE_VALUE(e,v) {e,v,sizeof(e)-1,sizeof(v)-1}
 
 /**
  * @internal

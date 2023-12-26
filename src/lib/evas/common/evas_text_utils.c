@@ -19,7 +19,7 @@ struct _Color_Name_Value
    unsigned char b;
 };
 
-#define COLOR_NAME(name,r,g,b) {name,(unsigned char)strlen(name),r,g,b}
+#define COLOR_NAME(name,r,g,b) {name,(unsigned char)sizeof(name)-1,r,g,b}
 
 /**
  * @internal
