@@ -412,7 +412,7 @@ _eina_file_timestamp_compare(Eina_File *f, struct stat *st)
    if (f->length != (unsigned long long) st->st_size) return EINA_FALSE;
    if (f->inode != st->st_ino) return EINA_FALSE;
 #ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
+# ifdef st_mtime
    if (f->mtime_nsec != (unsigned long int)st->st_mtim.tv_nsec)
      return EINA_FALSE;
 # else
