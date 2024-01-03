@@ -870,11 +870,7 @@ eina_file_open(const char *path, Eina_Bool shared)
         n->length = file_stat.st_size;
         n->mtime = file_stat.st_mtime;
 #ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
         n->mtime_nsec = (unsigned long int)file_stat.st_mtim.tv_nsec;
-# else
-        n->mtime_nsec = (unsigned long int)file_stat.st_mtimensec;
-# endif
 #endif
         n->inode = file_stat.st_ino;
         n->fd = fd;
@@ -928,11 +924,7 @@ eina_file_refresh(Eina_File *file)
    file->length = file_stat.st_size;
    file->mtime = file_stat.st_mtime;
 #ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
    file->mtime_nsec = (unsigned long int)file_stat.st_mtim.tv_nsec;
-# else
-   file->mtime_nsec = (unsigned long int)file_stat.st_mtimensec;
-# endif
 #endif
    file->inode = file_stat.st_ino;
 
@@ -1245,15 +1237,9 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
    st->mtime = buf.st_mtime;
    st->ctime = buf.st_ctime;
 #ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
    st->atimensec = buf.st_atim.tv_nsec;
    st->mtimensec = buf.st_mtim.tv_nsec;
    st->ctimensec = buf.st_ctim.tv_nsec;
-# else
-   st->atimensec = buf.st_atimensec;
-   st->mtimensec = buf.st_mtimensec;
-   st->ctimensec = buf.st_ctimensec;
-# endif
 #else
    st->atimensec = 0;
    st->mtimensec = 0;

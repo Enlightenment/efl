@@ -201,13 +201,8 @@ _timestamp_compare(Image_Timestamp *tstamp, struct stat *st)
    if (tstamp->size != st->st_size) return EINA_FALSE;
    if (tstamp->ino != st->st_ino) return EINA_FALSE;
 #ifdef _STAT_VER_LINUX
-#if (defined __USE_MISC && defined st_mtime)
    if (tstamp->mtime_nsec != (unsigned long int)st->st_mtim.tv_nsec)
      return EINA_FALSE;
-#else
-   if (tstamp->mtime_nsec != (unsigned long int)st->st_mtimensec)
-     return EINA_FALSE;
-#endif
 #endif
    return EINA_TRUE;
 }
@@ -219,11 +214,7 @@ _timestamp_build(Image_Timestamp *tstamp, struct stat *st)
    tstamp->size = st->st_size;
    tstamp->ino = st->st_ino;
 #ifdef _STAT_VER_LINUX
-#if (defined __USE_MISC && defined st_mtime)
    tstamp->mtime_nsec = (unsigned long int)st->st_mtim.tv_nsec;
-#else
-   tstamp->mtime_nsec = (unsigned long int)st->st_mtimensec;
-#endif
 #endif
 }
 

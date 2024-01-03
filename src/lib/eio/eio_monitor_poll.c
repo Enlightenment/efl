@@ -110,15 +110,9 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    est->mtime = st.st_mtime;
    est->ctime = st.st_ctime;
 #ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
    est->atimensec = st.st_atim.tv_nsec;
    est->mtimensec = st.st_mtim.tv_nsec;
    est->ctimensec = st.st_ctim.tv_nsec;
-# else
-   est->atimensec = st.st_atimensec;
-   est->mtimensec = st.st_mtimensec;
-   est->ctimensec = st.st_ctimensec;
-# endif
 #else
    est->atimensec = 0;
    est->mtimensec = 0;

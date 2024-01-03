@@ -128,15 +128,9 @@ _eio_file_struct_2_eina(Eina_Stat *es, _eio_stat_t *st)
    es->mtime = st->st_mtime;
    es->ctime = st->st_ctime;
 #ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
    es->atimensec = st->st_atim.tv_nsec;
    es->mtimensec = st->st_mtim.tv_nsec;
    es->ctimensec = st->st_ctim.tv_nsec;
-# else
-   es->atimensec = st->st_atimensec;
-   es->mtimensec = st->st_mtimensec;
-   es->ctimensec = st->st_ctimensec;
-# endif
 #else
    es->atimensec = 0;
    es->mtimensec = 0;
