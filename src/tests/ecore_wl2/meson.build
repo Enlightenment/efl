@@ -27,5 +27,6 @@ ecore_wl2_suite = executable('ecore_wl2_suite',
 )
 
 test('ecore_wl2-suite', ecore_wl2_suite,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )

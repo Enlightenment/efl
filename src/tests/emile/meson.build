@@ -14,5 +14,6 @@ emile_suite = executable('emile_suite',
 )
 
 test('emile-suite', emile_suite,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )

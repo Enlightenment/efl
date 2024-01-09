@@ -15,7 +15,8 @@ efreet_suite = executable('efreet_suite',
 )
 
 test('efreet-suite', efreet_suite,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )
 
 efreet_test_src = [

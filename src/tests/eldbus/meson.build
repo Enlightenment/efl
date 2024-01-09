@@ -29,4 +29,5 @@ eldbus_suite = executable('eldbus_suite',
 
 test('eldbus-suite', eldbus_suite,
   env : test_env,
+  timeout : master_timeout
 )

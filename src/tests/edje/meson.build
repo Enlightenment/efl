@@ -25,5 +25,6 @@ edje_suite = executable('edje_suite',
 )
 
 test('edje-suite', edje_suite,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )
