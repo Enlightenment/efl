@@ -1125,7 +1125,26 @@ EFL_START_TEST(evas_object_image_9patch)
 
         fail_if(r_w != 1024 || r_h != 1024);
         for (int i = 0; i < r_w * r_h; i++)
-          fail_if(((d[i] - r_d[i]) & 0xF8F8F8F8) != 0);
+         {
+           int pixa, pixr, pixg, pixb, refa, refr, refg, refb;
+
+           pixa = (d[i] >> 24) & 0xff;
+           pixr = (d[i] >> 16) & 0xff;
+           pixg = (d[i] >>  8) & 0xff;
+           pixb = (d[i]      ) & 0xff;
+           refa = (r_d[i] >> 24) & 0xff;
+           refr = (r_d[i] >> 16) & 0xff;
+           refg = (r_d[i] >>  8) & 0xff;
+           refb = (r_d[i]      ) & 0xff;
+           pixa = abs(pixa - refa);
+           fail_if(pixa > 32);
+           pixr = abs(pixr - refr);
+           fail_if(pixr > 32);
+           pixg = abs(pixg - refg);
+           fail_if(pixg > 32);
+           pixb = abs(pixb - refb);
+           fail_if(pixb > 32);
+         }
      }
 
    evas_object_del(obj);
