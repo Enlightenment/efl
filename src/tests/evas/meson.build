@@ -35,5 +35,5 @@ evas_suite = executable('evas_suite',
 
 test('evas-suite', evas_suite,
   env : test_env,
-  timeout: 60,
+  timeout : master_timeout
 )

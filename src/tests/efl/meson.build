@@ -14,5 +14,6 @@ efl_suite_bin = executable('efl_suite',
 )
 
 test('efl-suite', efl_suite_bin,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )

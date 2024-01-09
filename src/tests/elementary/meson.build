@@ -193,11 +193,13 @@ executable('efl_ui_window_cnp_dnd_slave',
 )
 
 test('elementary-suite', elementary_suite,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )
 
 test('efl-ui-suite', efl_ui_suite,
-  env : test_env
+  env : test_env,
+  timeout : master_timeout
 )
 
 install_data(files(['testdiff.diff', 'testfile-windows.txt', 'testfile-withblanks.txt', 'testfile.txt']),
