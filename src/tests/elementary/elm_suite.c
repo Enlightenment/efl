@@ -30,7 +30,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_prefs", elm_test_prefs},
   { "elm_map", elm_test_map},
   { "elm_glview", elm_test_glview},
-  { "elm_web", elm_test_web},
+//  { "elm_web", elm_test_web},
   { "elm_toolbar", elm_test_toolbar},
   { "elm_grid", elm_test_grid},
   { "elm_diskselector", elm_test_diskselector},

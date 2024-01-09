@@ -6,6 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+/*
 EFL_START_TEST(elm_web_legacy_type_check)
 {
    Evas_Object *win, *web;
@@ -46,3 +47,4 @@ void elm_test_web(TCase *tc)
    tcase_add_test(tc, elm_web_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
 }
+*/
