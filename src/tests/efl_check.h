@@ -306,9 +306,9 @@ _efl_suite_wait_on_fork(int *num_forks, Eina_Bool *timeout)
      ret = WEXITSTATUS(status);
    else
      ret = 1;
-   if (pid == timeout_pid)
+   if ((timeout_pid > 0) && (pid == timeout_pid))
      *timeout = EINA_TRUE;
-   else
+   else if (timeout_pid > 0)
      {
         eina_hash_del_by_key(fork_map, &pid);
         (*num_forks)--;
@@ -374,8 +374,25 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
              if (!timeout_pid)
                {
                   timeout_pid = fork();
-                  if (!timeout_pid)
-                    execl("/bin/sh", "/bin/sh", "-c", PACKAGE_BUILD_DIR "/src/tests/timeout", (char *)NULL);
+                  if (timeout_pid == 0)
+                    {
+                       int ret = execl(PACKAGE_BUILD_DIR "/src/tests/timeout",
+                                       (char *)NULL);
+                       if (ret != 0)
+                         {
+                            fprintf(stderr, "EXECL %s TO RUN TIMEOUT!!!\n", PACKAGE_BUILD_DIR "/src/tests/timeout");
+                            perror("EXECL");
+                            fflush(stderr);
+                            abort();
+                         }
+                    }
+                  else if (timeout_pid < 0)
+                    {
+                       fprintf(stderr, "FORK TO RUN TIMEOUT TOOL FAILED!!!\n");
+                       perror("FORK");
+                       fflush(stderr);
+                       abort();
+                    }
                }
              if (num_forks == eina_cpu_count())
                failed_count += _efl_suite_wait_on_fork(&num_forks, &timeout_reached);
@@ -392,6 +409,13 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
 # endif
                   continue;
                }
+            else if (pid < 0)
+              {
+                fprintf(stderr, "FORK TO RUN TIMEOUT TOOL FAILED!!!\n");
+                perror("FORK");
+                fflush(stderr);
+                abort();
+              }
           }
 #endif
 
