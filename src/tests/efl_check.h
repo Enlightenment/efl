@@ -377,6 +377,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
                   if (timeout_pid == 0)
                     {
                        int ret = execl(PACKAGE_BUILD_DIR "/src/tests/timeout",
+                                       PACKAGE_BUILD_DIR "/src/tests/timeout",
                                        (char *)NULL);
                        if (ret != 0)
                          {
