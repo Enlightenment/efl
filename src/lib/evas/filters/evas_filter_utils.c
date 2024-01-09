@@ -92,9 +92,18 @@ _interpolate_linear(DATA8 *output, int *points)
      {
         if (points[j] != -1)
           {
+             int val1, val2, vald, pos, len;
+
              output[j] = (DATA8) points[j];
+             val1 = points[last_idx];
+             val2 = points[j];
+             vald = val2 - val1;
+             len = j - last_idx;
              for (k = last_idx + 1; k < j; k++)
-               output[k] = (DATA8) (points[j] + ((k - last_idx) * (points[j] - points[last_idx]) / (j - last_idx)));
+               {
+                  pos = k - last_idx;
+                  output[k] = (DATA8) (val1 + ((pos * vald) / len));
+               }
              last_idx = j;
           }
      }
