@@ -347,7 +347,7 @@ Required by default:
 * openjpeg2
 * gstreamer (Ensure all codecs you want are installed.)
 * zlib
-* luajit (lua 5.1 or 5.2 support optional)
+* lua (lua 5.1, luajit or lua 5.2 support optional)
 * libtiff
 * openssl
 * curl

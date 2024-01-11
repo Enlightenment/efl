@@ -330,7 +330,7 @@ option('dotnet',
 option('lua-interpreter',
   type: 'combo',
   choices: ['luajit', 'lua'],
-  value: 'luajit',
+  value: 'lua',
   description: 'Which Lua back-end library to use in efl'
 )
 
