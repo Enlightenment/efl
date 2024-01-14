@@ -388,3 +388,9 @@ option('docs',
   value: false,
   description: 'Enable building C of documentation (Requires doxygen)'
 )
+
+option('embedded-libunibreak',
+  type : 'boolean',
+  value : true,
+  description : 'Use the embedded in-tree libunibreak instead of the system libunibreak.'
+)
