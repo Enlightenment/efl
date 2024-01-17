@@ -989,3 +989,10 @@ ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y)
 
    return NULL;
 }
+
+EAPI void
+ecore_drm2_display_user_data_set(Ecore_Drm2_Display *disp, void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   disp->user_data = data;
+}

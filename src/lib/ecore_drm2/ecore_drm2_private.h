@@ -283,6 +283,8 @@ struct _Ecore_Drm2_Display
 
    Ecore_Thread *thread;
 
+   void *user_data;
+
    Eina_Bool connected : 1;
 };
 
