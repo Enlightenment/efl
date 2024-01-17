@@ -551,8 +551,9 @@ static const struct {
   { "C:\\home\\mydir\\..\\myfile", "C:/home/myfile" },
   { "C:/home/mydir/../myfile", "C:/home/myfile" },
   { "\\home\\mydir\\..\\myfile", "/home/myfile" },
-#endif
+#else
   { "/home/mydir/../myfile", "/home/myfile" }
+#endif
 };
 
 EFL_START_TEST(eina_test_file_path)
