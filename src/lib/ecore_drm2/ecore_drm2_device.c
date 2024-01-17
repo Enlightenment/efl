@@ -41,6 +41,7 @@ _ecore_drm2_device_cb_device_change(void *data, int type EINA_UNUSED, void *even
 {
    Elput_Event_Device_Change *ev;
    Ecore_Drm2_Device *dev;
+   int dw, dh;
 
    ev = event;
    dev = data;
@@ -55,7 +56,10 @@ _ecore_drm2_device_cb_device_change(void *data, int type EINA_UNUSED, void *even
           {
              disp = eina_list_data_get(dev->displays);
              if (disp)
-               ecore_drm2_device_calibrate(dev, disp->w, disp->h);
+               {
+                  ecore_drm2_display_info_get(disp, NULL, NULL, &dw, &dh, NULL);
+                  ecore_drm2_device_calibrate(dev, dw, dh);
+               }
           }
         else
           {
@@ -65,7 +69,8 @@ _ecore_drm2_device_cb_device_change(void *data, int type EINA_UNUSED, void *even
                {
                   if (eina_streq(disp->name, name))
                     {
-                       ecore_drm2_device_calibrate(dev, disp->w, disp->h);
+                       ecore_drm2_display_info_get(disp, NULL, NULL, &dw, &dh, NULL);
+                       ecore_drm2_device_calibrate(dev, dw, dh);
                        break;
                     }
                }
