@@ -1,5 +1,9 @@
 #include "ecore_drm2_private.h"
 
+#define INSIDE(x, y, xx, yy, ww, hh) \
+   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && \
+       ((x) >= (xx)) && ((y) >= (yy)))
+
 #define EDID_DESCRIPTOR_ALPHANUMERIC_DATA_STRING 0xfe
 #define EDID_DESCRIPTOR_DISPLAY_PRODUCT_NAME 0xfc
 #define EDID_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER 0xff
@@ -962,4 +966,26 @@ ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi)
 
    if (ydpi)
      *ydpi = ((25.4 * (disp->state.current->mode->height)) / disp->ph);
+}
+
+EAPI Ecore_Drm2_Display *
+ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y)
+{
+   Eina_List *l;
+   Ecore_Drm2_Display *disp;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+
+   EINA_LIST_FOREACH(dev->displays, l, disp)
+     {
+        int ox, oy, ow, oh;
+
+        if (!disp->state.current->enabled) continue;
+
+        ecore_drm2_display_info_get(disp, &ox, &oy, &ow, &oh, NULL);
+        if (INSIDE(x, y, ox, oy, ow, oh))
+          return disp;
+     }
+
+   return NULL;
 }
