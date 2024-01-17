@@ -950,3 +950,16 @@ ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relativ
    EINA_SAFETY_ON_NULL_RETURN(disp);
    eina_stringshare_replace(&disp->relative.to, relative);
 }
+
+EAPI void
+ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi)
+{
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+   EINA_SAFETY_ON_TRUE_RETURN(!disp->state.current->enabled);
+
+   if (xdpi)
+     *xdpi = ((25.4 * (disp->state.current->mode->width)) / disp->pw);
+
+   if (ydpi)
+     *ydpi = ((25.4 * (disp->state.current->mode->height)) / disp->ph);
+}
