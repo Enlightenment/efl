@@ -116,6 +116,7 @@ EAPI void ecore_drm2_display_relative_mode_set(Ecore_Drm2_Display *disp, Ecore_D
 EAPI void ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relative);
 EAPI void ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi);
 EAPI Ecore_Drm2_Display *ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y);
+EAPI void ecore_drm2_display_user_data_set(Ecore_Drm2_Display *disp, void *data);
 
 # endif
 
