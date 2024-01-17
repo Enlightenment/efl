@@ -454,3 +454,11 @@ ecore_drm2_device_vt_set(Ecore_Drm2_Device *dev, int vt)
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev->em, EINA_FALSE);
    return elput_manager_vt_set(dev->em, vt);
 }
+
+EAPI int
+ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, -1);
+
+   return dev->clock_id;
+}

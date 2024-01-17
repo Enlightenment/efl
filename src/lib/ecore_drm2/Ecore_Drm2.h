@@ -82,6 +82,7 @@ EAPI void ecore_drm2_device_pointer_max_set(Ecore_Drm2_Device *dev, int w, int h
 EAPI Eina_Bool ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *dev, int rotation);
 EAPI void ecore_drm2_device_calibrate(Ecore_Drm2_Device *dev, int w, int h);
 EAPI Eina_Bool ecore_drm2_device_vt_set(Ecore_Drm2_Device *dev, int vt);
+EAPI int ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *dev);
 
 /* Display API functions */
 EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);
