@@ -996,3 +996,10 @@ ecore_drm2_display_user_data_set(Ecore_Drm2_Display *disp, void *data)
    EINA_SAFETY_ON_NULL_RETURN(disp);
    disp->user_data = data;
 }
+
+EAPI void *
+ecore_drm2_display_user_data_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+   return disp->user_data;
+}
