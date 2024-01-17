@@ -474,3 +474,12 @@ ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *dev, int *x, int *y)
 
    elput_input_pointer_xy_get(dev->em, NULL, x, y);
 }
+
+EAPI void
+ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *dev, int x, int y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(dev->em);
+
+   elput_input_pointer_xy_set(dev->em, NULL, x, y);
+}
