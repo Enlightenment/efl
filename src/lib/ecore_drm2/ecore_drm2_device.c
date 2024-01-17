@@ -462,3 +462,15 @@ ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *dev)
 
    return dev->clock_id;
 }
+
+EAPI void
+ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *dev, int *x, int *y)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(dev->em);
+
+   elput_input_pointer_xy_get(dev->em, NULL, x, y);
+}
