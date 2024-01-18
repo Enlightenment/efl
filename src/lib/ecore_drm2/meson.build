@@ -7,6 +7,7 @@ ecore_drm2_header_src = [
 ]
 
 ecore_drm2_src = files([
+  'ecore_drm2_fb.c',
   'ecore_drm2_displays.c',
   'ecore_drm2_connectors.c',
   'ecore_drm2_planes.c',
