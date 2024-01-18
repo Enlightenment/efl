@@ -35,6 +35,7 @@ void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req) = NULL;
 int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value) = NULL;
 int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data) = NULL;
 void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor) = NULL;
+int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl) = NULL;
 
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
 
@@ -98,6 +99,7 @@ _ecore_drm2_link(void)
         SYM(_drm_lib, drmModeAtomicAddProperty);
         SYM(_drm_lib, drmModeAtomicCommit);
         SYM(_drm_lib, drmModeAtomicSetCursor);
+        SYM(_drm_lib, drmWaitVBlank);
 
         if (fail)
           {
