@@ -40,6 +40,9 @@ typedef enum _Ecore_Drm2_Relative_Mode
    ECORE_DRM2_RELATIVE_MODE_TO_BELOW
 } Ecore_Drm2_Relative_Mode;
 
+/* opaque structure to represent a drm framebuffer */
+typedef struct _Ecore_Drm2_Fb Ecore_Drm2_Fb;
+
 /* opaque structure to represent a drm crtc */
 typedef struct _Ecore_Drm2_Crtc Ecore_Drm2_Crtc;
 

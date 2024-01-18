@@ -214,6 +214,13 @@ typedef struct _Ecore_Drm2_Display_State
 } Ecore_Drm2_Display_State;
 
 /* opaque API structures */
+struct _Ecore_Drm2_Fb
+{
+   int w, h;
+   int depth, bpp;
+   uint32_t format;
+};
+
 struct _Ecore_Drm2_Plane
 {
    int fd;
