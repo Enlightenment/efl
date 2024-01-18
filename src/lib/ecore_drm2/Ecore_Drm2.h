@@ -86,6 +86,7 @@ EAPI int ecore_drm2_device_clock_id_get(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_device_pointer_xy_get(Ecore_Drm2_Device *dev, int *x, int *y);
 EAPI void ecore_drm2_device_pointer_warp(Ecore_Drm2_Device *dev, int x, int y);
 EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *dev);
+EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *dev, unsigned int window);
 
 /* Display API functions */
 EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);
