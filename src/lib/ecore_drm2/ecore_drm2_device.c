@@ -494,3 +494,11 @@ ecore_drm2_device_fd_get(Ecore_Drm2_Device *dev)
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, -1);
    return dev->fd;
 }
+
+EAPI void
+ecore_drm2_device_window_set(Ecore_Drm2_Device *dev, unsigned int window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(dev->em);
+   elput_manager_window_set(dev->em, window);
+}
