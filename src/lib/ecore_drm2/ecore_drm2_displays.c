@@ -507,6 +507,50 @@ _ecore_drm2_display_state_thread_notify(void *data EINA_UNUSED, Ecore_Thread *th
    free(msg);
 }
 
+static unsigned int
+_ecore_drm2_display_vblank_pipe(Ecore_Drm2_Display *disp)
+{
+   if (!disp->crtc) return 0;
+
+   if (disp->crtc->pipe > 1)
+     {
+        return (disp->crtc->pipe << DRM_VBLANK_HIGH_CRTC_SHIFT) &
+          DRM_VBLANK_HIGH_CRTC_MASK;
+     }
+   else if (disp->crtc->pipe > 0)
+     return DRM_VBLANK_SECONDARY;
+   else
+     return 0;
+}
+
+static void
+_ecore_drm2_display_clock_read(Ecore_Drm2_Display *disp, struct timespec *tsnow)
+{
+   int ret;
+
+   ret = clock_gettime(disp->dev->clock_id, tsnow);
+   if (ret < 0)
+     {
+        tsnow->tv_sec = 0;
+        tsnow->tv_nsec = 0;
+
+        WRN("Failed to read display clock %#x: '%s' (%d)",
+            disp->dev->clock_id, strerror(errno), errno);
+     }
+}
+
+static void
+_ecore_drm2_display_msc_update(Ecore_Drm2_Display *disp, unsigned int sequence)
+{
+   uint32_t mh;
+
+   mh = disp->msc >> 32;
+   if (sequence < (disp->msc & 0xffffffff))
+     mh++;
+
+   disp->msc = ((uint64_t)mh << 32) + sequence;
+}
+
 Eina_Bool
 _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 {
@@ -1002,4 +1046,62 @@ ecore_drm2_display_user_data_get(Ecore_Drm2_Display *disp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
    return disp->user_data;
+}
+
+EAPI Eina_Bool
+ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int seq, long *sec, long *usec)
+{
+   drmVBlank vbl;
+   int ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sec, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(usec, EINA_FALSE);
+
+   memset(&vbl, 0, sizeof(vbl));
+   vbl.request.type = DRM_VBLANK_RELATIVE;
+   vbl.request.type |= _ecore_drm2_display_vblank_pipe(disp);
+   vbl.request.sequence = seq;
+   vbl.request.signal = 0;
+
+   /* try to get timestamp from drm vblank query */
+   ret = sym_drmWaitVBlank(disp->dev->fd, &vbl);
+
+   /* ret or zero timestamp is failure to get valid timestamp */
+   if ((ret == 0) && (vbl.reply.tval_sec > 0 || vbl.reply.tval_usec > 0))
+     {
+        struct timespec ts, tsnow, vblnow;
+        int64_t nsec, rnsec;
+
+        ts.tv_sec = vbl.reply.tval_sec;
+        ts.tv_nsec = vbl.reply.tval_usec * 1000;
+
+        /* read clock */
+        _ecore_drm2_display_clock_read(disp, &tsnow);
+
+        vblnow.tv_sec = tsnow.tv_sec - ts.tv_sec;
+        vblnow.tv_nsec = tsnow.tv_nsec - ts.tv_nsec;
+        if (vblnow.tv_nsec < 0)
+          {
+             vblnow.tv_sec--;
+             vblnow.tv_nsec += 1000000000;
+          }
+
+        rnsec = (1000000000000LL / disp->state.current->mode->refresh);
+        nsec = (int64_t)vblnow.tv_sec * 1000000000 + vblnow.tv_nsec;
+        if (nsec < rnsec)
+          {
+             /* update msc */
+             _ecore_drm2_display_msc_update(disp, vbl.reply.sequence);
+             return EINA_TRUE;
+          }
+        else
+          {
+             /* TODO: Do we need to provide a timestamp using pageflip fallback ? */
+          }
+     }
+
+   *sec = vbl.reply.tval_sec;
+   *usec = vbl.reply.tval_usec;
+   return EINA_TRUE;
 }
