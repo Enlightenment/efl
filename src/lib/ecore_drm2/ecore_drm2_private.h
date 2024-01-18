@@ -13,6 +13,7 @@
 # include <ctype.h>
 # include <sys/ioctl.h>
 # include <dlfcn.h>
+# include <time.h>
 
 /* include drm headers */
 # include <drm.h>
@@ -245,6 +246,7 @@ struct _Ecore_Drm2_Display
    Eina_Stringshare *name, *make, *model, *serial;
 
    uint32_t subpixel;
+   uint64_t msc;
 
    /* uint32_t supported_rotations; */
 
@@ -393,5 +395,6 @@ extern void (*sym_drmModeAtomicFree)(drmModeAtomicReqPtr req);
 extern int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id, uint32_t property_id, uint64_t value);
 extern int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data);
 extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
+extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl);
 
 #endif
