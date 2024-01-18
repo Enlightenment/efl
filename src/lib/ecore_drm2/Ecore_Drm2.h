@@ -118,6 +118,7 @@ EAPI void ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *y
 EAPI Ecore_Drm2_Display *ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y);
 EAPI void ecore_drm2_display_user_data_set(Ecore_Drm2_Display *disp, void *data);
 EAPI void *ecore_drm2_display_user_data_get(Ecore_Drm2_Display *disp);
+EAPI Eina_Bool ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int seq, long *sec, long *usec);
 
 # endif
 
