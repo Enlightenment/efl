@@ -1573,3 +1573,13 @@ eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
    if (path) *path = eina_tmpstr_add(tmpdirname);
    return EINA_TRUE;
 }
+
+
+EINA_API Eina_Bool
+eina_file_access(const char *path, Eina_File_Access_Mode mode)
+{
+   if (!path || !*path)
+     return EINA_FALSE;
+
+   return access(path, mode) == 0;
+}

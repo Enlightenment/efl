@@ -148,6 +148,21 @@ typedef enum {
   EINA_FILE_REMOVE      /**< This memory is to be released and any content will be lost. Subsequent accesses will succeed but return fresh memory as if accessed for the first time. This may not succeed if the filesystem does not support it. @since 1.8 */
 } Eina_File_Populate;
 
+/**
+ * @typedef Eina_File_Access_Mode
+ * @brief Type for enumeration of a file access mode.
+ * @details This type is used with eina_file_access(). Enumerations can be
+ * combined bitwise with the OR operator.
+ * @since 1.28
+ */
+typedef enum
+{
+  EINA_FILE_ACCESS_MODE_EXIST = 0,      /**< existence test: F_OK */
+  EINA_FILE_ACCESS_MODE_EXEC = 1 << 0,  /**< exec permission: X_OK */
+  EINA_FILE_ACCESS_MODE_WRITE = 1 << 1, /**< write permission: W_OK */
+  EINA_FILE_ACCESS_MODE_READ = 1 << 2,  /**< read permission: R_OK */
+} Eina_File_Access_Mode;
+
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
  * to when the app using eina is compiled. Exposing the path buffer below
  * can't safely and portably vary based on how/when you compile. It should
@@ -829,6 +844,30 @@ EINA_API void         eina_file_statgen_enable(void);
  * @since 1.23
  */
 EINA_API void         eina_file_statgen_disable(void);
+
+/**
+ * @brief Determine the accessibility of a file or path.
+ *
+ * @param[in] path The path to check.
+ * @param[in] mode Access permissions to be checked, or existence test.
+ * @return #EINA_TRUE it @p path satisfies the tests, #EINA_FALSE otherwise.
+ *
+ * On Linux, this function just calls the access() function. On Windows, it
+ * mimics as best as possible the behavior of access():
+ * - Existence is always checked.
+ * - As on Windows, a file is either read only or read/write, read permission
+ *   is equivalent to existence. so Write permission is equivalent to not
+ *   being read only.
+ * - A directory is always executable, except if greater privilege is needed.
+ *
+ * The @p mode has the same values than F_OK, X_OK, W_OK and R_OK, and the
+ * usage is the same than the access() function.
+ *
+ * If @p path is NULL or the epty string, this function returns #EINA_FALSE.
+ *
+ * @since 1.28
+ */
+EINA_API Eina_Bool    eina_file_access(const char *path, Eina_File_Access_Mode mode);
 
 /**
  * @}

@@ -897,6 +897,49 @@ EFL_START_TEST(eina_test_file_unlink)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_test_file_access)
+{
+   typedef struct
+   {
+      const char *path;
+      Eina_File_Access_Mode mode;
+      Eina_Bool expected;
+   } Paths;
+
+   Paths paths[] = {
+#ifdef _WIN32
+      { "c:\\Windows", EINA_FILE_ACCESS_MODE_EXIST, EINA_TRUE },
+      { "c:\\Windows", EINA_FILE_ACCESS_MODE_EXEC, EINA_TRUE },
+      { "c:\\Windows\\System32\\WDI", EINA_FILE_ACCESS_MODE_EXEC, EINA_FALSE },
+      { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_EXIST, EINA_TRUE },
+      { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_EXEC, EINA_TRUE },
+      { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_WRITE, EINA_TRUE },
+      { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_READ, EINA_TRUE },
+#else
+      { "/usr", EINA_FILE_ACCESS_MODE_EXIST, EINA_TRUE },
+      { "/usr", EINA_FILE_ACCESS_MODE_EXEC, EINA_TRUE },
+      { "/usr", EINA_FILE_ACCESS_MODE_READ, EINA_TRUE },
+      { "/root", EINA_FILE_ACCESS_MODE_WRITE, EINA_FALSE },
+#endif
+      { NULL, EINA_FILE_ACCESS_MODE_EXIST, EINA_FALSE },
+   };
+   size_t i;
+   Eina_Bool result;
+
+   result = eina_file_access(NULL, EINA_FILE_ACCESS_MODE_EXIST);
+   fail_if(result == EINA_TRUE);
+
+   result = eina_file_access("", EINA_FILE_ACCESS_MODE_EXIST);
+   fail_if(result == EINA_TRUE);
+
+   for (i = 0; paths[i].path; i++)
+     {
+        result = eina_file_access(paths[i].path, paths[i].mode);
+        fail_if(result != paths[i].expected);
+     }
+}
+EFL_END_TEST
+
 void
 eina_test_file(TCase *tc)
 {
@@ -914,5 +957,5 @@ eina_test_file(TCase *tc)
    tcase_add_test(tc, eina_test_file_statat);
    tcase_add_test(tc, eina_test_file_mktemp);
    tcase_add_test(tc, eina_test_file_unlink);
-
+   tcase_add_test(tc, eina_test_file_access);
 }

@@ -549,6 +549,93 @@ eina_file_cleanup(Eina_Tmpstr *path)
    return result;
 }
 
+static Eina_Bool
+_eina_file_is_binary(const char *path)
+{
+   HANDLE h;
+   HANDLE fm;
+   unsigned char *base;
+   unsigned char *base_nt;
+   LARGE_INTEGER sz;
+   WORD characteristics;
+   Eina_Bool res;
+
+   res = EINA_FALSE;
+
+   /*
+    * we parse the file to check if it is a PE file (EXE or DLL)
+    * and we finally check whether it's a DLL or not.
+    * Reference :
+    * https://docs.microsoft.com/en-us/windows/win32/debug/pe-format
+    */
+
+   h = CreateFile(path,
+                  GENERIC_READ,
+                  FILE_SHARE_READ,
+                  NULL,
+                  OPEN_EXISTING,
+                  FILE_ATTRIBUTE_NORMAL,
+                  NULL);
+   if (h == INVALID_HANDLE_VALUE)
+     return EINA_FALSE;
+
+   if (!GetFileSizeEx(h, &sz))
+     goto close_h;
+
+   /* a PE file must contain at least the DOS and NT headers */
+   if (sz.QuadPart < (LONGLONG)(sizeof(IMAGE_DOS_HEADER) + sizeof(IMAGE_NT_HEADERS)))
+     goto close_h;
+
+   fm = CreateFileMapping(h, NULL, PAGE_READONLY, 0, 0, NULL);
+   if (fm == NULL)
+     goto close_h;
+
+   base = (unsigned char *)MapViewOfFile(fm, FILE_MAP_READ, 0, 0, 0);
+   CloseHandle(fm);
+   if (base == NULL)
+     goto close_h;
+
+   /*
+    * the PE file begins with the DOS header.
+    * First magic number : the DOS header must begin with a DOS magic
+    * number, that is "MZ", that is 0x5a4d, stored in a WORD.
+    */
+   if (*((WORD *)base) != 0x5a4d)
+     goto unmap_view;
+
+   /*
+    * The position of the NT header is located at the offset 0x3c.
+    */
+   base_nt = base + *((DWORD *)(base + 0x3c));
+
+   /*
+    * The NT header begins with the magic number "PE\0\0", that is
+    * 0x00004550, stored in a DWORD.
+    */
+   if (*((DWORD *)base_nt) != 0x00004550)
+     goto unmap_view;
+
+   /*
+    * to get informations about executable (EXE or DLL), we look at
+    * the 'Characteristics' member of the NT header, located at the offset
+    * 22 (4 for the magic number, 18 for the offset) from base_nt.
+    * https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics
+    */
+   characteristics = *((WORD *)(base_nt + 4 + 18));
+
+   /*
+    * 0x0002 : if set, EXE or DLL
+    * 0x2000 : if set, DLL
+    */
+   res = (characteristics & 0x0002) && !(characteristics & 0x2000);
+
+ unmap_view:
+   UnmapViewOfFile(base);
+ close_h:
+   CloseHandle(h);
+   return res;
+}
+
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
@@ -1284,5 +1371,78 @@ eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
      }
 
    if (path) *path = eina_tmpstr_add(tmpdirname);
+   return EINA_TRUE;
+}
+
+EINA_API Eina_Bool
+eina_file_access(const char *path, Eina_File_Access_Mode mode)
+{
+   DWORD attr;
+
+   if (!path || !*path)
+     return EINA_FALSE;
+
+   if ((mode != EINA_FILE_ACCESS_MODE_EXIST) &&
+       ((mode >> 3) != 0))
+     return EINA_FALSE;
+
+   /*
+    * Always check for existence for both files and directories
+   */
+   attr = GetFileAttributes(path);
+   if (attr == INVALID_FILE_ATTRIBUTES)
+     return EINA_FALSE;
+
+   /*
+    * On Windows a file or path is either read/write or read only.
+    * So if it exists, it has at least read access.
+    * So do something only if mode is EXEC or WRITE
+    */
+
+   if (mode & EINA_FILE_ACCESS_MODE_EXEC)
+     {
+        if (attr & FILE_ATTRIBUTE_DIRECTORY)
+          {
+             /*
+              * Some directories have restricted access, like
+              * c:\Windows\System32\WDI
+              */
+             HANDLE h;
+             Eina_Bool ret = EINA_FALSE;
+
+             h = CreateFile(path,
+                            GENERIC_READ,
+                            FILE_SHARE_READ,
+                            NULL,
+                            OPEN_EXISTING,
+                            FILE_ATTRIBUTE_ARCHIVE | FILE_FLAG_BACKUP_SEMANTICS,
+                            NULL);
+             ret = (h == INVALID_HANDLE_VALUE);
+             CloseHandle(h);
+             if (ret)
+               return EINA_FALSE;
+          }
+        else
+          {
+             /*
+              * For files, check if it is a binary.
+              */
+             if (!_eina_file_is_binary(path))
+               return EINA_FALSE;
+          }
+     }
+
+   if (mode & EINA_FILE_ACCESS_MODE_WRITE)
+     {
+        DWORD attr;
+
+        attr = GetFileAttributes(path);
+        if (attr == INVALID_FILE_ATTRIBUTES)
+          return EINA_FALSE;
+
+        if (attr & FILE_ATTRIBUTE_READONLY)
+          return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
