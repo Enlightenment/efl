@@ -6,7 +6,7 @@ group { name: "elm/entry/path/separator/default";
             image.normal: "i-arrow-r";
             FIXED_SIZE(15, 15)
             aspect: 1.0 1.0;
-            color_class: "/fg/nmormal/fileselector/pathsep";
+            color_class: "/fg/normal/fileselector/pathsep";
          }
       }
    }

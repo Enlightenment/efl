@@ -337,7 +337,7 @@ color_tree {
       "/fg/normal/text-preedit";
       "/fg/normal/text-info";
       "/fg/normal/text-type";
-      "/fg/nmormal/fileselector/pathsep";
+      "/fg/normal/fileselector/pathsep";
       "/fg/selected/button/bar";
       "/fg/normal/button-anchor";
       "/fg/selected/thumb/bar";
@@ -1294,7 +1294,7 @@ color_classes {
 //   color_class { name: "/fg/disabled/flipselector/up";
 //      color:  96  96  96 255; }
 ///////////////////////////////////////////////////////////////////////////////
-//   color_class { name: "/fg/nmormal/fileselector/pathsep";
+//   color_class { name: "/fg/normal/fileselector/pathsep";
 //      color:  51 153 255 255; }
 ///////////////////////////////////////////////////////////////////////////////
 //   color_class { name: "/bg/normal/button";

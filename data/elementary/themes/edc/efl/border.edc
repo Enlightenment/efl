@@ -263,7 +263,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.to_x: "event.minimize";
             rel2.to_y: "shadow_base";
             align: 0.5 0.0;
-            color_class: "/fg/noemal/titlebar";
+            color_class: "/fg/normal/titlebar";
             min: 0 16;
             text { font: FNBD; size: 10;
                text_class: "title_bar";
@@ -330,7 +330,7 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.close";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color_class: "/fg/noemal/titlebar/close";
+            color_class: "/fg/normal/titlebar/close";
          }
          desc { "selected";
             inherit: "default";
@@ -345,7 +345,7 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "event.maximize";
             min: 15 15; max: 15 15;
             fixed: 1 1;
-            color_class: "/fg/noemal/titlebar/maximize";
+            color_class: "/fg/normal/titlebar/maximize";
          }
          desc { "selected";
             inherit: "default";
