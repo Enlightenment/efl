@@ -1,3 +1,9 @@
+// Define this to enable blur background to winlist
+//#define BLUR_WINLIST 1
+
+// Some values used if blur is enabled
+#define BLUR_WINLIST_AMOUNT "48"
+
 group { name: "e/widgets/winlist/main";
    parts {
       part { name: "base"; type: RECT; mouse_events: 0;
@@ -270,27 +276,27 @@ group { name: "e/widgets/winlist/large/bg";
             color: 255 255 255 255; // no cc
          }
       }
-/*
+#ifdef BLUR_WINLIST
       snapshot { "bg_blur";
          clip_to: "bg_clip";
          description { state: "default" 0.0;
-            filter.code: "padding_set { 0 } blur { state.pos * 50, color = '#ffff' }";
+            filter.code: "padding_set { 0 } blur { state.pos * "BLUR_WINLIST_AMOUNT", color = '#ffff' }";
             visible: 0;
          }
          desc { state: "visible" 0.0;
             inherit: "default" 0.0;
-            filter.code: "padding_set { 0 } blur { (1.0 - state.pos) * 50, color = '#ffff' }";
+            filter.code: "padding_set { 0 } blur { (1.0 - state.pos) * "BLUR_WINLIST_AMOUNT", color = '#ffff' }";
             visible: 1;
          }
       }
- */
+#endif
       part { name: "bg_darken"; type: RECT;
          clip_to: "bg_clip";
          description { state: "default" 0.0;
             color_class: "/dim/normal/winlist/base";
          }
       }
-/*
+#ifdef BLUR_WINLIST
       part { name: "shadow"; mouse_events: 0;
          clip_to: "bg_clip";
          description { state: "default" 0.0;
@@ -298,26 +304,26 @@ group { name: "e/widgets/winlist/large/bg";
             rel2.relative: 2.0 2.0;
             image.normal: "screen_circular_shadow.png";
             fill.smooth: 0;
-            color: 255 255 255 0; // no cc
             visible: 0;
          }
          description { state: "visible" 0.0;
             inherit;
             rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255; // no cc
             visible: 1;
          }
       }
- */
+#endif
    }
    programs {
       program { signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "bg_clip";
-//         target: "bg_blur";
-//         target: "shadow";
+#ifdef BLUR_WINLIST
+         target: "bg_blur";
+         target: "shadow";
+#endif
          after: "show2";
       }
       program { name: "show2";
@@ -327,8 +333,10 @@ group { name: "e/widgets/winlist/large/bg";
          action: STATE_SET "default" 0.0;
          transition: ACCELERATE 0.2 USE_DURATION_FACTOR 1 CURRENT;
          target: "bg_clip";
-//         target: "bg_blur";
-//         target: "shadow";
+#ifdef BLUR_WINLIST
+         target: "bg_blur";
+         target: "shadow";
+#endif
          after: "hide2";
       }
       program { name: "hide2";

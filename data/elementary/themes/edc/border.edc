@@ -1,3 +1,13 @@
+// Define this to enable a demo title blur
+//#define BLUR_TITLE 1
+// Define this to enable a demo blue behind everythnig - conflicts with title
+//#define BLUR_BEHIND 1
+
+// Some values used if blur is enabled
+#define BLUR_FORCE_ALPHA      160
+#define BLUR_TITLE_AMOUNT     "32"
+#define BLUR_BEHIND_AMOUNT    "32"
+
 group { name: "e/widgets/border/volume";
    images.image: "shadow_circle_vert.png" COMP;
    parts {
@@ -164,6 +174,15 @@ group { name: "e/widgets/border/default/border";
          }
       }
       WIN_SHAD("shadow_base", "shadow_clip", "win_shad_flat.png", 21, 21, 14, 28, 0.5)
+#ifdef BLUR_BEHIND
+      snapshot { name: "title-blur"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "top";
+            rel2.to: "bottom";
+            filter.code: "padding_set { 0 } blur { "BLUR_BEHIND_AMOUNT", color = '#ffff' }";
+         }
+      }
+#endif
       part { name: "client_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to_y: "e.swallow.client";
@@ -193,12 +212,23 @@ group { name: "e/widgets/border/default/border";
             rel2.offset: -1 -1;
          }
       }
+#ifdef BLUR_TITLE
+      snapshot { name: "title-blur"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel.to: "top";
+            filter.code: "padding_set { 0 } blur { "BLUR_TITLE_AMOUNT", color = '#ffff' }";
+         }
+      }
+#endif
       part { name: "top"; type: RECT; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
             rel2.to_y: "e.text.title";
             rel2.offset: -1 2;
             color_class: "/bg/normal/titlebar";
+#if defined(BLUR_TITLE) || defined(BLUR_BEHIND)
+            color: 255 255 255 BLUR_FORCE_ALPHA;
+#endif
             offscale;
          }
          description { state: "focused" 0.0;
@@ -494,6 +524,9 @@ group { name: "e/widgets/border/default/border";
          description { state: "default" 0.0;
             color_class: "/bg/normal/border";
             rel.to: "bottom";
+#if defined(BLUR_BEHIND)
+            color: 255 255 255 BLUR_FORCE_ALPHA;
+#endif
          }
          description { state: "focused" 0.0;
             inherit: "default" 0.0;
