@@ -3563,13 +3563,13 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 
         if (image)
           {
-             int w = 0, h = 0, stride, x, y;
+             int w = 0, h = 0, stride = 0, x, y;
              Eina_Bool unmap = EINA_FALSE;
-             Eina_Rw_Slice sl = {};
+             Eina_Rw_Slice sl = { 0 };
 
              if (efl_isa(image, EFL_CANVAS_IMAGE_CLASS))
                {
-                  Eina_Rect rect = {};
+                  Eina_Rect rect = { 0 };
 
                   unmap = EINA_TRUE;
                   rect.size = efl_gfx_buffer_size_get(image);
@@ -3578,12 +3578,14 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
                                           &stride);
                   w = rect.w;
                   h = rect.h;
+//                 printf("a %ix%i %p\n", w, h, sl.mem);
                }
              else
                {
                   evas_object_image_size_get(image, &w, &h);
                   stride = evas_object_image_stride_get(image);
                   sl.mem = evas_object_image_data_get(image, EINA_FALSE);
+//                 printf("b %ix%i %p\n", w, h, sl.mem);
                }
 
              if (sl.mem)
