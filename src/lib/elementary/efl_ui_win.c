@@ -3578,14 +3578,12 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
                                           &stride);
                   w = rect.w;
                   h = rect.h;
-//                 printf("a %ix%i %p\n", w, h, sl.mem);
                }
              else
                {
                   evas_object_image_size_get(image, &w, &h);
                   stride = evas_object_image_stride_get(image);
                   sl.mem = evas_object_image_data_get(image, EINA_FALSE);
-//                 printf("b %ix%i %p\n", w, h, sl.mem);
                }
 
              if (sl.mem)
