@@ -64,7 +64,7 @@ msgstr "オプション\n"
 
 #: src/lib/ecore/ecore_getopt.c:776
 msgid "Positional arguments:\n"
-msgstr ""
+msgstr "位置引数"
 
 #: src/lib/ecore/ecore_getopt.c:843
 #, fuzzy, c-format
@@ -241,7 +241,7 @@ msgstr "ビデオ"
 #: src/lib/evas/common/language/evas_language_utils.c:205
 #, fuzzy
 msgid "default:LTR"
-msgstr "default:LTR"
+msgstr "既定:LTR"
 
 #: src/lib/elementary/elc_naviframe.c:408
 msgid "Title"
