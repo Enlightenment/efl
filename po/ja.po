@@ -121,7 +121,7 @@ msgstr "パラメータがありません。\n"
 
 #: src/lib/ecore/ecore_getopt.c:1511
 msgid "missing callback function!\n"
-msgstr "コールバック関数がありません！\n"
+msgstr "コールバック関数がありません!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1542
 msgid "no version was defined.\n"
@@ -253,11 +253,11 @@ msgstr "サブタイトル"
 
 #: src/lib/elementary/elc_naviframe.c:966
 msgid "Back"
-msgstr "BACK"
+msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1755
 msgid "Up"
-msgstr "UP"
+msgstr ""
 
 #: src/lib/elementary/elc_fileselector.c:1769
 msgid "Home"
