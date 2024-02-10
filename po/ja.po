@@ -35,28 +35,28 @@ msgstr "Copyright:"
 
 #: src/lib/ecore/ecore_getopt.c:313
 msgid "License:"
-msgstr "License:"
+msgstr "ライセンス:"
 
 #: src/lib/ecore/ecore_getopt.c:499
 msgid "Type: "
-msgstr "Type:"
+msgstr "タイプ:"
 
 #: src/lib/ecore/ecore_getopt.c:575
 msgid "Default: "
-msgstr "Default:"
+msgstr "既定:"
 
 #: src/lib/ecore/ecore_getopt.c:602
 msgid "Choices: "
-msgstr "Choices: "
+msgstr "選択: "
 
 #: src/lib/ecore/ecore_getopt.c:640 src/lib/ecore/ecore_getopt.c:641
 msgid "No categories available."
-msgstr ""
+msgstr "利用可能なカテゴリはありません。"
 
 #: src/lib/ecore/ecore_getopt.c:645
 #, fuzzy
 msgid "Categories: "
-msgstr "Choices: "
+msgstr "カテゴリ: "
 
 #: src/lib/ecore/ecore_getopt.c:767
 msgid "Options:\n"
@@ -90,12 +90,12 @@ msgstr "エラー: "
 #: src/lib/ecore/ecore_getopt.c:1296 src/lib/ecore/ecore_getopt.c:1343
 #: src/lib/ecore/ecore_getopt.c:1463 src/lib/ecore/ecore_getopt.c:1504
 msgid "value has no pointer set.\n"
-msgstr "値にポインタがありません\n"
+msgstr "値にポインタがありません。\n"
 
 #: src/lib/ecore/ecore_getopt.c:1140 src/lib/ecore/ecore_getopt.c:1363
 #, c-format
 msgid "unknown boolean value %s.\n"
-msgstr "不明なboolean値 %s.\n"
+msgstr "不明なブール値 %s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1191 src/lib/ecore/ecore_getopt.c:1451
 #, c-format
