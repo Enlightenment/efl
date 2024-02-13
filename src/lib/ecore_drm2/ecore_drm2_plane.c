@@ -43,7 +43,7 @@ ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int
 {
    Eina_List *l;
    Ecore_Drm2_Plane *plane;
-   Ecore_Drm2_Plane_State *pstate;
+   Ecore_Drm2_Plane_State *pstate, *pstate_chosen = NULL;
 
    if (!_ecore_drm2_use_atomic) return NULL;
 
@@ -68,12 +68,12 @@ ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int
                continue;
 
              /* if we reach here, this FB can go on the cursor plane */
-             goto out;
+             pstate_chosen = pstate;
           }
         else if (pstate->type.value == DRM_PLANE_TYPE_OVERLAY)
           {
              /* there are no size checks for an overlay plane */
-             goto out;
+             pstate_chosen = pstate;
           }
         else if (pstate->type.value == DRM_PLANE_TYPE_PRIMARY)
           {
@@ -82,10 +82,15 @@ ecore_drm2_plane_assign(Ecore_Drm2_Output *output, Ecore_Drm2_Fb *fb, int x, int
                continue;
 
              /* if we reach here, this FB can go on the primary plane */
-             goto out;
+             pstate_chosen = pstate;
           }
      }
 
+   if (pstate_chosen)
+     {
+        pstate = pstate_chosen;
+        goto out;
+     }
    return NULL;
 
 out:
