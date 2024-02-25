@@ -64,7 +64,7 @@ msgstr "オプション\n"
 
 #: src/lib/ecore/ecore_getopt.c:776
 msgid "Positional arguments:\n"
-msgstr "位置引数"
+msgstr "位置引数:\n"
 
 #: src/lib/ecore/ecore_getopt.c:843
 #, fuzzy, c-format
