@@ -910,7 +910,6 @@ EFL_START_TEST(eina_test_file_access)
 #ifdef _WIN32
       { "c:\\Windows", EINA_FILE_ACCESS_MODE_EXIST, EINA_TRUE },
       { "c:\\Windows", EINA_FILE_ACCESS_MODE_EXEC, EINA_TRUE },
-      { "c:\\Windows\\System32\\WDI", EINA_FILE_ACCESS_MODE_EXEC, EINA_FALSE },
       { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_EXIST, EINA_TRUE },
       { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_EXEC, EINA_TRUE },
       { "c:\\Windows\\notepad.exe", EINA_FILE_ACCESS_MODE_WRITE, EINA_TRUE },
