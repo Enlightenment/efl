@@ -606,111 +606,19 @@ ecore_file_dir_get(const char *file)
 EAPI Eina_Bool
 ecore_file_can_read(const char *file)
 {
-   if (!file) return EINA_FALSE;
-   if (!access(file, R_OK)) return EINA_TRUE;
-   return EINA_FALSE;
+   return eina_file_access(file, EINA_FILE_ACCESS_MODE_READ);
 }
 
 EAPI Eina_Bool
 ecore_file_can_write(const char *file)
 {
-   if (!file) return EINA_FALSE;
-   if (!access(file, W_OK)) return EINA_TRUE;
-   return EINA_FALSE;
+   return eina_file_access(file, EINA_FILE_ACCESS_MODE_WRITE);
 }
 
 EAPI Eina_Bool
 ecore_file_can_exec(const char *file)
 {
-#ifdef _WIN32
-   HANDLE h;
-   HANDLE fm;
-   char *base;
-   char *base_nt;
-   LARGE_INTEGER sz;
-   WORD characteristics;
-#endif
-
-   if (!file || !*file) return EINA_FALSE;
-
-#ifdef _WIN32
-   /*
-    * we parse the file to check if it is a PE file (EXE or DLL)
-    * and we finally check whether it's a DLL or not.
-    * Reference :
-    * https://docs.microsoft.com/en-us/windows/win32/debug/pe-format
-    */
-   h = CreateFile(file, GENERIC_READ, FILE_SHARE_READ, NULL,
-                  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-   if (h == INVALID_HANDLE_VALUE)
-     goto test_bat;
-
-   if (!GetFileSizeEx(h, &sz))
-     goto close_h;
-
-   /* a PE file must have at least the DOS and NT headers */
-   if (sz.QuadPart < (LONGLONG)(sizeof(IMAGE_DOS_HEADER) + sizeof(IMAGE_NT_HEADERS)))
-     goto close_h;
-
-   fm = CreateFileMapping(h, NULL, PAGE_READONLY, 0, 0, NULL);
-   if (fm == NULL)
-     goto close_h;
-
-   base = (char *)MapViewOfFile(fm, FILE_MAP_READ, 0, 0, 0);
-   CloseHandle(fm);
-   if (base == NULL)
-     goto close_h;
-
-   /*
-    * the PE file begins with the DOS header.
-    * First magic number : the DOS header must begin with a DOS magic number,
-    * that is "MZ", that is 0x5a4d, stored in a WORD.
-    */
-   if (*((WORD *)base) != 0x5a4d)
-     goto unmap_view;
-
-   /*
-    * The position of the NT header is located at the offset 0x3c.
-    */
-   base_nt = base + *((DWORD *)(base + 0x3c));
-   /*
-    * The NT header begins with the magic number "PE\0\0", that is
-    * 0x00004550, stored in a DWORD.
-    */
-   if (*((DWORD *)base_nt) != 0x00004550)
-     goto unmap_view;
-
-   /*
-    * to get informations about executable (EXE or DLL), we look at
-    * the 'Characteristics' member of the NT header, located at the offset
-    * 22 (4 for the magic number, 18 for the offset) from base_nt.
-    * https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics
-    */
-   characteristics = *((WORD *)(base_nt + 4 + 18));
-
-   UnmapViewOfFile(base);
-   CloseHandle(h);
-
-   /*
-    * 0x0002 : if set, EXE or DLL
-    * 0x2000 : if set, DLL
-    */
-   if ((characteristics & 0x0002) && !(characteristics & 0x2000))
-     return EINA_TRUE;
- unmap_view:
-   UnmapViewOfFile(base);
- close_h:
-   CloseHandle(h);
- test_bat:
-   /*
-    * a .bat file, considered as an executable, is only a text file,
-    * so we rely on the extension. Not the best but we cannot do more.
-    */
-   return eina_str_has_extension(file, ".bat");
-#else
-   if (!access(file, X_OK)) return EINA_TRUE;
-#endif
-   return EINA_FALSE;
+   return eina_file_access(file, EINA_FILE_ACCESS_MODE_EXEC);
 }
 
 EAPI char *

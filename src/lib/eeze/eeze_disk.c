@@ -460,23 +460,23 @@ eeze_disk_removable_get(Eeze_Disk *disk)
 EAPI Eina_Bool
 eeze_disk_can_mount(void)
 {
-   if (sizeof(EEZE_MOUNT_BIN) == sizeof(""))
-     return EINA_FALSE;
-   return access(EEZE_MOUNT_BIN, X_OK | R_OK) == 0;
+   return eina_file_access(EEZE_MOUNT_BIN,
+                           EINA_FILE_ACCESS_MODE_EXEC |
+                           EINA_FILE_ACCESS_MODE_READ);
 }
 
 EAPI Eina_Bool
 eeze_disk_can_unmount(void)
 {
-   if (sizeof(EEZE_UNMOUNT_BIN) == sizeof(""))
-     return EINA_FALSE;
-   return access(EEZE_UNMOUNT_BIN, X_OK | R_OK) == 0;
+   return eina_file_access(EEZE_UNMOUNT_BIN,
+                           EINA_FILE_ACCESS_MODE_EXEC |
+                           EINA_FILE_ACCESS_MODE_READ);
 }
 
 EAPI Eina_Bool
 eeze_disk_can_eject(void)
 {
-   if (sizeof(EEZE_EJECT_BIN) == sizeof(""))
-     return EINA_FALSE;
-   return access(EEZE_EJECT_BIN, X_OK | R_OK) == 0;
+   return eina_file_access(EEZE_EJECT_BIN,
+                           EINA_FILE_ACCESS_MODE_EXEC |
+                           EINA_FILE_ACCESS_MODE_READ);
 }

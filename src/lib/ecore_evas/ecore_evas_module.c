@@ -22,15 +22,6 @@ static Eina_Module *_ecore_evas_vnc = NULL;
 # define ECORE_EVAS_ENGINE_NAME "module.so"
 #endif
 
-static inline Eina_Bool
-_file_exists(const char *file)
-{
-   if (!file) return EINA_FALSE;
-
-   if (access(file, F_OK) == -1) return EINA_FALSE;
-   return EINA_TRUE;
-}
-
 
 static Eina_Module *
 _ecore_evas_vnc_server_module_try_load(const char *prefix,
@@ -219,7 +210,7 @@ _ecore_evas_available_engines_get(void)
              eina_strbuf_append_printf(buf, "%s/%s/" ECORE_EVAS_ENGINE_NAME,
                                        info->path, MODULE_ARCH);
 
-             if (_file_exists(eina_strbuf_string_get(buf)))
+             if (eina_file_access(eina_strbuf_string_get(buf), EINA_FILE_ACCESS_MODE_EXIST))
                {
                   const char *name;
 

@@ -56,7 +56,7 @@ static Eina_Bool
 _eeze_mount_lock_mtab(void)
 {
 //    DBG("Locking mlock: %s", mnt_lock_get_linkfile(_eeze_mtab_lock));
-    if (EINA_LIKELY(access("/etc/mtab", W_OK)))
+    if (EINA_LIKELY(!eina_file_access("/etc/mtab", EINA_FILE_ACCESS_MODE_WRITE)))
       {
          INF("Insufficient privs for mtab lock, continuing without lock");
          return EINA_TRUE;

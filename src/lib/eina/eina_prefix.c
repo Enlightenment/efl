@@ -276,7 +276,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
    /* 1. is argv0 abs path? */
    if (!eina_file_path_relative(argv0))
      {
-        if (access(argv0, X_OK) == 0)
+        if (eina_file_access(argv0, EINA_FILE_ACCESS_MODE_EXEC))
           {
              INF("Executable argv0 is full path = %s", argv0);
              STRDUP_REP(pfx->exe_path, argv0);
@@ -296,7 +296,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
              eina_file_path_join(joined, len, buf2, argv0);
              if (realpath(joined, buf))
                {
-                  if (access(buf, X_OK) == 0)
+                  if (eina_file_access(buf, EINA_FILE_ACCESS_MODE_EXEC))
                     {
                        INF("Executable relative argv0=%s, cwd=%s, realpath=%s",
                            argv0, buf2, buf);
@@ -340,7 +340,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
         strcpy(buf2 + len + 1, argv0);
         if (realpath(buf2, buf))
           {
-             if (access(buf, X_OK) == 0)
+             if (eina_file_access(buf, EINA_FILE_ACCESS_MODE_EXEC))
                {
                   STRDUP_REP(pfx->exe_path, buf);
                   INF("Path %s is executable", pfx->exe_path);

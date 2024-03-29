@@ -1568,6 +1568,7 @@ eet_open(const char   *file,
      {
         if (mode == EET_FILE_MODE_READ_WRITE)
           {
+             /* do not use eina_file_access() here */
              ret = access(file, W_OK);
              if ((ret != 0) && (errno != ENOENT)) return NULL;
           }
@@ -1606,6 +1607,7 @@ open_error:
         size = 0;
 
         fp = NULL;
+        /* do not use eina_file_access() here */
         ret = access(file, W_OK);
         if ((ret != 0) && (errno != ENOENT)) return NULL;
      }

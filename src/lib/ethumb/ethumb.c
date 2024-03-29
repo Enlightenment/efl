@@ -852,7 +852,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
 
    sanitized_path = eina_file_path_sanitize(path);
    DBG("ethumb=%p, path=%s, key=%s", e, sanitized_path ? sanitized_path : "", key ? key : "");
-   if (sanitized_path && access(sanitized_path, R_OK))
+   if (sanitized_path && !eina_file_access(sanitized_path, EINA_FILE_ACCESS_MODE_READ))
      {
         free(sanitized_path);
         return EINA_FALSE;
