@@ -305,13 +305,19 @@ typedef struct
 typedef struct _Eo_Id_Data       Eo_Id_Data;
 typedef struct _Eo_Id_Table_Data Eo_Id_Table_Data;
 
+#define CACHENUM 2
+#define CACHELINE 64
+#define CACHELRU 1
+
 struct _Eo_Id_Table_Data
 {
    /* Cached eoid lookups */
+#if CACHENUM > 0
+   Eo_Id             cache_id[CACHENUM];
+   _Eo_Object       *cache_object[CACHENUM];
+#endif
    struct
      {
-        Eo_Id             id;
-        _Eo_Object       *object;
         const Eo         *isa_id;
         const Efl_Class  *klass;
         Eina_Bool         isa;
@@ -342,6 +348,100 @@ struct _Eo_Id_Data
 extern Eina_TLS          _eo_table_data;
 extern Eo_Id_Data       *_eo_table_data_shared;
 extern Eo_Id_Table_Data *_eo_table_data_shared_data;
+
+#ifndef CACHELRU
+static inline unsigned int
+_eo_cache_slot_get(void)
+{
+# if CACHENUM > 0
+  static unsigned int num = 0;
+
+  return (++num) % CACHENUM;
+# endif
+}
+#endif
+
+static inline void
+_eo_cache_prefetch(Eo_Id_Table_Data *tdata EINA_UNUSED)
+{
+#if CACHENUM > 0
+  int i;
+
+  for (i = 0; i < CACHENUM; i += (CACHELINE / sizeof(void *)))
+    {
+       EINA_PREFETCH(&(tdata->cache_id[i]));
+       if ((sizeof(void *) * CACHENUM) >= CACHELINE)
+         {
+            EINA_PREFETCH(&(tdata->cache_object[i]));
+         }
+    }
+#endif
+}
+
+static inline _Eo_Object *
+_eo_cache_find(Eo_Id_Table_Data *tdata EINA_UNUSED, Eo_Id obj_id EINA_UNUSED)
+{
+#if CACHENUM > 0
+  int i;
+
+  for (i = 0; i < CACHENUM; i++)
+    {
+       if (obj_id == tdata->cache_id[i]) return tdata->cache_object[i];
+    }
+#endif
+  return NULL;
+}
+
+static inline void
+_eo_cache_store(Eo_Id_Table_Data *tdata EINA_UNUSED, Eo_Id obj_id EINA_UNUSED, _Eo_Object *obj EINA_UNUSED)
+{
+#if CACHENUM > 0
+# ifdef CACHELRU
+#  if CACHENUM > 1
+   memmove(&tdata->cache_id[1], &tdata->cache_id[0],
+           (CACHENUM - 1) * sizeof(tdata->cache_id[0]));
+   memmove(&tdata->cache_object[1], &tdata->cache_object[0],
+           (CACHENUM - 1) * sizeof(tdata->cache_object[0]));
+#  endif
+   tdata->cache_id[0] = obj_id;
+   tdata->cache_object[0] = obj;
+# else
+   int slot = _eo_cache_slot_get();
+   tdata->cache_id[slot] = obj_id;
+   tdata->cache_object[slot] = obj;
+# endif
+#endif
+}
+
+static inline void
+_eo_cache_invalidate(Eo_Id_Table_Data *tdata EINA_UNUSED, Eo_Id obj_id EINA_UNUSED)
+{
+#if CACHENUM > 0
+  int i;
+
+  for (i = 0; i < CACHENUM; i++)
+    {
+      if (obj_id == tdata->cache_id[i])
+        {
+# ifdef CACHELRU
+           if (EINA_LIKELY((CACHENUM - 1 - i) > 0))
+             {
+                memmove(&tdata->cache_id[i], &tdata->cache_id[i + 1],
+                        (CACHENUM - 1 - i) * sizeof(tdata->cache_id[0]));
+                memmove(&tdata->cache_object[i], &tdata->cache_object[i + 1],
+                        (CACHENUM - 1 - i) * sizeof(tdata->cache_object[0]));
+             }
+           tdata->cache_id[CACHENUM - 1] = 0;
+           tdata->cache_object[CACHENUM - 1] = NULL;
+# else
+           tdata->cache_id[i] = 0;
+           tdata->cache_object[i] = NULL;
+# endif
+           return;
+        }
+    }
+#endif
+}
 
 static inline Eo_Id_Table_Data *
 _eo_table_data_table_new(Efl_Id_Domain domain)
@@ -672,11 +772,7 @@ _eo_id_release(const Eo_Id obj_id)
                          tdata->current_table = NULL;
                     }
                   // In case an object is destroyed, wipe out the cache
-                  if (tdata->cache.id == obj_id)
-                    {
-                       tdata->cache.id = 0;
-                       tdata->cache.object = NULL;
-                    }
+                  _eo_cache_invalidate(tdata, obj_id);
                   if ((Eo_Id)tdata->cache.isa_id == obj_id)
                     {
                        tdata->cache.isa_id = NULL;
@@ -722,11 +818,7 @@ _eo_id_release(const Eo_Id obj_id)
                          tdata->current_table = NULL;
                     }
                   // In case an object is destroyed, wipe out the cache
-                  if (tdata->cache.id == obj_id)
-                    {
-                       tdata->cache.id = 0;
-                       tdata->cache.object = NULL;
-                    }
+                  _eo_cache_invalidate(tdata, obj_id);
                   if ((Eo_Id)tdata->cache.isa_id == obj_id)
                     {
                        tdata->cache.isa_id = NULL;

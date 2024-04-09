@@ -94,19 +94,20 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
    EINA_PREFETCH(&(data->tables[0]));
    domain = (obj_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    tdata = _eo_table_data_table_get(data, domain);
-   EINA_PREFETCH(&(tdata->cache.id));
    if (EINA_UNLIKELY(!tdata)) goto err;
-
+   _eo_cache_prefetch(tdata);
 
    if (EINA_LIKELY(domain != EFL_ID_DOMAIN_SHARED))
      {
-        if (obj_id == tdata->cache.id)
-          return tdata->cache.object;
+        _Eo_Object *obj;
+
+        obj = _eo_cache_find(tdata, obj_id);
+        if (obj) return obj;
 
         mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        EINA_PREFETCH_NOCACHE(&(tdata->eo_ids_tables[mid_table_id])); //prefetch for line 119
+        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id])); //prefetch for line 119
         table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
-        EINA_PREFETCH_NOCACHE((tdata->eo_ids_tables[mid_table_id] + table_id)); //prefetch for line 121
+        EINA_PREFETCH((tdata->eo_ids_tables[mid_table_id] + table_id)); //prefetch for line 121
         entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
         generation = obj_id & MASK_GENERATIONS;
 
@@ -126,8 +127,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
                   if (entry->active && (entry->generation == generation))
                     {
                        // Cache the result of that lookup
-                       tdata->cache.object = entry->ptr;
-                       tdata->cache.id = obj_id;
+                       _eo_cache_store(tdata, obj_id, entry->ptr);
                        return entry->ptr;
                     }
                }
@@ -136,17 +136,19 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
      }
    else
      {
+        _Eo_Object *obj;
+
         eina_lock_take(&(_eo_table_data_shared_data->obj_lock));
-        if (obj_id == tdata->cache.id)
         // yes we return keeping the lock locked. that's why
         // you must call _eo_obj_pointer_done() wrapped
         // by EO_OBJ_DONE() to release
-          return tdata->cache.object;
+        obj = _eo_cache_find(tdata, obj_id);
+        if (obj) return obj;
 
         mid_table_id = (obj_id >> SHIFT_MID_TABLE_ID) & MASK_MID_TABLE_ID;
-        EINA_PREFETCH_NOCACHE(&(tdata->eo_ids_tables[mid_table_id]));
+        EINA_PREFETCH(&(tdata->eo_ids_tables[mid_table_id]));
         table_id = (obj_id >> SHIFT_TABLE_ID) & MASK_TABLE_ID;
-        EINA_PREFETCH_NOCACHE((tdata->eo_ids_tables[mid_table_id] + table_id));
+        EINA_PREFETCH((tdata->eo_ids_tables[mid_table_id] + table_id));
         entry_id = (obj_id >> SHIFT_ENTRY_ID) & MASK_ENTRY_ID;
         generation = obj_id & MASK_GENERATIONS;
 
@@ -167,8 +169,7 @@ _eo_obj_pointer_get(const Eo_Id obj_id, const char *func_name, const char *file,
                   if (entry->active && (entry->generation == generation))
                     {
                        // Cache the result of that lookup
-                       tdata->cache.object = entry->ptr;
-                       tdata->cache.id = obj_id;
+                       _eo_cache_store(tdata, obj_id, entry->ptr);
                        // yes we return keeping the lock locked. that's why
                        // you must call _eo_obj_pointer_done() wrapped
                        // by EO_OBJ_DONE() to release
