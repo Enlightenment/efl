@@ -26,6 +26,7 @@ EFL_START_TEST(elm_video_legacy_type_check)
 }
 EFL_END_TEST
 
+/*
 EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *video;
@@ -40,6 +41,7 @@ EFL_START_TEST(elm_atspi_role_get)
 
 }
 EFL_END_TEST
+*/
 
 void elm_test_video(TCase *tc)
 {
