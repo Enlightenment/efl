@@ -991,7 +991,7 @@ EFL_START_TEST(eo_magic_checks)
         simple_a_set((Efl_Class *) buf, 1);
         simple_a_set(efl_super((Efl_Class *) buf, SIMPLE_CLASS), ++i);
         simple_a_set(efl_super(SIMPLE_CLASS, (Efl_Class *) buf), ++i);
-        fail_if(efl_class_new(NULL, (Efl_Class *) buf), NULL);
+        fail_if(efl_class_new(NULL, (Efl_Class *) buf));
 
         efl_xref(obj, (Eo *) buf);
         efl_xunref(obj, (Eo *) buf);
