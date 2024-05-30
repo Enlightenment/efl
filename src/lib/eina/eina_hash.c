@@ -225,7 +225,7 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
 
    if (!hash->buckets)
      {
-        hash->buckets = calloc(sizeof (Eina_Rbtree *), hash->size);
+        hash->buckets = calloc(hash->size, sizeof(Eina_Rbtree *));
         if (!hash->buckets) goto on_error;
 
         hash_head = NULL;
