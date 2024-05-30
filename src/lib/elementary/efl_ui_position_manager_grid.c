@@ -122,7 +122,7 @@ _size_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
    pd->size_cache_dirty = EINA_FALSE;
    if (pd->size_cache)
      free(pd->size_cache);
-   pd->size_cache = calloc(sizeof(int), eina_inarray_count(pd->group_cache));
+   pd->size_cache = calloc(eina_inarray_count(pd->group_cache), sizeof(int));
 
    for (unsigned int i = 0; i < eina_inarray_count(pd->group_cache); ++i)
      {
