@@ -58,7 +58,10 @@ EFL_START_TEST(evas_render_engines)
    for (itr = built_engines; *itr != NULL; itr++)
      {
         Eina_Bool found = _find_list(lst, *itr);
-        fail_if(!found, "module should be built, but was not found: %s", *itr);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
+       fail_if(!found, "module should be built, but was not found: %s", *itr);
+#pragma GCC diagnostic pop
      }
 
    evas_render_method_list_free(lst);
@@ -72,7 +75,10 @@ EFL_START_TEST(evas_render_lookup)
    for (itr = built_engines; *itr != NULL; itr++)
      {
         int id = evas_render_method_lookup(*itr);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         fail_if(id == 0, "could not load engine: %s", *itr);
+#pragma GCC diagnostic pop
      }
 }
 EFL_END_TEST

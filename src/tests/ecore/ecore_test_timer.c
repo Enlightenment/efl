@@ -53,18 +53,27 @@ _timer2_cb(void *data)
      timer->num_elem = 0;
 
    // check add/delay timer 2
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(timer->add_timer2 > 1, "Error add/delay timer");
+#pragma GCC diagnostic pop
 
    // check set new delay for timer 1
    ecore_timer_delay(timer->timer1, timer->delay_1[timer->num_elem]);
 
    // check set new interval for timer 1
    ecore_timer_interval_set(timer->timer1, timer->interval_1[timer->num_elem]);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!EINA_DBL_EQ(timer->interval_1[timer->num_elem], ecore_timer_interval_get(timer->timer1)), "Error set new interval");
+#pragma GCC diagnostic pop
 
    // check set new precision
    ecore_timer_precision_set(timer->precision[timer->num_elem]);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!EINA_DBL_EQ(timer->precision[timer->num_elem], ecore_timer_precision_get()), "Error set new precision");
+#pragma GCC diagnostic pop
 
    // check removal timer 2
    if (ecore_timer_del(timer->timer2))
@@ -100,7 +109,10 @@ _timer4_cb(void *data)
    // check frezze/thaw timer 3
    if (freeze_thaw)
    {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
       fail_if(timer->check_freeze_thaw_timer3 != timer->count_timer3, "Error frezze/thaw timer");
+#pragma GCC diagnostic pop
 
       ecore_timer_thaw(timer->timer3);
       freeze_thaw = 0;
@@ -153,7 +165,10 @@ EFL_START_TEST(ecore_test_timers)
    timer.timer4 = ecore_timer_add(TIMEOUT_4, _timer4_cb, &timer);
    timer.timer5 = ecore_timer_add(TIMEOUT_5, _timer5_cb, &timer);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if((!timer.timer1 || !timer.timer2 || !timer.timer3 || !timer.timer4 || !timer.timer5), "Error add timer\n");
+#pragma GCC diagnostic pop
 
    ecore_main_loop_begin();
 
@@ -207,7 +222,10 @@ EFL_START_TEST(ecore_test_timer_inside_call)
    c->t = ecore_timer_add(0.01, _timeri_cb, c);
    ecore_timer_add(1.0, timeout_timer_cb, NULL);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!c->t, "Error add timer\n");
+#pragma GCC diagnostic pop
 
    ecore_main_loop_begin();
 }
@@ -217,7 +235,10 @@ EFL_END_TEST
 EFL_START_TEST(ecore_test_timer_valid_callbackfunc)
 {
    Ecore_Timer *t = NULL;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if((t = ecore_timer_add(0.5, NULL, NULL)), "ERROR: Invalid callback func!\n");
+#pragma GCC diagnostic pop
 }
 EFL_END_TEST
 
@@ -259,7 +280,10 @@ _timer_cb(void *data)
 {
    count++;
    int num = (intptr_t) data;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if (num != count, "Error timer is called out of order");
+#pragma GCC diagnostic pop
    if (count == 8) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }

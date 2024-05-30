@@ -282,8 +282,11 @@ EFL_START_TEST(evas_object_image_loader_orientation)
 
         r_d = evas_object_image_data_get(rot, EINA_FALSE);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         fail_if(res[i].compare_func(d, r_d, r_w, r_h),
                 "Image orientation test failed: exif orientation flag: %s\n", res[i].desc);
+#pragma GCC diagnostic pop
      }
 
    evas_object_del(orig);
@@ -332,8 +335,11 @@ EFL_START_TEST(evas_object_image_orient)
 
         r_d = evas_object_image_data_get(orig, EINA_FALSE);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         fail_if(res[i].compare_func(d, r_d, r_w, r_h),
                 "Image orientation test failed: orient flag: %s\n", res[i].desc);
+#pragma GCC diagnostic pop
      }
 
    evas_object_del(orig);
@@ -622,8 +628,11 @@ EFL_START_TEST(evas_object_image_partially_load_orientation)
         evas_object_image_size_get(rot, &r_w, &r_h);
         fail_if(w * h != r_w * r_h);
         r_d = evas_object_image_data_get(rot, EINA_FALSE);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         fail_if(res[i].compare_func(d, r_d, r_w, r_h),
                 "Image orientation partially load test failed: exif orientation flag: %s\n", res[i].desc);
+#pragma GCC diagnostic pop
         evas_object_del(rot);
      }
 
@@ -954,6 +963,8 @@ EFL_START_TEST(evas_object_image_map_unmap)
         orig = sorig.mem;
 
         // first quarter: same image
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         for (y = 0; y < h / 4; y++)
           for (x = 0; x < w; x++)
             fail_if(orig[y*stride/4 + x] != dest[y*stride2/4+x], "pixels differ [1]");
@@ -983,6 +994,7 @@ EFL_START_TEST(evas_object_image_map_unmap)
              fail_if(dest[y*stride/4 + x] != 0xFF00FF00, "pixels differ [3]");
              fail_if(dest[(y+1)*stride/4 + x] != 0xFFFF0000, "pixels differ [4]");
           }
+#pragma GCC diagnostic pop
 
         efl_gfx_buffer_unmap(o, sorig);
         efl_gfx_buffer_unmap(o2, sdest);

@@ -172,7 +172,10 @@ EFL_START_TEST(efl_io_model_test_test_monitor_add)
    filemodel = efl_add(EFL_IO_MODEL_CLASS,
                        efl_main_loop_get(),
                        efl_io_model_path_set(efl_added, tmpdir));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
+#pragma GCC diagnostic pop
 
    efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_ADDED, &_children_added_cb, filemodel);
    efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_REMOVED, &_children_removed_cb, NULL);

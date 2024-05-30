@@ -172,13 +172,16 @@ _assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx
    unsigned int i, len;
    const Efl_Net_Ip_Address *o;
 
-   if (ctx->err != err)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
+  if (ctx->err != err)
      _ck_assert_failed(file, line, "Failed",
                        "Expected error=%d (%s), got %d (%s) resolving=%s",
                        err, err ? eina_error_msg_get(err) : "success",
                        ctx->err, ctx->err ? eina_error_msg_get(ctx->err) : "success",
                        string,
                        NULL);
+#pragma GCC diagnostic pop
 
    if (err) return;
 
@@ -191,11 +194,14 @@ _assert_found_internal(const char *file, int line, const struct resolve_ctx *ctx
    EINA_VALUE_ARRAY_FOREACH(ctx->results, len, i, o)
      fprintf(stderr, "result %u: %s\n", i, efl_net_ip_address_string_get(o));
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    _ck_assert_failed(file, line, "Failed",
                      "Expected found=%hhu, got %hhu resolving=%s",
                      expected, found,
                      string,
                      NULL);
+#pragma GCC diagnostic pop
 }
 
 static Eina_Value

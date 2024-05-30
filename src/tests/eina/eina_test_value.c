@@ -2357,13 +2357,22 @@ EFL_START_TEST(eina_value_test_hash)
    fail_unless(str != NULL);
 
    snprintf(buf, sizeof(buf), "first: %d", (int) '!');
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    snprintf(buf, sizeof(buf), "second: %d", (int) '-');
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    snprintf(buf, sizeof(buf), "third: %d", (int) 's');
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    free(str);
 
@@ -2380,19 +2389,34 @@ EFL_START_TEST(eina_value_test_hash)
    fail_unless(str != NULL);
 
    eina_strlcpy(buf, "a: Enlightenment.org", sizeof(buf));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    eina_strlcpy(buf, "b: X11", sizeof(buf));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    eina_strlcpy(buf, "c: Pants", sizeof(buf));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    eina_strlcpy(buf, "d: on!!!", sizeof(buf));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    eina_strlcpy(buf, "e: k-s", sizeof(buf));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strstr(str, buf) != NULL, "Couldn't find '%s' in '%s'", buf, str);
+#pragma GCC diagnostic pop
 
    free(str);
 

@@ -151,12 +151,18 @@ EFL_START_TEST(evas_filter_parser)
    fprintf(stderr, "Evas filters tests: end of invalid cases.\n");
    evas_filter_program_del(pgm);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    for (int k = 0; good[k]; k++)
      CHKGOOD(good[k]);
+#pragma GCC diagnostic pop
 
    fprintf(stderr, "Evas filters tests: start invalid cases. Ignore the following ERRs.\n");
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    for (int k = 0; bad[k]; k++)
      CHKBAAD(bad[k]);
+#pragma GCC diagnostic pop
    fprintf(stderr, "Evas filters tests: end of invalid cases.\n");
 
    // All colors -- FIXME: need to check actual color value
@@ -193,7 +199,10 @@ EFL_START_TEST(evas_filter_parser)
      {
         char buf[64];
         sprintf(buf, "blend { color = '%s' }", colors[c]);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         CHKGOOD(buf);
+#pragma GCC diagnostic pop
      }
 
    // fillmodes are parsed when converting from instructions to commands
@@ -303,10 +312,13 @@ EFL_START_TEST(evas_filter_text_padding_test)
         evas_object_geometry_get(to, NULL, NULL, &W, &H);
         //fprintf(stderr, "Case %d: %dx%d for padding %d,%d,%d,%d\n", k, W, H, l, r, t, b);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         fail_if((l != tc->l) || (r != tc->r) || (t != tc->t) || (b != tc->b),
                 "Failed on invalid padding with '%s'\n", tc->code);
         fail_if((W != (tc->l + tc->r + w)) || (H != (tc->t + tc->b + h)),
                 "Failed on invalid geometry with '%s'\n", tc->code);
+#pragma GCC diagnostic pop
      }
 
    END_FILTER_TEST();
@@ -384,7 +396,10 @@ EFL_START_TEST(evas_filter_text_render_test)
         struct Filter_Test_Case *tc = &(_test_cases[k]);
         w = h = 0;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         CHKGOOD(tc->code);
+#pragma GCC diagnostic pop
         if (tc->source)
           {
              o = evas_object_rectangle_add(evas);
@@ -410,8 +425,11 @@ EFL_START_TEST(evas_filter_text_render_test)
         evas_object_resize(rect, w, h);
 
         ecore_evas_manual_render(ee);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
         fail_if(!_ecore_evas_pixels_check(ee),
                 "Render test failed with: [%dx%d] '%s'", w, h, tc->code);
+#pragma GCC diagnostic pop
 
         evas_object_del(o);
         evas_object_del(rect);
@@ -453,19 +471,28 @@ EFL_START_TEST(evas_filter_state_test)
    /* check pixels */
    ecore_evas_manual_render(ee);
    pixels = ecore_evas_buffer_pixels_get(ee);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!pixels || (*pixels != 0xFFFF0000),
            "state render test failed: %p (%#x)", pixels, pixels ? *pixels : 0);
+#pragma GCC diagnostic pop
 
    efl_gfx_filter_state_get(to, &s1, &v1, &s2, &v2, &p);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_unless(strequal(s1, "state1") && strequal(s2, "state2") && EINA_DBL_EQ(v1, 0.0) && EINA_DBL_EQ(v2, 1.0) && EINA_DBL_EQ(p, 0.5),
                "got: %s %f %s %f %f", s1, v1, s2, v2, p);
+#pragma GCC diagnostic pop
 
    /* data test */
    efl_gfx_filter_data_set(to, "data", "{r=0, g=255, b=0, a=255}", 1);
    ecore_evas_manual_render(ee);
    pixels = ecore_evas_buffer_pixels_get(ee);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!pixels || (*pixels != 0xFF00FF00),
            "state render test failed: %p (%#x)", pixels, pixels ? *pixels : 0);
+#pragma GCC diagnostic pop
 
    END_FILTER_TEST();
 }

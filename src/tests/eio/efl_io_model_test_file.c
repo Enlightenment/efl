@@ -168,7 +168,10 @@ EFL_START_TEST(efl_io_model_test_test_file)
 
    filemodel = efl_add(EFL_IO_MODEL_CLASS, efl_main_loop_get(),
                        efl_io_model_path_set(efl_added, EFL_MODEL_TEST_FILENAME_PATH));
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
+#pragma GCC diagnostic pop
 
    handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
 
