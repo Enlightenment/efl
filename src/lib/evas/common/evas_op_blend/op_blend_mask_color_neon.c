@@ -30,7 +30,7 @@ _op_blend_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, in
    uint16x8_t temp1_16x8;
    uint16x8_t x255_16x8;
    uint32x2_t c_32x2;
-   uint32x2_t m_32x2;
+   uint32x2_t m_32x2 = { 0, 0 };
    uint32x4_t a_32x4;
    uint32x4_t ad_32x4;
    uint32x4_t cond_32x4;
@@ -294,7 +294,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, 
    uint16x8_t m1_16x8;
    uint16x8_t m_16x8;
    uint32x2_t c_32x2;
-   uint32x2_t m_32x2;
+   uint32x2_t m_32x2 = { 0,  0 };
    uint32x4_t d_32x4;
    uint32x4_t dc_32x4;
    uint32x4_t m_32x4;
@@ -695,7 +695,7 @@ _op_blend_rel_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d
    uint16x8_t temp1_16x8;
    uint16x8_t x255_16x8;
    uint32x2_t c_32x2;
-   uint32x2_t m_32x2;
+   uint32x2_t m_32x2 = { 0, 0 };
    uint32x4_t a_32x4;
    uint32x4_t ad_32x4;
    uint32x4_t cond_32x4;

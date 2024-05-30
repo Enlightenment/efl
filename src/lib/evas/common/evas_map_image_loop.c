@@ -10,7 +10,7 @@
 
 # ifdef SCALE_USING_NEON
 #  ifndef COLBLACK
-   uint16x4_t temp_16x4;
+   uint16x4_t temp_16x4 = { 0, 0, 0, 0 };
    uint16x4_t rv_16x4;
    uint16x4_t val1_16x4;
    uint16x4_t val3_16x4;
@@ -19,8 +19,8 @@
    uint16x8_t val2_val4_16x8;
    uint16x8_t x255_16x8;
    uint32x2_t res_32x2;
-   uint32x2_t val1_val3_32x2;
-   uint32x2_t val2_val4_32x2;
+   uint32x2_t val1_val3_32x2 = { 0, 0 };
+   uint32x2_t val2_val4_32x2 = { 0, 0 };
    uint8x8_t val1_val3_8x8;
    uint8x8_t val2_val4_8x8;
 
@@ -33,7 +33,7 @@
    uint16x4_t c1_val3_16x4;
    uint16x8_t c1_16x8;
    uint16x8_t c1_val3_16x8;
-   uint32x2_t c1_32x2;
+   uint32x2_t c1_32x2 = { 0, 0 };
    uint8x8_t c1_8x8;
    uint8x8_t c1_val3_8x8;
 
@@ -49,7 +49,7 @@
    uint16x8_t c1_val1_16x8;
    uint16x8_t c2_val3_16x8;
    uint16x8_t cv_rv_16x8;
-   uint32x2_t c1_c2_32x2;
+   uint32x2_t c1_c2_32x2 = { 0, 0 };
    uint8x8_t c1_c2_8x8;
    uint8x8_t val3_8x8;
    uint16x8_t val3_16x8;
@@ -247,21 +247,21 @@
 #  ifndef COLBLACK
 #   ifdef COLMUL
    uint16x4_t x255_16x4;
-   uint16x4_t temp_16x4;
+   uint16x4_t temp_16x4 = { 0, 0, 0, 0 };
    uint16x8_t cval_16x8;
    uint32x2_t res_32x2;
    uint8x8_t cval_8x8;
    uint16x4_t c1_16x4;
    uint16x4_t cval_16x4;
    uint16x4_t val1_16x4;
-   uint32x2_t val1_32x2;
+   uint32x2_t val1_32x2 = { 0, 0 };
    uint8x8_t val1_8x8;
 
    x255_16x4 = vdup_n_u16(0xff);
 #    ifdef COLSAME
    uint16x8_t c1_16x8;
    uint16x8_t val1_16x8;
-   uint32x2_t c1_32x2;
+   uint32x2_t c1_32x2 = { 0, 0 };
    uint8x8_t c1_8x8;
 
    c1_32x2 = vset_lane_u32(c1, c1_32x2, 0);
@@ -277,7 +277,7 @@
    uint16x4_t cv_16x4;
    uint16x8_t c1_c2_16x8;
    uint16x8_t val1_16x8;
-   uint32x2_t c1_c2_32x2;
+   uint32x2_t c1_c2_32x2 = { 0, 0 };
    uint8x8_t c1_c2_8x8;
 
    c1_c2_32x2 = vset_lane_u32(c1, c1_c2_32x2, 0);

@@ -13,7 +13,7 @@ _op_blend_pas_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, 
    uint16x8_t temp1_16x8;
    uint16x8_t x255_16x8;
    uint32_t m_32;
-   uint32x2_t m_32x2;
+   uint32x2_t m_32x2 = {0, 0};
    uint32x4_t a_32x4;
    uint32x4_t ad_32x4;
    uint32x4_t cond_32x4;
@@ -217,7 +217,7 @@ _op_blend_p_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, in
    uint16x8_t temp0_16x8;
    uint16x8_t temp1_16x8;
    uint16x8_t x255_16x8;
-   uint32x2_t m_32x2;
+   uint32x2_t m_32x2 = { 0,  0 };
    uint32x4_t a_32x4;
    uint32x4_t ad_32x4;
    uint32x4_t cond_32x4;
