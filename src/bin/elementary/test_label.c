@@ -487,7 +487,7 @@ char * get_fit_status(Eo * textblock)
 void
 test_textblock_fit(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-  app = calloc(sizeof(APP), 1);
+   app = calloc(1, sizeof(APP));
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
@@ -616,7 +616,7 @@ static void _btn_clicked_mem(void *data EINA_UNUSED, Eo *obj, void *eventInfo EI
 void
 test_text_memory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   app_mem = calloc(sizeof(APP_MEM), 1);
+   app_mem = calloc(1, sizeof(APP_MEM));
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
