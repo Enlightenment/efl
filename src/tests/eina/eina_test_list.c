@@ -219,84 +219,85 @@ EFL_END_TEST
 
 EFL_START_TEST(eina_test_list_merge)
 {
-   Eina_List *l1;
-   Eina_List *l2;
-   Eina_List *l3;
-   Eina_List *l4;
-   Eina_List *l5;
-   int data[] = { 6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008 };
-   int i;
+  Eina_List *l1;
+  Eina_List *l2;
+  Eina_List *l3;
+  Eina_List *l4;
+  Eina_List *l5;
+  int data[] = { 6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008 };
+  int i;
 
 
-   l1 = eina_list_append(NULL, &data[0]);
-   l1 = eina_list_append(l1, &data[1]);
-   l1 = eina_list_append(l1, &data[2]);
-   l1 = eina_list_append(l1, &data[3]);
-      fail_if(l1 == NULL);
+  l1 = eina_list_append(NULL, &data[0]);
+  l1 = eina_list_append(l1, &data[1]);
+  l1 = eina_list_append(l1, &data[2]);
+  l1 = eina_list_append(l1, &data[3]);
+  fail_if(l1 == NULL);
 
-   l2 = eina_list_append(NULL, &data[4]);
-   l2 = eina_list_append(l2, &data[5]);
-      fail_if(l2 == NULL);
+  l2 = eina_list_append(NULL, &data[4]);
+  l2 = eina_list_append(l2, &data[5]);
+  fail_if(l2 == NULL);
 
-   l1 = eina_list_merge(l1, l2);
-      fail_if(l1 == NULL);
-      fail_if(eina_list_count(l1) != 6);
-   for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
-      fail_if(l2->data != &data[i]);
-      fail_if(i != 6);
-      fail_if(l2 != NULL);
+  l1 = eina_list_merge(l1, l2);
+  fail_if(l1 == NULL);
+  fail_if(eina_list_count(l1) != 6);
+  for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
+    fail_if(l2->data != &data[i]);
 
-      eina_list_free(l1);
+  fail_if(i != 6);
+  fail_if(l2 != NULL);
 
-   l1 = eina_list_append(NULL, &data[0]);
-   l1 = eina_list_append(l1, &data[1]);
-      fail_if(l1 == NULL);
+  eina_list_free(l1);
 
-   l2 = eina_list_append(NULL, &data[2]);
-   l2 = eina_list_append(l2, &data[3]);
-   l2 = eina_list_append(l2, &data[4]);
-   l2 = eina_list_append(l2, &data[5]);
-      fail_if(l2 == NULL);
+  l1 = eina_list_append(NULL, &data[0]);
+  l1 = eina_list_append(l1, &data[1]);
+  fail_if(l1 == NULL);
 
-   l1 = eina_list_merge(l1, l2);
-      fail_if(l1 == NULL);
-      fail_if(eina_list_count(l1) != 6);
-   for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
-      fail_if(l2->data != &data[i]);
-      fail_if(i != 6);
-      fail_if(l2 != NULL);
+  l2 = eina_list_append(NULL, &data[2]);
+  l2 = eina_list_append(l2, &data[3]);
+  l2 = eina_list_append(l2, &data[4]);
+  l2 = eina_list_append(l2, &data[5]);
+  fail_if(l2 == NULL);
 
-   l3 = eina_list_append(NULL, &data[6]);
-   l3 = eina_list_append(l3, &data[7]);
-   l3 = eina_list_append(l3, &data[8]);
+  l1 = eina_list_merge(l1, l2);
+  fail_if(l1 == NULL);
+  fail_if(eina_list_count(l1) != 6);
+  for (i = 0, l2 = l1; ((l2 != NULL) && (i < 6)); ++i, l2 = l2->next)
+    fail_if(l2->data != &data[i]);
 
-   l4 = eina_list_append(NULL, &data[9]);
-   l4 = eina_list_append(l4, &data[10]);
-   l4 = eina_list_append(l4, &data[11]);
+  fail_if(i != 6);
+  fail_if(l2 != NULL);
 
-   l5 = eina_list_append(NULL, &data[12]);
-   l5 = eina_list_append(l5, &data[13]);
-   l5 = eina_list_append(l5, &data[14]);
+  l3 = eina_list_append(NULL, &data[6]);
+  l3 = eina_list_append(l3, &data[7]);
+  l3 = eina_list_append(l3, &data[8]);
 
-   l1 = eina_list_sort(l1, -1, eina_int_cmp);
-   l3 = eina_list_sort(l3, -1, eina_int_cmp);
-   l4 = eina_list_sort(l4, -1, eina_int_cmp);
-   l5 = eina_list_sort(l5, -1, eina_int_cmp);
+  l4 = eina_list_append(NULL, &data[9]);
+  l4 = eina_list_append(l4, &data[10]);
+  l4 = eina_list_append(l4, &data[11]);
 
-   l1 = eina_list_sorted_merge(l1, l3, eina_int_cmp);
-      fail_if(l1 == NULL);
-      fail_if(eina_list_count(l1) != 9);
+  l5 = eina_list_append(NULL, &data[12]);
+  l5 = eina_list_append(l5, &data[13]);
+  l5 = eina_list_append(l5, &data[14]);
 
-   l1 = eina_list_sorted_merge(l1, l4, eina_int_cmp);
-      fail_if(l1 == NULL);
-      fail_if(eina_list_count(l1) != 12);
+  l1 = eina_list_sort(l1, -1, eina_int_cmp);
+  l3 = eina_list_sort(l3, -1, eina_int_cmp);
+  l4 = eina_list_sort(l4, -1, eina_int_cmp);
+  l5 = eina_list_sort(l5, -1, eina_int_cmp);
 
-   l1 = eina_list_sorted_merge(l1, l5, eina_int_cmp);
-      fail_if(l1 == NULL);
-      fail_if(eina_list_count(l1) != 15);
+  l1 = eina_list_sorted_merge(l1, l3, eina_int_cmp);
+  fail_if(l1 == NULL);
+  fail_if(eina_list_count(l1) != 9);
 
-      fail_if(!eina_list_sorted_check(l1));
+  l1 = eina_list_sorted_merge(l1, l4, eina_int_cmp);
+  fail_if(l1 == NULL);
+  fail_if(eina_list_count(l1) != 12);
 
+  l1 = eina_list_sorted_merge(l1, l5, eina_int_cmp);
+  fail_if(l1 == NULL);
+  fail_if(eina_list_count(l1) != 15);
+
+  fail_if(!eina_list_sorted_check(l1));
 }
 EFL_END_TEST
 
