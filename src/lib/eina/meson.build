@@ -371,13 +371,17 @@ eina_ext_deps += [iconv]
 execinfo = cc.find_library('execinfo', required: false)
 eina_ext_deps += [execinfo]
 
+iconv_c_args = ''
 if sys_windows == true
    bcrypt = cc.find_library('bcrypt', required: true)
    eina_ext_deps += [bcrypt]
+   if iconv.found()
+     iconv_c_args = '-DWINICONV_CONST='
+   endif
 endif
 
 eina_lib = library('eina', eina_src,
-  c_args : [package_c_args, '-DEINA_BUILD'],
+  c_args : [package_c_args, '-DEINA_BUILD', iconv_c_args],
   include_directories : config_dir,
   dependencies: eina_ext_deps + [eina_deps, evil],
   install: true,
