@@ -4,6 +4,10 @@
 
 #include "common.h"
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv */
+#endif
+
 Eina_Bool
 ex_is_original_app(void)
 {

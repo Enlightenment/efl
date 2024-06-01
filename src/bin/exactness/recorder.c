@@ -16,6 +16,11 @@
 # include <sys/sysinfo.h>
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv */
+# undef HAVE_DLSYM
+#endif
+
 #include <Eina.h>
 #include <Eo.h>
 #include <Evas.h>
