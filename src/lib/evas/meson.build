@@ -209,8 +209,30 @@ endif
 if get_option('opengl') != 'none'
   if get_option('opengl') == 'es-egl'
     config_h.set('GL_GLES', '1')
-    gl_deps += dependency('glesv2')
-    gl_deps += dependency('egl')
+    # Angle library does not provide .pc files
+    if sys_windows
+      glesv2_dep = cc.find_library(
+        'GLESv2',
+        has_headers: 'GLES2/gl2.h'
+      )
+      if glesv2_dep.found()
+        gl_deps += glesv2_dep
+      else
+        error('GLES 2.0 library not found. Please make sure Angle library is installed, or disable OpenGL support.')
+      endif
+      egl_dep = cc.find_library(
+        'EGL',
+        has_headers: 'EGL/egl.h'
+      )
+      if egl_dep.found()
+        gl_deps += egl_dep
+      else
+        error('EGL library not found. Please make sure Angle library is installed, or disable OpenGL support.')
+      endif
+    else
+      gl_deps += dependency('glesv2')
+      gl_deps += dependency('egl')
+    endif
   else
     gl_deps += dependency('gl')
   endif
