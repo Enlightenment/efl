@@ -179,6 +179,7 @@ _drag_start(void *data,
      elm_object_focus_set(data, EINA_TRUE);
    efl_event_callback_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, NULL);
    _drag_value_fetch(data);
+   elm_widget_scroll_freeze_push(data);
 }
 
 static void
@@ -189,6 +190,7 @@ _drag_stop(void *data,
 {
    _drag_value_fetch(data);
    efl_event_callback_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
+   elm_widget_scroll_freeze_pop(data);
 }
 
 static void
@@ -503,7 +505,10 @@ _spacer_move_cb(void *data,
         if (d > (_elm_config->thumbscroll_threshold - 1))
           {
              if (!sd->frozen)
-              sd->frozen = EINA_TRUE;
+               {
+                  elm_widget_scroll_freeze_push(data);
+                  sd->frozen = EINA_TRUE;
+               }
              ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
           }
 
@@ -514,7 +519,10 @@ _spacer_move_cb(void *data,
              efl_event_callback_call
                (data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
              if (sd->frozen)
-                sd->frozen = EINA_FALSE;
+               {
+                  elm_widget_scroll_freeze_pop(data);
+                  sd->frozen = EINA_FALSE;
+               }
              return;
           }
         if (_is_horizontal(sd->dir))
@@ -552,7 +560,28 @@ _spacer_up_cb(void *data,
    efl_event_callback_call(data, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, NULL);
 
    if (sd->frozen)
+     {
+        elm_widget_scroll_freeze_pop(data);
         sd->frozen = EINA_FALSE;
+     }
+}
+
+static void
+_mouse_in_cb(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj,
+              void *event_info EINA_UNUSED)
+{
+   efl_ui_widget_scroll_hold_push(obj);
+}
+
+static void
+_mouse_out_cb(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj,
+              void *event_info EINA_UNUSED)
+{
+   efl_ui_widget_scroll_hold_pop(obj);
 }
 
 static char *
@@ -628,6 +657,11 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *priv)
      (priv->spacer, EVAS_CALLBACK_MOUSE_MOVE, _spacer_move_cb, obj);
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_UP, _spacer_up_cb, obj);
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_MOUSE_IN, _mouse_in_cb, obj);
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_MOUSE_OUT, _mouse_out_cb, obj);
+
 
    efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 
