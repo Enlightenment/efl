@@ -3349,8 +3349,15 @@ _efl_ui_textbox_efl_ui_scrollable_scroll_hold_get(const Eo *obj EINA_UNUSED, Efl
 EOLIAN static void
 _efl_ui_textbox_efl_ui_scrollable_scroll_hold_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool hold)
 {
-   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
-   efl_ui_scrollable_scroll_hold_set(sd->scroller, !!hold);
+   /* Can be called by efl_ui_widget_scroll_hold_{pop, push} from another
+    * widget (ex., efl_ui_slider) without _efl_ui_textbox_scrollable_set() 
+    * invocation with undefined sd->scroller here as the result. 
+    * So, check if sd->scroll is true to avoid this. */
+   if(sd->scroll)
+   {
+      EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+      efl_ui_scrollable_scroll_hold_set(sd->scroller, !!hold);
+   }
 }
 
 EOLIAN static Eina_Bool
@@ -3363,8 +3370,12 @@ _efl_ui_textbox_efl_ui_scrollable_scroll_freeze_get(const Eo *obj EINA_UNUSED, E
 EOLIAN static void
 _efl_ui_textbox_efl_ui_scrollable_scroll_freeze_set(Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data *sd, Eina_Bool freeze)
 {
-   EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
-   efl_ui_scrollable_scroll_freeze_set(sd->scroller, !!freeze);
+   /* The same as for hold_set. See comments above. */
+   if(sd->scroll)
+   {
+      EINA_SAFETY_ON_NULL_RETURN(sd->scroller);
+      efl_ui_scrollable_scroll_freeze_set(sd->scroller, !!freeze);
+   }
 }
 
 EOLIAN static void
