@@ -376,7 +376,7 @@ if sys_windows == true
    bcrypt = cc.find_library('bcrypt', required: true)
    eina_ext_deps += [bcrypt]
    if iconv.found()
-     eina_c_args = '-DWINICONV_CONST='
+     eina_c_args += '-DWINICONV_CONST='
    endif
 endif
 
