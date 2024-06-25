@@ -56,8 +56,8 @@ eina_environment_home_get(void)
    if (home) return home;
 #ifdef _WIN32
    home = getenv("USERPROFILE");
-   if (!home) home = getenv("WINDIR");
-   if (!home &&
+   if (!home || !*home) home = getenv("WINDIR");
+   if ((!home  || !*home) &&
        (getenv("HOMEDRIVE") && getenv("HOMEPATH")))
      {
         char buf[PATH_MAX];
@@ -72,7 +72,7 @@ eina_environment_home_get(void)
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid()) home = getenv("HOME");
 # endif
-   if (!home)
+   if (!home || !*home)
      {
 # ifdef HAVE_GETPWENT
         struct passwd pwent, *pwent2 = NULL;
@@ -105,21 +105,21 @@ eina_environment_tmp_get(void)
    if (tmp) return tmp;
 #ifdef _WIN32
    tmp = getenv("TMP");
-   if (!tmp) tmp = getenv("TEMP");
-   if (!tmp) tmp = getenv("USERPROFILE");
-   if (!tmp) tmp = getenv("WINDIR");
-   if (!tmp) tmp = "C:\\";
+   if (!tmp || !*tmp) tmp = getenv("TEMP");
+   if (!tmp || !*tmp) tmp = getenv("USERPROFILE");
+   if (!tmp || !*tmp) tmp = getenv("WINDIR");
+   if (!tmp || !*tmp) tmp = "C:\\";
 #else
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
 # endif
      {
         tmp = getenv("TMPDIR");
-        if (!tmp) tmp = getenv("TMP");
-        if (!tmp) tmp = getenv("TEMPDIR");
-        if (!tmp) tmp = getenv("TEMP");
+        if (!tmp || !*tmp) tmp = getenv("TMP");
+        if (!tmp || !*tmp) tmp = getenv("TEMPDIR");
+        if (!tmp || !*tmp) tmp = getenv("TEMP");
      }
-   if (!tmp) tmp = "/tmp";
+   if (!tmp || !*tmp) tmp = "/tmp";
 #endif
 
 #if defined(__MACH__) && defined(__APPLE__)

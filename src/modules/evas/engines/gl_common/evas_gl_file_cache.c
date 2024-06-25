@@ -1,8 +1,12 @@
 #include "evas_gl_private.h"
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#endif
+
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 
-Eina_Bool
+static Eina_Bool
 evas_gl_common_file_cache_is_dir(const char *file)
 {
    struct stat st;
@@ -10,14 +14,6 @@ evas_gl_common_file_cache_is_dir(const char *file)
    if (stat(file, &st) < 0) return EINA_FALSE;
    if (S_ISDIR(st.st_mode)) return EINA_TRUE;
    return EINA_FALSE;
-}
-
-Eina_Bool
-evas_gl_common_file_cache_mkdir(const char *dir)
-{
-   /* evas gl only call this function when the dir is not exist */
-   if (mkdir(dir, default_mode) < 0) return EINA_FALSE;
-   return EINA_TRUE;
 }
 
 Eina_Bool
@@ -29,17 +25,15 @@ evas_gl_common_file_cache_file_exists(const char *file)
    return EINA_TRUE;
 }
 
-Eina_Bool
+static Eina_Bool
 evas_gl_common_file_cache_mkpath_if_not_exists(const char *path)
 {
    struct stat st;
 
    if (stat(path, &st) < 0)
-      return evas_gl_common_file_cache_mkdir(path);
-   else if (!S_ISDIR(st.st_mode))
-      return EINA_FALSE;
+     return mkdir(path, default_mode) == 0;
    else
-      return EINA_TRUE;
+     return S_ISDIR(st.st_mode);
 }
 
 Eina_Bool
@@ -70,16 +64,14 @@ evas_gl_common_file_cache_mkpath(const char *path)
 int
 evas_gl_common_file_cache_dir_check(char *cache_dir, int num)
 {
-   char *home = NULL;
+   char *home;
    char *subdir = ".cache/evas_gl_common_caches";
 
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() != geteuid()) return 0;
-#endif
-   home = getenv("HOME");
-   if ((!home) || (!home[0])) return 0;
+   home = (char *)eina_environment_home_get();
+   if (!home) return 0;
 
    snprintf(cache_dir, num, "%s/%s", home, subdir);
+   free(home);
    return evas_gl_common_file_cache_file_exists(cache_dir);
 }
 
@@ -121,4 +113,3 @@ evas_gl_common_file_cache_file_check(const char *cache_dir, const char *cache_na
 
    return evas_gl_common_file_cache_file_exists(cache_file);
 }
-
