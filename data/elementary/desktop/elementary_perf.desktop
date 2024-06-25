@@ -5,6 +5,7 @@ Name[it]=Prestazioni di Elementary
 Comment=Elementary Performance Test Application
 Comment[fr]=Test de performance pour Elementary
 Comment[it]=Test delle prestazioni per Elementary
+Comment[ru]=Приложение для выполнения элементарной проверки производительности
 Icon=elementary
 Exec=elementary_perf
 Terminal=false
