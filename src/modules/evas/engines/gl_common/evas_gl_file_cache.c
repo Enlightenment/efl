@@ -67,8 +67,11 @@ evas_gl_common_file_cache_dir_check(char *cache_dir, int num)
    char *home;
    char *subdir = ".cache/evas_gl_common_caches";
 
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() != geteuid()) return EINA_FALSE;
+#endif
    home = (char *)eina_environment_home_get();
-   if (!home) return 0;
+   if (!home) return EINA_FALSE;
 
    snprintf(cache_dir, num, "%s/%s", home, subdir);
    free(home);
