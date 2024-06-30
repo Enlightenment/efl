@@ -1,8 +1,10 @@
 #define _EVAS_GL_CONTEXT_C
 #include "evas_gl_private.h"
 
-#if defined HAVE_DLSYM && ! defined _WIN32
-# include <dlfcn.h>      /* dlopen,dlclose,etc */
+#ifdef _WIN32
+# include <evil_private.h> /* dlsym */
+#elif defined HAVE_DLSYM
+# include <dlfcn.h>        /* dlopen, dlclose, etc */
 #else
 # error gl_common should not get compiled if dlsym is not found on the system!
 #endif
@@ -973,11 +975,11 @@ evas_gl_common_context_new(void)
              i = 0;
 
              if ((secsym_tbm_surface_create) &&
-                  (secsym_tbm_surface_destroy) &&
-                  (secsym_tbm_surface_map) &&
-                  (secsym_tbm_surface_unmap) &&
-                  (secsym_tbm_surface_get_info))
-                  shared->info.sec_tbm_surface = 1;
+                 (secsym_tbm_surface_destroy) &&
+                 (secsym_tbm_surface_map) &&
+                 (secsym_tbm_surface_unmap) &&
+                 (secsym_tbm_surface_get_info))
+                shared->info.sec_tbm_surface = 1;
 #endif
              if (!_ckext(ext, "GL_QCOM_tiled_rendering"))
                {
@@ -4299,11 +4301,11 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 # define END_POINTER (masksam_ptr + SAM_SIZE)
 
              glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
-             if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
+             if ((gc->pipe[i].array.buffer_alloc < (intptr_t)END_POINTER) ||
                  (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
                {
-                  glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_STATIC_DRAW);
-                  gc->pipe[i].array.buffer_alloc = (long)END_POINTER;
+                  glBufferData(GL_ARRAY_BUFFER, (intptr_t)END_POINTER, NULL, GL_STATIC_DRAW);
+                  gc->pipe[i].array.buffer_alloc = (intptr_t)END_POINTER;
                   gc->pipe[i].array.buffer_use = 0;
                }
              gc->pipe[i].array.buffer_use++;
@@ -4312,24 +4314,24 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              if (x)
                {
                   if (gc->pipe[i].array.use_vertex)
-                    memcpy(x + (unsigned long)vertex_ptr, gc->pipe[i].array.vertex, VERTEX_SIZE);
+                    memcpy(x + (uintptr_t)vertex_ptr, gc->pipe[i].array.vertex, VERTEX_SIZE);
                   if (gc->pipe[i].array.use_color)
-                    memcpy(x + (unsigned long)color_ptr, gc->pipe[i].array.color, COLOR_SIZE);
+                    memcpy(x + (uintptr_t)color_ptr, gc->pipe[i].array.color, COLOR_SIZE);
                   if (gc->pipe[i].array.use_texuv)
-                    memcpy(x + (unsigned long)texuv_ptr, gc->pipe[i].array.texuv, TEX_SIZE);
+                    memcpy(x + (uintptr_t)texuv_ptr, gc->pipe[i].array.texuv, TEX_SIZE);
                   if (gc->pipe[i].array.use_texuv2)
-                    memcpy(x + (unsigned long)texuv2_ptr, gc->pipe[i].array.texuv2, TEX_SIZE);
+                    memcpy(x + (uintptr_t)texuv2_ptr, gc->pipe[i].array.texuv2, TEX_SIZE);
                   if (gc->pipe[i].array.use_texuv3)
-                    memcpy(x + (unsigned long)texuv3_ptr, gc->pipe[i].array.texuv3, TEX_SIZE);
+                    memcpy(x + (uintptr_t)texuv3_ptr, gc->pipe[i].array.texuv3, TEX_SIZE);
                   if (gc->pipe[i].array.use_texa)
-                    memcpy(x + (unsigned long)texa_ptr, gc->pipe[i].array.texa, TEX_SIZE);
+                    memcpy(x + (uintptr_t)texa_ptr, gc->pipe[i].array.texa, TEX_SIZE);
                   if (gc->pipe[i].array.use_texsam)
-                    memcpy(x + (unsigned long)texsam_ptr, gc->pipe[i].array.texsam, SAM_SIZE);
+                    memcpy(x + (uintptr_t)texsam_ptr, gc->pipe[i].array.texsam, SAM_SIZE);
                   if (gc->pipe[i].array.use_mask)
                     {
-                       memcpy(x + (unsigned long)mask_ptr, gc->pipe[i].array.mask, MASK_SIZE);
+                       memcpy(x + (uintptr_t)mask_ptr, gc->pipe[i].array.mask, MASK_SIZE);
                        if (gc->pipe[i].array.use_masksam)
-                         memcpy(x + (unsigned long)masksam_ptr, gc->pipe[i].array.masksam, SAM_SIZE);
+                         memcpy(x + (uintptr_t)masksam_ptr, gc->pipe[i].array.masksam, SAM_SIZE);
                     }
                   /*
                   fprintf(stderr, "copy %i bytes [%i/%i slots] [%i + %i + %i + %i + %i + %i + %i] <%i %i %i %i %i %i %i>\n",
