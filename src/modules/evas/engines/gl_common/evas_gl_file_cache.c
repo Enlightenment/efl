@@ -41,6 +41,7 @@ evas_gl_common_file_cache_mkpath(const char *path)
 {
    char ss[PATH_MAX];
    unsigned int i;
+   Eina_Bool found = EINA_FALSE;
 
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() != geteuid()) return EINA_FALSE;
@@ -50,11 +51,19 @@ evas_gl_common_file_cache_mkpath(const char *path)
    for (i = 0; path[i]; ss[i] = path[i], i++)
      {
         if (i == sizeof(ss) - 1) return EINA_FALSE;
-        if ((path[i] == '/') && (i > 0))
+        if ((path[i] == '/')
+#ifdef _WIN32
+            || (path[i] == '\\')
+#endif
+            )
           {
-             ss[i] = 0;
-             if (!evas_gl_common_file_cache_mkpath_if_not_exists(ss))
-                return EINA_FALSE;
+             if (found)
+               {
+                  ss[i] = 0;
+                  if (!evas_gl_common_file_cache_mkpath_if_not_exists(ss))
+                    return EINA_FALSE;
+               }
+             found = EINA_TRUE;
           }
      }
    ss[i] = 0;
