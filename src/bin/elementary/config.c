@@ -2251,7 +2251,7 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(pd);
 
    li = elm_list_add(win);
-   elm_list_multi_select_set(li, EINA_TRUE);
+   elm_list_multi_select_set(li, EINA_FALSE);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(pd, li);
