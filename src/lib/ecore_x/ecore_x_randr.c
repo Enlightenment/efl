@@ -3189,10 +3189,11 @@ ecore_x_randr_output_connector_type_get(Ecore_X_Window root EINA_UNUSED, Ecore_X
    /* try to get the output property from Xrandr */
    if ((info = XRRQueryOutputProperty(_ecore_x_disp, output, connector_type)))
      {
-        int ret = 0;
+        int ret = -1;
 
         /* convert the current value */
-        ret = (int)(val - info->values[0]);
+        if (info->num_values > 0)
+          ret = (int)(val - info->values[0]);
 
         /* printf("\tReturn Value: %d\n", ret); */
         /* printf("\t\tActual Name: %s\n",  */
