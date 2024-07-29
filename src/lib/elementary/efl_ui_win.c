@@ -5325,6 +5325,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
         else if ((disp) && (!strcmp(disp, "win")))
           {
              enginelist[p++] = ELM_SOFTWARE_WIN32;
+             enginelist[p++] = ELM_OPENGL_WIN32;
              enginelist[p++] = ELM_SOFTWARE_DDRAW;
           }
 #endif
@@ -5436,6 +5437,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
                   enginelist[p++] = ELM_SOFTWARE_WIN32;
+                  enginelist[p++] = ELM_OPENGL_WIN32;
                   enginelist[p++] = ELM_SOFTWARE_DDRAW;
 #endif
 #ifdef HAVE_ELEMENTARY_SDL
@@ -5471,6 +5473,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 #endif
 #ifdef HAVE_ELEMENTARY_WIN32
                   enginelist[p++] = ELM_SOFTWARE_WIN32;
+                  enginelist[p++] = ELM_OPENGL_WIN32;
                   enginelist[p++] = ELM_SOFTWARE_DDRAW;
 #endif
 #ifdef HAVE_ELEMENTARY_SDL
@@ -5533,6 +5536,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                tmp_sd.ee = _wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0, (opt_i > 0) ? opt : NULL);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_OPENGL_WIN32))
+               tmp_sd.ee = ecore_evas_gl_win32_new(NULL, 1, 1, 0, 0);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))
                tmp_sd.ee = ecore_evas_software_ddraw_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_SDL))

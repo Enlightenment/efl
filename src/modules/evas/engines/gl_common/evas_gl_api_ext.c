@@ -1,7 +1,10 @@
 
 #include "evas_gl_api_ext.h"
 
-#ifndef _WIN32
+/* dlsym */
+#ifdef _WIN32
+# include <evil_private.h>
+#else
 # include <dlfcn.h>
 #endif
 

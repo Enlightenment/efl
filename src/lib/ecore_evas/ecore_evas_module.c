@@ -281,6 +281,9 @@ _ecore_evas_available_engines_get(void)
 #ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
                        ADDENG("opengl_glew");
 #endif
+#ifdef BUILD_ECORE_EVAS_OPENGL_WIN32
+                       ADDENG("opengl_win32");
+#endif
                     }
                   else if (!strcmp(name, "drm"))
                     {

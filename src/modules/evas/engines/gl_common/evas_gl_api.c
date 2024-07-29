@@ -2,7 +2,10 @@
 #include "evas_gl_core_private.h"
 #include "evas_gl_api_ext.h"
 
-#ifndef _WIN32
+/* dlopen dlsym */
+#ifdef _WIN32
+# include <evil_private.h>
+#else
 # include <dlfcn.h>
 #endif
 
@@ -3652,9 +3655,13 @@ _evgl_gles3_api_init(int minor_version, void *(*get_proc_address)(const char *))
    memset(&_gles3_api, 0, sizeof(_gles3_api));
 
 #ifdef GL_GLES
+# ifdef _WIN32
+   _gles3_handle = dlopen("libGLESv2.dll", RTLD_NOW);
+# else
    _gles3_handle = dlopen("libGLESv2.so", RTLD_NOW);
    if (!_gles3_handle) _gles3_handle = dlopen("libGLESv2.so.2.0", RTLD_NOW);
    if (!_gles3_handle) _gles3_handle = dlopen("libGLESv2.so.2", RTLD_NOW);
+# endif
 #else
    _gles3_handle = dlopen("libGL.so", RTLD_NOW);
    if (!_gles3_handle) _gles3_handle = dlopen("libGL.so.4", RTLD_NOW);

@@ -6,7 +6,9 @@
 #include "evas_ector_gl.h"
 #include "filters/gl_engine_filter.h"
 
-#if defined HAVE_DLSYM && ! defined _WIN32
+#ifdef _WIN32
+# include <evil_private.h> /* dlsym */
+#elif defined HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #else
 # error gl_x11 should not get compiled if dlsym is not found on the system!

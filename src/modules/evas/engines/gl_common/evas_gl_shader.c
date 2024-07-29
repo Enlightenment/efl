@@ -331,6 +331,10 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
    Eet_File *ef = NULL, *ef0 = NULL;
    Evas_GL_Program *p;
    Eina_Iterator *it;
+#ifdef _WIN32
+   char *bin_file_path_2;
+   char *result_backslash;
+#endif
 
    /* use eet */
    if (!eet_init()) return 0;
@@ -345,7 +349,21 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
                                                bin_file_path, sizeof(bin_dir_path));
 
    /* use mkstemp for writing */
+#ifdef _WIN32
+   /*
+    * get basename so that the temporary file is created in
+    * the tmp directory with eina_file_mkstemp()
+    */
+   if ((bin_file_path_2 = strrchr(bin_file_path, '/'))) bin_file_path_2++;
+   else bin_file_path_2 = bin_file_path;
+   if ((result_backslash = strrchr(bin_file_path_2, '\\')))
+     bin_file_path_2 = ++result_backslash;
+
+   snprintf(tmp_file_name, sizeof(tmp_file_name), "%s.XXXXXX.cache", bin_file_path_2);
+#else
    snprintf(tmp_file_name, sizeof(tmp_file_name), "%s.XXXXXX.cache", bin_file_path);
+#endif
+
    tmpfd = eina_file_mkstemp(tmp_file_name, &tmp_file_path);
    if (tmpfd < 0) goto error;
 
@@ -362,6 +380,7 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
      }
 
 save:
+
    ef = eet_open(tmp_file_path, EET_FILE_MODE_WRITE);
    if (!ef) goto error;
 
@@ -408,7 +427,13 @@ save:
      }
 
    if (eet_close(ef) != EET_ERROR_NONE) goto destroyed;
+#ifdef _WIN32
+   /* no other choice on Windows: copy file from tmp dir to cache dir */
+   if (!CopyFile(tmp_file_path, bin_file_path, FALSE))
+     goto destroyed;
+#else
    if (rename(tmp_file_path, bin_file_path) < 0) goto destroyed;
+#endif
    eina_tmpstr_del(tmp_file_path);
    close(tmpfd);
    eet_shutdown();

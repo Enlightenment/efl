@@ -98,6 +98,13 @@ evas_gl_common_file_cache_file_check(const char *cache_dir, const char *cache_na
    char *driver = NULL;
    char *version = NULL;
 
+#ifdef _WIN32
+   vendor = "Google";
+   version = "OpenGL-ES-3_0_0";
+   driver = "Angle-D3D11-vs_5_0-ps_5_0";
+   /* no colon character in file names on Windows */
+#define SEP_GL "__"
+#else
    vendor = (char *)glGetString(GL_VENDOR);
    driver = (char *)glGetString(GL_RENDERER);
    version = (char *)glGetString(GL_VERSION);
@@ -105,8 +112,11 @@ evas_gl_common_file_cache_file_check(const char *cache_dir, const char *cache_na
    if (!vendor)  vendor  = "-UNKNOWN-";
    if (!driver)  driver  = "-UNKNOWN-";
    if (!version) version = "-UNKNOWN-";
+#define SEP_GL "::"
+#endif
 
-   new_path_len = snprintf(before_name, sizeof(before_name), "%s::%s::%s::%s.%d::%s.eet",
+   new_path_len = snprintf(before_name, sizeof(before_name),
+                           "%s" SEP_GL "%s" SEP_GL "%s" SEP_GL "%s.%d" SEP_GL "%s.eet",
                            vendor, version, driver, MODULE_ARCH, evas_version->micro, cache_name);
 
    /* remove '/' from file name */

@@ -1,40 +1,50 @@
 engines = [
- ['buffer', []],
- ['fb', ['fb']],
- ['drm', ['drm']],
- ['software_x11', ['x11']],
- ['wayland_shm', ['wl']],
+  ['buffer', []]
 ]
 
-if sys_windows == true
- engines += [
-   ['software_ddraw', []],
-   ['software_gdi', []],
- ]
-endif
-
-have_gl_engine = false
-
-if get_option('opengl') != 'none'
-  engines += [['gl_x11', ['x11']]]
-  have_gl_engine = true
-endif
-
-if get_option('opengl') == 'full'
-  engines += [['gl_cocoa', ['cocoa']]]
-  have_gl_engine = true
-endif
-
-if get_option('opengl') == 'es-egl'
+if sys_windows
   engines += [
-   ['wayland_egl', ['wl']],
-   ['gl_drm', ['drm']]
- ]
-  have_gl_engine = true
-endif
+    ['software_ddraw', []],
+    ['software_gdi', []],
+  ]
+  if get_option('opengl') == 'es-egl'
+    engines += [
+      ['gl_win32', []],
+      ['gl_generic', []]
+    ]
+    have_gl_engine = true
+  endif
+else
+  engines += [
+    ['fb', ['fb']],
+    ['drm', ['drm']],
+    ['software_x11', ['x11']],
+    ['wayland_shm', ['wl']],
+  ]
 
-if have_gl_engine
-  engines += [['gl_generic', []]]
+  have_gl_engine = false
+
+  if get_option('opengl') != 'none'
+    engines += [['gl_x11', ['x11']]]
+    have_gl_engine = true
+  endif
+
+  if get_option('opengl') == 'full'
+    engines += [['gl_cocoa', ['cocoa']]]
+    have_gl_engine = true
+  endif
+
+  if get_option('opengl') == 'es-egl'
+    engines += [
+      ['wayland_egl', ['wl']],
+      ['gl_drm', ['drm']]
+    ]
+    have_gl_engine = true
+  endif
+
+  if have_gl_engine
+    engines += [['gl_generic', []]]
+  endif
 endif
 
 foreach engine_conf : engines

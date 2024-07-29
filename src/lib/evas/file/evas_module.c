@@ -179,6 +179,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_drm);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_sdl);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_win32);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_8);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_8_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_ddraw);
@@ -262,6 +263,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_GL_SDL
   EVAS_EINA_STATIC_MODULE_USE(engine, gl_sdl),
+#endif
+#ifdef EVAS_STATIC_BUILD_GL_WIN32
+  EVAS_EINA_STATIC_MODULE_USE(engine, gl_win32),
 #endif
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_DDRAW
   EVAS_EINA_STATIC_MODULE_USE(engine, software_ddraw),

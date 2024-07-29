@@ -94,6 +94,7 @@ extern "C" {
 //#define HAVE_ECORE_EVAS_X11_16 1
 //#define HAVE_ECORE_EVAS_DIRECTFB 1
 #define HAVE_ECORE_EVAS_WIN32 1
+#define HAVE_ECORE_EVAS_WIN32_GL 1
 #define HAVE_ECORE_EVAS_COCOA 1
 #define HAVE_ECORE_EVAS_SDL 1
 //#define HAVE_ECORE_EVAS_WINCE 1
@@ -130,7 +131,8 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_WAYLAND_SHM,
    ECORE_EVAS_ENGINE_WAYLAND_EGL,
    ECORE_EVAS_ENGINE_DRM,
-   ECORE_EVAS_ENGINE_OPENGL_DRM
+   ECORE_EVAS_ENGINE_OPENGL_DRM,
+   ECORE_EVAS_ENGINE_OPENGL_WIN32,
 } Ecore_Evas_Engine_Type;
 
 #define ECORE_EVAS_OPT_NONE         0
@@ -1930,6 +1932,24 @@ EAPI Ecore_Evas     *ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent,
                                                    int                 y,
                                                    int                 width,
                                                    int                 height);
+
+/**
+ * @brief Creates Ecore_Evas using Opengl ES On Windows.
+ *
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
+ *
+ * @note If ecore is not compiled with support for x11 then nothing is done and NULL is returned.
+ */
+EAPI Ecore_Evas     *ecore_evas_gl_win32_new(Ecore_Win32_Window *parent,
+                                             int                 x,
+                                             int                 y,
+                                             int                 width,
+                                             int                 height);
 
 EAPI Ecore_Evas     *ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
                                                       int                 x,

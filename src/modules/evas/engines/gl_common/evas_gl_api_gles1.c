@@ -1,7 +1,10 @@
 #define GL_ERRORS_NODEF 1
 #include "evas_gl_core_private.h"
 
-#ifndef _WIN32
+/* dlopen dlsym */
+#ifdef _WIN32
+# include <evil_private.h>
+#else
 # include <dlfcn.h>
 #endif
 
@@ -3990,11 +3993,15 @@ _evgl_gles1_api_init(void)
    memset(&_gles1_api, 0, sizeof(_gles1_api));
 
 #ifdef GL_GLES
+# ifdef _WIN32
+   _gles1_handle = dlopen("libGLESv1_CM.dll", RTLD_NOW);
+# else
    _gles1_handle = dlopen("libGLES_CM.so", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLES_CM.so.1", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLES_CM.so.1.1", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLESv1_CM.so", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGLESv1_CM.so.1", RTLD_NOW);
+# endif
 #else
    _gles1_handle = dlopen("libGL.so", RTLD_NOW);
    if (!_gles1_handle) _gles1_handle = dlopen("libGL.so.4", RTLD_NOW);

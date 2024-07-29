@@ -58,6 +58,7 @@ const char *_elm_engines[] = {
    "drm",
    "ddraw",
    "gl_drm",
+   "opengl_win32",
    NULL
 };
 
@@ -2929,6 +2930,11 @@ _env_get(void)
                  (!strcasecmp(s, "software-gdi")) ||
                  (!strcasecmp(s, "software_gdi")))
           eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_WIN32);
+        else if ((!strcasecmp(s, "opengl-win32")) ||
+                 (!strcasecmp(s, "opengl_win32")) ||
+                 (!strcasecmp(s, "gl-win32")) ||
+                 (!strcasecmp(s, "gl_win32")))
+          eina_stringshare_replace(&_elm_config->engine, ELM_OPENGL_WIN32);
         else if (!strcasecmp(s, "buffer"))
           eina_stringshare_replace(&_elm_config->engine, ELM_BUFFER);
         else if ((!strncmp(s, "shot:", 5)))

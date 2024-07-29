@@ -39,6 +39,8 @@
  * GDI with software)
  * @li "ddraw", "software-ddraw", "software_ddraw" (Windows WIN32 rendering via
  * DirectDraw with software)
+ * @li "gl-win32", "gl_win32", "opengl-win32", "opengl_win32" (OpenGL-ES2
+ * rendering in Windows, using Angle)
  * @li "gl-cocoa", "gl_cocoa", "opengl-cocoa", "opengl_cocoa" (OpenGL rendering in Cocoa)
  * @li "wayland_shm" (Wayland client SHM rendering)
  * @li "wayland_egl" (Wayland client OpenGL/EGL rendering)
