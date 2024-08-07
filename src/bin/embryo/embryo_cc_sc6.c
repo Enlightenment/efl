@@ -94,8 +94,8 @@ hex2long(char *s, char **n)
 }
 
 #ifdef WORDS_BIGENDIAN
-static short       *
-align16(short *v)
+static void       *
+align16(void *v)
 {
    unsigned char      *s = (unsigned char *)v;
    unsigned char       t;
@@ -107,8 +107,8 @@ align16(short *v)
    return v;
 }
 
-static long        *
-align32(long *v)
+static void        *
+align32(void *v)
 {
    unsigned char      *s = (unsigned char *)v;
    unsigned char       t;
