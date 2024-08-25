@@ -2316,8 +2316,16 @@ ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc)
      return NULL;
 
    /* try to allocate space for the return struct and copy the results in */
-   if ((info = malloc(sizeof(Ecore_X_Randr_Crtc_Gamma_Info))))
-     memcpy(info, xgamma, sizeof(Ecore_X_Randr_Crtc_Gamma_Info));
+   if ((info = malloc(sizeof(Ecore_X_Randr_Crtc_Gamma_Info) + (xgamma->size * sizeof(unsigned short) * 3))))
+    {
+      info->size = xgamma->size;
+      info->red = (unsigned short *)(((char *)info) + sizeof(Ecore_X_Randr_Crtc_Gamma_Info));
+      info->green = info->red + xgamma->size;
+      info->blue = info->green + xgamma->size;
+      memcpy(info->red,   xgamma->red,   info->size * sizeof(unsigned short));
+      memcpy(info->green, xgamma->green, info->size * sizeof(unsigned short));
+      memcpy(info->blue,  xgamma->blue,  info->size * sizeof(unsigned short));
+    }
 
    /* free the returned gamma resource */
    XRRFreeGamma(xgamma);
