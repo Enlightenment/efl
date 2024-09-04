@@ -368,8 +368,11 @@ _pulse_output_volume_set(Ecore_Audio_Object *output, double vol)
      {
         stream = in->obj_data;
         idx = pa_stream_get_index(stream);
-        op = pa_context_set_sink_input_volume(priv->context, idx, &volume, NULL, NULL);
-        pa_operation_unref(op);
+        if (priv->context)
+         {
+           op = pa_context_set_sink_input_volume(priv->context, idx, &volume, NULL, NULL);
+           pa_operation_unref(op);
+         }
      }
 }
 
@@ -399,15 +402,17 @@ _pulse_output_add_input(Ecore_Audio_Object *output, Ecore_Audio_Object *input)
    Ecore_Audio_Input *in = (Ecore_Audio_Input *)input;
    Ecore_Audio_Module *outmod = out->module;
    struct _Ecore_Audio_Pa_Private *priv = (struct _Ecore_Audio_Pa_Private *)outmod->priv;
-   pa_stream *stream;
+   pa_stream *stream = NULL;
 
-   pa_sample_spec ss = {
+   pa_sample_spec ss =
+    {
       .format = PA_SAMPLE_FLOAT32LE,
       .rate = in->samplerate * in->speed,
       .channels = in->channels,
-   };
+    };
 
-   stream = pa_stream_new(priv->context, in->name, &ss, NULL);
+   if (priv->context)
+     stream = pa_stream_new(priv->context, in->name, &ss, NULL);
    if (!stream)
      {
         ERR("Could not create stream");

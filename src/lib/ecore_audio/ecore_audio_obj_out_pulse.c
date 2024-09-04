@@ -54,11 +54,13 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
 
   ecore_audio_obj_volume_set(efl_super(eo_obj, MY_CLASS), volume);
 
-  EINA_LIST_FOREACH(out_obj->inputs, input, in) {
+  EINA_LIST_FOREACH(out_obj->inputs, input, in)
+    {
       stream = efl_key_data_get(in, "pulse_data");
       idx = EPA_CALL(pa_stream_get_index)(stream);
-      EPA_CALL(pa_operation_unref)(EPA_CALL(pa_context_set_sink_input_volume)(pd->context, idx, &pa_volume, NULL, NULL));
-  }
+      if (pd->context)
+        EPA_CALL(pa_operation_unref)(EPA_CALL(pa_context_set_sink_input_volume)(pd->context, idx, &pa_volume, NULL, NULL));
+    }
 }
 
 static void _write_cb(pa_stream *stream, size_t len, void *data)
@@ -103,7 +105,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   const char *name = NULL;
   pa_sample_spec ss;
   double speed = 0;
-  pa_stream *stream;
+  pa_stream *stream = NULL;
   Eina_Bool ret = EINA_FALSE;
   Ecore_Audio_Object *ea_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_CLASS);
   Ecore_Audio_Out_Pulse_Data *pd = efl_data_scope_get(eo_obj, MY_CLASS);
@@ -121,12 +123,13 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
 
   ss.rate = ss.rate * speed;
 
-  stream = EPA_CALL(pa_stream_new)(pd->context, name, &ss, NULL);
-  if (!stream) {
+  if (pd->context) stream = EPA_CALL(pa_stream_new)(pd->context, name, &ss, NULL);
+  if (!stream)
+    {
       ERR("Could not create stream");
       ecore_audio_obj_out_input_detach(efl_super(eo_obj, MY_CLASS), in);
       return EINA_FALSE;
-  }
+    }
 
   efl_event_callback_add(in, ECORE_AUDIO_IN_EVENT_IN_SAMPLERATE_CHANGED, _update_samplerate_cb, eo_obj);
 
@@ -164,12 +167,15 @@ _ecore_audio_out_pulse_ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Out_
 
   if (_is_input_attached(eo_obj, in)) return EINA_TRUE;
 
-  if (pd->state != PA_CONTEXT_READY) {
-    DBG("Delaying input_attach because PA context is not ready.");
-    efl_event_callback_add(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, in);
-  } else {
-    retval = _input_attach_internal(eo_obj, in);
-  }
+  if (pd->state != PA_CONTEXT_READY)
+    {
+      DBG("Delaying input_attach because PA context is not ready.");
+      efl_event_callback_add(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, in);
+    }
+  else
+    {
+      retval = _input_attach_internal(eo_obj, in);
+    }
 
   return retval;
 }
@@ -240,27 +246,36 @@ static void _state_cb(pa_context *context, void *data)
    pd->state = state;
 
    //ref everything in the list to be sure...
-   EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {
+   EINA_LIST_FOREACH(pd->outputs, out, eo_obj)
+    {
       efl_ref(eo_obj);
-   }
+    }
    // the callback here can delete things in the list..
-   if (state == PA_CONTEXT_READY) {
+   if (state == PA_CONTEXT_READY)
+    {
       DBG("PA context ready.");
-      EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {
-         efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, NULL);
-      }
-   } else if ((state == PA_CONTEXT_FAILED) || (state == PA_CONTEXT_TERMINATED)) {
+      EINA_LIST_FOREACH(pd->outputs, out, eo_obj)
+        {
+          efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, NULL);
+        }
+    }
+  else if ((state == PA_CONTEXT_FAILED) || (state == PA_CONTEXT_TERMINATED))
+    {
       DBG("PA context fail.");
-      EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {
-         efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
-      }
-   } else {
+      EINA_LIST_FOREACH(pd->outputs, out, eo_obj)
+        {
+          efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
+        }
+    }
+  else
+    {
       DBG("Connection state %i", state);
-   }
+    }
    // now unref everything safely
-   EINA_LIST_FOREACH_SAFE(pd->outputs, out, tmp, eo_obj) {
+   EINA_LIST_FOREACH_SAFE(pd->outputs, out, tmp, eo_obj)
+    {
       efl_unref(eo_obj);
-   }
+    }
 }
 
 static void _state_job(void *data)
@@ -274,17 +289,20 @@ static void _state_job(void *data)
 
         DBG("PA context fail.");
         //ref everything in the list to be sure...
-        EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {
+        EINA_LIST_FOREACH(pd->outputs, out, eo_obj)
+         {
            efl_ref(eo_obj);
-        }
+         }
         // the callback here can delete things in the list..
-        EINA_LIST_FOREACH(pd->outputs, out, eo_obj) {
+        EINA_LIST_FOREACH(pd->outputs, out, eo_obj)
+         {
            efl_event_callback_call(eo_obj, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_FAIL, NULL);
-        }
+         }
         // now unref everything safely
-        EINA_LIST_FOREACH_SAFE(pd->outputs, out, tmp, eo_obj) {
+        EINA_LIST_FOREACH_SAFE(pd->outputs, out, tmp, eo_obj)
+         {
            efl_unref(eo_obj);
-        }
+         }
      }
    pd->state_job = NULL;
 }
@@ -296,6 +314,7 @@ _ecore_audio_out_pulse_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_
   char **argv, *disp = NULL;
   Ecore_Audio_Output *out_obj = efl_data_scope_get(eo_obj, ECORE_AUDIO_OUT_CLASS);
   static char *dispenv = NULL;
+  char *dispenv_free = NULL;
 
   if (!EPA_LOAD()) return NULL;
   eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
@@ -303,59 +322,71 @@ _ecore_audio_out_pulse_efl_object_constructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_
 
   out_obj->need_writer = EINA_FALSE;
 
-  if (!pd->context) {
+  if (!pd->context)
+    {
 
-    // if we're in a wayland world rather than x11... but DISPLAY also set...
-    if (getenv("WAYLAND_DISPLAY")) disp = getenv("DISPLAY");
-    // make a tmp copy of display locally as we'll overwrite this
-    if (disp) disp = strdup(disp);
-    // if we had a previously allocated env var buffer for DISPLAY then
-    // free it only if DISPLAY env var changed
-    if (dispenv) {
-      if (!((disp) && (!strcmp(dispenv + 8/*"DISPLAY="*/, disp)))) {
-        free(dispenv);
-        dispenv = NULL;
-      }
-    }
-    // no previous display env but we have a display, then allocate a buffer
-    // that stays around until the next time here with the evn var string
-    // but have space for disp string too
-    if ((!dispenv) && (disp)) {
-      dispenv = malloc(8/*"DISPLAY="*/ + strlen(disp) + 1);
-    }
-    // ensure env var is empty and to a putenv as pulse wants to use DISPLAY
-    // and if its non-empty it'll try connect to the xserver and we do not
-    // want this to happen in a wayland universe
-    if (dispenv) {
-      strcpy(dispenv, "DISPLAY=");
-      putenv(dispenv);
-    }
-    // now hopefully getenv("DISPLAY") inside pulse will return NULL or it
-    // will return an empty string "" which pulse thinsk is the same as NULL
+      // if we're in a wayland world rather than x11... but DISPLAY also set...
+      if (getenv("WAYLAND_DISPLAY")) disp = getenv("DISPLAY");
+      // make a tmp copy of display locally as we'll overwrite this
+      if (disp) disp = strdup(disp);
+      // if we had a previously allocated env var buffer for DISPLAY then
+      // free it only if DISPLAY env var changed
+      if (dispenv)
+        {
+          if (!((disp) && (!strcmp(dispenv + 8/*"DISPLAY="*/, disp))))
+            {
+              // queue this old disp env to be freed - don't do it yet
+              dispenv_free = dispenv;
+              dispenv = NULL;
+            }
+        }
+      // no previous display env but we have a display, then allocate a buffer
+      // that stays around until the next time here with the evn var string
+      // but have space for disp string too
+      if ((!dispenv) && (disp))
+        {
+          dispenv = malloc(8/*"DISPLAY="*/ + strlen(disp) + 1);
+        }
+      // ensure env var is empty and to a putenv as pulse wants to use DISPLAY
+      // and if its non-empty it'll try connect to the xserver and we do not
+      // want this to happen in a wayland universe
+      if (dispenv)
+        {
+          strcpy(dispenv, "DISPLAY=");
+          putenv(dispenv);
+        }
+      // now hopefully getenv("DISPLAY") inside pulse will return NULL or it
+      // will return an empty string "" which pulse thinsk is the same as NULL
 
-    ecore_app_args_get(&argc, &argv);
-    if (!argc) {
-        DBG("Could not get program name, pulse outputs will be named ecore_audio");
-       pd->context = EPA_CALL(pa_context_new)(pd->api, "ecore_audio");
-    } else {
-       pd->context = EPA_CALL(pa_context_new)(pd->api, basename(argv[0]));
-    }
-    // if we had a display value and a displayenv buffer then let's restore
-    // the previous value content of DISPLAY as we duplicated it above and
-    // add to the env of the dispenv buffer, then putenv that back. as the
-    // buffer is malloced this will be safe, but as the displayenv is local
-    // and static we wont go allocating these buffers forever. just this one
-    // here and then replace/re-use it.
-    if ((disp) && (dispenv)) {
-      strcat(dispenv, disp);
-      putenv(dispenv);
-    }
-    // free up our temporary local DISPLAY env sring copy if we have it
-    if (disp) free(disp);
+      ecore_app_args_get(&argc, &argv);
+      if (!argc)
+        {
+          DBG("Could not get program name, pulse outputs will be named ecore_audio");
+          pd->context = EPA_CALL(pa_context_new)(pd->api, "ecore_audio");
+        }
+      else
+        {
+          pd->context = EPA_CALL(pa_context_new)(pd->api, basename(argv[0]));
+        }
+      // if we had a display value and a displayenv buffer then let's restore
+      // the previous value content of DISPLAY as we duplicated it above and
+      // add to the env of the dispenv buffer, then putenv that back. as the
+      // buffer is malloced this will be safe, but as the displayenv is local
+      // and static we wont go allocating these buffers forever. just this one
+      // here and then replace/re-use it.
+      if ((disp) && (dispenv))
+        {
+          strcat(dispenv, disp);
+          putenv(dispenv);
+        }
+      // free up our temporary local DISPLAY env sring copy if we have it
+      if (disp) free(disp);
+      // free that old dispenv we don't need anymore
+      if (dispenv_free) free(dispenv_free);
 
-    EPA_CALL(pa_context_set_state_callback)(pd->context, _state_cb, pd);
-    EPA_CALL(pa_context_connect)(pd->context, NULL, PA_CONTEXT_NOFLAGS, NULL);
-  }
+      EPA_CALL(pa_context_set_state_callback)(pd->context, _state_cb, pd);
+      EPA_CALL(pa_context_connect)(pd->context, NULL, PA_CONTEXT_NOFLAGS, NULL);
+    }
 
   pd->outputs = eina_list_append(pd->outputs, eo_obj);
   pd->state_job = ecore_job_add(_state_job, pd);
@@ -368,7 +399,11 @@ _ecore_audio_out_pulse_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_Pulse_D
 {
   pd->outputs = eina_list_remove(pd->outputs, eo_obj);
   ecore_job_del(pd->state_job);
-  EPA_CALL(pa_context_unref)(pd->context);
+  if (pd->context)
+    {
+      EPA_CALL(pa_context_unref)(pd->context);
+      pd->context = NULL;
+    }
   efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
