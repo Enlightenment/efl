@@ -388,25 +388,24 @@ typedef enum _Ecore_X_Netwm_Direction
  */
 typedef enum _Ecore_X_Error_Code
 {
-   /** Everything is okay. */
-   ECORE_X_ERROR_CODE_SUCCESS = 0, /** Bad request code */
-   ECORE_X_ERROR_CODE_BAD_REQUEST = 1, /** Int parameter out of range */
-   ECORE_X_ERROR_CODE_BAD_VALUE = 2, /** Parameter not a Window */
-   ECORE_X_ERROR_CODE_BAD_WINDOW = 3, /** Parameter not a Pixmap */
-   ECORE_X_ERROR_CODE_BAD_PIXMAP = 4, /** Parameter not an Atom */
-   ECORE_X_ERROR_CODE_BAD_ATOM = 5, /** Parameter not a Cursor */
-   ECORE_X_ERROR_CODE_BAD_CURSOR = 6, /** Parameter not a Font */
-   ECORE_X_ERROR_CODE_BAD_FONT = 7, /** Parameter mismatch */
-   ECORE_X_ERROR_CODE_BAD_MATCH = 8, /** Parameter not a Pixmap or Window */
-   ECORE_X_ERROR_CODE_BAD_DRAWABLE = 9, /** Bad access */
-   ECORE_X_ERROR_CODE_BAD_ACCESS = 10, /** Insufficient resources */
-   ECORE_X_ERROR_CODE_BAD_ALLOC = 11, /** No such colormap */
-   ECORE_X_ERROR_CODE_BAD_COLOR = 12, /** Parameter not a GC */
-   ECORE_X_ERROR_CODE_BAD_GC = 13, /** Choice not in range or already used */
-   ECORE_X_ERROR_CODE_BAD_ID_CHOICE = 14, /** Font or color name doesn't exist */
-   ECORE_X_ERROR_CODE_BAD_NAME = 15, /** Request length incorrect */
-   ECORE_X_ERROR_CODE_BAD_LENGTH = 16, /** Server is defective */
-   ECORE_X_ERROR_CODE_BAD_IMPLEMENTATION = 17,
+   ECORE_X_ERROR_CODE_SUCCESS = 0, /** Everything is okay. */
+   ECORE_X_ERROR_CODE_BAD_REQUEST = 1, /** Bad request code */
+   ECORE_X_ERROR_CODE_BAD_VALUE = 2, /** Int parameter out of range */
+   ECORE_X_ERROR_CODE_BAD_WINDOW = 3, /** Parameter not a Window */
+   ECORE_X_ERROR_CODE_BAD_PIXMAP = 4, /** Parameter not a Pixmap */
+   ECORE_X_ERROR_CODE_BAD_ATOM = 5, /** Parameter not an Atom */
+   ECORE_X_ERROR_CODE_BAD_CURSOR = 6, /** Parameter not a Cursor */
+   ECORE_X_ERROR_CODE_BAD_FONT = 7, /** Parameter not a Font */
+   ECORE_X_ERROR_CODE_BAD_MATCH = 8, /** Parameter mismatch */
+   ECORE_X_ERROR_CODE_BAD_DRAWABLE = 9, /** Parameter not a Pixmap or Window */
+   ECORE_X_ERROR_CODE_BAD_ACCESS = 10, /** Bad access */
+   ECORE_X_ERROR_CODE_BAD_ALLOC = 11, /** Insufficient resources */
+   ECORE_X_ERROR_CODE_BAD_COLOR = 12, /** No such colormap */
+   ECORE_X_ERROR_CODE_BAD_GC = 13, /** Parameter not a GC */
+   ECORE_X_ERROR_CODE_BAD_ID_CHOICE = 14, /** Choice not in range or already used */
+   ECORE_X_ERROR_CODE_BAD_NAME = 15, /** Font or color name doesn't exist */
+   ECORE_X_ERROR_CODE_BAD_LENGTH = 16, /** Request length incorrect */
+   ECORE_X_ERROR_CODE_BAD_IMPLEMENTATION = 17, /** Server is defective */
 } Ecore_X_Error_Code;
 
 typedef enum _Ecore_X_Dpms_Mode
