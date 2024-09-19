@@ -49,7 +49,7 @@ group { name: "e/modules/cpufreq/main";
       public max_freq_now;
 
       public show_freq(Float:v) {
-         new Float:freq, Float:min_freq, Float:max_freq, Float:tf;
+         new Float:freq, Float:min_freq, Float:max_freq, Float:tf, Float:fdiff;
          new f, f0, f1;
 
          min_freq = fetch_int(available_frequencies, 0);
@@ -64,7 +64,10 @@ group { name: "e/modules/cpufreq/main";
          f = f + f0;
          set_int(cur_freq_now, f);
 
-         freq = (float(f) - min_freq) / (max_freq - min_freq);
+         fdiff = max_freq - min_freq;
+
+         if (fdiff <= 0) { freq = 1.0; }
+         else { freq = (float(f) - min_freq) / (fdiff); }
          tf = (freq * 225.0) - 135.0;
          custom_state(PART:"meter", "default", 0.0);
          set_state_val(PART:"meter", STATE_MAP_ROT_Z, tf);
@@ -78,7 +81,8 @@ group { name: "e/modules/cpufreq/main";
          f = f + f0;
          set_int(min_freq_now, f);
 
-         freq = (float(f) - min_freq) / (max_freq - min_freq);
+         if (fdiff <= 0) { freq = 1.0; }
+         else { freq = (float(f) - min_freq) / (fdiff); }
          tf = (freq * 225.0) - 135.0;
          custom_state(PART:"meter_min", "default", 0.0);
          set_state_val(PART:"meter_min", STATE_MAP_ROT_Z, tf);
@@ -92,7 +96,8 @@ group { name: "e/modules/cpufreq/main";
          f = f + f0;
          set_int(max_freq_now, f);
 
-         freq = (float(f) - min_freq) / (max_freq - min_freq);
+         if (fdiff <= 0) { freq = 1.0; }
+         else { freq = (float(f) - min_freq) / (fdiff); }
          tf = (freq * 225.0) - 135.0;
          custom_state(PART:"meter_max", "default", 0.0);
          set_state_val(PART:"meter_max", STATE_MAP_ROT_Z, tf);
