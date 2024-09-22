@@ -112,7 +112,7 @@ ecore_x_resource_db_flush(void)
              free(str);
           }
      }
-   eina_tmpstr_del(path);
    close(fd);
    unlink(path);
+   eina_tmpstr_del(path);
 }
