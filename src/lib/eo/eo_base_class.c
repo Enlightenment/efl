@@ -1816,6 +1816,7 @@ struct _Efl_Future_Scheduler_Entry
    Eina_Future_Scheduler_Cb cb;
    Eina_Future *future;
    Eina_Value value;
+   int called;
 };
 
 static Eina_Trash *schedulers_trash = NULL;
@@ -1837,6 +1838,7 @@ _futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Efl_Future_Scheduler *sched = data;
    Eina_List *entries = sched->futures;
    Efl_Future_Scheduler_Entry *entry;
+   Eina_List *l;
 
    sched->futures = NULL;
 
@@ -1844,10 +1846,17 @@ _futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    sched->listener = EINA_FALSE;
 
    // Now trigger callbacks
+   EINA_LIST_FOREACH(entries, l, entry)
+     {
+        if (entry->called == 0) entry->cb(entry->future, entry->value);
+        entry->called++;
+     }
    EINA_LIST_FREE(entries, entry)
      {
-        entry->cb(entry->future, entry->value);
-        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+        if (entry->called > 1) ERR("Future entry called more than once!");
+        entry->called--;
+        if (entry->called == 0)
+           eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
      }
 }
 
@@ -1896,6 +1905,7 @@ _efl_event_future_scheduler(Eina_Future_Scheduler *s_sched,
    entry->cb = cb;
    entry->future = future;
    entry->value = value;
+   entry->called = 0;
 
    if (!sched->listener)
      {
