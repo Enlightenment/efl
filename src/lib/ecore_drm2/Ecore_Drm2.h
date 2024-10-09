@@ -124,6 +124,9 @@ EAPI void ecore_drm2_display_user_data_set(Ecore_Drm2_Display *disp, void *data)
 EAPI void *ecore_drm2_display_user_data_get(Ecore_Drm2_Display *disp);
 EAPI Eina_Bool ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int seq, long *sec, long *usec);
 
+/* Framebuffer API functions */
+EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format);
+
 # endif
 
 #endif
