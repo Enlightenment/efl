@@ -125,3 +125,24 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
      WRN("Could not mark framebuffer as dirty: %m");
 #endif
 }
+
+EAPI void *
+ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
+   return fb->mmap;
+}
+
+EAPI unsigned int
+ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
+   return fb->sizes[0];
+}
+
+EAPI unsigned int
+ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
+   return fb->strides[0];
+}
