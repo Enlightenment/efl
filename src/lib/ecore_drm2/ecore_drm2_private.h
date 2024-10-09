@@ -375,6 +375,7 @@ void _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev);
 Ecore_Drm2_Plane *_ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id);
 
 /* external drm function prototypes (for dlopen) */
+extern int (*sym_drmIoctl)(int fd, unsigned long request, void *arg);
 extern void *(*sym_drmModeGetResources)(int fd);
 extern void (*sym_drmModeFreeResources)(drmModeResPtr ptr);
 extern int (*sym_drmGetCap)(int fd, uint64_t capability, uint64_t *value);
@@ -403,5 +404,10 @@ extern int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t obj
 extern int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data);
 extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
 extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl);
+extern int (*sym_drmModeAddFB)(int fd, uint32_t width, uint32_t height, uint8_t depth, uint8_t bpp, uint32_t pitch, uint32_t bo_handle, uint32_t *buf_id);
+extern int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_t pixel_format, uint32_t bo_handles[4], uint32_t pitches[4], uint32_t offsets[4], uint32_t *buf_id, uint32_t flags);
+extern int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
+extern int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
+extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
 
 #endif

@@ -8,6 +8,7 @@ static void *_drm_lib = NULL;
 int _ecore_drm2_log_dom = -1;
 
 /* external drm function prototypes (for dlopen) */
+int (*sym_drmIoctl)(int fd, unsigned long request, void *arg) = NULL;
 void *(*sym_drmModeGetResources)(int fd) = NULL;
 void (*sym_drmModeFreeResources)(drmModeResPtr ptr) = NULL;
 int (*sym_drmGetCap)(int fd, uint64_t capability, uint64_t *value);
@@ -36,6 +37,11 @@ int (*sym_drmModeAtomicAddProperty)(drmModeAtomicReqPtr req, uint32_t object_id,
 int (*sym_drmModeAtomicCommit)(int fd, drmModeAtomicReqPtr req, uint32_t flags, void *user_data) = NULL;
 void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor) = NULL;
 int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl) = NULL;
+int (*sym_drmModeAddFB)(int fd, uint32_t width, uint32_t height, uint8_t depth, uint8_t bpp, uint32_t pitch, uint32_t bo_handle, uint32_t *buf_id);
+int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_t pixel_format, uint32_t bo_handles[4], uint32_t pitches[4], uint32_t offsets[4], uint32_t *buf_id, uint32_t flags);
+int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
+int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
+int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
 
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
 
@@ -72,6 +78,7 @@ _ecore_drm2_link(void)
         fail = EINA_FALSE;
 
         /* TODO: Sym needed libdrm functions */
+	SYM(_drm_lib, drmIoctl);
         SYM(_drm_lib, drmModeGetResources);
         SYM(_drm_lib, drmModeFreeResources);
         SYM(_drm_lib, drmGetCap);
@@ -100,6 +107,12 @@ _ecore_drm2_link(void)
         SYM(_drm_lib, drmModeAtomicCommit);
         SYM(_drm_lib, drmModeAtomicSetCursor);
         SYM(_drm_lib, drmWaitVBlank);
+	SYM(_drm_lib, drmModeAddFB);
+	SYM(_drm_lib, drmModeAddFB2);
+	SYM(_drm_lib, drmModeRmFB);
+	SYM(_drm_lib, drmModeAddFB);
+	SYM(_drm_lib, drmModePageFlip);
+	SYM(_drm_lib, drmModeDirtyFB);
 
         if (fail)
           {
