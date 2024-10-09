@@ -1,4 +1,5 @@
 #include "ecore_drm2_private.h"
+#include <gbm.h>
 
 static Eina_Bool
 _ecore_drm2_fb_add(Ecore_Drm2_Fb *fb)
@@ -38,10 +39,9 @@ _ecore_drm2_fb_map(Ecore_Drm2_Fb *fb)
 }
 
 EAPI Ecore_Drm2_Fb *
-ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format)
+ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, void *bo)
 {
    Ecore_Drm2_Fb *fb;
-   struct drm_mode_create_dumb carg;
    struct drm_mode_destroy_dumb darg;
    int ret;
 
@@ -56,18 +56,30 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
    fb->bpp = bpp;
    fb->depth = depth;
    fb->format = format;
+   fb->bo = bo;
 
-   memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
-   carg.bpp = bpp;
-   carg.width = width;
-   carg.height = height;
+   if (!fb->bo)
+     {
+	struct drm_mode_create_dumb carg;
 
-   ret = sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
-   if (!ret) goto err;
+	memset(&carg, 0, sizeof(struct drm_mode_create_dumb));
+	carg.bpp = bpp;
+	carg.width = width;
+	carg.height = height;
 
-   fb->handles[0] = carg.handle;
-   fb->sizes[0] = carg.size;
-   fb->strides[0] = carg.pitch;
+	ret = sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
+	if (!ret) goto err;
+
+	fb->handles[0] = carg.handle;
+	fb->strides[0] = carg.pitch;
+	fb->sizes[0] = carg.size;
+     }
+   else
+     {
+	fb->handles[0] = gbm_bo_get_handle(fb->bo).u32;
+	fb->strides[0] = gbm_bo_get_stride(fb->bo);
+	fb->sizes[0] = fb->strides[0] * fb->h;
+     }
 
    if (!_ecore_drm2_fb_add(fb))
      {
@@ -81,10 +93,13 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
 	  }
      }
 
-   if (!_ecore_drm2_fb_map(fb))
+   if (!fb->bo)
      {
-	ERR("Could not map Framebuffer");
-	goto map_err;
+	if (!_ecore_drm2_fb_map(fb))
+	  {
+	     ERR("Could not map Framebuffer");
+	     goto map_err;
+	  }
      }
 
    return fb;
@@ -92,9 +107,12 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
 map_err:
    sym_drmModeRmFB(dev->fd, fb->id);
 add_err:
-   memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
-   darg.handle = fb->handles[0];
-   sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+   if (!fb->bo)
+     {
+	memset(&darg, 0, sizeof(struct drm_mode_destroy_dumb));
+	darg.handle = fb->handles[0];
+	sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_DESTROY_DUMB, &darg);
+     }
 err:
    free(fb);
    return NULL;
