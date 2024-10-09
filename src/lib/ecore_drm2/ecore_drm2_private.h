@@ -224,7 +224,7 @@ struct _Ecore_Drm2_Fb
    uint32_t id, handles[4];
    uint32_t strides[4], sizes[4];
 
-   void *mmap;
+   void *mmap, *bo;
 };
 
 struct _Ecore_Drm2_Plane
