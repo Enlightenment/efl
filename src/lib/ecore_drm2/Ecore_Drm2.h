@@ -126,6 +126,7 @@ EAPI Eina_Bool ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int se
 
 /* Framebuffer API functions */
 EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format);
+EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count);
 
 # endif
 
