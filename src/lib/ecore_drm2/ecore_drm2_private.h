@@ -372,10 +372,12 @@ struct _Ecore_Drm2_Device
 /* internal function prototypes */
 Eina_Bool _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev);
-Eina_Bool _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode);
+Eina_Bool _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc);
+Eina_Bool _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc);
 
 Eina_Bool _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev);
+Eina_Bool _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn);
 
 Eina_Bool _ecore_drm2_displays_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
@@ -420,5 +422,6 @@ extern int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
 extern int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
 extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
 extern int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
+extern int (*sym_drmModeConnectorSetProperty)(int fd, uint32_t connector_id, uint32_t property_id, uint64_t value);
 
 #endif
