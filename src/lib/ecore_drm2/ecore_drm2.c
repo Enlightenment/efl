@@ -42,6 +42,7 @@ int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_t pixel
 int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
 int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
 int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
+int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
 
@@ -113,6 +114,7 @@ _ecore_drm2_link(void)
 	SYM(_drm_lib, drmModeAddFB);
 	SYM(_drm_lib, drmModePageFlip);
 	SYM(_drm_lib, drmModeDirtyFB);
+	SYM(_drm_lib, drmModeCrtcSetGamma);
 
         if (fail)
           {
