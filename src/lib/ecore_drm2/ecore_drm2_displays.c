@@ -455,7 +455,7 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    _ecore_drm2_display_modes_get(disp);
 
    /* get gamma from crtc */
-   disp->state.current->gamma = disp->crtc->drmCrtc->gamma_size;
+   disp->state.current->gamma.size = disp->crtc->drmCrtc->gamma_size;
 
    /* get connected state */
    disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
@@ -771,11 +771,6 @@ ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled)
    pstate = disp->state.pending;
 
    if (cstate->enabled == enabled) return;
-
-   if (enabled)
-     ecore_drm2_display_dpms_set(disp, DRM_MODE_DPMS_ON);
-   else
-     ecore_drm2_display_dpms_set(disp, DRM_MODE_DPMS_OFF);
 
    pstate->enabled = enabled;
    pstate->changes |= ECORE_DRM2_DISPLAY_STATE_ENABLED;
@@ -1113,4 +1108,86 @@ ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int seq, long *sec, l
    *sec = vbl.reply.tval_sec;
    *usec = vbl.reply.tval_usec;
    return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
+{
+   Ecore_Drm2_Display_State *pstate;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+
+   pstate = disp->state.pending;
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_GAMMA)
+     {
+	uint16_t *r, *g, *b;
+
+	r = pstate->gamma.r;
+	g = pstate->gamma.g;
+	b = pstate->gamma.b;
+
+	if (sym_drmModeCrtcSetGamma(disp->crtc->fd, disp->crtc->id,
+				    pstate->gamma.size, r, g, b) < 0)
+	  ERR("Failed to set gamma for Display %s: %m", disp->name);
+	else
+	  pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_GAMMA;
+     }
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_ROTATION)
+     {
+
+     }
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_BACKLIGHT)
+     {
+
+     }
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_MODE)
+     {
+
+     }
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_PRIMARY)
+     {
+
+     }
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_ENABLED)
+     {
+
+     }
+
+   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_POSITION)
+     {
+
+     }
+
+   /* TODO: copy pending state to current when applying changes is successful */
+
+   return EINA_TRUE;
+}
+
+EAPI void
+ecore_drm2_display_gamma_set(Ecore_Drm2_Display *disp, uint16_t size, uint16_t *red, uint16_t *green, uint16_t *blue)
+{
+   Ecore_Drm2_Display_State *cstate, *pstate;
+
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+
+   cstate = disp->state.current;
+   pstate = disp->state.pending;
+
+   if (cstate->gamma.size == size) return;
+   if ((cstate->gamma.r == red) &&
+       (cstate->gamma.g == green) &&
+       (cstate->gamma.b == blue))
+     return;
+
+   pstate->gamma.size = size;
+   pstate->gamma.r = red;
+   pstate->gamma.g = green;
+   pstate->gamma.b = blue;
+   pstate->changes |= ECORE_DRM2_DISPLAY_STATE_GAMMA;
 }
