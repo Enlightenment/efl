@@ -1113,10 +1113,12 @@ ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int seq, long *sec, l
 EAPI Eina_Bool
 ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 {
-   Ecore_Drm2_Display_State *pstate;
+   Ecore_Drm2_Display_State *cstate, *pstate;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, EINA_FALSE);
 
+   cstate = disp->state.current;
    pstate = disp->state.pending;
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_GAMMA)
@@ -1146,25 +1148,36 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_MODE)
      {
+	Eina_Bool ret = EINA_FALSE;
 
+	ret = _ecore_drm2_crtcs_mode_set(disp->crtc, pstate->mode);
+	if (ret)
+	  pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_MODE;
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_PRIMARY)
      {
-
+	/* No-op change */
+	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_PRIMARY;
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_ENABLED)
      {
-
+	/* TODO: dpms on/off */
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_POSITION)
      {
-
+	disp->x = pstate->x;
+	disp->y = pstate->y;
+	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
 
-   /* TODO: copy pending state to current when applying changes is successful */
+   /* copy pending state to current when applying changes is successful */
+   memcpy(cstate, pstate, sizeof(Ecore_Drm2_Display_State));
+
+   /* reset pending state */
+   memset(pstate, 0, sizeof(Ecore_Drm2_Display_State));
 
    return EINA_TRUE;
 }
