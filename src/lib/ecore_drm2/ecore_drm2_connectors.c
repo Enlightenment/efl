@@ -271,3 +271,57 @@ _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev)
         thq = NULL;
      }
 }
+
+Eina_Bool
+_ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
+{
+   Ecore_Drm2_Connector_State *cstate, *pstate;
+   int ret = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
+
+   cstate = conn->state.current;
+   pstate = conn->state.pending;
+
+   if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_CRTC)
+     {
+	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_CRTC;
+     }
+
+   if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_DPMS)
+     {
+	if (pstate->dpms.value)
+	  ret = sym_drmModeConnectorSetProperty(conn->fd, conn->id,
+					       cstate->dpms.id,
+					       DRM_MODE_DPMS_ON);
+	else
+	  ret = sym_drmModeConnectorSetProperty(conn->fd, conn->id,
+					       cstate->dpms.id,
+					       DRM_MODE_DPMS_OFF);
+	if (ret < 0)
+	  {
+	     ERR("Failed to set connector dpms: %m");
+	     return EINA_FALSE;
+	  }
+
+	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_DPMS;
+     }
+
+   if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_ASPECT)
+     {
+	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_ASPECT;
+     }
+
+   if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_SCALING)
+     {
+	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_SCALING;
+     }
+
+   /* copy pending state to current state on success */
+   memcpy(cstate, pstate, sizeof(Ecore_Drm2_Connector_State));
+
+   /* reset pending state */
+   memset(pstate, 0, sizeof(Ecore_Drm2_Connector_State));
+
+   return EINA_TRUE;
+}
