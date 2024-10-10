@@ -203,7 +203,12 @@ typedef struct _Ecore_Drm2_Display_State
 
    int x, y;
 
-   uint16_t gamma;
+   struct
+     {
+	uint16_t *r, *g, *b;
+	uint16_t size;
+     } gamma;
+
    uint64_t rotation;
    double backlight;
 
@@ -415,5 +420,6 @@ extern int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_
 extern int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
 extern int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
 extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
+extern int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 
 #endif
