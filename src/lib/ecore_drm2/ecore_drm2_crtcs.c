@@ -254,45 +254,23 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
 }
 
 Eina_Bool
-_ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode)
+_ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc)
 {
    Eina_Bool result = EINA_FALSE;
-   Ecore_Drm2_Crtc_State *cstate;
+   Ecore_Drm2_Crtc_State *cstate, *pstate;
    drmModeAtomicReq *req = NULL;
    int ret = 0;
 
    cstate = crtc->state.current;
-
-   if (mode)
-     {
-	if (mode->id)
-	  sym_drmModeDestroyPropertyBlob(crtc->fd, mode->id);
-
-	ret =
-	  sym_drmModeCreatePropertyBlob(crtc->fd, &mode->info,
-					sizeof(drmModeModeInfo), &mode->id);
-	if (ret < 0)
-	  {
-	     ERR("Failed to create Mode property blob: %m");
-	     return EINA_FALSE;
-	  }
-     }
+   pstate = crtc->state.pending;
 
    req = sym_drmModeAtomicAlloc();
    if (!req) return EINA_FALSE;
 
    sym_drmModeAtomicSetCursor(req, 0);
 
-   if (mode)
-     {
-	cstate->active.value = 1;
-	cstate->mode.value = mode->id;
-     }
-   else
-     cstate->active.value = 0;
-
    ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
-				      cstate->mode.value);
+				      pstate->mode.value);
    if (ret < 0)
      {
 	ERR("Could not add atomic property: %m");
@@ -301,7 +279,7 @@ _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode)
      }
 
    ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
-				      cstate->active.value);
+				      pstate->active.value);
    if (ret < 0)
      {
 	ERR("Could not add atomic property: %m");
@@ -323,4 +301,33 @@ _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode)
 err:
    sym_drmModeAtomicFree(req);
    return result;
+}
+
+Eina_Bool
+_ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc)
+{
+   Ecore_Drm2_Crtc_State *cstate, *pstate;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(crtc, EINA_FALSE);
+
+   cstate = crtc->state.current;
+   pstate = crtc->state.pending;
+
+   if (pstate->changes & ECORE_DRM2_CRTC_STATE_MODE)
+     {
+	if (!_ecore_drm2_crtcs_mode_set(crtc))
+	  return EINA_FALSE;
+
+	pstate->changes &= ~ECORE_DRM2_CRTC_STATE_MODE;
+     }
+
+   /* TODO: add gamma */
+
+   /* copy pending state to current on success */
+   memcpy(cstate, pstate, sizeof(Ecore_Drm2_Crtc_State));
+
+   /* reset pendig state */
+   memset(pstate, 0, sizeof(Ecore_Drm2_Crtc_State));
+
+   return EINA_TRUE;
 }
