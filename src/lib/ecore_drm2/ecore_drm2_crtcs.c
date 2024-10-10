@@ -252,3 +252,75 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
         thq = NULL;
      }
 }
+
+Eina_Bool
+_ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode)
+{
+   Eina_Bool result = EINA_FALSE;
+   Ecore_Drm2_Crtc_State *cstate;
+   drmModeAtomicReq *req = NULL;
+   int ret = 0;
+
+   cstate = crtc->state.current;
+
+   if (mode)
+     {
+	if (mode->id)
+	  sym_drmModeDestroyPropertyBlob(crtc->fd, mode->id);
+
+	ret =
+	  sym_drmModeCreatePropertyBlob(crtc->fd, &mode->info,
+					sizeof(drmModeModeInfo), &mode->id);
+	if (ret < 0)
+	  {
+	     ERR("Failed to create Mode property blob: %m");
+	     return EINA_FALSE;
+	  }
+     }
+
+   req = sym_drmModeAtomicAlloc();
+   if (!req) return EINA_FALSE;
+
+   sym_drmModeAtomicSetCursor(req, 0);
+
+   if (mode)
+     {
+	cstate->active.value = 1;
+	cstate->mode.value = mode->id;
+     }
+   else
+     cstate->active.value = 0;
+
+   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+				      cstate->mode.value);
+   if (ret < 0)
+     {
+	ERR("Could not add atomic property: %m");
+	result = EINA_FALSE;
+	goto err;
+     }
+
+   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+				      cstate->active.value);
+   if (ret < 0)
+     {
+	ERR("Could not add atomic property: %m");
+	result = EINA_FALSE;
+	goto err;
+     }
+
+   ret = sym_drmModeAtomicCommit(crtc->fd, req,
+				 DRM_MODE_ATOMIC_ALLOW_MODESET, crtc);
+   if (ret < 0)
+     {
+	ERR("Failed to commit atomic Modeset: %m");
+	result = EINA_FALSE;
+	goto err;
+     }
+
+   result = EINA_TRUE;
+
+err:
+   sym_drmModeAtomicFree(req);
+   return result;
+}

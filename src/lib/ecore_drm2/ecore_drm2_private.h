@@ -374,6 +374,7 @@ struct _Ecore_Drm2_Device
 /* internal function prototypes */
 Eina_Bool _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev);
+Eina_Bool _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Display_Mode *mode);
 
 Eina_Bool _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev);
