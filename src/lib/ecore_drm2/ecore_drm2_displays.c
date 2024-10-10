@@ -187,7 +187,6 @@ _ecore_drm2_display_state_debug(Ecore_Drm2_Display *disp)
 
    /* DBG("\tCloned: %d", disp->cloned); */
    DBG("\tPrimary: %d", disp->state.current->primary);
-   DBG("\tEnabled: %d", disp->state.current->enabled);
    DBG("\tConnected: %d", disp->connected);
 }
 
@@ -662,6 +661,7 @@ EAPI void
 ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y)
 {
    Ecore_Drm2_Display_State *cstate, *pstate;
+   Ecore_Drm2_Crtc_State *crtc_cstate, *crtc_pstate;
 
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
@@ -677,10 +677,13 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
         pstate->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
 
-   if (cstate->mode != mode)
+   crtc_cstate = disp->crtc->state.current;
+   crtc_pstate = disp->crtc->state.pending;
+
+   if (crtc_cstate->mode.value != mode->id)
      {
-        pstate->mode = mode;
-        pstate->changes |= ECORE_DRM2_DISPLAY_STATE_MODE;
+        crtc_pstate->mode.value = mode->id;
+        crtc_pstate->changes |= ECORE_DRM2_CRTC_STATE_MODE;
      }
 
    /* FIXME: apply changes */
@@ -757,23 +760,25 @@ EAPI Eina_Bool
 ecore_drm2_display_enabled_get(Ecore_Drm2_Display *disp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
-   return disp->state.current->enabled;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, EINA_FALSE);
+   return disp->crtc->state.current->active.value;
 }
 
 EAPI void
 ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled)
 {
-   Ecore_Drm2_Display_State *cstate, *pstate;
+   Ecore_Drm2_Crtc_State *cstate, *pstate;
 
    EINA_SAFETY_ON_NULL_RETURN(disp);
+   EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
 
-   cstate = disp->state.current;
-   pstate = disp->state.pending;
+   cstate = disp->crtc->state.current;
+   pstate = disp->crtc->state.pending;
 
-   if (cstate->enabled == enabled) return;
+   if (cstate->active.value == enabled) return;
 
-   pstate->enabled = enabled;
-   pstate->changes |= ECORE_DRM2_DISPLAY_STATE_ENABLED;
+   pstate->active.value = enabled;
+   pstate->changes |= ECORE_DRM2_CRTC_STATE_ACTIVE;
 
    /* FIXME: apply changes */
 }
@@ -1007,7 +1012,8 @@ EAPI void
 ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi)
 {
    EINA_SAFETY_ON_NULL_RETURN(disp);
-   EINA_SAFETY_ON_TRUE_RETURN(!disp->state.current->enabled);
+   EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
+   EINA_SAFETY_ON_TRUE_RETURN(!disp->crtc->state.current->active.value);
 
    if (xdpi)
      *xdpi = ((25.4 * (disp->state.current->mode->width)) / disp->pw);
@@ -1028,7 +1034,8 @@ ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y)
      {
         int ox, oy, ow, oh;
 
-        if (!disp->state.current->enabled) continue;
+	if (!disp->crtc) continue;
+        if (!disp->crtc->state.current->active.value) continue;
 
         ecore_drm2_display_info_get(disp, &ox, &oy, &ow, &oh, NULL);
         if (INSIDE(x, y, ox, oy, ow, oh))
@@ -1138,21 +1145,12 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_ROTATION)
      {
-
+	/* TODO */
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_BACKLIGHT)
      {
-
-     }
-
-   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_MODE)
-     {
-	Eina_Bool ret = EINA_FALSE;
-
-	ret = _ecore_drm2_crtcs_mode_set(disp->crtc, pstate->mode);
-	if (ret)
-	  pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_MODE;
+	/* TODO */
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_PRIMARY)
