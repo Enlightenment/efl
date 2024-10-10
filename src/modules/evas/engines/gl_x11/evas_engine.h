@@ -95,16 +95,17 @@ struct _Outbuf
    Colormap         colormap;
    Window           win;
    unsigned int     w, h;
-   int              screen;
-   int              depth;
-   int              alpha;
-   int              rot;
-   int              prev_age;
    int              frame_cnt;
-   int              vsync;
+   short            rot;
+   char             screen;
+   char             prev_age;
+   char             buffer_age;
+   char             depth;
 
    unsigned char    lost_back : 1;
    unsigned char    surf : 1;
+   unsigned char    alpha : 1;
+   unsigned char    vsync : 1;
 
    struct {
       unsigned char drew : 1;
