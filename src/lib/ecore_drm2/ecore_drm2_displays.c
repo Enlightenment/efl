@@ -680,8 +680,30 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
    crtc_cstate = disp->crtc->state.current;
    crtc_pstate = disp->crtc->state.pending;
 
+   if (mode)
+     {
+	int ret = 0;
+
+	if (mode->id)
+	  sym_drmModeDestroyPropertyBlob(disp->crtc->fd, mode->id);
+
+	ret =
+	  sym_drmModeCreatePropertyBlob(disp->crtc->fd, &mode->info,
+					sizeof(drmModeModeInfo), &mode->id);
+	if (ret < 0)
+	  {
+	     ERR("Failed to create Mode Property Blob: %m");
+	     return;
+	  }
+     }
+
    if (crtc_cstate->mode.value != mode->id)
      {
+	if (mode)
+	  crtc_pstate->active.value = 1;
+	else
+	  crtc_pstate->active.value = 0;
+
         crtc_pstate->mode.value = mode->id;
         crtc_pstate->changes |= ECORE_DRM2_CRTC_STATE_MODE;
      }
@@ -1124,6 +1146,13 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, EINA_FALSE);
+
+   if (!_ecore_drm2_connectors_changes_apply(disp->conn))
+     return EINA_FALSE;
+
+   if (!_ecore_drm2_crtcs_changes_apply(disp->crtc))
+     return EINA_FALSE;
 
    cstate = disp->state.current;
    pstate = disp->state.pending;
@@ -1170,6 +1199,9 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 	disp->y = pstate->y;
 	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
+
+   /* If pstate still has some changes listed, than that means something failed */
+   if (pstate->changes) return EINA_FALSE;
 
    /* copy pending state to current when applying changes is successful */
    memcpy(cstate, pstate, sizeof(Ecore_Drm2_Display_State));
