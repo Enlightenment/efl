@@ -251,6 +251,7 @@ struct _Ecore_Drm2_Display_Mode
    uint32_t id;
    uint32_t flags, refresh;
    int32_t width, height;
+   uint32_t aspect_ratio;
    drmModeModeInfo info;
 };
 

@@ -268,6 +268,7 @@ _ecore_drm2_display_mode_create(const drmModeModeInfo *info)
    mode->flags = 0;
    mode->width = info->hdisplay;
    mode->height = info->vdisplay;
+   mode->aspect_ratio = info->flags;
 
    refresh = (info->clock * 1000000LL / info->htotal +
               info->vtotal / 2) / info->vtotal;
