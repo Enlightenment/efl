@@ -40,6 +40,15 @@ typedef enum _Ecore_Drm2_Relative_Mode
    ECORE_DRM2_RELATIVE_MODE_TO_BELOW
 } Ecore_Drm2_Relative_Mode;
 
+typedef enum _Ecore_Drm2_Aspect_Ratio
+{
+   ECORE_DRM2_MODE_ASPECT_NONE = 0,
+   ECORE_DRM2_MODE_ASPECT_4_3 = 1,
+   ECORE_DRM2_MODE_ASPECT_16_9 = 2,
+   ECORE_DRM2_MODE_ASPECT_64_27 = 3,
+   ECORE_DRM2_MODE_ASPECT_256_135 = 4,
+} Ecore_Drm2_Aspect_Ratio;
+
 /* opaque structure to represent a drm framebuffer */
 typedef struct _Ecore_Drm2_Fb Ecore_Drm2_Fb;
 
