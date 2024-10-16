@@ -334,7 +334,7 @@ _drm_send_time(double t)
                     }
                   if (t_sleep > 0.0) usleep(t_sleep * 1000000.0);
                }
-             D("    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
+             D("VSYNC:    @%1.5f   ... send %1.8f\n", ecore_time_get(), t);
              eina_spinlock_take(&tick_queue_lock);
              tick_queue_count++;
              eina_spinlock_release(&tick_queue_lock);
@@ -379,7 +379,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
         static unsigned int pframe = 0;
 
         DBG("vblank %i", frame);
-        D("    @%1.5f vblank %i\n", ecore_time_get(), frame);
+        D("VSYNC:    @%1.5f vblank %i\n", ecore_time_get(), frame);
         if (pframe != frame)
           {
 #if 0 // disable timestamp from vblank and use time event arrived
@@ -424,7 +424,7 @@ _drm_vblank_handler(int fd EINA_UNUSED,
      }
    else
      {
-        D("    @%1.5f vblank drm event when not busy!\n", ecore_time_get());
+        D("VSYNC:    @%1.5f vblank drm event when not busy!\n", ecore_time_get());
      }
 }
 
@@ -449,11 +449,11 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    while (!ecore_thread_check(thread))
      {
         DBG("------- drm_event_is_busy=%i", drm_event_is_busy);
-        D("    @%1.5f ------- drm_event_is_busy=%i\n", ecore_time_get(), drm_event_is_busy);
+        D("VSYNC:    @%1.5f ------- drm_event_is_busy=%i\n", ecore_time_get(), drm_event_is_busy);
         if (!drm_event_is_busy)
           {
              DBG("wait...");
-             D("    @%1.5f wait...\n", ecore_time_get());
+             D("VSYNC:    @%1.5f wait...\n", ecore_time_get());
              msg = eina_thread_queue_wait(thq, &ref);
              if (msg)
                {
@@ -466,7 +466,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              do
                {
                   DBG("poll...");
-                  D("    @%1.5f poll...\n", ecore_time_get());
+                  D("VSYNC:    @%1.5f poll...\n", ecore_time_get());
                   msg = eina_thread_queue_poll(thq, &ref);
                   if (msg)
                     {
@@ -477,7 +477,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              while (msg);
           }
         DBG("tick = %i", tick);
-        D("    @%1.5f tick = %i\n", ecore_time_get(), tick);
+        D("VSYNC:    @%1.5f tick = %i\n", ecore_time_get(), tick);
         if (tick == -1)
           {
              drm_thread = NULL;
@@ -494,7 +494,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 
              if (!_drm_tick_schedule())
                {
-                  D("    @%1.5f schedule fail\n", ecore_time_get());
+                  D("VSYNC:    @%1.5f schedule fail\n", ecore_time_get());
                   _drm_fail_count = 999999;
                }
              max_fd = 0;
@@ -508,7 +508,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                tv.tv_usec = _drm_fail_time2 * 1000000;
              else
                tv.tv_usec = _drm_fail_time * 1000000;
-             D("    @%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
+             D("VSYNC:    @%1.5f wait %ims\n", ecore_time_get(), (int)(tv.tv_usec /1000));
              ret = select(max_fd + 1, &rfds, &wfds, &exfds, &tv);
              _ecore_x_vsync_wakeup_time = ecore_time_get();
 #if 0
@@ -526,7 +526,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 #endif
              if ((ret == 1) && (FD_ISSET(drm_fd, &rfds)))
                {
-                  D("    @%1.5f have event\n", ecore_time_get());
+                  D("VSYNC:    @%1.5f have event\n", ecore_time_get());
                   sym_drmHandleEvent(drm_fd, &drm_evctx);
                   _drm_fail_count = 0;
                }
@@ -535,7 +535,7 @@ _drm_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                   // timeout
                   _drm_send_time(ecore_time_get());
                   _drm_fail_count++;
-                  D("    @%1.5f fail count %i\n", ecore_time_get(), _drm_fail_count);
+                  D("VSYNC:    @%1.5f fail count %i\n", ecore_time_get(), _drm_fail_count);
                }
           }
      }
@@ -551,7 +551,7 @@ _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void 
    tick_queue_count--;
    eina_spinlock_release(&tick_queue_lock);
    DBG("notify.... %3.3f %i", *((double *)msg), drm_event_is_busy);
-   D("notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
+   D("VSYNC: notify.... %3.3f %i\n", *((double *)msg), drm_event_is_busy);
    if (drm_event_is_busy)
      {
         double *t = msg, rt, lt;
@@ -560,8 +560,7 @@ _drm_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void 
         rt = ecore_time_get();
         lt = ecore_loop_time_get();
         DBG("VSYNC %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
-        D("VSYNC %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
-//        printf("VSYNC %1.8f = delt %1.5f | real = %1.5f | loop = %1.5f\n", *t, 1.0 / (*t - pt), 1.0 / (rt - prt), 1.0 / (lt - plt));
+        D("VSYNC: %1.8f = delt %1.8f | real = %1.8f | loop = %1.8f", *t, *t - pt, rt - prt, lt - plt);
         if ((!tick_skip) || (tick_queued == 1))
           {
              ecore_loop_time_set(*t);
@@ -669,6 +668,7 @@ _drm_init(int *flags)
    struct stat st;
    char buf[512];
    Eina_Bool ok = EINA_FALSE;
+   Eina_Bool card0, card1;
    int vmaj = 0, vmin = 0;
    FILE *fp;
 
@@ -694,21 +694,22 @@ _drm_init(int *flags)
    if (!ok) return 0;
    ok = EINA_FALSE;
 
-   snprintf(buf, sizeof(buf), "/dev/dri/card1");
-   if (stat(buf, &st) == 0)
+   D("VSYNC: init...\n");
+   card0 = (stat("/dev/dri/card0", &st) == 0);
+   card1 = (stat("/dev/dri/card1", &st) == 0);
+   if      (!card0 && card1)
+     snprintf(buf, sizeof(buf), "/dev/dri/card1");
+   else if (card0 && !card1)
+     snprintf(buf, sizeof(buf), "/dev/dri/card0");
+   else
      {
+        D("VSYNC: 2 cards - confused. can't do this.\n");
         // XXX: 2 dri cards - ambiguous. unknown device for screen
         if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
           fprintf(stderr, "You have 2 DRI cards. Don't know which to use for vsync\n");
         return 0;
      }
-   snprintf(buf, sizeof(buf), "/dev/dri/card0");
-   if (stat(buf, &st) != 0)
-     {
-        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-          fprintf(stderr, "Cannot find device card 0 (/de/dri/card0)\n");
-        return 0;
-     }
+   D("VSYNC: open %s\n", buf);
    drm_fd = open(buf, O_RDWR | O_CLOEXEC);
    if (drm_fd < 0)
      {
@@ -925,7 +926,8 @@ _vsync_init(void)
      {
 #ifdef ECORE_X_VSYNC_DRM
         // preferred inline drm if possible
-        if (!stat("/dev/dri/card0", &stb))
+        if ((!stat("/dev/dri/card0", &stb)) ||
+            (!stat("/dev/dri/card1", &stb)))
           {
              if (_drm_link())
                {
