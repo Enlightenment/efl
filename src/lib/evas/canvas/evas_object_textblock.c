@@ -2984,7 +2984,7 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
          * underline_height=<floatingnumber>
          * @endcode
          */
-        fmt->underline_height = atof(param);
+        fmt->underline_height = eina_convert_strtod_c(param, NULL);
         if (fmt->underline_height <= 0.0) fmt->underline_height = 1.0;
      }
    else if (cmd == gfx_filterstr)

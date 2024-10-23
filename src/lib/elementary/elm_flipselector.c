@@ -518,7 +518,7 @@ _elm_flipselector_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED
         return 0;
      }
    ELM_FLIPSELECTOR_ITEM_DATA_GET(sd->current->data, item);
-   return atof(item->label);
+   return eina_convert_strtod_c(item->label, NULL);
 }
 
 EOLIAN static void
@@ -529,7 +529,7 @@ _elm_flipselector_efl_ui_range_display_range_value_set(Eo *obj EINA_UNUSED, Elm_
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
-        if (atof(elm_object_item_text_get(it)) >= val)
+        if (eina_convert_strtod_c(elm_object_item_text_get(it), NULL) >= val)
           break;
      }
    elm_flipselector_item_selected_set(it, EINA_TRUE);

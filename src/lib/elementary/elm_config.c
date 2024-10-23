@@ -3024,9 +3024,9 @@ _env_get(void)
    s = _getenv_once("ELM_SCROLL_ANIMATION_DISABLE");
    if (s) _elm_config->scroll_animation_disable = !!atoi(s);
    s = _getenv_once("ELM_SCROLL_ACCEL_FACTOR");
-   if (s) _elm_config->scroll_accel_factor = atof(s);
+   if (s) _elm_config->scroll_accel_factor = _elm_atof(s);
 //   s = _getenv_once("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
-//   if (s) _elm_config->scroll_smooth_time_interval = atof(s); // not used anymore
+//   if (s) _elm_config->scroll_smooth_time_interval = _elm_atof(s); // not used anymore
    s = _getenv_once("ELM_SCROLL_SMOOTH_AMOUNT");
    if (s) _elm_config->scroll_smooth_amount = _elm_atof(s);
 //   s = _getenv_once("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT"); // not used anymore
@@ -3237,7 +3237,7 @@ _env_get(void)
    if (s) _elm_config->spinner_min_max_filter_enable = !!atoi(s);
 
    s = _getenv_once("ELM_TRANSITION_DURATION_FACTOR");
-   if (s) _elm_config->transition_duration_factor = atof(s);
+   if (s) _elm_config->transition_duration_factor = _elm_atof(s);
 
    s = _getenv_once("ELM_POPUP_HORIZONTAL_ALIGN");
    if (s) _elm_config->popup_horizontal_align = _elm_atof(s);

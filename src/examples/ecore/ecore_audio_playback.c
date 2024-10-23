@@ -271,7 +271,7 @@ main(int argc, const char *argv[])
                    freq = atoi(&val[5]);
                    efl_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &freq);
                  } else if (!strncmp(val, "duration=", 9)) {
-                   ecore_audio_obj_in_length_set(in, atof(&val[9]));
+                   ecore_audio_obj_in_length_set(in, eina_convert_strtod_c(&val[9], NULL));
                  }
               }
             free(tmp);

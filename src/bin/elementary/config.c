@@ -4538,7 +4538,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
      {
         if (theme_set) elm_theme_set(NULL, theme_set);
         if (finger_size_set) elm_config_finger_size_set(atoi(finger_size_set));
-        if (scale_set) elm_config_scale_set(atof(scale_set));
+        if (scale_set) elm_config_scale_set(eina_convert_strtod_c(scale_set, NULL));
         if (web_backend) elm_config_web_backend_set(web_backend);
 
         elm_config_all_flush();

@@ -242,12 +242,12 @@ elm_main(int argc, char **argv)
         else if ((!strcmp(argv[i], "-r")) && (i < (argc - 1)))
           {
              i++;
-             run_time = atof(argv[i]);
+             run_time = eina_convert_strtod_c(argv[i], NULL);
           }
         else if ((!strcmp(argv[i], "-d")) && (i < (argc - 1)))
           {
              i++;
-             spin_up_delay = atof(argv[i]);
+             spin_up_delay = eina_convert_strtod_c(argv[i], NULL);
           }
      }
    if (!tests_to_do)

@@ -167,7 +167,7 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
              else if (_IS_STRINGS_EQUAL(key, key_len, "font_size", 9))
                {
                   if (tag_ret)
-                    tag_ret->font_size = atof(val);
+                    tag_ret->font_size = eina_convert_strtod_c(val, NULL);
                }
              else if (_IS_STRINGS_EQUAL(key, key_len, "font", 4)) /* Fix fonts */
                {

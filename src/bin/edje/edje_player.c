@@ -123,7 +123,7 @@ static void
 _slave_mode_message_int(Evas_Object *edje, int id, char *arg)
 {
    Edje_Message_Int msg;
-   msg.val = atoi(arg);
+   msg.val =atoi(arg);
    edje_object_message_send(edje, EDJE_MESSAGE_INT, id, &msg);
 }
 
@@ -131,7 +131,7 @@ static void
 _slave_mode_message_float(Evas_Object *edje, int id, char *arg)
 {
    Edje_Message_Float msg;
-   msg.val = atof(arg);
+   msg.val = eina_convert_strtod_c(arg, NULL);
    edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, id, &msg);
 }
 
@@ -205,7 +205,7 @@ _slave_mode_message_float_set(Evas_Object *edje, int id, char *arg,
              fputs("ERROR: Message missing arg.\n", stderr);
              return;
           }
-        msg->val[i] = atof(extra_args);
+        msg->val[i] = eina_convert_strtod_c(extra_args, NULL);
         extra_args = next;
      }
 
@@ -246,7 +246,7 @@ _slave_mode_message_string_float(Evas_Object *edje, int id, char *arg,
    _slave_mode_tok(&extra_args);
 
    msg.str = arg;
-   msg.val = atof(extra_args);
+   msg.val = eina_convert_strtod_c(extra_args, NULL);
 
    edje_object_message_send(edje, EDJE_MESSAGE_STRING_FLOAT, id, &msg);
 }
@@ -314,7 +314,7 @@ _slave_mode_message_string_float_set(Evas_Object *edje, int id, char *arg,
              fputs("ERROR: Message missing arg.\n", stderr);
              return;
           }
-        msg->val[i] = atof(val);
+        msg->val[i] = eina_convert_strtod_c(val, NULL);
         val = next;
      }
 

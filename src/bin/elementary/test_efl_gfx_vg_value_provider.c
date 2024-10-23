@@ -82,7 +82,7 @@ add_value_provider(char* new_path, char* new_type, char* new_values)
         for( int i = 0; i < value_cnt; i++)
           {
              char* v = (char*)efl_text_get(values[i]);
-             if (v) value[i] = atof(v);
+             if (v) value[i] = eina_convert_strtod_c(v, NULL);
           }
 
         eina_matrix4_identity(&m);

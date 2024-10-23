@@ -2287,7 +2287,7 @@ _edje_param_convert(Edje_External_Param *param, const Edje_External_Param_Info *
 
             case EDJE_EXTERNAL_PARAM_TYPE_STRING:
             case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
-              d = (param->s) ? atof(param->s) : 0.0;
+              d = (param->s) ? eina_convert_strtod_c(param->s, NULL) : 0.0;
               break;
 
             case EDJE_EXTERNAL_PARAM_TYPE_BOOL:

@@ -99,7 +99,7 @@ _embryo_fp_str(Embryo_Program *ep, Embryo_Cell *params)
    len = embryo_data_string_length_get(ep, str);
    if ((len == 0) || (len >= (int)sizeof(buf))) return 0;
    embryo_data_string_get(ep, str, buf);
-   f = (float)atof(buf);
+   f = (float)eina_convert_strtod_c(buf, NULL);
    return EMBRYO_FLOAT_TO_CELL(f);
 }
 

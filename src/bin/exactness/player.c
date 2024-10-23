@@ -1074,7 +1074,7 @@ eina_init(void)
         _stabilize_shots = !!getenv("EXACTNESS_STABILIZE_SHOTS");
         _verbose = !!getenv("EXACTNESS_VERBOSE");
         if (speed)
-          _speed = atof(speed);
+          _speed = eina_convert_strtod_c(speed, NULL);
 
         _log_domain = eina_log_domain_register("exactness_player", NULL);
         if (!_setup_dest_type(dest, !!external_injection))

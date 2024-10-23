@@ -297,7 +297,7 @@ _edje_var_var_int_get(Edje *ed EINA_UNUSED, Edje_Var *var)
           {
              double f;
 
-             f = atof(var->data.s.v);
+             f = eina_convert_strtod_c(var->data.s.v, NULL);
              free(var->data.s.v);
              var->data.s.v = NULL;
              var->data.i.v = (int)f;
@@ -367,7 +367,7 @@ _edje_var_var_float_get(Edje *ed EINA_UNUSED, Edje_Var *var)
           {
              double f;
 
-             f = atof(var->data.s.v);
+             f = eina_convert_strtod_c(var->data.s.v, NULL);
              free(var->data.s.v);
              var->data.s.v = NULL;
              var->data.f.v = f;

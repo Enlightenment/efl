@@ -351,7 +351,7 @@ efreet_ini_double_get(Efreet_Ini *ini, const char *key)
     EINA_SAFETY_ON_NULL_RETURN_VAL(key, -1);
 
     str = efreet_ini_string_get(ini, key);
-    if (str) return atof(str);
+    if (str) return eina_convert_strtod_c(str, NULL);
 
     return -1;
 }

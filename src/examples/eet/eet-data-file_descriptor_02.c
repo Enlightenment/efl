@@ -374,7 +374,7 @@ _union_1_new(const char *v1,
      }
 
    un->type = EET_STRUCT1;
-   _st1_set(&(un->u.st1), atof(v1), atoi(v2), eina_stringshare_add(v3));
+   _st1_set(&(un->u.st1), eina_convert_strtod_c(v1, NULL), atoi(v2), eina_stringshare_add(v3));
 
    return un;
 }
@@ -426,7 +426,7 @@ _union_float_new(const char *v1)
      }
 
    un->type = EET_BASIC_FLOAT;
-   un->u.f = atof(v1);
+   un->u.f = eina_convert_strtod_c(v1, NULL);
 
    return un;
 }
@@ -464,7 +464,7 @@ _variant_1_new(const char *v1,
 
    va->t.type = eet_mapping[0].name;
    st1 = calloc(1, sizeof (Example_Struct1));
-   _st1_set(st1, atof(v1), atoi(v2), eina_stringshare_add(v3));
+   _st1_set(st1, eina_convert_strtod_c(v1, NULL), atoi(v2), eina_stringshare_add(v3));
    va->data = st1;
 
    return va;

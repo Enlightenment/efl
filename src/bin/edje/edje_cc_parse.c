@@ -1891,7 +1891,7 @@ _get_numf(char *s, double *val)
         pos++;
      }
    buf[pos] = '\0';
-   (*val) = atof(buf);
+   (*val) = eina_convert_strtod_c(buf, NULL);
    return s + pos;
 }
 
