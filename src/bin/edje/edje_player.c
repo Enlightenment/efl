@@ -123,7 +123,7 @@ static void
 _slave_mode_message_int(Evas_Object *edje, int id, char *arg)
 {
    Edje_Message_Int msg;
-   msg.val =atoi(arg);
+   msg.val = atoi(arg);
    edje_object_message_send(edje, EDJE_MESSAGE_INT, id, &msg);
 }
 
