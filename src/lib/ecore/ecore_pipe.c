@@ -449,7 +449,11 @@ _ecore_pipe_wait(Ecore_Pipe *p,
           }
         else t = NULL;
 
-        ret = main_loop_select(p->fd_read + 1, &rset, &wset, &exset, t);
+#ifdef _WIN32
+        ret = _ecore_main_win32_select(p->fd_read + 1, &rset, &wset, &exset, t);
+#else
+        ret = select(p->fd_read + 1, &rset, &wset, &exset, t);
+#endif
 
         if (ret > 0)
           {
