@@ -5690,7 +5690,8 @@ ecore_evas_drag_start(Ecore_Evas *ee, unsigned int seat, Eina_Content *content, 
 }
 
 EAPI void
-ecore_evas_drag_offset_set(Ecore_Evas *ee, unsigned int seat, Eina_Size2D offset) {
+ecore_evas_drag_offset_set(Ecore_Evas *ee, unsigned int seat, Eina_Size2D offset)
+{
    Ecore_Evas_Selection_Seat_Buffers *buffers;
 
    EINA_SAFETY_ON_NULL_RETURN(ee);
