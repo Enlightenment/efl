@@ -1486,6 +1486,12 @@ _ethumb_image_load(Ethumb *e)
    int error;
    Evas_Coord w, h, ww, hh, fx, fy, fw, fh;
    Evas_Object *img;
+   struct stat st;
+
+   if (stat(e->src_path, &st) != 0) return 0;
+   if (S_ISDIR(st.st_mode) || S_ISFIFO(st.st_mode) ||
+       S_ISSOCK(st.st_mode) || S_ISBLK(st.st_mode) ||
+       S_ISCHR(st.st_mode)) return 0;
 
    img = e->img;
 
