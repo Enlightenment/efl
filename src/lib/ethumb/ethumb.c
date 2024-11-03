@@ -1490,7 +1490,10 @@ _ethumb_image_load(Ethumb *e)
 
    if (stat(e->src_path, &st) != 0) return 0;
    if (S_ISDIR(st.st_mode) || S_ISFIFO(st.st_mode) ||
-       S_ISSOCK(st.st_mode) || S_ISBLK(st.st_mode) ||
+#ifdef S_ISSOCK
+       S_ISSOCK(st.st_mode) ||
+#endif
+       S_ISBLK(st.st_mode) ||
        S_ISCHR(st.st_mode)) return 0;
 
    img = e->img;
