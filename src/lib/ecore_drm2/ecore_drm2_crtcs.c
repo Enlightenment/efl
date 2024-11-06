@@ -313,15 +313,18 @@ _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc)
    cstate = crtc->state.current;
    pstate = crtc->state.pending;
 
-   if (pstate->changes & ECORE_DRM2_CRTC_STATE_MODE)
+   if (pstate->changes &
+       (ECORE_DRM2_CRTC_STATE_MODE | ECORE_DRM2_CRTC_STATE_ACTIVE))
      {
 	if (!_ecore_drm2_crtcs_mode_set(crtc))
 	  return EINA_FALSE;
 
-	pstate->changes &= ~ECORE_DRM2_CRTC_STATE_MODE;
-     }
+        if (pstate->changes & ECORE_DRM2_CRTC_STATE_MODE)
+          pstate->changes &= ~ECORE_DRM2_CRTC_STATE_MODE;
 
-   /* TODO: add gamma */
+        if (pstate->changes & ECORE_DRM2_CRTC_STATE_ACTIVE)
+          pstate->changes &= ~ECORE_DRM2_CRTC_STATE_ACTIVE;
+     }
 
    /* copy pending state to current on success */
    memcpy(cstate, pstate, sizeof(Ecore_Drm2_Crtc_State));
