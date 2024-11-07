@@ -663,6 +663,7 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
 {
    Ecore_Drm2_Display_State *cstate, *pstate;
    Ecore_Drm2_Crtc_State *crtc_cstate, *crtc_pstate;
+   Ecore_Drm2_Connector_State *conn_cstate, *conn_pstate;
 
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_NULL_RETURN(mode);
@@ -707,6 +708,15 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
 
         crtc_pstate->mode.value = mode->id;
         crtc_pstate->changes |= ECORE_DRM2_CRTC_STATE_MODE;
+     }
+
+   conn_cstate = disp->conn->state.current;
+   conn_pstate = disp->conn->state.pending;
+
+   if (conn_cstate->aspect.value != mode->aspect_ratio)
+     {
+        conn_pstate->aspect.value = mode->aspect_ratio;
+        conn_pstate->changes |= ECORE_DRM2_CONNECTOR_STATE_ASPECT;
      }
 
    /* FIXME: apply changes */
@@ -1149,12 +1159,6 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->crtc, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, EINA_FALSE);
 
-   if (!_ecore_drm2_connectors_changes_apply(disp->conn))
-     return EINA_FALSE;
-
-   if (!_ecore_drm2_crtcs_changes_apply(disp->crtc))
-     return EINA_FALSE;
-
    cstate = disp->state.current;
    pstate = disp->state.pending;
 
@@ -1176,11 +1180,13 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_ROTATION)
      {
 	/* TODO */
+        pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_ROTATION;
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_BACKLIGHT)
      {
 	/* TODO */
+        pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_BACKLIGHT;
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_PRIMARY)
@@ -1189,17 +1195,18 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_PRIMARY;
      }
 
-   if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_ENABLED)
-     {
-	/* TODO: dpms on/off */
-     }
-
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_POSITION)
      {
 	disp->x = pstate->x;
 	disp->y = pstate->y;
 	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
+
+   if (!_ecore_drm2_connectors_changes_apply(disp->conn))
+     return EINA_FALSE;
+
+   if (!_ecore_drm2_crtcs_changes_apply(disp->crtc))
+     return EINA_FALSE;
 
    /* If pstate still has some changes listed, than that means something failed */
    if (pstate->changes) return EINA_FALSE;
