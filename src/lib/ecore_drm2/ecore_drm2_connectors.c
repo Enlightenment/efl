@@ -285,6 +285,7 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
 
    if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_CRTC)
      {
+        /* TODO: set crtc */
 	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_CRTC;
      }
 
@@ -309,11 +310,17 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
 
    if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_ASPECT)
      {
+        /* TODO: set aspect */
+
+        /* cstate->aspect.id = prop->prop_id; */
+        /* cstate->aspect.flags = prop->flags; */
+        /* cstate->aspect.value = oprops->prop_values[i]; */
 	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_ASPECT;
      }
 
    if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_SCALING)
      {
+        /* TODO */
 	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_SCALING;
      }
 
