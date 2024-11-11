@@ -182,11 +182,6 @@ static void _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int on
 #endif
 
 #ifdef _WIN32
-static int _ecore_main_win32_select(int             nfds,
-                                    fd_set         *readfds,
-                                    fd_set         *writefds,
-                                    fd_set         *exceptfds,
-                                    struct timeval *timeout);
 static void _ecore_main_win32_handlers_cleanup(Eo *obj, Efl_Loop_Data *pd);
 #endif
 
@@ -201,8 +196,8 @@ static double t2 = 0.0;
 #endif
 
 #ifdef _WIN32
-Ecore_Select_Function        main_loop_select    = _ecore_main_win32_select;
-static Ecore_Select_Function general_loop_select = _ecore_main_win32_select;
+Ecore_Select_Function        main_loop_select    = ecore_main_win32_select;
+static Ecore_Select_Function general_loop_select = ecore_main_win32_select;
 #else
 # include <sys/select.h>
 Ecore_Select_Function        main_loop_select    = select;
@@ -2721,12 +2716,12 @@ _stdin_wait_thread(void *data EINA_UNUSED)
    return 0;
 }
 
-static int
-_ecore_main_win32_select(int             nfds EINA_UNUSED,
-                         fd_set         *readfds,
-                         fd_set         *writefds,
-                         fd_set         *exceptfds,
-                         struct timeval *tv)
+int
+ecore_main_win32_select(int             nfds EINA_UNUSED,
+                        fd_set         *readfds,
+                        fd_set         *writefds,
+                        fd_set         *exceptfds,
+                        struct timeval *tv)
 {
    Efl_Loop_Data *pd = ML_DAT;
    HANDLE *objects;

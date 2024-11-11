@@ -508,6 +508,13 @@ _ecore_call_fd_cb(Ecore_Fd_Cb func,
 
 extern int _ecore_fps_debug;
 extern Eina_Bool _ecore_glib_always_integrate;
+#ifdef _WIN32
+extern int ecore_main_win32_select(int             nfds,
+                                   fd_set         *readfds,
+                                   fd_set         *writefds,
+                                   fd_set         *exceptfds,
+                                   struct timeval *timeout);
+#endif
 extern Ecore_Select_Function main_loop_select;
 extern int in_main_loop;
 
