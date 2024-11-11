@@ -99,6 +99,7 @@ collections {
 #include "edc/fontpreview.edc"
 #include "edc/cslider.edc"
 #include "edc/spectrum.edc"
+#include "edc/graph.edc"
 
 // desktop in general
 #include "edc/wallpaper.edc"
