@@ -8,7 +8,7 @@ group { name: "e/graph/default/base";
 }
 
 group { name: "e/fileman/default/graph/bar";
-  alias: "e/graph/default/base";
+  alias: "e/graph/default/bar";
   script {
    hex(str[], len) {
      new i, val = 0;
