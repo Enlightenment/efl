@@ -440,6 +440,7 @@ color_tree {
       "/fg/normal/gadgets/temperature/hi";
       "/fg/normal/gadgets/clock/analog/hands/secs";
       "/fg/normal/fileperm/write";
+      "/fg/normal/filegraph/bar2";
    }
    ":selected4-dim" {
       "/fg/disabled/text-warning";
@@ -477,6 +478,7 @@ color_tree {
       "/fg/normal/progress/busy/2";
       "/fg/normal/gadgets/packagekit/pkg/low-priority";
       "/fg/normal/filegraph/bartop";
+      "/fg/normal/filegraph/bartop2";
    }
    ":light-high" {
       "/fg/normal/naviframe/top/overlap";
