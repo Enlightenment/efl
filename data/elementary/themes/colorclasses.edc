@@ -66,6 +66,8 @@ color_tree {
       "/bg/normal/gadgets/mixer/base";
       "/fg/disabled/text-preedit-sel";
       "/fg/normal/text-current";
+      "/fg/normal/gadgets/cpufreq/cpu_usage/0";
+      "/fg/normal/gadgets/cpufreq/cpu_freq/0";
    };
    ":bg-darkest" {
       "/bg/pressed/gadgets/tasks/base";
@@ -301,6 +303,7 @@ color_tree {
       "/fg-alt/selected";
       "/fg-alt/selected-pressed";
       "/fg/selected/fileman/filesize/0";
+      "/fg/normal/gadgets/cpufreq/cpu_usage/4";
    }
    ":selected" {
       "/bg/selected";
@@ -388,6 +391,7 @@ color_tree {
       "/fg/disabled/text-info";
       "/fg/disabled/text-type";
       "/fg/disabled/text-standout";
+      "/fg/normal/gadgets/cpufreq/cpu_usage/1";
    }
    ":selected-alt" {
       "/fg/normal/fileman/mount/on";
@@ -407,6 +411,7 @@ color_tree {
       "/fg/selected/fileman/filesize/2";
       "/fg/normal/fileperm/execute";
       "/fg/normal/filegraph/bar";
+      "/fg/normal/gadgets/cpufreq/cpu_usage/3";
    }
    ":selected-alt-trans" {
       "/bg/normal/access";
@@ -441,6 +446,7 @@ color_tree {
       "/fg/normal/gadgets/clock/analog/hands/secs";
       "/fg/normal/fileperm/write";
       "/fg/normal/filegraph/bar2";
+      "/fg/normal/gadgets/cpufreq/cpu_usage/2";
    }
    ":selected4-dim" {
       "/fg/disabled/text-warning";
@@ -460,6 +466,7 @@ color_tree {
    ":selected6" {
       "/fg/normal/text-string";
       "/fg/selected/fileman/filesize/1";
+      "/fg/normal/gadgets/cpufreq/cpu_freq/3";
    }
    ":selected6-dim" {
       "/fg/disabled/text-string";
@@ -489,6 +496,7 @@ color_tree {
    }
    ":light-glow" {
       "/fg/normal/gadgets/backlight/filament/on";
+      "/fg/normal/gadgets/cpufreq/cpu_freq/4";
    }
    ":dim-dark" {
       "/dim/pressed";
@@ -581,9 +589,11 @@ color_tree {
    }
    ":comment" {
       "/fg/normal/text-comment";
+      "/fg/normal/gadgets/cpufreq/cpu_freq/2";
    }
    ":comment-dim" {
       "/fg/disabled/text-comment";
+      "/fg/normal/gadgets/cpufreq/cpu_freq/1";
    }
    ":number" {
       "/fg/normal/text-number";

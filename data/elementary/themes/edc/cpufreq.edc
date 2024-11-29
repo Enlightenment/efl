@@ -290,3 +290,48 @@ group { name: "e/modules/cpufreq/main";
    }
 }
 
+#define G(_p, _p0, _p1, _v0, _v1) \
+part { name: "g"_p0".0"; type: RECT; mouse_events: 0; \
+ description { state: "default" 0.0; \
+  color_class: "/fg/normal/gadgets/cpufreq/"_p"/"_p0; \
+  rel1.relative: _v0  0.0; \
+  rel2.relative: _v1  1.0; \
+ } \
+} \
+part { name: "g"_p0".1"; mouse_events: 0; \
+ description { state: "default" 0.0; \
+  rel.to: "g"_p0".0"; \
+  image.normal: "grad_h.png"; \
+  color_class: "/fg/normal/gadgets/cpufreq/"_p"/"_p1; \
+ } \
+}
+group { name: "e/modules/cpufreq/grad/cpu_usage";
+  // 0 -> :bg-dark
+  // 1 -> :selected-dim
+  // 2 -> :selected4
+  // 3 -> :selected-alt
+  // 4 -> :fg-light
+  images.image: "grad_h.png" COMP;
+  parts {
+    G("cpu_usage", "0", "1", 0.0 , 0.25)
+    G("cpu_usage", "1", "2", 0.25, 0.50)
+    G("cpu_usage", "2", "3", 0.50, 0.75)
+    G("cpu_usage", "3", "4", 0.75, 1.00)
+  }
+}
+
+group { name: "e/modules/cpufreq/grad/cpu_freq";
+  // :bg-dark
+  // :comment-dim
+  // :comment
+  // :selected6
+  // :light-glow
+  images.image: "grad_h.png" COMP;
+  parts {
+    G("cpu_freq", "0", "1", 0.0 , 0.25)
+    G("cpu_freq", "1", "2", 0.25, 0.50)
+    G("cpu_freq", "2", "3", 0.50, 0.75)
+    G("cpu_freq", "3", "4", 0.75, 1.00)
+  }
+}
+#undef G
