@@ -290,21 +290,34 @@ group { name: "e/modules/cpufreq/main";
    }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+group { name: "e/modules/cpufreq/gadget";
+  // new gadget with cpu usage swallow
+  parts {
+    part { name: "e.swallow.content"; type: SWALLOW;
+      description { state: "default" 0.0;
+      }
+    }
+  }
+}
+
 #define G(_p, _p0, _p1, _v0, _v1) \
 part { name: "g"_p0".0"; type: RECT; mouse_events: 0; \
- description { state: "default" 0.0; \
-  color_class: "/fg/normal/gadgets/cpufreq/"_p"/"_p0; \
-  rel1.relative: _v0  0.0; \
-  rel2.relative: _v1  1.0; \
- } \
+  description { state: "default" 0.0; \
+    color_class: "/fg/normal/gadgets/cpufreq/"_p"/"_p0; \
+    rel1.relative: _v0  0.0; \
+    rel2.relative: _v1  1.0; \
+  } \
 } \
 part { name: "g"_p0".1"; mouse_events: 0; \
- description { state: "default" 0.0; \
-  rel.to: "g"_p0".0"; \
-  image.normal: "grad_h.png"; \
-  color_class: "/fg/normal/gadgets/cpufreq/"_p"/"_p1; \
- } \
+  description { state: "default" 0.0; \
+    rel.to: "g"_p0".0"; \
+    image.normal: "grad_h.png"; \
+    color_class: "/fg/normal/gadgets/cpufreq/"_p"/"_p1; \
+  } \
 }
+
 group { name: "e/modules/cpufreq/grad/cpu_usage";
   // 0 -> :bg-dark
   // 1 -> :selected-dim
