@@ -328,6 +328,111 @@ group { name: "e/modules/cpufreq/gadget";
   }
 }
 
+group { name: "e/modules/cpufreq/popup/detail";
+  // new gadget with cpu usage swallow
+  parts {
+    part { name: "bg"; type: RECT;
+      description { state: "default" 0.0;
+        color_class: "/bg/normal/gadgets/cpufreq/popup/detail/base";
+      }
+    }
+    part { name: "e.swallow.content"; type: SWALLOW;
+      description { state: "default" 0.0;
+      }
+    }
+    part { name: "e.text.cpu.usage.max"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 0.0;
+        rel2.relative: 0.0 0.0;
+        align: 0.0 0.0;
+        color_class: "/fg/normal/gadgets/cpufreq/popup/detail/usage/text_max";
+        text { font: FN; size: 10;
+          align: 0.0 0.0;
+          min: 1 1;
+          ellipsis: -1;
+          text_class: "module_normal";
+        }
+      }
+    }
+    part { name: "e.text.cpu.usage.avg"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 0.25;
+        rel2.relative: 0.0 0.25;
+        align: 0.0 0.5;
+        color_class: "/fg/normal/gadgets/cpufreq/popup/detail/usage/text_avg";
+        text { font: FN; size: 10;
+          align: 0.0 0.5;
+          min: 1 1;
+          ellipsis: -1;
+          text_class: "module_normal";
+        }
+      }
+    }
+    part { name: "e.text.cpu.usage.min"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 0.5;
+        rel2.relative: 0.0 0.5;
+        align: 0.0 1.0;
+        color_class: "/fg/normal/gadgets/cpufreq/popup/detail/usage/text_min";
+        text { font: FN; size: 10;
+          align: 0.0 1.0;
+          min: 1 1;
+          ellipsis: -1;
+          text_class: "module_normal";
+        }
+      }
+    }
+    part { name: "e.text.cpu.freq.max"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 0.5;
+        rel2.relative: 0.0 0.5;
+        align: 0.0 0.0;
+        color_class: "/fg/normal/gadgets/cpufreq/popup/detail/freq/text_max";
+        text { font: FN; size: 10;
+          align: 0.0 0.0;
+          min: 1 1;
+          ellipsis: -1;
+          text_class: "module_normal";
+        }
+      }
+    }
+    part { name: "e.text.cpu.freq.avg"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 0.75;
+        rel2.relative: 0.0 0.75;
+        align: 0.0 0.5;
+        color_class: "/fg/normal/gadgets/cpufreq/popup/detail/freq/text_avg";
+        text { font: FN; size: 10;
+          align: 0.0 0.5;
+          min: 1 1;
+          ellipsis: -1;
+          text_class: "module_normal";
+        }
+      }
+    }
+    part { name: "e.text.cpu.freq.min"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 1.0;
+        rel2.relative: 0.0 1.0;
+        align: 0.0 1.0;
+        color_class: "/fg/normal/gadgets/cpufreq/popup/detail/freq/text_min";
+        text { font: FN; size: 10;
+          align: 0.0 1.0;
+          min: 1 1;
+          ellipsis: -1;
+          text_class: "module_normal";
+        }
+      }
+    }
+  }
+}
+
 #define G(_p, _p0, _p1, _v0, _v1) \
 part { name: "g"_p0".0"; type: RECT; mouse_events: 0; \
   description { state: "default" 0.0; \

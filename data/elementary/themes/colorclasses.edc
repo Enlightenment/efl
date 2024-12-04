@@ -44,6 +44,7 @@ color_tree {
       "/fg/disabled/text-current";
       "/fg/normal/gadgets/clock/cal/day/date/hidden";
       "/fg/normal/text-status";
+      "/bg/normal/gadgets/cpufreq/popup/detail/base";
    }
    ":bg-dark" {
       "/bg-dark";
@@ -293,6 +294,12 @@ color_tree {
       "/fg/normal/gadgets/clock/analog/hands/mins";
       "/fg/normal/gadgets/clock/cal/day/date/today";
       "/fg/normal/gadgets/cpufreq/text";
+      "/fg/normal/gadgets/cpufreq/popup/detail/usage/text_max";
+      "/fg/normal/gadgets/cpufreq/popup/detail/usage/text_avg";
+      "/fg/normal/gadgets/cpufreq/popup/detail/usage/text_min";
+      "/fg/normal/gadgets/cpufreq/popup/detail/freq/text_max";
+      "/fg/normal/gadgets/cpufreq/popup/detail/freq/text_avg";
+      "/fg/normal/gadgets/cpufreq/popup/detail/freq/text_min";
       "/fg/pressed/gadgets/music_control/text";
       "/fg/pressed/gadgets/music_control/button";
       "/fg/normal/gadgets/music_control/text/title";
