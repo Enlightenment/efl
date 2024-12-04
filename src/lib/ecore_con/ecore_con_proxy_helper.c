@@ -424,7 +424,7 @@ _efl_net_proxy_helper_init(void)
    if (_efl_net_proxy_helper_init_num > 1) return;
    if (_efl_net_proxy_helper_prefix) return;
    _efl_net_proxy_helper_prefix = eina_prefix_new
-     (NULL, ecore_con_init, "ECORE", "ecore", "checkme",
+     (NULL, ecore_con_init, "ECORE_CON", "ecore_con", "checkme",
       PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
    if (!_efl_net_proxy_helper_queue_lock_init)
      {
