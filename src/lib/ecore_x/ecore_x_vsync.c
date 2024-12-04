@@ -6,6 +6,8 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
+static double _ecore_x_vsync_animator_tick_delay = 0.0;
+
 #include <string.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,8 +29,6 @@ static Ecore_X_Window vsync_root = 0;
 int _ecore_x_image_shm_check(void);
 
 static int _vsync_log_dom = -1;
-
-static double _ecore_x_vsync_animator_tick_delay = 0.0;
 
 #undef ERR
 #define ERR(...) EINA_LOG_DOM_ERR(_vsync_log_dom, __VA_ARGS__)
@@ -939,8 +939,8 @@ _vsync_init(void)
    done = 1;
 }
 
-EAPI Eina_Bool
-ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
+static Eina_Bool
+_drm_ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
 {
    Ecore_X_Window root;
    static int vsync_veto = -1;
@@ -975,8 +975,147 @@ ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
    return EINA_TRUE;
 }
 
+static Ecore_X_Window _ecore_x_vsync_win = 0;
+static unsigned long long _ecore_x_vsync_msc = 0;
+static unsigned long long _ecore_x_vsync_prev_ust = 0;
+static Eina_Bool _ecore_x_vsync_ticking = EINA_FALSE;
+static Ecore_Timer *_ecore_x_vsync_delay_timer = NULL;
+static double _ecore_x_vsync_delay_amount = 0.0;
+static Ecore_Event_Handler *_ecore_x_vsync_complete_handler = NULL;
+//#define PRESENTDBG 1
+#ifdef PRESENTDBG
+static double last_t = 0.0;
+#endif
+
+static Eina_Bool
+_ecore_x_cb_vsync_delay(void *data EINA_UNUSED)
+{
+#ifdef PRESENTDBG
+  double t = ecore_time_get();
+#endif
+
+  if (_ecore_x_vsync_ticking)
+    {
+#ifdef PRESENTDBG
+      printf("tik delayed delta=%1.5f\n", t - last_t);
+#endif
+      ecore_animator_custom_tick();
+    }
+  _ecore_x_vsync_delay_timer = NULL;
+  return EINA_FALSE;
+}
+
+static void
+_ecore_x_vsync_req(void)
+{
+  _ecore_x_vsync_msc++;
+  ecore_x_present_notify_msc(_ecore_x_vsync_win, 0, _ecore_x_vsync_msc, 1, 0);
+}
+
+static Eina_Bool
+_ecore_x_cb_pres_complete(void *data EINA_UNUSED, int type EINA_UNUSED, void *info EINA_UNUSED)
+{
+  Ecore_X_Event_Present_Complete *ev = info;
+#ifdef PRESENTDBG
+  double t = ecore_time_get();
+#endif
+
+  if (_ecore_x_vsync_prev_ust != ev->ust)
+    {
+      if (_ecore_x_vsync_ticking)
+        {
+          if ((_ecore_x_vsync_animator_tick_delay > 0.0) &&
+              (_ecore_x_vsync_delay_amount > 0.0))
+            {
+              if (!_ecore_x_vsync_delay_timer)
+                _ecore_x_vsync_delay_timer = ecore_timer_add
+                  (_ecore_x_vsync_delay_amount * _ecore_x_vsync_animator_tick_delay,
+                   _ecore_x_cb_vsync_delay, NULL);
+            }
+          else ecore_animator_custom_tick();
+          if (_ecore_x_vsync_prev_ust > 0)
+            _ecore_x_vsync_delay_amount =
+              (double)(ev->ust - _ecore_x_vsync_prev_ust) / 1000000.0;
+        }
+      _ecore_x_vsync_msc = ev->msc;
+#ifdef PRESENTDBG
+      printf("tik %i: msc=%llu | diff_ust=%llu | delta=%1.5fs\n", _ecore_x_vsync_ticking, _ecore_x_vsync_msc, ev->ust - _ecore_x_vsync_prev_ust, t - last_t);
+      last_t = t;
+#endif
+      if (_ecore_x_vsync_ticking) _ecore_x_vsync_req();
+      _ecore_x_vsync_prev_ust = ev->ust;
+    }
+#ifdef PRESENTDBG
+  else
+    printf("tik %i: msc=%llu | delta=%1.5fs skip\n", _ecore_x_vsync_ticking, _ecore_x_vsync_msc, t - last_t);
+#endif
+  return EINA_TRUE;
+}
+
+static void
+_ecore_x_vsync_present_tick_begin(void *data EINA_UNUSED)
+{
+  if (!_ecore_x_vsync_ticking)
+    {
+      _ecore_x_vsync_prev_ust = 0;
+      _ecore_x_vsync_ticking = EINA_TRUE;
+      _ecore_x_vsync_req();
+    }
+}
+
+static void
+_ecore_x_vsync_present_tick_end(void *data EINA_UNUSED)
+{
+  if (_ecore_x_vsync_ticking)
+    {
+      _ecore_x_vsync_ticking = EINA_FALSE;
+    }
+}
+
+static void
+_ecore_x_vsync_init(void)
+{
+  if (_ecore_x_vsync_win)
+    {
+      ecore_animator_custom_source_tick_begin_callback_set(_ecore_x_vsync_present_tick_begin, NULL);
+      ecore_animator_custom_source_tick_end_callback_set(_ecore_x_vsync_present_tick_end, NULL);
+      ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+      ecore_x_present_select_events(_ecore_x_vsync_win,
+                                    ECORE_X_PRESENT_EVENT_MASK_COMPLETE_NOTIFY);
+      if (!_ecore_x_vsync_complete_handler)
+        {
+          _ecore_x_vsync_complete_handler =
+            ecore_event_handler_add(ECORE_X_EVENT_PRESENT_COMPLETE,
+                                    _ecore_x_cb_pres_complete, NULL);
+        }
+    }
+  else
+    {
+      if (_ecore_x_vsync_ticking) _ecore_x_vsync_present_tick_end(NULL);
+      ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+      ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+      ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+    }
+}
+
+EAPI Eina_Bool
+ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win)
+{
+  if ((ecore_x_present_exists()) &&
+      (getenv("ECORE_X_VSYNC_PRESENT")))
+    {
+      // get the root win because this win may be deleted
+      win = ecore_x_window_root_get(win);
+      if (_ecore_x_vsync_win == win) return EINA_TRUE;
+      _ecore_x_vsync_win = win;
+      _ecore_x_vsync_init();
+      return EINA_TRUE;
+    }
+  else return _drm_ecore_x_vsync_animator_tick_source_set(win);
+}
+
 EAPI void
 ecore_x_vsync_animator_tick_delay_set(double delay)
 {
-   _ecore_x_vsync_animator_tick_delay = delay;
+  _ecore_x_vsync_animator_tick_delay = delay;
 }
