@@ -652,6 +652,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                        strncpy(pfx->prefix_path, pfx->exe_path,
                                p - pfx->exe_path);
                        pfx->prefix_path[p - pfx->exe_path] = 0;
+again:
                        DBG("Have prefix = %s", pfx->prefix_path);
 
                        /* bin */
@@ -694,7 +695,25 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                                  DBG("Magic path %s stat passed", buf);
                               }
                             else
-                              WRN("Missing magic path %s", buf);
+                              {
+                                 p = strrchr(pfx->prefix_path, EINA_PATH_SEP_C);
+                                 if ((p) && (p > pfx->prefix_path))
+                                   {
+                                      *p = 0;
+                                      free(pfx->prefix_path_bin);
+                                      free(pfx->prefix_path_lib);
+                                      free(pfx->prefix_path_locale);
+                                      pfx->prefix_path_bin = NULL;
+                                      pfx->prefix_path_lib = NULL;
+                                      pfx->prefix_path_locale = NULL;
+                                      checks_passed = 0;
+                                      goto again;
+                                   }
+                                 WRN("Missing magic path %s", buf);
+                                 _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
+                                           envprefix);
+                                 return pfx;
+                              }
                          }
 
                        if (((!magic) && (checks_passed > 0)) ||
