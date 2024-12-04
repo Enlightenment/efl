@@ -29,10 +29,10 @@ group { name: "elm/border/base/default";
          new s_hide = get_int(hide_shadow);
 
          if (s_hide) {
-            set_state(PART:"shadow_clip", "hidden", 0.0);
+            set_state(PART:"shadow_clip2", "hidden", 0.0);
             set_state(PART:"shadow_base", "hidden", 0.0);
          } else {
-            set_state(PART:"shadow_clip", "default", 0.0);
+            set_state(PART:"shadow_clip2", "default", 0.0);
             set_state(PART:"shadow_base", "default", 0.0);
          }
          if ((m_show)/* && (s_hide)*/) {
