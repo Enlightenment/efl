@@ -299,6 +299,32 @@ group { name: "e/modules/cpufreq/gadget";
       description { state: "default" 0.0;
       }
     }
+    part { name: "e.text.cpu.usage"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel2.relative: 1.0 0.5;
+        color_class: "/fg/normal/gadgets/cpufreq/text";
+        text { font: FN; size: 6;
+          align: 0.5 1.0;
+          min: 0 1;
+          ellipsis: -1;
+          text_class: "module_small";
+        }
+      }
+    }
+    part { name: "e.text.cpu.freq"; type: TEXT; mouse_events: 0;
+      scale: 1;
+      description { state: "default" 0.0;
+        rel1.relative: 0.0 0.5;
+        color_class: "/fg/normal/gadgets/cpufreq/text";
+        text { font: FN; size: 6;
+          align: 0.5 0.0;
+          min: 0 1;
+          ellipsis: -1;
+          text_class: "module_small";
+        }
+      }
+    }
   }
 }
 
