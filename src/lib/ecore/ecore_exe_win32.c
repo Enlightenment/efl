@@ -22,7 +22,8 @@
  * [X] error event
  * [X] data event buffered
  * [X] del event
- * [ ] batch files
+ * [X] batch files (not recommended by MSDN)
+ * [X] shebang
  * [X] exit code
  * [X] inherited env var
  */
@@ -384,19 +385,232 @@ _impl_ecore_exe_run_priority_get(void)
      }
 }
 
+static char *
+_ecore_exe_win32_child_get(const char *cmd)
+{
+   char *child;
+   const char *iter = cmd;
+   const char *iter2;
+
+   while (*iter == ' ')
+     iter++;
+
+   if (*iter == '\"')
+     {
+        iter++;
+        iter2 = iter;
+        while (*iter2)
+          {
+             if (*iter2 == '\"' && *(iter2 - 1) != '\\')
+               break;
+
+             iter2++;
+          }
+
+        if (*iter2 == 0) /* unbalanced " */
+          return NULL;
+     }
+   else
+     {
+        iter2 = iter + 1;
+
+        while (*iter2 && *iter2 != ' ')
+          iter2++;
+     }
+
+   child = calloc(iter2 - iter + 1, sizeof(char));
+   if (!child)
+     return NULL;
+
+   memcpy(child, iter, iter2 - iter);
+
+   return child;
+}
+
+static char *
+_ecore_exe_win32_shebang_interpreter_get(const char *child)
+{
+   Eina_File *file;
+   Eina_Iterator *it;
+   Eina_File_Line *line;
+   const char *iter;
+   char *interpreter = NULL;
+   size_t sz;
+
+   file = eina_file_open(child, EINA_FALSE);
+   if (!file)
+     return NULL;
+
+   it = eina_file_map_lines(file);
+   if (!it)
+     goto close_file;
+
+   if (!eina_iterator_next(it, (void **)(void *)&line))
+     goto free_iterator;
+
+   /*
+    * shebang spec:
+    * #!
+    * optional spaces
+    * optional /usr/bin/env
+    * at least one space
+    * interpreter
+    */
+
+   if (line->length < 2)
+     goto free_iterator;
+
+   iter = line->start;
+   if ((iter[0] != '#') && (iter[1] != '!'))
+     goto free_iterator;
+
+   iter += 2;
+
+   /* skip possible spaces after #! */
+   while (iter < line->end)
+     {
+        if (*iter != ' ')
+          break;
+        iter++;
+     }
+
+   /*
+    * Check if "/usr/bin/env" is used.
+    * If so, skip it (useless on Windows as the command is searched in PATH).
+    * Note that length of "/usr/bin/env" is 12.
+    */
+   if ((line->end - iter >= 12) &&
+       (strncmp(iter, "/usr/bin/env", 12) == 0))
+     iter += 12;
+
+   /* skip possible spaces after #! */
+   while (iter < line->end)
+     {
+        if (*iter != ' ')
+          break;
+        iter++;
+     }
+
+   if (*iter == '/')
+     {
+        const char *i;
+
+        /* get the last '/' (parse from last char) */
+        i = line->end;
+        while (i != iter)
+          {
+             if (*i == '/')
+               break;
+             i--;
+          }
+
+        if (i == iter)
+          {
+             goto free_iterator;
+          }
+
+        i++;
+        if (i > line->end)
+          goto free_iterator;
+
+        iter = i;
+     }
+
+   sz = line->end - iter;
+   /* quote it --> + 2 for the 2 " */
+   interpreter = malloc(sz + 3);
+   if (!interpreter)
+     goto free_iterator;
+
+   interpreter[0] = '\"';
+   memcpy(interpreter + 1, iter, sz);
+   interpreter[sz + 1] = '\"';
+   interpreter[sz + 2] = '\0';
+
+ free_iterator:
+   eina_iterator_free(it);
+ close_file:
+   eina_file_close(file);
+
+   return interpreter;
+}
+
+static char *
+_ecore_exe_win32_batch_cmd_get(const char *exe_cmd)
+{
+   char *cmd = NULL;
+   size_t len;
+
+   if (!exe_cmd || !*exe_cmd)
+     return NULL;
+
+   len = strlen(exe_cmd);
+   cmd = (char *)calloc(len + 16, sizeof(char));
+   if (cmd)
+     {
+        char *iter = cmd;
+
+        memcpy(iter, "\"cmd.exe\" \"/C\" ", 15);
+        iter += 15;
+        memcpy (iter, exe_cmd, len + 1);
+
+        DBG("Batch cmd: '%s'", cmd);
+     }
+
+   return cmd;
+}
+
+static char *
+_ecore_exe_win32_shebang_cmd_get(const char *exe_cmd, const char *child)
+{
+   char *cmd = NULL;
+   char *interpreter;
+   char *iter;
+   size_t len;
+   size_t len2;
+
+   if (!exe_cmd || !*exe_cmd || !child || !*child)
+     return NULL;
+
+   interpreter = _ecore_exe_win32_shebang_interpreter_get(child);
+   if (!interpreter)
+     return NULL;
+
+   len = strlen(exe_cmd);
+   len2 = strlen(interpreter);
+   cmd = (char *)calloc(len + len2 + 2, sizeof(char));
+   if (!cmd)
+     {
+        free(interpreter);
+        return NULL;
+     }
+
+   iter = cmd;
+   memcpy(iter, interpreter, len2);
+   free(interpreter);
+   iter += len2;
+   *iter = ' ';
+   iter++;
+   memcpy (iter, exe_cmd, len + 1);
+
+   DBG("Shebang cmd: '%s'", cmd);
+
+   return cmd;
+}
+
 Eo *
 _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 {
-   char exe_cmd_buf[32768];
    SECURITY_ATTRIBUTES sa;
    STARTUPINFO si;
    PROCESS_INFORMATION pi;
+   char *cmd = NULL;
+   char *child = NULL;
    HANDLE child_pipe_read = NULL;
    HANDLE child_pipe_error = NULL;
-   const char *shell = NULL;
    Ecore_Exe_Event_Add *e;
    Ecore_Exe_Flags flags;
-   Eina_Bool use_sh = EINA_FALSE;
+   BOOL ret;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
@@ -408,28 +622,6 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
        (!(flags & ECORE_EXE_PIPE_READ)))
      /* We need something to auto pipe. */
      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;
-
-   if ((flags & ECORE_EXE_USE_SH)) use_sh = EINA_TRUE;
-   else use_sh = eina_str_has_extension(exe->cmd, ".bat");
-
-   if (use_sh)
-     {
-        int len;
-
-        shell = "cmd.exe";
-        len = snprintf(exe_cmd_buf, sizeof(exe_cmd_buf), "/c %s", exe->cmd);
-        if (len >= (int)sizeof(exe_cmd_buf))
-          exe_cmd_buf[sizeof(exe_cmd_buf) - 1] = '\0';
-     }
-   else
-     {
-        int len;
-
-        /* FIXME : faster with memset() but one must be careful with size */
-        len = snprintf(exe_cmd_buf, sizeof(exe_cmd_buf), "%s", exe->cmd);
-        if (len >= (int)sizeof(exe_cmd_buf))
-          exe_cmd_buf[sizeof(exe_cmd_buf) - 1] = '\0';
-     }
 
    /* stdout, stderr and stdin pipes */
    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -503,12 +695,50 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    si.hStdError = child_pipe_error;
    si.dwFlags |= STARTF_USESTDHANDLES;
 
-   DBG("CreateProcess: shell:%s child:%s", use_sh ? "yes" : "no", exe_cmd_buf);
-   if (!CreateProcess(shell, exe_cmd_buf, NULL, NULL, EINA_TRUE,
-                      run_pri | CREATE_SUSPENDED, NULL, NULL, &si, &pi))
+   /*
+    * Creation of command line.
+    * Don't use an Eina_Strbuf as CreateProcess() can modify the string
+    * and eina_strbuf_string_get() returns a const string
+    */
+
+   /* Try first with cmd if the extension is .bat */
+   child = _ecore_exe_win32_child_get(exe->cmd);
+   if (eina_str_has_extension(child, ".bat"))
      {
-        WRN("Failed to create process %s: %s",
-            exe_cmd_buf, evil_last_error_get());
+        cmd = _ecore_exe_win32_batch_cmd_get(exe->cmd);
+        if (!cmd) goto error;
+
+        ret = CreateProcess(NULL, cmd,
+                            NULL, NULL, EINA_TRUE,
+                            run_pri | CREATE_SUSPENDED, NULL, NULL,
+                            &si, &pi);
+     }
+   else if ((cmd = _ecore_exe_win32_shebang_cmd_get(exe->cmd, child)))
+     {
+        ret = CreateProcess(NULL, cmd,
+                            NULL, NULL, EINA_TRUE,
+                            run_pri | CREATE_SUSPENDED, NULL, NULL,
+                            &si, &pi);
+     }
+   else
+     {
+        size_t len = strlen(exe->cmd);
+
+        cmd = (char *)calloc(len + 1, sizeof(char));
+        if (!cmd) goto error;
+
+        memcpy(cmd, exe->cmd, len + 1);
+        DBG("CreateProcess: child: '%s'", cmd);
+        ret = CreateProcess(NULL, cmd,
+                            NULL, NULL, EINA_TRUE,
+                            run_pri | CREATE_SUSPENDED, NULL, NULL,
+                            &si, &pi);
+     }
+
+   if (!ret)
+     {
+        WRN("Failed to create process '%s': %s",
+            cmd, evil_last_error_get());
         goto error;
      }
 
@@ -559,6 +789,8 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
    return obj;
 
 error:
+   free(child);
+   free(cmd);
    return NULL;
 }
 

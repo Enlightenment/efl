@@ -58,7 +58,8 @@ typedef enum
                                             * Ecore_Exe_Event_Data_Line */
   ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
   ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
-  ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command. */
+  ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command.
+                           * Unused on Windows. */
   ECORE_EXE_NOT_LEADER = 256, /**< Do not use setsid() to set the executed
                                * process as its own session leader */
   ECORE_EXE_TERM_WITH_PARENT = 512, /**< Makes child receive SIGTERM when parent

@@ -1117,7 +1117,11 @@ EAPI int ecore_exe_run_priority_get(void);
  * to write or read on the pipe that connects you with the spawned process.
  * If you need to do that use ecore_exe_pipe_run() with the
  * appropriated flags.
- *
+ * @note On Windows, you should surround each argument with double quotes
+ * to avoid misinterpreted command line, especially if the path contains
+ * a space, like 'c:\Program Files\foo'. You should also escape all special
+ * characters.
+ * @see ecore_exe_pipe_run()
  */
 EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
 
@@ -1145,6 +1149,8 @@ EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
  * @param   flags   The flag parameters for how to deal with inter-process I/O
  * @param   data    Data to attach to the returned process handle.
  * @return  A process handle to the spawned process.
+ * @note On Windows, see the note of ecore_exe_pipe().
+ * @see ecore_exe_pipe()
  */
 EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
 
