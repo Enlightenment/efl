@@ -515,6 +515,7 @@ color_tree {
       "/bg/normal/fileman/overlay/progress/base";
       "/bg/normal/notification";
       "/bg/pressed/gadgets/music_control/base";
+      "/bg/normal/gadgets/cpufreq/popup/detail/text/bg";
    }
    ":dim" {
       "/dim";
