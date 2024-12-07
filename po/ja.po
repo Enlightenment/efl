@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:13+0200\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
-"Last-Translator: Daichi Fukui<when.a.cat.sits.beside.you@gmail.com>\n"
+"Last-Translator: Green<usergreen@users.osdn.me>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -25,9 +25,9 @@ msgid "Usage:"
 msgstr "使用法"
 
 #: src/lib/ecore/ecore_getopt.c:101
-#, fuzzy, c-format
+#, c-format
 msgid "%s [options]"
-msgstr "%s [オプション]\n"
+msgstr "%s [オプション]"
 
 #: src/lib/ecore/ecore_getopt.c:301
 msgid "Copyright:"
@@ -54,7 +54,6 @@ msgid "No categories available."
 msgstr "利用可能なカテゴリはありません。"
 
 #: src/lib/ecore/ecore_getopt.c:645
-#, fuzzy
 msgid "Categories: "
 msgstr "カテゴリ: "
 
@@ -67,7 +66,7 @@ msgid "Positional arguments:\n"
 msgstr "位置引数:\n"
 
 #: src/lib/ecore/ecore_getopt.c:843
-#, fuzzy, c-format
+#, c-format
 msgid "ERROR: unknown category '%s'.\n"
 msgstr "エラー: 不明なオプション --%s.\n"
 
@@ -90,7 +89,7 @@ msgstr "エラー: "
 #: src/lib/ecore/ecore_getopt.c:1296 src/lib/ecore/ecore_getopt.c:1343
 #: src/lib/ecore/ecore_getopt.c:1463 src/lib/ecore/ecore_getopt.c:1504
 msgid "value has no pointer set.\n"
-msgstr "値にポインタがありません。\n"
+msgstr "値にポインタが設定されていません。\n"
 
 #: src/lib/ecore/ecore_getopt.c:1140 src/lib/ecore/ecore_getopt.c:1363
 #, c-format
@@ -105,7 +104,7 @@ msgstr "無効な数値形式 %s\n"
 #: src/lib/ecore/ecore_getopt.c:1309
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr "無効な選択 \"%s\". 有効な数値: "
+msgstr "無効な選択 \"%s\"。 有効な数値: "
 
 #: src/lib/ecore/ecore_getopt.c:1337
 msgid "missing parameter to append.\n"
@@ -138,12 +137,12 @@ msgstr "ライセンスが定義されていません。\n"
 #: src/lib/ecore/ecore_getopt.c:1666
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr "エラー: 不明なオプション --%s, 無視。\n"
+msgstr "エラー: 不明なオプション --%s につき無視します。\n"
 
 #: src/lib/ecore/ecore_getopt.c:1706
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr "エラー: オプション --%s には引数が必要です。\n"
+msgstr "エラー: オプション --%s には引数が必要です！\n"
 
 #: src/lib/ecore/ecore_getopt.c:1748
 #, c-format
@@ -156,14 +155,14 @@ msgid "ERROR: option -%c requires an argument!\n"
 msgstr "エラー: オプション -%c には引数が必要です。\n"
 
 #: src/lib/ecore/ecore_getopt.c:1888
-#, fuzzy, c-format
+#, c-format
 msgid "ERROR: missing required positional argument %s.\n"
-msgstr "エラー: オプション %c には位置引数が必要です。\n"
+msgstr "エラー: 必須の位置引数 %s が欠如しています。\n"
 
 #: src/lib/ecore/ecore_getopt.c:1920
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
-msgstr "エラー: オプション %s の位置引数で、%d は非対応のアクション・タイプです。\n"
+msgstr "エラー: 位置引数 %s でアクションタイプ %d はサポートされていません\n"
 
 #: src/lib/ecore/ecore_getopt.c:2041 src/lib/ecore/ecore_getopt.c:2107
 msgid "ERROR: no parser provided.\n"
@@ -192,7 +191,6 @@ msgid " See -%c.\n"
 msgstr "-%c を参照。\n"
 
 #: src/lib/ecore/ecore_getopt.c:2148
-#, fuzzy
 msgid "ERROR: invalid positional arguments found."
 msgstr "エラー: 無効な位置引数が見つかりました。"
 
@@ -239,7 +237,6 @@ msgid "Videos"
 msgstr "ビデオ"
 
 #: src/lib/evas/common/language/evas_language_utils.c:205
-#, fuzzy
 msgid "default:LTR"
 msgstr "既定:LTR"
 
@@ -253,11 +250,11 @@ msgstr "サブタイトル"
 
 #: src/lib/elementary/elc_naviframe.c:966
 msgid "Back"
-msgstr ""
+msgstr "戻る"
 
 #: src/lib/elementary/elc_fileselector.c:1755
 msgid "Up"
-msgstr ""
+msgstr "上へ"
 
 #: src/lib/elementary/elc_fileselector.c:1769
 msgid "Home"
