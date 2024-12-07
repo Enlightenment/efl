@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Efl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-19 16:13+0200\n"
-"PO-Revision-Date: 2012-06-24 17:10+0900\n"
+"PO-Revision-Date: 2024-12-07 13:24+0100\n"
 "Last-Translator: Green<usergreen@users.osdn.me>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: ja\n"
@@ -162,7 +162,7 @@ msgstr "エラー: 必須の位置引数 %s が欠如しています。\n"
 #: src/lib/ecore/ecore_getopt.c:1920
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
-msgstr "エラー: 位置引数 %s でアクションタイプ %d はサポートされていません\n"
+msgstr "エラー: 位置引数 %d でアクションタイプ %s はサポートされていません\n"
 
 #: src/lib/ecore/ecore_getopt.c:2041 src/lib/ecore/ecore_getopt.c:2107
 msgid "ERROR: no parser provided.\n"
