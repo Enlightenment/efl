@@ -2443,7 +2443,8 @@ _entry_paste_request_signal_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    if (!sd) return;
-   Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
+   // check if its "entry,paste,request,1" or not 
+   Elm_Sel_Type type = (emission[sizeof("entry,paste,request,")] == '1') ?
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
 
    if (!sd->editable) return;
