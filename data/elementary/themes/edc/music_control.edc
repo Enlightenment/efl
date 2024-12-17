@@ -7,7 +7,7 @@ group { name: "e/modules/music-control/icon";
       image { image: "efm_drive_cd_040.png" COMP; size: 0 0 40 40; }
    }
    parts {
-      part { name: "image"; mouse_events: 0;
+      part { name: "icon"; mouse_events: 0;
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "efm_drive_cd_icon";
@@ -24,10 +24,22 @@ group { name: "e/modules/music-control/main";
       image { image: "efm_drive_cd_040.png" COMP; size: 0 0 40 40; }
    }
    parts {
-      part { name: "icon";
+      part { name: "image";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
             image.normal: "efm_drive_cd_icon";
+         }
+      }
+      part { name: "cover_clip"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel.to: "image";
+            image.normal: "efm_drive_cd_icon";
+         }
+      }
+      part { name: "e.swallow.cover"; type: SWALLOW; mouse_events: 0;
+         clip_to: "cover_clip";
+         description { state: "default" 0.0;
+            rel.to: "image";
          }
       }
    }
