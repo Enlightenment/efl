@@ -142,7 +142,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    struct timeval tv;
    Eina_Bool data_control;
    Eina_Bool data_timeout;
-   unsigned int t;
+   unsigned long long t;
    signed char tick = 0;
    double t0, d, ft;
    int ret;
