@@ -2270,7 +2270,7 @@ stowlit(cell val)
  *  Return current literal character and increase the pointer to point
  *  just behind this literal character.
  *
- *  Note: standard "escape sequences" are suported, but the backslash may be
+ *  Note: standard "escape sequences" are supported, but the backslash may be
  *        replaced by another character; the syntax '\ddd' is supported,
  *        but ddd must be decimal!
  */

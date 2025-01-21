@@ -949,7 +949,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                   rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
                   if (!rp)
                     {
-                       /* FIXME: destroy all allocated ressource, need to have a common exit point */
+                       /* FIXME: destroy all allocated resources, need to have a common exit point */
                        ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                        goto on_error;
                     }

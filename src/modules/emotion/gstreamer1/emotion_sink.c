@@ -122,7 +122,7 @@ emotion_video_sink_get_property(GObject * object, guint prop_id,
        break;
     default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-       ERR("invalide property");
+       ERR("invalid property");
        break;
    }
 }
@@ -197,16 +197,16 @@ gboolean emotion_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    priv->info = info;
    priv->eheight = info.height;
 
-   for (i = 0; colorspace_format_convertion[i].name; i++)
+   for (i = 0; colorspace_format_conversion[i].name; i++)
      {
-        if ((info.finfo->format == colorspace_format_convertion[i].format) &&
-            ((colorspace_format_convertion[i].colormatrix == GST_VIDEO_COLOR_MATRIX_UNKNOWN) ||
-             (colorspace_format_convertion[i].colormatrix == info.colorimetry.matrix)))
+        if ((info.finfo->format == colorspace_format_conversion[i].format) &&
+            ((colorspace_format_conversion[i].colormatrix == GST_VIDEO_COLOR_MATRIX_UNKNOWN) ||
+             (colorspace_format_conversion[i].colormatrix == info.colorimetry.matrix)))
           {
-             DBG("Found '%s'", colorspace_format_convertion[i].name);
-             priv->eformat = colorspace_format_convertion[i].eformat;
-             priv->func = colorspace_format_convertion[i].func;
-             if (colorspace_format_convertion[i].force_height)
+             DBG("Found '%s'", colorspace_format_conversion[i].name);
+             priv->eformat = colorspace_format_conversion[i].eformat;
+             priv->func = colorspace_format_conversion[i].func;
+             if (colorspace_format_conversion[i].force_height)
                {
                   priv->eheight = (priv->eheight >> 1) << 1;
                }

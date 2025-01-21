@@ -411,7 +411,7 @@ void test_efl_ui_vg_animation(void *data, Evas_Object *obj, void *event_info);
 void test_efl_gfx_vg_value_provider(void *data, Evas_Object *obj, void *event_info);
 void test_ui_separator(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
-static void _list_udpate(void);
+static void _list_update(void);
 
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
 static void *tt;
@@ -472,14 +472,14 @@ static void
 _legacy_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    hide_legacy = elm_check_state_get(obj);
-   _list_udpate();
+   _list_update();
 }
 
 static void
 _beta_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    hide_beta = elm_check_state_get(obj);
-   _list_udpate();
+   _list_update();
 }
 
 static void
@@ -603,7 +603,7 @@ _entry_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EIN
 }
 
 static void
-_list_udpate(void)
+_list_update(void)
 {
    const char *str = elm_entry_entry_get(entry);
    if (!str) return;

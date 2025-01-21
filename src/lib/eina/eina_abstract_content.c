@@ -48,7 +48,7 @@ eina_content_converter_conversion_register(const char *from, const char *to, Ein
 
    if (eina_content_converter_convert_can(from, to))
      {
-        ERR("Convertion from %s to %s is already possible", from, to);
+        ERR("Conversion from %s to %s is already possible", from, to);
         eina_stringshare_del(shared_from);
         free(node);
         return EINA_FALSE;

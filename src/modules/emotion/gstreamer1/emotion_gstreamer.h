@@ -229,9 +229,9 @@ void emotion_gstreamer_message_free(Emotion_Gstreamer_Message *send);
 Emotion_Gstreamer * emotion_gstreamer_ref (Emotion_Gstreamer *ev);
 void emotion_gstreamer_unref (Emotion_Gstreamer *ev);
 
-typedef struct _ColorSpace_Format_Convertion ColorSpace_Format_Convertion;
+typedef struct _ColorSpace_Format_Conversion ColorSpace_Format_Conversion;
 
-struct _ColorSpace_Format_Convertion
+struct _ColorSpace_Format_Conversion
 {
    const char *name;
    GstVideoFormat format;
@@ -241,7 +241,7 @@ struct _ColorSpace_Format_Convertion
    Eina_Bool force_height;
 };
 
-extern const ColorSpace_Format_Convertion colorspace_format_convertion[];
+extern const ColorSpace_Format_Conversion colorspace_format_conversion[];
 
 /* From gst-plugins-base/gst/playback */
 typedef enum {

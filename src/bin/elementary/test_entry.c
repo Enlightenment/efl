@@ -2688,7 +2688,7 @@ _test_regex_bt_cb(void *data,
      {
      case ELM_REG_NOERROR:
           {
-             eina_strbuf_append(tmp, "No error. Regex maches to the Entrys text.");
+             eina_strbuf_append(tmp, "No error. Regex matches Entry text.");
              break;
           }
      case ELM_REG_BADPAT:
