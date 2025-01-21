@@ -545,7 +545,7 @@ _update_data(Evas_Object *obj, int delta)
 
    if (mktime(&time_check) == -1)
      {
-        ERR("mktime can not give week day for the next month. Please check what is wrong with udpate date.");
+        ERR("mktime can not give week day for the next month. Please check what is wrong with update date.");
         return EINA_FALSE;
      }
 

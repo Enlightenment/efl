@@ -195,7 +195,7 @@ inline std::string function_scope_get(attributes::function_def const& f)
        return "protected ";
      case attributes::member_scope::scope_unknown:
        // This should trigger a compilation error
-       return "unkown_scope ";
+       return "unknown_scope ";
     }
   return " ";
 }

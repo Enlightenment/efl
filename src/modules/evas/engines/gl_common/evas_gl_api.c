@@ -817,14 +817,14 @@ _evgl_glFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLi
 
     if (!rsc->current_eng)
       {
-         ERR("Unable to retrive Current Engine");
+         ERR("Unable to retrieve Current Engine");
          return;
       }
 
     ctx = rsc->current_ctx;
     if (!ctx)
       {
-         ERR("Unable to retrive Current Context");
+         ERR("Unable to retrieve Current Context");
          return;
       }
 

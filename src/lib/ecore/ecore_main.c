@@ -526,7 +526,7 @@ _ecore_main_fdh_poll_modify(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh
              memset(&ev, 0, sizeof (ev));
              ev.events = _ecore_poll_events_from_fdh(fdh);
              ev.data.ptr = fdh;
-             DBG("modifing epoll on %d to %08x", fdh->fd, ev.events);
+             DBG("modifying epoll on %d to %08x", fdh->fd, ev.events);
              r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
           }
      }
@@ -542,7 +542,7 @@ _ecore_main_fdh_poll_modify(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh
         fdh->gfd.fd = fdh->fd;
         fdh->gfd.events = _gfd_events_from_fdh(fdh);
         fdh->gfd.revents = 0;
-        DBG("modifing gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
+        DBG("modifying gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
 #endif
      }
    return r;

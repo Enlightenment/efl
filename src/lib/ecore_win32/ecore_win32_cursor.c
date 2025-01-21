@@ -85,7 +85,7 @@ _ecore_win32_cursor_x11_shaped_new(Ecore_Win32_Cursor_X11_Shape shape)
  * @c NULL.
  *
  * Once the cursor is not used anymore, use ecore_win32_cursor_free()
- * to free the ressources.
+ * to free the resources.
  *
  * Example of use:
  *
@@ -238,7 +238,7 @@ ecore_win32_cursor_free(Ecore_Win32_Cursor *cursor)
 }
 
 /**
- * @brief Create a cursor from a Windows ressource.
+ * @brief Create a cursor from a Windows resource.
  *
  * @param shape The pre-defined shape of the cursor.
  * @return The new cursor.
@@ -317,7 +317,7 @@ ecore_win32_cursor_shaped_new(Ecore_Win32_Cursor_Shape shape)
  *
  * This function returns a defined cursor with a specified X11
  * @p shape. Do not use ecore_win32_cursor_free() to free the
- * ressources as it is created once the libray is initialized and
+ * resources as it is created once the libray is initialized and
  * detroyed when it is shut down.
  *
  * @see ecore_win32_cursor_new()

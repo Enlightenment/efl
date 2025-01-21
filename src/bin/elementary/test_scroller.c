@@ -1022,7 +1022,7 @@ _btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    elm_object_text_set(lbl,
                        "Do you want close the popup?<br>"
                        "Please select cancel button<br><br>"
-                       "Do you wnat close the popup?<br>"
+                       "Do you want close the popup?<br>"
                        "Please select cancel button");
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);

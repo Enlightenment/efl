@@ -144,7 +144,7 @@ ecore_x_randr_config_timestamp_get(Ecore_X_Window root)
  ***************************************/
 
 /*
- * @param root window which's primary output will be queried
+ * @param root window whose primary output will be queried
  */
 EAPI Ecore_X_Randr_Orientation
 ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
@@ -163,7 +163,7 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 }
 
 /*
- * @param root window which's primary output will be queried
+ * @param root window whose primary output will be queried
  * @return the current orientation of the root window's screen primary output
  */
 EAPI Ecore_X_Randr_Orientation
@@ -185,7 +185,7 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 /*
  * @brief Sets a given screen's primary output's orientation.
  *
- * @param root Window which's screen's primary output will be queried.
+ * @param root Window whose screen's primary output will be queried.
  * @param orientation orientation which should be set for the root window's
  * screen primary output.
  * @return @c EINA_TRUE if the primary output's orientation could be
@@ -222,7 +222,7 @@ ecore_x_randr_screen_primary_output_orientation_set(Ecore_X_Window root, Ecore_X
 
 /*
  * @brief gets a screen's primary output's possible sizes
- * @param root window which's primary output will be queried
+ * @param root window whose primary output will be queried
  * @param num number of sizes reported as supported by the screen's primary output
  * @return an array of sizes reported as supported by the screen's primary output or - if query failed - NULL
  */
@@ -310,7 +310,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root, int *w
  * @brief Sets a given screen's primary output size, but disables all other
  * outputs at the same time.
  *
- * @param root Window which's primary output will be queried.
+ * @param root Window whose primary output will be queried.
  * @param size_index Within the list of sizes reported as supported by the root
  * window's screen primary output.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure due to e.g.
@@ -359,7 +359,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root, int size_index
 }
 
 /*
- * @param root window which's primary output will be queried
+ * @param root window whose primary output will be queried
  * @return currently used refresh rate or - if request failed or RandRR is not available - 0.0
  */
 EAPI Ecore_X_Randr_Refresh_Rate
@@ -386,7 +386,7 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(Ecore_X_Window root
 }
 
 /*
- * @param root window which's primary output will be queried
+ * @param root window whose primary output will be queried
  * @param size_index referencing the size to query valid refresh rates for
  * @return currently used refresh rate or - if request failed or RandRR is not available - NULL
  */
@@ -426,7 +426,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root, int s
 /*
  * @brief Sets the current primary output's refresh rate.
  *
- * @param root Window which's primary output will be queried.
+ * @param root Window whose primary output will be queried.
  * @param size_index Referencing the size to be set.
  * @param rate The refresh rate to be set.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
@@ -521,7 +521,7 @@ ecore_x_randr_screen_current_size_get(Ecore_X_Window root, int *w, int *h, int *
 }
 
 /*
- * @param root window which's screen will be queried
+ * @param root window whose screen will be queried
  * @param wmin minimum width the screen can be set to
  * @param hmin minimum height the screen can be set to
  * @param wmax maximum width the screen can be set to
@@ -641,7 +641,7 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 }
 
 /*
- * @param root Window which's screen's size should be set. If invalid (e.g.
+ * @param root Window whose screen's size should be set. If invalid (e.g.
  * @c NULL) no action is taken.
  * @param w Width in px the screen should be set to. If out of valid
  * boundaries, current value is assumed.
@@ -708,7 +708,7 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root, int w, int h, int w_m
 
 /*
  * @brief get detailed information for all modes related to a root window's screen
- * @param root window which's screen's resources are queried
+ * @param root window whose screen's resources are queried
  * @param num number of modes returned
  * @return modes' information
  */
@@ -798,7 +798,7 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root, int *num)
 /*
  * @brief Add a mode to a display.
  *
- * @param root Window to which's screen's ressources are added.
+ * @param root Window to whose screen's ressources are added.
  * @param mode_info
  * @return Ecore_X_Randr_Mode of the added mode. Ecore_X_Randr_None if mode
  * adding failed.
@@ -840,7 +840,7 @@ ecore_x_randr_mode_del(Ecore_X_Randr_Mode mode)
 
 /*
  * @brief get detailed information for a given mode id
- * @param root window which's screen's ressources are queried
+ * @param root window whose screen's ressources are queried
  * @param mode the XID which identifies the mode of interest
  * @return mode's detailed information
  */
@@ -934,7 +934,7 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
 /*
  * @brief Get all known CRTCs related to a root window's screen.
  *
- * @param root Window which's screen's ressources are queried.
+ * @param root Window whose screen's ressources are queried.
  * @param num Number of CRTCs returned.
  * @return CRTC IDs.
  */
@@ -1237,7 +1237,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window, int *num)
 
 /*
  * @brief get a CRTC's outputs.
- * @param root the root window which's screen will be queried
+ * @param root the root window whose screen will be queried
  * @param num number of outputs referenced by given CRTC
  */
 EAPI Ecore_X_Randr_Output *
@@ -1297,7 +1297,7 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int
 
 /*
  * @brief get a CRTC's possible outputs.
- * @param root the root window which's screen will be queried
+ * @param root the root window whose screen will be queried
  * @param num number of possible outputs referenced by given CRTC
  */
 EAPI Ecore_X_Randr_Output *
@@ -1399,7 +1399,7 @@ ecore_x_randr_crtc_pos_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x,
  * @brief Sets the position of given CRTC within root window's screen.
  *
  * @param root The window's screen to be queried.
- * @param crtc The CRTC which's position within the mentioned screen is to be
+ * @param crtc The CRTC whose position within the mentioned screen is to be
  * altered.
  * @param x Position on the x-axis (0 == left) of the screen. if x < 0 current
  * value will be kept.
@@ -1444,7 +1444,7 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, 
 /**
  * @brief Get the current set mode of a given CRTC
  * @param root the window's screen to be queried
- * @param crtc the CRTC which's should be queried
+ * @param crtc the CRTC whose should be queried
  * @return currently set mode or - in case parameters are invalid -
  * Ecore_X_Randr_Unset
  */
@@ -1677,8 +1677,8 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root, Ecore_X_Randr_Crtc original, E
  * @brief Sets the demanded parameters for a given CRTC. Note that the CRTC is
  * auto enabled in it's preferred mode, when it was disabled before.
  *
- * @param root The root window which's default display will be queried.
- * @param crtc The CRTC which's configuration should be altered.
+ * @param root The root window whose default display will be queried.
+ * @param crtc The CRTC whose configuration should be altered.
  * @param outputs An array of outputs, that should display this CRTC's content.
  * @param noutputs Number of outputs in the array of outputs. If set to
  * Ecore_X_Randr_Unset, current outputs and number of outputs will be used.
@@ -1770,7 +1770,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, Ec
 /**
  * @brief Sets a CRTC relative to another one.
  *
- * @param root The root window which's default display will be set.
+ * @param root The root window whose default display will be set.
  * @param crtc_r1 The CRTC to be positioned.
  * @param crtc_r2 The CRTC the position should be relative to.
  * @param policy The relation between the crtcs.
@@ -2082,7 +2082,7 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root, Ecore_X_Randr_Output output,
  * @brief gets the the outputs which might be used simultenously on the same
  * CRTC.
  * @param root window that this information should be queried for.
- * @param output the output which's clones we concern
+ * @param output the output whose clones we concern
  * @param num number of possible clones
  */
 EAPI Ecore_X_Randr_Output *
@@ -2207,7 +2207,7 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 
 /**
  * @brief gets the given output's name as reported by X
- * @param root the window which's screen will be queried
+ * @param root the window whose screen will be queried
  * @param output The output for which the name will be reported.
  * @param len length of returned c-string.
  * @return name of the output as reported by X
@@ -2418,7 +2418,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root, const Ecore_X_Randr_Crtc *
  * pixels relative to their current position. The screen size will be
  * automatically adjusted if necessary and possible.
  *
- * @param root Window which's screen's resources are used.
+ * @param root Window whose screen's resources are used.
  * @param crtcs List of CRTCs to be moved.
  * @param ncrtc Number of CRTCs in array.
  * @param dx Amount of pixels the CRTCs should be moved in x direction.

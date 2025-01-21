@@ -189,7 +189,7 @@ evas_image_load_file_head_webp(void *loader_data,
    WebPAnimDecoder *dec = WebPAnimDecoderNew(&webp_data, &dec_options);
    if (!dec)
      {
-        ERR("WebP Decoder Creation is Failed");
+        ERR("WebP Decoder Creation failed");
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
@@ -199,7 +199,7 @@ evas_image_load_file_head_webp(void *loader_data,
    WebPAnimInfo anim_info;
    if (!WebPAnimDecoderGetInfo(dec, &anim_info))
      {
-        ERR("Getting WebP Information is Failed");
+        ERR("Getting WebP Information failed");
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
@@ -213,7 +213,7 @@ evas_image_load_file_head_webp(void *loader_data,
    loader->frames = eina_array_new(anim_info.frame_count);
    if (!loader->frames)
      {
-        ERR("Frame Array Allocation is Faild");
+        ERR("Frame Array Allocation failed");
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return EINA_FALSE;
      }
@@ -223,7 +223,7 @@ evas_image_load_file_head_webp(void *loader_data,
      {
         if (!WebPAnimDecoderGetNext(dec, &buf, &cur_timestamp))
           {
-             ERR("WebP Decoded Frame Get is Failed");
+             ERR("WebP Decoded Frame Get failed");
              *error = EVAS_LOAD_ERROR_GENERIC;
              return EINA_FALSE;
           }

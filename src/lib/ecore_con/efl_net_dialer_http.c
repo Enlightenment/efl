@@ -659,7 +659,7 @@ _efl_net_dialer_http_debug(CURL *easy EINA_UNUSED, curl_infotype type, char *msg
          DBG("%s=%p sent SSL %zd bytes", cls, o, size);
          break;
       default:
-         DBG("%s=%p unkown debug type %d, msg=%p, size=%zd", cls, o, type, msg, size);
+         DBG("%s=%p unknown debug type %d, msg=%p, size=%zd", cls, o, type, msg, size);
      }
    return 0;
 }
@@ -737,7 +737,7 @@ _efl_net_dialer_http_headers_done(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    r = curl_easy_getinfo(pd->easy, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &d);
    if (r != CURLE_OK)
      {
-        DBG("could not query content-length for reponse: %s",
+        DBG("could not query content-length for response: %s",
             curl_easy_strerror(r));
         d = -1;
      }

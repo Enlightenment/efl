@@ -1397,7 +1397,7 @@ skip2:
              num_closes = clo;
           }
         close(dirfd);
-        // now go close all those fd's - some may be invalide like the dir
+        // now go close all those fd's - some may be invalid like the dir
         // reading fd above... that's ok.
         for (i = 0; i < num_closes; i++)
           {

@@ -64,7 +64,7 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_selected_value_set(Eo *obj EINA_UNUS
              return;
           }
      }
-   ERR("Value %d not assosiated with any radio button", selected_value);
+   ERR("Value %d not associated with any radio button", selected_value);
 }
 
 EOLIAN static int

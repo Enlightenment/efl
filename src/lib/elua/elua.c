@@ -32,7 +32,7 @@ elua_init(void)
 
    if (!_elua_pfx)
      {
-        ERR("coul not find elua prefix");
+        ERR("could not find elua prefix");
         return EINA_FALSE;
      }
 

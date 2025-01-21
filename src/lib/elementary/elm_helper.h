@@ -28,7 +28,7 @@ typedef struct _Elm_Validator_Regexp Elm_Validator_Regexp;
  */
 typedef enum
 {
-   /** Regex maches to the Entrys text. */
+   /** Regex matches the Entry text. */
    ELM_REG_NOERROR = 0,
    /** Failed to match. */
    ELM_REG_NOMATCH,

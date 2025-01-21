@@ -1085,7 +1085,7 @@ internal static class TraitFunctions
     // Traits functions //
     //                  //
 
-    // Convertion functions //
+    // Conversion functions //
 
     public static IntPtr ManagedToNativeAlloc<T>(T man)
     {

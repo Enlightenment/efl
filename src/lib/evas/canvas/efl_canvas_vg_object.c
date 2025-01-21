@@ -459,7 +459,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                                                       0, 0, w, h,
                                                       EFL_GFX_COLORSPACE_ARGB8888,
                                                       &cd->blend.stride);
-                  if (!cd->blend.pixels) ERR("Failed to map VG blend bufffer");
+                  if (!cd->blend.pixels) ERR("Failed to map VG blend buffer");
                }
              else
                {

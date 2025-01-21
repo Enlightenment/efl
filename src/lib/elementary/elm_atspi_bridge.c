@@ -1347,7 +1347,7 @@ _text_string_at_offset_get(const Eldbus_Service_Interface *iface, const Eldbus_M
            default:
              efl_del(sel1);
              efl_del(sel2);
-             return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Granularity not suported.");
+             return eldbus_message_error_new(msg, "org.freedesktop.DBus.Error.InvalidArgs", "Granularity not supported.");
           }
 
         str = efl_text_cursor_object_range_text_get(sel1, sel2);

@@ -4213,7 +4213,7 @@ _status_config_rendering(Evas_Object *win,
 
    CHECK_ADD("Aggressive withdrawn",
              "When the application is iconified it will<br>"
-             "drop its ressource and switch to a paused state<br>"
+             "drop its resources and switch to a paused state<br>"
              "if the application handle that lifecycle state.",
              _cb_withdrawn, NULL);
    elm_check_state_set(ck, elm_config_agressive_withdrawn_get());

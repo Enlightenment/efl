@@ -175,7 +175,7 @@ _evas_video_nv12(unsigned char *evas_data,
    for (j = 0; j < (rh / 2); j++, i++, ptr += jump) rows[i] = ptr;
 }
 
-const ColorSpace_Format_Convertion colorspace_format_convertion[] = {
+const ColorSpace_Format_Conversion colorspace_format_conversion[] = {
   { "I420-709", GST_VIDEO_FORMAT_I420, GST_VIDEO_COLOR_MATRIX_BT709,
      EVAS_COLORSPACE_YCBCR422P709_PL, _evas_video_i420, EINA_TRUE },
   { "I420", GST_VIDEO_FORMAT_I420, GST_VIDEO_COLOR_MATRIX_BT601,

@@ -2,7 +2,7 @@
 #define __EVIL_DLFCN_H__
 
 
-#include "evil_private.h"
+#include "evil_privte.h"
 #include <limits.h>
 
 
@@ -100,7 +100,7 @@ struct Dl_info
  * slash, or backward ones. Mapping a module can map other modules.
  * @p mode is unused.
  *
- * If an error occurred, an error string can be retrived with dlerror().
+ * If an error occurred, an error string can be retrieved with dlerror().
  *
  * According to the OS, the search order of the module can change,
  * according to the value of SafeDllSearchMode.
@@ -159,7 +159,7 @@ EVIL_API void *dlopen(const char* path, int mode);
  * is the value returned by a previous call to dlopen().
  *
  * If no error occurred, the returned value is 0, otherwise the
- * returned value is -1 and an error string can be retrived with
+ * returned value is -1 and an error string can be retrieved with
  * dlerror().
  *
  * Conformity: None.
@@ -184,7 +184,7 @@ EVIL_API int dlclose(void* handle);
  *
  * If no error occurred, the returned value is the code or data
  * location, otherwise the returned value is NULL and an error
- * string can be retrived with dlerror().
+ * string can be retrieved with dlerror().
  *
  * Conformity: None.
  *
