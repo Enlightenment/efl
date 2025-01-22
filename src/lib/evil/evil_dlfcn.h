@@ -2,7 +2,7 @@
 #define __EVIL_DLFCN_H__
 
 
-#include "evil_privte.h"
+#include "evil_private.h"
 #include <limits.h>
 
 
