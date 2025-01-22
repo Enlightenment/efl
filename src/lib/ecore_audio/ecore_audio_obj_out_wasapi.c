@@ -13,7 +13,6 @@
 
 #define INITGUID
 #include <initguid.h>
-#include <functiondiscoverykeys.h>
 #include <audioclient.h>
 #include <audiopolicy.h>
 #include <endpointvolume.h>
@@ -22,7 +21,6 @@
 #include <wtypes.h>
 #include <rpc.h>
 #include <rpcdce.h>
-#include <propkey.h>
 
 #define MY_CLASS ECORE_AUDIO_OUT_WASAPI_CLASS
 #define MY_CLASS_NAME "Ecore_Audio_Out_Wasapi"
