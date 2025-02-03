@@ -1189,6 +1189,23 @@ static const Emotion_Engine em_engine =
    em_meta_artwork_get,
 };
 
+static void
+_vaapi_hw_decode(const gchar *n, Eina_Bool on)
+{
+  GstRegistry *reg = gst_registry_get();
+  GstElementFactory *fac = gst_element_factory_find(n);
+
+  if ((!reg) || (!fac)) return;
+
+  if (on)
+    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE(fac), GST_RANK_PRIMARY + 1);
+  else
+    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE(fac), GST_RANK_NONE);
+
+  gst_registry_add_feature(reg, GST_PLUGIN_FEATURE(fac));
+}
+
+
 Eina_Bool
 gstreamer_module_init(void)
 {
@@ -1231,6 +1248,18 @@ gstreamer_module_init(void)
         EINA_LOG_CRIT("Could not load static gstreamer video sink for Emotion.");
         goto error_gst_plugin;
      }
+
+  if (!getenv("EMOTION_GST_NO_VAAPI"))
+    { // opt in for now via env var to disable vaapi if its a problem
+      // also these codec names may change over time so for now this will do
+      _vaapi_hw_decode("vaapiav1dec", EINA_TRUE);
+      _vaapi_hw_decode("vaapih264dec", EINA_TRUE);
+      _vaapi_hw_decode("vaapih265dec", EINA_TRUE);
+      _vaapi_hw_decode("vaapijpegdec", EINA_TRUE);
+      _vaapi_hw_decode("vaapimpeg2dec", EINA_TRUE);
+      _vaapi_hw_decode("vaapivc1dec", EINA_TRUE);
+      _vaapi_hw_decode("vaapivp9dec", EINA_TRUE);
+    }
 
    if (!_emotion_module_register(&em_engine))
      {
