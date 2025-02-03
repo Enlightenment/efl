@@ -1249,8 +1249,8 @@ gstreamer_module_init(void)
         goto error_gst_plugin;
      }
 
-  if (!getenv("EMOTION_GST_NO_VAAPI"))
-    { // opt in for now via env var to disable vaapi if its a problem
+  if (getenv("EMOTION_GST_VAAPI"))
+    { // opt in for now via env var to test - it seems much is broken
       // also these codec names may change over time so for now this will do
       _vaapi_hw_decode("vaapiav1dec", EINA_TRUE);
       _vaapi_hw_decode("vaapih264dec", EINA_TRUE);

@@ -496,6 +496,7 @@ emotion_video_sink_main_render(void *data)
         info.plane_ptr[1] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 1);
         info.plane_ptr[2] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 2);
         info.plane_ptr[3] = GST_VIDEO_FRAME_PLANE_DATA(vframe, 3);
+       printf("send->vfmapped\n");
      }
    else
      {
