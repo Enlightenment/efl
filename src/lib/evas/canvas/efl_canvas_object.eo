@@ -323,7 +323,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       }
       @property event_rects @beta {
          [[ A series of rectangles relative to object top-left that define
-            the input seriface area of the object instead of the normal
+            the input surface area of the object instead of the normal
             full object geometry itself. The object geometry itself acts
             implicitly as a master clip to this set of rects if they are
             outside the bounds of the object geometry. If set to a NULL
