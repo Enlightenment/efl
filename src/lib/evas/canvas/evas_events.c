@@ -49,7 +49,8 @@ static inline Eina_Bool
 _evas_event_object_pointer_allow_precise(Eo *eo_obj, Evas_Object_Protected_Data *obj, int x, int y, const Eina_List *ins)
 {
    return eina_list_data_find(ins, eo_obj) &&
-     ((!obj->precise_is_inside) || evas_object_is_inside(eo_obj, obj, x, y));
+     (((!obj->precise_is_inside) && (!obj->event_rects)) ||
+         evas_object_is_inside(eo_obj, obj, x, y));
 }
 
 #define EVAS_EVENT_FEED_SAFETY_CHECK(evas) _evas_event_feed_check(evas)
@@ -260,7 +261,8 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
              Evas_Object_Protected_Data *clip = obj->cur->clipper;
              int norep = 0;
 
-             if (clip && clip->mask->is_mask && clip->precise_is_inside)
+             if (clip && clip->mask->is_mask && clip->precise_is_inside &&
+                 (!clip->event_rects))
                if (!evas_object_is_inside(clip->object, clip, x, y))
                  return in;
 
@@ -339,7 +341,8 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
         else
           {
              Evas_Object_Protected_Data *clip = obj->cur->clipper;
-             if (clip && clip->mask->is_mask && clip->precise_is_inside)
+             if (clip && clip->mask->is_mask && clip->precise_is_inside &&
+                 (!clip->event_rects))
                inside = evas_object_is_inside(clip->object, clip, x, y);
              else
                inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
@@ -356,7 +359,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                          }
                     }
                }
-             if (inside && ((!obj->precise_is_inside) ||
+             if (inside && (((!obj->precise_is_inside) && (!obj->event_rects)) ||
                             (evas_object_is_inside(eo_obj, obj, x, y))))
                {
                   if (!evas_event_freezes_through(eo_obj, obj))
@@ -3970,9 +3973,10 @@ _feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
    in_output_rect = evas_object_is_in_output_rect(eo_obj, obj, pdata->seat->x,
                                                   pdata->seat->y, 1, 1);
    if ((in_output_rect) &&
-       ((!obj->precise_is_inside) || (evas_object_is_inside(eo_obj, obj,
-                                                            pdata->seat->x,
-                                                            pdata->seat->y))))
+       (((!obj->precise_is_inside) && (!obj->event_rects)) ||
+           (evas_object_is_inside(eo_obj, obj,
+                                  pdata->seat->x,
+                                  pdata->seat->y))))
      {
         _canvas_event_feed_mouse_move_legacy(evas->evas, evas,
                                              pdata->seat->x, pdata->seat->y,
@@ -4042,6 +4046,46 @@ EOLIAN Eina_Bool
 _efl_canvas_object_pass_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    return obj->pass_events;
+}
+
+EOLIAN void
+_efl_canvas_object_event_rects_set(Eo *obj, Evas_Object_Protected_Data *pd, const Eina_Rect *region)
+{
+   Eina_Rect *new_rects;
+   const Eina_Rect *r;
+   int n = 0;
+
+   if ((!region) && (!pd->event_rects)) return;
+   if (pd->event_rects)
+     {
+       free(pd->event_rects);
+       pd->event_rects = NULL;
+     }
+   if (region)
+     {
+       // count rects
+       for (r = region; ; r++, n++)
+         {
+           if ((r->x | r->y | r->w | r->h) == 0) break;
+         }
+       n++; // need 1 more slot for 0 0 0x0 rect
+       // alloc new rects
+       new_rects = malloc(n * sizeof(Eina_Rect));
+       if (!new_rects) return; // EEK
+       // fll it in
+       memcpy(new_rects, region, n * sizeof(Eina_Rect));
+       // nuke old ones
+       // store new rects
+       pd->event_rects = new_rects;
+     }
+   // reprocess in/out mouse and events
+   _feed_mouse_move_eval_internal(obj, pd);
+}
+
+EOLIAN const Eina_Rect *
+_efl_canvas_object_event_rects_get(const Eo *obj EINA_UNUSED, Evas_Object_Protected_Data *pd)
+{
+   return pd->event_rects;
 }
 
 EOLIAN void

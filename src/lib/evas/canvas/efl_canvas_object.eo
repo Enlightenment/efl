@@ -321,6 +321,26 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
                          ($false).]]
          }
       }
+      @property event_rects @beta {
+         [[ A series of rectangles relative to object top-left that define
+            the input seriface area of the object instead of the normal
+            full object geometry itself. The object geometry itself acts
+            implicitly as a master clip to this set of rects if they are
+            outside the bounds of the object geometry. If set to a NULL
+            array, the rectangle region set is cleared and normal behavior
+            resumes.
+
+            The array of rectangles is terminated by a rectangle of geometry
+            0,0 0x0.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            region: ptr(const(Eina.Rect)); [[ The rects in the region ]]
+         }
+      }
       @property anti_alias {
          [[Whether or not the given Evas object is to be drawn
            anti-aliased.

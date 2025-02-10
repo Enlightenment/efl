@@ -85,6 +85,18 @@ evas_object_pass_events_get(const Efl_Canvas_Object *obj)
 }
 
 EVAS_API void
+evas_object_event_rects_set(Efl_Canvas_Object *obj, const Eina_Rect *region)
+{
+  efl_canvas_object_event_rects_set(obj, region);
+}
+
+EVAS_API const Eina_Rect *
+evas_object_event_rects_get(const Efl_Canvas_Object *obj)
+{
+  return efl_canvas_object_event_rects_get(obj);
+}
+
+EVAS_API void
 evas_object_anti_alias_set(Efl_Canvas_Object *obj, Eina_Bool anti_alias)
 {
    efl_canvas_object_anti_alias_set(obj, anti_alias);

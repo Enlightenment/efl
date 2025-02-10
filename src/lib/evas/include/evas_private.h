@@ -724,6 +724,8 @@ struct _Evas_Object_Protected_Data
 
    Evas_Size_Hints            *size_hints;
 
+   Eina_Rect                  *event_rects;
+
    int                         last_mouse_down_counter;
    int                         last_mouse_up_counter;
    int                         last_event_id;

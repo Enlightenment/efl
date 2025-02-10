@@ -321,6 +321,38 @@ EVAS_API void evas_object_pass_events_set(Efl_Canvas_Object *obj, Eina_Bool pass
 EVAS_API Eina_Bool evas_object_pass_events_get(const Efl_Canvas_Object *obj);
 
 /**
+ * @brief Set the event region in rects of an object
+ *
+ * @param[in] obj The object.
+ * @param[in] region The rectangles (Eina_Rect) or NULL to reset.
+ * 
+ * The region is an array of rectangles which is "null" terminated by a
+ * rectangkle at the end being 0, 0 0x0 (all 0's).
+ * 
+ * @since 1.29
+ * 
+ * @see evas_object_event_rects_get()
+ *
+ * @ingroup Evas_Object_Group
+ */
+EVAS_API void evas_object_event_rects_set(Efl_Canvas_Object *obj, const Eina_Rect *region);
+
+/**
+ * @brief Get the event region in rects of an object
+ *
+ * @param[in] obj The object.
+ *
+ * @return The rectangles (Eina_Rect) or NULL when default object area used
+ *
+ * @since 1.29
+ * 
+ * @see evas_object_event_rects_set()
+ * 
+ * @ingroup Evas_Object_Group
+ */
+EVAS_API const Eina_Rect *evas_object_event_rects_get(const Efl_Canvas_Object *obj);
+
+/**
  * @brief Sets whether or not the given Evas object is to be drawn
  * anti-aliased.
  *

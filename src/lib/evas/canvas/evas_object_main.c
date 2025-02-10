@@ -510,6 +510,11 @@ evas_object_free(Evas_Object_Protected_Data *obj, Eina_Bool clean_layer)
      {
        EVAS_MEMPOOL_FREE(_mp_sh, obj->size_hints);
      }
+   if (obj->event_rects)
+     {
+       free(obj->event_rects);
+       obj->event_rects = NULL;
+     }
    eina_cow_free(evas_object_proxy_cow, (const Eina_Cow_Data**) &obj->proxy);
    eina_cow_free(evas_object_map_cow, (const Eina_Cow_Data**) &obj->map);
    eina_cow_free(evas_object_state_cow, (const Eina_Cow_Data**) &obj->cur);
@@ -862,10 +867,29 @@ evas_object_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    return 0;
 }
 
+static int
+evas_object_is_inside_event_rects(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
+{
+  Evas_Coord rx, ry;
+  const Eina_Rect *r;
+
+  rx = x - obj->cur->geometry.x;
+  ry = y - obj->cur->geometry.y;
+  for (r = obj->event_rects;; r++)
+    {
+      if ((r->x | r->y | r->w | r->h) == 0) break;
+      if (eina_rectangle_coords_inside(&(r->rect), rx, ry)) return 1;
+    }
+  return 0;
+}
+
 int
 evas_object_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
 {
    if (obj->is_smart) return 0;
+   if ((obj->event_rects) &&
+       (!evas_object_is_inside_event_rects(eo_obj, obj, x, y)))
+     return 0;
    if (obj->func->is_inside)
      return obj->func->is_inside(eo_obj, obj, obj->private_data, x, y);
    return 0;
@@ -875,6 +899,9 @@ int
 evas_object_was_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord x, Evas_Coord y)
 {
    if (obj->is_smart) return 0;
+   if ((obj->event_rects) &&
+       (!evas_object_is_inside_event_rects(eo_obj, obj, x, y)))
+     return 0;
    if (obj->func->was_inside)
      return obj->func->was_inside(eo_obj, obj, obj->private_data, x, y);
    return 0;
