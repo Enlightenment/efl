@@ -777,7 +777,7 @@ _key_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
 }
 
 static Evas_Object *
-_create_bg(void)
+_create_bg(Eina_Bool show)
 {
    const unsigned char *color = opts.color;
    Evas_Object *o = evas_object_rectangle_add(evas);
@@ -787,7 +787,7 @@ _create_bg(void)
         return NULL;
      }
    evas_object_color_set(o, color[0], color[1], color[2], 255);
-   evas_object_show(o);
+   if (show) evas_object_show(o);
    return o;
 }
 
@@ -1101,7 +1101,7 @@ main(int argc, char **argv)
    else if (opts.shaped)
      ecore_evas_shaped_set(win, EINA_TRUE);
 
-   if (opts.pad > 0)
+   if ((opts.pad > 0) && (!opts.alpha))
      {
         bg2 = evas_object_rectangle_add(evas);
         evas_object_resize(bg2, opts.size.w, opts.size.h);
@@ -1111,7 +1111,7 @@ main(int argc, char **argv)
           evas_object_color_set(bg2, 64, 64, 64, 255);
         evas_object_show(bg2);
      }
-   bg = _create_bg();
+   bg = _create_bg(!opts.alpha);
 
    edje = _create_edje();
    if (!edje) goto free_ecore_evas;
