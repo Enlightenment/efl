@@ -437,7 +437,7 @@ efreet_cache_shutdown(void)
     IF_RELEASE(icon_theme_cache_file);
 
     if (old_desktop_caches)
-        ERR("This application has not properly closed all its desktop references!");
+        WRN("This application has not properly closed all its desktop references!");
     EINA_LIST_FREE(old_desktop_caches, d)
     {
         eina_hash_free(d->hash);
