@@ -71,8 +71,8 @@ EAPI Eina_Bool
 ecore_x_dpms_enabled_get(void)
 {
 #ifdef ECORE_XDPMS
-   unsigned char state;
-   unsigned short power_lvl;
+   unsigned char state = 0;
+   unsigned short power_lvl = 0;
 
    LOGFN;
    EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
