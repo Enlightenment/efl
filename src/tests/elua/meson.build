@@ -6,10 +6,10 @@ elua_suite_src = [
    'elua_lib.c'
 ]
 
-elua_bindings_dir = join_paths(meson.source_root(), 'src', 'bindings', 'lua')
-elua_core_dir = join_paths(meson.source_root(), 'src', 'scripts', 'elua', 'core')
-elua_modules_dir = join_paths(meson.source_root(), 'src', 'scripts', 'elua', 'modules')
-elua_apps_dir = join_paths(meson.source_root(), 'src', 'tests', 'elua', 'data', 'apps')
+elua_bindings_dir = join_paths(meson.project_source_root(), 'src', 'bindings', 'lua')
+elua_core_dir = join_paths(meson.project_source_root(), 'src', 'scripts', 'elua', 'core')
+elua_modules_dir = join_paths(meson.project_source_root(), 'src', 'scripts', 'elua', 'modules')
+elua_apps_dir = join_paths(meson.project_source_root(), 'src', 'tests', 'elua', 'data', 'apps')
 
 elua_suite = executable('elua_suite',
   elua_suite_src,

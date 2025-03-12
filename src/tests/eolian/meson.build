@@ -32,7 +32,7 @@ eolian_suite = executable('eolian_suite',
   c_args : [
   '-DEOLIAN_GEN="'+eolian_gen_path+'"',
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
-  '-DEO_SRC_DIR="'+join_paths(meson.source_root(), 'src', 'lib')+'"',
+  '-DEO_SRC_DIR="'+join_paths(meson.project_source_root(), 'src', 'lib')+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
 )
 

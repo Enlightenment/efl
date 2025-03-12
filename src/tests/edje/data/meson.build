@@ -26,7 +26,7 @@ foreach edc_file : edc_files
     input : edc_file,
     output : '@BASENAME@.edj',
     command : edje_cc_exe + [ '-beta', '-fastcomp',
-              '-id', join_paths(meson.source_root(), 'src', 'tests', 'emotion', 'data'),
+              '-id', join_paths(meson.project_source_root(), 'src', 'tests', 'emotion', 'data'),
               '-fd', meson.current_source_dir(),
               '-sd', meson.current_source_dir(),
               '-vd', meson.current_source_dir(),

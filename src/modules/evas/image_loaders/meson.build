@@ -5,7 +5,7 @@ foreach loader_inst : evas_image_loaders_file
   if get_option('evas-loaders-disabler').contains(loader) == false
     if loader_type == 'shared'
       config_h.set('BUILD_LOADER_'+loader.to_upper(), '1')
-      file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'image_loaders', loader, 'evas_image_load_'+loader+'.c')
+      file = join_paths(meson.project_source_root(), 'src', 'modules', 'evas', 'image_loaders', loader, 'evas_image_load_'+loader+'.c')
       evas_package_modules = join_paths(dir_lib, 'evas', 'modules')
       mod_install_dir = join_paths(evas_package_modules, 'image_loaders', loader, version_name)
       shared_module('shared_loader_'+loader, file,

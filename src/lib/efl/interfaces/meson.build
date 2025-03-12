@@ -1,4 +1,4 @@
-eolian_include_directories += ['-I', join_paths(meson.source_root(), 'src', 'lib')]
+eolian_include_directories += ['-I', join_paths(meson.project_source_root(), 'src', 'lib')]
 
 pub_legacy_eo_files = [
   'efl_gfx_fill.eo',

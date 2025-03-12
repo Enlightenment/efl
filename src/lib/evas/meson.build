@@ -261,7 +261,7 @@ foreach loader_inst : evas_image_loaders_file
   if get_option('evas-loaders-disabler').contains(loader) == false
     if loader_type == 'static'
       config_h.set('BUILD_LOADER_'+loader.to_upper(), '1')
-      file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'image_loaders', loader, 'evas_image_load_'+loader+'.c')
+      file = join_paths(meson.project_source_root(), 'src', 'modules', 'evas', 'image_loaders', loader, 'evas_image_load_'+loader+'.c')
       config_h.set('EVAS_STATIC_BUILD_'+loader.to_upper(), '1')
       evas_static_list += [declare_dependency(
         sources: file,
@@ -280,7 +280,7 @@ foreach loader_inst : evas_image_savers_file
   if get_option('evas-loaders-disabler').contains(loader) == false
     if loader_type == 'static'
       config_h.set('BUILD_LOADER_'+loader.to_upper(), '1')
-      file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'image_savers', loader, 'evas_image_save_'+loader+'.c')
+      file = join_paths(meson.project_source_root(), 'src', 'modules', 'evas', 'image_savers', loader, 'evas_image_save_'+loader+'.c')
       config_h.set('EVAS_STATIC_BUILD_'+loader.to_upper(), '1')
       evas_static_list += [declare_dependency(
         sources: file,
@@ -297,7 +297,7 @@ foreach loader_inst : evas_vg_loaders_file
   loader_deps = loader_inst[1]
 
   if (get_option('evas-loaders-disabler').contains(loader) == false)
-    file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'vg_loaders', loader, 'evas_vg_load_'+loader+'.c')
+    file = join_paths(meson.project_source_root(), 'src', 'modules', 'evas', 'vg_loaders', loader, 'evas_vg_load_'+loader+'.c')
     evas_static_list += [declare_dependency(
       sources: file,
       dependencies: loader_deps,
@@ -308,7 +308,7 @@ endforeach
 
 foreach loader : evas_vg_savers_file
   if (get_option('evas-loaders-disabler').contains(loader) == false)
-    file = join_paths(meson.source_root(), 'src', 'modules', 'evas', 'vg_savers', loader, 'evas_vg_save_'+loader+'.c')
+    file = join_paths(meson.project_source_root(), 'src', 'modules', 'evas', 'vg_savers', loader, 'evas_vg_save_'+loader+'.c')
     evas_static_list += [declare_dependency(
       sources: file,
       dependencies: [eo, ector, emile, freetype, eet],

@@ -10,7 +10,7 @@ buildsystem_lib = static_library('buildsystem',
     dependencies : [eina, efl],
     include_directories : config_dir + [include_directories(join_paths('..', '..', 'lib'))],
     install: false,
-    c_args : ['-DPACKAGE_SRC_DIR="'+ meson.source_root() +'"'],
+    c_args : ['-DPACKAGE_SRC_DIR="'+ meson.project_source_root() +'"'],
 )
 
 buildsystem = declare_dependency(

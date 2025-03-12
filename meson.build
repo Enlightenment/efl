@@ -1,7 +1,7 @@
 project('efl', ['c','cpp'],
   version: '1.28.99',
   default_options : ['buildtype=plain', 'warning_level=1', 'cpp_std=c++11'],
-  meson_version : '>=0.50'
+  meson_version : '>=0.60'
 )
 
 if host_machine.system() == 'darwin'
@@ -141,7 +141,7 @@ config_h.set_quoted('PACKAGE_STRING', meson.project_name() + ' ' + meson.project
 config_h.set_quoted('PACKAGE_NAME', meson.project_name())
 config_h.set_quoted('PACKAGE_BIN_DIR', dir_bin)
 config_h.set_quoted('PACKAGE_LIB_DIR', dir_lib)
-config_h.set_quoted('PACKAGE_SRC_DIR', meson.source_root())
+config_h.set_quoted('PACKAGE_SRC_DIR', meson.project_source_root())
 config_h.set_quoted('PACKAGE_BUILD_DIR', meson.current_build_dir())
 config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)

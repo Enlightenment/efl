@@ -25,8 +25,8 @@ edjs = custom_target('player_entry',
   install : true,
   install_dir : 'share/exactness',
   command : edje_cc_exe + [
-    '-id', join_paths(meson.source_root(), 'data', 'elementary', 'themes', 'img'),
-    '-sd', join_paths(meson.source_root(), 'data', 'elementary', 'themes', 'snd'),
+    '-id', join_paths(meson.project_source_root(), 'data', 'elementary', 'themes', 'img'),
+    '-sd', join_paths(meson.project_source_root(), 'data', 'elementary', 'themes', 'snd'),
     '@INPUT@', '@OUTPUT@'],
   depends : edje_depends)
 

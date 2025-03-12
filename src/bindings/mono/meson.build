@@ -299,7 +299,7 @@ else
       cs_args : extra_cs_args + ['-doc:' + efl_mono_xml_doc, '-warnaserror+'],
   )
 
-  meson.add_install_script(join_paths(meson.source_root(), 'meson', 'meson_csharp_docs.sh'),
+  meson.add_install_script(join_paths(meson.project_source_root(), 'meson', 'meson_csharp_docs.sh'),
                            efl_mono_xml_doc,
                            efl_mono_install_dir)
 endif

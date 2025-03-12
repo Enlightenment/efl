@@ -109,12 +109,12 @@ foreach text_filter_property : text_filter_properties
   font = text_filter_property[1]
   size = text_filter_property[2]
   name = text_filter_property[3]
-  filter_code = run_command('cat', join_paths(meson.source_root(), 'src', 'examples', 'evas', 'filters', 'filter_'+name+'.lua'))
+  filter_code = run_command('cat', join_paths(meson.project_source_root(), 'src', 'examples', 'evas', 'filters', 'filter_'+name+'.lua'))
 
   doc_target += custom_target('preview_text_filters_'+name,
                   command: [
                     env, 'EFL_RUN_IN_TREE=1',
-                    'EFL_EVAS_FILTER_LUA_PREFIX=' + join_paths(meson.source_root(), 'src', 'lib', 'evas'),
+                    'EFL_EVAS_FILTER_LUA_PREFIX=' + join_paths(meson.project_source_root(), 'src', 'lib', 'evas'),
                     preview_text_filter.full_path(), text, filter_code.stdout(), '@OUTPUT@', font, size
                   ],
                   depends: preview_text_filter,
@@ -132,7 +132,7 @@ foreach widget_preview : widget_previews
       dependencies: elementary,
       build_by_default: false,
       c_args : [
-        '-DPACKAGE_DATA_DIR="'+join_paths(meson.source_root(), 'data', 'elementary')+'"',
+        '-DPACKAGE_DATA_DIR="'+join_paths(meson.project_source_root(), 'data', 'elementary')+'"',
         '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
         '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"',
         '-DDOCW_DIR="'+meson.current_build_dir()+'"']
@@ -196,7 +196,7 @@ doxyfile_conf = configuration_data()
 doxyfile_conf.merge_from(config_h)
 doxyfile_conf.set('srcdir', meson.current_source_dir())
 doxyfile_conf.set('top_builddir', meson.build_root())
-doxyfile_conf.set('top_srcdir', meson.source_root())
+doxyfile_conf.set('top_srcdir', meson.project_source_root())
 
 configure_file(
   input: 'Doxyfile.in',

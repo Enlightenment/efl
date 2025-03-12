@@ -15,4 +15,4 @@ configure_file(
   input: 'org.enlightenment.Ethumb.service.in',
   output: 'org.enlightenment.Ethumb.service',
   configuration: org_enlightenment_ethumb_service_config,
-  install_dir: dep.get_pkgconfig_variable('session_bus_services_dir'))
+  install_dir: dep.get_variable(pkgconfig : 'session_bus_services_dir'))

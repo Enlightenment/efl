@@ -261,7 +261,7 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 embed_script = find_program('config_embed')
 
 embed_config = custom_target('create_embedded_default_config',
-  input: join_paths(meson.source_root(), 'data', 'elementary', 'config', 'standard', 'base.src.in'),
+  input: join_paths(meson.project_source_root(), 'data', 'elementary', 'config', 'standard', 'base.src.in'),
   output: 'elm_default_config.x',
   command: [embed_script, '@INPUT@', '@OUTPUT@']
 )
@@ -955,7 +955,7 @@ elementary_pub_deps = [eina, eet, evas, ecore, ecore_evas, ecore_file, ecore_inp
 elementary_ext_deps = [atspi, dl, intl, buildsystem_simple]
 elm_options = configuration_data()
 
-config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.build_root())
+config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.project_build_root())
 config_h.set_quoted('MODULES_PATH', join_paths(dir_lib, 'modules'))
 config_h.set_quoted('ELEMENTARY_BASE_DIR', get_option('elementary-base-dir'))
 config_h.set_quoted('ICON_DIR', join_paths(dir_lib, 'icons'))
