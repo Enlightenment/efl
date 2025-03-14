@@ -51,6 +51,17 @@ struct _Eina_Thread_Queue
    int                           fd; // optional fd to write byte to on msg
 };
 
+typedef union _Eina_Thread_Queue_Msg_Aligned Eina_Thread_Queue_Msg_Aligned;
+
+union _Eina_Thread_Queue_Msg_Aligned
+{
+   Eina_Thread_Queue_Msg         msg; // actual message
+   void*                         alignment_for_ptr;
+   long long                     alignment_for_integer;
+   double                        alignment_for_floating_point_1;
+   long double                   alignment_for_floating_point_2;
+};
+
 struct _Eina_Thread_Queue_Msg_Block
 {
    Eina_Thread_Queue_Msg_Block  *next; // next block in the list
@@ -64,11 +75,11 @@ struct _Eina_Thread_Queue_Msg_Block
    int                           first; // the byte pos of the first msg
    int                           last; // the byte pos just after the last msg
    Eina_Bool                     full : 1; // is this block full yet?
-   Eina_Thread_Queue_Msg         data[1]; // data in memory beyond struct end
+   Eina_Thread_Queue_Msg_Aligned data[1]; // data in memory beyond struct end
 };
 
 // the minimum size of any message block holding 1 or more messages
-#define MIN_SIZE ((int)(4096 - sizeof(Eina_Thread_Queue_Msg_Block) + sizeof(Eina_Thread_Queue_Msg)))
+#define MIN_SIZE ((int)(4096 - sizeof(Eina_Thread_Queue_Msg_Block) + sizeof(Eina_Thread_Queue_Msg_Aligned)))
 
 // a pool of spare message blocks that are only of the minimum size so we
 // avoid reallocation via malloc/free etc. to avoid free memory pages and
@@ -115,7 +126,7 @@ _eina_thread_queue_msg_block_new(int size)
    eina_spinlock_release(&(_eina_thread_queue_block_pool_lock));
 
    blk = malloc(sizeof(Eina_Thread_Queue_Msg_Block) -
-                sizeof(Eina_Thread_Queue_Msg) +
+                sizeof(Eina_Thread_Queue_Msg_Aligned) +
                 size);
    if (!blk)
      {
