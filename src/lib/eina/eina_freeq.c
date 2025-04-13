@@ -574,6 +574,14 @@ eina_freeq_ptr_add(Eina_FreeQ *fq,
 
    if (!ptr) return;
    if (!free_func) free_func = free;
+
+   if (((fq->count_max <= 0) || (fq->mem_max <= 0)) &&
+       (!fq->postponed))
+     {
+        free_func(ptr);
+        return;
+     }
+
    if ((((fq) && !fq->postponed) || (!fq)) &&
        (size < _eina_freeq_fillpat_max) && (size > 0))
      _eina_freeq_fill_do(ptr, size);
