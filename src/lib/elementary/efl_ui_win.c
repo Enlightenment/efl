@@ -6271,8 +6271,37 @@ _efl_ui_win_center(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool h, Eina_Bool v)
         // enlightenment, but this works just as well. for wl we'd need
         // an alternate wl specific way... this below works better IMHO
         const char *s = getenv("DESKTOP");
+        Eina_Bool have_e = EINA_FALSE;
 
-        if ((s) && (!strcasecmp(s, "Enlightenment")))
+        if ((s) && (!strcasecmp(s, "Enlightenment"))) have_e = EINA_TRUE;
+#ifdef HAVE_ELEMENTARY_X
+        else if (sd->x.xwin)
+          {
+            Ecore_X_Window check = 0, check2 = 0;
+
+            if (ecore_x_window_prop_window_get
+                (ecore_x_window_root_get(sd->x.xwin),
+                 ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1) > 0)
+              {
+                if (ecore_x_window_prop_window_get
+                    (check,
+                     ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check2, 1) > 0)
+                  {
+                    if (check == check2)
+                      {
+                        char *name = NULL;
+
+                        if (ecore_x_netwm_name_get(check, &name))
+                          {
+                            if (!strcmp(name, "Enlightenment")) have_e = EINA_TRUE;
+                            free(name);
+                          }
+                      }
+                  }
+              }
+          }
+#endif
+        if (have_e)
           {
 #ifdef HAVE_ELEMENTARY_X
              if (sd->x.xwin)
