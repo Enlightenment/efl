@@ -3,13 +3,13 @@
 #ifndef __RG_ETC1_H__
 #define __RG_ETC1_H__
 
-typedef unsigned char bool;
+#include <Eina.h>
 
 // Unpacks an 8-byte ETC1 compressed block to a block of 4x4 32bpp RGBA pixels.
 // Returns false if the block is invalid. Invalid blocks will still be unpacked with clamping.
 // This function is thread safe, and does not dynamically allocate any memory.
 // If preserve_alpha is true, the alpha channel of the destination pixels will not be overwritten. Otherwise, alpha will be set to 255.
-bool rg_etc1_unpack_block(const void *pETC1_block, unsigned int* pDst_pixels_rgba, bool preserve_alpha);
+Eina_Bool rg_etc1_unpack_block(const void *pETC1_block, unsigned int* pDst_pixels_rgba, Eina_Bool preserve_alpha);
 
 // Quality setting = the higher the quality, the slower.
 // To pack large textures, it is highly recommended to call pack_etc1_block() in parallel, on different blocks, from multiple threads (particularly when using cHighQuality).
@@ -23,7 +23,7 @@ typedef enum {
 typedef struct
 {
    rg_etc1_quality m_quality;
-   bool m_dithering;
+   Eina_Bool m_dithering;
 } rg_etc1_pack_params;
 
 // pack_etc1_block_init() should be called before calling pack_etc1_block(),
