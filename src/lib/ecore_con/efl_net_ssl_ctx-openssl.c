@@ -18,6 +18,12 @@ struct _Efl_Net_Ssl_Ctx
 
 #define _efl_net_ssl_ctx_check_errors() \
   __efl_net_ssl_ctx_check_errors(__FILE__, __LINE__, __func__)
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+# define ERR_get_error_line_data(_a, _b, _c, _d) ERR_get_error_all(_a, _b, NULL, _c, _d)
+# define ERR_peek_error_line_data(_a, _b, _c, _d) ERR_peek_error_all(_a, _b, NULL, _c, _d)
+#endif
+
 static unsigned long
 __efl_net_ssl_ctx_check_errors(const char *file, int line, const char *fname)
 {

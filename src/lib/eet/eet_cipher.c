@@ -35,6 +35,10 @@
 # include <openssl/rand.h>
 #endif /* ifdef HAVE_CIPHER */
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/core_names.h>
+#endif
+
 #include <Emile.h>
 
 #include "Eet.h"
@@ -137,35 +141,44 @@ eet_identity_print(Eet_Key *key,
                    FILE    *out)
 {
 #ifdef HAVE_SIGNATURE
-   RSA *rsa;
-   DSA *dsa;
-   DH *dh;
 
    if (!key)
      return;
 
    if (!emile_cipher_init()) return ;
 
-   rsa = EVP_PKEY_get1_RSA(key->private_key);
-   if (rsa)
+   do
      {
-        fprintf(out, "Private key (RSA):\n");
-        RSA_print_fp(out, rsa, 0);
-     }
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+       EVP_PKEY_print_private_fp(out, key->private_key, 0, NULL);
+#else
+       RSA *rsa;
+       DSA *dsa;
+       DH *dh;
 
-   dsa = EVP_PKEY_get1_DSA(key->private_key);
-   if (dsa)
-     {
-        fprintf(out, "Private key (DSA):\n");
-        DSA_print_fp(out, dsa, 0);
-     }
+       rsa = EVP_PKEY_get1_RSA(key->private_key);
+       if (rsa)
+         {
+           fprintf(out, "Private key (RSA):\n");
+           RSA_print_fp(out, rsa, 0);
+         }
 
-   dh = EVP_PKEY_get1_DH(key->private_key);
-   if (dh)
-     {
-        fprintf(out, "Private key (DH):\n");
-        DHparams_print_fp(out, dh);
+       dsa = EVP_PKEY_get1_DSA(key->private_key);
+       if (dsa)
+         {
+           fprintf(out, "Private key (DSA):\n");
+           DSA_print_fp(out, dsa, 0);
+         }
+
+       dh = EVP_PKEY_get1_DH(key->private_key);
+       if (dh)
+         {
+           fprintf(out, "Private key (DH):\n");
+           DHparams_print_fp(out, dh);
+         }
+#endif
      }
+   while (0);
 
    fprintf(out, "Public certificate:\n");
    X509_print_fp(out, key->certificate);

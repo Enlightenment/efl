@@ -23,6 +23,11 @@
 
 #include "ecore_con_private.h"
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+# define ERR_get_error_line_data(_a, _b, _c, _d) ERR_get_error_all(_a, _b, NULL, _c, _d)
+# define ERR_peek_error_line_data(_a, _b, _c, _d) ERR_peek_error_all(_a, _b, NULL, _c, _d)
+#endif
+
 /* OpenSSL's BIO is the abstraction for I/O, provide one for Efl.Io.* */
 static int
 efl_net_socket_bio_create(BIO *b)
