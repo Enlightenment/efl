@@ -51,7 +51,7 @@ static Eina_Bool reseting;
 static Eina_Hash *monitor_hash;
 
 static void
-_ecore_file_monitor_inotify_reset()
+_ecore_file_monitor_inotify_reset(void *data EINA_UNUSED)
 {
    Eina_Iterator *it;
    Ecore_File_Monitor *em;
@@ -132,7 +132,7 @@ ecore_file_monitor_backend_add(const char *path,
    if (_inotify_fd_pid == -1) return NULL;
 
    if (_inotify_fd_pid != getpid())
-     _ecore_file_monitor_inotify_reset();
+     _ecore_file_monitor_inotify_reset(NULL);
 
    em = (Ecore_File_Monitor *)calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
