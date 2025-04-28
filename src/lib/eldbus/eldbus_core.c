@@ -103,7 +103,7 @@ eldbus_fd_handler_del(Eldbus_Handler_Data *hd)
 }
 
 static void
-_eldbus_fork_reset()
+_eldbus_fork_reset(void *data EINA_UNUSED)
 {
    int i;
 
