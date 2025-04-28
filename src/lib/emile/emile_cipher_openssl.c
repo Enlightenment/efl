@@ -313,6 +313,7 @@ EAPI Emile_SSL *
 emile_cipher_server_listen(Emile_Cipher_Type t)
 {
    Emile_SSL *r;
+   DH *dh_params = NULL;
    int options;
    int dh = 0;
 
@@ -342,47 +343,20 @@ emile_cipher_server_listen(Emile_Cipher_Type t)
 
    if (!r->ssl_ctx) goto on_error;
 
-//#define OPENSSL_DH_OLD 1
+   dh_params = DH_new();
+   if (!dh_params) goto on_error;
+   if (!DH_generate_parameters_ex(dh_params, 1024, DH_GENERATOR_5, NULL))
+     goto on_error;
+   if (!DH_check(dh_params, &dh))
+     goto on_error;
+   if ((dh & DH_CHECK_P_NOT_PRIME) || (dh & DH_CHECK_P_NOT_SAFE_PRIME))
+     goto on_error;
+   if (!DH_generate_key(dh_params))
+     goto on_error;
+   if (!SSL_CTX_set_tmp_dh(r->ssl_ctx, dh_params))
+     goto on_error;
 
-   do
-     {
-#ifdef OPENSSL_DH_OLD
-       DH *dh_params = DH_new();
-       if (!dh_params) goto on_error;
-       if (!DH_generate_parameters_ex(dh_params, 1024, DH_GENERATOR_5, NULL))
-         goto on_error;
-       if (!DH_check(dh_params, &dh))
-         goto on_error;
-       if ((dh & DH_CHECK_P_NOT_PRIME) || (dh & DH_CHECK_P_NOT_SAFE_PRIME))
-         goto on_error;
-       if (!DH_generate_key(dh_params))
-         goto on_error;
-       if (!SSL_CTX_set_tmp_dh(r->ssl_ctx, dh_params))
-         goto on_error;
-       DH_free(dh_params);
-#else
-       EVP_PKEY *params = NULL;
-       EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_DH, NULL);
-       if (!pctx)
-         goto on_error;
-       if (EVP_PKEY_paramgen_init(pctx) <= 0)
-         goto on_error2;
-       if (EVP_PKEY_CTX_set_dh_paramgen_prime_len(pctx, 1024) <= 0)
-         goto on_error2;
-       if (EVP_PKEY_CTX_set_dh_paramgen_generator(pctx, 5) <= 0)
-         goto on_error2;
-       if (EVP_PKEY_paramgen(pctx, &params) <= 0)
-         goto on_error2;
-       if (SSL_CTX_set0_tmp_dh_pkey(r->ssl_ctx, params) <= 0)
-         goto on_error2;
-on_error2:
-       if (params) EVP_PKEY_free(params);
-       EVP_PKEY_CTX_free(pctx);
-       if (!params) goto on_error;
-#endif
-     }
-   while (0);
-
+   DH_free(dh_params);
    INF("DH params successfully generated and applied!");
 
    if (!SSL_CTX_set_cipher_list(r->ssl_ctx,
