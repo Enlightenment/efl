@@ -33,7 +33,7 @@ ephysics_shape_points_get(const EPhysics_Shape *shape)
    return shape->points;
 }
 
-EAPI EPhysics_Shape *
+EPHYSICS_API EPhysics_Shape *
 ephysics_shape_new(void)
 {
    EPhysics_Shape *shape;
@@ -48,7 +48,7 @@ ephysics_shape_new(void)
    return shape;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_shape_del(EPhysics_Shape *shape)
 {
    EPhysics_Point *point;
@@ -69,7 +69,7 @@ ephysics_shape_del(EPhysics_Shape *shape)
    free(shape);
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y, double z)
 {
    EPhysics_Point *point;
@@ -94,7 +94,7 @@ ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y, double z)
 }
 
 /* TODO: load points from file */
-EAPI EPhysics_Shape *
+EPHYSICS_API EPhysics_Shape *
 ephysics_shape_load(const char *filename EINA_UNUSED)
 {
    EPhysics_Shape *shape;
@@ -107,7 +107,7 @@ ephysics_shape_load(const char *filename EINA_UNUSED)
 }
 
 /* TODO: save points to file */
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_shape_save(const EPhysics_Shape *shape EINA_UNUSED, const char *filename EINA_UNUSED)
 {
    return EINA_TRUE;

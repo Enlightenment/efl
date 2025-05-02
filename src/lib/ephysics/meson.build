@@ -21,12 +21,12 @@ ephysics_src = files([
 ])
 
 ephysics_lib = library('ephysics',
-    ephysics_src,
-    dependencies: ephysics_pub_deps + ephysics_deps + ephysics_ext_deps,
-    include_directories : config_dir + [include_directories('.')],
-    install: true,
-    c_args : package_c_args,
-    version : meson.project_version()
+  ephysics_src,
+  cpp_args : [package_c_args, '-DEPHYSICS_BUILD'],
+  dependencies: ephysics_pub_deps + ephysics_deps + ephysics_ext_deps,
+  include_directories : config_dir + [include_directories('.')],
+  install: true,
+  version : meson.project_version()
 )
 
 ephysics = declare_dependency(

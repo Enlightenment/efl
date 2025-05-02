@@ -669,7 +669,7 @@ _th_cancel_cb(void *data, Ecore_Thread *th)
    _ephysics_world_free(world);
 }
 
-EAPI EPhysics_World *
+EPHYSICS_API EPhysics_World *
 ephysics_world_new(void)
 {
    EPhysics_World *world;
@@ -817,7 +817,7 @@ no_camera:
    return NULL;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_serialize(EPhysics_World *world, const char *path)
 {
    btDefaultSerializer *serializer;
@@ -896,7 +896,7 @@ _ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
    _anim_simulate = ecore_animator_add(_simulate_worlds, NULL);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_del(EPhysics_World *world)
 {
    if (!world)
@@ -926,7 +926,7 @@ ephysics_world_del(EPhysics_World *world)
    _ephysics_world_th_cancel(world);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
 {
    if (!world)
@@ -940,7 +940,7 @@ ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
    eina_lock_release(&world->mutex);
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_running_get(const EPhysics_World *world)
 {
    if (!world)
@@ -952,7 +952,7 @@ ephysics_world_running_get(const EPhysics_World *world)
    return world->running;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_max_sleeping_time_set(EPhysics_World *world, double sleeping_time)
 {
    if (!world)
@@ -966,7 +966,7 @@ ephysics_world_max_sleeping_time_set(EPhysics_World *world, double sleeping_time
    eina_lock_release(&world->mutex);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_world_max_sleeping_time_get(const EPhysics_World *world)
 {
    if (!world)
@@ -978,7 +978,7 @@ ephysics_world_max_sleeping_time_get(const EPhysics_World *world)
    return world->max_sleeping_time;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double gz)
 {
    EPhysics_Body *bd;
@@ -997,7 +997,7 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double g
    eina_lock_release(&world->mutex);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_constraint_solver_iterations_set(EPhysics_World *world, int iterations)
 {
    if (!world)
@@ -1011,7 +1011,7 @@ ephysics_world_constraint_solver_iterations_set(EPhysics_World *world, int itera
    eina_lock_release(&world->mutex);
 }
 
-EAPI int
+EPHYSICS_API int
 ephysics_world_constraint_solver_iterations_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1023,7 +1023,7 @@ ephysics_world_constraint_solver_iterations_get(const EPhysics_World *world)
    return world->dynamics_world->getSolverInfo().m_numIterations;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode, Eina_Bool enable)
 {
    int current_solver_mode;
@@ -1041,7 +1041,7 @@ ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world, EPhysics
    eina_lock_release(&world->mutex);
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_constraint_solver_mode_enable_get(const EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode)
 {
      if (!world)
@@ -1053,7 +1053,7 @@ ephysics_world_constraint_solver_mode_enable_get(const EPhysics_World *world, EP
      return world->dynamics_world->getSolverInfo().m_solverMode & solver_mode;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy, double *gz)
 {
    btVector3 vector;
@@ -1071,7 +1071,7 @@ ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy, 
    if (gz) *gz = vector.z() * world->rate;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_rate_set(EPhysics_World *world, double rate)
 {
    EPhysics_Body *body;
@@ -1107,7 +1107,7 @@ ephysics_world_rate_set(EPhysics_World *world, double rate)
    eina_lock_release(&world->mutex);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_world_rate_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1119,7 +1119,7 @@ ephysics_world_rate_get(const EPhysics_World *world)
    return world->rate;
 }
 
-EAPI EPhysics_Camera *
+EPHYSICS_API EPhysics_Camera *
 ephysics_world_camera_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1131,7 +1131,7 @@ ephysics_world_camera_get(const EPhysics_World *world)
    return world->camera;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, const void *data)
 {
    EPhysics_World_Callback *cb;
@@ -1168,7 +1168,7 @@ ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_World
    world->callbacks = eina_inlist_append(world->callbacks, EINA_INLIST_GET(cb));
 }
 
-EAPI void *
+EPHYSICS_API void *
 ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func)
 {
    EPhysics_World_Callback *cb;
@@ -1193,7 +1193,7 @@ ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_World
    return cb_data;
 }
 
-EAPI void *
+EPHYSICS_API void *
 ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, void *data)
 {
    EPhysics_World_Callback *cb;
@@ -1218,7 +1218,7 @@ ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_
    return cb_data;
 }
 
-EAPI Eina_List *
+EPHYSICS_API Eina_List *
 ephysics_world_bodies_get(const EPhysics_World *world)
 {
    Eina_List *list = NULL;
@@ -1236,7 +1236,7 @@ ephysics_world_bodies_get(const EPhysics_World *world)
    return list;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    if (!world)
@@ -1268,7 +1268,7 @@ ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coo
    ephysics_camera_position_set(world->camera, x, y);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d)
 {
    if (!world)
@@ -1285,7 +1285,7 @@ ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, E
    if (d) *d = world->geometry.d;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_linear_slop_set(EPhysics_World *world, double linear_slop)
 {
    if (!world)
@@ -1299,7 +1299,7 @@ ephysics_world_linear_slop_set(EPhysics_World *world, double linear_slop)
    eina_lock_release(&world->mutex);
 }
 
-EAPI double
+EPHYSICS_API double
 ephysics_world_linear_slop_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1311,7 +1311,7 @@ ephysics_world_linear_slop_get(const EPhysics_World *world)
    return world->dynamics_world->getSolverInfo().m_linearSlop;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, Eina_Bool autodel)
 {
    if (!world)
@@ -1326,7 +1326,7 @@ ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, Eina_Bool a
       world->outside_front || world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_top_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1338,7 +1338,7 @@ ephysics_world_bodies_outside_top_autodel_get(const EPhysics_World *world)
    return world->outside_top;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world, Eina_Bool autodel)
 {
    if (!world)
@@ -1353,7 +1353,7 @@ ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world, Eina_Boo
       world->outside_front || world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_bottom_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1365,7 +1365,7 @@ ephysics_world_bodies_outside_bottom_autodel_get(const EPhysics_World *world)
    return world->outside_bottom;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, Eina_Bool autodel)
 {
    if (!world)
@@ -1380,7 +1380,7 @@ ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, Eina_Bool 
       world->outside_front || world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_left_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1392,7 +1392,7 @@ ephysics_world_bodies_outside_left_autodel_get(const EPhysics_World *world)
    return world->outside_left;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world, Eina_Bool autodel)
 {
    if (!world)
@@ -1407,7 +1407,7 @@ ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world, Eina_Bool
       world->outside_front || world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_right_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1419,7 +1419,7 @@ ephysics_world_bodies_outside_right_autodel_get(const EPhysics_World *world)
    return world->outside_right;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_bodies_outside_front_autodel_set(EPhysics_World *world, Eina_Bool autodel)
 {
    if (!world)
@@ -1434,7 +1434,7 @@ ephysics_world_bodies_outside_front_autodel_set(EPhysics_World *world, Eina_Bool
       world->outside_front || world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_front_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1446,7 +1446,7 @@ ephysics_world_bodies_outside_front_autodel_get(const EPhysics_World *world)
    return world->outside_front;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_bodies_outside_back_autodel_set(EPhysics_World *world, Eina_Bool autodel)
 {
    if (!world)
@@ -1461,7 +1461,7 @@ ephysics_world_bodies_outside_back_autodel_set(EPhysics_World *world, Eina_Bool 
       world->outside_front || world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_back_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1473,7 +1473,7 @@ ephysics_world_bodies_outside_back_autodel_get(const EPhysics_World *world)
    return world->outside_back;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1485,7 +1485,7 @@ ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
    return world->outside_autodel;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_simulation_set(EPhysics_World *world, double fixed_time_step, int max_sub_steps)
 {
    if (!world)
@@ -1515,7 +1515,7 @@ ephysics_world_simulation_set(EPhysics_World *world, double fixed_time_step, int
    eina_lock_release(&world->mutex);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_simulation_get(const EPhysics_World *world, double *fixed_time_step, int *max_sub_steps)
 {
    if (!world)
@@ -1540,7 +1540,7 @@ ephysics_world_lock_release(EPhysics_World *world)
    eina_lock_release(&world->mutex);
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_point_light_position_set(EPhysics_World *world, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz)
 {
    if (!world)
@@ -1555,7 +1555,7 @@ ephysics_world_point_light_position_set(EPhysics_World *world, Evas_Coord lx, Ev
    world->force_update = EINA_TRUE;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_point_light_color_set(EPhysics_World *world, int lr, int lg, int lb)
 {
    if (!world)
@@ -1570,7 +1570,7 @@ ephysics_world_point_light_color_set(EPhysics_World *world, int lr, int lg, int 
    world->force_update = EINA_TRUE;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_ambient_light_color_set(EPhysics_World *world, int ar, int ag, int ab)
 {
    if (!world)
@@ -1585,7 +1585,7 @@ ephysics_world_ambient_light_color_set(EPhysics_World *world, int ar, int ag, in
    world->force_update = EINA_TRUE;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_ambient_light_color_get(const EPhysics_World *world, int *ar, int *ag, int *ab)
 {
    if (!world)
@@ -1599,7 +1599,7 @@ ephysics_world_ambient_light_color_get(const EPhysics_World *world, int *ar, int
    if (ab) *ab = world->light.ab;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_point_light_color_get(const EPhysics_World *world, int *lr, int *lg, int *lb)
 {
    if (!world)
@@ -1613,7 +1613,7 @@ ephysics_world_point_light_color_get(const EPhysics_World *world, int *lr, int *
    if (lb) *lb = world->light.lb;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_point_light_position_get(const EPhysics_World *world, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz)
 {
    if (!world)
@@ -1627,7 +1627,7 @@ ephysics_world_point_light_position_get(const EPhysics_World *world, Evas_Coord 
    if (lz) *lz = world->light.lz;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool enable)
 {
    if (!world)
@@ -1640,7 +1640,7 @@ ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool enable)
    world->force_update = EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_light_all_bodies_get(const EPhysics_World *world)
 {
    if (!world)
@@ -1652,7 +1652,7 @@ ephysics_world_light_all_bodies_get(const EPhysics_World *world)
    return world->light.all_bodies;
 }
 
-EAPI void
+EPHYSICS_API void
 ephysics_world_stack_enable_set(EPhysics_World *world, Eina_Bool enabled)
 {
    if (!world)
@@ -1663,7 +1663,7 @@ ephysics_world_stack_enable_set(EPhysics_World *world, Eina_Bool enabled)
    world->stacking = !!enabled;
 }
 
-EAPI Eina_Bool
+EPHYSICS_API Eina_Bool
 ephysics_world_stack_enable_get(const EPhysics_World *world)
 {
    if (!world)
