@@ -271,7 +271,7 @@ void
 test_flip2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *tb, *li, *en;
-   char buf[PATH_MAX];
+   char buf[4096];
 
    win = elm_win_add(NULL, "flip2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip 2");
