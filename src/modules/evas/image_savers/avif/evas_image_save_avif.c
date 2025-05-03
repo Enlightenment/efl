@@ -99,7 +99,9 @@ save_image_avif(RGBA_Image *im, const char *file, int quality)
    rgb.depth = 8;
    rgb.pixels = (uint8_t *)im->image.data;
    rgb.rowBytes = 4 * im->cache_entry.w;
-   avifImageRGBToYUV(image, &rgb);
+   res = avifImageRGBToYUV(image, &rgb);
+   if (res != AVIF_RESULT_OK)
+     goto destroy_image;
 
    output.data = NULL;
    output.size = 0;

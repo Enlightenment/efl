@@ -71,7 +71,12 @@ evas_image_load_file_head_avif_internal(Evas_Loader_Internal *loader,
 
    INF("AV1 codec name (decode): %s", codec_name);
 
-   avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
+   res = avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
+   if (res != AVIF_RESULT_OK)
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        goto destroy_decoder;
+     }
    res = avifDecoderParse(decoder);
    if (res != AVIF_RESULT_OK)
      {
@@ -164,7 +169,12 @@ evas_image_load_file_data_avif_internal(Evas_Loader_Internal *loader,
 
         INF("AV1 codec name (decode): %s", codec_name);
 
-        avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
+        res = avifDecoderSetIOMemory(decoder, (const uint8_t *)map, length);
+        if (res != AVIF_RESULT_OK)
+          {
+             *error = EVAS_LOAD_ERROR_GENERIC;
+             goto on_error;
+          }
         res = avifDecoderParse(decoder);
         if (res != AVIF_RESULT_OK)
           {
@@ -206,7 +216,12 @@ evas_image_load_file_data_avif_internal(Evas_Loader_Internal *loader,
    rgb.pixels = pixels;
    rgb.rowBytes = 4 * decoder->image->width;
 
-   avifImageYUVToRGB(decoder->image, &rgb);
+   res = avifImageYUVToRGB(decoder->image, &rgb);
+   if (res != AVIF_RESULT_OK)
+     {
+        *error = EVAS_LOAD_ERROR_GENERIC;
+        goto on_error;
+     }
 
    *error = EVAS_LOAD_ERROR_NONE;
 
