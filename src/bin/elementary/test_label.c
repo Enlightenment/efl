@@ -804,7 +804,7 @@ static void
 _font_set(Evas_Object *label, const char *font)
 {
    // Note: u1F420 doesn't work but U0001F420 does.
-   const char *emojis = u8""
+   const char *emojis = ""
                         "<font='%s',Sans font_size=16 align=left>"
                         "Grinning Face: \U0001f600<br/>"
                         "Face with Tears of Joy: \xf0\x9f\x98\x82<br/>"
