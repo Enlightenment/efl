@@ -3199,11 +3199,11 @@ shell_surface_toplevel_set_app_id(struct wl_client *client EINA_UNUSED, struct w
 }
 
 static void
-shell_surface_toplevel_show_window_menu(){}
+shell_surface_toplevel_show_window_menu(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED, uint32_t a EINA_UNUSED, int32_t b EINA_UNUSED, int32_t c EINA_UNUSED){}
 static void
-shell_surface_toplevel_move(){}
+shell_surface_toplevel_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED, uint32_t a EINA_UNUSED){}
 static void
-shell_surface_toplevel_resize(){}
+shell_surface_toplevel_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED, uint32_t a EINA_UNUSED, uint32_t b EINA_UNUSED){}
 
 static void
 shell_surface_toplevel_set_max_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
@@ -3224,15 +3224,15 @@ shell_surface_toplevel_set_min_size(struct wl_client *client EINA_UNUSED, struct
 }
 
 static void
-shell_surface_toplevel_set_maximized(){}
+shell_surface_toplevel_set_maximized(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
 static void
-shell_surface_toplevel_unset_maximized(){}
+shell_surface_toplevel_unset_maximized(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
 static void
-shell_surface_toplevel_set_fullscreen(){}
+shell_surface_toplevel_set_fullscreen(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED){}
 static void
-shell_surface_toplevel_unset_fullscreen(){}
+shell_surface_toplevel_unset_fullscreen(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
 static void
-shell_surface_toplevel_set_minimized(){}
+shell_surface_toplevel_set_minimized(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
 
 static const struct xdg_toplevel_interface shell_surface_toplevel_interface =
 {

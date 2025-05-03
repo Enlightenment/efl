@@ -159,7 +159,7 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
  */
 static Eina_Bool reseting;
 static void
-_eio_monitor_reset()
+_eio_monitor_reset(void *data EINA_UNUSED)
 {
    Eina_Hash *h = _inotify_monitors;
    Eina_Iterator *it;

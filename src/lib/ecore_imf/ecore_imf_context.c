@@ -780,7 +780,7 @@ ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
    fn = calloc(1, sizeof (Ecore_IMF_Func_Node));
    if (!fn) return;
 
-   fn->func = func;
+   fn->func = (void *)func;
    fn->data = data;
    fn->type = type;
 
@@ -806,7 +806,7 @@ ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
 
    EINA_LIST_FOREACH_SAFE(ctx->callbacks, l, l_next, fn)
      {
-        if ((fn) && (fn->func == func) && (fn->type == type))
+        if ((fn) && (fn->func == (void *)func) && (fn->type == type))
           {
              void *tmp = (void *)fn->data;
              free(fn);
@@ -833,7 +833,11 @@ ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback
    EINA_LIST_FOREACH(ctx->callbacks, l, fn)
      {
         if ((fn) && (fn->type == type) && (fn->func))
-          fn->func(fn->data, ctx, event_info);
+         {
+           Ecore_IMF_Event_Cb cb = (Ecore_IMF_Event_Cb)fn->func;
+
+           cb((void *)fn->data, ctx, event_info);
+         }
      }
 }
 
@@ -1210,6 +1214,8 @@ ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
    return state;
 }
 
+typedef void (*Ecore_IMF_Input_Panel_Callback) (void *data, Ecore_IMF_Context *ctx, int value);
+
 EAPI void
 ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
                                                  Ecore_IMF_Input_Panel_Event type,
@@ -1230,7 +1236,7 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
    fn = calloc(1, sizeof (Ecore_IMF_Input_Panel_Callback_Node));
    if (!fn) return;
 
-   fn->func = func;
+   fn->func = (void *)func;
    fn->data = data;
    fn->type = type;
 
@@ -1258,7 +1264,7 @@ ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
 
    EINA_LIST_FOREACH_SAFE(ctx->input_panel_callbacks, l, l_next, fn)
      {
-        if ((fn) && (fn->func == func) && (fn->type == type))
+        if ((fn) && (fn->func == (void *)func) && (fn->type == type))
           {
              free(fn);
              ctx->input_panel_callbacks = eina_list_remove_list(ctx->input_panel_callbacks, l);
@@ -1284,7 +1290,8 @@ ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_
      {
         if ((fn) && (fn->type == type) && (fn->func))
           {
-             fn->func(fn->data, ctx, value);
+             Ecore_IMF_Input_Panel_Callback cb = (Ecore_IMF_Input_Panel_Callback)fn->func;
+             cb((void *)fn->data, ctx, value);
              if (type == ECORE_IMF_INPUT_PANEL_STATE_EVENT &&
                  value == ECORE_IMF_INPUT_PANEL_STATE_HIDE &&
                  show_req_ctx == ctx)

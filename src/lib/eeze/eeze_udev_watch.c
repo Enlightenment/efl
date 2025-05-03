@@ -362,7 +362,7 @@ error:
 }
 
 static void
-_eeze_udev_watch_reset()
+_eeze_udev_watch_reset(void *data EINA_UNUSED)
 {
    Eeze_Udev_Watch *watch;
 

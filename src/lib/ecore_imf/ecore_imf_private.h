@@ -77,14 +77,14 @@ struct _Ecore_IMF_Module
 
 struct _Ecore_IMF_Func_Node
 {
-   void (*func) ();
+   void *func; // cast at call time
    const void *data;
    Ecore_IMF_Callback_Type type;
 };
 
 struct _Ecore_IMF_Input_Panel_Callback_Node
 {
-   void (*func) ();
+   void *func;
    const void *data;
    Ecore_IMF_Input_Panel_Event type;
 };

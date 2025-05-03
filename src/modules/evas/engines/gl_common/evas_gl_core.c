@@ -21,7 +21,7 @@ EVGL_Engine *evgl_engine = NULL;
 int _evas_gl_log_dom   = -1;
 int _evas_gl_log_level = -1;
 
-typedef void           *(*glsym_func_void_ptr) ();
+typedef void           *(*glsym_func_void_ptr) (void *);
 glsym_func_void_ptr glsym_evas_gl_native_context_get = NULL;
 glsym_func_void_ptr glsym_evas_gl_engine_data_get = NULL;
 

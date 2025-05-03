@@ -222,7 +222,7 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 }
 
 static void
-_efreet_cache_reset()
+_efreet_cache_reset(void *data EINA_UNUSED)
 {
    const char *s;
    int len = 0;

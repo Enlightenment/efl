@@ -1040,7 +1040,7 @@ _write_unit_file(void)
 }
 #ifdef HAVE_DLSYM
 # define ORIGINAL_CALL_T(t, name, ...) \
-   t (*_original_init_cb)(); \
+   t (*_original_init_cb)(...); \
    _original_init_cb = dlsym(RTLD_NEXT, name); \
    original_return = _original_init_cb(__VA_ARGS__);
 #else

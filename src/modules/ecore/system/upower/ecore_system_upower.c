@@ -413,7 +413,7 @@ static void _ecore_system_upower_shutdown(void);
 static unsigned int reseting;
 
 static void
-_ecore_system_upower_reset()
+_ecore_system_upower_reset(void *data EINA_UNUSED)
 {
    reseting = 1;
    _ecore_system_upower_shutdown();

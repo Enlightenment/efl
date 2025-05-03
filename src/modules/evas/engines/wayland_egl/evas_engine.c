@@ -27,13 +27,6 @@ struct _Render_Engine
    Render_Output_GL_Generic generic;
 };
 
-/* local function prototypes */
-typedef void (*glsym_func_void) ();
-typedef void *(*glsym_func_void_ptr) ();
-typedef int (*glsym_func_int) ();
-typedef unsigned int (*glsym_func_uint) ();
-typedef const char *(*glsym_func_const_char_ptr) ();
-
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_unref = NULL;
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_free = NULL;
@@ -142,11 +135,11 @@ eng_gl_symbols(EGLDisplay edsp)
    const char *exts = NULL;
 
    if (done) return;
-#define FINDSYM(dst, sym, typ) \
+#define FINDSYM(dst, sym) \
    if (glsym_eglGetProcAddress) { \
-      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
+      if (!dst) dst = glsym_eglGetProcAddress(sym); \
    } else { \
-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
+      if (!dst) dst = dlsym(RTLD_DEFAULT, sym); \
    }
 
    // Find EGL extensions
@@ -155,20 +148,14 @@ eng_gl_symbols(EGLDisplay edsp)
    // Find GL extensions
    glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES",
-           glsym_func_void);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
 
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR",
-           glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage");
+   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR");
 
-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
-           glsym_func_uint);
+   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL");
 
    done = EINA_TRUE;
 }

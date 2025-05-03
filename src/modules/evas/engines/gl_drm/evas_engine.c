@@ -74,11 +74,7 @@ static struct gbm_device *gbm_dev = NULL;
 static int gbm_dev_refs = 0;
 
 /* local function prototype types */
-typedef void (*glsym_func_void)();
-typedef void *(*glsym_func_void_ptr)();
-typedef int (*glsym_func_int)();
-typedef unsigned int (*glsym_func_uint)();
-typedef const char *(*glsym_func_const_char_ptr)();
+typedef void *(*glsym_func_void_ptr)(void);
 
 /* external dynamic loaded Evas_GL function pointers */
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
@@ -255,26 +251,20 @@ eng_egl_symbols(EGLDisplay edsp)
 
    if (done) return;
 
-#define FINDSYM(dst, sym, typ) \
-   if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
+#define FINDSYM(dst, sym) \
+   if (!dst) dst = glsym_eglGetProcAddress(sym)
 
    exts = eglQueryString(edsp, EGL_EXTENSIONS);
 
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES,
-           "glEGLImageTargetTexture2DOES", glsym_func_void);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
 
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
-           glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
-           glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage");
 
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR",
-           glsym_func_uint);
+   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR");
 
-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
-           glsym_func_uint);
+   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL");
 
    if (_ckext(exts, "EGL_IMG_context_priority"))
      _extn_have_context_priority = 1;

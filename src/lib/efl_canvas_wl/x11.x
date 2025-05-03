@@ -640,7 +640,7 @@ x11_kbd_apply(Comp_Seat *s)
 static void seat_keymap_update(Comp_Seat *s);
 
 static Eina_Bool
-x11_xkb_refresh()
+x11_xkb_refresh(void *data EINA_UNUSED, int event EINA_UNUSED, void *info EINA_UNUSED)
 {
    Eina_List *l;
    Comp *c;

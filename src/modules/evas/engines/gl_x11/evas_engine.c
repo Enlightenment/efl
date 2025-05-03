@@ -33,13 +33,11 @@ static int gl_wins = 0;
 static int extn_have_y_inverted = 1;
 #endif
 
-typedef void            (*_eng_fn) (void);
-typedef _eng_fn         (*glsym_func_eng_fn) ();
-typedef void            (*glsym_func_void) ();
-typedef void           *(*glsym_func_void_ptr) ();
-typedef int             (*glsym_func_int) ();
-typedef unsigned int    (*glsym_func_uint) ();
-typedef const char     *(*glsym_func_const_char_ptr) ();
+typedef void           *(*glsym_func_void_ptr) (void);
+
+typedef void            (*glsym_func_void_in_voidp) (void *);
+typedef void            (*glsym_func_void_in_int) (int);
+typedef int             (*glsym_func_int_in_voidp) (void *);
 
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
 Evas_GL_Common_Image_Call glsym_evas_gl_common_image_unref = NULL;
@@ -68,14 +66,14 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
-glsym_func_void     glsym_evas_gl_common_shaders_flush = NULL;
-glsym_func_void     glsym_evas_gl_common_error_set = NULL;
-glsym_func_int      glsym_evas_gl_common_error_get = NULL;
-glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
+glsym_func_void_in_voidp glsym_evas_gl_common_shaders_flush = NULL;
+glsym_func_void_in_int   glsym_evas_gl_common_error_set = NULL;
+glsym_func_int_in_voidp  glsym_evas_gl_common_error_get = NULL;
+glsym_func_void_ptr      glsym_evas_gl_common_current_context_get = NULL;
 
 #ifdef GL_GLES
 
-_eng_fn      (*glsym_eglGetProcAddress)            (const char *a) = NULL;
+void        *(*glsym_eglGetProcAddress)            (const char *a) = NULL;
 EGLImageKHR  (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
 int          (*glsym_evas_gl_common_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void         (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
@@ -87,7 +85,7 @@ unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, /*struct wl_resource
 
 typedef XID     (*glsym_func_xid) ();
 
-_eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
+void    *(*glsym_glXGetProcAddress)  (const char *a) = NULL;
 void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
 void     (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
 int      (*glsym_glXGetVideoSync)    (unsigned int *a) = NULL;
@@ -1310,19 +1308,19 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_current_context_get);
    LINK2GENERIC(evas_gl_common_shaders_flush);
 
-#define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym);
+#define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
 #ifdef GL_GLES
 
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress");
 
 #else
 
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT");
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB");
+   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress");
 
 #endif
 #undef FINDSYM
@@ -1348,12 +1346,12 @@ eng_gl_symbols(Outbuf *ob)
     */
 
 #ifdef GL_GLES
-#define FINDSYM(dst, sym, ext, typ) do { \
+#define FINDSYM(dst, sym, ext) do { \
    if (!dst) { \
       if (_has_ext(exts, ext) && glsym_eglGetProcAddress) \
-        dst = (typ) glsym_eglGetProcAddress(sym); \
+        dst = glsym_eglGetProcAddress(sym); \
       if (!dst) \
-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+        dst = dlsym(RTLD_DEFAULT, sym); \
    }} while (0)
 
    // Find EGL extensions
@@ -1365,23 +1363,23 @@ eng_gl_symbols(Outbuf *ob)
    LINK2GENERIC(evas_gl_common_eglCreateImage);
    LINK2GENERIC(evas_gl_common_eglDestroyImage);
 
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL, glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage", glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage");
 
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update", glsym_func_uint);
+   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update");
 
-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
+   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display");
 
    // This is a GL extension
    exts = (const char *) glGetString(GL_EXTENSIONS);
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external");
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image");
 
 #else
 
-#define FINDSYM(dst, sym, ext, typ) do { \
+#define FINDSYM(dst, sym, ext) do { \
    if (!dst) { \
       if (_has_ext(exts, ext) && glsym_glXGetProcAddress) \
         dst = (typ) glsym_glXGetProcAddress(sym); \
@@ -1395,30 +1393,30 @@ eng_gl_symbols(Outbuf *ob)
    // Find GL extensions
    glsym_evas_gl_symbols((void*)glsym_glXGetProcAddress, exts);
 
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", NULL, glsym_func_void);
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", "GLX_EXT_texture_from_pixmap", glsym_func_void);
-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", "GLX_ARB_render_texture", glsym_func_void);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", NULL);
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", "GLX_EXT_texture_from_pixmap");
+   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", "GLX_ARB_render_texture");
 
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", NULL, glsym_func_void);
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", "GLX_EXT_texture_from_pixmap", glsym_func_void);
-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", "GLX_ARB_render_texture", glsym_func_void);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", NULL);
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", "GLX_EXT_texture_from_pixmap");
+   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", "GLX_ARB_render_texture");
 
-   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", "GLX_SGI_video_sync", glsym_func_int);
-   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", "GLX_SGI_video_sync", glsym_func_int);
+   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", "GLX_SGI_video_sync");
+   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", "GLX_SGI_video_sync");
 
    // GLX 1.3
-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", NULL, glsym_func_xid);
-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", NULL, glsym_func_void);
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL, glsym_func_void);
+   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", NULL);
+   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", NULL);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL);
 
    // swap interval: MESA and SGI take (interval)
-   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", "GLX_MESA_swap_control", glsym_func_int);
-   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", "GLX_SGI_swap_control", glsym_func_int);
+   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", "GLX_MESA_swap_control");
+   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", "GLX_SGI_swap_control");
 
    // swap interval: EXT takes (dpy, drawable, interval)
-   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", "GLX_EXT_swap_control", glsym_func_void);
+   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", "GLX_EXT_swap_control");
 
-   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", "GLX_MESA_release_buffers", glsym_func_void);
+   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", "GLX_MESA_release_buffers");
 
 #endif
 #undef FINDSYM

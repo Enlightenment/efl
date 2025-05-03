@@ -253,7 +253,7 @@ static Eina_Bool _ecore_system_systemd_init(void);
 static unsigned int reseting = 0;
 
 static void
-_ecore_system_systemd_reset()
+_ecore_system_systemd_reset(void *data EINA_UNUSED)
 {
    reseting = 1;
    _ecore_system_systemd_shutdown();
