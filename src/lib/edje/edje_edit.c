@@ -7757,11 +7757,11 @@ edje_edit_state_map_backface_cull_get(Evas_Object *obj, const char *part, const 
 }
 
 EAPI Eina_Bool
-edje_edit_state_map_backface_cull_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+edje_edit_state_map_backface_cull_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   pd->map.backcull = bool;
+   pd->map.backcull = b;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
@@ -7776,11 +7776,11 @@ edje_edit_state_map_perspective_on_get(Evas_Object *obj, const char *part, const
 }
 
 EAPI Eina_Bool
-edje_edit_state_map_perspective_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+edje_edit_state_map_perspective_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   pd->map.persp_on = bool;
+   pd->map.persp_on = b;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
@@ -7795,22 +7795,22 @@ edje_edit_state_map_alpha_get(Evas_Object *obj, const char *part, const char *st
 }
 
 EAPI Eina_Bool
-edje_edit_state_map_alpha_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+edje_edit_state_map_alpha_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   pd->map.alpha = bool;
+   pd->map.alpha = b;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
-edje_edit_state_map_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
+edje_edit_state_map_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
 {
    GET_PD_OR_RETURN(EINA_FALSE);
 
-   pd->map.smooth = bool;
+   pd->map.smooth = b;
 
    edje_object_calc_force(obj);
    return EINA_TRUE;
