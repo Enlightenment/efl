@@ -1513,7 +1513,7 @@ init(int ident, int *tag)
 	  }			/* if */
 	*tag = 0;
      }
-   else if (constexpr(&i, tag))
+   else if (constexpress(&i, tag))
      {
 	stowlit(i);		/* store expression result in literal table */
      }				/* if */
@@ -1532,7 +1532,7 @@ needsub(int *tag)
    *tag = 0;
    if (matchtoken(']'))		/* we've already seen "[" */
       return 0;			/* null size (like "char msg[]") */
-   constexpr(&val, tag);	/* get value (must be constant expression) */
+   constexpress(&val, tag);	/* get value (must be constant expression) */
    if (val < 0)
      {
 	error(9);		/* negative array size is invalid; assumed zero */
@@ -1561,7 +1561,7 @@ decl_const(int vclass)
    strncpy(constname, str, sizeof(constname) - 1);	/* save symbol name */
    constname[sizeof(constname) - 1] = 0;
    needtoken('=');
-   constexpr(&val, &exprtag);	/* get value */
+   constexpress(&val, &exprtag);	/* get value */
    needtoken(tTERM);
    /* add_constant() checks for duplicate definitions */
    if (!matchtag(tag, exprtag, FALSE))
@@ -1627,15 +1627,15 @@ decl_enum(int vclass)
      {
 	if (matchtoken(taADD))
 	  {
-	     constexpr(&increment, NULL);
+	     constexpress(&increment, NULL);
 	  }
 	else if (matchtoken(taMULT))
 	  {
-	     constexpr(&multiplier, NULL);
+	     constexpress(&multiplier, NULL);
 	  }
 	else if (matchtoken(taSHL))
 	  {
-	     constexpr(&lexval, NULL);
+	     constexpress(&lexval, NULL);
 	     while (lexval-- > 0)
 		multiplier *= 2;
 	  }			/* if */
@@ -1659,9 +1659,9 @@ decl_enum(int vclass)
 	constname[sNAMEMAX] = 0;
 	size = increment;	/* default increment of 'val' */
 	if (tok == tLABEL || matchtoken(':'))
-	   constexpr(&size, NULL);	/* get size */
+	   constexpress(&size, NULL);	/* get size */
 	if (matchtoken('='))
-	   constexpr(&enumvalue, NULL);	/* get value */
+	   constexpress(&enumvalue, NULL);	/* get value */
 	/* add_constant() checks whether a variable (global or local) or
 	 * a constant with the same name already exists */
 	add_constant(constname, enumvalue, vclass, tag);
@@ -2137,7 +2137,7 @@ funcstub(int native)
 	       }
 	     else
 	       {
-		  constexpr(&val, NULL);
+		  constexpress(&val, NULL);
 		  sym->addr = val;
 		  /*
 		   * ?? Must mark this address, so that it won't be generated again
@@ -2758,7 +2758,7 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 	       }
 	     else
 	       {
-		  constexpr(&arg->defvalue.val, &arg->defvalue_tag);
+		  constexpress(&arg->defvalue.val, &arg->defvalue_tag);
 		  assert(numtags > 0);
 		  if (!matchtag(tags[0], arg->defvalue_tag, TRUE))
 		     error(213);	/* tagname mismatch */
@@ -3391,10 +3391,10 @@ doexpr(int comma, int chkeffect, int allowarray, int mark_endexpr,
      }				/* if */
 }
 
-/*  constexpr
+/*  constexpress
  */
 int
-constexpr(cell * val, int *tag)
+constexpress(cell * val, int *tag)
 {
    int                 constant, idx;
    cell                cidx;
@@ -3728,7 +3728,7 @@ doswitch(void)
 		   * parse all expressions until that special token.
 		   */
 
-		  constexpr(&val, NULL);
+		  constexpress(&val, NULL);
 		  /* Search the insertion point (the table is kept in sorted
 		   * order, so that advanced abstract machines can sift the
 		   * case table with a binary search). Check for duplicate
@@ -3753,7 +3753,7 @@ doswitch(void)
 		    {
 		       cell                end;
 
-		       constexpr(&end, NULL);
+		       constexpress(&end, NULL);
 		       if (end <= val)
 			  error(50);	/* invalid range */
 		       while (++val <= end)

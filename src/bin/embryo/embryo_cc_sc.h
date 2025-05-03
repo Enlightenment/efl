@@ -432,7 +432,7 @@ symbol     *fetchfunc(char *name, int tag);
 char       *operator_symname(char *symname, char *opername, int tag1,
 				     int tag2, int numtags, int resulttag);
 char       *funcdisplayname(char *dest, char *funcname);
-int         constexpr(cell * val, int *tag);
+int         constexpress(cell * val, int *tag);
 constvalue *append_constval(constvalue * table, char *name, cell val,
 				    short index);
 constvalue *find_constval(constvalue * table, char *name, short index);
