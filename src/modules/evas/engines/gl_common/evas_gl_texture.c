@@ -938,8 +938,6 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
      }
 
    glBindTexture(gc->state.current.tex_target, gc->state.current.cur_tex);
-#else
-   if (gc + w + h + intformat + format) return pt;
 #endif
    return pt;
 
