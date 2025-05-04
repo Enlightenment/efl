@@ -1382,9 +1382,9 @@ eng_gl_symbols(Outbuf *ob)
 #define FINDSYM(dst, sym, ext) do { \
    if (!dst) { \
       if (_has_ext(exts, ext) && glsym_glXGetProcAddress) \
-        dst = (typ) glsym_glXGetProcAddress(sym); \
+        dst = glsym_glXGetProcAddress(sym); \
       if (!dst) \
-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+        dst = dlsym(RTLD_DEFAULT, sym); \
    }} while (0)
 
    // Find GLX extensions
