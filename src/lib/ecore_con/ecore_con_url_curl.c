@@ -157,7 +157,7 @@ _curlmcode_to_eina_error(const CURLMcode code)
     case CURLM_BAD_HANDLE: return EBADF;
     case CURLM_BAD_EASY_HANDLE: return EBADF;
     case CURLM_OUT_OF_MEMORY: return ENOMEM;
-    case CURLM_INTERNAL_ERROR: EIO; /* not exact, but the error should happen so not much of a problem */
+    case CURLM_INTERNAL_ERROR: return EIO; /* not exact, but the error should happen so not much of a problem */
     case CURLM_BAD_SOCKET: return ENOTSOCK;
     case CURLM_UNKNOWN_OPTION: return EINVAL;
     case CURLM_ADDED_ALREADY: return EALREADY;
