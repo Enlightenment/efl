@@ -15,8 +15,8 @@ do { \
 static Eina_TLS _outbuf_key = 0;
 static Eina_TLS _context_key = 0;
 
-typedef void (*glsym_func_void) ();
-glsym_func_void glsym_evas_gl_common_context_restore_set = NULL;
+typedef void (*glsym_func_void_in_bool) (Eina_Bool);
+glsym_func_void_in_bool glsym_evas_gl_common_context_restore_set = NULL;
 
 Eina_Bool gles3_supported = EINA_FALSE;
 

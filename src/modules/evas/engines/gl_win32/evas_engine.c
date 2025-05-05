@@ -21,13 +21,11 @@ struct _Render_Engine
    char *class_name;
 };
 
-typedef void          (*_eng_fn) (void);
-typedef _eng_fn       (*glsym_func_eng_fn) ();
-typedef void          (*glsym_func_void) ();
-typedef void         *(*glsym_func_void_ptr) ();
-typedef int           (*glsym_func_int) ();
-typedef unsigned int  (*glsym_func_uint) ();
-typedef const char   *(*glsym_func_const_char_ptr) ();
+typedef void           *(*glsym_func_void_ptr) (void);
+
+typedef void            (*glsym_func_void_in_voidp) (void *);
+typedef void            (*glsym_func_void_in_int) (int);
+typedef int             (*glsym_func_int_in_voidp) (void *);
 
 const char *debug_dir;
 int swap_buffer_debug_mode = -1;
@@ -66,12 +64,12 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
 Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
 
-glsym_func_void     glsym_evas_gl_common_shaders_flush = NULL;
-glsym_func_void     glsym_evas_gl_common_error_set = NULL;
-glsym_func_int      glsym_evas_gl_common_error_get = NULL;
-glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
+glsym_func_void_in_voidp glsym_evas_gl_common_shaders_flush = NULL;
+glsym_func_void_in_int   glsym_evas_gl_common_error_set = NULL;
+glsym_func_int_in_voidp  glsym_evas_gl_common_error_get = NULL;
+glsym_func_void_ptr      glsym_evas_gl_common_current_context_get = NULL;
 
-_eng_fn      (*glsym_eglGetProcAddress)            (const char *a) = NULL;
+void        *(*glsym_eglGetProcAddress)            (const char *a) = NULL;
 EGLImageKHR  (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
 int          (*glsym_evas_gl_common_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
 void         (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
@@ -1090,12 +1088,12 @@ gl_symbols(void)
    LINK2GENERIC(evas_gl_common_current_context_get);
    LINK2GENERIC(evas_gl_common_shaders_flush);
 
-#define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym);
+#define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym);
 
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB");
+   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress");
 
 #undef FINDSYM
 
@@ -1119,12 +1117,12 @@ eng_gl_symbols(Outbuf *ob)
     * -- jpeg, 2016/08/04
     */
 
-#define FINDSYM(dst, sym, ext, typ) do { \
+#define FINDSYM(dst, sym, ext) do { \
    if (!dst) { \
       if (eina_str_has_extension(exts, ext) && glsym_eglGetProcAddress) \
-        dst = (typ) glsym_eglGetProcAddress(sym); \
+        dst =  glsym_eglGetProcAddress(sym); \
       if (!dst) \
-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
+        dst =  dlsym(RTLD_DEFAULT, sym); \
    }} while (0)
 
    // Find EGL extensions
@@ -1136,19 +1134,19 @@ eng_gl_symbols(Outbuf *ob)
    LINK2GENERIC(evas_gl_common_eglCreateImage);
    LINK2GENERIC(evas_gl_common_eglDestroyImage);
 
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL, glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage", glsym_func_uint);
-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage", glsym_func_uint);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL);
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage");
+   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage");
 
-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update", glsym_func_uint);
+   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update");
 
-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
+   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display");
 
    // This is a GL extension
    exts = (const char *) glGetString(GL_EXTENSIONS);
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external");
+   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image");
 
 #undef FINDSYM
 
