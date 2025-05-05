@@ -106,7 +106,7 @@ EFL_START_TEST(elm_gengrid_focus)
    Evas_Object *win, *grid, *bx, *bt;
    Elm_Object_Item *it;
 
-   win = win_add_focused();
+   win = win_add_focused(NULL, "win", ELM_WIN_BASIC);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

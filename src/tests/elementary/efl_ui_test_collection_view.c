@@ -76,7 +76,7 @@ EFL_START_TEST(test_efl_ui_collection_view_basic)
    int count_realize = 0;
    int count_unrealize = 0;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
 
    model = _make_model(win);
@@ -116,7 +116,7 @@ EFL_START_TEST(test_efl_ui_collection_view_select)
    Eina_Value *sel_val;
    unsigned long sel = 10000;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
 
    model = _make_model(win);

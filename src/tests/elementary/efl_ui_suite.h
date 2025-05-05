@@ -64,6 +64,6 @@ void loop_timer_interval_set(Eo *obj, double in);
 const Efl_Class* efl_ui_widget_realized_class_get(void);
 #define WIDGET_CLASS efl_ui_widget_realized_class_get()
 
-Eo *win_add();
-Eo *win_add_focused();
+Eo *win_add(Evas_Object *parent, const char *title, Efl_Ui_Win_Type type);
+Eo *win_add_focused(Evas_Object *parent, const char *title, Efl_Ui_Win_Type type);
 #endif

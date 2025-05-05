@@ -44,7 +44,7 @@ EFL_END_TEST
 static unsigned int radio_change_count = 0;
 
 static void
-_rdg_changed_cb()
+_rdg_changed_cb(void *data EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *info EINA_UNUSED)
 {
    radio_change_count++;
    ecore_main_loop_quit();

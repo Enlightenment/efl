@@ -46,7 +46,7 @@ EFL_END_TEST
 
 EFL_START_TEST(elm_test_hoversel_behavior)
 {
-   Eo *hoversel, *win = win_add();
+   Eo *hoversel, *win = win_add(NULL, "win", ELM_WIN_BASIC);
    unsigned int i;
    const char *callbacks[] =
    {
@@ -110,7 +110,7 @@ EFL_END_TEST
 
 EFL_START_TEST(elm_test_hoversel_position)
 {
-   Eo *hoversel, *win = win_add();
+   Eo *hoversel, *win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    evas_object_resize(win, 500, 500);
    hoversel = elm_hoversel_add(win);

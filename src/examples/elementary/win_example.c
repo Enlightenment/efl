@@ -171,7 +171,7 @@ _win_focused_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSE
 }
 
 static Eina_Bool
-key_down()
+key_down(void *data EINA_UNUSED, int ev EINA_UNUSED, void *info EINA_UNUSED)
 {
    elm_win_fullscreen_set(win2, 0);
 

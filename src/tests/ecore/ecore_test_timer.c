@@ -207,7 +207,7 @@ _timeri_cb(void *data)
 }
 
 static Eina_Bool
-timeout_timer_cb()
+timeout_timer_cb(void *data EINA_UNUSED)
 {
    ck_abort();
    return EINA_FALSE;
@@ -359,7 +359,7 @@ EFL_START_TEST(ecore_test_timer_iteration)
 EFL_END_TEST
 
 static Eina_Bool
-_recursion()
+_recursion(void *data EINA_UNUSED)
 {
    static unsigned int recurse = 0;
    static Ecore_Timer *timer;

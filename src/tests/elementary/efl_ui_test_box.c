@@ -223,7 +223,7 @@ btn_geom_assert(Hint *hint, Eina_Rect btn_geom)
 static void
 layout_setup()
 {
-   win = win_add();
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    layout = efl_add(EFL_UI_BOX_CLASS, win);
 }

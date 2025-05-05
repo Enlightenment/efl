@@ -438,7 +438,7 @@ EFL_START_TEST(efl_ui_win_test_type)
 {
    Efl_Ui_Win *win;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    ck_assert_int_eq(efl_ui_win_type_get(win), EFL_UI_WIN_TYPE_BASIC);
 }

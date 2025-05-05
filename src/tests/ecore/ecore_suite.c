@@ -38,7 +38,7 @@ static Ecore_Timer *timeout;
 int timeout_reached = 0;
 
 static Eina_Bool
-timeout_cb()
+timeout_cb(void *data EINA_UNUSED)
 {
 #if CHECK_MINOR_VERSION >= 11
    const char *tcname = tcase_name();

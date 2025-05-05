@@ -34,7 +34,7 @@ _group_value_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 check_setup()
 {
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    radio_group = efl_new(EFL_UI_RADIO_GROUP_IMPL_CLASS, NULL);
    efl_event_callback_add(radio_group, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _group_value_changed_cb, NULL);
 }

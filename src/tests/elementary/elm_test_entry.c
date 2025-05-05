@@ -394,7 +394,7 @@ EFL_START_TEST(elm_atspi_role_get)
 EFL_END_TEST
 
 static Eina_Bool
-end_test()
+end_test(void *data EINA_UNUSED)
 {
    ecore_main_loop_quit();
    return EINA_FALSE;

@@ -175,7 +175,7 @@ _test_evasgl_context_version(const char *engine)
    /* verify function pointers - GLES 2 only */
    typedef void (*fptr_t)();
    const int idx_glViewport = ((char*) &gl->glViewport - (char*) &gl->glActiveTexture) / sizeof(fptr_t);
-   fptr_t *fptr= &gl->glActiveTexture;
+   fptr_t *fptr= (fptr_t *)&gl->glActiveTexture;
    for (int i = 0; i < idx_glViewport; i++, fptr++)
      fail_if(!*fptr);
 

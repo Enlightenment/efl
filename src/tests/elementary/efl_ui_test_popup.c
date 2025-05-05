@@ -32,7 +32,7 @@ _popup_alert_setup(const Efl_Class *klass)
 {
    Eo *win, *popup;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(klass, win);
@@ -62,7 +62,7 @@ EFL_START_TEST(efl_ui_test_popup_basic_align)
 {
    Eo *win, *popup;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
@@ -146,7 +146,7 @@ EFL_START_TEST(efl_ui_test_popup_basic_sizing)
 {
    Eo *win, *popup;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
@@ -171,14 +171,14 @@ EFL_START_TEST(efl_ui_test_popup_events)
    Eo *win, *popup;
    int called = 0;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
 
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED,
      (void*)event_callback_single_call_int_data, &called);
-   efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_TIMEOUT, event_callback_that_quits_the_main_loop_when_called, NULL);
+   efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_TIMEOUT, event_callback_that_quits_the_main_loop_when_called_efl, NULL);
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
@@ -213,7 +213,7 @@ EFL_START_TEST(efl_ui_test_popup_backwall_img)
    Eo *win, *popup;
    char buf[PATH_MAX];
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
@@ -239,7 +239,7 @@ EFL_START_TEST(efl_ui_test_popup_alert)
    Eina_Size2D layout_sz_min;
    int called;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
@@ -758,7 +758,7 @@ EFL_START_TEST(efl_ui_test_popup_text_anchor)
    char buf[PATH_MAX];
    int i, num_anchors = 6;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    layout = efl_add(EFL_UI_LAYOUT_CLASS, win);

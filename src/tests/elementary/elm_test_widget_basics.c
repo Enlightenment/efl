@@ -80,7 +80,7 @@ static const Simple_Test_Widget simple_widgets[] = {
 EFL_START_TEST(elm_test_widget_creation_easy)
 {
    Evas_Object *win, *o;
-   win = win_add();
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    evas_object_resize(win, 200, 200);
    evas_object_show(win);
@@ -102,7 +102,7 @@ EFL_START_TEST(elm_test_widget_creation_error_parent)
    Evas_Object *win, *o, *parent;
    Evas *evas;
 
-   win = win_add();
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
    evas = evas_object_evas_get(win);
    evas_object_resize(win, 200, 200);
    evas_object_show(win);

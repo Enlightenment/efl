@@ -11,7 +11,7 @@ static Eo *win;
 static void
 callback_setup()
 {
-   win = win_add();
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 50));
 }

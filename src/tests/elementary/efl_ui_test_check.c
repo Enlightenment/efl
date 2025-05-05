@@ -10,7 +10,7 @@ static Eo *win, *check;
 static void
 check_setup()
 {
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    check = efl_add(EFL_UI_CHECK_CLASS, win);
 }

@@ -33,7 +33,7 @@ Efl_Ui_Widget* efl_test_parent_get(Eo *obj);
 
 Eo* create_test_widget(void);
 
-Eo * win_add();
+Eo * win_add(Eo *parent, const char *title, Efl_Ui_Win_Type type);
 
 const Efl_Class* efl_ui_widget_realized_class_get(void);
 

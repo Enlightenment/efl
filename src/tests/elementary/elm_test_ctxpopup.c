@@ -57,7 +57,7 @@ EFL_START_TEST(elm_ctxpopup_test_sizing)
    Eo *win, *bt, *ctx;
    int pass = 0;
 
-   win = win_add();
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
    bt = elm_button_add(win);
    ctx = elm_ctxpopup_add(win);
    evas_object_smart_callback_add(ctx, "geometry,update", _geometry_update, &pass);

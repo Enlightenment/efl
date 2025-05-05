@@ -11,7 +11,7 @@ static Eo* win;
 static void
 item_container_setup()
 {
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 }
 
 static void

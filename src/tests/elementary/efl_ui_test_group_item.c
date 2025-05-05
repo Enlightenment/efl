@@ -12,7 +12,7 @@ static Eo *grid;
 static void
 create_ui(void)
 {
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    grid = efl_add(EFL_UI_GRID_CLASS, win);
 
 }

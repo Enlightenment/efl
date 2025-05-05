@@ -12,7 +12,7 @@ static Eo *win, *spin;
 static void
 spin_setup()
 {
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    spin = efl_add(EFL_UI_SPIN_BUTTON_CLASS, win);
    efl_content_set(win, spin);

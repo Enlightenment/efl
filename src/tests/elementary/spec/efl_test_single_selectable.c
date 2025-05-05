@@ -38,7 +38,7 @@ EFL_START_TEST(last_selectable_check)
    int c = 0;
 
    efl_event_callback_add(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
-   efl_event_callback_add(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
+   efl_event_callback_add(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called_efl, NULL);
 
    Eo *c1 = efl_pack_content_get(widget, 0);
    Eo *c2 = efl_pack_content_get(widget, 2);

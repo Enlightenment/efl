@@ -17,6 +17,7 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#include <Elementary.h>
 #include "suite_helpers.h"
 
 void elm_test_config(TCase *tc);
@@ -99,8 +100,8 @@ void elm_code_test_widget_text(TCase *tc);
 void elm_code_test_widget_selection(TCase *tc);
 void elm_code_test_widget_undo(TCase *tc);
 
-Evas_Object *win_add();
-Evas_Object *win_add_focused();
+Evas_Object *win_add(Evas_Object *parent, const char *title, Elm_Win_Type type);
+Evas_Object *win_add_focused(Evas_Object *parent, const char *title, Elm_Win_Type type);
 
 Eo *timer_add(double in, Ecore_Task_Cb cb, void *data);
 

@@ -19,7 +19,7 @@ EFL_START_TEST(efl_ui_test_scroller_events)
 {
    Eo *sc, *sc2, *sc3, *bx, *bx2, *gd, *gd2;
    int i, j, called = 0, called2 = 0, called3 = 0;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
 
@@ -148,7 +148,7 @@ EFL_START_TEST(efl_ui_test_scroller_scrollbar)
 {
    Eo *sc;
 
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    Eina_Bool hbar_visible = EINA_FALSE, vbar_visible = EINA_FALSE;
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 

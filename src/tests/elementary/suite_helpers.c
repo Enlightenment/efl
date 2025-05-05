@@ -145,7 +145,7 @@ real_timer_add(double in, Ecore_Task_Cb cb, void *data)
 }
 
 static Eina_Bool
-_timer_quit()
+_timer_quit(void *data EINA_UNUSED)
 {
    ecore_main_loop_quit();
    return EINA_FALSE;
@@ -208,13 +208,13 @@ _ui_win_visibility_change(void *data EINA_UNUSED, const Efl_Event *ev)
 EFL_CLASS_SIMPLE_CLASS(efl_loop, "Efl.Loop", EFL_LOOP_CLASS)
 
 static Evas_Object *
-_elm_suite_win_create(void)
+_elm_suite_win_create(Evas_Object *parent, const char *title, Elm_Win_Type type)
 {
    Evas_Object *win;
    Eo *loop, *timer;
 
    if (legacy_mode)
-     win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
+     win = elm_win_add(parent, title, type);
    else
      win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get());
    if (!buffer) return win;
@@ -243,7 +243,7 @@ _elm_suite_win_create(void)
 #define TEST_FONT_DIR TESTS_SRC_DIR "/fonts/"
 
 Evas_Object *
-win_add(void)
+win_add(Evas_Object *parent, const char *title, Elm_Win_Type type)
 {
    static Eina_Bool font_path = EINA_FALSE;
 
@@ -256,7 +256,7 @@ win_add(void)
      {
         if (global_win) return global_win;
      }
-   return _elm_suite_win_create();
+   return _elm_suite_win_create(parent, title, type);
 }
 
 static void
@@ -273,7 +273,7 @@ force_focus_win(Evas_Object *win)
 }
 
 Evas_Object *
-win_add_focused()
+win_add_focused(Evas_Object *parent, const char *title, Elm_Win_Type type)
 {
    Evas_Object *win;
 
@@ -282,7 +282,7 @@ win_add_focused()
         if (global_win) return global_win;
      }
 
-   win = _elm_suite_win_create();
+   win = _elm_suite_win_create(parent, title, type);
    force_focus_win(win);
    return win;
 }
@@ -339,7 +339,7 @@ suite_setup(Eina_Bool legacy)
    failed_count += !elm_init(1, args);
    if (buffer)
      {
-        global_win = _elm_suite_win_create();
+        global_win = _elm_suite_win_create(NULL, "efl_wuite", ELM_WIN_BASIC);
         force_focus_win(global_win);
         if (suite_setup_cb) suite_setup_cb(global_win);
      }
@@ -412,7 +412,7 @@ fail_on_errors_setup(void)
 }
 
 static void
-next_event_job()
+next_event_job(void *data EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }
@@ -614,7 +614,13 @@ event_callback_that_increments_an_int_when_called(void *data, Evas_Object *obj E
 }
 
 void
-event_callback_that_quits_the_main_loop_when_called()
+event_callback_that_quits_the_main_loop_when_called(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *info EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+}
+
+void
+event_callback_that_quits_the_main_loop_when_called_efl(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    ecore_main_loop_quit();
 }

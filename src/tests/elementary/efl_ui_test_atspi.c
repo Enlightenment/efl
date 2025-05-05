@@ -15,7 +15,7 @@ static Evas_Object *g_win, *g_btn, *g_bg;
 
 void generate_app(void)
 {
-   g_win = win_add(NULL, "Title", ELM_WIN_BASIC);
+   g_win = win_add(NULL, "Title", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_position_set(g_win, EINA_POSITION2D(100, 100));
    efl_gfx_entity_size_set(g_win, EINA_SIZE2D(100, 100));
 

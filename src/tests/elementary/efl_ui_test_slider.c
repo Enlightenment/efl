@@ -26,7 +26,7 @@ EFL_START_TEST(efl_ui_test_slider_events)
 {
    Eo *slider;
    Evas *e;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 100));
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,
@@ -62,7 +62,7 @@ EFL_START_TEST(efl_ui_test_slider_step)
 {
    Eo *slider;
    Evas *e;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 100));
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,
@@ -101,7 +101,7 @@ EFL_START_TEST(efl_ui_test_slider_step_drag)
 {
    Eo *slider;
    Evas *e;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 100));
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,

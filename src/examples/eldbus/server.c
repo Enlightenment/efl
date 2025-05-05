@@ -54,10 +54,10 @@ static Eldbus_Message *
 _send_bool(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
-   Eina_Bool bool;
-   if (!eldbus_message_arguments_get(msg, "b", &bool))
+   Eina_Bool b;
+   if (!eldbus_message_arguments_get(msg, "b", &b))
      printf("eldbus_message_arguments_get() error\n");
-   eldbus_message_arguments_append(reply, "b", bool);
+   eldbus_message_arguments_append(reply, "b", b);
    return reply;
 }
 

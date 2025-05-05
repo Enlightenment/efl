@@ -358,19 +358,19 @@ EFL_END_TEST
 static int it_del = 0;
 
 static void
-_gl_destroy()
+_gl_destroy(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    ck_assert_int_eq(it_del, 2);
 }
 
 static void
-_it_destroy()
+_it_destroy(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    it_del++;
 }
 
 static void
-_it_del()
+_it_del(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    it_del = 1;
 }
@@ -461,7 +461,7 @@ genlist_tree_test_expand(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 }
 
 static void
-_do_quit()
+_do_quit(void *data EINA_UNUSED)
 {
    itc.func.content_get = NULL;
    ecore_main_loop_quit();

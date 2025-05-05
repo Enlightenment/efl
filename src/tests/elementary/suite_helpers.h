@@ -43,7 +43,8 @@ void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
 void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);
 void event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
-void event_callback_that_quits_the_main_loop_when_called();
+void event_callback_that_quits_the_main_loop_when_called(void *data, Evas_Object *obj, void *info);
+void event_callback_that_quits_the_main_loop_when_called_efl(void *data, const Efl_Event *ev);
 void event_callback_that_increments_an_int_when_called(void *data, Evas_Object *obj, void *event_info);
 void smart_callback_that_stores_event_info_to_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info);
 

@@ -8,7 +8,7 @@
 
 EFL_START_TEST(check_all_times)
 {
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
    Eo *timepicker = efl_add(EFL_UI_TIMEPICKER_CLASS, win);
 
    for (int min = 0; min < 60; ++min)
@@ -23,7 +23,7 @@ EFL_END_TEST
 
 EFL_START_TEST(check_all_times_24_mode)
 {
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
    Eo *timepicker = efl_add(EFL_UI_TIMEPICKER_CLASS, win,
                             efl_ui_timepicker_is_24hour_set(efl_added, EINA_TRUE));
 

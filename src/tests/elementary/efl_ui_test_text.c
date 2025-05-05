@@ -17,7 +17,7 @@ increment_int_changed(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 EFL_START_TEST(text_cnp)
 {
    Eo *txt;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    int i_copy = 0, i_paste = 0, i_cut = 0;
 
@@ -65,7 +65,7 @@ _stop_event_soon(void *data EINA_UNUSED, const Efl_Event *ev)
 EFL_START_TEST(text_all_select_all_unselect)
 {
    Eo *txt, *txt2;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    int i_have_selection = 0, i_selection = 0;
 
@@ -141,7 +141,7 @@ EFL_END_TEST
 EFL_START_TEST(text_selection)
 {
    Eo *txt;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
@@ -178,7 +178,7 @@ user_changed(void *data, const Efl_Event *ev)
 EFL_START_TEST(text_user_change)
 {
    Eo *txt;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    Efl_Text_Change_Info info = {0};
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                 efl_event_callback_add(efl_added, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, user_changed, &info)
@@ -198,7 +198,7 @@ EFL_END_TEST
 EFL_START_TEST(text_scroll_mode)
 {
    Eo *txt, *win, *cur;
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
    cur = efl_text_interactive_main_cursor_get(txt);
@@ -220,7 +220,7 @@ EFL_END_TEST
 EFL_START_TEST(text_change_event)
 {
    Eo *txt;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
@@ -245,7 +245,7 @@ EFL_END_TEST
 EFL_START_TEST(text_keys_handler)
 {
    Eo *txt;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
 
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_event_callback_priority_add(txt, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _stop_event_soon, NULL);
@@ -283,7 +283,7 @@ EFL_END_TEST
 EFL_START_TEST(text_editable)
 {
    Eo *txt, *win;
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_text_font_size_set(txt, 100);
    efl_text_font_family_set(txt, "Arial");
@@ -303,7 +303,7 @@ EFL_END_TEST
 EFL_START_TEST(text_on_startup)
 {
    Eo *txt, *win;
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    unsigned char r,g,b,a;
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
                efl_text_color_set(efl_added, 0, 255, 0, 255),
@@ -328,7 +328,7 @@ EFL_START_TEST(text_multiline_selection)
    Eo *txt, *win;
    Eo *cursor1, *cursor2;
    Eina_Rect rc1, rc2;
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_text_markup_set(txt, "p1<ps/>p2<ps/>p3");
    efl_text_multiline_set(txt, EINA_FALSE);
@@ -350,7 +350,7 @@ EFL_START_TEST(text_singleline_cursor_movement)
    Eo *txt, *win;
    Eo *cursor;
    Eina_Rect rc1, rc2;
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_text_markup_set(txt, "p1<ps>p<b>2</b>2<ps>p3");
    efl_text_multiline_set(txt, EINA_FALSE);
@@ -407,7 +407,7 @@ EFL_START_TEST(text_multiline_singleline_cursor_pos)
    Eo *txt, *win;
    Eo *cursor, *cursor1, *cursor2;
    Eina_Rect rc1, rc2;
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
    efl_text_markup_set(txt, "p1<ps>p<b>2</b>2<ps>p3<ps>");
    cursor = efl_text_interactive_main_cursor_get(txt);
@@ -488,7 +488,7 @@ EFL_START_TEST(text_keyboard_mouse_cluster_cursor_movement)
 {
    Eo *txt;
    Eo *cursor;
-   Eo *win = win_add();
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    Evas *e;
    Eina_Rect rc, rc2;
 

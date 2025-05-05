@@ -79,7 +79,7 @@ setup(void)
 
    RESET;
 
-   win = win_add();
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(1000, 1000));
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
