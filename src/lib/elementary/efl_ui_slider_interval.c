@@ -713,7 +713,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
 EOLIAN static Eina_Bool
 _efl_ui_slider_interval_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Slider_Interval_Data *sd, Efl_Ui_Activate act)
 {
-   if (efl_ui_widget_disabled_get) return EINA_FALSE;
+   if (efl_ui_widget_disabled_get(obj)) return EINA_FALSE;
    if (act == EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
    if ((act == EFL_UI_ACTIVATE_UP) ||
