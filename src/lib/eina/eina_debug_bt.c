@@ -300,7 +300,7 @@ _collect_bt(Eina_Thread th)
 #ifndef _WIN32
    pthread_kill((pthread_t)th, SIG); // we can cast Eina_Thread -> pthread_t
 #else
-   (void)th; // silenmce unused warn
+   (void)th; // silence unused warn
 #endif
 }
 
