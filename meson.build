@@ -161,6 +161,13 @@ if cc.compiles(code, args : '-lc', name : 'environ check')
   config_h.set10('HAVE_ENVIRON', true)
 endif
 
+code = '''#include <stdio.h>
+void (*funcp) (...) = NULL;
+'''
+if cc.compiles(code, name: 'funcptr(...) works')
+  config_h.set10('FUNC_DOT_DOT_DOT', true)
+endif
+
 cpu_sse3 = false
 cpu_neon = false
 cpu_neon_intrinsics = false
