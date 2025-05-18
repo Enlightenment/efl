@@ -1184,7 +1184,7 @@ eina_file_statat(void *container EINA_UNUSED, Eina_File_Direct_Info *info, Eina_
    EINA_SAFETY_ON_NULL_RETURN_VAL(info, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(st, -1);
 
-   if (stat64(info->path, &buf))
+   if (_stat64(info->path, &buf))
      {
         info->type = EINA_FILE_UNKNOWN;
         return -1;
