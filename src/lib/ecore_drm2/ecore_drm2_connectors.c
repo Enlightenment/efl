@@ -293,11 +293,11 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
      {
 	if (pstate->dpms.value)
 	  ret = sym_drmModeConnectorSetProperty(conn->fd, conn->id,
-					       cstate->dpms.id,
+					       pstate->dpms.id,
 					       DRM_MODE_DPMS_ON);
 	else
 	  ret = sym_drmModeConnectorSetProperty(conn->fd, conn->id,
-					       cstate->dpms.id,
+					       pstate->dpms.id,
 					       DRM_MODE_DPMS_OFF);
 	if (ret < 0)
 	  {
