@@ -285,7 +285,15 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
 
    if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_CRTC)
      {
-        /* TODO: set crtc */
+        ret = sym_drmModeConnectorSetProperty(conn->fd, conn->id,
+                                              pstate->crtc.id,
+                                              pstate->crtc.value);
+        if (ret < 0)
+          {
+	     ERR("Failed to set connector crtc id: %m");
+	     return EINA_FALSE;
+          }
+
 	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_CRTC;
      }
 
