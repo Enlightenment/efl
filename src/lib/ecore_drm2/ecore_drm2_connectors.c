@@ -289,12 +289,9 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
                                               pstate->crtc.id,
                                               pstate->crtc.value);
         if (ret < 0)
-          {
-	     ERR("Failed to set connector crtc id: %m");
-	     return EINA_FALSE;
-          }
-
-	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_CRTC;
+          ERR("Failed to set connector crtc id: %m");
+        else
+          pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_CRTC;
      }
 
    if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_DPMS)
@@ -308,12 +305,9 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
 					       pstate->dpms.id,
 					       DRM_MODE_DPMS_OFF);
 	if (ret < 0)
-	  {
-	     ERR("Failed to set connector dpms: %m");
-	     return EINA_FALSE;
-	  }
-
-	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_DPMS;
+          ERR("Failed to set connector dpms: %m");
+        else
+          pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_DPMS;
      }
 
    if (pstate->changes & ECORE_DRM2_CONNECTOR_STATE_ASPECT)
@@ -331,6 +325,9 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
         /* TODO */
 	pstate->changes &= ~ECORE_DRM2_CONNECTOR_STATE_SCALING;
      }
+
+   /* if pstate still has some changes listed, than that means something failed */
+   if (pstate->changes) return EINA_FALSE;
 
    /* copy pending state to current state on success */
    memcpy(cstate, pstate, sizeof(Ecore_Drm2_Connector_State));
