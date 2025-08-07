@@ -342,6 +342,7 @@ struct _Ecore_Drm2_Crtc
      } state;
 
    Ecore_Thread *thread;
+   Eina_Bool in_use : 1;
 };
 
 struct _Ecore_Drm2_Device
@@ -378,6 +379,7 @@ Eina_Bool _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc);
 Eina_Bool _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev);
 Eina_Bool _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn);
+uint32_t _ecore_drm2_connectors_possible_crtcs_get(Ecore_Drm2_Connector *conn);
 
 Eina_Bool _ecore_drm2_displays_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);

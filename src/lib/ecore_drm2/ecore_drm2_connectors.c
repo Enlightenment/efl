@@ -337,3 +337,22 @@ _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn)
 
    return EINA_TRUE;
 }
+
+uint32_t
+_ecore_drm2_connectors_possible_crtcs_get(Ecore_Drm2_Connector *conn)
+{
+   uint32_t pcrtcs = 0;
+   drmModeEncoder *enc;
+   int i = 0;
+
+   for (; i < conn->drmConn->count_encoders; i++)
+     {
+        enc = sym_drmModeGetEncoder(conn->fd, conn->drmConn->encoders[i]);
+        if (!enc) continue;
+
+        pcrtcs |= enc->possible_crtcs;
+        sym_drmModeFreeEncoder(enc);
+     }
+
+   return pcrtcs;
+}
