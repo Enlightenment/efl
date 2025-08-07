@@ -551,13 +551,83 @@ _ecore_drm2_display_msc_update(Ecore_Drm2_Display *disp, unsigned int sequence)
    disp->msc = ((uint64_t)mh << 32) + sequence;
 }
 
+static Ecore_Drm2_Crtc *
+_ecore_drm2_possible_crtcs_find(Ecore_Drm2_Device *dev, uint32_t enc_crtc_id)
+{
+   Ecore_Drm2_Crtc *crtc;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(dev->crtcs, l, crtc)
+     {
+        if (crtc->id == enc_crtc_id)
+          return crtc;
+     }
+
+   return NULL;
+}
+
+Ecore_Drm2_Crtc *
+_ecore_drm2_displays_crtc_find(Ecore_Drm2_Display *disp, Ecore_Drm2_Connector *conn, uint32_t enc_crtc_id)
+{
+   Ecore_Drm2_Crtc *crtc, *ecrtcs[32], *bcrtc, *fcrtc;
+   uint32_t pcrtcs = 0xffffffff;
+   Eina_Bool match = EINA_FALSE;
+   Eina_List  *l;
+   unsigned int n = 0, i = 0;
+
+   EINA_LIST_FOREACH(disp->dev->crtcs, l, crtc)
+     {
+        pcrtcs &= _ecore_drm2_connectors_possible_crtcs_get(conn);
+
+        if (enc_crtc_id > 0 && n < EINA_C_ARRAY_LENGTH(ecrtcs))
+          ecrtcs[n++] = _ecore_drm2_possible_crtcs_find(disp->dev, enc_crtc_id);
+     }
+
+   EINA_LIST_FOREACH(disp->dev->crtcs, l, crtc)
+     {
+        if (!(pcrtcs & (1 << crtc->pipe)))
+          continue;
+
+        if (crtc->in_use) continue;
+
+        for (i = 0; i < n; i++)
+          {
+             if (ecrtcs[i] == crtc)
+               return crtc;
+          }
+
+        match = EINA_FALSE;
+        if (crtc->id == enc_crtc_id)
+          {
+             match = EINA_TRUE;
+             break;
+          }
+
+        if (!match) bcrtc = crtc;
+        fcrtc = crtc;
+     }
+
+   if (bcrtc) return bcrtc;
+   if (fcrtc) return fcrtc;
+
+   for (i = 0; i < n; i++)
+     {
+        crtc = ecrtcs[i];
+        if (!crtc->in_use) return crtc;
+     }
+
+   EINA_LIST_FOREACH(disp->dev->crtcs, l, crtc)
+     if (!crtc->in_use) return crtc;
+
+   return NULL;
+}
+
 Eina_Bool
 _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 {
    Ecore_Drm2_Display *disp;
    Ecore_Drm2_Connector *c;
-   Ecore_Drm2_Crtc *crtc;
-   Eina_List *l = NULL, *ll = NULL;
+   Eina_List *l = NULL;
 
    thq = eina_thread_queue_new();
 
@@ -586,20 +656,17 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 
         disp->dev = dev;
 
-        /* try to find crtc matching dcrtc->crtc_id and assign to display */
-        EINA_LIST_FOREACH(dev->crtcs, ll, crtc)
-          {
-             if (crtc->id == dcrtc->crtc_id)
-               {
-                  disp->crtc = crtc;
-                  break;
-               }
-          }
+        disp->crtc = _ecore_drm2_displays_crtc_find(disp, c, encoder->crtc_id);
+        if (disp->crtc) disp->crtc->in_use = EINA_TRUE;
 
         sym_drmModeFreeCrtc(dcrtc);
 
         /* disp->fd = dev->fd; */
         disp->conn = c;
+
+        /* TODO: init planes */
+        /* TODO: init gamma size */
+        /* TODO: init backlight */
 
         /* append this display to the list */
         dev->displays = eina_list_append(dev->displays, disp);
