@@ -338,7 +338,7 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 }
 
 Ecore_Drm2_Plane *
-_ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id)
+_ecore_drm2_planes_find(Ecore_Drm2_Device *dev, unsigned int crtc_id, uint64_t type)
 {
    drmModeObjectPropertiesPtr oprops;
    Ecore_Drm2_Plane *plane;
@@ -354,13 +354,13 @@ _ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id)
         pstate = plane->state.current;
         if (pstate)
           {
-             if (pstate->type.value != DRM_PLANE_TYPE_PRIMARY) continue;
+             if (pstate->type.value != type) continue;
              if (pstate->cid.value != crtc_id) continue;
              return plane;
           }
         else
           {
-             uint64_t cid = 0, type = 0;
+             uint64_t cid = 0, ptype = 0;
 
              /* We need to manually query plane properties here as
               * plane->state.current may not be filled yet due to threading */
@@ -380,14 +380,14 @@ _ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id)
                   if (!strcmp(prop->name, "CRTC_ID"))
                     cid = oprops->prop_values[i];
                   else if (!strcmp(prop->name, "type"))
-                    type = oprops->prop_values[i];
+                    ptype = oprops->prop_values[i];
 
                   sym_drmModeFreeProperty(prop);
                }
 
              sym_drmModeFreeObjectProperties(oprops);
 
-             if (type != DRM_PLANE_TYPE_PRIMARY) continue;
+             if (ptype != type) continue;
              if (cid != crtc_id) continue;
 
              return plane;

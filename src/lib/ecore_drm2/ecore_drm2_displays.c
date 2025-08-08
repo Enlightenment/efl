@@ -351,43 +351,48 @@ _ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
 {
    Ecore_Drm2_Plane *plane;
 
-   /* try to find primary plane for this display */
-   plane = _ecore_drm2_planes_primary_find(disp->dev, disp->crtc->id);
-   if (plane)
+   plane = disp->planes.primary;
+   if (!plane)
      {
-        if (plane->state.current)
-          disp->state.current->rotation = plane->state.current->rotation.value;
-        else
+        /* try to find primary plane for this display */
+        plane = _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
+                                        DRM_PLANE_TYPE_PRIMARY);
+     }
+
+   if (!plane) return;
+
+   if (plane->state.current)
+     disp->state.current->rotation = plane->state.current->rotation.value;
+   else
+     {
+        drmModeObjectPropertiesPtr oprops;
+
+        /* NB: Sadly we cannot rely on plane->state.current being already 
+         * filled by the time we reach this (due to threading), 
+         * so we will query the plane properties we want directly */
+
+        /* query plane for rotations */
+        oprops =
+          sym_drmModeObjectGetProperties(plane->fd,
+                                         plane->drmPlane->plane_id,
+                                         DRM_MODE_OBJECT_PLANE);
+        if (oprops)
           {
-             drmModeObjectPropertiesPtr oprops;
+             unsigned int i = 0;
 
-             /* NB: Sadly we cannot rely on plane->state.current being already 
-              * filled by the time we reach this (due to threading), 
-              * so we will query the plane properties we want directly */
-
-             /* query plane for rotations */
-             oprops =
-               sym_drmModeObjectGetProperties(plane->fd,
-                                              plane->drmPlane->plane_id,
-                                              DRM_MODE_OBJECT_PLANE);
-             if (oprops)
+             for (; i < oprops->count_props; i++)
                {
-                  unsigned int i = 0;
+                  drmModePropertyPtr prop;
 
-                  for (; i < oprops->count_props; i++)
-                    {
-                       drmModePropertyPtr prop;
+                  prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
+                  if (!prop) continue;
 
-                       prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
-                       if (!prop) continue;
+                  if (!strcmp(prop->name, "rotation"))
+                    disp->state.current->rotation = oprops->prop_values[i];
 
-                       if (!strcmp(prop->name, "rotation"))
-                         disp->state.current->rotation = oprops->prop_values[i];
-
-                       sym_drmModeFreeProperty(prop);
-                    }
-                  sym_drmModeFreeObjectProperties(oprops);
+                  sym_drmModeFreeProperty(prop);
                }
+             sym_drmModeFreeObjectProperties(oprops);
           }
      }
 }
@@ -566,6 +571,31 @@ _ecore_drm2_possible_crtcs_find(Ecore_Drm2_Device *dev, uint32_t enc_crtc_id)
    return NULL;
 }
 
+static void
+_ecore_drm2_displays_planes_init(Ecore_Drm2_Display *disp)
+{
+   if (!disp->planes.primary)
+     {
+        disp->planes.primary =
+          _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
+                                  DRM_PLANE_TYPE_PRIMARY);
+     }
+
+   if (!disp->planes.overlay)
+     {
+        /* TODO */
+     }
+
+   if (!disp->planes.cursor)
+     {
+        disp->planes.cursor =
+          _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
+                                  DRM_PLANE_TYPE_CURSOR);
+     }
+
+   disp->dev->hw_cursor = (disp->planes.cursor != NULL);
+}
+
 Ecore_Drm2_Crtc *
 _ecore_drm2_displays_crtc_find(Ecore_Drm2_Display *disp, Ecore_Drm2_Connector *conn, uint32_t enc_crtc_id)
 {
@@ -664,7 +694,8 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
         /* disp->fd = dev->fd; */
         disp->conn = c;
 
-        /* TODO: init planes */
+        _ecore_drm2_displays_planes_init(disp);
+
         /* TODO: init gamma size */
         /* TODO: init backlight */
 
@@ -1082,9 +1113,14 @@ ecore_drm2_display_supported_rotations_get(Ecore_Drm2_Display *disp)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp, -1);
 
-   /* get the primary plane for this output */
-   plane = _ecore_drm2_planes_primary_find(disp->dev, disp->crtc->id);
-   if (!plane) return -1;
+   plane = disp->planes.primary;
+   if (!plane)
+     {
+        /* get the primary plane for this output */
+        plane = _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
+                                        DRM_PLANE_TYPE_PRIMARY);
+        if (!plane) return -1;
+     }
 
    /* if plane state has not been filled yet, bail out */
    /* NB: We could modify this to get the plane rotations directly from drm */

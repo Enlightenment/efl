@@ -297,6 +297,13 @@ struct _Ecore_Drm2_Display
    Ecore_Drm2_Crtc *crtc;
    Ecore_Drm2_Connector *conn;
 
+   struct
+     {
+        Ecore_Drm2_Plane *primary;
+        Ecore_Drm2_Plane *overlay;
+        Ecore_Drm2_Plane *cursor;
+     } planes;
+
    Eina_List *modes;
 
    Ecore_Thread *thread;
@@ -368,6 +375,7 @@ struct _Ecore_Drm2_Device
    Eina_Bool atomic : 1;
    /* Eina_Bool gbm_mods : 1; */
    Eina_Bool aspect_ratio : 1;
+   Eina_Bool hw_cursor : 1;
 };
 
 /* internal function prototypes */
@@ -386,7 +394,7 @@ void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
 
 Eina_Bool _ecore_drm2_planes_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev);
-Ecore_Drm2_Plane *_ecore_drm2_planes_primary_find(Ecore_Drm2_Device *dev, unsigned int crtc_id);
+Ecore_Drm2_Plane *_ecore_drm2_planes_find(Ecore_Drm2_Device *dev, unsigned int crtc_id, uint64_t type);
 
 /* external drm function prototypes (for dlopen) */
 extern int (*sym_drmIoctl)(int fd, unsigned long request, void *arg);
