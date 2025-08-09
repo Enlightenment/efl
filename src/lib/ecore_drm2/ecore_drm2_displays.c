@@ -693,9 +693,6 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 
         _ecore_drm2_displays_planes_init(disp);
 
-        /* TODO: init gamma size */
-        /* TODO: init backlight */
-
         /* append this display to the list */
         dev->displays = eina_list_append(dev->displays, disp);
 
