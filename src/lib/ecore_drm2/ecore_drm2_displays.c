@@ -355,8 +355,7 @@ _ecore_drm2_display_rotation_get(Ecore_Drm2_Display *disp)
    if (!plane)
      {
         /* try to find primary plane for this display */
-        plane = _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
-                                        DRM_PLANE_TYPE_PRIMARY);
+        plane = _ecore_drm2_planes_find(disp, DRM_PLANE_TYPE_PRIMARY);
      }
 
    if (!plane) return;
@@ -577,8 +576,7 @@ _ecore_drm2_displays_planes_init(Ecore_Drm2_Display *disp)
    if (!disp->planes.primary)
      {
         disp->planes.primary =
-          _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
-                                  DRM_PLANE_TYPE_PRIMARY);
+          _ecore_drm2_planes_find(disp, DRM_PLANE_TYPE_PRIMARY);
      }
 
    if (!disp->planes.overlay)
@@ -589,8 +587,7 @@ _ecore_drm2_displays_planes_init(Ecore_Drm2_Display *disp)
    if (!disp->planes.cursor)
      {
         disp->planes.cursor =
-          _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
-                                  DRM_PLANE_TYPE_CURSOR);
+          _ecore_drm2_planes_find(disp, DRM_PLANE_TYPE_CURSOR);
      }
 
    disp->dev->hw_cursor = (disp->planes.cursor != NULL);
@@ -1117,8 +1114,7 @@ ecore_drm2_display_supported_rotations_get(Ecore_Drm2_Display *disp)
    if (!plane)
      {
         /* get the primary plane for this output */
-        plane = _ecore_drm2_planes_find(disp->dev, disp->crtc->id,
-                                        DRM_PLANE_TYPE_PRIMARY);
+        plane = _ecore_drm2_planes_find(disp, DRM_PLANE_TYPE_PRIMARY);
         if (!plane) return -1;
      }
 

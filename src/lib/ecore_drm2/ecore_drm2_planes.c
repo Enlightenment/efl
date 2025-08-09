@@ -273,6 +273,18 @@ _ecore_drm2_plane_create(Ecore_Drm2_Device *dev, drmModePlanePtr p, uint32_t ind
    return plane;
 }
 
+static Eina_Bool
+_ecore_drm2_planes_available(Ecore_Drm2_Plane *plane, Ecore_Drm2_Display *disp)
+{
+   if (!plane->state.current) return EINA_FALSE;
+
+   if (!plane->state.current->complete) return EINA_FALSE;
+
+   if (plane->state.current->cid.value != disp->crtc->id) return EINA_FALSE;
+
+   return !!(plane->possible_crtcs & (1 << disp->crtc->pipe));
+}
+
 Eina_Bool
 _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
 {
@@ -338,60 +350,42 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 }
 
 Ecore_Drm2_Plane *
-_ecore_drm2_planes_find(Ecore_Drm2_Device *dev, unsigned int crtc_id, uint64_t type)
+_ecore_drm2_planes_find(Ecore_Drm2_Display *disp, uint64_t type)
 {
-   drmModeObjectPropertiesPtr oprops;
+   Ecore_Drm2_Device *dev;
+   Ecore_Drm2_Display *dsp;
    Ecore_Drm2_Plane *plane;
-   Eina_List *l;
-   unsigned int i = 0;
+   Eina_List *l, *ll;
 
+   dev = disp->dev;
    if (!dev) return NULL;
 
+   /* NB: may need to fix this to check that plane state has been filled */
    EINA_LIST_FOREACH(dev->planes, l, plane)
      {
-        Ecore_Drm2_Plane_State *pstate;
+        Eina_Bool found = EINA_FALSE;
 
-        pstate = plane->state.current;
-        if (pstate)
+        if (plane->state.current->type.value != type) continue;
+        if (!_ecore_drm2_planes_available(plane, disp)) continue;
+
+        EINA_LIST_FOREACH(dev->displays, ll, dsp)
           {
-             if (pstate->type.value != type) continue;
-             if (pstate->cid.value != crtc_id) continue;
-             return plane;
-          }
-        else
-          {
-             uint64_t cid = 0, ptype = 0;
-
-             /* We need to manually query plane properties here as
-              * plane->state.current may not be filled yet due to threading */
-             oprops =
-               sym_drmModeObjectGetProperties(plane->fd,
-                                              plane->drmPlane->plane_id,
-                                              DRM_MODE_OBJECT_PLANE);
-             if (!oprops) continue;
-
-             for (i = 0; i < oprops->count_props; i++)
+             if ((dsp->planes.cursor == plane) ||
+                 (dsp->planes.primary == plane))
                {
-                  drmModePropertyPtr prop;
-
-                  prop = sym_drmModeGetProperty(plane->fd, oprops->props[i]);
-                  if (!prop) continue;
-
-                  if (!strcmp(prop->name, "CRTC_ID"))
-                    cid = oprops->prop_values[i];
-                  else if (!strcmp(prop->name, "type"))
-                    ptype = oprops->prop_values[i];
-
-                  sym_drmModeFreeProperty(prop);
+                  found = EINA_TRUE;
+                  break;
                }
-
-             sym_drmModeFreeObjectProperties(oprops);
-
-             if (ptype != type) continue;
-             if (cid != crtc_id) continue;
-
-             return plane;
           }
+
+        if (found) continue;
+
+        if ((type == DRM_PLANE_TYPE_PRIMARY) && (plane->crtc_id != 0) &&
+            (plane->crtc_id != disp->crtc->id))
+          continue;
+
+        plane->possible_crtcs = (1 << disp->crtc->pipe);
+        return plane;
      }
 
    return NULL;

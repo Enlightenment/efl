@@ -192,6 +192,7 @@ typedef struct _Ecore_Drm2_Plane_State
    uint32_t rotation_map[6];
    uint32_t supported_rotations;
 
+   Eina_Bool complete : 1;
    Eina_Bool in_use : 1;
 } Ecore_Drm2_Plane_State;
 
@@ -232,7 +233,8 @@ struct _Ecore_Drm2_Fb
 struct _Ecore_Drm2_Plane
 {
    int fd;
-   uint32_t id;
+   uint32_t id, crtc_id;
+   uint32_t possible_crtcs;
 
    drmModePlanePtr drmPlane;
 
@@ -394,7 +396,7 @@ void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
 
 Eina_Bool _ecore_drm2_planes_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev);
-Ecore_Drm2_Plane *_ecore_drm2_planes_find(Ecore_Drm2_Device *dev, unsigned int crtc_id, uint64_t type);
+Ecore_Drm2_Plane *_ecore_drm2_planes_find(Ecore_Drm2_Display *disp, uint64_t type);
 
 /* external drm function prototypes (for dlopen) */
 extern int (*sym_drmIoctl)(int fd, unsigned long request, void *arg);
