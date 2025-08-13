@@ -44,6 +44,7 @@ int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t fl
 int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
 int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 int (*sym_drmModeConnectorSetProperty)(int fd, uint32_t connector_id, uint32_t property_id, uint64_t value);
+int (*sym_drmModeSetPlane)(int fd, uint32_t plane_id, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, int32_t crtc_x, int32_t crtc_y, uint32_t crtc_w, uint32_t crtc_h, uint32_t src_x, uint32_t src_y, uint32_t src_w, uint32_t src_h);
 
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
 
@@ -117,6 +118,7 @@ _ecore_drm2_link(void)
 	SYM(_drm_lib, drmModeDirtyFB);
 	SYM(_drm_lib, drmModeCrtcSetGamma);
 	SYM(_drm_lib, drmModeConnectorSetProperty);
+        SYM(_drm_lib, drmModeSetPlane);
 
         if (fail)
           {
