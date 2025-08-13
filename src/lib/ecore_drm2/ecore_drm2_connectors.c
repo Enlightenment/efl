@@ -123,6 +123,36 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
              cstate->scaling.flags = prop->flags;
              cstate->scaling.value = oprops->prop_values[i];
           }
+        else if (!strcmp(prop->name, "WRITEBACK_PIXEL_FORMATS"))
+          {
+             drmModePropertyBlobPtr bp;
+             uint32_t *formats;
+
+             cstate->wb_formats.id = oprops->prop_values[i];
+             if (!cstate->wb_formats.id) goto cont;
+
+             bp = sym_drmModeGetPropertyBlob(conn->fd, cstate->wb_formats.id);
+             if (!bp) goto cont;
+
+             formats = bp->data;
+
+             conn->num_wb_formats = (bp->length / sizeof(uint32_t));
+             conn->wb_formats = calloc(conn->num_wb_formats, sizeof(uint32_t));
+
+             /* FIXME: Check for duplicate writeback formats */
+             for (i = 0; i < conn->num_wb_formats; i++)
+               conn->wb_formats[i] = formats[i];
+
+             sym_drmModeFreePropertyBlob(bp);
+          }
+        else if (!strcmp(prop->name, "WRITEBACK_FB_ID"))
+          {
+             /* TODO */
+          }
+        else if (!strcmp(prop->name, "WRITEBACK_OUT_FENCE_PTR"))
+          {
+             /* TODO */
+          }
 
 cont:
         sym_drmModeFreeProperty(prop);

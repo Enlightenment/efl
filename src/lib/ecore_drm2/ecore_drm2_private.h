@@ -133,6 +133,7 @@ typedef struct _Ecore_Drm2_Connector_State
    Ecore_Drm2_Atomic_Property aspect;
    Ecore_Drm2_Atomic_Property scaling;
    Ecore_Drm2_Atomic_Blob edid;
+   Ecore_Drm2_Atomic_Blob wb_formats;
 
    /* TODO ?? */
    /* Ecore_Drm2_Atomic_Property link-status; */
@@ -319,6 +320,7 @@ struct _Ecore_Drm2_Connector
 {
    uint32_t id;
    uint32_t type;
+   uint32_t num_wb_formats, *wb_formats;
    int fd;
 
    drmModeConnector *drmConn;
