@@ -335,6 +335,12 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->planes, plane)
      {
+        if (plane->state.current->type.value == DRM_PLANE_TYPE_OVERLAY)
+          {
+             sym_drmModeSetPlane(dev->fd, plane->id, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0);
+          }
+
         if (plane->thread) ecore_thread_cancel(plane->thread);
         if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
         free(plane->state.pending);
