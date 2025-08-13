@@ -25,6 +25,7 @@ static const char *conn_types[] =
    "None", "VGA", "DVI-I", "DVI-D", "DVI-A",
    "Composite", "S-Video", "LVDS", "Component", "DIN",
    "DisplayPort", "HDMI-A", "HDMI-B", "TV", "eDP", "Virtual", "DSI",
+   "DPI", "WRITEBACK", "SPI", "USB",
 };
 
 static void
