@@ -180,13 +180,13 @@ typedef struct _Ecore_Drm2_Plane_State
    Ecore_Drm2_Atomic_Property cx, cy, cw, ch;
    Ecore_Drm2_Atomic_Property rotation;
    Ecore_Drm2_Atomic_Range zpos;
+   Ecore_Drm2_Atomic_Blob fb_dmg_clips;
 
    /* TODO ?? */
    /* Ecore_Drm2_Atomic_Property IN_FENCE_FD; */
    /* Ecore_Drm2_Atomic_Property IN_FORMATS; */
    /* Ecore_Drm2_Atomic_Property COLOR_ENCODING; */
    /* Ecore_Drm2_Atomic_Property COLOR_RANGE; */
-   /* Ecore_Drm2_Atomic_Blob FB_DAMAGE_CLIPS; */
 
    /* NB: these are not part of an atomic state, but we store these here
     * so that we do not have to refetch properties when iterating planes */

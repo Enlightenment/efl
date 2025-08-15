@@ -197,6 +197,8 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
                   pstate->zpos.max = prop->values[1];
                }
           }
+        else if (!strcmp(prop->name, "FB_DAMAGE_CLIPS"))
+          pstate->fb_dmg_clips.id = prop->prop_id;
 
         sym_drmModeFreeProperty(prop);
      }
