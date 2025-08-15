@@ -134,6 +134,8 @@ typedef struct _Ecore_Drm2_Connector_State
    Ecore_Drm2_Atomic_Property scaling;
    Ecore_Drm2_Atomic_Blob edid;
    Ecore_Drm2_Atomic_Blob wb_formats;
+   Ecore_Drm2_Atomic_Property wb_fb_id;
+   Ecore_Drm2_Atomic_Property wb_out_ptr;
 
    /* TODO ?? */
    /* Ecore_Drm2_Atomic_Property link-status; */

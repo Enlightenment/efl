@@ -147,11 +147,11 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
           }
         else if (!strcmp(prop->name, "WRITEBACK_FB_ID"))
           {
-             /* TODO */
+             cstate->wb_fb_id.id = prop->prop_id;
           }
         else if (!strcmp(prop->name, "WRITEBACK_OUT_FENCE_PTR"))
           {
-             /* TODO */
+             cstate->wb_out_ptr.id = prop->prop_id;
           }
 
 cont:
