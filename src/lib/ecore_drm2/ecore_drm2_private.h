@@ -136,6 +136,7 @@ typedef struct _Ecore_Drm2_Connector_State
    Ecore_Drm2_Atomic_Blob wb_formats;
    Ecore_Drm2_Atomic_Property wb_fb_id;
    Ecore_Drm2_Atomic_Property wb_out_ptr;
+   Ecore_Drm2_Atomic_Property max_bpc;
 
    /* TODO ?? */
    /* Ecore_Drm2_Atomic_Property link-status; */
@@ -144,7 +145,6 @@ typedef struct _Ecore_Drm2_Connector_State
    /* Ecore_Drm2_Atomic_Property underscan; */
    /* Ecore_Drm2_Atomic_Property underscan hborder; */
    /* Ecore_Drm2_Atomic_Property underscan vborder; */
-   /* Ecore_Drm2_Atomic_Property max bpc; */
    /* Ecore_Drm2_Atomic_Property HDR_OUTPUT_METADATA; */
    /* Ecore_Drm2_Atomic_Property vrr_capable; */
    /* Ecore_Drm2_Atomic_Property Content Protection; */

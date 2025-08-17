@@ -153,6 +153,11 @@ _ecore_drm2_connector_state_fill(Ecore_Drm2_Connector *conn)
           {
              cstate->wb_out_ptr.id = prop->prop_id;
           }
+        else if (!strcmp(prop->name, "max bpc"))
+          {
+             cstate->max_bpc.id = prop->prop_id;
+             cstate->max_bpc.value = oprops->prop_values[i];
+          }
 
 cont:
         sym_drmModeFreeProperty(prop);
