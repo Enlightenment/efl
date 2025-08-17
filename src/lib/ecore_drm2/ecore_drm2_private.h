@@ -183,10 +183,10 @@ typedef struct _Ecore_Drm2_Plane_State
    Ecore_Drm2_Atomic_Property rotation;
    Ecore_Drm2_Atomic_Range zpos;
    Ecore_Drm2_Atomic_Blob fb_dmg_clips;
+   Ecore_Drm2_Atomic_Blob in_formats;
 
    /* TODO ?? */
    /* Ecore_Drm2_Atomic_Property IN_FENCE_FD; */
-   /* Ecore_Drm2_Atomic_Property IN_FORMATS; */
    /* Ecore_Drm2_Atomic_Property COLOR_ENCODING; */
    /* Ecore_Drm2_Atomic_Property COLOR_RANGE; */
 
@@ -440,5 +440,6 @@ extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips
 extern int (*sym_drmModeCrtcSetGamma)(int fd, uint32_t crtc_id, uint32_t size, uint16_t *red, uint16_t *green, uint16_t *blue);
 extern int (*sym_drmModeConnectorSetProperty)(int fd, uint32_t connector_id, uint32_t property_id, uint64_t value);
 extern int (*sym_drmModeSetPlane)(int fd, uint32_t plane_id, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, int32_t crtc_x, int32_t crtc_y, uint32_t crtc_w, uint32_t crtc_h, uint32_t src_x, uint32_t src_y, uint32_t src_w, uint32_t src_h);
+extern bool (*sym_drmModeFormatModifierBlobIterNext)(const drmModePropertyBlobRes *blob, drmModeFormatModifierIterator *iter);
 
 #endif

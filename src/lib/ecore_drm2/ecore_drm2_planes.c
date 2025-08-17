@@ -52,6 +52,7 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
    drmModeObjectPropertiesPtr oprops;
    drmModePlanePtr p;
    unsigned int i = 0;
+   Eina_Bool in_formats = EINA_FALSE;
 
    plane->state.current = calloc(1, sizeof(Ecore_Drm2_Plane_State));
    if (!plane->state.current)
@@ -65,11 +66,6 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
 
    pstate->obj_id = plane->id;
    pstate->mask = p->possible_crtcs;
-   pstate->num_formats = p->count_formats;
-
-   pstate->formats = calloc(p->count_formats, sizeof(uint32_t));
-   for (; i < p->count_formats; i++)
-     pstate->formats[i] = p->formats[i];
 
    /* try to fill get drm properties of this plane */
    oprops =
@@ -199,8 +195,50 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
           }
         else if (!strcmp(prop->name, "FB_DAMAGE_CLIPS"))
           pstate->fb_dmg_clips.id = prop->prop_id;
+        else if (!strcmp(prop->name, "IN_FORMATS"))
+          {
+             drmModePropertyBlobPtr bp;
+             drmModeFormatModifierIterator iter = {0};
+             uint32_t prev = DRM_FORMAT_INVALID;
+             int f = 0;
 
+             pstate->in_formats.id = oprops->prop_values[i];
+
+             bp = sym_drmModeGetPropertyBlob(plane->fd, pstate->in_formats.id);
+             if (!bp) goto cont;
+
+             pstate->num_formats = (bp->length / sizeof(uint32_t));
+             pstate->formats = calloc(pstate->num_formats, sizeof(uint32_t));
+
+             while (sym_drmModeFormatModifierBlobIterNext(bp, &iter))
+               {
+                  if (prev != iter.fmt)
+                    {
+                       pstate->formats[f] = iter.fmt;
+                       f++;
+                       prev = iter.fmt;
+                    }
+               }
+
+             /* TODO: add modifier */
+
+             in_formats = EINA_TRUE;
+
+             sym_drmModeFreePropertyBlob(bp);
+          }
+
+cont:
         sym_drmModeFreeProperty(prop);
+     }
+
+   /* if this plane does not support IN_FORMATS property, than use the 
+    * old fallback to fill in formats */
+   if (!in_formats)
+     {
+        pstate->num_formats = p->count_formats;
+        pstate->formats = calloc(p->count_formats, sizeof(uint32_t));
+        for (; i < p->count_formats; i++)
+          pstate->formats[i] = p->formats[i];
      }
 
    sym_drmModeFreeObjectProperties(oprops);
