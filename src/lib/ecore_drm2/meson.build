@@ -1,6 +1,6 @@
 ecore_drm2_deps = [eeze, elput, dependency('gbm')]
 ecore_drm2_pub_deps = [ecore]
-ecore_drm2_ext_deps = [dl, libdrm]
+ecore_drm2_ext_deps = [dl, dependency('libdrm', version: '>= 2.4.108')]
 
 ecore_drm2_header_src = [
   'Ecore_Drm2.h'
