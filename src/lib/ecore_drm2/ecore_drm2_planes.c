@@ -45,6 +45,34 @@ _ecore_drm2_plane_state_debug(Ecore_Drm2_Plane *plane)
    DBG("\t\t\tMax: %lu", (long)plane->state.current->zpos.max);
 }
 
+static Eina_Bool
+_ecore_drm2_plane_state_formats_add(Ecore_Drm2_Plane_State *pstate, drmModePropertyBlobPtr bp)
+{
+   drmModeFormatModifierIterator iter = {0};
+   uint32_t prev = DRM_FORMAT_INVALID;
+
+   while (sym_drmModeFormatModifierBlobIterNext(bp, &iter))
+     {
+        if (prev != iter.fmt)
+          {
+             Ecore_Drm2_Format *fmt;
+
+             /* allocate new Ecore_Drm2_Format */
+             fmt = calloc(1, sizeof(Ecore_Drm2_Format));
+             if (!fmt) return EINA_FALSE;
+
+             fmt->format = iter.fmt;
+             fmt->modifier = iter.mod;
+
+             /* add this format to the pstate formats list */
+             pstate->formats = eina_list_append(pstate->formats, fmt);
+             prev = iter.fmt;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 static void
 _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
 {
@@ -198,31 +226,14 @@ _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
         else if (!strcmp(prop->name, "IN_FORMATS"))
           {
              drmModePropertyBlobPtr bp;
-             drmModeFormatModifierIterator iter = {0};
-             uint32_t prev = DRM_FORMAT_INVALID;
-             int f = 0;
 
              pstate->in_formats.id = oprops->prop_values[i];
 
              bp = sym_drmModeGetPropertyBlob(plane->fd, pstate->in_formats.id);
              if (!bp) goto cont;
 
-             pstate->num_formats = (bp->length / sizeof(uint32_t));
-             pstate->formats = calloc(pstate->num_formats, sizeof(uint32_t));
-
-             while (sym_drmModeFormatModifierBlobIterNext(bp, &iter))
-               {
-                  if (prev != iter.fmt)
-                    {
-                       pstate->formats[f] = iter.fmt;
-                       f++;
-                       prev = iter.fmt;
-                    }
-               }
-
-             /* TODO: add modifier */
-
-             in_formats = EINA_TRUE;
+             if (_ecore_drm2_plane_state_formats_add(pstate, bp))
+               in_formats = EINA_TRUE;
 
              sym_drmModeFreePropertyBlob(bp);
           }
@@ -235,10 +246,22 @@ cont:
     * old fallback to fill in formats */
    if (!in_formats)
      {
-        pstate->num_formats = p->count_formats;
-        pstate->formats = calloc(p->count_formats, sizeof(uint32_t));
+        /* pstate->num_formats = p->count_formats; */
+        /* pstate->formats = calloc(p->count_formats, sizeof(uint32_t)); */
         for (; i < p->count_formats; i++)
-          pstate->formats[i] = p->formats[i];
+          {
+             Ecore_Drm2_Format *fmt;
+
+             fmt = calloc(1, sizeof(Ecore_Drm2_Format));
+             if (!fmt) break;
+
+             fmt->format = p->formats[i];
+
+             /* FIXME: Should we just use DRM_FORMAT_MOD_LINEAR here ? */
+             fmt->modifier = DRM_FORMAT_MOD_INVALID;
+
+             pstate->formats = eina_list_append(pstate->formats, fmt);
+          }
      }
 
    sym_drmModeFreeObjectProperties(oprops);
