@@ -125,6 +125,13 @@ typedef struct _Ecore_Drm2_Atomic_Range
    uint64_t min, max, value;
 } Ecore_Drm2_Atomic_Range;
 
+/* NB: May need to expose this structure via API */
+typedef struct _Ecore_Drm2_Format
+{
+   uint32_t format;
+   uint64_t modifier;
+} Ecore_Drm2_Format;
+
 typedef struct _Ecore_Drm2_Connector_State
 {
    uint32_t obj_id, changes;
@@ -174,7 +181,7 @@ typedef struct _Ecore_Drm2_Crtc_State
 typedef struct _Ecore_Drm2_Plane_State
 {
    uint32_t obj_id, mask, changes;
-   uint32_t num_formats, *formats;
+   /* uint32_t num_formats, *formats; */
 
    Ecore_Drm2_Atomic_Property type;
    Ecore_Drm2_Atomic_Property cid, fid;
@@ -194,6 +201,8 @@ typedef struct _Ecore_Drm2_Plane_State
     * so that we do not have to refetch properties when iterating planes */
    uint32_t rotation_map[6];
    uint32_t supported_rotations;
+
+   Eina_List *formats;
 
    Eina_Bool complete : 1;
    Eina_Bool in_use : 1;
