@@ -38,4 +38,14 @@ extern int _evas_engine_drm_log_dom;
 # endif
 # define CRI(...) EINA_LOG_DOM_CRIT(_evas_engine_drm_log_dom, __VA_ARGS__)
 
+struct _Outbuf
+{
+   Evas_Engine_Info_Drm *info;
+
+   int w, h;
+};
+
+Outbuf *_outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h);
+void _outbuf_free(Outbuf *ob);
+
 #endif
