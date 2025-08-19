@@ -181,7 +181,6 @@ typedef struct _Ecore_Drm2_Crtc_State
 typedef struct _Ecore_Drm2_Plane_State
 {
    uint32_t obj_id, mask, changes;
-   /* uint32_t num_formats, *formats; */
 
    Ecore_Drm2_Atomic_Property type;
    Ecore_Drm2_Atomic_Property cid, fid;
