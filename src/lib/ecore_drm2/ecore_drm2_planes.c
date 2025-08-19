@@ -74,6 +74,15 @@ _ecore_drm2_plane_state_formats_add(Ecore_Drm2_Plane_State *pstate, drmModePrope
 }
 
 static void
+_ecore_drm2_plane_state_formats_del(Ecore_Drm2_Plane_State *pstate)
+{
+   Ecore_Drm2_Format *fmt;
+
+   EINA_LIST_FREE(pstate->formats, fmt)
+     free(fmt);
+}
+
+static void
 _ecore_drm2_plane_state_fill(Ecore_Drm2_Plane *plane)
 {
    Ecore_Drm2_Plane_State *pstate;
@@ -406,8 +415,13 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 
         if (plane->thread) ecore_thread_cancel(plane->thread);
         if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
+
+        _ecore_drm2_plane_state_formats_del(plane->state.pending);
         free(plane->state.pending);
+
+        _ecore_drm2_plane_state_formats_del(plane->state.current);
         free(plane->state.current);
+
         free(plane);
      }
 
