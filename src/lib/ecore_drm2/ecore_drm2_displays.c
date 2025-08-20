@@ -13,11 +13,13 @@
 #define EDID_OFFSET_SERIAL 0x0c
 
 static Eina_Thread_Queue *thq = NULL;
+static Ecore_Thread *disp_thread = NULL;
 
 typedef struct
 {
    Eina_Thread_Queue_Msg head;
    Ecore_Drm2_Thread_Op_Code code;
+   Ecore_Drm2_Display *disp;
 } Thread_Msg;
 
 static const char *conn_types[] =
@@ -29,13 +31,14 @@ static const char *conn_types[] =
 };
 
 static void
-_ecore_drm2_display_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+_ecore_drm2_display_state_thread_send(Ecore_Drm2_Display *disp, Ecore_Drm2_Thread_Op_Code code)
 {
    Thread_Msg *msg;
    void *ref;
 
    msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
    msg->code = code;
+   msg->disp = disp;
    eina_thread_queue_send_done(thq, ref);
 }
 
@@ -471,32 +474,29 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
      memcpy(disp->state.pending, disp->state.current, sizeof(Ecore_Drm2_Display_State));
 
    /* send message to thread for debug printing display state */
-   _ecore_drm2_display_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
+   _ecore_drm2_display_state_thread_send(disp, ECORE_DRM2_THREAD_CODE_DEBUG);
 }
 
 static void
-_ecore_drm2_display_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_display_state_thread(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   Ecore_Drm2_Display *disp;
    Thread_Msg *msg;
    void *ref;
-
-   disp = data;
 
    eina_thread_name_set(eina_thread_self(), "Ecore-drm2-display");
 
    while (!ecore_thread_check(thread))
      {
-        msg = eina_thread_queue_wait(thq, &ref);
+        msg = eina_thread_queue_poll(thq, &ref);
         if (msg)
           {
              switch (msg->code)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
-                  _ecore_drm2_display_state_fill(disp);
+                  _ecore_drm2_display_state_fill(msg->disp);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
-                  _ecore_drm2_display_state_debug(disp);
+                  _ecore_drm2_display_state_debug(msg->disp);
                   break;
                 default:
                   break;
@@ -659,6 +659,11 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 
    thq = eina_thread_queue_new();
 
+   disp_thread =
+     ecore_thread_feedback_run(_ecore_drm2_display_state_thread,
+                               _ecore_drm2_display_state_thread_notify,
+                               NULL, NULL, NULL, EINA_TRUE);
+
    /* go through list of connectors and create displays */
    EINA_LIST_FOREACH(dev->conns, l, c)
      {
@@ -697,10 +702,8 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
         /* append this display to the list */
         dev->displays = eina_list_append(dev->displays, disp);
 
-        disp->thread =
-          ecore_thread_feedback_run(_ecore_drm2_display_state_thread,
-                                    _ecore_drm2_display_state_thread_notify,
-                                    NULL, NULL, disp, EINA_TRUE);
+        /* send message to thread for filling display state */
+        _ecore_drm2_display_state_thread_send(disp, ECORE_DRM2_THREAD_CODE_FILL);
 
 cont:
         sym_drmModeFreeEncoder(encoder);
@@ -716,7 +719,6 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->displays, disp)
      {
-        if (disp->thread) ecore_thread_cancel(disp->thread);
         eina_stringshare_del(disp->backlight.path);
         eina_stringshare_del(disp->relative.to);
         eina_stringshare_del(disp->serial);
@@ -726,6 +728,12 @@ _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
         free(disp->state.pending);
         free(disp->state.current);
         free(disp);
+     }
+
+   if (disp_thread)
+     {
+        ecore_thread_cancel(disp_thread);
+        disp_thread = NULL;
      }
 
    if (thq)

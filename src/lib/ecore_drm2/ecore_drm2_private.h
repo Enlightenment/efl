@@ -254,8 +254,6 @@ struct _Ecore_Drm2_Plane
         Ecore_Drm2_Plane_State *current;
         Ecore_Drm2_Plane_State *pending;
      } state;
-
-   Ecore_Thread *thread;
 };
 
 struct _Ecore_Drm2_Display_Mode
@@ -319,8 +317,6 @@ struct _Ecore_Drm2_Display
 
    Eina_List *modes;
 
-   Ecore_Thread *thread;
-
    void *user_data;
 
    Eina_Bool connected : 1;
@@ -341,8 +337,6 @@ struct _Ecore_Drm2_Connector
         Ecore_Drm2_Connector_State *pending;
      } state;
 
-   Ecore_Thread *thread;
-
    Eina_Bool writeback : 1;
 };
 
@@ -362,7 +356,6 @@ struct _Ecore_Drm2_Crtc
         Ecore_Drm2_Crtc_State *pending;
      } state;
 
-   Ecore_Thread *thread;
    Eina_Bool in_use : 1;
 };
 

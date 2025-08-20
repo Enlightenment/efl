@@ -1,28 +1,31 @@
 #include "ecore_drm2_private.h"
 
 static Eina_Thread_Queue *thq = NULL;
+static Ecore_Thread *plane_thread = NULL;
 
 typedef struct
 {
    Eina_Thread_Queue_Msg head;
    Ecore_Drm2_Thread_Op_Code code;
+   Ecore_Drm2_Plane *plane;
 } Thread_Msg;
 
 static void
-_ecore_drm2_plane_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+_ecore_drm2_plane_state_thread_send(Ecore_Drm2_Plane *plane, Ecore_Drm2_Thread_Op_Code code)
 {
    Thread_Msg *msg;
    void *ref;
 
    msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
    msg->code = code;
+   msg->plane = plane;
    eina_thread_queue_send_done(thq, ref);
 }
 
 static void
 _ecore_drm2_plane_state_debug(Ecore_Drm2_Plane *plane)
 {
-   DBG("Plane Atomic State Fill Complete");
+   DBG("Plane Atomic State Fill Complete: %d", plane->id);
    DBG("\tPlane: %d", plane->state.current->obj_id);
    DBG("\t\tCrtc: %lu", (long)plane->state.current->cid.value);
    DBG("\t\tFB: %lu", (long)plane->state.current->fid.value);
@@ -78,6 +81,7 @@ _ecore_drm2_plane_state_formats_del(Ecore_Drm2_Plane_State *pstate)
 {
    Ecore_Drm2_Format *fmt;
 
+   if (!pstate) return;
    EINA_LIST_FREE(pstate->formats, fmt)
      free(fmt);
 }
@@ -281,17 +285,14 @@ cont:
      memcpy(plane->state.pending, plane->state.current, sizeof(Ecore_Drm2_Plane_State));
 
    /* send message to thread for debug printing plane state */
-   _ecore_drm2_plane_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
+   _ecore_drm2_plane_state_thread_send(plane, ECORE_DRM2_THREAD_CODE_DEBUG);
 }
 
 static void
-_ecore_drm2_plane_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
+_ecore_drm2_plane_state_thread(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   Ecore_Drm2_Plane *plane;
    Thread_Msg *msg;
    void *ref;
-
-   plane = data;
 
    eina_thread_name_set(eina_thread_self(), "Ecore-drm2-plane");
 
@@ -303,10 +304,10 @@ _ecore_drm2_plane_state_thread(void *data, Ecore_Thread *thread EINA_UNUSED)
              switch (msg->code)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
-                  _ecore_drm2_plane_state_fill(plane);
+                  _ecore_drm2_plane_state_fill(msg->plane);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
-                  _ecore_drm2_plane_state_debug(plane);
+                  _ecore_drm2_plane_state_debug(msg->plane);
                   break;
                 default:
                   break;
@@ -339,16 +340,15 @@ _ecore_drm2_plane_create(Ecore_Drm2_Device *dev, drmModePlanePtr p, uint32_t ind
    plane->id = index;
    plane->drmPlane = p;
 
-   /* append this plane to the list */
-   dev->planes = eina_list_append(dev->planes, plane);
-
    return plane;
 }
 
 static Eina_Bool
 _ecore_drm2_planes_available(Ecore_Drm2_Plane *plane, Ecore_Drm2_Display *disp)
 {
-   if (!plane->state.current) return EINA_FALSE;
+   if (!plane->state.current)
+     return !!(plane->drmPlane->possible_crtcs & (1 << disp->crtc->pipe));
+//     return EINA_FALSE;
 
    if (!plane->state.current->complete) return EINA_FALSE;
 
@@ -371,6 +371,12 @@ _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
 
    thq = eina_thread_queue_new();
 
+   /* NB: Use an explicit thread to fill plane atomic state */
+   plane_thread =
+     ecore_thread_feedback_run(_ecore_drm2_plane_state_thread,
+                               _ecore_drm2_plane_state_thread_notify,
+                               NULL, NULL, NULL, EINA_TRUE);
+
    for (; i < pres->count_planes; i++)
      {
         /* try to get this plane from drm */
@@ -381,14 +387,15 @@ _ecore_drm2_planes_create(Ecore_Drm2_Device *dev)
         plane = _ecore_drm2_plane_create(dev, p, pres->planes[i]);
         if (!plane) goto err;
 
-        /* NB: Use an explicit thread to fill plane atomic state */
-        plane->thread =
-          ecore_thread_feedback_run(_ecore_drm2_plane_state_thread,
-                                    _ecore_drm2_plane_state_thread_notify,
-                                    NULL, NULL, plane, EINA_TRUE);
+        /* append this plane to the list */
+        dev->planes = eina_list_append(dev->planes, plane);
+
+        /* send message to thread for filling plane state */
+        _ecore_drm2_plane_state_thread_send(plane, ECORE_DRM2_THREAD_CODE_FILL);
      }
 
    sym_drmModeFreePlaneResources(pres);
+
    return EINA_TRUE;
 
 err:
@@ -407,13 +414,15 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->planes, plane)
      {
-        if (plane->state.current->type.value == DRM_PLANE_TYPE_OVERLAY)
+        if (plane->state.current)
           {
-             sym_drmModeSetPlane(dev->fd, plane->id, 0, 0, 0, 0, 0, 0, 0,
-                                 0, 0, 0, 0);
+             if (plane->state.current->type.value == DRM_PLANE_TYPE_OVERLAY)
+               {
+                  sym_drmModeSetPlane(dev->fd, plane->id, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0);
+               }
           }
 
-        if (plane->thread) ecore_thread_cancel(plane->thread);
         if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
 
         _ecore_drm2_plane_state_formats_del(plane->state.pending);
@@ -423,6 +432,12 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
         free(plane->state.current);
 
         free(plane);
+     }
+
+   if (plane_thread)
+     {
+        ecore_thread_cancel(plane_thread);
+        plane_thread = NULL;
      }
 
    if (thq)
@@ -448,7 +463,11 @@ _ecore_drm2_planes_find(Ecore_Drm2_Display *disp, uint64_t type)
      {
         Eina_Bool found = EINA_FALSE;
 
-        if (plane->state.current->type.value != type) continue;
+        if (plane->state.current)
+          {
+             if (plane->state.current->type.value != type) continue;
+          }
+
         if (!_ecore_drm2_planes_available(plane, disp)) continue;
 
         EINA_LIST_FOREACH(dev->displays, ll, dsp)

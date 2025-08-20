@@ -1,28 +1,31 @@
 #include "ecore_drm2_private.h"
 
 static Eina_Thread_Queue *thq = NULL;
+static Ecore_Thread *crtc_thread = NULL;
 
 typedef struct
 {
    Eina_Thread_Queue_Msg head;
    Ecore_Drm2_Thread_Op_Code code;
+   Ecore_Drm2_Crtc *crtc;
 } Thread_Msg;
 
 static void
-_ecore_drm2_crtc_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+_ecore_drm2_crtc_state_thread_send(Ecore_Drm2_Crtc *crtc, Ecore_Drm2_Thread_Op_Code code)
 {
    Thread_Msg *msg;
    void *ref;
 
    msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
    msg->code = code;
+   msg->crtc = crtc;
    eina_thread_queue_send_done(thq, ref);
 }
 
 static void
 _ecore_drm2_crtc_state_debug(Ecore_Drm2_Crtc *crtc)
 {
-   DBG("CRTC Atomic State Fill Complete");
+   DBG("CRTC Atomic State Fill Complete: %d", crtc->id);
    DBG("\tCrtc: %d", crtc->state.current->obj_id);
    DBG("\t\tMode: %d", crtc->state.current->mode.value);
    DBG("\t\tActive: %lu", (long)crtc->state.current->active.value);
@@ -53,6 +56,7 @@ _ecore_drm2_crtc_state_fill(Ecore_Drm2_Crtc *crtc)
    if (!oprops)
      {
         free(crtc->state.current);
+        ERR("Could not get Crtc Object Properties");
         return;
      }
 
@@ -121,17 +125,14 @@ cont:
      memcpy(crtc->state.pending, crtc->state.current, sizeof(Ecore_Drm2_Crtc_State));
 
    /* send message to thread for debug printing crtc state */
-   _ecore_drm2_crtc_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
+   _ecore_drm2_crtc_state_thread_send(crtc, ECORE_DRM2_THREAD_CODE_DEBUG);
 }
 
 static void
-_ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread)
+_ecore_drm2_crtc_state_thread(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   Ecore_Drm2_Crtc *crtc;
    Thread_Msg *msg;
    void *ref;
-
-   crtc = data;
 
    eina_thread_name_set(eina_thread_self(), "Ecore-drm2-crtc");
 
@@ -143,10 +144,10 @@ _ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread)
              switch (msg->code)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
-                  _ecore_drm2_crtc_state_fill(crtc);
+                  _ecore_drm2_crtc_state_fill(msg->crtc);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
-                  _ecore_drm2_crtc_state_debug(crtc);
+                  _ecore_drm2_crtc_state_debug(msg->crtc);
                   break;
                 default:
                   break;
@@ -159,10 +160,6 @@ _ecore_drm2_crtc_state_thread(void *data, Ecore_Thread *thread)
 static void
 _ecore_drm2_crtc_state_thread_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, void *msg)
 {
-   /* Ecore_Drm2_Crtc *crtc; */
-
-   /* crtc = data; */
-
    free(msg);
 }
 
@@ -184,9 +181,6 @@ _ecore_drm2_crtc_create(Ecore_Drm2_Device *dev, drmModeCrtcPtr dcrtc, uint32_t p
    crtc->pipe = pipe;
    crtc->drmCrtc = dcrtc;
 
-   /* add this crtc to the list */
-   dev->crtcs = eina_list_append(dev->crtcs, crtc);
-
    return crtc;
 }
 
@@ -204,23 +198,31 @@ _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev)
 
    thq = eina_thread_queue_new();
 
+   /* NB: Use an explicit thread to fill crtc atomic state */
+   crtc_thread =
+     ecore_thread_feedback_run(_ecore_drm2_crtc_state_thread,
+                               _ecore_drm2_crtc_state_thread_notify,
+                               NULL, NULL, NULL, EINA_TRUE);
+
    for (; i < res->count_crtcs; i++)
      {
         /* try to get this crtc from drm */
         c = sym_drmModeGetCrtc(dev->fd, res->crtcs[i]);
+        if (!c) continue;
 
         /* try to create a crtc */
         crtc = _ecore_drm2_crtc_create(dev, c, i);
         if (!crtc) goto err;
 
-        /* NB: Use an explicit thread to fill crtc atomic state */
-        crtc->thread =
-          ecore_thread_feedback_run(_ecore_drm2_crtc_state_thread,
-                                    _ecore_drm2_crtc_state_thread_notify,
-                                    NULL, NULL, crtc, EINA_TRUE);
+        /* add this crtc to the list */
+        dev->crtcs = eina_list_append(dev->crtcs, crtc);
+
+        /* send message to thread for filling crtc state */
+        _ecore_drm2_crtc_state_thread_send(crtc, ECORE_DRM2_THREAD_CODE_FILL);
      }
 
    sym_drmModeFreeResources(res);
+
    return EINA_TRUE;
 
 err:
@@ -239,11 +241,16 @@ _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->crtcs, crtc)
      {
-        if (crtc->thread) ecore_thread_cancel(crtc->thread);
         if (crtc->drmCrtc) sym_drmModeFreeCrtc(crtc->drmCrtc);
         free(crtc->state.pending);
         free(crtc->state.current);
         free(crtc);
+     }
+
+   if (crtc_thread)
+     {
+        ecore_thread_cancel(crtc_thread);
+        crtc_thread = NULL;
      }
 
    if (thq)

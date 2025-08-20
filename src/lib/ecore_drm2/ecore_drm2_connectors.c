@@ -5,28 +5,31 @@
 #endif
 
 static Eina_Thread_Queue *thq = NULL;
+static Ecore_Thread *conn_thread = NULL;
 
 typedef struct
 {
    Eina_Thread_Queue_Msg head;
    Ecore_Drm2_Thread_Op_Code code;
+   Ecore_Drm2_Connector *conn;
 } Thread_Msg;
 
 static void
-_ecore_drm2_connector_state_thread_send(Ecore_Drm2_Thread_Op_Code code)
+_ecore_drm2_connector_state_thread_send(Ecore_Drm2_Connector *conn, Ecore_Drm2_Thread_Op_Code code)
 {
    Thread_Msg *msg;
    void *ref;
 
    msg = eina_thread_queue_send(thq, sizeof(Thread_Msg), &ref);
    msg->code = code;
+   msg->conn = conn;
    eina_thread_queue_send_done(thq, ref);
 }
 
 static void
 _ecore_drm2_connector_state_debug(Ecore_Drm2_Connector *conn)
 {
-   DBG("Connector Atomic State Fill Complete");
+   DBG("Connector Atomic State Fill Complete: %d", conn->id);
    DBG("\tConnector: %d", conn->state.current->obj_id);
    DBG("\t\tCrtc Id: %lu", (long)conn->state.current->crtc.value);
    DBG("\t\tDPMS: %lu", (long)conn->state.current->dpms.value);
@@ -171,17 +174,14 @@ cont:
      memcpy(conn->state.pending, conn->state.current, sizeof(Ecore_Drm2_Connector_State));
 
    /* send message to thread for debug printing connector state */
-   _ecore_drm2_connector_state_thread_send(ECORE_DRM2_THREAD_CODE_DEBUG);
+   _ecore_drm2_connector_state_thread_send(conn, ECORE_DRM2_THREAD_CODE_DEBUG);
 }
 
 static void
-_ecore_drm2_connector_state_thread(void *data, Ecore_Thread *thread)
+_ecore_drm2_connector_state_thread(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
-   Ecore_Drm2_Connector *conn;
    Thread_Msg *msg;
    void *ref;
-
-   conn = data;
 
    eina_thread_name_set(eina_thread_self(), "Ecore-drm2-connector");
 
@@ -193,10 +193,10 @@ _ecore_drm2_connector_state_thread(void *data, Ecore_Thread *thread)
              switch (msg->code)
                {
                 case ECORE_DRM2_THREAD_CODE_FILL:
-                  _ecore_drm2_connector_state_fill(conn);
+                  _ecore_drm2_connector_state_fill(msg->conn);
                   break;
                 case ECORE_DRM2_THREAD_CODE_DEBUG:
-                  _ecore_drm2_connector_state_debug(conn);
+                  _ecore_drm2_connector_state_debug(msg->conn);
                   break;
                 default:
                   break;
@@ -230,9 +230,6 @@ _ecore_drm2_connector_create(Ecore_Drm2_Device *dev, drmModeConnector *conn, uin
    if (conn->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
      c->writeback = EINA_TRUE;
 
-   /* append this connector to list */
-   dev->conns = eina_list_append(dev->conns, c);
-
    return c;
 }
 
@@ -252,6 +249,12 @@ _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev)
 
    thq = eina_thread_queue_new();
 
+   /* NB: Use an explicit thread to fill crtc atomic state */
+   conn_thread =
+     ecore_thread_feedback_run(_ecore_drm2_connector_state_thread,
+                               _ecore_drm2_connector_state_thread_notify,
+                               NULL, NULL, NULL, EINA_TRUE);
+
    for (; i < res->count_connectors; i++)
      {
         uint32_t conn_id;
@@ -266,12 +269,11 @@ _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev)
         c = _ecore_drm2_connector_create(dev, conn, conn_id);
         if (!c) goto err;
 
-        /* NB: Use an explicit thread to fill crtc atomic state */
-        c->thread =
-          ecore_thread_feedback_run(_ecore_drm2_connector_state_thread,
-                                    _ecore_drm2_connector_state_thread_notify,
-                                    NULL, NULL, c, EINA_TRUE);
+        /* append this connector to list */
+        dev->conns = eina_list_append(dev->conns, c);
 
+        /* send message to thread for filling connector state */
+        _ecore_drm2_connector_state_thread_send(c, ECORE_DRM2_THREAD_CODE_FILL);
      }
 
    sym_drmModeFreeResources(res);
@@ -293,11 +295,16 @@ _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev)
 
    EINA_LIST_FREE(dev->conns, conn)
      {
-        if (conn->thread) ecore_thread_cancel(conn->thread);
         if (conn->drmConn) sym_drmModeFreeConnector(conn->drmConn);
         free(conn->state.pending);
         free(conn->state.current);
         free(conn);
+     }
+
+   if (conn_thread)
+     {
+        ecore_thread_cancel(conn_thread);
+        conn_thread = NULL;
      }
 
    if (thq)

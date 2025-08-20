@@ -280,6 +280,8 @@ ecore_drm2_device_open(const char *seat, unsigned int tty)
         goto caps_err;
      }
 
+   /* overlay planes */
+
    /* try to create planes */
    if (!_ecore_drm2_planes_create(dev))
      {
