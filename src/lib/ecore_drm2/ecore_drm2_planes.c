@@ -423,14 +423,17 @@ _ecore_drm2_planes_destroy(Ecore_Drm2_Device *dev)
                }
           }
 
+        /* only need to free formats from One of the plane states as the
+         * formats are copied to pending state in other parts of the code.
+         *
+         * If we try to free formats from both pending & current state,
+         * then we end up with a double-free */
+        _ecore_drm2_plane_state_formats_del(plane->state.current);
+
         if (plane->drmPlane) sym_drmModeFreePlane(plane->drmPlane);
 
-        _ecore_drm2_plane_state_formats_del(plane->state.pending);
         free(plane->state.pending);
-
-        _ecore_drm2_plane_state_formats_del(plane->state.current);
         free(plane->state.current);
-
         free(plane);
      }
 
