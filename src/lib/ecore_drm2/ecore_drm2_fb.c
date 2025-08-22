@@ -145,9 +145,18 @@ ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned int count
 }
 
 EAPI void *
-ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb)
+ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb, int *bpl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, NULL);
+
+   if (bpl)
+     {
+        if (fb->strides[0] > 0)
+          *bpl = fb->strides[0];
+        else
+          *bpl = (fb->bpp * fb->w);
+     }
+
    return fb->mmap;
 }
 
