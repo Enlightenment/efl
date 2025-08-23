@@ -141,6 +141,7 @@ EAPI void ecore_drm2_fb_dirty(Ecore_Drm2_Fb *fb, Eina_Rectangle *rects, unsigned
 EAPI void *ecore_drm2_fb_data_get(Ecore_Drm2_Fb *fb, int *bpl);
 EAPI unsigned int ecore_drm2_fb_size_get(Ecore_Drm2_Fb *fb);
 EAPI unsigned int ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb);
+EAPI Eina_Bool ecore_drm2_fb_map(Ecore_Drm2_Fb *fb);
 
 # endif
 

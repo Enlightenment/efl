@@ -16,23 +16,39 @@ _ecore_drm2_fb_add(Ecore_Drm2_Fb *fb)
 static Eina_Bool
 _ecore_drm2_fb_map(Ecore_Drm2_Fb *fb)
 {
-   struct drm_mode_map_dumb marg;
-   int ret;
-
-   memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
-   marg.handle = fb->handles[0];
-   ret = sym_drmIoctl(fb->fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
-   if (ret)
+   if (!fb->bo)
      {
-	ERR("Could not map Framebuffer: %m");
-	return EINA_FALSE;
+        struct drm_mode_map_dumb marg;
+        int ret;
+
+        memset(&marg, 0, sizeof(struct drm_mode_map_dumb));
+        marg.handle = fb->handles[0];
+        ret = sym_drmIoctl(fb->fd, DRM_IOCTL_MODE_MAP_DUMB, &marg);
+        if (ret)
+          {
+             ERR("Could not map Framebuffer: %m");
+             return EINA_FALSE;
+          }
+
+        fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, fb->fd, marg.offset);
+        if (fb->mmap == MAP_FAILED)
+          {
+             ERR("Could not map Framebuffer: %m");
+             return EINA_FALSE;
+          }
      }
-
-   fb->mmap = mmap(NULL, fb->sizes[0], PROT_WRITE, MAP_SHARED, fb->fd, marg.offset);
-   if (fb->mmap == MAP_FAILED)
+   else
      {
-	ERR("Could not map Framebuffer: %m");
-	return EINA_FALSE;
+        void *map_data = NULL;
+
+        fb->mmap =
+          gbm_bo_map(fb->bo, 0, 0, fb->w, fb->h,
+                     GBM_BO_TRANSFER_READ_WRITE, NULL, &map_data);
+        if (!fb->mmap)
+          {
+             ERR("Could not map Framebuffer Bo: %m");
+             return EINA_FALSE;
+          }
      }
 
    return EINA_TRUE;
@@ -93,13 +109,10 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
 	  }
      }
 
-   if (!fb->bo)
+   if (!_ecore_drm2_fb_map(fb))
      {
-	if (!_ecore_drm2_fb_map(fb))
-	  {
-	     ERR("Could not map Framebuffer");
-	     goto map_err;
-	  }
+        ERR("Could not map Framebuffer");
+        goto map_err;
      }
 
    return fb;
@@ -172,4 +185,11 @@ ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
    return fb->strides[0];
+}
+
+EAPI Eina_Bool
+ecore_drm2_fb_map(Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
+   return _ecore_drm2_fb_map(fb);
 }
