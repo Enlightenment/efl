@@ -184,7 +184,10 @@ EAPI unsigned int
 ecore_drm2_fb_stride_get(Ecore_Drm2_Fb *fb)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
-   return fb->strides[0];
+   if (fb->strides[0] > 0)
+     return fb->strides[0];
+   else
+     return (fb->bpp * fb->w);
 }
 
 EAPI Eina_Bool
