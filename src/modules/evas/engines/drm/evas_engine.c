@@ -33,20 +33,20 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
    ob = _outbuf_setup(info, w, h);
    if (!ob) goto err;
 
-   re->dev = info->info.dev;
+   re->dev = info->dev;
 
    if (!evas_render_engine_software_generic_init(engine, &re->generic, ob,
-                                                 NULL, //_outbuf_state_get,
-                                                 NULL, //_outbuf_rotation_get,
-                                                 NULL, //_outbuf_reconfigure,
-                                                 NULL,
-                                                 NULL, //_outbuf_damage_region_set,
-                                                 NULL, //_outbuf_update_region_new,
-                                                 NULL, //_outbuf_update_region_push,
-                                                 NULL,
-                                                 NULL,
-                                                 NULL, //_outbuf_flush,
-                                                 NULL,
+                                                 _outbuf_swap_mode_get,
+                                                 _outbuf_rotation_get,
+                                                 _outbuf_reconfigure,
+                                                 NULL, // region first rect get
+                                                 _outbuf_damage_region_set,
+                                                 _outbuf_update_region_new,
+                                                 _outbuf_update_region_push,
+                                                 NULL, // free_region_for_update
+                                                 _outbuf_idle_flush,
+                                                 _outbuf_flush,
+                                                 NULL, // redraws_clear
                                                  _outbuf_free,
                                                  ob->w, ob->h))
      goto init_err;
@@ -68,11 +68,11 @@ static int
 eng_output_update(void *engine EINA_UNUSED, void *data, void *einfo, unsigned int w, unsigned int h)
 {
    Render_Engine *re = data;
-//   Evas_Engine_Info_Drm *info;
+   Evas_Engine_Info_Drm *info;
 
-//   info = (Evas_Engine_Info_Drm *)einfo;
-//   _outbuf_reconfigure(re->generic.ob, w, h,
-//                       info->info.rotation, info->info.depth);
+   info = (Evas_Engine_Info_Drm *)einfo;
+
+   _outbuf_reconfigure(re->generic.ob, w, h, info->rotation, info->depth);
 
    evas_render_engine_software_generic_update(&re->generic,
                                               re->generic.ob, w, h);

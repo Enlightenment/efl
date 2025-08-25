@@ -2,9 +2,15 @@ engine_src = files([
   'Evas_Engine_Drm.h',
   'evas_engine.c',
   'evas_engine.h',
-  'evas_outbuf.c'
+  'evas_outbuf.c',
+  'evas_drm_swapper.c'
 ])
 
+evas_include_directories += include_directories('.')
+
+install_headers('Evas_Engine_Drm.h',
+  install_dir : join_paths(dir_include, 'evas-'+version_major),
+)
 engine_deps += [ecore_drm2, libdrm]
 
 shared_module(mod_full_name, engine_src,
