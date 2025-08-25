@@ -239,6 +239,9 @@ struct _Ecore_Drm2_Fb
    uint32_t strides[4], sizes[4];
 
    void *mmap, *bo;
+   void *map_data;
+
+   Eina_Bool mapped : 1;
 };
 
 struct _Ecore_Drm2_Plane
