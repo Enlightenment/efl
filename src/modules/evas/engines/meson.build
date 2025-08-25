@@ -16,7 +16,7 @@ if sys_windows
 else
   engines += [
     ['fb', ['fb']],
-#    ['drm', ['drm']],
+    ['drm', ['drm']],
     ['software_x11', ['x11']],
     ['wayland_shm', ['wl']],
   ]
