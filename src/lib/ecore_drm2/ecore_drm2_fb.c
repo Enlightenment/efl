@@ -100,7 +100,7 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
 	carg.height = height;
 
 	ret = sym_drmIoctl(dev->fd, DRM_IOCTL_MODE_CREATE_DUMB, &carg);
-	if (!ret) goto err;
+	if (ret) goto err;
 
 	fb->handles[0] = carg.handle;
 	fb->strides[0] = carg.pitch;
