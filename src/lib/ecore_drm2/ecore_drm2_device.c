@@ -203,6 +203,7 @@ _ecore_drm2_device_kms_caps_get(Ecore_Drm2_Device *dev)
    /* NB: This is NOT necessarily needed for ATOMIC support */
    ret = sym_drmGetCap(dev->fd, DRM_CAP_CRTC_IN_VBLANK_EVENT, &cap);
    if (ret != 0) cap = 0;
+   dev->has_vblank = ((ret == 0) && (cap == 1));
 
    /* try to enable atomic modesetting support */
    ret = sym_drmSetClientCap(dev->fd, DRM_CLIENT_CAP_ATOMIC, 1);
@@ -503,4 +504,11 @@ ecore_drm2_device_window_set(Ecore_Drm2_Device *dev, unsigned int window)
    EINA_SAFETY_ON_NULL_RETURN(dev);
    EINA_SAFETY_ON_NULL_RETURN(dev->em);
    elput_manager_window_set(dev->em, window);
+}
+
+EAPI Eina_Bool
+ecore_drm2_device_vblank_supported(Ecore_Drm2_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   return dev->has_vblank;
 }

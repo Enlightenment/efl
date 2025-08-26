@@ -386,6 +386,7 @@ struct _Ecore_Drm2_Device
    /* Eina_Bool gbm_mods : 1; */
    Eina_Bool aspect_ratio : 1;
    Eina_Bool hw_cursor : 1;
+   Eina_Bool has_vblank : 1;
 };
 
 /* internal function prototypes */
