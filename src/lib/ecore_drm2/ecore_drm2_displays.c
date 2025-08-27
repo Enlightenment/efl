@@ -465,6 +465,10 @@ _ecore_drm2_display_state_fill(Ecore_Drm2_Display *disp)
    /* get gamma from crtc */
    disp->state.current->gamma.size = disp->crtc->drmCrtc->gamma_size;
 
+   /* get position from crtc */
+   disp->state.current->x = disp->crtc->drmCrtc->x;
+   disp->state.current->y = disp->crtc->drmCrtc->y;
+
    /* get connected state */
    disp->connected = (disp->conn->drmConn->connection == DRM_MODE_CONNECTED);
 
@@ -650,12 +654,196 @@ _ecore_drm2_displays_crtc_find(Ecore_Drm2_Display *disp, Ecore_Drm2_Connector *c
    return NULL;
 }
 
+Ecore_Drm2_Display *
+_ecore_drm2_displays_find_connector(Ecore_Drm2_Device *dev, uint32_t id)
+{
+   Ecore_Drm2_Display *disp;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(dev->displays, l, disp)
+     if ((disp->conn) && (disp->conn->id == id))
+       return disp;
+
+   return NULL;
+}
+
+static void
+_ecore_drm2_displays_event_free(void *data EINA_UNUSED, void *event)
+{
+   Ecore_Drm2_Event_Display_Changed *ev;
+
+   ev = event;
+   eina_stringshare_del(ev->make);
+   eina_stringshare_del(ev->model);
+   eina_stringshare_del(ev->name);
+   free(ev);
+}
+
+static void
+_ecore_drm2_displays_event_send(Ecore_Drm2_Display *disp)
+{
+   Ecore_Drm2_Event_Display_Changed *ev;
+
+   ev = calloc(1, sizeof(Ecore_Drm2_Event_Display_Changed));
+   if (!ev) return;
+
+   ev->id = disp->crtc->id;
+
+   if (disp->state.current)
+     {
+        ev->x = disp->state.current->x;
+        ev->y = disp->state.current->y;
+        if (disp->state.current->mode)
+          {
+             ev->w = disp->state.current->mode->width;
+             ev->h = disp->state.current->mode->height;
+             ev->refresh = disp->state.current->mode->refresh;
+          }
+        else
+          {
+             ev->w = disp->crtc->drmCrtc->width;
+             ev->h = disp->crtc->drmCrtc->height;
+             ev->refresh = disp->crtc->drmCrtc->mode.vrefresh;
+          }
+     }
+   else
+     {
+        ev->x = disp->crtc->drmCrtc->x;
+        ev->y = disp->crtc->drmCrtc->y;
+        ev->w = disp->crtc->drmCrtc->width;
+        ev->h = disp->crtc->drmCrtc->height;
+        ev->refresh = 0;
+     }
+
+   ev->phys_width = disp->pw;
+   ev->phys_height = disp->ph;
+
+   ev->subpixel = disp->subpixel;
+   ev->connected = disp->connected;
+
+   ev->name = eina_stringshare_ref(disp->name);
+   ev->make = eina_stringshare_ref(disp->make);
+   ev->model = eina_stringshare_ref(disp->model);
+
+   ecore_event_add(ECORE_DRM2_EVENT_DISPLAY_CHANGED, ev,
+                   _ecore_drm2_displays_event_free, NULL);
+}
+
+static void
+_ecore_drm2_displays_cb_eeze_event(const char *device EINA_UNUSED, Eeze_Udev_Event event EINA_UNUSED, void *data, Eeze_Udev_Watch *watch EINA_UNUSED)
+{
+   Ecore_Drm2_Device *dev;
+   Ecore_Drm2_Display *disp;
+   Eina_List *l, *ll;
+   drmModeRes *res;
+   drmModeConnector *conn;
+   drmModeEncoder *encoder;
+   uint32_t *connected;
+   int i = 0;
+
+   dev = data;
+
+   res = sym_drmModeGetResources(dev->fd);
+   if (!res) return;
+
+   connected = calloc(res->count_connectors, sizeof(uint32_t));
+   if (!connected)
+     {
+        sym_drmModeFreeResources(res);
+        return;
+     }
+
+   for (; i < res->count_connectors; i++)
+     {
+        conn = sym_drmModeGetConnector(dev->fd, res->connectors[i]);
+        if (!conn) continue;
+
+        if (conn->connection != DRM_MODE_CONNECTED) goto next;
+
+        /* try to get the encoder from drm */
+        encoder = sym_drmModeGetEncoder(dev->fd, conn->encoder_id);
+        if (!encoder) goto next;
+
+        connected[i] = res->connectors[i];
+
+        if (!_ecore_drm2_displays_find_connector(dev, res->connectors[i]))
+          {
+             Ecore_Drm2_Connector *c;
+
+             /* if (dev->displays) */
+             /*   { */
+             /*      Ecore_Drm2_Display *last; */
+
+             /*      last = eina_list_last_data_get(dev->displays); */
+             /*      if (last) x = last->x + last->state.current->mode->width; */
+             /*      else x = 0; */
+             /*   } */
+             /* else */
+             /*   x = 0; */
+
+             c = _ecore_drm2_connectors_find(dev, res->connectors[i]);
+             if (!c) goto next;
+
+             /* try to allocate space for new display */
+             disp = calloc(1, sizeof(Ecore_Drm2_Display));
+             if (!disp)
+               {
+                  WRN("Could not allocate space for Display");
+                  goto enc_next;
+               }
+
+             disp->dev = dev;
+             disp->conn = c;
+
+             disp->crtc =
+               _ecore_drm2_displays_crtc_find(disp, c, encoder->crtc_id);
+             if (disp->crtc) disp->crtc->in_use = EINA_TRUE;
+
+             _ecore_drm2_displays_planes_init(disp);
+
+             /* append this display to the list */
+             dev->displays = eina_list_append(dev->displays, disp);
+
+             /* send message to thread for filling display state */
+             _ecore_drm2_display_state_thread_send(disp, ECORE_DRM2_THREAD_CODE_FILL);
+          }
+
+enc_next:
+        sym_drmModeFreeEncoder(encoder);
+next:
+        sym_drmModeFreeConnector(conn);
+     }
+
+   sym_drmModeFreeResources(res);
+
+   EINA_LIST_FOREACH_SAFE(dev->displays, l, ll, disp)
+     {
+        Eina_Bool disconnected = EINA_TRUE;
+
+        for (i = 0; i < res->count_connectors; i++)
+          if (connected[i] == disp->conn->id)
+            {
+               disconnected = EINA_FALSE;
+               break;
+            }
+
+        if (disconnected)
+          disp->connected = EINA_FALSE;
+        else
+          disp->connected = EINA_TRUE;
+
+        _ecore_drm2_displays_event_send(disp);
+     }
+   free(connected);
+}
+
 Eina_Bool
 _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 {
    Ecore_Drm2_Display *disp;
    Ecore_Drm2_Connector *c;
    Eina_List *l = NULL;
+   int eeze_events = 0;
 
    thq = eina_thread_queue_new();
 
@@ -709,6 +897,13 @@ cont:
         sym_drmModeFreeEncoder(encoder);
      }
 
+   eeze_events = (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE |
+                  EEZE_UDEV_EVENT_CHANGE);
+
+   dev->watch =
+     eeze_udev_watch_add(EEZE_UDEV_TYPE_DRM, eeze_events,
+                         _ecore_drm2_displays_cb_eeze_event, dev);
+
    return EINA_TRUE;
 }
 
@@ -716,6 +911,9 @@ void
 _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev)
 {
    Ecore_Drm2_Display *disp;
+
+   if (dev->watch) eeze_udev_watch_del(dev->watch);
+   dev->watch = NULL;
 
    EINA_LIST_FREE(dev->displays, disp)
      {
@@ -1022,10 +1220,10 @@ ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, in
    EINA_SAFETY_ON_NULL_RETURN(disp);
    EINA_SAFETY_ON_TRUE_RETURN(!disp->state.current->mode);
 
-   if (x) *x = disp->x;
-   if (y) *y = disp->y;
-
    cstate = disp->state.current;
+
+   if (x) *x = cstate->x;
+   if (y) *y = cstate->y;
 
    switch (cstate->rotation)
      {
@@ -1302,8 +1500,9 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_POSITION)
      {
-	disp->x = pstate->x;
-	disp->y = pstate->y;
+        /* FIXME */
+	/* disp->x = pstate->x; */
+	/* disp->y = pstate->y; */
 	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
 
