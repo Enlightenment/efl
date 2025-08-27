@@ -512,3 +512,10 @@ ecore_drm2_device_vblank_supported(Ecore_Drm2_Device *dev)
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
    return dev->has_vblank;
 }
+
+EAPI const Eina_List *
+ecore_drm2_device_displays_get(Ecore_Drm2_Device *dev)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+   return dev->displays;
+}
