@@ -48,6 +48,7 @@ int (*sym_drmModeSetPlane)(int fd, uint32_t plane_id, uint32_t crtc_id, uint32_t
 bool (*sym_drmModeFormatModifierBlobIterNext)(const drmModePropertyBlobRes *blob, drmModeFormatModifierIterator *iter);
 
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
+EAPI int ECORE_DRM2_EVENT_DISPLAY_CHANGED = -1;
 
 /* local static functions */
 static Eina_Bool
@@ -170,6 +171,7 @@ ecore_drm2_init(void)
      }
 
    ECORE_DRM2_EVENT_ACTIVATE = ecore_event_type_new();
+   ECORE_DRM2_EVENT_DISPLAY_CHANGED = ecore_event_type_new();
 
    if (!_ecore_drm2_link()) goto link_err;
 
@@ -204,6 +206,7 @@ ecore_drm2_shutdown(void)
    if (_drm_lib) dlclose(_drm_lib);
 
    ECORE_DRM2_EVENT_ACTIVATE = -1;
+   ECORE_DRM2_EVENT_DISPLAY_CHANGED = -1;
 
    eina_log_domain_unregister(_ecore_drm2_log_dom);
    _ecore_drm2_log_dom = -1;

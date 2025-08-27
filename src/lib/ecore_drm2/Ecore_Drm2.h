@@ -76,8 +76,22 @@ typedef struct _Ecore_Drm2_Event_Activate
    Eina_Bool active : 1;
 } Ecore_Drm2_Event_Activate;
 
+/* public structure to represent an event for display state changes */
+typedef struct _Ecore_Drm2_Event_Display_Changed
+{
+   unsigned int id;
+   int x, y, w, h;
+   int phys_width, phys_height;
+   unsigned int refresh, scale;
+   int subpixel, transform;
+   const char *make, *model, *name;
+   Eina_Bool connected : 1;
+   Eina_Bool enabled : 1;
+} Ecore_Drm2_Event_Display_Changed;
+
 /* API events */
 EAPI extern int ECORE_DRM2_EVENT_ACTIVATE;
+EAPI extern int ECORE_DRM2_EVENT_DISPLAY_CHANGED;
 
 /* API functions */
 EAPI int ecore_drm2_init(void);
