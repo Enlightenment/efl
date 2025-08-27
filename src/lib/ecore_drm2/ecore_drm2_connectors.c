@@ -398,3 +398,16 @@ _ecore_drm2_connectors_possible_crtcs_get(Ecore_Drm2_Connector *conn)
 
    return pcrtcs;
 }
+
+Ecore_Drm2_Connector *
+_ecore_drm2_connectors_find(Ecore_Drm2_Device *dev, uint32_t conn_id)
+{
+   Ecore_Drm2_Connector *conn;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(dev->conns, l, conn)
+     if (conn->id == conn_id)
+       return conn;
+
+   return NULL;
+}

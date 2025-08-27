@@ -271,7 +271,7 @@ struct _Ecore_Drm2_Display_Mode
 struct _Ecore_Drm2_Display
 {
    /* int fd; */
-   int x, y;
+   /* int x, y; */
    int pw, ph; // physical dimensions
    Eina_Stringshare *name, *make, *model, *serial;
 
@@ -374,6 +374,8 @@ struct _Ecore_Drm2_Device
         int width, height;
      } cursor;
 
+   Eeze_Udev_Watch *watch;
+
    Ecore_Event_Handler *session_hdlr;
    Ecore_Event_Handler *device_hdlr;
 
@@ -399,6 +401,7 @@ Eina_Bool _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev);
 Eina_Bool _ecore_drm2_connectors_changes_apply(Ecore_Drm2_Connector *conn);
 uint32_t _ecore_drm2_connectors_possible_crtcs_get(Ecore_Drm2_Connector *conn);
+Ecore_Drm2_Connector *_ecore_drm2_connectors_find(Ecore_Drm2_Device *dev, uint32_t conn_id);
 
 Eina_Bool _ecore_drm2_displays_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_displays_destroy(Ecore_Drm2_Device *dev);
