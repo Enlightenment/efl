@@ -76,6 +76,25 @@ typedef struct _Ecore_Drm2_Event_Activate
    Eina_Bool active : 1;
 } Ecore_Drm2_Event_Activate;
 
+/* public structure to represent a drmContext used to set vblank & pageflip callbacks */
+typedef struct _Ecore_Drm2_Event_Context
+{
+   int version;
+
+   void (*vblank_handler)(int fd, unsigned int sequence, unsigned int tv_sec,
+                          unsigned int tv_usec, void *user_data);
+
+   void (*page_flip_handler)(int fd, unsigned int sequence, unsigned int tv_sec,
+                             unsigned int tv_usec, void *user_data);
+
+   void (*page_flip_handler2)(int fd, unsigned int sequence, unsigned int tv_sec,
+                              unsigned int tv_usec, unsigned int crtc_id,
+                              void *user_data);
+
+   void (*sequence_handler)(int fd, uint64_t sequence, uint64_t ns,
+                            uint64_t user_data);
+} Ecore_Drm2_Event_Context;
+
 /* public structure to represent an event for display state changes */
 typedef struct _Ecore_Drm2_Event_Display_Changed
 {
@@ -115,6 +134,7 @@ EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *dev);
 EAPI void ecore_drm2_device_window_set(Ecore_Drm2_Device *dev, unsigned int window);
 EAPI Eina_Bool ecore_drm2_device_vblank_supported(Ecore_Drm2_Device *dev);
 EAPI const Eina_List *ecore_drm2_device_displays_get(Ecore_Drm2_Device *dev);
+EAPI int ecore_drm2_device_context_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Event_Context *drmctx);
 
 /* Display API functions */
 EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);

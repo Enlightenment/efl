@@ -519,3 +519,21 @@ ecore_drm2_device_displays_get(Ecore_Drm2_Device *dev)
    EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
    return dev->displays;
 }
+
+EAPI int
+ecore_drm2_device_context_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Event_Context *drmctx)
+{
+   drmEventContext ctx;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, -1);
+
+   memset(&ctx, 0, sizeof(ctx));
+
+   ctx.version = DRM_EVENT_CONTEXT_VERSION;
+   ctx.vblank_handler = drmctx->vblank_handler;
+   ctx.page_flip_handler = drmctx->page_flip_handler;
+   ctx.page_flip_handler2 = drmctx->page_flip_handler2;
+   ctx.sequence_handler = drmctx->sequence_handler;
+
+   return sym_drmHandleEvent(dev->fd, &ctx);
+}
