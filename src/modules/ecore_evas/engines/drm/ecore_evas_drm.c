@@ -46,6 +46,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
 
    Ecore_Drm2_Device *dev;
    Ecore_Drm2_Display *disp;
+   Ecore_Drm2_Event_Context ctx;
 
    Ecore_Fd_Handler *fd_hdlr;
 
@@ -98,7 +99,7 @@ _ecore_evas_drm_init(Ecore_Evas *ee EINA_UNUSED, Ecore_Evas_Engine_Drm_Data *eda
 
    ecore_event_evas_init();
 
-   /* TODO: handlers */
+   /* TODO: handlers for elput_event_device_change */
 
    return _drm_init_count;
 
@@ -867,15 +868,26 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 static Eina_Bool
 _cb_drm_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
-   /* Ecore_Evas *ee; */
-   /* Ecore_Evas_Engine_Drm_Data *edata; */
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+   int ret;
 
-   /* ee = data; */
-   /* edata = ee->engine.data; */
+   ee = data;
+   edata = ee->engine.data;
+
+   ret = ecore_drm2_device_context_event_handle(edata->dev, &edata->ctx);
+   if (ret) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static void
+_cb_drm_pageflip2(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, unsigned int tv_sec EINA_UNUSED, unsigned int tv_usec EINA_UNUSED, unsigned int crtc_id EINA_UNUSED, void *data EINA_UNUSED)
+{
+   /* Ecore_Drm2_Display *disp; */
+
+   /* disp = data; */
 
    /* TODO */
-
-   return EINA_TRUE;
 }
 
 static void
@@ -919,7 +931,6 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    Ecore_Evas *ee;
    Ecore_Evas_Interface_Drm *iface;
    Ecore_Evas_Engine_Drm_Data *edata;
-
    int method = 0;
 
    if (gl)
@@ -999,9 +1010,6 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    evas_output_method_set(ee->evas, method);
    evas_output_viewport_set(ee->evas, x, y, w, h);
 
-   /* TODO: evas_callback_render_flush_post ?? */
-   /* TODO: evas_callback_render_pre ?? */
-
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
                              _cb_drm_render_updates, ee);
@@ -1036,9 +1044,13 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    /* TODO: prop window */
 
    ecore_evas_data_set(ee, "device", edata->dev);
-   ecore_evas_done(ee, EINA_FALSE);
 
-   /* TODO: finish */
+   /* FIXME: Call ecore_evas_done when we have ee->prop.window */
+   /* ecore_evas_done(ee, EINA_FALSE); */
+
+   /* TODO: finish: (drm2_device_calibrate, etc) */
+   memset(&edata->ctx, 0, sizeof(edata->ctx));
+   edata->ctx.page_flip_handler2 = _cb_drm_pageflip2;
 
    edata->fd_hdlr =
      ecore_main_fd_handler_add(ecore_drm2_device_fd_get(edata->dev),
