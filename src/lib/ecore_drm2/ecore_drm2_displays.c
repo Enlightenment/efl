@@ -1017,8 +1017,6 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
         conn_pstate->aspect.value = mode->aspect_ratio;
         conn_pstate->changes |= ECORE_DRM2_CONNECTOR_STATE_ASPECT;
      }
-
-   /* FIXME: apply changes */
 }
 
 EAPI Eina_Bool
@@ -1084,8 +1082,6 @@ ecore_drm2_display_dpms_set(Ecore_Drm2_Display *disp, uint64_t level)
    pstate = disp->conn->state.pending;
    pstate->dpms.value = level;
    pstate->changes |= ECORE_DRM2_CONNECTOR_STATE_DPMS;
-
-   /* FIXME: apply changes */
 }
 
 EAPI Eina_Bool
@@ -1111,8 +1107,6 @@ ecore_drm2_display_enabled_set(Ecore_Drm2_Display *disp, Eina_Bool enabled)
 
    pstate->active.value = enabled;
    pstate->changes |= ECORE_DRM2_CRTC_STATE_ACTIVE;
-
-   /* FIXME: apply changes */
 }
 
 EAPI char *
@@ -1195,8 +1189,6 @@ ecore_drm2_display_primary_set(Ecore_Drm2_Display *disp, Eina_Bool primary)
 
    pstate->primary = primary;
    pstate->changes |= ECORE_DRM2_DISPLAY_STATE_PRIMARY;
-
-   /* FIXME: apply changes */
 }
 
 EAPI const Eina_List *
@@ -1264,8 +1256,6 @@ ecore_drm2_display_rotation_set(Ecore_Drm2_Display *disp, uint64_t rotation)
 
    pstate->rotation = rotation;
    pstate->changes |= ECORE_DRM2_DISPLAY_STATE_ROTATION;
-
-   /* FIXME: apply changes */
 }
 
 EAPI Ecore_Drm2_Crtc *
