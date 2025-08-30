@@ -396,6 +396,7 @@ Eina_Bool _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev);
 Eina_Bool _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc);
 Eina_Bool _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc);
+Eina_Bool _ecore_drm2_crtcs_position_set(Ecore_Drm2_Crtc *crtc, uint32_t conn_id, int x, int y);
 
 Eina_Bool _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev);
@@ -450,5 +451,6 @@ extern int (*sym_drmModeConnectorSetProperty)(int fd, uint32_t connector_id, uin
 extern int (*sym_drmModeSetPlane)(int fd, uint32_t plane_id, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, int32_t crtc_x, int32_t crtc_y, uint32_t crtc_w, uint32_t crtc_h, uint32_t src_x, uint32_t src_y, uint32_t src_w, uint32_t src_h);
 extern bool (*sym_drmModeFormatModifierBlobIterNext)(const drmModePropertyBlobRes *blob, drmModeFormatModifierIterator *iter);
 extern int (*sym_drmHandleEvent)(int fd, drmEventContextPtr evctx);
+extern int (*sym_drmModeSetCrtc)(int fd, uint32_t crtcId, uint32_t bufferId, uint32_t x, uint32_t y, uint32_t *connectors, int count, drmModeModeInfoPtr mode);
 
 #endif

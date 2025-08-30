@@ -47,6 +47,7 @@ int (*sym_drmModeConnectorSetProperty)(int fd, uint32_t connector_id, uint32_t p
 int (*sym_drmModeSetPlane)(int fd, uint32_t plane_id, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, int32_t crtc_x, int32_t crtc_y, uint32_t crtc_w, uint32_t crtc_h, uint32_t src_x, uint32_t src_y, uint32_t src_w, uint32_t src_h);
 bool (*sym_drmModeFormatModifierBlobIterNext)(const drmModePropertyBlobRes *blob, drmModeFormatModifierIterator *iter);
 int (*sym_drmHandleEvent)(int fd, drmEventContextPtr evctx);
+int (*sym_drmModeSetCrtc)(int fd, uint32_t crtcId, uint32_t bufferId, uint32_t x, uint32_t y, uint32_t *connectors, int count, drmModeModeInfoPtr mode);
 
 EAPI int ECORE_DRM2_EVENT_ACTIVATE = -1;
 EAPI int ECORE_DRM2_EVENT_DISPLAY_CHANGED = -1;
@@ -124,6 +125,7 @@ _ecore_drm2_link(void)
         SYM(_drm_lib, drmModeSetPlane);
         SYM(_drm_lib, drmModeFormatModifierBlobIterNext);
         SYM(_drm_lib, drmHandleEvent);
+        SYM(_drm_lib, drmModeSetCrtc);
 
         if (fail)
           {
