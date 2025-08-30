@@ -311,6 +311,30 @@ err:
 }
 
 Eina_Bool
+_ecore_drm2_crtcs_position_set(Ecore_Drm2_Crtc *crtc, uint32_t conn_id, int x, int y)
+{
+   drmModeCrtcPtr cptr;
+   int ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(crtc, EINA_FALSE);
+
+   cptr = sym_drmModeGetCrtc(crtc->fd, crtc->id);
+   if (!cptr) return EINA_FALSE;
+
+   ret = sym_drmModeSetCrtc(crtc->fd, crtc->id, cptr->buffer_id, x, y,
+                            &conn_id, 1, &cptr->mode);
+   if (ret)
+     {
+        ERR("Failed to set Crtc Position: %m");
+        sym_drmModeFreeCrtc(cptr);
+        return EINA_FALSE;
+     }
+
+   sym_drmModeFreeCrtc(cptr);
+   return EINA_TRUE;
+}
+
+Eina_Bool
 _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc)
 {
    Ecore_Drm2_Crtc_State *cstate, *pstate;
