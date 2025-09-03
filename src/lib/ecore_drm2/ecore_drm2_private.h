@@ -237,6 +237,7 @@ struct _Ecore_Drm2_Fb
 
    uint32_t id, handles[4];
    uint32_t strides[4], sizes[4];
+   uint64_t modifier;
 
    void *mmap, *bo;
    void *map_data;
@@ -443,6 +444,7 @@ extern void (*sym_drmModeAtomicSetCursor)(drmModeAtomicReqPtr req, int cursor);
 extern int (*sym_drmWaitVBlank)(int fd, drmVBlank *vbl);
 extern int (*sym_drmModeAddFB)(int fd, uint32_t width, uint32_t height, uint8_t depth, uint8_t bpp, uint32_t pitch, uint32_t bo_handle, uint32_t *buf_id);
 extern int (*sym_drmModeAddFB2)(int fd, uint32_t width, uint32_t height, uint32_t pixel_format, uint32_t bo_handles[4], uint32_t pitches[4], uint32_t offsets[4], uint32_t *buf_id, uint32_t flags);
+extern int (*sym_drmModeAddFB2WithModifiers)(int fd, uint32_t width, uint32_t height, uint32_t pixel_format, const uint32_t bo_handles[4], const uint32_t pitches[4], const uint32_t offsets[4], const uint64_t modifier[4], uint32_t *buf_id, uint32_t flags);
 extern int (*sym_drmModeRmFB)(int fd, uint32_t bufferId);
 extern int (*sym_drmModePageFlip)(int fd, uint32_t crtc_id, uint32_t fb_id, uint32_t flags, void *user_data);
 extern int (*sym_drmModeDirtyFB)(int fd, uint32_t bufferId, drmModeClipPtr clips, uint32_t num_clips);
