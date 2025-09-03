@@ -2,13 +2,30 @@
 #include <gbm.h>
 
 static Eina_Bool
-_ecore_drm2_fb_add(Ecore_Drm2_Fb *fb)
+_ecore_drm2_fb_add(Ecore_Drm2_Fb *fb, Eina_Bool use_mods)
 {
    uint32_t offsets[4] = {0};
    int ret;
 
-   ret = sym_drmModeAddFB2(fb->fd, fb->w, fb->h, fb->format, fb->handles,
-			   fb->strides, offsets, &fb->id, 0);
+   if (use_mods && fb->modifier != DRM_FORMAT_MOD_INVALID)
+     {
+        uint64_t mods[4] = {};
+        size_t i = 0;
+
+        for (; i < EINA_C_ARRAY_LENGTH(mods) && fb->handles[i]; i++)
+          mods[i] = fb->modifier;
+
+        ret =
+          sym_drmModeAddFB2WithModifiers(fb->fd, fb->w, fb->h, fb->format,
+                                         fb->handles, fb->strides, offsets,
+                                         mods, &fb->id, DRM_MODE_FB_MODIFIERS);
+     }
+   else
+     {
+        ret = sym_drmModeAddFB2(fb->fd, fb->w, fb->h, fb->format, fb->handles,
+                                fb->strides, offsets, &fb->id, 0);
+     }
+
    if (ret) return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -105,6 +122,7 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
 	fb->handles[0] = carg.handle;
 	fb->strides[0] = carg.pitch;
 	fb->sizes[0] = carg.size;
+        fb->modifier = DRM_FORMAT_MOD_INVALID;
      }
    else
      {
@@ -113,7 +131,7 @@ ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, i
 	fb->sizes[0] = fb->strides[0] * fb->h;
      }
 
-   if (!_ecore_drm2_fb_add(fb))
+   if (!_ecore_drm2_fb_add(fb, dev->gbm_mods))
      {
 	ret =
 	  sym_drmModeAddFB(dev->fd, width, height, depth, bpp,
