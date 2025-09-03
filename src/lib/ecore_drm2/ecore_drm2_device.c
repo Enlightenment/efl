@@ -210,8 +210,8 @@ _ecore_drm2_device_kms_caps_get(Ecore_Drm2_Device *dev)
    dev->atomic = ((ret == 0) && (cap == 1));
 
    /* test if gbm can do modifiers */
-   /* ret = sym_drmGetCap(dev->fd, DRM_CAP_ADDFB2_MODIFIERS, &cap); */
-   /* if (ret == 0) dev->gbm_mods = cap; */
+   ret = sym_drmGetCap(dev->fd, DRM_CAP_ADDFB2_MODIFIERS, &cap);
+   if (ret == 0) dev->gbm_mods = cap;
 
    /* set writeback connector support */
    sym_drmSetClientCap(dev->fd, DRM_CLIENT_CAP_WRITEBACK_CONNECTORS, 1);

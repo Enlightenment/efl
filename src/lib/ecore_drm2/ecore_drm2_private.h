@@ -385,7 +385,7 @@ struct _Ecore_Drm2_Device
    Eina_List *planes;
 
    Eina_Bool atomic : 1;
-   /* Eina_Bool gbm_mods : 1; */
+   Eina_Bool gbm_mods : 1;
    Eina_Bool aspect_ratio : 1;
    Eina_Bool hw_cursor : 1;
    Eina_Bool has_vblank : 1;
