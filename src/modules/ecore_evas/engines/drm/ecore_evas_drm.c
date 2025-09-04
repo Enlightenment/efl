@@ -151,9 +151,9 @@ _drm_avoid_damage_do(Ecore_Evas *ee, int on)
    if (ee->prop.avoid_damage)
      {
         if (ECORE_EVAS_PORTRAIT(ee))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+          evas_damage_rectangle_add(ee->evas, ee->x, ee->y, ee->w, ee->h);
         else
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+          evas_damage_rectangle_add(ee->evas, ee->y, ee->x, ee->h, ee->w);
      }
 }
 
@@ -173,7 +173,10 @@ _drm_alpha_do(Ecore_Evas *ee, int on)
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
 
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+   if (ECORE_EVAS_PORTRAIT(ee))
+     evas_damage_rectangle_add(ee->evas, ee->x, ee->y, ee->w, ee->h);
+   else
+     evas_damage_rectangle_add(ee->evas, ee->y, ee->x, ee->h, ee->w);
 }
 
 static void
@@ -192,7 +195,10 @@ _drm_transparent_do(Ecore_Evas *ee, int on)
    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
      ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
 
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+   if (ECORE_EVAS_PORTRAIT(ee))
+     evas_damage_rectangle_add(ee->evas, ee->x, ee->y, ee->w, ee->h);
+   else
+     evas_damage_rectangle_add(ee->evas, ee->y, ee->x, ee->h, ee->w);
 }
 
 static void
@@ -223,44 +229,46 @@ _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   ee->expecting_resize.w = ee->h;
                   ee->expecting_resize.h = ee->w;
                   evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
+                  evas_output_viewport_set(ee->evas, ee->x, ee->y, ee->req.h, ee->req.w);
                }
              else
                {
                   if (PORTRAIT_CHECK(rotation))
                     {
                        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
+                       evas_output_viewport_set(ee->evas, ee->x, ee->y, ee->req.w, ee->req.h);
                     }
                   else
                     {
                        evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
-                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
+                       evas_output_viewport_set(ee->evas, ee->y, ee->x, ee->req.h, ee->req.w);
                     }
                   if (ee->func.fn_resize) ee->func.fn_resize(ee);
                }
              if (PORTRAIT_CHECK(rotation))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+               evas_damage_rectangle_add(ee->evas, ee->x, ee->y, ee->req.w, ee->req.h);
              else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
+               evas_damage_rectangle_add(ee->evas, ee->y, ee->x, ee->req.h, ee->req.w);
           }
         else
           {
              if (PORTRAIT_CHECK(rotation))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+                  evas_output_viewport_set(ee->evas, ee->x, ee->y, ee->w, ee->h);
                }
              else
                {
                   evas_output_size_set(ee->evas, ee->h, ee->w);
-                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+                  evas_output_viewport_set(ee->evas, ee->y, ee->x, ee->h, ee->w);
                }
+
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
              if (PORTRAIT_CHECK(rotation))
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+               evas_damage_rectangle_add(ee->evas, ee->x, ee->y, ee->w, ee->h);
              else
-               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+               evas_damage_rectangle_add(ee->evas, ee->y, ee->x, ee->h, ee->w);
           }
         ecore_evas_size_min_get(ee, &minw, &minh);
         ecore_evas_size_max_get(ee, &maxw, &maxh);
@@ -279,12 +287,15 @@ _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
           ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
 
         ee->rotation = rotation;
+
         /* TODO: mouse_move_process ?? */
+
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
+
         if (PORTRAIT_CHECK(rotation))
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+          evas_damage_rectangle_add(ee->evas, ee->x, ee->y, ee->w, ee->h);
         else
-          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+          evas_damage_rectangle_add(ee->evas, ee->y, ee->x, ee->h, ee->w);
      }
 }
 
@@ -394,8 +405,18 @@ _drm_resize(Ecore_Evas *ee, int w, int h)
    ee->h = h;
    edata->w = w;
    edata->h = h;
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, ee->x, ee->y, w, h);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     {
+        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
+        evas_output_viewport_set(ee->evas, ee->x, ee->y, ee->req.w, ee->req.h);
+     }
+   else
+     {
+        evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+        evas_output_viewport_set(ee->evas, ee->y, ee->x, ee->req.h, ee->req.w);
+     }
+
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
@@ -573,9 +594,44 @@ _drm_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 static void
 _drm_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
+   Ecore_Evas_Engine_Drm_Data *edata;
+   Eina_Bool resized = EINA_FALSE;
+
+   edata = ee->engine.data;
+
    if (ee->prop.fullscreen == on) return;
    ee->prop.fullscreen = on;
-   /* TODO */
+
+   if (on)
+     {
+        /* TODO: get output size */
+     }
+   else
+     {
+        if ((edata->w != ee->w) || (edata->h != ee->h))
+          resized = EINA_TRUE;
+        ee->w = edata->w;
+        ee->h = edata->h;
+     }
+
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
+
+   evas_output_size_set(ee->evas, ee->w, ee->h);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     {
+        evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
+        evas_output_viewport_set(ee->evas, ee->x, ee->y, ee->req.w, ee->req.h);
+     }
+   else
+     {
+        evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+        evas_output_viewport_set(ee->evas, ee->y, ee->x, ee->req.h, ee->req.w);
+     }
+
+   if (resized)
+     if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
 static void
@@ -647,7 +703,7 @@ _drm_aspect_set(Ecore_Evas *ee, double aspect)
    ee->prop.aspect = aspect;
 }
 
-/* TODO */
+/* TODO: use relative mode for these */
 //screen_geom
 //screen_dpi
 
@@ -705,6 +761,7 @@ _drm_animator_register(Ecore_Evas *ee)
 
    if (!edata->blanktime)
      {
+        /* FIXME: Account for multiple outputs ? */
         ret = ecore_drm2_display_blanktime_get(edata->disp, 1, &sec, &usec);
         if (ret)
           {
@@ -718,6 +775,7 @@ _drm_animator_register(Ecore_Evas *ee)
 
    if ((!edata->ticking) || (ee->in_async_render))
      {
+        /* FIXME: Account for multiple outputs ? */
         ret = ecore_drm2_display_blanktime_get(edata->disp, 0, &sec, &usec);
         if (ret)
           {
@@ -891,6 +949,18 @@ _cb_drm_pageflip2(int fd EINA_UNUSED, unsigned int seq EINA_UNUSED, unsigned int
 }
 
 static void
+_cb_drm_render_flush_post(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   ee = data;
+   edata = ee->engine.data;
+
+   /* TODO: flip buffers */
+}
+
+static void
 _cb_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
 {
    Ecore_Evas *ee;
@@ -920,9 +990,7 @@ _cb_drm_render_updates(void *data, Evas *evas EINA_UNUSED, void *event)
      _drm_avoid_damage_do(ee, ee->delayed.avoid_damage);
 
    if (ee->delayed.rotation_changed)
-     {
-        ee->delayed.rotation_changed = EINA_FALSE;
-     }
+     ee->delayed.rotation_changed = EINA_FALSE;
 }
 
 static Ecore_Evas *
@@ -1010,6 +1078,8 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    evas_output_method_set(ee->evas, method);
    evas_output_viewport_set(ee->evas, x, y, w, h);
 
+   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
+                           _cb_drm_render_flush_post, ee);
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
                              _cb_drm_render_updates, ee);
@@ -1017,7 +1087,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
 #ifdef BUILD_ECORE_EVAS_GL_DRM
    if (gl)
      {
-        
+        /* TODO */
      }
    else
 #endif
