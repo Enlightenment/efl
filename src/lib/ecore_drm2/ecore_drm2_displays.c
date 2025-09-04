@@ -494,7 +494,7 @@ _ecore_drm2_display_state_thread(void *data EINA_UNUSED, Ecore_Thread *thread EI
 
    while (!ecore_thread_check(thread))
      {
-        msg = eina_thread_queue_poll(thq, &ref);
+        msg = eina_thread_queue_wait(thq, &ref);
         if (msg)
           {
              switch (msg->code)
