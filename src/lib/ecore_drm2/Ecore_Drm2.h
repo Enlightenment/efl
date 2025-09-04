@@ -165,6 +165,7 @@ EAPI void ecore_drm2_display_relative_mode_set(Ecore_Drm2_Display *disp, Ecore_D
 EAPI void ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relative);
 EAPI void ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi);
 EAPI Ecore_Drm2_Display *ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y);
+EAPI Eina_List *ecore_drm2_displays_find(Ecore_Drm2_Device *dev, int x, int  y, int w, int h);
 EAPI void ecore_drm2_display_user_data_set(Ecore_Drm2_Display *disp, void *data);
 EAPI void *ecore_drm2_display_user_data_get(Ecore_Drm2_Display *disp);
 EAPI Eina_Bool ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int seq, long *sec, long *usec);

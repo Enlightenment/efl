@@ -3,6 +3,9 @@
 #define INSIDE(x, y, xx, yy, ww, hh) \
    (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && \
        ((x) >= (xx)) && ((y) >= (yy)))
+#define CONTAINS(x, y, w, h, xx, yy, ww, hh) \
+     (((xx) >= (x)) && (((x) + (w)) >= ((xx) + (ww))) && ((yy) >= (y)) && \
+         (((y) + (h)) >= ((yy) + (hh))))
 
 #define EDID_DESCRIPTOR_ALPHANUMERIC_DATA_STRING 0xfe
 #define EDID_DESCRIPTOR_DISPLAY_PRODUCT_NAME 0xfc
@@ -1369,6 +1372,29 @@ ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y)
      }
 
    return NULL;
+}
+
+EAPI Eina_List *
+ecore_drm2_displays_find(Ecore_Drm2_Device *dev, int x, int  y, int w, int h)
+{
+   Eina_List *ret = NULL, *l;
+   Ecore_Drm2_Display *disp;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, NULL);
+
+   EINA_LIST_FOREACH(dev->displays, l, disp)
+     {
+        int ox, oy, ow, oh;
+
+	if (!disp->crtc) continue;
+        if (!disp->crtc->state.current->active.value) continue;
+
+        ecore_drm2_display_info_get(disp, &ox, &oy, &ow, &oh, NULL);
+        if (CONTAINS(x, y, w, h, ox, oy, ow, oh))
+          ret = eina_list_append(ret, disp);
+     }
+
+   return ret;
 }
 
 EAPI void
