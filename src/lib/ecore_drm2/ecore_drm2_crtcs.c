@@ -388,3 +388,10 @@ ecore_drm2_crtc_geometry_get(Ecore_Drm2_Crtc *crtc, int *x, int *y, int *w, int 
 
    sym_drmModeFreeCrtc(cptr);
 }
+
+EAPI uint32_t
+ecore_drm2_crtc_id_get(Ecore_Drm2_Crtc *crtc)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(crtc, 0);
+   return crtc->id;
+}

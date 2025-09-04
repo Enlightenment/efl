@@ -174,6 +174,7 @@ EAPI void ecore_drm2_display_gamma_set(Ecore_Drm2_Display *disp, uint16_t size, 
 
 /* Crtc API functions */
 EAPI void ecore_drm2_crtc_geometry_get(Ecore_Drm2_Crtc *crtc, int *x, int *y, int *w, int *h);
+EAPI uint32_t ecore_drm2_crtc_id_get(Ecore_Drm2_Crtc *crtc);
 
 /* Framebuffer API functions */
 EAPI Ecore_Drm2_Fb *ecore_drm2_fb_create(Ecore_Drm2_Device *dev, int width, int height, int depth, int bpp, unsigned int format, void *bo);
