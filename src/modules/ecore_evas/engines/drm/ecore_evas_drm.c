@@ -924,7 +924,7 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 };
 
 static Eina_Bool
-_cb_drm_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+_cb_drm_event(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Ecore_Evas_Engine_Drm_Data *edata;
