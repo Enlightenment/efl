@@ -365,3 +365,26 @@ _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc)
 
    return EINA_TRUE;
 }
+
+EAPI void
+ecore_drm2_crtc_geometry_get(Ecore_Drm2_Crtc *crtc, int *x, int *y, int *w, int *h)
+{
+   drmModeCrtcPtr cptr;
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN(crtc);
+
+   cptr = sym_drmModeGetCrtc(crtc->fd, crtc->id);
+   if (!cptr) return;
+
+   if (x) *x = cptr->x;
+   if (y) *y = cptr->y;
+   if (w) *w = cptr->width;
+   if (h) *h = cptr->height;
+
+   sym_drmModeFreeCrtc(cptr);
+}
