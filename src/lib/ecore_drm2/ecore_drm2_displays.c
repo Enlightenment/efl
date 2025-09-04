@@ -1213,9 +1213,11 @@ ecore_drm2_display_info_get(Ecore_Drm2_Display *disp, int *x, int *y, int *w, in
    if (refresh) *refresh = 0;
 
    EINA_SAFETY_ON_NULL_RETURN(disp);
-   EINA_SAFETY_ON_TRUE_RETURN(!disp->state.current->mode);
 
    cstate = disp->state.current;
+
+   EINA_SAFETY_ON_NULL_RETURN(cstate);
+   EINA_SAFETY_ON_TRUE_RETURN(!cstate->mode);
 
    if (x) *x = cstate->x;
    if (y) *y = cstate->y;
