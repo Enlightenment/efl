@@ -311,26 +311,22 @@ err:
 }
 
 Eina_Bool
-_ecore_drm2_crtcs_position_set(Ecore_Drm2_Crtc *crtc, uint32_t conn_id, int x, int y)
+_ecore_drm2_crtcs_position_set(Ecore_Drm2_Crtc *crtc, int x, int y)
 {
-   drmModeCrtcPtr cptr;
-   int ret;
+   Ecore_Drm2_Crtc_State *cstate, *pstate;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(crtc, EINA_FALSE);
 
-   cptr = sym_drmModeGetCrtc(crtc->fd, crtc->id);
-   if (!cptr) return EINA_FALSE;
+   cstate = crtc->state.current;
+   pstate = crtc->state.pending;
 
-   ret = sym_drmModeSetCrtc(crtc->fd, crtc->id, cptr->buffer_id, x, y,
-                            &conn_id, 1, &cptr->mode);
-   if (ret)
+   if ((cstate->x != x) || (cstate->y != y))
      {
-        ERR("Failed to set Crtc Position: %m");
-        sym_drmModeFreeCrtc(cptr);
-        return EINA_FALSE;
+        pstate->x = x;
+        pstate->y = y;
+        pstate->changes |= ECORE_DRM2_CRTC_STATE_POSITION;
      }
 
-   sym_drmModeFreeCrtc(cptr);
    return EINA_TRUE;
 }
 
@@ -357,6 +353,12 @@ _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc)
           pstate->changes &= ~ECORE_DRM2_CRTC_STATE_ACTIVE;
      }
 
+   if (pstate->changes & ECORE_DRM2_CRTC_STATE_POSITION)
+     {
+        /* No-op change */
+        pstate->changes &= ~ECORE_DRM2_CRTC_STATE_POSITION;
+     }
+
    /* copy pending state to current on success */
    memcpy(cstate, pstate, sizeof(Ecore_Drm2_Crtc_State));
 
@@ -370,6 +372,7 @@ EAPI void
 ecore_drm2_crtc_geometry_get(Ecore_Drm2_Crtc *crtc, int *x, int *y, int *w, int *h)
 {
    drmModeCrtcPtr cptr;
+   Ecore_Drm2_Crtc_State *cstate;
 
    if (x) *x = 0;
    if (y) *y = 0;
@@ -379,10 +382,16 @@ ecore_drm2_crtc_geometry_get(Ecore_Drm2_Crtc *crtc, int *x, int *y, int *w, int 
    EINA_SAFETY_ON_NULL_RETURN(crtc);
 
    cptr = sym_drmModeGetCrtc(crtc->fd, crtc->id);
-   if (!cptr) return;
+   if (!cptr)
+     {
+        ERR("Could Not Get Crtc: %d %m", crtc->id);
+        return;
+     }
 
-   if (x) *x = cptr->x;
-   if (y) *y = cptr->y;
+   cstate = crtc->state.current;
+
+   if (x) *x = cstate->x;
+   if (y) *y = cstate->y;
    if (w) *w = cptr->width;
    if (h) *h = cptr->height;
 

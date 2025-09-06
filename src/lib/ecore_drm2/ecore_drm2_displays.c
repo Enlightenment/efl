@@ -1513,14 +1513,12 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_PRIMARY)
      {
 	/* No-op change */
-        cstate->primary = pstate->primary;
 	pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_PRIMARY;
      }
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_POSITION)
      {
-        if (_ecore_drm2_crtcs_position_set(disp->crtc, disp->conn->id,
-                                           pstate->x, pstate->y))
+        if (_ecore_drm2_crtcs_position_set(disp->crtc, pstate->x, pstate->y))
           pstate->changes &= ~ECORE_DRM2_DISPLAY_STATE_POSITION;
      }
 

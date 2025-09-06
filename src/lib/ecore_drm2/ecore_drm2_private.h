@@ -88,6 +88,7 @@ typedef enum _Ecore_Drm2_Crtc_State_Changes
 {
    ECORE_DRM2_CRTC_STATE_ACTIVE = (1 << 0),
    ECORE_DRM2_CRTC_STATE_MODE = (1 << 1),
+   ECORE_DRM2_CRTC_STATE_POSITION = (1 << 2),
 } Ecore_Drm2_Crtc_State_Changes;
 
 typedef enum _Ecore_Drm2_Plane_State_Changes
@@ -163,7 +164,7 @@ typedef struct _Ecore_Drm2_Connector_State
 typedef struct _Ecore_Drm2_Crtc_State
 {
    uint32_t obj_id, changes;
-   /* int index; */
+   int x, y;
    Ecore_Drm2_Atomic_Property active;
    Ecore_Drm2_Atomic_Blob mode;
 
@@ -397,7 +398,7 @@ Eina_Bool _ecore_drm2_crtcs_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_crtcs_destroy(Ecore_Drm2_Device *dev);
 Eina_Bool _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc);
 Eina_Bool _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc);
-Eina_Bool _ecore_drm2_crtcs_position_set(Ecore_Drm2_Crtc *crtc, uint32_t conn_id, int x, int y);
+Eina_Bool _ecore_drm2_crtcs_position_set(Ecore_Drm2_Crtc *crtc, int x, int y);
 
 Eina_Bool _ecore_drm2_connectors_create(Ecore_Drm2_Device *dev);
 void _ecore_drm2_connectors_destroy(Ecore_Drm2_Device *dev);
