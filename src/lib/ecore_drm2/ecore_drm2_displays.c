@@ -961,25 +961,13 @@ ecore_drm2_display_model_get(Ecore_Drm2_Display *disp)
 }
 
 EAPI void
-ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode, int x, int y)
+ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *mode)
 {
-   Ecore_Drm2_Display_State *cstate, *pstate;
    Ecore_Drm2_Crtc_State *crtc_cstate, *crtc_pstate;
    Ecore_Drm2_Connector_State *conn_cstate, *conn_pstate;
 
    EINA_SAFETY_ON_NULL_RETURN(disp);
-   EINA_SAFETY_ON_NULL_RETURN(mode);
    EINA_SAFETY_ON_NULL_RETURN(disp->crtc);
-
-   cstate = disp->state.current;
-   pstate = disp->state.pending;
-
-   if ((cstate->x != x) || (cstate->y != y))
-     {
-        pstate->x = x;
-        pstate->y = y;
-        pstate->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
-     }
 
    crtc_cstate = disp->crtc->state.current;
    crtc_pstate = disp->crtc->state.pending;
@@ -1001,13 +989,25 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
 	  }
      }
 
-   if (crtc_cstate->mode.value != mode->id)
+   if (mode)
      {
-	if (mode)
-	  crtc_pstate->active.value = 1;
-	else
-	  crtc_pstate->active.value = 0;
+        if (crtc_cstate->active.value != 1)
+          {
+             crtc_pstate->active.value = 1;
+             crtc_pstate->changes |= ECORE_DRM2_CRTC_STATE_ACTIVE;
+          }
+     }
+   else
+     {
+        if (crtc_cstate->active.value != 0)
+          {
+             crtc_pstate->active.value = 0;
+             crtc_pstate->changes |= ECORE_DRM2_CRTC_STATE_ACTIVE;
+          }
+     }
 
+   if ((mode) && (crtc_cstate->mode.value != mode->id))
+     {
         crtc_pstate->mode.value = mode->id;
         crtc_pstate->changes |= ECORE_DRM2_CRTC_STATE_MODE;
      }
@@ -1015,7 +1015,7 @@ ecore_drm2_display_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Display_Mode *m
    conn_cstate = disp->conn->state.current;
    conn_pstate = disp->conn->state.pending;
 
-   if (conn_cstate->aspect.value != mode->aspect_ratio)
+   if ((mode) && (conn_cstate->aspect.value != mode->aspect_ratio))
      {
         conn_pstate->aspect.value = mode->aspect_ratio;
         conn_pstate->changes |= ECORE_DRM2_CONNECTOR_STATE_ASPECT;
