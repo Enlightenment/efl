@@ -1346,6 +1346,25 @@ ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relativ
    eina_stringshare_replace(&disp->relative.to, relative);
 }
 
+EAPI Ecore_Drm2_Display *
+ecore_drm2_display_relative_to_get(Ecore_Drm2_Display *disp)
+{
+   Ecore_Drm2_Display *ret;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, NULL);
+
+   if (!disp->relative.to) return NULL;
+
+   EINA_LIST_FOREACH(disp->dev->displays, l, ret)
+     {
+        if (!strcmp(disp->relative.to, ret->name))
+          return ret;
+     }
+
+   return NULL;
+}
+
 EAPI void
 ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi)
 {

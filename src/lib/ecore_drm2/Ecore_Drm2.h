@@ -164,6 +164,7 @@ EAPI int ecore_drm2_display_supported_rotations_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_relative_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Relative_Mode mode);
 EAPI Ecore_Drm2_Relative_Mode ecore_drm2_display_relative_mode_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relative);
+EAPI Ecore_Drm2_Display *ecore_drm2_display_relative_to_get(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_dpi_get(Ecore_Drm2_Display *disp, int *xdpi, int *ydpi);
 EAPI Ecore_Drm2_Display *ecore_drm2_display_find(Ecore_Drm2_Device *dev, int x, int y);
 EAPI Eina_List *ecore_drm2_displays_find(Ecore_Drm2_Device *dev, int x, int  y, int w, int h);
