@@ -1332,6 +1332,13 @@ ecore_drm2_display_relative_mode_set(Ecore_Drm2_Display *disp, Ecore_Drm2_Relati
    disp->relative.mode = mode;
 }
 
+EAPI Ecore_Drm2_Relative_Mode
+ecore_drm2_display_relative_mode_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, ECORE_DRM2_RELATIVE_MODE_UNKNOWN);
+   return disp->relative.mode;
+}
+
 EAPI void
 ecore_drm2_display_relative_to_set(Ecore_Drm2_Display *disp, const char *relative)
 {
