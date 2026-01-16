@@ -1588,3 +1588,20 @@ ecore_drm2_display_gamma_set(Ecore_Drm2_Display *disp, uint16_t size, uint16_t *
    pstate->gamma.b = blue;
    pstate->changes |= ECORE_DRM2_DISPLAY_STATE_GAMMA;
 }
+
+EAPI void
+ecore_drm2_display_position_set(Ecore_Drm2_Display *disp, int x, int y)
+{
+   Ecore_Drm2_Display_State *cstate, *pstate;
+
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+
+   cstate = disp->state.current;
+   pstate = disp->state.pending;
+
+   if ((cstate->x == x) && (cstate->y == y)) return;
+
+   pstate->x = x;
+   pstate->y = y;
+   pstate->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
+}
