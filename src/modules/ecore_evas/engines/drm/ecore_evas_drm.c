@@ -1038,14 +1038,6 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    if (gl) ee->driver = "gl_drm";
    else ee->driver = "drm";
 
-   ee->engine.func->fn_animator_register = NULL;
-   ee->engine.func->fn_animator_unregister = NULL;
-   if (ecore_drm2_device_vblank_supported(edata->dev))
-     {
-        ee->engine.func->fn_animator_register = _drm_animator_register;
-        ee->engine.func->fn_animator_unregister = _drm_animator_unregister;
-     }
-
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
    ee->engine.data = edata;
 
@@ -1068,6 +1060,14 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    ee->can_async_render = !gl;
    if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
      ee->can_async_render = 0;
+
+   ee->engine.func->fn_animator_register = NULL;
+   ee->engine.func->fn_animator_unregister = NULL;
+   if (ecore_drm2_device_vblank_supported(edata->dev))
+     {
+        ee->engine.func->fn_animator_register = _drm_animator_register;
+        ee->engine.func->fn_animator_unregister = _drm_animator_unregister;
+     }
 
    if (!ecore_evas_evas_new(ee, w, h))
      {
