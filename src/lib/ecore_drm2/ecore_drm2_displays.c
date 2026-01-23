@@ -134,6 +134,7 @@ _ecore_drm2_display_edid_get(Ecore_Drm2_Display *disp)
    int ret = 0;
 
    cstate = disp->conn->state.current;
+   if (!cstate) return;
 
    ret = _ecore_drm2_display_edid_parse(disp, cstate->edid.data, cstate->edid.len);
    if (!ret)
