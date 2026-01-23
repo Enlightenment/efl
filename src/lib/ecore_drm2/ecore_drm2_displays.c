@@ -1508,7 +1508,9 @@ ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(disp->conn, EINA_FALSE);
 
    cstate = disp->state.current;
+
    pstate = disp->state.pending;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pstate, EINA_FALSE);
 
    if (pstate->changes & ECORE_DRM2_DISPLAY_STATE_GAMMA)
      {
