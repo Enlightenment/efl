@@ -276,7 +276,7 @@ _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc)
 
    sym_drmModeAtomicSetCursor(req, 0);
 
-   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->mode.id,
+   ret = sym_drmModeAtomicAddProperty(req, crtc->id, cstate->mode.id,
 				      pstate->mode.value);
    if (ret < 0)
      {
@@ -285,7 +285,7 @@ _ecore_drm2_crtcs_mode_set(Ecore_Drm2_Crtc *crtc)
 	goto err;
      }
 
-   ret = sym_drmModeAtomicAddProperty(req, cstate->obj_id, cstate->active.id,
+   ret = sym_drmModeAtomicAddProperty(req, crtc->id, cstate->active.id,
 				      pstate->active.value);
    if (ret < 0)
      {
@@ -362,7 +362,7 @@ _ecore_drm2_crtcs_changes_apply(Ecore_Drm2_Crtc *crtc)
    /* copy pending state to current on success */
    memcpy(cstate, pstate, sizeof(Ecore_Drm2_Crtc_State));
 
-   /* reset pendig state */
+   /* reset pending state */
    memset(pstate, 0, sizeof(Ecore_Drm2_Crtc_State));
 
    return EINA_TRUE;
