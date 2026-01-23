@@ -248,3 +248,10 @@ ecore_drm2_fb_unmap(Ecore_Drm2_Fb *fb)
    EINA_SAFETY_ON_NULL_RETURN(fb);
    _ecore_drm2_fb_unmap(fb);
 }
+
+EAPI uint32_t
+ecore_drm2_fb_id_get(Ecore_Drm2_Fb *fb)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fb, 0);
+   return fb->id;
+}

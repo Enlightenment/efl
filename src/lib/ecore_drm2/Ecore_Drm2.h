@@ -189,6 +189,7 @@ EAPI Eina_Bool ecore_drm2_fb_map(Ecore_Drm2_Fb *fb);
 EAPI void ecore_drm2_fb_destroy(Ecore_Drm2_Fb *fb);
 EAPI void *ecore_drm2_fb_map_get(Ecore_Drm2_Fb *fb);
 EAPI void ecore_drm2_fb_unmap(Ecore_Drm2_Fb *fb);
+EAPI uint32_t ecore_drm2_fb_id_get(Ecore_Drm2_Fb *fb);
 
 # endif
 
