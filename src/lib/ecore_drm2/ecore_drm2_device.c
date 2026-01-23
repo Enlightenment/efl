@@ -393,9 +393,18 @@ ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *dev, int *depth, int *b
 
    EINA_SAFETY_ON_NULL_RETURN(dev);
 
+   if ((dev->depth != 0) && (dev->bpp != 0))
+     {
+        if (depth) *depth = dev->depth;
+        if (bpp) *bpp = dev->bpp;
+        return;
+     }
+
    ret = sym_drmGetCap(dev->fd, DRM_CAP_DUMB_PREFERRED_DEPTH, &caps);
    if (ret == 0)
      {
+        dev->depth = caps;
+        dev->bpp = caps;
         if (depth) *depth = caps;
         if (bpp) *bpp = caps;
      }

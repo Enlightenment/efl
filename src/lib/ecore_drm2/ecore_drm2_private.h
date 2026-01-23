@@ -370,6 +370,7 @@ struct _Ecore_Drm2_Device
 
    int fd;
    int clock_id;
+   int depth, bpp;
 
    struct
      {
