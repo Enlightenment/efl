@@ -1055,6 +1055,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
    ee->prop.withdrawn = EINA_TRUE;
+   ee->prop.window = (Ecore_Window)ee;
    ee->alpha = EINA_FALSE;
 
    ee->can_async_render = !gl;
@@ -1111,12 +1112,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
           }
      }
 
-   /* TODO: prop window */
-
    ecore_evas_data_set(ee, "device", edata->dev);
-
-   /* FIXME: Call ecore_evas_done when we have ee->prop.window */
-   /* ecore_evas_done(ee, EINA_FALSE); */
 
    /* TODO: finish: (drm2_device_calibrate, etc) */
    memset(&edata->ctx, 0, sizeof(edata->ctx));
@@ -1125,6 +1121,8 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    edata->fd_hdlr =
      ecore_main_fd_handler_add(ecore_drm2_device_fd_get(edata->dev),
                                ECORE_FD_READ, _cb_drm_event, ee, NULL, NULL);
+
+   ecore_evas_done(ee, EINA_TRUE);
 
    return ee;
 
