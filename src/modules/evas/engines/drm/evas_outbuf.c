@@ -16,25 +16,6 @@ _outbuf_setup(Evas_Engine_Info_Drm *info, int w, int h)
    ob->h = h;
    ob->info = info;
 
-   if ((ob->info->rotation == 0) || (ob->info->rotation == 180))
-     {
-        ob->swapper =
-          _drm_swapper_new(ob->info->dev, w, h, info->depth, info->bpp,
-                           info->format);
-     }
-   else if ((ob->info->rotation == 90) || (ob->info->rotation == 270))
-     {
-        ob->swapper =
-          _drm_swapper_new(ob->info->dev, h, w, info->depth, info->bpp,
-                           info->format);
-     }
-
-   if (!ob->swapper)
-     {
-        free(ob);
-        return NULL;
-     }
-
    eina_array_step_set(&ob->onebuf_regions, sizeof(Eina_Array), 8);
 
    return ob;
@@ -46,17 +27,15 @@ _outbuf_free(Outbuf *ob)
    _outbuf_flush(ob, NULL, NULL, EVAS_RENDER_MODE_UNDEF);
    _outbuf_idle_flush(ob);
 
-   _drm_swapper_free(ob->swapper);
-
    eina_array_flush(&ob->onebuf_regions);
 
    free(ob);
 }
 
 Render_Output_Swap_Mode
-_outbuf_swap_mode_get(Outbuf *ob)
+_outbuf_swap_mode_get(Outbuf *ob EINA_UNUSED)
 {
-   return _drm_swapper_mode_get(ob->swapper);
+   return MODE_AUTO;
 }
 
 int
@@ -120,25 +99,10 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
    ob->info->rotation = rot;
 
    _outbuf_idle_flush(ob);
-
-   _drm_swapper_free(ob->swapper);
-
-   if ((ob->info->rotation == 0) || (ob->info->rotation == 180))
-     {
-        ob->swapper =
-          _drm_swapper_new(ob->info->dev, w, h, ob->info->depth, ob->info->bpp,
-                           ob->info->format);
-     }
-   else if ((ob->info->rotation == 90) || (ob->info->rotation == 270))
-     {
-        ob->swapper =
-          _drm_swapper_new(ob->info->dev, h, w, ob->info->depth, ob->info->bpp,
-                           ob->info->format);
-     }
 }
 
 void
-_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
+_outbuf_damage_region_set(Outbuf *ob EINA_UNUSED, Tilebuf_Rect *damage)
 {
    Tilebuf_Rect *tr;
    Eina_Rectangle *rects;
@@ -156,7 +120,7 @@ _outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
         i++;
      }
 
-   _drm_swapper_dirty(ob->swapper, rects, count);
+   /* TODO: mark fb dirty */
 }
 
 void *
@@ -172,20 +136,23 @@ _outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *
      {
         Eina_Rectangle *rect;
         RGBA_Image *img;
-        void *data;
+        void *data = NULL;
         int bpl = 0;
 
         img = ob->onebuf;
         if (!img)
           {
-             int ww = 0, hh = 0, bpp;
+             /* int fw = 0, fh = 0, bpp; */
+             int fh = 0, bpp;
 
              /* bpp = ob->info->depth / 8; */
              bpp = ob->info->bpp;
-             data = _drm_swapper_buffer_map(ob->swapper, &bpl, &ww, &hh);
+
+             /* TODO: map fb data */
+
              img = (RGBA_Image *)
                evas_cache_image_data(evas_common_image_cache_get(),
-                                     bpl / bpp, hh, data, ob->alpha,
+                                     bpl / bpp, fh, data, ob->alpha,
                                      EVAS_COLORSPACE_ARGB8888);
              ob->onebuf = img;
              if (!img) return NULL;
@@ -246,12 +213,11 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    int bpp, bpl = 0, ww = 0, hh = 0;
    int rx = 0, ry = 0, wid;
    DATA32 *src;
-   DATA8 *dst;
+   DATA8 *dst = NULL;
 
    if (!ob->update_regions) return;
 
-   /* bpp = ob->info->depth / 8; */
-   bpp = ob->info->bpp;
+   bpp = ob->info->depth / 8;
    if (bpp <= 0) return;
 
    if ((ob->info->rotation == 0) || (ob->info->rotation == 180))
@@ -306,7 +272,7 @@ _outbuf_update_region_push(Outbuf *ob, RGBA_Image *update, int x, int y, int w, 
    src = update->image.data;
    if (!src) return;
 
-   dst = _drm_swapper_buffer_map(ob->swapper, &bpl, &ww, &hh);
+   /* TODO: get dst data */
    if (!dst) return;
 
    if ((ob->info->rotation == 0) || (ob->info->rotation == 180))
@@ -380,8 +346,7 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect
              eina_rectangle_free(rect);
           }
 
-        _drm_swapper_buffer_unmap(ob->swapper);
-        _drm_swapper_swap(ob->swapper, rects, update_count);
+        /* TODO: unmap current buffer, issue swap to new buffer */
 
         eina_array_clean(&ob->onebuf_regions);
 
@@ -450,7 +415,6 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect
              i++;
           }
 
-        _drm_swapper_buffer_unmap(ob->swapper);
-        _drm_swapper_swap(ob->swapper, rects, update_count);
+        /* TODO: unmap current buffer, issue swap to new buffer */
      }
 }
