@@ -349,11 +349,13 @@ _ecore_drm2_planes_available(Ecore_Drm2_Plane *plane, Ecore_Drm2_Display *disp)
    if (!plane->state.current)
      return !!(plane->drmPlane->possible_crtcs & (1 << disp->crtc->pipe));
 
-   if (!plane->state.current->complete) return EINA_FALSE;
+   if (plane->state.current->cid.value != 0)
+     {
+        if (plane->state.current->cid.value != disp->crtc->id)
+          return EINA_FALSE;
+     }
 
-   if (plane->state.current->cid.value != disp->crtc->id) return EINA_FALSE;
-
-   return !!(plane->possible_crtcs & (1 << disp->crtc->pipe));
+   return !!(plane->drmPlane->possible_crtcs & (1 << disp->crtc->pipe));
 }
 
 Eina_Bool
