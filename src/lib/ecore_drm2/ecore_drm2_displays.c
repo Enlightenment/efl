@@ -580,7 +580,7 @@ _ecore_drm2_possible_crtcs_find(Ecore_Drm2_Device *dev, uint32_t enc_crtc_id)
 }
 
 static void
-_ecore_drm2_displays_planes_init(Ecore_Drm2_Display *disp)
+_ecore_drm2_display_planes_init(Ecore_Drm2_Display *disp)
 {
    if (!disp->planes.primary)
      {
@@ -603,7 +603,7 @@ _ecore_drm2_displays_planes_init(Ecore_Drm2_Display *disp)
 }
 
 Ecore_Drm2_Crtc *
-_ecore_drm2_displays_crtc_find(Ecore_Drm2_Display *disp, Ecore_Drm2_Connector *conn, uint32_t enc_crtc_id)
+_ecore_drm2_display_crtc_find(Ecore_Drm2_Display *disp, Ecore_Drm2_Connector *conn, uint32_t enc_crtc_id)
 {
    Ecore_Drm2_Crtc *crtc, *ecrtcs[32], *bcrtc, *fcrtc;
    uint32_t pcrtcs = 0xffffffff;
@@ -800,10 +800,10 @@ _ecore_drm2_displays_cb_eeze_event(const char *device EINA_UNUSED, Eeze_Udev_Eve
              disp->conn = c;
 
              disp->crtc =
-               _ecore_drm2_displays_crtc_find(disp, c, encoder->crtc_id);
+               _ecore_drm2_display_crtc_find(disp, c, encoder->crtc_id);
              if (disp->crtc) disp->crtc->in_use = EINA_TRUE;
 
-             _ecore_drm2_displays_planes_init(disp);
+             _ecore_drm2_display_planes_init(disp);
 
              /* append this display to the list */
              dev->displays = eina_list_append(dev->displays, disp);
@@ -881,7 +881,7 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
 
         disp->dev = dev;
 
-        disp->crtc = _ecore_drm2_displays_crtc_find(disp, c, encoder->crtc_id);
+        disp->crtc = _ecore_drm2_display_crtc_find(disp, c, encoder->crtc_id);
         if (disp->crtc) disp->crtc->in_use = EINA_TRUE;
 
         sym_drmModeFreeCrtc(dcrtc);
@@ -889,7 +889,7 @@ _ecore_drm2_displays_create(Ecore_Drm2_Device *dev)
         /* disp->fd = dev->fd; */
         disp->conn = c;
 
-        _ecore_drm2_displays_planes_init(disp);
+        _ecore_drm2_display_planes_init(disp);
 
         /* append this display to the list */
         dev->displays = eina_list_append(dev->displays, disp);
