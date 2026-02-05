@@ -31,8 +31,6 @@ typedef struct _Efl_Object_Call_Stack {
 
 static Eina_TLS _eo_call_stack_key = 0;
 
-#define MEM_PAGE_SIZE 4096
-
 static void *
 _eo_call_stack_mem_alloc(size_t size)
 {
@@ -53,9 +51,10 @@ _eo_call_stack_mem_alloc(size_t size)
              // allocate eo call stack via mmped anon segment if on linux - more
              // secure and safe. also gives page aligned memory allowing madvise
              void *ptr;
-             size_t newsize;
-             newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
-                                        MEM_PAGE_SIZE);
+             size_t newsize, pagesize;
+
+             pagesize = MEM_PAGE_SIZE;
+             newsize = pagesize * ((size + pagesize - 1) / pagesize);
              ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
                         MAP_PRIVATE | MAP_ANON, -1, 0);
              if (ptr == MAP_FAILED)

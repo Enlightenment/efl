@@ -23,6 +23,8 @@
 # include <memcheck.h>
 #endif
 
+#define MEM_PAGE_SIZE ((size_t)eina_cpu_page_size())
+
 //#define SURFDBG 1
 
 static Evas_Cache_Image *eci = NULL;
@@ -84,17 +86,14 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
                                      Evas_Colorspace cspace,
                                      /*inout*/int *l, int *r, int *t, int *b)
 {
-#ifndef PAGE_SIZE
-# define PAGE_SIZE (4 * 1024)
-#endif
 #define HUGE_PAGE_SIZE (2 * 1024 * 1024)
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
 # define ALIGN_TO_PAGE(Siz) \
-   (((Siz / PAGE_SIZE) + (Siz % PAGE_SIZE ? 1 : 0)) * PAGE_SIZE)
+   (((Siz / MEM_PAGE_SIZE) + (Siz % MEM_PAGE_SIZE ? 1 : 0)) * MEM_PAGE_SIZE)
 #else
 # define ALIGN_TO_PAGE(Siz) Siz
 #endif
-   int siz, block_size = 8;
+   size_t siz, block_size = 8;
    Eina_Bool reset_borders = EINA_TRUE;
 
 #ifdef HAVE_VALGRIND
@@ -150,7 +149,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
         if (b) *b = 0;
      }
 
-   if ((siz < PAGE_SIZE) || evas_image_no_mmap) return siz;
+   if ((siz < MEM_PAGE_SIZE) || evas_image_no_mmap) return siz;
 
    return ALIGN_TO_PAGE(siz);
 #undef ALIGN_TO_PAGE
@@ -389,7 +388,7 @@ _evas_common_rgba_image_surface_mmap(Image_Entry *ie,
                                      /*inout*/int *pl, int *pr,
                                      int *pt, int *pb)
 {
-   int siz;
+   size_t siz;
 #if defined (HAVE_SYS_MMAN_H) && (!defined (_WIN32))
    void *r = MAP_FAILED;
 #endif
@@ -402,7 +401,7 @@ _evas_common_rgba_image_surface_mmap(Image_Entry *ie,
 #endif
    if (siz < 0) return NULL;
 
-   if ((siz < PAGE_SIZE) || evas_image_no_mmap) return malloc(siz);
+   if ((siz < MEM_PAGE_SIZE) || evas_image_no_mmap) return malloc(siz);
 
    if (siz > ((HUGE_PAGE_SIZE * 75) / 100))
      r = mmap(NULL, siz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_HUGETLB, -1, 0);
@@ -426,7 +425,7 @@ evas_common_rgba_image_surface_munmap(void *data, unsigned int w, unsigned int h
 
    siz = _evas_common_rgba_image_surface_size(w, h, cspace,
                                               NULL, NULL, NULL, NULL);
-   if ((siz < PAGE_SIZE) || evas_image_no_mmap) free(data);
+   if ((siz < MEM_PAGE_SIZE) || evas_image_no_mmap) free(data);
    else munmap(data, siz);
 #else
    (void)w;

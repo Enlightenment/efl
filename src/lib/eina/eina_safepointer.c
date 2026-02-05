@@ -28,6 +28,7 @@
 #include "eina_trash.h"
 #include "eina_log.h"
 #include "eina_lock.h"
+#include "eina_cpu.h"
 
 typedef struct _Eina_Memory_Header Eina_Memory_Header;
 
@@ -69,7 +70,7 @@ static Eina_Memory_Table *empty_table = NULL;
 // take that long anyway.
 static Eina_Spinlock sl;
 
-#define MEM_PAGE_SIZE 4096
+#define MEM_PAGE_SIZE eina_cpu_page_size()
 #define SAFEPOINTER_MAGIC 0x7DEADC03
 
 static int no_anon = -1;
@@ -84,12 +85,13 @@ _eina_safepointer_calloc(int number, size_t size)
 # endif
      {
         Eina_Memory_Header *header;
-        size_t newsize;
+        size_t newsize, pagesize;
 
+        pagesize = MEM_PAGE_SIZE;
         size = size * number + sizeof (Eina_Memory_Header);
-        newsize = ((size / MEM_PAGE_SIZE) +
-                   (size % MEM_PAGE_SIZE ? 1 : 0))
-          * MEM_PAGE_SIZE;
+        newsize = ((size / pagesize) +
+                   (size % pagesize ? 1 : 0))
+          * pagesize;
 
         if (no_anon == -1)
           {
