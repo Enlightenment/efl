@@ -93,7 +93,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
 #else
 # define ALIGN_TO_PAGE(Siz) Siz
 #endif
-   size_t siz, block_size = 8;
+   int siz = 0, block_size = 8;
    Eina_Bool reset_borders = EINA_TRUE;
 
 #ifdef HAVE_VALGRIND
@@ -149,7 +149,7 @@ _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
         if (b) *b = 0;
      }
 
-   if ((siz < MEM_PAGE_SIZE) || evas_image_no_mmap) return siz;
+   if ((siz < (int)MEM_PAGE_SIZE) || evas_image_no_mmap) return siz;
 
    return ALIGN_TO_PAGE(siz);
 #undef ALIGN_TO_PAGE
@@ -399,7 +399,7 @@ _evas_common_rgba_image_surface_mmap(Image_Entry *ie,
 #ifndef MAP_HUGETLB
 # define MAP_HUGETLB 0
 #endif
-   if (siz < 0) return NULL;
+   if (siz == 0) return NULL;
 
    if ((siz < MEM_PAGE_SIZE) || evas_image_no_mmap) return malloc(siz);
 
