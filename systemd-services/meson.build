@@ -1,7 +1,7 @@
 if get_option('systemd') == true
   sys_dep = dependency('systemd', required: false)
   if sys_dep.found()
-    sys_dir = sys_dep.get_pkgconfig_variable('systemduserunitdir')
+    sys_dir = sys_dep.get_variable(pkgconfig: 'systemduserunitdir')
   else
     sys_dir = join_paths(dir_lib, 'systemd', 'user')
   endif
