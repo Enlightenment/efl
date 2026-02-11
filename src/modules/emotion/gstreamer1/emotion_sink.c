@@ -183,7 +183,7 @@ gboolean emotion_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    EmotionVideoSink* sink;
    EmotionVideoSinkPrivate* priv;
    GstVideoInfo info;
-   unsigned int i;
+   unsigned int i, j;
 
    sink = EMOTION_VIDEO_SINK(bsink);
    priv = sink->priv;
@@ -197,22 +197,30 @@ gboolean emotion_video_sink_set_caps(GstBaseSink *bsink, GstCaps *caps)
    priv->info = info;
    priv->eheight = info.height;
 
-   for (i = 0; colorspace_format_conversion[i].name; i++)
-     {
-        if ((info.finfo->format == colorspace_format_conversion[i].format) &&
-            ((colorspace_format_conversion[i].colormatrix == GST_VIDEO_COLOR_MATRIX_UNKNOWN) ||
-             (colorspace_format_conversion[i].colormatrix == info.colorimetry.matrix)))
-          {
-             DBG("Found '%s'", colorspace_format_conversion[i].name);
-             priv->eformat = colorspace_format_conversion[i].eformat;
-             priv->func = colorspace_format_conversion[i].func;
-             if (colorspace_format_conversion[i].force_height)
-               {
+   for (j = 0; j < 2; j++)
+    { // try match colormatrix then try skip it just to work at all...
+      Eina_Bool match_colormatrix;
+
+      match_colormatrix = EINA_FALSE;
+      if (j == 0) match_colormatrix = EINA_TRUE;
+      for (i = 0; colorspace_format_conversion[i].name; i++)
+        {
+          if ((info.finfo->format == colorspace_format_conversion[i].format)
+              && ((!match_colormatrix) ||
+                  ((colorspace_format_conversion[i].colormatrix == GST_VIDEO_COLOR_MATRIX_UNKNOWN) ||
+                   (colorspace_format_conversion[i].colormatrix == info.colorimetry.matrix))))
+            {
+              DBG("Found '%s'", colorspace_format_conversion[i].name);
+              priv->eformat = colorspace_format_conversion[i].eformat;
+              priv->func = colorspace_format_conversion[i].func;
+              if (colorspace_format_conversion[i].force_height)
+                {
                   priv->eheight = (priv->eheight >> 1) << 1;
-               }
-             return TRUE;
-          }
-       }
+                }
+              return TRUE;
+            }
+        }
+    }
 
    ERR("unsupported : %s\n", gst_video_format_to_string(info.finfo->format));
    return FALSE;
