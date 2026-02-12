@@ -171,8 +171,8 @@ EFL_START_TEST(eina_cxx_inlist_constructors)
 
   efl::eina::inlist<int> list2(10, 5);
   ck_assert(list2.size() == 10);
-  ck_assert(std::find_if(list2.begin(), list2.end()
-                      , std::not1(std::bind1st(std::equal_to<int>(), 5))) == list2.end());
+  ck_assert(std::find_if(list2.begin(), list2.end(),
+                         [](int n) { return n != 5; }) == list2.end());
 
   efl::eina::inlist<int> list3(list2);
   ck_assert(list2 == list3);
