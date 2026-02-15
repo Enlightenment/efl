@@ -148,7 +148,10 @@ evas_object_smart_data_set(Evas_Object *eo_obj, void *data)
 EVAS_API void *
 evas_object_smart_data_get(const Evas_Object *eo_obj)
 {
-   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, NULL);
+   // do this by hand as this is often used as a func to figure out if this
+   // is a smart obj at all or not - so dont complain to stderr
+   Evas_Smart_Data *o = efl_data_scope_safe_get(eo_obj, MY_CLASS);
+   if (!o) return NULL;
    return o->data;
 }
 
