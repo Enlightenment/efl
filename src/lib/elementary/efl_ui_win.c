@@ -5278,6 +5278,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
       default:
         disp = getenv("ELM_DISPLAY");
+
+        if (_elm_preferred_engine)
+           enginelist[p++] = _elm_preferred_engine;
         if ((disp) && (!strcmp(disp, "buffer")))
           {
              enginelist[p++] = ELM_BUFFER;
