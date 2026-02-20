@@ -137,6 +137,7 @@ EAPI const Eina_List *ecore_drm2_device_displays_get(Ecore_Drm2_Device *dev);
 EAPI int ecore_drm2_device_context_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Event_Context *drmctx);
 EAPI void ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *dev, void *context, void *keymap, int group);
 EAPI void ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *dev, int group);
+EAPI Eina_Bool ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *dev, Eina_Bool left);
 
 /* Display API functions */
 EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);

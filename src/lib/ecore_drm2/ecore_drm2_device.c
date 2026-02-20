@@ -562,3 +562,11 @@ ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *dev, int group)
    EINA_SAFETY_ON_NULL_RETURN(dev->em);
    elput_input_keyboard_group_set(dev->em, group);
 }
+
+EAPI Eina_Bool
+ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *dev, Eina_Bool left)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev->em, EINA_FALSE);
+   return elput_input_pointer_left_handed_set(dev->em, NULL, left);
+}
