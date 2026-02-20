@@ -546,3 +546,11 @@ ecore_drm2_device_context_event_handle(Ecore_Drm2_Device *dev, Ecore_Drm2_Event_
 
    return sym_drmHandleEvent(dev->fd, &ctx);
 }
+
+EAPI void
+ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *dev, void *context, void *keymap, int group)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(dev->em);
+   elput_input_keyboard_info_set(dev->em, context, keymap, group);
+}
