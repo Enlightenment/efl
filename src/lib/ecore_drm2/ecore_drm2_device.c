@@ -554,3 +554,11 @@ ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *dev, void *context, void 
    EINA_SAFETY_ON_NULL_RETURN(dev->em);
    elput_input_keyboard_info_set(dev->em, context, keymap, group);
 }
+
+EAPI void
+ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *dev, int group)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dev);
+   EINA_SAFETY_ON_NULL_RETURN(dev->em);
+   elput_input_keyboard_group_set(dev->em, group);
+}
