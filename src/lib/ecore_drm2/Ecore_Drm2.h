@@ -139,6 +139,7 @@ EAPI void ecore_drm2_device_keyboard_info_set(Ecore_Drm2_Device *dev, void *cont
 EAPI void ecore_drm2_device_keyboard_group_set(Ecore_Drm2_Device *dev, int group);
 EAPI Eina_Bool ecore_drm2_device_pointer_left_handed_set(Ecore_Drm2_Device *dev, Eina_Bool left);
 EAPI void ecore_drm2_device_pointer_accel_speed_set(Ecore_Drm2_Device *dev, double speed);
+EAPI void ecore_drm2_device_touch_tap_to_click_enabled_set(Ecore_Drm2_Device *dev, Eina_Bool enabled);
 
 /* Display API functions */
 EAPI char *ecore_drm2_display_name_get(Ecore_Drm2_Display *disp);
