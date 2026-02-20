@@ -1608,3 +1608,29 @@ ecore_drm2_display_position_set(Ecore_Drm2_Display *disp, int x, int y)
    pstate->y = y;
    pstate->changes |= ECORE_DRM2_DISPLAY_STATE_POSITION;
 }
+
+EAPI void
+ecore_drm2_display_focused_set(Ecore_Drm2_Display *disp, Eina_Bool focused)
+{
+   Ecore_Drm2_Device *dev;
+   Ecore_Drm2_Display *tmp;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN(disp);
+
+   if (disp->focused == focused) return;
+
+   /* reset all other displays to not focused */
+   dev = disp->dev;
+   EINA_LIST_FOREACH(dev->displays, l, tmp)
+     tmp->focused = EINA_FALSE;
+
+   disp->focused = focused;
+}
+
+EAPI Eina_Bool
+ecore_drm2_display_focused_get(Ecore_Drm2_Display *disp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disp, EINA_FALSE);
+   return disp->focused;
+}

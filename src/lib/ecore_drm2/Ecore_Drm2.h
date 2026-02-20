@@ -174,6 +174,8 @@ EAPI Eina_Bool ecore_drm2_display_blanktime_get(Ecore_Drm2_Display *disp, int se
 EAPI Eina_Bool ecore_drm2_display_changes_apply(Ecore_Drm2_Display *disp);
 EAPI void ecore_drm2_display_gamma_set(Ecore_Drm2_Display *disp, uint16_t size, uint16_t *red, uint16_t *greeen, uint16_t *blue);
 EAPI void ecore_drm2_display_position_set(Ecore_Drm2_Display *disp, int x, int y);
+EAPI void ecore_drm2_display_focused_set(Ecore_Drm2_Display *disp, Eina_Bool focused);
+EAPI Eina_Bool ecore_drm2_display_focused_get(Ecore_Drm2_Display *disp);
 
 /* Crtc API functions */
 EAPI void ecore_drm2_crtc_geometry_get(Ecore_Drm2_Crtc *crtc, int *x, int *y, int *w, int *h);

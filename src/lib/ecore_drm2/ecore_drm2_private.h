@@ -325,6 +325,7 @@ struct _Ecore_Drm2_Display
    void *user_data;
 
    Eina_Bool connected : 1;
+   Eina_Bool focused : 1;
 };
 
 struct _Ecore_Drm2_Connector
