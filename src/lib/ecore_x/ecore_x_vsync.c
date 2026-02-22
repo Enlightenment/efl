@@ -140,6 +140,8 @@ static int (*sym_drmHandleEvent)(int fd,
                                  drmEventContext *evctx) = NULL;
 static void *(*sym_drmGetVersion)(int fd) = NULL;
 static void (*sym_drmFreeVersion)(void *drmver) = NULL;
+static void *(*sym_drmModeGetResources)(int fd) = NULL;
+static void (*sym_drmModeFreeResources)(void *res) = NULL;
 static int drm_fd = -1;
 static volatile int drm_event_is_busy = 0;
 static int drm_animators_interval = 1;
@@ -618,6 +620,8 @@ _drm_link(void)
              SYM(drm_lib, drmHandleEvent);
              SYM(drm_lib, drmGetVersion);
              SYM(drm_lib, drmFreeVersion);
+             SYM(drm_lib, drmModeGetResources);
+             SYM(drm_lib, drmModeFreeResources);
              if (fail)
                {
                   dlclose(drm_lib);
@@ -668,9 +672,9 @@ _drm_init(int *flags)
    struct stat st;
    char buf[512];
    Eina_Bool ok = EINA_FALSE;
-   Eina_Bool card0, card1;
    int vmaj = 0, vmin = 0;
    FILE *fp;
+   void *res;
 
    // vboxvideo 4.3.14 is crashing when calls drmWaitVBlank()
    // https://www.virtualbox.org/ticket/13265
@@ -695,27 +699,32 @@ _drm_init(int *flags)
    ok = EINA_FALSE;
 
    D("VSYNC: init...\n");
-   card0 = (stat("/dev/dri/card0", &st) == 0);
-   card1 = (stat("/dev/dri/card1", &st) == 0);
-   if      (!card0 && card1)
-     snprintf(buf, sizeof(buf), "/dev/dri/card1");
-   else if (card0 && !card1)
-     snprintf(buf, sizeof(buf), "/dev/dri/card0");
-   else
-     {
-        D("VSYNC: 2 cards - confused. can't do this.\n");
-        // XXX: 2 dri cards - ambiguous. unknown device for screen
-        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-          fprintf(stderr, "You have 2 DRI cards. Don't know which to use for vsync\n");
-        return 0;
+   drm_fd = -1;
+   for (i = 0; i < 16; i++)
+     { // try first 16 dri devices - find the first with mode resources
+       snprintf(buf, sizeof(buf), "/dev/dri/card%i", i);
+       drm_fd = open(buf, O_RDWR | O_CLOEXEC);
+       if (drm_fd >= 0)
+         {
+           res = sym_drmModeGetResources(drm_fd);
+           if (res)
+             { // this device has mode res - guess it's our display dev
+               // this may nto be true in some cases... :/
+               sym_drmModeFreeResources(res);
+               break;
+             }
+           else
+             {
+               close(drm_fd);
+               drm_fd = -1;
+             }
+         }
      }
-   D("VSYNC: open %s\n", buf);
-   drm_fd = open(buf, O_RDWR | O_CLOEXEC);
    if (drm_fd < 0)
      {
-        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-          fprintf(stderr, "Cannot open device card 0 (/de/dri/card0)\n");
-        return 0;
+       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+         fprintf(stderr, "Cannot open any dri devices with modes\n");
+       return 0;
      }
 
    if (!getenv("ECORE_VSYNC_DRM_ALL"))
