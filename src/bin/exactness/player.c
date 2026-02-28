@@ -942,10 +942,10 @@ _setup_names(const char *src)
                   _dest = "./output.exu";
                }
           }
-        char *slash = strrchr(_src_filename, '/');
+        const char *slash = strrchr(_src_filename, '/');
         if (slash) _test_name = strdup(slash + 1);
         else _test_name = strdup(_src_filename);
-        char *dot = strrchr(_test_name, '.');
+        char *dot = (char *)strrchr(_test_name, '.');
         if (dot) *dot = '\0';
      }
 }

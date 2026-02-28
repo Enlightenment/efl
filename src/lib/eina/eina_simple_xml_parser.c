@@ -563,7 +563,7 @@ eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_C
    const char *end;
    char *key;
    char *val;
-   char *next;
+   const char *next;
 
    if (!buf) return EINA_FALSE;
 
@@ -575,7 +575,7 @@ eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_C
 
    do
      {
-        char *sep = strchr(buf, ':');
+        const char *sep = strchr(buf, ':');
         next = strchr(buf, ';');
 
         key[0] = '\0';
@@ -604,7 +604,7 @@ eina_simple_xml_attribute_w3c_parse(const char *buf, Eina_Simple_XML_Attribute_C
           }
 
         if (key[0])
-          if (!func((void*) data, key, val))
+          if (!func((void *)data, key, val))
             return EINA_FALSE;
 
         buf = next + 1;

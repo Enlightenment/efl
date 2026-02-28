@@ -254,7 +254,7 @@ _on_label_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 static int
 _get_value_in_key_string(const char *oldstring, const char *key, char **value)
 {
-   char *curlocater, *endtag;
+   const char *curlocater, *endtag;
    int firstindex = 0, foundflag = -1;
 
    curlocater = strstr(oldstring, key);

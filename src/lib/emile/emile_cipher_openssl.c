@@ -691,9 +691,8 @@ _emile_cipher_client_handshake(Emile_SSL *client)
    cert = SSL_get_peer_certificate(client->ssl);
    if (cert)
      {
-        const char *verify_name;
+        const char *verify_name, *s;
         char *cert_name;
-        char *s;
         int clen;
         int err;
         int name = 0;

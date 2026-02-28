@@ -381,7 +381,7 @@ efreet_icon_new(const char *path)
     icon->path = eina_stringshare_add(path);
 
     /* load the .icon file if it's available */
-    p = strrchr(icon->path, '.');
+    p = (char *)strrchr(icon->path, '.');
     if (p)
     {
         char ico_path[PATH_MAX];
@@ -399,7 +399,7 @@ efreet_icon_new(const char *path)
         const char *file;
 
         file = ecore_file_file_get(icon->path);
-        p = strrchr(icon->path, '.');
+        p = (char *)strrchr(icon->path, '.');
         if (p) *p = '\0';
         icon->name = eina_stringshare_add(file);
         if (p) *p = '.';

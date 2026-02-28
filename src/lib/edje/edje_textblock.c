@@ -493,18 +493,18 @@ _edje_part_textblock_style_text_set(Edje *ed,
    return EINA_FALSE;
 }
 
-static char*
+static char *
 strrstr(const char* haystack, const char* violate)
 {
-   char *s_ret = NULL;
-   char *tmp = NULL;
-   const char *_haystack = haystack;
+   const char *_haystack = haystack, *tmp, *s_ret = NULL;
    size_t len = strlen(violate);
-   while((tmp = strstr(_haystack, violate))){
-     s_ret = tmp;
-     _haystack = tmp + len;
-   }
-   return s_ret;
+
+   while ((tmp = strstr(_haystack, violate)))
+     {
+       s_ret = tmp;
+       _haystack = tmp + len;
+     }
+   return (char *)s_ret;
 }
 
 void

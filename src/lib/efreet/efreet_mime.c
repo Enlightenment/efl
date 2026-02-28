@@ -570,7 +570,7 @@ efreet_mime_globs_type_get(const char *file)
    if (!mimedb_ptr) return NULL;
 
    /* Check in the extension hash for the type */
-   ext = strchr(file, '.');
+   ext = (char *)strchr(file, '.');
    if (ext)
      {
         sl = alloca(strlen(ext) + 1);

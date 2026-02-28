@@ -2167,7 +2167,7 @@ _icon_size_min_get(Evas_Object *image)
 static Eina_Bool
 _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *fdo)
 {
-   char *tmp;
+   const char *tmp;
    Eina_Bool ret = EINA_FALSE;
 
    EFL_UI_IMAGE_DATA_GET(obj, sd);

@@ -2848,11 +2848,11 @@ _elua_image_image(lua_State *L) // Stack usage [-(4|6), +(5|7), em]
           {
              Edje_Image_Directory_Entry *de;
              unsigned int i;
-             char *name;
+             const char *name;
 
              /* Image name */
              if ((name = strrchr(key, '/'))) name++;
-             else name = (char *)key;
+             else name = key;
 
              /* Loop through image directory to find if image exists */
              for (i = 0; i < obj->ed->file->image_dir->entries_count; ++i)

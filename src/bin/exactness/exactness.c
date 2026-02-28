@@ -352,16 +352,17 @@ _list_file_load(const char *filename)
 
    while (fgets(buf, BUF_SIZE, file))
      {
+        char *tmp;
+
         /* Skip comment/empty lines. */
         if ((*buf == '#') || (*buf == '\n') || (!*buf))
            continue;
 
-        char *tmp;
         List_Entry *cur = calloc(1, sizeof(*cur));
         cur->name = strdup(buf);
 
         /* Set the command to the second half and put a \0 in between. */
-        tmp = strchr(cur->name, ' ');
+        tmp = (char *)strchr(cur->name, ' ');
         if (tmp)
           {
              *tmp = '\0';
@@ -374,7 +375,7 @@ _list_file_load(const char *filename)
           }
 
         /* Replace the newline char with a \0. */
-        tmp = strchr(cur->command, '\n');
+        tmp = (char *)strchr(cur->command, '\n');
         if (tmp)
           {
              *tmp = '\0';

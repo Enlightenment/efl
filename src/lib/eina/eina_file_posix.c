@@ -1548,7 +1548,8 @@ EINA_API Eina_Bool
 eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path)
 {
    char buffer[PATH_MAX];
-   char *tmpdirname, *sep;
+   const char *sep;
+   char *tmpdirname;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(templatename, EINA_FALSE);
 

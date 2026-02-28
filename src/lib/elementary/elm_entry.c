@@ -1525,8 +1525,8 @@ _item_tags_remove(const char *str)
    while (EINA_TRUE)
      {
         const char *temp = eina_strbuf_string_get(buf);
-        char *start_tag = NULL;
-        char *end_tag = NULL;
+        const char *start_tag = NULL;
+        const char *end_tag = NULL;
         size_t sindex;
         size_t eindex;
 

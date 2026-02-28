@@ -266,8 +266,8 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
 static void
 _edje_textblock_tag_update(Eina_Strbuf *style, const char *key, const char *new_tag)
 {
-   char *ptr = strstr(eina_strbuf_string_get(style), key);
-   char *last = NULL;
+   const char *ptr = strstr(eina_strbuf_string_get(style), key);
+   const char *last = NULL;
 
    while (ptr != NULL)
      {

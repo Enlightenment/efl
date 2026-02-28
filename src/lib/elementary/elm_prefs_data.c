@@ -663,7 +663,7 @@ elm_prefs_data_value_set(Elm_Prefs_Data *prefs_data,
                          const Eina_Value *value)
 {
    char key[PATH_MAX];
-   char *name;
+   const char *name;
    size_t n;
    Eina_Value tmp;
    Eina_Hash *values;
@@ -751,7 +751,7 @@ elm_prefs_data_value_get(const Elm_Prefs_Data *prefs_data,
                          Eina_Value *value)
 {
    char key[PATH_MAX];
-   char *name;
+   const char *name;
    size_t n;
    Eina_Hash *values;
    Elm_Prefs_Data_Item *item;

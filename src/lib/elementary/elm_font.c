@@ -10,12 +10,13 @@ _elm_font_properties_get(Eina_Hash **font_hash,
                          const char *font)
 {
    Elm_Font_Properties *efp = NULL;
-   char *token = strchr(font, ':');
+   const char *token = strchr(font, ':');
 
    if (token &&
        !strncmp(token, ELM_FONT_TOKEN_STYLE, strlen(ELM_FONT_TOKEN_STYLE)))
      {
-        char *name, *subname, *style, *substyle;
+        char *name, *subname;
+        const char *style, *substyle;
         int len;
 
         /* get font name */
@@ -61,16 +62,17 @@ _elm_font_properties_get(Eina_Hash **font_hash,
         //TODO: Seems to need to add all styles. not only one.
         if (substyle)
           {
-             char *style_old = style;
+             char *style2;
+             const char *style_old = style;
 
              len = substyle - style;
-             style = calloc(len + 1, sizeof(char));
-             if (style)
+             style2 = calloc(len + 1, sizeof(char));
+             if (style2)
                {
-                  strncpy(style, style_old, len);
+                  strncpy(style2, style_old, len);
                   efp->styles = eina_list_append(efp->styles,
                                                  eina_stringshare_add(style));
-                  free(style);
+                  free(style2);
                }
           }
         else

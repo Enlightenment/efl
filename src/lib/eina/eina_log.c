@@ -1130,7 +1130,8 @@ eina_log_domain_parse_pendings(void)
    while (1)
      {
         Eina_Log_Domain_Level_Pending *p;
-        char *end = NULL, *tmp = NULL;
+        const char *end = NULL;
+        char *tmp = NULL;
         ptrdiff_t diff;
         long int level;
 
@@ -1177,7 +1178,8 @@ eina_log_domain_parse_pending_globs(void)
    while (1)
      {
         Eina_Log_Domain_Level_Pending *p;
-        char *end = NULL, *tmp = NULL;
+        const char *end = NULL;
+        char *tmp = NULL;
         ptrdiff_t diff;
         long int level;
 

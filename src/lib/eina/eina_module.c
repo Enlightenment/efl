@@ -409,7 +409,7 @@ EINA_API char *eina_module_symbol_path_get(const void *symbol, const char *sub_d
 
    if (dladdr(symbol, &eina_dl))
      {
-        char *pos = strrchr(eina_dl.dli_fname, EINA_PATH_SEP_C);
+        const char *pos = strrchr(eina_dl.dli_fname, EINA_PATH_SEP_C);
         if (pos)
           {
              char *path;

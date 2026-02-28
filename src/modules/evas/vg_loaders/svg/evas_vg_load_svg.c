@@ -183,7 +183,7 @@ _to_offset(const char *str)
    char *end = NULL;
    const char* str_end = str + strlen(str);
    double parsed_value = eina_convert_strtod_c(str, &end);
-   char *ptr = strstr(str, "%");
+   const char *ptr = strstr(str, "%");
 
    end = _skip_space(end, NULL);
 

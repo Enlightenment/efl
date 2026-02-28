@@ -3395,7 +3395,7 @@ _eo_log_obj_init(void)
              const Eina_Slice *itr;
              do
                {
-                  char *p = strchr(s, ',');
+                  const char *p = strchr(s, ',');
                   slice.mem = s;
                   if (p)
                     {
@@ -3442,7 +3442,7 @@ _eo_log_obj_init(void)
              const Eina_Slice *itr;
              do
                {
-                  char *p = strchr(s, ',');
+                  const char *p = strchr(s, ',');
                   slice.mem = s;
                   if (p)
                     {

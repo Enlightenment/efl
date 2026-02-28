@@ -371,7 +371,8 @@ const Ecore_Getopt optdesc = {
 static char *
 _standardizes_header(const char *filename)
 {
-   char *str, *itr, *aux;
+   char *str, *itr;
+   const char *aux;
 
    aux = strrchr(filename, '/');
    str = itr = strdup(aux ? aux + 1 : filename);

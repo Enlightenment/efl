@@ -13,7 +13,7 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
                                int quality, int compress, const char *encoding)
 {
    Evas_Image_Save_Func *evas_image_save_func = NULL;
-   char *p;
+   const char *p;
    char *saver = NULL;
 
    p = strrchr(file, '.');

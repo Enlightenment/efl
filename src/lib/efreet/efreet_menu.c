@@ -1688,8 +1688,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
         {
             Efreet_Desktop *desktop = NULL;
             char buf[PATH_MAX];
-            char *exten;
-            const char *fname;
+            const char *fname, *exten;
 
             fname = info->path + info->name_start;
             /* recurse into sub directories */
@@ -3286,7 +3285,7 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
     char buf2[PATH_MAX];
     Eina_Iterator *it;
     Eina_File_Direct_Info *info;
-    char *ext;
+    const char *ext;
 
     it = eina_file_stat_ls(path);
     if (!it) return 1;

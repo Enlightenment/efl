@@ -1463,7 +1463,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
         EINA_LIST_FOREACH(anchors_a, itr, node)
           {
              const char *s = evas_textblock_node_format_text_get(node);
-             char *p;
+             const char *p;
              an = calloc(1, sizeof(Anchor));
              if (!an)
                {
@@ -1516,7 +1516,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
         EINA_LIST_FOREACH(anchors_item, itr, node)
           {
              const char *s = evas_textblock_node_format_text_get(node);
-             char *p;
+             const char *p;
              an = calloc(1, sizeof(Anchor));
              if (!an)
                {

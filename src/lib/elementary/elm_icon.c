@@ -403,8 +403,7 @@ _internal_elm_icon_standard_set(Evas_Object *obj,
                        const char *name,
                        Eina_Bool *fdo)
 {
-   char *tmp;
-   const char *stdtmp;
+   const char *stdtmp, *tmp;
    Eina_Bool ret = EINA_FALSE;
 
    ELM_ICON_DATA_GET(obj, sd);

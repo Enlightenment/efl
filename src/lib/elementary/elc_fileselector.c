@@ -712,7 +712,7 @@ _filter_simple(void *data, Efl_Filter_Model *parent, Efl_Model *child)
 static const char *
 _file_type(const char *a)
 {
-   char *p = strrchr(a, '.');
+   const char *p = strrchr(a, '.');
    if (!p) return "";
 
    return p;

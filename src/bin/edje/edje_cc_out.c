@@ -587,7 +587,8 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
 static void
 _part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_Bool ns_required)
 {
-   char buf[1024], *p;
+   const char *p;
+   char buf[1024];
    size_t len;
    Edje_Part_Collection_Directory_Entry *de;
 
@@ -670,7 +671,8 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 static void
 _program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef, const char *sig, const char *src)
 {
-   char buf[1024], *p;
+   const char *p;
+   char buf[1024];
    size_t len;
    Edje_Part_Collection_Directory_Entry *de;
 

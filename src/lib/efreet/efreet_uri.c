@@ -27,9 +27,8 @@ EAPI Efreet_Uri *
 efreet_uri_decode(const char *full_uri)
 {
     Efreet_Uri *uri;
-    const char *p;
+    const char *p, *sep;
     char scheme[64], authority[_POSIX_HOST_NAME_MAX], path[PATH_MAX];
-    char *sep;
     int i = 0;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(full_uri, NULL);

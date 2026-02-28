@@ -54,7 +54,7 @@ static int
 cache_add(Eet_File *ef, const char *path, const char *file_id, int priority EINA_UNUSED, int *changed)
 {
     Efreet_Desktop *desk;
-    char *ext;
+    const char *ext;
 
     INF("FOUND: %s", path);
     if (file_id) INF(" (id): %s", file_id);

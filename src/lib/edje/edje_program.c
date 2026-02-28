@@ -45,7 +45,7 @@ _edje_emit_child(Edje *ed, Edje_Real_Part *rp, const char *part, const char *sig
    char *idx;
 
    /* search for the index if present and remove it from the part */
-   idx = strchr(part, EDJE_PART_PATH_SEPARATOR_INDEXL);
+   idx = (char *)strchr(part, EDJE_PART_PATH_SEPARATOR_INDEXL);
    if (idx)
      {
         char *end;

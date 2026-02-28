@@ -5712,7 +5712,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
         //   positioning
         int w = 1, h = 1;
         int vsize = 0, size = 0;
-        char *p;
+        const char *p;
 
         // don't care
         //href = strstr(s, " href=");

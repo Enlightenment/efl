@@ -568,7 +568,7 @@ ecore_file_realpath(const char *file)
 EAPI const char *
 ecore_file_file_get(const char *path)
 {
-   char *result = NULL;
+   const char *result = NULL;
 
    if (!path) return NULL;
 
@@ -784,7 +784,8 @@ ecore_file_escape_name(const char *filename)
 EAPI char *
 ecore_file_strip_ext(const char *path)
 {
-   char *p, *file = NULL;
+   const char *p;
+   char *file = NULL;
 
    if (!path)
      return NULL;

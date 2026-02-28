@@ -1044,7 +1044,7 @@ _efl_net_ip_port_user_pass_split(char *buf, const char **p_host, const char **p_
         *p = '\0';
         p++;
 
-        s = strchr(*p_user, ':');
+        s = (char *)strchr(*p_user, ':');
         if (!s)
           *p_pass = NULL;
         else
@@ -2350,7 +2350,7 @@ efl_net_multicast_address6_parse(const char *address, struct ipv6_mreq *mreq)
      {
         address++;
 
-        endptr = strchr(address, ']');
+        endptr = (char *)strchr(address, ']');
         if (!endptr)
           {
              err = EINVAL;
