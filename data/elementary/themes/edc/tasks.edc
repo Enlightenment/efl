@@ -88,6 +88,15 @@ group { name:"e/modules/tasks/item";
             visible: 1;
          }
       }
+      part { name: "icon_dim"; type: RECT; mouse_events: 0;
+         clip_to: "icon_clip";
+         description { state: "default" 0.0;
+            color: 255 255 255 255; // no cc
+         }
+         description { state: "visible" 0.0;
+            color: 255 255 255 64; // no cc
+         }
+      }
       part { name: "normal_clip"; type: RECT; mouse_events: 0;
          clip_to: "label_clip";
          description { state: "default" 0.0;
@@ -121,6 +130,38 @@ group { name:"e/modules/tasks/item";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             color_class: "/fg/pressed/gadgets/tasks/text/normal";
+         }
+         description { state: "scroll_left" 0.0;
+            color_class: "/fg/normal/gadgets/tasks/text/normal";
+            offscale;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            align: 1.0 0.5;
+            fixed: 1 1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               ellipsis: -1;
+               text_class: "tasks_text";
+            }
+         }
+         description { state: "scroll_right" 0.0;
+            color_class: "/fg/normal/gadgets/tasks/text/normal";
+            offscale;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            align: 0.0 0.5;
+            fixed: 1 1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               ellipsis: -1;
+               text_class: "tasks_text";
+            }
          }
       }
       part { name: "focused_clip"; type: RECT; mouse_events: 0;
@@ -158,6 +199,40 @@ group { name:"e/modules/tasks/item";
             inherit: "default" 0.0;
             color_class: "/fg/pressed/gadgets/tasks/text/focused";
          }
+         description { state: "scroll_left" 0.0;
+            color_class: "/fg/normal/gadgets/tasks/text/focused";
+            offscale;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            align: 1.0 0.5;
+            fixed: 1 1;
+            text { font: FNBD; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               ellipsis: -1;
+               text_class: "tasks_text";
+               text_source: "e.text.label";
+            }
+         }
+         description { state: "scroll_right" 0.0;
+            color_class: "/fg/normal/gadgets/tasks/text/focused";
+            offscale;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            align: 0.0 0.5;
+            fixed: 1 1;
+            text { font: FNBD; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               ellipsis: -1;
+               text_class: "tasks_text";
+               text_source: "e.text.label";
+            }
+         }
       }
       part { name: "iconic_clip"; type: RECT; mouse_events: 0;
          clip_to: "label_clip";
@@ -193,6 +268,40 @@ group { name:"e/modules/tasks/item";
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
             color_class: "/fg/pressed/gadgets/tasks/text/iconified";
+         }
+         description { state: "scroll_left" 0.0;
+            color_class: "/fg/normal/gadgets/tasks/text/iconified";
+            offscale;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            align: 1.0 0.5;
+            fixed: 1 1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               ellipsis: -1;
+               text_class: "tasks_text";
+               text_source: "e.text.label";
+            }
+         }
+         description { state: "scroll_right" 0.0;
+            color_class: "/fg/normal/gadgets/tasks/text/iconified";
+            offscale;
+            rel1.to_x: "icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            align: 0.0 0.5;
+            fixed: 1 1;
+            text { font: FN; size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               ellipsis: -1;
+               text_class: "tasks_text";
+               text_source: "e.text.label";
+            }
          }
       }
       part { name: "icon"; type: SPACER;
@@ -257,7 +366,7 @@ group { name:"e/modules/tasks/item";
          }
       }
       part { name: "e.swallow.icon"; type: SWALLOW; mouse_events: 0;
-         clip_to: "icon_clip";
+         clip_to: "icon_dim";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
             rel.to: "icon2";
@@ -418,6 +527,52 @@ group { name:"e/modules/tasks/item";
          target: "icon";
          target: "icon_clip";
          target: "label_clip";
+      }
+
+      program { name: "scroll_start"; signal: "mouse,in"; source: "event";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.25;
+         target: "icon_dim";
+         after: "scroll_init";
+      }
+      program { name: "scroll_init";
+         action: STATE_SET "scroll_right" 0.0;
+         target: "e.text.label";
+         target: "label_focused";
+         target: "label_iconic";
+         after: "scroll_l";
+      }
+      program { name: "scroll_l";
+         action: STATE_SET "scroll_left" 0.0;
+         transition: SINUSOIDAL 2.0;
+         target: "e.text.label";
+         target: "label_focused";
+         target: "label_iconic";
+         after: "scroll_r";
+      }
+      program { name: "scroll_r";
+         action: STATE_SET "scroll_right" 0.0;
+         transition: SINUSOIDAL 2.0;
+         target: "e.text.label";
+         target: "label_focused";
+         target: "label_iconic";
+         after: "scroll_l";
+      }
+      program { name: "scroll_stop"; signal: "mouse,out"; source: "event";
+         action: ACTION_STOP;
+         target: "scroll_start";
+         target: "scroll_init";
+         target: "scroll_l";
+         target: "scroll_r";
+         after: "scroll_reset";
+      }
+      program { name: "scroll_reset";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.5;
+         target: "e.text.label";
+         target: "label_focused";
+         target: "label_iconic";
+         target: "icon_dim";
       }
    }
 }
