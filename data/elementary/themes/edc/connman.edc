@@ -337,6 +337,47 @@ group { name: "e/modules/connman/main";
             visible: 1;
          }
       }
+      part { name: "band_label"; type: TEXT; effect: SHADOW; mouse_events: 0;
+         clip_to: "clip_wifi";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.45;
+            rel1.to: "wifi-base";
+            rel2.to: "wifi-base";
+            color: 170 220 255 220;
+            color3: 0 0 0 128;
+            text { font: FN; size: 7;
+               text: "";
+               align: 0.5 0.5;
+               min: 0 0;
+            }
+         }
+      }
+      part { name: "security_overlay"; mouse_events: 0;
+         clip_to: "clip_wifi";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.6 0.6;
+            rel2.relative: 1.0 1.0;
+            rel1.to: "wifi-base";
+            rel2.to: "wifi-base";
+            image.normal: "i-lock";
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
+         }
+         description { state: "wep" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "i-lock";
+            color_class: "/fg/normal/gadgets/connman/security/secure/low";
+         }
+         description { state: "psk" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "i-lock-double";
+            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
+         }
+      }
       part { name: "label_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 255 255 255 0; // no cc
@@ -580,48 +621,6 @@ else { \
          target: "icon_dim";
          target: "e.text.label";
       }
-   }
-}
-
-group { name: "e/modules/connman/icon/wifi";
-   inherit: "e/modules/connman/main";
-   SCRIPT_MESSAGE()
-   parts {
-      part { name: "security_overlay"; mouse_events: 0;
-         clip_to: "clip_wifi";
-         description { state: "default" 0.0;
-            visible: 0;
-            rel1.relative: 0.6 0.6;
-            rel2.relative: 1.0 1.0;
-            rel1.to: "wifi-base";
-            rel2.to: "wifi-base";
-            image.normal: "i-lock";
-            aspect: 1.0 1.0; aspect_preference: BOTH;
-            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
-         }
-         description { state: "wep" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            image.normal: "i-lock";
-            color_class: "/fg/normal/gadgets/connman/security/secure/low";
-         }
-         description { state: "psk" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            image.normal: "i-lock-double";
-            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
-         }
-      }
-   }
-   programs {
-      program { signal: "load"; source: "";
-         action: STATE_SET "wifi" 0.0;
-         target: "clip_exclam";
-         target: "clip_wifi";
-         target: "clip_eth";
-         target: "clip_bt";
-         target: "clip_cell";
-      }
       program { signal: "e,security,psk"; source: "e";
          action: STATE_SET "psk" 0.0;
          target: "security_overlay";
@@ -641,6 +640,21 @@ group { name: "e/modules/connman/icon/wifi";
       program { signal: "e,security,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "security_overlay";
+      }
+   }
+}
+
+group { name: "e/modules/connman/icon/wifi";
+   inherit: "e/modules/connman/main";
+   SCRIPT_MESSAGE()
+   programs {
+      program { signal: "load"; source: "";
+         action: STATE_SET "wifi" 0.0;
+         target: "clip_exclam";
+         target: "clip_wifi";
+         target: "clip_eth";
+         target: "clip_bt";
+         target: "clip_cell";
       }
    }
 }
