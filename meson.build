@@ -32,7 +32,7 @@ endif
 
 #prepare a special linker args flag for binaries on macos
 bin_linker_args = []
-if host_machine.system() == 'darwin'
+if host_machine.system() == 'darwin' and host_machine.cpu_family() != 'aarch64'
   bin_linker_args = ['-pagezero_size', '10000', '-image_base', '100000000']
 endif
 
