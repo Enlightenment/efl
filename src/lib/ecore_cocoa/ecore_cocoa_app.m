@@ -5,6 +5,7 @@
 static Eina_Bool
 _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
 {
+   @autoreleasepool {
         @try {
              NSEvent *e;
              do {
@@ -13,11 +14,8 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
                                             inMode:NSDefaultRunLoopMode
                                            dequeue:YES];
                   if (e != nil) {
-                       //NSLog(@"Catching event %@", e);
-
                        [NSApp sendEvent:e];
 
-                       /* Update (en/disable) the services menu's items */
                        NSEventType type = [e type];
                        if ((type != NSEventTypePeriodic) &&
                            (type != NSEventTypeMouseMoved)) {
@@ -28,10 +26,10 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
         }
         @catch (NSException *except) {
              NSLog(@"EXCEPTION: %@: %@", [except name], [except reason]);
-             /* Show the "fancy" annoying report panel */
              [NSApp reportException:except];
-             // XXX Maybe use Eina_Log to report the error instead
         }
+        [NSApp updateWindows];
+   }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -55,13 +53,14 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
       CRI("Failed to [super init]");
       return nil;
    }
-   NSApp = self; // NSApp is used EVERYWHERE! Set it right now!
+   NSApp = self;
 
    /* Set the process to be a foreground process,
     * without that it prevents the window to become the key window and
-    * receive all mouse mouve events. */
+    * receive all mouse mouve events.
+    * Activation is deferred to applicationDidFinishLaunching so the app
+    * is properly registered with the window server first. */
    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
-   [NSApp activateIgnoringOtherApps:YES];
 
    return NSApp;
 }
@@ -78,7 +77,13 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
 
 - (void)run
 {
-   [self finishLaunching];
+   /*
+    * Use the GLFW-style bootstrap: call [super run] which performs all
+    * internal NSApplication setup (beyond what finishLaunching alone does),
+    * then return control via [NSApp stop:nil] in applicationDidFinishLaunching.
+    * This ensures the app is fully registered with the window server.
+    */
+   [super run];
 
    _is_running = YES;
    _expiration = [NSDate distantPast];
@@ -142,9 +147,29 @@ static Ecore_Cocoa_AppDelegate *_appDelegate = nil;
    return _appDelegate;
 }
 
+- (void)applicationDidFinishLaunching:(NSNotification *) EINA_UNUSED notification
+{
+   /* Now that the app has finished launching and is registered with the
+    * window server, activate it so it can receive focus and display windows. */
+   [NSApp activateIgnoringOtherApps:YES];
+
+   /* Break out of [super run] so ecore can own the main loop.
+    * Post an empty event to ensure the stop is processed immediately. */
+   [NSApp stop:nil];
+   NSEvent *event = [NSEvent otherEventWithType:NSEventTypeApplicationDefined
+                                       location:NSMakePoint(0, 0)
+                                  modifierFlags:0
+                                      timestamp:0
+                                   windowNumber:0
+                                        context:nil
+                                        subtype:0
+                                          data1:0
+                                          data2:0];
+   [NSApp postEvent:event atStart:YES];
+}
+
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *) EINA_UNUSED sender
 {
-   // XXX This should be alterable (by Elm_Window policy)
    return NO;
 }
 
