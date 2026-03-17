@@ -208,11 +208,11 @@ eng_output_update(void *engine EINA_UNUSED,
 }
 
 static void
-eng_output_free(void *engine EINA_UNUSED, void *data)
+eng_output_free(void *engine, void *data)
 {
    Render_Engine *const re = data;
 
-   evas_outbuf_free(re->win);
+   evas_render_engine_software_generic_clean(engine, &re->generic.software);
    free(re);
 
    _gl_wins--;
