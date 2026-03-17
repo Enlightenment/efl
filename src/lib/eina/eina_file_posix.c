@@ -1305,6 +1305,33 @@ eina_file_close_from(int fd, int *except_fd)
 {
 #if defined(_WIN32)
    // XXX: what do to here? anything?
+#elif defined(__APPLE__)
+   /* On macOS this function is called between fork() and exec() in a
+    * multi-threaded Cocoa process.  The opendir/readdir/seekdir path is
+    * NOT async-signal-safe and corrupts the file-descriptor table when
+    * the C library's internal locks are in an inconsistent state after
+    * fork().  Use the simple brute-force close loop instead. */
+   {
+      int i, j, max = 1024;
+#ifdef HAVE_SYS_RESOURCE_H
+      struct rlimit lim;
+      if (getrlimit(RLIMIT_NOFILE, &lim) == 0 && lim.rlim_max != RLIM_INFINITY)
+        max = lim.rlim_max;
+#endif
+      for (i = fd; i < max; i++)
+        {
+           if (except_fd)
+             {
+                Eina_Bool skip = EINA_FALSE;
+                for (j = 0; except_fd[j] >= 0; j++)
+                  {
+                     if (except_fd[j] == i) { skip = EINA_TRUE; break; }
+                  }
+                if (skip) continue;
+             }
+           close(i);
+        }
+   }
 #else
 #ifdef HAVE_DIRENT_H
 //# if 0
