@@ -523,6 +523,13 @@ EAPI void ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win, Eina_Bool show
    EINA_ARG_NONNULL(1);
 
 /**
+ * Gets the backing scale factor for HiDPI/Retina displays
+ * @param window The Cocoa window to query
+ * @return The scale factor (e.g. 2.0 on Retina displays, 1.0 otherwise)
+ */
+EAPI double ecore_cocoa_window_backing_scale_get(const Ecore_Cocoa_Window *window);
+
+/**
  * Overrides the default behaviour in response to an application delete
  * request. When an application receives a delete request (i.e. CMD+Q)
  * the termination callback will be called and its result will determine

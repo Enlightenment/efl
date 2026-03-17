@@ -538,7 +538,10 @@ ecore_cocoa_window_show(Ecore_Cocoa_Window *window)
    EINA_SAFETY_ON_NULL_RETURN(window);
 
    if (![window->window isVisible])
-     [window->window makeKeyAndOrderFront:NSApp];
+     {
+        [window->window makeKeyAndOrderFront:NSApp];
+        [NSApp activateIgnoringOtherApps:YES];
+     }
    [window->window display];
 }
 
@@ -653,6 +656,13 @@ ecore_cocoa_window_cursor_show(Ecore_Cocoa_Window *win,
 
    if (show) [NSCursor unhide];
    else [NSCursor hide];
+}
+
+EAPI double
+ecore_cocoa_window_backing_scale_get(const Ecore_Cocoa_Window *window)
+{
+   if (!window || !window->window) return 1.0;
+   return [window->window backingScaleFactor];
 }
 
 Eina_Bool
