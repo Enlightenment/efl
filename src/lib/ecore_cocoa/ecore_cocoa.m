@@ -89,9 +89,9 @@ ecore_cocoa_shutdown(void)
                           ECORE_COCOA_EVENT_WINDOW_RESIZE_REQUEST,
                           ECORE_COCOA_EVENT_WINDOW_DESTROY);
 
-   eina_log_domain_unregister(_ecore_cocoa_log_domain);
    ecore_event_shutdown();
    ecore_shutdown();
+   eina_log_domain_unregister(_ecore_cocoa_log_domain);
 
    return _ecore_cocoa_init_count;
 }
@@ -195,6 +195,7 @@ Eina_Bool
 _ecore_cocoa_feed_events(void *anEvent)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(anEvent, EINA_FALSE);
+   if (EINA_UNLIKELY(_ecore_cocoa_init_count <= 0)) return EINA_FALSE;
 
    NSEvent *event = anEvent;
    unsigned int time = (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff);
