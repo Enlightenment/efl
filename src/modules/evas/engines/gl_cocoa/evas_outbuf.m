@@ -45,6 +45,14 @@ static int _win_count = 0;
    self = [super initWithFrame: frameRect
                    pixelFormat: pf];
 
+   /* Keep the GL framebuffer at 1x point dimensions.
+    * Evas does not yet support output != viewport for GL rendering,
+    * so we need the framebuffer to match the logical point size. */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+   [self setWantsBestResolutionOpenGLSurface:NO];
+#pragma clang diagnostic pop
+
    /*
    * Evas GL backend uses a global OpenGL context for all windows inside
    * an application. Each window has its own texture to render its
