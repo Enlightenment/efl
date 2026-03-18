@@ -102,9 +102,13 @@ ecore_cocoa_event_modifiers(NSUInteger mod)
    unsigned int modifiers = 0;
 
    if (mod & NSEventModifierFlagShift) modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
-   if (mod & NSEventModifierFlagControl) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   /* Swap Command ↔ Control so that Command (⌘) acts as the primary
+    * "Control" modifier for EFL applications, matching the standard
+    * macOS convention used by Qt, Electron, and most cross-platform
+    * toolkits.  The physical Control key becomes "Super". */
+   if (mod & NSEventModifierFlagCommand) modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if (mod & NSEventModifierFlagControl) modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if (mod & NSEventModifierFlagOption) modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
-   if (mod & NSEventModifierFlagCommand) modifiers |= ECORE_EVENT_MODIFIER_WIN;
    if (mod & NSEventModifierFlagNumericPad) modifiers |= ECORE_EVENT_LOCK_NUM;
    if (mod & NSEventModifierFlagCapsLock) modifiers |= ECORE_EVENT_LOCK_CAPS;
 
@@ -266,12 +270,12 @@ _ecore_cocoa_feed_events(void *anEvent)
            // Turn special key flags on
            if (flags & NSEventModifierFlagShift)
              key = "Shift_L";
-           else if (flags & NSEventModifierFlagControl)
+           else if (flags & NSEventModifierFlagCommand)
              key = "Control_L";
+           else if (flags & NSEventModifierFlagControl)
+             key = "Super_L";
            else if (flags & NSEventModifierFlagOption)
              key = "Alt_L";
-           else if (flags & NSEventModifierFlagCommand)
-             key = "Super_L";
            else if (flags & NSEventModifierFlagCapsLock)
              key = "Caps_Lock";
            else if (flags & NSEventModifierFlagNumericPad)
@@ -305,12 +309,12 @@ _ecore_cocoa_feed_events(void *anEvent)
            // Turn special key flags off
            if (changed_flags & NSEventModifierFlagShift)
              key = "Shift_L";
-           else if (changed_flags & NSEventModifierFlagControl)
+           else if (changed_flags & NSEventModifierFlagCommand)
              key = "Control_L";
+           else if (changed_flags & NSEventModifierFlagControl)
+             key = "Super_L";
            else if (changed_flags & NSEventModifierFlagOption)
              key = "Alt_L";
-           else if (changed_flags & NSEventModifierFlagCommand)
-             key = "Super_L";
            else if (changed_flags & NSEventModifierFlagCapsLock)
              key = "Caps_Lock";
            else if (changed_flags & NSEventModifierFlagNumericPad)
