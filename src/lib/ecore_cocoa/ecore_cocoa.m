@@ -260,6 +260,7 @@ _ecore_cocoa_feed_events(void *anEvent)
       case NSEventTypeFlagsChanged:
         {
            NSUInteger flags = [event modifierFlags];
+           unsigned short keyCode = [event keyCode];
            EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
 
            Ecore_Event_Key *evDown = NULL;
@@ -267,15 +268,18 @@ _ecore_cocoa_feed_events(void *anEvent)
            const char *key = NULL;
            int keylen;
 
+           /* Use keyCode to distinguish left/right modifier keys.
+            * macOS keyCodes: LShift=56 RShift=60 LCmd=55 RCmd=54
+            *                 LCtrl=59 RCtrl=62 LOpt=58 ROpt=61 */
            // Turn special key flags on
            if (flags & NSEventModifierFlagShift)
-             key = "Shift_L";
+             key = (keyCode == 60) ? "Shift_R" : "Shift_L";
            else if (flags & NSEventModifierFlagCommand)
-             key = "Control_L";
+             key = (keyCode == 54) ? "Control_R" : "Control_L";
            else if (flags & NSEventModifierFlagControl)
-             key = "Super_L";
+             key = (keyCode == 62) ? "Super_R" : "Super_L";
            else if (flags & NSEventModifierFlagOption)
-             key = "Alt_L";
+             key = (keyCode == 61) ? "Alt_R" : "Alt_L";
            else if (flags & NSEventModifierFlagCapsLock)
              key = "Caps_Lock";
            else if (flags & NSEventModifierFlagNumericPad)
@@ -297,6 +301,7 @@ _ecore_cocoa_feed_events(void *anEvent)
                 evDown->event_window = evDown->window;
                 evDown->timestamp = time;
                 evDown->string = NULL;
+                evDown->keycode = keyCode;
                 ecore_event_add(ECORE_EVENT_KEY_DOWN, evDown, NULL, NULL);
                 old_flags = flags;
                 break;
@@ -308,13 +313,13 @@ _ecore_cocoa_feed_events(void *anEvent)
 
            // Turn special key flags off
            if (changed_flags & NSEventModifierFlagShift)
-             key = "Shift_L";
+             key = (keyCode == 60) ? "Shift_R" : "Shift_L";
            else if (changed_flags & NSEventModifierFlagCommand)
-             key = "Control_L";
+             key = (keyCode == 54) ? "Control_R" : "Control_L";
            else if (changed_flags & NSEventModifierFlagControl)
-             key = "Super_L";
+             key = (keyCode == 62) ? "Super_R" : "Super_L";
            else if (changed_flags & NSEventModifierFlagOption)
-             key = "Alt_L";
+             key = (keyCode == 61) ? "Alt_R" : "Alt_L";
            else if (changed_flags & NSEventModifierFlagCapsLock)
              key = "Caps_Lock";
            else if (changed_flags & NSEventModifierFlagNumericPad)
