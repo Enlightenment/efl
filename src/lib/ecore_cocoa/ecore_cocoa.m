@@ -341,46 +341,104 @@ _ecore_cocoa_feed_events(void *anEvent)
         }
       case NSEventTypeScrollWheel:
         {
+           /* Trackpads report fine-grained pixel deltas via
+            * hasPreciseScrollingDeltas.  Each tiny delta used to produce
+            * z = ±1, making scrolling absurdly fast.  Accumulate the
+            * pixel values and only emit a wheel event once the built-up
+            * amount crosses a per-line threshold. */
+           static float _scroll_acc_x = 0.0f;
+           static float _scroll_acc_y = 0.0f;
+           static const float PRECISE_SCROLL_THRESHOLD = 40.0f;
+
            DBG("Scroll Wheel");
 
            EcoreCocoaWindow *window = (EcoreCocoaWindow *)[event window];
-           Ecore_Event_Mouse_Wheel *ev;
-           float dx, dy = 0;
-
-           ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
-           if (!ev) return pass;
 
            if ([event hasPreciseScrollingDeltas])
              {
-                dx = -[event scrollingDeltaX];
-                dy = -[event scrollingDeltaY];
+                NSEventPhase phase = [event phase];
+                NSEventPhase momentum = [event momentumPhase];
+                int steps;
+
+                if (phase == NSEventPhaseBegan)
+                  {
+                     _scroll_acc_x = 0.0f;
+                     _scroll_acc_y = 0.0f;
+                  }
+
+                _scroll_acc_x += [event scrollingDeltaX];
+                _scroll_acc_y += [event scrollingDeltaY];
+
+                /* vertical */
+                steps = (int)(_scroll_acc_y / PRECISE_SCROLL_THRESHOLD);
+                if (steps != 0)
+                  {
+                     Ecore_Event_Mouse_Wheel *ev;
+                     ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
+                     if (ev)
+                       {
+                          _scroll_acc_y -= steps * PRECISE_SCROLL_THRESHOLD;
+                          ev->window = (Ecore_Window)window.ecore_window_data;
+                          ev->event_window = ev->window;
+                          ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
+                          ev->timestamp = time;
+                          ev->direction = 0;
+                          ev->z = -steps;
+                          ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+                       }
+                  }
+
+                /* horizontal */
+                steps = (int)(_scroll_acc_x / PRECISE_SCROLL_THRESHOLD);
+                if (steps != 0)
+                  {
+                     Ecore_Event_Mouse_Wheel *ev;
+                     ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
+                     if (ev)
+                       {
+                          _scroll_acc_x -= steps * PRECISE_SCROLL_THRESHOLD;
+                          ev->window = (Ecore_Window)window.ecore_window_data;
+                          ev->event_window = ev->window;
+                          ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
+                          ev->timestamp = time;
+                          ev->direction = 1;
+                          ev->z = -steps;
+                          ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+                       }
+                  }
+
+                if (phase == NSEventPhaseEnded ||
+                    phase == NSEventPhaseCancelled ||
+                    momentum == NSEventPhaseEnded ||
+                    momentum == NSEventPhaseCancelled)
+                  {
+                     _scroll_acc_x = 0.0f;
+                     _scroll_acc_y = 0.0f;
+                  }
              }
            else
              {
-                dx = -[event deltaX];
-                dy = -[event deltaY];
-             }
+                /* Discrete scrolling (mouse wheel): one event per click. */
+                Ecore_Event_Mouse_Wheel *ev;
+                float dx = -[event deltaX];
+                float dy = -[event deltaY];
 
-           if (dx == 0 && dy == 0)
-             {
-                break;
-             }
+                if (dx == 0 && dy == 0) break;
 
-           ev->window = (Ecore_Window)window.ecore_window_data;
-           ev->event_window = ev->window;
-           ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
-           ev->timestamp = time;
-           if (dy != 0)
-             {
-                ev->z = (dy >  0) ? 1 : -1;
-             }
-           else
-             {
-                ev->z = (dx >  0) ? 1 : -1;
-             }
-           ev->direction = (dy != 0) ? 0 : 1;
+                ev = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
+                if (!ev) break;
 
-           ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+                ev->window = (Ecore_Window)window.ecore_window_data;
+                ev->event_window = ev->window;
+                ev->modifiers = ecore_cocoa_event_modifiers([event modifierFlags]);
+                ev->timestamp = time;
+                if (dy != 0)
+                  ev->z = (dy > 0) ? 1 : -1;
+                else
+                  ev->z = (dx > 0) ? 1 : -1;
+                ev->direction = (dy != 0) ? 0 : 1;
+                ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+             }
 
            break;
         }
