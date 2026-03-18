@@ -71,7 +71,7 @@ _ecore_evas_cocoa_event_lost_focus(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee = _ecore_evas_cocoa_match(e->cocoa_window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
 
-   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
+   _ecore_evas_focus_device_set(ee, NULL, EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }
 
