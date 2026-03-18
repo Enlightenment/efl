@@ -243,6 +243,7 @@ _elm_photo_internal_image_follow(Evas_Object *obj)
    ELM_PHOTO_DATA_GET(obj, sd);
 
    img = elm_image_object_get(sd->icon);
+   if (!img) return;
 
    evas_object_event_callback_add
      (img, EVAS_CALLBACK_MOVE, _icon_move_resize_cb, obj);
