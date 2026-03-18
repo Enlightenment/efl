@@ -6011,8 +6011,8 @@ _genlist_element_focused(void *data, const Efl_Event *ev)
    if (!focused || focused == data) return;
 
    item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
+   if (!item || !efl_isa(item, ELM_GENLIST_ITEM_CLASS)) return;
 
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(item, ELM_GENLIST_ITEM_CLASS));
    elm_object_item_focus_set(item, EINA_TRUE);
 }
 
