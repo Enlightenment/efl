@@ -178,7 +178,8 @@ _on_item_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    if (item->func) item->func((void *)WIDGET_ITEM_DATA_GET(eo_it), obj2, eo_it);
    evas_object_smart_callback_call(obj2, "selected", eo_it);
 
-   evas_object_event_callback_add(sd->hover, EVAS_CALLBACK_DEL, _auto_update, item);
+   if (sd->hover)
+     evas_object_event_callback_add(sd->hover, EVAS_CALLBACK_DEL, _auto_update, item);
 
    elm_hoversel_hover_end(obj2);
 }
@@ -614,7 +615,8 @@ _elm_hoversel_item_efl_object_destructor(Eo *eo_item, Elm_Hoversel_Item_Data *it
 {
    ELM_HOVERSEL_DATA_GET_OR_RETURN(WIDGET(item), sd);
 
-   evas_object_event_callback_del_full(sd->hover, EVAS_CALLBACK_DEL, _auto_update, eo_item);
+   if (sd->hover)
+     evas_object_event_callback_del_full(sd->hover, EVAS_CALLBACK_DEL, _auto_update, eo_item);
    elm_hoversel_hover_end(WIDGET(item));
    sd->items = eina_list_remove(sd->items, eo_item);
    eina_stringshare_del(item->label);
