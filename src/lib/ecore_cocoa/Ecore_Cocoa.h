@@ -541,6 +541,14 @@ EAPI double ecore_cocoa_window_backing_scale_get(const Ecore_Cocoa_Window *windo
 EAPI void ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
    EINA_ARG_NONNULL(1);
 
+/**
+ * Sets the application icon shown in the Dock and Command+Tab switcher.
+ * @param path Absolute path to a PNG or other image file
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ */
+EAPI Eina_Bool ecore_cocoa_app_icon_set(const char *path)
+   EINA_ARG_NONNULL(1);
+
 
 /*
  * The clipboard API is still BETA

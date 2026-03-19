@@ -8542,6 +8542,27 @@ elm_win_icon_name_set(Evas_Object *obj, const char *icon_name)
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa.win)
+     {
+        const char *path;
+        char buf[PATH_MAX];
+
+        elm_need_efreet();
+        path = efreet_icon_path_find(elm_config_icon_theme_get(),
+                                     icon_name, 128);
+        if (!path && _elm_lib_dir)
+          {
+             snprintf(buf, sizeof(buf),
+                      "%s/../share/icons/hicolor/128x128/apps/%s.png",
+                      _elm_lib_dir, icon_name);
+             if (access(buf, R_OK) == 0)
+               path = buf;
+          }
+        if (path)
+          ecore_cocoa_app_icon_set(path);
+     }
+#endif
 }
 
 EAPI const char*

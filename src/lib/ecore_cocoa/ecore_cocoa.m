@@ -495,3 +495,24 @@ ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
    EINA_SAFETY_ON_NULL_RETURN(cb);
    [NSApp setTerminateCb: cb];
 }
+
+EAPI Eina_Bool
+ecore_cocoa_app_icon_set(const char *path)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
+
+   @autoreleasepool {
+      NSString *ns_path = [NSString stringWithUTF8String:path];
+      NSImage *icon = [[NSImage alloc] initWithContentsOfFile:ns_path];
+      if (!icon)
+        {
+           ERR("Failed to load icon from: %s", path);
+           return EINA_FALSE;
+        }
+      [NSApp setApplicationIconImage:icon];
+#if !__has_feature(objc_arc)
+      [icon release];
+#endif
+   }
+   return EINA_TRUE;
+}
