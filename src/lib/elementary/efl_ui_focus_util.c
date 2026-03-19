@@ -33,9 +33,9 @@ _efl_ui_focus_util_focus(Efl_Ui_Focus_Object *user)
 
    top = elm_widget_top_get(user);
 
-   o = efl_key_data_get(top, "__delayed_focus_set");
+   o = efl_key_wref_get(top, "__delayed_focus_set");
    if (o) efl_event_callback_del(o, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed, o);
-   efl_key_data_set(top, "__delayed_focus_set", NULL);
+   efl_key_wref_set(top, "__delayed_focus_set", NULL);
 
    registered_manager = m = efl_ui_focus_object_focus_manager_get(user);
    entry = user;
@@ -52,7 +52,7 @@ _efl_ui_focus_util_focus(Efl_Ui_Focus_Object *user)
 
    if (!m)
      {
-        efl_key_data_set(top, "__delayed_focus_set", entry);
+        efl_key_wref_set(top, "__delayed_focus_set", entry);
         efl_event_callback_add(entry,
                                EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED,
                                _manager_changed, user);
