@@ -665,6 +665,26 @@ ecore_cocoa_window_backing_scale_get(const Ecore_Cocoa_Window *window)
    return [window->window backingScaleFactor];
 }
 
+void
+_ecore_cocoa_window_center_on_mouse_screen(Ecore_Cocoa_Window *window)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+
+   NSPoint mouse = [NSEvent mouseLocation];
+   for (NSScreen *screen in [NSScreen screens])
+     {
+        if (NSMouseInRect(mouse, [screen frame], NO))
+          {
+             NSRect vf = [screen visibleFrame];
+             NSRect wf = [window->window frame];
+             wf.origin.x = NSMinX(vf) + (NSWidth(vf) - wf.size.width) / 2;
+             wf.origin.y = NSMinY(vf) + (NSHeight(vf) - wf.size.height) / 2;
+             [window->window setFrame:wf display:YES];
+             break;
+          }
+     }
+}
+
 Eina_Bool
 _ecore_cocoa_window_init(void)
 {

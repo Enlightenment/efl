@@ -14,6 +14,8 @@
 #include "ecore_evas_private.h"
 #include "ecore_evas_cocoa.h"
 
+extern void _ecore_cocoa_window_center_on_mouse_screen(Ecore_Cocoa_Window *window);
+
 #ifdef _WIN32
 # ifndef EFL_MODULE_STATIC
 #  define EMODAPI __declspec(dllexport)
@@ -271,6 +273,9 @@ static void
 _ecore_evas_show(Ecore_Evas *ee)
 {
    DBG("%p", ee);
+
+   if (!ee->visible && !ee->prop.request_pos)
+     _ecore_cocoa_window_center_on_mouse_screen((Ecore_Cocoa_Window *)ee->prop.window);
 
    ecore_cocoa_window_show((Ecore_Cocoa_Window *)ee->prop.window);
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
