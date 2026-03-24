@@ -178,7 +178,8 @@ static NSCursor *_cursors[__ECORE_COCOA_CURSOR_LAST];
 
    //we ignore left click in titlebar as it is handled by the OS (to move window)
    //and the corresponding mouseUp event isn't sent
-   if (y <= 0 && [event buttonNumber] == 0) {
+   //in fullscreen there is no titlebar, so this guard must not apply
+   if (y <= 0 && [event buttonNumber] == 0 && ![self isFullScreen]) {
 	 return;
    }
 
