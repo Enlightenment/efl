@@ -522,3 +522,9 @@ ecore_cocoa_reopen_cb_set(Ecore_Cocoa_Reopen_Cb cb)
 {
    [(Ecore_Cocoa_Application *)NSApp setReopenCb:cb];
 }
+
+EAPI void
+ecore_cocoa_url_open_cb_set(Ecore_Cocoa_URL_Open_Cb cb)
+{
+   [(Ecore_Cocoa_Application *)NSApp setUrlOpenCb:cb];
+}

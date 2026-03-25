@@ -141,6 +141,16 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
    return _reopen_cb;
 }
 
+- (void)setUrlOpenCb:(Ecore_Cocoa_URL_Open_Cb)cb
+{
+   _url_open_cb = cb;
+}
+
+- (Ecore_Cocoa_URL_Open_Cb)urlOpenCb
+{
+   return _url_open_cb;
+}
+
 @end
 
 
@@ -204,6 +214,18 @@ static Ecore_Cocoa_AppDelegate *_appDelegate = nil;
         return handled ? YES : NO;
      }
    return NO;
+}
+
+- (void)application:(NSApplication *)sender openURLs:(NSArray<NSURL *> *)urls
+{
+   Ecore_Cocoa_URL_Open_Cb cb = [(Ecore_Cocoa_Application *)sender urlOpenCb];
+   if (!cb) return;
+
+   for (NSURL *url in urls)
+     {
+        const char *s = [[url absoluteString] UTF8String];
+        if (s) cb(s);
+     }
 }
 
 @end

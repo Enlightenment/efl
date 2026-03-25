@@ -108,6 +108,20 @@ typedef Eina_Bool (*Ecore_Cocoa_Terminate_Cb)(Ecore_Cocoa_Object *sender);
 typedef Eina_Bool (*Ecore_Cocoa_Reopen_Cb)(Eina_Bool has_visible);
 
 /**
+ * @typedef Ecore_Cocoa_URL_Open_Cb
+ * Callback called when macOS asks the application to open a URL. This occurs
+ * when the user clicks a link using a custom URL scheme registered in the
+ * application's Info.plist (CFBundleURLTypes), e.g. @c terminology://tmux/work.
+ * This corresponds to the @c application:openURLs: NSApplicationDelegate method.
+ * The callback is invoked once per URL. Return EINA_TRUE to indicate the URL
+ * was handled, EINA_FALSE otherwise.
+ * @param url The URL string to open (UTF-8 encoded, caller-owned — the
+ *            callback must copy it if it needs to persist beyond the call).
+ * @since 1.28
+ */
+typedef Eina_Bool (*Ecore_Cocoa_URL_Open_Cb)(const char *url);
+
+/**
  * @typedef Ecore_Cocoa_Cursor
  * Values of the Cocoa cursors handled by Ecore_Cocoa
  * See https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSCursor_Class/index.html for images of each cursors.
@@ -576,6 +590,18 @@ EAPI Eina_Bool ecore_cocoa_app_icon_set(const char *path)
  * @since 1.20
  */
 EAPI void ecore_cocoa_reopen_cb_set(Ecore_Cocoa_Reopen_Cb cb);
+
+/**
+ * Registers a callback to be invoked when macOS asks the application to open
+ * a URL via a registered custom URL scheme (CFBundleURLTypes in Info.plist).
+ * The callback fires for each URL, both on cold launch (URL triggers app
+ * start) and warm launch (app already running).
+ * If @c cb is NULL, incoming URL open requests are silently ignored.
+ * @param cb The URL open callback to set, or NULL to clear it.
+ * @see Ecore_Cocoa_URL_Open_Cb
+ * @since 1.28
+ */
+EAPI void ecore_cocoa_url_open_cb_set(Ecore_Cocoa_URL_Open_Cb cb);
 
 
 /*
