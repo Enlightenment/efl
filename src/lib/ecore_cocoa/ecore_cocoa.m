@@ -516,3 +516,9 @@ ecore_cocoa_app_icon_set(const char *path)
    }
    return EINA_TRUE;
 }
+
+EAPI void
+ecore_cocoa_reopen_cb_set(Ecore_Cocoa_Reopen_Cb cb)
+{
+   [(Ecore_Cocoa_Application *)NSApp setReopenCb:cb];
+}

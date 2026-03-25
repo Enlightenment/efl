@@ -9,6 +9,7 @@
    Ecore_Timer  *_timer;
    NSDate       *_expiration;
    Ecore_Cocoa_Terminate_Cb _terminate_cb;
+   Ecore_Cocoa_Reopen_Cb    _reopen_cb;
    BOOL          _is_running;
 }
 
@@ -21,6 +22,8 @@
 - (void)internalUpdate;
 - (void)setTerminateCb:(Ecore_Cocoa_Terminate_Cb)cb;
 - (Ecore_Cocoa_Terminate_Cb)terminateCb;
+- (void)setReopenCb:(Ecore_Cocoa_Reopen_Cb)cb;
+- (Ecore_Cocoa_Reopen_Cb)reopenCb;
 
 - (void) pauseNSRunLoopMonitoring;
 - (void) resumeNSRunLoopMonitoring;

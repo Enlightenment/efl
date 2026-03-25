@@ -131,6 +131,16 @@ _ecore_cocoa_run_loop_cb(void *data EINA_UNUSED)
    return _terminate_cb;
 }
 
+- (void)setReopenCb:(Ecore_Cocoa_Reopen_Cb)cb
+{
+   _reopen_cb = cb;
+}
+
+- (Ecore_Cocoa_Reopen_Cb)reopenCb
+{
+   return _reopen_cb;
+}
+
 @end
 
 
@@ -183,6 +193,17 @@ static Ecore_Cocoa_AppDelegate *_appDelegate = nil;
          if (!ret) status = NSTerminateCancel;
      }
    return status;
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag
+{
+   Ecore_Cocoa_Reopen_Cb cb = [(Ecore_Cocoa_Application *)sender reopenCb];
+   if (cb)
+     {
+        Eina_Bool handled = cb(flag ? EINA_TRUE : EINA_FALSE);
+        return handled ? YES : NO;
+     }
+   return NO;
 }
 
 @end

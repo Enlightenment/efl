@@ -92,6 +92,22 @@ typedef struct _Ecore_Cocoa_Event_Window_Destroy Ecore_Cocoa_Event_Window_Destro
 typedef Eina_Bool (*Ecore_Cocoa_Terminate_Cb)(Ecore_Cocoa_Object *sender);
 
 /**
+ * @typedef Ecore_Cocoa_Reopen_Cb
+ * Callback called when the application is asked to reopen (e.g. the user
+ * clicks the Dock icon or re-launches from Spotlight while the application
+ * is already running). This corresponds to the
+ * @c applicationShouldHandleReopen:hasVisibleWindows: NSApplicationDelegate
+ * method.
+ * Return EINA_TRUE to indicate the event was handled (macOS will not apply
+ * default behaviour). Return EINA_FALSE to let macOS apply its default
+ * behaviour (bring existing visible windows to front, or do nothing).
+ * @param has_visible EINA_TRUE if the application has at least one visible
+ * window at the time of the reopen request.
+ * @since 1.20
+ */
+typedef Eina_Bool (*Ecore_Cocoa_Reopen_Cb)(Eina_Bool has_visible);
+
+/**
  * @typedef Ecore_Cocoa_Cursor
  * Values of the Cocoa cursors handled by Ecore_Cocoa
  * See https://developer.apple.com/library/mac/documentation/Cocoa/Reference/ApplicationKit/Classes/NSCursor_Class/index.html for images of each cursors.
@@ -548,6 +564,18 @@ EAPI void ecore_cocoa_terminate_cb_set(Ecore_Cocoa_Terminate_Cb cb)
  */
 EAPI Eina_Bool ecore_cocoa_app_icon_set(const char *path)
    EINA_ARG_NONNULL(1);
+ 
+/**
+ * Registers a callback to be invoked when the application is asked to reopen.
+ * This occurs when the user clicks the running application's Dock icon or
+ * re-launches it from Spotlight / Launchpad while it is already running.
+ * If @c cb is NULL the default macOS reopen behaviour is restored (bring
+ * visible windows to front).
+ * @param cb The reopen callback to set, or NULL to clear it.
+ * @see Ecore_Cocoa_Reopen_Cb
+ * @since 1.20
+ */
+EAPI void ecore_cocoa_reopen_cb_set(Ecore_Cocoa_Reopen_Cb cb);
 
 
 /*
