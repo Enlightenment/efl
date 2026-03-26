@@ -833,6 +833,22 @@ void                 _elm_dbus_menu_app_menu_register(Ecore_X_Window xid, Eo *ob
 void                 _elm_dbus_menu_app_menu_unregister(Eo *obj);
 void                 _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item);
 
+#ifdef HAVE_ELEMENTARY_COCOA
+/* Forward declaration — guarded to avoid duplicate typedef when
+ * elm_widget_menu.h is included in the same translation unit. */
+#ifndef _ELM_COCOA_MENU_TYPEDEF
+#define _ELM_COCOA_MENU_TYPEDEF
+typedef struct _Elm_Cocoa_Menu Elm_Cocoa_Menu;
+#endif
+Elm_Cocoa_Menu *_elm_cocoa_menu_register(Eo *obj);
+void            _elm_cocoa_menu_unregister(Eo *obj);
+int             _elm_cocoa_menu_item_add(Elm_Cocoa_Menu *cocoa_menu,
+                                         Elm_Object_Item *eo_item);
+void            _elm_cocoa_menu_item_delete(Elm_Cocoa_Menu *cocoa_menu,
+                                             int id);
+void            _elm_cocoa_menu_update(Elm_Cocoa_Menu *cocoa_menu);
+#endif /* HAVE_ELEMENTARY_COCOA */
+
 void                 _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar);
 void                 _elm_menu_menu_bar_hide(Eo *obj);
 

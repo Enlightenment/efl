@@ -99,6 +99,9 @@ _elm_menu_item_elm_widget_item_disable(Eo *eo_item, Elm_Menu_Item_Data *item)
      elm_layout_signal_emit(VIEW(item), "elm,state,enabled", "elm");
 
    if (item->dbus_menu) _elm_dbus_menu_update(item->dbus_menu);
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (item->cocoa_menu) _elm_cocoa_menu_update(item->cocoa_menu);
+#endif
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(item)));
 }
 
@@ -474,6 +477,15 @@ _elm_dbus_menu_item_select_cb(Elm_Object_Item *obj_item)
   if (item->func) item->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(item))), WIDGET(item), obj_item);
 }
 
+/* Non-static forwarder used by elm_cocoa_menu.c to fire item callbacks */
+void
+_elm_menu_item_activate(Elm_Object_Item *eo_item)
+{
+   ELM_MENU_ITEM_DATA_GET(eo_item, item);
+   if (item->func)
+     item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
+}
+
 static void
 _menu_item_select_cb(void *data,
                      Evas_Object *obj EINA_UNUSED,
@@ -732,6 +744,9 @@ _elm_menu_efl_canvas_group_group_del(Eo *obj, Elm_Menu_Data *sd)
    Elm_Object_Item *eo_item;
 
    _elm_dbus_menu_unregister(obj);
+#ifdef HAVE_ELEMENTARY_COCOA
+   _elm_cocoa_menu_unregister(obj);
+#endif
 
    if (sd->parent)
      {
@@ -1040,6 +1055,10 @@ _elm_menu_item_efl_object_destructor(Eo *eo_item, Elm_Menu_Item_Data *item)
 
    if (sd->dbus_menu)
      _elm_dbus_menu_item_delete(sd->dbus_menu, item->dbus_idx);
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa_menu)
+     _elm_cocoa_menu_item_delete(sd->cocoa_menu, item->cocoa_idx);
+#endif
 
    efl_destructor(efl_super(eo_item, ELM_MENU_ITEM_CLASS));
 }
@@ -1094,6 +1113,13 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
      it->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu, eo_item);
      it->dbus_menu = sd->dbus_menu;
    }
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa_menu)
+     {
+       it->cocoa_idx  = _elm_cocoa_menu_item_add(sd->cocoa_menu, eo_item);
+       it->cocoa_menu = sd->cocoa_menu;
+     }
+#endif
    if (_elm_config->atspi_mode)
      {
         efl_access_added(eo_item);
@@ -1169,6 +1195,13 @@ _elm_menu_item_separator_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *eo_p_i
    if (sd->dbus_menu)
      subitem->dbus_idx = _elm_dbus_menu_item_add(sd->dbus_menu,
                                                  eo_subitem);
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa_menu)
+     {
+       subitem->cocoa_idx  = _elm_cocoa_menu_item_add(sd->cocoa_menu, eo_subitem);
+       subitem->cocoa_menu = sd->cocoa_menu;
+     }
+#endif
    return eo_subitem;
 }
 

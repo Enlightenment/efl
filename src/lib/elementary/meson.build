@@ -1005,6 +1005,7 @@ endif
 if get_option('cocoa')
   config_h.set('HAVE_ELEMENTARY_COCOA', '1')
   elementary_deps += ecore_cocoa
+  elementary_src += files('elm_cocoa_menu.c')
 endif
 
 if sys_windows == true

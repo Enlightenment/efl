@@ -7,6 +7,14 @@
 #include "elm_menu_item_eo.h"
 #include "elm_hover_eo.h"
 
+#ifdef HAVE_ELEMENTARY_COCOA
+/* Forward declaration only — elm_cocoa_menu.c owns the full definition */
+#ifndef _ELM_COCOA_MENU_TYPEDEF
+#define _ELM_COCOA_MENU_TYPEDEF
+typedef struct _Elm_Cocoa_Menu Elm_Cocoa_Menu;
+#endif
+#endif
+
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
  * FINAL. CALL elm_widget_api_check(ELM_INTERNAL_API_VERSION) TO CHECK
@@ -36,6 +44,10 @@ struct _Elm_Menu_Data
    Evas_Coord            xloc, yloc;
    Elm_DBus_Menu        *dbus_menu;
 
+#ifdef HAVE_ELEMENTARY_COCOA
+   Elm_Cocoa_Menu       *cocoa_menu;
+#endif
+
    Eina_Bool             menu_bar : 1;
 };
 
@@ -52,6 +64,10 @@ struct _Elm_Menu_Item_Data
    unsigned int   idx;
    Elm_DBus_Menu *dbus_menu;
    int            dbus_idx;
+#ifdef HAVE_ELEMENTARY_COCOA
+   Elm_Cocoa_Menu *cocoa_menu;
+   int             cocoa_idx;
+#endif
 
    struct
    {

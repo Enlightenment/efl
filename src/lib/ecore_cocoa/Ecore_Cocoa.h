@@ -604,6 +604,156 @@ EAPI void ecore_cocoa_reopen_cb_set(Ecore_Cocoa_Reopen_Cb cb);
 EAPI void ecore_cocoa_url_open_cb_set(Ecore_Cocoa_URL_Open_Cb cb);
 
 
+/* ===================================================================
+ * Menu API
+ * =================================================================== */
+
+/**
+ * @typedef Ecore_Cocoa_Menu
+ * Opaque handle for a native NSMenu managed through Ecore_Cocoa.
+ */
+typedef struct _Ecore_Cocoa_Menu Ecore_Cocoa_Menu;
+
+/**
+ * Creates a new top-level or sub NSMenu.
+ * @param title The menu title (used by macOS for the menu bar title).
+ * @return An opaque handle, or NULL on failure.
+ */
+EAPI Ecore_Cocoa_Menu *ecore_cocoa_menu_new(const char *title)
+   EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Frees an NSMenu and all associated target objects.
+ * @param menu The menu to free.
+ */
+EAPI void ecore_cocoa_menu_free(Ecore_Cocoa_Menu *menu);
+
+/**
+ * Adds a labeled menu item with an optional action callback.
+ * @param menu   The menu to add the item to.
+ * @param label  UTF-8 label text.
+ * @param icon   Reserved for future use (pass NULL).
+ * @param cb     C callback invoked when the item is clicked, or NULL.
+ * @param data   User data passed to @c cb.
+ * @return The zero-based index of the new item, or -1 on failure.
+ */
+EAPI int ecore_cocoa_menu_item_add(Ecore_Cocoa_Menu *menu,
+                                   const char       *label,
+                                   const char       *icon,
+                                   void (*cb)(void *data,
+                                              Ecore_Cocoa_Menu *menu,
+                                              int idx),
+                                   void             *data)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Adds a separator item to the menu.
+ * @param menu The menu to add the separator to.
+ * @return The zero-based index of the separator, or -1 on failure.
+ */
+EAPI int ecore_cocoa_menu_item_add_separator(Ecore_Cocoa_Menu *menu)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Removes the item at @c idx from the menu.
+ * @param menu The menu.
+ * @param idx  Index returned by ecore_cocoa_menu_item_add().
+ */
+EAPI void ecore_cocoa_menu_item_del(Ecore_Cocoa_Menu *menu, int idx)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Sets an integer tag on a menu item.  Tags can be used to identify
+ * items independently of their positional index (which drifts on
+ * deletion).
+ * @param menu The menu.
+ * @param idx  Positional index of the item.
+ * @param tag  Integer tag value (stored in NSMenuItem.tag).
+ */
+EAPI void ecore_cocoa_menu_item_tag_set(Ecore_Cocoa_Menu *menu,
+                                        int               idx,
+                                        int               tag)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Removes a menu item identified by its tag.
+ * @param menu The menu.
+ * @param tag  Tag previously assigned via ecore_cocoa_menu_item_tag_set().
+ */
+EAPI void ecore_cocoa_menu_item_del_by_tag(Ecore_Cocoa_Menu *menu,
+                                           int               tag)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Returns the positional index of the menu item matching the given tag.
+ * @param menu The menu.
+ * @param tag  Tag previously assigned via ecore_cocoa_menu_item_tag_set().
+ * @return Positional index (>= 0) or -1 if not found.
+ */
+EAPI int ecore_cocoa_menu_item_index_by_tag(Ecore_Cocoa_Menu *menu,
+                                             int               tag)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Enables or disables a menu item.
+ * @param menu    The menu.
+ * @param idx     Item index.
+ * @param enabled EINA_TRUE to enable, EINA_FALSE to grey out.
+ */
+EAPI void ecore_cocoa_menu_item_enabled_set(Ecore_Cocoa_Menu *menu,
+                                            int               idx,
+                                            Eina_Bool         enabled)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Enables or disables a menu item identified by its tag.
+ * @param menu    The menu.
+ * @param tag     Tag value.
+ * @param enabled EINA_TRUE to enable, EINA_FALSE to grey out.
+ */
+EAPI void ecore_cocoa_menu_item_enabled_set_by_tag(Ecore_Cocoa_Menu *menu,
+                                                   int               tag,
+                                                   Eina_Bool         enabled)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Updates the label of an existing menu item.
+ * @param menu  The menu.
+ * @param idx   Item index.
+ * @param label New UTF-8 label.
+ */
+EAPI void ecore_cocoa_menu_item_label_set(Ecore_Cocoa_Menu *menu,
+                                          int               idx,
+                                          const char       *label)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Attaches a sub-menu to an existing menu item.
+ * @param menu    The parent menu.
+ * @param idx     Index of the parent item that will own the submenu.
+ * @param submenu The child menu to attach.
+ */
+EAPI void ecore_cocoa_menu_submenu_set(Ecore_Cocoa_Menu *menu,
+                                       int               idx,
+                                       Ecore_Cocoa_Menu *submenu)
+   EINA_ARG_NONNULL(1, 3);
+
+/**
+ * Installs @c menu as the application's main menu bar.
+ * The menu is set unconditionally — NSApp is always initialised by the
+ * time a window exists.
+ * @param menu The top-level menu to install.
+ */
+EAPI void ecore_cocoa_menu_main_set(Ecore_Cocoa_Menu *menu)
+   EINA_ARG_NONNULL(1);
+
+/**
+ * Returns the current main menu handle, or NULL if none has been set.
+ */
+EAPI Ecore_Cocoa_Menu *ecore_cocoa_menu_main_get(void)
+   EINA_WARN_UNUSED_RESULT;
+
+
 /*
  * The clipboard API is still BETA
  */

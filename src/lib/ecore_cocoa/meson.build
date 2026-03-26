@@ -1,5 +1,5 @@
 cocoa_external_dep = declare_dependency(
-  link_args : ['-lobjc', '-framework', 'CoreFoundation', '-framework', 'cocoa', ],
+  link_args : ['-lobjc', '-framework', 'CoreFoundation', '-framework', 'Cocoa', ],
 )
 
 ecore_cocoa_deps = [eina, ecore_input, ecore, emile, eet]
@@ -20,6 +20,7 @@ ecore_cocoa_src = files([
   'ecore_cocoa_cnp.m',
   'ecore_cocoa_app.m',
   'ecore_cocoa_app.h',
+  'ecore_cocoa_menu.m',
   'ecore_cocoa_private.h'
 ])
 

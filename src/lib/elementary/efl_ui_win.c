@@ -8916,6 +8916,22 @@ elm_win_main_menu_get(Evas_Object *obj)
    sd->main_menu = elm_menu_add(obj);
    _elm_menu_menu_bar_set(sd->main_menu, EINA_TRUE);
 
+#ifdef HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa.win)
+     {
+        if (_elm_cocoa_menu_register(sd->main_menu))
+          {
+             /* Native Cocoa menu bar is active — hide the in-canvas
+              * EFL menu widget.  We reuse _dbus_menu_set(EINA_TRUE)
+              * because its EINA_TRUE branch does exactly what we need:
+              * unswallow the menu, hide it, and update the frame. */
+             _dbus_menu_set(EINA_TRUE, obj);
+             goto end;
+          }
+        /* Fall through: Cocoa menu alloc failed, use in-canvas widget */
+     }
+#endif
+
 #ifdef HAVE_ELEMENTARY_X
    if (!_elm_config->disable_external_menu && sd->x.xwin) use_dbus = EINA_TRUE;
 #endif
