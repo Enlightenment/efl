@@ -239,7 +239,16 @@ group { name: "e/modules/connman/main";
          }
       }
 ///////////////////////
+      part { name: "icon_dim"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 255 255 255 255; // no cc
+         }
+         description { state: "visible" 0.0;
+            color: 255 255 255 64; // no cc
+         }
+      }
       part { name: "clip_exclam"; type: RECT;
+         clip_to: "icon_dim";
          description { state: "default" 0.0;
             visible: 1;
          }
@@ -257,6 +266,7 @@ group { name: "e/modules/connman/main";
          }
       }
       part { name: "clip_wifi"; type: RECT;
+         clip_to: "icon_dim";
          description { state: "default" 0.0;
             visible: 0;
          }
@@ -274,6 +284,7 @@ group { name: "e/modules/connman/main";
          }
       }
       part { name: "clip_eth"; type: RECT;
+         clip_to: "icon_dim";
          description { state: "default" 0.0;
             visible: 0;
          }
@@ -291,6 +302,7 @@ group { name: "e/modules/connman/main";
          }
       }
       part { name: "clip_bt"; type: RECT;
+         clip_to: "icon_dim";
          description { state: "default" 0.0;
             visible: 0;
          }
@@ -308,6 +320,7 @@ group { name: "e/modules/connman/main";
          }
       }
       part { name: "clip_cell"; type: RECT;
+         clip_to: "icon_dim";
          description { state: "default" 0.0;
             visible: 0;
          }
