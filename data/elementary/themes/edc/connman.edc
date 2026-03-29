@@ -324,6 +324,134 @@ group { name: "e/modules/connman/main";
             visible: 1;
          }
       }
+      part { name: "band_label"; type: TEXT; effect: SHADOW; mouse_events: 0;
+         clip_to: "clip_wifi";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 0.85 0.45;
+            rel1.to: "wifi-base";
+            rel2.to: "wifi-base";
+            color: 170 220 255 220;
+            color3: 0 0 0 128;
+            text { font: FN; size: 7;
+               text: "";
+               align: 0.0 0.5;
+               min: 0 0;
+            }
+         }
+      }
+      part { name: "security_overlay"; mouse_events: 0;
+         clip_to: "clip_wifi";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1.relative: 0.6 0.6;
+            rel2.relative: 1.0 1.0;
+            rel1.to: "wifi-base";
+            rel2.to: "wifi-base";
+            image.normal: "i-lock";
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
+         }
+         description { state: "wep" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "i-lock";
+            color_class: "/fg/normal/gadgets/connman/security/secure/low";
+         }
+         description { state: "psk" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            image.normal: "i-lock-double";
+            color_class: "/fg/normal/gadgets/connman/security/secure/hi";
+         }
+      }
+      part { name: "activity_rx"; type: RECT; mouse_events: 0;
+         clip_to: "clip_wifi";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1 { relative: 0.18 0.80; to: "wifi"; }
+            rel2 { relative: 0.28 0.90; to: "wifi"; }
+            color: 170 220 255 0;
+         }
+         description { state: "on" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 170 220 255 200;
+            rel1 { relative: 0.18 0.80; to: "wifi"; }
+            rel2 { relative: 0.28 0.90; to: "wifi"; }
+         }
+         description { state: "bounce" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 170 220 255 200;
+            rel1 { relative: 0.18 0.65; to: "wifi"; }
+            rel2 { relative: 0.28 0.75; to: "wifi"; }
+         }
+         description { state: "off" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 170 220 255 0;
+         }
+      }
+      part { name: "activity_tx"; type: RECT; mouse_events: 0;
+         clip_to: "clip_wifi";
+         description { state: "default" 0.0;
+            visible: 0;
+            rel1 { relative: 0.32 0.80; to: "wifi"; }
+            rel2 { relative: 0.42 0.90; to: "wifi"; }
+            color: 170 220 255 0;
+         }
+         description { state: "on" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 170 220 255 200;
+            rel1 { relative: 0.32 0.80; to: "wifi"; }
+            rel2 { relative: 0.42 0.90; to: "wifi"; }
+         }
+         description { state: "bounce" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 170 220 255 200;
+            rel1 { relative: 0.32 0.95; to: "wifi"; }
+            rel2 { relative: 0.42 1.05; to: "wifi"; }
+         }
+         description { state: "off" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 170 220 255 0;
+         }
+      }
+      part { name: "label_clip"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 255 255 255 0; // no cc
+         }
+         description { state: "visible" 0.0;
+            color: 255 255 255 255; // no cc
+         }
+      }
+      part { name: "e.text.label"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         clip_to: "label_clip";
+         description { state: "default" 0.0;
+            color_class: "/fg/selected/gadgets/connman/text";
+            color: 255 255 255 255; // no cc
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
+            text { font: FN; size: 8;
+               min: 1 1;
+               text_class: "module_small";
+            }
+            fixed: 1 1;
+         }
+         description { state: "scroll_left" 0.0;
+            inherit: "default" 0.0;
+            align: 1.0 0.5;
+         }
+         description { state: "scroll_right" 0.0;
+            inherit: "default" 0.0;
+            align: 0.0 0.5;
+         }
+      }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0; // no cc
@@ -510,6 +638,244 @@ else { \
          target: "clip_bt";
          target: "clip_cell";
       }
+      program { name: "label_show"; signal: "mouse,in"; source: "event";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 0.25;
+         target: "label_clip";
+         target: "icon_dim";
+         after: "scroll_l";
+      }
+      program { name: "scroll_l";
+         action: STATE_SET "scroll_left" 0.0;
+         transition: LINEAR 3.0;
+         target: "e.text.label";
+         after: "scroll_r";
+      }
+      program { name: "scroll_r";
+         action: STATE_SET "scroll_right" 0.0;
+         transition: LINEAR 3.0;
+         target: "e.text.label";
+         after: "scroll_l";
+      }
+      program { name: "label_hide"; signal: "mouse,out"; source: "event";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 1.0;
+         target: "label_clip";
+         target: "icon_dim";
+         target: "e.text.label";
+      }
+      program { signal: "e,security,psk"; source: "e";
+         action: STATE_SET "psk" 0.0;
+         target: "security_overlay";
+      }
+      program { signal: "e,security,wep"; source: "e";
+         action: STATE_SET "wep" 0.0;
+         target: "security_overlay";
+      }
+      program { signal: "e,security,ieee8021x"; source: "e";
+         action: STATE_SET "psk" 0.0;
+         target: "security_overlay";
+      }
+      program { signal: "e,security,wps"; source: "e";
+         action: STATE_SET "wep" 0.0;
+         target: "security_overlay";
+      }
+      program { signal: "e,security,off"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "security_overlay";
+      }
+      /* --- RX (download) — dot bounces UP --- */
+      program { name: "rx_low"; signal: "e,traffic,rx,low"; source: "e";
+         action: ACTION_STOP;
+         target: "rx_up_m"; target: "rx_down_m";
+         target: "rx_up_h"; target: "rx_down_h";
+         after: "rx_appear_l";
+      }
+      program { name: "rx_appear_l";
+         action: STATE_SET "on" 0.0;
+         target: "activity_rx";
+         after: "rx_up_l";
+      }
+      program { name: "rx_up_l";
+         action: STATE_SET "bounce" 0.0;
+         transition: DECELERATE 0.25;
+         target: "activity_rx";
+         after: "rx_down_l";
+      }
+      program { name: "rx_down_l";
+         action: STATE_SET "on" 0.0;
+         transition: ACCELERATE 0.25;
+         target: "activity_rx";
+         after: "rx_pause_l";
+      }
+      program { name: "rx_pause_l";
+         action: STATE_SET "off" 0.0;
+         transition: LINEAR 0.5;
+         target: "activity_rx";
+         after: "rx_unpause_l";
+      }
+      program { name: "rx_unpause_l";
+         action: STATE_SET "on" 0.0;
+         target: "activity_rx";
+         after: "rx_up_l";
+      }
+      program { name: "rx_med"; signal: "e,traffic,rx,medium"; source: "e";
+         action: ACTION_STOP;
+         target: "rx_up_l"; target: "rx_down_l";
+         target: "rx_pause_l"; target: "rx_unpause_l";
+         target: "rx_up_h"; target: "rx_down_h";
+         after: "rx_appear_m";
+      }
+      program { name: "rx_appear_m";
+         action: STATE_SET "on" 0.0;
+         target: "activity_rx";
+         after: "rx_up_m";
+      }
+      program { name: "rx_up_m";
+         action: STATE_SET "bounce" 0.0;
+         transition: DECELERATE 0.15;
+         target: "activity_rx";
+         after: "rx_down_m";
+      }
+      program { name: "rx_down_m";
+         action: STATE_SET "on" 0.0;
+         transition: ACCELERATE 0.15;
+         target: "activity_rx";
+         after: "rx_up_m";
+      }
+      program { name: "rx_high"; signal: "e,traffic,rx,high"; source: "e";
+         action: ACTION_STOP;
+         target: "rx_up_l"; target: "rx_down_l";
+         target: "rx_pause_l"; target: "rx_unpause_l";
+         target: "rx_up_m"; target: "rx_down_m";
+         after: "rx_appear_h";
+      }
+      program { name: "rx_appear_h";
+         action: STATE_SET "on" 0.0;
+         target: "activity_rx";
+         after: "rx_up_h";
+      }
+      program { name: "rx_up_h";
+         action: STATE_SET "bounce" 0.0;
+         transition: DECELERATE 0.08;
+         target: "activity_rx";
+         after: "rx_down_h";
+      }
+      program { name: "rx_down_h";
+         action: STATE_SET "on" 0.0;
+         transition: ACCELERATE 0.08;
+         target: "activity_rx";
+         after: "rx_up_h";
+      }
+      program { name: "rx_idle"; signal: "e,traffic,rx,idle"; source: "e";
+         action: ACTION_STOP;
+         target: "rx_up_l"; target: "rx_down_l";
+         target: "rx_pause_l"; target: "rx_unpause_l";
+         target: "rx_up_m"; target: "rx_down_m";
+         target: "rx_up_h"; target: "rx_down_h";
+         after: "rx_hide";
+      }
+      program { name: "rx_hide";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.3;
+         target: "activity_rx";
+      }
+      /* --- TX (upload) — dot bounces DOWN --- */
+      program { name: "tx_low"; signal: "e,traffic,tx,low"; source: "e";
+         action: ACTION_STOP;
+         target: "tx_up_m"; target: "tx_down_m";
+         target: "tx_up_h"; target: "tx_down_h";
+         after: "tx_appear_l";
+      }
+      program { name: "tx_appear_l";
+         action: STATE_SET "on" 0.0;
+         target: "activity_tx";
+         after: "tx_down_l";
+      }
+      program { name: "tx_down_l";
+         action: STATE_SET "bounce" 0.0;
+         transition: DECELERATE 0.25;
+         target: "activity_tx";
+         after: "tx_up_l";
+      }
+      program { name: "tx_up_l";
+         action: STATE_SET "on" 0.0;
+         transition: ACCELERATE 0.25;
+         target: "activity_tx";
+         after: "tx_pause_l";
+      }
+      program { name: "tx_pause_l";
+         action: STATE_SET "off" 0.0;
+         transition: LINEAR 0.5;
+         target: "activity_tx";
+         after: "tx_unpause_l";
+      }
+      program { name: "tx_unpause_l";
+         action: STATE_SET "on" 0.0;
+         target: "activity_tx";
+         after: "tx_down_l";
+      }
+      program { name: "tx_med"; signal: "e,traffic,tx,medium"; source: "e";
+         action: ACTION_STOP;
+         target: "tx_down_l"; target: "tx_up_l";
+         target: "tx_pause_l"; target: "tx_unpause_l";
+         target: "tx_up_h"; target: "tx_down_h";
+         after: "tx_appear_m";
+      }
+      program { name: "tx_appear_m";
+         action: STATE_SET "on" 0.0;
+         target: "activity_tx";
+         after: "tx_down_m";
+      }
+      program { name: "tx_down_m";
+         action: STATE_SET "bounce" 0.0;
+         transition: DECELERATE 0.15;
+         target: "activity_tx";
+         after: "tx_up_m";
+      }
+      program { name: "tx_up_m";
+         action: STATE_SET "on" 0.0;
+         transition: ACCELERATE 0.15;
+         target: "activity_tx";
+         after: "tx_down_m";
+      }
+      program { name: "tx_high"; signal: "e,traffic,tx,high"; source: "e";
+         action: ACTION_STOP;
+         target: "tx_down_l"; target: "tx_up_l";
+         target: "tx_pause_l"; target: "tx_unpause_l";
+         target: "tx_down_m"; target: "tx_up_m";
+         after: "tx_appear_h";
+      }
+      program { name: "tx_appear_h";
+         action: STATE_SET "on" 0.0;
+         target: "activity_tx";
+         after: "tx_down_h";
+      }
+      program { name: "tx_down_h";
+         action: STATE_SET "bounce" 0.0;
+         transition: DECELERATE 0.08;
+         target: "activity_tx";
+         after: "tx_up_h";
+      }
+      program { name: "tx_up_h";
+         action: STATE_SET "on" 0.0;
+         transition: ACCELERATE 0.08;
+         target: "activity_tx";
+         after: "tx_down_h";
+      }
+      program { name: "tx_idle"; signal: "e,traffic,tx,idle"; source: "e";
+         action: ACTION_STOP;
+         target: "tx_down_l"; target: "tx_up_l";
+         target: "tx_pause_l"; target: "tx_unpause_l";
+         target: "tx_down_m"; target: "tx_up_m";
+         target: "tx_down_h"; target: "tx_up_h";
+         after: "tx_hide";
+      }
+      program { name: "tx_hide";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.3;
+         target: "activity_tx";
+      }
    }
 }
 
@@ -625,6 +991,39 @@ group { name: "e/modules/connman/end";
       }
       program { signal: "e,security,wps"; source: "e";
          action: STATE_SET "wep" 0.0;
+         target: "base";
+      }
+   }
+}
+
+group { name: "e/modules/connman/forget";
+   parts {
+      part { name: "base"; mouse_events: 0;
+         description { state: "default" 0.0;
+            image.normal: "i-trash";
+            rel1.relative: 0.2 0.2;
+            rel2.relative: 0.8 0.8;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            color_class: "/fg/normal/gadgets/connman/security/none";
+         }
+         description { state: "hover" 0.0;
+            inherit: "default" 0.0;
+            color_class: "/fg/normal/gadgets/connman/security/secure/low";
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { signal: "mouse,in"; source: "event";
+         action: STATE_SET "hover" 0.0;
+         target: "base";
+      }
+      program { signal: "mouse,out"; source: "event";
+         action: STATE_SET "default" 0.0;
          target: "base";
       }
    }
