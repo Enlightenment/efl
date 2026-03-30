@@ -131,10 +131,13 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
 
+   /* Save the current split ratio BEFORE calling the super theme_apply,
+    * which reloads the Edje object and resets all drag values to their
+    * theme defaults (typically 0.0). */
+   size = elm_panes_content_left_size_get(obj);
+
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
-
-   size = elm_panes_content_left_size_get(obj);
 
    if (sd->fixed)
      {
