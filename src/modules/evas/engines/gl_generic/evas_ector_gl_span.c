@@ -238,6 +238,7 @@ span_collector_clear(Span_Collector *sc)
            memset(sc->textures[i].span_counts, 0, sc->height * sizeof(int));
            memset(sc->textures[i].last_x_end, 0, sc->height * sizeof(int));
            sc->textures[i].dirty = EINA_FALSE;
+           sc->textures[i].rolling_hash = 2166136261u;  /* seed */
         }
    }
 
@@ -591,6 +592,8 @@ _find_texture_for_x(Span_Collector *sc, int x)
 {
    int i;
 
+   if (sc->texture_count == 1) return 0;
+
    for (i = 0; i < sc->texture_count; i++)
      {
         if (x >= sc->textures[i].x_min && x <= sc->textures[i].x_max)
@@ -654,7 +657,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
              continue;
           }
 
-        ti  = _find_texture_for_x(sc, sx);
+        ti  = (sc->texture_count == 1) ? 0 : _find_texture_for_x(sc, sx);
         tex = &sc->textures[ti];
         idx = tex->span_counts[y];
 
@@ -711,6 +714,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
                 entry[1] = 1;              /* len = 1 → advances x by 1 */
                 entry[2] = 255;            /* gap = 255 → advances x by 255 */
                 entry[3] = 0;
+                tex->rolling_hash = tex->rolling_hash * 31 + *((const uint32_t *)entry);
                 gap -= 256;                /* 255 gap + 1 len = 256 pixels */
                 idx++;
              }
@@ -726,6 +730,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
                 entry[1] = (uint8_t)chunk;  /* byte1 → G in BGRA */
                 entry[2] = (uint8_t)g;      /* byte2 → R in BGRA */
                 entry[3] = 0;               /* byte3 → A in BGRA */
+                tex->rolling_hash = tex->rolling_hash * 31 + *((const uint32_t *)entry);
 
                 cur_x += chunk;
                 remaining -= chunk;

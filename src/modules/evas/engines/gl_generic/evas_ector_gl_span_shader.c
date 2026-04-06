@@ -873,24 +873,8 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
              if (!tex->dirty)
                continue;
 
-             /* Quick content hash: only hash the active span entries per row
-              * (span_counts[row] + 1 for the sentinel) rather than the full
-              * max_spans allocation.  Uses a polynomial hash (h = h*31 + v)
-              * seeded with the FNV-1a offset basis to avoid the degenerate
-              * all-zero seed producing hash=0 on empty buffers. */
              {
-                uint32_t hash = 2166136261u;  /* FNV-1a offset basis as seed */
-                int row;
-                for (row = 0; row < sc->height; row++)
-                  {
-                     const uint32_t *p = (const uint32_t *)(tex->buffer +
-                                                            (size_t)row * sc->stride);
-                     int active = tex->span_counts[row] + 1;  /* +1 for sentinel */
-                     int w;
-                     if (active > sc->max_spans) active = sc->max_spans;
-                     for (w = 0; w < active; w++)
-                       hash = hash * 31 + p[w];
-                  }
+                uint32_t hash = tex->rolling_hash;
                 if (hash == tex->prev_hash)
                   {
                      tex->dirty = EINA_FALSE;
@@ -908,6 +892,10 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
         for (y = 0; y < sc->height; y++)
           {
              int idx = tex->span_counts[y];
+             /* Do NOT skip idx==0 rows — the buffer is not zeroed by
+              * span_collector_clear, so stale span data from previous
+              * frames may have len != 0.  The sentinel write at entry 0
+              * ensures the shader sees len=0 and stops immediately. */
              if (idx < sc->max_spans)
                {
                   int     bps      = 4;

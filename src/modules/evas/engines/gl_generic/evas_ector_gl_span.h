@@ -161,6 +161,7 @@ struct _Span_Texture
    int          *last_x_end;  /* per-row: x coord where last span ended (for gap calc) */
    Eina_Bool     dirty;       /* EINA_TRUE if span data changed since last upload */
    uint32_t      prev_hash;   /* hash of buffer content at last upload, for change detection */
+   uint32_t      rolling_hash;  /* accumulated during span collection */
    int           x_min;       /* inclusive left edge of the x-range covered */
    int           x_max;       /* inclusive right edge of the x-range covered */
    void         *evas_tex;    /* Evas_GL_Texture *; NULL until uploaded */
