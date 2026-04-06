@@ -660,7 +660,9 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj EINA_UNUSED,
    ector_software_rasterizer_clip_rect_set(pd->surface->rasterizer, clips);
    ector_software_rasterizer_transform_set(pd->surface->rasterizer, pd->base->m);
 
-   // fill the span_data structure
+   // fill the span_data structure — mark fill vs stroke pass for the
+   // span collector so it routes spans to the correct texture buffer.
+   pd->surface->rasterizer->fill_data.span_is_stroke = EINA_FALSE;
    if (pd->shape->fill)
      {
         ector_renderer_software_op_fill(pd->shape->fill);
@@ -689,6 +691,7 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj EINA_UNUSED,
 
    if (!pd->outline_data) return EINA_TRUE;
 
+   pd->surface->rasterizer->fill_data.span_is_stroke = EINA_TRUE;
    if (pd->shape->stroke.fill)
      {
         ector_renderer_software_op_fill(pd->shape->stroke.fill);

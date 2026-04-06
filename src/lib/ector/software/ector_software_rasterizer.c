@@ -928,7 +928,9 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                         Efl_Gfx_Vg_Composite_Method comp_method)
 {
    if (!rle) return;
-   if (!rasterizer->fill_data.raster_buffer->pixels.u32) return;
+   if (!rasterizer->fill_data.span_collector_alloc &&
+       !rasterizer->fill_data.raster_buffer->pixels.u32)
+     return;
 
    rasterizer->fill_data.offx = x;
    rasterizer->fill_data.offy = y;
@@ -940,6 +942,57 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
 
    _setup_span_fill_matrix(rasterizer);
    _adjust_span_fill_methods(&rasterizer->fill_data);
+
+   /* Per-shape collector allocation.  When span_collector_alloc is set,
+    * allocate (or reuse) a fresh Span_Collector for this shape and select
+    * the appropriate collector callback.  No CPU pixel blending occurs —
+    * spans are packed into the collector's GPU-uploadable buffer; the
+    * fragment shader renders them into the FBO in eng_ector_end().
+    *
+    * Each shape gets its own collector so:
+    *   - sc->color is not overwritten by subsequent shapes;
+    *   - gap encoding is per-shape, preventing cross-shape corruption;
+    *   - gradient data (sc->gradient_data, offx, offy) is isolated. */
+   if (rasterizer->fill_data.span_collector_alloc)
+     {
+        Span_Data *sd = &rasterizer->fill_data;
+        int ch = sd->raster_buffer ? (int)sd->raster_buffer->generic->h : 64;
+
+        /* Allocate or reuse a collector for this shape via the engine
+         * callback (keeps span_collector_* calls out of this module). */
+        sd->span_collector = sd->span_collector_alloc(
+              sd->span_collector_alloc_data,
+              ch,
+              sd->type,
+              sd->span_is_stroke);
+
+        if (!sd->span_collector) return;
+
+        /* Select the collector callback based on fill type. */
+        {
+           SW_FT_SpanFunc cb;
+           if (sd->type == LinearGradient || sd->type == RadialGradient)
+             cb = sd->collector_gradient;
+           else if (sd->comp)
+             cb = sd->collector_composite;
+           else
+             cb = sd->collector_solid;
+
+           if (cb)
+             {
+                sd->unclipped_blend = cb;
+                if (sd->clip.enabled)
+                  {
+                     if (sd->clip.type == 0)
+                       sd->blend = &_span_fill_clipRect;
+                     else
+                       sd->blend = &_span_fill_clipPath;
+                  }
+                else
+                  sd->blend = cb;
+             }
+        }
+     }
 
    if (rasterizer->fill_data.blend)
      rasterizer->fill_data.blend(rle->size, rle->spans, &rasterizer->fill_data);

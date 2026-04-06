@@ -75,7 +75,7 @@ _linear_helper_generic(uint32_t *buffer, int length, Ector_Renderer_Software_Gra
      }
 }
 
-void
+ECTOR_API void
 fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length)
 {
    Ector_Renderer_Software_Gradient_Data *g_data = data->gradient;
@@ -144,7 +144,7 @@ _radial_helper_generic(uint32_t *buffer, int length, Ector_Renderer_Software_Gra
 }
 
 
-void
+ECTOR_API void
 fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length)
 {
    Ector_Renderer_Software_Gradient_Data *g_data = data->gradient;

@@ -75,19 +75,24 @@ typedef enum _Span_Data_Type {
   RadialGradient,
 } Span_Data_Type;
 
+/* Function pointer type for allocating/reusing per-shape span collectors.
+ * Set on Span_Data by eng_ector_begin(); called by draw_rle_data() for each
+ * shape.  Keeps all span_collector_* calls inside the engine module (the only
+ * translation unit that includes evas_ector_gl_span.h). */
+typedef void *(*Span_Collector_Alloc_Fn)(void *data, int height,
+                                         Span_Data_Type type,
+                                         Eina_Bool is_stroke);
+
 typedef struct _Span_Data
 {
+   /* --- hot: touched on every rasterizer callback --- */
    Ector_Software_Buffer_Base_Data *raster_buffer;
    SW_FT_SpanFunc   blend;
    SW_FT_SpanFunc   unclipped_blend;
 
    int              offx, offy;
    Clip_Data        clip;
-   Ector_Software_Buffer_Base_Data    *comp;
-   Efl_Gfx_Vg_Composite_Method comp_method;
-   Eina_Matrix3     inv;
    Span_Data_Type   type;
-   Eina_Bool        fast_matrix;
    uint32_t         mul_col;
    Efl_Gfx_Render_Op        op;
    union {
@@ -95,6 +100,24 @@ typedef struct _Span_Data
       Ector_Renderer_Software_Gradient_Data *gradient;
       Ector_Software_Buffer_Base_Data *buffer;
    };
+
+   /* fields used on every draw but not in the innermost span callback */
+   Ector_Software_Buffer_Base_Data    *comp;
+   Efl_Gfx_Vg_Composite_Method comp_method;
+   Eina_Matrix3     inv;
+   Eina_Bool        fast_matrix;
+
+   /* --- cold: span-buffer GL fields --- */
+   void            *span_collector;             /* active collector for current shape */
+   Eina_Bool        span_is_stroke;             /* EINA_TRUE during stroke pass */
+   SW_FT_SpanFunc   collector_solid;
+   SW_FT_SpanFunc   collector_gradient;
+   SW_FT_SpanFunc   collector_composite;
+   /* Callback set by eng_ector_begin() to allocate/reuse per-shape collectors.
+    * draw_rle_data() calls this instead of calling span_collector_* directly,
+    * keeping the span.h dependency inside the engine module only. */
+   Span_Collector_Alloc_Fn span_collector_alloc;
+   void                   *span_collector_alloc_data; /* Ector_Software_Surface_Data* */
 } Span_Data;
 
 typedef struct _Software_Rasterizer
@@ -110,8 +133,31 @@ struct _Ector_Software_Surface_Data
    Software_Rasterizer *rasterizer;
    int x;
    int y;
+   /* Per-shape span collector arrays.  Each entry is a Span_Collector*.
+    * Owned by the engine (eng_ector_destroy frees them).  Arrays grow
+    * with high-water mark allocation — never shrunk, reallocated on
+    * demand when more shapes are drawn in a single VG object. */
+   void **span_collectors_fill;
+   int    span_collectors_fill_count;
+   int    span_collectors_fill_alloc;
+   void **span_collectors_stroke;
+   int    span_collectors_stroke_count;
+   int    span_collectors_stroke_alloc;
+
+   /* GL composite mask for the current eng_ector_begin/end window.
+    * Set by _efl_canvas_vg_container_render_pre() when a container has a
+    * composite target whose mask was rendered into an FBO via _prepare_comp().
+    * Read by eng_ector_end() to fill Span_Pipe_Params.mask_tex for each shape.
+    * Cleared to NULL by eng_ector_end() after the draw loop completes. */
+   void *gl_comp_surface;            /* Evas_GL_Image* of the mask FBO, or NULL */
+   int   gl_comp_method;             /* Efl_Gfx_Vg_Composite_Method, 0 = NONE */
 };
 
+
+ECTOR_API void  ector_software_surface_set_span_collector(Ector_Surface *obj, void *collector);
+ECTOR_API void *ector_software_surface_get_span_collector(Ector_Surface *obj);
+ECTOR_API void  ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface, int comp_method);
+ECTOR_API void  ector_software_surface_gl_comp_get(Ector_Surface *obj, void **gl_surface_out, int *comp_method_out);
 
 int  ector_software_gradient_init(void);
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);
@@ -144,8 +190,8 @@ void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 
 // Gradient Api
 void destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata);
-void fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
-void fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
+ECTOR_API void fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
+ECTOR_API void fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
 
 void ector_software_thread_init(Ector_Software_Thread *thread);
 void ector_software_thread_shutdown(Ector_Software_Thread *thread);

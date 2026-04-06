@@ -26,6 +26,7 @@
 
 static const Efl_Test_Case etc[] = {
   { "init", ector_test_init },
+  { "span_collector", ector_test_span_collector },
   { NULL, NULL }
 };
 
