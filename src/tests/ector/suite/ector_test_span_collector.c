@@ -699,6 +699,100 @@ EFL_START_TEST(span_collector_solid_overflow_drop)
 EFL_END_TEST
 
 /* ------------------------------------------------------------------ */
+/* Test: tail memset zeroes the full tail of a row, not just byte[1]  */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Write one span, then verify that ALL bytes from the entry after
+ * span_counts[y] to the end of the row (including the sentinel slot)
+ * are zero.  This confirms the memset covers the full tail rather than
+ * writing only a single sentinel byte.
+ */
+EFL_START_TEST(span_collector_solid_tail_memset)
+{
+   Span_Collector *sc;
+   Span_Data       sd;
+   SW_FT_Span      span;
+   uint8_t        *row;
+   int             tail_start, tail_bytes, b;
+
+   sc = span_collector_new(50, 16, Solid);
+   ck_assert_ptr_nonnull(sc);
+
+   /* Pollute the buffer with non-zero bytes to simulate stale data. */
+   memset(sc->textures[0].buffer, 0xAB, (size_t)50 * sc->stride);
+
+   _sd_init_solid(&sd, sc, 0xFFFFFFFF);
+
+   span.x        = 10;
+   span.y        =  7;
+   span.len      = 20;
+   span.coverage = 200;
+   _collect_spans_solid(1, &span, &sd);
+
+   ck_assert_int_eq(sc->textures[0].span_counts[7], 1);
+
+   /* Tail starts at entry 1 (one past the span) and runs to max_spans+1. */
+   row        = sc->textures[0].buffer + (7 * sc->stride);
+   tail_start = 1 * 4;                            /* first tail entry */
+   tail_bytes = (sc->max_spans + 1 - 1) * 4;      /* sentinel slot included */
+
+   for (b = 0; b < tail_bytes; b++)
+     ck_assert_int_eq(row[tail_start + b], 0);
+
+   span_collector_free(sc);
+}
+EFL_END_TEST
+
+/* ------------------------------------------------------------------ */
+/* Test: clear zeroes byte[1] of entry 0 so stale rows have sentinel  */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Frame 1: write a span on row 3, leaving non-zero data in the buffer.
+ * Call span_collector_clear (simulating a frame boundary).
+ * Frame 2: write NO span on row 3.
+ *
+ * Verify that byte[1] of entry 0 on row 3 is 0 after clear — the shader
+ * must see len=0 at the very first entry on a row that received no spans.
+ */
+EFL_START_TEST(span_collector_clear_stale_sentinel)
+{
+   Span_Collector *sc;
+   Span_Data       sd;
+   SW_FT_Span      span;
+   uint8_t        *entry0;
+
+   sc = span_collector_new(20, 8, Solid);
+   ck_assert_ptr_nonnull(sc);
+
+   _sd_init_solid(&sd, sc, 0xFFFF0000);
+
+   /* Frame 1: write a span on row 3. */
+   span.x        =  5;
+   span.y        =  3;
+   span.len      = 30;
+   span.coverage = 255;
+   _collect_spans_solid(1, &span, &sd);
+
+   ck_assert_int_eq(sc->textures[0].span_counts[3], 1);
+
+   /* Simulate frame boundary. */
+   span_collector_resize(sc, 20);
+   span_collector_clear(sc);
+
+   /* Frame 2: no spans written on row 3. span_counts[3] == 0. */
+   ck_assert_int_eq(sc->textures[0].span_counts[3], 0);
+
+   /* byte[1] of entry 0 must be 0 — the sentinel the shader relies on. */
+   entry0 = sc->textures[0].buffer + (3 * sc->stride);
+   ck_assert_int_eq(entry0[1], 0);
+
+   span_collector_free(sc);
+}
+EFL_END_TEST
+
+/* ------------------------------------------------------------------ */
 /* Registration                                                        */
 /* ------------------------------------------------------------------ */
 
@@ -715,4 +809,6 @@ ector_test_span_collector(TCase *tc)
    tcase_add_test(tc, span_collector_post_split_routing);
    tcase_add_test(tc, span_collector_gradient_basic);
    tcase_add_test(tc, span_collector_solid_overflow_drop);
+   tcase_add_test(tc, span_collector_solid_tail_memset);
+   tcase_add_test(tc, span_collector_clear_stale_sentinel);
 }

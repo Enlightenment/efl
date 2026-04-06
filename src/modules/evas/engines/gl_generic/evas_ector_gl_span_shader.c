@@ -850,7 +850,6 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
      {
         Span_Texture    *tex = &sc->textures[i];
         Evas_GL_Texture *evas_t;
-        int              y;
 
         /* Recreate the GPU texture if the active height changed
          * (the sub-region within the pool was allocated for a different height). */
@@ -884,27 +883,16 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
              }
           }
 
-        /* Write sentinels for rows that have spans.
+        /* Sentinel write is no longer needed here.
          *
-         * All fill types (Solid and gradient) use 1-texel-per-span BGRA layout:
-         * byte[1] holds len (the G channel).  Setting byte[1] = 0 writes a
-         * zero-length sentinel that terminates the shader's span scan loop. */
-        for (y = 0; y < sc->height; y++)
-          {
-             int idx = tex->span_counts[y];
-             /* Do NOT skip idx==0 rows — the buffer is not zeroed by
-              * span_collector_clear, so stale span data from previous
-              * frames may have len != 0.  The sentinel write at entry 0
-              * ensures the shader sees len=0 and stops immediately. */
-             if (idx < sc->max_spans)
-               {
-                  int     bps      = 4;
-                  uint8_t *sentinel = tex->buffer +
-                                      ((size_t)y * sc->stride) +
-                                      ((size_t)idx * bps);
-                  sentinel[1] = 0;  /* byte[1] = len (BGRA G channel) = 0 */
-               }
-          }
+         * _collect_spans_solid memsets the full tail of each row it touches
+         * (from span_counts[y] to max_spans+1) during collection, which
+         * implicitly writes the len=0 sentinel AND clears stale data from
+         * previous frames in a single L1-hot memset.
+         *
+         * For rows that receive NO spans this frame, span_collector_clear
+         * zeroes byte[1] (len) of entry 0 on every row, so the shader
+         * sees len=0 at the very first entry and terminates immediately. */
 
         /* First frame: create the Evas texture via the standard path.
          * Subsequent dirty frames: update in-place via glTexSubImage2D.

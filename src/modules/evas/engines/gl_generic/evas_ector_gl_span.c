@@ -228,17 +228,32 @@ span_collector_clear(Span_Collector *sc)
    /* Only zero sc->height rows (the active region), not alloc_height.
     * This is safe because:
     * - span_collector_resize zeros newly added rows when growing
-    * - span_counts[y] = 0 causes the shader to hit the len=0 sentinel
-    *   at entry index 0, so stale buffer data beyond entry 0 is never read
+    * - _collect_spans_solid memsets the tail of each row (from the last
+    *   written entry to max_spans+1) during collection, which writes the
+    *   sentinel implicitly for rows that receive spans
+    * - for rows that receive NO spans this frame, we zero byte[1] of entry 0
+    *   here so the shader sees len=0 and stops immediately (the rest of the
+    *   buffer may retain stale data, but the shader never reaches it)
     * - clear is always called after resize, which has already set height */
    {
       int i;
       for (i = 0; i < sc->texture_count; i++)
         {
-           memset(sc->textures[i].span_counts, 0, sc->height * sizeof(int));
-           memset(sc->textures[i].last_x_end, 0, sc->height * sizeof(int));
-           sc->textures[i].dirty = EINA_FALSE;
-           sc->textures[i].rolling_hash = 2166136261u;  /* seed */
+           Span_Texture *tex = &sc->textures[i];
+           int           y;
+
+           memset(tex->span_counts, 0, sc->height * sizeof(int));
+           memset(tex->last_x_end, 0, sc->height * sizeof(int));
+
+           /* Zero byte[1] (len) of entry 0 on every row so that rows
+            * which receive no spans this frame have a valid sentinel.
+            * _collect_spans_solid memsets the full tail for rows it touches,
+            * so this 4-byte-stride write covers only the uncollected rows. */
+           for (y = 0; y < sc->height; y++)
+             tex->buffer[(size_t)y * sc->stride + 1] = 0;  /* byte[1] = len = 0 */
+
+           tex->dirty = EINA_FALSE;
+           tex->rolling_hash = 2166136261u;  /* seed */
         }
    }
 
@@ -564,6 +579,17 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
         old_tex->last_x_end[y]  = left_last;
         new_tex->span_counts[y] = right_idx;
         new_tex->last_x_end[y]  = right_last;
+
+        /* Clear tails of redistributed rows — stale entries beyond the
+         * new span_counts have non-zero len bytes from the pre-split data.
+         * The collection callback's row-change memset won't cover these
+         * since the split happens mid-collection. */
+        if (left_idx < sc->max_spans)
+          memset(left_row + (size_t)left_idx * 4, 0,
+                 (size_t)(sc->max_spans + 1 - left_idx) * 4);
+        if (right_idx < sc->max_spans)
+          memset(right_row + (size_t)right_idx * 4, 0,
+                 (size_t)(sc->max_spans + 1 - right_idx) * 4);
      }
 
    /* Mark both textures dirty so the next upload path recreates them. */
@@ -616,7 +642,13 @@ _find_texture_for_x(Span_Collector *sc, int x)
  *   byte 3: reserved (zero)
  *
  * The base color is passed to the shader as a uniform, not per-span.
- * A zero-length sentinel (byte[1] = 0) terminates the row.
+ * A zero-length sentinel (byte[1] = 0) terminates the row; it is written
+ * implicitly by memset-ing the tail of the row (from span_counts[y] to
+ * max_spans+1) once per row when y changes.  The buffer is hot in L1-D
+ * from the span writes, so the memset is nearly free.
+ *
+ * Rows that receive no spans have their sentinel guaranteed by
+ * span_collector_clear, which zeroes byte[1] of entry 0 on all rows.
  *
  * Spans with y outside [0, height) are silently skipped.
  * When a row hits max_spans, a spatial split is attempted (_do_spatial_split).
@@ -630,6 +662,8 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data      *sd  = (Span_Data *)user_data;
    Span_Collector *sc  = (Span_Collector *)sd->span_collector;
    int             ti, idx, y, sx;
+   int             prev_y  = -1;
+   int             prev_ti = -1;
    Span_Texture   *tex;
    uint8_t        *entry;
 
@@ -655,6 +689,29 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
              spans++;
              count--;
              continue;
+          }
+
+        /* FreeType delivers spans in row order (y non-decreasing within a
+         * callback).  When y changes, the previous row is complete: memset
+         * the tail from the last written entry to the end of the row.
+         *
+         * This writes the zero-length sentinel implicitly (entry at
+         * span_counts[prev_y] has len=0 after zeroing) AND clears any stale
+         * data from prior frames beyond the current frame's last span.
+         * The buffer is hot in L1-D from the span writes above, so the
+         * memset is nearly free.
+         *
+         * Only fires when y actually changes — not once per span. */
+        if (y != prev_y && prev_y >= 0 && prev_ti >= 0)
+          {
+             Span_Texture *prev_tex = &sc->textures[prev_ti];
+             int           prev_idx = prev_tex->span_counts[prev_y];
+
+             if (prev_idx < sc->max_spans)
+               memset(prev_tex->buffer +
+                      ((size_t)prev_y * sc->stride) + ((size_t)prev_idx * 4),
+                      0,
+                      (size_t)(sc->max_spans + 1 - prev_idx) * 4);
           }
 
         ti  = (sc->texture_count == 1) ? 0 : _find_texture_for_x(sc, sx);
@@ -744,16 +801,27 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
         if (idx > sc->actual_max_spans)
           sc->actual_max_spans = idx;
 
-        /* Write zero-length sentinel after the last entry on this row. */
-        if (idx < sc->max_spans)
-          {
-             uint8_t *sentinel = tex->buffer +
-                                 ((size_t)y * sc->stride) + ((size_t)idx * 4);
-             sentinel[1] = 0; /* len = 0 marks end of row */
-          }
+        prev_y  = y;
+        prev_ti = ti;
 
         spans++;
         count--;
+     }
+
+   /* Memset the tail of the last row after the loop ends.
+    * The row-change path above fires only when y changes, so the final
+    * row (or the only row when the shape spans a single scanline) is
+    * handled here. */
+   if (prev_y >= 0 && prev_ti >= 0)
+     {
+        Span_Texture *prev_tex = &sc->textures[prev_ti];
+        int           prev_idx = prev_tex->span_counts[prev_y];
+
+        if (prev_idx < sc->max_spans)
+          memset(prev_tex->buffer +
+                 ((size_t)prev_y * sc->stride) + ((size_t)prev_idx * 4),
+                 0,
+                 (size_t)(sc->max_spans + 1 - prev_idx) * 4);
      }
 }
 
