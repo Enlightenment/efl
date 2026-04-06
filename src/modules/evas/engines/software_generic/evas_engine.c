@@ -4839,6 +4839,7 @@ static Evas_Func func =
      eng_ector_renderer_draw,
      eng_ector_end,
      eng_ector_surface_create,
+     NULL, // ector_mask_surface_create — software engine has no atlas; regular path suffices
      eng_ector_surface_destroy,
      eng_ector_surface_cache_set,
      eng_ector_surface_cache_get,

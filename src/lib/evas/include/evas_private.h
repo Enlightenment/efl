@@ -1073,6 +1073,7 @@ struct _Evas_Func
    void  (*ector_end)                    (void *engine, void *output, void *context, Ector_Surface *ector, Eina_Bool do_async);
 
    void *(*ector_surface_create)         (void *engine, int w, int h, int *error);
+   void *(*ector_mask_surface_create)    (void *engine, int w, int h, int *error);
    void  (*ector_surface_destroy)        (void *engine, void *surface);
    void  (*ector_surface_cache_set)      (void *engine, void *key, void *surface);
    void *(*ector_surface_cache_get)      (void *engine, void *key);

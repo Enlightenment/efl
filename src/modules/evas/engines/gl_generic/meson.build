@@ -5,6 +5,8 @@ engine_src = files([
   'evas_ector_gl.h',
   'evas_ector_gl_buffer.c',
   'evas_ector_gl_image_buffer.c',
+  'evas_ector_gl_span.c',
+  'evas_ector_gl_span_shader.c',
   join_paths('filters','gl_engine_filter.h'),
   join_paths('filters','gl_filter_blend.c'),
   join_paths('filters','gl_filter_blur.c'),
@@ -65,7 +67,13 @@ endforeach
 
 engine_deps += [gl_deps]
 
-engine_include_dir = include_directories(join_paths('..','software_generic'), join_paths('..', 'gl_common'))
+engine_include_dir = include_directories(
+  join_paths('..','software_generic'),
+  join_paths('..', 'gl_common'),
+  join_paths('..', '..', '..', '..', 'static_libs', 'freetype'),
+  join_paths('..', '..', '..', '..', 'static_libs', 'draw'),
+  join_paths('..', '..', '..', '..', 'lib', 'ector', 'software'),
+)
 
 shared_module(mod_full_name, engine_src,
   include_directories : config_dir + [engine_include_dir],

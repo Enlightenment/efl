@@ -75,6 +75,99 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT)
      init_buffer = 0xFFFFFFFF;
 
+   /* GL span-buffer path: render the mask shapes into a dedicated FBO surface
+    * through the same span-buffer pipeline.  This runs during render_pre,
+    * which is BEFORE the main VG object's eng_ector_begin(), so the shared
+    * ector surface is free and the nested begin/end does not conflict with
+    * any outer begin/end for the main VG render.
+    *
+    * The mask FBO surface is kept alive on pd->comp.gl_surface across frames
+    * and reused when the size matches.  eng_ector_end() of the main VG object
+    * reads espd->gl_comp_surface (set by render_pre after we return) to fill
+    * the mask texture params on each shape's Span_Pipe_Params. */
+   if (ENFN->gl_surface_read_pixels)  /* GL engine only — SW engine sets this to NULL */
+     {
+        int err = 0;
+        void *mask_surface = pd->comp.gl_surface;
+
+        /* Create or resize mask FBO. */
+        if (mask_surface)
+          {
+             int mw = 0, mh = 0;
+             ENFN->image_size_get(ENC, mask_surface, &mw, &mh);
+             if (mw != size.w || mh != size.h)
+               {
+                  ENFN->ector_surface_destroy(ENC, mask_surface);
+                  mask_surface = NULL;
+               }
+          }
+        if (!mask_surface)
+          {
+             /* Use ector_mask_surface_create when available so the mask FBO
+              * gets a dedicated GL texture that cannot be atlas-shared with the
+              * main VG FBO, preventing a read/write feedback loop in the shader. */
+             if (ENFN->ector_mask_surface_create)
+               mask_surface = ENFN->ector_mask_surface_create(ENC, size.w, size.h, &err);
+             else
+               mask_surface = ENFN->ector_surface_create(ENC, size.w, size.h, &err);
+             if (err || !mask_surface) goto gl_mask_fallback;
+          }
+        pd->comp.gl_surface = mask_surface;
+        pd->comp.size.w = size.w;
+        pd->comp.size.h = size.h;
+        pd->comp.vg_pd = obj;
+
+        /* Prepare mask shapes via render_pre.
+         * The nested composite chain (MASK_ADD) is handled first, exactly as
+         * in the CPU path below, but using NULL as the comp buffer since the
+         * GL path does not create a CPU comp buffer here. */
+        if (pd->comp.method >= EFL_GFX_VG_COMPOSITE_METHOD_MASK_ADD)
+          {
+             Efl_Canvas_Vg_Container_Data *target_pd = pd;
+             for (Efl_VG *ct = pd->comp_target; ct; ct = target_pd->comp_target)
+               {
+                  Efl_Canvas_Vg_Container_Data *src_pd = NULL;
+                  target_pd = efl_data_scope_get(ct, MY_CLASS);
+                  src_pd = efl_data_scope_get(eina_list_nth(target_pd->comp.src, 0), MY_CLASS);
+                  _evas_vg_render_pre(obj, ct,
+                                      engine, output, context, surface,
+                                      ctransform, c_opacity, NULL, src_pd->comp.method);
+               }
+          }
+
+        _evas_vg_render_pre(obj, comp_target,
+                            engine, output, context, surface,
+                            ptransform, p_opacity, NULL, comp_method);
+
+        /* Render mask shapes into the FBO via span-buffer pipeline.
+         * eng_ector_begin installs span collectors on the shared ector surface;
+         * _draw_comp drives ector_renderer_draw to populate them;
+         * eng_ector_end uploads and draws them to mask_surface's FBO. */
+        {
+           RGBA_Draw_Context *dc = evas_common_draw_context_new();
+           evas_common_draw_context_set_render_op(dc, _EVAS_RENDER_COPY);
+           evas_common_draw_context_set_color(dc, 255, 255, 255, 255);
+
+           if (ENFN->ector_begin(ENC, mask_surface, dc, surface, 0, 0, EINA_FALSE))
+             {
+                _draw_comp(obj, comp_target, surface, engine, output, context);
+                ENFN->image_dirty_region(ENC, mask_surface, 0, 0, size.w, size.h);
+                ENFN->ector_end(ENC, mask_surface, dc, surface, EINA_FALSE);
+             }
+
+           evas_common_draw_context_free(dc);
+        }
+
+        /* Signal to the caller that there is no CPU comp buffer.
+         * The mask FBO reference lives on pd->comp.gl_surface; render_pre
+         * propagates it to the ector surface data for eng_ector_end to pick up. */
+        return NULL;
+     }
+
+gl_mask_fallback:
+   /* Fallback: original CPU pixel buffer path (software backend or GL surface
+    * creation failure). */
+
    //2. Reusable ector buffer?
    if (pd->comp.buffer &&
        ((pd->comp.size.w != size.w) ||
@@ -171,6 +264,23 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    Efl_VG *child;
    Efl_Gfx_Change_Flag flag;
 
+   /* Even when the container's flags are NONE (nothing changed), we must
+    * still propagate the GL composite mask reference to the ector surface
+    * every frame — eng_ector_end clears it after use. */
+   if (pd->comp_target &&
+       (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE ||
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT ||
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT))
+     {
+        Efl_Canvas_Vg_Container_Data *cpd =
+           efl_data_scope_get(pd->comp_target, MY_CLASS);
+        if (cpd && cpd->comp.gl_surface)
+          ector_software_surface_gl_comp_set(surface,
+                                             cpd->comp.gl_surface,
+                                             (int)pd->comp.method);
+     }
+
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
    flag = nd->flags;
@@ -184,12 +294,27 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    // This condition is valid because the masking use same type as matte.
    if (pd->comp_target &&
        (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE))
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE ||
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT ||
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT))
      {
         comp_method = pd->comp.method;
         comp = _prepare_comp(vg_pd, pd->comp_target,
                              engine, output, context, surface,
                              ptransform, ctransform, p_opacity, c_a, comp, comp_method);
+
+        /* GL span-buffer path: _prepare_comp returns NULL but stores the
+         * mask FBO on pd->comp.gl_surface.  Propagate it to the shared ector
+         * surface so eng_ector_end() can find it when building pipe params. */
+        if (!comp && pd->comp_target)
+          {
+             Efl_Canvas_Vg_Container_Data *cpd =
+                efl_data_scope_get(pd->comp_target, MY_CLASS);
+             if (cpd && cpd->comp.gl_surface)
+               ector_software_surface_gl_comp_set(surface,
+                                                  cpd->comp.gl_surface,
+                                                  (int)pd->comp.method);
+          }
      }
 
    //If the container has transparency, it internally alpha blends with ector buffer.
@@ -225,7 +350,20 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
         //       However, if there is a composition target, the child must refer to the parent's opacity.
         //       Because _evas_vg_render does not support opacity calculation for containers that need to be composited.
         //       These things need to be refactored in a better way later.
-        c_a = !comp ? 255 : c_a;
+        /* If there is a composite (CPU buffer or GL FBO mask), children must
+         * inherit the container's opacity.  In the GL span-buffer path,
+         * comp is NULL even when a mask FBO was prepared, so also check for
+         * gl_surface on the comp_target's pd. */
+        {
+           Eina_Bool has_comp = comp != NULL;
+           if (!has_comp && pd->comp_target)
+             {
+                Efl_Canvas_Vg_Container_Data *cpd =
+                   efl_data_scope_get(pd->comp_target, MY_CLASS);
+                if (cpd && cpd->comp.gl_surface) has_comp = EINA_TRUE;
+             }
+           c_a = !has_comp ? 255 : c_a;
+        }
 
         _evas_vg_render_pre(vg_pd, child,
                             engine, output, context, surface,
@@ -265,6 +403,25 @@ _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
         if (pd->comp.pixels)
           ector_buffer_unmap(pd->comp.buffer, pd->comp.pixels, pd->comp.length);
         efl_unref(pd->comp.buffer);
+     }
+
+   /* Destroy GL FBO mask surface (GL span-buffer path).
+    * pd->comp.gl_surface is an Evas_GL_Image* allocated via
+    * ENFN->ector_surface_create.  We need the engine handle to free it.
+    * Retrieve the engine and output from the VG object's Evas layer if
+    * available.  If the engine context has already been torn down, skip
+    * the free to avoid use-after-free (minor leak on shutdown). */
+   if (pd->comp.gl_surface && pd->comp.vg_pd)
+     {
+        Evas_Object_Protected_Data *vg_pd = pd->comp.vg_pd;
+        if (vg_pd->layer && vg_pd->layer->evas)
+          {
+             Evas_Public_Data *evas = vg_pd->layer->evas;
+             if (evas->engine.func && evas->engine.func->ector_surface_destroy)
+               evas->engine.func->ector_surface_destroy(
+                  _evas_engine_context(evas), pd->comp.gl_surface);
+          }
+        pd->comp.gl_surface = NULL;
      }
 
    efl_unref(pd->comp_target);

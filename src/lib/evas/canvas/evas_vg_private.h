@@ -89,6 +89,7 @@ typedef struct _Vg_Composite
    void *pixels;                           //Composite pixel buffer (actual data)
    unsigned int length;                    //pixel buffer data size
    unsigned int stride;                    //pixel buffer stride
+   void *gl_surface;                       /* GL FBO surface for mask (Evas_GL_Image* in GL path, NULL for SW) */
    Eina_Size2D size;                       //Composite boundary
    Eina_List *src;                         //Composite Sources
    Efl_Gfx_Vg_Composite_Method method;     //Composite Method
@@ -147,6 +148,14 @@ Eina_Bool                   evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* 
 unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
 Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);
 void *                      evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx);
+/* Forward declarations for ector software surface GL composite accessors.
+ * The implementations live in src/lib/ector/software/ector_software_surface.c.
+ * These allow canvas code (which cannot include ector_software_private.h) to
+ * store and retrieve the GL FBO mask surface reference on the shared ector
+ * surface during render_pre, so that eng_ector_end() can find it. */
+ECTOR_API void ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface, int comp_method);
+ECTOR_API void ector_software_surface_gl_comp_get(Ector_Surface *obj, void **gl_surface_out, int *comp_method_out);
+
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);

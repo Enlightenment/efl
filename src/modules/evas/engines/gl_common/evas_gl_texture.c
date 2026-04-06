@@ -1152,6 +1152,36 @@ evas_gl_common_texture_render_noscale_new(Evas_Engine_GL_Context *gc, unsigned i
 }
 
 Evas_GL_Texture *
+evas_gl_common_texture_render_noscale_noatlas_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha)
+{
+   Evas_GL_Texture *tex;
+   int u = 0, v = 0;
+   int lformat;
+
+   lformat = _evas_gl_texture_search_format(alpha, gc->shared->info.bgra, EVAS_COLORSPACE_ARGB8888);
+   if (lformat < 0) return NULL;
+
+   tex = evas_gl_common_texture_alloc(gc, w, h, alpha);
+   if (!tex) return NULL;
+   tex->pt = _pool_tex_render_find(gc, w, h,
+                                   *matching_format[lformat].intformat,
+                                   *matching_format[lformat].format,
+                                   &u, &v, &tex->apt,
+                                   gc->shared->info.tune.atlas.max_alloc_size * 8,
+                                   EINA_TRUE);
+   if (!tex->pt)
+     {
+        evas_gl_common_texture_light_free(tex);
+        return NULL;
+     }
+   tex->x = u;
+   tex->y = v;
+
+   tex->pt->references++;
+   return tex;
+}
+
+Evas_GL_Texture *
 evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
 {
    Evas_GL_Texture *tex;
