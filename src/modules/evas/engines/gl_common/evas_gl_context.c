@@ -11,6 +11,18 @@
 
 #define PRG_INVALID NULL
 
+/* Span-lookup shader pipe flush — implemented in evas_ector_gl_span_shader.c
+ * (compiled into gl_generic).  The weak default is a no-op so that other
+ * engine modules that do not include the span shader (gl_x11, etc.) still
+ * link cleanly; for those modules SHD_SPAN pipes are never created. */
+void __attribute__((weak))
+span_shader_pipe_flush(Evas_Engine_GL_Context *gc EINA_UNUSED,
+                       int pipe_idx EINA_UNUSED,
+                       int gw EINA_UNUSED,
+                       int gh EINA_UNUSED)
+{
+}
+
 static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 Cutout_Rects *_evas_gl_common_cutout_rects = NULL;
@@ -2061,6 +2073,186 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
+/* Dummy Evas_GL_Program used as a stable non-NULL key for SHD_SPAN pipes.
+ * shader_array_flush() detects SHD_SPAN by region.type before touching
+ * this program, so prog = 0 is intentional and never passed to glUseProgram
+ * from the standard flush path. */
+static Evas_GL_Program _span_prog_dummy;
+
+void
+evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
+                                 const Span_Pipe_Params *p)
+{
+   int pn = 0;
+   /* Precompute reciprocals once; used in both the merge predicate and
+    * the write block below. */
+   float _inv_tw = 1.0f / (float)p->pool_w;
+   float _inv_th = 1.0f / (float)p->pool_h;
+
+   /* SHD_SPAN pipes carry per-shape uniforms (textures, colors, offsets,
+    * gradient params).  Two pushes may merge ONLY when every uniform
+    * value matches — otherwise the second push's uniforms overwrite the
+    * first's.  Field-by-field comparison with early exit; this also
+    * catches the atlas case where shapes share a GL texture name but
+    * differ in offset/color. */
+
+#define _S gc->pipe[pn].shader
+   /* Float == is intentional: both sides come from the same integer-
+    * derived computation path, so values are bit-identical when equal. */
+   {
+   again:
+      pn = gc->state.top_pipe;
+      if (gc->pipe[pn].array.num > 0)
+        {
+           Eina_Bool can_merge = EINA_FALSE;
+
+           if (gc->pipe[pn].region.type == SHD_SPAN &&
+               _S.span_fill_tex          == p->fill.tex        &&
+               _S.span_fill_off_tx       == p->fill.off_tx     &&
+               _S.span_fill_off_ty       == p->fill.off_ty     &&
+               _S.span_fill_col          == p->fill.col        &&
+               _S.span_stroke_tex        == p->stroke.tex      &&
+               _S.span_stroke_off_tx     == p->stroke.off_tx   &&
+               _S.span_stroke_off_ty     == p->stroke.off_ty   &&
+               _S.span_stroke_col        == p->stroke.col      &&
+               _S.span_inv_tw            == _inv_tw            &&
+               _S.span_inv_th            == _inv_th            &&
+               _S.span_max_spans         == p->max_spans       &&
+               _S.span_mul_col           == p->mul_col         &&
+               _S.span_fill_type         == p->fill.type       &&
+               _S.span_stroke_type       == p->stroke.type     &&
+               _S.span_fill_grad_a       == p->fill.grad_a     &&
+               _S.span_fill_grad_b       == p->fill.grad_b     &&
+               _S.span_fill_grad_c       == p->fill.grad_c     &&
+               _S.span_fill_grad_spread  == p->fill.grad_spread &&
+               _S.span_fill_grad_ramp    == p->fill.grad_ramp  &&
+               _S.span_fill_grad_type    == p->fill.grad_type  &&
+               _S.span_fill_grad_d       == p->fill.grad_d     &&
+               _S.span_fill_grad_e       == p->fill.grad_e     &&
+               _S.span_fill_grad_f       == p->fill.grad_f     &&
+               _S.span_fill_grad_ra      == p->fill.grad_ra    &&
+               _S.span_fill_grad_rdx     == p->fill.grad_rdx   &&
+               _S.span_fill_grad_rdy     == p->fill.grad_rdy   &&
+               _S.span_stroke_grad_a      == p->stroke.grad_a     &&
+               _S.span_stroke_grad_b      == p->stroke.grad_b     &&
+               _S.span_stroke_grad_c      == p->stroke.grad_c     &&
+               _S.span_stroke_grad_spread == p->stroke.grad_spread &&
+               _S.span_stroke_grad_ramp   == p->stroke.grad_ramp  &&
+               _S.span_stroke_grad_type   == p->stroke.grad_type  &&
+               _S.span_stroke_grad_d      == p->stroke.grad_d     &&
+               _S.span_stroke_grad_e      == p->stroke.grad_e     &&
+               _S.span_stroke_grad_f      == p->stroke.grad_f     &&
+               _S.span_stroke_grad_ra     == p->stroke.grad_ra    &&
+               _S.span_stroke_grad_rdx    == p->stroke.grad_rdx   &&
+               _S.span_stroke_grad_rdy    == p->stroke.grad_rdy   &&
+               _S.span_fbo_off_x          == p->fbo_off_x         &&
+               _S.span_fbo_off_y          == p->fbo_off_y         &&
+               _S.span_fill_x_min         == p->fill.x_min        &&
+               _S.span_stroke_x_min       == p->stroke.x_min      &&
+               _S.span_mask_tex           == p->mask_tex           &&
+               _S.span_comp_method        == p->comp_method        &&
+               _S.span_mask_w             == p->mask_w             &&
+               _S.span_mask_h             == p->mask_h             &&
+               _S.span_mask_off_x         == p->mask_off_x         &&
+               _S.span_mask_off_y         == p->mask_off_y)
+               can_merge = EINA_TRUE;
+
+            if (!can_merge)
+             {
+                pn = gc->state.top_pipe + 1;
+                if (pn >= gc->shared->info.tune.pipes.max)
+                  {
+                     shader_array_flush(gc);
+                     goto again;
+                  }
+                gc->state.top_pipe = pn;
+             }
+        }
+      vertex_array_size_check(gc, pn, 6);
+   }
+
+   /* Write span uniform fields — for a merge this is a redundant
+    * overwrite with identical values; for a new pipe it initialises. */
+   {
+        gc->pipe[pn].region.type       = SHD_SPAN;
+        gc->pipe[pn].shader.prog       = &_span_prog_dummy;
+        gc->pipe[pn].shader.cur_tex    = p->fill.tex ? p->fill.tex : p->stroke.tex;
+        gc->pipe[pn].shader.blend      = EINA_TRUE;
+        gc->pipe[pn].shader.render_op  = EVAS_RENDER_BLEND;
+        gc->pipe[pn].shader.clip       = 0;
+        gc->pipe[pn].shader.smooth     = 0;
+
+        _S.span_fill_tex      = p->fill.tex;
+        _S.span_fill_off_tx   = p->fill.off_tx;
+        _S.span_fill_off_ty   = p->fill.off_ty;
+        _S.span_fill_col      = p->fill.col;
+        _S.span_stroke_tex    = p->stroke.tex;
+        _S.span_stroke_off_tx = p->stroke.off_tx;
+        _S.span_stroke_off_ty = p->stroke.off_ty;
+        _S.span_stroke_col    = p->stroke.col;
+        _S.span_inv_tw        = _inv_tw;
+        _S.span_inv_th        = _inv_th;
+        _S.span_max_spans     = p->max_spans;
+        _S.span_mul_col       = p->mul_col;
+        _S.span_fill_type     = p->fill.type;
+        _S.span_stroke_type   = p->stroke.type;
+
+        _S.span_fill_grad_a      = p->fill.grad_a;
+        _S.span_fill_grad_b      = p->fill.grad_b;
+        _S.span_fill_grad_c      = p->fill.grad_c;
+        _S.span_fill_grad_spread = p->fill.grad_spread;
+        _S.span_fill_grad_ramp   = p->fill.grad_ramp;
+        _S.span_fill_grad_type   = p->fill.grad_type;
+        _S.span_fill_grad_d      = p->fill.grad_d;
+        _S.span_fill_grad_e      = p->fill.grad_e;
+        _S.span_fill_grad_f      = p->fill.grad_f;
+        _S.span_fill_grad_ra     = p->fill.grad_ra;
+        _S.span_fill_grad_rdx    = p->fill.grad_rdx;
+        _S.span_fill_grad_rdy    = p->fill.grad_rdy;
+
+        _S.span_stroke_grad_a      = p->stroke.grad_a;
+        _S.span_stroke_grad_b      = p->stroke.grad_b;
+        _S.span_stroke_grad_c      = p->stroke.grad_c;
+        _S.span_stroke_grad_spread = p->stroke.grad_spread;
+        _S.span_stroke_grad_ramp   = p->stroke.grad_ramp;
+        _S.span_stroke_grad_type   = p->stroke.grad_type;
+        _S.span_stroke_grad_d      = p->stroke.grad_d;
+        _S.span_stroke_grad_e      = p->stroke.grad_e;
+        _S.span_stroke_grad_f      = p->stroke.grad_f;
+        _S.span_stroke_grad_ra     = p->stroke.grad_ra;
+        _S.span_stroke_grad_rdx    = p->stroke.grad_rdx;
+        _S.span_stroke_grad_rdy    = p->stroke.grad_rdy;
+
+        _S.span_fbo_off_x    = p->fbo_off_x;
+        _S.span_fbo_off_y    = p->fbo_off_y;
+        _S.span_fill_x_min   = p->fill.x_min;
+        _S.span_stroke_x_min = p->stroke.x_min;
+
+        _S.span_mask_tex     = p->mask_tex;
+        _S.span_comp_method  = p->comp_method;
+        _S.span_mask_w       = p->mask_w;
+        _S.span_mask_h       = p->mask_h;
+        _S.span_mask_off_x   = p->mask_off_x;
+        _S.span_mask_off_y   = p->mask_off_y;
+
+        gc->pipe[pn].array.line        = 0;
+        gc->pipe[pn].array.use_vertex  = 1;
+        gc->pipe[pn].array.use_color   = 0;
+        gc->pipe[pn].array.use_texuv   = 0;
+        gc->pipe[pn].array.use_texuv2  = 0;
+        gc->pipe[pn].array.use_texuv3  = 0;
+        gc->pipe[pn].array.use_texa    = 0;
+        gc->pipe[pn].array.use_texsam  = 0;
+        gc->pipe[pn].array.use_mask    = 0;
+        gc->pipe[pn].array.use_masksam = 0;
+     }
+#undef _S
+
+   pipe_region_expand(gc, pn, p->x, p->y, p->w, p->h);
+   PIPE_GROW(gc, pn, 6);
+   PUSH_6_VERTICES(pn, p->x, p->y, p->w, p->h);
+}
+
 #define SWAP(a, b, tmp) \
    tmp = *a; \
    *a = *b; \
@@ -3997,6 +4189,25 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         setclip = EINA_FALSE;
         pipe_done++;
         gc->flushnum++;
+
+        /* SHD_SPAN pipes are handled entirely by the span-lookup shader path.
+         * They bypass the Evas shader program system because they own their
+         * own GLSL programs compiled and managed by evas_ector_gl_span_shader.c.
+         * After the flush the Evas program state cache must be invalidated
+         * (gc->state.current.prog = NULL) so the next non-span pipe re-binds
+         * its own program. */
+        if (gc->pipe[i].region.type == SHD_SPAN)
+          {
+             span_shader_pipe_flush(gc, i, gw, gh);
+             /* Reset both num and alloc so the next push re-allocates
+              * arrays with the correct use_* flags.  Without this, a
+              * reused pipe keeps the old alloc count and array_alloc()
+              * skips allocation — leaving texuv etc. as NULL when a
+              * subsequent IMAGE push expects them. */
+             gc->pipe[i].array.num = 0;
+             gc->pipe[i].array.alloc = 0;
+             continue;
+          }
 
         if (prog != gc->state.current.prog)
           {

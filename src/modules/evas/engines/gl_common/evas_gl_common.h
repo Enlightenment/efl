@@ -267,11 +267,45 @@ enum _Shader_Type {
    SHD_FILTER_BLUR_X,
    SHD_FILTER_BLUR_Y,
    SHD_FILTER_GRAYSCALE,
-   SHD_FILTER_INVERSE_COLOR
+   SHD_FILTER_INVERSE_COLOR,
+   SHD_SPAN
 };
 
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
+
+/* Parameters for one fill/stroke channel of a span pipe entry. */
+typedef struct _Span_Channel_Params {
+   GLuint   tex;        /* pool GL texture (0 = none) */
+   float    off_tx;     /* texel x-offset in pool */
+   float    off_ty;     /* texel y-offset in pool */
+   uint32_t col;        /* base color (premultiplied ARGB) */
+   int      type;       /* Span_Data_Type: Solid, LinearGradient, RadialGradient */
+   int      x_min;      /* spatial split x_min */
+   /* Gradient parameters (unused for Solid type) */
+   float    grad_a, grad_b, grad_c;  /* linear: t = a*px + b*py + c */
+   int      grad_spread;             /* 0=PAD, 1=REFLECT, 2=REPEAT */
+   GLuint   grad_ramp;               /* 1024x1 ramp texture */
+   int      grad_type;               /* 0=linear, 1=radial */
+   float    grad_d, grad_e, grad_f;  /* radial: 2nd affine row */
+   float    grad_ra, grad_rdx, grad_rdy; /* radial: quadratic params */
+} Span_Channel_Params;
+
+/* Full parameter set for evas_gl_common_context_span_push(). */
+typedef struct _Span_Pipe_Params {
+   int      pool_w, pool_h;       /* pool texture dimensions */
+   int      max_spans;            /* max spans per row */
+   int      x, y, w, h;          /* draw rect in canvas space */
+   uint32_t mul_col;              /* multiply color */
+   float    fbo_off_x, fbo_off_y; /* atlas FBO sub-region offset */
+   /* Composite mask parameters (0/NULL = no mask) */
+   GLuint   mask_tex;             /* GL texture name of mask FBO (0 = no mask) */
+   int      comp_method;          /* Efl_Gfx_Vg_Composite_Method */
+   float    mask_w, mask_h;       /* mask texture dimensions */
+   float    mask_off_x, mask_off_y; /* atlas offset of mask texture */
+   Span_Channel_Params fill;
+   Span_Channel_Params stroke;
+} Span_Pipe_Params;
 
 struct _Evas_Engine_GL_Context
 {
@@ -334,6 +368,60 @@ struct _Evas_Engine_GL_Context
             Eina_Bool     map_nearest : 1;
             Eina_Bool     map_delete  : 1;
          } filter;
+         /* SHD_SPAN: span-lookup shader parameters */
+         /* Span textures for fill and stroke (both from same pool atlas). */
+         GLuint   span_fill_tex;   /* pool GL texture for fill spans (0 = none) */
+         float    span_fill_off_tx;/* texel x-offset of fill in pool */
+         float    span_fill_off_ty;/* texel y-offset of fill in pool */
+         uint32_t span_fill_col;   /* fill base color (premultiplied ARGB) */
+         GLuint   span_stroke_tex; /* pool GL texture for stroke spans (0 = none) */
+         float    span_stroke_off_tx;
+         float    span_stroke_off_ty;
+         uint32_t span_stroke_col; /* stroke base color (premultiplied ARGB) */
+         float    span_inv_tw;     /* 1.0 / pool_width (shared, same pool) */
+         float    span_inv_th;     /* 1.0 / pool_height */
+         int      span_max_spans;  /* max spans per row */
+         uint32_t span_mul_col;      /* multiply color (premultiplied ARGB) */
+         int      span_fill_type;   /* Span_Data_Type for fill  (1=Solid, 2=Linear, 3=Radial) */
+         int      span_stroke_type; /* Span_Data_Type for stroke (1=Solid, 2=Linear, 3=Radial) */
+         /* Per-pixel gradient shader parameters for fill and stroke.
+          * t = grad_a * gl_FragCoord.x + grad_b * gl_FragCoord.y + grad_c
+          * For Solid fills these are unused (shader ignores them). */
+         float    span_fill_grad_a;      /* x coefficient for fill gradient t */
+         float    span_fill_grad_b;      /* y coefficient for fill gradient t */
+         float    span_fill_grad_c;      /* constant term for fill gradient t */
+         int      span_fill_grad_spread; /* 0=PAD 1=REFLECT 2=REPEAT */
+         GLuint   span_fill_grad_ramp;   /* 1024×1 gradient ramp GL texture name */
+         int      span_fill_grad_type;   /* 0=linear, 1=radial */
+         float    span_fill_grad_d;      /* radial: 2nd affine row x coeff */
+         float    span_fill_grad_e;      /* radial: 2nd affine row y coeff */
+         float    span_fill_grad_f;      /* radial: 2nd affine row constant */
+         float    span_fill_grad_ra;     /* radial: quadratic a (dr²-dx²-dy²) */
+         float    span_fill_grad_rdx;    /* radial: delta x (center-focal) */
+         float    span_fill_grad_rdy;    /* radial: delta y (center-focal) */
+         float    span_stroke_grad_a;
+         float    span_stroke_grad_b;
+         float    span_stroke_grad_c;
+         int      span_stroke_grad_spread;
+         GLuint   span_stroke_grad_ramp;
+         int      span_stroke_grad_type;
+         float    span_stroke_grad_d;
+         float    span_stroke_grad_e;
+         float    span_stroke_grad_f;
+         float    span_stroke_grad_ra;
+         float    span_stroke_grad_rdx;
+         float    span_stroke_grad_rdy;
+         float    span_fbo_off_x;     /* atlas FBO sub-region x offset */
+         float    span_fbo_off_y;     /* atlas FBO sub-region y offset */
+         int      span_fill_x_min;   /* spatial split: fill texture x_min */
+         int      span_stroke_x_min; /* spatial split: stroke texture x_min */
+         /* Composite mask parameters (0 = no mask) */
+         GLuint   span_mask_tex;     /* mask FBO texture (0 = no mask) */
+         int      span_comp_method;  /* composite method */
+         float    span_mask_w;       /* mask texture width */
+         float    span_mask_h;       /* mask texture height */
+         float    span_mask_off_x;   /* mask atlas x offset */
+         float    span_mask_off_y;   /* mask atlas y offset */
       } shader;
       struct {
          int            num, alloc;
@@ -611,6 +699,8 @@ void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *
                                                         int r, int g, int b, int a,
                                                         Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
                                                         Eina_Bool mask_smooth, Eina_Bool mask_color);
+void              evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
+                                                   const Span_Pipe_Params *p);
 void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *tex,
                                                     double sx, double sy, double sw, double sh,
@@ -721,6 +811,7 @@ Evas_GL_Texture  *evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Im
 Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_GL_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int stencil);
 Evas_GL_Texture  *evas_gl_common_texture_render_noscale_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
+Evas_GL_Texture  *evas_gl_common_texture_render_noscale_noatlas_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
 Evas_GL_Texture  *evas_gl_common_texture_dynamic_new(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im);
 void              evas_gl_common_texture_upload(Evas_GL_Texture *tex, RGBA_Image *im, unsigned int bytes_count);
@@ -753,6 +844,7 @@ void              evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int h
 void              evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc);
 Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, int stencil);
 Evas_GL_Image    *evas_gl_common_image_surface_noscale_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
+Evas_GL_Image    *evas_gl_common_image_surface_noscale_noatlas_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 void              evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int npoints, RGBA_Map_Point *p, int smooth, int level);
