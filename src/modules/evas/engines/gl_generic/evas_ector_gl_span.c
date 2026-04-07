@@ -272,6 +272,10 @@ span_collector_clear(Span_Collector *sc)
    sc->color         = 0;
    sc->mask_surface  = NULL;
    sc->comp_method   = 0;
+
+   /* Reset row-tail flush state for the new frame. */
+   sc->flush_prev_y  = -1;
+   sc->flush_prev_ti = -1;
 }
 
 /* ------------------------------------------------------------------ */
@@ -629,6 +633,38 @@ _find_texture_for_x(Span_Collector *sc, int x)
 }
 
 /* ------------------------------------------------------------------ */
+/* Row-tail sentinel helper                                            */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Zero the tail of a span texture row from the last written entry to the
+ * end of the stride.
+ *
+ * This writes the zero-length sentinel implicitly (the entry at
+ * span_counts[y] has len=0 after zeroing) AND clears any stale data from
+ * prior frames beyond the current frame's last span.
+ *
+ * The memset covers exactly (max_spans + 1 - idx) entries starting at
+ * index idx — only the unused tail, not the full row.  When idx == 0 the
+ * entire row is zeroed; when idx == max_spans nothing is done (row full,
+ * sentinel already provided by the spatial split path).
+ *
+ * @param sc  Span collector owning the texture.
+ * @param ti  Texture index within sc->textures[].
+ * @param y   Row index.
+ */
+static inline void
+_flush_row_tail(Span_Collector *sc, int ti, int y)
+{
+   Span_Texture *tex = &sc->textures[ti];
+   int           idx = tex->span_counts[y];
+
+   if (idx < sc->max_spans)
+     memset(tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4),
+            0, (size_t)(sc->max_spans + 1 - idx) * 4);
+}
+
+/* ------------------------------------------------------------------ */
 /* Solid span collector callback                                       */
 /* ------------------------------------------------------------------ */
 
@@ -662,8 +698,6 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data      *sd  = (Span_Data *)user_data;
    Span_Collector *sc  = (Span_Collector *)sd->span_collector;
    int             ti, idx, y, sx;
-   int             prev_y  = -1;
-   int             prev_ti = -1;
    Span_Texture   *tex;
    uint8_t        *entry;
 
@@ -702,17 +736,8 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
          * memset is nearly free.
          *
          * Only fires when y actually changes — not once per span. */
-        if (y != prev_y && prev_y >= 0 && prev_ti >= 0)
-          {
-             Span_Texture *prev_tex = &sc->textures[prev_ti];
-             int           prev_idx = prev_tex->span_counts[prev_y];
-
-             if (prev_idx < sc->max_spans)
-               memset(prev_tex->buffer +
-                      ((size_t)prev_y * sc->stride) + ((size_t)prev_idx * 4),
-                      0,
-                      (size_t)(sc->max_spans + 1 - prev_idx) * 4);
-          }
+        if (y != sc->flush_prev_y && sc->flush_prev_y >= 0 && sc->flush_prev_ti >= 0)
+          _flush_row_tail(sc, sc->flush_prev_ti, sc->flush_prev_y);
 
         ti  = (sc->texture_count == 1) ? 0 : _find_texture_for_x(sc, sx);
         tex = &sc->textures[ti];
@@ -801,28 +826,19 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
         if (idx > sc->actual_max_spans)
           sc->actual_max_spans = idx;
 
-        prev_y  = y;
-        prev_ti = ti;
+        sc->flush_prev_y  = y;
+        sc->flush_prev_ti = ti;
 
         spans++;
         count--;
      }
 
-   /* Memset the tail of the last row after the loop ends.
+   /* Flush the tail of the last row after the loop ends.
     * The row-change path above fires only when y changes, so the final
     * row (or the only row when the shape spans a single scanline) is
     * handled here. */
-   if (prev_y >= 0 && prev_ti >= 0)
-     {
-        Span_Texture *prev_tex = &sc->textures[prev_ti];
-        int           prev_idx = prev_tex->span_counts[prev_y];
-
-        if (prev_idx < sc->max_spans)
-          memset(prev_tex->buffer +
-                 ((size_t)prev_y * sc->stride) + ((size_t)prev_idx * 4),
-                 0,
-                 (size_t)(sc->max_spans + 1 - prev_idx) * 4);
-     }
+   if (sc->flush_prev_y >= 0 && sc->flush_prev_ti >= 0)
+     _flush_row_tail(sc, sc->flush_prev_ti, sc->flush_prev_y);
 }
 
 /* ------------------------------------------------------------------ */

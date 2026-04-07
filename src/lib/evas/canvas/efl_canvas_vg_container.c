@@ -5,6 +5,19 @@
 
 #define MY_CLASS EFL_CANVAS_VG_CONTAINER_CLASS
 
+/**
+ * Return EINA_TRUE if the composite method requires a mask texture
+ * (i.e., it belongs to the matte/mask family handled by the GL span path).
+ */
+static inline Eina_Bool
+_comp_method_needs_mask(Efl_Gfx_Vg_Composite_Method m)
+{
+   return (m == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
+           m == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE ||
+           m == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT ||
+           m == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT);
+}
+
 static void
 _invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
@@ -267,18 +280,11 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    /* Even when the container's flags are NONE (nothing changed), we must
     * still propagate the GL composite mask reference to the ector surface
     * every frame — eng_ector_end clears it after use. */
-   if (pd->comp_target &&
-       (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT))
+   if (pd->comp_target && _comp_method_needs_mask(pd->comp.method))
      {
         Efl_Canvas_Vg_Container_Data *cpd =
            efl_data_scope_get(pd->comp_target, MY_CLASS);
-        if (cpd && cpd->comp.gl_surface)
-          ector_software_surface_gl_comp_set(surface,
-                                             cpd->comp.gl_surface,
-                                             (int)pd->comp.method);
+        _maybe_set_gl_comp(surface, cpd, pd->comp.method);
      }
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
@@ -292,11 +298,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    //Container may have composite target.
    //FIXME : _prepare_comp() should only work in cases with matte or masking.
    // This condition is valid because the masking use same type as matte.
-   if (pd->comp_target &&
-       (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT ||
-        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT))
+   if (pd->comp_target && _comp_method_needs_mask(pd->comp.method))
      {
         comp_method = pd->comp.method;
         comp = _prepare_comp(vg_pd, pd->comp_target,
@@ -310,10 +312,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
           {
              Efl_Canvas_Vg_Container_Data *cpd =
                 efl_data_scope_get(pd->comp_target, MY_CLASS);
-             if (cpd && cpd->comp.gl_surface)
-               ector_software_surface_gl_comp_set(surface,
-                                                  cpd->comp.gl_surface,
-                                                  (int)pd->comp.method);
+             _maybe_set_gl_comp(surface, cpd, pd->comp.method);
           }
      }
 

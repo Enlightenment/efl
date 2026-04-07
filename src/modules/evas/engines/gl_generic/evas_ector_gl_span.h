@@ -199,6 +199,12 @@ struct _Span_Collector
                                     * The +1 reserves a dedicated sentinel slot. */
    int            actual_max_spans; /* max span_counts[y] seen during collection this frame */
 
+   /* Row-tail flush state — tracked across multiple _collect_spans_solid
+    * invocations (e.g., when _span_fill_clipRect calls the callback in
+    * chunks).  Reset in span_collector_clear. */
+   int            flush_prev_y;    /* last row flushed (-1 = none) */
+   int            flush_prev_ti;   /* texture index of last flushed row */
+
    /* Fill parameters captured at span_collector_new() time or during collection */
    Span_Data_Type type;            /* Solid, LinearGradient, or RadialGradient */
    uint32_t       color;           /* premultiplied ARGB (0xAARRGGBB) for Solid fills */

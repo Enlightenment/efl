@@ -438,10 +438,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
           {
              Efl_Canvas_Vg_Container_Data *cpd =
                 efl_data_scope_get(cd->comp_target, EFL_CANVAS_VG_CONTAINER_CLASS);
-             if (cpd && cpd->comp.gl_surface)
-               ector_software_surface_gl_comp_set(ector,
-                                                  cpd->comp.gl_surface,
-                                                  (int)cd->comp.method);
+             _maybe_set_gl_comp(ector, cpd, cd->comp.method);
           }
 
         int alpha = 255;

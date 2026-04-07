@@ -156,6 +156,25 @@ void *                      evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *ro
 ECTOR_API void ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface, int comp_method);
 ECTOR_API void ector_software_surface_gl_comp_get(Ector_Surface *obj, void **gl_surface_out, int *comp_method_out);
 
+/**
+ * Set the GL composite surface on @p ector if @p target_cd holds a valid
+ * gl_surface reference.  No-op when @p target_cd is NULL or has no
+ * gl_surface (software render path, or mask not yet rendered).
+ *
+ * @param ector     Shared ector surface for this VG render pass.
+ * @param target_cd Container data of the composite target node.
+ * @param method    Composite method to propagate.
+ */
+static inline void
+_maybe_set_gl_comp(Ector_Surface *ector,
+                   Efl_Canvas_Vg_Container_Data *target_cd,
+                   Efl_Gfx_Vg_Composite_Method method)
+{
+   if (target_cd && target_cd->comp.gl_surface)
+     ector_software_surface_gl_comp_set(ector, target_cd->comp.gl_surface,
+                                        (int)method);
+}
+
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);

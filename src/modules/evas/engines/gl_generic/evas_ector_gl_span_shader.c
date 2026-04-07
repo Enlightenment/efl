@@ -37,201 +37,17 @@ static const char _span_vertex_glsl[] =
    "   gl_Position = a_position;\n"
    "}\n";
 
-/* --- Solid fragment shader ---
- *
- * Each span entry is 1 texel (4 bytes) in the span texture:
- *   byte0 (B): coverage — AA coverage 0-255
- *   byte1 (G): len      — span length (max 255; longer spans are split)
- *   byte2 (R): gap      — distance from end of previous span on this row
- *   byte3 (A): reserved — zero
- *
- * The shader iterates over up to u_max_spans span entries on the current
- * scanline (identified by gl_FragCoord.y), checks whether the current pixel
- * falls inside each span's x range, and accumulates a coverage-weighted
- * premultiplied-alpha result.  A zero-length sentinel terminates the search.
- *
- * u_inv_tw / u_inv_th are 1/pool_w and 1/pool_h (pool-space reciprocals).
- * u_offset.x / u_offset.y are the texel offsets of the span sub-region
- * within the pool.  The shader adds these to convert from logical
- * span-buffer coordinates to pool UV coordinates.
- * #define MAX_SPANS must match SPAN_COLLECTOR_DEFAULT_MAX_SPANS (64).
- */
-static const char _span_solid_fragment_glsl[] =
-   "precision highp float;\n"
-   "uniform sampler2D u_fill_spans;\n"
-   "uniform sampler2D u_stroke_spans;\n"
-   "uniform float u_inv_tw;\n"
-   "uniform float u_inv_th;\n"
-   "uniform int   u_max_spans;\n"
-   "uniform vec4  u_mul_col;\n"
-   "uniform vec2  u_fill_offset;\n"
-   "uniform vec2  u_stroke_offset;\n"
-   "uniform vec2  u_fbo_offset;\n"
-   "uniform vec4  u_fill_col;\n"
-   "uniform vec4  u_stroke_col;\n"
-   "uniform int   u_has_fill;\n"
-   "uniform int   u_has_stroke;\n"
-   "uniform int   u_fill_x_min;\n"
-   "uniform int   u_stroke_x_min;\n"
-   "#define MAX_SPANS 64\n"
-   "\n"
-   "/* Scan one span texture row, accumulating coverage-weighted base_col\n"
-   " * via premultiplied-alpha src-over into result. */\n"
-   "vec4 scan_spans(sampler2D tex, vec2 off, vec4 base_col, float px,\n"
-   "                float fy, float inv_tw, int max_s, int x_min, vec4 res) {\n"
-   "   int sx = x_min;\n"
-   "   for (int i = 0; i < MAX_SPANS; i++) {\n"
-   "      if (i >= max_s) break;\n"
-   "      float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
-   "      vec4 t = texture2D(tex, vec2(fx, fy));\n"
-   "      int gap = int(t.r * 255.0 + 0.5);\n"
-   "      int len = int(t.g * 255.0 + 0.5);\n"
-   "      float cov = t.b;\n"
-   "      if (len == 0) break;\n"
-   "      sx += gap;\n"
-   "      if (int(px) >= sx && int(px) < sx + len) {\n"
-   "         vec4 col = base_col * cov;\n"
-   "         res.rgb = col.rgb + res.rgb * (1.0 - col.a);\n"
-   "         res.a   = col.a  + res.a   * (1.0 - col.a);\n"
-   "      }\n"
-   "      sx += len;\n"
-   "   }\n"
-   "   return res;\n"
-   "}\n"
-   "\n"
-   "void main() {\n"
-   "   float px = gl_FragCoord.x - u_fbo_offset.x;\n"
-   "   float py = gl_FragCoord.y - u_fbo_offset.y;\n"
-   "   vec4 result = vec4(0.0);\n"
-   "\n"
-   "   if (u_has_fill == 1) {\n"
-   "      float fy = (u_fill_offset.y + py) * u_inv_th;\n"
-   "      result = scan_spans(u_fill_spans, u_fill_offset, u_fill_col,\n"
-   "                          px, fy, u_inv_tw, u_max_spans, u_fill_x_min, result);\n"
-   "   }\n"
-   "   if (u_has_stroke == 1) {\n"
-   "      float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
-   "      result = scan_spans(u_stroke_spans, u_stroke_offset, u_stroke_col,\n"
-   "                          px, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
-   "   }\n"
-   "\n"
-   "   gl_FragColor = result * u_mul_col;\n"
-   "}\n";
+/* ------------------------------------------------------------------ */
+/* Shared GLSL fragment shader source fragments                        */
+/* ------------------------------------------------------------------ */
 
-/* --- Solid mask fragment shader ---
- *
- * Identical to the solid shader but with unconditional composite mask sampling.
- * Used when span_mask_tex != 0.  No u_has_mask / u_comp_method uniforms —
- * the mask alpha is always multiplied into the result.
- */
-static const char _span_solid_mask_fragment_glsl[] =
-   "precision highp float;\n"
-   "uniform sampler2D u_fill_spans;\n"
-   "uniform sampler2D u_stroke_spans;\n"
-   "uniform float u_inv_tw;\n"
-   "uniform float u_inv_th;\n"
-   "uniform int   u_max_spans;\n"
-   "uniform vec4  u_mul_col;\n"
-   "uniform vec2  u_fill_offset;\n"
-   "uniform vec2  u_stroke_offset;\n"
-   "uniform vec2  u_fbo_offset;\n"
-   "uniform vec4  u_fill_col;\n"
-   "uniform vec4  u_stroke_col;\n"
-   "uniform int   u_has_fill;\n"
-   "uniform int   u_has_stroke;\n"
-   "uniform int   u_fill_x_min;\n"
-   "uniform int   u_stroke_x_min;\n"
-   "uniform sampler2D u_mask_tex;\n"
-   "uniform vec2  u_mask_size;\n"
-   "uniform vec2  u_mask_offset;\n"
-   "uniform float u_mask_inv;\n"
-   "uniform float u_mask_op;\n"
-   "#define MAX_SPANS 64\n"
-   "\n"
-   "vec4 scan_spans(sampler2D tex, vec2 off, vec4 base_col, float px,\n"
-   "                float fy, float inv_tw, int max_s, int x_min, vec4 res) {\n"
-   "   int sx = x_min;\n"
-   "   for (int i = 0; i < MAX_SPANS; i++) {\n"
-   "      if (i >= max_s) break;\n"
-   "      float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
-   "      vec4 t = texture2D(tex, vec2(fx, fy));\n"
-   "      int gap = int(t.r * 255.0 + 0.5);\n"
-   "      int len = int(t.g * 255.0 + 0.5);\n"
-   "      float cov = t.b;\n"
-   "      if (len == 0) break;\n"
-   "      sx += gap;\n"
-   "      if (int(px) >= sx && int(px) < sx + len) {\n"
-   "         vec4 col = base_col * cov;\n"
-   "         res.rgb = col.rgb + res.rgb * (1.0 - col.a);\n"
-   "         res.a   = col.a  + res.a   * (1.0 - col.a);\n"
-   "      }\n"
-   "      sx += len;\n"
-   "   }\n"
-   "   return res;\n"
-   "}\n"
-   "\n"
-   "void main() {\n"
-   "   float px = gl_FragCoord.x - u_fbo_offset.x;\n"
-   "   float py = gl_FragCoord.y - u_fbo_offset.y;\n"
-   "   vec4 result = vec4(0.0);\n"
-   "\n"
-   "   if (u_has_fill == 1) {\n"
-   "      float fy = (u_fill_offset.y + py) * u_inv_th;\n"
-   "      result = scan_spans(u_fill_spans, u_fill_offset, u_fill_col,\n"
-   "                          px, fy, u_inv_tw, u_max_spans, u_fill_x_min, result);\n"
-   "   }\n"
-   "   if (u_has_stroke == 1) {\n"
-   "      float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
-   "      result = scan_spans(u_stroke_spans, u_stroke_offset, u_stroke_col,\n"
-   "                          px, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
-   "   }\n"
-   "\n"
-   "   /* Force unconditional sampler references (driver workaround). */\n"
-   "   result += (texture2D(u_fill_spans, vec2(0.0)) +\n"
-   "             texture2D(u_stroke_spans, vec2(0.0))) * 0.0;\n"
-   "\n"
-   "   vec2 mask_uv = vec2((px + u_mask_offset.x + 0.5) / u_mask_size.x,\n"
-   "                       (py + u_mask_offset.y + 0.5) / u_mask_size.y);\n"
-   "   float mask_a = texture2D(u_mask_tex, mask_uv).a;\n"
-   "   /* u_mask_op: 0=multiply, 1=add, 2=difference\n"
-   "    * u_mask_inv: 0=normal, 1=invert (for multiply path) */\n"
-   "   if (u_mask_op < 0.5)\n"
-   "      result *= mix(mask_a, 1.0 - mask_a, u_mask_inv);\n"
-   "   else if (u_mask_op < 1.5)\n"
-   "      result = vec4(result.rgb, min(result.a + mask_a, 1.0));\n"
-   "   else\n"
-   "      result *= abs(result.a - mask_a);\n"
-   "\n"
-   "   gl_FragColor = result * u_mul_col;\n"
-   "}\n";
+/* Shared by all four shaders. */
+static const char _glsl_precision[] =
+   "precision highp float;\n";
 
-/* --- Gradient fragment shader ---
- *
- * Per-pixel gradient evaluation using a 1024×1 RGBA8 ramp texture.
- *
- * Span buffer format: identical to the solid shader — 1 texel per span
- * (gap, len, coverage).  The shader uses the same scan_spans() helper as
- * the solid shader to find which span covers the current pixel.  On hit it
- * computes the gradient parameter t per-pixel instead of using a fixed color:
- *
- *   t = u_grad_a * gl_FragCoord.x + u_grad_b * gl_FragCoord.y + u_grad_c
- *
- * The three coefficients encode the full inverse-transform + gradient
- * direction in a single dot-product, pre-computed on the CPU in eng_ector_end.
- *
- * Spread modes:
- *   u_grad_spread == 0 (PAD):     t = clamp(t, 0.0, 1.0)
- *   u_grad_spread == 1 (REFLECT): t = 1.0 - abs(fract(t*0.5)*2.0 - 1.0)
- *   u_grad_spread == 2 (REPEAT):  t = fract(t)
- *
- * The ramp texture is on unit 2 (units 0 and 1 are fill/stroke span textures).
- *
- * For fill and stroke each channel carries independent gradient parameters
- * (u_fill_grad_* vs u_stroke_grad_*) so mixed gradient+gradient shapes
- * render correctly with different gradients per channel.
- */
-static const char _span_gradient_fragment_glsl[] =
-   "precision highp float;\n"
+/* 15 base uniforms + MAX_SPANS macro shared by all four shaders.
+ * #define MAX_SPANS must match SPAN_COLLECTOR_DEFAULT_MAX_SPANS (64). */
+static const char _glsl_uniforms_common[] =
    "uniform sampler2D u_fill_spans;\n"
    "uniform sampler2D u_stroke_spans;\n"
    "uniform float u_inv_tw;\n"
@@ -245,6 +61,15 @@ static const char _span_gradient_fragment_glsl[] =
    "uniform int   u_has_stroke;\n"
    "uniform int   u_fill_x_min;\n"
    "uniform int   u_stroke_x_min;\n"
+   "#define MAX_SPANS 64\n";
+
+/* Solid-only color uniforms (absent in gradient shaders → loc returns -1). */
+static const char _glsl_uniforms_solid[] =
+   "uniform vec4  u_fill_col;\n"
+   "uniform vec4  u_stroke_col;\n";
+
+/* 18 gradient coefficient uniforms (fill + stroke). */
+static const char _glsl_uniforms_gradient[] =
    "uniform sampler2D u_fill_grad_ramp;\n"
    "uniform float u_fill_grad_a;\n"
    "uniform float u_fill_grad_b;\n"
@@ -268,10 +93,60 @@ static const char _span_gradient_fragment_glsl[] =
    "uniform float u_stroke_grad_f;\n"
    "uniform float u_stroke_grad_ra;\n"
    "uniform float u_stroke_grad_rdx;\n"
-   "uniform float u_stroke_grad_rdy;\n"
-   "#define MAX_SPANS 64\n"
+   "uniform float u_stroke_grad_rdy;\n";
+
+/* Composite mask uniforms (present only in *_mask variants). */
+static const char _glsl_uniforms_mask[] =
+   "uniform sampler2D u_mask_tex;\n"
+   "uniform vec2  u_mask_size;\n"
+   "uniform vec2  u_mask_offset;\n"
+   "uniform float u_mask_inv;\n"
+   "uniform float u_mask_op;\n";
+
+/* scan_spans() — shared by solid and solid_mask shaders.
+ *
+ * Each span entry is 1 texel (4 bytes) in the span texture:
+ *   byte0 (B): coverage — AA coverage 0-255
+ *   byte1 (G): len      — span length (max 255; longer spans are split)
+ *   byte2 (R): gap      — distance from end of previous span on this row
+ *   byte3 (A): reserved — zero
+ */
+static const char _glsl_scan_spans[] =
    "\n"
-   "/* Apply gradient spread mode to t in [−∞, +∞] → [0, 1]. */\n"
+   "/* Scan one span texture row, accumulating coverage-weighted base_col\n"
+   " * via premultiplied-alpha src-over into result. */\n"
+   "vec4 scan_spans(sampler2D tex, vec2 off, vec4 base_col, float px,\n"
+   "                float fy, float inv_tw, int max_s, int x_min, vec4 res) {\n"
+   "   int sx = x_min;\n"
+   "   for (int i = 0; i < MAX_SPANS; i++) {\n"
+   "      if (i >= max_s) break;\n"
+   "      float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
+   "      vec4 t = texture2D(tex, vec2(fx, fy));\n"
+   "      int gap = int(t.r * 255.0 + 0.5);\n"
+   "      int len = int(t.g * 255.0 + 0.5);\n"
+   "      float cov = t.b;\n"
+   "      if (len == 0) break;\n"
+   "      sx += gap;\n"
+   "      if (int(px) >= sx && int(px) < sx + len) {\n"
+   "         vec4 col = base_col * cov;\n"
+   "         res.rgb = col.rgb + res.rgb * (1.0 - col.a);\n"
+   "         res.a   = col.a  + res.a   * (1.0 - col.a);\n"
+   "      }\n"
+   "      sx += len;\n"
+   "   }\n"
+   "   return res;\n"
+   "}\n";
+
+/* grad_spread() — shared by gradient and gradient_mask shaders.
+ *
+ * Spread modes:
+ *   spread == 0 (PAD):     t = clamp(t, 0.0, 1.0)
+ *   spread == 1 (REFLECT): t = 1.0 - abs(fract(t*0.5)*2.0 - 1.0)
+ *   spread == 2 (REPEAT):  t = fract(t)
+ */
+static const char _glsl_grad_spread[] =
+   "\n"
+   "/* Apply gradient spread mode to t in [-inf, +inf] -> [0, 1]. */\n"
    "float grad_spread(float t, int spread) {\n"
    "   if (spread == 1) {\n"
    "      /* REFLECT: mirror at 0 and 1 */\n"
@@ -284,7 +159,15 @@ static const char _span_gradient_fragment_glsl[] =
    "      t = clamp(t, 0.0, 1.0);\n"
    "   }\n"
    "   return t;\n"
-   "}\n"
+   "}\n";
+
+/* scan_gradient_spans() — shared by gradient and gradient_mask shaders.
+ *
+ * Span buffer format identical to the solid shader (gap, len, coverage).
+ * On hit, computes gradient parameter t per-pixel (linear or radial) and
+ * samples the gradient ramp texture.
+ */
+static const char _glsl_scan_gradient_spans[] =
    "\n"
    "/* Scan one gradient span texture row.  On hit, compute t per-pixel\n"
    " * (linear or radial) and sample the gradient ramp, then src-over\n"
@@ -332,7 +215,30 @@ static const char _span_gradient_fragment_glsl[] =
    "      sx += len;\n"
    "   }\n"
    "   return res;\n"
-   "}\n"
+   "}\n";
+
+/* main() body for solid shaders: px/py setup, fill/stroke dispatch.
+ * Everything up to but not including gl_FragColor. */
+static const char _glsl_main_solid_body[] =
+   "\n"
+   "void main() {\n"
+   "   float px = gl_FragCoord.x - u_fbo_offset.x;\n"
+   "   float py = gl_FragCoord.y - u_fbo_offset.y;\n"
+   "   vec4 result = vec4(0.0);\n"
+   "\n"
+   "   if (u_has_fill == 1) {\n"
+   "      float fy = (u_fill_offset.y + py) * u_inv_th;\n"
+   "      result = scan_spans(u_fill_spans, u_fill_offset, u_fill_col,\n"
+   "                          px, fy, u_inv_tw, u_max_spans, u_fill_x_min, result);\n"
+   "   }\n"
+   "   if (u_has_stroke == 1) {\n"
+   "      float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
+   "      result = scan_spans(u_stroke_spans, u_stroke_offset, u_stroke_col,\n"
+   "                          px, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
+   "   }\n";
+
+/* main() body for gradient shaders. */
+static const char _glsl_main_gradient_body[] =
    "\n"
    "void main() {\n"
    "   float px = gl_FragCoord.x - u_fbo_offset.x;\n"
@@ -360,141 +266,25 @@ static const char _span_gradient_fragment_glsl[] =
    "                  u_stroke_grad_d, u_stroke_grad_e, u_stroke_grad_f,\n"
    "                  u_stroke_grad_ra, u_stroke_grad_rdx, u_stroke_grad_rdy,\n"
    "                  px, py, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
-   "   }\n"
-   "\n"
+   "   }\n";
+
+/* Common main() ending: multiply by color and close. */
+static const char _glsl_main_end[] =
    "   gl_FragColor = result * u_mul_col;\n"
    "}\n";
 
-/* --- Gradient mask fragment shader ---
- *
- * Identical to the gradient shader but with unconditional composite mask sampling.
- * Used when span_mask_tex != 0.  No u_has_mask / u_comp_method uniforms —
- * the mask alpha is always multiplied into the result.
- */
-static const char _span_gradient_mask_fragment_glsl[] =
-   "precision highp float;\n"
-   "uniform sampler2D u_fill_spans;\n"
-   "uniform sampler2D u_stroke_spans;\n"
-   "uniform float u_inv_tw;\n"
-   "uniform float u_inv_th;\n"
-   "uniform int   u_max_spans;\n"
-   "uniform vec4  u_mul_col;\n"
-   "uniform vec2  u_fill_offset;\n"
-   "uniform vec2  u_stroke_offset;\n"
-   "uniform vec2  u_fbo_offset;\n"
-   "uniform int   u_has_fill;\n"
-   "uniform int   u_has_stroke;\n"
-   "uniform int   u_fill_x_min;\n"
-   "uniform int   u_stroke_x_min;\n"
-   "uniform sampler2D u_mask_tex;\n"
-   "uniform vec2  u_mask_size;\n"
-   "uniform vec2  u_mask_offset;\n"
-   "uniform float u_mask_inv;\n"
-   "uniform float u_mask_op;\n"
-   "uniform sampler2D u_fill_grad_ramp;\n"
-   "uniform float u_fill_grad_a;\n"
-   "uniform float u_fill_grad_b;\n"
-   "uniform float u_fill_grad_c;\n"
-   "uniform int   u_fill_grad_spread;\n"
-   "uniform sampler2D u_stroke_grad_ramp;\n"
-   "uniform float u_stroke_grad_a;\n"
-   "uniform float u_stroke_grad_b;\n"
-   "uniform float u_stroke_grad_c;\n"
-   "uniform int   u_stroke_grad_spread;\n"
-   "uniform int   u_fill_grad_type;\n"
-   "uniform float u_fill_grad_d;\n"
-   "uniform float u_fill_grad_e;\n"
-   "uniform float u_fill_grad_f;\n"
-   "uniform float u_fill_grad_ra;\n"
-   "uniform float u_fill_grad_rdx;\n"
-   "uniform float u_fill_grad_rdy;\n"
-   "uniform int   u_stroke_grad_type;\n"
-   "uniform float u_stroke_grad_d;\n"
-   "uniform float u_stroke_grad_e;\n"
-   "uniform float u_stroke_grad_f;\n"
-   "uniform float u_stroke_grad_ra;\n"
-   "uniform float u_stroke_grad_rdx;\n"
-   "uniform float u_stroke_grad_rdy;\n"
-   "#define MAX_SPANS 64\n"
+/* Unconditional sampler-keep lines for solid mask shaders.
+ * Forces the driver to preserve fill/stroke span samplers that only
+ * appear inside conditional branches. */
+static const char _glsl_mask_keep_solid[] =
    "\n"
-   "float grad_spread(float t, int spread) {\n"
-   "   if (spread == 1) {\n"
-   "      t = 1.0 - abs(fract(t * 0.5) * 2.0 - 1.0);\n"
-   "   } else if (spread == 2) {\n"
-   "      t = fract(t);\n"
-   "   } else {\n"
-   "      t = clamp(t, 0.0, 1.0);\n"
-   "   }\n"
-   "   return t;\n"
-   "}\n"
-   "\n"
-   "vec4 scan_gradient_spans(sampler2D span_tex, vec2 off,\n"
-   "                         sampler2D ramp, float ga, float gb, float gc,\n"
-   "                         int gspread, int gtype,\n"
-   "                         float gd, float ge, float gf,\n"
-   "                         float gra, float grdx, float grdy,\n"
-   "                         float px, float py,\n"
-   "                         float fy, float inv_tw, int max_s, int x_min, vec4 res) {\n"
-   "   int sx = x_min;\n"
-   "   for (int i = 0; i < MAX_SPANS; i++) {\n"
-   "      if (i >= max_s) break;\n"
-   "      float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
-   "      vec4 s = texture2D(span_tex, vec2(fx, fy));\n"
-   "      int gap = int(s.r * 255.0 + 0.5);\n"
-   "      int len = int(s.g * 255.0 + 0.5);\n"
-   "      float cov = s.b;\n"
-   "      if (len == 0) break;\n"
-   "      sx += gap;\n"
-   "      if (int(px) >= sx && int(px) < sx + len) {\n"
-   "         float t;\n"
-   "         if (gtype == 1) {\n"
-   "            float rx = ga * px + gb * py + gc;\n"
-   "            float ry = gd * px + ge * py + gf;\n"
-   "            float b_val = 2.0 * (rx * grdx + ry * grdy);\n"
-   "            float b_s = b_val * gra;\n"
-   "            float det = b_s * b_s + (rx * rx + ry * ry) * 2.0 * gra;\n"
-   "            t = sqrt(max(det, 0.0)) - b_s;\n"
-   "         } else {\n"
-   "            t = ga * px + gb * py + gc;\n"
-   "         }\n"
-   "         t = grad_spread(t, gspread);\n"
-   "         vec4 grad_col = texture2D(ramp, vec2(t, 0.5));\n"
-   "         vec4 col = grad_col * cov;\n"
-   "         res.rgb = col.rgb + res.rgb * (1.0 - col.a);\n"
-   "         res.a   = col.a  + res.a   * (1.0 - col.a);\n"
-   "      }\n"
-   "      sx += len;\n"
-   "   }\n"
-   "   return res;\n"
-   "}\n"
-   "\n"
-   "void main() {\n"
-   "   float px = gl_FragCoord.x - u_fbo_offset.x;\n"
-   "   float py = gl_FragCoord.y - u_fbo_offset.y;\n"
-   "   vec4 result = vec4(0.0);\n"
-   "\n"
-   "   if (u_has_fill == 1) {\n"
-   "      float fy = (u_fill_offset.y + py) * u_inv_th;\n"
-   "      result = scan_gradient_spans(\n"
-   "                  u_fill_spans, u_fill_offset,\n"
-   "                  u_fill_grad_ramp,\n"
-   "                  u_fill_grad_a, u_fill_grad_b, u_fill_grad_c,\n"
-   "                  u_fill_grad_spread, u_fill_grad_type,\n"
-   "                  u_fill_grad_d, u_fill_grad_e, u_fill_grad_f,\n"
-   "                  u_fill_grad_ra, u_fill_grad_rdx, u_fill_grad_rdy,\n"
-   "                  px, py, fy, u_inv_tw, u_max_spans, u_fill_x_min, result);\n"
-   "   }\n"
-   "   if (u_has_stroke == 1) {\n"
-   "      float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
-   "      result = scan_gradient_spans(\n"
-   "                  u_stroke_spans, u_stroke_offset,\n"
-   "                  u_stroke_grad_ramp,\n"
-   "                  u_stroke_grad_a, u_stroke_grad_b, u_stroke_grad_c,\n"
-   "                  u_stroke_grad_spread, u_stroke_grad_type,\n"
-   "                  u_stroke_grad_d, u_stroke_grad_e, u_stroke_grad_f,\n"
-   "                  u_stroke_grad_ra, u_stroke_grad_rdx, u_stroke_grad_rdy,\n"
-   "                  px, py, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
-   "   }\n"
+   "   /* Force unconditional sampler references (driver workaround). */\n"
+   "   result += (texture2D(u_fill_spans, vec2(0.0)) +\n"
+   "             texture2D(u_stroke_spans, vec2(0.0))) * 0.0;\n";
+
+/* Unconditional sampler-keep lines for gradient mask shaders.
+ * Keeps all four samplers: fill/stroke span and fill/stroke ramp. */
+static const char _glsl_mask_keep_gradient[] =
    "\n"
    "   /* Force all sampler references unconditionally to prevent the GLSL\n"
    "    * compiler from stripping samplers that only appear inside if-branches.\n"
@@ -503,7 +293,12 @@ static const char _span_gradient_mask_fragment_glsl[] =
    "   vec4 _keep_stroke = texture2D(u_stroke_spans, vec2(0.0));\n"
    "   vec4 _keep_framp  = texture2D(u_fill_grad_ramp, vec2(0.0));\n"
    "   vec4 _keep_sramp  = texture2D(u_stroke_grad_ramp, vec2(0.0));\n"
-   "   result += (_keep_fill + _keep_stroke + _keep_framp + _keep_sramp) * 0.0;\n"
+   "   result += (_keep_fill + _keep_stroke + _keep_framp + _keep_sramp) * 0.0;\n";
+
+/* Mask epilogue: sample the composite mask texture and apply it.
+ * u_mask_op: 0=multiply, 1=add, 2=difference
+ * u_mask_inv: 0=normal, 1=invert (multiply path only) */
+static const char _glsl_mask_epilogue[] =
    "\n"
    "   vec2 mask_uv = vec2((px + u_mask_offset.x + 0.5) / u_mask_size.x,\n"
    "                       (py + u_mask_offset.y + 0.5) / u_mask_size.y);\n"
@@ -515,9 +310,103 @@ static const char _span_gradient_mask_fragment_glsl[] =
    "   else if (u_mask_op < 1.5)\n"
    "      result = vec4(result.rgb, min(result.a + mask_a, 1.0));\n"
    "   else\n"
-   "      result *= abs(result.a - mask_a);\n"
-   "   gl_FragColor = result * u_mul_col;\n"
-   "}\n";
+   "      result *= abs(result.a - mask_a);\n";
+
+/* ------------------------------------------------------------------ */
+/* Per-shader fragment arrays                                          */
+/* ------------------------------------------------------------------ */
+
+/* --- Solid fragment shader ---
+ *
+ * Each span entry is 1 texel (4 bytes) in the span texture:
+ *   byte0 (B): coverage — AA coverage 0-255
+ *   byte1 (G): len      — span length (max 255; longer spans are split)
+ *   byte2 (R): gap      — distance from end of previous span on this row
+ *   byte3 (A): reserved — zero
+ *
+ * The shader iterates over up to u_max_spans span entries on the current
+ * scanline, checks whether the current pixel falls inside each span's x
+ * range, and accumulates a coverage-weighted premultiplied-alpha result.
+ * A zero-length sentinel terminates the search.
+ *
+ * u_inv_tw / u_inv_th are 1/pool_w and 1/pool_h (pool-space reciprocals).
+ * u_fill_offset / u_stroke_offset are texel offsets within the pool.
+ * #define MAX_SPANS must match SPAN_COLLECTOR_DEFAULT_MAX_SPANS (64).
+ */
+static const char * const _solid_shader_parts[] = {
+   _glsl_precision,
+   _glsl_uniforms_common,
+   _glsl_uniforms_solid,
+   _glsl_scan_spans,
+   _glsl_main_solid_body,
+   _glsl_main_end
+};
+#define _SOLID_SHADER_PARTS \
+   ((int)(sizeof(_solid_shader_parts) / sizeof(_solid_shader_parts[0])))
+
+/* --- Solid mask fragment shader ---
+ *
+ * Identical to the solid shader but with unconditional composite mask
+ * sampling.  Used when span_mask_tex != 0.  No u_has_mask / u_comp_method
+ * uniforms — the mask alpha is always applied inside the fragment shader.
+ */
+static const char * const _solid_mask_shader_parts[] = {
+   _glsl_precision,
+   _glsl_uniforms_common,
+   _glsl_uniforms_solid,
+   _glsl_uniforms_mask,
+   _glsl_scan_spans,
+   _glsl_main_solid_body,
+   _glsl_mask_keep_solid,
+   _glsl_mask_epilogue,
+   _glsl_main_end
+};
+#define _SOLID_MASK_SHADER_PARTS \
+   ((int)(sizeof(_solid_mask_shader_parts) / sizeof(_solid_mask_shader_parts[0])))
+
+/* --- Gradient fragment shader ---
+ *
+ * Per-pixel gradient evaluation using a 1024×1 RGBA8 ramp texture.
+ *
+ * Span buffer format: identical to the solid shader — 1 texel per span
+ * (gap, len, coverage).  On hit it computes the gradient parameter t
+ * per-pixel instead of using a fixed color:
+ *   t = u_grad_a * gl_FragCoord.x + u_grad_b * gl_FragCoord.y + u_grad_c
+ *
+ * The ramp texture is on unit 2 (units 0 and 1 are fill/stroke span
+ * textures).  Fill and stroke carry independent gradient parameters.
+ */
+static const char * const _gradient_shader_parts[] = {
+   _glsl_precision,
+   _glsl_uniforms_common,
+   _glsl_uniforms_gradient,
+   _glsl_grad_spread,
+   _glsl_scan_gradient_spans,
+   _glsl_main_gradient_body,
+   _glsl_main_end
+};
+#define _GRADIENT_SHADER_PARTS \
+   ((int)(sizeof(_gradient_shader_parts) / sizeof(_gradient_shader_parts[0])))
+
+/* --- Gradient mask fragment shader ---
+ *
+ * Identical to the gradient shader but with unconditional composite mask
+ * sampling.  Used when span_mask_tex != 0.
+ */
+static const char * const _gradient_mask_shader_parts[] = {
+   _glsl_precision,
+   _glsl_uniforms_common,
+   _glsl_uniforms_gradient,
+   _glsl_uniforms_mask,
+   _glsl_grad_spread,
+   _glsl_scan_gradient_spans,
+   _glsl_main_gradient_body,
+   _glsl_mask_keep_gradient,
+   _glsl_mask_epilogue,
+   _glsl_main_end
+};
+#define _GRADIENT_MASK_SHADER_PARTS \
+   ((int)(sizeof(_gradient_mask_shader_parts) / sizeof(_gradient_mask_shader_parts[0])))
 
 /* ------------------------------------------------------------------ */
 /* Internal shader state                                               */
@@ -590,14 +479,15 @@ static GLuint _white_mask_tex = 0;
 /* ------------------------------------------------------------------ */
 
 /**
- * Compile a single shader stage.
+ * Compile a single shader stage from an array of source fragments.
  *
- * @param type  GL_VERTEX_SHADER or GL_FRAGMENT_SHADER.
- * @param src   Null-terminated GLSL source string.
- * @return      GL shader object name, or 0 on failure.
+ * @param type    GL_VERTEX_SHADER or GL_FRAGMENT_SHADER.
+ * @param parts   Array of null-terminated GLSL source strings.
+ * @param count   Number of strings in @p parts.
+ * @return        GL shader object name, or 0 on failure.
  */
 static unsigned int
-_compile_shader(unsigned int type, const char *src)
+_compile_shader_parts(unsigned int type, const char **parts, int count)
 {
    unsigned int shd;
    int          ok = 0;
@@ -605,7 +495,7 @@ _compile_shader(unsigned int type, const char *src)
    shd = glCreateShader(type);
    if (!shd) return 0;
 
-   glShaderSource(shd, 1, &src, NULL);
+   glShaderSource(shd, count, parts, NULL);
    glCompileShader(shd);
    glGetShaderiv(shd, GL_COMPILE_STATUS, &ok);
    if (!ok)
@@ -620,25 +510,29 @@ _compile_shader(unsigned int type, const char *src)
 }
 
 /**
- * Compile and link a span shader program.
+ * Compile and link a span shader program from source fragment arrays.
  *
  * Idempotent: returns EINA_TRUE immediately if the program is already
  * compiled (ss->program != 0).
  *
- * @param ss        Shader state to populate.
- * @param frag_src  Fragment shader GLSL source.
- * @return          EINA_TRUE on success, EINA_FALSE on compile/link error.
+ * @param ss          Shader state to populate.
+ * @param frag_parts  Array of fragment shader GLSL source strings.
+ * @param frag_count  Number of strings in @p frag_parts.
+ * @return            EINA_TRUE on success, EINA_FALSE on compile/link error.
  */
 static Eina_Bool
-_link_program(Span_Shader *ss, const char *frag_src)
+_link_program(Span_Shader *ss, const char **frag_parts, int frag_count)
 {
    unsigned int vs, fs;
    int          ok = 0;
 
    if (ss->program) return EINA_TRUE; /* already compiled */
 
-   vs = _compile_shader(GL_VERTEX_SHADER, _span_vertex_glsl);
-   fs = _compile_shader(GL_FRAGMENT_SHADER, frag_src);
+   {
+      const char *vert_parts[1] = { _span_vertex_glsl };
+      vs = _compile_shader_parts(GL_VERTEX_SHADER, vert_parts, 1);
+   }
+   fs = _compile_shader_parts(GL_FRAGMENT_SHADER, frag_parts, frag_count);
    if (!vs || !fs)
      {
         if (vs) glDeleteShader(vs);
@@ -765,22 +659,26 @@ span_debug_readback(const char *label, GLuint tex_id, int px_x, int px_y)
 Eina_Bool
 span_shader_init(void)
 {
-   if (!_link_program(&_solid_shader, _span_solid_fragment_glsl))
+   if (!_link_program(&_solid_shader,
+                      (const char **)_solid_shader_parts, _SOLID_SHADER_PARTS))
      {
         ERR("span solid shader link failed");
         return EINA_FALSE;
      }
-   if (!_link_program(&_gradient_shader, _span_gradient_fragment_glsl))
+   if (!_link_program(&_gradient_shader,
+                      (const char **)_gradient_shader_parts, _GRADIENT_SHADER_PARTS))
      {
         ERR("span gradient shader link failed");
         return EINA_FALSE;
      }
-   if (!_link_program(&_solid_mask_shader, _span_solid_mask_fragment_glsl))
+   if (!_link_program(&_solid_mask_shader,
+                      (const char **)_solid_mask_shader_parts, _SOLID_MASK_SHADER_PARTS))
      {
         ERR("span solid mask shader link failed");
         return EINA_FALSE;
      }
-   if (!_link_program(&_gradient_mask_shader, _span_gradient_mask_fragment_glsl))
+   if (!_link_program(&_gradient_mask_shader,
+                      (const char **)_gradient_mask_shader_parts, _GRADIENT_MASK_SHADER_PARTS))
      {
         ERR("span gradient mask shader link failed");
         return EINA_FALSE;
@@ -883,16 +781,30 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
              }
           }
 
-        /* Sentinel write is no longer needed here.
+        /* Write sentinels for rows that have spans.
          *
-         * _collect_spans_solid memsets the full tail of each row it touches
-         * (from span_counts[y] to max_spans+1) during collection, which
-         * implicitly writes the len=0 sentinel AND clears stale data from
-         * previous frames in a single L1-hot memset.
+         * The collection phase (_flush_row_tail) memsets the tail of each
+         * row it touches, but edge cases in chunked callbacks can leave
+         * rows without a clean sentinel.  This per-row single-byte write
+         * is the correctness backstop: it ensures byte[1] (len) at the
+         * span_counts[y] position is 0 for every active row.
          *
-         * For rows that receive NO spans this frame, span_collector_clear
-         * zeroes byte[1] (len) of entry 0 on every row, so the shader
-         * sees len=0 at the very first entry and terminates immediately. */
+         * For rows with NO spans, span_collector_clear already zeroed
+         * byte[1] of entry 0, so only rows with idx > 0 need attention. */
+        {
+           int y;
+           for (y = 0; y < sc->height; y++)
+             {
+                int idx = tex->span_counts[y];
+                if (idx > 0 && idx < sc->max_spans)
+                  {
+                     uint8_t *sentinel = tex->buffer +
+                                         ((size_t)y * sc->stride) +
+                                         ((size_t)idx * 4);
+                     sentinel[1] = 0;
+                  }
+             }
+        }
 
         /* First frame: create the Evas texture via the standard path.
          * Subsequent dirty frames: update in-place via glTexSubImage2D.

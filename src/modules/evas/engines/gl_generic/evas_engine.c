@@ -3057,6 +3057,71 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
    *out_rdy = (float)gd->radial.dy;
 }
 
+/**
+ * Compute per-channel gradient coefficients for the span shader.
+ *
+ * Inspects sc->type and sc->gradient_data.  When sc is non-NULL and holds
+ * gradient data this function fills all out parameters and may downgrade
+ * *inout_shader_type from LinearGradient/RadialGradient to Solid when the
+ * radial geometry degenerates (fradius != 0 or a ≈ 0).  When sc is NULL
+ * or has no gradient data all out values are left at their zero defaults.
+ *
+ * @param sc               Span collector for this channel (fill or stroke).
+ * @param inout_shader_type  On entry: LinearGradient or RadialGradient.
+ *                           On exit: may be downgraded to Solid.
+ * @param inout_col        Solid color — updated when downgraded to Solid.
+ * @param out_ga..out_grdy Output gradient coefficients.
+ * @param out_gs           Gradient spread mode (EFL enum → int).
+ * @param out_gramp        Uploaded ramp texture GL name.
+ * @param out_gtype        0=linear, 1=radial.
+ */
+static void
+_compute_gradient_coeffs(Span_Collector *sc,
+                          int *inout_shader_type, uint32_t *inout_col,
+                          float *out_ga, float *out_gb, float *out_gc,
+                          int *out_gs, GLuint *out_gramp, int *out_gtype,
+                          float *out_gd, float *out_ge, float *out_gf,
+                          float *out_gra, float *out_grdx, float *out_grdy)
+{
+   Ector_Renderer_Software_Gradient_Data *gd;
+   int shader_type = *inout_shader_type;
+
+   if (!sc || !sc->gradient_data) return;
+   if (shader_type != (int)LinearGradient && shader_type != (int)RadialGradient) return;
+
+   gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
+   *out_gramp = _span_gradient_upload_ramp(sc);
+
+   if (shader_type == (int)LinearGradient)
+     {
+        _span_gradient_linear_coeffs(gd, &sc->inv,
+                                     sc->grad_offx, sc->grad_offy,
+                                     0.0f, 0.0f,
+                                     out_ga, out_gb, out_gc);
+        *out_gtype = 0;
+     }
+   else /* RadialGradient */
+     {
+        if (gd->radial.fradius >= 0.00001f || fabsf(gd->radial.a) <= 0.00001f)
+          {
+             /* Degenerate radial — fall back to solid using first stop color. */
+             *inout_shader_type = (int)Solid;
+             if (gd->color_table)
+               *inout_col = gd->color_table[0];
+             return;
+          }
+        _span_gradient_radial_coeffs(gd, &sc->inv,
+                                     sc->grad_offx, sc->grad_offy,
+                                     0.0f, 0.0f,
+                                     out_ga, out_gb, out_gc,
+                                     out_gd, out_ge, out_gf,
+                                     out_gra, out_grdx, out_grdy);
+        *out_gtype = 1;
+     }
+
+   *out_gs = (int)gd->gd->s;
+}
+
 static void
 eng_ector_end(void *engine,
               void *surface,
@@ -3192,87 +3257,20 @@ eng_ector_end(void *engine,
                      float stroke_gd = 0.0f, stroke_ge = 0.0f, stroke_gf = 0.0f;
                      float stroke_gra = 0.0f, stroke_grdx = 0.0f, stroke_grdy = 0.0f;
 
-                     if ((fill_shader_type == (int)LinearGradient ||
-                          fill_shader_type == (int)RadialGradient) &&
-                         sc_fill && sc_fill->gradient_data && _rsd)
+                     if (_rsd)
                        {
-                          Ector_Renderer_Software_Gradient_Data *gd =
-                             (Ector_Renderer_Software_Gradient_Data *)sc_fill->gradient_data;
-
-                          fill_gramp = _span_gradient_upload_ramp(sc_fill);
-
-                          if (fill_shader_type == (int)LinearGradient)
-                            {
-                                _span_gradient_linear_coeffs(gd, &sc_fill->inv,
-                                                              sc_fill->grad_offx, sc_fill->grad_offy,
-                                                              0.0f, 0.0f,
-                                                              &fill_ga, &fill_gb, &fill_gc_coef);
-                                fill_gtype = 0;
-                            }
-                          else if (fill_shader_type == (int)RadialGradient)
-                            {
-                               if (gd->radial.fradius >= 0.00001f ||
-                                   fabsf(gd->radial.a) <= 0.00001f)
-                                 {
-                                    fill_shader_type = (int)Solid;
-                                    if (gd->color_table)
-                                      fill_col = gd->color_table[0];
-                                 }
-                               else
-                                 {
-                                     _span_gradient_radial_coeffs(gd, &sc_fill->inv,
-                                                                   sc_fill->grad_offx, sc_fill->grad_offy,
-                                                                   0.0f, 0.0f,
-                                                                   &fill_ga, &fill_gb, &fill_gc_coef,
-                                                                   &fill_gd, &fill_ge, &fill_gf,
-                                                                   &fill_gra, &fill_grdx, &fill_grdy);
-                                    fill_gtype = 1;
-                                 }
-                            }
-
-                          /* Map EFL spread enum to shader int (PAD=0, REFLECT=1, REPEAT=2). */
-                          fill_gs = (int)gd->gd->s;
-                       }
-
-                     if ((stroke_shader_type == (int)LinearGradient ||
-                          stroke_shader_type == (int)RadialGradient) &&
-                         sc_stroke && sc_stroke->gradient_data && _rsd)
-                       {
-                            Ector_Renderer_Software_Gradient_Data *gd =
-                               (Ector_Renderer_Software_Gradient_Data *)sc_stroke->gradient_data;
-
-                           stroke_gramp = _span_gradient_upload_ramp(sc_stroke);
-
-                            if (stroke_shader_type == (int)LinearGradient)
-                              {
-                                  _span_gradient_linear_coeffs(gd, &sc_stroke->inv,
-                                                                sc_stroke->grad_offx, sc_stroke->grad_offy,
-                                                                0.0f, 0.0f,
-                                                                &stroke_ga, &stroke_gb, &stroke_gc_coef);
-                                 stroke_gtype = 0;
-                              }
-                           else if (stroke_shader_type == (int)RadialGradient)
-                             {
-                                if (gd->radial.fradius >= 0.00001f ||
-                                    fabsf(gd->radial.a) <= 0.00001f)
-                                  {
-                                     stroke_shader_type = (int)Solid;
-                                     if (gd->color_table)
-                                       stroke_col = gd->color_table[0];
-                                  }
-                                 else
-                                   {
-                                       _span_gradient_radial_coeffs(gd, &sc_stroke->inv,
-                                                                     sc_stroke->grad_offx, sc_stroke->grad_offy,
-                                                                     0.0f, 0.0f,
-                                                                     &stroke_ga, &stroke_gb, &stroke_gc_coef,
-                                                                     &stroke_gd, &stroke_ge, &stroke_gf,
-                                                                     &stroke_gra, &stroke_grdx, &stroke_grdy);
-                                      stroke_gtype = 1;
-                                   }
-                             }
-
-                          stroke_gs = (int)gd->gd->s;
+                          _compute_gradient_coeffs(sc_fill,
+                                                   &fill_shader_type, &fill_col,
+                                                   &fill_ga, &fill_gb, &fill_gc_coef,
+                                                   &fill_gs, &fill_gramp, &fill_gtype,
+                                                   &fill_gd, &fill_ge, &fill_gf,
+                                                   &fill_gra, &fill_grdx, &fill_grdy);
+                          _compute_gradient_coeffs(sc_stroke,
+                                                   &stroke_shader_type, &stroke_col,
+                                                   &stroke_ga, &stroke_gb, &stroke_gc_coef,
+                                                   &stroke_gs, &stroke_gramp, &stroke_gtype,
+                                                   &stroke_gd, &stroke_ge, &stroke_gf,
+                                                   &stroke_gra, &stroke_grdx, &stroke_grdy);
                        }
 
                      /* Draw each spatial-split texture within this shape.
