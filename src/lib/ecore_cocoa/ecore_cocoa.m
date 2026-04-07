@@ -61,6 +61,12 @@ ecore_cocoa_init(void)
    [Ecore_Cocoa_Application sharedApplication];
    [NSApp setDelegate:[Ecore_Cocoa_AppDelegate appDelegate]];
 
+   /* Disable macOS automatic window tabbing (Sierra+).  EFL applications
+    * manage their own window/tab lifecycle, so we do not want the system
+    * to silently merge new windows into a single tabbed frame. */
+   if (@available(macOS 10.12, *))
+     [NSWindow setAllowsAutomaticWindowTabbing:NO];
+
    /* Start events monitoring */
    [NSApp run];
 
