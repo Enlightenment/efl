@@ -92,7 +92,7 @@ fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int lengt
         rx = data->inv.xy * (y + (float)0.5) + data->inv.xz + data->inv.xx * (x + (float)0.5);
         ry = data->inv.yy * (y + (float)0.5) + data->inv.yz + data->inv.yx * (x + (float)0.5);
         t = g_data->linear.dx*rx + g_data->linear.dy*ry + g_data->linear.off;
-        inc = g_data->linear.dx * data->inv.xx + g_data->linear.dx * data->inv.yx;
+        inc = g_data->linear.dx * data->inv.xx + g_data->linear.dy * data->inv.yx;
 
         t *= (GRADIENT_STOPTABLE_SIZE - 1);
         inc *= (GRADIENT_STOPTABLE_SIZE - 1);
