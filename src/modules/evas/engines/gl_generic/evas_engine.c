@@ -2,7 +2,6 @@
 #include "evas_gl_core_private.h"
 
 #include "software/Ector_Software.h"
-#include "gl/Ector_GL.h"
 #include "evas_ector_gl.h"
 #include "filters/gl_engine_filter.h"
 
@@ -2438,28 +2437,13 @@ eng_context_dup(void *engine EINA_UNUSED, void *context)
    return ctx;
 }
 
-static Eina_Bool use_gl = EINA_FALSE;
-static Eina_Bool use_span_buffer = EINA_FALSE;
-
 static Ector_Surface *
 eng_ector_create(void *engine EINA_UNUSED)
 {
    Ector_Surface *ector;
-   const char *ector_backend;
-   ector_backend = getenv("ECTOR_BACKEND");
-   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   if (ector_backend && !strcasecmp(ector_backend, "gl"))
-     {
-        ector = efl_add_ref(ECTOR_GL_SURFACE_CLASS, NULL);
-        use_gl = EINA_TRUE;
-     }
-   else
-     {
-        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-        if (!ector_backend || strcasecmp(ector_backend, "software") != 0)
-          use_span_buffer = EINA_TRUE;
-     }
 
+   efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
+   ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
    efl_domain_current_pop();
    return ector;
 }
@@ -2588,27 +2572,19 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
                         void *context EINA_UNUSED, Ector_Renderer *renderer,
                         Eina_Array *clips EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_gl)
-     {
-        //FIXME no implementation yet
-     }
-   else
-     {
-        int w, h;
-        Eina_Rectangle *r;
-        Eina_Array *c = eina_array_new(4);
-        Evas_GL_Image *glimg = surface;
+   int w, h;
+   Eina_Rectangle *r;
+   Eina_Array *c = eina_array_new(4);
+   Evas_GL_Image *glimg = surface;
 
-        eng_image_size_get(engine, glimg, &w, &h);
-        eina_array_push(c, eina_rectangle_new(0, 0, w, h));
+   eng_image_size_get(engine, glimg, &w, &h);
+   eina_array_push(c, eina_rectangle_new(0, 0, w, h));
 
-        ector_renderer_draw(renderer, EFL_GFX_RENDER_OP_BLEND, c, 0xffffffff);
+   ector_renderer_draw(renderer, EFL_GFX_RENDER_OP_BLEND, c, 0xffffffff);
 
-        while ((r = eina_array_pop(c)))
-          eina_rectangle_free(r);
-        eina_array_free(c);
-
-     }
+   while ((r = eina_array_pop(c)))
+     eina_rectangle_free(r);
+   eina_array_free(c);
 }
 
 // Ector functions start
@@ -2619,29 +2595,17 @@ eng_ector_surface_create(void *engine, int width, int height, int *error)
 
    *error = EINA_FALSE;
 
-   if (use_span_buffer || use_gl)
-     {
-        /* FBO-backed render surface.  The span shader (or future native
-         * GL renderer) draws directly into the texture attached to this
-         * image's FBO.  Use the atlas pool so multiple VG objects share a
-         * single GL FBO texture, eliminating per-frame glGenFramebuffers/
-         * glDeleteFramebuffers overhead when VG object sizes change.
-         * The image's tex->x/y carry the atlas sub-region offset. */
-        {
-           Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
-           surface = evas_gl_common_image_surface_noscale_new(ctx, width, height, EINA_TRUE);
-           if (!surface)
-             *error = EINA_TRUE;
-        }
-     }
-   else
-     {
-        surface = eng_image_new_from_copied_data(engine, width, height, NULL, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
-        if (!surface)
-           *error = EINA_TRUE;
-        else  //Use this hint for ZERO COPY texture upload.
-          eng_image_content_hint_set(engine, surface, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
-     }
+   /* FBO-backed render surface.  The span shader draws directly into the
+    * texture attached to this image's FBO.  Use the atlas pool so multiple
+    * VG objects share a single GL FBO texture, eliminating per-frame
+    * glGenFramebuffers/glDeleteFramebuffers overhead when VG object sizes
+    * change.  The image's tex->x/y carry the atlas sub-region offset. */
+   {
+      Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
+      surface = evas_gl_common_image_surface_noscale_new(ctx, width, height, EINA_TRUE);
+      if (!surface)
+        *error = EINA_TRUE;
+   }
 
    return surface;
 }
@@ -2651,22 +2615,16 @@ eng_ector_mask_surface_create(void *engine, int width, int height, int *error)
 {
    *error = EINA_FALSE;
 
-   if (use_span_buffer || use_gl)
-     {
-        /* Mask FBO must use a dedicated texture — not shared with the atlas.
-         * The main VG FBO and the mask FBO would otherwise map to the same GL
-         * texture object, creating a read/write feedback loop when the span
-         * shader samples the mask while rendering into the main FBO. */
-        Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
-        void *surface = evas_gl_common_image_surface_noscale_noatlas_new(ctx, width, height, EINA_TRUE);
-        if (!surface) *error = EINA_TRUE;
-        return surface;
-     }
-   else
-     {
-        /* Software fallback: no atlas concern, delegate to the regular path. */
-        return eng_ector_surface_create(engine, width, height, error);
-     }
+   /* Mask FBO must use a dedicated texture — not shared with the atlas.
+    * The main VG FBO and the mask FBO would otherwise map to the same GL
+    * texture object, creating a read/write feedback loop when the span
+    * shader samples the mask while rendering into the main FBO. */
+   {
+      Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
+      void *surface = evas_gl_common_image_surface_noscale_noatlas_new(ctx, width, height, EINA_TRUE);
+      if (!surface) *error = EINA_TRUE;
+      return surface;
+   }
 }
 
 static void
@@ -2780,10 +2738,9 @@ eng_ector_begin(void *engine, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
                 int x, int y, Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_span_buffer)
-     {
-        Evas_GL_Image *glim = surface;
-        int w, h;
+   {
+      Evas_GL_Image *glim = surface;
+      int w, h;
 
         eng_image_size_get(engine, glim, &w, &h);
         if (w <= 0 || h <= 0) return EINA_FALSE;
@@ -2857,31 +2814,7 @@ eng_ector_begin(void *engine, void *surface,
 
         ector_surface_reference_point_set(ector, x, y);
         return EINA_TRUE;
-     }
-   else if (use_gl)
-     {
-        //FIXME: No implementation yet
-        return EINA_FALSE;
-     }
-   else
-     {
-        int w, h, stride;
-        Evas_GL_Image *glim = surface;
-        DATA32 *pixels;
-        int load_err;
-
-        glim = eng_image_data_get(engine, glim, EINA_TRUE, &pixels, &load_err,NULL);
-        if (!glim || !pixels) return EINA_FALSE;
-        eng_image_stride_get(engine, glim, &stride);
-        eng_image_size_get(engine, glim, &w, &h);
-
-        memset(pixels, 0, stride * h);
-
-        // it just uses the software backend to draw for now
-        ector_buffer_pixels_set(ector, pixels, w, h, stride, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
-        ector_surface_reference_point_set(ector, x, y);
-     }
-   return EINA_TRUE;
+   }
 }
 
 /* ------------------------------------------------------------------ */
@@ -3129,10 +3062,9 @@ eng_ector_end(void *engine,
               Ector_Surface *ector,
               Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_span_buffer)
-     {
-        Ector_Software_Surface_Data *espd = efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
-        Evas_GL_Image *glim = surface;
+   {
+      Ector_Software_Surface_Data *espd = efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
+      Evas_GL_Image *glim = surface;
 
         /* _span_collector_alloc updates espd-> arrays directly (it receives
          * espd as its data pointer).  No sync-back from Span_Data needed —
@@ -3408,25 +3340,7 @@ span_done:
              sd->span_collector_alloc     = NULL;
              sd->span_collector_alloc_data = NULL;
           }
-     }
-   else if (use_gl)
-     {
-        //FIXME: No implementation yet
-     }
-   else
-     {
-        Evas_GL_Image *glim = surface;
-        DATA32 *pixels;
-        int load_err;
-
-        glim = eng_image_data_get(engine, glim, EINA_FALSE, &pixels, &load_err,NULL);
-
-        eng_image_data_put(engine, glim, pixels);
-        eng_image_data_put(engine, glim, pixels);
-        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
-        evas_common_cpu_end_opt();
-
-     }
+   }
 }
 
 static Eina_Bool
