@@ -486,6 +486,74 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, El
 }
 
 static void
+_elm_code_widget_fill_line_empty(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, unsigned int row)
+{
+   unsigned int x, w;
+   int gutter, g, marker_col;
+   Evas_Object *grid;
+   Evas_Object *status;
+   Evas_Textgrid_Cell *cells;
+   void *grid_line;
+
+   w = elm_code_widget_columns_get(widget);
+   grid = _elm_code_widget_grid_for_row_get(pd, row);
+   if (!grid)
+     return;
+
+   grid_line = evas_object_data_get(grid, "line");
+   if (grid_line)
+     {
+        status = evas_object_data_get(grid, "status");
+        if (status)
+          {
+             elm_box_unpack(pd->gridbox, status);
+             evas_object_hide(status);
+             evas_object_data_set(grid, "status", NULL);
+          }
+        evas_object_data_set(grid, "line", NULL);
+     }
+
+   cells = evas_object_textgrid_cellrow_get(grid, 0);
+   gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
+
+   for (x = 0; x < w; x++)
+     {
+        cells[x].codepoint = 0;
+        cells[x].bold = 0;
+        cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
+        cells[x].bg = ELM_CODE_STATUS_TYPE_DEFAULT;
+     }
+
+   if (pd->line_width_marker > 0)
+     {
+        marker_col = gutter + pd->line_width_marker;
+        if (marker_col >= 0 && (unsigned int) marker_col < w)
+          cells[marker_col].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
+     }
+
+   if ((unsigned int) gutter <= w)
+     {
+        cells[gutter - 1].codepoint = status_icons[ELM_CODE_STATUS_TYPE_DEFAULT];
+        cells[gutter - 1].bold = 1;
+        cells[gutter - 1].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
+        if (pd->show_line_numbers)
+          cells[gutter - 1].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
+     }
+
+   if (pd->show_line_numbers)
+     {
+        for (g = 0; g < gutter - 1 && (unsigned int) g < w; g++)
+          {
+             cells[g].codepoint = 0;
+             cells[g].fg = ELM_CODE_WIDGET_COLOR_GUTTER_FG;
+             cells[g].bg = ELM_CODE_WIDGET_COLOR_GUTTER_BG;
+          }
+     }
+
+   evas_object_textgrid_update_add(grid, 0, 0, w, 1);
+}
+
+static void
 _elm_code_widget_cursor_selection_set(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
    unsigned int end_line, end_col;
@@ -511,7 +579,7 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
                             Elm_Code_Line *newline)
 {
    Elm_Code_Line *line;
-   unsigned int y;
+   unsigned int y, eof, rendered_rows, render_last_row, fill_start;
 
    if (newline)
      _elm_code_widget_fill_line(widget, pd, newline);
@@ -529,6 +597,23 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
 
         if (line)
           _elm_code_widget_fill_line(widget, pd, line);
+     }
+
+   rendered_rows = eina_list_count(pd->grids);
+   if (rendered_rows > 0)
+     {
+        eof = elm_code_file_lines_get(pd->code->file);
+        render_last_row = pd->grid_row_base + rendered_rows - 1;
+
+        if (render_last_row > eof)
+          {
+             fill_start = eof + 1;
+             if (fill_start < pd->grid_row_base)
+               fill_start = pd->grid_row_base;
+
+             for (y = fill_start; y <= render_last_row; y++)
+               _elm_code_widget_fill_line_empty(widget, pd, y);
+          }
      }
 
    if (pd->selection)
@@ -2107,9 +2192,9 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline EINA_UNU
    Evas_Object *grid;
    Evas_Coord ww, wh, old_width, old_height;
    int w = 0, cw = 0, ch = 0, gutter;
-   unsigned int i, h, line_width;
+   unsigned int i, h, line_width, visible_lines;
    unsigned int first_row, last_row;
-   unsigned int rows_to_render;
+   unsigned int rows_to_render, render_last_file_row;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
@@ -2131,6 +2216,10 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline EINA_UNU
      rows_to_render = 0;
    else
      rows_to_render = last_row - first_row + 1;
+
+   visible_lines = efl_ui_code_widget_lines_visible_get(widget);
+   if (h < visible_lines && rows_to_render < visible_lines)
+     rows_to_render = visible_lines;
 
    /* Calculate the maximum width of our lines. */
 
@@ -2168,7 +2257,18 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline EINA_UNU
      }
 
    evas_object_size_hint_min_set(pd->expander_top, ww, (first_row - 1) * ch);
-   evas_object_size_hint_min_set(pd->expander, ww, (h - (first_row + rows_to_render - 1)) * ch);
+
+   if (rows_to_render == 0)
+     render_last_file_row = first_row - 1;
+   else
+     render_last_file_row = first_row + rows_to_render - 1;
+   if (render_last_file_row > h)
+     render_last_file_row = h;
+
+   if (h > render_last_file_row)
+     evas_object_size_hint_min_set(pd->expander, ww, (h - render_last_file_row) * ch);
+   else
+     evas_object_size_hint_min_set(pd->expander, ww, 0);
 
    if (EINA_DBL_EQ(pd->gravity_x, 1.0) || EINA_DBL_EQ(pd->gravity_y, 1.0))
      _elm_code_widget_scroll_by(widget,
