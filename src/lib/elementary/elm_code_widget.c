@@ -3,6 +3,7 @@
 #endif
 
 #include <Elementary.h>
+#include <stdint.h>
 
 #include "elm_priv.h"
 
@@ -57,6 +58,7 @@ static Eina_Unicode status_icons[] = {
 } while (0)
 
 static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline);
+static Evas_Object *_elm_code_widget_grid_for_row_get(Elm_Code_Widget_Data *pd, unsigned int row);
 
 #include "elm_code_widget_legacy_eo.h"
 
@@ -77,6 +79,7 @@ _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
 
    pd->cursor_line = 1;
    pd->cursor_col = 1;
+   pd->grid_row_base = 1;
 
    pd->tabstop = 8;
 
@@ -99,6 +102,18 @@ EOLIAN static void
 _elm_code_widget_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
 
+}
+
+static Evas_Object *
+_elm_code_widget_grid_for_row_get(Elm_Code_Widget_Data *pd, unsigned int row)
+{
+   unsigned int index;
+
+   if (row < pd->grid_row_base || !pd->grids)
+     return NULL;
+
+   index = row - pd->grid_row_base;
+   return eina_list_nth(pd->grids, index);
 }
 
 void
@@ -403,16 +418,31 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, El
    unsigned int length, x, charwidth, i, w;
    int chrpos, gutter;
    Evas_Object *grid;
+   Evas_Object *status;
    Evas_Textgrid_Cell *cells;
+   void *grid_line;
 
    EINA_SAFETY_ON_NULL_RETURN(line);
 
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
-   if (eina_list_count(pd->grids) < line->number)
+   w = elm_code_widget_columns_get(widget);
+   grid = _elm_code_widget_grid_for_row_get(pd, line->number);
+   if (!grid)
      return;
 
-   w = elm_code_widget_columns_get(widget);
-   grid = eina_list_nth(pd->grids, line->number - 1);
+   grid_line = evas_object_data_get(grid, "line");
+   if (((unsigned int)(uintptr_t)grid_line) != line->number)
+     {
+        status = evas_object_data_get(grid, "status");
+        if (status)
+          {
+             elm_box_unpack(pd->gridbox, status);
+             evas_object_hide(status);
+             evas_object_data_set(grid, "status", NULL);
+          }
+        evas_object_data_set(grid, "line", (void *)(uintptr_t)line->number);
+     }
+
    cells = evas_object_textgrid_cellrow_get(grid, 0);
    length = elm_code_widget_line_text_column_width_get(widget, line);
    chrpos = 0;
@@ -566,6 +596,7 @@ _elm_code_widget_clear(Elm_Code_Widget *widget)
      {
         evas_object_del(grid);
      }
+   pd->grid_row_base = 1;
 }
 
 static void
@@ -576,6 +607,8 @@ _elm_code_widget_fill(Elm_Code_Widget *widget)
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    height = elm_code_widget_lines_visible_get(widget);
+   if (height < 1 && elm_code_file_lines_get(pd->code->file) > 0)
+     height = 1;
    if (height > elm_code_file_lines_get(pd->code->file))
      height = elm_code_file_lines_get(pd->code->file);
 
@@ -673,23 +706,18 @@ static void
 _elm_code_widget_cursor_ensure_visible(Elm_Code_Widget *widget)
 {
    Evas_Coord viewx, viewy, vieww, viewh, cellw = 0, cellh = 0;
-   Evas_Coord curx, cury, oy, rowy;
-   Evas_Object *grid;
+   Evas_Coord curx, cury;
    Elm_Code_Widget_Data *pd;
    int gutter;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   evas_object_geometry_get(widget, NULL, &oy, NULL, NULL);
    elm_scroller_region_get(pd->scroller, &viewx, &viewy, &vieww, &viewh);
    _elm_code_widget_cell_size_get(widget, &cellw, &cellh);
 
-   grid = eina_list_data_get(eina_list_nth_list(pd->grids, pd->cursor_line - 1));
-   evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
-
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
    curx = (pd->cursor_col + gutter - 1) * cellw;
-   cury = rowy + viewy - oy;
+   cury = (pd->cursor_line - 1) * cellh;
 
    if (curx >= viewx && cury >= viewy && curx + cellw <= viewx + vieww && cury + cellh <= viewy + viewh)
      return;
@@ -703,8 +731,7 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
    Elm_Code *code;
    Elm_Code_Line *line_obj;
    const char *text;
-   unsigned int oldrow, position, length, first_row, last_row;
-   int cw = 0, ch = 0;
+   unsigned int oldrow, position, length;
 
    oldrow = pd->cursor_line;
 
@@ -713,15 +740,6 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
 
    if (line > elm_code_file_lines_get(pd->code->file))
      return;
-
-   if ((line > eina_list_count(pd->grids)) && (!pd->selection))
-     {
-        if (_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
-          {
-              _elm_code_widget_cell_size_get(widget, &cw, &ch);
-              _elm_code_widget_scroll_by(widget, 0, ch * (line - last_row));
-          }
-     }
 
    code = pd->code;
    line_obj = elm_code_file_line_get(code->file, line);
@@ -748,12 +766,10 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
                                              unsigned int *row, int *col)
 {
    Elm_Code_Widget *widget;
-   Eina_List *item;
    Elm_Code_Line *line;
-   Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0, rowy = 0;
-   Evas_Object *grid;
+   Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0;
    int cw = 0, ch = 0, gutter, retcol;
-   unsigned int guess = 1, number = 1;
+   unsigned int number = 1;
 
    widget = (Elm_Code_Widget *)obj;
    evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
@@ -765,24 +781,7 @@ _elm_code_widget_position_at_coordinates_get(Eo *obj, Elm_Code_Widget_Data *pd,
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
 
    if (y >= 0 && ch > 0)
-     guess = ((double) y / ch) + 1;
-   if (guess > 1)
-     {
-        number = guess;
-
-        // unfortunately EINA_LIST_REVERSE_FOREACH skips to the end of the list...
-        for (item = eina_list_nth_list(pd->grids, number - 1), grid = eina_list_data_get(item);
-             number > 1 && item;
-             item = eina_list_prev(item), grid = eina_list_data_get(item))
-          {
-             evas_object_geometry_get(grid, NULL, &rowy, NULL, NULL);
-
-             if (rowy + sy - oy - 1 <= y)
-               break;
-
-             number--;
-          }
-     }
+     number = ((double) y / ch) + 1;
 
    if (col)
      {
@@ -808,8 +807,8 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
                                            Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Elm_Code_Line *line;
-   Evas_Object *grid;
-   Evas_Coord cellw = 0;
+   Evas_Coord cellw = 0, cellh = 0;
+   Evas_Coord ox = 0, oy = 0, sx = 0, sy = 0;
    unsigned int length = 0;
    int gutter;
 
@@ -818,16 +817,19 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
      return EINA_FALSE;
 
    elm_code_line_text_get(line, &length);
-   _elm_code_widget_cell_size_get(widget, &cellw, h);
+   _elm_code_widget_cell_size_get(widget, &cellw, &cellh);
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
-
-   grid = eina_list_nth(pd->grids, row - 1);
-   evas_object_geometry_get(grid, x, y, NULL, NULL);
+   evas_object_geometry_get(widget, &ox, &oy, NULL, NULL);
+   elm_scroller_region_get(pd->scroller, &sx, &sy, NULL, NULL);
 
    if (x)
-     *x += (col - 1 + gutter) * cellw;
+     *x = ox - sx + ((col - 1 + gutter) * cellw);
+   if (y)
+     *y = oy - sy + ((row - 1) * cellh);
    if (w)
      *w = cellw;
+   if (h)
+     *h = cellh;
 
    return !!line && col <= (int) length;
 }
@@ -841,7 +843,9 @@ _elm_code_widget_line_status_toggle(Elm_Code_Widget *widget EINA_UNUSED, Elm_Cod
    char *text;
 
    // add a status below the line if needed (and remove those no longer needed)
-   grid = eina_list_nth(pd->grids, line->number - 1);
+   grid = _elm_code_widget_grid_for_row_get(pd, line->number);
+   if (!grid)
+     return;
    status = evas_object_data_get(grid, "status");
 
    if (status)
@@ -2006,6 +2010,50 @@ _elm_code_widget_setup_palette(Evas_Object *o, Evas_Object *layout, float fade)
 }
 
 static void
+_elm_code_widget_render_window_get(Elm_Code_Widget *widget,
+                                   Elm_Code_Widget_Data *pd,
+                                   unsigned int *render_first_row,
+                                   unsigned int *render_last_row)
+{
+   unsigned int first_row = 1, last_row = 1, total_lines, preload;
+   Eina_Bool viewport = EINA_FALSE;
+
+   total_lines = elm_code_file_lines_get(pd->code->file);
+   if (!total_lines)
+     {
+        *render_first_row = 1;
+        *render_last_row = 0;
+        return;
+     }
+
+   if (_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
+     viewport = EINA_TRUE;
+
+   if (!viewport || last_row < first_row)
+     {
+        first_row = 1;
+        last_row = efl_ui_code_widget_lines_visible_get(widget);
+        if (last_row < 1)
+          last_row = 1;
+        if (last_row > total_lines)
+          last_row = total_lines;
+     }
+
+   preload = last_row - first_row + 1;
+   if (preload < 64)
+     preload = 64;
+
+   if (first_row > preload)
+     *render_first_row = first_row - preload;
+   else
+     *render_first_row = 1;
+
+   *render_last_row = last_row + preload;
+   if (*render_last_row > total_lines)
+     *render_last_row = total_lines;
+}
+
+static void
 _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 {
    Evas_Object *grid;
@@ -2015,22 +2063,22 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    existing = eina_list_count(pd->grids);
 
-   // trim unneeded rows in our rendering
-   if (rows < existing)
+   if (rows < 0)
+     rows = 0;
+
+   /* trim unneeded rows in our rendering */
+   while (existing > rows)
      {
-        for (i = existing - rows; i > 0; i--)
-          {
-             grid = eina_list_data_get(eina_list_last(pd->grids));
-             evas_object_del(grid);
-             elm_box_unpack(pd->gridbox, grid);
-             pd->grids = eina_list_remove_list(pd->grids, eina_list_last(pd->grids));
-          }
-        rows = existing;
+        Eina_List *last = eina_list_last(pd->grids);
+
+        grid = eina_list_data_get(last);
+        elm_box_unpack(pd->gridbox, grid);
+        evas_object_del(grid);
+        pd->grids = eina_list_remove_list(pd->grids, last);
+        existing--;
      }
 
-   if (rows == existing)
-     return;
-
+   if (rows == existing) return;
    for (i = existing; i < rows; i++)
      {
         grid = evas_object_textgrid_add(evas_object_evas_get(pd->gridbox));
@@ -2039,7 +2087,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
         evas_object_show(grid);
         _elm_code_widget_setup_palette(grid, widget, (double) pd->alpha / 255);
 
-        elm_box_pack_end(pd->gridbox, grid);
+        elm_box_pack_before(pd->gridbox, grid, pd->expander);
         pd->grids = eina_list_append(pd->grids, grid);
 
         evas_object_event_callback_add(grid, EVAS_CALLBACK_MOUSE_DOWN, _elm_code_widget_mouse_down_cb, widget);
@@ -2051,16 +2099,17 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 }
 
 static void
-_elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
+_elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline EINA_UNUSED)
 {
    Eina_List *item, *lines;
    Elm_Code_Widget_Data *pd;
    Elm_Code_Line *line;
    Evas_Object *grid;
    Evas_Coord ww, wh, old_width, old_height;
-   int w = 0, h, cw = 0, ch = 0, gutter;
-   unsigned int i, n, line_width, first_row = 1, last_row = 256;
-   Eina_Bool viewport = EINA_FALSE;
+   int w = 0, cw = 0, ch = 0, gutter;
+   unsigned int i, h, line_width;
+   unsigned int first_row, last_row;
+   unsigned int rows_to_render;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
@@ -2076,19 +2125,17 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
    old_width = ww;
    old_height = wh;
 
-   n = h = elm_code_file_lines_get(pd->code->file);
-
-   if (_elm_code_widget_viewport_get(widget, pd, &first_row, &last_row))
-     viewport = EINA_TRUE;
-
-   /* Grow by one page at a time where possible. */
-   n = (last_row + (last_row - first_row)) < n ?
-        last_row + (last_row - first_row) : n;
+   h = elm_code_file_lines_get(pd->code->file);
+   _elm_code_widget_render_window_get(widget, pd, &first_row, &last_row);
+   if (last_row < first_row)
+     rows_to_render = 0;
+   else
+     rows_to_render = last_row - first_row + 1;
 
    /* Calculate the maximum width of our lines. */
 
    lines = eina_list_nth_list(pd->code->file->lines, first_row - 1);
-   for (i = 0; i < n; i++)
+   for (i = 0; i < rows_to_render; i++)
      {
         line = eina_list_data_get(lines);
         if (!line) break;
@@ -2100,13 +2147,14 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         lines = eina_list_next(lines);
      }
 
-   _elm_code_widget_ensure_n_grid_rows(widget, n);
+   _elm_code_widget_ensure_n_grid_rows(widget, rows_to_render);
+   pd->grid_row_base = first_row;
    _elm_code_widget_cell_size_get(widget, &cw, &ch);
 
    if (w*cw > ww)
      ww = w*cw;
-   if (h*ch > wh)
-     wh = h*ch;
+   if ((Evas_Coord)(h * ch) > wh)
+     wh = h * ch;
 
    if (cw > 0 && ww/cw > w)
      pd->col_count = ww/cw;
@@ -2119,17 +2167,8 @@ _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline)
         evas_object_size_hint_min_set(grid, ww, ch);
      }
 
-   /* Here we expand our scroller when there are less grids than lines of text. */
-   elm_box_unpack(pd->gridbox, pd->expander);
-   evas_object_size_hint_min_set(pd->expander, ww, (h * ch) - (eina_list_count(pd->grids) * ch));
-   elm_box_pack_end(pd->gridbox, pd->expander);
-
-   if (!newline && viewport)
-     {
-        /* Where possible render additional lines to the viewport. */
-        _elm_code_widget_fill_range(widget, pd, first_row, last_row + 64, NULL);
-        return;
-     }
+   evas_object_size_hint_min_set(pd->expander_top, ww, (first_row - 1) * ch);
+   evas_object_size_hint_min_set(pd->expander, ww, (h - (first_row + rows_to_render - 1)) * ch);
 
    if (EINA_DBL_EQ(pd->gravity_x, 1.0) || EINA_DBL_EQ(pd->gravity_y, 1.0))
      _elm_code_widget_scroll_by(widget,
@@ -2189,7 +2228,7 @@ _elm_code_widget_font_set(Eo *obj, Elm_Code_Widget_Data *pd,
         evas_object_textgrid_font_set(grid, face, size * elm_config_scale_get());
      }
 
-   if (pd->cursor_rect && (eina_list_count(pd->grids) >= pd->cursor_line))
+   if (pd->cursor_rect)
      _elm_code_widget_cursor_update(obj, pd);
 
    if (pd->font_name)
@@ -2478,7 +2517,12 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
 
+   pd->expander_top = evas_object_rectangle_add(evas_object_evas_get(scroller));
+   evas_object_show(pd->expander_top);
+   elm_box_pack_end(pd->gridbox, pd->expander_top);
+
    pd->expander = evas_object_rectangle_add(evas_object_evas_get(scroller));
+   evas_object_show(pd->expander);
    elm_box_pack_end(pd->gridbox, pd->expander);
 
    _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);

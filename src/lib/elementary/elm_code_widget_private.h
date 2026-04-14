@@ -22,9 +22,10 @@ typedef struct
 {
    Elm_Code *code;
    Eina_List *grids;
+   unsigned int grid_row_base;
    unsigned int col_count;
    Evas_Object *scroller, *gridbox, *background;
-   Evas_Object *expander;
+   Evas_Object *expander, *expander_top;
 
    const char *font_name;
    Evas_Font_Size font_size;
