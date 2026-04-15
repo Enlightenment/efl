@@ -29,6 +29,7 @@ _efl_loop_fd_read_cb(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Eo *obj = data;
 
+   efl_ref(obj);
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
         efl_event_callback_call(obj, EFL_LOOP_FD_EVENT_READ, NULL);
@@ -41,6 +42,7 @@ _efl_loop_fd_read_cb(void *data, Ecore_Fd_Handler *fd_handler)
      {
         efl_event_callback_call(obj, EFL_LOOP_FD_EVENT_ERROR, NULL);
      }
+   efl_unref(obj);
 
    return ECORE_CALLBACK_RENEW;
 }
