@@ -53,7 +53,7 @@ static Eet_File *
 eet_cache_find(const char *path,
                Eet_File  **cache,
                int         cache_num);
-static void
+static Eet_File *
 eet_cache_add(Eet_File   *ef,
               Eet_File ***cache,
               int        *cache_num,
@@ -81,6 +81,12 @@ read_binbuf_from_disk(Eet_File      *ef,
 
 static Eet_Error
 eet_internal_close(Eet_File *ef, Eina_Bool locked, Eina_Bool shutdown);
+
+static void
+eet_cache_file_ref(Eet_File *ef);
+
+static void
+eet_cache_file_ref_mark_delete(Eet_File *ef);
 
 static Eina_Lock eet_cache_lock;
 
@@ -128,12 +134,13 @@ eet_check_header(const Eet_File *ef)
 
 static inline int
 eet_test_close(int       test,
-               Eet_File *ef)
+               Eet_File *ef,
+               Eina_Bool locked)
 {
    if (test)
      {
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
+        eet_internal_close(ef, locked, EINA_FALSE);
      }
 
    return test;
@@ -162,20 +169,20 @@ eet_cache_find(const char *path,
 
 /* add to end of cache */
 /* this should only be called when the cache lock is already held */
-static void
+static Eet_File *
 eet_cache_add(Eet_File   *ef,
               Eet_File ***cache,
               int        *cache_num,
               int        *cache_alloc)
 {
    Eet_File **new_cache;
+   Eet_File *del_ef = NULL;
    int new_cache_num;
    int new_cache_alloc;
 
    new_cache_num = *cache_num;
    if (new_cache_num >= 64) /* avoid fd overruns - limit to 128 (most recent) in the cache */
      {
-        Eet_File *del_ef = NULL;
         int i;
 
         new_cache = *cache;
@@ -189,10 +196,7 @@ eet_cache_add(Eet_File   *ef,
           }
 
         if (del_ef)
-          {
-             del_ef->delete_me_now = 1;
-             eet_internal_close(del_ef, EINA_TRUE, EINA_FALSE);
-          }
+          eet_cache_file_ref_mark_delete(del_ef);
      }
 
    new_cache = *cache;
@@ -214,6 +218,8 @@ eet_cache_add(Eet_File   *ef,
    *cache = new_cache;
    *cache_num = new_cache_num;
    *cache_alloc = new_cache_alloc;
+
+   return del_ef;
 }
 
 /* delete from cache */
@@ -269,6 +275,25 @@ eet_cache_del(Eet_File   *ef,
    *cache = new_cache;
    *cache_num = new_cache_num;
    *cache_alloc = new_cache_alloc;
+}
+
+/* this should only be called when the cache lock is already held */
+static void
+eet_cache_file_ref(Eet_File *ef)
+{
+   LOCK_FILE(ef);
+   ef->references++;
+   UNLOCK_FILE(ef);
+}
+
+/* this should only be called when the cache lock is already held */
+static void
+eet_cache_file_ref_mark_delete(Eet_File *ef)
+{
+   LOCK_FILE(ef);
+   ef->references++;
+   ef->delete_me_now = 1;
+   UNLOCK_FILE(ef);
 }
 
 /* internal string match. null friendly, catches same ptr */
@@ -699,6 +724,7 @@ eet_sync_sync(Eet_File *ef)
 EAPI void
 eet_clearcache(void)
 {
+   Eet_File **closelist = NULL;
    int num = 0;
    int i;
 
@@ -721,16 +747,14 @@ eet_clearcache(void)
 
    if (num > 0)
      {
-        Eet_File **closelist = NULL;
-
         closelist = alloca(num * sizeof(Eet_File *));
         num = 0;
         for (i = 0; i < eet_writers_num; i++)
           {
              if (eet_writers[i]->references <= 0)
                {
-                  closelist[num] = eet_writers[i];
-                  eet_writers[i]->delete_me_now = 1;
+                 closelist[num] = eet_writers[i];
+                  eet_cache_file_ref_mark_delete(eet_writers[i]);
                   num++;
                }
           }
@@ -740,23 +764,22 @@ eet_clearcache(void)
              if (eet_readers[i]->references <= 0)
                {
                   closelist[num] = eet_readers[i];
-                  eet_readers[i]->delete_me_now = 1;
+                  eet_cache_file_ref_mark_delete(eet_readers[i]);
                   num++;
                }
-          }
-
-        for (i = 0; i < num; i++)
-          {
-             eet_internal_close(closelist[i], EINA_TRUE, EINA_FALSE);
           }
      }
 
    UNLOCK_CACHE;
+
+   for (i = 0; i < num; i++)
+     eet_internal_close(closelist[i], EINA_FALSE, EINA_FALSE);
 }
 
 /* FIXME: MMAP race condition in READ_WRITE_MODE */
 static Eet_File *
-eet_internal_read2(Eet_File *ef)
+eet_internal_read2(Eet_File *ef,
+                   Eina_Bool locked)
 {
    const int *data = (const int *)ef->data;
    const char *start = (const char *)ef->data;
@@ -769,7 +792,7 @@ eet_internal_read2(Eet_File *ef)
    unsigned int i;
 
    idx += sizeof(int);
-   if (eet_test_close((int)eina_ntohl(*data) != EET_MAGIC_FILE2, ef))
+   if (eet_test_close((int)eina_ntohl(*data) != EET_MAGIC_FILE2, ef, locked))
      return NULL;
 
    data++;
@@ -792,24 +815,24 @@ eet_internal_read2(Eet_File *ef)
      num_dictionary_entries;
 
    /* we can't have > 0x7fffffff values here - invalid */
-   if (eet_test_close((num_directory_entries > 0x7fffffff), ef))
+   if (eet_test_close((num_directory_entries > 0x7fffffff), ef, locked))
      return NULL;
 
    /* we can't have more bytes directory and bytes in dictionaries than the size of the file */
    if (eet_test_close((bytes_directory_entries + bytes_dictionary_entries) >
-                      ef->data_size, ef))
+                     ef->data_size, ef, locked))
      return NULL;
 
    /* allocate header */
    ef->header = eet_file_header_calloc(1);
-   if (eet_test_close(!ef->header, ef))
+   if (eet_test_close(!ef->header, ef, locked))
      return NULL;
 
    ef->header->magic = EET_MAGIC_FILE_HEADER;
 
    /* allocate directory block in ram */
    ef->header->directory = eet_file_directory_calloc(1);
-   if (eet_test_close(!ef->header->directory, ef))
+   if (eet_test_close(!ef->header->directory, ef, locked))
      return NULL;
 
    /* 8 bit hash table (256 buckets) */
@@ -817,7 +840,7 @@ eet_internal_read2(Eet_File *ef)
    /* allocate base hash table */
    ef->header->directory->nodes =
      calloc(1, sizeof(Eet_File_Node *) * (1 << ef->header->directory->size));
-   if (eet_test_close(!ef->header->directory->nodes, ef))
+   if (eet_test_close(!ef->header->directory->nodes, ef, locked))
      return NULL;
 
    signature_base_offset = 0;
@@ -839,7 +862,7 @@ eet_internal_read2(Eet_File *ef)
         /* out directory block is inconsistent - we have overrun our */
         /* dynamic block buffer before we finished scanning dir entries */
         efn = eet_file_node_malloc(1);
-        if (eet_test_close(!efn, ef))
+        if (eet_test_close(!efn, ef, locked))
           {
              if (efn) eet_file_node_mp_free(efn);  /* yes i know - we only get here if
                                    * efn is null/0 -> trying to shut up
@@ -861,7 +884,7 @@ eet_internal_read2(Eet_File *ef)
         efn->compression_type = (flag >> 3) & 0xff;
 
 #define EFN_TEST(Test, Ef, Efn) \
-  if (eet_test_close(Test, Ef)) \
+  if (eet_test_close(Test, Ef, locked)) \
     {                           \
        eet_file_node_mp_free(Efn);               \
        return NULL;             \
@@ -922,26 +945,26 @@ eet_internal_read2(Eet_File *ef)
         if (eet_test_close((num_dictionary_entries *
                             (int)EET_FILE2_DICTIONARY_ENTRY_SIZE + idx) >
                            (bytes_dictionary_entries + bytes_directory_entries),
-                           ef))
+                           ef, locked))
           return NULL;
 
         ef->ed = eet_dictionary_add();
-        if (eet_test_close(!ef->ed, ef))
+        if (eet_test_close(!ef->ed, ef, locked))
           return NULL;
 
         INF("loading dictionary for '%s' with %lu entries of size %zu",
             ef->path, num_dictionary_entries, sizeof(Eet_String));
 
         ef->ed->all = calloc(1, num_dictionary_entries * sizeof(Eet_String));
-        if (eet_test_close(!ef->ed->all, ef))
+        if (eet_test_close(!ef->ed->all, ef, locked))
           return NULL;
 
 	ef->ed->all_hash = calloc(1, num_dictionary_entries * sizeof (unsigned char));
-	if (eet_test_close(!ef->ed->all_hash, ef))
+	if (eet_test_close(!ef->ed->all_hash, ef, locked))
 	  return NULL;
 
 	ef->ed->all_allocated = calloc(1, ((num_dictionary_entries >> 3) + 1) * sizeof (unsigned char));
-	if (eet_test_close(!ef->ed->all_allocated, ef))
+	if (eet_test_close(!ef->ed->all_allocated, ef, locked))
 	  return NULL;
 
         ef->ed->count = num_dictionary_entries;
@@ -964,7 +987,7 @@ eet_internal_read2(Eet_File *ef)
 
              /* Hash value could be stored on 8bits data, but this will break alignment of all the others data.
                 So stick to int and check the value. */
-             if (eet_test_close(hash & 0xFFFFFF00, ef))
+             if (eet_test_close(hash & 0xFFFFFF00, ef, locked))
                return NULL;
 
              /* Check string position */
@@ -973,7 +996,7 @@ eet_internal_read2(Eet_File *ef)
                                       (bytes_dictionary_entries +
                                        bytes_directory_entries))
                                   && (offset + ef->ed->all[j].len <=
-                                      ef->data_size)), ef))
+                                      ef->data_size)), ef, locked))
                return NULL;
 
              ef->ed->all[j].str = start + offset;
@@ -983,7 +1006,7 @@ eet_internal_read2(Eet_File *ef)
 
              /* Check '\0' at the end of the string */
              if (eet_test_close(ef->ed->all[j].str[ef->ed->all[j].len - 1] !=
-                                '\0', ef))
+                                '\0', ef, locked))
                return NULL;
 
              ef->ed->all_hash[j] = hash;
@@ -1034,7 +1057,7 @@ eet_internal_read2(Eet_File *ef)
                                                     &ef->signature_length,
                                                     &ef->x509_length);
 
-                  if (eet_test_close(!ef->x509_der, ef)) return NULL;
+                  if (eet_test_close(!ef->x509_der, ef, locked)) return NULL;
                }
           }
 
@@ -1059,7 +1082,8 @@ eet_internal_read2(Eet_File *ef)
 
 #if EET_OLD_EET_FILE_FORMAT
 static Eet_File *
-eet_internal_read1(Eet_File *ef)
+eet_internal_read1(Eet_File *ef,
+                   Eina_Bool locked)
 {
    const unsigned char *dyn_buf = NULL;
    const unsigned char *p = NULL;
@@ -1075,7 +1099,7 @@ eet_internal_read1(Eet_File *ef)
    /* build header table if read mode */
    /* geat header */
    idx += sizeof(int);
-   if (eet_test_close((int)eina_ntohl(*((int *)ef->data)) != EET_MAGIC_FILE, ef))
+   if (eet_test_close((int)eina_ntohl(*((int *)ef->data)) != EET_MAGIC_FILE, ef, locked))
      return NULL;
 
 #define EXTRACT_INT(Value, Pointer, Index)       \
@@ -1092,28 +1116,28 @@ eet_internal_read1(Eet_File *ef)
 
    /* we can't have <= 0 values here - invalid */
    if (eet_test_close((num_entries > 0x7fffffff) ||
-                      (byte_entries > 0x7fffffff), ef))
+                      (byte_entries > 0x7fffffff), ef, locked))
      return NULL;
 
    /* we can't have more entries than minimum bytes for those! invalid! */
-   if (eet_test_close((num_entries * 20) > byte_entries, ef))
+   if (eet_test_close((num_entries * 20) > byte_entries, ef, locked))
      return NULL;
 
    /* check we will not outrun the file limit */
    if (eet_test_close(((byte_entries + (int)(sizeof(int) * 3)) >
-                       ef->data_size), ef))
+                       ef->data_size), ef, locked))
      return NULL;
 
    /* allocate header */
    ef->header = eet_file_header_calloc(1);
-   if (eet_test_close(!ef->header, ef))
+   if (eet_test_close(!ef->header, ef, locked))
      return NULL;
 
    ef->header->magic = EET_MAGIC_FILE_HEADER;
 
    /* allocate directory block in ram */
    ef->header->directory = eet_file_directory_calloc(1);
-   if (eet_test_close(!ef->header->directory, ef))
+   if (eet_test_close(!ef->header->directory, ef, locked))
      return NULL;
 
    /* 8 bit hash table (256 buckets) */
@@ -1121,7 +1145,7 @@ eet_internal_read1(Eet_File *ef)
    /* allocate base hash table */
    ef->header->directory->nodes =
      calloc(1, sizeof(Eet_File_Node *) * (1 << ef->header->directory->size));
-   if (eet_test_close(!ef->header->directory->nodes, ef))
+   if (eet_test_close(!ef->header->directory->nodes, ef, locked))
      return NULL;
 
    /* actually read the directory block - all of it, into ram */
@@ -1143,12 +1167,12 @@ eet_internal_read1(Eet_File *ef)
 
         /* out directory block is inconsistent - we have overrun our */
         /* dynamic block buffer before we finished scanning dir entries */
-        if (eet_test_close(p + HEADER_SIZE >= (dyn_buf + byte_entries), ef))
+        if (eet_test_close(p + HEADER_SIZE >= (dyn_buf + byte_entries), ef, locked))
           return NULL;
 
         /* allocate all the ram needed for this stored node accounting */
         efn = eet_file_node_malloc(1);
-        if (eet_test_close(!efn, ef))
+        if (eet_test_close(!efn, ef, locked))
           {
              if (efn) eet_file_node_mp_free(efn);  /* yes i know - we only get here if
                                    * efn is null/0 -> trying to shut up
@@ -1168,21 +1192,21 @@ eet_internal_read1(Eet_File *ef)
         efn->alias = 0;
 
         /* invalid size */
-        if (eet_test_close(efn->size <= 0, ef))
+        if (eet_test_close(efn->size <= 0, ef, locked))
           {
              eet_file_node_mp_free(efn);
              return NULL;
           }
 
         /* invalid name_size */
-        if (eet_test_close(name_size == 0, ef))
+        if (eet_test_close(name_size == 0, ef, locked))
           {
              eet_file_node_mp_free(efn);
              return NULL;
           }
 
         /* reading name would mean falling off end of dyn_buf - invalid */
-        if (eet_test_close((p + 16 + name_size) > (dyn_buf + byte_entries), ef))
+        if (eet_test_close((p + 16 + name_size) > (dyn_buf + byte_entries), ef, locked))
           {
              eet_file_node_mp_free(efn);
              return NULL;
@@ -1198,7 +1222,7 @@ eet_internal_read1(Eet_File *ef)
         if (efn->free_name)
           {
              efn->name = malloc(sizeof(char) * name_size + 1);
-             if (eet_test_close(!efn->name, ef))
+             if (eet_test_close(!efn->name, ef, locked))
                {
                   eet_file_node_mp_free(efn);
                   return NULL;
@@ -1245,36 +1269,31 @@ eet_internal_read1(Eet_File *ef)
 
 #endif /* if EET_OLD_EET_FILE_FORMAT */
 
-/*
- * this should only be called when the cache lock is already held
- * (We could drop this restriction if we add a parameter to eet_test_close
- * that indicates if the lock is held or not.  For now it is easiest
- * to just require that it is always held.)
- */
 static Eet_File *
-eet_internal_read(Eet_File *ef)
+eet_internal_read(Eet_File *ef,
+                  Eina_Bool locked)
 {
    const int *data = (const int *)ef->data;
 
-   if (eet_test_close((ef->data == (void *)-1) || (!ef->data), ef))
+   if (eet_test_close((ef->data == (void *)-1) || (!ef->data), ef, locked))
      return NULL;
 
-   if (eet_test_close(ef->data_size < (int)sizeof(int) * 3, ef))
+   if (eet_test_close(ef->data_size < (int)sizeof(int) * 3, ef, locked))
      return NULL;
 
    switch (eina_ntohl(*data))
      {
 #if EET_OLD_EET_FILE_FORMAT
       case EET_MAGIC_FILE:
-        return eet_internal_read1(ef);
+        return eet_internal_read1(ef, locked);
 
 #endif /* if EET_OLD_EET_FILE_FORMAT */
       case EET_MAGIC_FILE2:
-        return eet_internal_read2(ef);
+        return eet_internal_read2(ef, locked);
 
       default:
         ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
+        eet_internal_close(ef, locked, EINA_FALSE);
         break;
      }
 
@@ -1286,6 +1305,7 @@ eet_internal_close(Eet_File *ef,
                    Eina_Bool locked, Eina_Bool shutdown)
 {
    Eet_Error err = EET_ERROR_NONE;
+   Eina_Bool keep_in_cache = EINA_FALSE;
 
    /* check to see its' an eet file pointer */
    if (eet_check_pointer(ef))
@@ -1297,16 +1317,23 @@ eet_internal_close(Eet_File *ef,
    if (!locked)
      LOCK_CACHE;
 
+   LOCK_FILE(ef);
+
    /* deref */
    ef->references--;
    /* if its still referenced - dont go any further */
    if (ef->references > 0)
      {
+        if (!locked)
+          UNLOCK_CACHE;
+
         /* flush any writes */
-         if ((ef->mode == EET_FILE_MODE_WRITE) ||
-             (ef->mode == EET_FILE_MODE_READ_WRITE))
-           eet_sync(ef);
-         goto on_error;
+        if ((ef->mode == EET_FILE_MODE_WRITE) ||
+            (ef->mode == EET_FILE_MODE_READ_WRITE))
+          err = eet_flush2(ef, EINA_FALSE);
+
+        UNLOCK_FILE(ef);
+        return err;
      }
 
    err = eet_flush2(ef, EINA_FALSE);
@@ -1316,18 +1343,25 @@ eet_internal_close(Eet_File *ef,
 
    /* if not urgent to delete it - dont free it - leave it in cache */
    if ((!ef->delete_me_now) && (ef->mode == EET_FILE_MODE_READ))
-     goto on_error;
+     keep_in_cache = EINA_TRUE;
 
-   /* remove from cache */
-   if (ef->mode == EET_FILE_MODE_READ)
-     eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
-   else if ((ef->mode == EET_FILE_MODE_WRITE) ||
-            (ef->mode == EET_FILE_MODE_READ_WRITE))
-     eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+   if (!keep_in_cache)
+     {
+        /* remove from cache */
+        if (ef->mode == EET_FILE_MODE_READ)
+          eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
+        else if ((ef->mode == EET_FILE_MODE_WRITE) ||
+                 (ef->mode == EET_FILE_MODE_READ_WRITE))
+          eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+     }
 
-   /* we can unlock the cache now */
+   UNLOCK_FILE(ef);
+
    if (!locked)
      UNLOCK_CACHE;
+
+   if (keep_in_cache)
+     return EET_ERROR_NONE;
 
    DESTROY_FILE(ef);
 
@@ -1401,12 +1435,6 @@ eet_internal_close(Eet_File *ef,
    if (!shutdown)
      eet_file_mp_free(ef);
    return err;
-
-on_error:
-   if (!locked)
-     UNLOCK_CACHE;
-
-   return EET_ERROR_NONE;
 }
 
 EAPI Eet_File *
@@ -1421,9 +1449,6 @@ eet_memopen_read(const void *data,
    ef = eet_file_malloc(1);
    if (!ef)
      return NULL;
-
-   /* eet_internal_read expects the cache lock to be held when it is called */
-   LOCK_CACHE;
 
    INIT_FILE(ef);
    ef->ed = NULL;
@@ -1441,9 +1466,7 @@ eet_memopen_read(const void *data,
    ef->sha1_length = 0;
    ef->readfp_owned = EINA_FALSE;
 
-   ef = eet_internal_read(ef);
-   UNLOCK_CACHE;
-   return ef;
+   return eet_internal_read(ef, EINA_FALSE);
 }
 
 EAPI const char *
@@ -1456,26 +1479,34 @@ eet_file_get(Eet_File *ef)
 EAPI Eet_File *
 eet_mmap(const Eina_File *file)
 {
+   Eet_File *cached = NULL;
+   Eet_File *evicted = NULL;
    Eet_File *ef = NULL;
    const char *path;
 
    path = eina_file_filename_get(file);
 
-   LOCK_CACHE;
-   ef = eet_cache_find(path, eet_writers, eet_writers_num);
-   if (ef)
+   for (;;)
      {
-        eet_sync(ef);
-        ef->references++;
-        ef->delete_me_now = 1;
-        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
-     }
+        LOCK_CACHE;
+        cached = eet_cache_find(path, eet_writers, eet_writers_num);
+        if (cached)
+          {
+             eet_cache_file_ref_mark_delete(cached);
+             UNLOCK_CACHE;
+             eet_internal_close(cached, EINA_FALSE, EINA_FALSE);
+             continue;
+          }
 
-   ef = eet_cache_find(path, eet_readers, eet_readers_num);
-   if (ef && ef->readfp == file)
-     {
-        ef->references++;
-        goto done;
+        ef = eet_cache_find(path, eet_readers, eet_readers_num);
+        if (ef && ef->readfp == file)
+          {
+             eet_cache_file_ref(ef);
+             UNLOCK_CACHE;
+             return ef;
+          }
+        UNLOCK_CACHE;
+        break;
      }
 
    /* Allocate struct for eet file and have it zero'd out */
@@ -1502,22 +1533,36 @@ eet_mmap(const Eina_File *file)
 
    ef->data_size = eina_file_size_get(ef->readfp);
    ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
-   if (eet_test_close((ef->data == NULL), ef))
+   if (eet_test_close((ef->data == NULL), ef, EINA_FALSE))
      goto on_error;
 
-   ef = eet_internal_read(ef);
+   ef = eet_internal_read(ef, EINA_FALSE);
    if (!ef)
      goto on_error;
 
-   if (ef->mode == EET_FILE_MODE_READ)
-     eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
+   LOCK_CACHE;
+   cached = eet_cache_find(path, eet_readers, eet_readers_num);
+   if (cached && cached->readfp == file)
+     {
+        eet_cache_file_ref(cached);
+        UNLOCK_CACHE;
+        LOCK_FILE(ef);
+        ef->delete_me_now = 1;
+        UNLOCK_FILE(ef);
+        eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
+        return cached;
+     }
 
- done:
+   if (ef->mode == EET_FILE_MODE_READ)
+     evicted = eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    UNLOCK_CACHE;
+
+   if (evicted)
+     eet_internal_close(evicted, EINA_FALSE, EINA_FALSE);
+
    return ef;
 
  on_error:
-   UNLOCK_CACHE;
    return NULL;
 }
 
@@ -1525,7 +1570,9 @@ EAPI Eet_File *
 eet_open(const char   *file,
          Eet_File_Mode mode)
 {
-   Eina_File *fp;
+   Eet_File *cached = NULL;
+   Eet_File *evicted = NULL;
+   Eina_File *fp = NULL;
    Eet_File *ef;
    int file_len, ret;
    unsigned long int size;
@@ -1535,32 +1582,42 @@ eet_open(const char   *file,
 
    /* find the current file handle in cache*/
    ef = NULL;
-   LOCK_CACHE;
-   if (mode == EET_FILE_MODE_READ)
+   for (;;)
      {
-        ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
-        if (ef)
+        LOCK_CACHE;
+        if (mode == EET_FILE_MODE_READ)
           {
-             eet_sync(ef);
-             ef->references++;
-             ef->delete_me_now = 1;
-             eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
-          }
+             cached = eet_cache_find((char *)file, eet_writers, eet_writers_num);
+             if (cached)
+               {
+                  eet_cache_file_ref_mark_delete(cached);
+                  UNLOCK_CACHE;
+                  eet_internal_close(cached, EINA_FALSE, EINA_FALSE);
+                  continue;
+               }
 
-        ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
-     }
-   else if ((mode == EET_FILE_MODE_WRITE) ||
-            (mode == EET_FILE_MODE_READ_WRITE))
-     {
-        ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
-        if (ef)
+             ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
+             if (ef)
+               eet_cache_file_ref(ef);
+          }
+        else if ((mode == EET_FILE_MODE_WRITE) ||
+                 (mode == EET_FILE_MODE_READ_WRITE))
           {
-             ef->delete_me_now = 1;
-             ef->references++;
-             eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
-          }
+             cached = eet_cache_find((char *)file, eet_readers, eet_readers_num);
+             if (cached)
+               {
+                  eet_cache_file_ref_mark_delete(cached);
+                  UNLOCK_CACHE;
+                  eet_internal_close(cached, EINA_FALSE, EINA_FALSE);
+                  continue;
+               }
 
-        ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
+             ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
+             if (ef)
+               eet_cache_file_ref(ef);
+          }
+        UNLOCK_CACHE;
+        break;
      }
 
    /* try open the file based on mode */
@@ -1570,7 +1627,8 @@ eet_open(const char   *file,
           {
              /* do not use eina_file_access() here */
              ret = access(file, W_OK);
-             if ((ret != 0) && (errno != ENOENT)) return NULL;
+             if ((ret != 0) && (errno != ENOENT))
+               goto on_error;
           }
         /* Prevent garbage in futur comparison. */
          fp = eina_file_open(file, EINA_FALSE);
@@ -1599,37 +1657,34 @@ open_error:
    else
      {
         if (mode != EET_FILE_MODE_WRITE)
-          {
-            UNLOCK_CACHE;
             return NULL;
-          }
 
         size = 0;
 
         fp = NULL;
         /* do not use eina_file_access() here */
         ret = access(file, W_OK);
-        if ((ret != 0) && (errno != ENOENT)) return NULL;
+        if ((ret != 0) && (errno != ENOENT))
+          goto on_error;
      }
 
    /* We found one */
    if (ef && ef->readfp != fp)
      {
+        LOCK_FILE(ef);
         ef->delete_me_now = 1;
-        ef->references++;
-        eet_internal_close(ef, EINA_TRUE, EINA_FALSE);
+        UNLOCK_FILE(ef);
+        eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
         ef = NULL;
      }
 
    if (ef)
      {
         /* reference it up and return it */
-         if (fp)
-           eina_file_close(fp);
+        if (fp)
+          eina_file_close(fp);
 
-         ef->references++;
-         UNLOCK_CACHE;
-         return ef;
+        return ef;
      }
 
    file_len = strlen(file) + 1;
@@ -1643,6 +1698,7 @@ open_error:
    INIT_FILE(ef);
    ef->key = NULL;
    ef->readfp = fp;
+   fp = NULL;
    ef->path = eina_stringshare_add_length(file, file_len);
    ef->magic = EET_MAGIC_FILE;
    ef->references = 1;
@@ -1665,38 +1721,74 @@ open_error:
      goto empty_file;
 
    /* if we can't open - bail out */
-   if (eet_test_close(!ef->readfp, ef))
+   if (eet_test_close(!ef->readfp, ef, EINA_FALSE))
      goto on_error;
 
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
         ef->data_size = size;
-        ef->data = eina_file_map_all(fp, EINA_FILE_SEQUENTIAL);
-        if (eet_test_close((ef->data == NULL), ef))
+        ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
+        if (eet_test_close((ef->data == NULL), ef, EINA_FALSE))
           goto on_error;
 
-        ef = eet_internal_read(ef);
+        ef = eet_internal_read(ef, EINA_FALSE);
         if (!ef)
           goto on_error;
      }
 
 empty_file:
    /* add to cache */
-   if (ef->references == 1)
+   LOCK_CACHE;
+   if (mode == EET_FILE_MODE_READ)
+     {
+        cached = eet_cache_find((char *)file, eet_readers, eet_readers_num);
+        if (cached && cached->readfp == ef->readfp)
+          {
+             eet_cache_file_ref(cached);
+             UNLOCK_CACHE;
+             LOCK_FILE(ef);
+             ef->delete_me_now = 1;
+             UNLOCK_FILE(ef);
+             eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
+             return cached;
+          }
+        cached = NULL;
+     }
+   else if ((mode == EET_FILE_MODE_WRITE) ||
+            (mode == EET_FILE_MODE_READ_WRITE))
+     cached = eet_cache_find((char *)file, eet_writers, eet_writers_num);
+
+   if (!cached && (ef->references == 1))
      {
         if (ef->mode == EET_FILE_MODE_READ)
-          eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
+          evicted = eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
         else if ((ef->mode == EET_FILE_MODE_WRITE) ||
                  (ef->mode == EET_FILE_MODE_READ_WRITE))
-          eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+          evicted = eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
      }
+   else if (cached)
+     eet_cache_file_ref(cached);
 
    UNLOCK_CACHE;
+
+   if (cached)
+     {
+        LOCK_FILE(ef);
+        ef->delete_me_now = 1;
+        UNLOCK_FILE(ef);
+        eet_internal_close(ef, EINA_FALSE, EINA_FALSE);
+        ef = cached;
+     }
+
+   if (evicted)
+     eet_internal_close(evicted, EINA_FALSE, EINA_FALSE);
+
    return ef;
 
 on_error:
-   UNLOCK_CACHE;
+   if (fp)
+     eina_file_close(fp);
    return NULL;
 }
 
