@@ -14,6 +14,7 @@ struct _Efl_File_Data
    Eina_Bool file_opened : 1; /* if `file` was opened implicitly during load */
    Eina_Bool setting : 1; /* set when this file is internally calling methods to avoid infinite recursion */
    Eina_Bool loaded : 1; /* whether the currently set file properties have been loaded */
+   Eina_Bool no_io : 1; /* i/o will be avoided on file_set */
 };
 
 EOLIAN static void
@@ -100,13 +101,17 @@ _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file)
 
    same = !eina_stringshare_replace(&pd->vpath, tmp ?: file);
    free(tmp);
-   if (file)
+   if ((!pd->no_io) && (file))
      {
         err = stat(pd->vpath, &st);
         if (same && (!err)) same = st.st_mtime == pd->mtime;
      }
-   if (same) return err;
-   pd->mtime = file && (!err) ? st.st_mtime : 0;
+   if (!pd->no_io)
+     {
+        if (same) return err;
+        pd->mtime = file && (!err) ? st.st_mtime : 0;
+     }
+   else pd->mtime = 0;
    pd->loaded = EINA_FALSE;
    if (pd->setting)
      err = 0; /* this is from mmap_set, which may provide a virtual file */
@@ -123,6 +128,18 @@ EOLIAN static Eina_Stringshare *
 _efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
 {
    return pd->vpath;
+}
+
+EOLIAN static void
+_efl_file_file_io_set(Eo *obj EINA_UNUSED, Efl_File_Data *pd, Eina_Bool enabled)
+{
+  pd->no_io = !!!enabled;
+}
+
+EOLIAN static Eina_Bool
+_efl_file_file_io_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
+{
+  return !pd->no_io;
 }
 
 EOLIAN static void

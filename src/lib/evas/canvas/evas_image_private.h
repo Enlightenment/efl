@@ -185,7 +185,7 @@ void _evas_image_load_scale_down_set(Eo *eo_obj, int scale_down);
 int _evas_image_load_scale_down_get(const Eo *eo_obj);
 void _evas_image_load_region_set(Eo *eo_obj, int x, int y, int w, int h);
 void _evas_image_load_region_get(const Eo *eo_obj, int *x, int *y, int *w, int *h);
-void _evas_image_load_head_skip_set(const Eo *eo_obj, Eina_Bool skip);
+void _evas_image_load_head_skip_set(Eo *eo_obj, Eina_Bool skip);
 Eina_Bool _evas_image_load_head_skip_get(const Eo *eo_obj);
 void _evas_image_load_orientation_set(Eo *eo_obj, Eina_Bool enable);
 Eina_Bool _evas_image_load_orientation_get(const Eo *eo_obj);

@@ -335,10 +335,11 @@ _efl_canvas_image_efl_gfx_image_load_controller_load_scale_down_get(const Eo *eo
 }
 
 void
-_evas_image_load_head_skip_set(const Eo *eo_obj, Eina_Bool skip)
+_evas_image_load_head_skip_set(Eo *eo_obj, Eina_Bool skip)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    o->skip_head = skip;
+   efl_file_io_set(eo_obj, !skip);
 }
 
 EOLIAN static void

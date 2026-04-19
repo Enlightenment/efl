@@ -39,6 +39,25 @@ mixin Efl.File requires Efl.Object {
             file: string; [[The file path.]]
          }
       }
+      @property file_io {
+         [[If any I/O will take place when setting file
+
+           If file is set, there may be disk/file I/O done on the actual
+           resulting file path to see if it exists or is valid etc. to
+           avoid repeated settings of file to the same file causing
+           repeated loads of that file unless it keeps changing.
+
+           This will ddisable that I/O and thus any optimizations
+           avoiding re-loads etc.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            enabled: bool; [[If I/O is enabled. True by default.]]
+         }
+      }
       @property key {
          [[The key which corresponds to the target data within a file.
 
