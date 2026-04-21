@@ -2060,14 +2060,13 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
                               Edje_Part_Description_Spec_Fill *fill,
                               Edje_Calc_Params *params)
 {
-   int fw;
-   int fh;
-
-   params->smooth = fill->smooth;
+   int fw = 1, fh = 1;
 
    if (fill->type == EDJE_FILL_TYPE_TILE)
-     evas_object_image_size_get(ep->object, &fw, NULL);
-   else
+     evas_object_image_size_get(ep->object, &fw, &fh);
+   params->smooth = fill->smooth;
+
+   if (fill->type != EDJE_FILL_TYPE_TILE)
      fw = params->final.w;
 
    _edje_calc_params_need_type_common(params);
@@ -2076,9 +2075,7 @@ _edje_part_recalc_single_fill(Edje_Real_Part *ep,
    params->type.common->fill.w = fill->abs_x
      + TO_INT(SCALE(fill->rel_x, fw));
 
-   if (fill->type == EDJE_FILL_TYPE_TILE)
-     evas_object_image_size_get(ep->object, NULL, &fh);
-   else
+   if (fill->type != EDJE_FILL_TYPE_TILE)
      fh = params->final.h;
 
    params->type.common->fill.y = fill->pos_abs_y
