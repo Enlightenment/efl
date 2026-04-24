@@ -479,7 +479,8 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, El
 
    _elm_code_widget_fill_selection(widget, line, cells, gutter, w);
    _elm_code_widget_fill_cursor(widget, line->number, gutter, w);
-   if (line->number < elm_code_file_lines_get(line->file))
+   if (line->number < elm_code_file_lines_get(line->file) &&
+       (length + (unsigned int) gutter) < w)
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
    evas_object_textgrid_update_add(grid, 0, 0, w, 1);
@@ -556,21 +557,10 @@ _elm_code_widget_fill_line_empty(Elm_Code_Widget *widget, Elm_Code_Widget_Data *
 static void
 _elm_code_widget_cursor_selection_set(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
-   unsigned int end_line, end_col;
-
-   end_line = pd->selection->end_line;
-   end_col = pd->selection->end_col;
-
    if (pd->selection->type == ELM_CODE_WIDGET_SELECTION_KEYBOARD)
      return;
 
-   if ((pd->selection->start_line == pd->selection->end_line && pd->selection->end_col > pd->selection->start_col) ||
-       (pd->selection->start_line < pd->selection->end_line))
-     {
-        end_col++;
-     }
-
-   elm_code_widget_cursor_position_set(widget, end_line, end_col);
+   elm_code_widget_cursor_position_set(widget, pd->selection->end_line, pd->selection->end_col);
 }
 
 static void
@@ -745,7 +735,7 @@ _elm_code_widget_selection_clear_cb(void *data, const Efl_Event *event EINA_UNUS
 
    widget = (Elm_Code_Widget *)data;
 
-   _elm_code_widget_fill(widget);
+   _elm_code_widget_refresh(widget, NULL);
 }
 
 static void
@@ -1282,7 +1272,7 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
 
    if (!pd->selection)
      if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
-       elm_code_widget_selection_start(widget, row, col);
+       elm_code_widget_selection_start(widget, pd->cursor_line, pd->cursor_col);
 
    _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_MOUSE);
    _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);

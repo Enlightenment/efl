@@ -38,6 +38,46 @@ _elm_code_widget_selection_limit(Evas_Object *widget EINA_UNUSED, Elm_Code_Widge
      *col = width + 1;
 }
 
+static Eina_Bool
+_elm_code_widget_selection_position_leq(unsigned int line, unsigned int col,
+                                        unsigned int other_line, unsigned int other_col)
+{
+   return (line < other_line) || (line == other_line && col <= other_col);
+}
+
+static void
+_elm_code_widget_selection_position_prev(Evas_Object *widget, Elm_Code_Widget_Data *pd,
+                                         unsigned int line, unsigned int col,
+                                         unsigned int *prev_line, unsigned int *prev_col)
+{
+   Elm_Code_Line *line_obj;
+
+   if (col > 1)
+     {
+        *prev_line = line;
+        *prev_col = col - 1;
+        return;
+     }
+
+   if (line <= 1)
+     {
+        *prev_line = 1;
+        *prev_col = 0;
+        return;
+     }
+
+   *prev_line = line - 1;
+   line_obj = elm_code_file_line_get(pd->code->file, *prev_line);
+   if (!line_obj)
+     {
+        *prev_line = 1;
+        *prev_col = 0;
+        return;
+     }
+
+   *prev_col = elm_code_widget_line_text_column_width_get(widget, line_obj) + 1;
+}
+
 EAPI void
 elm_code_widget_selection_start(Evas_Object *widget,
                                 unsigned int line, unsigned int col)
@@ -119,6 +159,7 @@ elm_code_widget_selection_normalized_get(Evas_Object *widget)
    Elm_Code_Widget_Data *pd;
    Elm_Code_Widget_Selection_Data *selection;
    Eina_Bool reverse;
+   unsigned int start_line, start_col, end_line, end_col;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
    selection = _elm_code_widget_selection_new();
@@ -131,24 +172,52 @@ elm_code_widget_selection_normalized_get(Evas_Object *widget)
         return selection;
      }
 
-   if (pd->selection->start_line == pd->selection->end_line)
-     reverse = pd->selection->start_col > pd->selection->end_col;
+   if (pd->selection->type == ELM_CODE_WIDGET_SELECTION_MOUSE)
+     {
+        if (_elm_code_widget_selection_position_leq(pd->selection->start_line, pd->selection->start_col,
+                                                    pd->selection->end_line, pd->selection->end_col))
+          {
+             selection->start_line = pd->selection->start_line;
+             selection->start_col = pd->selection->start_col;
+             _elm_code_widget_selection_position_prev(widget, pd,
+                                                      pd->selection->end_line, pd->selection->end_col,
+                                                      &selection->end_line, &selection->end_col);
+          }
+        else
+          {
+             selection->start_line = pd->selection->end_line;
+             selection->start_col = pd->selection->end_col;
+             _elm_code_widget_selection_position_prev(widget, pd,
+                                                      pd->selection->start_line, pd->selection->start_col,
+                                                      &selection->end_line, &selection->end_col);
+          }
+
+        return selection;
+     }
+
+   start_line = pd->selection->start_line;
+   start_col = pd->selection->start_col;
+   end_line = pd->selection->end_line;
+   end_col = pd->selection->end_col;
+
+   if (start_line == end_line)
+     reverse = start_col > end_col;
    else
-     reverse = pd->selection->start_line > pd->selection->end_line;
+     reverse = start_line > end_line;
 
    if (reverse)
      {
-        selection->start_line = pd->selection->end_line;
-        selection->start_col = pd->selection->end_col;
-        selection->end_line = pd->selection->start_line;
-        selection->end_col = pd->selection->start_col;
+        selection->start_line = end_line;
+        selection->start_col = end_col;
+        selection->end_line = start_line;
+        selection->end_col = start_col;
      }
    else
      {
-        selection->start_line = pd->selection->start_line;
-        selection->start_col = pd->selection->start_col;
-        selection->end_line = pd->selection->end_line;
-        selection->end_col = pd->selection->end_col;
+        selection->start_line = start_line;
+        selection->start_col = start_col;
+        selection->end_line = end_line;
+        selection->end_col = end_col;
      }
 
    return selection;
@@ -515,4 +584,3 @@ _elm_code_widget_selection_type_set(Evas_Object *widget, Elm_Code_Widget_Selecti
 
    pd->selection->type = type;
 }
-

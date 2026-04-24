@@ -109,6 +109,38 @@ EFL_START_TEST(elm_code_test_widget_selection_text_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_code_test_widget_selection_text_get_mouse_singleline)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+   Evas_Object *win;
+   char *selection;
+
+   char *args[] = { "exe" };
+   elm_init(1, args);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "test", 4, NULL);
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_start(widget, 1, 2);
+   pd->selection->type = ELM_CODE_WIDGET_SELECTION_MOUSE;
+   elm_code_widget_selection_end(widget, 1, 4);
+
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("es", selection);
+   free(selection);
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_code_test_widget_selection_reverse_text_get)
 {
    Elm_Code *code;
@@ -137,6 +169,39 @@ EFL_START_TEST(elm_code_test_widget_selection_reverse_text_get)
 
    elm_code_widget_selection_clear(widget);
    ck_assert_str_eq("", elm_code_widget_selection_text_get(widget));
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+EFL_END_TEST
+
+EFL_START_TEST(elm_code_test_widget_selection_text_get_mouse_twoline)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+   Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+   Evas_Object *win;
+   char *selection;
+
+   char *args[] = { "exe" };
+   elm_init(1, args);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   elm_code_file_line_append(file, "test", 4, NULL);
+   elm_code_file_line_append(file, "test", 4, NULL);
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   widget = elm_code_widget_add(win, code);
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   elm_code_widget_selection_start(widget, 1, 3);
+   pd->selection->type = ELM_CODE_WIDGET_SELECTION_MOUSE;
+   elm_code_widget_selection_end(widget, 2, 1);
+
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("st", selection);
+   free(selection);
 
    elm_code_free(code);
    elm_shutdown();
@@ -700,7 +765,9 @@ void elm_code_test_widget_selection(TCase *tc)
    tcase_add_test(tc, elm_code_test_widget_selection_set);
    tcase_add_test(tc, elm_code_test_widget_selection_normalized_get);
    tcase_add_test(tc, elm_code_test_widget_selection_text_get);
+   tcase_add_test(tc, elm_code_test_widget_selection_text_get_mouse_singleline);
    tcase_add_test(tc, elm_code_test_widget_selection_reverse_text_get);
+   tcase_add_test(tc, elm_code_test_widget_selection_text_get_mouse_twoline);
    tcase_add_test(tc, elm_code_test_widget_selection_text_get_twoline);
    tcase_add_test(tc, elm_code_test_widget_selection_reverse_text_get_twoline);
    tcase_add_test(tc, elm_code_test_widget_selection_text_get_multiline);
