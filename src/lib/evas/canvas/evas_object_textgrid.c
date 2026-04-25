@@ -148,6 +148,28 @@ evas_object_textgrid_init(Evas_Object *eo_obj)
    eina_array_step_set(&o->cur.palette_extended, sizeof (Eina_Array), 16);
 }
 
+/* Reset a row for reuse without freeing its backing arrays.
+ * This is the hot path: called every dirty-row per frame.
+ * Arrays survive with their current alloc; only _num counters are zeroed.
+ * text_props content refs are released because new render will re-create them. */
+static void
+evas_object_textgrid_row_reset(Evas_Textgrid_Data *o EINA_UNUSED,
+                               Evas_Object_Textgrid_Row *r)
+{
+   int i;
+
+   if (r->texts)
+     {
+        for (i = 0; i < r->texts_num; i++)
+          evas_common_text_props_content_unref(&(r->texts[i].text_props));
+     }
+   r->texts_num = 0;
+   r->rects_num = 0;
+   r->lines_num = 0;
+}
+
+/* Fully free a row's arrays and reset all counters/alloc fields.
+ * This is the teardown path: called on grid resize and object destruction. */
 static void
 evas_object_textgrid_row_clear(Evas_Textgrid_Data *o EINA_UNUSED,
                                Evas_Object_Textgrid_Row *r)
@@ -189,6 +211,26 @@ evas_object_textgrid_rows_clear(Evas_Object *eo_obj)
    for (i = 0; i < o->cur.h; i++)
      {
         evas_object_textgrid_row_clear(o, &(o->cur.rows[i]));
+        o->cur.rows[i].ch1 = 0;
+        o->cur.rows[i].ch2 = o->cur.w - 1;
+     }
+}
+
+/* Mark all rows dirty without freeing their backing arrays.
+ * Use this on font/palette changes where rows survive intact but must be
+ * fully re-rendered: backing arrays keep their pre-sized capacity, so the
+ * next render's row_text_append never needs to realloc on a steady-state grid.
+ * Use rows_clear (full teardown) only when the row array itself is being freed. */
+static void
+evas_object_textgrid_rows_reset(Evas_Object *eo_obj)
+{
+   int i;
+
+   Evas_Textgrid_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   if (!o->cur.rows) return;
+   for (i = 0; i < o->cur.h; i++)
+     {
+        evas_object_textgrid_row_reset(o, &(o->cur.rows[i]));
         o->cur.rows[i].ch1 = 0;
         o->cur.rows[i].ch2 = o->cur.w - 1;
      }
@@ -922,8 +964,76 @@ _evas_textgrid_grid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
      }
    for (i = 0; i < h; i++)
      {
-        o->cur.rows[i].ch1 = 0;
-        o->cur.rows[i].ch2 = w - 1;
+        Evas_Object_Textgrid_Row *r = &o->cur.rows[i];
+
+        r->ch1 = 0;
+        r->ch2 = w - 1;
+
+        /* Pre-allocate backing arrays sized for the full row width so the hot
+         * render path never needs to realloc on a steady-state grid. */
+        r->texts = calloc(w, sizeof(Evas_Object_Textgrid_Text));
+        if (!r->texts)
+          {
+             /* OOM: free all rows allocated so far then the row array itself */
+             int j;
+             for (j = 0; j < i; j++)
+               {
+                  free(o->cur.rows[j].texts);
+                  free(o->cur.rows[j].rects);
+                  free(o->cur.rows[j].lines);
+               }
+             free(o->cur.rows);
+             o->cur.rows = NULL;
+             free(o->cur.cells);
+             o->cur.cells = NULL;
+             return;
+          }
+        r->texts_alloc = w;
+
+        r->rects = calloc(w, sizeof(Evas_Object_Textgrid_Rect));
+        if (!r->rects)
+          {
+             int j;
+             free(r->texts);
+             r->texts = NULL;
+             r->texts_alloc = 0;
+             for (j = 0; j < i; j++)
+               {
+                  free(o->cur.rows[j].texts);
+                  free(o->cur.rows[j].rects);
+                  free(o->cur.rows[j].lines);
+               }
+             free(o->cur.rows);
+             o->cur.rows = NULL;
+             free(o->cur.cells);
+             o->cur.cells = NULL;
+             return;
+          }
+        r->rects_alloc = w;
+
+        r->lines = calloc(8, sizeof(Evas_Object_Textgrid_Line));
+        if (!r->lines)
+          {
+             int j;
+             free(r->texts);
+             r->texts = NULL;
+             r->texts_alloc = 0;
+             free(r->rects);
+             r->rects = NULL;
+             r->rects_alloc = 0;
+             for (j = 0; j < i; j++)
+               {
+                  free(o->cur.rows[j].texts);
+                  free(o->cur.rows[j].rects);
+                  free(o->cur.rows[j].lines);
+               }
+             free(o->cur.rows);
+             o->cur.rows = NULL;
+             free(o->cur.cells);
+             o->cur.cells = NULL;
+             return;
+          }
+        r->lines_alloc = 8;
      }
    o->cur.w = w;
    o->cur.h = h;
@@ -1190,7 +1300,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
    evas_object_inform_call_resize(eo_obj, obj);
    o->changed = 1;
    o->core_change = 1;
-   evas_object_textgrid_rows_clear(eo_obj);
+   evas_object_textgrid_rows_reset(eo_obj);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1348,7 +1458,7 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
      }
    o->changed = 1;
    o->pal_change = 1;
-   evas_object_textgrid_rows_clear(eo_obj);
+   evas_object_textgrid_rows_reset(eo_obj);
    evas_object_change(eo_obj, obj);
 }
 
@@ -1436,7 +1546,7 @@ _evas_textgrid_update_add(Eo *eo_obj, Evas_Textgrid_Data *o, int x, int y, int w
 
         if (r->ch1 < 0)
           {
-             evas_object_textgrid_row_clear(o, r);
+             evas_object_textgrid_row_reset(o, r);
              r->ch1 = x;
              r->ch2 = x2;
           }
