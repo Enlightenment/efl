@@ -161,6 +161,11 @@ _curlmcode_to_eina_error(const CURLMcode code)
     case CURLM_BAD_SOCKET: return ENOTSOCK;
     case CURLM_UNKNOWN_OPTION: return EINVAL;
     case CURLM_ADDED_ALREADY: return EALREADY;
+    case CURLM_RECURSIVE_API_CALL: return EBUSY;
+    case CURLM_WAKEUP_FAILURE: return EIO;
+    case CURLM_BAD_FUNCTION_ARGUMENT: return EINVAL;
+    case CURLM_ABORTED_BY_CALLBACK: return ECONNABORTED;
+    case CURLM_UNRECOVERABLE_POLL: return EIO;
 
     default:
        ERR("unexpected error CURLMcode=%d '%s', not mapped",

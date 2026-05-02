@@ -358,6 +358,16 @@ _efl_net_dialer_http_curlm_timer_schedule(CURLM *multi EINA_UNUSED, long timeout
    Efl_Net_Dialer_Http_Curlm *cm = data;
    double seconds = timeout_ms / 1000.0;
 
+   if (timeout_ms < 0)
+     {
+        if (cm->timer)
+          {
+             efl_del(cm->timer);
+             cm->timer = NULL;
+          }
+        return 0;
+     }
+
    if (cm->timer)
      {
         efl_loop_timer_interval_set(cm->timer, seconds);
@@ -374,6 +384,22 @@ _efl_net_dialer_http_curlm_timer_schedule(CURLM *multi EINA_UNUSED, long timeout
      }
 
    return 0;
+}
+
+static Eo *
+_efl_net_dialer_http_curlm_easy_find(Efl_Net_Dialer_Http_Curlm *cm, CURL *easy)
+{
+   const Eina_List *l;
+   Eo *dialer;
+
+   EINA_LIST_FOREACH(cm->users, l, dialer)
+     {
+        Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(dialer, MY_CLASS);
+        if ((pd) && (pd->easy == easy))
+          return dialer;
+     }
+
+   return NULL;
 }
 
 static void
@@ -408,22 +434,19 @@ static int
 _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, void *cm_data, void *fdhandler_data)
 {
    Efl_Net_Dialer_Http_Curlm *cm = cm_data;
-   Efl_Net_Dialer_Http_Data *pd;
+   Efl_Net_Dialer_Http_Data *pd = NULL;
    Eo *dialer, *fdhandler = fdhandler_data;
-   char *priv;
-   CURLcode re;
 
-   re = curl_easy_getinfo(e, CURLINFO_PRIVATE, &priv);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(re != CURLE_OK, -1);
-   if (!priv) return -1;
-   dialer = (Eo *)priv;
-   pd = efl_data_scope_get(dialer, MY_CLASS);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, -1);
+   dialer = _efl_net_dialer_http_curlm_easy_find(cm, e);
+   if (dialer)
+     pd = efl_data_scope_get(dialer, MY_CLASS);
 
    if (what == CURL_POLL_REMOVE)
      {
-        pd->fdhandler = NULL;
-        efl_del(fdhandler);
+        if ((pd) && (pd->fdhandler == fdhandler))
+          pd->fdhandler = NULL;
+        curl_multi_assign(cm->multi, fd, NULL);
+        if (fdhandler) efl_del(fdhandler);
      }
    else
      {
@@ -434,9 +457,10 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
           flags = (intptr_t)efl_key_data_get(fdhandler, "curl_flags");
         else
           {
-             pd->fdhandler = fdhandler = efl_add(EFL_LOOP_FD_CLASS, cm->loop,
-                                                 efl_loop_fd_set(efl_added, fd));
+             fdhandler = efl_add_ref(EFL_LOOP_FD_CLASS, cm->loop,
+                                     efl_loop_fd_set(efl_added, fd));
              EINA_SAFETY_ON_NULL_RETURN_VAL(fdhandler, -1);
+             if (pd) pd->fdhandler = fdhandler;
              curl_multi_assign(cm->multi, fd, fdhandler);
              flags = 0;
           }
@@ -494,15 +518,16 @@ _efl_net_dialer_http_curlm_add(Efl_Net_Dialer_Http_Curlm *cm, Eo *o, CURL *handl
         curl_multi_setopt(cm->multi, CURLMOPT_TIMERDATA, cm);
      }
 
+   cm->users = eina_list_append(cm->users, o);
+
    r = curl_multi_add_handle(cm->multi, handle);
    if (r != CURLM_OK)
      {
         ERR("could not register curl multi handle %p: %s",
             handle, curl_multi_strerror(r));
+        cm->users = eina_list_remove(cm->users, o);
         return EINA_FALSE;
      }
-
-   cm->users = eina_list_append(cm->users, o);
 
    return EINA_TRUE;
 }
