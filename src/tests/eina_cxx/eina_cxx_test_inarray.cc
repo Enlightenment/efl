@@ -129,8 +129,8 @@ EFL_START_TEST(eina_cxx_inarray_pod_constructors)
 
   efl::eina::inarray<int> array2(10, 5);
   ck_assert(array2.size() == 10);
-  ck_assert(std::find_if(array2.begin(), array2.end()
-                      , std::not1(std::bind1st(std::equal_to<int>(), 5))) == array2.end());
+  ck_assert(std::find_if(array2.begin(), array2.end(),
+                         [] (int n) { return n != 5; }) == array2.end());
 
   efl::eina::inarray<int> array3(array2);
   ck_assert(array2 == array3);
@@ -215,6 +215,11 @@ struct non_pod
 bool operator==(non_pod lhs, non_pod rhs)
 {
   return *lhs.x == *rhs.x;
+}
+
+bool operator!=(non_pod lhs, non_pod rhs)
+{
+  return !(lhs == rhs);
 }
 
 EFL_START_TEST(eina_cxx_inarray_nonpod_push_back)
@@ -338,8 +343,8 @@ EFL_START_TEST(eina_cxx_inarray_nonpod_constructors)
 
     efl::eina::inarray<non_pod> array2(10, 5);
     ck_assert(array2.size() == 10);
-    ck_assert(std::find_if(array2.begin(), array2.end()
-                        , std::not1(std::bind1st(std::equal_to<non_pod>(), 5))) == array2.end());
+    ck_assert(std::find_if(array2.begin(), array2.end(),
+	                       [] (non_pod n) { return n != 5; }) == array2.end());
 
     efl::eina::inarray<non_pod> array3(array2);
     ck_assert(array2 == array3);
