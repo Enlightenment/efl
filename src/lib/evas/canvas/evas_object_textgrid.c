@@ -18,6 +18,14 @@ typedef struct _Evas_Object_Textgrid_Rect  Evas_Object_Textgrid_Rect;
 typedef struct _Evas_Object_Textgrid_Text  Evas_Object_Textgrid_Text;
 typedef struct _Evas_Object_Textgrid_Line  Evas_Object_Textgrid_Line;
 
+/* Key for the per-(font_instance, codepoint) text_props cache */
+typedef struct _Evas_Textgrid_Cache_Key Evas_Textgrid_Cache_Key;
+struct _Evas_Textgrid_Cache_Key
+{
+   Evas_Font_Instance *fi;
+   Eina_Unicode        codepoint;
+};
+
 struct _Evas_Textgrid_Data
 {
    struct {
@@ -43,6 +51,11 @@ struct _Evas_Textgrid_Data
    Evas_Font_Set                 *font_bold;
    Evas_Font_Set                 *font_italic;
    Evas_Font_Set                 *font_bolditalic;
+
+   /* Cache: (fi, codepoint) -> heap-allocated Evas_Text_Props.
+    * Each cached entry holds one content ref.  On cache hit the row's copy
+    * takes its own independent ref via evas_common_text_props_content_copy_and_ref. */
+   Eina_Hash                     *text_props_cache;
 
    unsigned int                   changed : 1;
    unsigned int                   core_change : 1;
@@ -131,6 +144,71 @@ static const Evas_Object_Func object_func =
    NULL // render_prepare
 };
 
+/* --- text_props cache helpers --- */
+
+static int
+_textgrid_cache_key_length(const Evas_Textgrid_Cache_Key *key EINA_UNUSED)
+{
+   return sizeof(Evas_Textgrid_Cache_Key);
+}
+
+static int
+_textgrid_cache_key_cmp(const Evas_Textgrid_Cache_Key *a,
+                        int                            a_len EINA_UNUSED,
+                        const Evas_Textgrid_Cache_Key *b,
+                        int                            b_len EINA_UNUSED)
+{
+   if (a->fi != b->fi)
+     return (a->fi < b->fi) ? -1 : 1;
+   if (a->codepoint != b->codepoint)
+     return (a->codepoint < b->codepoint) ? -1 : 1;
+   return 0;
+}
+
+static int
+_textgrid_cache_key_hash(const Evas_Textgrid_Cache_Key *key,
+                         int                            key_len EINA_UNUSED)
+{
+   /* Murmur3-finalizer-style 64-bit mix: retains all pointer bits before
+    * truncating to int, avoiding collisions on 64-bit where upper 32 bits
+    * of the fi pointer differ between font instances. */
+   uint64_t h = (uint64_t)(uintptr_t)key->fi;
+   h ^= h >> 33;
+   h *= UINT64_C(0xff51afd7ed558ccd);
+   h ^= h >> 33;
+   h ^= (uint64_t)key->codepoint * 2654435761u;
+   h ^= h >> 17;
+   return (int)(unsigned int)h;
+}
+
+static void
+_textgrid_cache_entry_free(void *data)
+{
+   Evas_Text_Props *props = data;
+
+   evas_common_text_props_content_unref(props);
+   free(props);
+}
+
+static Eina_Hash *
+_textgrid_cache_new(void)
+{
+   return eina_hash_new(EINA_KEY_LENGTH(_textgrid_cache_key_length),
+                        EINA_KEY_CMP(_textgrid_cache_key_cmp),
+                        EINA_KEY_HASH(_textgrid_cache_key_hash),
+                        _textgrid_cache_entry_free,
+                        5);
+}
+
+static void
+_textgrid_cache_invalidate(Evas_Textgrid_Data *o)
+{
+   if (o->text_props_cache)
+     eina_hash_free_buckets(o->text_props_cache);
+}
+
+/* --- end text_props cache helpers --- */
+
 /* all nice and private */
 static void
 evas_object_textgrid_init(Evas_Object *eo_obj)
@@ -146,6 +224,7 @@ evas_object_textgrid_init(Evas_Object *eo_obj)
    o->prev = o->cur;
    eina_array_step_set(&o->cur.palette_standard, sizeof (Eina_Array), 16);
    eina_array_step_set(&o->cur.palette_extended, sizeof (Eina_Array), 16);
+   o->text_props_cache = _textgrid_cache_new();
 }
 
 /* Reset a row for reuse without freeing its backing arrays.
@@ -262,6 +341,12 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj E
    while ((c = eina_array_pop(&o->cur.palette_extended)))
      free(c);
    eina_array_flush(&o->cur.palette_extended);
+
+   if (o->text_props_cache)
+     {
+        eina_hash_free(o->text_props_cache);
+        o->text_props_cache = NULL;
+     }
 }
 
 EOLIAN static void
@@ -375,12 +460,61 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row,
    font = _textgrid_font_get(o, is_bold, is_italic);
    ENFN->font_run_end_get(ENC, font, &script_fi, &cur_fi,
                           script, &codepoint, 1);
-   memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
-   evas_common_text_props_script_set(&(text->text_props), script);
-   ENFN->font_text_props_info_create(ENC, cur_fi, &codepoint,
-                                     &(text->text_props), NULL, 0, 1,
-                                     EVAS_TEXT_PROPS_MODE_NONE,
-                                     o->cur.font_description_normal->lang);
+
+   /* --- text_props cache lookup --- */
+   if (o->text_props_cache && cur_fi)
+     {
+        /* Designated initializer zeroes all padding bytes so the full struct
+         * (including any trailing pad) is deterministic for eina_hash_add.
+         * This cache is main-loop-only; no locking is required. */
+        Evas_Textgrid_Cache_Key cache_key = { .fi = cur_fi, .codepoint = codepoint };
+        Evas_Text_Props *cached;
+
+        cached = eina_hash_find(o->text_props_cache, &cache_key);
+        if (cached)
+          {
+             /* Cache hit: copy the cached props and take an independent ref */
+             evas_common_text_props_content_copy_and_ref(&(text->text_props),
+                                                         cached);
+          }
+        else
+          {
+             /* Cache miss: shape, then store a copy in the cache */
+             memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
+             evas_common_text_props_script_set(&(text->text_props), script);
+             ENFN->font_text_props_info_create(ENC, cur_fi, &codepoint,
+                                               &(text->text_props), NULL, 0, 1,
+                                               EVAS_TEXT_PROPS_MODE_NONE,
+                                               o->cur.font_description_normal->lang);
+
+             if (text->text_props.info)
+               {
+                  Evas_Text_Props *store = malloc(sizeof(Evas_Text_Props));
+                  if (store)
+                    {
+                       /* The cache entry gets its own independent ref */
+                       evas_common_text_props_content_copy_and_ref(store,
+                                                                    &(text->text_props));
+                       if (!eina_hash_add(o->text_props_cache, &cache_key, store))
+                         {
+                            evas_common_text_props_content_unref(store);
+                            free(store);
+                         }
+                    }
+               }
+          }
+     }
+   else
+     {
+        /* No cache (e.g. null fi) - fall back to original path */
+        memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
+        evas_common_text_props_script_set(&(text->text_props), script);
+        ENFN->font_text_props_info_create(ENC, cur_fi, &codepoint,
+                                          &(text->text_props), NULL, 0, 1,
+                                          EVAS_TEXT_PROPS_MODE_NONE,
+                                          o->cur.font_description_normal->lang);
+     }
+   /* --- end cache lookup --- */
 
    text->x = x;
    text->r = r;
@@ -1300,6 +1434,8 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
    evas_object_inform_call_resize(eo_obj, obj);
    o->changed = 1;
    o->core_change = 1;
+   /* Font instances changed: cached text_props are now invalid */
+   _textgrid_cache_invalidate(o);
    evas_object_textgrid_rows_reset(eo_obj);
    evas_object_change(eo_obj, obj);
 }
