@@ -500,6 +500,7 @@ _stretch_region_load(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
           stretchable += o->cur->stretch.horizontal.region[i] & 0x7F;
      }
 
+   if (stretchable < 1) stretchable = 1;
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    {
       state_write->stretch.horizontal.stretchable = stretchable;
@@ -516,6 +517,7 @@ _stretch_region_load(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
           stretchable += o->cur->stretch.vertical.region[i] & 0x7F;
      }
 
+   if (stretchable < 1) stretchable = 1;
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    {
       state_write->stretch.vertical.stretchable = stretchable;
