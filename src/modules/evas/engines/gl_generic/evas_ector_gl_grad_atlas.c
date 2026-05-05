@@ -1,0 +1,222 @@
+/* SPDX-License-Identifier: LGPL-2.1-only */
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifndef SPAN_GRAD_ATLAS_TEST_BUILD
+/* Normal engine build: include the full evas GL private headers so that
+ * GL functions (glGenTextures etc.) are available. */
+# include "evas_gl_private.h"
+#else
+/* Test build: no real GL context.  Pull in Eina.h for basic types.
+ * GL type stubs (GLuint) are provided by evas_ector_gl_grad_atlas.h
+ * when SPAN_GRAD_ATLAS_TEST_BUILD is defined. */
+# include <Eina.h>
+/* Stub out all GL functions used by the implementation — in test mode
+ * _ensure_gl short-circuits before any GL call, and _upload_row skips
+ * the GL path, so these are never reached. */
+# define glGenTextures(n, ids)        ((void)0)
+# define glDeleteTextures(n, ids)     ((void)0)
+# define glBindTexture(t, id)         ((void)0)
+# define glTexImage2D(...)            ((void)0)
+# define glTexSubImage2D(...)         ((void)0)
+# define glTexParameteri(...)         ((void)0)
+# define GL_TEXTURE_2D                0x0DE1
+# define GL_RGBA                      0x1908
+# define GL_UNSIGNED_BYTE             0x1401
+# define GL_LINEAR                    0x2601
+# define GL_TEXTURE_MIN_FILTER        0x2801
+# define GL_TEXTURE_MAG_FILTER        0x2800
+# define GL_CLAMP_TO_EDGE             0x812F
+# define GL_TEXTURE_WRAP_S            0x2802
+# define GL_TEXTURE_WRAP_T            0x2803
+#endif
+
+#include "evas_ector_gl_grad_atlas.h"
+
+/* FNV-1a 32-bit hash over 4096 bytes.  Chosen for speed; cache lookup
+ * uses byte-compare on hit to defend against collisions. */
+uint32_t
+span_grad_atlas_hash(const uint8_t *bytes)
+{
+   uint32_t h = 0x811c9dc5u;
+   for (int i = 0; i < SPAN_GRAD_ATLAS_ROW_BYTES; i++)
+     {
+        h ^= (uint32_t)bytes[i];
+        h *= 0x01000193u;
+     }
+   return h;
+}
+
+Span_Grad_Atlas *
+span_grad_atlas_new(void)
+{
+   Span_Grad_Atlas *a = calloc(1, sizeof(*a));
+   if (!a) return NULL;
+
+   a->cpu_mirror = malloc((size_t)SPAN_GRAD_ATLAS_H * SPAN_GRAD_ATLAS_ROW_BYTES);
+   if (!a->cpu_mirror)
+     {
+        free(a);
+        return NULL;
+     }
+   /* GL allocation is deferred to first lookup so this is callable
+    * outside an active GL context (e.g. unit tests).  See _ensure_gl(). */
+   return a;
+}
+
+void
+span_grad_atlas_free(Span_Grad_Atlas *a)
+{
+   if (!a) return;
+   if (a->tex) glDeleteTextures(1, &a->tex);
+   free(a->cpu_mirror);
+   free(a);
+}
+
+void
+span_grad_atlas_frame_begin(Span_Grad_Atlas *a)
+{
+   if (!a) return;
+   a->current_frame++;
+}
+
+/* Lazily create the GL texture on first use.  Returns 1 on success, 0 on
+ * failure (caller marks atlas disabled). */
+static int
+_ensure_gl(Span_Grad_Atlas *a)
+{
+#ifdef SPAN_GRAD_ATLAS_TEST_BUILD
+   if (a->test_skip_gl) return 1;
+#endif
+   if (a->tex) return 1;
+   if (a->disabled) return 0;
+
+   GLuint t = 0;
+   glGenTextures(1, &t);
+   if (!t) { a->disabled = 1; return 0; }
+   glBindTexture(GL_TEXTURE_2D, t);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                SPAN_GRAD_ATLAS_W, SPAN_GRAD_ATLAS_H, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_CLAMP_TO_EDGE);
+   a->tex = t;
+   return 1;
+}
+
+/* Find row by (grad_id, version) — O(64). Returns row idx or -1. */
+static int
+_find_identity(Span_Grad_Atlas *a, void *grad_id, uint32_t version)
+{
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+     if (a->rows[i].occupied &&
+         a->rows[i].grad_id == grad_id &&
+         a->rows[i].version == version)
+       return i;
+   return -1;
+}
+
+/* Find row whose hash matches AND whose CPU mirror byte-equals bytes.
+ * Returns row idx or -1.  Distinguishes true hits from hash collisions. */
+static int
+_find_by_content(Span_Grad_Atlas *a, uint32_t hash, const uint8_t *bytes)
+{
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+     {
+        if (!a->rows[i].occupied) continue;
+        if (a->rows[i].hash != hash) continue;
+        if (memcmp(a->cpu_mirror + (size_t)i * SPAN_GRAD_ATLAS_ROW_BYTES,
+                   bytes, SPAN_GRAD_ATLAS_ROW_BYTES) == 0)
+          return i;
+     }
+   return -1;
+}
+
+/* Free row, else evict the smallest-last_used row.  Returns idx. */
+static int
+_alloc_row(Span_Grad_Atlas *a)
+{
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+     if (!a->rows[i].occupied) return i;
+
+   int      best     = 0;
+   uint32_t best_age = a->rows[0].last_used;
+   for (int i = 1; i < SPAN_GRAD_ATLAS_H; i++)
+     if (a->rows[i].last_used < best_age)
+       { best = i; best_age = a->rows[i].last_used; }
+   return best;
+}
+
+/* Upload bytes to row idx via glTexSubImage2D and copy to mirror. */
+static void
+_upload_row(Span_Grad_Atlas *a, int row, const uint8_t *bytes)
+{
+#ifdef SPAN_GRAD_ATLAS_TEST_BUILD
+   if (a->test_skip_gl) goto mirror_only;
+#endif
+   if (a->tex)
+     {
+        glBindTexture(GL_TEXTURE_2D, a->tex);
+        glTexSubImage2D(GL_TEXTURE_2D, 0,
+                        0, row, SPAN_GRAD_ATLAS_W, 1,
+                        GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+     }
+#ifdef SPAN_GRAD_ATLAS_TEST_BUILD
+mirror_only:
+#endif
+   memcpy(a->cpu_mirror + (size_t)row * SPAN_GRAD_ATLAS_ROW_BYTES,
+          bytes, SPAN_GRAD_ATLAS_ROW_BYTES);
+}
+
+int
+span_grad_atlas_lookup(Span_Grad_Atlas *a, void *grad_id,
+                       uint32_t version, const uint8_t *bytes)
+{
+   if (!a || a->disabled) return -1;
+
+   /* Identity fast path. */
+   int row = _find_identity(a, grad_id, version);
+   if (row >= 0)
+     {
+        a->rows[row].last_used = a->current_frame;
+        return row;
+     }
+
+   /* Hash + byte-compare path. */
+   uint32_t h = span_grad_atlas_hash(bytes);
+   row = _find_by_content(a, h, bytes);
+   if (row >= 0)
+     {
+        a->rows[row].grad_id   = grad_id;
+        a->rows[row].version   = version;
+        a->rows[row].last_used = a->current_frame;
+        return row;
+     }
+
+   /* Miss — allocate or evict, upload. */
+   if (!_ensure_gl(a)) return -1;
+   row = _alloc_row(a);
+   _upload_row(a, row, bytes);
+   a->rows[row].hash      = h;
+   a->rows[row].version   = version;
+   a->rows[row].grad_id   = grad_id;
+   a->rows[row].last_used = a->current_frame;
+   a->rows[row].occupied  = 1;
+   return row;
+}
+
+#ifdef SPAN_GRAD_ATLAS_TEST_BUILD
+void
+span_grad_atlas_test_enable(Span_Grad_Atlas *a)
+{
+   if (!a) return;
+   a->test_skip_gl = 1;
+}
+#endif
