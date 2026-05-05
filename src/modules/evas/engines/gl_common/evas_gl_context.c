@@ -1461,6 +1461,13 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              PIPE_FREE(gc->pipe[i].array.mask);
              PIPE_FREE(gc->pipe[i].array.masksam);
              FREE(gc->pipe[i].array.filter_data);
+             if (gc->pipe[i].array.span_vertex_data)
+               {
+                  free(gc->pipe[i].array.span_vertex_data);
+                  gc->pipe[i].array.span_vertex_data      = NULL;
+                  gc->pipe[i].array.span_vertex_data_size = 0;
+                  gc->pipe[i].array.span_vertex_data_used = 0;
+               }
           }
      }
 
@@ -2079,180 +2086,391 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
  * from the standard flush path. */
 static Evas_GL_Program _span_prog_dummy;
 
+/* Fill 6 vertices of the per-variant interleaved struct from Span_Pipe_Params
+ * and pre-computed NDC quad corners.  pos varies per vertex; all other fields
+ * are replicated identically across the 6 vertices of a quad.
+ *
+ * NDC quad order: TL(0), TR(1), BR(2), BL(3) — two triangles: 0,1,2 + 0,2,3.
+ */
+static void
+_span_fill_vertices(void *out_buf, Span_Variant variant,
+                    const Span_Pipe_Params *p,
+                    const GLfloat ndc_quad[8] /* TL,TR,BR,BL: x0y0,x1y0,x1y1,x0y1 */)
+{
+   const int idx[6] = { 0, 1, 2, 0, 2, 3 }; /* triangle fan indices into ndc_quad */
+
+   /* Mask inv: 0=normal, 1=invert, derived from comp_method same as _span_draw_pass */
+   float mask_inv = 0.0f;
+   if (p->comp_method == 2 || p->comp_method == 4) mask_inv = 1.0f;
+
+   /* Build the common header once; pos is overwritten per vertex in the loop. */
+   Span_Vertex_Common common;
+   common.fbo_fill_off[0]     = p->fbo_off_x;
+   common.fbo_fill_off[1]     = p->fbo_off_y;
+   common.fbo_fill_off[2]     = p->fill.off_tx;
+   common.fbo_fill_off[3]     = p->fill.off_ty;
+   common.stroke_off_flags[0] = p->stroke.off_tx;
+   common.stroke_off_flags[1] = p->stroke.off_ty;
+   common.stroke_off_flags[2] = (GLfloat)p->max_spans;
+   common.stroke_off_flags[3] = (GLfloat)((p->fill.tex   ? 1 : 0) |
+                                           (p->stroke.tex ? 2 : 0));
+   common.x_min[0] = (GLfloat)p->fill.x_min;
+   common.x_min[1] = (GLfloat)p->stroke.x_min;
+   /* mul_col: premultiplied ARGB 0xAARRGGBB — decode as R,G,B,A for the shader */
+   common.mul_col[0] = (float)((p->mul_col >> 16) & 0xFF) / 255.0f; /* R */
+   common.mul_col[1] = (float)((p->mul_col >>  8) & 0xFF) / 255.0f; /* G */
+   common.mul_col[2] = (float)( p->mul_col        & 0xFF) / 255.0f; /* B */
+   common.mul_col[3] = (float)((p->mul_col >> 24) & 0xFF) / 255.0f; /* A */
+
+   for (int v = 0; v < 6; v++)
+     {
+        const int corner = idx[v];
+        common.pos[0] = ndc_quad[corner * 2 + 0];
+        common.pos[1] = ndc_quad[corner * 2 + 1];
+
+        switch (variant)
+          {
+           case SPAN_VARIANT_SOLID:
+             {
+                Span_Vertex_Solid *o =
+                   (Span_Vertex_Solid *)((char *)out_buf + v * sizeof(*o));
+                o->c = common;
+                o->fill_col[0]   = (float)((p->fill.col   >> 16) & 0xFF) / 255.0f;
+                o->fill_col[1]   = (float)((p->fill.col   >>  8) & 0xFF) / 255.0f;
+                o->fill_col[2]   = (float)( p->fill.col          & 0xFF) / 255.0f;
+                o->fill_col[3]   = (float)((p->fill.col   >> 24) & 0xFF) / 255.0f;
+                o->stroke_col[0] = (float)((p->stroke.col >> 16) & 0xFF) / 255.0f;
+                o->stroke_col[1] = (float)((p->stroke.col >>  8) & 0xFF) / 255.0f;
+                o->stroke_col[2] = (float)( p->stroke.col        & 0xFF) / 255.0f;
+                o->stroke_col[3] = (float)((p->stroke.col >> 24) & 0xFF) / 255.0f;
+                break;
+             }
+           case SPAN_VARIANT_SOLID_MASK:
+             {
+                Span_Vertex_Solid_Mask *o =
+                   (Span_Vertex_Solid_Mask *)((char *)out_buf + v * sizeof(*o));
+                o->s.c = common;
+                o->s.fill_col[0]   = (float)((p->fill.col   >> 16) & 0xFF) / 255.0f;
+                o->s.fill_col[1]   = (float)((p->fill.col   >>  8) & 0xFF) / 255.0f;
+                o->s.fill_col[2]   = (float)( p->fill.col          & 0xFF) / 255.0f;
+                o->s.fill_col[3]   = (float)((p->fill.col   >> 24) & 0xFF) / 255.0f;
+                o->s.stroke_col[0] = (float)((p->stroke.col >> 16) & 0xFF) / 255.0f;
+                o->s.stroke_col[1] = (float)((p->stroke.col >>  8) & 0xFF) / 255.0f;
+                o->s.stroke_col[2] = (float)( p->stroke.col        & 0xFF) / 255.0f;
+                o->s.stroke_col[3] = (float)((p->stroke.col >> 24) & 0xFF) / 255.0f;
+                o->mask_off_size[0] = p->mask_off_x;
+                o->mask_off_size[1] = p->mask_off_y;
+                o->mask_off_size[2] = p->mask_w;
+                o->mask_off_size[3] = p->mask_h;
+                o->mask_comp_inv[0]   = (GLfloat)p->comp_method;
+                o->mask_comp_inv[1]   = mask_inv;
+                break;
+             }
+           case SPAN_VARIANT_GRADIENT:
+             {
+                Span_Vertex_Gradient *o =
+                   (Span_Vertex_Gradient *)((char *)out_buf + v * sizeof(*o));
+                o->c = common;
+                o->fill_grad_abc_y[0]    = p->fill.grad_a;
+                o->fill_grad_abc_y[1]    = p->fill.grad_b;
+                o->fill_grad_abc_y[2]    = p->fill.grad_c;
+                o->fill_grad_abc_y[3]    = p->fill.grad_ramp_y;
+                o->fill_grad_def[0]      = p->fill.grad_d;
+                o->fill_grad_def[1]      = p->fill.grad_e;
+                o->fill_grad_def[2]      = p->fill.grad_f;
+                o->fill_grad_def[3]      = (GLfloat)p->fill.grad_type;
+                o->fill_grad_radial[0]   = p->fill.grad_ra;
+                o->fill_grad_radial[1]   = p->fill.grad_rdx;
+                o->fill_grad_radial[2]   = p->fill.grad_rdy;
+                o->fill_grad_radial[3]   = (GLfloat)p->fill.grad_spread;
+                o->stroke_grad_abc_y[0]  = p->stroke.grad_a;
+                o->stroke_grad_abc_y[1]  = p->stroke.grad_b;
+                o->stroke_grad_abc_y[2]  = p->stroke.grad_c;
+                o->stroke_grad_abc_y[3]  = p->stroke.grad_ramp_y;
+                o->stroke_grad_def[0]    = p->stroke.grad_d;
+                o->stroke_grad_def[1]    = p->stroke.grad_e;
+                o->stroke_grad_def[2]    = p->stroke.grad_f;
+                o->stroke_grad_def[3]    = (GLfloat)p->stroke.grad_type;
+                o->stroke_grad_radial[0] = p->stroke.grad_ra;
+                o->stroke_grad_radial[1] = p->stroke.grad_rdx;
+                o->stroke_grad_radial[2] = p->stroke.grad_rdy;
+                o->stroke_grad_radial[3] = (GLfloat)p->stroke.grad_spread;
+                break;
+             }
+           case SPAN_VARIANT_GRADIENT_MASK:
+             {
+                Span_Vertex_Gradient_Mask *o =
+                   (Span_Vertex_Gradient_Mask *)((char *)out_buf + v * sizeof(*o));
+                o->g.c = common;
+                o->g.fill_grad_abc_y[0]    = p->fill.grad_a;
+                o->g.fill_grad_abc_y[1]    = p->fill.grad_b;
+                o->g.fill_grad_abc_y[2]    = p->fill.grad_c;
+                o->g.fill_grad_abc_y[3]    = p->fill.grad_ramp_y;
+                o->g.fill_grad_def[0]      = p->fill.grad_d;
+                o->g.fill_grad_def[1]      = p->fill.grad_e;
+                o->g.fill_grad_def[2]      = p->fill.grad_f;
+                o->g.fill_grad_def[3]      = (GLfloat)p->fill.grad_type;
+                o->g.fill_grad_radial[0]   = p->fill.grad_ra;
+                o->g.fill_grad_radial[1]   = p->fill.grad_rdx;
+                o->g.fill_grad_radial[2]   = p->fill.grad_rdy;
+                o->g.fill_grad_radial[3]   = (GLfloat)p->fill.grad_spread;
+                o->g.stroke_grad_abc_y[0]  = p->stroke.grad_a;
+                o->g.stroke_grad_abc_y[1]  = p->stroke.grad_b;
+                o->g.stroke_grad_abc_y[2]  = p->stroke.grad_c;
+                o->g.stroke_grad_abc_y[3]  = p->stroke.grad_ramp_y;
+                o->g.stroke_grad_def[0]    = p->stroke.grad_d;
+                o->g.stroke_grad_def[1]    = p->stroke.grad_e;
+                o->g.stroke_grad_def[2]    = p->stroke.grad_f;
+                o->g.stroke_grad_def[3]    = (GLfloat)p->stroke.grad_type;
+                o->g.stroke_grad_radial[0] = p->stroke.grad_ra;
+                o->g.stroke_grad_radial[1] = p->stroke.grad_rdx;
+                o->g.stroke_grad_radial[2] = p->stroke.grad_rdy;
+                o->g.stroke_grad_radial[3] = (GLfloat)p->stroke.grad_spread;
+                o->mask_off_size[0] = p->mask_off_x;
+                o->mask_off_size[1] = p->mask_off_y;
+                o->mask_off_size[2] = p->mask_w;
+                o->mask_off_size[3] = p->mask_h;
+                o->mask_comp_inv[0]   = (GLfloat)p->comp_method;
+                o->mask_comp_inv[1]   = mask_inv;
+                break;
+             }
+           default: break;
+          }
+     }
+}
+
+/* Find an existing mergeable pipe entry or allocate a new one.
+ * Returns pipe index, or -1 if flush loop was triggered (caller retries). */
+static int
+_span_pipe_find_or_alloc(Evas_Engine_GL_Context *gc,
+                         const Span_Pipe_Params *p,
+                         Span_Variant variant,
+                         float _inv_tw, float _inv_th)
+{
+   int pn = gc->state.top_pipe;
+
+#define _S gc->pipe[pn].shader
+   if (gc->pipe[pn].array.num > 0)
+     {
+        Eina_Bool can_merge = EINA_FALSE;
+
+        if (gc->pipe[pn].region.type == SHD_SPAN &&
+            _S.span_fill_tex          == p->fill.tex        &&
+            _S.span_fill_off_tx       == p->fill.off_tx     &&
+            _S.span_fill_off_ty       == p->fill.off_ty     &&
+            _S.span_fill_col          == p->fill.col        &&
+            _S.span_stroke_tex        == p->stroke.tex      &&
+            _S.span_stroke_off_tx     == p->stroke.off_tx   &&
+            _S.span_stroke_off_ty     == p->stroke.off_ty   &&
+            _S.span_stroke_col        == p->stroke.col      &&
+            _S.span_inv_tw            == _inv_tw            &&
+            _S.span_inv_th            == _inv_th            &&
+            _S.span_max_spans         == p->max_spans       &&
+            _S.span_mul_col           == p->mul_col         &&
+            _S.span_fill_type         == p->fill.type       &&
+            _S.span_stroke_type       == p->stroke.type     &&
+            _S.span_fill_grad_a       == p->fill.grad_a     &&
+            _S.span_fill_grad_b       == p->fill.grad_b     &&
+            _S.span_fill_grad_c       == p->fill.grad_c     &&
+            _S.span_fill_grad_spread  == p->fill.grad_spread &&
+            _S.span_fill_grad_ramp_y  == p->fill.grad_ramp_y  &&
+            _S.span_fill_grad_type    == p->fill.grad_type  &&
+            _S.span_fill_grad_d       == p->fill.grad_d     &&
+            _S.span_fill_grad_e       == p->fill.grad_e     &&
+            _S.span_fill_grad_f       == p->fill.grad_f     &&
+            _S.span_fill_grad_ra      == p->fill.grad_ra    &&
+            _S.span_fill_grad_rdx     == p->fill.grad_rdx   &&
+            _S.span_fill_grad_rdy     == p->fill.grad_rdy   &&
+            _S.span_stroke_grad_a      == p->stroke.grad_a     &&
+            _S.span_stroke_grad_b      == p->stroke.grad_b     &&
+            _S.span_stroke_grad_c      == p->stroke.grad_c     &&
+            _S.span_stroke_grad_spread == p->stroke.grad_spread &&
+            _S.span_stroke_grad_ramp_y == p->stroke.grad_ramp_y  &&
+            _S.span_stroke_grad_type   == p->stroke.grad_type  &&
+            _S.span_stroke_grad_d      == p->stroke.grad_d     &&
+            _S.span_stroke_grad_e      == p->stroke.grad_e     &&
+            _S.span_stroke_grad_f      == p->stroke.grad_f     &&
+            _S.span_stroke_grad_ra     == p->stroke.grad_ra    &&
+            _S.span_stroke_grad_rdx    == p->stroke.grad_rdx   &&
+            _S.span_stroke_grad_rdy    == p->stroke.grad_rdy   &&
+            _S.span_fbo_off_x          == p->fbo_off_x         &&
+            _S.span_fbo_off_y          == p->fbo_off_y         &&
+            _S.span_fill_x_min         == p->fill.x_min        &&
+            _S.span_stroke_x_min       == p->stroke.x_min      &&
+            _S.span_grad_atlas_tex     == p->grad_atlas_tex     &&
+            _S.span_mask_tex           == p->mask_tex           &&
+            _S.span_comp_method        == p->comp_method        &&
+            _S.span_mask_w             == p->mask_w             &&
+            _S.span_mask_h             == p->mask_h             &&
+            _S.span_mask_off_x         == p->mask_off_x         &&
+            _S.span_mask_off_y         == p->mask_off_y)
+          can_merge = EINA_TRUE;
+
+        /* 1024-quad cap: even a matching entry is full if it's at capacity. */
+        if (can_merge)
+          {
+             size_t vsize = span_vertex_size(variant);
+             if (gc->pipe[pn].array.span_vertex_data_used / vsize
+                 >= (size_t)SPAN_PIPE_MAX_QUADS * 6)
+               can_merge = EINA_FALSE; /* full — fall through to new entry */
+          }
+
+        if (!can_merge)
+          {
+             pn = gc->state.top_pipe + 1;
+             if (pn >= gc->shared->info.tune.pipes.max)
+               return -1; /* caller must flush and retry */
+             gc->state.top_pipe = pn;
+          }
+     }
+#undef _S
+   return pn;
+}
+
 void
 evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
-                                 const Span_Pipe_Params *p)
+                                 const Span_Pipe_Params *p,
+                                 const GLfloat ndc_quad[8])
 {
-   int pn = 0;
-   /* Precompute reciprocals once; used in both the merge predicate and
-    * the write block below. */
+   /* Precompute reciprocals once for the merge predicate. */
    float _inv_tw = 1.0f / (float)p->pool_w;
    float _inv_th = 1.0f / (float)p->pool_h;
 
-   /* SHD_SPAN pipes carry per-shape uniforms (textures, colors, offsets,
-    * gradient params).  Two pushes may merge ONLY when every uniform
-    * value matches — otherwise the second push's uniforms overwrite the
-    * first's.  Field-by-field comparison with early exit; this also
-    * catches the atlas case where shapes share a GL texture name but
-    * differ in offset/color. */
+   /* Determine variant from fill/stroke gradient types and mask presence.
+    * Span_Data_Type values: 1=Solid, 2=LinearGradient, 3=RadialGradient.
+    * SPAN_FILL_TYPE_GRADIENT_MIN == 2 (defined in evas_ector_gl_span_types.h). */
+   Span_Variant variant;
+   if (p->fill.type  >= SPAN_FILL_TYPE_GRADIENT_MIN ||
+       p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN)
+     variant = (p->mask_tex != 0) ? SPAN_VARIANT_GRADIENT_MASK
+                                   : SPAN_VARIANT_GRADIENT;
+   else
+     variant = (p->mask_tex != 0) ? SPAN_VARIANT_SOLID_MASK
+                                   : SPAN_VARIANT_SOLID;
+
+   int pn;
+ again:
+   pn = _span_pipe_find_or_alloc(gc, p, variant, _inv_tw, _inv_th);
+   if (pn < 0)
+     {
+        shader_array_flush(gc);
+        goto again;
+     }
 
 #define _S gc->pipe[pn].shader
-   /* Float == is intentional: both sides come from the same integer-
-    * derived computation path, so values are bit-identical when equal. */
-   {
-   again:
-      pn = gc->state.top_pipe;
-      if (gc->pipe[pn].array.num > 0)
-        {
-           Eina_Bool can_merge = EINA_FALSE;
-
-           if (gc->pipe[pn].region.type == SHD_SPAN &&
-               _S.span_fill_tex          == p->fill.tex        &&
-               _S.span_fill_off_tx       == p->fill.off_tx     &&
-               _S.span_fill_off_ty       == p->fill.off_ty     &&
-               _S.span_fill_col          == p->fill.col        &&
-               _S.span_stroke_tex        == p->stroke.tex      &&
-               _S.span_stroke_off_tx     == p->stroke.off_tx   &&
-               _S.span_stroke_off_ty     == p->stroke.off_ty   &&
-               _S.span_stroke_col        == p->stroke.col      &&
-               _S.span_inv_tw            == _inv_tw            &&
-               _S.span_inv_th            == _inv_th            &&
-               _S.span_max_spans         == p->max_spans       &&
-               _S.span_mul_col           == p->mul_col         &&
-               _S.span_fill_type         == p->fill.type       &&
-               _S.span_stroke_type       == p->stroke.type     &&
-               _S.span_fill_grad_a       == p->fill.grad_a     &&
-               _S.span_fill_grad_b       == p->fill.grad_b     &&
-               _S.span_fill_grad_c       == p->fill.grad_c     &&
-               _S.span_fill_grad_spread  == p->fill.grad_spread &&
-               _S.span_fill_grad_ramp_y  == p->fill.grad_ramp_y  &&
-               _S.span_fill_grad_type    == p->fill.grad_type  &&
-               _S.span_fill_grad_d       == p->fill.grad_d     &&
-               _S.span_fill_grad_e       == p->fill.grad_e     &&
-               _S.span_fill_grad_f       == p->fill.grad_f     &&
-               _S.span_fill_grad_ra      == p->fill.grad_ra    &&
-               _S.span_fill_grad_rdx     == p->fill.grad_rdx   &&
-               _S.span_fill_grad_rdy     == p->fill.grad_rdy   &&
-               _S.span_stroke_grad_a      == p->stroke.grad_a     &&
-               _S.span_stroke_grad_b      == p->stroke.grad_b     &&
-               _S.span_stroke_grad_c      == p->stroke.grad_c     &&
-               _S.span_stroke_grad_spread == p->stroke.grad_spread &&
-               _S.span_stroke_grad_ramp_y == p->stroke.grad_ramp_y  &&
-               _S.span_stroke_grad_type   == p->stroke.grad_type  &&
-               _S.span_stroke_grad_d      == p->stroke.grad_d     &&
-               _S.span_stroke_grad_e      == p->stroke.grad_e     &&
-               _S.span_stroke_grad_f      == p->stroke.grad_f     &&
-               _S.span_stroke_grad_ra     == p->stroke.grad_ra    &&
-               _S.span_stroke_grad_rdx    == p->stroke.grad_rdx   &&
-               _S.span_stroke_grad_rdy    == p->stroke.grad_rdy   &&
-               _S.span_fbo_off_x          == p->fbo_off_x         &&
-               _S.span_fbo_off_y          == p->fbo_off_y         &&
-               _S.span_fill_x_min         == p->fill.x_min        &&
-               _S.span_stroke_x_min       == p->stroke.x_min      &&
-               _S.span_grad_atlas_tex     == p->grad_atlas_tex     &&
-               _S.span_mask_tex           == p->mask_tex           &&
-               _S.span_comp_method        == p->comp_method        &&
-               _S.span_mask_w             == p->mask_w             &&
-               _S.span_mask_h             == p->mask_h             &&
-               _S.span_mask_off_x         == p->mask_off_x         &&
-               _S.span_mask_off_y         == p->mask_off_y)
-               can_merge = EINA_TRUE;
-
-            if (!can_merge)
-             {
-                pn = gc->state.top_pipe + 1;
-                if (pn >= gc->shared->info.tune.pipes.max)
-                  {
-                     shader_array_flush(gc);
-                     goto again;
-                  }
-                gc->state.top_pipe = pn;
-             }
-        }
-      vertex_array_size_check(gc, pn, 6);
-   }
-
    /* Write span uniform fields — for a merge this is a redundant
     * overwrite with identical values; for a new pipe it initialises. */
-   {
-        gc->pipe[pn].region.type       = SHD_SPAN;
-        gc->pipe[pn].shader.prog       = &_span_prog_dummy;
-        gc->pipe[pn].shader.cur_tex    = p->fill.tex ? p->fill.tex : p->stroke.tex;
-        gc->pipe[pn].shader.blend      = EINA_TRUE;
-        gc->pipe[pn].shader.render_op  = EVAS_RENDER_BLEND;
-        gc->pipe[pn].shader.clip       = 0;
-        gc->pipe[pn].shader.smooth     = 0;
+   gc->pipe[pn].region.type       = SHD_SPAN;
+   gc->pipe[pn].shader.prog       = &_span_prog_dummy;
+   gc->pipe[pn].shader.cur_tex    = p->fill.tex ? p->fill.tex : p->stroke.tex;
+   gc->pipe[pn].shader.blend      = EINA_TRUE;
+   gc->pipe[pn].shader.render_op  = EVAS_RENDER_BLEND;
+   gc->pipe[pn].shader.clip       = 0;
+   gc->pipe[pn].shader.smooth     = 0;
 
-        _S.span_fill_tex      = p->fill.tex;
-        _S.span_fill_off_tx   = p->fill.off_tx;
-        _S.span_fill_off_ty   = p->fill.off_ty;
-        _S.span_fill_col      = p->fill.col;
-        _S.span_stroke_tex    = p->stroke.tex;
-        _S.span_stroke_off_tx = p->stroke.off_tx;
-        _S.span_stroke_off_ty = p->stroke.off_ty;
-        _S.span_stroke_col    = p->stroke.col;
-        _S.span_inv_tw        = _inv_tw;
-        _S.span_inv_th        = _inv_th;
-        _S.span_max_spans     = p->max_spans;
-        _S.span_mul_col       = p->mul_col;
-        _S.span_fill_type     = p->fill.type;
-        _S.span_stroke_type   = p->stroke.type;
+   _S.span_fill_tex      = p->fill.tex;
+   _S.span_fill_off_tx   = p->fill.off_tx;
+   _S.span_fill_off_ty   = p->fill.off_ty;
+   _S.span_fill_col      = p->fill.col;
+   _S.span_stroke_tex    = p->stroke.tex;
+   _S.span_stroke_off_tx = p->stroke.off_tx;
+   _S.span_stroke_off_ty = p->stroke.off_ty;
+   _S.span_stroke_col    = p->stroke.col;
+   _S.span_inv_tw        = _inv_tw;
+   _S.span_inv_th        = _inv_th;
+   _S.span_max_spans     = p->max_spans;
+   _S.span_mul_col       = p->mul_col;
+   _S.span_fill_type     = p->fill.type;
+   _S.span_stroke_type   = p->stroke.type;
 
-        _S.span_fill_grad_a      = p->fill.grad_a;
-        _S.span_fill_grad_b      = p->fill.grad_b;
-        _S.span_fill_grad_c      = p->fill.grad_c;
-        _S.span_fill_grad_spread = p->fill.grad_spread;
-        _S.span_fill_grad_ramp_y = p->fill.grad_ramp_y;
-        _S.span_fill_grad_type   = p->fill.grad_type;
-        _S.span_fill_grad_d      = p->fill.grad_d;
-        _S.span_fill_grad_e      = p->fill.grad_e;
-        _S.span_fill_grad_f      = p->fill.grad_f;
-        _S.span_fill_grad_ra     = p->fill.grad_ra;
-        _S.span_fill_grad_rdx    = p->fill.grad_rdx;
-        _S.span_fill_grad_rdy    = p->fill.grad_rdy;
+   _S.span_fill_grad_a      = p->fill.grad_a;
+   _S.span_fill_grad_b      = p->fill.grad_b;
+   _S.span_fill_grad_c      = p->fill.grad_c;
+   _S.span_fill_grad_spread = p->fill.grad_spread;
+   _S.span_fill_grad_ramp_y = p->fill.grad_ramp_y;
+   _S.span_fill_grad_type   = p->fill.grad_type;
+   _S.span_fill_grad_d      = p->fill.grad_d;
+   _S.span_fill_grad_e      = p->fill.grad_e;
+   _S.span_fill_grad_f      = p->fill.grad_f;
+   _S.span_fill_grad_ra     = p->fill.grad_ra;
+   _S.span_fill_grad_rdx    = p->fill.grad_rdx;
+   _S.span_fill_grad_rdy    = p->fill.grad_rdy;
 
-        _S.span_stroke_grad_a      = p->stroke.grad_a;
-        _S.span_stroke_grad_b      = p->stroke.grad_b;
-        _S.span_stroke_grad_c      = p->stroke.grad_c;
-        _S.span_stroke_grad_spread = p->stroke.grad_spread;
-        _S.span_stroke_grad_ramp_y = p->stroke.grad_ramp_y;
-        _S.span_stroke_grad_type   = p->stroke.grad_type;
-        _S.span_stroke_grad_d      = p->stroke.grad_d;
-        _S.span_stroke_grad_e      = p->stroke.grad_e;
-        _S.span_stroke_grad_f      = p->stroke.grad_f;
-        _S.span_stroke_grad_ra     = p->stroke.grad_ra;
-        _S.span_stroke_grad_rdx    = p->stroke.grad_rdx;
-        _S.span_stroke_grad_rdy    = p->stroke.grad_rdy;
+   _S.span_stroke_grad_a      = p->stroke.grad_a;
+   _S.span_stroke_grad_b      = p->stroke.grad_b;
+   _S.span_stroke_grad_c      = p->stroke.grad_c;
+   _S.span_stroke_grad_spread = p->stroke.grad_spread;
+   _S.span_stroke_grad_ramp_y = p->stroke.grad_ramp_y;
+   _S.span_stroke_grad_type   = p->stroke.grad_type;
+   _S.span_stroke_grad_d      = p->stroke.grad_d;
+   _S.span_stroke_grad_e      = p->stroke.grad_e;
+   _S.span_stroke_grad_f      = p->stroke.grad_f;
+   _S.span_stroke_grad_ra     = p->stroke.grad_ra;
+   _S.span_stroke_grad_rdx    = p->stroke.grad_rdx;
+   _S.span_stroke_grad_rdy    = p->stroke.grad_rdy;
 
-        _S.span_fbo_off_x    = p->fbo_off_x;
-        _S.span_fbo_off_y    = p->fbo_off_y;
-        _S.span_fill_x_min   = p->fill.x_min;
-        _S.span_stroke_x_min = p->stroke.x_min;
+   _S.span_fbo_off_x    = p->fbo_off_x;
+   _S.span_fbo_off_y    = p->fbo_off_y;
+   _S.span_fill_x_min   = p->fill.x_min;
+   _S.span_stroke_x_min = p->stroke.x_min;
 
-        _S.span_grad_atlas_tex = p->grad_atlas_tex;
-        _S.span_mask_tex     = p->mask_tex;
-        _S.span_comp_method  = p->comp_method;
-        _S.span_mask_w       = p->mask_w;
-        _S.span_mask_h       = p->mask_h;
-        _S.span_mask_off_x   = p->mask_off_x;
-        _S.span_mask_off_y   = p->mask_off_y;
-
-        gc->pipe[pn].array.line        = 0;
-        gc->pipe[pn].array.use_vertex  = 1;
-        gc->pipe[pn].array.use_color   = 0;
-        gc->pipe[pn].array.use_texuv   = 0;
-        gc->pipe[pn].array.use_texuv2  = 0;
-        gc->pipe[pn].array.use_texuv3  = 0;
-        gc->pipe[pn].array.use_texa    = 0;
-        gc->pipe[pn].array.use_texsam  = 0;
-        gc->pipe[pn].array.use_mask    = 0;
-        gc->pipe[pn].array.use_masksam = 0;
-     }
+   _S.span_grad_atlas_tex = p->grad_atlas_tex;
+   _S.span_mask_tex     = p->mask_tex;
+   _S.span_comp_method  = p->comp_method;
+   _S.span_mask_w       = p->mask_w;
+   _S.span_mask_h       = p->mask_h;
+   _S.span_mask_off_x   = p->mask_off_x;
+   _S.span_mask_off_y   = p->mask_off_y;
 #undef _S
 
+   gc->pipe[pn].array.line        = 0;
+   gc->pipe[pn].array.use_vertex  = 1;
+   gc->pipe[pn].array.use_color   = 0;
+   gc->pipe[pn].array.use_texuv   = 0;
+   gc->pipe[pn].array.use_texuv2  = 0;
+   gc->pipe[pn].array.use_texuv3  = 0;
+   gc->pipe[pn].array.use_texa    = 0;
+   gc->pipe[pn].array.use_texsam  = 0;
+   gc->pipe[pn].array.use_mask    = 0;
+   gc->pipe[pn].array.use_masksam = 0;
+
    pipe_region_expand(gc, pn, p->x, p->y, p->w, p->h);
+   vertex_array_size_check(gc, pn, 6);
    PIPE_GROW(gc, pn, 6);
    PUSH_6_VERTICES(pn, p->x, p->y, p->w, p->h);
+
+   /* --- Dual-write: also fill span_vertex_data (NDC, Task 3).
+    * The existing array.vertex upload (canvas-space, above) continues to
+    * drive the existing flush.  span_vertex_data carries NDC and is
+    * currently unused at flush-time; Task 4 will flip it to the source
+    * of truth and delete the array.vertex path for span pipes. */
+   {
+      const size_t vsize  = span_vertex_size(variant);
+      const size_t needed = gc->pipe[pn].array.span_vertex_data_used + 6 * vsize;
+      if (gc->pipe[pn].array.span_vertex_data_size < needed)
+        {
+           size_t new_size = gc->pipe[pn].array.span_vertex_data_size;
+           if (new_size == 0) new_size = vsize * 6;
+           while (new_size < needed) new_size *= 2;
+           void *grown = realloc(gc->pipe[pn].array.span_vertex_data, new_size);
+           if (grown)
+             {
+                gc->pipe[pn].array.span_vertex_data      = grown;
+                gc->pipe[pn].array.span_vertex_data_size = new_size;
+             }
+           /* If realloc fails we silently skip the struct fill for this push.
+            * The existing array.vertex path still works, so rendering is
+            * unaffected. */
+        }
+      if (gc->pipe[pn].array.span_vertex_data_size >= needed)
+        {
+           void *write_ptr = (char *)gc->pipe[pn].array.span_vertex_data
+                           + gc->pipe[pn].array.span_vertex_data_used;
+           _span_fill_vertices(write_ptr, variant, p, ndc_quad);
+           gc->pipe[pn].array.span_vertex_data_used += 6 * vsize;
+           gc->pipe[pn].array.span_variant            = variant;
+        }
+   }
 }
 
 #define SWAP(a, b, tmp) \
@@ -4208,6 +4426,10 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
               * subsequent IMAGE push expects them. */
              gc->pipe[i].array.num = 0;
              gc->pipe[i].array.alloc = 0;
+             /* Reset span_vertex_data_used so the buffer is reused
+              * from the start on the next flush cycle (size stays
+              * allocated as a high-water mark). */
+             gc->pipe[i].array.span_vertex_data_used = 0;
              continue;
           }
 
@@ -4906,6 +5128,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
+        gc->pipe[i].array.span_vertex_data_used = 0;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {

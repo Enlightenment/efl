@@ -46,6 +46,11 @@
 
 #include "evas_gl_define.h"
 
+/* Per-variant span-buffer interleaved vertex types, shared macros, and
+ * the SPAN_FILL_TYPE_GRADIENT_MIN threshold constant.
+ * Single source of truth — no duplication with evas_ector_gl_span.h. */
+#include "evas_ector_gl_span_types.h"
+
 #define EVAS_GL_TILE_SIZE 16
 
 #define SHAD_VERTEX 0
@@ -454,6 +459,14 @@ struct _Evas_Engine_GL_Context
          Eina_Bool      use_mask    : 1;
          Eina_Bool      use_masksam : 1;
          Eina_Bool      anti_alias  : 1;
+         /* Span-buffer attribute batching (Task 3+).
+          * Heap-grown interleaved buffer of Span_Vertex_<variant> structs.
+          * 6 vertices per quad (two triangles).  Filled at push-time;
+          * currently unused at flush-time (Task 4 will flip this). */
+         void          *span_vertex_data;       /* heap-grown; NULL until first push */
+         size_t         span_vertex_data_size;  /* bytes allocated */
+         size_t         span_vertex_data_used;  /* bytes filled */
+         Span_Variant   span_variant;           /* SOLID / SOLID_MASK / GRADIENT / GRADIENT_MASK */
       } array;
    } pipe[MAX_PIPES];
 
@@ -703,7 +716,8 @@ void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *
                                                         Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
                                                         Eina_Bool mask_smooth, Eina_Bool mask_color);
 void              evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
-                                                   const Span_Pipe_Params *p);
+                                                   const Span_Pipe_Params *p,
+                                                   const GLfloat ndc_quad[8]);
 void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *tex,
                                                     double sx, double sy, double sw, double sh,

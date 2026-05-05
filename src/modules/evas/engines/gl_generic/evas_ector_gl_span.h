@@ -430,4 +430,12 @@ void span_debug_readback(const char *label, unsigned int tex_id,
 #endif /* SPAN_DEBUG_PROBES */
 #endif /* EVAS_GL_COMMON_H */
 
+/* ------------------------------------------------------------------ */
+/* Per-variant interleaved vertex structs (Task 3)                     */
+/* ------------------------------------------------------------------ */
+
+/* Per-variant vertex types, SPAN_PIPE_MAX_QUADS, SPAN_FILL_TYPE_GRADIENT_MIN.
+ * Single source of truth shared with gl_common (no sw_ft_raster.h dependency). */
+#include "../gl_common/evas_ector_gl_span_types.h"
+
 #endif /* EVAS_ECTOR_GL_SPAN_H_ */

@@ -3312,7 +3312,22 @@ eng_ector_end(void *engine,
                                        }
                                   }
 
-                                evas_gl_common_context_span_push(gc, &_spp);
+                                /* Pre-convert canvas-space quad to NDC for
+                                 * span_vertex_data (Task 3 dual-write).
+                                 * array.vertex still receives canvas-space
+                                 * coords via PUSH_6_VERTICES. */
+                                GLfloat _ndc[8];
+                                float _gw = (float)(gc->w ? gc->w : 1);
+                                float _gh = (float)(gc->h ? gc->h : 1);
+                                float _x0 = (float)_spp.x;
+                                float _y0 = (float)_spp.y;
+                                float _x1 = _x0 + (float)_spp.w;
+                                float _y1 = _y0 + (float)_spp.h;
+                                _ndc[0] = _x0 / _gw * 2.0f - 1.0f; _ndc[1] = _y0 / _gh * 2.0f - 1.0f; /* TL */
+                                _ndc[2] = _x1 / _gw * 2.0f - 1.0f; _ndc[3] = _y0 / _gh * 2.0f - 1.0f; /* TR */
+                                _ndc[4] = _x1 / _gw * 2.0f - 1.0f; _ndc[5] = _y1 / _gh * 2.0f - 1.0f; /* BR */
+                                _ndc[6] = _x0 / _gw * 2.0f - 1.0f; _ndc[7] = _y1 / _gh * 2.0f - 1.0f; /* BL */
+                                evas_gl_common_context_span_push(gc, &_spp, _ndc);
                              }
                           }
                      }

@@ -21,6 +21,7 @@ engine_src = files([
 common_engine_src = [
   'evas_gl_private.h',
   'evas_gl_common.h',
+  'evas_ector_gl_span_types.h',
   'evas_gl_define.h',
   'evas_gl_context.c',
   'evas_gl_file_cache.c',
