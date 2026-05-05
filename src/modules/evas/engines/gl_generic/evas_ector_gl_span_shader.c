@@ -47,37 +47,97 @@ static const char _span_vertex_glsl[] =
 static const char _glsl_precision[] =
    "precision mediump float;\n";
 
-/* 15 base uniforms + MAX_SPANS macro shared by all four shaders.
+/* Which span-data bindings the variant declares uniforms for.  The
+ * shader source is assembled from a binding-specific uniforms block so
+ * that the GLSL compiler never sees a sampler the variant does not use,
+ * removing the need for the "* 0.0" sampler-keep workaround. */
+typedef enum {
+   SPAN_BIND_FILL_AND_STROKE = 0,  /* fill texture + stroke texture     */
+   SPAN_BIND_FILL_ONLY       = 1,  /* fill texture only                 */
+   SPAN_BIND_STROKE_ONLY     = 2,  /* stroke texture only               */
+   SPAN_BIND_COUNT
+} Span_Bind_Set;
+
+/* Always present, regardless of bindings.
  * #define MAX_SPANS must match SPAN_COLLECTOR_DEFAULT_MAX_SPANS (64).
  * u_inv_tw/th and u_fbo_offset participate in pixel-coordinate math that
  * can overflow fp16 on large surfaces — mark highp. */
-static const char _glsl_uniforms_common[] =
-   "uniform sampler2D u_fill_spans;\n"
-   "uniform sampler2D u_stroke_spans;\n"
-   "uniform highp float u_inv_tw;\n"
-   "uniform highp float u_inv_th;\n"
+static const char _glsl_uniforms_shared[] =
    "uniform int   u_max_spans;\n"
    "uniform vec4  u_mul_col;\n"
-   "uniform highp vec2  u_fill_offset;\n"
-   "uniform highp vec2  u_stroke_offset;\n"
-   "uniform highp vec2  u_fbo_offset;\n"
-   "uniform int   u_has_fill;\n"
-   "uniform int   u_has_stroke;\n"
-   "uniform int   u_fill_x_min;\n"
-   "uniform int   u_stroke_x_min;\n"
+   "uniform highp vec2 u_fbo_offset;\n"
+   "uniform highp float u_inv_tw;\n"
+   "uniform highp float u_inv_th;\n"
    "#define MAX_SPANS 64\n";
 
-/* Solid-only color uniforms (absent in gradient shaders → loc returns -1). */
-static const char _glsl_uniforms_solid[] =
-   "uniform vec4  u_fill_col;\n"
-   "uniform vec4  u_stroke_col;\n";
+/* Fill-and-stroke binding set: both span samplers + both offsets. */
+static const char _glsl_uniforms_bind_fs[] =
+   "uniform sampler2D u_fill_spans;\n"
+   "uniform sampler2D u_stroke_spans;\n"
+   "uniform highp vec2 u_fill_offset;\n"
+   "uniform highp vec2 u_stroke_offset;\n"
+   "uniform int u_has_fill;\n"
+   "uniform int u_has_stroke;\n"
+   "uniform int u_fill_x_min;\n"
+   "uniform int u_stroke_x_min;\n";
 
-/* 18 gradient coefficient uniforms (fill + stroke).
+/* Fill-only binding set: fill sampler + fill offset.
+ *
+ * All samplers and uniforms from the fill-and-stroke set are declared so
+ * that identifiers in dead branches resolve on strict GLSL ES 2.0 front-ends
+ * (notably Broadcom V3D 4.2).  The "#define u_has_stroke 0" makes the
+ * matching branch statically dead, so post-parse DCE removes the
+ * texture2D(u_stroke_spans, ...) dispatch and we still avoid runtime TMU
+ * work and register pressure on unused sampler results. */
+static const char _glsl_uniforms_bind_f[] =
+   "uniform sampler2D u_fill_spans;\n"
+   "uniform sampler2D u_stroke_spans;\n"
+   "uniform highp vec2 u_fill_offset;\n"
+   "uniform highp vec2 u_stroke_offset;\n"
+   "uniform int u_has_fill;\n"
+   "uniform int u_fill_x_min;\n"
+   "#define u_has_stroke 0\n"
+   "#define u_stroke_x_min 0\n";
+
+/* Stroke-only binding set: stroke sampler + stroke offset.
+ *
+ * All samplers and uniforms from the fill-and-stroke set are declared so
+ * that identifiers in dead branches resolve on strict GLSL ES 2.0 front-ends
+ * (notably Broadcom V3D 4.2).  The "#define u_has_fill 0" makes the
+ * matching branch statically dead, so post-parse DCE removes the
+ * texture2D(u_fill_spans, ...) dispatch and we still avoid runtime TMU
+ * work and register pressure on unused sampler results. */
+static const char _glsl_uniforms_bind_s[] =
+   "uniform sampler2D u_stroke_spans;\n"
+   "uniform sampler2D u_fill_spans;\n"
+   "uniform highp vec2 u_stroke_offset;\n"
+   "uniform highp vec2 u_fill_offset;\n"
+   "uniform int u_has_stroke;\n"
+   "uniform int u_stroke_x_min;\n"
+   "#define u_has_fill 0\n"
+   "#define u_fill_x_min 0\n";
+
+/* Solid color uniforms — split by binding set so unused uniforms are absent. */
+static const char _glsl_uniforms_solid_fs[] =
+   "uniform vec4 u_fill_col;\n"
+   "uniform vec4 u_stroke_col;\n";
+
+static const char _glsl_uniforms_solid_f[] =
+   "uniform vec4 u_fill_col;\n"
+   "uniform vec4 u_stroke_col;\n";   /* declared for V3D dead-branch resolution; DCE removes use */
+
+static const char _glsl_uniforms_solid_s[] =
+   "uniform vec4 u_stroke_col;\n"
+   "uniform vec4 u_fill_col;\n";     /* declared for V3D dead-branch resolution; DCE removes use */
+
+/* Gradient coefficient uniforms — split by binding set.
  *
  * highp is mandatory: these multiply gl_FragCoord (which can be > 2048 on
  * large surfaces) and are squared in the radial path, so mediump (fp16)
  * would lose precision in the gradient parameter. */
-static const char _glsl_uniforms_gradient[] =
+
+/* Fill-and-stroke gradient: both ramp samplers + all coefficients. */
+static const char _glsl_uniforms_gradient_fs[] =
    "uniform sampler2D u_fill_grad_ramp;\n"
    "uniform highp float u_fill_grad_a;\n"
    "uniform highp float u_fill_grad_b;\n"
@@ -102,6 +162,68 @@ static const char _glsl_uniforms_gradient[] =
    "uniform highp float u_stroke_grad_ra;\n"
    "uniform highp float u_stroke_grad_rdx;\n"
    "uniform highp float u_stroke_grad_rdy;\n";
+
+/* Fill-only gradient: fill ramp + fill coefficients.
+ * Stroke uniforms are also declared so dead-branch identifiers resolve on
+ * strict GLSL ES 2.0 front-ends (V3D 4.2).  "#define u_has_stroke 0" in
+ * _glsl_uniforms_bind_f makes the stroke branch statically dead; post-parse
+ * DCE then removes the texture2D(u_stroke_grad_ramp, ...) dispatch. */
+static const char _glsl_uniforms_gradient_f[] =
+   "uniform sampler2D u_fill_grad_ramp;\n"
+   "uniform highp float u_fill_grad_a;\n"
+   "uniform highp float u_fill_grad_b;\n"
+   "uniform highp float u_fill_grad_c;\n"
+   "uniform int   u_fill_grad_spread;\n"
+   "uniform int   u_fill_grad_type;\n"
+   "uniform highp float u_fill_grad_d;\n"
+   "uniform highp float u_fill_grad_e;\n"
+   "uniform highp float u_fill_grad_f;\n"
+   "uniform highp float u_fill_grad_ra;\n"
+   "uniform highp float u_fill_grad_rdx;\n"
+   "uniform highp float u_fill_grad_rdy;\n"
+   "uniform sampler2D u_stroke_grad_ramp;\n"
+   "uniform highp float u_stroke_grad_a;\n"
+   "uniform highp float u_stroke_grad_b;\n"
+   "uniform highp float u_stroke_grad_c;\n"
+   "uniform int   u_stroke_grad_spread;\n"
+   "uniform int   u_stroke_grad_type;\n"
+   "uniform highp float u_stroke_grad_d;\n"
+   "uniform highp float u_stroke_grad_e;\n"
+   "uniform highp float u_stroke_grad_f;\n"
+   "uniform highp float u_stroke_grad_ra;\n"
+   "uniform highp float u_stroke_grad_rdx;\n"
+   "uniform highp float u_stroke_grad_rdy;\n";
+
+/* Stroke-only gradient: stroke ramp + stroke coefficients.
+ * Fill uniforms are also declared so dead-branch identifiers resolve on
+ * strict GLSL ES 2.0 front-ends (V3D 4.2).  "#define u_has_fill 0" in
+ * _glsl_uniforms_bind_s makes the fill branch statically dead; post-parse
+ * DCE then removes the texture2D(u_fill_grad_ramp, ...) dispatch. */
+static const char _glsl_uniforms_gradient_s[] =
+   "uniform sampler2D u_stroke_grad_ramp;\n"
+   "uniform highp float u_stroke_grad_a;\n"
+   "uniform highp float u_stroke_grad_b;\n"
+   "uniform highp float u_stroke_grad_c;\n"
+   "uniform int   u_stroke_grad_spread;\n"
+   "uniform int   u_stroke_grad_type;\n"
+   "uniform highp float u_stroke_grad_d;\n"
+   "uniform highp float u_stroke_grad_e;\n"
+   "uniform highp float u_stroke_grad_f;\n"
+   "uniform highp float u_stroke_grad_ra;\n"
+   "uniform highp float u_stroke_grad_rdx;\n"
+   "uniform highp float u_stroke_grad_rdy;\n"
+   "uniform sampler2D u_fill_grad_ramp;\n"
+   "uniform highp float u_fill_grad_a;\n"
+   "uniform highp float u_fill_grad_b;\n"
+   "uniform highp float u_fill_grad_c;\n"
+   "uniform int   u_fill_grad_spread;\n"
+   "uniform int   u_fill_grad_type;\n"
+   "uniform highp float u_fill_grad_d;\n"
+   "uniform highp float u_fill_grad_e;\n"
+   "uniform highp float u_fill_grad_f;\n"
+   "uniform highp float u_fill_grad_ra;\n"
+   "uniform highp float u_fill_grad_rdx;\n"
+   "uniform highp float u_fill_grad_rdy;\n";
 
 /* Composite mask uniforms (present only in *_mask variants). */
 static const char _glsl_uniforms_mask[] =
@@ -286,28 +408,6 @@ static const char _glsl_main_end[] =
    "   gl_FragColor = result * u_mul_col;\n"
    "}\n";
 
-/* Unconditional sampler-keep lines for solid mask shaders.
- * Forces the driver to preserve fill/stroke span samplers that only
- * appear inside conditional branches. */
-static const char _glsl_mask_keep_solid[] =
-   "\n"
-   "   /* Force unconditional sampler references (driver workaround). */\n"
-   "   result += (texture2D(u_fill_spans, vec2(0.0)) +\n"
-   "             texture2D(u_stroke_spans, vec2(0.0))) * 0.0;\n";
-
-/* Unconditional sampler-keep lines for gradient mask shaders.
- * Keeps all four samplers: fill/stroke span and fill/stroke ramp. */
-static const char _glsl_mask_keep_gradient[] =
-   "\n"
-   "   /* Force all sampler references unconditionally to prevent the GLSL\n"
-   "    * compiler from stripping samplers that only appear inside if-branches.\n"
-   "    * The 0.0 * texture2D() terms contribute nothing to the result. */\n"
-   "   vec4 _keep_fill   = texture2D(u_fill_spans, vec2(0.0));\n"
-   "   vec4 _keep_stroke = texture2D(u_stroke_spans, vec2(0.0));\n"
-   "   vec4 _keep_framp  = texture2D(u_fill_grad_ramp, vec2(0.0));\n"
-   "   vec4 _keep_sramp  = texture2D(u_stroke_grad_ramp, vec2(0.0));\n"
-   "   result += (_keep_fill + _keep_stroke + _keep_framp + _keep_sramp) * 0.0;\n";
-
 /* Mask epilogue: sample the composite mask texture and apply it.
  * u_mask_op: 0=multiply, 1=add, 2=difference
  * u_mask_inv: 0=normal, 1=invert (multiply path only) */
@@ -326,100 +426,78 @@ static const char _glsl_mask_epilogue[] =
    "      result *= abs(result.a - mask_a);\n";
 
 /* ------------------------------------------------------------------ */
-/* Per-shader fragment arrays                                          */
+/* Per-binding-set uniform block selectors                             */
 /* ------------------------------------------------------------------ */
 
-/* --- Solid fragment shader ---
- *
- * Each span entry is 1 texel (4 bytes) in the span texture:
- *   byte0 (B): coverage — AA coverage 0-255
- *   byte1 (G): len      — span length (max 255; longer spans are split)
- *   byte2 (R): gap      — distance from end of previous span on this row
- *   byte3 (A): reserved — zero
- *
- * The shader iterates over up to u_max_spans span entries on the current
- * scanline, checks whether the current pixel falls inside each span's x
- * range, and accumulates a coverage-weighted premultiplied-alpha result.
- * A zero-length sentinel terminates the search.
- *
- * u_inv_tw / u_inv_th are 1/pool_w and 1/pool_h (pool-space reciprocals).
- * u_fill_offset / u_stroke_offset are texel offsets within the pool.
- * #define MAX_SPANS must match SPAN_COLLECTOR_DEFAULT_MAX_SPANS (64).
- */
-static const char * const _solid_shader_parts[] = {
-   _glsl_precision,
-   _glsl_uniforms_common,
-   _glsl_uniforms_solid,
-   _glsl_scan_spans,
-   _glsl_main_solid_body,
-   _glsl_main_end
-};
-#define _SOLID_SHADER_PARTS \
-   ((int)(sizeof(_solid_shader_parts) / sizeof(_solid_shader_parts[0])))
+static const char *
+_uniforms_bind_for(Span_Bind_Set bind)
+{
+   switch (bind)
+     {
+      case SPAN_BIND_FILL_AND_STROKE: return _glsl_uniforms_bind_fs;
+      case SPAN_BIND_FILL_ONLY:       return _glsl_uniforms_bind_f;
+      case SPAN_BIND_STROKE_ONLY:     return _glsl_uniforms_bind_s;
+      default:                        return _glsl_uniforms_bind_fs;
+     }
+}
 
-/* --- Solid mask fragment shader ---
- *
- * Identical to the solid shader but with unconditional composite mask
- * sampling.  Used when span_mask_tex != 0.  No u_has_mask / u_comp_method
- * uniforms — the mask alpha is always applied inside the fragment shader.
- */
-static const char * const _solid_mask_shader_parts[] = {
-   _glsl_precision,
-   _glsl_uniforms_common,
-   _glsl_uniforms_solid,
-   _glsl_uniforms_mask,
-   _glsl_scan_spans,
-   _glsl_main_solid_body,
-   _glsl_mask_keep_solid,
-   _glsl_mask_epilogue,
-   _glsl_main_end
-};
-#define _SOLID_MASK_SHADER_PARTS \
-   ((int)(sizeof(_solid_mask_shader_parts) / sizeof(_solid_mask_shader_parts[0])))
+static const char *
+_uniforms_solid_for(Span_Bind_Set bind)
+{
+   switch (bind)
+     {
+      case SPAN_BIND_FILL_AND_STROKE: return _glsl_uniforms_solid_fs;
+      case SPAN_BIND_FILL_ONLY:       return _glsl_uniforms_solid_f;
+      case SPAN_BIND_STROKE_ONLY:     return _glsl_uniforms_solid_s;
+      default:                        return _glsl_uniforms_solid_fs;
+     }
+}
 
-/* --- Gradient fragment shader ---
- *
- * Per-pixel gradient evaluation using a 1024×1 RGBA8 ramp texture.
- *
- * Span buffer format: identical to the solid shader — 1 texel per span
- * (gap, len, coverage).  On hit it computes the gradient parameter t
- * per-pixel instead of using a fixed color:
- *   t = u_grad_a * gl_FragCoord.x + u_grad_b * gl_FragCoord.y + u_grad_c
- *
- * The ramp texture is on unit 2 (units 0 and 1 are fill/stroke span
- * textures).  Fill and stroke carry independent gradient parameters.
- */
-static const char * const _gradient_shader_parts[] = {
-   _glsl_precision,
-   _glsl_uniforms_common,
-   _glsl_uniforms_gradient,
-   _glsl_grad_spread,
-   _glsl_scan_gradient_spans,
-   _glsl_main_gradient_body,
-   _glsl_main_end
-};
-#define _GRADIENT_SHADER_PARTS \
-   ((int)(sizeof(_gradient_shader_parts) / sizeof(_gradient_shader_parts[0])))
+static const char *
+_uniforms_gradient_for(Span_Bind_Set bind)
+{
+   switch (bind)
+     {
+      case SPAN_BIND_FILL_AND_STROKE: return _glsl_uniforms_gradient_fs;
+      case SPAN_BIND_FILL_ONLY:       return _glsl_uniforms_gradient_f;
+      case SPAN_BIND_STROKE_ONLY:     return _glsl_uniforms_gradient_s;
+      default:                        return _glsl_uniforms_gradient_fs;
+     }
+}
 
-/* --- Gradient mask fragment shader ---
- *
- * Identical to the gradient shader but with unconditional composite mask
- * sampling.  Used when span_mask_tex != 0.
- */
-static const char * const _gradient_mask_shader_parts[] = {
-   _glsl_precision,
-   _glsl_uniforms_common,
-   _glsl_uniforms_gradient,
-   _glsl_uniforms_mask,
-   _glsl_grad_spread,
-   _glsl_scan_gradient_spans,
-   _glsl_main_gradient_body,
-   _glsl_mask_keep_gradient,
-   _glsl_mask_epilogue,
-   _glsl_main_end
-};
-#define _GRADIENT_MASK_SHADER_PARTS \
-   ((int)(sizeof(_gradient_mask_shader_parts) / sizeof(_gradient_mask_shader_parts[0])))
+/* Build source parts for the (kind, bind, mask) combination.
+ * kind: 0=solid, 1=gradient; bind: Span_Bind_Set; mask: 0 or 1.
+ * Returns a heap-allocated array of static string pointers; the caller
+ * must free() the array (not the strings). */
+static const char **
+_span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
+{
+   const char *parts[16];
+   int n = 0;
+
+   parts[n++] = _glsl_precision;
+   parts[n++] = _glsl_uniforms_shared;
+   parts[n++] = _uniforms_bind_for(bind);
+   if (kind == 0)
+     parts[n++] = _uniforms_solid_for(bind);
+   else
+     parts[n++] = _uniforms_gradient_for(bind);
+   if (mask) parts[n++] = _glsl_uniforms_mask;
+
+   if (kind == 1) parts[n++] = _glsl_grad_spread;
+   parts[n++] = (kind == 0) ? _glsl_scan_spans : _glsl_scan_gradient_spans;
+   parts[n++] = (kind == 0) ? _glsl_main_solid_body : _glsl_main_gradient_body;
+   if (mask) parts[n++] = _glsl_mask_epilogue;
+   parts[n++] = _glsl_main_end;
+
+   {
+      const char **out = malloc(sizeof(*out) * (size_t)n);
+      if (!out) { *out_count = 0; return NULL; }
+      memcpy(out, parts, sizeof(*out) * (size_t)n);
+      *out_count = n;
+      return out;
+   }
+}
 
 /* ------------------------------------------------------------------ */
 /* Internal shader state                                               */
@@ -478,10 +556,15 @@ typedef struct
    int          loc_mask_op;   /* 0.0 = multiply, 1.0 = add, 2.0 = difference */
 } Span_Shader;
 
-static Span_Shader _solid_shader         = { 0 };
-static Span_Shader _gradient_shader      = { 0 };
-static Span_Shader _solid_mask_shader    = { 0 };
-static Span_Shader _gradient_mask_shader = { 0 };
+/* [kind][bind][mask] — kind 0=solid 1=gradient, bind in Span_Bind_Set, mask 0/1.
+ * 12 variants total: eliminates unused sampler declarations per binding set. */
+static Span_Shader _span_shaders[2][SPAN_BIND_COUNT][2];
+
+static Span_Shader *
+_span_shader_pick(int kind, Span_Bind_Set bind, int mask)
+{
+   return &_span_shaders[kind][(int)bind][mask ? 1 : 0];
+}
 
 /* 1x1 white texture — kept for potential fallback use; not bound during
  * normal rendering (non-mask shaders have no mask sampler at all). */
@@ -672,29 +755,39 @@ span_debug_readback(const char *label, GLuint tex_id, int px_x, int px_y)
 Eina_Bool
 span_shader_init(void)
 {
-   if (!_link_program(&_solid_shader,
-                      (const char **)_solid_shader_parts, _SOLID_SHADER_PARTS))
+   static const char *kind_name[2] = { "solid", "gradient" };
+   static const char *bind_name[SPAN_BIND_COUNT] = {
+      "fill+stroke", "fill-only", "stroke-only"
+   };
+   int kind, b, mask;
+
+   for (kind = 0; kind < 2; kind++)
      {
-        ERR("span solid shader link failed");
-        return EINA_FALSE;
-     }
-   if (!_link_program(&_gradient_shader,
-                      (const char **)_gradient_shader_parts, _GRADIENT_SHADER_PARTS))
-     {
-        ERR("span gradient shader link failed");
-        return EINA_FALSE;
-     }
-   if (!_link_program(&_solid_mask_shader,
-                      (const char **)_solid_mask_shader_parts, _SOLID_MASK_SHADER_PARTS))
-     {
-        ERR("span solid mask shader link failed");
-        return EINA_FALSE;
-     }
-   if (!_link_program(&_gradient_mask_shader,
-                      (const char **)_gradient_mask_shader_parts, _GRADIENT_MASK_SHADER_PARTS))
-     {
-        ERR("span gradient mask shader link failed");
-        return EINA_FALSE;
+        for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
+          {
+             for (mask = 0; mask < 2; mask++)
+               {
+                  Span_Shader *ss = &_span_shaders[kind][b][mask];
+                  const char **parts;
+                  int n;
+
+                  parts = _span_shader_parts_build(kind, (Span_Bind_Set)b, mask, &n);
+                  if (!parts)
+                    {
+                       ERR("span shader parts alloc failed (%s %s %s)",
+                           kind_name[kind], bind_name[b], mask ? "mask" : "no-mask");
+                       return EINA_FALSE;
+                    }
+                  if (!_link_program(ss, parts, n))
+                    {
+                       free(parts);
+                       ERR("span shader link failed (%s %s %s)",
+                           kind_name[kind], bind_name[b], mask ? "mask" : "no-mask");
+                       return EINA_FALSE;
+                    }
+                  free(parts);
+               }
+          }
      }
 
    /* Create 1x1 white texture — kept as a potential no-mask fallback. */
@@ -716,26 +809,20 @@ span_shader_init(void)
 void
 span_shader_shutdown(void)
 {
-   if (_solid_shader.program)
-     {
-        glDeleteProgram(_solid_shader.program);
-        _solid_shader.program = 0;
-     }
-   if (_gradient_shader.program)
-     {
-        glDeleteProgram(_gradient_shader.program);
-        _gradient_shader.program = 0;
-     }
-   if (_solid_mask_shader.program)
-     {
-        glDeleteProgram(_solid_mask_shader.program);
-        _solid_mask_shader.program = 0;
-     }
-   if (_gradient_mask_shader.program)
-     {
-        glDeleteProgram(_gradient_mask_shader.program);
-        _gradient_mask_shader.program = 0;
-     }
+   int kind, b, mask;
+
+   for (kind = 0; kind < 2; kind++)
+     for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
+       for (mask = 0; mask < 2; mask++)
+         {
+            Span_Shader *ss = &_span_shaders[kind][b][mask];
+            if (ss->program)
+              {
+                 glDeleteProgram(ss->program);
+                 ss->program = 0;
+              }
+         }
+
    if (_white_mask_tex)
      {
         glDeleteTextures(1, &_white_mask_tex);
@@ -1070,8 +1157,11 @@ _span_draw_pass(Span_Shader *ss,
     * Only set these uniforms when using a gradient shader; on the solid fast
     * path all gradient uniform locations are -1 and glUniform on -1 is a GL
     * no-op per spec, but the calls are still dispatched through the driver.
-    * Skipping them entirely saves ~22 glUniform calls per solid draw. */
-   if (ss == &_gradient_shader || ss == &_gradient_mask_shader)
+    * Skipping them entirely saves ~22 glUniform calls per solid draw.
+    *
+    * Identify gradient shaders by checking loc_fill_grad_ramp: it is >= 0
+    * only in gradient-family shaders (solid shaders have no such uniform). */
+   if (ss->loc_fill_grad_ramp >= 0 || ss->loc_stroke_grad_ramp >= 0)
      {
         GLuint fill_ramp   = gc->pipe[pipe_idx].shader.span_fill_grad_ramp;
         GLuint stroke_ramp = gc->pipe[pipe_idx].shader.span_stroke_grad_ramp;
@@ -1114,8 +1204,9 @@ _span_draw_pass(Span_Shader *ss,
 
    /* Composite mask (texture unit 4) — only for mask shader variants.
     * Non-mask shaders have no u_mask_tex uniform at all; skip binding
-    * to avoid unnecessary texture unit state changes. */
-   if (ss == &_solid_mask_shader || ss == &_gradient_mask_shader)
+    * to avoid unnecessary texture unit state changes.
+    * Identify mask shaders by loc_mask_tex being >= 0. */
+   if (ss->loc_mask_tex >= 0)
      {
         GLuint mask_tex = gc->pipe[pipe_idx].shader.span_mask_tex;
 
@@ -1176,9 +1267,13 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx, int gw, int gh)
    GLfloat  ndc[18 * 2];
    GLfloat *dst;
 
-   /* Ensure all four shader programs are compiled. */
-   if (!_solid_shader.program || !_gradient_shader.program ||
-       !_solid_mask_shader.program || !_gradient_mask_shader.program)
+   /* Ensure all 12 shader programs are compiled.
+    * NOTE: checking [0][0][0] alone is a partial guard.  If span_shader_init()
+    * returns EINA_FALSE after [0][0][0] already compiled (a later slot failed),
+    * [0][0][0].program != 0 on the next flush and we skip re-init — the broken
+    * variants stay broken.  This is a pre-existing edge case; a full-init retry
+    * would require zeroing all slots on failure, which is left as future work. */
+   if (!_span_shaders[0][0][0].program)
      {
         if (!span_shader_init())
           return;
@@ -1230,15 +1325,18 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx, int gw, int gh)
 
       if (same_family)
         {
-           /* Single draw call: choose shader by fill type and mask presence. */
-           Span_Shader *ss;
+           /* Single draw call: choose shader by fill type, bind set, and mask. */
+           Span_Bind_Set bind;
+           int kind;
 
-           if (fill_is_grad || stroke_is_grad)
-             ss = has_mask ? &_gradient_mask_shader : &_gradient_shader;
-           else
-             ss = has_mask ? &_solid_mask_shader    : &_solid_shader;
+           if (fill_tex && stroke_tex) bind = SPAN_BIND_FILL_AND_STROKE;
+           else if (fill_tex)          bind = SPAN_BIND_FILL_ONLY;
+           else                        bind = SPAN_BIND_STROKE_ONLY;
 
-           _span_draw_pass(ss, gc, pipe_idx, nverts, max_spans,
+           kind = (fill_is_grad || stroke_is_grad) ? 1 : 0;
+
+           _span_draw_pass(_span_shader_pick(kind, bind, has_mask),
+                           gc, pipe_idx, nverts, max_spans,
                            mul_col, fill_tex, stroke_tex);
         }
       else
@@ -1248,19 +1346,20 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx, int gw, int gh)
             * terminate the shader loop at the actual entry count.
             * The mask (if any) is applied on every pass — this is correct
             * because each pass draws the same quad geometry and the mask
-            * covers the same pixel region. */
+            * covers the same pixel region.
+            * Each pass uses the FILL_ONLY / STROKE_ONLY binding variant. */
            if (fill_is_solid)
-             _span_draw_pass(has_mask ? &_solid_mask_shader    : &_solid_shader,
+             _span_draw_pass(_span_shader_pick(0, SPAN_BIND_FILL_ONLY, has_mask),
                              gc, pipe_idx, nverts, max_spans, mul_col, fill_tex, 0);
            if (fill_is_grad)
-             _span_draw_pass(has_mask ? &_gradient_mask_shader : &_gradient_shader,
+             _span_draw_pass(_span_shader_pick(1, SPAN_BIND_FILL_ONLY, has_mask),
                              gc, pipe_idx, nverts, max_spans, mul_col, fill_tex, 0);
 
            if (stroke_is_solid)
-             _span_draw_pass(has_mask ? &_solid_mask_shader    : &_solid_shader,
+             _span_draw_pass(_span_shader_pick(0, SPAN_BIND_STROKE_ONLY, has_mask),
                              gc, pipe_idx, nverts, max_spans, mul_col, 0, stroke_tex);
            if (stroke_is_grad)
-             _span_draw_pass(has_mask ? &_gradient_mask_shader : &_gradient_shader,
+             _span_draw_pass(_span_shader_pick(1, SPAN_BIND_STROKE_ONLY, has_mask),
                              gc, pipe_idx, nverts, max_spans, mul_col, 0, stroke_tex);
         }
    }
