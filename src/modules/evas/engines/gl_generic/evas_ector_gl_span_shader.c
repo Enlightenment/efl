@@ -1261,9 +1261,36 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx, int gw, int gh)
    uint32_t mul_col     = gc->pipe[pipe_idx].shader.span_mul_col;
    int      max_spans   = gc->pipe[pipe_idx].shader.span_max_spans;
    int      vi, nverts  = n;
-   /* 18 vertices = max 3 merged quads (6 verts each).  In practice
-    * span_push creates one quad per push, but the pipe merge logic
-    * can accumulate up to 3 quads in a single pipe entry. */
+   /* 18 vertices = 3 quads (6 verts each) — the design intent was to allow
+    * up to 3 same-uniform pushes to coalesce into one draw call.
+    *
+    * WHY THIS CAP IS INTENTIONAL AND CANNOT BE PROFITABLY RAISED:
+    *
+    * The merge predicate in evas_gl_common_context_span_push()
+    * (gl_common/evas_gl_context.c:2109–2157) requires ALL ~40 per-shape
+    * uniform fields to be bit-identical before two pushes may share a pipe
+    * entry.  Every distinct VG shape occupies its own tile in the span-buffer
+    * atlas, so span_fill_off_tx / span_fill_off_ty differ for every shape.
+    * Additionally, gradient parameters (grad_a … grad_rdy) and actual_max_spans
+    * are shape-specific.  Consequently no two distinct SHD_SPAN pushes ever
+    * pass the merge predicate: each push creates a fresh pipe entry with
+    * exactly 6 vertices.  array.num is therefore always 6 when flush is called.
+    *
+    * The ndc[18*2] buffer and the "nverts > 18" clamp below are therefore
+    * latent safety guards for a merge scenario that cannot occur with the
+    * current per-shape atlas allocation scheme.  Raising the cap to, say,
+    * 16 quads would cost 96*2*4 = 768 bytes of extra stack and reduce the
+    * maximum V3D uniform-stream rebuilds by zero (no merges happen).
+    *
+    * To actually reduce per-draw overhead on V3D (Cortex-A72 + Mesa V3D):
+    *   1. Relax the merge predicate to allow pushes that differ only in
+    *      geometry (x/y/w/h) but share all uniform state — requires moving
+    *      the span-buffer atlas offsets into per-vertex attributes rather
+    *      than uniforms, which is a non-trivial shader rework.
+    *   2. Alternatively, pre-sort VG shapes so those sharing the same
+    *      fill/stroke parameters are batched, then share a single atlas tile
+    *      via instanced rendering.
+    * Until one of those changes lands, keep this at 18 (3 quads). */
    GLfloat  ndc[18 * 2];
    GLfloat *dst;
 
