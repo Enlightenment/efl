@@ -3111,21 +3111,35 @@ eng_ector_end(void *engine,
                 int ox = glim->tex ? glim->tex->x : 0;
                 int oy = glim->tex ? glim->tex->y : 0;
 
-                /* Clear FBO sub-region to transparent.  Flush immediately
-                 * so the clear is executed before any span draws — otherwise
-                 * the SHD_RECT pipe and SHD_SPAN pipes may be reordered
-                 * during batch flush, causing the clear to overwrite the
-                 * span content on some frames. */
-                {
-                   RGBA_Draw_Context *dc_save = gc->dc;
-                   gc->dc = evas_common_draw_context_new();
-                   evas_common_draw_context_set_color(gc->dc, 0, 0, 0, 0);
-                   evas_common_draw_context_set_render_op(gc->dc, EVAS_RENDER_COPY);
-                   evas_gl_common_rect_draw(gc, 0, 0, w, h);
-                   evas_common_draw_context_free(gc->dc);
-                   gc->dc = dc_save;
-                   evas_gl_common_context_flush(gc);
-                }
+                /* Clear FBO sub-region to transparent via glClear + scissor.
+                 *
+                 * On tile-based GPUs (Broadcom V3D / ARM Mali) glClear is
+                 * a tile-buffer flag — no main-memory traffic — whereas the
+                 * previous SHD_RECT + immediate flush forced a tile store
+                 * and reload before the span draws.  The clear happens
+                 * outside the pipe system, so no pipe-reorder races; we
+                 * still flush any pending pipe content first to be safe.
+                 *
+                 * glScissor uses the same (ox, oy, w, h) as glViewport:
+                 * _evas_gl_common_viewport_set already sets the viewport to
+                 * (tex->x, tex->y, w, h) for atlas sub-rects, so scissor
+                 * coords are in framebuffer space, matching GL bottom-left.
+                 *
+                 * The Evas GL state cache is invalidated on textures and
+                 * render op below so subsequent draws restore them as needed. */
+                evas_gl_common_context_flush(gc);
+                glEnable(GL_SCISSOR_TEST);
+                glScissor(ox, oy, w, h);
+                glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+                glDisable(GL_SCISSOR_TEST);
+                gc->state.current.clip      = 0;
+                gc->state.current.cx        = 0;
+                gc->state.current.cy        = 0;
+                gc->state.current.cw        = 0;
+                gc->state.current.ch        = 0;
+                gc->state.current.cur_tex   = -1;
+                gc->state.current.render_op = -1;
 
                 /* Per-shape draw loop.
                  *
