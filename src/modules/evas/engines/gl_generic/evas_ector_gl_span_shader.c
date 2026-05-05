@@ -24,6 +24,7 @@
 #include "evas_ector_log_restore.h"
 
 #include "evas_ector_gl_span.h"
+#include "evas_ector_gl_grad_atlas.h"
 
 /* ------------------------------------------------------------------ */
 /* GLSL shader source strings                                          */
@@ -68,6 +69,7 @@ static const char _glsl_uniforms_shared[] =
    "uniform highp vec2 u_fbo_offset;\n"
    "uniform highp float u_inv_tw;\n"
    "uniform highp float u_inv_th;\n"
+   "uniform sampler2D u_grad_ramp_atlas;\n"
    "#define MAX_SPANS 64\n";
 
 /* Fill-and-stroke binding set: both span samplers + both offsets. */
@@ -136,14 +138,15 @@ static const char _glsl_uniforms_solid_s[] =
  * large surfaces) and are squared in the radial path, so mediump (fp16)
  * would lose precision in the gradient parameter. */
 
-/* Fill-and-stroke gradient: both ramp samplers + all coefficients. */
+/* Fill-and-stroke gradient: ramp_y uniforms + all coefficients.
+ * The ramp atlas sampler (u_grad_ramp_atlas) is now in _glsl_uniforms_shared. */
 static const char _glsl_uniforms_gradient_fs[] =
-   "uniform sampler2D u_fill_grad_ramp;\n"
+   "uniform highp float u_fill_grad_ramp_y;\n"
    "uniform highp float u_fill_grad_a;\n"
    "uniform highp float u_fill_grad_b;\n"
    "uniform highp float u_fill_grad_c;\n"
    "uniform int   u_fill_grad_spread;\n"
-   "uniform sampler2D u_stroke_grad_ramp;\n"
+   "uniform highp float u_stroke_grad_ramp_y;\n"
    "uniform highp float u_stroke_grad_a;\n"
    "uniform highp float u_stroke_grad_b;\n"
    "uniform highp float u_stroke_grad_c;\n"
@@ -163,13 +166,12 @@ static const char _glsl_uniforms_gradient_fs[] =
    "uniform highp float u_stroke_grad_rdx;\n"
    "uniform highp float u_stroke_grad_rdy;\n";
 
-/* Fill-only gradient: fill ramp + fill coefficients.
+/* Fill-only gradient: fill ramp_y + fill coefficients.
  * Stroke uniforms are also declared so dead-branch identifiers resolve on
  * strict GLSL ES 2.0 front-ends (V3D 4.2).  "#define u_has_stroke 0" in
- * _glsl_uniforms_bind_f makes the stroke branch statically dead; post-parse
- * DCE then removes the texture2D(u_stroke_grad_ramp, ...) dispatch. */
+ * _glsl_uniforms_bind_f makes the stroke branch statically dead. */
 static const char _glsl_uniforms_gradient_f[] =
-   "uniform sampler2D u_fill_grad_ramp;\n"
+   "uniform highp float u_fill_grad_ramp_y;\n"
    "uniform highp float u_fill_grad_a;\n"
    "uniform highp float u_fill_grad_b;\n"
    "uniform highp float u_fill_grad_c;\n"
@@ -181,7 +183,7 @@ static const char _glsl_uniforms_gradient_f[] =
    "uniform highp float u_fill_grad_ra;\n"
    "uniform highp float u_fill_grad_rdx;\n"
    "uniform highp float u_fill_grad_rdy;\n"
-   "uniform sampler2D u_stroke_grad_ramp;\n"
+   "uniform highp float u_stroke_grad_ramp_y;\n"
    "uniform highp float u_stroke_grad_a;\n"
    "uniform highp float u_stroke_grad_b;\n"
    "uniform highp float u_stroke_grad_c;\n"
@@ -194,13 +196,12 @@ static const char _glsl_uniforms_gradient_f[] =
    "uniform highp float u_stroke_grad_rdx;\n"
    "uniform highp float u_stroke_grad_rdy;\n";
 
-/* Stroke-only gradient: stroke ramp + stroke coefficients.
+/* Stroke-only gradient: stroke ramp_y + stroke coefficients.
  * Fill uniforms are also declared so dead-branch identifiers resolve on
  * strict GLSL ES 2.0 front-ends (V3D 4.2).  "#define u_has_fill 0" in
- * _glsl_uniforms_bind_s makes the fill branch statically dead; post-parse
- * DCE then removes the texture2D(u_fill_grad_ramp, ...) dispatch. */
+ * _glsl_uniforms_bind_s makes the fill branch statically dead. */
 static const char _glsl_uniforms_gradient_s[] =
-   "uniform sampler2D u_stroke_grad_ramp;\n"
+   "uniform highp float u_stroke_grad_ramp_y;\n"
    "uniform highp float u_stroke_grad_a;\n"
    "uniform highp float u_stroke_grad_b;\n"
    "uniform highp float u_stroke_grad_c;\n"
@@ -212,7 +213,7 @@ static const char _glsl_uniforms_gradient_s[] =
    "uniform highp float u_stroke_grad_ra;\n"
    "uniform highp float u_stroke_grad_rdx;\n"
    "uniform highp float u_stroke_grad_rdy;\n"
-   "uniform sampler2D u_fill_grad_ramp;\n"
+   "uniform highp float u_fill_grad_ramp_y;\n"
    "uniform highp float u_fill_grad_a;\n"
    "uniform highp float u_fill_grad_b;\n"
    "uniform highp float u_fill_grad_c;\n"
@@ -303,10 +304,11 @@ static const char _glsl_grad_spread[] =
 static const char _glsl_scan_gradient_spans[] =
    "\n"
    "/* Scan one gradient span texture row.  On hit, compute t per-pixel\n"
-   " * (linear or radial) and sample the gradient ramp, then src-over\n"
-   " * blend into result. */\n"
+   " * (linear or radial) and sample the gradient ramp atlas at ramp_v,\n"
+   " * then src-over blend into result. */\n"
    "vec4 scan_gradient_spans(sampler2D span_tex, highp vec2 off,\n"
-   "                         sampler2D ramp, highp float ga, highp float gb, highp float gc,\n"
+   "                         highp float ramp_v,\n"
+   "                         highp float ga, highp float gb, highp float gc,\n"
    "                         int gspread, int gtype,\n"
    "                         highp float gd, highp float ge, highp float gf,\n"
    "                         highp float gra, highp float grdx, highp float grdy,\n"
@@ -342,7 +344,7 @@ static const char _glsl_scan_gradient_spans[] =
    "            t = ga * px + gb * py + gc;\n"
    "         }\n"
    "         t = grad_spread(t, gspread);\n"
-   "         vec4 grad_col = texture2D(ramp, vec2(t, 0.5));\n"
+   "         vec4 grad_col = texture2D(u_grad_ramp_atlas, vec2(t, ramp_v));\n"
    "         vec4 col = grad_col * cov;\n"
    "         res.rgb = col.rgb + res.rgb * (1.0 - col.a);\n"
    "         res.a   = col.a  + res.a   * (1.0 - col.a);\n"
@@ -384,7 +386,7 @@ static const char _glsl_main_gradient_body[] =
    "      highp float fy = (u_fill_offset.y + py) * u_inv_th;\n"
    "      result = scan_gradient_spans(\n"
    "                  u_fill_spans, u_fill_offset,\n"
-   "                  u_fill_grad_ramp,\n"
+   "                  u_fill_grad_ramp_y,\n"
    "                  u_fill_grad_a, u_fill_grad_b, u_fill_grad_c,\n"
    "                  u_fill_grad_spread, u_fill_grad_type,\n"
    "                  u_fill_grad_d, u_fill_grad_e, u_fill_grad_f,\n"
@@ -395,7 +397,7 @@ static const char _glsl_main_gradient_body[] =
    "      highp float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
    "      result = scan_gradient_spans(\n"
    "                  u_stroke_spans, u_stroke_offset,\n"
-   "                  u_stroke_grad_ramp,\n"
+   "                  u_stroke_grad_ramp_y,\n"
    "                  u_stroke_grad_a, u_stroke_grad_b, u_stroke_grad_c,\n"
    "                  u_stroke_grad_spread, u_stroke_grad_type,\n"
    "                  u_stroke_grad_d, u_stroke_grad_e, u_stroke_grad_f,\n"
@@ -522,12 +524,13 @@ typedef struct
    int          loc_fill_x_min;
    int          loc_stroke_x_min;
    /* Gradient-only uniforms (location -1 in solid shader → safe no-op) */
-   int          loc_fill_grad_ramp;
+   int          loc_grad_ramp_atlas;     /* u_grad_ramp_atlas  — shared atlas sampler */
+   int          loc_fill_grad_ramp_y;    /* u_fill_grad_ramp_y  — atlas V coord for fill */
    int          loc_fill_grad_a;
    int          loc_fill_grad_b;
    int          loc_fill_grad_c;
    int          loc_fill_grad_spread;
-   int          loc_stroke_grad_ramp;
+   int          loc_stroke_grad_ramp_y;  /* u_stroke_grad_ramp_y — atlas V coord for stroke */
    int          loc_stroke_grad_a;
    int          loc_stroke_grad_b;
    int          loc_stroke_grad_c;
@@ -675,12 +678,13 @@ _link_program(Span_Shader *ss, const char **frag_parts, int frag_count)
    ss->loc_fill_x_min    = glGetUniformLocation(ss->program, "u_fill_x_min");
    ss->loc_stroke_x_min  = glGetUniformLocation(ss->program, "u_stroke_x_min");
    /* Gradient uniforms — location -1 in solid shader (safe no-op). */
-   ss->loc_fill_grad_ramp    = glGetUniformLocation(ss->program, "u_fill_grad_ramp");
-   ss->loc_fill_grad_a       = glGetUniformLocation(ss->program, "u_fill_grad_a");
-   ss->loc_fill_grad_b       = glGetUniformLocation(ss->program, "u_fill_grad_b");
-   ss->loc_fill_grad_c       = glGetUniformLocation(ss->program, "u_fill_grad_c");
-   ss->loc_fill_grad_spread  = glGetUniformLocation(ss->program, "u_fill_grad_spread");
-   ss->loc_stroke_grad_ramp   = glGetUniformLocation(ss->program, "u_stroke_grad_ramp");
+   ss->loc_grad_ramp_atlas    = glGetUniformLocation(ss->program, "u_grad_ramp_atlas");
+   ss->loc_fill_grad_ramp_y   = glGetUniformLocation(ss->program, "u_fill_grad_ramp_y");
+   ss->loc_fill_grad_a        = glGetUniformLocation(ss->program, "u_fill_grad_a");
+   ss->loc_fill_grad_b        = glGetUniformLocation(ss->program, "u_fill_grad_b");
+   ss->loc_fill_grad_c        = glGetUniformLocation(ss->program, "u_fill_grad_c");
+   ss->loc_fill_grad_spread   = glGetUniformLocation(ss->program, "u_fill_grad_spread");
+   ss->loc_stroke_grad_ramp_y = glGetUniformLocation(ss->program, "u_stroke_grad_ramp_y");
    ss->loc_stroke_grad_a      = glGetUniformLocation(ss->program, "u_stroke_grad_a");
    ss->loc_stroke_grad_b      = glGetUniformLocation(ss->program, "u_stroke_grad_b");
    ss->loc_stroke_grad_c      = glGetUniformLocation(ss->program, "u_stroke_grad_c");
@@ -1153,34 +1157,36 @@ _span_draw_pass(Span_Shader *ss,
    glUniform1i(ss->loc_fill_x_min,   gc->pipe[pipe_idx].shader.span_fill_x_min);
    glUniform1i(ss->loc_stroke_x_min, gc->pipe[pipe_idx].shader.span_stroke_x_min);
 
-   /* Gradient parameters — units 2 and 3 for fill and stroke ramp textures.
+   /* Gradient parameters — atlas on texture unit 2, ramp_y uniforms per shape.
     * Only set these uniforms when using a gradient shader; on the solid fast
     * path all gradient uniform locations are -1 and glUniform on -1 is a GL
     * no-op per spec, but the calls are still dispatched through the driver.
     * Skipping them entirely saves ~22 glUniform calls per solid draw.
     *
-    * Identify gradient shaders by checking loc_fill_grad_ramp: it is >= 0
+    * Identify gradient shaders by checking loc_grad_ramp_atlas: it is >= 0
     * only in gradient-family shaders (solid shaders have no such uniform). */
-   if (ss->loc_fill_grad_ramp >= 0 || ss->loc_stroke_grad_ramp >= 0)
+   if (ss->loc_grad_ramp_atlas >= 0)
      {
-        GLuint fill_ramp   = gc->pipe[pipe_idx].shader.span_fill_grad_ramp;
-        GLuint stroke_ramp = gc->pipe[pipe_idx].shader.span_stroke_grad_ramp;
+        GLuint atlas_tex = gc->pipe[pipe_idx].shader.span_grad_atlas_tex;
+
+        /* Bind shared gradient ramp atlas on texture unit 2. */
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, atlas_tex);
+        glUniform1i(ss->loc_grad_ramp_atlas, 2);
+
+        /* Per-shape ramp V coordinates. */
+        glUniform1f(ss->loc_fill_grad_ramp_y,   gc->pipe[pipe_idx].shader.span_fill_grad_ramp_y);
+        glUniform1f(ss->loc_stroke_grad_ramp_y, gc->pipe[pipe_idx].shader.span_stroke_grad_ramp_y);
 
         glUniform1f(ss->loc_fill_grad_a,       gc->pipe[pipe_idx].shader.span_fill_grad_a);
         glUniform1f(ss->loc_fill_grad_b,       gc->pipe[pipe_idx].shader.span_fill_grad_b);
         glUniform1f(ss->loc_fill_grad_c,       gc->pipe[pipe_idx].shader.span_fill_grad_c);
         glUniform1i(ss->loc_fill_grad_spread,  gc->pipe[pipe_idx].shader.span_fill_grad_spread);
-        glUniform1i(ss->loc_fill_grad_ramp,    2);  /* texture unit 2 */
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, fill_ramp ? fill_ramp : 0);
 
         glUniform1f(ss->loc_stroke_grad_a,      gc->pipe[pipe_idx].shader.span_stroke_grad_a);
         glUniform1f(ss->loc_stroke_grad_b,      gc->pipe[pipe_idx].shader.span_stroke_grad_b);
         glUniform1f(ss->loc_stroke_grad_c,      gc->pipe[pipe_idx].shader.span_stroke_grad_c);
         glUniform1i(ss->loc_stroke_grad_spread, gc->pipe[pipe_idx].shader.span_stroke_grad_spread);
-        glUniform1i(ss->loc_stroke_grad_ramp,   3);  /* texture unit 3 */
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, stroke_ramp ? stroke_ramp : 0);
 
         glUniform1i(ss->loc_fill_grad_type,   gc->pipe[pipe_idx].shader.span_fill_grad_type);
         glUniform1f(ss->loc_fill_grad_d,      gc->pipe[pipe_idx].shader.span_fill_grad_d);

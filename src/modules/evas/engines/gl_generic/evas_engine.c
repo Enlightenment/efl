@@ -159,6 +159,10 @@ eng_engine_new(void)
    if (!engine) return NULL;
    engine->software.surface_cache = generic_cache_new(engine, eng_image_free);
 
+   /* Gradient ramp atlas: NULL return means atlas unavailable — gradient
+    * shapes will be skipped per the spec error table (no-op, non-fatal). */
+   engine->grad_atlas = span_grad_atlas_new();
+
    return engine;
 }
 
@@ -169,6 +173,8 @@ eng_engine_free(void *engine)
    Render_Output_GL_Generic *output;
 
    generic_cache_destroy(e->software.surface_cache);
+
+   if (e->grad_atlas) span_grad_atlas_free(e->grad_atlas);
 
    EINA_LIST_FREE(e->software.outputs, output)
      ERR("Output %p not properly cleaned before engine destruction.", output);
@@ -2818,88 +2824,8 @@ eng_ector_begin(void *engine, void *surface,
 }
 
 /* ------------------------------------------------------------------ */
-/* Gradient ramp upload + t-coefficient helpers for eng_ector_end()   */
+/* Gradient t-coefficient helpers for eng_ector_end()                 */
 /* ------------------------------------------------------------------ */
-
-/**
- * Ensure the 1024×1 RGBA8 gradient ramp texture is uploaded to the GPU.
- *
- * Caches the GL texture object in sc->grad_ramp_tex across frames.
- * The ramp content is always re-uploaded every frame (4KB via
- * glTexSubImage2D) to avoid stale data when gradient stops are animated.
- *
- * @param sc  Span_Collector owning the ramp cache slot.
- * @return    GL texture name, or 0 on failure.
- */
-static GLuint
-_span_gradient_upload_ramp(Span_Collector *sc)
-{
-   Ector_Renderer_Software_Gradient_Data *gd;
-   GLuint ramp_tex;
-   uint32_t crc;
-
-   if (!sc || !sc->gradient_data) return 0;
-   gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
-   if (!gd->color_table || gd->ctable_status != CTABLE_READY_DONE) return 0;
-
-    /* Quick CRC over the 1024-entry color table to detect changes.
-     * eina_crc hashes 4KB — cheap compared to the glTexSubImage2D it gates. */
-    crc = eina_crc((const char *)gd->color_table,
-                   1024 * sizeof(uint32_t), 0xFFFFFFFF, EINA_TRUE);
-
-    if (sc->grad_ramp_tex && crc == sc->grad_ramp_crc)
-      return (GLuint)sc->grad_ramp_tex;
-
-   /* Build staging buffer: swap R<->B for GL_RGBA upload. */
-   {
-      uint32_t staging[1024];
-      int j;
-      for (j = 0; j < 1024; j++)
-        {
-           uint32_t c = gd->color_table[j];
-           uint8_t *p = (uint8_t *)&staging[j];
-           p[0] = (c >> 16) & 0xFF; /* R */
-           p[1] = (c >> 8) & 0xFF;  /* G */
-           p[2] = c & 0xFF;          /* B */
-           p[3] = (c >> 24) & 0xFF; /* A */
-        }
-
-      if (!sc->grad_ramp_tex)
-        {
-           glGenTextures(1, &ramp_tex);
-           if (!ramp_tex) return 0;
-
-           glBindTexture(GL_TEXTURE_2D, ramp_tex);
-           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-           glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1024, 1, 0,
-                        GL_RGBA, GL_UNSIGNED_BYTE, staging);
-           /* Unbind to 0 rather than restoring gc->state.current.cur_tex:
-            * gc is not in scope here.  This is safe because
-            * span_shader_pipe_flush sets gc->state.current.cur_tex = 0
-            * via the state invalidation path before any subsequent Evas
-            * texture operations, so the state cache remains coherent. */
-           glBindTexture(GL_TEXTURE_2D, 0);
-
-           sc->grad_ramp_tex = (unsigned int)ramp_tex;
-        }
-      else
-        {
-           ramp_tex = (GLuint)sc->grad_ramp_tex;
-           glBindTexture(GL_TEXTURE_2D, ramp_tex);
-           glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1024, 1,
-                           GL_RGBA, GL_UNSIGNED_BYTE, staging);
-           /* Same rationale as above: unbind to 0, coherence restored by
-            * span_shader_pipe_flush state invalidation. */
-           glBindTexture(GL_TEXTURE_2D, 0);
-        }
-   }
-
-   sc->grad_ramp_crc = crc;
-   return (GLuint)sc->grad_ramp_tex;
-}
 
 /**
  * Compute linear gradient t-coefficients for the GL shader.
@@ -3000,19 +2926,23 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
  * or has no gradient data all out values are left at their zero defaults.
  *
  * @param sc               Span collector for this channel (fill or stroke).
+ * @param atlas            Gradient ramp atlas (may be NULL → gradient skipped).
  * @param inout_shader_type  On entry: LinearGradient or RadialGradient.
  *                           On exit: may be downgraded to Solid.
  * @param inout_col        Solid color — updated when downgraded to Solid.
  * @param out_ga..out_grdy Output gradient coefficients.
  * @param out_gs           Gradient spread mode (EFL enum → int).
- * @param out_gramp        Uploaded ramp texture GL name.
+ * @param out_gramp_y      Atlas V coordinate for this gradient's ramp row.
+ * @param out_atlas_skip   Set to EINA_TRUE if atlas lookup failed (skip shape).
  * @param out_gtype        0=linear, 1=radial.
  */
 static void
 _compute_gradient_coeffs(Span_Collector *sc,
+                          Span_Grad_Atlas *atlas,
                           int *inout_shader_type, uint32_t *inout_col,
                           float *out_ga, float *out_gb, float *out_gc,
-                          int *out_gs, GLuint *out_gramp, int *out_gtype,
+                          int *out_gs, float *out_gramp_y, Eina_Bool *out_atlas_skip,
+                          int *out_gtype,
                           float *out_gd, float *out_ge, float *out_gf,
                           float *out_gra, float *out_grdx, float *out_grdy)
 {
@@ -3023,7 +2953,43 @@ _compute_gradient_coeffs(Span_Collector *sc,
    if (shader_type != (int)LinearGradient && shader_type != (int)RadialGradient) return;
 
    gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
-   *out_gramp = _span_gradient_upload_ramp(sc);
+
+   /* Upload ramp into atlas and get V coordinate.
+    * version is content-derived (hash of the 4 KB staging buffer) so the
+    * identity fast path in span_grad_atlas_lookup is keyed on (grad_id,
+    * content_hash) — animated stop changes force a re-lookup automatically.
+    * Fallback: if atlas is unavailable, mark the shape as atlas-skip. */
+   if (atlas && gd->color_table && gd->ctable_status == CTABLE_READY_DONE)
+     {
+        uint32_t staging[1024];
+        int j;
+        for (j = 0; j < 1024; j++)
+          {
+             uint32_t c = gd->color_table[j];
+             uint8_t *p = (uint8_t *)&staging[j];
+             p[0] = (c >> 16) & 0xFF; /* R */
+             p[1] = (c >>  8) & 0xFF; /* G */
+             p[2] =  c        & 0xFF; /* B */
+             p[3] = (c >> 24) & 0xFF; /* A */
+          }
+        uint32_t version = span_grad_atlas_hash((const uint8_t *)staging);
+        int row = span_grad_atlas_lookup(atlas, sc->gradient_data,
+                                         version,
+                                         (const uint8_t *)staging);
+        if (row < 0)
+          {
+             /* Atlas disabled or full — skip this shape. */
+             *out_atlas_skip = EINA_TRUE;
+             return;
+          }
+        *out_gramp_y = span_grad_atlas_row_to_v(row);
+     }
+   else
+     {
+        /* Atlas unavailable — skip gradient shapes (spec error table). */
+        *out_atlas_skip = EINA_TRUE;
+        return;
+     }
 
    if (shader_type == (int)LinearGradient)
      {
@@ -3104,6 +3070,9 @@ eng_ector_end(void *engine,
                 }
 
                 evas_gl_common_context_target_surface_set(gc, glim);
+
+                /* Bump gradient atlas LRU frame counter for this render pass. */
+                span_grad_atlas_frame_begin(((Render_Engine_GL_Generic *)engine)->grad_atlas);
 
                 /* Atlas offset: when VG surfaces share an FBO via the texture
                  * atlas pool, each surface occupies a sub-rectangle at (ox, oy).
@@ -3191,33 +3160,46 @@ eng_ector_end(void *engine,
                      /* Per-shape gradient coefficients. */
                      float fill_ga = 0.0f, fill_gb = 0.0f, fill_gc_coef = 0.0f;
                      int   fill_gs = 0;
-                     GLuint fill_gramp = 0;
+                     float fill_gramp_y = 0.0f;
+                     Eina_Bool fill_atlas_skip = EINA_FALSE;
                      int   fill_gtype = 0;
                      float fill_gd = 0.0f, fill_ge = 0.0f, fill_gf = 0.0f;
                      float fill_gra = 0.0f, fill_grdx = 0.0f, fill_grdy = 0.0f;
 
                      float stroke_ga = 0.0f, stroke_gb = 0.0f, stroke_gc_coef = 0.0f;
                      int   stroke_gs = 0;
-                     GLuint stroke_gramp = 0;
+                     float stroke_gramp_y = 0.0f;
+                     Eina_Bool stroke_atlas_skip = EINA_FALSE;
                      int   stroke_gtype = 0;
                      float stroke_gd = 0.0f, stroke_ge = 0.0f, stroke_gf = 0.0f;
                      float stroke_gra = 0.0f, stroke_grdx = 0.0f, stroke_grdy = 0.0f;
 
-                     if (_rsd)
-                       {
-                          _compute_gradient_coeffs(sc_fill,
-                                                   &fill_shader_type, &fill_col,
-                                                   &fill_ga, &fill_gb, &fill_gc_coef,
-                                                   &fill_gs, &fill_gramp, &fill_gtype,
-                                                   &fill_gd, &fill_ge, &fill_gf,
-                                                   &fill_gra, &fill_grdx, &fill_grdy);
-                          _compute_gradient_coeffs(sc_stroke,
-                                                   &stroke_shader_type, &stroke_col,
-                                                   &stroke_ga, &stroke_gb, &stroke_gc_coef,
-                                                   &stroke_gs, &stroke_gramp, &stroke_gtype,
-                                                   &stroke_gd, &stroke_ge, &stroke_gf,
-                                                   &stroke_gra, &stroke_grdx, &stroke_grdy);
-                       }
+                     {
+                        Render_Engine_GL_Generic *re =
+                           (Render_Engine_GL_Generic *)engine;
+                        Span_Grad_Atlas *atlas = re->grad_atlas;
+
+                        if (_rsd)
+                          {
+                             _compute_gradient_coeffs(sc_fill, atlas,
+                                                      &fill_shader_type, &fill_col,
+                                                      &fill_ga, &fill_gb, &fill_gc_coef,
+                                                      &fill_gs, &fill_gramp_y,
+                                                      &fill_atlas_skip, &fill_gtype,
+                                                      &fill_gd, &fill_ge, &fill_gf,
+                                                      &fill_gra, &fill_grdx, &fill_grdy);
+                             _compute_gradient_coeffs(sc_stroke, atlas,
+                                                      &stroke_shader_type, &stroke_col,
+                                                      &stroke_ga, &stroke_gb, &stroke_gc_coef,
+                                                      &stroke_gs, &stroke_gramp_y,
+                                                      &stroke_atlas_skip, &stroke_gtype,
+                                                      &stroke_gd, &stroke_ge, &stroke_gf,
+                                                      &stroke_gra, &stroke_grdx, &stroke_grdy);
+                          }
+
+                        /* Skip gradient shapes when atlas lookup failed. */
+                        if (fill_atlas_skip || stroke_atlas_skip) continue;
+                     }
 
                      /* Draw each spatial-split texture within this shape.
                       * Most collectors have 1 texture; complex shapes that
@@ -3263,6 +3245,14 @@ eng_ector_end(void *engine,
                                 _spp.fbo_off_x  = (float)ox;
                                 _spp.fbo_off_y  = (float)oy;
 
+                                {
+                                   Render_Engine_GL_Generic *re =
+                                      (Render_Engine_GL_Generic *)engine;
+                                   _spp.grad_atlas_tex =
+                                      (re->grad_atlas && re->grad_atlas->tex)
+                                      ? re->grad_atlas->tex : 0;
+                                }
+
                                 _spp.fill.tex        = f_tex;
                                 _spp.fill.off_tx     = (float)f_tx;
                                 _spp.fill.off_ty     = (float)f_ty;
@@ -3272,9 +3262,9 @@ eng_ector_end(void *engine,
                                 _spp.fill.grad_a     = fill_ga;
                                 _spp.fill.grad_b     = fill_gb;
                                 _spp.fill.grad_c     = fill_gc_coef;
-                                _spp.fill.grad_spread = fill_gs;
-                                _spp.fill.grad_ramp  = fill_gramp;
-                                _spp.fill.grad_type  = fill_gtype;
+                                _spp.fill.grad_spread  = fill_gs;
+                                _spp.fill.grad_ramp_y  = fill_gramp_y;
+                                _spp.fill.grad_type    = fill_gtype;
                                 _spp.fill.grad_d     = fill_gd;
                                 _spp.fill.grad_e     = fill_ge;
                                 _spp.fill.grad_f     = fill_gf;
@@ -3291,9 +3281,9 @@ eng_ector_end(void *engine,
                                 _spp.stroke.grad_a     = stroke_ga;
                                 _spp.stroke.grad_b     = stroke_gb;
                                 _spp.stroke.grad_c     = stroke_gc_coef;
-                                _spp.stroke.grad_spread = stroke_gs;
-                                _spp.stroke.grad_ramp  = stroke_gramp;
-                                _spp.stroke.grad_type  = stroke_gtype;
+                                _spp.stroke.grad_spread  = stroke_gs;
+                                _spp.stroke.grad_ramp_y  = stroke_gramp_y;
+                                _spp.stroke.grad_type    = stroke_gtype;
                                 _spp.stroke.grad_d     = stroke_gd;
                                 _spp.stroke.grad_e     = stroke_ge;
                                 _spp.stroke.grad_f     = stroke_gf;

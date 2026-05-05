@@ -7,6 +7,7 @@
 #include "../gl_common/evas_gl_common.h"
 #include "../gl_common/evas_gl_core.h"
 #include "../gl_common/evas_gl_core_private.h"
+#include "evas_ector_gl_grad_atlas.h"
 
 typedef struct _Render_Engine_GL_Generic Render_Engine_GL_Generic;
 typedef struct _Render_Output_GL_Generic Render_Output_GL_Generic;
@@ -23,6 +24,11 @@ struct _Render_Engine_GL_Generic
    Render_Engine_Software_Generic software;
 
    Render_Output_GL_Generic *current;
+
+   /* Gradient ramp atlas: one 1024×64 RGBA8 texture pool per engine lifetime.
+    * NULL if span_grad_atlas_new() failed — gradient shapes are skipped per
+    * the spec error table (one-shot ERR logged at allocation time). */
+   Span_Grad_Atlas          *grad_atlas;
 
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;

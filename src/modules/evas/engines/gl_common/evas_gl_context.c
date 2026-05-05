@@ -2125,7 +2125,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
                _S.span_fill_grad_b       == p->fill.grad_b     &&
                _S.span_fill_grad_c       == p->fill.grad_c     &&
                _S.span_fill_grad_spread  == p->fill.grad_spread &&
-               _S.span_fill_grad_ramp    == p->fill.grad_ramp  &&
+               _S.span_fill_grad_ramp_y  == p->fill.grad_ramp_y  &&
                _S.span_fill_grad_type    == p->fill.grad_type  &&
                _S.span_fill_grad_d       == p->fill.grad_d     &&
                _S.span_fill_grad_e       == p->fill.grad_e     &&
@@ -2137,7 +2137,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
                _S.span_stroke_grad_b      == p->stroke.grad_b     &&
                _S.span_stroke_grad_c      == p->stroke.grad_c     &&
                _S.span_stroke_grad_spread == p->stroke.grad_spread &&
-               _S.span_stroke_grad_ramp   == p->stroke.grad_ramp  &&
+               _S.span_stroke_grad_ramp_y == p->stroke.grad_ramp_y  &&
                _S.span_stroke_grad_type   == p->stroke.grad_type  &&
                _S.span_stroke_grad_d      == p->stroke.grad_d     &&
                _S.span_stroke_grad_e      == p->stroke.grad_e     &&
@@ -2149,6 +2149,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
                _S.span_fbo_off_y          == p->fbo_off_y         &&
                _S.span_fill_x_min         == p->fill.x_min        &&
                _S.span_stroke_x_min       == p->stroke.x_min      &&
+               _S.span_grad_atlas_tex     == p->grad_atlas_tex     &&
                _S.span_mask_tex           == p->mask_tex           &&
                _S.span_comp_method        == p->comp_method        &&
                _S.span_mask_w             == p->mask_w             &&
@@ -2201,7 +2202,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
         _S.span_fill_grad_b      = p->fill.grad_b;
         _S.span_fill_grad_c      = p->fill.grad_c;
         _S.span_fill_grad_spread = p->fill.grad_spread;
-        _S.span_fill_grad_ramp   = p->fill.grad_ramp;
+        _S.span_fill_grad_ramp_y = p->fill.grad_ramp_y;
         _S.span_fill_grad_type   = p->fill.grad_type;
         _S.span_fill_grad_d      = p->fill.grad_d;
         _S.span_fill_grad_e      = p->fill.grad_e;
@@ -2214,7 +2215,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
         _S.span_stroke_grad_b      = p->stroke.grad_b;
         _S.span_stroke_grad_c      = p->stroke.grad_c;
         _S.span_stroke_grad_spread = p->stroke.grad_spread;
-        _S.span_stroke_grad_ramp   = p->stroke.grad_ramp;
+        _S.span_stroke_grad_ramp_y = p->stroke.grad_ramp_y;
         _S.span_stroke_grad_type   = p->stroke.grad_type;
         _S.span_stroke_grad_d      = p->stroke.grad_d;
         _S.span_stroke_grad_e      = p->stroke.grad_e;
@@ -2228,6 +2229,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
         _S.span_fill_x_min   = p->fill.x_min;
         _S.span_stroke_x_min = p->stroke.x_min;
 
+        _S.span_grad_atlas_tex = p->grad_atlas_tex;
         _S.span_mask_tex     = p->mask_tex;
         _S.span_comp_method  = p->comp_method;
         _S.span_mask_w       = p->mask_w;

@@ -285,7 +285,7 @@ typedef struct _Span_Channel_Params {
    /* Gradient parameters (unused for Solid type) */
    float    grad_a, grad_b, grad_c;  /* linear: t = a*px + b*py + c */
    int      grad_spread;             /* 0=PAD, 1=REFLECT, 2=REPEAT */
-   GLuint   grad_ramp;               /* 1024x1 ramp texture */
+   float    grad_ramp_y;             /* atlas V coordinate: (row+0.5)/SPAN_GRAD_ATLAS_H */
    int      grad_type;               /* 0=linear, 1=radial */
    float    grad_d, grad_e, grad_f;  /* radial: 2nd affine row */
    float    grad_ra, grad_rdx, grad_rdy; /* radial: quadratic params */
@@ -298,6 +298,8 @@ typedef struct _Span_Pipe_Params {
    int      x, y, w, h;          /* draw rect in canvas space */
    uint32_t mul_col;              /* multiply color */
    float    fbo_off_x, fbo_off_y; /* atlas FBO sub-region offset */
+   /* Gradient ramp atlas (0 = atlas unavailable, gradient shapes are skipped) */
+   GLuint   grad_atlas_tex;       /* GL texture name of the shared gradient ramp atlas */
    /* Composite mask parameters (0/NULL = no mask) */
    GLuint   mask_tex;             /* GL texture name of mask FBO (0 = no mask) */
    int      comp_method;          /* Efl_Gfx_Vg_Composite_Method */
@@ -391,7 +393,7 @@ struct _Evas_Engine_GL_Context
          float    span_fill_grad_b;      /* y coefficient for fill gradient t */
          float    span_fill_grad_c;      /* constant term for fill gradient t */
          int      span_fill_grad_spread; /* 0=PAD 1=REFLECT 2=REPEAT */
-         GLuint   span_fill_grad_ramp;   /* 1024×1 gradient ramp GL texture name */
+         float    span_fill_grad_ramp_y; /* atlas V coord: (row+0.5)/SPAN_GRAD_ATLAS_H */
          int      span_fill_grad_type;   /* 0=linear, 1=radial */
          float    span_fill_grad_d;      /* radial: 2nd affine row x coeff */
          float    span_fill_grad_e;      /* radial: 2nd affine row y coeff */
@@ -403,7 +405,7 @@ struct _Evas_Engine_GL_Context
          float    span_stroke_grad_b;
          float    span_stroke_grad_c;
          int      span_stroke_grad_spread;
-         GLuint   span_stroke_grad_ramp;
+         float    span_stroke_grad_ramp_y; /* atlas V coord: (row+0.5)/SPAN_GRAD_ATLAS_H */
          int      span_stroke_grad_type;
          float    span_stroke_grad_d;
          float    span_stroke_grad_e;
@@ -411,6 +413,7 @@ struct _Evas_Engine_GL_Context
          float    span_stroke_grad_ra;
          float    span_stroke_grad_rdx;
          float    span_stroke_grad_rdy;
+         GLuint   span_grad_atlas_tex;   /* gradient ramp atlas GL texture name */
          float    span_fbo_off_x;     /* atlas FBO sub-region x offset */
          float    span_fbo_off_y;     /* atlas FBO sub-region y offset */
          int      span_fill_x_min;   /* spatial split: fill texture x_min */
