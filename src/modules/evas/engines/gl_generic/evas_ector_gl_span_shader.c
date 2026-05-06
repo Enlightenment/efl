@@ -16,6 +16,7 @@
 # include "config.h"
 #endif
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -30,12 +31,161 @@
 /* GLSL shader source strings                                          */
 /* ------------------------------------------------------------------ */
 
-/* Vertex shader — shared between solid and gradient programs.
- * Positions are passed as NDC; no matrix transform needed. */
-static const char _span_vertex_glsl[] =
-   "attribute vec4 a_position;\n"
+/* ------------------------------------------------------------------ */
+/* Varying declaration blocks (VS writes, FS reads)                    */
+/* ------------------------------------------------------------------ */
+
+/* Common varyings present in all variants. */
+static const char _glsl_varyings_common[] =
+   "varying highp vec2 v_fbo_off;\n"
+   "varying highp vec2 v_fill_off;\n"
+   "varying highp vec2 v_stroke_off;\n"
+   "varying highp float v_max_spans;\n"
+   "varying highp float v_has_flags;\n"  /* (has_fill | has_stroke<<1) as float */
+   "varying highp float v_fill_x_min;\n"
+   "varying highp float v_stroke_x_min;\n"
+   "varying mediump vec4 v_mul_col;\n";
+
+static const char _glsl_varyings_solid[] =
+   "varying mediump vec4 v_fill_col;\n"
+   "varying mediump vec4 v_stroke_col;\n";
+
+static const char _glsl_varyings_gradient[] =
+   "varying highp vec4 v_fill_grad_abc_y;\n"
+   "varying highp vec4 v_fill_grad_def;\n"
+   "varying highp vec4 v_fill_grad_radial;\n"
+   "varying highp vec4 v_stroke_grad_abc_y;\n"
+   "varying highp vec4 v_stroke_grad_def;\n"
+   "varying highp vec4 v_stroke_grad_radial;\n";
+
+static const char _glsl_varyings_mask[] =
+   "varying highp vec4 v_mask_off_size;\n"
+   "varying mediump vec2 v_mask_comp_inv;\n";
+
+/* ------------------------------------------------------------------ */
+/* Attribute declaration blocks (per-vertex data → VS input)          */
+/* ------------------------------------------------------------------ */
+
+static const char _glsl_attributes_common[] =
+   "attribute highp vec2  a_position;\n"
+   "attribute highp vec4  a_fbo_fill_off;\n"
+   "attribute highp vec4  a_stroke_off_flags;\n"
+   "attribute highp vec2  a_x_min;\n"
+   "attribute mediump vec4 a_mul_col;\n";
+
+static const char _glsl_attributes_solid[] =
+   "attribute mediump vec4 a_fill_col;\n"
+   "attribute mediump vec4 a_stroke_col;\n";
+
+static const char _glsl_attributes_gradient[] =
+   "attribute highp vec4 a_fill_grad_abc_y;\n"
+   "attribute highp vec4 a_fill_grad_def;\n"
+   "attribute highp vec4 a_fill_grad_radial;\n"
+   "attribute highp vec4 a_stroke_grad_abc_y;\n"
+   "attribute highp vec4 a_stroke_grad_def;\n"
+   "attribute highp vec4 a_stroke_grad_radial;\n";
+
+static const char _glsl_attributes_mask[] =
+   "attribute highp vec4 a_mask_off_size;\n"
+   "attribute mediump vec2 a_mask_comp_inv;\n";
+
+/* ------------------------------------------------------------------ */
+/* Vertex shader main bodies — one per variant family                  */
+/* ------------------------------------------------------------------ */
+
+/* Solid, no mask. */
+static const char _glsl_vs_main_solid[] =
    "void main() {\n"
-   "   gl_Position = a_position;\n"
+   "   gl_Position    = vec4(a_position, 0.0, 1.0);\n"
+   "   v_fbo_off      = a_fbo_fill_off.xy;\n"
+   "   v_fill_off     = a_fbo_fill_off.zw;\n"
+   "   v_stroke_off   = a_stroke_off_flags.xy;\n"
+   "   v_max_spans    = a_stroke_off_flags.z;\n"
+   "   v_has_flags    = a_stroke_off_flags.w;\n"
+   "   v_fill_x_min   = a_x_min.x;\n"
+   "   v_stroke_x_min = a_x_min.y;\n"
+   "   v_mul_col      = a_mul_col;\n"
+   "   v_fill_col     = a_fill_col;\n"
+   "   v_stroke_col   = a_stroke_col;\n"
+   "}\n";
+
+/* Solid with composite mask.
+ * Decodes comp_method (slot 0) → mask_op (0=multiply,1=add,2=difference)
+ * so the FS can keep its existing mop < 0.5 / mop < 1.5 logic.
+ * Slot 1 (mask_inv) is already pre-decoded by _span_fill_vertices. */
+static const char _glsl_vs_main_solid_mask[] =
+   "void main() {\n"
+   "   gl_Position    = vec4(a_position, 0.0, 1.0);\n"
+   "   v_fbo_off      = a_fbo_fill_off.xy;\n"
+   "   v_fill_off     = a_fbo_fill_off.zw;\n"
+   "   v_stroke_off   = a_stroke_off_flags.xy;\n"
+   "   v_max_spans    = a_stroke_off_flags.z;\n"
+   "   v_has_flags    = a_stroke_off_flags.w;\n"
+   "   v_fill_x_min   = a_x_min.x;\n"
+   "   v_stroke_x_min = a_x_min.y;\n"
+   "   v_mul_col      = a_mul_col;\n"
+   "   v_fill_col     = a_fill_col;\n"
+   "   v_stroke_col   = a_stroke_col;\n"
+   "   v_mask_off_size = a_mask_off_size;\n"
+   "   /* Decode comp_method in slot 0 to mask_op (0=multiply,1=add,2=difference).\n"
+   "    * Slot 1 carries pre-decoded mask_inv (0=normal, 1=invert).\n"
+   "    * comp_method 3 = ADD, 6 = DIFFERENCE, all others = MULTIPLY.\n"
+   "    * Use tight range [2.5,3.5) so method 4 falls through to mop=0.0. */\n"
+   "   highp float cm = a_mask_comp_inv.x;\n"
+   "   highp float mop;\n"
+   "   if (cm > 5.5)                    mop = 2.0;\n"  /* comp_method == 6: MASK_DIFFERENCE */
+   "   else if (cm > 2.5 && cm < 3.5)  mop = 1.0;\n"  /* comp_method == 3 only: MASK_ADD */
+   "   else                             mop = 0.0;\n"  /* methods 1,2,4,5: MULTIPLY */
+   "   v_mask_comp_inv = vec2(mop, a_mask_comp_inv.y);\n"
+   "}\n";
+
+/* Gradient, no mask. */
+static const char _glsl_vs_main_gradient[] =
+   "void main() {\n"
+   "   gl_Position    = vec4(a_position, 0.0, 1.0);\n"
+   "   v_fbo_off      = a_fbo_fill_off.xy;\n"
+   "   v_fill_off     = a_fbo_fill_off.zw;\n"
+   "   v_stroke_off   = a_stroke_off_flags.xy;\n"
+   "   v_max_spans    = a_stroke_off_flags.z;\n"
+   "   v_has_flags    = a_stroke_off_flags.w;\n"
+   "   v_fill_x_min   = a_x_min.x;\n"
+   "   v_stroke_x_min = a_x_min.y;\n"
+   "   v_mul_col      = a_mul_col;\n"
+   "   v_fill_grad_abc_y    = a_fill_grad_abc_y;\n"
+   "   v_fill_grad_def      = a_fill_grad_def;\n"
+   "   v_fill_grad_radial   = a_fill_grad_radial;\n"
+   "   v_stroke_grad_abc_y  = a_stroke_grad_abc_y;\n"
+   "   v_stroke_grad_def    = a_stroke_grad_def;\n"
+   "   v_stroke_grad_radial = a_stroke_grad_radial;\n"
+   "}\n";
+
+/* Gradient with composite mask. */
+static const char _glsl_vs_main_gradient_mask[] =
+   "void main() {\n"
+   "   gl_Position    = vec4(a_position, 0.0, 1.0);\n"
+   "   v_fbo_off      = a_fbo_fill_off.xy;\n"
+   "   v_fill_off     = a_fbo_fill_off.zw;\n"
+   "   v_stroke_off   = a_stroke_off_flags.xy;\n"
+   "   v_max_spans    = a_stroke_off_flags.z;\n"
+   "   v_has_flags    = a_stroke_off_flags.w;\n"
+   "   v_fill_x_min   = a_x_min.x;\n"
+   "   v_stroke_x_min = a_x_min.y;\n"
+   "   v_mul_col      = a_mul_col;\n"
+   "   v_fill_grad_abc_y    = a_fill_grad_abc_y;\n"
+   "   v_fill_grad_def      = a_fill_grad_def;\n"
+   "   v_fill_grad_radial   = a_fill_grad_radial;\n"
+   "   v_stroke_grad_abc_y  = a_stroke_grad_abc_y;\n"
+   "   v_stroke_grad_def    = a_stroke_grad_def;\n"
+   "   v_stroke_grad_radial = a_stroke_grad_radial;\n"
+   "   v_mask_off_size      = a_mask_off_size;\n"
+   "   /* comp_method 3 = ADD, 6 = DIFFERENCE, all others = MULTIPLY.\n"
+   "    * Tight range [2.5,3.5) excludes method 4 from the ADD branch. */\n"
+   "   highp float cm = a_mask_comp_inv.x;\n"
+   "   highp float mop;\n"
+   "   if (cm > 5.5)                    mop = 2.0;\n"  /* comp_method == 6: MASK_DIFFERENCE */
+   "   else if (cm > 2.5 && cm < 3.5)  mop = 1.0;\n"  /* comp_method == 3 only: MASK_ADD */
+   "   else                             mop = 0.0;\n"  /* methods 1,2,4,5: MULTIPLY */
+   "   v_mask_comp_inv = vec2(mop, a_mask_comp_inv.y);\n"
    "}\n";
 
 /* ------------------------------------------------------------------ */
@@ -61,178 +211,47 @@ typedef enum {
 
 /* Always present, regardless of bindings.
  * #define MAX_SPANS must match SPAN_COLLECTOR_DEFAULT_MAX_SPANS (64).
- * u_inv_tw/th and u_fbo_offset participate in pixel-coordinate math that
- * can overflow fp16 on large surfaces — mark highp. */
+ * Per-shape data (mul_col, fbo_offset, max_spans) are now varyings;
+ * only the shared pool reciprocals and atlas sampler remain as uniforms.
+ * u_mask_tex is also a uniform (sampler); only present in mask variants. */
 static const char _glsl_uniforms_shared[] =
-   "uniform int   u_max_spans;\n"
-   "uniform vec4  u_mul_col;\n"
-   "uniform highp vec2 u_fbo_offset;\n"
    "uniform highp float u_inv_tw;\n"
    "uniform highp float u_inv_th;\n"
    "uniform sampler2D u_grad_ramp_atlas;\n"
    "#define MAX_SPANS 64\n";
 
-/* Fill-and-stroke binding set: both span samplers + both offsets. */
+/* Fill-and-stroke binding set: both span samplers.
+ *
+ * Per-shape data (offsets, x_min, has_fill/has_stroke) moved to varyings.
+ * Samplers still declared as uniforms; the has_fill/has_stroke values are
+ * decoded from v_has_flags in main() — no per-binding defines needed. */
 static const char _glsl_uniforms_bind_fs[] =
    "uniform sampler2D u_fill_spans;\n"
-   "uniform sampler2D u_stroke_spans;\n"
-   "uniform highp vec2 u_fill_offset;\n"
-   "uniform highp vec2 u_stroke_offset;\n"
-   "uniform int u_has_fill;\n"
-   "uniform int u_has_stroke;\n"
-   "uniform int u_fill_x_min;\n"
-   "uniform int u_stroke_x_min;\n";
+   "uniform sampler2D u_stroke_spans;\n";
 
-/* Fill-only binding set: fill sampler + fill offset.
+/* Fill-only binding set: fill sampler only.
  *
- * All samplers and uniforms from the fill-and-stroke set are declared so
- * that identifiers in dead branches resolve on strict GLSL ES 2.0 front-ends
- * (notably Broadcom V3D 4.2).  The "#define u_has_stroke 0" makes the
- * matching branch statically dead, so post-parse DCE removes the
- * texture2D(u_stroke_spans, ...) dispatch and we still avoid runtime TMU
- * work and register pressure on unused sampler results. */
+ * u_stroke_spans is also declared so that identifiers in dead branches
+ * resolve on strict GLSL ES 2.0 front-ends (V3D 4.2).  The has_s integer
+ * (decoded from v_has_flags) will be 0 for fill-only shapes, making the
+ * stroke branch statically dead after constant folding. */
 static const char _glsl_uniforms_bind_f[] =
    "uniform sampler2D u_fill_spans;\n"
-   "uniform sampler2D u_stroke_spans;\n"
-   "uniform highp vec2 u_fill_offset;\n"
-   "uniform highp vec2 u_stroke_offset;\n"
-   "uniform int u_has_fill;\n"
-   "uniform int u_fill_x_min;\n"
-   "#define u_has_stroke 0\n"
-   "#define u_stroke_x_min 0\n";
+   "uniform sampler2D u_stroke_spans;\n";
 
-/* Stroke-only binding set: stroke sampler + stroke offset.
+/* Stroke-only binding set: stroke sampler only.
  *
- * All samplers and uniforms from the fill-and-stroke set are declared so
- * that identifiers in dead branches resolve on strict GLSL ES 2.0 front-ends
- * (notably Broadcom V3D 4.2).  The "#define u_has_fill 0" makes the
- * matching branch statically dead, so post-parse DCE removes the
- * texture2D(u_fill_spans, ...) dispatch and we still avoid runtime TMU
- * work and register pressure on unused sampler results. */
+ * u_fill_spans is also declared for dead-branch resolution (see fill-only
+ * comment above).  has_f decoded from v_has_flags will be 0. */
 static const char _glsl_uniforms_bind_s[] =
    "uniform sampler2D u_stroke_spans;\n"
-   "uniform sampler2D u_fill_spans;\n"
-   "uniform highp vec2 u_stroke_offset;\n"
-   "uniform highp vec2 u_fill_offset;\n"
-   "uniform int u_has_stroke;\n"
-   "uniform int u_stroke_x_min;\n"
-   "#define u_has_fill 0\n"
-   "#define u_fill_x_min 0\n";
+   "uniform sampler2D u_fill_spans;\n";
 
-/* Solid color uniforms — split by binding set so unused uniforms are absent. */
-static const char _glsl_uniforms_solid_fs[] =
-   "uniform vec4 u_fill_col;\n"
-   "uniform vec4 u_stroke_col;\n";
 
-static const char _glsl_uniforms_solid_f[] =
-   "uniform vec4 u_fill_col;\n"
-   "uniform vec4 u_stroke_col;\n";   /* declared for V3D dead-branch resolution; DCE removes use */
-
-static const char _glsl_uniforms_solid_s[] =
-   "uniform vec4 u_stroke_col;\n"
-   "uniform vec4 u_fill_col;\n";     /* declared for V3D dead-branch resolution; DCE removes use */
-
-/* Gradient coefficient uniforms — split by binding set.
- *
- * highp is mandatory: these multiply gl_FragCoord (which can be > 2048 on
- * large surfaces) and are squared in the radial path, so mediump (fp16)
- * would lose precision in the gradient parameter. */
-
-/* Fill-and-stroke gradient: ramp_y uniforms + all coefficients.
- * The ramp atlas sampler (u_grad_ramp_atlas) is now in _glsl_uniforms_shared. */
-static const char _glsl_uniforms_gradient_fs[] =
-   "uniform highp float u_fill_grad_ramp_y;\n"
-   "uniform highp float u_fill_grad_a;\n"
-   "uniform highp float u_fill_grad_b;\n"
-   "uniform highp float u_fill_grad_c;\n"
-   "uniform int   u_fill_grad_spread;\n"
-   "uniform highp float u_stroke_grad_ramp_y;\n"
-   "uniform highp float u_stroke_grad_a;\n"
-   "uniform highp float u_stroke_grad_b;\n"
-   "uniform highp float u_stroke_grad_c;\n"
-   "uniform int   u_stroke_grad_spread;\n"
-   "uniform int   u_fill_grad_type;\n"
-   "uniform highp float u_fill_grad_d;\n"
-   "uniform highp float u_fill_grad_e;\n"
-   "uniform highp float u_fill_grad_f;\n"
-   "uniform highp float u_fill_grad_ra;\n"
-   "uniform highp float u_fill_grad_rdx;\n"
-   "uniform highp float u_fill_grad_rdy;\n"
-   "uniform int   u_stroke_grad_type;\n"
-   "uniform highp float u_stroke_grad_d;\n"
-   "uniform highp float u_stroke_grad_e;\n"
-   "uniform highp float u_stroke_grad_f;\n"
-   "uniform highp float u_stroke_grad_ra;\n"
-   "uniform highp float u_stroke_grad_rdx;\n"
-   "uniform highp float u_stroke_grad_rdy;\n";
-
-/* Fill-only gradient: fill ramp_y + fill coefficients.
- * Stroke uniforms are also declared so dead-branch identifiers resolve on
- * strict GLSL ES 2.0 front-ends (V3D 4.2).  "#define u_has_stroke 0" in
- * _glsl_uniforms_bind_f makes the stroke branch statically dead. */
-static const char _glsl_uniforms_gradient_f[] =
-   "uniform highp float u_fill_grad_ramp_y;\n"
-   "uniform highp float u_fill_grad_a;\n"
-   "uniform highp float u_fill_grad_b;\n"
-   "uniform highp float u_fill_grad_c;\n"
-   "uniform int   u_fill_grad_spread;\n"
-   "uniform int   u_fill_grad_type;\n"
-   "uniform highp float u_fill_grad_d;\n"
-   "uniform highp float u_fill_grad_e;\n"
-   "uniform highp float u_fill_grad_f;\n"
-   "uniform highp float u_fill_grad_ra;\n"
-   "uniform highp float u_fill_grad_rdx;\n"
-   "uniform highp float u_fill_grad_rdy;\n"
-   "uniform highp float u_stroke_grad_ramp_y;\n"
-   "uniform highp float u_stroke_grad_a;\n"
-   "uniform highp float u_stroke_grad_b;\n"
-   "uniform highp float u_stroke_grad_c;\n"
-   "uniform int   u_stroke_grad_spread;\n"
-   "uniform int   u_stroke_grad_type;\n"
-   "uniform highp float u_stroke_grad_d;\n"
-   "uniform highp float u_stroke_grad_e;\n"
-   "uniform highp float u_stroke_grad_f;\n"
-   "uniform highp float u_stroke_grad_ra;\n"
-   "uniform highp float u_stroke_grad_rdx;\n"
-   "uniform highp float u_stroke_grad_rdy;\n";
-
-/* Stroke-only gradient: stroke ramp_y + stroke coefficients.
- * Fill uniforms are also declared so dead-branch identifiers resolve on
- * strict GLSL ES 2.0 front-ends (V3D 4.2).  "#define u_has_fill 0" in
- * _glsl_uniforms_bind_s makes the fill branch statically dead. */
-static const char _glsl_uniforms_gradient_s[] =
-   "uniform highp float u_stroke_grad_ramp_y;\n"
-   "uniform highp float u_stroke_grad_a;\n"
-   "uniform highp float u_stroke_grad_b;\n"
-   "uniform highp float u_stroke_grad_c;\n"
-   "uniform int   u_stroke_grad_spread;\n"
-   "uniform int   u_stroke_grad_type;\n"
-   "uniform highp float u_stroke_grad_d;\n"
-   "uniform highp float u_stroke_grad_e;\n"
-   "uniform highp float u_stroke_grad_f;\n"
-   "uniform highp float u_stroke_grad_ra;\n"
-   "uniform highp float u_stroke_grad_rdx;\n"
-   "uniform highp float u_stroke_grad_rdy;\n"
-   "uniform highp float u_fill_grad_ramp_y;\n"
-   "uniform highp float u_fill_grad_a;\n"
-   "uniform highp float u_fill_grad_b;\n"
-   "uniform highp float u_fill_grad_c;\n"
-   "uniform int   u_fill_grad_spread;\n"
-   "uniform int   u_fill_grad_type;\n"
-   "uniform highp float u_fill_grad_d;\n"
-   "uniform highp float u_fill_grad_e;\n"
-   "uniform highp float u_fill_grad_f;\n"
-   "uniform highp float u_fill_grad_ra;\n"
-   "uniform highp float u_fill_grad_rdx;\n"
-   "uniform highp float u_fill_grad_rdy;\n";
-
-/* Composite mask uniforms (present only in *_mask variants). */
+/* Composite mask uniforms (present only in *_mask variants).
+ * Only the sampler remains; size, offset, op, inv moved to varyings. */
 static const char _glsl_uniforms_mask[] =
-   "uniform sampler2D u_mask_tex;\n"
-   "uniform vec2  u_mask_size;\n"
-   "uniform vec2  u_mask_offset;\n"
-   "uniform float u_mask_inv;\n"
-   "uniform float u_mask_op;\n";
+   "uniform sampler2D u_mask_tex;\n";
 
 /* scan_spans() — shared by solid and solid_mask shaders.
  *
@@ -355,74 +374,93 @@ static const char _glsl_scan_gradient_spans[] =
    "}\n";
 
 /* main() body for solid shaders: px/py setup, fill/stroke dispatch.
- * Everything up to but not including gl_FragColor. */
+ * Everything up to but not including gl_FragColor.
+ * Reads per-shape data from varyings (not uniforms). */
 static const char _glsl_main_solid_body[] =
    "\n"
    "void main() {\n"
-   "   highp float px = gl_FragCoord.x - u_fbo_offset.x;\n"
-   "   highp float py = gl_FragCoord.y - u_fbo_offset.y;\n"
+   "   int max_s  = int(v_max_spans + 0.5);\n"
+   "   int has_f  = int(mod(v_has_flags + 0.5, 2.0));\n"
+   "   int has_s  = int(v_has_flags + 0.5) / 2;\n"
+   "   int fill_xm = int(v_fill_x_min + 0.5);\n"
+   "   int stk_xm  = int(v_stroke_x_min + 0.5);\n"
+   "   highp float px = gl_FragCoord.x - v_fbo_off.x;\n"
+   "   highp float py = gl_FragCoord.y - v_fbo_off.y;\n"
    "   vec4 result = vec4(0.0);\n"
    "\n"
-   "   if (u_has_fill == 1) {\n"
-   "      highp float fy = (u_fill_offset.y + py) * u_inv_th;\n"
-   "      result = scan_spans(u_fill_spans, u_fill_offset, u_fill_col,\n"
-   "                          px, fy, u_inv_tw, u_max_spans, u_fill_x_min, result);\n"
+   "   if (has_f == 1) {\n"
+   "      highp float fy = (v_fill_off.y + py) * u_inv_th;\n"
+   "      result = scan_spans(u_fill_spans, v_fill_off, v_fill_col,\n"
+   "                          px, fy, u_inv_tw, max_s, fill_xm, result);\n"
    "   }\n"
-   "   if (u_has_stroke == 1) {\n"
-   "      highp float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
-   "      result = scan_spans(u_stroke_spans, u_stroke_offset, u_stroke_col,\n"
-   "                          px, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
+   "   if (has_s == 1) {\n"
+   "      highp float fy = (v_stroke_off.y + py) * u_inv_th;\n"
+   "      result = scan_spans(u_stroke_spans, v_stroke_off, v_stroke_col,\n"
+   "                          px, fy, u_inv_tw, max_s, stk_xm, result);\n"
    "   }\n";
 
-/* main() body for gradient shaders. */
+/* main() body for gradient shaders.
+ * Reads per-shape data from varyings (not uniforms). */
 static const char _glsl_main_gradient_body[] =
    "\n"
    "void main() {\n"
-   "   highp float px = gl_FragCoord.x - u_fbo_offset.x;\n"
-   "   highp float py = gl_FragCoord.y - u_fbo_offset.y;\n"
+   "   int max_s   = int(v_max_spans + 0.5);\n"
+   "   int has_f   = int(mod(v_has_flags + 0.5, 2.0));\n"
+   "   int has_s   = int(v_has_flags + 0.5) / 2;\n"
+   "   int fill_xm = int(v_fill_x_min + 0.5);\n"
+   "   int stk_xm  = int(v_stroke_x_min + 0.5);\n"
+   "   /* Gradient type/spread packed in .w: type in fill_grad_def.w, spread in fill_grad_radial.w */\n"
+   "   int fill_gtype   = int(v_fill_grad_def.w + 0.5);\n"
+   "   int fill_gspread = int(v_fill_grad_radial.w + 0.5);\n"
+   "   int stk_gtype    = int(v_stroke_grad_def.w + 0.5);\n"
+   "   int stk_gspread  = int(v_stroke_grad_radial.w + 0.5);\n"
+   "   highp float px = gl_FragCoord.x - v_fbo_off.x;\n"
+   "   highp float py = gl_FragCoord.y - v_fbo_off.y;\n"
    "   vec4 result = vec4(0.0);\n"
    "\n"
-   "   if (u_has_fill == 1) {\n"
-   "      highp float fy = (u_fill_offset.y + py) * u_inv_th;\n"
+   "   if (has_f == 1) {\n"
+   "      highp float fy = (v_fill_off.y + py) * u_inv_th;\n"
    "      result = scan_gradient_spans(\n"
-   "                  u_fill_spans, u_fill_offset,\n"
-   "                  u_fill_grad_ramp_y,\n"
-   "                  u_fill_grad_a, u_fill_grad_b, u_fill_grad_c,\n"
-   "                  u_fill_grad_spread, u_fill_grad_type,\n"
-   "                  u_fill_grad_d, u_fill_grad_e, u_fill_grad_f,\n"
-   "                  u_fill_grad_ra, u_fill_grad_rdx, u_fill_grad_rdy,\n"
-   "                  px, py, fy, u_inv_tw, u_max_spans, u_fill_x_min, result);\n"
+   "                  u_fill_spans, v_fill_off,\n"
+   "                  v_fill_grad_abc_y.w,\n"
+   "                  v_fill_grad_abc_y.x, v_fill_grad_abc_y.y, v_fill_grad_abc_y.z,\n"
+   "                  fill_gspread, fill_gtype,\n"
+   "                  v_fill_grad_def.x, v_fill_grad_def.y, v_fill_grad_def.z,\n"
+   "                  v_fill_grad_radial.x, v_fill_grad_radial.y, v_fill_grad_radial.z,\n"
+   "                  px, py, fy, u_inv_tw, max_s, fill_xm, result);\n"
    "   }\n"
-   "   if (u_has_stroke == 1) {\n"
-   "      highp float fy = (u_stroke_offset.y + py) * u_inv_th;\n"
+   "   if (has_s == 1) {\n"
+   "      highp float fy = (v_stroke_off.y + py) * u_inv_th;\n"
    "      result = scan_gradient_spans(\n"
-   "                  u_stroke_spans, u_stroke_offset,\n"
-   "                  u_stroke_grad_ramp_y,\n"
-   "                  u_stroke_grad_a, u_stroke_grad_b, u_stroke_grad_c,\n"
-   "                  u_stroke_grad_spread, u_stroke_grad_type,\n"
-   "                  u_stroke_grad_d, u_stroke_grad_e, u_stroke_grad_f,\n"
-   "                  u_stroke_grad_ra, u_stroke_grad_rdx, u_stroke_grad_rdy,\n"
-   "                  px, py, fy, u_inv_tw, u_max_spans, u_stroke_x_min, result);\n"
+   "                  u_stroke_spans, v_stroke_off,\n"
+   "                  v_stroke_grad_abc_y.w,\n"
+   "                  v_stroke_grad_abc_y.x, v_stroke_grad_abc_y.y, v_stroke_grad_abc_y.z,\n"
+   "                  stk_gspread, stk_gtype,\n"
+   "                  v_stroke_grad_def.x, v_stroke_grad_def.y, v_stroke_grad_def.z,\n"
+   "                  v_stroke_grad_radial.x, v_stroke_grad_radial.y, v_stroke_grad_radial.z,\n"
+   "                  px, py, fy, u_inv_tw, max_s, stk_xm, result);\n"
    "   }\n";
 
-/* Common main() ending: multiply by color and close. */
+/* Common main() ending: multiply by color and close.
+ * Uses v_mul_col (varying) instead of u_mul_col (uniform). */
 static const char _glsl_main_end[] =
-   "   gl_FragColor = result * u_mul_col;\n"
+   "   gl_FragColor = result * v_mul_col;\n"
    "}\n";
 
 /* Mask epilogue: sample the composite mask texture and apply it.
- * u_mask_op: 0=multiply, 1=add, 2=difference
- * u_mask_inv: 0=normal, 1=invert (multiply path only) */
+ * v_mask_comp_inv.x: decoded mask_op (0=multiply, 1=add, 2=difference)
+ *   — decoded in the VS from raw comp_method to save per-fragment work.
+ * v_mask_comp_inv.y: mask_inv (0=normal, 1=invert, multiply path only). */
 static const char _glsl_mask_epilogue[] =
    "\n"
-   "   vec2 mask_uv = vec2((px + u_mask_offset.x + 0.5) / u_mask_size.x,\n"
-   "                       (py + u_mask_offset.y + 0.5) / u_mask_size.y);\n"
+   "   vec2 mask_uv = vec2((px + v_mask_off_size.x + 0.5) / v_mask_off_size.z,\n"
+   "                       (py + v_mask_off_size.y + 0.5) / v_mask_off_size.w);\n"
    "   float mask_a = texture2D(u_mask_tex, mask_uv).a;\n"
-   "   /* u_mask_op: 0=multiply, 1=add, 2=difference\n"
-   "    * u_mask_inv: 0=normal, 1=invert (for multiply path) */\n"
-   "   if (u_mask_op < 0.5)\n"
-   "      result *= mix(mask_a, 1.0 - mask_a, u_mask_inv);\n"
-   "   else if (u_mask_op < 1.5)\n"
+   "   float mop = v_mask_comp_inv.x;\n"
+   "   float mvi = v_mask_comp_inv.y;\n"
+   "   if (mop < 0.5)\n"
+   "      result *= mix(mask_a, 1.0 - mask_a, mvi);\n"
+   "   else if (mop < 1.5)\n"
    "      result = vec4(result.rgb, min(result.a + mask_a, 1.0));\n"
    "   else\n"
    "      result *= abs(result.a - mask_a);\n";
@@ -443,54 +481,75 @@ _uniforms_bind_for(Span_Bind_Set bind)
      }
 }
 
-static const char *
-_uniforms_solid_for(Span_Bind_Set bind)
-{
-   switch (bind)
-     {
-      case SPAN_BIND_FILL_AND_STROKE: return _glsl_uniforms_solid_fs;
-      case SPAN_BIND_FILL_ONLY:       return _glsl_uniforms_solid_f;
-      case SPAN_BIND_STROKE_ONLY:     return _glsl_uniforms_solid_s;
-      default:                        return _glsl_uniforms_solid_fs;
-     }
-}
-
-static const char *
-_uniforms_gradient_for(Span_Bind_Set bind)
-{
-   switch (bind)
-     {
-      case SPAN_BIND_FILL_AND_STROKE: return _glsl_uniforms_gradient_fs;
-      case SPAN_BIND_FILL_ONLY:       return _glsl_uniforms_gradient_f;
-      case SPAN_BIND_STROKE_ONLY:     return _glsl_uniforms_gradient_s;
-      default:                        return _glsl_uniforms_gradient_fs;
-     }
-}
-
-/* Build source parts for the (kind, bind, mask) combination.
+/* Build fragment-shader source parts for the (kind, bind, mask) combination.
  * kind: 0=solid, 1=gradient; bind: Span_Bind_Set; mask: 0 or 1.
- * Returns a heap-allocated array of static string pointers; the caller
+ *
+ * Task 4: per-shape uniform blocks replaced by varying declarations.
+ * The bind-specific uniform blocks still declare the span samplers and
+ * the fill/stroke binding-set defines (#define u_has_stroke 0 etc.) so
+ * dead-branch resolution works on strict GLSL ES 2.0 (V3D 4.2).
+ *
+ * Returns a heap-allocated array of static string pointers; caller
  * must free() the array (not the strings). */
 static const char **
 _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
 {
-   const char *parts[16];
+   const char *parts[20];
    int n = 0;
 
    parts[n++] = _glsl_precision;
+   /* Shared uniforms: pool reciprocals + atlas sampler. */
    parts[n++] = _glsl_uniforms_shared;
+   /* Binding-set: span samplers + u_has_fill/u_has_stroke defines. */
    parts[n++] = _uniforms_bind_for(bind);
-   if (kind == 0)
-     parts[n++] = _uniforms_solid_for(bind);
-   else
-     parts[n++] = _uniforms_gradient_for(bind);
+   /* Mask sampler uniform (only in mask variants). */
    if (mask) parts[n++] = _glsl_uniforms_mask;
+   /* Varyings: varying declarations read by this FS. */
+   parts[n++] = _glsl_varyings_common;
+   if (kind == 0) parts[n++] = _glsl_varyings_solid;
+   else           parts[n++] = _glsl_varyings_gradient;
+   if (mask)      parts[n++] = _glsl_varyings_mask;
 
    if (kind == 1) parts[n++] = _glsl_grad_spread;
    parts[n++] = (kind == 0) ? _glsl_scan_spans : _glsl_scan_gradient_spans;
    parts[n++] = (kind == 0) ? _glsl_main_solid_body : _glsl_main_gradient_body;
    if (mask) parts[n++] = _glsl_mask_epilogue;
    parts[n++] = _glsl_main_end;
+
+   {
+      const char **out = malloc(sizeof(*out) * (size_t)n);
+      if (!out) { *out_count = 0; return NULL; }
+      memcpy(out, parts, sizeof(*out) * (size_t)n);
+      *out_count = n;
+      return out;
+   }
+}
+
+/* Build vertex-shader source parts for the (kind, mask) combination.
+ * Returns a heap-allocated array of static string pointers; caller
+ * must free() the array (not the strings). */
+static const char **
+_span_vs_parts_build(int kind, int mask, int *out_count)
+{
+   const char *parts[12];
+   int n = 0;
+
+   parts[n++] = _glsl_precision;
+   /* Attribute declarations. */
+   parts[n++] = _glsl_attributes_common;
+   if (kind == 0) parts[n++] = _glsl_attributes_solid;
+   else           parts[n++] = _glsl_attributes_gradient;
+   if (mask)      parts[n++] = _glsl_attributes_mask;
+   /* Varying declarations (same set as FS). */
+   parts[n++] = _glsl_varyings_common;
+   if (kind == 0) parts[n++] = _glsl_varyings_solid;
+   else           parts[n++] = _glsl_varyings_gradient;
+   if (mask)      parts[n++] = _glsl_varyings_mask;
+   /* VS main body. */
+   if (kind == 0)
+     parts[n++] = mask ? _glsl_vs_main_solid_mask    : _glsl_vs_main_solid;
+   else
+     parts[n++] = mask ? _glsl_vs_main_gradient_mask : _glsl_vs_main_gradient;
 
    {
       const char **out = malloc(sizeof(*out) * (size_t)n);
@@ -508,55 +567,33 @@ _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
 typedef struct
 {
    unsigned int program;
+   /* Uniform locations — samplers and pool reciprocals only.
+    * Per-shape data is now in vertex attributes (attr_* below). */
    int          loc_fill_spans;
    int          loc_stroke_spans;
    int          loc_inv_tw;
    int          loc_inv_th;
-   int          loc_max_spans;
-   int          loc_mul_col;
-   int          loc_fill_offset;
-   int          loc_stroke_offset;
-   int          loc_fill_col;
-   int          loc_stroke_col;
-   int          loc_has_fill;
-   int          loc_has_stroke;
-   int          loc_fbo_offset;
-   int          loc_fill_x_min;
-   int          loc_stroke_x_min;
-   /* Gradient-only uniforms (location -1 in solid shader → safe no-op) */
-   int          loc_grad_ramp_atlas;     /* u_grad_ramp_atlas  — shared atlas sampler */
-   int          loc_fill_grad_ramp_y;    /* u_fill_grad_ramp_y  — atlas V coord for fill */
-   int          loc_fill_grad_a;
-   int          loc_fill_grad_b;
-   int          loc_fill_grad_c;
-   int          loc_fill_grad_spread;
-   int          loc_stroke_grad_ramp_y;  /* u_stroke_grad_ramp_y — atlas V coord for stroke */
-   int          loc_stroke_grad_a;
-   int          loc_stroke_grad_b;
-   int          loc_stroke_grad_c;
-   int          loc_stroke_grad_spread;
-   int          loc_fill_grad_type;
-   int          loc_fill_grad_d;
-   int          loc_fill_grad_e;
-   int          loc_fill_grad_f;
-   int          loc_fill_grad_ra;
-   int          loc_fill_grad_rdx;
-   int          loc_fill_grad_rdy;
-   int          loc_stroke_grad_type;
-   int          loc_stroke_grad_d;
-   int          loc_stroke_grad_e;
-   int          loc_stroke_grad_f;
-   int          loc_stroke_grad_ra;
-   int          loc_stroke_grad_rdx;
-   int          loc_stroke_grad_rdy;
-   /* Mask uniform locations — valid only in *_mask_shader variants.
-    * glGetUniformLocation returns -1 for non-mask shaders; glUniform on
-    * location -1 is a GL no-op per spec (safe to call unconditionally). */
+   /* Gradient atlas sampler — valid only in gradient variants (-1 otherwise). */
+   int          loc_grad_ramp_atlas;
+   /* Mask sampler — valid only in mask variants (-1 otherwise). */
    int          loc_mask_tex;
-   int          loc_mask_size;
-   int          loc_mask_offset;
-   int          loc_mask_inv;  /* 0.0 = normal, 1.0 = invert (multiply path) */
-   int          loc_mask_op;   /* 0.0 = multiply, 1.0 = add, 2.0 = difference */
+   /* Attribute locations — queried after glLinkProgram.
+    * -1 for attributes absent in this variant; BIND_ATTR skips them. */
+   int          attr_position;
+   int          attr_fbo_fill_off;
+   int          attr_stroke_off_flags;
+   int          attr_x_min;
+   int          attr_mul_col;
+   int          attr_fill_col;          /* solid variants only; -1 in gradient */
+   int          attr_stroke_col;        /* solid variants only; -1 in gradient */
+   int          attr_fill_grad_abc_y;   /* gradient variants only */
+   int          attr_fill_grad_def;
+   int          attr_fill_grad_radial;
+   int          attr_stroke_grad_abc_y;
+   int          attr_stroke_grad_def;
+   int          attr_stroke_grad_radial;
+   int          attr_mask_off_size;     /* mask variants only */
+   int          attr_mask_comp_inv;     /* mask variants only */
 } Span_Shader;
 
 /* [kind][bind][mask] — kind 0=solid 1=gradient, bind in Span_Bind_Set, mask 0/1.
@@ -609,28 +646,29 @@ _compile_shader_parts(unsigned int type, const char **parts, int count)
 }
 
 /**
- * Compile and link a span shader program from source fragment arrays.
+ * Compile and link a span shader program from FS + VS source fragment arrays.
  *
  * Idempotent: returns EINA_TRUE immediately if the program is already
  * compiled (ss->program != 0).
  *
  * @param ss          Shader state to populate.
+ * @param vert_parts  Array of vertex shader GLSL source strings.
+ * @param vert_count  Number of strings in @p vert_parts.
  * @param frag_parts  Array of fragment shader GLSL source strings.
  * @param frag_count  Number of strings in @p frag_parts.
  * @return            EINA_TRUE on success, EINA_FALSE on compile/link error.
  */
 static Eina_Bool
-_link_program(Span_Shader *ss, const char **frag_parts, int frag_count)
+_link_program(Span_Shader *ss,
+              const char **vert_parts, int vert_count,
+              const char **frag_parts, int frag_count)
 {
    unsigned int vs, fs;
    int          ok = 0;
 
    if (ss->program) return EINA_TRUE; /* already compiled */
 
-   {
-      const char *vert_parts[1] = { _span_vertex_glsl };
-      vs = _compile_shader_parts(GL_VERTEX_SHADER, vert_parts, 1);
-   }
+   vs = _compile_shader_parts(GL_VERTEX_SHADER,   vert_parts, vert_count);
    fs = _compile_shader_parts(GL_FRAGMENT_SHADER, frag_parts, frag_count);
    if (!vs || !fs)
      {
@@ -642,7 +680,6 @@ _link_program(Span_Shader *ss, const char **frag_parts, int frag_count)
    ss->program = glCreateProgram();
    glAttachShader(ss->program, vs);
    glAttachShader(ss->program, fs);
-   glBindAttribLocation(ss->program, 0, "a_position");
    glLinkProgram(ss->program);
    glGetProgramiv(ss->program, GL_LINK_STATUS, &ok);
 
@@ -662,55 +699,33 @@ _link_program(Span_Shader *ss, const char **frag_parts, int frag_count)
         return EINA_FALSE;
      }
 
-   ss->loc_fill_spans   = glGetUniformLocation(ss->program, "u_fill_spans");
-   ss->loc_stroke_spans = glGetUniformLocation(ss->program, "u_stroke_spans");
-   ss->loc_inv_tw       = glGetUniformLocation(ss->program, "u_inv_tw");
-   ss->loc_inv_th       = glGetUniformLocation(ss->program, "u_inv_th");
-   ss->loc_max_spans    = glGetUniformLocation(ss->program, "u_max_spans");
-   ss->loc_mul_col      = glGetUniformLocation(ss->program, "u_mul_col");
-   ss->loc_fill_offset  = glGetUniformLocation(ss->program, "u_fill_offset");
-   ss->loc_stroke_offset = glGetUniformLocation(ss->program, "u_stroke_offset");
-   ss->loc_fill_col     = glGetUniformLocation(ss->program, "u_fill_col");
-   ss->loc_stroke_col   = glGetUniformLocation(ss->program, "u_stroke_col");
-   ss->loc_has_fill     = glGetUniformLocation(ss->program, "u_has_fill");
-   ss->loc_has_stroke   = glGetUniformLocation(ss->program, "u_has_stroke");
-   ss->loc_fbo_offset     = glGetUniformLocation(ss->program, "u_fbo_offset");
-   ss->loc_fill_x_min    = glGetUniformLocation(ss->program, "u_fill_x_min");
-   ss->loc_stroke_x_min  = glGetUniformLocation(ss->program, "u_stroke_x_min");
-   /* Gradient uniforms — location -1 in solid shader (safe no-op). */
-   ss->loc_grad_ramp_atlas    = glGetUniformLocation(ss->program, "u_grad_ramp_atlas");
-   ss->loc_fill_grad_ramp_y   = glGetUniformLocation(ss->program, "u_fill_grad_ramp_y");
-   ss->loc_fill_grad_a        = glGetUniformLocation(ss->program, "u_fill_grad_a");
-   ss->loc_fill_grad_b        = glGetUniformLocation(ss->program, "u_fill_grad_b");
-   ss->loc_fill_grad_c        = glGetUniformLocation(ss->program, "u_fill_grad_c");
-   ss->loc_fill_grad_spread   = glGetUniformLocation(ss->program, "u_fill_grad_spread");
-   ss->loc_stroke_grad_ramp_y = glGetUniformLocation(ss->program, "u_stroke_grad_ramp_y");
-   ss->loc_stroke_grad_a      = glGetUniformLocation(ss->program, "u_stroke_grad_a");
-   ss->loc_stroke_grad_b      = glGetUniformLocation(ss->program, "u_stroke_grad_b");
-   ss->loc_stroke_grad_c      = glGetUniformLocation(ss->program, "u_stroke_grad_c");
-   ss->loc_stroke_grad_spread = glGetUniformLocation(ss->program, "u_stroke_grad_spread");
-   ss->loc_fill_grad_type   = glGetUniformLocation(ss->program, "u_fill_grad_type");
-   ss->loc_fill_grad_d      = glGetUniformLocation(ss->program, "u_fill_grad_d");
-   ss->loc_fill_grad_e      = glGetUniformLocation(ss->program, "u_fill_grad_e");
-   ss->loc_fill_grad_f      = glGetUniformLocation(ss->program, "u_fill_grad_f");
-   ss->loc_fill_grad_ra     = glGetUniformLocation(ss->program, "u_fill_grad_ra");
-   ss->loc_fill_grad_rdx    = glGetUniformLocation(ss->program, "u_fill_grad_rdx");
-   ss->loc_fill_grad_rdy    = glGetUniformLocation(ss->program, "u_fill_grad_rdy");
-   ss->loc_stroke_grad_type = glGetUniformLocation(ss->program, "u_stroke_grad_type");
-   ss->loc_stroke_grad_d    = glGetUniformLocation(ss->program, "u_stroke_grad_d");
-   ss->loc_stroke_grad_e    = glGetUniformLocation(ss->program, "u_stroke_grad_e");
-   ss->loc_stroke_grad_f    = glGetUniformLocation(ss->program, "u_stroke_grad_f");
-   ss->loc_stroke_grad_ra   = glGetUniformLocation(ss->program, "u_stroke_grad_ra");
-   ss->loc_stroke_grad_rdx  = glGetUniformLocation(ss->program, "u_stroke_grad_rdx");
-   ss->loc_stroke_grad_rdy  = glGetUniformLocation(ss->program, "u_stroke_grad_rdy");
+   /* Uniform locations — only samplers and pool reciprocals remain. */
+   ss->loc_fill_spans     = glGetUniformLocation(ss->program, "u_fill_spans");
+   ss->loc_stroke_spans   = glGetUniformLocation(ss->program, "u_stroke_spans");
+   ss->loc_inv_tw         = glGetUniformLocation(ss->program, "u_inv_tw");
+   ss->loc_inv_th         = glGetUniformLocation(ss->program, "u_inv_th");
+   /* Gradient atlas — location -1 in solid shaders (safe no-op). */
+   ss->loc_grad_ramp_atlas = glGetUniformLocation(ss->program, "u_grad_ramp_atlas");
+   /* Mask sampler — location -1 in non-mask shaders (safe no-op). */
+   ss->loc_mask_tex       = glGetUniformLocation(ss->program, "u_mask_tex");
 
-   /* Mask uniforms — present only in *_mask_shader variants; returns -1
-    * for non-mask shaders (safe no-op when passed to glUniform). */
-   ss->loc_mask_tex    = glGetUniformLocation(ss->program, "u_mask_tex");
-   ss->loc_mask_size   = glGetUniformLocation(ss->program, "u_mask_size");
-   ss->loc_mask_offset = glGetUniformLocation(ss->program, "u_mask_offset");
-   ss->loc_mask_inv    = glGetUniformLocation(ss->program, "u_mask_inv");
-   ss->loc_mask_op     = glGetUniformLocation(ss->program, "u_mask_op");
+   /* Attribute locations — determined after link.
+    * -1 returned for attributes not in this variant. */
+   ss->attr_position          = glGetAttribLocation(ss->program, "a_position");
+   ss->attr_fbo_fill_off      = glGetAttribLocation(ss->program, "a_fbo_fill_off");
+   ss->attr_stroke_off_flags  = glGetAttribLocation(ss->program, "a_stroke_off_flags");
+   ss->attr_x_min             = glGetAttribLocation(ss->program, "a_x_min");
+   ss->attr_mul_col           = glGetAttribLocation(ss->program, "a_mul_col");
+   ss->attr_fill_col          = glGetAttribLocation(ss->program, "a_fill_col");
+   ss->attr_stroke_col        = glGetAttribLocation(ss->program, "a_stroke_col");
+   ss->attr_fill_grad_abc_y   = glGetAttribLocation(ss->program, "a_fill_grad_abc_y");
+   ss->attr_fill_grad_def     = glGetAttribLocation(ss->program, "a_fill_grad_def");
+   ss->attr_fill_grad_radial  = glGetAttribLocation(ss->program, "a_fill_grad_radial");
+   ss->attr_stroke_grad_abc_y = glGetAttribLocation(ss->program, "a_stroke_grad_abc_y");
+   ss->attr_stroke_grad_def   = glGetAttribLocation(ss->program, "a_stroke_grad_def");
+   ss->attr_stroke_grad_radial= glGetAttribLocation(ss->program, "a_stroke_grad_radial");
+   ss->attr_mask_off_size     = glGetAttribLocation(ss->program, "a_mask_off_size");
+   ss->attr_mask_comp_inv     = glGetAttribLocation(ss->program, "a_mask_comp_inv");
 
    return EINA_TRUE;
 }
@@ -772,24 +787,29 @@ span_shader_init(void)
              for (mask = 0; mask < 2; mask++)
                {
                   Span_Shader *ss = &_span_shaders[kind][b][mask];
-                  const char **parts;
-                  int n;
+                  const char **fs_parts, **vs_parts;
+                  int fn, vn;
 
-                  parts = _span_shader_parts_build(kind, (Span_Bind_Set)b, mask, &n);
-                  if (!parts)
+                  fs_parts = _span_shader_parts_build(kind, (Span_Bind_Set)b, mask, &fn);
+                  vs_parts = _span_vs_parts_build(kind, mask, &vn);
+                  if (!fs_parts || !vs_parts)
                     {
+                       free(fs_parts);
+                       free(vs_parts);
                        ERR("span shader parts alloc failed (%s %s %s)",
                            kind_name[kind], bind_name[b], mask ? "mask" : "no-mask");
                        return EINA_FALSE;
                     }
-                  if (!_link_program(ss, parts, n))
+                  if (!_link_program(ss, vs_parts, vn, fs_parts, fn))
                     {
-                       free(parts);
+                       free(fs_parts);
+                       free(vs_parts);
                        ERR("span shader link failed (%s %s %s)",
                            kind_name[kind], bind_name[b], mask ? "mask" : "no-mask");
                        return EINA_FALSE;
                     }
-                  free(parts);
+                  free(fs_parts);
+                  free(vs_parts);
                }
           }
      }
@@ -1024,385 +1044,158 @@ span_collector_delete_textures(Span_Collector *sc)
 }
 
 /* ------------------------------------------------------------------ */
-/* Public API: draw                                                    */
-/* ------------------------------------------------------------------ */
-
-/**
- * Draw a textured quad for every Span_Texture in @p sc using the
- * appropriate span-lookup shader (solid or gradient, based on sc->type).
- *
- * GL state saved and restored: current program, blend enable.
- * Blend function is set to (GL_ONE, GL_ONE_MINUS_SRC_ALPHA) for
- * premultiplied-alpha compositing.
- *
- * After return the caller must call evas_gl_common_context_flush() to
- * invalidate the Evas GL state cache.
- */
-/* span_shader_draw() removed — all rendering goes through the Evas pipe
- * path via span_shader_pipe_flush(). */
-
-/* ------------------------------------------------------------------ */
 /* Evas pipe integration: span_shader_pipe_flush                       */
 /* ------------------------------------------------------------------ */
-
-/**
- * Flush one SHD_SPAN pipe entry from shader_array_flush().
- *
- * Reads the canvas-space vertex quad from gc->pipe[pipe_idx].array.vertex
- * and the span shader parameters from gc->pipe[pipe_idx].shader.span_*.
- * Converts vertex coordinates to NDC and issues a single glDrawArrays call
- * using the solid span-lookup shader.
- *
- * @param gc       GL context.
- * @param pipe_idx Index of the pipe being flushed.
- * @param gw       Viewport width in pixels (for NDC conversion).
- * @param gh       Viewport height in pixels (for NDC conversion).
- *
- * This function is the strong override of the weak stub in evas_gl_context.c.
- * It is only linked into engine modules that include evas_ector_gl_span_shader.c
- * (currently gl_generic and its sub-engines).
- */
-/**
- * Bind shader uniforms and issue one glDrawArrays call for a span pipe entry.
- *
- * Precondition: glVertexAttribPointer(SHAD_VERTEX, ...) has already been
- * called by the parent span_shader_pipe_flush() with the NDC vertex data.
- *
- * @param ss         Shader to use (solid or gradient).
- * @param gc         GL context.
- * @param pipe_idx   Pipe index.
- * @param nverts     Vertex count (passed to glDrawArrays).
- * @param mul_col    Premultiplied multiply color.
- * @param fill_tex   Fill texture GL name (0 = no fill this pass).
- * @param stroke_tex Stroke texture GL name (0 = no stroke this pass).
- */
-static void
-_span_draw_pass(Span_Shader *ss,
-                Evas_Engine_GL_Context *gc,
-                int pipe_idx,
-                int nverts,
-                int max_spans,
-                uint32_t mul_col,
-                GLuint fill_tex,
-                GLuint stroke_tex)
-{
-   float inv_tw   = gc->pipe[pipe_idx].shader.span_inv_tw;
-   float inv_th   = gc->pipe[pipe_idx].shader.span_inv_th;
-   float r, g, b, a;
-
-   a = (float)((mul_col >> 24) & 0xFF) / 255.0f;
-   r = (float)((mul_col >> 16) & 0xFF) / 255.0f;
-   g = (float)((mul_col >>  8) & 0xFF) / 255.0f;
-   b = (float)( mul_col        & 0xFF) / 255.0f;
-
-   glUseProgram(ss->program);
-
-   glUniform1f(ss->loc_inv_tw,    inv_tw);
-   glUniform1f(ss->loc_inv_th,    inv_th);
-   glUniform1i(ss->loc_max_spans, max_spans);
-   glUniform4f(ss->loc_mul_col,   r, g, b, a);
-
-   /* Fill on texture unit 0 */
-   {
-      int has_fill = (fill_tex != 0) ? 1 : 0;
-      glUniform1i(ss->loc_has_fill, has_fill);
-      if (has_fill)
-        {
-           uint32_t fc = gc->pipe[pipe_idx].shader.span_fill_col;
-           glUniform2f(ss->loc_fill_offset,
-                       gc->pipe[pipe_idx].shader.span_fill_off_tx,
-                       gc->pipe[pipe_idx].shader.span_fill_off_ty);
-           /* loc_fill_col is -1 in the gradient shader (uniform absent) —
-            * glUniform on location -1 is a GL no-op per spec. */
-           glUniform4f(ss->loc_fill_col,
-                       (float)((fc >> 16) & 0xFF) / 255.0f,
-                       (float)((fc >>  8) & 0xFF) / 255.0f,
-                       (float)( fc        & 0xFF) / 255.0f,
-                       (float)((fc >> 24) & 0xFF) / 255.0f);
-           glActiveTexture(GL_TEXTURE0);
-           glBindTexture(GL_TEXTURE_2D, fill_tex);
-        }
-      glUniform1i(ss->loc_fill_spans, 0);
-   }
-
-   /* Stroke on texture unit 1 */
-   {
-      int has_stroke = (stroke_tex != 0) ? 1 : 0;
-      glUniform1i(ss->loc_has_stroke, has_stroke);
-      if (has_stroke)
-        {
-           uint32_t s_col = gc->pipe[pipe_idx].shader.span_stroke_col;
-           glUniform2f(ss->loc_stroke_offset,
-                       gc->pipe[pipe_idx].shader.span_stroke_off_tx,
-                       gc->pipe[pipe_idx].shader.span_stroke_off_ty);
-           glUniform4f(ss->loc_stroke_col,
-                       (float)((s_col >> 16) & 0xFF) / 255.0f,
-                       (float)((s_col >>  8) & 0xFF) / 255.0f,
-                       (float)( s_col        & 0xFF) / 255.0f,
-                       (float)((s_col >> 24) & 0xFF) / 255.0f);
-           glActiveTexture(GL_TEXTURE1);
-           glBindTexture(GL_TEXTURE_2D, stroke_tex);
-        }
-      glUniform1i(ss->loc_stroke_spans, 1);
-   }
-
-   /* FBO atlas offset: converts gl_FragCoord from atlas-space to VG-local
-    * coordinates.  Zero for dedicated FBOs (pre-atlas path). */
-   glUniform2f(ss->loc_fbo_offset,
-               gc->pipe[pipe_idx].shader.span_fbo_off_x,
-               gc->pipe[pipe_idx].shader.span_fbo_off_y);
-
-   /* Spatial split x_min: each split texture covers a sub-range of x.
-    * The shader starts its span accumulator at x_min instead of 0. */
-   glUniform1i(ss->loc_fill_x_min,   gc->pipe[pipe_idx].shader.span_fill_x_min);
-   glUniform1i(ss->loc_stroke_x_min, gc->pipe[pipe_idx].shader.span_stroke_x_min);
-
-   /* Gradient parameters — atlas on texture unit 2, ramp_y uniforms per shape.
-    * Only set these uniforms when using a gradient shader; on the solid fast
-    * path all gradient uniform locations are -1 and glUniform on -1 is a GL
-    * no-op per spec, but the calls are still dispatched through the driver.
-    * Skipping them entirely saves ~22 glUniform calls per solid draw.
-    *
-    * Identify gradient shaders by checking loc_grad_ramp_atlas: it is >= 0
-    * only in gradient-family shaders (solid shaders have no such uniform). */
-   if (ss->loc_grad_ramp_atlas >= 0)
-     {
-        GLuint atlas_tex = gc->pipe[pipe_idx].shader.span_grad_atlas_tex;
-
-        /* Bind shared gradient ramp atlas on texture unit 2. */
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, atlas_tex);
-        glUniform1i(ss->loc_grad_ramp_atlas, 2);
-
-        /* Per-shape ramp V coordinates. */
-        glUniform1f(ss->loc_fill_grad_ramp_y,   gc->pipe[pipe_idx].shader.span_fill_grad_ramp_y);
-        glUniform1f(ss->loc_stroke_grad_ramp_y, gc->pipe[pipe_idx].shader.span_stroke_grad_ramp_y);
-
-        glUniform1f(ss->loc_fill_grad_a,       gc->pipe[pipe_idx].shader.span_fill_grad_a);
-        glUniform1f(ss->loc_fill_grad_b,       gc->pipe[pipe_idx].shader.span_fill_grad_b);
-        glUniform1f(ss->loc_fill_grad_c,       gc->pipe[pipe_idx].shader.span_fill_grad_c);
-        glUniform1i(ss->loc_fill_grad_spread,  gc->pipe[pipe_idx].shader.span_fill_grad_spread);
-
-        glUniform1f(ss->loc_stroke_grad_a,      gc->pipe[pipe_idx].shader.span_stroke_grad_a);
-        glUniform1f(ss->loc_stroke_grad_b,      gc->pipe[pipe_idx].shader.span_stroke_grad_b);
-        glUniform1f(ss->loc_stroke_grad_c,      gc->pipe[pipe_idx].shader.span_stroke_grad_c);
-        glUniform1i(ss->loc_stroke_grad_spread, gc->pipe[pipe_idx].shader.span_stroke_grad_spread);
-
-        glUniform1i(ss->loc_fill_grad_type,   gc->pipe[pipe_idx].shader.span_fill_grad_type);
-        glUniform1f(ss->loc_fill_grad_d,      gc->pipe[pipe_idx].shader.span_fill_grad_d);
-        glUniform1f(ss->loc_fill_grad_e,      gc->pipe[pipe_idx].shader.span_fill_grad_e);
-        glUniform1f(ss->loc_fill_grad_f,      gc->pipe[pipe_idx].shader.span_fill_grad_f);
-        glUniform1f(ss->loc_fill_grad_ra,     gc->pipe[pipe_idx].shader.span_fill_grad_ra);
-        glUniform1f(ss->loc_fill_grad_rdx,    gc->pipe[pipe_idx].shader.span_fill_grad_rdx);
-        glUniform1f(ss->loc_fill_grad_rdy,    gc->pipe[pipe_idx].shader.span_fill_grad_rdy);
-
-        glUniform1i(ss->loc_stroke_grad_type, gc->pipe[pipe_idx].shader.span_stroke_grad_type);
-        glUniform1f(ss->loc_stroke_grad_d,    gc->pipe[pipe_idx].shader.span_stroke_grad_d);
-        glUniform1f(ss->loc_stroke_grad_e,    gc->pipe[pipe_idx].shader.span_stroke_grad_e);
-        glUniform1f(ss->loc_stroke_grad_f,    gc->pipe[pipe_idx].shader.span_stroke_grad_f);
-        glUniform1f(ss->loc_stroke_grad_ra,   gc->pipe[pipe_idx].shader.span_stroke_grad_ra);
-        glUniform1f(ss->loc_stroke_grad_rdx,  gc->pipe[pipe_idx].shader.span_stroke_grad_rdx);
-        glUniform1f(ss->loc_stroke_grad_rdy,  gc->pipe[pipe_idx].shader.span_stroke_grad_rdy);
-
-        /* Restore active texture to unit 0 (Evas convention). */
-        glActiveTexture(GL_TEXTURE0);
-     }
-
-   /* Composite mask (texture unit 4) — only for mask shader variants.
-    * Non-mask shaders have no u_mask_tex uniform at all; skip binding
-    * to avoid unnecessary texture unit state changes.
-    * Identify mask shaders by loc_mask_tex being >= 0. */
-   if (ss->loc_mask_tex >= 0)
-     {
-        GLuint mask_tex = gc->pipe[pipe_idx].shader.span_mask_tex;
-
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, mask_tex);
-        glUniform1i(ss->loc_mask_tex, 4);
-        glUniform2f(ss->loc_mask_size,
-                    gc->pipe[pipe_idx].shader.span_mask_w,
-                    gc->pipe[pipe_idx].shader.span_mask_h);
-        glUniform2f(ss->loc_mask_offset,
-                    gc->pipe[pipe_idx].shader.span_mask_off_x,
-                    gc->pipe[pipe_idx].shader.span_mask_off_y);
-        /* EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA         = 1 → mask_inv 0.0
-         * EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE = 2 → mask_inv 1.0
-         * Using the integer value directly since this file does not pull in
-         * the Efl_Gfx_Vg header; see efl_gfx_types.eot for the mapping. */
-        {
-           float mask_inv = 0.0f;
-           float mask_op  = 0.0f;
-           int   comp_method = gc->pipe[pipe_idx].shader.span_comp_method;
-           /* Enum values from efl_gfx_types.eot:
-            *   1 = MATTE_ALPHA         → inv=0 op=0 (result *= mask_a)
-            *   2 = MATTE_ALPHA_INVERSE → inv=1 op=0 (result *= 1-mask_a)
-            *   3 = MASK_ADD            → inv=0 op=1 (result.a += mask_a)
-            *   4 = MASK_SUBSTRACT      → inv=1 op=0 (result *= 1-mask_a)
-            *   5 = MASK_INTERSECT      → inv=0 op=0 (result *= mask_a)
-            *   6 = MASK_DIFFERENCE     → inv=0 op=2 (result *= |a - mask_a|) */
-           if (comp_method == 2 || comp_method == 4)
-             mask_inv = 1.0f;
-           if (comp_method == 3)
-             mask_op = 1.0f;
-           else if (comp_method == 6)
-             mask_op = 2.0f;
-           glUniform1f(ss->loc_mask_inv, mask_inv);
-           glUniform1f(ss->loc_mask_op, mask_op);
-        }
-        glActiveTexture(GL_TEXTURE0);
-     }
-
-   glDrawArrays(GL_TRIANGLES, 0, nverts);
-}
 
 void
 span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx, int gw, int gh)
 {
-   int      fill_type   = gc->pipe[pipe_idx].shader.span_fill_type;
-   int      stroke_type = gc->pipe[pipe_idx].shader.span_stroke_type;
-   GLuint   fill_tex    = gc->pipe[pipe_idx].shader.span_fill_tex;
-   GLuint   stroke_tex  = gc->pipe[pipe_idx].shader.span_stroke_tex;
-   int      n           = gc->pipe[pipe_idx].array.num;
-   GLfloat *vsrc        = gc->pipe[pipe_idx].array.vertex;
-   uint32_t mul_col     = gc->pipe[pipe_idx].shader.span_mul_col;
-   int      max_spans   = gc->pipe[pipe_idx].shader.span_max_spans;
-   int      vi, nverts  = n;
-   /* 18 vertices = 3 quads (6 verts each) — the design intent was to allow
-    * up to 3 same-uniform pushes to coalesce into one draw call.
-    *
-    * WHY THIS CAP IS INTENTIONAL AND CANNOT BE PROFITABLY RAISED:
-    *
-    * The merge predicate in evas_gl_common_context_span_push()
-    * (gl_common/evas_gl_context.c:2109–2157) requires ALL ~40 per-shape
-    * uniform fields to be bit-identical before two pushes may share a pipe
-    * entry.  Every distinct VG shape occupies its own tile in the span-buffer
-    * atlas, so span_fill_off_tx / span_fill_off_ty differ for every shape.
-    * Additionally, gradient parameters (grad_a … grad_rdy) and actual_max_spans
-    * are shape-specific.  Consequently no two distinct SHD_SPAN pushes ever
-    * pass the merge predicate: each push creates a fresh pipe entry with
-    * exactly 6 vertices.  array.num is therefore always 6 when flush is called.
-    *
-    * The ndc[18*2] buffer and the "nverts > 18" clamp below are therefore
-    * latent safety guards for a merge scenario that cannot occur with the
-    * current per-shape atlas allocation scheme.  Raising the cap to, say,
-    * 16 quads would cost 96*2*4 = 768 bytes of extra stack and reduce the
-    * maximum V3D uniform-stream rebuilds by zero (no merges happen).
-    *
-    * To actually reduce per-draw overhead on V3D (Cortex-A72 + Mesa V3D):
-    *   1. Relax the merge predicate to allow pushes that differ only in
-    *      geometry (x/y/w/h) but share all uniform state — requires moving
-    *      the span-buffer atlas offsets into per-vertex attributes rather
-    *      than uniforms, which is a non-trivial shader rework.
-    *   2. Alternatively, pre-sort VG shapes so those sharing the same
-    *      fill/stroke parameters are batched, then share a single atlas tile
-    *      via instanced rendering.
-    * Until one of those changes lands, keep this at 18 (3 quads). */
-   GLfloat  ndc[18 * 2];
-   GLfloat *dst;
+   /* gw/gh were used for NDC conversion in the old canvas-space path.
+    * NDC is now pre-baked by _span_fill_vertices at push time.  Kept in
+    * the signature for ABI compatibility; removed in Task 5. */
+   (void)gw; (void)gh;
 
-   /* Ensure all 12 shader programs are compiled.
-    * NOTE: checking [0][0][0] alone is a partial guard.  If span_shader_init()
-    * returns EINA_FALSE after [0][0][0] already compiled (a later slot failed),
-    * [0][0][0].program != 0 on the next flush and we skip re-init — the broken
-    * variants stay broken.  This is a pre-existing edge case; a full-init retry
-    * would require zeroing all slots on failure, which is left as future work. */
+   Span_Variant  variant   = gc->pipe[pipe_idx].array.span_variant;
+   void         *vdata     = gc->pipe[pipe_idx].array.span_vertex_data;
+   int           nverts    = gc->pipe[pipe_idx].array.num;
+   GLsizei       stride    = (GLsizei)span_vertex_size(variant);
+   GLuint        fill_tex  = gc->pipe[pipe_idx].shader.span_fill_tex;
+   GLuint        stroke_tex= gc->pipe[pipe_idx].shader.span_stroke_tex;
+   GLuint        atlas_tex = gc->pipe[pipe_idx].shader.span_grad_atlas_tex;
+   GLuint        mask_tex  = gc->pipe[pipe_idx].shader.span_mask_tex;
+   float         inv_tw    = gc->pipe[pipe_idx].shader.span_inv_tw;
+   float         inv_th    = gc->pipe[pipe_idx].shader.span_inv_th;
+
+   /* Determine kind (0=solid, 1=gradient) and bind set from variant + textures. */
+   int kind     = (variant == SPAN_VARIANT_GRADIENT ||
+                   variant == SPAN_VARIANT_GRADIENT_MASK) ? 1 : 0;
+   int has_mask = (variant == SPAN_VARIANT_SOLID_MASK ||
+                   variant == SPAN_VARIANT_GRADIENT_MASK) ? 1 : 0;
+   Span_Bind_Set bind;
+   if (fill_tex && stroke_tex) bind = SPAN_BIND_FILL_AND_STROKE;
+   else if (fill_tex)          bind = SPAN_BIND_FILL_ONLY;
+   else                        bind = SPAN_BIND_STROKE_ONLY;
+
+   Span_Shader *ss = _span_shader_pick(kind, bind, has_mask);
+
+   if (!vdata || nverts == 0) return;
+
+   /* Ensure all 12 shader programs are compiled. */
    if (!_span_shaders[0][0][0].program)
      {
         if (!span_shader_init())
           return;
      }
 
-   if (nverts > 18) nverts = 18;
+   glUseProgram(ss->program);
 
-   /* Convert canvas-space (x, y, z) vertices to NDC (x, y) vec2.
-    * No Y-flip: canvas y=0 maps to NDC -1 (GL bottom) for FBO rendering. */
-   dst = ndc;
-   for (vi = 0; vi < nverts; vi++)
+   /* Uniforms — sampler bindings + pool reciprocals. */
+   glActiveTexture(GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D, fill_tex ? fill_tex : stroke_tex);
+   glUniform1i(ss->loc_fill_spans, 0);
+
+   glActiveTexture(GL_TEXTURE1);
+   glBindTexture(GL_TEXTURE_2D, stroke_tex ? stroke_tex : fill_tex);
+   glUniform1i(ss->loc_stroke_spans, 1);
+
+   if (ss->loc_inv_tw >= 0) glUniform1f(ss->loc_inv_tw, inv_tw);
+   if (ss->loc_inv_th >= 0) glUniform1f(ss->loc_inv_th, inv_th);
+
+   if (ss->loc_grad_ramp_atlas >= 0 && atlas_tex)
      {
-        float px = vsrc[vi * 3 + 0];
-        float py = vsrc[vi * 3 + 1];
-        dst[vi * 2 + 0] = (px / (float)gw) * 2.0f - 1.0f;
-        dst[vi * 2 + 1] = (py / (float)gh) * 2.0f - 1.0f;
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, atlas_tex);
+        glUniform1i(ss->loc_grad_ramp_atlas, 2);
      }
+
+   if (ss->loc_mask_tex >= 0 && mask_tex)
+     {
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, mask_tex);
+        glUniform1i(ss->loc_mask_tex, 3);
+     }
+
+   /* Attribute pointer setup.
+    * BIND_ATTR(loc, components, byte_offset_in_struct) enables and binds each
+    * attribute.  Locations left enabled after draw are benign — image/font
+    * shaders bind their own slots (SHAD_VERTEX/SHAD_COLOR) explicitly before
+    * drawing, and never fetch from span-specific locations. */
+#define BIND_ATTR(loc, cnt, off) \
+   do { \
+      if ((loc) >= 0) { \
+         glEnableVertexAttribArray((GLuint)(loc)); \
+         glVertexAttribPointer((GLuint)(loc), (cnt), GL_FLOAT, GL_FALSE, \
+                               stride, (const char *)vdata + (off)); \
+      } \
+   } while (0)
+
+   /* Common fields — all variants share Span_Vertex_Common at offset 0. */
+   BIND_ATTR(ss->attr_position,         2, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, pos));
+   BIND_ATTR(ss->attr_fbo_fill_off,     4, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, fbo_fill_off));
+   BIND_ATTR(ss->attr_stroke_off_flags, 4, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, stroke_off_flags));
+   BIND_ATTR(ss->attr_x_min,            2, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, x_min));
+   BIND_ATTR(ss->attr_mul_col,          4, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, mul_col));
+
+   switch (variant)
+     {
+      case SPAN_VARIANT_SOLID:
+        BIND_ATTR(ss->attr_fill_col,   4, offsetof(Span_Vertex_Solid, fill_col));
+        BIND_ATTR(ss->attr_stroke_col, 4, offsetof(Span_Vertex_Solid, stroke_col));
+        break;
+      case SPAN_VARIANT_SOLID_MASK:
+        BIND_ATTR(ss->attr_fill_col,      4,
+                  offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, fill_col));
+        BIND_ATTR(ss->attr_stroke_col,    4,
+                  offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, stroke_col));
+        BIND_ATTR(ss->attr_mask_off_size, 4, offsetof(Span_Vertex_Solid_Mask, mask_off_size));
+        BIND_ATTR(ss->attr_mask_comp_inv, 2, offsetof(Span_Vertex_Solid_Mask, mask_comp_inv));
+        break;
+      case SPAN_VARIANT_GRADIENT:
+        BIND_ATTR(ss->attr_fill_grad_abc_y,    4, offsetof(Span_Vertex_Gradient, fill_grad_abc_y));
+        BIND_ATTR(ss->attr_fill_grad_def,      4, offsetof(Span_Vertex_Gradient, fill_grad_def));
+        BIND_ATTR(ss->attr_fill_grad_radial,   4, offsetof(Span_Vertex_Gradient, fill_grad_radial));
+        BIND_ATTR(ss->attr_stroke_grad_abc_y,  4, offsetof(Span_Vertex_Gradient, stroke_grad_abc_y));
+        BIND_ATTR(ss->attr_stroke_grad_def,    4, offsetof(Span_Vertex_Gradient, stroke_grad_def));
+        BIND_ATTR(ss->attr_stroke_grad_radial, 4, offsetof(Span_Vertex_Gradient, stroke_grad_radial));
+        break;
+      case SPAN_VARIANT_GRADIENT_MASK:
+        BIND_ATTR(ss->attr_fill_grad_abc_y,    4,
+                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, fill_grad_abc_y));
+        BIND_ATTR(ss->attr_fill_grad_def,      4,
+                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, fill_grad_def));
+        BIND_ATTR(ss->attr_fill_grad_radial,   4,
+                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, fill_grad_radial));
+        BIND_ATTR(ss->attr_stroke_grad_abc_y,  4,
+                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, stroke_grad_abc_y));
+        BIND_ATTR(ss->attr_stroke_grad_def,    4,
+                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, stroke_grad_def));
+        BIND_ATTR(ss->attr_stroke_grad_radial, 4,
+                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, stroke_grad_radial));
+        BIND_ATTR(ss->attr_mask_off_size, 4, offsetof(Span_Vertex_Gradient_Mask, mask_off_size));
+        BIND_ATTR(ss->attr_mask_comp_inv, 2, offsetof(Span_Vertex_Gradient_Mask, mask_comp_inv));
+        break;
+      default: break;
+     }
+#undef BIND_ATTR
 
    glEnable(GL_BLEND);
    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
    glDisable(GL_SCISSOR_TEST);
 
-   glEnableVertexAttribArray(SHAD_VERTEX);
-   glVertexAttribPointer(SHAD_VERTEX, 2, GL_FLOAT, GL_FALSE, 0, ndc);
+   glDrawArrays(GL_TRIANGLES, 0, nverts);
 
-   /* Determine if fill and stroke use the same shader family.
-    *
-    * Option A: both solid, or both gradient — single draw call.
-    * Option B: mixed (e.g., gradient fill + solid stroke) — two draw calls,
-    *   one per shader.  This is rare (most VG shapes have matching fill/stroke
-    *   types) but must be handled correctly.
-    *
-    * "Is gradient" means LinearGradient or RadialGradient.
-    *
-    * Mask awareness: when span_mask_tex is set, select the *_mask_shader
-    * variant so that the mask alpha is applied unconditionally inside the
-    * fragment shader.  Non-mask shaders have no mask sampler at all. */
-   {
-      int fill_is_grad   = fill_tex   &&
-                           (fill_type == LinearGradient || fill_type == RadialGradient);
-      int stroke_is_grad = stroke_tex &&
-                           (stroke_type == LinearGradient || stroke_type == RadialGradient);
-      int fill_is_solid   = fill_tex   && !fill_is_grad;
-      int stroke_is_solid = stroke_tex && !stroke_is_grad;
-      int has_mask        = (gc->pipe[pipe_idx].shader.span_mask_tex != 0);
+   /* Restore active texture unit. */
+   glActiveTexture(GL_TEXTURE0);
 
-      int same_family = (!fill_tex || !stroke_tex) ||
-                        (fill_is_grad == stroke_is_grad);
-
-      if (same_family)
-        {
-           /* Single draw call: choose shader by fill type, bind set, and mask. */
-           Span_Bind_Set bind;
-           int kind;
-
-           if (fill_tex && stroke_tex) bind = SPAN_BIND_FILL_AND_STROKE;
-           else if (fill_tex)          bind = SPAN_BIND_FILL_ONLY;
-           else                        bind = SPAN_BIND_STROKE_ONLY;
-
-           kind = (fill_is_grad || stroke_is_grad) ? 1 : 0;
-
-           _span_draw_pass(_span_shader_pick(kind, bind, has_mask),
-                           gc, pipe_idx, nverts, max_spans,
-                           mul_col, fill_tex, stroke_tex);
-        }
-      else
-        {
-           /* Mixed types: draw fill and stroke separately.
-            * max_spans is a safe upper bound for both; sentinels
-            * terminate the shader loop at the actual entry count.
-            * The mask (if any) is applied on every pass — this is correct
-            * because each pass draws the same quad geometry and the mask
-            * covers the same pixel region.
-            * Each pass uses the FILL_ONLY / STROKE_ONLY binding variant. */
-           if (fill_is_solid)
-             _span_draw_pass(_span_shader_pick(0, SPAN_BIND_FILL_ONLY, has_mask),
-                             gc, pipe_idx, nverts, max_spans, mul_col, fill_tex, 0);
-           if (fill_is_grad)
-             _span_draw_pass(_span_shader_pick(1, SPAN_BIND_FILL_ONLY, has_mask),
-                             gc, pipe_idx, nverts, max_spans, mul_col, fill_tex, 0);
-
-           if (stroke_is_solid)
-             _span_draw_pass(_span_shader_pick(0, SPAN_BIND_STROKE_ONLY, has_mask),
-                             gc, pipe_idx, nverts, max_spans, mul_col, 0, stroke_tex);
-           if (stroke_is_grad)
-             _span_draw_pass(_span_shader_pick(1, SPAN_BIND_STROKE_ONLY, has_mask),
-                             gc, pipe_idx, nverts, max_spans, mul_col, 0, stroke_tex);
-        }
-   }
-
-   /* Invalidate only the Evas GL state cache fields that the span shader
-    * actually touched: program, textures (units 0-4), blend, and render_op.
-    * Leave clip, smooth, and anti_alias alone. */
+   /* Invalidate Evas GL state cache fields touched by the span shader. */
    gc->state.current.prog       = NULL;
    gc->state.current.cur_tex    = 0;
    gc->state.current.cur_texu   = 0;
    gc->state.current.render_op  = -1;
    gc->state.current.blend      = -1;
+   gc->state.current.clip       = 0;
+   gc->state.current.cx         = 0;
+   gc->state.current.cy         = 0;
+   gc->state.current.cw         = 0;
+   gc->state.current.ch         = 0;
 }

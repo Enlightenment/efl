@@ -2240,7 +2240,13 @@ _span_fill_vertices(void *out_buf, Span_Variant variant,
 }
 
 /* Find an existing mergeable pipe entry or allocate a new one.
- * Returns pipe index, or -1 if flush loop was triggered (caller retries). */
+ *
+ * Task 4: merge predicate collapses from ~44 per-shape fields to 6:
+ *   variant, fill_tex, stroke_tex, grad_atlas_tex, mask_tex.
+ * All other per-shape data is now embedded in the span_vertex_data buffer
+ * as per-vertex attributes, so it no longer participates in the predicate.
+ *
+ * Returns pipe index, or -1 if the pipe array is full (caller must flush). */
 static int
 _span_pipe_find_or_alloc(Evas_Engine_GL_Context *gc,
                          const Span_Pipe_Params *p,
@@ -2248,72 +2254,25 @@ _span_pipe_find_or_alloc(Evas_Engine_GL_Context *gc,
                          float _inv_tw, float _inv_th)
 {
    int pn = gc->state.top_pipe;
+   size_t vsize = span_vertex_size(variant);
 
 #define _S gc->pipe[pn].shader
    if (gc->pipe[pn].array.num > 0)
      {
-        Eina_Bool can_merge = EINA_FALSE;
-
-        if (gc->pipe[pn].region.type == SHD_SPAN &&
-            _S.span_fill_tex          == p->fill.tex        &&
-            _S.span_fill_off_tx       == p->fill.off_tx     &&
-            _S.span_fill_off_ty       == p->fill.off_ty     &&
-            _S.span_fill_col          == p->fill.col        &&
-            _S.span_stroke_tex        == p->stroke.tex      &&
-            _S.span_stroke_off_tx     == p->stroke.off_tx   &&
-            _S.span_stroke_off_ty     == p->stroke.off_ty   &&
-            _S.span_stroke_col        == p->stroke.col      &&
-            _S.span_inv_tw            == _inv_tw            &&
-            _S.span_inv_th            == _inv_th            &&
-            _S.span_max_spans         == p->max_spans       &&
-            _S.span_mul_col           == p->mul_col         &&
-            _S.span_fill_type         == p->fill.type       &&
-            _S.span_stroke_type       == p->stroke.type     &&
-            _S.span_fill_grad_a       == p->fill.grad_a     &&
-            _S.span_fill_grad_b       == p->fill.grad_b     &&
-            _S.span_fill_grad_c       == p->fill.grad_c     &&
-            _S.span_fill_grad_spread  == p->fill.grad_spread &&
-            _S.span_fill_grad_ramp_y  == p->fill.grad_ramp_y  &&
-            _S.span_fill_grad_type    == p->fill.grad_type  &&
-            _S.span_fill_grad_d       == p->fill.grad_d     &&
-            _S.span_fill_grad_e       == p->fill.grad_e     &&
-            _S.span_fill_grad_f       == p->fill.grad_f     &&
-            _S.span_fill_grad_ra      == p->fill.grad_ra    &&
-            _S.span_fill_grad_rdx     == p->fill.grad_rdx   &&
-            _S.span_fill_grad_rdy     == p->fill.grad_rdy   &&
-            _S.span_stroke_grad_a      == p->stroke.grad_a     &&
-            _S.span_stroke_grad_b      == p->stroke.grad_b     &&
-            _S.span_stroke_grad_c      == p->stroke.grad_c     &&
-            _S.span_stroke_grad_spread == p->stroke.grad_spread &&
-            _S.span_stroke_grad_ramp_y == p->stroke.grad_ramp_y  &&
-            _S.span_stroke_grad_type   == p->stroke.grad_type  &&
-            _S.span_stroke_grad_d      == p->stroke.grad_d     &&
-            _S.span_stroke_grad_e      == p->stroke.grad_e     &&
-            _S.span_stroke_grad_f      == p->stroke.grad_f     &&
-            _S.span_stroke_grad_ra     == p->stroke.grad_ra    &&
-            _S.span_stroke_grad_rdx    == p->stroke.grad_rdx   &&
-            _S.span_stroke_grad_rdy    == p->stroke.grad_rdy   &&
-            _S.span_fbo_off_x          == p->fbo_off_x         &&
-            _S.span_fbo_off_y          == p->fbo_off_y         &&
-            _S.span_fill_x_min         == p->fill.x_min        &&
-            _S.span_stroke_x_min       == p->stroke.x_min      &&
-            _S.span_grad_atlas_tex     == p->grad_atlas_tex     &&
-            _S.span_mask_tex           == p->mask_tex           &&
-            _S.span_comp_method        == p->comp_method        &&
-            _S.span_mask_w             == p->mask_w             &&
-            _S.span_mask_h             == p->mask_h             &&
-            _S.span_mask_off_x         == p->mask_off_x         &&
-            _S.span_mask_off_y         == p->mask_off_y)
-          can_merge = EINA_TRUE;
+        Eina_Bool can_merge =
+           (gc->pipe[pn].region.type == SHD_SPAN            &&
+            gc->pipe[pn].array.span_variant == variant      &&
+            _S.span_fill_tex       == p->fill.tex           &&
+            _S.span_stroke_tex     == p->stroke.tex         &&
+            _S.span_grad_atlas_tex == p->grad_atlas_tex     &&
+            _S.span_mask_tex       == p->mask_tex)
+           ? EINA_TRUE : EINA_FALSE;
 
         /* 1024-quad cap: even a matching entry is full if it's at capacity. */
-        if (can_merge)
-          {
-             size_t vsize = span_vertex_size(variant);
-             if (gc->pipe[pn].array.span_vertex_data_used / vsize
-                 >= (size_t)SPAN_PIPE_MAX_QUADS * 6)
-               can_merge = EINA_FALSE; /* full — fall through to new entry */
-          }
+        if (can_merge &&
+            gc->pipe[pn].array.span_vertex_data_used / vsize
+                >= (size_t)SPAN_PIPE_MAX_QUADS * 6)
+          can_merge = EINA_FALSE;
 
         if (!can_merge)
           {
@@ -2324,6 +2283,11 @@ _span_pipe_find_or_alloc(Evas_Engine_GL_Context *gc,
           }
      }
 #undef _S
+
+   /* Store only the 5 predicate fields; per-shape data lives in vertex structs. */
+   gc->pipe[pn].shader.span_inv_tw    = _inv_tw;
+   gc->pipe[pn].shader.span_inv_th    = _inv_th;
+
    return pn;
 }
 
@@ -2358,8 +2322,8 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
      }
 
 #define _S gc->pipe[pn].shader
-   /* Write span uniform fields — for a merge this is a redundant
-    * overwrite with identical values; for a new pipe it initialises. */
+   /* Initialise pipe entry metadata and the 5 predicate fields.
+    * Per-shape data goes directly into the span_vertex_data buffer below. */
    gc->pipe[pn].region.type       = SHD_SPAN;
    gc->pipe[pn].shader.prog       = &_span_prog_dummy;
    gc->pipe[pn].shader.cur_tex    = p->fill.tex ? p->fill.tex : p->stroke.tex;
@@ -2368,59 +2332,11 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].shader.clip       = 0;
    gc->pipe[pn].shader.smooth     = 0;
 
-   _S.span_fill_tex      = p->fill.tex;
-   _S.span_fill_off_tx   = p->fill.off_tx;
-   _S.span_fill_off_ty   = p->fill.off_ty;
-   _S.span_fill_col      = p->fill.col;
-   _S.span_stroke_tex    = p->stroke.tex;
-   _S.span_stroke_off_tx = p->stroke.off_tx;
-   _S.span_stroke_off_ty = p->stroke.off_ty;
-   _S.span_stroke_col    = p->stroke.col;
-   _S.span_inv_tw        = _inv_tw;
-   _S.span_inv_th        = _inv_th;
-   _S.span_max_spans     = p->max_spans;
-   _S.span_mul_col       = p->mul_col;
-   _S.span_fill_type     = p->fill.type;
-   _S.span_stroke_type   = p->stroke.type;
-
-   _S.span_fill_grad_a      = p->fill.grad_a;
-   _S.span_fill_grad_b      = p->fill.grad_b;
-   _S.span_fill_grad_c      = p->fill.grad_c;
-   _S.span_fill_grad_spread = p->fill.grad_spread;
-   _S.span_fill_grad_ramp_y = p->fill.grad_ramp_y;
-   _S.span_fill_grad_type   = p->fill.grad_type;
-   _S.span_fill_grad_d      = p->fill.grad_d;
-   _S.span_fill_grad_e      = p->fill.grad_e;
-   _S.span_fill_grad_f      = p->fill.grad_f;
-   _S.span_fill_grad_ra     = p->fill.grad_ra;
-   _S.span_fill_grad_rdx    = p->fill.grad_rdx;
-   _S.span_fill_grad_rdy    = p->fill.grad_rdy;
-
-   _S.span_stroke_grad_a      = p->stroke.grad_a;
-   _S.span_stroke_grad_b      = p->stroke.grad_b;
-   _S.span_stroke_grad_c      = p->stroke.grad_c;
-   _S.span_stroke_grad_spread = p->stroke.grad_spread;
-   _S.span_stroke_grad_ramp_y = p->stroke.grad_ramp_y;
-   _S.span_stroke_grad_type   = p->stroke.grad_type;
-   _S.span_stroke_grad_d      = p->stroke.grad_d;
-   _S.span_stroke_grad_e      = p->stroke.grad_e;
-   _S.span_stroke_grad_f      = p->stroke.grad_f;
-   _S.span_stroke_grad_ra     = p->stroke.grad_ra;
-   _S.span_stroke_grad_rdx    = p->stroke.grad_rdx;
-   _S.span_stroke_grad_rdy    = p->stroke.grad_rdy;
-
-   _S.span_fbo_off_x    = p->fbo_off_x;
-   _S.span_fbo_off_y    = p->fbo_off_y;
-   _S.span_fill_x_min   = p->fill.x_min;
-   _S.span_stroke_x_min = p->stroke.x_min;
-
+   /* The 5 merge-predicate fields (inv_tw/th initialised by _span_pipe_find_or_alloc). */
+   _S.span_fill_tex       = p->fill.tex;
+   _S.span_stroke_tex     = p->stroke.tex;
    _S.span_grad_atlas_tex = p->grad_atlas_tex;
-   _S.span_mask_tex     = p->mask_tex;
-   _S.span_comp_method  = p->comp_method;
-   _S.span_mask_w       = p->mask_w;
-   _S.span_mask_h       = p->mask_h;
-   _S.span_mask_off_x   = p->mask_off_x;
-   _S.span_mask_off_y   = p->mask_off_y;
+   _S.span_mask_tex       = p->mask_tex;
 #undef _S
 
    gc->pipe[pn].array.line        = 0;
@@ -2435,15 +2351,15 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_masksam = 0;
 
    pipe_region_expand(gc, pn, p->x, p->y, p->w, p->h);
+   /* array.vertex is no longer used by span_shader_pipe_flush (Task 4).
+    * Maintain array.num so the flush condition triggers; use PIPE_GROW to
+    * keep the count in sync.  The actual geometry comes from span_vertex_data. */
    vertex_array_size_check(gc, pn, 6);
    PIPE_GROW(gc, pn, 6);
    PUSH_6_VERTICES(pn, p->x, p->y, p->w, p->h);
 
-   /* --- Dual-write: also fill span_vertex_data (NDC, Task 3).
-    * The existing array.vertex upload (canvas-space, above) continues to
-    * drive the existing flush.  span_vertex_data carries NDC and is
-    * currently unused at flush-time; Task 4 will flip it to the source
-    * of truth and delete the array.vertex path for span pipes. */
+   /* Fill the per-variant interleaved vertex buffer — this is the source of
+    * truth for span_shader_pipe_flush starting in Task 4. */
    {
       const size_t vsize  = span_vertex_size(variant);
       const size_t needed = gc->pipe[pn].array.span_vertex_data_used + 6 * vsize;
@@ -2453,23 +2369,21 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
            if (new_size == 0) new_size = vsize * 6;
            while (new_size < needed) new_size *= 2;
            void *grown = realloc(gc->pipe[pn].array.span_vertex_data, new_size);
-           if (grown)
+           if (!grown)
              {
-                gc->pipe[pn].array.span_vertex_data      = grown;
-                gc->pipe[pn].array.span_vertex_data_size = new_size;
+                /* OOM: drop this push.  array.num was already bumped by PIPE_GROW;
+                 * flush will see the count but span_vertex_data_used is short.
+                 * span_shader_pipe_flush guards on span_vertex_data != NULL. */
+                return;
              }
-           /* If realloc fails we silently skip the struct fill for this push.
-            * The existing array.vertex path still works, so rendering is
-            * unaffected. */
+           gc->pipe[pn].array.span_vertex_data      = grown;
+           gc->pipe[pn].array.span_vertex_data_size = new_size;
         }
-      if (gc->pipe[pn].array.span_vertex_data_size >= needed)
-        {
-           void *write_ptr = (char *)gc->pipe[pn].array.span_vertex_data
-                           + gc->pipe[pn].array.span_vertex_data_used;
-           _span_fill_vertices(write_ptr, variant, p, ndc_quad);
-           gc->pipe[pn].array.span_vertex_data_used += 6 * vsize;
-           gc->pipe[pn].array.span_variant            = variant;
-        }
+      void *write_ptr = (char *)gc->pipe[pn].array.span_vertex_data
+                      + gc->pipe[pn].array.span_vertex_data_used;
+      _span_fill_vertices(write_ptr, variant, p, ndc_quad);
+      gc->pipe[pn].array.span_vertex_data_used += 6 * vsize;
+      gc->pipe[pn].array.span_variant            = variant;
    }
 }
 
