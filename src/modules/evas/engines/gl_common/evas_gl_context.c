@@ -17,9 +17,7 @@
  * link cleanly; for those modules SHD_SPAN pipes are never created. */
 void __attribute__((weak))
 span_shader_pipe_flush(Evas_Engine_GL_Context *gc EINA_UNUSED,
-                       int pipe_idx EINA_UNUSED,
-                       int gw EINA_UNUSED,
-                       int gh EINA_UNUSED)
+                       int pipe_idx EINA_UNUSED)
 {
 }
 
@@ -2340,7 +2338,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
 #undef _S
 
    gc->pipe[pn].array.line        = 0;
-   gc->pipe[pn].array.use_vertex  = 1;
+   gc->pipe[pn].array.use_vertex  = 0;
    gc->pipe[pn].array.use_color   = 0;
    gc->pipe[pn].array.use_texuv   = 0;
    gc->pipe[pn].array.use_texuv2  = 0;
@@ -2351,12 +2349,11 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].array.use_masksam = 0;
 
    pipe_region_expand(gc, pn, p->x, p->y, p->w, p->h);
-   /* array.vertex is no longer used by span_shader_pipe_flush (Task 4).
-    * Maintain array.num so the flush condition triggers; use PIPE_GROW to
-    * keep the count in sync.  The actual geometry comes from span_vertex_data. */
-   vertex_array_size_check(gc, pn, 6);
-   PIPE_GROW(gc, pn, 6);
-   PUSH_6_VERTICES(pn, p->x, p->y, p->w, p->h);
+   /* Span pipes carry all geometry in span_vertex_data; array.vertex is not
+    * used.  Bump array.num directly so the flush trigger fires (num > 0).
+    * Set havestuff so shader_array_flush does not bail early on span-only frames. */
+   gc->havestuff = EINA_TRUE;
+   gc->pipe[pn].array.num += 6;
 
    /* Fill the per-variant interleaved vertex buffer — this is the source of
     * truth for span_shader_pipe_flush starting in Task 4. */
@@ -4332,7 +4329,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
          * its own program. */
         if (gc->pipe[i].region.type == SHD_SPAN)
           {
-             span_shader_pipe_flush(gc, i, gw, gh);
+             span_shader_pipe_flush(gc, i);
              /* Reset both num and alloc so the next push re-allocates
               * arrays with the correct use_* flags.  Without this, a
               * reused pipe keeps the old alloc count and array_alloc()
@@ -4701,7 +4698,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              masksam_ptr = (unsigned char *)gc->pipe[i].array.masksam;
           }
 
-        // use_vertex is always true
+        // use_vertex is always true here (span pipes take the early-return
+        // path above; non-span pipes always populate array.vertex via PIPE_GROW).
         glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_FLOAT, GL_FALSE, 0, vertex_ptr);
 
         if (gc->pipe[i].array.use_color)

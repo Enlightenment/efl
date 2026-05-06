@@ -375,61 +375,15 @@ struct _Evas_Engine_GL_Context
             Eina_Bool     map_nearest : 1;
             Eina_Bool     map_delete  : 1;
          } filter;
-         /* SHD_SPAN: span-lookup shader parameters */
-         /* Span textures for fill and stroke (both from same pool atlas). */
-         GLuint   span_fill_tex;   /* pool GL texture for fill spans (0 = none) */
-         float    span_fill_off_tx;/* texel x-offset of fill in pool */
-         float    span_fill_off_ty;/* texel y-offset of fill in pool */
-         uint32_t span_fill_col;   /* fill base color (premultiplied ARGB) */
-         GLuint   span_stroke_tex; /* pool GL texture for stroke spans (0 = none) */
-         float    span_stroke_off_tx;
-         float    span_stroke_off_ty;
-         uint32_t span_stroke_col; /* stroke base color (premultiplied ARGB) */
-         float    span_inv_tw;     /* 1.0 / pool_width (shared, same pool) */
-         float    span_inv_th;     /* 1.0 / pool_height */
-         int      span_max_spans;  /* max spans per row */
-         uint32_t span_mul_col;      /* multiply color (premultiplied ARGB) */
-         int      span_fill_type;   /* Span_Data_Type for fill  (1=Solid, 2=Linear, 3=Radial) */
-         int      span_stroke_type; /* Span_Data_Type for stroke (1=Solid, 2=Linear, 3=Radial) */
-         /* Per-pixel gradient shader parameters for fill and stroke.
-          * t = grad_a * gl_FragCoord.x + grad_b * gl_FragCoord.y + grad_c
-          * For Solid fills these are unused (shader ignores them). */
-         float    span_fill_grad_a;      /* x coefficient for fill gradient t */
-         float    span_fill_grad_b;      /* y coefficient for fill gradient t */
-         float    span_fill_grad_c;      /* constant term for fill gradient t */
-         int      span_fill_grad_spread; /* 0=PAD 1=REFLECT 2=REPEAT */
-         float    span_fill_grad_ramp_y; /* atlas V coord: (row+0.5)/SPAN_GRAD_ATLAS_H */
-         int      span_fill_grad_type;   /* 0=linear, 1=radial */
-         float    span_fill_grad_d;      /* radial: 2nd affine row x coeff */
-         float    span_fill_grad_e;      /* radial: 2nd affine row y coeff */
-         float    span_fill_grad_f;      /* radial: 2nd affine row constant */
-         float    span_fill_grad_ra;     /* radial: quadratic a (dr²-dx²-dy²) */
-         float    span_fill_grad_rdx;    /* radial: delta x (center-focal) */
-         float    span_fill_grad_rdy;    /* radial: delta y (center-focal) */
-         float    span_stroke_grad_a;
-         float    span_stroke_grad_b;
-         float    span_stroke_grad_c;
-         int      span_stroke_grad_spread;
-         float    span_stroke_grad_ramp_y; /* atlas V coord: (row+0.5)/SPAN_GRAD_ATLAS_H */
-         int      span_stroke_grad_type;
-         float    span_stroke_grad_d;
-         float    span_stroke_grad_e;
-         float    span_stroke_grad_f;
-         float    span_stroke_grad_ra;
-         float    span_stroke_grad_rdx;
-         float    span_stroke_grad_rdy;
-         GLuint   span_grad_atlas_tex;   /* gradient ramp atlas GL texture name */
-         float    span_fbo_off_x;     /* atlas FBO sub-region x offset */
-         float    span_fbo_off_y;     /* atlas FBO sub-region y offset */
-         int      span_fill_x_min;   /* spatial split: fill texture x_min */
-         int      span_stroke_x_min; /* spatial split: stroke texture x_min */
-         /* Composite mask parameters (0 = no mask) */
-         GLuint   span_mask_tex;     /* mask FBO texture (0 = no mask) */
-         int      span_comp_method;  /* composite method */
-         float    span_mask_w;       /* mask texture width */
-         float    span_mask_h;       /* mask texture height */
-         float    span_mask_off_x;   /* mask atlas x offset */
-         float    span_mask_off_y;   /* mask atlas y offset */
+         /* SHD_SPAN: span-lookup shader parameters.
+          * Only the 6 fields used by the merge predicate and flush survive;
+          * all per-shape data now lives in the per-vertex span_vertex_data buffer. */
+         GLuint   span_fill_tex;       /* pool GL texture for fill spans (0 = none) */
+         GLuint   span_stroke_tex;     /* pool GL texture for stroke spans (0 = none) */
+         GLuint   span_grad_atlas_tex; /* gradient ramp atlas GL texture name */
+         GLuint   span_mask_tex;       /* mask FBO texture (0 = no mask) */
+         float    span_inv_tw;         /* 1.0 / pool_width (shared, same pool) */
+         float    span_inv_th;         /* 1.0 / pool_height */
       } shader;
       struct {
          int            num, alloc;
@@ -449,7 +403,7 @@ struct _Evas_Engine_GL_Context
          int            buffer_alloc;
          int            buffer_use;
          Eina_Bool      line        : 1;
-         Eina_Bool      use_vertex  : 1; // always true
+         Eina_Bool      use_vertex  : 1; // true for all non-span pipes
          Eina_Bool      use_color   : 1;
          Eina_Bool      use_texuv   : 1;
          Eina_Bool      use_texuv2  : 1;
@@ -459,10 +413,10 @@ struct _Evas_Engine_GL_Context
          Eina_Bool      use_mask    : 1;
          Eina_Bool      use_masksam : 1;
          Eina_Bool      anti_alias  : 1;
-         /* Span-buffer attribute batching (Task 3+).
+         /* Span-buffer attribute batching.
           * Heap-grown interleaved buffer of Span_Vertex_<variant> structs.
-          * 6 vertices per quad (two triangles).  Filled at push-time;
-          * currently unused at flush-time (Task 4 will flip this). */
+          * 6 vertices per quad (two triangles).  Sole source of truth for
+          * span_shader_pipe_flush; array.vertex is not used by span pipes. */
          void          *span_vertex_data;       /* heap-grown; NULL until first push */
          size_t         span_vertex_data_size;  /* bytes allocated */
          size_t         span_vertex_data_used;  /* bytes filled */

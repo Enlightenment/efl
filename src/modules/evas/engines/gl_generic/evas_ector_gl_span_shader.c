@@ -1034,13 +1034,6 @@ span_collector_delete_textures(Span_Collector *sc)
           }
      }
 
-   /* Free the gradient ramp texture if one was created. */
-   if (sc->grad_ramp_tex)
-     {
-        GLuint t = (GLuint)sc->grad_ramp_tex;
-        glDeleteTextures(1, &t);
-        sc->grad_ramp_tex = 0;
-     }
 }
 
 /* ------------------------------------------------------------------ */
@@ -1048,13 +1041,8 @@ span_collector_delete_textures(Span_Collector *sc)
 /* ------------------------------------------------------------------ */
 
 void
-span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx, int gw, int gh)
+span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
 {
-   /* gw/gh were used for NDC conversion in the old canvas-space path.
-    * NDC is now pre-baked by _span_fill_vertices at push time.  Kept in
-    * the signature for ABI compatibility; removed in Task 5. */
-   (void)gw; (void)gh;
-
    Span_Variant  variant   = gc->pipe[pipe_idx].array.span_variant;
    void         *vdata     = gc->pipe[pipe_idx].array.span_vertex_data;
    int           nverts    = gc->pipe[pipe_idx].array.num;

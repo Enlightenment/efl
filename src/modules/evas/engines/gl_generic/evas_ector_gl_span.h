@@ -231,11 +231,6 @@ struct _Span_Collector
    void          *mask_surface;   /* Evas_GL_Image* for the mask FBO (NULL = no mask) */
    int            comp_method;    /* Efl_Gfx_Vg_Composite_Method (0 = NONE) */
 
-   /* GL texture name for the 1024×1 gradient ramp, managed by eng_ector_end().
-    * 0 until the first gradient frame.  Persists across frames if the gradient
-    * data pointer is unchanged; freed in span_collector_delete_textures(). */
-   unsigned int   grad_ramp_tex; /* GLuint, stored as unsigned int */
-   uint32_t       grad_ramp_crc; /* CRC of last uploaded color_table */
 };
 
 /* ------------------------------------------------------------------ */
@@ -407,11 +402,8 @@ void span_shader_shutdown(void);
  *
  * @param gc        Evas GL context.
  * @param pipe_idx  Index of the pipe being flushed.
- * @param gw        Viewport width in pixels (for NDC conversion).
- * @param gh        Viewport height in pixels (for NDC conversion).
  */
-void span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx,
-                            int gw, int gh);
+void span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx);
 
 /**
  * Debug helper: read a single pixel from a GL texture via a temp FBO.
