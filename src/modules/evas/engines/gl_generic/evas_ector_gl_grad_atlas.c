@@ -209,8 +209,11 @@ span_grad_atlas_lookup(Span_Grad_Atlas *a, void *grad_id,
         return row;
      }
 
-   /* Hash + byte-compare path. */
-   uint32_t h = span_grad_atlas_hash(bytes);
+   /* Hash + byte-compare path.
+    * version == span_grad_atlas_hash(bytes) by contract: callers compute it
+    * via span_grad_atlas_hash() before calling lookup, so recomputing here
+    * is redundant.  Use version directly. */
+   uint32_t h = version;
    row = _find_by_content(a, h, bytes);
    if (row >= 0)
      {

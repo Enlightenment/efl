@@ -49,6 +49,22 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
 
    Eina_Bool alpha;
    int ctable_status;       //Ready for color table?
+
+   /* GL atlas CRC cache: avoids re-hashing 4 KB of color_table on every
+    * span push when the ramp content has not changed since the previous
+    * compute.  Invalidated when the framework regenerates color_table
+    * (status cycles through CTABLE_NOT_READY before becoming READY again).
+    *
+    * Lives here rather than on Span_Collector so the cache survives the
+    * collector pool's high-water-mark slot reuse — collectors are
+    * recycled across shapes between frames, but gradient_data is stable
+    * per-gradient-renderer-object.
+    *
+    * Zero-initialised automatically: Eo private data is calloc'd by the
+    * Eo framework, so cached_ctable_crc_valid starts as EINA_FALSE. */
+   uint32_t  cached_ctable_crc;
+   int       cached_ctable_status;   /* ctable_status when crc was computed */
+   Eina_Bool cached_ctable_crc_valid;
 } Ector_Renderer_Software_Gradient_Data;
 
 typedef struct _Shape_Rle_Data

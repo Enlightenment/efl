@@ -2966,27 +2966,36 @@ _compute_gradient_coeffs(Span_Collector *sc,
     * regen in flight, or pointer realloc). */
    if (!(atlas && gd->color_table && gd->ctable_status == CTABLE_READY_DONE))
      {
-        sc->cached_ctable_ptr = NULL;  /* invalidate — content may regen */
+        /* Ramp not ready or atlas unavailable — invalidate gd-side cache so
+         * that when status returns to READY we recompute the CRC against
+         * potentially new content. */
+        gd->cached_ctable_crc_valid = EINA_FALSE;
         *out_atlas_skip = EINA_TRUE;
         return;
      }
 
    /* Pass gd->color_table directly — no staging rearrangement needed.
-    * _upload_row in the atlas does the ARGB→RGBA swap at GL upload time. */
+    * _upload_row in the atlas does the ARGB→RGBA swap at GL upload time.
+    *
+    * Tier-3 cache: skip the 4 KB CRC recompute on frames where color_table
+    * content has not changed.  Staleness signal: the framework cycles
+    * ctable_status through CTABLE_NOT_READY when stops change; we check
+    * the status at the time the CRC was last computed rather than the
+    * pointer (pointer may survive in-place regen).  Cache lives on gd so
+    * it survives Span_Collector slot reuse across shapes between frames. */
    const uint8_t *ramp_bytes = (const uint8_t *)gd->color_table;
    uint32_t version;
-   if (sc->cached_ctable_ptr == gd->color_table &&
-       sc->cached_ctable_status == CTABLE_READY_DONE &&
-       gd->ctable_status == CTABLE_READY_DONE)
+   if (gd->cached_ctable_crc_valid &&
+       gd->cached_ctable_status == CTABLE_READY_DONE)
      {
-        version = sc->cached_ctable_crc;
+        version = gd->cached_ctable_crc;
      }
    else
      {
         version = span_grad_atlas_hash(ramp_bytes);
-        sc->cached_ctable_ptr    = gd->color_table;
-        sc->cached_ctable_crc    = version;
-        sc->cached_ctable_status = gd->ctable_status;
+        gd->cached_ctable_crc       = version;
+        gd->cached_ctable_status    = gd->ctable_status;
+        gd->cached_ctable_crc_valid = EINA_TRUE;
      }
 
    int row = span_grad_atlas_lookup(atlas, sc->gradient_data,

@@ -231,17 +231,6 @@ struct _Span_Collector
    void          *mask_surface;   /* Evas_GL_Image* for the mask FBO (NULL = no mask) */
    int            comp_method;    /* Efl_Gfx_Vg_Composite_Method (0 = NONE) */
 
-   /* Cached gradient ramp CRC for the gl_generic atlas lookup.  Avoids
-    * re-hashing 4 KB of color_table content every frame when the gradient
-    * has not changed.  Invalidated when color_table pointer differs (the
-    * framework typically reallocates on stop changes) or when ctable_status
-    * was last seen non-READY (signalling content dirty/regen in flight).
-    * Zero-initialised by calloc inside span_collector_new — first lookup
-    * always misses (cached_ctable_ptr == NULL). */
-   const uint32_t *cached_ctable_ptr;   /* pointer observed at last READY hash */
-   uint32_t        cached_ctable_crc;   /* CRC32 computed at last hash */
-   int             cached_ctable_status;/* ctable_status observed at last hash */
-
 };
 
 /* ------------------------------------------------------------------ */
