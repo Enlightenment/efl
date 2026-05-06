@@ -365,6 +365,15 @@ struct _Evas_Engine_GL_Context
          GLuint           cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int              tex_target;
          int              cx, cy, cw, ch;
+         /* SHD_SPAN: span-lookup shader parameters.
+          * Only the 6 fields used by the merge predicate and flush survive;
+          * all per-shape data now lives in the per-vertex span_vertex_data buffer. */
+         GLuint   span_fill_tex;       /* pool GL texture for fill spans (0 = none) */
+         GLuint   span_stroke_tex;     /* pool GL texture for stroke spans (0 = none) */
+         GLuint   span_grad_atlas_tex; /* gradient ramp atlas GL texture name */
+         GLuint   span_mask_tex;       /* mask FBO texture (0 = no mask) */
+         float    span_inv_tw;         /* 1.0 / pool_width (shared, same pool) */
+         float    span_inv_th;         /* 1.0 / pool_height */
          signed char      render_op;
          Eina_Bool        smooth      : 2;
          Eina_Bool        blend       : 2;
@@ -375,15 +384,6 @@ struct _Evas_Engine_GL_Context
             Eina_Bool     map_nearest : 1;
             Eina_Bool     map_delete  : 1;
          } filter;
-         /* SHD_SPAN: span-lookup shader parameters.
-          * Only the 6 fields used by the merge predicate and flush survive;
-          * all per-shape data now lives in the per-vertex span_vertex_data buffer. */
-         GLuint   span_fill_tex;       /* pool GL texture for fill spans (0 = none) */
-         GLuint   span_stroke_tex;     /* pool GL texture for stroke spans (0 = none) */
-         GLuint   span_grad_atlas_tex; /* gradient ramp atlas GL texture name */
-         GLuint   span_mask_tex;       /* mask FBO texture (0 = no mask) */
-         float    span_inv_tw;         /* 1.0 / pool_width (shared, same pool) */
-         float    span_inv_th;         /* 1.0 / pool_height */
       } shader;
       struct {
          int            num, alloc;
@@ -399,9 +399,17 @@ struct _Evas_Engine_GL_Context
          int            filter_data_count; // number of vec2
          GLfloat       *filter_data;
          Evas_GL_Image *im;
+         /* Span-buffer attribute batching.
+          * Heap-grown interleaved buffer of Span_Vertex_<variant> structs.
+          * 6 vertices per quad (two triangles).  Sole source of truth for
+          * span_shader_pipe_flush; array.vertex is not used by span pipes. */
+         void          *span_vertex_data;       /* heap-grown; NULL until first push */
+         size_t         span_vertex_data_size;  /* bytes allocated */
+         size_t         span_vertex_data_used;  /* bytes filled */
          GLuint         buffer;
          int            buffer_alloc;
          int            buffer_use;
+         Span_Variant   span_variant;           /* SOLID / SOLID_MASK / GRADIENT / GRADIENT_MASK */
          Eina_Bool      line        : 1;
          Eina_Bool      use_vertex  : 1; // true for all non-span pipes
          Eina_Bool      use_color   : 1;
@@ -413,14 +421,6 @@ struct _Evas_Engine_GL_Context
          Eina_Bool      use_mask    : 1;
          Eina_Bool      use_masksam : 1;
          Eina_Bool      anti_alias  : 1;
-         /* Span-buffer attribute batching.
-          * Heap-grown interleaved buffer of Span_Vertex_<variant> structs.
-          * 6 vertices per quad (two triangles).  Sole source of truth for
-          * span_shader_pipe_flush; array.vertex is not used by span pipes. */
-         void          *span_vertex_data;       /* heap-grown; NULL until first push */
-         size_t         span_vertex_data_size;  /* bytes allocated */
-         size_t         span_vertex_data_used;  /* bytes filled */
-         Span_Variant   span_variant;           /* SOLID / SOLID_MASK / GRADIENT / GRADIENT_MASK */
       } array;
    } pipe[MAX_PIPES];
 
