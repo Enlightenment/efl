@@ -2108,7 +2108,8 @@ _span_fill_vertices(void *out_buf, Span_Variant variant,
 {
    const int idx[6] = { 0, 1, 2, 0, 2, 3 }; /* triangle fan indices into ndc_quad */
 
-   /* Mask inv: 0=normal, 1=invert, derived from comp_method same as _span_draw_pass */
+   /* Mask inv: 0=normal, 1=invert.  Derived from comp_method; methods 2
+    * and 4 invert the mask, others use the mask alpha directly. */
    float mask_inv = 0.0f;
    if (p->comp_method == 2 || p->comp_method == 4) mask_inv = 1.0f;
 
@@ -2250,8 +2251,9 @@ _span_fill_vertices(void *out_buf, Span_Variant variant,
 
 /* Find an existing mergeable pipe entry or allocate a new one.
  *
- * Task 4: merge predicate collapses from ~44 per-shape fields to 6:
- *   variant, fill_tex, stroke_tex, grad_atlas_tex, mask_tex.
+ * The merge predicate collapses from ~44 per-shape fields to 6:
+ *   region.type == SHD_SPAN, span_variant, span_fill_tex,
+ *   span_stroke_tex, span_grad_atlas_tex, span_mask_tex.
  * All other per-shape data is now embedded in the span_vertex_data buffer
  * as per-vertex attributes, so it no longer participates in the predicate.
  *
@@ -2293,7 +2295,11 @@ _span_pipe_find_or_alloc(Evas_Engine_GL_Context *gc,
      }
 #undef _S
 
-   /* Store only the 5 predicate fields; per-shape data lives in vertex structs. */
+   /* Store the pool reciprocals: frame-constant scalars uploaded as uniforms
+    * at flush time.  The 6 merge-predicate fields (variant, fill_tex,
+    * stroke_tex, grad_atlas_tex, mask_tex, region.type) are written by the
+    * caller after this returns, since they only need to be set on the path
+    * that allocates a fresh entry. */
    gc->pipe[pn].shader.span_inv_tw    = _inv_tw;
    gc->pipe[pn].shader.span_inv_th    = _inv_th;
 
