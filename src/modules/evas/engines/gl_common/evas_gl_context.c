@@ -2298,12 +2298,38 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
    float _inv_tw = 1.0f / (float)p->pool_w;
    float _inv_th = 1.0f / (float)p->pool_h;
 
-   /* Determine variant from fill/stroke gradient types and mask presence.
+   /* Classify each bound side as solid or gradient.  An unbound side
+    * (tex == 0) is "none" and does not influence variant selection.
     * Span_Data_Type values: 1=Solid, 2=LinearGradient, 3=RadialGradient.
     * SPAN_FILL_TYPE_GRADIENT_MIN == 2 (defined in evas_ector_gl_span_types.h). */
+   const int fill_is_grad   = (p->fill.tex   && p->fill.type   >= SPAN_FILL_TYPE_GRADIENT_MIN);
+   const int stroke_is_grad = (p->stroke.tex && p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN);
+   const int fill_is_solid  = (p->fill.tex   && !fill_is_grad);
+   const int stroke_is_solid = (p->stroke.tex && !stroke_is_grad);
+
+   /* Mixed family: one side is gradient and the other is solid.
+    * The gradient and solid main bodies are separate shader programs,
+    * so a mixed shape cannot be drawn in a single pipe entry.  Split
+    * into two recursive pushes — one per side — and let the merge
+    * predicate group each half with the appropriate program.  The
+    * src-over blend is associative, so two passes produce the same
+    * visual result as the old single-pass shader that processed both
+    * sides sequentially within one fragment. */
+   if ((fill_is_grad && stroke_is_solid) || (fill_is_solid && stroke_is_grad))
+     {
+        /* At most one level of recursion: each child call has one tex
+         * zeroed, so it can never re-enter this branch. */
+        Span_Pipe_Params q;
+        q = *p; q.stroke.tex = 0;
+        evas_gl_common_context_span_push(gc, &q, ndc_quad);
+        q = *p; q.fill.tex = 0;
+        evas_gl_common_context_span_push(gc, &q, ndc_quad);
+        return;
+     }
+
+   /* Single-family case (both grad, both solid, or only one side bound). */
    Span_Variant variant;
-   if (p->fill.type  >= SPAN_FILL_TYPE_GRADIENT_MIN ||
-       p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN)
+   if (fill_is_grad || stroke_is_grad)
      variant = (p->mask_tex != 0) ? SPAN_VARIANT_GRADIENT_MASK
                                    : SPAN_VARIANT_GRADIENT;
    else

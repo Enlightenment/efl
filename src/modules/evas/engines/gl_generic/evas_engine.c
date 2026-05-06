@@ -3313,12 +3313,29 @@ eng_ector_end(void *engine,
                                   }
 
                                 /* Pre-convert canvas-space quad to NDC for
-                                 * span_vertex_data (Task 3 dual-write).
-                                 * array.vertex still receives canvas-space
-                                 * coords via PUSH_6_VERTICES. */
+                                 * span_vertex_data.
+                                 *
+                                 * NDC must be divided by the TARGET SURFACE
+                                 * dimensions, not gc->w/gc->h.  When VG content
+                                 * is drawn into an FBO (the common case — VG
+                                 * renders to an atlas-pool sub-rect via glim),
+                                 * gc->w/h still hold the main window dimensions
+                                 * because _evas_gl_common_viewport_set never
+                                 * updates them for FBO targets.  Using the
+                                 * window dims here would compress all geometry
+                                 * into a corner of the actual sub-rect.
+                                 *
+                                 * Mirrors what shader_array_flush computes for
+                                 * non-span pipes: surface->w/h for FBO,
+                                 * gc->w/h for the default surface. */
                                 GLfloat _ndc[8];
-                                float _gw = (float)(gc->w ? gc->w : 1);
-                                float _gh = (float)(gc->h ? gc->h : 1);
+                                Evas_GL_Image *_tgt = gc->pipe[0].shader.surface;
+                                float _gw, _gh;
+                                if (_tgt && _tgt != gc->def_surface)
+                                  { _gw = (float)_tgt->w; _gh = (float)_tgt->h; }
+                                else
+                                  { _gw = (float)(gc->w ? gc->w : 1);
+                                    _gh = (float)(gc->h ? gc->h : 1); }
                                 float _x0 = (float)_spp.x;
                                 float _y0 = (float)_spp.y;
                                 float _x1 = _x0 + (float)_spp.w;
