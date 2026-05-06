@@ -1103,17 +1103,35 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
         glUniform1i(ss->loc_mask_tex, 3);
      }
 
+   /* VBO upload: upload span vertex data once per flush as GL_STREAM_DRAW.
+    * Using a VBO avoids the per-draw driver scratch-buffer allocation that
+    * client-side vertex arrays require, recovering the performance lost by
+    * the attribute-batching refactor on non-batching draws.
+    *
+    * Lazy allocation: glGenBuffers fires on first use; the context teardown
+    * already calls glDeleteBuffers for array.buffer (unconditionally for span
+    * pipes via the span_vertex_data cleanup block). */
+   if (!gc->pipe[pipe_idx].array.buffer)
+     glGenBuffers(1, &gc->pipe[pipe_idx].array.buffer);
+   glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[pipe_idx].array.buffer);
+   glBufferData(GL_ARRAY_BUFFER,
+                (GLsizeiptr)gc->pipe[pipe_idx].array.span_vertex_data_used,
+                vdata,
+                GL_STREAM_DRAW);
+
    /* Attribute pointer setup.
-    * BIND_ATTR(loc, components, byte_offset_in_struct) enables and binds each
-    * attribute.  Locations left enabled after draw are benign — image/font
-    * shaders bind their own slots (SHAD_VERTEX/SHAD_COLOR) explicitly before
-    * drawing, and never fetch from span-specific locations. */
+    * BIND_ATTR(loc, components, byte_offset_into_vbo) enables and binds each
+    * attribute using VBO byte offsets (not CPU pointers).  The VBO is bound
+    * above; GL interprets the last argument as an offset when a buffer is
+    * bound to GL_ARRAY_BUFFER.  Locations left enabled after draw are benign —
+    * image/font shaders bind their own slots (SHAD_VERTEX/SHAD_COLOR)
+    * explicitly before drawing, and never fetch from span-specific locations. */
 #define BIND_ATTR(loc, cnt, off) \
    do { \
       if ((loc) >= 0) { \
          glEnableVertexAttribArray((GLuint)(loc)); \
          glVertexAttribPointer((GLuint)(loc), (cnt), GL_FLOAT, GL_FALSE, \
-                               stride, (const char *)vdata + (off)); \
+                               stride, (const void *)(uintptr_t)(off)); \
       } \
    } while (0)
 
@@ -1171,6 +1189,10 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
    glDisable(GL_SCISSOR_TEST);
 
    glDrawArrays(GL_TRIANGLES, 0, nverts);
+
+   /* Unbind span VBO so subsequent client-side array draws (image/font)
+    * are not accidentally interpreted as VBO-offset draws. */
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
    /* Restore active texture unit. */
    glActiveTexture(GL_TEXTURE0);

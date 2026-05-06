@@ -1466,6 +1466,17 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
                   gc->pipe[i].array.span_vertex_data_size = 0;
                   gc->pipe[i].array.span_vertex_data_used = 0;
                }
+             /* Delete the span VBO when the MapBuffer-gated loop above did
+              * not run.  When glsym_glMapBuffer is present, the loop at
+              * lines ~1442-1446 already deletes every pipe's array.buffer
+              * (image/font and span share that field), so this block is
+              * a no-op there.  When MapBuffer is absent the loop is
+              * skipped, and the span path (which uses plain glBufferData
+              * rather than glMapBuffer) needs this fallback to avoid
+              * leaking the VBO. */
+             if (gc->pipe[i].array.buffer &&
+                 !(glsym_glMapBuffer && glsym_glUnmapBuffer))
+               glDeleteBuffers(1, &gc->pipe[i].array.buffer);
           }
      }
 
@@ -4724,8 +4735,10 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
              masksam_ptr = (unsigned char *)gc->pipe[i].array.masksam;
           }
 
-        // use_vertex is always true here (span pipes take the early-return
-        // path above; non-span pipes always populate array.vertex via PIPE_GROW).
+        // use_vertex is always true here.  Span pipes take the early-return path
+        // above (they use span_vertex_data + a VBO via span_shader_pipe_flush,
+        // not array.vertex).  Non-span pipes always populate array.vertex via
+        // PIPE_GROW.
         glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_FLOAT, GL_FALSE, 0, vertex_ptr);
 
         if (gc->pipe[i].array.use_color)
