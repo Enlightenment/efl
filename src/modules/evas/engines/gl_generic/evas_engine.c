@@ -2955,41 +2955,49 @@ _compute_gradient_coeffs(Span_Collector *sc,
    gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
 
    /* Upload ramp into atlas and get V coordinate.
-    * version is content-derived (hash of the 4 KB staging buffer) so the
-    * identity fast path in span_grad_atlas_lookup is keyed on (grad_id,
-    * content_hash) — animated stop changes force a re-lookup automatically.
-    * Fallback: if atlas is unavailable, mark the shape as atlas-skip. */
-   if (atlas && gd->color_table && gd->ctable_status == CTABLE_READY_DONE)
+    * version is the CRC32 of gd->color_table's native uint32 content (4096 B).
+    * The identity fast path in span_grad_atlas_lookup is keyed on (grad_id,
+    * content_crc) — animated stop changes force a re-lookup automatically.
+    * Fallback: if atlas is unavailable, mark the shape as atlas-skip.
+    *
+    * Tier-3 cache: skip the 4 KB CRC recompute on frames where the
+    * color_table pointer and ctable_status are unchanged from the last
+    * observed READY state.  Invalidated if either differs (stop change,
+    * regen in flight, or pointer realloc). */
+   if (!(atlas && gd->color_table && gd->ctable_status == CTABLE_READY_DONE))
      {
-        uint32_t staging[1024];
-        int j;
-        for (j = 0; j < 1024; j++)
-          {
-             uint32_t c = gd->color_table[j];
-             uint8_t *p = (uint8_t *)&staging[j];
-             p[0] = (c >> 16) & 0xFF; /* R */
-             p[1] = (c >>  8) & 0xFF; /* G */
-             p[2] =  c        & 0xFF; /* B */
-             p[3] = (c >> 24) & 0xFF; /* A */
-          }
-        uint32_t version = span_grad_atlas_hash((const uint8_t *)staging);
-        int row = span_grad_atlas_lookup(atlas, sc->gradient_data,
-                                         version,
-                                         (const uint8_t *)staging);
-        if (row < 0)
-          {
-             /* Atlas disabled or full — skip this shape. */
-             *out_atlas_skip = EINA_TRUE;
-             return;
-          }
-        *out_gramp_y = span_grad_atlas_row_to_v(row);
-     }
-   else
-     {
-        /* Atlas unavailable — skip gradient shapes (spec error table). */
+        sc->cached_ctable_ptr = NULL;  /* invalidate — content may regen */
         *out_atlas_skip = EINA_TRUE;
         return;
      }
+
+   /* Pass gd->color_table directly — no staging rearrangement needed.
+    * _upload_row in the atlas does the ARGB→RGBA swap at GL upload time. */
+   const uint8_t *ramp_bytes = (const uint8_t *)gd->color_table;
+   uint32_t version;
+   if (sc->cached_ctable_ptr == gd->color_table &&
+       sc->cached_ctable_status == CTABLE_READY_DONE &&
+       gd->ctable_status == CTABLE_READY_DONE)
+     {
+        version = sc->cached_ctable_crc;
+     }
+   else
+     {
+        version = span_grad_atlas_hash(ramp_bytes);
+        sc->cached_ctable_ptr    = gd->color_table;
+        sc->cached_ctable_crc    = version;
+        sc->cached_ctable_status = gd->ctable_status;
+     }
+
+   int row = span_grad_atlas_lookup(atlas, sc->gradient_data,
+                                    version, ramp_bytes);
+   if (row < 0)
+     {
+        /* Atlas disabled or full — skip this shape. */
+        *out_atlas_skip = EINA_TRUE;
+        return;
+     }
+   *out_gramp_y = span_grad_atlas_row_to_v(row);
 
    if (shader_type == (int)LinearGradient)
      {
