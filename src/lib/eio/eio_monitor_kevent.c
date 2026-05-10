@@ -35,137 +35,198 @@
 
 #define KEVENT_NUM_EVENTS 5
 
+typedef struct _Eio_File_Info
+{
+  unsigned int      file_off;
+  unsigned int      mode;
+  unsigned long int ino, mtime;
+} Eio_File_Info;
+
+typedef struct _Eio_Ls
+{
+  Eio_File_Info *info;
+  char          *strings;
+} Eio_Ls;
+
 struct _Eio_Monitor_Backend
 {
-   Eio_Monitor *parent;
-   Eina_List *prev_list;
-   int fd;
-};
-
-typedef struct _Eio_File_Info Eio_File_Info;
-struct _Eio_File_Info
-{
-   const char *path;
-   Eina_Stat st;
+  Eio_Monitor *parent;
+  Eio_Ls       prev_ls;
+  int          fd;
 };
 
 static Ecore_Fd_Handler *_kqueue_fd = NULL;
 static Eina_Hash *_kevent_monitors = NULL;
 
 static void
-_eio_kevent_ls_free(Eina_List *list)
+_eio_kevent_ls_free(Eio_Ls ls)
 {
-   Eio_File_Info *file;
-
-   EINA_LIST_FREE(list, file)
-     {
-        eina_stringshare_del(file->path);
-        free(file);
-     }
+  free(ls.info);
+  free(ls.strings);
+  ls.info = NULL;
+  ls.strings = NULL;
 }
 
 static void
 _eio_kevent_del(void *data)
 {
-   Eio_Monitor_Backend *emb = data;
+  Eio_Monitor_Backend *emb = data;
 
-   _eio_kevent_ls_free(emb->prev_list);
-
-   if (emb->fd)
-      close(emb->fd);
-
-   free(emb);
+  _eio_kevent_ls_free(emb->prev_ls);
+  if (emb->fd >= 0) close(emb->fd);
+  free(emb);
 }
 
-
-static Eina_List *
+static Eio_Ls
 _eio_kevent_ls(const char *directory)
 {
-   Eina_Iterator *it;
-   Eina_File_Direct_Info *info;
-   Eina_List *files = NULL;
+  Eina_Iterator *it;
+  Eina_File_Direct_Info *info;
+  Eio_Ls ls = { NULL, NULL }, ls2;
+  unsigned int file_num = 0;
+  unsigned int strings_size = 0;
+  unsigned int strings_size2 = 0;
 
-   it = eina_file_direct_ls(directory);
-   if (!it) return NULL;
+  it = eina_file_direct_ls(directory);
+  if (!it) return ls;
 
-   EINA_ITERATOR_FOREACH(it, info)
-     {
-        Eio_File_Info *file = malloc(sizeof(Eio_File_Info));
-        if (eina_file_statat(eina_iterator_container_get(it), info, &file->st))
-          {
-             free(file);
-             continue;
-          }
-        file->path = eina_stringshare_add(info->path);
-        files = eina_list_append(files, file);
-     }
+  ls.info = calloc(1, sizeof(Eio_File_Info));
+  if (!ls.info) goto done;
+  file_num = 1;
+  ls.strings = calloc(1, 1);
+  if (!ls.strings)
+    {
+      free(ls.info);
+      goto done;
+    }
+  strings_size = 1;
+  EINA_ITERATOR_FOREACH(it, info)
+    {
+      Eina_Stat st;
+      const char *file = info->path + info->name_start;
 
-   eina_iterator_free(it);
-
-   return files;
+      if (eina_file_statat(eina_iterator_container_get(it), info, &st))
+        continue;
+      file_num++;
+      strings_size2 = strings_size + strlen(file) + 1;
+      ls2.info = realloc(ls.info, file_num * sizeof(Eio_File_Info));
+      ls2.strings = realloc(ls.strings, strings_size2);
+      if ((strings_size2 >= (2UL * 1024 * 1024 * 1024)/*2GB*/) || // too big
+          (!ls2.info) || (!ls2.strings))
+        {
+          if      (ls2.info)    free(ls2.info);
+          else if (ls.info)     free(ls.info);
+          if      (ls2.strings) free(ls2.strings);
+          else if (ls.strings)  free(ls.strings);
+          ls.info    = NULL;
+          ls.strings = NULL;
+          goto done;
+        }
+      ls.info = ls2.info;
+      ls.strings = ls2.strings;
+      ls.info[file_num - 2].file_off = strings_size;
+      ls.info[file_num - 2].mode = st.mode;
+      ls.info[file_num - 2].ino = st.ino;
+      ls.info[file_num - 2].mtime = st.mtime;
+      ls.info[file_num - 1].file_off = 0; // item with file_off == 0 == end
+      ls.info[file_num - 1].mode = 0;
+      ls.info[file_num - 1].ino = 0;
+      ls.info[file_num - 1].mtime = 0;
+      strcpy(ls.strings + strings_size, file); // already allocd right size
+      strings_size = strings_size2;
+    }
+done:
+  eina_iterator_free(it);
+  return ls;
 }
 
 static void
 _eio_kevent_event_find(Eio_Monitor_Backend *backend)
 {
-   Eina_List *l, *l2;
-   Eio_File_Info *file, *file2;
-   Eina_List *next_list = _eio_kevent_ls(backend->parent->path);
+  Eio_File_Info *file, *file2;
+  Eio_Ls next_ls = _eio_kevent_ls(backend->parent->path);
+  char buf[PATH_MAX];
 
-   EINA_LIST_FOREACH(backend->prev_list, l, file)
-     {
-        Eina_Bool exists = EINA_FALSE;
-        EINA_LIST_FOREACH(next_list, l2, file2)
-          {
-             if (file->st.ino == file2->st.ino)
-               {
-                  if (file->path == file2->path)
-                    exists = EINA_TRUE;
-
-                  if (file->st.mtime != file2->st.mtime)
+  if (backend->prev_ls.info)
+    {
+      for (file = backend->prev_ls.info; file->file_off; file++)
+        {
+          Eina_Bool exists = EINA_FALSE;
+          if (next_ls.info)
+            {
+              for (file2 = next_ls.info; file2->file_off; file2++)
+                {
+                  if (file->ino == file2->ino)
                     {
-                       if (S_ISDIR(file->st.mode))
-                         _eio_monitor_send(backend->parent, file->path, EIO_MONITOR_DIRECTORY_MODIFIED);
-                       else
-                         _eio_monitor_send(backend->parent, file->path, EIO_MONITOR_FILE_MODIFIED);
+                      if (!strcmp(backend->prev_ls.strings + file->file_off,
+                                  next_ls.strings + file2->file_off))
+                        exists = EINA_TRUE;
+                      if (file->mtime != file2->mtime)
+                        {
+                          snprintf(buf, sizeof(buf), "%s/%s",
+                                   backend->parent->path,
+                                   backend->prev_ls.strings + file->file_off);
+                          if (S_ISDIR(file->mode))
+                            _eio_monitor_send(backend->parent, buf,
+                                              EIO_MONITOR_DIRECTORY_MODIFIED);
+                          else
+                            _eio_monitor_send(backend->parent, buf,
+                                              EIO_MONITOR_FILE_MODIFIED);
+                        }
                     }
-               }
-          }
+                }
+            }
+          if (!exists)
+            {
+              snprintf(buf, sizeof(buf), "%s/%s",
+                       backend->parent->path,
+                       backend->prev_ls.strings + file->file_off);
+              if (S_ISDIR(file->mode))
+                _eio_monitor_send(backend->parent, buf,
+                                  EIO_MONITOR_DIRECTORY_DELETED);
+              else
+                _eio_monitor_send(backend->parent, buf,
+                                  EIO_MONITOR_FILE_DELETED);
+            }
+        }
+    }
 
-        if (!exists)
-          {
-             if (S_ISDIR(file->st.mode))
-               _eio_monitor_send(backend->parent, file->path, EIO_MONITOR_DIRECTORY_DELETED);
-             else
-               _eio_monitor_send(backend->parent, file->path, EIO_MONITOR_FILE_DELETED);
-          }
-     }
+  if (next_ls.info)
+    {
+      for (file2 = next_ls.info; file2->file_off; file2++)
+        {
+          Eina_Bool exists = EINA_FALSE;
 
-   EINA_LIST_FOREACH(next_list, l, file)
-     {
-        Eina_Bool exists = EINA_FALSE;
-        EINA_LIST_FOREACH(backend->prev_list, l2, file2)
-          {
-             if ((file->path == file2->path) &&
-                         (file->st.ino == file2->st.ino))
-               {
-                  exists = EINA_TRUE;
-                  break;
-               }
-          }
+          if (backend->prev_ls.info)
+            {
+              for (file = backend->prev_ls.info; file->file_off; file++)
+                {
+                  if ((!strcmp(backend->prev_ls.strings + file->file_off,
+                               next_ls.strings + file2->file_off)) &&
+                      (file->ino == file2->ino))
+                    {
+                      exists = EINA_TRUE;
+                      break;
+                    }
+                }
+            }
+          if (!exists)
+            {
+              snprintf(buf, sizeof(buf), "%s/%s",
+                       backend->parent->path,
+                       next_ls.strings + file2->file_off);
+              if (S_ISDIR(file2->mode))
+                _eio_monitor_send(backend->parent, buf,
+                                  EIO_MONITOR_DIRECTORY_CREATED);
+              else
+                _eio_monitor_send(backend->parent, buf,
+                                  EIO_MONITOR_FILE_CREATED);
+            }
+        }
+    }
 
-        if (!exists)
-          {
-             if (S_ISDIR(file->st.mode))
-               _eio_monitor_send(backend->parent, file->path, EIO_MONITOR_DIRECTORY_CREATED);
-             else
-               _eio_monitor_send(backend->parent, file->path, EIO_MONITOR_FILE_CREATED);
-          }
-     }
-
-   _eio_kevent_ls_free(backend->prev_list);
-
-   backend->prev_list = next_list;
+   _eio_kevent_ls_free(backend->prev_ls);
+   backend->prev_ls = next_ls;
 }
 
 static Eina_Bool
@@ -175,18 +236,18 @@ _eio_kevent_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
    struct kevent evs[KEVENT_NUM_EVENTS];
    int event_code = 0;
    const struct timespec timeout = { 0, 0 };
+   int res = kevent(ecore_main_fd_handler_fd_get(fdh), 0, 0, evs,
+                    KEVENT_NUM_EVENTS, &timeout);
 
-   int res = kevent(ecore_main_fd_handler_fd_get(fdh), 0, 0, evs, KEVENT_NUM_EVENTS, &timeout);
-
-   for(int i=0; i<res; ++i)
+   for (int i = 0; i < res; i++)
      {
         backend = eina_hash_find(_kevent_monitors, &evs[i].ident);
-        if(evs[i].fflags & NOTE_DELETE)
+        if (evs[i].fflags & NOTE_DELETE)
           {
              event_code = EIO_MONITOR_SELF_DELETED;
              _eio_monitor_send(backend->parent, backend->parent->path, event_code);
           }
-        if(evs[i].fflags & NOTE_WRITE || evs[i].fflags & NOTE_ATTRIB)
+        if (evs[i].fflags & NOTE_WRITE || evs[i].fflags & NOTE_ATTRIB)
           {
              /* Handle directory/file creation and deletion */
              if (ecore_file_is_dir(backend->parent->path))
@@ -219,112 +280,110 @@ _eio_kevent_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
  * @endcond
  */
 
-void eio_monitor_backend_init(void)
+void
+eio_monitor_backend_init(void)
 {
-   int fd;
+  int fd;
 
-   if (_kqueue_fd != NULL) return; // already initialized
+  if (_kqueue_fd) return; // already initialized
 
-   fd = kqueue();
-   if (fd < 0) return;
+  fd = kqueue();
+  if (fd < 0) return;
 
-   _kqueue_fd = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _eio_kevent_handler, NULL, NULL, NULL);
-   if (!_kqueue_fd)
-     {
-        close(fd);
-        return;
-     }
+  _kqueue_fd = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _eio_kevent_handler, NULL, NULL, NULL);
+  if (!_kqueue_fd)
+    {
+      close(fd);
+      return;
+    }
 
-   _kevent_monitors = eina_hash_int32_new(_eio_kevent_del);
+  _kevent_monitors = eina_hash_int32_new(_eio_kevent_del);
 }
 
-void eio_monitor_backend_shutdown(void)
+void
+eio_monitor_backend_shutdown(void)
 {
-   int fd;
+  int fd;
 
-   if (!_kqueue_fd) return;
+  if (!_kqueue_fd) return;
 
-   eina_hash_free(_kevent_monitors);
+  eina_hash_free(_kevent_monitors);
+  fd = ecore_main_fd_handler_fd_get(_kqueue_fd);
+  ecore_main_fd_handler_del(_kqueue_fd);
+  _kqueue_fd = NULL;
 
-   fd = ecore_main_fd_handler_fd_get(_kqueue_fd);
-   ecore_main_fd_handler_del(_kqueue_fd);
-   _kqueue_fd = NULL;
+  if (fd < 0) return;
 
-   if (fd < 0)
-     return;
-
-   close(fd);
+  close(fd);
 }
 
-void eio_monitor_backend_add(Eio_Monitor *monitor)
+void
+eio_monitor_backend_add(Eio_Monitor *monitor)
 {
-   struct kevent e;
-   struct stat st;
-   Eio_Monitor_Backend* backend;
-   int fd, res = 0;
+  struct kevent e;
+  struct stat st;
+  Eio_Monitor_Backend* backend;
+  int fd, res = 0;
 
-   if (!_kqueue_fd)
-     {
-        return;
-     }
+  if (!_kqueue_fd) return;
 
-   backend = calloc(1, sizeof (Eio_Monitor_Backend));
-   if (!backend) return;
+  backend = calloc(1, sizeof (Eio_Monitor_Backend));
+  if (!backend) return;
 
-   res = stat(monitor->path, &st);
-   if (res) goto error;
+  res = stat(monitor->path, &st);
+  if (res) goto error;
 
-   fd = open(monitor->path, O_RDONLY);
-   if (fd < 0) goto error;
+  fd = open(monitor->path, O_RDONLY);
+  if (fd < 0) goto error;
 
-   eina_file_close_on_exec(fd, EINA_TRUE);
-   backend->fd = fd;
-   backend->parent = monitor;
-   monitor->backend = backend;
+  eina_file_close_on_exec(fd, EINA_TRUE);
+  backend->fd = fd;
+  backend->parent = monitor;
+  monitor->backend = backend;
 
-   if (ecore_file_is_dir(backend->parent->path))
-     backend->prev_list = _eio_kevent_ls(backend->parent->path);
+  if (ecore_file_is_dir(backend->parent->path))
+    backend->prev_ls = _eio_kevent_ls(backend->parent->path);
 
-   eina_hash_direct_add(_kevent_monitors, &backend->fd, backend);
+  eina_hash_direct_add(_kevent_monitors, &backend->fd, backend);
 
-   EV_SET(&e, fd, EVFILT_VNODE, EV_ADD | EV_CLEAR,
-          NOTE_DELETE | NOTE_WRITE | NOTE_ATTRIB, 0, NULL);
-   res = kevent(ecore_main_fd_handler_fd_get(_kqueue_fd), &e, 1, 0, 0, 0);
-   if (res)
-     {
-        eina_hash_del(_kevent_monitors, &backend->fd, backend);
-     }
-
-   return;
+  EV_SET(&e, fd, EVFILT_VNODE, EV_ADD | EV_CLEAR,
+         NOTE_DELETE | NOTE_WRITE | NOTE_ATTRIB, 0, NULL);
+  res = kevent(ecore_main_fd_handler_fd_get(_kqueue_fd), &e, 1, 0, 0, 0);
+  if (res) eina_hash_del(_kevent_monitors, &backend->fd, backend);
+  return;
 
 error:
    free(backend);
 }
 
-void eio_monitor_backend_del(Eio_Monitor *monitor)
+void
+eio_monitor_backend_del(Eio_Monitor *monitor)
 {
-   Eio_Monitor_Backend *backend;
+  Eio_Monitor_Backend *backend;
 
-   backend = monitor->backend;
-   monitor->backend = NULL;
+  backend = monitor->backend;
+  monitor->backend = NULL;
 
-   eina_hash_del(_kevent_monitors, &backend->fd, backend);
+  eina_hash_del(_kevent_monitors, &backend->fd, backend);
 }
 
-Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor, const char *path)
+Eina_Bool
+eio_monitor_context_check(const Eio_Monitor *monitor, const char *path)
 {
-   Eio_Monitor_Backend *backend = monitor->backend;
-   Eina_List *l;
-   Eio_File_Info *file;
+  Eio_Monitor_Backend *backend = monitor->backend;
+  Eio_File_Info *file;
+  const char *filename;
 
-   EINA_LIST_FOREACH(backend->prev_list, l, file)
-     {
-        if (eina_streq(file->path, path))
-          {
-             return EINA_TRUE;
-          }
-     }
-   return EINA_FALSE;
+  if (!path) return EINA_FALSE;
+  filename = strrchr(path, '/');
+  if (!filename) return EINA_FALSE;
+  filename++;
+  for (file = backend->prev_ls.info; file->file_off; file++)
+    {
+      if (!strcmp(backend->prev_ls.strings + file->file_off, filename))
+        return EINA_TRUE;
+    }
+  return EINA_FALSE;
 }
 
 
