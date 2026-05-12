@@ -1,4 +1,5 @@
 group { name: "e/modules/connman/main";
+   min: 16 16;
    images.image: "cloud-conn.png" COMP;
 
    images.image: "eth-top.png" COMP;
