@@ -852,7 +852,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
    size_t                file_length;
    size_t                key_length;
    struct stat           st;
-   Image_Timestamp       tstamp;
+   Image_Timestamp       tstamp = { 1 };
    Evas_Image_Load_Opts  tlo;
    Eina_Bool             skip = lo->skip_head;
 
@@ -886,12 +886,15 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
         int ok = 1;
 
         stat_done = 1;
-        if (stat(file, &st) < 0)
-          {
-             stat_failed = 1;
-             ok = 0;
-          }
-        else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+        if (!skip)
+         {
+           if (stat(file, &st) < 0)
+             {
+               stat_failed = 1;
+               ok = 0;
+             }
+           else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+         }
 
         if (ok) goto on_ok;
         /* image we found doesn't match what's on disk (stat info wise)
@@ -914,17 +917,20 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
      {
         int ok = 1;
 
-        if (!stat_done)
-          {
-             stat_done = 1;
-             if (stat(file, &st) < 0)
-               {
-                  stat_failed = 1;
-                       ok = 0;
-               }
-             else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
-          }
-        else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+        if (!skip)
+         {
+           if (!stat_done)
+             {
+               stat_done = 1;
+               if (stat(file, &st) < 0)
+                 {
+                   stat_failed = 1;
+                   ok = 0;
+                 }
+               else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+             }
+           else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+         }
 
         if (ok)
           {
@@ -949,11 +955,14 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
      }
    if (stat_failed) goto on_stat_error;
 
-   if (!stat_done)
+   if (!skip)
      {
-        if (stat(file, &st) < 0) goto on_stat_error;
+       if (!stat_done)
+         {
+           if (stat(file, &st) < 0) goto on_stat_error;
+         }
+       _timestamp_build(&tstamp, &st);
      }
-   _timestamp_build(&tstamp, &st);
    im = _evas_cache_image_entry_new(cache, hkey, &tstamp, NULL,
                                     file, key, &tlo, error);
    if (!im) goto on_stat_error;
