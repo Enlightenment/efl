@@ -79,6 +79,7 @@ struct _Eina_File
    unsigned long long length;  /**< The length of the file in bytes. */
    time_t mtime;               /**< The last modified time. */
    ino_t inode;                /**< The inode. */
+   dev_t dev;                  /**< The fs device. */
 #ifdef _STAT_VER_LINUX
    unsigned long int mtime_nsec; /**< The nano version of the last modified time. */
 #endif

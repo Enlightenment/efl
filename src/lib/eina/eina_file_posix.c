@@ -411,6 +411,7 @@ _eina_file_timestamp_compare(Eina_File *f, struct stat *st)
    if (f->mtime != st->st_mtime) return EINA_FALSE;
    if (f->length != (unsigned long long) st->st_size) return EINA_FALSE;
    if (f->inode != st->st_ino) return EINA_FALSE;
+   if (f->dev != st->st_dev) return EINA_FALSE;
 #ifdef _STAT_VER_LINUX
 # ifdef st_mtime
    if (f->mtime_nsec != (unsigned long int)st->st_mtim.tv_nsec)
@@ -931,6 +932,7 @@ eina_file_open(const char *path, Eina_Bool shared)
         n->mtime_nsec = (unsigned long int)file_stat.st_mtim.tv_nsec;
 #endif
         n->inode = file_stat.st_ino;
+        n->dev = file_stat.st_dev;
         n->fd = fd;
         n->shared = shared;
         n->refcount = 1;
@@ -999,6 +1001,7 @@ eina_file_refresh(Eina_File *file)
    file->mtime_nsec = (unsigned long int)file_stat.st_mtim.tv_nsec;
 #endif
    file->inode = file_stat.st_ino;
+   file->dev = file_stat.st_dev;
 
    return r;
 }
