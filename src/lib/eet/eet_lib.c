@@ -1068,14 +1068,14 @@ eet_internal_read2(Eet_File *ef,
      }
 
    /* At this stage we have a valid eet file, let's tell the system we are likely to need most of its data */
-   if (ef->readfp && ef->ed)
-     {
-        unsigned long int offset;
-
-        offset = (unsigned char*) ef->ed->start - (unsigned char*) ef->data;
-        eina_file_map_populate(ef->readfp, EINA_FILE_WILLNEED, ef->data,
-                               offset, ef->data_size - offset);
-     }
+//   if (ef->readfp && ef->ed)
+//     {
+//        unsigned long int offset;
+//
+//        offset = (unsigned char*) ef->ed->start - (unsigned char*) ef->data;
+//        eina_file_map_populate(ef->readfp, EINA_FILE_WILLNEED, ef->data,
+//                               offset, ef->data_size - offset);
+//     }
 
    return ef;
 }
@@ -1532,7 +1532,8 @@ eet_mmap(const Eina_File *file)
    ef->readfp_owned = EINA_TRUE;
 
    ef->data_size = eina_file_size_get(ef->readfp);
-   ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
+   ef->data = eina_file_map_all(ef->readfp, EINA_FILE_RANDOM);
+//   ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
    if (eet_test_close((ef->data == NULL), ef, EINA_FALSE))
      goto on_error;
 
@@ -1728,7 +1729,8 @@ open_error:
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
         ef->data_size = size;
-        ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
+        ef->data = eina_file_map_all(ef->readfp, EINA_FILE_RANDOM);
+//        ef->data = eina_file_map_all(ef->readfp, EINA_FILE_SEQUENTIAL);
         if (eet_test_close((ef->data == NULL), ef, EINA_FALSE))
           goto on_error;
 
