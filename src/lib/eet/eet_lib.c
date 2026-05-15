@@ -1427,11 +1427,12 @@ eet_internal_close(Eet_File *ef,
         eina_file_close(ef->readfp);
      }
 
+   /* free it */
+   eina_stringshare_del(ef->path);
+
    /* zero out ram for struct - caution tactic against stale memory use */
    memset(ef, 0, sizeof(Eet_File));
 
-   /* free it */
-   eina_stringshare_del(ef->path);
    if (!shutdown)
      eet_file_mp_free(ef);
    return err;
