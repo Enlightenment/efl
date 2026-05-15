@@ -328,6 +328,11 @@ int eina_file_map_key_cmp(const unsigned long long int *key1, int key1_length,
  */
 int eina_file_map_key_hash(const unsigned long long int *key, int key_length);
 
+#ifndef _WIN32
+void eina_file_posix_init(void);
+void eina_file_posix_shutdown(void);
+#endif
+
 /**
  * @}
  */

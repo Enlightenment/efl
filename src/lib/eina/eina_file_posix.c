@@ -66,6 +66,8 @@
 #include "eina_log.h"
 #include "eina_xattr.h"
 #include "eina_file_common.h"
+#include "eina_thread.h"
+#include "eina_thread_queue.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -95,6 +97,8 @@ struct _Eina_File_Iterator
 #endif
 
 int _eina_file_log_dom = -1;
+
+static void _eina_file_posix_fd_close(dev_t dev, int fd);
 
 /*
  * This complex piece of code is needed due to possible race condition.
@@ -310,7 +314,8 @@ eina_file_real_close(Eina_File *file)
      {
         if (!file->copied && file->global_map != MAP_FAILED)
           munmap(file->global_map, file->length);
-        close(file->fd);
+        _eina_file_posix_fd_close(file->dev, file->fd);
+//        close(file->fd);
      }
 }
 
@@ -836,7 +841,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    Eina_File *file;
    Eina_File *n;
    Eina_Stringshare *filename;
-   struct stat file_stat;
+   struct stat file_stat = { 0 };
    int fd = -1;
    Eina_Statgen statgen;
 
@@ -893,7 +898,8 @@ eina_file_open(const char *path, Eina_Bool shared)
              file->statgen = statgen;
              eina_lock_release(&file->lock);
 
-             close(fd);
+             _eina_file_posix_fd_close(file_stat.st_dev, fd);
+//             close(fd);
              eina_stringshare_del(filename);
              return file;
           }
@@ -958,7 +964,8 @@ eina_file_open(const char *path, Eina_Bool shared)
         eina_hash_free(n->rmap);
         eina_hash_free(n->map);
         eina_stringshare_del(n->filename);
-        close(n->fd);
+        _eina_file_posix_fd_close(n->dev, n->fd);
+//        close(n->fd);
         free(n);
         eina_stringshare_del(filename);
         return file;
@@ -971,7 +978,11 @@ eina_file_open(const char *path, Eina_Bool shared)
    INF("Could not open file [%s].", filename);
    eina_stringshare_del(filename);
 
-   if (fd >= 0) close(fd);
+   if (fd >= 0)
+     {
+        _eina_file_posix_fd_close(file_stat.st_dev, fd);
+//        close(fd);
+     }
    if (file) eina_file_close(file);
    return NULL;
 }
@@ -1685,4 +1696,162 @@ eina_file_access(const char *path, Eina_File_Access_Mode mode)
      return EINA_FALSE;
 
    return access(path, mode) == 0;
+}
+
+typedef struct _Close_Thread
+{
+  dev_t dev;
+  Eina_Thread_Queue *thq;
+  Eina_Thread th;
+} Close_Thread;
+
+typedef struct _Close_Msg
+{
+  Eina_Thread_Queue_Msg head;
+  int dev;
+  int fd;
+} Close_Msg;
+
+static Eina_Lock     _close_threads_lock;
+static Close_Thread *_close_threads = NULL;
+static int           _close_threads_num = 0;
+
+#define EXIT_FD -999909999
+
+static void *
+_eina_file_posix_close_thread(void *arg, Eina_Thread t)
+{
+  Close_Thread *ct = arg;
+  Eina_Thread_Queue *thq = ct->thq;
+  Close_Msg *msg;
+  void *ref = NULL;
+
+  eina_thread_name_set(t, "Eina-fd-closer");
+  for (;;)
+    {
+      msg = eina_thread_queue_wait(thq, &ref);
+      if (msg)
+        {
+          int fd = msg->fd;
+          eina_thread_queue_wait_done(thq, ref);
+          if (fd == EXIT_FD) return NULL;
+          close(fd);
+        }
+    }
+  return NULL;
+}
+
+static Close_Thread *
+_eina_file_posix_close_thread_add(dev_t dev)
+{ // requires _close_threads_lock to be taken
+  Close_Thread *ct;
+
+  _close_threads_num++;
+  ct = realloc(_close_threads, _close_threads_num * sizeof(Close_Thread));
+  if (!ct)
+    {
+      _close_threads_num--;
+      return NULL;
+    }
+  _close_threads = ct;
+  _close_threads[_close_threads_num - 1].dev = dev;
+  _close_threads[_close_threads_num - 1].thq = eina_thread_queue_new();
+  if (!_close_threads[_close_threads_num - 1].thq)
+    {
+      _close_threads_num--;
+      return NULL;
+    }
+  if (!eina_thread_create(&(_close_threads[_close_threads_num - 1].th),
+                          EINA_THREAD_NORMAL, -1,
+                          _eina_file_posix_close_thread,
+                          &(_close_threads[_close_threads_num - 1])))
+    {
+      eina_thread_queue_free(_close_threads[_close_threads_num - 1].thq);
+      _close_threads_num--;
+      return NULL;
+    }
+  return &(_close_threads[_close_threads_num - 1]);
+}
+
+static Close_Thread *
+_eina_file_posix_close_thread_find(dev_t dev)
+{ // requires _close_threads_lock to be taken
+  Close_Thread *ct = NULL;
+  int i;
+
+  for (i = 0; i < _close_threads_num; i++)
+    {
+      if (_close_threads[i].dev == dev)
+        {
+          ct = &(_close_threads[i]);
+          break;
+        }
+    }
+  return ct;
+}
+
+static void
+_eina_file_posix_fd_close(dev_t dev, int fd)
+{
+  Close_Thread *ct;
+  Close_Msg *msg;
+  void *ref = NULL;
+
+  eina_lock_take(&_close_threads_lock);
+  ct = _eina_file_posix_close_thread_find(dev);
+  if (!ct) _eina_file_posix_close_thread_add(dev);
+  eina_lock_release(&_close_threads_lock);
+
+  if (!ct) goto err; // EEEK we can't alloc a closer thread?
+  msg = eina_thread_queue_send(ct->thq, sizeof(Close_Msg), &ref);
+  if (!msg) goto err;
+  msg->dev = dev;
+  msg->fd = fd;
+  eina_thread_queue_send_done(ct->thq, ref);
+  return;
+err:
+  close(fd);
+  return;
+}
+
+static void
+_eina_file_posix_closers_clear(void)
+{ // requires _close_threads_lock to be taken
+  int i;
+
+  if (!_close_threads) return;
+  for (i = 0; i < _close_threads_num; i++)
+    {
+      Close_Msg *msg;
+      Close_Thread *ct = &_close_threads[i];
+      void *ref;
+
+      msg = eina_thread_queue_send(ct->thq, sizeof(Close_Msg), &ref);
+      if (msg)
+        {
+          msg->dev = ct->dev;
+          msg->fd = EXIT_FD;
+          eina_thread_queue_send_done(ct->thq, ref);
+        }
+      eina_thread_join(ct->th);
+      eina_thread_queue_free(ct->thq);
+    }
+  free(_close_threads);
+  _close_threads = NULL;
+  _close_threads_num = 0;
+}
+
+void
+eina_file_posix_init(void)
+{
+  eina_lock_new(&_close_threads_lock);
+}
+
+void
+eina_file_posix_shutdown(void)
+{
+  eina_lock_take(&_close_threads_lock);
+  _eina_file_posix_closers_clear();
+  eina_lock_release(&_close_threads_lock);
+  eina_lock_free(&_close_threads_lock);
 }
