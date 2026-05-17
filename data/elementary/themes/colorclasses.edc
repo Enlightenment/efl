@@ -374,6 +374,7 @@ color_tree {
       "/fg/normal/gadgets/music_control/progress";
       "/fg/normal/gadgets/music_control/text/tag";
       "/fg/normal/fileman/filesize/1";
+      "/fg/normal/gadgets/connman/activity/rx";
    }
    ":selected-light" {
       "/bg/normal/tiling/position/base";
@@ -419,6 +420,7 @@ color_tree {
       "/fg/normal/fileperm/execute";
       "/fg/normal/filegraph/bar";
       "/fg/normal/gadgets/cpufreq/cpu_usage/3";
+      "/fg/normal/gadgets/connman/activity/tx";
    }
    ":selected-alt-trans" {
       "/bg/normal/access";
