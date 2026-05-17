@@ -734,14 +734,14 @@ else { \
       }
       program { name: "rx_up_l";
          action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.25;
+         transition: DECELERATE 0.1;
          target: "activity_rx";
          target: "activity_rx_clip";
          after: "rx_down_l";
       }
       program { name: "rx_down_l";
          action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.25;
+         transition: ACCELERATE 0.1;
          target: "activity_rx";
          target: "activity_rx_clip";
          after: "rx_pause_l";
@@ -774,14 +774,14 @@ else { \
       }
       program { name: "rx_up_m";
          action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.15;
+         transition: DECELERATE 0.05;
          target: "activity_rx";
          target: "activity_rx_clip";
          after: "rx_down_m";
       }
       program { name: "rx_down_m";
          action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.15;
+         transition: ACCELERATE 0.05;
          target: "activity_rx";
          target: "activity_rx_clip";
          after: "rx_up_m";
@@ -801,14 +801,14 @@ else { \
       }
       program { name: "rx_up_h";
          action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.08;
+         transition: DECELERATE 0.02;
          target: "activity_rx";
          target: "activity_rx_clip";
          after: "rx_down_h";
       }
       program { name: "rx_down_h";
          action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.08;
+         transition: ACCELERATE 0.02;
          target: "activity_rx";
          target: "activity_rx_clip";
          after: "rx_up_h";
@@ -842,14 +842,14 @@ else { \
       }
       program { name: "tx_down_l";
          action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.25;
+         transition: DECELERATE 0.1;
          target: "activity_tx";
          target: "activity_tx_clip";
          after: "tx_up_l";
       }
       program { name: "tx_up_l";
          action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.25;
+         transition: ACCELERATE 0.1;
          target: "activity_tx";
          target: "activity_tx_clip";
          after: "tx_pause_l";
@@ -882,14 +882,14 @@ else { \
       }
       program { name: "tx_down_m";
          action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.15;
+         transition: DECELERATE 0.05;
          target: "activity_tx";
          target: "activity_tx_clip";
          after: "tx_up_m";
       }
       program { name: "tx_up_m";
          action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.15;
+         transition: ACCELERATE 0.05;
          target: "activity_tx";
          target: "activity_tx_clip";
          after: "tx_down_m";
@@ -909,14 +909,14 @@ else { \
       }
       program { name: "tx_down_h";
          action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.08;
+         transition: DECELERATE 0.02;
          target: "activity_tx";
          target: "activity_tx_clip";
          after: "tx_up_h";
       }
       program { name: "tx_up_h";
          action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.08;
+         transition: ACCELERATE 0.02;
          target: "activity_tx";
          target: "activity_tx_clip";
          after: "tx_down_h";
