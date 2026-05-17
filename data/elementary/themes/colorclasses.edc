@@ -375,6 +375,7 @@ color_tree {
       "/fg/normal/gadgets/music_control/text/tag";
       "/fg/normal/fileman/filesize/1";
       "/fg/normal/gadgets/connman/activity/rx";
+      "/fg/normal/gadgets/connman/band-label";
    }
    ":selected-light" {
       "/bg/normal/tiling/position/base";
