@@ -402,7 +402,7 @@ group { name: "e/modules/connman/main";
          }
       }
       part { name: "activity_rx_clip"; type: RECT; mouse_events: 0;
-         clip_to: "clip_wifi";
+//         clip_to: "clip_wifi";
          description { state: "default" 0.0;
             color: 255 255 255 0; // no cc
          }
@@ -442,7 +442,7 @@ group { name: "e/modules/connman/main";
          }
       }
       part { name: "activity_tx_clip"; type: RECT; mouse_events: 0;
-         clip_to: "clip_wifi";
+//         clip_to: "clip_wifi";
          description { state: "default" 0.0;
             color: 255 255 255 0; // no cc
          }
