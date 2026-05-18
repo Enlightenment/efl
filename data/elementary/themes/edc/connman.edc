@@ -20,6 +20,8 @@ group { name: "e/modules/connman/main";
    images.image: "cell-3.png" COMP;
    images.image: "cell-4.png" COMP;
    images.image: "cell-base.png" COMP;
+
+   images.image: "radio.png" COMP;
    parts {
       part { name: "exclam_base"; mouse_events: 0;
          scale: 1;
@@ -338,7 +340,7 @@ group { name: "e/modules/connman/main";
             visible: 1;
          }
       }
-      part { name: "e.text.band-label"; type: TEXT; effect: SHADOW; mouse_events: 0;
+      part { name: "e.text.band-label"; type: TEXT; mouse_events: 0;
          clip_to: "clip_wifi";
          description { state: "default" 0.0;
             rel.to: "wifi-base";
@@ -376,86 +378,120 @@ group { name: "e/modules/connman/main";
             color_class: "/fg/normal/gadgets/connman/security/secure/hi";
          }
       }
-      part { name: "activity_rx"; type: RECT; mouse_events: 0;
+     part { name: "activity_rx"; mouse_events: 0; scale: 1;
          clip_to: "activity_rx_clip";
          description { state: "default" 0.0;
-            visible: 0;
+            image.normal: "radio.png";
             color_class: "/fg/normal/gadgets/connman/activity/rx";
-            rel1 { relative: 0.18 0.80; to: "wifi"; }
-            rel2 { relative: 0.28 0.90; to: "wifi"; }
+            rel1 { relative: 0.23 0.85; to: "event"; }
+            rel2 { relative: 0.23 0.85; to: "event"; }
+            FIXED_SIZE(1, 1)
          }
-         description { state: "on" 0.0;
+         description { state: "low" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
-            rel1 { relative: 0.18 0.80; to: "wifi"; }
-            rel2 { relative: 0.28 0.90; to: "wifi"; }
+            FIXED_SIZE(2, 2)
          }
-         description { state: "bounce" 0.0;
+         description { state: "medium" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
-            rel1 { relative: 0.18 0.65; to: "wifi"; }
-            rel2 { relative: 0.28 0.75; to: "wifi"; }
+            FIXED_SIZE(4, 4)
          }
-         description { state: "off" 0.0;
+         description { state: "high" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
+            FIXED_SIZE(6, 6)
          }
       }
       part { name: "activity_rx_clip"; type: RECT; mouse_events: 0;
-//         clip_to: "clip_wifi";
          description { state: "default" 0.0;
             color: 255 255 255 0; // no cc
          }
-         description { state: "on" 0.0;
-            color: 255 255 255 255; // no cc
+         description { state: "low" 0.0;
+            color: 255 255 255 80; // no cc
          }
-         description { state: "bounce" 0.0;
-            color: 255 255 255 255; // no cc
+         description { state: "medium" 0.0;
+            color: 255 255 255 160; // no cc
          }
-         description { state: "off" 0.0;
-            color: 255 255 255 0; // no cc
+         description { state: "high" 0.0;
+            color: 255 255 255 255; // no cc
          }
       }
-      part { name: "activity_tx"; type: RECT; mouse_events: 0;
+      program { signal: "e,traffic,rx,idle"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "activity_rx";
+         target: "activity_rx_clip";
+      }
+      program { signal: "e,traffic,rx,low"; source: "e";
+         action: STATE_SET "low" 0.0;
+         target: "activity_rx";
+         target: "activity_rx_clip";
+      }
+      program { signal: "e,traffic,rx,medium"; source: "e";
+         action: STATE_SET "medium" 0.0;
+         target: "activity_rx";
+         target: "activity_rx_clip";
+      }
+      program { signal: "e,traffic,rx,high"; source: "e";
+         action: STATE_SET "high" 0.0;
+         target: "activity_rx";
+         target: "activity_rx_clip";
+      }
+
+      part { name: "activity_tx"; mouse_events: 0; scale: 1;
          clip_to: "activity_tx_clip";
          description { state: "default" 0.0;
-            visible: 0;
+            image.normal: "radio.png";
             color_class: "/fg/normal/gadgets/connman/activity/tx";
-            rel1 { relative: 0.32 0.80; to: "wifi"; }
-            rel2 { relative: 0.42 0.90; to: "wifi"; }
+            rel1 { relative: 0.37 0.85; to: "event"; }
+            rel2 { relative: 0.37 0.85; to: "event"; }
+            FIXED_SIZE(1, 1)
          }
-         description { state: "on" 0.0;
+         description { state: "low" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
-            rel1 { relative: 0.32 0.80; to: "wifi"; }
-            rel2 { relative: 0.42 0.90; to: "wifi"; }
+            FIXED_SIZE(2, 2)
          }
-         description { state: "bounce" 0.0;
+         description { state: "medium" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
-            rel1 { relative: 0.32 0.95; to: "wifi"; }
-            rel2 { relative: 0.42 1.05; to: "wifi"; }
+            FIXED_SIZE(4, 4)
          }
-         description { state: "off" 0.0;
+         description { state: "high" 0.0;
             inherit: "default" 0.0;
-            visible: 1;
+            FIXED_SIZE(6, 6)
          }
       }
       part { name: "activity_tx_clip"; type: RECT; mouse_events: 0;
-//         clip_to: "clip_wifi";
          description { state: "default" 0.0;
             color: 255 255 255 0; // no cc
          }
-         description { state: "on" 0.0;
-            color: 255 255 255 255; // no cc
+         description { state: "low" 0.0;
+            color: 255 255 255 80; // no cc
          }
-         description { state: "bounce" 0.0;
-            color: 255 255 255 255; // no cc
+         description { state: "medium" 0.0;
+            color: 255 255 255 160; // no cc
          }
-         description { state: "off" 0.0;
-            color: 255 255 255 0; // no cc
+         description { state: "high" 0.0;
+            color: 255 255 255 255; // no cc
          }
       }
+      program { signal: "e,traffic,tx,idle"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "activity_tx";
+         target: "activity_tx_clip";
+      }
+      program { signal: "e,traffic,tx,low"; source: "e";
+         action: STATE_SET "low" 0.0;
+         target: "activity_tx";
+         target: "activity_tx_clip";
+      }
+      program { signal: "e,traffic,tx,medium"; source: "e";
+         action: STATE_SET "medium" 0.0;
+         target: "activity_tx";
+         target: "activity_tx_clip";
+      }
+      program { signal: "e,traffic,tx,high"; source: "e";
+         action: STATE_SET "high" 0.0;
+         target: "activity_tx";
+         target: "activity_tx_clip";
+      }
+
       part { name: "label_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             color: 255 255 255 0; // no cc
@@ -718,222 +754,6 @@ else { \
       program { signal: "e,security,off"; source: "e";
          action: STATE_SET "default" 0.0;
          target: "security_overlay";
-      }
-      /* --- RX (download) — dot bounces UP --- */
-      program { name: "rx_low"; signal: "e,traffic,rx,low"; source: "e";
-         action: ACTION_STOP;
-         target: "rx_up_m"; target: "rx_down_m";
-         target: "rx_up_h"; target: "rx_down_h";
-         after: "rx_appear_l";
-      }
-      program { name: "rx_appear_l";
-         action: STATE_SET "on" 0.0;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_up_l";
-      }
-      program { name: "rx_up_l";
-         action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.1;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_down_l";
-      }
-      program { name: "rx_down_l";
-         action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.1;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_pause_l";
-      }
-      program { name: "rx_pause_l";
-         action: STATE_SET "off" 0.0;
-         transition: LINEAR 0.5;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_unpause_l";
-      }
-      program { name: "rx_unpause_l";
-         action: STATE_SET "on" 0.0;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_up_l";
-      }
-      program { name: "rx_med"; signal: "e,traffic,rx,medium"; source: "e";
-         action: ACTION_STOP;
-         target: "rx_up_l"; target: "rx_down_l";
-         target: "rx_pause_l"; target: "rx_unpause_l";
-         target: "rx_up_h"; target: "rx_down_h";
-         after: "rx_appear_m";
-      }
-      program { name: "rx_appear_m";
-         action: STATE_SET "on" 0.0;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_up_m";
-      }
-      program { name: "rx_up_m";
-         action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.05;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_down_m";
-      }
-      program { name: "rx_down_m";
-         action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.05;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_up_m";
-      }
-      program { name: "rx_high"; signal: "e,traffic,rx,high"; source: "e";
-         action: ACTION_STOP;
-         target: "rx_up_l"; target: "rx_down_l";
-         target: "rx_pause_l"; target: "rx_unpause_l";
-         target: "rx_up_m"; target: "rx_down_m";
-         after: "rx_appear_h";
-      }
-      program { name: "rx_appear_h";
-         action: STATE_SET "on" 0.0;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_up_h";
-      }
-      program { name: "rx_up_h";
-         action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.02;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_down_h";
-      }
-      program { name: "rx_down_h";
-         action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.02;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-         after: "rx_up_h";
-      }
-      program { name: "rx_idle"; signal: "e,traffic,rx,idle"; source: "e";
-         action: ACTION_STOP;
-         target: "rx_up_l"; target: "rx_down_l";
-         target: "rx_pause_l"; target: "rx_unpause_l";
-         target: "rx_up_m"; target: "rx_down_m";
-         target: "rx_up_h"; target: "rx_down_h";
-         after: "rx_hide";
-      }
-      program { name: "rx_hide";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
-         target: "activity_rx";
-         target: "activity_rx_clip";
-      }
-      /* --- TX (upload) — dot bounces DOWN --- */
-      program { name: "tx_low"; signal: "e,traffic,tx,low"; source: "e";
-         action: ACTION_STOP;
-         target: "tx_up_m"; target: "tx_down_m";
-         target: "tx_up_h"; target: "tx_down_h";
-         after: "tx_appear_l";
-      }
-      program { name: "tx_appear_l";
-         action: STATE_SET "on" 0.0;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_down_l";
-      }
-      program { name: "tx_down_l";
-         action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.1;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_up_l";
-      }
-      program { name: "tx_up_l";
-         action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.1;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_pause_l";
-      }
-      program { name: "tx_pause_l";
-         action: STATE_SET "off" 0.0;
-         transition: LINEAR 0.5;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_unpause_l";
-      }
-      program { name: "tx_unpause_l";
-         action: STATE_SET "on" 0.0;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_down_l";
-      }
-      program { name: "tx_med"; signal: "e,traffic,tx,medium"; source: "e";
-         action: ACTION_STOP;
-         target: "tx_down_l"; target: "tx_up_l";
-         target: "tx_pause_l"; target: "tx_unpause_l";
-         target: "tx_up_h"; target: "tx_down_h";
-         after: "tx_appear_m";
-      }
-      program { name: "tx_appear_m";
-         action: STATE_SET "on" 0.0;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_down_m";
-      }
-      program { name: "tx_down_m";
-         action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.05;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_up_m";
-      }
-      program { name: "tx_up_m";
-         action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.05;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_down_m";
-      }
-      program { name: "tx_high"; signal: "e,traffic,tx,high"; source: "e";
-         action: ACTION_STOP;
-         target: "tx_down_l"; target: "tx_up_l";
-         target: "tx_pause_l"; target: "tx_unpause_l";
-         target: "tx_down_m"; target: "tx_up_m";
-         after: "tx_appear_h";
-      }
-      program { name: "tx_appear_h";
-         action: STATE_SET "on" 0.0;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_down_h";
-      }
-      program { name: "tx_down_h";
-         action: STATE_SET "bounce" 0.0;
-         transition: DECELERATE 0.02;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_up_h";
-      }
-      program { name: "tx_up_h";
-         action: STATE_SET "on" 0.0;
-         transition: ACCELERATE 0.02;
-         target: "activity_tx";
-         target: "activity_tx_clip";
-         after: "tx_down_h";
-      }
-      program { name: "tx_idle"; signal: "e,traffic,tx,idle"; source: "e";
-         action: ACTION_STOP;
-         target: "tx_down_l"; target: "tx_up_l";
-         target: "tx_pause_l"; target: "tx_unpause_l";
-         target: "tx_down_m"; target: "tx_up_m";
-         target: "tx_down_h"; target: "tx_up_h";
-         after: "tx_hide";
-      }
-      program { name: "tx_hide";
-         action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.3;
-         target: "activity_tx";
-         target: "activity_tx_clip";
       }
    }
 }
