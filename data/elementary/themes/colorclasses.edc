@@ -12,6 +12,7 @@ color_tree {
       "/bg/normal/gadgets/tasks/base/normal";
       "/bg/normal/gadgets/tasks/base/iconified";
       "/fg/normal/gadgets/backlight/filament/off";
+      "/bg/normal/hover/base";
    }
    ":bg-alt" {
       "/bg-alt";
