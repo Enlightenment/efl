@@ -1378,8 +1378,8 @@ typedef struct
 //# define do_getdents(fd, buf, size) getdents64(fd, buf, size)
 typedef struct
 {
-   ino64_t        d_ino;
-   off64_t        d_off;
+   uint64_t       d_ino;
+   uint64_t       d_off;
    unsigned short d_reclen;
    unsigned char  d_type;
    char           d_name[4096];
