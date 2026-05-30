@@ -275,7 +275,7 @@ group { name: "elm/hover/base/popout";
             rel.to: "elm.swallow.slot.left";
             rel1.offset: -6 -6;
             rel2.offset: -1 5;
-            color_class: "/bg/normal/hover";
+            color_class: "/bg/normal/hover/base";
             color: 255 255 255 0; // no cc
          }
          description { state: "visible" 0.0;
