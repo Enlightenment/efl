@@ -1023,9 +1023,7 @@ eina_file_init(void)
    eina_spinlock_release(&_eina_statgen_lock);
    eina_lock_recursive_new(&_eina_file_lock_cache);
    eina_magic_string_set(EINA_FILE_MAGIC, "Eina_File");
-#ifndef _WIN32
-   eina_file_posix_init();
-#endif
+
    return EINA_TRUE;
 }
 
@@ -1049,9 +1047,6 @@ eina_file_shutdown(void)
    eina_hash_free(_eina_file_cache);
    _eina_file_cache = NULL;
 
-#ifndef _WIN32
-   eina_file_posix_shutdown();
-#endif
    eina_lock_free(&_eina_file_lock_cache);
 
    eina_log_domain_unregister(_eina_file_log_dom);
