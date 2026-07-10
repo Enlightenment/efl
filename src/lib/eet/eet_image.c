@@ -2,9 +2,9 @@
 # include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
-#ifdef __OpenBSD__
+#if defined(__OpenBSD__) || defined(__NetBSD__)
 # include <sys/types.h>
-#endif /* ifdef __OpenBSD__ */
+#endif
 
 #include <stdio.h>
 #include <string.h>

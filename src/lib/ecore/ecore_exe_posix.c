@@ -218,7 +218,7 @@ _impl_ecore_exe_run_priority_get(void)
    return run_pri;
 }
 
-#if defined (__FreeBSD__) || defined (__OpenBSD__)
+#if defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__)
 # include <dlfcn.h>
 static char ***_dl_environ;
 #else
@@ -350,7 +350,7 @@ _impl_ecore_exe_efl_object_finalize(Eo *obj, Ecore_Exe_Data *exe)
 #ifdef HAVE_SYSTEMD
          char **env = NULL, **e;
 
-# if defined (__FreeBSD__) || defined (__OpenBSD__)
+# if defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__)
          _dl_environ = dlsym(NULL, "environ");
          env = *_dl_environ;
 # else
