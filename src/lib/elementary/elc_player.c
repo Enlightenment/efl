@@ -352,7 +352,7 @@ static void
 _stop(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_layout_signal_emit(data, "elm,button,stop", "elm");
-   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_QUALITY_CLICKED, NULL);
+   efl_event_callback_legacy_call(data, ELM_PLAYER_EVENT_STOP_CLICKED, NULL);
 }
 
 static void

@@ -77,6 +77,15 @@ EWAPI extern const Efl_Event_Description _ELM_PLAYER_EVENT_REWIND_CLICKED;
  */
 #define ELM_PLAYER_EVENT_REWIND_CLICKED (&(_ELM_PLAYER_EVENT_REWIND_CLICKED))
 
+EWAPI extern const Efl_Event_Description _ELM_PLAYER_EVENT_STOP_CLICKED;
+
+/** Called when stop was clicked
+ *
+ * @since 1.29
+ * @ingroup Elm_Player
+ */
+#define ELM_PLAYER_EVENT_STOP_CLICKED (&(_ELM_PLAYER_EVENT_STOP_CLICKED))
+
 EWAPI extern const Efl_Event_Description _ELM_PLAYER_EVENT_QUALITY_CLICKED;
 
 /** Called when quality was clicked
