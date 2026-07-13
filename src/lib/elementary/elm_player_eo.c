@@ -13,9 +13,9 @@ EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_PREV_CLICKED =
 EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_REWIND_CLICKED =
    EFL_EVENT_DESCRIPTION("rewind,clicked");
 EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_QUALITY_CLICKED =
-   EFL_EVENT_DESCRIPTION("stop,clicked");
-EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_STOP_CLICKED =
    EFL_EVENT_DESCRIPTION("quality,clicked");
+EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_STOP_CLICKED =
+   EFL_EVENT_DESCRIPTION("stop,clicked");
 EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_EJECT_CLICKED =
    EFL_EVENT_DESCRIPTION("eject,clicked");
 EWAPI const Efl_Event_Description _ELM_PLAYER_EVENT_VOLUME_CLICKED =
