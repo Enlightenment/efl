@@ -2245,7 +2245,9 @@ typedef struct
    Script_Write *sc;
 } Pending_Script_Write;
 
-#define PENDING_COMMANDS_MAX 8
+/* 1 by default so compiled scripts get written in deterministic order,
+ * for reproducible builds; raise via EDJE_CC_PENDING_COMMANDS_MAX */
+static int pending_commands_max = 1;
 
 static int pending_write_commands = 0;
 static Eina_List *pending_script_writes = NULL;
@@ -2274,7 +2276,7 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
    if (!ev->exe) return ECORE_CALLBACK_RENEW;
    if (ecore_exe_data_get(ev->exe) != sc) return ECORE_CALLBACK_RENEW;
    pending_write_commands--;
-   if (pending_write_commands < PENDING_COMMANDS_MAX)
+   if (pending_write_commands < pending_commands_max)
      {
         if (pending_script_writes)
           {
@@ -2308,7 +2310,7 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
 static void
 data_write_script_queue(Script_Write *sc, const char *exeline)
 {
-   if (pending_write_commands >= PENDING_COMMANDS_MAX)
+   if (pending_write_commands >= pending_commands_max)
      {
         Pending_Script_Write *pend = malloc(sizeof(Pending_Script_Write));
         if (pend)
@@ -2347,6 +2349,16 @@ data_write_scripts(Eet_File *ef)
    char embryo_cc_path[PATH_MAX] = "";
    char inc_path[PATH_MAX] = "";
    int i;
+   char *envmax;
+
+   if ((envmax = getenv("EDJE_CC_PENDING_COMMANDS_MAX")))
+     {
+        int newmax = atoi(envmax);
+
+        if (newmax > 0) pending_commands_max = newmax;
+        else
+          WRN("Ignoring invalid EDJE_CC_PENDING_COMMANDS_MAX \"%s\"", envmax);
+     }
 
 #ifdef _WIN32
 # define BIN_EXT ".exe"
