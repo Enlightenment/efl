@@ -742,6 +742,10 @@ ICON("person-bust", "i-person-bust")
 ICON("state-radio", "i-radio")
 ICON("state-check", "i-check")
 
+ICON("power", "i-power")
+ICON("view", "i-eye")
+ICON("pair", "i-pc-phone")
+
 #undef ICON
 
 // regular icons
