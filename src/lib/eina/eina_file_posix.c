@@ -1362,14 +1362,7 @@ typedef struct
 } Dirent;
 #elif defined(__NetBSD__)
 # define do_getdents(fd, buf, size) getdents(fd, buf, size)
-typedef struct
-{
-   ino_t          d_fileno;
-   uint16_t       d_reclen;
-   uint16_t       d_namlen;
-   uint8_t        d_type;
-   char           d_name[4096];
-} Dirent;
+typedef struct dirent Dirent;
 #elif defined(__linux__)
 # define do_getdents(fd, buf, size) syscall(SYS_getdents64, fd, buf, size)
 // getdents64 added un glibc 2.30 ... so use raw syscall - will work
