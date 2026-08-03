@@ -253,7 +253,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
    else
 #endif
 #ifdef BUILD_NEON
-     if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     if (evas_common_cpu_has_neon_for(NEON_PART_SCALE))
        cb = evas_common_scale_rgba_in_to_out_clip_smooth_neon;
    else
 #endif
@@ -285,7 +285,7 @@ evas_common_scale_rgba_smooth_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
    else
 #endif
 #ifdef BUILD_NEON
-     if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+     if (evas_common_cpu_has_neon_for(NEON_PART_SCALE))
        _evas_common_scale_rgba_in_to_out_clip_smooth_neon
      (src, dst,
          dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
@@ -337,7 +337,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
 	else
 # endif
 #ifdef BUILD_NEON
-          if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          if (evas_common_cpu_has_neon_for(NEON_PART_SCALE))
             evas_common_scale_rgba_in_to_out_clip_smooth_neon(src, dst, dc,
                                                               src_region_x, src_region_y,
                                                               src_region_w, src_region_h,
@@ -370,7 +370,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
 	else
 # endif
 #ifdef BUILD_NEON
-          if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          if (evas_common_cpu_has_neon_for(NEON_PART_SCALE))
             evas_common_scale_rgba_in_to_out_clip_smooth_neon(src, dst, dc,
                                                               src_region_x, src_region_y,
                                                               src_region_w, src_region_h,

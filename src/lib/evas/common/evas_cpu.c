@@ -1,12 +1,41 @@
 #include "evas_common_private.h"
 
 static int cpu_feature_mask = 0;
+static unsigned int neon_disabled_parts = 0;
 
 static Eina_Bool
 _cpu_check(Eina_Cpu_Features f)
 {
    Eina_Cpu_Features features = eina_cpu_features_get();
    return (features & f) == f;
+}
+
+/* EVAS_NEON_DISABLE=map,scale,blit,font,convert - see Neon_Part. Lets a
+ * rendering artifact be narrowed down to one NEON kernel without a rebuild. */
+static void
+_neon_disable_parse(void)
+{
+   static const struct { const char *name; unsigned int bit; } parts[] = {
+      { "map",     NEON_PART_MAP     },
+      { "scale",   NEON_PART_SCALE   },
+      { "blit",    NEON_PART_BLIT    },
+      { "font",    NEON_PART_FONT    },
+      { "convert", NEON_PART_CONVERT },
+      { "ops",     NEON_PART_OPS     },
+      { "blur",    NEON_PART_BLUR    },
+      { NULL, 0 }
+   };
+   const char *s = getenv("EVAS_NEON_DISABLE");
+   int i;
+
+   if (!s) return;
+   if (!strcmp(s, "all"))
+     {
+        for (i = 0; parts[i].name; i++) neon_disabled_parts |= parts[i].bit;
+        return;
+     }
+   for (i = 0; parts[i].name; i++)
+     if (strstr(s, parts[i].name)) neon_disabled_parts |= parts[i].bit;
 }
 
 EVAS_API void
@@ -65,12 +94,20 @@ evas_common_cpu_init(void)
    else
      cpu_feature_mask |= _cpu_check(EINA_CPU_SVE) * CPU_FEATURE_SVE;
 #endif
+   _neon_disable_parse();
 }
 
 int
 evas_common_cpu_has_feature(unsigned int feature)
 {
    return (cpu_feature_mask & feature);
+}
+
+int
+evas_common_cpu_has_neon_for(unsigned int part)
+{
+   if (!(cpu_feature_mask & CPU_FEATURE_NEON)) return 0;
+   return !(neon_disabled_parts & part);
 }
 
 int

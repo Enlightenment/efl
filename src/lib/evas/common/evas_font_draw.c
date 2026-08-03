@@ -580,7 +580,7 @@ evas_common_font_glyph_draw(RGBA_Font_Glyph *fg,
 #endif
 
 #ifdef BUILD_NEON
-        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+        if (evas_common_cpu_has_neon_for(NEON_PART_FONT))
           {
 #define NEON 1
 #include "evas_font_compress_draw.c"

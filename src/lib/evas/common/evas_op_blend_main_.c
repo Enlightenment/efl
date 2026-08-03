@@ -121,7 +121,7 @@ op_blend_init(void)
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (evas_common_cpu_has_neon_for(NEON_PART_OPS))
      {
         init_blend_pixel_span_funcs_neon();
         init_blend_pixel_color_span_funcs_neon();
@@ -176,7 +176,7 @@ blend_gfx_span_func_cpu(int s, int m, int c, int d)
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (evas_common_cpu_has_neon_for(NEON_PART_OPS))
      {
 	cpu = CPU_NEON;
 	func = op_blend_span_funcs[s][m][c][d][cpu];
@@ -297,7 +297,7 @@ blend_gfx_pt_func_cpu(int s, int m, int c, int d)
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (evas_common_cpu_has_neon_for(NEON_PART_OPS))
      {
 	cpu = CPU_NEON;
 	func = op_blend_pt_funcs[s][m][c][d][cpu];
@@ -459,7 +459,7 @@ blend_rel_gfx_span_func_cpu(int s, int m, int c, int d)
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (evas_common_cpu_has_neon_for(NEON_PART_OPS))
      {
 	cpu = CPU_NEON;
 	func = op_blend_rel_span_funcs[s][m][c][d][cpu];
@@ -575,7 +575,7 @@ blend_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
      }
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (evas_common_cpu_has_neon_for(NEON_PART_OPS))
      {
 	cpu = CPU_NEON;
 	func = op_blend_rel_pt_funcs[s][m][c][d][cpu];

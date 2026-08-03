@@ -879,7 +879,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
         else
 #endif
 #ifdef BUILD_NEON
-          if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          if (evas_common_cpu_has_neon_for(NEON_PART_MAP))
             cb = evas_common_map_rgba_internal_neon;
           else
 #endif
@@ -916,7 +916,7 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
    else
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+   if (evas_common_cpu_has_neon_for(NEON_PART_MAP))
      _evas_common_map_rgba_internal_neon(src, dst,
                                     clip_x, clip_y, clip_w, clip_h,
                                     mul_col, render_op,
@@ -966,7 +966,7 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
         else
 #endif
 #ifdef BUILD_NEON
-        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+        if (evas_common_cpu_has_neon_for(NEON_PART_MAP))
           evas_common_map_rgba_internal_neon_do(src, dst, dc,
                                            &spans->spans[0], smooth,
                                            dc->anti_alias, level);
@@ -995,7 +995,7 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
         else
 #endif
 #ifdef BUILD_NEON
-        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+        if (evas_common_cpu_has_neon_for(NEON_PART_MAP))
           evas_common_map_rgba_internal_neon_do(src, dst, dc,
                                                &spans->spans[i], smooth,
                                                dc->anti_alias, level);

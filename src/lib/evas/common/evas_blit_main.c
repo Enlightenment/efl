@@ -598,7 +598,7 @@ evas_common_draw_func_copy_get(int pixels EINA_UNUSED, int reverse)
           return evas_common_copy_pixels_rev_mmx;
 #endif
 #ifdef BUILD_NEON
-        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+        if (evas_common_cpu_has_neon_for(NEON_PART_BLIT))
           return evas_common_copy_pixels_rev_neon;
 #endif
         return evas_common_copy_pixels_rev_c;
@@ -614,7 +614,7 @@ evas_common_draw_func_copy_get(int pixels EINA_UNUSED, int reverse)
           return evas_common_copy_pixels_mmx;
 #endif
 #ifdef BUILD_NEON
-        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+        if (evas_common_cpu_has_neon_for(NEON_PART_BLIT))
           return evas_common_copy_pixels_neon;
 #endif
      }

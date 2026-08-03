@@ -67,7 +67,7 @@ _box_blur_horiz_rgba(const uint32_t *src, int src_stride,
      }
 #endif
 #ifdef BUILD_NEON
-   if (eina_cpu_features_get() & EINA_CPU_NEON)
+   if (evas_common_cpu_has_neon_for(NEON_PART_BLUR))
      {
         _box_blur_rgba_horiz_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
@@ -103,7 +103,7 @@ _box_blur_vert_rgba(const uint32_t *src, int src_stride,
      }
 #endif
 #ifdef BUILD_NEON
-   if (eina_cpu_features_get() & EINA_CPU_NEON)
+   if (evas_common_cpu_has_neon_for(NEON_PART_BLUR))
      {
         _box_blur_rgba_vert_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
@@ -150,7 +150,7 @@ _box_blur_horiz_alpha(const uint8_t *src, int src_stride,
      }
 #endif
 #ifdef BUILD_NEON
-   if (eina_cpu_features_get() & EINA_CPU_NEON)
+   if (evas_common_cpu_has_neon_for(NEON_PART_BLUR))
      {
         _box_blur_alpha_horiz_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;
@@ -186,7 +186,7 @@ _box_blur_vert_alpha(const uint8_t *src, int src_stride,
      }
 #endif
 #ifdef BUILD_NEON
-   if (eina_cpu_features_get() & EINA_CPU_NEON)
+   if (evas_common_cpu_has_neon_for(NEON_PART_BLUR))
      {
         _box_blur_alpha_vert_step_neon(src, src_stride, dst, dst_stride, radii, region);
         goto end;

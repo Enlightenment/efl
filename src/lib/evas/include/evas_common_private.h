@@ -469,6 +469,21 @@ typedef enum _CPU_Features
    CPU_FEATURE_SVE     = (1 << 8)
 } CPU_Features;
 
+/* Subsystems that dispatch to a hand written NEON kernel outside of the
+ * op tables. EVAS_NEON_DISABLE=map,scale,blit,font,convert (or "all") forces
+ * any subset of them back onto the C path at runtime, which makes a rendering
+ * artifact bisectable to a single kernel without rebuilding. */
+typedef enum _Neon_Part
+{
+   NEON_PART_MAP     = (1 << 0),
+   NEON_PART_SCALE   = (1 << 1),
+   NEON_PART_BLIT    = (1 << 2),
+   NEON_PART_FONT    = (1 << 3),
+   NEON_PART_CONVERT = (1 << 4),
+   NEON_PART_OPS     = (1 << 5),  /* the blend/copy span and point op tables */
+   NEON_PART_BLUR    = (1 << 6)
+} Neon_Part;
+
 /*****************************************************************************/
 
 struct _Image_Entry_Flags
@@ -1032,6 +1047,7 @@ EVAS_API void evas_common_cpu_init                          (void);
 
 int  evas_common_cpu_have_cpuid                         (void);
 int  evas_common_cpu_has_feature                        (unsigned int feature);
+int  evas_common_cpu_has_neon_for                       (unsigned int part);
 EVAS_API void evas_common_cpu_can_do                        (int *mmx, int *sse, int *sse2);
 EVAS_API void evas_common_cpu_end_opt                       (void);
 
