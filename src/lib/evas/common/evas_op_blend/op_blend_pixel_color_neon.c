@@ -711,8 +711,8 @@ _op_blend_pan_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
 }
 
 #define _op_blend_pas_c_dp_neon _op_blend_p_c_dp_neon
-#define _op_blend_pas_can_dp_neon _op_blend_p_c_dp_neon
-#define _op_blend_pas_caa_dp_neon _op_blend_p_c_dp_neon
+#define _op_blend_pas_can_dp_neon _op_blend_p_can_dp_neon
+#define _op_blend_pas_caa_dp_neon _op_blend_p_caa_dp_neon
 
 #define _op_blend_p_c_dpan_neon _op_blend_p_c_dp_neon
 #define _op_blend_pas_c_dpan_neon _op_blend_pas_c_dp_neon

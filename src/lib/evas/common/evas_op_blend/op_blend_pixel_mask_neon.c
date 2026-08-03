@@ -373,7 +373,11 @@ _op_blend_pt_p_mas_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
    *d = s + MUL_256(c, *d);
 }
 
-#define _op_blend_pt_pan_mas_dp_neon _op_blend_pt_p_mas_dp_neon
+static void
+_op_blend_pt_pan_mas_dp_neon(DATA32 s, DATA8 m, DATA32 c EINA_UNUSED, DATA32 *d) {
+   *d = INTERP_256(m + 1, s, *d);
+}
+
 #define _op_blend_pt_pas_mas_dp_neon _op_blend_pt_p_mas_dp_neon
 
 #define _op_blend_pt_p_mas_dpan_neon _op_blend_pt_p_mas_dp_neon

@@ -98,13 +98,13 @@ init_copy_pixel_pt_funcs_neon(void)
 
 #ifdef BUILD_NEON
 static void
-_op_copy_rel_p_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
+_op_copy_rel_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    // FIXME: neon-it
    DATA32 *e;
    UNROLL8_PLD_WHILE(d, l, e,
                      {
-                        *d = MUL_SYM(*d >> 24, c);
-                        d++;
+                        *d = MUL_SYM(*d >> 24, *s);
+                        d++; s++;
                      });
 }
 
@@ -132,8 +132,8 @@ init_copy_rel_pixel_span_funcs_neon(void)
 #ifdef BUILD_NEON
 static void
 _op_copy_rel_pt_p_dp_neon(DATA32 s, DATA8 m EINA_UNUSED, DATA32 c, DATA32 *d) {
-   s = 1 + (*d >> 24);
-   *d = MUL_256(s, c);
+   c = 1 + (*d >> 24);
+   *d = MUL_256(c, s);
 }
 
 

@@ -390,8 +390,21 @@ _op_blend_mas_can_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, 
    end += (size & 3);
    while (start <  end) {
       DATA32 alpha = *m;
-      alpha++;
-      *start = INTERP_256(alpha, c, *start);
+      /* the vector body above selects the untouched dst for alpha == 0
+       * (vbslq_u32) and yields exactly c for alpha == 255; the tail has to
+       * special-case both to stay bit identical to the C reference */
+      switch (alpha)
+        {
+         case 0:
+            break;
+         case 255:
+            *start = c;
+            break;
+         default:
+            alpha++;
+            *start = INTERP_256(alpha, c, *start);
+            break;
+        }
       m++;  start++;
    }
 #else
@@ -650,13 +663,16 @@ init_blend_mask_color_span_funcs_neon(void)
 static void
 _op_blend_pt_mas_c_dp_neon(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
    s = MUL_SYM(m, c);
-   c = 256 - (s >> 24);
-   *d = MUL_SYM(*d >> 24, s) + MUL_256(c, *d);
+   m = 255 - (s >> 24);
+   *d = s + MUL_256(m, *d);
 }
 
+static void
+_op_blend_pt_mas_can_dp_neon(DATA32 s EINA_UNUSED, DATA8 m, DATA32 c, DATA32 *d) {
+   *d = INTERP_256(m + 1, c, *d);
+}
 
-#define _op_blend_pt_mas_cn_dp_neon _op_blend_pt_mas_c_dp_neon
-#define _op_blend_pt_mas_can_dp_neon _op_blend_pt_mas_c_dp_neon
+#define _op_blend_pt_mas_cn_dp_neon _op_blend_pt_mas_can_dp_neon
 #define _op_blend_pt_mas_caa_dp_neon _op_blend_pt_mas_c_dp_neon
 
 #define _op_blend_pt_mas_c_dpan_neon _op_blend_pt_mas_c_dp_neon

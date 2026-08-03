@@ -183,7 +183,6 @@
              c2_val3_16x8 = vcombine_u16(c2_16x4, val3_16x4);
 
              cv_16x4 = vdup_n_u16(cv>>16);
-             cv += cd;
              cv_rv_16x8 = vcombine_u16(cv_16x4, rv_16x4);
 
              c2_val3_16x8 = vsubq_u16(c2_val3_16x8, c1_val1_16x8);
@@ -218,6 +217,13 @@
           }
         else
           *d = val1;
+#   if defined(COLMUL) && !defined(COLSAME)
+        /* The colour gradient advances once per pixel. The C and MMX paths do
+         * this unconditionally; doing it inside the branch above skipped it on
+         * fully transparent texels and desynchronised the gradient for the
+         * whole rest of the span. */
+        cv += cd;
+#   endif
 #  else //COLMUL
         val1 = INTERP_256(ru, val2, val1);
         val3 = INTERP_256(ru, val4, val3);

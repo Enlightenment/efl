@@ -98,6 +98,7 @@ _op_copy_rel_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d,
                         switch(color)
                           {
                           case 0:
+                             *d = 0;
                              break;
                           case 255:
                              color = 1 + (*d >> 24);

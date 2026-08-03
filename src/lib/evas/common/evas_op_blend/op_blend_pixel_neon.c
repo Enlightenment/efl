@@ -463,14 +463,19 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DAT
       cond0_32x4 = vceqq_u32(alpha0_32x4, x0_32x4);
       cond1_32x4 = vceqq_u32(alpha1_32x4, x0_32x4);
 
+      ad0_32x4 = vaddq_u32(s0_32x4, ad0_32x4);
+      ad1_32x4 = vaddq_u32(s1_32x4, ad1_32x4);
+
+      /* A source alpha of 0 means "leave the destination alone" in the C
+       * reference (case 0: break). Selecting the untouched destination before
+       * the add still let s through, so a pixel that is transparent but not
+       * colour-zero corrupted dst - and map/scale interpolation produces
+       * exactly those. Select after the add instead; same instruction count. */
       ad0_32x4 = vbslq_u32(cond0_32x4, d0_32x4, ad0_32x4);
       ad1_32x4 = vbslq_u32(cond1_32x4, d1_32x4, ad1_32x4);
 
-      d0_32x4 = vaddq_u32(s0_32x4, ad0_32x4);
-      d1_32x4 = vaddq_u32(s1_32x4, ad1_32x4);
-
-      vst1q_u32(start, d0_32x4);
-      vst1q_u32(start+4, d1_32x4);
+      vst1q_u32(start, ad0_32x4);
+      vst1q_u32(start+4, ad1_32x4);
 
       s+=8;
       start+=8;
@@ -478,9 +483,18 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DAT
    end += (size & 7);
    while (start <  end)
    {
-      int alpha;
-      alpha = 256 - (*s >> 24);
-      *start = *s++ + MUL_256(alpha, *start);
+      switch (*s & 0xff000000)
+        {
+         case 0:
+            break;
+         case 0xff000000:
+            *start = *s;
+            break;
+         default:
+            *start = *s + MUL_256(256 - (*s >> 24), *start);
+            break;
+        }
+      s++;
       start++;
    }
 #else
