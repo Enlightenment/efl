@@ -23,121 +23,87 @@
 static void
 _op_blend_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   uint16x8_t m_16x8;
-   uint16x8_t mc0_16x8;
-   uint16x8_t mc1_16x8;
-   uint16x8_t temp0_16x8;
-   uint16x8_t temp1_16x8;
-   uint16x8_t x255_16x8;
-   uint32x2_t c_32x2;
-   uint32x2_t m_32x2 = { 0, 0 };
-   uint32x4_t a_32x4;
-   uint32x4_t ad_32x4;
-   uint32x4_t cond_32x4;
-   uint32x4_t d_32x4;
-   uint32x4_t m_32x4;
-   uint32x4_t temp_32x4;
-   uint32x4_t mc_32x4;
-   uint32x4_t x0_32x4;
-   uint32x4_t x1_32x4;
-   uint8x16_t a_8x16;
-   uint8x16_t d_8x16;
-   uint8x16_t m_8x16;
-   uint8x16_t mc_8x16;
-   uint8x16_t temp_8x16;
-   uint8x16_t x0_8x16;
-   uint8x16_t x1_8x16;
-   uint8x8_t a0_8x8;
-   uint8x8_t a1_8x8;
-   uint8x8_t c_8x8;
-   uint8x8_t d0_8x8;
-   uint8x8_t d1_8x8;
-   uint8x8_t m0_8x8;
-   uint8x8_t m1_8x8;
-   uint8x8_t m_8x8;
-   uint8x8_t mc0_8x8;
-   uint8x8_t mc1_8x8;
-   uint8x8_t temp0_8x8;
-   uint8x8_t temp1_8x8;
-
-   x1_8x16 = vdupq_n_u8(0x1);
-   x0_8x16 = vdupq_n_u8(0x0);
-   x0_32x4 = vreinterpretq_u32_u8(x0_8x16);
-   x255_16x8 = vdupq_n_u16(0xff);
-   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
-   c_32x2 = vdup_n_u32(c);
-   c_8x8 = vreinterpret_u8_u32(c_32x2);
-
+   /* mc = MUL_SYM(m, c) per channel, i.e. (c * m + 255) >> 8, then
+    * d = mc + MUL_256(256 - (mc >> 24), d).
+    *
+    * The second step is expressed as
+    *
+    *    mc + ((d * (255 - mc_a) + d) >> 8)
+    *
+    * because (256 - mc_a) does not fit in a byte, and d * (256 - mc_a) is the
+    * same as d * (255 - mc_a) + d. Everything stays unsigned and inside 16
+    * bits, so the whole span can be processed one channel plane at a time.
+    *
+    * Planar is what makes this cheap: vld4q gives one register per channel and
+    * the per pixel mask lines up with each plane directly, so the packed
+    * version's mask splat - two widenings plus a 32 bit multiply by 0x01010101
+    * for every four pixels - is not needed at all.
+    *
+    * A mask of 0 needs no special case here, unlike the mask x can variant:
+    * it gives mc = 0 and 255 - mc_a = 255, so the result is (d * 256) >> 8,
+    * which is d. Fully transparent blocks are still skipped outright, since
+    * that is free and glyph coverage masks are mostly zero. */
+   const uint8x16_t c_b = vdupq_n_u8(c & 0xff);
+   const uint8x16_t c_g = vdupq_n_u8((c >> 8) & 0xff);
+   const uint8x16_t c_r = vdupq_n_u8((c >> 16) & 0xff);
+   const uint8x16_t c_a = vdupq_n_u8((c >> 24) & 0xff);
+   const uint16x8_t x255 = vdupq_n_u16(0xff);
    DATA32 *start = d;
    int size = l;
-   DATA32 *end = start + (size & ~3);
-   while (start < end) {
-      int k = *((int *)m);
-      if (k == 0)
-      {
-         m+=4;
-         start+=4;
-         continue;
-      }
+   DATA32 *end = start + (size & ~15);
 
-      m_32x2 = vld1_lane_u32((DATA32*)m, m_32x2, 0);
-      d_32x4 = vld1q_u32(start);
+   /* mc = (c * m + 255) >> 8 */
+#define EVAS_MAS_C_MUL(out, cv)                                              \
+   do {                                                                      \
+      uint16x8_t lo_ = vmlal_u8(x255, vget_low_u8(cv), vget_low_u8(m8));      \
+      uint16x8_t hi_ = vmlal_u8(x255, vget_high_u8(cv), vget_high_u8(m8));    \
+      out = vcombine_u8(vshrn_n_u16(lo_, 8), vshrn_n_u16(hi_, 8));            \
+   } while (0)
 
-      m_8x8 = vreinterpret_u8_u32(m_32x2);
-      m_16x8 = vmovl_u8(m_8x8);
-      m_8x16 = vreinterpretq_u8_u16(m_16x8);
-      m_8x8 = vget_low_u8(m_8x16);
-      m_16x8 = vmovl_u8(m_8x8);
-      m_32x4 = vreinterpretq_u32_u16(m_16x8);
+   /* d = mc + ((d * (255 - mc_a) + d) >> 8) */
+#define EVAS_MAS_C_BLEND(plane, mc)                                          \
+   do {                                                                      \
+      uint16x8_t lo_ = vmull_u8(vget_low_u8(plane), vget_low_u8(nmca));       \
+      uint16x8_t hi_ = vmull_u8(vget_high_u8(plane), vget_high_u8(nmca));     \
+      lo_ = vaddw_u8(lo_, vget_low_u8(plane));                                \
+      hi_ = vaddw_u8(hi_, vget_high_u8(plane));                               \
+      plane = vaddq_u8(mc, vcombine_u8(vshrn_n_u16(lo_, 8),                   \
+                                       vshrn_n_u16(hi_, 8)));                 \
+   } while (0)
 
-      m_32x4 = vmulq_u32(m_32x4, x1_32x4);
-      m_8x16 = vreinterpretq_u8_u32(m_32x4);
-      m0_8x8 = vget_low_u8(m_8x16);
-      m1_8x8 = vget_high_u8(m_8x16);
+   while (start < end)
+     {
+        uint8x16_t m8 = vld1q_u8(m);
+        uint8x16x4_t dp;
+        uint8x16_t mc_b, mc_g, mc_r, mc_a, nmca;
 
-      mc0_16x8 = vmull_u8(m0_8x8, c_8x8);
-      mc1_16x8 = vmull_u8(m1_8x8, c_8x8);
-      mc0_16x8 = vaddq_u16(mc0_16x8, x255_16x8);
-      mc1_16x8 = vaddq_u16(mc1_16x8, x255_16x8);
+        if (vmaxvq_u8(m8) == 0)          /* wholly transparent: nothing to do */
+          {
+             m += 16;
+             start += 16;
+             continue;
+          }
 
-      mc0_8x8 = vshrn_n_u16(mc0_16x8, 8);
-      mc1_8x8 = vshrn_n_u16(mc1_16x8, 8);
-      mc_8x16 = vcombine_u8(mc0_8x8, mc1_8x8);
+        EVAS_MAS_C_MUL(mc_b, c_b);
+        EVAS_MAS_C_MUL(mc_g, c_g);
+        EVAS_MAS_C_MUL(mc_r, c_r);
+        EVAS_MAS_C_MUL(mc_a, c_a);
+        nmca = vmvnq_u8(mc_a);
 
-      a_8x16 = vsubq_u8(x0_8x16, mc_8x16);
+        dp = vld4q_u8((const uint8_t *)start);
+        EVAS_MAS_C_BLEND(dp.val[0], mc_b);
+        EVAS_MAS_C_BLEND(dp.val[1], mc_g);
+        EVAS_MAS_C_BLEND(dp.val[2], mc_r);
+        EVAS_MAS_C_BLEND(dp.val[3], mc_a);
+        vst4q_u8((uint8_t *)start, dp);
 
-      a_32x4 = vreinterpretq_u32_u8(a_8x16);
-      a_32x4 = vshrq_n_u32(a_32x4, 24);
-      a_32x4 = vmulq_u32(a_32x4, x1_32x4);
+        m += 16;
+        start += 16;
+     }
+#undef EVAS_MAS_C_MUL
+#undef EVAS_MAS_C_BLEND
 
-      a_8x16 = vreinterpretq_u8_u32(a_32x4);
-      a0_8x8 = vget_low_u8(a_8x16);
-      a1_8x8 = vget_high_u8(a_8x16);
-
-      d_8x16 = vreinterpretq_u8_u32(d_32x4);
-      d0_8x8 = vget_low_u8(d_8x16);
-      d1_8x8 = vget_high_u8(d_8x16);
-
-      temp0_16x8 = vmull_u8(a0_8x8, d0_8x8);
-      temp1_16x8 = vmull_u8(a1_8x8, d1_8x8);
-      temp0_8x8 = vshrn_n_u16(temp0_16x8,8);
-      temp1_8x8 = vshrn_n_u16(temp1_16x8,8);
-
-      temp_8x16 = vcombine_u8(temp0_8x8, temp1_8x8);
-      temp_32x4 = vreinterpretq_u32_u8(temp_8x16);
-
-      cond_32x4 = vceqq_u32(a_32x4, x0_32x4);
-      ad_32x4 = vbslq_u32(cond_32x4, d_32x4, temp_32x4);
-
-      mc_32x4 = vreinterpretq_u32_u8(mc_8x16);
-      d_32x4 = vaddq_u32(mc_32x4, ad_32x4);
-
-      vst1q_u32(start, d_32x4);
-
-      start+=4;
-      m+=4;
-   }
-   end += (size & 3);
+   end += (size & 15);
    while (start <  end) {
       DATA32 a = *m;
       DATA32 mc = MUL_SYM(a, c);
@@ -277,122 +243,90 @@ _op_blend_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, in
 static void
 _op_blend_mas_can_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
-   int16x8_t c_i16x8;
-   int16x8_t d0_i16x8;
-   int16x8_t d1_i16x8;
-   int16x8_t dc0_i16x8;
-   int16x8_t dc1_i16x8;
-   int16x8_t m0_i16x8;
-   int16x8_t m1_i16x8;
-   int8x16_t dc_i8x16;
-   int8x8_t dc0_i8x8;
-   int8x8_t dc1_i8x8;
-   uint16x8_t c_16x8;
-   uint16x8_t d0_16x8;
-   uint16x8_t d1_16x8;
-   uint16x8_t m0_16x8;
-   uint16x8_t m1_16x8;
-   uint16x8_t m_16x8;
-   uint32x2_t c_32x2;
-   uint32x2_t m_32x2 = { 0,  0 };
-   uint32x4_t d_32x4;
-   uint32x4_t dc_32x4;
-   uint32x4_t m_32x4;
-   uint32x4_t x1_32x4;
-   uint8x16_t d_8x16;
-   uint8x16_t m_8x16;
-   uint8x16_t x1_8x16;
-   uint8x8_t c_8x8;
-   uint8x8_t d0_8x8;
-   uint8x8_t d1_8x8;
-   uint8x8_t m0_8x8;
-   uint8x8_t m1_8x8;
-   uint8x8_t m_8x8;
-   uint8x8_t x1_8x8;
-   uint32x4_t x0_32x4;
-   uint32x4_t cond_32x4;
-
-   c_32x2 = vdup_n_u32(c);
-   c_8x8 = vreinterpret_u8_u32(c_32x2);
-   c_16x8 = vmovl_u8(c_8x8);
-   c_i16x8 = vreinterpretq_s16_u16(c_16x8);
-   x1_8x16 = vdupq_n_u8(0x1);
-   x1_8x8 = vget_low_u8(x1_8x16);
-   x1_32x4 = vreinterpretq_u32_u8(x1_8x16);
-   x0_32x4 = vdupq_n_u32(0x0);
-
+   /* d = INTERP_256(m + 1, c, d) per channel, i.e.
+    *
+    *    d + (((c - d) * (m + 1)) >> 8)
+    *
+    * Rearranged so that no intermediate is ever negative:
+    *
+    *    (d * (255 - m) + c * (m + 1)) >> 8
+    *
+    * which is exact (the largest intermediate is 255*256 = 65280, so it stays
+    * inside 16 bits) and lets the span be processed one channel plane at a
+    * time. Planar is the point: vld4q hands back one register per channel and
+    * the per pixel mask then lines up with each plane directly, so the byte
+    * splat that the packed version needed - two widenings and a 32 bit
+    * multiply by 0x01010101 for every four pixels - disappears entirely.
+    *
+    * A mask of 0 must leave the destination untouched rather than yield
+    * (d * 255 + c) >> 8, so zero mask lanes are selected back to d. Whole
+    * blocks that are entirely transparent or entirely opaque are handled
+    * without any arithmetic at all, which is what the C path gets from its
+    * switch and what glyph coverage masks mostly consist of. */
+   const uint8x16_t c_b = vdupq_n_u8(c & 0xff);
+   const uint8x16_t c_g = vdupq_n_u8((c >> 8) & 0xff);
+   const uint8x16_t c_r = vdupq_n_u8((c >> 16) & 0xff);
+   const uint8x16_t c_a = vdupq_n_u8((c >> 24) & 0xff);
+   const uint32x4_t c_32x4 = vdupq_n_u32(c);
    DATA32 *start = d;
    int size = l;
-   DATA32 *end = start + (size & ~3);
-   while (start < end) {
-      int k = *((int *)m);
-      if (k == 0)
-      {
-         m+=4;
-         start+=4;
-         continue;
-      }
+   DATA32 *end = start + (size & ~15);
 
-      m_32x2 = vld1_lane_u32((DATA32*)m, m_32x2, 0);
-      d_32x4 = vld1q_u32(start);
-      d_8x16 = vreinterpretq_u8_u32(d_32x4);
-      d0_8x8 = vget_low_u8(d_8x16);
-      d1_8x8 = vget_high_u8(d_8x16);
+#define EVAS_MAS_CAN_CHAN(dst_plane, src_plane, cv)                          \
+   do {                                                                      \
+      uint16x8_t lo_ = vmull_u8(vget_low_u8(src_plane), vget_low_u8(nm));     \
+      uint16x8_t hi_ = vmull_u8(vget_high_u8(src_plane), vget_high_u8(nm));   \
+      lo_ = vmlal_u8(lo_, vget_low_u8(cv), vget_low_u8(m8));                  \
+      hi_ = vmlal_u8(hi_, vget_high_u8(cv), vget_high_u8(m8));                \
+      lo_ = vaddw_u8(lo_, vget_low_u8(cv));                                   \
+      hi_ = vaddw_u8(hi_, vget_high_u8(cv));                                  \
+      dst_plane = vbslq_u8(mzero,                                             \
+                           src_plane,                                         \
+                           vcombine_u8(vshrn_n_u16(lo_, 8),                   \
+                                       vshrn_n_u16(hi_, 8)));                 \
+   } while (0)
 
-      m_8x8 = vreinterpret_u8_u32(m_32x2);
-      m_16x8 = vmovl_u8(m_8x8);
-      m_8x16 = vreinterpretq_u8_u16(m_16x8);
-      m_8x8 = vget_low_u8(m_8x16);
-      m_16x8 = vmovl_u8(m_8x8);
-      m_32x4 = vreinterpretq_u32_u16(m_16x8);
+   while (start < end)
+     {
+        uint8x16_t m8 = vld1q_u8(m);
+        uint8x16x4_t dp;
+        uint8x16_t nm, mzero;
 
-      m_32x4 = vmulq_u32(m_32x4, x1_32x4);
-      m_8x16 = vreinterpretq_u8_u32(m_32x4);
-      m0_8x8 = vget_low_u8(m_8x16);
-      m1_8x8 = vget_high_u8(m_8x16);
-      m0_16x8 = vaddl_u8(m0_8x8, x1_8x8);
-      m1_16x8 = vaddl_u8(m1_8x8, x1_8x8);
+        if (vmaxvq_u8(m8) == 0)          /* wholly transparent: nothing to do */
+          {
+             m += 16;
+             start += 16;
+             continue;
+          }
+        if (vminvq_u8(m8) == 255)        /* wholly opaque: a flat colour fill */
+          {
+             vst1q_u32(start, c_32x4);
+             vst1q_u32(start + 4, c_32x4);
+             vst1q_u32(start + 8, c_32x4);
+             vst1q_u32(start + 12, c_32x4);
+             m += 16;
+             start += 16;
+             continue;
+          }
 
-      m0_i16x8 = vreinterpretq_s16_u16(m0_16x8);
-      m1_i16x8 = vreinterpretq_s16_u16(m1_16x8);
+        dp = vld4q_u8((const uint8_t *)start);
+        nm = vmvnq_u8(m8);
+        mzero = vceqq_u8(m8, vdupq_n_u8(0));
 
-      d0_16x8 = vmovl_u8(d0_8x8);
-      d1_16x8 = vmovl_u8(d1_8x8);
+        EVAS_MAS_CAN_CHAN(dp.val[0], dp.val[0], c_b);
+        EVAS_MAS_CAN_CHAN(dp.val[1], dp.val[1], c_g);
+        EVAS_MAS_CAN_CHAN(dp.val[2], dp.val[2], c_r);
+        EVAS_MAS_CAN_CHAN(dp.val[3], dp.val[3], c_a);
 
-      d0_i16x8 = vreinterpretq_s16_u16(d0_16x8);
-      d1_i16x8 = vreinterpretq_s16_u16(d1_16x8);
+        vst4q_u8((uint8_t *)start, dp);
+        m += 16;
+        start += 16;
+     }
+#undef EVAS_MAS_CAN_CHAN
 
-      dc0_i16x8 = vsubq_s16(c_i16x8, d0_i16x8);
-      dc1_i16x8 = vsubq_s16(c_i16x8, d1_i16x8);
-
-      dc0_i16x8 = vmulq_s16(dc0_i16x8, m0_i16x8);
-      dc1_i16x8 = vmulq_s16(dc1_i16x8, m1_i16x8);
-
-      dc0_i16x8 = vshrq_n_s16(dc0_i16x8, 8);
-      dc1_i16x8 = vshrq_n_s16(dc1_i16x8, 8);
-
-      dc0_i16x8 = vaddq_s16(dc0_i16x8, d0_i16x8);
-      dc1_i16x8 = vaddq_s16(dc1_i16x8, d1_i16x8);
-
-      dc0_i8x8 = vmovn_s16(dc0_i16x8);
-      dc1_i8x8 = vmovn_s16(dc1_i16x8);
-
-      dc_i8x16 = vcombine_s8(dc0_i8x8, dc1_i8x8);
-      dc_32x4 = vreinterpretq_u32_s8(dc_i8x16);
-
-      cond_32x4 = vceqq_u32(m_32x4, x0_32x4);
-      dc_32x4 = vbslq_u32(cond_32x4, d_32x4, dc_32x4);
-
-      vst1q_u32(start, dc_32x4);
-      m+=4;
-      start+=4;
-   }
-   end += (size & 3);
+   end += (size & 15);
    while (start <  end) {
       DATA32 alpha = *m;
-      /* the vector body above selects the untouched dst for alpha == 0
-       * (vbslq_u32) and yields exactly c for alpha == 255; the tail has to
-       * special-case both to stay bit identical to the C reference */
       switch (alpha)
         {
          case 0:
@@ -700,6 +634,105 @@ init_blend_mask_color_pt_funcs_neon(void)
 /* blend_rel mask x color -> dst */
 
 #ifdef BUILD_NEON
+#ifdef BUILD_NEON_INTRINSICS
+/* The AArch64 path below uses tbl and the across-vector reduce, neither of
+ * which exists in 32 bit NEON. Keep the original kernel for ARMv7 rather
+ * than adding a second version that cannot be tested here. */
+static void
+_op_blend_rel_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+   /* mc = MUL_SYM(m, c), then
+    *
+    *    d = MUL_SYM(d_a, mc) + MUL_256(256 - mc_a, d)
+    *
+    * with the second term written as (d * (255 - mc_a) + d) >> 8 so that
+    * 256 - mc_a never has to fit in a byte.
+    *
+    * Packed rather than planar, for the same reason as the pixel x mask
+    * kernel: the C reference's final step adds two packed ARGB words, so an
+    * overflowing channel carries into the next one, which a per byte add
+    * would not reproduce.
+    *
+    * Both byte splats this needs - the mask byte across its pixel's channels,
+    * and the destination alpha across its own - were two widenings plus a
+    * 32 bit multiply by 0x01010101 per four pixels. Each is one tbl against a
+    * constant index vector.
+    *
+    * A zero mask needs no special case: it gives mc = 0, so the first term is
+    * 0 and the second is (d * 256) >> 8, which is d. Wholly transparent
+    * blocks are skipped anyway because it is free. */
+   static const uint8_t splat_idx[4][16] = {
+      {  0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 },
+      {  4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 },
+      {  8,  8,  8,  8,  9,  9,  9,  9, 10, 10, 10, 10, 11, 11, 11, 11 },
+      { 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15 }
+   };
+   static const uint8_t alpha_idx[16] =
+      { 3, 3, 3, 3, 7, 7, 7, 7, 11, 11, 11, 11, 15, 15, 15, 15 };
+   const uint8x16_t aidx = vld1q_u8(alpha_idx);
+   const uint8x16_t c8 = vreinterpretq_u8_u32(vdupq_n_u32(c));
+   const uint16x8_t x255 = vdupq_n_u16(0xff);
+   DATA32 *start = d;
+   int size = l;
+   DATA32 *end = start + (size & ~15);
+
+   while (start < end)
+     {
+        uint8x16_t m16 = vld1q_u8(m);
+        int j;
+
+        if (vmaxvq_u8(m16) == 0)
+          {
+             m += 16;
+             start += 16;
+             continue;
+          }
+
+        for (j = 0; j < 4; j++)
+          {
+             uint8x16_t d8 = vreinterpretq_u8_u32(vld1q_u32(start + (j * 4)));
+             uint8x16_t m8 = vqtbl1q_u8(m16, vld1q_u8(splat_idx[j]));
+             uint8x16_t mc, da, t, nmca, term;
+             uint16x8_t lo, hi;
+
+             /* mc = (c * m + 255) >> 8 */
+             lo = vmlal_u8(x255, vget_low_u8(c8), vget_low_u8(m8));
+             hi = vmlal_u8(x255, vget_high_u8(c8), vget_high_u8(m8));
+             mc = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+             /* t = (mc * d_a + 255) >> 8 */
+             da = vqtbl1q_u8(d8, aidx);
+             lo = vmlal_u8(x255, vget_low_u8(mc), vget_low_u8(da));
+             hi = vmlal_u8(x255, vget_high_u8(mc), vget_high_u8(da));
+             t = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+             /* term = (d * (255 - mc_a) + d) >> 8 */
+             nmca = vmvnq_u8(vqtbl1q_u8(mc, aidx));
+             lo = vmull_u8(vget_low_u8(d8), vget_low_u8(nmca));
+             hi = vmull_u8(vget_high_u8(d8), vget_high_u8(nmca));
+             lo = vaddw_u8(lo, vget_low_u8(d8));
+             hi = vaddw_u8(hi, vget_high_u8(d8));
+             term = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+             vst1q_u32(start + (j * 4),
+                       vaddq_u32(vreinterpretq_u32_u8(t),
+                                 vreinterpretq_u32_u8(term)));
+          }
+
+        m += 16;
+        start += 16;
+     }
+
+   end += (size & 15);
+   while (start < end)
+   {
+      DATA32 mc = MUL_SYM(*m, c);
+      int alpha = 256 - (mc >> 24);
+      *start = MUL_SYM(*start >> 24, mc) + MUL_256(alpha, *start);
+      start++;
+      m++;
+   }
+}
+#else
 static void
 _op_blend_rel_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    uint16x8_t dc0_16x8;
@@ -841,6 +874,7 @@ _op_blend_rel_mas_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m, DATA32 c, DATA32 *d
       m++;
    }
 }
+#endif
 
 #define _op_blend_rel_mas_cn_dp_neon _op_blend_rel_mas_c_dp_neon
 #define _op_blend_rel_mas_can_dp_neon _op_blend_rel_mas_c_dp_neon

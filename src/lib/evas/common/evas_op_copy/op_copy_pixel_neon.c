@@ -97,20 +97,7 @@ init_copy_pixel_pt_funcs_neon(void)
 /* copy_rel pixel --> dst */
 
 #ifdef BUILD_NEON
-static void
-_op_copy_rel_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
-   // FIXME: neon-it
-   DATA32 *e;
-   UNROLL8_PLD_WHILE(d, l, e,
-                     {
-                        *d = MUL_SYM(*d >> 24, *s);
-                        d++; s++;
-                     });
-}
 
-
-#define _op_copy_rel_pas_dp_neon _op_copy_rel_p_dp_neon
-#define _op_copy_rel_pan_dp_neon _op_copy_rel_p_dp_neon
 
 #define _op_copy_rel_p_dpan_neon _op_copy_p_dpan_neon
 #define _op_copy_rel_pan_dpan_neon _op_copy_pan_dpan_neon
@@ -119,9 +106,6 @@ _op_copy_rel_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DA
 static void
 init_copy_rel_pixel_span_funcs_neon(void)
 {
-   op_copy_rel_span_funcs[SP][SM_N][SC_N][DP][CPU_NEON] = _op_copy_rel_p_dp_neon;
-   op_copy_rel_span_funcs[SP_AN][SM_N][SC_N][DP][CPU_NEON] = _op_copy_rel_pan_dp_neon;
-   op_copy_rel_span_funcs[SP_AS][SM_N][SC_N][DP][CPU_NEON] = _op_copy_rel_pas_dp_neon;
 
    op_copy_rel_span_funcs[SP][SM_N][SC_N][DP_AN][CPU_NEON] = _op_copy_rel_p_dpan_neon;
    op_copy_rel_span_funcs[SP_AN][SM_N][SC_N][DP_AN][CPU_NEON] = _op_copy_rel_pan_dpan_neon;
@@ -130,15 +114,7 @@ init_copy_rel_pixel_span_funcs_neon(void)
 #endif
 
 #ifdef BUILD_NEON
-static void
-_op_copy_rel_pt_p_dp_neon(DATA32 s, DATA8 m EINA_UNUSED, DATA32 c, DATA32 *d) {
-   c = 1 + (*d >> 24);
-   *d = MUL_256(c, s);
-}
 
-
-#define _op_copy_rel_pt_pan_dp_neon _op_copy_rel_pt_p_dp_neon
-#define _op_copy_rel_pt_pas_dp_neon _op_copy_rel_pt_p_dp_neon
 
 #define _op_copy_rel_pt_p_dpan_neon _op_copy_pt_p_dpan_neon
 #define _op_copy_rel_pt_pan_dpan_neon _op_copy_pt_pan_dpan_neon
@@ -147,9 +123,6 @@ _op_copy_rel_pt_p_dp_neon(DATA32 s, DATA8 m EINA_UNUSED, DATA32 c, DATA32 *d) {
 static void
 init_copy_rel_pixel_pt_funcs_neon(void)
 {
-   op_copy_rel_pt_funcs[SP][SM_N][SC_N][DP][CPU_NEON] = _op_copy_rel_pt_p_dp_neon;
-   op_copy_rel_pt_funcs[SP_AN][SM_N][SC_N][DP][CPU_NEON] = _op_copy_rel_pt_pan_dp_neon;
-   op_copy_rel_pt_funcs[SP_AS][SM_N][SC_N][DP][CPU_NEON] = _op_copy_rel_pt_pas_dp_neon;
 
    op_copy_rel_pt_funcs[SP][SM_N][SC_N][DP_AN][CPU_NEON] = _op_copy_rel_pt_p_dpan_neon;
    op_copy_rel_pt_funcs[SP_AN][SM_N][SC_N][DP_AN][CPU_NEON] = _op_copy_rel_pt_pan_dpan_neon;

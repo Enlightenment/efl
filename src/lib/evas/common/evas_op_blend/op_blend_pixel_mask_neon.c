@@ -4,6 +4,111 @@
 /* blend pixel x mask --> dst */
 
 #ifdef BUILD_NEON
+#ifdef BUILD_NEON_INTRINSICS
+/* The AArch64 path below uses tbl and the across-vector reduce, neither of
+ * which exists in 32 bit NEON. Keep the original kernels for ARMv7 rather
+ * than writing a second version that cannot be tested here. */
+static void
+_op_blend_p_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
+   /* sm = MUL_SYM(m, s) per channel, i.e. (s * m + 255) >> 8, then
+    * d = sm + MUL_256(256 - sm_a, d), with the second term written as
+    *
+    *    (d * (255 - sm_a) + d) >> 8
+    *
+    * so 256 - sm_a never has to fit in a byte.
+    *
+    * This stays on packed pixels rather than de-interleaving to planes,
+    * because the final combine has to be a 32 bit add: the C reference adds
+    * two packed ARGB words, so a channel that overflows carries into the next
+    * one. A per byte add would not, and source pixels that are not properly
+    * premultiplied - which map and scale interpolation do produce - are
+    * exactly the case where that overflow happens.
+    *
+    * What made the packed form slow was the byte splats. Replicating a mask
+    * byte across its pixel's four channels cost two widenings and a 32 bit
+    * multiply by 0x01010101 per four pixels, and extracting the source alpha
+    * cost another shift and multiply. Both are a single table lookup with a
+    * constant index vector.
+    *
+    * Neither of the C reference's special cases is needed for correctness,
+    * they are only shortcuts: a mask of 0 gives sm = 0 and 255 - sm_a = 255,
+    * so the result is (d * 256) >> 8, which is d. Wholly transparent blocks
+    * are still skipped because that is free and masks are commonly sparse.
+    *
+    * The C side maps p, pas and pan to one kernel, so do the same here rather
+    * than carrying two near identical copies. */
+   static const uint8_t splat_idx[4][16] = {
+      {  0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 },
+      {  4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 },
+      {  8,  8,  8,  8,  9,  9,  9,  9, 10, 10, 10, 10, 11, 11, 11, 11 },
+      { 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15 }
+   };
+   static const uint8_t alpha_idx[16] =
+      { 3, 3, 3, 3, 7, 7, 7, 7, 11, 11, 11, 11, 15, 15, 15, 15 };
+   const uint8x16_t aidx = vld1q_u8(alpha_idx);
+   const uint16x8_t x255 = vdupq_n_u16(0xff);
+   DATA32 *start = d;
+   int size = l;
+   DATA32 *end = start + (size & ~15);
+
+   while (start < end)
+     {
+        uint8x16_t m16 = vld1q_u8(m);
+        int j;
+
+        if (vmaxvq_u8(m16) == 0)
+          {
+             m += 16;
+             s += 16;
+             start += 16;
+             continue;
+          }
+
+        for (j = 0; j < 4; j++)
+          {
+             uint8x16_t s8 = vreinterpretq_u8_u32(vld1q_u32(s + (j * 4)));
+             uint8x16_t d8 = vreinterpretq_u8_u32(vld1q_u32(start + (j * 4)));
+             uint8x16_t m8 = vqtbl1q_u8(m16, vld1q_u8(splat_idx[j]));
+             uint8x16_t sm, nsma, term;
+             uint16x8_t lo, hi;
+
+             lo = vmlal_u8(x255, vget_low_u8(s8), vget_low_u8(m8));
+             hi = vmlal_u8(x255, vget_high_u8(s8), vget_high_u8(m8));
+             sm = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+             nsma = vmvnq_u8(vqtbl1q_u8(sm, aidx));
+
+             lo = vmull_u8(vget_low_u8(d8), vget_low_u8(nsma));
+             hi = vmull_u8(vget_high_u8(d8), vget_high_u8(nsma));
+             lo = vaddw_u8(lo, vget_low_u8(d8));
+             hi = vaddw_u8(hi, vget_high_u8(d8));
+             term = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+             /* 32 bit add, so channel overflow carries exactly as it does in
+              * the C reference */
+             vst1q_u32(start + (j * 4),
+                       vaddq_u32(vreinterpretq_u32_u8(sm),
+                                 vreinterpretq_u32_u8(term)));
+          }
+
+        m += 16;
+        s += 16;
+        start += 16;
+     }
+
+   end += (size & 15);
+   while (start < end) {
+      DATA32 sm = MUL_SYM(*m, *s);
+      DATA32 alpha = 256 - (sm >> 24);
+
+      *start = sm + MUL_256(alpha, *start);
+      m++;  s++;  start++;
+   }
+}
+
+#define _op_blend_pas_mas_dp_neon _op_blend_p_mas_dp_neon
+#define _op_blend_pan_mas_dp_neon _op_blend_p_mas_dp_neon
+#else
 static void
 _op_blend_pas_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
    uint16x8_t m_16x8;
@@ -347,6 +452,7 @@ _op_blend_p_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d, in
 }
 
 #define _op_blend_pan_mas_dp_neon _op_blend_pas_mas_dp_neon
+#endif
 
 #define _op_blend_p_mas_dpan_neon _op_blend_p_mas_dp_neon
 #define _op_blend_pan_mas_dpan_neon _op_blend_pan_mas_dp_neon

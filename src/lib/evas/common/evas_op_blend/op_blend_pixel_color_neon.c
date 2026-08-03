@@ -503,6 +503,77 @@ _op_blend_pan_can_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, 
    }
 }
 
+#ifdef BUILD_NEON_INTRINSICS
+/* The AArch64 path below uses tbl and the across-vector reduce, neither of
+ * which exists in 32 bit NEON. Keep the original kernel for ARMv7 rather
+ * than adding a second version that cannot be tested here. */
+static void
+_op_blend_p_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+   /* sc = MUL_256(1 + (c & 0xff), s), then d = sc + MUL_256(256 - sc_a, d).
+    *
+    * The colour here is an alpha replicated across all four channels, so only
+    * its low byte matters. Both scale factors are in 1..256 and so do not fit
+    * in a byte; both are handled the same way:
+    *
+    *    (s * (ca + 1)) >> 8            == (s * ca + s) >> 8
+    *    (d * (256 - sc_a)) >> 8        == (d * (255 - sc_a) + d) >> 8
+    *
+    * which keeps every operand a byte and every intermediate inside 16 bits.
+    *
+    * Packed rather than planar, because the final step adds two packed ARGB
+    * words in the C reference, so an overflowing channel carries into the next
+    * one. Extracting sc's alpha across its pixel's four channels was a shift
+    * plus a 32 bit multiply by 0x01010101; it is one tbl instead. */
+   static const uint8_t alpha_idx[16] =
+      { 3, 3, 3, 3, 7, 7, 7, 7, 11, 11, 11, 11, 15, 15, 15, 15 };
+   const uint8x16_t aidx = vld1q_u8(alpha_idx);
+   const uint8x16_t ca = vdupq_n_u8(c & 0xff);
+   DATA32 *start = d;
+   int size = l;
+   DATA32 *end = start + (size & ~3);
+
+   while (start < end)
+     {
+        uint8x16_t s8 = vreinterpretq_u8_u32(vld1q_u32(s));
+        uint8x16_t d8 = vreinterpretq_u8_u32(vld1q_u32(start));
+        uint8x16_t sc, nsca, term;
+        uint16x8_t lo, hi;
+
+        /* sc = (s * ca + s) >> 8 */
+        lo = vmlal_u8(vmovl_u8(vget_low_u8(s8)), vget_low_u8(s8), vget_low_u8(ca));
+        hi = vmlal_u8(vmovl_u8(vget_high_u8(s8)), vget_high_u8(s8), vget_high_u8(ca));
+        sc = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+        /* term = (d * (255 - sc_a) + d) >> 8 */
+        nsca = vmvnq_u8(vqtbl1q_u8(sc, aidx));
+        lo = vmull_u8(vget_low_u8(d8), vget_low_u8(nsca));
+        hi = vmull_u8(vget_high_u8(d8), vget_high_u8(nsca));
+        lo = vaddw_u8(lo, vget_low_u8(d8));
+        hi = vaddw_u8(hi, vget_high_u8(d8));
+        term = vcombine_u8(vshrn_n_u16(lo, 8), vshrn_n_u16(hi, 8));
+
+        vst1q_u32(start, vaddq_u32(vreinterpretq_u32_u8(sc),
+                                   vreinterpretq_u32_u8(term)));
+        s += 4;
+        start += 4;
+     }
+
+   end += (size & 3);
+   {
+      DATA32 cc = 1 + (c & 0xff);
+
+      while (start < end)
+        {
+           DATA32 sc = MUL_256(cc, *s);
+           int alpha = 256 - (sc >> 24);
+
+           *start = sc + MUL_256(alpha, *start);
+           start++;
+           s++;
+        }
+   }
+}
+#else
 static void
 _op_blend_p_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
    uint16x8_t ad0_16x8;
@@ -620,6 +691,7 @@ _op_blend_p_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, in
    }
 
 }
+#endif
 
 static void
 _op_blend_pan_caa_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
