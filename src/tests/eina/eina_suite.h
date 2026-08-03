@@ -80,5 +80,6 @@ void eina_test_vpath(TCase *tc);
 void eina_test_debug(TCase *tc);
 void eina_test_abstract_content(TCase *tc);
 void eina_test_thread(TCase *tc);
+void eina_test_cpu(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

@@ -92,6 +92,7 @@ static const Efl_Test_Case etc[] = {
    { "debug", eina_test_debug },
    { "Abstract Content", eina_test_abstract_content },
    { "thread", eina_test_thread },
+   { "Cpu", eina_test_cpu },
    { NULL, NULL }
 };
 

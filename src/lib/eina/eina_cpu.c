@@ -83,6 +83,37 @@ static inline void _x86_cpuid(int op, int *a, int *b, int *c, int *d)
       : "cc");
 }
 
+static inline void _x86_cpuid_count(int op, int cnt, int *a, int *b, int *c, int *d)
+{
+   __asm__ volatile (
+#if defined(__x86_64__)
+      "pushq %%rbx      \n\t"
+#else
+      "pushl %%ebx      \n\t"
+#endif
+      "cpuid            \n\t"
+      "movl %%ebx, %1   \n\t"
+#if defined(__x86_64__)
+      "popq %%rbx       \n\t"
+#else
+      "popl %%ebx       \n\t"
+#endif
+      : "=a" (*a), "=r" (*b), "=c" (*c), "=d" (*d)
+      : "a" (op), "c" (cnt)
+      : "cc");
+}
+
+/* xgetbv without needing -mxsave: 0x0f 0x01 0xd0 is the XGETBV encoding. */
+static inline unsigned long long _x86_xgetbv(unsigned int xcr)
+{
+   unsigned int lo, hi;
+
+   __asm__ volatile (".byte 0x0f, 0x01, 0xd0"
+                     : "=a" (lo), "=d" (hi)
+                     : "c" (xcr));
+   return ((unsigned long long)hi << 32) | lo;
+}
+
 static
 void _x86_simd(Eina_Cpu_Features *features)
 {
@@ -123,6 +154,26 @@ void _x86_simd(Eina_Cpu_Features *features)
 
    if ((c >> 20) & 1)
       *features |= EINA_CPU_SSE42;
+
+   /* AVX2 needs three separate things to be true: the CPU has the
+    * instructions, the OS enabled XSAVE, and the OS actually saves the YMM
+    * half on context switch. Skipping the last check does not fault - it
+    * silently corrupts the upper 128 bits across a switch. */
+   if (((c >> 27) & 1) && ((c >> 28) & 1))
+     {
+        int a7, b7, c7, d7;
+
+        if ((_x86_xgetbv(0) & 0x6) == 0x6)
+          {
+             _x86_cpuid(0, &a7, &b7, &c7, &d7);
+             if (a7 >= 7)
+               {
+                  _x86_cpuid_count(7, 0, &a7, &b7, &c7, &d7);
+                  if ((b7 >> 5) & 1)
+                     *features |= EINA_CPU_AVX2;
+               }
+          }
+     }
 }
 #endif
 

@@ -56,7 +56,8 @@ typedef enum _Eina_Cpu_Features
    EINA_CPU_SSSE3   = 0x00000080, /**< Supplemental Streaming SIMD Extension 3 (Intel) */
    EINA_CPU_SSE41   = 0x00000100, /**< Streaming SIMD Extension 4.1 (Intel) */
    EINA_CPU_SSE42   = 0x00000200, /**< Streaming SIMD Extension 4.2 (Intel) */
-   EINA_CPU_SVE     = 0x00000400  /**< Scalable Vector Extension (ARM) */
+   EINA_CPU_SVE     = 0x00000400, /**< Scalable Vector Extension (ARM) */
+   EINA_CPU_AVX2    = 0x00000800  /**< Advanced Vector Extensions 2 (Intel) */
 } Eina_Cpu_Features;
 
 /**
