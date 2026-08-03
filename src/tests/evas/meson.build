@@ -22,6 +22,7 @@ evas_suite_src = [
   'efl_test_canvas3.c',
   'efl_canvas_animation.c',
   'evas_test_map.c',
+  'evas_test_premul.c',
 ]
 
 evas_suite = executable('evas_suite',

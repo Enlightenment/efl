@@ -560,7 +560,13 @@ efl_draw_argb_premul(uint32_t *data, unsigned int len)
              lrgba.val[0] = vmovl_u8(rgba.val[0]);
              lrgba.val[1] = vmovl_u8(rgba.val[1]);
              lrgba.val[2] = vmovl_u8(rgba.val[2]);
-             lrgba.val[3] = vaddl_u8(rgba.val[3], mask_0x01);
+             /* vmlaq below is c + c * val[3], so val[3] must be the alpha
+              * itself to yield c * (alpha + 1) - the same thing the scalar
+              * loop computes. Adding one here applied the +1 twice and
+              * produced c * (alpha + 2), which rounds faint pixels up past
+              * their own alpha and breaks the premultiplied invariant the
+              * blend kernels rely on. */
+             lrgba.val[3] = vmovl_u8(rgba.val[3]);
 
              rgba.val[0] = vshrn_n_u16(vmlaq_u16(lrgba.val[0], lrgba.val[0],
                                                  lrgba.val[3]), 8);
