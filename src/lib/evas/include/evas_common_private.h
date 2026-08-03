@@ -466,7 +466,8 @@ typedef enum _CPU_Features
    CPU_FEATURE_VIS2    = (1 << 5),
    CPU_FEATURE_NEON    = (1 << 6),
    CPU_FEATURE_SSE3    = (1 << 7),
-   CPU_FEATURE_SVE     = (1 << 8)
+   CPU_FEATURE_SVE     = (1 << 8),
+   CPU_FEATURE_AVX2    = (1 << 9)
 } CPU_Features;
 
 /* Subsystems that dispatch to a hand written NEON kernel outside of the

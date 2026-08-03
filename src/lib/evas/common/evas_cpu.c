@@ -64,6 +64,12 @@ evas_common_cpu_init(void)
    else
      cpu_feature_mask |= _cpu_check(EINA_CPU_SSE3) * CPU_FEATURE_SSE3;
 # endif /* BUILD_SSE3 */
+# ifdef BUILD_AVX2
+   if (getenv("EVAS_CPU_NO_AVX2"))
+     cpu_feature_mask &= ~CPU_FEATURE_AVX2;
+   else
+     cpu_feature_mask |= _cpu_check(EINA_CPU_AVX2) * CPU_FEATURE_AVX2;
+# endif /* BUILD_AVX2 */
 #endif /* BUILD_MMX */
 
 #ifdef BUILD_ALTIVEC
