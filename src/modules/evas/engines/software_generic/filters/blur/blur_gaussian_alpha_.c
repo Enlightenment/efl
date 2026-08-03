@@ -21,6 +21,9 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
    const int diameter = 2 * radius + 1;
    const int left = MIN(radius, len);
    const int right = MIN(radius, (len - radius));
+   const int mid = len - (2 * radius);
+   /* where the right ramp starts reading, i.e. how far the middle advanced */
+   const int roff = (mid > 0) ? mid : 0;
    const DATA8* restrict s;
    const DATA8* restrict src;
    DATA8* restrict dst;
@@ -36,7 +39,10 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
              acc = 0;
              divider = 0;
              s = src;
-             for (j = 0; j <= k + radius; j++, s += STEP)
+             /* j is also the source position here, so the second condition is
+              * what keeps a window wider than the line from running off the
+              * end of it. It can only bite when len < 2 * radius + 1. */
+             for (j = 0; (j <= k + radius) && (j < len); j++, s += STEP)
                {
                   acc += (*s) * weights[j + radius - k];
                   divider += weights[j + radius - k];
@@ -46,7 +52,8 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
           }
 
         // middle
-        for (k = radius; k < (len - radius); k++, src += STEP, dst += STEP)
+        k = radius;
+        for (; k < (len - radius); k++, src += STEP, dst += STEP)
           {
              acc = 0;
              s = src;
@@ -61,7 +68,10 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
              acc = 0;
              divider = 0;
              s = src;
-             for (j = 0; j < 2 * radius - k; j++, s += STEP)
+             /* src sits at roff + k, so roff + k + j is the source position;
+              * as in the left ramp this only clamps when the window is wider
+              * than the line */
+             for (j = 0; (j < 2 * radius - k) && ((roff + k + j) < len); j++, s += STEP)
                {
                   acc += (*s) * weights[j];
                   divider += weights[j];

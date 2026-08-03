@@ -19,6 +19,9 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
    const int diameter = 2 * radius + 1;
    const int left = MIN(radius, len);
    const int right = MIN(radius, (len - radius));
+   const int mid = len - (2 * radius);
+   /* where the right ramp starts reading, i.e. how far the middle advanced */
+   const int roff = (mid > 0) ? mid : 0;
    const DATA32* restrict src;
    DATA32* restrict dst;
    int i, j, k;
@@ -34,7 +37,11 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
              int acc[4] = {0};
              int divider = 0;
              const DATA32* restrict s = src;
-             for (j = 0; j <= k + radius; j++, s += STEP)
+
+             /* j is also the source position here, so the second condition is
+              * what keeps a window wider than the line from running off the
+              * end of it. It can only bite when len < 2 * radius + 1. */
+             for (j = 0; (j <= k + radius) && (j < len); j++, s += STEP)
                {
                   const int weightidx = j + radius - k;
                   acc[ALPHA] += A_VAL(s) * weights[weightidx];
@@ -51,10 +58,12 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
           }
 
         // middle
-        for (k = len - (2 * radius); k > 0; k--, src += STEP, dst += STEP)
+        k = mid;
+        for (; k > 0; k--, src += STEP, dst += STEP)
           {
              int acc[4] = {0};
              const DATA32* restrict s = src;
+
              for (j = 0; j < diameter; j++, s += STEP)
                {
                   acc[ALPHA] += A_VAL(s) * weights[j];
@@ -74,7 +83,11 @@ FUNCTION_NAME(const DATA32* restrict srcdata, DATA32* restrict dstdata,
              int acc[4] = {0};
              int divider = 0;
              const DATA32* restrict s = src;
-             for (j = 0; j < 2 * radius - k; j++, s += STEP)
+
+             /* src sits at roff + k, so roff + k + j is the source position;
+              * as in the left ramp this only clamps when the window is wider
+              * than the line */
+             for (j = 0; (j < 2 * radius - k) && ((roff + k + j) < len); j++, s += STEP)
                {
                   acc[ALPHA] += A_VAL(s) * weights[j];
                   acc[RED]   += R_VAL(s) * weights[j];
