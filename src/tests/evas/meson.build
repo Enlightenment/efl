@@ -37,3 +37,20 @@ test('evas-suite', evas_suite,
   env : test_env,
   timeout : master_timeout
 )
+
+# Compares every C/NEON pair in the evas span and point op tables. It includes
+# the op translation units directly rather than linking them, because the copy
+# tables are static; that keeps the library itself untouched. Skips (exit 77)
+# on builds without BUILD_NEON.
+if cpu_neon
+  evas_neon_ops = executable('evas_neon_ops',
+    ['evas_test_neon_ops.c'],
+    dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet], #internal headers, as above
+    c_args : ['-DEVAS_BUILD']
+  )
+
+  test('evas-neon-ops', evas_neon_ops,
+    env : test_env,
+    timeout : master_timeout
+  )
+endif
