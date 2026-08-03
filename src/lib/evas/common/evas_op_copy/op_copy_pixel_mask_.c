@@ -87,8 +87,8 @@ _op_copy_rel_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
                              break;
                           default:
                              c = MUL_SYM(*d >> 24, *s);
-                             l++;
-                             *d = INTERP_256(l, c, *d);
+                             color++;
+                             *d = INTERP_256(color, c, *d);
                              break;
                           }
                         m++;  s++;  d++;

@@ -93,8 +93,8 @@ _op_copy_rel_p_mas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c EINA_UNUSED, DATA32 *d,
                              break;
                           default:
                              c = MUL_SYM(*d >> 24, *s);
-                             l++;
-                             *d = INTERP_256(l, c, *d);
+                             color++;
+                             *d = INTERP_256(color, c, *d);
                              break;
                           }
                         m++;  s++;  d++;
