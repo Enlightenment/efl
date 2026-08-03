@@ -331,42 +331,8 @@ _box_blur_vert_apply_rgba(Evas_Filter_Command *cmd)
 
 /* Gaussian blur */
 
-static void
-_sin_blur_weights_get(int *weights, int *pow2_divider, int radius)
-{
-   const int diameter = 2 * radius + 1;
-   double x, divider, sum = 0.0;
-   double dweights[diameter];
-   int k, nextpow2, isum = 0;
-   const int FAKE_PI = 3.0;
+#include "./blur/blur_weights_.c"
 
-   /* Base curve:
-    * f(x) = sin(x+pi/2)/2+1/2
-    */
-
-   for (k = 0; k < diameter; k++)
-     {
-        x = ((double) k / (double) (diameter - 1)) * FAKE_PI * 2.0 - FAKE_PI;
-        dweights[k] = ((sin(x + M_PI_2) + 1.0) / 2.0) * 1024.0;
-        sum += dweights[k];
-     }
-
-   // Now we need to normalize to have a 2^N divider.
-   nextpow2 = log2(2 * sum);
-   divider = (double) (1 << nextpow2);
-
-   for (k = 0; k < diameter; k++)
-     {
-        weights[k] = round(dweights[k] * divider / sum);
-        isum += weights[k];
-     }
-
-   // Final correction. The difference SHOULD be small...
-   weights[radius] += (int) divider - isum;
-
-   if (pow2_divider)
-     *pow2_divider = nextpow2;
-}
 
 #define FUNCTION_NAME _gaussian_blur_horiz_alpha_step
 #define STEP 1
@@ -385,6 +351,30 @@ _sin_blur_weights_get(int *weights, int *pow2_divider, int radius)
 #define STEP loops
 #include "./blur/blur_gaussian_rgba_.c"
 
+#ifdef BUILD_NEON
+# include <arm_neon.h>
+
+# define FUNCTION_NAME _gaussian_blur_horiz_alpha_step_neon
+# define STEP 1
+# define BLUR_NEON 1
+# include "./blur/blur_gaussian_alpha_.c"
+
+# define FUNCTION_NAME _gaussian_blur_vert_alpha_step_neon
+# define STEP loops
+# define BLUR_NEON 1
+# include "./blur/blur_gaussian_alpha_.c"
+
+# define FUNCTION_NAME _gaussian_blur_horiz_rgba_step_neon
+# define STEP 1
+# define BLUR_NEON 1
+# include "./blur/blur_gaussian_rgba_.c"
+
+# define FUNCTION_NAME _gaussian_blur_vert_rgba_step_neon
+# define STEP loops
+# define BLUR_NEON 1
+# include "./blur/blur_gaussian_rgba_.c"
+#endif
+
 static Eina_Bool
 _gaussian_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
 {
@@ -401,11 +391,31 @@ _gaussian_blur_apply(Evas_Filter_Command *cmd, Eina_Bool vert, Eina_Bool rgba)
    h = cmd->input->h;
 
    weights = alloca((2 * radius + 1) * sizeof(int));
-   _sin_blur_weights_get(weights, &pow2_div, radius);
+   evas_blur_weights_get(weights, &pow2_div, radius);
 
    if (src && dst)
      {
         DEBUG_TIME_BEGIN();
+#ifdef BUILD_NEON
+        if (evas_common_cpu_has_neon_for(NEON_PART_BLUR))
+          {
+             if (rgba)
+               {
+                  if (!vert)
+                    _gaussian_blur_horiz_rgba_step_neon(src, dst, radius, w, h, w, weights, pow2_div);
+                  else
+                    _gaussian_blur_vert_rgba_step_neon(src, dst, radius, h, w, 1, weights, pow2_div);
+               }
+             else
+               {
+                  if (!vert)
+                    _gaussian_blur_horiz_alpha_step_neon(src, dst, radius, w, h, w, weights, pow2_div);
+                  else
+                    _gaussian_blur_vert_alpha_step_neon(src, dst, radius, h, w, 1, weights, pow2_div);
+               }
+          }
+        else
+#endif
         if (rgba)
           {
              if (!vert)

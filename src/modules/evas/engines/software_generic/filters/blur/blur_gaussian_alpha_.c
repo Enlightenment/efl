@@ -2,6 +2,12 @@
  * Should define the functions:
  * - _gaussian_blur_horiz_alpha_step
  * - _gaussian_blur_vert_alpha_step
+ *
+ * Define BLUR_NEON as well to get the same kernel with its middle section
+ * vectorised. See blur_gaussian_rgba_.c for the reasoning, including why there
+ * is no separate NEON copy of this file. The only difference here is that an
+ * alpha plane is one byte per pixel, so sixteen outputs fit in a register
+ * instead of four.
  */
 
 /* Datatypes and MIN macro */
@@ -27,6 +33,56 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
    const DATA8* restrict s;
    const DATA8* restrict src;
    DATA8* restrict dst;
+#ifdef BLUR_NEON
+   const int32x4_t shift = vdupq_n_s32(-pow2_divider);
+   int done_cols = 0;
+
+   /* Vertical only: the middle of every column, sixteen columns at a time.
+    * Each tap is one contiguous 16 byte load spanning sixteen columns of one
+    * row, and the tap loop walks down by STEP. */
+   if ((STEP != 1) && (mid > 0))
+     {
+        int c;
+
+        for (c = 0; c + 16 <= loops; c += 16)
+          {
+             const DATA8* restrict scol = srcdata + c;
+             DATA8* restrict dcol = dstdata + c + (size_t) left * STEP;
+
+             for (k = 0; k < mid; k++, scol += STEP, dcol += STEP)
+               {
+                  uint32x4_t a0 = vdupq_n_u32(0), a1 = vdupq_n_u32(0);
+                  uint32x4_t a2 = vdupq_n_u32(0), a3 = vdupq_n_u32(0);
+                  const DATA8* restrict sc = scol;
+
+                  for (j = 0; j < diameter; j++, sc += STEP)
+                    {
+                       const uint8x16_t px = vld1q_u8(sc);
+                       const uint16x8_t lo = vmovl_u8(vget_low_u8(px));
+                       const uint16x8_t hi = vmovl_u8(vget_high_u8(px));
+                       const uint16_t w = (uint16_t) weights[j];
+
+                       a0 = vmlal_n_u16(a0, vget_low_u16(lo), w);
+                       a1 = vmlal_n_u16(a1, vget_high_u16(lo), w);
+                       a2 = vmlal_n_u16(a2, vget_low_u16(hi), w);
+                       a3 = vmlal_n_u16(a3, vget_high_u16(hi), w);
+                    }
+
+                  a0 = vshlq_u32(a0, shift);
+                  a1 = vshlq_u32(a1, shift);
+                  a2 = vshlq_u32(a2, shift);
+                  a3 = vshlq_u32(a3, shift);
+
+                  vst1q_u8(dcol,
+                           vcombine_u8(vmovn_u16(vcombine_u16(vmovn_u32(a0),
+                                                              vmovn_u32(a1))),
+                                       vmovn_u16(vcombine_u16(vmovn_u32(a2),
+                                                              vmovn_u32(a3)))));
+               }
+          }
+        done_cols = c;
+     }
+#endif
 
    for (i = loops; i; --i)
      {
@@ -53,6 +109,52 @@ FUNCTION_NAME(const DATA8* restrict srcdata, DATA8* restrict dstdata,
 
         // middle
         k = radius;
+#ifdef BLUR_NEON
+        if (STEP != 1)
+          {
+             /* already done by the vectorised column pass, for the columns it
+              * covered; step over it */
+             if (i > (loops - done_cols))
+               {
+                  src += roff * STEP;
+                  dst += roff * STEP;
+                  k = len - radius;
+               }
+          }
+        else
+          {
+             for (; k + 16 <= (len - radius); k += 16, src += 16, dst += 16)
+               {
+                  uint32x4_t a0 = vdupq_n_u32(0), a1 = vdupq_n_u32(0);
+                  uint32x4_t a2 = vdupq_n_u32(0), a3 = vdupq_n_u32(0);
+
+                  s = src;
+                  for (j = 0; j < diameter; j++, s++)
+                    {
+                       const uint8x16_t px = vld1q_u8(s);
+                       const uint16x8_t lo = vmovl_u8(vget_low_u8(px));
+                       const uint16x8_t hi = vmovl_u8(vget_high_u8(px));
+                       const uint16_t w = (uint16_t) weights[j];
+
+                       a0 = vmlal_n_u16(a0, vget_low_u16(lo), w);
+                       a1 = vmlal_n_u16(a1, vget_high_u16(lo), w);
+                       a2 = vmlal_n_u16(a2, vget_low_u16(hi), w);
+                       a3 = vmlal_n_u16(a3, vget_high_u16(hi), w);
+                    }
+
+                  a0 = vshlq_u32(a0, shift);
+                  a1 = vshlq_u32(a1, shift);
+                  a2 = vshlq_u32(a2, shift);
+                  a3 = vshlq_u32(a3, shift);
+
+                  vst1q_u8(dst,
+                           vcombine_u8(vmovn_u16(vcombine_u16(vmovn_u32(a0),
+                                                              vmovn_u32(a1))),
+                                       vmovn_u16(vcombine_u16(vmovn_u32(a2),
+                                                              vmovn_u32(a3)))));
+               }
+          }
+#endif
         for (; k < (len - radius); k++, src += STEP, dst += STEP)
           {
              acc = 0;
@@ -92,3 +194,6 @@ error:
 
 #undef FUNCTION_NAME
 #undef STEP
+#ifdef BLUR_NEON
+# undef BLUR_NEON
+#endif

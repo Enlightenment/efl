@@ -53,4 +53,20 @@ if cpu_neon
     env : test_env,
     timeout : master_timeout
   )
+
+  # Same idea for the gaussian blur steps. They are static inline templates
+  # rather than table entries, so this instantiates each one twice - from the
+  # C file and from the NEON one - and diffs the pair.
+  evas_neon_blur = executable('evas_neon_blur',
+    ['evas_test_neon_blur.c'],
+    dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet, m],
+    include_directories: include_directories(
+      join_paths('..', '..', 'modules', 'evas', 'engines', 'software_generic', 'filters')),
+    c_args : ['-DEVAS_BUILD']
+  )
+
+  test('evas-neon-blur', evas_neon_blur,
+    env : test_env,
+    timeout : master_timeout
+  )
 endif
