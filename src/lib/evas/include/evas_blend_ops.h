@@ -415,6 +415,65 @@ mul3_sym_sse3(__m128i x, __m128i y) {
 #endif
 #endif
 
+/* some useful AVX2 inline functions */
+
+#ifdef NEED_AVX2
+#ifdef BUILD_AVX2
+
+#include <immintrin.h>
+
+static __m256i GA_MASK_AVX2;
+static __m256i RB_MASK_AVX2;
+static __m256i ALPHA_AVX2;
+
+#ifndef EFL_ALWAYS_INLINE
+# define EFL_ALWAYS_INLINE inline
+#endif
+
+/* Operation-for-operation port of mul_256_sse3. Every step below is lane-local
+ * - unpacklo/unpackhi and shuffle_ps all work within each 128-bit half on AVX2
+ * - so this computes exactly what the SSE3 helper computes, twice, and the
+ * results are bit-identical rather than merely equivalent. */
+static EFL_ALWAYS_INLINE __m256i
+mul_256_avx2(__m256i a, __m256i c) {
+
+   /* prepare alpha for word multiplication */
+   __m256i a_l = a;
+   __m256i a_h = a;
+   a_l = _mm256_unpacklo_epi16(a_l, a_l);
+   a_h = _mm256_unpackhi_epi16(a_h, a_h);
+   __m256i a0 = (__m256i) _mm256_shuffle_ps( (__m256)a_l, (__m256)a_h, 0x88);
+
+   /* first half of calc */
+   __m256i c0 = c;
+   c0 = _mm256_srli_epi32(c0, 8);
+   c0 = _mm256_and_si256(GA_MASK_AVX2, c0);
+   c0 = _mm256_mullo_epi16(a0, c0);
+   c0 = _mm256_and_si256(RB_MASK_AVX2, c0);
+
+   /* second half of calc */
+   __m256i c1 = c;
+   c1 = _mm256_and_si256(GA_MASK_AVX2, c1);
+   c1 = _mm256_mullo_epi16(a0, c1);
+   c1 = _mm256_srli_epi32(c1, 8);
+   c1 = _mm256_and_si256(GA_MASK_AVX2, c1);
+
+   /* combine */
+   return _mm256_add_epi32(c0, c1);
+}
+
+static EFL_ALWAYS_INLINE __m256i
+sub4_alpha_avx2(__m256i c) {
+
+   __m256i c0 = c;
+
+   c0 = _mm256_srli_epi32(c0, 24);
+   return _mm256_sub_epi32(ALPHA_AVX2, c0);
+}
+
+#endif
+#endif
+
 #define LOOP_ALIGNED_U1_A48(DEST, LENGTH, UOP, A4OP, A8OP) \
   {                                                        \
       while((uintptr_t)DEST & 0xF && LENGTH) UOP \
@@ -436,6 +495,48 @@ mul3_sym_sse3(__m128i x, __m128i y) {
            break;                               \
           default:                              \
            A8OP                                 \
+           break;                               \
+        }                                       \
+      } \
+   }
+
+/* Same shape as LOOP_ALIGNED_U1_A48 but for 256-bit kernels: scalar until DEST
+ * reaches a 32-byte boundary, then 16 pixels at a time, then 8, then scalar for
+ * whatever is left. DEST alignment is what lets the destination be loaded and
+ * stored with the aligned intrinsics; sources stay unaligned loads. */
+#define LOOP_ALIGNED_U1_A8_A16(DEST, LENGTH, UOP, A8OP, A16OP) \
+  {                                                            \
+      while((uintptr_t)DEST & 0x1F && LENGTH) UOP \
+   \
+      while(LENGTH) { \
+        switch(LENGTH) {                        \
+          case 7: UOP; EINA_FALLTHROUGH;        \
+          case 6: UOP; EINA_FALLTHROUGH;        \
+          case 5: UOP; EINA_FALLTHROUGH;        \
+          case 4: UOP; EINA_FALLTHROUGH;        \
+          case 3: UOP; EINA_FALLTHROUGH;        \
+          case 2: UOP; EINA_FALLTHROUGH;        \
+          case 1: UOP;                          \
+           break;                               \
+          case 15:                              \
+           EINA_FALLTHROUGH;                    \
+          case 14:                              \
+           EINA_FALLTHROUGH;                    \
+          case 13:                              \
+           EINA_FALLTHROUGH;                    \
+          case 12:                              \
+           EINA_FALLTHROUGH;                    \
+          case 11:                              \
+           EINA_FALLTHROUGH;                    \
+          case 10:                              \
+           EINA_FALLTHROUGH;                    \
+          case 9:                               \
+           EINA_FALLTHROUGH;                    \
+          case 8:                               \
+           A8OP                                 \
+           break;                               \
+          default:                              \
+           A16OP                                \
            break;                               \
         }                                       \
       } \

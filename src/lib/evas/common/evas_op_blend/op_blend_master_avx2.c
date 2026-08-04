@@ -21,10 +21,17 @@ EXPORTAPI void evas_common_cpu_end_opt(void);
 extern RGBA_Gfx_Func     op_blend_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 extern RGBA_Gfx_Func     op_blend_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 
+# include "op_blend_pixel_avx2.c"
+
 void
 evas_common_op_blend_init_avx2(void)
 {
 #ifdef BUILD_AVX2
+   GA_MASK_AVX2 = _mm256_set1_epi32(0x00FF00FF);
+   RB_MASK_AVX2 = _mm256_set1_epi32(0xFF00FF00);
+   ALPHA_AVX2   = _mm256_set1_epi32(256);
+
+   init_blend_pixel_span_funcs_avx2();
 #endif
 }
 

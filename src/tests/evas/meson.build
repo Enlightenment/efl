@@ -71,3 +71,25 @@ if cpu_neon
     timeout : master_timeout
   )
 endif
+
+# Compares every C/AVX2 pair in the evas blend op tables. Same harness as the
+# NEON build, with the tier taken as a build macro. Needs -mavx2 for the AVX2
+# kernels it pulls in through the op translation unit. op_blend_master_avx2.c
+# is added as an extra source (not #included by evas_test_simd_ops.c) so its
+# evas_common_op_blend_init_avx2() and the op_blend_span_funcs table it writes
+# to resolve within this executable rather than against libevas's copy.
+if cpu_avx2
+  evas_avx2_ops = executable('evas_avx2_ops',
+    ['evas_test_simd_ops.c',
+     '../../lib/evas/common/evas_op_blend/op_blend_master_avx2.c',
+     '../../lib/evas/common/evas_op_blend/op_blend_master_sse3.c',
+     'evas_test_simd_avx2_alpha_stub.c'],
+    dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet],
+    c_args : ['-DEVAS_BUILD', '-DSIMD_TIER=CPU_AVX2', '-DSIMD_NAME="avx2"'] + avx2_c_args
+  )
+
+  test('evas-avx2-ops', evas_avx2_ops,
+    env : test_env,
+    timeout : master_timeout
+  )
+endif
