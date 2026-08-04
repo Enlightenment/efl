@@ -92,4 +92,33 @@ if cpu_avx2
     env : test_env,
     timeout : master_timeout
   )
+
+  # Same harness, same executable sources, but compared against CPU_SSE3
+  # instead of CPU_C. Some AVX2 kernels are ported operation-for-operation
+  # from an SSE3 original that itself diverges from the plain-C reference
+  # macros (a pre-existing property of the shipped SSE3 code, not something
+  # introduced by the AVX2 port); for those kernels "bit-exact against
+  # SSE3" is the correct acceptance bar, and this target answers that
+  # question directly rather than folding it into the AVX2-vs-C result.
+  #
+  # -DSIMD_REQUIRE_EXACT makes this target's gate reject ANY in-span
+  # difference, of any magnitude - this is the build meant to enforce
+  # bit-exactness, so it must not tolerate the "max 1 LSB is fine" leniency
+  # the vs-C build needs for the known SSE3-inherited divergence. See the
+  # SIMD_REQUIRE_EXACT comment in evas_test_simd_ops.c.
+  evas_avx2_vs_sse3_ops = executable('evas_avx2_vs_sse3_ops',
+    ['evas_test_simd_ops.c',
+     '../../lib/evas/common/evas_op_blend/op_blend_master_avx2.c',
+     '../../lib/evas/common/evas_op_blend/op_blend_master_sse3.c',
+     'evas_test_simd_avx2_alpha_stub.c'],
+    dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet],
+    c_args : ['-DEVAS_BUILD', '-DSIMD_TIER=CPU_AVX2', '-DSIMD_NAME="avx2"',
+              '-DSIMD_REF_TIER=CPU_SSE3', '-DSIMD_REF_NAME="sse3"',
+              '-DSIMD_REQUIRE_EXACT=1'] + avx2_c_args
+  )
+
+  test('evas-avx2-vs-sse3-ops', evas_avx2_vs_sse3_ops,
+    env : test_env,
+    timeout : master_timeout
+  )
 endif
