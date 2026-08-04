@@ -5,11 +5,16 @@
  * aliases), at one arithmetic shape - constant colour blended over dest, no
  * source pointer, no mask. A bit-exact pass here validates the porting
  * pattern (mul_256_avx2 as a lane-local port of the SSE3 helper) and the
- * LOOP_ALIGNED_U1_A8_A16 alignment handling for colour-only blends. It does
- * NOT validate any other arithmetic shape - pixel/mask blends, the
+ * LOOP_ALIGNED_U1_A4_A8_A16 alignment handling for colour-only blends. It
+ * does NOT validate any other arithmetic shape - pixel/mask blends, the
  * relative-blend variants, etc. Later kernel groups that copy this file's
  * pattern each need their own differential-test run against their own C
  * reference; none of that verification can be inherited from this result.
+ *
+ * The A4OP block is the SSE3 kernel's A4OP body verbatim (__m128i, _sse3
+ * helpers): the 4-wide stage exists so AVX2 executes the same instructions
+ * SSE3 does at 4-7 pixels. mul_256_sse3 is exact against plain C at every
+ * width, so this doesn't change this kernel's bit-exactness against C.
  */
 
 #ifdef BUILD_AVX2
@@ -21,12 +26,25 @@ _op_blend_c_dp_avx2(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA3
 
    const __m256i c_packed = _mm256_set1_epi32(c);
    const __m256i a_packed = _mm256_set1_epi32(a);
+   const __m128i c_packed128 = _mm_set_epi32(c, c, c, c);
+   const __m128i a_packed128 = _mm_set_epi32(a, a, a, a);
 
-   LOOP_ALIGNED_U1_A8_A16(d, l,
+   LOOP_ALIGNED_U1_A4_A8_A16(d, l,
       { /* UOP */
 
          *d = c + MUL_256(a, *d);
          d++; l--;
+      },
+      { /* A4OP - verbatim SSE3 A4OP body, see file header */
+
+         __m128i d0 = _mm_load_si128((__m128i *)d);
+
+         d0 = mul_256_sse3(a_packed128, d0);
+         d0 = _mm_add_epi32(d0, c_packed128);
+
+         _mm_store_si128((__m128i *)d, d0);
+
+         d += 4; l -= 4;
       },
       { /* A8OP */
 
