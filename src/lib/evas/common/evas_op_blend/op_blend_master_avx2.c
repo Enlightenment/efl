@@ -47,6 +47,7 @@ extern RGBA_Gfx_Func     op_blend_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_L
 # include "op_blend_pixel_avx2.c"
 # include "op_blend_color_avx2.c"
 # include "op_blend_pixel_color_avx2.c"
+# include "op_blend_pixel_mask_avx2.c"
 
 void
 evas_common_op_blend_init_avx2(void)
@@ -74,6 +75,7 @@ evas_common_op_blend_init_avx2(void)
    init_blend_pixel_span_funcs_avx2();
    init_blend_color_span_funcs_avx2();
    init_blend_pixel_color_span_funcs_avx2();
+   init_blend_pixel_mask_span_funcs_avx2();
 #endif
 }
 
