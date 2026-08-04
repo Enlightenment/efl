@@ -312,38 +312,62 @@ typedef struct
                                          * SIMD_REQUIRE_EXACT above */
 } Stats;
 
-/* Whitelist for the plain-C-reference gate (see SIMD_MODE_NAME above): the
- * only slots allowed to differ from CPU_C are the 12 pixel+colour SC/SC_AN
- * AVX2 kernels, whose AVX2 form deliberately matches SSE3's mul4_sym/
- * mul3_sym rounding rather than the plain-C MUL4_SYM/MUL3_SYM macros (see
- * op_blend_pixel_color_avx2.c). Every other slot - including the SC_AA
- * kernels in the same file, and every kernel in every other blend/copy
- * table - is expected to be exact against C, so a difference there is
- * always a hard failure, never "rounding". Irrelevant (and unused) when
- * SIMD_REQUIRE_EXACT is defined, since that mode disallows any diff at all
- * regardless of slot.
+/* Derived (not hand-maintained) exemption for the plain-C-reference gate (see
+ * SIMD_MODE_NAME above).
  *
- * Scoped to SIMD_TIER == CPU_AVX2 only: this whitelist documents a property
- * of the AVX2 port specifically. The NEON build compiles this same file
- * with SIMD_TIER=CPU_NEON and no SIMD_REF_TIER override (so it also runs in
- * plain-C-reference mode); it must keep its pre-existing, unrelated
- * tolerance - up to 1 LSB anywhere, gated only by the total.max_delta check
- * below - rather than suddenly being held to an AVX2-specific slot list it
- * has nothing to do with. Outside CPU_AVX2 this always returns "tolerated"
- * so the per-slot unexpected_diff accounting is a no-op and behaviour is
- * unchanged from before this gate existed. Unused (and compiled out) under
- * SIMD_REQUIRE_EXACT, where every caller is itself compiled out too. */
+ * A hand-written (table, m, c) whitelist - as this file used to have - goes
+ * stale the moment a new kernel group lands: the measured fact is that in
+ * the blend_rel table 15 of 35 SM_N slots diverge from C at
+ * CPU_SSE3, split as SC (6), SC_AN (6) and SC_AA (only 3 of 6) - so a triple
+ * list extended by hand to cover blend_rel would either miss slots or, worse,
+ * wrongly tolerate the 3 SC_AA slots that are actually exact. Instead this
+ * derives the exemption per pixel, from the code under test itself: CPU_C,
+ * CPU_SSE3 and CPU_AVX2 are all live in the same process (same op tables,
+ * different [CPU_*] slots), so all three can be run over the identical input
+ * and compared directly rather than guessed at from a list.
+ *
+ * classify_diff() below is the rule: a pixel where AVX2 disagrees with C is
+ * tolerated only if SSE3 *also* disagrees with C on that exact pixel, and
+ * AVX2's result matches SSE3's exactly - i.e. the divergence is inherited
+ * from SSE3's pre-existing rounding, not a new AVX2-only bug. Any other
+ * disagreement (no SSE3 slot to check against on this tier, or AVX2 differs
+ * from SSE3 too, or SSE3 happens to agree with C while AVX2 doesn't) is a
+ * hard, unexplained divergence and fails.
+ *
+ * Scoped to SIMD_TIER == CPU_AVX2: only that tier has an SSE3 slot in the
+ * same op tables to consult. The NEON build (SIMD_TIER == CPU_NEON) has no
+ * SSE3 tier at all - referencing CPU_SSE3 there would either fail to compile
+ * (BUILD_SSE3 not necessarily on for a NEON build) or dereference a slot
+ * nothing ever populated. It therefore falls back to the older, coarser
+ * "no per-pixel exemption; a difference is only caught if it exceeds the
+ * documented 1-LSB bound" rule below, which is exactly the pre-existing
+ * behaviour this file always had before this per-pixel scheme existed. That
+ * is checked purely by build target - only the AVX2 targets ever define
+ * -DSIMD_TIER=CPU_AVX2, so this is a compile-time, not runtime, distinction
+ * (no live NEON hardware or NEON build was used to verify this branch).
+ *
+ * Irrelevant (and unused) when SIMD_REQUIRE_EXACT is defined: that mode
+ * (the AVX2-vs-SSE3 build) rejects any in-span difference outright and never
+ * calls this. */
 #ifndef SIMD_REQUIRE_EXACT
 static int
-known_c_divergent_slot(const char *table, int m, int c)
+classify_diff(DATA32 vn, DATA32 vc, DATA32 vr, int have_ref, int delta)
 {
-#if (SIMD_TIER != CPU_AVX2)
-   (void)table; (void)m; (void)c;
-   return 1;
+#if (SIMD_TIER == CPU_AVX2)
+   (void)delta;
+   if (!have_ref) return 0;         /* no SSE3 slot for this entry: not tolerated */
+   if (vr == vc) return 0;          /* SSE3 itself matches C: AVX2 diverging is new */
+   return (vn == vr);               /* tolerated iff AVX2 reproduces SSE3 exactly */
 #else
-   if (strcmp(table, "blend") != 0) return 0;
-   if (m != SM_N) return 0;
-   return (c == SC) || (c == SC_AN);
+   /* No SSE3 tier to consult on this build (NEON). Fall back to the
+    * pre-existing blanket rule: tolerate anything up to 1 LSB per channel,
+    * exactly as this file always did before the per-pixel scheme above. The
+    * final total.max_delta > 1 check in main() is what actually enforces
+    * the bound; returning "tolerated" here for delta<=1 just keeps this
+    * path's per-slot UNEXPECTED accounting from firing on that pre-existing,
+    * accepted tolerance. */
+   (void)vn; (void)vc; (void)vr; (void)have_ref;
+   return (delta <= 1);
 #endif
 }
 #endif
@@ -391,13 +415,18 @@ report(Category cat, const char *table, int s, int m, int c, int d, int len,
      printf("  ... further reports of this kind suppressed (--max-report to raise)\n");
 }
 
-/* Run one span function pair over one configuration. */
+/* Run one span function pair over one configuration. fr is an optional third
+ * (reference-tier, e.g. SSE3) kernel used only to classify a C/SIMD_TIER
+ * difference as inherited-vs-new - see classify_diff() above. May be NULL
+ * (no such slot on this tier, or SIMD_REQUIRE_EXACT builds that never need
+ * it). */
 static void
 run_span_case(const char *table, RGBA_Gfx_Func fc, RGBA_Gfx_Func fn,
+              RGBA_Gfx_Func fr,
               int s, int m, int c, int d, int len, const int *off,
               Pattern pat, Stats *st)
 {
-   static Buf src, msk, src_o, msk_o, dst_c, dst_n, dst_o;
+   static Buf src, msk, src_o, msk_o, dst_c, dst_n, dst_o, dst_r;
    static int inited = 0;
    int soff = off[0], doff = off[1], moff = off[2];
    DATA32 col;
@@ -407,7 +436,7 @@ run_span_case(const char *table, RGBA_Gfx_Func fc, RGBA_Gfx_Func fn,
      {
         buf_new(&src); buf_new(&msk);
         buf_new(&src_o); buf_new(&msk_o);
-        buf_new(&dst_c); buf_new(&dst_n); buf_new(&dst_o);
+        buf_new(&dst_c); buf_new(&dst_n); buf_new(&dst_o); buf_new(&dst_r);
         inited = 1;
      }
 
@@ -451,6 +480,16 @@ run_span_case(const char *table, RGBA_Gfx_Func fc, RGBA_Gfx_Func fn,
         report(CAT_CLOBBER, table, s, m, c, d, len, off, pat,
                SIMD_NAME " modified its source or mask", 0, 0, 0, 0, 0, col);
         st->src_clobber++;
+        memcpy(src.raw, src_o.raw, BUF_BYTES);
+        memcpy(msk.raw, msk_o.raw, BUF_BYTES);
+     }
+
+   /* Reference-tier run (e.g. SSE3), purely for classify_diff() below. Not
+    * subject to the clobber/oob checks above - those already cover fc/fn. */
+   if (fr)
+     {
+        memcpy(dst_r.raw, dst_o.raw, BUF_BYTES);
+        fr(src.pix + soff, (DATA8 *)msk.pix + moff, col, dst_r.pix + doff, len);
         memcpy(src.raw, src_o.raw, BUF_BYTES);
         memcpy(msk.raw, msk_o.raw, BUF_BYTES);
      }
@@ -506,6 +545,13 @@ run_span_case(const char *table, RGBA_Gfx_Func fc, RGBA_Gfx_Func fn,
         if (delta > st->max_delta) st->max_delta = delta;
         st->span_diff++;
 
+#ifndef SIMD_REQUIRE_EXACT
+        if (!classify_diff(vn, vc, fr ? dst_r.pix[doff + i] : 0, fr != NULL, delta))
+          st->unexpected_diff++;
+#else
+        st->unexpected_diff++;
+#endif
+
         if (verbose || delta > 1)
           report(CAT_DIFF, table, s, m, c, d, len, off, pat,
                  delta > 1 ? "mismatch beyond rounding" : "rounding difference",
@@ -529,6 +575,16 @@ walk_span_table(const char *table,
            {
               RGBA_Gfx_Func fc = t[s][m][c][d][SIMD_REF_TIER];
               RGBA_Gfx_Func fn = t[s][m][c][d][SIMD_TIER];
+#if !defined(SIMD_REQUIRE_EXACT) && (SIMD_TIER == CPU_AVX2)
+              /* Only meaningful when SIMD_REF_TIER is CPU_C (the vs-C build):
+               * classify_diff() wants an independent SSE3 opinion to compare
+               * against. When SIMD_REF_TIER is itself CPU_SSE3 (the
+               * SIMD_REQUIRE_EXACT vs-SSE3 build) this branch is compiled out
+               * anyway. */
+              RGBA_Gfx_Func fr = t[s][m][c][d][CPU_SSE3];
+#else
+              RGBA_Gfx_Func fr = NULL;
+#endif
               Stats st;
 
               if (!fn) continue;
@@ -546,7 +602,7 @@ walk_span_table(const char *table,
                 for (li = 0; li < NLENS; li++)
                   for (oi = 0; oi < NOFFS; oi++)
                     for (p = 0; p < PAT_LAST; p++)
-                      run_span_case(table, fc, fn, s, m, c, d,
+                      run_span_case(table, fc, fn, fr, s, m, c, d,
                                     lens[li], offs[oi], (Pattern)p, &st);
 
               total->cases += st.cases;
@@ -559,23 +615,15 @@ walk_span_table(const char *table,
               total->src_clobber += st.src_clobber;
               if (st.max_delta > total->max_delta) total->max_delta = st.max_delta;
 
-              /* Gate: under SIMD_REQUIRE_EXACT no slot may differ; otherwise
-               * only the explicitly whitelisted C-divergent slots may. */
-#ifdef SIMD_REQUIRE_EXACT
-              if (st.span_diff) total->unexpected_diff += st.span_diff;
-#else
-              if (st.span_diff && !known_c_divergent_slot(table, m, c))
-                total->unexpected_diff += st.span_diff;
-#endif
+              /* Gate: st.unexpected_diff was accumulated per pixel inside
+               * run_span_case, via classify_diff() (or unconditionally under
+               * SIMD_REQUIRE_EXACT) - see there. */
+              total->unexpected_diff += st.unexpected_diff;
 
               if (st.span_diff || st.oob_simd || st.oob_c || st.src_clobber)
                 printf("  %-10s[%-5s][%-5s][%-5s][%-5s]%s diff=%llu oob_simd=%llu oob_c=%llu clobber=%llu maxdelta=%d\n",
                        table, sp_names[s], sm_names[m], sc_names[c], dp_names[d],
-#ifdef SIMD_REQUIRE_EXACT
-                       st.span_diff ? " UNEXPECTED" : "",
-#else
-                       (st.span_diff && !known_c_divergent_slot(table, m, c)) ? " UNEXPECTED" : "",
-#endif
+                       st.unexpected_diff ? " UNEXPECTED" : "",
                        st.span_diff, st.oob_simd, st.oob_c, st.src_clobber,
                        st.max_delta);
               /* Worth naming even though the input is out of contract: map and
@@ -609,6 +657,11 @@ walk_pt_table(const char *table,
            {
               RGBA_Gfx_Pt_Func fc = t[s][m][c][d][SIMD_REF_TIER];
               RGBA_Gfx_Pt_Func fn = t[s][m][c][d][SIMD_TIER];
+#if !defined(SIMD_REQUIRE_EXACT) && (SIMD_TIER == CPU_AVX2)
+              RGBA_Gfx_Pt_Func fr = t[s][m][c][d][CPU_SSE3];
+#else
+              RGBA_Gfx_Pt_Func fr = NULL;
+#endif
               unsigned long long diff = 0;
               int maxd = 0;
 
@@ -632,12 +685,13 @@ walk_pt_table(const char *table,
                                       | ((DATA32)MIN(corners[i], da) << 16)
                                       | ((DATA32)MIN(corners[j], da) << 8)
                                       | MIN(corners[k], da);
-                       DATA32 dc, dn;
+                       DATA32 dc, dn, dr = 0;
                        int delta;
 
                        dc = dn = dorig;
                        fc(sv, mv, col, &dc);
                        fn(sv, mv, col, &dn);
+                       if (fr) { dr = dorig; fr(sv, mv, col, &dr); }
 
                        if (dc == dn) continue;
                        delta = chan_delta(dn, dc);
@@ -648,7 +702,7 @@ walk_pt_table(const char *table,
 #ifdef SIMD_REQUIRE_EXACT
                        total->unexpected_diff++;
 #else
-                       if (!known_c_divergent_slot(table, m, c))
+                       if (!classify_diff(dn, dc, dr, fr != NULL, delta))
                          total->unexpected_diff++;
 #endif
                        if (verbose || delta > 1)

@@ -166,4 +166,116 @@ init_blend_pixel_mask_span_funcs_avx2(void)
    op_blend_span_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_AVX2] = _op_blend_pan_mas_dpan_avx2;
 }
 
+/*-----*/
+
+/* blend_rel pixel x mask -> dst */
+
+/* Same situation as the base kernel above: the SSE3 _rel_p_mas_dp body is
+ * compiled out (#if 0, same FIXME) and its slot is #defined NULL, so there
+ * is no working SSE3 kernel to match. Ported instead from the plain-C
+ * reference (op_blend_pixel_mask_.c), which for the rel variant is simpler
+ * than the base kernel: no 0/255 mask special-casing at all, just
+ * `c = MUL_SYM(*m, *s); *d = MUL_SYM(*d>>24, c) + MUL_256(256-(c>>24), *d)`
+ * unconditionally - directly vectorisable with mul_sym_avx2/mul_256_avx2,
+ * same helpers already proven bit-exact against C for this group's base
+ * kernel above. */
+
+static void
+_op_blend_rel_p_mas_dp_avx2(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
+
+   LOOP_ALIGNED_U1_A4_A8_A16(d, l,
+      { /* UOP - byte-identical to the C reference's UOP */
+
+         c = MUL_SYM(*m, *s);
+         int alpha = 256 - (c >> 24);
+         *d = MUL_SYM(*d >> 24, c) + MUL_256(alpha, *d);
+         d++; m++; s++; l--;
+      },
+      { /* A4OP - disabled SSE3 A4OP body verbatim, see file header */
+
+         __m128i s0 = _mm_lddqu_si128((__m128i *)s);
+         __m128i m0 = _mm_set_epi32(m[3], m[2], m[1], m[0]);
+         __m128i d0 = _mm_load_si128((__m128i *)d);
+
+         __m128i c0 = mul_sym_sse3(m0, s0);
+         __m128i a0 = sub4_alpha_sse3(c0);
+
+         __m128i l0 = mul_sym_sse3(_mm_srli_epi32(d0, 24), c0);
+         __m128i r0 = mul_256_sse3(a0, d0);
+
+         d0 = _mm_add_epi32(l0, r0);
+
+         _mm_store_si128((__m128i *)d, d0);
+
+         d += 4; m += 4; s += 4; l -= 4;
+      },
+      { /* A8OP */
+
+         __m256i s0 = _mm256_loadu_si256((__m256i *)s);
+         __m256i m0 = _mm256_cvtepu8_epi32(_mm_loadl_epi64((__m128i *)m));
+         __m256i d0 = _mm256_load_si256((__m256i *)d);
+
+         __m256i c0 = mul_sym_avx2(m0, s0);
+         __m256i a0 = sub4_alpha_avx2(c0);
+
+         __m256i l0 = mul_sym_avx2(_mm256_srli_epi32(d0, 24), c0);
+         __m256i r0 = mul_256_avx2(a0, d0);
+
+         d0 = _mm256_add_epi32(l0, r0);
+
+         _mm256_store_si256((__m256i *)d, d0);
+
+         d += 8; m += 8; s += 8; l -= 8;
+      },
+      { /* A16OP */
+
+         __m256i s0 = _mm256_loadu_si256((__m256i *)s);
+         __m256i m0 = _mm256_cvtepu8_epi32(_mm_loadl_epi64((__m128i *)m));
+         __m256i d0 = _mm256_load_si256((__m256i *)d);
+
+         __m256i s1 = _mm256_loadu_si256((__m256i *)(s+8));
+         __m256i m1 = _mm256_cvtepu8_epi32(_mm_loadl_epi64((__m128i *)(m+8)));
+         __m256i d1 = _mm256_load_si256((__m256i *)(d+8));
+
+         __m256i c0 = mul_sym_avx2(m0, s0);
+         __m256i c1 = mul_sym_avx2(m1, s1);
+
+         __m256i a0 = sub4_alpha_avx2(c0);
+         __m256i a1 = sub4_alpha_avx2(c1);
+
+         __m256i l0 = mul_sym_avx2(_mm256_srli_epi32(d0, 24), c0);
+         __m256i r0 = mul_256_avx2(a0, d0);
+
+         __m256i l1 = mul_sym_avx2(_mm256_srli_epi32(d1, 24), c1);
+         __m256i r1 = mul_256_avx2(a1, d1);
+
+         d0 = _mm256_add_epi32(l0, r0);
+         d1 = _mm256_add_epi32(l1, r1);
+
+         _mm256_store_si256((__m256i *)d, d0);
+         _mm256_store_si256((__m256i *)(d+8), d1);
+
+         d += 16; m += 16; s += 16; l -= 16;
+      })
+}
+
+#define _op_blend_rel_pas_mas_dp_avx2 _op_blend_rel_p_mas_dp_avx2
+#define _op_blend_rel_pan_mas_dp_avx2 _op_blend_rel_p_mas_dp_avx2
+
+#define _op_blend_rel_p_mas_dpan_avx2 _op_blend_p_mas_dpan_avx2
+#define _op_blend_rel_pas_mas_dpan_avx2 _op_blend_pas_mas_dpan_avx2
+#define _op_blend_rel_pan_mas_dpan_avx2 _op_blend_pan_mas_dpan_avx2
+
+static void
+init_blend_rel_pixel_mask_span_funcs_avx2(void)
+{
+   op_blend_rel_span_funcs[SP][SM_AS][SC_N][DP][CPU_AVX2] = _op_blend_rel_p_mas_dp_avx2;
+   op_blend_rel_span_funcs[SP_AS][SM_AS][SC_N][DP][CPU_AVX2] = _op_blend_rel_pas_mas_dp_avx2;
+   op_blend_rel_span_funcs[SP_AN][SM_AS][SC_N][DP][CPU_AVX2] = _op_blend_rel_pan_mas_dp_avx2;
+
+   op_blend_rel_span_funcs[SP][SM_AS][SC_N][DP_AN][CPU_AVX2] = _op_blend_rel_p_mas_dpan_avx2;
+   op_blend_rel_span_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_AVX2] = _op_blend_rel_pas_mas_dpan_avx2;
+   op_blend_rel_span_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_AVX2] = _op_blend_rel_pan_mas_dpan_avx2;
+}
+
 #endif
