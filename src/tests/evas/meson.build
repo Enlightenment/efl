@@ -83,6 +83,7 @@ if cpu_avx2
     ['evas_test_simd_ops.c',
      '../../lib/evas/common/evas_op_blend/op_blend_master_avx2.c',
      '../../lib/evas/common/evas_op_blend/op_blend_master_sse3.c',
+     '../../lib/evas/common/evas_op_copy/op_copy_master_avx2.c',
      'evas_test_simd_avx2_alpha_stub.c'],
     dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet],
     c_args : ['-DEVAS_BUILD', '-DSIMD_TIER=CPU_AVX2', '-DSIMD_NAME="avx2"'] + avx2_c_args
@@ -110,6 +111,7 @@ if cpu_avx2
     ['evas_test_simd_ops.c',
      '../../lib/evas/common/evas_op_blend/op_blend_master_avx2.c',
      '../../lib/evas/common/evas_op_blend/op_blend_master_sse3.c',
+     '../../lib/evas/common/evas_op_copy/op_copy_master_avx2.c',
      'evas_test_simd_avx2_alpha_stub.c'],
     dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet],
     c_args : ['-DEVAS_BUILD', '-DSIMD_TIER=CPU_AVX2', '-DSIMD_NAME="avx2"',

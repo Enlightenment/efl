@@ -1,8 +1,13 @@
 #include "evas_common_private.h"
 #include "evas_blend_private.h"
 
-static RGBA_Gfx_Func     op_copy_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+RGBA_Gfx_Func     op_copy_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 static RGBA_Gfx_Pt_Func  op_copy_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+
+#ifdef BUILD_AVX2
+void evas_common_op_copy_init_avx2(void);
+void evas_common_op_copy_rel_init_avx2(void);
+#endif
 
 static void op_copy_init(void);
 static void op_copy_shutdown(void);
@@ -36,7 +41,7 @@ evas_common_gfx_compositor_copy_get(void)
 }
 
 
-static RGBA_Gfx_Func     op_copy_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
+RGBA_Gfx_Func     op_copy_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 static RGBA_Gfx_Pt_Func  op_copy_rel_pt_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 
 static void op_copy_rel_init(void);
@@ -100,6 +105,12 @@ op_copy_init(void)
 {
    memset(op_copy_span_funcs, 0, sizeof(op_copy_span_funcs));
    memset(op_copy_pt_funcs, 0, sizeof(op_copy_pt_funcs));
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+     {
+        evas_common_op_copy_init_avx2();
+     }
+#endif
 #ifdef BUILD_MMX
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
      {
@@ -155,6 +166,14 @@ copy_gfx_span_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Func  func = NULL;
    int cpu = CPU_N;
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+    {
+      cpu = CPU_AVX2;
+      func = op_copy_span_funcs[s][m][c][d][cpu];
+      if (func) return func;
+    }
+#endif
 #ifdef BUILD_MMX
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
     {
@@ -364,6 +383,12 @@ op_copy_rel_init(void)
 {
    memset(op_copy_rel_span_funcs, 0, sizeof(op_copy_rel_span_funcs));
    memset(op_copy_rel_pt_funcs, 0, sizeof(op_copy_rel_pt_funcs));
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+     {
+        evas_common_op_copy_rel_init_avx2();
+     }
+#endif
 #ifdef BUILD_MMX
    init_copy_rel_pixel_span_funcs_mmx();
    init_copy_rel_pixel_color_span_funcs_mmx();
@@ -413,6 +438,14 @@ copy_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Func func = NULL;
    int cpu = CPU_N;
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+    {
+      cpu = CPU_AVX2;
+      func = op_copy_rel_span_funcs[s][m][c][d][cpu];
+      if (func) return func;
+    }
+#endif
 #ifdef BUILD_MMX
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
     {

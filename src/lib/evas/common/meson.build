@@ -90,7 +90,8 @@ endif
 
 if cpu_avx2 == true
   evas_src_opt_avx2 += files([
-    'evas_op_blend/op_blend_master_avx2.c'
+    'evas_op_blend/op_blend_master_avx2.c',
+    'evas_op_copy/op_copy_master_avx2.c'
   ])
 endif
 
