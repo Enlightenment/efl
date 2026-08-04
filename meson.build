@@ -168,6 +168,8 @@ if cc.compiles(code, name: 'funcptr(...) works')
 endif
 
 cpu_sse3 = false
+cpu_avx2 = false
+avx2_c_args = [ ]
 cpu_neon = false
 cpu_neon_intrinsics = false
 native_arch_opt_c_args = [ ]
@@ -183,6 +185,10 @@ if get_option('native-arch-optimization')
     config_h.set10('BUILD_SSE3', true)
     native_arch_opt_c_args = [ '-msse3' ]
     message('x86 build - MMX + SSE3 enabled')
+    cpu_avx2 = true
+    config_h.set10('BUILD_AVX2', true)
+    avx2_c_args = [ '-mavx2' ]
+    message('x86 build - AVX2 enabled')
   elif host_machine.cpu_family() == 'arm'
     cpu_neon = true
     config_h.set10('BUILD_NEON', true)

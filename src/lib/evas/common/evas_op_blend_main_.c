@@ -94,12 +94,20 @@ evas_common_gfx_compositor_blend_rel_get(void)
 #ifdef BUILD_SSE3
 void evas_common_op_blend_init_sse3(void);
 #endif
+#ifdef BUILD_AVX2
+void evas_common_op_blend_init_avx2(void);
+void evas_common_op_blend_rel_init_avx2(void);
+#endif
 
 static void
 op_blend_init(void)
 {
    memset(op_blend_span_funcs, 0, sizeof(op_blend_span_funcs));
    memset(op_blend_pt_funcs, 0, sizeof(op_blend_pt_funcs));
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+     evas_common_op_blend_init_avx2();
+#endif
 #ifdef BUILD_SSE3
    if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
      evas_common_op_blend_init_sse3();
@@ -159,6 +167,14 @@ blend_gfx_span_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Func func = NULL;
    int cpu = CPU_N;
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+     {
+        cpu = CPU_AVX2;
+        func = op_blend_span_funcs[s][m][c][d][cpu];
+        if (func) return func;
+     }
+#endif
 #ifdef BUILD_SSE3
    if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
       {
@@ -390,6 +406,10 @@ op_blend_rel_init(void)
 {
    memset(op_blend_rel_span_funcs, 0, sizeof(op_blend_rel_span_funcs));
    memset(op_blend_rel_pt_funcs, 0, sizeof(op_blend_rel_pt_funcs));
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+     evas_common_op_blend_rel_init_avx2();
+#endif
 #ifdef BUILD_SSE3
    evas_common_op_blend_rel_init_sse3();
 #endif
@@ -442,6 +462,14 @@ blend_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 {
    RGBA_Gfx_Func func = NULL;
    int cpu = CPU_N;
+#ifdef BUILD_AVX2
+   if (evas_common_cpu_has_feature(CPU_FEATURE_AVX2))
+     {
+        cpu = CPU_AVX2;
+        func = op_blend_rel_span_funcs[s][m][c][d][cpu];
+        if (func) return func;
+     }
+#endif
 #ifdef BUILD_SSE3
    if (evas_common_cpu_has_feature(CPU_FEATURE_SSE3))
       {

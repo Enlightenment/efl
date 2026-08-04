@@ -45,9 +45,9 @@ test('evas-suite', evas_suite,
 # on builds without BUILD_NEON.
 if cpu_neon
   evas_neon_ops = executable('evas_neon_ops',
-    ['evas_test_neon_ops.c'],
+    ['evas_test_simd_ops.c'],
     dependencies: [evas_bin, evas, evas_ext_none_static_deps, eet], #internal headers, as above
-    c_args : ['-DEVAS_BUILD']
+    c_args : ['-DEVAS_BUILD', '-DSIMD_TIER=CPU_NEON', '-DSIMD_NAME="neon"']
   )
 
   test('evas-neon-ops', evas_neon_ops,

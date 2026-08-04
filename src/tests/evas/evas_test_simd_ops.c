@@ -1,6 +1,6 @@
 /* Differential test: C reference vs NEON kernels in the evas span/point op tables.
  *
- * The op tables are indexed by CPU, so after init both [CPU_C] and [CPU_NEON]
+ * The op tables are indexed by CPU, so after init both [CPU_C] and [SIMD_TIER]
  * slots are live in the same process. We can therefore run the two variants
  * over identical buffers and compare, with no second build and no mocking.
  *
@@ -12,6 +12,15 @@
 # include "config.h"
 #endif
 
+/* Which vector tier this build compares against the C reference. The build
+ * compiles this file once per tier; everything below is tier-agnostic. */
+#ifndef SIMD_TIER
+# error "SIMD_TIER must be defined by the build (e.g. -DSIMD_TIER=CPU_AVX2)"
+#endif
+#ifndef SIMD_NAME
+# error "SIMD_NAME must be defined by the build (e.g. -DSIMD_NAME=\"avx2\")"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +28,15 @@
 
 #include "evas_common_private.h"
 #include "evas_blend_private.h"
+
+/* Check if the current tier has a corresponding BUILD flag. Each tier can only
+ * run if its implementation is compiled in. This must come AFTER the includes
+ * above, which pull in evas_blend_ops.h and define CPU_NEON, CPU_AVX2, etc. */
+#if (SIMD_TIER == CPU_NEON) && !defined(BUILD_NEON)
+# define SIMD_TIER_UNAVAILABLE 1
+#elif (SIMD_TIER == CPU_AVX2) && !defined(BUILD_AVX2)
+# define SIMD_TIER_UNAVAILABLE 1
+#endif
 
 /* The op TUs only need these symbols from the rest of evas. Force NEON on so
  * both the C and the NEON init paths populate their slots regardless of any
@@ -243,7 +261,7 @@ typedef struct
    unsigned long long cases;
    unsigned long long span_diff;      /* differing pixels inside the span */
    unsigned long long raw_diff;       /* ditto, but from invalid PAT_RAW input */
-   unsigned long long oob_neon;       /* NEON wrote outside its span */
+   unsigned long long oob_simd;       /* NEON wrote outside its span */
    unsigned long long oob_c;          /* C wrote outside its span */
    unsigned long long src_clobber;    /* an implementation modified src/mask */
    int                max_delta;      /* worst per-channel difference */
@@ -287,7 +305,7 @@ report(Category cat, const char *table, int s, int m, int c, int d, int len,
    printf("  %s[%s][%s][%s][%s] len=%d off=(s%d,d%d,m%d) pat=%s: %s\n",
           table, sp_names[s], sm_names[m], sc_names[c], dp_names[d],
           len, off[0], off[1], off[2], pat_names[pat], what);
-   printf("      pixel %d: neon=%08x c=%08x  (src=%08x mask=%02x col=%08x)\n",
+   printf("      pixel %d: " SIMD_NAME "=%08x c=%08x  (src=%08x mask=%02x col=%08x)\n",
           idx, got, want, sv, mv, col);
    if (reported[cat] == max_report)
      printf("  ... further reports of this kind suppressed (--max-report to raise)\n");
@@ -351,7 +369,7 @@ run_span_case(const char *table, RGBA_Gfx_Func fc, RGBA_Gfx_Func fn,
        memcmp(msk.raw, msk_o.raw, BUF_BYTES))
      {
         report(CAT_CLOBBER, table, s, m, c, d, len, off, pat,
-               "NEON modified its source or mask", 0, 0, 0, 0, 0, col);
+               SIMD_NAME " modified its source or mask", 0, 0, 0, 0, 0, col);
         st->src_clobber++;
         memcpy(src.raw, src_o.raw, BUF_BYTES);
         memcpy(msk.raw, msk_o.raw, BUF_BYTES);
@@ -369,9 +387,9 @@ run_span_case(const char *table, RGBA_Gfx_Func fc, RGBA_Gfx_Func fn,
         if (((DATA32 *)dst_n.raw)[i] != orig)
           {
              report(CAT_OOB, table, s, m, c, d, len, off, pat,
-                    "NEON wrote outside its span", i - PAD_PIX - doff,
+                    SIMD_NAME " wrote outside its span", i - PAD_PIX - doff,
                     ((DATA32 *)dst_n.raw)[i], orig, 0, 0, col);
-             st->oob_neon++;
+             st->oob_simd++;
           }
         if (((DATA32 *)dst_c.raw)[i] != orig)
           {
@@ -422,7 +440,7 @@ walk_span_table(const char *table,
                 int iterations, Stats *total)
 {
    int s, m, c, d, li, oi, p, it;
-   int pairs = 0, neon_only = 0;
+   int pairs = 0, simd_only = 0;
 
    for (s = 0; s < SP_LAST; s++)
      for (m = 0; m < SM_LAST; m++)
@@ -430,15 +448,15 @@ walk_span_table(const char *table,
          for (d = 0; d < DP_LAST; d++)
            {
               RGBA_Gfx_Func fc = t[s][m][c][d][CPU_C];
-              RGBA_Gfx_Func fn = t[s][m][c][d][CPU_NEON];
+              RGBA_Gfx_Func fn = t[s][m][c][d][SIMD_TIER];
               Stats st;
 
               if (!fn) continue;
               if (!fc)
                 {
-                   printf("  %s[%s][%s][%s][%s]: NEON slot with no C reference\n",
+                   printf("  %s[%s][%s][%s][%s]: " SIMD_NAME " slot with no C reference\n",
                           table, sp_names[s], sm_names[m], sc_names[c], dp_names[d]);
-                   neon_only++;
+                   simd_only++;
                    continue;
                 }
               pairs++;
@@ -456,15 +474,15 @@ walk_span_table(const char *table,
               total->raw_diff += st.raw_diff;
               if (st.raw_max_delta > total->raw_max_delta)
                 total->raw_max_delta = st.raw_max_delta;
-              total->oob_neon += st.oob_neon;
+              total->oob_simd += st.oob_simd;
               total->oob_c += st.oob_c;
               total->src_clobber += st.src_clobber;
               if (st.max_delta > total->max_delta) total->max_delta = st.max_delta;
 
-              if (st.span_diff || st.oob_neon || st.oob_c || st.src_clobber)
-                printf("  %-10s[%-5s][%-5s][%-5s][%-5s] diff=%llu oob_neon=%llu oob_c=%llu clobber=%llu maxdelta=%d\n",
+              if (st.span_diff || st.oob_simd || st.oob_c || st.src_clobber)
+                printf("  %-10s[%-5s][%-5s][%-5s][%-5s] diff=%llu oob_simd=%llu oob_c=%llu clobber=%llu maxdelta=%d\n",
                        table, sp_names[s], sm_names[m], sc_names[c], dp_names[d],
-                       st.span_diff, st.oob_neon, st.oob_c, st.src_clobber,
+                       st.span_diff, st.oob_simd, st.oob_c, st.src_clobber,
                        st.max_delta);
               /* Worth naming even though the input is out of contract: map and
                * scale interpolation really do emit transparent-but-coloured
@@ -475,8 +493,8 @@ walk_span_table(const char *table,
                        st.raw_diff, st.raw_max_delta);
            }
 
-   printf("%s: %d C/NEON pairs compared", table, pairs);
-   if (neon_only) printf(", %d NEON-only slots", neon_only);
+   printf("%s: %d C/" SIMD_NAME " pairs compared", table, pairs);
+   if (simd_only) printf(", %d " SIMD_NAME "-only slots", simd_only);
    printf("\n");
 }
 
@@ -496,7 +514,7 @@ walk_pt_table(const char *table,
          for (d = 0; d < DP_LAST; d++)
            {
               RGBA_Gfx_Pt_Func fc = t[s][m][c][d][CPU_C];
-              RGBA_Gfx_Pt_Func fn = t[s][m][c][d][CPU_NEON];
+              RGBA_Gfx_Pt_Func fn = t[s][m][c][d][SIMD_TIER];
               unsigned long long diff = 0;
               int maxd = 0;
 
@@ -549,7 +567,7 @@ walk_pt_table(const char *table,
                        diff, maxd);
            }
 
-   printf("%s: %d C/NEON pairs compared\n", table, pairs);
+   printf("%s: %d C/" SIMD_NAME " pairs compared\n", table, pairs);
 }
 
 /*----------------------------------------------------------------------------
@@ -630,7 +648,7 @@ bench_span_table(const char *table,
          for (d = 0; d < DP_LAST; d++)
            {
               RGBA_Gfx_Func fc = t[s][m][c][d][CPU_C];
-              RGBA_Gfx_Func fn = t[s][m][c][d][CPU_NEON];
+              RGBA_Gfx_Func fn = t[s][m][c][d][SIMD_TIER];
               double tc, tn;
               DATA32 col;
 
@@ -649,7 +667,7 @@ bench_span_table(const char *table,
               bench_pair(fc, fn, src.pix, (DATA8 *)msk.pix, col, dst.pix, len,
                          iters, trials, &tc, &tn);
 
-              printf("  %-10s[%-5s][%-5s][%-5s][%-5s] C %7.1f Mpx/s  NEON %7.1f Mpx/s  %5.2fx\n",
+              printf("  %-10s[%-5s][%-5s][%-5s][%-5s] C %7.1f Mpx/s  " SIMD_NAME " %7.1f Mpx/s  %5.2fx\n",
                      table, sp_names[s], sm_names[m], sc_names[c], dp_names[d],
                      len / tc / 1e6, len / tn / 1e6, tc / tn);
            }
@@ -687,11 +705,11 @@ main(int argc, char **argv)
    if (!seed) seed = 1;
    rng_state = seed;
 
-#ifndef BUILD_NEON
-   printf("built without BUILD_NEON - nothing to compare\n");
+#ifdef SIMD_TIER_UNAVAILABLE
+   printf("built without " SIMD_NAME " support - nothing to compare\n");
    return 77;   /* meson/automake "skipped" */
 #else
-   printf("evas op table C vs NEON differential test (seed=%u iterations=%d)\n\n",
+   printf("evas op table C vs " SIMD_NAME " differential test (seed=%u iterations=%d)\n\n",
           seed, iterations);
 
    memset(&total, 0, sizeof(total));
@@ -728,11 +746,11 @@ main(int argc, char **argv)
    printf("worst channel delta: %d\n", total.max_delta);
    printf("  (non-premultiplied input, informational: %llu diffs, worst delta %d)\n",
           total.raw_diff, total.raw_max_delta);
-   printf("NEON out-of-span   : %llu\n", total.oob_neon);
+   printf(SIMD_NAME " out-of-span   : %llu\n", total.oob_simd);
    printf("C out-of-span      : %llu\n", total.oob_c);
    printf("input clobbered    : %llu\n", total.src_clobber);
 
-   if (total.oob_neon || total.oob_c || total.src_clobber)
+   if (total.oob_simd || total.oob_c || total.src_clobber)
      {
         printf("RESULT: FAIL (buffer overrun or input clobbered)\n");
         return 1;

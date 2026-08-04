@@ -154,6 +154,7 @@ evas_src += files([
 ])
 
 evas_src_opt = [ ]
+evas_src_opt_avx2 = [ ]
 
 evas_ext_none_static_deps += dependency('freetype2')
 
@@ -252,6 +253,23 @@ if  cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
     dependencies: [eina, eo, ector, emile, evas_deps, evas_ext_none_static_deps],
   )
   evas_link += [ evas_opt ]
+endif
+
+if cpu_avx2 == true
+  evas_opt_avx2_partial_deps = [ ]
+  foreach dep : [eina, eo, ector, emile] + evas_deps + evas_ext_none_static_deps
+    evas_opt_avx2_partial_deps += dep.partial_dependency(compile_args: true, includes: true)
+  endforeach
+  evas_opt_avx2 = static_library('evas_opt_avx2',
+    sources: [evas_src_opt_avx2, pub_eo_file_target, priv_eo_file_target],
+    include_directories:
+      [ include_directories('../../..') ] +
+      evas_include_directories +
+      [vg_common_inc_dir],
+    c_args: avx2_c_args,
+    dependencies: evas_opt_avx2_partial_deps,
+  )
+  evas_link += [ evas_opt_avx2 ]
 endif
 
 foreach loader_inst : evas_image_loaders_file
