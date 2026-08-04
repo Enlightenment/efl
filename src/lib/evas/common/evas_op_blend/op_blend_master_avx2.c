@@ -22,6 +22,7 @@ extern RGBA_Gfx_Func     op_blend_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST]
 extern RGBA_Gfx_Func     op_blend_rel_span_funcs[SP_LAST][SM_LAST][SC_LAST][DP_LAST][CPU_LAST];
 
 # include "op_blend_pixel_avx2.c"
+# include "op_blend_color_avx2.c"
 
 void
 evas_common_op_blend_init_avx2(void)
@@ -32,6 +33,7 @@ evas_common_op_blend_init_avx2(void)
    ALPHA_AVX2   = _mm256_set1_epi32(256);
 
    init_blend_pixel_span_funcs_avx2();
+   init_blend_color_span_funcs_avx2();
 #endif
 }
 
