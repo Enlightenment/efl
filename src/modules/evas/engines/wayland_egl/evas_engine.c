@@ -85,13 +85,11 @@ symbols(void)
 
    if (done) return;
 
-   /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
-    * gets fixed. Currently it is incorrectly detecting wl_display and
-    * returning _EGL_PLATFORM_X11 instead of _EGL_PLATFORM_WAYLAND.
-    *
-    * See ticket #1972 for more info.
+   /* NB: eng_window_new() sets EGL_PLATFORM itself, but only on the
+    * legacy path where the EGL platform extensions are missing.  Forcing
+    * it here as well would pin the whole process to the wayland platform
+    * even when another engine in the same process wants gbm or x11.
     */
-   setenv("EGL_PLATFORM", "wayland", 1);
 
 #define LINK2GENERIC(sym) \
    glsym_##sym = dlsym(RTLD_DEFAULT, #sym);
@@ -539,13 +537,11 @@ eng_output_setup(void *engine, void *info, unsigned int w, unsigned int h)
 
    swap_mode = _eng_swap_mode_get();
 
-   /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
-    * gets fixed. Currently it is incorrectly detecting wl_display and
-    * returning _EGL_PLATFORM_X11 instead of _EGL_PLATFORM_WAYLAND.
-    *
-    * See ticket #1972 for more info.
+   /* NB: eng_window_new() sets EGL_PLATFORM itself, but only on the
+    * legacy path where the EGL platform extensions are missing.  Forcing
+    * it here as well would pin the whole process to the wayland platform
+    * even when another engine in the same process wants gbm or x11.
     */
-   setenv("EGL_PLATFORM", "wayland", 1);
 
    /* try to allocate space for a new render engine */
    if (!(re = calloc(1, sizeof(Render_Engine))))

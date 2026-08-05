@@ -47,8 +47,14 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    context_attrs[2] = EGL_NONE;
 
    wl_disp = ecore_wl2_display_get(gw->wl2_disp);
+   /* EGL_EXT_platform_base gives us eglGetPlatformDisplayEXT; it is
+    * EGL_EXT_platform_wayland (or its KHR alias) that makes
+    * EGL_PLATFORM_WAYLAND_EXT a legal token for it.  Checking only the
+    * former can hand the driver a platform it never claimed to support. */
    const char *s = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
-   if (s && strstr(s, "EXT_platform_base"))
+   if (s && strstr(s, "EGL_EXT_platform_base") &&
+       (strstr(s, "EGL_EXT_platform_wayland") ||
+        strstr(s, "EGL_KHR_platform_wayland")))
      {
         EGLDisplay (*func) (EGLenum platform, void *native_display, const EGLint *attrib_list);
         func = (void *)eglGetProcAddress("eglGetPlatformDisplayEXT");
@@ -58,7 +64,9 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    else
      {
 noext:
-        putenv("EGL_PLATFORM=wayland");
+        /* Legacy path for stacks predating the platform extensions, where
+         * eglGetDisplay() has to be steered by the environment. */
+        setenv("EGL_PLATFORM", "wayland", 1);
         gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)wl_disp);
      }
    if (!gw->egl_disp)
