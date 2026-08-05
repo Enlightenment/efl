@@ -98,6 +98,32 @@ static const struct wl_buffer_listener buffer_listener =
    buffer_release
 };
 
+/* Read the driver name out of the kernel so we never aim a driver-specific
+ * ioctl at a driver that never implemented it.  DRM command numbers are
+ * per-driver: DRM_IOCTL_VC4_CREATE_BO is DRM_COMMAND_BASE + 0x03, which on
+ * panfrost is DRM_PANFROST_MMAP_BO - same size, same direction, so the
+ * kernel happily dispatches it and we get whatever that driver does with a
+ * garbage handle. */
+static Eina_Bool
+_drm_driver_is(int fd, const char *want)
+{
+   drm_version_t v;
+   char name[64];
+   Eina_Bool ret;
+
+   memset(&v, 0, sizeof(v));
+   v.name = name;
+   v.name_len = sizeof(name) - 1;
+
+   if (ioctl(fd, DRM_IOCTL_VERSION, &v)) return EINA_FALSE;
+   if (v.name_len >= (__typeof__(v.name_len))sizeof(name)) return EINA_FALSE;
+
+   name[v.name_len] = '\0';
+   ret = !strcmp(name, want);
+
+   return ret;
+}
+
 static struct wl_buffer *
 _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
 {
@@ -223,7 +249,9 @@ _intel_buffer_manager_setup(int fd)
    Eina_Bool fail = EINA_FALSE;
    void *drm_intel_lib;
 
-   drm_intel_lib = dlopen("libdrm_intel.so", RTLD_LAZY | RTLD_GLOBAL);
+   if (!_drm_driver_is(fd, "i915")) return EINA_FALSE;
+
+   drm_intel_lib = dlopen("libdrm_intel.so.1", RTLD_LAZY | RTLD_GLOBAL);
    if (!drm_intel_lib) return EINA_FALSE;
 
    SYM(drm_intel_lib, drm_intel_bufmgr_gem_init);
@@ -326,7 +354,9 @@ _exynos_buffer_manager_setup(int fd)
    void *drm_exynos_lib;
    struct exynos_bo *bo;
 
-   drm_exynos_lib = dlopen("libdrm_exynos.so", RTLD_LAZY | RTLD_GLOBAL);
+   if (!_drm_driver_is(fd, "exynos")) return EINA_FALSE;
+
+   drm_exynos_lib = dlopen("libdrm_exynos.so.1", RTLD_LAZY | RTLD_GLOBAL);
    if (!drm_exynos_lib) return EINA_FALSE;
 
    SYM(drm_exynos_lib, exynos_device_create);
@@ -565,6 +595,8 @@ _vc4_buffer_manager_setup(int fd)
    Eina_Bool fail = EINA_FALSE;
    void *drm_lib;
 
+   if (!_drm_driver_is(fd, "vc4")) return EINA_FALSE;
+
    memset(&bo, 0, sizeof(bo));
    bo.size = 32;
    if (ioctl(fd, DRM_IOCTL_VC4_CREATE_BO, &bo)) return EINA_FALSE;
@@ -573,7 +605,7 @@ _vc4_buffer_manager_setup(int fd)
    cl.handle = bo.handle;
    ioctl(fd, DRM_IOCTL_GEM_CLOSE, &cl);
 
-   drm_lib = dlopen("libdrm.so", RTLD_LAZY | RTLD_GLOBAL);
+   drm_lib = dlopen("libdrm.so.2", RTLD_LAZY | RTLD_GLOBAL);
    if (!drm_lib) return EINA_FALSE;
 
    SYM(drm_lib, drmPrimeHandleToFD);
@@ -595,6 +627,38 @@ err:
    return EINA_FALSE;
 }
 
+/* renderD128 is only the first render node the kernel hands out; on a box
+ * with a discrete card, or where the display and render devices are
+ * separate (rockchip + panfrost, sun4i + lima, ...), the one we want may
+ * well be a higher number. */
+static int
+_render_node_open(void)
+{
+   const char *env;
+   char path[64];
+   int i, fd;
+
+   env = getenv("ECORE_WL2_RENDER_NODE");
+   if (env)
+     {
+        fd = open(env, O_RDWR | O_CLOEXEC);
+        if (fd >= 0) return fd;
+        ERR("ECORE_WL2_RENDER_NODE is set to %s, which could not be opened",
+            env);
+        return -1;
+     }
+
+   /* 128..191 is the render node minor range */
+   for (i = 128; i < 192; i++)
+     {
+        snprintf(path, sizeof(path), "/dev/dri/renderD%d", i);
+        fd = open(path, O_RDWR | O_CLOEXEC);
+        if (fd >= 0) return fd;
+     }
+
+   return -1;
+}
+
 EAPI Eina_Bool
 ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 {
@@ -614,16 +678,21 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 
    if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF") && dmabuf)
      {
-        fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC);
+        fd = _render_node_open();
         if (fd < 0)
           {
-             ERR("Tried to use dmabufs, but can't find /dev/dri/renderD128 . Falling back to regular SHM");
+             ERR("Tried to use dmabufs, but found no usable render node in "
+                 "/dev/dri. Falling back to regular SHM");
              goto fallback_shm;
           }
 
         success = _intel_buffer_manager_setup(fd);
         if (!success) success = _exynos_buffer_manager_setup(fd);
         if (!success) success = _vc4_buffer_manager_setup(fd);
+
+        if (!success)
+          WRN("No dmabuf allocator available for this device, falling back "
+              "to regular SHM");
      }
 fallback_shm:
    if (!success) success = shm && _wl_shm_buffer_manager_setup(0);
