@@ -261,6 +261,9 @@ _evas_outbuf_egl_setup(Outbuf *ob)
         goto err;
      }
 
+   /* cleared so the check below sees a failed search rather than a config
+    * left over from an earlier setup (this runs again on resize) */
+   ob->egl.config = NULL;
    for (; i < ncfg; ++i)
      {
         EGLint format = 0;
@@ -277,6 +280,17 @@ _evas_outbuf_egl_setup(Outbuf *ob)
              ob->egl.config = cfgs[i];
              break;
           }
+     }
+
+   /* Without this, a driver that offers no config matching the scanout
+    * format leaves egl.config at whatever it happened to hold and we hand
+    * that to eglCreateWindowSurface.  Mesa's config ordering is not
+    * stable across releases, so fail loudly rather than render nothing. */
+   if (!ob->egl.config)
+     {
+        ERR("No EGL config found for DRM format %#x among %d configs",
+            ob->info->info.format, ncfg);
+        goto err;
      }
 
    if (ob->egl.surface != EGL_NO_SURFACE)
