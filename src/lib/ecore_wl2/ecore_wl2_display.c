@@ -46,16 +46,83 @@ _ecore_wl2_display_signal_exit(void)
    ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, ev, NULL, NULL);
 }
 
+void
+_ecore_wl2_dmabuf_modifier_add(Ecore_Wl2_Display *ewd, uint32_t format, uint64_t modifier)
+{
+   uint32_t *nf;
+   uint64_t *nm;
+   int n;
+
+   EINA_SAFETY_ON_NULL_RETURN(ewd);
+
+   n = ewd->dmabuf_fmts.count;
+   nf = realloc(ewd->dmabuf_fmts.formats, (n + 1) * sizeof(uint32_t));
+   if (!nf) return;
+   ewd->dmabuf_fmts.formats = nf;
+
+   nm = realloc(ewd->dmabuf_fmts.modifiers, (n + 1) * sizeof(uint64_t));
+   if (!nm) return;
+   ewd->dmabuf_fmts.modifiers = nm;
+
+   ewd->dmabuf_fmts.formats[n] = format;
+   ewd->dmabuf_fmts.modifiers[n] = modifier;
+   ewd->dmabuf_fmts.count = n + 1;
+}
+
+void
+_ecore_wl2_dmabuf_formats_clear(Ecore_Wl2_Display *ewd)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ewd);
+
+   free(ewd->dmabuf_fmts.formats);
+   free(ewd->dmabuf_fmts.modifiers);
+   ewd->dmabuf_fmts.formats = NULL;
+   ewd->dmabuf_fmts.modifiers = NULL;
+   ewd->dmabuf_fmts.count = 0;
+}
+
+Eina_Bool
+_ecore_wl2_dmabuf_modifier_supported(Ecore_Wl2_Display *ewd, uint32_t format, uint64_t modifier)
+{
+   int i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, EINA_FALSE);
+
+   for (i = 0; i < ewd->dmabuf_fmts.count; i++)
+     {
+        if ((ewd->dmabuf_fmts.formats[i] == format) &&
+            (ewd->dmabuf_fmts.modifiers[i] == modifier))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _dmabuf_cb_format(void *data EINA_UNUSED, struct zwp_linux_dmabuf_v1 *dmabuf EINA_UNUSED, uint32_t format EINA_UNUSED)
 {
-   /* It would be awfully nice if this actually happened */
+   /* Deprecated since version 3 - compositors that speak v3 send the
+    * modifier event instead, which carries the same format plus its
+    * tiling layout.  We bind at v3 when we can, so this rarely fires. */
 };
 
+static void
+_dmabuf_cb_modifier(void *data, struct zwp_linux_dmabuf_v1 *dmabuf EINA_UNUSED, uint32_t format, uint32_t modifier_hi, uint32_t modifier_lo)
+{
+   Ecore_Wl2_Display *ewd = data;
+
+   _ecore_wl2_dmabuf_modifier_add(ewd, format,
+                                  ((uint64_t)modifier_hi << 32) | modifier_lo);
+}
+
+/* NB: every event the bound version can emit MUST have a non-NULL entry
+ * here - libwayland dispatches straight through this table, so a NULL slot
+ * is a jump to address 0 the first time the compositor sends that event.
+ * Keep this in sync with the version passed to wl_registry_bind() below. */
 static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener =
 {
    _dmabuf_cb_format,
-   NULL
+   _dmabuf_cb_modifier
 };
 
 static void
@@ -295,8 +362,16 @@ _cb_global_add(void *data, struct wl_registry *registry, unsigned int id, const 
      }
    else if (!strcmp(interface, "zwp_linux_dmabuf_v1") && (version >= 2))
      {
+        /* v3 is the first version that tells us which tiling layouts the
+         * compositor will actually accept.  Cap at 3 rather than binding
+         * whatever the compositor offers: v4 replaces the format/modifier
+         * events with per-surface feedback objects we do not implement, and
+         * binding it would leave us with no advertised formats at all. */
+        int ver = (version > 3) ? 3 : (int)version;
+
         ewd->wl.dmabuf =
-          wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, 2);
+          wl_registry_bind(registry, id, &zwp_linux_dmabuf_v1_interface, ver);
+        ewd->wl.dmabuf_version = ver;
         zwp_linux_dmabuf_v1_add_listener(ewd->wl.dmabuf, &_dmabuf_listener, ewd);
         _ecore_wl2_buffer_test(ewd);
         _ecore_wl2_display_sync_add(ewd);
@@ -445,6 +520,7 @@ _ecore_wl2_display_globals_cleanup(Ecore_Wl2_Display *ewd)
    if (ewd->wl.compositor) wl_compositor_destroy(ewd->wl.compositor);
    if (ewd->wl.subcompositor) wl_subcompositor_destroy(ewd->wl.subcompositor);
    if (ewd->wl.dmabuf) zwp_linux_dmabuf_v1_destroy(ewd->wl.dmabuf);
+   _ecore_wl2_dmabuf_formats_clear(ewd);
    if (ewd->wl.efl_aux_hints) efl_aux_hints_destroy(ewd->wl.efl_aux_hints);
    if (ewd->wl.efl_hints) efl_hints_destroy(ewd->wl.efl_hints);
 

@@ -16,6 +16,7 @@
 #include <exynos_drmif.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <inttypes.h>
 
 #if defined(__linux__)
 #include <linux/dma-buf.h>
@@ -47,6 +48,27 @@ struct dma_buf_sync {
       }                            \
    } while (0)
 
+#ifndef DRM_FORMAT_MOD_INVALID
+# define DRM_FORMAT_MOD_INVALID ((1ULL << 56) - 1)
+#endif
+#ifndef DRM_FORMAT_MOD_LINEAR
+# define DRM_FORMAT_MOD_LINEAR 0ULL
+#endif
+
+/* Minimal GBM ABI.  We dlopen libgbm rather than linking it so that
+ * ecore_wl2 keeps building and running on systems without Mesa, which is
+ * also why we declare the few bits we need here instead of including
+ * <gbm.h> and picking up a hard build dependency. */
+struct gbm_device;
+struct gbm_bo;
+
+#define ECORE_GBM_BO_USE_RENDERING     (1 << 2)
+#define ECORE_GBM_BO_USE_LINEAR        (1 << 4)
+#define ECORE_GBM_BO_TRANSFER_READ     (1 << 0)
+#define ECORE_GBM_BO_TRANSFER_WRITE    (1 << 1)
+#define ECORE_GBM_BO_TRANSFER_RW \
+   (ECORE_GBM_BO_TRANSFER_READ | ECORE_GBM_BO_TRANSFER_WRITE)
+
 static int drm_fd = -1;
 
 typedef struct _Ecore_Wl2_Buffer Ecore_Wl2_Buffer;
@@ -54,7 +76,7 @@ typedef struct _Buffer_Handle Buffer_Handle;
 typedef struct _Buffer_Manager Buffer_Manager;
 struct _Buffer_Manager
 {
-   Buffer_Handle *(*alloc)(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd);
+   Buffer_Handle *(*alloc)(Buffer_Manager *self, Ecore_Wl2_Display *ewd, const char *name, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd);
    struct wl_buffer *(*to_buffer)(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db);
    void *(*map)(Ecore_Wl2_Buffer *buf);
    void (*unmap)(Ecore_Wl2_Buffer *buf);
@@ -77,6 +99,18 @@ static drm_intel_bo *(*sym_drm_intel_bo_alloc_tiled)(drm_intel_bufmgr *mgr, cons
 static void (*sym_drm_intel_bo_unreference)(drm_intel_bo *bo) = NULL;
 static int (*sym_drmPrimeHandleToFD)(int fd, uint32_t handle, uint32_t flags, int *prime_fd) = NULL;
 static void (*sym_drm_intel_bufmgr_destroy)(drm_intel_bufmgr *) = NULL;
+
+static struct gbm_device *(*sym_gbm_create_device)(int fd) = NULL;
+static void (*sym_gbm_device_destroy)(struct gbm_device *gbm) = NULL;
+static struct gbm_bo *(*sym_gbm_bo_create)(struct gbm_device *gbm, uint32_t w, uint32_t h, uint32_t format, uint32_t flags) = NULL;
+static void (*sym_gbm_bo_destroy)(struct gbm_bo *bo) = NULL;
+static int (*sym_gbm_bo_get_fd)(struct gbm_bo *bo) = NULL;
+static uint32_t (*sym_gbm_bo_get_stride)(struct gbm_bo *bo) = NULL;
+static void *(*sym_gbm_bo_map)(struct gbm_bo *bo, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t flags, uint32_t *stride, void **map_data) = NULL;
+static void (*sym_gbm_bo_unmap)(struct gbm_bo *bo, void *map_data) = NULL;
+/* Optional - absent on pre-17.1 gbm.  Without it we simply report an
+ * unknown modifier and let the compositor negotiate implicitly. */
+static uint64_t (*sym_gbm_bo_get_modifier)(struct gbm_bo *bo) = NULL;
 
 static struct exynos_device *(*sym_exynos_device_create)(int fd) = NULL;
 static struct exynos_bo *(*sym_exynos_bo_create)(struct exynos_device *dev, size_t size, uint32_t flags) = NULL;
@@ -132,15 +166,37 @@ _evas_dmabuf_wl_buffer_from_dmabuf(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *db)
    struct zwp_linux_buffer_params_v1 *dp;
    uint32_t flags = 0;
    uint32_t format;
+   uint64_t modifier;
 
    if (db->alpha)
      format = DRM_FORMAT_ARGB8888;
    else
      format = DRM_FORMAT_XRGB8888;
 
+   /* Tell the compositor the layout we actually allocated.  Sending a
+    * concrete modifier is only meaningful if it had a chance to tell us
+    * which ones it accepts (v3+); at v2 the field is ignored and treated
+    * as implicit by spec-conforming compositors, so send INVALID rather
+    * than claiming a layout we never negotiated. */
+   modifier = db->modifier;
+   if ((ewd->wl.dmabuf_version < 3) || (ewd->dmabuf_fmts.count == 0))
+     modifier = DRM_FORMAT_MOD_INVALID;
+   else if ((modifier != DRM_FORMAT_MOD_INVALID) &&
+            (!_ecore_wl2_dmabuf_modifier_supported(ewd, format, modifier)))
+     {
+        /* We allocated something the compositor never advertised.  Fall
+         * back to implicit negotiation instead of forcing a create that
+         * would just fail. */
+        DBG("Compositor does not advertise modifier %#" PRIx64 " for format "
+            "%#x, falling back to implicit modifier", modifier, format);
+        modifier = DRM_FORMAT_MOD_INVALID;
+     }
+
    dmabuf = ecore_wl2_display_dmabuf_get(ewd);
    dp = zwp_linux_dmabuf_v1_create_params(dmabuf);
-   zwp_linux_buffer_params_v1_add(dp, db->fd, 0, 0, db->stride, 0, 0);
+   zwp_linux_buffer_params_v1_add(dp, db->fd, 0, 0, db->stride,
+                                  (uint32_t)(modifier >> 32),
+                                  (uint32_t)(modifier & 0xFFFFFFFF));
    buf = zwp_linux_buffer_params_v1_create_immed(dp, db->w, db->h,
                                                  format, flags);
    wl_buffer_add_listener(buf, &buffer_listener, db);
@@ -180,11 +236,13 @@ _dmabuf_unlock(Ecore_Wl2_Buffer *b)
 }
 
 static Buffer_Handle *
-_intel_alloc(Buffer_Manager *self, const char *name, int w, int h, unsigned long *stride, int32_t *fd)
+_intel_alloc(Buffer_Manager *self, Ecore_Wl2_Display *ewd EINA_UNUSED, const char *name, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd)
 {
    uint32_t tile = I915_TILING_NONE;
    drm_intel_bo *out;
 
+   /* we reject anything tiled below, so what we hand out is always linear */
+   *modifier = DRM_FORMAT_MOD_LINEAR;
    out = sym_drm_intel_bo_alloc_tiled(self->priv, name, w, h, 4, &tile,
                                        stride, 0);
 
@@ -285,11 +343,12 @@ err:
 }
 
 static Buffer_Handle *
-_exynos_alloc(Buffer_Manager *self, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
+_exynos_alloc(Buffer_Manager *self, Ecore_Wl2_Display *ewd EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd)
 {
    size_t size = w * h * 4;
    struct exynos_bo *out;
 
+   *modifier = DRM_FORMAT_MOD_LINEAR;
    *stride = w * 4;
    out = sym_exynos_bo_create(self->priv, size, 0);
    if (!out) return NULL;
@@ -393,13 +452,159 @@ err:
    return EINA_FALSE;
 }
 
+/* Generic allocator that works on any driver with a Mesa gbm backend
+ * (panfrost, amdgpu, radeon, nouveau, iris, lima, v3d, ...).  The
+ * driver-specific managers above only cover i915, exynos and vc4, so
+ * without this everything else silently falls back to wl_shm.
+ *
+ * The only consumer of these buffers is the software Evas engine, which
+ * renders into them with the CPU, so they must be linear and mappable.
+ * That is also why we do not use gbm_bo_create_with_modifiers(): letting
+ * the driver pick a tiled layout here would be actively wrong. */
 static Buffer_Handle *
-_wl_shm_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
+_gbm_alloc(Buffer_Manager *self, Ecore_Wl2_Display *ewd EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd)
+{
+   struct gbm_bo *bo;
+
+   bo = sym_gbm_bo_create(self->priv, w, h, DRM_FORMAT_ARGB8888,
+                          ECORE_GBM_BO_USE_LINEAR |
+                          ECORE_GBM_BO_USE_RENDERING);
+   if (!bo) return NULL;
+
+   *fd = sym_gbm_bo_get_fd(bo);
+   if (*fd < 0)
+     {
+        sym_gbm_bo_destroy(bo);
+        return NULL;
+     }
+
+   *stride = sym_gbm_bo_get_stride(bo);
+   if (sym_gbm_bo_get_modifier)
+     *modifier = sym_gbm_bo_get_modifier(bo);
+   else
+     *modifier = DRM_FORMAT_MOD_INVALID;
+
+   return (Buffer_Handle *)bo;
+}
+
+static void *
+_gbm_map(Ecore_Wl2_Buffer *buf)
+{
+   struct gbm_bo *bo;
+   uint32_t map_stride = 0;
+   void *ptr;
+
+   bo = (struct gbm_bo *)buf->bh;
+
+   /* NB: mapping the exported dmabuf fd is not an option - Mesa exports it
+    * read-only on several drivers (panfrost among them), so a writable
+    * mmap() comes back EACCES.  gbm_bo_map() goes through the GEM mapping
+    * instead and can hand us a writable pointer. */
+   buf->map_data = NULL;
+   ptr = sym_gbm_bo_map(bo, 0, 0, buf->w, buf->h, ECORE_GBM_BO_TRANSFER_RW,
+                        &map_stride, &buf->map_data);
+   if (!ptr) return NULL;
+
+   /* Evas will render at buf->stride, which is what we handed to the
+    * compositor when the wl_buffer was created.  If the map disagrees we
+    * would scribble past the end of each scanline, so refuse instead. */
+   if (map_stride != (uint32_t)buf->stride)
+     {
+        ERR("gbm map stride %u does not match buffer stride %lu",
+            map_stride, buf->stride);
+        sym_gbm_bo_unmap(bo, buf->map_data);
+        buf->map_data = NULL;
+        return NULL;
+     }
+
+   return ptr;
+}
+
+static void
+_gbm_unmap(Ecore_Wl2_Buffer *buf)
+{
+   struct gbm_bo *bo;
+
+   bo = (struct gbm_bo *)buf->bh;
+   if (!buf->map_data) return;
+   sym_gbm_bo_unmap(bo, buf->map_data);
+   buf->map_data = NULL;
+}
+
+static void
+_gbm_discard(Ecore_Wl2_Buffer *buf)
+{
+   struct gbm_bo *bo;
+
+   bo = (struct gbm_bo *)buf->bh;
+   sym_gbm_bo_destroy(bo);
+}
+
+static void
+_gbm_manager_destroy(void)
+{
+   sym_gbm_device_destroy(buffer_manager->priv);
+}
+
+static Eina_Bool
+_gbm_buffer_manager_setup(int fd)
+{
+   Eina_Bool fail = EINA_FALSE;
+   void *gbm_lib;
+
+   /* soname, not the -dev symlink: libgbm.so is frequently absent on
+    * runtime-only installs */
+   gbm_lib = dlopen("libgbm.so.1", RTLD_LAZY | RTLD_GLOBAL);
+   if (!gbm_lib) return EINA_FALSE;
+
+   SYM(gbm_lib, gbm_create_device);
+   SYM(gbm_lib, gbm_device_destroy);
+   SYM(gbm_lib, gbm_bo_create);
+   SYM(gbm_lib, gbm_bo_destroy);
+   SYM(gbm_lib, gbm_bo_get_fd);
+   SYM(gbm_lib, gbm_bo_get_stride);
+   SYM(gbm_lib, gbm_bo_map);
+   SYM(gbm_lib, gbm_bo_unmap);
+
+   if (fail) goto err;
+
+   /* optional, older gbm does not have it */
+   sym_gbm_bo_get_modifier = dlsym(gbm_lib, "gbm_bo_get_modifier");
+
+   buffer_manager->priv = sym_gbm_create_device(fd);
+   if (!buffer_manager->priv) goto err;
+
+   buffer_manager->alloc = _gbm_alloc;
+   buffer_manager->to_buffer = _evas_dmabuf_wl_buffer_from_dmabuf;
+   buffer_manager->map = _gbm_map;
+   buffer_manager->unmap = _gbm_unmap;
+   buffer_manager->discard = _gbm_discard;
+   /* NB: not redundant with gbm_bo_map(). ecore_wl2_buffer_map() caches the
+    * mapping for the buffer's lifetime, so the map happens once; lock and
+    * unlock are what bracket each frame's CPU writes, and every other
+    * manager wires them up for exactly that reason. */
+   buffer_manager->lock = _dmabuf_lock;
+   buffer_manager->unlock = _dmabuf_unlock;
+   buffer_manager->manager_destroy = _gbm_manager_destroy;
+   buffer_manager->dl_handle = gbm_lib;
+
+   return EINA_TRUE;
+
+err:
+   dlclose(gbm_lib);
+   return EINA_FALSE;
+}
+
+static Buffer_Handle *
+_wl_shm_alloc(Buffer_Manager *self EINA_UNUSED, Ecore_Wl2_Display *ewd EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd)
 {
    Eina_Tmpstr *fullname;
    size_t size = w * h * 4;
    void *out = NULL;
    char *tmp;
+
+   /* shm buffers never travel over the dmabuf protocol */
+   *modifier = DRM_FORMAT_MOD_INVALID;
 
    // XXX try memfd, then shm open then the below...
    tmp = eina_vpath_resolve("(:usr.run:)/evas-wayland_shm-XXXXXX");
@@ -497,7 +702,7 @@ align(int v, int a)
 }
 
 static Buffer_Handle *
-_vc4_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, int32_t *fd)
+_vc4_alloc(Buffer_Manager *self EINA_UNUSED, Ecore_Wl2_Display *ewd EINA_UNUSED, const char *name EINA_UNUSED, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd)
 {
    struct drm_vc4_create_bo bo;
    struct internal_vc4_bo *obo;
@@ -505,6 +710,7 @@ _vc4_alloc(Buffer_Manager *self EINA_UNUSED, const char *name EINA_UNUSED, int w
    size_t size;
    int ret;
 
+   *modifier = DRM_FORMAT_MOD_LINEAR;
    obo = malloc(sizeof(struct internal_vc4_bo));
    if (!obo) return NULL;
 
@@ -686,7 +892,12 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
              goto fallback_shm;
           }
 
-        success = _intel_buffer_manager_setup(fd);
+        /* gbm first: it is the only one of these that covers drivers we
+         * have not been taught about by name.  The three below it stay for
+         * setups where gbm is unavailable, and each now checks the kernel
+         * driver name before touching a driver-specific ioctl. */
+        success = _gbm_buffer_manager_setup(fd);
+        if (!success) success = _intel_buffer_manager_setup(fd);
         if (!success) success = _exynos_buffer_manager_setup(fd);
         if (!success) success = _vc4_buffer_manager_setup(fd);
 
@@ -737,12 +948,13 @@ _buffer_manager_destroy(void)
 }
 
 static Buffer_Handle *
-_buffer_manager_alloc(const char *name, int w, int h, unsigned long *stride, int32_t *fd)
+_buffer_manager_alloc(Ecore_Wl2_Display *ewd, const char *name, int w, int h, unsigned long *stride, uint64_t *modifier, int32_t *fd)
 {
    Buffer_Handle *out;
 
    _buffer_manager_ref();
-   out = buffer_manager->alloc(buffer_manager, name, w, h, stride, fd);
+   out = buffer_manager->alloc(buffer_manager, ewd, name, w, h, stride,
+                               modifier, fd);
    if (!out) _buffer_manager_deref();
    return out;
 }
@@ -901,7 +1113,7 @@ ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h)
 }
 
 static Ecore_Wl2_Buffer *
-_ecore_wl2_buffer_partial_create(int w, int h, Eina_Bool alpha)
+_ecore_wl2_buffer_partial_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
 {
    Ecore_Wl2_Buffer *out;
 
@@ -910,7 +1122,9 @@ _ecore_wl2_buffer_partial_create(int w, int h, Eina_Bool alpha)
 
    out->fd = -1;
    out->alpha = alpha;
-   out->bh = _buffer_manager_alloc("name", w, h, &out->stride, &out->fd);
+   out->modifier = DRM_FORMAT_MOD_INVALID;
+   out->bh = _buffer_manager_alloc(ewd, "name", w, h, &out->stride,
+                                   &out->modifier, &out->fd);
    if (!out->bh)
      {
         free(out);
@@ -928,7 +1142,7 @@ ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha)
 {
    Ecore_Wl2_Buffer *out;
 
-   out = _ecore_wl2_buffer_partial_create(w, h, alpha);
+   out = _ecore_wl2_buffer_partial_create(ewd, w, h, alpha);
    if (!out) return NULL;
 
    out->wl_buffer = buffer_manager->to_buffer(ewd, out);
@@ -969,11 +1183,28 @@ _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd)
 
    if (!ecore_wl2_buffer_init(ewd, ECORE_WL2_BUFFER_DMABUF)) return;
 
-   buf = _ecore_wl2_buffer_partial_create(1, 1, EINA_TRUE);
+   /* ecore_wl2_buffer_init() hands back the pre-existing manager if one is
+    * already up.  If that manager is the shm one its "fd" is a memfd, not a
+    * dmabuf, and offering it over the dmabuf protocol would be nonsense.
+    * NB: drop our reference and give up on dmabuf for this display only -
+    * buffer_manager is process wide, so tearing it down here would poison
+    * it for every other Ecore_Wl2_Display still using it. */
+   if (buffer_manager->to_buffer != _evas_dmabuf_wl_buffer_from_dmabuf)
+     {
+        _buffer_manager_deref();
+        ewd->wl.dmabuf = NULL;
+        return;
+     }
+
+   buf = _ecore_wl2_buffer_partial_create(ewd, 1, 1, EINA_TRUE);
    if (!buf) goto fail;
 
+   /* No modifier events can have arrived yet - we are still inside the
+    * registry global handler - so probe the implicit path. */
    dp = zwp_linux_dmabuf_v1_create_params(ewd->wl.dmabuf);
-   zwp_linux_buffer_params_v1_add(dp, buf->fd, 0, 0, buf->stride, 0, 0);
+   zwp_linux_buffer_params_v1_add(dp, buf->fd, 0, 0, buf->stride,
+                                  (uint32_t)(DRM_FORMAT_MOD_INVALID >> 32),
+                                  (uint32_t)(DRM_FORMAT_MOD_INVALID & 0xFFFFFFFF));
    zwp_linux_buffer_params_v1_add_listener(dp, &params_listener, ewd);
    zwp_linux_buffer_params_v1_create(dp, buf->w, buf->h,
                                      DRM_FORMAT_ARGB8888, 0);

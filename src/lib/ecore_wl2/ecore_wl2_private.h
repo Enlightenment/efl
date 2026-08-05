@@ -85,6 +85,7 @@ struct _Ecore_Wl2_Display
         int data_device_manager_version;
         struct wl_shm *shm;
         struct zwp_linux_dmabuf_v1 *dmabuf;
+        int dmabuf_version;
         struct zxdg_shell_v6 *zxdg_shell;
         struct xdg_wm_base *xdg_wm_base;
         struct zwp_e_session_recovery *session_recovery;
@@ -92,6 +93,19 @@ struct _Ecore_Wl2_Display
         struct efl_hints *efl_hints;
         int compositor_version;
      } wl;
+
+   /* format/modifier pairs advertised by the compositor's
+    * zwp_linux_dmabuf_v1.  Only populated when we managed to bind at
+    * version 3 or later - at version 2 the compositor has no way to tell
+    * us about modifiers at all, and we have to fall back to implicit
+    * (DRM_FORMAT_MOD_INVALID) negotiation.  Kept as parallel arrays; a
+    * format shows up once per modifier it supports. */
+   struct
+     {
+        uint32_t *formats;
+        uint64_t *modifiers;
+        int count;
+     } dmabuf_fmts;
 
    uint32_t serial;
 
@@ -533,6 +547,13 @@ typedef struct _Ecore_Wl2_Buffer
    Buffer_Handle *bh;
    int fd;
    void *mapping;
+   /* opaque cookie handed back to the buffer manager's unmap(); currently
+    * only the gbm manager uses it (gbm_bo_unmap() needs it) */
+   void *map_data;
+   /* real tiling layout of the allocation, as reported by the allocator.
+    * DRM_FORMAT_MOD_INVALID means "we don't know, let the compositor and
+    * the driver negotiate implicitly". */
+   uint64_t modifier;
 
    int index;
    Eina_Bool locked : 1;
@@ -587,6 +608,15 @@ void _ecore_wl2_offer_unref(Ecore_Wl2_Offer *offer);
 Eina_Bool _ecore_wl2_display_sync_get(void);
 
 void _ecore_wl2_buffer_test(Ecore_Wl2_Display *ewd);
+
+/* Record a format/modifier pair advertised by the compositor. */
+void _ecore_wl2_dmabuf_modifier_add(Ecore_Wl2_Display *ewd, uint32_t format, uint64_t modifier);
+void _ecore_wl2_dmabuf_formats_clear(Ecore_Wl2_Display *ewd);
+/* EINA_TRUE if the compositor told us it accepts this exact layout.  Always
+ * EINA_FALSE when the compositor never advertised anything (dmabuf v2), so
+ * callers must treat "not supported" as "fall back to implicit", not as
+ * "give up". */
+Eina_Bool _ecore_wl2_dmabuf_modifier_supported(Ecore_Wl2_Display *ewd, uint32_t format, uint64_t modifier);
 
 EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double h);
 
