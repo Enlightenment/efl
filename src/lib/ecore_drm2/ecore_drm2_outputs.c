@@ -334,6 +334,60 @@ _output_mode_add(Ecore_Drm2_Output *output, const drmModeModeInfo *info)
    return mode;
 }
 
+/* Lowest refresh we still consider "full speed".  Ecore_Drm2_Output_Mode's
+ * refresh is already rounded to whole Hz by _output_mode_add(), so 59.94Hz
+ * modes arrive here as 60; this is purely a floor that keeps 50/30/24Hz
+ * modes from winning a tie against a full rate one. */
+#define _MODE_REFRESH_MIN 59
+
+/* A CRTC's mode and the same mode as listed on the connector are not
+ * byte-identical: the kernel leaves 'type' and 'name' zeroed on what it
+ * hands back from drmModeGetCrtc(). memcmp() over the whole struct
+ * therefore never matches, so compare the timings that actually define
+ * the mode instead. */
+static Eina_Bool
+_output_mode_same(const drmModeModeInfo *a, const drmModeModeInfo *b)
+{
+   return ((a->clock == b->clock) &&
+           (a->hdisplay == b->hdisplay) &&
+           (a->hsync_start == b->hsync_start) &&
+           (a->hsync_end == b->hsync_end) &&
+           (a->htotal == b->htotal) &&
+           (a->hskew == b->hskew) &&
+           (a->vdisplay == b->vdisplay) &&
+           (a->vsync_start == b->vsync_start) &&
+           (a->vsync_end == b->vsync_end) &&
+           (a->vtotal == b->vtotal) &&
+           (a->vscan == b->vscan) &&
+           (a->flags == b->flags));
+}
+
+/* Highest resolution wins.  Among equal resolutions prefer something
+ * running at a sane refresh rate over, say, a 24Hz cinema mode, then the
+ * highest refresh, and finally let the display's own preferred timing
+ * break any remaining tie. */
+static Eina_Bool
+_output_mode_better(Ecore_Drm2_Output_Mode *m, Ecore_Drm2_Output_Mode *best)
+{
+   long long ma, ba;
+   Eina_Bool mok, bok;
+
+   if (!best) return EINA_TRUE;
+
+   ma = (long long)m->width * (long long)m->height;
+   ba = (long long)best->width * (long long)best->height;
+   if (ma != ba) return (ma > ba);
+
+   mok = (m->refresh >= _MODE_REFRESH_MIN);
+   bok = (best->refresh >= _MODE_REFRESH_MIN);
+   if (mok != bok) return mok;
+
+   if (m->refresh != best->refresh) return (m->refresh > best->refresh);
+
+   return ((m->flags & DRM_MODE_TYPE_PREFERRED) &&
+           (!(best->flags & DRM_MODE_TYPE_PREFERRED)));
+}
+
 static void
 _output_modes_create(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output, const drmModeConnector *conn)
 {
@@ -342,7 +396,7 @@ _output_modes_create(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output, const dr
    drmModeEncoder *enc;
    drmModeModeInfo crtc_mode;
    Ecore_Drm2_Output_Mode *omode;
-   Ecore_Drm2_Output_Mode *current = NULL, *preferred = NULL, *best = NULL;
+   Ecore_Drm2_Output_Mode *current = NULL, *best = NULL;
    Eina_List *l = NULL;
 
    memset(&crtc_mode, 0, sizeof(crtc_mode));
@@ -365,22 +419,28 @@ _output_modes_create(Ecore_Drm2_Device *dev, Ecore_Drm2_Output *output, const dr
 
    EINA_LIST_REVERSE_FOREACH(output->modes, l, omode)
      {
-        if (!memcmp(&crtc_mode, &omode->info, sizeof(crtc_mode)))
+        if (_output_mode_same(&crtc_mode, &omode->info))
           current = omode;
-        if (omode->flags & DRM_MODE_TYPE_PREFERRED)
-          preferred = omode;
-        best = omode;
+        if (_output_mode_better(omode, best))
+          best = omode;
      }
 
+   /* Only if the CRTC is running something the connector does not list at
+    * all - keep it around so we can still describe the current state. NB:
+    * this is deliberately not folded into the 'best' search above, as an
+    * off-list mode should never be what we boot into. */
    if ((!current) && (crtc_mode.clock != 0))
      {
         current = _output_mode_add(output, &crtc_mode);
         if (!current) goto err;
      }
 
-   if (current) output->current_mode = current;
-   else if (preferred) output->current_mode = preferred;
-   else if (best) output->current_mode = best;
+   /* Prefer the best mode the display can actually do over whatever the
+    * CRTC was left at by the firmware or a previous session - the latter
+    * is frequently a low fallback resolution. Any stored per-screen
+    * configuration is applied afterwards and still wins over this. */
+   if (best) output->current_mode = best;
+   else if (current) output->current_mode = current;
 
    if (!output->current_mode) goto err;
 
