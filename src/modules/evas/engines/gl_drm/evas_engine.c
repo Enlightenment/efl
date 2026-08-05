@@ -69,6 +69,7 @@ int _extn_have_context_priority = 0;
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
 static Eina_Bool dmabuf_present = EINA_FALSE;
+static Eina_Bool dmabuf_modifiers_present = EINA_FALSE;
 static int gl_wins = 0;
 static struct gbm_device *gbm_dev = NULL;
 static int gbm_dev_refs = 0;
@@ -303,6 +304,8 @@ gl_extn_veto(Render_Engine *re)
           glsym_eglSwapBuffersWithDamage = NULL;
         if (_ckext(str, "EGL_EXT_image_dma_buf_import"))
           dmabuf_present = EINA_TRUE;
+        if (_ckext(str, "EGL_EXT_image_dma_buf_import_modifiers"))
+          dmabuf_modifiers_present = EINA_TRUE;
      }
    else
      {
@@ -672,7 +675,7 @@ drm_import_simple_dmabuf(Ecore_Drm2_Device *dev, struct dmabuf_attributes *attri
 
 /* Code from weston's gl-renderer... */
 static EGLImageKHR
-gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
+_gl_import_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes, Eina_Bool with_modifier)
 {
    EGLAttrib attribs[50];
    int atti = 0;
@@ -695,12 +698,14 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
    attribs[atti++] = attributes->height;
    attribs[atti++] = EGL_LINUX_DRM_FOURCC_EXT;
    attribs[atti++] = attributes->format;
-   if (attributes->modifier[0] != DRM_FORMAT_MOD_INVALID)
-     {
-// XXX: test for extension
-//        if (!have_dmabuf_import_modifiers) return NULL;
-        has_modifier = EINA_TRUE;
-     }
+   /* Passing the modifier attributes to a driver without
+    * EGL_EXT_image_dma_buf_import_modifiers gets the whole import rejected
+    * with EGL_BAD_ATTRIBUTE, which surfaces as a silently black window.
+    * Only send them when the driver actually understands them; otherwise
+    * fall back to letting it work the layout out implicitly. */
+   if ((with_modifier) && (dmabuf_modifiers_present) &&
+       (attributes->modifier[0] != DRM_FORMAT_MOD_INVALID))
+     has_modifier = EINA_TRUE;
 
    if (attributes->n_planes > 0)
      {
@@ -775,6 +780,28 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
    return glsym_evas_gl_common_eglCreateImage(display, EGL_NO_CONTEXT,
                                               EGL_LINUX_DMA_BUF_EXT,
                                               NULL, attribs);
+}
+
+static EGLImageKHR
+gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
+{
+   EGLImageKHR img;
+
+   img = _gl_import_dmabuf(display, attributes, EINA_TRUE);
+   if (img) return img;
+
+   /* The explicit layout was refused - a driver may advertise
+    * import_modifiers and still reject a particular modifier.  Retry
+    * implicitly before giving up and rendering nothing. */
+   if ((dmabuf_modifiers_present) &&
+       (attributes->modifier[0] != DRM_FORMAT_MOD_INVALID))
+     {
+        DBG("dmabuf import with modifier %#" PRIx64 " failed (%#x), "
+            "retrying without", attributes->modifier[0], eglGetError());
+        img = _gl_import_dmabuf(display, attributes, EINA_FALSE);
+     }
+
+   return img;
 }
 
 static void
