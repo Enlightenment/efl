@@ -1778,7 +1778,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
    if (pd->fdhandler)
      {
         DBG("dialer=%p fdhandler=%p still alive!", o, pd->fdhandler);
-        efl_del(pd->fdhandler);
+        efl_unref(pd->fdhandler);
         pd->fdhandler = NULL;
      }
 
