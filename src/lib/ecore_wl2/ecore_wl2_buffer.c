@@ -495,12 +495,23 @@ _gbm_map(Ecore_Wl2_Buffer *buf)
    void *ptr;
 
    bo = (struct gbm_bo *)buf->bh;
-
-   /* NB: mapping the exported dmabuf fd is not an option - Mesa exports it
-    * read-only on several drivers (panfrost among them), so a writable
-    * mmap() comes back EACCES.  gbm_bo_map() goes through the GEM mapping
-    * instead and can hand us a writable pointer. */
    buf->map_data = NULL;
+
+   /* Map the exported dmabuf if we can.  ecore_wl2_buffer_map() caches this
+    * pointer for the buffer's lifetime and brackets each frame with nothing
+    * but DMA_BUF_IOCTL_SYNC, so the mapping has to *be* the buffer.
+    * gbm_bo_map() does not promise that: on iris it hands back a staging
+    * copy that only reaches the BO when gbm_bo_unmap() runs, and that never
+    * happens between frames - every frame is dropped and the surface stays
+    * black. */
+   ptr = mmap(NULL, buf->stride * buf->h, PROT_READ | PROT_WRITE, MAP_SHARED,
+              buf->fd, 0);
+   if (ptr != MAP_FAILED) return ptr;
+
+   /* Some drivers (panfrost among them) export the dmabuf read-only, so the
+    * mmap above comes back EACCES.  Those are also the ones whose gbm_bo_map()
+    * returns a pointer straight into the BO rather than a staging copy, so a
+    * cached mapping remains correct there. */
    ptr = sym_gbm_bo_map(bo, 0, 0, buf->w, buf->h, ECORE_GBM_BO_TRANSFER_RW,
                         &map_stride, &buf->map_data);
    if (!ptr) return NULL;
@@ -526,9 +537,16 @@ _gbm_unmap(Ecore_Wl2_Buffer *buf)
    struct gbm_bo *bo;
 
    bo = (struct gbm_bo *)buf->bh;
-   if (!buf->map_data) return;
-   sym_gbm_bo_unmap(bo, buf->map_data);
-   buf->map_data = NULL;
+
+   /* map_data is only set on the gbm_bo_map() fallback path; otherwise the
+    * mapping came from mmap() on the dmabuf fd. */
+   if (buf->map_data)
+     {
+        sym_gbm_bo_unmap(bo, buf->map_data);
+        buf->map_data = NULL;
+     }
+   else if (buf->mapping)
+     munmap(buf->mapping, buf->stride * buf->h);
 }
 
 static void
