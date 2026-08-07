@@ -1003,7 +1003,13 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    else
      method = evas_render_method_lookup("drm");
 
-   if (!method) return NULL;
+   /* Callers treat NULL as "try the software engine instead", so failing
+    * mutely here just moves the confusion downstream - say why. */
+   if (!method)
+     {
+        ERR("Evas engine '%s' is unavailable", gl ? "gl_drm" : "drm");
+        return NULL;
+     }
 
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee) return NULL;
@@ -1147,10 +1153,24 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
 EMODAPI Ecore_Evas *
 ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED, int x, int y, int w, int h)
 {
-   static void *libglapi = NULL;
+   static Eina_Bool tried = EINA_FALSE;
 
-   if (!libglapi) libglapi = dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
-   if (dlerror()) return NULL;
+   /* We used to force-load libglapi so the GL dispatch symbols were visible
+    * to the dlsym(RTLD_DEFAULT, "gl*") lookups gl_common does.  Mesa 25.1
+    * folded libglapi into libgallium and stopped shipping it, so it being
+    * missing is now the normal case and must not be fatal - libEGL brings
+    * the dispatch in either way.  Still try it for older stacks where it
+    * really is a separate object.
+    * NB: dlerror() is not a reliable failure test here.  It also reports
+    * errors left over from unrelated earlier dlopen()s, which is how this
+    * turned into a silent "no GL for you" on every mesa >= 25.1 system. */
+   if (!tried)
+     {
+        tried = EINA_TRUE;
+        if (!dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL))
+          DBG("libglapi.so.0 unavailable (expected on mesa >= 25.1): %s",
+              dlerror());
+     }
 
    return _ecore_evas_new_internal(device, x, y, w, h, EINA_TRUE);
 }
