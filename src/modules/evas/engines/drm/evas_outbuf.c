@@ -292,7 +292,9 @@ _outbuf_state_get(Outbuf *ob)
 {
    int age;
 
-   if (!ob->priv.draw) return MODE_FULL;
+   /* Evas asks for the swap mode once per frame, before it draws anything,
+    * so this is where the buffer that frame lands in gets picked. */
+   if (!_outbuf_fb_assign(ob)) return MODE_FULL;
 
    age = ob->priv.draw->age;
    if (age > 4) return MODE_FULL;
