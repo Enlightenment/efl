@@ -887,20 +887,35 @@ ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device)
      return EINA_FALSE;
 }
 
+/* Width a pixel of the given colour depth occupies in a dumb buffer. Not
+ * the same number as the depth - the usual 24bit case is stored 32bits
+ * wide, which is why the two are separate parameters in the first place. */
+static int
+_depth_bpp_get(int depth)
+{
+   if (depth <= 8) return 8;
+   if (depth <= 16) return 16;
+   return 32;
+}
+
 EAPI void
 ecore_drm2_device_preferred_depth_get(Ecore_Drm2_Device *device, int *depth, int *bpp)
 {
    uint64_t caps;
-   int ret;
+   int d = 24;
 
    EINA_SAFETY_ON_NULL_RETURN(device);
 
-   ret = sym_drmGetCap(device->fd, DRM_CAP_DUMB_PREFERRED_DEPTH, &caps);
-   if (ret == 0)
-     {
-        if (depth) *depth = caps;
-        if (bpp) *bpp = caps;
-     }
+   /* DRM_CAP_DUMB_PREFERRED_DEPTH is a hint, and one plenty of drivers do
+    * not bother filling in: anything that leaves mode_config.preferred_depth
+    * at zero - rockchip among them - answers this query successfully with 0.
+    * Only take the cap when it says something. */
+   if ((sym_drmGetCap(device->fd, DRM_CAP_DUMB_PREFERRED_DEPTH, &caps) == 0) &&
+       (caps > 0))
+     d = caps;
+
+   if (depth) *depth = d;
+   if (bpp) *bpp = _depth_bpp_get(d);
 }
 
 EAPI int

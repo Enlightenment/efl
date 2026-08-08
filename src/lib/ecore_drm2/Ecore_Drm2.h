@@ -414,6 +414,9 @@ EAPI Eina_Bool ecore_drm2_device_prefer_shadow(Ecore_Drm2_Device *device);
 /**
  * Get the default depth & bpp from a given device
  *
+ * Always returns a usable pair, falling back to 24bit depth at 32bpp when
+ * the driver expresses no preference of its own.
+ *
  * @param device
  * @param depth
  * @param bpp
