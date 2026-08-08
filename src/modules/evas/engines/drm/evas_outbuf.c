@@ -233,6 +233,7 @@ void
 _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
 {
    unsigned int format = DRM_FORMAT_ARGB8888;
+   Outbuf_Fb *ofb;
 
    switch (depth)
      {
@@ -285,6 +286,18 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    ob->priv.unused_duration = 0;
 
    _outbuf_idle_flush(ob);
+
+   /* Every framebuffer we are holding describes the old geometry.
+    * _outbuf_update_region_push() clips against ob->w and ob->h but strides
+    * and offsets into whatever ob->priv.draw points at, so keeping one of
+    * these across a resize means writing past the end of its mapping.
+    * Drop them - _outbuf_fb_assign() allocates at the new size on demand.
+    * The idle flush above has already handed back what the output was
+    * holding, so most of these are freed right here; anything a plane is
+    * still referencing goes when the next swap replaces it. */
+   EINA_LIST_FREE(ob->priv.fb_list, ofb)
+     _outbuf_fb_destroy(ofb);
+   ob->priv.draw = NULL;
 }
 
 Render_Output_Swap_Mode
