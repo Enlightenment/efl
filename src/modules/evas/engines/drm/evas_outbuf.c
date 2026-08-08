@@ -98,10 +98,9 @@ _outbuf_fb_assign(Outbuf *ob)
    Eina_List *l;
 
    ob->priv.draw = _outbuf_fb_wait(ob);
-   if (!ob->priv.draw)
+   if ((!ob->priv.draw) &&
+       (eina_list_count(ob->priv.fb_list) < MAX_BUFFERS))
      {
-        EINA_SAFETY_ON_TRUE_RETURN_VAL(eina_list_count(ob->priv.fb_list) >= MAX_BUFFERS, NULL);
-
         if ((ob->rotation == 0) || (ob->rotation == 180))
           {
              fw = ob->w;
@@ -117,9 +116,14 @@ _outbuf_fb_assign(Outbuf *ob)
           ob->priv.fb_list = eina_list_append(ob->priv.fb_list, ob->priv.draw);
      }
 
+   /* Everything we have is busy and we may not allocate more, so take one
+    * back off the output - worst looking first - until one frees up.  Once
+    * ecore_drm2_fb_release() says there is nothing left to reclaim nothing
+    * else here can make a buffer appear either, so give up rather than ask
+    * it the same question forever. */
    while (!ob->priv.draw)
      {
-        ecore_drm2_fb_release(ob->priv.output, EINA_TRUE);
+        if (!ecore_drm2_fb_release(ob->priv.output, EINA_TRUE)) return NULL;
         ob->priv.draw = _outbuf_fb_wait(ob);
      }
 
