@@ -305,6 +305,23 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
                              engine, output, context, surface,
                              ptransform, ctransform, p_opacity, c_a, comp, comp_method);
 
+        /* From here on comp_method is handed to this container's own children,
+         * i.e. to the *source* shapes, for which the mask is already built and
+         * only has to be applied.  MASK_INTERSECT and MASK_SUBSTRACT describe
+         * how a mask is combined while it is being built, and the software
+         * rasterizer maps them onto _comp_mask_ins()/_comp_mask_sub(), which
+         * only ever mutate the mask buffer and never write the raster buffer.
+         * Letting the source shapes reach those would draw nothing at all.
+         * Applying an intersect mask is exactly MATTE_ALPHA, and applying a
+         * subtract mask is exactly MATTE_ALPHA_INVERSE, which is also what the
+         * GL span shader does for these two methods.  Note that _prepare_comp()
+         * above still gets the original method, since the mask-building pass
+         * does need the combining behaviour. */
+        if (comp_method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT)
+          comp_method = EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA;
+        else if (comp_method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT)
+          comp_method = EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE;
+
         /* GL span-buffer path: _prepare_comp returns NULL but stores the
          * mask FBO on pd->comp.gl_surface.  Propagate it to the shared ector
          * surface so eng_ector_end() can find it when building pipe params. */
