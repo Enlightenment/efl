@@ -2845,7 +2845,7 @@ eng_ector_begin(void *engine, void *surface,
 static void
 _span_gradient_linear_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
                               const Eina_Matrix3 *inv,
-                              int offx EINA_UNUSED, int offy EINA_UNUSED,
+                              int offx, int offy,
                               float atlas_off_x EINA_UNUSED,
                               float atlas_off_y EINA_UNUSED,
                               float *out_a, float *out_b, float *out_c)
@@ -2853,21 +2853,34 @@ _span_gradient_linear_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
    double dx  = gd->linear.dx;
    double dy  = gd->linear.dy;
    double off = gd->linear.off;
+   double a, b;
 
    /* The software computes t = dx*rx + dy*ry + off where:
     *   rx = inv.xx*(x+0.5) + inv.xy*(y+0.5) + inv.xz
     *   ry = inv.yx*(x+0.5) + inv.yy*(y+0.5) + inv.yz
     *
+    * That (x, y) is the *span-local* raster coordinate.  The ector surface
+    * origin (offx, offy) is applied to the destination pointer only
+    * (ector_software_rasterizer.c) and never reaches the gradient
+    * parameter.  The shader instead evaluates at px/py in surface space,
+    * which does include that origin, so the translation has to be undone
+    * here — otherwise the gradient slides across the shape by
+    * (a*offx + b*offy) in ramp units.
+    *
     * The shader receives px = gl_FragCoord.x - fbo_offset which already
-    * equals (x + 0.5) per the OpenGL spec (FragCoord centers at half-integer).
-    * So t = a*px + b*py + c decomposes as:
+    * equals (x + 0.5) per the OpenGL spec (FragCoord centers at half-integer),
+    * so span-local (x + 0.5) is px - offx.  t = a*px + b*py + c decomposes as:
     *   a = dx*inv.xx + dy*inv.yx
     *   b = dx*inv.xy + dy*inv.yy
-    *   c = dx*inv.xz + dy*inv.yz + off   (no extra half-pixel term needed)
+    *   c = dx*inv.xz + dy*inv.yz + off - a*offx - b*offy
     */
-   *out_a = (float)(dx * inv->xx + dy * inv->yx);
-   *out_b = (float)(dx * inv->xy + dy * inv->yy);
-   *out_c = (float)(dx * inv->xz + dy * inv->yz + off);
+   a = dx * inv->xx + dy * inv->yx;
+   b = dx * inv->xy + dy * inv->yy;
+
+   *out_a = (float)a;
+   *out_b = (float)b;
+   *out_c = (float)(dx * inv->xz + dy * inv->yz + off
+                    - a * (double)offx - b * (double)offy);
 }
 
 /**
@@ -2888,7 +2901,7 @@ _span_gradient_linear_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
 static void
 _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
                               const Eina_Matrix3 *inv,
-                              int offx EINA_UNUSED, int offy EINA_UNUSED,
+                              int offx, int offy,
                               float atlas_off_x EINA_UNUSED,
                               float atlas_off_y EINA_UNUSED,
                               float *out_a, float *out_b, float *out_c,
@@ -2899,15 +2912,21 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
     *   rx = inv.xx*(x+0.5) + inv.xy*(y+0.5) + inv.xz - fx
     *   ry = inv.yx*(x+0.5) + inv.yy*(y+0.5) + inv.yz - fy
     *
+    * As in the linear case that (x, y) is span-local, so the ector surface
+    * origin (offx, offy) must be subtracted from the shader's surface-space
+    * px/py.  Fold it into the constant terms.
+    *
     * The shader's px/py already include the +0.5 (gl_FragCoord centering),
     * so the constant terms are just inv.xz - fx and inv.yz - fy. */
    *out_a = (float)inv->xx;
    *out_b = (float)inv->xy;
-   *out_c = (float)(inv->xz - gd->radial.fx);
+   *out_c = (float)(inv->xz - gd->radial.fx
+                    - inv->xx * (double)offx - inv->xy * (double)offy);
 
    *out_d = (float)inv->yx;
    *out_e = (float)inv->yy;
-   *out_f = (float)(inv->yz - gd->radial.fy);
+   *out_f = (float)(inv->yz - gd->radial.fy
+                    - inv->yx * (double)offx - inv->yy * (double)offy);
 
    /* Quadratic parameters — pass inv2a instead of a to avoid
     * per-fragment division in the shader. */
