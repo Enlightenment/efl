@@ -27,6 +27,25 @@
 #include "evas_ector_gl_span.h"
 #include "evas_ector_gl_grad_atlas.h"
 
+/* Scratch buffer for the no-EXT_unpack_subimage upload path: span rows are
+ * copied here tightly packed so one glTexSubImage2D covers the whole
+ * sub-rect.  Grown on demand, never shrunk; freed in span_shader_shutdown. */
+static uint8_t *_span_pack_buf = NULL;
+static size_t   _span_pack_sz  = 0;
+
+static uint8_t *
+_span_pack_buf_get(size_t need)
+{
+   if (need > _span_pack_sz)
+     {
+        uint8_t *p = realloc(_span_pack_buf, need);
+        if (!p) return NULL;
+        _span_pack_buf = p;
+        _span_pack_sz  = need;
+     }
+   return _span_pack_buf;
+}
+
 /* ------------------------------------------------------------------ */
 /* GLSL shader source strings                                          */
 /* ------------------------------------------------------------------ */
@@ -980,6 +999,10 @@ span_shader_shutdown(void)
         glDeleteTextures(1, &_white_mask_tex);
         _white_mask_tex = 0;
      }
+
+   free(_span_pack_buf);
+   _span_pack_buf = NULL;
+   _span_pack_sz  = 0;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1123,15 +1146,38 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
                }
              else
                {
-                  int row;
-                  for (row = 0; row < sc->height; row++)
+                  /* No GL_UNPACK_ROW_LENGTH: the span buffer's stride
+                   * ((max_spans + 1) * 4) is wider than the uploaded rect, so
+                   * the rows cannot be handed to GL as-is.  Pack them into a
+                   * contiguous scratch buffer and upload once, rather than
+                   * issuing one call per scanline per shape per frame. */
+                  size_t   row_bytes = (size_t)tex_width * 4;
+                  size_t   need      = row_bytes * (size_t)sc->height;
+                  uint8_t *packed    = _span_pack_buf_get(need);
+
+                  if (packed)
                     {
-                       const uint8_t *src = tex->buffer + (size_t)row * sc->stride;
+                       int row;
+                       for (row = 0; row < sc->height; row++)
+                         memcpy(packed + (size_t)row * row_bytes,
+                                tex->buffer + (size_t)row * sc->stride,
+                                row_bytes);
                        glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                       evas_t->x, evas_t->y + row,
-                                       tex_width, 1,
+                                       evas_t->x, evas_t->y,
+                                       tex_width, sc->height,
                                        evas_t->pt->format,
-                                       GL_UNSIGNED_BYTE, src);
+                                       GL_UNSIGNED_BYTE, packed);
+                    }
+                  else
+                    {
+                       int row;
+                       for (row = 0; row < sc->height; row++)
+                         glTexSubImage2D(GL_TEXTURE_2D, 0,
+                                         evas_t->x, evas_t->y + row,
+                                         tex_width, 1,
+                                         evas_t->pt->format,
+                                         GL_UNSIGNED_BYTE,
+                                         tex->buffer + (size_t)row * sc->stride);
                     }
                }
 
