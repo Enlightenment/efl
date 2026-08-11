@@ -230,26 +230,51 @@ EFL_START_TEST(grad_atlas_no_eviction_of_rows_used_this_frame)
    ck_assert_int_ge(new_row, 0);
    ck_assert_int_eq(_flush_calls, 1);
 
+   /* After the drain, no unflushed draw references any row any more, so the
+    * next several distinct gradients in the SAME pass must resume ordinary
+    * LRU reuse rather than forcing a flush each time - one flush must not
+    * turn into a flush storm for every further gradient. */
+   for (int i = 0; i < 5; i++)
+     {
+        _fill_ramp(ramp, (uint32_t)(20000 + i));
+        int r = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0xD000 + i),
+                                       (uint32_t)(20000 + i), ramp);
+        ck_assert_int_ge(r, 0);
+     }
+   ck_assert_int_eq(_flush_calls, 1);
+
    span_grad_atlas_free(a);
 }
 EFL_END_TEST
 
 EFL_START_TEST(grad_atlas_flush_cb_optional)
 {
-   /* With no callback registered the atlas must still make progress rather
-    * than fail the lookup. */
+   /* With no callback registered, nothing is ever drained, so the atlas
+    * cannot claim any row is safe to reuse once all are pinned.  It falls
+    * back to always returning row 0 for further misses in the same pass -
+    * this is deterministic and must not crash across many repeated
+    * overwrites of that row. */
    Span_Grad_Atlas *a = span_grad_atlas_new();
    ck_assert_ptr_nonnull(a);
    span_grad_atlas_test_enable(a);
 
    uint8_t ramp[SPAN_GRAD_ATLAS_ROW_BYTES];
    span_grad_atlas_frame_begin(a);
-   for (int i = 0; i < SPAN_GRAD_ATLAS_H + 1; i++)
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
      {
         _fill_ramp(ramp, (uint32_t)(i + 1));
         int r = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0x3000 + i),
                                        (uint32_t)(i + 1), ramp);
         ck_assert_int_ge(r, 0);
+     }
+
+   /* Every subsequent distinct gradient in this pass must land on row 0. */
+   for (int i = 0; i < 5; i++)
+     {
+        _fill_ramp(ramp, (uint32_t)(40000 + i));
+        int r = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0x4000 + i),
+                                       (uint32_t)(40000 + i), ramp);
+        ck_assert_int_eq(r, 0);
      }
    span_grad_atlas_free(a);
 }

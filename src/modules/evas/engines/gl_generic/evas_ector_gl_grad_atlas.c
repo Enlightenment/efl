@@ -180,8 +180,31 @@ _alloc_row(Span_Grad_Atlas *a)
      }
    if (best >= 0) return best;
 
-   /* Every row is pinned by this pass.  Drain, then any row may be reused. */
-   if (a->flush_cb) a->flush_cb(a->flush_data);
+   /* Every row is pinned by this pass.  Drain the pending draws, then no
+    * unflushed draw references any row any more - age every pinned row by
+    * one so ordinary LRU resumes for the rest of this pass instead of
+    * flushing again on the very next miss (which would turn a heavy-gradient
+    * pass into one pipe flush per gradient). */
+   if (a->flush_cb)
+     {
+        a->flush_cb(a->flush_data);
+        for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+          if (a->rows[i].last_used == a->current_frame)
+            a->rows[i].last_used = a->current_frame - 1;
+
+        best     = 0;
+        best_age = a->rows[0].last_used;
+        for (int i = 1; i < SPAN_GRAD_ATLAS_H; i++)
+          if (a->rows[i].last_used < best_age)
+            { best = i; best_age = a->rows[i].last_used; }
+        return best;
+     }
+
+   /* No callback registered: nothing was drained, so no row is actually
+    * safe to reuse.  There is no way to make progress otherwise (the
+    * gradient path has no failure mode for "atlas full mid-pass"), so
+    * return row 0 anyway - this is the same degenerate-but-non-crashing
+    * fallback the atlas has always had for an unrecoverable situation. */
    return 0;
 }
 
