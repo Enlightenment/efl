@@ -37,13 +37,13 @@
 
 /* Common varyings present in all variants. */
 static const char _glsl_varyings_common[] =
-   "varying highp vec2 v_fbo_off;\n"
-   "varying highp vec2 v_fill_off;\n"
-   "varying highp vec2 v_stroke_off;\n"
-   "varying highp float v_max_spans;\n"
-   "varying highp float v_has_flags;\n"  /* (has_fill | has_stroke<<1) as float */
-   "varying highp float v_fill_x_min;\n"
-   "varying highp float v_stroke_x_min;\n"
+   "varying SPAN_HP vec2 v_fbo_off;\n"
+   "varying SPAN_HP vec2 v_fill_off;\n"
+   "varying SPAN_HP vec2 v_stroke_off;\n"
+   "varying SPAN_HP float v_max_spans;\n"
+   "varying SPAN_HP float v_has_flags;\n"  /* (has_fill | has_stroke<<1) as float */
+   "varying SPAN_HP float v_fill_x_min;\n"
+   "varying SPAN_HP float v_stroke_x_min;\n"
    "varying mediump vec4 v_mul_col;\n";
 
 static const char _glsl_varyings_solid[] =
@@ -51,15 +51,15 @@ static const char _glsl_varyings_solid[] =
    "varying mediump vec4 v_stroke_col;\n";
 
 static const char _glsl_varyings_gradient[] =
-   "varying highp vec4 v_fill_grad_abc_y;\n"
-   "varying highp vec4 v_fill_grad_def;\n"
-   "varying highp vec4 v_fill_grad_radial;\n"
-   "varying highp vec4 v_stroke_grad_abc_y;\n"
-   "varying highp vec4 v_stroke_grad_def;\n"
-   "varying highp vec4 v_stroke_grad_radial;\n";
+   "varying SPAN_HP vec4 v_fill_grad_abc_y;\n"
+   "varying SPAN_HP vec4 v_fill_grad_def;\n"
+   "varying SPAN_HP vec4 v_fill_grad_radial;\n"
+   "varying SPAN_HP vec4 v_stroke_grad_abc_y;\n"
+   "varying SPAN_HP vec4 v_stroke_grad_def;\n"
+   "varying SPAN_HP vec4 v_stroke_grad_radial;\n";
 
 static const char _glsl_varyings_mask[] =
-   "varying highp vec4 v_mask_off_size;\n"
+   "varying SPAN_HP vec4 v_mask_off_size;\n"
    "varying mediump vec2 v_mask_comp_inv;\n";
 
 /* ------------------------------------------------------------------ */
@@ -192,6 +192,31 @@ static const char _glsl_vs_main_gradient_mask[] =
 /* Shared GLSL fragment shader source fragments                        */
 /* ------------------------------------------------------------------ */
 
+/* Fragment-stage highp is optional in GLSL ES 1.00.  glGetShaderPrecisionFormat
+ * reports range == 0 and precision == 0 when a format is unsupported, which is
+ * how we detect it.  The result is injected as the SPAN_HP macro into *both*
+ * stages, because a varying's precision qualifier has to agree across them. */
+static int _span_fs_highp = -1;   /* -1 unprobed, 0 unsupported, 1 supported */
+
+static int
+_span_fragment_highp_supported(void)
+{
+   GLint range[2] = { 0, 0 };
+   GLint precision = 0;
+
+   if (_span_fs_highp >= 0) return _span_fs_highp;
+
+   glGetShaderPrecisionFormat(GL_FRAGMENT_SHADER, GL_HIGH_FLOAT,
+                              range, &precision);
+   _span_fs_highp = (range[0] != 0 || range[1] != 0 || precision != 0) ? 1 : 0;
+   if (!_span_fs_highp)
+     INF("span shader: fragment highp unsupported, falling back to mediump");
+   return _span_fs_highp;
+}
+
+static const char _glsl_hp_highp[]   = "#define SPAN_HP highp\n";
+static const char _glsl_hp_mediump[] = "#define SPAN_HP mediump\n";
+
 /* Default precision: mediump for register pressure on tilers (V3D 4.2 / Mali).
  * Locals and uniforms that need fp32 (gradient coefficients, gl_FragCoord
  * arithmetic) are explicitly qualified highp at their declaration site. */
@@ -215,8 +240,8 @@ typedef enum {
  * only the shared pool reciprocals and atlas sampler remain as uniforms.
  * u_mask_tex is also a uniform (sampler); only present in mask variants. */
 static const char _glsl_uniforms_shared[] =
-   "uniform highp float u_inv_tw;\n"
-   "uniform highp float u_inv_th;\n"
+   "uniform SPAN_HP float u_inv_tw;\n"
+   "uniform SPAN_HP float u_inv_th;\n"
    "uniform sampler2D u_grad_ramp_atlas;\n"
    "#define MAX_SPANS 64\n";
 
@@ -265,12 +290,12 @@ static const char _glsl_scan_spans[] =
    "\n"
    "/* Scan one span texture row, accumulating coverage-weighted base_col\n"
    " * via premultiplied-alpha src-over into result. */\n"
-   "vec4 scan_spans(sampler2D tex, highp vec2 off, vec4 base_col, highp float px,\n"
-   "                highp float fy, highp float inv_tw, int max_s, int x_min, vec4 res) {\n"
+   "vec4 scan_spans(sampler2D tex, SPAN_HP vec2 off, vec4 base_col, SPAN_HP float px,\n"
+   "                SPAN_HP float fy, SPAN_HP float inv_tw, int max_s, int x_min, vec4 res) {\n"
    "   int sx = x_min;\n"
    "   for (int i = 0; i < MAX_SPANS; i++) {\n"
    "      if (i >= max_s) break;\n"
-   "      highp float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
+   "      SPAN_HP float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
    "      vec4 t = texture2D(tex, vec2(fx, fy));\n"
    "      int gap = int(t.r * 255.0 + 0.5);\n"
    "      int len = int(t.g * 255.0 + 0.5);\n"
@@ -297,15 +322,15 @@ static const char _glsl_scan_spans[] =
 static const char _glsl_grad_spread[] =
    "\n"
    "/* Apply gradient spread mode to t in [-inf, +inf] -> [0, 1].\n"
-   " * Parameter and return type are highp to preserve precision for\n"
+   " * Parameter and return type are SPAN_HP to preserve precision for\n"
    " * REFLECT/REPEAT on surfaces wider than ~1024 px (mediump fract\n"
    " * loses mantissa bits once t > 1024). */\n"
-   "highp float grad_spread(highp float t, int spread) {\n"
+   "SPAN_HP float grad_spread(SPAN_HP float t, int spread) {\n"
    "   if (spread == 1) {\n"
-   "      /* REFLECT: mirror at 0 and 1; arithmetic stays highp */\n"
+   "      /* REFLECT: mirror at 0 and 1; arithmetic stays SPAN_HP */\n"
    "      t = 1.0 - abs(fract(t * 0.5) * 2.0 - 1.0);\n"
    "   } else if (spread == 2) {\n"
-   "      /* REPEAT; fract in highp */\n"
+   "      /* REPEAT; fract in SPAN_HP */\n"
    "      t = fract(t);\n"
    "   } else {\n"
    "      /* PAD (default) */\n"
@@ -325,18 +350,18 @@ static const char _glsl_scan_gradient_spans[] =
    "/* Scan one gradient span texture row.  On hit, compute t per-pixel\n"
    " * (linear or radial) and sample the gradient ramp atlas at ramp_v,\n"
    " * then src-over blend into result. */\n"
-   "vec4 scan_gradient_spans(sampler2D span_tex, highp vec2 off,\n"
-   "                         highp float ramp_v,\n"
-   "                         highp float ga, highp float gb, highp float gc,\n"
+   "vec4 scan_gradient_spans(sampler2D span_tex, SPAN_HP vec2 off,\n"
+   "                         SPAN_HP float ramp_v,\n"
+   "                         SPAN_HP float ga, SPAN_HP float gb, SPAN_HP float gc,\n"
    "                         int gspread, int gtype,\n"
-   "                         highp float gd, highp float ge, highp float gf,\n"
-   "                         highp float gra, highp float grdx, highp float grdy,\n"
-   "                         highp float px, highp float py,\n"
-   "                         highp float fy, highp float inv_tw, int max_s, int x_min, vec4 res) {\n"
+   "                         SPAN_HP float gd, SPAN_HP float ge, SPAN_HP float gf,\n"
+   "                         SPAN_HP float gra, SPAN_HP float grdx, SPAN_HP float grdy,\n"
+   "                         SPAN_HP float px, SPAN_HP float py,\n"
+   "                         SPAN_HP float fy, SPAN_HP float inv_tw, int max_s, int x_min, vec4 res) {\n"
    "   int sx = x_min;\n"
    "   for (int i = 0; i < MAX_SPANS; i++) {\n"
    "      if (i >= max_s) break;\n"
-   "      highp float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
+   "      SPAN_HP float fx = (off.x + float(i) + 0.5) * inv_tw;\n"
    "      vec4 s = texture2D(span_tex, vec2(fx, fy));\n"
    "      int gap = int(s.r * 255.0 + 0.5);\n"
    "      int len = int(s.g * 255.0 + 0.5);\n"
@@ -344,22 +369,22 @@ static const char _glsl_scan_gradient_spans[] =
    "      if (len == 0) break;\n"
    "      sx += gap;\n"
    "      if (int(px) >= sx && int(px) < sx + len) {\n"
-   "         highp float t;\n"
+   "         SPAN_HP float t;\n"
    "         if (gtype == 1) {\n"
    "            /* Radial gradient: quadratic solve in gradient space */\n"
-   "            highp float rx = ga * px + gb * py + gc;\n"
-   "            highp float ry = gd * px + ge * py + gf;\n"
-   "            highp float b_val = 2.0 * (rx * grdx + ry * grdy);\n"
+   "            SPAN_HP float rx = ga * px + gb * py + gc;\n"
+   "            SPAN_HP float ry = gd * px + ge * py + gf;\n"
+   "            SPAN_HP float b_val = 2.0 * (rx * grdx + ry * grdy);\n"
    "            /* gra = inv2a = 0.5/a, precomputed on CPU to avoid\n"
    "             * per-fragment division.  Pre-scale b and det like\n"
    "             * the software forward-differencing path does. */\n"
-   "            highp float b_s = b_val * gra;\n"
-   "            highp float det = b_s * b_s + (rx * rx + ry * ry) * 2.0 * gra;\n"
+   "            SPAN_HP float b_s = b_val * gra;\n"
+   "            SPAN_HP float det = b_s * b_s + (rx * rx + ry * ry) * 2.0 * gra;\n"
    "            t = sqrt(max(det, 0.0)) - b_s;\n"
    "         } else {\n"
    "            /* Linear gradient: affine dot product.\n"
    "             * All operands (ga, gb, gc, px, py) and destination t\n"
-   "             * are highp; result lands in highp t. */\n"
+   "             * are SPAN_HP; result lands in SPAN_HP t. */\n"
    "            t = ga * px + gb * py + gc;\n"
    "         }\n"
    "         t = grad_spread(t, gspread);\n"
@@ -384,17 +409,17 @@ static const char _glsl_main_solid_body[] =
    "   int has_s  = int(v_has_flags + 0.5) / 2;\n"
    "   int fill_xm = int(v_fill_x_min + 0.5);\n"
    "   int stk_xm  = int(v_stroke_x_min + 0.5);\n"
-   "   highp float px = gl_FragCoord.x - v_fbo_off.x;\n"
-   "   highp float py = gl_FragCoord.y - v_fbo_off.y;\n"
+   "   SPAN_HP float px = gl_FragCoord.x - v_fbo_off.x;\n"
+   "   SPAN_HP float py = gl_FragCoord.y - v_fbo_off.y;\n"
    "   vec4 result = vec4(0.0);\n"
    "\n"
    "   if (has_f == 1) {\n"
-   "      highp float fy = (v_fill_off.y + py) * u_inv_th;\n"
+   "      SPAN_HP float fy = (v_fill_off.y + py) * u_inv_th;\n"
    "      result = scan_spans(u_fill_spans, v_fill_off, v_fill_col,\n"
    "                          px, fy, u_inv_tw, max_s, fill_xm, result);\n"
    "   }\n"
    "   if (has_s == 1) {\n"
-   "      highp float fy = (v_stroke_off.y + py) * u_inv_th;\n"
+   "      SPAN_HP float fy = (v_stroke_off.y + py) * u_inv_th;\n"
    "      result = scan_spans(u_stroke_spans, v_stroke_off, v_stroke_col,\n"
    "                          px, fy, u_inv_tw, max_s, stk_xm, result);\n"
    "   }\n";
@@ -414,12 +439,12 @@ static const char _glsl_main_gradient_body[] =
    "   int fill_gspread = int(v_fill_grad_radial.w + 0.5);\n"
    "   int stk_gtype    = int(v_stroke_grad_def.w + 0.5);\n"
    "   int stk_gspread  = int(v_stroke_grad_radial.w + 0.5);\n"
-   "   highp float px = gl_FragCoord.x - v_fbo_off.x;\n"
-   "   highp float py = gl_FragCoord.y - v_fbo_off.y;\n"
+   "   SPAN_HP float px = gl_FragCoord.x - v_fbo_off.x;\n"
+   "   SPAN_HP float py = gl_FragCoord.y - v_fbo_off.y;\n"
    "   vec4 result = vec4(0.0);\n"
    "\n"
    "   if (has_f == 1) {\n"
-   "      highp float fy = (v_fill_off.y + py) * u_inv_th;\n"
+   "      SPAN_HP float fy = (v_fill_off.y + py) * u_inv_th;\n"
    "      result = scan_gradient_spans(\n"
    "                  u_fill_spans, v_fill_off,\n"
    "                  v_fill_grad_abc_y.w,\n"
@@ -430,7 +455,7 @@ static const char _glsl_main_gradient_body[] =
    "                  px, py, fy, u_inv_tw, max_s, fill_xm, result);\n"
    "   }\n"
    "   if (has_s == 1) {\n"
-   "      highp float fy = (v_stroke_off.y + py) * u_inv_th;\n"
+   "      SPAN_HP float fy = (v_stroke_off.y + py) * u_inv_th;\n"
    "      result = scan_gradient_spans(\n"
    "                  u_stroke_spans, v_stroke_off,\n"
    "                  v_stroke_grad_abc_y.w,\n"
@@ -497,6 +522,7 @@ _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
    const char *parts[20];
    int n = 0;
 
+   parts[n++] = _span_fragment_highp_supported() ? _glsl_hp_highp : _glsl_hp_mediump;
    parts[n++] = _glsl_precision;
    /* Shared uniforms: pool reciprocals + atlas sampler. */
    parts[n++] = _glsl_uniforms_shared;
@@ -531,9 +557,10 @@ _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
 static const char **
 _span_vs_parts_build(int kind, int mask, int *out_count)
 {
-   const char *parts[12];
+   const char *parts[13];
    int n = 0;
 
+   parts[n++] = _span_fragment_highp_supported() ? _glsl_hp_highp : _glsl_hp_mediump;
    parts[n++] = _glsl_precision;
    /* Attribute declarations. */
    parts[n++] = _glsl_attributes_common;
