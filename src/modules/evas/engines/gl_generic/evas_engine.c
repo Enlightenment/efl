@@ -3087,7 +3087,7 @@ eng_ector_end(void *engine,
                 eng_image_size_get(engine, glim, &w, &h);
                 gc = gl_generic_context_find(engine, EINA_TRUE);
 
-                span_shader_init();
+                if (!span_shader_init()) goto span_done;
 
                 /* Upload textures for all collectors. */
                 for (ci = 0; ci < fill_count; ci++)

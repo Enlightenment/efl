@@ -377,6 +377,9 @@ void span_collector_delete_textures(Span_Collector *sc);
  */
 Eina_Bool span_shader_init(void);
 
+/* EINA_TRUE only when span_shader_init() has run and every variant linked. */
+Eina_Bool span_shader_available(void);
+
 /**
  * Delete the GL programs and reset internal shader state.
  * Must be called from the GL thread.

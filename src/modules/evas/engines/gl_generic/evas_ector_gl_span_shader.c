@@ -606,6 +606,18 @@ _span_shader_pick(int kind, Span_Bind_Set bind, int mask)
    return &_span_shaders[kind][(int)bind][mask ? 1 : 0];
 }
 
+/* Shader init memo.  A failed compile must never be retried: without this
+ * the whole 12-program build is re-attempted on every eng_ector_end, which
+ * on a device that cannot compile them costs a full compile plus an
+ * unbounded ERR log flood every frame. */
+typedef enum {
+   SPAN_SHADER_UNTRIED = 0,
+   SPAN_SHADER_OK      = 1,
+   SPAN_SHADER_FAILED  = 2
+} Span_Shader_State;
+
+static Span_Shader_State _span_shader_state = SPAN_SHADER_UNTRIED;
+
 /* 1x1 white texture — kept for potential fallback use; not bound during
  * normal rendering (non-mask shaders have no mask sampler at all). */
 static GLuint _white_mask_tex = 0;
@@ -780,6 +792,9 @@ span_shader_init(void)
    };
    int kind, b, mask;
 
+   if (_span_shader_state == SPAN_SHADER_OK)     return EINA_TRUE;
+   if (_span_shader_state == SPAN_SHADER_FAILED) return EINA_FALSE;
+
    for (kind = 0; kind < 2; kind++)
      {
         for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
@@ -798,6 +813,7 @@ span_shader_init(void)
                        free(vs_parts);
                        ERR("span shader parts alloc failed (%s %s %s)",
                            kind_name[kind], bind_name[b], mask ? "mask" : "no-mask");
+                       _span_shader_state = SPAN_SHADER_FAILED;
                        return EINA_FALSE;
                     }
                   if (!_link_program(ss, vs_parts, vn, fs_parts, fn))
@@ -806,6 +822,7 @@ span_shader_init(void)
                        free(vs_parts);
                        ERR("span shader link failed (%s %s %s)",
                            kind_name[kind], bind_name[b], mask ? "mask" : "no-mask");
+                       _span_shader_state = SPAN_SHADER_FAILED;
                        return EINA_FALSE;
                     }
                   free(fs_parts);
@@ -827,13 +844,22 @@ span_shader_init(void)
         glBindTexture(GL_TEXTURE_2D, 0);
      }
 
+   _span_shader_state = SPAN_SHADER_OK;
    return EINA_TRUE;
+}
+
+Eina_Bool
+span_shader_available(void)
+{
+   return _span_shader_state == SPAN_SHADER_OK;
 }
 
 void
 span_shader_shutdown(void)
 {
    int kind, b, mask;
+
+   _span_shader_state = SPAN_SHADER_UNTRIED;
 
    for (kind = 0; kind < 2; kind++)
      for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
@@ -1068,12 +1094,12 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
 
    if (!vdata || nverts == 0) return;
 
-   /* Ensure all 12 shader programs are compiled. */
-   if (!_span_shaders[0][0][0].program)
-     {
-        if (!span_shader_init())
-          return;
-     }
+   /* Ensure all 12 shader programs are compiled.  Checking the specific
+    * variant matters: span_shader_init() aborts at the first failing
+    * variant, so [0][0][0] linking says nothing about the one we are about
+    * to bind, and glUseProgram(0) yields GL_INVALID_OPERATION. */
+   if (!span_shader_init()) return;
+   if (!ss->program) return;
 
    glUseProgram(ss->program);
 
