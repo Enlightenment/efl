@@ -280,6 +280,60 @@ EFL_START_TEST(grad_atlas_flush_cb_optional)
 }
 EFL_END_TEST
 
+/* Reproduces the all-pinned branch of _alloc_row() being reached while
+ * current_frame == 0 (i.e. before the first span_grad_atlas_frame_begin()
+ * call).  Regression test for a uint32_t underflow: `current_frame - 1`
+ * used to wrap to UINT32_MAX, flattening the LRU forever (row 0 would be
+ * returned for the rest of the atlas's lifetime, even in later frames).
+ * With the fix, ageing is clamped at frame 0 instead of underflowing. */
+EFL_START_TEST(grad_atlas_all_pinned_at_frame_zero)
+{
+   Span_Grad_Atlas *a = span_grad_atlas_new();
+   ck_assert_ptr_nonnull(a);
+   span_grad_atlas_test_enable(a);
+   _flush_calls = 0;
+   span_grad_atlas_flush_cb_set(a, _count_flush, NULL);
+
+   uint8_t ramp[SPAN_GRAD_ATLAS_ROW_BYTES];
+
+   /* Deliberately do NOT call span_grad_atlas_frame_begin(): current_frame
+    * stays at its calloc'd value of 0, matching every row's initial
+    * last_used, so the atlas is "all pinned" as soon as it fills up. */
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+     {
+        _fill_ramp(ramp, (uint32_t)(i + 1));
+        int r = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0x5000 + i),
+                                       (uint32_t)(i + 1), ramp);
+        ck_assert_int_ge(r, 0);
+     }
+   ck_assert_int_eq(_flush_calls, 0);
+
+   /* The 65th distinct ramp forces the all-pinned branch at current_frame
+    * == 0.  It must not crash and must drain via the flush callback.
+    *
+    * Note: at current_frame == 0 the post-flush ageing is clamped to 0
+    * (guarded, see the fix), so aged rows still compare equal to
+    * current_frame and read as "pinned" again on the very next miss.  This
+    * means every further miss in this same frame-0 pass re-triggers a
+    * flush - a degraded-but-safe outcome, not the resumed-LRU behaviour
+    * normal passes (current_frame > 0) get.  The regression this guards
+    * against is the uint32_t underflow that made rows unevictable *forever*
+    * (UINT32_MAX never ages further); what matters here is that every
+    * lookup keeps succeeding and the row index stays valid. */
+   for (int i = 0; i < 6; i++)
+     {
+        _fill_ramp(ramp, (uint32_t)(30000 + i));
+        int r = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0x6000 + i),
+                                       (uint32_t)(30000 + i), ramp);
+        ck_assert_int_ge(r, 0);
+        ck_assert_int_lt(r, SPAN_GRAD_ATLAS_H);
+     }
+   ck_assert_int_gt(_flush_calls, 0);
+
+   span_grad_atlas_free(a);
+}
+EFL_END_TEST
+
 void
 ector_test_grad_atlas(TCase *tc)
 {
@@ -291,4 +345,5 @@ ector_test_grad_atlas(TCase *tc)
    tcase_add_test(tc, grad_atlas_version_change_evicts_or_refreshes);
    tcase_add_test(tc, grad_atlas_no_eviction_of_rows_used_this_frame);
    tcase_add_test(tc, grad_atlas_flush_cb_optional);
+   tcase_add_test(tc, grad_atlas_all_pinned_at_frame_zero);
 }

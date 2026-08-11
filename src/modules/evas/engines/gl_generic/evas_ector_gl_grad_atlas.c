@@ -190,7 +190,12 @@ _alloc_row(Span_Grad_Atlas *a)
         a->flush_cb(a->flush_data);
         for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
           if (a->rows[i].last_used == a->current_frame)
-            a->rows[i].last_used = a->current_frame - 1;
+            /* current_frame is uint32_t; guard against underflow when this
+             * branch is reached before the first frame_begin() (current_frame
+             * == 0).  Without the guard every row's age would wrap to
+             * UINT32_MAX and never be beaten again, flattening the LRU for
+             * the atlas's lifetime. */
+            a->rows[i].last_used = a->current_frame ? a->current_frame - 1 : 0;
 
         best     = 0;
         best_age = a->rows[0].last_used;

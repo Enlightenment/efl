@@ -2660,8 +2660,15 @@ eng_ector_mask_surface_create(void *engine, int width, int height, int *error)
      }
    else
      {
-        /* CPU fallback: no atlas concern, delegate to the regular path. */
-        return eng_ector_surface_create(engine, width, height, error);
+        /* Span path unusable: this GL-mask branch has no CPU-backed
+         * counterpart that eng_ector_end() knows how to consume — the mask
+         * it produces is only ever read from espd->gl_comp_surface inside
+         * the span draw loop.  Fail here so efl_canvas_vg_container.c's
+         * caller takes its "gl_mask_fallback" path instead, which uses the
+         * software rasterizer's own CPU comp-buffer masking and is the one
+         * that actually applies the mask in fallback mode. */
+        *error = EINA_TRUE;
+        return NULL;
      }
 }
 

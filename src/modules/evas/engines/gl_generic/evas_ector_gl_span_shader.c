@@ -282,6 +282,17 @@ _span_tier_get(void)
    varyings /= 4;
 #endif
 
+   if (attribs == 0 && varyings == 0)
+     {
+        /* Both queries came back 0: this means glGetIntegerv failed (e.g. no
+         * current GL context yet), not that the device genuinely reports 0
+         * attributes/varyings.  Do not memoize — leave _span_tier_resolved
+         * unresolved so the next call (once a context is current) retries. */
+        INF("span tier query returned 0/0; assuming no current GL context, "
+            "will retry on next call");
+        return SPAN_TIER_OFF;
+     }
+
    if (attribs  < SPAN_WIDE_MAX_ATTRIBS ||
        varyings < SPAN_WIDE_MAX_VARYINGS)
      {
@@ -963,12 +974,6 @@ span_shader_init(void)
 }
 
 Eina_Bool
-span_shader_available(void)
-{
-   return _span_shader_state == SPAN_SHADER_OK;
-}
-
-Eina_Bool
 span_path_usable(void)
 {
    if (_span_tier_get() == SPAN_TIER_OFF) return EINA_FALSE;
@@ -981,6 +986,8 @@ span_shader_shutdown(void)
    int kind, b, mask;
 
    _span_shader_state = SPAN_SHADER_UNTRIED;
+   _span_tier_resolved = -1;
+   _span_fs_highp = -1;
 
    for (kind = 0; kind < 2; kind++)
      for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
