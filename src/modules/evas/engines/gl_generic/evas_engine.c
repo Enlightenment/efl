@@ -2601,17 +2601,31 @@ eng_ector_surface_create(void *engine, int width, int height, int *error)
 
    *error = EINA_FALSE;
 
-   /* FBO-backed render surface.  The span shader draws directly into the
-    * texture attached to this image's FBO.  Use the atlas pool so multiple
-    * VG objects share a single GL FBO texture, eliminating per-frame
-    * glGenFramebuffers/glDeleteFramebuffers overhead when VG object sizes
-    * change.  The image's tex->x/y carry the atlas sub-region offset. */
-   {
-      Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
-      surface = evas_gl_common_image_surface_noscale_new(ctx, width, height, EINA_TRUE);
-      if (!surface)
-        *error = EINA_TRUE;
-   }
+   if (span_path_usable())
+     {
+        /* FBO-backed render surface.  The span shader draws directly into the
+         * texture attached to this image's FBO.  Use the atlas pool so multiple
+         * VG objects share a single GL FBO texture, eliminating per-frame
+         * glGenFramebuffers/glDeleteFramebuffers overhead when VG object sizes
+         * change.  The image's tex->x/y carry the atlas sub-region offset. */
+        Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
+        surface = evas_gl_common_image_surface_noscale_new(ctx, width, height, EINA_TRUE);
+        if (!surface)
+          *error = EINA_TRUE;
+     }
+   else
+     {
+        /* Span path unusable: fall back to a plain CPU-backed image.  The
+         * software rasterizer draws into it directly (no span collectors
+         * installed, see eng_ector_begin) and eng_ector_end uploads the
+         * result to the GPU with eng_image_data_put. */
+        surface = eng_image_new_from_copied_data(engine, width, height, NULL,
+                                                  EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
+        if (!surface)
+          *error = EINA_TRUE;
+        else /* Hint for zero-copy texture upload. */
+          eng_image_content_hint_set(engine, surface, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+     }
 
    return surface;
 }
@@ -2621,16 +2635,22 @@ eng_ector_mask_surface_create(void *engine, int width, int height, int *error)
 {
    *error = EINA_FALSE;
 
-   /* Mask FBO must use a dedicated texture — not shared with the atlas.
-    * The main VG FBO and the mask FBO would otherwise map to the same GL
-    * texture object, creating a read/write feedback loop when the span
-    * shader samples the mask while rendering into the main FBO. */
-   {
-      Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
-      void *surface = evas_gl_common_image_surface_noscale_noatlas_new(ctx, width, height, EINA_TRUE);
-      if (!surface) *error = EINA_TRUE;
-      return surface;
-   }
+   if (span_path_usable())
+     {
+        /* Mask FBO must use a dedicated texture — not shared with the atlas.
+         * The main VG FBO and the mask FBO would otherwise map to the same GL
+         * texture object, creating a read/write feedback loop when the span
+         * shader samples the mask while rendering into the main FBO. */
+        Evas_Engine_GL_Context *ctx = gl_generic_context_find(engine, EINA_TRUE);
+        void *surface = evas_gl_common_image_surface_noscale_noatlas_new(ctx, width, height, EINA_TRUE);
+        if (!surface) *error = EINA_TRUE;
+        return surface;
+     }
+   else
+     {
+        /* CPU fallback: no atlas concern, delegate to the regular path. */
+        return eng_ector_surface_create(engine, width, height, error);
+     }
 }
 
 static void
@@ -2744,6 +2764,30 @@ eng_ector_begin(void *engine, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
                 int x, int y, Eina_Bool do_async EINA_UNUSED)
 {
+   if (!span_path_usable())
+     {
+        /* CPU fallback: surface is a plain image (see eng_ector_surface_create).
+         * Draw directly into the image's own pixel buffer with the software
+         * rasterizer, exactly as the engine did before the span path existed.
+         * No span collectors are involved, so ector must write into pixels
+         * that eng_ector_end can hand straight back to the GPU. */
+        Evas_GL_Image *glim = surface;
+        DATA32 *pixels;
+        int w, h, stride, load_err;
+
+        glim = eng_image_data_get(engine, glim, EINA_TRUE, &pixels, &load_err, NULL);
+        if (!glim || !pixels) return EINA_FALSE;
+        eng_image_stride_get(engine, glim, &stride);
+        eng_image_size_get(engine, glim, &w, &h);
+
+        memset(pixels, 0, stride * h);
+
+        ector_buffer_pixels_set(ector, pixels, w, h, stride,
+                                EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_surface_reference_point_set(ector, x, y);
+        return EINA_TRUE;
+     }
+
    {
       Evas_GL_Image *glim = surface;
       int w, h;
@@ -2809,6 +2853,12 @@ eng_ector_begin(void *engine, void *surface,
                 Span_Data *sd = &pd->rasterizer->fill_data;
                 sd->span_collector               = NULL;
                 sd->span_is_stroke               = EINA_FALSE;
+
+                /* Reaching here means span_path_usable() already returned
+                 * EINA_TRUE (checked at function entry above) — the
+                 * !span_path_usable() case returns early with the CPU
+                 * fallback and never installs collectors, so ector does not
+                 * emit spans that nothing consumes. */
                 sd->collector_solid              = _collect_spans_solid;
                 sd->collector_gradient           = _collect_spans_gradient;
                 sd->collector_composite          = _collect_spans_composite;
@@ -3064,6 +3114,27 @@ eng_ector_end(void *engine,
               Ector_Surface *ector,
               Eina_Bool do_async EINA_UNUSED)
 {
+   if (!span_path_usable())
+     {
+        /* CPU fallback: the software rasterizer wrote directly into the
+         * image's own pixel buffer (set up in eng_ector_begin).  Push it
+         * to the GPU the same way the engine did before the span path
+         * existed.  The double eng_image_data_put() call mirrors that
+         * pre-span code: the first marks the image dirty, the second
+         * uploads it. */
+        Evas_GL_Image *glim = surface;
+        DATA32 *pixels;
+        int load_err;
+
+        glim = eng_image_data_get(engine, glim, EINA_FALSE, &pixels, &load_err, NULL);
+
+        eng_image_data_put(engine, glim, pixels);
+        eng_image_data_put(engine, glim, pixels);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        evas_common_cpu_end_opt();
+        return;
+     }
+
    {
       Ector_Software_Surface_Data *espd = efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
       Evas_GL_Image *glim = surface;
