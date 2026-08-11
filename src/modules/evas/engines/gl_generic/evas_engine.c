@@ -2856,6 +2856,23 @@ eng_ector_begin(void *engine, void *surface,
            Ector_Software_Surface_Data *pd = efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
            if (!pd) return EINA_FALSE;
 
+           /* Collectors survive across passes and their Evas_GL_Textures are
+            * overwritten in place by span_collector_upload_textures.  If this
+            * surface already ran a pass whose draws are still queued, those
+            * uploads would land in the GL stream ahead of the draw that reads
+            * them, and the earlier pass would sample this pass's spans.
+            * Drain first.  In the normal single-pass case eng_ector_end's
+            * target_surface_set has already flushed, so this is a cheap
+            * no-op: evas_gl_common_context_flush stops at the first empty
+            * pipe. */
+           if (pd->span_collectors_fill_count > 0 ||
+               pd->span_collectors_stroke_count > 0)
+             {
+                Evas_Engine_GL_Context *fgc =
+                   gl_generic_context_find(engine, EINA_FALSE);
+                if (fgc) evas_gl_common_context_flush(fgc);
+             }
+
            /* Reset counts — existing collectors are reused by the alloc cb. */
            pd->span_collectors_fill_count   = 0;
            pd->span_collectors_stroke_count = 0;
