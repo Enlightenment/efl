@@ -150,6 +150,15 @@ egl_display_get(Render_Engine_GL_Generic *engine)
 
 void eng_image_free(void *engine, void *image);
 
+/* Drain span draws that reference atlas rows, so a row can be safely
+ * overwritten.  See _alloc_row in evas_ector_gl_grad_atlas.c. */
+static void
+_span_grad_atlas_flush_cb(void *data)
+{
+   Evas_Engine_GL_Context *gc = gl_generic_context_find(data, EINA_FALSE);
+   if (gc) evas_gl_common_context_flush(gc);
+}
+
 static void *
 eng_engine_new(void)
 {
@@ -162,6 +171,9 @@ eng_engine_new(void)
    /* Gradient ramp atlas: NULL return means atlas unavailable — gradient
     * shapes will be skipped per the spec error table (no-op, non-fatal). */
    engine->grad_atlas = span_grad_atlas_new();
+   if (engine->grad_atlas)
+     span_grad_atlas_flush_cb_set(engine->grad_atlas,
+                                  _span_grad_atlas_flush_cb, engine);
 
    return engine;
 }

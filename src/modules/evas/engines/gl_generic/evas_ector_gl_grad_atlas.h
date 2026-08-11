@@ -49,6 +49,8 @@ struct _Span_Grad_Atlas
    Span_Grad_Atlas_Row  rows[SPAN_GRAD_ATLAS_H];
    uint32_t             current_frame;        /* monotonic, incremented per render pass */
    int                  disabled;             /* 1 if alloc failed; gradient path skips */
+   void               (*flush_cb)(void *data);  /* drains pending draws */
+   void                *flush_data;
 #ifdef SPAN_GRAD_ATLAS_TEST_BUILD
    int                  test_skip_gl;         /* bypass GL; uploads are no-ops */
 #endif
@@ -62,6 +64,13 @@ void span_grad_atlas_free(Span_Grad_Atlas *a);
 
 /* Begin a new render pass — bumps the LRU frame counter. */
 void span_grad_atlas_frame_begin(Span_Grad_Atlas *a);
+
+/* Register a callback that drains any draw calls referencing atlas rows.
+ * Called when every row has already been used in the current pass and a new
+ * ramp needs one; without it an in-use row would be overwritten before the
+ * draws referencing it were submitted. */
+void span_grad_atlas_flush_cb_set(Span_Grad_Atlas *a,
+                                  void (*cb)(void *data), void *data);
 
 /* Hash 4096 bytes of ramp content.  Public so tests can reach it. */
 uint32_t span_grad_atlas_hash(const uint8_t *bytes);

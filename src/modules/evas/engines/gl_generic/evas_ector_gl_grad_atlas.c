@@ -113,6 +113,15 @@ _ensure_gl(Span_Grad_Atlas *a)
    return 1;
 }
 
+void
+span_grad_atlas_flush_cb_set(Span_Grad_Atlas *a,
+                             void (*cb)(void *data), void *data)
+{
+   if (!a) return;
+   a->flush_cb   = cb;
+   a->flush_data = data;
+}
+
 /* Find row by (grad_id, version) — O(64). Returns row idx or -1. */
 static int
 _find_identity(Span_Grad_Atlas *a, void *grad_id, uint32_t version)
@@ -141,19 +150,39 @@ _find_by_content(Span_Grad_Atlas *a, uint32_t hash, const uint8_t *bytes)
    return -1;
 }
 
-/* Free row, else evict the smallest-last_used row.  Returns idx. */
+/* Free row, else evict the least recently used row that is NOT already in
+ * use by the current pass.
+ *
+ * Rows stamped with current_frame are referenced by draws that have been
+ * recorded but not yet submitted - span pushes are batched and flushed at
+ * the end of the pass, and grad_ramp_y travels per-vertex.  Overwriting such
+ * a row makes the earlier shape sample the newer ramp.  When every row is
+ * pinned, drain the pending draws first; after that the rows are free to
+ * reuse.
+ *
+ * This also repairs a degenerate LRU: last_used is a per-pass counter, so
+ * once the atlas fills within one pass every row compares equal and the
+ * strict < below never beats index 0, meaning the pass evicted its own
+ * earliest row every time. */
 static int
 _alloc_row(Span_Grad_Atlas *a)
 {
    for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
      if (!a->rows[i].occupied) return i;
 
-   int      best     = 0;
-   uint32_t best_age = a->rows[0].last_used;
-   for (int i = 1; i < SPAN_GRAD_ATLAS_H; i++)
-     if (a->rows[i].last_used < best_age)
-       { best = i; best_age = a->rows[i].last_used; }
-   return best;
+   int      best     = -1;
+   uint32_t best_age = 0;
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+     {
+        if (a->rows[i].last_used == a->current_frame) continue; /* pinned */
+        if (best < 0 || a->rows[i].last_used < best_age)
+          { best = i; best_age = a->rows[i].last_used; }
+     }
+   if (best >= 0) return best;
+
+   /* Every row is pinned by this pass.  Drain, then any row may be reused. */
+   if (a->flush_cb) a->flush_cb(a->flush_data);
+   return 0;
 }
 
 /* Upload bytes to row idx via glTexSubImage2D and copy to mirror.

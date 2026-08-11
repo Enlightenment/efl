@@ -195,6 +195,66 @@ EFL_START_TEST(grad_atlas_version_change_evicts_or_refreshes)
 }
 EFL_END_TEST
 
+/* Counts flush-callback invocations for the exhaustion test. */
+static int _flush_calls = 0;
+static void _count_flush(void *data EINA_UNUSED) { _flush_calls++; }
+
+EFL_START_TEST(grad_atlas_no_eviction_of_rows_used_this_frame)
+{
+   Span_Grad_Atlas *a = span_grad_atlas_new();
+   ck_assert_ptr_nonnull(a);
+   span_grad_atlas_test_enable(a);
+   _flush_calls = 0;
+   span_grad_atlas_flush_cb_set(a, _count_flush, NULL);
+
+   uint8_t ramp[SPAN_GRAD_ATLAS_ROW_BYTES];
+
+   /* Fill all 64 rows within a SINGLE frame. */
+   span_grad_atlas_frame_begin(a);
+   int rows[SPAN_GRAD_ATLAS_H];
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
+     {
+        _fill_ramp(ramp, (uint32_t)(i + 1));
+        rows[i] = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0x2000 + i),
+                                         (uint32_t)(i + 1), ramp);
+        ck_assert_int_ge(rows[i], 0);
+     }
+
+   /* No flush needed yet: every row was free when it was taken. */
+   ck_assert_int_eq(_flush_calls, 0);
+
+   /* The 65th distinct ramp, still in the same frame, must force a flush
+    * before reusing a row that this frame's pending draws still reference. */
+   _fill_ramp(ramp, 9999);
+   int new_row = span_grad_atlas_lookup(a, (void *)0xCAFE, 9999, ramp);
+   ck_assert_int_ge(new_row, 0);
+   ck_assert_int_eq(_flush_calls, 1);
+
+   span_grad_atlas_free(a);
+}
+EFL_END_TEST
+
+EFL_START_TEST(grad_atlas_flush_cb_optional)
+{
+   /* With no callback registered the atlas must still make progress rather
+    * than fail the lookup. */
+   Span_Grad_Atlas *a = span_grad_atlas_new();
+   ck_assert_ptr_nonnull(a);
+   span_grad_atlas_test_enable(a);
+
+   uint8_t ramp[SPAN_GRAD_ATLAS_ROW_BYTES];
+   span_grad_atlas_frame_begin(a);
+   for (int i = 0; i < SPAN_GRAD_ATLAS_H + 1; i++)
+     {
+        _fill_ramp(ramp, (uint32_t)(i + 1));
+        int r = span_grad_atlas_lookup(a, (void *)(uintptr_t)(0x3000 + i),
+                                       (uint32_t)(i + 1), ramp);
+        ck_assert_int_ge(r, 0);
+     }
+   span_grad_atlas_free(a);
+}
+EFL_END_TEST
+
 void
 ector_test_grad_atlas(TCase *tc)
 {
@@ -204,4 +264,6 @@ ector_test_grad_atlas(TCase *tc)
    tcase_add_test(tc, grad_atlas_content_dedup_across_distinct_grad_ids);
    tcase_add_test(tc, grad_atlas_hash_collision_distinguished_by_memcmp);
    tcase_add_test(tc, grad_atlas_version_change_evicts_or_refreshes);
+   tcase_add_test(tc, grad_atlas_no_eviction_of_rows_used_this_frame);
+   tcase_add_test(tc, grad_atlas_flush_cb_optional);
 }
