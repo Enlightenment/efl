@@ -217,6 +217,68 @@ _span_fragment_highp_supported(void)
 static const char _glsl_hp_highp[]   = "#define SPAN_HP highp\n";
 static const char _glsl_hp_mediump[] = "#define SPAN_HP mediump\n";
 
+/* Widest variant (gradient + mask) resource usage, counted from the shader
+ * source blocks: 5 common + 6 gradient + 2 mask attributes, and roughly 11
+ * packed varying vectors.  GLES2 guarantees only 8 of each. */
+#define SPAN_WIDE_MAX_ATTRIBS   13
+#define SPAN_WIDE_MAX_VARYINGS  11
+
+typedef enum {
+   SPAN_TIER_AUTO = 0,
+   SPAN_TIER_WIDE = 1,
+   SPAN_TIER_OFF  = 2
+} Span_Tier;
+
+static int _span_tier_resolved = -1;  /* -1 unresolved, else Span_Tier */
+
+static Span_Tier
+_span_tier_get(void)
+{
+   const char *env;
+   GLint attribs = 0, varyings = 0;
+
+   if (_span_tier_resolved >= 0) return (Span_Tier)_span_tier_resolved;
+
+   env = getenv("EVAS_GL_SPAN_TIER");
+   if (env)
+     {
+        if (!strcmp(env, "wide"))      { _span_tier_resolved = SPAN_TIER_WIDE; goto done; }
+        if (!strcmp(env, "off"))       { _span_tier_resolved = SPAN_TIER_OFF;  goto done; }
+        if (!strcmp(env, "compact"))
+          {
+             ERR("EVAS_GL_SPAN_TIER=compact is not implemented yet "
+                 "(Stage 2); falling back to auto");
+          }
+        else if (strcmp(env, "auto"))
+          {
+             ERR("EVAS_GL_SPAN_TIER: unknown value '%s'; falling back to auto", env);
+          }
+     }
+
+   glGetIntegerv(GL_MAX_VERTEX_ATTRIBS,  &attribs);
+#ifdef GL_MAX_VARYING_VECTORS
+   glGetIntegerv(GL_MAX_VARYING_VECTORS, &varyings);
+#else
+   glGetIntegerv(GL_MAX_VARYING_FLOATS, &varyings);
+   varyings /= 4;
+#endif
+
+   if (attribs  < SPAN_WIDE_MAX_ATTRIBS ||
+       varyings < SPAN_WIDE_MAX_VARYINGS)
+     {
+        INF("span path disabled: device reports %d vertex attributes and %d "
+            "varying vectors, the span shaders need %d and %d",
+            (int)attribs, (int)varyings,
+            SPAN_WIDE_MAX_ATTRIBS, SPAN_WIDE_MAX_VARYINGS);
+        _span_tier_resolved = SPAN_TIER_OFF;
+     }
+   else
+     _span_tier_resolved = SPAN_TIER_WIDE;
+
+done:
+   return (Span_Tier)_span_tier_resolved;
+}
+
 /* Default precision: mediump for register pressure on tilers (V3D 4.2 / Mali).
  * Locals and uniforms that need fp32 (gradient coefficients, gl_FragCoord
  * arithmetic) are explicitly qualified highp at their declaration site. */
@@ -822,6 +884,12 @@ span_shader_init(void)
    if (_span_shader_state == SPAN_SHADER_OK)     return EINA_TRUE;
    if (_span_shader_state == SPAN_SHADER_FAILED) return EINA_FALSE;
 
+   if (_span_tier_get() == SPAN_TIER_OFF)
+     {
+        _span_shader_state = SPAN_SHADER_FAILED;
+        return EINA_FALSE;
+     }
+
    for (kind = 0; kind < 2; kind++)
      {
         for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
@@ -879,6 +947,13 @@ Eina_Bool
 span_shader_available(void)
 {
    return _span_shader_state == SPAN_SHADER_OK;
+}
+
+Eina_Bool
+span_path_usable(void)
+{
+   if (_span_tier_get() == SPAN_TIER_OFF) return EINA_FALSE;
+   return span_shader_init();
 }
 
 void

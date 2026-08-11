@@ -380,6 +380,11 @@ Eina_Bool span_shader_init(void);
 /* EINA_TRUE only when span_shader_init() has run and every variant linked. */
 Eina_Bool span_shader_available(void);
 
+/* EINA_TRUE when the span rendering path may be used: the tier setting
+ * permits it and the shaders linked.  When EINA_FALSE the caller must not
+ * install span collectors. */
+Eina_Bool span_path_usable(void);
+
 /**
  * Delete the GL programs and reset internal shader state.
  * Must be called from the GL thread.
