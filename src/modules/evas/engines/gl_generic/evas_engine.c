@@ -2828,17 +2828,34 @@ eng_ector_begin(void *engine, void *surface,
          * the pixel buffer with realloc if needed (high-water mark)
          * to avoid the per-frame free+calloc cycle in pixels_set. */
         {
+           Ector_Software_Surface_Data *spd =
+              efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
            Ector_Software_Buffer_Base_Data *bbd =
               efl_data_scope_get(ector, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
            if (!bbd || !bbd->pixels.u8)
              {
                 ector_buffer_pixels_set(ector, NULL, w, h, 0,
                                         EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+                if (spd)
+                  {
+                     Ector_Software_Buffer_Base_Data *nbd =
+                        efl_data_scope_get(ector, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+                     spd->span_pixels_alloc = nbd ? (size_t)nbd->stride * h : 0;
+                  }
              }
            else if (bbd->generic && (bbd->generic->w != (unsigned)w || bbd->generic->h != (unsigned)h))
              {
                 size_t needed = (size_t)bbd->stride * h;
-                size_t have = (size_t)bbd->stride * bbd->generic->h;
+                size_t have   = spd ? spd->span_pixels_alloc
+                                    : (size_t)bbd->stride * bbd->generic->h;
+
+                /* Grow on a high-water mark.  generic->h is the height in
+                 * use, not the height allocated, so deriving the current
+                 * allocation from it makes every shrink-then-grow realloc a
+                 * buffer that was already large enough.  With one surface
+                 * shared by every vector object on the canvas and their
+                 * sizes changing independently, that was reallocating and
+                 * zeroing hundreds of kilobytes many times a frame. */
                 if (needed > have)
                   {
                      uint8_t *p = realloc(bbd->pixels.u8, needed);
@@ -2846,6 +2863,7 @@ eng_ector_begin(void *engine, void *surface,
                        {
                           bbd->pixels.u8 = p;
                           memset(p + have, 0, needed - have);
+                          if (spd) spd->span_pixels_alloc = needed;
                        }
                   }
                 bbd->generic->w = w;

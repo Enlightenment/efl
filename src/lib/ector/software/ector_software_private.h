@@ -160,6 +160,11 @@ struct _Ector_Software_Surface_Data
    int    span_collectors_stroke_count;
    int    span_collectors_stroke_alloc;
 
+   /* Bytes currently allocated for the shared raster pixel buffer.  The
+    * buffer's own descriptor only records the height in use, which is not
+    * the height it was allocated at, so growth has to be tracked here. */
+   size_t span_pixels_alloc;
+
    /* GL composite mask for the current eng_ector_begin/end window.
     * Set by _efl_canvas_vg_container_render_pre() when a container has a
     * composite target whose mask was rendered into an FBO via _prepare_comp().
