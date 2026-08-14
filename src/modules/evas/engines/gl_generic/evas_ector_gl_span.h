@@ -355,6 +355,7 @@ Eina_Bool span_collector_supports_composite(Efl_Gfx_Vg_Composite_Method comp_met
 typedef struct _Span_Page
 {
    void     *evas_tex;   /* Evas_GL_Texture *; NULL until first upload */
+   void     *gc;         /* the Evas_Engine_GL_Context evas_tex belongs to */
    int       w, h;       /* logical size currently allocated */
    uint32_t  prev_hash;  /* combined hash of the last uploaded pass */
 } Span_Page;
@@ -362,8 +363,17 @@ typedef struct _Span_Page
 /** Allocate an empty page.  No GL resource is taken until first upload. */
 Span_Page *span_page_new(void);
 
-/** Free @p page and its GL texture.  Must be called from the GL thread. */
-void span_page_free(Span_Page *page);
+/**
+ * Free @p page.
+ *
+ * @p release_tex says whether the GL texture may still be touched.  It comes
+ * from the context's texture pool, so once that context is gone the pool has
+ * already freed it and releasing it again is a use-after-free.  Pass
+ * EINA_FALSE when tearing down after the context has been destroyed.
+ *
+ * Must be called from the GL thread.
+ */
+void span_page_free(Span_Page *page, Eina_Bool release_tex);
 
 /**
  * Pack the span rows of every collector in @p fills and @p strokes into

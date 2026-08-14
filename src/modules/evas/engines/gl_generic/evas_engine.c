@@ -200,7 +200,15 @@ eng_engine_free(void *engine)
 
    generic_cache_destroy(e->software.surface_cache);
 
-   if (e->span_page) { span_page_free(e->span_page); e->span_page = NULL; }
+   if (e->span_page)
+     {
+        /* The page's texture came from a GL context's texture pool.  Outputs
+         * are gone by the time the engine is freed - the loop below shouts if
+         * they are not - and that pool went with them, taking the texture. */
+        span_page_free(e->span_page,
+                       gl_generic_context_find(engine, EINA_FALSE) != NULL);
+        e->span_page = NULL;
+     }
    if (e->grad_atlas) span_grad_atlas_free(e->grad_atlas);
 
    EINA_LIST_FREE(e->software.outputs, output)

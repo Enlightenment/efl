@@ -15,7 +15,7 @@
  * wayland_egl.  The definitions live in evas_ector_gl_span_shader.c. */
 struct _Span_Page;
 struct _Span_Page *span_page_new(void);
-void               span_page_free(struct _Span_Page *page);
+void               span_page_free(struct _Span_Page *page, Eina_Bool release_tex);
 
 typedef struct _Render_Engine_GL_Generic Render_Engine_GL_Generic;
 typedef struct _Render_Output_GL_Generic Render_Output_GL_Generic;

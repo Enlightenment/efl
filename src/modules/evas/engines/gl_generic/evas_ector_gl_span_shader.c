@@ -1282,10 +1282,10 @@ span_page_new(void)
 }
 
 void
-span_page_free(Span_Page *page)
+span_page_free(Span_Page *page, Eina_Bool release_tex)
 {
    if (!page) return;
-   if (page->evas_tex)
+   if (page->evas_tex && release_tex)
      evas_gl_common_texture_free((Evas_GL_Texture *)page->evas_tex, EINA_TRUE);
    free(page);
 }
@@ -1340,6 +1340,17 @@ _span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
    RGBA_Image  *im;
    Image_Entry *ie;
 
+   /* A texture from a previous context is not ours to free - that context's
+    * pool already did - but it must not be used either. */
+   if (t && page->gc != gc)
+     {
+        t = NULL;
+        page->evas_tex  = NULL;
+        page->gc        = NULL;
+        page->w = page->h = 0;
+        page->prev_hash = 0;
+     }
+
    if (t && page->w >= w && page->h >= h) return EINA_TRUE;
 
    /* Grow to at least what is asked, never shrink. */
@@ -1365,6 +1376,7 @@ _span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
    if (!t) return EINA_FALSE;
 
    page->evas_tex = t;
+   page->gc = gc;
    page->w = w;
    page->h = h;
    return EINA_TRUE;
