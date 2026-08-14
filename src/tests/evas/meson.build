@@ -9,6 +9,7 @@ evas_suite_src = [
   'evas_test_text.c',
   'evas_test_callbacks.c',
   'evas_test_render_engines.c',
+  'evas_test_vg.c',
   'evas_test_filters.c',
   'evas_test_image.c',
   'evas_test_mask.c',

@@ -27,6 +27,7 @@ static const Efl_Test_Case etc[] = {
   { "Efl Canvas Animation", efl_test_canvas_animation },
   { "Map", evas_test_map },
   { "Premul", evas_test_premul },
+  { "VG", evas_test_vg },
   { NULL, NULL }
 };
 
