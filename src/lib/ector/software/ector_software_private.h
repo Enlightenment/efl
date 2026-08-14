@@ -160,9 +160,14 @@ struct _Ector_Software_Surface_Data
    int    span_collectors_stroke_count;
    int    span_collectors_stroke_alloc;
 
-   /* Bytes currently allocated for the shared raster pixel buffer.  The
-    * buffer's own descriptor only records the height in use, which is not
-    * the height it was allocated at, so growth has to be tracked here. */
+   /* Scratch raster buffer for the GL span path, owned here rather than by
+    * the ector buffer.  Handing it to ector_buffer_pixels_set() as a plain
+    * pointer sets nofree, which matters because the VG blend path swaps the
+    * surface's buffer out and back again: were the buffer to own the
+    * allocation, that swap would free it and the restore would reinstate a
+    * dangling pointer.  The buffer descriptor also only records the height
+    * in use, not the height allocated, so growth is tracked here too. */
+   void  *span_pixels;
    size_t span_pixels_alloc;
 
    /* GL composite mask for the current eng_ector_begin/end window.

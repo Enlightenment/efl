@@ -2530,6 +2530,10 @@ eng_ector_destroy(void *engine EINA_UNUSED, Ector_Surface *ector)
                   Span_Collector *sc = (Span_Collector *)pd->span_collectors_stroke[ci];
                   if (sc) span_collector_free(sc);
                }
+             free(pd->span_pixels);
+             pd->span_pixels       = NULL;
+             pd->span_pixels_alloc = 0;
+
              free(pd->span_collectors_stroke);
              pd->span_collectors_stroke       = NULL;
              pd->span_collectors_stroke_count  = 0;
@@ -2821,54 +2825,41 @@ eng_ector_begin(void *engine, void *surface,
         eng_image_size_get(engine, glim, &w, &h);
         if (w <= 0 || h <= 0) return EINA_FALSE;
 
-        /* Set ector surface dimensions for rasterizer clipping.
-         *
-         * On first call, pixels_set initialises struct fields (stride,
-         * pixel_size, cspace).  After that, just update w/h and grow
-         * the pixel buffer with realloc if needed (high-water mark)
-         * to avoid the per-frame free+calloc cycle in pixels_set. */
+        /* Point the ector surface at a scratch buffer big enough for this
+         * object, for the rasterizer's clipping bounds. */
         {
            Ector_Software_Surface_Data *spd =
               efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
            Ector_Software_Buffer_Base_Data *bbd =
               efl_data_scope_get(ector, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
-           if (!bbd || !bbd->pixels.u8)
-             {
-                ector_buffer_pixels_set(ector, NULL, w, h, 0,
-                                        EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
-                if (spd)
-                  {
-                     Ector_Software_Buffer_Base_Data *nbd =
-                        efl_data_scope_get(ector, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
-                     spd->span_pixels_alloc = nbd ? (size_t)nbd->stride * h : 0;
-                  }
-             }
-           else if (bbd->generic && (bbd->generic->w != (unsigned)w || bbd->generic->h != (unsigned)h))
-             {
-                size_t needed = (size_t)bbd->stride * h;
-                size_t have   = spd ? spd->span_pixels_alloc
-                                    : (size_t)bbd->stride * bbd->generic->h;
+           /* Size from this object's own width.  Every vector object on the
+            * canvas shares one ector surface, so sizing from the stride the
+            * buffer happens to carry made it as many pixels wide as whichever
+            * object was rendered first while telling everyone else it was as
+            * wide as they are. */
+           size_t row    = (size_t)w * 4;
+           size_t needed = row * (size_t)h;
 
-                /* Grow on a high-water mark.  generic->h is the height in
-                 * use, not the height allocated, so deriving the current
-                 * allocation from it makes every shrink-then-grow realloc a
-                 * buffer that was already large enough.  With one surface
-                 * shared by every vector object on the canvas and their
-                 * sizes changing independently, that was reallocating and
-                 * zeroing hundreds of kilobytes many times a frame. */
-                if (needed > have)
-                  {
-                     uint8_t *p = realloc(bbd->pixels.u8, needed);
-                     if (p)
-                       {
-                          bbd->pixels.u8 = p;
-                          memset(p + have, 0, needed - have);
-                          if (spd) spd->span_pixels_alloc = needed;
-                       }
-                  }
-                bbd->generic->w = w;
-                bbd->generic->h = h;
+           if (!spd) return EINA_FALSE;
+
+           /* Grow on a high-water mark; generic->h is the height in use, not
+            * the height allocated, so it cannot answer this question. */
+           if (needed > spd->span_pixels_alloc)
+             {
+                void *p = realloc(spd->span_pixels, needed);
+                if (!p) return EINA_FALSE;
+                memset((uint8_t *)p + spd->span_pixels_alloc, 0,
+                       needed - spd->span_pixels_alloc);
+                spd->span_pixels       = p;
+                spd->span_pixels_alloc = needed;
              }
+
+           /* Hand the buffer in as a pointer so the surface never owns it. */
+           if (!bbd || bbd->pixels.u8 != spd->span_pixels ||
+               !bbd->generic ||
+               bbd->generic->w != (unsigned)w || bbd->generic->h != (unsigned)h)
+             ector_buffer_pixels_set(ector, spd->span_pixels, w, h, (int)row,
+                                     EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         }
 
         /* Per-shape collector model.
