@@ -2101,6 +2101,39 @@ static Evas_GL_Program _span_prog_dummy;
  *
  * NDC quad order: TL(0), TR(1), BR(2), BL(3) — two triangles: 0,1,2 + 0,2,3.
  */
+/* Write one side's gradient attributes.  A side that is not actually a
+ * gradient travels as SPAN_GRAD_TYPE_SOLID with its colour in abc_y, so that
+ * a mixed fill/stroke shape needs one program rather than two. */
+static void
+_span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
+                    const Span_Channel_Params *side)
+{
+   if (side->type < SPAN_FILL_TYPE_GRADIENT_MIN)
+     {
+        abc_y[0] = (float)((side->col >> 16) & 0xFF) / 255.0f;
+        abc_y[1] = (float)((side->col >>  8) & 0xFF) / 255.0f;
+        abc_y[2] = (float)( side->col        & 0xFF) / 255.0f;
+        abc_y[3] = (float)((side->col >> 24) & 0xFF) / 255.0f;
+        def[0] = def[1] = def[2] = 0.0f;
+        def[3] = (GLfloat)SPAN_GRAD_TYPE_SOLID;
+        radial[0] = radial[1] = radial[2] = radial[3] = 0.0f;
+        return;
+     }
+
+   abc_y[0]  = side->grad_a;
+   abc_y[1]  = side->grad_b;
+   abc_y[2]  = side->grad_c;
+   abc_y[3]  = side->grad_ramp_y;
+   def[0]    = side->grad_d;
+   def[1]    = side->grad_e;
+   def[2]    = side->grad_f;
+   def[3]    = (GLfloat)side->grad_type;
+   radial[0] = side->grad_ra;
+   radial[1] = side->grad_rdx;
+   radial[2] = side->grad_rdy;
+   radial[3] = (GLfloat)side->grad_spread;
+}
+
 static void
 _span_fill_vertices(void *out_buf, Span_Variant variant,
                     const Span_Pipe_Params *p,
@@ -2181,30 +2214,10 @@ _span_fill_vertices(void *out_buf, Span_Variant variant,
                 Span_Vertex_Gradient *o =
                    (Span_Vertex_Gradient *)((char *)out_buf + v * sizeof(*o));
                 o->c = common;
-                o->fill_grad_abc_y[0]    = p->fill.grad_a;
-                o->fill_grad_abc_y[1]    = p->fill.grad_b;
-                o->fill_grad_abc_y[2]    = p->fill.grad_c;
-                o->fill_grad_abc_y[3]    = p->fill.grad_ramp_y;
-                o->fill_grad_def[0]      = p->fill.grad_d;
-                o->fill_grad_def[1]      = p->fill.grad_e;
-                o->fill_grad_def[2]      = p->fill.grad_f;
-                o->fill_grad_def[3]      = (GLfloat)p->fill.grad_type;
-                o->fill_grad_radial[0]   = p->fill.grad_ra;
-                o->fill_grad_radial[1]   = p->fill.grad_rdx;
-                o->fill_grad_radial[2]   = p->fill.grad_rdy;
-                o->fill_grad_radial[3]   = (GLfloat)p->fill.grad_spread;
-                o->stroke_grad_abc_y[0]  = p->stroke.grad_a;
-                o->stroke_grad_abc_y[1]  = p->stroke.grad_b;
-                o->stroke_grad_abc_y[2]  = p->stroke.grad_c;
-                o->stroke_grad_abc_y[3]  = p->stroke.grad_ramp_y;
-                o->stroke_grad_def[0]    = p->stroke.grad_d;
-                o->stroke_grad_def[1]    = p->stroke.grad_e;
-                o->stroke_grad_def[2]    = p->stroke.grad_f;
-                o->stroke_grad_def[3]    = (GLfloat)p->stroke.grad_type;
-                o->stroke_grad_radial[0] = p->stroke.grad_ra;
-                o->stroke_grad_radial[1] = p->stroke.grad_rdx;
-                o->stroke_grad_radial[2] = p->stroke.grad_rdy;
-                o->stroke_grad_radial[3] = (GLfloat)p->stroke.grad_spread;
+                _span_side_grad_set(o->fill_grad_abc_y, o->fill_grad_def,
+                                    o->fill_grad_radial, &p->fill);
+                _span_side_grad_set(o->stroke_grad_abc_y, o->stroke_grad_def,
+                                    o->stroke_grad_radial, &p->stroke);
                 break;
              }
            case SPAN_VARIANT_GRADIENT_MASK:
@@ -2212,30 +2225,10 @@ _span_fill_vertices(void *out_buf, Span_Variant variant,
                 Span_Vertex_Gradient_Mask *o =
                    (Span_Vertex_Gradient_Mask *)((char *)out_buf + v * sizeof(*o));
                 o->g.c = common;
-                o->g.fill_grad_abc_y[0]    = p->fill.grad_a;
-                o->g.fill_grad_abc_y[1]    = p->fill.grad_b;
-                o->g.fill_grad_abc_y[2]    = p->fill.grad_c;
-                o->g.fill_grad_abc_y[3]    = p->fill.grad_ramp_y;
-                o->g.fill_grad_def[0]      = p->fill.grad_d;
-                o->g.fill_grad_def[1]      = p->fill.grad_e;
-                o->g.fill_grad_def[2]      = p->fill.grad_f;
-                o->g.fill_grad_def[3]      = (GLfloat)p->fill.grad_type;
-                o->g.fill_grad_radial[0]   = p->fill.grad_ra;
-                o->g.fill_grad_radial[1]   = p->fill.grad_rdx;
-                o->g.fill_grad_radial[2]   = p->fill.grad_rdy;
-                o->g.fill_grad_radial[3]   = (GLfloat)p->fill.grad_spread;
-                o->g.stroke_grad_abc_y[0]  = p->stroke.grad_a;
-                o->g.stroke_grad_abc_y[1]  = p->stroke.grad_b;
-                o->g.stroke_grad_abc_y[2]  = p->stroke.grad_c;
-                o->g.stroke_grad_abc_y[3]  = p->stroke.grad_ramp_y;
-                o->g.stroke_grad_def[0]    = p->stroke.grad_d;
-                o->g.stroke_grad_def[1]    = p->stroke.grad_e;
-                o->g.stroke_grad_def[2]    = p->stroke.grad_f;
-                o->g.stroke_grad_def[3]    = (GLfloat)p->stroke.grad_type;
-                o->g.stroke_grad_radial[0] = p->stroke.grad_ra;
-                o->g.stroke_grad_radial[1] = p->stroke.grad_rdx;
-                o->g.stroke_grad_radial[2] = p->stroke.grad_rdy;
-                o->g.stroke_grad_radial[3] = (GLfloat)p->stroke.grad_spread;
+                _span_side_grad_set(o->g.fill_grad_abc_y, o->g.fill_grad_def,
+                                    o->g.fill_grad_radial, &p->fill);
+                _span_side_grad_set(o->g.stroke_grad_abc_y, o->g.stroke_grad_def,
+                                    o->g.stroke_grad_radial, &p->stroke);
                 o->mask_off_size[0] = p->mask_off_x;
                 o->mask_off_size[1] = p->mask_off_y;
                 o->mask_off_size[2] = p->mask_w;
@@ -2324,27 +2317,14 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
    const int fill_is_solid  = (p->fill.tex   && !fill_is_grad);
    const int stroke_is_solid = (p->stroke.tex && !stroke_is_grad);
 
-   /* Mixed family: one side is gradient and the other is solid.
-    * The gradient and solid main bodies are separate shader programs,
-    * so a mixed shape cannot be drawn in a single pipe entry.  Split
-    * into two recursive pushes — one per side — and let the merge
-    * predicate group each half with the appropriate program.  The
-    * src-over blend is associative, so two passes produce the same
-    * visual result as the old single-pass shader that processed both
-    * sides sequentially within one fragment. */
-   if ((fill_is_grad && stroke_is_solid) || (fill_is_solid && stroke_is_grad))
-     {
-        /* At most one level of recursion: each child call has one tex
-         * zeroed, so it can never re-enter this branch. */
-        Span_Pipe_Params q;
-        q = *p; q.stroke.tex = 0;
-        evas_gl_common_context_span_push(gc, &q, ndc_quad);
-        q = *p; q.fill.tex = 0;
-        evas_gl_common_context_span_push(gc, &q, ndc_quad);
-        return;
-     }
+   /* A mixed shape - gradient one side, plain colour the other - used to be
+    * split into two pushes, because the two had separate programs and so
+    * could not share a pipe entry.  That doubled the draw calls for a very
+    * ordinary shape.  The gradient program now carries a plain colour as
+    * SPAN_GRAD_TYPE_SOLID, so one entry covers both sides. */
+   (void)fill_is_solid;
+   (void)stroke_is_solid;
 
-   /* Single-family case (both grad, both solid, or only one side bound). */
    Span_Variant variant;
    if (fill_is_grad || stroke_is_grad)
      variant = (p->mask_tex != 0) ? SPAN_VARIANT_GRADIENT_MASK

@@ -36,6 +36,22 @@ typedef float GLfloat;
 #define SPAN_FILL_TYPE_GRADIENT_MIN 2
 
 /* ---------------------------------------------------------------------------
+ * Gradient type carried in the .w of a side's grad_def attribute:
+ *   0 linear, 1 radial, 2 solid.
+ *
+ * "Solid" is how a plain colour rides in a gradient variant.  A shape with a
+ * gradient fill and a solid stroke would otherwise need two programs and so
+ * two draw calls; encoding the solid side as a degenerate gradient lets one
+ * draw cover both.  Such a side puts its premultiplied colour in the four
+ * components of grad_abc_y - the slots a linear gradient uses for its
+ * coefficients and ramp row - and the shader takes it verbatim instead of
+ * sampling the ramp atlas.
+ * --------------------------------------------------------------------------- */
+#define SPAN_GRAD_TYPE_LINEAR 0
+#define SPAN_GRAD_TYPE_RADIAL 1
+#define SPAN_GRAD_TYPE_SOLID  2
+
+/* ---------------------------------------------------------------------------
  * Span_Variant — selects the interleaved vertex layout for a given draw call.
  *
  * SOLID         — no gradient, no mask
