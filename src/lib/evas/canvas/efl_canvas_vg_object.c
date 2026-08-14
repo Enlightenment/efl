@@ -444,6 +444,58 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
         int alpha = 255;
         efl_gfx_color_get(node, NULL, NULL, NULL, &alpha);
 
+        /* Group opacity on the GL engine.
+         *
+         * The blend-buffer path below composites the group into the ector
+         * surface's CPU pixel buffer.  The GL engine rasterises vector shapes
+         * through a span path that renders into an FBO and never reads that
+         * buffer back, so there the group's alpha would be computed and then
+         * dropped, leaving the group fully opaque.  Fold it into the draw
+         * context's multiplier instead, which the engine passes down as each
+         * shape's mul_col.
+         *
+         * This applies the alpha per shape rather than to the flattened
+         * group, so shapes that overlap inside the group blend against each
+         * other before being faded rather than after.  Identical wherever a
+         * group's shapes are disjoint, which is the usual case for fading one
+         * out; the exact form needs the group rendered to its own FBO. */
+        if ((alpha < 255) && ENFN->gl_surface_read_pixels)
+          {
+             int pr = 255, pg = 255, pb = 255, pa = 255;
+             Eina_Bool had_mul;
+
+             had_mul = !!ENFN->context_multiplier_get(engine, context,
+                                                      &pr, &pg, &pb, &pa);
+             if (!had_mul) { pr = pg = pb = pa = 255; }
+
+#define _VG_MUL(x, y)  (((x) * (y) + 0xff) >> 8)
+             ENFN->context_multiplier_set(engine, context,
+                                          _VG_MUL(pr, alpha), _VG_MUL(pg, alpha),
+                                          _VG_MUL(pb, alpha), _VG_MUL(pa, alpha));
+#undef _VG_MUL
+
+             EINA_LIST_FOREACH(cd->children, l, child)
+               {
+                  if (efl_isa(child, EFL_CANVAS_VG_CONTAINER_CLASS))
+                    {
+                       Efl_Canvas_Vg_Container_Data *child_cd =
+                          efl_data_scope_get(child, EFL_CANVAS_VG_CONTAINER_CLASS);
+                       if (child_cd && child_cd->comp.src) continue;
+                    }
+                  if (cd->comp_target && efl_isa(child, EFL_CANVAS_VG_GRADIENT_CLASS))
+                    continue;
+                  _evas_vg_render(obj, pd, engine, output, context, child,
+                                  clips, w, h, ector, do_async);
+               }
+
+             if (had_mul)
+               ENFN->context_multiplier_set(engine, context, pr, pg, pb, pa);
+             else
+               ENFN->context_multiplier_unset(engine, context);
+
+             return;
+          }
+
         if (alpha < 255)
           {
              //Replace with a new size.

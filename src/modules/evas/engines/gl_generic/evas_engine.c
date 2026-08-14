@@ -2606,18 +2606,24 @@ eng_ector_buffer_new(void *engine, Evas *evas, int w, int h,
 
 static void
 eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
-                        void *context EINA_UNUSED, Ector_Renderer *renderer,
+                        void *context, Ector_Renderer *renderer,
                         Eina_Array *clips EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
    int w, h;
    Eina_Rectangle *r;
    Eina_Array *c = eina_array_new(4);
    Evas_GL_Image *glimg = surface;
+   RGBA_Draw_Context *dc = context;
+   /* Carry the draw context's multiplier through as the shape's mul_col.
+    * It is how group opacity reaches the span path: a vector container with
+    * alpha folds itself into this multiplier rather than compositing through
+    * a CPU blend buffer the GL path never reads back. */
+   unsigned int mul_col = (dc && dc->mul.use) ? dc->mul.col : 0xffffffff;
 
    eng_image_size_get(engine, glimg, &w, &h);
    eina_array_push(c, eina_rectangle_new(0, 0, w, h));
 
-   ector_renderer_draw(renderer, EFL_GFX_RENDER_OP_BLEND, c, 0xffffffff);
+   ector_renderer_draw(renderer, EFL_GFX_RENDER_OP_BLEND, c, mul_col);
 
    while ((r = eina_array_pop(c)))
      eina_rectangle_free(r);
