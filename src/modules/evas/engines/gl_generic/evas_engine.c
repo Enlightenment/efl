@@ -159,6 +159,17 @@ _span_grad_atlas_flush_cb(void *data)
    if (gc) evas_gl_common_context_flush(gc);
 }
 
+/* Byte size of a cached ector surface, for the surface cache's memory
+ * budget.  These are render targets, so they are always 32bpp. */
+static size_t
+_ector_surface_cache_size(void *engine EINA_UNUSED, void *surface)
+{
+   Evas_GL_Image *im = surface;
+
+   if (!im || im->w <= 0 || im->h <= 0) return 0;
+   return (size_t)im->w * (size_t)im->h * 4;
+}
+
 static void *
 eng_engine_new(void)
 {
@@ -167,6 +178,8 @@ eng_engine_new(void)
    engine = calloc(1, sizeof (Render_Engine_GL_Generic));
    if (!engine) return NULL;
    engine->software.surface_cache = generic_cache_new(engine, eng_image_free);
+   generic_cache_size_func_set(engine->software.surface_cache,
+                               _ector_surface_cache_size);
 
    /* Gradient ramp atlas: NULL return means atlas unavailable — gradient
     * shapes will be skipped per the spec error table (no-op, non-fatal). */

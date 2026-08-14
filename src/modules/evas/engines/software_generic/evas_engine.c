@@ -3780,6 +3780,17 @@ eng_gl_rotation_angle_get(void *data EINA_UNUSED)
 
 //------------------------------------------------//
 
+/* Byte size of a cached ector surface, for the surface cache's memory
+ * budget.  These are render targets, so they are always 32bpp. */
+static size_t
+_ector_surface_cache_size(void *engine EINA_UNUSED, void *surface)
+{
+   Image_Entry *ie = surface;
+
+   if (!ie) return 0;
+   return (size_t)ie->w * (size_t)ie->h * 4;
+}
+
 /* The following function require that any engine
    inheriting from software generic to have at the
    top of their render engine structure a
@@ -3796,6 +3807,8 @@ eng_engine_new(void)
    if (!engine) return NULL;
 
    engine->surface_cache = generic_cache_new(engine, eng_image_free);
+   generic_cache_size_func_set(engine->surface_cache,
+                               _ector_surface_cache_size);
 
    return engine;
 }
