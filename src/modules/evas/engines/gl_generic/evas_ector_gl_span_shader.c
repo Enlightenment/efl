@@ -16,6 +16,7 @@
 # include "config.h"
 #endif
 
+#include <dlfcn.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -680,6 +681,30 @@ _span_vs_parts_build(int kind, int mask, int *out_count)
 }
 
 /* ------------------------------------------------------------------ */
+/* Fixed vertex attribute locations                                    */
+/* ------------------------------------------------------------------ */
+
+/* Bound with glBindAttribLocation before every link so that all twelve
+ * programs agree.  Solid and gradient variants reuse 5 and 6 because a VAO
+ * is created per variant and no variant declares both sets.  The widest
+ * variant (gradient + mask) uses 13 of the 16 GLES2-guaranteed slots. */
+#define SPAN_ATTR_POSITION          0
+#define SPAN_ATTR_FBO_FILL_OFF      1
+#define SPAN_ATTR_STROKE_OFF_FLAGS  2
+#define SPAN_ATTR_X_MIN             3
+#define SPAN_ATTR_MUL_COL           4
+#define SPAN_ATTR_FILL_COL          5   /* solid variants    */
+#define SPAN_ATTR_STROKE_COL        6   /* solid variants    */
+#define SPAN_ATTR_F_GRAD_ABC_Y      5   /* gradient variants */
+#define SPAN_ATTR_F_GRAD_DEF        6
+#define SPAN_ATTR_F_GRAD_RADIAL     7
+#define SPAN_ATTR_S_GRAD_ABC_Y      8
+#define SPAN_ATTR_S_GRAD_DEF        9
+#define SPAN_ATTR_S_GRAD_RADIAL    10
+#define SPAN_ATTR_MASK_OFF_SIZE    11
+#define SPAN_ATTR_MASK_COMP_INV    12
+
+/* ------------------------------------------------------------------ */
 /* Internal shader state                                               */
 /* ------------------------------------------------------------------ */
 
@@ -687,7 +712,8 @@ typedef struct
 {
    unsigned int program;
    /* Uniform locations — samplers and pool reciprocals only.
-    * Per-shape data is now in vertex attributes (attr_* below). */
+    * Per-shape data travels in vertex attributes, whose locations are the
+    * fixed SPAN_ATTR_* constants bound before linking. */
    int          loc_fill_spans;
    int          loc_stroke_spans;
    int          loc_inv_tw;
@@ -696,23 +722,8 @@ typedef struct
    int          loc_grad_ramp_atlas;
    /* Mask sampler — valid only in mask variants (-1 otherwise). */
    int          loc_mask_tex;
-   /* Attribute locations — queried after glLinkProgram.
-    * -1 for attributes absent in this variant; BIND_ATTR skips them. */
-   int          attr_position;
-   int          attr_fbo_fill_off;
-   int          attr_stroke_off_flags;
-   int          attr_x_min;
-   int          attr_mul_col;
-   int          attr_fill_col;          /* solid variants only; -1 in gradient */
-   int          attr_stroke_col;        /* solid variants only; -1 in gradient */
-   int          attr_fill_grad_abc_y;   /* gradient variants only */
-   int          attr_fill_grad_def;
-   int          attr_fill_grad_radial;
-   int          attr_stroke_grad_abc_y;
-   int          attr_stroke_grad_def;
-   int          attr_stroke_grad_radial;
-   int          attr_mask_off_size;     /* mask variants only */
-   int          attr_mask_comp_inv;     /* mask variants only */
+   /* Sampler uniforms are program state; assign the texture units once. */
+   Eina_Bool    samplers_bound;
 } Span_Shader;
 
 /* [kind][bind][mask] — kind 0=solid 1=gradient, bind in Span_Bind_Set, mask 0/1.
@@ -740,6 +751,157 @@ static Span_Shader_State _span_shader_state = SPAN_SHADER_UNTRIED;
 /* 1x1 white texture — kept for potential fallback use; not bound during
  * normal rendering (non-mask shaders have no mask sampler at all). */
 static GLuint _white_mask_tex = 0;
+
+/* ------------------------------------------------------------------ */
+/* Per-draw state: shared VBO, per-variant VAOs, binding cache         */
+/* ------------------------------------------------------------------ */
+
+/* One streaming VBO for every span pipe instead of one per pipe entry.
+ * A VAO records which buffer each attribute reads from, so sharing a single
+ * buffer is what allows the VAO to be per-variant rather than per-pipe. */
+static GLuint _span_vbo = 0;
+
+/* One VAO per Span_Variant, or 0 when vertex array objects are unavailable.
+ * Binding one replaces the ten glVertexAttribPointer + ten
+ * glEnableVertexAttribArray calls the flush used to issue per draw. */
+static GLuint _span_vao[SPAN_VARIANT_COUNT];
+
+static void (*_gl_gen_vao)(GLsizei, GLuint *)       = NULL;
+static void (*_gl_bind_vao)(GLuint)                 = NULL;
+static void (*_gl_del_vao)(GLsizei, const GLuint *) = NULL;
+static int  _span_vao_probed = 0;
+
+static void
+_span_vao_probe(void)
+{
+   const char *ext;
+
+   if (_span_vao_probed) return;
+   _span_vao_probed = 1;
+
+   ext = (const char *)glGetString(GL_EXTENSIONS);
+   if (!ext || (!strstr(ext, "GL_OES_vertex_array_object") &&
+                !strstr(ext, "GL_ARB_vertex_array_object")))
+     {
+        /* GLES 3.0+ and desktop GL 3.0+ have it in core with no extension
+         * string in the (non-indexed) list, so fall through to the dlsym
+         * probe rather than giving up here. */
+     }
+
+   _gl_gen_vao  = dlsym(RTLD_DEFAULT, "glGenVertexArrays");
+   _gl_bind_vao = dlsym(RTLD_DEFAULT, "glBindVertexArray");
+   _gl_del_vao  = dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
+   if (!_gl_gen_vao || !_gl_bind_vao || !_gl_del_vao)
+     {
+        _gl_gen_vao  = dlsym(RTLD_DEFAULT, "glGenVertexArraysOES");
+        _gl_bind_vao = dlsym(RTLD_DEFAULT, "glBindVertexArrayOES");
+        _gl_del_vao  = dlsym(RTLD_DEFAULT, "glDeleteVertexArraysOES");
+     }
+   if (!_gl_gen_vao || !_gl_bind_vao || !_gl_del_vao)
+     {
+        _gl_gen_vao = NULL; _gl_bind_vao = NULL; _gl_del_vao = NULL;
+        INF("span shader: no vertex array objects, using per-draw attribute setup");
+     }
+}
+
+/* Describe one attribute: location, component count, byte offset. */
+typedef struct { int loc, cnt, off; } Span_Attr_Desc;
+
+/* Fill @p out with the attribute layout of @p variant; returns the count. */
+static int
+_span_attr_layout(Span_Variant variant, Span_Attr_Desc *out)
+{
+   int n = 0;
+#define A(l, c, o) do { out[n].loc = (l); out[n].cnt = (c); out[n].off = (int)(o); n++; } while (0)
+#define COMMON(base) \
+   A(SPAN_ATTR_POSITION,         2, (base) + offsetof(Span_Vertex_Common, pos)); \
+   A(SPAN_ATTR_FBO_FILL_OFF,     4, (base) + offsetof(Span_Vertex_Common, fbo_fill_off)); \
+   A(SPAN_ATTR_STROKE_OFF_FLAGS, 4, (base) + offsetof(Span_Vertex_Common, stroke_off_flags)); \
+   A(SPAN_ATTR_X_MIN,            2, (base) + offsetof(Span_Vertex_Common, x_min)); \
+   A(SPAN_ATTR_MUL_COL,          4, (base) + offsetof(Span_Vertex_Common, mul_col))
+
+   switch (variant)
+     {
+      case SPAN_VARIANT_SOLID:
+        COMMON(offsetof(Span_Vertex_Solid, c));
+        A(SPAN_ATTR_FILL_COL,   4, offsetof(Span_Vertex_Solid, fill_col));
+        A(SPAN_ATTR_STROKE_COL, 4, offsetof(Span_Vertex_Solid, stroke_col));
+        break;
+      case SPAN_VARIANT_SOLID_MASK:
+        COMMON(offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, c));
+        A(SPAN_ATTR_FILL_COL,   4,
+          offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, fill_col));
+        A(SPAN_ATTR_STROKE_COL, 4,
+          offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, stroke_col));
+        A(SPAN_ATTR_MASK_OFF_SIZE, 4, offsetof(Span_Vertex_Solid_Mask, mask_off_size));
+        A(SPAN_ATTR_MASK_COMP_INV, 2, offsetof(Span_Vertex_Solid_Mask, mask_comp_inv));
+        break;
+      case SPAN_VARIANT_GRADIENT:
+        COMMON(offsetof(Span_Vertex_Gradient, c));
+        A(SPAN_ATTR_F_GRAD_ABC_Y,  4, offsetof(Span_Vertex_Gradient, fill_grad_abc_y));
+        A(SPAN_ATTR_F_GRAD_DEF,    4, offsetof(Span_Vertex_Gradient, fill_grad_def));
+        A(SPAN_ATTR_F_GRAD_RADIAL, 4, offsetof(Span_Vertex_Gradient, fill_grad_radial));
+        A(SPAN_ATTR_S_GRAD_ABC_Y,  4, offsetof(Span_Vertex_Gradient, stroke_grad_abc_y));
+        A(SPAN_ATTR_S_GRAD_DEF,    4, offsetof(Span_Vertex_Gradient, stroke_grad_def));
+        A(SPAN_ATTR_S_GRAD_RADIAL, 4, offsetof(Span_Vertex_Gradient, stroke_grad_radial));
+        break;
+      case SPAN_VARIANT_GRADIENT_MASK:
+        COMMON(offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, c));
+#define G(f) (offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, f))
+        A(SPAN_ATTR_F_GRAD_ABC_Y,  4, G(fill_grad_abc_y));
+        A(SPAN_ATTR_F_GRAD_DEF,    4, G(fill_grad_def));
+        A(SPAN_ATTR_F_GRAD_RADIAL, 4, G(fill_grad_radial));
+        A(SPAN_ATTR_S_GRAD_ABC_Y,  4, G(stroke_grad_abc_y));
+        A(SPAN_ATTR_S_GRAD_DEF,    4, G(stroke_grad_def));
+        A(SPAN_ATTR_S_GRAD_RADIAL, 4, G(stroke_grad_radial));
+#undef G
+        A(SPAN_ATTR_MASK_OFF_SIZE, 4, offsetof(Span_Vertex_Gradient_Mask, mask_off_size));
+        A(SPAN_ATTR_MASK_COMP_INV, 2, offsetof(Span_Vertex_Gradient_Mask, mask_comp_inv));
+        break;
+      default: break;
+     }
+#undef COMMON
+#undef A
+   return n;
+}
+
+/* Apply @p n attribute descriptors against the currently bound VBO. */
+static void
+_span_attr_apply(const Span_Attr_Desc *d, int n, GLsizei stride)
+{
+   int i;
+   for (i = 0; i < n; i++)
+     {
+        glEnableVertexAttribArray((GLuint)d[i].loc);
+        glVertexAttribPointer((GLuint)d[i].loc, d[i].cnt, GL_FLOAT, GL_FALSE,
+                              stride, (const void *)(uintptr_t)d[i].off);
+     }
+}
+
+/* Return the VAO for @p variant, creating it on first use.  0 means the
+ * caller must fall back to per-draw attribute setup. */
+static GLuint
+_span_vao_get(Span_Variant variant)
+{
+   Span_Attr_Desc desc[16];
+   int n;
+
+   _span_vao_probe();
+   if (!_gl_bind_vao) return 0;
+   if (_span_vao[variant]) return _span_vao[variant];
+
+   _gl_gen_vao(1, &_span_vao[variant]);
+   if (!_span_vao[variant]) return 0;
+
+   _gl_bind_vao(_span_vao[variant]);
+   glBindBuffer(GL_ARRAY_BUFFER, _span_vbo);
+   n = _span_attr_layout(variant, desc);
+   _span_attr_apply(desc, n, (GLsizei)span_vertex_size(variant));
+   _gl_bind_vao(0);
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+   return _span_vao[variant];
+}
 
 /* ------------------------------------------------------------------ */
 /* Shader compilation helpers                                          */
@@ -811,6 +973,31 @@ _link_program(Span_Shader *ss,
    ss->program = glCreateProgram();
    glAttachShader(ss->program, vs);
    glAttachShader(ss->program, fs);
+
+   /* Bind attribute locations explicitly, before linking, so that every
+    * variant places a given semantic at the same index.  Without this the
+    * linker is free to assign per-program locations, and a vertex array
+    * object — whose state is keyed by location, not by program — could not
+    * be shared between the programs that use the same vertex layout.
+    *
+    * Solid and gradient variants deliberately overlap on 5/6: a VAO is
+    * per-variant, and no variant declares both sets. */
+   glBindAttribLocation(ss->program, SPAN_ATTR_POSITION,         "a_position");
+   glBindAttribLocation(ss->program, SPAN_ATTR_FBO_FILL_OFF,     "a_fbo_fill_off");
+   glBindAttribLocation(ss->program, SPAN_ATTR_STROKE_OFF_FLAGS, "a_stroke_off_flags");
+   glBindAttribLocation(ss->program, SPAN_ATTR_X_MIN,            "a_x_min");
+   glBindAttribLocation(ss->program, SPAN_ATTR_MUL_COL,          "a_mul_col");
+   glBindAttribLocation(ss->program, SPAN_ATTR_FILL_COL,         "a_fill_col");
+   glBindAttribLocation(ss->program, SPAN_ATTR_STROKE_COL,       "a_stroke_col");
+   glBindAttribLocation(ss->program, SPAN_ATTR_F_GRAD_ABC_Y,     "a_fill_grad_abc_y");
+   glBindAttribLocation(ss->program, SPAN_ATTR_F_GRAD_DEF,       "a_fill_grad_def");
+   glBindAttribLocation(ss->program, SPAN_ATTR_F_GRAD_RADIAL,    "a_fill_grad_radial");
+   glBindAttribLocation(ss->program, SPAN_ATTR_S_GRAD_ABC_Y,     "a_stroke_grad_abc_y");
+   glBindAttribLocation(ss->program, SPAN_ATTR_S_GRAD_DEF,       "a_stroke_grad_def");
+   glBindAttribLocation(ss->program, SPAN_ATTR_S_GRAD_RADIAL,    "a_stroke_grad_radial");
+   glBindAttribLocation(ss->program, SPAN_ATTR_MASK_OFF_SIZE,    "a_mask_off_size");
+   glBindAttribLocation(ss->program, SPAN_ATTR_MASK_COMP_INV,    "a_mask_comp_inv");
+
    glLinkProgram(ss->program);
    glGetProgramiv(ss->program, GL_LINK_STATUS, &ok);
 
@@ -840,23 +1027,10 @@ _link_program(Span_Shader *ss,
    /* Mask sampler — location -1 in non-mask shaders (safe no-op). */
    ss->loc_mask_tex       = glGetUniformLocation(ss->program, "u_mask_tex");
 
-   /* Attribute locations — determined after link.
-    * -1 returned for attributes not in this variant. */
-   ss->attr_position          = glGetAttribLocation(ss->program, "a_position");
-   ss->attr_fbo_fill_off      = glGetAttribLocation(ss->program, "a_fbo_fill_off");
-   ss->attr_stroke_off_flags  = glGetAttribLocation(ss->program, "a_stroke_off_flags");
-   ss->attr_x_min             = glGetAttribLocation(ss->program, "a_x_min");
-   ss->attr_mul_col           = glGetAttribLocation(ss->program, "a_mul_col");
-   ss->attr_fill_col          = glGetAttribLocation(ss->program, "a_fill_col");
-   ss->attr_stroke_col        = glGetAttribLocation(ss->program, "a_stroke_col");
-   ss->attr_fill_grad_abc_y   = glGetAttribLocation(ss->program, "a_fill_grad_abc_y");
-   ss->attr_fill_grad_def     = glGetAttribLocation(ss->program, "a_fill_grad_def");
-   ss->attr_fill_grad_radial  = glGetAttribLocation(ss->program, "a_fill_grad_radial");
-   ss->attr_stroke_grad_abc_y = glGetAttribLocation(ss->program, "a_stroke_grad_abc_y");
-   ss->attr_stroke_grad_def   = glGetAttribLocation(ss->program, "a_stroke_grad_def");
-   ss->attr_stroke_grad_radial= glGetAttribLocation(ss->program, "a_stroke_grad_radial");
-   ss->attr_mask_off_size     = glGetAttribLocation(ss->program, "a_mask_off_size");
-   ss->attr_mask_comp_inv     = glGetAttribLocation(ss->program, "a_mask_comp_inv");
+   /* Attribute locations are the constants bound above, not queried: an
+    * attribute the linker optimised out would report -1, but enabling an
+    * unused array is harmless and keeping the index fixed is what lets the
+    * per-variant VAO be shared across programs. */
 
    return EINA_TRUE;
 }
@@ -999,6 +1173,7 @@ span_shader_shutdown(void)
                  glDeleteProgram(ss->program);
                  ss->program = 0;
               }
+            ss->samplers_bound = EINA_FALSE;
          }
 
    if (_white_mask_tex)
@@ -1006,6 +1181,19 @@ span_shader_shutdown(void)
         glDeleteTextures(1, &_white_mask_tex);
         _white_mask_tex = 0;
      }
+
+   if (_gl_del_vao)
+     {
+        int v;
+        for (v = 0; v < SPAN_VARIANT_COUNT; v++)
+          if (_span_vao[v]) { _gl_del_vao(1, &_span_vao[v]); _span_vao[v] = 0; }
+     }
+   if (_span_vbo)
+     {
+        glDeleteBuffers(1, &_span_vbo);
+        _span_vbo = 0;
+     }
+
 
    free(_span_pack_buf);
    _span_pack_buf = NULL;
@@ -1055,7 +1243,7 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
         if (tex->evas_tex)
           {
              Evas_GL_Texture *existing = (Evas_GL_Texture *)tex->evas_tex;
-             if (existing->h < (unsigned int)sc->height)
+             if (existing->h < sc->height)
                {
                   evas_gl_common_texture_free(existing, EINA_TRUE);
                   tex->evas_tex  = NULL;
@@ -1261,6 +1449,7 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
    GLuint        mask_tex  = gc->pipe[pipe_idx].shader.span_mask_tex;
    float         inv_tw    = gc->pipe[pipe_idx].shader.span_inv_tw;
    float         inv_th    = gc->pipe[pipe_idx].shader.span_inv_th;
+   GLuint        vao;
 
    /* Determine kind (0=solid, 1=gradient) and bind set from variant + textures. */
    int kind     = (variant == SPAN_VARIANT_GRADIENT ||
@@ -1285,112 +1474,59 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
 
    glUseProgram(ss->program);
 
-   /* Uniforms — sampler bindings + pool reciprocals. */
+   /* Sampler uniforms are program state and never change: unit 0 is always
+    * the fill span texture, 1 the stroke, 2 the gradient ramp atlas, 3 the
+    * composite mask.  Assign them once per program rather than on every
+    * draw. */
+   if (!ss->samplers_bound)
+     {
+        if (ss->loc_fill_spans      >= 0) glUniform1i(ss->loc_fill_spans, 0);
+        if (ss->loc_stroke_spans    >= 0) glUniform1i(ss->loc_stroke_spans, 1);
+        if (ss->loc_grad_ramp_atlas >= 0) glUniform1i(ss->loc_grad_ramp_atlas, 2);
+        if (ss->loc_mask_tex        >= 0) glUniform1i(ss->loc_mask_tex, 3);
+        ss->samplers_bound = EINA_TRUE;
+     }
+
    glActiveTexture(GL_TEXTURE0);
    glBindTexture(GL_TEXTURE_2D, fill_tex ? fill_tex : stroke_tex);
-   glUniform1i(ss->loc_fill_spans, 0);
-
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, stroke_tex ? stroke_tex : fill_tex);
-   glUniform1i(ss->loc_stroke_spans, 1);
-
-   if (ss->loc_inv_tw >= 0) glUniform1f(ss->loc_inv_tw, inv_tw);
-   if (ss->loc_inv_th >= 0) glUniform1f(ss->loc_inv_th, inv_th);
-
    if (ss->loc_grad_ramp_atlas >= 0 && atlas_tex)
      {
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, atlas_tex);
-        glUniform1i(ss->loc_grad_ramp_atlas, 2);
      }
-
    if (ss->loc_mask_tex >= 0 && mask_tex)
      {
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, mask_tex);
-        glUniform1i(ss->loc_mask_tex, 3);
      }
 
-   /* VBO upload: upload span vertex data once per flush as GL_STREAM_DRAW.
-    * Using a VBO avoids the per-draw driver scratch-buffer allocation that
-    * client-side vertex arrays require, recovering the performance lost by
-    * the attribute-batching refactor on non-batching draws.
-    *
-    * Lazy allocation: glGenBuffers fires on first use; the context teardown
-    * already calls glDeleteBuffers for array.buffer (unconditionally for span
-    * pipes via the span_vertex_data cleanup block). */
-   if (!gc->pipe[pipe_idx].array.buffer)
-     glGenBuffers(1, &gc->pipe[pipe_idx].array.buffer);
-   glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[pipe_idx].array.buffer);
+   if (ss->loc_inv_tw >= 0) glUniform1f(ss->loc_inv_tw, inv_tw);
+   if (ss->loc_inv_th >= 0) glUniform1f(ss->loc_inv_th, inv_th);
+
+   /* One streaming VBO shared by every span pipe.  Re-specifying it with
+    * glBufferData orphans the previous storage, so the driver never has to
+    * stall on data the GPU may still be reading. */
+   if (!_span_vbo) glGenBuffers(1, &_span_vbo);
+   vao = _span_vao_get(variant);
+   if (vao) _gl_bind_vao(vao);
+   glBindBuffer(GL_ARRAY_BUFFER, _span_vbo);
+
    glBufferData(GL_ARRAY_BUFFER,
                 (GLsizeiptr)gc->pipe[pipe_idx].array.span_vertex_data_used,
                 vdata,
                 GL_STREAM_DRAW);
 
-   /* Attribute pointer setup.
-    * BIND_ATTR(loc, components, byte_offset_into_vbo) enables and binds each
-    * attribute using VBO byte offsets (not CPU pointers).  The VBO is bound
-    * above; GL interprets the last argument as an offset when a buffer is
-    * bound to GL_ARRAY_BUFFER.  Locations left enabled after draw are benign —
-    * image/font shaders bind their own slots (SHAD_VERTEX/SHAD_COLOR)
-    * explicitly before drawing, and never fetch from span-specific locations. */
-#define BIND_ATTR(loc, cnt, off) \
-   do { \
-      if ((loc) >= 0) { \
-         glEnableVertexAttribArray((GLuint)(loc)); \
-         glVertexAttribPointer((GLuint)(loc), (cnt), GL_FLOAT, GL_FALSE, \
-                               stride, (const void *)(uintptr_t)(off)); \
-      } \
-   } while (0)
-
-   /* Common fields — all variants share Span_Vertex_Common at offset 0. */
-   BIND_ATTR(ss->attr_position,         2, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, pos));
-   BIND_ATTR(ss->attr_fbo_fill_off,     4, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, fbo_fill_off));
-   BIND_ATTR(ss->attr_stroke_off_flags, 4, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, stroke_off_flags));
-   BIND_ATTR(ss->attr_x_min,            2, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, x_min));
-   BIND_ATTR(ss->attr_mul_col,          4, offsetof(Span_Vertex_Solid, c) + offsetof(Span_Vertex_Common, mul_col));
-
-   switch (variant)
+   if (!vao)
      {
-      case SPAN_VARIANT_SOLID:
-        BIND_ATTR(ss->attr_fill_col,   4, offsetof(Span_Vertex_Solid, fill_col));
-        BIND_ATTR(ss->attr_stroke_col, 4, offsetof(Span_Vertex_Solid, stroke_col));
-        break;
-      case SPAN_VARIANT_SOLID_MASK:
-        BIND_ATTR(ss->attr_fill_col,      4,
-                  offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, fill_col));
-        BIND_ATTR(ss->attr_stroke_col,    4,
-                  offsetof(Span_Vertex_Solid_Mask, s) + offsetof(Span_Vertex_Solid, stroke_col));
-        BIND_ATTR(ss->attr_mask_off_size, 4, offsetof(Span_Vertex_Solid_Mask, mask_off_size));
-        BIND_ATTR(ss->attr_mask_comp_inv, 2, offsetof(Span_Vertex_Solid_Mask, mask_comp_inv));
-        break;
-      case SPAN_VARIANT_GRADIENT:
-        BIND_ATTR(ss->attr_fill_grad_abc_y,    4, offsetof(Span_Vertex_Gradient, fill_grad_abc_y));
-        BIND_ATTR(ss->attr_fill_grad_def,      4, offsetof(Span_Vertex_Gradient, fill_grad_def));
-        BIND_ATTR(ss->attr_fill_grad_radial,   4, offsetof(Span_Vertex_Gradient, fill_grad_radial));
-        BIND_ATTR(ss->attr_stroke_grad_abc_y,  4, offsetof(Span_Vertex_Gradient, stroke_grad_abc_y));
-        BIND_ATTR(ss->attr_stroke_grad_def,    4, offsetof(Span_Vertex_Gradient, stroke_grad_def));
-        BIND_ATTR(ss->attr_stroke_grad_radial, 4, offsetof(Span_Vertex_Gradient, stroke_grad_radial));
-        break;
-      case SPAN_VARIANT_GRADIENT_MASK:
-        BIND_ATTR(ss->attr_fill_grad_abc_y,    4,
-                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, fill_grad_abc_y));
-        BIND_ATTR(ss->attr_fill_grad_def,      4,
-                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, fill_grad_def));
-        BIND_ATTR(ss->attr_fill_grad_radial,   4,
-                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, fill_grad_radial));
-        BIND_ATTR(ss->attr_stroke_grad_abc_y,  4,
-                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, stroke_grad_abc_y));
-        BIND_ATTR(ss->attr_stroke_grad_def,    4,
-                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, stroke_grad_def));
-        BIND_ATTR(ss->attr_stroke_grad_radial, 4,
-                  offsetof(Span_Vertex_Gradient_Mask, g) + offsetof(Span_Vertex_Gradient, stroke_grad_radial));
-        BIND_ATTR(ss->attr_mask_off_size, 4, offsetof(Span_Vertex_Gradient_Mask, mask_off_size));
-        BIND_ATTR(ss->attr_mask_comp_inv, 2, offsetof(Span_Vertex_Gradient_Mask, mask_comp_inv));
-        break;
-      default: break;
+        /* No vertex array objects: respecify the layout for every draw.
+         * Locations left enabled afterwards are benign — image/font shaders
+         * bind their own slots explicitly and never fetch from ours. */
+        Span_Attr_Desc desc[16];
+        int n = _span_attr_layout(variant, desc);
+        _span_attr_apply(desc, n, stride);
      }
-#undef BIND_ATTR
 
    glEnable(GL_BLEND);
    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -1398,11 +1534,11 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
 
    glDrawArrays(GL_TRIANGLES, 0, nverts);
 
-   /* Unbind span VBO so subsequent client-side array draws (image/font)
-    * are not accidentally interpreted as VBO-offset draws. */
+   /* Leave the default vertex array and no array buffer bound so that the
+    * client-side array draws of the image/font pipes are unaffected, and
+    * hand back texture unit 0 which those paths bind without selecting. */
+   if (vao) _gl_bind_vao(0);
    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-   /* Restore active texture unit. */
    glActiveTexture(GL_TEXTURE0);
 
    /* Invalidate Evas GL state cache fields touched by the span shader. */
