@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-only */
 /*
  * Span-buffer collector for the Ector GL engine.
  *

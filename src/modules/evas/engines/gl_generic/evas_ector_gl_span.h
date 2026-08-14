@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-only */
 /*
  * Span-buffer collector for the Ector GL engine.
  *
@@ -424,27 +423,11 @@ Eina_Bool span_path_usable(void);
  */
 void span_shader_shutdown(void);
 
-/* span_shader_pipe_flush() uses Evas_Engine_GL_Context which is only
+/* span_pass_draw() uses Evas_Engine_GL_Context which is only
  * available when evas_gl_common.h has been included before this header.
  * Guard the declaration so non-GL translation units (e.g., unit tests)
  * can still include this header without the full GL context definition. */
 #ifdef EVAS_GL_COMMON_H
-/**
- * Flush one SHD_SPAN pipe entry from the Evas GL shader_array_flush() loop.
- *
- * Called by shader_array_flush() in evas_gl_context.c when a pipe with
- * region.type == SHD_SPAN is encountered.  The function reads vertex data
- * and span shader parameters from gc->pipe[pipe_idx] and issues a single
- * glDrawArrays call through the span-lookup GLSL program.
- *
- * A weak default no-op stub is provided in evas_gl_context.c so that engine
- * modules that do not include the span shader (e.g., pure gl_x11 without
- * VG support) still link cleanly.
- *
- * @param gc        Evas GL context.
- * @param pipe_idx  Index of the pipe being flushed.
- */
-void span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx);
 
 /**
  * Render one VG object's span quads straight into @p target's framebuffer.

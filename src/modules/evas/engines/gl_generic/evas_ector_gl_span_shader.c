@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-only */
 /*
  * Span-lookup GLSL shaders for the Ector GL engine.
  *
@@ -1581,12 +1580,11 @@ done:
 }
 
 /* ------------------------------------------------------------------ */
-/* Evas pipe integration: span_shader_pipe_flush                       */
+/* Span drawing                                                        */
 /* ------------------------------------------------------------------ */
 
-/* Which program a quad needs.  Mirrors evas_gl_common_context_span_push();
- * a plain colour rides in the gradient variant, so only a genuine gradient
- * on either side selects it. */
+/* Which program a quad needs.  A plain colour rides in the gradient variant,
+ * so only a genuine gradient on either side selects it. */
 static Span_Variant
 _span_variant_of(const Span_Pipe_Params *p)
 {
@@ -1710,21 +1708,6 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
    gc->state.current.ch         = 0;
 }
 
-void
-span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
-{
-   _span_draw_batch(gc,
-                    gc->pipe[pipe_idx].array.span_variant,
-                    gc->pipe[pipe_idx].array.span_vertex_data,
-                    gc->pipe[pipe_idx].array.span_vertex_data_used,
-                    gc->pipe[pipe_idx].array.num,
-                    gc->pipe[pipe_idx].shader.span_fill_tex,
-                    gc->pipe[pipe_idx].shader.span_stroke_tex,
-                    gc->pipe[pipe_idx].shader.span_grad_atlas_tex,
-                    gc->pipe[pipe_idx].shader.span_mask_tex,
-                    gc->pipe[pipe_idx].shader.span_inv_tw,
-                    gc->pipe[pipe_idx].shader.span_inv_th);
-}
 
 /* ------------------------------------------------------------------ */
 /* Direct VG pass                                                      */

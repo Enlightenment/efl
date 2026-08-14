@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-only */
 /*
  * Restore Evas log macros after ector_software_private.h clobbers them.
  * ector_private.h redefines ERR/WRN/etc. to use _ector_log_dom_global

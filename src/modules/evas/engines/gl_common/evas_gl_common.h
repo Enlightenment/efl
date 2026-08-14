@@ -272,8 +272,7 @@ enum _Shader_Type {
    SHD_FILTER_BLUR_X,
    SHD_FILTER_BLUR_Y,
    SHD_FILTER_GRAYSCALE,
-   SHD_FILTER_INVERSE_COLOR,
-   SHD_SPAN
+   SHD_FILTER_INVERSE_COLOR
 };
 
 #define ARRAY_BUFFER_USE 500
@@ -296,7 +295,7 @@ typedef struct _Span_Channel_Params {
    float    grad_ra, grad_rdx, grad_rdy; /* radial: quadratic params */
 } Span_Channel_Params;
 
-/* Full parameter set for evas_gl_common_context_span_push(). */
+/* Full parameter set for one span quad; see span_pass_draw(). */
 typedef struct _Span_Pipe_Params {
    int      pool_w, pool_h;
        /* pool texture dimensions */
@@ -366,15 +365,6 @@ struct _Evas_Engine_GL_Context
          GLuint           cur_tex, cur_texu, cur_texv, cur_texa, cur_texm;
          int              tex_target;
          int              cx, cy, cw, ch;
-         /* SHD_SPAN: span-lookup shader parameters.
-          * Only the 6 fields used by the merge predicate and flush survive;
-          * all per-shape data now lives in the per-vertex span_vertex_data buffer. */
-         GLuint   span_fill_tex;       /* pool GL texture for fill spans (0 = none) */
-         GLuint   span_stroke_tex;     /* pool GL texture for stroke spans (0 = none) */
-         GLuint   span_grad_atlas_tex; /* gradient ramp atlas GL texture name */
-         GLuint   span_mask_tex;       /* mask FBO texture (0 = no mask) */
-         float    span_inv_tw;         /* 1.0 / pool_width (shared, same pool) */
-         float    span_inv_th;         /* 1.0 / pool_height */
          signed char      render_op;
          Eina_Bool        smooth      : 2;
          Eina_Bool        blend       : 2;
@@ -400,17 +390,9 @@ struct _Evas_Engine_GL_Context
          int            filter_data_count; // number of vec2
          GLfloat       *filter_data;
          Evas_GL_Image *im;
-         /* Span-buffer attribute batching.
-          * Heap-grown interleaved buffer of Span_Vertex_<variant> structs.
-          * 6 vertices per quad (two triangles).  Sole source of truth for
-          * span_shader_pipe_flush; array.vertex is not used by span pipes. */
-         void          *span_vertex_data;       /* heap-grown; NULL until first push */
-         size_t         span_vertex_data_size;  /* bytes allocated */
-         size_t         span_vertex_data_used;  /* bytes filled */
          GLuint         buffer;
          int            buffer_alloc;
          int            buffer_use;
-         Span_Variant   span_variant;           /* SOLID / SOLID_MASK / GRADIENT / GRADIENT_MASK */
          Eina_Bool      line        : 1;
          Eina_Bool      use_vertex  : 1; // true for all non-span pipes
          Eina_Bool      use_color   : 1;
@@ -670,9 +652,6 @@ void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *
                                                         int r, int g, int b, int a,
                                                         Evas_GL_Texture *mtex, int mx, int my, int mw, int mh,
                                                         Eina_Bool mask_smooth, Eina_Bool mask_color);
-void              evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
-                                                   const Span_Pipe_Params *p,
-                                                   const GLfloat ndc_quad[8]);
 /* Fill the six interleaved vertices of one span quad.  Exported so that the
  * VG pass can build a batch without going through a pipe entry: it renders
  * into its own FBO, so putting it in the pipe forced a target switch - and

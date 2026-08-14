@@ -11,15 +11,6 @@
 
 #define PRG_INVALID NULL
 
-/* Span-lookup shader pipe flush — implemented in evas_ector_gl_span_shader.c
- * (compiled into gl_generic).  The weak default is a no-op so that other
- * engine modules that do not include the span shader (gl_x11, etc.) still
- * link cleanly; for those modules SHD_SPAN pipes are never created. */
-void __attribute__((weak))
-span_shader_pipe_flush(Evas_Engine_GL_Context *gc EINA_UNUSED,
-                       int pipe_idx EINA_UNUSED)
-{
-}
 
 static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
@@ -1459,24 +1450,6 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              PIPE_FREE(gc->pipe[i].array.mask);
              PIPE_FREE(gc->pipe[i].array.masksam);
              FREE(gc->pipe[i].array.filter_data);
-             if (gc->pipe[i].array.span_vertex_data)
-               {
-                  free(gc->pipe[i].array.span_vertex_data);
-                  gc->pipe[i].array.span_vertex_data      = NULL;
-                  gc->pipe[i].array.span_vertex_data_size = 0;
-                  gc->pipe[i].array.span_vertex_data_used = 0;
-               }
-             /* Delete the span VBO when the MapBuffer-gated loop above did
-              * not run.  When glsym_glMapBuffer is present, the loop at
-              * lines ~1442-1446 already deletes every pipe's array.buffer
-              * (image/font and span share that field), so this block is
-              * a no-op there.  When MapBuffer is absent the loop is
-              * skipped, and the span path (which uses plain glBufferData
-              * rather than glMapBuffer) needs this fallback to avoid
-              * leaking the VBO. */
-             if (gc->pipe[i].array.buffer &&
-                 !(glsym_glMapBuffer && glsym_glUnmapBuffer))
-               glDeleteBuffers(1, &gc->pipe[i].array.buffer);
           }
      }
 
@@ -2089,18 +2062,6 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
-/* Dummy Evas_GL_Program used as a stable non-NULL key for SHD_SPAN pipes.
- * shader_array_flush() detects SHD_SPAN by region.type before touching
- * this program, so prog = 0 is intentional and never passed to glUseProgram
- * from the standard flush path. */
-static Evas_GL_Program _span_prog_dummy;
-
-/* Fill 6 vertices of the per-variant interleaved struct from Span_Pipe_Params
- * and pre-computed NDC quad corners.  pos varies per vertex; all other fields
- * are replicated identically across the 6 vertices of a quad.
- *
- * NDC quad order: TL(0), TR(1), BR(2), BL(3) — two triangles: 0,1,2 + 0,2,3.
- */
 /* Write one side's gradient attributes.  A side that is not actually a
  * gradient travels as SPAN_GRAD_TYPE_SOLID with its colour in abc_y, so that
  * a mixed fill/stroke shape needs one program rather than two. */
@@ -2240,171 +2201,6 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
            default: break;
           }
      }
-}
-
-/* Find an existing mergeable pipe entry or allocate a new one.
- *
- * The merge predicate collapses from ~44 per-shape fields to 6:
- *   region.type == SHD_SPAN, span_variant, span_fill_tex,
- *   span_stroke_tex, span_grad_atlas_tex, span_mask_tex.
- * All other per-shape data is now embedded in the span_vertex_data buffer
- * as per-vertex attributes, so it no longer participates in the predicate.
- *
- * Returns pipe index, or -1 if the pipe array is full (caller must flush). */
-static int
-_span_pipe_find_or_alloc(Evas_Engine_GL_Context *gc,
-                         const Span_Pipe_Params *p,
-                         Span_Variant variant,
-                         float _inv_tw, float _inv_th)
-{
-   int pn = gc->state.top_pipe;
-   size_t vsize = span_vertex_size(variant);
-
-#define _S gc->pipe[pn].shader
-   if (gc->pipe[pn].array.num > 0)
-     {
-        Eina_Bool can_merge =
-           (gc->pipe[pn].region.type == SHD_SPAN            &&
-            gc->pipe[pn].array.span_variant == variant      &&
-            _S.span_fill_tex       == p->fill.tex           &&
-            _S.span_stroke_tex     == p->stroke.tex         &&
-            _S.span_grad_atlas_tex == p->grad_atlas_tex     &&
-            _S.span_mask_tex       == p->mask_tex)
-           ? EINA_TRUE : EINA_FALSE;
-
-        /* 1024-quad cap: even a matching entry is full if it's at capacity. */
-        if (can_merge &&
-            gc->pipe[pn].array.span_vertex_data_used / vsize
-                >= (size_t)SPAN_PIPE_MAX_QUADS * 6)
-          can_merge = EINA_FALSE;
-
-        if (!can_merge)
-          {
-             pn = gc->state.top_pipe + 1;
-             if (pn >= gc->shared->info.tune.pipes.max)
-               return -1; /* caller must flush and retry */
-             gc->state.top_pipe = pn;
-          }
-     }
-#undef _S
-
-   /* Store the pool reciprocals: frame-constant scalars uploaded as uniforms
-    * at flush time.  The 6 merge-predicate fields (variant, fill_tex,
-    * stroke_tex, grad_atlas_tex, mask_tex, region.type) are written by the
-    * caller after this returns, since they only need to be set on the path
-    * that allocates a fresh entry. */
-   gc->pipe[pn].shader.span_inv_tw    = _inv_tw;
-   gc->pipe[pn].shader.span_inv_th    = _inv_th;
-
-   return pn;
-}
-
-void
-evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
-                                 const Span_Pipe_Params *p,
-                                 const GLfloat ndc_quad[8])
-{
-   /* Precompute reciprocals once for the merge predicate. */
-   float _inv_tw = 1.0f / (float)p->pool_w;
-   float _inv_th = 1.0f / (float)p->pool_h;
-
-   /* Classify each bound side as solid or gradient.  An unbound side
-    * (tex == 0) is "none" and does not influence variant selection.
-    * Span_Data_Type values: 1=Solid, 2=LinearGradient, 3=RadialGradient.
-    * SPAN_FILL_TYPE_GRADIENT_MIN == 2 (defined in evas_ector_gl_span_types.h). */
-   const int fill_is_grad   = (p->fill.tex   && p->fill.type   >= SPAN_FILL_TYPE_GRADIENT_MIN);
-   const int stroke_is_grad = (p->stroke.tex && p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN);
-   const int fill_is_solid  = (p->fill.tex   && !fill_is_grad);
-   const int stroke_is_solid = (p->stroke.tex && !stroke_is_grad);
-
-   /* A mixed shape - gradient one side, plain colour the other - used to be
-    * split into two pushes, because the two had separate programs and so
-    * could not share a pipe entry.  That doubled the draw calls for a very
-    * ordinary shape.  The gradient program now carries a plain colour as
-    * SPAN_GRAD_TYPE_SOLID, so one entry covers both sides. */
-   (void)fill_is_solid;
-   (void)stroke_is_solid;
-
-   Span_Variant variant;
-   if (fill_is_grad || stroke_is_grad)
-     variant = (p->mask_tex != 0) ? SPAN_VARIANT_GRADIENT_MASK
-                                   : SPAN_VARIANT_GRADIENT;
-   else
-     variant = (p->mask_tex != 0) ? SPAN_VARIANT_SOLID_MASK
-                                   : SPAN_VARIANT_SOLID;
-
-   int pn;
- again:
-   pn = _span_pipe_find_or_alloc(gc, p, variant, _inv_tw, _inv_th);
-   if (pn < 0)
-     {
-        shader_array_flush(gc);
-        goto again;
-     }
-
-#define _S gc->pipe[pn].shader
-   /* Initialise pipe entry metadata and the 5 predicate fields.
-    * Per-shape data goes directly into the span_vertex_data buffer below. */
-   gc->pipe[pn].region.type       = SHD_SPAN;
-   gc->pipe[pn].shader.prog       = &_span_prog_dummy;
-   gc->pipe[pn].shader.cur_tex    = p->fill.tex ? p->fill.tex : p->stroke.tex;
-   gc->pipe[pn].shader.blend      = EINA_TRUE;
-   gc->pipe[pn].shader.render_op  = EVAS_RENDER_BLEND;
-   gc->pipe[pn].shader.clip       = 0;
-   gc->pipe[pn].shader.smooth     = 0;
-
-   /* The 5 merge-predicate fields (inv_tw/th initialised by _span_pipe_find_or_alloc). */
-   _S.span_fill_tex       = p->fill.tex;
-   _S.span_stroke_tex     = p->stroke.tex;
-   _S.span_grad_atlas_tex = p->grad_atlas_tex;
-   _S.span_mask_tex       = p->mask_tex;
-#undef _S
-
-   gc->pipe[pn].array.line        = 0;
-   gc->pipe[pn].array.use_vertex  = 0;
-   gc->pipe[pn].array.use_color   = 0;
-   gc->pipe[pn].array.use_texuv   = 0;
-   gc->pipe[pn].array.use_texuv2  = 0;
-   gc->pipe[pn].array.use_texuv3  = 0;
-   gc->pipe[pn].array.use_texa    = 0;
-   gc->pipe[pn].array.use_texsam  = 0;
-   gc->pipe[pn].array.use_mask    = 0;
-   gc->pipe[pn].array.use_masksam = 0;
-
-   pipe_region_expand(gc, pn, p->x, p->y, p->w, p->h);
-   /* Span pipes carry all geometry in span_vertex_data; array.vertex is not
-    * used.  Bump array.num directly so the flush trigger fires (num > 0).
-    * Set havestuff so shader_array_flush does not bail early on span-only frames. */
-   gc->havestuff = EINA_TRUE;
-   gc->pipe[pn].array.num += 6;
-
-   /* Fill the per-variant interleaved vertex buffer — this is the source of
-    * truth for span_shader_pipe_flush starting in Task 4. */
-   {
-      const size_t vsize  = span_vertex_size(variant);
-      const size_t needed = gc->pipe[pn].array.span_vertex_data_used + 6 * vsize;
-      if (gc->pipe[pn].array.span_vertex_data_size < needed)
-        {
-           size_t new_size = gc->pipe[pn].array.span_vertex_data_size;
-           if (new_size == 0) new_size = vsize * 6;
-           while (new_size < needed) new_size *= 2;
-           void *grown = realloc(gc->pipe[pn].array.span_vertex_data, new_size);
-           if (!grown)
-             {
-                /* OOM: drop this push.  array.num was already bumped by PIPE_GROW;
-                 * flush will see the count but span_vertex_data_used is short.
-                 * span_shader_pipe_flush guards on span_vertex_data != NULL. */
-                return;
-             }
-           gc->pipe[pn].array.span_vertex_data      = grown;
-           gc->pipe[pn].array.span_vertex_data_size = new_size;
-        }
-      void *write_ptr = (char *)gc->pipe[pn].array.span_vertex_data
-                      + gc->pipe[pn].array.span_vertex_data_used;
-      evas_gl_common_span_fill_vertices(write_ptr, variant, p, ndc_quad);
-      gc->pipe[pn].array.span_vertex_data_used += 6 * vsize;
-      gc->pipe[pn].array.span_variant            = variant;
-   }
 }
 
 #define SWAP(a, b, tmp) \
@@ -4344,29 +4140,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         pipe_done++;
         gc->flushnum++;
 
-        /* SHD_SPAN pipes are handled entirely by the span-lookup shader path.
-         * They bypass the Evas shader program system because they own their
-         * own GLSL programs compiled and managed by evas_ector_gl_span_shader.c.
-         * After the flush the Evas program state cache must be invalidated
-         * (gc->state.current.prog = NULL) so the next non-span pipe re-binds
-         * its own program. */
-        if (gc->pipe[i].region.type == SHD_SPAN)
-          {
-             span_shader_pipe_flush(gc, i);
-             /* Reset both num and alloc so the next push re-allocates
-              * arrays with the correct use_* flags.  Without this, a
-              * reused pipe keeps the old alloc count and array_alloc()
-              * skips allocation — leaving texuv etc. as NULL when a
-              * subsequent IMAGE push expects them. */
-             gc->pipe[i].array.num = 0;
-             gc->pipe[i].array.alloc = 0;
-             /* Reset span_vertex_data_used so the buffer is reused
-              * from the start on the next flush cycle (size stays
-              * allocated as a high-water mark). */
-             gc->pipe[i].array.span_vertex_data_used = 0;
-             continue;
-          }
-
         if (prog != gc->state.current.prog)
           {
              glUseProgram(prog->prog);
@@ -4722,7 +4495,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           }
 
         // use_vertex is always true here.  Span pipes take the early-return path
-        // above (they use span_vertex_data + a VBO via span_shader_pipe_flush,
         // not array.vertex).  Non-span pipes always populate array.vertex via
         // PIPE_GROW.
         glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_FLOAT, GL_FALSE, 0, vertex_ptr);
@@ -5065,7 +4837,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
-        gc->pipe[i].array.span_vertex_data_used = 0;
 
         if (glsym_glMapBuffer && glsym_glUnmapBuffer)
           {

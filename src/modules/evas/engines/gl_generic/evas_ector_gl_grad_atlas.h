@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-only */
 #ifndef EVAS_ECTOR_GL_GRAD_ATLAS_H
 #define EVAS_ECTOR_GL_GRAD_ATLAS_H
 

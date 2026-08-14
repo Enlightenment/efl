@@ -3489,8 +3489,7 @@ eng_ector_end(void *engine,
                                        }
                                   }
 
-                                /* Pre-convert canvas-space quad to NDC for
-                                 * span_vertex_data.
+                                /* Pre-convert the canvas-space quad to NDC.
                                  *
                                  * NDC must be divided by the TARGET SURFACE
                                  * dimensions, not gc->w/gc->h.  When VG content

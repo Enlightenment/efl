@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: LGPL-2.1-only */
 /*
  * Shared type definitions for the span-buffer GL batching path.
  *
