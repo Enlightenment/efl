@@ -1026,17 +1026,36 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
 
    tex_width = sc->max_spans;
 
+   /* Upload only the columns the shader will actually read.  The scan loop
+    * is bounded by actual_max_spans, so entries past that are never sampled
+    * and uploading the full max_spans width is pure bandwidth waste (64
+    * columns instead of the 2-15 a typical shape needs).  The texture stays
+    * max_spans wide so nothing has to be reallocated when the span count
+    * fluctuates between frames. */
+   int up_width = sc->actual_max_spans + 1;
+   if (up_width > sc->max_spans) up_width = sc->max_spans;
+   if (up_width < 1) up_width = 1;
+
    for (i = 0; i < sc->texture_count; i++)
      {
         Span_Texture    *tex = &sc->textures[i];
         Evas_GL_Texture *evas_t;
 
-        /* Recreate the GPU texture if the active height changed
-         * (the sub-region within the pool was allocated for a different height). */
+        /* Keep the GPU texture across height changes.  It is allocated at
+         * the high-water alloc_height, so a shorter active height simply
+         * leaves unused rows at the bottom that the shader never samples
+         * (px/py are clamped to the surface, and py < sc->height).  Only a
+         * genuine growth past the allocation forces a recreate.
+         *
+         * Freeing and recreating on every height change was extremely
+         * expensive: it takes the evas_gl_common_texture_new() path, which
+         * reallocates an atlas slot and re-uploads the whole rect plus its
+         * border rows.  For content that resizes every frame that was
+         * ~2200 glTexSubImage2D calls and ~10 MB of upload per frame. */
         if (tex->evas_tex)
           {
              Evas_GL_Texture *existing = (Evas_GL_Texture *)tex->evas_tex;
-             if (existing->h != (unsigned int)sc->height)
+             if (existing->h < (unsigned int)sc->height)
                {
                   evas_gl_common_texture_free(existing, EINA_TRUE);
                   tex->evas_tex  = NULL;
@@ -1096,20 +1115,26 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
          * without a staging copy. */
         if (!tex->evas_tex)
           {
-             /* Initial creation via Evas texture pool. */
+             /* Initial creation via Evas texture pool.  Allocate at the
+              * high-water alloc_height so later frames with a different
+              * active height can reuse this texture in place. */
              int row_bytes = tex_width * 4;
+             int tex_h = sc->alloc_height;
              RGBA_Image *im;
              Image_Entry *ie;
 
+             if (tex_h < sc->height) tex_h = sc->height;
              ie = evas_cache_image_copied_data(evas_common_image_cache_get(),
-                                               tex_width, sc->height,
+                                               tex_width, tex_h,
                                                NULL, EINA_TRUE,
                                                EVAS_COLORSPACE_ARGB8888);
              if (!ie) continue;
              ie->flags.preload_done = 0;
              im = (RGBA_Image *)ie;
 
-             /* Copy pre-swapped buffer into the RGBA_Image. */
+             /* Copy pre-swapped buffer into the RGBA_Image.  Rows past the
+              * active height are never sampled but are zeroed so the texture
+              * never carries uninitialised memory. */
              {
                 int row;
                 uint8_t *dst = (uint8_t *)im->image.data;
@@ -1119,6 +1144,8 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
                             row_bytes);
                      dst += row_bytes;
                   }
+                if (tex_h > sc->height)
+                  memset(dst, 0, (size_t)(tex_h - sc->height) * row_bytes);
              }
 
              evas_t = evas_gl_common_texture_new(gc, im, EINA_FALSE);
@@ -1128,9 +1155,9 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
           }
         else
           {
-             /* Update existing texture in-place. Upload the full span
-              * buffer via glTexSubImage2D — avoids creating a new
-              * texture object and pool allocation each frame. */
+             /* Update existing texture in-place via glTexSubImage2D —
+              * avoids creating a new texture object and pool allocation
+              * each frame. */
              evas_t = (Evas_GL_Texture *)tex->evas_tex;
 
              glBindTexture(GL_TEXTURE_2D, evas_t->pt->texture);
@@ -1146,7 +1173,7 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
                   glPixelStorei(GL_UNPACK_ROW_LENGTH, stride_pixels);
                   glTexSubImage2D(GL_TEXTURE_2D, 0,
                                   evas_t->x, evas_t->y,
-                                  tex_width, sc->height,
+                                  up_width, sc->height,
                                   evas_t->pt->format,
                                   GL_UNSIGNED_BYTE, tex->buffer);
                   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
@@ -1158,7 +1185,7 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
                    * the rows cannot be handed to GL as-is.  Pack them into a
                    * contiguous scratch buffer and upload once, rather than
                    * issuing one call per scanline per shape per frame. */
-                  size_t   row_bytes = (size_t)tex_width * 4;
+                  size_t   row_bytes = (size_t)up_width * 4;
                   size_t   need      = row_bytes * (size_t)sc->height;
                   uint8_t *packed    = _span_pack_buf_get(need);
 
@@ -1171,7 +1198,7 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
                                 row_bytes);
                        glTexSubImage2D(GL_TEXTURE_2D, 0,
                                        evas_t->x, evas_t->y,
-                                       tex_width, sc->height,
+                                       up_width, sc->height,
                                        evas_t->pt->format,
                                        GL_UNSIGNED_BYTE, packed);
                     }
@@ -1181,7 +1208,7 @@ span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
                        for (row = 0; row < sc->height; row++)
                          glTexSubImage2D(GL_TEXTURE_2D, 0,
                                          evas_t->x, evas_t->y + row,
-                                         tex_width, 1,
+                                         up_width, 1,
                                          evas_t->pt->format,
                                          GL_UNSIGNED_BYTE,
                                          tex->buffer + (size_t)row * sc->stride);
