@@ -9,6 +9,14 @@
 #include "../gl_common/evas_gl_core_private.h"
 #include "evas_ector_gl_grad_atlas.h"
 
+/* Span page lifecycle.  Declared here rather than pulled in from
+ * evas_ector_gl_span.h, which needs sw_ft_raster.h - only on gl_generic's
+ * include path, while this header is also used by gl_x11, gl_drm and
+ * wayland_egl.  The definitions live in evas_ector_gl_span_shader.c. */
+struct _Span_Page;
+struct _Span_Page *span_page_new(void);
+void               span_page_free(struct _Span_Page *page);
+
 typedef struct _Render_Engine_GL_Generic Render_Engine_GL_Generic;
 typedef struct _Render_Output_GL_Generic Render_Output_GL_Generic;
 typedef struct _Context_3D Context_3D;
@@ -29,6 +37,15 @@ struct _Render_Engine_GL_Generic
     * NULL if span_grad_atlas_new() failed — gradient shapes are skipped per
     * the spec error table (one-shot ERR logged at allocation time). */
    Span_Grad_Atlas          *grad_atlas;
+
+   /* One GPU texture holding the span rows of the render pass in flight.
+    * Shared by every collector so that a pass costs a single upload; see
+    * span_page_upload().  NULL until the first pass.
+    *
+    * Only forward-declared: evas_ector_gl_span.h needs sw_ft_raster.h, which
+    * is only on gl_generic's include path, and this header is also pulled in
+    * by gl_x11, gl_drm and wayland_egl. */
+   struct _Span_Page        *span_page;
 
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;

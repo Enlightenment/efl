@@ -208,8 +208,8 @@ span_collector_free(Span_Collector *sc)
 
    if (!sc) return;
 
-   /* evas_tex fields must have been released by the GL thread via
-    * span_collector_delete_textures() before this call. */
+   /* No GL resource is owned here: the rows live in the engine's shared
+    * span page, which outlives individual collectors. */
    for (i = 0; i < sc->texture_count; i++)
      {
         free(sc->textures[i].buffer);
@@ -977,26 +977,12 @@ _collect_spans_composite(int count, const SW_FT_Span *spans, void *user_data)
 /* ------------------------------------------------------------------ */
 
 /*
- * The real implementations of these five functions live in
- * evas_ector_gl_span_shader.c, which is compiled as part of the
- * gl_generic engine module.  The stubs below are compiled ONLY when
- * SPAN_COLLECTOR_TEST_BUILD is defined so that the unit-test binary
- * (which does not link against GL) can still link successfully.
+ * The real implementations live in evas_ector_gl_span_shader.c, which is
+ * compiled as part of the gl_generic engine module.  The stubs below are
+ * compiled ONLY when SPAN_COLLECTOR_TEST_BUILD is defined so that the
+ * unit-test binary (which does not link against GL) still links.
  */
 #ifdef SPAN_COLLECTOR_TEST_BUILD
-
-void
-span_collector_upload_textures(Span_Collector *sc EINA_UNUSED,
-                               void *gc_ptr EINA_UNUSED)
-{
-   /* No-op in test build: GL not available. */
-}
-
-void
-span_collector_delete_textures(Span_Collector *sc EINA_UNUSED)
-{
-   /* No-op in test build: GL not available. */
-}
 
 Eina_Bool
 span_shader_init(void)

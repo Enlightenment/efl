@@ -170,6 +170,7 @@ eng_engine_new(void)
 
    /* Gradient ramp atlas: NULL return means atlas unavailable — gradient
     * shapes will be skipped per the spec error table (no-op, non-fatal). */
+   engine->span_page = span_page_new();
    engine->grad_atlas = span_grad_atlas_new();
    if (engine->grad_atlas)
      span_grad_atlas_flush_cb_set(engine->grad_atlas,
@@ -186,6 +187,7 @@ eng_engine_free(void *engine)
 
    generic_cache_destroy(e->software.surface_cache);
 
+   if (e->span_page) { span_page_free(e->span_page); e->span_page = NULL; }
    if (e->grad_atlas) span_grad_atlas_free(e->grad_atlas);
 
    EINA_LIST_FREE(e->software.outputs, output)
@@ -2503,11 +2505,7 @@ eng_ector_destroy(void *engine EINA_UNUSED, Ector_Surface *ector)
              for (ci = 0; ci < pd->span_collectors_fill_alloc; ci++)
                {
                   Span_Collector *sc = (Span_Collector *)pd->span_collectors_fill[ci];
-                  if (sc)
-                    {
-                       span_collector_delete_textures(sc);
-                       span_collector_free(sc);
-                    }
+                  if (sc) span_collector_free(sc);
                }
              free(pd->span_collectors_fill);
              pd->span_collectors_fill       = NULL;
@@ -2517,11 +2515,7 @@ eng_ector_destroy(void *engine EINA_UNUSED, Ector_Surface *ector)
              for (ci = 0; ci < pd->span_collectors_stroke_alloc; ci++)
                {
                   Span_Collector *sc = (Span_Collector *)pd->span_collectors_stroke[ci];
-                  if (sc)
-                    {
-                       span_collector_delete_textures(sc);
-                       span_collector_free(sc);
-                    }
+                  if (sc) span_collector_free(sc);
                }
              free(pd->span_collectors_stroke);
              pd->span_collectors_stroke       = NULL;
@@ -2864,7 +2858,7 @@ eng_ector_begin(void *engine, void *surface,
            if (!pd) return EINA_FALSE;
 
            /* Collectors survive across passes and their Evas_GL_Textures are
-            * overwritten in place by span_collector_upload_textures.  If this
+            * overwritten in place by span_page_upload.  If this
             * surface already ran a pass whose draws are still queued, those
             * uploads would land in the GL stream ahead of the draw that reads
             * them, and the earlier pass would sample this pass's spans.
@@ -3196,13 +3190,7 @@ eng_ector_end(void *engine,
 
                 if (!span_shader_init()) goto span_done;
 
-                /* Upload textures for all collectors. */
-                for (ci = 0; ci < fill_count; ci++)
-                  span_collector_upload_textures((Span_Collector *)fill_arr[ci], gc);
-                for (ci = 0; ci < stroke_count; ci++)
-                  span_collector_upload_textures((Span_Collector *)stroke_arr[ci], gc);
-
-                /* Check that at least one collector has texture data. */
+                /* Check that at least one collector has span data. */
                 {
                    int has_data = 0;
                    for (ci = 0; !has_data && ci < fill_count; ci++)
@@ -3211,6 +3199,14 @@ eng_ector_end(void *engine,
                      has_data |= ((Span_Collector *)stroke_arr[ci])->actual_max_spans > 0;
                    if (!has_data) goto span_done;
                 }
+
+                /* Every collector of this pass shares one page and one
+                 * upload.  On a tiled GPU the span upload cost is driven by
+                 * the number of glTexSubImage2D calls, not their size. */
+                if (!span_page_upload(gc, ((Render_Engine_GL_Generic *)engine)->span_page,
+                                      fill_arr, fill_count,
+                                      stroke_arr, stroke_count))
+                  goto span_done;
 
                 evas_gl_common_context_target_surface_set(gc, glim);
 
@@ -3351,25 +3347,31 @@ eng_ector_end(void *engine,
                         int ti;
                         for (ti = 0; ti < max_tc; ti++)
                           {
+                             /* Fill and stroke live in the same page; only
+                              * their row offsets differ. */
+                             Span_Page *_page =
+                                ((Render_Engine_GL_Generic *)engine)->span_page;
+                             GLuint page_tex = span_page_tex_id(_page);
                              GLuint f_tex = 0, s_tex = 0;
                              int f_tx = 0, f_ty = 0, s_tx = 0, s_ty = 0;
                              int pw = 1, ph = 1;
                              int f_xmin = 0, s_xmin = 0;
 
-                             if (ti < fill_tc && sc_fill->textures[ti].evas_tex)
+                             if (!page_tex) continue;
+                             span_page_pool_size(_page, &pw, &ph);
+
+                             if (ti < fill_tc)
                                {
-                                  Evas_GL_Texture *t = (Evas_GL_Texture *)sc_fill->textures[ti].evas_tex;
-                                  f_tex  = t->pt->texture;
-                                  f_tx   = t->x; f_ty = t->y;
-                                  pw     = t->pt->w; ph = t->pt->h;
+                                  f_tex  = page_tex;
+                                  f_tx   = sc_fill->textures[ti].page_x;
+                                  f_ty   = sc_fill->textures[ti].page_y;
                                   f_xmin = sc_fill->textures[ti].x_min;
                                }
-                             if (ti < stroke_tc && sc_stroke->textures[ti].evas_tex)
+                             if (ti < stroke_tc)
                                {
-                                  Evas_GL_Texture *t = (Evas_GL_Texture *)sc_stroke->textures[ti].evas_tex;
-                                  s_tex  = t->pt->texture;
-                                  s_tx   = t->x; s_ty = t->y;
-                                  pw     = t->pt->w; ph = t->pt->h;
+                                  s_tex  = page_tex;
+                                  s_tx   = sc_stroke->textures[ti].page_x;
+                                  s_ty   = sc_stroke->textures[ti].page_y;
                                   s_xmin = sc_stroke->textures[ti].x_min;
                                }
 

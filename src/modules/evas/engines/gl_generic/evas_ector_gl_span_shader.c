@@ -50,7 +50,30 @@ static size_t   _span_pack_sz  = 0;
 #endif
 
 static GLuint _span_pbo = 0;
+static size_t _span_pbo_size = 0;
 static int    _span_pbo_ok = -1;   /* -1 unprobed, 0 unusable, 1 usable */
+
+/* Bind the staging buffer and make sure it holds @p need bytes, growing it
+ * on a high-water mark.
+ *
+ * Respecifying the store on every upload orphans it, which avoids waiting on
+ * a copy the GPU may still be reading - but it also makes the driver take a
+ * fresh buffer object from the kernel each time.  At the sizes a whole pass
+ * reaches that showed up as four times the ioctl time.  Allocate once and
+ * refill instead; a single upload per pass leaves more than enough slack for
+ * the previous blit to have drained. */
+static void
+_span_pbo_bind(size_t need)
+{
+   if (!_span_pbo) glGenBuffers(1, &_span_pbo);
+   glBindBuffer(GL_PIXEL_UNPACK_BUFFER, _span_pbo);
+   if (need > _span_pbo_size)
+     {
+        glBufferData(GL_PIXEL_UNPACK_BUFFER, (GLsizeiptr)need, NULL,
+                     GL_STREAM_DRAW);
+        _span_pbo_size = need;
+     }
+}
 
 static int
 _span_pbo_usable(void)
@@ -68,6 +91,7 @@ _span_pbo_usable(void)
    if ((ver && (strstr(ver, "OpenGL ES 3") || !strstr(ver, "OpenGL ES"))) ||
        (ext && strstr(ext, "pixel_buffer_object")))
      _span_pbo_ok = 1;
+
 
    if (!_span_pbo_ok)
      INF("span shader: no pixel buffer objects, uploading from client memory");
@@ -1237,6 +1261,7 @@ span_shader_shutdown(void)
      {
         glDeleteBuffers(1, &_span_pbo);
         _span_pbo = 0;
+        _span_pbo_size = 0;
      }
    _span_pbo_ok = -1;
 
@@ -1250,275 +1275,288 @@ span_shader_shutdown(void)
 /* Public API: texture upload / delete                                 */
 /* ------------------------------------------------------------------ */
 
-void
-span_collector_upload_textures(Span_Collector *sc, void *gc_ptr)
+Span_Page *
+span_page_new(void)
 {
-   Evas_Engine_GL_Context *gc = (Evas_Engine_GL_Context *)gc_ptr;
-   int i, tex_width;
-
-   if (!sc || !gc) return;
-
-   tex_width = sc->max_spans;
-
-   /* Upload only the columns the shader will actually read.  The scan loop
-    * is bounded by actual_max_spans, so entries past that are never sampled
-    * and uploading the full max_spans width is pure bandwidth waste (64
-    * columns instead of the 2-15 a typical shape needs).  The texture stays
-    * max_spans wide so nothing has to be reallocated when the span count
-    * fluctuates between frames. */
-   int up_width = sc->actual_max_spans + 1;
-   if (up_width > sc->max_spans) up_width = sc->max_spans;
-   if (up_width < 1) up_width = 1;
-
-   for (i = 0; i < sc->texture_count; i++)
-     {
-        Span_Texture    *tex = &sc->textures[i];
-        Evas_GL_Texture *evas_t;
-
-        /* Keep the GPU texture across height changes.  It is allocated at
-         * the high-water alloc_height, so a shorter active height simply
-         * leaves unused rows at the bottom that the shader never samples
-         * (px/py are clamped to the surface, and py < sc->height).  Only a
-         * genuine growth past the allocation forces a recreate.
-         *
-         * Freeing and recreating on every height change was extremely
-         * expensive: it takes the evas_gl_common_texture_new() path, which
-         * reallocates an atlas slot and re-uploads the whole rect plus its
-         * border rows.  For content that resizes every frame that was
-         * ~2200 glTexSubImage2D calls and ~10 MB of upload per frame. */
-        if (tex->evas_tex)
-          {
-             Evas_GL_Texture *existing = (Evas_GL_Texture *)tex->evas_tex;
-             if (existing->h < sc->height)
-               {
-                  evas_gl_common_texture_free(existing, EINA_TRUE);
-                  tex->evas_tex  = NULL;
-                  tex->prev_hash = 0;
-               }
-          }
-
-        /* Skip upload if span data hasn't changed since last frame.
-         * Use a fast hash of the buffer to detect identical content even
-         * when dirty is set (spans re-collected with same values). */
-        if (tex->evas_tex)
-          {
-             if (!tex->dirty)
-               continue;
-
-             {
-                uint32_t hash = tex->rolling_hash;
-                if (hash == tex->prev_hash)
-                  {
-                     tex->dirty = EINA_FALSE;
-                     continue;
-                  }
-                tex->prev_hash = hash;
-             }
-          }
-
-        /* Write sentinels for rows that have spans.
-         *
-         * The collection phase (_flush_row_tail) memsets the tail of each
-         * row it touches, but edge cases in chunked callbacks can leave
-         * rows without a clean sentinel.  This per-row single-byte write
-         * is the correctness backstop: it ensures byte[1] (len) at the
-         * span_counts[y] position is 0 for every active row.
-         *
-         * For rows with NO spans, span_collector_clear already zeroed
-         * byte[1] of entry 0, so only rows with idx > 0 need attention. */
-        {
-           int y;
-           for (y = 0; y < sc->height; y++)
-             {
-                int idx = tex->span_counts[y];
-                if (idx > 0 && idx < sc->max_spans)
-                  {
-                     uint8_t *sentinel = tex->buffer +
-                                         ((size_t)y * sc->stride) +
-                                         ((size_t)idx * 4);
-                     sentinel[1] = 0;
-                  }
-             }
-        }
-
-        /* First frame: create the Evas texture via the standard path.
-         * Subsequent dirty frames: update in-place via glTexSubImage2D.
-         *
-         * The span buffer is already in BGRA-swapped byte order (written
-         * that way by _collect_spans_solid), so we can upload directly
-         * without a staging copy. */
-        if (!tex->evas_tex)
-          {
-             /* Initial creation via Evas texture pool.  Allocate at the
-              * high-water alloc_height so later frames with a different
-              * active height can reuse this texture in place. */
-             int row_bytes = tex_width * 4;
-             int tex_h = sc->alloc_height;
-             RGBA_Image *im;
-             Image_Entry *ie;
-
-             if (tex_h < sc->height) tex_h = sc->height;
-             ie = evas_cache_image_copied_data(evas_common_image_cache_get(),
-                                               tex_width, tex_h,
-                                               NULL, EINA_TRUE,
-                                               EVAS_COLORSPACE_ARGB8888);
-             if (!ie) continue;
-             ie->flags.preload_done = 0;
-             im = (RGBA_Image *)ie;
-
-             /* Copy pre-swapped buffer into the RGBA_Image.  Rows past the
-              * active height are never sampled but are zeroed so the texture
-              * never carries uninitialised memory. */
-             {
-                int row;
-                uint8_t *dst = (uint8_t *)im->image.data;
-                for (row = 0; row < sc->height; row++)
-                  {
-                     memcpy(dst, tex->buffer + (size_t)row * sc->stride,
-                            row_bytes);
-                     dst += row_bytes;
-                  }
-                if (tex_h > sc->height)
-                  memset(dst, 0, (size_t)(tex_h - sc->height) * row_bytes);
-             }
-
-             evas_t = evas_gl_common_texture_new(gc, im, EINA_FALSE);
-             if (evas_t)
-               tex->evas_tex = evas_t;
-             evas_cache_image_drop(ie);
-          }
-        else
-          {
-             /* Update existing texture in-place via glTexSubImage2D —
-              * avoids creating a new texture object and pool allocation
-              * each frame. */
-             evas_t = (Evas_GL_Texture *)tex->evas_tex;
-
-             glBindTexture(GL_TEXTURE_2D, evas_t->pt->texture);
-             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-             /* Preferred path: pack the rows tight and hand them to the GPU
-              * through a pixel-unpack buffer, so the tiling conversion is a
-              * GPU blit rather than a CPU swizzle. */
-             if (_span_pbo_usable())
-               {
-                  size_t   row_bytes = (size_t)up_width * 4;
-                  size_t   need      = row_bytes * (size_t)sc->height;
-                  uint8_t *packed    = _span_pack_buf_get(need);
-
-                  if (packed)
-                    {
-                       int row;
-
-                       for (row = 0; row < sc->height; row++)
-                         memcpy(packed + (size_t)row * row_bytes,
-                                tex->buffer + (size_t)row * sc->stride,
-                                row_bytes);
-
-                       if (!_span_pbo) glGenBuffers(1, &_span_pbo);
-                       glBindBuffer(GL_PIXEL_UNPACK_BUFFER, _span_pbo);
-                       /* Respecify rather than update: orphaning lets the
-                        * driver hand back fresh storage instead of waiting
-                        * on the copy the GPU may still be reading. */
-                       glBufferData(GL_PIXEL_UNPACK_BUFFER, (GLsizeiptr)need,
-                                    NULL, GL_STREAM_DRAW);
-                       glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0,
-                                       (GLsizeiptr)need, packed);
-                       /* The rows are packed tight here.  Evas' own texture
-                        * upload paths leave GL_UNPACK_ROW_LENGTH set to the
-                        * stride they used, so it has to be cleared or the
-                        * driver reads these rows with the wrong pitch. */
-                       glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-                       glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                       evas_t->x, evas_t->y,
-                                       up_width, sc->height,
-                                       evas_t->pt->format,
-                                       GL_UNSIGNED_BYTE, (const void *)0);
-                       glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-                       goto uploaded;
-                    }
-               }
-
-             /* Upload the entire span buffer in one call when the driver
-              * supports GL_UNPACK_ROW_LENGTH (handles stride != tex width).
-              * Otherwise fall back to row-by-row upload. */
-             if (gc->shared->info.unpack_row_length)
-               {
-                  /* stride is in bytes; GL_UNPACK_ROW_LENGTH is in pixels. */
-                  int stride_pixels = sc->stride / 4;
-                  glPixelStorei(GL_UNPACK_ROW_LENGTH, stride_pixels);
-                  glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                  evas_t->x, evas_t->y,
-                                  up_width, sc->height,
-                                  evas_t->pt->format,
-                                  GL_UNSIGNED_BYTE, tex->buffer);
-                  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-               }
-             else
-               {
-                  /* No GL_UNPACK_ROW_LENGTH: the span buffer's stride
-                   * ((max_spans + 1) * 4) is wider than the uploaded rect, so
-                   * the rows cannot be handed to GL as-is.  Pack them into a
-                   * contiguous scratch buffer and upload once, rather than
-                   * issuing one call per scanline per shape per frame. */
-                  size_t   row_bytes = (size_t)up_width * 4;
-                  size_t   need      = row_bytes * (size_t)sc->height;
-                  uint8_t *packed    = _span_pack_buf_get(need);
-
-                  if (packed)
-                    {
-                       int row;
-                       for (row = 0; row < sc->height; row++)
-                         memcpy(packed + (size_t)row * row_bytes,
-                                tex->buffer + (size_t)row * sc->stride,
-                                row_bytes);
-                       glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                       evas_t->x, evas_t->y,
-                                       up_width, sc->height,
-                                       evas_t->pt->format,
-                                       GL_UNSIGNED_BYTE, packed);
-                    }
-                  else
-                    {
-                       int row;
-                       for (row = 0; row < sc->height; row++)
-                         glTexSubImage2D(GL_TEXTURE_2D, 0,
-                                         evas_t->x, evas_t->y + row,
-                                         up_width, 1,
-                                         evas_t->pt->format,
-                                         GL_UNSIGNED_BYTE,
-                                         tex->buffer + (size_t)row * sc->stride);
-                    }
-               }
-
-uploaded:
-             /* Restore Evas texture binding state. */
-             if (evas_t->pt->texture != gc->state.current.cur_tex)
-               glBindTexture(gc->state.current.tex_target,
-                             gc->state.current.cur_tex);
-          }
-
-        tex->dirty = EINA_FALSE;
-     }
+   return calloc(1, sizeof(Span_Page));
 }
 
 void
-span_collector_delete_textures(Span_Collector *sc)
+span_page_free(Span_Page *page)
 {
-   int i;
+   if (!page) return;
+   if (page->evas_tex)
+     evas_gl_common_texture_free((Evas_GL_Texture *)page->evas_tex, EINA_TRUE);
+   free(page);
+}
 
-   if (!sc) return;
+unsigned int
+span_page_tex_id(const Span_Page *page)
+{
+   const Evas_GL_Texture *t = page ? (const Evas_GL_Texture *)page->evas_tex : NULL;
+   return (t && t->pt) ? t->pt->texture : 0;
+}
 
-   for (i = 0; i < sc->texture_count; i++)
+void
+span_page_pool_size(const Span_Page *page, int *w, int *h)
+{
+   const Evas_GL_Texture *t = page ? (const Evas_GL_Texture *)page->evas_tex : NULL;
+
+   if (w) *w = (t && t->pt) ? t->pt->w : 1;
+   if (h) *h = (t && t->pt) ? t->pt->h : 1;
+}
+
+/* Walk every Span_Texture of every collector in the pass.  The two arrays
+ * are indexed by shape and either may be shorter, so they are visited in
+ * sequence rather than in lockstep. */
+#define SPAN_PAGE_FOREACH(fills, nf, strokes, ns, scvar, texvar, body)   \
+   do {                                                                 \
+      int _a, _c, _t;                                                    \
+      for (_a = 0; _a < 2; _a++)                                         \
+        {                                                                \
+           void **_arr = _a ? (strokes) : (fills);                       \
+           int    _n   = _a ? (ns)      : (nf);                          \
+           if (!_arr) continue;                                          \
+           for (_c = 0; _c < _n; _c++)                                   \
+             {                                                           \
+                Span_Collector *scvar = (Span_Collector *)_arr[_c];      \
+                if (!scvar) continue;                                    \
+                for (_t = 0; _t < scvar->texture_count; _t++)            \
+                  {                                                      \
+                     Span_Texture *texvar = &scvar->textures[_t];        \
+                     body                                                \
+                  }                                                      \
+             }                                                           \
+        }                                                                \
+   } while (0)
+
+/* Ensure the page texture can hold w x h texels, growing it if not.  The
+ * texture is created through the Evas pool so that it lives in the same
+ * atlas machinery as every other engine texture. */
+static Eina_Bool
+_span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
+{
+   Evas_GL_Texture *t = (Evas_GL_Texture *)page->evas_tex;
+   RGBA_Image  *im;
+   Image_Entry *ie;
+
+   if (t && page->w >= w && page->h >= h) return EINA_TRUE;
+
+   /* Grow to at least what is asked, never shrink. */
+   if (w < page->w) w = page->w;
+   if (h < page->h) h = page->h;
+
+   if (t)
      {
-        if (sc->textures[i].evas_tex)
-          {
-             evas_gl_common_texture_free(
-                (Evas_GL_Texture *)sc->textures[i].evas_tex, EINA_TRUE);
-             sc->textures[i].evas_tex = NULL;
-          }
+        evas_gl_common_texture_free(t, EINA_TRUE);
+        page->evas_tex  = NULL;
+        page->prev_hash = 0;
      }
 
+   ie = evas_cache_image_copied_data(evas_common_image_cache_get(), w, h,
+                                     NULL, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
+   if (!ie) return EINA_FALSE;
+   ie->flags.preload_done = 0;
+   im = (RGBA_Image *)ie;
+   if (im->image.data) memset(im->image.data, 0, (size_t)w * h * 4);
+
+   t = evas_gl_common_texture_new(gc, im, EINA_FALSE);
+   evas_cache_image_drop(ie);
+   if (!t) return EINA_FALSE;
+
+   page->evas_tex = t;
+   page->w = w;
+   page->h = h;
+   return EINA_TRUE;
+}
+
+/* One Span_Texture's worth of rows waiting to go into the page. */
+typedef struct
+{
+   Span_Texture *tex;
+   int           width;   /* columns the shader will actually read */
+   int           rows;
+   int           stride;  /* source row stride in bytes */
+   int           max_spans;
+   int          *counts;
+} Span_Page_Entry;
+
+static int
+_entry_cmp_width_desc(const void *a, const void *b)
+{
+   const Span_Page_Entry *x = a, *y = b;
+
+   if (x->width != y->width) return y->width - x->width;
+   return 0;
+}
+
+Eina_Bool
+span_page_upload(void *gc_ptr, Span_Page *page,
+                 void **fills, int nfills, void **strokes, int nstrokes)
+{
+   Evas_Engine_GL_Context *gc = (Evas_Engine_GL_Context *)gc_ptr;
+   Evas_GL_Texture *pt;
+   Span_Page_Entry  stackbuf[64];
+   Span_Page_Entry *ent = stackbuf;
+   uint32_t hash = 2166136261u;
+   int      n = 0, cap = (int)(sizeof(stackbuf) / sizeof(stackbuf[0]));
+   int      i, page_w = 1, total_h = 0, row_at;
+   Eina_Bool ok = EINA_FALSE;
+
+   if (!gc || !page) return EINA_FALSE;
+
+   /* Gather every Span_Texture of the pass. */
+   SPAN_PAGE_FOREACH(fills, nfills, strokes, nstrokes, sc, tex,
+     {
+        int wid = sc->actual_max_spans + 1;
+
+        if (wid > sc->max_spans) wid = sc->max_spans;
+        if (wid < 1) wid = 1;
+
+        if (n == cap)
+          {
+             int newcap = cap * 2;
+             Span_Page_Entry *grown = (ent == stackbuf)
+                ? malloc((size_t)newcap * sizeof(*grown))
+                : realloc(ent, (size_t)newcap * sizeof(*grown));
+             if (!grown) goto done;
+             if (ent == stackbuf) memcpy(grown, stackbuf, sizeof(stackbuf));
+             ent = grown;
+             cap = newcap;
+          }
+
+        ent[n].tex       = tex;
+        ent[n].width     = wid;
+        ent[n].rows      = sc->height;
+        ent[n].stride    = sc->stride;
+        ent[n].max_spans = sc->max_spans;
+        ent[n].counts    = tex->span_counts;
+        n++;
+
+        total_h += sc->height;
+        if (wid > page_w) page_w = wid;
+     });
+
+   if (!n || total_h <= 0) goto done;
+
+   /* Widest first.  One glTexSubImage2D covers a rectangle, so collectors
+    * sharing an upload also share its width - putting a 3-column shape in
+    * the same rectangle as a 40-column one would upload thirteen times the
+    * rows it needs.  Sorting lets similar widths group together below. */
+   qsort(ent, (size_t)n, sizeof(*ent), _entry_cmp_width_desc);
+
+   for (i = 0; i < n; i++)
+     {
+        hash = hash * 31 + ent[i].tex->rolling_hash;
+        hash = hash * 31 + (uint32_t)ent[i].rows;
+        hash = hash * 31 + (uint32_t)ent[i].width;
+     }
+
+   if (!_span_page_ensure(page, gc, page_w, total_h)) goto done;
+   pt = (Evas_GL_Texture *)page->evas_tex;
+
+   /* Hand out page offsets.  This has to happen even when the upload is
+    * skipped, because the draw code reads them on every pass. */
+   row_at = 0;
+   for (i = 0; i < n; i++)
+     {
+        ent[i].tex->page_x = pt->x;
+        ent[i].tex->page_y = pt->y + row_at;
+        ent[i].tex->dirty  = EINA_FALSE;
+        row_at += ent[i].rows;
+     }
+
+   ok = EINA_TRUE;
+
+   /* Identical content and layout to the last pass: the rows are already
+    * there.  This is what keeps unchanging shapes free, and they are the
+    * common case - a pass re-runs whenever anything on the canvas changes,
+    * not only when the vector content does. */
+   if (hash == page->prev_hash) goto done;
+   page->prev_hash = hash;
+
+   glBindTexture(GL_TEXTURE_2D, pt->pt->texture);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   /* The rows are packed tight below.  Evas' own upload paths leave
+    * GL_UNPACK_ROW_LENGTH set to the stride they used, so it has to be
+    * cleared or the driver reads these rows with the wrong pitch. */
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+
+   /* Walk the sorted entries in runs whose widths are within a factor of
+    * two, and upload one rectangle per run.  Uniform shapes - the common
+    * case - collapse to a single call; a mix costs one call per width class
+    * instead of one per collector, without inflating the bytes. */
+   row_at = 0;
+   i = 0;
+   while (i < n)
+     {
+        int      g_start = i, g_w = ent[i].width, g_rows = 0;
+        size_t   row_bytes, need;
+        uint8_t *packed;
+        int      j, at;
+
+        while (i < n && ent[i].width * 2 >= g_w)
+          {
+             g_rows += ent[i].rows;
+             i++;
+          }
+
+        row_bytes = (size_t)g_w * 4;
+        need      = row_bytes * (size_t)g_rows;
+
+        packed = _span_pack_buf_get(need);
+        if (!packed) break;
+
+        at = 0;
+        for (j = g_start; j < i; j++)
+          {
+             Span_Texture *tex = ent[j].tex;
+             int y;
+
+             /* Sentinel backstop: the collection phase memsets the tail of
+              * each row it touches, but chunked callbacks can leave a row
+              * without a clean terminator.  Rows with no spans were already
+              * zeroed by span_collector_clear. */
+             for (y = 0; y < ent[j].rows; y++)
+               {
+                  int idx = ent[j].counts[y];
+                  if (idx > 0 && idx < ent[j].max_spans)
+                    tex->buffer[((size_t)y * ent[j].stride) +
+                                ((size_t)idx * 4) + 1] = 0;
+               }
+
+             for (y = 0; y < ent[j].rows; y++)
+               memcpy(packed + (size_t)(at + y) * row_bytes,
+                      tex->buffer + (size_t)y * ent[j].stride,
+                      row_bytes);
+             at += ent[j].rows;
+          }
+
+        if (_span_pbo_usable())
+          {
+             _span_pbo_bind(need);
+             glBufferSubData(GL_PIXEL_UNPACK_BUFFER, 0, (GLsizeiptr)need, packed);
+             glTexSubImage2D(GL_TEXTURE_2D, 0, pt->x, pt->y + row_at,
+                             g_w, g_rows, pt->pt->format,
+                             GL_UNSIGNED_BYTE, (const void *)0);
+             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+          }
+        else
+          {
+             glTexSubImage2D(GL_TEXTURE_2D, 0, pt->x, pt->y + row_at,
+                             g_w, g_rows, pt->pt->format,
+                             GL_UNSIGNED_BYTE, packed);
+          }
+
+        row_at += g_rows;
+     }
+
+   if (pt->pt->texture != gc->state.current.cur_tex)
+     glBindTexture(gc->state.current.tex_target, gc->state.current.cur_tex);
+
+done:
+   if (ent != stackbuf) free(ent);
+   return ok;
 }
 
 /* ------------------------------------------------------------------ */

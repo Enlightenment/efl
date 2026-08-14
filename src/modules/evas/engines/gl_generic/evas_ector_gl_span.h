@@ -152,7 +152,13 @@ typedef struct _Span_Collector Span_Collector;
  * (1024×1 RGBA8) and per-pixel t-computation coefficients are passed as
  * shader uniforms.  No per-span color data is stored in the span buffer.
  *
- * evas_tex is NULL until span_collector_upload_textures() has been called.
+ * The rows do not get a GPU texture of their own.  Every Span_Texture of
+ * every collector in one render pass is packed into a single shared page
+ * (Span_Page below) and uploaded in one call, because the span upload cost
+ * on a tiled GPU is dominated by the number of glTexSubImage2D calls rather
+ * than by the bytes they carry.  page_x/page_y are this texture's texel
+ * offset inside that page, and are what the shader receives as the fill or
+ * stroke offset.  They are only valid after span_page_upload().
  */
 struct _Span_Texture
 {
@@ -164,7 +170,8 @@ struct _Span_Texture
    uint32_t      rolling_hash;  /* accumulated during span collection */
    int           x_min;       /* inclusive left edge of the x-range covered */
    int           x_max;       /* inclusive right edge of the x-range covered */
-   void         *evas_tex;    /* Evas_GL_Texture *; NULL until uploaded */
+   int           page_x;      /* texel offset of these rows inside the shared page */
+   int           page_y;
 };
 
 /* ------------------------------------------------------------------ */
@@ -337,30 +344,49 @@ Eina_Bool span_collector_supports_composite(Efl_Gfx_Vg_Composite_Method comp_met
 /* ------------------------------------------------------------------ */
 
 /**
- * Upload all Span_Texture buffers in @p sc to the GPU.
+ * One GPU texture holding the span rows of every collector in a render pass.
  *
- * For each texture slot whose span buffer contains at least one non-empty
- * row, a GL texture object is created (or re-used if tex_id != 0) and the
- * buffer is uploaded with glTexImage2D.  On return tex_id fields are valid
- * GL texture names.
+ * Owned by the engine and reused across passes, following the same
+ * high-water discipline as the CPU-side buffers: it grows when a pass needs
+ * more room and never shrinks.  Because it is shared, a pass overwrites the
+ * previous pass's rows, which is why eng_ector_begin() drains queued draws
+ * before collecting again.
+ */
+typedef struct _Span_Page
+{
+   void     *evas_tex;   /* Evas_GL_Texture *; NULL until first upload */
+   int       w, h;       /* logical size currently allocated */
+   uint32_t  prev_hash;  /* combined hash of the last uploaded pass */
+} Span_Page;
+
+/** Allocate an empty page.  No GL resource is taken until first upload. */
+Span_Page *span_page_new(void);
+
+/** Free @p page and its GL texture.  Must be called from the GL thread. */
+void span_page_free(Span_Page *page);
+
+/**
+ * Pack the span rows of every collector in @p fills and @p strokes into
+ * @p page and upload them with a single glTexSubImage2D.
+ *
+ * Each collector's Span_Texture gets its page_x/page_y assigned.  When the
+ * combined content and layout match the previous pass the upload is skipped,
+ * so unchanging shapes cost nothing.
  *
  * Must be called from the GL thread (i.e., inside eng_ector_end()).
  *
- * @param gc_ptr  Evas_Engine_GL_Context *; used to allocate textures via
- *                evas_gl_common_texture_render_noscale_new() so that the
- *                upload goes through Evas's texture pool and format system.
+ * @param gc_ptr  Evas_Engine_GL_Context *.
+ * @return EINA_TRUE when the page holds valid rows and page_x/page_y are set.
  */
-void span_collector_upload_textures(Span_Collector *sc, void *gc_ptr);
+Eina_Bool span_page_upload(void *gc_ptr, Span_Page *page,
+                           void **fills, int nfills,
+                           void **strokes, int nstrokes);
 
-/**
- * Free all Evas_GL_Texture objects owned by @p sc.
- *
- * Sets every evas_tex back to NULL.  The CPU-side buffers are left intact.
- * Safe to call when no textures have been uploaded (no-op in that case).
- *
- * Must be called from the GL thread.
- */
-void span_collector_delete_textures(Span_Collector *sc);
+/** GL texture name backing @p page, or 0 if it has none yet. */
+unsigned int span_page_tex_id(const Span_Page *page);
+
+/** Pool dimensions of the texture backing @p page (for the shader's 1/w, 1/h). */
+void span_page_pool_size(const Span_Page *page, int *w, int *h);
 
 /* ------------------------------------------------------------------ */
 /* Span-lookup shader                                                  */
