@@ -658,9 +658,14 @@ _flush_row_tail(Span_Collector *sc, int ti, int y)
    Span_Texture *tex = &sc->textures[ti];
    int           idx = tex->span_counts[y];
 
+   /* Only the terminator has to be written, not the whole tail.  Nothing
+    * reads past it: the shader's scan breaks at the first zero length, and
+    * the split helpers walk exactly span_counts[y] entries.  Clearing the
+    * rest was up to 260 bytes of strided memset for every row of every
+    * shape - on a 600x300 drawing with five shapes, a few hundred kilobytes
+    * a frame to erase bytes no one looks at. */
    if (idx < sc->max_spans)
-     memset(tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4),
-            0, (size_t)(sc->max_spans + 1 - idx) * 4);
+     tex->buffer[((size_t)y * sc->stride) + ((size_t)idx * 4) + 1] = 0;
 }
 
 /* ------------------------------------------------------------------ */
@@ -806,12 +811,21 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
                 int g = (cur_x == sx) ? gap : 0;
                 if (g > 255) g = 255;
 
-                entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
-                entry[0] = (uint8_t)cov;   /* byte0 → B in BGRA */
-                entry[1] = (uint8_t)chunk;  /* byte1 → G in BGRA */
-                entry[2] = (uint8_t)g;      /* byte2 → R in BGRA */
-                entry[3] = 0;               /* byte3 → A in BGRA */
-                tex->rolling_hash = tex->rolling_hash * 31 + *((const uint32_t *)entry);
+                /* Compose once, then hash the value rather than reading
+                 * back the bytes just stored - that read waits on the
+                 * stores in the innermost loop of the collector. */
+                {
+                   uint32_t v = (uint32_t)cov
+                              | ((uint32_t)chunk << 8)
+                              | ((uint32_t)g     << 16);
+
+                   entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
+                   entry[0] = (uint8_t)cov;    /* byte0 → B in BGRA */
+                   entry[1] = (uint8_t)chunk;  /* byte1 → G in BGRA */
+                   entry[2] = (uint8_t)g;      /* byte2 → R in BGRA */
+                   entry[3] = 0;               /* byte3 → A in BGRA */
+                   tex->rolling_hash = tex->rolling_hash * 31 + v;
+                }
 
                 cur_x += chunk;
                 remaining -= chunk;

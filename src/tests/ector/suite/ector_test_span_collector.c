@@ -724,18 +724,18 @@ EFL_END_TEST
  * are zero.  This confirms the memset covers the full tail rather than
  * writing only a single sentinel byte.
  */
-EFL_START_TEST(span_collector_solid_tail_memset)
+EFL_START_TEST(span_collector_solid_row_terminator)
 {
    Span_Collector *sc;
    Span_Data       sd;
    SW_FT_Span      span;
    uint8_t        *row;
-   int             tail_start, tail_bytes, b;
 
    sc = span_collector_new(50, 16, Solid);
    ck_assert_ptr_nonnull(sc);
 
-   /* Pollute the buffer with non-zero bytes to simulate stale data. */
+   /* Pollute the buffer with non-zero bytes to simulate stale data left by
+    * an earlier frame. */
    memset(sc->textures[0].buffer, 0xAB, (size_t)50 * sc->stride);
 
    _sd_init_solid(&sd, sc, 0xFFFFFFFF);
@@ -748,13 +748,25 @@ EFL_START_TEST(span_collector_solid_tail_memset)
 
    ck_assert_int_eq(sc->textures[0].span_counts[7], 1);
 
-   /* Tail starts at entry 1 (one past the span) and runs to max_spans+1. */
-   row        = sc->textures[0].buffer + (7 * sc->stride);
-   tail_start = 1 * 4;                            /* first tail entry */
-   tail_bytes = (sc->max_spans + 1 - 1) * 4;      /* sentinel slot included */
+   row = sc->textures[0].buffer + (7 * sc->stride);
 
-   for (b = 0; b < tail_bytes; b++)
-     ck_assert_int_eq(row[tail_start + b], 0);
+   /* The span itself. */
+   ck_assert_int_eq(row[0], 200);   /* coverage */
+   ck_assert_int_eq(row[1], 20);    /* length   */
+
+   /* What has to hold is that the row is terminated: the entry one past the
+    * last span carries a zero length, which is what stops every consumer -
+    * the shader's scan loop and the spatial-split walkers alike.
+    *
+    * The rest of the tail is deliberately left as it was.  Clearing it cost
+    * a strided memset of the full row for every row of every shape, and no
+    * consumer ever reads past the terminator, so those bytes only had to be
+    * erased to satisfy a test. */
+   ck_assert_int_eq(row[1 * 4 + 1], 0);
+
+   /* And the stale bytes beyond it are indeed still stale, which is the
+    * point: this documents the weaker invariant rather than hiding it. */
+   ck_assert_int_eq(row[2 * 4 + 1], 0xAB);
 
    span_collector_free(sc);
 }
@@ -825,6 +837,6 @@ ector_test_span_collector(TCase *tc)
    tcase_add_test(tc, span_collector_post_split_routing);
    tcase_add_test(tc, span_collector_gradient_basic);
    tcase_add_test(tc, span_collector_solid_overflow_drop);
-   tcase_add_test(tc, span_collector_solid_tail_memset);
+   tcase_add_test(tc, span_collector_solid_row_terminator);
    tcase_add_test(tc, span_collector_clear_stale_sentinel);
 }
