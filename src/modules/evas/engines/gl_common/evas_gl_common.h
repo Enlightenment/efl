@@ -298,7 +298,8 @@ typedef struct _Span_Channel_Params {
 
 /* Full parameter set for evas_gl_common_context_span_push(). */
 typedef struct _Span_Pipe_Params {
-   int      pool_w, pool_h;       /* pool texture dimensions */
+   int      pool_w, pool_h;
+       /* pool texture dimensions */
    int      max_spans;            /* max spans per row */
    int      x, y, w, h;          /* draw rect in canvas space */
    uint32_t mul_col;              /* multiply color */
@@ -672,6 +673,13 @@ void              evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *
 void              evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
                                                    const Span_Pipe_Params *p,
                                                    const GLfloat ndc_quad[8]);
+/* Fill the six interleaved vertices of one span quad.  Exported so that the
+ * VG pass can build a batch without going through a pipe entry: it renders
+ * into its own FBO, so putting it in the pipe forced a target switch - and
+ * with it a flush - around every vector object. */
+void evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
+                                       const Span_Pipe_Params *p,
+                                       const GLfloat ndc_quad[8]);
 void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     Evas_GL_Texture *tex,
                                                     double sx, double sy, double sw, double sh,

@@ -3244,7 +3244,14 @@ eng_ector_end(void *engine,
                                       stroke_arr, stroke_count))
                   goto span_done;
 
-                evas_gl_common_context_target_surface_set(gc, glim);
+                /* Collect this pass's quads and draw them in one go below,
+                 * without switching the pipe's target surface.  Switching it
+                 * flushes, and the pipe is holding the composite quads of
+                 * every vector object drawn so far this frame; leaving them
+                 * queued lets them batch. */
+                Span_Pipe_Params *_pass_q = NULL;
+                GLfloat          *_pass_ndc = NULL;
+                int               _pass_n = 0, _pass_alloc = 0;
 
                 /* Bump gradient atlas LRU frame counter for this render pass. */
                 span_grad_atlas_frame_begin(((Render_Engine_GL_Generic *)engine)->grad_atlas);
@@ -3271,19 +3278,8 @@ eng_ector_end(void *engine,
                  *
                  * The Evas GL state cache is invalidated on textures and
                  * render op below so subsequent draws restore them as needed. */
-                evas_gl_common_context_flush(gc);
-                glEnable(GL_SCISSOR_TEST);
-                glScissor(ox, oy, w, h);
-                glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-                glClear(GL_COLOR_BUFFER_BIT);
-                glDisable(GL_SCISSOR_TEST);
-                gc->state.current.clip      = 0;
-                gc->state.current.cx        = 0;
-                gc->state.current.cy        = 0;
-                gc->state.current.cw        = 0;
-                gc->state.current.ch        = 0;
-                gc->state.current.cur_tex   = -1;
-                gc->state.current.render_op = -1;
+                /* The clear happens inside span_pass_draw, with the
+                 * target bound. */
 
                 /* Per-shape draw loop.
                  *
@@ -3506,17 +3502,14 @@ eng_ector_end(void *engine,
                                  * window dims here would compress all geometry
                                  * into a corner of the actual sub-rect.
                                  *
-                                 * Mirrors what shader_array_flush computes for
-                                 * non-span pipes: surface->w/h for FBO,
-                                 * gc->w/h for the default surface. */
+                                 * The target is glim, this pass's own FBO
+                                 * image.  It cannot be read back off the pipe:
+                                 * the pipe is still aimed at the canvas,
+                                 * because this pass deliberately does not
+                                 * switch it. */
                                 GLfloat _ndc[8];
-                                Evas_GL_Image *_tgt = gc->pipe[0].shader.surface;
-                                float _gw, _gh;
-                                if (_tgt && _tgt != gc->def_surface)
-                                  { _gw = (float)_tgt->w; _gh = (float)_tgt->h; }
-                                else
-                                  { _gw = (float)(gc->w ? gc->w : 1);
-                                    _gh = (float)(gc->h ? gc->h : 1); }
+                                float _gw = (float)(glim->w ? glim->w : 1);
+                                float _gh = (float)(glim->h ? glim->h : 1);
                                 float _x0 = (float)_spp.x;
                                 float _y0 = (float)_spp.y;
                                 float _x1 = _x0 + (float)_spp.w;
@@ -3525,13 +3518,31 @@ eng_ector_end(void *engine,
                                 _ndc[2] = _x1 / _gw * 2.0f - 1.0f; _ndc[3] = _y0 / _gh * 2.0f - 1.0f; /* TR */
                                 _ndc[4] = _x1 / _gw * 2.0f - 1.0f; _ndc[5] = _y1 / _gh * 2.0f - 1.0f; /* BR */
                                 _ndc[6] = _x0 / _gw * 2.0f - 1.0f; _ndc[7] = _y1 / _gh * 2.0f - 1.0f; /* BL */
-                                evas_gl_common_context_span_push(gc, &_spp, _ndc);
+                                if (_pass_n == _pass_alloc)
+                                  {
+                                     int na = _pass_alloc ? _pass_alloc * 2 : 8;
+                                     Span_Pipe_Params *nq =
+                                        realloc(_pass_q, (size_t)na * sizeof(*nq));
+                                     GLfloat *nn =
+                                        realloc(_pass_ndc, (size_t)na * 8 * sizeof(*nn));
+                                     if (nq) _pass_q = nq;
+                                     if (nn) _pass_ndc = nn;
+                                     if (!nq || !nn) continue;
+                                     _pass_alloc = na;
+                                  }
+                                _pass_q[_pass_n] = _spp;
+                                memcpy(_pass_ndc + _pass_n * 8, _ndc, sizeof(_ndc));
+                                _pass_n++;
                              }
                           }
                      }
                   } /* per-shape loop */
 
-                evas_gl_common_context_target_surface_set(gc, gc->def_surface);
+                if (_pass_n > 0)
+                  span_pass_draw(gc, glim, _pass_q, _pass_ndc, _pass_n,
+                                 ox, oy, w, h);
+                free(_pass_q);
+                free(_pass_ndc);
              }
         }
 span_done:

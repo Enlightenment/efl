@@ -1584,19 +1584,30 @@ done:
 /* Evas pipe integration: span_shader_pipe_flush                       */
 /* ------------------------------------------------------------------ */
 
-void
-span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
+/* Which program a quad needs.  Mirrors evas_gl_common_context_span_push();
+ * a plain colour rides in the gradient variant, so only a genuine gradient
+ * on either side selects it. */
+static Span_Variant
+_span_variant_of(const Span_Pipe_Params *p)
 {
-   Span_Variant  variant   = gc->pipe[pipe_idx].array.span_variant;
-   void         *vdata     = gc->pipe[pipe_idx].array.span_vertex_data;
-   int           nverts    = gc->pipe[pipe_idx].array.num;
-   GLsizei       stride    = (GLsizei)span_vertex_size(variant);
-   GLuint        fill_tex  = gc->pipe[pipe_idx].shader.span_fill_tex;
-   GLuint        stroke_tex= gc->pipe[pipe_idx].shader.span_stroke_tex;
-   GLuint        atlas_tex = gc->pipe[pipe_idx].shader.span_grad_atlas_tex;
-   GLuint        mask_tex  = gc->pipe[pipe_idx].shader.span_mask_tex;
-   float         inv_tw    = gc->pipe[pipe_idx].shader.span_inv_tw;
-   float         inv_th    = gc->pipe[pipe_idx].shader.span_inv_th;
+   int grad = ((p->fill.tex   && p->fill.type   >= SPAN_FILL_TYPE_GRADIENT_MIN) ||
+               (p->stroke.tex && p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN));
+
+   if (grad) return (p->mask_tex != 0) ? SPAN_VARIANT_GRADIENT_MASK
+                                       : SPAN_VARIANT_GRADIENT;
+   return (p->mask_tex != 0) ? SPAN_VARIANT_SOLID_MASK : SPAN_VARIANT_SOLID;
+}
+
+/* Issue one batch of span quads.  Shared by the pipe path and by the direct
+ * VG pass, which cannot use a pipe entry because it renders into its own
+ * framebuffer. */
+static void
+_span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
+                 const void *vdata, size_t vbytes, int nverts,
+                 GLuint fill_tex, GLuint stroke_tex, GLuint atlas_tex,
+                 GLuint mask_tex, float inv_tw, float inv_th)
+{
+   GLsizei       stride = (GLsizei)span_vertex_size(variant);
    GLuint        vao;
 
    /* Determine kind (0=solid, 1=gradient) and bind set from variant + textures. */
@@ -1661,10 +1672,7 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
    if (vao) _gl_bind_vao(vao);
    glBindBuffer(GL_ARRAY_BUFFER, _span_vbo);
 
-   glBufferData(GL_ARRAY_BUFFER,
-                (GLsizeiptr)gc->pipe[pipe_idx].array.span_vertex_data_used,
-                vdata,
-                GL_STREAM_DRAW);
+   glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)vbytes, vdata, GL_STREAM_DRAW);
 
    if (!vao)
      {
@@ -1700,4 +1708,125 @@ span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
    gc->state.current.cy         = 0;
    gc->state.current.cw         = 0;
    gc->state.current.ch         = 0;
+}
+
+void
+span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx)
+{
+   _span_draw_batch(gc,
+                    gc->pipe[pipe_idx].array.span_variant,
+                    gc->pipe[pipe_idx].array.span_vertex_data,
+                    gc->pipe[pipe_idx].array.span_vertex_data_used,
+                    gc->pipe[pipe_idx].array.num,
+                    gc->pipe[pipe_idx].shader.span_fill_tex,
+                    gc->pipe[pipe_idx].shader.span_stroke_tex,
+                    gc->pipe[pipe_idx].shader.span_grad_atlas_tex,
+                    gc->pipe[pipe_idx].shader.span_mask_tex,
+                    gc->pipe[pipe_idx].shader.span_inv_tw,
+                    gc->pipe[pipe_idx].shader.span_inv_th);
+}
+
+/* ------------------------------------------------------------------ */
+/* Direct VG pass                                                      */
+/* ------------------------------------------------------------------ */
+
+/* Vertex scratch for the direct pass, grown on demand. */
+static void  *_span_pass_buf = NULL;
+static size_t _span_pass_sz  = 0;
+
+static void *
+_span_pass_buf_get(size_t need)
+{
+   if (need > _span_pass_sz)
+     {
+        void *p = realloc(_span_pass_buf, need);
+        if (!p) return NULL;
+        _span_pass_buf = p;
+        _span_pass_sz  = need;
+     }
+   return _span_pass_buf;
+}
+
+/* Restore the framebuffer and viewport the Evas pipe expects, given whatever
+ * surface it is currently targeting. */
+static void
+_span_pass_restore(Evas_Engine_GL_Context *gc)
+{
+   Evas_GL_Image *s = gc->pipe[0].shader.surface;
+
+   if (!s || s == gc->def_surface)
+     {
+        glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        if ((gc->rot == 0) || (gc->rot == 180))
+          glViewport(0, 0, gc->w, gc->h);
+        else
+          glViewport(0, 0, gc->h, gc->w);
+     }
+   else
+     {
+        glsym_glBindFramebuffer(GL_FRAMEBUFFER, s->tex->pt->fb);
+        glViewport(s->tex->x, s->tex->y, s->w, s->h);
+     }
+}
+
+void
+span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
+               const Span_Pipe_Params *quads, const GLfloat *ndc, int n,
+               int clear_x, int clear_y, int clear_w, int clear_h)
+{
+   int i, run_start;
+
+   if (!gc || !target || !target->tex || !target->tex->pt || n <= 0) return;
+   if (!span_shader_init()) return;
+
+   /* Bind directly rather than through evas_gl_common_context_target_surface_set:
+    * that flushes the pipe, and the pipe is holding the composite draws of
+    * every vector object rendered so far this frame.  Leaving them queued is
+    * the point - they can then batch into one draw instead of one each. */
+   glsym_glBindFramebuffer(GL_FRAMEBUFFER, target->tex->pt->fb);
+   glViewport(target->tex->x, target->tex->y, target->w, target->h);
+
+   glEnable(GL_SCISSOR_TEST);
+   glScissor(clear_x, clear_y, clear_w, clear_h);
+   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+   glClear(GL_COLOR_BUFFER_BIT);
+   glDisable(GL_SCISSOR_TEST);
+
+   /* Walk the quads in runs that share a program and its bindings, so a pass
+    * of many shapes costs one draw per distinct binding rather than one per
+    * shape. */
+   run_start = 0;
+   while (run_start < n)
+     {
+        Span_Variant variant = _span_variant_of(&quads[run_start]);
+        size_t vsize, need;
+        void *buf;
+        int end = run_start + 1, k;
+
+        while (end < n &&
+               _span_variant_of(&quads[end]) == variant &&
+               quads[end].fill.tex        == quads[run_start].fill.tex &&
+               quads[end].stroke.tex      == quads[run_start].stroke.tex &&
+               quads[end].grad_atlas_tex  == quads[run_start].grad_atlas_tex &&
+               quads[end].mask_tex        == quads[run_start].mask_tex)
+          end++;
+
+        vsize = span_vertex_size(variant);
+        need  = vsize * 6 * (size_t)(end - run_start);
+        buf   = _span_pass_buf_get(need);
+        if (!buf) break;
+
+        for (k = run_start; k < end; k++)
+          evas_gl_common_span_fill_vertices((char *)buf + vsize * 6 * (size_t)(k - run_start),
+                                            variant, &quads[k], ndc + k * 8);
+
+        _span_draw_batch(gc, variant, buf, need, 6 * (end - run_start),
+                         quads[run_start].fill.tex, quads[run_start].stroke.tex,
+                         quads[run_start].grad_atlas_tex, quads[run_start].mask_tex,
+                         1.0f / (float)quads[run_start].pool_w,
+                         1.0f / (float)quads[run_start].pool_h);
+        run_start = end;
+     }
+
+   _span_pass_restore(gc);
 }

@@ -447,6 +447,25 @@ void span_shader_shutdown(void);
 void span_shader_pipe_flush(Evas_Engine_GL_Context *gc, int pipe_idx);
 
 /**
+ * Render one VG object's span quads straight into @p target's framebuffer.
+ *
+ * Deliberately does not go through a pipe entry.  A pipe entry is flushed
+ * with whatever surface the pipe is targeting, so putting the VG pass there
+ * forced evas_gl_common_context_target_surface_set() around every vector
+ * object - and that flushes, which meant each object's composite quad was
+ * drawn on its own instead of batching with the rest of the canvas.
+ *
+ * Clears (@p clear_x, @p clear_y, @p clear_w, @p clear_h) in framebuffer
+ * coordinates first, then draws @p n quads, grouping consecutive ones that
+ * share a program and bindings into single draws.  The pipe's framebuffer
+ * and viewport are restored before returning; its queued contents are left
+ * untouched.
+ */
+void span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
+                    const Span_Pipe_Params *quads, const GLfloat *ndc, int n,
+                    int clear_x, int clear_y, int clear_w, int clear_h);
+
+/**
  * Debug helper: read a single pixel from a GL texture via a temp FBO.
  * Logs the RGBA values with a caller-supplied label.  Throttled to avoid
  * log flooding (max 30 calls).  Only available when compiled with

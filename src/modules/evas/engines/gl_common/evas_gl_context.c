@@ -2134,8 +2134,8 @@ _span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
    radial[3] = (GLfloat)side->grad_spread;
 }
 
-static void
-_span_fill_vertices(void *out_buf, Span_Variant variant,
+void
+evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
                     const Span_Pipe_Params *p,
                     const GLfloat ndc_quad[8] /* TL,TR,BR,BL: x0y0,x1y0,x1y1,x0y1 */)
 {
@@ -2401,7 +2401,7 @@ evas_gl_common_context_span_push(Evas_Engine_GL_Context *gc,
         }
       void *write_ptr = (char *)gc->pipe[pn].array.span_vertex_data
                       + gc->pipe[pn].array.span_vertex_data_used;
-      _span_fill_vertices(write_ptr, variant, p, ndc_quad);
+      evas_gl_common_span_fill_vertices(write_ptr, variant, p, ndc_quad);
       gc->pipe[pn].array.span_vertex_data_used += 6 * vsize;
       gc->pipe[pn].array.span_variant            = variant;
    }
