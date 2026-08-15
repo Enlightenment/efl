@@ -46,6 +46,18 @@ _generic_cache_trim(Generic_Cache *cache)
           }
         else if (count <= 50) break;
 
+        /* Never evict the entry just inserted.  It is at the head, and when
+         * the budget is smaller than a single surface the head is also the
+         * tail - trimming it would free the very data the caller stored a
+         * moment ago and is about to draw with.  A budget is advisory when
+         * one item does not fit; a use-after-free is not. */
+        /* Never evict the entry just inserted.  It is at the head, and when
+         * the budget is smaller than a single surface the head is also the
+         * tail - trimming it would free the very data the caller stored a
+         * moment ago and is about to draw with.  A budget is advisory when
+         * one item does not fit; a use-after-free is not. */
+        if (l == cache->lru_list) break;
+
         prev = eina_list_prev(l);
         if (!entry || entry->ref > 1) continue;
 

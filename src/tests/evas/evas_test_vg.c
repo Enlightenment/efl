@@ -179,8 +179,35 @@ EFL_START_TEST(evas_vg_container_alpha_is_applied)
 }
 EFL_END_TEST
 
+/* A surface cache too small for even one vector surface must still hand back
+ * something usable.  The budget is advisory - the entry just stored is at the
+ * head of the LRU and, when nothing else is cached, is also its tail, so a
+ * trim that walks from the tail can otherwise free the surface the caller is
+ * about to draw with.  That is invisible at any sane budget, which is why it
+ * is provoked here rather than left to chance. */
+EFL_START_TEST(evas_vg_tiny_surface_cache)
+{
+   const char **eng;
+   char prev[64] = "";
+   const char *old_env = getenv("EVAS_SURFACE_CACHE_SIZE");
+
+   if (old_env) snprintf(prev, sizeof(prev), "%s", old_env);
+   setenv("EVAS_SURFACE_CACHE_SIZE", "16", 1);   /* 16 KB: smaller than one surface */
+
+   for (eng = _engines; *eng; eng++)
+     {
+        unsigned int px = 0;
+        _scene_sample(*eng, _build_narrow_then_wide, 4, 128, 128, &px);
+     }
+
+   if (prev[0]) setenv("EVAS_SURFACE_CACHE_SIZE", prev, 1);
+   else         unsetenv("EVAS_SURFACE_CACHE_SIZE");
+}
+EFL_END_TEST
+
 void evas_test_vg(TCase *tc)
 {
    tcase_add_test(tc, evas_vg_mixed_sizes_group_opacity);
    tcase_add_test(tc, evas_vg_container_alpha_is_applied);
+   tcase_add_test(tc, evas_vg_tiny_surface_cache);
 }
