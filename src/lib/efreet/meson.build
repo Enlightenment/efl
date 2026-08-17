@@ -66,14 +66,16 @@ install_headers(efreet_header_src,
 # libefreet_mime.so and libefreet_trash.so will just have NEEDED on libefreet.so so the symbols get caught in like that
 
 deprecated_efreet_mime_lib = library('efreet_mime',
-    dependencies: [efreet],
+    link_with: efreet_lib,
+    override_options: ['b_asneeded=false'],
     include_directories : config_dir + [include_directories('.')],
     install: true,
     version : meson.project_version()
 )
 
 deprecated_efreet_trash_lib = library('efreet_trash',
-    dependencies: efreet,
+    link_with: efreet_lib,
+    override_options: ['b_asneeded=false'],
     include_directories : config_dir + [include_directories('.')],
     install: true,
     version : meson.project_version()
