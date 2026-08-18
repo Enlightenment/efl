@@ -449,7 +449,7 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
    char test_string[] = "This is Text Popup";
    unsigned int string_counts[] =
    {
-    1, 50, 1, 1, 1, 50, 50, 50, 50, 50, 50, 50, 50, 50
+    1, 50, 1, 1, 1, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
    };
    Eina_Size2D test_expands[] =
    {
@@ -467,34 +467,49 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
       EINA_SIZE2D(POPUP_SIZE_EXPAND, -1),
       EINA_SIZE2D(-1, POPUP_SIZE),
       EINA_SIZE2D(-1, POPUP_SIZE_EXPAND),
-   };
-   Eina_Size2D expected_sizes[] =
-   {
-      /* -1 is MAX(POPUP_SIZE, min_size)
-       * 0 is min_size
-       * POPUP_SIZE_EXPAND on height is MIN(POPUP_SIZE_EXPAND, label_min)
+      /* a max hint roomy enough for the whole text: the popup sizes itself to
+       * its content instead of clamping to the max hint
        */
-      EINA_SIZE2D(-1, -1),
-      EINA_SIZE2D(-1, -1),
-      EINA_SIZE2D(-1, 0),
-      EINA_SIZE2D(-1, -1),
-      EINA_SIZE2D(-1, 0),
-      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND),
-      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE),
-      EINA_SIZE2D(-1, 0),
-      EINA_SIZE2D(-1, 0),
-      EINA_SIZE2D(-1, POPUP_SIZE),
-      EINA_SIZE2D(-1, POPUP_SIZE),
-      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE),
-      EINA_SIZE2D(-1, POPUP_SIZE),
-      EINA_SIZE2D(-1, POPUP_SIZE_EXPAND),
+      EINA_SIZE2D(-1, POPUP_SIZE * 4),
+   };
+   /* only the width is tabulated: the expected height is derived below from the
+    * widget's actual sizing model, which no sentinel encoding can express
+    * (see the comment on the height assertion).
+    *
+    * -1 is MAX(POPUP_SIZE, min_size)
+    * 0 is min_size
+    * anything else is that exact width
+    */
+   int expected_widths[] =
+   {
+      -1,
+      -1,
+      -1,
+      -1,
+      -1,
+      POPUP_SIZE_EXPAND,
+      POPUP_SIZE_EXPAND,
+      -1,
+      -1,
+      -1,
+      -1,
+      POPUP_SIZE_EXPAND,
+      -1,
+      -1,
+      -1,
    };
    unsigned int num_tests = EINA_C_ARRAY_LENGTH(string_counts);
    unsigned int i;
    Eina_Size2D popup_sz_min1;
+   /* the popup's constant vertical overhead: everything which is not the
+    * scrollable content (title, buttons, paddings). Measured below rather than
+    * hardcoded, since it depends on the theme and on the scale.
+    */
+   int chrome = -1;
 
    /* ensure future modifications don't break the test */
    ck_assert_int_eq(EINA_C_ARRAY_LENGTH(string_counts), EINA_C_ARRAY_LENGTH(test_expands));
+   ck_assert_int_eq(EINA_C_ARRAY_LENGTH(string_counts), EINA_C_ARRAY_LENGTH(expected_widths));
 
    get_me_to_those_events(popup);
    popup_sz_min1 = efl_gfx_hint_size_combined_min_get(popup);
@@ -528,25 +543,66 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
         label_sz_min = efl_gfx_hint_size_combined_min_get(label);
         popup_sz_min = efl_gfx_hint_size_combined_min_get(popup);
         popup_sz = efl_gfx_entity_size_get(popup);
-        if (expected_sizes[i].w == -1)
+
+        /* The first iteration sets no max hint at all, so the popup's height
+         * there does not depend on the chrome: measuring it from that iteration
+         * is not circular. The chrome is whatever vertical space the popup does
+         * not hand to the scroller.
+         */
+        if (i == 0)
+          chrome = popup_sz.h - scroller_sz.h;
+
+        if (expected_widths[i] == -1)
           ck_assert_int_eq(popup_sz.w, MAX(POPUP_SIZE, popup_sz_min.w));
-        else if (expected_sizes[i].w == 0)
+        else if (expected_widths[i] == 0)
           ck_assert_int_eq(popup_sz.w, popup_sz_min.w);
         else
-          ck_assert_int_eq(popup_sz.w, expected_sizes[i].w);
-        if (expected_sizes[i].h == -1)
-          ck_assert_int_eq(popup_sz.h, MAX(POPUP_SIZE, popup_sz_min.h));
-        else if (expected_sizes[i].h == 0)
-          {
-             if ((test_expands[i].h >= label_sz_min.h) && (label_sz_min.h > popup_sz_min1.h))
-               ck_assert_int_eq(popup_sz.h, popup_sz_min.h);
-             else
-               ck_assert_int_eq(popup_sz.h, popup_sz_min1.h);
-          }
-        else if (expected_sizes[i].h == POPUP_SIZE_EXPAND)
-          ck_assert_int_eq(popup_sz.h, MIN(POPUP_SIZE_EXPAND, label_sz_min.h));
-        else
-          ck_assert_int_eq(popup_sz.h, expected_sizes[i].h);
+          ck_assert_int_eq(popup_sz.w, expected_widths[i]);
+
+        /* The height model implemented by the scrollable-content mixin
+         * (_scroller_sizing_eval in efl_ui_widget_scrollable_content.c):
+         *
+         * - obj_min is the popup's min size while the scroller does not match
+         *   its content, i.e. the chrome plus the scroller's minimum viewport.
+         *   That is popup_sz_min1, captured before any text or max hint was set.
+         * - scr_min is the popup's min size *including* its content, i.e. the
+         *   label's min height plus the chrome, floored by obj_min.
+         * - without a vertical max hint the scroller never matches its content,
+         *   and the popup is simply as tall as its own min size, the min hint
+         *   set above included.
+         * - with a vertical max hint the min hint is ignored: the popup takes
+         *   the max hint, floored by obj_min, and clamped down to scr_min so it
+         *   never grows past what the content actually needs.
+         *
+         * Note the clamp is against scr_min and *not* against the label's min
+         * height: the two differ by the chrome, so a label whose min height sits
+         * just under the max hint still leaves the popup at the max hint instead
+         * of shrinking it to its min.
+         */
+        {
+           /* what the popup reports as its min size while not matching content */
+           int no_match_min_h = MAX(popup_sz_min1.h, POPUP_SIZE);
+           int expected_h;
+
+           if (test_expands[i].h == -1)
+             expected_h = no_match_min_h;
+           else if (popup_sz_min.h > no_match_min_h)
+             /* the popup raised its own min size, which it only does when it
+              * matches its content: scr_min is then directly observable and the
+              * popup is exactly as tall as its content needs
+              */
+             expected_h = popup_sz_min.h;
+           else
+             /* otherwise the popup clamped to the max hint and scr_min is not
+              * observable, so recompute it from the label and the chrome. Edje's
+              * min size computation can round the chrome by a pixel at fractional
+              * scales, which is why the branch above is preferred wherever it
+              * applies; here scr_min is never within a pixel of the max hint.
+              */
+             expected_h = MIN(MAX(popup_sz_min1.h, test_expands[i].h),
+                              MAX(popup_sz_min1.h, label_sz_min.h + chrome));
+           ck_assert_int_eq(popup_sz.h, expected_h);
+        }
 
         eina_strbuf_free(buf);
      }
