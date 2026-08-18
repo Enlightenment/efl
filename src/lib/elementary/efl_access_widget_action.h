@@ -8,7 +8,7 @@ struct _Efl_Access_Action_Data
    const char *name;
    const char *action;
    const char *param;
-   Eina_Bool (*func)(Evas_Object *obj, const char *params);
+   Eina_Bool (*func)(Efl_Canvas_Object *obj, const char *params);
 };
 
 typedef struct _Efl_Access_Action_Data Efl_Access_Action_Data;

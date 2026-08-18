@@ -135,6 +135,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_focus_layer.eo.h>
 # include <efl_access_object.h>
 # include <efl_access_text.h>
+# include <efl_access_widget_action.h>
 # include <efl_access_window.h>
 
 # include <efl_access_action.eo.h>
