@@ -1,9 +1,18 @@
 interface @beta Efl.Ui.Legacy
 {
-   [[The bg (background) widget is used for setting (solid) background decorations
+   [[Marker interface for widgets instantiated through the legacy $[elm_*_add()]
+     API.
 
-   in a window (unless it has transparency enabled) or on any container object. It
-   works just like an image but has some properties useful for backgrounds, such as
-   setting it to tiled, centered, scaled or stretched.
+     Widget classes are shared between the unified and the legacy API, so a class
+     alone does not say which of the two created a given object. Legacy widget
+     classes therefore implement this interface and nothing else: it declares no
+     methods, no properties and no events, and exists purely so that
+     $[efl_isa(obj, EFL_UI_LEGACY_INTERFACE)] can answer that question. Widget
+     code asks through $[elm_widget_is_legacy()] and uses the answer to pick the
+     legacy theme group name, the legacy part aliases and the compatibility
+     behaviour paths.
+
+     This is internal machinery. Applications should not implement it, and its
+     presence on an object is not part of any API contract.
    ]]
 }
