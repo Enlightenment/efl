@@ -59,17 +59,17 @@ _field_value_update(Eo *obj)
 
    if (!pd->is_24hour)
      {
-        if (pd->cur_time[TIMEPICKER_HOUR] > 12)
-          {
-             //TODO: gets text from strftime.
-             efl_text_set(pd->ampm, "PM");
-             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR] - 12);
-          }
-        else
-          {
-             efl_text_set(pd->ampm, "AM");
-             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR]);
-          }
+        int hour = pd->cur_time[TIMEPICKER_HOUR];
+
+        /* The hour spin runs 1..12. On a 12-hour clock midnight is 12 AM and
+         * noon is 12 PM, so neither 0 nor 12 maps by subtracting twelve. */
+        //TODO: gets text from strftime.
+        efl_text_set(pd->ampm, (hour >= 12) ? "PM" : "AM");
+
+        if (hour > 12) hour -= 12;
+        else if (hour == 0) hour = 12;
+
+        efl_ui_range_value_set(pd->hour, hour);
      }
    else
      {
