@@ -628,6 +628,14 @@ _get_item_day(Evas_Object *obj,
 {
    int day;
 
+   /* Without EO_DEBUG, efl_data_scope_get does not check that the object is
+    * of the class being asked for -- it returns the object's address plus
+    * that class's data offset, whatever the object actually is. Reading it is
+    * garbage and writing it corrupts the object. An item whose parent is not
+    * a calendar gets here, so check before asking.
+    */
+   if (!efl_isa(obj, MY_CLASS)) return 0;
+
    EFL_UI_CALENDAR_DATA_GET(obj, sd);
 
    day = selected_it - sd->first_day_it + 1;
@@ -673,6 +681,11 @@ _update_focused_it(Evas_Object *obj, int focused_it)
 {
    int day;
    char emission[32];
+
+   /* Same as _get_item_day: the class has to be checked before the data is
+    * asked for, or sd->focused_it below writes into whatever this object
+    * really is. */
+   if (!efl_isa(obj, MY_CLASS)) return EINA_FALSE;
 
    EFL_UI_CALENDAR_DATA_GET(obj, sd);
 
