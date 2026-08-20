@@ -28,9 +28,11 @@ internal partial class NativeModule
     // with the way evas modules are built.
     private const int RTLD_GLOBAL = 0x100;
 
-    [DllImport(efl.Libs.Libdl)]
+    // Through EFL's own helper library rather than a guessed platform name:
+    // dlopen moved into libc in glibc 2.34 and libdl.so.2 exports nothing.
+    [DllImport(efl.Libs.CustomExports, EntryPoint = "efl_mono_native_dlopen")]
     private static extern IntPtr dlopen(string fileName, int flag);
-    [DllImport(efl.Libs.Libdl)]
+    [DllImport(efl.Libs.CustomExports, EntryPoint = "efl_mono_native_dlclose")]
     private static extern int dlclose(IntPtr handle);
 
     ///<summary>Closes the library handle.</summary>

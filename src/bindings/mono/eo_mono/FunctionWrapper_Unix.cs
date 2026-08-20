@@ -23,7 +23,9 @@ namespace Efl.Eo
 
 internal static partial class FunctionInterop
 {
-    [DllImport(efl.Libs.Libdl)]
+    // See NativeModule_Unix: through EFL's helper library, not a guessed
+    // platform library name.
+    [DllImport(efl.Libs.CustomExports, EntryPoint = "efl_mono_native_dlsym")]
     private static extern IntPtr dlsym(IntPtr handle, string symbol);
 
     /// <summary>Loads a function pointer from the given module.

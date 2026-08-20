@@ -43,6 +43,39 @@
 #endif /* ! _WIN32 */
 
 
+#ifndef _WIN32
+# include <dlfcn.h>
+
+/* The C# side has to dlopen the EFL libraries by name, and used to reach
+ * dlopen by naming a platform library in a DllImport. That name is not
+ * something a binding can know: since glibc 2.34 dlopen lives in libc and
+ * libdl.so.2 exports nothing at all, so "libdl.so" fails on any current
+ * system -- and would need a different answer again on musl or macOS.
+ *
+ * These wrappers move the question to where it can actually be answered, in
+ * a library EFL builds and the binding already loads.
+ */
+
+EAPI void *
+efl_mono_native_dlopen(const char *filename, int flags)
+{
+   return dlopen(filename, flags);
+}
+
+EAPI void *
+efl_mono_native_dlsym(void *handle, const char *symbol)
+{
+   return dlsym(handle, symbol);
+}
+
+EAPI int
+efl_mono_native_dlclose(void *handle)
+{
+   return dlclose(handle);
+}
+
+#endif
+
 EAPI const char *efl_mono_wrapper_supervisor_key_get()
 {
    return "__c#_wrapper_supervisor";
