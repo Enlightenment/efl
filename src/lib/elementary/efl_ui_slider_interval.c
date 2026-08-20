@@ -823,7 +823,23 @@ _efl_ui_slider_interval_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Sli
      }
 
    if (EINA_DBL_EQ(val, sd->val)) return;
+
+   /* range_value is the first of the two thumbs. It used to write sd->val and
+    * nothing else, so the thumb stayed where it was and the next
+    * _slider_update -- which recomputes both values from the thumb positions
+    * -- threw the assignment away. Setting a value and reading it back worked;
+    * setting a value and then touching the widget did not.
+    *
+    * Keep the pair ordered: the first thumb cannot pass the second.
+    */
+   /* Keep the pair ordered. Rather than refusing a value the caller asked
+    * for, the second thumb moves out of the way: Efl.Ui.Range_Display promises
+    * that what you set is what you read back, and clamping silently would
+    * break that promise on this widget alone. */
+   if (val > sd->intvl_to) sd->intvl_to = val;
+
    sd->val = val;
+   sd->intvl_from = val;
 
    _emit_events(obj, sd);
    _val_set(obj);

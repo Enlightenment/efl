@@ -3,11 +3,21 @@ class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Layout_Base implements Efl.Ui.
 {
     [[An interval slider.
 
-      This is a slider with two indicators.
+      This is a slider with two indicators, selecting a range rather than a
+      single value. @.interval_value is the pair, and the pair is always
+      ordered: $from is never greater than $to.
+
+      The inherited @Efl.Ui.Range_Display.range_value is the first of the two
+      indicators. Setting it past the second moves the second out of the way
+      rather than refusing the value, so that what is set is what is read
+      back.
     ]]
     methods {
         @property interval_value {
-            [[Sets up position of two indicators at start and end position.
+            [[The positions of the two indicators.
+
+              Always ordered: $from is never greater than $to, whichever
+              indicator the user moved.
             ]]
             get {
             }
@@ -33,7 +43,13 @@ class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Layout_Base implements Efl.Ui.
     }
     events {
       slider,drag,start: void; [[Called when a slider drag operation has started. This means a $press event
-                                 has been received on the slider thumb but not the $unpress.]]
+                                 has been received on the slider thumb but not the $unpress.
+
+                                 Which of the two indicators is being dragged is
+                                 deliberately not reported: read @.interval_value,
+                                 which is current while the drag is in progress.
+                                 Flutter's RangeSlider, the only comparable
+                                 widget, is likewise thumb-anonymous.]]
       slider,drag,stop: void; [[Called when a slider drag operation has finished. This means an $unpress event
                                 has been received on the slider thumb.]]
    }

@@ -10,7 +10,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Range_Display_Interactive",
-       "test-widgets": ["Efl.Ui.Slider", "Efl.Ui.Spin_Button"]}
+       "test-widgets": ["Efl.Ui.Slider", "Efl.Ui.Spin_Button", "Efl.Ui.Slider_Interval"]}
    spec-meta-end */
 
 EFL_START_TEST(step_setting)
