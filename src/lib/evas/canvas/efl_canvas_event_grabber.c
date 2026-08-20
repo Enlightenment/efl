@@ -345,6 +345,10 @@ _efl_canvas_event_grabber_efl_object_constructor(Eo *eo_obj, Efl_Object_Event_Gr
 
    efl_canvas_group_clipped_set(eo_obj, EINA_FALSE);
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
+
+   /* NULL when there is no canvas to join; everything below works off it. */
+   if (!eo_obj) return NULL;
+
    efl_canvas_object_type_set(eo_obj, MY_CLASS_NAME_LEGACY);
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    obj->is_event_parent = 1;

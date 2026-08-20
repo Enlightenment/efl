@@ -374,6 +374,12 @@ EOLIAN static Eo *
 _evas_text_efl_object_constructor(Eo *eo_obj, Evas_Text_Data *o EINA_UNUSED)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
+
+   /* The canvas object constructor returns NULL when there is no canvas to
+    * join -- efl_add() with no parent, most obviously. Initialising the text
+    * on that would work off NULL. */
+   if (!eo_obj) return NULL;
+
    evas_object_text_init(eo_obj);
 
    return eo_obj;
