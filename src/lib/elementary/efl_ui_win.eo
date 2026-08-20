@@ -837,7 +837,13 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
    constructors {
       .win_name;
       .win_type @optional;
-      .accel_preference;
+      /* Optional, like win_type beside it. This is @beta, and a mandatory
+       * constructor property lands in the middle of the generated signature
+       * for every binding that exposes it -- so building the C# binding with
+       * beta enabled stopped stable two-argument constructions of a window
+       * from compiling at all. Nothing needs an acceleration preference to
+       * make a window; the stable build has always made them without one. */
+      .accel_preference @optional;
    }
    events {
       delete,request: void; [[Called when the window receives a delete request]]
