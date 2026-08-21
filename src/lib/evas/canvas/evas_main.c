@@ -433,7 +433,21 @@ EFL_CALLBACKS_ARRAY_DEFINE(_object_forced_death,
                            { EFL_EVENT_NOREF, _object_noref } );
 
 
-EOLIAN static void
+EOLIAN /* efl_del on an object whose parent is already NULL warns and then does
+   nothing but unref, so pick the one that applies. An object can still be on
+   a layer with no parent while the canvas is being torn down: its widget went
+   first and set it loose, and something outside the canvas is still holding a
+   reference to it. Every language binding does exactly that -- the wrapper
+   owns a reference for as long as the managed object is reachable -- so this
+   is the normal case there rather than a mistake worth reporting. */
+static void
+_evas_canvas_object_release(Eo *obj)
+{
+   if (efl_parent_get(obj)) efl_del(obj);
+   else efl_unref(obj);
+}
+
+static void
 _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
 {
    Evas_Object_Protected_Data *o;
@@ -475,7 +489,7 @@ _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
 
         // Properly destroy depending on the object being legacy or not
         if (pd->legacy.ctor) evas_object_del(obj);
-        else efl_del(obj);
+        else _evas_canvas_object_release(obj);
      }
 
    // We are now potentially only facing zombies
@@ -505,7 +519,7 @@ _evas_canvas_efl_object_invalidate(Eo *eo_e, Evas_Public_Data *e)
             efl_ref_count(obj), ___efl_ref2_count(obj));
         ___efl_ref2_reset(obj);
         // This code explicitely bypass all refcounting to destroy them
-        if (!force.invalidated) efl_del(obj);
+        if (!force.invalidated) _evas_canvas_object_release(obj);
         while (!force.destroyed) efl_unref(obj);
 
         if (!force.invalidated)

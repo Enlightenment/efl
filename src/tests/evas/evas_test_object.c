@@ -92,6 +92,71 @@ EFL_START_TEST(evas_object_event_rects)
 }
 EFL_END_TEST
 
+static int _del_errors;
+
+static void
+_mark_destructed(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   int *destructed = data;
+
+   (*destructed)++;
+}
+
+static void
+_count_efl_del_errors(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+                      const char *file EINA_UNUSED, const char *fnc, int line EINA_UNUSED,
+                      const char *fmt EINA_UNUSED, void *data EINA_UNUSED,
+                      va_list args EINA_UNUSED)
+{
+   if ((level == EINA_LOG_LEVEL_ERR) && fnc && !strcmp(fnc, "efl_del"))
+     _del_errors++;
+}
+
+/* Tearing down a canvas that still holds an object nobody parents.
+ *
+ * A canvas object can outlive its parent: the widget that owned it goes first
+ * and sets it loose, while something else -- a language binding holding a
+ * reference for as long as its wrapper is reachable -- keeps it alive. The
+ * object is then still on a layer with no parent when the canvas is freed,
+ * and efl_del is the wrong way to let go of it: it is deprecated for a
+ * parentless object and does nothing there but unref while complaining.
+ *
+ * The legacy half of this is evas_object_various above. This is the Eo half,
+ * which is the one every binding goes through.
+ */
+EFL_START_TEST(evas_object_del_without_parent_at_canvas_free)
+{
+   Evas *evas = EVAS_TEST_INIT_EVAS();
+   Eo *obj = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas);
+   int destructed = 0;
+
+   ck_assert_ptr_ne(obj, NULL);
+
+   /* Hold it the way a binding does, then let the parent go. */
+   efl_ref(obj);
+   efl_parent_set(obj, NULL);
+   ck_assert_ptr_eq(efl_parent_get(obj), NULL);
+
+   efl_event_callback_add(obj, EFL_EVENT_DESTRUCT, _mark_destructed, &destructed);
+
+   _del_errors = 0;
+   eina_log_print_cb_set(_count_efl_del_errors, NULL);
+   evas_free(evas);
+   eina_log_print_cb_set(NULL, NULL);
+
+   ck_assert_int_eq(_del_errors, 0);
+
+   /* The canvas still takes it along, reference or no reference: a canvas
+      object cannot outlive its canvas, so the holder is told rather than
+      obeyed. That is what it was before this and what it stays -- efl_del on
+      a parentless object did nothing but this unref anyway. */
+   ck_assert_int_eq(destructed, 1);
+
+   /* Twice because EVAS_TEST_INIT_EVAS inits it twice. */
+   evas_free(EVAS_TEST_INIT_EVAS());
+}
+EFL_END_TEST
+
 EFL_START_TEST(evas_object_freeze_events)
 {
    Evas *evas = EVAS_TEST_INIT_EVAS();
@@ -262,6 +327,7 @@ EFL_END_TEST
 void evas_test_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_various);
+   tcase_add_test(tc, evas_object_del_without_parent_at_canvas_free);
    tcase_add_test(tc, evas_object_event_rects);
    tcase_add_test(tc, evas_object_freeze_events);
    tcase_add_test(tc, evas_object_animation_simple);
