@@ -48,6 +48,72 @@ static class UnsafeNativeMethods
         _evas_init = new Efl.Eo.FunctionWrapper<init_func_delegate>(efl.Libs.Evas, "evas_init");
     }
 
+    private static int nativeArgc = -1;
+    private static IntPtr nativeArgv = IntPtr.Zero;
+
+    /// <summary>This process's command line, laid out the way a C runtime
+    /// hands it to main().
+    ///
+    /// It is what EFL knows about the command line and nothing else knows it
+    /// first: ecore_init_ex sends it on to Efl.Loop.arguments, which is what
+    /// reaches Efl.Csharp.Application.OnInitialize, and fills
+    /// Efl.Core.CommandLine, which refuses to be filled a second time. Passing
+    /// 0 and null, as every init here did before, left a C# application unable
+    /// to see its own arguments at all, and made the later attempt to supply
+    /// them fail rather than take effect.
+    ///
+    /// Built once and never freed, deliberately: a C program's argv lives as
+    /// long as the process does, and ecore keeps pointing at what it was
+    /// handed rather than copying all of it.
+    /// </summary>
+    internal static void NativeCommandLine(out int argc, out IntPtr argv)
+    {
+        if (nativeArgc < 0)
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            IntPtr[] ptrs = new IntPtr[args.Length + 1];
+
+            for (int i = 0; i < args.Length; ++i)
+            {
+                ptrs[i] = Eina.MemoryNative.StrDup(args[i]);
+            }
+
+            // NULL-terminated, as a C runtime leaves it.
+            ptrs[args.Length] = IntPtr.Zero;
+
+            nativeArgv = Eina.MemoryNative.Alloc(IntPtr.Size * ptrs.Length);
+            Marshal.Copy(ptrs, 0, nativeArgv, ptrs.Length);
+            nativeArgc = args.Length;
+        }
+
+        argc = nativeArgc;
+        argv = nativeArgv;
+    }
+
+    /// <summary>Calls ecore_init_ex with this process's real command line.
+    ///
+    /// ecore_init_ex only forwards the arguments the first time it runs, so
+    /// whichever init gets there first decides what the whole application sees.
+    /// </summary>
+    internal static void ecore_init_ex_with_command_line()
+    {
+        int argc;
+        IntPtr argv;
+
+        NativeCommandLine(out argc, out argv);
+        ecore_init_ex(argc, argv);
+    }
+
+    /// <summary>Calls elm_init with this process's real command line.</summary>
+    internal static int elm_init_with_command_line()
+    {
+        int argc;
+        IntPtr argv;
+
+        NativeCommandLine(out argc, out argv);
+        return elm_init(argc, argv);
+    }
+
     internal static void evas_init()
     {
         _evas_init.Value.Delegate();
@@ -92,7 +158,7 @@ public static class All
             Eina.Config.Init();
             Efl.Eo.Config.Init();
             ecore_init();
-            ecore_init_ex(0, IntPtr.Zero);
+            ecore_init_ex_with_command_line();
             evas_init();
             eldbus.Config.Init();
         }
@@ -169,7 +235,6 @@ public static class Config
     /// </summary>
     public static void Init()
     {
-        // TODO Support elm command line arguments
 #if WIN32 // Not a native define, we define it in our build system
         // Ecore_Win32 uses OleInitialize, which requires single thread apartments
         if (System.Threading.Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
@@ -177,7 +242,7 @@ public static class Config
             throw new InvalidOperationException("UI Applications require STAThreadAttribute in Main()");
         }
 #endif
-        elm_init(0, IntPtr.Zero);
+        UnsafeNativeMethods.elm_init_with_command_line();
 
         Efl.Ui.Win.ExitOnAllWindowsClosed = new Eina.Value(0);
     }

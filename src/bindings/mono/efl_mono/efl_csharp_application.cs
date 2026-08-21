@@ -95,7 +95,7 @@ public abstract class Application
             Eina.Config.Init();
             Efl.Eo.Config.Init();
             ecore_init();
-            ecore_init_ex(0, IntPtr.Zero);
+            Efl.UnsafeNativeMethods.ecore_init_ex_with_command_line();
             evas_init();
             eldbus.Config.Init();
         }
@@ -112,7 +112,7 @@ public abstract class Application
                 throw new InvalidOperationException("UI Applications require STAThreadAttribute in Main()");
             }
 #endif
-            elm_init(0, IntPtr.Zero);
+            Efl.UnsafeNativeMethods.elm_init_with_command_line();
 
             Efl.Ui.Win.ExitOnAllWindowsClosed = new Eina.Value(0);
         }
@@ -198,12 +198,11 @@ public abstract class Application
     {
         Init(components);
         Efl.App app = Efl.App.AppMain;
-#if EFL_BETA
-        var command_line = new List<Eina.Stringshare>();
-        //command_line.Add(List.ConvertAll(Environment.GetCommandLineArgs(), s => (Eina.Stringshare)s));
-        //command_line.AddRange(Environment.GetCommandLineArgs());
-        app.SetCommandArray(command_line);
-#endif
+
+        // No command line to set here. The loop filled it from what elm_init
+        // was given, and it only accepts being filled once -- setting it again
+        // was refused every time, and the empty list this used to pass would
+        // have thrown the real arguments away if it had ever succeeded.
         app.ArgumentsEvent += (object sender, LoopArgumentsEventArgs evt) =>
         {
             if (evt.Arg.Initialization)
