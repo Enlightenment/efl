@@ -17,6 +17,7 @@ class @beta Efl.Ui.Select_Model extends Efl.Boolean_Model
       Efl.Ui.Multi_Selectable_Index_Range.ndx_range_select;
       Efl.Ui.Multi_Selectable_Index_Range.ndx_range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
+      Efl.Ui.Single_Selectable.allow_manual_deselection {get; set;}
       Efl.Ui.Selectable.selected {get; set;}
    }
    events {

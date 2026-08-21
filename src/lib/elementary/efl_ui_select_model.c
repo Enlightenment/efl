@@ -24,6 +24,8 @@ struct _Efl_Ui_Select_Model_Data
    Efl_Ui_Select_Model *last_model;
 
    Efl_Ui_Select_Mode selection;
+
+   Eina_Bool allow_manual_deselection : 1;
 };
 
 static void
@@ -54,6 +56,10 @@ _efl_ui_select_model_efl_object_constructor(Eo *obj,
    efl_boolean_model_boolean_add(obj, "selected", EINA_FALSE);
 
    efl_event_callback_add(obj, EFL_MODEL_EVENT_CHILD_REMOVED, _efl_ui_select_model_child_removed, pd);
+
+   /* Same default as Efl.Ui.Collection: unselecting what is selected is
+      allowed until someone says otherwise. */
+   pd->allow_manual_deselection = EINA_TRUE;
 
    parent = efl_parent_get(obj);
    if (efl_isa(parent, EFL_UI_SELECT_MODEL_CLASS))
@@ -156,6 +162,21 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
  on_error:
    eina_value_free(selected);
    return v;
+}
+
+EOLIAN static void
+_efl_ui_select_model_efl_ui_single_selectable_allow_manual_deselection_set(Eo *obj EINA_UNUSED,
+                                                                           Efl_Ui_Select_Model_Data *pd,
+                                                                           Eina_Bool allow_manual_deselection)
+{
+   pd->allow_manual_deselection = !!allow_manual_deselection;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_select_model_efl_ui_single_selectable_allow_manual_deselection_get(const Eo *obj EINA_UNUSED,
+                                                                           Efl_Ui_Select_Model_Data *pd)
+{
+   return pd->allow_manual_deselection;
 }
 
 static void
@@ -400,6 +421,21 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         // Nothing changed
         if (newflag == prevflag)
           return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
+
+        /* Refusing to be the change that leaves nothing selected, which is
+           what allow_manual_deselection is for. Refused before the value is
+           stored rather than undone afterwards, so the selection is never
+           briefly empty and nothing downstream sees a state that was not
+           meant to exist.
+
+           A fallback is not this case: something is still selected once it
+           takes over, so the deselection is allowed to go through. */
+        if (!newflag &&
+            (pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE) &&
+            (!pd->parent->allow_manual_deselection) &&
+            (!pd->parent->fallback_model) &&
+            (pd->parent->last_model == obj))
+          return efl_loop_future_resolved(obj, eina_value_bool_init(EINA_TRUE));
 
         single_selection = !!(pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE);
 

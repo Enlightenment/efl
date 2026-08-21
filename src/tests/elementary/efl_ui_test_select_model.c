@@ -608,6 +608,76 @@ EFL_START_TEST(efl_test_select_model_gone_row_is_not_selected)
 }
 EFL_END_TEST
 
+/* In single mode, allow_manual_deselection decides whether the model may end
+ * up with nothing selected. It defaults to allowing it, the same as
+ * Efl.Ui.Collection does; turning it off makes the last selection stick.
+ *
+ * This is checked on the model directly rather than through a view: the
+ * property is documented in terms of clicking, but a model has no clicks, and
+ * a model driven from code has to behave the same way. */
+EFL_START_TEST(efl_test_select_model_manual_deselection)
+{
+   Efl_Model *base_model, *model, *child;
+   Eina_Value v = EINA_VALUE_EMPTY;
+   Eina_Value *readback;
+   Eina_Bool selected = EINA_FALSE;
+   int i;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   ck_assert(!!base_model);
+
+   for (i = 0; i < 3; ++i)
+     {
+        child = efl_model_child_add(base_model);
+        ck_assert(!!child);
+        ck_assert(eina_value_set(&v, i));
+        efl_model_property_set(child, "test_p_int", &v);
+     }
+
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+
+   /* Allowed by default, as Efl.Ui.Collection has it. */
+   ck_assert_int_eq(efl_ui_selectable_allow_manual_deselection_get(model), EINA_TRUE);
+
+   efl_ui_selectable_allow_manual_deselection_set(model, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_allow_manual_deselection_get(model), EINA_FALSE);
+
+   /* Select one, then try to give it back. */
+   v = eina_value_int_init(1);
+   efl_model_property_set(model, "child.selected", &v);
+   ecore_main_loop_iterate();
+
+   {
+      Eina_Value keep = eina_value_bool_init(EINA_FALSE);
+      Efl_Model *sel = efl_ui_selectable_last_selected_get(model);
+
+      ck_assert_ptr_ne(sel, NULL);
+      efl_model_property_set(sel, "self.selected", &keep);
+      eina_value_flush(&keep);
+      ecore_main_loop_iterate();
+      ecore_main_loop_iterate();
+
+      readback = efl_model_property_get(sel, "selected");
+      ck_assert_ptr_ne(readback, NULL);
+      eina_value_bool_get(readback, &selected);
+      eina_value_free(readback);
+
+      /* Refused: something is still selected. */
+      ck_assert_int_eq(selected, EINA_TRUE);
+      ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), sel);
+   }
+
+   eina_value_flush(&v);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -621,4 +691,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_gone_row_is_not_selected);
    tcase_add_test(tc, efl_test_select_model_single_selects_in_one_turn);
    tcase_add_test(tc, efl_test_select_model_single_to_none_unselects_all);
+   tcase_add_test(tc, efl_test_select_model_manual_deselection);
 }
