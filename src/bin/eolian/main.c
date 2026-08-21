@@ -437,6 +437,43 @@ _append_dep_line(Eina_Strbuf *buf, Eina_Strbuf *dbuf, char **outs, int gen_what,
    eina_strbuf_append_buffer(buf, dbuf);
 }
 
+/* Collect a unit's dependencies transitively.
+ *
+ * eolian_unit_children_get() gives the units a file refers to directly. A
+ * make-style depfile has to name every file whose change invalidates the
+ * output, because the tool reading it -- ninja, make -- does not chase the
+ * list further. Stopping at the direct children silently under-reports: a
+ * class implementing an interface through an intermediate mixin gets a
+ * generated .eo.c carrying signatures owned by a file the depfile never
+ * mentions, so changing that file leaves the .eo.c stale and the build fails
+ * to link with a conflicting-types error.
+ *
+ * The unit graph is a DAG, but a diamond is normal (two parents importing the
+ * same types file), so the visited set is what keeps this linear rather than
+ * what stops it looping.
+ */
+static void
+_gather_deps(const Eolian_Unit *un, Eina_Hash *seen, Eina_Strbuf *dbuf)
+{
+   const Eolian_Unit *dun;
+   Eina_Iterator *deps = eolian_unit_children_get(un);
+
+   EINA_ITERATOR_FOREACH(deps, dun)
+     {
+        const char *dpath = eolian_unit_file_path_get(dun);
+
+        if (!dpath || eina_hash_find(seen, dpath))
+          continue;
+
+        eina_hash_add(seen, dpath, (void *)1);
+        eina_strbuf_append_char(dbuf, ' ');
+        eina_strbuf_append(dbuf, dpath);
+
+        _gather_deps(dun, seen, dbuf);
+     }
+   eina_iterator_free(deps);
+}
+
 static Eina_Bool
 _write_deps(const Eolian_State *eos, const char *ofname, const char *ifname,
             char **outs, int gen_what)
@@ -458,17 +495,14 @@ _write_deps(const Eolian_State *eos, const char *ofname, const char *ifname,
    /* every generated file depends on its .eo/.eot file */
    eina_strbuf_append(dbuf, eolian_unit_file_path_get(un));
 
-   const Eolian_Unit *dun;
-   Eina_Iterator *deps = eolian_unit_children_get(un);
-   EINA_ITERATOR_FOREACH(deps, dun)
-     {
-        const char *dpath = eolian_unit_file_path_get(dun);
-        if (!dpath)
-          continue;
-        eina_strbuf_append_char(dbuf, ' ');
-        eina_strbuf_append(dbuf, dpath);
-     }
-   eina_iterator_free(deps);
+   {
+      Eina_Hash *seen = eina_hash_string_superfast_new(NULL);
+      const char *self = eolian_unit_file_path_get(un);
+
+      if (self) eina_hash_add(seen, self, (void *)1);
+      _gather_deps(un, seen, dbuf);
+      eina_hash_free(seen);
+   }
    eina_strbuf_append_char(dbuf, '\n');
 
    _append_dep_line(buf, dbuf, outs, gen_what, GEN_H);
