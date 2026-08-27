@@ -8636,6 +8636,7 @@ static void
 _part_description_state_update(Edje_Part_Description_Common *ed)
 {
    Edje_Part *ep = current_part;
+   Edje_Part_Collection *pc = eina_list_data_get(eina_list_last(edje_collections));
 
    if (ed == ep->default_desc) return;
    if ((ep->default_desc->state.name && !strcmp(ed->state.name, ep->default_desc->state.name) && EINA_DBL_EQ(ed->state.value, ep->default_desc->state.value)) ||
@@ -8644,7 +8645,10 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
         if (ep->type == EDJE_PART_TYPE_IMAGE)
           _edje_part_description_image_remove((Edje_Part_Description_Image *)ed);
 
-        free(ed);
+        /* state.name is owned by the parser stack in the desc { "state"; }
+         * short form, edje_cc_handlers_wildcard() frees it there */
+        ed->state.name = NULL;
+        _part_desc_free(pc, ep, ed);
         ep->other.desc_count--;
         ep->other.desc = realloc(ep->other.desc,
                                  sizeof (Edje_Part_Description_Common *) * ep->other.desc_count);
@@ -8660,7 +8664,8 @@ _part_description_state_update(Edje_Part_Description_Common *ed)
                   if (ep->type == EDJE_PART_TYPE_IMAGE)
                     _edje_part_description_image_remove((Edje_Part_Description_Image *)ed);
 
-                  free(ed);
+                  ed->state.name = NULL;
+                  _part_desc_free(pc, ep, ed);
                   ep->other.desc_count--;
                   ep->other.desc = realloc(ep->other.desc,
                                            sizeof (Edje_Part_Description_Common *) * ep->other.desc_count);
