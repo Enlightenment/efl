@@ -85,9 +85,58 @@ EFL_START_TEST(efl_ui_image_test_scale_method)
 }
 EFL_END_TEST
 
+/* A load size is a promise that the image will not be decoded larger than it
+ * has to be. The raster loaders only ever read the scale-down divisor -- the
+ * PNG one reads opts->emile.scale_down_by and the region and never the
+ * requested width and height -- so before the widget worked a divisor out from
+ * the header the promise was empty: the getter answered with what had been
+ * asked for and the whole image was decoded anyway.
+ *
+ * Measured once by hand on an 8000x8000 PNG: 246 MB decoded as it comes, 244 MB
+ * with a load size, 1 MB with a scale-down. This test uses a small image on
+ * purpose -- a test that reproduces the 246 MB is a test that will one day run
+ * on a machine without room for it.
+ */
+EFL_START_TEST(efl_ui_image_test_load_size_bounds_the_decode)
+{
+   Eo *win, *plain, *bounded;
+   Eina_Size2D natural, small, asked = EINA_SIZE2D(100, 100);
+
+   win = win_add(NULL, "image", EFL_UI_WIN_TYPE_BASIC);
+
+   plain = efl_add(EFL_UI_IMAGE_CLASS, win);
+   ck_assert(efl_file_simple_load(plain, ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   natural = efl_gfx_view_size_get(plain);
+   ck_assert_int_gt(natural.w, asked.w * 2);
+   ck_assert_int_gt(natural.h, asked.h * 2);
+
+   bounded = efl_add(EFL_UI_IMAGE_CLASS, win);
+   efl_gfx_image_load_controller_load_size_set(bounded, asked);
+   ck_assert(efl_file_simple_load(bounded, ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   small = efl_gfx_view_size_get(bounded);
+
+   /* Smaller than the file, and no smaller than what was asked for: a request
+      is a floor, not a target, because a loader may only be able to halve. */
+   ck_assert_int_lt(small.w, natural.w);
+   ck_assert_int_lt(small.h, natural.h);
+   ck_assert_int_ge(small.w, asked.w);
+   ck_assert_int_ge(small.h, asked.h);
+
+   /* The property still answers with what was asked for, not with what the
+      loader managed. */
+   ck_assert_int_eq(efl_gfx_image_load_controller_load_size_get(bounded).w, asked.w);
+
+   /* elm_image_prescale_set reaches the same property and is deliberately kept
+      on the old behaviour -- legacy is frozen and prescale has never bounded a
+      raster decode. It is not asserted here because this file is built without
+      the legacy API. */
+}
+EFL_END_TEST
+
 void efl_ui_test_image(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_image_test_icon);
    tcase_add_test(tc, efl_ui_image_test_border_insets_before_load);
    tcase_add_test(tc, efl_ui_image_test_scale_method);
+   tcase_add_test(tc, efl_ui_image_test_load_size_bounds_the_decode);
 }

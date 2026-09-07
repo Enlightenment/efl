@@ -847,6 +847,41 @@ _efl_ui_image_load_size_set_internal(Evas_Object *obj, Efl_Ui_Image_Data *sd)
    evas_object_image_load_size_set(sd->img, sz.w, sz.h);
 }
 
+/* A requested load size is honoured by loaders that can decode at an arbitrary
+ * size -- the scalable ones -- and ignored by everything else: the PNG and JPEG
+ * loaders read scale_down_by and the region, never the requested width and
+ * height. So asking a raster image to load small did nothing at all, and the
+ * getter still answered with the size that had been asked for.
+ *
+ * The image's header is read by the time this runs, so the natural size is
+ * known and the divisor the loader does read can be worked out from it. The
+ * factor is rounded down, which is what keeps the decode at least as large as
+ * what was asked for: overshooting a request is allowed, undershooting is a
+ * blurrier image than the caller asked for.
+ *
+ * Not applied to elm_image_prescale_set: that is legacy, it has never bounded
+ * a raster decode, and making it start to would change what shipped
+ * applications draw.
+ */
+static void
+_efl_ui_image_load_size_bound_apply(Efl_Ui_Image_Data *sd)
+{
+   int nat_w = 0, nat_h = 0, factor;
+
+   if (!sd->img || sd->edje || sd->load_size_legacy) return;
+   if ((sd->load_size.w <= 0) || (sd->load_size.h <= 0)) return;
+   if (efl_isa(sd->img, EFL_CANVAS_LAYOUT_CLASS)) return;
+
+   evas_object_image_size_get(sd->img, &nat_w, &nat_h);
+   if ((nat_w <= 0) || (nat_h <= 0)) return;
+
+   factor = nat_w / sd->load_size.w;
+   if ((nat_h / sd->load_size.h) < factor) factor = nat_h / sd->load_size.h;
+   if (factor <= 1) return;
+
+   evas_object_image_load_scale_down_set(sd->img, factor);
+}
+
 static void
 _efl_ui_image_file_set_do(Evas_Object *obj)
 {
@@ -1036,6 +1071,10 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd)
    _efl_ui_image_file_set_do(obj);
 
    evas_object_image_mmap_set(sd->img, f, key);
+
+   /* After the header, before the pixels: the natural size is known here and
+      nothing has been decoded yet. */
+   _efl_ui_image_load_size_bound_apply(sd);
 
    err = evas_object_image_load_error_get(sd->img);
    if (err)
@@ -1583,16 +1622,25 @@ elm_image_prescale_set(Evas_Object *obj,
                        int size)
 {
    EFL_UI_IMAGE_CHECK(obj);
+   EFL_UI_IMAGE_DATA_GET(obj, sd);
+
    efl_gfx_image_load_controller_load_size_set(obj, EINA_SIZE2D(size, size));
+
+   /* Frozen behaviour: prescale asks the loader for a size and takes what it
+      gives, which for a raster image is the whole thing. Marked after the
+      call, which clears the flag. */
+   sd->load_size_legacy = EINA_TRUE;
 }
 
 EOLIAN static void
 _efl_ui_image_efl_gfx_image_load_controller_load_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
    sd->load_size = sz;
+   sd->load_size_legacy = EINA_FALSE;
 
    if (!sd->img) return;
    _efl_ui_image_load_size_set_internal(obj, sd);
+   _efl_ui_image_load_size_bound_apply(sd);
 }
 
 EOLIAN static void

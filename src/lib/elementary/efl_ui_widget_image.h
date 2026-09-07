@@ -112,6 +112,10 @@ struct _Efl_Ui_Image_Data
    Eina_Bool             legacy_align : 1;
    Eina_Bool             property_watch : 1;
    Eina_Bool             in_calc : 1;
+   /* The load size came from elm_image_prescale_set rather than from the
+    * unified property. Legacy is frozen, and prescale has never bounded a
+    * raster decode, so the derivation below is kept off that path. */
+   Eina_Bool             load_size_legacy : 1;
 };
 
 /**
