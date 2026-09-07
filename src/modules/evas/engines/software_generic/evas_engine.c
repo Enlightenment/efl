@@ -1820,11 +1820,16 @@ eng_image_data_slice_add(void *engdata, void *image,
         if (!stride) stride = w * bpp;
         if (copy)
           {
+             /* Row by row, because the source may be strided and the
+                destination is not. Both indices are the row being copied:
+                this read past the end of the source and wrote every row on
+                top of the second one, which left the image blank and read
+                out of bounds while doing it. */
              for (int y = 0; y < h; y++)
                {
-                  const unsigned char *src = slice->bytes + h * stride;
-                  unsigned char *dst = im->image.data8 + bpp * w;
-                  memcpy(dst, src, w * bpp);
+                  const unsigned char *src = slice->bytes + ((size_t) y * stride);
+                  unsigned char *dst = im->image.data8 + ((size_t) y * bpp * w);
+                  memcpy(dst, src, (size_t) w * bpp);
                }
           }
         else

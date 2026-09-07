@@ -1009,6 +1009,60 @@ EFL_START_TEST(evas_object_image_map_unmap)
 }
 EFL_END_TEST
 
+/* A copy has to arrive: every row of it, at the right offset, from a source
+ * that may be strided. This copied one row from past the end of the source
+ * over the second row of the destination h times, which left the image blank
+ * and read out of bounds on the way -- and nothing noticed, because the only
+ * test of the buffer API used the zero-copy path and the only test of this
+ * path checked the size rather than the pixels.
+ */
+EFL_START_TEST(evas_object_image_buffer_copy)
+{
+   Evas *e = _setup_evas();
+   const int w = 8, h = 4;
+   const int stride = (w + 3) * 4;   /* padded rows: the harder case */
+   unsigned int *src, *back;
+   Eina_Slice slice;
+   Eo *o;
+   int x, y;
+
+   src = malloc((size_t) stride * h);
+   fail_if(!src);
+   for (y = 0; y < h; y++)
+     {
+        unsigned int *row = (unsigned int *) (((unsigned char *) src) + ((size_t) y * stride));
+
+        for (x = 0; x < w; x++)
+          row[x] = 0xff000000 | (unsigned int) ((y << 16) | (x << 8) | 0x11);
+     }
+
+   o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
+
+   slice = (Eina_Slice) { (size_t) stride * h, src };
+   fail_if(!efl_gfx_buffer_copy_set(o, &slice, EINA_SIZE2D(w, h), stride,
+                                    EFL_GFX_COLORSPACE_ARGB8888, 0));
+
+   /* Copied means copied: the source goes away and the image keeps its
+      pixels. */
+   memset(src, 0xa5, (size_t) stride * h);
+   free(src);
+
+   back = evas_object_image_data_get(o, EINA_FALSE);
+   fail_if(!back);
+
+   for (y = 0; y < h; y++)
+     for (x = 0; x < w; x++)
+       {
+          unsigned int want = 0xff000000 | (unsigned int) ((y << 16) | (x << 8) | 0x11);
+
+          fail_if(back[(y * w) + x] != want);
+       }
+
+   efl_del(o);
+   evas_free(e);
+}
+EFL_END_TEST
+
 #if BUILD_LOADER_JP2K
 EFL_START_TEST(evas_object_image_jp2k_loader_data)
 {
@@ -1276,6 +1330,7 @@ void evas_test_image_object(TCase *tc)
 #endif
    tcase_add_test(tc, evas_object_image_buggy);
    tcase_add_test(tc, evas_object_image_map_unmap);
+   tcase_add_test(tc, evas_object_image_buffer_copy);
 #endif
    tcase_add_test(tc, evas_object_image_partially_load_orientation);
    tcase_add_test(tc, evas_object_image_cached_data_comparision);
