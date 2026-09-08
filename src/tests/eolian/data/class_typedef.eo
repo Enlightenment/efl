@@ -1,0 +1,29 @@
+class Class_Typedef {
+   [[Docs for class Class_Typedef. @since 1.66]]
+   methods {
+      @property linked {
+         [[Names a class in a key and in a value.]]
+         keys {
+            key: nmsp2.class1;
+         }
+         values {
+            value: nmsp1.nmsp11.class2;
+         }
+      }
+      @property only_set {
+         [[Names a class in a setter only.]]
+         set {
+         }
+         values {
+            value: no_nmsp;
+         }
+      }
+      make {
+         [[Names a class as a return type.]]
+         return: Class_Simple;
+      }
+   }
+   events {
+      linked: Events; [[Names a class as an event type.]]
+   }
+}

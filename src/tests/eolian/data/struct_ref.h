@@ -4,7 +4,10 @@
 #ifndef _STRUCT_EO_CLASS_TYPE
 #define _STRUCT_EO_CLASS_TYPE
 
+#ifndef _STRUCT_EO_CLASS_TYPE_FWD
+#define _STRUCT_EO_CLASS_TYPE_FWD
 typedef Eo Struct;
+#endif
 
 #endif
 

@@ -4,7 +4,10 @@
 #ifndef _CLASS_SIMPLE_EO_CLASS_TYPE
 #define _CLASS_SIMPLE_EO_CLASS_TYPE
 
+#ifndef _CLASS_SIMPLE_EO_CLASS_TYPE_FWD
+#define _CLASS_SIMPLE_EO_CLASS_TYPE_FWD
 typedef Eo Class_Simple;
+#endif
 
 #endif
 

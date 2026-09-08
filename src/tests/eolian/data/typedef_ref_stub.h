@@ -1,7 +1,10 @@
 #ifndef _EOLIAN_TYPEDEF_EO_STUB_H_STUBS
 #define _EOLIAN_TYPEDEF_EO_STUB_H_STUBS
 
+#ifndef _TYPEDEF_EO_CLASS_TYPE_FWD
+#define _TYPEDEF_EO_CLASS_TYPE_FWD
 typedef Eo Typedef;
+#endif
 
 /** Docs for typedef Evas.Coord.
  *

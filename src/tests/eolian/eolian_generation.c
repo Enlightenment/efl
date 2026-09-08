@@ -163,6 +163,17 @@ EFL_START_TEST(eolian_functions_descriptions)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_class_typedefs)
+{
+   char output_filepath[PATH_MAX + 128] = "";
+   snprintf(output_filepath, PATH_MAX, "%s/eolian_class_typedef",
+            eina_environment_tmp_get());
+   _remove_ref(output_filepath, "eo.h");
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_typedef.eo", "-gh", output_filepath));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_typedef_ref_eo.h", output_filepath, "eo.h"));
+}
+EFL_END_TEST
+
 EFL_START_TEST(eolian_import)
 {
    char output_filepath[PATH_MAX + 128] = "";
@@ -235,6 +246,7 @@ void eolian_generation_test(TCase *tc)
    tcase_add_test(tc, eolian_override_generation);
    tcase_add_test(tc, eolian_dev_impl_code);
    tcase_add_test(tc, eolian_functions_descriptions);
+   tcase_add_test(tc, eolian_class_typedefs);
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_docs);
    tcase_add_test(tc, eolian_function_pointers);

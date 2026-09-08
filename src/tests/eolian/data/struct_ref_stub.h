@@ -1,7 +1,10 @@
 #ifndef _EOLIAN_TYPEDEF_EO_STUB_H_STUBS
 #define _EOLIAN_TYPEDEF_EO_STUB_H_STUBS
 
+#ifndef _STRUCT_EO_CLASS_TYPE_FWD
+#define _STRUCT_EO_CLASS_TYPE_FWD
 typedef Eo Struct;
+#endif
 
 /** Docs for struct Named.
  *

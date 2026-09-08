@@ -384,6 +384,96 @@ void eo_gen_types_source_gen(Eina_Iterator *itr, Eina_Strbuf *buf)
    eina_iterator_free(itr);
 }
 
+/* Declare every class type the class names, guarded, so that two classes
+ * may name each other whichever header is included first.
+ */
+static void
+_class_typedef_emit(Eina_Strbuf *buf, Eina_Hash *seen, const char *cname)
+{
+   char *guard;
+
+   if (eina_hash_find(seen, cname)) return;
+   eina_hash_add(seen, cname, (void *) 1);
+
+   guard = strdup(cname);
+   if (!guard) return;
+
+   eina_str_toupper(&guard);
+   eina_strbuf_append_printf(buf,
+                             "#ifndef _%s_EO_CLASS_TYPE_FWD\n"
+                             "#define _%s_EO_CLASS_TYPE_FWD\n"
+                             "typedef Eo %s;\n"
+                             "#endif\n", guard, guard, cname);
+   free(guard);
+}
+
+static void
+_class_typedef_add(Eina_Strbuf *buf, Eina_Hash *seen, const Eolian_Type *tp)
+{
+   const Eolian_Class *rcl;
+   char *rfn;
+
+   if (!tp) return;
+   if (eolian_type_type_get(tp) != EOLIAN_TYPE_CLASS) return;
+
+   rcl = eolian_type_class_get(tp);
+   if (!rcl) return;
+
+   rfn = eo_gen_c_full_name_get(eolian_class_c_name_get(rcl));
+   if (!rfn) return;
+
+   _class_typedef_emit(buf, seen, rfn);
+   free(rfn);
+}
+
+static void
+_class_typedefs_from_parameters(Eina_Strbuf *buf, Eina_Hash *seen,
+                                Eina_Iterator *itr)
+{
+   const Eolian_Function_Parameter *pr;
+
+   EINA_ITERATOR_FOREACH(itr, pr)
+     {
+        _class_typedef_add(buf, seen, eolian_parameter_type_get(pr));
+     }
+   eina_iterator_free(itr);
+}
+
+static void
+_class_typedefs_from_functions(Eina_Strbuf *buf, Eina_Hash *seen,
+                               const Eolian_Class *cl)
+{
+   Eina_Iterator *itr;
+   const Eolian_Function *fid;
+
+   itr = eolian_class_functions_get(cl, EOLIAN_METHOD);
+   EINA_ITERATOR_FOREACH(itr, fid)
+     {
+        _class_typedef_add(buf, seen,
+                           eolian_function_return_type_get(fid, EOLIAN_METHOD));
+        _class_typedefs_from_parameters(buf, seen,
+                                        eolian_function_parameters_get(fid));
+     }
+   eina_iterator_free(itr);
+
+   itr = eolian_class_functions_get(cl, EOLIAN_PROPERTY);
+   EINA_ITERATOR_FOREACH(itr, fid)
+     {
+        Eolian_Function_Type ftype;
+
+        for (ftype = EOLIAN_PROP_SET; ftype <= EOLIAN_PROP_GET; ftype++)
+          {
+             _class_typedef_add(buf, seen,
+                                eolian_function_return_type_get(fid, ftype));
+             _class_typedefs_from_parameters(buf, seen,
+                                             eolian_property_keys_get(fid, ftype));
+             _class_typedefs_from_parameters(buf, seen,
+                                             eolian_property_values_get(fid, ftype));
+          }
+     }
+   eina_iterator_free(itr);
+}
+
 Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_State *eos, const char *eof)
 {
    const Eolian_Class *cl = eolian_state_class_by_file_get(eos, eof);
@@ -392,8 +482,23 @@ Eina_Strbuf *eo_gen_class_typedef_gen(const Eolian_State *eos, const char *eof)
    char *clfn = eo_gen_c_full_name_get(eolian_class_c_name_get(cl));
    if (!clfn)
      return NULL;
+
    Eina_Strbuf *ret = eina_strbuf_new();
-   eina_strbuf_append_printf(ret, "typedef Eo %s;\n", clfn);
+   Eina_Hash *seen = eina_hash_string_superfast_new(NULL);
+   Eina_Iterator *eitr;
+   const Eolian_Event *ev;
+
+   _class_typedef_emit(ret, seen, clfn);
+   _class_typedefs_from_functions(ret, seen, cl);
+
+   eitr = eolian_class_events_get(cl);
+   EINA_ITERATOR_FOREACH(eitr, ev)
+     {
+        _class_typedef_add(ret, seen, eolian_event_type_get(ev));
+     }
+   eina_iterator_free(eitr);
+
+   eina_hash_free(seen);
    free(clfn);
    return ret;
 }
