@@ -182,20 +182,44 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// </summary>
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing && handle != System.IntPtr.Zero)
+        /* The handle is taken first and cleared, whichever path releases it.
+         *
+         * This used to test the handle only on the disposing path, so an
+         * object disposed twice -- or disposed and then finalized, which is
+         * what happens when a parent tears its children down and the garbage
+         * collector reaches the wrappers afterwards -- took the finalizer
+         * branch with a handle of zero and asked the native side to release
+         * it. That is the "Invalid wrapper supervisor [Eo pointer: 0]" in the
+         * log, and it was one queued release per object; the finalizer branch
+         * also never cleared the handle, so the same pointer could be queued
+         * again and released twice.
+         */
+        IntPtr h = handle;
+        if (h == IntPtr.Zero)
         {
-            IntPtr h = handle;
-            handle = IntPtr.Zero;
-            Efl.Eo.Globals.efl_mono_native_dispose(h);
+            return;
         }
-        else
+
+        handle = IntPtr.Zero;
+
+        if (disposing)
         {
-            Monitor.Enter(Efl.All.InitLock);
+            Efl.Eo.Globals.efl_mono_native_dispose(h);
+            return;
+        }
+
+        // The finalizer does not run on the main loop, so the release is
+        // queued onto it -- and only while there is a loop left to queue onto.
+        Monitor.Enter(Efl.All.InitLock);
+        try
+        {
             if (Efl.All.MainLoopInitialized)
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_native_dispose(handle);
+                Efl.Eo.Globals.efl_mono_thread_safe_native_dispose(h);
             }
-
+        }
+        finally
+        {
             Monitor.Exit(Efl.All.InitLock);
         }
     }

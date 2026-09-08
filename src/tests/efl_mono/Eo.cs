@@ -811,4 +811,37 @@ class TestAliasEquality
     }
 }
 
+/// <summary>Teardown of a live MVVM stack, which is what closing a window that
+/// holds an Efl.Ui.CollectionView over an Efl.Model amounts to.
+///
+/// This used to leave one queued release of a null handle per wrapper: Dispose
+/// checked the handle only on the disposing path, so an object disposed and
+/// then finalized -- which is what happens when a parent tears its children
+/// down and the collector reaches the wrappers afterwards -- took the
+/// finalizer branch with a handle of zero and asked the native side to release
+/// it. Forty teardowns of a window holding a list view over an Efl.Io.Model
+/// produced thirty-nine of them.
+/// </summary>
+class TestEoTeardown
+{
+    /// <summary>Disposing twice is disposing once, and does not throw.
+    ///
+    /// This states the contract rather than proving the fix: from C# the
+    /// second call looks the same either way. What proves it is the count of
+    /// "Invalid wrapper supervisor" lines that teardown used to emit.
+    /// </summary>
+    public static void dispose_is_idempotent()
+    {
+        var buffer = new Efl.Io.Buffer(null);
+        Test.AssertNotEquals(IntPtr.Zero, buffer.NativeHandle);
+
+        buffer.Dispose();
+        Test.AssertEquals(IntPtr.Zero, buffer.NativeHandle);
+
+        // the one that used to queue a release of nothing
+        buffer.Dispose();
+        Test.AssertEquals(IntPtr.Zero, buffer.NativeHandle);
+    }
+}
+
 }
