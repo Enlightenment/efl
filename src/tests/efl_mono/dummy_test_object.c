@@ -4656,7 +4656,14 @@ void _dummy_test_object_fulfill_promise(Eo *obj EINA_UNUSED, Dummy_Test_Object_D
     Eina_Value v;
     eina_value_setup(&v, EINA_VALUE_TYPE_INT);
     eina_value_set(&v, data);
-    eina_promise_resolve(pd->promise, v);
+
+    /* Delivering frees the promise: what is kept here is a pointer to a slot
+       that eina has taken back. Leaving it set means the destructor rejects
+       it again, and if the mempool has handed the slot to somebody else by
+       then it rejects their promise instead of complaining about this one. */
+    Eina_Promise *delivered = pd->promise;
+    pd->promise = NULL;
+    eina_promise_resolve(delivered, v);
 }
 
 void _dummy_test_object_reject_promise(Eo *obj EINA_UNUSED, Dummy_Test_Object_Data *pd, Eina_Error err)
@@ -4667,7 +4674,10 @@ void _dummy_test_object_reject_promise(Eo *obj EINA_UNUSED, Dummy_Test_Object_Da
          return;
       }
 
-    eina_promise_reject(pd->promise, err);
+    /* Same as resolving: the promise is gone once it has been delivered. */
+    Eina_Promise *delivered = pd->promise;
+    pd->promise = NULL;
+    eina_promise_reject(delivered, err);
 }
 
 Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj EINA_UNUSED, Dummy_Test_Object_Data *pd, Eina_Accessor *acc)
