@@ -346,16 +346,6 @@ EAPI struct wl_shm *ecore_wl_shm_get(void);
 EAPI struct wl_display *ecore_wl_display_get(void);
 
 /**
- * @brief Retrieves the Compositor interface.
- *
- * This interface is used by clients to request the creation of surfaces and
- * regions.
- *
- * @return The current wayland compositor interface, or NULL on error
- * @since 1.8
- */
-
-/**
  * @ingroup Ecore_Wl_Display_Group
  * @brief Retrieves the size of the current screen.
  *
@@ -802,11 +792,10 @@ EAPI void ecore_wl_dnd_drag_types_set(Ecore_Wl_Input *input, const char **types_
  */
 EAPI struct wl_array *ecore_wl_dnd_drag_types_get(Ecore_Wl_Input *input);
 
-/**
- * @ingroup Ecore_Wl_Dnd_Group
+/* @ingroup Ecore_Wl_Dnd_Group
  * @since 1.8
- */
-/* EAPI Ecore_Wl_Dnd_Source *ecore_wl_dnd_drag_source_create(Ecore_Wl_Dnd *dnd); */
+ *
+ * EAPI Ecore_Wl_Dnd_Source *ecore_wl_dnd_drag_source_create(Ecore_Wl_Dnd *dnd); */
 
 /**
  * Enables/disables server mode.

@@ -4516,10 +4516,7 @@ EAPI Eet_Node *
 eet_node_var_array_new(const char *name,
                        Eina_List *nodes);
 
-/**
- * TODO FIX ME
- * @ingroup Eet_Node_Group
- */
+/* TODO FIX ME */
 /**
  * @ingroup Eet_Node_Group
  * @brief Creates a new hash node.
@@ -4544,10 +4541,7 @@ EAPI Eet_Node *
 eet_node_struct_new(const char *name,
                     Eina_List *nodes);
 
-/**
- * TODO FIX ME
- * @ingroup Eet_Node_Group
- */
+/* TODO FIX ME */
 /**
  * @ingroup Eet_Node_Group
  * @brief Creates a new struct child node.

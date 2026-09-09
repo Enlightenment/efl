@@ -52,18 +52,13 @@ extern "C" {
 #endif
 
 /**
+ * @file Emile.h
  * @brief Emile serialization, compression and ciphering public API calls.
  *
- * These routines are used for Emile Library interaction
+ * This header provides the Emile management functions. These routines are
+ * used for Emile Library interaction.
  *
  * @date 2013 (created)
- */
-
-/**
- * @file Emile.h
- * @brief The file that provide the Emile function
- *
- * This header provides the Emile management functions.
  */
 
 /**

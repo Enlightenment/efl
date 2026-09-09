@@ -361,15 +361,6 @@ EVAS_API Eina_Bool                                evas_textblock_cursor_line_set
  * @return Returns true if a visible format was added, false otherwise.
  * @see evas_textblock_cursor_format_prepend()
  */
-
-/**
- * Check if the current cursor position points to the terminating null of the
- * last paragraph. (shouldn't be allowed to point to the terminating null of
- * any previous paragraph anyway.
- *
- * @param cur the cursor to look at.
- * @return @c EINA_TRUE if the cursor points to the terminating null, @c EINA_FALSE otherwise.
- */
 EVAS_API Eina_Bool                                evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format) EINA_ARG_NONNULL(1, 2);
 
 /**

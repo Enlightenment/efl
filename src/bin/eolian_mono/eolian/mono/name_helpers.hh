@@ -30,7 +30,6 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/list.hpp"
 #include "grammar/string.hpp"
-#include "grammar/integral.hpp"
 
 using efl::eolian::grammar::as_generator;
 using efl::eolian::grammar::string;

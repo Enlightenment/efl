@@ -28,7 +28,6 @@
 #include <functional>
 #include <chrono>
 #include <mutex>
-#include <functional>
 
 /**
  * @addtogroup Eina_Cxx_Tools_Group Tools

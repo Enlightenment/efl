@@ -72,8 +72,7 @@ typedef enum _Ecore_Audio_Type Ecore_Audio_Type;
 
   /** @since 1.8
    */
-typedef struct _Ecore_Audio_Module Ecore_Audio_Module;
-/**< The audio module */
+typedef struct _Ecore_Audio_Module Ecore_Audio_Module;  /**< The audio module */
 
   /** @since 1.8
    */

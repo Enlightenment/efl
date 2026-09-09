@@ -28,10 +28,6 @@
 #include <pixman.h>
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include <Eina.h>
 #include <Eo.h>
 #include <Ector.h>

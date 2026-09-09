@@ -58,8 +58,6 @@
 # include <signal.h>
 #endif
 
-#include <sys/types.h>
-
 #define __EFL_UI_IS_REQUIRED
 
 #include <Efl_Core.h>

@@ -5687,9 +5687,7 @@ EAPI Eina_Bool edje_edit_state_external_param_choice_get(Evas_Object *obj, const
  * @param type The type of the parameter.
  *
  * @return @c EINA_TRUE in case of success, @c EINA_FALSE otherwise.
- */
-
-/**
+ *
  * Arguments should have proper sized values matching their types:
  *   - EDJE_EXTERNAL_PARAM_TYPE_INT: int
  *   - EDJE_EXTERNAL_PARAM_TYPE_BOOL: int
