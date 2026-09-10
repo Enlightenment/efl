@@ -638,7 +638,13 @@ T convert_to_event(void* value, typename std::enable_if< is_container<T>::value
 template <typename T>
 T convert_to_event(void* value, typename std::enable_if< !std::is_pointer<T>::value
                    && !is_container<T>::value && !is_range<T>::value
-                   && !eo::is_eolian_object<T>::value>::type* = 0)
+                   && !eo::is_eolian_object<T>::value
+                   /* bool has an overload of its own below, because the payload
+                      is an Eina_Bool rather than a C++ bool. Without excluding
+                      it here both are viable and neither wins, which made every
+                      event carrying a bool -- Efl.Io.Reader's can_read,changed
+                      among them -- impossible to attach a C++ handler to. */
+                   && !std::is_same<T, bool>::value>::type* = 0)
 {
   return *static_cast<T*>(value);
 }

@@ -212,6 +212,20 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
 }
 EFL_END_TEST
 
+/* An event whose payload is a bool. The payload is an Eina_Bool, so bool has
+   a convert_to_event overload of its own -- and the generic one beside it
+   did not exclude bool, so both were viable, neither won, and no C++ handler
+   could be attached to any such event at all. Compiling is most of the test. */
+EFL_START_TEST(eolian_cxx_test_bool_event_payload)
+{
+  Eina_Bool payload = EINA_TRUE;
+
+  ck_assert(efl::eolian::convert_to_event<bool>(&payload));
+  payload = EINA_FALSE;
+  ck_assert(!efl::eolian::convert_to_event<bool>(&payload));
+}
+EFL_END_TEST
+
 using efl::eolian::grammar::attributes::klass_def;
 using efl::eolian::grammar::attributes::function_def;
 using efl::eolian::grammar::attributes::property_def;
@@ -498,6 +512,7 @@ eolian_cxx_test_binding(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_only_required);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_all_optionals);
    tcase_add_test(tc, eolian_cxx_test_type_generation);
+   tcase_add_test(tc, eolian_cxx_test_bool_event_payload);
    tcase_add_test(tc, eolian_cxx_test_type_generation_in);
    tcase_add_test(tc, eolian_cxx_test_type_generation_return);
    tcase_add_test(tc, eolian_cxx_test_type_generation_optional);
