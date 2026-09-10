@@ -21,6 +21,9 @@
 #include <eina_eo_concrete_fwd.hh>
 
 #include <iostream>
+#include <initializer_list>
+#include <memory>
+#include <cstring>
 
 namespace efl { namespace eina {
 
@@ -495,6 +498,37 @@ public:
   typedef typename _base_type::native_handle_type native_handle_type;
 
   using _base_type::_base_type;
+
+  /**
+   * @brief Build a range over a brace list of strings.
+   *
+   * @code
+   * model.filter_patterns_set({"*.h", "*.hh"});
+   * @endcode
+   *
+   * Otherwise this takes an @c Eina_Array the caller has to build by hand --
+   * eina_array_new, a push per element, and a free afterwards -- which is four
+   * lines of C in the middle of C++ to say a list of two globs.
+   *
+   * The array and copies of the strings are owned by the range and released
+   * when the last copy of it goes, so the usual case of passing a brace list
+   * straight to a setter cleans up at the end of the full expression. Copying
+   * shares that ownership; a range built the other way, from an @c Eina_Array
+   * somebody else owns, holds nothing and frees nothing, exactly as before.
+   *
+   * Setters that take an array copy what they keep -- Efl.Io.Model's
+   * filter_patterns says so in as many words -- so the temporary outliving the
+   * call is not required, only the call itself.
+   */
+  template <typename U = T>
+  range_array(std::initializer_list<const char*> strings
+              , typename std::enable_if
+                <std::is_constructible<U, const char*>::value>::type* = 0)
+    : _base_type(_build(strings))
+    , _owned(this->native_handle(), &range_array::_release)
+  {
+  }
+
   using _base_type::size;
   using _base_type::empty;
   using _base_type::back;
@@ -509,6 +543,35 @@ public:
   using _base_type::crend;
   using _base_type::release_native_handle;
   using _base_type::native_handle;
+
+private:
+  /** Built before the base is constructed, so that the range and the storage
+   * it owns come into being in the right order. */
+  static ::Eina_Array* _build(std::initializer_list<const char*> strings)
+  {
+     ::Eina_Array* array = ::eina_array_new(strings.size() ? strings.size() : 1);
+
+     for (const char* s : strings)
+       ::eina_array_push(array, s ? ::strdup(s) : nullptr);
+
+     return array;
+  }
+
+  static void _release(::Eina_Array* array)
+  {
+     unsigned int i;
+     ::Eina_Array_Iterator it;
+     void* item;
+
+     EINA_ARRAY_ITER_NEXT(array, i, item, it)
+       ::free(item);
+
+     ::eina_array_free(array);
+  }
+
+  /** Null unless this range built the array itself; see the brace-list
+   * constructor. */
+  std::shared_ptr< ::Eina_Array> _owned;
 };
 
 template <typename T>
