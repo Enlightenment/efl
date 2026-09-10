@@ -121,6 +121,21 @@ _efl_mono_model_internal_efl_model_child_add(Eo *obj, Efl_Mono_Model_Internal_Da
   pcd->values = eina_array_new(5);
   eina_array_push (pd->items, pcd);
 
+  /* Efl.Model.child_add says the event is raised once the child is effectively
+     added, and every other implementation does raise it -- Efl.Filter_Model
+     raises both of these in the same place. This one did not, so a C# model
+     built on UserModel<T> never told anyone a child had arrived, and nothing
+     bound to Efl.IModel.ChildAdded ever fired. */
+  {
+     Efl_Model_Children_Event cevt = { 0 };
+
+     cevt.index = pcd->index;
+     cevt.child = child;
+
+     efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
+     efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
+  }
+
   return child;
 }
 
