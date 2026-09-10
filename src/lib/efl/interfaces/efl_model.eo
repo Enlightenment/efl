@@ -156,7 +156,9 @@ interface Efl.Model
                 This function might rely on @.children_slice_get as a fallback.
               ]]
             params {
-               @in indices: iterator<uint>; [[Indices of the requested children.]]
+               @in indices: iterator<uint> @move; [[Indices of the requested
+                                                   children. The iterator is
+                                                   consumed and freed here.]]
             }
             return: future<array<Efl.Object>>; [[Array of children]]
          }
