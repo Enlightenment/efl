@@ -11,10 +11,47 @@
 
 #define MY_CLASS ECORE_AUDIO_OUT_PIPEWIRE_CLASS
 
+typedef struct _Ecore_Audio_Out_Pipewire_Data
+{
+  Eo *obj;
+  struct pw_loop *loop;
+  struct pw_context *context;
+  struct pw_core *core;
+  struct spa_hook listener;
+  Ecore_Fd_Handler *handler;
+  Ecore_Job *state_job;
+  Ecore_Timer *timeout;
+  Eina_List *streams;
+  int sync;
+  Eina_Bool init : 1;
+  Eina_Bool failed : 1;
+} Ecore_Audio_Out_Pipewire_Data;
+
+typedef struct _Ecore_Audio_Pipewire_Stream
+{
+  Ecore_Audio_Out_Pipewire_Data *output;
+  Eo *input;
+  struct pw_stream *stream;
+  struct spa_hook listener;
+  unsigned int stride;
+  Eina_Bool processing : 1;
+  Eina_Bool detached : 1;
+  Eina_Bool ended : 1;
+} Ecore_Audio_Pipewire_Stream;
+
+typedef struct _Ecore_Audio_Pipewire_Probe
+{
+  int sync;
+  Eina_Bool done : 1;
+  Eina_Bool available : 1;
+} Ecore_Audio_Pipewire_Probe;
+
 /* Keep the library loaded across ecore_audio_shutdown(): objects and deferred
  * cleanup jobs may still call PipeWire.
  */
 Ecore_Audio_Lib_Pipewire *ecore_audio_pipewire_lib = NULL;
+
+static Eina_Bool _probe_available = EINA_FALSE;
 
 Eina_Bool
 ecore_audio_pipewire_lib_load(void)
@@ -117,16 +154,6 @@ ecore_audio_pipewire_lib_unload(void)
      }
 }
 
-static Eina_Bool _probe_checked;
-static Eina_Bool _probe_available;
-
-typedef struct
-{
-   int sync;
-   Eina_Bool done;
-   Eina_Bool available;
-} Ecore_Audio_Pipewire_Probe;
-
 static void
 _probe_done(void *data, uint32_t id, int seq)
 {
@@ -164,8 +191,7 @@ _ecore_audio_out_pipewire_probe(void)
    double deadline, remaining;
    int ret;
 
-   if (_probe_checked) return _probe_available;
-   _probe_checked = EINA_TRUE;
+   if (_probe_available) return EINA_TRUE;
    if (!EPW_LOAD()) return EINA_FALSE;
    EPW_CALL(pw_init)(NULL, NULL);
    loop = EPW_CALL(pw_loop_new)(NULL);
@@ -178,7 +204,7 @@ _ecore_audio_out_pipewire_probe(void)
    EPW_CALL(pw_core_add_listener)(core, &listener, &_probe_events, &probe);
    probe.sync = EPW_CALL(pw_core_sync)(core, PW_ID_CORE, 0);
    if (probe.sync < 0) goto disconnect;
-   deadline = ecore_time_get() + 0.5;
+   deadline = ecore_time_get() + 5.0;
    while (!probe.done)
      {
         remaining = deadline - ecore_time_get();
@@ -199,34 +225,6 @@ end:
    EPW_CALL(pw_deinit)();
    return _probe_available;
 }
-
-typedef struct
-{
-   Eo *obj;
-   struct pw_loop *loop;
-   struct pw_context *context;
-   struct pw_core *core;
-   struct spa_hook listener;
-   Ecore_Fd_Handler *handler;
-   Ecore_Job *state_job;
-   Ecore_Timer *timeout;
-   Eina_List *streams;
-   int sync;
-  Eina_Bool init : 1;
-  Eina_Bool failed : 1;
-} Ecore_Audio_Out_Pipewire_Data;
-
-typedef struct
-{
-   Ecore_Audio_Out_Pipewire_Data *output;
-   Eo *input;
-   struct pw_stream *stream;
-   struct spa_hook listener;
-   unsigned int stride;
-   Eina_Bool processing;
-   Eina_Bool detached;
-   Eina_Bool ended;
-} Ecore_Audio_Pipewire_Stream;
 
 static void
 _state_job(void *data)

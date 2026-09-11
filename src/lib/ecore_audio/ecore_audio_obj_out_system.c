@@ -9,35 +9,35 @@
 
 #define MY_CLASS ECORE_AUDIO_OUT_SYSTEM_CLASS
 
-typedef enum
+typedef enum _Ecore_Audio_System_Request_Type
 {
-   REQUEST_VOLUME,
-   REQUEST_PAUSED,
-   REQUEST_ATTACH,
-   REQUEST_DETACH,
-   REQUEST_VIO
+  REQUEST_VOLUME,
+  REQUEST_PAUSED,
+  REQUEST_ATTACH,
+  REQUEST_DETACH,
+  REQUEST_VIO
 } Ecore_Audio_System_Request_Type;
 
-typedef struct
+typedef struct _Ecore_Audio_System_Request
 {
-   Ecore_Audio_System_Request_Type type;
-   double volume;
-   Eina_Bool paused;
-   Eo *input;
-   Ecore_Audio_Vio *vio;
-   void *data;
-   efl_key_data_free_func free_func;
+  Ecore_Audio_System_Request_Type type;
+  double volume;
+  Eo *input;
+  Ecore_Audio_Vio *vio;
+  void *data;
+  efl_key_data_free_func free_func;
+  Eina_Bool paused : 1;
 } Ecore_Audio_System_Request;
 
-typedef struct
+typedef struct _Ecore_Audio_Out_System_Data
 {
-   Eo *backend;
-   Ecore_Job *ready_job;
-   Eina_List *requests;
-   Eina_List *pending;
-   Eina_Bool waiting;
-   Eina_Bool failed;
-   Eina_Bool replaying;
+  Eo *backend;
+  Ecore_Job *ready_job;
+  Eina_List *requests;
+  Eina_List *pending;
+  Eina_Bool waiting : 1;
+  Eina_Bool failed : 1;
+  Eina_Bool replaying : 1;
 } Ecore_Audio_Out_System_Data;
 
 /* Cache the getter, rather than an Eo class pointer which can become stale
@@ -48,10 +48,11 @@ typedef struct
 static const Efl_Class *(*_backend_class_get)(void) = ecore_audio_out_wasapi_class_get;
 #else
 static const Efl_Class *(*_backend_class_get)(void);
-static Eina_Bool _backend_checked;
-static Eina_Bool _backend_env_checked;
-static Eina_List *_waiting;
-static Ecore_Job *_probe_job;
+static Eina_Bool _backend_checked = EINA_FALSE;
+static Eina_Bool _backend_env_checked = EINA_FALSE;
+static Eina_List *_waiting = NULL;
+static Ecore_Job *_probe_job = NULL;
+static Ecore_Timer *_probe_timer = NULL;
 #endif
 
 static void
@@ -100,8 +101,9 @@ _context_fail_cb(void *data, const Efl_Event *event)
    pd->waiting = EINA_FALSE;
    pd->failed = EINA_TRUE;
    _requests_clear(pd);
-   efl_event_callback_call(data, ECORE_AUDIO_OUT_SYSTEM_EVENT_CONTEXT_FAIL,
-                          event ? event->info : NULL);
+   efl_event_callback_call(data,
+                           ECORE_AUDIO_OUT_SYSTEM_EVENT_CONTEXT_FAIL,
+                           event ? event->info : NULL);
    efl_unref(data);
 }
 
@@ -153,9 +155,11 @@ _context_ready_cb(void *data, const Efl_Event *event)
    pd->pending = eina_list_free(pd->pending);
    pd->waiting = EINA_FALSE;
    pd->replaying = EINA_FALSE;
-   efl_event_callback_call(data, success ? ECORE_AUDIO_OUT_SYSTEM_EVENT_CONTEXT_READY :
-                          ECORE_AUDIO_OUT_SYSTEM_EVENT_CONTEXT_FAIL,
-                          event ? event->info : NULL);
+   efl_event_callback_call(data,
+                           success ?
+                           ECORE_AUDIO_OUT_SYSTEM_EVENT_CONTEXT_READY :
+                           ECORE_AUDIO_OUT_SYSTEM_EVENT_CONTEXT_FAIL,
+                           event ? event->info : NULL);
    efl_unref(data);
 }
 
@@ -221,7 +225,8 @@ _backend_new(Eo *obj, Ecore_Audio_Out_System_Data *pd)
    if (!pd->backend) return EINA_FALSE;
    _backend_callbacks(obj, pd, EINA_TRUE);
 #ifdef _WIN32
-   efl_event_callback_add(pd->backend, ECORE_AUDIO_OUT_WASAPI_EVENT_STOP,
+   efl_event_callback_add(pd->backend,
+                          ECORE_AUDIO_OUT_WASAPI_EVENT_STOP,
                           _stop_cb, obj);
    /* WASAPI initializes synchronously and does not emit context,ready. */
    pd->ready_job = ecore_job_add(_ready_job, obj);
@@ -233,6 +238,18 @@ _backend_new(Eo *obj, Ecore_Audio_Out_System_Data *pd)
 }
 
 #ifndef _WIN32
+#if defined(HAVE_PULSE) || defined(HAVE_PIPEWIRE)
+static void _probe_finish(void *data);
+
+static Eina_Bool
+_probe_retry(void *data EINA_UNUSED)
+{
+   _probe_timer = NULL;
+   _probe_finish(NULL);
+   return ECORE_CALLBACK_CANCEL;
+}
+#endif
+
 static void
 _probe_finish(void *data EINA_UNUSED)
 {
@@ -248,7 +265,17 @@ _probe_finish(void *data EINA_UNUSED)
    if (!_backend_class_get && _ecore_audio_out_pipewire_probe())
      _backend_class_get = ecore_audio_out_pipewire_class_get;
 #endif
-   _backend_checked = EINA_TRUE;
+   /* A server may still be starting. Keep the outputs and their queued
+    * requests waiting, and cache only a successful automatic selection.
+    */
+   _backend_checked = !!_backend_class_get;
+#if defined(HAVE_PULSE) || defined(HAVE_PIPEWIRE)
+   if ((!_backend_checked) && (_waiting))
+     {
+        _probe_timer = ecore_timer_add(1.0, _probe_retry, NULL);
+        if (_probe_timer) return;
+     }
+#endif
 
    /* Callbacks may destroy other waiters, so remove each one before calling. */
    while (_waiting)
@@ -267,10 +294,10 @@ _backend_check(void)
 {
    const char *backend;
 
-   if (_backend_checked || _probe_job) return;
+   if (_backend_checked || _probe_job || _probe_timer) return;
    backend = _backend_env_checked ? NULL : getenv("ECORE_AUDIO_BACKEND");
    _backend_env_checked = EINA_TRUE;
-   if (backend && backend[0] && strcmp(backend, "auto"))
+   if ((backend) && (backend[0]) && (!!strcmp(backend, "auto")))
      {
         _backend_checked = EINA_TRUE;
 #ifdef HAVE_PIPEWIRE
@@ -319,10 +346,15 @@ _ecore_audio_out_system_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_System
 {
 #ifndef _WIN32
    _waiting = eina_list_remove(_waiting, eo_obj);
-   if (!_waiting && _probe_job)
+   if ((!_waiting) && (_probe_job))
      {
         ecore_job_del(_probe_job);
         _probe_job = NULL;
+     }
+   if ((!_waiting) && (_probe_timer))
+     {
+        ecore_timer_del(_probe_timer);
+        _probe_timer = NULL;
      }
 #endif
    if (pd->ready_job) ecore_job_del(pd->ready_job);
@@ -333,7 +365,8 @@ _ecore_audio_out_system_efl_object_destructor(Eo *eo_obj, Ecore_Audio_Out_System
      {
         _backend_callbacks(eo_obj, pd, EINA_FALSE);
 #ifdef _WIN32
-        efl_event_callback_del(pd->backend, ECORE_AUDIO_OUT_WASAPI_EVENT_STOP,
+        efl_event_callback_del(pd->backend,
+                               ECORE_AUDIO_OUT_WASAPI_EVENT_STOP,
                                _stop_cb, eo_obj);
 #endif
         efl_unref(pd->backend);
@@ -361,7 +394,7 @@ _ecore_audio_out_system_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Syste
 EOLIAN static double
 _ecore_audio_out_system_ecore_audio_volume_get(const Eo *eo_obj, Ecore_Audio_Out_System_Data *pd)
 {
-   if (pd->waiting || !pd->backend)
+   if ((pd->waiting) || (!pd->backend))
      return ecore_audio_obj_volume_get(efl_super(eo_obj, MY_CLASS));
    return ecore_audio_obj_volume_get(pd->backend);
 }
@@ -385,7 +418,7 @@ _ecore_audio_out_system_ecore_audio_paused_set(Eo *eo_obj, Ecore_Audio_Out_Syste
 EOLIAN static Eina_Bool
 _ecore_audio_out_system_ecore_audio_paused_get(const Eo *eo_obj, Ecore_Audio_Out_System_Data *pd)
 {
-   if (pd->waiting || !pd->backend)
+   if ((pd->waiting) || (!pd->backend))
      return ecore_audio_obj_paused_get(efl_super(eo_obj, MY_CLASS));
    return ecore_audio_obj_paused_get(pd->backend);
 }

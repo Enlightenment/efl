@@ -3,19 +3,23 @@ class @beta Ecore.Audio.Out.System extends Ecore.Audio.Out
    [[Portable audio output using WASAPI on Windows and PulseAudio elsewhere,
      with PipeWire as a fallback when PulseAudio is unavailable.
 
-     Backend selection is shared by all system outputs and cached for the
-     lifetime of the process. On non-Windows platforms, the first output
+     Successful backend selection is shared by all system outputs and cached
+     for the lifetime of the process. On non-Windows platforms, the first output
      probes PulseAudio first, then PipeWire if PulseAudio cannot connect.
      Probes use native connections without constructing audio output objects,
-     and each backend caches its availability, including failed probes.
+     and each backend caches successful availability probes. If neither server
+     is available, detection retries once per second while outputs are waiting.
      Later outputs construct the selected backend directly, even if that
      backend subsequently fails. ECORE_AUDIO_BACKEND can select pipewire or
      pulseaudio (pulse is an alias) explicitly, disabling fallback. Unset,
      empty or auto uses detection. Unknown or unavailable explicit backends
      fail construction. The variable is read once and ignored on Windows.
 
-     Failed automatic detection emits context,fail. Construction fails if
-     an already selected backend cannot be created. Inputs are
+     Unsuccessful automatic detection keeps outputs and queued requests waiting
+     for a server to become available. If a retry cannot be scheduled or no
+     backend is compiled in, context,fail is emitted. Construction fails if
+     initial detection cannot be scheduled or an already selected backend
+     cannot be created. Inputs are
      attached to the owned backend, so Ecore.Audio.In.output returns that
      backend. Input lists and playback capabilities follow the backend.
      While detection or connection is pending, volume, pause, input and VIO

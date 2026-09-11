@@ -20,6 +20,15 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+typedef struct _Ecore_Audio_Out_Pulse_Data
+{
+   pa_mainloop_api *api;
+   pa_context *context;
+   pa_context_state_t state;
+   Ecore_Job *state_job;
+   Eina_List *outputs;
+} Ecore_Audio_Out_Pulse_Data;
+
 extern pa_mainloop_api functable;
 
 #define MY_CLASS ECORE_AUDIO_OUT_PULSE_CLASS
@@ -127,8 +136,7 @@ ecore_audio_pulse_lib_unload(void)
      }
 }
 
-static Eina_Bool _probe_checked;
-static Eina_Bool _probe_available;
+static Eina_Bool _probe_available = EINA_FALSE;
 
 Eina_Bool
 _ecore_audio_out_pulse_probe(void)
@@ -138,8 +146,7 @@ _ecore_audio_out_pulse_probe(void)
    pa_context_state_t state;
    double deadline, remaining;
 
-   if (_probe_checked) return _probe_available;
-   _probe_checked = EINA_TRUE;
+   if (_probe_available) return EINA_TRUE;
    if (!EPA_LOAD()) return EINA_FALSE;
    loop = EPA_CALL(pa_mainloop_new)();
    if (!loop) return EINA_FALSE;
@@ -149,7 +156,7 @@ _ecore_audio_out_pulse_probe(void)
    /* Detect an existing server; do not start one merely to probe it. */
    if (EPA_CALL(pa_context_connect)(context, NULL, PA_CONTEXT_NOAUTOSPAWN,
                                     NULL) < 0) goto disconnect;
-   deadline = ecore_time_get() + 0.5;
+   deadline = ecore_time_get() + 5.0;
    for (;;)
      {
         state = EPA_CALL(pa_context_get_state)(context);
@@ -173,17 +180,6 @@ end:
    EPA_CALL(pa_mainloop_free)(loop);
    return _probe_available;
 }
-
-struct _Ecore_Audio_Out_Pulse_Data
-{
-   pa_mainloop_api *api;
-   pa_context *context;
-   pa_context_state_t state;
-   Ecore_Job *state_job;
-   Eina_List *outputs;
-};
-
-typedef struct _Ecore_Audio_Out_Pulse_Data Ecore_Audio_Out_Pulse_Data;
 
 EOLIAN static void
 _ecore_audio_out_pulse_ecore_audio_paused_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_Data *pd EINA_UNUSED, Eina_Bool paused)
@@ -231,7 +227,8 @@ _ecore_audio_out_pulse_ecore_audio_volume_set(Eo *eo_obj, Ecore_Audio_Out_Pulse_
     }
 }
 
-static void _write_cb(pa_stream *stream, size_t len, void *data)
+static void
+_write_cb(pa_stream *stream, size_t len, void *data)
 {
   Eo *in = data;
 
@@ -254,7 +251,8 @@ static void _write_cb(pa_stream *stream, size_t len, void *data)
     EPA_CALL(pa_stream_write)(stream, buf, bread, NULL, 0, PA_SEEK_RELATIVE);
 }
 
-static void _update_samplerate_cb(void *data EINA_UNUSED, const Efl_Event *event)
+static void
+_update_samplerate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
   pa_stream *stream = NULL;
   int samplerate = 0;
@@ -268,7 +266,8 @@ static void _update_samplerate_cb(void *data EINA_UNUSED, const Efl_Event *event
   EPA_CALL(pa_operation_unref)(EPA_CALL(pa_stream_update_sample_rate)(stream, samplerate * speed, NULL, NULL));
 }
 
-static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
+static Eina_Bool
+_input_attach_internal(Eo *eo_obj, Eo *in)
 {
   const char *name = NULL;
   pa_sample_spec ss;
@@ -315,7 +314,8 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   return ret;
 }
 
-static void _delayed_attach_cb(void *data, const Efl_Event *event)
+static void
+_delayed_attach_cb(void *data, const Efl_Event *event)
 {
   efl_event_callback_del(event->object, ECORE_AUDIO_OUT_PULSE_EVENT_CONTEXT_READY, _delayed_attach_cb, data);
 
@@ -350,7 +350,8 @@ _ecore_audio_out_pulse_ecore_audio_out_input_attach(Eo *eo_obj, Ecore_Audio_Out_
   return retval;
 }
 
-static void _drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EINA_UNUSED)
+static void
+_drain_cb(pa_stream *stream, int success EINA_UNUSED, void *data EINA_UNUSED)
 {
   if (!EPA_LOAD()) return;
   EPA_CALL(pa_stream_disconnect)(stream);
@@ -404,7 +405,8 @@ _ecore_audio_out_pulse_ecore_audio_out_input_detach(Eo *eo_obj, Ecore_Audio_Out_
   return EINA_TRUE;
 }
 
-static void _state_cb(pa_context *context, void *data)
+static void
+_state_cb(pa_context *context, void *data)
 {
    Eina_List *out, *tmp;
    Eo *eo_obj;
@@ -448,7 +450,8 @@ static void _state_cb(pa_context *context, void *data)
     }
 }
 
-static void _state_job(void *data)
+static void
+_state_job(void *data)
 {
    Ecore_Audio_Out_Pulse_Data *pd = data;
    if ((pd->state == PA_CONTEXT_FAILED) ||
