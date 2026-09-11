@@ -144,6 +144,42 @@ class Generic extends Efl.Object implements Generic_Interface {
            value: const(binbuf);
          }
       }
+
+      string_array_in {
+         [[Takes an array of strings it does not own. @since 1.66]]
+         params {
+           l: array<string>;
+         }
+      }
+      string_array_in_own {
+         [[Takes an array of strings and the strings with it. @since 1.66]]
+         params {
+           l: array<string> @move;
+         }
+      }
+      string_array_out {
+         [[Hands back an array of strings the object keeps. @since 1.66]]
+         params {
+           @out l: array<string>;
+         }
+      }
+      string_array_out_own {
+         [[Hands back an array of strings, and the strings with it. @since 1.66]]
+         params {
+           @out l: array<string> @move;
+         }
+      }
+      string_array_return_own {
+         [[Returns an array of strings, and the strings with it. @since 1.66]]
+         return: array<string> @move;
+      }
+      @property string_array_seen {
+         [[What the last array handed in held, joined with commas. @since 1.66]]
+         get {}
+         values {
+            joined: string;
+         }
+      }
    }
    constructors {
       .required_ctor_a;
@@ -153,6 +189,7 @@ class Generic extends Efl.Object implements Generic_Interface {
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
    }
    events {
      prefix,event1: void;

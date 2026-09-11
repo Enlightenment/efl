@@ -476,15 +476,23 @@ Eina_List const* convert_to_c_impl(efl::eina::range_list<T> range, tag<Eina_List
 {
   return range.native_handle();
 }
+/* The trailing true on the tag is emitted for @move, and means the callee takes
+   the container and what is in it. So the caller has to stop owning it: peeking
+   at the handle left both sides believing they had to free it, and the C++ one
+   ran second, reading an Eina_Array the C side had already freed. Releasing
+   leaves the caller holding an empty container, which is what handing something
+   over should look like. The const& is the signature in_traits gives an in
+   parameter; @move makes it a transfer regardless, so the cast says what the
+   tag already said. */
 template <typename T>
 Eina_List* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List *, efl::eina::list<T>const&, true>)
 {
-  return const_cast<Eina_List*>(c.native_handle());
+  return const_cast<efl::eina::list<T>&>(c).release_native_handle();
 }
 template <typename T>
 Eina_List const* convert_to_c_impl(efl::eina::list<T>const& c, tag<Eina_List const *, efl::eina::list<T>const&, true>)
 {
-  return c.native_handle();
+  return const_cast<efl::eina::list<T>&>(c).release_native_handle();
 }
 
 template <typename T>
@@ -500,12 +508,12 @@ Eina_Array const* convert_to_c_impl(efl::eina::range_array<T> range, tag<Eina_Ar
 template <typename T>
 Eina_Array* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array *, efl::eina::array<T>const&, true>)
 {
-  return const_cast<Eina_Array*>(c.native_handle());
+  return const_cast<efl::eina::array<T>&>(c).release_native_handle();
 }
 template <typename T>
 Eina_Array const* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array const *, efl::eina::array<T>const&, true>)
 {
-  return c.native_handle();
+  return const_cast<efl::eina::array<T>&>(c).release_native_handle();
 }
 template <typename T>
 Eina_Iterator* convert_to_c_impl(efl::eina::iterator<T>const& i, tag<Eina_Iterator *, efl::eina::iterator<T>const&>)

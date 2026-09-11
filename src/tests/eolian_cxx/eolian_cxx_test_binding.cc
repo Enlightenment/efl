@@ -35,6 +35,86 @@
 #include <Eolian_Cxx.hh>
 #include "grammar/klass_def.hpp"
 
+// Arrays of strings across the boundary, run rather than only compiled.
+//
+// An Eina_Array of strings holds each string where an array of objects would
+// hold a pointer to one, so reading an element means building it from the
+// char* rather than dereferencing through it. Every direction the generator
+// emits is here: handed in borrowed and handed in owned, handed back borrowed
+// and handed back owned, and returned. The C side records what arrived, so
+// each check is that the contents crossed, not merely that the call did.
+EFL_START_TEST(eolian_cxx_test_string_arrays)
+{
+  efl::eo::eo_init init;
+
+  nonamespace::Generic g
+    (efl::eo::instantiate,
+     [&]
+     {
+       g.required_ctor_a(1);
+       g.required_ctor_b(2);
+     }
+    );
+
+  // In, borrowed: the caller keeps the array and the strings.
+  {
+    efl::eina::range_array< ::efl::eina::string_view> sent{"sent-one", "sent-two"};
+    g.string_array_in(sent);
+
+    ck_assert_str_eq("sent-one,sent-two", g.string_array_seen_get().data());
+
+    // and the caller's copy is untouched by the call
+    ck_assert(sent.size() == 2u);
+    ck_assert(sent[0] == "sent-one");
+  }
+
+  // In, owned: @move, so the array and the strings become the callee's. The
+  // caller's object must not free them again on the way out of this scope.
+  {
+    efl::eina::array< ::efl::eina::string_view> sent{"moved-one", "moved-two"};
+    g.string_array_in_own(sent);
+
+    ck_assert_str_eq("moved-one,moved-two", g.string_array_seen_get().data());
+  }
+
+  // Out, borrowed: the object keeps what it handed back.
+  {
+    efl::eina::range_array< ::efl::eina::string_view> got;
+    g.string_array_out(got);
+
+    ck_assert(got.size() == 2u);
+    ck_assert(got[0] == "kept-one");
+    ck_assert(got[1] == "kept-two");
+
+    char const* expected[] = {"kept-one", "kept-two"};
+    ck_assert(std::equal(got.begin(), got.end(), expected));
+  }
+
+  // Out, owned: the strings and the array are the caller's, and freeing them
+  // is what its destructor does at the end of this scope.
+  {
+    efl::eina::array< ::efl::eina::string_view> got;
+    g.string_array_out_own(got);
+
+    ck_assert(got.size() == 2u);
+    ck_assert(got[0] == "given-one");
+    ck_assert(got[1] == "given-two");
+  }
+
+  // Returned, owned: same, by return value.
+  {
+    efl::eina::array< ::efl::eina::string_view> got = g.string_array_return_own();
+
+    ck_assert(got.size() == 2u);
+    ck_assert(got.front() == "given-one");
+    ck_assert(got.back() == "given-two");
+
+    char const* reversed[] = {"given-two", "given-one"};
+    ck_assert(std::equal(got.rbegin(), got.rend(), reversed));
+  }
+}
+EFL_END_TEST
+
 EFL_START_TEST(eolian_cxx_test_binding_constructor_only_required)
 {
   efl::eo::eo_init init;
@@ -509,6 +589,7 @@ EFL_END_TEST
 void
 eolian_cxx_test_binding(TCase* tc)
 {
+   tcase_add_test(tc, eolian_cxx_test_string_arrays);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_only_required);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_all_optionals);
    tcase_add_test(tc, eolian_cxx_test_type_generation);

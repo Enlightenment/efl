@@ -22,6 +22,12 @@ struct _Generic_Data
    int        req_ctor_b_val;
    int        opt_ctor_a_val;
    int        opt_ctor_b_val;
+   /* What the last array handed in held, so a caller can ask whether what it
+      sent is what arrived. */
+   char       seen[256];
+   /* Handed out by string_array_out, which does not pass ownership: the
+      object keeps it, and the strings in it are literals. */
+   Eina_Array *kept;
 };
 typedef struct _Generic_Data Generic_Data;
 
@@ -31,7 +37,86 @@ static Eo *_generic_efl_object_constructor(Eo *obj, Generic_Data *pd)
 {
    pd->req_ctor_a_val = 0;
    pd->opt_ctor_a_val = 0;
+   pd->seen[0] = '\0';
+   pd->kept = NULL;
    return efl_constructor(efl_super(obj, MY_CLASS));
+}
+
+static void _generic_efl_object_destructor(Eo *obj, Generic_Data *pd)
+{
+   /* Only the array: what it holds are string literals. */
+   if (pd->kept) eina_array_free(pd->kept);
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
+/* Records the contents so a test can check that what it sent is what arrived,
+   rather than only that the call went through. */
+static void _generic_record(Generic_Data *pd, Eina_Array *l)
+{
+   unsigned int i;
+   Eina_Array_Iterator it;
+   void *item;
+
+   pd->seen[0] = '\0';
+   EINA_ARRAY_ITER_NEXT(l, i, item, it)
+     {
+        if (i) strncat(pd->seen, ",", sizeof(pd->seen) - strlen(pd->seen) - 1);
+        strncat(pd->seen, item ? (const char *)item : "(null)",
+                sizeof(pd->seen) - strlen(pd->seen) - 1);
+     }
+}
+
+static Eina_Array *_generic_make_owned(void)
+{
+   Eina_Array *a = eina_array_new(2);
+   eina_array_push(a, strdup("given-one"));
+   eina_array_push(a, strdup("given-two"));
+   return a;
+}
+
+static void _generic_string_array_in(Eo *obj EINA_UNUSED, Generic_Data *pd, Eina_Array *l)
+{
+   _generic_record(pd, l);
+}
+
+static void _generic_string_array_in_own(Eo *obj EINA_UNUSED, Generic_Data *pd, Eina_Array *l)
+{
+   unsigned int i;
+   Eina_Array_Iterator it;
+   void *item;
+
+   _generic_record(pd, l);
+
+   /* @move: the strings and the array are the callee's now. */
+   EINA_ARRAY_ITER_NEXT(l, i, item, it)
+     free(item);
+   eina_array_free(l);
+}
+
+static void _generic_string_array_out(Eo *obj EINA_UNUSED, Generic_Data *pd, Eina_Array **l)
+{
+   if (!pd->kept)
+     {
+        pd->kept = eina_array_new(2);
+        eina_array_push(pd->kept, "kept-one");
+        eina_array_push(pd->kept, "kept-two");
+     }
+   *l = pd->kept;
+}
+
+static void _generic_string_array_out_own(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, Eina_Array **l)
+{
+   *l = _generic_make_owned();
+}
+
+static Eina_Array *_generic_string_array_return_own(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED)
+{
+   return _generic_make_owned();
+}
+
+static const char *_generic_string_array_seen_get(const Eo *obj EINA_UNUSED, Generic_Data *pd)
+{
+   return pd->seen;
 }
 
 static void _generic_required_ctor_a(Eo *obj EINA_UNUSED, Generic_Data *pd, int value)
