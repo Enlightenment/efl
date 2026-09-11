@@ -143,6 +143,12 @@ option('pulseaudio',
   description : 'Pulseaudio support for audio API'
 )
 
+option('pipewire',
+  type : 'boolean',
+  value : true,
+  description : 'PipeWire support for audio API'
+)
+
 option('network-backend',
   type : 'combo',
   choices : ['connman', 'none'],

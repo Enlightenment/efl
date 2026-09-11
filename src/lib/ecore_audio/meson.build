@@ -66,18 +66,16 @@ ecore_audio_src += files([
 ecore_audio_deps += dependency('sndfile')
 config_h.set('HAVE_SNDFILE', '1')
 
-if not sys_windows
+if get_option('pipewire') and not sys_windows
   # PipeWire 1.4 exports the core and loop helpers for dynamic symbol loading.
-  pipewire = dependency('libpipewire-0.3', version: '>=1.4.0', required: false)
-  if pipewire.found()
-    spa = dependency('libspa-0.2')
-    spa_library = host_machine.system() == 'darwin' ? 'libspa.dylib' : 'libspa.so'
-    config_h.set_quoted('ECORE_AUDIO_SPA_LIBRARY',
-      join_paths(spa.get_variable(pkgconfig: 'plugindir'), spa_library))
-    ecore_audio_ext_deps += pipewire.partial_dependency(compile_args: true, includes: true)
-    ecore_audio_src += files('ecore_audio_obj_out_pipewire.c')
-    config_h.set('HAVE_PIPEWIRE', '1')
-  endif
+  pipewire = dependency('libpipewire-0.3', version: '>=1.4.0')
+  spa = dependency('libspa-0.2')
+  spa_library = host_machine.system() == 'darwin' ? 'libspa.dylib' : 'libspa.so'
+  config_h.set_quoted('ECORE_AUDIO_SPA_LIBRARY',
+    join_paths(spa.get_variable(pkgconfig: 'plugindir'), spa_library))
+  ecore_audio_ext_deps += pipewire.partial_dependency(compile_args: true, includes: true)
+  ecore_audio_src += files('ecore_audio_obj_out_pipewire.c')
+  config_h.set('HAVE_PIPEWIRE', '1')
 endif
 
 if get_option('pulseaudio')
