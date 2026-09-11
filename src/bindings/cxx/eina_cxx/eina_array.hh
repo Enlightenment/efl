@@ -26,8 +26,76 @@
 #include <cstring>
 #include <iterator>
 #include <algorithm>
+#include <vector>
 
 namespace efl { namespace eina {
+
+/**
+ * @internal
+ *
+ * Iterator over an @c Eina_Array whose elements are strings.
+ *
+ * The array holds each string itself, a @c char*, where an array of objects
+ * would hold a pointer to the object. So there is no @c T stored to refer to,
+ * and dereferencing yields one built from the pointer rather than a reference
+ * to one. That is why this exists rather than reusing the pointer-array
+ * iterator, which reads the @c char* as if it were a @c T* and hands back
+ * whatever the bytes of the string happen to look like.
+ */
+template <typename T>
+struct _string_array_iterator
+{
+  typedef std::ptrdiff_t difference_type;
+  typedef std::forward_iterator_tag iterator_category;
+  typedef T value_type;
+  typedef T reference;
+  typedef void pointer;
+
+  _string_array_iterator() : _ptr(nullptr) {}
+  explicit _string_array_iterator(void** ptr) : _ptr(ptr) {}
+
+  reference operator*() const
+  {
+    char const* s = static_cast<char const*>(*_ptr);
+    return s ? T(s) : T();
+  }
+
+  _string_array_iterator<T>& operator++() { ++_ptr; return *this; }
+  _string_array_iterator<T> operator++(int) { _string_array_iterator<T> t(*this); ++*this; return t; }
+  _string_array_iterator<T>& operator--() { --_ptr; return *this; }
+  _string_array_iterator<T> operator--(int) { _string_array_iterator<T> t(*this); --*this; return t; }
+
+  void** native_handle() const { return _ptr; }
+
+  friend inline bool operator==(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
+  { return lhs._ptr == rhs._ptr; }
+  friend inline bool operator!=(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
+  { return !(lhs == rhs); }
+  friend inline _string_array_iterator<T> operator+(_string_array_iterator<T> lhs, difference_type n)
+  { lhs._ptr += n; return lhs; }
+  friend inline _string_array_iterator<T> operator-(_string_array_iterator<T> lhs, difference_type n)
+  { lhs._ptr -= n; return lhs; }
+  friend inline difference_type operator-(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
+  { return lhs._ptr - rhs._ptr; }
+
+private:
+  void** _ptr;
+};
+
+/**
+ * @internal
+ *
+ * True for element types that are the string itself rather than a pointer to
+ * an object.
+ */
+template <typename T>
+struct _is_string_element
+  : std::integral_constant
+    <bool
+     , std::is_constructible<T, char const*>::value
+       && !::efl::eo::is_eolian_object<T>::value>
+{};
+
 
 template <typename T, typename CloneAllocator = default_clone_allocator_placeholder, typename Enable = void>
 class array : ptr_array<T, typename std::conditional
@@ -519,70 +587,269 @@ public:
 };
 
 /**
- * @internal
+ * @ingroup Eina_Cxx_Containers_Group
  *
- * Iterator over an @c Eina_Array whose elements are strings.
+ * Owning array of strings.
  *
- * The array holds each string itself, a @c char*, where an array of objects
- * would hold a pointer to the object. So there is no @c T stored to refer to,
- * and dereferencing yields one built from the pointer rather than a reference
- * to one. That is why this exists rather than reusing the pointer-array
- * iterator, which reads the @c char* as if it were a @c T* and hands back
- * whatever the bytes of the string happen to look like.
+ * The counterpart of @ref range_array for strings, for the same reason: an
+ * @c Eina_Array of objects holds pointers to them, an @c Eina_Array of strings
+ * holds each string, and only the first arrangement can be read by
+ * dereferencing. Where the range only reads, this one owns: every string that
+ * goes in is copied, and every string still in it is freed when it goes.
+ *
+ * It does not derive from @ref ptr_array the way the generic array does. That
+ * one reads an element by reinterpreting the array's slot as a @c T*, which
+ * works for an Eo wrapper because a wrapper is a pointer and nothing else. A
+ * @c string_view is a pointer and a length, so there is nothing in the array to
+ * reinterpret, and elements come back by value instead.
+ *
+ * The clone allocator parameter is accepted for symmetry and not used: strings
+ * are copied with @c strdup and released with @c free.
  */
-template <typename T>
-struct _string_array_iterator
+template <typename T, typename CloneAllocator>
+class array<T, CloneAllocator, typename std::enable_if<_is_string_element<T>::value>::type>
 {
-  typedef std::ptrdiff_t difference_type;
-  typedef std::forward_iterator_tag iterator_category;
-  typedef T value_type;
+  typedef array<T, CloneAllocator> _self_type;
+public:
+  typedef T value_type; /**< The type of each element. */
+  /** By value: the array holds strings, not @c T objects, so there is nothing
+   * to hand back a reference to. */
   typedef T reference;
-  typedef void pointer;
+  typedef T const_reference;
+  typedef _string_array_iterator<T> iterator;
+  typedef _string_array_iterator<T> const_iterator;
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+  typedef ::Eina_Array* native_handle_type;
 
-  _string_array_iterator() : _ptr(nullptr) {}
-  explicit _string_array_iterator(void** ptr) : _ptr(ptr) {}
+  array() : _array(::eina_array_new(1)) {}
 
-  reference operator*() const
+  /** Takes over an array the caller was holding, and the strings in it. */
+  explicit array(native_handle_type handle)
+    : _array(handle ? handle : ::eina_array_new(1))
+  {}
+
+  array(std::initializer_list<const char*> strings)
+    : _array(::eina_array_new(strings.size() ? strings.size() : 1))
   {
-    char const* s = static_cast<char const*>(*_ptr);
-    return s ? T(s) : T();
+     for (const char* str : strings)
+       _push(str);
   }
 
-  _string_array_iterator<T>& operator++() { ++_ptr; return *this; }
-  _string_array_iterator<T> operator++(int) { _string_array_iterator<T> t(*this); ++*this; return t; }
-  _string_array_iterator<T>& operator--() { --_ptr; return *this; }
-  _string_array_iterator<T> operator--(int) { _string_array_iterator<T> t(*this); --*this; return t; }
+  template <typename InputIterator>
+  array(InputIterator i, InputIterator const& j
+        , typename eina::enable_if<!eina::is_integral<InputIterator>::value>::type* = 0)
+    : _array(::eina_array_new(1))
+  {
+     for (; i != j; ++i)
+       push_back(*i);
+  }
 
-  void** native_handle() const { return _ptr; }
+  array(_self_type const& other)
+    : _array(::eina_array_new(other.size() ? other.size() : 1))
+  {
+     for (size_type n = 0u; n != other.size(); ++n)
+       _push(other._raw(n));
+  }
 
-  friend inline bool operator==(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
-  { return lhs._ptr == rhs._ptr; }
-  friend inline bool operator!=(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
-  { return !(lhs == rhs); }
-  friend inline _string_array_iterator<T> operator+(_string_array_iterator<T> lhs, difference_type n)
-  { lhs._ptr += n; return lhs; }
-  friend inline _string_array_iterator<T> operator-(_string_array_iterator<T> lhs, difference_type n)
-  { lhs._ptr -= n; return lhs; }
-  friend inline difference_type operator-(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
-  { return lhs._ptr - rhs._ptr; }
+  array(_self_type&& other) noexcept
+    : _array(other._array)
+  {
+     other._array = nullptr;
+  }
+
+  _self_type& operator=(_self_type const& other)
+  {
+     if (this != &other)
+       {
+          _self_type copy(other);
+          swap(copy);
+       }
+     return *this;
+  }
+
+  _self_type& operator=(_self_type&& other) noexcept
+  {
+     if (this != &other)
+       {
+          _dispose();
+          _array = other._array;
+          other._array = nullptr;
+       }
+     return *this;
+  }
+
+  ~array() { _dispose(); }
+
+  size_type size() const { return _array ? ::eina_array_count(_array) : 0u; }
+  bool empty() const { return size() == 0u; }
+  size_type max_size() const { return -1; }
+
+  void clear()
+  {
+     _free_elements();
+     if (_array)
+       ::eina_array_clean(_array);
+  }
+
+  void push_back(value_type const& v) { _push(v.data(), v.size()); }
+  void push_back(const char* str) { _push(str); }
+
+  void pop_back()
+  {
+     if (!empty())
+       ::free(::eina_array_pop(_array));
+  }
+
+  value_type operator[](size_type index) const { return _at(index); }
+  value_type front() const { return _at(0); }
+  value_type back() const { return _at(size() - 1); }
+
+  iterator begin() const { return iterator(_data()); }
+  iterator end() const { return iterator(_data() + size()); }
+  const_iterator cbegin() const { return begin(); }
+  const_iterator cend() const { return end(); }
+  reverse_iterator rbegin() const { return reverse_iterator(end()); }
+  reverse_iterator rend() const { return reverse_iterator(begin()); }
+  const_reverse_iterator crbegin() const { return rbegin(); }
+  const_reverse_iterator crend() const { return rend(); }
+
+  /** Inserts before @p p. Iterators are invalidated, as for a vector. */
+  iterator insert(iterator p, value_type const& v)
+  {
+     size_type const index = static_cast<size_type>(p.native_handle() - _data());
+     std::vector<char*> kept = _take();
+     kept.insert(kept.begin() + index, _dup(v.data(), v.size()));
+     _rebuild(kept);
+     return begin() + static_cast<difference_type>(index);
+  }
+
+  template <typename InputIterator>
+  iterator insert(iterator p, InputIterator i, InputIterator j
+                  , typename eina::enable_if<!eina::is_integral<InputIterator>::value>::type* = 0)
+  {
+     size_type const index = static_cast<size_type>(p.native_handle() - _data());
+     std::vector<char*> kept = _take();
+     size_type at = index;
+     for (; i != j; ++i, ++at)
+       {
+          value_type const v = *i;
+          kept.insert(kept.begin() + at, _dup(v.data(), v.size()));
+       }
+     _rebuild(kept);
+     return begin() + static_cast<difference_type>(index);
+  }
+
+  iterator erase(iterator p) { return erase(p, p + 1); }
+
+  iterator erase(iterator i, iterator j)
+  {
+     size_type const first = static_cast<size_type>(i.native_handle() - _data());
+     size_type const last = static_cast<size_type>(j.native_handle() - _data());
+     std::vector<char*> kept = _take();
+     for (size_type n = first; n != last; ++n)
+       ::free(kept[n]);
+     kept.erase(kept.begin() + first, kept.begin() + last);
+     _rebuild(kept);
+     return begin() + static_cast<difference_type>(first);
+  }
+
+  template <typename InputIterator>
+  void assign(InputIterator i, InputIterator j
+              , typename eina::enable_if<!eina::is_integral<InputIterator>::value>::type* = 0)
+  {
+     clear();
+     for (; i != j; ++i)
+       push_back(*i);
+  }
+
+  void swap(_self_type& other) { std::swap(_array, other._array); }
+
+  native_handle_type native_handle() const { return _array; }
+
+  /** Hands the array and its strings to the caller; this one is left empty. */
+  native_handle_type release_native_handle()
+  {
+     native_handle_type released = _array;
+     _array = ::eina_array_new(1);
+     return released;
+  }
+
+  friend bool operator==(_self_type const& lhs, _self_type const& rhs)
+  {
+     return lhs.size() == rhs.size()
+       && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+  }
+
+  friend bool operator!=(_self_type const& lhs, _self_type const& rhs)
+  {
+     return !(lhs == rhs);
+  }
 
 private:
-  void** _ptr;
-};
+  void** _data() const { return _array ? _array->data : nullptr; }
+  char const* _raw(size_type index) const { return static_cast<char const*>(_array->data[index]); }
 
-/**
- * @internal
- *
- * True for element types that are the string itself rather than a pointer to
- * an object.
- */
-template <typename T>
-struct _is_string_element
-  : std::integral_constant
-    <bool
-     , std::is_constructible<T, char const*>::value
-       && !::efl::eo::is_eolian_object<T>::value>
-{};
+  value_type _at(size_type index) const
+  {
+     char const* s = _raw(index);
+     return s ? T(s) : T();
+  }
+
+  static char* _dup(char const* s, size_type n)
+  {
+     if (!s)
+       return nullptr;
+     char* copy = static_cast<char*>(::malloc(n + 1));
+     if (copy)
+       {
+          ::memcpy(copy, s, n);
+          copy[n] = '\0';
+       }
+     return copy;
+  }
+
+  void _push(char const* s) { ::eina_array_push(_array, s ? ::strdup(s) : nullptr); }
+  void _push(char const* s, size_type n) { ::eina_array_push(_array, _dup(s, n)); }
+
+  /** Empties the Eina_Array into a vector without freeing the strings. */
+  std::vector<char*> _take()
+  {
+     std::vector<char*> kept;
+     kept.reserve(size());
+     for (size_type n = 0u; n != size(); ++n)
+       kept.push_back(static_cast<char*>(_array->data[n]));
+     ::eina_array_clean(_array);
+     return kept;
+  }
+
+  void _rebuild(std::vector<char*> const& kept)
+  {
+     for (char* s : kept)
+       ::eina_array_push(_array, s);
+  }
+
+  void _free_elements()
+  {
+     if (!_array)
+       return;
+     for (size_type n = 0u; n != size(); ++n)
+       ::free(_array->data[n]);
+  }
+
+  void _dispose()
+  {
+     if (!_array)
+       return;
+     _free_elements();
+     ::eina_array_free(_array);
+     _array = nullptr;
+  }
+
+  ::Eina_Array* _array;
+};
 
 /**
  * @ingroup Eina_Cxx_Containers_Group

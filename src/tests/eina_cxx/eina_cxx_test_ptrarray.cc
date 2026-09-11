@@ -569,10 +569,115 @@ EFL_START_TEST(eina_cxx_array_of_strings)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_cxx_owning_array_of_strings)
+{
+  efl::eina::eina_init eina_init;
+
+  typedef efl::eina::array< ::efl::eina::string_view> string_array;
+
+  // Taking over an array built the way C builds one.
+  {
+    ::Eina_Array* native = ::eina_array_new(2);
+    ::eina_array_push(native, ::strdup("hello"));
+    ::eina_array_push(native, ::strdup("there"));
+
+    string_array owned(native);
+
+    ck_assert(owned.size() == 2u);
+    ck_assert(owned[0] == "hello");
+    ck_assert(owned[1] == "there");
+    ck_assert(owned.front() == "hello");
+    ck_assert(owned.back() == "there");
+    // and it frees both strings and the array on the way out
+  }
+
+  // Building one, and reading it back.
+  {
+    string_array built;
+    ck_assert(built.empty());
+
+    built.push_back("one");
+    built.push_back("two");
+    built.push_back("three");
+
+    ck_assert(built.size() == 3u);
+
+    char const* expected[] = {"one", "two", "three"};
+    ck_assert(std::equal(built.begin(), built.end(), expected));
+
+    char const* reversed[] = {"three", "two", "one"};
+    ck_assert(std::equal(built.rbegin(), built.rend(), reversed));
+
+    built.pop_back();
+    ck_assert(built.size() == 2u);
+    ck_assert(built.back() == "two");
+
+    built.clear();
+    ck_assert(built.empty());
+  }
+
+  // A copy owns its own strings: what it holds has to survive the original.
+  {
+    string_array original{"alpha", "beta"};
+    string_array copy = original;
+
+    ck_assert(copy.size() == 2u);
+    ck_assert(copy == original);
+
+    original.clear();
+
+    ck_assert(original.empty());
+    ck_assert(copy.size() == 2u);
+    ck_assert(copy[0] == "alpha");
+    ck_assert(copy[1] == "beta");
+  }
+
+  // Moving hands the strings over rather than copying them.
+  {
+    string_array source{"x", "y"};
+    string_array moved = std::move(source);
+
+    ck_assert(moved.size() == 2u);
+    ck_assert(moved[1] == "y");
+  }
+
+  // Inserting and erasing, each freeing exactly what it drops.
+  {
+    string_array a{"first", "third"};
+
+    a.insert(a.begin() + 1, ::efl::eina::string_view("second"));
+    ck_assert(a.size() == 3u);
+    ck_assert(a[0] == "first");
+    ck_assert(a[1] == "second");
+    ck_assert(a[2] == "third");
+
+    a.erase(a.begin());
+    ck_assert(a.size() == 2u);
+    ck_assert(a[0] == "second");
+
+    a.erase(a.begin(), a.end());
+    ck_assert(a.empty());
+  }
+
+  // Handing the array back out: this one keeps nothing.
+  {
+    string_array a{"kept"};
+    ::Eina_Array* released = a.release_native_handle();
+
+    ck_assert(a.empty());
+    ck_assert(::eina_array_count(released) == 1u);
+
+    ::free(::eina_array_data_get(released, 0));
+    ::eina_array_free(released);
+  }
+}
+EFL_END_TEST
+
 void
 eina_test_ptrarray(TCase* tc)
 {
   tcase_add_test(tc, eina_cxx_array_of_strings);
+  tcase_add_test(tc, eina_cxx_owning_array_of_strings);
   tcase_add_test(tc, eina_cxx_ptrarray_push_back);
   tcase_add_test(tc, eina_cxx_ptrarray_pop_back);
   tcase_add_test(tc, eina_cxx_ptrarray_insert);
