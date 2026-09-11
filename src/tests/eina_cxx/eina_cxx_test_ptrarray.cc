@@ -496,9 +496,83 @@ EFL_START_TEST(eina_cxx_ptrarray_range)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_cxx_array_of_strings)
+{
+  efl::eina::eina_init eina_init;
+
+  // As it arrives from C: the array holds each string, not a pointer to
+  // anything the range could dereference.
+  ::Eina_Array* native = ::eina_array_new(4);
+  ::eina_array_push(native, ::strdup("first"));
+  ::eina_array_push(native, ::strdup("second"));
+  ::eina_array_push(native, ::strdup("third"));
+
+  {
+    efl::eina::range_array< ::efl::eina::string_view> range(native);
+
+    ck_assert(!range.empty());
+    ck_assert(range.size() == 3u);
+
+    ck_assert(range[0] == "first");
+    ck_assert(range[1] == "second");
+    ck_assert(range[2] == "third");
+    ck_assert(range.front() == "first");
+    ck_assert(range.back() == "third");
+
+    char const* expected[] = {"first", "second", "third"};
+    ck_assert(std::equal(range.begin(), range.end(), expected));
+
+    char const* reversed[] = {"third", "second", "first"};
+    ck_assert(std::equal(range.rbegin(), range.rend(), reversed));
+
+    std::size_t walked = 0u;
+    for (::efl::eina::string_view s : range)
+      {
+         ck_assert(s == expected[walked]);
+         ++walked;
+      }
+    ck_assert(walked == 3u);
+  }
+
+  {
+    unsigned int i;
+    ::Eina_Array_Iterator it;
+    void* item;
+    EINA_ARRAY_ITER_NEXT(native, i, item, it)
+      ::free(item);
+    ::eina_array_free(native);
+  }
+
+  // And the other direction, which owns what it built: the brace list goes out
+  // and reads back as itself.
+  {
+    efl::eina::range_array< ::efl::eina::string_view> built{"*.h", "*.hh"};
+
+    ck_assert(built.size() == 2u);
+    ck_assert(built[0] == "*.h");
+    ck_assert(built[1] == "*.hh");
+
+    efl::eina::range_array< ::efl::eina::string_view> shared = built;
+    ck_assert(shared.size() == 2u);
+    ck_assert(shared[1] == "*.hh");
+  }
+
+  // An empty array is empty rather than undefined.
+  {
+    ::Eina_Array* none = ::eina_array_new(1);
+    efl::eina::range_array< ::efl::eina::string_view> range(none);
+    ck_assert(range.empty());
+    ck_assert(range.size() == 0u);
+    ck_assert(range.begin() == range.end());
+    ::eina_array_free(none);
+  }
+}
+EFL_END_TEST
+
 void
 eina_test_ptrarray(TCase* tc)
 {
+  tcase_add_test(tc, eina_cxx_array_of_strings);
   tcase_add_test(tc, eina_cxx_ptrarray_push_back);
   tcase_add_test(tc, eina_cxx_ptrarray_pop_back);
   tcase_add_test(tc, eina_cxx_ptrarray_insert);

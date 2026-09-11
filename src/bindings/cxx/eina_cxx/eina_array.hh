@@ -24,6 +24,8 @@
 #include <initializer_list>
 #include <memory>
 #include <cstring>
+#include <iterator>
+#include <algorithm>
 
 namespace efl { namespace eina {
 
@@ -499,6 +501,121 @@ public:
 
   using _base_type::_base_type;
 
+  using _base_type::size;
+  using _base_type::empty;
+  using _base_type::back;
+  using _base_type::front;
+  using _base_type::begin;
+  using _base_type::end;
+  using _base_type::rbegin;
+  using _base_type::rend;
+  using _base_type::cbegin;
+  using _base_type::cend;
+  using _base_type::crbegin;
+  using _base_type::crend;
+  using _base_type::release_native_handle;
+  using _base_type::native_handle;
+
+};
+
+/**
+ * @internal
+ *
+ * Iterator over an @c Eina_Array whose elements are strings.
+ *
+ * The array holds each string itself, a @c char*, where an array of objects
+ * would hold a pointer to the object. So there is no @c T stored to refer to,
+ * and dereferencing yields one built from the pointer rather than a reference
+ * to one. That is why this exists rather than reusing the pointer-array
+ * iterator, which reads the @c char* as if it were a @c T* and hands back
+ * whatever the bytes of the string happen to look like.
+ */
+template <typename T>
+struct _string_array_iterator
+{
+  typedef std::ptrdiff_t difference_type;
+  typedef std::forward_iterator_tag iterator_category;
+  typedef T value_type;
+  typedef T reference;
+  typedef void pointer;
+
+  _string_array_iterator() : _ptr(nullptr) {}
+  explicit _string_array_iterator(void** ptr) : _ptr(ptr) {}
+
+  reference operator*() const
+  {
+    char const* s = static_cast<char const*>(*_ptr);
+    return s ? T(s) : T();
+  }
+
+  _string_array_iterator<T>& operator++() { ++_ptr; return *this; }
+  _string_array_iterator<T> operator++(int) { _string_array_iterator<T> t(*this); ++*this; return t; }
+  _string_array_iterator<T>& operator--() { --_ptr; return *this; }
+  _string_array_iterator<T> operator--(int) { _string_array_iterator<T> t(*this); --*this; return t; }
+
+  void** native_handle() const { return _ptr; }
+
+  friend inline bool operator==(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
+  { return lhs._ptr == rhs._ptr; }
+  friend inline bool operator!=(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
+  { return !(lhs == rhs); }
+  friend inline _string_array_iterator<T> operator+(_string_array_iterator<T> lhs, difference_type n)
+  { lhs._ptr += n; return lhs; }
+  friend inline _string_array_iterator<T> operator-(_string_array_iterator<T> lhs, difference_type n)
+  { lhs._ptr -= n; return lhs; }
+  friend inline difference_type operator-(_string_array_iterator<T> lhs, _string_array_iterator<T> rhs)
+  { return lhs._ptr - rhs._ptr; }
+
+private:
+  void** _ptr;
+};
+
+/**
+ * @internal
+ *
+ * True for element types that are the string itself rather than a pointer to
+ * an object.
+ */
+template <typename T>
+struct _is_string_element
+  : std::integral_constant
+    <bool
+     , std::is_constructible<T, char const*>::value
+       && !::efl::eo::is_eolian_object<T>::value>
+{};
+
+/**
+ * @ingroup Eina_Cxx_Containers_Group
+ *
+ * Range over an @c Eina_Array of strings.
+ *
+ * Eolian gives every @c array<string> this type, in both directions. Going out
+ * it can be built from a brace list; coming back, each element is constructed
+ * from the @c char* the array holds. The generic range would have read that
+ * @c char* as a @c T* and dereferenced it, so reading a returned string array
+ * never worked.
+ */
+template <typename T>
+class range_array<T, typename std::enable_if<_is_string_element<T>::value>::type>
+{
+public:
+  typedef T value_type;
+  /** By value: the array holds strings, not @c T objects, so there is nothing
+   * to hand back a reference to. */
+  typedef T reference;
+  typedef T const_reference;
+  typedef _string_array_iterator<T> iterator;
+  typedef _string_array_iterator<T> const_iterator;
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  typedef std::size_t size_type;
+  typedef std::ptrdiff_t difference_type;
+  typedef ::Eina_Array* native_handle_type;
+
+  range_array(native_handle_type array = nullptr)
+    : _array(array)
+  {}
+
   /**
    * @brief Build a range over a brace list of strings.
    *
@@ -520,29 +637,52 @@ public:
    * filter_patterns says so in as many words -- so the temporary outliving the
    * call is not required, only the call itself.
    */
-  template <typename U = T>
-  range_array(std::initializer_list<const char*> strings
-              , typename std::enable_if
-                <std::is_constructible<U, const char*>::value>::type* = 0)
-    : _base_type(_build(strings))
-    , _owned(this->native_handle(), &range_array::_release)
+  range_array(std::initializer_list<const char*> strings)
+    : _array(_build(strings))
+    , _owned(_array, &range_array::_release)
   {
   }
 
-  using _base_type::size;
-  using _base_type::empty;
-  using _base_type::back;
-  using _base_type::front;
-  using _base_type::begin;
-  using _base_type::end;
-  using _base_type::rbegin;
-  using _base_type::rend;
-  using _base_type::cbegin;
-  using _base_type::cend;
-  using _base_type::crbegin;
-  using _base_type::crend;
-  using _base_type::release_native_handle;
-  using _base_type::native_handle;
+  size_type size() const { return _array ? ::eina_array_count(_array) : 0u; }
+  bool empty() const { return size() == 0u; }
+
+  value_type operator[](size_type index) const { return _at(index); }
+  value_type front() const { return _at(0); }
+  value_type back() const { return _at(size() - 1); }
+
+  iterator begin() const { return iterator(_data()); }
+  iterator end() const { return iterator(_data() + size()); }
+  const_iterator cbegin() const { return begin(); }
+  const_iterator cend() const { return end(); }
+  reverse_iterator rbegin() const { return reverse_iterator(end()); }
+  reverse_iterator rend() const { return reverse_iterator(begin()); }
+  const_reverse_iterator crbegin() const { return rbegin(); }
+  const_reverse_iterator crend() const { return rend(); }
+
+  native_handle_type native_handle() const { return _array; }
+
+  native_handle_type release_native_handle()
+  {
+     native_handle_type released = _array;
+     _array = nullptr;
+     _owned.reset();
+     return released;
+  }
+
+  void swap(range_array<T>& other)
+  {
+     std::swap(_array, other._array);
+     std::swap(_owned, other._owned);
+  }
+
+private:
+  value_type _at(size_type index) const
+  {
+     char const* s = static_cast<char const*>(_array->data[index]);
+     return s ? T(s) : T();
+  }
+
+  void** _data() const { return _array ? _array->data : nullptr; }
 
 private:
   /** Built before the base is constructed, so that the range and the storage
@@ -571,8 +711,25 @@ private:
 
   /** Null unless this range built the array itself; see the brace-list
    * constructor. */
+  ::Eina_Array* _array;
+  /** Null unless this range built the array itself; see the brace-list
+   * constructor. */
   std::shared_ptr< ::Eina_Array> _owned;
 };
+
+template <typename T>
+bool operator==(range_array<T, typename std::enable_if<_is_string_element<T>::value>::type> const& lhs
+                , range_array<T, typename std::enable_if<_is_string_element<T>::value>::type> const& rhs)
+{
+  return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template <typename T>
+bool operator!=(range_array<T, typename std::enable_if<_is_string_element<T>::value>::type> const& lhs
+                , range_array<T, typename std::enable_if<_is_string_element<T>::value>::type> const& rhs)
+{
+  return !(lhs == rhs);
+}
 
 template <typename T>
 class range_array<T, typename std::enable_if< ::efl::eo::is_eolian_object<T>::value>::type>
