@@ -1839,6 +1839,9 @@ _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
    Efl_Ui_Collection_Request *request = NULL;
    Eina_List *requests = NULL;
    MY_DATA_GET(data, pd);
+
+   /* Arrived after the view was taken apart. */
+   if (!pd) return;
    unsigned int index;
    unsigned int count = 0;
 
@@ -1923,6 +1926,9 @@ _efl_model_child_added(void *data, const Efl_Event *event)
    // At the moment model only append child, but let's try to handle it theorically correct
    Efl_Model_Children_Event *ev = event->info;
    MY_DATA_GET(data, pd);
+
+   /* Arrived after the view was taken apart. */
+   if (!pd) return;
 #ifdef VIEWPORT_ENABLE
    Eina_List *requests = NULL;
    unsigned int i;
@@ -1992,6 +1998,9 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
 {
    Efl_Model_Children_Event *ev = event->info;
    MY_DATA_GET(data, pd);
+
+   /* Arrived after the view was taken apart. */
+   if (!pd) return;
    Eina_List *requests = NULL;
 #ifdef VIEWPORT_ENABLE
    unsigned int i;
@@ -2330,6 +2339,28 @@ _efl_ui_collection_view_efl_object_invalidate(Eo *obj,
     * settling took the whole application with it. */
    efl_event_callback_del(efl_main_loop_get(), EFL_LOOP_EVENT_IDLE,
                           _idle_cb, obj);
+
+   /* Let go of the model first of all.
+    *
+    * Its events are delivered to handlers that reach straight for this data,
+    * and this data is about to stop existing. A directory that is still
+    * being read goes on saying child,added long after the view that asked
+    * for it has been taken apart -- through the whole composite chain, one
+    * event per entry -- and the first line of the handler dereferences what
+    * is no longer there. Nothing was ever detaching these. */
+   if (pd->model)
+     {
+        efl_event_callback_array_del(pd->model, model_cbs(), obj);
+        efl_replace(&pd->model, NULL);
+     }
+   if (pd->multi_selectable_async_model)
+     {
+        efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
+                                         EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
+                                         obj);
+        efl_composite_detach(obj, pd->multi_selectable_async_model);
+        efl_replace(&pd->multi_selectable_async_model, NULL);
+     }
 
    _all_cleanup(obj, pd);
 
