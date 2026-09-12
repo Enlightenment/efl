@@ -40,6 +40,7 @@ static const Efl_Test_Case etc[] = {
    { "ustringshare", eina_test_ustringshare },
    { "Log", eina_test_log },
    { "Error", eina_test_error },
+   { "Promise", eina_test_promise },
    { "Magic", eina_test_magic },
    { "Inlist", eina_test_inlist },
    { "lalloc", eina_test_lalloc },

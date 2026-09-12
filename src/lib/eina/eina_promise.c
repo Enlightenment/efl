@@ -660,13 +660,67 @@ _eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
    eina_mempool_free(_promise_mp, p);
 }
 
+/* The two sides of eina_future_as_value, and what one knows about the other.
+ *
+ * The promise below stands between a future that is still running and a chain
+ * that is waiting for it. Either can end first, and each has to be able to
+ * tell. The link is this box rather than the promise itself, because a
+ * promise does not survive being dispatched or cancelled -- which is what the
+ * documentation of Eina_Promise_Cancel_Cb says to do about exactly this:
+ * hold the promise behind a pointer the cancel callback clears and the
+ * resolution checks.
+ */
+typedef struct _Eina_Future_Proxy_Link Eina_Future_Proxy_Link;
+struct _Eina_Future_Proxy_Link
+{
+   Eina_Promise *promise;
+};
+
+static void
+_future_proxy_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
+{
+   Eina_Future_Proxy_Link *link = data;
+
+   /* The waiting chain gave up and the promise went with it. The future on
+      the other side is still running and will come back here; finding this
+      empty is how it learns there is nobody left to answer. */
+   link->promise = NULL;
+}
+
 static Eina_Value
 _future_proxy(void *data, const Eina_Value v,
               const Eina_Future *dead_future EINA_UNUSED)
 {
+   Eina_Future_Proxy_Link *link = data;
    Eina_Value copy = EINA_VALUE_EMPTY;
 
-   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR) return v;
+   /* Called exactly once, whether the future was answered or cancelled, and
+      it owns the link: Eina_Future_Desc carries no free callback, so a
+      callback's data is the callback's to release. */
+
+   // Nobody is waiting on this any more.
+   if (!link->promise)
+     {
+        free(link);
+        return v;
+     }
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = 0;
+
+        /* Pass the failure on. Returning it here instead would leave the
+           waiting chain waiting for a value that is never coming, and the
+           promise it is waiting on never freed. */
+        eina_value_get(&v, &err);
+        eina_value_setup(&copy, EINA_VALUE_TYPE_ERROR);
+        eina_value_set(&copy, err);
+
+        _eina_promise_clean_dispatch(link->promise, copy);
+        free(link);
+        return v;
+     }
+
    //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch
    if (!v.type || !memcmp(&v, &copy, sizeof (Eina_Value))) copy = v;
    else if (!eina_value_copy(&v, &copy))
@@ -675,7 +729,8 @@ _future_proxy(void *data, const Eina_Value v,
         eina_value_setup(&copy, EINA_VALUE_TYPE_ERROR);
         eina_value_set(&copy, ENOTSUP);
      }
-   _eina_promise_clean_dispatch(data, copy);
+   _eina_promise_clean_dispatch(link->promise, copy);
+   free(link);
    return v;
 }
 
@@ -702,13 +757,23 @@ EINA_API Eina_Value
 eina_future_as_value(Eina_Future *f)
 {
    Eina_Value v = EINA_VALUE_EMPTY;
+   Eina_Future_Proxy_Link *link;
    Eina_Promise *p;
    Eina_Future *r_future;
 
    EINA_FUTURE_CHECK_RETURN_VAL(f, v);
-   p = eina_promise_new(_scheduler_get(f), _dummy_cancel, NULL);
-   EINA_SAFETY_ON_NULL_GOTO(p, err_promise);
-   r_future = eina_future_then(f, _future_proxy, p, NULL);
+
+   link = calloc(1, sizeof (Eina_Future_Proxy_Link));
+   EINA_SAFETY_ON_NULL_GOTO(link, err_promise);
+
+   p = eina_promise_new(_scheduler_get(f), _future_proxy_cancel, link);
+   if (!p)
+     {
+        free(link);
+        goto err_promise;
+     }
+   link->promise = p;
+   r_future = eina_future_then(f, _future_proxy, link);
    //If eina_future_then() fails f will be cancelled
    EINA_SAFETY_ON_NULL_GOTO(r_future, err_future);
 
@@ -721,6 +786,8 @@ eina_future_as_value(Eina_Future *f)
 
    //The promise was freed by eina_promise_as_value()
    ERR("Could not create a Eina_Value for future %p", f);
+   //The promise is gone, so there is nothing left for the proxy to answer.
+   link->promise = NULL;
    //Futures will be unlinked
    _eina_future_free(r_future);
    _eina_future_cancel(f, ENOMEM);
@@ -731,7 +798,9 @@ eina_future_as_value(Eina_Future *f)
      Do not cancel the _eina_future_cancel(f,..) here, it
      was already canceled by eina_future_then().
    */
+   //Cancelling clears the link; nothing is attached to free it, so do it here.
    _eina_promise_cancel(p);
+   free(link);
    return v;
 
  err_promise:

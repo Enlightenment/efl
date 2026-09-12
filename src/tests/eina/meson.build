@@ -2,6 +2,7 @@ eina_test_src = files(
 'eina_suite.c',
 'eina_suite.h',
 'eina_test_abi.c',
+'eina_test_promise.c',
 'eina_test_fp.c',
 'eina_test_ustringshare.c',
 'eina_test_ustr.c',
