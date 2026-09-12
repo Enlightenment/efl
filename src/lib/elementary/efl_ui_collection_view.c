@@ -1325,11 +1325,17 @@ _mark_lesser(Efl_Ui_Collection_Item_Lookup *root, Eina_Array *mark, const unsign
    if (root->index < lower)
      {
         eina_array_push(mark, root);
+        /* son[1] is smaller than this one, so all of it is below the
+           boundary too. son[0] is bigger, and used to be skipped here -- but
+           bigger than a node that is itself below the boundary says nothing
+           about being above it, and everything between the two was missed. */
+        _mark_lesser((void*) EINA_RBTREE_GET(root)->son[0], mark, lower);
         _mark_lesser((void*) EINA_RBTREE_GET(root)->son[1], mark, lower);
      }
    else
      {
-        _mark_lesser((void*) EINA_RBTREE_GET(root)->son[0], mark, lower);
+        /* This one is at or above the boundary, and so is everything in
+           son[0]. Only the smaller side can hold anything. */
         _mark_lesser((void*) EINA_RBTREE_GET(root)->son[1], mark, lower);
      }
 }
@@ -1372,11 +1378,19 @@ _idle_cb(void *data, const Efl_Event *event EINA_UNUSED)
    _mark_lesser((void*) pd->cache, &mark, lower_end);
    _mark_ge((void*) pd->cache, &mark, upper_end);
 
+   /* Out of the tree first, cleaned up second.
+    *
+    * Releasing an item runs callbacks, and those callbacks walk this same
+    * cache -- a listing arriving is one of them. A node that is still in the
+    * tree while its neighbours are being cleaned up is one they can find,
+    * remove and free, and this loop then frees it again. */
+   EINA_ARRAY_ITER_NEXT(&mark, i, lookup, iterator)
+     pd->cache = (void*) eina_rbtree_inline_remove(pd->cache,
+                                                   EINA_RBTREE_GET(lookup),
+                                                   _cache_tree_cmp, NULL);
+
    EINA_ARRAY_ITER_NEXT(&mark, i, lookup, iterator)
      {
-        pd->cache = (void*) eina_rbtree_inline_remove(pd->cache,
-                                                      EINA_RBTREE_GET(lookup),
-                                                      _cache_tree_cmp, NULL);
         _item_cleanup(data, pd->factory, &lookup->item, &scheduled_release);
         free(lookup);
      }
@@ -1810,11 +1824,14 @@ _cache_cleanup_above(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *p
 
    _mark_ge((void*) pd->cache, &mark, index);
 
+   /* Out of the tree first, cleaned up second: see _idle_cb. */
+   EINA_ARRAY_ITER_NEXT(&mark, i, lookup, iterator)
+     pd->cache = (void*) eina_rbtree_inline_remove(pd->cache,
+                                                   EINA_RBTREE_GET(lookup),
+                                                   _cache_tree_cmp, NULL);
+
    EINA_ARRAY_ITER_NEXT(&mark, i, lookup, iterator)
      {
-        pd->cache = (void*) eina_rbtree_inline_remove(pd->cache,
-                                                      EINA_RBTREE_GET(lookup),
-                                                      _cache_tree_cmp, NULL);
         _item_cleanup(obj, pd->factory, &lookup->item, &scheduled_release);
         free(lookup);
      }
