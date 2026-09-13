@@ -797,7 +797,8 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                       efl_debug_name_get(lookup->item.entity));
                }
           }
-        else if (!ITEM_BASE_SIZE_FROM_MODEL(pd->model, item_size))
+        else if (!item_base.w && !item_base.h &&
+                 !ITEM_BASE_SIZE_FROM_MODEL(pd->model, item_size))
           {
              INF("No base size yet available. Making things up.");
              item_size.w = 1;
@@ -1018,6 +1019,19 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    limit = conf.range.end_id - conf.range.start_id;
    ITEM_BASE_SIZE_FROM_MODEL(parent, item_base);
 
+   /* Before anything has been measured, an item is said to fill the view.
+      Something has to be built for a size to be learned from, and the view
+      only builds what it has room to show: with every item reported as
+      nothing it has room for none of them and asks for none, and the listing
+      stays empty for ever. One item to a screen asks for one, and measuring
+      that one replaces this with the real size everywhere.
+
+      Said the same way to both of the answers below, because the position
+      manager compares what it cached against what it is placing and says so
+      when the two disagree. */
+   if (!item_base.w && !item_base.h)
+     item_base = efl_gfx_entity_size_get(data);
+
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE
    if (pd->viewport[0] && ((unsigned int)(conf.range.start_id + idx) < pd->viewport[0]->offset))
@@ -1119,23 +1133,12 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
     * and @ref Efl.Ui.Average_Model answer per child and are asked per child,
     * below -- a caller who chose them asked for that.
     *
-    * The shared size is not known until something has been measured. What
-    * stands in until then is below.
+    * The shared size is not known until something has been measured; what
+    * stands in until then is set above.
     */
    if (conf.cache_request &&
        efl_isa(parent, EFL_UI_HOMOGENEOUS_MODEL_CLASS))
      {
-        /* Before anything has been measured, say that one item fills the view.
-           Something has to be built for the size to be learned from, and the
-           view only builds what it has room to show: with every item reported
-           as nothing it has room for none of them and asks for none, and the
-           listing stays empty for ever. One item to a screen asks for one --
-           through the ordinary path, in the ordinary order, with no separate
-           request racing the listing -- and measuring that one replaces this
-           guess with the real size everywhere. */
-        if (!item_base.w && !item_base.h)
-          item_base = efl_gfx_entity_size_get(data);
-
         while (idx < limit)
           {
              sizes[idx].size = item_base;
