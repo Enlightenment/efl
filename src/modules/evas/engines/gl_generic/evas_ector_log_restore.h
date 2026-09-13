@@ -1,8 +1,6 @@
-/*
- * Restore Evas log macros after ector_software_private.h clobbers them.
- * ector_private.h redefines ERR/WRN/etc. to use _ector_log_dom_global
- * which is not linked into the engine module.
- */
+// Restore Evas log macros after ector_software_private.h clobbers them.
+// ector_private.h redefines ERR/WRN/etc. to use _ector_log_dom_global
+// which is not linked into the engine module.
 #undef ERR
 #undef WRN
 #undef INF

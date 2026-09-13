@@ -430,10 +430,10 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 
         if (cd->comp.src) return;   //Don't draw composite target itself.
 
-        /* GL composite mask: propagate the mask FBO to the shared ector
-         * surface every frame.  render_pre only runs on changes, but the
-         * draw phase runs every frame.  eng_ector_end clears gl_comp_surface
-         * after use, so it must be re-set here. */
+        // GL composite mask: propagate the mask FBO to the shared ector
+        // surface every frame.  render_pre only runs on changes, but the
+        // draw phase runs every frame.  eng_ector_end clears gl_comp_surface
+        // after use, so it must be re-set here.
         if (cd->comp_target)
           {
              Efl_Canvas_Vg_Container_Data *cpd =
@@ -444,21 +444,21 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
         int alpha = 255;
         efl_gfx_color_get(node, NULL, NULL, NULL, &alpha);
 
-        /* Group opacity on the GL engine.
-         *
-         * The blend-buffer path below composites the group into the ector
-         * surface's CPU pixel buffer.  The GL engine rasterises vector shapes
-         * through a span path that renders into an FBO and never reads that
-         * buffer back, so there the group's alpha would be computed and then
-         * dropped, leaving the group fully opaque.  Fold it into the draw
-         * context's multiplier instead, which the engine passes down as each
-         * shape's mul_col.
-         *
-         * This applies the alpha per shape rather than to the flattened
-         * group, so shapes that overlap inside the group blend against each
-         * other before being faded rather than after.  Identical wherever a
-         * group's shapes are disjoint, which is the usual case for fading one
-         * out; the exact form needs the group rendered to its own FBO. */
+        // Group opacity on the GL engine.
+        //
+        // The blend-buffer path below composites the group into the ector
+        // surface's CPU pixel buffer.  The GL engine rasterises vector shapes
+        // through a span path that renders into an FBO and never reads that
+        // buffer back, so there the group's alpha would be computed and then
+        // dropped, leaving the group fully opaque.  Fold it into the draw
+        // context's multiplier instead, which the engine passes down as each
+        // shape's mul_col.
+        //
+        // This applies the alpha per shape rather than to the flattened
+        // group, so shapes that overlap inside the group blend against each
+        // other before being faded rather than after.  Identical wherever a
+        // group's shapes are disjoint, which is the usual case for fading one
+        // out; the exact form needs the group rendered to its own FBO.
         if ((alpha < 255) && ENFN->gl_surface_read_pixels)
           {
              int pr = 255, pg = 255, pb = 255, pa = 255;
@@ -556,7 +556,8 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                     }
                   if (cd->comp_target && efl_isa(child, EFL_CANVAS_VG_GRADIENT_CLASS))
                     continue;
-                  _evas_vg_render(obj, pd, engine, output, context, child, clips, w, h, ector, do_async);
+                  _evas_vg_render(obj, pd, engine, output, context, child,
+                                  clips, w, h, ector, do_async);
                }
 
              // Recover original surface
@@ -573,22 +574,23 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 
              EINA_LIST_FOREACH(cd->children, l, child)
                {
-                  /* Skip composite target containers — their shapes were
-                   * already rendered to the mask FBO during render_pre.
-                   * Drawing them again would overwrite the masked result. */
+                  // Skip composite target containers — their shapes were
+                  // already rendered to the mask FBO during render_pre.
+                  // Drawing them again would overwrite the masked result.
                   if (efl_isa(child, EFL_CANVAS_VG_CONTAINER_CLASS))
                     {
                        Efl_Canvas_Vg_Container_Data *child_cd =
                           efl_data_scope_get(child, EFL_CANVAS_VG_CONTAINER_CLASS);
                        if (child_cd && child_cd->comp.src) continue;
                     }
-                  /* Skip gradient objects in composite containers — they are
-                   * fill properties of shapes, not standalone renderable
-                   * nodes.  Only skip when comp_target is set to avoid
-                   * affecting non-composite containers. */
+                  // Skip gradient objects in composite containers — they are
+                  // fill properties of shapes, not standalone renderable
+                  // nodes.  Only skip when comp_target is set to avoid
+                  // affecting non-composite containers.
                   if (cd->comp_target && efl_isa(child, EFL_CANVAS_VG_GRADIENT_CLASS))
                     continue;
-                  _evas_vg_render(obj, pd, engine, output, context, child, clips, w, h, ector, do_async);
+                  _evas_vg_render(obj, pd, engine, output, context, child,
+                                  clips, w, h, ector, do_async);
                }
           }
      }

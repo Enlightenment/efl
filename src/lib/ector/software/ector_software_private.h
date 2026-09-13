@@ -50,20 +50,20 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
    Eina_Bool alpha;
    int ctable_status;       //Ready for color table?
 
-   /* GL atlas CRC cache: avoids re-hashing 4 KB of color_table on every
-    * span push when the ramp content has not changed since the previous
-    * compute.  Invalidated when the framework regenerates color_table
-    * (status cycles through CTABLE_NOT_READY before becoming READY again).
-    *
-    * Lives here rather than on Span_Collector so the cache survives the
-    * collector pool's high-water-mark slot reuse — collectors are
-    * recycled across shapes between frames, but gradient_data is stable
-    * per-gradient-renderer-object.
-    *
-    * Zero-initialised automatically: Eo private data is calloc'd by the
-    * Eo framework, so cached_ctable_crc_valid starts as EINA_FALSE. */
+   // GL atlas CRC cache: avoids re-hashing 4 KB of color_table on every
+   // span push when the ramp content has not changed since the previous
+   // compute.  Invalidated when the framework regenerates color_table
+   // (status cycles through CTABLE_NOT_READY before becoming READY again).
+   //
+   // Lives here rather than on Span_Collector so the cache survives the
+   // collector pool's high-water-mark slot reuse — collectors are
+   // recycled across shapes between frames, but gradient_data is stable
+   // per-gradient-renderer-object.
+   //
+   // Zero-initialised automatically: Eo private data is calloc'd by the
+   // Eo framework, so cached_ctable_crc_valid starts as EINA_FALSE.
    uint32_t  cached_ctable_crc;
-   int       cached_ctable_status;   /* ctable_status when crc was computed */
+   int       cached_ctable_status;   // ctable_status when crc was computed
    Eina_Bool cached_ctable_crc_valid;
 } Ector_Renderer_Software_Gradient_Data;
 
@@ -91,17 +91,17 @@ typedef enum _Span_Data_Type {
   RadialGradient,
 } Span_Data_Type;
 
-/* Function pointer type for allocating/reusing per-shape span collectors.
- * Set on Span_Data by eng_ector_begin(); called by draw_rle_data() for each
- * shape.  Keeps all span_collector_* calls inside the engine module (the only
- * translation unit that includes evas_ector_gl_span.h). */
+// Function pointer type for allocating/reusing per-shape span collectors.
+// Set on Span_Data by eng_ector_begin(); called by draw_rle_data() for each
+// shape.  Keeps all span_collector_* calls inside the engine module (the only
+// translation unit that includes evas_ector_gl_span.h).
 typedef void *(*Span_Collector_Alloc_Fn)(void *data, int h,
                                          Span_Data_Type type,
                                          Eina_Bool is_stroke);
 
 typedef struct _Span_Data
 {
-   /* --- hot: touched on every rasterizer callback --- */
+   // --- hot: touched on every rasterizer callback ---
    Ector_Software_Buffer_Base_Data *raster_buffer;
    SW_FT_SpanFunc   blend;
    SW_FT_SpanFunc   unclipped_blend;
@@ -117,23 +117,23 @@ typedef struct _Span_Data
       Ector_Software_Buffer_Base_Data *buffer;
    };
 
-   /* fields used on every draw but not in the innermost span callback */
+   // fields used on every draw but not in the innermost span callback
    Ector_Software_Buffer_Base_Data    *comp;
    Efl_Gfx_Vg_Composite_Method comp_method;
    Eina_Matrix3     inv;
    Eina_Bool        fast_matrix;
 
-   /* --- cold: span-buffer GL fields --- */
-   void            *span_collector;             /* active collector for current shape */
-   Eina_Bool        span_is_stroke;             /* EINA_TRUE during stroke pass */
+   // --- cold: span-buffer GL fields ---
+   void            *span_collector;             // active collector for current shape
+   Eina_Bool        span_is_stroke;             // EINA_TRUE during stroke pass
    SW_FT_SpanFunc   collector_solid;
    SW_FT_SpanFunc   collector_gradient;
    SW_FT_SpanFunc   collector_composite;
-   /* Callback set by eng_ector_begin() to allocate/reuse per-shape collectors.
-    * draw_rle_data() calls this instead of calling span_collector_* directly,
-    * keeping the span.h dependency inside the engine module only. */
+   // Callback set by eng_ector_begin() to allocate/reuse per-shape collectors.
+   // draw_rle_data() calls this instead of calling span_collector_* directly,
+   // keeping the span.h dependency inside the engine module only.
    Span_Collector_Alloc_Fn span_collector_alloc;
-   void                   *span_collector_alloc_data; /* Ector_Software_Surface_Data* */
+   void                   *span_collector_alloc_data; // Ector_Software_Surface_Data*
 } Span_Data;
 
 typedef struct _Software_Rasterizer
@@ -149,10 +149,10 @@ struct _Ector_Software_Surface_Data
    Software_Rasterizer *rasterizer;
    int x;
    int y;
-   /* Per-shape span collector arrays.  Each entry is a Span_Collector*.
-    * Owned by the engine (eng_ector_destroy frees them).  Arrays grow
-    * with high-water mark allocation — never shrunk, reallocated on
-    * demand when more shapes are drawn in a single VG object. */
+   // Per-shape span collector arrays.  Each entry is a Span_Collector*.
+   // Owned by the engine (eng_ector_destroy frees them).  Arrays grow
+   // with high-water mark allocation — never shrunk, reallocated on
+   // demand when more shapes are drawn in a single VG object.
    void **span_collectors_fill;
    int    span_collectors_fill_count;
    int    span_collectors_fill_alloc;
@@ -160,27 +160,28 @@ struct _Ector_Software_Surface_Data
    int    span_collectors_stroke_count;
    int    span_collectors_stroke_alloc;
 
-   /* Scratch raster buffer for the GL span path, owned here rather than by
-    * the ector buffer.  Handing it to ector_buffer_pixels_set() as a plain
-    * pointer sets nofree, which matters because the VG blend path swaps the
-    * surface's buffer out and back again: were the buffer to own the
-    * allocation, that swap would free it and the restore would reinstate a
-    * dangling pointer.  The buffer descriptor also only records the height
-    * in use, not the height allocated, so growth is tracked here too. */
+   // Scratch raster buffer for the GL span path, owned here rather than by
+   // the ector buffer.  Handing it to ector_buffer_pixels_set() as a plain
+   // pointer sets nofree, which matters because the VG blend path swaps the
+   // surface's buffer out and back again: were the buffer to own the
+   // allocation, that swap would free it and the restore would reinstate a
+   // dangling pointer.  The buffer descriptor also only records the height
+   // in use, not the height allocated, so growth is tracked here too.
    void  *span_pixels;
    size_t span_pixels_alloc;
 
-   /* GL composite mask for the current eng_ector_begin/end window.
-    * Set by _efl_canvas_vg_container_render_pre() when a container has a
-    * composite target whose mask was rendered into an FBO via _prepare_comp().
-    * Read by eng_ector_end() to fill Span_Pipe_Params.mask_tex for each shape.
-    * Cleared to NULL by eng_ector_end() after the draw loop completes. */
-   void *gl_comp_surface;            /* Evas_GL_Image* of the mask FBO, or NULL */
-   int   gl_comp_method;             /* Efl_Gfx_Vg_Composite_Method, 0 = NONE */
+   // GL composite mask for the current eng_ector_begin/end window.
+   // Set by _efl_canvas_vg_container_render_pre() when a container has a
+   // composite target whose mask was rendered into an FBO via _prepare_comp().
+   // Read by eng_ector_end() to fill Span_Pipe_Params.mask_tex for each shape.
+   // Cleared to NULL by eng_ector_end() after the draw loop completes.
+   void *gl_comp_surface;            // Evas_GL_Image* of the mask FBO, or NULL
+   int   gl_comp_method;             // Efl_Gfx_Vg_Composite_Method, 0 = NONE
 };
 
 
-ECTOR_API void  ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface, int comp_method);
+ECTOR_API void  ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface,
+                                                   int comp_method);
 
 int  ector_software_gradient_init(void);
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);

@@ -2062,9 +2062,9 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
-/* Write one side's gradient attributes.  A side that is not actually a
- * gradient travels as SPAN_GRAD_TYPE_SOLID with its colour in abc_y, so that
- * a mixed fill/stroke shape needs one program rather than two. */
+// Write one side's gradient attributes.  A side that is not actually a
+// gradient travels as SPAN_GRAD_TYPE_SOLID with its colour in abc_y, so that
+// a mixed fill/stroke shape needs one program rather than two.
 static void
 _span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
                     const Span_Channel_Params *side)
@@ -2097,17 +2097,17 @@ _span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
 
 void
 evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
-                    const Span_Pipe_Params *p,
-                    const GLfloat ndc_quad[8] /* TL,TR,BR,BL: x0y0,x1y0,x1y1,x0y1 */)
+                                  const Span_Pipe_Params *p,
+                                  const GLfloat ndc_quad[8] /* TL,TR,BR,BL: x0y0,x1y0,x1y1,x0y1 */)
 {
-   const int idx[6] = { 0, 1, 2, 0, 2, 3 }; /* triangle fan indices into ndc_quad */
+   const int idx[6] = { 0, 1, 2, 0, 2, 3 }; // triangle fan indices into ndc_quad
 
-   /* Mask inv: 0=normal, 1=invert.  Derived from comp_method; methods 2
-    * and 4 invert the mask, others use the mask alpha directly. */
+   // Mask inv: 0=normal, 1=invert.  Derived from comp_method; methods 2
+   // and 4 invert the mask, others use the mask alpha directly.
    float mask_inv = 0.0f;
    if ((p->comp_method == 2) || (p->comp_method == 4)) mask_inv = 1.0f;
 
-   /* Build the common header once; pos is overwritten per vertex in the loop. */
+   // Build the common header once; pos is overwritten per vertex in the loop.
    Span_Vertex_Common common;
    common.fbo_fill_off[0]     = p->fbo_off_x;
    common.fbo_fill_off[1]     = p->fbo_off_y;
@@ -2117,14 +2117,14 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
    common.stroke_off_flags[1] = p->stroke.off_ty;
    common.stroke_off_flags[2] = (GLfloat)p->max_spans;
    common.stroke_off_flags[3] = (GLfloat)((p->fill.tex   ? 1 : 0) |
-                                           (p->stroke.tex ? 2 : 0));
+                                          (p->stroke.tex ? 2 : 0));
    common.x_min[0] = (GLfloat)p->fill.x_min;
    common.x_min[1] = (GLfloat)p->stroke.x_min;
-   /* mul_col: premultiplied ARGB 0xAARRGGBB — decode as R,G,B,A for the shader */
-   common.mul_col[0] = (float)((p->mul_col >> 16) & 0xFF) / 255.0f; /* R */
-   common.mul_col[1] = (float)((p->mul_col >>  8) & 0xFF) / 255.0f; /* G */
-   common.mul_col[2] = (float)( p->mul_col        & 0xFF) / 255.0f; /* B */
-   common.mul_col[3] = (float)((p->mul_col >> 24) & 0xFF) / 255.0f; /* A */
+   // mul_col: premultiplied ARGB 0xAARRGGBB — decode as R,G,B,A for the shader
+   common.mul_col[0] = (float)((p->mul_col >> 16) & 0xFF) / 255.0f; // R
+   common.mul_col[1] = (float)((p->mul_col >>  8) & 0xFF) / 255.0f; // G
+   common.mul_col[2] = (float)( p->mul_col        & 0xFF) / 255.0f; // B
+   common.mul_col[3] = (float)((p->mul_col >> 24) & 0xFF) / 255.0f; // A
 
    for (int v = 0; v < 6; v++)
      {

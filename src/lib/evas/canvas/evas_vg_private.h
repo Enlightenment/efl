@@ -89,7 +89,7 @@ typedef struct _Vg_Composite
    void *pixels;                           //Composite pixel buffer (actual data)
    unsigned int length;                    //pixel buffer data size
    unsigned int stride;                    //pixel buffer stride
-   void *gl_surface;                       /* GL FBO surface for mask (Evas_GL_Image* in GL path, NULL for SW) */
+   void *gl_surface;                       //Mask FBO (Evas_GL_Image* on GL, NULL on SW)
    Eina_Size2D size;                       //Composite boundary
    Eina_List *src;                         //Composite Sources
    Efl_Gfx_Vg_Composite_Method method;     //Composite Method
@@ -148,22 +148,21 @@ Eina_Bool                   evas_cache_vg_anim_sector_get(const Vg_Cache_Entry* 
 unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
 Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);
 void *                      evas_cache_vg_surface_key_get(Efl_Canvas_Vg_Node *root, int w, int h, int frame_idx);
-/* Forward declaration for the ector software surface GL composite accessor.
- * The implementation lives in src/lib/ector/software/ector_software_surface.c.
- * This allows canvas code (which cannot include ector_software_private.h) to
- * store the GL FBO mask surface reference on the shared ector
- * surface during render_pre, so that eng_ector_end() can find it. */
-ECTOR_API void ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface, int comp_method);
+// Forward declaration for the ector software surface GL composite accessor.
+// The implementation lives in src/lib/ector/software/ector_software_surface.c.
+// This allows canvas code (which cannot include ector_software_private.h) to
+// store the GL FBO mask surface reference on the shared ector
+// surface during render_pre, so that eng_ector_end() can find it.
+ECTOR_API void ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface,
+                                                  int comp_method);
 
-/**
- * Set the GL composite surface on @p ector if @p target_cd holds a valid
- * gl_surface reference.  No-op when @p target_cd is NULL or has no
- * gl_surface (software render path, or mask not yet rendered).
- *
- * @param ector     Shared ector surface for this VG render pass.
- * @param target_cd Container data of the composite target node.
- * @param method    Composite method to propagate.
- */
+// Set the GL composite surface on @p ector if @p target_cd holds a valid
+// gl_surface reference.  No-op when @p target_cd is NULL or has no
+// gl_surface (software render path, or mask not yet rendered).
+//
+// @param ector     Shared ector surface for this VG render pass.
+// @param target_cd Container data of the composite target node.
+// @param method    Composite method to propagate.
 static inline void
 _maybe_set_gl_comp(Ector_Surface *ector,
                    Efl_Canvas_Vg_Container_Data *target_cd,

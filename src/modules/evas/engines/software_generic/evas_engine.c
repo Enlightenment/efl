@@ -3780,8 +3780,8 @@ eng_gl_rotation_angle_get(void *data EINA_UNUSED)
 
 //------------------------------------------------//
 
-/* Byte size of a cached ector surface, for the surface cache's memory
- * budget.  These are render targets, so they are always 32bpp. */
+// Byte size of a cached ector surface, for the surface cache's memory
+// budget.  These are render targets, so they are always 32bpp.
 static size_t
 _ector_surface_cache_size(void *engine EINA_UNUSED, void *surface)
 {
@@ -4852,7 +4852,7 @@ static Evas_Func func =
      eng_ector_renderer_draw,
      eng_ector_end,
      eng_ector_surface_create,
-     NULL, // ector_mask_surface_create — software engine has no atlas; regular path suffices
+     NULL, // ector_mask_surface_create - software has no atlas, regular path suffices
      eng_ector_surface_destroy,
      eng_ector_surface_cache_set,
      eng_ector_surface_cache_get,

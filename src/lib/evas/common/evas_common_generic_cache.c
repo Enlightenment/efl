@@ -1,11 +1,11 @@
 #include "evas_common_private.h"
 
-/* Default memory budget for a size-aware generic cache.  Override with
- * EVAS_SURFACE_CACHE_SIZE, in kilobytes. */
+// Default memory budget for a size-aware generic cache.  Override with
+// EVAS_SURFACE_CACHE_SIZE, in kilobytes.
 #define GENERIC_CACHE_DEFAULT_BUDGET (8 * 1024 * 1024)
 
-/* Hard ceiling on entries, so a cache of tiny surfaces cannot grow the LRU
- * list without bound.  Only reached when the byte budget has not been. */
+// Hard ceiling on entries, so a cache of tiny surfaces cannot grow the LRU
+// list without bound.  Only reached when the byte budget has not been.
 #define GENERIC_CACHE_MAX_ENTRIES 4096
 
 static size_t
@@ -23,10 +23,10 @@ _generic_cache_budget(void)
    return v;
 }
 
-/* Drop entries from the least-recently-used end until the cache is back
- * inside its budget.  Entries still handed out (ref > 1) are skipped rather
- * than aborting the sweep - stopping at the first one would let a single
- * long-lived surface pin the cache above its budget forever. */
+// Drop entries from the least-recently-used end until the cache is back
+// inside its budget.  Entries still handed out (ref > 1) are skipped rather
+// than aborting the sweep - stopping at the first one would let a single
+// long-lived surface pin the cache above its budget forever.
 static void
 _generic_cache_trim(Generic_Cache *cache)
 {
@@ -46,16 +46,17 @@ _generic_cache_trim(Generic_Cache *cache)
           }
         else if (count <= 50) break;
 
-        /* Never evict the entry just inserted.  It is at the head, and when
-         * the budget is smaller than a single surface the head is also the
-         * tail - trimming it would free the very data the caller stored a
-         * moment ago and is about to draw with.  A budget is advisory when
-         * one item does not fit; a use-after-free is not. */
-        /* Never evict the entry just inserted.  It is at the head, and when
-         * the budget is smaller than a single surface the head is also the
-         * tail - trimming it would free the very data the caller stored a
-         * moment ago and is about to draw with.  A budget is advisory when
-         * one item does not fit; a use-after-free is not. */
+        // Never evict the entry just inserted.  It is at the head, and when
+        // the budget is smaller than a single surface the head is also the
+        // tail - trimming it would free the very data the caller stored a
+        // moment ago and is about to draw with.  A budget is advisory when
+        // one item does not fit; a use-after-free is not.
+
+        // Never evict the entry just inserted.  It is at the head, and when
+        // the budget is smaller than a single surface the head is also the
+        // tail - trimming it would free the very data the caller stored a
+        // moment ago and is about to draw with.  A budget is advisory when
+        // one item does not fit; a use-after-free is not.
         if (l == cache->lru_list) break;
 
         prev = eina_list_prev(l);

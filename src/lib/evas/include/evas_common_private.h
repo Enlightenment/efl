@@ -1151,7 +1151,7 @@ struct _Generic_Cache_Entry
 };
 
 typedef void (*Generic_Cache_Free)(void *user_data, void *data);
-/** Report how many bytes @p data occupies, for the cache's memory budget. */
+// Report how many bytes @p data occupies, for the cache's memory budget.
 typedef size_t (*Generic_Cache_Size)(void *user_data, void *data);
 
 struct _Generic_Cache
@@ -1160,17 +1160,17 @@ struct _Generic_Cache
    Eina_List          *lru_list;
    void               *user_data;
    Generic_Cache_Free  free_func;
-   /* Budgeting by bytes rather than by entry count.  A count cap cannot
-    * describe this cache: fifty 4K surfaces are hundreds of megabytes while
-    * three hundred icon-sized ones are a few.  NULL size_func falls back to
-    * the count cap. */
+   // Budgeting by bytes rather than by entry count.  A count cap cannot
+   // describe this cache: fifty 4K surfaces are hundreds of megabytes while
+   // three hundred icon-sized ones are a few.  NULL size_func falls back to
+   // the count cap.
    Generic_Cache_Size  size_func;
    size_t              bytes;
    size_t              budget;
 };
 
 EVAS_API Generic_Cache* generic_cache_new(void *user_data, Generic_Cache_Free func);
-/** Switch @p cache to a memory budget, using @p func to size entries. */
+// Switch @p cache to a memory budget, using @p func to size entries.
 EVAS_API void generic_cache_size_func_set(Generic_Cache *cache, Generic_Cache_Size func);
 EVAS_API void generic_cache_destroy(Generic_Cache *cache);
 EVAS_API void generic_cache_dump(Generic_Cache *cache);
