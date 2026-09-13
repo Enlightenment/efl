@@ -101,26 +101,45 @@ _efl_ui_widget_factory_constructing(void *data EINA_UNUSED, const Efl_Event *ev)
 
    model = efl_ui_view_model_get(ui_view);
 
+   /* An item taken back out of the cache comes back locked, from the release
+      below. This is where it goes back into use, so this is where the lock
+      comes off -- without it the item can never again be told it needs to lay
+      itself out, and it draws its new contents at its old arrangement. */
+   if (efl_isa(ui_view, EFL_UI_ITEM_CLASS)) efl_ui_item_calc_locked_set(ui_view, EINA_FALSE);
+
    // Enable recalculate in case we do not know the size of the item
    efl_canvas_group_need_recalculate_set(ui_view, EINA_TRUE);
 
-   // Fetch min size from model if available to avoid recalculcating it
-   width = efl_model_property_get(model, "self.width");
-   height = efl_model_property_get(model, "self.height");
-   if (eina_value_type_get(width) != EINA_VALUE_TYPE_ERROR &&
-       eina_value_type_get(height) != EINA_VALUE_TYPE_ERROR)
+   /* How big the item is, if the model has been told, so that it does not have
+      to be measured to find out.
+
+      Items only. The same factory machinery builds the widgets inside an item
+      -- the label, the icon -- from the same model, and $["self.width"] is how
+      big the row is in the view, not how big anything in it is. Handing it to
+      the label gives the label the width of the whole row; handing it to the
+      icon gives a row-sized icon.
+
+      The size is all that is taken from it. The item is left able to lay
+      itself out: knowing how big it is says nothing about where its contents
+      go, and it has not been given its place yet. */
+   if (efl_isa(ui_view, EFL_UI_ITEM_CLASS))
      {
-        Eina_Size2D s;
+        width = efl_model_property_get(model, "self.width");
+        height = efl_model_property_get(model, "self.height");
+        if (eina_value_type_get(width) != EINA_VALUE_TYPE_ERROR &&
+            eina_value_type_get(height) != EINA_VALUE_TYPE_ERROR)
+          {
+             Eina_Size2D s;
 
-        if (!eina_value_int_convert(width, &s.w)) s.w = 0;
-        if (!eina_value_int_convert(height, &s.h)) s.h = 0;
+             if (!eina_value_int_convert(width, &s.w)) s.w = 0;
+             if (!eina_value_int_convert(height, &s.h)) s.h = 0;
 
-        efl_gfx_hint_size_min_set(ui_view, s);
-        efl_canvas_group_need_recalculate_set(ui_view, EINA_FALSE);
-        if (efl_isa(ui_view, EFL_UI_ITEM_CLASS)) efl_ui_item_calc_locked_set(ui_view, EINA_TRUE);
+             efl_gfx_hint_size_min_set(ui_view, s);
+             efl_canvas_group_need_recalculate_set(ui_view, EINA_FALSE);
+          }
+        eina_value_free(width);
+        eina_value_free(height);
      }
-   eina_value_free(width);
-   eina_value_free(height);
 
    efl_key_data_set(ui_view, "efl.ui.widget.factory.size_check", (void*)EINA_TRUE);
 }

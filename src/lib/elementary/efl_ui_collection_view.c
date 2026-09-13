@@ -64,6 +64,7 @@ struct _Efl_Ui_Collection_Request
 
 struct _Efl_Ui_Collection_View_Data
 {
+   unsigned int last_count; /* to tell a re-order from children arriving */
    Efl_Ui_Factory *factory;
    Efl_Ui_Position_Manager_Entity *manager;
    Efl_Ui_Scroll_Manager *scroller;
@@ -532,9 +533,11 @@ _entity_propagate(Efl_Model *model, Efl_Gfx_Entity *entity)
 
    if (ITEM_SIZE_FROM_MODEL(model, item_size))
      {
+        /* Known size, so nothing to measure -- but the item is left able to
+           lay itself out. It has not been given its place yet, and an item
+           that cannot be told it needs arranging never arranges. */
         efl_gfx_hint_size_min_set(entity, item_size);
         efl_canvas_group_need_recalculate_set(entity, EINA_FALSE);
-        if (efl_isa(entity, EFL_UI_ITEM_CLASS)) efl_ui_item_calc_locked_set(entity, EINA_TRUE);
         return EINA_FALSE;
      }
 
@@ -1100,19 +1103,48 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
      }
 #endif
 
-   /* if (conf.cache_request) */
-   /*   { */
-   /*      printf("CACHING SIZE CALL\n"); */
-   /*      while (idx < limit) */
-   /*          { */
-   /*             sizes[idx].depth_leader = EINA_FALSE; */
-   /*             sizes[idx].element_depth = 0; */
-   /*             sizes[idx].size = pd->last_base; */
-   /*             idx++; */
-   /*        } */
-   /*      fprintf(stderr, "read with no fetch\n"); */
-   /*   } */
-   /* else */
+   /* A size asked for to fill a cache is answered with the size items have,
+    * and nothing is fetched.
+    *
+    * The position manager keeps a running total over every item so that it
+    * knows how big the whole thing is and where any index sits inside it.
+    * That is a question about all hundred thousand of them, and answering it
+    * one at a time means fetching a hundred thousand children and -- since a
+    * child that was never built cannot say how big it is -- building a widget
+    * for each, which is the entire cost the view exists to avoid. The request
+    * says what it is for, and what a cache wants is an approximation.
+    *
+    * Only @ref Efl.Ui.Homogeneous_Model has one to give: every item the same
+    * size, so one measurement answers for all of them. @ref Efl.Ui.Exact_Model
+    * and @ref Efl.Ui.Average_Model answer per child and are asked per child,
+    * below -- a caller who chose them asked for that.
+    *
+    * The shared size is not known until something has been measured. What
+    * stands in until then is below.
+    */
+   if (conf.cache_request &&
+       efl_isa(parent, EFL_UI_HOMOGENEOUS_MODEL_CLASS))
+     {
+        /* Before anything has been measured, say that one item fills the view.
+           Something has to be built for the size to be learned from, and the
+           view only builds what it has room to show: with every item reported
+           as nothing it has room for none of them and asks for none, and the
+           listing stays empty for ever. One item to a screen asks for one --
+           through the ordinary path, in the ordinary order, with no separate
+           request racing the listing -- and measuring that one replaces this
+           guess with the real size everywhere. */
+        if (!item_base.w && !item_base.h)
+          item_base = efl_gfx_entity_size_get(data);
+
+        while (idx < limit)
+          {
+             sizes[idx].size = item_base;
+             sizes[idx].element_depth = 0;
+             sizes[idx].depth_leader = EINA_FALSE;
+             idx++;
+          }
+     }
+   else
      {
         while (idx < limit)
           {
@@ -1775,6 +1807,8 @@ _efl_ui_collection_view_position_manager_get(const Eo *obj EINA_UNUSED,
    return pd->manager;
 }
 
+static void _cache_cleanup_above(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *pd, unsigned int index);
+
 static void
 _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
@@ -1792,6 +1826,24 @@ _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
         if (index + 1 == count)
           return ;
      }
+
+   /* A count that has not changed, announced as changed, is how a model says
+      its children are in a different order: there is no other event for it,
+      and both @ref Efl.Sorted_Model and a sorting @ref Efl.Io.Model send this
+      one for exactly that. Every index means a different child, so nothing
+      filed under an index is about the child it is filed under.
+
+      Only then. A count that really did change is children appended or taken
+      away, and child added and child removed below have already dealt with
+      those precisely -- throwing the cache away for each batch of a long
+      listing would rebuild every visible item over and over. */
+   if (count == pd->last_count)
+     {
+        _cache_cleanup_above(data, pd, 0);
+        if (count)
+          efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
+     }
+   pd->last_count = count;
 
    // The last item is not the last item anymore
    requests = _request_add(requests, &request, count, EINA_TRUE);
@@ -2090,6 +2142,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
                                     efl_loop_model_volatile_make(efl_added));
 
    efl_replace(&pd->model, model);
+   pd->last_count = efl_model_children_count_get(model);
    efl_event_callback_array_add(pd->model, model_cbs(), data);
 
    if (mselect) efl_unref(mselect);
