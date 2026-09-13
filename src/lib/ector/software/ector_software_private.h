@@ -180,10 +180,7 @@ struct _Ector_Software_Surface_Data
 };
 
 
-ECTOR_API void  ector_software_surface_set_span_collector(Ector_Surface *obj, void *collector);
-ECTOR_API void *ector_software_surface_get_span_collector(Ector_Surface *obj);
 ECTOR_API void  ector_software_surface_gl_comp_set(Ector_Surface *obj, void *gl_surface, int comp_method);
-ECTOR_API void  ector_software_surface_gl_comp_get(Ector_Surface *obj, void **gl_surface_out, int *comp_method_out);
 
 int  ector_software_gradient_init(void);
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);
@@ -216,8 +213,8 @@ void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 
 // Gradient Api
 void destroy_color_table(Ector_Renderer_Software_Gradient_Data *gdata);
-ECTOR_API void fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
-ECTOR_API void fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
+void fetch_linear_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
+void fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int length);
 
 void ector_software_thread_init(Ector_Software_Thread *thread);
 void ector_software_thread_shutdown(Ector_Software_Thread *thread);

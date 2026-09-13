@@ -285,13 +285,14 @@ _ector_software_surface_ector_surface_draw_image(Eo *obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
-/* GL composite mask accessors.
+/* GL composite mask accessor.
  *
  * Called by efl_canvas_vg_container.c during render_pre to store the mask FBO
  * surface and composite method so that eng_ector_end() (in the GL engine) can
- * look them up via _gl_comp_get and populate Span_Pipe_Params.mask_tex.
+ * read them from Ector_Software_Surface_Data and populate
+ * Span_Pipe_Params.mask_tex.
  *
- * These are the only way for canvas code (which cannot include
+ * This is the only way for canvas code (which cannot include
  * ector_software_private.h) to reach Ector_Software_Surface_Data fields. */
 ECTOR_API void
 ector_software_surface_gl_comp_set(Ector_Surface *obj,
@@ -301,21 +302,6 @@ ector_software_surface_gl_comp_set(Ector_Surface *obj,
    if (!pd) return;
    pd->gl_comp_surface = gl_surface;
    pd->gl_comp_method  = comp_method;
-}
-
-ECTOR_API void
-ector_software_surface_gl_comp_get(Ector_Surface *obj,
-                                   void **gl_surface_out, int *comp_method_out)
-{
-   Ector_Software_Surface_Data *pd = efl_data_scope_get(obj, ECTOR_SOFTWARE_SURFACE_CLASS);
-   if (!pd)
-     {
-        if (gl_surface_out)  *gl_surface_out  = NULL;
-        if (comp_method_out) *comp_method_out = 0;
-        return;
-     }
-   if (gl_surface_out)  *gl_surface_out  = pd->gl_comp_surface;
-   if (comp_method_out) *comp_method_out = pd->gl_comp_method;
 }
 
 #include "ector_software_surface.eo.c"
