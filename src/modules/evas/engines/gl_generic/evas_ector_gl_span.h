@@ -199,8 +199,8 @@ struct _Span_Collector
    int            split_count;
 
    int            max_spans;       /* max spans per row per texture (default 32) */
-   int            height;          /* active height this frame (VG object height) */
-   int            alloc_height;    /* allocated buffer height (high-water mark, never shrinks) */
+   int            h;               /* active height this frame (VG object height) */
+   int            alloc_h;         /* allocated buffer height (high-water mark, never shrinks) */
    int            stride;          /* bytes per row = (max_spans + 1) * 4
                                     * The +1 reserves a dedicated sentinel slot. */
    int            actual_max_spans; /* max span_counts[y] seen during collection this frame */
@@ -246,7 +246,7 @@ struct _Span_Collector
 /**
  * Allocate and initialise a new Span_Collector.
  *
- * @param height     Canvas height in pixels.  Determines per-texture buffer
+ * @param h          Canvas height in pixels.  Determines per-texture buffer
  *                   allocation.
  * @param max_spans  Maximum spans packed per row.  Pass
  *                   SPAN_COLLECTOR_DEFAULT_MAX_SPANS unless you have a
@@ -255,7 +255,7 @@ struct _Span_Collector
  *                   callback is active.
  * @return           Newly allocated collector, or NULL on allocation failure.
  */
-Span_Collector *span_collector_new(int height, int max_spans, Span_Data_Type type);
+Span_Collector *span_collector_new(int h, int max_spans, Span_Data_Type type);
 
 /**
  * Free all resources owned by @p sc including texture buffers and any
@@ -277,8 +277,8 @@ void span_collector_clear(Span_Collector *sc);
  * Resize a collector for a new active height.
  *
  * Follows the Evas high-water mark pattern: buffers grow via realloc when
- * @p h exceeds alloc_height, but never shrink.  When @p h is within
- * alloc_height, only the active height is updated — no allocation.
+ * @p h exceeds alloc_h, but never shrink.  When @p h is within
+ * alloc_h, only the active height is updated — no allocation.
  */
 void span_collector_resize(Span_Collector *sc, int h);
 

@@ -51,22 +51,22 @@
  * sc->textures array, avoiding a separate heap allocation and copy.
  *
  * @param tex     Pointer to the Span_Texture slot to initialise.
- * @param height  Canvas height — determines buffer row count.
+ * @param h       Canvas height — determines buffer row count.
  * @param stride  Bytes per row ((max_spans + 1) * 4).
  * @param x_min   Inclusive left edge of the x-range this texture covers.
  * @param x_max   Inclusive right edge of the x-range this texture covers.
  * @return        EINA_TRUE on success, EINA_FALSE on allocation failure.
  */
 static Eina_Bool
-_span_texture_init(Span_Texture *tex, int height, int stride, int x_min, int x_max)
+_span_texture_init(Span_Texture *tex, int h, int stride, int x_min, int x_max)
 {
    memset(tex, 0, sizeof(*tex));
 
-   if (height <= 0 || height > 16384) return EINA_FALSE;
+   if (h <= 0 || h > 16384) return EINA_FALSE;
 
-   tex->buffer = calloc(height, stride);
-   tex->span_counts = calloc(height, sizeof(int));
-   tex->last_x_end = calloc(height, sizeof(int));
+   tex->buffer = calloc(h, stride);
+   tex->span_counts = calloc(h, sizeof(int));
+   tex->last_x_end = calloc(h, sizeof(int));
    if (!tex->buffer || !tex->span_counts || !tex->last_x_end)
      {
         free(tex->buffer);
@@ -88,17 +88,17 @@ _span_texture_init(Span_Texture *tex, int height, int stride, int x_min, int x_m
 /* ------------------------------------------------------------------ */
 
 Span_Collector *
-span_collector_new(int height, int max_spans, Span_Data_Type type)
+span_collector_new(int h, int max_spans, Span_Data_Type type)
 {
    Span_Collector *sc;
 
-   if (height <= 0 || max_spans <= 0) return NULL;
+   if (h <= 0 || max_spans <= 0) return NULL;
 
    sc = calloc(1, sizeof(Span_Collector));
    if (!sc) return NULL;
 
-   sc->height       = height;
-   sc->alloc_height = height;
+   sc->h            = h;
+   sc->alloc_h      = h;
    sc->max_spans    = max_spans;
    sc->type      = type;
 
@@ -115,7 +115,7 @@ span_collector_new(int height, int max_spans, Span_Data_Type type)
      }
 
    /* Initialise the primary texture slot in place — no alloc+copy+free. */
-   if (!_span_texture_init(&sc->textures[0], height, sc->stride, 0, SPAN_TEXTURE_X_MAX_INITIAL))
+   if (!_span_texture_init(&sc->textures[0], h, sc->stride, 0, SPAN_TEXTURE_X_MAX_INITIAL))
      {
         free(sc->textures);
         free(sc);
@@ -135,8 +135,8 @@ span_collector_new(int height, int max_spans, Span_Data_Type type)
  * Resize a collector for a new active height.
  *
  * Follows the Evas high-water mark pattern (like pipe buffers and RLE
- * spans): buffers grow via realloc when h > alloc_height, but never
- * shrink.  When h <= alloc_height, only the active height is updated
+ * spans): buffers grow via realloc when h > alloc_h, but never
+ * shrink.  When h <= alloc_h, only the active height is updated
  * and the existing buffers are reused — no allocation at all.
  */
 void
@@ -146,9 +146,9 @@ span_collector_resize(Span_Collector *sc, int h)
 
    if (!sc || h <= 0) return;
 
-   if (sc->height == h) return;  /* no change at all */
+   if (sc->h == h) return;  /* no change at all */
 
-   sc->height = h;
+   sc->h = h;
 
    /* When active height changes, the GPU texture dimensions no longer
     * match — mark dirty so the upload path recreates or resizes it. */
@@ -159,7 +159,7 @@ span_collector_resize(Span_Collector *sc, int h)
    }
 
    /* Common case: h fits within existing allocation — no realloc needed. */
-   if (h <= sc->alloc_height)
+   if (h <= sc->alloc_h)
      return;
 
    /* Growth needed: realloc all per-row arrays in each texture slot. */
@@ -176,11 +176,11 @@ span_collector_resize(Span_Collector *sc, int h)
         if (!new_buf || !new_counts || !new_last)
           {
              /* OOM: keep old size, the collector will clip spans to
-              * alloc_height via the height field. */
+              * alloc_h via the h field. */
              if (new_buf) tex->buffer = new_buf;
              if (new_counts) tex->span_counts = new_counts;
              if (new_last) tex->last_x_end = new_last;
-             sc->height = sc->alloc_height;
+             sc->h = sc->alloc_h;
              return;
           }
 
@@ -189,15 +189,15 @@ span_collector_resize(Span_Collector *sc, int h)
         tex->last_x_end = new_last;
 
         /* Zero the newly added rows only. */
-        memset(tex->buffer + (size_t)sc->alloc_height * sc->stride,
-               0, (size_t)(h - sc->alloc_height) * sc->stride);
-        memset(tex->span_counts + sc->alloc_height,
-               0, (size_t)(h - sc->alloc_height) * sizeof(int));
-        memset(tex->last_x_end + sc->alloc_height,
-               0, (size_t)(h - sc->alloc_height) * sizeof(int));
+        memset(tex->buffer + (size_t)sc->alloc_h * sc->stride,
+               0, (size_t)(h - sc->alloc_h) * sc->stride);
+        memset(tex->span_counts + sc->alloc_h,
+               0, (size_t)(h - sc->alloc_h) * sizeof(int));
+        memset(tex->last_x_end + sc->alloc_h,
+               0, (size_t)(h - sc->alloc_h) * sizeof(int));
      }
 
-   sc->alloc_height = h;
+   sc->alloc_h = h;
 }
 
 void
@@ -224,7 +224,7 @@ span_collector_clear(Span_Collector *sc)
 {
    if (!sc) return;
 
-   /* Only zero sc->height rows (the active region), not alloc_height.
+   /* Only zero sc->h rows (the active region), not alloc_h.
     * This is safe because:
     * - span_collector_resize zeros newly added rows when growing
     * - _collect_spans_solid memsets the tail of each row (from the last
@@ -241,14 +241,14 @@ span_collector_clear(Span_Collector *sc)
            Span_Texture *tex = &sc->textures[i];
            int           y;
 
-           memset(tex->span_counts, 0, sc->height * sizeof(int));
-           memset(tex->last_x_end, 0, sc->height * sizeof(int));
+           memset(tex->span_counts, 0, sc->h * sizeof(int));
+           memset(tex->last_x_end, 0, sc->h * sizeof(int));
 
            /* Zero byte[1] (len) of entry 0 on every row so that rows
             * which receive no spans this frame have a valid sentinel.
             * _collect_spans_solid memsets the full tail for rows it touches,
             * so this 4-byte-stride write covers only the uncollected rows. */
-           for (y = 0; y < sc->height; y++)
+           for (y = 0; y < sc->h; y++)
              tex->buffer[(size_t)y * sc->stride + 1] = 0;  /* byte[1] = len = 0 */
 
            tex->dirty = EINA_FALSE;
@@ -447,11 +447,11 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
    }
 
    /* Initialise the new right-half texture slot in place.
-    * Allocate at alloc_height (high-water mark), not the current active
-    * height.  span_collector_clear memsets alloc_height rows on ALL
-    * textures when the active height grows back within alloc_height. */
+    * Allocate at alloc_h (high-water mark), not the current active
+    * height.  span_collector_clear memsets alloc_h rows on ALL
+    * textures when the active height grows back within alloc_h. */
    if (!_span_texture_init(&sc->textures[sc->texture_count],
-                           sc->alloc_height, sc->stride, split_x, old_x_max))
+                           sc->alloc_h, sc->stride, split_x, old_x_max))
      {
         /* realloc already grew the array; shrink the logical count back down.
          * The uninitialized slot at sc->texture_count is harmless since
@@ -481,7 +481,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
     *            gap is relative to the same origin used during collection.
     * right_last tracks the end of the last span written to the right texture;
     *            initialised to split_x (the x_min of the new right texture). */
-   for (y = 0; y < sc->height; y++)
+   for (y = 0; y < sc->h; y++)
      {
         int src_count  = old_tex->span_counts[y];
         int left_idx   = 0;
@@ -722,7 +722,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
         sx = spans->x + sd->offx;
 
         /* Skip spans outside the canvas. */
-        if (y < 0 || y >= sc->height)
+        if (y < 0 || y >= sc->h)
           {
              spans++;
              count--;

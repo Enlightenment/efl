@@ -2747,7 +2747,7 @@ eng_ector_surface_cache_drop(void *engine, void *key)
  * @return           Span_Collector* for this shape, or NULL on failure.
  */
 static void *
-_span_collector_alloc(void *data, int height,
+_span_collector_alloc(void *data, int h,
                       Span_Data_Type type, Eina_Bool is_stroke)
 {
    Ector_Software_Surface_Data *pd = (Ector_Software_Surface_Data *)data;
@@ -2787,7 +2787,7 @@ _span_collector_alloc(void *data, int height,
    /* Create collector for an empty slot; reuse+clear an existing one. */
    if (!(*arr_ptr)[idx])
      {
-        (*arr_ptr)[idx] = span_collector_new(height,
+        (*arr_ptr)[idx] = span_collector_new(h,
                                              SPAN_COLLECTOR_DEFAULT_MAX_SPANS,
                                              type);
         if (!(*arr_ptr)[idx]) return NULL;
@@ -2795,7 +2795,7 @@ _span_collector_alloc(void *data, int height,
    else
      {
         Span_Collector *sc = (Span_Collector *)(*arr_ptr)[idx];
-        span_collector_resize(sc, height);
+        span_collector_resize(sc, h);
         span_collector_clear(sc);
      }
 

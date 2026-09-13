@@ -1394,7 +1394,7 @@ _span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
 typedef struct
 {
    Span_Texture *tex;
-   int           width;   /* columns the shader will actually read */
+   int           w;       /* columns the shader will actually read */
    int           rows;
    int           stride;  /* source row stride in bytes */
    int           max_spans;
@@ -1402,11 +1402,11 @@ typedef struct
 } Span_Page_Entry;
 
 static int
-_entry_cmp_width_desc(const void *a, const void *b)
+_entry_cmp_w_desc(const void *a, const void *b)
 {
    const Span_Page_Entry *x = a, *y = b;
 
-   if (x->width != y->width) return y->width - x->width;
+   if (x->w != y->w) return y->w - x->w;
    return 0;
 }
 
@@ -1428,10 +1428,10 @@ span_page_upload(void *gc_ptr, Span_Page *page,
    /* Gather every Span_Texture of the pass. */
    SPAN_PAGE_FOREACH(fills, nfills, strokes, nstrokes, sc, tex,
      {
-        int wid = sc->actual_max_spans + 1;
+        int w = sc->actual_max_spans + 1;
 
-        if (wid > sc->max_spans) wid = sc->max_spans;
-        if (wid < 1) wid = 1;
+        if (w > sc->max_spans) w = sc->max_spans;
+        if (w < 1) w = 1;
 
         if (n == cap)
           {
@@ -1446,15 +1446,15 @@ span_page_upload(void *gc_ptr, Span_Page *page,
           }
 
         ent[n].tex       = tex;
-        ent[n].width     = wid;
-        ent[n].rows      = sc->height;
+        ent[n].w         = w;
+        ent[n].rows      = sc->h;
         ent[n].stride    = sc->stride;
         ent[n].max_spans = sc->max_spans;
         ent[n].counts    = tex->span_counts;
         n++;
 
-        total_h += sc->height;
-        if (wid > page_w) page_w = wid;
+        total_h += sc->h;
+        if (w > page_w) page_w = w;
      });
 
    if (!n || total_h <= 0) goto done;
@@ -1463,13 +1463,13 @@ span_page_upload(void *gc_ptr, Span_Page *page,
     * sharing an upload also share its width - putting a 3-column shape in
     * the same rectangle as a 40-column one would upload thirteen times the
     * rows it needs.  Sorting lets similar widths group together below. */
-   qsort(ent, (size_t)n, sizeof(*ent), _entry_cmp_width_desc);
+   qsort(ent, (size_t)n, sizeof(*ent), _entry_cmp_w_desc);
 
    for (i = 0; i < n; i++)
      {
         hash = hash * 31 + ent[i].tex->rolling_hash;
         hash = hash * 31 + (uint32_t)ent[i].rows;
-        hash = hash * 31 + (uint32_t)ent[i].width;
+        hash = hash * 31 + (uint32_t)ent[i].w;
      }
 
    if (!_span_page_ensure(page, gc, page_w, total_h)) goto done;
@@ -1510,12 +1510,12 @@ span_page_upload(void *gc_ptr, Span_Page *page,
    i = 0;
    while (i < n)
      {
-        int      g_start = i, g_w = ent[i].width, g_rows = 0;
+        int      g_start = i, g_w = ent[i].w, g_rows = 0;
         size_t   row_bytes, need;
         uint8_t *packed;
         int      j, at;
 
-        while (i < n && ent[i].width * 2 >= g_w)
+        while (i < n && ent[i].w * 2 >= g_w)
           {
              g_rows += ent[i].rows;
              i++;

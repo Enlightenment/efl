@@ -95,7 +95,7 @@ typedef enum _Span_Data_Type {
  * Set on Span_Data by eng_ector_begin(); called by draw_rle_data() for each
  * shape.  Keeps all span_collector_* calls inside the engine module (the only
  * translation unit that includes evas_ector_gl_span.h). */
-typedef void *(*Span_Collector_Alloc_Fn)(void *data, int height,
+typedef void *(*Span_Collector_Alloc_Fn)(void *data, int h,
                                          Span_Data_Type type,
                                          Eina_Bool is_stroke);
 
