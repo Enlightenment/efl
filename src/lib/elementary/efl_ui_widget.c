@@ -5850,6 +5850,20 @@ _efl_ui_property_bind_get(Eo *obj, Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound
    if (!pd->properties.model) return ;
 
    value = efl_model_property_get(pd->properties.model, prop->property);
+
+   /* A model with nothing to give says so with an error: EAGAIN while the
+      value is still being fetched, or "no such property". There is nothing to
+      show for that. Setting the widget's property from it would set it from
+      the error's message -- and asking for a string gets one by converting,
+      which is its own trouble (see eina_value_string_convert). Leave the
+      widget as it is; the binding is subscribed and will hear the value when
+      there is one. */
+   if (!value || (eina_value_type_get(value) == EINA_VALUE_TYPE_ERROR))
+     {
+        eina_value_free(value);
+        return;
+     }
+
    target = prop->part ? efl_part(obj, prop->part) : obj;
 
    err = efl_property_reflection_set(target, prop->key, eina_value_reference_copy(value));
