@@ -6051,6 +6051,18 @@ _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
      {
         pd->properties.model_lookup = eina_hash_stringshared_new(_efl_ui_property_bind_free);
         pd->properties.view_lookup = eina_hash_stringshared_new(NULL);
+
+        /* Ask again now that there is something to refresh.
+           The registration above ran before these existed, and it gives up
+           when they do not: there is no point listening for a property to
+           change when nothing is bound to it. That makes the first binding on
+           a widget the one that subscribes to nothing -- so a widget with
+           exactly one bound property never hears the value arrive, while the
+           same widget with two works, because the second binding registers
+           what the first one set up. A model that answers from a thread or a
+           future has nothing to give at the moment of binding, which is to
+           say the first binding was never refreshed at all. */
+        _efl_ui_widget_model_register(widget, pd);
      }
 
    prop = calloc(1, sizeof (Efl_Ui_Property_Bound));

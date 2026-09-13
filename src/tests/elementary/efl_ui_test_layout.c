@@ -243,6 +243,44 @@ EFL_START_TEST(efl_ui_layout_test_freeze)
 }
 EFL_END_TEST
 
+/* One binding is as good as two.
+ *
+ * A widget subscribes to its model when something is bound to it, and the
+ * subscription used to be attempted before the first binding was recorded --
+ * so the first binding on a widget listened to nothing, and a widget with
+ * exactly one bound property never heard the value arrive. Two bindings
+ * worked, because the second registered what the first had set up. Any model
+ * that answers later than it is asked, which is every asynchronous one, was
+ * therefore never read at all through a single binding.
+ */
+EFL_START_TEST(efl_ui_layout_test_property_bind_alone)
+{
+   Evas_Object *win, *one, *two;
+   Efl_Generic_Model *model;
+   Eina_Value v;
+   int spins;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+
+   one = efl_add(EFL_UI_BUTTON_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   efl_ui_property_bind(one, "text", "greeting");
+
+   two = efl_add(EFL_UI_BUTTON_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   efl_ui_property_bind(two, "text", "greeting");
+   efl_ui_property_bind(two, "tooltip", "greeting");
+
+   /* Set after binding, which is the order an asynchronous model imposes. */
+   v = eina_value_string_init("hello");
+   efl_model_property_set(model, "greeting", &v);
+
+   for (spins = 0; spins < 200; spins++) ecore_main_loop_iterate();
+
+   ck_assert_str_eq(efl_text_get(two) ?: "", "hello");
+   ck_assert_str_eq(efl_text_get(one) ?: "", "hello");
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_test_property_bind);
@@ -253,6 +291,7 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_api_ordering);
    tcase_add_test(tc, efl_ui_layout_test_callback);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_provider);
+   tcase_add_test(tc, efl_ui_layout_test_property_bind_alone);
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
 }
