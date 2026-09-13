@@ -177,11 +177,17 @@ _model_child_remove(Efl_Io_Model *obj, Efl_Io_Model_Data *pd, Eina_Stringshare *
    cevt.index = i;
    cevt.child = mi->object;
 
+   /* Out of the list before anybody is told about it.
+    *
+    * Being told is when a view asks for a slice -- a collection view flushes
+    * its pending batch from inside the callback -- and a slice served off a
+    * list that still holds the entry, against a count that no longer does,
+    * walks past the end of it. Announcing a removal that has already happened
+    * is the only order in which the model is consistent while it speaks. */
+   pd->files = eina_list_remove_list(pd->files, l);
+
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
-
-   // Remove the entry from the files list
-   pd->files = eina_list_remove_list(pd->files, l);
 
    // This will only trigger the data destruction if no object is referencing them.
    _efl_io_model_info_free(mi, EINA_FALSE);

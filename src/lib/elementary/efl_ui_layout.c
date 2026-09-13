@@ -2396,6 +2396,12 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
                        .success_type = EINA_VALUE_TYPE_ARRAY,
                        .data = request,
                        .free = _clean_request);
+
+   /* Remembered, because it is the only handle on a request that has not come
+      back yet. Without this the tracking is freed with the widget while the
+      request is still out, and when the object's pending futures are cancelled
+      -- later in the same invalidate -- _clean_request writes into it. */
+   tracking->in_flight = f;
 }
 
 static void
