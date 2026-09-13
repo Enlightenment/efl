@@ -956,7 +956,14 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
    if (rasterizer->fill_data.span_collector_alloc)
      {
         Span_Data *sd = &rasterizer->fill_data;
-        int ch = sd->raster_buffer ? (int)sd->raster_buffer->generic->h : 64;
+        int ch;
+
+        /* raster_buffer is set by the surface constructor and
+         * eng_ector_begin() sizes it before installing the alloc callback,
+         * so generic is always valid here.  Bail out rather than guess a
+         * height: a wrong one silently clips every span below it. */
+        if (!sd->raster_buffer->generic) return;
+        ch = (int)sd->raster_buffer->generic->h;
 
         /* Allocate or reuse a collector for this shape via the engine
          * callback (keeps span_collector_* calls out of this module). */
