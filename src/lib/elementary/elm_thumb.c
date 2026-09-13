@@ -403,15 +403,28 @@ _thumbnailing_available_cb(void *data,
 }
 
 static Eina_Bool _elm_need_ethumb = EINA_FALSE;
+static Eina_Bool _elm_ethumb_tried = EINA_FALSE;
+static Eina_Bool _elm_ethumb_connecting = EINA_FALSE;
 static void _on_die_cb(void *, Ethumb_Client *);
 
+/* The client is stored here, by the callback, and never from the return of
+   ethumb_client_connect().
+
+   A connection that fails takes the client with it -- ethumb_client frees it
+   as it reports the failure -- and the report can arrive before the call that
+   started it has returned. Storing the returned handle then writes a pointer
+   to freed memory over the NULL this just set, and the next thing to
+   disconnect it frees it twice. */
 static void
 _connect_cb(void *data EINA_UNUSED,
             Ethumb_Client *c,
             Eina_Bool success)
 {
+   _elm_ethumb_connecting = EINA_FALSE;
+
    if (success)
      {
+        _elm_ethumb_client = c;
         ethumb_client_on_server_die_callback_set(c, _on_die_cb, NULL, NULL);
         _elm_ethumb_connected = EINA_TRUE;
         ecore_event_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, NULL, NULL, NULL);
@@ -431,7 +444,10 @@ _on_die_cb(void *data EINA_UNUSED,
      }
    _elm_ethumb_connected = EINA_FALSE;
    if (pending_request > 0)
-     _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
+     {
+        _elm_ethumb_connecting = EINA_TRUE;
+        ethumb_client_connect(_connect_cb, NULL, NULL);
+     }
 }
 
 static void
@@ -441,7 +457,13 @@ _thumb_show(Elm_Thumb_Data *sd)
    evas_object_show(wd->resize_obj);
 
    if (!_elm_ethumb_client)
-     _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
+     {
+        if (!_elm_ethumb_connecting)
+          {
+             _elm_ethumb_connecting = EINA_TRUE;
+             ethumb_client_connect(_connect_cb, NULL, NULL);
+          }
+     }
    else if (elm_thumb_ethumb_client_connected_get())
      {
         _thumb_start(sd);
@@ -488,9 +510,42 @@ _elm_thumb_efl_gfx_entity_visible_set(Eo *obj, Elm_Thumb_Data *sd, Eina_Bool vis
    ELM_SAFE_FREE(sd->eeh, ecore_event_handler_del);
 }
 
+/* The one client, and everything that wants a thumbnail shares it.
+ *
+ * It is connected the first time something asks and taken down when
+ * elementary is, rather than with whatever asked: ethumb_client_init and
+ * shutdown cycle eldbus underneath, so a widget that inits and shuts down
+ * around its own lifetime pulls the connection out from under every other
+ * widget still using it. Once, then, and only once.
+ *
+ * A connection that could not be made is not tried again either. There is no
+ * ethumbd on most of the places this toolkit goes, and a caller that asks per
+ * file would otherwise ask the bus per file.
+ */
+void
+_elm_thumb_ethumb_client_ensure(void)
+{
+   if (_elm_ethumb_client || _elm_ethumb_tried) return;
+   _elm_ethumb_tried = EINA_TRUE;
+
+   elm_need_ethumb();
+   _elm_ethumb_connecting = EINA_TRUE;
+   ethumb_client_connect(_connect_cb, NULL, NULL);
+}
+
+/* The client once it is usable, and NULL until then: connecting takes a turn
+   of the loop, and there is nothing to ask before it is done. */
+Ethumb_Client *
+_elm_thumb_ethumb_client_get(void)
+{
+   return _elm_ethumb_connected ? _elm_ethumb_client : NULL;
+}
+
 void
 _elm_unneed_ethumb(void)
 {
+   _elm_ethumb_tried = EINA_FALSE;
+   _elm_ethumb_connecting = EINA_FALSE;
    if (!_elm_need_ethumb) return;
    _elm_need_ethumb = EINA_FALSE;
 

@@ -722,6 +722,8 @@ Eina_Bool            _elm_widget_top_win_focused_get(const Evas_Object *obj);
 void                 _elm_unneed_systray(void);
 void                 _elm_unneed_sys_notify(void);
 void                 _elm_unneed_ethumb(void);
+void                 _elm_thumb_ethumb_client_ensure(void);
+Ethumb_Client       *_elm_thumb_ethumb_client_get(void);
 void                 _elm_unneed_web(void);
 
 void                 _elm_rescale(void);
