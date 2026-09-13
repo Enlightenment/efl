@@ -208,19 +208,55 @@ eio_associate_free(void *data)
   _eio_pool_free(&associate_pool, tmp);
 }
 
+/* Hands a batch of results over to the main loop, when it is full or when it
+ * is old -- whichever comes first.
+ *
+ * Full matters as much as old. A batch used to be bounded only by time, and
+ * three milliseconds of reading a directory out of a warm page cache is a lot
+ * of entries: measured at eighteen hundred, and every one of them is an
+ * Eina_File_Direct_Info, which carries a path buffer of EINA_PATH_MAX and so
+ * weighs eight kilobytes. Fourteen megabytes in one batch.
+ *
+ * That is what made eio_memory_burst_limit_set() unusable. The limit was
+ * checked while the thread still held the batch it had not handed over, so a
+ * limit smaller than one batch stopped the thread on memory only that thread
+ * could release. Which limit was safe therefore depended on how fast the
+ * filesystem answered, which no caller can know -- so the limit was left off,
+ * and a large directory was read as fast as it could be into as much memory
+ * as that took.
+ *
+ * Bounded by count, a batch is EIO_PACKET_COUNT entries and no more.
+ */
 Eina_List *
 eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
 {
    double current;
 
+   if (eina_list_count(pack) >= EIO_PACKET_COUNT)
+     goto send;
+
    current = ecore_time_get();
    if (current - *start > EIO_PACKED_TIME)
-     {
-        *start = current;
-        ecore_thread_feedback(thread, pack);
-        return NULL;
-     }
+     goto send;
 
+   if (memory_pool_limit > 0 &&
+       memory_pool_usage > memory_pool_limit)
+     goto send;
+
+   return pack;
+
+ send:
+   *start = ecore_time_get();
+   if (pack) ecore_thread_feedback(thread, pack);
+
+   /* Waited on with nothing in hand.
+    *
+    * What frees this memory is the main loop working through batches that
+    * have been handed to it, and a batch this thread is still holding is one
+    * the main loop cannot reach. Waiting while holding it means waiting for
+    * the only thing that could end the wait -- so the whole listing stops,
+    * for ever, and the process does not exit. The batch goes first, then the
+    * wait, and then there is nothing held that the main loop needs. */
    if (memory_pool_limit > 0 &&
        memory_pool_usage > memory_pool_limit)
      {
@@ -231,7 +267,7 @@ eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
         eina_lock_release(&(memory_pool_mutex));
      }
 
-   return pack;
+   return NULL;
 }
 
 void *
