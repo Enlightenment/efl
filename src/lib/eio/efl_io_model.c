@@ -155,6 +155,43 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    return EINA_TRUE;
 }
 
+/* The child model for one entry of the listing, made if it has not been asked
+ * for before.
+ *
+ * The entry points weakly at the child so that asking again hands out the same
+ * one, and so that the entry stops pointing at it when it goes. The weak
+ * reference is added here with the object rather than on every slice: the
+ * extra ones a repeated slice would add are not taken away when the child is
+ * invalidated, and each of them writes into the entry long after it has been
+ * freed.
+ *
+ * The reference that comes back belongs to the caller. */
+static Eo *
+_efl_io_model_child_build(Eo *obj, Efl_Io_Model_Data *pd, Eina_List *ls)
+{
+   Efl_Io_Model_Info *info = eina_list_data_get(ls);
+   Efl_Io_Model_Data *child_data = NULL;
+
+   info->parent_ref = EINA_TRUE;
+
+   if (info->object) return efl_ref(info->object);
+
+   // Little trick here, setting internal data before finalize
+   info->object = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
+                              efl_loop_model_volatile_make(efl_added),
+                              child_data = efl_data_scope_get(efl_added, EFL_IO_MODEL_CLASS),
+                              child_data->info = info,
+                              child_data->path = eina_stringshare_ref(info->path),
+                              child_data->parent = ls,
+                              // NOTE: We are assuming here that the parent model will outlive all its children
+                              child_data->filter.cb = pd->filter.cb,
+                              child_data->filter.data = pd->filter.data);
+
+   efl_wref_add(info->object, &info->object);
+
+   return info->object;
+}
+
 static void
 _model_child_remove(Efl_Io_Model *obj, Efl_Io_Model_Data *pd, Eina_Stringshare *path)
 {
@@ -175,7 +212,11 @@ _model_child_remove(Efl_Io_Model *obj, Efl_Io_Model_Data *pd, Eina_Stringshare *
      return;
 
    cevt.index = i;
-   cevt.child = mi->object;
+   /* The child goes with the event, made now if nothing had asked for it yet.
+      The index cannot stand in for it: by the time anybody is told, the entry
+      is out of the list and that index is somebody else's. This is the last
+      moment the removed child can be handed to anyone, so hand it over. */
+   cevt.child = _efl_io_model_child_build(obj, pd, l);
 
    /* Out of the list before anybody is told about it.
     *
@@ -188,6 +229,8 @@ _model_child_remove(Efl_Io_Model *obj, Efl_Io_Model_Data *pd, Eina_Stringshare *
 
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_REMOVED, &cevt);
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
+
+   efl_unref(cevt.child);
 
    // This will only trigger the data destruction if no object is referencing them.
    _efl_io_model_info_free(mi, EINA_FALSE);
@@ -1028,37 +1071,11 @@ _efl_io_model_efl_model_children_slice_get(Eo *obj, Efl_Io_Model_Data *pd,
 
    while (count > 0)
      {
-        Efl_Io_Model_Info *info = eina_list_data_get(ls);
-        Efl_Io_Model_Data *child_data = NULL;
+        Eo *child = _efl_io_model_child_build(obj, pd, ls);
 
-        info->parent_ref = EINA_TRUE;
+        eina_value_array_append(&array, child);
 
-        if (info->object == NULL)
-          {
-             // Little trick here, setting internal data before finalize
-             info->object = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
-                                        efl_loop_model_volatile_make(efl_added),
-                                        child_data = efl_data_scope_get(efl_added, EFL_IO_MODEL_CLASS),
-                                        child_data->info = info,
-                                        child_data->path = eina_stringshare_ref(info->path),
-                                        child_data->parent = ls,
-                                        // NOTE: We are assuming here that the parent model will outlive all its children
-                                        child_data->filter.cb = pd->filter.cb,
-                                        child_data->filter.data = pd->filter.data);
-
-             /* The entry points weakly at the child so that a later slice
-                hands out the same one, and so that the entry stops pointing
-                at it when it goes. Added here with the object rather than on
-                every slice: the extra ones a repeated slice would add are
-                not taken away when the child is invalidated, and each of them
-                writes into the entry long after it has been freed. */
-             efl_wref_add(info->object, &info->object);
-          }
-        else
-          efl_ref(info->object);
-        eina_value_array_append(&array, info->object);
-
-        efl_unref(info->object);
+        efl_unref(child);
 
         count--;
         ls = eina_list_next(ls);
