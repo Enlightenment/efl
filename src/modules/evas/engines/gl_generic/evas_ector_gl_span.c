@@ -62,7 +62,7 @@ _span_texture_init(Span_Texture *tex, int h, int stride, int x_min, int x_max)
 {
    memset(tex, 0, sizeof(*tex));
 
-   if (h <= 0 || h > 16384) return EINA_FALSE;
+   if ((h <= 0) || (h > 16384)) return EINA_FALSE;
 
    tex->buffer = calloc(h, stride);
    tex->span_counts = calloc(h, sizeof(int));
@@ -92,7 +92,7 @@ span_collector_new(int h, int max_spans, Span_Data_Type type)
 {
    Span_Collector *sc;
 
-   if (h <= 0 || max_spans <= 0) return NULL;
+   if ((h <= 0) || (max_spans <= 0)) return NULL;
 
    sc = calloc(1, sizeof(Span_Collector));
    if (!sc) return NULL;
@@ -144,7 +144,7 @@ span_collector_resize(Span_Collector *sc, int h)
 {
    int i;
 
-   if (!sc || h <= 0) return;
+   if (!sc || (h <= 0)) return;
 
    if (sc->h == h) return;  /* no change at all */
 
@@ -189,7 +189,7 @@ span_collector_resize(Span_Collector *sc, int h)
         tex->last_x_end = new_last;
 
         /* Zero the newly added rows only. */
-        memset(tex->buffer + (size_t)sc->alloc_h * sc->stride,
+        memset(tex->buffer + ((size_t)sc->alloc_h * sc->stride),
                0, (size_t)(h - sc->alloc_h) * sc->stride);
         memset(tex->span_counts + sc->alloc_h,
                0, (size_t)(h - sc->alloc_h) * sizeof(int));
@@ -249,7 +249,7 @@ span_collector_clear(Span_Collector *sc)
             * _collect_spans_solid memsets the full tail for rows it touches,
             * so this 4-byte-stride write covers only the uncollected rows. */
            for (y = 0; y < sc->h; y++)
-             tex->buffer[(size_t)y * sc->stride + 1] = 0;  /* byte[1] = len = 0 */
+             tex->buffer[((size_t)y * sc->stride) + 1] = 0;  /* byte[1] = len = 0 */
 
            tex->dirty = EINA_FALSE;
            tex->rolling_hash = 2166136261u;  /* seed */
@@ -340,12 +340,12 @@ _find_split_x(Span_Texture *tex, int y, int stride, int bytes_per_span)
         abs_x += gap;
         /* Skip gap extender entries (cov==0 && len==1): advance position
          * but do not count them when computing the midpoint average. */
-        if (cov == 0 && len == 1)
+        if ((cov == 0) && (len == 1))
           {
              abs_x += len;
              continue;
           }
-        sum_x += abs_x + len / 2;
+        sum_x += (abs_x + (len / 2));
         real_count++;
         abs_x += len;
      }
@@ -373,9 +373,9 @@ _emit_gap_extenders(uint8_t *row_buf, int idx, int max_spans,
 {
    int written = 0;
 
-   while (*gap_ptr > 255 && (idx + written) < max_spans)
+   while ((*gap_ptr > 255) && ((idx + written) < max_spans))
      {
-        _write_span_entry(row_buf + (size_t)(idx + written) * 4,
+        _write_span_entry(row_buf + ((size_t)(idx + written) * 4),
                           0, 1, 255);
         *gap_ptr -= 256;  /* 255 gap + 1 len */
         written++;
@@ -430,7 +430,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
    split_x = _find_split_x(old_tex, overflow_y, sc->stride, bytes_per_span);
 
    /* Guard against degenerate split points that would produce an empty half. */
-   if (split_x <= old_tex->x_min || split_x >= old_tex->x_max)
+   if ((split_x <= old_tex->x_min) || (split_x >= old_tex->x_max))
      return EINA_FALSE;
 
    /* Save x_max before realloc potentially moves the textures array. */
@@ -490,12 +490,12 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
         int left_last  = old_tex->x_min;
         int right_last = split_x;
 
-        uint8_t *left_row  = old_tex->buffer + (size_t)y * sc->stride;
-        uint8_t *right_row = new_tex->buffer + (size_t)y * sc->stride;
+        uint8_t *left_row  = old_tex->buffer + ((size_t)y * sc->stride);
+        uint8_t *right_row = new_tex->buffer + ((size_t)y * sc->stride);
 
         for (i = 0; i < src_count; i++)
           {
-             uint8_t *src_entry = left_row + (size_t)i * bytes_per_span;
+             uint8_t *src_entry = left_row + ((size_t)i * bytes_per_span);
              int gap = src_entry[2];
              int len = src_entry[1];
              int cov = src_entry[0];
@@ -504,7 +504,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
              abs_x += gap;  /* start of this span in absolute coords */
 
              /* Skip source gap extender entries — just advance position. */
-             if (cov == 0 && len == 1)
+             if ((cov == 0) && (len == 1))
                {
                   abs_x += len;
                   continue;
@@ -522,7 +522,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                                                      sc->stride, &new_gap);
                      if (left_idx < sc->max_spans)
                        {
-                          _write_span_entry(left_row + (size_t)left_idx * 4,
+                          _write_span_entry(left_row + ((size_t)left_idx * 4),
                                             cov, len, new_gap);
                           left_idx++;
                           left_last = span_end;
@@ -537,7 +537,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                                                       sc->stride, &new_gap);
                      if (right_idx < sc->max_spans)
                        {
-                          _write_span_entry(right_row + (size_t)right_idx * 4,
+                          _write_span_entry(right_row + ((size_t)right_idx * 4),
                                             cov, len, new_gap);
                           right_idx++;
                           right_last = span_end;
@@ -557,7 +557,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                                                         sc->stride, &new_gap);
                         if (left_idx < sc->max_spans)
                           {
-                             _write_span_entry(left_row + (size_t)left_idx * 4,
+                             _write_span_entry(left_row + ((size_t)left_idx * 4),
                                                cov, left_len, new_gap);
                              left_idx++;
                              left_last = split_x;
@@ -567,7 +567,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                      /* Right fragment starts exactly at split_x → gap = 0. */
                      if (right_idx < sc->max_spans)
                        {
-                          _write_span_entry(right_row + (size_t)right_idx * 4,
+                          _write_span_entry(right_row + ((size_t)right_idx * 4),
                                             cov, right_len, 0);
                           right_idx++;
                           right_last = span_end;
@@ -588,10 +588,10 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
          * The collection callback's row-change memset won't cover these
          * since the split happens mid-collection. */
         if (left_idx < sc->max_spans)
-          memset(left_row + (size_t)left_idx * 4, 0,
+          memset(left_row + ((size_t)left_idx * 4), 0,
                  (size_t)(sc->max_spans + 1 - left_idx) * 4);
         if (right_idx < sc->max_spans)
-          memset(right_row + (size_t)right_idx * 4, 0,
+          memset(right_row + ((size_t)right_idx * 4), 0,
                  (size_t)(sc->max_spans + 1 - right_idx) * 4);
      }
 
@@ -625,7 +625,7 @@ _find_texture_for_x(Span_Collector *sc, int x)
 
    for (i = 0; i < sc->texture_count; i++)
      {
-        if (x >= sc->textures[i].x_min && x <= sc->textures[i].x_max)
+        if ((x >= sc->textures[i].x_min) && (x <= sc->textures[i].x_max))
           return i;
      }
    return 0;
@@ -722,7 +722,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
         sx = spans->x + sd->offx;
 
         /* Skip spans outside the canvas. */
-        if (y < 0 || y >= sc->h)
+        if ((y < 0) || (y >= sc->h))
           {
              spans++;
              count--;
@@ -740,7 +740,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
          * memset is nearly free.
          *
          * Only fires when y actually changes — not once per span. */
-        if (y != sc->flush_prev_y && sc->flush_prev_y >= 0 && sc->flush_prev_ti >= 0)
+        if ((y != sc->flush_prev_y) && (sc->flush_prev_y >= 0) && (sc->flush_prev_ti >= 0))
           _flush_row_tail(sc, sc->flush_prev_ti, sc->flush_prev_y);
 
         ti  = (sc->texture_count == 1) ? 0 : _find_texture_for_x(sc, sx);
@@ -777,7 +777,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
            /* Compute gap relative to x_min so split textures don't
             * overflow the 8-bit gap field.  The shader adds x_min to
             * its sx accumulator to recover absolute coordinates. */
-           int ref = tex->last_x_end[y] > tex->x_min
+           int ref = (tex->last_x_end[y] > tex->x_min)
                    ? tex->last_x_end[y] : tex->x_min;
            int gap = sx - ref;
            int remaining = spans->len;
@@ -793,19 +793,19 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
             * accumulator by 256 per entry without drawing anything.
             * This preserves absolute x positioning for wide VG objects
             * where spans can be hundreds of pixels apart. */
-           while (gap > 255 && idx < sc->max_spans)
+           while ((gap > 255) && (idx < sc->max_spans))
              {
                 entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
                 entry[0] = 0;              /* cov = 0 → invisible */
                 entry[1] = 1;              /* len = 1 → advances x by 1 */
                 entry[2] = 255;            /* gap = 255 → advances x by 255 */
                 entry[3] = 0;
-                tex->rolling_hash = tex->rolling_hash * 31 + *((const uint32_t *)entry);
+                tex->rolling_hash = (tex->rolling_hash * 31) + *((const uint32_t *)entry);
                 gap -= 256;                /* 255 gap + 1 len = 256 pixels */
                 idx++;
              }
 
-           while (remaining > 0 && idx < sc->max_spans)
+           while ((remaining > 0) && (idx < sc->max_spans))
              {
                 int chunk = (remaining > 255) ? 255 : remaining;
                 int g = (cur_x == sx) ? gap : 0;
@@ -824,7 +824,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
                    entry[1] = (uint8_t)chunk;  /* byte1 → G in BGRA */
                    entry[2] = (uint8_t)g;      /* byte2 → R in BGRA */
                    entry[3] = 0;               /* byte3 → A in BGRA */
-                   tex->rolling_hash = tex->rolling_hash * 31 + v;
+                   tex->rolling_hash = (tex->rolling_hash * 31) + v;
                 }
 
                 cur_x += chunk;
@@ -850,7 +850,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
     * The row-change path above fires only when y changes, so the final
     * row (or the only row when the shape spans a single scanline) is
     * handled here. */
-   if (sc->flush_prev_y >= 0 && sc->flush_prev_ti >= 0)
+   if ((sc->flush_prev_y >= 0) && (sc->flush_prev_ti >= 0))
      _flush_row_tail(sc, sc->flush_prev_ti, sc->flush_prev_y);
 }
 
@@ -979,7 +979,7 @@ _collect_spans_composite(int count, const SW_FT_Span *spans, void *user_data)
     * does not, so we must set it here unconditionally. */
    sc->inv = sd->inv;
 
-   if (sc->type == LinearGradient || sc->type == RadialGradient)
+   if ((sc->type == LinearGradient) || (sc->type == RadialGradient))
      _collect_spans_gradient(count, spans, user_data);
    else
      _collect_spans_solid(count, spans, user_data);

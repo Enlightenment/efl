@@ -127,8 +127,8 @@ _find_identity(Span_Grad_Atlas *a, void *grad_id, uint32_t version)
 {
    for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
      if (a->rows[i].occupied &&
-         a->rows[i].grad_id == grad_id &&
-         a->rows[i].version == version)
+         (a->rows[i].grad_id == grad_id) &&
+         (a->rows[i].version == version))
        return i;
    return -1;
 }
@@ -142,7 +142,7 @@ _find_by_content(Span_Grad_Atlas *a, uint32_t hash, const uint8_t *bytes)
      {
         if (!a->rows[i].occupied) continue;
         if (a->rows[i].hash != hash) continue;
-        if (memcmp(a->cpu_mirror + (size_t)i * SPAN_GRAD_ATLAS_ROW_BYTES,
+        if (memcmp(a->cpu_mirror + ((size_t)i * SPAN_GRAD_ATLAS_ROW_BYTES),
                    bytes, SPAN_GRAD_ATLAS_ROW_BYTES) == 0)
           return i;
      }
@@ -174,7 +174,7 @@ _alloc_row(Span_Grad_Atlas *a)
    for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
      {
         if (a->rows[i].last_used == a->current_frame) continue; /* pinned */
-        if (best < 0 || a->rows[i].last_used < best_age)
+        if ((best < 0) || (a->rows[i].last_used < best_age))
           { best = i; best_age = a->rows[i].last_used; }
      }
    if (best >= 0) return best;
@@ -194,7 +194,7 @@ _alloc_row(Span_Grad_Atlas *a)
              * == 0).  Without the guard every row's age would wrap to
              * UINT32_MAX and never be beaten again, flattening the LRU for
              * the atlas's lifetime. */
-            a->rows[i].last_used = a->current_frame ? a->current_frame - 1 : 0;
+            a->rows[i].last_used = a->current_frame ? (a->current_frame - 1) : 0;
 
         best     = 0;
         best_age = a->rows[0].last_used;
@@ -247,7 +247,7 @@ _upload_row(Span_Grad_Atlas *a, int row, const uint8_t *bytes)
 #ifdef SPAN_GRAD_ATLAS_TEST_BUILD
 mirror_only:
 #endif
-   memcpy(a->cpu_mirror + (size_t)row * SPAN_GRAD_ATLAS_ROW_BYTES,
+   memcpy(a->cpu_mirror + ((size_t)row * SPAN_GRAD_ATLAS_ROW_BYTES),
           bytes, SPAN_GRAD_ATLAS_ROW_BYTES);
 }
 

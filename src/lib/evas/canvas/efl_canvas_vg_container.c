@@ -12,10 +12,10 @@
 static inline Eina_Bool
 _comp_method_needs_mask(Efl_Gfx_Vg_Composite_Method m)
 {
-   return (m == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
-           m == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE ||
-           m == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT ||
-           m == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT);
+   return ((m == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA) ||
+           (m == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE) ||
+           (m == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT) ||
+           (m == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT));
 }
 
 static void
@@ -108,7 +108,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
           {
              int mw = 0, mh = 0;
              ENFN->image_size_get(ENC, mask_surface, &mw, &mh);
-             if (mw != size.w || mh != size.h)
+             if ((mw != size.w) || (mh != size.h))
                {
                   ENFN->ector_surface_destroy(ENC, mask_surface);
                   mask_surface = NULL;

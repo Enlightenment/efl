@@ -18,7 +18,7 @@ _generic_cache_budget(void)
         const char *e = getenv("EVAS_SURFACE_CACHE_SIZE");
         long kb = e ? atol(e) : 0;
 
-        v = (kb > 0) ? (size_t)kb * 1024 : GENERIC_CACHE_DEFAULT_BUDGET;
+        v = (kb > 0) ? ((size_t)kb * 1024) : GENERIC_CACHE_DEFAULT_BUDGET;
      }
    return v;
 }
@@ -33,7 +33,7 @@ _generic_cache_trim(Generic_Cache *cache)
    Eina_List *l, *prev;
    int count = (int)eina_list_count(cache->lru_list);
 
-   if (!cache->size_func && count <= 50) return;
+   if (!cache->size_func && (count <= 50)) return;
 
    for (l = eina_list_last(cache->lru_list); l; l = prev)
      {
@@ -41,7 +41,7 @@ _generic_cache_trim(Generic_Cache *cache)
 
         if (cache->size_func)
           {
-             if (cache->bytes <= cache->budget &&
+             if ((cache->bytes <= cache->budget) &&
                  count <= GENERIC_CACHE_MAX_ENTRIES) break;
           }
         else if (count <= 50) break;
@@ -59,7 +59,7 @@ _generic_cache_trim(Generic_Cache *cache)
         if (l == cache->lru_list) break;
 
         prev = eina_list_prev(l);
-        if (!entry || entry->ref > 1) continue;
+        if (!entry || (entry->ref > 1)) continue;
 
         eina_hash_del(cache->hash, &entry->key, entry);
         cache->lru_list = eina_list_remove_list(cache->lru_list, l);

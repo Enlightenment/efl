@@ -978,7 +978,7 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
         /* Select the collector callback based on fill type. */
         {
            SW_FT_SpanFunc cb;
-           if (sd->type == LinearGradient || sd->type == RadialGradient)
+           if ((sd->type == LinearGradient) || (sd->type == RadialGradient))
              cb = sd->collector_gradient;
            else if (sd->comp)
              cb = sd->collector_composite;

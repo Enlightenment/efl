@@ -166,7 +166,7 @@ _ector_surface_cache_size(void *engine EINA_UNUSED, void *surface)
 {
    Evas_GL_Image *im = surface;
 
-   if (!im || im->w <= 0 || im->h <= 0) return 0;
+   if (!im || (im->w <= 0) || (im->h <= 0)) return 0;
    return (size_t)im->w * (size_t)im->h * 4;
 }
 
@@ -2775,7 +2775,7 @@ _span_collector_alloc(void *data, int h,
    /* Grow the pointer array if needed (high-water mark doubling). */
    if (idx >= *alloc_ptr)
      {
-        int    new_alloc = *alloc_ptr ? *alloc_ptr * 2 : 4;
+        int    new_alloc = *alloc_ptr ? (*alloc_ptr * 2) : 4;
         void **new_arr   = realloc(*arr_ptr, (size_t)new_alloc * sizeof(void *));
         if (!new_arr) return NULL;
         memset(new_arr + *alloc_ptr, 0,
@@ -2837,7 +2837,7 @@ eng_ector_begin(void *engine, void *surface,
       int w, h;
 
         eng_image_size_get(engine, glim, &w, &h);
-        if (w <= 0 || h <= 0) return EINA_FALSE;
+        if ((w <= 0) || (h <= 0)) return EINA_FALSE;
 
         /* Point the ector surface at a scratch buffer big enough for this
          * object, for the rasterizer's clipping bounds. */
@@ -2869,9 +2869,9 @@ eng_ector_begin(void *engine, void *surface,
              }
 
            /* Hand the buffer in as a pointer so the surface never owns it. */
-           if (!bbd || bbd->pixels.u8 != spd->span_pixels ||
+           if (!bbd || (bbd->pixels.u8 != spd->span_pixels) ||
                !bbd->generic ||
-               bbd->generic->w != (unsigned)w || bbd->generic->h != (unsigned)h)
+               (bbd->generic->w != (unsigned)w) || (bbd->generic->h != (unsigned)h))
              ector_buffer_pixels_set(ector, spd->span_pixels, w, h, (int)row,
                                      EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         }
@@ -2902,8 +2902,8 @@ eng_ector_begin(void *engine, void *surface,
             * target_surface_set has already flushed, so this is a cheap
             * no-op: evas_gl_common_context_flush stops at the first empty
             * pipe. */
-           if (pd->span_collectors_fill_count > 0 ||
-               pd->span_collectors_stroke_count > 0)
+           if ((pd->span_collectors_fill_count > 0) ||
+               (pd->span_collectors_stroke_count > 0))
              {
                 Evas_Engine_GL_Context *fgc =
                    gl_generic_context_find(engine, EINA_FALSE);
@@ -2990,13 +2990,13 @@ _span_gradient_linear_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
     *   b = dx*inv.xy + dy*inv.yy
     *   c = dx*inv.xz + dy*inv.yz + off - a*offx - b*offy
     */
-   a = dx * inv->xx + dy * inv->yx;
-   b = dx * inv->xy + dy * inv->yy;
+   a = (dx * inv->xx) + (dy * inv->yx);
+   b = (dx * inv->xy) + (dy * inv->yy);
 
    *out_a = (float)a;
    *out_b = (float)b;
-   *out_c = (float)(dx * inv->xz + dy * inv->yz + off
-                    - a * (double)offx - b * (double)offy);
+   *out_c = (float)((dx * inv->xz) + (dy * inv->yz) + off
+                    - (a * (double)offx) - (b * (double)offy));
 }
 
 /**
@@ -3037,12 +3037,12 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
    *out_a = (float)inv->xx;
    *out_b = (float)inv->xy;
    *out_c = (float)(inv->xz - gd->radial.fx
-                    - inv->xx * (double)offx - inv->xy * (double)offy);
+                    - (inv->xx * (double)offx) - (inv->xy * (double)offy));
 
    *out_d = (float)inv->yx;
    *out_e = (float)inv->yy;
    *out_f = (float)(inv->yz - gd->radial.fy
-                    - inv->yx * (double)offx - inv->yy * (double)offy);
+                    - (inv->yx * (double)offx) - (inv->yy * (double)offy));
 
    /* Quadratic parameters — pass inv2a instead of a to avoid
     * per-fragment division in the shader. */
@@ -3085,7 +3085,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    int shader_type = *inout_shader_type;
 
    if (!sc || !sc->gradient_data) return;
-   if (shader_type != (int)LinearGradient && shader_type != (int)RadialGradient) return;
+   if ((shader_type != (int)LinearGradient) && (shader_type != (int)RadialGradient)) return;
 
    gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
 
@@ -3099,7 +3099,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
     * color_table pointer and ctable_status are unchanged from the last
     * observed READY state.  Invalidated if either differs (stop change,
     * regen in flight, or pointer realloc). */
-   if (!(atlas && gd->color_table && gd->ctable_status == CTABLE_READY_DONE))
+   if (!(atlas && gd->color_table && (gd->ctable_status == CTABLE_READY_DONE)))
      {
         /* Ramp not ready or atlas unavailable — invalidate gd-side cache so
          * that when status returns to READY we recompute the CRC against
@@ -3121,7 +3121,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    const uint8_t *ramp_bytes = (const uint8_t *)gd->color_table;
    uint32_t version;
    if (gd->cached_ctable_crc_valid &&
-       gd->cached_ctable_status == CTABLE_READY_DONE)
+       (gd->cached_ctable_status == CTABLE_READY_DONE))
      {
         version = gd->cached_ctable_crc;
      }
@@ -3153,7 +3153,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
      }
    else /* RadialGradient */
      {
-        if (gd->radial.fradius >= 0.00001f || fabsf(gd->radial.a) <= 0.00001f)
+        if ((gd->radial.fradius >= 0.00001f) || (fabsf(gd->radial.a) <= 0.00001f))
           {
              /* Degenerate radial — fall back to solid using first stop color. */
              *inout_shader_type = (int)Solid;
@@ -3215,7 +3215,7 @@ eng_ector_end(void *engine,
            void **fill_arr   = (espd && fill_count)   ? espd->span_collectors_fill   : NULL;
            void **stroke_arr = (espd && stroke_count) ? espd->span_collectors_stroke : NULL;
 
-           if (glim && (fill_count > 0 || stroke_count > 0))
+           if (glim && ((fill_count > 0) || (stroke_count > 0)))
              {
                 int w, h;
                 Evas_Engine_GL_Context *gc;
@@ -3229,10 +3229,10 @@ eng_ector_end(void *engine,
                 /* Check that at least one collector has span data. */
                 {
                    int has_data = 0;
-                   for (ci = 0; !has_data && ci < fill_count; ci++)
-                     has_data |= ((Span_Collector *)fill_arr[ci])->actual_max_spans > 0;
-                   for (ci = 0; !has_data && ci < stroke_count; ci++)
-                     has_data |= ((Span_Collector *)stroke_arr[ci])->actual_max_spans > 0;
+                   for (ci = 0; !has_data && (ci < fill_count); ci++)
+                     has_data |= (((Span_Collector *)fill_arr[ci])->actual_max_spans > 0);
+                   for (ci = 0; !has_data && (ci < stroke_count); ci++)
+                     has_data |= (((Span_Collector *)stroke_arr[ci])->actual_max_spans > 0);
                    if (!has_data) goto span_done;
                 }
 
@@ -3298,7 +3298,7 @@ eng_ector_end(void *engine,
                  */
                 Span_Data *_rsd = (espd && espd->rasterizer)
                                   ? &espd->rasterizer->fill_data : NULL;
-                int max_shapes = fill_count > stroke_count
+                int max_shapes = (fill_count > stroke_count)
                                  ? fill_count : stroke_count;
                  int si;
                  for (si = 0; si < max_shapes; si++)
@@ -3312,14 +3312,14 @@ eng_ector_end(void *engine,
 
                       int fill_tc   = sc_fill   ? sc_fill->texture_count   : 0;
                      int stroke_tc = sc_stroke ? sc_stroke->texture_count : 0;
-                     int max_tc    = fill_tc > stroke_tc ? fill_tc : stroke_tc;
+                     int max_tc    = (fill_tc > stroke_tc) ? fill_tc : stroke_tc;
                      if (max_tc == 0) continue;
 
                      /* Per-shape actual_max_spans (used to cap the shader loop). */
                      int actual_max = 1;
-                     if (sc_fill   && sc_fill->actual_max_spans   > actual_max)
+                     if (sc_fill   && (sc_fill->actual_max_spans   > actual_max))
                        actual_max = sc_fill->actual_max_spans;
-                     if (sc_stroke && sc_stroke->actual_max_spans > actual_max)
+                     if (sc_stroke && (sc_stroke->actual_max_spans > actual_max))
                        actual_max = sc_stroke->actual_max_spans;
 
                      uint32_t fill_col   = sc_fill   ? sc_fill->color   : 0;
@@ -3513,13 +3513,13 @@ eng_ector_end(void *engine,
                                 float _y0 = (float)_spp.y;
                                 float _x1 = _x0 + (float)_spp.w;
                                 float _y1 = _y0 + (float)_spp.h;
-                                _ndc[0] = _x0 / _gw * 2.0f - 1.0f; _ndc[1] = _y0 / _gh * 2.0f - 1.0f; /* TL */
-                                _ndc[2] = _x1 / _gw * 2.0f - 1.0f; _ndc[3] = _y0 / _gh * 2.0f - 1.0f; /* TR */
-                                _ndc[4] = _x1 / _gw * 2.0f - 1.0f; _ndc[5] = _y1 / _gh * 2.0f - 1.0f; /* BR */
-                                _ndc[6] = _x0 / _gw * 2.0f - 1.0f; _ndc[7] = _y1 / _gh * 2.0f - 1.0f; /* BL */
+                                _ndc[0] = (_x0 / _gw * 2.0f) - 1.0f; _ndc[1] = (_y0 / _gh * 2.0f) - 1.0f; /* TL */
+                                _ndc[2] = (_x1 / _gw * 2.0f) - 1.0f; _ndc[3] = (_y0 / _gh * 2.0f) - 1.0f; /* TR */
+                                _ndc[4] = (_x1 / _gw * 2.0f) - 1.0f; _ndc[5] = (_y1 / _gh * 2.0f) - 1.0f; /* BR */
+                                _ndc[6] = (_x0 / _gw * 2.0f) - 1.0f; _ndc[7] = (_y1 / _gh * 2.0f) - 1.0f; /* BL */
                                 if (_pass_n == _pass_alloc)
                                   {
-                                     int na = _pass_alloc ? _pass_alloc * 2 : 8;
+                                     int na = _pass_alloc ? (_pass_alloc * 2) : 8;
                                      Span_Pipe_Params *nq =
                                         realloc(_pass_q, (size_t)na * sizeof(*nq));
                                      GLfloat *nn =
@@ -3530,7 +3530,7 @@ eng_ector_end(void *engine,
                                      _pass_alloc = na;
                                   }
                                 _pass_q[_pass_n] = _spp;
-                                memcpy(_pass_ndc + _pass_n * 8, _ndc, sizeof(_ndc));
+                                memcpy(_pass_ndc + (_pass_n * 8), _ndc, sizeof(_ndc));
                                 _pass_n++;
                              }
                           }

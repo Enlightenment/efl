@@ -2105,7 +2105,7 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
    /* Mask inv: 0=normal, 1=invert.  Derived from comp_method; methods 2
     * and 4 invert the mask, others use the mask alpha directly. */
    float mask_inv = 0.0f;
-   if (p->comp_method == 2 || p->comp_method == 4) mask_inv = 1.0f;
+   if ((p->comp_method == 2) || (p->comp_method == 4)) mask_inv = 1.0f;
 
    /* Build the common header once; pos is overwritten per vertex in the loop. */
    Span_Vertex_Common common;
@@ -2129,15 +2129,15 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
    for (int v = 0; v < 6; v++)
      {
         const int corner = idx[v];
-        common.pos[0] = ndc_quad[corner * 2 + 0];
-        common.pos[1] = ndc_quad[corner * 2 + 1];
+        common.pos[0] = ndc_quad[(corner * 2) + 0];
+        common.pos[1] = ndc_quad[(corner * 2) + 1];
 
         switch (variant)
           {
            case SPAN_VARIANT_SOLID:
              {
                 Span_Vertex_Solid *o =
-                   (Span_Vertex_Solid *)((char *)out_buf + v * sizeof(*o));
+                   (Span_Vertex_Solid *)((char *)out_buf + (v * sizeof(*o)));
                 o->c = common;
                 o->fill_col[0]   = (float)((p->fill.col   >> 16) & 0xFF) / 255.0f;
                 o->fill_col[1]   = (float)((p->fill.col   >>  8) & 0xFF) / 255.0f;
@@ -2152,7 +2152,7 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
            case SPAN_VARIANT_SOLID_MASK:
              {
                 Span_Vertex_Solid_Mask *o =
-                   (Span_Vertex_Solid_Mask *)((char *)out_buf + v * sizeof(*o));
+                   (Span_Vertex_Solid_Mask *)((char *)out_buf + (v * sizeof(*o)));
                 o->s.c = common;
                 o->s.fill_col[0]   = (float)((p->fill.col   >> 16) & 0xFF) / 255.0f;
                 o->s.fill_col[1]   = (float)((p->fill.col   >>  8) & 0xFF) / 255.0f;
@@ -2173,7 +2173,7 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
            case SPAN_VARIANT_GRADIENT:
              {
                 Span_Vertex_Gradient *o =
-                   (Span_Vertex_Gradient *)((char *)out_buf + v * sizeof(*o));
+                   (Span_Vertex_Gradient *)((char *)out_buf + (v * sizeof(*o)));
                 o->c = common;
                 _span_side_grad_set(o->fill_grad_abc_y, o->fill_grad_def,
                                     o->fill_grad_radial, &p->fill);
@@ -2184,7 +2184,7 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
            case SPAN_VARIANT_GRADIENT_MASK:
              {
                 Span_Vertex_Gradient_Mask *o =
-                   (Span_Vertex_Gradient_Mask *)((char *)out_buf + v * sizeof(*o));
+                   (Span_Vertex_Gradient_Mask *)((char *)out_buf + (v * sizeof(*o)));
                 o->g.c = common;
                 _span_side_grad_set(o->g.fill_grad_abc_y, o->g.fill_grad_def,
                                     o->g.fill_grad_radial, &p->fill);

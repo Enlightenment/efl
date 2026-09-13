@@ -291,7 +291,7 @@ _span_fragment_highp_supported(void)
 
    glGetShaderPrecisionFormat(GL_FRAGMENT_SHADER, GL_HIGH_FLOAT,
                               range, &precision);
-   _span_fs_highp = (range[0] != 0 || range[1] != 0 || precision != 0) ? 1 : 0;
+   _span_fs_highp = ((range[0] != 0) || (range[1] != 0) || (precision != 0)) ? 1 : 0;
    if (!_span_fs_highp)
      INF("span shader: fragment highp unsupported, falling back to mediump");
    return _span_fs_highp;
@@ -346,7 +346,7 @@ _span_tier_get(void)
    varyings /= 4;
 #endif
 
-   if (attribs == 0 && varyings == 0)
+   if ((attribs == 0) && (varyings == 0))
      {
         /* Both queries came back 0: this means glGetIntegerv failed (e.g. no
          * current GL context yet), not that the device genuinely reports 0
@@ -357,8 +357,8 @@ _span_tier_get(void)
         return SPAN_TIER_OFF;
      }
 
-   if (attribs  < SPAN_WIDE_MAX_ATTRIBS ||
-       varyings < SPAN_WIDE_MAX_VARYINGS)
+   if ((attribs  < SPAN_WIDE_MAX_ATTRIBS) ||
+       (varyings < SPAN_WIDE_MAX_VARYINGS))
      {
         INF("span path disabled: device reports %d vertex attributes and %d "
             "varying vectors, the span shaders need %d and %d",
@@ -1350,7 +1350,7 @@ _span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
 
    /* A texture from a previous context is not ours to free - that context's
     * pool already did - but it must not be used either. */
-   if (t && page->gc != gc)
+   if (t && (page->gc != gc))
      {
         t = NULL;
         page->evas_tex  = NULL;
@@ -1359,7 +1359,7 @@ _span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
         page->prev_hash = 0;
      }
 
-   if (t && page->w >= w && page->h >= h) return EINA_TRUE;
+   if (t && (page->w >= w) && (page->h >= h)) return EINA_TRUE;
 
    /* Grow to at least what is asked, never shrink. */
    if (w < page->w) w = page->w;
@@ -1457,7 +1457,7 @@ span_page_upload(void *gc_ptr, Span_Page *page,
         if (w > page_w) page_w = w;
      });
 
-   if (!n || total_h <= 0) goto done;
+   if (!n || (total_h <= 0)) goto done;
 
    /* Widest first.  One glTexSubImage2D covers a rectangle, so collectors
     * sharing an upload also share its width - putting a 3-column shape in
@@ -1467,9 +1467,9 @@ span_page_upload(void *gc_ptr, Span_Page *page,
 
    for (i = 0; i < n; i++)
      {
-        hash = hash * 31 + ent[i].tex->rolling_hash;
-        hash = hash * 31 + (uint32_t)ent[i].rows;
-        hash = hash * 31 + (uint32_t)ent[i].w;
+        hash = (hash * 31) + ent[i].tex->rolling_hash;
+        hash = (hash * 31) + (uint32_t)ent[i].rows;
+        hash = (hash * 31) + (uint32_t)ent[i].w;
      }
 
    if (!_span_page_ensure(page, gc, page_w, total_h)) goto done;
@@ -1515,7 +1515,7 @@ span_page_upload(void *gc_ptr, Span_Page *page,
         uint8_t *packed;
         int      j, at;
 
-        while (i < n && ent[i].w * 2 >= g_w)
+        while ((i < n) && ((ent[i].w * 2) >= g_w))
           {
              g_rows += ent[i].rows;
              i++;
@@ -1540,14 +1540,14 @@ span_page_upload(void *gc_ptr, Span_Page *page,
              for (y = 0; y < ent[j].rows; y++)
                {
                   int idx = ent[j].counts[y];
-                  if (idx > 0 && idx < ent[j].max_spans)
+                  if ((idx > 0) && (idx < ent[j].max_spans))
                     tex->buffer[((size_t)y * ent[j].stride) +
                                 ((size_t)idx * 4) + 1] = 0;
                }
 
              for (y = 0; y < ent[j].rows; y++)
-               memcpy(packed + (size_t)(at + y) * row_bytes,
-                      tex->buffer + (size_t)y * ent[j].stride,
+               memcpy(packed + ((size_t)(at + y) * row_bytes),
+                      tex->buffer + ((size_t)y * ent[j].stride),
                       row_bytes);
              at += ent[j].rows;
           }
@@ -1588,8 +1588,8 @@ done:
 static Span_Variant
 _span_variant_of(const Span_Pipe_Params *p)
 {
-   int grad = ((p->fill.tex   && p->fill.type   >= SPAN_FILL_TYPE_GRADIENT_MIN) ||
-               (p->stroke.tex && p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN));
+   int grad = ((p->fill.tex   && (p->fill.type   >= SPAN_FILL_TYPE_GRADIENT_MIN)) ||
+               (p->stroke.tex && (p->stroke.type >= SPAN_FILL_TYPE_GRADIENT_MIN)));
 
    if (grad) return (p->mask_tex != 0) ? SPAN_VARIANT_GRADIENT_MASK
                                        : SPAN_VARIANT_GRADIENT;
@@ -1609,10 +1609,10 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
    GLuint        vao;
 
    /* Determine kind (0=solid, 1=gradient) and bind set from variant + textures. */
-   int kind     = (variant == SPAN_VARIANT_GRADIENT ||
-                   variant == SPAN_VARIANT_GRADIENT_MASK) ? 1 : 0;
-   int has_mask = (variant == SPAN_VARIANT_SOLID_MASK ||
-                   variant == SPAN_VARIANT_GRADIENT_MASK) ? 1 : 0;
+   int kind     = ((variant == SPAN_VARIANT_GRADIENT) ||
+                   (variant == SPAN_VARIANT_GRADIENT_MASK)) ? 1 : 0;
+   int has_mask = ((variant == SPAN_VARIANT_SOLID_MASK) ||
+                   (variant == SPAN_VARIANT_GRADIENT_MASK)) ? 1 : 0;
    Span_Bind_Set bind;
    if (fill_tex && stroke_tex) bind = SPAN_BIND_FILL_AND_STROKE;
    else if (fill_tex)          bind = SPAN_BIND_FILL_ONLY;
@@ -1620,7 +1620,7 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
 
    Span_Shader *ss = _span_shader_pick(kind, bind, has_mask);
 
-   if (!vdata || nverts == 0) return;
+   if (!vdata || (nverts == 0)) return;
 
    /* Ensure all 12 shader programs are compiled.  Checking the specific
     * variant matters: span_shader_init() aborts at the first failing
@@ -1648,12 +1648,12 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
    glBindTexture(GL_TEXTURE_2D, fill_tex ? fill_tex : stroke_tex);
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, stroke_tex ? stroke_tex : fill_tex);
-   if (ss->loc_grad_ramp_atlas >= 0 && atlas_tex)
+   if ((ss->loc_grad_ramp_atlas >= 0) && atlas_tex)
      {
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, atlas_tex);
      }
-   if (ss->loc_mask_tex >= 0 && mask_tex)
+   if ((ss->loc_mask_tex >= 0) && mask_tex)
      {
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, mask_tex);
@@ -1737,7 +1737,7 @@ _span_pass_restore(Evas_Engine_GL_Context *gc)
 {
    Evas_GL_Image *s = gc->pipe[0].shader.surface;
 
-   if (!s || s == gc->def_surface)
+   if (!s || (s == gc->def_surface))
      {
         glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
         if ((gc->rot == 0) || (gc->rot == 180))
@@ -1759,7 +1759,7 @@ span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
 {
    int i, run_start;
 
-   if (!gc || !target || !target->tex || !target->tex->pt || n <= 0) return;
+   if (!gc || !target || !target->tex || !target->tex->pt || (n <= 0)) return;
    if (!span_shader_init()) return;
 
    /* Bind directly rather than through evas_gl_common_context_target_surface_set:
@@ -1786,12 +1786,12 @@ span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
         void *buf;
         int end = run_start + 1, k;
 
-        while (end < n &&
-               _span_variant_of(&quads[end]) == variant &&
-               quads[end].fill.tex        == quads[run_start].fill.tex &&
-               quads[end].stroke.tex      == quads[run_start].stroke.tex &&
-               quads[end].grad_atlas_tex  == quads[run_start].grad_atlas_tex &&
-               quads[end].mask_tex        == quads[run_start].mask_tex)
+        while ((end < n) &&
+               (_span_variant_of(&quads[end]) == variant) &&
+               (quads[end].fill.tex        == quads[run_start].fill.tex) &&
+               (quads[end].stroke.tex      == quads[run_start].stroke.tex) &&
+               (quads[end].grad_atlas_tex  == quads[run_start].grad_atlas_tex) &&
+               (quads[end].mask_tex        == quads[run_start].mask_tex))
           end++;
 
         vsize = span_vertex_size(variant);
@@ -1800,8 +1800,8 @@ span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
         if (!buf) break;
 
         for (k = run_start; k < end; k++)
-          evas_gl_common_span_fill_vertices((char *)buf + vsize * 6 * (size_t)(k - run_start),
-                                            variant, &quads[k], ndc + k * 8);
+          evas_gl_common_span_fill_vertices((char *)buf + (vsize * 6 * (size_t)(k - run_start)),
+                                            variant, &quads[k], ndc + (k * 8));
 
         _span_draw_batch(gc, variant, buf, need, 6 * (end - run_start),
                          quads[run_start].fill.tex, quads[run_start].stroke.tex,
