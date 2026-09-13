@@ -57,7 +57,7 @@ group { "efl/list_view";
 }
 
 group { "efl/list_item";
-   data.item: "version" "124";
+   data.item: "version" "125";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    parts {
@@ -135,10 +135,16 @@ group { "efl/list_item";
             offscale;
          }
       }
+      /* Fixed in both directions: what is parked on the right of a row is a
+         column, and a column does not decide how tall the row is. Left free
+         vertically, the row was as tall as whatever had been swallowed by the
+         time it was first measured -- which for a size and a date behind a
+         stat is a race, and in a homogeneous list the row that wins it sets
+         the height of every other row. */
       swallow { "efl.extra";
          scale: 1;
          desc { "default";
-            fixed: 1 0;
+            fixed: 1 1;
             align: 1.0 0.5;
             rel1.offset: -5 4;
             rel1.relative: 1.0 0.0;
