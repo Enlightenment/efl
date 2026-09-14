@@ -99,7 +99,7 @@ _ensure_gl(Span_Grad_Atlas *a)
 
    GLuint t = 0;
    glGenTextures(1, &t);
-   if (!t) { a->disabled = 1; return 0; }
+   if (!t) { a->disabled = EINA_TRUE; return 0; }
    glBindTexture(GL_TEXTURE_2D, t);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                 SPAN_GRAD_ATLAS_W, SPAN_GRAD_ATLAS_H, 0,
@@ -287,7 +287,7 @@ span_grad_atlas_lookup(Span_Grad_Atlas *a, void *grad_id,
    a->rows[row].version   = version;
    a->rows[row].grad_id   = grad_id;
    a->rows[row].last_used = a->current_frame;
-   a->rows[row].occupied  = 1;
+   a->rows[row].occupied  = EINA_TRUE;
    return row;
 }
 
@@ -296,6 +296,6 @@ void
 span_grad_atlas_test_enable(Span_Grad_Atlas *a)
 {
    if (!a) return;
-   a->test_skip_gl = 1;
+   a->test_skip_gl = EINA_TRUE;
 }
 #endif

@@ -88,7 +88,8 @@ span_collector_new(int h, int max_spans, Span_Data_Type type)
 {
    Span_Collector *sc;
 
-   if ((h <= 0) || (max_spans <= 0)) return NULL;
+   // max_spans is stored in 16 bits.
+   if ((h <= 0) || (max_spans <= 0) || (max_spans > 0xffff)) return NULL;
 
    sc = calloc(1, sizeof(Span_Collector));
    if (!sc) return NULL;

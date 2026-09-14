@@ -795,7 +795,7 @@ typedef struct
    // Mask sampler - valid only in mask variants (-1 otherwise).
    int          loc_mask_tex;
    // Sampler uniforms are program state; assign the texture units once.
-   Eina_Bool    samplers_bound;
+   Eina_Bool    samplers_bound : 1;
 } Span_Shader;
 
 // [kind][bind][mask] - kind 0=solid 1=gradient, bind in Span_Bind_Set, mask 0/1.
@@ -1395,11 +1395,11 @@ _span_page_ensure(Span_Page *page, Evas_Engine_GL_Context *gc, int w, int h)
 typedef struct
 {
    Span_Texture *tex;
+   int          *counts;
    int           w;       // columns the shader will actually read
    int           rows;
    int           stride;  // source row stride in bytes
    int           max_spans;
-   int          *counts;
 } Span_Page_Entry;
 
 static int

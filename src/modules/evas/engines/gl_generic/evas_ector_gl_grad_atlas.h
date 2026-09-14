@@ -2,6 +2,7 @@
 #define EVAS_ECTOR_GL_GRAD_ATLAS_H
 
 #include <stdint.h>
+#include <Eina.h>
 
 // In the normal engine build GLuint is provided by the system GL headers
 // pulled in by evas_gl_private.h (the .c file includes that before this
@@ -31,26 +32,26 @@ typedef unsigned int GLuint;
 
 typedef struct _Span_Grad_Atlas_Row
 {
+   void    *grad_id;    // gradient pointer for fast-path identity match
    uint32_t hash;       // hash of 4096-byte ramp
    uint32_t version;    // last_uploaded_version, piggybacks gradient counter
-   void    *grad_id;    // gradient pointer for fast-path identity match
    uint32_t last_used;  // render-frame counter for LRU
-   int      occupied;   // 0 = free row, 1 = occupied
+   Eina_Bool occupied : 1; // EINA_FALSE = free row
 } Span_Grad_Atlas_Row;
 
 typedef struct _Span_Grad_Atlas Span_Grad_Atlas;
 
 struct _Span_Grad_Atlas
 {
-   GLuint               tex;                  // GL texture handle, 0 until allocated
    uint8_t             *cpu_mirror;           // H * ROW_BYTES = 256 KB
-   Span_Grad_Atlas_Row  rows[SPAN_GRAD_ATLAS_H];
-   uint32_t             current_frame;        // monotonic, incremented per render pass
-   int                  disabled;             // 1 if alloc failed; gradient path skips
    void               (*flush_cb)(void *data);  // drains pending draws
    void                *flush_data;
+   Span_Grad_Atlas_Row  rows[SPAN_GRAD_ATLAS_H];
+   GLuint               tex;                  // GL texture handle, 0 until allocated
+   uint32_t             current_frame;        // monotonic, incremented per render pass
+   Eina_Bool            disabled : 1;         // alloc failed; gradient path skips
 #ifdef SPAN_GRAD_ATLAS_TEST_BUILD
-   int                  test_skip_gl;         // bypass GL; uploads are no-ops
+   Eina_Bool            test_skip_gl : 1;     // bypass GL; uploads are no-ops
 #endif
 };
 

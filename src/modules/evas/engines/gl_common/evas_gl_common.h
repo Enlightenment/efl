@@ -284,33 +284,32 @@ typedef struct _Span_Channel_Params {
    float    off_tx;     // texel x-offset in pool
    float    off_ty;     // texel y-offset in pool
    uint32_t col;        // base color (premultiplied ARGB)
-   int      type;       // SPAN_FILL_TYPE_* (ector's Span_Data_Type)
    int      x_min;      // spatial split x_min
    // Gradient parameters (unused for Solid type)
    float    grad_a, grad_b, grad_c;  // linear: t = a*px + b*py + c
-   int      grad_spread;             // 0=PAD, 1=REFLECT, 2=REPEAT
    float    grad_ramp_y;             // atlas V coordinate: (row+0.5)/SPAN_GRAD_ATLAS_H
    float    grad_d, grad_e, grad_f;  // radial: 2nd affine row
    float    grad_ra, grad_rdx, grad_rdy; // radial: quadratic params
+   unsigned char type;               // SPAN_FILL_TYPE_* (ector's Span_Data_Type)
+   unsigned char grad_spread;        // 0=PAD, 1=REFLECT, 2=REPEAT
 } Span_Channel_Params;
 
 // Full parameter set for one span quad; see span_pass_draw().
 typedef struct _Span_Pipe_Params {
-   int      pool_w, pool_h;
-       // pool texture dimensions
-   int      max_spans;            // max spans per row
+   int      pool_w, pool_h;       // pool texture dimensions
    int      x, y, w, h;          // draw rect in canvas space
    uint32_t mul_col;              // multiply color
    float    fbo_off_x, fbo_off_y; // atlas FBO sub-region offset
    // Gradient ramp atlas (0 = atlas unavailable, gradient shapes are skipped)
    GLuint   grad_atlas_tex;       // GL texture name of the shared gradient ramp atlas
-   // Composite mask parameters (0/NULL = no mask)
+   // Composite mask parameters (0/NULL = no mask); comp_method is at the end
    GLuint   mask_tex;             // GL texture name of mask FBO (0 = no mask)
-   int      comp_method;          // Efl_Gfx_Vg_Composite_Method
    float    mask_w, mask_h;       // mask texture dimensions
    float    mask_off_x, mask_off_y; // atlas offset of mask texture
    Span_Channel_Params fill;
    Span_Channel_Params stroke;
+   unsigned short max_spans;      // max spans per row
+   unsigned char  comp_method;    // Efl_Gfx_Vg_Composite_Method
 } Span_Pipe_Params;
 
 struct _Evas_Engine_GL_Context

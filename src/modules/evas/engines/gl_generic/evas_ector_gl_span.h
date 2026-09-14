@@ -157,13 +157,13 @@ struct _Span_Texture
    uint8_t      *buffer;      // row-major span buffer, height * stride bytes
    int          *span_counts; // per-row count of packed spans, height ints
    int          *last_x_end;  // per-row: x coord where last span ended (for gap calc)
-   Eina_Bool     dirty;       // EINA_TRUE if span data changed since last upload
    uint32_t      prev_hash;   // hash of buffer content at last upload, for change detection
    uint32_t      rolling_hash;  // accumulated during span collection
    int           x_min;       // inclusive left edge of the x-range covered
    int           x_max;       // inclusive right edge of the x-range covered
    int           page_x;      // texel offset of these rows inside the shared page
    int           page_y;
+   Eina_Bool     dirty : 1;   // EINA_TRUE if span data changed since last upload
 };
 
 // ------------------------------------------------------------------
@@ -177,32 +177,7 @@ struct _Span_Texture
 // (or cleared and reused) at eng_ector_end().
 struct _Span_Collector
 {
-   Span_Texture  *textures;      // dynamic array of texture slots
-   int            texture_count; // number of active entries in textures[]
-
-   // X-coordinates at which the canvas is split into separate textures.
-   // split_points[i] is the x_min of texture i+1 (i.e., the exclusive
-   // right boundary of texture i).  split_count is the number of splits
-   // recorded so far, up to SPAN_COLLECTOR_MAX_SPLITS.
-   int            split_points[SPAN_COLLECTOR_MAX_SPLITS];
-   int            split_count;
-
-   int            max_spans;       // max spans per row per texture (default 32)
-   int            h;               // active height this frame (VG object height)
-   int            alloc_h;         // allocated buffer height (high-water mark, never shrinks)
-   int            stride;          // bytes per row = (max_spans + 1) * 4
-                                   // The +1 reserves a dedicated sentinel slot.
-   int            actual_max_spans; // max span_counts[y] seen during collection this frame
-
-   // Row-tail flush state - tracked across multiple _collect_spans_solid
-   // invocations (e.g., when _span_fill_clipRect calls the callback in
-   // chunks).  Reset in span_collector_clear.
-   int            flush_prev_y;    // last row flushed (-1 = none)
-   int            flush_prev_ti;   // texture index of last flushed row
-
-   // Fill parameters captured at span_collector_new() time or during collection
-   Span_Data_Type type;            // Solid, LinearGradient, or RadialGradient
-   uint32_t       color;           // premultiplied ARGB (0xAARRGGBB) for Solid fills
+   Span_Texture  *textures;        // dynamic array of texture slots
 
    // Gradient data pointer set during _collect_spans_gradient().
    // Points into the active Ector_Renderer_Software_Gradient_Data for this
@@ -210,22 +185,47 @@ struct _Span_Collector
    // Used by eng_ector_end() to upload the color ramp and compute t-coefficients.
    void          *gradient_data;   // Ector_Renderer_Software_Gradient_Data* or NULL
 
-   // Ector surface offset captured during _collect_spans_gradient().
-   // These are the x/y values passed to ector_surface_reference_point_set().
-   // Needed to fold the local->canvas translation into the t-coefficients.
-   int            grad_offx;
-   int            grad_offy;
+   // Composite/mask parameters set by _collect_spans_composite() when a shape
+   // has an active composite mask.  Both default to 0/NULL for non-masked
+   // shapes; comp_method is at the end of the struct.
+   void          *mask_surface;    // Evas_GL_Image* for the mask FBO (NULL = no mask)
 
    // Per-shape inverse transform matrix captured during gradient/composite collection.
    // Copy of sd->inv from the current shape being rasterized.  Used by
    // eng_ector_end() to compute gradient t-coefficients with the correct transform.
    Eina_Matrix3   inv;
 
-   // Composite/mask parameters set by _collect_spans_composite() when a shape
-   // has an active composite mask.  Both default to 0/NULL for non-masked shapes.
-   void          *mask_surface;   // Evas_GL_Image* for the mask FBO (NULL = no mask)
-   int            comp_method;    // Efl_Gfx_Vg_Composite_Method (0 = NONE)
+   int            h;               // active height this frame (VG object height)
+   int            alloc_h;         // allocated buffer height (high-water mark, never shrinks)
+   int            stride;          // bytes per row = (max_spans + 1) * 4
+                                   // The +1 reserves a dedicated sentinel slot.
+   uint32_t       color;           // premultiplied ARGB (0xAARRGGBB) for Solid fills
 
+   // Ector surface offset captured during _collect_spans_gradient().
+   // These are the x/y values passed to ector_surface_reference_point_set().
+   // Needed to fold the local->canvas translation into the t-coefficients.
+   int            grad_offx;
+   int            grad_offy;
+
+   // Row-tail flush state - tracked across multiple _collect_spans_solid
+   // invocations (e.g., when _span_fill_clipRect calls the callback in
+   // chunks).  Reset in span_collector_clear.  flush_prev_ti is at the end.
+   int            flush_prev_y;    // last row flushed (-1 = none)
+
+   // X-coordinates at which the canvas is split into separate textures.
+   // split_points[i] is the x_min of texture i+1 (i.e., the exclusive
+   // right boundary of texture i).  split_count is the number of splits
+   // recorded so far, up to SPAN_COLLECTOR_MAX_SPLITS.
+   int            split_points[SPAN_COLLECTOR_MAX_SPLITS];
+
+   unsigned short max_spans;       // max spans per row per texture (default 64)
+   unsigned short actual_max_spans; // max span_counts[y] seen this frame
+
+   unsigned char  texture_count;   // active entries in textures[], at most 1 + MAX_SPLITS
+   unsigned char  split_count;
+   signed char    flush_prev_ti;   // texture index of last flushed row (-1 = none)
+   unsigned char  type;            // Span_Data_Type: Solid, LinearGradient, RadialGradient
+   unsigned char  comp_method;     // Efl_Gfx_Vg_Composite_Method (0 = NONE)
 };
 
 // ------------------------------------------------------------------
