@@ -147,13 +147,10 @@ span_collector_resize(Span_Collector *sc, int h)
 
    // When active height changes, the GPU texture dimensions no longer
    // match - mark dirty so the upload path recreates or resizes it.
-   {
-      int ti;
-      for (ti = 0; ti < sc->texture_count; ti++)
-        {
-           sc->textures[ti].dirty = EINA_TRUE;
-        }
-   }
+   for (i = 0; i < sc->texture_count; i++)
+     {
+        sc->textures[i].dirty = EINA_TRUE;
+     }
 
    // Common case: h fits within existing allocation - no realloc needed.
    if (h <= sc->alloc_h)
