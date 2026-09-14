@@ -142,8 +142,8 @@ _find_by_content(Span_Grad_Atlas *a, uint32_t hash, const uint8_t *bytes)
      {
         if (!a->rows[i].occupied) continue;
         if (a->rows[i].hash != hash) continue;
-        if (memcmp(a->cpu_mirror + ((size_t)i * SPAN_GRAD_ATLAS_ROW_BYTES),
-                   bytes, SPAN_GRAD_ATLAS_ROW_BYTES) == 0)
+        if (!memcmp(a->cpu_mirror + ((size_t)i * SPAN_GRAD_ATLAS_ROW_BYTES),
+                    bytes, SPAN_GRAD_ATLAS_ROW_BYTES))
           return i;
      }
    return -1;
