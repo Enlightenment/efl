@@ -40,11 +40,11 @@ _fill_ramp(uint8_t *buf, uint32_t seed)
 {
    for (int i = 0; i < SPAN_GRAD_ATLAS_W; i++)
      {
-        uint32_t v = seed * 2654435761u + (uint32_t)i;
-        buf[i*4 + 0] = (uint8_t)(v >>  0);
-        buf[i*4 + 1] = (uint8_t)(v >>  8);
-        buf[i*4 + 2] = (uint8_t)(v >> 16);
-        buf[i*4 + 3] = (uint8_t)(v >> 24);
+        uint32_t v = (seed * 2654435761u) + (uint32_t)i;
+        buf[(i*4) + 0] = (uint8_t)(v >>  0);
+        buf[(i*4) + 1] = (uint8_t)(v >>  8);
+        buf[(i*4) + 2] = (uint8_t)(v >> 16);
+        buf[(i*4) + 3] = (uint8_t)(v >> 24);
      }
 }
 

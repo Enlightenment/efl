@@ -106,7 +106,7 @@ _scene_sample(const char *engine, void (*build)(Evas *e),
 
    evas_object_image_size_get(snap, &sw, NULL);
    pixels = evas_object_image_data_get(snap, EINA_FALSE);
-   if (pixels && sw > 0) *out = pixels[py * sw + px];
+   if (pixels && (sw > 0)) *out = pixels[(py * sw) + px];
    else                  *out = 0;
    if (pixels) evas_object_image_data_set(snap, pixels);
 
@@ -170,7 +170,7 @@ EFL_START_TEST(evas_vg_container_alpha_is_applied)
         r = (px >> 16) & 0xff;
         // Wide tolerance: this is checking that the alpha was applied at
         // all, not the exact rounding of the blend.
-        ck_assert_msg(r > 100 && r < 160,
+        ck_assert_msg((r > 100) && (r < 160),
                       "engine %s: group alpha 128 over black should give a "
                       "channel near 128, got %d (pixel %08x)",
                       *eng, r, px);

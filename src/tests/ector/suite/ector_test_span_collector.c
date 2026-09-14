@@ -107,7 +107,7 @@ _reconstruct_spans(Span_Texture *tex, int y, int stride, int max_ent,
         abs_x += gap;
 
         // Gap extender: cov==0, len==1 - advances position, not a real span.
-        if (cov == 0 && len == 1)
+        if ((cov == 0) && (len == 1))
           {
              abs_x += len;
              continue;
@@ -360,7 +360,7 @@ EFL_START_TEST(span_collector_gap_extender)
 
    // Reconstruct absolute x: both real spans must land at the right positions
    rcount = _reconstruct_spans(&sc->textures[0], 5, sc->stride,
-                                sc->max_spans, rx, rl, 8);
+                               sc->max_spans, rx, rl, 8);
    ck_assert_int_eq(rcount, 2);
    ck_assert_int_eq(rx[0],  10);
    ck_assert_int_eq(rl[0],   5);
@@ -427,7 +427,7 @@ EFL_START_TEST(span_collector_overflow_split)
         int n;
         n = _reconstruct_spans(&sc->textures[i], 5, sc->stride,
                                sc->max_spans, t_rx, t_rl, 16);
-        while (n > 0 && all_count < 16)
+        while ((n > 0) && (all_count < 16))
           {
              rx[all_count] = t_rx[n - 1];
              rl[all_count] = t_rl[n - 1];
@@ -456,7 +456,7 @@ EFL_START_TEST(span_collector_overflow_split)
         {
            for (k = 0; k < all_count; k++)
              {
-                if (rx[k] == orig_x[j] && rl[k] == 5)
+                if ((rx[k] == orig_x[j]) && (rl[k] == 5))
                   {
                      found[j] = 1;
                      break;
@@ -531,7 +531,7 @@ EFL_START_TEST(span_collector_split_absolute_x)
         {
            for (k = 0; k < all_count; k++)
              {
-                if (rx[k] == orig_x[j] && rl[k] == 5)
+                if ((rx[k] == orig_x[j]) && (rl[k] == 5))
                   {
                      found[j] = 1;
                      break;
@@ -734,11 +734,11 @@ EFL_START_TEST(span_collector_solid_row_terminator)
    // a strided memset of the full row for every row of every shape, and no
    // consumer ever reads past the terminator, so those bytes only had to be
    // erased to satisfy a test.
-   ck_assert_int_eq(row[1 * 4 + 1], 0);
+   ck_assert_int_eq(row[(1 * 4) + 1], 0);
 
    // And the stale bytes beyond it are indeed still stale, which is the
    // point: this documents the weaker invariant rather than hiding it.
-   ck_assert_int_eq(row[2 * 4 + 1], 0xAB);
+   ck_assert_int_eq(row[(2 * 4) + 1], 0xAB);
 
    span_collector_free(sc);
 }
