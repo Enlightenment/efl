@@ -261,9 +261,22 @@ eio_pack_send(Ecore_Thread *thread, Eina_List *pack, double *start)
        memory_pool_usage > memory_pool_limit)
      {
         eina_lock_take(&(memory_pool_mutex));
-        memory_pool_suspended = EINA_TRUE;
-        eina_condition_wait(&(memory_pool_cond));
-        memory_pool_suspended = EINA_FALSE;
+        /* Asked again, holding the lock.
+         *
+         * The main loop only wakes a thread it can see is asleep: it takes
+         * this lock and broadcasts if memory_pool_suspended. Between the test
+         * above and this lock it can free the last of what was outstanding,
+         * find nobody suspended, and say nothing -- and then this would wait
+         * for a wakeup that has already been and gone, with nothing left to
+         * cause another. Which is a listing that stops for good, and a
+         * process that does not exit, about one run of the eio suite in ten.
+         */
+        if (memory_pool_usage > memory_pool_limit)
+          {
+             memory_pool_suspended = EINA_TRUE;
+             eina_condition_wait(&(memory_pool_cond));
+             memory_pool_suspended = EINA_FALSE;
+          }
         eina_lock_release(&(memory_pool_mutex));
      }
 
