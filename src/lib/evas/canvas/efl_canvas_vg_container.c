@@ -139,7 +139,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
                {
                   Efl_Canvas_Vg_Container_Data *src_pd = NULL;
                   target_pd = efl_data_scope_get(ct, MY_CLASS);
-                  src_pd = efl_data_scope_get(eina_list_nth(target_pd->comp.src, 0), MY_CLASS);
+                  src_pd = efl_data_scope_get(eina_list_data_get(target_pd->comp.src), MY_CLASS);
                   _evas_vg_render_pre(obj, ct,
                                       engine, output, context, surface,
                                       ctransform, c_opacity, NULL, src_pd->comp.method);
@@ -236,7 +236,7 @@ gl_mask_fallback:
           {
              Efl_Canvas_Vg_Container_Data *src_pd = NULL;
              target_pd = efl_data_scope_get(comp_target, MY_CLASS);
-             src_pd = efl_data_scope_get(eina_list_nth(target_pd->comp.src, 0), MY_CLASS);
+             src_pd = efl_data_scope_get(eina_list_data_get(target_pd->comp.src), MY_CLASS);
              _evas_vg_render_pre(obj, comp_target,
                                  engine, output, context, surface,
                                  ctransform, c_opacity, comp, src_pd->comp.method);
