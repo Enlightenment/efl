@@ -26,6 +26,11 @@
 // themselves before including this header.
 #include "sw_ft_raster.h"
 
+// Span_Page typedef, per-variant vertex types, SPAN_PIPE_MAX_QUADS and
+// SPAN_FILL_TYPE_*.  Single source of truth shared with gl_common (no
+// sw_ft_raster.h dependency).
+#include "../gl_common/evas_ector_gl_span_types.h"
+
 // ------------------------------------------------------------------
 // Forward declarations for ector_software_private.h types
 // ------------------------------------------------------------------
@@ -317,13 +322,13 @@ Eina_Bool span_collector_supports_composite(Efl_Gfx_Vg_Composite_Method comp_met
 // more room and never shrinks.  Because it is shared, a pass overwrites the
 // previous pass's rows, which is why eng_ector_begin() drains queued draws
 // before collecting again.
-typedef struct _Span_Page
+struct _Span_Page
 {
    void     *evas_tex;   // Evas_GL_Texture *; NULL until first upload
    void     *gc;         // the Evas_Engine_GL_Context evas_tex belongs to
    int       w, h;       // logical size currently allocated
    uint32_t  prev_hash;  // combined hash of the last uploaded pass
-} Span_Page;
+};
 
 // Allocate an empty page.  No GL resource is taken until first upload.
 Span_Page *span_page_new(void);
@@ -418,13 +423,5 @@ void span_debug_readback(const char *label, unsigned int tex_id,
                          int px_x, int px_y);
 #endif // SPAN_DEBUG_PROBES
 #endif // EVAS_GL_COMMON_H
-
-// ------------------------------------------------------------------
-// Per-variant interleaved vertex structs (Task 3)
-// ------------------------------------------------------------------
-
-// Per-variant vertex types, SPAN_PIPE_MAX_QUADS, SPAN_FILL_TYPE_*.
-// Single source of truth shared with gl_common (no sw_ft_raster.h dependency).
-#include "../gl_common/evas_ector_gl_span_types.h"
 
 #endif // EVAS_ECTOR_GL_SPAN_H_

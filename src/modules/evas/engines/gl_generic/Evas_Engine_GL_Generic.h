@@ -12,10 +12,10 @@
 // Span page lifecycle.  Declared here rather than pulled in from
 // evas_ector_gl_span.h, which needs sw_ft_raster.h - only on gl_generic's
 // include path, while this header is also used by gl_x11, gl_drm and
-// wayland_egl.  The definitions live in evas_ector_gl_span_shader.c.
-struct _Span_Page;
-struct _Span_Page *span_page_new(void);
-void               span_page_free(struct _Span_Page *page, Eina_Bool release_tex);
+// wayland_egl.  The Span_Page typedef comes from evas_ector_gl_span_types.h
+// and the definitions live in evas_ector_gl_span_shader.c.
+Span_Page *span_page_new(void);
+void       span_page_free(Span_Page *page, Eina_Bool release_tex);
 
 typedef struct _Render_Engine_GL_Generic Render_Engine_GL_Generic;
 typedef struct _Render_Output_GL_Generic Render_Output_GL_Generic;
@@ -42,10 +42,10 @@ struct _Render_Engine_GL_Generic
    // Shared by every collector so that a pass costs a single upload; see
    // span_page_upload().  NULL until the first pass.
    //
-   // Only forward-declared: evas_ector_gl_span.h needs sw_ft_raster.h, which
-   // is only on gl_generic's include path, and this header is also pulled in
-   // by gl_x11, gl_drm and wayland_egl.
-   struct _Span_Page        *span_page;
+   // Only the typedef is visible here: evas_ector_gl_span.h needs
+   // sw_ft_raster.h, which is only on gl_generic's include path, and this
+   // header is also pulled in by gl_x11, gl_drm and wayland_egl.
+   Span_Page                *span_page;
 
    struct {
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;

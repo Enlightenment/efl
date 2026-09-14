@@ -4,6 +4,7 @@
 //   - Span_Variant enum
 //   - Span_Vertex_* interleaved vertex structs
 //   - span_vertex_size() helper
+//   - Span_Page typedef
 //   - SPAN_PIPE_MAX_QUADS and the SPAN_FILL_TYPE_* fill type macros
 //
 // Deliberately has NO dependency on sw_ft_raster.h, GL headers, or any
@@ -23,6 +24,11 @@
 // (and therefore GLfloat) via their GL headers.
 typedef float GLfloat;
 # endif
+
+// The span page is defined in gl_generic/evas_ector_gl_span.h.  Its typedef
+// lives here so that Evas_Engine_GL_Generic.h, which cannot include that
+// header, can name the type as well.
+typedef struct _Span_Page Span_Page;
 
 // ---------------------------------------------------------------------------
 // Fill type of one side of a span quad, as stored in Span_Channel_Params.type
