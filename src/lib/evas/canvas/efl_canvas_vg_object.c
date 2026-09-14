@@ -466,7 +466,10 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 
              had_mul = !!ENFN->context_multiplier_get(engine, context,
                                                       &pr, &pg, &pb, &pa);
-             if (!had_mul) { pr = pg = pb = pa = 255; }
+             if (!had_mul)
+               {
+                  pr = pg = pb = pa = 255;
+               }
 
 #define _VG_MUL(x, y)  (((x) * (y) + 0xff) >> 8)
              ENFN->context_multiplier_set(engine, context,

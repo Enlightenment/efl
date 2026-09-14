@@ -215,7 +215,11 @@ EFL_END_TEST
 
 // Counts flush-callback invocations for the exhaustion test.
 static int _flush_calls = 0;
-static void _count_flush(void *data EINA_UNUSED) { _flush_calls++; }
+static void
+_count_flush(void *data EINA_UNUSED)
+{
+   _flush_calls++;
+}
 
 EFL_START_TEST(grad_atlas_no_eviction_of_rows_used_this_frame)
 {

@@ -327,8 +327,16 @@ _span_tier_get(void)
    env = getenv("EVAS_GL_SPAN_TIER");
    if (env)
      {
-        if (!strcmp(env, "wide"))      { _span_tier_resolved = SPAN_TIER_WIDE; goto done; }
-        if (!strcmp(env, "off"))       { _span_tier_resolved = SPAN_TIER_OFF;  goto done; }
+        if (!strcmp(env, "wide"))
+          {
+             _span_tier_resolved = SPAN_TIER_WIDE;
+             goto done;
+          }
+        if (!strcmp(env, "off"))
+          {
+             _span_tier_resolved = SPAN_TIER_OFF;
+             goto done;
+          }
         if (!strcmp(env, "compact"))
           {
              ERR("EVAS_GL_SPAN_TIER=compact is not implemented yet "
@@ -707,7 +715,11 @@ _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
 
    {
       const char **out = malloc(sizeof(*out) * (size_t)n);
-      if (!out) { *out_count = 0; return NULL; }
+      if (!out)
+        {
+           *out_count = 0;
+           return NULL;
+        }
       memcpy(out, parts, sizeof(*out) * (size_t)n);
       *out_count = n;
       return out;
@@ -743,7 +755,11 @@ _span_vs_parts_build(int kind, int mask, int *out_count)
 
    {
       const char **out = malloc(sizeof(*out) * (size_t)n);
-      if (!out) { *out_count = 0; return NULL; }
+      if (!out)
+        {
+           *out_count = 0;
+           return NULL;
+        }
       memcpy(out, parts, sizeof(*out) * (size_t)n);
       *out_count = n;
       return out;

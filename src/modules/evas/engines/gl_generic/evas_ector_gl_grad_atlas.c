@@ -99,7 +99,11 @@ _ensure_gl(Span_Grad_Atlas *a)
 
    GLuint t = 0;
    glGenTextures(1, &t);
-   if (!t) { a->disabled = EINA_TRUE; return 0; }
+   if (!t)
+     {
+        a->disabled = EINA_TRUE;
+        return 0;
+     }
    glBindTexture(GL_TEXTURE_2D, t);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                 SPAN_GRAD_ATLAS_W, SPAN_GRAD_ATLAS_H, 0,
@@ -179,7 +183,10 @@ _alloc_row(Span_Grad_Atlas *a)
      {
         if (a->rows[i].last_used == a->current_frame) continue; // pinned
         if ((best < 0) || (a->rows[i].last_used < best_age))
-          { best = i; best_age = a->rows[i].last_used; }
+          {
+             best = i;
+             best_age = a->rows[i].last_used;
+          }
      }
    if (best >= 0) return best;
 
