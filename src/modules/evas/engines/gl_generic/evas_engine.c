@@ -3227,9 +3227,13 @@ eng_ector_end(void *engine,
                 {
                    int has_data = 0;
                    for (ci = 0; !has_data && (ci < fill_count); ci++)
-                     has_data |= (((Span_Collector *)fill_arr[ci])->actual_max_spans > 0);
+                     {
+                        has_data |= (((Span_Collector *)fill_arr[ci])->actual_max_spans > 0);
+                     }
                    for (ci = 0; !has_data && (ci < stroke_count); ci++)
-                     has_data |= (((Span_Collector *)stroke_arr[ci])->actual_max_spans > 0);
+                     {
+                        has_data |= (((Span_Collector *)stroke_arr[ci])->actual_max_spans > 0);
+                     }
                    if (!has_data) goto span_done;
                 }
 

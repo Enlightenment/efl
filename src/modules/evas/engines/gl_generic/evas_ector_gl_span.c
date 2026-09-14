@@ -150,7 +150,9 @@ span_collector_resize(Span_Collector *sc, int h)
    {
       int ti;
       for (ti = 0; ti < sc->texture_count; ti++)
-        sc->textures[ti].dirty = EINA_TRUE;
+        {
+           sc->textures[ti].dirty = EINA_TRUE;
+        }
    }
 
    // Common case: h fits within existing allocation - no realloc needed.
@@ -244,7 +246,9 @@ span_collector_clear(Span_Collector *sc)
            // _collect_spans_solid memsets the full tail for rows it touches,
            // so this 4-byte-stride write covers only the uncollected rows.
            for (y = 0; y < sc->h; y++)
-             tex->buffer[((size_t)y * sc->stride) + 1] = 0;  // byte[1] = len = 0
+             {
+                tex->buffer[((size_t)y * sc->stride) + 1] = 0;  // byte[1] = len = 0
+             }
 
            tex->dirty = EINA_FALSE;
            tex->rolling_hash = 2166136261u;  // seed

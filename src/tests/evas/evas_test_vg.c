@@ -94,7 +94,9 @@ _scene_sample(const char *engine, void (*build)(Evas *e),
    // Several frames: the first one populates caches, and failures in the
    // vector paths have tended to need a second pass to show up.
    for (i = 0; i < frames; i++)
-     ecore_evas_manual_render(ee);
+     {
+        ecore_evas_manual_render(ee);
+     }
 
    // A snapshot reads back uniformly whether the engine renders to memory
    // or to a window.

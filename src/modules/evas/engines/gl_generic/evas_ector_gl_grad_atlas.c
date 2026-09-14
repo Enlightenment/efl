@@ -126,10 +126,12 @@ static int
 _find_identity(Span_Grad_Atlas *a, void *grad_id, uint32_t version)
 {
    for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
-     if (a->rows[i].occupied &&
-         (a->rows[i].grad_id == grad_id) &&
-         (a->rows[i].version == version))
-       return i;
+     {
+        if (a->rows[i].occupied &&
+            (a->rows[i].grad_id == grad_id) &&
+            (a->rows[i].version == version))
+          return i;
+     }
    return -1;
 }
 
@@ -167,7 +169,9 @@ static int
 _alloc_row(Span_Grad_Atlas *a)
 {
    for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
-     if (!a->rows[i].occupied) return i;
+     {
+        if (!a->rows[i].occupied) return i;
+     }
 
    int      best     = -1;
    uint32_t best_age = 0;
@@ -188,19 +192,28 @@ _alloc_row(Span_Grad_Atlas *a)
      {
         a->flush_cb(a->flush_data);
         for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
-          if (a->rows[i].last_used == a->current_frame)
-            // current_frame is uint32_t; guard against underflow when this
-            // branch is reached before the first frame_begin() (current_frame
-            // == 0).  Without the guard every row's age would wrap to
-            // UINT32_MAX and never be beaten again, flattening the LRU for
-            // the atlas's lifetime.
-            a->rows[i].last_used = a->current_frame ? (a->current_frame - 1) : 0;
+          {
+             if (a->rows[i].last_used == a->current_frame)
+               {
+                  // current_frame is uint32_t; guard against underflow when this
+                  // branch is reached before the first frame_begin() (current_frame
+                  // == 0).  Without the guard every row's age would wrap to
+                  // UINT32_MAX and never be beaten again, flattening the LRU for
+                  // the atlas's lifetime.
+                  a->rows[i].last_used = a->current_frame ? (a->current_frame - 1) : 0;
+               }
+          }
 
         best     = 0;
         best_age = a->rows[0].last_used;
         for (int i = 1; i < SPAN_GRAD_ATLAS_H; i++)
-          if (a->rows[i].last_used < best_age)
-            { best = i; best_age = a->rows[i].last_used; }
+          {
+             if (a->rows[i].last_used < best_age)
+               {
+                  best = i;
+                  best_age = a->rows[i].last_used;
+               }
+          }
         return best;
      }
 

@@ -283,7 +283,9 @@ EFL_START_TEST(span_collector_solid_oob)
    _collect_spans_solid(2, spans, &sd);
 
    for (i = 0; i < 50; i++)
-     ck_assert_int_eq(sc->textures[0].span_counts[i], 0);
+     {
+        ck_assert_int_eq(sc->textures[0].span_counts[i], 0);
+     }
 
    span_collector_free(sc);
 }
@@ -465,7 +467,9 @@ EFL_START_TEST(span_collector_overflow_split)
         }
    }
    for (i = 0; i < 5; i++)
-     ck_assert_int_eq(found[i], 1);
+     {
+        ck_assert_int_eq(found[i], 1);
+     }
 
    span_collector_free(sc);
 }
@@ -681,7 +685,9 @@ EFL_START_TEST(span_collector_solid_overflow_drop)
 
    total = 0;
    for (i = 0; i < sc->texture_count; i++)
-     total += sc->textures[i].span_counts[3];
+     {
+        total += sc->textures[i].span_counts[3];
+     }
    ck_assert_int_ge(total, 5);
 
    span_collector_free(sc);

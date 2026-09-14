@@ -1235,17 +1235,21 @@ span_shader_shutdown(void)
    _span_fs_highp = -1;
 
    for (kind = 0; kind < 2; kind++)
-     for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
-       for (mask = 0; mask < 2; mask++)
-         {
-            Span_Shader *ss = &_span_shaders[kind][b][mask];
-            if (ss->program)
-              {
-                 glDeleteProgram(ss->program);
-                 ss->program = 0;
-              }
-            ss->samplers_bound = EINA_FALSE;
-         }
+     {
+        for (b = 0; b < (int)SPAN_BIND_COUNT; b++)
+          {
+             for (mask = 0; mask < 2; mask++)
+               {
+                  Span_Shader *ss = &_span_shaders[kind][b][mask];
+                  if (ss->program)
+                    {
+                       glDeleteProgram(ss->program);
+                       ss->program = 0;
+                    }
+                  ss->samplers_bound = EINA_FALSE;
+               }
+          }
+     }
 
    if (_white_mask_tex)
      {
@@ -1257,7 +1261,13 @@ span_shader_shutdown(void)
      {
         int v;
         for (v = 0; v < SPAN_VARIANT_COUNT; v++)
-          if (_span_vao[v]) { _gl_del_vao(1, &_span_vao[v]); _span_vao[v] = 0; }
+          {
+             if (_span_vao[v])
+               {
+                  _gl_del_vao(1, &_span_vao[v]);
+                  _span_vao[v] = 0;
+               }
+          }
      }
    if (_span_vbo)
      {
@@ -1544,9 +1554,11 @@ span_page_upload(void *gc_ptr, Span_Page *page,
                }
 
              for (y = 0; y < ent[j].rows; y++)
-               memcpy(packed + ((size_t)(at + y) * row_bytes),
-                      tex->buffer + ((size_t)y * ent[j].stride),
-                      row_bytes);
+               {
+                  memcpy(packed + ((size_t)(at + y) * row_bytes),
+                         tex->buffer + ((size_t)y * ent[j].stride),
+                         row_bytes);
+               }
              at += ent[j].rows;
           }
 
@@ -1797,8 +1809,11 @@ span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
         if (!buf) break;
 
         for (k = run_start; k < end; k++)
-          evas_gl_common_span_fill_vertices((char *)buf + (vsize * 6 * (size_t)(k - run_start)),
-                                            variant, &quads[k], ndc + (k * 8));
+          {
+             evas_gl_common_span_fill_vertices((char *)buf +
+                                               (vsize * 6 * (size_t)(k - run_start)),
+                                               variant, &quads[k], ndc + (k * 8));
+          }
 
         _span_draw_batch(gc, variant, buf, need, 6 * (end - run_start),
                          quads[run_start].fill.tex, quads[run_start].stroke.tex,

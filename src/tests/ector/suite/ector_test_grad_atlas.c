@@ -88,8 +88,12 @@ EFL_START_TEST(grad_atlas_distinct_ramps_get_distinct_rows)
      }
    // All 64 rows should be unique.
    for (int i = 0; i < SPAN_GRAD_ATLAS_H; i++)
-     for (int j = i + 1; j < SPAN_GRAD_ATLAS_H; j++)
-       ck_assert_int_ne(rows[i], rows[j]);
+     {
+        for (int j = i + 1; j < SPAN_GRAD_ATLAS_H; j++)
+          {
+             ck_assert_int_ne(rows[i], rows[j]);
+          }
+     }
 
    span_grad_atlas_free(a);
 }
