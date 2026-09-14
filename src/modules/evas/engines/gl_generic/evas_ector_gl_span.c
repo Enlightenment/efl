@@ -48,7 +48,7 @@
 // sc->textures array, avoiding a separate heap allocation and copy.
 //
 // @param tex     Pointer to the Span_Texture slot to initialise.
-// @param h       Canvas height — determines buffer row count.
+// @param h       Canvas height - determines buffer row count.
 // @param stride  Bytes per row ((max_spans + 1) * 4).
 // @param x_min   Inclusive left edge of the x-range this texture covers.
 // @param x_max   Inclusive right edge of the x-range this texture covers.
@@ -110,7 +110,7 @@ span_collector_new(int h, int max_spans, Span_Data_Type type)
         return NULL;
      }
 
-   // Initialise the primary texture slot in place — no alloc+copy+free.
+   // Initialise the primary texture slot in place - no alloc+copy+free.
    if (!_span_texture_init(&sc->textures[0], h, sc->stride, 0, SPAN_TEXTURE_X_MAX_INITIAL))
      {
         free(sc->textures);
@@ -132,7 +132,7 @@ span_collector_new(int h, int max_spans, Span_Data_Type type)
 // Follows the Evas high-water mark pattern (like pipe buffers and RLE
 // spans): buffers grow via realloc when h > alloc_h, but never
 // shrink.  When h <= alloc_h, only the active height is updated
-// and the existing buffers are reused — no allocation at all.
+// and the existing buffers are reused - no allocation at all.
 void
 span_collector_resize(Span_Collector *sc, int h)
 {
@@ -145,14 +145,14 @@ span_collector_resize(Span_Collector *sc, int h)
    sc->h = h;
 
    // When active height changes, the GPU texture dimensions no longer
-   // match — mark dirty so the upload path recreates or resizes it.
+   // match - mark dirty so the upload path recreates or resizes it.
    {
       int ti;
       for (ti = 0; ti < sc->texture_count; ti++)
         sc->textures[ti].dirty = EINA_TRUE;
    }
 
-   // Common case: h fits within existing allocation — no realloc needed.
+   // Common case: h fits within existing allocation - no realloc needed.
    if (h <= sc->alloc_h)
      return;
 
@@ -257,7 +257,7 @@ span_collector_clear(Span_Collector *sc)
    // that may be freed between frames via the Eina free queue.  If not
    // NULLed here, a reused collector from the high-water mark pool
    // would retain a dangling pointer from the previous frame.
-   // type must also be reset — a collector previously used for gradient fills
+   // type must also be reset - a collector previously used for gradient fills
    // retains LinearGradient/RadialGradient, causing eng_ector_end to select
    // the gradient shader with a NULL gradient_data when reused for solid fills.
    sc->type          = Solid;
@@ -351,7 +351,7 @@ _find_split_x(Span_Texture *tex, int y, int stride, int bytes_per_span)
 // @param row_buf   Pointer to the start of the row (buffer + y * stride).
 // @param idx       Entry index to start writing at.
 // @param max_spans Maximum spans allowed in this row.
-// @param stride    Bytes per row (unused here — caller passes row_buf already
+// @param stride    Bytes per row (unused here - caller passes row_buf already
 //                  offset to the correct row; kept for API symmetry).
 // @param gap_ptr   Remaining gap; reduced by 256 per extender written.
 // @return          Number of extender entries written.
@@ -377,7 +377,7 @@ _emit_gap_extenders(uint8_t *row_buf, int idx, int max_spans,
 // existing rows are redistributed: spans fully on the right migrate to the
 // new texture; straddling spans are split at split_x; left-only spans stay.
 //
-// Gap extender entries (cov==0, len==1) in the source are skipped — they are
+// Gap extender entries (cov==0, len==1) in the source are skipped - they are
 // not redistributed.  New gap extenders are emitted in each destination where
 // the recomputed relative gap exceeds 255.
 //
@@ -455,11 +455,11 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
    // Gap-encoded format: byte[0]=cov, byte[1]=len, byte[2]=gap, byte[3]=0
    // Absolute position reconstructed as:
    //   abs_x starts at old_tex->x_min (first gap is relative to x_min)
-   //   abs_x += gap  → start of span
-   //   abs_x += len  → end of span / start of next gap region
+   //   abs_x += gap  -> start of span
+   //   abs_x += len  -> end of span / start of next gap region
    //
    // Gap extender entries (cov==0 && len==1) bridge gaps > 255 in the
-   // source — skip them during redistribution (they are regenerated below
+   // source - skip them during redistribution (they are regenerated below
    // wherever the recomputed destination gap still exceeds 255).
    //
    // left_last  tracks the end of the last span written to the left texture;
@@ -489,7 +489,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
 
              abs_x += gap;  // start of this span in absolute coords
 
-             // Skip source gap extender entries — just advance position.
+             // Skip source gap extender entries - just advance position.
              if ((cov == 0) && (len == 1))
                {
                   abs_x += len;
@@ -501,7 +501,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
 
                 if (span_end <= split_x)
                   {
-                     // Entirely in the left half — compact in place.
+                     // Entirely in the left half - compact in place.
                      int new_gap = abs_x - left_last;
                      left_idx += _emit_gap_extenders(left_row, left_idx,
                                                      sc->max_spans,
@@ -516,7 +516,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                   }
                 else if (abs_x >= split_x)
                   {
-                     // Entirely in the right half — move to new texture.
+                     // Entirely in the right half - move to new texture.
                      int new_gap = abs_x - right_last;
                      right_idx += _emit_gap_extenders(right_row, right_idx,
                                                       sc->max_spans,
@@ -531,7 +531,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                   }
                 else
                   {
-                     // Straddles the split point — divide at split_x.
+                     // Straddles the split point - divide at split_x.
                      int left_len  = split_x - abs_x;
                      int right_len = span_end - split_x;
 
@@ -550,7 +550,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                           }
                      }
 
-                     // Right fragment starts exactly at split_x → gap = 0.
+                     // Right fragment starts exactly at split_x -> gap = 0.
                      if (right_idx < sc->max_spans)
                        {
                           _write_span_entry(right_row + ((size_t)right_idx * 4),
@@ -569,7 +569,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
         new_tex->span_counts[y] = right_idx;
         new_tex->last_x_end[y]  = right_last;
 
-        // Clear tails of redistributed rows — stale entries beyond the
+        // Clear tails of redistributed rows - stale entries beyond the
         // new span_counts have non-zero len bytes from the pre-split data.
         // The collection callback's row-change memset won't cover these
         // since the split happens mid-collection.
@@ -627,7 +627,7 @@ _find_texture_for_x(Span_Collector *sc, int x)
 // prior frames beyond the current frame's last span.
 //
 // The memset covers exactly (max_spans + 1 - idx) entries starting at
-// index idx — only the unused tail, not the full row.  When idx == 0 the
+// index idx - only the unused tail, not the full row.  When idx == 0 the
 // entire row is zeroed; when idx == max_spans nothing is done (row full,
 // sentinel already provided by the spatial split path).
 //
@@ -657,9 +657,9 @@ _flush_row_tail(Span_Collector *sc, int ti, int y)
 // SW_FT_SpanFunc callback for Solid fills.
 //
 // Packs each span as 1 RGBA8 texel (4 bytes) into the Span_Texture row:
-//   byte 0: gap   — distance from end of previous span on this row
-//   byte 1: len   — span length (max 255; longer spans are split)
-//   byte 2: coverage — AA coverage 0-255
+//   byte 0: gap   - distance from end of previous span on this row
+//   byte 1: len   - span length (max 255; longer spans are split)
+//   byte 2: coverage - AA coverage 0-255
 //   byte 3: reserved (zero)
 //
 // The base color is passed to the shader as a uniform, not per-span.
@@ -688,7 +688,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
    if (!sc) return;
 
    // sd->color and sd->mul_col are constant across all spans in one
-   // callback invocation — compute the composited base color once.
+   // callback invocation - compute the composited base color once.
    // DRAW_MUL4_SYM is defined either via draw.h (engine build) or via
    // evas_ector_gl_span.h (SPAN_COLLECTOR_TEST_BUILD).
    sc->color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -719,7 +719,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
         // The buffer is hot in L1-D from the span writes above, so the
         // memset is nearly free.
         //
-        // Only fires when y actually changes — not once per span.
+        // Only fires when y actually changes - not once per span.
         if ((y != sc->flush_prev_y) && (sc->flush_prev_y >= 0) && (sc->flush_prev_ti >= 0))
           _flush_row_tail(sc, sc->flush_prev_ti, sc->flush_prev_y);
 
@@ -729,7 +729,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
 
         // When the row is full, attempt a spatial split so that the
         // overflow span can still be routed to a new right-half texture.
-        // On split success, retry the current span without advancing — the
+        // On split success, retry the current span without advancing - the
         // textures array has been reorganised and _find_texture_for_x will
         // now return a different (less-full) slot.
         // On split failure (quota exhausted or degenerate geometry), drop
@@ -750,7 +750,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
            //
            // Memory layout: [cov, len, gap, reserved]
            // GL_BGRA interprets: B=cov, G=len, R=gap, A=reserved
-           // Shader reads: .r=gap, .g=len, .b=cov — correct.
+           // Shader reads: .r=gap, .g=len, .b=cov - correct.
            //
            // gap = distance from end of previous span on this row.
            // Spans longer than 255 are split into multiple entries.
@@ -777,9 +777,9 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
            while ((gap > 255) && (idx < sc->max_spans))
              {
                 entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
-                entry[0] = 0;              // cov = 0 → invisible
-                entry[1] = 1;              // len = 1 → advances x by 1
-                entry[2] = 255;            // gap = 255 → advances x by 255
+                entry[0] = 0;              // cov = 0 -> invisible
+                entry[1] = 1;              // len = 1 -> advances x by 1
+                entry[2] = 255;            // gap = 255 -> advances x by 255
                 entry[3] = 0;
                 tex->rolling_hash = (tex->rolling_hash * 31) + *((const uint32_t *)entry);
                 gap -= 256;                // 255 gap + 1 len = 256 pixels
@@ -801,10 +801,10 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
                               | ((uint32_t)g     << 16);
 
                    entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
-                   entry[0] = (uint8_t)cov;    // byte0 → B in BGRA
-                   entry[1] = (uint8_t)chunk;  // byte1 → G in BGRA
-                   entry[2] = (uint8_t)g;      // byte2 → R in BGRA
-                   entry[3] = 0;               // byte3 → A in BGRA
+                   entry[0] = (uint8_t)cov;    // byte0 -> B in BGRA
+                   entry[1] = (uint8_t)chunk;  // byte1 -> G in BGRA
+                   entry[2] = (uint8_t)g;      // byte2 -> R in BGRA
+                   entry[3] = 0;               // byte3 -> A in BGRA
                    tex->rolling_hash = (tex->rolling_hash * 31) + v;
                 }
 
@@ -845,7 +845,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
 // identical (1 texel per span: gap, len, coverage, reserved).  Gradient
 // colors are NOT stored per-span; instead the fragment shader computes
 // them per-pixel using:
-//   - a 1024×1 RGBA8 gradient ramp texture (uploaded by eng_ector_end)
+//   - a 1024x1 RGBA8 gradient ramp texture (uploaded by eng_ector_end)
 //   - three float coefficients (a, b, c) where t = a*px + b*py + c
 //     with px/py being FBO-space gl_FragCoord values.
 //
@@ -884,10 +884,10 @@ _collect_spans_gradient(int count, const SW_FT_Span *spans, void *user_data)
 // natively via the fragment shader.
 //
 // Supported methods (shader handles the blend via branchless mix()):
-//   MATTE_ALPHA         — result *= mask_a              (u_mask_inv = 0.0)
-//   MATTE_ALPHA_INVERSE — result *= (1 - mask_a)        (u_mask_inv = 1.0)
-//   MASK_INTERSECT      — result *= mask_a              (u_mask_inv = 0.0)
-//   MASK_SUBSTRACT      — result *= (1 - mask_a)        (u_mask_inv = 1.0)
+//   MATTE_ALPHA         - result *= mask_a              (u_mask_inv = 0.0)
+//   MATTE_ALPHA_INVERSE - result *= (1 - mask_a)        (u_mask_inv = 1.0)
+//   MASK_INTERSECT      - result *= mask_a              (u_mask_inv = 0.0)
+//   MASK_SUBSTRACT      - result *= (1 - mask_a)        (u_mask_inv = 1.0)
 //
 // INTERSECT uses the same shader math as MATTE_ALPHA; SUBSTRACT uses
 // the same as MATTE_ALPHA_INVERSE.  The semantic difference (how
@@ -895,8 +895,8 @@ _collect_spans_gradient(int count, const SW_FT_Span *spans, void *user_data)
 // FBO rendering phase, not the source shape shader.
 //
 // Additive / difference modes (u_mask_op selects the math):
-//   MASK_ADD             — result.a = min(result.a + mask_a, 1.0) (u_mask_op = 1)
-//   MASK_DIFFERENCE      — result *= abs(result.a - mask_a)       (u_mask_op = 2)
+//   MASK_ADD             - result.a = min(result.a + mask_a, 1.0) (u_mask_op = 1)
+//   MASK_DIFFERENCE      - result *= abs(result.a - mask_a)       (u_mask_op = 2)
 //
 // All 6 composite methods are GPU-accelerated.  NONE falls through.
 //

@@ -51,12 +51,12 @@ typedef struct _Span_Page Span_Page;
 #define SPAN_FILL_TYPE_GRADIENT_MIN    SPAN_FILL_TYPE_LINEAR_GRADIENT
 
 // ---------------------------------------------------------------------------
-// Span_Variant — selects the interleaved vertex layout for a given draw call.
+// Span_Variant - selects the interleaved vertex layout for a given draw call.
 //
-// SOLID         — no gradient, no mask
-// SOLID_MASK    — no gradient, composite mask present
-// GRADIENT      — gradient fill or stroke, no mask
-// GRADIENT_MASK — gradient fill or stroke, composite mask present
+// SOLID         - no gradient, no mask
+// SOLID_MASK    - no gradient, composite mask present
+// GRADIENT      - gradient fill or stroke, no mask
+// GRADIENT_MASK - gradient fill or stroke, composite mask present
 // ---------------------------------------------------------------------------
 typedef enum
 {
@@ -76,8 +76,8 @@ typedef enum
 //   docs/superpowers/specs/2026-05-05-span-gl-attribute-batching-design.md
 //
 // mask_comp_inv[2]:
-//   [0] — raw comp_method (Efl_Gfx_Vg_Composite_Method enum value, cast to GLfloat)
-//   [1] — mask_inv flag (1.0 if the mask alpha should be inverted, 0.0 otherwise)
+//   [0] - raw comp_method (Efl_Gfx_Vg_Composite_Method enum value, cast to GLfloat)
+//   [1] - mask_inv flag (1.0 if the mask alpha should be inverted, 0.0 otherwise)
 // ---------------------------------------------------------------------------
 
 // Common fields shared by all four variants. 16f = 64 B

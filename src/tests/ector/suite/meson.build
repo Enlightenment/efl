@@ -7,10 +7,10 @@ ector_suite_src = [
 ]
 
 # Include directories for the test suite:
-#   '..'           — resolves ../efl_check.h via the -I../src/tests/ector
+#   '..'           - resolves ../efl_check.h via the -I../src/tests/ector
 #                    search path that meson adds automatically
-#   gl_generic     — provides evas_ector_gl_span.h
-#   freetype       — provides sw_ft_raster.h (needed by evas_ector_gl_span.h)
+#   gl_generic     - provides evas_ector_gl_span.h
+#   freetype       - provides sw_ft_raster.h (needed by evas_ector_gl_span.h)
 ector_suite_inc = [
   include_directories('..'),
   include_directories(

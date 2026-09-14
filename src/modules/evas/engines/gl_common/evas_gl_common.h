@@ -48,7 +48,7 @@
 
 // Per-variant span-buffer interleaved vertex types, shared macros, and
 // the SPAN_FILL_TYPE_* fill type constants.
-// Single source of truth — no duplication with evas_ector_gl_span.h.
+// Single source of truth - no duplication with evas_ector_gl_span.h.
 #include "evas_ector_gl_span_types.h"
 
 #define EVAS_GL_TILE_SIZE 16

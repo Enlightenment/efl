@@ -149,7 +149,7 @@ static const char _glsl_varyings_mask[] =
    "varying mediump vec2 v_mask_comp_inv;\n";
 
 // ------------------------------------------------------------------
-// Attribute declaration blocks (per-vertex data → VS input)
+// Attribute declaration blocks (per-vertex data -> VS input)
 // ------------------------------------------------------------------
 
 static const char _glsl_attributes_common[] =
@@ -176,7 +176,7 @@ static const char _glsl_attributes_mask[] =
    "attribute mediump vec2 a_mask_comp_inv;\n";
 
 // ------------------------------------------------------------------
-// Vertex shader main bodies — one per variant family
+// Vertex shader main bodies - one per variant family
 // ------------------------------------------------------------------
 
 // Solid, no mask.
@@ -196,7 +196,7 @@ static const char _glsl_vs_main_solid[] =
    "}\n";
 
 // Solid with composite mask.
-// Decodes comp_method (slot 0) → mask_op (0=multiply,1=add,2=difference)
+// Decodes comp_method (slot 0) -> mask_op (0=multiply,1=add,2=difference)
 // so the FS can keep its existing mop < 0.5 / mop < 1.5 logic.
 // Slot 1 (mask_inv) is already pre-decoded by _span_fill_vertices.
 static const char _glsl_vs_main_solid_mask[] =
@@ -353,7 +353,7 @@ _span_tier_get(void)
      {
         // Both queries came back 0: this means glGetIntegerv failed (e.g. no
         // current GL context yet), not that the device genuinely reports 0
-        // attributes/varyings.  Do not memoize — leave _span_tier_resolved
+        // attributes/varyings.  Do not memoize - leave _span_tier_resolved
         // unresolved so the next call (once a context is current) retries.
         INF("span tier query returned 0/0; assuming no current GL context, "
             "will retry on next call");
@@ -408,7 +408,7 @@ static const char _glsl_uniforms_shared[] =
 //
 // Per-shape data (offsets, x_min, has_fill/has_stroke) moved to varyings.
 // Samplers still declared as uniforms; the has_fill/has_stroke values are
-// decoded from v_has_flags in main() — no per-binding defines needed.
+// decoded from v_has_flags in main() - no per-binding defines needed.
 static const char _glsl_uniforms_bind_fs[] =
    "uniform sampler2D u_fill_spans;\n"
    "uniform sampler2D u_stroke_spans;\n";
@@ -437,13 +437,13 @@ static const char _glsl_uniforms_bind_s[] =
 static const char _glsl_uniforms_mask[] =
    "uniform sampler2D u_mask_tex;\n";
 
-// scan_spans() — shared by solid and solid_mask shaders.
+// scan_spans() - shared by solid and solid_mask shaders.
 //
 // Each span entry is 1 texel (4 bytes) in the span texture:
-//   byte0 (B): coverage — AA coverage 0-255
-//   byte1 (G): len      — span length (max 255; longer spans are split)
-//   byte2 (R): gap      — distance from end of previous span on this row
-//   byte3 (A): reserved — zero
+//   byte0 (B): coverage - AA coverage 0-255
+//   byte1 (G): len      - span length (max 255; longer spans are split)
+//   byte2 (R): gap      - distance from end of previous span on this row
+//   byte3 (A): reserved - zero
 static const char _glsl_scan_spans[] =
    "\n"
    "/* Scan one span texture row, accumulating coverage-weighted base_col\n"
@@ -470,7 +470,7 @@ static const char _glsl_scan_spans[] =
    "   return res;\n"
    "}\n";
 
-// grad_spread() — shared by gradient and gradient_mask shaders.
+// grad_spread() - shared by gradient and gradient_mask shaders.
 //
 // Spread modes:
 //   spread == 0 (PAD):     t = clamp(t, 0.0, 1.0)
@@ -496,7 +496,7 @@ static const char _glsl_grad_spread[] =
    "   return t;\n"
    "}\n";
 
-// scan_gradient_spans() — shared by gradient and gradient_mask shaders.
+// scan_gradient_spans() - shared by gradient and gradient_mask shaders.
 //
 // Span buffer format identical to the solid shader (gap, len, coverage).
 // On hit, computes gradient parameter t per-pixel (linear or radial) and
@@ -639,7 +639,7 @@ static const char _glsl_main_end[] =
 
 // Mask epilogue: sample the composite mask texture and apply it.
 // v_mask_comp_inv.x: decoded mask_op (0=multiply, 1=add, 2=difference)
-//   — decoded in the VS from raw comp_method to save per-fragment work.
+//   - decoded in the VS from raw comp_method to save per-fragment work.
 // v_mask_comp_inv.y: mask_inv (0=normal, 1=invert, multiply path only).
 static const char _glsl_mask_epilogue[] =
    "\n"
@@ -783,22 +783,22 @@ _span_vs_parts_build(int kind, int mask, int *out_count)
 typedef struct
 {
    unsigned int program;
-   // Uniform locations — samplers and pool reciprocals only.
+   // Uniform locations - samplers and pool reciprocals only.
    // Per-shape data travels in vertex attributes, whose locations are the
    // fixed SPAN_ATTR_* constants bound before linking.
    int          loc_fill_spans;
    int          loc_stroke_spans;
    int          loc_inv_tw;
    int          loc_inv_th;
-   // Gradient atlas sampler — valid only in gradient variants (-1 otherwise).
+   // Gradient atlas sampler - valid only in gradient variants (-1 otherwise).
    int          loc_grad_ramp_atlas;
-   // Mask sampler — valid only in mask variants (-1 otherwise).
+   // Mask sampler - valid only in mask variants (-1 otherwise).
    int          loc_mask_tex;
    // Sampler uniforms are program state; assign the texture units once.
    Eina_Bool    samplers_bound;
 } Span_Shader;
 
-// [kind][bind][mask] — kind 0=solid 1=gradient, bind in Span_Bind_Set, mask 0/1.
+// [kind][bind][mask] - kind 0=solid 1=gradient, bind in Span_Bind_Set, mask 0/1.
 // 12 variants total: eliminates unused sampler declarations per binding set.
 static Span_Shader _span_shaders[2][SPAN_BIND_COUNT][2];
 
@@ -820,7 +820,7 @@ typedef enum {
 
 static Span_Shader_State _span_shader_state = SPAN_SHADER_UNTRIED;
 
-// 1x1 white texture — kept for potential fallback use; not bound during
+// 1x1 white texture - kept for potential fallback use; not bound during
 // normal rendering (non-mask shaders have no mask sampler at all).
 static GLuint _white_mask_tex = 0;
 
@@ -1050,7 +1050,7 @@ _link_program(Span_Shader *ss,
    // Bind attribute locations explicitly, before linking, so that every
    // variant places a given semantic at the same index.  Without this the
    // linker is free to assign per-program locations, and a vertex array
-   // object — whose state is keyed by location, not by program — could not
+   // object - whose state is keyed by location, not by program - could not
    // be shared between the programs that use the same vertex layout.
    //
    // Solid and gradient variants deliberately overlap on 5/6: a VAO is
@@ -1090,14 +1090,14 @@ _link_program(Span_Shader *ss,
         return EINA_FALSE;
      }
 
-   // Uniform locations — only samplers and pool reciprocals remain.
+   // Uniform locations - only samplers and pool reciprocals remain.
    ss->loc_fill_spans     = glGetUniformLocation(ss->program, "u_fill_spans");
    ss->loc_stroke_spans   = glGetUniformLocation(ss->program, "u_stroke_spans");
    ss->loc_inv_tw         = glGetUniformLocation(ss->program, "u_inv_tw");
    ss->loc_inv_th         = glGetUniformLocation(ss->program, "u_inv_th");
-   // Gradient atlas — location -1 in solid shaders (safe no-op).
+   // Gradient atlas - location -1 in solid shaders (safe no-op).
    ss->loc_grad_ramp_atlas = glGetUniformLocation(ss->program, "u_grad_ramp_atlas");
-   // Mask sampler — location -1 in non-mask shaders (safe no-op).
+   // Mask sampler - location -1 in non-mask shaders (safe no-op).
    ss->loc_mask_tex       = glGetUniformLocation(ss->program, "u_mask_tex");
 
    // Attribute locations are the constants bound above, not queried: an
@@ -1203,7 +1203,7 @@ span_shader_init(void)
           }
      }
 
-   // Create 1x1 white texture — kept as a potential no-mask fallback.
+   // Create 1x1 white texture - kept as a potential no-mask fallback.
    if (!_white_mask_tex)
      {
         uint8_t white[4] = { 255, 255, 255, 255 };
@@ -1676,7 +1676,7 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
    if (!vao)
      {
         // No vertex array objects: respecify the layout for every draw.
-        // Locations left enabled afterwards are benign — image/font shaders
+        // Locations left enabled afterwards are benign - image/font shaders
         // bind their own slots explicitly and never fetch from ours.
         Span_Attr_Desc desc[16];
         int n = _span_attr_layout(variant, desc);

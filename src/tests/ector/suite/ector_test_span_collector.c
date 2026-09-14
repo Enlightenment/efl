@@ -18,26 +18,26 @@
 // Unit tests for the span-buffer collector (1-texel gap-encoded format).
 //
 // The current format stores each span as one RGBA8 texel (4 bytes):
-//   byte[0] (B): coverage  — AA coverage 0-255
-//   byte[1] (G): len       — span length (0-255; 0 == sentinel)
-//   byte[2] (R): gap       — distance from end of previous span on this row
+//   byte[0] (B): coverage  - AA coverage 0-255
+//   byte[1] (G): len       - span length (0-255; 0 == sentinel)
+//   byte[2] (R): gap       - distance from end of previous span on this row
 //                            (first span's gap is relative to x_min of the texture)
-//   byte[3] (A): reserved  — always 0
+//   byte[3] (A): reserved  - always 0
 //
 // stride = (max_spans + 1) * 4 bytes per row.  The extra +1 slot holds the
 // zero-length sentinel (byte[1] == 0) that terminates the shader scan loop.
 //
-// sc->color is a premultiplied ARGB uniform — it is NOT written into the
+// sc->color is a premultiplied ARGB uniform - it is NOT written into the
 // span buffer.  The callback sets sc->color = DRAW_MUL4_SYM(sd->color,
 // sd->mul_col) before packing spans.
 //
 // To drive _collect_spans_solid in the test binary we set:
-//   sd.mul_col = 0xFFFFFFFF   — identity, so sc->color == sd.color
+//   sd.mul_col = 0xFFFFFFFF   - identity, so sc->color == sd.color
 //   sd.color   = desired_color
-//   sd.offx    = sd.offy = 0  — no ector surface offset
+//   sd.offx    = sd.offy = 0  - no ector surface offset
 //
 // Tests exercise span_collector_new/free and _collect_spans_solid in
-// isolation — no GL context is required because upload/draw stubs are
+// isolation - no GL context is required because upload/draw stubs are
 // compiled as no-ops when SPAN_COLLECTOR_TEST_BUILD is defined.
 
 #ifdef HAVE_CONFIG_H
@@ -70,7 +70,7 @@ _sd_init_solid(Span_Data *sd, Span_Collector *sc, uint32_t color)
    sd->color          = color;
    sd->mul_col        = 0xFFFFFFFF; // identity: DRAW_MUL4_SYM(c, 0xFFFFFFFF) == c
    sd->type           = Solid;
-   // offx, offy default to 0 — no ector surface translation
+   // offx, offy default to 0 - no ector surface translation
 }
 
 // Walk one texture row and reconstruct (absolute_x, len) pairs for every
@@ -106,7 +106,7 @@ _reconstruct_spans(Span_Texture *tex, int y, int stride, int max_ent,
 
         abs_x += gap;
 
-        // Gap extender: cov==0, len==1 — advances position, not a real span.
+        // Gap extender: cov==0, len==1 - advances position, not a real span.
         if (cov == 0 && len == 1)
           {
              abs_x += len;
@@ -136,7 +136,7 @@ _reconstruct_spans(Span_Texture *tex, int y, int stride, int max_ent,
 //   entry byte[2]    == 50   (gap from x_min=0, so gap == x)
 //   entry byte[3]    == 0    (reserved)
 //
-// sc->color is set via DRAW_MUL4_SYM(sd.color, sd.mul_col) — not written
+// sc->color is set via DRAW_MUL4_SYM(sd.color, sd.mul_col) - not written
 // to the buffer, so we do NOT assert buffer bytes against color values.
 EFL_START_TEST(span_collector_solid_single)
 {
@@ -199,14 +199,14 @@ EFL_START_TEST(span_collector_solid_sentinel)
 
    // Sentinel is at entry index 1 (one past the span we wrote).
    sentinel = sc->textures[0].buffer + (5 * sc->stride) + (1 * 4);
-   ck_assert_int_eq(sentinel[1], 0); // len == 0 → sentinel
+   ck_assert_int_eq(sentinel[1], 0); // len == 0 -> sentinel
 
    span_collector_free(sc);
 }
 EFL_END_TEST
 
 // ------------------------------------------------------------------
-// Test 3: multiple spans on the same row — gap encoding
+// Test 3: multiple spans on the same row - gap encoding
 // ------------------------------------------------------------------
 
 // Write 3 spans on row 20:
@@ -353,7 +353,7 @@ EFL_START_TEST(span_collector_gap_extender)
    ck_assert_int_eq(e2[1],   1);
    ck_assert_int_eq(e2[2], 255);
 
-   // Entry 3: span B — remainder gap = 585 - 2*256 = 73
+   // Entry 3: span B - remainder gap = 585 - 2*256 = 73
    ck_assert_int_eq(e3[0], 100); // coverage
    ck_assert_int_eq(e3[1],   5); // len
    ck_assert_int_eq(e3[2],  73); // gap = 585 - 512
@@ -610,12 +610,12 @@ EFL_START_TEST(span_collector_post_split_routing)
 EFL_END_TEST
 
 // ------------------------------------------------------------------
-// Test 9: gradient format invariants — stride == (max_spans+1)*4
+// Test 9: gradient format invariants - stride == (max_spans+1)*4
 // ------------------------------------------------------------------
 
 // Verifies that span_collector_new() sets stride correctly for gradient
 // fill types.  Stride must be (max_spans + 1) * 4 bytes for all types
-// (Solid, LinearGradient, RadialGradient) — the +1 is the sentinel slot.
+// (Solid, LinearGradient, RadialGradient) - the +1 is the sentinel slot.
 //
 // Actual gradient color sampling (which requires a gradient ramp texture
 // and t-coefficient uniforms) is tested in the integration suite.  Here
@@ -642,7 +642,7 @@ EFL_START_TEST(span_collector_gradient_basic)
 EFL_END_TEST
 
 // ------------------------------------------------------------------
-// Test 10: overflow drop test (legacy) — preserved for regression
+// Test 10: overflow drop test (legacy) - preserved for regression
 // ------------------------------------------------------------------
 
 // Original regression test: with max_spans=4, write exactly 4 spans
@@ -752,7 +752,7 @@ EFL_END_TEST
 // Call span_collector_clear (simulating a frame boundary).
 // Frame 2: write NO span on row 3.
 //
-// Verify that byte[1] of entry 0 on row 3 is 0 after clear — the shader
+// Verify that byte[1] of entry 0 on row 3 is 0 after clear - the shader
 // must see len=0 at the very first entry on a row that received no spans.
 EFL_START_TEST(span_collector_clear_stale_sentinel)
 {
@@ -782,7 +782,7 @@ EFL_START_TEST(span_collector_clear_stale_sentinel)
    // Frame 2: no spans written on row 3. span_counts[3] == 0.
    ck_assert_int_eq(sc->textures[0].span_counts[3], 0);
 
-   // byte[1] of entry 0 must be 0 — the sentinel the shader relies on.
+   // byte[1] of entry 0 must be 0 - the sentinel the shader relies on.
    entry0 = sc->textures[0].buffer + (3 * sc->stride);
    ck_assert_int_eq(entry0[1], 0);
 

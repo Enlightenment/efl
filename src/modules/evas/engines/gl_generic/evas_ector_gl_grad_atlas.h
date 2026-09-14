@@ -14,14 +14,14 @@ typedef unsigned int GLuint;
 # endif
 #endif
 
-// Gradient ramp atlas — fixed 1024×64 RGBA8 texture pool.
+// Gradient ramp atlas - fixed 1024x64 RGBA8 texture pool.
 //
 // Each row holds one resolved 1024-texel ramp.  Lookup is by
-//   (Efl_Vg_Gradient*, version)  — fast identity match
+//   (Efl_Vg_Gradient*, version)  - fast identity match
 // or by content hash with byte-compare fallback for collisions.
 //
 // The CPU-side mirror (256 KB) lives only for hash-collision
-// verification — it is never read back from the GPU.
+// verification - it is never read back from the GPU.
 //
 // Single-threaded; no locking.
 
@@ -60,7 +60,7 @@ Span_Grad_Atlas *span_grad_atlas_new(void);
 // Free GL resources and CPU mirror.
 void span_grad_atlas_free(Span_Grad_Atlas *a);
 
-// Begin a new render pass — bumps the LRU frame counter.
+// Begin a new render pass - bumps the LRU frame counter.
 void span_grad_atlas_frame_begin(Span_Grad_Atlas *a);
 
 // Register a callback that drains any draw calls referencing atlas rows.

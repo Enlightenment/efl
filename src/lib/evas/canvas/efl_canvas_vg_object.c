@@ -574,7 +574,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 
              EINA_LIST_FOREACH(cd->children, l, child)
                {
-                  // Skip composite target containers — their shapes were
+                  // Skip composite target containers - their shapes were
                   // already rendered to the mask FBO during render_pre.
                   // Drawing them again would overwrite the masked result.
                   if (efl_isa(child, EFL_CANVAS_VG_CONTAINER_CLASS))
@@ -583,7 +583,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                           efl_data_scope_get(child, EFL_CANVAS_VG_CONTAINER_CLASS);
                        if (child_cd && child_cd->comp.src) continue;
                     }
-                  // Skip gradient objects in composite containers — they are
+                  // Skip gradient objects in composite containers - they are
                   // fill properties of shapes, not standalone renderable
                   // nodes.  Only skip when comp_target is set to avoid
                   // affecting non-composite containers.

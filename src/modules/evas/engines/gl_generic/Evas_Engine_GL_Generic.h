@@ -33,8 +33,8 @@ struct _Render_Engine_GL_Generic
 
    Render_Output_GL_Generic *current;
 
-   // Gradient ramp atlas: one 1024×64 RGBA8 texture pool per engine lifetime.
-   // NULL if span_grad_atlas_new() failed — gradient shapes are skipped per
+   // Gradient ramp atlas: one 1024x64 RGBA8 texture pool per engine lifetime.
+   // NULL if span_grad_atlas_new() failed - gradient shapes are skipped per
    // the spec error table (one-shot ERR logged at allocation time).
    Span_Grad_Atlas          *grad_atlas;
 

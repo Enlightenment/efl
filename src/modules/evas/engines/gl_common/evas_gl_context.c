@@ -2120,7 +2120,7 @@ evas_gl_common_span_fill_vertices(void *out_buf, Span_Variant variant,
                                           (p->stroke.tex ? 2 : 0));
    common.x_min[0] = (GLfloat)p->fill.x_min;
    common.x_min[1] = (GLfloat)p->stroke.x_min;
-   // mul_col: premultiplied ARGB 0xAARRGGBB — decode as R,G,B,A for the shader
+   // mul_col: premultiplied ARGB 0xAARRGGBB - decode as R,G,B,A for the shader
    common.mul_col[0] = (float)((p->mul_col >> 16) & 0xFF) / 255.0f; // R
    common.mul_col[1] = (float)((p->mul_col >>  8) & 0xFF) / 255.0f; // G
    common.mul_col[2] = (float)( p->mul_col        & 0xFF) / 255.0f; // B

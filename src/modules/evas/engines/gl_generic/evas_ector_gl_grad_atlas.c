@@ -19,7 +19,7 @@
 // when SPAN_GRAD_ATLAS_TEST_BUILD is defined.
 # include <Eina.h>
 # include <eina_crc.h>
-// Stub out all GL functions used by the implementation — in test mode
+// Stub out all GL functions used by the implementation - in test mode
 // _ensure_gl short-circuits before any GL call, and _upload_row skips
 // the GL path, so these are never reached.
 # define glGenTextures(n, ids)        ((void)0)
@@ -42,7 +42,7 @@
 #include "evas_ector_gl_grad_atlas.h"
 
 // CRC32 over 4096 bytes using eina_crc() (SSE4.2-accelerated when
-// available — measured ~2.6x faster than FNV-1a on 4 KB ramps).
+// available - measured ~2.6x faster than FNV-1a on 4 KB ramps).
 // Cache lookup uses byte-compare on hit to defend against collisions.
 uint32_t
 span_grad_atlas_hash(const uint8_t *bytes)
@@ -121,7 +121,7 @@ span_grad_atlas_flush_cb_set(Span_Grad_Atlas *a,
    a->flush_data = data;
 }
 
-// Find row by (grad_id, version) — O(64). Returns row idx or -1.
+// Find row by (grad_id, version) - O(64). Returns row idx or -1.
 static int
 _find_identity(Span_Grad_Atlas *a, void *grad_id, uint32_t version)
 {
@@ -215,9 +215,9 @@ _alloc_row(Span_Grad_Atlas *a)
 // Upload bytes to row idx via glTexSubImage2D and copy to mirror.
 //
 // @p bytes points at native uint32 ARGB content (same layout as
-// gd->color_table).  The ARGB→RGBA byte-swap for the GL upload is
+// gd->color_table).  The ARGB->RGBA byte-swap for the GL upload is
 // done here on a stack staging buffer so that callers never need a
-// separate rearrangement pass — the cpu_mirror stores the native
+// separate rearrangement pass - the cpu_mirror stores the native
 // layout too, keeping hash/memcmp consistent.
 static void
 _upload_row(Span_Grad_Atlas *a, int row, const uint8_t *bytes)
@@ -227,7 +227,7 @@ _upload_row(Span_Grad_Atlas *a, int row, const uint8_t *bytes)
 #endif
    if (a->tex)
      {
-        // Rearrange ARGB native→RGBA for GL only at upload time.
+        // Rearrange ARGB native->RGBA for GL only at upload time.
         uint32_t staging[SPAN_GRAD_ATLAS_W];
         const uint32_t *src = (const uint32_t *)bytes;
         for (int j = 0; j < SPAN_GRAD_ATLAS_W; j++)
@@ -279,7 +279,7 @@ span_grad_atlas_lookup(Span_Grad_Atlas *a, void *grad_id,
         return row;
      }
 
-   // Miss — allocate or evict, upload.
+   // Miss - allocate or evict, upload.
    if (!_ensure_gl(a)) return -1;
    row = _alloc_row(a);
    _upload_row(a, row, bytes);

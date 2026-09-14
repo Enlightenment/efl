@@ -114,7 +114,7 @@ EFL_START_TEST(grad_atlas_lru_eviction)
                                                1, ramp);
         ck_assert_int_ge(first_rows[i], 0);
      }
-   // The oldest row was filled at frame 1 — that's first_rows[0].
+   // The oldest row was filled at frame 1 - that's first_rows[0].
    int oldest_row = first_rows[0];
 
    // Insert a 65th distinct ramp.  Must evict oldest_row.
@@ -137,7 +137,7 @@ EFL_START_TEST(grad_atlas_content_dedup_across_distinct_grad_ids)
    uint8_t ramp[SPAN_GRAD_ATLAS_ROW_BYTES];
    _fill_ramp(ramp, 42);
 
-   // Two different grad_ids with identical content — second should hit
+   // Two different grad_ids with identical content - second should hit
    // the hash+memcmp path and return the same row.
    int r1 = span_grad_atlas_lookup(a, (void *)0x1000, 1, ramp);
    ck_assert_int_ge(r1, 0);
@@ -152,7 +152,7 @@ EFL_END_TEST
 
 EFL_START_TEST(grad_atlas_hash_collision_distinguished_by_memcmp)
 {
-   // Two distinct ramp contents — even if they hashed to the same value
+   // Two distinct ramp contents - even if they hashed to the same value
    // (rare in practice for FNV-1a over 4 KB), memcmp must detect they
    // differ and allocate a second row.  We can't easily synthesize a
    // real collision, but we CAN simulate the logic by inserting two
@@ -169,7 +169,7 @@ EFL_START_TEST(grad_atlas_hash_collision_distinguished_by_memcmp)
    uint8_t ramp_b[SPAN_GRAD_ATLAS_ROW_BYTES];
    _fill_ramp(ramp_a, 1001);
    _fill_ramp(ramp_b, 1002);
-   // Confirm they differ — fail loud if our pattern collides accidentally.
+   // Confirm they differ - fail loud if our pattern collides accidentally.
    ck_assert_int_ne(memcmp(ramp_a, ramp_b, SPAN_GRAD_ATLAS_ROW_BYTES), 0);
 
    int ra = span_grad_atlas_lookup(a, (void *)0x1000, 1, ramp_a);
@@ -198,7 +198,7 @@ EFL_START_TEST(grad_atlas_version_change_evicts_or_refreshes)
    int r1 = span_grad_atlas_lookup(a, grad, 1, ramp_v1);
    ck_assert_int_ge(r1, 0);
 
-   // Version bumps + content changes — must NOT return r1 via identity
+   // Version bumps + content changes - must NOT return r1 via identity
    // (version differs); content also differs so hash path won't dedup.
    // Result: a fresh row is allocated.
    int r2 = span_grad_atlas_lookup(a, grad, 2, ramp_v2);

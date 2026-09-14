@@ -945,7 +945,7 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
 
    // Per-shape collector allocation.  When span_collector_alloc is set,
    // allocate (or reuse) a fresh Span_Collector for this shape and select
-   // the appropriate collector callback.  No CPU pixel blending occurs —
+   // the appropriate collector callback.  No CPU pixel blending occurs -
    // spans are packed into the collector's GPU-uploadable buffer; the
    // fragment shader renders them into the FBO in eng_ector_end().
    //

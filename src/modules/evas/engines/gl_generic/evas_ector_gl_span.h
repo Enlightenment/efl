@@ -55,11 +55,11 @@ typedef enum _Span_Data_Type
 // Span_Data struct: full definition when building in test mode so test code
 // can declare stack instances and drive _collect_spans_solid directly.
 // Must mirror the fields that _collect_spans_solid actually reads:
-//   offx, offy     — ector surface offset (zero in unit tests)
-//   mul_col        — multiplicative tint; set to 0xFFFFFFFF for identity
-//   color (union)  — premultiplied ARGB base color for Solid fills
-//   type           — fill type (Solid / LinearGradient / RadialGradient)
-//   span_collector — pointer to the active Span_Collector
+//   offx, offy     - ector surface offset (zero in unit tests)
+//   mul_col        - multiplicative tint; set to 0xFFFFFFFF for identity
+//   color (union)  - premultiplied ARGB base color for Solid fills
+//   type           - fill type (Solid / LinearGradient / RadialGradient)
+//   span_collector - pointer to the active Span_Collector
 // In normal engine builds the full definition comes from ector_software_private.h.
 # ifdef SPAN_COLLECTOR_TEST_BUILD
 struct _Span_Data
@@ -67,18 +67,18 @@ struct _Span_Data
    void    *raster_buffer;  // unused in tests; keeps struct layout sane
    void    *blend;          // unused in tests
    void    *unclipped_blend; // unused in tests
-   int      offx, offy;     // ector surface offset — set to 0 in tests
+   int      offx, offy;     // ector surface offset - set to 0 in tests
    void    *clip;           // unused in tests
-   int      type;           // Span_Data_Type cast — Solid=1, etc.
+   int      type;           // Span_Data_Type cast - Solid=1, etc.
    uint32_t mul_col;        // multiplicative tint; 0xFFFFFFFF = identity
-   int      op;             // render op — unused in tests
+   int      op;             // render op - unused in tests
    union {
       uint32_t color;       // premultiplied ARGB for Solid fills
-      void    *gradient;    // gradient pointer — unused in span tests
+      void    *gradient;    // gradient pointer - unused in span tests
       void    *buffer;      // unused in tests
    };
    void    *span_collector; // active Span_Collector *
-   Eina_Matrix3 inv;        // inverse transform matrix — identity in tests
+   Eina_Matrix3 inv;        // inverse transform matrix - identity in tests
 };
 
 // DRAW_MUL4_SYM: symmetric 8-bit channel multiply used to composite mul_col
@@ -132,17 +132,17 @@ typedef struct _Span_Collector Span_Collector;
 //
 // Each entry is 1 texel (4 bytes) for all fill types (Solid, LinearGradient,
 // RadialGradient):
-//   byte 0 (BGRA B): coverage — AA coverage 0-255
-//   byte 1 (BGRA G): len      — span length (max 255; longer spans are split)
-//   byte 2 (BGRA R): gap      — distance from end of previous span on this row
-//   byte 3 (BGRA A): reserved — zero
+//   byte 0 (BGRA B): coverage - AA coverage 0-255
+//   byte 1 (BGRA G): len      - span length (max 255; longer spans are split)
+//   byte 2 (BGRA R): gap      - distance from end of previous span on this row
+//   byte 3 (BGRA A): reserved - zero
 //
 // The buffer is stored in BGRA-swapped byte order for direct upload.
 // The shader reads: .r=gap, .g=len, .b=coverage.
 //
 // For Solid fills: the base color is passed as a shader uniform.
 // For LinearGradient / RadialGradient fills: the gradient ramp texture
-// (1024×1 RGBA8) and per-pixel t-computation coefficients are passed as
+// (1024x1 RGBA8) and per-pixel t-computation coefficients are passed as
 // shader uniforms.  No per-span color data is stored in the span buffer.
 //
 // The rows do not get a GPU texture of their own.  Every Span_Texture of
@@ -194,7 +194,7 @@ struct _Span_Collector
                                    // The +1 reserves a dedicated sentinel slot.
    int            actual_max_spans; // max span_counts[y] seen during collection this frame
 
-   // Row-tail flush state — tracked across multiple _collect_spans_solid
+   // Row-tail flush state - tracked across multiple _collect_spans_solid
    // invocations (e.g., when _span_fill_clipRect calls the callback in
    // chunks).  Reset in span_collector_clear.
    int            flush_prev_y;    // last row flushed (-1 = none)
@@ -212,7 +212,7 @@ struct _Span_Collector
 
    // Ector surface offset captured during _collect_spans_gradient().
    // These are the x/y values passed to ector_surface_reference_point_set().
-   // Needed to fold the local→canvas translation into the t-coefficients.
+   // Needed to fold the local->canvas translation into the t-coefficients.
    int            grad_offx;
    int            grad_offy;
 
@@ -260,7 +260,7 @@ void span_collector_clear(Span_Collector *sc);
 //
 // Follows the Evas high-water mark pattern: buffers grow via realloc when
 // @p h exceeds alloc_h, but never shrink.  When @p h is within
-// alloc_h, only the active height is updated — no allocation.
+// alloc_h, only the active height is updated - no allocation.
 void span_collector_resize(Span_Collector *sc, int h);
 
 // ------------------------------------------------------------------
@@ -278,8 +278,8 @@ void _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data);
 //
 // Thin wrapper around _collect_spans_solid(): packs spans in the same
 // 1-texel format (gap, len, coverage, reserved).  The gradient shader
-// computes per-pixel colors from a 1024×1 ramp texture and per-frame
-// t-computation coefficients passed as uniforms — no per-span color data
+// computes per-pixel colors from a 1024x1 ramp texture and per-frame
+// t-computation coefficients passed as uniforms - no per-span color data
 // is written into the span buffer.
 //
 // Sets sc->type = sd->type and captures sc->gradient_data and

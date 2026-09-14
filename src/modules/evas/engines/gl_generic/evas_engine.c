@@ -181,7 +181,7 @@ eng_engine_new(void)
    generic_cache_size_func_set(engine->software.surface_cache,
                                _ector_surface_cache_size);
 
-   // Gradient ramp atlas: NULL return means atlas unavailable — gradient
+   // Gradient ramp atlas: NULL return means atlas unavailable - gradient
    // shapes will be skipped per the spec error table (no-op, non-fatal).
    engine->span_page = span_page_new();
    engine->grad_atlas = span_grad_atlas_new();
@@ -2674,7 +2674,7 @@ eng_ector_mask_surface_create(void *engine, int width, int height, int *error)
 
    if (span_path_usable())
      {
-        // Mask FBO must use a dedicated texture — not shared with the atlas.
+        // Mask FBO must use a dedicated texture - not shared with the atlas.
         // The main VG FBO and the mask FBO would otherwise map to the same GL
         // texture object, creating a read/write feedback loop when the span
         // shader samples the mask while rendering into the main FBO.
@@ -2687,7 +2687,7 @@ eng_ector_mask_surface_create(void *engine, int width, int height, int *error)
    else
      {
         // Span path unusable: this GL-mask branch has no CPU-backed
-        // counterpart that eng_ector_end() knows how to consume — the mask
+        // counterpart that eng_ector_end() knows how to consume - the mask
         // it produces is only ever read from espd->gl_comp_surface inside
         // the span draw loop.  Fail here so efl_canvas_vg_container.c's
         // caller takes its "gl_mask_fallback" path instead, which uses the
@@ -2887,7 +2887,7 @@ eng_ector_begin(void *engine, void *surface,
         // the underlying Span_Collector* slots are reused/cleared on demand.
         //
         // Skip-collection is not yet implemented for the multi-collector
-        // model — it would require per-collector hash storage.
+        // model - it would require per-collector hash storage.
         {
            Ector_Software_Surface_Data *pd =
               efl_data_scope_get(ector, ECTOR_SOFTWARE_SURFACE_CLASS);
@@ -2910,7 +2910,7 @@ eng_ector_begin(void *engine, void *surface,
                 if (fgc) evas_gl_common_context_flush(fgc);
              }
 
-           // Reset counts — existing collectors are reused by the alloc cb.
+           // Reset counts - existing collectors are reused by the alloc cb.
            pd->span_collectors_fill_count   = 0;
            pd->span_collectors_stroke_count = 0;
 
@@ -2921,7 +2921,7 @@ eng_ector_begin(void *engine, void *surface,
                 sd->span_is_stroke               = EINA_FALSE;
 
                 // Reaching here means span_path_usable() already returned
-                // EINA_TRUE (checked at function entry above) — the
+                // EINA_TRUE (checked at function entry above) - the
                 // !span_path_usable() case returns early with the CPU
                 // fallback and never installs collectors, so ector does not
                 // emit spans that nothing consumes.
@@ -2978,7 +2978,7 @@ _span_gradient_linear_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
    // (ector_software_rasterizer.c) and never reaches the gradient
    // parameter.  The shader instead evaluates at px/py in surface space,
    // which does include that origin, so the translation has to be undone
-   // here — otherwise the gradient slides across the shape by
+   // here - otherwise the gradient slides across the shape by
    // (a*offx + b*offy) in ramp units.
    //
    // The shader receives px = gl_FragCoord.x - fbo_offset which already
@@ -3039,7 +3039,7 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
    *out_f = (float)(inv->yz - gd->radial.fy
                     - (inv->yx * (double)offx) - (inv->yy * (double)offy));
 
-   // Quadratic parameters — pass inv2a instead of a to avoid
+   // Quadratic parameters - pass inv2a instead of a to avoid
    // per-fragment division in the shader.
    *out_ra  = (float)(0.5 / gd->radial.a);
    *out_rdx = (float)gd->radial.dx;
@@ -3051,16 +3051,16 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
 // Inspects sc->type and sc->gradient_data.  When sc is non-NULL and holds
 // gradient data this function fills all out parameters and may downgrade
 // *inout_shader_type from LinearGradient/RadialGradient to Solid when the
-// radial geometry degenerates (fradius != 0 or a ≈ 0).  When sc is NULL
+// radial geometry degenerates (fradius != 0 or a ~ 0).  When sc is NULL
 // or has no gradient data all out values are left at their zero defaults.
 //
 // @param sc               Span collector for this channel (fill or stroke).
-// @param atlas            Gradient ramp atlas (may be NULL → gradient skipped).
+// @param atlas            Gradient ramp atlas (may be NULL -> gradient skipped).
 // @param inout_shader_type  On entry: LinearGradient or RadialGradient.
 //                           On exit: may be downgraded to Solid.
-// @param inout_col        Solid color — updated when downgraded to Solid.
+// @param inout_col        Solid color - updated when downgraded to Solid.
 // @param out_ga..out_grdy Output gradient coefficients.
-// @param out_gs           Gradient spread mode (EFL enum → int).
+// @param out_gs           Gradient spread mode (EFL enum -> int).
 // @param out_gramp_y      Atlas V coordinate for this gradient's ramp row.
 // @param out_atlas_skip   Set to EINA_TRUE if atlas lookup failed (skip shape).
 static void
@@ -3083,7 +3083,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    // Upload ramp into atlas and get V coordinate.
    // version is the CRC32 of gd->color_table's native uint32 content (4096 B).
    // The identity fast path in span_grad_atlas_lookup is keyed on (grad_id,
-   // content_crc) — animated stop changes force a re-lookup automatically.
+   // content_crc) - animated stop changes force a re-lookup automatically.
    // Fallback: if atlas is unavailable, mark the shape as atlas-skip.
    //
    // Tier-3 cache: skip the 4 KB CRC recompute on frames where the
@@ -3092,7 +3092,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    // regen in flight, or pointer realloc).
    if (!(atlas && gd->color_table && (gd->ctable_status == CTABLE_READY_DONE)))
      {
-        // Ramp not ready or atlas unavailable — invalidate gd-side cache so
+        // Ramp not ready or atlas unavailable - invalidate gd-side cache so
         // that when status returns to READY we recompute the CRC against
         // potentially new content.
         gd->cached_ctable_crc_valid = EINA_FALSE;
@@ -3100,8 +3100,8 @@ _compute_gradient_coeffs(Span_Collector *sc,
         return;
      }
 
-   // Pass gd->color_table directly — no staging rearrangement needed.
-   // _upload_row in the atlas does the ARGB→RGBA swap at GL upload time.
+   // Pass gd->color_table directly - no staging rearrangement needed.
+   // _upload_row in the atlas does the ARGB->RGBA swap at GL upload time.
    //
    // Tier-3 cache: skip the 4 KB CRC recompute on frames where color_table
    // content has not changed.  Staleness signal: the framework cycles
@@ -3128,7 +3128,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
                                     version, ramp_bytes);
    if (row < 0)
      {
-        // Atlas disabled or full — skip this shape.
+        // Atlas disabled or full - skip this shape.
         *out_atlas_skip = EINA_TRUE;
         return;
      }
@@ -3145,7 +3145,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
      {
         if ((gd->radial.fradius >= 0.00001f) || (fabsf(gd->radial.a) <= 0.00001f))
           {
-             // Degenerate radial — fall back to solid using first stop color.
+             // Degenerate radial - fall back to solid using first stop color.
              *inout_shader_type = (int)Solid;
              if (gd->color_table)
                *inout_col = gd->color_table[0];
@@ -3203,7 +3203,7 @@ eng_ector_end(void *engine,
       Evas_GL_Image *glim = surface;
 
         // _span_collector_alloc updates espd-> arrays directly (it receives
-        // espd as its data pointer).  No sync-back from Span_Data needed —
+        // espd as its data pointer).  No sync-back from Span_Data needed -
         // the counts and pointers on espd are already authoritative.
 
         {
@@ -3262,7 +3262,7 @@ eng_ector_end(void *engine,
                 // Clear FBO sub-region to transparent via glClear + scissor.
                 //
                 // On tile-based GPUs (Broadcom V3D / ARM Mali) glClear is
-                // a tile-buffer flag — no main-memory traffic — whereas the
+                // a tile-buffer flag - no main-memory traffic - whereas the
                 // previous SHD_RECT + immediate flush forced a tile store
                 // and reload before the span draws.  The clear happens
                 // outside the pipe system, so no pipe-reorder races; we
@@ -3486,7 +3486,7 @@ eng_ector_end(void *engine,
                                 //
                                 // NDC must be divided by the TARGET SURFACE
                                 // dimensions, not gc->w/gc->h.  When VG content
-                                // is drawn into an FBO (the common case — VG
+                                // is drawn into an FBO (the common case - VG
                                 // renders to an atlas-pool sub-rect via glim),
                                 // gc->w/h still hold the main window dimensions
                                 // because _evas_gl_common_viewport_set never
@@ -3547,7 +3547,7 @@ eng_ector_end(void *engine,
         }
 span_done:
 
-        // Do NOT reset ector surface dimensions to 0 here — the pixel
+        // Do NOT reset ector surface dimensions to 0 here - the pixel
         // buffer is managed by the high-water mark path in eng_ector_begin
         // and must persist across begin/end cycles within the same frame
         // (VG objects may be rendered multiple times per frame).

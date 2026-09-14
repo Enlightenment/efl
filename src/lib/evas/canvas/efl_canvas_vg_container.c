@@ -96,7 +96,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
    // and reused when the size matches.  eng_ector_end() of the main VG object
    // reads espd->gl_comp_surface (set by render_pre after we return) to fill
    // the mask texture params on each shape's Span_Pipe_Params.
-   if (ENFN->gl_surface_read_pixels)  // GL engine only — SW engine sets this to NULL
+   if (ENFN->gl_surface_read_pixels)  // GL engine only - SW engine sets this to NULL
      {
         int err = 0;
         void *mask_surface = pd->comp.gl_surface;
@@ -277,7 +277,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
 
    // Even when the container's flags are NONE (nothing changed), we must
    // still propagate the GL composite mask reference to the ector surface
-   // every frame — eng_ector_end clears it after use.
+   // every frame - eng_ector_end clears it after use.
    if (pd->comp_target && _comp_method_needs_mask(pd->comp.method))
      {
         Efl_Canvas_Vg_Container_Data *cpd =

@@ -56,7 +56,7 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
    // (status cycles through CTABLE_NOT_READY before becoming READY again).
    //
    // Lives here rather than on Span_Collector so the cache survives the
-   // collector pool's high-water-mark slot reuse — collectors are
+   // collector pool's high-water-mark slot reuse - collectors are
    // recycled across shapes between frames, but gradient_data is stable
    // per-gradient-renderer-object.
    //
@@ -151,7 +151,7 @@ struct _Ector_Software_Surface_Data
    int y;
    // Per-shape span collector arrays.  Each entry is a Span_Collector*.
    // Owned by the engine (eng_ector_destroy frees them).  Arrays grow
-   // with high-water mark allocation — never shrunk, reallocated on
+   // with high-water mark allocation - never shrunk, reallocated on
    // demand when more shapes are drawn in a single VG object.
    void **span_collectors_fill;
    int    span_collectors_fill_count;
