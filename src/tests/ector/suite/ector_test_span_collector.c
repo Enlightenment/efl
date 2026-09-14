@@ -396,6 +396,8 @@ EFL_START_TEST(span_collector_overflow_split)
    int             i, total;
    int             rx[16], rl[16], rcount, all_count;
    int             found[5];
+   int             orig_x[5] = {10, 30, 60, 90, 120};
+   int             j, k;
 
    sc = span_collector_new(10, 4, Solid);
    ck_assert_ptr_nonnull(sc);
@@ -451,21 +453,17 @@ EFL_START_TEST(span_collector_overflow_split)
 
    // Every original x must appear in the reconstructed list.
    memset(found, 0, sizeof(found));
-   {
-      int orig_x[5] = {10, 30, 60, 90, 120};
-      int j, k;
-      for (j = 0; j < 5; j++)
-        {
-           for (k = 0; k < all_count; k++)
-             {
-                if ((rx[k] == orig_x[j]) && (rl[k] == 5))
-                  {
-                     found[j] = 1;
-                     break;
-                  }
-             }
-        }
-   }
+   for (j = 0; j < 5; j++)
+     {
+        for (k = 0; k < all_count; k++)
+          {
+             if ((rx[k] == orig_x[j]) && (rl[k] == 5))
+               {
+                  found[j] = 1;
+                  break;
+               }
+          }
+     }
    for (i = 0; i < 5; i++)
      {
         ck_assert_int_eq(found[i], 1);
@@ -498,6 +496,7 @@ EFL_START_TEST(span_collector_split_absolute_x)
    int             rx[16], rl[16];
    int             found[5];
    int             orig_x[5] = {10, 40, 80, 130, 180};
+   int             j, k;
 
    sc = span_collector_new(10, 4, Solid);
    ck_assert_ptr_nonnull(sc);
@@ -529,20 +528,17 @@ EFL_START_TEST(span_collector_split_absolute_x)
 
    // Every original span must be present at the correct absolute x.
    memset(found, 0, sizeof(found));
-   {
-      int j, k;
-      for (j = 0; j < 5; j++)
-        {
-           for (k = 0; k < all_count; k++)
-             {
-                if ((rx[k] == orig_x[j]) && (rl[k] == 5))
-                  {
-                     found[j] = 1;
-                     break;
-                  }
-             }
-        }
-   }
+   for (j = 0; j < 5; j++)
+     {
+        for (k = 0; k < all_count; k++)
+          {
+             if ((rx[k] == orig_x[j]) && (rl[k] == 5))
+               {
+                  found[j] = 1;
+                  break;
+               }
+          }
+     }
    for (i = 0; i < 5; i++)
      {
         // Use ck_assert_msg so failures name the offending original x.

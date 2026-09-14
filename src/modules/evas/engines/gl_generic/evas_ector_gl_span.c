@@ -216,6 +216,8 @@ span_collector_free(Span_Collector *sc)
 void
 span_collector_clear(Span_Collector *sc)
 {
+   int i;
+
    if (!sc) return;
 
    // Only zero sc->h rows (the active region), not alloc_h.
@@ -228,29 +230,26 @@ span_collector_clear(Span_Collector *sc)
    //   here so the shader sees len=0 and stops immediately (the rest of the
    //   buffer may retain stale data, but the shader never reaches it)
    // - clear is always called after resize, which has already set height
-   {
-      int i;
-      for (i = 0; i < sc->texture_count; i++)
-        {
-           Span_Texture *tex = &sc->textures[i];
-           int           y;
+   for (i = 0; i < sc->texture_count; i++)
+     {
+        Span_Texture *tex = &sc->textures[i];
+        int           y;
 
-           memset(tex->span_counts, 0, sc->h * sizeof(int));
-           memset(tex->last_x_end, 0, sc->h * sizeof(int));
+        memset(tex->span_counts, 0, sc->h * sizeof(int));
+        memset(tex->last_x_end, 0, sc->h * sizeof(int));
 
-           // Zero byte[1] (len) of entry 0 on every row so that rows
-           // which receive no spans this frame have a valid sentinel.
-           // _collect_spans_solid memsets the full tail for rows it touches,
-           // so this 4-byte-stride write covers only the uncollected rows.
-           for (y = 0; y < sc->h; y++)
-             {
-                tex->buffer[((size_t)y * sc->stride) + 1] = 0;  // byte[1] = len = 0
-             }
+        // Zero byte[1] (len) of entry 0 on every row so that rows
+        // which receive no spans this frame have a valid sentinel.
+        // _collect_spans_solid memsets the full tail for rows it touches,
+        // so this 4-byte-stride write covers only the uncollected rows.
+        for (y = 0; y < sc->h; y++)
+          {
+             tex->buffer[((size_t)y * sc->stride) + 1] = 0;  // byte[1] = len = 0
+          }
 
-           tex->dirty = EINA_FALSE;
-           tex->rolling_hash = 2166136261u;  // seed
-        }
-   }
+        tex->dirty = EINA_FALSE;
+        tex->rolling_hash = 2166136261u;  // seed
+     }
 
    sc->actual_max_spans = 0;
 
@@ -398,6 +397,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
    int           old_ti, split_x, old_x_max, i, y;
    Span_Texture *old_tex;
    Span_Texture *new_tex;
+   Span_Texture *resized;
 
    if (sc->split_count >= SPAN_COLLECTOR_MAX_SPLITS)
      return EINA_FALSE;
@@ -426,13 +426,11 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
 
    // Grow the textures array.  Note: realloc may move it, so re-seat
    // old_tex after the realloc.
-   {
-      Span_Texture *resized = realloc(sc->textures,
-                                      (size_t)(sc->texture_count + 1) *
-                                      sizeof(Span_Texture));
-      if (!resized) return EINA_FALSE;
-      sc->textures = resized;
-   }
+   resized = realloc(sc->textures,
+                     (size_t)(sc->texture_count + 1) *
+                     sizeof(Span_Texture));
+   if (!resized) return EINA_FALSE;
+   sc->textures = resized;
 
    // Initialise the new right-half texture slot in place.
    // Allocate at alloc_h (high-water mark), not the current active
@@ -487,6 +485,7 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
              int gap = src_entry[2];
              int len = src_entry[1];
              int cov = src_entry[0];
+             int span_end;
              if (len == 0) break;  // sentinel
 
              abs_x += gap;  // start of this span in absolute coords
@@ -498,70 +497,66 @@ _do_spatial_split(Span_Collector *sc, int overflow_y)
                   continue;
                }
 
-             {
-                int span_end = abs_x + len;
+             span_end = abs_x + len;
 
-                if (span_end <= split_x)
-                  {
-                     // Entirely in the left half - compact in place.
-                     int new_gap = abs_x - left_last;
-                     left_idx += _emit_gap_extenders(left_row, left_idx,
-                                                     sc->max_spans,
-                                                     sc->stride, &new_gap);
-                     if (left_idx < sc->max_spans)
-                       {
-                          _write_span_entry(left_row + ((size_t)left_idx * 4),
-                                            cov, len, new_gap);
-                          left_idx++;
-                          left_last = span_end;
-                       }
-                  }
-                else if (abs_x >= split_x)
-                  {
-                     // Entirely in the right half - move to new texture.
-                     int new_gap = abs_x - right_last;
-                     right_idx += _emit_gap_extenders(right_row, right_idx,
-                                                      sc->max_spans,
-                                                      sc->stride, &new_gap);
-                     if (right_idx < sc->max_spans)
-                       {
-                          _write_span_entry(right_row + ((size_t)right_idx * 4),
-                                            cov, len, new_gap);
-                          right_idx++;
-                          right_last = span_end;
-                       }
-                  }
-                else
-                  {
-                     // Straddles the split point - divide at split_x.
-                     int left_len  = split_x - abs_x;
-                     int right_len = span_end - split_x;
+             if (span_end <= split_x)
+               {
+                  // Entirely in the left half - compact in place.
+                  int new_gap = abs_x - left_last;
+                  left_idx += _emit_gap_extenders(left_row, left_idx,
+                                                  sc->max_spans,
+                                                  sc->stride, &new_gap);
+                  if (left_idx < sc->max_spans)
+                    {
+                       _write_span_entry(left_row + ((size_t)left_idx * 4),
+                                         cov, len, new_gap);
+                       left_idx++;
+                       left_last = span_end;
+                    }
+               }
+             else if (abs_x >= split_x)
+               {
+                  // Entirely in the right half - move to new texture.
+                  int new_gap = abs_x - right_last;
+                  right_idx += _emit_gap_extenders(right_row, right_idx,
+                                                   sc->max_spans,
+                                                   sc->stride, &new_gap);
+                  if (right_idx < sc->max_spans)
+                    {
+                       _write_span_entry(right_row + ((size_t)right_idx * 4),
+                                         cov, len, new_gap);
+                       right_idx++;
+                       right_last = span_end;
+                    }
+               }
+             else
+               {
+                  // Straddles the split point - divide at split_x.
+                  int left_len  = split_x - abs_x;
+                  int right_len = span_end - split_x;
+                  int new_gap   = abs_x - left_last;
 
-                     // Left fragment.
-                     {
-                        int new_gap = abs_x - left_last;
-                        left_idx += _emit_gap_extenders(left_row, left_idx,
-                                                        sc->max_spans,
-                                                        sc->stride, &new_gap);
-                        if (left_idx < sc->max_spans)
-                          {
-                             _write_span_entry(left_row + ((size_t)left_idx * 4),
-                                               cov, left_len, new_gap);
-                             left_idx++;
-                             left_last = split_x;
-                          }
-                     }
+                  // Left fragment.
+                  left_idx += _emit_gap_extenders(left_row, left_idx,
+                                                  sc->max_spans,
+                                                  sc->stride, &new_gap);
+                  if (left_idx < sc->max_spans)
+                    {
+                       _write_span_entry(left_row + ((size_t)left_idx * 4),
+                                         cov, left_len, new_gap);
+                       left_idx++;
+                       left_last = split_x;
+                    }
 
-                     // Right fragment starts exactly at split_x -> gap = 0.
-                     if (right_idx < sc->max_spans)
-                       {
-                          _write_span_entry(right_row + ((size_t)right_idx * 4),
-                                            cov, right_len, 0);
-                          right_idx++;
-                          right_last = span_end;
-                       }
-                  }
-             }
+                  // Right fragment starts exactly at split_x -> gap = 0.
+                  if (right_idx < sc->max_spans)
+                    {
+                       _write_span_entry(right_row + ((size_t)right_idx * 4),
+                                         cov, right_len, 0);
+                       right_idx++;
+                       right_last = span_end;
+                    }
+               }
 
              abs_x += len;  // advance past this span
           }
@@ -684,6 +679,8 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data      *sd  = (Span_Data *)user_data;
    Span_Collector *sc  = (Span_Collector *)sd->span_collector;
    int             ti, idx, y, sx;
+   int             ref, gap, remaining, cur_x;
+   unsigned int    cov;
    Span_Texture   *tex;
    uint8_t        *entry;
 
@@ -746,77 +743,74 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
              continue;
           }
 
-        {
-           // 1-texel (4-byte) packing in BGRA-swapped order so the buffer
-           // can be uploaded directly via GL_BGRA without a staging copy.
-           //
-           // Memory layout: [cov, len, gap, reserved]
-           // GL_BGRA interprets: B=cov, G=len, R=gap, A=reserved
-           // Shader reads: .r=gap, .g=len, .b=cov - correct.
-           //
-           // gap = distance from end of previous span on this row.
-           // Spans longer than 255 are split into multiple entries.
+        // 1-texel (4-byte) packing in BGRA-swapped order so the buffer
+        // can be uploaded directly via GL_BGRA without a staging copy.
+        //
+        // Memory layout: [cov, len, gap, reserved]
+        // GL_BGRA interprets: B=cov, G=len, R=gap, A=reserved
+        // Shader reads: .r=gap, .g=len, .b=cov - correct.
+        //
+        // gap = distance from end of previous span on this row.
+        // Spans longer than 255 are split into multiple entries.
 
-           // Compute gap relative to x_min so split textures don't
-           // overflow the 8-bit gap field.  The shader adds x_min to
-           // its sx accumulator to recover absolute coordinates.
-           int ref = (tex->last_x_end[y] > tex->x_min)
-                   ? tex->last_x_end[y] : tex->x_min;
-           int gap = sx - ref;
-           int remaining = spans->len;
-           unsigned int cov = spans->coverage;
-           int cur_x = sx;
+        // Compute gap relative to x_min so split textures don't
+        // overflow the 8-bit gap field.  The shader adds x_min to
+        // its sx accumulator to recover absolute coordinates.
+        ref = (tex->last_x_end[y] > tex->x_min)
+            ? tex->last_x_end[y] : tex->x_min;
+        gap = sx - ref;
+        remaining = spans->len;
+        cov = spans->coverage;
+        cur_x = sx;
 
-           tex->dirty = EINA_TRUE;
+        tex->dirty = EINA_TRUE;
 
-           if (gap < 0) gap = 0;
+        if (gap < 0) gap = 0;
 
-           // When the gap exceeds 255, emit invisible "gap extender"
-           // entries (coverage=0, len=1) that advance the shader's x
-           // accumulator by 256 per entry without drawing anything.
-           // This preserves absolute x positioning for wide VG objects
-           // where spans can be hundreds of pixels apart.
-           while ((gap > 255) && (idx < sc->max_spans))
-             {
-                entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
-                entry[0] = 0;              // cov = 0 -> invisible
-                entry[1] = 1;              // len = 1 -> advances x by 1
-                entry[2] = 255;            // gap = 255 -> advances x by 255
-                entry[3] = 0;
-                tex->rolling_hash = (tex->rolling_hash * 31) + *((const uint32_t *)entry);
-                gap -= 256;                // 255 gap + 1 len = 256 pixels
-                idx++;
-             }
+        // When the gap exceeds 255, emit invisible "gap extender"
+        // entries (coverage=0, len=1) that advance the shader's x
+        // accumulator by 256 per entry without drawing anything.
+        // This preserves absolute x positioning for wide VG objects
+        // where spans can be hundreds of pixels apart.
+        while ((gap > 255) && (idx < sc->max_spans))
+          {
+             entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
+             entry[0] = 0;              // cov = 0 -> invisible
+             entry[1] = 1;              // len = 1 -> advances x by 1
+             entry[2] = 255;            // gap = 255 -> advances x by 255
+             entry[3] = 0;
+             tex->rolling_hash = (tex->rolling_hash * 31) + *((const uint32_t *)entry);
+             gap -= 256;                // 255 gap + 1 len = 256 pixels
+             idx++;
+          }
 
-           while ((remaining > 0) && (idx < sc->max_spans))
-             {
-                int chunk = (remaining > 255) ? 255 : remaining;
-                int g = (cur_x == sx) ? gap : 0;
-                if (g > 255) g = 255;
+        while ((remaining > 0) && (idx < sc->max_spans))
+          {
+             int chunk = (remaining > 255) ? 255 : remaining;
+             int g = (cur_x == sx) ? gap : 0;
+             uint32_t v;
 
-                // Compose once, then hash the value rather than reading
-                // back the bytes just stored - that read waits on the
-                // stores in the innermost loop of the collector.
-                {
-                   uint32_t v = (uint32_t)cov
-                              | ((uint32_t)chunk << 8)
-                              | ((uint32_t)g     << 16);
+             if (g > 255) g = 255;
 
-                   entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
-                   entry[0] = (uint8_t)cov;    // byte0 -> B in BGRA
-                   entry[1] = (uint8_t)chunk;  // byte1 -> G in BGRA
-                   entry[2] = (uint8_t)g;      // byte2 -> R in BGRA
-                   entry[3] = 0;               // byte3 -> A in BGRA
-                   tex->rolling_hash = (tex->rolling_hash * 31) + v;
-                }
+             // Compose once, then hash the value rather than reading
+             // back the bytes just stored - that read waits on the
+             // stores in the innermost loop of the collector.
+             v = (uint32_t)cov
+                 | ((uint32_t)chunk << 8)
+                 | ((uint32_t)g     << 16);
+             entry = tex->buffer + ((size_t)y * sc->stride) + ((size_t)idx * 4);
+             entry[0] = (uint8_t)cov;    // byte0 -> B in BGRA
+             entry[1] = (uint8_t)chunk;  // byte1 -> G in BGRA
+             entry[2] = (uint8_t)g;      // byte2 -> R in BGRA
+             entry[3] = 0;               // byte3 -> A in BGRA
+             tex->rolling_hash = (tex->rolling_hash * 31) + v;
 
-                cur_x += chunk;
-                remaining -= chunk;
-                idx++;
-             }
+             cur_x += chunk;
+             remaining -= chunk;
+             idx++;
+          }
 
-           tex->last_x_end[y] = sx + spans->len;
-        }
+        tex->last_x_end[y] = sx + spans->len;
 
         tex->span_counts[y] = idx;
         if (idx > sc->actual_max_spans)

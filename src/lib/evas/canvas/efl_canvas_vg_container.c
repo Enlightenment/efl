@@ -154,20 +154,18 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
         // eng_ector_begin installs span collectors on the shared ector surface;
         // _draw_comp drives ector_renderer_draw to populate them;
         // eng_ector_end uploads and draws them to mask_surface's FBO.
-        {
-           RGBA_Draw_Context *dc = evas_common_draw_context_new();
-           evas_common_draw_context_set_render_op(dc, _EVAS_RENDER_COPY);
-           evas_common_draw_context_set_color(dc, 255, 255, 255, 255);
+        RGBA_Draw_Context *dc = evas_common_draw_context_new();
+        evas_common_draw_context_set_render_op(dc, _EVAS_RENDER_COPY);
+        evas_common_draw_context_set_color(dc, 255, 255, 255, 255);
 
-           if (ENFN->ector_begin(ENC, mask_surface, dc, surface, 0, 0, EINA_FALSE))
-             {
-                _draw_comp(obj, comp_target, surface, engine, output, context);
-                ENFN->image_dirty_region(ENC, mask_surface, 0, 0, size.w, size.h);
-                ENFN->ector_end(ENC, mask_surface, dc, surface, EINA_FALSE);
-             }
+        if (ENFN->ector_begin(ENC, mask_surface, dc, surface, 0, 0, EINA_FALSE))
+          {
+             _draw_comp(obj, comp_target, surface, engine, output, context);
+             ENFN->image_dirty_region(ENC, mask_surface, 0, 0, size.w, size.h);
+             ENFN->ector_end(ENC, mask_surface, dc, surface, EINA_FALSE);
+          }
 
-           evas_common_draw_context_free(dc);
-        }
+        evas_common_draw_context_free(dc);
 
         // Signal to the caller that there is no CPU comp buffer.
         // The mask FBO reference lives on pd->comp.gl_surface; render_pre
@@ -368,16 +366,14 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
         // inherit the container's opacity.  In the GL span-buffer path,
         // comp is NULL even when a mask FBO was prepared, so also check for
         // gl_surface on the comp_target's pd.
-        {
-           Eina_Bool has_comp = comp != NULL;
-           if (!has_comp && pd->comp_target)
-             {
-                Efl_Canvas_Vg_Container_Data *cpd =
-                   efl_data_scope_get(pd->comp_target, MY_CLASS);
-                if (cpd && cpd->comp.gl_surface) has_comp = EINA_TRUE;
-             }
-           c_a = !has_comp ? 255 : c_a;
-        }
+        Eina_Bool has_comp = comp != NULL;
+        if (!has_comp && pd->comp_target)
+          {
+             Efl_Canvas_Vg_Container_Data *cpd =
+                efl_data_scope_get(pd->comp_target, MY_CLASS);
+             if (cpd && cpd->comp.gl_surface) has_comp = EINA_TRUE;
+          }
+        c_a = !has_comp ? 255 : c_a;
 
         _evas_vg_render_pre(vg_pd, child,
                             engine, output, context, surface,

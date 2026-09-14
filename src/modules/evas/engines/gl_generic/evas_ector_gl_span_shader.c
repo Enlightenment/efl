@@ -691,6 +691,7 @@ static const char **
 _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
 {
    const char *parts[20];
+   const char **out;
    int n = 0;
 
    parts[n++] = _span_fragment_highp_supported() ? _glsl_hp_highp : _glsl_hp_mediump;
@@ -713,17 +714,15 @@ _span_shader_parts_build(int kind, Span_Bind_Set bind, int mask, int *out_count)
    if (mask) parts[n++] = _glsl_mask_epilogue;
    parts[n++] = _glsl_main_end;
 
-   {
-      const char **out = malloc(sizeof(*out) * (size_t)n);
-      if (!out)
-        {
-           *out_count = 0;
-           return NULL;
-        }
-      memcpy(out, parts, sizeof(*out) * (size_t)n);
-      *out_count = n;
-      return out;
-   }
+   out = malloc(sizeof(*out) * (size_t)n);
+   if (!out)
+     {
+        *out_count = 0;
+        return NULL;
+     }
+   memcpy(out, parts, sizeof(*out) * (size_t)n);
+   *out_count = n;
+   return out;
 }
 
 // Build vertex-shader source parts for the (kind, mask) combination.
@@ -733,6 +732,7 @@ static const char **
 _span_vs_parts_build(int kind, int mask, int *out_count)
 {
    const char *parts[13];
+   const char **out;
    int n = 0;
 
    parts[n++] = _span_fragment_highp_supported() ? _glsl_hp_highp : _glsl_hp_mediump;
@@ -753,17 +753,15 @@ _span_vs_parts_build(int kind, int mask, int *out_count)
    else
      parts[n++] = mask ? _glsl_vs_main_gradient_mask : _glsl_vs_main_gradient;
 
-   {
-      const char **out = malloc(sizeof(*out) * (size_t)n);
-      if (!out)
-        {
-           *out_count = 0;
-           return NULL;
-        }
-      memcpy(out, parts, sizeof(*out) * (size_t)n);
-      *out_count = n;
-      return out;
-   }
+   out = malloc(sizeof(*out) * (size_t)n);
+   if (!out)
+     {
+        *out_count = 0;
+        return NULL;
+     }
+   memcpy(out, parts, sizeof(*out) * (size_t)n);
+   *out_count = n;
+   return out;
 }
 
 // ------------------------------------------------------------------

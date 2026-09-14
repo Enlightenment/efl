@@ -956,6 +956,7 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
    if (rasterizer->fill_data.span_collector_alloc)
      {
         Span_Data *sd = &rasterizer->fill_data;
+        SW_FT_SpanFunc cb;
         int ch;
 
         // raster_buffer is set by the surface constructor and
@@ -974,29 +975,26 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
         if (!sd->span_collector) return;
 
         // Select the collector callback based on fill type.
-        {
-           SW_FT_SpanFunc cb;
-           if ((sd->type == LinearGradient) || (sd->type == RadialGradient))
-             cb = sd->collector_gradient;
-           else if (sd->comp)
-             cb = sd->collector_composite;
-           else
-             cb = sd->collector_solid;
+        if ((sd->type == LinearGradient) || (sd->type == RadialGradient))
+          cb = sd->collector_gradient;
+        else if (sd->comp)
+          cb = sd->collector_composite;
+        else
+          cb = sd->collector_solid;
 
-           if (cb)
-             {
-                sd->unclipped_blend = cb;
-                if (sd->clip.enabled)
-                  {
-                     if (sd->clip.type == 0)
-                       sd->blend = &_span_fill_clipRect;
-                     else
-                       sd->blend = &_span_fill_clipPath;
-                  }
-                else
-                  sd->blend = cb;
-             }
-        }
+        if (cb)
+          {
+             sd->unclipped_blend = cb;
+             if (sd->clip.enabled)
+               {
+                  if (sd->clip.type == 0)
+                    sd->blend = &_span_fill_clipRect;
+                  else
+                    sd->blend = &_span_fill_clipPath;
+               }
+             else
+               sd->blend = cb;
+          }
      }
 
    if (rasterizer->fill_data.blend)
