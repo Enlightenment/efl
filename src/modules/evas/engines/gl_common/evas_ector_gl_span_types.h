@@ -4,7 +4,7 @@
 //   - Span_Variant enum
 //   - Span_Vertex_* interleaved vertex structs
 //   - span_vertex_size() helper
-//   - SPAN_PIPE_MAX_QUADS and SPAN_FILL_TYPE_GRADIENT_MIN macros
+//   - SPAN_PIPE_MAX_QUADS and the SPAN_FILL_TYPE_* fill type macros
 //
 // Deliberately has NO dependency on sw_ft_raster.h, GL headers, or any
 // EFL private header so it can be included from both gl_common (which
@@ -25,28 +25,24 @@ typedef float GLfloat;
 # endif
 
 // ---------------------------------------------------------------------------
-// Fill-type threshold: Span_Data_Type values >= this are gradient types.
-// Span_Data_Type: 1=Solid, 2=LinearGradient, 3=RadialGradient.
-// evas_gl_context.c cannot include evas_ector_gl_span.h (sw_ft_raster.h
-// dependency), so it tests fill.type against this macro instead of the enum.
-// ---------------------------------------------------------------------------
-#define SPAN_FILL_TYPE_GRADIENT_MIN 2
-
-// ---------------------------------------------------------------------------
-// Gradient type carried in the .w of a side's grad_def attribute:
-//   0 linear, 1 radial, 2 solid.
+// Fill type of one side of a span quad, as stored in Span_Channel_Params.type
+// and handed to the gradient shaders in the .w of that side's grad_def
+// attribute.  These are ector's Span_Data_Type values (0 is None).  gl_common
+// and the GLSL sources cannot include ector_software_private.h, so the values
+// are mirrored here and gl_generic/evas_engine.c checks at build time that
+// they still match the enum.
 //
-// "Solid" is how a plain colour rides in a gradient variant.  A shape with a
-// gradient fill and a solid stroke would otherwise need two programs and so
-// two draw calls; encoding the solid side as a degenerate gradient lets one
-// draw cover both.  Such a side puts its premultiplied colour in the four
-// components of grad_abc_y - the slots a linear gradient uses for its
-// coefficients and ramp row - and the shader takes it verbatim instead of
-// sampling the ramp atlas.
+// A type below SPAN_FILL_TYPE_GRADIENT_MIN is a plain colour.  In a gradient
+// variant such a side still rides along, so that a shape with a gradient fill
+// and a solid stroke needs one program and one draw rather than two: it puts
+// its premultiplied colour in the four components of grad_abc_y - the slots a
+// linear gradient uses for its coefficients and ramp row - and the shader
+// takes it verbatim instead of sampling the ramp atlas.
 // ---------------------------------------------------------------------------
-#define SPAN_GRAD_TYPE_LINEAR 0
-#define SPAN_GRAD_TYPE_RADIAL 1
-#define SPAN_GRAD_TYPE_SOLID  2
+#define SPAN_FILL_TYPE_SOLID           1
+#define SPAN_FILL_TYPE_LINEAR_GRADIENT 2
+#define SPAN_FILL_TYPE_RADIAL_GRADIENT 3
+#define SPAN_FILL_TYPE_GRADIENT_MIN    SPAN_FILL_TYPE_LINEAR_GRADIENT
 
 // ---------------------------------------------------------------------------
 // Span_Variant — selects the interleaved vertex layout for a given draw call.

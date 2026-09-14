@@ -25,6 +25,11 @@
 #include "evas_ector_gl_span.h"
 #include "evas_ector_gl_grad_atlas.h"
 
+// Paste a C integer constant into GLSL source, so C and the shaders share
+// one definition.  The indirection expands the macro before stringifying.
+#define SPAN_GLSL_INT_(x) #x
+#define SPAN_GLSL_INT(x)  SPAN_GLSL_INT_(x)
+
 // Scratch buffer for the no-EXT_unpack_subimage upload path: span rows are
 // copied here tightly packed so one glTexSubImage2D covers the whole
 // sub-rect.  Grown on demand, never shrunk; freed in span_shader_shutdown.
@@ -522,14 +527,14 @@ static const char _glsl_scan_gradient_spans[] =
    "      if (int(px) >= sx && int(px) < sx + len) {\n"
    "         vec4 grad_col;\n"
    "         SPAN_HP float t;\n"
-   "         if (gtype == 2) {\n"
+   "         if (gtype < " SPAN_GLSL_INT(SPAN_FILL_TYPE_GRADIENT_MIN) ") {\n"
    "            /* Plain colour riding in a gradient variant: the four\n"
    "             * gradient-coefficient slots carry it verbatim, so that a\n"
    "             * shape with a gradient fill and a solid stroke needs one\n"
    "             * program and one draw rather than two. */\n"
    "            grad_col = vec4(ga, gb, gc, ramp_v);\n"
    "         } else {\n"
-   "         if (gtype == 1) {\n"
+   "         if (gtype == " SPAN_GLSL_INT(SPAN_FILL_TYPE_RADIAL_GRADIENT) ") {\n"
    "            /* Radial gradient: quadratic solve in gradient space */\n"
    "            SPAN_HP float rx = ga * px + gb * py + gc;\n"
    "            SPAN_HP float ry = gd * px + ge * py + gf;\n"

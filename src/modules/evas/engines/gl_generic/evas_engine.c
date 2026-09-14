@@ -3063,14 +3063,12 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
 // @param out_gs           Gradient spread mode (EFL enum → int).
 // @param out_gramp_y      Atlas V coordinate for this gradient's ramp row.
 // @param out_atlas_skip   Set to EINA_TRUE if atlas lookup failed (skip shape).
-// @param out_gtype        0=linear, 1=radial.
 static void
 _compute_gradient_coeffs(Span_Collector *sc,
                          Span_Grad_Atlas *atlas,
                          int *inout_shader_type, uint32_t *inout_col,
                          float *out_ga, float *out_gb, float *out_gc,
                          int *out_gs, float *out_gramp_y, Eina_Bool *out_atlas_skip,
-                         int *out_gtype,
                          float *out_gd, float *out_ge, float *out_gf,
                          float *out_gra, float *out_grdx, float *out_grdy)
 {
@@ -3142,7 +3140,6 @@ _compute_gradient_coeffs(Span_Collector *sc,
                                      sc->grad_offx, sc->grad_offy,
                                      0.0f, 0.0f,
                                      out_ga, out_gb, out_gc);
-        *out_gtype = 0;
      }
    else // RadialGradient
      {
@@ -3160,11 +3157,18 @@ _compute_gradient_coeffs(Span_Collector *sc,
                                      out_ga, out_gb, out_gc,
                                      out_gd, out_ge, out_gf,
                                      out_gra, out_grdx, out_grdy);
-        *out_gtype = 1;
      }
 
    *out_gs = (int)gd->gd->s;
 }
+
+// gl_common and the span shaders use SPAN_FILL_TYPE_* because they cannot
+// see ector's Span_Data_Type.  This translation unit sees both, so fail the
+// build here if the two ever drift apart.
+typedef char _span_fill_type_matches_span_data_type[
+   (((int)Solid          == SPAN_FILL_TYPE_SOLID) &&
+    ((int)LinearGradient == SPAN_FILL_TYPE_LINEAR_GRADIENT) &&
+    ((int)RadialGradient == SPAN_FILL_TYPE_RADIAL_GRADIENT)) ? 1 : -1];
 
 static void
 eng_ector_end(void *engine,
@@ -3326,7 +3330,6 @@ eng_ector_end(void *engine,
                      int   fill_gs = 0;
                      float fill_gramp_y = 0.0f;
                      Eina_Bool fill_atlas_skip = EINA_FALSE;
-                     int   fill_gtype = 0;
                      float fill_gd = 0.0f, fill_ge = 0.0f, fill_gf = 0.0f;
                      float fill_gra = 0.0f, fill_grdx = 0.0f, fill_grdy = 0.0f;
 
@@ -3334,7 +3337,6 @@ eng_ector_end(void *engine,
                      int   stroke_gs = 0;
                      float stroke_gramp_y = 0.0f;
                      Eina_Bool stroke_atlas_skip = EINA_FALSE;
-                     int   stroke_gtype = 0;
                      float stroke_gd = 0.0f, stroke_ge = 0.0f, stroke_gf = 0.0f;
                      float stroke_gra = 0.0f, stroke_grdx = 0.0f, stroke_grdy = 0.0f;
 
@@ -3349,14 +3351,14 @@ eng_ector_end(void *engine,
                                                       &fill_shader_type, &fill_col,
                                                       &fill_ga, &fill_gb, &fill_gc_coef,
                                                       &fill_gs, &fill_gramp_y,
-                                                      &fill_atlas_skip, &fill_gtype,
+                                                      &fill_atlas_skip,
                                                       &fill_gd, &fill_ge, &fill_gf,
                                                       &fill_gra, &fill_grdx, &fill_grdy);
                              _compute_gradient_coeffs(sc_stroke, atlas,
                                                       &stroke_shader_type, &stroke_col,
                                                       &stroke_ga, &stroke_gb, &stroke_gc_coef,
                                                       &stroke_gs, &stroke_gramp_y,
-                                                      &stroke_atlas_skip, &stroke_gtype,
+                                                      &stroke_atlas_skip,
                                                       &stroke_gd, &stroke_ge, &stroke_gf,
                                                       &stroke_gra, &stroke_grdx, &stroke_grdy);
                           }
@@ -3434,7 +3436,6 @@ eng_ector_end(void *engine,
                                 _spp.fill.grad_c     = fill_gc_coef;
                                 _spp.fill.grad_spread  = fill_gs;
                                 _spp.fill.grad_ramp_y  = fill_gramp_y;
-                                _spp.fill.grad_type    = fill_gtype;
                                 _spp.fill.grad_d     = fill_gd;
                                 _spp.fill.grad_e     = fill_ge;
                                 _spp.fill.grad_f     = fill_gf;
@@ -3453,7 +3454,6 @@ eng_ector_end(void *engine,
                                 _spp.stroke.grad_c     = stroke_gc_coef;
                                 _spp.stroke.grad_spread  = stroke_gs;
                                 _spp.stroke.grad_ramp_y  = stroke_gramp_y;
-                                _spp.stroke.grad_type    = stroke_gtype;
                                 _spp.stroke.grad_d     = stroke_gd;
                                 _spp.stroke.grad_e     = stroke_ge;
                                 _spp.stroke.grad_f     = stroke_gf;

@@ -2062,9 +2062,9 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
    PUSH_6_COLORS(pn, r, g, b, a);
 }
 
-// Write one side's gradient attributes.  A side that is not actually a
-// gradient travels as SPAN_GRAD_TYPE_SOLID with its colour in abc_y, so that
-// a mixed fill/stroke shape needs one program rather than two.
+// Write one side's gradient attributes.  The side's fill type goes in
+// def.w.  A side that is not actually a gradient carries its colour in abc_y,
+// so that a mixed fill/stroke shape needs one program rather than two.
 static void
 _span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
                     const Span_Channel_Params *side)
@@ -2076,7 +2076,7 @@ _span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
         abc_y[2] = (float)( side->col        & 0xFF) / 255.0f;
         abc_y[3] = (float)((side->col >> 24) & 0xFF) / 255.0f;
         def[0] = def[1] = def[2] = 0.0f;
-        def[3] = (GLfloat)SPAN_GRAD_TYPE_SOLID;
+        def[3] = (GLfloat)side->type;
         radial[0] = radial[1] = radial[2] = radial[3] = 0.0f;
         return;
      }
@@ -2088,7 +2088,7 @@ _span_side_grad_set(GLfloat abc_y[4], GLfloat def[4], GLfloat radial[4],
    def[0]    = side->grad_d;
    def[1]    = side->grad_e;
    def[2]    = side->grad_f;
-   def[3]    = (GLfloat)side->grad_type;
+   def[3]    = (GLfloat)side->type;
    radial[0] = side->grad_ra;
    radial[1] = side->grad_rdx;
    radial[2] = side->grad_rdy;

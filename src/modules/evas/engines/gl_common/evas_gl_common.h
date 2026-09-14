@@ -47,7 +47,7 @@
 #include "evas_gl_define.h"
 
 // Per-variant span-buffer interleaved vertex types, shared macros, and
-// the SPAN_FILL_TYPE_GRADIENT_MIN threshold constant.
+// the SPAN_FILL_TYPE_* fill type constants.
 // Single source of truth — no duplication with evas_ector_gl_span.h.
 #include "evas_ector_gl_span_types.h"
 
@@ -284,13 +284,12 @@ typedef struct _Span_Channel_Params {
    float    off_tx;     // texel x-offset in pool
    float    off_ty;     // texel y-offset in pool
    uint32_t col;        // base color (premultiplied ARGB)
-   int      type;       // Span_Data_Type: Solid, LinearGradient, RadialGradient
+   int      type;       // SPAN_FILL_TYPE_* (ector's Span_Data_Type)
    int      x_min;      // spatial split x_min
    // Gradient parameters (unused for Solid type)
    float    grad_a, grad_b, grad_c;  // linear: t = a*px + b*py + c
    int      grad_spread;             // 0=PAD, 1=REFLECT, 2=REPEAT
    float    grad_ramp_y;             // atlas V coordinate: (row+0.5)/SPAN_GRAD_ATLAS_H
-   int      grad_type;               // 0=linear, 1=radial
    float    grad_d, grad_e, grad_f;  // radial: 2nd affine row
    float    grad_ra, grad_rdx, grad_rdy; // radial: quadratic params
 } Span_Channel_Params;
