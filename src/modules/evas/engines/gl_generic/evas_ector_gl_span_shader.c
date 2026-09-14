@@ -94,7 +94,6 @@ _span_pbo_usable(void)
        (ext && strstr(ext, "pixel_buffer_object")))
      _span_pbo_ok = 1;
 
-
    if (!_span_pbo_ok)
      INF("span shader: no pixel buffer objects, uploading from client memory");
    return _span_pbo_ok;
@@ -430,7 +429,6 @@ static const char _glsl_uniforms_bind_f[] =
 static const char _glsl_uniforms_bind_s[] =
    "uniform sampler2D u_stroke_spans;\n"
    "uniform sampler2D u_fill_spans;\n";
-
 
 // Composite mask uniforms (present only in *_mask variants).
 // Only the sampler remains; size, offset, op, inv moved to varyings.
@@ -1274,7 +1272,6 @@ span_shader_shutdown(void)
      }
    _span_pbo_ok = -1;
 
-
    free(_span_pack_buf);
    _span_pack_buf = NULL;
    _span_pack_sz  = 0;
@@ -1708,7 +1705,6 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
    gc->state.current.cw         = 0;
    gc->state.current.ch         = 0;
 }
-
 
 // ------------------------------------------------------------------
 // Direct VG pass

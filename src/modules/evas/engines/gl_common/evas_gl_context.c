@@ -11,7 +11,6 @@
 
 #define PRG_INVALID NULL
 
-
 static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 Cutout_Rects *_evas_gl_common_cutout_rects = NULL;
