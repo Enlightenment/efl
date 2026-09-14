@@ -12,14 +12,14 @@ static size_t
 _generic_cache_budget(void)
 {
    static size_t v = 0;
+   const char *e;
+   long kb;
 
-   if (!v)
-     {
-        const char *e = getenv("EVAS_SURFACE_CACHE_SIZE");
-        long kb = e ? atol(e) : 0;
+   if (v) return v;
 
-        v = (kb > 0) ? ((size_t)kb * 1024) : GENERIC_CACHE_DEFAULT_BUDGET;
-     }
+   e = getenv("EVAS_SURFACE_CACHE_SIZE");
+   kb = e ? atol(e) : 0;
+   v = (kb > 0) ? ((size_t)kb * 1024) : GENERIC_CACHE_DEFAULT_BUDGET;
    return v;
 }
 
