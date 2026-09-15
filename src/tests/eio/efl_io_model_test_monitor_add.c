@@ -8,13 +8,29 @@
 #include <Eio.h>
 #include <Ecore.h>
 #include <Efl.h>
+#include <Ecore_File.h>
 #include <stdio.h>
 
 #include "eio_suite.h"
+#include "eio_test_common.h"
 
+/* A directory of this test's own.
+ *
+ * It used to watch eina_environment_tmp_get() -- /tmp itself -- and wait for
+ * its own file to be reported among everything else happening in there. That
+ * is fine on an idle machine and a lottery during a parallel test run, where
+ * a dozen other suites are making and removing temporary files and
+ * directories in the same place: the event this test is waiting for has to
+ * find its way through all of theirs, and when it does not, ecore_main_loop_begin
+ * never returns and the whole suite dies on a timeout with nothing to say
+ * about why. It was the one suite-level hang anybody had seen.
+ *
+ * Watching somewhere nobody else touches makes it about the monitor again.
+ */
+static Eina_Tmpstr *test_dirname = NULL;
 Eina_Tmpstr* temp_filename = NULL;
-const char* tmpdir = NULL;
 Eina_Bool children_deleted = EINA_FALSE;
+static Ecore_Timer *give_up = NULL;
 
 // This will ensure that the child have the time to be automatically destroyed
 static Eina_Value
@@ -101,6 +117,37 @@ _children_removed_cb(void *data EINA_UNUSED, const Efl_Event* event)
 
 static Eina_Bool started_up = EINA_FALSE;
 
+/* Waiting for an event that never comes is a failure, not a hang: say so
+   here rather than leaving the suite to be killed from outside. */
+static Eina_Bool
+_give_up_cb(void *data EINA_UNUSED)
+{
+   give_up = NULL;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+/* The file the monitor is supposed to notice, made once the model is up and
+   listening rather than from the first thing the listing happens to report --
+   an empty directory reports nothing, and there would be nothing to start
+   from. */
+static Eina_Value
+_make_watched_file(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   char templatename[PATH_MAX];
+   int fd;
+
+   snprintf(templatename, sizeof(templatename), "%s/prefixXXXXXX.ext",
+            (const char *) test_dirname);
+   fd = eina_file_mkstemp(templatename, &temp_filename);
+   ck_assert_int_gt(fd, 0);
+   close(fd);
+
+   started_up = EINA_TRUE;
+
+   return v;
+}
+
 static Eina_Value
 _children_get(void *data,
               const Eina_Value v,
@@ -140,16 +187,6 @@ _children_get(void *data,
         eina_value_free(path);
      }
 
-   if (!started_up)
-     {
-        int fd;
-
-        fd = eina_file_mkstemp("prefixXXXXXX.ext", &temp_filename);
-        ck_assert_int_gt(fd, 0);
-        close(fd);
-     }
-   started_up = EINA_TRUE;
-
    return v;
 }
 
@@ -167,11 +204,16 @@ EFL_START_TEST(efl_io_model_test_test_monitor_add)
 {
    Eo *filemodel = NULL;
 
-   tmpdir = eina_environment_tmp_get();
+   test_dirname = get_eio_test_file_tmp_dir();
+   fail_if(test_dirname == NULL);
+
+   started_up = EINA_FALSE;
+   children_deleted = EINA_FALSE;
+   temp_filename = NULL;
 
    filemodel = efl_add(EFL_IO_MODEL_CLASS,
                        efl_main_loop_get(),
-                       efl_io_model_path_set(efl_added, tmpdir));
+                       efl_io_model_path_set(efl_added, test_dirname));
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-extra-args"
    fail_if(!filemodel, "ERROR: Cannot init model!\n");
@@ -180,11 +222,28 @@ EFL_START_TEST(efl_io_model_test_test_monitor_add)
    efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_ADDED, &_children_added_cb, filemodel);
    efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_REMOVED, &_children_removed_cb, NULL);
 
+   /* Asking for the count is what starts the listing and puts the monitor in
+      place; the file goes in once that has happened. */
+   efl_model_children_count_get(filemodel);
+   efl_future_then(filemodel, efl_loop_job(efl_loop_get(filemodel)),
+                   .success = _make_watched_file);
+
+   give_up = ecore_timer_add(60.0, _give_up_cb, NULL);
+
    ecore_main_loop_begin();
+
+   ecore_timer_del(give_up);
+   give_up = NULL;
 
    efl_del(filemodel);
 
-   fail_if(!children_deleted);
+   fail_if(!started_up, "the file the monitor should have seen was never made");
+   fail_if(!children_deleted, "the monitor never reported the file being added");
+
+   if (temp_filename) unlink(temp_filename);
+   ecore_file_recursive_rm(test_dirname);
+   eina_tmpstr_del(test_dirname);
+   test_dirname = NULL;
 }
 EFL_END_TEST
 
