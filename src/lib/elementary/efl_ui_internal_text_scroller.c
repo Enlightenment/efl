@@ -62,6 +62,22 @@ EOLIAN static Eo *
 _efl_ui_internal_text_scroller_efl_object_constructor(Eo *obj,
                                         Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
 {
+   /* Themed as a text scroller, not as a scroller.
+    *
+    * Efl.Ui.Scroller names itself "scroller" and this inherited that, so a
+    * textbox that scrolls was dressed as a plain scroller and the theme's
+    * "efl/text/scroller" and "efl/text/single/scroller" -- which is where the
+    * entry background, the focus glow and the validation glow live -- were
+    * asked for by nobody. A scrolling textbox had no background to say it was
+    * a field, and no glow to say it had the focus or had refused what was
+    * typed. Said here, before Efl.Ui.Scroller can name itself, because it
+    * only names itself when nothing else has. */
+   if (!elm_widget_theme_klass_get(obj))
+     {
+        elm_widget_theme_klass_set(obj, "text");
+        elm_widget_theme_element_set(obj, "single/scroller");
+     }
+
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
@@ -171,14 +187,17 @@ _efl_ui_internal_text_scroller_scroller_mode_set(Eo *obj,
    sd->mode = mode;
    if (mode == EFL_UI_TEXT_SCROLLER_MODE_MULTILINE)
      {
+        elm_widget_theme_element_set(obj, "scroller");
         efl_ui_scrollbar_bar_mode_set(obj,
               EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO);
      }
    else // default (single-line)
      {
+        elm_widget_theme_element_set(obj, "single/scroller");
         efl_ui_scrollbar_bar_mode_set(obj,
               EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
      }
+   efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eo *
