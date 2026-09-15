@@ -64,6 +64,8 @@ struct _Efl_Ui_Collection_Request
 
 struct _Efl_Ui_Collection_View_Data
 {
+   Eina_Bool had_viewport : 1; /* there has been room to show something */
+
    unsigned int last_count; /* to tell a re-order from children arriving */
    Efl_Ui_Factory *factory;
    Efl_Ui_Position_Manager_Entity *manager;
@@ -2202,8 +2204,41 @@ _pan_viewport_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    MY_DATA_GET(data, pd);
    Eina_Rect rect = efl_ui_scrollable_viewport_geometry_get(data);
+   Eina_Size2D item_base = { 0, 0 };
 
    efl_ui_position_manager_entity_viewport_set(pd->manager, rect);
+
+   /* The first time there is any room to show anything.
+    *
+    * Before that, everything the position manager asked about was answered
+    * with the size of the view, and the view had no size -- so it cached a
+    * listing in which every item is nothing, a total of nothing, and nothing
+    * to show. Handing it a viewport does not help: it reads the same cache
+    * back. Nor does anything else come along to correct it, and the listing
+    * stays empty for as long as it is open.
+    *
+    * Which never happened while a view was built with its window, because the
+    * window is laid out before a model is ever set on it. It happens as soon
+    * as one is built in answer to something -- a popup from a click -- and it
+    * is what made such a view look broken.
+    *
+    * So the sizes are dropped once, here, the first time there is a viewport
+    * to measure against. Only while nothing has been measured yet: once one
+    * item has been, the size is known and resizing is just resizing.
+    */
+   if (!pd->had_viewport && (rect.w > 0) && (rect.h > 0))
+     {
+        pd->had_viewport = EINA_TRUE;
+
+        if (pd->model && !ITEM_BASE_SIZE_FROM_MODEL(pd->model, item_base))
+          {
+             unsigned int count = efl_model_children_count_get(pd->model);
+
+             if (count)
+               efl_ui_position_manager_entity_item_size_changed(pd->manager, 0,
+                                                                count - 1);
+          }
+     }
 }
 
 static void
