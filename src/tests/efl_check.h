@@ -301,7 +301,11 @@ EINA_UNUSED static int
 _efl_suite_wait_on_fork(int *num_forks, Eina_Bool *timeout)
 {
    int status = 0, ret, pid;
-   pid = waitpid(0, &status, 0);
+
+   /* Any child, not any child in this process group: the test-case children
+      are put in groups of their own so that the failsafe can kill the whole
+      of one, and waitpid(0, ...) would no longer see them. */
+   pid = waitpid(-1, &status, 0);
    if (WIFEXITED(status))
      ret = WEXITSTATUS(status);
    else
@@ -417,6 +421,15 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
                 fflush(stderr);
                 abort();
               }
+            else
+              {
+                /* A process group of its own. check forks again for every
+                   test inside this test case, so the pid the harness holds
+                   is not the one that hangs -- killing it on the failsafe
+                   path left the grandchild running after the suite had
+                   already reported and gone. The group takes all of it. */
+                setpgid(0, 0);
+              }
           }
 #endif
 
@@ -425,8 +438,21 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
           tcase_add_checked_fixture(tc, init, shutdown);
 
 #ifdef HAVE_FORK
+        /* Long enough that no working test can reach it -- the slowest here
+           is seconds, and CK_TIMEOUT_MULTIPLIER stretches this for the
+           valgrind and sanitiser runs -- and short enough to be caught
+           inside the failsafe below.
+
+           It used to be 0, which is check's "no timeout at all", on the
+           grounds that the failsafe would catch anything stuck. It does, but
+           only by test case and only after everything else has finished, and
+           the process check forked for the hung test is in a process group
+           of check's own making, so the failsafe cannot take it with it and
+           it is left running after the suite has gone. check can: it knows
+           the group because it made it, and it says which test rather than
+           which test case. */
         if (do_fork)
-          tcase_set_timeout(tc, 0);
+          tcase_set_timeout(tc, 120);
 #endif
 
         etc[i].build(tc);
@@ -456,13 +482,23 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
         if (timeout_reached)
           {
              Eina_Iterator *it;
-             const char *testname;
-             it = eina_hash_iterator_data_new(fork_map);
+             Eina_Hash_Tuple *tuple;
+
+             it = eina_hash_iterator_tuple_new(fork_map);
              timeout_pid = 0;
              printf("FAILSAFE TIMEOUT REACHED!\n");
              fflush(stdout);
-             EINA_ITERATOR_FOREACH(it, testname)
-               printf("STILL RUNNING: %s\n", testname);
+             /* Named and then killed. Left alone they outlive the suite that
+                forked them, and a test run that goes on burning a core after
+                it has been reported is the next run's problem. */
+             EINA_ITERATOR_FOREACH(it, tuple)
+               {
+                  int stuck = *((int *) tuple->key);
+
+                  printf("STILL RUNNING: %s\n", (const char *) tuple->data);
+                  /* The group, not the pid: see setpgid above. */
+                  if (kill(-stuck, SIGKILL) != 0) kill(stuck, SIGKILL);
+               }
              fflush(stdout);
              eina_iterator_free(it);
              failed_count++;
