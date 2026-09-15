@@ -2815,12 +2815,28 @@ _efl_ui_layout_base_efl_layout_signal_signal_process(Eo *obj, Efl_Ui_Layout_Data
 /* Efl.Part implementation */
 
 EOLIAN static Eo *
-_efl_ui_layout_base_efl_part_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *part)
+_efl_ui_layout_base_efl_part_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd, const char *part)
 {
    Efl_Canvas_Layout_Part_Type type = EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    ELM_WIDGET_DATA_GET_OR_RETURN((Eo *) obj, wd, NULL);
+
+   /* Which kind of part this is comes from the group, so there has to be a
+      group to ask. A widget still being built has none -- the theme arrives
+      at finalize -- and everything below then reads "not a text part, not a
+      swallow either" and hands back the plain part class, which implements
+      neither Efl.Text nor Efl.Content. Writing through that goes nowhere and
+      says nothing about it, which is why
+
+         efl_add(EFL_UI_MENU_ITEM_CLASS, m, efl_text_set(efl_added, "Home"))
+
+      came out blank while the same two calls one after the other did not.
+
+      So the theme is brought forward to the first question asked of it. It
+      was going to be applied a moment later anyway, and the answer is only
+      meaningful once it has been. */
+   if (sd->needs_theme_apply) efl_ui_widget_theme_apply((Eo *) obj);
 
    // Check part type without using edje_object_part_object_get(), as this
    // can cause recalc, which has side effects... and could be slow.

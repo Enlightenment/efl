@@ -281,8 +281,71 @@ EFL_START_TEST(efl_ui_layout_test_property_bind_alone)
 }
 EFL_END_TEST
 
+/* A part asked about before the theme has arrived.
+ *
+ * Which kind of part something is comes from the group, and a widget still
+ * being built has none -- so part_get used to answer "not text, not swallow"
+ * and hand back the plain part class, which implements neither Efl.Text nor
+ * Efl.Content. Everything written through it was dropped without a word.
+ *
+ * The classes it bit were the ones whose text goes to a named theme part:
+ * Efl.Ui.Check and everything built on Efl.Ui.Default_Item. Button and
+ * Textbox route theirs elsewhere and always worked, which is what made it
+ * look like the callers were holding it wrong.
+ */
+EFL_START_TEST(efl_ui_layout_text_set_while_building)
+{
+   Eo *win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   const Efl_Class *klasses[] = {
+      EFL_UI_BUTTON_CLASS, EFL_UI_CHECK_CLASS, EFL_UI_LIST_DEFAULT_ITEM_CLASS,
+      EFL_UI_GRID_DEFAULT_ITEM_CLASS,
+   };
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(klasses); i++)
+     {
+        Eo *inside, *after;
+
+        /* The idiomatic way round: everything in one efl_add. */
+        inside = efl_add(klasses[i], win, efl_text_set(efl_added, "IN"));
+        ck_assert_ptr_ne(inside, NULL);
+        ck_assert_ptr_ne(efl_text_get(inside), NULL);
+        ck_assert_str_eq(efl_text_get(inside), "IN");
+
+        /* And the long way round, which always worked. */
+        after = efl_add(klasses[i], win);
+        efl_text_set(after, "AFTER");
+        ck_assert_str_eq(efl_text_get(after), "AFTER");
+
+        efl_del(inside);
+        efl_del(after);
+     }
+
+   efl_del(win);
+}
+EFL_END_TEST
+
+/* Content set the same way, which never had the problem -- a swallow is
+   remembered as the object it is -- and must go on not having it. */
+EFL_START_TEST(efl_ui_layout_content_set_while_building)
+{
+   Eo *win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   Eo *item, *icon;
+
+   item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, win);
+   icon = efl_add(EFL_UI_IMAGE_CLASS, item);
+   efl_content_set(efl_part(item, "icon"), icon);
+   ck_assert_ptr_eq(efl_content_get(efl_part(item, "icon")), icon);
+
+   efl_del(item);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
+   tcase_add_test(tc, efl_ui_layout_text_set_while_building);
+   tcase_add_test(tc, efl_ui_layout_content_set_while_building);
    tcase_add_test(tc, efl_ui_layout_test_property_bind);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_size_min);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_update_hints);
