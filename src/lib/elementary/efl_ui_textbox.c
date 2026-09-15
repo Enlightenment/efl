@@ -195,6 +195,7 @@ static inline Eo * _decoration_create(Eo *obj, Efl_Ui_Textbox_Data *sd, const ch
 static void _decoration_defer(Eo *obj);
 static void _clear_text_selection(Efl_Ui_Textbox_Data *sd);
 static void _anchors_free(Efl_Ui_Textbox_Data *sd);
+static void _scrollable_apply(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll);
 static void _selection_defer(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static Eina_Position2D _decoration_calc_offset(Efl_Ui_Textbox_Data *sd);
 static void _update_text_theme(Eo *obj, Efl_Ui_Textbox_Data *sd);
@@ -1768,6 +1769,9 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
    efl_input_text_predictable_set(obj, EINA_TRUE);
    efl_input_text_input_content_type_set(obj, EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE);
 
+   /* Asked for before there was a theme to put it in. See scrollable_set. */
+   if (sd->scroll) _scrollable_apply(obj, sd, EINA_TRUE);
+
    sd->calc_force = EINA_TRUE;
 
    return obj;
@@ -2051,11 +2055,8 @@ _efl_ui_textbox_cnp_dnd_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textbox_Data 
 }
 
 EOLIAN static void
-_efl_ui_textbox_scrollable_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll)
+_scrollable_apply(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll)
 {
-   if (sd->scroll == scroll) return;
-   sd->scroll = scroll;
-
    if (scroll)
      {
         efl_content_set(efl_part(sd->entry_edje, "efl.text"), NULL);
@@ -2085,6 +2086,26 @@ _efl_ui_textbox_scrollable_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool scrol
         sd->scroller = NULL;
      }
    efl_canvas_group_change(obj);
+}
+
+EOLIAN static void
+_efl_ui_textbox_scrollable_set(Eo *obj, Efl_Ui_Textbox_Data *sd, Eina_Bool scroll)
+{
+   if (sd->scroll == scroll) return;
+   sd->scroll = scroll;
+
+   /* Not yet, if the widget is still being built.
+    *
+    * The scroller goes in the theme's "efl.text" part, and until the widget
+    * is finalized it has no theme and so no such part. Swallowing into a part
+    * that is not there does nothing and says nothing: the scroller is left
+    * where an unplaced object goes, which is the top left of the canvas, and
+    * the widget draws its text there instead of in itself. Finalize applies
+    * it, which is where the theme arrives.
+    */
+   if (!efl_finalized_get(obj)) return;
+
+   _scrollable_apply(obj, sd, scroll);
 }
 
 EOLIAN static Eina_Bool
