@@ -283,13 +283,13 @@ span_collector_clear(Span_Collector *sc)
 static inline void
 _write_span_entry(uint8_t *dst, int cov, int len, int gap)
 {
-   if (gap < 0) gap = 0;
-   if (gap > 255) gap = 255;
-   if (len < 0) len = 0;
-   if (len > 255) len = 255;
-   dst[0] = (uint8_t)cov;
-   dst[1] = (uint8_t)len;
-   dst[2] = (uint8_t)gap;
+#define SPAN_LIM(x) ((x) < 0 ? 0 : ((x) > 255 ? 255 : (x)))
+
+   gap = SPAN_LIM(gap);
+   len = SPAN_LIM(len);
+   dst[0] = cov;
+   dst[1] = len;
+   dst[2] = gap;
    dst[3] = 0;
 }
 
