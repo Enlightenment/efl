@@ -674,8 +674,8 @@ _flush_row_tail(Span_Collector *sc, int ti, int y)
 void
 _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
 {
-   Span_Data      *sd  = (Span_Data *)user_data;
-   Span_Collector *sc  = (Span_Collector *)sd->span_collector;
+   Span_Data      *sd  = user_data;
+   Span_Collector *sc  = sd->span_collector;
    int             ti, idx, y, sx;
    int             ref, gap, remaining, cur_x;
    unsigned int    cov;
@@ -754,8 +754,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
         // Compute gap relative to x_min so split textures don't
         // overflow the 8-bit gap field.  The shader adds x_min to
         // its sx accumulator to recover absolute coordinates.
-        ref = (tex->last_x_end[y] > tex->x_min)
-            ? tex->last_x_end[y] : tex->x_min;
+        ref = MAX(tex->x_min, tex->last_x_end[y]);
         gap = sx - ref;
         remaining = spans->len;
         cov = spans->coverage;
