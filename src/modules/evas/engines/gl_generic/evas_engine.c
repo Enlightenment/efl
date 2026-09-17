@@ -3102,7 +3102,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    // pointer (pointer may survive in-place regen).  Cache lives on gd so
    // it survives Span_Collector slot reuse across shapes between frames.
    const uint8_t *ramp_bytes = (const uint8_t *)gd->color_table;
-   uint32_t version;
+   unsigned int version;
    if (gd->cached_ctable_crc_valid &&
        (gd->cached_ctable_status == CTABLE_READY_DONE))
      {

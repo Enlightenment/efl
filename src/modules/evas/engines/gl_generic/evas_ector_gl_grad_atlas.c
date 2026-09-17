@@ -44,13 +44,13 @@
 // CRC32 over 4096 bytes using eina_crc() (SSE4.2-accelerated when
 // available - measured ~2.6x faster than FNV-1a on 4 KB ramps).
 // Cache lookup uses byte-compare on hit to defend against collisions.
-uint32_t
+unsigned int
 span_grad_atlas_hash(const uint8_t *bytes)
 {
-   return (uint32_t)eina_crc((const char *)bytes,
-                             SPAN_GRAD_ATLAS_ROW_BYTES,
-                             0xffffffffU,
-                             EINA_TRUE);
+   return eina_crc((const char *)bytes,
+                   SPAN_GRAD_ATLAS_ROW_BYTES,
+                   0xffffffffU,
+                   EINA_TRUE);
 }
 
 Span_Grad_Atlas *
