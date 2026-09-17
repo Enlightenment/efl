@@ -139,9 +139,7 @@ span_collector_resize(Span_Collector *sc, int h)
 {
    int i;
 
-   if (!sc || (h <= 0)) return;
-
-   if (sc->h == h) return;  // no change at all
+   if (!sc || (h <= 0) || (sc->h == h)) return;
 
    sc->h = h;
 
