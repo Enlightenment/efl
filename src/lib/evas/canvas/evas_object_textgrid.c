@@ -75,7 +75,7 @@ struct _Evas_Object_Textgrid_Row
    int rects_alloc, texts_alloc, lines_alloc;
    Evas_Object_Textgrid_Rect *rects; // rects + colors
    Evas_Object_Textgrid_Text *texts; // text
-   Evas_Object_Textgrid_Line *lines; // underlines, strikethroughs
+   Evas_Object_Textgrid_Line *lines; // underlines, strikethroughs, overlines
 };
 
 struct _Evas_Object_Textgrid_Rect
@@ -640,7 +640,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                                                        rr, rg, rb, ra);
                }
              if ((cells->codepoint > 0) || (cells->underline) ||
-                 (cells->strikethrough))
+                 (cells->strikethrough) || (cells->overline))
                {
                   if (cells->fg_extended) palette = &(o->cur.palette_extended);
                   else palette = &(o->cur.palette_standard);
@@ -655,8 +655,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                                                               c->r, c->g, c->b, c->a,
                                                               cells->bold,
                                                               cells->italic);
-                       // XXX: underlines and strikethroughs don't get
-                       // merged into horizontal runs like bg rects above
+                       // XXX: underlines, strikethroughs and overlines don't
+                       // get merged into horizontal runs like bg rects above
                        if (cells->underline)
                          evas_object_textgrid_row_line_append(row, xp, w,
                                                               o->ascent + 1,
@@ -664,6 +664,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                        if (cells->strikethrough)
                          evas_object_textgrid_row_line_append(row, xp, w,
                                                               ((3 * o->ascent) / 4),
+                                                              c->r, c->g, c->b, c->a);
+                       if (cells->overline)
+                         evas_object_textgrid_row_line_append(row, xp, w, 0,
                                                               c->r, c->g, c->b, c->a);
                     }
                }
