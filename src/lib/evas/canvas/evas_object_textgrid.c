@@ -46,6 +46,7 @@ struct _Evas_Textgrid_Data
    } cur, prev;
 
    int                            ascent;
+   int                            line_thickness;
 
    Evas_Font_Set                 *font_normal;
    Evas_Font_Set                 *font_bold;
@@ -96,7 +97,7 @@ struct _Evas_Object_Textgrid_Text
 struct _Evas_Object_Textgrid_Line
 {
    unsigned char r, g, b, a;
-   int x, w, y;
+   int x, w, y, th;
 };
 
 /* private methods for textgrid objects */
@@ -524,7 +525,7 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row,
 }
 
 static void
-evas_object_textgrid_row_line_append(Evas_Object_Textgrid_Row *row, int x, int w, int y, int r, int g, int b, int a)
+evas_object_textgrid_row_line_append(Evas_Object_Textgrid_Row *row, int x, int w, int y, int th, int r, int g, int b, int a)
 {
    row->lines_num++;
    if (row->lines_num > row->lines_alloc)
@@ -543,6 +544,7 @@ evas_object_textgrid_row_line_append(Evas_Object_Textgrid_Row *row, int x, int w
    row->lines[row->lines_num - 1].x = x;
    row->lines[row->lines_num - 1].w = w;
    row->lines[row->lines_num - 1].y = y;
+   row->lines[row->lines_num - 1].th = th;
    row->lines[row->lines_num - 1].r = r;
    row->lines[row->lines_num - 1].g = g;
    row->lines[row->lines_num - 1].b = b;
@@ -574,6 +576,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    Eina_Array *palette;
    int xx, yy, xp, yp, w, h, ww, hh;
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
+   int line_th, underline_y, strikethrough_y;
 
    /* render object to surface with context, and offset by x,y */
    Evas_Textgrid_Data *o = type_private_data;
@@ -586,6 +589,16 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    h = o->cur.char_height;
    ww = obj->cur->geometry.w;
    hh = obj->cur->geometry.h;
+
+   // the font is loaded at the scaled size, so its metrics already follow
+   // both the font size and the object scale
+   line_th = o->line_thickness;
+   if (line_th < 1) line_th = 1;
+   if (line_th > h) line_th = h;
+   underline_y = o->ascent + 1;
+   if (underline_y + line_th > h) underline_y = h - line_th;
+   strikethrough_y = (3 * o->ascent) / 4;
+   if (strikethrough_y + line_th > h) strikethrough_y = h - line_th;
 
    // generate row data from cells (and only deal with rows that updated)
    for (yy = 0, cells = o->cur.cells; yy < o->cur.h; yy++)
@@ -659,14 +672,14 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                        // get merged into horizontal runs like bg rects above
                        if (cells->underline)
                          evas_object_textgrid_row_line_append(row, xp, w,
-                                                              o->ascent + 1,
+                                                              underline_y, line_th,
                                                               c->r, c->g, c->b, c->a);
                        if (cells->strikethrough)
                          evas_object_textgrid_row_line_append(row, xp, w,
-                                                              ((3 * o->ascent) / 4),
+                                                              strikethrough_y, line_th,
                                                               c->r, c->g, c->b, c->a);
                        if (cells->overline)
-                         evas_object_textgrid_row_line_append(row, xp, w, 0,
+                         evas_object_textgrid_row_line_append(row, xp, w, 0, line_th,
                                                               c->r, c->g, c->b, c->a);
                     }
                }
@@ -825,10 +838,10 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                                      row->lines[xx].b, row->lines[xx].a);
              ENFN->context_cutout_target(engine, context,
                                          xp + row->lines[xx].x, yp + row->lines[xx].y,
-                                         row->lines[xx].w, 1);
+                                         row->lines[xx].w, row->lines[xx].th);
              ENFN->rectangle_draw(engine, output, context, surface,
                                   xp + row->lines[xx].x, yp + row->lines[xx].y,
-                                  row->lines[xx].w, 1,
+                                  row->lines[xx].w, row->lines[xx].th,
                                   do_async);
           }
         yp += h;
@@ -1332,6 +1345,8 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
         o->cur.char_width = advance;
         o->cur.char_height = vadvance;
         o->ascent = ENFN->font_ascent_get(ENC, o->font_normal);
+        o->line_thickness =
+           evas_common_font_instance_underline_thickness_get(text_props.font_instance);
         evas_common_text_props_content_unref(&text_props);
      }
    else
@@ -1344,6 +1359,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
         EINA_COW_STATE_WRITE_END(obj, state_write, cur);
 
         o->ascent = 0;
+        o->line_thickness = 1;
      }
 
    DBG("font: '%s' weight: %d, slant: %d",
