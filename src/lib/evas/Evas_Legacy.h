@@ -6493,6 +6493,39 @@ EVAS_API Evas_Object *evas_object_textgrid_add(Evas *e);
 EVAS_API void evas_object_textgrid_font_source_set(Eo *obj, const char *font_source);
 
 /**
+ * @brief Enable OpenType ligature shaping on a textgrid object.
+ *
+ * When enabled, adjacent cells whose codepoints can take part in a liga,
+ * clig, calt, dlig or rlig substitution are shaped together, so coding
+ * ligatures such as @c "=>" render as the font intends. A change of
+ * foreground colour or bold/italic style splits a run, so the cursor and
+ * selection edges split ligatures.
+ *
+ * A shaped run is used only if it advances exactly one cell per source cell;
+ * otherwise its cells are rendered one by one. Other cells are unaffected.
+ *
+ * Disabled by default.
+ *
+ * @see evas_object_textgrid_ligatures_get()
+ *
+ * @since 1.29
+ *
+ * @param[in] enabled @c EINA_TRUE to shape ligature runs, @c EINA_FALSE not to.
+ */
+EVAS_API void evas_object_textgrid_ligatures_set(Eo *obj, Eina_Bool enabled);
+
+/**
+ * @brief Get whether OpenType ligature shaping is enabled on a textgrid object.
+ *
+ * @return @c EINA_TRUE if ligature shaping is enabled, @c EINA_FALSE otherwise.
+ *
+ * @see evas_object_textgrid_ligatures_set()
+ *
+ * @since 1.29
+ */
+EVAS_API Eina_Bool evas_object_textgrid_ligatures_get(const Eo *obj);
+
+/**
  *
  * @brief Get the font file's path which is being used on a given textgrid object.
  *

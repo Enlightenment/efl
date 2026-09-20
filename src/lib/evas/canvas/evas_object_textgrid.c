@@ -31,6 +31,30 @@ struct _Evas_Textgrid_Cache_Key
    ((int)(sizeof(Evas_Textgrid_Cache_Key) + \
           (((unsigned int)(len_) - 1) * sizeof(Eina_Unicode))))
 
+/* Bound on cached entries, checked when storing a run.  Only pathological
+ * content reaches it, so a wholesale flush is enough; no LRU. */
+#define TEXTGRID_CACHE_MAX 4096
+
+/* Longest run offered to the shaper, to bound the cache key size. */
+#define TEXTGRID_LIGA_RUN_MAX 32
+
+/* Cached in place of the props of a run that would break the grid. */
+static Evas_Text_Props _textgrid_run_rejected;
+#define TEXTGRID_RUN_REJECTED (&_textgrid_run_rejected)
+
+/* Ligature state, allocated only while ligatures are enabled */
+typedef struct _Evas_Textgrid_Liga Evas_Textgrid_Liga;
+struct _Evas_Textgrid_Liga
+{
+   /* Codepoints of the normal font that can take part in a substitution */
+   Evas_Font_Liga_Triggers  triggers;
+   /* Scratch for one run and its cache key, sized for a full row */
+   Eina_Unicode            *run;
+   Evas_Textgrid_Cache_Key *key;
+   int                      scratch_w;
+   Eina_Bool                avail;
+};
+
 struct _Evas_Textgrid_Data
 {
    struct {
@@ -62,6 +86,8 @@ struct _Evas_Textgrid_Data
     * Each cached entry holds one content ref.  On cache hit the row's copy
     * takes its own independent ref via evas_common_text_props_content_copy_and_ref. */
    Eina_Hash                     *text_props_cache;
+
+   Evas_Textgrid_Liga            *liga; /* NULL when ligatures are off */
 
    unsigned int                   changed : 1;
    unsigned int                   core_change : 1;
@@ -210,6 +236,7 @@ _textgrid_cache_entry_free(void *data)
 {
    Evas_Text_Props *props = data;
 
+   if (props == TEXTGRID_RUN_REJECTED) return;
    evas_common_text_props_content_unref(props);
    free(props);
 }
@@ -229,6 +256,107 @@ _textgrid_cache_invalidate(Evas_Textgrid_Data *o)
 {
    if (o->text_props_cache)
      eina_hash_free_buckets(o->text_props_cache);
+}
+
+static Eina_Bool
+_textgrid_cache_run_collect(const Eina_Hash *hash EINA_UNUSED,
+                            const void *key, void *data EINA_UNUSED,
+                            void *fdata)
+{
+   const Evas_Textgrid_Cache_Key *k = key;
+
+   if (k->len > 1) eina_array_push(fdata, (void *)key);
+   return EINA_TRUE;
+}
+
+/* Drop the run entries, keeping the single cells. */
+static void
+_textgrid_cache_runs_drop(Evas_Textgrid_Data *o)
+{
+   Eina_Array *keys;
+   unsigned int i;
+
+   if (!o->text_props_cache) return;
+   keys = eina_array_new(16);
+   if (!keys)
+     {
+        _textgrid_cache_invalidate(o);
+        return;
+     }
+   /* eina_hash cannot delete while iterating: collect first. */
+   eina_hash_foreach(o->text_props_cache, _textgrid_cache_run_collect, keys);
+   for (i = 0; i < eina_array_count(keys); i++)
+     eina_hash_del_by_key(o->text_props_cache, eina_array_data_get(keys, i));
+   eina_array_free(keys);
+}
+
+static void
+_textgrid_liga_scratch_free(Evas_Textgrid_Liga *liga)
+{
+   free(liga->run);
+   liga->run = NULL;
+   free(liga->key);
+   liga->key = NULL;
+   liga->scratch_w = 0;
+}
+
+/* Grow the run scratch to @p w cells. */
+static Eina_Bool
+_textgrid_liga_scratch_resize(Evas_Textgrid_Liga *liga, int w)
+{
+   Eina_Unicode *run;
+   Evas_Textgrid_Cache_Key *key;
+
+   if (w < 1) w = 1;
+   if (liga->scratch_w >= w) return EINA_TRUE;
+
+   run = realloc(liga->run, w * sizeof(Eina_Unicode));
+   if (!run) goto err;
+   liga->run = run;
+
+   key = realloc(liga->key, TEXTGRID_CACHE_KEY_SIZE(w));
+   if (!key) goto err;
+   /* Zero the padding after len: eina_hash copies the key verbatim. */
+   memset(key, 0, TEXTGRID_CACHE_KEY_SIZE(w));
+   liga->key = key;
+
+   liga->scratch_w = w;
+   return EINA_TRUE;
+
+err:
+   /* scratch_w must never overstate the scratch size. */
+   _textgrid_liga_scratch_free(liga);
+   return EINA_FALSE;
+}
+
+static void
+_textgrid_liga_free(Evas_Textgrid_Data *o)
+{
+   if (!o->liga) return;
+   evas_common_font_ot_ligature_triggers_clear(&(o->liga->triggers));
+   _textgrid_liga_scratch_free(o->liga);
+   free(o->liga);
+   o->liga = NULL;
+}
+
+/* Walks the cmap: call on font load or when ligatures get enabled only. */
+static void
+_textgrid_liga_triggers_load(Evas_Object_Protected_Data *obj,
+                             Evas_Textgrid_Data *o)
+{
+   Eina_Unicode W[2] = { 'O', 0 };
+   Evas_Font_Instance *script_fi = NULL;
+   Evas_Font_Instance *cur_fi = NULL;
+
+   evas_common_font_ot_ligature_triggers_clear(&(o->liga->triggers));
+   o->liga->avail = EINA_FALSE;
+   if (!o->font_normal) return;
+   ENFN->font_run_end_get(ENC, o->font_normal, &script_fi, &cur_fi,
+                          evas_common_language_script_type_get(W, 1), W, 1);
+   if (cur_fi)
+     o->liga->avail =
+        evas_common_font_ot_ligature_triggers_get((RGBA_Font_Int *)cur_fi,
+                                                  &(o->liga->triggers));
 }
 
 /* --- end text_props cache helpers --- */
@@ -371,6 +499,7 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj E
         eina_hash_free(o->text_props_cache);
         o->text_props_cache = NULL;
      }
+   _textgrid_liga_free(o);
 }
 
 EOLIAN static void
@@ -446,21 +575,43 @@ _textgrid_font_get(Evas_Textgrid_Data *o,
      }
 }
 
-static void
+/* Fill the scratch key for a run.  NULL when the run cannot be cached. */
+static Evas_Textgrid_Cache_Key *
+_textgrid_liga_key_build(Evas_Textgrid_Liga *liga, Evas_Font_Instance *fi,
+                         const Eina_Unicode *cps, int len)
+{
+   Evas_Textgrid_Cache_Key *key;
+
+   if ((!liga) || (!liga->key) || (len > liga->scratch_w)) return NULL;
+   key = liga->key;
+   key->fi = fi;
+   key->len = (unsigned int)len;
+   memcpy(key->cp, cps, len * sizeof(Eina_Unicode));
+   return key;
+}
+
+/* Append one entry for the head of @p cps and return how many cells it
+ * covers (>= 1).  A single cell is shaped without GSUB, as before.  A longer
+ * run goes through the real shaper and is kept only if it advances exactly
+ * one cell per source cell; otherwise it is cached as rejected. */
+static int
 evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row,
                                      Evas_Object_Protected_Data *obj,
                                      Evas_Textgrid_Data *o,
                                      int x,
-                                     Eina_Unicode codepoint,
+                                     const Eina_Unicode *cps,
+                                     int len,
                                      int r, int g, int b, int a,
                                      Eina_Bool is_bold,
-                                     Eina_Bool is_italic)
+                                     Eina_Bool is_italic,
+                                     Eina_Bool *shape_ok)
 {
    Evas_Script_Type script;
    Evas_Font_Instance *script_fi = NULL;
    Evas_Font_Instance *cur_fi = NULL;
    Evas_Object_Textgrid_Text *text;
    Evas_Font_Set *font;
+   int n, run_end;
 
    row->texts_num++;
    if (row->texts_num > row->texts_alloc)
@@ -472,80 +623,149 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row,
         if (!t)
           {
              row->texts_num--;
-             return;
+             return len;
           }
         row->texts = t;
      }
 
-   script = evas_common_language_script_type_get(&codepoint, 1);
+   script = evas_common_language_script_type_get(cps, len);
    text = &row->texts[row->texts_num - 1];
    text->bold = is_bold;
    text->italic = is_italic;
    font = _textgrid_font_get(o, is_bold, is_italic);
-   ENFN->font_run_end_get(ENC, font, &script_fi, &cur_fi,
-                          script, &codepoint, 1);
+   run_end = ENFN->font_run_end_get(ENC, font, &script_fi, &cur_fi,
+                                    script, cps, len);
+   /* Never shape across a font-instance boundary. */
+   if ((run_end > 0) && (run_end < len)) len = run_end;
+   n = len;
 
-   /* --- text_props cache lookup --- */
-   if (o->text_props_cache && cur_fi)
+   /* At most two passes: a rejected run retries as a single cell. */
+   for (;;)
      {
         /* Designated initializer zeroes all padding bytes so the full struct
-         * (including any trailing pad) is deterministic for eina_hash_add.
-         * This cache is main-loop-only; no locking is required. */
-        Evas_Textgrid_Cache_Key cache_key = { .fi = cur_fi, .len = 1,
-                                             .cp = { codepoint } };
-        Evas_Text_Props *cached;
+         * is deterministic for eina_hash_add. */
+        Evas_Textgrid_Cache_Key key1 = { .fi = cur_fi, .len = 1,
+                                         .cp = { cps[0] } };
+        Evas_Textgrid_Cache_Key *key = NULL;
+        Evas_Text_Props *cached = NULL;
 
-        cached = eina_hash_find(o->text_props_cache, &cache_key);
+        if ((o->text_props_cache) && (cur_fi))
+          {
+             if (n == 1) key = &key1;
+             else key = _textgrid_liga_key_build(o->liga, cur_fi, cps, n);
+          }
+        if (key) cached = eina_hash_find(o->text_props_cache, key);
+
+        if (cached == TEXTGRID_RUN_REJECTED)
+          {
+             if (n > 1)
+               {
+                  if (shape_ok) *shape_ok = EINA_FALSE;
+                  n = 1;
+                  continue;
+               }
+             cached = NULL;
+          }
         if (cached)
           {
              /* Cache hit: copy the cached props and take an independent ref */
              evas_common_text_props_content_copy_and_ref(&(text->text_props),
                                                          cached);
+             break;
           }
-        else
-          {
-             /* Cache miss: shape, then store a copy in the cache */
-             memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
-             evas_common_text_props_script_set(&(text->text_props), script);
-             ENFN->font_text_props_info_create(ENC, cur_fi, &codepoint,
-                                               &(text->text_props), NULL, 0, 1,
-                                               EVAS_TEXT_PROPS_MODE_NONE,
-                                               o->cur.font_description_normal->lang);
 
-             if (text->text_props.info)
+        /* Cache miss.  Runs need the real shaper: the fallback one applies
+         * no GSUB. */
+        memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
+        evas_common_text_props_script_set(&(text->text_props), script);
+        ENFN->font_text_props_info_create(ENC, cur_fi, cps,
+                                          &(text->text_props), NULL, 0, n,
+                                          (n > 1) ? EVAS_TEXT_PROPS_MODE_SHAPE
+                                                  : EVAS_TEXT_PROPS_MODE_NONE,
+                                          o->cur.font_description_normal->lang);
+
+        if ((n > 1) &&
+            (ENFN->font_h_advance_get(ENC, font, &(text->text_props)) !=
+             (n * o->cur.char_width)))
+          {
+             /* Off the grid: remember it and retry as a single cell. */
+             evas_common_text_props_content_unref(&(text->text_props));
+             if (key)
+               eina_hash_add(o->text_props_cache, key, TEXTGRID_RUN_REJECTED);
+             /* Stop the caller offering the rest of the run, or every
+              * suffix would cost a shaping call. */
+             if (shape_ok) *shape_ok = EINA_FALSE;
+             n = 1;
+             continue;
+          }
+
+        if (key && text->text_props.info)
+          {
+             Evas_Text_Props *store;
+
+             if ((n > 1) &&
+                 (eina_hash_population(o->text_props_cache) >= TEXTGRID_CACHE_MAX))
+               eina_hash_free_buckets(o->text_props_cache);
+
+             store = malloc(sizeof(Evas_Text_Props));
+             if (store)
                {
-                  Evas_Text_Props *store = malloc(sizeof(Evas_Text_Props));
-                  if (store)
+                  /* The cache entry gets its own independent ref */
+                  evas_common_text_props_content_copy_and_ref(store,
+                                                              &(text->text_props));
+                  if (!eina_hash_add(o->text_props_cache, key, store))
                     {
-                       /* The cache entry gets its own independent ref */
-                       evas_common_text_props_content_copy_and_ref(store,
-                                                                    &(text->text_props));
-                       if (!eina_hash_add(o->text_props_cache, &cache_key, store))
-                         {
-                            evas_common_text_props_content_unref(store);
-                            free(store);
-                         }
+                       evas_common_text_props_content_unref(store);
+                       free(store);
                     }
                }
           }
+        break;
      }
-   else
-     {
-        /* No cache (e.g. null fi) - fall back to original path */
-        memset(&(text->text_props), 0, sizeof(Evas_Text_Props));
-        evas_common_text_props_script_set(&(text->text_props), script);
-        ENFN->font_text_props_info_create(ENC, cur_fi, &codepoint,
-                                          &(text->text_props), NULL, 0, 1,
-                                          EVAS_TEXT_PROPS_MODE_NONE,
-                                          o->cur.font_description_normal->lang);
-     }
-   /* --- end cache lookup --- */
 
    text->x = x;
    text->r = r;
    text->g = g;
    text->b = b;
    text->a = a;
+
+   return n;
+}
+
+/* One pending ligature run: cells sit in o->liga->run. */
+typedef struct _Evas_Textgrid_Liga_Run Evas_Textgrid_Liga_Run;
+struct _Evas_Textgrid_Liga_Run
+{
+   int       x;   /* pixel x of the first cell */
+   int       len; /* cells pending in o->liga->run */
+   int       r, g, b, a;
+   Eina_Bool bold, italic;
+};
+
+static void
+_textgrid_liga_run_flush(Evas_Object_Textgrid_Row *row,
+                         Evas_Object_Protected_Data *obj,
+                         Evas_Textgrid_Data *o,
+                         Evas_Textgrid_Liga_Run *run)
+{
+   Eina_Bool shape_ok = EINA_TRUE;
+   int i = 0;
+
+   while (i < run->len)
+     {
+        int used;
+
+        used = evas_object_textgrid_row_text_append(row, obj, o,
+                                                    run->x + (i * o->cur.char_width),
+                                                    o->liga->run + i,
+                                                    shape_ok ? (run->len - i) : 1,
+                                                    run->r, run->g, run->b, run->a,
+                                                    run->bold, run->italic,
+                                                    &shape_ok);
+        if (used < 1) break;
+        i += used;
+     }
+   run->len = 0;
 }
 
 static void
@@ -601,6 +821,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    int xx, yy, xp, yp, w, h, ww, hh;
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
    int line_th, underline_y, strikethrough_y;
+   Evas_Textgrid_Liga_Run lrun;
+   Eina_Bool liga_on, trig;
 
    /* render object to surface with context, and offset by x,y */
    Evas_Textgrid_Data *o = type_private_data;
@@ -613,6 +835,10 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    h = o->cur.char_height;
    ww = obj->cur->geometry.w;
    hh = obj->cur->geometry.h;
+
+   liga_on = ((o->liga) && (o->liga->avail) &&
+              (o->liga->run) && (o->liga->scratch_w >= o->cur.w));
+   memset(&lrun, 0, sizeof(lrun));
 
    // the font is loaded at the scaled size, so its metrics already follow
    // both the font size and the object scale
@@ -637,6 +863,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
         row->ch1 = -1;
         row->ch2 = 0;
         run = 0;
+        lrun.len = 0;
         xp = 0;
         for (xx = 0; xx < o->cur.w; xx++, cells++)
           {
@@ -683,17 +910,52 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                   if (cells->fg_extended) palette = &(o->cur.palette_extended);
                   else palette = &(o->cur.palette_standard);
                   if (cells->fg < eina_array_count(palette))
-                    c = eina_array_data_get(palette, cells->fg);
+                    {
+                       c = eina_array_data_get(palette, cells->fg);
+                    }
                   if ((c) && (c->a == 0)) c = NULL;
                }
 
-             if ((c) && (cells->codepoint > 0))
-               evas_object_textgrid_row_text_append(row, obj,
-                                                    o, xp,
-                                                    cells->codepoint,
-                                                    c->r, c->g, c->b, c->a,
-                                                    cells->bold,
-                                                    cells->italic);
+             /* Most cells (letters, digits, spaces) fail this bit test and
+              * take the single-cell path. */
+             trig = ((liga_on) && (c) && (cells->codepoint > 0) &&
+                     evas_common_font_liga_trigger_check(&(o->liga->triggers),
+                                                         cells->codepoint));
+
+             /* A run is drawn with one colour and style, so the cursor and
+              * selection edges split ligatures. */
+             if ((lrun.len) &&
+                 ((!trig) || (lrun.len >= TEXTGRID_LIGA_RUN_MAX) ||
+                  (lrun.r != c->r) || (lrun.g != c->g) ||
+                  (lrun.b != c->b) || (lrun.a != c->a) ||
+                  (lrun.bold != (Eina_Bool)cells->bold) ||
+                  (lrun.italic != (Eina_Bool)cells->italic)))
+               _textgrid_liga_run_flush(row, obj, o, &lrun);
+
+             if (trig)
+               {
+                  if (!lrun.len)
+                    {
+                       lrun.x = xp;
+                       lrun.r = c->r;
+                       lrun.g = c->g;
+                       lrun.b = c->b;
+                       lrun.a = c->a;
+                       lrun.bold = cells->bold;
+                       lrun.italic = cells->italic;
+                    }
+                  o->liga->run[lrun.len++] = cells->codepoint;
+               }
+             else if ((c) && (cells->codepoint > 0))
+               {
+                  Eina_Unicode cp = cells->codepoint;
+
+                  evas_object_textgrid_row_text_append(row, obj,
+                                                       o, xp, &cp, 1,
+                                                       c->r, c->g, c->b, c->a,
+                                                       cells->bold,
+                                                       cells->italic, NULL);
+               }
 
              if (c)
                {
@@ -713,6 +975,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                }
              xp += w;
           }
+        if (lrun.len) _textgrid_liga_run_flush(row, obj, o, &lrun);
         if (run)
           {
              run = 0;
@@ -1133,6 +1396,7 @@ _evas_textgrid_grid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
      }
    o->cur.cells = calloc(w * h, sizeof(Evas_Textgrid_Cell));
    if (!o->cur.cells) return;
+   if (o->liga) _textgrid_liga_scratch_resize(o->liga, w);
    o->cur.rows = calloc(h, sizeof(Evas_Object_Textgrid_Row));
    if (!o->cur.rows)
      {
@@ -1389,6 +1653,7 @@ _evas_textgrid_font_reload(Eo *eo_obj, Evas_Textgrid_Data *o)
         o->ascent = 0;
         o->line_thickness = 1;
      }
+   if (o->liga) _textgrid_liga_triggers_load(obj, o);
 
    DBG("font: '%s' weight: %d, slant: %d",
        fdesc->name, fdesc->weight, fdesc->slant);
@@ -1726,17 +1991,34 @@ _evas_textgrid_update_add(Eo *eo_obj, Evas_Textgrid_Data *o, int x, int y, int w
    for (i = 0; i < h; i++)
      {
         Evas_Object_Textgrid_Row *r = &(o->cur.rows[y + i]);
+        int rx1 = x, rx2 = x2;
+
+        /* A cell's glyph depends on its run: widen the damage to the run
+         * boundaries, or a partial redraw leaves half a stale ligature. */
+        if ((o->liga) && (o->liga->avail) && (o->cur.cells))
+          {
+             Evas_Textgrid_Cell *cl = o->cur.cells + ((y + i) * o->cur.w);
+
+             while ((rx1 > 0) &&
+                    evas_common_font_liga_trigger_check(&(o->liga->triggers),
+                                                        cl[rx1 - 1].codepoint))
+               rx1--;
+             while ((rx2 < (o->cur.w - 1)) &&
+                    evas_common_font_liga_trigger_check(&(o->liga->triggers),
+                                                        cl[rx2 + 1].codepoint))
+               rx2++;
+          }
 
         if (r->ch1 < 0)
           {
              evas_object_textgrid_row_reset(o, r);
-             r->ch1 = x;
-             r->ch2 = x2;
+             r->ch1 = rx1;
+             r->ch2 = rx2;
           }
         else
           {
-             if (x < r->ch1) r->ch1 = x;
-             if (x2 > r->ch2) r->ch2 = x2;
+             if (rx1 < r->ch1) r->ch1 = rx1;
+             if (rx2 > r->ch2) r->ch2 = rx2;
           }
      }
    o->row_change = 1;
@@ -1796,6 +2078,45 @@ evas_object_textgrid_font_get(const Eo *obj, const char **font_name, Evas_Font_S
 {
    if (font_name) *font_name = efl_text_font_family_get((Eo *) obj);
    if (font_size) *font_size = efl_text_font_size_get((Eo *) obj);
+}
+
+EVAS_API void
+evas_object_textgrid_ligatures_set(Eo *eo_obj, Eina_Bool enabled)
+{
+   Evas_Object_Protected_Data *obj;
+   Evas_Textgrid_Data *o;
+
+   o = efl_data_scope_safe_get(eo_obj, MY_CLASS);
+   if (!o) return;
+   if ((!!enabled) == (o->liga != NULL)) return;
+
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   if (enabled)
+     {
+        o->liga = calloc(1, sizeof(Evas_Textgrid_Liga));
+        if (!o->liga) return;
+        if (o->cur.w > 0) _textgrid_liga_scratch_resize(o->liga, o->cur.w);
+        _textgrid_liga_triggers_load(obj, o);
+     }
+   else
+     {
+        _textgrid_liga_free(o);
+        _textgrid_cache_runs_drop(o);
+     }
+   evas_object_textgrid_rows_reset(eo_obj);
+   o->changed = 1;
+   o->row_change = 1;
+   evas_object_change(eo_obj, obj);
+}
+
+EVAS_API Eina_Bool
+evas_object_textgrid_ligatures_get(const Eo *eo_obj)
+{
+   Evas_Textgrid_Data *o = efl_data_scope_safe_get((Eo *)eo_obj, MY_CLASS);
+
+   if (!o) return EINA_FALSE;
+   return o->liga != NULL;
 }
 
 EOLIAN static void
