@@ -253,7 +253,7 @@ if use_valgrind
    eina_ext_deps += valgrind
 else
    config_h.set('NVALGRIND', 1)
-   valgrind = []
+   valgrind = declare_dependency()
 endif
 
 if debug_malloc
