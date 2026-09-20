@@ -18,13 +18,18 @@ typedef struct _Evas_Object_Textgrid_Rect  Evas_Object_Textgrid_Rect;
 typedef struct _Evas_Object_Textgrid_Text  Evas_Object_Textgrid_Text;
 typedef struct _Evas_Object_Textgrid_Line  Evas_Object_Textgrid_Line;
 
-/* Key for the per-(font_instance, codepoint) text_props cache */
+/* Key for the per-(font_instance, codepoint run) text_props cache */
 typedef struct _Evas_Textgrid_Cache_Key Evas_Textgrid_Cache_Key;
 struct _Evas_Textgrid_Cache_Key
 {
    Evas_Font_Instance *fi;
-   Eina_Unicode        codepoint;
+   unsigned int        len;
+   Eina_Unicode        cp[1]; /* len entries */
 };
+
+#define TEXTGRID_CACHE_KEY_SIZE(len_) \
+   ((int)(sizeof(Evas_Textgrid_Cache_Key) + \
+          (((unsigned int)(len_) - 1) * sizeof(Eina_Unicode))))
 
 struct _Evas_Textgrid_Data
 {
@@ -148,9 +153,9 @@ static const Evas_Object_Func object_func =
 /* --- text_props cache helpers --- */
 
 static int
-_textgrid_cache_key_length(const Evas_Textgrid_Cache_Key *key EINA_UNUSED)
+_textgrid_cache_key_length(const Evas_Textgrid_Cache_Key *key)
 {
-   return sizeof(Evas_Textgrid_Cache_Key);
+   return TEXTGRID_CACHE_KEY_SIZE(key->len);
 }
 
 static int
@@ -159,26 +164,44 @@ _textgrid_cache_key_cmp(const Evas_Textgrid_Cache_Key *a,
                         const Evas_Textgrid_Cache_Key *b,
                         int                            b_len EINA_UNUSED)
 {
+   unsigned int i;
+
+   /* Not memcmp: eina_hash copies the key verbatim, padding included. */
    if (a->fi != b->fi)
      return (a->fi < b->fi) ? -1 : 1;
-   if (a->codepoint != b->codepoint)
-     return (a->codepoint < b->codepoint) ? -1 : 1;
+   if (a->len != b->len)
+     return (a->len < b->len) ? -1 : 1;
+   for (i = 0; i < a->len; i++)
+     {
+        if (a->cp[i] != b->cp[i])
+          return (a->cp[i] < b->cp[i]) ? -1 : 1;
+     }
    return 0;
+}
+
+/* MurmurHash3 64-bit finalizer */
+static inline uint64_t
+_textgrid_fmix64(uint64_t k)
+{
+   k ^= k >> 33;
+   k *= UINT64_C(0xff51afd7ed558ccd);
+   k ^= k >> 33;
+   k *= UINT64_C(0xc4ceb9fe1a85ec53);
+   k ^= k >> 33;
+   return k;
 }
 
 static int
 _textgrid_cache_key_hash(const Evas_Textgrid_Cache_Key *key,
                          int                            key_len EINA_UNUSED)
 {
-   /* Murmur3-finalizer-style 64-bit mix: retains all pointer bits before
-    * truncating to int, avoiding collisions on 64-bit where upper 32 bits
-    * of the fi pointer differ between font instances. */
-   uint64_t h = (uint64_t)(uintptr_t)key->fi;
-   h ^= h >> 33;
-   h *= UINT64_C(0xff51afd7ed558ccd);
-   h ^= h >> 33;
-   h ^= (uint64_t)key->codepoint * 2654435761u;
-   h ^= h >> 17;
+   /* Mix the whole pointer before truncating to int, so font instances
+    * differing only in their upper 32 bits do not collide. */
+   uint64_t h = _textgrid_fmix64((uint64_t)(uintptr_t)key->fi);
+   unsigned int i;
+
+   for (i = 0; i < key->len; i++)
+     h = _textgrid_fmix64(h ^ key->cp[i]);
    return (int)(unsigned int)h;
 }
 
@@ -468,7 +491,8 @@ evas_object_textgrid_row_text_append(Evas_Object_Textgrid_Row *row,
         /* Designated initializer zeroes all padding bytes so the full struct
          * (including any trailing pad) is deterministic for eina_hash_add.
          * This cache is main-loop-only; no locking is required. */
-        Evas_Textgrid_Cache_Key cache_key = { .fi = cur_fi, .codepoint = codepoint };
+        Evas_Textgrid_Cache_Key cache_key = { .fi = cur_fi, .len = 1,
+                                             .cp = { codepoint } };
         Evas_Text_Props *cached;
 
         cached = eina_hash_find(o->text_props_cache, &cache_key);
