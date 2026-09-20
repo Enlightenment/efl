@@ -3,6 +3,7 @@
 #ifdef USE_HARFBUZZ
 # include <hb.h>
 # include <hb-ft.h>
+# include <hb-ot.h>
 #endif
 
 #ifdef USE_HARFBUZZ
@@ -237,13 +238,14 @@ _evas_common_font_ot_unicode_funcs_get(void)
    return unicode_funcs;
 }
 
-static void
-_evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Props_Mode mode)
+static hb_font_t *
+_evas_common_font_ot_hb_font_get(RGBA_Font_Int *fi)
 {
-   /* Create hb_font if not previously created */
    if (!fi->ft.hb_font)
      {
         hb_font_t *hb_ft_font;
+
+        if (!fi->src || !fi->src->ft.face) return NULL;
 
         hb_ft_font = hb_ft_font_create(fi->src->ft.face, NULL);
         fi->ft.hb_font = hb_font_create_sub_font(hb_ft_font);
@@ -252,6 +254,14 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Pro
         hb_font_set_funcs(fi->ft.hb_font,
               _evas_common_font_ot_font_funcs_get(), fi, NULL);
      }
+
+   return fi->ft.hb_font;
+}
+
+static void
+_evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Props_Mode mode)
+{
+   if (!_evas_common_font_ot_hb_font_get(fi)) return;
 
    if (mode == EVAS_TEXT_PROPS_MODE_SHAPE)
      {
@@ -262,6 +272,118 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Pro
         const char *shaper_list[] = { "fallback", NULL };
         hb_shape_full(fi->ft.hb_font, buffer, NULL, 0, shaper_list);
      }
+}
+
+EVAS_API void
+evas_common_font_ot_ligature_triggers_clear(Evas_Font_Liga_Triggers *t)
+{
+   if (!t) return;
+   free(t->extra);
+   memset(t, 0, sizeof(*t));
+}
+
+EVAS_API Eina_Bool
+evas_common_font_ot_ligature_triggers_get(RGBA_Font_Int *fi,
+                                          Evas_Font_Liga_Triggers *out)
+{
+   /* Coding-ligature fonts mostly use calt; the others cover the rest. */
+   static const hb_tag_t feats[] = {
+      HB_TAG('l','i','g','a'), HB_TAG('c','l','i','g'),
+      HB_TAG('c','a','l','t'), HB_TAG('d','l','i','g'),
+      HB_TAG('r','l','i','g'), HB_TAG_NONE
+   };
+   hb_font_t *hb_font;
+   hb_face_t *face;
+   hb_set_t *lookups, *cover, *unis, *before, *input, *after, *output;
+   hb_codepoint_t idx;
+   Eina_Unicode *extra = NULL;
+   unsigned int extra_cnt = 0, extra_alloc = 0;
+   Eina_Bool found = EINA_FALSE;
+
+   if (!out) return EINA_FALSE;
+   memset(out, 0, sizeof(*out));
+   if (!fi) return EINA_FALSE;
+
+   evas_common_font_int_reload(fi);
+   hb_font = _evas_common_font_ot_hb_font_get(fi);
+   if (!hb_font) return EINA_FALSE;
+   face = hb_font_get_face(hb_font);
+   if (!face) return EINA_FALSE;
+   if (!hb_ot_layout_has_substitution(face)) return EINA_FALSE;
+
+   lookups = hb_set_create();
+   cover = hb_set_create();
+   unis = hb_set_create();
+   before = hb_set_create();
+   input = hb_set_create();
+   after = hb_set_create();
+   output = hb_set_create();
+
+   /* NULL scripts and languages: all of them. */
+   hb_ot_layout_collect_lookups(face, HB_OT_TAG_GSUB, NULL, NULL, feats,
+                                lookups);
+
+   idx = HB_SET_VALUE_INVALID;
+   while (hb_set_next(lookups, &idx))
+     {
+        hb_set_clear(before);
+        hb_set_clear(input);
+        hb_set_clear(after);
+        hb_set_clear(output);
+        hb_ot_layout_lookup_collect_glyphs(face, HB_OT_TAG_GSUB, idx,
+                                           before, input, after, output);
+        /* Context glyphs count too: they change what their neighbours
+         * become. */
+        hb_set_union(cover, before);
+        hb_set_union(cover, input);
+        hb_set_union(cover, after);
+     }
+   if (hb_set_is_empty(cover)) goto done;
+
+   /* Map covered glyphs back to codepoints. */
+   hb_face_collect_unicodes(face, unis);
+   idx = HB_SET_VALUE_INVALID;
+   while (hb_set_next(unis, &idx))
+     {
+        hb_codepoint_t g;
+
+        if (!hb_font_get_nominal_glyph(hb_font, idx, &g)) continue;
+        if (!hb_set_has(cover, g)) continue;
+
+        found = EINA_TRUE;
+        if (idx < 0x80)
+          {
+             out->ascii[idx >> 6] |= (UINT64_C(1) << (idx & 63));
+             continue;
+          }
+        /* hb_set_next is ascending, so extra[] stays sorted. */
+        if (extra_cnt == extra_alloc)
+          {
+             Eina_Unicode *tmp;
+             unsigned int na = extra_alloc ? (extra_alloc * 2) : 16;
+
+             tmp = realloc(extra, na * sizeof(Eina_Unicode));
+             if (!tmp) goto done;
+             extra = tmp;
+             extra_alloc = na;
+          }
+        extra[extra_cnt++] = (Eina_Unicode)idx;
+     }
+
+done:
+   hb_set_destroy(output);
+   hb_set_destroy(after);
+   hb_set_destroy(input);
+   hb_set_destroy(before);
+   hb_set_destroy(unis);
+   hb_set_destroy(cover);
+   hb_set_destroy(lookups);
+
+   out->extra = extra;
+   out->extra_cnt = extra_cnt;
+   if (!found) evas_common_font_ot_ligature_triggers_clear(out);
+
+   return found;
 }
 
 EVAS_API Eina_Bool
@@ -331,6 +453,23 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
    hb_buffer_destroy(buffer);
    evas_common_font_int_use_trim();
 
+   return EINA_FALSE;
+}
+
+#else
+
+EVAS_API void
+evas_common_font_ot_ligature_triggers_clear(Evas_Font_Liga_Triggers *t)
+{
+   if (!t) return;
+   memset(t, 0, sizeof(*t));
+}
+
+EVAS_API Eina_Bool
+evas_common_font_ot_ligature_triggers_get(RGBA_Font_Int *fi EINA_UNUSED,
+                                          Evas_Font_Liga_Triggers *out)
+{
+   if (out) memset(out, 0, sizeof(*out));
    return EINA_FALSE;
 }
 
