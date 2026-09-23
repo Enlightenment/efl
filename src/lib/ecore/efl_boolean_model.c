@@ -406,10 +406,12 @@ struct _Eina_Iterator_Boolean
    Efl_Boolean_Model_Storage_Range *sr;
    Eina_Iterator *infix;
 
-   unsigned int index;
+   unsigned int index;   /* where the next match is, once found */
+   unsigned int found;   /* the match being handed out */
    unsigned int total;
 
    Eina_Bool request;
+   Eina_Bool valid;      /* index names a match rather than the end */
 };
 
 static Eina_Bool
@@ -474,8 +476,13 @@ _efl_boolean_model_iterator_index_find(Eina_Iterator_Boolean *it)
                }
           }
 
+        /* A buffer holds whole bytes and is as long as it is, so the search
+           through one can walk past the last child and find a bit that was
+           never anybody's. Bounded here rather than in there: what the
+           search knows about is the buffer, and how many children there are
+           is not its business. */
         if (_efl_boolean_model_iterator_storage_index_find(it))
-          return EINA_TRUE;
+          return (it->index < it->total);
 
         // Nothing more to look at in this buffer
         it->sr = NULL;
@@ -484,13 +491,24 @@ _efl_boolean_model_iterator_index_find(Eina_Iterator_Boolean *it)
    return EINA_FALSE;
 }
 
+/* Hand out the match that has been found, then go looking for the one after
+ * it. Which way round that goes matters: the search moves it->index onto
+ * what it finds, so a walk that searched and then reported would report
+ * where it had got to rather than where it was, and the answer would be
+ * every match but the first.
+ */
 static Eina_Bool
 efl_boolean_model_iterator_next(Eina_Iterator_Boolean *it, void **data)
 {
-   *data = &it->index;
-   it->index++;
+   if (!it->valid) return EINA_FALSE;
 
-   return _efl_boolean_model_iterator_index_find(it);
+   it->found = it->index;
+   *data = &it->found;
+
+   it->index++;
+   it->valid = _efl_boolean_model_iterator_index_find(it);
+
+   return EINA_TRUE;
 }
 
 static Eo *
@@ -527,11 +545,15 @@ _efl_boolean_model_boolean_iterator_get(Eo *obj, Efl_Boolean_Model_Data *pd, con
    itb->pd = pd;
    itb->v = v;
    itb->infix = eina_rbtree_iterator_infix(v->buffers_root);
-   // Search the first index that do have the valid value
-   _efl_boolean_model_iterator_index_find(itb);
    itb->index = 0;
    itb->total = efl_model_children_count_get(obj);
    itb->request = !!request;
+
+   /* Where the first match is. After the fields it reads, not before them:
+      searching against a total of zero found nothing every time, and what
+      covered for it was the walk starting one short -- which is exactly why
+      a match at the first index was never reported. */
+   itb->valid = _efl_boolean_model_iterator_index_find(itb);
 
    itb->iterator.version = EINA_ITERATOR_VERSION;
    itb->iterator.next = FUNC_ITERATOR_NEXT(efl_boolean_model_iterator_next);

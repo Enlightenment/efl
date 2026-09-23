@@ -128,8 +128,76 @@ EFL_START_TEST(efl_test_select_model)
 }
 EFL_END_TEST
 
+/* The first child, selected and then asked about.
+ *
+ * Selection is a bit per child in @Efl.Boolean_Model and reading it back is
+ * that model's iterator, which walked from one rather than from zero: a
+ * selection that included the first child came back one short and every
+ * other answer was right, so nothing noticed. Which child is picked first is
+ * not an unusual thing for a person to do.
+ *
+ * All three are selected here rather than only the first, so that a count
+ * one short is a failure and not an empty answer that could be anything. */
+EFL_START_TEST(efl_test_select_model_selects_the_first)
+{
+   Efl_Model *base_model, *model, *child;
+   Eina_Value v = EINA_VALUE_EMPTY;
+   Eina_Iterator *it;
+   unsigned int *index, seen = 0, i;
+   Eina_Bool got[3] = { EINA_FALSE, EINA_FALSE, EINA_FALSE };
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   ck_assert(!!base_model);
+
+   for (i = 0; i < 3; ++i)
+     {
+        child = efl_model_child_add(base_model);
+        ck_assert(!!child);
+        ck_assert(eina_value_set(&v, (int) i));
+        efl_model_property_set(child, "test_p_int", &v);
+     }
+
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 0, 2);
+   /* One future per child, so more than one turn of the loop. */
+   for (i = 0; i < 8; i++) ecore_main_loop_iterate();
+
+   it = efl_ui_multi_selectable_selected_ndx_iterator_new(model);
+   ck_assert_ptr_ne(it, NULL);
+   EINA_ITERATOR_FOREACH(it, index)
+     {
+        ck_assert_int_lt(*index, 3);
+        got[*index] = EINA_TRUE;
+        seen++;
+     }
+   eina_iterator_free(it);
+
+   ck_assert_int_eq(seen, 3);
+   for (i = 0; i < 3; i++) ck_assert_int_eq(got[i], EINA_TRUE);
+
+   /* And the other way round: with everything selected, nothing is not. */
+   it = efl_ui_multi_selectable_unselected_ndx_iterator_new(model);
+   ck_assert_ptr_ne(it, NULL);
+   seen = 0;
+   EINA_ITERATOR_FOREACH(it, index) seen++;
+   eina_iterator_free(it);
+   ck_assert_int_eq(seen, 0);
+
+   eina_value_flush(&v);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_select_model);
+   tcase_add_test(tc, efl_test_select_model_selects_the_first);
 }
