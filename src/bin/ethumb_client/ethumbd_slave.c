@@ -792,6 +792,28 @@ main(int argc EINA_UNUSED, const char *argv[] EINA_UNUSED)
 
    ec = _ec_new();
 
+   /* Nothing may sit in a buffer this process cannot see.
+    *
+    * Commands are read from stdin with getc, and which of them have arrived
+    * is decided by a file descriptor handler watching descriptor 0. Those
+    * two do not agree: a buffered read takes everything the pipe has, so a
+    * command that arrived behind the one being read ends up in stdio's
+    * buffer, where the descriptor handler cannot see it -- the pipe is empty
+    * as far as the loop is concerned, so it never fires again and the
+    * command is never read. ethumbd waits ten seconds and kills this process
+    * for hanging.
+    *
+    * It takes two commands arriving close enough together to land in one
+    * read, which is a setup and the generate behind it: one thumbnail asked
+    * for while another is still being asked for. A file manager opening a
+    * directory does exactly that.
+    *
+    * Unbuffered, a read takes what it asks for and no more, so what is in
+    * the pipe is all there is. These are a few hundred bytes per thumbnail,
+    * so what it costs is nothing.
+    */
+   setvbuf(stdin, NULL, _IONBF, 0);
+
    _ec_setup(ec);
 
    DBG("child started!");
