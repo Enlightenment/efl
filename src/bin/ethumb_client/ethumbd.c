@@ -44,6 +44,7 @@
 #include <Ethumb_Client.h>
 
 #include "ethumbd_private.h"
+#include "buildsystem.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -1722,9 +1723,17 @@ _ethumbd_slave_spawn(Ethumbd_Slave *slave, Ethumbd *ed)
    slave->bufcmd = NULL;
    slave->scmd = 0;
 
-   snprintf(buf, sizeof(buf),
-            "%s/ethumb_client/utils/"MODULE_ARCH"/ethumbd_slave",
-            eina_prefix_lib_get(_pfx));
+   /* Where the slave is, which is not the same question when this is run
+      from a build tree: the prefix is worked out from where the library
+      landed, and in a build tree that is not next to the slave. Asking for
+      the installed one from an uninstalled daemon gets whichever version
+      happens to be on the machine, talking a protocol that may not be this
+      one -- which looks like a slave that starts and immediately exits 255.
+      Same shape as efreet spawning efreetd. */
+   if (!bs_binary_get(buf, sizeof(buf), "ethumb_client", "ethumbd_slave"))
+     snprintf(buf, sizeof(buf),
+              "%s/ethumb_client/utils/"MODULE_ARCH"/ethumbd_slave",
+              eina_prefix_lib_get(_pfx));
 
    slave->exe = ecore_exe_pipe_run(buf,
       ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE, ed);

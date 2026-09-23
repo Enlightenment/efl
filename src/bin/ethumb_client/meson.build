@@ -1,7 +1,7 @@
 ethumbd = executable('ethumbd',
         'ethumbd.c',
         install: true,
-        dependencies : [ecore, ethumb, ethumb_client, ecore, eldbus],
+        dependencies : [ecore, ethumb, ethumb_client, ecore, eldbus, buildsystem],
         include_directories : config_dir,
         c_args : package_c_args,
 )
