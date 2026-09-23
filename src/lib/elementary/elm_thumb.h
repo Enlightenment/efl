@@ -21,7 +21,10 @@
  * Different configuration settings will cause different thumbnails to
  * be generated even on the same file.
  *
- * Generated thumbnails are stored under @c $HOME/.thumbnails/. Check
+ * Generated thumbnails are stored under @c $XDG_CACHE_HOME/thumbnails/,
+ * which is @c $HOME/.cache/thumbnails/ when that is not set -- where the
+ * Thumbnail Managing Standard says they go, and where the rest of the
+ * desktop looks for them. Check
  * Ethumb's documentation to change this path, and to see other
  * configuration options.
  *

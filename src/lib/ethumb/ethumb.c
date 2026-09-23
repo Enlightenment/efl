@@ -225,7 +225,6 @@ _ethumb_plugins_unload(void)
 EAPI int
 ethumb_init(void)
 {
-   const char *home;
    char buf[PATH_MAX];
 
    if (initcount)
@@ -259,22 +258,37 @@ ethumb_init(void)
    ecore_evas_init();
    edje_init();
 
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
+   /* Where everything else on the desktop keeps its thumbnails.
+    *
+    * The Thumbnail Managing Standard used to say $HOME/.thumbnails and now
+    * says $XDG_CACHE_HOME/thumbnails, defaulting to $HOME/.cache/thumbnails.
+    * Everything that reads or writes these moved years ago, so what this
+    * wrote was a cache nothing else could see, and what everything else
+    * wrote was a cache this could not see: every picture thumbnailed twice,
+    * and a file manager's work never reused here.
+    *
+    * The names were right the whole time -- the md5 of the percent-encoded
+    * file:// URI, under normal/ or large/, as a PNG -- so only the directory
+    * above them was in the old place.
+    *
+    * Asked of eina's vpath rather than assembled here, which is where the
+    * rules for this already live, including that a program running under
+    * someone else's id does not believe $XDG_CACHE_HOME. That replaces a
+    * getpwent() that never returned the user it was reaching for: it walks
+    * the password database from the top, so the first call answers with
+    * whoever is first in /etc/passwd, and a setuid ethumb wrote its
+    * thumbnails into that account's home.
+    *
+    * Thumbnails already made in the old place are not moved. They are a
+    * cache, they cost one regeneration each, and $HOME/.thumbnails can be
+    * deleted by whoever notices it.
+    */
+   if (eina_vpath_resolve_snprintf(buf, sizeof(buf),
+                                   "(:usr.cache:)/thumbnails") >= (int) sizeof(buf))
      {
-        home = eina_environment_home_get();
-        snprintf(buf, sizeof(buf), "%s/.thumbnails", home);
+        ERR("Could not work out where to keep thumbnails.");
+        goto error_plugins_ext;
      }
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   else
-     {
-        struct passwd *pw = getpwent();
-
-        if ((!pw) || (!pw->pw_dir)) goto error_plugins_ext;
-        snprintf(buf, sizeof(buf), "%s/.thumbnails", pw->pw_dir);
-     }
-#endif
 
    _home_thumb_dir = eina_stringshare_add(buf);
    _thumb_category_normal = eina_stringshare_add("normal");
