@@ -735,6 +735,9 @@ elm_need_efreet(void)
 static void
 _elm_unneed_efreet(void)
 {
+   /* Whatever was worked out from efreet goes when efreet does. */
+   _efl_ui_image_icon_theme_forget();
+
    if (!_elm_need_efreet) return;
    _elm_need_efreet = EINA_FALSE;
    efreet_trash_shutdown();

@@ -2190,6 +2190,28 @@ _icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
    return EINA_FALSE;
 }
 
+/* Forget which icon theme efreet was asked about.
+ *
+ * The answer is kept in a static for the life of the process, because
+ * working it out means asking efreet for a theme and then for its
+ * fallbacks. But it is a stringshare, and elementary shutting down takes
+ * eina down with it and every stringshare in it -- so what this held after
+ * an elm_shutdown was a pointer into freed memory, and the next elm_init to
+ * ask for an icon by freedesktop name read it. A process that starts
+ * elementary twice is unusual; a test suite that starts it once per test is
+ * not, which is where this was caught.
+ *
+ * Dropped when efreet is let go, which is what it was an answer from, and
+ * before eina goes, so the reference is given back rather than abandoned.
+ */
+void
+_efl_ui_image_icon_theme_forget(void)
+{
+   if ((icon_theme) && (icon_theme != NON_EXISTING))
+     eina_stringshare_del(icon_theme);
+   icon_theme = NULL;
+}
+
 static inline int
 _icon_size_min_get(Evas_Object *image)
 {

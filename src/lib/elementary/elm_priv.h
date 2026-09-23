@@ -701,6 +701,7 @@ void                 _elm_theme_parse(Elm_Theme *th,
                                       const char *theme);
 void                 _elm_theme_init(void);
 void                 _elm_theme_shutdown(void);
+void                 _efl_ui_image_icon_theme_forget(void);
 
 void                 _elm_module_init(void);
 void                 _elm_module_shutdown(void);
