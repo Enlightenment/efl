@@ -197,6 +197,13 @@ typedef enum _Ecore_X_Randr_Orientation
    ECORE_X_RANDR_ORIENTATION_FLIP_Y = (1 << 5)
 } Ecore_X_Randr_Orientation;
 
+/** RandR transform sampling filter. @since 1.29 */
+typedef enum _Ecore_X_Randr_Transform_Filter
+{
+   ECORE_X_RANDR_TRANSFORM_FILTER_NEAREST,
+   ECORE_X_RANDR_TRANSFORM_FILTER_BILINEAR
+} Ecore_X_Randr_Transform_Filter;
+
 typedef enum _Ecore_X_Randr_Connection_Status
 {
    ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED = 0,
@@ -2226,6 +2233,68 @@ EAPI Eina_Bool                                 ecore_x_randr_output_crtc_set(Eco
 EAPI int                                       ecore_x_randr_crtc_gamma_size_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
 EAPI Ecore_X_Randr_Crtc_Gamma_Info            *ecore_x_randr_crtc_gamma_get(Ecore_X_Randr_Crtc crtc); /**< @since 1.8 */
 EAPI Eina_Bool                                 ecore_x_randr_crtc_gamma_set(Ecore_X_Randr_Crtc crtc, const Ecore_X_Randr_Crtc_Gamma_Info *gamma); /**< @since 1.8 */
+
+/**
+ * Stage a CRTC transform for the next CRTC configuration change.
+ *
+ * @param crtc The CRTC to transform.
+ * @param transform Nine doubles in row-major order, from top left to bottom
+ * right. Must not be NULL. Values must be finite and fit signed 16.16 fixed
+ * point; conversion truncates to that precision.
+ * @param filter The sampling filter.
+ * @return EINA_TRUE if the request was queued, EINA_FALSE for invalid arguments
+ * or unavailable RandR 1.3 support. X server errors are asynchronous.
+ *
+ * Apply the staged transform with ecore_x_randr_crtc_settings_set(). All
+ * outputs attached to this CRTC share the transform.
+ * @since 1.29
+ */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_transform_set(Ecore_X_Randr_Crtc crtc, const double transform[9], Ecore_X_Randr_Transform_Filter filter);
+
+/**
+ * Query the currently applied CRTC transform, excluding any pending transform.
+ *
+ * @param crtc The CRTC to query.
+ * @param transform Storage for nine doubles in row-major order, from top left
+ * to bottom right. Must not be NULL.
+ * @param filter Optional storage for the sampling filter. An unset filter is
+ * reported as nearest. Other filters cannot be represented by this enum.
+ * @return EINA_TRUE on success, EINA_FALSE on failure, unavailable RandR 1.3
+ * support, or an unrepresentable filter when @p filter is requested. Return
+ * parameters are unchanged on failure.
+ * @since 1.29
+ */
+EAPI Eina_Bool                                 ecore_x_randr_crtc_transform_get(Ecore_X_Randr_Crtc crtc, double transform[9], Ecore_X_Randr_Transform_Filter *filter);
+
+/**
+ * Stage a transform on the CRTC currently driving an output.
+ *
+ * @param root The root window whose screen contains the output.
+ * @param output The output to transform. It must have an assigned CRTC.
+ * @param transform Nine doubles in row-major order, as for
+ * ecore_x_randr_crtc_transform_set().
+ * @param filter The sampling filter.
+ * @return EINA_TRUE if queued, EINA_FALSE on failure.
+ *
+ * The transform takes effect on the next CRTC configuration change and is
+ * shared by all outputs attached to that CRTC. See
+ * ecore_x_randr_crtc_transform_set() for validation and error semantics.
+ * @since 1.29
+ */
+EAPI Eina_Bool                                 ecore_x_randr_output_transform_set(Ecore_X_Window root, Ecore_X_Randr_Output output, const double transform[9], Ecore_X_Randr_Transform_Filter filter);
+
+/**
+ * Query the currently applied transform of the CRTC driving an output.
+ *
+ * @param root The root window whose screen contains the output.
+ * @param output The output to query. It must have an assigned CRTC.
+ * @param transform Storage for nine doubles in row-major order.
+ * @param filter Optional storage for the sampling filter.
+ * @return EINA_TRUE on success, EINA_FALSE on failure. See
+ * ecore_x_randr_crtc_transform_get() for validation and error semantics.
+ * @since 1.29
+ */
+EAPI Eina_Bool                                 ecore_x_randr_output_transform_get(Ecore_X_Window root, Ecore_X_Randr_Output output, double transform[9], Ecore_X_Randr_Transform_Filter *filter);
 
 /**
  * @brief Validates the header from raw EDID data.

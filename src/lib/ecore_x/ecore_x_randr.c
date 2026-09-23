@@ -2898,6 +2898,124 @@ ecore_x_randr_output_subpixel_order_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
  * API Functions for RandR version 1.3 *
  ***************************************/
 
+EAPI Eina_Bool
+ecore_x_randr_crtc_transform_set(Ecore_X_Randr_Crtc crtc, const double transform[9], Ecore_X_Randr_Transform_Filter filter)
+{
+#ifdef ECORE_XRANDR
+   XTransform xtransform;
+   const char *name;
+   int i;
+
+   if (_randr_version < RANDR_VERSION_1_3) return EINA_FALSE;
+   if ((!crtc) || (!transform)) return EINA_FALSE;
+
+   switch (filter)
+     {
+      case ECORE_X_RANDR_TRANSFORM_FILTER_NEAREST:
+        name = FilterNearest;
+        break;
+      case ECORE_X_RANDR_TRANSFORM_FILTER_BILINEAR:
+        name = FilterBilinear;
+        break;
+      default:
+        return EINA_FALSE;
+     }
+
+   for (i = 0; i < 9; i++)
+     xtransform.matrix[i / 3][i % 3] = XDoubleToFixed(transform[i]);
+
+   XRRSetCrtcTransform(_ecore_x_disp, crtc, &xtransform, name, NULL, 0);
+   if (_ecore_xlib_sync) ecore_x_sync();
+   return EINA_TRUE;
+#else
+   (void)crtc;
+   (void)transform;
+   (void)filter;
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_x_randr_crtc_transform_get(Ecore_X_Randr_Crtc crtc, double transform[9], Ecore_X_Randr_Transform_Filter *filter)
+{
+#ifdef ECORE_XRANDR
+   XRRCrtcTransformAttributes *attr = NULL;
+   Ecore_X_Randr_Transform_Filter value = ECORE_X_RANDR_TRANSFORM_FILTER_NEAREST;
+   int i;
+
+   if (_randr_version < RANDR_VERSION_1_3) return EINA_FALSE;
+   if ((!crtc) || (!transform)) return EINA_FALSE;
+   if (!XRRGetCrtcTransform(_ecore_x_disp, crtc, &attr))
+     {
+        if (attr) XFree(attr);
+        return EINA_FALSE;
+     }
+   if (!attr) return EINA_FALSE;
+
+   if ((filter) && (attr->currentFilter) && (attr->currentFilter[0]))
+     {
+        if (!strcmp(attr->currentFilter, FilterBilinear))
+          value = ECORE_X_RANDR_TRANSFORM_FILTER_BILINEAR;
+        else if (strcmp(attr->currentFilter, FilterNearest))
+          {
+             XFree(attr);
+             return EINA_FALSE;
+          }
+     }
+
+   for (i = 0; i < 9; i++)
+     transform[i] = XFixedToDouble(attr->currentTransform.matrix[i / 3][i % 3]);
+   if (filter) *filter = value;
+   XFree(attr);
+   return EINA_TRUE;
+#else
+   (void)crtc;
+   (void)transform;
+   (void)filter;
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_x_randr_output_transform_set(Ecore_X_Window root, Ecore_X_Randr_Output output, const double transform[9], Ecore_X_Randr_Transform_Filter filter)
+{
+#ifdef ECORE_XRANDR
+   Ecore_X_Randr_Crtc crtc;
+
+   if (_randr_version < RANDR_VERSION_1_3) return EINA_FALSE;
+   if ((!output) || (!transform)) return EINA_FALSE;
+   crtc = ecore_x_randr_output_crtc_get(root, output);
+   if (!crtc) return EINA_FALSE;
+   return ecore_x_randr_crtc_transform_set(crtc, transform, filter);
+#else
+   (void)root;
+   (void)output;
+   (void)transform;
+   (void)filter;
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_x_randr_output_transform_get(Ecore_X_Window root, Ecore_X_Randr_Output output, double transform[9], Ecore_X_Randr_Transform_Filter *filter)
+{
+#ifdef ECORE_XRANDR
+   Ecore_X_Randr_Crtc crtc;
+
+   if (_randr_version < RANDR_VERSION_1_3) return EINA_FALSE;
+   if ((!output) || (!transform)) return EINA_FALSE;
+   crtc = ecore_x_randr_output_crtc_get(root, output);
+   if (!crtc) return EINA_FALSE;
+   return ecore_x_randr_crtc_transform_get(crtc, transform, filter);
+#else
+   (void)root;
+   (void)output;
+   (void)transform;
+   (void)filter;
+   return EINA_FALSE;
+#endif
+}
+
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_output_wired_clones_get(Ecore_X_Window root EINA_UNUSED, Ecore_X_Randr_Output output, int *num)
 {
