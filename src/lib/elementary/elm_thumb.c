@@ -405,6 +405,9 @@ _thumbnailing_available_cb(void *data,
 static Eina_Bool _elm_need_ethumb = EINA_FALSE;
 static Eina_Bool _elm_ethumb_tried = EINA_FALSE;
 static Eina_Bool _elm_ethumb_connecting = EINA_FALSE;
+/* The one being made, for as long as it is being made. See
+   _ethumb_connect_start. */
+static Ethumb_Client *_elm_ethumb_pending = NULL;
 static void _on_die_cb(void *, Ethumb_Client *);
 
 /* The client is stored here, by the callback, and never from the return of
@@ -421,6 +424,7 @@ _connect_cb(void *data EINA_UNUSED,
             Eina_Bool success)
 {
    _elm_ethumb_connecting = EINA_FALSE;
+   _elm_ethumb_pending = NULL;
 
    if (success)
      {
@@ -433,6 +437,31 @@ _connect_cb(void *data EINA_UNUSED,
      _elm_ethumb_client = NULL;
 }
 
+/* Ask for a connection, and hold the handle for as long as it is being made.
+ *
+ * The handle cannot simply be kept: a connection that fails takes the client
+ * with it -- ethumb_client frees it as it reports the failure -- and the
+ * report can arrive before ethumb_client_connect() has returned. What says
+ * which of those happened is the callback, which lowers the connecting flag,
+ * so the handle is kept only while that flag is still up.
+ *
+ * Kept at all because a connection still being made is otherwise a
+ * connection nobody can take down: _elm_ethumb_client is set by the callback
+ * and is NULL until then, so elementary shutting down in that window left
+ * the client alive and holding its eldbus connection open while eina was
+ * torn down underneath it. The next connection was handed that same cached
+ * eldbus connection with every string in it freed.
+ */
+static void
+_ethumb_connect_start(void)
+{
+   Ethumb_Client *c;
+
+   _elm_ethumb_connecting = EINA_TRUE;
+   c = ethumb_client_connect(_connect_cb, NULL, NULL);
+   if (_elm_ethumb_connecting) _elm_ethumb_pending = c;
+}
+
 static void
 _on_die_cb(void *data EINA_UNUSED,
            Ethumb_Client *c EINA_UNUSED)
@@ -443,11 +472,7 @@ _on_die_cb(void *data EINA_UNUSED,
         _elm_ethumb_client = NULL;
      }
    _elm_ethumb_connected = EINA_FALSE;
-   if (pending_request > 0)
-     {
-        _elm_ethumb_connecting = EINA_TRUE;
-        ethumb_client_connect(_connect_cb, NULL, NULL);
-     }
+   if (pending_request > 0) _ethumb_connect_start();
 }
 
 static void
@@ -458,11 +483,7 @@ _thumb_show(Elm_Thumb_Data *sd)
 
    if (!_elm_ethumb_client)
      {
-        if (!_elm_ethumb_connecting)
-          {
-             _elm_ethumb_connecting = EINA_TRUE;
-             ethumb_client_connect(_connect_cb, NULL, NULL);
-          }
+        if (!_elm_ethumb_connecting) _ethumb_connect_start();
      }
    else if (elm_thumb_ethumb_client_connected_get())
      {
@@ -529,8 +550,7 @@ _elm_thumb_ethumb_client_ensure(void)
    _elm_ethumb_tried = EINA_TRUE;
 
    elm_need_ethumb();
-   _elm_ethumb_connecting = EINA_TRUE;
-   ethumb_client_connect(_connect_cb, NULL, NULL);
+   _ethumb_connect_start();
 }
 
 /* The client once it is usable, and NULL until then: connecting takes a turn
@@ -549,6 +569,13 @@ _elm_unneed_ethumb(void)
    if (!_elm_need_ethumb) return;
    _elm_need_ethumb = EINA_FALSE;
 
+   /* One still being made is one still holding an eldbus connection, and
+      everything below here is about to go. */
+   if (_elm_ethumb_pending)
+     {
+        ethumb_client_disconnect(_elm_ethumb_pending);
+        _elm_ethumb_pending = NULL;
+     }
    if (_elm_ethumb_client)
      {
         ethumb_client_disconnect(_elm_ethumb_client);
