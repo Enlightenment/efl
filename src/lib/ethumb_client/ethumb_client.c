@@ -204,6 +204,19 @@ _ethumb_client_free(Ethumb_Client *client)
    if (client->invalid)
       return;
 
+   /* Marked before anything is cancelled rather than after.
+    *
+    * Cancelling a call dispatches its reply handler, and the handler for the
+    * call that makes a client reports the connection -- which, on a failure,
+    * frees the client. That is this same client and this same function, so
+    * it ran a second time, freed underneath the first, and the first went on
+    * to write this flag into memory that had just gone. The guard above is
+    * what stops that; it only had to be true by the time it could be
+    * reached. Disconnecting a client whose connection is still being made is
+    * what gets here, which is what elementary does when it shuts down while
+    * a widget's request is in flight. */
+   client->invalid = EINA_TRUE;
+
    if (client->dbus_pending)
      {
         Eldbus_Pending *pending;
@@ -211,7 +224,6 @@ _ethumb_client_free(Ethumb_Client *client)
            eldbus_pending_cancel(pending);
      }
 
-   client->invalid = EINA_TRUE;
    EINA_LIST_FREE(client->pending_add, data)
      {
         struct _ethumb_pending_add *pending = data;
@@ -1233,8 +1245,9 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
  * Configure future requests to use FreeDesktop.Org preset.
  *
  * This is a preset to provide freedesktop.org (fdo) standard
- * compliant thumbnails. That is, files are stored as JPEG under
- * ~/.thumbnails/SIZE, with size being either normal (128x128) or
+ * compliant thumbnails. That is, files are stored as PNG under
+ * $XDG_CACHE_HOME/thumbnails/SIZE -- $HOME/.cache/thumbnails/SIZE when
+ * that is not set -- with size being either normal (128x128) or
  * large (256x256).
  *
  * @param client the client instance to use. Must @b not be @c
@@ -1592,7 +1605,8 @@ ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *gro
  *        NULL. May be pending connected (can be called before @c
  *        connected_cb)
  * @param path base directory where to store thumbnails. Default is
- *        ~/.thumbnails
+ *        $XDG_CACHE_HOME/thumbnails, or $HOME/.cache/thumbnails when that
+ *        is not set
  *
  * @see ethumb_client_category_set()
  */
