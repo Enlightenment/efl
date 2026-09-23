@@ -904,6 +904,41 @@ static const char ACCEPTABLE_URI_CHARS[96] = {
      0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x20,0x20,0x20,0x3F,0x20
 };
 
+/* The name of a file as the thumbnail standard spells it: a file:// URI with
+ * everything outside a small set of characters percent-encoded.
+ *
+ * The buffer must hold three bytes per byte of $file plus room for "file://"
+ * and the terminator.
+ */
+static void
+_ethumb_uri_build(char *uri, const char *file)
+{
+   static const char hex[] = "0123456789abcdef";
+   const unsigned char *c;
+   char *t;
+
+#define _check_uri_char(c) \
+   ((c) >= 32 && (c) < 128 && (ACCEPTABLE_URI_CHARS[(c) - 32] & 0x08))
+
+   memcpy(uri, "file://", sizeof("file://"));
+   t = uri + sizeof("file://") - 1;
+
+   for (c = (const unsigned char *)file; *c != '\0'; c++)
+     {
+        if (!_check_uri_char(*c))
+          {
+             *t++ = '%';
+             *t++ = hex[*c >> 4];
+             *t++ = hex[*c & 15];
+          }
+        else
+          *t++ = *c;
+     }
+   *t = '\0';
+
+#undef _check_uri_char
+}
+
 static const char *
 _ethumb_generate_hash(const char *file)
 {
@@ -914,8 +949,6 @@ _ethumb_generate_hash(const char *file)
    static const char hex[] = "0123456789abcdef";
 
    char *uri;
-   char *t;
-   const unsigned char *c;
 
 #ifdef HAVE_XATTR
    ssize_t length;
@@ -938,29 +971,10 @@ _ethumb_generate_hash(const char *file)
      }
 #endif
 
-#define _check_uri_char(c) \
-   ((c) >= 32 && (c) < 128 && (ACCEPTABLE_URI_CHARS[(c) - 32] & 0x08))
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
    uri = alloca(3 * strlen(file) + 9);
-   memcpy(uri, "file://", sizeof("file://"));
-   t = uri + sizeof("file://") - 1;
-
-   for (c = (const unsigned char *)file; *c != '\0'; c++)
-     {
-        if (!_check_uri_char(*c))
-          {
-             *t++ = '%';
-             *t++ = hex[*c >> 4];
-             *t++ = hex[*c & 15];
-          }
-        else
-          *t++ = *c;
-     }
-   *t = '\0';
-
-#undef _check_uri_char
+   _ethumb_uri_build(uri, file);
 
    MD5Init (&ctx);
    MD5Update (&ctx, (unsigned char const*)uri, (unsigned)strlen (uri));
@@ -1317,6 +1331,128 @@ ethumb_plugin_image_resize(Ethumb *e, int w, int h)
    return EINA_TRUE;
 }
 
+/* One PNG chunk: a length, a four-letter type, the bytes, and a CRC over the
+ * type and the bytes together. */
+static unsigned char *
+_ethumb_png_chunk_put(unsigned char *p, const char *type,
+                      const char *data, unsigned int len)
+{
+   unsigned int crc;
+
+   p[0] = (len >> 24) & 0xff;
+   p[1] = (len >> 16) & 0xff;
+   p[2] = (len >> 8) & 0xff;
+   p[3] = len & 0xff;
+   memcpy(p + 4, type, 4);
+   if (len) memcpy(p + 8, data, len);
+
+   /* eina_crc is the one PNG asks for -- the 0xEDB88320 polynomial, seeded
+      with all ones and returned inverted -- so what comes out goes in. */
+   crc = eina_crc((const char *) (p + 4), 4 + len, 0xffffffff, EINA_TRUE);
+   p[8 + len + 0] = (crc >> 24) & 0xff;
+   p[8 + len + 1] = (crc >> 16) & 0xff;
+   p[8 + len + 2] = (crc >> 8) & 0xff;
+   p[8 + len + 3] = crc & 0xff;
+
+   return p + 12 + len;
+}
+
+/* Add the Thumb::URI, Thumb::MTime and Thumb::Size text chunks of the
+ * thumbnail standard to the PNG at "path", which is a thumbnail of "src".
+ *
+ * They are spliced in after IHDR because Evas's PNG saver cannot be told about
+ * text chunks. The result is written beside the PNG and renamed over it, so a
+ * failure anywhere leaves the thumbnail as Evas wrote it.
+ */
+static void
+_ethumb_png_meta_add(const char *path, const char *src)
+{
+   struct stat st;
+   Eina_File *f;
+   unsigned char *out = NULL, *p;
+   const unsigned char *map;
+   char *uri, mtime[64], size[64], tmp[PATH_MAX];
+   unsigned int ihdr_len, head;
+   size_t len, rest, room;
+   FILE *w;
+
+   if (stat(src, &st) != 0) return;
+
+   f = eina_file_open(path, EINA_FALSE);
+   if (!f) return;
+
+   len = eina_file_size_get(f);
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto done;
+   if (len < 8 + 12) goto done;
+
+   /* A signature and an IHDR, or it is not a PNG and not ours to edit. */
+   if (memcmp(map, "\211PNG\r\n\032\n", 8)) goto done;
+   if (memcmp(map + 12, "IHDR", 4)) goto done;
+
+   ihdr_len = (map[8] << 24) | (map[9] << 16) | (map[10] << 8) | map[11];
+   head = 8 + 12 + ihdr_len;
+   if (head > len) goto done;
+   rest = len - head;
+
+   uri = alloca(3 * strlen(src) + 9);
+   _ethumb_uri_build(uri, src);
+   snprintf(mtime, sizeof(mtime), "%llu", (unsigned long long) st.st_mtime);
+   snprintf(size, sizeof(size), "%llu", (unsigned long long) st.st_size);
+
+   /* Three chunks: twelve bytes of frame each, plus a keyword, a separator
+      and a value. */
+   room = len + 3 * (12 + 32) + strlen(uri) + strlen(mtime) + strlen(size);
+   out = malloc(room);
+   if (!out) goto done;
+
+   memcpy(out, map, head);
+   p = out + head;
+
+#define _TEXT(k, v)                                                     \
+   do {                                                                 \
+      size_t _kl = strlen(k), _vl = strlen(v);                          \
+      char *_b = alloca(_kl + 1 + _vl);                                 \
+                                                                        \
+      memcpy(_b, k, _kl);                                               \
+      _b[_kl] = '\0';                                                   \
+      memcpy(_b + _kl + 1, v, _vl);                                     \
+      p = _ethumb_png_chunk_put(p, "tEXt", _b, _kl + 1 + _vl);          \
+   } while (0)
+
+   _TEXT("Thumb::URI", uri);
+   _TEXT("Thumb::MTime", mtime);
+   _TEXT("Thumb::Size", size);
+
+#undef _TEXT
+
+   memcpy(p, map + head, rest);
+   p += rest;
+
+   eina_file_map_free(f, (void *) map);
+   eina_file_close(f);
+
+   snprintf(tmp, sizeof(tmp), "%s.meta", path);
+   w = fopen(tmp, "wb");
+   if (w)
+     {
+        Eina_Bool ok = (fwrite(out, 1, p - out, w) == (size_t) (p - out));
+
+        if ((fclose(w) != 0) || !ok || (rename(tmp, path) != 0))
+          {
+             ERR("could not write the metadata of the thumbnail of '%s'", src);
+             unlink(tmp);
+          }
+     }
+   free(out);
+   return;
+
+ done:
+   if (map) eina_file_map_free(f, (void *) map);
+   eina_file_close(f);
+   free(out);
+}
+
 EAPI Eina_Bool
 ethumb_image_save(Ethumb *e)
 {
@@ -1362,6 +1498,10 @@ ethumb_image_save(Ethumb *e)
             e->thumb_key);
         return EINA_FALSE;
      }
+
+   /* Only the FDO format is a PNG read by other programs. */
+   if (e->format == ETHUMB_THUMB_FDO) _ethumb_png_meta_add(buf, e->src_path);
+
    if (rename(buf, e->thumb_path) < 0)
      {
         ERR("could not rename image: path=%s, key=%s to path=%s",

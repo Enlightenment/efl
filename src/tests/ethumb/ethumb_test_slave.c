@@ -28,7 +28,7 @@
 
 /* A real PNG, seven across and five down, so the slave has something it can
    actually open and scale. */
-static const unsigned char real_png[] = {
+const unsigned char ethumb_test_png[] = {
    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
    0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x05,
    0x08, 0x02, 0x00, 0x00, 0x00, 0x06, 0xf8, 0x61, 0x8f, 0x00, 0x00, 0x00,
@@ -42,6 +42,8 @@ static const unsigned char real_png[] = {
    0xa9, 0x1c, 0xd9, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae,
    0x42, 0x60, 0x82
 };
+
+const size_t ethumb_test_png_size = sizeof(ethumb_test_png);
 
 /* The wire is native ints and length-prefixed strings, the way the daemon
    writes them. Built up in one buffer so the whole conversation can be
@@ -149,7 +151,8 @@ _tree_make(void)
                     sizeof(srcfile));
    f = fopen(srcfile, "wb");
    ck_assert_ptr_ne(f, NULL);
-   ck_assert_int_eq(fwrite(real_png, 1, sizeof(real_png), f), sizeof(real_png));
+   ck_assert_int_eq(fwrite(ethumb_test_png, 1, ethumb_test_png_size, f),
+                    ethumb_test_png_size);
    fclose(f);
 }
 

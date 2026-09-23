@@ -6,6 +6,7 @@
 
 static const Efl_Test_Case etc[] = {
   { "ethumb_slave", ethumb_test_slave },
+  { "ethumb_ethumb", ethumb_test_ethumb },
   { NULL, NULL }
 };
 

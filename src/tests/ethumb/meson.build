@@ -7,6 +7,7 @@ if is_variable('ethumbd_slave')
     'ethumb_suite.c',
     'ethumb_suite.h',
     'ethumb_test_slave.c',
+    'ethumb_test_ethumb.c',
   ]
 
   ethumb_suite = executable('ethumb_suite',
