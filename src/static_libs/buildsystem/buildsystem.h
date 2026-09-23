@@ -12,6 +12,14 @@
 Eina_Bool bs_binary_get(char *path, size_t maxlen, const char *subsystem, const char *bin_name);
 
 /*
+ * Fills the provided buffer with the path to a helper binary built under
+ * src/generic, which is where the loaders that run in a process of their own
+ * live. They are installed somewhere else entirely, so asking for the
+ * installed path from a build tree finds the wrong one or none at all.
+ */
+Eina_Bool bs_binary_generic_get(char *path, size_t maxlen, const char *subsystem, const char *bin_name);
+
+/*
  * Fills the provided buffer with the path to the data file/dir of a given subsystem
  */
 Eina_Bool bs_data_path_get(char *path, size_t maxlen, const char *subsystem, const char *file);

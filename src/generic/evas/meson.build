@@ -39,6 +39,26 @@ foreach loader : generic_loaders
 
     bin = join_paths(dir_lib, 'evas', 'utils', 'evas_image_loader.'+loader+bin_ext)
     evas_loader_map += [[bin, generic_support]]
+
+    # And the same links in the build tree, so that a video or a document
+    # has a picture when EFL is run uninstalled. Made now, pointing at a
+    # name that is built in a moment; a link is followed when it is used,
+    # not when it is made.
+    #
+    # Not bin_ext: that is '.' on anything without an executable suffix, and
+    # the install script strips the dot back off again. The name here has to
+    # be the one the binary actually has.
+    if generic_support.length() > 0
+      intree_name = 'evas_image_loader.'+loader
+      if sys_exe_extension != ''
+        intree_name = intree_name + '.' + sys_exe_extension
+      endif
+      run_command(join_paths(meson.project_source_root(), 'meson', 'evas_loader_intree.sh'),
+                  meson.current_build_dir(),
+                  intree_name,
+                  generic_support,
+                  check: true)
+    endif
   else
     message('Image loader '+loader+' disabled')
   endif

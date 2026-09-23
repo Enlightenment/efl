@@ -40,6 +40,16 @@ bs_binary_get(char *path, size_t maxlen, const char *subsystem, const char *bin_
 }
 
 Eina_Bool
+bs_binary_generic_get(char *path, size_t maxlen, const char *subsystem, const char *bin_name)
+{
+   if (!getenv("EFL_RUN_IN_TREE")) return EINA_FALSE;
+
+   snprintf(path, maxlen, PACKAGE_BUILD_DIR"/src/generic/%s/%s"EXE_SUFFIX, subsystem, bin_name);
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
 bs_data_path_get(char *path, size_t maxlen, const char *subsystem, const char *file)
 {
    if (!getenv("EFL_RUN_IN_TREE")) return EINA_FALSE;

@@ -3,6 +3,7 @@
 #endif
 
 #include "evas_common_private.h"
+#include "buildsystem.h"
 #include "evas_private.h"
 
 #include <stdio.h>
@@ -114,7 +115,7 @@ _load(Eina_File *ef, const char *key,
    Eina_Bool res = EINA_FALSE;
    int w = 0, h = 0, alpha = 0;
    const char *dot1 = NULL, *dot2 = NULL, *end, *p;
-   char *cmd = NULL, decoders[3][4096], buf[4096];
+   char *cmd = NULL, decoders[3][4096], buf[4096], intree[4096];
    char *loader = "/evas/utils/evas_image_loader";
    char *img_loader = NULL;
    const char *libdir;
@@ -125,12 +126,28 @@ _load(Eina_File *ef, const char *key,
    DATA32 *body;
    FILE *f = NULL;
 
-   libdir = _evas_module_libdir_get();
-   cmd_len = strlen(libdir);
-   cmd_len += strlen(loader);
-   img_loader = alloca(cmd_len + 1);
-   strcpy(img_loader, libdir);
-   strcat(img_loader, loader);
+   /* Where the helper that can read this file is.
+    *
+    * Installed, they sit in $libdir/evas/utils with a symlink per extension
+    * pointing at the one that handles it. Run from a build tree there is no
+    * such directory: the helpers are under src/generic/evas, and asking for
+    * the installed path either finds nothing -- so a video or a document has
+    * no picture at all -- or finds a different build of EFL and runs that.
+    */
+   if (bs_binary_generic_get(intree, sizeof(intree), "evas", "evas_image_loader"))
+     {
+        img_loader = intree;
+        cmd_len = strlen(img_loader);
+     }
+   else
+     {
+        libdir = _evas_module_libdir_get();
+        cmd_len = strlen(libdir);
+        cmd_len += strlen(loader);
+        img_loader = alloca(cmd_len + 1);
+        strcpy(img_loader, libdir);
+        strcat(img_loader, loader);
+     }
 
    // params excluding file, key and loadopts
    cmd_len += 5120; // up to 4096 for cmd plus 1024 for cmd line opts
