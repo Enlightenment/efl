@@ -168,7 +168,14 @@ struct _Span_Texture
    int           x_min;       // inclusive left edge of the x-range covered
    int           x_max;       // inclusive right edge of the x-range covered
    int           page_x;      // texel offset of these rows inside the shared page
-   int           page_y;
+   // page_y shares its 32-bit word with dirty, which keeps the struct at 48
+   // bytes instead of 56 - dirty as a plain trailing bitfield would open a
+   // fresh storage unit and the tail would then pad out to the next 8.  That
+   // is 8 bytes per slot on an array of up to 1 + SPAN_COLLECTOR_MAX_SPLITS
+   // slots, per collector, per shape.  page_y is a texel offset inside the
+   // page (pt->y plus a running row count, see span_page_upload) so it is
+   // never negative and 31 bits leaves ample headroom.
+   int           page_y : 31;
    Eina_Bool     dirty : 1;   // EINA_TRUE if span data changed since last upload
 };
 
