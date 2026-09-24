@@ -178,3 +178,45 @@ group { name: "efl/pointer:top_side";
       }
    }
 }
+
+/* The two edges that had no cursor.
+ *
+ * efl_ui_win asks for one of eight shapes when the pointer goes over a
+ * resize edge of its own decorations (_resize_infos in efl_ui_win.c). Six
+ * of the eight were here; a window dragged by its left or right edge fell
+ * back to the plain pointer, which is the one shape that says the edge does
+ * nothing. These are the side pair the other way up.
+ */
+group { name: "efl/pointer:right_side";
+   inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 0.7 1.0;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
+group { name: "efl/pointer:left_side";
+   inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
+   parts {
+      part { name: "box";
+         description { state: "default" 0.0;
+            rel1.relative: 0.6 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "p1" 0.0;
+            rel1.relative: 0.3 0.3;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
