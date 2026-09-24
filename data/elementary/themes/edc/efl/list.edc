@@ -97,8 +97,19 @@ group { "efl/list_item";
             rel2.to_x: "efl.extra";
             color_class: "/fg/normal/list/item";
             text { font: FN; size: 10;
-               min: 1 1;
-               ellipsis: -1;
+               /* The height of a line of text, and no opinion about width.
+                *
+                * Asking for the width of the name as a minimum meant the
+                * part kept that width whatever the row was given -- a
+                * minimum wins over the edge it was told to stop at -- so in
+                * a narrow column the name was drawn straight across the size
+                * and the date on the right of the row and all three became
+                * unreadable. Free to shrink, it stops where it was told and
+                * what does not fit is cut short. */
+               min: 0 1;
+               /* Cut at the end, keeping the beginning: what tells two
+                  files apart is usually how their names start. */
+               ellipsis: 0.0;
                align: 0.0 0.5;
                text_class: "list_item";
             }
