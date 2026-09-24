@@ -1272,8 +1272,8 @@ gstreamer_module_init(void)
 
  error_register:
  error_gst_plugin:
-
-   gst_deinit();
+   /* No gst_deinit() here either -- see gstreamer_module_shutdown(). Even
+      on a failed start, this process may have other users of GStreamer. */
 
  error_gst_init:
    eina_log_domain_unregister(_emotion_gstreamer_log_domain);
@@ -1302,7 +1302,20 @@ gstreamer_module_shutdown(void)
    eina_log_domain_unregister(_emotion_gstreamer_log_domain);
    _emotion_gstreamer_log_domain = -1;
 
-   gst_deinit();
+   /* And not gst_deinit().
+    *
+    * GStreamer cannot be started again once it has been stopped: the next
+    * gst_init_check() aborts the process with "GStreamer should not be
+    * deinitialized a second time". This runs when the last Emotion object
+    * in the program goes away, which is not the same thing as the program
+    * ending -- an application that closes a window holding a video and
+    * then opens another was killed by this, in three lines of its own
+    * code.
+    *
+    * gst_deinit() is documented as something a program calls on its way
+    * out, to quiet a leak checker. A module that is loaded and unloaded
+    * with the objects that use it is in no position to decide the program
+    * is finished with GStreamer, so it does not decide it. */
 }
 
 #ifndef EMOTION_STATIC_BUILD_GSTREAMER
