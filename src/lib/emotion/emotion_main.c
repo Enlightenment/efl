@@ -151,6 +151,19 @@ emotion_init(void)
 
    eina_init();
 
+   /* Made here because it is destroyed in emotion_shutdown().
+    *
+    * Nothing ever made it. It is a static, so the first program to reach
+    * it found a zeroed pthread_mutex_t, which glibc happens to accept as
+    * an initialised one -- and that is the only reason this ever worked.
+    * Shutting emotion down then destroyed it for real, and a program that
+    * started emotion again took a destroyed lock from then on:
+
+    *   EINA ERROR: 'Invalid argument' on lock 0x...
+
+    * on every pending-object count for the rest of the run. */
+   eina_lock_new(&emotion_pending_lock);
+
    _emotion_log_domain = eina_log_domain_register("emotion", EINA_COLOR_LIGHTCYAN);
    if (_emotion_log_domain < 0)
      {
