@@ -62,9 +62,9 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
    //
    // Zero-initialised automatically: Eo private data is calloc'd by the
    // Eo framework, so cached_ctable_crc_valid starts as EINA_FALSE.
-   uint32_t  cached_ctable_crc;
-   int       cached_ctable_status;   // ctable_status when crc was computed
-   Eina_Bool cached_ctable_crc_valid;
+   unsigned int cached_ctable_crc;
+   int          cached_ctable_status;   // ctable_status when crc was computed
+   Eina_Bool    cached_ctable_crc_valid;
 } Ector_Renderer_Software_Gradient_Data;
 
 typedef struct _Shape_Rle_Data
