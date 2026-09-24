@@ -99,33 +99,43 @@ typedef void *(*Span_Collector_Alloc_Fn)(void *data, int h,
                                          Span_Data_Type type,
                                          Eina_Bool is_stroke);
 
+// Field order is by access frequency inside the per-span callbacks, not by
+// topic.  The first group is everything read by every span callback of both
+// paths - the software blenders (_blend_argb, _blend_gradient, _comp_*) and
+// the GL collectors (_collect_spans_*) - and it is sized to land inside one
+// 64-byte cache line.  type, op and comp_method are byte-wide because their
+// enums hold single-digit values; they cost nothing here, sitting in bytes
+// that would otherwise be padding ahead of clip.
 typedef struct _Span_Data
 {
-   // --- hot: touched on every rasterizer callback ---
+   // --- hot: read by every per-span callback (offsets 0..48, one cache line)
    Ector_Software_Buffer_Base_Data *raster_buffer;
-   SW_FT_SpanFunc   blend;
-   SW_FT_SpanFunc   unclipped_blend;
-
-   int              offx, offy;
-   Clip_Data        clip;
-   Span_Data_Type   type;
-   uint32_t         mul_col;
-   Efl_Gfx_Render_Op        op;
    union {
       uint32_t color;
       Ector_Renderer_Software_Gradient_Data *gradient;
       Ector_Software_Buffer_Base_Data *buffer;
    };
-
-   // fields used on every draw but not in the innermost span callback
-   Ector_Software_Buffer_Base_Data    *comp;
-   Efl_Gfx_Vg_Composite_Method comp_method;
-   Eina_Matrix3     inv;
+   Ector_Software_Buffer_Base_Data *comp;         // read by the _comp_* blenders
+   void            *span_collector;               // read by every _collect_spans_*
+   int              offx, offy;
+   uint32_t         mul_col;
+   unsigned char    type;                         // Span_Data_Type, 0..3
+   unsigned char    op;                           // Efl_Gfx_Render_Op, 0..2
+   unsigned char    comp_method;                  // Efl_Gfx_Vg_Composite_Method
    Eina_Bool        fast_matrix;
+   Eina_Bool        span_is_stroke;               // EINA_TRUE during stroke pass
 
-   // --- cold: span-buffer GL fields ---
-   void            *span_collector;             // active collector for current shape
-   Eina_Bool        span_is_stroke;             // EINA_TRUE during stroke pass
+   // --- hot only when a clip is set: _span_fill_clipRect / _span_fill_clipPath
+   //     read clip and then call through unclipped_blend, per span batch.
+   Clip_Data        clip;
+   SW_FT_SpanFunc   unclipped_blend;
+   SW_FT_SpanFunc   blend;
+
+   // --- read by the gradient and composite collectors only.  72 bytes, so it
+   //     never shares a line with the group above whatever the order.
+   Eina_Matrix3     inv;
+
+   // --- cold: set once per shape, never read inside a span callback ---
    SW_FT_SpanFunc   collector_solid;
    SW_FT_SpanFunc   collector_gradient;
    SW_FT_SpanFunc   collector_composite;

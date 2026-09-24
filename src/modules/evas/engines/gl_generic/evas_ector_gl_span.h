@@ -62,22 +62,28 @@ typedef enum _Span_Data_Type
 //   span_collector - pointer to the active Span_Collector
 // In normal engine builds the full definition comes from ector_software_private.h.
 # ifdef SPAN_COLLECTOR_TEST_BUILD
+// Field order mirrors the canonical struct, which is ordered by access
+// frequency inside the per-span callbacks - see the comment there.
 struct _Span_Data
 {
    void    *raster_buffer;  // unused in tests; keeps struct layout sane
-   void    *blend;          // unused in tests
-   void    *unclipped_blend; // unused in tests
-   int      offx, offy;     // ector surface offset - set to 0 in tests
-   void    *clip;           // unused in tests
-   int      type;           // Span_Data_Type cast - Solid=1, etc.
-   uint32_t mul_col;        // multiplicative tint; 0xFFFFFFFF = identity
-   int      op;             // render op - unused in tests
    union {
       uint32_t color;       // premultiplied ARGB for Solid fills
       void    *gradient;    // gradient pointer - unused in span tests
       void    *buffer;      // unused in tests
    };
+   void    *comp;           // unused in tests
    void    *span_collector; // active Span_Collector *
+   int      offx, offy;     // ector surface offset - set to 0 in tests
+   uint32_t mul_col;        // multiplicative tint; 0xFFFFFFFF = identity
+   unsigned char type;      // Span_Data_Type cast - Solid=1, etc.
+   unsigned char op;        // render op - unused in tests
+   unsigned char comp_method; // unused in tests
+   Eina_Bool fast_matrix;   // unused in tests
+   Eina_Bool span_is_stroke; // unused in tests
+   void    *clip[3];        // Clip_Data placeholder (24 bytes) - unused in tests
+   void    *unclipped_blend; // unused in tests
+   void    *blend;          // unused in tests
    Eina_Matrix3 inv;        // inverse transform matrix - identity in tests
 };
 
