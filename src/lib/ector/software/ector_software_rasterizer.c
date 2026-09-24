@@ -928,8 +928,8 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                         Efl_Gfx_Vg_Composite_Method comp_method)
 {
    if (!rle) return;
-   if (!rasterizer->fill_data.span_collector_alloc &&
-       !rasterizer->fill_data.raster_buffer->pixels.u32)
+   if ((!rasterizer->fill_data.span_collector_alloc) &&
+       (!rasterizer->fill_data.raster_buffer->pixels.u32))
      return;
 
    rasterizer->fill_data.offx = x;

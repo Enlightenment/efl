@@ -63,7 +63,7 @@ _span_texture_init(Span_Texture *tex, int h, int stride, int x_min, int x_max)
    tex->buffer = calloc(h, stride);
    tex->span_counts = calloc(h, sizeof(int));
    tex->last_x_end = calloc(h, sizeof(int));
-   if (!tex->buffer || !tex->span_counts || !tex->last_x_end)
+   if ((!tex->buffer) || (!tex->span_counts) || (!tex->last_x_end))
      {
         free(tex->buffer);
         free(tex->span_counts);
@@ -139,7 +139,7 @@ span_collector_resize(Span_Collector *sc, int h)
 {
    int i;
 
-   if (!sc || (h <= 0) || (sc->h == h)) return;
+   if ((!sc) || (h <= 0) || (sc->h == h)) return;
 
    sc->h = h;
 
@@ -165,7 +165,7 @@ span_collector_resize(Span_Collector *sc, int h)
         new_counts = realloc(tex->span_counts, (size_t)h * sizeof(int));
         new_last = realloc(tex->last_x_end, (size_t)h * sizeof(int));
 
-        if (!new_buf || !new_counts || !new_last)
+        if ((!new_buf) || (!new_counts) || (!new_last))
           {
              // OOM: keep old size, the collector will clip spans to
              // alloc_h via the h field.

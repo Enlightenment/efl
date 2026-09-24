@@ -166,7 +166,7 @@ _ector_surface_cache_size(void *engine EINA_UNUSED, void *surface)
 {
    Evas_GL_Image *im = surface;
 
-   if (!im || (im->w <= 0) || (im->h <= 0)) return 0;
+   if ((!im) || (im->w <= 0) || (im->h <= 0)) return 0;
    return (size_t)im->w * (size_t)im->h * 4;
 }
 
@@ -2867,8 +2867,8 @@ eng_ector_begin(void *engine, void *surface,
      }
 
    // Hand the buffer in as a pointer so the surface never owns it.
-   if (!bbd || (bbd->pixels.u8 != spd->span_pixels) ||
-       !bbd->generic ||
+   if ((!bbd) || (bbd->pixels.u8 != spd->span_pixels) ||
+       (!bbd->generic) ||
        (bbd->generic->w != (unsigned)w) || (bbd->generic->h != (unsigned)h))
      ector_buffer_pixels_set(ector, spd->span_pixels, w, h, (int)row,
                              EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
@@ -3067,7 +3067,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    Ector_Renderer_Software_Gradient_Data *gd;
    int shader_type = *inout_shader_type;
 
-   if (!sc || !sc->gradient_data) return;
+   if ((!sc) || (!sc->gradient_data)) return;
    if ((shader_type != (int)LinearGradient) && (shader_type != (int)RadialGradient)) return;
 
    gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
@@ -3215,11 +3215,11 @@ eng_ector_end(void *engine,
 
         // Check that at least one collector has span data.
         int has_data = 0;
-        for (ci = 0; !has_data && (ci < fill_count); ci++)
+        for (ci = 0; (!has_data) && (ci < fill_count); ci++)
           {
              has_data |= (((Span_Collector *)fill_arr[ci])->actual_max_spans > 0);
           }
-        for (ci = 0; !has_data && (ci < stroke_count); ci++)
+        for (ci = 0; (!has_data) && (ci < stroke_count); ci++)
           {
              has_data |= (((Span_Collector *)stroke_arr[ci])->actual_max_spans > 0);
           }
@@ -3391,7 +3391,7 @@ eng_ector_end(void *engine,
                        s_xmin = sc_stroke->textures[ti].x_min;
                     }
 
-                  if (!f_tex && !s_tex) continue;
+                  if ((!f_tex) && (!s_tex)) continue;
 
                   Span_Pipe_Params _spp = { 0 };
                   _spp.pool_w     = pw;
@@ -3509,7 +3509,7 @@ eng_ector_end(void *engine,
                           realloc(_pass_ndc, (size_t)na * 8 * sizeof(*nn));
                        if (nq) _pass_q = nq;
                        if (nn) _pass_ndc = nn;
-                       if (!nq || !nn) continue;
+                       if ((!nq) || (!nn)) continue;
                        _pass_alloc = na;
                     }
                   _pass_q[_pass_n] = _spp;

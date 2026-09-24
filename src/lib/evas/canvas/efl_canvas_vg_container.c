@@ -121,7 +121,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
                mask_surface = ENFN->ector_mask_surface_create(ENC, size.w, size.h, &err);
              else
                mask_surface = ENFN->ector_surface_create(ENC, size.w, size.h, &err);
-             if (err || !mask_surface) goto gl_mask_fallback;
+             if (err || (!mask_surface)) goto gl_mask_fallback;
           }
         pd->comp.gl_surface = mask_surface;
         pd->comp.size.w = size.w;
@@ -321,7 +321,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
         // GL span-buffer path: _prepare_comp returns NULL but stores the
         // mask FBO on pd->comp.gl_surface.  Propagate it to the shared ector
         // surface so eng_ector_end() can find it when building pipe params.
-        if (!comp && pd->comp_target)
+        if ((!comp) && pd->comp_target)
           {
              Efl_Canvas_Vg_Container_Data *cpd =
                 efl_data_scope_get(pd->comp_target, MY_CLASS);
@@ -367,7 +367,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
         // comp is NULL even when a mask FBO was prepared, so also check for
         // gl_surface on the comp_target's pd.
         Eina_Bool has_comp = comp != NULL;
-        if (!has_comp && pd->comp_target)
+        if ((!has_comp) && pd->comp_target)
           {
              Efl_Canvas_Vg_Container_Data *cpd =
                 efl_data_scope_get(pd->comp_target, MY_CLASS);

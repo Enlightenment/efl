@@ -864,8 +864,8 @@ _span_vao_probe(void)
    _span_vao_probed = 1;
 
    ext = (const char *)glGetString(GL_EXTENSIONS);
-   if (!ext || (!strstr(ext, "GL_OES_vertex_array_object") &&
-                !strstr(ext, "GL_ARB_vertex_array_object")))
+   if ((!ext) || (!strstr(ext, "GL_OES_vertex_array_object") &&
+                 !strstr(ext, "GL_ARB_vertex_array_object")))
      {
         // GLES 3.0+ and desktop GL 3.0+ have it in core with no extension
         // string in the (non-indexed) list, so fall through to the dlsym
@@ -875,13 +875,13 @@ _span_vao_probe(void)
    _gl_gen_vao  = dlsym(RTLD_DEFAULT, "glGenVertexArrays");
    _gl_bind_vao = dlsym(RTLD_DEFAULT, "glBindVertexArray");
    _gl_del_vao  = dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
-   if (!_gl_gen_vao || !_gl_bind_vao || !_gl_del_vao)
+   if ((!_gl_gen_vao) || (!_gl_bind_vao) || (!_gl_del_vao))
      {
         _gl_gen_vao  = dlsym(RTLD_DEFAULT, "glGenVertexArraysOES");
         _gl_bind_vao = dlsym(RTLD_DEFAULT, "glBindVertexArrayOES");
         _gl_del_vao  = dlsym(RTLD_DEFAULT, "glDeleteVertexArraysOES");
      }
-   if (!_gl_gen_vao || !_gl_bind_vao || !_gl_del_vao)
+   if ((!_gl_gen_vao) || (!_gl_bind_vao) || (!_gl_del_vao))
      {
         _gl_gen_vao = NULL; _gl_bind_vao = NULL; _gl_del_vao = NULL;
         INF("span shader: no vertex array objects, using per-draw attribute setup");
@@ -1048,7 +1048,7 @@ _link_program(Span_Shader *ss,
 
    vs = _compile_shader_parts(GL_VERTEX_SHADER,   vert_parts, vert_count);
    fs = _compile_shader_parts(GL_FRAGMENT_SHADER, frag_parts, frag_count);
-   if (!vs || !fs)
+   if ((!vs) || (!fs))
      {
         if (vs) glDeleteShader(vs);
         if (fs) glDeleteShader(fs);
@@ -1191,7 +1191,7 @@ span_shader_init(void)
 
                   fs_parts = _span_shader_parts_build(kind, (Span_Bind_Set)b, mask, &fn);
                   vs_parts = _span_vs_parts_build(kind, mask, &vn);
-                  if (!fs_parts || !vs_parts)
+                  if ((!fs_parts) || (!vs_parts))
                     {
                        free(fs_parts);
                        free(vs_parts);
@@ -1445,7 +1445,7 @@ span_page_upload(void *gc_ptr, Span_Page *page,
    int      i, page_w = 1, total_h = 0, row_at;
    Eina_Bool ok = EINA_FALSE;
 
-   if (!gc || !page) return EINA_FALSE;
+   if ((!gc) || (!page)) return EINA_FALSE;
 
    // Gather every Span_Texture of the pass.
    SPAN_PAGE_FOREACH(fills, nfills, strokes, nstrokes, sc, tex,
@@ -1479,7 +1479,7 @@ span_page_upload(void *gc_ptr, Span_Page *page,
         if (w > page_w) page_w = w;
      });
 
-   if (!n || (total_h <= 0)) goto done;
+   if ((!n) || (total_h <= 0)) goto done;
 
    // Widest first.  One glTexSubImage2D covers a rectangle, so collectors
    // sharing an upload also share its width - putting a 3-column shape in
@@ -1644,7 +1644,7 @@ _span_draw_batch(Evas_Engine_GL_Context *gc, Span_Variant variant,
 
    Span_Shader *ss = _span_shader_pick(kind, bind, has_mask);
 
-   if (!vdata || (nverts == 0)) return;
+   if ((!vdata) || (nverts == 0)) return;
 
    // Ensure all 12 shader programs are compiled.  Checking the specific
    // variant matters: span_shader_init() aborts at the first failing
@@ -1760,7 +1760,7 @@ _span_pass_restore(Evas_Engine_GL_Context *gc)
 {
    Evas_GL_Image *s = gc->pipe[0].shader.surface;
 
-   if (!s || (s == gc->def_surface))
+   if ((!s) || (s == gc->def_surface))
      {
         glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
         if ((gc->rot == 0) || (gc->rot == 180))
@@ -1782,7 +1782,7 @@ span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
 {
    int i, run_start;
 
-   if (!gc || !target || !target->tex || !target->tex->pt || (n <= 0)) return;
+   if ((!gc) || (!target) || (!target->tex) || (!target->tex->pt) || (n <= 0)) return;
    if (!span_shader_init()) return;
 
    // Bind directly rather than through evas_gl_common_context_target_surface_set:

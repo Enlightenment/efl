@@ -34,7 +34,7 @@ _generic_cache_trim(Generic_Cache *cache)
    Eina_List *l, *prev;
    int count = (int)eina_list_count(cache->lru_list);
 
-   if (!cache->size_func && (count <= 50)) return;
+   if ((!cache->size_func) && (count <= 50)) return;
 
    EINA_LIST_REVERSE_FOREACH_SAFE(cache->lru_list, l, prev, entry)
      {
@@ -52,7 +52,7 @@ _generic_cache_trim(Generic_Cache *cache)
         // one item does not fit; a use-after-free is not.
         if (l == cache->lru_list) break;
 
-        if (!entry || (entry->ref > 1)) continue;
+        if ((!entry) || (entry->ref > 1)) continue;
 
         eina_hash_del(cache->hash, &entry->key, entry);
         cache->lru_list = eina_list_remove_list(cache->lru_list, l);

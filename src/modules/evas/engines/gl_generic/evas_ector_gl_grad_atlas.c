@@ -275,7 +275,7 @@ int
 span_grad_atlas_lookup(Span_Grad_Atlas *a, void *grad_id,
                        uint32_t version, const uint8_t *bytes)
 {
-   if (!a || a->disabled) return -1;
+   if ((!a) || a->disabled) return -1;
 
    // Identity fast path.
    int row = _find_identity(a, grad_id, version);
