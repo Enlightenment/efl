@@ -2210,6 +2210,17 @@ _efl_ui_collection_view_efl_object_invalidate(Eo *obj,
    efl_event_callback_del(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED,
                           _efl_ui_collection_view_model_changed, obj);
 
+   /* The idle sweep of the cache is the main loop's, not ours.
+    *
+    * It is registered on the loop with this view as its data, and the loop
+    * outlives every view in the program. A view taken apart with a sweep
+    * still pending leaves the loop holding a dead object to hand back, and
+    * the first line of the handler asks that object for its data and reads
+    * through what it gets. Closing a window while a listing was still
+    * settling took the whole application with it. */
+   efl_event_callback_del(efl_main_loop_get(), EFL_LOOP_EVENT_IDLE,
+                          _idle_cb, obj);
+
    _all_cleanup(obj, pd);
 
    //pd pan is given to edje, which reparents it, which forces us to manually deleting it
