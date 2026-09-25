@@ -858,8 +858,14 @@ evas_object_image_size_set(Evas_Object *eo_obj, int w, int h)
    if (h < 1) h = 1;
    if (w >= 32768) return;
    if (h >= 32768) return;
+   /* Same size is not enough to conclude there is nothing to do: releasing a
+    * native surface (native_surface_set(obj, NULL)) frees the engine image
+    * while leaving the recorded size untouched. Returning here would leave the
+    * object with no engine data at all, so it renders as nothing until some
+    * later call happens to change the size. That is what made elm_glview go
+    * blank until the window was resized when switching to direct rendering. */
    if ((w == o->cur->image.w) &&
-       (h == o->cur->image.h)) return;
+       (h == o->cur->image.h) && o->engine_data) return;
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      {
