@@ -254,14 +254,7 @@ utf8_offset_to_index(const char *str, int offset)
 static unsigned int
 get_time(void)
 {
-   unsigned int tint;
-   struct timeval tv;
-   struct timezone tz;           /* is not used since ages */
-   gettimeofday(&tv, &tz);
-   tint = tv.tv_sec * 1000;
-   tint = tint / 1000 * 1000;
-   tint = tint + tv.tv_usec / 1000;
-   return tint;
+   return ecore_time_get() * 1000.0;
 }
 
 /* Function Implementations */
