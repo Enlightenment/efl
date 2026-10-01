@@ -2497,6 +2497,8 @@ _ecore_evas_wl_selection_claim(Ecore_Evas *ee, unsigned int seat, Ecore_Evas_Sel
    data->sent_serial =
      ecore_wl2_dnd_selection_set(_fetch_input(ee, seat),
                                  (const char**)tmp_array);
+   // no commit follows to flush it, other clients would not see it until then
+   ecore_wl2_display_flush(ecore_wl2_window_display_get(wdata->win));
    return EINA_TRUE;
 }
 
