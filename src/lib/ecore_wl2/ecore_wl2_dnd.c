@@ -565,9 +565,18 @@ ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **types)
         wl_array_init(&input->data.selection.types);
      }
 
-   input->data.selection.source = NULL;
-
-   if (!types[0]) return 0;
+   if (!types[0])
+     {
+        // once another client took the selection, ours was cancelled: keep theirs
+        if (input->data.selection.source)
+          {
+             wl_data_device_set_selection(input->data.device, NULL,
+                                          input->display->serial);
+          }
+        input->data.selection.source = NULL;
+        input->data.selection.serial = 0;
+        return 0;
+     }
 
    input->data.selection.source = wl_data_device_manager_create_data_source(manager);
    if (!input->data.selection.source)
