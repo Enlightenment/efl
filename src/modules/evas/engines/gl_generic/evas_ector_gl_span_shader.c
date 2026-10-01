@@ -1794,7 +1794,7 @@ span_pass_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *target,
                const Span_Pipe_Params *quads, const GLfloat *ndc, int n,
                int clear_x, int clear_y, int clear_w, int clear_h)
 {
-   int i, run_start;
+   int run_start;
 
    if ((!gc) || (!target) || (!target->tex) || (!target->tex->pt) || (n <= 0)) return;
    if (!span_shader_init()) return;
