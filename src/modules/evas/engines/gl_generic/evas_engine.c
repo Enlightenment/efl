@@ -3033,6 +3033,16 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
 
    // Quadratic parameters - pass inv2a instead of a to avoid
    // per-fragment division in the shader.
+   //
+   // The caller rejects fabsf(a) <= 0.00001f, so this cannot divide by zero.
+   // That bound also caps |out_ra| at 50000, which overruns the +-2^14 range
+   // GLSL ES 1.00 guarantees for mediump - what SPAN_HP becomes when the
+   // fragment-highp probe fails.  A radial whose focal point sits very close
+   // to the gradient circle can therefore lose the ramp on such hardware.
+   // Keeping it within range would need the caller's epsilon at 0.5/16384,
+   // which would then blank radials the software path still draws, so the
+   // tighter divergence is not obviously the better trade.  Untested here:
+   // no mediump-only hardware was available.
    *out_ra  = (float)(0.5 / gd->radial.a);
    *out_rdx = (float)gd->radial.dx;
    *out_rdy = (float)gd->radial.dy;
@@ -3042,15 +3052,16 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
 //
 // Inspects sc->type and sc->gradient_data.  When sc is non-NULL and holds
 // gradient data this function fills all out parameters and may downgrade
-// *inout_shader_type from LinearGradient/RadialGradient to Solid when the
-// radial geometry degenerates (fradius != 0 or a ~ 0).  When sc is NULL
-// or has no gradient data all out values are left at their zero defaults.
+// *inout_shader_type from LinearGradient/RadialGradient to a transparent
+// Solid when the radial geometry degenerates (fradius != 0 or a ~ 0), which
+// draws nothing for this channel.  When sc is NULL or has no gradient data
+// all out values are left at their zero defaults.
 //
 // @param sc               Span collector for this channel (fill or stroke).
 // @param atlas            Gradient ramp atlas (may be NULL -> gradient skipped).
 // @param inout_shader_type  On entry: LinearGradient or RadialGradient.
 //                           On exit: may be downgraded to Solid.
-// @param inout_col        Solid color - updated when downgraded to Solid.
+// @param inout_col        Solid color - zeroed when downgraded to Solid.
 // @param out_ga..out_grdy Output gradient coefficients.
 // @param out_gs           Gradient spread mode (EFL enum -> int).
 // @param out_gramp_y      Atlas V coordinate for this gradient's ramp row.
@@ -3135,12 +3146,36 @@ _compute_gradient_coeffs(Span_Collector *sc,
      }
    else // RadialGradient
      {
+        // Degenerate radial: a = dr*dr - dx*dx - dy*dy reaches 0 when the
+        // focal point sits exactly on the gradient circle, which an author
+        // can set directly or cross while animating the focal point.  The
+        // quadratic then collapses to a linear equation this shader does
+        // not solve, and 0.5/a in _span_gradient_radial_coeffs() would blow
+        // up.
+        //
+        // Draw nothing, matching the software rasterizer: the same test in
+        // fetch_radial_gradient() (ector_software_gradient.c) clears the
+        // span to transparent and returns.  The two must agree, because the
+        // CPU fallback in eng_ector_end() can take over at any frame -
+        // diverging would make a shape's appearance depend on whether the
+        // span path happened to be usable.
+        //
+        // Transparent solid rather than *out_atlas_skip, because skip drops
+        // the whole shape: software blanks only this channel's spans, so a
+        // degenerate radial fill must still leave a solid stroke drawn.
+        // _span_side_grad_set() packs a non-gradient side's colour, alpha
+        // included, into abc_y, so colour 0 contributes nothing.
+        //
+        // The fradius arm is a shader-capability bail rather than a
+        // degeneracy test: _span_gradient_radial_coeffs() assumes
+        // fradius = 0 to drop the sqrfr and dr*fradius terms.  EFL pins
+        // fradius to 0 today, so it is unreachable; it exists so that
+        // giving focal radius a meaning fails visibly here instead of
+        // silently rendering the wrong gradient.
         if ((gd->radial.fradius >= 0.00001f) || (fabsf(gd->radial.a) <= 0.00001f))
           {
-             // Degenerate radial - fall back to solid using first stop color.
              *inout_shader_type = (int)Solid;
-             if (gd->color_table)
-               *inout_col = gd->color_table[0];
+             *inout_col         = 0;
              return;
           }
         _span_gradient_radial_coeffs(gd, &sc->inv,

@@ -153,6 +153,11 @@ fetch_radial_gradient(uint32_t *buffer, Span_Data *data, int y, int x, int lengt
          delta_det, delta_delta_det;
 
    // avoid division by zero
+   //
+   // Drawing nothing here is the reference behaviour for a degenerate radial.
+   // _compute_gradient_coeffs() in the gl_generic engine repeats this test
+   // and skips the shape to match; keep the two in step, or a shape changes
+   // appearance depending on which path renders it.
    if (fabsf(g_data->radial.a) <= 0.00001f)
      {
         draw_memset32(buffer, 0, length);
