@@ -2694,6 +2694,11 @@ _wl_interaction_send(void *data, int type EINA_UNUSED, void *event)
    EINA_SAFETY_ON_FALSE_GOTO(selection->callbacks.delivery
                              (ee, ev->seat, buffer, ev->type,
                                  &forign_slice->slice), end);
+   // Eina_Content text carries its nul terminator, the receiver must not get it
+   if ((eina_str_has_prefix(ev->type, "text")) &&
+       (forign_slice->slice.len > 0) &&
+       (forign_slice->slice.bytes[forign_slice->slice.len - 1] == '\0'))
+     forign_slice->slice.len--;
    ecore_main_fd_handler_add(ev->fd, ECORE_FD_WRITE, _write_to_fd,
                              forign_slice, NULL, NULL);
 
