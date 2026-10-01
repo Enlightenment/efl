@@ -1134,11 +1134,15 @@ span_debug_readback(const char *label, GLuint tex_id, int px_x, int px_y)
    GLint      prev_fbo = 0;
    uint8_t    px[4] = {0};
    GLenum     status;
+   int        err;
 
    if (fire_count >= 30) return;
    fire_count++;
 
-   (void)glGetError();
+   // Drain any error left by earlier unrelated GL work, so the check after
+   // the readback below only reports what this probe itself caused.
+   err = glGetError();
+
    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prev_fbo);
    glGenFramebuffers(1, &tmp_fbo);
    glBindFramebuffer(GL_FRAMEBUFFER, tmp_fbo);
@@ -1148,9 +1152,19 @@ span_debug_readback(const char *label, GLuint tex_id, int px_x, int px_y)
    if (status == GL_FRAMEBUFFER_COMPLETE)
      {
         glReadPixels(px_x, px_y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+
+        err = glGetError();
+        if (err != GL_NO_ERROR)
+          __evas_gl_err(err, __FILE__, __func__, __LINE__, "glReadPixels");
+
         fprintf(stderr, "SPAN_PROBE [%s]: tex=%u at (%d,%d) -> (%d,%d,%d,%d)\n",
                 label, tex_id, px_x, px_y,
                 px[0], px[1], px[2], px[3]);
+     }
+   else
+     {
+        fprintf(stderr, "SPAN_PROBE [%s]: tex=%u framebuffer incomplete (%#x)\n",
+                label, tex_id, status);
      }
    glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)prev_fbo);
    glDeleteFramebuffers(1, &tmp_fbo);
