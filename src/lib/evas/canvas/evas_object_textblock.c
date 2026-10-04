@@ -5999,11 +5999,10 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
                   if (word_len >= 4)
                     {
+                       size_t pos = 0;
+#ifdef HAVE_HYPHEN
                        size_t hyphen_off;
                        size_t i = 0;
-                       size_t pos = 0;
-
-#ifdef HAVE_HYPHEN
                        char *hyphens = _layout_wrap_hyphens_get(
                              str, it->format->font.fdesc->lang,
                              word_start, word_len);
@@ -6016,7 +6015,9 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                             word_end = orig_wrap - 1;
                          }
 
+#ifdef HAVE_HYPHEN
                        hyphen_off = word_end - word_start;
+#endif
 
                        /* We limit our search to the start of the line */
                        if (word_start < line_start)
@@ -6024,13 +6025,21 @@ _layout_get_hyphenationwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                             word_start = line_start;
                          }
 
-                       for (i = hyphen_off, pos = word_end ; pos > word_start ; i--, pos--)
+                       for (
+#ifdef HAVE_HYPHEN
+                            i = hyphen_off,
+#endif
+                            pos = word_end; pos > word_start;
+#ifdef HAVE_HYPHEN
+                            i--,
+#endif
+                            pos--)
                          {
                             if (
 #ifdef HAVE_HYPHEN
                                   (hyphens && (hyphens[i] & 1)) ||
 #endif
-                                  (str[pos] == SHY_HYPHEN))
+                                 (str[pos] == SHY_HYPHEN))
                               {
                                  found_hyphen = EINA_TRUE;
                                  break;
