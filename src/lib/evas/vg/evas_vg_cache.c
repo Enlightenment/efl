@@ -434,7 +434,6 @@ evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, 
 
    Vg_File_Anim_Data_Marker *marker;
    Vg_File_Anim_Data_Marker new_marker;
-   int i = 0;
 
    EINA_INARRAY_FOREACH(vg_entry->vfd->anim_data->markers, marker)
      {
@@ -444,7 +443,6 @@ evas_cache_vg_anim_sector_set(const Vg_Cache_Entry* vg_entry, const char *name, 
              marker->endframe = endframe;
              return EINA_TRUE;
           }
-        i++;
      }
 
    new_marker.name = eina_stringshare_add(name);
