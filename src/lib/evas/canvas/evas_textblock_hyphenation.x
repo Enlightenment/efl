@@ -52,8 +52,8 @@ _dict_hyphen_load(const char *lang)
    EINA_ITERATOR_FOREACH(it, dir)
      {
         const char *file = dir->path + dir->name_start;
-        char *prefix_off; /* 'hyph_' prefix (may be in some distros) */
-        char *dic_off; /* '.dic' file extension offset */
+        const char *prefix_off; /* 'hyph_' prefix (may be in some distros) */
+        const char *dic_off; /* '.dic' file extension offset */
 
         /* Check a few assumptions and reject if aren't met. */
         prefix_off = strstr(file, "hyph_");
@@ -161,8 +161,8 @@ _layout_wrap_hyphens_get(const Eina_Unicode *text, const char *lang,
 
         /* Skip BOM character (0xFFFE) from converted text */
         if ((converted_len >= 2) &&
-            (converted_text[0] == 0xff) &&
-            (converted_text[1] == 0xfe))
+            (converted_text[0] == (char)0xff) &&
+            (converted_text[1] == (char)0xfe))
           converted_text_offset = 2;
 
         /* If there is only a BOM character, return NULL */
