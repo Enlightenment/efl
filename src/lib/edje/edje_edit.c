@@ -12693,7 +12693,7 @@ static Eina_Strbuf *
 _edje_generate_image_set_source(Evas_Object *obj, const char *entry)
 {
    Eina_Strbuf *buf = eina_strbuf_new();
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret = EINA_TRUE;
    if (!buf) return NULL;
 
    BUF_APPENDF(I1 "set { name: \"%s\";\n", entry);
@@ -12749,6 +12749,7 @@ _edje_generate_image_set_source(Evas_Object *obj, const char *entry)
         place++;
      }
    BUF_APPEND(I1 "}\n");
+   if (!ret) ERR("Generating image set source");
 
    return buf;
 }
@@ -14995,6 +14996,8 @@ _edje_generate_source_state_text(Edje *ed, Edje_Part_Description_Common *pd,
    //TODO Filter
    if (attr_amount > 1)
      BUF_APPEND(I5 "}\n");
+
+   if (!ret) ERR("Generating soruce state text");
 }
 
 #define COMMON_STATE_ATTRIBUTES_AMOUNT 32
@@ -15871,6 +15874,7 @@ _edje_generate_source_of_sounds(Edje_Sound_Directory *sound_directory, Eina_Strb
      }
 
    BUF_APPEND(I1 "}\n");
+   if (!ret) ERR("Generating source of sounds");
 }
 
 static void
