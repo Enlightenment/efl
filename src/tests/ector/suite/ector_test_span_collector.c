@@ -69,7 +69,7 @@ _sd_init_solid(Span_Data *sd, Span_Collector *sc, uint32_t color)
    sd->span_collector = sc;
    sd->color          = color;
    sd->mul_col        = 0xFFFFFFFF; // identity: DRAW_MUL4_SYM(c, 0xFFFFFFFF) == c
-   sd->type           = Solid;
+   sd->type           = SPAN_TYPE_SOLID;
    // offx, offy default to 0 - no ector surface translation
 }
 
@@ -145,7 +145,7 @@ EFL_START_TEST(span_collector_solid_single)
    SW_FT_Span      span;
    uint8_t        *entry;
 
-   sc = span_collector_new(100, 32, Solid);
+   sc = span_collector_new(100, 32, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
    ck_assert_int_eq(sc->texture_count, 1);
 
@@ -184,7 +184,7 @@ EFL_START_TEST(span_collector_solid_sentinel)
    SW_FT_Span      span;
    uint8_t        *sentinel;
 
-   sc = span_collector_new(50, 32, Solid);
+   sc = span_collector_new(50, 32, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFFFFFFFF);
@@ -222,7 +222,7 @@ EFL_START_TEST(span_collector_solid_multi_span)
    SW_FT_Span      spans[3];
    uint8_t        *e0, *e1, *e2;
 
-   sc = span_collector_new(50, 32, Solid);
+   sc = span_collector_new(50, 32, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFF00FF00);
@@ -273,7 +273,7 @@ EFL_START_TEST(span_collector_solid_oob)
    SW_FT_Span      spans[2];
    int             i;
 
-   sc = span_collector_new(50, 32, Solid);
+   sc = span_collector_new(50, 32, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFFFFFFFF);
@@ -323,7 +323,7 @@ EFL_START_TEST(span_collector_gap_extender)
    int             rx[8], rl[8], rcount;
 
    // max_spans must be large enough to hold both spans + 2 extenders
-   sc = span_collector_new(20, 32, Solid);
+   sc = span_collector_new(20, 32, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFF808080);
@@ -399,7 +399,7 @@ EFL_START_TEST(span_collector_overflow_split)
    int             orig_x[5] = {10, 30, 60, 90, 120};
    int             j, k;
 
-   sc = span_collector_new(10, 4, Solid);
+   sc = span_collector_new(10, 4, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFFFF0000);
@@ -498,7 +498,7 @@ EFL_START_TEST(span_collector_split_absolute_x)
    int             orig_x[5] = {10, 40, 80, 130, 180};
    int             j, k;
 
-   sc = span_collector_new(10, 4, Solid);
+   sc = span_collector_new(10, 4, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFF0000FF);
@@ -569,7 +569,7 @@ EFL_START_TEST(span_collector_post_split_routing)
    SW_FT_Span      new_span;
    int             split_x;
 
-   sc = span_collector_new(10, 4, Solid);
+   sc = span_collector_new(10, 4, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFFFF0000);
@@ -615,7 +615,7 @@ EFL_END_TEST
 
 // Verifies that span_collector_new() sets stride correctly for gradient
 // fill types.  Stride must be (max_spans + 1) * 4 bytes for all types
-// (Solid, LinearGradient, RadialGradient) - the +1 is the sentinel slot.
+// (SPAN_TYPE_SOLID, SPAN_TYPE_LINEAR_GRADIENT, SPAN_TYPE_RADIAL_GRADIENT) - the +1 is the sentinel slot.
 //
 // Actual gradient color sampling (which requires a gradient ramp texture
 // and t-coefficient uniforms) is tested in the integration suite.  Here
@@ -626,14 +626,14 @@ EFL_START_TEST(span_collector_gradient_basic)
    Span_Collector *sc_rad;
    int             expected_stride;
 
-   sc_lin = span_collector_new(200, 32, LinearGradient);
+   sc_lin = span_collector_new(200, 32, SPAN_TYPE_LINEAR_GRADIENT);
    ck_assert_ptr_nonnull(sc_lin);
    expected_stride = (32 + 1) * 4; // 132 bytes
    ck_assert_int_eq(sc_lin->stride, expected_stride);
    ck_assert_int_eq(sc_lin->texture_count, 1);
    span_collector_free(sc_lin);
 
-   sc_rad = span_collector_new(200, 32, RadialGradient);
+   sc_rad = span_collector_new(200, 32, SPAN_TYPE_RADIAL_GRADIENT);
    ck_assert_ptr_nonnull(sc_rad);
    ck_assert_int_eq(sc_rad->stride, expected_stride);
    ck_assert_int_eq(sc_rad->texture_count, 1);
@@ -656,7 +656,7 @@ EFL_START_TEST(span_collector_solid_overflow_drop)
    SW_FT_Span      span;
    int             i, total;
 
-   sc = span_collector_new(10, 4, Solid);
+   sc = span_collector_new(10, 4, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFFFF0000);
@@ -705,7 +705,7 @@ EFL_START_TEST(span_collector_solid_row_terminator)
    SW_FT_Span      span;
    uint8_t        *row;
 
-   sc = span_collector_new(50, 16, Solid);
+   sc = span_collector_new(50, 16, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    // Pollute the buffer with non-zero bytes to simulate stale data left by
@@ -763,7 +763,7 @@ EFL_START_TEST(span_collector_clear_stale_sentinel)
    SW_FT_Span      span;
    uint8_t        *entry0;
 
-   sc = span_collector_new(20, 8, Solid);
+   sc = span_collector_new(20, 8, SPAN_TYPE_SOLID);
    ck_assert_ptr_nonnull(sc);
 
    _sd_init_solid(&sd, sc, 0xFFFF0000);

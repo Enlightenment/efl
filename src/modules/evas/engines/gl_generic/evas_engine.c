@@ -2742,7 +2742,7 @@ eng_ector_surface_cache_drop(void *engine, void *key)
 //
 // @param data       Ector_Software_Surface_Data* owning the arrays.
 // @param height     Canvas height (from raster_buffer->generic->h).
-// @param type       Fill type for this shape (Solid, LinearGradient, etc.).
+// @param type       Fill type for this shape (SPAN_TYPE_SOLID, SPAN_TYPE_LINEAR_GRADIENT, etc.).
 // @param is_stroke  EINA_TRUE if this is the stroke pass.
 // @return           Span_Collector* for this shape, or NULL on failure.
 static void *
@@ -3052,16 +3052,16 @@ _span_gradient_radial_coeffs(Ector_Renderer_Software_Gradient_Data *gd,
 //
 // Inspects sc->type and sc->gradient_data.  When sc is non-NULL and holds
 // gradient data this function fills all out parameters and may downgrade
-// *inout_shader_type from LinearGradient/RadialGradient to a transparent
-// Solid when the radial geometry degenerates (fradius != 0 or a ~ 0), which
+// *inout_shader_type from SPAN_TYPE_LINEAR_GRADIENT/SPAN_TYPE_RADIAL_GRADIENT to a transparent
+// SPAN_TYPE_SOLID when the radial geometry degenerates (fradius != 0 or a ~ 0), which
 // draws nothing for this channel.  When sc is NULL or has no gradient data
 // all out values are left at their zero defaults.
 //
 // @param sc               Span collector for this channel (fill or stroke).
 // @param atlas            Gradient ramp atlas (may be NULL -> gradient skipped).
-// @param inout_shader_type  On entry: LinearGradient or RadialGradient.
-//                           On exit: may be downgraded to Solid.
-// @param inout_col        Solid color - zeroed when downgraded to Solid.
+// @param inout_shader_type  On entry: SPAN_TYPE_LINEAR_GRADIENT or SPAN_TYPE_RADIAL_GRADIENT.
+//                           On exit: may be downgraded to SPAN_TYPE_SOLID.
+// @param inout_col        SPAN_TYPE_SOLID color - zeroed when downgraded to SPAN_TYPE_SOLID.
 // @param out_ga..out_grdy Output gradient coefficients.
 // @param out_gs           Gradient spread mode (EFL enum -> int).
 // @param out_gramp_y      Atlas V coordinate for this gradient's ramp row.
@@ -3079,7 +3079,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
    int shader_type = *inout_shader_type;
 
    if ((!sc) || (!sc->gradient_data)) return;
-   if ((shader_type != (int)LinearGradient) && (shader_type != (int)RadialGradient)) return;
+   if ((shader_type != (int)SPAN_TYPE_LINEAR_GRADIENT) && (shader_type != (int)SPAN_TYPE_RADIAL_GRADIENT)) return;
 
    gd = (Ector_Renderer_Software_Gradient_Data *)sc->gradient_data;
 
@@ -3137,14 +3137,14 @@ _compute_gradient_coeffs(Span_Collector *sc,
      }
    *out_gramp_y = span_grad_atlas_row_to_v(row);
 
-   if (shader_type == (int)LinearGradient)
+   if (shader_type == (int)SPAN_TYPE_LINEAR_GRADIENT)
      {
         _span_gradient_linear_coeffs(gd, &sc->inv,
                                      sc->grad_offx, sc->grad_offy,
                                      0.0f, 0.0f,
                                      out_ga, out_gb, out_gc);
      }
-   else // RadialGradient
+   else // SPAN_TYPE_RADIAL_GRADIENT
      {
         // Degenerate radial: a = dr*dr - dx*dx - dy*dy reaches 0 when the
         // focal point sits exactly on the gradient circle, which an author
@@ -3174,7 +3174,7 @@ _compute_gradient_coeffs(Span_Collector *sc,
         // silently rendering the wrong gradient.
         if ((gd->radial.fradius >= 0.00001f) || (fabsf(gd->radial.a) <= 0.00001f))
           {
-             *inout_shader_type = (int)Solid;
+             *inout_shader_type = (int)SPAN_TYPE_SOLID;
              *inout_col         = 0;
              return;
           }
@@ -3193,9 +3193,9 @@ _compute_gradient_coeffs(Span_Collector *sc,
 // see ector's Span_Data_Type.  This translation unit sees both, so fail the
 // build here if the two ever drift apart.
 typedef char _span_fill_type_matches_span_data_type[
-   (((int)Solid          == SPAN_FILL_TYPE_SOLID) &&
-    ((int)LinearGradient == SPAN_FILL_TYPE_LINEAR_GRADIENT) &&
-    ((int)RadialGradient == SPAN_FILL_TYPE_RADIAL_GRADIENT)) ? 1 : -1];
+   (((int)SPAN_TYPE_SOLID           == SPAN_FILL_TYPE_SOLID) &&
+    ((int)SPAN_TYPE_LINEAR_GRADIENT == SPAN_FILL_TYPE_LINEAR_GRADIENT) &&
+    ((int)SPAN_TYPE_RADIAL_GRADIENT == SPAN_FILL_TYPE_RADIAL_GRADIENT)) ? 1 : -1];
 
 static void
 eng_ector_end(void *engine,
@@ -3349,8 +3349,8 @@ eng_ector_end(void *engine,
              uint32_t fill_col   = sc_fill   ? sc_fill->color   : 0;
              uint32_t stroke_col = sc_stroke ? sc_stroke->color : 0;
 
-             int fill_shader_type   = sc_fill   ? (int)sc_fill->type   : (int)Solid;
-             int stroke_shader_type = sc_stroke ? (int)sc_stroke->type : (int)Solid;
+             int fill_shader_type   = sc_fill   ? (int)sc_fill->type   : (int)SPAN_TYPE_SOLID;
+             int stroke_shader_type = sc_stroke ? (int)sc_stroke->type : (int)SPAN_TYPE_SOLID;
 
              // Per-shape gradient coefficients.
              float fill_ga = 0.0f, fill_gb = 0.0f, fill_gc_coef = 0.0f;

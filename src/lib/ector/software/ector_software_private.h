@@ -85,10 +85,10 @@ typedef struct _Clip_Data
 } Clip_Data;
 
 typedef enum _Span_Data_Type {
-  None,
-  Solid,
-  LinearGradient,
-  RadialGradient,
+  SPAN_TYPE_NONE,
+  SPAN_TYPE_SOLID,
+  SPAN_TYPE_LINEAR_GRADIENT,
+  SPAN_TYPE_RADIAL_GRADIENT,
 } Span_Data_Type;
 
 // Function pointer type for allocating/reusing per-shape span collectors.

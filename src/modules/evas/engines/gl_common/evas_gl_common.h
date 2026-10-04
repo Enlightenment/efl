@@ -285,7 +285,7 @@ typedef struct _Span_Channel_Params {
    float    off_ty;     // texel y-offset in pool
    uint32_t col;        // base color (premultiplied ARGB)
    int      x_min;      // spatial split x_min
-   // Gradient parameters (unused for Solid type)
+   // Gradient parameters (unused for SPAN_TYPE_SOLID)
    float    grad_a, grad_b, grad_c;  // linear: t = a*px + b*py + c
    float    grad_ramp_y;             // atlas V coordinate: (row+0.5)/SPAN_GRAD_ATLAS_H
    float    grad_d, grad_e, grad_f;  // radial: 2nd affine row

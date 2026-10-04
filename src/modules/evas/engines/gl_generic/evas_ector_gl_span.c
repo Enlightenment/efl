@@ -257,9 +257,9 @@ span_collector_clear(Span_Collector *sc)
    // NULLed here, a reused collector from the high-water mark pool
    // would retain a dangling pointer from the previous frame.
    // type must also be reset - a collector previously used for gradient fills
-   // retains LinearGradient/RadialGradient, causing eng_ector_end to select
+   // retains SPAN_TYPE_LINEAR_GRADIENT/SPAN_TYPE_RADIAL_GRADIENT, causing eng_ector_end to select
    // the gradient shader with a NULL gradient_data when reused for solid fills.
-   sc->type          = Solid;
+   sc->type          = SPAN_TYPE_SOLID;
    sc->gradient_data = NULL;
    sc->color         = 0;
    sc->mask_surface  = NULL;
@@ -646,10 +646,10 @@ _flush_row_tail(Span_Collector *sc, int ti, int y)
 }
 
 // ------------------------------------------------------------------
-// Solid span collector callback
+// SPAN_TYPE_SOLID span collector callback
 // ------------------------------------------------------------------
 
-// SW_FT_SpanFunc callback for Solid fills.
+// SW_FT_SpanFunc callback for SPAN_TYPE_SOLID fills.
 //
 // Packs each span as 1 RGBA8 texel (4 bytes) into the Span_Texture row:
 //   byte 0: gap   - distance from end of previous span on this row
@@ -832,7 +832,7 @@ _collect_spans_solid(int count, const SW_FT_Span *spans, void *user_data)
 // Gradient span collector callback
 // ------------------------------------------------------------------
 
-// SW_FT_SpanFunc callback for LinearGradient and RadialGradient fills.
+// SW_FT_SpanFunc callback for SPAN_TYPE_LINEAR_GRADIENT and SPAN_TYPE_RADIAL_GRADIENT fills.
 //
 // Thin wrapper around _collect_spans_solid(): the span buffer format is
 // identical (1 texel per span: gap, len, coverage, reserved).  Gradient
@@ -947,7 +947,7 @@ _collect_spans_composite(int count, const SW_FT_Span *spans, void *user_data)
    // does not, so we must set it here unconditionally.
    sc->inv = sd->inv;
 
-   if ((sc->type == LinearGradient) || (sc->type == RadialGradient))
+   if ((sc->type == SPAN_TYPE_LINEAR_GRADIENT) || (sc->type == SPAN_TYPE_RADIAL_GRADIENT))
      _collect_spans_gradient(count, spans, user_data);
    else
      _collect_spans_solid(count, spans, user_data);

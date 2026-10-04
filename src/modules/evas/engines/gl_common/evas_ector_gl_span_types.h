@@ -33,7 +33,7 @@ typedef struct _Span_Page Span_Page;
 // ---------------------------------------------------------------------------
 // Fill type of one side of a span quad, as stored in Span_Channel_Params.type
 // and handed to the gradient shaders in the .w of that side's grad_def
-// attribute.  These are ector's Span_Data_Type values (0 is None).  gl_common
+// attribute.  These are ector's Span_Data_Type values (0 is SPAN_TYPE_NONE).  gl_common
 // and the GLSL sources cannot include ector_software_private.h, so the values
 // are mirrored here and gl_generic/evas_engine.c checks at build time that
 // they still match the enum.

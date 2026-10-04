@@ -258,8 +258,8 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
    const int pix_stride = sd->raster_buffer->stride / 4;
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
-   if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
-   if (sd->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+   if (sd->type == SPAN_TYPE_LINEAR_GRADIENT) fetchfunc = &fetch_linear_gradient;
+   if (sd->type == SPAN_TYPE_RADIAL_GRADIENT) fetchfunc = &fetch_radial_gradient;
 
    if (!fetchfunc || !sd->raster_buffer->pixels.u32) return;
 
@@ -295,8 +295,8 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
    uint32_t gbuffer[BLEND_GRADIENT_BUFFER_SIZE];  //gradient buffer
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
-   if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
-   if (sd->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+   if (sd->type == SPAN_TYPE_LINEAR_GRADIENT) fetchfunc = &fetch_linear_gradient;
+   if (sd->type == SPAN_TYPE_RADIAL_GRADIENT) fetchfunc = &fetch_radial_gradient;
 
    if (!fetchfunc) return;
 
@@ -345,8 +345,8 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    uint32_t gbuffer[BLEND_GRADIENT_BUFFER_SIZE];  //gradient buffer
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
-   if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
-   if (sd->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+   if (sd->type == SPAN_TYPE_LINEAR_GRADIENT) fetchfunc = &fetch_linear_gradient;
+   if (sd->type == SPAN_TYPE_RADIAL_GRADIENT) fetchfunc = &fetch_radial_gradient;
 
    if (!fetchfunc) return;
 
@@ -619,19 +619,19 @@ _adjust_span_fill_methods(Span_Data *spdata)
           {
            default:
            case EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA:
-              if (spdata->type == Solid)
+              if (spdata->type == SPAN_TYPE_SOLID)
                 spdata->unclipped_blend = &_comp_matte_alpha;
-              else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
+              else if (spdata->type == SPAN_TYPE_LINEAR_GRADIENT || spdata->type == SPAN_TYPE_RADIAL_GRADIENT)
                 spdata->unclipped_blend = &_blend_gradient_alpha;
-              else //None
+              else //SPAN_TYPE_NONE
                 spdata->unclipped_blend = NULL;
               break;
            case EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE:
-              if (spdata->type == Solid)
+              if (spdata->type == SPAN_TYPE_SOLID)
                 spdata->unclipped_blend = &_comp_matte_alpha_inv;
-              else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
+              else if (spdata->type == SPAN_TYPE_LINEAR_GRADIENT || spdata->type == SPAN_TYPE_RADIAL_GRADIENT)
                 spdata->unclipped_blend = &_blend_gradient_alpha_inv;
-              else //None
+              else //SPAN_TYPE_NONE
                 spdata->unclipped_blend = NULL;
               break;
            case EFL_GFX_VG_COMPOSITE_METHOD_MASK_ADD:
@@ -650,11 +650,11 @@ _adjust_span_fill_methods(Span_Data *spdata)
      }
    else
      {
-        if (spdata->type == Solid)
+        if (spdata->type == SPAN_TYPE_SOLID)
           spdata->unclipped_blend = &_blend_argb;
-        else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
+        else if (spdata->type == SPAN_TYPE_LINEAR_GRADIENT || spdata->type == SPAN_TYPE_RADIAL_GRADIENT)
           spdata->unclipped_blend = &_blend_gradient;
-        else //None
+        else //SPAN_TYPE_NONE
           spdata->unclipped_blend = NULL;
      }
 
@@ -902,14 +902,14 @@ void
 ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
 {
    rasterizer->fill_data.color = DRAW_ARGB_JOIN(a, r, g, b);
-   rasterizer->fill_data.type = Solid;
+   rasterizer->fill_data.type = SPAN_TYPE_SOLID;
 }
 
 void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasterizer,
                                                    Ector_Renderer_Software_Gradient_Data *linear)
 {
    rasterizer->fill_data.gradient = linear;
-   rasterizer->fill_data.type = LinearGradient;
+   rasterizer->fill_data.type = SPAN_TYPE_LINEAR_GRADIENT;
 }
 
 void
@@ -917,7 +917,7 @@ ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer,
                                               Ector_Renderer_Software_Gradient_Data *radial)
 {
    rasterizer->fill_data.gradient = radial;
-   rasterizer->fill_data.type = RadialGradient;
+   rasterizer->fill_data.type = SPAN_TYPE_RADIAL_GRADIENT;
 }
 
 void
@@ -975,7 +975,7 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
         if (!sd->span_collector) return;
 
         // Select the collector callback based on fill type.
-        if ((sd->type == LinearGradient) || (sd->type == RadialGradient))
+        if ((sd->type == SPAN_TYPE_LINEAR_GRADIENT) || (sd->type == SPAN_TYPE_RADIAL_GRADIENT))
           cb = sd->collector_gradient;
         else if (sd->comp)
           cb = sd->collector_composite;
