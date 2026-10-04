@@ -655,8 +655,8 @@ _elm_win_state_eval(void *data EINA_UNUSED)
    Eina_List *l;
    Evas_Object *obj;
    int _elm_win_count_shown = 0;
-   int _elm_win_count_minimized = 0;
-   int _elm_win_count_withdrawn = 0;
+//   int _elm_win_count_minimized = 0;
+//   int _elm_win_count_withdrawn = 0;
    Eina_Bool throttle = EINA_FALSE;
 
    _elm_win_state_eval_timer_now = EINA_FALSE;
@@ -719,9 +719,10 @@ _elm_win_state_eval(void *data EINA_UNUSED)
      {
         EINA_LIST_FOREACH(_elm_win_list, l, obj)
           {
-             if (elm_win_withdrawn_get(obj)) _elm_win_count_withdrawn++;
-             else if (elm_win_iconified_get(obj)) _elm_win_count_minimized++;
-             else if (evas_object_visible_get(obj)) _elm_win_count_shown++;
+//             if (elm_win_withdrawn_get(obj)) _elm_win_count_withdrawn++;
+//             else if (elm_win_iconified_get(obj)) _elm_win_count_minimized++;
+//             else
+             if (evas_object_visible_get(obj)) _elm_win_count_shown++;
           }
         if (_elm_win_count_shown <= 0)
           {
