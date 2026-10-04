@@ -257,7 +257,6 @@ _photocam_mouse_wheel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    Evas_Object *photocam = data;
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
    int zoom;
-   double val;
 
    //unset the mouse wheel
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -270,12 +269,10 @@ _photocam_mouse_wheel_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    else
      zoom *= 2;
 
-   val = 1;
    int _zoom = zoom;
    while (_zoom>1)
      {
         _zoom /= 2;
-        val++;
      }
 
    elm_photocam_zoom_mode_set(photocam, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
@@ -775,7 +772,7 @@ _zoomable_mouse_wheel_cb(void *data, const Efl_Event *e)
 {
    Eo *zoomable = data;
    Efl_Input_Pointer *ev = e->info;
-   int zoom, _zoom, delta, val;
+   int zoom, _zoom, delta;
 
    zoom = efl_ui_zoom_level_get(zoomable);
    delta = efl_input_pointer_wheel_delta_get(ev);
@@ -786,12 +783,10 @@ _zoomable_mouse_wheel_cb(void *data, const Efl_Event *e)
    else
      zoom *= 2;
 
-   val = 1;
    _zoom = zoom;
    while (_zoom>1)
      {
         _zoom /= 2;
-        val++;
      }
 
    efl_ui_zoom_mode_set(zoomable, EFL_UI_ZOOM_MODE_MANUAL);
