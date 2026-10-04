@@ -414,6 +414,14 @@ open_property(const char *content, unsigned length)
 static Eina_Bool
 open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Object **obj)
 {
+   static int warns = -1;
+
+   if (warns == -1)
+     {
+        if (getenv("ELDBUS_CODEGEN_WARNINGS")) warns = 1;
+        else warns = 0;
+     }
+
    unsigned int i;
    if (!strncmp(content, OBJECT_TAG, OBJECT_TAG_LENGTH))
      return open_object(content, length, is_open_empty, obj);
@@ -429,6 +437,8 @@ open_tag(const char *content, unsigned length, Eina_Bool is_open_empty, DBus_Obj
      return open_method(content, length, is_open_empty);
    else if (!strncmp(content, PROPERTY_TAG, PROPERTY_TAG_LENGTH) && iface)
      return open_property(content, length);
+
+   if (!warns) return EINA_TRUE;
 
    printf("Warning: Tag not handled:\n");
    for (i = 0; i < length; i++)
