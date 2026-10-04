@@ -1621,7 +1621,6 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
     Efreet_Menu_Internal *legacy_internal;
     Efreet_Menu_Filter *filter;
     Efreet_Menu_App_Dir *app_dir;
-    int count = 0;
     Eina_Iterator *it;
 
     if (!parent || !legacy_dir) return 0;
@@ -1749,7 +1748,6 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
             else
                 filter->op->filenames = eina_list_append(filter->op->filenames, eina_stringshare_add(fname));
 
-            count++;
             efreet_desktop_free(desktop);
         }
         eina_iterator_free(it);
