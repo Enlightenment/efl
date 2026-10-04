@@ -719,12 +719,11 @@
     SW_FT_UInt   num_contours = 0;
 
     SW_FT_UInt     count      = border->num_points;
-    SW_FT_Vector*  point      = border->points;
     SW_FT_Byte*    tags       = border->tags;
     SW_FT_Int      in_contour = 0;
 
 
-    for ( ; count > 0; count--, num_points++, point++, tags++ )
+    for ( ; count > 0; count--, num_points++, tags++ )
     {
       if ( tags[0] & SW_FT_STROKE_TAG_BEGIN )
       {
