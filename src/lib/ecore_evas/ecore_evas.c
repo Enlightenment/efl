@@ -249,6 +249,9 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
                                  efl_event_callback_add(ee->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _ecore_evas_animator, ee);
                                  ee->animator_registered = EINA_TRUE;
                               }
+                            /* make sure a tick comes if already ticking */
+                            if (ee->engine.func->fn_evas_changed)
+                              ee->engine.func->fn_evas_changed(ee, EINA_FALSE);
                          }
                        continue ;
                     }
