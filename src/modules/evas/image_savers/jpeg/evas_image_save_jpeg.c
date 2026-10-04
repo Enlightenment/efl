@@ -57,7 +57,6 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    DATA8              *buf;
    DATA32             *ptr;
    JSAMPROW           *jbuf;
-   int                 y = 0;
 
    if (!im || !im->image.data || !file)
       return 0;
@@ -66,7 +65,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    f = fopen(file, "wb");
    if (!f)
      {
-	return 0;
+        return 0;
      }
    memset(&cinfo, 0, sizeof(cinfo));
    cinfo.err = jpeg_std_error(&(jerr.pub));
@@ -75,9 +74,9 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    jerr.pub.output_message = _JPEGErrorHandler;
    if (setjmp(jerr.setjmp_buffer))
      {
-	jpeg_destroy_compress(&cinfo);
-	fclose(f);
-	return 0;
+        jpeg_destroy_compress(&cinfo);
+        fclose(f);
+        return 0;
      }
    jpeg_create_compress(&cinfo);
    jpeg_stdio_dest(&cinfo, f);
@@ -103,17 +102,16 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    ptr = im->image.data;
    while (cinfo.next_scanline < cinfo.image_height)
      {
-	unsigned int i, j;
-	for (j = 0, i = 0; i < im->cache_entry.w; i++)
-	  {
-	     buf[j++] = ((*ptr) >> 16) & 0xff;
-	     buf[j++] = ((*ptr) >> 8) & 0xff;
-	     buf[j++] = ((*ptr)) & 0xff;
-	     ptr++;
-	  }
-	jbuf = (JSAMPROW *) (&buf);
-	jpeg_write_scanlines(&cinfo, jbuf, 1);
-	y++;
+        unsigned int i, j;
+        for (j = 0, i = 0; i < im->cache_entry.w; i++)
+          {
+             buf[j++] = ((*ptr) >> 16) & 0xff;
+             buf[j++] = ((*ptr) >> 8) & 0xff;
+             buf[j++] = ((*ptr)) & 0xff;
+             ptr++;
+          }
+        jbuf = (JSAMPROW *) (&buf);
+        jpeg_write_scanlines(&cinfo, jbuf, 1);
      }
    jpeg_finish_compress(&cinfo);
    jpeg_destroy_compress(&cinfo);
