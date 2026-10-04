@@ -1166,7 +1166,6 @@ xcf_load_tile_rle(Tile    *tile,
    DATA8 *data;
    DATA8 val;
    int size;
-   int count;
    int length;
    int bpp;
    int i, j;
@@ -1192,7 +1191,6 @@ xcf_load_tile_rle(Tile    *tile,
      {
         data = (tile->data) + i;
         size = tile->ewidth * tile->eheight;
-        count = 0;
 
         while (size > 0)
           {
@@ -1212,7 +1210,6 @@ xcf_load_tile_rle(Tile    *tile,
                        xcfdata += 2;
                     }
 
-                  count += length;
                   size -= length;
 
                   if (size < 0) goto bogus_rle;
@@ -1235,7 +1232,6 @@ xcf_load_tile_rle(Tile    *tile,
                        xcfdata += 2;
                     }
 
-                  count += length;
                   size -= length;
 
                   if (size < 0) goto bogus_rle;
