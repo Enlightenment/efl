@@ -2509,6 +2509,29 @@ ecore_x_pointer_root_xy_get(int *x, int *y)
    free(root);
 }
 
+EAPI unsigned int
+ecore_x_pointer_buttons_pressed_get(Ecore_X_Window win)
+{
+   Window rwin, cwin;
+   int rx, ry, wx, wy, ret;
+   unsigned int mask;
+   unsigned int buttons = 0;
+
+   LOGFN;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, 0);
+   ret = XQueryPointer(_ecore_x_disp, win, &rwin, &cwin,
+                       &rx, &ry, &wx, &wy, &mask);
+   if (!ret) return 0;
+   if (_ecore_xlib_sync) ecore_x_sync();
+   if (mask & Button1Mask) buttons |= (1 << 0);
+   if (mask & Button2Mask) buttons |= (1 << 1);
+   if (mask & Button3Mask) buttons |= (1 << 2);
+   if (mask & Button4Mask) buttons |= (1 << 3);
+   if (mask & Button5Mask) buttons |= (1 << 4);
+   return buttons;
+}
+
+
 /**
  * Retrieve the Visual ID from a given Visual.
  *

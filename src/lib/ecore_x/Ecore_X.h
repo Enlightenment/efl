@@ -2082,6 +2082,7 @@ EAPI void             ecore_x_events_allow_all(void);
 EAPI void             ecore_x_pointer_last_xy_get(int *x, int *y);
 EAPI void             ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y);
 EAPI void             ecore_x_pointer_root_xy_get(int *x, int *y);
+EAPI unsigned int     ecore_x_pointer_buttons_pressed_get(Ecore_X_Window win); /* @since 1.29 */
 
 /* ecore_x_region.c */
 EAPI Ecore_X_XRegion *ecore_x_xregion_new(void);
