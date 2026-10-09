@@ -823,8 +823,10 @@ typedef void *EGLClientBuffer;
 
 #include <stddef.h>
 
+#if !defined(GL_ES_VERSION_2_0) && !defined(GL_VERSION_1_5)
 typedef ptrdiff_t GLintptr;     // Changed khronos_intptr_t
 typedef ptrdiff_t GLsizeiptr;   // Changed khronos_ssize_t
+#endif
 
 typedef void             GLvoid;
 typedef char             GLchar;
