@@ -60,6 +60,16 @@ struct _Evas_Object_Textgrid_Color
    unsigned char r, g, b, a;
 };
 
+/* Applications index cell rows with the sizeof and field offsets that were
+ * compiled into them, so the cell must keep its 8-byte layout: the new
+ * true color flags have to fit in the spare bits of the flags short.  The
+ * render code reads a true color entry's components as
+ * Evas_Object_Textgrid_Color, so both color structs must match. */
+EINA_STATIC_ASSERT(sizeof(Evas_Textgrid_Cell) == 8, "Evas_Textgrid_Cell ABI");
+EINA_STATIC_ASSERT(sizeof(Evas_Textgrid_Truecolor) ==
+                   2 * sizeof(Evas_Object_Textgrid_Color),
+                   "Evas_Textgrid_Truecolor layout");
+
 struct _Evas_Textgrid_Data
 {
    struct {
