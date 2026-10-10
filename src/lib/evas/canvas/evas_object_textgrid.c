@@ -852,8 +852,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    Evas_Textgrid_Cell *cells;
    const Evas_Textgrid_Truecolor *tc;
    const Evas_Object_Textgrid_Color *c;
+   Evas_Object_Textgrid_Color rc;
    int xx, yy, xp, yp, w, h, ww, hh;
-   int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
+   int rx = 0, rw = 0, run;
    int line_th, underline_y, strikethrough_y;
    Evas_Textgrid_Liga_Run lrun;
    Eina_Bool liga_on, trig;
@@ -900,6 +901,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
         run = 0;
         lrun.len = 0;
         xp = 0;
+        /* Run state as one 4-byte color: comparing and copying it is a
+         * single load and store in the per-cell loop. */
+        rc.r = rc.g = rc.b = rc.a = 0;
         for (xx = 0; xx < o->cur.w; xx++, cells++, tc = tc ? tc + 1 : NULL)
           {
 <<<<<<< HEAD
@@ -920,22 +924,16 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                   if (!run)
                     {
                        run = 1;
-                       rr = c->r;
-                       rg = c->g;
-                       rb = c->b;
-                       ra = c->a;
+                       rc = *c;
                        rx = xp;
                        rw = w;
                     }
-                  else if ((c->r != rr) || (c->g != rg) ||
-                           (c->b != rb) || (c->a != ra))
+                  else if (memcmp(&rc, c, sizeof(rc)) != 0)
                     {
                        evas_object_textgrid_row_rect_append(row, rx, rw,
-                                                            rr, rg, rb, ra);
-                       rr = c->r;
-                       rg = c->g;
-                       rb = c->b;
-                       ra = c->a;
+                                                            rc.r, rc.g,
+                                                            rc.b, rc.a);
+                       rc = *c;
                        rx = xp;
                        rw = w;
                     }
@@ -945,7 +943,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                {
                   run = 0;
                   evas_object_textgrid_row_rect_append(row, rx, rw,
-                                                       rr, rg, rb, ra);
+                                                       rc.r, rc.g,
+                                                       rc.b, rc.a);
                }
              c = NULL;
              if ((cells->codepoint > 0) || (cells->underline) ||
@@ -1033,7 +1032,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
           {
              run = 0;
              evas_object_textgrid_row_rect_append(row, rx, rw,
-                                                  rr, rg, rb, ra);
+                                                  rc.r, rc.g, rc.b, rc.a);
           }
      }
    yp = obj->cur->geometry.y + y;
