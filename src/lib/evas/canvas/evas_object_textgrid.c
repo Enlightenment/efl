@@ -55,6 +55,11 @@ struct _Evas_Textgrid_Liga
    Eina_Bool                avail;
 };
 
+struct _Evas_Object_Textgrid_Color
+{
+   unsigned char r, g, b, a;
+};
+
 struct _Evas_Textgrid_Data
 {
    struct {
@@ -69,10 +74,17 @@ struct _Evas_Textgrid_Data
       Evas_Font_Size              font_size;
       Evas_Font_Description      *font_description_normal;
 
-      Eina_Array                  palette_standard;
-      Eina_Array                  palette_extended;
       Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
    } cur, prev;
+
+   /* Flat palettes: no per-color mallocs and no Eina_Array indirection in
+    * the render loop, just a bounds check and an indexed load.  The counts
+    * are separate so that entries above them (holes) are zeroed, like the
+    * calloc'ed filler entries of the old array of pointers. */
+   Evas_Object_Textgrid_Color palette_standard[256];
+   Evas_Object_Textgrid_Color palette_extended[256];
+   unsigned short             palette_standard_count;
+   unsigned short             palette_extended_count;
 
    int                            ascent;
    int                            line_thickness;
@@ -93,11 +105,6 @@ struct _Evas_Textgrid_Data
    unsigned int                   core_change : 1;
    unsigned int                   row_change : 1;
    unsigned int                   pal_change : 1;
-};
-
-struct _Evas_Object_Textgrid_Color
-{
-   unsigned char r, g, b, a;
 };
 
 struct _Evas_Object_Textgrid_Row
@@ -130,6 +137,21 @@ struct _Evas_Object_Textgrid_Line
    unsigned char r, g, b, a;
    int x, w, y, th;
 };
+
+/* Resolve a palette index to its color.  All 256 entries of both
+ * palettes are always valid: entries that were never set are zeroed
+ * (alpha 0), so the render loop needs no bounds check - alpha 0
+ * already means "no color".  The counts are only used by the public
+ * palette_get(), to keep its "entry not set" semantics. */
+static inline const Evas_Object_Textgrid_Color *
+_textgrid_palette_color_get(const Evas_Textgrid_Data *o,
+                            Eina_Bool extended, unsigned char idx)
+{
+   const Evas_Object_Textgrid_Color *pal = extended ? o->palette_extended
+                                                    : o->palette_standard;
+
+   return &(pal[idx]);
+}
 
 /* private methods for textgrid objects */
 static void evas_object_textgrid_init(Evas_Object *eo_obj);
@@ -374,8 +396,11 @@ evas_object_textgrid_init(Evas_Object *eo_obj)
    Evas_Textgrid_Data *o = obj->private_data;
    o->prev.bitmap_scalable = o->cur.bitmap_scalable = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
    o->prev = o->cur;
-   eina_array_step_set(&o->cur.palette_standard, sizeof (Eina_Array), 16);
-   eina_array_step_set(&o->cur.palette_extended, sizeof (Eina_Array), 16);
+   /* Unset palette entries stay zeroed (alpha 0 = no color) for the
+    * whole life of the object, so the render loop can index the
+    * palettes without a bounds check. */
+   memset(o->palette_standard, 0, sizeof(o->palette_standard));
+   memset(o->palette_extended, 0, sizeof(o->palette_extended));
    o->text_props_cache = _textgrid_cache_new();
 }
 
@@ -470,7 +495,6 @@ evas_object_textgrid_rows_reset(Evas_Object *eo_obj)
 static void
 evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
-   Evas_Object_Textgrid_Color *c;
    Evas_Textgrid_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
    /* free obj */
@@ -487,12 +511,6 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj E
    if (o->font_bolditalic) evas_font_free(o->font_bolditalic);
 
    if (o->cur.cells) free(o->cur.cells);
-   while ((c = eina_array_pop(&o->cur.palette_standard)))
-     free(c);
-   eina_array_flush(&o->cur.palette_standard);
-   while ((c = eina_array_pop(&o->cur.palette_extended)))
-     free(c);
-   eina_array_flush(&o->cur.palette_extended);
 
    if (o->text_props_cache)
      {
@@ -816,8 +834,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                             int x, int y, Eina_Bool do_async)
 {
    Evas_Textgrid_Cell *cells;
-   Evas_Object_Textgrid_Color *c;
-   Eina_Array *palette;
+   const Evas_Object_Textgrid_Color *c;
    int xx, yy, xp, yp, w, h, ww, hh;
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
    int line_th, underline_y, strikethrough_y;
@@ -867,11 +884,8 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
         xp = 0;
         for (xx = 0; xx < o->cur.w; xx++, cells++)
           {
-             if (cells->bg_extended) palette = &(o->cur.palette_extended);
-             else palette = &(o->cur.palette_standard);
-             if (cells->bg >= eina_array_count(palette)) c = NULL;
-             else c = eina_array_data_get(palette, cells->bg);
-             if ((c) && (c->a > 0))
+             c = _textgrid_palette_color_get(o, cells->bg_extended, cells->bg);
+             if (c->a > 0)
                {
                   if (!run)
                     {
@@ -907,13 +921,9 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
              if ((cells->codepoint > 0) || (cells->underline) ||
                  (cells->strikethrough) || (cells->overline))
                {
-                  if (cells->fg_extended) palette = &(o->cur.palette_extended);
-                  else palette = &(o->cur.palette_standard);
-                  if (cells->fg < eina_array_count(palette))
-                    {
-                       c = eina_array_data_get(palette, cells->fg);
-                    }
-                  if ((c) && (c->a == 0)) c = NULL;
+                  c = _textgrid_palette_color_get(o, cells->fg_extended,
+                                                  cells->fg);
+                  if (c->a == 0) c = NULL;
                }
 
              /* Most cells (letters, digits, spaces) fail this bit test and
@@ -1822,10 +1832,10 @@ EOLIAN static void
 _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Palette pal, int idx, int r, int g, int b, int a)
 {
 
-   Eina_Array *palette;
-   Evas_Object_Textgrid_Color *color, *c;
+   Evas_Object_Textgrid_Color *palette;
+   Evas_Object_Textgrid_Color *color;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   int count, i;
+   unsigned short *count;
 
    if ((idx < 0) || (idx > 255)) return;
 
@@ -1857,19 +1867,20 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
    switch (pal)
      {
      case EVAS_TEXTGRID_PALETTE_STANDARD:
-       palette = &(o->cur.palette_standard);
+       palette = o->palette_standard;
+       count = &(o->palette_standard_count);
        break;
      case EVAS_TEXTGRID_PALETTE_EXTENDED:
-       palette = &(o->cur.palette_extended);
+       palette = o->palette_extended;
+       count = &(o->palette_extended_count);
        break;
      default:
        return;
      }
 
-   count = eina_array_count(palette);
-   if (idx < count)
+   if (idx < *count)
      {
-        color = eina_array_data_get(palette, idx);
+        color = &(palette[idx]);
         if (color->a == a &&
             color->r == r &&
             color->g == g &&
@@ -1878,8 +1889,10 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
      }
    else
      {
-        color = malloc(sizeof(Evas_Object_Textgrid_Color));
-        if (!color) return;
+        /* Entries between the old count and idx are already zeroed
+         * (alpha 0) since init, and stay that way. */
+        *count = idx + 1;
+        color = &(palette[idx]);
      }
 
    color->a = a;
@@ -1887,23 +1900,6 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
    color->g = g;
    color->b = b;
 
-   if (idx < count) eina_array_data_set(palette, idx, color);
-   else if (idx == count) eina_array_push(palette, color);
-   else
-     {
-        for (i = count; i < idx; i++)
-          {
-             c = calloc(1, sizeof(Evas_Object_Textgrid_Color));
-             if (!c)
-               {
-                  ERR("Evas cannot allocate memory");
-                  free(color);
-                  return;
-               }
-             eina_array_push(palette, c);
-          }
-        eina_array_push(palette, color);
-     }
    o->changed = 1;
    o->pal_change = 1;
    evas_object_textgrid_rows_reset(eo_obj);
@@ -1913,26 +1909,28 @@ _evas_textgrid_palette_set(Eo *eo_obj, Evas_Textgrid_Data *o, Evas_Textgrid_Pale
 EOLIAN static void
 _evas_textgrid_palette_get(const Eo *eo_obj EINA_UNUSED, Evas_Textgrid_Data *o, Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a)
 {
-   Eina_Array *palette;
    Evas_Object_Textgrid_Color *color;
+   Evas_Object_Textgrid_Color *palette;
+   unsigned short count;
 
    if (idx < 0) return;
 
    switch (pal)
      {
       case EVAS_TEXTGRID_PALETTE_STANDARD:
-        palette = &(((Evas_Textgrid_Data *)o)->cur.palette_standard);
+        palette = ((Evas_Textgrid_Data *)o)->palette_standard;
+        count = ((Evas_Textgrid_Data *)o)->palette_standard_count;
         break;
       case EVAS_TEXTGRID_PALETTE_EXTENDED:
-        palette = &(((Evas_Textgrid_Data *)o)->cur.palette_extended);
+        palette = ((Evas_Textgrid_Data *)o)->palette_extended;
+        count = ((Evas_Textgrid_Data *)o)->palette_extended_count;
         break;
       default:
         return;
      }
 
-   if (idx >= (int)eina_array_count(palette)) return;
-   color = eina_array_data_get(palette, idx);
-   if (!color) return;
+   if (idx >= (int)count) return;
+   color = &(palette[idx]);
 
    if (a) *a = color->a;
    if (r) *r = color->r;
