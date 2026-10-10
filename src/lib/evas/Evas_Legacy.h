@@ -6526,6 +6526,83 @@ EVAS_API void evas_object_textgrid_ligatures_set(Eo *obj, Eina_Bool enabled);
 EVAS_API Eina_Bool evas_object_textgrid_ligatures_get(const Eo *obj);
 
 /**
+ * @brief Enable the per-cell true color buffer of a textgrid object.
+ *
+ * When enabled, a cell whose fg_truecolor or bg_truecolor flag is set
+ * takes that color from the buffer returned by
+ * evas_object_textgrid_truecolor_cellrow_get() instead of from the palettes.
+ * An entry's components are pre-multiplied, and an alpha of 0 means no
+ * color, as for palette entries.  The buffer follows the cell array: it
+ * is reset to zero whenever the grid is resized.
+ *
+ * When disabled (the default), both flags are ignored and the buffer is
+ * freed, so objects that never enable it behave exactly as before.
+ *
+ * @see evas_object_textgrid_truecolor_get()
+ * @see evas_object_textgrid_truecolor_cellrow_get()
+ *
+ * @since 1.29
+ *
+ * @param[in] enabled @c EINA_TRUE to allocate and use the true color buffer, @c EINA_FALSE not to.
+ */
+EVAS_API void evas_object_textgrid_truecolor_set(Eo *obj, Eina_Bool enabled);
+
+/**
+ * @brief Get whether the per-cell true color buffer is enabled on a textgrid object.
+ *
+ * @return @c EINA_TRUE if the true color buffer is enabled, @c EINA_FALSE otherwise.
+ *
+ * @see evas_object_textgrid_truecolor_set()
+ *
+ * @since 1.29
+ */
+EVAS_API Eina_Bool evas_object_textgrid_truecolor_get(const Eo *obj);
+
+/**
+ * @brief Get the true color entries of one row of a textgrid object.
+ *
+ * Returns a pointer to the row's entries, one per column, parallel to the
+ * cells returned by evas_object_textgrid_cellrow_get().  Modify them in
+ * place (a checkout/checkin pattern together with
+ * evas_object_textgrid_truecolor_cellrow_set()), then call
+ * evas_object_textgrid_update_add() for the changed range.
+ *
+ * @return The array of @c w entries for row @p y, or @c NULL if the true
+ * color buffer is disabled or @p y is out of range.
+ *
+ * @see evas_object_textgrid_cellrow_get()
+ * @see evas_object_textgrid_truecolor_set()
+ * @see evas_object_textgrid_truecolor_cellrow_set()
+ *
+ * @since 1.29
+ *
+ * @param[in] y The row to access, between 0 and the grid height minus 1.
+ */
+EVAS_API Evas_Textgrid_Truecolor *evas_object_textgrid_truecolor_cellrow_get(const Eo *obj, int y);
+
+/**
+ * @brief Set the true color entries of one row of a textgrid object.
+ *
+ * Copies @c w entries from @p row into the row's true color buffer,
+ * parallel to evas_object_textgrid_cellrow_set(), and marks the row as
+ * changed.  Together with evas_object_textgrid_truecolor_cellrow_get()
+ * this forms a checkout/checkin pattern: get a row, make any changes
+ * (or just reads), then set it back.
+ *
+ * Does nothing if the true color buffer is disabled, @p row is @c NULL,
+ * or @p y is out of range.
+ *
+ * @see evas_object_textgrid_cellrow_set()
+ * @see evas_object_textgrid_truecolor_cellrow_get()
+ *
+ * @since 1.29
+ *
+ * @param[in] y The row to write, between 0 and the grid height minus 1.
+ * @param[in] row The array of @c w entries to copy into the row.
+ */
+EVAS_API void evas_object_textgrid_truecolor_cellrow_set(Eo *obj, int y, const Evas_Textgrid_Truecolor *row);
+
+/**
  *
  * @brief Get the font file's path which is being used on a given textgrid object.
  *

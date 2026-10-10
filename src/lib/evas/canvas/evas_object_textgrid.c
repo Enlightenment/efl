@@ -69,6 +69,9 @@ EINA_STATIC_ASSERT(sizeof(Evas_Textgrid_Cell) == 8, "Evas_Textgrid_Cell ABI");
 EINA_STATIC_ASSERT(sizeof(Evas_Textgrid_Truecolor) ==
                    2 * sizeof(Evas_Object_Textgrid_Color),
                    "Evas_Textgrid_Truecolor layout");
+EINA_STATIC_ASSERT(sizeof(((Evas_Textgrid_Truecolor *)0)->fg) ==
+                   sizeof(Evas_Object_Textgrid_Color),
+                   "Evas_Textgrid_Truecolor color layout");
 
 struct _Evas_Textgrid_Data
 {
@@ -78,6 +81,7 @@ struct _Evas_Textgrid_Data
       int                         char_height;
       Evas_Object_Textgrid_Row   *rows;
       Evas_Textgrid_Cell         *cells;
+      Evas_Textgrid_Truecolor    *truecolors;
 
       const char                 *font_source;
       const char                 *font_name;
@@ -115,6 +119,7 @@ struct _Evas_Textgrid_Data
    unsigned int                   core_change : 1;
    unsigned int                   row_change : 1;
    unsigned int                   pal_change : 1;
+   unsigned int                   truecolor_enabled : 1;
 };
 
 struct _Evas_Object_Textgrid_Row
@@ -521,6 +526,7 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj E
    if (o->font_bolditalic) evas_font_free(o->font_bolditalic);
 
    if (o->cur.cells) free(o->cur.cells);
+   if (o->cur.truecolors) free(o->cur.truecolors);
 
    if (o->text_props_cache)
      {
@@ -844,6 +850,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                             int x, int y, Eina_Bool do_async)
 {
    Evas_Textgrid_Cell *cells;
+   const Evas_Textgrid_Truecolor *tc;
    const Evas_Object_Textgrid_Color *c;
    int xx, yy, xp, yp, w, h, ww, hh;
    int rr = 0, rg = 0, rb = 0, ra = 0, rx = 0, rw = 0, run;
@@ -878,13 +885,14 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    if (strikethrough_y + line_th > h) strikethrough_y = h - line_th;
 
    // generate row data from cells (and only deal with rows that updated)
-   for (yy = 0, cells = o->cur.cells; yy < o->cur.h; yy++)
+   for (yy = 0, cells = o->cur.cells, tc = o->cur.truecolors; yy < o->cur.h; yy++)
      {
         Evas_Object_Textgrid_Row *row = &(o->cur.rows[yy]);
 
         if (row->ch1 < 0)
           {
              cells += o->cur.w;
+             if (tc) tc += o->cur.w;
              continue;
           }
         row->ch1 = -1;
@@ -892,10 +900,22 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
         run = 0;
         lrun.len = 0;
         xp = 0;
-        for (xx = 0; xx < o->cur.w; xx++, cells++)
+        for (xx = 0; xx < o->cur.w; xx++, cells++, tc = tc ? tc + 1 : NULL)
           {
+<<<<<<< HEAD
              c = _textgrid_palette_color_get(o, cells->bg_extended, cells->bg);
              if (c->a > 0)
+||||||| parent of f61cd18 (evas:textgrid: add per-cell true color buffer and render support)
+             c = _textgrid_palette_color_get(o, cells->bg_extended, cells->bg);
+             if ((c) && (c->a > 0))
+=======
+             if ((tc) && (cells->bg_truecolor))
+               c = (const Evas_Object_Textgrid_Color *)&(tc->bg);
+             else
+               c = _textgrid_palette_color_get(o, cells->bg_extended,
+                                               cells->bg);
+             if ((c) && (c->a > 0))
+>>>>>>> f61cd18 (evas:textgrid: add per-cell true color buffer and render support)
                {
                   if (!run)
                     {
@@ -931,9 +951,22 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
              if ((cells->codepoint > 0) || (cells->underline) ||
                  (cells->strikethrough) || (cells->overline))
                {
+<<<<<<< HEAD
                   c = _textgrid_palette_color_get(o, cells->fg_extended,
                                                   cells->fg);
                   if (c->a == 0) c = NULL;
+||||||| parent of f61cd18 (evas:textgrid: add per-cell true color buffer and render support)
+                  c = _textgrid_palette_color_get(o, cells->fg_extended,
+                                                  cells->fg);
+                  if ((c) && (c->a == 0)) c = NULL;
+=======
+                  if ((tc) && (cells->fg_truecolor))
+                    c = (const Evas_Object_Textgrid_Color *)&(tc->fg);
+                  else
+                    c = _textgrid_palette_color_get(o, cells->fg_extended,
+                                                    cells->fg);
+                  if ((c) && (c->a == 0)) c = NULL;
+>>>>>>> f61cd18 (evas:textgrid: add per-cell true color buffer and render support)
                }
 
              /* Most cells (letters, digits, spaces) fail this bit test and
@@ -1414,6 +1447,11 @@ _evas_textgrid_grid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
         free(o->cur.cells);
         o->cur.cells = NULL;
      }
+   if (o->cur.truecolors)
+     {
+        free(o->cur.truecolors);
+        o->cur.truecolors = NULL;
+     }
    o->cur.cells = calloc(w * h, sizeof(Evas_Textgrid_Cell));
    if (!o->cur.cells) return;
    if (o->liga) _textgrid_liga_scratch_resize(o->liga, w);
@@ -1497,6 +1535,8 @@ _evas_textgrid_grid_size_set(Eo *eo_obj, Evas_Textgrid_Data *o, int w, int h)
           }
         r->lines_alloc = 8;
      }
+   if (o->truecolor_enabled)
+     o->cur.truecolors = calloc(w * h, sizeof(Evas_Textgrid_Truecolor));
    o->cur.w = w;
    o->cur.h = h;
    o->changed = 1;
@@ -2125,6 +2165,87 @@ evas_object_textgrid_ligatures_get(const Eo *eo_obj)
 
    if (!o) return EINA_FALSE;
    return o->liga != NULL;
+}
+
+EVAS_API void
+evas_object_textgrid_truecolor_set(Eo *eo_obj, Eina_Bool enabled)
+{
+   Evas_Object_Protected_Data *obj;
+   Evas_Textgrid_Data *o;
+
+   o = efl_data_scope_safe_get(eo_obj, MY_CLASS);
+   if (!o) return;
+   if ((!!enabled) == (!!o->truecolor_enabled)) return;
+
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   if (enabled)
+     {
+        o->truecolor_enabled = 1;
+        if ((o->cur.w > 0) && (o->cur.h > 0))
+          o->cur.truecolors = calloc(o->cur.w * o->cur.h,
+                                     sizeof(Evas_Textgrid_Truecolor));
+        /* On OOM the buffer stays NULL: rendering degrades to the palette
+         * path until the next resize reallocates it. */
+     }
+   else
+     {
+        o->truecolor_enabled = 0;
+        if (o->cur.truecolors)
+          {
+             free(o->cur.truecolors);
+             o->cur.truecolors = NULL;
+          }
+     }
+   /* On enable, cells may carry stale true color flags from a previous
+    * enable period (or bits written before enabling); on disable, cells
+    * that used true color fall back to the palette.  Re-render all rows. */
+   evas_object_textgrid_rows_reset(eo_obj);
+   o->changed = 1;
+   o->row_change = 1;
+   evas_object_change(eo_obj, obj);
+}
+
+EVAS_API Eina_Bool
+evas_object_textgrid_truecolor_get(const Eo *eo_obj)
+{
+   Evas_Textgrid_Data *o = efl_data_scope_safe_get((Eo *)eo_obj, MY_CLASS);
+
+   if (!o) return EINA_FALSE;
+   return o->truecolor_enabled != 0;
+}
+
+EVAS_API Evas_Textgrid_Truecolor *
+evas_object_textgrid_truecolor_cellrow_get(const Eo *eo_obj, int y)
+{
+   Evas_Textgrid_Data *o = efl_data_scope_safe_get((Eo *)eo_obj, MY_CLASS);
+
+   if (!o) return NULL;
+   if (!o->truecolor_enabled) return NULL;
+   if (!o->cur.truecolors) return NULL;
+   if ((y < 0) || (y >= o->cur.h)) return NULL;
+
+   return o->cur.truecolors + (y * o->cur.w);
+}
+
+EVAS_API void
+evas_object_textgrid_truecolor_cellrow_set(Eo *eo_obj, int y,
+                                           const Evas_Textgrid_Truecolor *row)
+{
+   Evas_Object_Protected_Data *obj;
+   Evas_Textgrid_Data *o = efl_data_scope_safe_get(eo_obj, MY_CLASS);
+
+   if (!o) return;
+   if (!row) return;
+   if (!o->truecolor_enabled) return;
+   if (!o->cur.truecolors) return;
+   if ((y < 0) || (y >= o->cur.h)) return;
+
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   memcpy(o->cur.truecolors + (y * o->cur.w), row,
+          o->cur.w * sizeof(Evas_Textgrid_Truecolor));
+   _evas_textgrid_update_add(eo_obj, o, 0, y, o->cur.w, 1);
 }
 
 EOLIAN static void
