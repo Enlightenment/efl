@@ -330,6 +330,11 @@ if cc.has_header('byteswap.h')
    eina_config.set('EINA_HAVE_BYTESWAP_H', '1')
 endif
 
+if cc.compiles('_Static_assert(1, "static assertion failed");',
+               name: 'C11 _Static_assert keyword')
+   eina_config.set('EINA_HAVE_C11_STATIC_ASSERT', '1')
+endif
+
 if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
    eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
 endif

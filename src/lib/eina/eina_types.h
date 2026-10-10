@@ -621,6 +621,31 @@ typedef void (*Eina_Free_Cb)(void *data);
 #define EINA_C_ARRAY_LENGTH(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /**
+ * @def EINA_STATIC_ASSERT
+ * Static assertion macro. Fails to compile if the (integer constant
+ * expression) condition evaluates to false, either at file scope or inside
+ * a function.
+ *
+ * @param cond Condition to check at compile time.
+ * @param msg Diagnostic message printed by the compiler when the
+ *        assertion fails. Only used when the C11 @c _Static_assert keyword
+ *        is available.
+ *
+ * Uses the C11 @c _Static_assert keyword when available, otherwise falls
+ * back to a negative-array typedef check.
+ *
+ * @since 1.29
+ */
+#ifdef EINA_HAVE_C11_STATIC_ASSERT
+# define EINA_STATIC_ASSERT(cond, msg) _Static_assert((cond), msg)
+#else
+# define EINA_STATIC_ASSERT_PASTE_(line) eina_static_assert_failed_ ## line
+# define EINA_STATIC_ASSERT_(cond, line) \
+   typedef char EINA_STATIC_ASSERT_PASTE_(line)[(cond) ? 1 : -1] EINA_UNUSED
+# define EINA_STATIC_ASSERT(cond, msg) EINA_STATIC_ASSERT_(cond, __LINE__)
+#endif
+
+/**
  * @def EINA_DOUBLE_EQUAL
  * Macro to compare 2 double floating point values and deal with precision
  * loss issues.
