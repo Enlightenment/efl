@@ -830,6 +830,117 @@ _drop_glyphs_ref(const void *container EINA_UNUSED, void *data, void *fdata)
    return EINA_TRUE;
 }
 
+/* Append the resolved background color of one cell to the run of
+ * same-colored rectangles being built for the row.  The run state is
+ * passed by pointer and kept by the caller across cells. */
+static inline void
+_textgrid_render_cell_bg(Evas_Object_Textgrid_Row *row,
+                         int *run, Evas_Object_Textgrid_Color *rc,
+                         int *rx, int *rw,
+                         const Evas_Object_Textgrid_Color *c,
+                         int xp, int w)
+{
+   if (c->a > 0)
+     {
+        if (!*run)
+          {
+             *run = 1;
+             *rc = *c;
+             *rx = xp;
+             *rw = w;
+          }
+        else if (memcmp(rc, c, sizeof(*rc)) != 0)
+          {
+             evas_object_textgrid_row_rect_append(row, *rx, *rw,
+                                                  rc->r, rc->g, rc->b, rc->a);
+             *rc = *c;
+             *rx = xp;
+             *rw = w;
+          }
+        else *rw += w;
+     }
+   else if (*run)
+     {
+        *run = 0;
+        evas_object_textgrid_row_rect_append(row, *rx, *rw,
+                                             rc->r, rc->g, rc->b, rc->a);
+     }
+}
+
+/* Ligature runs, glyph text and under/strikethrough/overlines of one
+ * cell, given its resolved foreground color (NULL for none).  Appends
+ * to the pending ligature run in `lrun`. */
+static inline void
+_textgrid_render_cell_text(Evas_Object_Textgrid_Row *row,
+                           Evas_Object_Protected_Data *obj,
+                           Evas_Textgrid_Data *o,
+                           Evas_Textgrid_Liga_Run *lrun,
+                           const Evas_Textgrid_Cell *cells,
+                           const Evas_Object_Textgrid_Color *c,
+                           int xp, int w,
+                           Eina_Bool liga_on,
+                           int underline_y, int strikethrough_y, int line_th)
+{
+   Eina_Bool trig;
+
+   /* Most cells (letters, digits, spaces) fail this bit test and take
+    * the single-cell path. */
+   trig = ((liga_on) && (c) && (cells->codepoint > 0) &&
+           evas_common_font_liga_trigger_check(&(o->liga->triggers),
+                                               cells->codepoint));
+
+   /* A run is drawn with one colour and style, so the cursor and
+    * selection edges split ligatures. */
+   if ((lrun->len) &&
+       ((!trig) || (lrun->len >= TEXTGRID_LIGA_RUN_MAX) ||
+        (lrun->r != c->r) || (lrun->g != c->g) ||
+        (lrun->b != c->b) || (lrun->a != c->a) ||
+        (lrun->bold != (Eina_Bool)cells->bold) ||
+        (lrun->italic != (Eina_Bool)cells->italic)))
+     _textgrid_liga_run_flush(row, obj, o, lrun);
+
+   if (trig)
+     {
+        if (!lrun->len)
+          {
+             lrun->x = xp;
+             lrun->r = c->r;
+             lrun->g = c->g;
+             lrun->b = c->b;
+             lrun->a = c->a;
+             lrun->bold = cells->bold;
+             lrun->italic = cells->italic;
+          }
+        o->liga->run[lrun->len++] = cells->codepoint;
+     }
+   else if ((c) && (cells->codepoint > 0))
+     {
+        Eina_Unicode cp = cells->codepoint;
+
+        evas_object_textgrid_row_text_append(row, obj, o, xp, &cp, 1,
+                                             c->r, c->g, c->b, c->a,
+                                             cells->bold, cells->italic,
+                                             NULL);
+     }
+
+   if (c)
+     {
+        /* XXX: underlines, strikethroughs and overlines don't get merged
+         * into horizontal runs like bg rects above */
+        if (cells->underline)
+          evas_object_textgrid_row_line_append(row, xp, w,
+                                               underline_y, line_th,
+                                               c->r, c->g, c->b, c->a);
+        if (cells->strikethrough)
+          evas_object_textgrid_row_line_append(row, xp, w,
+                                               strikethrough_y, line_th,
+                                               c->r, c->g, c->b, c->a);
+        if (cells->overline)
+          evas_object_textgrid_row_line_append(row, xp, w, 0, line_th,
+                                               c->r, c->g, c->b, c->a);
+     }
+}
+
 static void
 evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
                             Evas_Object_Protected_Data *obj,
@@ -845,7 +956,7 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
    int rx = 0, rw = 0, run;
    int line_th, underline_y, strikethrough_y;
    Evas_Textgrid_Liga_Run lrun;
-   Eina_Bool liga_on, trig;
+   Eina_Bool liga_on;
 
    /* render object to surface with context, and offset by x,y */
    Evas_Textgrid_Data *o = type_private_data;
@@ -878,132 +989,82 @@ evas_object_textgrid_render(Evas_Object *eo_obj EINA_UNUSED,
      {
         Evas_Object_Textgrid_Row *row = &(o->cur.rows[yy]);
 
-        if (row->ch1 < 0)
+        if (row->ch1 >= 0)
           {
-             cells += o->cur.w;
-             if (tc) tc += o->cur.w;
-             continue;
-          }
-        row->ch1 = -1;
-        row->ch2 = 0;
-        run = 0;
-        lrun.len = 0;
-        xp = 0;
-        /* Run state as one 4-byte color: comparing and copying it is a
-         * single load and store in the per-cell loop. */
-        rc.r = rc.g = rc.b = rc.a = 0;
-        for (xx = 0; xx < o->cur.w; xx++, cells++, tc = tc ? tc + 1 : NULL)
-          {
-             if ((tc) && (cells->bg_truecolor))
-               c = (const Evas_Object_Textgrid_Color *)&(tc->bg);
-             else
-               c = _textgrid_palette_color_get(o, cells->bg_extended,
-                                               cells->bg);
-             if (c->a > 0)
+             row->ch1 = -1;
+             row->ch2 = 0;
+             run = 0;
+             lrun.len = 0;
+             xp = 0;
+             /* Run state as one 4-byte color: comparing and copying it is
+              * a single load and store in the per-cell loop. */
+             rc.r = rc.g = rc.b = rc.a = 0;
+             if (tc)
                {
-                  if (!run)
+                  const Evas_Textgrid_Truecolor *t = tc;
+
+                  for (xx = 0; xx < o->cur.w; xx++, cells++, t++)
                     {
-                       run = 1;
-                       rc = *c;
-                       rx = xp;
-                       rw = w;
+                       if (cells->bg_truecolor)
+                         c = (const Evas_Object_Textgrid_Color *)&(t->bg);
+                       else
+                         c = _textgrid_palette_color_get(o, cells->bg_extended,
+                                                         cells->bg);
+                       _textgrid_render_cell_bg(row, &run, &rc, &rx, &rw,
+                                                c, xp, w);
+                       c = NULL;
+                       if ((cells->codepoint > 0) || (cells->underline) ||
+                           (cells->strikethrough) || (cells->overline))
+                         {
+                            if (cells->fg_truecolor)
+                              c = (const Evas_Object_Textgrid_Color *)&(t->fg);
+                            else
+                              c = _textgrid_palette_color_get(o,
+                                                              cells->fg_extended,
+                                                              cells->fg);
+                            if (c->a == 0) c = NULL;
+                         }
+                       _textgrid_render_cell_text(row, obj, o, &lrun, cells,
+                                                  c, xp, w, liga_on,
+                                                  underline_y,
+                                                  strikethrough_y, line_th);
+                       xp += w;
                     }
-                  else if (memcmp(&rc, c, sizeof(rc)) != 0)
-                    {
-                       evas_object_textgrid_row_rect_append(row, rx, rw,
-                                                            rc.r, rc.g,
-                                                            rc.b, rc.a);
-                       rc = *c;
-                       rx = xp;
-                       rw = w;
-                    }
-                  else rw += w;
                }
-             else if (run)
+             else
+               {
+                  for (xx = 0; xx < o->cur.w; xx++, cells++)
+                    {
+                       c = _textgrid_palette_color_get(o, cells->bg_extended,
+                                                       cells->bg);
+                       _textgrid_render_cell_bg(row, &run, &rc, &rx, &rw,
+                                                c, xp, w);
+                       c = NULL;
+                       if ((cells->codepoint > 0) || (cells->underline) ||
+                           (cells->strikethrough) || (cells->overline))
+                         {
+                            c = _textgrid_palette_color_get(o,
+                                                            cells->fg_extended,
+                                                            cells->fg);
+                            if (c->a == 0) c = NULL;
+                         }
+                       _textgrid_render_cell_text(row, obj, o, &lrun, cells,
+                                                  c, xp, w, liga_on,
+                                                  underline_y,
+                                                  strikethrough_y, line_th);
+                       xp += w;
+                    }
+               }
+             if (lrun.len) _textgrid_liga_run_flush(row, obj, o, &lrun);
+             if (run)
                {
                   run = 0;
                   evas_object_textgrid_row_rect_append(row, rx, rw,
-                                                       rc.r, rc.g,
-                                                       rc.b, rc.a);
+                                                       rc.r, rc.g, rc.b, rc.a);
                }
-             c = NULL;
-             if ((cells->codepoint > 0) || (cells->underline) ||
-                 (cells->strikethrough) || (cells->overline))
-               {
-                  if ((tc) && (cells->fg_truecolor))
-                    c = (const Evas_Object_Textgrid_Color *)&(tc->fg);
-                  else
-                    c = _textgrid_palette_color_get(o, cells->fg_extended,
-                                                    cells->fg);
-                  if (c->a == 0) c = NULL;
-               }
-
-             /* Most cells (letters, digits, spaces) fail this bit test and
-              * take the single-cell path. */
-             trig = ((liga_on) && (c) && (cells->codepoint > 0) &&
-                     evas_common_font_liga_trigger_check(&(o->liga->triggers),
-                                                         cells->codepoint));
-
-             /* A run is drawn with one colour and style, so the cursor and
-              * selection edges split ligatures. */
-             if ((lrun.len) &&
-                 ((!trig) || (lrun.len >= TEXTGRID_LIGA_RUN_MAX) ||
-                  (lrun.r != c->r) || (lrun.g != c->g) ||
-                  (lrun.b != c->b) || (lrun.a != c->a) ||
-                  (lrun.bold != (Eina_Bool)cells->bold) ||
-                  (lrun.italic != (Eina_Bool)cells->italic)))
-               _textgrid_liga_run_flush(row, obj, o, &lrun);
-
-             if (trig)
-               {
-                  if (!lrun.len)
-                    {
-                       lrun.x = xp;
-                       lrun.r = c->r;
-                       lrun.g = c->g;
-                       lrun.b = c->b;
-                       lrun.a = c->a;
-                       lrun.bold = cells->bold;
-                       lrun.italic = cells->italic;
-                    }
-                  o->liga->run[lrun.len++] = cells->codepoint;
-               }
-             else if ((c) && (cells->codepoint > 0))
-               {
-                  Eina_Unicode cp = cells->codepoint;
-
-                  evas_object_textgrid_row_text_append(row, obj,
-                                                       o, xp, &cp, 1,
-                                                       c->r, c->g, c->b, c->a,
-                                                       cells->bold,
-                                                       cells->italic, NULL);
-               }
-
-             if (c)
-               {
-                  // XXX: underlines, strikethroughs and overlines don't
-                  // get merged into horizontal runs like bg rects above
-                  if (cells->underline)
-                    evas_object_textgrid_row_line_append(row, xp, w,
-                                                         underline_y, line_th,
-                                                         c->r, c->g, c->b, c->a);
-                  if (cells->strikethrough)
-                    evas_object_textgrid_row_line_append(row, xp, w,
-                                                         strikethrough_y, line_th,
-                                                         c->r, c->g, c->b, c->a);
-                  if (cells->overline)
-                    evas_object_textgrid_row_line_append(row, xp, w, 0, line_th,
-                                                         c->r, c->g, c->b, c->a);
-               }
-             xp += w;
           }
-        if (lrun.len) _textgrid_liga_run_flush(row, obj, o, &lrun);
-        if (run)
-          {
-             run = 0;
-             evas_object_textgrid_row_rect_append(row, rx, rw,
-                                                  rc.r, rc.g, rc.b, rc.a);
-          }
+        else cells += o->cur.w; /* skipped row: cells move as a block */
+        if (tc) tc += o->cur.w;
      }
    yp = obj->cur->geometry.y + y;
    // draw the row data that is generated from the cell array
