@@ -91,15 +91,6 @@ struct _Evas_Textgrid_Data
       Efl_Text_Font_Bitmap_Scalable bitmap_scalable;
    } cur, prev;
 
-   /* Flat palettes: no per-color mallocs and no Eina_Array indirection in
-    * the render loop, just a bounds check and an indexed load.  The counts
-    * are separate so that entries above them (holes) are zeroed, like the
-    * calloc'ed filler entries of the old array of pointers. */
-   Evas_Object_Textgrid_Color palette_standard[256];
-   Evas_Object_Textgrid_Color palette_extended[256];
-   unsigned short             palette_standard_count;
-   unsigned short             palette_extended_count;
-
    int                            ascent;
    int                            line_thickness;
 
@@ -120,6 +111,16 @@ struct _Evas_Textgrid_Data
    unsigned int                   row_change : 1;
    unsigned int                   pal_change : 1;
    unsigned int                   truecolor_enabled : 1;
+
+   /* Flat palettes, at the end so that the hot fields above keep their
+    * offsets: no per-color mallocs and no Eina_Array indirection in the
+    * render loop, just a bounds check and an indexed load.  The counts
+    * are separate so that entries above them (holes) are zeroed, like
+    * the calloc'ed filler entries of the old array of pointers. */
+   Evas_Object_Textgrid_Color palette_standard[256];
+   Evas_Object_Textgrid_Color palette_extended[256];
+   unsigned short             palette_standard_count;
+   unsigned short             palette_extended_count;
 };
 
 struct _Evas_Object_Textgrid_Row
