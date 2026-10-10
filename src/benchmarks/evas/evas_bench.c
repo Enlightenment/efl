@@ -21,6 +21,7 @@ struct _Evas_Benchmark_Case
 static const Evas_Benchmark_Case etc[] = {
    { "Loader", evas_bench_loader, EINA_TRUE },
    { "Saver", evas_bench_saver, EINA_TRUE },
+   { "Textgrid", evas_bench_textgrid, EINA_TRUE },
    { NULL, NULL, EINA_FALSE }
 };
 

@@ -5,6 +5,7 @@
 
 void evas_bench_loader(Eina_Benchmark *bench);
 void evas_bench_saver(Eina_Benchmark *bench);
+void evas_bench_textgrid(Eina_Benchmark *bench);
 
 #endif
 

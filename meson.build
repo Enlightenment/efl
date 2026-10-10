@@ -345,7 +345,7 @@ subprojects = [
   ['elput'            ,['input']             , false,  true, false,  false,   true,     false,  true, ['eina', 'eldbus'], []],
   ['ecore_drm2'       ,['drm']               , false,  true, false,  false,  false,     false,  true, ['ecore'], ['libdrm']],
   ['ecore_cocoa'      ,['cocoa']             , false,  true, false,  false,  false,     false,  true, ['eina'], []],
-  ['evas'             ,[]                    ,  true,  true, false,  false,   true,      true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
+  ['evas'             ,[]                    ,  true,  true, false,   true,   true,      true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
   ['efreet'           ,[]                    , false,  true, false,  false,   true,     false,  true, ['eina', 'efl', 'eo'], []],
   ['ecore_input_evas' ,[]                    , false,  true, false,  false,  false,     false,  true, ['eina', 'evas'], []],
   ['ecore_evas'       ,[]                    ,  true,  true,  true,  false,  false,     false,  true, ['evas', 'ector'], []],
