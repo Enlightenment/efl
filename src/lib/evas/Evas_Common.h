@@ -1856,7 +1856,10 @@ EVAS_API Eina_Bool                     evas_object_image_extension_can_load_fast
  *
  * A cell contains a single unicode character, with associated formatting
  * data including style, color, and color palette.  Double-wide characters
- * are flagged to permit visually merging the cell to the right.
+ * are flagged to permit visually merging the cell to the right.  Colors
+ * are either looked up in a palette by index, or, when the fg_truecolor
+ * or bg_truecolor flag is set, taken from the cell's true color entry
+ * (see #Evas_Textgrid_Truecolor).
  *
  * @since 1.7
  */
@@ -1871,8 +1874,31 @@ struct _Evas_Textgrid_Cell
    unsigned short strikethrough : 1; /**< whether the character is strikethrough'ed */
    unsigned short fg_extended   : 1; /**< whether the extended palette is used for the foreground color */
    unsigned short bg_extended   : 1; /**< whether the extended palette is used for the background color */
-   unsigned short double_width  : 1; /**< if the codepoint is merged with the following cell to the right visually (cells must be in pairs with 2nd cell being a duplicate in all ways except codepoint is 0) */
+   unsigned short double_width  : 1; /**< if the codepoint is merged with the following cell to the right visually (cells must be in pairs with 2nd cell being a duplicate in all ways except codepoint is 0; when a true color is set for the pair, the true color entry must be duplicated as well) */
    unsigned short overline      : 1; /**< whether the character is overlined @since 1.29 */
+   unsigned short fg_truecolor  : 1; /**< the foreground color comes from the true color entry of the cell, and fg and fg_extended are ignored @since 1.29 */
+   unsigned short bg_truecolor  : 1; /**< the background color comes from the true color entry of the cell, and bg and bg_extended are ignored @since 1.29 */
+};
+
+/**
+ * @struct _Evas_Textgrid_Truecolor
+ *
+ * Direct colors of one textgrid cell, used when the fg_truecolor or
+ * bg_truecolor flag of an #Evas_Textgrid_Cell is set.  Components are
+ * pre-multiplied, like palette colors.  An alpha of 0 means no color: a
+ * transparent background, or an invisible foreground.
+ *
+ * @since 1.29
+ */
+typedef struct _Evas_Textgrid_Truecolor Evas_Textgrid_Truecolor;
+struct _Evas_Textgrid_Truecolor
+{
+   struct {
+      unsigned char r, g, b, a;   /**< pre-multiplied foreground color */
+   } fg;
+   struct {
+      unsigned char r, g, b, a;   /**< pre-multiplied background color */
+   } bg;
 };
 
 /**
