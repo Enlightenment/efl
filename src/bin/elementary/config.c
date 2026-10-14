@@ -1641,6 +1641,8 @@ _icon_elm_change(void *data       EINA_UNUSED,
         item = elm_list_selected_item_get(icon_theme_list);
         if (item)
           elm_list_item_selected_set(item, EINA_FALSE);
+        elm_config_icon_theme_set(ELM_CONFIG_ICON_THEME_ELEMENTARY);
+        elm_config_all_flush();
      }
    else
      {
