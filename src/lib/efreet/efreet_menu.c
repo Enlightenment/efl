@@ -3363,7 +3363,7 @@ efreet_menu_cb_md_compare(const Efreet_Menu_Desktop *a, const Efreet_Menu_Deskto
     return strcmp(ecore_file_file_get(a->desktop->orig_path), ecore_file_file_get(b->desktop->orig_path));
 #else
     if (a->desktop->name == b->desktop->name) return 0;
-    return strcasecmp(a->desktop->name, b->desktop->name);
+    return strcoll(a->desktop->name, b->desktop->name);
 #endif
 }
 
