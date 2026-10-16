@@ -470,15 +470,29 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons)
     return EINA_TRUE;
 }
 
+static int _check_changed_history_num = 0;
+static Eina_Array *_check_changed_history = NULL;
+
 static Eina_Bool
 check_changed(Efreet_Cache_Icon_Theme *theme)
 {
     Eina_List *l;
     const char *name;
+    Eina_Bool ret = EINA_FALSE;
 
     if (!theme) return EINA_FALSE;
 
     if (theme->changed) return EINA_TRUE;
+    _check_changed_history_num++;
+    if (!_check_changed_history)
+    { // need a history buf/array
+        _check_changed_history = eina_array_new(8);
+        if (!_check_changed_history) goto done;
+    }
+    // if we have checked this before in this pass - skip it.
+    if (eina_array_find(_check_changed_history, theme, NULL)) goto done;
+    // store this theme in history check array
+    eina_array_push(_check_changed_history, theme);
     if (theme->theme.inherits)
     {
         EINA_LIST_FOREACH(theme->theme.inherits, l, name)
@@ -489,15 +503,30 @@ check_changed(Efreet_Cache_Icon_Theme *theme)
             if (!inherit)
                 INF("Theme `%s` not found for `%s`.",
                         name, theme->theme.name.internal);
-            if (check_changed(inherit)) return EINA_TRUE;
+            if (check_changed(inherit))
+            {
+                ret = EINA_TRUE;
+                goto done;
+            }
         }
     }
     else if (strcmp(theme->theme.name.internal, "hicolor"))
     {
         theme = eina_hash_find(icon_themes, "hicolor");
-        if (check_changed(theme)) return EINA_TRUE;
+        if (check_changed(theme))
+        {
+            ret = EINA_TRUE;
+            goto done;
+        }
     }
-    return EINA_FALSE;
+done:
+    _check_changed_history_num--;
+    if (_check_changed_history_num == 0)
+    {
+        if (_check_changed_history) eina_array_free(_check_changed_history);
+        _check_changed_history = NULL;
+    }
+    return ret;
 }
 
 static Efreet_Icon_Theme_Directory *
