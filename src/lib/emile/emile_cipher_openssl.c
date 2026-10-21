@@ -231,6 +231,7 @@ emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
    unsigned int salt;
    unsigned int size;
    int tmp_len;
+   int final_len;
    int tmp = 0;
 
    if (algo != EMILE_AES256_CBC) return NULL;
@@ -264,13 +265,21 @@ emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
    result = eina_binbuf_new();
    if (!result) goto on_error;
 
-   eina_binbuf_append_length(result, (unsigned char*) (over + 1), tmp_len);
+   if (!eina_binbuf_append_length(result, (unsigned char*) (over + 1), tmp_len))
+     goto on_error;
 
    /* Openssl create the corresponding cipher */
    ctx = EVP_CIPHER_CTX_new();
+   if (!ctx) goto on_error;
 
    if (!EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, ik, iv))
      goto on_error;
+
+   /* The stored size is used to remove padding. Legacy writers round the
+      ciphertext storage up to 32 bytes, which can leave an extra block
+      after the PKCS padding. Disable OpenSSL padding so that Update writes
+      every block, including the last block containing plaintext. */
+   if (!EVP_CIPHER_CTX_set_padding(ctx, 0)) goto on_error;
 
    memset(iv, 0, sizeof (iv));
    memset(ik, 0, sizeof (ik));
@@ -282,18 +291,24 @@ emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
      goto on_error;
 
    /* Openssl close the cipher*/
+   if (!EVP_DecryptFinal_ex(ctx,
+                           (unsigned char *)eina_binbuf_string_get(result) + tmp,
+                           &final_len))
+     goto on_error;
+   tmp += final_len;
    EVP_CIPHER_CTX_free(ctx);
    ctx = NULL;
 
    /* Get the decrypted data size */
-   tmp = *(unsigned int*)(eina_binbuf_string_get(result));
-   tmp = eina_ntohl(tmp);
-   if (tmp > tmp_len || tmp <= 0)
+   if (tmp < (int)sizeof(unsigned int)) goto on_error;
+   size = *(unsigned int*)(eina_binbuf_string_get(result));
+   size = eina_ntohl(size);
+   if (size > tmp - sizeof(unsigned int) || size == 0)
      goto on_error;
 
    /* Remove header and padding  */
    eina_binbuf_remove(result, 0, sizeof (unsigned int));
-   eina_binbuf_remove(result, tmp, eina_binbuf_length_get(result));
+   eina_binbuf_remove(result, size, eina_binbuf_length_get(result));
 
    return result;
 
