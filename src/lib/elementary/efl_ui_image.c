@@ -159,6 +159,17 @@ _efl_ui_image_animate_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+_efl_ui_image_border_apply(Evas_Object *img, Efl_Ui_Image_Data *sd)
+{
+   if (!img) return;
+
+   efl_gfx_image_border_insets_set(img, sd->border.l, sd->border.r,
+                                   sd->border.t, sd->border.b);
+   efl_gfx_image_border_insets_scale_set(img, sd->border.scale);
+   efl_gfx_image_center_fill_mode_set(img, sd->border.fill);
+}
+
 static Evas_Object *
 _img_new(Evas_Object *obj)
 {
@@ -172,6 +183,7 @@ _img_new(Evas_Object *obj)
      (img, EVAS_CALLBACK_IMAGE_PRELOADED, _on_image_preloaded, sd);
    evas_object_smart_member_add(img, obj);
    elm_widget_sub_object_add(obj, img);
+   _efl_ui_image_border_apply(img, sd);
 
    return img;
 }
@@ -884,6 +896,8 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 
    pd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FIT;
    pd->self = obj;
+   pd->border.scale = 1.0;
+   pd->border.fill = EFL_GFX_CENTER_FILL_MODE_DEFAULT;
    /* legacy elm_image starts paused */
    pd->paused = elm_widget_is_legacy(obj);
    pd->playback_speed = 1;
@@ -1428,7 +1442,18 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_border_insets_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, int l, int r, int t, int b)
 {
    if (pd->edje) return;
-   efl_gfx_image_border_insets_set(pd->img, l, r, t, b);
+
+   if (l < 0) l = 0;
+   if (r < 0) r = 0;
+   if (t < 0) t = 0;
+   if (b < 0) b = 0;
+
+   pd->border.l = l;
+   pd->border.r = r;
+   pd->border.t = t;
+   pd->border.b = b;
+
+   if (pd->img) efl_gfx_image_border_insets_set(pd->img, l, r, t, b);
 }
 
 EOLIAN static void
@@ -1441,9 +1466,16 @@ _efl_ui_image_efl_gfx_image_border_insets_get(const Eo *obj EINA_UNUSED, Efl_Ui_
         if (t) *t = 0;
         if (b) *b = 0;
      }
-   else
+   else if (pd->img)
      {
         efl_gfx_image_border_insets_get(pd->img, l, r, t, b);
+     }
+   else
+     {
+        if (l) *l = pd->border.l;
+        if (r) *r = pd->border.r;
+        if (t) *t = pd->border.t;
+        if (b) *b = pd->border.b;
      }
 }
 
@@ -1451,14 +1483,16 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_border_insets_scale_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, double scale)
 {
    if (pd->edje) return;
-   efl_gfx_image_border_insets_scale_set(pd->img, scale);
+   pd->border.scale = scale;
+   if (pd->img) efl_gfx_image_border_insets_scale_set(pd->img, scale);
 }
 
 EOLIAN static double
 _efl_ui_image_efl_gfx_image_border_insets_scale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 {
    if (pd->edje) return 0.0;
-   return efl_gfx_image_border_insets_scale_get(pd->img);
+   if (pd->img) return efl_gfx_image_border_insets_scale_get(pd->img);
+   return pd->border.scale;
 }
 
 
@@ -1466,7 +1500,8 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_center_fill_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Efl_Gfx_Center_Fill_Mode fill)
 {
    if (pd->edje) return;
-   efl_gfx_image_center_fill_mode_set(pd->img, fill);
+   pd->border.fill = fill;
+   if (pd->img) efl_gfx_image_center_fill_mode_set(pd->img, fill);
 }
 
 
@@ -1474,7 +1509,8 @@ EOLIAN static Efl_Gfx_Center_Fill_Mode
 _efl_ui_image_efl_gfx_image_center_fill_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
 {
    if (pd->edje) return EFL_GFX_CENTER_FILL_MODE_DEFAULT;
-   return efl_gfx_image_center_fill_mode_get(pd->img);
+   if (pd->img) return efl_gfx_image_center_fill_mode_get(pd->img);
+   return pd->border.fill;
 }
 
 EOLIAN static Eina_Error

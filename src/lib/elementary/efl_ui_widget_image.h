@@ -59,6 +59,12 @@ struct _Efl_Ui_Image_Data
    double                playback_speed;
    double                align_x, align_y;
 
+   struct {
+      int                      l, r, t, b;
+      double                   scale;
+      Efl_Gfx_Center_Fill_Mode fill;
+   } border;
+
    Eina_Size2D           load_size;
    int                   frame_count;
    int                   cur_frame;
