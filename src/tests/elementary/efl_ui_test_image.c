@@ -31,6 +31,35 @@ EFL_START_TEST(efl_ui_image_test_icon)
 EFL_END_TEST
 
 extern Eo *elm_image_object_get(Eo*);
+EFL_START_TEST(efl_ui_image_test_border_insets_before_load)
+{
+   Eo *win, *image;
+   int l, r, t, b;
+
+   win = win_add(NULL, "image", EFL_UI_WIN_TYPE_BASIC);
+   image = efl_add(EFL_UI_IMAGE_CLASS, win);
+
+   /* The file can be selected before the image is actually loaded. Border
+    * insets set in that window must not be lost when loading happens. */
+   efl_file_set(image, ELM_IMAGE_DATA_DIR"/images/logo.png");
+   efl_gfx_image_border_insets_set(image, 50, 50, 50, 50);
+
+   efl_gfx_image_border_insets_get(image, &l, &r, &t, &b);
+   ck_assert_int_eq(l, 50);
+   ck_assert_int_eq(r, 50);
+   ck_assert_int_eq(t, 50);
+   ck_assert_int_eq(b, 50);
+
+   ck_assert_int_eq(efl_file_load(image), 0);
+
+   efl_gfx_image_border_insets_get(image, &l, &r, &t, &b);
+   ck_assert_int_eq(l, 50);
+   ck_assert_int_eq(r, 50);
+   ck_assert_int_eq(t, 50);
+   ck_assert_int_eq(b, 50);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_image_test_scale_method)
 {
    Eo *win, *image;
@@ -59,5 +88,6 @@ EFL_END_TEST
 void efl_ui_test_image(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_image_test_icon);
+   tcase_add_test(tc, efl_ui_image_test_border_insets_before_load);
    tcase_add_test(tc, efl_ui_image_test_scale_method);
 }
