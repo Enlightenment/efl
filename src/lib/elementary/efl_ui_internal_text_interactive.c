@@ -2112,7 +2112,6 @@ _efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_return_key_s
 #else
    (void)obj;
    (void)en;
-   (void)disabled;
 #endif
 }
 
