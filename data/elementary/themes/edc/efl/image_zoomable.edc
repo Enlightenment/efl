@@ -21,7 +21,7 @@ group { name: "efl/image_zoomable";
    IMAGE_RING("ringb", 160)
    IMAGE_RING("ringc", 160)
    parts {
-      BUSY("base", "elm,state,pulse,started", "efl", "elm,state,pulse,stopped", "efl")
+      BUSY("base", "efl,state,busy,started", "efl", "efl,state,busy,stopped", "efl")
       part { name: "base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
