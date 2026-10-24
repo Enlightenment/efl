@@ -342,6 +342,16 @@ _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *s
    if (!pd) return ;
    pd->request.stat = NULL;
 
+   /* The answer to a question nobody is around to hear any more. Going on
+      from here would watch the directory and list it, and the handlers that
+      takes would outlive the object: invalidate has already taken the ones
+      it knew about away. */
+   if (efl_invalidated_get(model) || efl_invalidating_get(model))
+     {
+        efl_unref(model);
+        return;
+     }
+
    pd->st = malloc(sizeof (Eina_Stat));
    if (!pd->st) return ;
 
@@ -1024,21 +1034,30 @@ _efl_io_model_efl_model_children_slice_get(Eo *obj, Efl_Io_Model_Data *pd,
         info->parent_ref = EINA_TRUE;
 
         if (info->object == NULL)
-          // Little trick here, setting internal data before finalize
-          info->object = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
-                                     efl_loop_model_volatile_make(efl_added),
-                                     child_data = efl_data_scope_get(efl_added, EFL_IO_MODEL_CLASS),
-                                     child_data->info = info,
-                                     child_data->path = eina_stringshare_ref(info->path),
-                                     child_data->parent = ls,
-                                     // NOTE: We are assuming here that the parent model will outlive all its children
-                                     child_data->filter.cb = pd->filter.cb,
-                                     child_data->filter.data = pd->filter.data);
+          {
+             // Little trick here, setting internal data before finalize
+             info->object = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
+                                        efl_loop_model_volatile_make(efl_added),
+                                        child_data = efl_data_scope_get(efl_added, EFL_IO_MODEL_CLASS),
+                                        child_data->info = info,
+                                        child_data->path = eina_stringshare_ref(info->path),
+                                        child_data->parent = ls,
+                                        // NOTE: We are assuming here that the parent model will outlive all its children
+                                        child_data->filter.cb = pd->filter.cb,
+                                        child_data->filter.data = pd->filter.data);
+
+             /* The entry points weakly at the child so that a later slice
+                hands out the same one, and so that the entry stops pointing
+                at it when it goes. Added here with the object rather than on
+                every slice: the extra ones a repeated slice would add are
+                not taken away when the child is invalidated, and each of them
+                writes into the entry long after it has been freed. */
+             efl_wref_add(info->object, &info->object);
+          }
         else
           efl_ref(info->object);
         eina_value_array_append(&array, info->object);
 
-        efl_wref_add(info->object, &info->object);
         efl_unref(info->object);
 
         count--;
@@ -1118,6 +1137,18 @@ _efl_io_model_efl_object_invalidate(Eo *obj , Efl_Io_Model_Data *priv)
    // are already in the process of doing an implicit del).
    efl_invalidate(efl_super(obj, EFL_IO_MODEL_CLASS));
 
+   /* Before the monitor rather than after it: waiting on a request runs the
+      loop, so anything that comes back does so while the model is still in
+      one piece. */
+   if (priv->request.stat)
+     {
+        if (!ecore_thread_wait(priv->request.stat->thread, 0.1))
+          {
+             ecore_thread_cancel(priv->request.stat->thread);
+             ecore_thread_wait(priv->request.stat->thread, 0.1);
+          }
+     }
+
    _efl_io_model_efl_model_monitor_del(priv);
 
    // Unlink the object from the parent
@@ -1140,14 +1171,6 @@ _efl_io_model_efl_object_invalidate(Eo *obj , Efl_Io_Model_Data *priv)
           {
              ecore_thread_cancel(priv->request.move->thread);
              ecore_thread_wait(priv->request.move->thread, 0.1);
-          }
-     }
-   if (priv->request.stat)
-     {
-        if (!ecore_thread_wait(priv->request.stat->thread, 0.1))
-          {
-             ecore_thread_cancel(priv->request.stat->thread);
-             ecore_thread_wait(priv->request.stat->thread, 0.1);
           }
      }
 }
