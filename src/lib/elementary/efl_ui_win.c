@@ -1765,8 +1765,9 @@ _efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, int rotat
 {
    Efl_Ui_Widget *widget;
    Eina_Iterator *it;
-   int rot = rotation %360;
+   int rot = rotation % 360;
 
+   if (rot < 0) rot += 360;
    if (pd->rot == rot) return;
 
    _win_rotate(obj, pd, rot, EINA_FALSE);

@@ -469,6 +469,24 @@ EFL_START_TEST(efl_ui_win_test_device_added_removed)
 }
 EFL_END_TEST
 
+/* Any angle is taken, and kept as the same angle between 0 and 359. */
+EFL_START_TEST(efl_ui_win_test_rotation_normalized)
+{
+   Efl_Ui_Win *win;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   efl_ui_win_rotation_set(win, 90);
+   ck_assert_int_eq(efl_ui_win_rotation_get(win), 90);
+   efl_ui_win_rotation_set(win, 360);
+   ck_assert_int_eq(efl_ui_win_rotation_get(win), 0);
+   efl_ui_win_rotation_set(win, -90);
+   ck_assert_int_eq(efl_ui_win_rotation_get(win), 270);
+   efl_ui_win_rotation_set(win, 450);
+   ck_assert_int_eq(efl_ui_win_rotation_get(win), 90);
+   efl_unref(win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_win_test_type)
 {
    Efl_Ui_Win *win;
@@ -494,5 +512,6 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_wheel);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_cancel);
    tcase_add_test(tc, efl_ui_win_test_device_added_removed);
+   tcase_add_test(tc, efl_ui_win_test_rotation_normalized);
    tcase_add_test(tc, efl_ui_win_test_type);
 }
