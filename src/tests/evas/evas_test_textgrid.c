@@ -25,6 +25,9 @@
 /* Cell size, set by _textgrid_new() for the current test */
 static int cw, ch;
 
+/* The buffer canvas does not clear what no object covers, so a transparent
+ * black backdrop drawn with COPY makes "the canvas shows through" mean zero
+ * rather than whatever the allocator left there. */
 #define START_TG_TEST() \
    Ecore_Evas *ee; Evas *e; \
    ee = ecore_evas_buffer_new(CANVAS_W, CANVAS_H); \
@@ -32,6 +35,7 @@ static int cw, ch;
    ecore_evas_show(ee); \
    ecore_evas_manual_render_set(ee, EINA_TRUE); \
    e = ecore_evas_get(ee); \
+   _backdrop_add(e); \
    do {} while (0)
 
 #define END_TG_TEST() do { ecore_evas_free(ee); } while (0)
@@ -47,6 +51,17 @@ static int cw, ch;
 /* What shows through where nothing is drawn on the buffer canvas:
  * transparent black */
 #define COL_CANVAS 0x00000000u
+
+static void
+_backdrop_add(Evas *e)
+{
+   Evas_Object *bg = evas_object_rectangle_add(e);
+
+   evas_object_color_set(bg, 0, 0, 0, 0);
+   evas_object_render_op_set(bg, EVAS_RENDER_COPY);
+   evas_object_geometry_set(bg, 0, 0, CANVAS_W, CANVAS_H);
+   evas_object_show(bg);
+}
 
 static Evas_Object *
 _textgrid_new(Evas *e)
