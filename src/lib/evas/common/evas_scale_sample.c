@@ -825,7 +825,7 @@ evas_common_scale_sample_init(void)
         goto cleanup;
      }
    main_queue = eina_thread_queue_new();
-   if (EINA_UNLIKELY(!thread_queue))
+   if (EINA_UNLIKELY(!main_queue))
      {
         ERR("Failed to create thread queue");
         goto cleanup;
@@ -842,8 +842,14 @@ evas_common_scale_sample_init(void)
    return;
 
 cleanup:
+   /* Without the thread there is nothing for a fork to reset, and nothing
+    * would take the callback back: shutdown only does when the thread
+    * runs. */
+   ecore_fork_reset_callback_del(evas_common_scale_sample_fork_reset, NULL);
    if (thread_queue) eina_thread_queue_free(thread_queue);
    if (main_queue) eina_thread_queue_free(main_queue);
+   thread_queue = NULL;
+   main_queue = NULL;
 }
 
 EVAS_API void
