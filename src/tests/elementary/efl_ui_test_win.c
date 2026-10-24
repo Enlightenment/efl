@@ -487,6 +487,18 @@ EFL_START_TEST(efl_ui_win_test_rotation_normalized)
 }
 EFL_END_TEST
 
+/* Loading an image as the window's background says it worked when it did. */
+EFL_START_TEST(efl_ui_win_test_background_load)
+{
+   Efl_Ui_Win *win;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   ck_assert(efl_file_simple_load(efl_part(win, "background"), ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   ck_assert(efl_isa(efl_content_get(efl_part(win, "background")), EFL_GFX_IMAGE_INTERFACE));
+   efl_unref(win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_win_test_type)
 {
    Efl_Ui_Win *win;
@@ -511,6 +523,7 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_in_out);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_wheel);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_cancel);
+   tcase_add_test(tc, efl_ui_win_test_background_load);
    tcase_add_test(tc, efl_ui_win_test_device_added_removed);
    tcase_add_test(tc, efl_ui_win_test_rotation_normalized);
    tcase_add_test(tc, efl_ui_win_test_type);

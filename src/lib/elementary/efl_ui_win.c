@@ -7867,11 +7867,11 @@ _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const cha
              _elm_win_standard_init(obj);
           }
 
-        return ok;
+        return ok ? 0 : EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 
    WIN_PART_ERR(part);
-   return EINA_FALSE;
+   return EINVAL;
 }
 
 static const char *
