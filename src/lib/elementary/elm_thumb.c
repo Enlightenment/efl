@@ -413,11 +413,18 @@ static void _on_die_cb(void *, Ethumb_Client *);
 /* The client is stored here, by the callback, and never from the return of
    ethumb_client_connect().
 
-   A connection that fails takes the client with it -- ethumb_client frees it
-   as it reports the failure -- and the report can arrive before the call that
-   started it has returned. Storing the returned handle then writes a pointer
-   to freed memory over the NULL this just set, and the next thing to
-   disconnect it frees it twice. */
+   A connection that fails before ethumb_client_connect() returns takes the
+   client with it -- ethumb_client frees it and reports the failure with no
+   client at all. Storing the returned handle then writes a pointer to freed
+   memory over the NULL this just set, and the next thing to disconnect it
+   frees it twice.
+
+   One that fails later, when the daemon answers and the answer is no, does
+   not: the client is reported and is still ours to disconnect. Forgetting it
+   there kept its eldbus connection alive past eldbus_shutdown(), which frees
+   what the connection points at but not the connection, and the next
+   program to start eldbus was handed that same connection with every name
+   in it gone. */
 static void
 _connect_cb(void *data EINA_UNUSED,
             Ethumb_Client *c,
@@ -434,7 +441,10 @@ _connect_cb(void *data EINA_UNUSED,
         ecore_event_add(ELM_ECORE_EVENT_ETHUMB_CONNECT, NULL, NULL, NULL);
      }
    else
-     _elm_ethumb_client = NULL;
+     {
+        _elm_ethumb_client = NULL;
+        if (c) ethumb_client_disconnect(c);
+     }
 }
 
 /* Ask for a connection, and hold the handle for as long as it is being made.
