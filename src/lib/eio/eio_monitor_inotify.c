@@ -158,6 +158,7 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
  * @endcond
  */
 static Eina_Bool reseting;
+static Eina_Bool fork_reset_registered;
 static void
 _eio_monitor_reset(void *data EINA_UNUSED)
 {
@@ -192,6 +193,13 @@ void eio_monitor_backend_init(void)
 {
    int fd;
 
+   /* Registered whether or not inotify answers, so that shutdown can always
+    * take it back: a fork reset callback left behind outlives eina's lists,
+    * and the next ecore_init appends to freed memory. inotify does run out,
+    * at 128 instances per user by default. */
+   if ((!reseting) && (!fork_reset_registered))
+     fork_reset_registered = ecore_fork_reset_callback_add(_eio_monitor_reset, NULL);
+
    fd = inotify_init();
    if (fd < 0)
      return;
@@ -206,13 +214,17 @@ void eio_monitor_backend_init(void)
      }
 
    _inotify_monitors = eina_hash_int32_new(_eio_inotify_del);
-   if (!reseting)
-     ecore_fork_reset_callback_add(_eio_monitor_reset, NULL);
 }
 
 void eio_monitor_backend_shutdown(void)
 {
    int fd;
+
+   if ((!reseting) && (fork_reset_registered))
+     {
+        ecore_fork_reset_callback_del(_eio_monitor_reset, NULL);
+        fork_reset_registered = EINA_FALSE;
+     }
 
    if (!_inotify_fdh) return;
 
@@ -226,8 +238,6 @@ void eio_monitor_backend_shutdown(void)
      return;
 
    close(fd);
-   if (!reseting)
-     ecore_fork_reset_callback_del(_eio_monitor_reset, NULL);
 }
 
 void eio_monitor_backend_add(Eio_Monitor *monitor)
