@@ -2230,6 +2230,20 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
 
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
+   /* An absolute path is a file, not the name of an icon.
+    *
+    * It was tried as a name first and only loaded as a file once the theme
+    * and the FreeDesktop cache had both said no -- which meant a lookup of
+    * "/home/someone/holiday.jpg" in an icon theme, every time, for a caller
+    * that never meant one. Nothing can answer it, so the answer was never
+    * different; only the work was. */
+   if (!eina_file_path_relative(name))
+     {
+        if (fdo) *fdo = EINA_FALSE;
+        eina_stringshare_replace(&sd->stdicon, NULL);
+        return efl_file_simple_load(obj, name, NULL);
+     }
+
    /* try locating the icon using the specified theme */
    if (!strcmp(ELM_CONFIG_ICON_THEME_ELEMENTARY, elm_config_icon_theme_get()))
      {
@@ -2255,13 +2269,6 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
      }
    else
      eina_stringshare_replace(&sd->stdicon, NULL);
-
-   if (!eina_file_path_relative(name))
-     {
-        if (fdo)
-          *fdo = EINA_FALSE;
-        return efl_file_simple_load(obj, name, NULL);
-     }
 
    /* if that fails, see if icon name is in the format size/name. if so,
 		try locating a fallback without the size specification */
