@@ -2452,6 +2452,10 @@ _efl_object_composite_detach(Eo *parent_id, Efl_Object_Data *pd EINA_UNUSED, Eo 
 
    // unlikely so improve l1 instr cache by using goto
    if (!efl_composite_part_is(comp_obj_id)) goto err_part;
+     {
+        Efl_Object_Data *comp_pd = efl_data_scope_get(comp_obj_id, EFL_OBJECT_CLASS);
+        if (comp_pd->ext->composite_parent != parent_id) goto err_part;
+     }
 
    opt = EO_OPTIONAL_COW_WRITE(parent);
    opt->composite_objects = eina_list_remove(opt->composite_objects, comp_obj_id);

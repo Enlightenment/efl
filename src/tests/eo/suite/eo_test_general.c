@@ -455,6 +455,26 @@ EFL_START_TEST(efl_composite_tests)
 }
 EFL_END_TEST
 
+/* Detaching from an object the composite is not attached to is refused, and
+ * leaves the real attachment alone. */
+EFL_START_TEST(efl_composite_detach_wrong_parent)
+{
+   Eo *parent = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *other = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *comp = efl_add_ref(SIMPLE_CLASS, NULL);
+
+   fail_if(!efl_composite_attach(parent, comp));
+   fail_if(efl_composite_detach(other, comp));
+   fail_if(!efl_composite_part_is(comp));
+   fail_if(!efl_composite_detach(parent, comp));
+   fail_if(efl_composite_part_is(comp));
+
+   efl_unref(comp);
+   efl_unref(other);
+   efl_unref(parent);
+}
+EFL_END_TEST
+
 static Eina_Bool _man_should_con = EINA_TRUE;
 static Eina_Bool _man_should_des = EINA_TRUE;
 static const Efl_Class *cur_klass = NULL;
@@ -1858,6 +1878,7 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_data_safe_fetch);
    tcase_add_test(tc, efl_isa_tests);
    tcase_add_test(tc, efl_composite_tests);
+   tcase_add_test(tc, efl_composite_detach_wrong_parent);
    tcase_add_test(tc, eo_man_free);
    tcase_add_test(tc, efl_refs);
    tcase_add_test(tc, efl_weak_reference);
