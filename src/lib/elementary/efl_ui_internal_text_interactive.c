@@ -2097,10 +2097,10 @@ _efl_ui_internal_text_interactive_efl_input_text_entity_input_panel_return_key_s
         switch (state)
         {
            case EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_ENABLED:
-              ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, EINA_TRUE);
+              ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, EINA_FALSE);
            break;
            case EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_DISABLED:
-              ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, EINA_FALSE);
+              ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, EINA_TRUE);
            break;
            case EFL_INPUT_TEXT_PANEL_RETURN_KEY_STATE_AUTO:
               _return_key_update(obj);
