@@ -232,9 +232,39 @@ _elm_video_check(Evas_Object *video)
    return EINA_TRUE;
 }
 
+static Eina_Bool _elm_emotion_held = EINA_FALSE;
+
+/* Emotion, started the first time a video is made and stopped when
+ * elementary is, rather than around each video.
+ *
+ * Every Efl.Canvas.Video starts and stops emotion around its own lifetime, so
+ * the last one going takes emotion down -- and emotion going down waits for
+ * whatever its decoders still have queued by running the main loop. That
+ * happened inside the video's deletion, with the canvas part way through
+ * tearing it out, and anything else that was waiting on the loop ran there
+ * too. Holding it here makes deleting a video only that; the engine is still
+ * each video's own.
+ */
+void
+_elm_emotion_ensure(void)
+{
+   if (_elm_emotion_held) return;
+   _elm_emotion_held = emotion_init();
+}
+
+void
+_elm_unneed_emotion(void)
+{
+   if (!_elm_emotion_held) return;
+   _elm_emotion_held = EINA_FALSE;
+   emotion_shutdown();
+}
+
 EOLIAN static void
 _efl_ui_video_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Video_Data *priv)
 {
+   _elm_emotion_ensure();
+
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (!elm_widget_theme_klass_get(obj))
