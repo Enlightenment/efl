@@ -202,10 +202,36 @@ EFL_START_TEST(evas_test_events_touch_seat_removed)
 }
 EFL_END_TEST
 
+/* Cancelling the pointer of one seat releases the fingers of that seat only. */
+EFL_START_TEST(evas_test_events_touch_cancel_one_seat)
+{
+   Evas *evas = EVAS_TEST_INIT_EVAS();
+   Test_Seat a, b;
+
+   _test_seat_add(evas, &a, "seat-a");
+   _test_seat_add(evas, &b, "seat-b");
+
+   /* the other seat's finger comes first in the list, so a cancel that walks
+    * every point meets it before the fingers of the seat being cancelled */
+   _touch_feed(evas, b.mouse, EFL_POINTER_ACTION_DOWN, 3, 80, 80);
+   _touch_feed(evas, a.mouse, EFL_POINTER_ACTION_DOWN, 1, 10, 10);
+   _touch_feed(evas, a.mouse, EFL_POINTER_ACTION_DOWN, 2, 50, 50);
+
+   _touch_feed(evas, a.mouse, EFL_POINTER_ACTION_CANCEL, 0, 0, 0);
+   ck_assert_int_eq(evas_canvas_seat_touch_point_count(evas, a.seat), 0);
+   ck_assert_int_eq(evas_canvas_seat_touch_point_count(evas, b.seat), 1);
+   ck_assert_int_eq(evas_touch_point_list_count(evas), 1);
+   _touch_check(evas, b.seat, 0, 3, 80, 80);
+
+   ecore_evas_free(ecore_evas_ecore_evas_get(evas));
+}
+EFL_END_TEST
+
 void evas_test_events(TCase *tc)
 {
    tcase_add_test(tc, evas_test_events_frozen_mouse_up);
    tcase_add_test(tc, evas_test_events_touch_seats_distinct);
    tcase_add_test(tc, evas_test_events_touch_default_seat);
    tcase_add_test(tc, evas_test_events_touch_seat_removed);
+   tcase_add_test(tc, evas_test_events_touch_cancel_one_seat);
 }

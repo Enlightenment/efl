@@ -2141,6 +2141,8 @@ _canvas_event_feed_mouse_cancel_internal(Evas_Public_Data *e, Efl_Input_Pointer_
    ev->event_flags = (Efl_Input_Flags)flags;
    EINA_LIST_FOREACH_SAFE(e->touch_points, l, ll, point)
      {
+        /* only the touches of the seat being cancelled */
+        if (point->seat != pdata->seat->seat) continue;
         if ((point->state == EVAS_TOUCH_POINT_DOWN) ||
             (point->state == EVAS_TOUCH_POINT_MOVE) ||
             (point->state == EVAS_TOUCH_POINT_STILL))
