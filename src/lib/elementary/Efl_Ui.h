@@ -295,6 +295,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_multi_selectable_index_range.eo.h>
 # include <efl_ui_popup.eo.h>
 # include <efl_ui_alert_popup.eo.h>
+# include <efl_ui_alert_popup_part_title.eo.h>
 # include <efl_ui_popup_part_backwall.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list.eo.h>
