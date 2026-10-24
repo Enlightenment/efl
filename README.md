@@ -53,9 +53,17 @@ events to appropriate callbacks.
 *BSD 2-Clause license*
 
 This library provides an API for audio playback and recording. It uses
-pulse audio underneath to handle mixing and policies. The API for this
-should not be considered stable right now because it relies on EO and
-EO is not considered finalized yet.
+pulse audio or pipewire underneath to handle mixing and policies. The API
+for this should not be considered stable right now because it relies on EO
+and EO is not considered finalized yet. It will try and auto-detect by
+trying both pulse and pipewire and picking the one that works. You can
+be explicit by setting the env var ECORE_AUDIO_BACKEND. So:
+
+    export ECORE_AUDIO_BACKEND=pipewire
+    export ECORE_AUDIO_BACKEND=pulse
+    export ECORE_AUDIO_BACKEND=auto
+
+are your options.
 
 **Ecore Cocoa:**
 
@@ -358,6 +366,7 @@ Required by default:
 * fribidi
 * harfbuzz
 * libpulse
+* libpipewire (1.4.0 or newer - only needed for headers in build - runtime is auto-detected/loaded)
 * libsndfile
 * libx11
 * libxau
