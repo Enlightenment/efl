@@ -219,8 +219,19 @@ _ethumb_client_free(Ethumb_Client *client)
 
    if (client->dbus_pending)
      {
+        Eina_List *pendings = client->dbus_pending;
         Eldbus_Pending *pending;
-        EINA_LIST_FREE(client->dbus_pending, pending)
+
+        /* Taken away before any of them is cancelled.
+         *
+         * Cancelling one calls its reply handler, and the reply handlers here
+         * remove themselves from this very list -- so freeing the list as it
+         * is walked means a handler removing itself from nodes that have
+         * already been freed. Disconnecting a client with calls still in
+         * flight is what reaches this, which is what a short-lived widget
+         * does. */
+        client->dbus_pending = NULL;
+        EINA_LIST_FREE(pendings, pending)
            eldbus_pending_cancel(pending);
      }
 
