@@ -365,6 +365,7 @@ group { name: "efl/button:anchor";
             rel2.offset: 4 -5;
             rel2.to: "base";
             visible: 0;
+            offscale;
          }
          desc { "visible";
             inherit: "default";
@@ -398,6 +399,7 @@ group { name: "efl/button:anchor";
                min: 0 0;
             }
             visible: 0;
+            offscale;
             min: 0 ICMIN;
          }
          desc { "visible";
