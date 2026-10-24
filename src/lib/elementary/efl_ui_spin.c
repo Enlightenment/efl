@@ -36,6 +36,7 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "spin");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    sd->val_max = 100.0;
 
@@ -120,6 +121,9 @@ _efl_ui_spin_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd,
      efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
 
    efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+   /* a screen reader reads the value, so it is told when it moves */
+   if (_elm_config->atspi_mode)
+     efl_access_value_changed_signal_emit(obj);
 
    _label_write(obj, sd);
 }
@@ -128,6 +132,18 @@ EOLIAN static double
 _efl_ui_spin_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
 {
    return sd->val;
+}
+
+/* A spin shows a value but has nothing to do itself; Efl.Ui.Spin_Button adds
+ * the actions. The empty table keeps Efl.Access.Action from calling an
+ * unimplemented function when a screen reader asks. */
+EOLIAN static const Efl_Access_Action_Data *
+_efl_ui_spin_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd EINA_UNUSED)
+{
+   static Efl_Access_Action_Data atspi_actions[] = {
+      { NULL, NULL, NULL, NULL }
+   };
+   return &atspi_actions[0];
 }
 
 #include "efl_ui_spin.eo.c"

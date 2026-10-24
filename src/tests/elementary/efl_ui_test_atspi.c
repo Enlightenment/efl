@@ -5,6 +5,7 @@
 
 #define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_OBJECT_PROTECTED
+#define EFL_ACCESS_ACTION_PROTECTED
 
 #include <string.h>
 #include <Efl_Ui.h>
@@ -614,6 +615,7 @@ EFL_START_TEST(test_efl_ui_widget_roles)
       { efl_ui_tags_class_get, EFL_ACCESS_ROLE_PANEL },
       { efl_ui_textpath_class_get, EFL_ACCESS_ROLE_LABEL },
       { efl_ui_vg_animation_class_get, EFL_ACCESS_ROLE_ANIMATION },
+      { efl_ui_spin_class_get, EFL_ACCESS_ROLE_SPIN_BUTTON },
    };
    unsigned int i;
    Eo *win;
@@ -629,6 +631,50 @@ EFL_START_TEST(test_efl_ui_widget_roles)
                       efl_access_object_role_get(obj), expected[i].role);
         efl_del(obj);
      }
+}
+EFL_END_TEST
+
+static int _value_changes;
+
+static void
+_count_value_change(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   if ((ev->desc == EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED) &&
+       ev->info && !strcmp(ev->info, "value"))
+     _value_changes++;
+}
+
+/* Widgets whose value a screen reader reads announce when it changes, and a
+ * spin, which has nothing to do, answers that it has no actions. */
+EFL_START_TEST(test_efl_ui_value_announced)
+{
+   Efl_Access_Event_Handler *hdl;
+   Eina_Bool atspi = elm_config_atspi_mode_get();
+   Eo *win, *progress, *spin, *spin_button;
+
+   win = win_add(NULL, "values", EFL_UI_WIN_TYPE_BASIC);
+   progress = efl_add(EFL_UI_PROGRESSBAR_CLASS, win);
+   spin = efl_add(EFL_UI_SPIN_CLASS, win);
+   spin_button = efl_add(EFL_UI_SPIN_BUTTON_CLASS, win);
+
+   {
+      /* the table is empty rather than calling what was never written */
+      Eina_List *actions = efl_access_action_actions_get(spin);
+
+      ck_assert_ptr_eq(actions, NULL);
+   }
+
+   elm_config_atspi_mode_set(EINA_TRUE);
+   _value_changes = 0;
+   hdl = efl_access_object_event_handler_add(_count_value_change, NULL);
+   efl_ui_range_value_set(progress, 0.5);
+   ck_assert_int_eq(_value_changes, 1);
+   efl_ui_range_value_set(spin, 3);
+   ck_assert_int_eq(_value_changes, 2);
+   efl_ui_range_value_set(spin_button, 4);
+   ck_assert_int_eq(_value_changes, 3);
+   efl_access_object_event_handler_del(hdl);
+   elm_config_atspi_mode_set(atspi);
 }
 EFL_END_TEST
 
@@ -657,4 +703,5 @@ void efl_ui_test_atspi(TCase *tc)
    tcase_add_test(tc, test_efl_access_object_reading_info_type_set);
    tcase_add_test(tc, test_efl_access_object_reading_info_type_get);
    tcase_add_test(tc, test_efl_ui_widget_roles);
+   tcase_add_test(tc, test_efl_ui_value_announced);
 }

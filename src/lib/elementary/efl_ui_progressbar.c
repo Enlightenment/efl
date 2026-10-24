@@ -502,6 +502,10 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
         if (EINA_DBL_EQ(sd->val, max))
           efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
      }
+
+   /* a screen reader reads the value, so it is told when it moves */
+   if (_elm_config->atspi_mode)
+     efl_access_value_changed_signal_emit(obj);
 }
 
 static double

@@ -14,5 +14,6 @@ Efl.Ui.Format, Efl.Access.Widget.Action
       Efl.Ui.Range_Display.range_limits { get; set; }
       Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Ui.Format.apply_formatted_value;
+      Efl.Access.Widget.Action.elm_actions { get; }
    }
 }
