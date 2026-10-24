@@ -2735,6 +2735,8 @@ _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
    sd->obj = obj;
    sd->needs_theme_apply = EINA_TRUE;
    sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 1;
+   /* legacy widgets follow the window's rotation unless told not to */
+   sd->automatic_orientation_apply = elm_widget_is_legacy(obj);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);

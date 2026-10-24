@@ -41,6 +41,23 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+/* Orientation mode is on by default and the setter's argument says
+ * "disabled", as it did before rotation moved to the layout. */
+EFL_START_TEST(elm_layout_test_orientation_mode)
+{
+   Evas_Object *win, *ly;
+
+   win = win_add(NULL, "layout", ELM_WIN_BASIC);
+   ly = elm_layout_add(win);
+
+   ck_assert_int_eq(elm_object_orientation_mode_disabled_get(ly), EINA_FALSE);
+   elm_object_orientation_mode_disabled_set(ly, EINA_TRUE);
+   ck_assert_int_eq(elm_object_orientation_mode_disabled_get(ly), EINA_TRUE);
+   elm_object_orientation_mode_disabled_set(ly, EINA_FALSE);
+   ck_assert_int_eq(elm_object_orientation_mode_disabled_get(ly), EINA_FALSE);
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_layout_test_swallows)
 {
    char buf[PATH_MAX];
@@ -135,6 +152,7 @@ void elm_test_layout(TCase *tc)
    tcase_add_test(tc, elm_layout_test_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_layout_test_swallows);
+   tcase_add_test(tc, elm_layout_test_orientation_mode);
    tcase_add_test(tc, elm_layout_test_sizing);
    tcase_add_test(tc, elm_layout_test_theme_changed_callback);
 }
