@@ -342,8 +342,32 @@ EFL_START_TEST(efl_ui_layout_content_set_while_building)
 }
 EFL_END_TEST
 
+/* A part handle is only something alongside the widget it belongs to, which
+ * efl_part() attaches before finalize. Built directly -- which efl_add()
+ * allows, and which anything walking every class will do -- there is no
+ * widget, and the part used to work off NULL and take the process down. It
+ * is refused instead. */
+EFL_START_TEST(efl_ui_layout_part_without_widget)
+{
+   Eo *win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   const Efl_Class *klasses[] = {
+      EFL_UI_WIDGET_PART_CLASS, EFL_UI_WIDGET_PART_BG_CLASS,
+      EFL_UI_LAYOUT_PART_CLASS, EFL_UI_LAYOUT_PART_TEXT_CLASS,
+      EFL_UI_LAYOUT_PART_CONTENT_CLASS, EFL_UI_LAYOUT_PART_BG_CLASS,
+   };
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(klasses); i++)
+     ck_assert_ptr_eq(efl_add(klasses[i], win), NULL);
+
+   /* and a part handed out by its widget still works */
+   efl_text_set(efl_part(efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, win), "text"), "works");
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
+   tcase_add_test(tc, efl_ui_layout_part_without_widget);
    tcase_add_test(tc, efl_ui_layout_text_set_while_building);
    tcase_add_test(tc, efl_ui_layout_content_set_while_building);
    tcase_add_test(tc, efl_ui_layout_test_property_bind);

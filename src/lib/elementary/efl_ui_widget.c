@@ -5653,6 +5653,20 @@ _efl_ui_widget_efl_part_part_get(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_U
    return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_CLASS, obj, part);
 }
 
+EOLIAN static Efl_Object *
+_efl_ui_widget_part_efl_object_finalize(Eo *obj, Elm_Part_Data *pd)
+{
+   /* A part handle only means anything alongside the widget it is a part of,
+    * and efl_part() attaches that before finalize runs. Built on its own --
+    * which efl_add() permits, and which anything walking every class will do
+    * -- there is no widget, and every part method here works off pd->obj.
+    * Refuse, so that a part that exists is always a part of something.
+    */
+   if (!pd || !pd->obj) return NULL;
+
+   return efl_finalize(efl_super(obj, EFL_UI_WIDGET_PART_CLASS));
+}
+
 EOLIAN static void \
 _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
 {
@@ -5700,7 +5714,12 @@ Efl_Canvas_Object *
 _efl_ui_widget_bg_get(const Efl_Ui_Widget *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Evas_Object *bg_obj = sd->bg;
+   Evas_Object *bg_obj;
+
+   /* Reached with no widget when a part class is constructed directly rather
+    * than obtained from efl_part(). */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, NULL);
+   bg_obj = sd->bg;
 
    if (!bg_obj)
      {
@@ -5720,6 +5739,10 @@ static inline Efl_Canvas_Object *
 efl_ui_widget_part_bg_get(const Eo *part_obj)
 {
    Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_CLASS);
+
+   /* A part built on its own has no widget behind it. */
+   if (!pd || !pd->obj) return NULL;
+
    return _efl_ui_widget_bg_get(pd->obj);
 }
 
@@ -5807,6 +5830,10 @@ EOLIAN static Efl_Object*
 _efl_ui_widget_part_bg_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   /* No widget, so no background to stand in front of: refuse rather than
+    * hand back a part that is not part of anything. */
+   if (!bg_obj) return NULL;
 
    efl_composite_attach(obj, bg_obj);
 

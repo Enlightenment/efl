@@ -2981,6 +2981,14 @@ _efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
    if (!obj) return NULL;
 
    pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   /* A part is only meaningful bound to the widget it belongs to, which is
+    * how efl_part() hands them out. Constructed on its own -- which nothing
+    * sensible does, but which efl_add() allows -- there is no widget here and
+    * everything below would work off NULL. Refuse, the way
+    * Efl.Canvas.Layout_Part does, rather than crash.
+    */
+   if (!pd || !pd->obj) return NULL;
+
    sd = efl_data_scope_get(pd->obj, MY_CLASS);
    bg = _efl_ui_widget_bg_get(pd->obj);
    if (!_efl_ui_layout_content_set(pd->obj, sd, "efl.background", bg))
