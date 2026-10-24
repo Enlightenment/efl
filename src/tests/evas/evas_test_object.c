@@ -37,6 +37,61 @@ EFL_START_TEST(evas_object_various)
 }
 EFL_END_TEST
 
+static void
+_mouse_down_count(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int *count = data;
+
+   (*count)++;
+}
+
+/* Event rectangles narrow an object's input surface: they are copied in,
+ * read back, cleared by NULL, and a press only reaches the object where one
+ * of them is. */
+EFL_START_TEST(evas_object_event_rects)
+{
+   Evas *evas = EVAS_TEST_INIT_EVAS();
+   Eina_Rect region[] = {
+      EINA_RECT(10, 10, 20, 20),
+      EINA_RECT(0, 0, 0, 0)
+   };
+   const Eina_Rect *got;
+   Evas_Object *obj;
+   int down = 0;
+
+   obj = evas_object_rectangle_add(evas);
+   evas_object_geometry_set(obj, 0, 0, 100, 100);
+   evas_object_show(obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_count, &down);
+
+   ck_assert_ptr_eq(efl_canvas_object_event_rects_get(obj), NULL);
+   efl_canvas_object_event_rects_set(obj, region);
+   got = efl_canvas_object_event_rects_get(obj);
+   ck_assert_ptr_ne(got, NULL);
+   ck_assert_ptr_ne(got, region);
+   ck_assert_int_eq(got[0].x, 10);
+   ck_assert_int_eq(got[0].w, 20);
+   ck_assert_int_eq(got[1].w, 0);
+
+   evas_event_feed_mouse_in(evas, 0, NULL);
+   /* outside every rect, though inside the object */
+   evas_event_feed_mouse_move(evas, 50, 50, 0, NULL);
+   evas_event_feed_mouse_down(evas, 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(evas, 1, 0, 0, NULL);
+   ck_assert_int_eq(down, 0);
+   /* inside the first rect */
+   evas_event_feed_mouse_move(evas, 15, 15, 0, NULL);
+   evas_event_feed_mouse_down(evas, 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(evas, 1, 0, 0, NULL);
+   ck_assert_int_eq(down, 1);
+
+   efl_canvas_object_event_rects_set(obj, NULL);
+   ck_assert_ptr_eq(efl_canvas_object_event_rects_get(obj), NULL);
+
+   evas_free(evas);
+}
+EFL_END_TEST
+
 EFL_START_TEST(evas_object_freeze_events)
 {
    Evas *evas = EVAS_TEST_INIT_EVAS();
@@ -207,6 +262,7 @@ EFL_END_TEST
 void evas_test_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_various);
+   tcase_add_test(tc, evas_object_event_rects);
    tcase_add_test(tc, evas_object_freeze_events);
    tcase_add_test(tc, evas_object_animation_simple);
    tcase_add_test(tc, evas_object_animation_progress);

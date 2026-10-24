@@ -890,6 +890,9 @@ evas_object_is_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
    if ((obj->event_rects) &&
        (!evas_object_is_inside_event_rects(eo_obj, obj, x, y)))
      return 0;
+   /* inside one of its event rects is inside, unless asked to be precise */
+   if ((obj->event_rects) && (!obj->precise_is_inside))
+     return 1;
    if (obj->func->is_inside)
      return obj->func->is_inside(eo_obj, obj, obj->private_data, x, y);
    return 0;
@@ -902,6 +905,9 @@ evas_object_was_inside(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eva
    if ((obj->event_rects) &&
        (!evas_object_is_inside_event_rects(eo_obj, obj, x, y)))
      return 0;
+   /* inside one of its event rects is inside, unless asked to be precise */
+   if ((obj->event_rects) && (!obj->precise_is_inside))
+     return 1;
    if (obj->func->was_inside)
      return obj->func->was_inside(eo_obj, obj, obj->private_data, x, y);
    return 0;
