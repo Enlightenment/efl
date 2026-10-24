@@ -110,7 +110,7 @@ struct collection_match_rule {
      AtspiCollectionMatchType attributematchtype;
      uint64_t roles[2];
      AtspiCollectionMatchType rolematchtype;
-     Eina_List *ifaces;
+     Eina_List *ifaces; /* stringshared AT-SPI interface names */
      AtspiCollectionMatchType interfacematchtype;
      Eina_Bool reverse : 1;
 };
@@ -2882,11 +2882,52 @@ static const Eldbus_Service_Interface_Desc application_iface_desc = {
    ATSPI_DBUS_INTERFACE_APPLICATION, NULL, NULL, application_properties, _application_properties_get, _application_properties_set
 };
 
+/* Whether an object offers the AT-SPI interface of the given short name, as
+ * a collection match rule names it. This is the same decision
+ * _accessible_interfaces_get makes when it lists them, so a rule matches
+ * what the object says it is. */
+static Eina_Bool
+_bridge_object_has_interface(const Eo *obj, const char *name)
+{
+   if (!strcmp(name, "action"))
+     return efl_isa(obj, EFL_ACCESS_ACTION_MIXIN);
+   if (!strcmp(name, "component"))
+     return efl_isa(obj, EFL_ACCESS_COMPONENT_MIXIN);
+   if (!strcmp(name, "editabletext"))
+     return efl_isa(obj, EFL_ACCESS_EDITABLE_TEXT_INTERFACE);
+   if (!strcmp(name, "text"))
+     return efl_isa(obj, EFL_ACCESS_TEXT_INTERFACE);
+   if (!strcmp(name, "image"))
+     return efl_isa(obj, EFL_ACCESS_OBJECT_MIXIN);
+   if (!strcmp(name, "selection"))
+     return efl_isa(obj, EFL_ACCESS_SELECTION_INTERFACE);
+   if (!strcmp(name, "value"))
+     return efl_isa(obj, EFL_ACCESS_VALUE_INTERFACE) ||
+            efl_isa(obj, EFL_UI_RANGE_DISPLAY_INTERFACE);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_bridge_interface_name_known(const char *name)
+{
+   static const char *names[] = {
+      "action", "component", "editabletext", "text", "image", "selection", "value", NULL
+   };
+   int i;
+
+   for (i = 0; names[i]; i++)
+     if (!strcmp(name, names[i])) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 void
 _collection_match_rule_free(struct collection_match_rule *rule)
 {
    Efl_Access_Attribute *attr;
-   eina_list_free(rule->ifaces);
+   const char *name;
+
+   EINA_LIST_FREE(rule->ifaces, name)
+     eina_stringshare_del(name);
    EINA_LIST_FREE(rule->attributes, attr)
      {
         eina_stringshare_del(attr->key);
@@ -2968,30 +3009,12 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
    //Get interfaces to match
    while (eldbus_message_iter_get_and_next(ifc_iter, 's', &ifc_name))
      {
-        const Efl_Class *class = NULL;
-        if (!strcmp(ifc_name, "action"))
-          class = EFL_ACCESS_ACTION_MIXIN;
-        else if (!strcmp(ifc_name, "component"))
-          class = EFL_ACCESS_COMPONENT_MIXIN;
-        else if (!strcmp(ifc_name, "editabletext"))
-          class = EFL_ACCESS_EDITABLE_TEXT_INTERFACE;
-        else if (!strcmp(ifc_name, "text"))
-          class = EFL_ACCESS_TEXT_INTERFACE;
-        else if (!strcmp(ifc_name, "image"))
-          class = EFL_ACCESS_SELECTION_INTERFACE;
-        else if (!strcmp(ifc_name, "value"))
-        {
-           class = EFL_ACCESS_VALUE_INTERFACE;
-           rule->ifaces = eina_list_append(rule->ifaces, EFL_UI_RANGE_DISPLAY_INTERFACE); //alternative interface
-        }
-
-        if (class)
-          rule->ifaces = eina_list_append(rule->ifaces, class);
-        else
+        if (!_bridge_interface_name_known(ifc_name))
           {
              _collection_match_rule_free(rule);
              return EINA_FALSE;
           }
+        rule->ifaces = eina_list_append(rule->ifaces, eina_stringshare_add(ifc_name));
      }
 
    return EINA_TRUE;
@@ -3000,12 +3023,12 @@ _collection_iter_match_rule_get(Eldbus_Message_Iter *iter, struct collection_mat
 static Eina_Bool
 _collection_match_interfaces_helper(Eo *obj, Eina_List *ifcs, Eina_Bool condition, Eina_Bool ret_if_true, Eina_Bool ret_if_false)
 {
-   Efl_Class *class;
+   const char *name;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(ifcs, l, class)
+   EINA_LIST_FOREACH(ifcs, l, name)
      {
-        if (efl_isa(obj, class) == condition)
+        if (_bridge_object_has_interface(obj, name) == condition)
           return ret_if_true;
      }
    return ret_if_false;
