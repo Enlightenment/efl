@@ -676,6 +676,20 @@ group { name: "efl/check:toggle";
       program { signal: "efl,state,enabled"; source: "efl";
          script { flag_unset(DISABLE); }
       }
+      program { signal: "efl,state,disabled"; source: "efl";
+         action:  STATE_SET "disabled" 0.0;
+         target: "base_but";
+         target: "event2";
+         target: "efl.offtext";
+         target: "efl.ontext";
+      }
+      program { signal: "efl,state,enabled"; source: "efl";
+         action:  STATE_SET "default" 0.0;
+         target: "base_but";
+         target: "event2";
+         target: "efl.offtext";
+         target: "efl.ontext";
+      }
       program { signal: "edje,state,rtl"; source: "edje";
          script {
             set_int(is_rtl, 1);

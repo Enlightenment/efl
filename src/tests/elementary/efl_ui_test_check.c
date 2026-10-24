@@ -3,6 +3,7 @@
 #endif
 
 #include <Efl_Ui.h>
+#include <Elementary.h>
 #include "efl_ui_suite.h"
 
 static Eo *win, *check;
@@ -14,6 +15,30 @@ check_setup()
 
    check = efl_add(EFL_UI_CHECK_CLASS, win);
 }
+
+/* A disabled toggle draws its knob and its on and off wording disabled, the
+ * way the legacy toggle always has. The efl copy of the group set the flag
+ * and nothing else, so it went on drawing all three at full strength. */
+EFL_START_TEST(check_toggle_disabled)
+{
+   Eo *toggle, *edje;
+   double val;
+
+   toggle = efl_add(EFL_UI_CHECK_CLASS, win,
+                    efl_ui_widget_style_set(efl_added, "toggle"));
+   efl_gfx_entity_size_set(toggle, EINA_SIZE2D(100, 40));
+   efl_ui_widget_disabled_set(toggle, EINA_TRUE);
+   get_me_to_those_events(toggle);
+
+   edje = elm_layout_edje_get(toggle);
+   ck_assert_str_eq(edje_object_part_state_get(edje, "base_but", &val), "disabled");
+   ck_assert_str_eq(edje_object_part_state_get(edje, "efl.ontext", &val), "disabled");
+
+   efl_ui_widget_disabled_set(toggle, EINA_FALSE);
+   get_me_to_those_events(toggle);
+   ck_assert_str_eq(edje_object_part_state_get(edje, "base_but", &val), "default");
+}
+EFL_END_TEST
 
 EFL_START_TEST(check_content)
 {
@@ -103,4 +128,5 @@ void efl_ui_test_check(TCase *tc)
    tcase_add_test(tc, check_content);
    tcase_add_test(tc, check_selection_events);
    tcase_add_test(tc, efl_ui_test_check_callbacks);
+   tcase_add_test(tc, check_toggle_disabled);
 }
