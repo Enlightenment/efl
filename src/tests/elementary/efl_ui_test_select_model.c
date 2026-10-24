@@ -195,9 +195,47 @@ EFL_START_TEST(efl_test_select_model_selects_the_first)
 }
 EFL_END_TEST
 
+/* A range given high end first is the same range, and unselecting
+ * everything in an empty model is nothing to do. */
+EFL_START_TEST(efl_test_select_model_reversed_range)
+{
+   Efl_Model *base_model, *model, *empty_base, *empty;
+   Eina_Iterator *it;
+   unsigned int *index, seen = 0, i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 3; ++i)
+     ck_assert(!!efl_model_child_add(base_model));
+
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 0);
+   for (i = 0; i < 8; i++) ecore_main_loop_iterate();
+
+   it = efl_ui_multi_selectable_selected_ndx_iterator_new(model);
+   EINA_ITERATOR_FOREACH(it, index) seen++;
+   eina_iterator_free(it);
+   ck_assert_int_eq(seen, 3);
+
+   empty_base = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   empty = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, empty_base));
+   efl_ui_multi_selectable_all_unselect(empty);
+   for (i = 0; i < 8; i++) ecore_main_loop_iterate();
+
+   efl_unref(empty);
+   efl_unref(empty_base);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_select_model);
    tcase_add_test(tc, efl_test_select_model_selects_the_first);
+   tcase_add_test(tc, efl_test_select_model_reversed_range);
 }

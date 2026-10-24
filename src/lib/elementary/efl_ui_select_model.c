@@ -562,6 +562,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_all_unselect(Eo *obj,
 {
    unsigned int count = efl_model_children_count_get(obj);
 
+   if (!count) return;
    efl_ui_multi_selectable_ndx_range_unselect(obj, 0, count - 1);
 }
 
@@ -572,9 +573,16 @@ _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_select(Eo *ob
 {
    unsigned long count, i;
 
+   if (a > b)
+     {
+        unsigned int tmp = a;
+        a = b;
+        b = tmp;
+     }
+
    // Not the fastest way to implement it, but will reuse more code and be easier as a v1.
    // It also make it not very async which could be noticeable.
-   count = MIN(efl_model_children_count_get(obj), b + 1);
+   count = MIN(efl_model_children_count_get(obj), (unsigned long) b + 1);
 
    for (i = a; i < count; i++)
      {
@@ -612,9 +620,16 @@ _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *
                                                                             Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
                                                                             unsigned int a, unsigned int b)
 {
-   unsigned int count, batch, i;
+   unsigned long count, batch, i;
 
-   count = MIN(efl_model_children_count_get(obj), b + 1);
+   if (a > b)
+     {
+        unsigned int tmp = a;
+        a = b;
+        b = tmp;
+     }
+
+   count = MIN(efl_model_children_count_get(obj), (unsigned long) b + 1);
 
    // Fetch group request of children in batches not to big to allow for throttling
    // In the callback edit said object property to be unselected
