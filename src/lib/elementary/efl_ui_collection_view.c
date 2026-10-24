@@ -283,7 +283,6 @@ static void
 _all_cleanup(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *pd)
 {
    Efl_Ui_Collection_Request *request;
-   Eina_List *l, *ll;
 #ifdef VIEWPORT_ENABLE
    unsigned int i;
 #endif
@@ -304,24 +303,28 @@ _all_cleanup(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *pd)
    efl_replace(&pd->focus.previously, NULL);
    efl_replace(&pd->focus.last, NULL);
 
-   /* Detach the whole list before cancelling any of it.
+   /* Cancel from the head of the live list, one request at a time.
     *
     * Cancelling a request runs its free callbacks, which take that request
-    * off this list and free it -- and the futures are all chained on the same
-    * object, so cancelling one can finish others and free those too.
-    * FOREACH_SAFE guards the node after the current one and nothing beyond
-    * it, which is not enough: the walk then continues into a node that has
-    * been freed. It shows up as a crash in the promise dispatch when a model
-    * is replaced while fetches are in flight, which is what changing
-    * directory does. */
-   {
-      Eina_List *requests = pd->requests;
+    * off pd->requests and free it -- and the futures are all chained on the
+    * same object, so cancelling one can finish others and free those too.
+    * Any walk over a list, or a copy of it, can therefore reach a request
+    * that has already been freed. The free callbacks keep pd->requests
+    * exact, so its head is always a live request. A model request whose
+    * entity fetch has started survives its first cancel with a new future,
+    * which the next turn cancels; one that is somehow left on the list is
+    * dropped from it so the loop ends. */
+   while (pd->requests)
+     {
+        Eina_Future *f;
 
-      pd->requests = NULL;
-      EINA_LIST_FOREACH_SAFE(requests, l, ll, request)
-        eina_future_cancel(request->f);
-      eina_list_free(requests);
-   }
+        request = eina_list_data_get(pd->requests);
+        f = request->f;
+        eina_future_cancel(f);
+        if (pd->requests && (eina_list_data_get(pd->requests) == request) &&
+            ((request->f == f) || !request->f))
+          pd->requests = eina_list_remove_list(pd->requests, pd->requests);
+     }
 }
 
 static inline Eina_Bool
