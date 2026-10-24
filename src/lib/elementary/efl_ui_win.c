@@ -239,6 +239,8 @@ struct _Efl_Ui_Win_Data
       short     object_focus_in;
       short     object_focus_out;
       short     device_changed;
+      short     device_added;
+      short     device_removed;
    } event_forward;
 
    struct {
@@ -2163,6 +2165,14 @@ _elm_win_evas_device_changed(void *data,
 }
 
 static void
+_evas_event_device_cb(void *data, const Efl_Event *ev)
+{
+   Eo *win = data;
+
+   efl_event_callback_call(win, ev->desc, ev->info);
+}
+
+static void
 _win_event_add_cb(void *data, const Efl_Event *ev)
 {
    const Efl_Callback_Array_Item_Full *array = ev->info;
@@ -2289,6 +2299,18 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
              if (!(sd->event_forward.device_changed++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_DEVICE_CHANGED,
                                        _elm_win_evas_device_changed, win);
+          }
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
+          {
+             if (!(sd->event_forward.device_added++))
+               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
+                                      _evas_event_device_cb, win);
+          }
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED)
+          {
+             if (!(sd->event_forward.device_removed++))
+               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
+                                      _evas_event_device_cb, win);
           }
      }
 }
@@ -2420,6 +2442,18 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
              if (!(--sd->event_forward.device_changed))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_DEVICE_CHANGED,
                                             _elm_win_evas_device_changed, win);
+          }
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
+          {
+             if (!(--sd->event_forward.device_added))
+               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
+                                      _evas_event_device_cb, win);
+          }
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED)
+          {
+             if (!(--sd->event_forward.device_removed))
+               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
+                                      _evas_event_device_cb, win);
           }
      }
 }

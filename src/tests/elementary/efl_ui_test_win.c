@@ -434,6 +434,41 @@ EFL_START_TEST(efl_ui_win_test_efl_input_interface_pointer_cancel)
 }
 EFL_END_TEST
 
+static void
+_count_event(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   int *count = data;
+
+   (*count)++;
+}
+
+/* The window is a scene, so it says when a device comes and goes on its
+ * canvas, as it already did for device,changed. */
+EFL_START_TEST(efl_ui_win_test_device_added_removed)
+{
+   Efl_Ui_Win *win;
+   Evas_Device *dev;
+   int added = 0, removed = 0;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   efl_event_callback_add(win, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _count_event, &added);
+   efl_event_callback_add(win, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _count_event, &removed);
+
+   dev = evas_device_add_full(evas_object_evas_get(win), "test-seat", "a seat",
+                              NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                              EVAS_DEVICE_SUBCLASS_NONE);
+   ck_assert_ptr_ne(dev, NULL);
+   ck_assert_int_eq(added, 1);
+
+   evas_device_del(dev);
+   ck_assert_int_eq(removed, 1);
+
+   efl_event_callback_del(win, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _count_event, &added);
+   efl_event_callback_del(win, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _count_event, &removed);
+   efl_unref(win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_win_test_type)
 {
    Efl_Ui_Win *win;
@@ -458,5 +493,6 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_in_out);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_wheel);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_cancel);
+   tcase_add_test(tc, efl_ui_win_test_device_added_removed);
    tcase_add_test(tc, efl_ui_win_test_type);
 }
