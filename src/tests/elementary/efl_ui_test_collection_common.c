@@ -57,7 +57,27 @@ EFL_START_TEST(finalizer_group_middle_insert)
 }
 EFL_END_TEST
 
+/* Selecting what is already selected is not a second selection: selecting
+ * everything on top of a selected item, and then unselecting everything, has
+ * to leave nothing selected. */
+EFL_START_TEST(selecting_twice_is_one_selection)
+{
+   Eo *it;
+
+   fill_items(EFL_UI_LIST_DEFAULT_ITEM_CLASS);
+   it = efl_pack_content_get(item_container, 1);
+   efl_ui_multi_selectable_select_mode_set(item_container, EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_selectable_selected_set(it, EINA_TRUE);
+   efl_ui_multi_selectable_all_select(item_container);
+   efl_ui_multi_selectable_all_unselect(item_container);
+   ck_assert(!efl_ui_selectable_selected_get(it));
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(item_container), NULL);
+}
+EFL_END_TEST
+
 void efl_ui_test_item_container_common_add(TCase *tc)
 {
    tcase_add_test(tc, finalizer_group_middle_insert);
+   tcase_add_test(tc, selecting_twice_is_one_selection);
 }

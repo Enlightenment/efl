@@ -42,15 +42,14 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 {
    Efl_Ui_Select_Mode m;
 
+   /* Already selected: there is nothing to change, and telling the container
+      again would put the item twice in its selection. */
+   if (pd->selected) return;
+
    if (pd->container)
      {
         m = _fetch_state(pd->container);
         if (m == EFL_UI_SELECT_MODE_NONE)
-          return;
-     }
-   else
-     {
-        if (pd->selected)
           return;
      }
 
