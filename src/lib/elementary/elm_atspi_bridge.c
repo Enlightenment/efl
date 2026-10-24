@@ -2891,6 +2891,7 @@ _collection_match_rule_free(struct collection_match_rule *rule)
      {
         eina_stringshare_del(attr->key);
         eina_stringshare_del(attr->value);
+        free(attr);
      }
 }
 
