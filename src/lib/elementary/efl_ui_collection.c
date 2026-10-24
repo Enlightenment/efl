@@ -1140,10 +1140,12 @@ _range_selection_find(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a,
      {
         if (!start)
           {
-             if (c == a)
-               start = n;
-             else if (c == b)
-               start = n;
+             if ((c == a) || (c == b))
+               {
+                  start = n;
+                  /* a range of one item ends where it starts */
+                  if (a == b) end = n;
+               }
           }
         else if (!end)
           {
