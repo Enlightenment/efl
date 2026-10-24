@@ -107,6 +107,8 @@ _del_cb(void *data, const Efl_Event *ev)
           }
      }
 
+   if (devtype == EFL_INPUT_DEVICE_TYPE_SEAT)
+     _evas_touch_point_seat_cleanup(e, ev->object);
    if (devtype == EFL_INPUT_DEVICE_TYPE_MOUSE)
      {
         _evas_pointer_data_remove(e, ev->object, EINA_TRUE);

@@ -177,8 +177,9 @@ MAGIC_CHECK_FAILED(o, t, m)
 struct _Evas_Coord_Touch_Point
 {
    double x, y;
-   int id; // id in order to distinguish each point
+   int id; // id in order to distinguish each point, unique per seat
    Evas_Touch_Point_State state;
+   Efl_Input_Device *seat; // seat the point belongs to, not referenced
 };
 
 struct _Evas_Key_Grab
@@ -1393,9 +1394,10 @@ void evas_map_object_move_diff_set(Evas_Map *m, Evas_Coord diff_x, Evas_Coord di
 Eina_List *evas_module_engine_list(void);
 
 /* for updating touch point list */
-void _evas_touch_point_append(Evas *e, int id, Evas_Coord x, Evas_Coord y);
-void _evas_touch_point_update(Evas *e, int id, Evas_Coord x, Evas_Coord y, Evas_Touch_Point_State state);
-void _evas_touch_point_remove(Evas *e, int id);
+void _evas_touch_point_append(Evas *e, Efl_Input_Device *seat, int id, Evas_Coord x, Evas_Coord y);
+void _evas_touch_point_update(Evas *e, Efl_Input_Device *seat, int id, Evas_Coord x, Evas_Coord y, Evas_Touch_Point_State state);
+void _evas_touch_point_remove(Evas *e, Efl_Input_Device *seat, int id);
+void _evas_touch_point_seat_cleanup(Evas_Public_Data *e, Efl_Input_Device *seat);
 
 void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);

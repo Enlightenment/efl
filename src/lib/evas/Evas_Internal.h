@@ -213,6 +213,8 @@ EVAS_API EVAS_API_WEAK void efl_canvas_group_add(Eo *obj);
 EVAS_API EVAS_API_WEAK void efl_canvas_group_del(Eo *obj);
 EVAS_API EVAS_API_WEAK void efl_canvas_group_clipped_set(Eo *obj, Eina_Bool unclipped);
 EVAS_API EVAS_API_WEAK void evas_canvas_touch_point_list_nth_xy_get(Eo *obj, unsigned int n, double *x, double *y);
+EVAS_API unsigned int evas_canvas_seat_touch_point_count(Eo *obj, Efl_Input_Device *seat);
+EVAS_API Eina_Bool evas_canvas_seat_touch_point_nth_get(Eo *obj, Efl_Input_Device *seat, unsigned int n, int *id, Evas_Touch_Point_State *state, double *x, double *y);
 EVAS_API EVAS_API_WEAK void evas_canvas_seat_focus_in(Eo *obj, Efl_Input_Device *seat);
 EVAS_API EVAS_API_WEAK void evas_canvas_seat_focus_out(Eo *obj, Efl_Input_Device *seat);
 EVAS_API EVAS_API_WEAK Eo* evas_canvas_seat_focus_get(const Eo *obj, Efl_Input_Device *seat);

@@ -1653,7 +1653,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
-   _evas_touch_point_append(e->evas, 0, pdata->seat->x, pdata->seat->y);
+   _evas_touch_point_append(e->evas, pdata->seat->seat, 0, pdata->seat->x, pdata->seat->y);
    /* If this is the first finger down, i.e no other fingers pressed,
     * get a new event list, otherwise, keep the current grabbed list. */
    if (pdata->seat->mouse_grabbed == 0)
@@ -1726,7 +1726,7 @@ _canvas_event_feed_mouse_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    e->last_mouse_down_counter++;
    _evas_post_event_callback_call(eo_e, e, event_id);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
-   _evas_touch_point_update(eo_e, 0, pdata->seat->x, pdata->seat->y, EVAS_TOUCH_POINT_STILL);
+   _evas_touch_point_update(eo_e, pdata->seat->seat, 0, pdata->seat->x, pdata->seat->y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -1924,7 +1924,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
    _evas_walk(e);
    if (!cancel)
      /* update released touch point */
-     _evas_touch_point_update(eo_e, 0, pdata->seat->x, pdata->seat->y, EVAS_TOUCH_POINT_UP);
+     _evas_touch_point_update(eo_e, pdata->seat->seat, 0, pdata->seat->x, pdata->seat->y, EVAS_TOUCH_POINT_UP);
    copy = evas_event_list_copy(pdata->seat->object.in);
    EINA_LIST_FOREACH(copy, l, eo_obj)
      {
@@ -2021,7 +2021,7 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
           }
      }
    /* remove released touch point from the touch point list */
-   _evas_touch_point_remove(eo_e, 0);
+   _evas_touch_point_remove(eo_e, pdata->seat->seat, 0);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -2354,7 +2354,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
    _evas_walk(e);
    /* update moved touch point */
    if (!EINA_DBL_EQ(cur_pt.x, prev_pt.x) || !EINA_DBL_EQ(cur_pt.y, prev_pt.y))
-     _evas_touch_point_update(eo_e, 0, pdata->seat->x, pdata->seat->y, EVAS_TOUCH_POINT_MOVE);
+     _evas_touch_point_update(eo_e, pdata->seat->seat, 0, pdata->seat->x, pdata->seat->y, EVAS_TOUCH_POINT_MOVE);
    /* if our mouse button is grabbed to any objects */
    if (pdata->seat->mouse_grabbed > 0)
      {
@@ -3034,7 +3034,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
-   _evas_touch_point_append(eo_e, ev->touch_id, ev->cur.x, ev->cur.y);
+   _evas_touch_point_append(eo_e, pdata->seat->seat, ev->touch_id, ev->cur.x, ev->cur.y);
    if (pdata->seat->mouse_grabbed == 0)
      {
         if (pdata->seat->downs > 1)
@@ -3091,7 +3091,7 @@ _canvas_event_feed_multi_down_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
 
    _evas_post_event_callback_call(eo_e, e, event_id);
    /* update touch point's state to EVAS_TOUCH_POINT_STILL */
-   _evas_touch_point_update(eo_e, ev->touch_id, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_STILL);
+   _evas_touch_point_update(eo_e, pdata->seat->seat, ev->touch_id, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -3140,7 +3140,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
 
    _evas_walk(e);
    /* update released touch point */
-   _evas_touch_point_update(eo_e, ev->touch_id, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_UP);
+   _evas_touch_point_update(eo_e, pdata->seat->seat, ev->touch_id, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_UP);
    copy = evas_event_list_copy(pdata->seat->object.in);
    EINA_LIST_FOREACH(copy, l, eo_obj)
      {
@@ -3179,7 +3179,7 @@ _canvas_event_feed_multi_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
      }
 
    /* remove released touch point from the touch point list */
-   _evas_touch_point_remove(eo_e, ev->touch_id);
+   _evas_touch_point_remove(eo_e, pdata->seat->seat, ev->touch_id);
    _evas_unwalk(e);
 
    if (ev->device) efl_unref(ev->device);
@@ -3324,7 +3324,7 @@ _canvas_event_feed_multi_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
 
    _evas_walk(e);
    /* update moved touch point */
-   _evas_touch_point_update(eo_e, ev->touch_id, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_MOVE);
+   _evas_touch_point_update(eo_e, pdata->seat->seat, ev->touch_id, ev->cur.x, ev->cur.y, EVAS_TOUCH_POINT_MOVE);
    /* if our mouse button is grabbed to any objects */
    if (pdata->seat->mouse_grabbed > 0)
      {
