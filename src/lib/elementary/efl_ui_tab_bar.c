@@ -141,6 +141,7 @@ _efl_ui_tab_bar_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Data *sd)
      elm_widget_theme_klass_set(obj, "tab_bar");
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB_LIST);
 
    sd->bx = efl_add(EFL_UI_BOX_CLASS, obj);
    efl_ui_box_homogeneous_set(sd->bx, EINA_TRUE);

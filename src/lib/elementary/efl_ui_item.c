@@ -115,6 +115,7 @@ EOLIAN static Eo *
 _efl_ui_item_efl_object_constructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST_ITEM);
    efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
    efl_event_callback_array_add(obj, self_listening(), obj);

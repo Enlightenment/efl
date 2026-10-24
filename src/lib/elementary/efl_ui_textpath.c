@@ -722,6 +722,7 @@ EOLIAN static Efl_Object *
 _efl_ui_textpath_efl_object_constructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LABEL);
    pd->slice_no = SLICE_DEFAULT_NO;
    pd->direction = EFL_UI_TEXTPATH_DIRECTION_CW;
 

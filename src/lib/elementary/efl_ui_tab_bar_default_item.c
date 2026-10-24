@@ -64,6 +64,7 @@ _efl_ui_tab_bar_default_item_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Defa
    Eo *eo;
 
    eo = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PAGE_TAB);
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "tab_bar/tab");

@@ -6,6 +6,7 @@
 #define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_OBJECT_PROTECTED
 
+#include <string.h>
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -586,6 +587,51 @@ EFL_START_TEST(test_efl_access_object_reading_info_type_get)
 }
 EFL_END_TEST
 
+/* What a screen reader is told each unified widget is. These used to fall
+ * through to the generic filler role of Efl.Ui.Layout_Base, which says
+ * nothing about what can be done with the widget. */
+EFL_START_TEST(test_efl_ui_widget_roles)
+{
+   static const struct {
+      const Efl_Class *(*klass)(void);
+      Efl_Access_Role role;
+   } expected[] = {
+      { efl_ui_list_class_get, EFL_ACCESS_ROLE_LIST },
+      { efl_ui_grid_class_get, EFL_ACCESS_ROLE_TREE_TABLE },
+      { efl_ui_list_view_class_get, EFL_ACCESS_ROLE_LIST },
+      { efl_ui_grid_view_class_get, EFL_ACCESS_ROLE_TREE_TABLE },
+      { efl_ui_list_default_item_class_get, EFL_ACCESS_ROLE_LIST_ITEM },
+      { efl_ui_grid_default_item_class_get, EFL_ACCESS_ROLE_LIST_ITEM },
+      { efl_ui_tab_bar_class_get, EFL_ACCESS_ROLE_PAGE_TAB_LIST },
+      { efl_ui_tab_bar_default_item_class_get, EFL_ACCESS_ROLE_PAGE_TAB },
+      { efl_ui_popup_class_get, EFL_ACCESS_ROLE_DIALOG },
+      { efl_ui_alert_popup_class_get, EFL_ACCESS_ROLE_ALERT },
+      { efl_ui_datepicker_class_get, EFL_ACCESS_ROLE_DATE_EDITOR },
+      { efl_ui_timepicker_class_get, EFL_ACCESS_ROLE_DATE_EDITOR },
+      { efl_ui_navigation_bar_class_get, EFL_ACCESS_ROLE_HEADER },
+      { efl_ui_separator_class_get, EFL_ACCESS_ROLE_SEPARATOR },
+      { efl_ui_scroller_class_get, EFL_ACCESS_ROLE_SCROLL_PANE },
+      { efl_ui_tags_class_get, EFL_ACCESS_ROLE_PANEL },
+      { efl_ui_textpath_class_get, EFL_ACCESS_ROLE_LABEL },
+      { efl_ui_vg_animation_class_get, EFL_ACCESS_ROLE_ANIMATION },
+   };
+   unsigned int i;
+   Eo *win;
+
+   win = win_add(NULL, "roles", EFL_UI_WIN_TYPE_BASIC);
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(expected); i++)
+     {
+        Eo *obj = efl_add(expected[i].klass(), win);
+
+        ck_assert_msg(obj != NULL, "could not create %s", efl_class_name_get(expected[i].klass()));
+        ck_assert_msg(efl_access_object_role_get(obj) == expected[i].role,
+                      "%s has role %d, expected %d", efl_class_name_get(obj),
+                      efl_access_object_role_get(obj), expected[i].role);
+        efl_del(obj);
+     }
+}
+EFL_END_TEST
+
 void efl_ui_test_atspi(TCase *tc)
 {
    tcase_add_test(tc, test_efl_access_app_obj_name_get);
@@ -610,4 +656,5 @@ void efl_ui_test_atspi(TCase *tc)
    tcase_add_test(tc, test_efl_access_object_attributes_clear);
    tcase_add_test(tc, test_efl_access_object_reading_info_type_set);
    tcase_add_test(tc, test_efl_access_object_reading_info_type_get);
+   tcase_add_test(tc, test_efl_ui_widget_roles);
 }

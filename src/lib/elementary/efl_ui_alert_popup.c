@@ -241,6 +241,7 @@ _efl_ui_alert_popup_efl_object_constructor(Eo *obj,
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "alert_popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ALERT);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
    efl_add(EFL_UI_LAYOUT_CLASS, obj,

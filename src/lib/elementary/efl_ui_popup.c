@@ -538,6 +538,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _hints_changed_cb, pd);
    efl_event_callback_add(obj, EFL_UI_WIDGET_SCROLLABLE_CONTENT_EVENT_OPTIMAL_SIZE_CALC, _scrollable_content_size_cb, pd);

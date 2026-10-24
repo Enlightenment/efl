@@ -37,6 +37,7 @@ _efl_ui_navigation_bar_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Bar_Dat
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "navigation_bar");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_HEADER);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);

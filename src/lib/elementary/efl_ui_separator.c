@@ -17,7 +17,10 @@ _efl_ui_separator_efl_object_constructor(Eo *obj, Efl_Ui_Separator_Data *pd EINA
 {
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "separator");
-   return efl_constructor(efl_super(obj, MY_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SEPARATOR);
+
+   return obj;
 }
 
 EOLIAN static void

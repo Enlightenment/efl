@@ -19,6 +19,7 @@ EOLIAN static Eo *
 _efl_ui_grid_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
 
    efl_ui_collection_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS));
 

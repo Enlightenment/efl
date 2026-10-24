@@ -2160,6 +2160,7 @@ _efl_ui_collection_view_efl_object_constructor(Eo *obj, Efl_Ui_Collection_View_D
 {
    pd->direction = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    obj = efl_constructor(efl_super(obj, EFL_UI_COLLECTION_VIEW_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "collection");

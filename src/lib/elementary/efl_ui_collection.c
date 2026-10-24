@@ -373,6 +373,7 @@ _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EI
      elm_widget_theme_klass_set(obj, "collection");
 
    o = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    pd->sizer = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(obj));
    efl_gfx_color_set(pd->sizer, 0, 0, 0, 0);

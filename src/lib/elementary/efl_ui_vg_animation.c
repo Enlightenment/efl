@@ -292,6 +292,7 @@ _efl_ui_vg_animation_efl_object_constructor(Eo *obj,
                                            Efl_Ui_Vg_Animation_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    return obj;
