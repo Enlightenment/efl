@@ -42,6 +42,7 @@ void efl_ui_test_progressbar(TCase *tc);
 void efl_ui_test_radio_group(TCase *tc);
 void efl_ui_test_slider(TCase *tc);
 void efl_ui_test_win(TCase *tc);
+void efl_ui_test_caching_factory(TCase *tc);
 void efl_ui_test_spin(TCase *tc);
 void efl_ui_test_spin_button(TCase *tc);
 void efl_ui_test_item_container(TCase *tc);

@@ -131,6 +131,7 @@ efl_ui_suite_src = [
   'suite_helpers.h',
   'elm_test_init.c',
   'efl_ui_test_win.c',
+  'efl_ui_test_caching_factory.c',
   'efl_ui_test_atspi.c',
   'efl_ui_test_callback.c',
   'efl_ui_test_config.c',

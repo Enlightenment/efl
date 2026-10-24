@@ -22,6 +22,9 @@ struct _Efl_Ui_Caching_Factory_Data
    Eina_List *cache;
    Eina_Hash *lookup;
    Eina_Future *flush;
+   // The application whose pause empties the cache. It outlives the factory,
+   // so the factory has to stop listening to it when it goes.
+   Efl_App *app;
 
    struct {
       unsigned int memory;
@@ -468,7 +471,11 @@ _efl_ui_caching_factory_efl_object_finalize(Eo *obj, Efl_Ui_Caching_Factory_Data
    if (!obj) return NULL;
 
    a = efl_provider_find(obj, EFL_APP_CLASS);
-   if (a) efl_event_callback_add(a, EFL_APP_EVENT_PAUSE, _efl_ui_caching_factory_pause, pd);
+   if (a)
+     {
+        efl_event_callback_add(a, EFL_APP_EVENT_PAUSE, _efl_ui_caching_factory_pause, pd);
+        efl_wref_add(a, &pd->app);
+     }
 
    // The order of the invalidate event is guaranteed to happen before any children is invalidated
    // this is not the case for the children invalidate function, which can happen in random order.
@@ -482,6 +489,11 @@ _efl_ui_caching_factory_efl_object_invalidate(Eo *obj,
                                               Efl_Ui_Caching_Factory_Data *pd)
 {
    efl_event_callback_del(efl_ui_widget_factory_widget_get(obj), EFL_EVENT_INVALIDATE, _invalidate, pd);
+   if (pd->app)
+     {
+        efl_event_callback_del(pd->app, EFL_APP_EVENT_PAUSE, _efl_ui_caching_factory_pause, pd);
+        efl_wref_del(pd->app, &pd->app);
+     }
 
    efl_invalidate(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS));
 }
