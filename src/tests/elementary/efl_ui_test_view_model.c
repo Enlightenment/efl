@@ -363,8 +363,53 @@ EFL_START_TEST(efl_test_view_model)
 }
 EFL_END_TEST
 
+static int _logic_freed;
+
+static void
+_logic_free_count(void *data EINA_UNUSED)
+{
+   _logic_freed++;
+}
+
+static Eina_Value *
+_logic_get_nothing(void *data EINA_UNUSED, const Efl_Ui_View_Model *mv EINA_UNUSED, Eina_Stringshare *property EINA_UNUSED)
+{
+   return eina_value_error_new(EAGAIN);
+}
+
+/* A logic that is refused is not kept, so what was handed over with it --
+ * its callbacks' data, its iterator -- is released at once. */
+EFL_START_TEST(efl_test_view_model_logic_refused)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Ui_View_Model *mv;
+   static const char *none[] = { NULL };
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   mv = efl_add_ref(EFL_UI_VIEW_MODEL_CLASS, efl_main_loop_get(),
+                    efl_ui_view_model_set(efl_added, base_model));
+
+   _logic_freed = 0;
+   ck_assert_int_eq(efl_ui_view_model_property_logic_add(mv, "twice",
+                       NULL, _logic_get_nothing, _logic_free_count,
+                       NULL, NULL, NULL,
+                       EINA_C_ARRAY_ITERATOR_NEW(none)), 0);
+   ck_assert_int_eq(_logic_freed, 0);
+
+   ck_assert_int_ne(efl_ui_view_model_property_logic_add(mv, "twice",
+                       NULL, _logic_get_nothing, _logic_free_count,
+                       NULL, NULL, _logic_free_count,
+                       EINA_C_ARRAY_ITERATOR_NEW(none)), 0);
+   ck_assert_int_eq(_logic_freed, 2);
+
+   efl_unref(mv);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_view_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_view_model);
+   tcase_add_test(tc, efl_test_view_model_logic_refused);
 }

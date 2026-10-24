@@ -161,11 +161,15 @@ _efl_ui_view_model_property_logic_add(Eo *obj, Efl_Ui_View_Model_Data *pd,
    if (eina_hash_find(pd->logics, prop))
      {
         eina_stringshare_del(prop);
-        return EFL_MODEL_ERROR_INCORRECT_VALUE;
+        goto refused;
      }
 
    logic = calloc(1, sizeof (Efl_Ui_View_Model_Logic));
-   if (!logic) return ENOMEM;
+   if (!logic)
+     {
+        eina_stringshare_del(prop);
+        goto no_memory;
+     }
 
    logic->object = obj;
    logic->property = prop;
@@ -186,6 +190,19 @@ _efl_ui_view_model_property_logic_add(Eo *obj, Efl_Ui_View_Model_Data *pd,
    eina_iterator_free(bound);
 
    return 0;
+
+   /* What was handed over is ours to release when the logic is not kept:
+    * the iterator, and the callbacks' data through their free functions. */
+ refused:
+   eina_iterator_free(bound);
+   if (get_free_cb) get_free_cb(get_data);
+   if (set_free_cb) set_free_cb(set_data);
+   return EFL_MODEL_ERROR_INCORRECT_VALUE;
+ no_memory:
+   eina_iterator_free(bound);
+   if (get_free_cb) get_free_cb(get_data);
+   if (set_free_cb) set_free_cb(set_data);
+   return ENOMEM;
 }
 
 static Eina_Error
