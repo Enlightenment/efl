@@ -402,6 +402,9 @@ EFL_START_TEST(efl_test_view_model_logic_refused)
                        EINA_C_ARRAY_ITERATOR_NEW(none)), 0);
    ck_assert_int_eq(_logic_freed, 2);
 
+   ck_assert_int_eq(efl_ui_view_model_property_logic_del(mv, "twice"), 0);
+   ck_assert_int_eq(_logic_freed, 3);
+
    efl_unref(mv);
    efl_unref(base_model);
 }

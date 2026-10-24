@@ -210,11 +210,19 @@ _efl_ui_view_model_property_logic_del(Eo *obj EINA_UNUSED, Efl_Ui_View_Model_Dat
                                    const char *property)
 {
    Efl_Ui_View_Model_Logic *logic;
+   Eina_Stringshare *prop;
+   Eina_Error err = EFL_MODEL_ERROR_INCORRECT_VALUE;
 
-   logic = eina_hash_find(pd->logics, property);
-   if (!logic) return EFL_MODEL_ERROR_INCORRECT_VALUE;
-   eina_hash_del(pd->logics, property, logic);
-   return 0;
+   /* the logics are keyed by stringshare */
+   prop = eina_stringshare_add(property);
+   logic = eina_hash_find(pd->logics, prop);
+   if (logic)
+     {
+        eina_hash_del(pd->logics, prop, logic);
+        err = 0;
+     }
+   eina_stringshare_del(prop);
+   return err;
 }
 
 static int
