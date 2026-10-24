@@ -551,8 +551,43 @@ EFL_START_TEST(text_input_content_type)
 }
 EFL_END_TEST
 
+static int _stack_errors;
+
+static void
+_count_stack_errors(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+                    const char *file EINA_UNUSED, const char *fnc, int line EINA_UNUSED,
+                    const char *fmt EINA_UNUSED, void *data EINA_UNUSED,
+                    va_list args EINA_UNUSED)
+{
+   if ((level <= EINA_LOG_LEVEL_ERR) && fnc && strstr(fnc, "stack"))
+     _stack_errors++;
+}
+
+/* A scrollable textbox keeps its text inside the scroller's pan while the
+ * cursor is a member of the layout. The cursor used to be stacked above the
+ * text across those two smart parents, which evas refuses and logs, every
+ * time such a textbox was built. */
+EFL_START_TEST(text_scrollable_cursor_stack)
+{
+   Eo *win, *txt;
+
+   win = win_add(NULL, "entry", EFL_UI_WIN_TYPE_BASIC);
+   _stack_errors = 0;
+   eina_log_print_cb_set(_count_stack_errors, NULL);
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                 efl_ui_textbox_scrollable_set(efl_added, EINA_TRUE),
+                 efl_text_set(efl_added, "scrolling"));
+   efl_gfx_entity_size_set(txt, EINA_SIZE2D(200, 40));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 40));
+   get_me_to_those_events(txt);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(_stack_errors, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
+   tcase_add_test(tc, text_scrollable_cursor_stack);
    tcase_add_test(tc, text_cnp);
    tcase_add_test(tc, text_all_select_all_unselect);
    tcase_add_test(tc, text_selection);

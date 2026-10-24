@@ -2705,7 +2705,16 @@ _decoration_create(Eo *obj, Efl_Ui_Textbox_Data *sd,
    efl_canvas_group_member_add(sd->entry_edje, ret);
    if (above)
      {
-        efl_gfx_stack_above(ret, sd->text_table);
+        /* The cursor belongs on top of the text. A scrollable textbox puts
+           the text table inside the scroller's pan while this decoration is a
+           member of the layout, and evas cannot stack across two smart
+           parents -- it refuses and logs. Where they have drifted apart,
+           being on top of our own parent is what "above the text" means. */
+        if (evas_object_smart_parent_get(ret) ==
+            evas_object_smart_parent_get(sd->text_table))
+          efl_gfx_stack_above(ret, sd->text_table);
+        else
+          efl_gfx_stack_raise_to_top(ret);
      }
    else
      {
