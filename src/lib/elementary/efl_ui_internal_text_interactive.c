@@ -180,6 +180,12 @@ _return_key_update(Evas_Object *obj)
 #endif
 }
 
+static void
+_return_key_auto_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   _return_key_update(ev->object);
+}
+
 Eina_Bool
 _entry_hide_visible_password(Eo *obj)
 {
@@ -1835,6 +1841,9 @@ _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_T
          _sel_cursor_changed, obj);
    efl_event_callback_add(en->sel_end, EFL_TEXT_CURSOR_OBJECT_EVENT_CHANGED,
          _sel_cursor_changed, obj);
+   /* an automatic return key follows the text, however it changed */
+   efl_event_callback_add(obj, EFL_CANVAS_TEXTBLOCK_EVENT_CHANGED,
+         _return_key_auto_cb, NULL);
 
 #ifdef HAVE_ECORE_IMF
      {
