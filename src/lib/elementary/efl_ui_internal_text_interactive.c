@@ -180,6 +180,10 @@ _return_key_update(Evas_Object *obj)
 #endif
 }
 
+#ifdef HAVE_ECORE_IMF
+static void _input_hints_apply(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en);
+#endif
+
 static void
 _return_key_auto_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
@@ -1900,9 +1904,8 @@ _efl_ui_internal_text_interactive_efl_object_finalize(Eo *obj, Efl_Ui_Internal_T
            ecore_imf_context_input_panel_language_set(en->imf_context, ECORE_IMF_INPUT_PANEL_LANG_ALPHABET);
 #endif
 
-        if (efl_text_multiline_get(obj))
-           ecore_imf_context_input_hint_set(en->imf_context,
-                 ecore_imf_context_input_hint_get(en->imf_context) | ECORE_IMF_INPUT_HINT_MULTILINE);
+        /* what was asked for before there was an input method to tell */
+        _input_hints_apply(obj, en);
      }
 #endif
 
@@ -2261,34 +2264,38 @@ _efl_ui_internal_text_interactive_efl_input_text_entity_predictable_get(const Eo
 }
 
 
+#ifdef HAVE_ECORE_IMF
+/* What the input method is told: the application's hints, plus the
+ * multiline hint, which the field derives from itself and does not report
+ * back as one of them. */
+static void
+_input_hints_apply(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   Ecore_IMF_Input_Hints hints = (Ecore_IMF_Input_Hints)en->input_hints;
+
+   if (!en->imf_context) return;
+   if (efl_text_multiline_get(obj))
+     hints |= ECORE_IMF_INPUT_HINT_MULTILINE;
+   ecore_imf_context_input_hint_set(en->imf_context, hints);
+}
+#endif
+
 EOLIAN static void
 _efl_ui_internal_text_interactive_efl_input_text_entity_input_content_type_set(Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en, Efl_Input_Text_Content_Type input_hints)
 {
+   en->input_hints = input_hints;
 #ifdef HAVE_ECORE_IMF
-   if (en->imf_context)
-     ecore_imf_context_input_hint_set(en->imf_context, (Ecore_IMF_Input_Hints)input_hints);
-   (void)obj;
+   _input_hints_apply(obj, en);
 #else
    (void)obj;
-   (void)en;
-   (void)input_hints;
 #endif
 }
 
 
 EOLIAN static Efl_Input_Text_Content_Type
-_efl_ui_internal_text_interactive_efl_input_text_entity_input_content_type_get(const Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+_efl_ui_internal_text_interactive_efl_input_text_entity_input_content_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
-#ifdef HAVE_ECORE_IMF
-   if (en->imf_context)
-     return (Efl_Input_Text_Content_Type)ecore_imf_context_input_hint_get(en->imf_context);
-   (void)obj;
-#else
-   (void)obj;
-   (void)en;
-#endif
-
-   return EFL_INPUT_TEXT_CONTENT_TYPE_NONE;
+   return en->input_hints;
 }
 
 

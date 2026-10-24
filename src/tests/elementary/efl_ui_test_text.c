@@ -526,6 +526,31 @@ EFL_START_TEST(text_keyboard_mouse_cluster_cursor_movement)
 EFL_END_TEST
 */
 
+/* The content type is the field's own: it reads back what was set whether or
+ * not there is an input method to tell, and a password layout builds on it. */
+EFL_START_TEST(text_input_content_type)
+{
+   Eo *txt, *win;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+
+   efl_input_text_input_content_type_set(txt, EFL_INPUT_TEXT_CONTENT_TYPE_NONE);
+   ck_assert_int_eq(efl_input_text_input_content_type_get(txt),
+                    EFL_INPUT_TEXT_CONTENT_TYPE_NONE);
+   efl_input_text_input_content_type_set(txt, EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE);
+   ck_assert_int_eq(efl_input_text_input_content_type_get(txt),
+                    EFL_INPUT_TEXT_CONTENT_TYPE_AUTO_COMPLETE);
+
+   efl_input_text_input_panel_layout_set(txt, EFL_INPUT_TEXT_PANEL_LAYOUT_TYPE_PASSWORD);
+   ck_assert_int_eq(efl_input_text_input_content_type_get(txt),
+                    EFL_INPUT_TEXT_CONTENT_TYPE_SENSITIVE_DATA);
+
+   efl_del(txt);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_cnp);
@@ -540,6 +565,7 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_singleline_cursor_movement);
    tcase_add_test(tc, text_multiline_singleline_cursor_pos);
    tcase_add_test(tc, text_on_startup);
+   tcase_add_test(tc, text_input_content_type);
 // works on some systemd and not others - is suepct font or harfbuzz system
 // dependency issue... for now - disable.
 //   tcase_add_test(tc, text_keyboard_mouse_cluster_cursor_movement);
