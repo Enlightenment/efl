@@ -2516,7 +2516,7 @@ _elm_win_modality_increment(Efl_Ui_Win_Data *modalsd)
              else
                edje_object_signal_emit(ed, "efl,action,show_blocker", "efl");
              efl_event_callback_legacy_call
-                   (cursd->main_menu, EFL_UI_WIN_EVENT_ELM_ACTION_BLOCK_MENU, NULL);
+                   (cursd->main_menu, ELM_MENU_EVENT_ELM_ACTION_BLOCK_MENU, NULL);
              _elm_win_frame_style_update(cursd, 0, 1);
           }
      }
