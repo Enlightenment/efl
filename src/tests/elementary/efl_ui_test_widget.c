@@ -442,9 +442,90 @@ EFL_START_TEST(efl_ui_test_widget_disabled_nested_calls)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_test_widget_scroll_hold)
+{
+   Efl_Ui_Widget *win, *scroller, *box, *child;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
+
+   scroller = efl_add(EFL_UI_SCROLLER_CLASS, win);
+   efl_content_set(win, scroller);
+   box = efl_add(EFL_UI_BOX_CLASS, scroller);
+   efl_content_set(scroller, box);
+   child = efl_add(EFL_UI_BUTTON_CLASS, box);
+   efl_pack_end(box, child);
+
+   ck_assert(!efl_ui_scrollable_scroll_hold_get(scroller));
+
+   /* a push from deep in the tree holds the scrollable above it */
+   efl_ui_widget_scroll_hold_push(child);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+
+   /* holds nest: one pop of two does not release */
+   efl_ui_widget_scroll_hold_push(child);
+   efl_ui_widget_scroll_hold_pop(child);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+
+   efl_ui_widget_scroll_hold_pop(child);
+   ck_assert(!efl_ui_scrollable_scroll_hold_get(scroller));
+
+   /* an unbalanced pop must not drive the count negative -- if it did, the
+    * next push would reach zero rather than one and never hold again. It
+    * complains, which is right, so let it: the suite otherwise aborts on ERR */
+   fail_on_errors_teardown();
+   efl_ui_widget_scroll_hold_pop(child);
+   fail_on_errors_setup();
+
+   efl_ui_widget_scroll_hold_push(child);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+   efl_ui_widget_scroll_hold_pop(child);
+   ck_assert(!efl_ui_scrollable_scroll_hold_get(scroller));
+
+   /* a widget that dies while holding releases what it took, rather than
+    * leaving the scroller held with nothing left to pop it */
+   efl_ui_widget_scroll_hold_push(child);
+   efl_ui_widget_scroll_hold_push(child);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+   efl_del(child);
+   ck_assert(!efl_ui_scrollable_scroll_hold_get(scroller));
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_ui_test_widget_scroll_freeze)
+{
+   Efl_Ui_Widget *win, *scroller, *box, *child;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
+
+   scroller = efl_add(EFL_UI_SCROLLER_CLASS, win);
+   efl_content_set(win, scroller);
+   box = efl_add(EFL_UI_BOX_CLASS, scroller);
+   efl_content_set(scroller, box);
+   child = efl_add(EFL_UI_BUTTON_CLASS, box);
+   efl_pack_end(box, child);
+
+   ck_assert(!efl_ui_scrollable_scroll_freeze_get(scroller));
+
+   efl_ui_widget_scroll_freeze_push(child);
+   ck_assert(efl_ui_scrollable_scroll_freeze_get(scroller));
+
+   efl_ui_widget_scroll_freeze_push(child);
+   efl_ui_widget_scroll_freeze_pop(child);
+   ck_assert(efl_ui_scrollable_scroll_freeze_get(scroller));
+
+   /* and the same unwind on delete */
+   efl_del(child);
+   ck_assert(!efl_ui_scrollable_scroll_freeze_get(scroller));
+}
+EFL_END_TEST
+
 void efl_ui_test_widget(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
+   tcase_add_test(tc, efl_ui_test_widget_scroll_hold);
+   tcase_add_test(tc, efl_ui_test_widget_scroll_freeze);
    tcase_add_test(tc, efl_ui_test_widget_parent_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_sub_iterator);

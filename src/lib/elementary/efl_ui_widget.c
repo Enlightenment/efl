@@ -2213,6 +2213,10 @@ _efl_ui_widget_scroll_hold_push(Eo *obj, Elm_Widget_Smart_Data *sd)
 EOLIAN static void
 _efl_ui_widget_scroll_hold_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
+   /* An unbalanced pop used to drive this negative, after which the next push
+    * reached 0 rather than 1 and the hold was never applied again. */
+   EINA_SAFETY_ON_TRUE_RETURN(sd->scroll_hold <= 0);
+
    sd->scroll_hold--;
    if (!sd->scroll_hold)
      {
@@ -2290,6 +2294,8 @@ _efl_ui_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
 EOLIAN static void
 _efl_ui_widget_scroll_freeze_pop(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
+   EINA_SAFETY_ON_TRUE_RETURN(sd->scroll_freeze <= 0);
+
    sd->scroll_freeze--;
    if (!sd->scroll_freeze)
      {
@@ -6129,6 +6135,24 @@ static void
 _efl_ui_widget_efl_object_invalidate(Eo *obj, Efl_Ui_Widget_Data *pd)
 {
    efl_invalidate(efl_super(obj, EFL_UI_WIDGET_CLASS));
+
+   /* A push walks up the tree incrementing every ancestor. If this widget dies
+    * still holding, those ancestors would stay held for good -- scrolling dead
+    * in that subtree with nothing left to pop it. Unwind what we pushed.
+    */
+   {
+      Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, EFL_UI_WIDGET_CLASS);
+
+      if (sd && sd->parent_obj)
+        {
+           int i;
+
+           for (i = sd->scroll_hold; i > 0; i--)
+             efl_ui_widget_scroll_hold_pop(sd->parent_obj);
+           for (i = sd->scroll_freeze; i > 0; i--)
+             efl_ui_widget_scroll_freeze_pop(sd->parent_obj);
+        }
+   }
 
    _efl_ui_widget_model_unregister(obj, pd);
    efl_replace(&pd->properties.model, NULL);
