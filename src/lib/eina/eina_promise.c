@@ -1310,6 +1310,11 @@ _race_then_cb(void *data, const Eina_Value v,
    if (ctx->dispatching) return EINA_VALUE_EMPTY;
    ctx->dispatching = EINA_TRUE;
 
+   /* The race promise itself is being cancelled, which is what cancelled
+    * this future: the canceller frees the promise, so it must not be
+    * dispatched here as well. */
+   if (ctx->base.cancelled) return v;
+
    //By freeing the race_ctx all the other futures will be cancelled.
    if (!ctx->base.cancelled)
      _race_promise_ctx_free(ctx);
@@ -1349,6 +1354,10 @@ _all_then_cb(void *data, const Eina_Value v,
 
    ctx->processed++;
    eina_value_array_set(&ctx->values, i, v);
+   /* The all promise itself is being cancelled, which is what cancelled
+    * this future: the canceller frees the promise and the context, so the
+    * promise must not be dispatched here as well. */
+   if (ctx->base.cancelled) return v;
    if (ctx->processed == ctx->base.futures_len)
      {
         //We're in a safe context (from mainloop), so we can avoid scheduling a new dispatch

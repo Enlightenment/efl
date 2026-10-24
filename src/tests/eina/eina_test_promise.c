@@ -390,6 +390,66 @@ EFL_START_TEST(eina_test_promise_cancel_plain_chain)
 }
 EFL_END_TEST
 
+/* ------------------------------------------------------------------------ */
+
+static int combined_cancels;
+
+static void
+_count_promise_cancel(void *data EINA_UNUSED, const Eina_Promise *dead EINA_UNUSED)
+{
+   combined_cancels++;
+}
+
+/* Cancelling what eina_future_all or eina_future_race hands back cancels the
+ * futures it waits on, whose callbacks then report to the combined promise --
+ * which is the one being cancelled. Each pending promise hears its cancel
+ * once, the combined future answers ECANCELED once, and nothing is freed
+ * twice (valgrind shows the last; the counts show the rest). */
+static void
+_combined_cancel_check(Eina_Bool race)
+{
+   Test_Scheduler ts;
+   Eina_Promise *p1, *p2;
+   Eina_Future *f;
+
+   _test_scheduler_setup(&ts);
+   _counters_reset();
+   combined_cancels = 0;
+
+   p1 = eina_promise_new(&ts.scheduler, _count_promise_cancel, NULL);
+   p2 = eina_promise_new(&ts.scheduler, _count_promise_cancel, NULL);
+   fail_if(!p1 || !p2);
+
+   if (race)
+     f = eina_future_race(eina_future_new(p1), eina_future_new(p2));
+   else
+     f = eina_future_all(eina_future_new(p1), eina_future_new(p2));
+   fail_if(!f);
+   f = eina_future_then(f, _outer_done, NULL, NULL);
+   fail_if(!f);
+
+   eina_future_cancel(f);
+   _test_scheduler_pump(&ts);
+
+   ck_assert_int_eq(combined_cancels, 2);
+   ck_assert_int_eq(outer_calls, 1);
+   ck_assert_int_eq(outer_error, ECANCELED);
+
+   _test_scheduler_flush(&ts);
+}
+
+EFL_START_TEST(eina_test_promise_all_cancel)
+{
+   _combined_cancel_check(EINA_FALSE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eina_test_promise_race_cancel)
+{
+   _combined_cancel_check(EINA_TRUE);
+}
+EFL_END_TEST
+
 void
 eina_test_promise(TCase *tc)
 {
@@ -399,4 +459,6 @@ eina_test_promise(TCase *tc)
    tcase_add_test(tc, eina_test_promise_future_as_value_cancel_before_resolve);
    tcase_add_test(tc, eina_test_promise_future_as_value_cancel_while_inner_pending);
    tcase_add_test(tc, eina_test_promise_future_as_value_cancel_then_inner_rejects);
+   tcase_add_test(tc, eina_test_promise_all_cancel);
+   tcase_add_test(tc, eina_test_promise_race_cancel);
 }
