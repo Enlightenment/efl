@@ -69,6 +69,12 @@ interface Efl.Model
               ]]
               return: future<any_value_ref>; [[Return an error in case the property could not be set,
                                                or the value that was set otherwise.]]
+              keys {
+                 property: string; [[Property name]]
+              }
+              values {
+                 value: any_value_ref; [[Property value. The model copies what it keeps.]]
+              }
            }
            get {
               [[Retrieve the value of a given property name.
@@ -79,12 +85,13 @@ interface Efl.Model
 
                 See @.properties.get, @[Efl.Model.properties,changed]
               ]]
-           }
-           keys {
-              property: string; [[Property name]]
-           }
-           values {
-              value: any_value_ref; [[Property value]]
+              keys {
+                 property: string; [[Property name]]
+              }
+              values {
+                 value: any_value_ref @move; [[Property value, newly allocated: the caller frees it
+                                               (using $eina_value_free() in C).]]
+              }
            }
         }
         property_ready_get {
