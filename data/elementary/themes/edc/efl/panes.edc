@@ -301,6 +301,9 @@ group { name: "efl/panes/vertical:flush";
    data.item: "version" "123";
    images.image: "shadow_circle_vert.png" COMP;
    parts {
+      alias: "first" "efl.left";
+      alias: "second" "efl.right";
+
       part { name: "whole"; type: SPACER;
          description { state: "default" 0.0;
          }
@@ -540,6 +543,9 @@ group { name: "efl/panes/horizontal:flush";
    data.item: "version" "123";
    images.image: "shadow_circle_horiz.png" COMP;
    parts {
+      alias: "first" "efl.left";
+      alias: "second" "efl.right";
+
       part { name: "whole"; type: SPACER;
          description { state: "default" 0.0;
          }
