@@ -204,7 +204,13 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
    struct sigaction sa;
 
    sa.sa_sigaction = func;
-   sa.sa_flags = SA_RESTART | SA_SIGINFO;
+   /* SA_ONSTACK: a thread that set up an alternate signal stack expects a
+      handler to run on it. Go sets one on every thread it runs goroutines
+      on, whose own stacks are a few kilobytes and cannot take a handler
+      frame: without the flag, a SIGCHLD from a Go program's os/exec lands
+      on one and corrupts it. Threads with no alternate stack are not
+      affected. */
+   sa.sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK;
    sigemptyset(&sa.sa_mask);
    sigaction(sig, &sa, NULL);
 }

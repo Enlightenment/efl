@@ -211,7 +211,9 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
           }
         /* set up signal handler for SIGBUS */
         sa.sa_sigaction = _eina_mmap_safe_sigbus;
-        sa.sa_flags = SA_RESTART | SA_SIGINFO;
+        /* On the thread's alternate signal stack when it has one, as a
+           host runtime such as Go's requires. */
+        sa.sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK;
         sigemptyset(&sa.sa_mask);
         if (sigaction(SIGBUS, &sa, &_eina_mmap_prev_sigaction) == 0) goto done;
         /* setup of SIGBUS handler failed, lets close zero page dev and fail */

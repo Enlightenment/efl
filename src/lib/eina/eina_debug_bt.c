@@ -274,7 +274,9 @@ _signal_init(void)
    // set up signal handler for our profiling signal - eevery thread should
    // obey this (this is the case on linux - other OSs may vary)
    sa.sa_sigaction = _signal_handler;
-   sa.sa_flags = SA_RESTART | SA_SIGINFO;
+   /* On the thread's alternate signal stack when it has one, as a host
+      runtime such as Go's requires. */
+   sa.sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK;
    sigemptyset(&sa.sa_mask);
    if (sigaction(SIG, &sa, NULL) != 0)
       e_debug("EINA DEBUG ERROR: Can't set up sig %i handler!", SIG);

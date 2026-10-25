@@ -4,6 +4,9 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#ifndef _WIN32
+# include <signal.h>
+#endif
 
 #ifdef _WIN32
 # include <evil_private.h> /* pipe */
@@ -481,8 +484,36 @@ EFL_START_TEST(ecore_test_ecore_app)
 }
 EFL_END_TEST
 
+#ifndef _WIN32
+/* Ecore's signal handlers run on the thread's alternate signal stack when it
+   has one. A Go program sets one on every thread, and a handler run on a
+   goroutine's own stack instead corrupts it: a SIGCHLD from a child it
+   spawned was enough. */
+EFL_START_TEST(ecore_test_ecore_signal_handlers_onstack)
+{
+   const int sigs[] = { SIGPIPE, SIGALRM, SIGCHLD, SIGUSR1, SIGUSR2,
+                        SIGHUP, SIGQUIT, SIGINT, SIGTERM };
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(sigs); i++)
+     {
+        struct sigaction sa;
+
+        ck_assert_int_eq(sigaction(sigs[i], NULL, &sa), 0);
+        ck_assert_msg(sa.sa_flags & SA_SIGINFO,
+                      "signal %d does not have ecore's handler", sigs[i]);
+        ck_assert_msg(sa.sa_flags & SA_ONSTACK,
+                      "signal %d's handler is not SA_ONSTACK", sigs[i]);
+     }
+}
+EFL_END_TEST
+#endif
+
 void ecore_test_ecore(TCase *tc)
 {
+#ifndef _WIN32
+   tcase_add_test(tc, ecore_test_ecore_signal_handlers_onstack);
+#endif
    tcase_add_test(tc, ecore_test_ecore_init);
    tcase_add_test(tc, ecore_test_ecore_main_loop);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
