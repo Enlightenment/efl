@@ -306,7 +306,10 @@ eina_value_dup(const Eina_Value *val)
 {
    Eina_Value *v;
 
-   v = eina_value_new(eina_value_type_get(val));
+   /* eina_value_copy sets its target up itself: one set up already, as
+      eina_value_new(type) would give, loses its first allocation for any
+      type that does not fit inline -- an array, a hash, a struct. */
+   v = eina_value_new(NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(v, NULL);
    if (!eina_value_copy(val, v))
      {

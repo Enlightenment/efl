@@ -2060,6 +2060,33 @@ EFL_START_TEST(eina_value_test_convert_float)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_value_test_dup_array)
+{
+   Eina_Value *value, *dup;
+   char c;
+
+   value = eina_value_array_new(EINA_VALUE_TYPE_CHAR, 0);
+   fail_unless(value != NULL);
+   fail_unless(eina_value_array_append(value, 'k'));
+   fail_unless(eina_value_array_append(value, 's'));
+
+   /* An array does not fit inline: copying it into a value set up already
+      lost that first allocation, which only a leak checker would see. */
+   dup = eina_value_dup(value);
+   fail_unless(dup != NULL);
+   ck_assert_ptr_eq(eina_value_type_get(dup), EINA_VALUE_TYPE_ARRAY);
+   ck_assert_int_eq(eina_value_array_count(dup), 2);
+
+   /* A copy, not an alias. */
+   fail_unless(eina_value_array_set(value, 0, 'x'));
+   fail_unless(eina_value_array_get(dup, 0, &c));
+   ck_assert_int_eq(c, 'k');
+
+   eina_value_free(value);
+   eina_value_free(dup);
+}
+EFL_END_TEST
+
 EFL_START_TEST(eina_value_test_array)
 {
    Eina_Value *value, other;
@@ -3108,6 +3135,7 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_convert_float);
    // TODO: other converters...
    tcase_add_test(tc, eina_value_test_array);
+   tcase_add_test(tc, eina_value_test_dup_array);
    tcase_add_test(tc, eina_value_test_list);
    tcase_add_test(tc, eina_value_test_list_insert);
    tcase_add_test(tc, eina_value_test_hash);
