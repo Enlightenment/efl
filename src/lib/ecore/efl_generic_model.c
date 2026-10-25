@@ -156,6 +156,7 @@ _efl_generic_model_efl_model_child_add(Eo *obj, Efl_Generic_Model_Data *sd)
      }
 
    cevt.index = eina_list_count(sd->childrens);
+   cevt.child = child;
    sd->childrens = eina_list_append(sd->childrens, child);
 
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);

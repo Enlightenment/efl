@@ -551,10 +551,38 @@ EFL_START_TEST(efl_test_composite_model_source_properties_first)
 }
 EFL_END_TEST
 
+static void
+_child_added_cb(void *data, const Efl_Event *event)
+{
+   Efl_Model_Children_Event *cevt = event->info;
+   Efl_Model_Children_Event *seen = data;
+
+   *seen = *cevt;
+}
+
+EFL_START_TEST(efl_test_generic_model_child_added)
+{
+   Efl_Generic_Model *model, *child;
+   Efl_Model_Children_Event seen = { 0 };
+
+   model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   efl_event_callback_add(model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, &seen);
+
+   efl_model_child_add(model);
+   child = efl_model_child_add(model);
+
+   ck_assert_int_eq(seen.index, 1);
+   ck_assert_ptr_eq(seen.child, child);
+
+   efl_unref(model);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_boolean_model);
    tcase_add_test(tc, efl_test_filter_model);
+   tcase_add_test(tc, efl_test_generic_model_child_added);
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);
 }
