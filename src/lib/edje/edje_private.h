@@ -2445,7 +2445,7 @@ void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
 void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
 const Edje_Signal_Callback_Group *_edje_signal_callback_alloc(void);
-void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m, Edje_Signal_Callback_Flags *flags, void **custom_data);
+void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp);
 Eina_Bool _edje_signal_callback_push(Edje_Signal_Callback_Group *cgp,
                                      const char *signal, const char *source,

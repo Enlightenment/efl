@@ -1773,7 +1773,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
           }
 
 break_prog:
-        _edje_signal_callback_matches_unref(m, ed->callbacks->flags, ed->callbacks->custom_data);
+        _edje_signal_callback_matches_unref(m);
 
         _edje_signal_callback_patterns_unref(ssp);
      }

@@ -229,11 +229,79 @@ EFL_START_TEST(edje_test_signal_callback_del_full)
 }
 EFL_END_TEST
 
+static int _owned_heard;
+static int _owned_freed;
+
+static void
+_owned_signal_cb(void *data, Eo *obj EINA_UNUSED,
+                 const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   /* The data is only valid until it has been freed. */
+   ck_assert_int_eq(_owned_freed, 0);
+   ck_assert_int_eq(*(int *)data, 42);
+   _owned_heard++;
+}
+
+static void
+_owned_signal_free(void *data)
+{
+   ck_assert_int_eq(*(int *)data, 42);
+   _owned_freed++;
+}
+
+/* A callback added with data and a free function keeps its data for as long
+   as it is registered, however many signals it hears, and has it freed once:
+   when it is deleted, or when the object goes away. Edje used to free it on
+   every emission. */
+EFL_START_TEST(edje_test_signal_callback_free_once)
+{
+   Evas *evas;
+   Eo *obj;
+   int data = 42;
+
+   evas = _setup_evas();
+
+   obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
+                 efl_file_set(efl_added,
+                 test_layout_get("test_signal_callback_del_full.edj")),
+                 efl_file_key_set(efl_added, "test"),
+                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(320, 240)),
+                 efl_gfx_entity_visible_set(efl_added, 1));
+
+   _owned_heard = _owned_freed = 0;
+   ck_assert(efl_layout_signal_callback_add(obj, "some_signal", "event", &data,
+                                            _owned_signal_cb, _owned_signal_free));
+   efl_layout_signal_emit(obj, "some_signal", "event");
+   efl_layout_signal_process(obj, EINA_FALSE);
+   efl_layout_signal_emit(obj, "some_signal", "event");
+   efl_layout_signal_process(obj, EINA_FALSE);
+   ck_assert_int_eq(_owned_heard, 2);
+   ck_assert_int_eq(_owned_freed, 0);
+
+   ck_assert(efl_layout_signal_callback_del(obj, "some_signal", "event", &data,
+                                            _owned_signal_cb, _owned_signal_free));
+   ck_assert_int_eq(_owned_freed, 1);
+   efl_layout_signal_emit(obj, "some_signal", "event");
+   efl_layout_signal_process(obj, EINA_FALSE);
+   ck_assert_int_eq(_owned_heard, 2);
+
+   _owned_freed = 0;
+   ck_assert(efl_layout_signal_callback_add(obj, "some_signal", "event", &data,
+                                            _owned_signal_cb, _owned_signal_free));
+   efl_layout_signal_emit(obj, "some_signal", "event");
+   efl_layout_signal_process(obj, EINA_FALSE);
+   ck_assert_int_eq(_owned_freed, 0);
+   efl_del(obj);
+   ck_assert_int_eq(_owned_freed, 1);
+}
+EFL_END_TEST
+
 void edje_test_signal(TCase *tc)
 {
    tcase_add_test(tc, edje_test_message_send_legacy);
    tcase_add_test(tc, edje_test_message_send_eo);
    tcase_add_test(tc, edje_test_signals);
    tcase_add_test(tc, edje_test_signal_callback_del_full);
+   tcase_add_test(tc, edje_test_signal_callback_free_once);
 
 }

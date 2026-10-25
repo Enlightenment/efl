@@ -343,21 +343,14 @@ err:
 }
 
 void
-_edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m,
-                                    Edje_Signal_Callback_Flags *flags,
-                                    void **custom_data)
+_edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m)
 {
    unsigned int i;
 
-   if (m->free_cb)
-     {
-        for (i = 0; i < m->matches_count; ++i)
-          {
-             if (!flags[i].delete_me && m->free_cb[i])
-               m->free_cb[i](custom_data[i]);
-          }
-     }
-
+   /* The matches are shared, between objects whose callbacks look alike and
+      by whoever is walking them, so dropping a reference says nothing about
+      any callback's data: that belongs to the group, and is freed when the
+      callback is deleted or the group goes away. */
    EINA_REFCOUNT_UNREF(m)
      {
         if (m->hashed)
@@ -391,8 +384,18 @@ _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp)
    Edje_Signal_Callback_Group *gp = (Edje_Signal_Callback_Group *)cgp;
 
    if (!gp) return;
+   if (gp->matches && gp->matches->free_cb)
+     {
+        unsigned int i;
+
+        for (i = 0; i < gp->matches->matches_count; ++i)
+          {
+             if (!gp->flags[i].delete_me && gp->matches->free_cb[i])
+               gp->matches->free_cb[i](gp->custom_data[i]);
+          }
+     }
    _edje_signal_callback_matches_unref
-     ((Edje_Signal_Callback_Matches *)gp->matches, gp->flags, gp->custom_data);
+     ((Edje_Signal_Callback_Matches *)gp->matches);
    free(gp->flags);
    free(gp->custom_data);
    gp->matches = NULL;
@@ -539,7 +542,7 @@ _edje_signal_callback_patterns_ref(Edje_Signal_Callback_Group *gp)
                }
           }
         _edje_signal_callback_matches_unref
-          ((Edje_Signal_Callback_Matches *)tmp, gp->flags, gp->custom_data);
+          ((Edje_Signal_Callback_Matches *)tmp);
         ((Edje_Signal_Callback_Group *)gp)->matches = m;
         tmp = (Edje_Signal_Callback_Matches *)gp->matches;
         EINA_REFCOUNT_REF(tmp);
