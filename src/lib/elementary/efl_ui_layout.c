@@ -948,6 +948,8 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    EINA_LIST_FREE(sd->parts_cursors, pc)
      _part_cursor_free(pc);
 
+   _elm_layout_signal_proxies_detach(&sd->signal_proxies);
+
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
         edje_object_signal_callback_del_full
@@ -1169,20 +1171,125 @@ _efl_ui_layout_base_efl_layout_signal_signal_emit(Eo *obj, Efl_Ui_Layout_Data *_
    efl_layout_signal_emit(wd->resize_obj, emission, source);
 }
 
-static Eina_Bool
-_efl_ui_layout_base_efl_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+/* A callback added to a widget is called with the widget, not with the edje
+   object that implements it: that object is the widget's own business, and a
+   caller comparing what it is handed with what it registered on would find
+   something it has never seen. The legacy API has always done this through
+   Edje_Signal_Data; the Eo API forwarded the callback as it was. Each
+   registration is now a proxy that edje owns and calls back. */
+typedef struct _Elm_Layout_Signal_Proxy
 {
-   // Don't do anything else than call forward here
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_layout_signal_callback_add(wd->resize_obj, emission, source, func_data, func, func_free_cb);
+   Eo                *obj;     /* the widget, handed to func */
+   Eina_List        **owner;   /* the widget's list, NULL once it is gone */
+   EflLayoutSignalCb  func;
+   void              *data;
+   Eina_Free_Cb       free_cb;
+   Eina_Stringshare  *emission;
+   Eina_Stringshare  *source;
+} Elm_Layout_Signal_Proxy;
+
+static void
+_signal_proxy_cb(void *data, Eo *edje EINA_UNUSED, const char *emission, const char *source)
+{
+   Elm_Layout_Signal_Proxy *p = data;
+
+   p->func(p->data, p->obj, emission, source);
+}
+
+/* Called by edje when the callback is deleted or the edje object freed. */
+static void
+_signal_proxy_free(void *data)
+{
+   Elm_Layout_Signal_Proxy *p = data;
+
+   if (p->owner) *p->owner = eina_list_remove(*p->owner, p);
+   if (p->free_cb) p->free_cb(p->data);
+   eina_stringshare_del(p->emission);
+   eina_stringshare_del(p->source);
+   free(p);
+}
+
+Eina_Bool
+_elm_layout_signal_proxy_add(Eo *obj, Eo *edje, Eina_List **proxies,
+                             const char *emission, const char *source,
+                             void *func_data, EflLayoutSignalCb func,
+                             Eina_Free_Cb func_free_cb)
+{
+   Elm_Layout_Signal_Proxy *p;
+
+   if (!edje || !func) return EINA_FALSE;
+   p = calloc(1, sizeof(*p));
+   if (!p) return EINA_FALSE;
+   p->obj = obj;
+   p->owner = proxies;
+   p->func = func;
+   p->data = func_data;
+   p->free_cb = func_free_cb;
+   p->emission = eina_stringshare_add(emission);
+   p->source = eina_stringshare_add(source);
+   if (!efl_layout_signal_callback_add(edje, emission, source, p,
+                                       _signal_proxy_cb, _signal_proxy_free))
+     {
+        /* Refused: the caller keeps its data, so it is not freed here. */
+        eina_stringshare_del(p->emission);
+        eina_stringshare_del(p->source);
+        free(p);
+        return EINA_FALSE;
+     }
+   *proxies = eina_list_append(*proxies, p);
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_elm_layout_signal_proxy_del(Eo *edje, Eina_List **proxies,
+                             const char *emission, const char *source,
+                             void *func_data, EflLayoutSignalCb func,
+                             Eina_Free_Cb func_free_cb)
+{
+   Elm_Layout_Signal_Proxy *p;
+   Eina_List *l;
+
+   if (!edje) return EINA_FALSE;
+   EINA_LIST_FOREACH(*proxies, l, p)
+     {
+        if ((p->func != func) || (p->data != func_data) ||
+            (p->free_cb != func_free_cb) ||
+            (!!emission != !!p->emission) || (!!source != !!p->source) ||
+            (emission && strcmp(p->emission, emission)) ||
+            (source && strcmp(p->source, source)))
+          continue;
+        /* edje calls _signal_proxy_free, which takes p off the list. */
+        return efl_layout_signal_callback_del(edje, p->emission, p->source, p,
+                                              _signal_proxy_cb, _signal_proxy_free);
+     }
+   return EINA_FALSE;
+}
+
+/* The widget is going away before its edje object: the proxies stay edje's
+   to free, but must not reach back into the widget's list. */
+void
+_elm_layout_signal_proxies_detach(Eina_List **proxies)
+{
+   Elm_Layout_Signal_Proxy *p;
+
+   EINA_LIST_FREE(*proxies, p)
+     p->owner = NULL;
 }
 
 static Eina_Bool
-_efl_ui_layout_base_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+_efl_ui_layout_base_efl_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Layout_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
-   // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_layout_signal_callback_del(wd->resize_obj, emission, source, func_data, func, func_free_cb);
+   return _elm_layout_signal_proxy_add(obj, wd->resize_obj, &pd->signal_proxies,
+                                       emission, source, func_data, func, func_free_cb);
+}
+
+static Eina_Bool
+_efl_ui_layout_base_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layout_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   return _elm_layout_signal_proxy_del(wd->resize_obj, &pd->signal_proxies,
+                                       emission, source, func_data, func, func_free_cb);
 }
 
 // TODO:

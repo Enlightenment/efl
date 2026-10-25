@@ -52,6 +52,7 @@ typedef struct _Efl_Ui_Layout_Data
    Evas_Object          *obj; /**< The object itself */
    Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects such as text, content and the children of box and table. */
    Eina_List            *edje_signals; /**< The list of edje signal callbacks. */
+   Eina_List            *signal_proxies; /**< The callbacks added through efl_layout_signal_callback_add, see _elm_layout_signal_proxy_add. */
    Eina_List            *parts_cursors; /**< The list of cursor names of layout parts. This is a list of Elm_Layout_Sub_Object_Cursor struct. */
    Eina_Inarray           *deferred_signals; /**< signals which were generated during construction */
 

@@ -947,6 +947,9 @@ double _elm_atof(const char *s);
 void _elm_layout_legacy_icon_signal_emit(Evas_Object *obj);
 // elm_layout and elm_entry LEGACY signal API (returned the user data pointer)
 void _elm_layout_signal_callback_add_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_signals, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
+Eina_Bool _elm_layout_signal_proxy_add(Eo *obj, Eo *edje, Eina_List **proxies, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb);
+Eina_Bool _elm_layout_signal_proxy_del(Eo *edje, Eina_List **proxies, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb);
+void _elm_layout_signal_proxies_detach(Eina_List **proxies);
 void *_elm_layout_signal_callback_del_legacy(Eo *obj, Eo *edje, Eina_List **p_edje_signals, const char *emission, const char *source, Edje_Signal_Cb func);
 void _elm_entry_signal_callback_add_legacy(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
 void *_elm_entry_signal_callback_del_legacy(Eo *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb);

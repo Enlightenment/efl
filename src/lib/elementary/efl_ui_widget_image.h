@@ -43,6 +43,7 @@ typedef struct _Efl_Ui_Image_Data Efl_Ui_Image_Data;
 struct _Efl_Ui_Image_Data
 {
    Eo                   *self;
+   Eina_List            *signal_proxies; /* see _elm_layout_signal_proxy_add */
    Evas_Object          *hit_rect;
    Evas_Object          *img;
    Evas_Object          *prev_img;

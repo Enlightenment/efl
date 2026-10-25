@@ -642,6 +642,7 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
      efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                             _on_size_hints_changed, sd);
    ecore_timer_del(sd->anim_timer);
+   _elm_layout_signal_proxies_detach(&sd->signal_proxies);
    evas_object_del(sd->img);
    _prev_img_del(sd);
    _async_cancel(sd);
@@ -1299,10 +1300,11 @@ _efl_ui_image_efl_layout_signal_message_send(Eo *obj EINA_UNUSED, Efl_Ui_Image_D
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+_efl_ui_image_efl_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_Image_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    if (pd->edje)
-     return efl_layout_signal_callback_add(pd->img, emission, source, func_data, func, func_free_cb);
+     return _elm_layout_signal_proxy_add(obj, pd->img, &pd->signal_proxies,
+                                         emission, source, func_data, func, func_free_cb);
    return EINA_FALSE;
 }
 
@@ -1310,7 +1312,8 @@ EOLIAN static Eina_Bool
 _efl_ui_image_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    if (pd->edje)
-     return efl_layout_signal_callback_del(pd->img, emission, source, func_data, func, func_free_cb);
+     return _elm_layout_signal_proxy_del(pd->img, &pd->signal_proxies,
+                                         emission, source, func_data, func, func_free_cb);
    return EINA_FALSE;
 }
 

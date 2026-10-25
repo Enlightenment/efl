@@ -213,6 +213,64 @@ EFL_START_TEST(efl_ui_layout_test_api_ordering)
 }
 EFL_END_TEST
 
+typedef struct
+{
+   Eo *from;
+   int heard;
+   int freed;
+} Signal_Probe;
+
+static void
+_probe_signal_cb(void *data, Efl_Layout_Signal *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   Signal_Probe *probe = data;
+
+   ck_assert_int_eq(probe->freed, 0);
+   probe->from = obj;
+   probe->heard++;
+}
+
+static void
+_probe_free(void *data)
+{
+   Signal_Probe *probe = data;
+
+   probe->freed++;
+}
+
+/* A signal callback added to a widget is called with the widget -- not with
+ * the edje object inside it, which the caller has never seen -- can be
+ * deleted with what it was added with, and has its data freed once: when it
+ * is deleted, or when the widget goes away. */
+EFL_START_TEST(efl_ui_layout_test_signal_callback_object)
+{
+   Signal_Probe kept = { 0 }, dropped = { 0 };
+   Eo *win, *layout;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   layout = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+   ck_assert(efl_layout_signal_callback_add(layout, "ego,test", "ego", &kept, _probe_signal_cb, _probe_free));
+   ck_assert(efl_layout_signal_callback_add(layout, "ego,test", "ego", &dropped, _probe_signal_cb, _probe_free));
+   efl_layout_signal_emit(layout, "ego,test", "ego");
+   efl_layout_signal_process(layout, EINA_TRUE);
+   ck_assert_int_eq(kept.heard, 1);
+   ck_assert_ptr_eq(kept.from, layout);
+
+   ck_assert(efl_layout_signal_callback_del(layout, "ego,test", "ego", &dropped, _probe_signal_cb, _probe_free));
+   ck_assert_int_eq(dropped.freed, 1);
+   ck_assert(!efl_layout_signal_callback_del(layout, "ego,test", "ego", &dropped, _probe_signal_cb, _probe_free));
+   efl_layout_signal_emit(layout, "ego,test", "ego");
+   efl_layout_signal_process(layout, EINA_TRUE);
+   ck_assert_int_eq(kept.heard, 2);
+   ck_assert_int_eq(dropped.heard, 1);
+
+   efl_del(layout);
+   ck_assert_int_eq(kept.freed, 1);
+   ck_assert_int_eq(dropped.freed, 1);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_layout_test_versioning)
 {
    Evas_Object *win;
@@ -378,6 +436,7 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_api_ordering);
    tcase_add_test(tc, efl_ui_layout_test_callback);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_provider);
+   tcase_add_test(tc, efl_ui_layout_test_signal_callback_object);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_alone);
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
