@@ -3401,7 +3401,7 @@ EOLIAN_API char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  *
  * When the reference is a class, alias, struct, enum or var, the first data arg
  * is filled. When it's a func, the first data is class and second data is
- * the respective Eolian_Implement, when it's an event the first data is class
+ * the respective Eolian_Function, when it's an event the first data is class
  * and the second data is the event, when it's a struct field or enum field
  * the first data is is the struct/enum and the second data is the field.
  *
