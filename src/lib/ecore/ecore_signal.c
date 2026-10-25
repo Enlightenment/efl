@@ -491,7 +491,7 @@ _ecore_signal_waitpid(Eina_Bool once, siginfo_t info)
                   Ecore_Signal_Pid_Info pinfo;
 
                   sig_pid_info_list = eina_list_remove_list
-                    (sig_pid_info_list, ll);
+                    (sig_pid_info_list, l);
                   pinfo.pid = pid;
                   pinfo.info = info;
                   if (WIFEXITED(status))
