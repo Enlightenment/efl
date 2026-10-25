@@ -54,7 +54,7 @@ mixin @beta Efl.Ui.Selection requires Efl.Object {
       params {
         buffer : Efl.Ui.Cnp_Buffer; [[System buffer to use.]]
         seat : uint; [[Seat where the data should be pasted. Use 0 when in doubt.]]
-        acceptable_types : iterator<string>; [[List of accepted IANA MIME types:
+        acceptable_types : iterator<string> @move; [[List of accepted IANA MIME types:
                                                https://www.iana.org/assignments/media-types/media-types.xhtml
                                                If automatic conversion cannot be provided to any of the accepted
                                                types, an error will be returned.

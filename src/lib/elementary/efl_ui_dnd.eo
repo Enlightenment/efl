@@ -74,7 +74,7 @@ mixin @beta Efl.Ui.Dnd requires Efl.Object {
          [[Retrieves the dropped data.]]
          params {
             @in seat: uint; [[Seat that started the drag operation. When in doubt use 0.]]
-            @in acceptable_types : iterator<string>; [[List of strings describing the type of content the application
+            @in acceptable_types : iterator<string> @move; [[List of strings describing the type of content the application
                                                        can accept. Types are IANA MIME types:
                                                        https://www.iana.org/assignments/media-types/media-types.xhtml.]]
          }
