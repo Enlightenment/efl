@@ -341,6 +341,85 @@ EFL_START_TEST(test_efl_ui_collection_view_last_row_kept)
 }
 EFL_END_TEST
 
+/* A list emptied and filled again, as a whole new set of rows replaces the
+   old one, shows the new rows. The view asks for its last row each time
+   the count changes, and those asked for while the old rows went away are
+   answered once the new ones are in: they must not be shown as them. */
+EFL_START_TEST(test_efl_ui_collection_view_refill)
+{
+   Eina_List *realized = NULL;
+   Efl_Ui_Win *win;
+   Efl_Model *model;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   Eina_Value v;
+   Eo *item, *rows[3];
+   char text[16];
+   int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 300));
+
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+   eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
+   for (i = 0; i < 3; i++)
+     {
+        snprintf(text, sizeof(text), "Row %d", i);
+        eina_value_set(&v, text);
+        rows[i] = efl_model_child_add(model);
+        efl_model_property_set(rows[i], "title", &v);
+     }
+
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_event_callback_add(efl_added, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                                       _realized_track, &realized),
+                efl_event_callback_add(efl_added, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                                       _unrealized_track, &realized),
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, model));
+   efl_content_set(win, lv);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   /* Taken out from the last, then new ones appended. */
+   for (i = 2; i >= 0; i--)
+     {
+        efl_model_child_del(model, rows[i]);
+     }
+   for (i = 0; i < 3; i++)
+     {
+        snprintf(text, sizeof(text), "Row %d", 10 + i);
+        eina_value_set(&v, text);
+        efl_model_property_set(efl_model_child_add(model), "title", &v);
+     }
+   eina_value_flush(&v);
+   for (i = 0; i < 100; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   for (i = 0; i < 3; i++)
+     {
+        snprintf(text, sizeof(text), "Row %d", 10 + i);
+        item = _realized_row(realized, i);
+        ck_assert_ptr_nonnull(item);
+        ck_assert_str_eq(efl_text_get(item), text);
+     }
+
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   eina_list_free(realized);
+}
+EFL_END_TEST
+
 /* The sizes the position manager caches and the sizes it places must agree
    while the window resizes the view. */
 EFL_START_TEST(test_efl_ui_collection_view_sizes_agree)
@@ -492,6 +571,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_select);
    tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
    tcase_add_test(tc, test_efl_ui_collection_view_last_row_kept);
+   tcase_add_test(tc, test_efl_ui_collection_view_refill);
    tcase_add_test(tc, test_efl_ui_collection_view_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_shift_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);

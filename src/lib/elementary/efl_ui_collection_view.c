@@ -57,6 +57,8 @@ struct _Efl_Ui_Collection_Request
    unsigned int offset;
    unsigned int length;
 
+   unsigned int generation; /* of the rows, when the request was made */
+
    Eina_Bool need_size : 1;
    Eina_Bool need_entity : 1;
    Eina_Bool entity_requested : 1;
@@ -67,6 +69,9 @@ struct _Efl_Ui_Collection_View_Data
    Eina_Bool had_viewport : 1; /* there has been room to show something */
 
    unsigned int last_count; /* to tell a re-order from children arriving */
+   /* Changes whenever rows are added, taken away or reordered, so a row's
+      index may now mean another row. */
+   unsigned int generation;
    Efl_Ui_Factory *factory;
    Efl_Ui_Position_Manager_Entity *manager;
    Efl_Ui_Scroll_Manager *scroller;
@@ -441,6 +446,33 @@ _request_add(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 }
 
+static Eina_List *_batch_request_flush(Eina_List *requests,
+                                       Efl_Ui_Collection_View *obj,
+                                       Efl_Ui_Collection_View_Data *pd);
+
+/* A request is for rows by their index, and answers later. If rows were
+   added, taken away or reordered meanwhile, what it got is for rows that
+   may no longer be at those indexes -- a list emptied and filled again
+   would show its old rows. It is made again instead, for the rows there
+   now. */
+static Eina_Bool
+_request_outdated(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *pd,
+                  Efl_Ui_Collection_Request *request)
+{
+   Efl_Ui_Collection_Request *again;
+
+   if (request->generation == pd->generation) return EINA_FALSE;
+
+   again = calloc(1, sizeof (Efl_Ui_Collection_Request));
+   if (!again) return EINA_TRUE;
+   again->offset = request->offset;
+   again->length = request->length;
+   again->need_size = request->need_size;
+   again->need_entity = request->need_entity;
+   _batch_request_flush(eina_list_append(NULL, again), obj, pd);
+   return EINA_TRUE;
+}
+
 static Eina_Value
 _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
 {
@@ -449,6 +481,8 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    Efl_Model *child;
    unsigned int i, len;
    Eina_Bool request_entity = EINA_FALSE;
+
+   if (_request_outdated(obj, pd, request)) return v;
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
@@ -624,6 +658,20 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    unsigned int updated_size_start_id = 0, updated_entity_start_id = 0;
    Eina_Bool updated_size = EINA_FALSE, updated_entity = EINA_FALSE;
    Evas *e;
+
+   if (_request_outdated(obj, pd, request))
+     {
+        Eina_Array built;
+
+        eina_array_step_set(&built, sizeof (Eina_Array), 4);
+        EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+          {
+             eina_array_push(&built, child);
+          }
+        efl_ui_factory_release(pd->factory, eina_array_iterator_new(&built));
+        eina_array_flush(&built);
+        return v;
+     }
 
    e = evas_object_evas_get(obj);
    evas_event_freeze(e);
@@ -971,6 +1019,9 @@ _batch_request_flush(Eina_List *requests,
              unsigned int rstart = request->offset;
              unsigned int rend = request->offset + request->length;
 
+             // Fetching rows that may no longer be there: it will ask again
+             if (inflight->generation != pd->generation) continue;
+
              // Way before
              if (rend < istart) continue;
              // Way after
@@ -1058,6 +1109,7 @@ _batch_request_flush(Eina_List *requests,
 
         // We now have a request, time to trigger a fetch
         // We assume here that we are always fetching the model (model_requested must be true)
+        request->generation = pd->generation;
         request->f = efl_model_children_slice_get(model, request->offset, request->length);
         request->f = efl_future_then(obj, request->f,
                                      .success = _model_fetched_cb,
@@ -1994,6 +2046,7 @@ _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
       listing would rebuild every visible item over and over. */
    if (count == pd->last_count)
      {
+        pd->generation++;
         _cache_cleanup_above(data, pd, 0);
         if (count)
           efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
@@ -2066,6 +2119,7 @@ _efl_model_child_added(void *data, const Efl_Event *event)
    unsigned int i;
 #endif
 
+   pd->generation++;
    _cache_cleanup_above(data, pd, ev->index);
 
    // Check if we really have something to do
@@ -2144,6 +2198,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
 
    // FIXME: later optimization, instead of reloading everyone, we could actually track index and self
    // update would be more efficient, but it is also more tricky
+   pd->generation++;
    _cache_cleanup_above(data, pd, ev->index);
 
    count = efl_model_children_count_get(event->object);
