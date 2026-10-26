@@ -1326,11 +1326,23 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
           {
              if (!strcmp(part, sub_d->part))
                {
-                  if (content == sub_d->obj) goto end;
-                  if (efl_alive_get(sub_d->obj))
+                  Evas_Object *old = sub_d->obj;
+
+                  if (content == old) goto end;
+                  /* The part is forgotten here, not when the old content is
+                     freed: deleting it only frees it if nothing else holds a
+                     reference, and a binding always does. Left in the list,
+                     it was what content_get kept answering for the part. */
+                  sd->subs = eina_list_remove_list(sd->subs, l);
+                  _icon_signal_emit(sd, sub_d, EINA_FALSE);
+                  eina_stringshare_del(sub_d->part);
+                  free(sub_d);
+                  if (efl_alive_get(old))
                     {
-                       _eo_unparent_helper(sub_d->obj, obj);
-                       evas_object_del(sub_d->obj);
+                       edje_object_part_unswallow(wd->resize_obj, old);
+                       elm_widget_sub_object_del(obj, old);
+                       _eo_unparent_helper(old, obj);
+                       evas_object_del(old);
                     }
                   break;
                }

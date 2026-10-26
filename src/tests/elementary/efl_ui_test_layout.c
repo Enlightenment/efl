@@ -423,8 +423,38 @@ EFL_START_TEST(efl_ui_layout_part_without_widget)
 }
 EFL_END_TEST
 
+/* Content replaced in a part is the content the part then has, even while
+   something -- a binding, an application -- still holds a reference to what
+   it replaced: the replaced object is taken out of the layout, not just
+   deleted and left to be forgotten once it is freed. */
+EFL_START_TEST(efl_ui_layout_content_replaced_while_held)
+{
+   Eo *win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   Eo *item, *a, *b;
+
+   item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, win);
+   a = efl_add(EFL_UI_IMAGE_CLASS, item);
+   b = efl_add(EFL_UI_IMAGE_CLASS, item);
+   efl_ref(a);
+
+   efl_content_set(efl_part(item, "extra"), a);
+   ck_assert_ptr_eq(efl_content_get(efl_part(item, "extra")), a);
+   efl_content_set(efl_part(item, "extra"), b);
+   ck_assert_ptr_eq(efl_content_get(efl_part(item, "extra")), b);
+
+   /* Emptying the part leaves nothing behind in it. */
+   efl_content_set(efl_part(item, "extra"), NULL);
+   ck_assert_ptr_eq(efl_content_get(efl_part(item, "extra")), NULL);
+
+   efl_unref(a);
+   efl_del(item);
+   efl_del(win);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
+   tcase_add_test(tc, efl_ui_layout_content_replaced_while_held);
    tcase_add_test(tc, efl_ui_layout_part_without_widget);
    tcase_add_test(tc, efl_ui_layout_text_set_while_building);
    tcase_add_test(tc, efl_ui_layout_content_set_while_building);
