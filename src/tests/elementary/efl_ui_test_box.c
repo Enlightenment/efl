@@ -559,6 +559,27 @@ EFL_START_TEST (efl_ui_box_internal)
 }
 EFL_END_TEST
 
+/* Tab goes through a box's children in the order they are packed in, not
+   the order the focus manager happened to hear of them -- which, as they
+   are all shown at once, is the reverse. */
+EFL_START_TEST (efl_ui_box_focus_order)
+{
+   Eo *a, *b, *c;
+
+   efl_content_set(win, layout);
+   a = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack_end(layout, efl_added));
+   b = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack_end(layout, efl_added));
+   c = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack_begin(layout, efl_added));
+   get_me_to_those_events(win);
+
+   efl_ui_focus_util_focus(c);
+   ck_assert_ptr_eq(efl_ui_focus_manager_move(win, EFL_UI_FOCUS_DIRECTION_NEXT), a);
+   ck_assert_ptr_eq(efl_ui_focus_manager_move(win, EFL_UI_FOCUS_DIRECTION_NEXT), b);
+   ck_assert_ptr_eq(efl_ui_focus_manager_move(win, EFL_UI_FOCUS_DIRECTION_PREVIOUS), a);
+   ck_assert_ptr_eq(efl_ui_focus_manager_move(win, EFL_UI_FOCUS_DIRECTION_PREVIOUS), c);
+}
+EFL_END_TEST
+
 void efl_ui_test_box(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, NULL);
@@ -569,4 +590,5 @@ void efl_ui_test_box(TCase *tc)
    tcase_add_test(tc, efl_ui_box_pack_unpack);
    tcase_add_test(tc, efl_ui_box_properties);
    tcase_add_test(tc, efl_ui_box_internal);
+   tcase_add_test(tc, efl_ui_box_focus_order);
 }

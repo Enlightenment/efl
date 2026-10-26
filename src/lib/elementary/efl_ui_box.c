@@ -213,6 +213,19 @@ _efl_ui_box_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd
    return eina_list_count(pd->children);
 }
 
+/* The focus manager orders the children of a node as it hears of them, and
+   it hears of a box's children as each is shown, in no order the box
+   controls. Tab goes through them in the order they are packed in. */
+EOLIAN static void
+_efl_ui_box_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Efl_Ui_Box_Data *pd)
+{
+   Efl_Ui_Focus_Manager *manager = efl_ui_focus_object_focus_manager_get(obj);
+
+   if (manager && pd->children)
+     efl_ui_focus_manager_calc_update_order(manager, obj, eina_list_clone(pd->children));
+   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_pack_clear(Eo *obj, Efl_Ui_Box_Data *pd)
 {

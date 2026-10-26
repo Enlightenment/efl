@@ -6,6 +6,7 @@
 #endif
 
 #define EFL_PACK_LAYOUT_PROTECTED
+#define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
