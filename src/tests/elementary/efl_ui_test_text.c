@@ -56,6 +56,32 @@ EFL_START_TEST(text_cnp)
 }
 EFL_END_TEST
 
+/* Copying and cutting take no hold on scrolling, so they must not release
+   one: a hold someone else took, such as a drag in progress, has to keep the
+   scroller around the text still. */
+EFL_START_TEST(text_cnp_keeps_scroll_holds)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *scroller = efl_add(EFL_UI_SCROLLER_CLASS, win);
+   Eo *txt = efl_add(EFL_UI_TEXTBOX_CLASS, scroller);
+
+   efl_content_set(scroller, txt);
+   efl_ui_widget_scroll_hold_push(txt);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+
+   efl_text_set(txt, "Hello");
+   efl_text_interactive_all_select(txt);
+   efl_ui_textbox_selection_copy(txt);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+   efl_text_interactive_all_select(txt);
+   efl_ui_textbox_selection_cut(txt);
+   ck_assert(efl_ui_scrollable_scroll_hold_get(scroller));
+
+   efl_ui_widget_scroll_hold_pop(txt);
+   ck_assert(!efl_ui_scrollable_scroll_hold_get(scroller));
+}
+EFL_END_TEST
+
 static void
 _stop_event_soon(void *data EINA_UNUSED, const Efl_Event *ev)
 {
@@ -589,6 +615,7 @@ void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_scrollable_cursor_stack);
    tcase_add_test(tc, text_cnp);
+   tcase_add_test(tc, text_cnp_keeps_scroll_holds);
    tcase_add_test(tc, text_all_select_all_unselect);
    tcase_add_test(tc, text_selection);
    tcase_add_test(tc, text_user_change);

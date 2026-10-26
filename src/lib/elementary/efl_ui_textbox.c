@@ -764,7 +764,6 @@ _efl_ui_textbox_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Textbox_Data
              if ((efl_text_interactive_have_selection_get(obj)) && (!sd->popup))
                {
                   sd->sel_mode = EINA_FALSE;
-                  efl_ui_widget_scroll_hold_pop(obj);
                   edje_object_part_text_select_allow_set(sd->entry_edje, "efl.text", EINA_FALSE);
                   efl_layout_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
                   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
@@ -904,9 +903,6 @@ _popup_item_cancel_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    EFL_UI_TEXT_DATA_GET(data, sd);
 
    if (!efl_text_interactive_selection_allowed_get(data)) return;
-
-   if (!_elm_config->desktop_entry)
-     efl_ui_widget_scroll_hold_pop(data);
 
    sd->sel_mode = EINA_FALSE;
    efl_text_interactive_all_unselect(data);
@@ -1969,9 +1965,6 @@ _efl_ui_textbox_selection_cut(Eo *obj, Efl_Ui_Textbox_Data *sd)
        (sd->entry_edje, "efl.text", EINA_FALSE);
    efl_layout_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
 
-   if (!_elm_config->desktop_entry)
-     efl_ui_widget_scroll_hold_pop(obj);
-
    /*In password mode, cut will remove text only*/
    if (!efl_text_password_get(obj))
      _selection_store(EFL_UI_CNP_BUFFER_COPY_AND_PASTE, obj);
@@ -2004,7 +1997,6 @@ _efl_ui_textbox_selection_copy(Eo *obj, Efl_Ui_Textbox_Data *sd)
         edje_object_part_text_select_allow_set
           (sd->entry_edje, "efl.text", EINA_FALSE);
         efl_layout_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
-        efl_ui_widget_scroll_hold_pop(obj);
      }
    _selection_store(EFL_UI_CNP_BUFFER_COPY_AND_PASTE, obj);
    efl_event_callback_call(obj, EFL_UI_TEXTBOX_EVENT_SELECTION_COPY, NULL);
