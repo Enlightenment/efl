@@ -481,9 +481,80 @@ EFL_START_TEST(efl_test_filter_model)
 }
 EFL_END_TEST
 
+static Eina_Value
+_names_check(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
+{
+   int *checked = data;
+   unsigned int i, len;
+   Efl_Model *child;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        Eina_Value *name = efl_model_property_get(child, "name");
+        Eina_Value *comment = efl_model_property_get(child, "comment");
+        char *n = eina_value_to_string(name);
+        char *c = eina_value_to_string(comment);
+
+        ck_assert_str_eq(n, i ? "pear" : "apple");
+        ck_assert_str_eq(c, "ripe");
+        free(n);
+        free(c);
+        eina_value_free(name);
+        eina_value_free(comment);
+        (*checked)++;
+     }
+   return v;
+}
+
+/* A composite model is a view on its source: a property the source has is
+   the source's, even when the wrapper is an Eo object with a property of the
+   same name -- "name" and "comment" are Efl.Object's, and among the most
+   common names a data model has. */
+EFL_START_TEST(efl_test_composite_model_source_properties_first)
+{
+   Efl_Generic_Model *base_model, *child;
+   Efl_Boolean_Model *model;
+   Eina_Future *future;
+   const char *names[] = { "apple", "pear" };
+   int checked = 0;
+   unsigned int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 2; i++)
+     {
+        Eina_Value *v;
+
+        child = efl_model_child_add(base_model);
+        v = eina_value_string_new(names[i]);
+        efl_model_property_set(child, "name", v);
+        eina_value_free(v);
+        v = eina_value_string_new("ripe");
+        efl_model_property_set(child, "comment", v);
+        eina_value_free(v);
+     }
+
+   model = efl_add_ref(EFL_BOOLEAN_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model),
+                       efl_boolean_model_boolean_add(efl_added, "selected", EINA_FALSE));
+
+   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
+   future = efl_future_then(model, future,
+                            .success = _names_check,
+                            .success_type = EINA_VALUE_TYPE_ARRAY,
+                            .data = &checked,
+                            .free = _cleanup);
+   ecore_main_loop_begin();
+
+   ck_assert_int_eq(checked, 2);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_boolean_model);
    tcase_add_test(tc, efl_test_filter_model);
+   tcase_add_test(tc, efl_test_composite_model_source_properties_first);
 }

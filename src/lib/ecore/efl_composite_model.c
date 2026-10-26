@@ -303,15 +303,32 @@ _efl_composite_model_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Compo
           return eina_value_uint_new(pd->index);
         return eina_value_error_new(EAGAIN);
      }
-   try = efl_model_property_get(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS), property);
+   /* The source first: this model is a view on it, and what it would find
+      on itself through Efl.Loop_Model's reflection is its own Eo properties,
+      such as Efl.Object's "name" and "comment", which would hide a source's
+      data of the same name. Only what the source does not have falls back
+      to them. */
+   if (!pd->source)
+     return efl_model_property_get(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS), property);
+   try = efl_model_property_get(pd->source, property);
    if (eina_value_type_get(try) == EINA_VALUE_TYPE_ERROR)
      {
         Eina_Error err = EINA_ERROR_NOT_IMPLEMENTED;
 
-        if (eina_value_error_get(try, &err) && (err == EINA_ERROR_NOT_IMPLEMENTED))
+        if (eina_value_error_get(try, &err) &&
+            ((err == EINA_ERROR_NOT_IMPLEMENTED) || (err == EFL_MODEL_ERROR_NOT_FOUND)))
           {
+             Eina_Value *own;
+
+             own = efl_model_property_get(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS), property);
+             /* Neither has it: what the source said is the answer. */
+             if (eina_value_type_get(own) == EINA_VALUE_TYPE_ERROR)
+               {
+                  eina_value_free(own);
+                  return try;
+               }
              eina_value_free(try);
-             return efl_model_property_get(pd->source, property);
+             return own;
           }
      }
    return try;
