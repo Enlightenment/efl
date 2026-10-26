@@ -281,6 +281,34 @@ EFL_START_TEST(efl_loop_test_loop_timer_freeze_counted)
 }
 EFL_END_TEST
 
+static void
+_reset_in_tick(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   /* Late, then asking for a whole interval from now. */
+   efl_loop_timer_interval_set(ev->object, 1.0);
+   usleep(300000);
+   efl_loop_timer_reset(ev->object);
+   efl_loop_quit(efl_loop_get(ev->object), EINA_VALUE_EMPTY);
+}
+
+/* A timer reset from its own tick starts its interval again from then, as
+   it does from anywhere else, instead of the reset being dropped. */
+EFL_START_TEST(efl_loop_test_loop_timer_reset_in_tick)
+{
+   Eo *loop = efl_main_loop_get();
+   Eo *t;
+
+   t = efl_add(EFL_LOOP_TIMER_CLASS, loop,
+               efl_loop_timer_interval_set(efl_added, 0.01),
+               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _reset_in_tick, NULL));
+   efl_loop_begin(loop);
+   ck_assert_msg(efl_loop_timer_time_pending_get(t) > 0.9,
+                 "next tick in %f, not a whole interval after the reset",
+                 efl_loop_timer_time_pending_get(t));
+   efl_del(t);
+}
+EFL_END_TEST
+
 void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
 {
   /* XXX: this seems a silly test - that we del the loop object?
@@ -291,4 +319,5 @@ void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
    tcase_add_test(tc, efl_loop_test_loop_timer_iteration);
    tcase_add_test(tc, efl_loop_test_loop_timer_recursion);
    tcase_add_test(tc, efl_loop_test_loop_timer_freeze_counted);
+   tcase_add_test(tc, efl_loop_test_loop_timer_reset_in_tick);
 }

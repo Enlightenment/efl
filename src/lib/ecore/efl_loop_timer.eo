@@ -37,7 +37,8 @@ class Efl.Loop_Timer extends Efl.Loop_Consumer
           [[Resets a timer to its full interval. This effectively makes the
             timer start ticking off from zero now.
 
-            This is equal to delaying the timer by the already passed time, since the timer started ticking
+            This is equal to delaying the timer by the already passed time, since the timer started ticking.
+            Called from the timer's own tick, it makes the next tick a full interval after the call.
           ]]
       }
       timer_loop_reset {

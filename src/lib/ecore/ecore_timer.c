@@ -277,16 +277,30 @@ _efl_loop_timer_timer_delay(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *pd, double
    _efl_loop_timer_util_delay(pd, add);
 }
 
+/* Reset from inside the timer's own tick. The timer cannot be moved in the
+   loop's list while the loop walks it, and once the tick returns the loop
+   moves it on by its interval anyway: making now the time it ticked is all
+   it takes for that interval to start from now. A reset here used to be
+   dropped, so a timer could not be pushed back from its own tick. */
+static void
+_efl_loop_timer_util_reset_current(Efl_Loop_Timer_Data *timer, double now)
+{
+   if (timer->frozen) timer->pending = timer->in;
+   else timer->at = now;
+}
+
 EOLIAN static void
 _efl_loop_timer_timer_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, add;
 
    if (!timer->loop_data) return;
-   // Do not reset the current timer while inside the callback
-   if (timer->loop_data->timer_current == timer) return;
-
    now = ecore_time_get();
+   if (timer->loop_data->timer_current == timer)
+     {
+        _efl_loop_timer_util_reset_current(timer, now);
+        return;
+     }
    if (!timer->initialized)
      {
         timer->at = now;
@@ -304,10 +318,12 @@ _efl_loop_timer_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer
    double now, add;
 
    if (!timer->loop_data) return;
-   // Do not reset the current timer while inside the callback
-   if (timer->loop_data->timer_current == timer) return;
-
    now = efl_loop_time_get(timer->loop);
+   if (timer->loop_data->timer_current == timer)
+     {
+        _efl_loop_timer_util_reset_current(timer, now);
+        return;
+     }
    if (!timer->initialized)
      {
         timer->at = now;
