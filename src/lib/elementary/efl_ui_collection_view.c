@@ -91,6 +91,7 @@ struct _Efl_Ui_Collection_View_Data
    unsigned int end_id;
 
    Eina_Size2D content_min_size;
+   Eina_Size2D size_stand_in; /* said for every item until one is measured */
 
    Efl_Ui_Layout_Orientation direction;
    Efl_Ui_Select_Mode mode;
@@ -1049,9 +1050,16 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
 
       Said the same way to both of the answers below, because the position
       manager compares what it cached against what it is placing and says so
-      when the two disagree. */
+      when the two disagree. The view's size is only read when the cache is
+      built: the window resizing the view before anything was measured would
+      otherwise change the answer under the cache, which is not rebuilt for a
+      resize. */
    if (!item_base.w && !item_base.h)
-     item_base = efl_gfx_entity_size_get(data);
+     {
+        if (conf.cache_request)
+          pd->size_stand_in = efl_gfx_entity_size_get(data);
+        item_base = pd->size_stand_in;
+     }
 
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE

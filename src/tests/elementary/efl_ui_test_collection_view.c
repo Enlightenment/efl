@@ -149,8 +149,52 @@ EFL_START_TEST(test_efl_ui_collection_view_select)
 }
 EFL_END_TEST
 
+static void
+_count_size_disagreements(const Eina_Log_Domain *d, Eina_Log_Level level,
+                          const char *file, const char *fnc, int line,
+                          const char *fmt, void *data, va_list args)
+{
+   int *disagreements = data;
+
+   if (eina_str_has_prefix(fmt, "Reported sizes changed"))
+     (*disagreements)++;
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
+
+/* The sizes the position manager caches and the sizes it places must agree
+   while the window resizes the view. */
+EFL_START_TEST(test_efl_ui_collection_view_sizes_agree)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   int disagreements = 0;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+
+   eina_log_print_cb_set(_count_size_disagreements, &disagreements);
+
+   model = _make_model(win);
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, model));
+   efl_content_set(win, lv);
+
+   get_me_to_those_events(lv);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(disagreements, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
    tcase_add_test(tc, test_efl_ui_collection_view_select);
+   tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
 }
