@@ -161,6 +161,104 @@ _count_size_disagreements(const Eina_Log_Domain *d, Eina_Log_Level level,
    eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
 }
 
+/* The row an item shows: the item sits in a view, not in a pack, so it has
+   no index of its own, but its model is the row. */
+static int
+_item_row(Eo *item)
+{
+   Efl_Model *model = NULL;
+
+   if (efl_isa(item, EFL_UI_VIEW_INTERFACE)) model = efl_ui_view_model_get(item);
+   return (model && efl_isa(model, EFL_COMPOSITE_MODEL_CLASS)) ?
+     (int) efl_composite_model_index_get(model) : -1;
+}
+
+static Eina_Value
+_select_child(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Model *child = NULL;
+   Eina_Value set = eina_value_bool_init(EINA_TRUE);
+
+   eina_value_array_get(&v, 0, &child);
+   efl_model_property_set(child, "self.selected", &set);
+   eina_value_flush(&set);
+   return v;
+}
+
+/* Turns the loop until last_selected is an item showing row index, or gives
+   up; returns the item. */
+static Eo *
+_wait_last_selected(Eo *lv, int index)
+{
+   int i;
+
+   for (i = 0; i < 500; i++)
+     {
+        Eo *item = efl_ui_selectable_last_selected_get(lv);
+
+        if (item && (_item_row(item) == index)) return item;
+        ecore_main_loop_iterate();
+     }
+   return efl_ui_selectable_last_selected_get(lv);
+}
+
+/* What a view says was selected last is an item, as for any other widget,
+   and it stays that item while its row is scrolled away: the view keeps it
+   aside, out of sight, rather than letting it go. A row selected without
+   ever being shown gets an item too. */
+EFL_START_TEST(test_efl_ui_collection_view_last_selected_is_an_item)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   Eo *item, *later;
+   int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+
+   model = _make_model(win);
+   model = efl_add(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                   efl_ui_view_model_set(efl_added, model));
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, model));
+   efl_content_set(win, lv);
+   get_me_to_those_events(lv);
+
+   click_object_at(lv, 50, 5);
+   item = _wait_last_selected(lv, 0);
+   ck_assert_ptr_nonnull(item);
+   ck_assert(efl_isa(item, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   ck_assert_int_eq(_item_row(item), 0);
+   ck_assert(efl_ui_selectable_selected_get(item));
+
+   /* far away, and long enough for the view to let rows' items go */
+   efl_ui_scrollable_content_pos_set(lv, EINA_POSITION2D(0, 100000));
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(lv), item);
+   ck_assert_int_eq(_item_row(item), 0);
+   ck_assert(efl_ui_selectable_selected_get(item));
+   ck_assert(!efl_gfx_entity_visible_get(item));
+
+   /* a row nobody scrolled to, chosen from code */
+   efl_future_then(model, efl_model_children_slice_get(model, 25, 1),
+                   .success = _select_child, .success_type = EINA_VALUE_TYPE_ARRAY);
+   later = _wait_last_selected(lv, 25);
+   ck_assert_ptr_nonnull(later);
+   ck_assert_int_eq(_item_row(later), 25);
+}
+EFL_END_TEST
+
 /* The sizes the position manager caches and the sizes it places must agree
    while the window resizes the view. */
 EFL_START_TEST(test_efl_ui_collection_view_sizes_agree)
@@ -215,5 +313,6 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
    tcase_add_test(tc, efl_ui_collection_view_manager_twice);
    tcase_add_test(tc, test_efl_ui_collection_view_select);
+   tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
 }

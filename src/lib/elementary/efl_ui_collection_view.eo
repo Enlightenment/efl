@@ -23,6 +23,10 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
 
      Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
      policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Index_Range.selected_ndx_iterator_new.
+     @Efl.Ui.Single_Selectable.last_selected is the item showing the row selected last, as for any
+     other widget; its model is the row. The item of a selected row is kept while the row is
+     scrolled out of sight, so it stays the same object, and a row selected from code that was
+     never shown gets one, a moment after @[Efl.Ui.Single_Selectable.selection_changed].
 
      @since 1.23
    ]]
@@ -60,6 +64,8 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Focus.Manager.move;
       Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Single_Selectable.last_selected { get; }
+      Efl.Ui.Single_Selectable.fallback_selection { get; set; }
    }
    events {
       item,realized : Efl.Ui.Item; [[Event triggered when an @Efl.Ui.Item has been provided by the @Efl.Ui.Factory and is about to be used.]]

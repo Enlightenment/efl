@@ -232,6 +232,34 @@ EFL_CALLBACKS_ARRAY_DEFINE(active_item_cbs,
   { EFL_INPUT_EVENT_CLICKED, _redirect_item_cb },
   { EFL_INPUT_EVENT_CLICKED_ANY, _redirect_item_cb });
 
+/* The item showing a row of the selection chain, if it has one. */
+static Efl_Gfx_Entity *
+_row_entity(Efl_Ui_Collection_View_Data *pd, Efl_Model *row)
+{
+   Efl_Ui_Collection_Item_Lookup *lookup;
+   unsigned int index;
+
+   if (!row || !efl_isa(row, EFL_COMPOSITE_MODEL_CLASS)) return NULL;
+   index = efl_composite_model_index_get(row);
+   lookup = (void*) eina_rbtree_inline_lookup(pd->cache, &index, sizeof (index),
+                                              _cache_tree_lookup, NULL);
+   return lookup ? lookup->item.entity : NULL;
+}
+
+/* The row of the selection chain an item shows: its model is a wrapper of
+   it, which is a wrapper of the application's. */
+static Efl_Model *
+_entity_row(Efl_Gfx_Entity *entity)
+{
+   Efl_Model *model = NULL;
+
+   if (efl_isa(entity, EFL_UI_VIEW_INTERFACE)) model = efl_ui_view_model_get(entity);
+   while (model && !efl_isa(model, EFL_UI_SELECTABLE_INTERFACE) &&
+          efl_isa(model, EFL_COMPOSITE_MODEL_CLASS))
+     model = efl_ui_view_model_get(model);
+   return (model && efl_isa(model, EFL_UI_SELECTABLE_INTERFACE)) ? model : NULL;
+}
+
 static void
 _entity_cleanup(Efl_Ui_Collection_View *obj, Efl_Ui_Factory *factory,
                 Efl_Ui_Collection_Item *item, Eina_Array *scheduled_release)
@@ -464,7 +492,10 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
           request_entity = EINA_TRUE;
      }
 
-   if (request_entity)
+   /* An item is built when its size is not known otherwise, and when the
+      request asked for one: knowing the size of a row is no item to show
+      or hand out. */
+   if (request_entity || request->need_entity)
      {
         request->need_entity = EINA_TRUE;
 
@@ -1384,6 +1415,30 @@ _viewport_walk_fill(Eina_List *requests,
 
 #endif
 
+/* Whether a row is selected, as its model says: the item mirrors it, but
+   may not have caught up yet. */
+static Eina_Bool
+_row_selected(Efl_Model *model)
+{
+   Eina_Value *v;
+   Eina_Bool selected = EINA_FALSE;
+
+   if (!model) return EINA_FALSE;
+   v = efl_model_property_get(model, "self.selected");
+   if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
+     eina_value_bool_get(v, &selected);
+   eina_value_free(v);
+   return selected;
+}
+
+/* A selected row keeps its item while it is off screen, so that what
+   last_selected hands out stays the object the application was given. */
+static Eina_Bool
+_lookup_kept(Efl_Ui_Collection_Item_Lookup *lookup)
+{
+   return lookup->item.entity && _row_selected(lookup->item.model);
+}
+
 // An RbTree has the nice property of sorting content. The smaller than the root being in
 // son[1] and the greater than the root in son[0]. Using this we can efficiently walk the
 // tree once to take note of all the item that need cleaning.
@@ -1447,6 +1502,24 @@ _idle_cb(void *data, const Efl_Event *event EINA_UNUSED)
 
    _mark_lesser((void*) pd->cache, &mark, lower_end);
    _mark_ge((void*) pd->cache, &mark, upper_end);
+
+   /* A selected row's item stays, out of sight: nothing places it while its
+      row is off screen, and the position manager shows it again when it
+      comes back. */
+   {
+      Eina_Array gone;
+
+      eina_array_step_set(&gone, sizeof (Eina_Array), 16);
+      EINA_ARRAY_ITER_NEXT(&mark, i, lookup, iterator)
+        {
+           if (_lookup_kept(lookup))
+             efl_gfx_entity_visible_set(lookup->item.entity, EINA_FALSE);
+           else
+             eina_array_push(&gone, lookup);
+        }
+      eina_array_flush(&mark);
+      mark = gone;
+   }
 
    /* Out of the tree first, cleaned up second.
     *
@@ -1743,6 +1816,28 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    requests = _batch_request_flush(requests, data, pd);
 }
 #endif
+
+/* A row selected while no item shows it -- chosen from code, or never
+   scrolled to -- gets one, kept like any selected row's, so that
+   last_selected has an item to hand out. */
+static void
+_selection_realize_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Ui_Collection_View *obj = data;
+   Efl_Ui_Collection_Request *request = NULL;
+   Eina_List *requests;
+   Efl_Model *row;
+   MY_DATA_GET(obj, pd);
+
+   if (!pd->multi_selectable_async_model) return;
+   row = efl_ui_selectable_last_selected_get(pd->multi_selectable_async_model);
+   if (!row || !efl_isa(row, EFL_COMPOSITE_MODEL_CLASS)) return;
+   if (_row_entity(pd, row)) return;
+
+   requests = _request_add(NULL, &request, efl_composite_model_index_get(row), EINA_TRUE);
+   if (request) requests = eina_list_append(requests, request);
+   _batch_request_flush(requests, obj, pd);
+}
 
 EFL_CALLBACKS_ARRAY_DEFINE(manager_cbs,
  { EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, _manager_content_size_changed_cb },
@@ -2131,6 +2226,9 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
         efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
                                          EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                          data);
+        efl_event_callback_del(pd->multi_selectable_async_model,
+                               EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
+                               _selection_realize_cb, data);
         efl_composite_detach(data, pd->multi_selectable_async_model);
      }
 
@@ -2185,6 +2283,9 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    efl_event_callback_forwarder_add(pd->multi_selectable_async_model,
                                     EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                     data);
+   efl_event_callback_add(pd->multi_selectable_async_model,
+                          EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
+                          _selection_realize_cb, data);
 
    if (!sizing) model = efl_add_ref(EFL_UI_HOMOGENEOUS_MODEL_CLASS, data,
                                     efl_ui_view_model_set(efl_added, model),
@@ -2374,6 +2475,9 @@ _efl_ui_collection_view_efl_object_invalidate(Eo *obj,
         efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
                                          EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                          obj);
+        efl_event_callback_del(pd->multi_selectable_async_model,
+                               EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
+                               _selection_realize_cb, obj);
         efl_composite_detach(obj, pd->multi_selectable_async_model);
         efl_replace(&pd->multi_selectable_async_model, NULL);
      }
@@ -2521,6 +2625,46 @@ EOLIAN static Eina_Bool
 _efl_ui_collection_view_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Collection_View_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+}
+
+/* last_selected and fallback_selection are about items here, as they are for
+   every other widget: the selection itself is the select model's, of rows,
+   and these translate between the two. */
+EOLIAN static Efl_Ui_Selectable *
+_efl_ui_collection_view_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA_UNUSED,
+                                                                   Efl_Ui_Collection_View_Data *pd)
+{
+   if (!pd->multi_selectable_async_model) return NULL;
+   return _row_entity(pd, efl_ui_selectable_last_selected_get(pd->multi_selectable_async_model));
+}
+
+EOLIAN static Efl_Ui_Selectable *
+_efl_ui_collection_view_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED,
+                                                                        Efl_Ui_Collection_View_Data *pd)
+{
+   if (!pd->multi_selectable_async_model) return NULL;
+   return _row_entity(pd, efl_ui_selectable_fallback_selection_get(pd->multi_selectable_async_model));
+}
+
+EOLIAN static void
+_efl_ui_collection_view_efl_ui_single_selectable_fallback_selection_set(Eo *obj,
+                                                                        Efl_Ui_Collection_View_Data *pd,
+                                                                        Efl_Ui_Selectable *fallback)
+{
+   Efl_Model *row = NULL;
+
+   if (!pd->multi_selectable_async_model) return;
+   if (fallback)
+     {
+        row = _entity_row(fallback);
+        if (!row)
+          {
+             ERR("'%s' is not an item of '%s'", efl_debug_name_get(fallback),
+                 efl_debug_name_get(obj));
+             return;
+          }
+     }
+   efl_ui_selectable_fallback_selection_set(pd->multi_selectable_async_model, row);
 }
 
 #include "efl_ui_collection_view.eo.c"
