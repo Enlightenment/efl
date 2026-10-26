@@ -51,8 +51,9 @@ _efl_test_view_model_label_get(void *data, const Efl_Ui_View_Model *mv, Eina_Str
 }
 
 static Eina_Future *
-_efl_test_view_model_label_set(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
+_efl_test_view_model_label_set(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value)
 {
+   eina_value_free(value);
    return efl_loop_future_rejected(mv, EFL_MODEL_ERROR_READ_ONLY);
 }
 
@@ -85,8 +86,9 @@ _efl_test_view_model_color_get(void *data EINA_UNUSED, const Efl_Ui_View_Model *
 }
 
 static Eina_Future *
-_efl_test_view_model_color_set(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
+_efl_test_view_model_color_set(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value)
 {
+   eina_value_free(value);
    return efl_loop_future_rejected(mv, EFL_MODEL_ERROR_READ_ONLY);
 }
 
@@ -417,7 +419,7 @@ static Eina_Future *
 _logic_set_record(void *data, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value)
 {
    _set_called_with = data;
-   (void) value;
+   eina_value_free(value);
    return efl_loop_future_resolved(mv, EINA_VALUE_EMPTY);
 }
 
@@ -448,9 +450,58 @@ EFL_START_TEST(efl_test_view_model_logic_set_data)
 }
 EFL_END_TEST
 
+static Eina_Value *_set_value_got;
+
+static Eina_Future *
+_logic_set_own(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value)
+{
+   int i = 0;
+
+   _set_value_got = value;
+   ck_assert(eina_value_get(value, &i));
+   ck_assert_int_eq(i, 42);
+   /* It is the callback's: @move says so, and freeing it must be safe. */
+   eina_value_free(value);
+   return efl_loop_future_resolved(mv, EINA_VALUE_EMPTY);
+}
+
+/* The value a set callback gets is its own, as @move says: a copy of what
+   the caller of property_set passed, which the caller still owns. */
+EFL_START_TEST(efl_test_view_model_logic_set_owns_value)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Ui_View_Model *mv;
+   Eina_Value *v = eina_value_new(EINA_VALUE_TYPE_INT);
+   Eina_Future *f;
+   int i = 0;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   mv = efl_add_ref(EFL_UI_VIEW_MODEL_CLASS, efl_main_loop_get(),
+                    efl_ui_view_model_set(efl_added, base_model));
+   ck_assert_int_eq(efl_ui_view_model_property_logic_add(mv, "p",
+                       NULL, _logic_get_nothing, NULL,
+                       NULL, _logic_set_own, NULL,
+                       NULL), 0);
+
+   eina_value_set(v, 42);
+   _set_value_got = NULL;
+   f = efl_model_property_set(mv, "p", v);
+   ck_assert_ptr_nonnull(_set_value_got);
+   ck_assert_ptr_ne(_set_value_got, v);
+   ck_assert(eina_value_get(v, &i));
+   ck_assert_int_eq(i, 42);
+   eina_value_free(v);
+   if (f) eina_future_cancel(f);
+
+   efl_unref(mv);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_view_model(TCase *tc)
 {
+   tcase_add_test(tc, efl_test_view_model_logic_set_owns_value);
    tcase_add_test(tc, efl_test_view_model_logic_set_data);
    tcase_add_test(tc, efl_test_view_model);
    tcase_add_test(tc, efl_test_view_model_logic_refused);

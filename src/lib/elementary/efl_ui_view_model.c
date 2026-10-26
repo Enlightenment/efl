@@ -140,8 +140,9 @@ static Eina_Future *
 _efl_ui_view_model_property_dummy_set(void *data EINA_UNUSED,
                                    Efl_Ui_View_Model *view_model,
                                    Eina_Stringshare *property EINA_UNUSED,
-                                   Eina_Value *value EINA_UNUSED)
+                                   Eina_Value *value)
 {
+   if (value) eina_value_free(value);
    return efl_loop_future_rejected(view_model, EFL_MODEL_ERROR_READ_ONLY);
 }
 
@@ -692,7 +693,9 @@ _efl_ui_view_model_efl_model_property_set(Eo *obj, Efl_Ui_View_Model_Data *pd,
    prop = eina_stringshare_add(property);
    logic = _efl_ui_view_model_property_logic_lookup(pd, prop);
    if (logic)
-     f = logic->set.fct(logic->set.data, obj, prop, value);
+     /* The callback owns the value it is given (@move); the caller of
+        property_set keeps its own, so the callback gets a copy. */
+     f = logic->set.fct(logic->set.data, obj, prop, value ? eina_value_dup(value) : NULL);
    else
      {
         if (eina_hash_find(pd->texts, prop))
