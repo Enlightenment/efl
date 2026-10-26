@@ -2,6 +2,8 @@
 #include "elementary_config.h"
 #endif
 
+#include <limits.h>
+#include <stdlib.h>
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_widget.h"
@@ -738,33 +740,92 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_position_single_ite
    return geom;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_position_manager_grid_efl_ui_position_manager_entity_relative_item(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int current_id, Efl_Ui_Focus_Direction direction, unsigned int *index)
+/* The item on the next line (row in a vertical grid, column in a
+   horizontal one) closest to current across it, or on the previous line
+   when forward is false.
+
+   Worked out from where items are drawn rather than from a column count: a
+   group header starts a line of its own and a group's last line may be
+   short, so an item's line is not its index divided by anything. */
+static Eina_Bool
+_grid_line_neighbor(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd,
+                    unsigned int current_id, Eina_Bool forward, unsigned int *found)
 {
+   const Eina_Bool vertical = pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
+   Eina_Rect cur, r;
+   int line = 0, best_dist = INT_MAX;
+   Eina_Bool in_line = EINA_FALSE;
+   unsigned int i;
+
+   cur = efl_ui_position_manager_entity_position_single_item(obj, current_id);
+#define ALONG(g) (vertical ? (g).y : (g).x)
+#define ACROSS(g) (vertical ? (g).x : (g).y)
+   for (i = current_id; forward ? (i + 1 < pd->size) : (i > 0);)
+     {
+        int dist;
+
+        i = forward ? i + 1 : i - 1;
+        r = efl_ui_position_manager_entity_position_single_item(obj, i);
+        if (!in_line)
+          {
+             if (forward ? (ALONG(r) <= ALONG(cur)) : (ALONG(r) >= ALONG(cur))) continue;
+             in_line = EINA_TRUE;
+             line = ALONG(r);
+          }
+        else if (ALONG(r) != line) break;
+        dist = abs(ACROSS(r) - ACROSS(cur));
+        if (dist < best_dist)
+          {
+             best_dist = dist;
+             *found = i;
+          }
+     }
+#undef ALONG
+#undef ACROSS
+   return in_line;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_position_manager_grid_efl_ui_position_manager_entity_relative_item(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int current_id, Efl_Ui_Focus_Direction direction, unsigned int *index)
+{
+   const Eina_Bool vertical = pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
+   unsigned int found = current_id;
+   int step = 0, line = 0;
+
+   if (current_id >= pd->size) return EINA_FALSE;
+
+   /* Across the lines the grid is laid in -- up and down a vertical grid,
+      left and right a horizontal one -- moves to the next line; along them,
+      as next and previous do, to the next item. */
    switch(direction)
      {
-        case EFL_UI_FOCUS_DIRECTION_RIGHT:
-        case EFL_UI_FOCUS_DIRECTION_NEXT:
-           if (current_id + 1 >= pd->size) return EINA_FALSE;
-           current_id += 1;
-           break;
-        case EFL_UI_FOCUS_DIRECTION_LEFT:
-        case EFL_UI_FOCUS_DIRECTION_PREVIOUS:
-           if (current_id == 0) return EINA_FALSE;
-           current_id -= 1;
-           break;
-        case EFL_UI_FOCUS_DIRECTION_UP:
-           //FIXME
-           break;
-        case EFL_UI_FOCUS_DIRECTION_DOWN:
-           //FIXME
-           break;
+        case EFL_UI_FOCUS_DIRECTION_NEXT: step = 1; break;
+        case EFL_UI_FOCUS_DIRECTION_PREVIOUS: step = -1; break;
+        case EFL_UI_FOCUS_DIRECTION_DOWN: if (vertical) line = 1; else step = 1; break;
+        case EFL_UI_FOCUS_DIRECTION_UP: if (vertical) line = -1; else step = -1; break;
+        case EFL_UI_FOCUS_DIRECTION_RIGHT: if (vertical) step = 1; else line = 1; break;
+        case EFL_UI_FOCUS_DIRECTION_LEFT: if (vertical) step = -1; else line = -1; break;
         default:
            ERR("Uncaught case!");
            return EINA_FALSE;
      }
 
-   if (index) *index = current_id;
+   if (line)
+     {
+        if (!_grid_line_neighbor(obj, pd, current_id, line > 0, &found)) return EINA_FALSE;
+     }
+   else if (step > 0)
+     {
+        if (current_id + 1 >= pd->size) return EINA_FALSE;
+        found = current_id + 1;
+     }
+   else
+     {
+        if (current_id == 0) return EINA_FALSE;
+        found = current_id - 1;
+     }
+
+   if (index) *index = found;
    return EINA_TRUE;
 }
 

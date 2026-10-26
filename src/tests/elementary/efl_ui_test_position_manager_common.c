@@ -184,8 +184,61 @@ EFL_START_TEST(viewport_newsize_event_result)
 }
 EFL_END_TEST
 
+/* Moving across lines goes to the item drawn next to the current one on
+   that side, whatever the layout: down to the next row in a vertical grid,
+   right to the next column in a horizontal one, the next item in a list.
+   There is nothing past the last line, and moving back comes back. */
+static void
+_check_line_moves(Efl_Ui_Layout_Orientation dir, Efl_Ui_Focus_Direction forward,
+                  Efl_Ui_Focus_Direction back)
+{
+   Eina_Rect from, to;
+   unsigned int next = 0, prev = 0;
+   const unsigned int start = 3;
+
+   efl_ui_layout_orientation_set(position_manager, dir);
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(0, 0, 200, 200));
+   _iterate_a_few();
+
+   ck_assert(efl_ui_position_manager_entity_relative_item(position_manager, start, forward, &next));
+   from = efl_ui_position_manager_entity_position_single_item(position_manager, start);
+   to = efl_ui_position_manager_entity_position_single_item(position_manager, next);
+   if (dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     {
+        ck_assert_int_gt(to.y, from.y);
+        ck_assert_int_eq(to.x, from.x);
+     }
+   else
+     {
+        ck_assert_int_gt(to.x, from.x);
+        ck_assert_int_eq(to.y, from.y);
+     }
+
+   ck_assert(efl_ui_position_manager_entity_relative_item(position_manager, next, back, &prev));
+   ck_assert_int_eq(prev, start);
+
+   ck_assert(!efl_ui_position_manager_entity_relative_item(position_manager, 24, forward, &next));
+   ck_assert(!efl_ui_position_manager_entity_relative_item(position_manager, 0, back, &prev));
+}
+
+EFL_START_TEST(relative_item_across_lines)
+{
+   unsigned int i;
+
+   _initial_setup();
+   for (i = 0; i < 25; ++i)
+     _add_item(efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, win), EINA_SIZE2D(20, 20));
+
+   _check_line_moves(EFL_UI_LAYOUT_ORIENTATION_VERTICAL,
+                     EFL_UI_FOCUS_DIRECTION_DOWN, EFL_UI_FOCUS_DIRECTION_UP);
+   _check_line_moves(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL,
+                     EFL_UI_FOCUS_DIRECTION_RIGHT, EFL_UI_FOCUS_DIRECTION_LEFT);
+}
+EFL_END_TEST
+
 void efl_ui_test_position_manager_common_add(TCase *tc)
 {
+   tcase_add_test(tc, relative_item_across_lines);
    tcase_add_checked_fixture(tc, item_container_setup, item_container_teardown);
    tcase_add_test(tc, no_crash1);
    tcase_add_test(tc, no_crash2);
