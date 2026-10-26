@@ -12,6 +12,7 @@
 
 typedef struct _Efl_Ui_Image_Factory_Data
 {
+    Eina_Stringshare *key; /* what of the image is bound: its file or its icon */
     Eina_Stringshare *property;
 } Efl_Ui_Image_Factory_Data;
 
@@ -21,7 +22,7 @@ _efl_ui_image_factory_building(void *data, const Efl_Event *ev)
    Efl_Ui_Image_Factory_Data *pd = data;
    Efl_Gfx_Entity *ui_view = ev->info;
 
-   efl_ui_property_bind(ui_view, "filename", pd->property);
+   efl_ui_property_bind(ui_view, pd->key ? pd->key : "filename", pd->property);
 }
 
 EOLIAN static Eo *
@@ -40,6 +41,8 @@ _efl_ui_image_factory_efl_object_constructor(Eo *obj, Efl_Ui_Image_Factory_Data 
 EOLIAN static void
 _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd)
 {
+   eina_stringshare_del(pd->key);
+   pd->key = NULL;
    eina_stringshare_del(pd->property);
    pd->property = NULL;
 
@@ -55,8 +58,12 @@ _efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *
 }
 
 EOLIAN static Eina_Error
-_efl_ui_image_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, const char *key EINA_UNUSED, const char *property)
+_efl_ui_image_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, const char *key, const char *property)
 {
+   /* The key is what of each image the property sets: "icon" for a named
+      icon, "filename" or no key for a file. */
+   if (!key || !key[0]) key = "filename";
+   eina_stringshare_replace(&pd->key, key);
    eina_stringshare_replace(&pd->property, property);
    return 0;
 }

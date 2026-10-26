@@ -1,6 +1,14 @@
 class @beta Efl.Ui.Image_Factory extends Efl.Ui.Caching_Factory
 {
-   [[Efl UI image factory class]]
+   [[An @Efl.Ui.Factory that builds @Efl.Ui.Image objects from a model.
+
+     Bind a model property with @Efl.Ui.Property_Bind.property_bind and the
+     images it names are what the view shows. The key says what the property
+     holds: "filename" (or no key) for a file's path, "icon" for an icon's
+     name, as @Efl.Ui.Image.icon takes it. Being an @Efl.Ui.Caching_Factory,
+     it keeps the objects it has built for reuse, which is what makes
+     scrolling a long list of images affordable.
+   ]]
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

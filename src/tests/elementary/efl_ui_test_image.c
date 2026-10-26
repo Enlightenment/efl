@@ -30,6 +30,83 @@ EFL_START_TEST(efl_ui_image_test_icon)
 }
 EFL_END_TEST
 
+typedef struct
+{
+   const char *icon;
+   const char *file;
+   int built;
+} Factory_Check;
+
+static Eina_Value
+_factory_built(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
+{
+   Factory_Check *check = data;
+   unsigned int i, len;
+   Eo *item;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, item)
+     {
+        if (check->icon)
+          ck_assert_str_eq(efl_ui_image_icon_get(item), check->icon);
+        if (check->file)
+          ck_assert_str_eq(efl_file_get(item), check->file);
+        check->built++;
+     }
+   efl_loop_quit(efl_main_loop_get(), EINA_VALUE_EMPTY);
+   return v;
+}
+
+static Eina_Value
+_factory_failed(Eo *o EINA_UNUSED, void *data EINA_UNUSED, Eina_Error err)
+{
+   efl_loop_quit(efl_main_loop_get(), EINA_VALUE_EMPTY);
+   return eina_value_error_init(err);
+}
+
+static void
+_factory_build(Eo *factory, Eo *child, Factory_Check *check)
+{
+   Eo *models[] = { child };
+   Eina_Future *f;
+
+   f = efl_ui_view_factory_create_with_event(factory, EINA_C_ARRAY_ITERATOR_NEW(models));
+   efl_future_then(factory, f, .success = _factory_built, .error = _factory_failed,
+                   .success_type = EINA_VALUE_TYPE_ARRAY, .data = check);
+   ecore_main_loop_begin();
+}
+
+/* An image factory binds the property its key names, as every factory does:
+   "icon" shows a named icon, and a file -- the key "filename", or none -- is
+   what it always did. */
+EFL_START_TEST(efl_ui_image_factory_binds_its_key)
+{
+   Factory_Check by_icon = { "folder", NULL, 0 };
+   Factory_Check by_file = { NULL, ELM_IMAGE_DATA_DIR"/images/logo.png", 0 };
+   Eo *win, *model, *child, *factory;
+   Eina_Value *v;
+
+   win = win_add(NULL, "image", EFL_UI_WIN_TYPE_BASIC);
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+   child = efl_model_child_add(model);
+   v = eina_value_string_new("folder");
+   efl_model_property_set(child, "sky", v);
+   eina_value_free(v);
+   v = eina_value_string_new(ELM_IMAGE_DATA_DIR"/images/logo.png");
+   efl_model_property_set(child, "path", v);
+   eina_value_free(v);
+
+   factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
+   efl_ui_property_bind(factory, "icon", "sky");
+   _factory_build(factory, child, &by_icon);
+   ck_assert_int_eq(by_icon.built, 1);
+
+   factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
+   efl_ui_property_bind(factory, "", "path");
+   _factory_build(factory, child, &by_file);
+   ck_assert_int_eq(by_file.built, 1);
+}
+EFL_END_TEST
+
 extern Eo *elm_image_object_get(Eo*);
 EFL_START_TEST(efl_ui_image_test_border_insets_before_load)
 {
@@ -170,6 +247,7 @@ void efl_ui_test_image(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_image_test_icon);
    tcase_add_test(tc, efl_ui_image_test_border_insets_before_load);
+   tcase_add_test(tc, efl_ui_image_factory_binds_its_key);
    tcase_add_test(tc, efl_ui_image_test_scale_method);
    tcase_add_test(tc, efl_ui_image_test_load_size_bounds_the_decode);
    tcase_add_test(tc, efl_ui_image_test_mmap_set_null);
