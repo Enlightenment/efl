@@ -269,6 +269,17 @@ _entity_cleanup(Efl_Ui_Collection_View *obj, Efl_Ui_Factory *factory,
    entities[0] = item->entity;
    if (!entities[0]) return ;
 
+   /* An item let go of may be handed to another row next. Focus must not
+      come back to it as if it still showed this one. */
+   {
+      MY_DATA_GET(obj, pd);
+
+      if (pd && (pd->focus.last == entities[0]))
+        efl_replace(&pd->focus.last, NULL);
+      if (pd && (pd->focus.previously == entities[0]))
+        efl_replace(&pd->focus.previously, NULL);
+   }
+
    efl_event_callback_array_del(entities[0], active_item_cbs(), obj);
    efl_replace(&item->entity, NULL);
    efl_event_callback_call(obj, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED, entities[0]);
@@ -1432,11 +1443,13 @@ _row_selected(Efl_Model *model)
 }
 
 /* A selected row keeps its item while it is off screen, so that what
-   last_selected hands out stays the object the application was given. */
+   last_selected hands out stays the object the application was given. So
+   does the last row, which focus enters the view on from below. */
 static Eina_Bool
-_lookup_kept(Efl_Ui_Collection_Item_Lookup *lookup)
+_lookup_kept(Efl_Ui_Collection_View_Data *pd, Efl_Ui_Collection_Item_Lookup *lookup)
 {
-   return lookup->item.entity && _row_selected(lookup->item.model);
+   if (!lookup->item.entity) return EINA_FALSE;
+   return (lookup->item.entity == pd->focus.last) || _row_selected(lookup->item.model);
 }
 
 // An RbTree has the nice property of sorting content. The smaller than the root being in
@@ -1512,7 +1525,7 @@ _idle_cb(void *data, const Efl_Event *event EINA_UNUSED)
       eina_array_step_set(&gone, sizeof (Eina_Array), 16);
       EINA_ARRAY_ITER_NEXT(&mark, i, lookup, iterator)
         {
-           if (_lookup_kept(lookup))
+           if (_lookup_kept(pd, lookup))
              efl_gfx_entity_visible_set(lookup->item.entity, EINA_FALSE);
            else
              eina_array_push(&gone, lookup);
@@ -1983,8 +1996,12 @@ _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
      }
    pd->last_count = count;
 
-   // The last item is not the last item anymore
-   requests = _request_add(requests, &request, count, EINA_TRUE);
+   // The last item is not the last item anymore: fetch the one that is
+   if (count)
+     {
+        requests = _request_add(requests, &request, count - 1, EINA_TRUE);
+        if (request) requests = eina_list_append(requests, request);
+     }
    requests = _batch_request_flush(requests, data, pd);
 
    // We are not triggering efl_ui_position_manager_entity_data_access_set as it is can
@@ -2326,6 +2343,8 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
         uint64_t index = efl_model_children_count_get(model) - 1;
 
         requests = _request_add(requests, &request, index, EINA_TRUE);
+        /* _request_add hands back the request it is building, not listed yet. */
+        if (request) requests = eina_list_append(requests, request);
      }
 
    // Flush all pending request
