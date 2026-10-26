@@ -253,6 +253,34 @@ EFL_START_TEST(efl_loop_test_loop_timer_recursion)
 }
 EFL_END_TEST
 
+/* Freezing is counted, as for any object: a timer frozen twice and thawed
+   once is still frozen, its time standing still and its count saying so. */
+EFL_START_TEST(efl_loop_test_loop_timer_freeze_counted)
+{
+   Eo *loop = efl_main_loop_get();
+   Eo *t;
+   double pending;
+
+   t = efl_add(EFL_LOOP_TIMER_CLASS, loop,
+               efl_loop_timer_interval_set(efl_added, 10.0),
+               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _timer_cb, NULL));
+   efl_event_freeze(t);
+   efl_event_freeze(t);
+   efl_event_thaw(t);
+   ck_assert_int_eq(efl_event_freeze_count_get(t), 1);
+
+   pending = efl_loop_timer_time_pending_get(t);
+   usleep(50000);
+   ck_assert(EINA_DBL_EQ(efl_loop_timer_time_pending_get(t), pending));
+
+   efl_event_thaw(t);
+   ck_assert_int_eq(efl_event_freeze_count_get(t), 0);
+   usleep(50000);
+   ck_assert(efl_loop_timer_time_pending_get(t) < pending);
+   efl_del(t);
+}
+EFL_END_TEST
+
 void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
 {
   /* XXX: this seems a silly test - that we del the loop object?
@@ -262,4 +290,5 @@ void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
    tcase_add_test(tc, efl_app_test_loop_timer_invalid);
    tcase_add_test(tc, efl_loop_test_loop_timer_iteration);
    tcase_add_test(tc, efl_loop_test_loop_timer_recursion);
+   tcase_add_test(tc, efl_loop_test_loop_timer_freeze_counted);
 }

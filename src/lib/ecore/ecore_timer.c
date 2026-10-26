@@ -368,9 +368,12 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 }
 
 EOLIAN static int
-_efl_loop_timer_efl_object_event_freeze_count_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_efl_object_event_freeze_count_get(const Eo *obj, Efl_Loop_Timer_Data *timer EINA_UNUSED)
 {
-   return timer->frozen;
+   /* The count Efl.Object keeps, of freezes not yet thawed: frozen only
+      says whether the timer is stopped, which it is for as long as that
+      count is not zero. */
+   return efl_event_freeze_count_get(efl_super(obj, MY_CLASS));
 }
 
 EAPI void
@@ -388,6 +391,11 @@ _efl_loop_timer_efl_object_event_thaw(Eo *obj, Efl_Loop_Timer_Data *timer)
    efl_event_thaw(efl_super(obj, MY_CLASS));
 
    if (!timer->frozen) return; // Timer not frozen
+   /* Freezes are counted, as for any object: the timer only starts again
+      on the thaw matching its first freeze. Starting it on the first thaw
+      had it run while its events were still frozen, its ticks going
+      nowhere and the time it had left lost. */
+   if (efl_event_freeze_count_get(efl_super(obj, MY_CLASS)) > 0) return;
    timer->frozen = 0;
 
    if (timer->loop_data)
