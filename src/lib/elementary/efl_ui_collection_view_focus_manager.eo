@@ -3,5 +3,6 @@ class @beta Efl.Ui.Collection_View_Focus_Manager extends Efl.Ui.Focus.Manager_Ca
   implements {
       Efl.Ui.Focus.Manager.manager_focus { set; }
       Efl.Ui.Focus.Manager.request_move;
+      Efl.Ui.Focus.Manager.setup_on_first_touch;
   }
 }

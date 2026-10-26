@@ -390,6 +390,101 @@ EFL_START_TEST(efl_ui_collection_view_manager_twice)
 }
 EFL_END_TEST
 
+/* A list between two buttons, its rows more than it shows. */
+static Eo *
+_list_between(Eo **above, Eo **below)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Factory *fl;
+   Eo *box, *lv;
+   int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 300));
+   box = efl_add(EFL_UI_BOX_CLASS, win);
+   efl_content_set(win, box);
+   *above = efl_add(EFL_UI_BUTTON_CLASS, box, efl_pack_end(box, efl_added));
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, box,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, _make_model(win)),
+                efl_pack_end(box, efl_added));
+   *below = efl_add(EFL_UI_BUTTON_CLASS, box, efl_pack_end(box, efl_added));
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   return lv;
+}
+
+/* Moves focus as a key would, then lets the view catch up, and says which
+   row has focus in the view, or -1 if it is not in the view. */
+static int
+_tab(Eo *lv, Efl_Ui_Focus_Direction direction)
+{
+   Eo *win = efl_provider_find(lv, EFL_UI_WIN_CLASS);
+   Eo *focus;
+   int i;
+
+   efl_ui_focus_manager_move(win, direction);
+   for (i = 0; i < 10; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   focus = efl_ui_focus_manager_focus_get(win);
+   if (focus != lv) return -1;
+   focus = efl_ui_focus_manager_focus_get(lv);
+   return efl_isa(focus, EFL_UI_ITEM_CLASS) ? _item_row(focus) : -1;
+}
+
+/* Tab enters a list on its first row and goes through its rows in order,
+   past those it shows -- the list scrolls to each -- and out of it after
+   the last one. Shift+Tab on the first row leaves it upwards. */
+EFL_START_TEST(test_efl_ui_collection_view_tab)
+{
+   Eo *win, *lv, *above, *below;
+   int i;
+
+   lv = _list_between(&above, &below);
+   win = efl_provider_find(lv, EFL_UI_WIN_CLASS);
+   efl_ui_focus_util_focus(above);
+   ck_assert_int_eq(_tab(lv, EFL_UI_FOCUS_DIRECTION_NEXT), 0);
+   ck_assert_int_eq(_tab(lv, EFL_UI_FOCUS_DIRECTION_PREVIOUS), -1);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(win), above);
+
+   for (i = 0; i < NUM_ITEMS; i++)
+     {
+        ck_assert_int_eq(_tab(lv, EFL_UI_FOCUS_DIRECTION_NEXT), i);
+        if (i == 10) ck_assert_int_gt(efl_ui_scrollable_content_pos_get(lv).y, 0);
+     }
+   ck_assert_int_eq(_tab(lv, EFL_UI_FOCUS_DIRECTION_NEXT), -1);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(win), below);
+}
+EFL_END_TEST
+
+/* Shift+Tab from below enters a list on its last row, though it shows the
+   top, and goes back through the rows; focus coming back to the list
+   comes back to the row it left. */
+EFL_START_TEST(test_efl_ui_collection_view_shift_tab)
+{
+   Eo *lv, *above, *below;
+   int i;
+
+   lv = _list_between(&above, &below);
+   efl_ui_focus_util_focus(below);
+   for (i = NUM_ITEMS - 1; i > NUM_ITEMS - 10; i--)
+     {
+        ck_assert_int_eq(_tab(lv, EFL_UI_FOCUS_DIRECTION_PREVIOUS), i);
+     }
+
+   efl_ui_focus_util_focus(above);
+   ck_assert_int_eq(_tab(lv, EFL_UI_FOCUS_DIRECTION_NEXT), NUM_ITEMS - 9);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -397,5 +492,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_select);
    tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
    tcase_add_test(tc, test_efl_ui_collection_view_last_row_kept);
+   tcase_add_test(tc, test_efl_ui_collection_view_tab);
+   tcase_add_test(tc, test_efl_ui_collection_view_shift_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
 }

@@ -84,7 +84,8 @@ struct _Efl_Ui_Collection_View_Data
 
    struct {
       Efl_Gfx_Entity *last; // The last item of the collection, so focus can start by the end if necessary.
-      Efl_Gfx_Entity *previously; // The previously selected item in the collection, so focus can come back to it.
+      // The item focus was on last in the collection, so focus can come back to it.
+      Efl_Gfx_Entity *previously;
    } focus;
 
    unsigned int start_id;
@@ -1444,12 +1445,15 @@ _row_selected(Efl_Model *model)
 
 /* A selected row keeps its item while it is off screen, so that what
    last_selected hands out stays the object the application was given. So
-   does the last row, which focus enters the view on from below. */
+   does the last row, which focus enters the view on from below, and the
+   row focus was on, which it comes back to. */
 static Eina_Bool
 _lookup_kept(Efl_Ui_Collection_View_Data *pd, Efl_Ui_Collection_Item_Lookup *lookup)
 {
    if (!lookup->item.entity) return EINA_FALSE;
-   return (lookup->item.entity == pd->focus.last) || _row_selected(lookup->item.model);
+   return (lookup->item.entity == pd->focus.last) ||
+          (lookup->item.entity == pd->focus.previously) ||
+          _row_selected(lookup->item.model);
 }
 
 // An RbTree has the nice property of sorting content. The smaller than the root being in
@@ -2624,18 +2628,6 @@ _efl_ui_collection_view_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Vie
                }
           }
      }
-   else
-     {
-        Efl_Model *model;
-        Eina_Value *vindex;
-        unsigned int index;
-
-        model = efl_ui_view_model_get(new_obj);
-        vindex = efl_model_property_get(model, "child.index");
-        if (eina_value_uint_convert(vindex, &index))
-          _item_scroll_internal(obj, pd, index, .0, EINA_TRUE);
-        eina_value_free(vindex);
-     }
 
    return new_obj;
 }
@@ -2710,37 +2702,102 @@ _assert_item_available(Eo *item, int new_id, Efl_Ui_Collection_View_Data *pd)
    efl_gfx_entity_visible_set(item, EINA_TRUE);
    efl_gfx_entity_geometry_set(item, efl_ui_position_manager_entity_position_single_item(pd->manager, new_id));
 }
+
+static Efl_Ui_Item *
+_index_entity(Efl_Ui_Collection_View_Data *pd, unsigned int index)
+{
+   Efl_Ui_Collection_Item_Lookup *lookup;
+
+   lookup = (void*) eina_rbtree_inline_lookup(pd->cache, &index, sizeof (index),
+                                              _cache_tree_lookup, NULL);
+   return lookup ? lookup->item.entity : NULL;
+}
+
+/* The item focus goes to as it comes into the view: back to the row it was
+   on, or else the first row -- the last one, coming in backwards from
+   below, which the view keeps an item of for that. If that row has no
+   item, the first or last row shown. */
+static Efl_Ui_Item *
+_entry_item(Efl_Ui_Collection_View_Data *pd, Eina_Bool backwards)
+{
+   Efl_Ui_Item *item;
+   unsigned int count;
+
+   if (pd->focus.previously) return pd->focus.previously;
+   if (!pd->model) return NULL;
+   count = efl_model_children_count_get(pd->model);
+   if (!count) return NULL;
+
+   item = _index_entity(pd, backwards ? count - 1 : 0);
+   if (!item) item = _index_entity(pd, backwards ? pd->end_id : pd->start_id);
+   return item;
+}
+
 EOLIAN static void
 _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Collection_View_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focus)
 {
    MY_DATA_GET(pd->collection, cpd);
    Efl_Ui_Item *item = NULL;
+   Eina_Bool remember = EINA_TRUE;
    unsigned int item_id;
 
    if (focus == efl_ui_focus_manager_root_get(obj))
      {
-        // Find last item
-        item = cpd->focus.previously;
-        if (!item) item = cpd->focus.last;
-        if (item) item_id = _lookup_entity_index(item, NULL);
-        else item_id = efl_model_children_count_get(cpd->model) - 1;
+        /* Focus given to the view itself: the manager would pick whichever
+           item it heard of first, which once items are reused for other
+           rows can be any row. This is also how the manager puts a view
+           it starts to send focus to in a known state, before focus comes
+           in from a direction: what is picked here is not remembered as
+           the row focus was on. */
+        item = _entry_item(cpd, EINA_FALSE);
+        remember = EINA_FALSE;
+        if (!item)
+          {
+             efl_ui_focus_manager_focus_set(efl_super(obj,
+                                                      EFL_UI_COLLECTION_VIEW_FOCUS_MANAGER_CLASS),
+                                            focus);
+             return;
+          }
+        focus = item;
      }
-   else
-     {
-        item = _find_item(obj, cpd, focus);
-        if (!item) return ;
 
-        item_id = _lookup_entity_index(item, NULL);
-     }
+   item = _find_item(obj, cpd, focus);
+   if (!item) return ;
 
    // If this is NULL then we are before finalize, we cannot serve any sane value here
    if (!cpd->manager) return ;
 
+   item_id = _lookup_entity_index(item, NULL);
    if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
      {
         _assert_item_available(item, item_id, cpd);
      }
+   /* However focus got there, the row it is on is shown. Without
+      animation: the rows around it are only built as the view scrolls, and
+      the next key may already want one of them. */
+   _item_scroll_internal(pd->collection, cpd, item_id, .0, EINA_FALSE);
+   if (remember) efl_replace(&cpd->focus.previously, item);
    efl_ui_focus_manager_focus_set(efl_super(obj, EFL_UI_COLLECTION_VIEW_FOCUS_MANAGER_CLASS), focus);
+}
+
+EOLIAN static void
+_efl_ui_collection_view_focus_manager_efl_ui_focus_manager_setup_on_first_touch(Eo *obj,
+                                                                                Efl_Ui_Collection_View_Focus_Manager_Data *pd,
+                                                                                Efl_Ui_Focus_Direction direction,
+                                                                                Efl_Ui_Focus_Object *entry)
+{
+   MY_DATA_GET(pd->collection, cpd);
+   Efl_Ui_Item *item = NULL;
+
+   /* The manager would come in backwards on the last item it heard of. */
+   if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+     item = _entry_item(cpd, EINA_TRUE);
+   if (item)
+     efl_ui_focus_manager_focus_set(obj, item);
+   else
+     efl_ui_focus_manager_setup_on_first_touch(efl_super(obj,
+                                                         EFL_UI_COLLECTION_VIEW_FOCUS_MANAGER_CLASS),
+                                               direction, entry);
 }
 
 static int
@@ -2777,7 +2834,11 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
    if (!_id_from_item(item, &item_id))
      goto end;
 
-   if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
+   /* Tab goes through the rows in their order, which the order the manager
+      heard of their items in says nothing of once items are reused. */
+   if (ITEM_IS_OUTSIDE_VISIBLE(item_id) ||
+       (direction == EFL_UI_FOCUS_DIRECTION_NEXT) ||
+       (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS))
      {
         unsigned int new_id;
 
@@ -2812,15 +2873,17 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
                lookup = (void*) eina_rbtree_inline_lookup(cpd->cache, &search_index,
                                            sizeof (search_index), _cache_tree_lookup,
                                            NULL);
-               if (lookup)
+               if (lookup && lookup->item.entity)
                  {
                     _assert_item_available(lookup->item.entity, new_id, cpd);
                     new_item = lookup->item.entity;
                  }
                else
                  {
-                    ERR("This item cannot get focus right now. It should be visible first.");
-                    new_item = NULL;
+                    /* The row is there, but its item is still being built
+                       as the view scrolls: focus stays where it is rather
+                       than leave the view, and the next key finds it. */
+                    new_item = item;
                  }
 #endif
           }
@@ -2831,7 +2894,6 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
      }
 
  end:
-   efl_replace(&cpd->focus.previously, new_item);
    return new_item;
 }
 
