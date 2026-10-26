@@ -692,7 +692,7 @@ _efl_ui_view_model_efl_model_property_set(Eo *obj, Efl_Ui_View_Model_Data *pd,
    prop = eina_stringshare_add(property);
    logic = _efl_ui_view_model_property_logic_lookup(pd, prop);
    if (logic)
-     f = logic->set.fct(logic->get.data, obj, prop, value);
+     f = logic->set.fct(logic->set.data, obj, prop, value);
    else
      {
         if (eina_hash_find(pd->texts, prop))

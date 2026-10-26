@@ -410,9 +410,48 @@ EFL_START_TEST(efl_test_view_model_logic_refused)
 }
 EFL_END_TEST
 
+static int _get_tag, _set_tag;
+static void *_set_called_with;
+
+static Eina_Future *
+_logic_set_record(void *data, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value)
+{
+   _set_called_with = data;
+   (void) value;
+   return efl_loop_future_resolved(mv, EINA_VALUE_EMPTY);
+}
+
+/* Each callback of a logic is called with its own data: the set callback
+ * with what was given as set_data, not with get_data. */
+EFL_START_TEST(efl_test_view_model_logic_set_data)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Ui_View_Model *mv;
+   Eina_Value v = eina_value_int_init(1);
+   Eina_Future *f;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   mv = efl_add_ref(EFL_UI_VIEW_MODEL_CLASS, efl_main_loop_get(),
+                    efl_ui_view_model_set(efl_added, base_model));
+
+   ck_assert_int_eq(efl_ui_view_model_property_logic_add(mv, "p",
+                       &_get_tag, _logic_get_nothing, NULL,
+                       &_set_tag, _logic_set_record, NULL,
+                       NULL), 0);
+   _set_called_with = NULL;
+   f = efl_model_property_set(mv, "p", &v);
+   ck_assert_ptr_eq(_set_called_with, &_set_tag);
+   if (f) eina_future_cancel(f);
+
+   efl_unref(mv);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_view_model(TCase *tc)
 {
+   tcase_add_test(tc, efl_test_view_model_logic_set_data);
    tcase_add_test(tc, efl_test_view_model);
    tcase_add_test(tc, efl_test_view_model_logic_refused);
 }
