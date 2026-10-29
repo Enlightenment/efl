@@ -836,6 +836,7 @@ _offer_receive_fd_cb(void *data, Ecore_Fd_Handler *fdh)
         ecore_event_add(ECORE_WL2_EVENT_OFFER_DATA_READY, ev, _free_buf, buf);
 
         buf->offer->reads = eina_list_remove(buf->offer->reads, fdh);
+        close(fd);
         return ECORE_CALLBACK_CANCEL;
      }
 }
