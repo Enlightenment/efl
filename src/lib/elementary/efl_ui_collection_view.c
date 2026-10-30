@@ -2413,6 +2413,9 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    // Flush all pending request
    requests = _batch_request_flush(requests, data, pd);
 
+   /* No manager yet: position_manager_set installs the data access itself
+      once the manager comes. */
+   if (!pd->manager) return;
    switch (efl_ui_position_manager_entity_version(pd->manager, 1))
      {
        case 1:
@@ -2423,7 +2426,8 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
            count);
        break;
      }
-   efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
+   if (count)
+     efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
 }
 
 static void
