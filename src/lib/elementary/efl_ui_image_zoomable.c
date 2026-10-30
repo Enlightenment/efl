@@ -2391,8 +2391,15 @@ _efl_ui_image_zoomable_efl_file_load(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 }
 
 EOLIAN static Eina_Error
-_efl_ui_image_zoomable_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
+_efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
 {
+   const Eina_File *mmap = efl_file_mmap_get(obj);
+
+   /* A file set after an icon, or any mmap, is the file to load: the mmap
+    * would be what is loaded otherwise. Not when the mmap is what is
+    * setting this very file. */
+   if (mmap && !eina_streq(eina_file_filename_get(mmap), file))
+     efl_file_mmap_set(obj, NULL);
    eina_stringshare_replace(&sd->file, file);
    return 0;
 }
@@ -2819,6 +2826,7 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
    if (f)
      {
         if (sd->f) eina_file_close(sd->f);
+        sd->f = NULL; /* or the unload closes it a second time */
         efl_file_key_set(o, buf);
         efl_file_mmap_set(o, f);
 
