@@ -100,9 +100,31 @@ EFL_START_TEST(efl_ui_test_image_zoomable_file_after_icon)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_test_image_zoomable_set_while_constructing)
+{
+   Evas_Object *win, *img_zoomable;
+   Eina_Size2D size;
+
+   win = win_add(NULL, "photocam", EFL_UI_WIN_TYPE_BASIC);
+
+   img_zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win,
+                          efl_file_set(efl_added, ELM_IMAGE_DATA_DIR"/images/logo.png"));
+   ck_assert(efl_file_loaded_get(img_zoomable));
+   size = efl_gfx_view_size_get(img_zoomable);
+   ck_assert_int_gt(size.w, 0);
+   ck_assert_int_gt(size.h, 0);
+
+   img_zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win,
+                          efl_ui_image_icon_set(efl_added, "folder"));
+   ck_assert(efl_file_loaded_get(img_zoomable));
+   ck_assert_str_eq(efl_ui_image_icon_get(img_zoomable), "folder");
+}
+EFL_END_TEST
+
 void efl_ui_test_image_zoomable(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_image_zoomable_icon);
    tcase_add_test(tc, efl_ui_test_image_zoomable_replaced_calc_job);
    tcase_add_test(tc, efl_ui_test_image_zoomable_file_after_icon);
+   tcase_add_test(tc, efl_ui_test_image_zoomable_set_while_constructing);
 }

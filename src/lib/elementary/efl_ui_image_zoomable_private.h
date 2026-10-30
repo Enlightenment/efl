@@ -138,6 +138,7 @@ struct _Efl_Ui_Image_Zoomable_Data
    Eina_Bool    do_region : 1;
    Eina_Bool    zoom_g_layer : 1;
    Eina_Bool    resized : 1;
+   Eina_Bool    loaded : 1; /* what is set, file or icon, has been loaded */
    Eina_Bool    on_hold : 1;
    Eina_Bool    paused : 1;
    Eina_Bool    orientation_changed : 1;

@@ -1952,6 +1952,17 @@ _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Dat
    return obj;
 }
 
+EOLIAN static Eo *
+_efl_ui_image_zoomable_efl_object_finalize(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (!obj) return NULL;
+   /* A file set while constructing is loaded here, as for Efl.Ui.Image:
+    * file_set only keeps the name, and the mixin does not know of it. */
+   if (sd->file && !sd->loaded) efl_file_load(obj);
+   return obj;
+}
+
 EOLIAN static Eina_Size2D
 _efl_ui_image_zoomable_efl_gfx_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *pd)
 {
@@ -2214,6 +2225,7 @@ _efl_ui_image_zoomable_remote_copier_done(void *data, const Efl_Event *event EIN
    efl_file_mmap_set(obj, f);
    eina_file_close(f);
    ret = _internal_file_set(obj, sd, &ret);
+   sd->loaded = !ret;
 
    if (ret)
      {
@@ -2350,6 +2362,7 @@ _efl_ui_image_zoomable_efl_file_unload(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    ELM_SAFE_FREE(sd->edje, evas_object_del);
    eina_stringshare_replace(&sd->stdicon, NULL);
+   sd->loaded = EINA_FALSE;
 
    _grid_clear_all(obj);
    _efl_ui_image_zoomable_zoom_reset(obj, sd);
@@ -2374,10 +2387,17 @@ _efl_ui_image_zoomable_efl_file_load(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
    Evas_Load_Error ret;
    Eina_Error err;
 
-   if (efl_file_loaded_get(obj)) return 0;
+   /* This class does not keep the loaded state of Efl.File: an icon, or
+    * what an earlier load did, is not to be undone by the load that
+    * Efl.File's finalize asks for. */
+   if (sd->loaded) return 0;
    err = _efl_ui_image_zoomable_file_set_internal(obj, sd, &ret);
 
-   if ((!ret) && (!err)) return 0;
+   if ((!ret) && (!err))
+     {
+        sd->loaded = EINA_TRUE;
+        return 0;
+     }
 
    eina_error_set(
      ret == EVAS_LOAD_ERROR_DOES_NOT_EXIST             ? PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST :
@@ -2401,7 +2421,22 @@ _efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
    if (mmap && !eina_streq(eina_file_filename_get(mmap), file))
      efl_file_mmap_set(obj, NULL);
    eina_stringshare_replace(&sd->file, file);
+   sd->loaded = EINA_FALSE;
    return 0;
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_file_key_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *key)
+{
+   efl_file_key_set(efl_super(obj, MY_CLASS), key);
+   /* Another key is another thing to load from the same file. */
+   sd->loaded = EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_zoomable_efl_file_loaded_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   return sd->loaded;
 }
 
 EOLIAN static const char *
@@ -2941,6 +2976,7 @@ _internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Ein
    if (ret)
      {
         eina_stringshare_replace(&sd->stdicon, name);
+        sd->loaded = EINA_TRUE;
         _sizing_eval(obj);
         return EINA_TRUE;
      }
