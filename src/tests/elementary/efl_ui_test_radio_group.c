@@ -134,6 +134,28 @@ EFL_START_TEST(active_selection_object_setting)
 }
 EFL_END_TEST
 
+EFL_START_TEST(selected_before_registration)
+{
+   Eo *r1, *r2;
+
+   r1 = efl_add(EFL_UI_RADIO_CLASS, win,
+                efl_ui_radio_state_value_set(efl_added, 1),
+                efl_ui_selectable_selected_set(efl_added, EINA_TRUE));
+   efl_ui_radio_group_register(radio_group, r1);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r1);
+
+   r2 = efl_add(EFL_UI_RADIO_CLASS, win,
+                efl_ui_radio_state_value_set(efl_added, 2),
+                efl_ui_selectable_selected_set(efl_added, EINA_TRUE));
+   efl_ui_radio_group_register(radio_group, r2);
+
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r2);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 2);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(r1), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(r2), EINA_TRUE);
+}
+EFL_END_TEST
+
 EFL_START_TEST(unregister_setted)
 {
    Eo *r = radio();
@@ -255,6 +277,7 @@ void efl_ui_test_radio_group(TCase *tc)
    tcase_add_test(tc, pairwise_different_error);
    tcase_add_test(tc, group_double_registeration);
    tcase_add_test(tc, group_registeration_in_two_groups);
+   tcase_add_test(tc, selected_before_registration);
    tcase_add_test(tc, unregister_setted);
    tcase_add_test(tc, external_setting);
    tcase_add_test(tc, delete_setted);

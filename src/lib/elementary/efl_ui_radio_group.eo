@@ -26,6 +26,9 @@ interface Efl.Ui.Radio_Group extends Efl.Ui.Single_Selectable
           If the @Efl.Ui.Radio.state_value of the new button is already used by a previous
           button in the group, the button will not be added.
 
+          A button that is already selected when it is registered becomes the selection of the
+          group, and the button selected until then is deselected: the last one registered wins.
+
           See also @.unregister.
         ]]
         params {

@@ -150,6 +150,16 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_register(Eo *obj, Efl_Ui_Radio_Group
    pd->registered_set = eina_list_append(pd->registered_set, radio);
    eina_hash_add(radio_group_map, &radio, obj);
    efl_event_callback_array_add(radio, radio_btn_cb(), obj);
+
+   /* Selected before it joined, a radio created with selected set: nobody was
+    * listening to hear of it, so the group takes it as it would have been
+    * told, and the one selected until now is released. */
+   if (efl_ui_selectable_selected_get(radio))
+     {
+        Efl_Event ev = { radio, NULL, NULL };
+
+        _selected_cb(obj, &ev);
+     }
 }
 
 EOLIAN static void
