@@ -2022,6 +2022,7 @@ _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
    evas_object_image_preload(sd->img, 0);
    sd->main_load_pending = EINA_TRUE;
 
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
    efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD, NULL);
    sd->preload_num++;
@@ -2137,6 +2138,7 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret
    evas_object_image_preload(sd->img, 0);
    sd->main_load_pending = EINA_TRUE;
 
+   ecore_job_del(sd->calc_job);
    sd->calc_job = ecore_job_add(_calc_job_cb, obj);
    efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD, NULL);
    sd->preload_num++;
@@ -2355,7 +2357,7 @@ _efl_ui_image_zoomable_efl_file_unload(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
    sd->no_smooth--;
    if (sd->no_smooth == 0) _smooth_update(obj);
 
-   ecore_job_del(sd->calc_job);
+   ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
    evas_object_hide(sd->img);
    if (sd->f) eina_file_close(sd->f);
    sd->f = NULL;
