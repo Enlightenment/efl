@@ -1058,9 +1058,10 @@ _connection_get(Eldbus_Connection_Type type, const char *address, Eina_Bool shar
 
    if (!conn->dbus_conn || dbus_error_is_set(&err))
      {
-        free(conn);
         ERR("Error connecting to bus of type %d. error name: %s error message: %s",
             type, err.name, err.message);
+        free(conn);
+        dbus_error_free(&err);
         return NULL;
      }
 
