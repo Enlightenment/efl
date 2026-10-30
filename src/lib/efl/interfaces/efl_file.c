@@ -75,7 +75,7 @@ _efl_file_mmap_set(Eo *obj, Efl_File_Data *pd, const Eina_File *f)
      {
         /* avoid infinite recursion */
         pd->setting = 1;
-        err = efl_file_set(obj, eina_file_filename_get(pd->file));
+        err = efl_file_set(obj, pd->file ? eina_file_filename_get(pd->file) : NULL);
         pd->setting = 0;
      }
    return err;

@@ -133,10 +133,44 @@ EFL_START_TEST(efl_ui_image_test_load_size_bounds_the_decode)
 }
 EFL_END_TEST
 
+static void
+_count_errors(const Eina_Log_Domain *d, Eina_Log_Level level,
+              const char *file, const char *fnc, int line,
+              const char *fmt, void *data, va_list args)
+{
+   int *errors = data;
+
+   if (level <= EINA_LOG_LEVEL_ERR)
+     (*errors)++;
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
+
+EFL_START_TEST(efl_ui_image_test_mmap_set_null)
+{
+   Eo *win, *image;
+   int errors = 0;
+
+   win = win_add(NULL, "image", EFL_UI_WIN_TYPE_BASIC);
+
+   image = efl_add(EFL_UI_IMAGE_CLASS, win);
+   ck_assert(efl_file_simple_load(image, ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   ck_assert_ptr_ne(efl_file_get(image), NULL);
+
+   eina_log_print_cb_set(_count_errors, &errors);
+   efl_file_mmap_set(image, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   ck_assert_int_eq(errors, 0);
+   ck_assert_ptr_eq(efl_file_mmap_get(image), NULL);
+   ck_assert_ptr_eq(efl_file_get(image), NULL);
+}
+EFL_END_TEST
+
 void efl_ui_test_image(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_image_test_icon);
    tcase_add_test(tc, efl_ui_image_test_border_insets_before_load);
    tcase_add_test(tc, efl_ui_image_test_scale_method);
    tcase_add_test(tc, efl_ui_image_test_load_size_bounds_the_decode);
+   tcase_add_test(tc, efl_ui_image_test_mmap_set_null);
 }
