@@ -28,6 +28,10 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
      scrolled out of sight, so it stays the same object, and a row selected from code that was
      never shown gets one, a moment after @[Efl.Ui.Single_Selectable.selection_changed].
 
+     The policy is kept by the selection model of the model chain, which exists once there is a
+     model: a policy set on the view, before or after the model, is applied to that model, and to
+     the next. A model that is shared with others is changed for them too.
+
      @since 1.23
    ]]
    methods {
@@ -66,6 +70,7 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Single_Selectable.last_selected { get; }
       Efl.Ui.Single_Selectable.fallback_selection { get; set; }
+      Efl.Ui.Multi_Selectable.select_mode { get; set; }
    }
    events {
       item,realized : Efl.Ui.Item; [[Event triggered when an @Efl.Ui.Item has been provided by the @Efl.Ui.Factory and is about to be used.]]

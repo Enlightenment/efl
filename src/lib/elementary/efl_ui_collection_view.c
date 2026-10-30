@@ -67,6 +67,7 @@ struct _Efl_Ui_Collection_Request
 struct _Efl_Ui_Collection_View_Data
 {
    Eina_Bool had_viewport : 1; /* there has been room to show something */
+   Eina_Bool mode_set : 1;
 
    unsigned int last_count; /* to tell a re-order from children arriving */
    /* Changes whenever rows are added, taken away or reordered, so a row's
@@ -100,7 +101,7 @@ struct _Efl_Ui_Collection_View_Data
    Eina_Size2D size_stand_in; /* said for every item until one is measured */
 
    Efl_Ui_Layout_Orientation direction;
-   Efl_Ui_Select_Mode mode;
+   Efl_Ui_Select_Mode mode; /* asked for, and applied to every model that selects */
 
    struct {
       Eina_Bool w : 1;
@@ -2356,6 +2357,9 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
      }
    efl_replace(&pd->multi_selectable_async_model, mselect);
    efl_composite_attach(data, pd->multi_selectable_async_model);
+   /* Asked for before the model had come, or for the one before it. */
+   if (pd->mode_set)
+     efl_ui_multi_selectable_select_mode_set(pd->multi_selectable_async_model, pd->mode);
    efl_event_callback_forwarder_add(pd->multi_selectable_async_model,
                                     EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                     data);
@@ -2485,6 +2489,28 @@ EFL_CALLBACKS_ARRAY_DEFINE(pan_events_cb,
   {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _pan_viewport_changed_cb},
   {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _pan_viewport_changed_cb},
 )
+
+/* The selection is kept by a model of the chain, which only exists once a
+ * model has been set: the mode is kept here too, so that it can be asked for
+ * at construction, in whichever order, and still reach the model. */
+EOLIAN static void
+_efl_ui_collection_view_efl_ui_multi_selectable_select_mode_set(Eo *obj EINA_UNUSED,
+                                                                Efl_Ui_Collection_View_Data *pd,
+                                                                Efl_Ui_Select_Mode mode)
+{
+   pd->mode = mode;
+   pd->mode_set = EINA_TRUE;
+   if (pd->multi_selectable_async_model)
+     efl_ui_multi_selectable_select_mode_set(pd->multi_selectable_async_model, mode);
+}
+
+EOLIAN static Efl_Ui_Select_Mode
+_efl_ui_collection_view_efl_ui_multi_selectable_select_mode_get(const Eo *obj EINA_UNUSED,
+                                                                Efl_Ui_Collection_View_Data *pd)
+{
+   if (!pd->multi_selectable_async_model) return pd->mode;
+   return efl_ui_multi_selectable_select_mode_get(pd->multi_selectable_async_model);
+}
 
 EOLIAN static Efl_Object *
 _efl_ui_collection_view_efl_object_constructor(Eo *obj, Efl_Ui_Collection_View_Data *pd)

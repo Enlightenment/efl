@@ -420,6 +420,31 @@ EFL_START_TEST(test_efl_ui_collection_view_refill)
 }
 EFL_END_TEST
 
+/* The selection mode is kept by a model of the chain, which only exists once
+   a model has been set: asked for first, it must still be there. */
+EFL_START_TEST(test_efl_ui_collection_view_select_mode_before_model)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_multi_selectable_select_mode_set(efl_added, EFL_UI_SELECT_MODE_MULTI),
+                efl_ui_collection_view_factory_set(efl_added, fl));
+   ck_assert_int_eq(efl_ui_multi_selectable_select_mode_get(lv), EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_view_model_set(lv, _make_model(win));
+   ck_assert_int_eq(efl_ui_multi_selectable_select_mode_get(lv), EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_view_model_set(lv, _make_model(win));
+   ck_assert_int_eq(efl_ui_multi_selectable_select_mode_get(lv), EFL_UI_SELECT_MODE_MULTI);
+}
+EFL_END_TEST
+
 /* The sizes the position manager caches and the sizes it places must agree
    while the window resizes the view. */
 EFL_START_TEST(test_efl_ui_collection_view_sizes_agree)
@@ -570,6 +595,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, efl_ui_collection_view_manager_twice);
    tcase_add_test(tc, test_efl_ui_collection_view_select);
    tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
+   tcase_add_test(tc, test_efl_ui_collection_view_select_mode_before_model);
    tcase_add_test(tc, test_efl_ui_collection_view_last_row_kept);
    tcase_add_test(tc, test_efl_ui_collection_view_refill);
    tcase_add_test(tc, test_efl_ui_collection_view_tab);
