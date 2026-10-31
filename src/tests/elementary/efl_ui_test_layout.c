@@ -452,8 +452,39 @@ EFL_START_TEST(efl_ui_layout_content_replaced_while_held)
 }
 EFL_END_TEST
 
+static void
+_count_errors(const Eina_Log_Domain *d, Eina_Log_Level level,
+              const char *file, const char *fnc, int line,
+              const char *fmt, void *data, va_list args)
+{
+   int *errors = data;
+
+   if (level <= EINA_LOG_LEVEL_ERR)
+     (*errors)++;
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
+
+/* A panel calculates its sub-objects when it is told to calculate, and one of
+   them is a plain rectangle that has no calculation to run. */
+EFL_START_TEST(efl_ui_layout_calc_subobjs_without_calc)
+{
+   Eo *win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   Eo *panel;
+   int errors = 0;
+
+   panel = efl_add(EFL_UI_PANEL_CLASS, win);
+
+   eina_log_print_cb_set(_count_errors, &errors);
+   efl_canvas_group_calculate(panel);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   ck_assert_int_eq(errors, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
+   tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
    tcase_add_test(tc, efl_ui_layout_content_replaced_while_held);
    tcase_add_test(tc, efl_ui_layout_part_without_widget);
    tcase_add_test(tc, efl_ui_layout_text_set_while_building);

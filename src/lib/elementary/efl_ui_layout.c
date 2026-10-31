@@ -184,7 +184,8 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
         for (unsigned int i = 0; i < eina_array_count(wd->children); ++i)
           {
              subobj = eina_array_data_get(wd->children, i);
-             efl_canvas_group_calculate(subobj);
+             if (efl_isa(subobj, EFL_CANVAS_GROUP_CLASS))
+               efl_canvas_group_calculate(subobj);
           }
      }
    elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
