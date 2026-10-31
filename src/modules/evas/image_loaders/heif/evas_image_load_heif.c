@@ -102,6 +102,64 @@ static heif_image_handle_release_t heif_image_handle_release_f = NULL;
 typedef void (*heif_image_release_t)(const struct heif_image*);
 static heif_image_release_t heif_image_release_f = NULL;
 
+/* optional: embedded thumbnails, used when a smaller load size is set */
+
+// heif_image_handle_get_number_of_thumbnails
+typedef int (*heif_image_handle_get_number_of_thumbnails_t)(const struct heif_image_handle* handle);
+static heif_image_handle_get_number_of_thumbnails_t heif_image_handle_get_number_of_thumbnails_f = NULL;
+
+// heif_image_handle_get_list_of_thumbnail_IDs
+typedef int (*heif_image_handle_get_list_of_thumbnail_IDs_t)(const struct heif_image_handle* handle,
+                                                             heif_item_id* ids, int count);
+static heif_image_handle_get_list_of_thumbnail_IDs_t heif_image_handle_get_list_of_thumbnail_IDs_f = NULL;
+
+// heif_image_handle_get_thumbnail
+typedef struct heif_error (*heif_image_handle_get_thumbnail_t)(const struct heif_image_handle* main_image_handle,
+                                                               heif_item_id thumbnail_id,
+                                                               struct heif_image_handle** out_thumbnail_handle);
+static heif_image_handle_get_thumbnail_t heif_image_handle_get_thumbnail_f = NULL;
+
+// heif_image_handle_get_item_id
+typedef heif_item_id (*heif_image_handle_get_item_id_t)(const struct heif_image_handle* handle);
+static heif_image_handle_get_item_id_t heif_image_handle_get_item_id_f = NULL;
+
+/* from heif_properties.h; enums are passed as int so this builds against
+ * libheif versions that lack that header */
+
+// heif_item_get_transformation_properties
+typedef int (*heif_item_get_transformation_properties_t)(const struct heif_context* context,
+                                                         heif_item_id id,
+                                                         uint32_t* out_list,
+                                                         int count);
+static heif_item_get_transformation_properties_t heif_item_get_transformation_properties_f = NULL;
+
+// heif_item_get_property_type
+typedef int (*heif_item_get_property_type_t)(const struct heif_context* context,
+                                             heif_item_id id,
+                                             uint32_t property_id);
+static heif_item_get_property_type_t heif_item_get_property_type_f = NULL;
+
+// heif_item_get_property_transform_rotation_ccw
+typedef int (*heif_item_get_property_transform_rotation_ccw_t)(const struct heif_context* context,
+                                                               heif_item_id itemId,
+                                                               uint32_t propertyId);
+static heif_item_get_property_transform_rotation_ccw_t heif_item_get_property_transform_rotation_ccw_f = NULL;
+
+// heif_item_get_property_transform_mirror
+typedef int (*heif_item_get_property_transform_mirror_t)(const struct heif_context* context,
+                                                         heif_item_id itemId,
+                                                         uint32_t propertyId);
+static heif_item_get_property_transform_mirror_t heif_item_get_property_transform_mirror_f = NULL;
+
+#define EVAS_HEIF_FOURCC(a, b, c, d) \
+   ((int)(((unsigned int)(a) << 24) | ((b) << 16) | ((c) << 8) | (d)))
+#define EVAS_HEIF_PROP_IROT EVAS_HEIF_FOURCC('i', 'r', 'o', 't')
+#define EVAS_HEIF_PROP_IMIR EVAS_HEIF_FOURCC('i', 'm', 'i', 'r')
+#define EVAS_HEIF_MAX_TRANSFORMS 8
+#define EVAS_HEIF_MAX_THUMBNAILS 16
+
+static Eina_Bool _evas_loader_heif_thumbnails = EINA_FALSE;
+
 #ifdef ERR
 # undef ERR
 #endif
@@ -111,6 +169,143 @@ static heif_image_release_t heif_image_release_f = NULL;
 # undef INF
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_loader_heif_log_dom, __VA_ARGS__)
+
+/* EINA_TRUE if both items carry the same irot/imir transforms in the same
+ * order (clap only has to be present in both; the aspect check covers it) */
+static Eina_Bool
+evas_image_load_heif_same_transforms(struct heif_context *ctx,
+                                     heif_item_id a, heif_item_id b)
+{
+   uint32_t pa[EVAS_HEIF_MAX_TRANSFORMS];
+   uint32_t pb[EVAS_HEIF_MAX_TRANSFORMS];
+   int na, nb, i;
+
+   na = heif_item_get_transformation_properties_f(ctx, a, NULL, 0);
+   nb = heif_item_get_transformation_properties_f(ctx, b, NULL, 0);
+   if ((na != nb) || (na < 0) || (na > EVAS_HEIF_MAX_TRANSFORMS))
+     return EINA_FALSE;
+   if (na == 0)
+     return EINA_TRUE;
+   if ((heif_item_get_transformation_properties_f(ctx, a, pa, na) != na) ||
+       (heif_item_get_transformation_properties_f(ctx, b, pb, nb) != nb))
+     return EINA_FALSE;
+
+   for (i = 0; i < na; i++)
+     {
+        int ta, tb;
+
+        ta = heif_item_get_property_type_f(ctx, a, pa[i]);
+        tb = heif_item_get_property_type_f(ctx, b, pb[i]);
+        if (ta != tb)
+          return EINA_FALSE;
+        if ((ta == EVAS_HEIF_PROP_IROT) &&
+            (heif_item_get_property_transform_rotation_ccw_f(ctx, a, pa[i]) !=
+             heif_item_get_property_transform_rotation_ccw_f(ctx, b, pb[i])))
+          return EINA_FALSE;
+        if ((ta == EVAS_HEIF_PROP_IMIR) &&
+            (heif_item_get_property_transform_mirror_f(ctx, a, pa[i]) !=
+             heif_item_get_property_transform_mirror_f(ctx, b, pb[i])))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+/* When a load size or scale_down_by is set and an embedded thumbnail is at
+ * least that big (same aspect ratio and orientation), decode the thumbnail
+ * instead of the primary image, like the jpeg loader decodes at a reduced
+ * DCT scale. Returns the handle to use; the primary is released if it is
+ * replaced. */
+static struct heif_image_handle *
+evas_image_load_heif_thumbnail_pick(Evas_Loader_Internal *loader,
+                                    struct heif_context *ctx,
+                                    struct heif_image_handle *handle)
+{
+   Evas_Image_Load_Opts *opts = loader->opts;
+   heif_item_id ids[EVAS_HEIF_MAX_THUMBNAILS];
+   struct heif_image_handle *best = NULL;
+   unsigned long long w, h, tw, th;
+   int bw = 0, n, i;
+
+   if ((!_evas_loader_heif_thumbnails) || (!opts))
+     return handle;
+   if ((opts->emile.region.w > 0) && (opts->emile.region.h > 0))
+     return handle;
+
+   w = heif_image_handle_get_width_f(handle);
+   h = heif_image_handle_get_height_f(handle);
+   if ((w < 1) || (h < 1))
+     return handle;
+
+   /* smallest size the caller asked for, aspect ratio kept */
+   if (opts->emile.scale_down_by > 1)
+     {
+        tw = w / opts->emile.scale_down_by;
+        th = h / opts->emile.scale_down_by;
+     }
+   else if ((opts->emile.w > 0) && (opts->emile.h > 0))
+     {
+        if ((w * opts->emile.h) > (h * opts->emile.w))
+          {
+             tw = opts->emile.w;
+             th = (h * opts->emile.w) / w;
+          }
+        else
+          {
+             th = opts->emile.h;
+             tw = (w * opts->emile.h) / h;
+          }
+     }
+   else
+     return handle;
+   if ((tw >= w) || (th >= h))
+     return handle;
+
+   if (heif_image_handle_get_number_of_thumbnails_f(handle) < 1)
+     return handle;
+   n = heif_image_handle_get_list_of_thumbnail_IDs_f(handle, ids,
+                                                     EVAS_HEIF_MAX_THUMBNAILS);
+   for (i = 0; i < n; i++)
+     {
+        struct heif_image_handle *thumb;
+        struct heif_error err;
+        long long d;
+        int thw, thh;
+
+        err = heif_image_handle_get_thumbnail_f(handle, ids[i], &thumb);
+        if (err.code != heif_error_Ok)
+          continue;
+        thw = heif_image_handle_get_width_f(thumb);
+        thh = heif_image_handle_get_height_f(thumb);
+        /* same aspect ratio to within a pixel in either direction */
+        d = (long long)thw * h - (long long)thh * w;
+        if (d < 0) d = -d;
+        if ((thw > 0) && (thh > 0) &&
+            ((unsigned long long)thw >= tw) &&
+            ((unsigned long long)thh >= th) &&
+            ((unsigned long long)d <= w + h) &&
+            ((!best) || (thw < bw)) &&
+            evas_image_load_heif_same_transforms
+              (ctx, heif_image_handle_get_item_id_f(handle),
+               heif_image_handle_get_item_id_f(thumb)))
+          {
+             if (best)
+               heif_image_handle_release_f(best);
+             best = thumb;
+             bw = thw;
+          }
+        else
+          heif_image_handle_release_f(thumb);
+     }
+
+   if (!best)
+     return handle;
+   INF("using %dx%d thumbnail for %llux%llu load size",
+       heif_image_handle_get_width_f(best),
+       heif_image_handle_get_height_f(best), tw, th);
+   heif_image_handle_release_f(handle);
+   return best;
+}
 
 static Eina_Bool
 evas_image_load_file_head_heif_init(Evas_Loader_Internal *loader,
@@ -162,6 +357,8 @@ evas_image_load_file_head_heif_init(Evas_Loader_Internal *loader,
         heif_context_free_f(ctx);
         return ret;
      }
+
+   handle = evas_image_load_heif_thumbnail_pick(loader, ctx, handle);
 
    prop->w = heif_image_handle_get_width_f(handle);
    prop->h = heif_image_handle_get_height_f(handle);
@@ -451,6 +648,27 @@ module_open(Evas_Module *em)
    SYM(heif_image_handle_has_alpha_channel);
    SYM(heif_image_handle_release);
    SYM(heif_image_release);
+
+#define OPT_SYM(x) \
+   x ## _f = eina_module_symbol_get(_evas_loader_heif_mod, #x)
+   OPT_SYM(heif_image_handle_get_number_of_thumbnails);
+   OPT_SYM(heif_image_handle_get_list_of_thumbnail_IDs);
+   OPT_SYM(heif_image_handle_get_thumbnail);
+   OPT_SYM(heif_image_handle_get_item_id);
+   OPT_SYM(heif_item_get_transformation_properties);
+   OPT_SYM(heif_item_get_property_type);
+   OPT_SYM(heif_item_get_property_transform_rotation_ccw);
+   OPT_SYM(heif_item_get_property_transform_mirror);
+#undef OPT_SYM
+   _evas_loader_heif_thumbnails =
+     heif_image_handle_get_number_of_thumbnails_f &&
+     heif_image_handle_get_list_of_thumbnail_IDs_f &&
+     heif_image_handle_get_thumbnail_f &&
+     heif_image_handle_get_item_id_f &&
+     heif_item_get_transformation_properties_f &&
+     heif_item_get_property_type_f &&
+     heif_item_get_property_transform_rotation_ccw_f &&
+     heif_item_get_property_transform_mirror_f;
 
    heif_init_f = eina_module_symbol_get(_evas_loader_heif_mod, "heif_init");
    heif_deinit_f = eina_module_symbol_get(_evas_loader_heif_mod, "heif_deinit");
