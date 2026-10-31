@@ -121,6 +121,7 @@ _activate(Evas_Object *obj)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_selectable_selected_get(obj));
+   _efl_ui_property_bind_user_changed(obj, "selected");
 }
 
 EOLIAN static Efl_Access_State_Set
@@ -232,12 +233,15 @@ _access_state_cb(void *data, Evas_Object *obj)
 static void
 _flush_selected(Eo *obj, Eina_Bool sel)
 {
+   Eina_Bool changed = (efl_ui_selectable_selected_get(obj) != sel);
+
    efl_ui_selectable_selected_set(obj, sel);
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_selectable_selected_get(obj));
+   if (changed) _efl_ui_property_bind_user_changed(obj, "selected");
 }
 
 static void

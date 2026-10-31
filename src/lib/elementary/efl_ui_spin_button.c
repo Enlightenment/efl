@@ -158,6 +158,9 @@ _value_set(Evas_Object *obj,
                                             .free = _delay_change_timer_cleanup,
                                             .data = sd);
 
+   // Last, as a handler may delete the spin button.
+   _efl_ui_property_bind_user_changed(obj, "range_value");
+
    return EINA_TRUE;
 }
 
@@ -714,11 +717,14 @@ _efl_ui_spin_button_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_
 }
 
 EOLIAN static void
-_efl_ui_spin_button_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double val)
+_efl_ui_spin_button_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd, double val)
 {
    efl_ui_range_value_set(efl_super(obj, MY_CLASS), val);
 
    _label_write(obj);
+   /* The entry is filled when it opens: refresh it, or leaving it would
+      apply the value it held before this one. */
+   if (sd->entry_visible && sd->ent) _entry_show(obj);
 }
 
 EOLIAN static void

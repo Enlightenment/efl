@@ -82,6 +82,7 @@ static void
 _user_value_update(Evas_Object *obj, double value)
 {
    EFL_UI_SLIDER_DATA_GET(obj, sd);
+   double previous = sd->val;
 
    efl_ui_range_value_set(obj, value);
 
@@ -89,6 +90,10 @@ _user_value_update(Evas_Object *obj, double value)
    sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
 
    evas_object_smart_changed(obj);
+
+   // Last, as a handler may delete the slider.
+   if (!EINA_DBL_EQ(previous, sd->val))
+     _efl_ui_property_bind_user_changed(obj, "range_value");
 }
 
 static void

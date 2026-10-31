@@ -181,6 +181,7 @@ static void _update_decorations(Eo *obj);
 static void _create_text_cursors(Eo *obj, Efl_Ui_Textbox_Data *sd);
 static void _efl_ui_textbox_changed_cb(void *data, const Efl_Event *event);
 static void _efl_ui_textbox_changed_user_cb(void *data, const Efl_Event *event);
+static void _efl_ui_textbox_property_bind_changed_user_cb(void *data, const Efl_Event *event);
 static void _efl_ui_textbox_selection_start_clear_cb(void *data, const Efl_Event *event);
 static void _efl_ui_textbox_selection_changed_cb(void *data, const Efl_Event *event);
 static void _efl_ui_textbox_cursor_changed_cb(void *data, const Efl_Event *event);
@@ -1696,6 +1697,9 @@ _efl_ui_textbox_efl_object_constructor(Eo *obj, Efl_Ui_Textbox_Data *sd)
 
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, obj);
+   // Pasting and deleting a selection emit it on the textbox itself, so listen here.
+   efl_event_callback_add(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER,
+                          _efl_ui_textbox_property_bind_changed_user_cb, NULL);
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_HAVE_SELECTION_CHANGED, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_REDO_REQUEST, obj);
@@ -3222,6 +3226,13 @@ _efl_ui_textbox_changed_user_cb(void *data, const Efl_Event *event)
    _update_guide_text(data, sd);
    efl_canvas_group_change(obj);
    _decoration_defer_all(obj);
+}
+
+static void
+_efl_ui_textbox_property_bind_changed_user_cb(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   if (efl_invalidated_get(event->object)) return;
+   _efl_ui_property_bind_user_changed(event->object, "text");
 }
 
 static void

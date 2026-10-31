@@ -145,6 +145,7 @@ _activate(Evas_Object *obj)
      {
         //in new API, we just toggle the state of the widget, rest will be automatically handled
         efl_ui_selectable_selected_set(obj, !efl_ui_selectable_selected_get(obj));
+        _efl_ui_property_bind_user_changed(obj, "selected");
      }
 }
 

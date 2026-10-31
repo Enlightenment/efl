@@ -12,6 +12,10 @@ class Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action
      To handle button grouping, you can either use an @Efl.Ui.Radio_Group_Impl object or
      use more convenient widgets like @Efl.Ui.Radio_Box.
 
+     A radio button raises @[Efl.Ui.Property_Bind.properties,changed] for "selected" when the
+     user presses it. The buttons the group unchecks as a result do not: to follow a whole
+     group from a model, bind the group's value instead.
+
      @since 1.23
    ]]
    methods {

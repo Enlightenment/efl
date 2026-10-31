@@ -5897,8 +5897,26 @@ _efl_ui_property_bind_get(Eo *obj, Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound
         return;
      }
 
-   target = prop->part ? efl_part(obj, prop->part) : obj;
+   /* The model tells about every set, including the one this widget made
+      when the user edited it. Setting again what the widget already holds
+      is not harmless: a text is cleared and rebuilt, which loses the cursor,
+      the selection and the markup the user is working in. */
+   {
+      /* efl_part() hands out one object for one use: ask again for each. */
+      Eina_Value current = efl_property_reflection_get(prop->part ? efl_part(obj, prop->part) : obj,
+                                                       prop->key);
+      Eina_Bool same = (eina_value_type_get(&current) == eina_value_type_get(value)) &&
+                       (eina_value_compare(&current, value) == 0);
 
+      eina_value_flush(&current);
+      if (same)
+        {
+           eina_value_free(value);
+           return;
+        }
+   }
+
+   target = prop->part ? efl_part(obj, prop->part) : obj;
    err = efl_property_reflection_set(target, prop->key, eina_value_reference_copy(value));
    eina_value_free(value);
 
@@ -6105,7 +6123,9 @@ _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
    prop->property = eina_stringshare_add(property);
 
    eina_hash_direct_add(pd->properties.model_lookup, prop->property, prop);
-   eina_hash_direct_add(pd->properties.view_lookup, prop->key, prop);
+   // Only the widget itself raises properties,changed, never its parts.
+   if (!prop->part)
+     eina_hash_direct_add(pd->properties.view_lookup, prop->key, prop);
 
    _efl_ui_property_bind_get(widget, pd, prop);
 

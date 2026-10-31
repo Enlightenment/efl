@@ -154,6 +154,7 @@ efl_ui_suite_src = [
   'efl_ui_test_widget.c',
   'efl_ui_test_spotlight.c',
   'efl_ui_test_check.c',
+  'efl_ui_test_property_bind.c',
   'efl_ui_test_radio_group.c',
   'efl_ui_test_progressbar.c',
   'efl_ui_test_spin.c',

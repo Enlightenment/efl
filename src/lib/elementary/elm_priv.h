@@ -1080,4 +1080,33 @@ void _drop_event_unregister(Eo *obj);
 void _register_selection_changed(Efl_Ui_Selection *selection);
 Efl_Ui_Win* efl_ui_win_get(Evas_Object *obj);
 
+/*
+ * Tells whoever is bound to @p property of @p obj that the user changed it.
+ *
+ * It raises Efl.Ui.Property_Bind's properties,changed, which Efl.Ui.Widget
+ * turns into an efl_model_property_set() on the bound model. Call it last
+ * on the path a user interaction takes, once the new value is readable from
+ * @p obj and only if it really changed -- never from a setter, or a value
+ * the model just handed over would be written straight back to it. A
+ * handler may delete @p obj: touch nothing of it afterward.
+ *
+ * @p property is the object's own property name: the key given to
+ * efl_ui_property_bind().
+ */
+static inline void
+_efl_ui_property_bind_user_changed(Eo *obj, const char *property)
+{
+   Efl_Ui_Property_Event evt;
+
+   if (!efl_event_callback_count(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED))
+     return;
+
+   evt.changed_properties = eina_array_new(1);
+   if (!evt.changed_properties) return;
+   eina_array_push(evt.changed_properties, eina_stringshare_add(property));
+   efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED, &evt);
+   eina_stringshare_del(eina_array_pop(evt.changed_properties));
+   eina_array_free(evt.changed_properties);
+}
+
 #endif
