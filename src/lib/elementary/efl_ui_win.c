@@ -302,6 +302,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    shown : 1;
    Eina_Bool    stack_base : 1;
    Eina_Bool    paused : 1;
+   Eina_Bool    event_forward_frozen : 1; /* finalize internals are not counted */
 };
 
 struct _Input_Pointer_Iterator
@@ -2173,6 +2174,138 @@ _evas_event_device_cb(void *data, const Efl_Event *ev)
    efl_event_callback_call(win, ev->desc, ev->info);
 }
 
+typedef enum
+{
+   WIN_FWD_EFL,  /* efl_event_callback_add on the canvas */
+   WIN_FWD_EVAS  /* legacy evas_event_callback_add on the canvas */
+} Win_Forward_Kind;
+
+static const struct
+{
+   const Efl_Event_Description *desc;
+   size_t           counter;
+   Win_Forward_Kind kind;
+   int              evas_type;
+   void            *cb;
+   Eina_Bool        no_legacy;
+} _win_forward[] = {
+   { EFL_EVENT_POINTER_MOVE,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_move), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_POINTER_DOWN,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_down), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_POINTER_UP,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_up), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_POINTER_IN,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_in), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_POINTER_OUT,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_out), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_POINTER_CANCEL,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_cancel), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_POINTER_WHEEL,
+     offsetof(Efl_Ui_Win_Data, event_forward.pointer_wheel), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_FINGER_MOVE,
+     offsetof(Efl_Ui_Win_Data, event_forward.finger_move), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_FINGER_DOWN,
+     offsetof(Efl_Ui_Win_Data, event_forward.finger_down), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_FINGER_UP,
+     offsetof(Efl_Ui_Win_Data, event_forward.finger_up), WIN_FWD_EFL, 0,
+     _evas_event_pointer_cb, EINA_FALSE },
+   { EFL_EVENT_KEY_DOWN,
+     offsetof(Efl_Ui_Win_Data, event_forward.key_down), WIN_FWD_EFL, 0,
+     _evas_event_key_cb, EINA_TRUE },
+   { EFL_EVENT_KEY_UP,
+     offsetof(Efl_Ui_Win_Data, event_forward.key_up), WIN_FWD_EFL, 0,
+     _evas_event_key_cb, EINA_TRUE },
+   { EFL_CANVAS_SCENE_EVENT_RENDER_POST,
+     offsetof(Efl_Ui_Win_Data, event_forward.render_post), WIN_FWD_EVAS, EVAS_CALLBACK_RENDER_POST,
+     _elm_win_evas_render_post, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_RENDER_PRE,
+     offsetof(Efl_Ui_Win_Data, event_forward.render_pre), WIN_FWD_EVAS, EVAS_CALLBACK_RENDER_PRE,
+     _elm_win_evas_render_pre, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN,
+     offsetof(Efl_Ui_Win_Data, event_forward.focus_in), WIN_FWD_EVAS, EVAS_CALLBACK_CANVAS_FOCUS_IN,
+     _elm_win_evas_focus_in, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
+     offsetof(Efl_Ui_Win_Data, event_forward.focus_out), WIN_FWD_EVAS,
+     EVAS_CALLBACK_CANVAS_FOCUS_OUT,
+     _elm_win_evas_focus_out, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
+     offsetof(Efl_Ui_Win_Data, event_forward.object_focus_in), WIN_FWD_EFL, 0,
+     _evas_event_focus_object_cb, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
+     offsetof(Efl_Ui_Win_Data, event_forward.object_focus_out), WIN_FWD_EFL, 0,
+     _evas_event_focus_object_cb, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
+     offsetof(Efl_Ui_Win_Data, event_forward.device_changed), WIN_FWD_EVAS,
+     EVAS_CALLBACK_DEVICE_CHANGED,
+     _elm_win_evas_device_changed, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
+     offsetof(Efl_Ui_Win_Data, event_forward.device_added), WIN_FWD_EFL, 0,
+     _evas_event_device_cb, EINA_FALSE },
+   { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
+     offsetof(Efl_Ui_Win_Data, event_forward.device_removed), WIN_FWD_EFL, 0,
+     _evas_event_device_cb, EINA_FALSE },
+};
+
+static int
+_win_forward_find(const Efl_Event_Description *desc)
+{
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(_win_forward); i++)
+     {
+        if (_win_forward[i].desc == desc) return (int)i;
+     }
+   return -1;
+}
+
+static void
+_win_forward_connect(Efl_Ui_Win_Data *sd, unsigned int idx)
+{
+   if (_win_forward[idx].kind == WIN_FWD_EVAS)
+     evas_event_callback_add(sd->evas, _win_forward[idx].evas_type,
+                             _win_forward[idx].cb, sd->obj);
+   else
+     efl_event_callback_add(sd->evas, _win_forward[idx].desc,
+                            _win_forward[idx].cb, sd->obj);
+}
+
+static void
+_win_forward_disconnect(Efl_Ui_Win_Data *sd, unsigned int idx)
+{
+   if (_win_forward[idx].kind == WIN_FWD_EVAS)
+     evas_event_callback_del_full(sd->evas, _win_forward[idx].evas_type,
+                                  _win_forward[idx].cb, sd->obj);
+   else
+     efl_event_callback_del(sd->evas, _win_forward[idx].desc,
+                            _win_forward[idx].cb, sd->obj);
+}
+
+/* Callbacks can be added before the canvas exists (efl_add arguments,
+ * bindings): they are only counted, and connected by
+ * _win_forward_connect_pending() once the canvas is created. */
+static void
+_win_forward_connect_pending(Efl_Ui_Win_Data *sd)
+{
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(_win_forward); i++)
+     {
+        short *counter = (short *)((char *)sd + _win_forward[i].counter);
+
+        if (*counter > 0) _win_forward_connect(sd, i);
+     }
+}
+
 static void
 _win_event_add_cb(void *data, const Efl_Event *ev)
 {
@@ -2181,138 +2314,17 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
    Efl_Ui_Win *win = ev->object;
    int i;
 
+   if (sd->event_forward_frozen) return;
    for (i = 0; array[i].desc; i++)
      {
-        if (array[i].desc == EFL_EVENT_POINTER_MOVE)
-          {
-             if (!(sd->event_forward.pointer_move++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_DOWN)
-          {
-             if (!(sd->event_forward.pointer_down++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_UP)
-          {
-             if (!(sd->event_forward.pointer_up++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_IN)
-          {
-             if (!(sd->event_forward.pointer_in++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_OUT)
-          {
-             if (!(sd->event_forward.pointer_out++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_CANCEL)
-          {
-             if (!(sd->event_forward.pointer_cancel++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_WHEEL)
-          {
-             if (!(sd->event_forward.pointer_wheel++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_FINGER_MOVE)
-          {
-             if (!(sd->event_forward.finger_move++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_FINGER_DOWN)
-          {
-             if (!(sd->event_forward.finger_down++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_FINGER_UP)
-          {
-             if (!(sd->event_forward.finger_up++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_KEY_DOWN)
-          {
-             // Legacy API: Must grab key
-             if (elm_widget_is_legacy(win)) return;
-             if (!(sd->event_forward.key_down++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_key_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_KEY_UP)
-          {
-             // Legacy API: Must grab key
-             if (elm_widget_is_legacy(win)) return;
-             if (!(sd->event_forward.key_up++))
-               efl_event_callback_add(sd->evas, array[i].desc,
-                                     _evas_event_key_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_POST)
-          {
-             if (!(sd->event_forward.render_post++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_POST,
-                                       _elm_win_evas_render_post, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_PRE)
-          {
-             if (!(sd->event_forward.render_pre++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE,
-                                       _elm_win_evas_render_pre, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
-          {
-             if (!(sd->event_forward.focus_in++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
-                                       _elm_win_evas_focus_in, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
-          {
-             if (!(sd->event_forward.focus_out++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
-                                       _elm_win_evas_focus_out, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
-          {
-             if (!(sd->event_forward.object_focus_in++))
-               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
-                                       _evas_event_focus_object_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
-          {
-             if (!(sd->event_forward.object_focus_out++))
-               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
-                                       _evas_event_focus_object_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED)
-          {
-             if (!(sd->event_forward.device_changed++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_DEVICE_CHANGED,
-                                       _elm_win_evas_device_changed, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
-          {
-             if (!(sd->event_forward.device_added++))
-               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
-                                      _evas_event_device_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED)
-          {
-             if (!(sd->event_forward.device_removed++))
-               efl_event_callback_add(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
-                                      _evas_event_device_cb, win);
-          }
+        int idx = _win_forward_find(array[i].desc);
+        short *counter;
+
+        if (idx < 0) continue;
+        // Legacy API: Must grab key
+        if (_win_forward[idx].no_legacy && elm_widget_is_legacy(win)) continue;
+        counter = (short *)((char *)sd + _win_forward[idx].counter);
+        if (!((*counter)++) && sd->evas) _win_forward_connect(sd, idx);
      }
 }
 
@@ -2324,138 +2336,17 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
    Efl_Ui_Win *win = ev->object;
    int i;
 
+   if (sd->event_forward_frozen) return;
    for (i = 0; array[i].desc; i++)
      {
-        if (array[i].desc == EFL_EVENT_POINTER_MOVE)
-          {
-             if (!(--sd->event_forward.pointer_move))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_DOWN)
-          {
-             if (!(--sd->event_forward.pointer_down))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_UP)
-          {
-             if (!(--sd->event_forward.pointer_up))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_IN)
-          {
-             if (!(--sd->event_forward.pointer_in))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_OUT)
-          {
-             if (!(--sd->event_forward.pointer_out))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_CANCEL)
-          {
-             if (!(--sd->event_forward.pointer_cancel))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_POINTER_WHEEL)
-          {
-             if (!(--sd->event_forward.pointer_wheel))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_FINGER_MOVE)
-          {
-             if (!(--sd->event_forward.finger_move))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_FINGER_DOWN)
-          {
-             if (!(--sd->event_forward.finger_down))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_FINGER_UP)
-          {
-             if (!(--sd->event_forward.finger_up))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_pointer_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_KEY_DOWN)
-          {
-             // Legacy API: Must grab key
-             if (elm_widget_is_legacy(win)) return;
-             if (!(--sd->event_forward.key_down))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_key_cb, win);
-          }
-        else if (array[i].desc == EFL_EVENT_KEY_UP)
-          {
-             // Legacy API: Must grab key
-             if (elm_widget_is_legacy(win)) return;
-             if (!(--sd->event_forward.key_up))
-               efl_event_callback_del(sd->evas, array[i].desc,
-                                     _evas_event_key_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_POST)
-          {
-             if (!(--sd->event_forward.render_post))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_POST,
-                                            _elm_win_evas_render_post, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_RENDER_PRE)
-          {
-             if (!(--sd->event_forward.render_pre))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE,
-                                            _elm_win_evas_render_pre, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
-          {
-             if (!(--sd->event_forward.focus_in))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_IN,
-                                            _elm_win_evas_focus_in, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
-          {
-             if (!(--sd->event_forward.focus_out))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
-                                            _elm_win_evas_focus_out, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
-          {
-             if (!(--sd->event_forward.object_focus_in))
-               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
-                                            _evas_event_focus_object_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
-          {
-             if (!(--sd->event_forward.object_focus_out))
-               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
-                                            _evas_event_focus_object_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED)
-          {
-             if (!(--sd->event_forward.device_changed))
-               evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_DEVICE_CHANGED,
-                                            _elm_win_evas_device_changed, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
-          {
-             if (!(--sd->event_forward.device_added))
-               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED,
-                                      _evas_event_device_cb, win);
-          }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED)
-          {
-             if (!(--sd->event_forward.device_removed))
-               efl_event_callback_del(sd->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
-                                      _evas_event_device_cb, win);
-          }
+        int idx = _win_forward_find(array[i].desc);
+        short *counter;
+
+        if (idx < 0) continue;
+        if (_win_forward[idx].no_legacy && elm_widget_is_legacy(win)) continue;
+        counter = (short *)((char *)sd + _win_forward[idx].counter);
+        if (*counter <= 0) continue;
+        if (!(--(*counter)) && sd->evas) _win_forward_disconnect(sd, idx);
      }
 }
 
@@ -5276,6 +5167,10 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
          efl_isa(parent, EFL_UI_WIN_LEGACY_CLASS) ||
          efl_isa(parent, EFL_UI_WIN_INLINED_CLASS))) parent = NULL;
 
+   /* Registrations made by the window itself from here on (constructor
+    * chain, widget setup, fake feeds) must not be counted as users. */
+   sd->event_forward_frozen = EINA_TRUE;
+
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Efl_Ui_Win_Data));
 
@@ -5937,7 +5832,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
    efl_event_callback_array_add(sd->evas, _elm_evas_tracking(), sd);
    efl_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
-   efl_event_callback_array_add(obj, _elm_win_tracking(), sd);
+   // Callbacks added before the canvas existed were only counted
+   sd->event_forward_frozen = EINA_FALSE;
+   _win_forward_connect_pending(sd);
    evas_object_show(sd->legacy.edje);
 
    if (type == EFL_UI_WIN_TYPE_FAKE)
@@ -6038,6 +5935,9 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
     * really bad and hacky. Needs fixing. */
 
    pd->obj = obj;
+   // Watch callbacks from now on: efl_add() arguments are added before
+   // finalize, when the canvas does not exist yet.
+   efl_event_callback_array_add(obj, _elm_win_tracking(), pd);
    pd->provider = efl_add_ref(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, NULL);
    pd->profile.available = eina_array_new(4);
    pd->max_w = pd->max_h = -1;

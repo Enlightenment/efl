@@ -531,9 +531,187 @@ EFL_START_TEST(efl_ui_win_test_content_replaced)
 }
 EFL_END_TEST
 
+static void
+_count_inc(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   int *count = data;
+   (*count)++;
+}
+
+static void
+_feed_render(Efl_Ui_Win *win)
+{
+   Evas *e = evas_object_evas_get(win);
+   Eo *r = efl_add(EFL_CANVAS_RECTANGLE_CLASS, e);
+
+   efl_gfx_entity_size_set(r, EINA_SIZE2D(10, 10));
+   efl_gfx_entity_visible_set(r, EINA_TRUE);
+   evas_render(e);
+   efl_del(r);
+   evas_render(e);
+}
+
+static void
+_canvas_pointer_emit(Evas *e, const Efl_Event_Description *desc,
+                     Efl_Pointer_Action action, int touch_id)
+{
+   Eo *p = efl_add_ref(EFL_INPUT_POINTER_CLASS, e);
+
+   efl_input_pointer_action_set(p, action);
+   efl_input_pointer_touch_id_set(p, touch_id);
+   efl_input_pointer_position_set(p, EINA_POSITION2D(50, 50));
+   efl_input_pointer_button_set(p, 1);
+   efl_event_callback_call(e, desc, p);
+   efl_unref(p);
+}
+
+static void
+_canvas_key_emit(Evas *e, const Efl_Event_Description *desc, Eina_Bool down)
+{
+   Eo *k = efl_add_ref(EFL_INPUT_KEY_CLASS, e);
+
+   efl_input_key_pressed_set(k, down);
+   efl_input_key_name_set(k, "a");
+   efl_input_key_sym_set(k, "a");
+   efl_input_key_string_set(k, "a");
+   efl_input_key_code_set(k, 0x61);
+   efl_event_callback_call(e, desc, k);
+   efl_unref(k);
+}
+
+EFL_START_TEST(efl_ui_win_test_event_added_at_construction)
+{
+   int render = 0, focus = 0, key = 0, pdown = 0, fdown = 0;
+   Efl_Ui_Win *win;
+   Ecore_Evas *ee;
+   Evas *e;
+
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
+                 efl_event_callback_add(efl_added, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, _count_inc, &render),
+                 efl_event_callback_add(efl_added, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, _count_inc, &focus),
+                 efl_event_callback_add(efl_added, EFL_EVENT_POINTER_DOWN, _count_inc, &pdown),
+                 efl_event_callback_add(efl_added, EFL_EVENT_FINGER_DOWN, _count_inc, &fdown),
+                 efl_event_callback_add(efl_added, EFL_EVENT_KEY_DOWN, _count_inc, &key));
+   ck_assert_ptr_ne(win, NULL);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+   e = evas_object_evas_get(win);
+   ee = ecore_evas_ecore_evas_get(e);
+
+   _feed_render(win);
+   ck_assert_int_gt(render, 0);
+
+   ecore_evas_focus_set(ee, EINA_FALSE);
+   ecore_evas_focus_set(ee, EINA_TRUE);
+   ck_assert_int_eq(focus, 1);
+
+   _canvas_pointer_emit(e, EFL_EVENT_POINTER_DOWN, EFL_POINTER_ACTION_DOWN, 0);
+   ck_assert_int_eq(pdown, 1);
+   _canvas_pointer_emit(e, EFL_EVENT_FINGER_DOWN, EFL_POINTER_ACTION_DOWN, 1);
+   ck_assert_int_eq(fdown, 1);
+
+   /* emitted on the canvas, as ecore_evas does, with the window not focused */
+   evas_object_focus_set(win, EINA_FALSE);
+   _canvas_key_emit(e, EFL_EVENT_KEY_DOWN, EINA_TRUE);
+   ck_assert_int_eq(key, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_ui_win_test_event_add_del_before_finalize)
+{
+   int first = 0, second = 0;
+   Efl_Ui_Win *win;
+   Ecore_Evas *ee;
+
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
+                 efl_event_callback_add(efl_added, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, _count_inc, &first));
+   ck_assert_ptr_ne(win, NULL);
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
+
+   /* removing a construction-time callback must keep the counter sane */
+   efl_event_callback_del(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, _count_inc, &first);
+   efl_event_callback_add(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, _count_inc, &second);
+
+   ecore_evas_focus_set(ee, EINA_FALSE);
+   ecore_evas_focus_set(ee, EINA_TRUE);
+   ck_assert_int_eq(first, 0);
+   ck_assert_int_eq(second, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_ui_win_test_event_forward_fires_once)
+{
+   int pout = 0, fdown = 0, fup = 0, fmove = 0;
+   Efl_Ui_Win *win;
+   Evas *e;
+
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
+   e = evas_object_evas_get(win);
+
+   efl_event_callback_add(win, EFL_EVENT_POINTER_OUT, _count_inc, &pout);
+   efl_event_callback_add(win, EFL_EVENT_FINGER_DOWN, _count_inc, &fdown);
+   efl_event_callback_add(win, EFL_EVENT_FINGER_UP, _count_inc, &fup);
+   efl_event_callback_add(win, EFL_EVENT_FINGER_MOVE, _count_inc, &fmove);
+
+   _canvas_pointer_emit(e, EFL_EVENT_POINTER_OUT, EFL_POINTER_ACTION_OUT, 0);
+   _canvas_pointer_emit(e, EFL_EVENT_FINGER_DOWN, EFL_POINTER_ACTION_DOWN, 1);
+   _canvas_pointer_emit(e, EFL_EVENT_FINGER_MOVE, EFL_POINTER_ACTION_MOVE, 1);
+   _canvas_pointer_emit(e, EFL_EVENT_FINGER_UP, EFL_POINTER_ACTION_UP, 1);
+   ck_assert_int_eq(pout, 1);
+   ck_assert_int_eq(fdown, 1);
+   ck_assert_int_eq(fmove, 1);
+   ck_assert_int_eq(fup, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_ui_win_test_event_forward_no_leak)
+{
+   static const Efl_Event_Description *descs[4];
+   unsigned int before[4], i;
+   Efl_Ui_Win *win;
+   Evas *e;
+
+   descs[0] = EFL_EVENT_POINTER_DOWN;
+   descs[1] = EFL_EVENT_POINTER_MOVE;
+   descs[2] = EFL_EVENT_FINGER_DOWN;
+   descs[3] = EFL_EVENT_KEY_DOWN;
+
+   win = efl_add_ref(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
+   e = evas_object_evas_get(win);
+   efl_ref(e);
+
+   /* nobody listens on the window: the canvas must not be forwarding.
+    * Compare with a window nobody touched after creation. */
+   for (i = 0; i < 4; i++)
+     before[i] = efl_event_callback_count(e, descs[i]);
+   {
+      int n = 0;
+      efl_event_callback_add(win, descs[0], _count_inc, &n);
+      efl_event_callback_add(win, descs[2], _count_inc, &n);
+      /* one forwarder for the user's handler, whatever the window itself
+       * registers for */
+      ck_assert_int_eq(efl_event_callback_count(e, descs[2]), before[2] + 1);
+      efl_event_callback_del(win, descs[0], _count_inc, &n);
+      efl_event_callback_del(win, descs[2], _count_inc, &n);
+   }
+   for (i = 0; i < 4; i++)
+     ck_assert_int_eq(efl_event_callback_count(e, descs[i]), before[i]);
+
+   efl_unref(e);
+   efl_unref(win);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
+   tcase_add_test(tc, efl_ui_win_test_event_added_at_construction);
+   tcase_add_test(tc, efl_ui_win_test_event_add_del_before_finalize);
+   tcase_add_test(tc, efl_ui_win_test_event_forward_fires_once);
+   tcase_add_test(tc, efl_ui_win_test_event_forward_no_leak);
    tcase_add_test(tc, efl_ui_win_test_scene_focus);
    tcase_add_test(tc, efl_ui_win_test_object_focus);
    tcase_add_test(tc, efl_ui_win_test_object_focus);
