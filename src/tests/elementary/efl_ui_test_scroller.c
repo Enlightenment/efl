@@ -218,8 +218,25 @@ EFL_START_TEST(efl_ui_test_scroller_connector_unbind)
 }
 EFL_END_TEST
 
+/* Private class: the library exports its getter, the tests have no header. */
+EAPI const Efl_Class *efl_ui_internal_text_scroller_class_get(void);
+
+EFL_START_TEST(efl_ui_test_internal_text_scroller_keeps_constructed_content)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *content = efl_add(EFL_UI_BOX_CLASS, win);
+   Eo *sc = efl_add(efl_ui_internal_text_scroller_class_get(), win,
+                    efl_content_set(efl_added, content));
+
+   ck_assert_ptr_ne(sc, NULL);
+   ck_assert_ptr_eq(efl_content_get(sc), content);
+   ck_assert(!efl_invalidated_get(content));
+}
+EFL_END_TEST
+
 void efl_ui_test_scroller(TCase *tc)
 {
+   tcase_add_test(tc, efl_ui_test_internal_text_scroller_keeps_constructed_content);
    tcase_add_test(tc, efl_ui_test_scroller_events);
    tcase_add_test(tc, efl_ui_test_scroller_scrollbar);
    tcase_add_test(tc, efl_ui_test_scroller_connector_unbind);

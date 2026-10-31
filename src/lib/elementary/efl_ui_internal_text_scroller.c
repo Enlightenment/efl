@@ -147,12 +147,15 @@ _efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
 
 EOLIAN static Eo *
 _efl_ui_internal_text_scroller_efl_object_finalize(Eo *obj,
-                                     Efl_Ui_Internal_Text_Scroller_Data *sd EINA_UNUSED)
+                                     Efl_Ui_Internal_Text_Scroller_Data *sd)
 {
    obj = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
-   efl_content_set(obj, sd->text_table);
+   /* Without initialize there is no table to show, and what the caller gave
+      as content at construction (Efl.Ui.Scroller keeps it through finalize)
+      stays. */
+   if (sd->text_table) efl_content_set(obj, sd->text_table);
    return obj;
 }
 
