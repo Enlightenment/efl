@@ -43,6 +43,7 @@ class Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layo
       Efl.Canvas.Group.group_calculate;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Ui.Focus.Object.setup_order_non_recursive;

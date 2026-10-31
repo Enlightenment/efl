@@ -23,6 +23,7 @@ struct _Table_Item
    EINA_INLIST;
 
    Efl_Gfx_Entity *object;
+   Eo *table; // the table holding it
    int col_span, row_span;
    int col, row;
 };

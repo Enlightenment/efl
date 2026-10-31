@@ -37,6 +37,7 @@ class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Lay
       Efl.Canvas.Group.group_calculate;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Ui.Layout_Orientable.orientation { get; set; }

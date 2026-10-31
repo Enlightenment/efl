@@ -165,6 +165,10 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_register(Eo *obj, Efl_Ui_Radio_Group
 EOLIAN static void
 _efl_ui_radio_group_impl_efl_ui_radio_group_unregister(Eo *obj, Efl_Ui_Radio_Group_Impl_Data *pd, Efl_Ui_Radio *radio)
 {
+   /* A radio that leaves cannot be what the group falls back to, or
+      deselecting it would select it again. */
+   if (pd->fallback_object == radio)
+     pd->fallback_object = NULL;
    if (pd->selected == radio)
      efl_ui_selectable_selected_set(pd->selected, EINA_FALSE);
 

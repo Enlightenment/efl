@@ -11,33 +11,19 @@ typedef struct {
    Efl_Ui_Radio_Group *group;
 } Efl_Ui_Radio_Box_Data;
 
-static inline Eina_Bool
-register_safe_in_group_begin(Eo *subobj, Efl_Ui_Radio_Box_Data *pd, Eina_Bool is_radio)
-{
-   if (pd->in_pack) return EINA_TRUE;
-   if (is_radio)
-     efl_ui_radio_group_register(pd->group, subobj);
-   pd->in_pack = EINA_TRUE;
-
-   return EINA_TRUE;
-}
-
-static inline Eina_Bool
-register_safe_group_end(Eo *subobj, Efl_Ui_Radio_Box_Data *pd, Eina_Bool is_radio, Eina_Bool result)
-{
-   if (is_radio && (!result))
-     efl_ui_radio_group_unregister(pd->group, subobj);
-   pd->in_pack = EINA_FALSE;
-
-   return result;
-}
-
+/* The radio joins the group once the box holds it. Packing it takes it from
+   its former parent, and a radio box learns of that as its radio leaves, so
+   the radio is out of the group it came from by the time it joins this one.
+   A pack that calls another pack registers only in the outermost one. */
 #define REGISTER_SAFE(f) \
-  Eina_Bool result, is_radio = efl_isa(subobj, EFL_UI_RADIO_CLASS); \
-  if (!register_safe_in_group_begin(subobj, pd, is_radio)) \
-    return EINA_FALSE; \
-  result = f ; \
-  return register_safe_group_end(subobj, pd, is_radio, result);
+  Eina_Bool result, is_radio; \
+  if (pd->in_pack) return f; \
+  is_radio = efl_isa(subobj, EFL_UI_RADIO_CLASS); \
+  pd->in_pack = EINA_TRUE; \
+  result = f; \
+  pd->in_pack = EINA_FALSE; \
+  if (result && is_radio) efl_ui_radio_group_register(pd->group, subobj); \
+  return result;
 
 static void
 unpack_from_logical(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
@@ -47,6 +33,18 @@ unpack_from_logical(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
      {
         efl_ui_radio_group_unregister(pd->group, efl_pack_content_get(obj, i));
      }
+}
+
+/* A radio another container takes leaves the group with the box. */
+EOLIAN static Eina_Bool
+_efl_ui_radio_box_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Radio_Box_Data *pd, Efl_Gfx_Entity *sobj)
+{
+   Eina_Bool held = efl_isa(sobj, EFL_UI_RADIO_CLASS) &&
+     (efl_pack_index_get(obj, sobj) >= 0);
+   Eina_Bool ok = efl_ui_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+
+   if (ok && held) efl_ui_radio_group_unregister(pd->group, sobj);
+   return ok;
 }
 
 EOLIAN static Eina_Bool

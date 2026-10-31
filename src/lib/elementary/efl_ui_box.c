@@ -20,27 +20,18 @@ _on_child_size_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_on_child_del(void *data, const Efl_Event *event)
-{
-   Eo *box = data;
-   EFL_UI_BOX_DATA_GET(box, sd);
-
-   sd->children = eina_list_remove(sd->children, event->object);
-
-   efl_pack_layout_request(box);
-}
-
-static void
 _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *box = data;
    efl_pack_layout_request(box);
 }
 
+static void _on_child_invalidate(void *data, const Efl_Event *event);
+
 EFL_CALLBACKS_ARRAY_DEFINE(efl_ui_box_callbacks,
   { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_child_size_changed },
   { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed },
-  { EFL_EVENT_DEL, _on_child_del }
+  { EFL_EVENT_INVALIDATE, _on_child_invalidate }
 );
 
 static inline Eina_Bool
@@ -69,6 +60,36 @@ _efl_ui_box_child_register(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj)
    return EINA_TRUE;
 }
 
+/* The box lets go of a child: no longer a member, clipped, or listened to.
+   This is shared by the box unpacking the child and by another container
+   taking it, which the box hears of as the widget parent losing it. */
+static void
+_efl_ui_box_child_release(Eo *obj, Efl_Gfx_Entity *subobj)
+{
+   efl_canvas_group_member_remove(obj, subobj);
+   efl_canvas_object_clipper_set(subobj, NULL);
+   efl_key_data_set(subobj, "_elm_leaveme", NULL);
+   efl_event_callback_array_del(subobj, efl_ui_box_callbacks(), obj);
+   if (efl_invalidating_get(obj) || efl_invalidated_get(obj)) return;
+
+   efl_pack_layout_request(obj);
+   efl_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
+}
+
+/* A child deleted while something else still references it is gone from the
+   box now, not at the last unref. */
+static void
+_on_child_invalidate(void *data, const Efl_Event *event)
+{
+   Eo *box = data;
+   EFL_UI_BOX_DATA_GET(box, sd);
+   Eina_List *found = eina_list_data_find_list(sd->children, event->object);
+
+   if (!found) return;
+   sd->children = eina_list_remove_list(sd->children, found);
+   _efl_ui_box_child_release(box, event->object);
+}
+
 static inline Eina_Bool
 _efl_ui_box_child_unregister(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
@@ -81,21 +102,34 @@ _efl_ui_box_child_unregister(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_E
    if (!subobj)
      return EINA_FALSE;
 
+   /* Moving the child to the top widget makes the box hear of it through
+      widget_sub_object_del, which releases it already. */
    if (!efl_ui_widget_internal_get(obj))
      {
         if (!_elm_widget_sub_object_redirect_to_top(obj, subobj))
           return EINA_FALSE;
      }
 
-   efl_canvas_group_member_remove(obj, subobj);
-   efl_canvas_object_clipper_set(subobj, NULL);
-   efl_key_data_set(subobj, "_elm_leaveme", NULL);
-   efl_pack_layout_request(obj);
-
-   efl_event_callback_array_del(subobj, efl_ui_box_callbacks(), obj);
-   efl_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
+   if (efl_canvas_object_render_parent_get(subobj) == obj)
+     _efl_ui_box_child_release(obj, subobj);
 
    return EINA_TRUE;
+}
+
+/* A child that another container takes is no longer ours, whatever it
+   was told. */
+EOLIAN static Eina_Bool
+_efl_ui_box_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *sobj)
+{
+   Eina_Bool ok = efl_ui_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   Eina_List *found = ok ? eina_list_data_find_list(pd->children, sobj) : NULL;
+
+   if (found)
+     {
+        pd->children = eina_list_remove_list(pd->children, found);
+        _efl_ui_box_child_release(obj, sobj);
+     }
+   return ok;
 }
 
 static void
@@ -230,8 +264,12 @@ EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_pack_clear(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    Eo *child;
-   EINA_LIST_FREE(pd->children, child)
+
+   /* Each child leaves the list before it is deleted, as deleting it makes
+      the box hear of it through widget_sub_object_del. */
+   while ((child = eina_list_data_get(pd->children)))
      {
+        pd->children = eina_list_remove_list(pd->children, pd->children);
         efl_event_callback_array_del(child, efl_ui_box_callbacks(), obj);
         efl_del(child);
      }
@@ -247,8 +285,11 @@ _efl_ui_box_efl_pack_unpack_all(Eo *obj, Efl_Ui_Box_Data *pd)
    Eo *child;
    Eina_Bool ret = EINA_TRUE;
 
-   EINA_LIST_FREE(pd->children, child)
-     ret &= _efl_ui_box_child_unregister(obj, pd, child);
+   while ((child = eina_list_data_get(pd->children)))
+     {
+        pd->children = eina_list_remove_list(pd->children, pd->children);
+        ret &= _efl_ui_box_child_unregister(obj, pd, child);
+     }
 
    return ret;
 }

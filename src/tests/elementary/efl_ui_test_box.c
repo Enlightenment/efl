@@ -580,6 +580,311 @@ EFL_START_TEST (efl_ui_box_focus_order)
 }
 EFL_END_TEST
 
+static int
+_iterated(Eo *container, Eo *wanted)
+{
+   Eina_Iterator *it = efl_content_iterate(container);
+   Eo *child;
+   int n = 0;
+
+   EINA_ITERATOR_FOREACH(it, child)
+     {
+        if (child == wanted) n++;
+     }
+   eina_iterator_free(it);
+   return n;
+}
+
+static void
+_removed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   (*(int *)data)++;
+}
+
+static Eo *
+_mover(Eo *parent)
+{
+   Eo *m = efl_add(EFL_UI_BUTTON_CLASS, parent);
+
+   efl_gfx_hint_size_min_set(m, EINA_SIZE2D(20, 20));
+   return m;
+}
+
+static void
+_calculate(Eo *container, int x, int y)
+{
+   efl_gfx_entity_geometry_set(container, EINA_RECT(x, y, 100, 100));
+   efl_canvas_group_calculate(container);
+}
+
+typedef enum
+{
+   TAKEN_BY_BOX,
+   TAKEN_AS_CONTENT,
+   TAKEN_AS_SUB_OBJECT
+} Taker_Kind;
+
+/* What takes the child from the box: another box, a frame as its content,
+   or a widget adopting it as a sub object. */
+static Eo *
+_taker_add(Taker_Kind kind)
+{
+   switch (kind)
+     {
+      case TAKEN_BY_BOX: return efl_add(EFL_UI_BOX_CLASS, win);
+      case TAKEN_AS_CONTENT: return efl_add(EFL_UI_FRAME_CLASS, win);
+      default: return efl_add(EFL_UI_LAYOUT_CLASS, win);
+     }
+}
+
+static void
+_taken_by(Taker_Kind kind, Eo *taker, Eo *child)
+{
+   switch (kind)
+     {
+      case TAKEN_BY_BOX:
+         ck_assert(efl_pack_end(taker, child));
+         break;
+      case TAKEN_AS_CONTENT:
+         ck_assert(efl_content_set(taker, child));
+         break;
+      default:
+         ck_assert(efl_ui_widget_sub_object_add(taker, child));
+         break;
+     }
+}
+
+static void
+_box_child_taken(Taker_Kind kind)
+{
+   Eo *first = _mover(win), *moved = _mover(win), *last = _mover(win);
+   Eo *taker;
+   int removed = 0;
+
+   taker = _taker_add(kind);
+
+   ck_assert(efl_pack_end(layout, first));
+   ck_assert(efl_pack_end(layout, moved));
+   ck_assert(efl_pack_end(layout, last));
+   efl_event_callback_add(layout, EFL_CONTAINER_EVENT_CONTENT_REMOVED, _removed_cb, &removed);
+   _calculate(layout, 0, 0);
+
+   _taken_by(kind, taker, moved);
+   _calculate(taker, 300, 300);
+   _calculate(layout, 0, 0);
+
+   ck_assert_int_eq(efl_content_count(layout), 2);
+   ck_assert_int_eq(_iterated(layout, moved), 0);
+   ck_assert_int_eq(_iterated(layout, first), 1);
+   ck_assert_int_eq(_iterated(layout, last), 1);
+   ck_assert_ptr_eq(efl_pack_content_get(layout, 1), last);
+   ck_assert_int_eq(efl_pack_index_get(layout, moved), -1);
+   ck_assert_int_eq(removed, 1);
+   ck_assert_ptr_ne(efl_canvas_object_render_parent_get(moved), layout);
+   /* a plain widget parent places nothing: the old box must not either */
+   if (kind == TAKEN_AS_SUB_OBJECT) efl_gfx_entity_position_set(moved, EINA_POSITION2D(300, 300));
+   _calculate(layout, 0, 0);
+   ck_assert_int_ge(efl_gfx_entity_position_get(moved).x, 300);
+   ck_assert_int_ge(efl_gfx_entity_position_get(moved).y, 300);
+
+   /* deleting the old box leaves what it lost alone */
+   efl_del(layout);
+   layout = NULL;
+   ck_assert_int_eq(removed, 1);
+   ck_assert(!efl_invalidated_get(moved));
+   ck_assert(efl_invalidated_get(first));
+   ck_assert(efl_invalidated_get(last));
+   _calculate(taker, 300, 300);
+   ck_assert_int_ge(efl_gfx_entity_position_get(moved).x, 300);
+
+   /* and the new container is the one to delete it */
+   efl_del(taker);
+   ck_assert(efl_invalidated_get(moved));
+}
+
+EFL_START_TEST (efl_ui_box_child_taken_by_another_box)
+{
+   _box_child_taken(TAKEN_BY_BOX);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_child_taken_as_content)
+{
+   _box_child_taken(TAKEN_AS_CONTENT);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_child_taken_as_sub_object)
+{
+   _box_child_taken(TAKEN_AS_SUB_OBJECT);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_child_deleted_after_being_taken)
+{
+   Eo *moved = _mover(win);
+   Eo *other = efl_add(EFL_UI_BOX_CLASS, win);
+
+   ck_assert(efl_pack_end(layout, moved));
+   ck_assert(efl_pack_end(other, moved));
+   efl_del(moved);
+   _calculate(layout, 0, 0);
+   _calculate(other, 100, 100);
+   ck_assert_int_eq(efl_content_count(layout), 0);
+   ck_assert_int_eq(efl_content_count(other), 0);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_child_deleted_but_referenced)
+{
+   Eo *kept = _mover(win), *dead = _mover(win);
+
+   ck_assert(efl_pack_end(layout, kept));
+   ck_assert(efl_pack_end(layout, dead));
+   efl_ref(dead);
+   efl_del(dead);
+   ck_assert_int_eq(efl_content_count(layout), 1);
+   ck_assert_int_eq(_iterated(layout, dead), 0);
+   ck_assert_ptr_eq(efl_pack_content_get(layout, 0), kept);
+   efl_unref(dead);
+}
+EFL_END_TEST
+
+/* A radio another container takes leaves the group of the radio box. */
+EFL_START_TEST (efl_ui_box_radio_taken_leaves_the_group)
+{
+   Eo *radios = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *other = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *r1 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 1));
+   Eo *r2 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 2));
+
+   ck_assert(efl_pack_end(radios, r1));
+   ck_assert(efl_pack_end(radios, r2));
+   efl_ui_selectable_selected_set(r1, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), 1);
+
+   /* taken by another box with its own group: it joins that one */
+   ck_assert(efl_pack_end(other, r1));
+   ck_assert_int_eq(efl_content_count(radios), 1);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), -1);
+   efl_ui_selectable_selected_set(r2, EINA_TRUE);
+   ck_assert(!efl_ui_selectable_selected_get(r1));
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), 2);
+   efl_ui_selectable_selected_set(r1, EINA_TRUE);
+   ck_assert(efl_ui_selectable_selected_get(r2));
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), 2);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(other), 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_radio_taken_by_a_frame_leaves_the_group)
+{
+   Eo *radios = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *frame = efl_add(EFL_UI_FRAME_CLASS, win);
+   Eo *r1 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 1));
+   Eo *r2 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 2));
+
+   ck_assert(efl_pack_end(radios, r1));
+   ck_assert(efl_pack_end(radios, r2));
+   efl_ui_selectable_selected_set(r1, EINA_TRUE);
+
+   ck_assert(efl_content_set(frame, r1));
+   ck_assert_int_eq(efl_content_count(radios), 1);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), -1);
+   efl_ui_selectable_selected_set(r2, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), 2);
+   efl_ui_selectable_selected_set(r1, EINA_TRUE);
+   ck_assert(efl_ui_selectable_selected_get(r2));
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radios), 2);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_radio_failed_pack_keeps_the_group)
+{
+   Eo *a = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *b = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *r1 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 1));
+   Eo *r2 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 2));
+   Eo *stranger = _mover(win);
+
+   ck_assert(efl_pack_end(a, r1));
+   ck_assert(efl_pack_end(a, r2));
+
+   /* the anchor is not a child of b: nothing happens */
+   EXPECT_ERROR_START;
+   ck_assert(!efl_pack_before(b, r1, stranger));
+   EXPECT_ERROR_END;
+   ck_assert_int_eq(efl_content_count(a), 2);
+   efl_ui_selectable_selected_set(r1, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), 1);
+   efl_ui_selectable_selected_set(r2, EINA_TRUE);
+   ck_assert(!efl_ui_selectable_selected_get(r1));
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), 2);
+
+   /* packing it again where it is stays in the group */
+   EXPECT_ERROR_START;
+   ck_assert(!efl_pack_end(a, r1));
+   EXPECT_ERROR_END;
+   efl_ui_selectable_selected_set(r1, EINA_TRUE);
+   ck_assert(!efl_ui_selectable_selected_get(r2));
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_radio_fallback_taken_leaves_the_group)
+{
+   Eo *a = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *b = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *r1 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 1));
+   Eo *r2 = efl_add(EFL_UI_RADIO_CLASS, win, efl_ui_radio_state_value_set(efl_added, 2));
+
+   ck_assert(efl_pack_end(a, r1));
+   ck_assert(efl_pack_end(a, r2));
+   efl_ui_selectable_fallback_selection_set(a, r1);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), 1);
+
+   ck_assert(efl_pack_end(b, r1));
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), -1);
+   ck_assert_ptr_eq(efl_ui_selectable_fallback_selection_get(a), NULL);
+   efl_ui_selectable_selected_set(r2, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), 2);
+   efl_ui_selectable_selected_set(r2, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_radio_group_selected_value_get(a), -1);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_box_unpack_and_pack_back)
+{
+   Eo *a = _mover(win), *b = _mover(win);
+   int removed = 0;
+
+   ck_assert(efl_pack_end(layout, a));
+   ck_assert(efl_pack_end(layout, b));
+   efl_event_callback_add(layout, EFL_CONTAINER_EVENT_CONTENT_REMOVED, _removed_cb, &removed);
+
+   ck_assert(efl_pack_unpack(layout, a));
+   ck_assert_int_eq(removed, 1);
+   ck_assert_int_eq(efl_content_count(layout), 1);
+   ck_assert_int_eq(_iterated(layout, a), 0);
+   ck_assert(efl_pack_begin(layout, a));
+   ck_assert_int_eq(efl_content_count(layout), 2);
+   ck_assert_ptr_eq(efl_pack_content_get(layout, 0), a);
+
+   ck_assert(efl_pack_unpack_all(layout));
+   ck_assert_int_eq(removed, 3);
+   ck_assert_int_eq(efl_content_count(layout), 0);
+   ck_assert(!efl_invalidated_get(a));
+   ck_assert(!efl_invalidated_get(b));
+   ck_assert(efl_pack_end(layout, a));
+   ck_assert(efl_pack_end(layout, b));
+
+   ck_assert(efl_pack_clear(layout));
+   ck_assert_int_eq(efl_content_count(layout), 0);
+   ck_assert(efl_invalidated_get(a));
+   ck_assert(efl_invalidated_get(b));
+}
+EFL_END_TEST
+
 void efl_ui_test_box(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, NULL);
@@ -591,4 +896,14 @@ void efl_ui_test_box(TCase *tc)
    tcase_add_test(tc, efl_ui_box_properties);
    tcase_add_test(tc, efl_ui_box_internal);
    tcase_add_test(tc, efl_ui_box_focus_order);
+   tcase_add_test(tc, efl_ui_box_child_taken_by_another_box);
+   tcase_add_test(tc, efl_ui_box_child_taken_as_content);
+   tcase_add_test(tc, efl_ui_box_child_taken_as_sub_object);
+   tcase_add_test(tc, efl_ui_box_child_deleted_after_being_taken);
+   tcase_add_test(tc, efl_ui_box_child_deleted_but_referenced);
+   tcase_add_test(tc, efl_ui_box_radio_taken_leaves_the_group);
+   tcase_add_test(tc, efl_ui_box_radio_taken_by_a_frame_leaves_the_group);
+   tcase_add_test(tc, efl_ui_box_radio_failed_pack_keeps_the_group);
+   tcase_add_test(tc, efl_ui_box_radio_fallback_taken_leaves_the_group);
+   tcase_add_test(tc, efl_ui_box_unpack_and_pack_back);
 }

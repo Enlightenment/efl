@@ -48,38 +48,12 @@ _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
    efl_pack_layout_request(table);
 }
 
-static void
-_on_child_del(void *data, const Efl_Event *event)
-{
-   Eo *table = data;
-   Table_Item *gi;
-   EFL_UI_TABLE_DATA_GET(table, pd);
-
-   gi = _efl_ui_table_item_date_get(table, pd, event->object);
-   if (!gi) return;
-
-   if ((gi->col == pd->last_col) && (gi->row == pd->last_row))
-     pd->linear_recalc = EINA_TRUE;
-
-   if (gi->col + gi->col_span >= pd->cols)
-     pd->cols_recalc = EINA_TRUE;
-   if (gi->row + gi->row_span >= pd->rows)
-     pd->rows_recalc = EINA_TRUE;
-
-   pd->items = (Table_Item *)
-         eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
-   free(gi);
-
-   pd->count--;
-   efl_key_data_set(event->object, TABLE_ITEM_KEY, NULL);
-
-   efl_pack_layout_request(table);
-}
+static void _on_child_invalidate(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(efl_ui_table_callbacks,
   { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_child_size_changed },
   { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed },
-  { EFL_EVENT_DEL, _on_child_del }
+  { EFL_EVENT_INVALIDATE, _on_child_invalidate }
 );
 
 static void
@@ -259,6 +233,7 @@ _efl_ui_table_efl_object_invalidate(Eo *obj, Efl_Ui_Table_Data *pd)
    EINA_INLIST_FREE(EINA_INLIST_GET(pd->items), gi)
      {
         efl_event_callback_array_del(gi->object, efl_ui_table_callbacks(), obj);
+        efl_key_data_set(gi->object, TABLE_ITEM_KEY, NULL);
 
         pd->items = (Table_Item *)
             eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
@@ -355,6 +330,7 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj, int col, int ro
    gi->col_span = colspan;
    gi->row_span = rowspan;
    gi->object = subobj;
+   gi->table = obj;
    pd->count++;
    pd->items = (Table_Item *)
        eina_inlist_append(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
@@ -509,21 +485,20 @@ _efl_ui_table_efl_pack_table_table_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Table
    return NULL;
 }
 
-static Eina_Bool
-_item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Table_Item *gi)
+/* The table lets go of an item: no longer a member, clipped, or listened
+   to. This is shared by the table unpacking the child and by another
+   container taking it, which the table hears of as the widget parent
+   losing it. */
+static void
+_item_release(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Table_Item *gi)
 {
    Efl_Gfx_Entity *subobj = gi->object;
-
-   if (!subobj || !_elm_widget_sub_object_redirect_to_top(obj, subobj))
-     return EINA_FALSE;
 
    efl_canvas_object_clipper_set(subobj, NULL);
    efl_key_data_set(subobj, "_elm_leaveme", NULL);
    efl_key_data_set(subobj, TABLE_ITEM_KEY, NULL);
    efl_event_callback_array_del(subobj, efl_ui_table_callbacks(), obj);
-
    efl_canvas_group_member_remove(obj, subobj);
-   efl_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
 
    if ((gi->col == pd->last_col) && (gi->row == pd->last_row))
      pd->linear_recalc = EINA_TRUE;
@@ -538,9 +513,59 @@ _item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Table_Item *gi)
    free(gi);
 
    pd->count--;
+   if (efl_invalidating_get(obj) || efl_invalidated_get(obj)) return;
+
    efl_pack_layout_request(obj);
+   efl_event_callback_call(obj, EFL_CONTAINER_EVENT_CONTENT_REMOVED, subobj);
+}
+
+/* The item of a child this table holds, found through the child. */
+static Table_Item *
+_item_owned(Efl_Ui_Table *obj, Efl_Gfx_Entity *subobj)
+{
+   Table_Item *gi = efl_key_data_get(subobj, TABLE_ITEM_KEY);
+
+   return (gi && (gi->table == obj)) ? gi : NULL;
+}
+
+static Eina_Bool
+_item_remove(Efl_Ui_Table *obj, Efl_Ui_Table_Data *pd, Table_Item *gi)
+{
+   Efl_Gfx_Entity *subobj = gi->object;
+
+   if (!subobj || !_elm_widget_sub_object_redirect_to_top(obj, subobj))
+     return EINA_FALSE;
+
+   /* Moving the child to the top widget makes the table hear of it through
+      widget_sub_object_del, which releases it already. */
+   gi = _item_owned(obj, subobj);
+   if (gi) _item_release(obj, pd, gi);
 
    return EINA_TRUE;
+}
+
+/* A child deleted while something else still references it is gone from the
+   table now, not at the last unref. */
+static void
+_on_child_invalidate(void *data, const Efl_Event *event)
+{
+   Eo *table = data;
+   EFL_UI_TABLE_DATA_GET(table, pd);
+   Table_Item *gi = _item_owned(table, event->object);
+
+   if (gi) _item_release(table, pd, gi);
+}
+
+/* A child that another container takes is no longer ours, whatever it
+   was told. */
+EOLIAN static Eina_Bool
+_efl_ui_table_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *sobj)
+{
+   Eina_Bool ok = efl_ui_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   Table_Item *gi = ok ? _item_owned(obj, sobj) : NULL;
+
+   if (gi) _item_release(obj, pd, gi);
+   return ok;
 }
 
 EOLIAN static Eina_Bool
@@ -559,12 +584,16 @@ _efl_ui_table_efl_pack_pack_clear(Eo *obj, Efl_Ui_Table_Data *pd)
 
    EINA_INLIST_FREE(EINA_INLIST_GET(pd->items), gi)
      {
-        efl_event_callback_array_del(gi->object, efl_ui_table_callbacks(), obj);
-        efl_del(gi->object);
+        Efl_Gfx_Entity *subobj = gi->object;
 
+        /* The item is gone before the child is deleted, as deleting it
+           makes the table hear of it through widget_sub_object_del. */
         pd->items = (Table_Item *)
             eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
         free(gi);
+        efl_key_data_set(subobj, TABLE_ITEM_KEY, NULL);
+        efl_event_callback_array_del(subobj, efl_ui_table_callbacks(), obj);
+        efl_del(subobj);
      }
 
    pd->linear_recalc = EINA_TRUE;
