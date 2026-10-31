@@ -20,4 +20,34 @@ collections {
          }
       }
    }
+
+   group {
+      name: "test_alias_group";
+      parts {
+         part {
+            name: "aliased";
+            type: SWALLOW;
+
+            description {
+               state: "default" 0.0;
+            }
+         }
+      }
+   }
+
+   group {
+      name: "test_alias_group_again";
+      parts {
+         alias: "aliased" "real";
+
+         part {
+            name: "real";
+            type: SWALLOW;
+
+            description {
+               state: "default" 0.0;
+            }
+         }
+      }
+   }
 }

@@ -43,6 +43,33 @@ EFL_START_TEST(edje_test_swallows)
 }
 EFL_END_TEST
 
+/* A swallow given by a part alias survives the file being set again. */
+EFL_START_TEST(edje_test_swallows_alias_survives_file_reload)
+{
+   Evas *evas = _setup_evas();
+   Evas_Object *ly, *child;
+   Eina_Rect g;
+
+   ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
+   fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"),
+                                     "test_alias_group"));
+   efl_gfx_entity_geometry_set(ly, EINA_RECT(10, 20, 100, 80));
+   child = efl_add(EFL_CANVAS_LAYOUT_CLASS, ly);
+   fail_if(!edje_object_part_swallow(ly, "aliased", child));
+
+   fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"),
+                                     "test_alias_group_again"));
+   evas_smart_objects_calculate(evas);
+
+   ck_assert_ptr_eq(edje_object_part_swallow_get(ly, "real"), child);
+   ck_assert_ptr_eq(edje_object_part_swallow_get(ly, "aliased"), child);
+   fail_unless(evas_object_visible_get(child));
+   g = efl_gfx_entity_geometry_get(child);
+   ck_assert_int_eq(g.w, 100);
+   ck_assert_int_eq(g.h, 80);
+}
+EFL_END_TEST
+
 EFL_START_TEST(edje_test_swallows_lifetime)
 {
    Evas *evas = _setup_evas();
@@ -155,6 +182,7 @@ EFL_END_TEST
 void edje_test_swallow(TCase *tc)
 {
    tcase_add_test(tc, edje_test_swallows);
+   tcase_add_test(tc, edje_test_swallows_alias_survives_file_reload);
    tcase_add_test(tc, edje_test_swallows_lifetime);
    tcase_add_test(tc, edje_test_swallows_invalidate);
    tcase_add_test(tc, edje_test_swallows_eoapi);

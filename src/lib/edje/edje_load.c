@@ -1526,6 +1526,21 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                   Eina_Iterator *it;
                   Eina_List *l, *ll;
 
+                  /* A part given by one of its aliases is still there: the
+                   * calls below resolve the alias. */
+                  if (part_match && ed->collection && ed->collection->alias)
+                    {
+                       Eina_Iterator *alias_it;
+                       const char *alias_name;
+
+                       alias_it = eina_hash_iterator_key_new(ed->collection->alias);
+                       EINA_ITERATOR_FOREACH(alias_it, alias_name)
+                         {
+                            eina_hash_add(part_match, alias_name, (void*)1);
+                         }
+                       eina_iterator_free(alias_it);
+                    }
+
                   it = eina_hash_iterator_data_new(collect);
                   EINA_ITERATOR_FOREACH(it, l)
                     {
