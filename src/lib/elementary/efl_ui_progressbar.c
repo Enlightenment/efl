@@ -460,7 +460,15 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
 
    _internal_theme_mode_pulse_set(obj, sd, EINA_FALSE);
 
-   if ((!is_cur_progressbar) || sd->has_cur_progressbar_part)
+   /* The progress bar's own limits are known before its theme is: a value
+    * given while it is constructed is checked against them, not against
+    * the 0..0 of a part the theme has not created yet. */
+   if (is_cur_progressbar)
+     {
+        min = sd->val_min;
+        max = sd->val_max;
+     }
+   else
      efl_ui_range_limits_get(efl_part(obj, part_name), &min, &max);
 
    if (val < min) val = min;

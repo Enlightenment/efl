@@ -31,9 +31,21 @@ EFL_START_TEST(pb_progress_label)
 }
 EFL_END_TEST
 
+/* Without a text, nothing loads the theme before the value is set. */
+EFL_START_TEST(pb_value_while_constructed)
+{
+   Eo *bar = efl_add(EFL_UI_PROGRESSBAR_CLASS, win,
+                     efl_ui_range_limits_set(efl_added, 0.0, 100.0),
+                     efl_ui_range_value_set(efl_added, 65.0));
+
+   ck_assert(EINA_DBL_EQ(efl_ui_range_value_get(bar), 65.0));
+}
+EFL_END_TEST
+
 void efl_ui_test_progressbar(TCase *tc)
 {
    tcase_add_checked_fixture(tc, check_setup, NULL);
    tcase_add_test(tc, pb_text);
    tcase_add_test(tc, pb_progress_label);
+   tcase_add_test(tc, pb_value_while_constructed);
 }
