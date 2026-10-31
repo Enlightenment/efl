@@ -98,6 +98,10 @@ static heif_init_t heif_init_f = NULL;
 typedef void (*heif_image_handle_release_t)(const struct heif_image_handle*);
 static heif_image_handle_release_t heif_image_handle_release_f = NULL;
 
+// heif_image_release
+typedef void (*heif_image_release_t)(const struct heif_image*);
+static heif_image_release_t heif_image_release_f = NULL;
+
 #ifdef ERR
 # undef ERR
 #endif
@@ -198,6 +202,8 @@ evas_image_load_file_head_heif_internal(Evas_Loader_Internal *loader,
 
    heif_image_handle_release_f(loader->handle);
    heif_context_free_f(loader->ctx);
+   loader->handle = NULL;
+   loader->ctx = NULL;
 
    return EINA_TRUE;
 }
@@ -209,7 +215,7 @@ evas_image_load_file_data_heif_internal(Evas_Loader_Internal *loader,
                                         void *map, size_t length,
                                         int *error)
 {
-   struct heif_image *img;
+   struct heif_image *img = NULL;
    struct heif_error err;
    const unsigned char *data;
    unsigned char *dd;
@@ -237,6 +243,11 @@ evas_image_load_file_data_heif_internal(Evas_Loader_Internal *loader,
      }
 
    data = heif_image_get_plane_readonly_f(img, heif_channel_interleaved, &stride);
+   if (!data)
+     {
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        goto on_error;
+     }
 
    dd = (unsigned char *)pixels;
    plane = (unsigned char *)data;
@@ -277,6 +288,14 @@ evas_image_load_file_data_heif_internal(Evas_Loader_Internal *loader,
   prop->premul = EINA_TRUE;
 
  on_error:
+   /* the context reads from the file map, which the caller unmaps
+    * right after we return, so drop everything now */
+   if (img)
+     heif_image_release_f(img);
+   heif_image_handle_release_f(loader->handle);
+   heif_context_free_f(loader->ctx);
+   loader->handle = NULL;
+   loader->ctx = NULL;
    return ret;
 }
 
@@ -431,6 +450,7 @@ module_open(Evas_Module *em)
    SYM(heif_image_handle_get_width);
    SYM(heif_image_handle_has_alpha_channel);
    SYM(heif_image_handle_release);
+   SYM(heif_image_release);
 
    heif_init_f = eina_module_symbol_get(_evas_loader_heif_mod, "heif_init");
    heif_deinit_f = eina_module_symbol_get(_evas_loader_heif_mod, "heif_deinit");
