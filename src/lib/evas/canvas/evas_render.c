@@ -125,15 +125,6 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
 static Eina_List *_rendering_evases = NULL;
 
 #ifdef EVAS_RENDER_DEBUG_TIMING
-static double
-_time_get()
-{
-   struct timeval tv;
-
-   gettimeofday(&tv, NULL);
-
-   return (tv.tv_sec + tv.tv_usec / 1000000.0) * 1000.0;
-}
 
 struct accumulator {
    double total, min, max, draw_start_time;
@@ -178,7 +169,7 @@ _accumulate_time(double before, Eina_Bool async)
           }
      }
 
-   double diff = _time_get() - before;
+   double diff = ecore_time_get() * 1000 - before;
 
    acc->total += diff;
    if (diff > acc->max) acc->max = diff;
@@ -3325,7 +3316,7 @@ evas_render_updates_internal(Evas *eo_e,
           }
      }
 #ifdef EVAS_RENDER_DEBUG_TIMING
-   double start_time = _time_get();
+   double start_time = ecore_time_get() * 1000;
 #endif
 
    if (show_update_boxes == -1)
