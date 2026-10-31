@@ -30,6 +30,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_check", efl_ui_test_check },
   { "efl_ui_property_bind", efl_ui_test_property_bind },
   { "efl_ui_popup", efl_ui_test_popup },
+  { "efl_ui_button", efl_ui_test_button },
   { "efl_ui_progressbar", efl_ui_test_progressbar },
   { "efl_ui_radio_group", efl_ui_test_radio_group },
   { "efl_ui_scroller", efl_ui_test_scroller },

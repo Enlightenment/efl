@@ -557,18 +557,21 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
 static void
 _deferred_signals_emit(Efl_Ui_Layout_Data *pd)
 {
-   do
-     {
-        Deferred_Version_Signal *dvs = eina_inarray_pop(pd->deferred_signals);
+   Eina_Inarray *signals = pd->deferred_signals;
+   Deferred_Version_Signal *dvs;
 
+   /* In the order they were sent: a part filled then emptied is empty. */
+   pd->deferred_signals = NULL;
+   EINA_INARRAY_FOREACH(signals, dvs)
+     {
         if (pd->version < dvs->version_threshold)
           efl_layout_signal_emit(pd->obj, dvs->old_sig, "efl");
         else
           efl_layout_signal_emit(pd->obj, dvs->new_sig, "efl");
         eina_stringshare_del(dvs->old_sig);
         eina_stringshare_del(dvs->new_sig);
-     } while (eina_inarray_count(pd->deferred_signals));
-   ELM_SAFE_FREE(pd->deferred_signals, eina_inarray_free);
+     }
+   eina_inarray_free(signals);
 }
 
 EOLIAN static Eina_Error

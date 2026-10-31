@@ -39,6 +39,7 @@ void efl_ui_test_widget(TCase *tc);
 void efl_ui_test_spotlight(TCase *tc);
 void efl_ui_test_check(TCase *tc);
 void efl_ui_test_property_bind(TCase *tc);
+void efl_ui_test_button(TCase *tc);
 void efl_ui_test_progressbar(TCase *tc);
 void efl_ui_test_radio_group(TCase *tc);
 void efl_ui_test_slider(TCase *tc);
