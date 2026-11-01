@@ -13,7 +13,14 @@
 # include "config.h"
 #endif
 
-#include <dlfcn.h>
+#if defined HAVE_DLOPEN && ! defined _WIN32
+# include <dlfcn.h>
+#endif
+
+#ifdef _WIN32
+# include <evil_private.h> /* dlsym */
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
