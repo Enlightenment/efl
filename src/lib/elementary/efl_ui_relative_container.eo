@@ -13,7 +13,9 @@ class Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout
          [[Specifies the left side edge of the $child object relative to the $base object.
            When $relative_position is 0 the left edges of the two objects are aligned.
            When $relative_position is 1 the left edge of the $child object is aligned
-           to the right edge of the $base object.]]
+           to the right edge of the $base object.
+           Setting a relation on an object that is not a child of this container
+           packs it into this container.]]
          keys {
             child: Efl.Gfx.Entity; [[The child object whose size and position is
                                      being changed.]]
@@ -30,7 +32,9 @@ class Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout
          [[Specifies the right side edge of the $child object relative to the $base object.
            When $relative_position is 0 the right edge of the $child object is aligned
            to the left edge of the $base object.
-           When $relative_position is 1 the right edges of the two objects are aligned.]]
+           When $relative_position is 1 the right edges of the two objects are aligned.
+           Setting a relation on an object that is not a child of this container
+           packs it into this container.]]
          keys {
             child: Efl.Gfx.Entity; [[The child object whose size and position is
                                      being changed.]]
@@ -47,7 +51,9 @@ class Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout
          [[Specifies the top side edge of the $child object relative to the $base object.
            When $relative_position is 0 the top edges of the two objects are aligned.
            When $relative_position is 1 the top edge of the $child object is aligned
-           to the bottom edge of the $base object.]]
+           to the bottom edge of the $base object.
+           Setting a relation on an object that is not a child of this container
+           packs it into this container.]]
          keys {
             child: Efl.Gfx.Entity; [[The child object whose size and position is
                                      being changed.]]
@@ -64,7 +70,9 @@ class Efl.Ui.Relative_Container extends Efl.Ui.Widget implements Efl.Pack_Layout
          [[Specifies the bottom side edge of the $child object relative to the $base object.
            When $relative_position is 0 the bottom edge of the $child object is aligned
            to the top edge of the $base object.
-           When $relative_position is 1 the bottom edges of the two objects are aligned.]]
+           When $relative_position is 1 the bottom edges of the two objects are aligned.
+           Setting a relation on an object that is not a child of this container
+           packs it into this container.]]
          keys {
             child: Efl.Gfx.Entity; [[The child object whose size and position is
                                      being changed.]]

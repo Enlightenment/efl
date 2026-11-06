@@ -363,6 +363,54 @@ EFL_START_TEST (efl_ui_relative_container_pack)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_relative_container_null_base_resets)
+{
+   Eo *a, *b, *target = NULL;
+   Eina_Rect ref;
+   double relative = -1.0;
+
+   a = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack(layout, efl_added));
+   b = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack(layout, efl_added));
+
+   efl_ui_relative_container_relation_left_set(layout, b, a, 1.0);
+   efl_ui_relative_container_relation_left_get(layout, b, &target, &relative);
+   ck_assert_ptr_eq(target, a);
+
+   efl_ui_relative_container_relation_left_set(layout, b, NULL, 0.0);
+   efl_ui_relative_container_relation_left_get(layout, b, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   // the layout matches a child that never had a relation
+   efl_canvas_group_calculate(layout);
+   ref = efl_gfx_entity_geometry_get(a);
+   ck_assert_int_eq(efl_gfx_entity_geometry_get(b).x, ref.x);
+   ck_assert_int_eq(efl_gfx_entity_geometry_get(b).w, ref.w);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_relative_container_relation_packs_child)
+{
+   Eo *btn, *child;
+   Eina_Iterator *it;
+   Eina_Bool found = EINA_FALSE;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, layout);
+   ck_assert_int_eq(efl_content_count(layout), 0);
+
+   efl_ui_relative_container_relation_left_set(layout, btn, layout, 0.5);
+
+   it = efl_content_iterate(layout);
+   EINA_ITERATOR_FOREACH(it, child)
+     {
+        if (child == btn) found = EINA_TRUE;
+     }
+   eina_iterator_free(it);
+   ck_assert(found);
+   ck_assert_int_eq(efl_content_count(layout), 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_relative_container(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, NULL);
@@ -371,4 +419,6 @@ void efl_ui_test_relative_container(TCase *tc)
    tcase_add_test(tc, efl_ui_relative_container_layout_update_chain);
    tcase_add_test(tc, efl_ui_relative_container_relation_set);
    tcase_add_test(tc, efl_ui_relative_container_pack);
+   tcase_add_test(tc, efl_ui_relative_container_null_base_resets);
+   tcase_add_test(tc, efl_ui_relative_container_relation_packs_child);
 }

@@ -112,7 +112,7 @@ struct _Efl_Ui_Relative_Container_Content_Iterator
       if (!child) return; \
       rc = _relative_child_get(pd, child); \
       if (!rc) return; \
-      if (target) rc->rel[DIRECTION].to = target; \
+      rc->rel[DIRECTION].to = target ? target : obj; \
       if (relative_position < 0) relative_position = 0; \
       else if (relative_position > 1) relative_position = 1; \
       rc->rel[DIRECTION].relative_position = relative_position; \
