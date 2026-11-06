@@ -630,6 +630,82 @@ EFL_START_TEST(rebinding_a_key_replaces_the_binding)
 }
 EFL_END_TEST
 
+// Binding a part again replaces what it was bound to: it follows the new
+// property only, and the old one has no hold on it any more.
+EFL_START_TEST(rebinding_a_layout_part_replaces_the_binding)
+{
+   Eo *win = _window();
+   Eo *model = _model_new("title", eina_value_string_new("T"));
+   Eo *ly;
+   char buf[PATH_MAX];
+
+   _model_set(model, "name", eina_value_string_new("N"));
+
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "layout"));
+
+   ck_assert_int_eq(efl_ui_property_bind(ly, "text", "title"), 0);
+   ck_assert_int_eq(efl_ui_property_bind(ly, "text", "name"), 0);
+   // The same binding again, as a factory does for a reused item
+   ck_assert_int_eq(efl_ui_property_bind(ly, "text", "name"), 0);
+   efl_ui_view_model_set(ly, model);
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(efl_part(ly, "text")), "N");
+
+   _model_set(model, "title", eina_value_string_new("T2"));
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(efl_part(ly, "text")), "N");
+
+   _model_set(model, "name", eina_value_string_new("N2"));
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(efl_part(ly, "text")), "N2");
+   efl_unref(model);
+}
+EFL_END_TEST
+
+// Several parts bound to one property: rebinding one of them takes only that
+// one away from the property, the others keep following it. Each part takes
+// its turn, as the order the stale entries are found in is not defined.
+EFL_START_TEST(rebinding_one_of_several_parts_keeps_the_others)
+{
+   static const char *const parts[] = { "t1", "t2", "t3" };
+   Eo *win = _window();
+   Eo *m1 = _model_new("title", eina_value_string_new("T"));
+   Eo *m2 = _model_new("title", eina_value_string_new("T2"));
+   char buf[PATH_MAX];
+   unsigned int i, j;
+
+   _model_set(m1, "name", eina_value_string_new("N"));
+   _model_set(m2, "name", eina_value_string_new("N2"));
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(parts); i++)
+     {
+        Eo *ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+
+        ck_assert(efl_file_simple_load(ly, buf, "bind_parts_layout"));
+        for (j = 0; j < EINA_C_ARRAY_LENGTH(parts); j++)
+          {
+             ck_assert_int_eq(efl_ui_property_bind(ly, parts[j], "title"), 0);
+          }
+        ck_assert_int_eq(efl_ui_property_bind(ly, parts[i], "name"), 0);
+
+        // Binding a model updates every bound part from scratch
+        efl_ui_view_model_set(ly, m1);
+        ecore_main_loop_iterate();
+        efl_ui_view_model_set(ly, m2);
+        ecore_main_loop_iterate();
+        for (j = 0; j < EINA_C_ARRAY_LENGTH(parts); j++)
+          {
+             ck_assert_str_eq(efl_text_get(efl_part(ly, parts[j])), (i == j) ? "N2" : "T2");
+          }
+     }
+   efl_unref(m1);
+   efl_unref(m2);
+}
+EFL_END_TEST
+
 /* A model outlives the provider that handed it to a widget. The widget has
  * to stop listening to it with the provider, or the model calls into a widget
  * that has since been freed. */
@@ -668,6 +744,8 @@ efl_ui_test_property_bind(TCase *tc)
    tcase_add_test(tc, efl_ui_model_provider_live_edit);
    tcase_add_test(tc, efl_ui_model_provider_dies_first);
    tcase_add_test(tc, rebinding_a_key_replaces_the_binding);
+   tcase_add_test(tc, rebinding_a_layout_part_replaces_the_binding);
+   tcase_add_test(tc, rebinding_one_of_several_parts_keeps_the_others);
    tcase_add_test(tc, textbox_model_change_does_not_loop);
    tcase_add_test(tc, textbox_typing_in_the_middle_keeps_the_cursor);
    tcase_add_test(tc, textbox_typing_at_the_start_keeps_the_cursor);

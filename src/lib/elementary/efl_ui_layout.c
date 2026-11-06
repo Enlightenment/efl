@@ -929,6 +929,24 @@ _efl_ui_layout_base_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Layout_Data *_pd 
         (edje, "size,eval", "efl", _on_size_evaluate_signal, obj);
 }
 
+// Every entry of a connect hash owns one reference to its property, which
+// the hash does not release by itself.
+static void
+_efl_ui_layout_connect_hash_free(Eina_Hash *hash)
+{
+   Eina_Iterator *it;
+   Eina_Hash_Tuple *tuple;
+
+   if (!hash) return;
+   it = eina_hash_iterator_tuple_new(hash);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     {
+        eina_stringshare_del(tuple->key);
+     }
+   eina_iterator_free(it);
+   eina_hash_free(hash);
+}
+
 EOLIAN static void
 _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
@@ -971,9 +989,9 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
                                 _efl_model_properties_changed_cb, sd);
      }
 
-   eina_hash_free(sd->connect.properties);
+   _efl_ui_layout_connect_hash_free(sd->connect.properties);
    sd->connect.properties = NULL;
-   eina_hash_free(sd->connect.signals);
+   _efl_ui_layout_connect_hash_free(sd->connect.signals);
    sd->connect.signals = NULL;
    eina_hash_free(sd->connect.factories);
    sd->connect.factories = NULL;
@@ -2710,6 +2728,57 @@ _efl_ui_layout_connected(Eina_Hash *hash, Eina_Stringshare *property, const char
    return found;
 }
 
+// A part follows one property: drop what it was bound to before, unless it
+// is the property being bound.
+// Eina cannot delete one entry among several that share a key (removal looks
+// the node up by key, and finds another one), so the hash is rebuilt without
+// the stale entries. Every entry owns one reference to its property, which
+// the hash does not release by itself.
+static void
+_efl_ui_layout_unbind_part(Eina_Hash **hashp, Eina_Stringshare *property, const char *part)
+{
+   Eina_Hash *hash = *hashp;
+   Eina_Hash *fresh;
+   Eina_Iterator *it;
+   Eina_Hash_Tuple *tuple;
+   Eina_Bool stale = EINA_FALSE;
+
+   it = eina_hash_iterator_tuple_new(hash);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     {
+        if ((tuple->key != property) && !strcmp(tuple->data, part))
+          {
+             stale = EINA_TRUE;
+             break;
+          }
+     }
+   eina_iterator_free(it);
+   if (!stale) return;
+
+   fresh = eina_hash_stringshared_new(EINA_FREE_CB(free));
+   if (!fresh) return;
+
+   it = eina_hash_iterator_tuple_new(hash);
+   EINA_ITERATOR_FOREACH(it, tuple)
+     {
+        if ((tuple->key != property) && !strcmp(tuple->data, part))
+          {
+             eina_stringshare_del(tuple->key);
+             free((void *)tuple->data);
+          }
+        else
+          {
+             eina_hash_add(fresh, tuple->key, tuple->data);
+          }
+     }
+   eina_iterator_free(it);
+
+   // The entries were moved, not copied
+   eina_hash_free_cb_set(hash, NULL);
+   eina_hash_free(hash);
+   *hashp = fresh;
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
@@ -2717,6 +2786,7 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
    Eina_Stringshare *sprop;
    Eina_Stringshare *sk;
    Eina_Hash *hash = NULL;
+   Eina_Hash **hashp = NULL;
    char *data = NULL;
    Efl_Model *model;
    Eina_Error r;
@@ -2739,12 +2809,14 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
 
    if (strncmp(SIGNAL_PREFIX, key, sizeof(SIGNAL_PREFIX) - 1) == 0)
      {
-        hash = pd->connect.signals;
+        hashp = &pd->connect.signals;
+        hash = *hashp;
         data = strdup(key + sizeof(SIGNAL_PREFIX) - 1);
      }
    else
      {
-        hash = pd->connect.properties;
+        hashp = &pd->connect.properties;
+        hash = *hashp;
         data = strdup(key);
      }
 
@@ -2760,6 +2832,8 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
      }
    else
      {
+        _efl_ui_layout_unbind_part(hashp, sprop, data);
+        hash = *hashp;
         eina_hash_add(hash, sprop, data);
      }
 

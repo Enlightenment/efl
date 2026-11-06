@@ -21,7 +21,10 @@ interface Efl.Ui.Property_Bind
    methods {
       property_bind {
          [[bind property data with the given key string. when the data is ready or changed,
-           bind the data to the key action and process promised work.]]
+           bind the data to the key action and process promised work.
+
+           Binding a key again replaces its previous binding: the key follows the new
+           property only. Binding it to the same property again changes nothing.]]
          params {
             key: string; [[key string for bind model property data]]
             property: string; [[Model property name]]

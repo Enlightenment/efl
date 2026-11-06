@@ -833,6 +833,29 @@ collections {
          }
       }
    }
+   group { name: "bind_parts_layout";
+      parts {
+         part { name: "t1";
+            type: TEXT;
+            effect: NONE;
+            description { state: "default" 0.0;
+               text { text: ""; font: "Sans"; size: 10; }
+            }
+         }
+         part { name: "t2";
+            type: TEXT;
+            description { state: "default" 0.0;
+               text { text: ""; font: "Sans"; size: 10; }
+            }
+         }
+         part { name: "t3";
+            type: TEXT;
+            description { state: "default" 0.0;
+               text { text: ""; font: "Sans"; size: 10; }
+            }
+         }
+      }
+   }
    group { name: "font_overlay_layout";
       styles {
          style { name: "test_class_style";
