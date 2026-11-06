@@ -578,10 +578,135 @@ EFL_START_TEST(efl_test_generic_model_child_added)
 }
 EFL_END_TEST
 
+static Eina_Bool
+_marked_get(Eo *child)
+{
+   Eina_Value *r = efl_model_property_get(child, "marked");
+   Eina_Bool b = EINA_FALSE;
+
+   ck_assert(eina_value_bool_convert(r, &b));
+   eina_value_free(r);
+   return b;
+}
+
+static Eina_Value
+_insert_check(Eo *model, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Model_Children_Event ev = { 0 };
+   Eo *base = efl_ui_view_model_get(model);
+   Eo *kids[5] = { NULL };
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        ck_assert_int_lt(i, 5);
+        kids[i] = c;
+     }
+   ck_assert_int_eq(len, 5);
+
+   efl_model_property_set(kids[2], "marked", eina_value_bool_new(EINA_TRUE));
+   ck_assert(_marked_get(kids[2]));
+
+   ev.index = 0;
+   efl_event_callback_call(base, EFL_MODEL_EVENT_CHILD_ADDED, &ev);
+
+   ck_assert_int_eq(efl_composite_model_index_get(kids[2]), 3);
+   // The old child 2 is now child 3 and keeps its mark, whatever now sits at 2 does not
+   ck_assert(_marked_get(kids[2]));
+   ck_assert_int_eq(efl_composite_model_index_get(kids[1]), 2);
+   ck_assert(!_marked_get(kids[1]));
+
+   ecore_main_loop_quit();
+   return v;
+}
+
+/* A child inserted in front of the others pushes them one index further, and
+ * the marks go with the children rather than staying at their index.
+ * Efl.Generic_Model only appends, so the insertion is announced the way a
+ * model that can insert does it. */
+EFL_START_TEST(efl_test_boolean_model_insert)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Boolean_Model *model;
+   Eina_Future *future;
+   int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 5; i++)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+
+   model = efl_add_ref(EFL_BOOLEAN_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model),
+                       efl_boolean_model_boolean_add(efl_added, "marked", EINA_FALSE));
+   ck_assert(!!model);
+
+   future = efl_model_children_slice_get(model, 0, 5);
+   efl_future_then(model, future, .success_type = EINA_VALUE_TYPE_ARRAY,
+                   .success = _insert_check);
+
+   ecore_main_loop_begin();
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
+static Eina_Value
+_true_default_check(Eo *model EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        // Changing the first child allocates the buffer the others share
+        if (!i) efl_model_property_set(c, "marked", eina_value_bool_new(EINA_FALSE));
+        ck_assert(_marked_get(c) == !!i);
+     }
+   ck_assert_int_eq(len, 10);
+
+   ecore_main_loop_quit();
+   return v;
+}
+
+/* A boolean that is true by default is true for every child sharing a buffer
+ * with one that was changed, not only for the first of each byte. */
+EFL_START_TEST(efl_test_boolean_model_true_default)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Boolean_Model *model;
+   int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 10; i++)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+
+   model = efl_add_ref(EFL_BOOLEAN_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model),
+                       efl_boolean_model_boolean_add(efl_added, "marked", EINA_TRUE));
+   ck_assert(!!model);
+
+   efl_future_then(model, efl_model_children_slice_get(model, 0, 10),
+                   .success_type = EINA_VALUE_TYPE_ARRAY,
+                   .success = _true_default_check);
+   ecore_main_loop_begin();
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_boolean_model);
+   tcase_add_test(tc, efl_test_boolean_model_insert);
+   tcase_add_test(tc, efl_test_boolean_model_true_default);
    tcase_add_test(tc, efl_test_filter_model);
    tcase_add_test(tc, efl_test_generic_model_child_added);
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);
