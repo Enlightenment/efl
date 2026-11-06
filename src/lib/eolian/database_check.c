@@ -241,6 +241,7 @@ _check_unit(const Eolian_Unit *unit)
              continue;
           }
      }
+   eina_iterator_free(itr);
    eina_hash_free(chash);
 
    /* check collected deps against children units */
