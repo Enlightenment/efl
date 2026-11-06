@@ -261,6 +261,7 @@ _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
           _efl_ui_caching_factory_remove(pd, pd->cache, w);
 
           efl_ui_view_model_set(w, model);
+          efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_BUILDING, w);
 
           eina_value_array_append(&gr->done, w);
 

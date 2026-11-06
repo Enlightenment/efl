@@ -2691,6 +2691,25 @@ _efl_ui_layout_base_model_watch(Eo *obj, Efl_Ui_Layout_Data *pd)
    _efl_ui_layout_base_model_register(obj, pd, model);
 }
 
+static Eina_Bool
+_efl_ui_layout_connected(Eina_Hash *hash, Eina_Stringshare *property, const char *part)
+{
+   Eina_Iterator *it = eina_hash_iterator_tuple_new(hash);
+   Eina_Hash_Tuple *tuple;
+   Eina_Bool found = EINA_FALSE;
+
+   EINA_ITERATOR_FOREACH(it, tuple)
+     {
+        if ((tuple->key == property) && !strcmp(tuple->data, part))
+          {
+             found = EINA_TRUE;
+             break;
+          }
+     }
+   eina_iterator_free(it);
+   return found;
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
@@ -2701,6 +2720,7 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
    char *data = NULL;
    Efl_Model *model;
    Eina_Error r;
+   Eina_Bool duplicate = EINA_FALSE;
 
    // First try binding with property on the Widget
    r = efl_ui_property_bind(efl_super(obj, EFL_UI_LAYOUT_BASE_CLASS), key, property);
@@ -2717,7 +2737,6 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
 
    sprop = eina_stringshare_add(property);
 
-   // FIXME: prevent double connect of key to multiple property ?
    if (strncmp(SIGNAL_PREFIX, key, sizeof(SIGNAL_PREFIX) - 1) == 0)
      {
         hash = pd->connect.signals;
@@ -2733,6 +2752,12 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
      {
         // FIXME: remove the entry from the hash ?
      }
+   else if (_efl_ui_layout_connected(hash, sprop, data))
+     {
+        // Binding the same part to the same property again, as a factory
+        // does for an item it reuses, changes nothing
+        duplicate = EINA_TRUE;
+     }
    else
      {
         eina_hash_add(hash, sprop, data);
@@ -2746,6 +2771,12 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
           _efl_ui_layout_view_model_signal_update(pd, data, sprop);
         else
           _efl_ui_layout_view_model_property_update(pd, data, sprop);
+     }
+
+   if (duplicate)
+     {
+        eina_stringshare_del(sprop);
+        free(data);
      }
 
    sk = eina_stringshare_add(key);

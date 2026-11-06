@@ -6104,6 +6104,34 @@ _efl_ui_widget_model_unregister(Eo *obj, Efl_Ui_Widget_Data *pd)
      _efl_ui_widget_model_provider_invalidate(obj, NULL);
 }
 
+static void
+_efl_ui_property_unbind(Efl_Ui_Widget_Data *pd, const char *part, const char *key)
+{
+   Efl_Ui_Property_Bound *prop, *found = NULL;
+   Eina_Stringshare *ss_part = eina_stringshare_add(part);
+   Eina_Stringshare *ss_key = eina_stringshare_add(key);
+   Eina_Iterator *it;
+
+   it = eina_hash_iterator_data_new(pd->properties.model_lookup);
+   EINA_ITERATOR_FOREACH(it, prop)
+     {
+        if ((prop->part == ss_part) && (prop->key == ss_key))
+          {
+             found = prop;
+             break;
+          }
+     }
+   eina_iterator_free(it);
+
+   if (found)
+     {
+        if (!found->part) eina_hash_del(pd->properties.view_lookup, found->key, found);
+        eina_hash_del(pd->properties.model_lookup, found->property, found);
+     }
+   eina_stringshare_del(ss_part);
+   eina_stringshare_del(ss_key);
+}
+
 static Eina_Error
 _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
                       const char *part, const char *key, const char *property)
@@ -6135,6 +6163,10 @@ _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
            say the first binding was never refreshed at all. */
         _efl_ui_widget_model_register(widget, pd);
      }
+
+   // One binding per part and key: a factory binds again every item it
+   // reuses, and the old binding would otherwise keep updating it as well
+   _efl_ui_property_unbind(pd, part, key);
 
    prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
    if (!prop) return ENOMEM;

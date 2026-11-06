@@ -4,6 +4,7 @@
 
 #include <Efl_Ui.h>
 #include <Elementary.h>
+#include "elm_widget.h"
 #include "efl_ui_suite.h"
 
 /* A widget bound to a property of its model must write what the user did
@@ -603,11 +604,38 @@ EFL_START_TEST(efl_ui_model_provider_live_edit)
 }
 EFL_END_TEST
 
+/* A factory binds every item again each time it hands one out, reused or
+ * not. Binding the same key again replaces the binding: nothing piles up. */
+EFL_START_TEST(rebinding_a_key_replaces_the_binding)
+{
+   Eo *win = _window();
+   Eo *model = _model_new("t", eina_value_string_new("first"));
+   Eo *txt;
+   Efl_Ui_Widget_Data *pd;
+   int i;
+
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                 efl_ui_view_model_set(efl_added, model));
+   for (i = 0; i < 6; i++)
+     ck_assert_int_eq(efl_ui_property_bind(txt, "text", "t"), 0);
+
+   pd = efl_data_scope_get(txt, EFL_UI_WIDGET_CLASS);
+   ck_assert_int_eq(eina_hash_population(pd->properties.model_lookup), 1);
+   ck_assert_int_eq(eina_hash_population(pd->properties.view_lookup), 1);
+   ck_assert_str_eq(efl_text_get(txt), "first");
+
+   _model_set(model, "t", eina_value_string_new("second"));
+   ck_assert_str_eq(efl_text_get(txt), "second");
+   efl_unref(model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_property_bind(TCase *tc)
 {
    tcase_add_test(tc, textbox_user_edit_reaches_the_model);
    tcase_add_test(tc, efl_ui_model_provider_live_edit);
+   tcase_add_test(tc, rebinding_a_key_replaces_the_binding);
    tcase_add_test(tc, textbox_model_change_does_not_loop);
    tcase_add_test(tc, textbox_typing_in_the_middle_keeps_the_cursor);
    tcase_add_test(tc, textbox_typing_at_the_start_keeps_the_cursor);
