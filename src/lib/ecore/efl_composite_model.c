@@ -45,21 +45,18 @@ _children_indexed_key(const Efl_Composite_Model_Data *node,
    return 0;
 }
 
+// Marks every child whose index is at or above lower.
 static void
-_mark_greater(Efl_Composite_Model_Data *root, Eina_Array *mark, const unsigned int upper)
+_mark_from(Efl_Composite_Model_Data *root, Eina_Array *mark, const unsigned int lower)
 {
    if (!root) return ;
 
-   if (root->index > upper)
+   if (root->index >= lower)
      {
         eina_array_push(mark, root);
-        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
-        _mark_greater((void*) EINA_RBTREE_GET(root)->son[1], mark, upper);
+        _mark_from((void*) EINA_RBTREE_GET(root)->son[1], mark, lower);
      }
-   else
-     {
-        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
-     }
+   _mark_from((void*) EINA_RBTREE_GET(root)->son[0], mark, lower);
 }
 
 static void
@@ -166,6 +163,20 @@ _efl_composite_model_child_event(Efl_Composite_Model_Data *pd,
    Eina_Array_Iterator iterator;
    unsigned int i;
 
+   eina_array_step_set(&mark, sizeof (Eina_Array), 8);
+
+   // A child added at an index pushes the one that was there, and all above it, one further.
+   // This has to be done before looking for the new child, or the old one at that index is it.
+   if (description == EFL_MODEL_EVENT_CHILD_ADDED)
+     {
+        _mark_from((void*) pd->indexed, &mark, ev->index);
+        EINA_ARRAY_ITER_NEXT(&mark, i, cpd, iterator)
+          {
+             cpd->index++;
+             efl_ref(cpd->self);
+          }
+     }
+
    cev.index = ev->index;
    if (ev->child)
      {
@@ -179,29 +190,26 @@ _efl_composite_model_child_event(Efl_Composite_Model_Data *pd,
         if (cpd) cev.child = efl_ref(cpd->self);
      }
 
-   if (cev.child && description == EFL_MODEL_EVENT_CHILD_REMOVED)
+   if (description == EFL_MODEL_EVENT_CHILD_REMOVED)
      {
-        cpd = efl_data_scope_get(cev.child, EFL_COMPOSITE_MODEL_CLASS);
+        if (cev.child)
+          {
+             cpd = efl_data_scope_get(cev.child, EFL_COMPOSITE_MODEL_CLASS);
 
-        // Remove child from lookup tree if it exist before triggering anything further
-        pd->indexed = eina_rbtree_inline_remove(pd->indexed, EINA_RBTREE_GET(cpd),
-                                                EINA_RBTREE_CMP_NODE_CB(_children_indexed_cmp), NULL);
-        cpd->inserted = EINA_FALSE;
-        efl_replace(&cpd->source, NULL);
-     }
+             // Remove child from lookup tree if it exist before triggering anything further
+             pd->indexed = eina_rbtree_inline_remove(pd->indexed, EINA_RBTREE_GET(cpd),
+                                                     EINA_RBTREE_CMP_NODE_CB(_children_indexed_cmp), NULL);
+             cpd->inserted = EINA_FALSE;
+             efl_replace(&cpd->source, NULL);
+          }
 
-   // Update all index above this one if necessaryy
-   eina_array_step_set(&mark, sizeof (Eina_Array), 8);
-   _mark_greater((void*) pd->indexed, &mark, cev.index);
-
-   // Correct index of the object stored that need to
-   // There is no need to remove and reinsert them as their relative order will not change.
-   EINA_ARRAY_ITER_NEXT(&mark, i, cpd, iterator)
-     {
-        if (description == EFL_MODEL_EVENT_CHILD_REMOVED) cpd->index--;
-        else cpd->index++;
-
-        efl_ref(cpd->self);
+        // Everything above the removed one is one closer
+        _mark_from((void*) pd->indexed, &mark, ev->index + 1);
+        EINA_ARRAY_ITER_NEXT(&mark, i, cpd, iterator)
+          {
+             cpd->index--;
+             efl_ref(cpd->self);
+          }
      }
 
    efl_event_callback_call(pd->self, description, &cev);

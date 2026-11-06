@@ -589,12 +589,24 @@ _marked_get(Eo *child)
    return b;
 }
 
+static void
+_added_child_keep(void *data, const Efl_Event *ev)
+{
+   Efl_Model_Children_Event *cev = ev->info;
+   Eo **kept = data;
+
+   // Volatile children go once nobody holds them
+   *kept = efl_ref(cev->child);
+}
+
 static Eina_Value
 _insert_check(Eo *model, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Model_Children_Event ev = { 0 };
    Eo *base = efl_ui_view_model_get(model);
    Eo *kids[5] = { NULL };
+   Eo *sources[5] = { NULL };
+   Eo *row, *added = NULL;
    unsigned int i, len;
    Eo *c;
 
@@ -602,21 +614,40 @@ _insert_check(Eo *model, void *data EINA_UNUSED, const Eina_Value v)
      {
         ck_assert_int_lt(i, 5);
         kids[i] = c;
+        sources[i] = efl_ui_view_model_get(c);
      }
    ck_assert_int_eq(len, 5);
 
    efl_model_property_set(kids[2], "marked", eina_value_bool_new(EINA_TRUE));
    ck_assert(_marked_get(kids[2]));
 
-   ev.index = 0;
+   // A new row in the middle, announced the way a model that can insert does it
+   row = efl_add(EFL_GENERIC_MODEL_CLASS, base);
+   ev.index = 2;
+   ev.child = row;
+   efl_event_callback_add(model, EFL_MODEL_EVENT_CHILD_ADDED, _added_child_keep, &added);
    efl_event_callback_call(base, EFL_MODEL_EVENT_CHILD_ADDED, &ev);
+   efl_event_callback_del(model, EFL_MODEL_EVENT_CHILD_ADDED, _added_child_keep, &added);
 
+   // The new row is the one at 2, unmarked, and is not the one that was there
+   ck_assert_ptr_ne(added, NULL);
+   ck_assert_ptr_ne(added, kids[2]);
+   ck_assert_ptr_eq(efl_ui_view_model_get(added), row);
+   ck_assert_int_eq(efl_composite_model_index_get(added), 2);
+   ck_assert(!_marked_get(added));
+
+   // The old 2 is 3 now, still its own row, and keeps its mark
    ck_assert_int_eq(efl_composite_model_index_get(kids[2]), 3);
-   // The old child 2 is now child 3 and keeps its mark, whatever now sits at 2 does not
+   ck_assert_ptr_eq(efl_ui_view_model_get(kids[2]), sources[2]);
    ck_assert(_marked_get(kids[2]));
-   ck_assert_int_eq(efl_composite_model_index_get(kids[1]), 2);
-   ck_assert(!_marked_get(kids[1]));
 
+   // Those before are where they were, and those after are one further
+   ck_assert_int_eq(efl_composite_model_index_get(kids[1]), 1);
+   ck_assert(!_marked_get(kids[1]));
+   ck_assert_int_eq(efl_composite_model_index_get(kids[3]), 4);
+   ck_assert(!_marked_get(kids[3]));
+
+   efl_unref(added);
    ecore_main_loop_quit();
    return v;
 }
