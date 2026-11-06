@@ -66,6 +66,42 @@ _children_get(Eo *obj EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
    return EINA_VALUE_EMPTY;
 }
 
+/* A collection view nobody gave a position manager lists its items. */
+EFL_START_TEST(efl_ui_collection_view_bare)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model;
+   Efl_Ui_Collection_View *cv;
+   Efl_Ui_Factory *fl;
+   int count_realize = 0;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
+
+   model = _make_model(win);
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+
+   cv = efl_add(EFL_UI_COLLECTION_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, model),
+                efl_event_callback_add(efl_added, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                                       (void*)event_callback_that_increments_an_int_when_called,
+                                       &count_realize));
+   ck_assert_ptr_ne(cv, NULL);
+   ck_assert(efl_isa(efl_ui_collection_view_position_manager_get(cv),
+                     EFL_UI_POSITION_MANAGER_LIST_CLASS));
+   efl_content_set(win, cv);
+
+   get_me_to_those_events(cv);
+   ck_assert_int_gt(count_realize, 0);
+   efl_event_callback_del(cv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          (void*)event_callback_that_increments_an_int_when_called,
+                          &count_realize);
+}
+EFL_END_TEST
+
 EFL_START_TEST(test_efl_ui_collection_view_basic)
 {
    Efl_Ui_Win *win;
@@ -593,6 +629,7 @@ void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
    tcase_add_test(tc, efl_ui_collection_view_manager_twice);
+   tcase_add_test(tc, efl_ui_collection_view_bare);
    tcase_add_test(tc, test_efl_ui_collection_view_select);
    tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
    tcase_add_test(tc, test_efl_ui_collection_view_select_mode_before_model);

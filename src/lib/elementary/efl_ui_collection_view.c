@@ -2517,6 +2517,16 @@ _efl_ui_collection_view_efl_ui_multi_selectable_select_mode_get(const Eo *obj EI
 }
 
 EOLIAN static Efl_Object *
+_efl_ui_collection_view_efl_object_finalize(Eo *obj, Efl_Ui_Collection_View_Data *pd)
+{
+   // A bare collection view lists its items, like Efl.Ui.List_View does
+   if (!pd->manager)
+     efl_ui_collection_view_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
+
+   return efl_finalize(efl_super(obj, EFL_UI_COLLECTION_VIEW_CLASS));
+}
+
+EOLIAN static Efl_Object *
 _efl_ui_collection_view_efl_object_constructor(Eo *obj, Efl_Ui_Collection_View_Data *pd)
 {
    pd->direction = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;

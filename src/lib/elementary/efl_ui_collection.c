@@ -395,6 +395,9 @@ _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EI
 EOLIAN static Efl_Object*
 _efl_ui_collection_efl_object_finalize(Eo *obj, Efl_Ui_Collection_Data *pd)
 {
+   // A bare collection lists its items, like Efl.Ui.List does
+   if (!pd->pos_man)
+     efl_ui_collection_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd->pos_man, NULL);
 
    return efl_finalize(efl_super(obj, MY_CLASS));

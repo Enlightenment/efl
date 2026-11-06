@@ -58,6 +58,7 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.invalidate;
 
       Efl.Ui.Layout_Orientable.orientation { get; set; }
