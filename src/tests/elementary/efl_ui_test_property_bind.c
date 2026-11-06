@@ -630,11 +630,43 @@ EFL_START_TEST(rebinding_a_key_replaces_the_binding)
 }
 EFL_END_TEST
 
+/* A model outlives the provider that handed it to a widget. The widget has
+ * to stop listening to it with the provider, or the model calls into a widget
+ * that has since been freed. */
+EFL_START_TEST(efl_ui_model_provider_dies_first)
+{
+   Eo *win = _window();
+   Eo *model = _model_new("t", eina_value_string_new("one"));
+   Eo *box, *provider, *label;
+   unsigned int before = efl_event_callback_count(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED);
+
+   box = efl_add(EFL_UI_BOX_CLASS, win);
+   provider = efl_add(EFL_MODEL_PROVIDER_CLASS, box);
+   efl_provider_register(box, EFL_MODEL_PROVIDER_CLASS, provider);
+   label = efl_add(EFL_UI_TEXTBOX_CLASS, box,
+                   efl_ui_property_bind(efl_added, "text", "t"));
+   efl_pack_end(box, label);
+   efl_ui_view_model_set(provider, model);
+   ck_assert_str_eq(efl_text_get(label), "one");
+   ck_assert_int_gt(efl_event_callback_count(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED), before);
+
+   efl_del(provider);
+   ck_assert_int_eq(efl_event_callback_count(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED), before);
+
+   // Nothing is called, now or after the widget is gone
+   _model_set(model, "t", eina_value_string_new("two"));
+   efl_del(label);
+   _model_set(model, "t", eina_value_string_new("three"));
+   efl_unref(model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_property_bind(TCase *tc)
 {
    tcase_add_test(tc, textbox_user_edit_reaches_the_model);
    tcase_add_test(tc, efl_ui_model_provider_live_edit);
+   tcase_add_test(tc, efl_ui_model_provider_dies_first);
    tcase_add_test(tc, rebinding_a_key_replaces_the_binding);
    tcase_add_test(tc, textbox_model_change_does_not_loop);
    tcase_add_test(tc, textbox_typing_in_the_middle_keeps_the_cursor);

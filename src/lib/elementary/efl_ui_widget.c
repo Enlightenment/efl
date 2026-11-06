@@ -5995,6 +5995,19 @@ _efl_ui_widget_model_update(Eo *obj, Efl_Ui_Widget_Data *pd)
    eina_iterator_free(it);
 }
 
+// Stops listening to the model for changes, but keeps the model
+static void
+_efl_ui_widget_model_unsubscribe(Eo *obj, Efl_Ui_Widget_Data *pd)
+{
+   if (!pd->properties.registered) return;
+
+   efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                          _efl_ui_model_property_bind_changed, obj);
+   efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                          _efl_ui_view_property_bind_changed, obj);
+   pd->properties.registered = EINA_FALSE;
+}
+
 static void _efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event EINA_UNUSED);
 static void _efl_ui_widget_model_provider_invalidate(void *data, const Efl_Event *event EINA_UNUSED);
 
@@ -6010,14 +6023,7 @@ _efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event)
    if (!pd) return;
 
    // The properties,changed subscription belongs to the model being replaced
-   if (pd->properties.registered)
-     {
-        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_model_property_bind_changed, data);
-        efl_event_callback_del(data, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_view_property_bind_changed, data);
-        pd->properties.registered = EINA_FALSE;
-     }
+   _efl_ui_widget_model_unsubscribe(data, pd);
 
    efl_replace(&pd->properties.model,
                efl_ui_view_model_get(pd->properties.provider));
@@ -6041,6 +6047,9 @@ _efl_ui_widget_model_provider_invalidate(void *data, const Efl_Event *event EINA
    ELM_WIDGET_DATA_GET(data, pd);
 
    if (!pd) return;
+
+   // The model goes with the provider, and the subscription made to it with the model
+   _efl_ui_widget_model_unsubscribe(data, pd);
    efl_event_callback_array_del(pd->properties.provider,
                                 efl_ui_widget_model_provider_callbacks(),
                                 data);
@@ -6089,16 +6098,8 @@ _efl_ui_widget_model_register(Eo *obj, Efl_Ui_Widget_Data *pd)
 static void
 _efl_ui_widget_model_unregister(Eo *obj, Efl_Ui_Widget_Data *pd)
 {
-   if (pd->properties.registered)
-     {
-        // Remove any existing handler that might exist for any reason
-        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_model_property_bind_changed, obj);
-        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_view_property_bind_changed, obj);
-
-        pd->properties.registered = EINA_FALSE;
-     }
+   // Remove any existing handler that might exist for any reason
+   _efl_ui_widget_model_unsubscribe(obj, pd);
    // Invalidate must be called before setting a new model and even if no model is registered
    if (pd->properties.provider)
      _efl_ui_widget_model_provider_invalidate(obj, NULL);
