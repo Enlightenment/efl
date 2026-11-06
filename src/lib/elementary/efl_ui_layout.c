@@ -2884,6 +2884,13 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
 
    // First undo the old one if there is one
    tracking = eina_hash_find(pd->connect.factories, ss_key);
+   if (tracking && (tracking->factory == factory))
+     {
+        // Bound again to the same factory, as a factory does for an item it
+        // reuses: the content is already what the factory made.
+        eina_stringshare_del(ss_key);
+        return EINA_ERROR_NO_ERROR;
+     }
    if (tracking)
      {
         Efl_Gfx_Entity *old[1];
@@ -2898,6 +2905,9 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
 
         // Release previous factory
         efl_replace(&tracking->factory, NULL);
+
+        // The tracking already holds a reference to the key
+        eina_stringshare_del(ss_key);
      }
    else
      {

@@ -482,6 +482,50 @@ EFL_START_TEST(efl_ui_layout_calc_subobjs_without_calc)
 }
 EFL_END_TEST
 
+static void
+_building_count(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   unsigned int *count = data;
+
+   (*count)++;
+}
+
+/* Binding a part again to the factory it is bound to leaves the content it
+ * has: nothing is unset, released or asked of the factory a second time. */
+EFL_START_TEST(efl_ui_layout_test_factory_bind_same_factory)
+{
+   Eo *win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   Eo *model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+   Eo *factory, *item, *content;
+   unsigned int building = 0;
+   int i;
+
+   factory = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
+                     efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_BUTTON_CLASS),
+                     efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
+                                            _building_count, &building));
+   item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, win,
+                  efl_ui_view_model_set(efl_added, model));
+
+   efl_ui_factory_bind(item, "icon", factory);
+   for (i = 0; (i < 100) && !efl_content_get(efl_part(item, "icon")); i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   content = efl_content_get(efl_part(item, "icon"));
+   ck_assert_ptr_ne(content, NULL);
+   ck_assert_uint_eq(building, 1);
+
+   efl_ui_factory_bind(item, "icon", factory);
+   for (i = 0; i < 10; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_eq(efl_content_get(efl_part(item, "icon")), content);
+   ck_assert_uint_eq(building, 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -501,4 +545,5 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_property_bind_alone);
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
+   tcase_add_test(tc, efl_ui_layout_test_factory_bind_same_factory);
 }
