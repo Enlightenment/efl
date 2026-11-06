@@ -112,6 +112,54 @@ EFL_START_TEST(efl_ui_layout_test_property_bind_provider)
 }
 EFL_END_TEST
 
+static unsigned int _theme_changed_count;
+static int _theme_changed_version;
+
+static void
+_theme_changed_cb(void *data, const Efl_Event *ev)
+{
+   Eo *ly = data;
+
+   EINA_SAFETY_ON_FALSE_RETURN(ev->object == ly);
+   _theme_changed_count++;
+   _theme_changed_version = efl_ui_layout_theme_version_get(ly);
+}
+
+// theme,changed is emitted once the theme is applied, so a listener that
+// reads the theme version sees the one of the theme just loaded.
+EFL_START_TEST(efl_ui_layout_test_theme_changed_sees_new_version)
+{
+   Eo *win, *ly, *def;
+   char first[PATH_MAX], second[PATH_MAX];
+
+   snprintf(first, sizeof(first), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   snprintf(second, sizeof(second), "%s/objects/test_theme_version.edj", ELM_TEST_DATA_DIR);
+   def = efl_ui_theme_default_get();
+   efl_ui_theme_extension_add(def, first);
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win,
+                efl_ui_layout_theme_set(efl_added, "version_test", NULL, NULL));
+   ck_assert_int_eq(efl_ui_layout_theme_version_get(ly), 123);
+
+   _theme_changed_count = 0;
+   _theme_changed_version = 0;
+   efl_event_callback_add(ly, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, _theme_changed_cb, ly);
+
+   // The overlay answers before the extension: the same group, a version
+   // later. Widgets apply their theme again when the theme changes.
+   efl_ui_theme_overlay_add(def, second);
+
+   ck_assert_uint_eq(_theme_changed_count, 1);
+   ck_assert_int_eq(_theme_changed_version, 124);
+   ck_assert_int_eq(efl_ui_layout_theme_version_get(ly), 124);
+
+   efl_event_callback_del(ly, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, _theme_changed_cb, ly);
+   efl_ui_theme_overlay_del(def, second);
+   efl_ui_theme_extension_del(def, first);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_layout_test_layout_api_size_min)
 {
    Evas_Object *win;
@@ -534,6 +582,7 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_text_set_while_building);
    tcase_add_test(tc, efl_ui_layout_content_set_while_building);
    tcase_add_test(tc, efl_ui_layout_test_property_bind);
+   tcase_add_test(tc, efl_ui_layout_test_theme_changed_sees_new_version);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_size_min);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_update_hints);
    tcase_add_test(tc, efl_ui_layout_test_layout_force);

@@ -856,6 +856,16 @@ collections {
          }
       }
    }
+   group { "efl/version_test";
+      data.item: "version" "123";
+      parts {
+         part { "base";
+            type: RECT;
+            description { "default";
+            }
+         }
+      }
+   }
    group { name: "font_overlay_layout";
       styles {
          style { name: "test_class_style";

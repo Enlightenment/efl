@@ -7,6 +7,7 @@ edc_files = [
   'test_tooltip.edc',
   'test_pager.edc',
   'test_prefs.edc',
+  'test_theme_version.edc',
   'cursors.edc',
   'font_preview.edc',
   'multibuttonentry.edc',

@@ -523,7 +523,8 @@ _efl_ui_layout_base_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Layout_Data *_pd 
 }
 
 static Eina_Error
-_efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_Data **widget_data)
+_efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd,
+                               Elm_Widget_Smart_Data **widget_data, Eina_Bool *changed)
 {
    Eina_Error ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
@@ -540,13 +541,8 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
                 elm_widget_theme_style_get(obj));
      }
 
-   if (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     {
-        if (sd->cb_theme_changed)
-          efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
-        if (elm_widget_is_legacy(obj))
-          evas_object_smart_callback_call(obj, "theme,changed", NULL);
-     }
+   // The event is for the caller to emit, once the version is known
+   *changed = (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    if (!_visuals_refresh(obj, sd))
      ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
@@ -574,8 +570,8 @@ _deferred_signals_emit(Efl_Ui_Layout_Data *pd)
    eina_inarray_free(signals);
 }
 
-EOLIAN static Eina_Error
-_efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
+static Eina_Error
+_efl_ui_layout_theme_apply_do(Eo *obj, Efl_Ui_Layout_Data *sd, Eina_Bool *changed)
 {
    Eina_Error theme_apply_ret, theme_apply_internal_ret;
    Elm_Widget_Smart_Data *wd = NULL;
@@ -588,7 +584,7 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   theme_apply_internal_ret = _efl_ui_layout_theme_internal(obj, sd, &wd);
+   theme_apply_internal_ret = _efl_ui_layout_theme_internal(obj, sd, &wd, changed);
    if (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
@@ -657,6 +653,24 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
      }
 
    return EFL_UI_THEME_APPLY_ERROR_NONE;
+}
+
+// theme,changed is emitted once the theme is applied: the version is parsed
+// and the children are packed again, so a listener reads the new state.
+EOLIAN static Eina_Error
+_efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
+{
+   Eina_Bool changed = EINA_FALSE;
+   Eina_Error ret = _efl_ui_layout_theme_apply_do(obj, sd, &changed);
+
+   if (changed)
+     {
+        if (sd->cb_theme_changed)
+          efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+        if (elm_widget_is_legacy(obj))
+          evas_object_smart_callback_call(obj, "theme,changed", NULL);
+     }
+   return ret;
 }
 
 EOLIAN static int

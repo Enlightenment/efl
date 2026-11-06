@@ -1,0 +1,14 @@
+// A second theme file for tests: the same group as in test.edc, one theme
+// version later.
+collections {
+   group { "efl/version_test";
+      data.item: "version" "124";
+      parts {
+         part { "base";
+            type: RECT;
+            description { "default";
+            }
+         }
+      }
+   }
+}
