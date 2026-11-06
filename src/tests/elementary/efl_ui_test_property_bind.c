@@ -565,10 +565,49 @@ EFL_START_TEST(radio_click_reaches_the_model)
 }
 EFL_END_TEST
 
+/* A widget that finds its model through a provider follows the provider to a
+ * new model, and then hears that model change as it heard the first. */
+EFL_START_TEST(efl_ui_model_provider_live_edit)
+{
+   Eo *win = _window();
+   Eo *m1 = _model_new("t", eina_value_string_new("one"));
+   Eo *m2 = _model_new("t", eina_value_string_new("two"));
+   Eo *box, *provider, *label;
+
+   box = efl_add(EFL_UI_BOX_CLASS, win);
+   provider = efl_add(EFL_MODEL_PROVIDER_CLASS, box);
+   efl_provider_register(box, EFL_MODEL_PROVIDER_CLASS, provider);
+   label = efl_add(EFL_UI_TEXTBOX_CLASS, box,
+                   efl_ui_property_bind(efl_added, "text", "t"));
+   efl_pack_end(box, label);
+   efl_content_set(win, box);
+
+   efl_ui_view_model_set(provider, m1);
+   ck_assert_str_eq(efl_text_get(label), "one");
+   _model_set(m1, "t", eina_value_string_new("one again"));
+   ck_assert_str_eq(efl_text_get(label), "one again");
+
+   // The provider moves on to another model
+   efl_ui_view_model_set(provider, m2);
+   ck_assert_str_eq(efl_text_get(label), "two");
+
+   _model_set(m2, "t", eina_value_string_new("live edit"));
+   ck_assert_str_eq(efl_text_get(label), "live edit");
+
+   // What the old model does is not the label's business any more
+   _model_set(m1, "t", eina_value_string_new("stale"));
+   ck_assert_str_eq(efl_text_get(label), "live edit");
+
+   efl_unref(m1);
+   efl_unref(m2);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_property_bind(TCase *tc)
 {
    tcase_add_test(tc, textbox_user_edit_reaches_the_model);
+   tcase_add_test(tc, efl_ui_model_provider_live_edit);
    tcase_add_test(tc, textbox_model_change_does_not_loop);
    tcase_add_test(tc, textbox_typing_in_the_middle_keeps_the_cursor);
    tcase_add_test(tc, textbox_typing_at_the_start_keeps_the_cursor);

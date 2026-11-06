@@ -6008,9 +6008,29 @@ _efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event)
    ELM_WIDGET_DATA_GET(data, pd);
 
    if (!pd) return;
+
+   // The properties,changed subscription belongs to the model being replaced
+   if (pd->properties.registered)
+     {
+        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, data);
+        efl_event_callback_del(data, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, data);
+        pd->properties.registered = EINA_FALSE;
+     }
+
    efl_replace(&pd->properties.model,
                efl_ui_view_model_get(pd->properties.provider));
    _efl_ui_widget_model_update(data, pd);
+
+   if (pd->properties.model && pd->properties.model_lookup)
+     {
+        efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, data);
+        efl_event_callback_add(data, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, data);
+        pd->properties.registered = EINA_TRUE;
+     }
 
    efl_event_callback_call(data, EFL_UI_VIEW_EVENT_MODEL_CHANGED, event->info);
 }
