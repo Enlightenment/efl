@@ -647,12 +647,109 @@ EFL_START_TEST(efl_ui_layout_test_box_part)
 
    ck_assert_ptr_eq(efl_pack_unpack_at(efl_part(ly, "box"), 1), c);
    ck_assert_int_eq(efl_content_count(efl_part(ly, "box")), 2);
+
+   // After the last one is the end.
+   c = efl_add(EFL_UI_BUTTON_CLASS, win);
+   ck_assert(efl_pack_after(efl_part(ly, "box"), c, b));
+   ck_assert_int_eq(efl_pack_index_get(efl_part(ly, "box"), c), 2);
+}
+EFL_END_TEST
+
+// Indices of the box part follow Efl.Ui.Box: negative ones count from the end
+// and out of range ones are clamped (content_get, unpack_at) or go to an end
+// (pack_at). Both containers get the same calls and must agree.
+static Eo *
+_box_part_fill(Eo *win, Eo *ly, Eo *box, Eo **items, int n)
+{
+   int i;
+
+   for (i = 0; i < n; i++)
+     {
+        items[i] = efl_add(EFL_UI_BUTTON_CLASS, win);
+        if (ly) ck_assert(efl_pack_end(efl_part(ly, "box"), items[i]));
+        else ck_assert(efl_pack_end(box, items[i]));
+     }
+   return box;
+}
+
+EFL_START_TEST(efl_ui_layout_test_box_part_indices)
+{
+   static const int idx[] = { 0, 2, 3, -1, -2, -3, -4, 5, 7, -9 };
+   char buf[PATH_MAX];
+   Eo *win, *ly, *box, *a[3], *b[3];
+   unsigned int i;
+   int k;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "box_layout"));
+   box = efl_add(EFL_UI_BOX_CLASS, win);
+   _box_part_fill(win, ly, NULL, a, 3);
+   _box_part_fill(win, NULL, box, b, 3);
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(idx); i++)
+     {
+        Eo *ra = efl_pack_content_get(efl_part(ly, "box"), idx[i]);
+        Eo *rb = efl_pack_content_get(box, idx[i]);
+
+        ck_assert_ptr_ne(rb, NULL);
+        for (k = 0; (k < 3) && (b[k] != rb); k++)
+          {
+             continue;
+          }
+        ck_assert_msg(ra == a[k], "content_get(%d) differs from Efl.Ui.Box (%d)",
+                      idx[i], k);
+     }
+
+   // pack_at: where does a new child land?
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(idx); i++)
+     {
+        Eo *na = efl_add(EFL_UI_BUTTON_CLASS, win);
+        Eo *nb = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+        ck_assert(efl_pack_at(efl_part(ly, "box"), na, idx[i]));
+        ck_assert(efl_pack_at(box, nb, idx[i]));
+        ck_assert_msg(efl_pack_index_get(efl_part(ly, "box"), na) ==
+                      efl_pack_index_get(box, nb),
+                      "pack_at(%d) differs from Efl.Ui.Box", idx[i]);
+        ck_assert_int_eq(efl_content_count(efl_part(ly, "box")),
+                         efl_content_count(box));
+        // Take it out again, from where it is.
+        ck_assert(efl_pack_unpack(efl_part(ly, "box"), na));
+        ck_assert(efl_pack_unpack(box, nb));
+        efl_del(na);
+        efl_del(nb);
+     }
+
+   // unpack_at: which one comes out?
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(idx); i++)
+     {
+        Eo *ra = efl_pack_unpack_at(efl_part(ly, "box"), idx[i]);
+        Eo *rb = efl_pack_unpack_at(box, idx[i]);
+        int ia = -1, ib = -1;
+
+        ck_assert_ptr_ne(rb, NULL);
+        ck_assert_ptr_ne(ra, NULL);
+        for (k = 0; k < 3; k++)
+          {
+             if (a[k] == ra) ia = k;
+             if (b[k] == rb) ib = k;
+          }
+        ck_assert_int_eq(ia, ib);
+        // Put it back at the same place.
+        ck_assert(efl_pack_at(efl_part(ly, "box"), ra, ia));
+        ck_assert(efl_pack_at(box, rb, ib));
+        ck_assert_int_eq(efl_pack_index_get(efl_part(ly, "box"), ra),
+                         efl_pack_index_get(box, rb));
+     }
 }
 EFL_END_TEST
 
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
+   tcase_add_test(tc, efl_ui_layout_test_box_part_indices);
    tcase_add_test(tc, efl_ui_layout_content_replaced_while_held);
    tcase_add_test(tc, efl_ui_layout_part_without_widget);
    tcase_add_test(tc, efl_ui_layout_text_set_while_building);

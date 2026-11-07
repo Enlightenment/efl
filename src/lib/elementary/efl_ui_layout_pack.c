@@ -84,9 +84,17 @@ _box_nth(Eo *pack, int index)
 {
    Evas_Object_Box_Option *opt;
    Evas_Object_Box_Data *priv;
+   int count;
 
-   if (!pack || (index < 0)) return NULL;
+   if (!pack) return NULL;
    priv = efl_data_scope_get(pack, EVAS_BOX_CLASS);
+   count = eina_list_count(priv->children);
+   if (!count) return NULL;
+   // As Efl.Pack.Linear says and Efl.Ui.Box does: -1 is the last, and an
+   // index out of range gives the first or the last.
+   if (index <= -count) index = 0;
+   else if (index >= count) index = count - 1;
+   else if (index < 0) index += count;
    opt = eina_list_nth(priv->children, index);
    if (!opt) return NULL;
    return opt->obj;
@@ -190,7 +198,8 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED, Efl_Ui_L
    index = _box_index(pack, existing);
    if (index < 0) return EINA_FALSE;
 
-   other = _box_nth(pack, index + 1);
+   // _box_nth clamps, so the last one has to be told apart first.
+   other = ((index + 1) < evas_obj_box_count(pack)) ? _box_nth(pack, index + 1) : NULL;
    if (other)
      return _efl_ui_layout_box_insert_before(pd->obj, pd->sd, pd->part, subobj, other);
 
@@ -198,8 +207,14 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED, Efl_Ui_L
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_box_efl_pack_linear_pack_at(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd, Efl_Gfx_Entity *subobj, int index)
+_efl_ui_layout_part_box_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Efl_Gfx_Entity *subobj, int index)
 {
+   int count = evas_obj_box_count(_pack_real(pd));
+
+   // Before -count it is a pack_begin, from count on a pack_end.
+   if (index < -count) return efl_pack_begin(obj, subobj);
+   if (index >= count) return efl_pack_end(obj, subobj);
+   if (index < 0) index += count;
    return _efl_ui_layout_box_insert_at(pd->obj, pd->sd, pd->part, subobj, index);
 }
 
