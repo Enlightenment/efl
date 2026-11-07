@@ -113,9 +113,51 @@ EFL_START_TEST(ecore_test_ecore_evas_fallback_selection)
 }
 EFL_END_TEST
 
+// Resizing a buffer canvas while an asynchronous render is in flight must not
+// free the output buffer the draw thread is still writing to.
+EFL_START_TEST(ecore_test_ecore_evas_buffer_resize_async)
+{
+   Ecore_Evas *ee;
+   Evas *canvas;
+   int i, j;
+
+   fail_if(ecore_evas_init() == 0);
+
+   ee = ecore_evas_buffer_new(400, 400);
+   fail_if(ee == NULL);
+   ecore_evas_show(ee);
+   canvas = ecore_evas_get(ee);
+
+   for (j = 0; j < 16; j++)
+     {
+        Evas_Object *r = evas_object_rectangle_add(canvas);
+
+        evas_object_color_set(r, 20 * j, 255 - 10 * j, 128, 255);
+        evas_object_move(r, j * 4, j * 4);
+        evas_object_resize(r, 400, 400);
+        evas_object_show(r);
+     }
+
+   for (i = 0; i < 20; i++)
+     {
+        int s = 400 + ((i & 1) ? 37 : 0);
+
+        // Queue an asynchronous render, then resize before it completes.
+        ecore_evas_render(ee);
+        ecore_evas_resize(ee, s, s);
+        ecore_evas_render_wait(ee);
+        ecore_main_loop_iterate();
+     }
+
+   ecore_evas_free(ee);
+   fail_if(ecore_evas_shutdown() != 0);
+}
+EFL_END_TEST
+
 void ecore_test_ecore_evas(TCase *tc)
 {
    tcase_add_test(tc, ecore_test_ecore_evas_associate);
    tcase_add_test(tc, ecore_test_ecore_evas_cocoa);
    tcase_add_test(tc, ecore_test_ecore_evas_fallback_selection);
+   tcase_add_test(tc, ecore_test_ecore_evas_buffer_resize_async);
 }

@@ -65,6 +65,9 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    ee->req.w = w;
    ee->req.h = h;
    if ((w == ee->w) && (h == ee->h)) return;
+   // An asynchronous render still draws into the old pixels, which are
+   // freed below.
+   ecore_evas_render_wait(ee);
    ee->w = w;
    ee->h = h;
    evas_output_size_set(ee->evas, ee->w, ee->h);

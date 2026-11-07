@@ -135,6 +135,9 @@ efl_canvas_output_engine_info_set(Efl_Canvas_Output *output,
 
    e = _efl_canvas_output_async_block(output);
    if (!e) return EINA_FALSE;
+   // The engine may free or reallocate the surfaces an asynchronous render is
+   // still drawing into (the buffer engine does on every resize).
+   evas_render_rendering_wait(e);
    if (output->info != info) return EINA_FALSE;
    if (info->magic != output->info_magic) return EINA_FALSE;
 
