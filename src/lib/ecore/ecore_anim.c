@@ -27,7 +27,7 @@
 
 #else
 
-# include <sys/select.h>
+# include <poll.h>
 # include <fcntl.h>
 
 # define pipe_write(fd, buffer, size) write((fd), buffer, size)
@@ -125,6 +125,41 @@ _timer_send_time(double t, Ecore_Thread *thread)
      }
 }
 
+// Waits for fd to be readable. Gives 1 when it is, 0 on timeout and -1 on
+// error. poll() is used where there is one, as the control pipe is made
+// when the first animator starts and its fd can be above what an fd_set
+// holds. A NULL timeout waits for ever.
+static int
+_timer_wait(int fd, const struct timeval *tv)
+{
+#ifdef _WIN32
+   fd_set rfds, wfds, exfds;
+   struct timeval t;
+   int ret;
+
+   FD_ZERO(&rfds);
+   FD_ZERO(&wfds);
+   FD_ZERO(&exfds);
+   FD_SET(fd, &rfds);
+   if (tv) t = *tv;
+   ret = select(fd + 1, &rfds, &wfds, &exfds, tv ? &t : NULL);
+   if ((ret == 1) && FD_ISSET(fd, &rfds)) return 1;
+   return (ret == 1) ? -1 : ret;
+#else
+   struct pollfd pfd;
+   int ms = -1, ret;
+
+   pfd.fd = fd;
+   pfd.events = POLLIN;
+   pfd.revents = 0;
+   // Rounded up, so that waking early does not spin on a sub-millisecond rest.
+   if (tv) ms = (tv->tv_sec * 1000) + ((tv->tv_usec + 999) / 1000);
+   ret = poll(&pfd, 1, ms);
+   if (ret > 0) return 1;
+   return ret;
+#endif
+}
+
 static void
 _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
 {
@@ -138,7 +173,6 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
    struct itimerspec tspec_old;
 #endif
    double t_out, t_gap, t_target;
-   fd_set rfds, wfds, exfds;
    struct timeval tv;
    Eina_Bool data_control;
    Eina_Bool data_timeout;
@@ -276,11 +310,6 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
              data_timeout = EINA_FALSE;
              ft = animators_frametime;
 
-             FD_ZERO(&rfds);
-             FD_ZERO(&wfds);
-             FD_ZERO(&exfds);
-             FD_SET(timer_fd_read, &rfds);
-
              t0 = ecore_time_get();
              d = fmod(t0, ft);
              t_target = t0 - d + ft;
@@ -289,7 +318,7 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                   t = (ft - d) * 1000000.0;
                   tv.tv_sec = t / 1000000;
                   tv.tv_usec = t % 1000000;
-                  ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, &tv);
+                  ret = _timer_wait(timer_fd_read, &tv);
                   t_out = ecore_time_get();
                   t_gap = t_out - t0;
                   if (t_gap > (ft * 2.0))
@@ -299,9 +328,9 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
                }
              else
                {
-                  ret = select(timer_fd_read + 1, &rfds, &wfds, &exfds, NULL);
+                  ret = _timer_wait(timer_fd_read, NULL);
                }
-             if ((ret == 1) && (FD_ISSET(timer_fd_read, &rfds)))
+             if (ret == 1)
                data_control = EINA_TRUE;
              else if (ret == 0)
                data_timeout = EINA_TRUE;
