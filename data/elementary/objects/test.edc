@@ -833,6 +833,15 @@ collections {
          }
       }
    }
+   group { "box_layout";
+      parts {
+         box { "box";
+            desc { "default";
+               box.layout: "vertical";
+            }
+         }
+      }
+   }
    group { "table_layout";
       parts {
          table { "table";

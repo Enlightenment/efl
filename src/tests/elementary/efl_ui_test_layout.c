@@ -600,6 +600,56 @@ EFL_START_TEST(efl_ui_layout_test_table_part_getters)
 }
 EFL_END_TEST
 
+// The box part of a layout reaches the evas box inside the edje, not the
+// layout widget: counting, iterating and indexing work on it. A part proxy
+// is temporary, so each call asks for a new one.
+EFL_START_TEST(efl_ui_layout_test_box_part)
+{
+   char buf[PATH_MAX];
+   Eo *win, *ly, *a, *b, *c;
+   Eina_Iterator *it;
+   Eo *content;
+   int n = 0;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "box_layout"));
+
+   a = efl_add(EFL_UI_BUTTON_CLASS, win);
+   b = efl_add(EFL_UI_BUTTON_CLASS, win);
+   c = efl_add(EFL_UI_BUTTON_CLASS, win);
+   ck_assert(efl_pack_end(efl_part(ly, "box"), a));
+   ck_assert(efl_pack_end(efl_part(ly, "box"), b));
+   ck_assert_int_eq(efl_content_count(efl_part(ly, "box")), 2);
+
+   it = efl_content_iterate(efl_part(ly, "box"));
+   EINA_ITERATOR_FOREACH(it, content)
+     {
+        ck_assert_ptr_eq(content, (n == 0) ? a : b);
+        n++;
+     }
+   eina_iterator_free(it);
+   ck_assert_int_eq(n, 2);
+
+   // The theme asks for a vertical box.
+   ck_assert_int_eq(efl_ui_layout_orientation_get(efl_part(ly, "box")),
+                    EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
+
+   ck_assert_int_eq(efl_pack_index_get(efl_part(ly, "box"), b), 1);
+   ck_assert_ptr_eq(efl_pack_content_get(efl_part(ly, "box"), 0), a);
+   ck_assert_ptr_eq(efl_pack_content_get(efl_part(ly, "box"), 1), b);
+
+   // After goes through the real box too.
+   ck_assert(efl_pack_after(efl_part(ly, "box"), c, a));
+   ck_assert_ptr_eq(efl_pack_content_get(efl_part(ly, "box"), 1), c);
+   ck_assert_int_eq(efl_content_count(efl_part(ly, "box")), 3);
+
+   ck_assert_ptr_eq(efl_pack_unpack_at(efl_part(ly, "box"), 1), c);
+   ck_assert_int_eq(efl_content_count(efl_part(ly, "box")), 2);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -622,4 +672,5 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_freeze);
    tcase_add_test(tc, efl_ui_layout_test_factory_bind_same_factory);
    tcase_add_test(tc, efl_ui_layout_test_table_part_getters);
+   tcase_add_test(tc, efl_ui_layout_test_box_part);
 }
