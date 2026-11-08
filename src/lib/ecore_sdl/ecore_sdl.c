@@ -20,6 +20,9 @@ struct _Ecore_SDL_Pressed
    EINA_RBTREE;
 
    SDL_Keycode key;
+   /* name given to the press of a key with no entry in the key table,
+    * so that its release gets the same name */
+   char name[SDL_TEXTINPUTEVENT_TEXT_SIZE];
 };
 
 EAPI int ECORE_SDL_EVENT_GOT_FOCUS = 0;
@@ -351,27 +354,30 @@ _ecore_sdl_key_text_take(Uint32 windowID, char *buf, size_t size)
    return EINA_TRUE;
 }
 
-/* build an Ecore key event; any text is copied into the same allocation,
- * as the event is released with a plain free() */
+/* build an Ecore key event; name and string are copied into the same
+ * allocation, as the event is released with a plain free() */
 static Ecore_Event_Key *
 _ecore_sdl_key_event_new(Uint32 windowID, const char *name,
-                         const char *string, const char *text,
+                         const char *string,
                          unsigned int modifiers, unsigned int keycode,
                          double timestamp)
 {
    Ecore_Event_Key *ev;
-   size_t tlen = text ? strlen(text) + 1 : 0;
+   size_t nlen = strlen(name) + 1;
+   size_t slen = string ? strlen(string) + 1 : 0;
+   char *copy;
 
-   ev = calloc(1, sizeof(Ecore_Event_Key) + tlen);
+   ev = calloc(1, sizeof(Ecore_Event_Key) + nlen + slen);
    if (!ev) return NULL;
 
-   if (text)
+   copy = (char *)(ev + 1);
+   memcpy(copy, name, nlen);
+   name = copy;
+   if (string)
      {
-        char *copy = (char *)(ev + 1);
-
-        memcpy(copy, text, tlen);
-        if (string == text) string = copy;
-        if (name == text) name = copy;
+        copy += nlen;
+        memcpy(copy, string, slen);
+        string = copy;
      }
 
    ev->timestamp = timestamp;
@@ -389,10 +395,11 @@ _ecore_sdl_key_event_new(Uint32 windowID, const char *name,
    return ev;
 }
 
-/* text is the SDL_TEXTINPUT text of a key press, or NULL */
+/* text is the SDL_TEXTINPUT text of a key press, or NULL; pressed is the
+ * entry of a key that is held down, or NULL */
 static Ecore_Event_Key*
 _ecore_sdl_event_key(const SDL_KeyboardEvent *kev, const char *text,
-                     double timestamp)
+                     const Ecore_SDL_Pressed *pressed, double timestamp)
 {
    const char *name = NULL, *string = NULL;
    unsigned int i, keycode = 0;
@@ -416,17 +423,18 @@ _ecore_sdl_event_key(const SDL_KeyboardEvent *kev, const char *text,
    if (!name)
      {
         /* a key with no entry in the table (a layout-specific key on a
-         * backend whose key codes follow the layout): name it after the
-         * text it produces, or give up */
-        if (!text) return NULL;
-        name = text;
+         * backend whose key codes follow the layout): name it as it was
+         * named when pressed, or after the text it produces, or give up */
+        if ((pressed) && (pressed->name[0])) name = pressed->name;
+        else if (text) name = text;
+        else return NULL;
      }
 
    if ((sc > SDL_SCANCODE_UNKNOWN) && (sc < SDL_NUM_SCANCODES) &&
        (_ecore_sdl_evdev_codes[sc]))
      keycode = _ecore_sdl_evdev_codes[sc] + 8;
 
-   return _ecore_sdl_key_event_new(kev->windowID, name, string, text,
+   return _ecore_sdl_key_event_new(kev->windowID, name, string,
                                    _ecore_sdl_event_modifiers(kev->keysym.mod),
                                    keycode, timestamp);
 }
@@ -554,12 +562,13 @@ ecore_sdl_feed_events(void)
                                                                     EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
              if (entry)
                {
-                  ev = _ecore_sdl_event_key(&event.key, NULL, timestamp);
+                  ev = _ecore_sdl_event_key(&event.key, NULL, entry,
+                                            timestamp);
                   if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
                }
 
              ev = _ecore_sdl_event_key(&event.key, has_text ? text : NULL,
-                                       timestamp);
+                                       entry, timestamp);
              if (ev) ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
              if (!entry)
@@ -568,6 +577,9 @@ ecore_sdl_feed_events(void)
                   if (!entry) break;
 
                   entry->key = event.key.keysym.sym;
+                  /* only used for keys with no entry in the table */
+                  eina_strlcpy(entry->name, has_text ? text : "",
+                               sizeof(entry->name));
 
                   repeat = eina_rbtree_inline_insert(repeat, EINA_RBTREE_GET(entry),
                                                      EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
@@ -581,15 +593,17 @@ ecore_sdl_feed_events(void)
 
              entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
                                                                     EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
+             /* build the release before freeing the entry: it holds the
+              * name of a key with no entry in the table */
+             ev = _ecore_sdl_event_key(&event.key, NULL, entry, timestamp);
+             if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+
              if (entry)
                {
                   repeat = eina_rbtree_inline_remove(repeat, EINA_RBTREE_GET(entry),
                                                      EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
                   free(entry);
                }
-
-             ev = _ecore_sdl_event_key(&event.key, NULL, timestamp);
-             if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
              break;
           }
           case SDL_TEXTINPUT:
@@ -604,13 +618,11 @@ ecore_sdl_feed_events(void)
              modifiers = _ecore_sdl_event_modifiers(SDL_GetModState());
              ev = _ecore_sdl_key_event_new(event.text.windowID,
                                            event.text.text, event.text.text,
-                                           event.text.text, modifiers, 0,
-                                           timestamp);
+                                           modifiers, 0, timestamp);
              if (ev) ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
              ev = _ecore_sdl_key_event_new(event.text.windowID,
                                            event.text.text, NULL,
-                                           event.text.text, modifiers, 0,
-                                           timestamp);
+                                           modifiers, 0, timestamp);
              if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
              break;
           }
