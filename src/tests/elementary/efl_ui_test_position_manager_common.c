@@ -236,6 +236,21 @@ EFL_START_TEST(relative_item_across_lines)
 }
 EFL_END_TEST
 
+// A manager that goes with a job still pending must not be reached by it: the
+// job is bound to the manager and ends with it.
+EFL_START_TEST(deleted_with_job_pending)
+{
+   _initial_setup();
+
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
+   _add_item(NULL, EINA_SIZE2D(20, 20));
+   // (the fixture made it with efl_new: its one ref is ours)
+   efl_unref(position_manager);
+   position_manager = NULL;
+   _iterate_a_few();
+}
+EFL_END_TEST
+
 void efl_ui_test_position_manager_common_add(TCase *tc)
 {
    tcase_add_test(tc, relative_item_across_lines);
@@ -243,4 +258,5 @@ void efl_ui_test_position_manager_common_add(TCase *tc)
    tcase_add_test(tc, no_crash1);
    tcase_add_test(tc, no_crash2);
    tcase_add_test(tc, viewport_newsize_event_result);
+   tcase_add_test(tc, deleted_with_job_pending);
 }

@@ -575,17 +575,24 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_scroll_position_set
 }
 
 static Eina_Value
-_rebuild_job_cb(void *data, Eina_Value v EINA_UNUSED, const Eina_Future *f EINA_UNUSED)
+_rebuild_job_cb(Eo *obj, void *data, const Eina_Value v)
 {
-   MY_DATA_GET(data, pd);
+   Efl_Ui_Position_Manager_Grid_Data *pd = data;
 
-   if (!efl_alive_get(data)) return EINA_VALUE_EMPTY;
+   _flush_abs_size(obj, pd);
+   _reposition_content(obj, pd);
 
-   _flush_abs_size(data, pd);
-   _reposition_content(data, pd);
+   return v;
+}
+
+// The job is bound to the manager (efl_future_then): it is cancelled when the
+// manager goes, and never runs on an object that is gone.
+static void
+_rebuild_job_free(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_Position_Manager_Grid_Data *pd = data;
+
    pd->rebuild_absolut_size = NULL;
-
-   return EINA_VALUE_EMPTY;
 }
 
 static void
@@ -593,8 +600,10 @@ _schedule_recalc_abs_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
    if (pd->rebuild_absolut_size) return;
 
-   pd->rebuild_absolut_size = efl_loop_job(efl_app_main_get());
-   eina_future_then(pd->rebuild_absolut_size, _rebuild_job_cb, obj);
+   pd->rebuild_absolut_size = efl_future_then(obj, efl_loop_job(efl_app_main_get()),
+                                              .success = _rebuild_job_cb,
+                                              .data = pd,
+                                              .free = _rebuild_job_free);
 }
 
 EOLIAN static void
@@ -865,8 +874,11 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access
 
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_object_invalidate(Eo *obj,
-                                                    Efl_Ui_Position_Manager_Grid_Data *pd EINA_UNUSED)
+                                                    Efl_Ui_Position_Manager_Grid_Data *pd)
 {
+   if (pd->rebuild_absolut_size)
+     eina_future_cancel(pd->rebuild_absolut_size);
+
    efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
    // (nothing reads the caches once the data is gone, and nothing else frees them)
