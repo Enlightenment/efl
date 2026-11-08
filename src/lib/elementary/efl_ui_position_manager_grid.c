@@ -869,6 +869,14 @@ _efl_ui_position_manager_grid_efl_object_invalidate(Eo *obj,
 {
    efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 
+   // (nothing reads the caches once the data is gone, and nothing else frees them)
+   eina_inarray_free(pd->group_cache);
+   pd->group_cache = NULL;
+   free(pd->size_cache);
+   pd->size_cache = NULL;
+   pd->group_cache_dirty = EINA_TRUE;
+   pd->size_cache_dirty = EINA_TRUE;
+
    efl_invalidate(efl_super(obj, EFL_UI_POSITION_MANAGER_GRID_CLASS));
 }
 
