@@ -105,6 +105,28 @@ _efl_canvas_layout_efl_layout_signal_message_send(Eo *obj, Edje *pd EINA_UNUSED,
         eina_value_get(&val, &msg.i.val);
         msgtype = EDJE_MESSAGE_INT;
      }
+   else if ((valtype == EINA_VALUE_TYPE_UCHAR) || (valtype == EINA_VALUE_TYPE_CHAR) ||
+            (valtype == EINA_VALUE_TYPE_USHORT) || (valtype == EINA_VALUE_TYPE_SHORT) ||
+            (valtype == EINA_VALUE_TYPE_UINT) || (valtype == EINA_VALUE_TYPE_LONG) ||
+            (valtype == EINA_VALUE_TYPE_ULONG) || (valtype == EINA_VALUE_TYPE_INT64) ||
+            (valtype == EINA_VALUE_TYPE_UINT64))
+     {
+        /* An integer of any other width is an int when it fits: a binding
+         * that has only one integer type of 64 bits sends this. */
+        Eina_Value as_int;
+        Eina_Bool ok;
+
+        ok = eina_value_setup(&as_int, EINA_VALUE_TYPE_INT) &&
+          eina_value_convert(&val, &as_int) &&
+          eina_value_get(&as_int, &msg.i.val);
+        eina_value_flush(&as_int);
+        if (!ok)
+          {
+             ERR("The integer value does not fit in an int.");
+             return;
+          }
+        msgtype = EDJE_MESSAGE_INT;
+     }
    else if (valtype == EINA_VALUE_TYPE_FLOAT)
      {
         float f;
@@ -172,7 +194,7 @@ _efl_canvas_layout_efl_layout_signal_message_send(Eo *obj, Edje *pd EINA_UNUSED,
 bad_type:
    ERR("Unsupported value type: %s. Only primitives types int, real "
        "(float or double), string or arrays of those types are supported.",
-       eina_value_type_name_get(valtype));
+       valtype ? eina_value_type_name_get(valtype) : "empty");
    return;
 }
 

@@ -153,6 +153,42 @@ EFL_START_TEST(edje_test_message_send_eo)
 }
 EFL_END_TEST
 
+EFL_START_TEST(edje_test_message_send_wide_int)
+{
+   Evas *evas;
+   Evas_Object *obj;
+   Eina_Value v;
+   int id = 0;
+
+   evas = _setup_evas();
+
+   obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
+                 efl_file_set(efl_added, test_layout_get("test_messages.edj")),
+                 efl_file_key_set(efl_added, "test_group"));
+   edje_object_signal_callback_add(obj, "*", "edc", _message_signal_reply_cb, &id);
+
+   /* an integer of 64 bits that fits is an int message */
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT64);
+   eina_value_set(&v, (int64_t)42);
+   efl_layout_signal_message_send(obj, 1, v);
+   eina_value_flush(&v);
+   edje_message_signal_process();
+   edje_object_calc_force(obj);
+   ck_assert_int_eq(id, 1);
+
+   /* one that does not is refused, not truncated */
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT64);
+   eina_value_set(&v, (int64_t)1 << 40);
+   efl_layout_signal_message_send(obj, 1, v);
+   eina_value_flush(&v);
+   edje_message_signal_process();
+   edje_object_calc_force(obj);
+   ck_assert_int_eq(id, 1);
+
+   efl_del(obj);
+}
+EFL_END_TEST
+
 EFL_START_TEST(edje_test_signals)
 {
    Evas *evas;
@@ -300,6 +336,7 @@ void edje_test_signal(TCase *tc)
 {
    tcase_add_test(tc, edje_test_message_send_legacy);
    tcase_add_test(tc, edje_test_message_send_eo);
+   tcase_add_test(tc, edje_test_message_send_wide_int);
    tcase_add_test(tc, edje_test_signals);
    tcase_add_test(tc, edje_test_signal_callback_del_full);
    tcase_add_test(tc, edje_test_signal_callback_free_once);
