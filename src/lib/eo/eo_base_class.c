@@ -1817,6 +1817,8 @@ struct _Efl_Future_Scheduler_Entry
    Eina_Future *future;
    Eina_Value value;
    int called;
+   // Recalled while the batch it is in was being run: the future is gone.
+   Eina_Bool recalled : 1;
 };
 
 static Eina_Trash *schedulers_trash = NULL;
@@ -1845,10 +1847,12 @@ _futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
    sched->listener = EINA_FALSE;
 
-   // Now trigger callbacks
+   // Now trigger callbacks. A callback may cancel a future of this batch, which
+   // frees the future and recalls its entry: that entry must not be called.
    EINA_LIST_FOREACH(entries, l, entry)
      {
-        if (entry->called == 0) entry->cb(entry->future, entry->value);
+        if ((entry->called == 0) && !entry->recalled)
+          entry->cb(entry->future, entry->value);
         entry->called++;
      }
    EINA_LIST_FREE(entries, entry)
@@ -1874,7 +1878,8 @@ _futures_cancel_cb(void *data)
    EINA_LIST_FREE(entries, entry)
      {
         eina_future_cancel(entry->future);
-        eina_value_flush(&entry->value);
+        // The cancel recalled the entry, which flushed its value.
+        if (!entry->recalled) eina_value_flush(&entry->value);
         eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
      }
 
@@ -1906,6 +1911,7 @@ _efl_event_future_scheduler(Eina_Future_Scheduler *s_sched,
    entry->future = future;
    entry->value = value;
    entry->called = 0;
+   entry->recalled = EINA_FALSE;
 
    if (!sched->listener)
      {
@@ -1927,7 +1933,18 @@ _efl_event_future_recall(Eina_Future_Schedule_Entry *s_entry)
    sched = (Efl_Future_Scheduler *) entry->base.scheduler;
 
    lookup = eina_list_data_find_list(sched->futures, entry);
-   if (!lookup) return;
+   if (!lookup)
+     {
+        // Not waiting for a batch: it is in the batch being run, whose list is
+        // local to _futures_dispatch_cb(), and the future it names is about to
+        // be freed. The batch frees the entry, but must skip it.
+        if (!entry->recalled)
+          {
+             entry->recalled = EINA_TRUE;
+             eina_value_flush(&entry->value);
+          }
+        return;
+     }
 
    sched->futures = eina_list_remove_list(sched->futures, lookup);
    if (!sched->futures)

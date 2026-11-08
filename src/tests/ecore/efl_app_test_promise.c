@@ -643,6 +643,175 @@ EFL_START_TEST(efl_test_promise_future_cancel)
 }
 EFL_END_TEST
 
+typedef struct _Batch_Ctx
+{
+   Eina_Future *victim;
+   int first_ran;
+   int victim_ran;
+   int victim_canceled;
+   int errors;
+} Batch_Ctx;
+
+static Eina_Value
+_batch_first(void *data, const Eina_Value v EINA_UNUSED, const Eina_Future *dead EINA_UNUSED)
+{
+   Batch_Ctx *ctx = data;
+
+   ctx->first_ran++;
+   // Both futures are in the batch the scheduler is running: the second is
+   // canceled from the callback of the first.
+   eina_future_cancel(ctx->victim);
+   return EINA_VALUE_EMPTY;
+}
+
+static Eina_Value
+_batch_victim(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Batch_Ctx *ctx = data;
+   Eina_Error err = 0;
+
+   ctx->victim_ran++;
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_get(&v, &err);
+        if (err == ECANCELED) ctx->victim_canceled++;
+     }
+   return EINA_VALUE_EMPTY;
+}
+
+static void
+_batch_log(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+           const char *file EINA_UNUSED, const char *fnc EINA_UNUSED, int line EINA_UNUSED,
+           const char *fmt EINA_UNUSED, void *data, va_list args EINA_UNUSED)
+{
+   Batch_Ctx *ctx = data;
+
+   if (level <= EINA_LOG_LEVEL_ERR) ctx->errors++;
+}
+
+static void
+_batch_promise_cancel(void *data EINA_UNUSED, const Eina_Promise *dead EINA_UNUSED)
+{
+}
+
+// A future canceled from a callback of the batch the scheduler of the loop is
+// running must not be called again, nor read again, once it is freed.
+EFL_START_TEST(efl_test_promise_future_cancel_in_batch)
+{
+   Batch_Ctx ctx = { 0 };
+   Eina_Promise *p1, *p2;
+   Eina_Future *f1, *f2;
+   int i;
+
+   fail_if(!ecore_init());
+   p1 = eina_promise_new(_future_scheduler_get(), _batch_promise_cancel, NULL);
+   p2 = eina_promise_new(_future_scheduler_get(), _batch_promise_cancel, NULL);
+   fail_if(!p1 || !p2);
+   f1 = eina_future_new(p1);
+   f2 = eina_future_new(p2);
+   fail_if(!f1 || !f2);
+   fail_if(!eina_future_then(f1, _batch_first, &ctx));
+   ctx.victim = eina_future_then(f2, _batch_victim, &ctx);
+   fail_if(!ctx.victim);
+
+   eina_log_print_cb_set(_batch_log, &ctx);
+   eina_promise_resolve(p1, eina_value_int_init(1));
+   eina_promise_resolve(p2, eina_value_int_init(2));
+   for (i = 0; i < 3; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   ck_assert_int_eq(ctx.first_ran, 1);
+   // told once that it was canceled, never run for the value it was resolved with
+   ck_assert_int_eq(ctx.victim_ran, 1);
+   ck_assert_int_eq(ctx.victim_canceled, 1);
+   // and nobody read the freed future (the safety check of the scheduler entry)
+   ck_assert_int_eq(ctx.errors, 0);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+// A scheduler of an object of its own, run by an event the test calls.
+static const Efl_Event_Description _owned_sched_event = EFL_EVENT_DESCRIPTION("test,owned,sched");
+EFL_SCHEDULER_ARRAY_DEFINE(_owned_sched, &_owned_sched_event);
+
+typedef struct _Owned_Ctx
+{
+   Eo *owner;
+   int ran;
+   int canceled;
+   int errors;
+} Owned_Ctx;
+
+static Eina_Value
+_owned_other(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Owned_Ctx *ctx = data;
+   Eina_Error err = 0;
+
+   ctx->ran++;
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_get(&v, &err);
+        if (err == ECANCELED) ctx->canceled++;
+     }
+   return EINA_VALUE_EMPTY;
+}
+
+static void
+_owned_log(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+           const char *file EINA_UNUSED, const char *fnc EINA_UNUSED, int line EINA_UNUSED,
+           const char *fmt EINA_UNUSED, void *data, va_list args EINA_UNUSED)
+{
+   Owned_Ctx *ctx = data;
+
+   if (level <= EINA_LOG_LEVEL_ERR) ctx->errors++;
+}
+
+static Eina_Future *
+_owned_future(Eo *owner, Eina_Future_Cb cb, Owned_Ctx *ctx, const char *str)
+{
+   Eina_Promise *p = eina_promise_new(efl_event_future_scheduler_get(owner, _owned_sched()),
+                                      _batch_promise_cancel, NULL);
+   Eina_Future *f;
+   Eina_Value v;
+
+   fail_if(!p);
+   f = eina_future_new(p);
+   fail_if(!f);
+   f = eina_future_then(f, cb, ctx);
+   fail_if(!f);
+   fail_if(!eina_value_setup(&v, EINA_VALUE_TYPE_STRINGSHARE));
+   fail_if(!eina_value_set(&v, str));
+   eina_promise_resolve(p, v);
+   return f;
+}
+
+// The owner of a scheduler is destroyed while a future with a value that
+// holds memory (a stringshare) is scheduled in it: the value is freed once.
+EFL_START_TEST(efl_test_promise_future_owner_destroyed)
+{
+   Owned_Ctx ctx = { 0 };
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.owner);
+   _owned_future(ctx.owner, _owned_other, &ctx, "scheduled and never run");
+   eina_log_print_cb_set(_owned_log, &ctx);
+   efl_parent_set(ctx.owner, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(ctx.ran, 1);
+   ck_assert_int_eq(ctx.canceled, 1);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_test_promise_future_inner_promise)
 {
    Eina_Future *f;
@@ -1487,6 +1656,8 @@ void efl_app_test_promise_2(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_chain_no_error);
    tcase_add_test(tc, efl_test_promise_future_chain_error);
    tcase_add_test(tc, efl_test_promise_future_cancel);
+   tcase_add_test(tc, efl_test_promise_future_cancel_in_batch);
+   tcase_add_test(tc, efl_test_promise_future_owner_destroyed);
    tcase_add_test(tc, efl_test_promise_future_implicit_cancel);
    tcase_add_test(tc, efl_test_promise_future_inner_promise);
    tcase_add_test(tc, efl_test_promise_future_inner_promise_fail);
