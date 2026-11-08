@@ -93,6 +93,34 @@ EFL_START_TEST(efl_ui_collection_bare)
 }
 EFL_END_TEST
 
+static void
+_manager_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   *(Eina_Bool *)data = EINA_TRUE;
+}
+
+// The ownership of a position manager is passed to the container: it holds the
+// only ref once it is set, and ends the manager it replaces.
+EFL_START_TEST(efl_ui_collection_manager_ownership)
+{
+   Eina_Bool gone = EINA_FALSE, gone2 = EINA_FALSE;
+   Eo *c = efl_add(EFL_UI_COLLECTION_CLASS, win);
+   Eo *grid = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+   Eo *list = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
+
+   efl_event_callback_add(grid, EFL_EVENT_DEL, _manager_del, &gone);
+   efl_event_callback_add(list, EFL_EVENT_DEL, _manager_del, &gone2);
+   efl_ui_collection_position_manager_set(c, grid);
+   ck_assert_ptr_eq(efl_ui_collection_position_manager_get(c), grid);
+   ck_assert_int_eq(efl_ref_count(grid), 1);
+   efl_ui_collection_position_manager_set(c, list);
+   ck_assert(gone);
+   ck_assert(!gone2);
+   efl_del(c);
+   ck_assert(gone2);
+}
+EFL_END_TEST
+
 void efl_ui_test_item_container(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
@@ -100,4 +128,5 @@ void efl_ui_test_item_container(TCase *tc)
    tcase_add_test(tc, finalizer_check);
    tcase_add_test(tc, efl_ui_collection_manager_twice);
    tcase_add_test(tc, efl_ui_collection_bare);
+   tcase_add_test(tc, efl_ui_collection_manager_ownership);
 }

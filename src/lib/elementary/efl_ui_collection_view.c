@@ -1988,6 +1988,8 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
    count = model ? efl_model_children_count_get(model) : 0;
 
    efl_parent_set(pd->manager, obj);
+   // the ownership is passed to us: the parent is the only holder left
+   efl_unref(pd->manager);
    efl_event_callback_array_add(pd->manager, manager_cbs(), obj);
         switch(efl_ui_position_manager_entity_version(pd->manager, 1))
           {

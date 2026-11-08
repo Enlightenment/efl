@@ -970,6 +970,8 @@ _efl_ui_collection_position_manager_set(Eo *obj, Efl_Ui_Collection_Data *pd, Efl
    if (pd->pos_man)
      {
         efl_parent_set(pd->pos_man, obj);
+        // the ownership is passed to us: the parent is the only holder left
+        efl_unref(pd->pos_man);
         efl_event_callback_array_add(pd->pos_man, pos_manager_cbs(), obj);
         switch(efl_ui_position_manager_entity_version(pd->pos_man, 1))
           {

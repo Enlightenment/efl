@@ -625,11 +625,41 @@ EFL_START_TEST(test_efl_ui_collection_view_shift_tab)
 }
 EFL_END_TEST
 
+static void
+_manager_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   *(Eina_Bool *)data = EINA_TRUE;
+}
+
+// The ownership of a position manager is passed to the view: it holds the
+// only ref once it is set, and ends the manager it replaces.
+EFL_START_TEST(efl_ui_collection_view_manager_ownership)
+{
+   Eina_Bool gone = EINA_FALSE, gone2 = EINA_FALSE;
+   Efl_Ui_Win *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *cv = efl_add(EFL_UI_COLLECTION_VIEW_CLASS, win);
+   Eo *grid = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+   Eo *list = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
+
+   efl_event_callback_add(grid, EFL_EVENT_DEL, _manager_del, &gone);
+   efl_event_callback_add(list, EFL_EVENT_DEL, _manager_del, &gone2);
+   efl_ui_collection_view_position_manager_set(cv, grid);
+   ck_assert_ptr_eq(efl_ui_collection_view_position_manager_get(cv), grid);
+   ck_assert_int_eq(efl_ref_count(grid), 1);
+   efl_ui_collection_view_position_manager_set(cv, list);
+   ck_assert(gone);
+   ck_assert(!gone2);
+   efl_del(cv);
+   ck_assert(gone2);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
    tcase_add_test(tc, efl_ui_collection_view_manager_twice);
    tcase_add_test(tc, efl_ui_collection_view_bare);
+   tcase_add_test(tc, efl_ui_collection_view_manager_ownership);
    tcase_add_test(tc, test_efl_ui_collection_view_select);
    tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
    tcase_add_test(tc, test_efl_ui_collection_view_select_mode_before_model);
