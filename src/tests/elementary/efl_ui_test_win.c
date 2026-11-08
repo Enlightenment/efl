@@ -705,6 +705,50 @@ EFL_START_TEST(efl_ui_win_test_event_forward_no_leak)
 }
 EFL_END_TEST
 
+// As Efl.Content says: a content that replaces another one removes it first
+// (it is hidden, the slot is the new one's, and deleting it later leaves the
+// slot alone), and the content that is unset is given back alive and alone,
+// holding nothing of the window's (as a layout does), so that deleting it
+// frees it.
+EFL_START_TEST(efl_ui_win_test_content_replace_and_unset)
+{
+   Efl_Ui_Win *win;
+   Eo *a, *b, *c, *gone = NULL, *got = NULL;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   a = efl_add(EFL_UI_BUTTON_CLASS, win);
+   b = efl_add(EFL_UI_BUTTON_CLASS, win);
+   c = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_wref_add(a, &gone);
+   efl_wref_add(c, &got);
+
+   ck_assert(efl_content_set(win, a));
+   ck_assert_ptr_eq(efl_content_get(win), a);
+   ck_assert(efl_content_set(win, b));
+   ck_assert_ptr_eq(efl_content_get(win), b);
+   ck_assert_ptr_ne(gone, NULL);
+   ck_assert(!efl_gfx_entity_visible_get(a));
+   efl_del(a);
+   ck_assert_ptr_eq(gone, NULL);
+   ck_assert_ptr_eq(efl_content_get(win), b);
+
+   ck_assert(efl_content_set(win, c));
+   ck_assert_ptr_eq(efl_content_get(win), c);
+   ck_assert_ptr_eq(efl_content_unset(win), c);
+   ck_assert_ptr_eq(efl_content_get(win), NULL);
+   // alive, and nobody has a reference but its parent
+   ck_assert_ptr_ne(got, NULL);
+   ck_assert_int_eq(efl_ref_count(c), 1);
+   ck_assert_ptr_ne(efl_parent_get(c), win);
+   efl_del(c);
+   ck_assert_ptr_eq(got, NULL);
+
+   // and a window that has none gives none
+   ck_assert_ptr_eq(efl_content_unset(win), NULL);
+   efl_unref(win);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -728,4 +772,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_rotation_normalized);
    tcase_add_test(tc, efl_ui_win_test_type);
    tcase_add_test(tc, efl_ui_win_test_content_replaced);
+   tcase_add_test(tc, efl_ui_win_test_content_replace_and_unset);
 }

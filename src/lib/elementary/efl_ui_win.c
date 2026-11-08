@@ -7637,25 +7637,37 @@ _elm_win_standard_init(Eo *obj)
    _elm_win_frame_style_update(sd, 0, 1);
 }
 
+// Takes the content of the window out of it, and gives it back: still alive,
+// no longer the window's.
+static Eo *
+_win_content_detach(Efl_Ui_Win_Data *sd, Eo *obj)
+{
+   Eo *prev = sd->content;
+
+   if (!prev) return NULL;
+   efl_wref_del(prev, &sd->content);
+   sd->content = NULL;
+   evas_object_box_remove(sd->legacy.box, prev);
+   elm_widget_sub_object_del(obj, prev);
+   return prev;
+}
+
 static Eina_Bool
 _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *content)
 {
+   Eo *prev;
+
    sd->legacy.forbidden = EINA_TRUE;
    if (eina_streq(part, "content"))
      {
         if (sd->content == content) return EINA_TRUE;
-        // The previous content goes first (@Efl.Content.content says so): left
-        // in the box, with its weak reference on, it would clear the slot of the
-        // content that replaced it when it is deleted.
-        if (sd->content)
-          {
-             Eo *prev = sd->content;
-
-             efl_wref_del(prev, &sd->content);
-             sd->content = NULL;
-             evas_object_box_remove(sd->legacy.box, prev);
-             elm_widget_sub_object_del(obj, prev);
-          }
+        // The previous content goes first, as @Efl.Content.content says: out of the
+        // box, hidden, and no longer held by the weak reference, which would
+        // clear the slot of the content that replaced it when it is deleted. It
+        // stays a child of the window, which ends it (callers that mean to keep
+        // it unset it first, and one that wants it gone deletes it).
+        prev = _win_content_detach(sd, obj);
+        if (prev && (prev != content)) evas_object_hide(prev);
         if (!content) return EINA_TRUE;
         if (!elm_widget_sub_object_add(obj, content))
           goto err;
@@ -7704,6 +7716,15 @@ _efl_ui_win_content_unset(Eo *obj, Efl_Ui_Win_Data *sd, const char *part)
    Eo *content;
 
    sd->legacy.forbidden = EINA_TRUE;
+   if (eina_streq(part, "content"))
+     {
+        // As Efl.Ui.Layout does: the caller gets the object alive and holding no
+        // reference of ours, and it is no longer a child of the window.
+        content = _win_content_detach(sd, obj);
+        if (content && (efl_parent_get(content) == obj))
+          efl_parent_set(content, evas_object_evas_get(obj));
+        return content;
+     }
    content = _efl_ui_win_content_get(obj, sd, part);
    if (!content) return NULL;
 
