@@ -139,7 +139,9 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
 
    ev->timestamp = timestamp;
    ev->window = event->key.windowID;
-   ev->event_window = 0;
+   /* ecore_input_evas routes key events by event_window, like mouse
+    * events: with 0 they match no window and are silently dropped */
+   ev->event_window = event->key.windowID;
    ev->modifiers = _ecore_sdl_event_modifiers(SDL_GetModState());
    ev->key = NULL;
    ev->compose = NULL;
@@ -148,7 +150,9 @@ _ecore_sdl_event_key(SDL_Event *event, double timestamp)
      if (keystable[i].code == event->key.keysym.sym)
        {
           ev->keyname = keystable[i].name;
+          ev->key = keystable[i].name;
           ev->string = keystable[i].compose;
+          ev->compose = keystable[i].compose;
 
           return ev;
        }
