@@ -740,10 +740,24 @@ EFL_SCHEDULER_ARRAY_DEFINE(_owned_sched, &_owned_sched_event);
 typedef struct _Owned_Ctx
 {
    Eo *owner;
+   Eina_Bool kill_owner;
+   int first_ran;
+   int nested_ran;
    int ran;
    int canceled;
    int errors;
 } Owned_Ctx;
+
+static Eina_Value
+_owned_first(void *data, const Eina_Value v EINA_UNUSED, const Eina_Future *dead EINA_UNUSED)
+{
+   Owned_Ctx *ctx = data;
+
+   ctx->first_ran++;
+   // The object that owns the scheduler goes away from a callback of the batch.
+   if (ctx->kill_owner) efl_parent_set(ctx->owner, NULL);
+   return EINA_VALUE_EMPTY;
+}
 
 static Eina_Value
 _owned_other(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
@@ -806,6 +820,77 @@ EFL_START_TEST(efl_test_promise_future_owner_destroyed)
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
    ck_assert_int_eq(ctx.ran, 1);
    ck_assert_int_eq(ctx.canceled, 1);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+// The owner is destroyed by a callback of the batch being run: what is left of
+// the batch is canceled, not run, and nothing reads the scheduler once freed.
+EFL_START_TEST(efl_test_promise_future_owner_destroyed_in_batch)
+{
+   Owned_Ctx ctx = { 0 };
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.owner);
+   ctx.kill_owner = EINA_TRUE;
+   _owned_future(ctx.owner, _owned_first, &ctx, "first");
+   _owned_future(ctx.owner, _owned_other, &ctx, "second");
+   _owned_future(ctx.owner, _owned_other, &ctx, "third");
+   eina_log_print_cb_set(_owned_log, &ctx);
+   efl_event_callback_call(ctx.owner, &_owned_sched_event, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(ctx.first_ran, 1);
+   // each of the others is told it was canceled, once, and never ran for its value
+   ck_assert_int_eq(ctx.ran, 2);
+   ck_assert_int_eq(ctx.canceled, 2);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+static Eina_Value
+_nested_a1(void *data, const Eina_Value v EINA_UNUSED, const Eina_Future *dead EINA_UNUSED)
+{
+   Owned_Ctx *ctx = data;
+
+   ctx->nested_ran++;
+   // A second batch of the same scheduler starts inside this callback, as it
+   // does when a callback spins a nested main loop...
+   _owned_future(ctx->owner, _owned_first, ctx, "b1");
+   _owned_future(ctx->owner, _owned_other, ctx, "b2");
+   efl_event_callback_call(ctx->owner, &_owned_sched_event, NULL);
+   return EINA_VALUE_EMPTY;
+}
+
+// ...and the second one deletes the owner (_owned_first): what is left of both
+// batches is canceled, not run, and the scheduler is freed once, by the outer loop.
+EFL_START_TEST(efl_test_promise_future_owner_destroyed_in_nested_batch)
+{
+   Owned_Ctx ctx = { 0 };
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.owner);
+   ctx.kill_owner = EINA_TRUE;
+   _owned_future(ctx.owner, _nested_a1, &ctx, "a1");
+   _owned_future(ctx.owner, _owned_other, &ctx, "a2");
+   _owned_future(ctx.owner, _owned_other, &ctx, "a3");
+   eina_log_print_cb_set(_owned_log, &ctx);
+   efl_event_callback_call(ctx.owner, &_owned_sched_event, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(ctx.nested_ran, 1);
+   ck_assert_int_eq(ctx.first_ran, 1);
+   // a2, a3 (outer batch) and b2 (inner one): told once, never run for their value
+   ck_assert_int_eq(ctx.ran, 3);
+   ck_assert_int_eq(ctx.canceled, 3);
    ck_assert_int_eq(ctx.errors, 0);
    efl_unref(parent);
    ecore_shutdown();
@@ -1658,6 +1743,8 @@ void efl_app_test_promise_2(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_cancel);
    tcase_add_test(tc, efl_test_promise_future_cancel_in_batch);
    tcase_add_test(tc, efl_test_promise_future_owner_destroyed);
+   tcase_add_test(tc, efl_test_promise_future_owner_destroyed_in_batch);
+   tcase_add_test(tc, efl_test_promise_future_owner_destroyed_in_nested_batch);
    tcase_add_test(tc, efl_test_promise_future_implicit_cancel);
    tcase_add_test(tc, efl_test_promise_future_inner_promise);
    tcase_add_test(tc, efl_test_promise_future_inner_promise_fail);

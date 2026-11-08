@@ -1798,6 +1798,14 @@ EO_API EFL_FUNC_BODYV(efl_event_callback_array_del,
 typedef struct _Efl_Future_Scheduler Efl_Future_Scheduler;
 typedef struct _Efl_Future_Scheduler_Entry Efl_Future_Scheduler_Entry;
 
+typedef struct _Efl_Future_Batch Efl_Future_Batch;
+
+struct _Efl_Future_Batch
+{
+   Eina_List *entries;
+   Efl_Future_Batch *prev;
+};
+
 struct _Efl_Future_Scheduler
 {
    Eina_Future_Scheduler scheduler;
@@ -1806,8 +1814,15 @@ struct _Efl_Future_Scheduler
    const Eo *self;
 
    Eina_List *futures;
+   // The batches being run by _futures_dispatch_cb(), the innermost first (a
+   // callback may start another one of the same scheduler): the entries that
+   // are not called yet can be reached when the scheduler is deleted.
+   Efl_Future_Batch *batches;
+   unsigned int dispatching;
 
    Eina_Bool listener : 1;
+   // Deleted while a batch was running: freed when the last batch is over.
+   Eina_Bool dead : 1;
 };
 
 struct _Efl_Future_Scheduler_Entry
@@ -1835,26 +1850,51 @@ _future_scheduler_cleanup(Efl_Object_Data *pd)
 }
 
 static void
+_future_scheduler_release(Efl_Future_Scheduler *sched)
+{
+   if (schedulers_count > 8)
+     {
+        free(sched);
+     }
+   else
+     {
+        eina_trash_push(&schedulers_trash, sched);
+        schedulers_count++;
+     }
+}
+
+static void
 _futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Future_Scheduler *sched = data;
    Eina_List *entries = sched->futures;
    Efl_Future_Scheduler_Entry *entry;
    Eina_List *l;
+   Efl_Future_Batch frame;
 
    sched->futures = NULL;
 
    efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
    sched->listener = EINA_FALSE;
 
+   // The scheduler may be deleted by a callback of the batch (its object goes
+   // away): it is then kept until the batch is over.
+   frame.entries = entries;
+   frame.prev = sched->batches;
+   sched->batches = &frame;
+   sched->dispatching++;
+
    // Now trigger callbacks. A callback may cancel a future of this batch, which
    // frees the future and recalls its entry: that entry must not be called.
+   // An entry is counted as called before its callback runs, so that the
+   // deletion of the scheduler, from this callback, leaves it alone.
    EINA_LIST_FOREACH(entries, l, entry)
      {
-        if ((entry->called == 0) && !entry->recalled)
+        if ((entry->called++ == 0) && !entry->recalled)
           entry->cb(entry->future, entry->value);
-        entry->called++;
      }
+   sched->dispatching--;
+   sched->batches = frame.prev;
    EINA_LIST_FREE(entries, entry)
      {
         if (entry->called > 1) ERR("Future entry called more than once!");
@@ -1862,6 +1902,8 @@ _futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
         if (entry->called == 0)
            eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
      }
+   // Deleted meanwhile: its object was told, and the rest of the batch canceled.
+   if (!sched->dispatching && sched->dead) _future_scheduler_release(sched);
 }
 
 static void
@@ -1883,15 +1925,26 @@ _futures_cancel_cb(void *data)
         eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
      }
 
-   if (schedulers_count > 8)
+   if (sched->dispatching)
      {
-        free(sched);
+        // A callback of the batch being run deleted the object. The entries
+        // of that batch that did not run are canceled (the loop skips them
+        // and frees them), and the scheduler is freed by the loop when done.
+        Efl_Future_Batch *b;
+        Eina_List *l;
+
+        sched->dead = EINA_TRUE;
+        for (b = sched->batches; b; b = b->prev)
+          {
+             EINA_LIST_FOREACH(b->entries, l, entry)
+               {
+                  if ((entry->called == 0) && !entry->recalled)
+                    eina_future_cancel(entry->future);
+               }
+          }
+        return;
      }
-   else
-     {
-        eina_trash_push(&schedulers_trash, sched);
-        schedulers_count++;
-     }
+   _future_scheduler_release(sched);
 }
 
 static Eina_Future_Schedule_Entry *
@@ -1947,7 +2000,8 @@ _efl_event_future_recall(Eina_Future_Schedule_Entry *s_entry)
      }
 
    sched->futures = eina_list_remove_list(sched->futures, lookup);
-   if (!sched->futures)
+   // (a scheduler that runs a batch is not cleaned up from under it)
+   if (!sched->futures && !sched->dispatching)
      {
         Efl_Object_Data *pd = efl_data_scope_get(sched->self, EFL_OBJECT_CLASS);
 
@@ -1991,6 +2045,11 @@ _efl_object_event_future_scheduler_get(const Eo *obj, Efl_Object_Data *pd, Efl_C
         // Need to allocate a new scheduler as none are on standby.
         sched = calloc(1, sizeof (Efl_Future_Scheduler));
      }
+   sched->batches = NULL;
+   sched->dispatching = 0;
+   sched->dead = EINA_FALSE;
+   sched->futures = NULL;
+   sched->listener = EINA_FALSE;
    sched->scheduler.schedule = _efl_event_future_scheduler;
    sched->scheduler.recall = _efl_event_future_recall;
    sched->array = array;
