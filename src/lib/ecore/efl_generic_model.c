@@ -80,14 +80,6 @@ _efl_generic_model_efl_model_property_set(Eo *obj, Efl_Generic_Model_Data *pd, c
    if (!eina_value_copy(value, exist))
      goto value_failed;
 
-   {
-      char *v = eina_value_to_string(value);
-      char *e = eina_value_to_string(exist);
-
-      free(v);
-      free(e);
-   }
-
    evt.changed_properties = eina_array_new(1);
    eina_array_push(evt.changed_properties, prop);
 
