@@ -53,6 +53,7 @@ class @beta Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Duplicate.duplicate;
    }
 }

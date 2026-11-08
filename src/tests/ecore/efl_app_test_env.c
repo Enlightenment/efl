@@ -3,7 +3,14 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+#if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
+# if __GLIBC_PREREQ(2, 33)
+#  include <malloc.h>
+#  define HAVE_MALLINFO2
+# endif
+#endif
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
 #include "efl_app_suite.h"
@@ -124,6 +131,53 @@ EFL_START_TEST(efl_core_env_test_undepend_fork)
 }
 EFL_END_TEST
 
+/* 200 environments of 16 variables of a kilobyte each, and a duplicate of each,
+ * made and deleted. */
+static void
+_env_churn(void)
+{
+   char name[32], value[1024];
+   int n, i;
+
+   memset(value, 'v', sizeof(value) - 1);
+   value[sizeof(value) - 1] = '\0';
+   for (n = 0; n < 200; n++)
+     {
+        Efl_Core_Env *env = efl_add_ref(EFL_CORE_ENV_CLASS, NULL), *copy;
+
+        for (i = 0; i < 16; i++)
+          {
+             snprintf(name, sizeof(name), "VAR_%d_%d", n, i);
+             value[0] = 'a' + i;
+             efl_core_env_set(env, name, value);
+          }
+        copy = efl_duplicate(env);
+        snprintf(name, sizeof(name), "VAR_%d_3", n);
+        ck_assert_int_eq(efl_core_env_get(copy, name)[0], 'd');
+        efl_unref(env);
+        efl_unref(copy);
+     }
+}
+
+EFL_START_TEST(efl_core_env_test_destroyed_with_values)
+{
+#ifdef HAVE_MALLINFO2
+   size_t before, after;
+
+   /* A deleted environment gives its variables back. What a leak keeps shows in
+    * the heap: 200 environments with 16 values of a kilobyte, twice over, are
+    * megabytes, and the heap must not grow by a fraction of that. */
+   _env_churn();
+   before = mallinfo2().uordblks;
+   _env_churn();
+   after = mallinfo2().uordblks;
+   ck_assert_msg(after < before + 256 * 1024, "the heap grew by %zu bytes", after - before);
+#else
+   _env_churn();
+#endif
+}
+EFL_END_TEST
+
 void efl_test_efl_env(TCase *tc)
 {
    tcase_add_test(tc, efl_core_env_test_set_get);
@@ -132,4 +186,5 @@ void efl_test_efl_env(TCase *tc)
    tcase_add_test(tc, efl_core_env_test_fork);
    tcase_add_test(tc, efl_core_env_test_process);
    tcase_add_test(tc, efl_core_env_test_undepend_fork);
+   tcase_add_test(tc, efl_core_env_test_destroyed_with_values);
 }

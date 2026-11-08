@@ -94,6 +94,15 @@ _efl_core_env_efl_object_constructor(Eo *obj, Efl_Core_Env_Data *pd)
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static void
+_efl_core_env_efl_object_destructor(Eo *obj, Efl_Core_Env_Data *pd)
+{
+   eina_hash_free(pd->env);
+   pd->env = NULL;
+
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Eina_Iterator*
 _efl_core_env_content_get(const Eo *obj EINA_UNUSED, Efl_Core_Env_Data *pd)
 {
