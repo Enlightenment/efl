@@ -353,7 +353,11 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
      }
 
 
-   if (name)
+   // A module is loaded when its engine is not registered yet, and not for every
+   // object made: loading counts, the shutdown lets go once, and a module that
+   // stays loaded believes itself registered in a registry that was emptied
+   // (the next life of emotion would find no engine).
+   if (name && !_emotion_engine_registry_find(name))
      {
         m = _find_mod(name);
         if (m)
@@ -366,7 +370,7 @@ emotion_engine_instance_new(const char *name, Evas_Object *obj, Emotion_Module_O
    if (!_emotion_engine_registry)
      {
         m = _find_mod("gstreamer1");
-        if (!eina_module_load(m))
+        if (m && !eina_module_load(m))
           ERR("Cannot load module %s", eina_module_file_get(m));
      }
 
