@@ -7744,7 +7744,20 @@ _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *cont
    if (eina_streq(part, "content"))
      {
         if (sd->content == content) return EINA_TRUE;
-        if (content && !elm_widget_sub_object_add(obj, content))
+        // The previous content goes first (@Efl.Content.content says so): left
+        // in the box, with its weak reference on, it would clear the slot of the
+        // content that replaced it when it is deleted.
+        if (sd->content)
+          {
+             Eo *prev = sd->content;
+
+             efl_wref_del(prev, &sd->content);
+             sd->content = NULL;
+             evas_object_box_remove(sd->legacy.box, prev);
+             elm_widget_sub_object_del(obj, prev);
+          }
+        if (!content) return EINA_TRUE;
+        if (!elm_widget_sub_object_add(obj, content))
           goto err;
         /* FIXME: Switch to swallow inside the frame
         if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", content))

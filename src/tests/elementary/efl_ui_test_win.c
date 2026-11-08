@@ -509,6 +509,28 @@ EFL_START_TEST(efl_ui_win_test_type)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_win_test_content_replaced)
+{
+   Efl_Ui_Win *win;
+   Eo *a, *b;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   a = efl_add(EFL_UI_BUTTON_CLASS, win);
+   b = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+   efl_content_set(win, a);
+   ck_assert_ptr_eq(efl_content_get(win), a);
+   efl_content_set(win, b);
+   ck_assert_ptr_eq(efl_content_get(win), b);
+
+   efl_del(a);
+   ck_assert_ptr_eq(efl_content_get(win), b);
+
+   efl_content_set(win, NULL);
+   ck_assert_ptr_eq(efl_content_get(win), NULL);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -527,4 +549,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_device_added_removed);
    tcase_add_test(tc, efl_ui_win_test_rotation_normalized);
    tcase_add_test(tc, efl_ui_win_test_type);
+   tcase_add_test(tc, efl_ui_win_test_content_replaced);
 }
