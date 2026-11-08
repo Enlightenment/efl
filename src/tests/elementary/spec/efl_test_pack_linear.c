@@ -473,7 +473,11 @@ object_setup(void)
 {
    if (widget_klass == EFL_UI_GROUP_ITEM_CLASS)
      {
-        Efl_Ui_Collection *collection = collection_grid;
+        // The grid made at suite setup is shared by the cases only because each
+        // runs in its own process, a copy of it. Unforked, the first window to
+        // end deletes it with its content, and the next case finds an object
+        // that is gone: each case gets its own.
+        Efl_Ui_Collection *collection = is_forked() ? collection_grid : NULL;
         if (!collection) collection = efl_add(EFL_UI_GRID_CLASS, win);
         efl_content_set(win, collection);
         efl_pack_end(collection, widget);
