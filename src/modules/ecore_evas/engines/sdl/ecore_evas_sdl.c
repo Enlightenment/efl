@@ -52,6 +52,7 @@ struct _Ecore_Evas_SDL_Switch_Data
    SDL_Texture *pages[2];
    SDL_Renderer *r;
    SDL_Window *w;
+   Eina_Bool fixed; /* display has one size only (KMSDRM console) */
 
    unsigned char current;
 };
@@ -131,6 +132,7 @@ _ecore_evas_sdl_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED,
    ee = _ecore_evas_sdl_match(e->windowID);
 
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if ((e->w == ee->w) && (e->h == ee->h)) return ECORE_CALLBACK_PASS_ON;
 
    rmethod = evas_output_method_get(ee->evas);
    if (rmethod == evas_render_method_lookup("buffer"))
@@ -179,6 +181,9 @@ _ecore_evas_sdl_event_video_resize(void *data EINA_UNUSED, int type EINA_UNUSED,
 
    evas_output_size_set(ee->evas, e->w, e->h);
    evas_output_viewport_set(ee->evas, 0, 0, e->w, e->h);
+   evas_damage_rectangle_add(ee->evas, 0, 0, e->w, e->h);
+
+   if (ee->func.fn_resize) ee->func.fn_resize(ee);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -288,11 +293,22 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    int rmethod;
 
+   Ecore_Evas_SDL_Switch_Data *swdata = (Ecore_Evas_SDL_Switch_Data*)(ee + 1);
+
    if ((w == ee->w) && (h == ee->h)) return;
+   if (swdata->fixed)
+     {
+        /* a console display cannot change size: keep the canvas at the
+         * screen size and tell the application what size it really has */
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        return;
+     }
    ee->req.w = w;
    ee->req.h = h;
    ee->w = w;
    ee->h = h;
+
+   SDL_SetWindowSize(swdata->w, w, h);
 
    rmethod = evas_output_method_get(ee->evas);
    if (rmethod == evas_render_method_lookup("buffer"))
@@ -463,6 +479,9 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    Ecore_Evas_SDL_Switch_Data *swd;
    Ecore_Evas *ee;
    Eina_Bool gl = EINA_FALSE;
+   Eina_Bool fixed = EINA_FALSE;
+   const char *vdrv;
+   Uint32 wflags;
 
    if (ecore_evas_sdl_count > 0) return NULL;
    if (!name)
@@ -474,6 +493,22 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
      {
         ERR("SDL Video initialization failed !");
         return NULL;
+     }
+
+   vdrv = SDL_GetCurrentVideoDriver();
+   if ((vdrv) && (!SDL_strcasecmp(vdrv, "KMSDRM")))
+     {
+        SDL_DisplayMode dm;
+
+        /* on the console there is no window system: the window is the
+         * screen, so create it fullscreen at the current display mode */
+        fixed = EINA_TRUE;
+        fullscreen = 1;
+        if (SDL_GetDesktopDisplayMode(0, &dm) == 0)
+          {
+             w = dm.w;
+             h = dm.h;
+          }
      }
 
    ee = calloc(1, sizeof(Ecore_Evas) + sizeof (Ecore_Evas_SDL_Switch_Data));
@@ -519,13 +554,21 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    evas_output_method_set(ee->evas, rmethod);
 
    gl = !(rmethod == evas_render_method_lookup("buffer"));
-   ee->can_async_render = gl ? EINA_FALSE : EINA_TRUE;
+   /* the SDL renderer (and its EGL context) belongs to this thread: the
+    * buffer engine's switch_buffer callback calls SDL_RenderCopy() and
+    * SDL_RenderPresent(), so it must never run in the evas render thread */
+   ee->can_async_render = EINA_FALSE;
+
+   swd->fixed = fixed;
+   wflags = (gl ? SDL_WINDOW_OPENGL : 0);
+   if (fixed) wflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+   else wflags |= SDL_WINDOW_RESIZABLE;
 
    swd->w = SDL_CreateWindow(name,
                              SDL_WINDOWPOS_UNDEFINED,
                              SDL_WINDOWPOS_UNDEFINED,
                              w, h,
-                             SDL_WINDOW_RESIZABLE | (gl ? SDL_WINDOW_OPENGL : 0));
+                             wflags);
    if (!swd->w)
      {
         ERR("SDL_CreateWindow failed.");
