@@ -207,6 +207,28 @@ EFL_START_TEST(elm_win_policy_quit_last_window_hidden)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_win_test_exit_on_close_unset)
+{
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
+   Eina_Value val = eina_value_int_init(66);
+   int code = 0;
+
+   ck_assert(!eina_value_type_get(efl_ui_win_exit_on_close_get(win)));
+   efl_ui_win_exit_on_close_set(win, &val);
+   ck_assert(eina_value_int_get(efl_ui_win_exit_on_close_get(win), &code));
+   ck_assert_int_eq(code, 66);
+
+   /* what the window returns can be set back, and is not lost doing it */
+   efl_ui_win_exit_on_close_set(win, efl_ui_win_exit_on_close_get(win));
+   ck_assert(eina_value_int_get(efl_ui_win_exit_on_close_get(win), &code));
+   ck_assert_int_eq(code, 66);
+
+   /* an empty value unsets it: the old one must not stay */
+   efl_ui_win_exit_on_close_set(win, &EINA_VALUE_EMPTY);
+   ck_assert(!eina_value_type_get(efl_ui_win_exit_on_close_get(win)));
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_win_test_exit_on_close)
 {
    Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
@@ -484,6 +506,7 @@ void elm_test_win(TCase *tc)
    tcase_add_test(tc, elm_atspi_component_screen_position);
    tcase_add_test(tc, elm_win_policy_quit_last_window_hidden);
    tcase_add_test(tc, elm_win_test_exit_on_close);
+   tcase_add_test(tc, elm_win_test_exit_on_close_unset);
    tcase_add_test(tc, elm_win_test_app_exit_on_windows_close);
    tcase_add_test(tc, efl_ui_win_multi_touch_inputs);
    tcase_add_test(tc, elm_win_test_rotation);

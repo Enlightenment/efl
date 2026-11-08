@@ -6219,12 +6219,14 @@ _efl_ui_win_exit_on_close_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 EOLIAN static void
 _efl_ui_win_exit_on_close_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const Eina_Value *exit_code)
 {
-   const Eina_Value_Type *type = eina_value_type_get(exit_code);
+   Eina_Value next = EINA_VALUE_EMPTY;
 
-   if (type)
-     eina_value_copy(exit_code, &sd->exit_on_close);
-   else
-     eina_value_flush(&sd->exit_on_close);
+   /* The new value is made first: exit_code may be the one we hold. And a
+    * flush leaves the type of a basic value in place, so what unsets is an
+    * empty value, not the flush. */
+   if (eina_value_type_get(exit_code) && !eina_value_copy(exit_code, &next)) return;
+   eina_value_flush(&sd->exit_on_close);
+   sd->exit_on_close = next;
 }
 
 /* Only for C API */
