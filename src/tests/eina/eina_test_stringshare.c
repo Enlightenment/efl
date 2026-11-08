@@ -130,6 +130,26 @@ EINA_TEST_START(eina_stringshare_small)
 }
 EINA_TEST_END
 
+EINA_TEST_START(eina_stringshare_single_byte)
+{
+   char buf[2] = { 0, 0 };
+   int c;
+
+   for (c = 1; c < 256; c++)
+     {
+        const char *t0;
+
+        buf[0] = (char)c;
+        t0 = eina_stringshare_add(buf);
+        fail_if(t0 == NULL);
+        fail_if(strcmp(t0, buf) != 0);
+        fail_if(t0 != eina_stringshare_add_length(buf, 1));
+        eina_stringshare_del(t0);
+        eina_stringshare_del(t0);
+     }
+}
+EINA_TEST_END
+
 
 EINA_TEST_START(eina_stringshare_test_share)
 {
