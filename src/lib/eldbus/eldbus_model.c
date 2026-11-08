@@ -161,7 +161,8 @@ static Eina_Iterator *
 _eldbus_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                        Eldbus_Model_Data *pd EINA_UNUSED)
 {
-   char *unique[] = { UNIQUE_NAME_PROPERTY };
+   // The iterator reads it after this returns.
+   static const char *unique[] = { UNIQUE_NAME_PROPERTY };
 
    return EINA_C_ARRAY_ITERATOR_NEW(unique);
 }

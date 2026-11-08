@@ -37,8 +37,12 @@ EFL_START_TEST(properties_get)
    unsigned int actual_properties_count = 0;
    const char *prop;
 
+   // The names are read after the call returned: they must not be on its stack.
    EINA_ITERATOR_FOREACH(properties, prop)
-     actual_properties_count++;
+     {
+        ck_assert_str_eq(prop, UNIQUE_NAME_PROPERTY);
+        actual_properties_count++;
+     }
    eina_iterator_free(properties);
 
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
