@@ -136,15 +136,23 @@ eolian_expression_value_to_literal(const Eolian_Value *val)
      }
 }
 
+// Indexed by the operator enums, whose first value is INVALID
 static const char *_binops[] = {
-    "+", "-", "*", "/", "%",
-    "==", "!=", ">", "<", ">=", "<=",
-    "&&", "||",
-    "&", "|", "^", "<<", ">>"
+   [EOLIAN_BINOP_ADD] = "+", [EOLIAN_BINOP_SUB] = "-",
+   [EOLIAN_BINOP_MUL] = "*", [EOLIAN_BINOP_DIV] = "/",
+   [EOLIAN_BINOP_MOD] = "%",
+   [EOLIAN_BINOP_EQ] = "==", [EOLIAN_BINOP_NQ] = "!=",
+   [EOLIAN_BINOP_GT] = ">", [EOLIAN_BINOP_LT] = "<",
+   [EOLIAN_BINOP_GE] = ">=", [EOLIAN_BINOP_LE] = "<=",
+   [EOLIAN_BINOP_AND] = "&&", [EOLIAN_BINOP_OR] = "||",
+   [EOLIAN_BINOP_BAND] = "&", [EOLIAN_BINOP_BOR] = "|",
+   [EOLIAN_BINOP_BXOR] = "^",
+   [EOLIAN_BINOP_LSH] = "<<", [EOLIAN_BINOP_RSH] = ">>"
 };
 
 static const char *_unops[] = {
-    "-", "+", "!", "~"
+   [EOLIAN_UNOP_UNM] = "-", [EOLIAN_UNOP_UNP] = "+",
+   [EOLIAN_UNOP_NOT] = "!", [EOLIAN_UNOP_BNOT] = "~"
 };
 
 static Eina_Bool

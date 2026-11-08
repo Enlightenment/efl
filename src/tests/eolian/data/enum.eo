@@ -32,6 +32,8 @@ enum Value {
 
 const Pants: Value = Value.pants; [[Docs for var Pants. @since 1.66]]
 
+const Inverted: int = ~1; [[Docs for var Inverted. @since 1.66]]
+
 class Enum {
     [[Docs for class Enum. @since 1.66]]
     methods {

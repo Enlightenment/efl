@@ -688,12 +688,12 @@ class TestEolianExpression(object):
         exp = var.value
         assert isinstance(exp, eolian.Expression)
         assert exp.type == eolian.Eolian_Expression_Type.UNARY
-        assert float(exp.serialize) == 32768.0  # TODO is this a bug? isn't -1.0 =
-        assert exp.unary_operator == eolian.Eolian_Unary_Operator.UNM  # Invalid -> NO
+        assert float(exp.serialize) == -32768.0
+        assert exp.unary_operator == eolian.Eolian_Unary_Operator.UNM
         unary = exp.unary_expression
         assert isinstance(unary, eolian.Expression)
         assert unary.type == eolian.Eolian_Expression_Type.INT
-        assert float(exp.serialize) == 32768.0  # Bug too ?
+        assert float(unary.serialize) == 32768.0
 
         # TODO test_expression_binary
         #  exp.binary_operator # TODO find a better test (only works for BINARY expr)

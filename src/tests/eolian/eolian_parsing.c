@@ -910,6 +910,19 @@ EFL_START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 2));
 
+   // Serialized operators match the source
+   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "flag2")));
+   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
+   name = eolian_expression_serialize(exp);
+   ck_assert_str_eq(name, "1 << 1");
+   eina_stringshare_del(name);
+
+   fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Inverted")));
+   fail_if(!(exp = eolian_constant_value_get(var)));
+   name = eolian_expression_serialize(exp);
+   ck_assert_str_eq(name, "~1");
+   eina_stringshare_del(name);
+
    fail_if(!(tdl = eolian_unit_enum_by_name_get(unit, "Name.Spaced")));
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "pants")));
 
