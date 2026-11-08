@@ -22,6 +22,7 @@ static const Eina_Benchmark_Case etc[] = {
    { "eo_do", eo_bench_eo_do },
    { "efl_add", eo_bench_efl_add },
    { "eo_callbacks", eo_bench_callbacks },
+   { "eo_promise", eo_bench_promise },
    { NULL, NULL }
 };
 

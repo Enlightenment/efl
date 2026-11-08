@@ -4,6 +4,7 @@
 void eo_bench_eo_do(Eina_Benchmark *bench);
 void eo_bench_efl_add(Eina_Benchmark *bench);
 void eo_bench_callbacks(Eina_Benchmark *bench);
+void eo_bench_promise(Eina_Benchmark *bench);
 
 #define _EO_BENCH_TIMES(Start, Repeat, Jump) (Start), ((Start) + ((Jump) * (Repeat))), (Jump)
 

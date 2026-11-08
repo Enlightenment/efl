@@ -43,6 +43,17 @@ EINA_API void __eina_promise_cancel_all(void);
 EINA_API void __eina_promise_cancel_data(void *data);
 
 /**
+ * Cancels the promises made with a scheduler that is going away, as if
+ * eina_future_cancel() had been called on their futures. Returns how many
+ * there were.
+ *
+ * Internal function. Do not use.
+ *
+ * @internal
+ */
+EINA_API unsigned int __eina_promise_scheduler_cancel(Eina_Future_Scheduler *scheduler);
+
+/**
  * Make the app specific paths accessible as virtual path
  *
  * This will create :

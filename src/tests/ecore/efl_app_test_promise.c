@@ -4,8 +4,10 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <pthread.h>
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
+#include "eina_internal.h"
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
@@ -897,6 +899,440 @@ EFL_START_TEST(efl_test_promise_future_owner_destroyed_in_nested_batch)
 }
 EFL_END_TEST
 
+typedef struct _Promise_Owner_Ctx
+{
+   Owned_Ctx base;
+   Eina_Promise *promise;
+   int promise_canceled;
+   int errors;
+} Promise_Owner_Ctx;
+
+static void
+_promise_owner_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
+{
+   Promise_Owner_Ctx *ctx = data;
+
+   ctx->promise_canceled++;
+   ctx->promise = NULL;
+}
+
+static void
+_promise_owner_cancel_count(void *data, const Eina_Promise *dead EINA_UNUSED)
+{
+   Promise_Owner_Ctx *ctx = data;
+
+   ctx->promise_canceled++;
+}
+
+static void
+_promise_owner_log(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+                   const char *file EINA_UNUSED, const char *fnc EINA_UNUSED, int line EINA_UNUSED,
+                   const char *fmt EINA_UNUSED, void *data, va_list args EINA_UNUSED)
+{
+   Promise_Owner_Ctx *ctx = data;
+
+   if (level <= EINA_LOG_LEVEL_ERR) ctx->errors++;
+}
+
+// A promise made with the scheduler of an object, whose future waits for the
+// value, when the object goes: the promise keeps the scheduler it was made with,
+// and resolving it afterwards would schedule on one that is released (and
+// reused for the next object that asks for one). It is canceled with the
+// scheduler instead: the future is told, and so is the owner of the promise.
+EFL_START_TEST(efl_test_promise_future_promise_outlives_owner)
+{
+   Promise_Owner_Ctx ctx = { { 0 }, NULL, 0, 0 };
+   Eo *parent;
+   Eina_Future *f;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.base.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.base.owner);
+
+   ctx.promise = eina_promise_new(efl_event_future_scheduler_get(ctx.base.owner, _owned_sched()),
+                                  _promise_owner_cancel, &ctx);
+   fail_if(!ctx.promise);
+   f = eina_future_new(ctx.promise);
+   fail_if(!f);
+   fail_if(!eina_future_then(f, _owned_other, &ctx.base));
+
+   eina_log_print_cb_set(_promise_owner_log, &ctx);
+   efl_parent_set(ctx.base.owner, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   // the future was told, once, that it is canceled; so was the promise
+   ck_assert_int_eq(ctx.base.ran, 1);
+   ck_assert_int_eq(ctx.base.canceled, 1);
+   ck_assert_int_eq(ctx.promise_canceled, 1);
+   ck_assert_ptr_eq(ctx.promise, NULL);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+static Eina_Value
+_cont_first(void *data, const Eina_Value v EINA_UNUSED, const Eina_Future *dead)
+{
+   Promise_Owner_Ctx *ctx = data;
+
+   ctx->base.first_ran++;
+   // The callback that deletes the owner returns a promise to continue with: it
+   // gets the scheduler that is running it, and that one is released with the batch.
+   efl_parent_set(ctx->base.owner, NULL);
+   ctx->promise = eina_promise_continue_new(dead, _promise_owner_cancel, ctx);
+   return eina_promise_as_value(ctx->promise);
+}
+
+EFL_START_TEST(efl_test_promise_future_continue_after_owner)
+{
+   Promise_Owner_Ctx ctx = { { 0 }, NULL, 0, 0 };
+   Eina_Promise *p;
+   Eina_Future *f;
+   Eina_Value v;
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.base.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.base.owner);
+
+   p = eina_promise_new(efl_event_future_scheduler_get(ctx.base.owner, _owned_sched()),
+                        _batch_promise_cancel, NULL);
+   fail_if(!p);
+   f = eina_future_new(p);
+   fail_if(!f);
+   fail_if(!eina_future_chain(f, {.cb = _cont_first, .data = &ctx},
+                              {.cb = _owned_other, .data = &ctx.base}));
+   fail_if(!eina_value_setup(&v, EINA_VALUE_TYPE_INT));
+   fail_if(!eina_value_set(&v, 1));
+   eina_promise_resolve(p, v);
+
+   eina_log_print_cb_set(_promise_owner_log, &ctx);
+   efl_event_callback_call(ctx.base.owner, &_owned_sched_event, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   ck_assert_int_eq(ctx.base.first_ran, 1);
+   // the continuation was canceled with the scheduler that was releasing: the
+   // future that waited for it is told, and so is the owner of the promise
+   ck_assert_int_eq(ctx.base.ran, 1);
+   ck_assert_int_eq(ctx.base.canceled, 1);
+   ck_assert_int_eq(ctx.promise_canceled, 1);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+// A callback of a future that is canceled because its object goes asks that
+// very object for its schedulers (as efl_loop_job() of a loop that is going
+// does): nothing may read the hash of schedulers that is being freed. The object
+// has two, so that whichever is canceled last asks for the one that is gone.
+static const Efl_Event_Description _owned_sched2_event = EFL_EVENT_DESCRIPTION("test,owned,sched2");
+EFL_SCHEDULER_ARRAY_DEFINE(_owned_sched2, &_owned_sched2_event);
+
+static Eina_Value
+_cancel_asks_scheduler(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Owned_Ctx *ctx = data;
+   Eina_Error err = 0;
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_get(&v, &err);
+        if (err == ECANCELED) ctx->canceled++;
+     }
+   ctx->ran++;
+   // (the callback of the future it asks for does not ask again)
+   if (ctx->nested_ran++ < 2)
+     {
+        Eina_Promise *p;
+
+        p = eina_promise_new(efl_event_future_scheduler_get(ctx->owner, _owned_sched()),
+                             _batch_promise_cancel, NULL);
+        fail_if(!p);
+        fail_if(!eina_future_then(eina_future_new(p), _owned_other, ctx));
+        p = eina_promise_new(efl_event_future_scheduler_get(ctx->owner, _owned_sched2()),
+                             _batch_promise_cancel, NULL);
+        fail_if(!p);
+        fail_if(!eina_future_then(eina_future_new(p), _owned_other, ctx));
+     }
+   return EINA_VALUE_EMPTY;
+}
+
+static void
+_owned_future2(Eo *owner, Eina_Future_Cb cb, Owned_Ctx *ctx)
+{
+   Eina_Promise *p = eina_promise_new(efl_event_future_scheduler_get(owner, _owned_sched2()),
+                                      _batch_promise_cancel, NULL);
+   Eina_Future *f;
+
+   fail_if(!p);
+   f = eina_future_then(eina_future_new(p), cb, ctx);
+   fail_if(!f);
+   eina_promise_resolve(p, eina_value_int_init(1));
+}
+
+EFL_START_TEST(efl_test_promise_future_cancel_asks_scheduler)
+{
+   Owned_Ctx ctx = { 0 };
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.owner);
+   _owned_future(ctx.owner, _cancel_asks_scheduler, &ctx, "first");
+   _owned_future2(ctx.owner, _cancel_asks_scheduler, &ctx);
+   eina_log_print_cb_set(_owned_log, &ctx);
+   efl_parent_set(ctx.owner, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   // the two futures were canceled; each asked for two, and those were canceled
+   // too (without asking again)
+   ck_assert_int_eq(ctx.canceled, 6);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+typedef struct _Reentrant_Ctx
+{
+   Eina_Future_Scheduler *scheduler;
+   int canceled[2];
+} Reentrant_Ctx;
+
+typedef struct _Reentrant_Promise
+{
+   Reentrant_Ctx *ctx;
+   int index;
+} Reentrant_Promise;
+
+static void
+_reentrant_promise_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
+{
+   Reentrant_Promise *rp = data;
+
+   rp->ctx->canceled[rp->index]++;
+   // the first one cancels the scheduler again from its callback
+   if (rp->index == 0) __eina_promise_scheduler_cancel(rp->ctx->scheduler);
+}
+
+// A promise is out of the list of its scheduler before its cancel callback
+// runs: the cancel of the scheduler from that callback does not take it twice.
+EFL_START_TEST(efl_test_promise_future_cancel_reentrant)
+{
+   Reentrant_Ctx ctx = { 0 };
+   Reentrant_Promise rp[2] = { { &ctx, 0 }, { &ctx, 1 } };
+   Owned_Ctx owned = { 0 };
+   Eina_Promise *p;
+   Eo *parent;
+   int i;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   owned.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!owned.owner);
+   ctx.scheduler = efl_event_future_scheduler_get(owned.owner, _owned_sched());
+   for (i = 0; i < 2; i++)
+     {
+        p = eina_promise_new(ctx.scheduler, _reentrant_promise_cancel, &rp[i]);
+        fail_if(!p);
+        fail_if(!eina_future_then(eina_future_new(p), _owned_other, &owned));
+     }
+   efl_parent_set(owned.owner, NULL);
+   ck_assert_int_eq(ctx.canceled[0], 1);
+   ck_assert_int_eq(ctx.canceled[1], 1);
+   ck_assert_int_eq(owned.canceled, 2);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+// A thread that resolves a promise while the scheduler of another one is
+// canceling it blocks on no lock of the cancel.
+typedef struct _Thread_Sched
+{
+   Eina_Future_Scheduler base;
+   Eina_Future_Schedule_Entry entry;
+} Thread_Sched;
+
+static Eina_Future_Schedule_Entry *
+_thread_sched_schedule(Eina_Future_Scheduler *s, Eina_Future_Scheduler_Cb cb EINA_UNUSED,
+                       Eina_Future *f EINA_UNUSED, Eina_Value value)
+{
+   Thread_Sched *ts = (Thread_Sched *)s;
+
+   eina_value_flush(&value);
+   ts->entry.scheduler = s;
+   return &ts->entry;
+}
+
+static void
+_thread_sched_recall(Eina_Future_Schedule_Entry *entry EINA_UNUSED)
+{
+}
+
+typedef struct _Thread_Ctx
+{
+   Eina_Promise *promise;
+   pthread_t thread;
+   int canceled;
+} Thread_Ctx;
+
+static void *
+_resolver_thread(void *data)
+{
+   Thread_Ctx *tc = data;
+
+   eina_promise_resolve(tc->promise, eina_value_int_init(1));
+   return NULL;
+}
+
+static void
+_waits_for_thread_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
+{
+   Thread_Ctx *tc = data;
+
+   tc->canceled++;
+   // the other thread resolves a promise: it needs the lock of the futures
+   pthread_create(&tc->thread, NULL, _resolver_thread, tc);
+   pthread_join(tc->thread, NULL);
+}
+
+EFL_START_TEST(efl_test_promise_future_cancel_no_lock_across_callbacks)
+{
+   Thread_Sched ts = { { _thread_sched_schedule, _thread_sched_recall }, { NULL } };
+   Thread_Ctx tc = { 0 };
+   Owned_Ctx owned = { 0 };
+   Eina_Promise *p;
+   Eina_Future *f;
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   owned.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!owned.owner);
+
+   // the promise the thread resolves: on a scheduler of the test's
+   tc.promise = eina_promise_new(&ts.base, _batch_promise_cancel, NULL);
+   fail_if(!tc.promise);
+   f = eina_future_new(tc.promise);
+   fail_if(!f);
+   fail_if(!eina_future_then(f, _owned_other, &owned));
+
+   // the one that is canceled with its object, whose callback waits for the thread
+   p = eina_promise_new(efl_event_future_scheduler_get(owned.owner, _owned_sched()),
+                        _waits_for_thread_cancel, &tc);
+   fail_if(!p);
+   fail_if(!eina_future_then(eina_future_new(p), _owned_other, &owned));
+
+   efl_parent_set(owned.owner, NULL);
+   ck_assert_int_eq(tc.canceled, 1);
+   // (what the thread resolved is scheduled on the scheduler of the test, which
+   // never runs it: cancel it)
+   eina_future_cancel(f);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+static void
+_late_cancel(void *data EINA_UNUSED, const Eina_Promise *dead EINA_UNUSED)
+{
+}
+
+// The promise of a scheduler that went, that has no future yet, is kept: its
+// owner was not told, and may resolve it, and a future it gets afterwards is
+// canceled. One that had a future is canceled and freed with the scheduler (its
+// owner was told, and by the contract of the callback lets go of it). Neither
+// touches freed memory.
+static Eina_Value
+_cont_many(void *data, const Eina_Value v EINA_UNUSED, const Eina_Future *dead)
+{
+   Promise_Owner_Ctx *ctx = data;
+
+   return eina_promise_as_value(eina_promise_continue_new(dead, _promise_owner_cancel_count, ctx));
+}
+
+// Continue promises pending on the scheduler of an object that dies are
+// canceled and freed (not kept: their owners let go of them when told).
+EFL_START_TEST(efl_test_promise_future_continue_promises_owner_dies)
+{
+   enum { N = 50 };
+   Promise_Owner_Ctx ctx = { { 0 }, NULL, 0, 0 };
+   Eo *parent;
+   int i;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.base.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.base.owner);
+   for (i = 0; i < N; i++)
+     {
+        Eina_Promise *p = eina_promise_new(efl_event_future_scheduler_get(ctx.base.owner, _owned_sched()),
+                                           _batch_promise_cancel, NULL);
+        Eina_Future *f;
+
+        fail_if(!p);
+        f = eina_future_new(p);
+        fail_if(!eina_future_chain(f, {.cb = _cont_many, .data = &ctx},
+                                   {.cb = _owned_other, .data = &ctx.base}));
+        eina_promise_resolve(p, eina_value_int_init(1));
+     }
+   // the first callbacks run, each returns a continue promise that waits
+   efl_event_callback_call(ctx.base.owner, &_owned_sched_event, NULL);
+   ck_assert_int_eq(ctx.base.ran, 0);
+   eina_log_print_cb_set(_promise_owner_log, &ctx);
+   efl_parent_set(ctx.base.owner, NULL);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(ctx.promise_canceled, N);
+   ck_assert_int_eq(ctx.base.ran, N);
+   ck_assert_int_eq(ctx.base.canceled, N);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_test_promise_future_resolve_after_owner)
+{
+   Owned_Ctx ctx = { 0 };
+   Eina_Promise *with_future, *without_future;
+   Eina_Future *f;
+   Eo *parent;
+
+   fail_if(!ecore_init());
+   parent = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
+   ctx.owner = efl_add(EFL_IO_BUFFER_CLASS, parent);
+   fail_if(!ctx.owner);
+
+   with_future = eina_promise_new(efl_event_future_scheduler_get(ctx.owner, _owned_sched()),
+                                  _late_cancel, NULL);
+   fail_if(!with_future);
+   fail_if(!eina_future_then(eina_future_new(with_future), _owned_other, &ctx));
+   // (the owner of this one lets go of it when it is told)
+   without_future = eina_promise_new(efl_event_future_scheduler_get(ctx.owner, _owned_sched()),
+                                     _late_cancel, NULL);
+   fail_if(!without_future);
+
+   eina_log_print_cb_set(_owned_log, &ctx);
+   efl_parent_set(ctx.owner, NULL);
+   // the first one was canceled with the scheduler...
+   ck_assert_int_eq(ctx.canceled, 1);
+   // ...and the one without future can still be resolved
+   f = eina_future_then(eina_future_new(without_future), _owned_other, &ctx);
+   fail_if(!f);
+   eina_promise_resolve(without_future, eina_value_int_init(2));
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(ctx.canceled, 2);
+   ck_assert_int_eq(ctx.errors, 0);
+   efl_unref(parent);
+   ecore_shutdown();
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_test_promise_future_inner_promise)
 {
    Eina_Future *f;
@@ -1745,6 +2181,13 @@ void efl_app_test_promise_2(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_owner_destroyed);
    tcase_add_test(tc, efl_test_promise_future_owner_destroyed_in_batch);
    tcase_add_test(tc, efl_test_promise_future_owner_destroyed_in_nested_batch);
+   tcase_add_test(tc, efl_test_promise_future_promise_outlives_owner);
+   tcase_add_test(tc, efl_test_promise_future_continue_after_owner);
+   tcase_add_test(tc, efl_test_promise_future_cancel_asks_scheduler);
+   tcase_add_test(tc, efl_test_promise_future_cancel_reentrant);
+   tcase_add_test(tc, efl_test_promise_future_cancel_no_lock_across_callbacks);
+   tcase_add_test(tc, efl_test_promise_future_resolve_after_owner);
+   tcase_add_test(tc, efl_test_promise_future_continue_promises_owner_dies);
    tcase_add_test(tc, efl_test_promise_future_implicit_cancel);
    tcase_add_test(tc, efl_test_promise_future_inner_promise);
    tcase_add_test(tc, efl_test_promise_future_inner_promise_fail);

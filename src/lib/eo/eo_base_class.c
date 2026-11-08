@@ -11,6 +11,7 @@
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 #include "eina_promise_private.h"
+#include "eina_internal.h"
 
 EO_API const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD =
     EFL_EVENT_DESCRIPTION_HOT("callback,add");
@@ -186,23 +187,35 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
 
+   // The hashes are detached before they are freed: what their free callbacks
+   // run (the cancel of a scheduler calls the callbacks of futures, which may
+   // ask this object for a scheduler again) must not find the hash that is
+   // being freed.
    if (pd->ext && pd->ext->forwarders)
      {
-        eina_hash_free(pd->ext->forwarders);
+        Eina_Hash *h = pd->ext->forwarders;
+
         pd->ext->forwarders = NULL;
+        eina_hash_free(h);
         _efl_object_extension_noneed(pd);
      }
 
    if (pd->ext && pd->ext->providers)
      {
-        eina_hash_free(pd->ext->providers);
+        Eina_Hash *h = pd->ext->providers;
+
         pd->ext->providers = NULL;
+        eina_hash_free(h);
         _efl_object_extension_noneed(pd);
      }
-   if (pd->ext && pd->ext->schedulers)
+   // (a scheduler that is asked for by a callback of the cancel is a new one,
+   // in a new hash, that goes the same way)
+   while (pd->ext && pd->ext->schedulers)
      {
-        eina_hash_free(pd->ext->schedulers);
+        Eina_Hash *h = pd->ext->schedulers;
+
         pd->ext->schedulers = NULL;
+        eina_hash_free(h);
         _efl_object_extension_noneed(pd);
      }
 
@@ -1842,6 +1855,8 @@ static unsigned char schedulers_count = 0;
 static void
 _future_scheduler_cleanup(Efl_Object_Data *pd)
 {
+   // (nothing to do while the hash is being freed: it was detached)
+   if (!pd->ext || !pd->ext->schedulers) return;
    if (eina_hash_population(pd->ext->schedulers)) return ;
 
    eina_hash_free(pd->ext->schedulers);
@@ -1849,9 +1864,44 @@ _future_scheduler_cleanup(Efl_Object_Data *pd)
    _efl_object_extension_noneed(pd);
 }
 
+// Cancels the entries that wait for a batch, the first one of the list each
+// time: what a callback of the cancel adds, adds to the list.
+static void
+_future_scheduler_entries_cancel(Efl_Future_Scheduler *sched)
+{
+   Eina_List *entries = sched->futures;
+   Efl_Future_Scheduler_Entry *entry;
+
+   sched->futures = NULL;
+   EINA_LIST_FREE(entries, entry)
+     {
+        eina_future_cancel(entry->future);
+        // The cancel recalled the entry, which flushed its value.
+        if (!entry->recalled) eina_value_flush(&entry->value);
+        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+     }
+}
+
+// The scheduler of an object that is gone gives nothing to the futures and
+// promises that still hold it: they are canceled, so that none of them reaches
+// it afterwards (once it is back in the trash, it is the scheduler of the next
+// object that asks for one).
+static void
+_future_scheduler_flush(Efl_Future_Scheduler *sched)
+{
+   do
+     {
+        _future_scheduler_entries_cancel(sched);
+     }
+   while (__eina_promise_scheduler_cancel(&sched->scheduler) || sched->futures);
+}
+
 static void
 _future_scheduler_release(Efl_Future_Scheduler *sched)
 {
+   // (promises that were made with it after it was deleted, or that a callback
+   // of its last batch returned, are only found now)
+   _future_scheduler_flush(sched);
    if (schedulers_count > 8)
      {
         free(sched);
@@ -1910,20 +1960,15 @@ static void
 _futures_cancel_cb(void *data)
 {
    Efl_Future_Scheduler *sched = data;
-   Eina_List *entries = sched->futures;
-   Efl_Future_Scheduler_Entry *entry;
 
+   // From here on nothing is scheduled on it (see _efl_event_future_scheduler()).
+   sched->dead = EINA_TRUE;
    efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
    sched->listener = EINA_FALSE;
-   sched->futures = NULL;
 
-   EINA_LIST_FREE(entries, entry)
-     {
-        eina_future_cancel(entry->future);
-        // The cancel recalled the entry, which flushed its value.
-        if (!entry->recalled) eina_value_flush(&entry->value);
-        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
-     }
+   _future_scheduler_entries_cancel(sched);
+   // The promises it was made for, whose futures wait for a value.
+   __eina_promise_scheduler_cancel(&sched->scheduler);
 
    if (sched->dispatching)
      {
@@ -1931,9 +1976,9 @@ _futures_cancel_cb(void *data)
         // of that batch that did not run are canceled (the loop skips them
         // and frees them), and the scheduler is freed by the loop when done.
         Efl_Future_Batch *b;
+        Efl_Future_Scheduler_Entry *entry;
         Eina_List *l;
 
-        sched->dead = EINA_TRUE;
         for (b = sched->batches; b; b = b->prev)
           {
              EINA_LIST_FOREACH(b->entries, l, entry)
@@ -1966,7 +2011,9 @@ _efl_event_future_scheduler(Eina_Future_Scheduler *s_sched,
    entry->called = 0;
    entry->recalled = EINA_FALSE;
 
-   if (!sched->listener)
+   // A scheduler that is deleted has no object to listen on: what is put in it
+   // is canceled when it is released.
+   if (!sched->listener && !sched->dead)
      {
         efl_event_callback_array_add((Eo *) sched->self, sched->array, sched);
         sched->listener = EINA_TRUE;
@@ -2001,7 +2048,7 @@ _efl_event_future_recall(Eina_Future_Schedule_Entry *s_entry)
 
    sched->futures = eina_list_remove_list(sched->futures, lookup);
    // (a scheduler that runs a batch is not cleaned up from under it)
-   if (!sched->futures && !sched->dispatching)
+   if (!sched->futures && !sched->dispatching && !sched->dead)
      {
         Efl_Object_Data *pd = efl_data_scope_get(sched->self, EFL_OBJECT_CLASS);
 

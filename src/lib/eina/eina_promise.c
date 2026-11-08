@@ -9,6 +9,8 @@
 #include "eina_promise_private.h"
 #include "eina_internal.h"
 #include "eina_iterator.h"
+#include "eina_inlist.h"
+#include "eina_hash.h"
 
 #include <errno.h>
 #include <stdarg.h>
@@ -101,10 +103,14 @@
 #define _eina_promise_value_dbg(_msg, _p, _v) __eina_promise_value_dbg(_msg, _p, _v, __LINE__, __func__)
 
 struct _Eina_Promise {
+   // The promises that share a scheduler are listed under it (see
+   // _promise_track()), so that they can be canceled when it goes.
+   EINA_INLIST;
    Eina_Future *future;
    Eina_Future_Scheduler *scheduler;
    Eina_Promise_Cancel_Cb cancel;
    const void *data;
+   Eina_Bool tracked : 1;
 };
 
 struct _Eina_Future {
@@ -124,6 +130,125 @@ static Eina_List *_pending_futures = NULL;
 static int _promise_log_dom = -1;
 
 static void _eina_promise_cancel(Eina_Promise *p);
+
+// The promises of a scheduler. A promise keeps the scheduler it was made with,
+// and the scheduler of an object does not outlive the object: a promise that is
+// resolved after that would schedule on a scheduler that is gone (or, once its
+// memory is reused, on the scheduler of another object). The scheduler tells
+// us when it goes, with __eina_promise_scheduler_cancel(), and what it still
+// has is canceled. All of it is under _promise_track_lock, a spinlock: it is
+// taken for a few pointers, twice for every promise, and never held while
+// anything else is called (the callbacks of a cancel run with no lock of ours
+// held, so that a thread that resolves a promise meanwhile is not blocked).
+//
+// A track stays, empty, until its scheduler tells us it goes or Eina shuts
+// down: a scheduler that is not an eo one never tells us, so each distinct
+// scheduler address costs a hash entry and a few bytes until Eina shuts down.
+// That is bounded by the number of schedulers a program ever makes.
+//
+// A promise taken from a scheduler that goes is not freed (see
+// __eina_promise_scheduler_cancel()): its owner may still resolve it.
+typedef struct _Promise_Track
+{
+   Eina_Inlist *promises;
+} Promise_Track;
+
+static Eina_Spinlock _promise_track_lock;
+// (NULL when the lock or the hash could not be made: nothing is tracked then,
+// and the lock is never taken)
+static Eina_Hash *_promise_tracks = NULL;
+static Eina_Future_Scheduler *_promise_track_last_scheduler = NULL;
+static Promise_Track *_promise_track_last = NULL;
+
+// What the promises of a scheduler that went are given: it takes nothing, and
+// the future that would have been scheduled is canceled.
+static Eina_Future_Schedule_Entry *
+_released_schedule(Eina_Future_Scheduler *scheduler EINA_UNUSED,
+                   Eina_Future_Scheduler_Cb cb EINA_UNUSED,
+                   Eina_Future *f EINA_UNUSED, Eina_Value value EINA_UNUSED)
+{
+   return NULL;
+}
+
+static void
+_released_recall(Eina_Future_Schedule_Entry *entry EINA_UNUSED)
+{
+}
+
+static Eina_Future_Scheduler _released_scheduler = {
+   .schedule = _released_schedule,
+   .recall = _released_recall
+};
+
+static Promise_Track *
+_promise_track_find(Eina_Future_Scheduler *scheduler)
+{
+   Promise_Track *t;
+
+   if (scheduler == _promise_track_last_scheduler) return _promise_track_last;
+   t = eina_hash_find(_promise_tracks, &scheduler);
+   if (t)
+     {
+        _promise_track_last_scheduler = scheduler;
+        _promise_track_last = t;
+     }
+   return t;
+}
+
+static Eina_Bool
+_promise_track(Eina_Promise *p)
+{
+   Promise_Track *t;
+
+   // (not being able to track is not an error: the promise works as before)
+   if (!_promise_tracks) return EINA_FALSE;
+   eina_spinlock_take(&_promise_track_lock);
+   t = _promise_track_find(p->scheduler);
+   if (!t)
+     {
+        t = calloc(1, sizeof(Promise_Track));
+        if (t && !eina_hash_add(_promise_tracks, &p->scheduler, t))
+          {
+             free(t);
+             t = NULL;
+          }
+        if (t)
+          {
+             _promise_track_last_scheduler = p->scheduler;
+             _promise_track_last = t;
+          }
+     }
+   if (t)
+     {
+        t->promises = eina_inlist_append(t->promises, EINA_INLIST_GET(p));
+        p->tracked = EINA_TRUE;
+     }
+   eina_spinlock_release(&_promise_track_lock);
+   return !!t;
+}
+
+static void
+_promise_untrack(Eina_Promise *p)
+{
+   Promise_Track *t;
+
+   if (!p->tracked || !_promise_tracks) return;
+   eina_spinlock_take(&_promise_track_lock);
+   t = _promise_track_find(p->scheduler);
+   // (the track stays when its list is empty: promises are made and resolved
+   // one after the other on the same scheduler, and making it again each time
+   // costs more than the promise. It goes with the scheduler, or with Eina.)
+   if (t) t->promises = eina_inlist_remove(t->promises, EINA_INLIST_GET(p));
+   p->tracked = EINA_FALSE;
+   eina_spinlock_release(&_promise_track_lock);
+}
+
+static void
+_eina_promise_free(Eina_Promise *p)
+{
+   _promise_untrack(p);
+   eina_mempool_free(_promise_mp, p);
+}
 
 static Eina_Value_Struct_Member RACE_STRUCT_MEMBERS[] = {
   EINA_VALUE_STRUCT_MEMBER(NULL, Eina_Future_Race_Result, value),
@@ -312,9 +437,12 @@ static void
 _eina_promise_cancel(Eina_Promise *p)
 {
    DBG("Cancelling promise: %p, data: %p, future: %p", p, p->data, p->future);
+   // (out of its scheduler's list before its callback runs: a cancel of that
+   // scheduler from the callback must not find it again)
+   _promise_untrack(p);
    _eina_promise_unlink(p);
    p->cancel((void *)p->data, p);
-   eina_mempool_free(_promise_mp, p);
+   _eina_promise_free(p);
 }
 
 static void
@@ -326,7 +454,11 @@ _eina_promise_value_steal_and_link(Eina_Future_Scheduler *scheduler,
    DBG("Promise %p stolen from value", p);
    eina_value_flush(&value);
    // In the case of continue promise, define a scheduler when steal&link
-   if (!p->scheduler) p->scheduler = scheduler;
+   if (!p->scheduler)
+     {
+        p->scheduler = scheduler;
+        _promise_track(p);
+     }
    if (f) _eina_promise_link(p, f);
    else _eina_promise_unlink(p);
 }
@@ -500,6 +632,13 @@ _eina_future_schedule(Eina_Promise *p,
         ERR("Trying to resolve a continue promise during a future callback. Directly return Eina_Value instead.");
         goto err;
      }
+   if (p->scheduler == &_released_scheduler)
+     {
+        // its scheduler went before the future was attached or the promise resolved
+        _eina_future_cancel(f, ECANCELED);
+        eina_value_flush(&value);
+        return;
+     }
    f->scheduled_entry = p->scheduler->schedule(p->scheduler,
                                                _scheduled_entry_cb,
                                                f, value);
@@ -533,7 +672,7 @@ _eina_promise_deliver(Eina_Promise *p,
         DBG("Promise %p has no future", p);
         eina_value_flush(&value);
      }
-   eina_mempool_free(_promise_mp, p);
+   _eina_promise_free(p);
 }
 
 Eina_Bool
@@ -562,6 +701,12 @@ eina_promise_init(void)
    EINA_SAFETY_ON_NULL_GOTO(_future_mp, err_future);
 
    eina_lock_recursive_new(&_pending_futures_lock);
+   // (no tracking if this fails: promises work as they did)
+   if (eina_spinlock_new(&_promise_track_lock))
+     {
+        _promise_tracks = eina_hash_pointer_new(NULL);
+        if (!_promise_tracks) eina_spinlock_free(&_promise_track_lock);
+     }
 
    return EINA_TRUE;
 
@@ -581,6 +726,77 @@ __eina_promise_cancel_all(void)
    while (_pending_futures)
      _eina_future_cancel(_pending_futures->data, ECANCELED);
    eina_lock_release(&_pending_futures_lock);
+}
+
+EINA_API unsigned int
+__eina_promise_scheduler_cancel(Eina_Future_Scheduler *scheduler)
+{
+   unsigned int count = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(scheduler, 0);
+   if (!_promise_tracks) return 0;
+
+   // Each promise leaves the list under the lock, then is handled with none
+   // held: its callbacks, and those of its futures, run free (a cancel callback
+   // may free other promises, or ask for this scheduler again). This is not
+   // thread safe against a thread that resolves one of these promises at the
+   // same time (the promise is read and written without a lock once it left the
+   // list); what it does is not to hold the lock of the futures, which such a
+   // thread, resolving a promise of another scheduler, takes.
+   for (;;)
+     {
+        Promise_Track *t;
+        Eina_Promise *p = NULL;
+
+        eina_spinlock_take(&_promise_track_lock);
+        t = _promise_track_find(scheduler);
+        if (t && t->promises)
+          {
+             p = EINA_INLIST_CONTAINER_GET(t->promises, Eina_Promise);
+             t->promises = eina_inlist_remove(t->promises, EINA_INLIST_GET(p));
+             p->tracked = EINA_FALSE;
+          }
+        else if (t)
+          {
+             // nothing left, and the scheduler is going: its track goes too
+             eina_hash_del(_promise_tracks, &scheduler, t);
+             if (_promise_track_last == t)
+               {
+                  _promise_track_last = NULL;
+                  _promise_track_last_scheduler = NULL;
+               }
+             free(t);
+          }
+        eina_spinlock_release(&_promise_track_lock);
+        if (!p) break;
+
+        count++;
+        if (p->future)
+          {
+             // As eina_future_cancel() does: the owner is told (and, by the
+             // contract of the cancel callback, lets go of the promise), the
+             // promise is freed, then the chain is told. Nothing is kept: a
+             // program that makes promises for objects that die would grow.
+             Eina_Future *f = p->future;
+
+             _eina_promise_unlink(p);
+             p->cancel((void *)p->data, p);
+             eina_mempool_free(_promise_mp, p);
+             _eina_future_cancel(f, ECANCELED);
+          }
+        else
+          {
+             // No future: its owner was not told and may resolve it later (it
+             // may also sit in a PROMISE value). It is kept, with the scheduler
+             // of the ones that went, listed under it so that Eina frees what is
+             // never resolved when it shuts down. If it cannot be listed (no
+             // memory) it stays unlisted and leaks if it is never resolved:
+             // freeing it would leave its owner a dangling promise.
+             p->scheduler = &_released_scheduler;
+             _promise_track(p);
+          }
+     }
+   return count;
 }
 
 EINA_API void
@@ -608,6 +824,35 @@ Eina_Bool
 eina_promise_shutdown(void)
 {
    __eina_promise_cancel_all();
+   if (_promise_tracks)
+     {
+        Eina_Iterator *it;
+        Eina_Future_Scheduler *released = &_released_scheduler;
+        Promise_Track *rt = eina_hash_find(_promise_tracks, &released);
+
+        // the promises that were taken from schedulers that went, and that
+        // their owners never resolved
+        while (rt && rt->promises)
+          {
+             Eina_Promise *p = EINA_INLIST_CONTAINER_GET(rt->promises, Eina_Promise);
+
+             rt->promises = eina_inlist_remove(rt->promises, EINA_INLIST_GET(p));
+             eina_mempool_free(_promise_mp, p);
+          }
+        it = eina_hash_iterator_data_new(_promise_tracks);
+        Promise_Track *t;
+
+        EINA_ITERATOR_FOREACH(it, t)
+          {
+             free(t);
+          }
+        eina_iterator_free(it);
+        eina_hash_free(_promise_tracks);
+        _promise_tracks = NULL;
+        _promise_track_last = NULL;
+        _promise_track_last_scheduler = NULL;
+        eina_spinlock_free(&_promise_track_lock);
+     }
    eina_lock_free(&_pending_futures_lock);
    eina_mempool_del(_future_mp);
    eina_mempool_del(_promise_mp);
@@ -657,7 +902,7 @@ _eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
         // Nobody is going to flush this value if we don't
         eina_value_flush(&v);
      }
-   eina_mempool_free(_promise_mp, p);
+   _eina_promise_free(p);
 }
 
 /* The two sides of eina_future_as_value, and what one knows about the other.
@@ -822,6 +1067,7 @@ eina_promise_new(Eina_Future_Scheduler *scheduler,
    p->cancel = cancel_cb;
    p->data = data;
    p->scheduler = scheduler;
+   _promise_track(p);
    DBG("Creating new promise - Promise:%p, cb: %p, data:%p", p,
        p->cancel, p->data);
    return p;
@@ -1413,7 +1659,7 @@ promise_proxy_of_future_array_create(Eina_Future *array[],
    ctx->futures = NULL;
  err_futures:
    ctx->futures_len = 0;
-   eina_mempool_free(_promise_mp, ctx->promise);
+   _eina_promise_free(ctx->promise);
    ctx->promise = NULL;
    return EINA_FALSE;
 }
@@ -1473,7 +1719,7 @@ eina_promise_all_iterator(Eina_Iterator *it)
    free(ctx->base.futures);
    ctx->base.futures = NULL;
 
-   eina_mempool_free(_promise_mp, ctx->base.promise);
+   _eina_promise_free(ctx->base.promise);
    eina_value_flush(&ctx->values);
  err_array:
    free(ctx);
@@ -1515,7 +1761,7 @@ eina_promise_all_array(Eina_Future *array[])
  err_stub:
    for (i = 0; i < ctx->base.futures_len; i++) _eina_future_free(ctx->base.futures[i]);
    free(ctx->base.futures);
-   eina_mempool_free(_promise_mp, ctx->base.promise);
+   _eina_promise_free(ctx->base.promise);
  err_promise:
    eina_value_flush(&ctx->values);
  err_array:

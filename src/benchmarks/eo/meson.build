@@ -4,6 +4,7 @@ eo_benchmark_src = [
   'eo_bench.c',
   'eo_bench.h',
   'eo_bench_callbacks.c',
+  'eo_bench_promise.c',
   'eo_bench_eo_do.c',
   'eo_bench_eo_add.c'
 ]
