@@ -199,7 +199,9 @@ static const unsigned short _ecore_sdl_evdev_codes[SDL_NUM_SCANCODES] =
    [SDL_SCANCODE_F23] = 193,
    [SDL_SCANCODE_F24] = 194,
    [SDL_SCANCODE_AUDIOFASTFORWARD] = 208,
-   [SDL_SCANCODE_PRINTSCREEN] = 210,
+   /* the Print Screen key: SDL's evdev backend reports it as SYSREQ,
+    * its other backends as PRINTSCREEN; KEY_PRINT (210) is rare */
+   [SDL_SCANCODE_PRINTSCREEN] = 99,
    [SDL_SCANCODE_AC_SEARCH] = 217,
    [SDL_SCANCODE_ALTERASE] = 222,
    [SDL_SCANCODE_CANCEL] = 223,
