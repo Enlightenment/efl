@@ -125,6 +125,11 @@ EFL_START_TEST(efl_test_select_model)
    eina_iterator_free(it);
 
    efl_model_property_set(model, "child.selected", eina_value_int_new(1));
+
+   // both were made with efl_add_ref: the refs are the test's to give back
+   efl_unref(model);
+   efl_unref(base_model);
+   eina_value_flush(&v);
 }
 EFL_END_TEST
 
