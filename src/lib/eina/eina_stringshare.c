@@ -584,7 +584,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
      {
         eina_share_common_population_add(stringshare_share, slen);
 
-        return (Eina_Stringshare *) _eina_stringshare_single + ((*str) << 1);
+        return (Eina_Stringshare *) _eina_stringshare_single + (((unsigned char)*str) << 1);
      }
    else if (slen < 4)
      {
