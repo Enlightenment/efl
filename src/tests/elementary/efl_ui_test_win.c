@@ -546,6 +546,21 @@ EFL_START_TEST(efl_ui_win_test_background_replace)
 }
 EFL_END_TEST
 
+// A part proxy that no call ever used: efl_part() armed it to drop its extra ref
+// at the end of its next call, and the next call is its own deletion with the
+// window. It must be released once, not twice.
+EFL_START_TEST(efl_ui_win_test_part_proxy_unused)
+{
+   Efl_Ui_Win *win;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   ck_assert_ptr_ne(efl_part(win, "background"), NULL);
+   fail_on_errors_setup();
+   evas_object_del(win);
+   fail_on_errors_teardown();
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_win_test_type)
 {
    Efl_Ui_Win *win;
@@ -871,6 +886,7 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_rotation_normalized);
    tcase_add_test(tc, efl_ui_win_test_type);
    tcase_add_test(tc, efl_ui_win_test_content_replaced);
+   tcase_add_test(tc, efl_ui_win_test_part_proxy_unused);
    tcase_add_test(tc, efl_ui_win_test_background_replace);
    tcase_add_test(tc, efl_ui_win_test_content_replace_and_unset);
    tcase_add_test(tc, efl_ui_win_test_background_unset);

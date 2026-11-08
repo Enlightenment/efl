@@ -82,6 +82,11 @@ static void
 _noref_death(void *data EINA_UNUSED, const Efl_Event *event)
 {
    efl_event_callback_del(event->object, EFL_EVENT_NOREF, _noref_death, NULL);
+   // A proxy that nobody used is armed to drop its extra ref at its next call,
+   // which can be the call that invalidates it with its parent: its parent is
+   // then already letting go of it, and a second efl_del would release the
+   // parent's reference twice ("Too many unrefs").
+   if (efl_invalidating_get(event->object)) return;
    efl_del(event->object);
 }
 
