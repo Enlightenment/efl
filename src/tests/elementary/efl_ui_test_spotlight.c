@@ -691,6 +691,25 @@ EFL_START_TEST (efl_ui_spotlight_manager_unset)
 }
 EFL_END_TEST
 
+// A manager set again stays: it is not the one that is replaced, and not ended.
+EFL_START_TEST (efl_ui_spotlight_manager_twice)
+{
+   Eina_Bool gone = EINA_FALSE;
+   Eo *manager = efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS);
+
+   efl_event_callback_add(manager, EFL_EVENT_DEL, _manager_del, &gone);
+   efl_ui_spotlight_manager_set(container, manager);
+   efl_ref(manager); // (a caller that gives it again, with the ref it takes to do so)
+   efl_ui_spotlight_manager_set(container, manager);
+   ck_assert(!gone);
+   ck_assert_ptr_eq(efl_ui_spotlight_manager_get(container), manager);
+   ck_assert_int_eq(efl_ref_count(manager), 1);
+   // and it is the one in use: set to none, it is ended
+   efl_ui_spotlight_manager_set(container, NULL);
+   ck_assert(gone);
+}
+EFL_END_TEST
+
 EFL_START_TEST (efl_ui_spotlight_min_max_sizing)
 {
    Efl_Ui_Button *btn0, *btn1;
@@ -770,5 +789,6 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_test_pop3);
    tcase_add_test(tc, efl_ui_spotlight_animated_transition);
    tcase_add_test(tc, efl_ui_spotlight_manager_unset);
+   tcase_add_test(tc, efl_ui_spotlight_manager_twice);
    tcase_add_test(tc, efl_ui_spotlight_min_max_sizing);
 }

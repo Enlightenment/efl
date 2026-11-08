@@ -657,6 +657,17 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
    if (transition)
      EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_SPOTLIGHT_MANAGER_CLASS));
 
+   // the manager that is there, set again, stays: ending it would end the one
+   // that is being set. The ref it came with is let go of, as for any manager.
+   if (transition && (transition == pd->transition))
+     {
+        int extra_refs = efl_ref_count(transition) - (efl_parent_get(transition) ? 1 : 0);
+
+        if (extra_refs > 0)
+          efl_unref(transition);
+        return;
+     }
+
    // the manager that is there goes first, then the new one (a plain one when
    // none is given) is taken over the same way
    if (pd->transition)
