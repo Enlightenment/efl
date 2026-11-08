@@ -7521,10 +7521,48 @@ if (x < 0) { x = 0; bad = 1; } } while (0)
 
 #define WIN_PART_ERR(part) ERR("No such part in window: '%s'. Supported parts are: 'content' and 'background'.", part);
 
+// Replaces the background with nothing: the slot is forgotten first (the weak
+// reference would otherwise clear it when the background dies), then, if it is
+// still alive, it leaves the part and the window and is deleted.
+// evas_object_del waits for the references an Evas callback holds on it, where
+// efl_del would not.
+static void
+_win_bg_drop(Efl_Ui_Win_Data *sd)
+{
+   Eo *prev = sd->bg;
+
+   if (!prev) return;
+   efl_wref_del(prev, &sd->bg);
+   sd->bg = NULL;
+   if (!efl_alive_get(prev)) return;
+   edje_object_part_unswallow(_elm_config->win_no_border ? sd->legacy.edje : sd->frame_obj, prev);
+   elm_widget_sub_object_del(sd->obj, prev);
+   if (efl_parent_get(prev) == sd->obj)
+     efl_parent_set(prev, evas_object_evas_get(sd->obj));
+   evas_object_del(prev);
+}
+
+// Takes the background back out of the window after a part of taking it failed.
+static Eina_Bool
+_win_bg_refuse(Efl_Ui_Win_Data *sd, Eo *bg)
+{
+   edje_object_part_unswallow(_elm_config->win_no_border ? sd->legacy.edje : sd->frame_obj, bg);
+   elm_widget_sub_object_del(sd->obj, bg);
+   return EINA_FALSE;
+}
+
 static Eina_Bool
 _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
 {
-   ELM_SAFE_DEL(sd->bg);
+   if (bg && (bg == sd->bg)) return EINA_TRUE;
+   _win_bg_drop(sd);
+   // (a callback of the deleted background may have set another one, or this
+   // one: whatever it set goes too, so that one background is held at the end)
+   if (bg && (bg == sd->bg)) return EINA_TRUE;
+   while (sd->bg)
+     {
+        _win_bg_drop(sd);
+     }
    if (!bg) return EINA_TRUE;
 
    if (!elm_widget_sub_object_add(sd->obj, bg))
@@ -7534,12 +7572,12 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
         if (!_elm_config->win_no_border)
           {
              if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg))
-               return EINA_FALSE;
+               return _win_bg_refuse(sd, bg);
           }
         else
           {
              if (!edje_object_part_swallow(sd->legacy.edje, "elm.swallow.background", bg))
-               return EINA_FALSE;
+               return _win_bg_refuse(sd, bg);
           }
      }
    else
@@ -7547,12 +7585,12 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
         if (!_elm_config->win_no_border)
           {
              if (!edje_object_part_swallow(sd->frame_obj, "efl.background", bg))
-               return EINA_FALSE;
+               return _win_bg_refuse(sd, bg);
           }
         else
           {
              if (!edje_object_part_swallow(sd->legacy.edje, "efl.background", bg))
-               return EINA_FALSE;
+               return _win_bg_refuse(sd, bg);
           }
      }
    efl_gfx_entity_visible_set(bg, 1);

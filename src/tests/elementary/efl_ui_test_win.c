@@ -499,6 +499,53 @@ EFL_START_TEST(efl_ui_win_test_background_load)
 }
 EFL_END_TEST
 
+static Eo *_bg_other = NULL;
+
+static void
+_bg_replace_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *win = data;
+   Eo *other = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+
+   efl_wref_add(other, &_bg_other);
+   // (a callback of the background that goes sets another one)
+   efl_content_set(efl_part(win, "background"), other);
+}
+
+// Setting a background deletes the one there, a refused one leaves the part
+// empty, and what a callback of the deleted one sets does not outlive the one
+// that is set.
+EFL_START_TEST(efl_ui_win_test_background_replace)
+{
+   Efl_Ui_Win *win;
+   Eo *a, *b, *c, *got_a = NULL, *got_b = NULL;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   a = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   efl_wref_add(a, &got_a);
+   ck_assert(efl_content_set(efl_part(win, "background"), a));
+
+   // refused: empty, the old one gone, and nothing is left half attached
+   EXPECT_ERROR_START;
+   ck_assert(!efl_content_set(efl_part(win, "background"), win));
+   EXPECT_ERROR_END;
+   ck_assert_ptr_eq(efl_content_get(efl_part(win, "background")), NULL);
+   ck_assert_ptr_eq(got_a, NULL);
+
+   // a callback of the replaced one sets another background: that one goes too
+   b = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   efl_wref_add(b, &got_b);
+   efl_event_callback_add(b, EFL_EVENT_DEL, _bg_replace_cb, win);
+   ck_assert(efl_content_set(efl_part(win, "background"), b));
+   c = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   ck_assert(efl_content_set(efl_part(win, "background"), c));
+   ck_assert_ptr_eq(got_b, NULL);
+   ck_assert_ptr_eq(efl_content_get(efl_part(win, "background")), c);
+   ck_assert_ptr_eq(_bg_other, NULL);
+   efl_unref(win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_win_test_type)
 {
    Efl_Ui_Win *win;
@@ -824,6 +871,7 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_rotation_normalized);
    tcase_add_test(tc, efl_ui_win_test_type);
    tcase_add_test(tc, efl_ui_win_test_content_replaced);
+   tcase_add_test(tc, efl_ui_win_test_background_replace);
    tcase_add_test(tc, efl_ui_win_test_content_replace_and_unset);
    tcase_add_test(tc, efl_ui_win_test_background_unset);
    tcase_add_test(tc, efl_ui_win_test_content_replace_refused);
