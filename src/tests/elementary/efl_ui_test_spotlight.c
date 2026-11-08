@@ -665,6 +665,32 @@ EFL_START_TEST (efl_ui_spotlight_animated_transition)
 }
 EFL_END_TEST
 
+static void
+_manager_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   *(Eina_Bool *)data = EINA_TRUE;
+}
+
+// Setting no manager ends the one that was set, and a plain one stands in.
+EFL_START_TEST (efl_ui_spotlight_manager_unset)
+{
+   Eina_Bool gone = EINA_FALSE;
+   Eo *manager = efl_new(EFL_UI_SPOTLIGHT_FADE_MANAGER_CLASS);
+
+   efl_event_callback_add(manager, EFL_EVENT_DEL, _manager_del, &gone);
+   efl_ui_spotlight_manager_set(container, manager);
+   ck_assert_ptr_eq(efl_ui_spotlight_manager_get(container), manager);
+   ck_assert_int_eq(efl_ref_count(manager), 1);
+
+   efl_ui_spotlight_manager_set(container, NULL);
+   ck_assert(gone);
+   ck_assert_ptr_eq(efl_ui_spotlight_manager_get(container), NULL);
+   // (a manager stands in: the container still works)
+   efl_ui_spotlight_animated_transition_set(container, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_spotlight_animated_transition_get(container), EINA_FALSE);
+}
+EFL_END_TEST
+
 EFL_START_TEST (efl_ui_spotlight_min_max_sizing)
 {
    Efl_Ui_Button *btn0, *btn1;
@@ -743,5 +769,6 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_test_pop2);
    tcase_add_test(tc, efl_ui_spotlight_test_pop3);
    tcase_add_test(tc, efl_ui_spotlight_animated_transition);
+   tcase_add_test(tc, efl_ui_spotlight_manager_unset);
    tcase_add_test(tc, efl_ui_spotlight_min_max_sizing);
 }

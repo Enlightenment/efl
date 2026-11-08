@@ -654,17 +654,20 @@ _pos_updated(void *data, const Efl_Event *event)
 EOLIAN static void
 _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Spotlight_Manager *transition)
 {
-   if (!transition)
-     pd->transition = efl_add(EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS, obj);
-   else
+   if (transition)
      EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_SPOTLIGHT_MANAGER_CLASS));
 
+   // the manager that is there goes first, then the new one (a plain one when
+   // none is given) is taken over the same way
    if (pd->transition)
      {
         efl_ui_spotlight_manager_bind(pd->transition, NULL);
         efl_del(pd->transition);
+        pd->transition = NULL;
      }
 
+   if (!transition)
+     transition = efl_new(EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS);
    pd->transition = transition;
 
    if (pd->transition)
