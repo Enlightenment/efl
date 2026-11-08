@@ -5,17 +5,17 @@ struct _ecore_sdl_keys_s
 {
    SDL_Keycode code;
    const char*  name;
-   const char*  compose;
+   const char*  compose; /* NULL for keys that produce no character */
 };
 
 static const struct _ecore_sdl_keys_s  keystable[] =
 {
-   { SDLK_UNKNOWN,      "0x00",         "" },
+   { SDLK_UNKNOWN,      "0x00",         NULL },
    { SDLK_BACKSPACE,    "BackSpace",    "\010" },
    { SDLK_TAB,          "Tab",          "\011" },
-   { SDLK_CLEAR,        "Clear",        "Clear" },
+   { SDLK_CLEAR,        "Clear",        NULL },
    { SDLK_RETURN,       "Return",       "\015" },
-   { SDLK_PAUSE,        "Pause",        "Pause" },
+   { SDLK_PAUSE,        "Pause",        NULL },
    { SDLK_ESCAPE,       "Escape",       "\033" },
    { SDLK_SPACE,        "space",        " " },
    { SDLK_EXCLAIM,      "exclam",       "!" },
@@ -106,54 +106,54 @@ static const struct _ecore_sdl_keys_s  keystable[] =
    { SDLK_KP_EQUALS,    "KP_Equals",    "=" },
 
    /* Arrows + Home/End pad */
-   { SDLK_UP,           "Up",           "Up" },
-   { SDLK_DOWN,         "Down",         "Down" },
-   { SDLK_RIGHT,        "Right",        "Right" },
-   { SDLK_LEFT,         "Left",         "Left" },
-   { SDLK_INSERT,       "Insert",       "Insert" },
-   { SDLK_HOME,         "Home",         "Home" },
-   { SDLK_END,          "End",          "End" },
-   { SDLK_PAGEUP,       "Page_Up",      "Page_Up" },
-   { SDLK_PAGEDOWN,     "Page_Down",    "Page_Down" },
+   { SDLK_UP,           "Up",           NULL },
+   { SDLK_DOWN,         "Down",         NULL },
+   { SDLK_RIGHT,        "Right",        NULL },
+   { SDLK_LEFT,         "Left",         NULL },
+   { SDLK_INSERT,       "Insert",       NULL },
+   { SDLK_HOME,         "Home",         NULL },
+   { SDLK_END,          "End",          NULL },
+   { SDLK_PAGEUP,       "Page_Up",      NULL },
+   { SDLK_PAGEDOWN,     "Page_Down",    NULL },
 
    /* Function keys */
-   { SDLK_F1,           "F1",           "F1" },
-   { SDLK_F2,           "F2",           "F2" },
-   { SDLK_F3,           "F3",           "F3" },
-   { SDLK_F4,           "F4",           "F4" },
-   { SDLK_F5,           "F5",           "F5" },
-   { SDLK_F6,           "F6",           "F6" },
-   { SDLK_F7,           "F7",           "F7" },
-   { SDLK_F8,           "F8",           "F8" },
-   { SDLK_F9,           "F9",           "F9" },
-   { SDLK_F10,          "F10",          "F10" },
-   { SDLK_F11,          "F11",          "F11" },
-   { SDLK_F12,          "F12",          "F12" },
-   { SDLK_F13,          "F13",          "F13" },
-   { SDLK_F14,          "F14",          "F14" },
-   { SDLK_F15,          "F15",          "F15" },
+   { SDLK_F1,           "F1",           NULL },
+   { SDLK_F2,           "F2",           NULL },
+   { SDLK_F3,           "F3",           NULL },
+   { SDLK_F4,           "F4",           NULL },
+   { SDLK_F5,           "F5",           NULL },
+   { SDLK_F6,           "F6",           NULL },
+   { SDLK_F7,           "F7",           NULL },
+   { SDLK_F8,           "F8",           NULL },
+   { SDLK_F9,           "F9",           NULL },
+   { SDLK_F10,          "F10",          NULL },
+   { SDLK_F11,          "F11",          NULL },
+   { SDLK_F12,          "F12",          NULL },
+   { SDLK_F13,          "F13",          NULL },
+   { SDLK_F14,          "F14",          NULL },
+   { SDLK_F15,          "F15",          NULL },
 
    /* Key state modifier keys */
-   { SDLK_NUMLOCKCLEAR, "Num_Lock",     "Num_Lock" },
-   { SDLK_CAPSLOCK,     "Caps_Lock",    "Caps_Lock" },
-   { SDLK_SCROLLLOCK,   "Scroll_Lock",  "Scroll_Lock" },
-   { SDLK_RSHIFT,       "Shift_R",      "Shift_R" },
-   { SDLK_LSHIFT,       "Shift_L",      "Shift_L" },
-   { SDLK_RCTRL,        "Control_R",    "Control_R" },
-   { SDLK_LCTRL,        "Control_L",    "Control_L" },
-   { SDLK_RALT,         "Alt_R",        "Alt_R" },
-   { SDLK_LALT,         "Alt_L",        "Alt_L" },
-   { SDLK_LGUI,         "Super_L",      "Super_L" },   /* Left "Windows" key */
-   { SDLK_RGUI,         "Super_R",      "Super_R" },   /* Right "Windows" key */
-   { SDLK_MODE,         "Mode",         "Mode" },   /* "Alt Gr" key */
+   { SDLK_NUMLOCKCLEAR, "Num_Lock",     NULL },
+   { SDLK_CAPSLOCK,     "Caps_Lock",    NULL },
+   { SDLK_SCROLLLOCK,   "Scroll_Lock",  NULL },
+   { SDLK_RSHIFT,       "Shift_R",      NULL },
+   { SDLK_LSHIFT,       "Shift_L",      NULL },
+   { SDLK_RCTRL,        "Control_R",    NULL },
+   { SDLK_LCTRL,        "Control_L",    NULL },
+   { SDLK_RALT,         "Alt_R",        NULL },
+   { SDLK_LALT,         "Alt_L",        NULL },
+   { SDLK_LGUI,         "Super_L",      NULL },   /* Left "Windows" key */
+   { SDLK_RGUI,         "Super_R",      NULL },   /* Right "Windows" key */
+   { SDLK_MODE,         "Mode",         NULL },   /* "Alt Gr" key */
 
    /* Miscellaneous function keys */
-   { SDLK_HELP,         "Help",         "Help" },
-   { SDLK_PRINTSCREEN,  "Print",        "Print" },
-   { SDLK_SYSREQ,       "SysReq",       "SysReq" },
-   { SDLK_MENU,         "Menu",         "Menu" },
-   { SDLK_POWER,        "Power",        "Power" },   /* Power Macintosh power key */
-   { SDLK_UNDO,         "Undo",         "Undo" }    /* Atari keyboard has Undo */
+   { SDLK_HELP,         "Help",         NULL },
+   { SDLK_PRINTSCREEN,  "Print",        NULL },
+   { SDLK_SYSREQ,       "SysReq",       NULL },
+   { SDLK_MENU,         "Menu",         NULL },
+   { SDLK_POWER,        "Power",        NULL },   /* Power Macintosh power key */
+   { SDLK_UNDO,         "Undo",         NULL }    /* Atari keyboard has Undo */
 };
 
 #endif  /* ECORE_SDL_KEYS_H__ */
