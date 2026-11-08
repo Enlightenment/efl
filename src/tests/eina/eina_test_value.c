@@ -2087,6 +2087,28 @@ EFL_START_TEST(eina_value_test_dup_array)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_value_test_array_of_values_with_an_empty_one)
+{
+   Eina_Value *array, empty = EINA_VALUE_EMPTY, number;
+   char *str;
+
+   /* An array of values holding an empty one converts to a string. */
+   array = eina_value_array_new(EINA_VALUE_TYPE_VALUE, 0);
+   fail_unless(array != NULL);
+   fail_unless(eina_value_setup(&number, EINA_VALUE_TYPE_INT));
+   fail_unless(eina_value_set(&number, 7));
+   fail_unless(eina_value_array_pappend(array, &number));
+   fail_unless(eina_value_array_pappend(array, &empty));
+   fail_unless(eina_value_array_pappend(array, &number));
+   eina_value_flush(&number);
+
+   str = eina_value_to_string(array);
+   fail_unless(str != NULL);
+   free(str);
+   eina_value_free(array);
+}
+EFL_END_TEST
+
 EFL_START_TEST(eina_value_test_array)
 {
    Eina_Value *value, other;
@@ -3135,6 +3157,7 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_convert_float);
    // TODO: other converters...
    tcase_add_test(tc, eina_value_test_array);
+   tcase_add_test(tc, eina_value_test_array_of_values_with_an_empty_one);
    tcase_add_test(tc, eina_value_test_dup_array);
    tcase_add_test(tc, eina_value_test_list);
    tcase_add_test(tc, eina_value_test_list_insert);

@@ -3939,6 +3939,9 @@ static Eina_Bool
 _eina_value_type_value_convert_to(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
 {
    const Eina_Value *v = type_mem;
+
+   /* An empty value holds nothing to convert (and has no memory to get). */
+   if (!v->type) return EINA_FALSE;
    return eina_value_type_convert_to(v->type, convert, eina_value_memory_get(v), convert_mem);
 }
 
@@ -3946,6 +3949,8 @@ static Eina_Bool
 _eina_value_type_value_convert_from(const Eina_Value_Type *type EINA_UNUSED, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
 {
    Eina_Value *v = type_mem;
+
+   if (!v->type) return EINA_FALSE;
    return eina_value_type_convert_from(v->type, convert, eina_value_memory_get(v), convert_mem);
 }
 
