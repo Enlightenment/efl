@@ -654,17 +654,24 @@ _pos_updated(void *data, const Efl_Event *event)
 EOLIAN static void
 _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Spotlight_Manager *transition)
 {
+   Eina_Bool ref_given = EINA_FALSE;
+
+   // everything is checked before the container is touched: a refused manager
+   // leaves the one that is there in place
    if (transition)
-     EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_SPOTLIGHT_MANAGER_CLASS));
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_SPOTLIGHT_MANAGER_CLASS));
+        // The ownership is passed to us, with a ref that is not the parent's. A
+        // manager that has only its parent's (efl_add(CLASS, obj)) brings none:
+        // it has nothing to let go of, and unreffing it would be one ref too many.
+        ref_given = (efl_ref_count(transition) - (efl_parent_get(transition) ? 1 : 0)) > 0;
+     }
 
    // the manager that is there, set again, stays: ending it would end the one
    // that is being set. The ref it came with is let go of, as for any manager.
    if (transition && (transition == pd->transition))
      {
-        int extra_refs = efl_ref_count(transition) - (efl_parent_get(transition) ? 1 : 0);
-
-        if (extra_refs > 0)
-          efl_unref(transition);
+        if (ref_given) efl_unref(transition);
         return;
      }
 
@@ -678,15 +685,17 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
      }
 
    if (!transition)
-     transition = efl_new(EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS);
+     {
+        transition = efl_new(EFL_UI_SPOTLIGHT_PLAIN_MANAGER_CLASS);
+        ref_given = EINA_TRUE;
+     }
    pd->transition = transition;
 
    if (pd->transition)
      {
-        EINA_SAFETY_ON_FALSE_RETURN(efl_ownable_get(pd->transition));
         efl_parent_set(pd->transition, obj);
         //the api indicates that the caller passes ownership to this function, so we need to unref here
-        efl_unref(pd->transition);
+        if (ref_given) efl_unref(pd->transition);
         //disable animation when not finalized yet, this help reducing the overhead of scheduling a animation that will not be displayed
         _animated_transition_manager_eval(obj, pd);
         efl_ui_spotlight_manager_animated_transition_set(pd->transition, efl_finalized_get(obj));
@@ -709,6 +718,22 @@ _efl_ui_spotlight_container_spotlight_manager_get(const Eo *obj EINA_UNUSED, Efl
 EOLIAN static void
 _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Spotlight_Indicator *indicator)
 {
+   Eina_Bool ref_given = EINA_FALSE;
+
+   // checked before the container is touched, as for the manager
+   if (indicator)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_isa(indicator, EFL_UI_SPOTLIGHT_INDICATOR_CLASS));
+        ref_given = (efl_ref_count(indicator) - (efl_parent_get(indicator) ? 1 : 0)) > 0;
+     }
+
+   // the indicator that is there, set again, stays
+   if (indicator && (indicator == pd->indicator))
+     {
+        if (ref_given) efl_unref(indicator);
+        return;
+     }
+
    if (pd->indicator)
      {
         efl_del(pd->indicator);
@@ -716,10 +741,9 @@ _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Da
    pd->indicator = indicator;
    if (pd->indicator)
      {
-        EINA_SAFETY_ON_FALSE_RETURN(efl_ownable_get(pd->indicator));
         efl_parent_set(pd->indicator, obj);
         //the api indicates that the caller passes ownership to this function, so we need to unref here
-        efl_unref(pd->indicator);
+        if (ref_given) efl_unref(pd->indicator);
         efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         if (!EINA_DBL_EQ(pd->position, -1))
           efl_ui_spotlight_indicator_position_update(pd->indicator, pd->position);

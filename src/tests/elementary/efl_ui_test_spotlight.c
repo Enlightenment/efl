@@ -770,6 +770,90 @@ spotlight_teardown()
    memset(&indicator_calls, 0, sizeof(indicator_calls));
 }
 
+// The manager and the indicator may be handed over in three ways: with a ref
+// of their own (efl_new, efl_add_ref), or with only their parent's
+// (efl_add(CLASS, container)). Each ends bound, held by the container and ended
+// with it, without an error logged (the fixture fails on one).
+static Eo *
+_tracked_manager(int how, Eo *c)
+{
+   Eo *m;
+
+   memset(&transition_calls, 0, sizeof(transition_calls));
+   if (how == 0)
+     m = efl_add(efl_ui_spotlight_manager_realized_class_get(), c,
+                 efl_object_override(efl_added, &transition_tracker));
+   else if (how == 1)
+     m = efl_new(efl_ui_spotlight_manager_realized_class_get(),
+                 efl_object_override(efl_added, &transition_tracker));
+   else
+     m = efl_add_ref(efl_ui_spotlight_manager_realized_class_get(), NULL,
+                     efl_object_override(efl_added, &transition_tracker));
+   return m;
+}
+
+EFL_START_TEST (efl_ui_spotlight_manager_ownership)
+{
+   int how;
+
+   for (how = 0; how < 3; how++)
+     {
+        Eina_Bool gone = EINA_FALSE;
+        Eo *c = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win);
+        Eo *m = _tracked_manager(how, c);
+
+        efl_event_callback_add(m, EFL_EVENT_DEL, _manager_del, &gone);
+        efl_ui_spotlight_manager_set(c, m);
+
+        ck_assert(!gone);
+        ck_assert_ptr_eq(efl_ui_spotlight_manager_get(c), m);
+        ck_assert_ptr_eq(efl_parent_get(m), c);
+        ck_assert_int_eq(efl_ref_count(m), 1);
+        ck_assert_int_eq(transition_calls.spotlight.called, 1);
+        ck_assert_ptr_eq(transition_calls.spotlight.spotlight, c);
+        ck_assert_int_eq(efl_event_callback_count(m, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE), 1);
+
+        efl_del(c);
+        ck_assert(gone);
+     }
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_spotlight_indicator_ownership)
+{
+   int how;
+
+   for (how = 0; how < 3; how++)
+     {
+        Eina_Bool gone = EINA_FALSE;
+        Eo *c = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win);
+        Eo *i;
+
+        memset(&indicator_calls, 0, sizeof(indicator_calls));
+        if (how == 0)
+          i = efl_add(efl_ui_spotlight_indicator_realized_class_get(), c,
+                      efl_object_override(efl_added, &indicator_tracker));
+        else if (how == 1)
+          i = _create_indicator();
+        else
+          i = efl_add_ref(efl_ui_spotlight_indicator_realized_class_get(), NULL,
+                          efl_object_override(efl_added, &indicator_tracker));
+        efl_event_callback_add(i, EFL_EVENT_DEL, _manager_del, &gone);
+        efl_ui_spotlight_indicator_set(c, i);
+
+        ck_assert(!gone);
+        ck_assert_ptr_eq(efl_ui_spotlight_indicator_get(c), i);
+        ck_assert_ptr_eq(efl_parent_get(i), c);
+        ck_assert_int_eq(efl_ref_count(i), 1);
+        ck_assert_int_eq(indicator_calls.spotlight.called, 1);
+        ck_assert_ptr_eq(indicator_calls.spotlight.spotlight, c);
+
+        efl_del(c);
+        ck_assert(gone);
+     }
+}
+EFL_END_TEST
+
 void efl_ui_test_spotlight(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
@@ -791,4 +875,6 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_manager_unset);
    tcase_add_test(tc, efl_ui_spotlight_manager_twice);
    tcase_add_test(tc, efl_ui_spotlight_min_max_sizing);
+   tcase_add_test(tc, efl_ui_spotlight_manager_ownership);
+   tcase_add_test(tc, efl_ui_spotlight_indicator_ownership);
 }
