@@ -7652,6 +7652,22 @@ _win_content_detach(Efl_Ui_Win_Data *sd, Eo *obj)
    return prev;
 }
 
+// Takes the background out of the window, and gives it back: still alive, no
+// longer the window's, as the content is.
+static Eo *
+_win_bg_detach(Efl_Ui_Win_Data *sd, Eo *obj)
+{
+   Eo *bg = sd->bg;
+
+   if (!bg) return NULL;
+   efl_wref_del(bg, &sd->bg);
+   sd->bg = NULL;
+   edje_object_part_unswallow(_elm_config->win_no_border ? sd->legacy.edje : sd->frame_obj, bg);
+   elm_widget_sub_object_del(obj, bg);
+   evas_object_hide(bg);
+   return bg;
+}
+
 static Eina_Bool
 _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *content)
 {
@@ -7666,11 +7682,13 @@ _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *cont
         // clear the slot of the content that replaced it when it is deleted. It
         // stays a child of the window, which ends it (callers that mean to keep
         // it unset it first, and one that wants it gone deletes it).
+        // (a content that cannot become the window's is refused before anything
+        // moves: the slot keeps the content it has)
+        if (content && !elm_widget_sub_object_add(obj, content))
+          goto err;
         prev = _win_content_detach(sd, obj);
         if (prev && (prev != content)) evas_object_hide(prev);
         if (!content) return EINA_TRUE;
-        if (!elm_widget_sub_object_add(obj, content))
-          goto err;
         /* FIXME: Switch to swallow inside the frame
         if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", content))
           goto err;
@@ -7725,12 +7743,17 @@ _efl_ui_win_content_unset(Eo *obj, Efl_Ui_Win_Data *sd, const char *part)
           efl_parent_set(content, evas_object_evas_get(obj));
         return content;
      }
-   content = _efl_ui_win_content_get(obj, sd, part);
-   if (!content) return NULL;
-
-   efl_ref(content);
-   _efl_ui_win_content_set(obj, sd, part, NULL);
-   return content;
+   if (eina_streq(part, "background"))
+     {
+        // The same for the background: alive, no reference of ours, no longer a
+        // child of the window (the theme's own background shows).
+        content = _win_bg_detach(sd, obj);
+        if (content && (efl_parent_get(content) == obj))
+          efl_parent_set(content, evas_object_evas_get(obj));
+        return content;
+     }
+   WIN_PART_ERR(part);
+   return NULL;
 }
 
 static Eina_Bool
