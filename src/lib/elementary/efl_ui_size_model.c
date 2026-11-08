@@ -12,11 +12,13 @@ const char *_efl_model_property_selfh = "self.height";
 const char *_efl_model_property_totalw = "total.width";
 const char *_efl_model_property_totalh = "total.height";
 
+// The iterators read these after the function has returned, so they cannot
+// live on its stack. The names are those of the _efl_model_property_* above.
 static Eina_Iterator *
 _efl_ui_size_model_properties_child(void)
 {
-   const char *properties[] = {
-     _efl_model_property_itemw, _efl_model_property_itemh, _efl_model_property_selfh, _efl_model_property_selfw
+   static const char *properties[] = {
+     "item.width", "item.height", "self.height", "self.width"
    };
    return EINA_C_ARRAY_ITERATOR_NEW(properties);
 }
@@ -24,8 +26,8 @@ _efl_ui_size_model_properties_child(void)
 static Eina_Iterator *
 _efl_ui_size_model_properties_root(void)
 {
-   const char *properties[] = {
-     _efl_model_property_itemw, _efl_model_property_itemh
+   static const char *properties[] = {
+     "item.width", "item.height"
    };
    return EINA_C_ARRAY_ITERATOR_NEW(properties);
 }

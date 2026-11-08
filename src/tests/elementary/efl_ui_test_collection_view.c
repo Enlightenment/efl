@@ -4,6 +4,7 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
+#include "efl_ui_homogeneous_model.eo.h"
 
 #define NUM_ITEMS 50
 
@@ -530,6 +531,70 @@ EFL_START_TEST(efl_ui_collection_view_manager_twice)
 }
 EFL_END_TEST
 
+/* A Homogeneous_Model is made from C and given to a view as its model. */
+EFL_START_TEST(test_efl_ui_collection_view_homogeneous_model)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *sizes;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   Eina_Iterator *it;
+   Eina_Value *w = NULL;
+   const char *property;
+   Eina_Bool has_width = EINA_FALSE;
+   int width = 0, i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+
+   model = _make_model(win);
+   sizes = efl_add(EFL_UI_HOMOGENEOUS_MODEL_CLASS, win,
+                   efl_ui_view_model_set(efl_added, model));
+   ck_assert_ptr_ne(sizes, NULL);
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, sizes));
+   efl_content_set(win, lv);
+
+   get_me_to_those_events(lv);
+   for (i = 0; i < 20; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   ck_assert_ptr_eq(efl_ui_view_model_get(lv), sizes);
+   ck_assert_uint_eq(efl_model_children_count_get(sizes), NUM_ITEMS);
+
+   // It says it has sizes, which the view looks for to know it need not
+   // make a size model of its own over it.
+   it = efl_model_properties_get(sizes);
+   EINA_ITERATOR_FOREACH(it, property)
+     {
+        if (property && !strcmp(property, "item.width")) has_width = EINA_TRUE;
+     }
+   eina_iterator_free(it);
+   ck_assert(has_width);
+
+   // Nothing told it a size: the view measures a realized item and gives
+   // the answer back to the model it was given.
+   for (i = 0; i < 2000; i++)
+     {
+        w = efl_model_property_get(sizes, "item.width");
+        if (w && (eina_value_type_get(w) != EINA_VALUE_TYPE_ERROR)) break;
+        eina_value_free(w);
+        w = NULL;
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!w);
+   ck_assert(eina_value_int_convert(w, &width));
+   eina_value_free(w);
+   ck_assert_int_gt(width, 0);
+}
+EFL_END_TEST
+
 /* A list between two buttons, its rows more than it shows. */
 static Eo *
 _list_between(Eo **above, Eo **below)
@@ -667,5 +732,6 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_refill);
    tcase_add_test(tc, test_efl_ui_collection_view_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_shift_tab);
+   tcase_add_test(tc, test_efl_ui_collection_view_homogeneous_model);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
 }
