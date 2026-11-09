@@ -55,14 +55,12 @@ _efl_ui_exact_model_efl_object_constructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
 }
 
 static Eina_List *
-_efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, unsigned int *buffer)
+_efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed, unsigned int *buffer)
 {
-   unsigned int list_index = index / EFL_UI_EXACT_MODEL_CONTENT;
    static Eina_Binbuf *z = NULL;
    Eina_Binbuf *cbuf;
    Eina_Binbuf *tbuf;
    Eina_List *l = NULL;
-   unsigned int i;
 
    l = eina_list_nth_list(compressed, list_index);
 
@@ -73,8 +71,17 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
    eina_binbuf_free(tbuf);
    if (!cbuf) return compressed;
 
+   if (l)
+     {
+        // Replace older buffer by newer buffer
+        tbuf = eina_list_data_get(l);
+        eina_list_data_set(l, cbuf);
+        if (tbuf != z) eina_binbuf_free(tbuf);
+        return compressed;
+     }
+
    // Make sure the list has all the buffer up to the needed one filled with valid data
-   if (list_index)
+   if (eina_list_count(compressed) < list_index)
      {
         // Create the compressed zero buffer once.
         if (!z)
@@ -84,15 +91,15 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
              zmem = calloc(EFL_UI_EXACT_MODEL_CONTENT, sizeof (unsigned int));
              if (!zmem)
                {
-                  if (cbuf) eina_binbuf_free(cbuf);
+                  eina_binbuf_free(cbuf);
                   return compressed;
                }
 
              tbuf = eina_binbuf_manage_new(zmem, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
              if (!tbuf)
                {
-                  if (cbuf) eina_binbuf_free(cbuf);
-                  if (zmem) free(zmem);
+                  eina_binbuf_free(cbuf);
+                  free(zmem);
                   return compressed;
                }
 
@@ -100,23 +107,19 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
 
              eina_binbuf_free(tbuf);
              free(zmem);
+             if (!z)
+               {
+                  eina_binbuf_free(cbuf);
+                  return compressed;
+               }
           }
 
         // Fill the list all the way to the needed index with buffer full of zero
-        for (i = 0; i < list_index; i++)
-          {
-             compressed = eina_list_append(compressed, z);
-          }
-        l = eina_list_last(compressed);
+        while (eina_list_count(compressed) < list_index)
+          compressed = eina_list_append(compressed, z);
      }
 
-   // Replace older buffer by newer buffer
-   tbuf = eina_list_data_get(l);
-   compressed = eina_list_prepend_relative(compressed, l, cbuf);
-   compressed = eina_list_remove_list(compressed, l);
-   if (tbuf != z) eina_binbuf_free(tbuf);
-
-   return compressed;
+   return eina_list_append(compressed, cbuf);
 }
 
 static unsigned int *
@@ -157,8 +160,8 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *pd, unsigned int index,
         // Check if the slot has valid content
         if (!pd->parent->slot[lookup].defined)
           continue;
-        if (pd->parent->slot[lookup].start_offset <= index &&
-            index < pd->parent->slot[lookup].start_offset + EFL_UI_EXACT_MODEL_CONTENT)
+        // (start_offset is a block number, not a row index)
+        if (pd->parent->slot[lookup].start_offset == index / EFL_UI_EXACT_MODEL_CONTENT)
           found = lookup;
         // Reduce usage to find unused slot.
         if (pd->parent->slot[lookup].usage > 0)
@@ -186,14 +189,16 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *pd, unsigned int index,
             (pd->parent->slot[found].width ||
              pd->parent->slot[found].height))
           {
+             unsigned int block = pd->parent->slot[found].start_offset;
+
              if (pd->parent->slot[found].width &&
                  pd->parent->slot[found].decompressed.width)
-               pd->parent->compressed.width = _efl_ui_exact_model_slot_compress(index,
+               pd->parent->compressed.width = _efl_ui_exact_model_slot_compress(block,
                                                                                 pd->parent->compressed.width,
                                                                                 pd->parent->slot[found].width);
              if (pd->parent->slot[found].height &&
                  pd->parent->slot[found].decompressed.height)
-               pd->parent->compressed.height = _efl_ui_exact_model_slot_compress(index,
+               pd->parent->compressed.height = _efl_ui_exact_model_slot_compress(block,
                                                                                  pd->parent->compressed.height,
                                                                                  pd->parent->slot[found].height);
           }

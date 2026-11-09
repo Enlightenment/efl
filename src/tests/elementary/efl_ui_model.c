@@ -337,6 +337,85 @@ EFL_START_TEST(efl_ui_average_model_test)
 }
 EFL_END_TEST
 
+// Rows past the first block of 1024 are kept in other slots, and a slot that is
+// reused for another block must be written back under its own block.
+#define MANY_ROWS 3500
+
+typedef struct _Many_Rows Many_Rows;
+
+struct _Many_Rows
+{
+   Eo *rows[MANY_ROWS];
+   unsigned int count;
+};
+
+static Eina_Value
+_many_rows_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Many_Rows *many = data;
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        many->rows[i] = efl_ref(c);
+        many->count++;
+     }
+   return v;
+}
+
+static unsigned int
+_many_height(unsigned int i)
+{
+   return 1 + ((i * 7) % 97) + ((i / 1024) * 100);
+}
+
+EFL_START_TEST(efl_ui_exact_model_many_rows)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Model *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   unsigned int i, step, sum = 0, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+
+   eina_future_then(efl_model_children_slice_get(model, 0, MANY_ROWS), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && (many->count < MANY_ROWS); loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, MANY_ROWS);
+
+   // scattered: every block is left and come back to many times
+   for (step = 0, i = 0; step < MANY_ROWS; step++, i = (i + 1237) % MANY_ROWS)
+     {
+        efl_future_then(many->rows[i], efl_model_property_set(many->rows[i], "self.height",
+                                                              eina_value_uint_new(_many_height(i))));
+        sum += _many_height(i);
+     }
+   for (step = 0, i = 0; step < MANY_ROWS; step++, i = (i + 1237) % MANY_ROWS)
+     {
+        ck_assert_uint_eq(_property_uint_expected(many->rows[i], "self.height"), _many_height(i));
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), sum);
+
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   free(many);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_model(TCase *tc)
 {
@@ -348,4 +427,5 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_homogeneous_model_test);
    tcase_add_test(tc, efl_ui_average_model_test);
    tcase_add_test(tc, efl_ui_exact_model_test);
+   tcase_add_test(tc, efl_ui_exact_model_many_rows);
 }
