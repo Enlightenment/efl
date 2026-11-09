@@ -1548,15 +1548,15 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void
              changed_user = EINA_TRUE;
 
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
-             if (free_string) free(string);
           }
      }
 end:
    if (changed_user)
      {
+        // info.content is the string: it is freed once the listeners are done
         efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, &info);
      }
+   if (free_string) free(string);
    (void) 0;
 }
 
