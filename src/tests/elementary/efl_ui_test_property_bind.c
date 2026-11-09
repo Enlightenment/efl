@@ -630,6 +630,26 @@ EFL_START_TEST(rebinding_a_key_replaces_the_binding)
 }
 EFL_END_TEST
 
+// Binding a key to no property takes the binding away, and adds none.
+EFL_START_TEST(binding_to_no_property_unbinds)
+{
+   Eo *win = _window();
+   Eo *model = _model_new("t", eina_value_string_new("first"));
+   Eo *txt;
+
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                 efl_ui_view_model_set(efl_added, model),
+                 efl_ui_property_bind(efl_added, "text", "t"));
+   ck_assert_str_eq(efl_text_get(txt), "first");
+
+   ck_assert_int_eq(efl_ui_property_bind(txt, "text", NULL), 0);
+
+   _model_set(model, "t", eina_value_string_new("second"));
+   ck_assert_str_eq(efl_text_get(txt), "first");
+   efl_unref(model);
+}
+EFL_END_TEST
+
 // Binding a part again replaces what it was bound to: it follows the new
 // property only, and the old one has no hold on it any more.
 EFL_START_TEST(rebinding_a_layout_part_replaces_the_binding)
@@ -746,6 +766,7 @@ efl_ui_test_property_bind(TCase *tc)
    tcase_add_test(tc, rebinding_a_key_replaces_the_binding);
    tcase_add_test(tc, rebinding_a_layout_part_replaces_the_binding);
    tcase_add_test(tc, rebinding_one_of_several_parts_keeps_the_others);
+   tcase_add_test(tc, binding_to_no_property_unbinds);
    tcase_add_test(tc, textbox_model_change_does_not_loop);
    tcase_add_test(tc, textbox_typing_in_the_middle_keeps_the_cursor);
    tcase_add_test(tc, textbox_typing_at_the_start_keeps_the_cursor);

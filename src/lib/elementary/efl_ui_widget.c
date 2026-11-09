@@ -6169,6 +6169,9 @@ _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
    // reuses, and the old binding would otherwise keep updating it as well
    _efl_ui_property_unbind(pd, part, key);
 
+   // No property to follow: the binding is gone, which is all that was asked.
+   if (!property) return 0;
+
    prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
    if (!prop) return ENOMEM;
    prop->part = eina_stringshare_add(part);
