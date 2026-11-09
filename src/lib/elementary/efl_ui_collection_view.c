@@ -375,6 +375,18 @@ _all_cleanup(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_View_Data *pd)
      }
 }
 
+// How far past the visible range rows are kept and fetched. Half the range is too
+// little when the range is a row or two: the next layout pass shows one more row
+// than the last one did, and a row dropped for being just outside is answered
+// with a stand-in size after the position manager has added up its real one.
+#define RANGE_MARGIN_MIN 2
+
+static inline long
+_range_margin(long length)
+{
+   return MAX(length / 2, RANGE_MARGIN_MIN);
+}
+
 static inline Eina_Bool
 _size_from_model(Efl_Model *model, Eina_Size2D *r, const char *width, const char *height)
 {
@@ -1563,8 +1575,8 @@ _idle_cb(void *data, const Efl_Event *event EINA_UNUSED)
    Eina_Array scheduled_release;
    MY_DATA_GET(data, pd);
    const unsigned int length = pd->current_range.end_id - pd->current_range.start_id;
-   const unsigned int lower_end = MAX((long)pd->current_range.start_id - (long)length/2, 0);
-   const unsigned int upper_end = pd->current_range.end_id + length/2;
+   const unsigned int lower_end = MAX((long)pd->current_range.start_id - _range_margin(length), 0);
+   const unsigned int upper_end = pd->current_range.end_id + _range_margin(length);
    Eina_Array_Iterator iterator;
    unsigned int i;
 
@@ -1636,8 +1648,8 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    count = efl_model_children_count_get(efl_ui_view_model_get(data));
 
    length = pd->current_range.end_id - pd->current_range.start_id;
-   lower_end = MAX((long)pd->current_range.start_id - (length / 2), 0);
-   upper_end = MIN(pd->current_range.end_id + (length / 2), count);
+   lower_end = MAX((long)pd->current_range.start_id - _range_margin(length), 0);
+   upper_end = MIN(pd->current_range.end_id + _range_margin(length), count);
 
    idx = lower_end;
    while (idx < upper_end)
@@ -2207,7 +2219,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
 
    count = efl_model_children_count_get(event->object);
    length = pd->current_range.end_id - pd->current_range.start_id;
-   upper_end = MIN(pd->current_range.end_id + (length / 2), count);
+   upper_end = MIN(pd->current_range.end_id + _range_margin(length), count);
 
    // Check if we really have something to do
 #ifdef VIEWPORT_ENABLE

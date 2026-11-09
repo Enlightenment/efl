@@ -490,13 +490,7 @@ _count_err_cri(const Eina_Log_Domain *d, Eina_Log_Level level,
 {
    int *n = data;
 
-   // An Exact_Model has no size to stand in for a row the view has no model for
-   // yet, and the position manager says so when its cache and its placement of
-   // such a row differ. That is not what these tests are about.
-   if ((level <= EINA_LOG_LEVEL_ERR) && !eina_str_has_prefix(fmt, "Reported sizes changed"))
-     {
-        (*n)++;
-     }
+   if (level <= EINA_LOG_LEVEL_ERR) (*n)++;
    eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
 }
 
