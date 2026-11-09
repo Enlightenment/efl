@@ -427,11 +427,16 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         // row, and those unselects arrive once the mode is none
         if ((pd->parent->selection == EFL_UI_SELECT_MODE_NONE) && newflag)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
-        if (newflag) pd->parent->select_seq++;
 
         // Nothing changed
         if (newflag == prevflag)
           return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
+
+        // (a select that changes nothing does not take the place of one by index in flight)
+        if (newflag)
+          {
+             pd->parent->select_seq++;
+          }
 
         /* Refusing to be the change that leaves nothing selected, which is
            what allow_manual_deselection is for. Refused before the value is
