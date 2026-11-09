@@ -317,6 +317,144 @@ EFL_START_TEST(efl_test_select_model_multi_to_single_keeps_last)
 }
 EFL_END_TEST
 
+// In single mode, selecting by index replaces the selection, as selecting the row does.
+EFL_START_TEST(efl_test_select_model_single_index_select_replaces)
+{
+   Efl_Model *base_model, *model;
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 2);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 2);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 4, 4);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 4);
+   ck_assert_int_eq(efl_composite_model_index_get(efl_ui_selectable_last_selected_get(model)), 4);
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
+// The row selected last was unselected before leaving multiple selection: the lowest
+// still selected is kept, and it is the selected one from then on, so a single selection
+// that follows replaces it rather than joining it.
+EFL_START_TEST(efl_test_select_model_multi_to_single_keeps_one_without_last)
+{
+   Efl_Model *base_model, *model;
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_select(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_unselect(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 1);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), NULL);
+
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 1);
+   ck_assert_ptr_ne(efl_ui_selectable_last_selected_get(model), NULL);
+   ck_assert_int_eq(efl_composite_model_index_get(efl_ui_selectable_last_selected_get(model)), 1);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 3, 3);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 3);
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
+// Leaving multiple selection, then selecting another row before the kept one is known:
+// the later selection is the one that stays.
+EFL_START_TEST(efl_test_select_model_multi_to_single_select_at_once)
+{
+   Efl_Model *base_model, *model;
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
+   efl_ui_multi_selectable_ndx_range_select(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_unselect(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   efl_ui_multi_selectable_ndx_range_select(model, 3, 3);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 3);
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -324,4 +462,7 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_selects_the_first);
    tcase_add_test(tc, efl_test_select_model_reversed_range);
    tcase_add_test(tc, efl_test_select_model_multi_to_single_keeps_last);
+   tcase_add_test(tc, efl_test_select_model_single_index_select_replaces);
+   tcase_add_test(tc, efl_test_select_model_multi_to_single_keeps_one_without_last);
+   tcase_add_test(tc, efl_test_select_model_multi_to_single_select_at_once);
 }

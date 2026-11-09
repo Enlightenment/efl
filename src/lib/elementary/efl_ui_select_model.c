@@ -206,10 +206,17 @@ _check_child_change(Efl_Model *child, Eina_Bool value)
    return r;
 }
 
+// Selecting by index is selecting the row: through "self.selected", which in single mode
+// is what unselects the row selected before.
 static Eina_Future *
 _select_child(Efl_Model *child)
 {
-   return _check_child_change(child, EINA_TRUE);
+   Eina_Value select = eina_value_bool_init(EINA_TRUE);
+   Eina_Future *r;
+
+   r = efl_model_property_set(child, "self.selected", &select);
+   eina_value_flush(&select);
+   return r;
 }
 
 static Eina_Future *
@@ -495,8 +502,45 @@ _efl_ui_select_model_efl_ui_single_selectable_last_selected_get(const Eo *obj EI
    return pd->last_model;
 }
 
-// Leaving multiple selection for single keeps one row, the one selected last (or, with none
-// known, the lowest that is selected) and unselects the others, as Efl.Ui.Collection does.
+// The row kept on leaving multiple selection, when it was not the last selected: it is
+// the selected one from now on, unless a single selection came first, which then wins.
+static Eina_Value
+_select_keep_one_then(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(obj, EFL_UI_SELECT_MODEL_CLASS);
+   Eina_Value *selected;
+   Eina_Bool flag = EINA_FALSE;
+   Eo *child = NULL;
+
+   if (pd->selection != EFL_UI_SELECT_MODE_SINGLE) return v;
+   if (eina_value_array_count(&v) != 1) return v;
+   eina_value_array_get(&v, 0, &child);
+   if (!child) return v;
+
+   selected = efl_model_property_get(child, "selected");
+   eina_value_bool_get(selected, &flag);
+   eina_value_free(selected);
+   if (!flag) return v;
+
+   if (!pd->last_model)
+     {
+        _efl_ui_select_model_apply_last_model(obj, pd, child);
+     }
+   else if (pd->last_model != child)
+     {
+        Eina_Value unselect = eina_value_bool_init(EINA_FALSE);
+
+        efl_model_property_set(child, "self.selected", &unselect);
+        eina_value_flush(&unselect);
+     }
+   return v;
+}
+
+// Leaving multiple selection for single keeps one row and unselects the others, as
+// Efl.Ui.Collection does. That is the row selected last when it is still selected;
+// otherwise the lowest selected one (Collection keeps the most recently selected still
+// selected, but this model only remembers the last one, and keeping an order of all
+// selections would cost every selection a list entry for the rare mode switch).
 static void
 _select_keep_one(Eo *obj, Efl_Ui_Select_Model_Data *pd)
 {
@@ -507,7 +551,8 @@ _select_keep_one(Eo *obj, Efl_Ui_Select_Model_Data *pd)
    if (pd->last_model)
      {
         keep = efl_composite_model_index_get(pd->last_model);
-        have = EINA_TRUE;
+        // (no index: it is not a row any more)
+        have = (keep != 0xFFFFFFFF);
      }
    it = efl_ui_multi_selectable_selected_ndx_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, index)
@@ -524,7 +569,12 @@ _select_keep_one(Eo *obj, Efl_Ui_Select_Model_Data *pd)
 
    count = efl_model_children_count_get(obj);
    if (keep > 0) efl_ui_multi_selectable_ndx_range_unselect(obj, 0, keep - 1);
-   if (keep + 1 < count) efl_ui_multi_selectable_ndx_range_unselect(obj, keep + 1, count - 1);
+   if (keep < count - 1) efl_ui_multi_selectable_ndx_range_unselect(obj, keep + 1, count - 1);
+
+   if (pd->last_model && (efl_composite_model_index_get(pd->last_model) == keep)) return;
+   efl_future_then(obj, efl_model_children_slice_get(obj, keep, 1),
+                   .success_type = EINA_VALUE_TYPE_ARRAY,
+                   .success = _select_keep_one_then);
 }
 
 static void
