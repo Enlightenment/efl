@@ -455,6 +455,93 @@ EFL_START_TEST(efl_test_select_model_multi_to_single_select_at_once)
 }
 EFL_END_TEST
 
+// Single mode holds one row even when several selections are asked for in one turn,
+// before any of them committed: the last one asked for is the one.
+EFL_START_TEST(efl_test_select_model_single_selects_in_one_turn)
+{
+   Efl_Model *base_model, *model;
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 8; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 1, 3);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 3);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 5, 5);
+   efl_ui_multi_selectable_ndx_range_select(model, 0, 0);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 0);
+   ck_assert_int_eq(efl_composite_model_index_get(efl_ui_selectable_last_selected_get(model)), 0);
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
+// Going to none unselects every row, whatever mode it comes from: a row selected but not
+// known as the last one (kept on leaving multiple selection, before it is fetched) does not
+// come back on the next switch to multiple selection.
+EFL_START_TEST(efl_test_select_model_single_to_none_unselects_all)
+{
+   Efl_Model *base_model, *model;
+   unsigned int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+   efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
+   efl_ui_multi_selectable_ndx_range_select(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_unselect(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, NULL), 1);
+
+   // single keeps row 1, then none at once, before row 1 is known as the last one
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_NONE);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, NULL), 0);
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // A row that left while the slice holding it was pending has no index: selecting it
 // selects nothing and does not make it the selected one.
 static Eina_Value
@@ -532,4 +619,6 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_multi_to_single_keeps_one_without_last);
    tcase_add_test(tc, efl_test_select_model_multi_to_single_select_at_once);
    tcase_add_test(tc, efl_test_select_model_gone_row_is_not_selected);
+   tcase_add_test(tc, efl_test_select_model_single_selects_in_one_turn);
+   tcase_add_test(tc, efl_test_select_model_single_to_none_unselects_all);
 }

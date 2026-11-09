@@ -131,8 +131,10 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
    eina_value_bool_get(selected, &selflag);
    if (selflag)
      {
-        // select case
-        _efl_ui_select_model_apply_last_model(parent, pd, child);
+        // select case (in single mode the last one was set when the selection was asked for,
+        // and a later one asked for before this commit is the last one)
+        if ((pd->selection != EFL_UI_SELECT_MODE_SINGLE) || !pd->last_model)
+          _efl_ui_select_model_apply_last_model(parent, pd, child);
         efl_event_callback_call(child, EFL_UI_SELECT_MODEL_EVENT_SELECTED, child);
      }
    else
@@ -380,8 +382,6 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         Eina_Value *prev;
         Eina_Future *chain;
 
-        if (pd->parent->selection == EFL_UI_SELECT_MODE_NONE)
-          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
         // A row with no index left while a slice held it: it is not a row to select
         if (efl_composite_model_index_get(obj) == 0xFFFFFFFF)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -391,6 +391,11 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         success &= eina_value_bool_convert(value, &newflag);
 
         if (!success) return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+
+        // None selects nothing, but what was selected can go: going to none unselects every
+        // row, and those unselects arrive once the mode is none
+        if ((pd->parent->selection == EFL_UI_SELECT_MODE_NONE) && newflag)
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
         // Nothing changed
         if (newflag == prevflag)
@@ -440,6 +445,9 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
                                                 .data = efl_ref(obj),
                                                 .error = _untangle_error,
                                                 .free = _untangle_free);
+                  // This is the last one now, not once it commits: a selection asked for
+                  // before then unselects this one, not the one before it
+                  _efl_ui_select_model_apply_last_model(parent, pd->parent, obj);
                }
              else
                {
@@ -592,15 +600,9 @@ _efl_ui_select_model_efl_ui_multi_selectable_select_mode_set(Eo *obj,
          if (pd->selection == EFL_UI_SELECT_MODE_MULTI) _select_keep_one(obj, pd);
          break;
       case EFL_UI_SELECT_MODE_NONE:
-         if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
-           efl_ui_multi_selectable_all_unselect(obj);
-         else if (pd->last_model)
-           {
-              Eina_Value unselect = eina_value_bool_init(EINA_FALSE);
-
-              efl_model_property_set(pd->last_model, "self.selected", &unselect);
-              eina_value_flush(&unselect);
-           }
+         // Every row, from single mode too: one selected but not known as the last one (kept
+         // on leaving multiple selection, before it is fetched) would come back in multi
+         efl_ui_multi_selectable_all_unselect(obj);
          break;
       case EFL_UI_SELECT_MODE_MULTI:
          break;
