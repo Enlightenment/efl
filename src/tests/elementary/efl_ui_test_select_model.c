@@ -237,10 +237,91 @@ EFL_START_TEST(efl_test_select_model_reversed_range)
 }
 EFL_END_TEST
 
+/* Leaving multiple selection for single keeps the row that was selected last, as
+ * Efl.Ui.Collection does (it keeps the last of its selected items), and unselects the
+ * others. Going to none unselects everything, in both. */
+static unsigned int
+_selected_count(Efl_Ui_Select_Model *model, unsigned int *first)
+{
+   Eina_Iterator *it = efl_ui_multi_selectable_selected_ndx_iterator_new(model);
+   unsigned int *index, n = 0;
+
+   if (first) *first = (unsigned int) -1;
+   EINA_ITERATOR_FOREACH(it, index)
+     {
+        if (!n && first) *first = *index;
+        n++;
+     }
+   eina_iterator_free(it);
+   return n;
+}
+
+EFL_START_TEST(efl_test_select_model_multi_to_single_keeps_last)
+{
+   Efl_Model *base_model, *model, *child;
+   Eina_Value v = EINA_VALUE_EMPTY;
+   unsigned int i, first = 99;
+
+   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   ck_assert(!!base_model);
+   for (i = 0; i < 6; ++i)
+     {
+        child = efl_model_child_add(base_model);
+        ck_assert(!!child);
+        ck_assert(eina_value_set(&v, (int) i));
+        efl_model_property_set(child, "test_p_int", &v);
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+
+   // (one at a time, the last one is the one selected last)
+   efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_select(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 2);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, NULL), 3);
+
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 2);
+
+   // none: everything goes
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_NONE);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, NULL), 0);
+
+   eina_value_flush(&v);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_select_model);
    tcase_add_test(tc, efl_test_select_model_selects_the_first);
    tcase_add_test(tc, efl_test_select_model_reversed_range);
+   tcase_add_test(tc, efl_test_select_model_multi_to_single_keeps_last);
 }

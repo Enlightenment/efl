@@ -495,6 +495,38 @@ _efl_ui_select_model_efl_ui_single_selectable_last_selected_get(const Eo *obj EI
    return pd->last_model;
 }
 
+// Leaving multiple selection for single keeps one row, the one selected last (or, with none
+// known, the lowest that is selected) and unselects the others, as Efl.Ui.Collection does.
+static void
+_select_keep_one(Eo *obj, Efl_Ui_Select_Model_Data *pd)
+{
+   Eina_Iterator *it;
+   unsigned int *index, keep = 0, count;
+   Eina_Bool have = EINA_FALSE, any = EINA_FALSE;
+
+   if (pd->last_model)
+     {
+        keep = efl_composite_model_index_get(pd->last_model);
+        have = EINA_TRUE;
+     }
+   it = efl_ui_multi_selectable_selected_ndx_iterator_new(obj);
+   EINA_ITERATOR_FOREACH(it, index)
+     {
+        any = EINA_TRUE;
+        if (!have)
+          {
+             keep = *index;
+             have = EINA_TRUE;
+          }
+     }
+   eina_iterator_free(it);
+   if (!any) return;
+
+   count = efl_model_children_count_get(obj);
+   if (keep > 0) efl_ui_multi_selectable_ndx_range_unselect(obj, 0, keep - 1);
+   if (keep + 1 < count) efl_ui_multi_selectable_ndx_range_unselect(obj, keep + 1, count - 1);
+}
+
 static void
 _efl_ui_select_model_efl_ui_multi_selectable_select_mode_set(Eo *obj,
                                                                    Efl_Ui_Select_Model_Data *pd,
@@ -504,8 +536,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_select_mode_set(Eo *obj,
      {
       case EFL_UI_SELECT_MODE_SINGLE:
          mode = EFL_UI_SELECT_MODE_SINGLE;
-         if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
-           efl_ui_multi_selectable_all_unselect(obj);
+         if (pd->selection == EFL_UI_SELECT_MODE_MULTI) _select_keep_one(obj, pd);
          break;
       case EFL_UI_SELECT_MODE_NONE:
          if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
