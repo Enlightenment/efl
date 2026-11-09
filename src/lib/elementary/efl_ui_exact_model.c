@@ -238,6 +238,9 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             unsigned char found;
 
             index = efl_composite_model_index_get(obj);
+            // (no index: the row left while a slice held it, and has no slot)
+            if (index == 0xFFFFFFFF)
+              return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
             found = _efl_ui_exact_model_slot_find(pd, index, EINA_TRUE, EINA_FALSE);
             if (!eina_value_uint_convert(value, &pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT]))
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -253,6 +256,8 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             unsigned char found;
 
             index = efl_composite_model_index_get(obj);
+            if (index == 0xFFFFFFFF)
+              return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
             found = _efl_ui_exact_model_slot_find(pd, index, EINA_FALSE, EINA_TRUE);
             old_value = pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT];
             if (!eina_value_uint_convert(value, &pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT]))
@@ -300,6 +305,8 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              unsigned char found;
 
              index = efl_composite_model_index_get(obj);
+             // (no index: the row left while a slice held it, and has no size)
+             if (index == 0xFFFFFFFF) return eina_value_error_new(EAGAIN);
              found = _efl_ui_exact_model_slot_find(pd, index, EINA_TRUE, EINA_FALSE);
              return eina_value_uint_new(pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT]);
           }
@@ -309,6 +316,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              unsigned char found;
 
              index = efl_composite_model_index_get(obj);
+             if (index == 0xFFFFFFFF) return eina_value_error_new(EAGAIN);
              found = _efl_ui_exact_model_slot_find(pd, index, EINA_FALSE, EINA_TRUE);
              return eina_value_uint_new(pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT]);
           }
