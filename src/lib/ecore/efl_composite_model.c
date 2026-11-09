@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <limits.h>
+
 #include <Eina.h>
 #include <Efl.h>
 #include <Ecore.h>
@@ -506,6 +508,11 @@ _efl_composite_model_efl_model_children_slice_get(Eo *obj,
    Eina_Future *f;
    unsigned int source_count, self_count;
    unsigned int req_count, i;
+
+   // A count that wraps start + count around asks for nothing that exists (it would pass the
+   // check below, and size what the answer is waited for with)
+   if (count > UINT_MAX - start)
+     return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
    source_count = efl_model_children_count_get(pd->source);
    self_count = efl_model_children_count_get(obj);

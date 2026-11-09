@@ -20,6 +20,8 @@
 # include "config.h"
 #endif
 
+#include <limits.h>
+
 #include "efl_suite.h"
 
 #include <Efl.h>
@@ -1190,6 +1192,39 @@ EFL_START_TEST(efl_test_composite_model_pending_slice_removed_row)
 }
 EFL_END_TEST
 
+// A slice whose count wraps start + count around asks for nothing that exists.
+static Eina_Value
+_wrap_error(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eina_Error *err = data;
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     eina_value_error_get(&v, err);
+   else
+     *err = 0;
+   return v;
+}
+
+EFL_START_TEST(efl_test_composite_model_slice_count_wraps)
+{
+   Eina_Error err = -1;
+   Eo *base, *model, *rows[6];
+   unsigned int i;
+
+   model = _pending_setup(&base, rows, 6);
+   eina_future_then(efl_model_children_slice_get(model, 10, UINT_MAX - 5),
+                    _wrap_error, &err, NULL);
+   for (i = 0; (i < 8) && (err == -1); i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(err, EFL_MODEL_ERROR_INCORRECT_VALUE);
+
+   efl_unref(model);
+   efl_unref(base);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
@@ -1205,4 +1240,5 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_composite_model_pending_slice_insert);
    tcase_add_test(tc, efl_test_composite_model_pending_slice_remove);
    tcase_add_test(tc, efl_test_composite_model_pending_slice_removed_row);
+   tcase_add_test(tc, efl_test_composite_model_slice_count_wraps);
 }
