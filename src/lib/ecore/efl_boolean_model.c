@@ -329,11 +329,19 @@ _child_added(void *data, const Efl_Event *event)
    it = eina_hash_iterator_data_new(pd->values);
    EINA_ITERATOR_FOREACH(it, v)
      {
-        unsigned int i;
+        unsigned int i, stored;
+
+        // Past the last stored range every bit is the default, and so is the one
+        // that moves onto it: only what is stored has to be moved.
+        stored = (v->last) ? (v->last->offset + v->last->length) : 0;
+        i = total - 1;
+        if (i > stored) i = stored;
 
         // Everything from the insertion point is now one child further
-        for (i = total - 1; i > ev->index; i--)
-          _value_bit_set(v, i, _value_bit_get(v, i - 1));
+        for (; i > ev->index; i--)
+          {
+             _value_bit_set(v, i, _value_bit_get(v, i - 1));
+          }
         _value_bit_set(v, ev->index, !!v->default_value);
      }
    eina_iterator_free(it);
