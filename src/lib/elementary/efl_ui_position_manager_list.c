@@ -319,6 +319,8 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    if (pd->average_item_size <= 0) return;
 
    cache_require(obj, pd);
+   // No size is known yet (every item reported none): nothing to lay out until one is.
+   if (!pd->size_cache) return;
 
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
@@ -447,6 +449,8 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
    if (!pd->size) return EINA_RECT(0,0,0,0);
 
    cache_require(obj, pd);
+   // No size is known yet (every item reported none): nothing to lay out until one is.
+   if (!pd->size_cache) return EINA_RECT(0,0,0,0);
 
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
@@ -592,6 +596,8 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_entities_ready(Eo *
    if (pd->average_item_size <= 0) return;
 
    cache_require(obj, pd);
+   // No size is known yet (every item reported none): nothing to lay out until one is.
+   if (!pd->size_cache) return;
 
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
