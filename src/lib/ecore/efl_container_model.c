@@ -233,6 +233,9 @@ _efl_container_model_efl_model_property_set(Eo *obj,
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
         index = efl_composite_model_index_get(obj);
+        // A row with no index left while a slice held it: the values would grow to reach it
+        if (index == 0xFFFFFFFF)
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
         // Try converting the type before touching any data inside the Model
         if (eina_value_type_get(value) != cpd->type)
