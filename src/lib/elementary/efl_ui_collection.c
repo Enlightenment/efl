@@ -637,8 +637,9 @@ _redirect_cb(void *data, const Efl_Event *ev)
      {                                                          \
         Efl_Ui_Item_Clickable_Clicked item_clicked;             \
         Efl_Input_Clickable_Clicked *clicked = ev->info;        \
+        Efl_Input_Clickable_Clicked primary = { .button = 1 };  \
                                                                 \
-        item_clicked.clicked = *clicked;                        \
+        item_clicked.clicked = clicked ? *clicked : primary;    \
         item_clicked.item = ev->object;                         \
                                                                 \
         efl_event_callback_call(obj, Item_Desc, &item_clicked); \
@@ -647,9 +648,9 @@ _redirect_cb(void *data, const Efl_Event *ev)
    if (Desc == ev->desc)                                        \
      {                                                          \
         Efl_Ui_Item_Clickable_Pressed item_pressed;             \
-        int *button = ev->info;        \
+        int *button = ev->info;                                 \
                                                                 \
-        item_pressed.button = *button;                        \
+        item_pressed.button = button ? *button : 1;             \
         item_pressed.item = ev->object;                         \
                                                                 \
         efl_event_callback_call(obj, Item_Desc, &item_pressed); \

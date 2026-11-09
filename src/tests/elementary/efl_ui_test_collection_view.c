@@ -595,6 +595,71 @@ EFL_START_TEST(test_efl_ui_collection_view_homogeneous_model)
 }
 EFL_END_TEST
 
+static void
+_view_item_clicked_cb(void *data, const Efl_Event *ev)
+{
+   const Efl_Ui_Item_Clickable_Clicked *c = ev->info;
+   int *n = data;
+
+   ck_assert_int_eq(c->clicked.button, 1);
+   ck_assert_ptr_ne(c->item, NULL);
+   (*n)++;
+}
+
+static void
+_view_item_pressed_cb(void *data, const Efl_Event *ev)
+{
+   const Efl_Ui_Item_Clickable_Pressed *p = ev->info;
+   int *n = data;
+
+   ck_assert_int_eq(p->button, 1);
+   ck_assert_ptr_ne(p->item, NULL);
+   (*n)++;
+}
+
+/* An application may raise the click or the press of an item with nothing
+   attached: the view takes the primary button. */
+EFL_START_TEST(test_efl_ui_collection_view_item_events_without_info)
+{
+   Eina_List *realized = NULL;
+   Efl_Ui_Win *win;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   Eo *item;
+   int clicked = 0, pressed = 0, i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_event_callback_add(efl_added, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                                       _realized_track, &realized),
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, _make_model(win)));
+   efl_content_set(win, lv);
+   efl_event_callback_add(lv, EFL_UI_EVENT_ITEM_CLICKED, _view_item_clicked_cb, &clicked);
+   efl_event_callback_add(lv, EFL_UI_EVENT_ITEM_PRESSED, _view_item_pressed_cb, &pressed);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   item = _realized_row(realized, 0);
+   ck_assert_ptr_nonnull(item);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_CLICKED, NULL);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_PRESSED, NULL);
+   ck_assert_int_eq(clicked, 1);
+   ck_assert_int_eq(pressed, 1);
+
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   eina_list_free(realized);
+}
+EFL_END_TEST
+
 /* A list between two buttons, its rows more than it shows. */
 static Eo *
 _list_between(Eo **above, Eo **below)
@@ -733,5 +798,6 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_shift_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_homogeneous_model);
+   tcase_add_test(tc, test_efl_ui_collection_view_item_events_without_info);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
 }

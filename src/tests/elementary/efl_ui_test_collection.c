@@ -94,6 +94,54 @@ EFL_START_TEST(efl_ui_collection_bare)
 EFL_END_TEST
 
 static void
+_item_clicked_cb(void *data, const Efl_Event *ev)
+{
+   const Efl_Ui_Item_Clickable_Clicked *c = ev->info;
+   int *n = data;
+
+   ck_assert_int_eq(c->clicked.button, 1);
+   ck_assert_int_eq(c->clicked.repeated, 0);
+   ck_assert_ptr_ne(c->item, NULL);
+   (*n)++;
+}
+
+static void
+_item_pressed_cb(void *data, const Efl_Event *ev)
+{
+   const Efl_Ui_Item_Clickable_Pressed *p = ev->info;
+   int *n = data;
+
+   ck_assert_int_eq(p->button, 1);
+   ck_assert_ptr_ne(p->item, NULL);
+   (*n)++;
+}
+
+// An application may raise the click or the press of an item with nothing
+// attached: the collection takes the primary button.
+EFL_START_TEST(efl_ui_collection_item_events_without_info)
+{
+   Eo *c, *item;
+   int clicked = 0, pressed = 0, any = 0;
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
+   c = efl_add(EFL_UI_COLLECTION_CLASS, win);
+   efl_content_set(win, c);
+   item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, c);
+   efl_pack_end(c, item);
+   efl_event_callback_add(c, EFL_UI_EVENT_ITEM_CLICKED, _item_clicked_cb, &clicked);
+   efl_event_callback_add(c, EFL_UI_EVENT_ITEM_CLICKED_ANY, _item_clicked_cb, &any);
+   efl_event_callback_add(c, EFL_UI_EVENT_ITEM_PRESSED, _item_pressed_cb, &pressed);
+
+   efl_event_callback_call(item, EFL_INPUT_EVENT_CLICKED, NULL);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_CLICKED_ANY, NULL);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_PRESSED, NULL);
+   ck_assert_int_eq(clicked, 1);
+   ck_assert_int_eq(any, 1);
+   ck_assert_int_eq(pressed, 1);
+}
+EFL_END_TEST
+
+static void
 _manager_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    *(Eina_Bool *)data = EINA_TRUE;
@@ -128,5 +176,6 @@ void efl_ui_test_item_container(TCase *tc)
    tcase_add_test(tc, finalizer_check);
    tcase_add_test(tc, efl_ui_collection_manager_twice);
    tcase_add_test(tc, efl_ui_collection_bare);
+   tcase_add_test(tc, efl_ui_collection_item_events_without_info);
    tcase_add_test(tc, efl_ui_collection_manager_ownership);
 }
