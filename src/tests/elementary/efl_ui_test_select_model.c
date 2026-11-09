@@ -678,6 +678,57 @@ EFL_START_TEST(efl_test_select_model_manual_deselection)
 }
 EFL_END_TEST
 
+static Eina_Value
+_state_ignore(void *data EINA_UNUSED, const Eina_Value v,
+              const Eina_Future *dead_future EINA_UNUSED)
+{
+   return v;
+}
+
+// Single mode: a row selected directly (a click) after a selection by index was asked for,
+// before that one fetched its row, is the later one and wins.
+EFL_START_TEST(efl_test_select_model_single_later_direct_select_wins)
+{
+   Efl_Model *base_model, *model;
+   Eo *kids[2] = { NULL, NULL };
+   Eina_Value select = eina_value_bool_init(EINA_TRUE);
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 10; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 2);
+   eina_future_then(efl_model_children_slice_get(model, 8, 1), _gone_then, kids, NULL);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!kids[0]);
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 2);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 5, 5);
+   eina_future_then(efl_model_property_set(kids[0], "self.selected", &select),
+                    _state_ignore, NULL, NULL);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 8);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), kids[0]);
+
+   efl_unref(kids[0]);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -692,4 +743,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_single_selects_in_one_turn);
    tcase_add_test(tc, efl_test_select_model_single_to_none_unselects_all);
    tcase_add_test(tc, efl_test_select_model_manual_deselection);
+   tcase_add_test(tc, efl_test_select_model_single_later_direct_select_wins);
 }

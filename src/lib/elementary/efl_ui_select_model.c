@@ -24,6 +24,9 @@ struct _Efl_Ui_Select_Model_Data
    Efl_Ui_Select_Model *last_model;
 
    Efl_Ui_Select_Mode selection;
+   // Counts the selections asked for: one by index fetches its row first, and in single mode
+   // a selection asked for meanwhile is the later one
+   unsigned int select_seq;
 
    Eina_Bool allow_manual_deselection : 1;
 };
@@ -249,12 +252,18 @@ _unselect_child(Efl_Model *child)
 }
 
 static Eina_Value
-_select_slice_then(Eo *obj EINA_UNUSED,
-                   void *data EINA_UNUSED,
+_select_slice_then(Eo *obj,
+                   void *data,
                    const Eina_Value v)
 {
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(obj, EFL_UI_SELECT_MODEL_CLASS);
+   unsigned int seq = (unsigned int) (uintptr_t) data;
    Efl_Model *child = NULL;
    Eina_Future *r;
+
+   // Single mode: a selection asked for after this one, while its row was fetched, wins
+   if ((pd->selection == EFL_UI_SELECT_MODE_SINGLE) && (pd->select_seq != seq))
+     return v;
 
    child = _select_child_get(&v, 0);
    if (!child) goto on_error;
@@ -392,6 +401,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         return efl_future_then(efl_ref(obj), efl_model_children_slice_get(obj, l, 1),
                                .success = _select_slice_then,
                                .success_type = EINA_VALUE_TYPE_ARRAY,
+                               .data = (void *) (uintptr_t) ++pd->select_seq,
                                .free = _clear_child);
      }
 
@@ -417,6 +427,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         // row, and those unselects arrive once the mode is none
         if ((pd->parent->selection == EFL_UI_SELECT_MODE_NONE) && newflag)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+        if (newflag) pd->parent->select_seq++;
 
         // Nothing changed
         if (newflag == prevflag)
