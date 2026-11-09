@@ -603,7 +603,9 @@ eina_convert_strtod_c(const char *nptr, char **endptr)
 
             for (; isdigit(*iter); iter++)
               {
-                expo_part = expo_part * 10U + (unsigned int)(*iter - '0');
+                /* far past any double's range, more digits change nothing */
+                if (expo_part < 10000U)
+                  expo_part = expo_part * 10U + (unsigned int)(*iter - '0');
               }
           }
         else if (!isdigit(*(a - 1)))

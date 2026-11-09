@@ -248,6 +248,11 @@ EFL_START_TEST(eina_convert_strtod_c_simple)
    _eina_convert_strtod_c_check("2.2250738585072012e-308");
    _eina_convert_strtod_c_check("2.2250738585072013e-308");
    _eina_convert_strtod_c_check("2.2250738585072014e-308");
+   /* exponents past UINT_MAX */
+   _eina_convert_strtod_c_check("1e4294967295");
+   _eina_convert_strtod_c_check("1e4294967297");
+   _eina_convert_strtod_c_check("1e-4294967297");
+   _eina_convert_strtod_c_check("1e56789012345678901234567890");
    _eina_convert_strtod_c_check(" NaNfoo");
    _eina_convert_strtod_c_check(" -INFfoo");
 // this test isn't viable because libc actually fails the conversion (testing
