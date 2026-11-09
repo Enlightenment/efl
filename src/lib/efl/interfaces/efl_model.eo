@@ -136,6 +136,11 @@ interface Efl.Model
 
                  See @.children_count.get
 
+                 The answer is the rows as they were when the call was made:
+                 rows that are added or removed before the future is done do not
+                 change which rows it holds, and a row that left meanwhile is
+                 still in it (its index is then invalid).
+
                  Note: The returned children will live only as long as the future
                  itself. Once the future is done, if you want to keep the object
                  alive, you need to take a reference for yourself.
