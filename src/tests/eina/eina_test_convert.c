@@ -253,6 +253,9 @@ EFL_START_TEST(eina_convert_strtod_c_simple)
    _eina_convert_strtod_c_check("1e4294967297");
    _eina_convert_strtod_c_check("1e-4294967297");
    _eina_convert_strtod_c_check("1e56789012345678901234567890");
+   /* zero times an infinite scale */
+   _eina_convert_strtod_c_check("0e400");
+   _eina_convert_strtod_c_check("-0.0e-400");
    _eina_convert_strtod_c_check(" NaNfoo");
    _eina_convert_strtod_c_check(" -INFfoo");
 // this test isn't viable because libc actually fails the conversion (testing
