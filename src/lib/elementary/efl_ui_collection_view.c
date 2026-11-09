@@ -918,6 +918,7 @@ _batch_request_flush(Eina_List *requests,
         // Check request intersection with all pending request
         Efl_Ui_Collection_Request *inflight;
         Efl_Model *model;
+        unsigned int count;
         Eina_List *l;
 
         EINA_LIST_FOREACH(pd->requests, l, inflight)
@@ -994,17 +995,19 @@ _batch_request_flush(Eina_List *requests,
              free(request);
              continue;
           }
+        // Asked once: the two checks below and the subtraction must see the same count
+        count = efl_model_children_count_get(model);
         // Is the request inside the limit of the model?
-        if (request->offset >= efl_model_children_count_get(model))
+        if (request->offset >= count)
           {
              requests = eina_list_remove_list(requests, ll);
              free(request);
              continue;
           }
         // Is its limit outside the model limit?
-        if (request->offset + request->length >= efl_model_children_count_get(model))
+        if (request->offset + request->length >= count)
           {
-             request->length = efl_model_children_count_get(model) - request->offset;
+             request->length = count - request->offset;
           }
 
         // We now have a request, time to trigger a fetch
