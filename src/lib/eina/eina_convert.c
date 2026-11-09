@@ -644,7 +644,9 @@ eina_convert_strtod_c(const char *nptr, char **endptr)
             expo_part--;
           }
 
-        val = (minus_e == -1) ? (val / scale) : (val * scale);
+        /* 0 * inf would be NaN */
+        if (!eina_dbl_exact(val, 0.0))
+          val = (minus_e == -1) ? (val / scale) : (val * scale);
      }
    else if ((iter > nptr) && !isdigit(*(iter - 1)))
      {
