@@ -612,7 +612,7 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
    Eldbus_Property_Promise* p;
    Eina_Stringshare *sp;
    Eina_Array *properties;
-   Efl_Model_Property_Event evt;
+   Efl_Model_Property_Event evt = { 0 };
 
    pd->pendings = eina_list_remove(pd->pendings, pending);
 

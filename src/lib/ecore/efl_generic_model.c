@@ -62,7 +62,7 @@ _efl_generic_model_efl_model_property_set(Eo *obj, Efl_Generic_Model_Data *pd, c
 {
    Eina_Stringshare *prop;
    Eina_Value *exist, next = EINA_VALUE_EMPTY;
-   Efl_Model_Property_Event evt;
+   Efl_Model_Property_Event evt = { 0 };
 
    prop = eina_stringshare_add(property);
    exist = eina_hash_find(pd->properties, prop);

@@ -644,6 +644,37 @@ _set_counted(Efl_Generic_Model *model, const char *name, int tag)
    eina_value_free(v);
 }
 
+static void
+_properties_changed(void *data, const Efl_Event *ev)
+{
+   Efl_Model_Property_Event *event = ev->info;
+   Eina_Bool *invalidated_unset = data;
+
+   *invalidated_unset = (event->invalidated_properties == NULL);
+}
+
+/* An event that carries a list of changed properties does not carry a stray
+ * list of invalidated ones. The stray value is the stack's, so only an
+ * uninitialized-read checker tells it reliably. */
+EFL_START_TEST(efl_test_generic_model_properties_changed_event)
+{
+   Efl_Generic_Model *model;
+   Eina_Bool invalidated_unset = EINA_FALSE;
+   Eina_Value *v;
+
+   model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                          _properties_changed, &invalidated_unset);
+
+   v = eina_value_int_new(42);
+   eina_future_cancel(efl_model_property_set(model, "p", v));
+   eina_value_free(v);
+   ck_assert(invalidated_unset);
+
+   efl_unref(model);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_test_generic_model_property_replaced)
 {
    Efl_Generic_Model *model;
@@ -963,5 +994,6 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_filter_model);
    tcase_add_test(tc, efl_test_generic_model_child_added);
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);
+   tcase_add_test(tc, efl_test_generic_model_properties_changed_event);
    tcase_add_test(tc, efl_test_generic_model_property_replaced);
 }
