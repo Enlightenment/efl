@@ -455,6 +455,72 @@ EFL_START_TEST(efl_test_select_model_multi_to_single_select_at_once)
 }
 EFL_END_TEST
 
+// A row that left while the slice holding it was pending has no index: selecting it
+// selects nothing and does not make it the selected one.
+static Eina_Value
+_gone_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eo **kids = data;
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        if (i < 2) kids[i] = efl_ref(c);
+     }
+   return v;
+}
+
+EFL_START_TEST(efl_test_select_model_gone_row_is_not_selected)
+{
+   Efl_Model *base_model, *model, *rows[3];
+   Eo *kids[2] = { NULL, NULL };
+   Eina_Value select = eina_value_bool_init(EINA_TRUE);
+   unsigned int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 3; ++i)
+     {
+        rows[i] = efl_model_child_add(base_model);
+        ck_assert(!!rows[i]);
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+
+   eina_future_then(efl_model_children_slice_get(model, 0, 2), _gone_then, kids, NULL);
+   efl_model_child_del(base_model, rows[0]);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_ne(kids[0], NULL);
+   ck_assert_int_eq(efl_composite_model_index_get(kids[0]), 0xFFFFFFFF);
+
+   eina_future_cancel(efl_model_property_set(kids[0], "self.selected", &select));
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), NULL);
+   ck_assert_int_eq(_selected_count(model, NULL), 0);
+
+   // and the row that is there now is still selectable
+   eina_future_cancel(efl_model_property_set(kids[1], "self.selected", &select));
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, NULL), 1);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), kids[1]);
+
+   efl_unref(kids[0]);
+   efl_unref(kids[1]);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -465,4 +531,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_single_index_select_replaces);
    tcase_add_test(tc, efl_test_select_model_multi_to_single_keeps_one_without_last);
    tcase_add_test(tc, efl_test_select_model_multi_to_single_select_at_once);
+   tcase_add_test(tc, efl_test_select_model_gone_row_is_not_selected);
 }

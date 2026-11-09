@@ -382,6 +382,9 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
 
         if (pd->parent->selection == EFL_UI_SELECT_MODE_NONE)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+        // A row with no index left while a slice held it: it is not a row to select
+        if (efl_composite_model_index_get(obj) == 0xFFFFFFFF)
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
         prev = efl_model_property_get(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS), "selected");
         success = eina_value_bool_get(prev, &prevflag);
