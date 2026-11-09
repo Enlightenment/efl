@@ -201,6 +201,52 @@ user_changed(void *data, const Efl_Event *ev)
    *stored = *info;
 }
 
+static Eo *
+_typing_textbox(Eo **win_out, Evas **e_out)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+
+   efl_gfx_entity_size_set(txt, EINA_SIZE2D(300, 300));
+   efl_text_interactive_editable_set(txt, EINA_TRUE);
+   efl_gfx_entity_visible_set(txt, EINA_TRUE);
+   efl_ui_focus_util_focus(txt);
+
+   *win_out = win;
+   *e_out = evas_object_evas_get(txt);
+
+   return txt;
+}
+
+static void
+_type(Evas *e, const char *keyname, const char *str)
+{
+   evas_event_feed_key_down(e, keyname, keyname, str, str, time(NULL), NULL);
+   evas_event_feed_key_up(e, keyname, keyname, str, str, time(NULL), NULL);
+   ecore_main_loop_iterate();
+}
+
+typedef struct
+{
+   const char *content;
+   int length;
+   int count;
+} User_Typed;
+
+/* Typing builds the string of the change (the input filters return a copy):
+ * a listener reads it while the event is raised, so it has to be alive then. */
+static void
+user_typed(void *data, const Efl_Event *ev)
+{
+   const Efl_Text_Change_Info *info = ev->info;
+   User_Typed *typed = data;
+
+   fail_if(!info->content);
+   ck_assert_str_eq(info->content, typed->content);
+   ck_assert_int_eq(info->length, typed->length);
+   typed->count++;
+}
+
 EFL_START_TEST(text_user_change)
 {
    Eo *txt;
@@ -217,7 +263,28 @@ EFL_START_TEST(text_user_change)
    ck_assert_int_eq(info.position, 0);
    ck_assert_int_eq(info.length, 5);
    efl_del(txt);
-   efl_del(win);
+   // In a forked run win_add() gives every call the window of the suite, which must stay.
+   if (!is_forked()) efl_del(win);
+
+   {
+      User_Typed typed = { "a", 1, 0 };
+      Evas *e;
+
+      txt = _typing_textbox(&win, &e);
+      efl_event_callback_add(txt, EFL_TEXT_INTERACTIVE_EVENT_CHANGED_USER, user_typed, &typed);
+      _type(e, "a", "a");
+      ck_assert_int_eq(typed.count, 1);
+
+      /* A composed character: the string the compose sequence builds is the
+       * one a listener reads. */
+      typed.content = "\xc3\xa1";
+      typed.length = 1;
+      _type(e, "dead_acute", NULL);
+      _type(e, "a", "a");
+      ck_assert_int_eq(typed.count, 2);
+      efl_del(txt);
+      if (!is_forked()) efl_del(win);
+   }
 }
 EFL_END_TEST
 
