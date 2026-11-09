@@ -199,7 +199,9 @@ _efl_boolean_model_efl_model_property_set(Eo *obj,
    if (!eina_value_bool_convert(value, &flag))
      convert_fail = EINA_TRUE;
 
-   sr = _storage_lookup(pd, property, index, EINA_TRUE, flag, &found, &default_value);
+   // A row with no index (it left while a slice held it) has no bit to set, and the
+   // storage is not sparse: allocating up to there would take all the memory
+   sr = _storage_lookup(pd, property, index, index != 0xFFFFFFFF, flag, &found, &default_value);
    if (!found)
      return efl_model_property_set(efl_super(obj, EFL_BOOLEAN_MODEL_CLASS),
                                    property, value);
@@ -207,6 +209,9 @@ _efl_boolean_model_efl_model_property_set(Eo *obj,
    // Convert did fail and we actually should have a valid Boolean to put in the buffer
    if (convert_fail)
      return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_UNKNOWN);
+
+   if (index == 0xFFFFFFFF)
+     return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
    if (!sr)
      return efl_loop_future_resolved(obj, eina_value_bool_init(default_value));

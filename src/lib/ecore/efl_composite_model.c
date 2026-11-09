@@ -9,7 +9,11 @@
 #include "ecore_private.h"
 #include "efl_composite_model.eo.h"
 
+// The index of a row that left while a slice that holds it was pending: it is nowhere.
+#define COMPOSITE_GONE 0xFFFFFFFF
+
 typedef struct _Efl_Composite_Model_Data Efl_Composite_Model_Data;
+typedef struct _Efl_Composite_Model_Slice_Request Efl_Composite_Model_Slice_Request;
 
 struct _Efl_Composite_Model_Data
 {
@@ -18,13 +22,37 @@ struct _Efl_Composite_Model_Data
    Efl_Composite_Model *self;
    Efl_Model *source;
    Eina_Rbtree *indexed;
+   Eina_Inlist *pending; // Efl_Composite_Model_Slice_Request not answered yet
 
    unsigned int index;
 
    Eina_Bool need_index : 1;
    Eina_Bool set_index : 1;
    Eina_Bool inserted : 1;
+   Eina_Bool detached : 1; // never in the parent's index tree
 };
+
+struct _Efl_Composite_Model_Slice_Request
+{
+   EINA_INLIST;
+
+   const Efl_Class *self;
+   Eo *parent;
+   Efl_Composite_Model_Data *pd;
+   unsigned int start;
+   unsigned int count; // rows asked for, dummies included
+   unsigned int dummy_need;
+   // Where each row asked for is now. The source answers with the rows it had when it
+   // was asked, so rows that come or go in front of them before the answer move them.
+   unsigned int index[];
+};
+
+static inline unsigned int
+_request_index(const Efl_Composite_Model_Slice_Request *req, unsigned int i)
+{
+   // (a source may answer more than was asked for, a count of 0 being all of it to some)
+   return (i < req->count) ? req->index[i] : (req->start + i);
+}
 
 static Eina_Rbtree_Direction
 _children_indexed_cmp(const Efl_Composite_Model_Data *left,
@@ -99,7 +127,7 @@ _efl_composite_model_efl_object_finalize(Eo *obj, Efl_Composite_Model_Data *pd)
    pd->self = obj;
 
    parent = efl_parent_get(obj);
-   if (efl_isa(parent, EFL_COMPOSITE_MODEL_CLASS) && !pd->inserted)
+   if (efl_isa(parent, EFL_COMPOSITE_MODEL_CLASS) && !pd->inserted && !pd->detached)
      {
         Efl_Composite_Model_Data *ppd = efl_data_scope_get(parent, EFL_COMPOSITE_MODEL_CLASS);
         Efl_Composite_Model_Data *lookup;
@@ -108,9 +136,12 @@ _efl_composite_model_efl_object_finalize(Eo *obj, Efl_Composite_Model_Data *pd)
                                                    EINA_RBTREE_CMP_KEY_CB(_children_indexed_key), NULL);
         if (lookup)
           {
-             // There is already an object at this index, we should not
-             // build anything different than what exist. Returning existing one.
-             return lookup->self;
+             // The index is taken: this one stays out of the tree, and the one there
+             // keeps following inserts and removals. (Eo keeps the object built here
+             // whatever finalize returns, so returning the other one never replaced
+             // it.) A model stacked on a composite without an index of its own, at 0,
+             // is the usual case.
+             pd->detached = EINA_TRUE;
           }
         else
           {
@@ -152,6 +183,27 @@ _efl_composite_model_index_get(const Eo *obj, Efl_Composite_Model_Data *pd)
    return r;
 }
 
+// A row came (added) or went at index at: move the rows that pending slices hold.
+static void
+_pending_shift(Efl_Composite_Model_Data *pd, unsigned int at, Eina_Bool added)
+{
+   Efl_Composite_Model_Slice_Request *req;
+   unsigned int i;
+
+   EINA_INLIST_FOREACH(pd->pending, req)
+     {
+        for (i = 0; i < req->count; i++)
+          {
+             unsigned int *index = &req->index[i];
+
+             if ((*index == COMPOSITE_GONE) || (*index < at)) continue;
+             if (added) (*index)++;
+             else if (*index == at) *index = COMPOSITE_GONE;
+             else (*index)--;
+          }
+     }
+}
+
 static void
 _efl_composite_model_child_event(Efl_Composite_Model_Data *pd,
                                  const Efl_Model_Children_Event *ev,
@@ -164,6 +216,8 @@ _efl_composite_model_child_event(Efl_Composite_Model_Data *pd,
    unsigned int i;
 
    eina_array_step_set(&mark, sizeof (Eina_Array), 8);
+
+   _pending_shift(pd, ev->index, description == EFL_MODEL_EVENT_CHILD_ADDED);
 
    // A child added at an index pushes the one that was there, and all above it, one further.
    // This has to be done before looking for the new child, or the old one at that index is it.
@@ -363,14 +417,26 @@ _efl_composite_model_efl_model_children_count_get(const Eo *obj EINA_UNUSED, Efl
    return efl_model_children_count_get(pd->source);
 }
 
-typedef struct _Efl_Composite_Model_Slice_Request Efl_Composite_Model_Slice_Request;
-struct _Efl_Composite_Model_Slice_Request
+static void
+_efl_composite_model_detach(Eo *obj)
 {
-   const Efl_Class *self;
-   Eo *parent;
-   unsigned int start;
-   unsigned int dummy_need;
-};
+   Efl_Composite_Model_Data *pd = efl_data_scope_get(obj, EFL_COMPOSITE_MODEL_CLASS);
+
+   pd->detached = EINA_TRUE;
+}
+
+// A row that left before the slice holding it was answered: still the row, at no index,
+// and out of the index tree, so nothing that comes later at its old index is mistaken
+// for it.
+static Eo *
+_efl_composite_gone_add(const Efl_Class *klass, Eo *parent, Efl_Model *view)
+{
+   return efl_add_ref(klass, parent,
+                      _efl_composite_model_detach(efl_added),
+                      efl_ui_view_model_set(efl_added, view),
+                      efl_composite_model_index_set(efl_added, COMPOSITE_GONE),
+                      efl_loop_model_volatile_make(efl_added));
+}
 
 static Eina_Value
 _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
@@ -387,7 +453,10 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
         Eo *composite;
 
         // Fetch an existing composite model for this model or create a new one if none exist
-        composite = _efl_composite_lookup(req->self, req->parent, target, req->start + i);
+        if (_request_index(req, i) == COMPOSITE_GONE)
+          composite = _efl_composite_gone_add(req->self, req->parent, target);
+        else
+          composite = _efl_composite_lookup(req->self, req->parent, target, _request_index(req, i));
         if (!composite) continue;
 
         eina_value_array_append(&r, composite);
@@ -403,7 +472,7 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
         dummy = efl_add(EFL_GENERIC_MODEL_CLASS, req->parent);
         dummy_proxy = efl_add_ref(req->self, req->parent,
                                   efl_ui_view_model_set(efl_added, dummy),
-                                  efl_composite_model_index_set(efl_added, req->start + i),
+                                  efl_composite_model_index_set(efl_added, _request_index(req, i)),
                                   efl_loop_model_volatile_make(efl_added));
         efl_parent_set(dummy, dummy_proxy);
 
@@ -422,6 +491,7 @@ _efl_composite_model_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dea
 {
    Efl_Composite_Model_Slice_Request *req = data;
 
+   req->pd->pending = eina_inlist_remove(req->pd->pending, EINA_INLIST_GET(req));
    efl_unref(req->parent);
    free(data);
 }
@@ -435,7 +505,7 @@ _efl_composite_model_efl_model_children_slice_get(Eo *obj,
    Efl_Composite_Model_Slice_Request *req;
    Eina_Future *f;
    unsigned int source_count, self_count;
-   unsigned int req_count;
+   unsigned int req_count, i;
 
    source_count = efl_model_children_count_get(pd->source);
    self_count = efl_model_children_count_get(obj);
@@ -447,8 +517,8 @@ _efl_composite_model_efl_model_children_slice_get(Eo *obj,
    if (start > source_count)
      {
         Eina_Value r = EINA_VALUE_EMPTY;
-        unsigned int i = 0;
 
+        i = 0;
         eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
 
         while (count)
@@ -477,16 +547,27 @@ _efl_composite_model_efl_model_children_slice_get(Eo *obj,
    f = efl_model_children_slice_get(pd->source, start, req_count);
    if (!f) return NULL;
 
-   req = malloc(sizeof (Efl_Composite_Model_Slice_Request));
-   if (!req) return efl_loop_future_rejected(obj, ENOMEM);
+   req = malloc(sizeof (Efl_Composite_Model_Slice_Request) + count * sizeof (unsigned int));
+   if (!req)
+     {
+        eina_future_cancel(f);
+        return efl_loop_future_rejected(obj, ENOMEM);
+     }
 
    req->self = efl_class_get(obj);
    req->parent = efl_ref(obj);
+   req->pd = pd;
    req->start = start;
+   req->count = count;
+   for (i = 0; i < count; i++)
+     {
+        req->index[i] = start + i;
+     }
    if (start + count < source_count)
      req->dummy_need = 0;
    else
      req->dummy_need = count - (source_count - start);
+   pd->pending = eina_inlist_append(pd->pending, EINA_INLIST_GET(req));
 
    return efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
                           .success = _efl_composite_model_then,

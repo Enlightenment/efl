@@ -984,6 +984,212 @@ EFL_START_TEST(efl_test_boolean_model_many)
 }
 EFL_END_TEST
 
+// A slice that was asked for before rows came or went in front of it. The source
+// answers with the rows it had when asked, so their composites must take the index
+// those rows have now, not the one they had when the slice was asked for.
+#define PENDING_MAX 8
+
+typedef struct _Pending_Slice Pending_Slice;
+struct _Pending_Slice
+{
+   Eo *kids[PENDING_MAX];
+   unsigned int len;
+   Eina_Bool done;
+};
+
+static Eina_Value
+_pending_slice_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Pending_Slice *ps = data;
+   unsigned int i, len;
+   Eo *c;
+
+   ps->done = EINA_TRUE;
+   if (eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY) return v;
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        if (i < PENDING_MAX) ps->kids[i] = efl_ref(c);
+     }
+   ps->len = len;
+   return v;
+}
+
+static void
+_pending_slice_get(Eo *model, unsigned int start, unsigned int count, Pending_Slice *ps)
+{
+   memset(ps, 0, sizeof (*ps));
+   eina_future_then(efl_model_children_slice_get(model, start, count),
+                    _pending_slice_then, ps, NULL);
+   // Not answered yet: the source answers on the loop
+   ck_assert(!ps->done);
+}
+
+static void
+_pending_slice_wait(Pending_Slice *ps)
+{
+   unsigned int i;
+
+   for (i = 0; (i < 20) && !ps->done; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(ps->done);
+}
+
+static void
+_pending_slice_unref(Pending_Slice *ps)
+{
+   unsigned int i;
+
+   for (i = 0; i < PENDING_MAX; i++)
+     {
+        efl_unref(ps->kids[i]);
+     }
+   memset(ps, 0, sizeof (*ps));
+}
+
+static Eo *
+_pending_setup(Eo **base, Eo **rows, unsigned int n)
+{
+   Pending_Slice ps;
+   unsigned int i;
+
+   *base = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < n; i++)
+     {
+        rows[i] = efl_model_child_add(*base);
+        ck_assert(!!rows[i]);
+     }
+   // (the rows themselves, as the generic model gives them)
+   _pending_slice_get(*base, 0, n, &ps);
+   _pending_slice_wait(&ps);
+   _pending_slice_unref(&ps);
+
+   return efl_add_ref(EFL_BOOLEAN_MODEL_CLASS, efl_main_loop_get(),
+                      efl_ui_view_model_set(efl_added, *base),
+                      efl_boolean_model_boolean_add(efl_added, "marked", EINA_FALSE));
+}
+
+static unsigned int
+_marked_indexes(Eo *model, unsigned int *out, unsigned int max)
+{
+   Eina_Iterator *it = efl_boolean_model_boolean_iterator_get(model, "marked", EINA_TRUE);
+   unsigned int *index, n = 0;
+
+   EINA_ITERATOR_FOREACH(it, index)
+     {
+        if (n < max) out[n] = *index;
+        n++;
+     }
+   eina_iterator_free(it);
+   return n;
+}
+
+EFL_START_TEST(efl_test_composite_model_pending_slice_insert)
+{
+   Efl_Model_Children_Event ev = { 0 };
+   Pending_Slice held, ps;
+   Eo *base, *model, *rows[6], *row;
+   unsigned int marked[4];
+
+   model = _pending_setup(&base, rows, 6);
+
+   // Row 4 already has its composite
+   _pending_slice_get(model, 4, 1, &held);
+   _pending_slice_wait(&held);
+   ck_assert_int_eq(efl_composite_model_index_get(held.kids[0]), 4);
+
+   // Rows 3 and 4 are asked for, then a row comes in front of them
+   _pending_slice_get(model, 3, 2, &ps);
+   row = efl_add(EFL_GENERIC_MODEL_CLASS, base);
+   ev.index = 0;
+   ev.child = row;
+   efl_event_callback_call(base, EFL_MODEL_EVENT_CHILD_ADDED, &ev);
+   ck_assert_int_eq(efl_composite_model_index_get(held.kids[0]), 5);
+   _pending_slice_wait(&ps);
+
+   ck_assert_int_eq(ps.len, 2);
+   ck_assert_ptr_eq(efl_ui_view_model_get(ps.kids[0]), rows[3]);
+   ck_assert_int_eq(efl_composite_model_index_get(ps.kids[0]), 4);
+   ck_assert_ptr_eq(ps.kids[1], held.kids[0]);
+   ck_assert_int_eq(efl_composite_model_index_get(ps.kids[1]), 5);
+
+   // A mark on the row lands on its own index, and on nobody else
+   eina_future_cancel(efl_model_property_set(ps.kids[0], "marked", eina_value_bool_new(EINA_TRUE)));
+   ck_assert(_marked_get(ps.kids[0]));
+   ck_assert(!_marked_get(held.kids[0]));
+   ck_assert_int_eq(_marked_indexes(model, marked, 4), 1);
+   ck_assert_int_eq(marked[0], 4);
+
+   _pending_slice_unref(&ps);
+   _pending_slice_unref(&held);
+   efl_unref(model);
+   efl_unref(base);
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_test_composite_model_pending_slice_remove)
+{
+   Pending_Slice held, ps;
+   Eo *base, *model, *rows[6];
+
+   model = _pending_setup(&base, rows, 6);
+
+   // Row 4 has its composite; after the removal it sits at 3, where row 3 was asked for
+   _pending_slice_get(model, 4, 1, &held);
+   _pending_slice_wait(&held);
+
+   _pending_slice_get(model, 3, 1, &ps);
+   efl_model_child_del(base, rows[0]);
+   ck_assert_int_eq(efl_composite_model_index_get(held.kids[0]), 3);
+   _pending_slice_wait(&ps);
+
+   // Row 3 is its own composite at 2, not row 4's
+   ck_assert_int_eq(ps.len, 1);
+   ck_assert_ptr_ne(ps.kids[0], held.kids[0]);
+   ck_assert_ptr_eq(efl_ui_view_model_get(ps.kids[0]), rows[3]);
+   ck_assert_int_eq(efl_composite_model_index_get(ps.kids[0]), 2);
+   ck_assert_ptr_eq(efl_ui_view_model_get(held.kids[0]), rows[4]);
+   ck_assert_int_eq(efl_composite_model_index_get(held.kids[0]), 3);
+
+   _pending_slice_unref(&ps);
+   _pending_slice_unref(&held);
+   efl_unref(model);
+   efl_unref(base);
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_test_composite_model_pending_slice_removed_row)
+{
+   Pending_Slice ps;
+   Eo *base, *model, *rows[4];
+   unsigned int marked[4];
+
+   model = _pending_setup(&base, rows, 4);
+
+   // Row 0 is asked for and goes before the answer
+   _pending_slice_get(model, 0, 2, &ps);
+   efl_model_child_del(base, rows[0]);
+   _pending_slice_wait(&ps);
+
+   // The answer keeps its length: the removed row has no index, row 1 is at 0
+   ck_assert_int_eq(ps.len, 2);
+   ck_assert_ptr_eq(efl_ui_view_model_get(ps.kids[0]), rows[0]);
+   ck_assert_int_eq(efl_composite_model_index_get(ps.kids[0]), 0xFFFFFFFF);
+   ck_assert_ptr_eq(efl_ui_view_model_get(ps.kids[1]), rows[1]);
+   ck_assert_int_eq(efl_composite_model_index_get(ps.kids[1]), 0);
+
+   // Marking a row that is gone marks nothing
+   eina_future_cancel(efl_model_property_set(ps.kids[0], "marked", eina_value_bool_new(EINA_TRUE)));
+   ck_assert_int_eq(_marked_indexes(model, marked, 4), 0);
+   ck_assert(!_marked_get(ps.kids[1]));
+
+   _pending_slice_unref(&ps);
+   efl_unref(model);
+   efl_unref(base);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
@@ -996,4 +1202,7 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);
    tcase_add_test(tc, efl_test_generic_model_properties_changed_event);
    tcase_add_test(tc, efl_test_generic_model_property_replaced);
+   tcase_add_test(tc, efl_test_composite_model_pending_slice_insert);
+   tcase_add_test(tc, efl_test_composite_model_pending_slice_remove);
+   tcase_add_test(tc, efl_test_composite_model_pending_slice_removed_row);
 }
