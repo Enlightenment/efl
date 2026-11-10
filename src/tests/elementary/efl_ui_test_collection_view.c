@@ -1038,6 +1038,45 @@ EFL_START_TEST(test_efl_ui_collection_view_exact_model_jump)
 }
 EFL_END_TEST
 
+/* Rows are added one at a time to a view that is showing the model, as a
+   listing arriving does, and the loop is let to idle in between. */
+static void
+_single_adds(Efl_Model *model, int rows)
+{
+   int i;
+
+   for (i = 0; i < rows; i++)
+     {
+        efl_model_child_add(model);
+        wait_timer(0.0);
+     }
+}
+
+/* A view over an Exact_Model is asked the size of every row each time one
+   comes in. How long 2000 of them take depends on the machine, and is not
+   asserted. */
+EFL_START_TEST(test_efl_ui_collection_view_many_single_adds)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *sizes;
+   Efl_Ui_List_View *lv;
+   int i;
+   const int rows = 2000;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 300));
+   lv = _exact_list(win, &sizes);
+   model = efl_ui_view_model_get(sizes);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   _single_adds(model, rows);
+   ck_assert_int_eq(efl_model_children_count_get(model), NUM_ITEMS + rows);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -1058,4 +1097,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
    tcase_add_test(tc, test_efl_ui_collection_view_remove_last_row);
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_jump);
+   tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds);
 }

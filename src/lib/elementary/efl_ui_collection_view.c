@@ -885,7 +885,7 @@ _build_from_focus(Efl_Ui_Collection_View_Data *pd, unsigned int search_index,
 
 static Eina_List *
 _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
-                  Efl_Ui_Collection_View_Data *pd,
+                  Efl_Ui_Collection_View_Data *pd, Efl_Model *exact,
                   unsigned int search_index,
                   Efl_Ui_Position_Manager_Size_Batch_Entity *target,
                   Eina_Size2D item_base)
@@ -893,6 +893,18 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    Efl_Ui_Collection_Item_Lookup *lookup;
    Efl_Model *model = NULL;
    Eina_Size2D item_size = item_base;
+
+   /* A row measured is of the size it was told to be, whether the view has
+      it at hand or let go of it (the position manager has that size cached,
+      and finds the sizes changed under it if told another). An Exact_Model
+      remembers them, and is quicker to ask than the row is to be found. */
+   if (exact && _efl_ui_exact_model_row_size_get(exact, search_index, &item_size))
+     {
+        target->size = item_size;
+        target->element_depth = 0;
+        target->depth_leader = EINA_FALSE;
+        return requests;
+     }
 
    if (!pd->cache) goto not_found;
 
@@ -939,17 +951,6 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
-   /* A row let go of is still of the size it was told to be, and the
-      position manager has that size cached: saying anything else makes it
-      find the sizes changed under it. An Exact_Model remembers them. */
-   if (_efl_ui_exact_model_row_size_get(pd->model, search_index, &item_size))
-     {
-        target->size = item_size;
-        target->element_depth = 0;
-        target->depth_leader = EINA_FALSE;
-        return requests;
-     }
-
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
    target->size = item_size;
@@ -1153,7 +1154,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    Efl_Ui_Position_Manager_Size_Batch_Entity *sizes;
    Efl_Ui_Collection_Request *request = NULL;
    Efl_Ui_Position_Manager_Size_Batch_Result result = {0};
-   Efl_Model *parent;
+   Efl_Model *parent, *exact;
    Eina_List *requests = NULL;
    Eina_Size2D item_base = {0};
    unsigned int limit;
@@ -1161,6 +1162,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
 
    // get the approximate value from the tree node
    parent = pd->model;
+   exact = _efl_ui_exact_model_find(parent);
 
    sizes = memory.mem;
    //count = efl_model_children_count_get(parent);
@@ -1194,7 +1196,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
         while ((unsigned int)(conf.range.start_id + idx) < pd->viewport[0]->offset && idx < limit)
           {
              unsigned int search_index = conf.range.start_id + idx;
-             requests = _cache_size_fetch(requests, &request, pd,
+             requests = _cache_size_fetch(requests, &request, pd, exact,
                                           search_index, &sizes[idx], item_base);
              idx++;
           }
@@ -1266,7 +1268,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    while (idx < limit)
      {
         unsigned int search_index = conf.range.start_id + idx;
-        requests = _cache_size_fetch(requests, &request, pd,
+        requests = _cache_size_fetch(requests, &request, pd, exact,
                                      search_index, &sizes[idx], item_base);
         idx++;
      }
@@ -1307,7 +1309,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
         while (idx < limit)
           {
              unsigned int search_index = conf.range.start_id + idx;
-             requests = _cache_size_fetch(requests, &request, pd,
+             requests = _cache_size_fetch(requests, &request, pd, exact,
                                           search_index, &sizes[idx], item_base);
              idx++;
           }

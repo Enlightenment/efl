@@ -416,25 +416,29 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
    return efl_model_property_get(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS), property);
 }
 
-/* The size of a row as it was told to the model, without the row itself:
-   the view asks for rows it has let go of and cannot wait for them. */
-Eina_Bool
-_efl_ui_exact_model_row_size_get(Efl_Model *model, unsigned int index, Eina_Size2D *size)
+/* The Exact_Model under the models the view wraps its own around, or NULL. */
+Efl_Model *
+_efl_ui_exact_model_find(Efl_Model *model)
 {
-   Efl_Ui_Exact_Model_Data *root;
-   unsigned int w, h;
-   unsigned char found;
-
-   /* The view wraps the model it is given in models of its own. */
    while (model && !efl_isa(model, EFL_UI_EXACT_MODEL_CLASS))
      {
         if (!efl_isa(model, EFL_COMPOSITE_MODEL_CLASS) ||
             !efl_isa(model, EFL_UI_VIEW_INTERFACE))
-          return EINA_FALSE;
+          return NULL;
         model = efl_ui_view_model_get(model);
      }
-   if (!model) return EINA_FALSE;
-   root = efl_data_scope_get(model, EFL_UI_EXACT_MODEL_CLASS);
+   return model;
+}
+
+/* The size of a row as it was told to the model, without the row itself:
+   the view asks for rows it has let go of and cannot wait for them. */
+Eina_Bool
+_efl_ui_exact_model_row_size_get(Efl_Model *exact, unsigned int index, Eina_Size2D *size)
+{
+   Efl_Ui_Exact_Model_Data *root = efl_data_scope_get(exact, EFL_UI_EXACT_MODEL_CLASS);
+   unsigned int w, h;
+   unsigned char found;
+
    if (!root || root->parent) return EINA_FALSE;
 
    found = _efl_ui_exact_model_slot_find(root, index, EINA_TRUE, EINA_TRUE);
