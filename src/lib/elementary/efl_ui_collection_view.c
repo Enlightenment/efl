@@ -2072,8 +2072,24 @@ _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
    // The last item is not the last item anymore: fetch the one that is
    if (count)
      {
-        requests = _request_add(requests, &request, count - 1, EINA_TRUE);
-        if (request) requests = eina_list_append(requests, request);
+        Efl_Ui_Collection_Item_Lookup *last;
+        unsigned int last_index = count - 1;
+
+        /* The row that became the last one may already have its item (it
+           was on screen): asking for it again would build a second one.
+           It is only to be remembered as the last. */
+        last = (void*) eina_rbtree_inline_lookup(pd->cache, &last_index,
+                                                 sizeof (last_index), _cache_tree_lookup,
+                                                 NULL);
+        if (last && last->item.entity)
+          {
+             _last_entity_update(pd, last->item.entity);
+          }
+        else
+          {
+             requests = _request_add(requests, &request, last_index, EINA_TRUE);
+             if (request) requests = eina_list_append(requests, request);
+          }
      }
    requests = _batch_request_flush(requests, data, pd);
 

@@ -929,6 +929,57 @@ EFL_START_TEST(efl_ui_collection_view_manager_ownership)
 }
 EFL_END_TEST
 
+/* The last row of a model bound to a live view is removed: the view
+   must not find an item or an entity left for a row that is gone. */
+EFL_START_TEST(test_efl_ui_collection_view_remove_last_row)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *rows[NUM_ITEMS];
+   int total = 4;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   Eina_Value v;
+   int errors = 0, i, n;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+   eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
+   eina_value_set(&v, "Row");
+   for (i = 0; i < total; i++)
+     {
+        rows[i] = efl_model_child_add(model);
+        efl_model_property_set(rows[i], "title", &v);
+     }
+   eina_value_flush(&v);
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, model));
+   efl_content_set(win, lv);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   eina_log_print_cb_set(_count_err_cri, &errors);
+   for (n = 0; n < 3; n++)
+     {
+        efl_model_child_del(model, rows[total - 1 - n]);
+        for (i = 0; i < 50; i++)
+          {
+             ecore_main_loop_iterate();
+          }
+     }
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(errors, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -947,4 +998,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_homogeneous_model);
    tcase_add_test(tc, test_efl_ui_collection_view_item_events_without_info);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
+   tcase_add_test(tc, test_efl_ui_collection_view_remove_last_row);
 }
