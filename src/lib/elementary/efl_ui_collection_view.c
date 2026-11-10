@@ -939,6 +939,17 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
+   /* A row let go of is still of the size it was told to be, and the
+      position manager has that size cached: saying anything else makes it
+      find the sizes changed under it. An Exact_Model remembers them. */
+   if (_efl_ui_exact_model_row_size_get(pd->model, search_index, &item_size))
+     {
+        target->size = item_size;
+        target->element_depth = 0;
+        target->depth_leader = EINA_FALSE;
+        return requests;
+     }
+
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
    target->size = item_size;

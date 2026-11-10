@@ -980,6 +980,64 @@ EFL_START_TEST(test_efl_ui_collection_view_remove_last_row)
 }
 EFL_END_TEST
 
+/* A list of rows measured, jumped far away and back, beyond the rows kept
+   around the visible ones: the rows let go of are still of the size they
+   were measured at, and the position manager must not be told otherwise
+   (it logs the sizes changing under it) nor place the rows by it. */
+EFL_START_TEST(test_efl_ui_collection_view_exact_model_jump)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *sizes;
+   Efl_Ui_List_View *lv;
+   Eina_List *realized = NULL;
+   Efl_Gfx_Entity *item;
+   Eina_Rect g;
+   int errors = 0, i, y = 0;
+   const int target = 40;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 100));
+   eina_log_print_cb_set(_count_err_cri, &errors);
+
+   lv = _exact_list(win, &sizes);
+   efl_event_callback_add(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_add(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   for (i = 0; i < target; i++)
+     {
+        y += (i % 2) ? 40 : 90;
+     }
+   efl_ui_scrollable_content_pos_set(lv, EINA_POSITION2D(0, y));
+   wait_timer(0.5);
+   efl_ui_scrollable_content_pos_set(lv, EINA_POSITION2D(0, 0));
+   wait_timer(0.5);
+   efl_ui_scrollable_content_pos_set(lv, EINA_POSITION2D(0, y));
+   wait_timer(0.5);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(errors, 0);
+
+   item = _realized_row(realized, target);
+   ck_assert_ptr_nonnull(item);
+   g = efl_gfx_entity_geometry_get(item);
+   ck_assert_int_eq(g.h, 90);
+   ck_assert_int_eq(g.y, efl_gfx_entity_position_get(lv).y);
+
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   eina_list_free(realized);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -999,4 +1057,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_item_events_without_info);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
    tcase_add_test(tc, test_efl_ui_collection_view_remove_last_row);
+   tcase_add_test(tc, test_efl_ui_collection_view_exact_model_jump);
 }

@@ -207,83 +207,84 @@ _efl_ui_exact_model_buffer_expand(unsigned int list_index, unsigned int *buffer,
 }
 
 static unsigned char
-_efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *pd, unsigned int index,
+_efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
                               Eina_Bool width_get, Eina_Bool height_get)
 {
    unsigned char lookup;
-   unsigned char found = EINA_C_ARRAY_LENGTH(pd->parent->slot);
+   unsigned char found = EINA_C_ARRAY_LENGTH(root->slot);
 
-   for (lookup = 0; lookup < EINA_C_ARRAY_LENGTH(pd->parent->slot); lookup++)
+   for (lookup = 0; lookup < EINA_C_ARRAY_LENGTH(root->slot); lookup++)
      {
         // Check if the slot has valid content
-        if (!pd->parent->slot[lookup].defined)
+        if (!root->slot[lookup].defined)
           continue;
         // (start_offset is a block number, not a row index)
-        if (pd->parent->slot[lookup].start_offset == index / EFL_UI_EXACT_MODEL_CONTENT)
+        if (root->slot[lookup].start_offset == index / EFL_UI_EXACT_MODEL_CONTENT)
           found = lookup;
         // Reduce usage to find unused slot.
-        if (pd->parent->slot[lookup].usage > 0)
-          pd->parent->slot[lookup].usage--;
+        if (root->slot[lookup].usage > 0)
+          root->slot[lookup].usage--;
      }
 
    // Do we need to find a new slot?
-   if (found == EINA_C_ARRAY_LENGTH(pd->parent->slot))
+   if (found == EINA_C_ARRAY_LENGTH(root->slot))
      {
         found = 0;
-        for (lookup = 0; lookup < EINA_C_ARRAY_LENGTH(pd->parent->slot); lookup++)
+        for (lookup = 0; lookup < EINA_C_ARRAY_LENGTH(root->slot); lookup++)
           {
-             if (!pd->parent->slot[lookup].defined)
+             if (!root->slot[lookup].defined)
                {
                   // Found an empty slot, let's use that.
                   found = lookup;
                   break;
                }
-             if (pd->parent->slot[lookup].usage < pd->parent->slot[found].usage)
+             if (root->slot[lookup].usage < root->slot[found].usage)
                found = lookup;
           }
 
         // Commit change back to the stored buffer list
-        if (pd->parent->slot[found].defined &&
-            (pd->parent->slot[found].width ||
-             pd->parent->slot[found].height))
+        if (root->slot[found].defined &&
+            (root->slot[found].width ||
+             root->slot[found].height))
           {
-             unsigned int block = pd->parent->slot[found].start_offset;
+             // (written back under the block it holds, not the one that evicts it)
+             unsigned int block = root->slot[found].start_offset;
 
-             if (pd->parent->slot[found].width &&
-                 pd->parent->slot[found].decompressed.width)
-               pd->parent->compressed.width = _efl_ui_exact_model_slot_compress(block,
-                                                                                pd->parent->compressed.width,
-                                                                                pd->parent->slot[found].width);
-             if (pd->parent->slot[found].height &&
-                 pd->parent->slot[found].decompressed.height)
-               pd->parent->compressed.height = _efl_ui_exact_model_slot_compress(block,
-                                                                                 pd->parent->compressed.height,
-                                                                                 pd->parent->slot[found].height);
+             if (root->slot[found].width &&
+                 root->slot[found].decompressed.width)
+               root->compressed.width =
+                 _efl_ui_exact_model_slot_compress(block, root->compressed.width,
+                                                   root->slot[found].width);
+             if (root->slot[found].height &&
+                 root->slot[found].decompressed.height)
+               root->compressed.height =
+                 _efl_ui_exact_model_slot_compress(block, root->compressed.height,
+                                                   root->slot[found].height);
           }
 
-        pd->parent->slot[found].defined = EINA_TRUE;
-        pd->parent->slot[found].decompressed.width = EINA_FALSE;
-        pd->parent->slot[found].decompressed.height = EINA_FALSE;
-        pd->parent->slot[found].start_offset = index / EFL_UI_EXACT_MODEL_CONTENT;
+        root->slot[found].defined = EINA_TRUE;
+        root->slot[found].decompressed.width = EINA_FALSE;
+        root->slot[found].decompressed.height = EINA_FALSE;
+        root->slot[found].start_offset = index / EFL_UI_EXACT_MODEL_CONTENT;
      }
 
    // Increase usage of the returned slot for now
-   pd->parent->slot[found].usage++;
+   root->slot[found].usage++;
 
    // Unpack the data if requested
-   if (width_get && !pd->parent->slot[found].decompressed.width)
+   if (width_get && !root->slot[found].decompressed.width)
      {
-        pd->parent->slot[found].width = _efl_ui_exact_model_buffer_expand(pd->parent->slot[found].start_offset,
-                                                                          pd->parent->slot[found].width,
-                                                                          pd->parent->compressed.width);
-        pd->parent->slot[found].decompressed.width = EINA_TRUE;
+        root->slot[found].width = _efl_ui_exact_model_buffer_expand(root->slot[found].start_offset,
+                                                                    root->slot[found].width,
+                                                                    root->compressed.width);
+        root->slot[found].decompressed.width = EINA_TRUE;
      }
-   if (height_get && !pd->parent->slot[found].decompressed.height)
+   if (height_get && !root->slot[found].decompressed.height)
      {
-        pd->parent->slot[found].height = _efl_ui_exact_model_buffer_expand(pd->parent->slot[found].start_offset,
-                                                                          pd->parent->slot[found].height,
-                                                                          pd->parent->compressed.height);
-        pd->parent->slot[found].decompressed.height = EINA_TRUE;
+        root->slot[found].height = _efl_ui_exact_model_buffer_expand(root->slot[found].start_offset,
+                                                                     root->slot[found].height,
+                                                                     root->compressed.height);
+        root->slot[found].decompressed.height = EINA_TRUE;
      }
 
    return found;
@@ -304,7 +305,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             // (no index: the row left while a slice held it, and has no slot)
             if (index == 0xFFFFFFFF)
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
-            found = _efl_ui_exact_model_slot_find(pd, index, EINA_TRUE, EINA_FALSE);
+            found = _efl_ui_exact_model_slot_find(pd->parent, index, EINA_TRUE, EINA_FALSE);
             if (!eina_value_uint_convert(value, &size) || (size & EFL_UI_EXACT_MODEL_MEASURED))
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
             pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT] =
@@ -324,7 +325,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             index = efl_composite_model_index_get(obj);
             if (index == 0xFFFFFFFF)
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
-            found = _efl_ui_exact_model_slot_find(pd, index, EINA_FALSE, EINA_TRUE);
+            found = _efl_ui_exact_model_slot_find(pd->parent, index, EINA_FALSE, EINA_TRUE);
             cell = &pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT];
             old_value = *cell & ~EFL_UI_EXACT_MODEL_MEASURED;
             if (!eina_value_uint_convert(value, &size) || (size & EFL_UI_EXACT_MODEL_MEASURED))
@@ -375,7 +376,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              index = efl_composite_model_index_get(obj);
              // (no index: the row left while a slice held it, and has no size)
              if (index == 0xFFFFFFFF) return eina_value_error_new(EAGAIN);
-             found = _efl_ui_exact_model_slot_find(pd, index, EINA_TRUE, EINA_FALSE);
+             found = _efl_ui_exact_model_slot_find(pd->parent, index, EINA_TRUE, EINA_FALSE);
              size = pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT];
              // Not measured yet: not ready, as for a Homogeneous_Model, and not a size of 0.
              if (!(size & EFL_UI_EXACT_MODEL_MEASURED)) return eina_value_error_new(EAGAIN);
@@ -388,7 +389,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
 
              index = efl_composite_model_index_get(obj);
              if (index == 0xFFFFFFFF) return eina_value_error_new(EAGAIN);
-             found = _efl_ui_exact_model_slot_find(pd, index, EINA_FALSE, EINA_TRUE);
+             found = _efl_ui_exact_model_slot_find(pd->parent, index, EINA_FALSE, EINA_TRUE);
              size = pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT];
              if (!(size & EFL_UI_EXACT_MODEL_MEASURED)) return eina_value_error_new(EAGAIN);
              return eina_value_uint_new(size & ~EFL_UI_EXACT_MODEL_MEASURED);
@@ -413,6 +414,37 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
         return eina_value_error_new(EAGAIN);
      }
    return efl_model_property_get(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS), property);
+}
+
+/* The size of a row as it was told to the model, without the row itself:
+   the view asks for rows it has let go of and cannot wait for them. */
+Eina_Bool
+_efl_ui_exact_model_row_size_get(Efl_Model *model, unsigned int index, Eina_Size2D *size)
+{
+   Efl_Ui_Exact_Model_Data *root;
+   unsigned int w, h;
+   unsigned char found;
+
+   /* The view wraps the model it is given in models of its own. */
+   while (model && !efl_isa(model, EFL_UI_EXACT_MODEL_CLASS))
+     {
+        if (!efl_isa(model, EFL_COMPOSITE_MODEL_CLASS) ||
+            !efl_isa(model, EFL_UI_VIEW_INTERFACE))
+          return EINA_FALSE;
+        model = efl_ui_view_model_get(model);
+     }
+   if (!model) return EINA_FALSE;
+   root = efl_data_scope_get(model, EFL_UI_EXACT_MODEL_CLASS);
+   if (!root || root->parent) return EINA_FALSE;
+
+   found = _efl_ui_exact_model_slot_find(root, index, EINA_TRUE, EINA_TRUE);
+   w = root->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT];
+   h = root->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT];
+   if (!(w & EFL_UI_EXACT_MODEL_MEASURED) || !(h & EFL_UI_EXACT_MODEL_MEASURED))
+     return EINA_FALSE;
+   size->w = w & ~EFL_UI_EXACT_MODEL_MEASURED;
+   size->h = h & ~EFL_UI_EXACT_MODEL_MEASURED;
+   return EINA_TRUE;
 }
 
 #include "efl_ui_exact_model.eo.c"

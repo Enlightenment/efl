@@ -653,6 +653,9 @@ struct _Elm_Module
    int          references;
 };
 
+Eina_Bool            _efl_ui_exact_model_row_size_get(Efl_Model *model,
+                                                      unsigned int index,
+                                                      Eina_Size2D *size);
 Eina_Bool            _elm_web_init(const char *engine);
 
 Eo                   *_elm_atspi_bridge_get(void);
