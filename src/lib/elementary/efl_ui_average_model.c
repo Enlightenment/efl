@@ -56,7 +56,8 @@ _efl_ui_average_model_update(Eo *obj EINA_UNUSED, void *data, const Eina_Value v
    if (!eina_value_uint_convert(&v, &now))
      goto on_error;
 
-   *(request->total) += now - request->previous;
+   // (a row that shrinks takes from the total: the difference is signed)
+   *(request->total) += (long long) now - (long long) request->previous;
    if (request->seen) *(request->seen) += 1;
 
  on_error:
@@ -130,8 +131,17 @@ _efl_ui_average_model_child_removed(void *data, const Efl_Event *event)
 
    _efl_ui_average_model_forgotten_check(event->object, pd);
    if (!_efl_ui_exact_model_removed_height_get(event->object, &height)) return;
-   if (pd->total.height >= height) pd->total.height -= height;
-   if (pd->total.hseen) pd->total.hseen--;
+   // What the Exact_Model took out was added here, so there is enough to take out.
+   // If there is not, the totals are wrong and are of no use any more.
+   if ((pd->total.height < height) || !pd->total.hseen)
+     {
+        ERR("The average of the heights does not hold the row that was removed: "
+            "starting it again.");
+        memset(&pd->total, 0, sizeof (pd->total));
+        return;
+     }
+   pd->total.height -= height;
+   pd->total.hseen--;
 }
 
 static Eina_Future *
