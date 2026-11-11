@@ -381,6 +381,70 @@ EFL_START_TEST(test_efl_ui_collection_view_last_row_kept)
 }
 EFL_END_TEST
 
+/* The last row of a view is taken away while it is out of sight, with the
+   item the view kept for it: the row that is the last one now gets its own,
+   each time, and the item of the row that left is not kept as the last. */
+EFL_START_TEST(test_efl_ui_collection_view_last_row_removed_offscreen)
+{
+   Eina_List *realized = NULL;
+   Efl_Ui_Win *win;
+   Efl_Model *model, *rows[NUM_ITEMS];
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Factory *fl;
+   Eina_Value v;
+   int i, n;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100, 100));
+
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+   eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
+   eina_value_set(&v, "Row");
+   for (i = 0; i < NUM_ITEMS; i++)
+     {
+        rows[i] = efl_model_child_add(model);
+        efl_model_property_set(rows[i], "title", &v);
+     }
+   eina_value_flush(&v);
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_property_bind(efl_added, "text", "title"),
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_event_callback_add(efl_added, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                                       _realized_track, &realized),
+                efl_event_callback_add(efl_added, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                                       _unrealized_track, &realized),
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, model));
+   efl_content_set(win, lv);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_nonnull(_realized_row(realized, NUM_ITEMS - 1));
+   ck_assert(!efl_gfx_entity_visible_get(_realized_row(realized, NUM_ITEMS - 1)));
+
+   for (n = 1; n <= 3; n++)
+     {
+        efl_model_child_del(model, rows[NUM_ITEMS - n]);
+        for (i = 0; i < 50; i++)
+          {
+             ecore_main_loop_iterate();
+          }
+        ck_assert_int_eq(efl_model_children_count_get(model), NUM_ITEMS - n);
+        ck_assert_ptr_nonnull(_realized_row(realized, NUM_ITEMS - n - 1));
+        ck_assert_ptr_null(_realized_row(realized, NUM_ITEMS - n));
+     }
+
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   eina_list_free(realized);
+}
+EFL_END_TEST
+
 /* A list emptied and filled again, as a whole new set of rows replaces the
    old one, shows the new rows. The view asks for its last row each time
    the count changes, and those asked for while the old rows went away are
@@ -2450,6 +2514,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_last_selected_is_an_item);
    tcase_add_test(tc, test_efl_ui_collection_view_select_mode_before_model);
    tcase_add_test(tc, test_efl_ui_collection_view_last_row_kept);
+   tcase_add_test(tc, test_efl_ui_collection_view_last_row_removed_offscreen);
    tcase_add_test(tc, test_efl_ui_collection_view_refill);
    tcase_add_test(tc, test_efl_ui_collection_view_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_shift_tab);

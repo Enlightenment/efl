@@ -628,7 +628,14 @@ _last_entity_update(Efl_Ui_Collection_View_Data *pd, Efl_Gfx_Entity *entity)
    new_index = _lookup_entity_index(entity, &new_model);
    old_index = _lookup_entity_index(pd->focus.last, &old_model);
 
-   if (new_index <= old_index) return;
+   /* A last that is past the end of the model is a row that left (or one
+      the index of which is stale): it is not a last to be kept over a row
+      that is in the model, however high its index. */
+   if ((new_index <= old_index) &&
+       (old_index < efl_model_children_count_get(pd->model)))
+     {
+        return;
+     }
 
  replace:
    efl_replace(&pd->focus.last, entity);
