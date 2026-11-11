@@ -45,6 +45,11 @@ struct _Efl_Ui_Exact_Model_Data
          Eina_Bool width : 1;
          Eina_Bool height : 1;
       } decompressed;
+      // Written to since it was expanded: what the compressed list has is older
+      struct {
+         Eina_Bool width : 1;
+         Eina_Bool height : 1;
+      } dirty;
    } slot[3];
 };
 
@@ -250,13 +255,16 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
              // (written back under the block it holds, not the one that evicts it)
              unsigned int block = root->slot[found].start_offset;
 
+             // (a slot that was only read has nothing to commit)
              if (root->slot[found].width &&
-                 root->slot[found].decompressed.width)
+                 root->slot[found].decompressed.width &&
+                 root->slot[found].dirty.width)
                root->compressed.width =
                  _efl_ui_exact_model_slot_compress(block, root->compressed.width,
                                                    root->slot[found].width);
              if (root->slot[found].height &&
-                 root->slot[found].decompressed.height)
+                 root->slot[found].decompressed.height &&
+                 root->slot[found].dirty.height)
                root->compressed.height =
                  _efl_ui_exact_model_slot_compress(block, root->compressed.height,
                                                    root->slot[found].height);
@@ -265,6 +273,8 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
         root->slot[found].defined = EINA_TRUE;
         root->slot[found].decompressed.width = EINA_FALSE;
         root->slot[found].decompressed.height = EINA_FALSE;
+        root->slot[found].dirty.width = EINA_FALSE;
+        root->slot[found].dirty.height = EINA_FALSE;
         root->slot[found].start_offset = index / EFL_UI_EXACT_MODEL_CONTENT;
      }
 
@@ -310,6 +320,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
             pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT] =
               size | EFL_UI_EXACT_MODEL_MEASURED;
+            pd->parent->slot[found].dirty.width = EINA_TRUE;
             // We succeeded so let's update the max total size width (As we only handle vertical list case at the moment)
             if (pd->parent->total_size.width < size)
               pd->parent->total_size.width = size;
@@ -331,6 +342,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             if (!eina_value_uint_convert(value, &size) || (size & EFL_UI_EXACT_MODEL_MEASURED))
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
             *cell = size | EFL_UI_EXACT_MODEL_MEASURED;
+            pd->parent->slot[found].dirty.height = EINA_TRUE;
             // We succeeded so let's update the total size
             pd->parent->total_size.height += size - old_value;
             return efl_loop_future_resolved(obj, eina_value_uint_init(size));
