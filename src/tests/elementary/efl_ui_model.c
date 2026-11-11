@@ -171,12 +171,18 @@ EFL_START_TEST(efl_ui_homogeneous_model_test)
 
    ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
+   // (what the loop quit with is the test's to flush, once)
+   eina_value_flush(ret__);
+   *ret__ = EINA_VALUE_EMPTY;
    fail_if(real__ != 0);
 
    ck_assert_int_eq(_property_uint_expected(model, "total.width"), base_ints[0] * 2);
    ck_assert_int_eq(_property_uint_expected(model, "total.height"), base_ints[0] * 3 * 3);
    ck_assert_int_eq(_property_uint_expected(model, "item.width"), base_ints[0] * 2);
    ck_assert_int_eq(_property_uint_expected(model, "item.height"), base_ints[0] * 3);
+
+   efl_unref(model);
+   efl_unref(base_model);
 }
 EFL_END_TEST
 
@@ -242,10 +248,16 @@ EFL_START_TEST(efl_ui_exact_model_test)
 
    ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
+   // (what the loop quit with is the test's to flush, once)
+   eina_value_flush(ret__);
+   *ret__ = EINA_VALUE_EMPTY;
    fail_if(real__ != 0);
 
    ck_assert_int_eq(_property_uint_expected(model, "total.width"), base_ints[2] * 2);
    ck_assert_int_eq(_property_uint_expected(model, "total.height"), base_ints[0] * 3 + base_ints[1] * 3 + base_ints[2] * 3);
+
+   efl_unref(model);
+   efl_unref(base_model);
 }
 EFL_END_TEST
 
@@ -330,10 +342,16 @@ EFL_START_TEST(efl_ui_average_model_test)
 
    ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
+   // (what the loop quit with is the test's to flush, once)
+   eina_value_flush(ret__);
+   *ret__ = EINA_VALUE_EMPTY;
    fail_if(real__ != 0);
 
    ck_assert_int_eq(_property_uint_expected(model, "total.width"), base_ints[2] * 2);
    ck_assert_int_eq(_property_uint_expected(model, "total.height"), base_ints[0] * 3 + base_ints[1] * 3 + base_ints[2] * 3);
+
+   efl_unref(model);
+   efl_unref(base_model);
 }
 EFL_END_TEST
 
