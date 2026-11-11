@@ -1207,6 +1207,61 @@ EFL_START_TEST(efl_ui_exact_model_remove_widest_alike)
 }
 EFL_END_TEST
 
+// A listener that runs before all the others (the priority of the Exact_Model's
+// own is lower than any other) is told of a removal after the sizes moved, and
+// the row that left is still the row it was until the event is over.
+typedef struct _Removal_Watch Removal_Watch;
+struct _Removal_Watch
+{
+   Efl_Model *model;
+   Eo *row;
+   unsigned int total_height;
+   unsigned int index;
+   Eina_Bool told;
+};
+
+static void
+_removal_watch(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Removal_Watch *rw = data;
+
+   rw->total_height = _property_uint_expected(rw->model, "total.height");
+   rw->index = efl_composite_model_index_get(rw->row);
+   rw->told = EINA_TRUE;
+}
+
+EFL_START_TEST(efl_ui_exact_model_remove_event_state)
+{
+   Shift_Rows *sr = _shift_new(10);
+   Removal_Watch rw = { 0 };
+   unsigned int i;
+
+   for (i = 0; i < 10; i++)
+     {
+        _shift_height(sr, i, 10 + i);
+     }
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.height"), 145);
+
+   rw.model = sr->model;
+   rw.row = efl_ref(sr->cur[5]);
+   efl_event_callback_priority_add(sr->model, EFL_MODEL_EVENT_CHILD_REMOVED,
+                                   EFL_CALLBACK_PRIORITY_BEFORE - 1, _removal_watch, &rw);
+   _shift_remove(sr, 5);
+   efl_event_callback_del(sr->model, EFL_MODEL_EVENT_CHILD_REMOVED, _removal_watch, &rw);
+
+   ck_assert(rw.told);
+   // The total is already without the row, and the row is still the 5th
+   ck_assert_uint_eq(rw.total_height, 130);
+   ck_assert_uint_eq(rw.index, 5);
+   ck_assert_uint_eq(efl_composite_model_index_get(rw.row), 0xFFFFFFFF);
+   ck_assert_uint_eq(efl_composite_model_index_get(sr->cur[5]), 5);
+   ck_assert_uint_eq(_property_uint_expected(sr->cur[5], "self.height"), 16);
+
+   efl_unref(rw.row);
+   _shift_free(sr);
+}
+EFL_END_TEST
+
 // Blocks that are all measured: what falls out of the last block as the rows
 // move is a size too, and has a block of its own.
 EFL_START_TEST(efl_ui_exact_model_shift_overflow)
@@ -1361,6 +1416,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_removed_row_write);
    tcase_add_test(tc, efl_ui_exact_model_shift_unmeasured);
    tcase_add_test(tc, efl_ui_exact_model_shift_overflow);
+   tcase_add_test(tc, efl_ui_exact_model_remove_event_state);
    tcase_add_test(tc, efl_ui_exact_model_shift_store_fails);
    tcase_add_test(tc, efl_ui_average_model_forgotten);
    tcase_add_test(tc, efl_ui_exact_model_remove_widest);
