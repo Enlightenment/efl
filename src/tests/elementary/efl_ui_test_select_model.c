@@ -837,6 +837,71 @@ EFL_START_TEST(efl_test_select_model_multi_to_single_pick_a_selected_row)
 }
 EFL_END_TEST
 
+static Eina_Value
+_rows_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eo **rows = data;
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        rows[i] = efl_ref(c);
+     }
+   return v;
+}
+
+// The fallback takes over when the selected row is unselected directly.
+EFL_START_TEST(efl_test_select_model_fallback_after_direct_unselect)
+{
+   Efl_Model *base_model, *model;
+   Eo *rows[4] = { NULL, NULL, NULL, NULL };
+   Eina_Value unselect = eina_value_bool_init(EINA_FALSE);
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _rows_then, rows, NULL);
+   for (i = 0; (i < 12) && !rows[3]; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!rows[3]);
+
+   efl_ui_selectable_fallback_selection_set(model, rows[0]);
+   efl_ui_multi_selectable_ndx_range_select(model, 3, 3);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 3);
+
+   eina_future_then(efl_model_property_set(rows[3], "self.selected", &unselect),
+                    _state_ignore, NULL, NULL);
+   for (i = 0; i < 16; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 0);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), rows[0]);
+
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(rows[i]);
+     }
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -854,4 +919,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_single_later_direct_select_wins);
    tcase_add_test(tc, efl_test_select_model_noop_select_keeps_index_select);
    tcase_add_test(tc, efl_test_select_model_multi_to_single_pick_a_selected_row);
+   tcase_add_test(tc, efl_test_select_model_fallback_after_direct_unselect);
 }

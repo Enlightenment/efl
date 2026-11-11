@@ -85,19 +85,21 @@ _efl_ui_select_model_efl_object_invalidate(Eo *obj,
    efl_invalidate(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS));
 }
 
+// @child was the selected row and is not anymore: the fallback takes its place, unless
+// the fallback is @child, which is the one asked to give up the selection.
 static void
-_efl_ui_select_model_fallback(Efl_Ui_Select_Model_Data *pd)
+_efl_ui_select_model_fallback(Efl_Ui_Select_Model_Data *parent_pd, Eo *child)
 {
    Eina_Value selected;
 
-   if (!pd->parent) return;
-   if (!pd->parent->last_model) return;
-   if (!pd->parent->fallback_model) return;
+   if (!parent_pd) return;
+   if (!parent_pd->fallback_model) return;
+   if (parent_pd->fallback_model == child) return;
    // I think it only make sense to trigger the fallback on single mode
-   if (pd->parent->selection != EFL_UI_SELECT_MODE_SINGLE) return;
+   if (parent_pd->selection != EFL_UI_SELECT_MODE_SINGLE) return;
 
    selected = eina_value_bool_init(EINA_TRUE);
-   efl_model_property_set(pd->parent->fallback_model, "self.selected", &selected);
+   efl_model_property_set(parent_pd->fallback_model, "self.selected", &selected);
    eina_value_flush(&selected);
 }
 
@@ -159,7 +161,7 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
              _efl_ui_select_model_apply_last_model(parent, pd, NULL);
 
              // Just in case we need to refill the fallback
-             _efl_ui_select_model_fallback(pd);
+             _efl_ui_select_model_fallback(pd, child);
           }
         efl_event_callback_call(child, EFL_UI_SELECT_MODEL_EVENT_UNSELECTED, child);
      }
@@ -479,7 +481,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
                     {
                        _efl_ui_select_model_apply_last_model(efl_parent_get(obj), pd->parent, NULL);
 
-                       _efl_ui_select_model_fallback(pd);
+                       _efl_ui_select_model_fallback(pd->parent, obj);
                     }
                }
              else if (pd->parent->last_model)
