@@ -713,6 +713,219 @@ EFL_START_TEST(efl_ui_exact_model_removed_row_write)
 }
 EFL_END_TEST
 
+// What a shift of the sizes must give, kept on the side: the row now at each
+// index, and the height it was told (0 for none).
+typedef struct _Shift_Rows Shift_Rows;
+struct _Shift_Rows
+{
+   Efl_Model *base;
+   Efl_Model *model;
+   Eo **cur;
+   unsigned int *exp;
+   unsigned int n;
+};
+
+static void
+_shift_check(Shift_Rows *sr)
+{
+   unsigned int i, sum = 0;
+
+   for (i = 0; i < sr->n; i++)
+     {
+        ck_assert_uint_eq(efl_composite_model_index_get(sr->cur[i]), i);
+        if (!sr->exp[i])
+          ck_assert_int_eq(_property_error_expected(sr->cur[i], "self.height"), EAGAIN);
+        else
+          ck_assert_uint_eq(_property_uint_expected(sr->cur[i], "self.height"), sr->exp[i]);
+        sum += sr->exp[i];
+     }
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.height"), sum);
+}
+
+static void
+_shift_height(Shift_Rows *sr, unsigned int at, unsigned int h)
+{
+   _uint_set(sr->cur[at], "self.height", h);
+   sr->exp[at] = h;
+}
+
+static void
+_shift_insert(Shift_Rows *sr, unsigned int at, unsigned int h)
+{
+   Efl_Model_Children_Event ev = { 0 };
+   Eo *row = efl_add(EFL_GENERIC_MODEL_CLASS, sr->base);
+   Eo *added = NULL;
+
+   ev.index = at;
+   ev.child = row;
+   efl_event_callback_add(sr->model, EFL_MODEL_EVENT_CHILD_ADDED, _row_keep, &added);
+   efl_event_callback_call(sr->base, EFL_MODEL_EVENT_CHILD_ADDED, &ev);
+   efl_event_callback_del(sr->model, EFL_MODEL_EVENT_CHILD_ADDED, _row_keep, &added);
+   ck_assert_ptr_ne(added, NULL);
+   memmove(sr->cur + at + 1, sr->cur + at, (sr->n - at) * sizeof (Eo *));
+   memmove(sr->exp + at + 1, sr->exp + at, (sr->n - at) * sizeof (unsigned int));
+   sr->cur[at] = added;
+   sr->exp[at] = 0;
+   sr->n++;
+   if (h) _shift_height(sr, at, h);
+}
+
+static void
+_shift_remove(Shift_Rows *sr, unsigned int at)
+{
+   Efl_Model_Children_Event ev = { 0 };
+
+   ev.index = at;
+   efl_event_callback_call(sr->base, EFL_MODEL_EVENT_CHILD_REMOVED, &ev);
+   efl_unref(sr->cur[at]);
+   memmove(sr->cur + at, sr->cur + at + 1, (sr->n - at - 1) * sizeof (Eo *));
+   memmove(sr->exp + at, sr->exp + at + 1, (sr->n - at - 1) * sizeof (unsigned int));
+   sr->n--;
+}
+
+static Shift_Rows *
+_shift_new(unsigned int n)
+{
+   Shift_Rows *sr = calloc(1, sizeof (Shift_Rows));
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops;
+
+   ck_assert_uint_le(n, MANY_ROWS);
+   sr->cur = calloc(n + 16, sizeof (Eo *));
+   sr->exp = calloc(n + 16, sizeof (unsigned int));
+   sr->base = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < n; i++)
+     {
+        efl_model_child_add(sr->base);
+     }
+   sr->model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
+                           efl_ui_view_model_set(efl_added, sr->base));
+   ck_assert(!!sr->model);
+   eina_future_then(efl_model_children_slice_get(sr->model, 0, n), _many_rows_then, many, NULL);
+   // (the slice puts what it gets in the array of Many_Rows, which holds MANY_ROWS)
+   for (loops = 0; (loops < 100) && many->count < n; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, n);
+   for (i = 0; i < n; i++)
+     {
+        sr->cur[i] = many->rows[i];
+     }
+   sr->n = n;
+   free(many);
+   return sr;
+}
+
+static void
+_shift_free(Shift_Rows *sr)
+{
+   unsigned int i;
+
+   for (i = 0; i < sr->n; i++)
+     {
+        efl_unref(sr->cur[i]);
+     }
+   free(sr->cur);
+   free(sr->exp);
+   efl_unref(sr->model);
+   efl_unref(sr->base);
+   free(sr);
+}
+
+// Most rows were never measured: the blocks of zeros between those that were
+// are not touched by a shift, and what is on each side of them must still
+// move, and on the boundary of two blocks too.
+EFL_START_TEST(efl_ui_exact_model_shift_unmeasured)
+{
+   Shift_Rows *sr = _shift_new(3400);
+   unsigned int i;
+
+   for (i = 0; i < 10; i++)
+     {
+        _shift_height(sr, i, 3 + i);
+     }
+   for (i = 2600; i < 2610; i++)
+     {
+        _shift_height(sr, i, 100 + i % 50);
+     }
+   for (i = 3390; i < 3400; i++)
+     {
+        _shift_height(sr, i, 200 + i % 50);
+     }
+   _shift_check(sr);
+
+   _shift_insert(sr, 5, 0);
+   _shift_check(sr);
+   // The last row of the first block, and the first of the second
+   _shift_insert(sr, 1023, 0);
+   _shift_check(sr);
+   _shift_insert(sr, 1024, 77);
+   _shift_check(sr);
+   _shift_remove(sr, 1024);
+   _shift_check(sr);
+   _shift_remove(sr, 1023);
+   _shift_check(sr);
+   // The sizes of the second block are of rows that never were measured
+   _shift_remove(sr, 1500);
+   _shift_check(sr);
+   _shift_insert(sr, 2047, 31);
+   _shift_check(sr);
+   _shift_insert(sr, 2048, 0);
+   _shift_check(sr);
+   _shift_remove(sr, 0);
+   _shift_check(sr);
+   // At the very end, and the one that was the last
+   _shift_insert(sr, sr->n, 12);
+   _shift_check(sr);
+   _shift_remove(sr, sr->n - 1);
+   _shift_check(sr);
+   _shift_remove(sr, sr->n - 1);
+   _shift_check(sr);
+   _shift_free(sr);
+}
+EFL_END_TEST
+
+// Blocks that are all measured: what falls out of the last block as the rows
+// move is a size too, and has a block of its own.
+EFL_START_TEST(efl_ui_exact_model_shift_overflow)
+{
+   Shift_Rows *sr = _shift_new(2048);
+   unsigned int i;
+
+   for (i = 0; i < 2048; i++)
+     {
+        _shift_height(sr, i, 1 + (i * 7) % 97);
+     }
+   _shift_check(sr);
+
+   _shift_insert(sr, 1023, 0);
+   _shift_check(sr);
+   _shift_insert(sr, 1024, 0);
+   _shift_check(sr);
+   _shift_insert(sr, 0, 9);
+   _shift_check(sr);
+   // Again over the block that was made for it
+   for (i = 0; i < 4; i++)
+     {
+        _shift_insert(sr, 1024, 2 + i);
+        _shift_check(sr);
+     }
+   _shift_remove(sr, 1024);
+   _shift_check(sr);
+   _shift_remove(sr, 1023);
+   _shift_check(sr);
+   _shift_remove(sr, sr->n - 1);
+   _shift_check(sr);
+   for (i = 0; i < 6; i++)
+     {
+        _shift_remove(sr, 3);
+        _shift_check(sr);
+     }
+   _shift_free(sr);
+}
+EFL_END_TEST
+
 // Exact_Models that held sizes in several blocks are let go of: what they kept
 // compressed (both lists), the buffers of their slots and the block of zeros
 // they fill the gaps with are theirs to free (valgrind sees what is not). The
@@ -766,5 +979,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
    tcase_add_test(tc, efl_ui_exact_model_insert_remove);
    tcase_add_test(tc, efl_ui_exact_model_removed_row_write);
+   tcase_add_test(tc, efl_ui_exact_model_shift_unmeasured);
+   tcase_add_test(tc, efl_ui_exact_model_shift_overflow);
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
 }
