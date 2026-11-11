@@ -435,6 +435,127 @@ EFL_START_TEST(efl_ui_exact_model_many_rows)
 }
 EFL_END_TEST
 
+// The property_set takes a copy: the value given is the caller's to free.
+static void
+_uint_set(Efl_Model *model, const char *property, unsigned int value)
+{
+   Eina_Value *v = eina_value_uint_new(value);
+
+   efl_future_then(model, efl_model_property_set(model, property, v));
+   eina_value_free(v);
+}
+
+static void
+_row_keep(void *data, const Efl_Event *ev)
+{
+   Efl_Model_Children_Event *cev = ev->info;
+   Eo **kept = data;
+
+   *kept = efl_ref(cev->child);
+}
+
+// Rows of every kind of size: those of the original index i keep _many_height(i).
+static void
+_many_heights_check(Many_Rows *many, unsigned int skip, unsigned int skip2)
+{
+   unsigned int i;
+
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        if (i == skip || i == skip2) continue;
+        ck_assert_uint_eq(_property_uint_expected(many->rows[i], "self.height"), _many_height(i));
+        ck_assert_uint_eq(_property_uint_expected(many->rows[i], "self.width"),
+                          1000 + _many_height(i));
+     }
+}
+
+// A row inserted in front of the others, or removed from the front or from
+// the middle, moves the rows after it: each keeps the size it was told to be,
+// whichever block it was in and goes to, and the row that came in has none.
+EFL_START_TEST(efl_ui_exact_model_insert_remove)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Model *model;
+   Efl_Model_Children_Event ev = { 0 };
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   Eo *row, *added = NULL;
+   unsigned int i, loops, sum = 0;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+
+   eina_future_then(efl_model_children_slice_get(model, 0, MANY_ROWS), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && many->count < MANY_ROWS; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, MANY_ROWS);
+
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        _uint_set(many->rows[i], "self.height", _many_height(i));
+        _uint_set(many->rows[i], "self.width", 1000 + _many_height(i));
+        sum += _many_height(i);
+     }
+   _many_heights_check(many, MANY_ROWS, MANY_ROWS);
+
+   // In front of the others, as a model that can insert announces it
+   row = efl_add(EFL_GENERIC_MODEL_CLASS, base_model);
+   ev.index = 0;
+   ev.child = row;
+   efl_event_callback_add(model, EFL_MODEL_EVENT_CHILD_ADDED, _row_keep, &added);
+   efl_event_callback_call(base_model, EFL_MODEL_EVENT_CHILD_ADDED, &ev);
+   efl_event_callback_del(model, EFL_MODEL_EVENT_CHILD_ADDED, _row_keep, &added);
+   ck_assert_ptr_ne(added, NULL);
+   ck_assert_uint_eq(efl_composite_model_index_get(added), 0);
+   ck_assert_int_eq(_property_error_expected(added, "self.height"), EAGAIN);
+   ck_assert_int_eq(_property_error_expected(added, "self.width"), EAGAIN);
+   _many_heights_check(many, MANY_ROWS, MANY_ROWS);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), sum);
+
+   // The row that came in is measured on its own
+   _uint_set(added, "self.height", 5);
+   ck_assert_uint_eq(_property_uint_expected(added, "self.height"), 5);
+   _many_heights_check(many, MANY_ROWS, MANY_ROWS);
+
+   // And leaves again, from the front
+   ev.child = NULL;
+   efl_event_callback_call(base_model, EFL_MODEL_EVENT_CHILD_REMOVED, &ev);
+   _many_heights_check(many, MANY_ROWS, MANY_ROWS);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), sum);
+
+   // A row of the second block leaves: those after are one closer
+   ck_assert_uint_eq(efl_composite_model_index_get(many->rows[1030]), 1030);
+   ev.index = 1030;
+   efl_event_callback_call(base_model, EFL_MODEL_EVENT_CHILD_REMOVED, &ev);
+   _many_heights_check(many, 1030, MANY_ROWS);
+   ck_assert_uint_eq(efl_composite_model_index_get(many->rows[1031]), 1030);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), sum - _many_height(1030));
+
+   // The first row leaves
+   ev.index = 0;
+   efl_event_callback_call(base_model, EFL_MODEL_EVENT_CHILD_REMOVED, &ev);
+   _many_heights_check(many, 1030, 0);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"),
+                     sum - _many_height(1030) - _many_height(0));
+
+   efl_unref(added);
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   free(many);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // An Exact_Model that held sizes in several blocks is let go of: what it kept
 // compressed, the buffers of its slots and the block of zeros it fills the gaps
 // with are its to free (there is nothing to check here but valgrind). The last
@@ -495,5 +616,6 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_test);
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
+   tcase_add_test(tc, efl_ui_exact_model_insert_remove);
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
 }

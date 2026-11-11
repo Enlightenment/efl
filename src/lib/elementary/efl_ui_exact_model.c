@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <limits.h>
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -53,6 +54,22 @@ struct _Efl_Ui_Exact_Model_Data
    } slot[3];
 };
 
+static void _efl_ui_exact_model_child_added(void *data, const Efl_Event *event);
+static void _efl_ui_exact_model_child_removed(void *data, const Efl_Event *event);
+
+// Before anything that is told of the change (the view, the position manager),
+// the sizes have to be where the rows now are.
+//
+// The callbacks of an object are called in the order of their priority value,
+// the lowest first, and a priority is a short: the lowest value there is runs
+// before any other, including the ones of EFL_CALLBACK_PRIORITY_BEFORE that the
+// composite model and others use.
+#define EFL_UI_EXACT_MODEL_FIRST SHRT_MIN
+
+EFL_CALLBACKS_ARRAY_DEFINE(exact_model_callbacks,
+                           { EFL_MODEL_EVENT_CHILD_ADDED, _efl_ui_exact_model_child_added },
+                           { EFL_MODEL_EVENT_CHILD_REMOVED, _efl_ui_exact_model_child_removed });
+
 static Efl_Object *
 _efl_ui_exact_model_efl_object_constructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
 {
@@ -61,7 +78,12 @@ _efl_ui_exact_model_efl_object_constructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
    if (parent && efl_isa(parent, EFL_UI_EXACT_MODEL_CLASS))
      pd->parent = efl_data_scope_get(efl_parent_get(obj), EFL_UI_EXACT_MODEL_CLASS);
 
-   return efl_constructor(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS));
+   // (only the root keeps sizes)
+   if (obj && !pd->parent)
+     efl_event_callback_array_priority_add(obj, exact_model_callbacks(),
+                                           EFL_UI_EXACT_MODEL_FIRST, pd);
+   return obj;
 }
 
 // The compressed block of zeros that fills the gaps is shared by every model,
@@ -211,6 +233,34 @@ _efl_ui_exact_model_buffer_expand(unsigned int list_index, unsigned int *buffer,
    return buffer;
 }
 
+// Writes the slot back under the block it holds (not the one that evicts it),
+// when it was written to, and leaves it holding nothing.
+static void
+_efl_ui_exact_model_slot_commit(Efl_Ui_Exact_Model_Data *root, unsigned char found)
+{
+   unsigned int block = root->slot[found].start_offset;
+
+   if (!root->slot[found].defined) return;
+
+   // (a slot that was only read has nothing to commit)
+   if (root->slot[found].width &&
+       root->slot[found].decompressed.width &&
+       root->slot[found].dirty.width)
+     root->compressed.width =
+       _efl_ui_exact_model_slot_compress(block, root->compressed.width,
+                                         root->slot[found].width);
+   if (root->slot[found].height &&
+       root->slot[found].decompressed.height &&
+       root->slot[found].dirty.height)
+     root->compressed.height =
+       _efl_ui_exact_model_slot_compress(block, root->compressed.height,
+                                         root->slot[found].height);
+   root->slot[found].decompressed.width = EINA_FALSE;
+   root->slot[found].decompressed.height = EINA_FALSE;
+   root->slot[found].dirty.width = EINA_FALSE;
+   root->slot[found].dirty.height = EINA_FALSE;
+}
+
 static unsigned char
 _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
                               Eina_Bool width_get, Eina_Bool height_get)
@@ -247,28 +297,7 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
                found = lookup;
           }
 
-        // Commit change back to the stored buffer list
-        if (root->slot[found].defined &&
-            (root->slot[found].width ||
-             root->slot[found].height))
-          {
-             // (written back under the block it holds, not the one that evicts it)
-             unsigned int block = root->slot[found].start_offset;
-
-             // (a slot that was only read has nothing to commit)
-             if (root->slot[found].width &&
-                 root->slot[found].decompressed.width &&
-                 root->slot[found].dirty.width)
-               root->compressed.width =
-                 _efl_ui_exact_model_slot_compress(block, root->compressed.width,
-                                                   root->slot[found].width);
-             if (root->slot[found].height &&
-                 root->slot[found].decompressed.height &&
-                 root->slot[found].dirty.height)
-               root->compressed.height =
-                 _efl_ui_exact_model_slot_compress(block, root->compressed.height,
-                                                   root->slot[found].height);
-          }
+        _efl_ui_exact_model_slot_commit(root, found);
 
         root->slot[found].defined = EINA_TRUE;
         root->slot[found].decompressed.width = EINA_FALSE;
@@ -298,6 +327,201 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
      }
 
    return found;
+}
+
+// Stores the content of a block in the list node that holds it, or at the end
+// of the list when it is the one after the last.
+static void
+_efl_ui_exact_model_block_store(Eina_List **compressed, Eina_List *l,
+                                unsigned int block, unsigned int *buffer)
+{
+   Eina_Binbuf *old;
+   Eina_Binbuf *tbuf;
+   Eina_Binbuf *cbuf;
+
+   if (!l)
+     {
+        *compressed = _efl_ui_exact_model_slot_compress(block, *compressed, buffer);
+        return;
+     }
+
+   tbuf = eina_binbuf_manage_new((unsigned char *) buffer,
+                                 EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
+   if (!tbuf) return;
+   cbuf = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
+   eina_binbuf_free(tbuf);
+   if (!cbuf) return;
+
+   old = eina_list_data_get(l);
+   eina_list_data_set(l, cbuf);
+   if (old != _zero_block)
+     {
+        eina_binbuf_free(old);
+     }
+   else
+     {
+        _efl_ui_exact_model_zero_unref();
+     }
+}
+
+static void
+_efl_ui_exact_model_block_load(Eina_List *l, unsigned int *buffer)
+{
+   Eina_Binbuf *tmp;
+
+   if (!l)
+     {
+        memset(buffer, 0, EFL_UI_EXACT_MODEL_CONTENT_LENGTH);
+        return;
+     }
+   tmp = eina_binbuf_manage_new((unsigned char *) buffer,
+                                EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
+   if (!tmp)
+     {
+        memset(buffer, 0, EFL_UI_EXACT_MODEL_CONTENT_LENGTH);
+        return;
+     }
+   emile_expand(eina_list_data_get(l), tmp, EMILE_LZ4);
+   eina_binbuf_free(tmp);
+}
+
+// A row is inserted at index: every size from there on is one row further, and
+// the row that is now at index has none. Only the blocks from the one holding
+// index on are touched, and the blocks of zeros that the shift does not reach
+// are left alone.
+static void
+_efl_ui_exact_model_list_insert(Eina_List **compressed, unsigned int index)
+{
+   unsigned int buffer[EFL_UI_EXACT_MODEL_CONTENT];
+   unsigned int block = index / EFL_UI_EXACT_MODEL_CONTENT;
+   unsigned int start = index % EFL_UI_EXACT_MODEL_CONTENT;
+   unsigned int carry = 0, out;
+   Eina_List *l;
+
+   l = eina_list_nth_list(*compressed, block);
+   // Everything from here on is zero, and stays so
+   if (!l) return;
+
+   for (;; block++)
+     {
+        Eina_List *next = eina_list_next(l);
+
+        if ((block > (index / EFL_UI_EXACT_MODEL_CONTENT)) && !carry &&
+            (eina_list_data_get(l) == _zero_block))
+          goto advance;
+
+        _efl_ui_exact_model_block_load(l, buffer);
+        out = buffer[EFL_UI_EXACT_MODEL_CONTENT - 1];
+        memmove(buffer + start + 1, buffer + start,
+                (EFL_UI_EXACT_MODEL_CONTENT - 1 - start) * sizeof (unsigned int));
+        buffer[start] = carry;
+        carry = out;
+        _efl_ui_exact_model_block_store(compressed, l, block, buffer);
+
+     advance:
+        start = 0;
+        if (!next)
+          {
+             // What fell out of the last block is a size too
+             if (carry)
+               {
+                  memset(buffer, 0, sizeof (buffer));
+                  buffer[0] = carry;
+                  _efl_ui_exact_model_block_store(compressed, NULL, block + 1, buffer);
+               }
+             break;
+          }
+        l = next;
+     }
+}
+
+// A row is removed at index: every size after it is one row closer. What the
+// size of the row was is returned.
+static unsigned int
+_efl_ui_exact_model_list_remove(Eina_List *compressed, unsigned int index)
+{
+   unsigned int bufs[2][EFL_UI_EXACT_MODEL_CONTENT];
+   unsigned int block = index / EFL_UI_EXACT_MODEL_CONTENT;
+   unsigned int start = index % EFL_UI_EXACT_MODEL_CONTENT;
+   unsigned int removed;
+   unsigned int cur = 0;
+   Eina_List *l;
+
+   l = eina_list_nth_list(compressed, block);
+   // Never written, so never measured
+   if (!l) return 0;
+
+   _efl_ui_exact_model_block_load(l, bufs[cur]);
+   removed = bufs[cur][start];
+   for (;; block++)
+     {
+        Eina_List *next = eina_list_next(l);
+        Eina_Bool unchanged;
+
+        _efl_ui_exact_model_block_load(next, bufs[!cur]);
+        unchanged = (block > (index / EFL_UI_EXACT_MODEL_CONTENT)) &&
+          (eina_list_data_get(l) == _zero_block) &&
+          (!next || (eina_list_data_get(next) == _zero_block));
+        if (!unchanged)
+          {
+             memmove(bufs[cur] + start, bufs[cur] + start + 1,
+                     (EFL_UI_EXACT_MODEL_CONTENT - 1 - start) * sizeof (unsigned int));
+             bufs[cur][EFL_UI_EXACT_MODEL_CONTENT - 1] = bufs[!cur][0];
+             _efl_ui_exact_model_block_store(&compressed, l, block, bufs[cur]);
+          }
+        start = 0;
+        if (!next) break;
+        l = next;
+        cur = !cur;
+     }
+   return removed;
+}
+
+// The sizes follow their rows when one comes or goes. The sizes are kept by
+// index, and the rows after the one that came or went have another one now.
+static void
+_efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Eina_Bool added)
+{
+   unsigned char i;
+
+   // What is kept expanded in the slots has to be in the list to be moved
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(root->slot); i++)
+     {
+        _efl_ui_exact_model_slot_commit(root, i);
+        root->slot[i].defined = EINA_FALSE;
+        root->slot[i].usage = 0;
+     }
+
+   if (added)
+     {
+        _efl_ui_exact_model_list_insert(&root->compressed.width, index);
+        _efl_ui_exact_model_list_insert(&root->compressed.height, index);
+     }
+   else
+     {
+        unsigned int h;
+
+        _efl_ui_exact_model_list_remove(root->compressed.width, index);
+        h = _efl_ui_exact_model_list_remove(root->compressed.height, index);
+        if (h & EFL_UI_EXACT_MODEL_MEASURED)
+          root->total_size.height -= h & ~EFL_UI_EXACT_MODEL_MEASURED;
+     }
+}
+
+static void
+_efl_ui_exact_model_child_added(void *data, const Efl_Event *event)
+{
+   const Efl_Model_Children_Event *ev = event->info;
+
+   _efl_ui_exact_model_shift(data, ev->index, EINA_TRUE);
+}
+
+static void
+_efl_ui_exact_model_child_removed(void *data, const Efl_Event *event)
+{
+   const Efl_Model_Children_Event *ev = event->info;
+
+   _efl_ui_exact_model_shift(data, ev->index, EINA_FALSE);
 }
 
 static Eina_Future *
