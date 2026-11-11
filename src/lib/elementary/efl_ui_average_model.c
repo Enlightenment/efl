@@ -113,6 +113,13 @@ _efl_ui_average_model_update(Eo *obj EINA_UNUSED, void *data, const Eina_Value v
 }
 
 static void
+_efl_ui_average_model_unref(Eo *loop EINA_UNUSED, void *data,
+                            const Eina_Future *dead_future EINA_UNUSED)
+{
+   efl_unref(data);
+}
+
+static void
 _efl_ui_average_model_clean(Eo *obj, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    Efl_Ui_Average_Model_Update *update = data;
@@ -124,7 +131,13 @@ _efl_ui_average_model_clean(Eo *obj, void *data, const Eina_Future *dead_future 
      }
    free(update);
 
-   efl_unref(obj);
+   // This is called from inside the freeing of the future, which the row
+   // being the last ref of is destroyed under: the row cancels the futures it
+   // is the object of, this one among them, and it is freed twice. The ref is
+   // let go of from a job, where nothing of that future is left to be touched
+   // (the job is freed, and so the ref is let go of, even if the loop goes first).
+   efl_future_then(efl_loop_get(obj), efl_loop_job(efl_loop_get(obj)),
+                   .data = obj, .free = _efl_ui_average_model_unref);
 }
 
 static Eina_Future *

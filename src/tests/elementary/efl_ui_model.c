@@ -865,6 +865,50 @@ EFL_START_TEST(efl_ui_average_model_root_deleted)
 }
 EFL_END_TEST
 
+// The last ref to a row that was told its height is dropped in the same turn:
+// the ref the pending update holds is then the last one, and it must not be
+// let go of while the future that holds the update is being freed (valgrind
+// sees the row, and the future with it, being destroyed from inside it).
+EFL_START_TEST(efl_ui_average_model_last_ref_dropped)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 4; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && many->count < 4; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 4);
+
+   _uint_set(many->rows[0], "self.height", 40);
+   _uint_set(many->rows[1], "self.height", 10);
+   // The user lets go in the same turn: only the updates hold the rows now
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 100);
+
+   free(many);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 static void
 _total_height_changed(void *data, const Efl_Event *ev)
 {
@@ -1605,6 +1649,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_shrink);
    tcase_add_test(tc, efl_ui_average_model_remove_pending);
    tcase_add_test(tc, efl_ui_average_model_root_deleted);
+   tcase_add_test(tc, efl_ui_average_model_last_ref_dropped);
    tcase_add_test(tc, efl_ui_average_model_first_measure);
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
