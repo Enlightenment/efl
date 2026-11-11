@@ -962,6 +962,9 @@ _batch_request_flush(Eina_List *requests,
                   rn->need_size = request->need_size;
 
                   requests = eina_list_append(requests, rn);
+                  // Appended after next_list_item was taken: when this was the last
+                  // request, go on with the new one.
+                  if (!next_list_item) next_list_item = eina_list_last(requests);
 
                   request->length = istart - rstart;
                   continue;
