@@ -777,6 +777,66 @@ EFL_START_TEST(efl_test_select_model_noop_select_keeps_index_select)
 }
 EFL_END_TEST
 
+// Leaving multiple selection, then picking one of the rows that were selected, in the same
+// turn: the unselects of the others, which arrive later, must not take the pick away.
+EFL_START_TEST(efl_test_select_model_multi_to_single_pick_a_selected_row)
+{
+   Efl_Model *base_model, *model;
+   Eo *kids[2] = { NULL, NULL };
+   Eina_Value select = eina_value_bool_init(EINA_TRUE);
+   unsigned int i, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_MULTI);
+   eina_future_then(efl_model_children_slice_get(model, 0, 2), _gone_then, kids, NULL);
+   for (i = 0; (i < 12) && !kids[1]; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!kids[1]);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_select(model, 4, 4);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 2);
+   for (i = 0; i < 8; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, NULL), 3);
+
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   eina_future_then(efl_model_property_set(kids[1], "self.selected", &select),
+                    _state_ignore, NULL, NULL);
+   for (i = 0; i < 16; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_selected_count(model, &first), 1);
+   ck_assert_int_eq(first, 1);
+   ck_assert_ptr_ne(efl_ui_selectable_last_selected_get(model), NULL);
+   ck_assert_int_eq(efl_composite_model_index_get(efl_ui_selectable_last_selected_get(model)), 1);
+
+   efl_unref(kids[0]);
+   efl_unref(kids[1]);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -793,4 +853,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_manual_deselection);
    tcase_add_test(tc, efl_test_select_model_single_later_direct_select_wins);
    tcase_add_test(tc, efl_test_select_model_noop_select_keeps_index_select);
+   tcase_add_test(tc, efl_test_select_model_multi_to_single_pick_a_selected_row);
 }

@@ -31,6 +31,10 @@ struct _Efl_Ui_Select_Model_Data
    Eina_Bool allow_manual_deselection : 1;
 };
 
+static void _unselect_range(Eo *obj, unsigned int a, unsigned int b,
+                            Eina_Value (*then)(Eo *o, void *data, const Eina_Value v));
+static Eina_Value _children_unselect_keep_picked_then(Eo *o, void *data, const Eina_Value v);
+
 static void
 _efl_ui_select_model_apply_last_model(Eo *obj, Efl_Ui_Select_Model_Data *pd, Eo *last_model)
 {
@@ -428,8 +432,12 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         if ((pd->parent->selection == EFL_UI_SELECT_MODE_NONE) && newflag)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-        // Nothing changed
-        if (newflag == prevflag)
+        // Nothing changed. A row still selected from before a switch to single selection,
+        // that is not the selected one, is not that: picking it makes it the one, or the
+        // unselects that follow the switch would take it too.
+        if ((newflag == prevflag) &&
+            !(newflag && (pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE) &&
+              (pd->parent->last_model != obj)))
           return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
 
         // (a select that changes nothing does not take the place of one by index in flight)
@@ -631,8 +639,11 @@ _select_keep_one(Eo *obj, Efl_Ui_Select_Model_Data *pd)
    if (!any) return;
 
    count = efl_model_children_count_get(obj);
-   if (keep > 0) efl_ui_multi_selectable_ndx_range_unselect(obj, 0, keep - 1);
-   if (keep < count - 1) efl_ui_multi_selectable_ndx_range_unselect(obj, keep + 1, count - 1);
+   if (keep > 0) _unselect_range(obj, 0, keep - 1, _children_unselect_keep_picked_then);
+   if (keep < (count - 1))
+     {
+        _unselect_range(obj, keep + 1, count - 1, _children_unselect_keep_picked_then);
+     }
 
    if (pd->last_model && (efl_composite_model_index_get(pd->last_model) == keep)) return;
    efl_future_then(obj, efl_model_children_slice_get(obj, keep, 1),
@@ -751,12 +762,34 @@ _children_unselect_then(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Va
    return v;
 }
 
+// The rows left over when leaving multiple selection: the one picked since, which is the
+// selected one now, stays.
+static Eina_Value
+_children_unselect_keep_picked_then(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(o, EFL_UI_SELECT_MODEL_CLASS);
+   Eo *target;
+   Eina_Value unselect;
+   unsigned int i, len;
+
+   unselect = eina_value_bool_init(EINA_FALSE);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, target)
+     {
+        if ((pd->selection == EFL_UI_SELECT_MODE_SINGLE) && (pd->last_model == target)) continue;
+        efl_model_property_set(target, "self.selected", &unselect);
+     }
+
+   eina_value_flush(&unselect);
+
+   return v;
+}
+
 #define BATCH_MAX 100
 
 static void
-_efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *obj,
-                                                                            Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
-                                                                            unsigned int a, unsigned int b)
+_unselect_range(Eo *obj, unsigned int a, unsigned int b,
+                Eina_Value (*then)(Eo *o, void *data, const Eina_Value v))
 {
    unsigned long count, batch, i;
 
@@ -783,10 +816,18 @@ _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *
 
         f = efl_model_children_slice_get(obj, i, batch);
         efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
-                        .success = _children_unselect_then);
+                        .success = then);
 
         i += batch;
      }
+}
+
+static void
+_efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *obj,
+                                                                            Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
+                                                                            unsigned int a, unsigned int b)
+{
+   _unselect_range(obj, a, b, _children_unselect_then);
 }
 
 static void
