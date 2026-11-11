@@ -886,6 +886,37 @@ EFL_START_TEST(efl_ui_exact_model_shift_unmeasured)
 }
 EFL_END_TEST
 
+// The total width is the one of the widest row, and goes down with it.
+EFL_START_TEST(efl_ui_exact_model_remove_widest)
+{
+   Shift_Rows *sr = _shift_new(1100);
+   Eo *r[4];
+   unsigned int w[4] = { 20, 80, 90, 20 };
+   unsigned int at[4] = { 5, 3, 1030, 7 };
+   unsigned int i;
+
+   for (i = 0; i < 4; i++)
+     {
+        r[i] = sr->cur[at[i]];
+        efl_future_then(r[i], efl_model_property_set(r[i], "self.width", eina_value_uint_new(w[i])));
+     }
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 90);
+
+   // Not the widest: nothing changes
+   _shift_remove(sr, 5);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 90);
+   // The widest, in another block than the others
+   _shift_remove(sr, 1029);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 80);
+   _shift_remove(sr, 3);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 20);
+   ck_assert_uint_eq(efl_composite_model_index_get(r[3]), 5);
+   _shift_remove(sr, 5);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 0);
+   _shift_free(sr);
+}
+EFL_END_TEST
+
 // Blocks that are all measured: what falls out of the last block as the rows
 // move is a size too, and has a block of its own.
 EFL_START_TEST(efl_ui_exact_model_shift_overflow)
@@ -981,5 +1012,6 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_removed_row_write);
    tcase_add_test(tc, efl_ui_exact_model_shift_unmeasured);
    tcase_add_test(tc, efl_ui_exact_model_shift_overflow);
+   tcase_add_test(tc, efl_ui_exact_model_remove_widest);
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
 }

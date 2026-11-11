@@ -488,6 +488,28 @@ _efl_ui_exact_model_list_remove(Eina_List *compressed, unsigned int index,
    return EINA_TRUE;
 }
 
+// The widest row of what the list holds (the total width is that of one row,
+// as it is a vertical list that is kept).
+static unsigned int
+_efl_ui_exact_model_width_max(Eina_List *compressed)
+{
+   unsigned int buffer[EFL_UI_EXACT_MODEL_CONTENT];
+   unsigned int max = 0, i;
+   Eina_List *l;
+
+   for (l = compressed; l; l = eina_list_next(l))
+     {
+        if (eina_list_data_get(l) == _zero_block) continue;
+        _efl_ui_exact_model_block_load(l, buffer);
+        for (i = 0; i < EFL_UI_EXACT_MODEL_CONTENT; i++)
+          {
+             if (buffer[i] & EFL_UI_EXACT_MODEL_MEASURED)
+               max = MAX(max, buffer[i] & ~EFL_UI_EXACT_MODEL_MEASURED);
+          }
+     }
+   return max;
+}
+
 // A block could not be compressed in the middle of a shift, and the lists are
 // no longer in step with the rows. The sizes that are kept are of no use then
 // and a size that is the one of another row is worse than none: they are all
@@ -538,6 +560,10 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
           }
         if (h & EFL_UI_EXACT_MODEL_MEASURED)
           root->total_size.height -= h & ~EFL_UI_EXACT_MODEL_MEASURED;
+        // The total width is the widest row: only when it was that one is it to be looked for again
+        if ((w & EFL_UI_EXACT_MODEL_MEASURED) &&
+            (w & ~EFL_UI_EXACT_MODEL_MEASURED) >= root->total_size.width)
+          root->total_size.width = _efl_ui_exact_model_width_max(root->compressed.width);
      }
 }
 
