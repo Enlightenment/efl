@@ -1546,7 +1546,8 @@ EFL_END_TEST
    change must place every item where a grid that is given the final items
    places it. Items are plain, headers of groups, or members of the group
    before them. */
-static unsigned char _grid_kinds[CACHE_MAX_ROWS];
+static unsigned char _grid_kinds[2048];
+static unsigned int _grid_asked = 0;
 
 static Efl_Ui_Position_Manager_Size_Batch_Result
 _grid_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf,
@@ -1565,6 +1566,7 @@ _grid_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config c
         sizes[i].depth_leader = kind == 1;
      }
    result.filled_items = i;
+   _grid_asked += i;
    return result;
 }
 
@@ -1581,7 +1583,8 @@ _grid_manager_add(Efl_Ui_Win *win)
    return manager;
 }
 
-EFL_START_TEST(test_efl_ui_position_manager_grid_groups_follow)
+static void
+_grid_groups_follow(Eina_Bool plain_after_group)
 {
    Efl_Ui_Win *win;
    Efl_Ui_Position_Manager_Entity *manager, *fresh;
@@ -1611,13 +1614,18 @@ EFL_START_TEST(test_efl_ui_position_manager_grid_groups_follow)
              unsigned char kind = (seed >> 12) % 4;
 
              idx %= _cache_count + 1;
-             // Mostly members and plain items, a header makes a group. A plain
-             // item is never after a group, and a member after a header or a member.
+             // Mostly members and plain items, a header makes a group. A member
+             // is after a header or a member. A plain item is not after a group,
+             // unless it is asked to be (the item that ends a group is the one
+             // that the layout does not count in a line, see _group_cache_require).
              kind = (kind == 3) ? 1 : ((kind == 2) ? 2 : 0);
              if (kind == 1 && idx < _cache_count && _grid_kinds[idx] == 0)
                kind = 0;
              if (kind != 1)
-               kind = (idx > 0 && _grid_kinds[idx - 1] != 0) ? 2 : 0;
+               kind = (idx > 0 && _grid_kinds[idx - 1] != 0 &&
+                       !(plain_after_group && kind == 0)) ? 2 : 0;
+             // (a member in front of a plain item would make it one: they are not in a group)
+             if (kind == 2 && idx < _cache_count && _grid_kinds[idx] == 0) kind = 0;
              memmove(_grid_kinds + idx + 1, _grid_kinds + idx, _cache_count - idx);
              _grid_kinds[idx] = kind;
              _cache_count++;
@@ -1651,6 +1659,75 @@ EFL_START_TEST(test_efl_ui_position_manager_grid_groups_follow)
         efl_del(fresh);
      }
    efl_del(manager);
+}
+
+EFL_START_TEST(test_efl_ui_position_manager_grid_groups_follow)
+{
+   _grid_groups_follow(EINA_FALSE);
+}
+EFL_END_TEST
+
+// The same, with plain items after a group as well
+EFL_START_TEST(test_efl_ui_position_manager_grid_groups_follow_plain_after_group)
+{
+   _grid_groups_follow(EINA_TRUE);
+}
+EFL_END_TEST
+
+// Items appended to a grid with a group followed by plain items are put in the groups that
+// are known, and the sizes of the others are not asked for again: asking for the sizes of
+// twice the items costs twice, not four times.
+static unsigned int
+_grid_appends_asked(unsigned int appends, Efl_Ui_Win *win, Efl_Gfx_Entity *item)
+{
+   Efl_Ui_Position_Manager_Entity *manager, *fresh;
+   unsigned int i;
+   static const unsigned char start[] = { 1, 2, 2, 0, 0, 0 };
+
+   memcpy(_grid_kinds, start, sizeof (start));
+   _cache_count = sizeof (start);
+   manager = _grid_manager_add(win);
+   // (the groups are known)
+   efl_ui_position_manager_entity_position_single_item(manager, 3);
+
+   _grid_asked = 0;
+   for (i = 0; i < appends; i++)
+     {
+        _grid_kinds[_cache_count] = 0;
+        _cache_count++;
+        efl_ui_position_manager_entity_item_added(manager, _cache_count - 1, item);
+        efl_ui_position_manager_entity_position_single_item(manager, _cache_count - 1);
+     }
+   i = _grid_asked;
+
+   // what it placed is what a grid that is given the items at once places
+   fresh = _grid_manager_add(win);
+   for (appends = 3; appends < _cache_count; appends += 97)
+     {
+        Eina_Rect a = efl_ui_position_manager_entity_position_single_item(manager, appends);
+        Eina_Rect b = efl_ui_position_manager_entity_position_single_item(fresh, appends);
+
+        ck_assert_int_eq(a.x, b.x);
+        ck_assert_int_eq(a.y, b.y);
+     }
+   efl_del(fresh);
+   efl_del(manager);
+   return i;
+}
+
+EFL_START_TEST(test_efl_ui_position_manager_grid_group_appends_linear)
+{
+   Efl_Ui_Win *win;
+   Efl_Gfx_Entity *item;
+   unsigned int n = 500, asked_n, asked_2n;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   item = _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+   asked_n = _grid_appends_asked(n, win, item);
+   asked_2n = _grid_appends_asked(2 * n, win, item);
+   // (linear is 2 times, a full build for each is 4 times)
+   ck_assert_uint_lt(asked_2n, asked_n * 3);
 }
 EFL_END_TEST
 
@@ -2367,6 +2444,8 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_position_manager_list_differential);
    tcase_add_test(tc, test_efl_ui_position_manager_list_estimate_stable);
    tcase_add_test(tc, test_efl_ui_position_manager_grid_groups_follow);
+   tcase_add_test(tc, test_efl_ui_position_manager_grid_groups_follow_plain_after_group);
+   tcase_add_test(tc, test_efl_ui_position_manager_grid_group_appends_linear);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_idle);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_renumbered);

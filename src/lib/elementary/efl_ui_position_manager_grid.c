@@ -139,6 +139,7 @@ _group_cache_insert(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx,
                     const Efl_Ui_Position_Manager_Size_Batch_Entity *entity)
 {
    unsigned int count, i, consumed = 0;
+   Eina_Bool prev_group = EINA_FALSE;
 
    if (!pd->group_cache) return EINA_FALSE;
    if (entity->depth_leader) return EINA_FALSE;
@@ -148,6 +149,10 @@ _group_cache_insert(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx,
      {
         Group_Cache_Line *line = eina_inarray_nth(pd->group_cache, i);
 
+        // The plain item that ends a group is in no line (see _group_cache_require):
+        // it is the place before the line that follows a group with plain items
+        if (prev_group && !line->real_group) consumed++;
+        prev_group = line->real_group;
         if (idx <= consumed + line->items)
           {
              Eina_Bool member = entity->element_depth > 0;
@@ -167,6 +172,7 @@ static Eina_Bool
 _group_cache_remove(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx)
 {
    unsigned int count, i, consumed = 0;
+   Eina_Bool prev_group = EINA_FALSE;
 
    if (!pd->group_cache) return EINA_FALSE;
 
@@ -175,7 +181,11 @@ _group_cache_remove(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx)
      {
         Group_Cache_Line *line = eina_inarray_nth(pd->group_cache, i);
 
-        if (idx < consumed + line->items)
+        // (see _group_cache_insert: the item that ends a group is in no line, and
+        // one that goes is left to a full build)
+        if (prev_group && !line->real_group) consumed++;
+        prev_group = line->real_group;
+        if (idx >= consumed && idx < consumed + line->items)
           {
              // The header of a group takes the group with it
              if ((line->real_group) && (idx == consumed)) return EINA_FALSE;
