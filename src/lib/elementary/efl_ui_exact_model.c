@@ -518,9 +518,11 @@ _efl_ui_exact_model_list_remove(Eina_List *compressed, unsigned int index,
 }
 
 // The widest row of what the list holds (the total width is that of one row,
-// as it is a vertical list that is kept).
+// as it is a vertical list that is kept). It is no wider than "known", so as
+// soon as a row is that wide there is no need to look further: when the
+// rows that are left are alike, nothing but the first block is expanded.
 static unsigned int
-_efl_ui_exact_model_width_max(Eina_List *compressed)
+_efl_ui_exact_model_width_max(Eina_List *compressed, unsigned int known)
 {
    unsigned int buffer[EFL_UI_EXACT_MODEL_CONTENT];
    unsigned int max = 0, i;
@@ -532,8 +534,9 @@ _efl_ui_exact_model_width_max(Eina_List *compressed)
         _efl_ui_exact_model_block_load(l, buffer);
         for (i = 0; i < EFL_UI_EXACT_MODEL_CONTENT; i++)
           {
-             if (buffer[i] & EFL_UI_EXACT_MODEL_MEASURED)
-               max = MAX(max, buffer[i] & ~EFL_UI_EXACT_MODEL_MEASURED);
+             if (!(buffer[i] & EFL_UI_EXACT_MODEL_MEASURED)) continue;
+             max = MAX(max, buffer[i] & ~EFL_UI_EXACT_MODEL_MEASURED);
+             if (max >= known) return max;
           }
      }
    return max;
@@ -612,7 +615,8 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
         // The total width is the widest row: only when it was that one is it to be looked for again
         if ((w & EFL_UI_EXACT_MODEL_MEASURED) &&
             (w & ~EFL_UI_EXACT_MODEL_MEASURED) >= root->total_size.width)
-          root->total_size.width = _efl_ui_exact_model_width_max(root->compressed.width);
+          root->total_size.width = _efl_ui_exact_model_width_max(root->compressed.width,
+                                          root->total_size.width);
      }
 }
 

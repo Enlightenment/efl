@@ -1187,6 +1187,27 @@ EFL_START_TEST(efl_ui_average_model_forgotten)
 }
 EFL_END_TEST
 
+// Rows that are all as wide: the total width is theirs as long as one is left.
+EFL_START_TEST(efl_ui_exact_model_remove_widest_alike)
+{
+   Shift_Rows *sr = _shift_new(2100);
+   unsigned int i;
+
+   for (i = 0; i < 2100; i += 3)
+     efl_future_then(sr->cur[i], efl_model_property_set(sr->cur[i], "self.width",
+                                                         eina_value_uint_new(60)));
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 60);
+   // (every third row is measured: the last of them is the row 2097)
+   for (i = 0; i < 2100; i++)
+     {
+        _shift_remove(sr, 0);
+        ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"),
+                          i < 2097 ? 60 : 0);
+     }
+   _shift_free(sr);
+}
+EFL_END_TEST
+
 // Blocks that are all measured: what falls out of the last block as the rows
 // move is a size too, and has a block of its own.
 EFL_START_TEST(efl_ui_exact_model_shift_overflow)
@@ -1344,6 +1365,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_shift_store_fails);
    tcase_add_test(tc, efl_ui_average_model_forgotten);
    tcase_add_test(tc, efl_ui_exact_model_remove_widest);
+   tcase_add_test(tc, efl_ui_exact_model_remove_widest_alike);
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
    tcase_add_test(tc, efl_ui_average_model_forgotten_in_set);
 }
