@@ -902,6 +902,74 @@ EFL_START_TEST(efl_test_select_model_fallback_after_direct_unselect)
 }
 EFL_END_TEST
 
+static Eina_Bool
+_state_get(Eo *child, const char *name)
+{
+   Eina_Value *r = efl_model_property_get(child, name);
+   Eina_Bool b = EINA_FALSE;
+
+   ck_assert(!!r);
+   ck_assert(eina_value_type_get(r) == EINA_VALUE_TYPE_BOOL);
+   eina_value_bool_get(r, &b);
+   eina_value_free(r);
+   return b;
+}
+
+// A select that is cancelled while it waits for the unselect of the row before is rolled back:
+// the new row is not selected, so it is not the last selected one either, and the row before
+// is the selected one still.
+EFL_START_TEST(efl_test_select_model_failed_unselect_rolls_back_last)
+{
+   Efl_Model *base_model, *model;
+   Eo *rows[3] = { NULL, NULL, NULL };
+   Eina_Value select = eina_value_bool_init(EINA_TRUE);
+   unsigned int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 3; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   eina_future_then(efl_model_children_slice_get(model, 0, 3), _rows_then, rows, NULL);
+   for (i = 0; (i < 12) && !rows[2]; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!rows[2]);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 2);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), rows[2]);
+
+   eina_future_cancel(efl_model_property_set(rows[0], "self.selected", &select));
+   for (i = 0; i < 16; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   // The new row was taken back: it is not selected, so it is not the last selected one
+   ck_assert_int_eq(_state_get(rows[0], "selected"), EINA_FALSE);
+   // and the row whose unselect failed is still the selected one
+   ck_assert_int_eq(_state_get(rows[2], "selected"), EINA_TRUE);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), rows[2]);
+   ck_assert_int_eq(_selected_count(model, &i), 1);
+   ck_assert_int_eq(i, 2);
+
+   for (i = 0; i < 3; i++)
+     {
+        efl_unref(rows[i]);
+     }
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -920,4 +988,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_noop_select_keeps_index_select);
    tcase_add_test(tc, efl_test_select_model_multi_to_single_pick_a_selected_row);
    tcase_add_test(tc, efl_test_select_model_fallback_after_direct_unselect);
+   tcase_add_test(tc, efl_test_select_model_failed_unselect_rolls_back_last);
 }

@@ -329,19 +329,60 @@ _untangle_array(void *data EINA_UNUSED,
    return va;
 }
 
-static Eina_Value
-_untangle_error(void *data, Eina_Error err)
+// What a select that unselects the row selected before keeps to roll back with
+typedef struct
 {
-   Efl_Model *child = data;
-   Eina_Future *f;
+   Eo *obj;  // the row being selected
+   Eo *prev; // the row that was selected, which this one was to replace
+} Untangle;
 
-   // We need to roll back the change, which means in this
-   // case to unselect this child as this is the only case
-   // where we could end up here.
+static Untangle *
+_untangle_new(Eo *obj, Eo *prev)
+{
+   Untangle *u = calloc(1, sizeof (Untangle));
+
+   if (!u) return NULL;
+   u->obj = efl_ref(obj);
+   u->prev = efl_ref(prev);
+   return u;
+}
+
+// We need to roll back the change, which means in this
+// case to unselect this child as this is the only case
+// where we could end up here. The row before stays the selected one, when it is still a
+// row and is still selected, as its unselect is what failed.
+static Eina_Value
+_untangle_rollback(Untangle *u, Eina_Error err)
+{
+   Eo *child = u->obj;
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(efl_parent_get(child),
+                                                     EFL_UI_SELECT_MODEL_CLASS);
+   Eina_Future *f;
    Eina_Error *error = calloc(1, sizeof (Eina_Error));
 
    f = efl_model_property_set(efl_super(child, EFL_UI_SELECT_MODEL_CLASS),
                               "selected", eina_value_bool_new(EINA_FALSE));
+
+   // A later selection asked for in the meantime is the last one, not this one
+   if ((pd) && (pd->last_model == child))
+     {
+        Eo *keep = NULL;
+
+        if (u->prev && (efl_composite_model_index_get(u->prev) != 0xFFFFFFFF))
+          {
+             Eina_Value *selected;
+             Eina_Bool flag = EINA_FALSE;
+
+             selected = efl_model_property_get(efl_super(u->prev, EFL_UI_SELECT_MODEL_CLASS),
+                                               "selected");
+             eina_value_bool_get(selected, &flag);
+             eina_value_free(selected);
+             if (flag) keep = u->prev;
+          }
+        _efl_ui_select_model_apply_last_model(efl_parent_get(child), pd, keep);
+     }
+
+   if (!error) return eina_future_as_value(f);
    // Once this is done, we need to repropagate the error
    *error = err;
    f = eina_future_then(f, _regenerate_error, error, NULL);
@@ -349,13 +390,21 @@ _untangle_error(void *data, Eina_Error err)
    return eina_future_as_value(f);
 }
 
+static Eina_Value
+_untangle_error(void *data, Eina_Error err)
+{
+   return _untangle_rollback(data, err);
+}
+
 static void
 _untangle_free(void *data,
                const Eina_Future *dead_future EINA_UNUSED)
 {
-   Eo *obj = data;
+   Untangle *u = data;
 
-   efl_unref(obj);
+   efl_unref(u->obj);
+   efl_unref(u->prev);
+   free(u);
 }
 
 static Eina_Iterator *
@@ -418,6 +467,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         Eina_Bool success;
         Eina_Value *prev;
         Eina_Future *chain;
+        Untangle *untangle = NULL;
 
         // A row with no index left while a slice held it: it is not a row to select
         if (efl_composite_model_index_get(obj) == 0xFFFFFFFF)
@@ -465,6 +515,14 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
 
         single_selection = !!(pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE);
 
+        // What the select keeps to roll back with, before anything is stored: no memory
+        // for it fails the select cleanly
+        if (single_selection && newflag && pd->parent->last_model)
+          {
+             untangle = _untangle_new(obj, pd->parent->last_model);
+             if (!untangle) return efl_loop_future_rejected(obj, ENOMEM);
+          }
+
         // First store the new value in the boolean model we inherit from
         chain = efl_model_property_set(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS),
                                        "selected", value);
@@ -504,7 +562,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
                   chain = eina_future_then_easy(chain,
                                                 .success_type = EINA_VALUE_TYPE_ARRAY,
                                                 .success = _untangle_array,
-                                                .data = efl_ref(obj),
+                                                .data = untangle,
                                                 .error = _untangle_error,
                                                 .free = _untangle_free);
                   // This is the last one now, not once it commits: a selection asked for
