@@ -29,11 +29,15 @@ struct _Efl_Ui_Select_Model_Data
    unsigned int select_seq;
 
    Eina_Bool allow_manual_deselection : 1;
+   // Set while the unselects that going to none asks for are applied: they are not a manual
+   // deselection, and nothing takes the place of what they unselect
+   Eina_Bool clearing : 1;
 };
 
 static void _unselect_range(Eo *obj, unsigned int a, unsigned int b,
                             Eina_Value (*then)(Eo *o, void *data, const Eina_Value v));
 static Eina_Value _children_unselect_keep_picked_then(Eo *o, void *data, const Eina_Value v);
+static Eina_Value _children_unselect_clear_then(Eo *o, void *data, const Eina_Value v);
 
 static void
 _efl_ui_select_model_apply_last_model(Eo *obj, Efl_Ui_Select_Model_Data *pd, Eo *last_model)
@@ -95,6 +99,7 @@ _efl_ui_select_model_fallback(Efl_Ui_Select_Model_Data *parent_pd, Eo *child)
    if (!parent_pd) return;
    if (!parent_pd->fallback_model) return;
    if (parent_pd->fallback_model == child) return;
+   if (parent_pd->clearing) return;
    // I think it only make sense to trigger the fallback on single mode
    if (parent_pd->selection != EFL_UI_SELECT_MODE_SINGLE) return;
 
@@ -509,6 +514,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         if (!newflag &&
             (pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE) &&
             (!pd->parent->allow_manual_deselection) &&
+            (!pd->parent->clearing) &&
             (!pd->parent->fallback_model) &&
             (pd->parent->last_model == obj))
           return efl_loop_future_resolved(obj, eina_value_bool_init(EINA_TRUE));
@@ -725,7 +731,11 @@ _efl_ui_select_model_efl_ui_multi_selectable_select_mode_set(Eo *obj,
       case EFL_UI_SELECT_MODE_NONE:
          // Every row, from single mode too: one selected but not known as the last one (kept
          // on leaving multiple selection, before it is fetched) would come back in multi
-         efl_ui_multi_selectable_all_unselect(obj);
+         {
+            unsigned int count = efl_model_children_count_get(obj);
+
+            if (count) _unselect_range(obj, 0, count - 1, _children_unselect_clear_then);
+         }
          break;
       case EFL_UI_SELECT_MODE_MULTI:
          break;
@@ -843,6 +853,20 @@ _children_unselect_keep_picked_then(Eo *o, void *data EINA_UNUSED, const Eina_Va
    eina_value_flush(&unselect);
 
    return v;
+}
+
+// What going to none unselects, which allow_manual_deselection does not refuse
+static Eina_Value
+_children_unselect_clear_then(Eo *o, void *data, const Eina_Value v)
+{
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(o, EFL_UI_SELECT_MODEL_CLASS);
+   Eina_Value r;
+
+   pd->clearing = EINA_TRUE;
+   r = _children_unselect_then(o, data, v);
+   pd->clearing = EINA_FALSE;
+
+   return r;
 }
 
 #define BATCH_MAX 100

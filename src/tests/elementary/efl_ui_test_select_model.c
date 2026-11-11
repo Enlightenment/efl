@@ -970,6 +970,45 @@ EFL_START_TEST(efl_test_select_model_failed_unselect_rolls_back_last)
 }
 EFL_END_TEST
 
+// Going to none unselects every row, whatever allow_manual_deselection says: that is not a
+// person giving up the selection but the mode taking it away. Back in single mode nothing
+// is selected, whether the mode came back at once or after the unselects ran.
+EFL_START_TEST(efl_test_select_model_none_clears_without_manual_deselection)
+{
+   Efl_Model *base_model, *model;
+   unsigned int i, round, first = 99;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   efl_ui_selectable_allow_manual_deselection_set(model, EINA_FALSE);
+
+   for (round = 0; round < 2; round++)
+     {
+        efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
+        for (i = 0; i < 12; i++) ecore_main_loop_iterate();
+        ck_assert_int_eq(_selected_count(model, &first), 1);
+        ck_assert_int_eq(first, 1);
+
+        efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_NONE);
+        // (round 0: back to single in the same turn, round 1: once the unselects ran)
+        if (round) for (i = 0; i < 12; i++) ecore_main_loop_iterate();
+        efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+        for (i = 0; i < 12; i++) ecore_main_loop_iterate();
+        ck_assert_int_eq(_selected_count(model, NULL), 0);
+        ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), NULL);
+     }
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_select_model(TCase *tc)
 {
@@ -989,4 +1028,5 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_multi_to_single_pick_a_selected_row);
    tcase_add_test(tc, efl_test_select_model_fallback_after_direct_unselect);
    tcase_add_test(tc, efl_test_select_model_failed_unselect_rolls_back_last);
+   tcase_add_test(tc, efl_test_select_model_none_clears_without_manual_deselection);
 }
