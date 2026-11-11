@@ -298,10 +298,15 @@ _child_removed(void *data, const Efl_Event *event)
    it = eina_hash_iterator_data_new(pd->values);
    EINA_ITERATOR_FOREACH(it, v)
      {
-        unsigned int i;
+        unsigned int i, stored, limit;
+
+        // Past the last stored range every bit is the default, and so is the one
+        // that moves onto it: only what is stored has to be moved.
+        stored = (v->last) ? (v->last->offset + v->last->length) : 0;
+        limit = (stored < total) ? stored : total;
 
         // Everything after the removed one is one index closer
-        for (i = ev->index; i < total; i++)
+        for (i = ev->index; i < limit; i++)
           {
              _value_bit_set(v, i, _value_bit_get(v, i + 1));
           }

@@ -986,6 +986,110 @@ EFL_START_TEST(efl_test_boolean_model_many)
 }
 EFL_END_TEST
 
+// Rows taken out from the front of a list, the marks sit close to it. Every mark
+// must stay on its row, and the rows that were never marked must not get one.
+// Two booleans, one default false and one default true. The bits past the last
+// stored range are the default and are not moved, so the marks sit in the first
+// range, on both sides of the border of the second, and past the last stored one
+// nothing is marked.
+#define FRONT_TOTAL 5000
+#define FRONT_GONE 300
+
+static const unsigned int front_marks[] = { 0, 299, 300, 1500, 2047, 2048, 2049 };
+static Eo **front_rows;
+static unsigned int front_total;
+
+static Eina_Bool
+_front_is_mark(unsigned int id)
+{
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(front_marks); i++)
+     {
+        if (front_marks[i] == id) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Value
+_front_check(Eo *model, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Eo *base = efl_ui_view_model_get(model);
+   Eo **kids = calloc(front_total, sizeof (Eo *));
+   unsigned int i, len, id;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        kids[i] = c;
+     }
+   ck_assert_int_eq(len, front_total);
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(front_marks); i++)
+     {
+        _many_set(kids[front_marks[i]], "a", EINA_TRUE);
+        _many_set(kids[front_marks[i]], "b", EINA_FALSE);
+     }
+
+   for (id = 0; id < FRONT_GONE; id++)
+     {
+        efl_model_child_del(base, front_rows[id]);
+     }
+
+   for (id = FRONT_GONE; id < front_total; id++)
+     {
+        ck_assert_int_eq(efl_composite_model_index_get(kids[id]), id - FRONT_GONE);
+        ck_assert(_marked_named_get(kids[id], "a") == _front_is_mark(id));
+        ck_assert(_marked_named_get(kids[id], "b") == !_front_is_mark(id));
+     }
+   ck_assert(_marked_named_get(kids[front_total - 1], "b"));
+   ck_assert(!_marked_named_get(kids[front_total - 1], "a"));
+
+   free(kids);
+   ecore_main_loop_quit();
+   return v;
+}
+
+static void
+_front_run(unsigned int total)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Boolean_Model *model;
+   Eina_Future *future;
+   unsigned int i;
+
+   front_total = total;
+   front_rows = calloc(total, sizeof (Eo *));
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < total; i++)
+     {
+        front_rows[i] = efl_model_child_add(base_model);
+        ck_assert(!!front_rows[i]);
+     }
+
+   model = efl_add_ref(EFL_BOOLEAN_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model),
+                       efl_boolean_model_boolean_add(efl_added, "a", EINA_FALSE),
+                       efl_boolean_model_boolean_add(efl_added, "b", EINA_TRUE));
+   ck_assert(!!model);
+
+   future = efl_model_children_slice_get(model, 0, total);
+   efl_future_then(model, future, .success_type = EINA_VALUE_TYPE_ARRAY,
+                   .success = _front_check);
+
+   ecore_main_loop_begin();
+
+   efl_unref(model);
+   efl_unref(base_model);
+   free(front_rows);
+}
+
+EFL_START_TEST(efl_test_boolean_model_remove_front)
+{
+   _front_run(FRONT_TOTAL);
+}
+EFL_END_TEST
+
 // A slice that was asked for before rows came or went in front of it. The source
 // answers with the rows it had when asked, so their composites must take the index
 // those rows have now, not the one they had when the slice was asked for.
@@ -1232,6 +1336,7 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_boolean_model_insert);
    tcase_add_test(tc, efl_test_boolean_model_true_default);
    tcase_add_test(tc, efl_test_boolean_model_many);
+   tcase_add_test(tc, efl_test_boolean_model_remove_front);
    tcase_add_test(tc, efl_test_filter_model);
    tcase_add_test(tc, efl_test_generic_model_child_added);
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);
