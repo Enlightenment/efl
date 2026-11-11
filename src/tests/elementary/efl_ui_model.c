@@ -865,6 +865,73 @@ EFL_START_TEST(efl_ui_average_model_root_deleted)
 }
 EFL_END_TEST
 
+static void
+_total_height_changed(void *data, const Efl_Event *ev)
+{
+   Efl_Model_Property_Event *pev = ev->info;
+   unsigned int *count = data;
+   Eina_Array_Iterator it;
+   const char *property;
+   unsigned int i;
+
+   if (!pev || !pev->changed_properties) return;
+   EINA_ARRAY_ITER_NEXT(pev->changed_properties, i, property, it)
+     if (eina_streq(property, "total.height")) (*count)++;
+}
+
+// The first row that is measured changes what the rows nobody measured are
+// estimated to be (from a stand-in to its height), even when that height is 0
+// and the average, a number, stays what it was: it is told of like any change.
+EFL_START_TEST(efl_ui_average_model_first_measure)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops, changes = 0, known_changes;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 4; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _total_height_changed, &changes);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && many->count < 4; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 4);
+   changes = 0;
+
+   _uint_set(many->rows[0], "self.height", 0);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   known_changes = changes;
+   ck_assert_uint_eq(known_changes, 1);
+
+   // (and from then on, the average of 0 staying 0 is no change)
+   _uint_set(many->rows[1], "self.height", 0);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(changes, known_changes);
+
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   free(many);
+   efl_event_callback_del(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _total_height_changed, &changes);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // A row that was removed has no place in the model any more: what is told
 // to it is not for the row that is now at the index it had.
 EFL_START_TEST(efl_ui_exact_model_removed_row_write)
@@ -1459,6 +1526,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_shrink);
    tcase_add_test(tc, efl_ui_average_model_remove_pending);
    tcase_add_test(tc, efl_ui_average_model_root_deleted);
+   tcase_add_test(tc, efl_ui_average_model_first_measure);
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
    tcase_add_test(tc, efl_ui_exact_model_insert_remove);

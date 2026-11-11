@@ -32,10 +32,14 @@ struct _Efl_Ui_Average_Model_Data
    // the number of times it changed (what a view that estimates with it keeps)
    unsigned long long average;
    unsigned int revision;
-
    // What a row was told that has not been added to the totals yet (it is
    // added when the loop gets to it), for the row that leaves before that.
    Eina_List *pending;
+
+   // Whether any row was told when it was: a view gives the rows nobody measured
+   // the size it has for them (not the average) until one was, so it changes
+   // what they are even when the average is the 0 it was
+   Eina_Bool known : 1;
 };
 
 typedef struct _Efl_Ui_Average_Model_Update Efl_Ui_Average_Model_Update;
@@ -53,14 +57,19 @@ struct _Efl_Ui_Average_Model_Update
 };
 
 // What an item is estimated to be, from what was told: not a number of its own,
-// a change of it is what makes the estimates of the others change.
+// a change of it is what makes the estimates of the others change. That is a
+// change of the average, and the first row that is told (or the last one that
+// leaves), as the rows nobody measured are then what the average is and not
+// what the view had for them.
 static Eina_Bool
 _efl_ui_average_model_revise(Efl_Ui_Average_Model_Data *root)
 {
    unsigned long long average = root->total.hseen ? root->total.height / root->total.hseen : 0;
+   Eina_Bool known = !!root->total.hseen;
 
-   if (average == root->average) return EINA_FALSE;
+   if ((average == root->average) && (known == root->known)) return EINA_FALSE;
    root->average = average;
+   root->known = known;
    root->revision++;
    return EINA_TRUE;
 }
