@@ -556,51 +556,113 @@ EFL_START_TEST(efl_ui_exact_model_insert_remove)
 }
 EFL_END_TEST
 
-// An Exact_Model that held sizes in several blocks is let go of: what it kept
-// compressed, the buffers of its slots and the block of zeros it fills the gaps
-// with are its to free (there is nothing to check here but valgrind). The last
-// block is written first so that the blocks before it are filled with zeros,
-// and each of the first ones is visited again after the slots were reused.
-EFL_START_TEST(efl_ui_exact_model_destroyed)
+// Builds an Exact_Model over MANY_ROWS rows, with the rows of it.
+static Efl_Model *
+_many_exact_add(Efl_Generic_Model **base_model, Many_Rows *many)
 {
-   Efl_Generic_Model *base_model;
    Efl_Model *model;
-   Many_Rows *many = calloc(1, sizeof (Many_Rows));
-   static const unsigned int order[] = { 3400, 2100, 1100, 50, 3401, 2101, 1101, 51, 3402 };
    unsigned int i, loops;
 
-   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   *base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
    for (i = 0; i < MANY_ROWS; i++)
      {
-        efl_model_child_add(base_model);
+        efl_model_child_add(*base_model);
      }
    model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
-                       efl_ui_view_model_set(efl_added, base_model));
+                       efl_ui_view_model_set(efl_added, *base_model));
    ck_assert(!!model);
 
+   many->count = 0;
    eina_future_then(efl_model_children_slice_get(model, 0, MANY_ROWS), _many_rows_then, many, NULL);
    for (loops = 0; (loops < 50) && (many->count < MANY_ROWS); loops++)
      {
         ecore_main_loop_iterate();
      }
    ck_assert_uint_eq(many->count, MANY_ROWS);
+   return model;
+}
 
-   for (i = 0; i < EINA_C_ARRAY_LENGTH(order); i++)
+// Width and height of the rows of the order, each its own value.
+static void
+_many_sizes_set(Many_Rows *many, const unsigned int *order, unsigned int count)
+{
+   unsigned int i;
+
+   for (i = 0; i < count; i++)
      {
-        Eina_Future *f = efl_model_property_set(many->rows[order[i]], "self.height",
-                                                eina_value_uint_new(10 + i));
-
-        efl_future_then(many->rows[order[i]], f);
+        _uint_set(many->rows[order[i]], "self.height", 10 + i);
+        _uint_set(many->rows[order[i]], "self.width", 500 + i);
         ck_assert_uint_eq(_property_uint_expected(many->rows[order[i]], "self.height"), 10 + i);
+        ck_assert_uint_eq(_property_uint_expected(many->rows[order[i]], "self.width"), 500 + i);
      }
+}
+
+static void
+_many_sizes_check(Many_Rows *many, const unsigned int *order, unsigned int count)
+{
+   unsigned int i;
+
+   for (i = 0; i < count; i++)
+     {
+        ck_assert_uint_eq(_property_uint_expected(many->rows[order[i]], "self.height"), 10 + i);
+        ck_assert_uint_eq(_property_uint_expected(many->rows[order[i]], "self.width"), 500 + i);
+     }
+   // Rows nobody measured, in the blocks filled with zeros, are not ready
+   ck_assert_int_eq(_property_error_expected(many->rows[5], "self.height"), EAGAIN);
+   ck_assert_int_eq(_property_error_expected(many->rows[5], "self.width"), EAGAIN);
+   ck_assert_int_eq(_property_error_expected(many->rows[1500], "self.height"), EAGAIN);
+   ck_assert_int_eq(_property_error_expected(many->rows[1500], "self.width"), EAGAIN);
+}
+
+static void
+_many_free(Many_Rows *many, Efl_Model *model, Efl_Generic_Model *base_model)
+{
+   unsigned int i;
 
    for (i = 0; i < MANY_ROWS; i++)
      {
         efl_unref(many->rows[i]);
      }
-   free(many);
    efl_unref(model);
    efl_unref(base_model);
+}
+
+// Exact_Models that held sizes in several blocks are let go of: what they kept
+// compressed (both lists), the buffers of their slots and the block of zeros
+// they fill the gaps with are theirs to free (valgrind sees what is not). The
+// last block is written first so that the blocks before it are filled with
+// zeros, and each of the first ones is visited again after the slots were
+// reused. The block of zeros is shared: it stays while another model holds it
+// and is made again once the last one is gone, and what a model reads is
+// the same throughout.
+EFL_START_TEST(efl_ui_exact_model_destroyed)
+{
+   Efl_Generic_Model *base_a, *base_b, *base_c;
+   Efl_Model *a, *b, *c;
+   Many_Rows *many_a = calloc(1, sizeof (Many_Rows));
+   Many_Rows *many_b = calloc(1, sizeof (Many_Rows));
+   Many_Rows *many_c = calloc(1, sizeof (Many_Rows));
+   static const unsigned int order[] = { 3400, 2100, 1100, 50, 3401, 2101, 1101, 51, 3402 };
+
+   a = _many_exact_add(&base_a, many_a);
+   b = _many_exact_add(&base_b, many_b);
+   _many_sizes_set(many_a, order, EINA_C_ARRAY_LENGTH(order));
+   _many_sizes_set(many_b, order, EINA_C_ARRAY_LENGTH(order));
+   _many_sizes_check(many_a, order, EINA_C_ARRAY_LENGTH(order));
+
+   // The first one goes: the second still reads what it was told, and the gaps
+   _many_free(many_a, a, base_a);
+   free(many_a);
+   _many_sizes_check(many_b, order, EINA_C_ARRAY_LENGTH(order));
+
+   // The last one goes and the block of zeros with it: a new one makes it again
+   _many_free(many_b, b, base_b);
+   free(many_b);
+   c = _many_exact_add(&base_c, many_c);
+   _many_sizes_set(many_c, order, EINA_C_ARRAY_LENGTH(order));
+   _many_sizes_check(many_c, order, EINA_C_ARRAY_LENGTH(order));
+   _many_free(many_c, c, base_c);
+   free(many_c);
 }
 EFL_END_TEST
 
