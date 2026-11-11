@@ -28,7 +28,12 @@ struct @beta Efl.Ui.Position_Manager.Size_Batch_Entity{
 }
 
 struct @beta Efl.Ui.Position_Manager.Size_Batch_Result {
-   [[Struct returned by the size access callback.]]
+   [[Struct returned by the size access callback.
+
+     A callback must zero-initialise it before it fills it in: the position
+     managers read @.estimated and @.estimate_version, which a callback written
+     before they existed does not know of.
+   ]]
    parent_size : Eina.Size2D; [[The group size of the group where the first item is part of.]]
    parent_depth : ubyte; [[The depth of the parent]]
    filled_items : uint; [[The number of items that are filled into the slice.]]
@@ -47,7 +52,12 @@ struct @beta Efl.Ui.Position_Manager.Size_Batch_Result {
 }
 
 struct @beta Efl.Ui.Position_Manager.Size_Call_Config {
-   [[Struct that is returned by the function callbacks.]]
+   [[Struct that is returned by the function callbacks.
+
+     The fields were added after the first release of this struct: a caller
+     must zero-initialise it (a designated initializer or memset) before it
+     sets the fields it means, so that one it does not know of is false.
+   ]]
    range : Efl.Ui.Position_Manager.Request_Range; [[The range of items to fill into @.memory. The length of memory must
                                                     be bigger or equal to the requested items]]
                                                     // This struct does not contain a @.memory field.

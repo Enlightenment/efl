@@ -32,7 +32,7 @@ _batch_request_size_config(Api_Callbacks cb , int start_id, int end_id, int len,
    slice.mem = data;
    slice.len = len;
 
-   Efl_Ui_Position_Manager_Size_Call_Config conf;
+   Efl_Ui_Position_Manager_Size_Call_Config conf = { 0 };
    conf.cache_request = cache;
    conf.no_fetch = no_fetch;
    conf.range.start_id = start_id;
