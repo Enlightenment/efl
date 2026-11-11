@@ -653,6 +653,10 @@ struct _Elm_Module
    int          references;
 };
 
+/* Valid only under the view's own wrappers, which keep the index of a row
+   (the Select_Model, the Homogeneous_Model, a Boolean_Model...): the sizes
+   are kept under the index of the Exact_Model, which another model may
+   number differently. _find answers NULL for those. */
 Efl_Model           *_efl_ui_exact_model_find(Efl_Model *model);
 Eina_Bool            _efl_ui_exact_model_row_size_get(Efl_Model *exact,
                                                       unsigned int index,

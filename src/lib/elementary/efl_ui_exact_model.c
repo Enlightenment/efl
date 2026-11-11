@@ -416,14 +416,20 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
    return efl_model_property_get(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS), property);
 }
 
-/* The Exact_Model under the models the view wraps its own around, or NULL. */
+/* The Exact_Model under the models the view wraps its own around, or NULL.
+
+   Only wrappers that keep the index of a row are walked through: a Boolean_Model
+   (the Select_Model) and a Size_Model (the Homogeneous_Model and the
+   Average_Model). Any other model (a Filter_Model, say) may
+   number a row differently than the Exact_Model under it does, and the
+   sizes are kept under the index of the Exact_Model. */
 Efl_Model *
 _efl_ui_exact_model_find(Efl_Model *model)
 {
    while (model && !efl_isa(model, EFL_UI_EXACT_MODEL_CLASS))
      {
-        if (!efl_isa(model, EFL_COMPOSITE_MODEL_CLASS) ||
-            !efl_isa(model, EFL_UI_VIEW_INTERFACE))
+        if (!efl_isa(model, EFL_BOOLEAN_MODEL_CLASS) &&
+            !efl_isa(model, EFL_UI_SIZE_MODEL_CLASS))
           return NULL;
         model = efl_ui_view_model_get(model);
      }

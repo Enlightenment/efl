@@ -1077,6 +1077,80 @@ EFL_START_TEST(test_efl_ui_collection_view_many_single_adds)
 }
 EFL_END_TEST
 
+static Eina_Future *
+_skip_first_row(void *data EINA_UNUSED, Efl_Filter_Model *parent, Efl_Model *child)
+{
+   Eina_Value *initial = efl_model_property_get(child, "initial");
+   int row = 0;
+
+   eina_value_int_get(initial, &row);
+   eina_value_free(initial);
+   return efl_loop_future_resolved(parent, eina_value_bool_init(row != 0));
+}
+
+/* A view over a model that renumbers the rows of an Exact_Model (a
+   Filter_Model that does not keep the first one) must not read a size by the
+   index the row has in the view: the Exact_Model keeps it under the index of
+   the row in the source. Each row has the height its own index in the view
+   says. */
+EFL_START_TEST(test_efl_ui_collection_view_exact_model_renumbered)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *sizes, *filtered;
+   Efl_Ui_Factory *fl;
+   Efl_Ui_List_View *lv;
+   Eina_List *realized = NULL, *l;
+   Efl_Gfx_Entity *item;
+   int errors = 0, i, checked = 0;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 100));
+   eina_log_print_cb_set(_count_err_cri, &errors);
+
+   model = _make_model(win);
+   sizes = efl_add(EFL_UI_EXACT_MODEL_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   filtered = efl_add(EFL_FILTER_MODEL_CLASS, win,
+                      efl_ui_view_model_set(efl_added, sizes),
+                      efl_filter_model_filter_set(efl_added, NULL, _skip_first_row, NULL));
+   fl = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS),
+                efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
+                                       _row_height_on_build, NULL));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, filtered));
+   efl_content_set(win, lv);
+   efl_event_callback_add(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_add(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   EINA_LIST_FOREACH(realized, l, item)
+     {
+        Eina_Rect g = efl_gfx_entity_geometry_get(item);
+
+        if (g.h == 0) continue;
+        ck_assert_int_eq(g.h, (efl_composite_model_index_get(efl_ui_view_model_get(item)) % 2) ?
+                         40 : 90);
+        checked++;
+     }
+   ck_assert_int_ge(checked, 2);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(errors, 0);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   eina_list_free(realized);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -1098,4 +1172,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_remove_last_row);
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_jump);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds);
+   tcase_add_test(tc, test_efl_ui_collection_view_exact_model_renumbered);
 }
