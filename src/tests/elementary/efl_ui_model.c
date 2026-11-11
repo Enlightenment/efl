@@ -1635,6 +1635,79 @@ EFL_START_TEST(efl_ui_average_model_remove_nested)
 }
 EFL_END_TEST
 
+static void
+_stop_removal(void *data, const Efl_Event *ev)
+{
+   Nested_Removal *nr = data;
+
+   if (nr->done) return;
+   nr->done = EINA_TRUE;
+   efl_event_callback_stop(ev->object);
+}
+
+// A listener stops the removal of a row that was measured before the Average_Model is told of
+// it (and what the Exact_Model kept of that row is never let go of by the end of the event). The
+// removal of a row that was not measured, that comes next from the same place (the event is
+// at the same address), does not take the height of the one before out of the average.
+EFL_START_TEST(efl_ui_average_model_remove_after_stopped)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   Many_Rows *base_rows = calloc(1, sizeof (Many_Rows));
+   Nested_Removal nr = { 0 };
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 4; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
+   eina_future_then(efl_model_children_slice_get(base_model, 0, 4), _many_rows_then, base_rows, NULL);
+   for (loops = 0; (loops < 50) && (many->count < 4 || base_rows->count < 4); loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 4);
+   ck_assert_uint_eq(base_rows->count, 4);
+
+   _uint_set(many->rows[0], "self.height", 10);
+   _uint_set(many->rows[1], "self.height", 20);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 60);
+
+   efl_event_callback_priority_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, -150, _stop_removal, &nr);
+   efl_model_child_del(base_model, base_rows->rows[0]);
+   ck_assert(nr.done);
+   efl_event_callback_del(model, EFL_MODEL_EVENT_CHILD_REMOVED, _stop_removal, &nr);
+
+   // (the Average_Model was not told of that one: it still has the 30 over 2 seen rows)
+   efl_model_child_del(base_model, base_rows->rows[3]);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   // The row that was not measured took nothing out: 30 over 2, for the 2 rows that are left
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 30);
+
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(many->rows[i]);
+        efl_unref(base_rows->rows[i]);
+     }
+   free(many);
+   free(base_rows);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_model(TCase *tc)
 {
@@ -1665,4 +1738,5 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
    tcase_add_test(tc, efl_ui_average_model_forgotten_in_set);
    tcase_add_test(tc, efl_ui_average_model_remove_nested);
+   tcase_add_test(tc, efl_ui_average_model_remove_after_stopped);
 }

@@ -34,7 +34,9 @@ struct _Efl_Ui_Exact_Model_Data
    // how many times the sizes were all forgotten
    // The event that told of it is what says whose it is, so that one that was
    // stopped before the last listener, and a removal told from a listener of
-   // another, do not give what is another row's. The one that was being told
+   // another, do not give what is another row's. (An event is at the address
+   // of an older one that is over, which is why a new removal first lets go of
+   // what it finds at its address.) The one that was being told
    // when another began is kept (the removals are not nested more than that).
    struct {
       const void *event;
@@ -593,6 +595,11 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
 
    if (!added)
      {
+        // Two events that are being told are not at the same address, so what was kept for
+        // one at this address is of an event that was stopped before the last listener,
+        // and was never let go of: it is not this row's, and not an outer one either
+        if (root->removed.event == event) memset(&root->removed, 0, sizeof (root->removed));
+        if (root->outer.event == event) memset(&root->outer, 0, sizeof (root->outer));
         // (whatever the last one told is of no use to this one, and what it was told of is kept)
         root->outer = root->removed;
         root->removed.measured = EINA_FALSE;
