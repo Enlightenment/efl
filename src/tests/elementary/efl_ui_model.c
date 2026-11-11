@@ -416,6 +416,54 @@ EFL_START_TEST(efl_ui_exact_model_many_rows)
 }
 EFL_END_TEST
 
+// An Exact_Model that held sizes in several blocks is let go of: what it kept
+// compressed, the buffers of its slots and the block of zeros it fills the gaps
+// with are its to free (there is nothing to check here but valgrind). The last
+// block is written first so that the blocks before it are filled with zeros,
+// and each of the first ones is visited again after the slots were reused.
+EFL_START_TEST(efl_ui_exact_model_destroyed)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Model *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   static const unsigned int order[] = { 3400, 2100, 1100, 50, 3401, 2101, 1101, 51, 3402 };
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+
+   eina_future_then(efl_model_children_slice_get(model, 0, MANY_ROWS), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && (many->count < MANY_ROWS); loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, MANY_ROWS);
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(order); i++)
+     {
+        Eina_Future *f = efl_model_property_set(many->rows[order[i]], "self.height",
+                                                eina_value_uint_new(10 + i));
+
+        efl_future_then(many->rows[order[i]], f);
+        ck_assert_uint_eq(_property_uint_expected(many->rows[order[i]], "self.height"), 10 + i);
+     }
+
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   free(many);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_model(TCase *tc)
 {
@@ -428,4 +476,5 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_test);
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
+   tcase_add_test(tc, efl_ui_exact_model_destroyed);
 }

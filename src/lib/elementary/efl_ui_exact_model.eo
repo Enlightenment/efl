@@ -12,6 +12,7 @@ class @beta Efl.Ui.Exact_Model extends Efl.Ui.Size_Model
 
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Model.property { set; get; }
    }
 }

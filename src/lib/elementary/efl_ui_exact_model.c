@@ -54,14 +54,30 @@ _efl_ui_exact_model_efl_object_constructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
    return efl_constructor(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS));
 }
 
+// The compressed block of zeros that fills the gaps is shared by every model,
+// and is let go of with the last list that holds it. The count of the lists
+// holding it is not atomic and not locked: it is only ever touched from the
+// main loop, as the models themselves are.
+static Eina_Binbuf *_zero_block = NULL;
+static unsigned int _zero_block_users = 0;
+
+static void
+_efl_ui_exact_model_zero_unref(void)
+{
+   if (--_zero_block_users) return;
+   eina_binbuf_free(_zero_block);
+   _zero_block = NULL;
+}
+
 static Eina_List *
 _efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed, unsigned int *buffer)
 {
-   static Eina_Binbuf *z = NULL;
+   Eina_Binbuf *z;
    Eina_Binbuf *cbuf;
    Eina_Binbuf *tbuf;
    Eina_List *l = NULL;
 
+   z = _zero_block;
    l = eina_list_nth_list(compressed, list_index);
 
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
@@ -77,6 +93,7 @@ _efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed
         tbuf = eina_list_data_get(l);
         eina_list_data_set(l, cbuf);
         if (tbuf != z) eina_binbuf_free(tbuf);
+        else _efl_ui_exact_model_zero_unref();
         return compressed;
      }
 
@@ -103,7 +120,7 @@ _efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed
                   return compressed;
                }
 
-             z = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
+             z = _zero_block = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
 
              eina_binbuf_free(tbuf);
              free(zmem);
@@ -116,10 +133,46 @@ _efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed
 
         // Fill the list all the way to the needed index with buffer full of zero
         while (eina_list_count(compressed) < list_index)
-          compressed = eina_list_append(compressed, z);
+          {
+             compressed = eina_list_append(compressed, z);
+             _zero_block_users++;
+          }
      }
 
    return eina_list_append(compressed, cbuf);
+}
+
+static void
+_efl_ui_exact_model_compressed_free(Eina_List *list)
+{
+   Eina_Binbuf *b;
+
+   EINA_LIST_FREE(list, b)
+     {
+        if (b == _zero_block) _efl_ui_exact_model_zero_unref();
+        else eina_binbuf_free(b);
+     }
+}
+
+static void
+_efl_ui_exact_model_efl_object_destructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
+{
+   unsigned int i;
+
+   // (only the root keeps sizes, its rows have none)
+   _efl_ui_exact_model_compressed_free(pd->compressed.width);
+   _efl_ui_exact_model_compressed_free(pd->compressed.height);
+   pd->compressed.width = NULL;
+   pd->compressed.height = NULL;
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(pd->slot); i++)
+     {
+        free(pd->slot[i].width);
+        free(pd->slot[i].height);
+        pd->slot[i].width = NULL;
+        pd->slot[i].height = NULL;
+     }
+
+   efl_destructor(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS));
 }
 
 static unsigned int *
