@@ -58,6 +58,7 @@ struct _Efl_Ui_Exact_Model_Data
 
 static void _efl_ui_exact_model_child_added(void *data, const Efl_Event *event);
 static void _efl_ui_exact_model_child_removed(void *data, const Efl_Event *event);
+static void _efl_ui_exact_model_child_removed_done(void *data, const Efl_Event *event);
 
 // Before anything that is told of the change (the view, the position manager),
 // the sizes have to be where the rows now are.
@@ -83,8 +84,13 @@ _efl_ui_exact_model_efl_object_constructor(Eo *obj, Efl_Ui_Exact_Model_Data *pd)
    obj = efl_constructor(efl_super(obj, EFL_UI_EXACT_MODEL_CLASS));
    // (only the root keeps sizes)
    if (obj && !pd->parent)
-     efl_event_callback_array_priority_add(obj, exact_model_callbacks(),
-                                           EFL_UI_EXACT_MODEL_FIRST, pd);
+     {
+        efl_event_callback_array_priority_add(obj, exact_model_callbacks(),
+                                              EFL_UI_EXACT_MODEL_FIRST, pd);
+        // What was kept of the row that left is for the listeners of the event only
+        efl_event_callback_priority_add(obj, EFL_MODEL_EVENT_CHILD_REMOVED, SHRT_MAX,
+                                        _efl_ui_exact_model_child_removed_done, pd);
+     }
    return obj;
 }
 
@@ -634,6 +640,14 @@ _efl_ui_exact_model_child_removed(void *data, const Efl_Event *event)
    const Efl_Model_Children_Event *ev = event->info;
 
    _efl_ui_exact_model_shift(data, ev->index, EINA_FALSE);
+}
+
+static void
+_efl_ui_exact_model_child_removed_done(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Exact_Model_Data *root = data;
+
+   root->removed.measured = EINA_FALSE;
 }
 
 static Eina_Future *
