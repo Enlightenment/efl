@@ -188,6 +188,30 @@ _eina_thread_queue_msg_block_free(Eina_Thread_Queue_Msg_Block *blk)
    else _eina_thread_queue_msg_block_real_free(blk);
 }
 
+/* Frees a block of a queue being freed, unless someone still uses it: a
+ * listener holding a message fetched from it (its ref), which may still
+ * call eina_thread_queue_wait_done() since that does not need the queue,
+ * or a sender in the middle of a message (its lock_non_0_ref, which may
+ * also be held by a thread that is gone after a fork). Such a block is
+ * left alone, as it was before the queue freed any block. */
+static void
+_eina_thread_queue_msg_block_free_unused(Eina_Thread_Queue_Msg_Block *blk)
+{
+   int ref;
+
+#ifdef ATOMIC
+   __atomic_load(&(blk->ref), &ref, __ATOMIC_RELAXED);
+#else
+   eina_spinlock_take(&(blk->lock_ref));
+   ref = blk->ref;
+   eina_spinlock_release(&(blk->lock_ref));
+#endif
+   if (ref != 0) return;
+   if (eina_lock_take_try(&(blk->lock_non_0_ref)) != EINA_LOCK_SUCCEED) return;
+   eina_lock_release(&(blk->lock_non_0_ref));
+   _eina_thread_queue_msg_block_free(blk);
+}
+
 static Eina_Bool
 _eina_thread_queue_msg_block_pool_init(void)
 {
@@ -456,7 +480,16 @@ eina_thread_queue_new(void)
 EINA_API void
 eina_thread_queue_free(Eina_Thread_Queue *thq)
 {
+   Eina_Thread_Queue_Msg_Block *blk, *next;
+
    if (!thq) return;
+
+   if (thq->read) _eina_thread_queue_msg_block_free_unused(thq->read);
+   for (blk = thq->data; blk; blk = next)
+     {
+        next = blk->next;
+        _eina_thread_queue_msg_block_free_unused(blk);
+     }
 
 #ifndef ATOMIC
    eina_spinlock_free(&(thq->lock_pending));

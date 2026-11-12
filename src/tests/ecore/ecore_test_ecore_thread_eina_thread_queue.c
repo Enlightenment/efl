@@ -680,11 +680,81 @@ EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_t7)
 }
 EFL_END_TEST
 
+/* A queue freed with messages in it, across several blocks and half read.
+ * Nothing to observe but a clean run; valgrind is what shows the blocks
+ * going back. */
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_free_unread)
+{
+   Eina_Thread_Queue *thq = eina_thread_queue_new();
+   Msg *msg;
+   void *ref;
+   int i;
+
+   fail_if(!thq);
+   for (i = 0; i < 500; i++)
+     {
+        msg = eina_thread_queue_send(thq, sizeof(Msg), &ref);
+        fail_if(!msg);
+        msg->value = i;
+        eina_thread_queue_send_done(thq, ref);
+     }
+   /* one message larger than a block */
+   msg = eina_thread_queue_send(thq, 8192, &ref);
+   fail_if(!msg);
+   eina_thread_queue_send_done(thq, ref);
+
+   msg = eina_thread_queue_wait(thq, &ref);
+   fail_if(!msg);
+   fail_if(msg->value != 0);
+   eina_thread_queue_wait_done(thq, ref);
+
+   fail_if(eina_thread_queue_pending_get(thq) != 500);
+   eina_thread_queue_free(thq);
+}
+EFL_END_TEST
+
+/* A message fetched and not released yet stays valid when its queue is
+ * freed, and is released after: wait_done does not need the queue. Its block
+ * must not go back to the pool, where the next queue would write over it. */
+EFL_START_TEST(ecore_test_ecore_thread_eina_thread_queue_free_while_held)
+{
+   Eina_Thread_Queue *thq = eina_thread_queue_new(), *other;
+   Msg *msg, *held;
+   void *ref, *held_ref;
+   int i;
+
+   fail_if(!thq);
+   for (i = 0; i < 3; i++)
+     {
+        msg = eina_thread_queue_send(thq, sizeof(Msg), &ref);
+        fail_if(!msg);
+        msg->value = 42 + i;
+        eina_thread_queue_send_done(thq, ref);
+     }
+   held = eina_thread_queue_wait(thq, &held_ref);
+   fail_if(!held);
+   eina_thread_queue_free(thq);
+
+   other = eina_thread_queue_new();
+   fail_if(!other);
+   msg = eina_thread_queue_send(other, sizeof(Msg), &ref);
+   fail_if(!msg);
+   msg->value = 7;
+   eina_thread_queue_send_done(other, ref);
+
+   ck_assert_int_eq(held->value, 42);
+   eina_thread_queue_wait_done(NULL, held_ref);
+   eina_thread_queue_free(other);
+}
+EFL_END_TEST
+
 void ecore_test_ecore_thread_eina_thread_queue(TCase *tc EINA_UNUSED)
 {
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t1);
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t2);
    tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_t3);
+   tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_free_unread);
+   tcase_add_test(tc, ecore_test_ecore_thread_eina_thread_queue_free_while_held);
 }
 
 void ecore_test_ecore_thread_eina_thread_queue2(TCase *tc EINA_UNUSED)

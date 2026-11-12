@@ -83,6 +83,10 @@ eina_thread_queue_new(void);
  * on messages or sending them. Any pending messages will be freed without
  * being processed by a listener.
  *
+ * The messages that were sent and never fetched are freed with the queue. A
+ * message fetched and not yet released with eina_thread_queue_wait_done()
+ * stays valid, and may still be released after the queue is freed.
+ *
  * @param[in] thq The thread queue to free
  *
  * @since 1.11
