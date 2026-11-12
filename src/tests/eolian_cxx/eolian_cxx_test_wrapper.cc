@@ -76,9 +76,44 @@ EFL_START_TEST(eolian_cxx_test_wrapper_converts_to_base)
 }
 EFL_END_TEST
 
+static int _logged_errors;
+
+static void
+_count_errors(const Eina_Log_Domain *domain EINA_UNUSED, Eina_Log_Level level,
+              const char *file EINA_UNUSED, const char *fnc EINA_UNUSED,
+              int line EINA_UNUSED, const char *fmt EINA_UNUSED,
+              void *data EINA_UNUSED, va_list args EINA_UNUSED)
+{
+  if (level == EINA_LOG_LEVEL_ERR) _logged_errors++;
+}
+
+/* A class is an Eo id that cannot be referenced: copying and destroying a
+ * wrapper of one must not try. */
+EFL_START_TEST(eolian_cxx_test_wrapper_class_is_not_referenced)
+{
+  efl::eo::eo_init init;
+
+  _logged_errors = 0;
+  eina_log_print_cb_set(_count_errors, NULL);
+  {
+    ::efl::eo::concrete first(const_cast<Eo*>(EFL_OBJECT_CLASS));
+    ::efl::eo::concrete copy(first);
+    ::efl::eo::concrete assigned(nullptr);
+
+    assigned = first;
+    fail_if(copy._eo_ptr() != EFL_OBJECT_CLASS);
+    fail_if(assigned._eo_ptr() != EFL_OBJECT_CLASS);
+  }
+  eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+  ck_assert_int_eq(_logged_errors, 0);
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_wrapper(TCase* tc)
 {
   tcase_add_test(tc, eolian_cxx_test_wrapper_size);
   tcase_add_test(tc, eolian_cxx_test_wrapper_converts_to_base);
+  tcase_add_test(tc, eolian_cxx_test_wrapper_class_is_not_referenced);
 }

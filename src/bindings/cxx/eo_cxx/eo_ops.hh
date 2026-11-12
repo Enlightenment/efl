@@ -36,22 +36,33 @@ shutdown()
    ::efl_object_shutdown();
 }
 
+/* A class is an Eo id as well, but it lives as long as Eo does and cannot be
+ * referenced: efl_ref and efl_unref on one are errors. An efl::Class is a
+ * wrapper like any other and is copied and destroyed like one, so what the
+ * wrappers hold is told apart here. */
+inline bool
+is_class(const Eo *obj)
+{
+   return ::efl_class_get(obj) == EFL_CLASS_CLASS;
+}
+
 inline Eo*
 ref(Eo *obj)
 {
-   return ::efl_ref(obj);
+   return is_class(obj) ? obj : ::efl_ref(obj);
 }
 
 inline const Eo*
 ref(const Eo *obj)
 {
-   return ::efl_ref(obj);
+   return is_class(obj) ? obj : ::efl_ref(obj);
 }
 
 inline void
 unref(const Eo *obj)
 {
-   ::efl_unref(obj);
+   if (!is_class(obj))
+     ::efl_unref(obj);
 }
 
 inline void
