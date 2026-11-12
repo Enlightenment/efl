@@ -63,7 +63,7 @@ static void
 _efl_filter_model_filter_set(Eo *obj EINA_UNUSED, Efl_Filter_Model_Data *pd,
                              void *filter_data, EflFilterModel filter, Eina_Free_Cb filter_free_cb)
 {
-   if (pd->filter.cb)
+   if (pd->filter.free_cb)
      pd->filter.free_cb(pd->filter.data);
    pd->filter.data = filter_data;
    pd->filter.cb = filter;
@@ -289,6 +289,12 @@ _efl_filter_model_efl_object_destructor(Eo *obj, Efl_Filter_Model_Data *pd)
           free(pd->self);
      }
    pd->self = NULL;
+
+   if (pd->filter.free_cb)
+     pd->filter.free_cb(pd->filter.data);
+   pd->filter.data = NULL;
+   pd->filter.cb = NULL;
+   pd->filter.free_cb = NULL;
 
    efl_destructor(efl_super(obj, EFL_FILTER_MODEL_CLASS));
 }

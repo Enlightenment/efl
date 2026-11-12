@@ -1329,6 +1329,53 @@ EFL_START_TEST(efl_test_composite_model_slice_count_wraps)
 }
 EFL_END_TEST
 
+/* The data given to filter_set is the model's: it is freed when the filter is
+ * replaced and when the model goes, through the callback given with it. */
+static int filter_data_freed;
+
+static void
+_filter_data_free(void *data EINA_UNUSED)
+{
+   filter_data_freed++;
+}
+
+static Eina_Future *
+_filter_never_asked(void *data EINA_UNUSED, Efl_Filter_Model *parent EINA_UNUSED,
+                    Efl_Model *child EINA_UNUSED)
+{
+   return NULL;
+}
+
+EFL_START_TEST(efl_test_filter_model_frees_filter_data)
+{
+   Efl_Generic_Model *base;
+   Efl_Filter_Model *filter;
+
+   filter_data_freed = 0;
+
+   base = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   ck_assert(!!base);
+
+   filter = efl_add_ref(EFL_FILTER_MODEL_CLASS, efl_main_loop_get(),
+                        efl_ui_view_model_set(efl_added, base),
+                        efl_filter_model_filter_set(efl_added, &filter_data_freed,
+                                                    _filter_never_asked, _filter_data_free));
+   ck_assert(!!filter);
+   ck_assert_int_eq(filter_data_freed, 0);
+
+   efl_filter_model_filter_set(filter, &filter_data_freed,
+                               _filter_never_asked, _filter_data_free);
+   ck_assert_int_eq(filter_data_freed, 1);
+
+   efl_unref(filter);
+   efl_del(filter);
+   ck_assert_int_eq(filter_data_freed, 2);
+
+   efl_unref(base);
+   efl_del(base);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
@@ -1346,4 +1393,5 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_composite_model_pending_slice_remove);
    tcase_add_test(tc, efl_test_composite_model_pending_slice_removed_row);
    tcase_add_test(tc, efl_test_composite_model_slice_count_wraps);
+   tcase_add_test(tc, efl_test_filter_model_frees_filter_data);
 }
