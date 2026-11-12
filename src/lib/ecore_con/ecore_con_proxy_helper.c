@@ -141,6 +141,15 @@ _efl_net_proxy_helper_cancel(void)
              eina_thread_queue_send_done(req->thq, ref);
              if (!req->busy)
                {
+                  Efl_Net_Proxy_Helper_Thq_Msg *left;
+                  void *left_ref;
+
+                  /* answers nobody collected own their proxies */
+                  while ((left = eina_thread_queue_poll(req->thq, &left_ref)))
+                    {
+                       ecore_con_libproxy_proxies_free(left->proxies);
+                       eina_thread_queue_wait_done(req->thq, left_ref);
+                    }
                   free(req->str);
                   ecore_con_libproxy_proxies_free(req->proxies);
                   eina_thread_queue_free(req->thq);
