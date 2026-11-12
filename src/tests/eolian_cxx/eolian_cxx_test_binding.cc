@@ -586,9 +586,26 @@ EFL_START_TEST(eolian_cxx_test_beta_cascading)
 }
 EFL_END_TEST
 
+/* A "string" event carries a char const* (Efl.Ui.Textbox's activated carries
+ * the text that way), not a string_view. */
+EFL_START_TEST(eolian_cxx_test_string_event_payload)
+{
+  char const text[] = "a payload that is longer than a string_view is";
+  efl::eina::string_view v =
+    efl::eolian::convert_to_event<efl::eina::string_view>(const_cast<char*>(text));
+  std::string got(v);
+  ck_assert_str_eq(got.c_str(), text);
+
+  /* Efl.Config's config,changed carries NULL when every value changed. */
+  efl::eina::string_view none = efl::eolian::convert_to_event<efl::eina::string_view>(nullptr);
+  ck_assert(none.empty());
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_binding(TCase* tc)
 {
+   tcase_add_test(tc, eolian_cxx_test_string_event_payload);
    tcase_add_test(tc, eolian_cxx_test_string_arrays);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_only_required);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_all_optionals);

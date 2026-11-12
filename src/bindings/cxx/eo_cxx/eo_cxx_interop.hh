@@ -652,9 +652,17 @@ T convert_to_event(void* value, typename std::enable_if< !std::is_pointer<T>::va
                       it here both are viable and neither wins, which made every
                       event carrying a bool -- Efl.Io.Reader's can_read,changed
                       among them -- impossible to attach a C++ handler to. */
-                   && !std::is_same<T, bool>::value>::type* = 0)
+                   && !std::is_same<T, bool>::value
+                   && !std::is_same<T, efl::eina::string_view>::value>::type* = 0)
 {
   return *static_cast<T*>(value);
+}
+/* An event whose payload is a "string" carries the char const* itself, not a
+   string_view over it, and may carry none (NULL). */
+template <typename T>
+T convert_to_event(void* value, typename std::enable_if<std::is_same<T, efl::eina::string_view>::value>::type* = 0)
+{
+  return value ? T(static_cast<char const*>(value)) : T(nullptr);
 }
 template <typename T>
 T convert_to_event(void* value, typename std::enable_if<std::is_same<T, bool>::value>::type* = 0)
