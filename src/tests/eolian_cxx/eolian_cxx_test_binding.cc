@@ -20,6 +20,8 @@
 #include <Ecore.h>
 
 #include <map>
+#include <vector>
+#include <memory>
 
 #define GENERIC_BETA
 #define EOLIANCXXTEST_API
@@ -602,9 +604,38 @@ EFL_START_TEST(eolian_cxx_test_string_event_payload)
 }
 EFL_END_TEST
 
+/* A handler may disconnect its own handle and then go on using what it
+ * captured: the closure outlives the call (valgrind: no invalid read). */
+EFL_START_TEST(eolian_cxx_test_event_handler_disconnects_own_handle)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int seen = 0;
+  nonamespace::Generic g(efl::eo::instantiate);
+  std::unique_ptr<efl::eolian::scoped_signal_connection> handle;
+  std::vector<int> payload(16, 7);
+  auto* h = &handle;
+  auto* out = &seen;
+  handle.reset(new efl::eolian::scoped_signal_connection(
+    efl::eolian::event_add(g.prefix_event1_event, g,
+                           [h, out, payload] (nonamespace::Generic)
+                           {
+                             h->reset();
+                             *out += payload[5];
+                           })));
+  g.call_event1();
+  ck_assert_int_eq(seen, 7);
+  g.call_event1();
+  ck_assert_int_eq(seen, 7);
+  ecore_main_loop_iterate();
+  ecore_shutdown();
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_binding(TCase* tc)
 {
+   tcase_add_test(tc, eolian_cxx_test_event_handler_disconnects_own_handle);
    tcase_add_test(tc, eolian_cxx_test_string_event_payload);
    tcase_add_test(tc, eolian_cxx_test_string_arrays);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_only_required);

@@ -86,10 +86,16 @@ private:
   scoped_signal_connection(scoped_signal_connection const&) = delete;
 };
 
+/* The closure is shared: the registration owns one reference, and every call
+   in progress takes another for its duration. A handler may end its own
+   context or disconnect its own handle (the ecore thread-safe call runs
+   immediately on the main thread), and the closure it is executing must
+   survive that. */
 template <typename F>
 struct _event_deleter
 {
-  _event_deleter(F* data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
+  typedef std::shared_ptr<F> Holder;
+  _event_deleter(Holder* data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
     : _data(data), _eo( ::efl_ref(eo)), _cb(cb), _description(description)
   {
   }
@@ -113,23 +119,19 @@ struct _event_deleter
   void operator()() const
   {
     ::efl_event_callback_del(_eo, _description, _cb, _data);
-    ::ecore_main_loop_thread_safe_call_async(&_deleter_call, _data);
+    /* Drops the registration's reference; a call in progress holds its own. */
+    delete _data;
   }
 
 private:
-  static void _deleter_call(void* data)
-  {
-    delete static_cast<F*>(data);
-  }
-
-  F* _data;
+  Holder* _data;
   Eo* _eo;
   ::Efl_Event_Cb _cb;
   Efl_Event_Description const* _description;
 };
 
 template <typename F>
-signal_connection make_signal_connection(std::unique_ptr<F>& data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
+signal_connection make_signal_connection(std::unique_ptr<std::shared_ptr<F> >& data, Eo* eo, ::Efl_Event_Cb cb, Efl_Event_Description const* description)
 {
   signal_connection c(_event_deleter<F>(data.get(), eo, cb, description));
   data.release();
@@ -153,7 +155,9 @@ template <typename T, typename P, typename F>
 void event_callback(void *data, ::Efl_Event const* event)
 {
    T wrapper(::efl_ref(event->object));
-   F *f = static_cast<F*>(data);
+   /* Our own reference keeps the closure alive if the handler severs the
+      connection (or ends its context) while it runs. */
+   std::shared_ptr<F> f = *static_cast<std::shared_ptr<F>*>(data);
    _detail::really_call_event<T, P>
      (wrapper, *f, event->info, std::is_void<P>{});
 }
@@ -165,7 +169,8 @@ signal_connection event_add(Event event, Object object, F&& function)
   static_assert((eo::is_eolian_object<Object>::value), "Type is not an object");
 
   typedef typename std::remove_reference<F>::type function_type;
-  std::unique_ptr<function_type> f(new function_type(std::forward<F>(function)));
+  std::unique_ptr<std::shared_ptr<function_type> > f
+    (new std::shared_ptr<function_type>(new function_type(std::forward<F>(function))));
 
   ::efl_event_callback_priority_add
       (object._eo_ptr(), event.description(), 0
