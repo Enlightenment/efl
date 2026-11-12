@@ -433,8 +433,105 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_cookies_ignore_session)
 }
 EFL_END_TEST
 
+/* A request answered by a server on this machine runs to its end. Under
+ * valgrind this is what shows whether the dialer lets go of everything it
+ * made for the connection: the fd handler it keeps for libcurl used to be
+ * left behind with an extra reference when curl dropped the socket. */
+typedef struct _Local_Http Local_Http;
+
+struct _Local_Http
+{
+   Ecore_Con_Server *server;
+   int status;
+   Eina_Bool done;
+};
+
+static Eina_Bool
+_local_http_client_data(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
+{
+   Ecore_Con_Event_Client_Data *ev = event_info;
+   static const char answer[] =
+     "HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok";
+
+   ecore_con_client_send(ev->client, answer, sizeof(answer) - 1);
+   ecore_con_client_flush(ev->client);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_local_http_client_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
+{
+   Ecore_Con_Event_Client_Del *ev = event_info;
+
+   if (ev->client) ecore_con_client_del(ev->client);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_local_http_complete(void *data, int type EINA_UNUSED, void *event_info)
+{
+   Local_Http *lh = data;
+   Ecore_Con_Event_Url_Complete *ev = event_info;
+
+   lh->status = ev->status;
+   lh->done = EINA_TRUE;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_local_http_deadline(void *data EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+EFL_START_TEST(ecore_con_test_ecore_con_url_local_get)
+{
+   Local_Http lh = { NULL, 0, EINA_FALSE };
+   Ecore_Event_Handler *h[3];
+   Ecore_Timer *deadline;
+   Ecore_Con_Url *url;
+   char link[64];
+   int port;
+
+   fail_if(ecore_con_url_init() != 1);
+
+   for (port = 38300; (port < 38400) && !lh.server; port++)
+     {
+        lh.server = ecore_con_server_add(ECORE_CON_REMOTE_TCP, "127.0.0.1", port, NULL);
+     }
+   fail_if(!lh.server);
+   port--;
+
+   h[0] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA, _local_http_client_data, NULL);
+   h[1] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, _local_http_client_del, NULL);
+   h[2] = ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _local_http_complete, &lh);
+
+   snprintf(link, sizeof(link), "http://127.0.0.1:%d/", port);
+   url = ecore_con_url_new(link);
+   fail_if(!url);
+   fail_if(!ecore_con_url_get(url));
+
+   deadline = ecore_timer_add(10.0, _local_http_deadline, NULL);
+   ecore_main_loop_begin();
+   if (lh.done) ecore_timer_del(deadline);
+
+   fail_if(!lh.done);
+   fail_if(lh.status != 200);
+
+   ecore_con_url_free(url);
+   ecore_event_handler_del(h[0]);
+   ecore_event_handler_del(h[1]);
+   ecore_event_handler_del(h[2]);
+   ecore_con_server_del(lh.server);
+   fail_if(ecore_con_url_shutdown() != 0);
+}
+EFL_END_TEST
+
 void ecore_con_test_ecore_con_url(TCase *tc)
 {
+   tcase_add_test(tc, ecore_con_test_ecore_con_url_local_get);
    tcase_add_test(tc, ecore_con_test_ecore_con_url_init);
    tcase_add_test(tc, ecore_con_test_ecore_con_url_create);
    tcase_add_test(tc, ecore_con_test_ecore_con_url_download);

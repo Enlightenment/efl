@@ -443,10 +443,19 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
 
    if (what == CURL_POLL_REMOVE)
      {
-        if ((pd) && (pd->fdhandler == fdhandler))
+        /* The dialer owns the extra reference efl_add_ref() gave, as long as
+         * it still points at the handler; efl_del() only drops the parent's
+         * reference, so the dialer's has to go too or the handler leaks. */
+        Eina_Bool owned = (pd) && (pd->fdhandler == fdhandler);
+
+        if (owned)
           pd->fdhandler = NULL;
         curl_multi_assign(cm->multi, fd, NULL);
-        if (fdhandler) efl_del(fdhandler);
+        if (fdhandler)
+          {
+             efl_del(fdhandler);
+             if (owned) efl_unref(fdhandler);
+          }
      }
    else
      {
@@ -461,6 +470,7 @@ _efl_net_dialer_http_curlm_socket_manage(CURL *e, curl_socket_t fd, int what, vo
                                      efl_loop_fd_set(efl_added, fd));
              EINA_SAFETY_ON_NULL_RETURN_VAL(fdhandler, -1);
              if (pd) pd->fdhandler = fdhandler;
+             else efl_unref(fdhandler); /* no dialer to own the extra ref */
              curl_multi_assign(cm->multi, fd, fdhandler);
              flags = 0;
           }
