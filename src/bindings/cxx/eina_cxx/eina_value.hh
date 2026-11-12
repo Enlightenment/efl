@@ -209,6 +209,41 @@ struct _eina_value_traits<short>
 
 /**
  * @internal
+ *
+ * A bool is a EINA_VALUE_TYPE_BOOL, not an int: consumers of boolean values
+ * (Efl.Filter_Model's answer, for one) check the type. The C side stores an
+ * Eina_Bool, which is not a C++ bool, so it is read through one.
+ */
+template <>
+struct _eina_value_traits<bool>
+  : _eina_value_traits_base<bool>
+{
+  static ::Eina_Value_Type const* value_type()
+  {
+    return EINA_VALUE_TYPE_BOOL;
+  }
+  static void set( ::Eina_Value* v, bool c)
+  {
+    ::eina_value_set(v, c ? EINA_TRUE : EINA_FALSE);
+  }
+  static bool get( ::Eina_Value* v)
+  {
+    if(EINA_VALUE_TYPE_BOOL == eina_value_type_get(v))
+      {
+        Eina_Bool vv;
+        if(::eina_value_get(v, &vv))
+          return vv != EINA_FALSE;
+        else
+           EFL_CXX_THROW(eina::system_error(eina::get_error_code()));
+      }
+    else
+       EFL_CXX_THROW(eina::system_error(EINA_ERROR_VALUE_FAILED,
+                                        eina::eina_error_category()));
+  }
+};
+
+/**
+ * @internal
  */
 template <>
 struct _eina_value_traits<int>

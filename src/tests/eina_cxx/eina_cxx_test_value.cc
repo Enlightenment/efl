@@ -55,6 +55,24 @@ EFL_START_TEST(eina_cxx_value_constructors)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_cxx_value_bool)
+{
+  efl::eina::eina_init init;
+
+  efl::eina::value vtrue(true);
+  ck_assert(::eina_value_type_get(vtrue.native_handle()) == EINA_VALUE_TYPE_BOOL);
+  ck_assert(efl::eina::get<bool>(vtrue) == true);
+
+  efl::eina::value vfalse(false);
+  ck_assert(::eina_value_type_get(vfalse.native_handle()) == EINA_VALUE_TYPE_BOOL);
+  ck_assert(efl::eina::get<bool>(vfalse) == false);
+
+  /* An int is still an int, and is not read as a bool. */
+  efl::eina::value vint(1);
+  ck_assert(::eina_value_type_get(vint.native_handle()) == EINA_VALUE_TYPE_INT);
+}
+EFL_END_TEST
+
 EFL_START_TEST(eina_cxx_value_get)
 {
   efl::eina::eina_init init;
@@ -209,6 +227,7 @@ EFL_END_TEST
 void
 eina_test_value(TCase* tc)
 {
+  tcase_add_test(tc, eina_cxx_value_bool);
   tcase_add_test(tc, eina_cxx_value_constructors);
   tcase_add_test(tc, eina_cxx_value_get);
   tcase_add_test(tc, eina_cxx_value_wrong_get);
