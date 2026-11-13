@@ -427,5 +427,19 @@ efl_ui_scroll_connector_unbind(Eo *obj)
                                   ctx, _scroll_connector_hbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,hbar,unpress", "efl",
                                   ctx, _scroll_connector_hbar_unpress_cb, NULL);
+   efl_layout_signal_callback_del(obj, "efl,action,scroll", "efl",
+                                  ctx, _scroll, NULL);
+
+   /* Everything bind connected hands ctx to its callback: leave one behind
+    * and the next scrollbar event reads the context freed below. */
+   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
+                          _scroll_connector_bar_size_changed_cb, ctx);
+   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED,
+                          _scroll_connector_bar_pos_changed_cb, ctx);
+   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW,
+                          _scroll_connector_bar_show_cb, ctx);
+   efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
+                          _scroll_connector_bar_hide_cb, ctx);
+   efl_key_data_set(obj, "__context", NULL);
    free(ctx);
 }

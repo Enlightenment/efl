@@ -194,8 +194,33 @@ EFL_START_TEST(efl_ui_test_scroller_scrollbar)
 }
 EFL_END_TEST
 
+/* A panel binds the scrollbar events of its scroll manager to its theme when it
+   becomes scrollable, and unbinds them when it stops being: an event raised
+   after that must not reach what the unbind freed. */
+EFL_START_TEST(efl_ui_test_scroller_connector_unbind)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *panel = efl_add(EFL_UI_PANEL_CLASS, win);
+   unsigned int unbound;
+   Eina_Size2D size = EINA_SIZE2D(1, 1);
+
+   efl_ui_panel_scrollable_set(panel, EINA_FALSE);
+   unbound = efl_event_callback_count(panel, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED);
+
+   efl_ui_panel_scrollable_set(panel, EINA_TRUE);
+   ck_assert_uint_gt(efl_event_callback_count(panel, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED),
+                     unbound);
+
+   efl_ui_panel_scrollable_set(panel, EINA_FALSE);
+   ck_assert_uint_eq(efl_event_callback_count(panel, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED),
+                     unbound);
+   efl_event_callback_call(panel, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED, &size);
+}
+EFL_END_TEST
+
 void efl_ui_test_scroller(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_scroller_events);
    tcase_add_test(tc, efl_ui_test_scroller_scrollbar);
+   tcase_add_test(tc, efl_ui_test_scroller_connector_unbind);
 }
