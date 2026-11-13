@@ -2504,6 +2504,32 @@ EFL_START_TEST(test_efl_ui_collection_view_average_model_grid_prepend)
 }
 EFL_END_TEST
 
+// A view holds on to its factory only while it lives: once it is gone the
+// factory is back to the references its owner keeps, so the factory and every
+// factory bound to it go away with their owner.
+EFL_START_TEST(efl_ui_collection_view_lets_go_of_its_factory)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Factory *fl;
+   Efl_Ui_Collection_View *cv;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   /* A factory needs a loop to live on: the window owns it. */
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   ck_assert_int_eq(efl_ref_count(fl), 1);
+
+   cv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, _make_model(win)));
+   efl_content_set(win, cv);
+   get_me_to_those_events(cv);
+
+   efl_del(cv);
+   ck_assert_int_eq(efl_ref_count(fl), 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -2542,4 +2568,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_grid_remove_fetches_nothing);
    tcase_add_test(tc, test_efl_ui_collection_view_average_model_estimates);
    tcase_add_test(tc, test_efl_ui_collection_view_average_model_grid_prepend);
+   tcase_add_test(tc, efl_ui_collection_view_lets_go_of_its_factory);
 }

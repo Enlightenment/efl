@@ -2736,6 +2736,14 @@ _efl_ui_collection_view_efl_object_invalidate(Eo *obj,
 
    _all_cleanup(obj, pd);
 
+   /* Every entity went back to the factory above: the view has no further
+    * use for it, and the reference it took in factory_set is the one thing
+    * keeping it, and every factory bound to it, alive past its owner. */
+   if (pd->factory) efl_ui_property_bind(pd->factory, "selected", NULL);
+   efl_replace(&pd->factory, NULL);
+
+   efl_ui_scroll_connector_unbind(obj);
+
    //pd pan is given to edje, which reparents it, which forces us to manually deleting it
    if (pd->pan)
      efl_del(pd->pan);
