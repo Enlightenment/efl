@@ -24,16 +24,17 @@
 using namespace std::placeholders;
 using efl::eo::instantiate;
 
-static efl::ui::Win win;
-
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = efl::ui::Win(instantiate);
+   efl::ui::Win win(instantiate);
    win.text_set("Slider example");
-   win.delete_request_event_cb_add([](){ win._delete(); });
+   auto wwin(win._get_wref());
+   win.delete_request_event_cb_add([wwin](){
+        if (auto w = wwin.lock()) ::efl_del(w->_eo_ptr());
+     });
 
    efl::ui::Box bx(instantiate, win);
    win.content_set(bx);

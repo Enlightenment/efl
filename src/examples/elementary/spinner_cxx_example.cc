@@ -25,8 +25,6 @@
 using namespace std::placeholders;
 using efl::eo::instantiate;
 
-static efl::ui::Win win;
-
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {

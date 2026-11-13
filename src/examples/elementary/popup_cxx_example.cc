@@ -20,14 +20,23 @@
 #include <Evas.hh>
 #include <Efl_Ui.hh>
 #include <iostream>
+#include <memory>
 
 using efl::eo::instantiate;
 
-static efl::ui::Popup g_popup(nullptr);
-static efl::ui::Button g_repeat_events_test_btn(nullptr);
+/* What the callbacks share. It lives in the callbacks, so it goes away when
+ * the objects that own them are deleted, which is before EFL shuts down: a
+ * file-scope wrapper would still hold its reference (and release it) after
+ * Eo is gone whenever the loop ends without a window being closed by the user. */
+struct State
+{
+   efl::ui::Popup popup{nullptr};
+   efl::ui::Button repeat_events_test_btn{nullptr};
+};
+typedef std::shared_ptr<State> State_Ptr;
 
 static efl::ui::Popup
-create_popup(efl::ui::Win win)
+create_popup(efl::ui::Win win, State_Ptr st)
 {
    efl::ui::Popup popup(instantiate, win);
 
@@ -37,8 +46,8 @@ create_popup(efl::ui::Win win)
 
    popup.size_set({160, 160});
 
-   auto timeout_cb(std::bind([]() {
-        g_popup = nullptr;
+   auto timeout_cb(std::bind([st]() {
+        st->popup = nullptr;
         std::cout << "Popup times out and it is deleted" << std::endl;
      }));
    efl::eolian::event_add(efl::ui::Popup::timeout_event, popup, timeout_cb);
@@ -51,6 +60,8 @@ static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
+
+   State_Ptr st = std::make_shared<State>();
 
 
    //Popup Window
@@ -69,10 +80,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    //Popup Window Delete callback
    auto wfunc_win(func_win._get_wref());
-   auto win_del_cb(std::bind([wfunc_win]() {
-        g_popup = nullptr;
-        g_repeat_events_test_btn = nullptr;
-        ::efl_del(wfunc_win->_eo_ptr());
+   auto win_del_cb(std::bind([wfunc_win, st]() {
+        st->popup = nullptr;
+        st->repeat_events_test_btn = nullptr;
+        if (auto w = wfunc_win.lock())
+          ::efl_del(w->_eo_ptr());
         std::cout << "Window is deleted" << std::endl;
      }));
    efl::eolian::event_add(win.delete_request_event, win, win_del_cb);
@@ -80,10 +92,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    //Popup Function Window Delete callback
    auto wwin(win._get_wref());
-   auto func_win_del_cb(std::bind([wwin]() {
-        g_popup = nullptr;
-        g_repeat_events_test_btn = nullptr;
-        ::efl_del(wwin->_eo_ptr());
+   auto func_win_del_cb(std::bind([wwin, st]() {
+        st->popup = nullptr;
+        st->repeat_events_test_btn = nullptr;
+        if (auto w = wwin.lock())
+          ::efl_del(w->_eo_ptr());
         std::cout << "Window is deleted" << std::endl;
      }));
    efl::eolian::event_add(func_win.delete_request_event, func_win, func_win_del_cb);
@@ -100,11 +113,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         std::cout << "Repeat Test Button is clicked" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, repeat_events_test_btn, repeat_events_test_cb);
-   g_repeat_events_test_btn = repeat_events_test_btn;
+   st->repeat_events_test_btn = repeat_events_test_btn;
 
 
    //Popup
-   g_popup = create_popup(win);
+   st->popup = create_popup(win, st);
 
 
    //Create Button
@@ -113,15 +126,15 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    create_btn.position_set({0, 0});
    create_btn.size_set({150, 50});
 
-   auto create_cb(std::bind([wwin]() {
-        if (g_popup)
+   auto create_cb(std::bind([wwin, st]() {
+        if (st->popup)
           std::cout << "Efl.Ui.Popup is already created" << std::endl;
         else {
           std::cout << "Efl.Ui.Popup is created" << std::endl;
           auto lwin = wwin.lock();
           if (lwin) {
              auto win = lwin.get();
-             g_popup = create_popup(win);
+             st->popup = create_popup(win, st);
           }
         }
      }));
@@ -134,11 +147,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    delete_btn.position_set({150, 0});
    delete_btn.size_set({150, 50});
 
-   auto delete_cb(std::bind([wwin]() {
-        if (g_popup) {
-           auto wpopup(g_popup._get_wref());
-           ::efl_del(wpopup->_eo_ptr());
-           g_popup = nullptr;
+   auto delete_cb(std::bind([wwin, st]() {
+        if (st->popup) {
+           ::efl_del(st->popup._eo_ptr());
+           st->popup = nullptr;
         }
         else
           std::cout << "Efl.Ui.Popup does not exist" << std::endl;
@@ -153,8 +165,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    repeat_events_btn.size_set({150, 50});
 
    auto wrepeat_events_btn(repeat_events_btn._get_wref());
-   auto repeat_events_cb(std::bind([wrepeat_events_btn]() {
-        if (!g_popup) return;
+   auto repeat_events_cb(std::bind([wrepeat_events_btn, st]() {
+        if (!st->popup) return;
 
         auto lrepeat_events_btn = wrepeat_events_btn.lock();
         if (!lrepeat_events_btn) return;
@@ -162,12 +174,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         auto repeat_events_btn = lrepeat_events_btn.get();
         if (!repeat_events_btn) return;
 
-        if (efl::eo::downcast<efl::canvas::Object>(g_popup.part_get("backwall")).repeat_events_get()) {
-           efl::eo::downcast<efl::canvas::Object>(g_popup.part_get("backwall")).repeat_events_set(false);
+        if (efl::eo::downcast<efl::canvas::Object>(st->popup.part_get("backwall")).repeat_events_get()) {
+           efl::eo::downcast<efl::canvas::Object>(st->popup.part_get("backwall")).repeat_events_set(false);
            repeat_events_btn.text_set("Set Repeat Events");
         }
         else {
-           efl::eo::downcast<efl::canvas::Object>(g_popup.part_get("backwall")).repeat_events_set(true);
+           efl::eo::downcast<efl::canvas::Object>(st->popup.part_get("backwall")).repeat_events_set(true);
            repeat_events_btn.text_set("Unset Repeat Events");
         }
      }));
@@ -181,8 +193,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    dummy_btn.size_set({150, 50});
 
    auto wdummy_btn(dummy_btn._get_wref());
-   auto dummy_cb(std::bind([wdummy_btn]() {
-        if (!g_popup) return;
+   auto dummy_cb(std::bind([wdummy_btn, st]() {
+        if (!st->popup) return;
 
         auto ldummy_btn = wdummy_btn.lock();
         if (!ldummy_btn) return;
@@ -190,12 +202,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         auto dummy_btn = ldummy_btn.get();
         if (!dummy_btn) return;
 
-        if (g_repeat_events_test_btn.visible_get()) {
-           g_repeat_events_test_btn.visible_set(false);
+        if (st->repeat_events_test_btn.visible_get()) {
+           st->repeat_events_test_btn.visible_set(false);
            dummy_btn.text_set("Show Dummy Button");
         }
         else {
-           g_repeat_events_test_btn.visible_set(true);
+           st->repeat_events_test_btn.visible_set(true);
            dummy_btn.text_set("Hide Dummy Button");
         }
      }));
@@ -209,10 +221,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    backwall_btn.size_set({150, 50});
 
    auto wbackwall_btn(backwall_btn._get_wref());
-   auto backwall_cb(std::bind([wbackwall_btn]() {
+   auto backwall_cb(std::bind([wbackwall_btn, st]() {
         static bool backwall_visible = false;
 
-        if (!g_popup) return;
+        if (!st->popup) return;
 
         auto lbackwall_btn = wbackwall_btn.lock();
         if (!lbackwall_btn) return;
@@ -222,11 +234,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
         backwall_visible = !backwall_visible;
         if (backwall_visible) {
-           efl::eo::downcast<efl::File>(g_popup.part_get("backwall")).file_set("./sky_01.jpg");
+           efl::eo::downcast<efl::File>(st->popup.part_get("backwall")).file_set("./sky_01.jpg");
            backwall_btn.text_set("Unset Backwall");
         }
         else {
-           efl::eo::downcast<efl::File>(g_popup.part_get("backwall")).file_set(nullptr);
+           efl::eo::downcast<efl::File>(st->popup.part_get("backwall")).file_set(nullptr);
            backwall_btn.text_set("Set Backwall");
         }
      }));
@@ -239,10 +251,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    timeout_btn.position_set({150, 100});
    timeout_btn.size_set({150, 50});
 
-   auto timeout_set_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto timeout_set_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.closing_timeout_set(3);
+        st->popup.closing_timeout_set(3);
         std::cout << "Timeout is set to 3 seconds" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, timeout_btn, timeout_set_cb);
@@ -254,10 +266,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    center_btn.position_set({0, 150});
    center_btn.size_set({150, 50});
 
-   auto center_align_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto center_align_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.align_set(EFL_UI_POPUP_ALIGN_CENTER);
+        st->popup.align_set(EFL_UI_POPUP_ALIGN_CENTER);
         std::cout << "Align Center" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, center_btn, center_align_cb);
@@ -269,10 +281,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    top_btn.position_set({150, 150});
    top_btn.size_set({150, 50});
 
-   auto top_align_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto top_align_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.align_set(EFL_UI_POPUP_ALIGN_TOP);
+        st->popup.align_set(EFL_UI_POPUP_ALIGN_TOP);
         std::cout << "Align Top" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, top_btn, top_align_cb);
@@ -284,10 +296,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    left_btn.position_set({0, 200});
    left_btn.size_set({150, 50});
 
-   auto left_align_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto left_align_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.align_set(EFL_UI_POPUP_ALIGN_LEFT);
+        st->popup.align_set(EFL_UI_POPUP_ALIGN_LEFT);
         std::cout << "Align Left" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, left_btn, left_align_cb);
@@ -299,10 +311,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    right_btn.position_set({150, 200});
    right_btn.size_set({150, 50});
 
-   auto right_align_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto right_align_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.align_set(EFL_UI_POPUP_ALIGN_RIGHT);
+        st->popup.align_set(EFL_UI_POPUP_ALIGN_RIGHT);
         std::cout << "Align Right" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, right_btn, right_align_cb);
@@ -314,10 +326,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bottom_btn.position_set({0, 250});
    bottom_btn.size_set({150, 50});
 
-   auto bottom_align_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto bottom_align_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.align_set(EFL_UI_POPUP_ALIGN_BOTTOM);
+        st->popup.align_set(EFL_UI_POPUP_ALIGN_BOTTOM);
         std::cout << "Align Bottom" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, bottom_btn, bottom_align_cb);
@@ -329,10 +341,10 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    position_btn.position_set({150, 250});
    position_btn.size_set({150, 50});
 
-   auto position_set_cb(std::bind([]() {
-        if (!g_popup) return;
+   auto position_set_cb(std::bind([st]() {
+        if (!st->popup) return;
 
-        g_popup.position_set({0, 0});
+        st->popup.position_set({0, 0});
         std::cout << "Position is set to (0, 0)" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, position_btn, position_set_cb);

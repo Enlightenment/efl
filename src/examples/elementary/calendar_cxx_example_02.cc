@@ -16,6 +16,7 @@
 #define EFL_CXXPERIMENTAL
 
 #include <Efl_Ui.hh>
+#include <memory>
 
 using namespace std::placeholders;
 using efl::eo::add;
@@ -28,12 +29,16 @@ struct appData
       std::cout << "Good bye!" << std::endl;
    }
 
-   void create() {
+   /* The window's delete callback holds the application, so it lives exactly
+    * as long as the window does: the connection frees its closure when the
+    * window is invalidated, whether the user closed it or EFL is shutting
+    * down, and that is always before EFL is gone. */
+   void create(std::shared_ptr<appData> self) {
       std::cout << "Hello!" << std::endl;
 
       add(m_win);
       m_win.text_set("Calendar Layout Formatting Example");
-      m_win.delete_request_event_cb_add([&](){ destroy(); });
+      m_win.delete_request_event_cb_add([self](){ self->destroy(); });
 
       efl::ui::Calendar cal(add, m_win);
       m_win.content_set(cal);
@@ -67,12 +72,11 @@ private:
    efl::ui::Win m_win;
 };
 
-static appData app;
-
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   app.create();
+   auto app = std::make_shared<appData>();
+   app->create(app);
 }
 EFL_MAIN()

@@ -29,17 +29,15 @@
 
 using efl::eo::instantiate;
 
-static efl::ui::Win win;
-
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Efl_Loop_Arguments *args = static_cast<Efl_Loop_Arguments *>(ev->info);
 
-   win = efl::ui::Win(instantiate);
+   efl::ui::Win win(instantiate);
    win.text_set("Bg Image");
    win.autohide_set(true);
-   win.delete_request_event_cb_add([](){ win = nullptr; efl_exit(0); });
+   win.delete_request_event_cb_add([](){ efl_exit(0); });
 
    std::string path;
    /* argv[0] is the program itself; the image, if any, is the next one. */
