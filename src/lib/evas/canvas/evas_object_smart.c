@@ -1465,6 +1465,11 @@ evas_object_smart_del(Evas_Object *eo_obj)
    free(sobj->interface_privates);
    sobj->interface_privates = NULL;
 
+   /* Data evas allocated itself (the clipped smart state) is evas's to free:
+    * the destructor would, but it only ever sees the NULL set below. Data a
+    * legacy smart class handed over with evas_object_smart_data_set() stays
+    * that class's own. */
+   if (!sobj->data_nofree) free(sobj->data);
    sobj->data = NULL;
    if (s) evas_object_smart_unuse(s);
 }
