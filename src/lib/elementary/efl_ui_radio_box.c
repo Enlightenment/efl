@@ -121,5 +121,20 @@ _efl_ui_radio_box_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
+/* The group is the box's own: the constructor made it with efl_new and
+   attaching a composite does not hand it over, so nothing else lets it go.
+   Every radio left the group as the box let go of its children. */
+EOLIAN static void
+_efl_ui_radio_box_efl_object_destructor(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
+{
+   efl_event_callback_forwarder_del(pd->group, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, obj);
+   efl_event_callback_forwarder_del(pd->group, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, obj);
+   efl_composite_detach(obj, pd->group);
+   efl_unref(pd->group);
+   pd->group = NULL;
+
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
 
 #include "efl_ui_radio_box.eo.c"

@@ -20,6 +20,7 @@ class Efl.Ui.Radio_Box extends Efl.Ui.Box composites Efl.Ui.Radio_Group
       Efl.Pack_Linear.pack_at;
       Efl.Pack_Linear.pack_unpack_at;
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Ui.Widget.widget_sub_object_del;
    }
 }

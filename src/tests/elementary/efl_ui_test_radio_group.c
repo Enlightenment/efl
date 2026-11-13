@@ -267,6 +267,18 @@ EFL_START_TEST(group_invalid_value)
 }
 EFL_END_TEST
 
+/* The group of a Radio_Box is the box's own and goes with it: nothing reaches
+ * it from here, so the leak shows under valgrind (--leak-check=full). */
+EFL_START_TEST(radio_box_frees_its_group)
+{
+   Eo *box = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   Eo *r = radio();
+
+   efl_pack_end(box, r);
+   efl_del(box);
+}
+EFL_END_TEST
+
 void efl_ui_test_radio_group(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
@@ -282,4 +294,5 @@ void efl_ui_test_radio_group(TCase *tc)
    tcase_add_test(tc, external_setting);
    tcase_add_test(tc, delete_setted);
    tcase_add_test(tc, group_invalid_value);
+   tcase_add_test(tc, radio_box_frees_its_group);
 }
