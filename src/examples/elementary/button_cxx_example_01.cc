@@ -53,9 +53,9 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    box_initial.pack_end(btn);
 
    auto wup = up._get_wref();
-   auto wdown = up._get_wref();
-   auto wleft = up._get_wref();
-   auto wright = up._get_wref();
+   auto wdown = down._get_wref();
+   auto wleft = left._get_wref();
+   auto wright = right._get_wref();
    auto btn_options = std::bind(
             [wup, wdown, wleft, wright] (efl::ui::Button &button)
    {
