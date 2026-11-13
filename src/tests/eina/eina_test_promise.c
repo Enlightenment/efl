@@ -450,6 +450,187 @@ EFL_START_TEST(eina_test_promise_race_cancel)
 }
 EFL_END_TEST
 
+/* A callback that cancels the next future of its own chain: the shape of an
+ * object dying in its own future callback while it has another future
+ * pending right behind it. The cancelled future answers ECANCELED once, the
+ * dispatch of the chain stops there, and nothing is touched after free. */
+static Eina_Future *cancel_next_target;
+static int cancel_next_first_calls;
+static Eina_Promise *cancel_next_probe_promise;
+static Eina_Future *cancel_next_probe;
+
+static Eina_Value
+_cancel_next_cb(void *data EINA_UNUSED, const Eina_Value v,
+                const Eina_Future *dead EINA_UNUSED)
+{
+   cancel_next_first_calls++;
+   eina_future_cancel(cancel_next_target);
+   cancel_next_target = NULL;
+
+   /* The chained mempool hands back the slot just freed, so this future takes
+      the place of the cancelled one. A dispatch that still reached for the
+      cancelled future would find this one (no callback) and run the probe's
+      callback with our value: visible without valgrind, which is what catches
+      it with the pass_through mempool. */
+   cancel_next_probe = eina_future_then_from_desc(eina_future_new(cancel_next_probe_promise),
+                                                  (Eina_Future_Desc){ .cb = _count_cb,
+                                                                      .storage = &cancel_next_probe });
+   return v;
+}
+
+EFL_START_TEST(eina_test_promise_cancel_next_from_callback)
+{
+   Test_Scheduler ts;
+   Eina_Promise *p;
+   Eina_Future *f1, *f2;
+
+   _test_scheduler_setup(&ts);
+   _counters_reset();
+   cancel_next_first_calls = 0;
+   cancel_next_probe = NULL;
+   cancel_next_probe_promise = eina_promise_new(&ts.scheduler, _dummy_promise_cancel, NULL);
+   fail_if(!cancel_next_probe_promise);
+
+   p = eina_promise_new(&ts.scheduler, _dummy_promise_cancel, NULL);
+   fail_if(!p);
+
+   f1 = eina_future_then(eina_future_new(p), _cancel_next_cb, NULL, NULL);
+   fail_if(!f1);
+   f2 = eina_future_then(f1, _outer_done, NULL, NULL);
+   fail_if(!f2);
+   cancel_next_target = f2;
+
+   eina_promise_resolve(p, eina_value_int_init(1));
+   _test_scheduler_pump(&ts);
+
+   ck_assert_int_eq(cancel_next_first_calls, 1);
+   ck_assert_int_eq(outer_calls, 1);
+   ck_assert_int_eq(outer_error, ECANCELED);
+
+   /* The probe is still waiting for its own promise, untouched. */
+   ck_assert_int_eq(chained_calls, 0);
+   fail_if(cancel_next_probe == NULL);
+
+   eina_future_cancel(cancel_next_probe);
+   _test_scheduler_pump(&ts);
+   _test_scheduler_flush(&ts);
+}
+EFL_END_TEST
+
+/* The same, for the other shapes of the same mistake. Two probe futures are
+ * made after the cancel, to take the slots of the two futures it freed. */
+static Eina_Promise *cancel_probe_promise[2];
+static Eina_Future *cancel_probe[2];
+
+static void
+_cancel_probes_setup(Test_Scheduler *ts)
+{
+   int i;
+
+   _counters_reset();
+   cancel_next_first_calls = 0;
+   for (i = 0; i < 2; i++)
+     {
+        cancel_probe[i] = NULL;
+        cancel_probe_promise[i] = eina_promise_new(&ts->scheduler, _dummy_promise_cancel, NULL);
+        fail_if(!cancel_probe_promise[i]);
+     }
+}
+
+static Eina_Value
+_cancel_target_cb(void *data EINA_UNUSED, const Eina_Value v,
+                  const Eina_Future *dead EINA_UNUSED)
+{
+   int i;
+
+   cancel_next_first_calls++;
+   eina_future_cancel(cancel_next_target);
+   cancel_next_target = NULL;
+   for (i = 0; i < 2; i++)
+     {
+        cancel_probe[i] = eina_future_then_from_desc(eina_future_new(cancel_probe_promise[i]),
+                                                     (Eina_Future_Desc){ .cb = _count_cb,
+                                                                         .storage = &cancel_probe[i] });
+     }
+   return v;
+}
+
+static void
+_cancel_probes_check_and_free(Test_Scheduler *ts)
+{
+   int i;
+
+   /* The probes are still waiting for their own promises, untouched. */
+   ck_assert_int_eq(chained_calls, 0);
+   for (i = 0; i < 2; i++)
+     {
+        fail_if(cancel_probe[i] == NULL);
+        eina_future_cancel(cancel_probe[i]);
+     }
+   _test_scheduler_pump(ts);
+   _test_scheduler_flush(ts);
+}
+
+/* f -> N -> L, and the callback of f cancels L, two steps after it: the
+ * walk stops at N, and both N and L answer ECANCELED. */
+EFL_START_TEST(eina_test_promise_cancel_two_steps_from_callback)
+{
+   Test_Scheduler ts;
+   Eina_Promise *p;
+   Eina_Future *f, *n, *l;
+
+   _test_scheduler_setup(&ts);
+   _cancel_probes_setup(&ts);
+
+   p = eina_promise_new(&ts.scheduler, _dummy_promise_cancel, NULL);
+   fail_if(!p);
+
+   f = eina_future_then(eina_future_new(p), _cancel_target_cb, NULL, NULL);
+   n = eina_future_then(f, _outer_done, NULL, NULL);
+   l = eina_future_then(n, _outer_done, NULL, NULL);
+   fail_if(!f || !n || !l);
+   cancel_next_target = l;
+
+   eina_promise_resolve(p, eina_value_int_init(1));
+   _test_scheduler_pump(&ts);
+
+   ck_assert_int_eq(cancel_next_first_calls, 1);
+   ck_assert_int_eq(outer_calls, 2);
+   ck_assert_int_eq(outer_error, ECANCELED);
+   _cancel_probes_check_and_free(&ts);
+}
+EFL_END_TEST
+
+/* R -> N -> L cancelled from outside, and the ECANCELED callback of N, which
+ * runs inside the cancel loop, cancels L: nothing dangles from N. */
+EFL_START_TEST(eina_test_promise_cancel_from_callback_in_cancel_loop)
+{
+   Test_Scheduler ts;
+   Eina_Promise *p;
+   Eina_Future *r, *n, *l;
+
+   _test_scheduler_setup(&ts);
+   _cancel_probes_setup(&ts);
+
+   p = eina_promise_new(&ts.scheduler, _dummy_promise_cancel, NULL);
+   fail_if(!p);
+
+   r = eina_future_then(eina_future_new(p), _outer_done, NULL, NULL);
+   n = eina_future_then(r, _cancel_target_cb, NULL, NULL);
+   l = eina_future_then(n, _outer_done, NULL, NULL);
+   fail_if(!r || !n || !l);
+   cancel_next_target = l;
+
+   eina_future_cancel(r);
+   _test_scheduler_pump(&ts);
+
+   ck_assert_int_eq(cancel_next_first_calls, 1);
+   ck_assert_int_eq(outer_calls, 2);
+   ck_assert_int_eq(outer_error, ECANCELED);
+   _cancel_probes_check_and_free(&ts);
+}
+EFL_END_TEST
+
 void
 eina_test_promise(TCase *tc)
 {
@@ -461,4 +642,7 @@ eina_test_promise(TCase *tc)
    tcase_add_test(tc, eina_test_promise_future_as_value_cancel_then_inner_rejects);
    tcase_add_test(tc, eina_test_promise_all_cancel);
    tcase_add_test(tc, eina_test_promise_race_cancel);
+   tcase_add_test(tc, eina_test_promise_cancel_next_from_callback);
+   tcase_add_test(tc, eina_test_promise_cancel_two_steps_from_callback);
+   tcase_add_test(tc, eina_test_promise_cancel_from_callback_in_cancel_loop);
 }

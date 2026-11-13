@@ -468,8 +468,11 @@ _eina_future_cb_dispatch(Eina_Future *f, const Eina_Value value)
 {
    Eina_Future_Cb cb = f->cb;
 
-   // Cleaning up prev and past to avoid recursion
-   if (f->next) f->next->prev = NULL;
+   // Cleaning up prev to avoid recursion. next->prev is kept on purpose:
+   // the callback may cancel the next future (an object dying in its own
+   // callback does), and that cancel must still see f as being dispatched
+   // (see _eina_future_cancel) and must unlink the freed future from f
+   // through its prev, or f would hand it back to the dispatch afterwards.
    if (f->prev) f->prev->next = NULL;
 
    f->cb = EINA_FUTURE_DISPATCHED;
@@ -584,7 +587,9 @@ _eina_future_cancel(Eina_Future *f, int err)
    DBG("Cancelling future %p, cb: %p data: %p with error: %d - msg: '%s'",
        f, f->cb, f->data, err, eina_error_msg_get(err));
 
-   for (; f->prev != NULL; f = f->prev)
+   // A future whose previous one is mid-dispatch is the root of what can
+   // still be cancelled.
+   for (; (f->prev != NULL) && (f->prev->cb != EINA_FUTURE_DISPATCHED); f = f->prev)
      {
         assert(f->promise == NULL); /* intermediate futures shouldn't have a promise */
         assert(f->scheduled_entry == NULL); /* intermediate futures shouldn't have pending dispatch */
