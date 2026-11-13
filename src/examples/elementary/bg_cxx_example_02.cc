@@ -42,10 +42,17 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
    win.delete_request_event_cb_add([](){ win = nullptr; efl_exit(0); });
 
    std::string path;
-   if (eina_array_count(args->argv) > 0)
-     path = static_cast<const char *>(eina_array_data_get(args->argv, 0));
+   /* argv[0] is the program itself; the image, if any, is the next one. */
+   if (eina_array_count(args->argv) > 1)
+     path = static_cast<const char *>(eina_array_data_get(args->argv, 1));
    else
-     path = "performance/background.png";
+     {
+        /* Where the C example finds it: the installed (or in-tree) data of
+         * elementary. */
+        elm_app_info_set(reinterpret_cast<void *>(efl_main), "elementary",
+                         "images/plant_01.jpg");
+        path = std::string(elm_app_data_dir_get()) + "/images/plant_01.jpg";
+     }
 
    efl::ui::Bg bg(instantiate, win);
    bg.scale_method_set(EFL_GFX_IMAGE_SCALE_METHOD_FILL);
