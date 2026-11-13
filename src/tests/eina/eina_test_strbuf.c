@@ -657,6 +657,22 @@ EFL_START_TEST(eina_test_strbuf_strftime_test)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_test_strbuf_printf_empty)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   fail_unless(buf != NULL);
+   fail_unless(eina_strbuf_append(buf, "abc"));
+
+   /* an empty result adds nothing, as it always has */
+   fail_if(eina_strbuf_append_printf(buf, "%s", ""));
+   fail_if(eina_strbuf_insert_printf(buf, "%s", 1, ""));
+   ck_assert_str_eq(eina_strbuf_string_get(buf), "abc");
+
+   eina_strbuf_free(buf);
+}
+EFL_END_TEST
+
 void
 eina_test_strbuf(TCase *tc)
 {
@@ -675,5 +691,6 @@ eina_test_strbuf(TCase *tc)
    tcase_add_test(tc, eina_test_strbuf_prepend_print);
    tcase_add_test(tc, eina_test_strbuf_release_test);
    tcase_add_test(tc, eina_test_strbuf_strftime_test);
+   tcase_add_test(tc, eina_test_strbuf_printf_empty);
 }
 

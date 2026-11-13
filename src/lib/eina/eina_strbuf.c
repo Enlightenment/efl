@@ -83,15 +83,20 @@ eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
 {
    va_list args;
    char *str;
-   size_t len;
+   int len;
    Eina_Bool ret;
 
    va_start(args, fmt);
    len = vasprintf(&str, fmt, args);
    va_end(args);
 
-   if (len == 0 || !str)
-      return EINA_FALSE;
+   /* An empty result is still a string vasprintf allocated; a failed one
+    * leaves str undefined. */
+   if (len <= 0)
+     {
+        if (len == 0) free(str);
+        return EINA_FALSE;
+     }
 
    ret = eina_strbuf_append_length(buf, str, len);
    free(str);
@@ -102,13 +107,18 @@ EINA_API Eina_Bool
 eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args)
 {
    char *str;
-   size_t len;
+   int len;
    Eina_Bool ret;
 
    len = vasprintf(&str, fmt, args);
 
-   if (len == 0 || !str)
-      return EINA_FALSE;
+   /* An empty result is still a string vasprintf allocated; a failed one
+    * leaves str undefined. */
+   if (len <= 0)
+     {
+        if (len == 0) free(str);
+        return EINA_FALSE;
+     }
 
    ret = eina_strbuf_append_length(buf, str, len);
    free(str);
@@ -120,15 +130,20 @@ eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...)
 {
    va_list args;
    char *str;
-   size_t len;
+   int len;
    Eina_Bool ret;
 
    va_start(args, pos);
    len = vasprintf(&str, fmt, args);
    va_end(args);
 
-   if (len == 0 || !str)
-      return EINA_FALSE;
+   /* An empty result is still a string vasprintf allocated; a failed one
+    * leaves str undefined. */
+   if (len <= 0)
+     {
+        if (len == 0) free(str);
+        return EINA_FALSE;
+     }
 
    ret = eina_strbuf_insert(buf, str, pos);
    free(str);
@@ -142,13 +157,18 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
                            va_list args)
 {
    char *str;
-   size_t len;
+   int len;
    Eina_Bool ret;
 
    len = vasprintf(&str, fmt, args);
 
-   if (len == 0 || !str)
-      return EINA_FALSE;
+   /* An empty result is still a string vasprintf allocated; a failed one
+    * leaves str undefined. */
+   if (len <= 0)
+     {
+        if (len == 0) free(str);
+        return EINA_FALSE;
+     }
 
    ret = eina_strbuf_insert(buf, str, pos);
    free(str);
