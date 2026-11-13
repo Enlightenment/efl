@@ -72,15 +72,13 @@ struct class_implementation_generator
 #endif
 
      if(!as_generator(
-        attribute_reorder<0, 1, 4, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
+        attribute_reorder<0, 1, 4, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3>
         (
          "namespace eo_cxx {\n"
          << namespaces
          [
           *function_definition(get_klass_name(cls))
           << *part_implementation(cls.cxx_name)
-          << "inline " << base_class_name << "::operator " << class_name << "() const { return *static_cast< "
-            << class_name << " const*>(static_cast<void const*>(this)); }\n"
           << "inline " << base_class_name << "::operator " << class_name << "&() { return *static_cast< "
             << class_name << "*>(static_cast<void*>(this)); }\n"
           << "inline " << base_class_name << "::operator " << class_name << " const&() const { return *static_cast< "

@@ -89,16 +89,14 @@ struct base_class_definition_generator
         ).generate(sink, cls.cxx_name, context))
        return false;
 
-     // operator ::ns::Class_Name() const;
      // operator ::ns::Class_Name&();
      // operator ::ns::Class_Name const&() const;
      auto class_name = *(lit("::") << lower_case[string]) << "::" << string;
      if(!as_generator
         (
-         attribute_reorder<0, 1, 0, 1, 0, 1, 0, 1>
+         attribute_reorder<0, 1, 0, 1>
          (
-            scope_tab << "operator " << class_name << "() const;\n"
-            << scope_tab << "operator " << class_name << "&();\n"
+            scope_tab << "operator " << class_name << "&();\n"
             << scope_tab << "operator " << class_name << " const&() const;\n"
          )).generate(sink, std::make_tuple(cpp_namespaces, cls.cxx_name), context))
        return false;
