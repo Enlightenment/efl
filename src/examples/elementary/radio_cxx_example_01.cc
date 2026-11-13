@@ -37,6 +37,16 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    win.content_set(bx);
 
+   /* Only the box emits value,changed (it forwards it from its radios), so
+    * the connection is on the box and not on each radio. The handler is given
+    * the box, so it does not capture it: a closure that captured its own
+    * emitter would hold a reference on it. */
+   efl::eolian::event_add(efl::ui::Radio_Group::value_changed_event, bx,
+     [] (efl::ui::Radio_Box box, int)
+     {
+        std::cout << "val is now: " << box.selected_value_get() << std::endl;
+     });
+
    efl::ui::Radio radio(instantiate, win);
    efl::ui::Radio group = radio;
    radio.text_set("Radio 1");
@@ -47,11 +57,6 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    radio.content_set(ic);
    bx.pack_end(radio);
 
-   auto cb_val = std::bind([bx] (efl::ui::Radio &obj EINA_UNUSED)
-   { std::cout << "val is now: " << bx.selected_value_get() << std::endl; },
-         std::placeholders::_1);
-   efl::eolian::event_add(efl::ui::Radio_Group::value_changed_event, radio, cb_val);
-
    efl::ui::Radio radio2(instantiate, win);
    radio2.text_set("Radio 2");
    radio2.state_value_set(2);
@@ -60,18 +65,15 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    ic2.icon_set("file");
    radio2.content_set(ic2);
    bx.pack_end(radio2);
-   efl::eolian::event_add(efl::ui::Radio_Group::value_changed_event, radio2, cb_val);
 
    efl::ui::Radio radio3(instantiate, win);
    radio3.text_set("Radio 3");
    radio3.state_value_set(3);
    bx.pack_end(radio3);
-   efl::eolian::event_add(efl::ui::Radio_Group::value_changed_event, radio3, cb_val);
 
    efl::ui::Radio radio4(instantiate, win);
    radio4.text_set("Radio 4");
    radio4.state_value_set(4);
    bx.pack_end(radio4);
-   efl::eolian::event_add(efl::ui::Radio_Group::value_changed_event, radio4, cb_val);
 }
 EFL_MAIN()
