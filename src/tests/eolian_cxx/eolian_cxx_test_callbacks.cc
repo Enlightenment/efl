@@ -182,6 +182,48 @@ EFL_START_TEST(eolian_cxx_test_callbacks_lent_iterator)
 }
 EFL_END_TEST
 
+/* An object out parameter: a borrowed one gets a reference of the wrapper's
+ * own, so dropping the wrapper leaves the object as it was; one given with
+ * @move is adopted, so dropping the wrapper frees it. */
+EFL_START_TEST(eolian_cxx_test_out_object)
+{
+  efl::eo::eo_init init;
+
+  nonamespace::Fnptr obj(efl::eo::instantiate);
+  Eo* raw = obj._eo_ptr();
+  int refs = efl_ref_count(raw);
+  {
+    nonamespace::Fnptr o;
+    obj.self_out(o);
+    ck_assert_ptr_eq(o._eo_ptr(), raw);
+    ck_assert_int_eq(efl_ref_count(raw), refs + 1);
+  }
+  ck_assert_int_eq(efl_ref_count(raw), refs);
+
+  /* Through an optional out, as a hand-written binding may use: still
+   * borrowed, so still referenced. */
+  {
+    nonamespace::Fnptr o;
+    efl::eina::optional<nonamespace::Fnptr&> opt(o);
+    efl::eolian::assign_out<efl::eina::optional<nonamespace::Fnptr&>, Eo*>(opt, raw);
+    ck_assert_ptr_eq(o._eo_ptr(), raw);
+    ck_assert_int_eq(efl_ref_count(raw), refs + 1);
+  }
+  ck_assert_int_eq(efl_ref_count(raw), refs);
+
+  Eo* fresh = nullptr;
+  {
+    nonamespace::Fnptr o;
+    obj.fresh_out(o);
+    fresh = o._eo_ptr();
+    ck_assert_ptr_ne(fresh, NULL);
+    efl_wref_add(fresh, &fresh);
+    ck_assert_int_eq(efl_ref_count(fresh), 1);
+  }
+  ck_assert_ptr_eq(fresh, NULL);
+}
+EFL_END_TEST
+
 static int _callbacks_log_errors = 0;
 
 static void
@@ -337,6 +379,7 @@ void
 eolian_cxx_test_callbacks(TCase* tc)
 {
   tcase_add_test(tc, eolian_cxx_test_callbacks_return_string);
+  tcase_add_test(tc, eolian_cxx_test_out_object);
   tcase_add_test(tc, eolian_cxx_test_callbacks_kept_alive_at_no_reference);
   tcase_add_test(tc, eolian_cxx_test_callbacks_null_wrapper_not_dying);
   tcase_add_test(tc, eolian_cxx_test_callbacks_object_being_destroyed);

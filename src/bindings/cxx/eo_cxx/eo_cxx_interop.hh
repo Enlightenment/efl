@@ -148,14 +148,29 @@ void assign_out_impl(T& lhs, T& rhs, tag<T&, T>)
 {
   lhs = rhs;
 }
+// Borrowed: C keeps its reference, the wrapper takes one of its own, which
+// is the one it drops.
 template <typename T>
 void assign_out_impl(T& lhs, Eo* rhs, tag<T&, Eo*>
                      , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
-  lhs._reset(rhs);
+  lhs._reset(eo::detail::ref(rhs));
 }
 template <typename T>
 void assign_out_impl(T& lhs, Eo const* rhs, tag<T&, Eo const*>
+                     , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  lhs._reset(const_cast<Eo*>(eo::detail::ref(rhs)));
+}
+// Given with @move: the reference C gives is the wrapper's.
+template <typename T>
+void assign_out_impl(T& lhs, Eo* rhs, tag<T&, Eo*, true>
+                     , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
+{
+  lhs._reset(const_cast<Eo*>(rhs));
+}
+template <typename T>
+void assign_out_impl(T& lhs, Eo const* rhs, tag<T&, Eo const*, true>
                      , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
   lhs._reset(const_cast<Eo*>(rhs));
@@ -182,11 +197,13 @@ void assign_out_impl(T*& lhs, T& rhs, tag<T*, T>) // optional
   if(lhs)
     *lhs = rhs;
 }
+// The generator only makes this for owned values, hence the forced Own; an
+// object keeps its own, so a borrowed one is referenced, not adopted.
 template <typename T, typename Rhs, typename U, typename O, bool B>
 void assign_out_impl(efl::eina::optional<T>& lhs, Rhs& rhs, tag<efl::eina::optional<U&>, O, B>)
 {
   if(lhs)
-    assign_out<U&, O, true>(*lhs, rhs);
+    assign_out<U&, O, eo::is_eolian_object<U>::value ? B : true>(*lhs, rhs);
 }
 template <typename Tag>
 void assign_out_impl(eina::value& lhs, Eina_Value& rhs, Tag)

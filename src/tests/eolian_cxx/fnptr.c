@@ -82,6 +82,18 @@ _fnptr_sum_lent(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED, Eina_Iterator *
    return sum;
 }
 
+static void
+_fnptr_self_out(Eo *obj, Fnptr_Data *pd EINA_UNUSED, Eo **o)
+{
+   *o = obj;
+}
+
+static void
+_fnptr_fresh_out(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED, Eo **o)
+{
+   *o = efl_add_ref(FNPTR_CLASS, NULL);
+}
+
 static int
 _fnptr_format(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED,
               void *cb_data, Fnptr_Format_Func cb, Eina_Free_Cb cb_free_cb)
