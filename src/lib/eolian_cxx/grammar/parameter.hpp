@@ -47,7 +47,7 @@ struct parameter_type_generator
       attributes::regular_type_def const* typ =
             efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
       if (typ && typ->is_function_ptr())
-        return as_generator("F").generate(sink, attributes::unused, context);
+        return as_generator("F_" << string).generate(sink, param.param_name, context);
 
       return as_generator
         (

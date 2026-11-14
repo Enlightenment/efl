@@ -6,6 +6,22 @@ function Fnptr_Text_Func {
    return: string; [[The text.]]
 };
 
+function Fnptr_Int_Func {
+   [[A callback taking and returning an int. @since 1.66]]
+   params {
+      @in x: int; [[The argument.]]
+   }
+   return: int; [[The result.]]
+};
+
+function Fnptr_Twice_Func {
+   [[Another callback type, so a method can take two different ones. @since 1.66]]
+   params {
+      @in x: int; [[The argument.]]
+   }
+   return: int; [[The result.]]
+};
+
 class Fnptr extends Efl.Object {
    [[A class with methods taking function pointers. @since 1.66]]
    data: null;
@@ -20,6 +36,18 @@ class Fnptr extends Efl.Object {
             @in value: int; [[The value to pass it.]]
          }
          return: string; [[The text $cb returned.]]
+      }
+      apply {
+         [[Calls $first then $second with $value and adds what they return.
+
+           The callbacks are freed through their free functions before the
+           method returns, unless they are $null. @since 1.66]]
+         params {
+            @in first: Fnptr_Int_Func; [[Called first.]]
+            @in second: Fnptr_Twice_Func; [[Called second.]]
+            @in value: int; [[The value to pass them.]]
+         }
+         return: int; [[The sum of both results.]]
       }
    }
 }

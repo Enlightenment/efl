@@ -967,15 +967,13 @@ struct function_def
   std::string template_statement() const
   {
      std::string statement;
-     char template_typename = 'F';
      for (auto const& param : this->parameters)
        {
           attributes::regular_type_def const* typ =
                 efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
           if (typ && typ->is_function_ptr())
             {
-               char typenam[2] = { 0, };
-               typenam[0] = template_typename++;
+               std::string typenam = "F_" + param.param_name;
                if (statement.empty())
                  statement = std::string("template <typename ") + typenam;
                else
@@ -989,15 +987,13 @@ struct function_def
   std::vector<std::string> opening_statements() const
   {
      std::vector<std::string> statements;
-     char template_typename = 'F';
      for (auto const& param : this->parameters)
        {
           attributes::regular_type_def const* typ =
                 efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
           if (typ && typ->is_function_ptr())
             {
-               char typenam[2] = { 0, };
-               typenam[0] = template_typename++;
+               std::string typenam = "F_" + param.param_name;
                std::string statement = "auto fw_" + param.param_name + " = new ::efl::eolian::function_wrapper<";
                statement += param.type.c_type + ", " + typenam + ", ::efl::eolian::" + param.type.c_type + "__function_tag>(" + param.param_name + ");";
                statements.push_back(statement);
