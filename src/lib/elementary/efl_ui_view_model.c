@@ -584,7 +584,11 @@ _efl_ui_view_model_child_added(void *data, const Efl_Event *event)
    efl_event_callback_stop(event->object);
 
    co = _efl_ui_view_model_child_lookup(pd, event->object, ev->child);
-   if (!co) return;
+   if (!co)
+     {
+        pd->propagating.child_added = EINA_FALSE;
+        return;
+     }
 
    nevt.index = ev->index;
    nevt.child = co;
@@ -613,7 +617,11 @@ _efl_ui_view_model_child_removed(void *data, const Efl_Event *event)
    efl_event_callback_stop(event->object);
 
    co = _efl_ui_view_model_child_lookup(pd, event->object, ev->child);
-   if (!co) return;
+   if (!co)
+     {
+        pd->propagating.child_removed = EINA_FALSE;
+        return;
+     }
 
    nevt.index = ev->index;
    nevt.child = co;
