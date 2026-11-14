@@ -559,6 +559,9 @@ _efl_ui_view_model_child_lookup(Efl_Ui_View_Model_Data *pd, Efl_Object *parent, 
                 efl_ui_view_model_set(efl_added, view),
                 _efl_ui_view_model_parent_data(efl_added, pd));
    if (!co) return NULL;
+   /* A remembered child comes back with a reference of its own, so a new one
+    * does too: every caller unrefs it once done. */
+   efl_ref(co);
 
    EFL_COMPOSITE_REMEMBER_RETURN(co, view);
 }
@@ -587,6 +590,7 @@ _efl_ui_view_model_child_added(void *data, const Efl_Event *event)
    nevt.child = co;
 
    efl_event_callback_call(event->object, EFL_MODEL_EVENT_CHILD_ADDED, &nevt);
+   efl_unref(co);
 
    pd->propagating.child_added = EINA_FALSE;
 }
@@ -617,6 +621,7 @@ _efl_ui_view_model_child_removed(void *data, const Efl_Event *event)
    efl_event_callback_call(event->object, EFL_MODEL_EVENT_CHILD_REMOVED, &nevt);
 
    // The object is being destroyed, there is no point in us keeping the ViewModel proxy alive.
+   efl_unref(co);
    efl_del(co);
 
    pd->propagating.child_removed = EINA_FALSE;
@@ -848,6 +853,7 @@ _efl_ui_view_model_slice_then(Eo *o, void *data, const Eina_Value v)
 
         composite = _efl_ui_view_model_child_lookup(req->pd, o, target);
         eina_value_array_append(&r, composite);
+        efl_unref(composite);
      }
 
    return r;

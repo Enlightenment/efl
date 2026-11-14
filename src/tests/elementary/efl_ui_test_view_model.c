@@ -498,9 +498,165 @@ EFL_START_TEST(efl_test_view_model_logic_set_owns_value)
 }
 EFL_END_TEST
 
+static Efl_Object *_leak_wref;
+static int _leak_rounds;
+
+static Eina_Value
+_leak_slice_done(Eo *mv EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Model *child;
+   unsigned int i, len;
+
+   ck_assert_ptr_eq(eina_value_type_get(&v), EINA_VALUE_TYPE_ARRAY);
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        ck_assert(!!child);
+     }
+   _leak_rounds++;
+
+   return v;
+}
+
+static Eina_Value
+_leak_slice_again(Eo *mv, void *data EINA_UNUSED, const Eina_Value v EINA_UNUSED)
+{
+   /* The second lookup finds the children the first one remembered. */
+   return eina_future_as_value(efl_model_children_slice_get(mv, 0,
+                                                            efl_model_children_count_get(mv)));
+}
+
+static Eina_Value
+_leak_end(Eo *mv, void *data EINA_UNUSED, const Eina_Value v)
+{
+   efl_loop_quit(efl_loop_get(mv), v);
+   return v;
+}
+
+/* Every path of the children lookup hands out one reference, so asking for
+ * the same children twice must not leave one behind: once the View_Model and
+ * its source are gone, the children of the source must be gone too. */
+EFL_START_TEST(efl_test_view_model_children_unref)
+{
+   Efl_Generic_Model *base_model, *child, *mv;
+   Eina_Future *f;
+   Eina_Value v;
+   int i;
+
+   _leak_wref = NULL;
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   ck_assert(!!base_model);
+   for (i = 0; i < child_number; ++i)
+     {
+        child = efl_model_child_add(base_model);
+        ck_assert(!!child);
+        v = eina_value_int_init(base_ints[i]);
+        efl_model_property_set(child, "test_p_int", &v);
+        if (!i) efl_wref_add(child, &_leak_wref);
+     }
+
+   mv = efl_add_ref(EFL_UI_VIEW_MODEL_CLASS, efl_main_loop_get(),
+                    efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!mv);
+
+   _leak_rounds = 0;
+   f = efl_model_children_slice_get(mv, 0, efl_model_children_count_get(mv));
+   f = efl_future_then(mv, f, .success_type = EINA_VALUE_TYPE_ARRAY,
+                       .success = _leak_slice_done);
+   f = efl_future_then(mv, f, .success = _leak_slice_again);
+   f = efl_future_then(mv, f, .success_type = EINA_VALUE_TYPE_ARRAY,
+                       .success = _leak_slice_done);
+   f = efl_future_then(mv, f, .success_type = EINA_VALUE_TYPE_ARRAY,
+                       .success = _leak_end);
+   ecore_main_loop_begin();
+   ck_assert_int_eq(_leak_rounds, 2);
+   ck_assert_ptr_nonnull(_leak_wref);
+
+   efl_del(mv);
+   efl_del(base_model);
+   efl_unref(mv);
+   efl_unref(base_model);
+   ck_assert_ptr_null(_leak_wref);
+}
+EFL_END_TEST
+
+static int _added_count, _removed_count;
+static Efl_Object *_added_view_child;
+
+static void
+_view_child_added(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Efl_Model_Children_Event *ev = event->info;
+
+   _added_count++;
+   ck_assert(!!ev->child);
+   ck_assert(efl_isa(ev->child, EFL_UI_VIEW_MODEL_CLASS));
+   if (_added_count == 1) _added_view_child = ev->child;
+}
+
+static void
+_view_child_removed(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Efl_Model_Children_Event *ev = event->info;
+
+   _removed_count++;
+   ck_assert_ptr_eq(ev->child, _added_view_child);
+}
+
+/* The children the View_Model announces when the source gains or loses one go
+ * through the same lookup: each comes with a reference that is given back, so
+ * a source child that is removed, or that goes with its source, is really
+ * destroyed. children_bind is on by default. */
+EFL_START_TEST(efl_test_view_model_children_events)
+{
+   Efl_Generic_Model *base_model, *added, *kept;
+   Efl_Ui_View_Model *mv;
+   Efl_Object *added_wref = NULL, *kept_wref = NULL, *proxy_wref = NULL;
+   Eina_Value v = eina_value_int_init(1);
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   mv = efl_add_ref(EFL_UI_VIEW_MODEL_CLASS, efl_main_loop_get(),
+                    efl_ui_view_model_set(efl_added, base_model));
+   ck_assert_int_eq(efl_ui_view_model_children_bind_get(mv), EINA_TRUE);
+   efl_event_callback_add(mv, EFL_MODEL_EVENT_CHILD_ADDED, _view_child_added, NULL);
+   efl_event_callback_add(mv, EFL_MODEL_EVENT_CHILD_REMOVED, _view_child_removed, NULL);
+
+   _added_count = _removed_count = 0;
+   _added_view_child = NULL;
+
+   added = efl_model_child_add(base_model);
+   ck_assert(!!added);
+   efl_wref_add(added, &added_wref);
+   efl_model_property_set(added, "p", &v);
+   ck_assert_int_eq(_added_count, 1);
+   ck_assert_ptr_nonnull(_added_view_child);
+   efl_wref_add(_added_view_child, &proxy_wref);
+
+   kept = efl_model_child_add(base_model);
+   efl_wref_add(kept, &kept_wref);
+   ck_assert_int_eq(_added_count, 2);
+
+   /* Removed from the source: announced by the View_Model, and gone, both
+    * the source child and the View_Model's proxy for it. */
+   efl_model_child_del(base_model, added);
+   ck_assert_int_eq(_removed_count, 1);
+   ck_assert_ptr_null(added_wref);
+   ck_assert_ptr_null(proxy_wref);
+
+   /* The one that stays goes with its source and its View_Model. */
+   ck_assert_ptr_nonnull(kept_wref);
+   efl_del(mv);
+   efl_del(base_model);
+   efl_unref(mv);
+   efl_unref(base_model);
+   ck_assert_ptr_null(kept_wref);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_view_model(TCase *tc)
 {
+   tcase_add_test(tc, efl_test_view_model_children_unref);
+   tcase_add_test(tc, efl_test_view_model_children_events);
    tcase_add_test(tc, efl_test_view_model_logic_set_owns_value);
    tcase_add_test(tc, efl_test_view_model_logic_set_data);
    tcase_add_test(tc, efl_test_view_model);
