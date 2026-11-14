@@ -70,6 +70,11 @@ EFL_START_TEST(eina_cxx_eo_iterator_equal)
   nonamespace::Eina_Simple const result[] = {w1, w2, w3, w4};
 
   ck_assert(std::equal(iterator, last_iterator, result));
+
+  /* Post-increment moves on like pre-increment. */
+  efl::eina::iterator<nonamespace::Eina_Simple> it = list.ibegin();
+  it++;
+  ck_assert((*it)._eo_ptr() == w2._eo_ptr());
 }
 EFL_END_TEST
 

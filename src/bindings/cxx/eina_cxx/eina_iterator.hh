@@ -301,7 +301,7 @@ public:
    */
   self_type& operator++(int)
   {
-    return ++**this;
+    return ++*this;
   }
 
   /**
