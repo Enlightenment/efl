@@ -160,14 +160,21 @@ public:
    * @param other Another iterator of the same type.
    * @return Reference for itself.
    *
-   * @warning The supplied iterator transfer its internal handle to the
-   * new iterator, thus @p other will point to nothing after the call
-   * of this constructor.
+   * The handle this iterator held is freed first. Assigning an iterator to
+   * itself leaves it as it was.
+   *
+   * @warning The supplied iterator transfer its internal handle to this
+   * iterator, thus @p other will point to nothing after the assignment.
    */
   _common_iterator_base& operator=(self_type const& other)
   {
-    _iterator = other._iterator;
-    other._iterator = 0;
+    if(this != &other)
+      {
+         if(_iterator)
+           eina_iterator_free(_iterator);
+         _iterator = other._iterator;
+         other._iterator = 0;
+      }
     return *this;
   }
 

@@ -78,9 +78,62 @@ EFL_START_TEST(eina_cxx_eo_iterator_equal)
 }
 EFL_END_TEST
 
+static Eina_Bool
+_keep_all(const void* /*container*/, void* /*data*/, void* /*fdata*/)
+{
+  return EINA_TRUE;
+}
+
+static void
+_count_free(void* fdata)
+{
+  ++*static_cast<int*>(fdata);
+}
+
+/* A native iterator over list that adds one to *freed when it is freed. */
+static Eina_Iterator*
+_counted(Eina_List* list, int* freed)
+{
+  return eina_iterator_filter_new(eina_list_iterator_new(list), _keep_all, _count_free, freed);
+}
+
+/* Assigning over an iterator frees what it held, and an iterator assigned
+ * to itself keeps its handle. */
+EFL_START_TEST(eina_cxx_iterator_assign)
+{
+  efl::eina::eina_init eina_init;
+
+  int values[] = {5, 10, 15};
+  Eina_List* list = nullptr;
+  for (int& v : values)
+    list = eina_list_append(list, &v);
+
+  int freed_a = 0, freed_b = 0;
+  {
+    efl::eina::iterator<int> a(_counted(list, &freed_a));
+    efl::eina::iterator<int> b(_counted(list, &freed_b));
+    a = b;
+    ck_assert_int_eq(freed_a, 1);
+    ck_assert_int_eq(freed_b, 0);
+    ck_assert_int_eq(*a, 5);
+    ck_assert(b == efl::eina::iterator<int>());
+
+    efl::eina::iterator<int>& self = a;
+    a = self;
+    ck_assert(a != efl::eina::iterator<int>());
+    ck_assert_int_eq(*a, 5);
+    ck_assert_int_eq(freed_b, 0);
+  }
+  ck_assert_int_eq(freed_a, 1);
+  ck_assert_int_eq(freed_b, 1);
+  eina_list_free(list);
+}
+EFL_END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
+  tcase_add_test(tc, eina_cxx_iterator_assign);
   tcase_add_test(tc, eina_cxx_iterator_equal);
   tcase_add_test(tc, eina_cxx_eo_iterator_equal);
 }
