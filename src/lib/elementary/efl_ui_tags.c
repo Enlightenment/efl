@@ -129,9 +129,11 @@ _shrink_mode_set(Eo *obj,
 
         if (sd->view_state != TAGS_VIEW_SHRINK)
           {
+             Eina_Bool expanded = EINA_FALSE;
+
              sd->view_state = TAGS_VIEW_SHRINK;
              efl_event_callback_call
-               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, &shrink);
+               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, &expanded);
           }
 
         eina_value_flush(&val);
@@ -160,9 +162,11 @@ _shrink_mode_set(Eo *obj,
 
         if (sd->view_state == TAGS_VIEW_SHRINK)
           {
+             Eina_Bool expanded = EINA_TRUE;
+
              sd->view_state = TAGS_VIEW_NONE;
              efl_event_callback_call
-               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, &shrink);
+               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, &expanded);
           }
      }
 

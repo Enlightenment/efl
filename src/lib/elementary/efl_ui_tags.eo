@@ -61,6 +61,6 @@ class @beta Efl.Ui.Tags extends Efl.Ui.Layout_Base
       expanded: void; [[Called when expanded]]
       contracted: void; [[Called when contracted]]
       /* FIXME: Not future-proof */
-      expand,state,changed: int; [[Called when expanded state changed]]
+      expand,state,changed: bool; [[Called when expanded state changed, with the state it is in now]]
    }
 }
