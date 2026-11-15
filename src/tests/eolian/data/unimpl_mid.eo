@@ -1,0 +1,5 @@
+import unimpl_base;
+
+interface Unimpl_Mid extends Unimpl_Base {
+    [[Docs for interface Unimpl_Mid. @since 1.66]]
+}

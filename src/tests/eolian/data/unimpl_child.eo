@@ -1,0 +1,6 @@
+import unimpl_parent;
+
+class Unimpl_Child extends Unimpl_Parent {
+    [[Docs for class Unimpl_Child, which inherits a composite whose interface
+      extends another one. @since 1.66]]
+}

@@ -1,0 +1,5 @@
+import unimpl_mid;
+
+class Unimpl_Parent composites Unimpl_Mid {
+    [[Docs for class Unimpl_Parent. @since 1.66]]
+}

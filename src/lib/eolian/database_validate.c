@@ -1238,6 +1238,8 @@ _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
    return succ;
 }
 
+static void _add_implicit_composite(Eolian_Class *icl, Eina_Hash *ch, Eina_Bool try_tree);
+
 /* this is so we can inherit composite lists into regular classes
  * it doesn't need to be recursive since the parent/extension already
  * has its composite stuff filled in from before
@@ -1252,7 +1254,13 @@ _add_composite(Eolian_Class *cl, const Eolian_Class *icl, Eina_Hash *ch)
         if (eina_hash_find(ch, &ccl))
           continue;
         cl->composite = eina_list_append(cl->composite, ccl);
-        eina_hash_add(ch, &ccl, ccl);
+        /* the whole interface tree of an inherited composite counts as
+         * composited too, the same way a class's own composites do: a member
+         * declared on a composited interface's parent is still going to come
+         * from the composite object at runtime
+         */
+        _add_implicit_composite((Eolian_Class *)ccl, ch,
+                                ccl->type == EOLIAN_CLASS_INTERFACE);
      }
 }
 

@@ -1,0 +1,8 @@
+interface Unimpl_Base {
+    [[Docs for interface Unimpl_Base. @since 1.66]]
+    methods {
+        foo {
+            [[Docs for foo.]]
+        }
+    }
+}
