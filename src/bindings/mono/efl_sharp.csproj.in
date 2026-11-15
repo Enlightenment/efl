@@ -10,6 +10,10 @@
     <Version>@EFL_VERSION@</Version>
     <Authors>EFL Team</Authors>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <!-- Said outright, because the SDK's stand-in for an unset description is
+         the words "Package Description", and that is what shipped. -->
+    <Description>C# bindings for the Enlightenment Foundation Libraries: the Efl.Ui widget set, the Eo object system, and the Eina data types, as one assembly.</Description>
+    <PackageProjectUrl>https://www.enlightenment.org</PackageProjectUrl>
   </PropertyGroup>
 
   <!-- <PropertyGroup Condition="'$(BuildType)'=='Beta'"> -->
@@ -40,7 +44,12 @@
   <!-- Code style configuration -->
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+    <!-- PrivateAssets="all": this is how the binding is checked, not part of
+         what it offers. Without it the analyzer is listed as a dependency of
+         the Efl.Csharp package, and every application that references the
+         package inherits EFL's own style rules. -->
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118"
+                      PrivateAssets="all" />
   </ItemGroup>
   <PropertyGroup>
     <CodeAnalysisRuleSet>@CA_RULESET@</CodeAnalysisRuleSet>

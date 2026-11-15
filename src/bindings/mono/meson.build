@@ -306,12 +306,15 @@ endif
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 
+# The assembly installed is efl_sharp.dll when the .NET SDK builds it, and
+# efl_mono.dll when mcs does.
+efl_mono_assembly = get_option('dotnet') ? 'efl_sharp.dll' : 'efl_mono.dll'
 pkgconfig.generate(
   name : 'efl-mono',
   description : 'Efl C# bindings',
   version : version_major + '.' + version_minor + '.' + version_micro,
-  libraries : ['-r:${assemblies_dir}/efl_mono.dll'],
+  libraries : ['-r:${assemblies_dir}/' + efl_mono_assembly],
   variables : ['assemblies_dir='+join_paths(dir_lib, 'efl-mono-'+version_major),
-               'mono_libs=-r:${assemblies_dir}/efl_mono.dll']
+               'mono_libs=-r:${assemblies_dir}/' + efl_mono_assembly]
 )
 test_dirs += 'efl_mono'

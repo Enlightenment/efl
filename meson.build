@@ -491,9 +491,14 @@ foreach package : subprojects
       if (package[8] and get_option('efl-one'))
         efl_one_sub_dirs += [package_version_name] + tmp_package_subdirs
       endif
+      # ector installs no headers: it has no include directory to advertise.
+      pc_subdirs = [package_version_name] + tmp_package_subdirs
+      if package_name == 'ector'
+        pc_subdirs = []
+      endif
       pkgconfig.generate(tmp_lib,
         name : '-'.join(package_name.split('_')),
-        subdirs : [package_version_name] + tmp_package_subdirs,
+        subdirs : pc_subdirs,
         version : version_major + '.' + version_minor + '.' + version_micro,
         libraries : tmp_pub_deps,
         requires : package[9],
