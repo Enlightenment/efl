@@ -5,6 +5,7 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "efl_ui_suite.h"
+#include "efl_ui_popup_private.h"
 
 #define WIN_SIZE 500
 #define POPUP_SIZE 160
@@ -946,12 +947,38 @@ EFL_START_TEST(efl_ui_test_popup_text_anchor)
 }
 EFL_END_TEST
 
+/* The style of a popup is applied after its constructor ran, so the backwall,
+ * which was themed there, has to be themed again for the style to reach it. */
+EFL_START_TEST(efl_ui_test_popup_backwall_follows_style)
+{
+   Eo *win, *popup, *def;
+   Efl_Ui_Popup_Data *pd;
+   const char *group = NULL;
+   char path[PATH_MAX];
+
+   snprintf(path, sizeof(path), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   def = efl_ui_theme_default_get();
+   efl_ui_theme_extension_add(def, path);
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   popup = efl_add(EFL_UI_POPUP_CLASS, win,
+                   efl_ui_widget_style_set(efl_added, "backwall_test"));
+   pd = efl_data_scope_get(popup, EFL_UI_POPUP_CLASS);
+   edje_object_file_get(pd->backwall, NULL, &group);
+   ck_assert_ptr_ne(group, NULL);
+   ck_assert_str_eq(group, "efl/popup/backwall:backwall_test");
+
+   efl_ui_theme_extension_del(def, path);
+}
+EFL_END_TEST
+
 void efl_ui_test_popup(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_popup_events);
    tcase_add_test(tc, efl_ui_test_popup_basic_sizing);
    tcase_add_test(tc, efl_ui_test_popup_basic_align);
    tcase_add_test(tc, efl_ui_test_popup_backwall_img);
+   tcase_add_test(tc, efl_ui_test_popup_backwall_follows_style);
    tcase_add_test(tc, efl_ui_test_popup_alert);
    tcase_add_test(tc, efl_ui_test_popup_scroll_alert);
    tcase_add_test(tc, efl_ui_test_popup_scroll_alert_expand);

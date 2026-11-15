@@ -842,6 +842,15 @@ collections {
          }
       }
    }
+   group { "efl/popup/backwall:backwall_test";
+      data.item: "version" "123";
+      parts {
+         rect { "base";
+            desc { "default";
+            }
+         }
+      }
+   }
    group { "table_layout";
       parts {
          table { "table";

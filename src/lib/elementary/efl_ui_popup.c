@@ -530,6 +530,31 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
    efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 }
 
+EOLIAN static Eina_Error
+_efl_ui_popup_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
+   Eina_Error int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
+
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
+
+   /* The backwall is themed from this widget's klass and style, and it was
+      themed once in the constructor. A style chosen later has to reach it
+      too, or it applies to everything except the part it was chosen for. Its
+      result is reported, so a caller can tell a style that resolved from one
+      that quietly fell back to the plain group. */
+   if (pd->backwall)
+     {
+        Eina_Error wall_ret = elm_widget_element_update(obj, pd->backwall,
+                                                        PART_NAME_BACKWALL);
+
+        if ((wall_ret != EFL_UI_THEME_APPLY_ERROR_NONE) &&
+            (int_ret == EFL_UI_THEME_APPLY_ERROR_NONE))
+          int_ret = wall_ret;
+     }
+
+   return int_ret;
+}
+
 EOLIAN static Eo *
 _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {

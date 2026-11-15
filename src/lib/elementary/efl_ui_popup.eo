@@ -123,6 +123,7 @@ class Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Foc
       backwall: Efl.Ui.Popup_Part_Backwall; [[A backwall behind the Popup.]]
    }
    implements {
+      Efl.Ui.Widget.theme_apply;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.invalidate;
