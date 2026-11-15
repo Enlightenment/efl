@@ -46,7 +46,8 @@ EFL_START_TEST(efl_ui_test_slider_events)
    int x, y, w, h;
    int sx, sy, sw, sh;
 
-   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"), &x, &y, &w, &h);
+   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"),
+                            &x, &y, &w, &h);
    evas_object_geometry_get(slider, &sx, &sy, &sw, &sh);
    evas_event_feed_mouse_in(e, 0, NULL);
    evas_event_feed_mouse_move(e, x + (w / 2), y + (h / 2), 0, NULL);
@@ -85,7 +86,8 @@ EFL_START_TEST(efl_ui_test_slider_step)
    int x, y, w, h;
    int sx, sy, sw, sh;
 
-   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"), &x, &y, &w, &h);
+   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"),
+                            &x, &y, &w, &h);
    evas_object_geometry_get(slider, &sx, &sy, &sw, &sh);
    evas_event_feed_mouse_in(e, 0, NULL);
    evas_event_feed_mouse_move(e, x + (w / 2), y + (h / 2), 0, NULL);
@@ -120,7 +122,8 @@ EFL_START_TEST(efl_ui_test_slider_step_drag)
    int x, y, w, h;
    int sx, sy, sw, sh;
 
-   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"), &x, &y, &w, &h);
+   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"),
+                            &x, &y, &w, &h);
    evas_object_geometry_get(slider, &sx, &sy, &sw, &sh);
    evas_event_feed_mouse_in(e, 0, NULL);
    evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
@@ -176,6 +179,48 @@ EFL_START_TEST(efl_ui_test_slider_interval_limits)
 }
 EFL_END_TEST
 
+static void
+_range_changed_count(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   unsigned int *count = data;
+
+   (*count)++;
+}
+
+/* One drag step is one change, not one per call that reports it and one per
+ * thumb. */
+EFL_START_TEST(efl_ui_test_slider_interval_drag_reports_once)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *slider;
+   Evas *e = evas_object_evas_get(win);
+   unsigned int changes = 0;
+   int x, y, w, h;
+
+   slider = efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, win,
+                    efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(400, 100)));
+   efl_ui_range_limits_set(slider, 0.0, 100.0);
+   efl_ui_slider_interval_value_set(slider, 20.0, 60.0);
+   efl_layout_signal_process(slider, EINA_TRUE);
+   get_me_to_those_events(slider);
+
+   efl_event_callback_add(slider, EFL_UI_RANGE_EVENT_CHANGED,
+                          _range_changed_count, &changes);
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 100));
+   evas_object_geometry_get(elm_object_part_content_get(slider, "efl.bar"),
+                            &x, &y, &w, &h);
+   evas_event_feed_mouse_in(e, 0, NULL);
+   evas_event_feed_mouse_move(e, x + (w / 5), y + (h / 2), 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   changes = 0;
+   evas_event_feed_mouse_move(e, x + (w / 10), y + (h / 2), 0, NULL);
+   efl_layout_signal_process(slider, EINA_TRUE);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   ck_assert_uint_eq(changes, 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_slider(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_slider_events);
@@ -183,4 +228,5 @@ void efl_ui_test_slider(TCase *tc)
    tcase_add_test(tc, efl_ui_test_slider_step_drag);
    tcase_add_test(tc, efl_ui_test_slider_interval_pair);
    tcase_add_test(tc, efl_ui_test_slider_interval_limits);
+   tcase_add_test(tc, efl_ui_test_slider_interval_drag_reports_once);
 }

@@ -98,6 +98,7 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
 {
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
    double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
+   Eina_Bool changed = EINA_FALSE;
 
    EFL_UI_SLIDER_INTERVAL_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -130,25 +131,22 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
      {
         sd->val = val;
         sd->intvl_from = val;
-        if (user_event)
-          {
-             efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
-             efl_event_callback_legacy_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
-             ecore_timer_del(sd->delay);
-             sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
-          }
+        changed = EINA_TRUE;
      }
 
    if (fabs(val2 - sd->intvl_to) > DBL_EPSILON)
      {
         sd->intvl_to = val2;
-        if (user_event)
-          {
-             efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
-             efl_event_callback_legacy_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
-             ecore_timer_del(sd->delay);
-             sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
-          }
+        changed = EINA_TRUE;
+     }
+
+   if (changed && user_event)
+     {
+        // The legacy call reaches the Eo callbacks as well: calling both
+        // would report every change twice.
+        efl_event_callback_legacy_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+        ecore_timer_del(sd->delay);
+        sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
      }
 }
 
