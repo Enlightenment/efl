@@ -41,6 +41,20 @@ test('evas-suite', evas_suite,
   timeout : master_timeout
 )
 
+# The stable Efl.Canvas.Object_Animation mixin must be reachable from
+# <Efl_Canvas.h> without the beta macro, which the project adds to every
+# target.
+evas_stable_headers = executable('evas_stable_headers',
+  'evas_test_stable_headers.c',
+  dependencies: [evas],
+  c_args : ['-UEFL_BETA_API_SUPPORT']
+)
+
+test('evas-stable-headers', evas_stable_headers,
+  env : test_env,
+  timeout : master_timeout
+)
+
 # Compares every C/NEON pair in the evas span and point op tables. It includes
 # the op translation units directly rather than linking them, because the copy
 # tables are static; that keeps the library itself untouched. Skips (exit 77)
