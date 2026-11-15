@@ -319,6 +319,57 @@ EFL_START_TEST(efl_ui_layout_test_signal_callback_object)
 }
 EFL_END_TEST
 
+static void
+_orient_signal_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission,
+                  const char *source EINA_UNUSED)
+{
+   Eina_Stringshare **last = data;
+
+   eina_stringshare_replace(last, emission);
+}
+
+/* A layout that follows the window's rotation tells its theme each new angle;
+ * one that does not, does not. Turning the flag off tells it nothing. */
+EFL_START_TEST(efl_ui_layout_test_theme_rotation)
+{
+   Evas_Object *win;
+   Eina_Stringshare *last = NULL, *ignored = NULL;
+   Eo *follows, *ignores, *box;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   box = efl_add(EFL_UI_BOX_CLASS, win);
+   efl_content_set(win, box);
+   follows = efl_add(EFL_UI_BUTTON_CLASS, box,
+                     efl_ui_layout_automatic_theme_rotation_set(efl_added, EINA_TRUE),
+                     efl_pack_end(box, efl_added));
+   ignores = efl_add(EFL_UI_BUTTON_CLASS, box,
+                     efl_pack_end(box, efl_added));
+   ck_assert_int_eq(efl_ui_layout_automatic_theme_rotation_get(follows), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_layout_automatic_theme_rotation_get(ignores), EINA_FALSE);
+
+   efl_layout_signal_callback_add(follows, "efl,state,orient,*", "efl", &last,
+                                  _orient_signal_cb, NULL);
+   efl_ui_win_rotation_set(win, 90);
+   ecore_main_loop_iterate();
+   ck_assert_ptr_ne(last, NULL);
+   ck_assert_str_eq(last, "efl,state,orient,90");
+
+   efl_layout_signal_callback_add(ignores, "efl,state,orient,*", "efl", &ignored,
+                                  _orient_signal_cb, NULL);
+   efl_ui_win_rotation_set(win, 180);
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(last, "efl,state,orient,180");
+   ck_assert_ptr_eq(ignored, NULL);
+
+   /* turning it off does not send the rotation, as turning it on does */
+   eina_stringshare_del(last);
+   last = NULL;
+   efl_ui_layout_automatic_theme_rotation_set(follows, EINA_FALSE);
+   ecore_main_loop_iterate();
+   ck_assert_ptr_eq(last, NULL);
+}
+EFL_END_TEST
+
 EFL_START_TEST(efl_ui_layout_test_versioning)
 {
    Evas_Object *win;
@@ -819,6 +870,7 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_property_bind_provider);
    tcase_add_test(tc, efl_ui_layout_test_signal_callback_object);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_alone);
+   tcase_add_test(tc, efl_ui_layout_test_theme_rotation);
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
    tcase_add_test(tc, efl_ui_layout_test_factory_bind_same_factory);

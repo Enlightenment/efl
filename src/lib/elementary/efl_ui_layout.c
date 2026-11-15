@@ -3292,10 +3292,12 @@ _efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
 EOLIAN static void
 _efl_ui_layout_base_automatic_theme_rotation_set(Eo *obj, Efl_Ui_Layout_Data *pd, Eina_Bool automatic)
 {
+   automatic = !!automatic;
    if (pd->automatic_orientation_apply == automatic) return;
    pd->automatic_orientation_apply = automatic;
 
-   efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(elm_widget_top_get(obj)));
+   if (automatic)
+     efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(elm_widget_top_get(obj)));
 }
 
 EOLIAN static Eina_Bool
