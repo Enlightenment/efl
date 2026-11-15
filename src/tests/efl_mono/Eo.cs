@@ -583,6 +583,18 @@ class TestConstructors
         Test.Assert(!obj.IfaceWasSet);
         obj.Dispose();
     }
+
+#if EFL_BETA
+    public static void test_set_only_constructor_properties()
+    {
+        var simple = new Dummy.StructSimple(fint: 7);
+        var obj = new Dummy.Child(null, "LFE", 3.14, 1337,
+                                  kw_interface: 5, simpleStruct: simple);
+        Test.AssertEquals(5, obj.InterfaceValue);
+        Test.AssertEquals(7, obj.SimpleStructFint);
+        obj.Dispose();
+    }
+#endif
 }
 
 class TestInterfaceConcrete

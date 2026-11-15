@@ -20,6 +20,8 @@ typedef struct Dummy_Child_Data
   int iface_prop;
   const char* a;
   double b;
+  int interface_value;
+  int simple_struct_fint;
   Eina_Bool iface_was_set;
   Eina_Bool obligatory_beta_ctor_was_called;
   Eina_Bool optional_beta_ctor_was_called;
@@ -83,6 +85,26 @@ Eina_Bool _dummy_child_obligatory_beta_ctor_was_called_get(EINA_UNUSED const Eo*
 Eina_Bool _dummy_child_optional_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
 {
     return pd->optional_beta_ctor_was_called;
+}
+
+void _dummy_child_interface_set(EINA_UNUSED Eo *obj, Dummy_Child_Data *pd, int value)
+{
+    pd->interface_value = value;
+}
+
+void _dummy_child_simple_struct_set(EINA_UNUSED Eo *obj, Dummy_Child_Data *pd, Dummy_StructSimple *value)
+{
+    pd->simple_struct_fint = value->fint;
+}
+
+int _dummy_child_interface_value_get(EINA_UNUSED const Eo *obj, Dummy_Child_Data *pd)
+{
+    return pd->interface_value;
+}
+
+int _dummy_child_simple_struct_fint_get(EINA_UNUSED const Eo *obj, Dummy_Child_Data *pd)
+{
+    return pd->simple_struct_fint;
 }
 
 EOLIAN static void

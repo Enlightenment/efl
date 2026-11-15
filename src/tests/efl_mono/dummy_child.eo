@@ -46,12 +46,46 @@ class Dummy.Child extends Dummy.Test_Object {
           data: bool;
         }
       }
+
+      @property interface {
+        [[A set-only constructor property named after a C# keyword. @since 1.66]]
+        set {}
+        values {
+          value: int;
+        }
+      }
+
+      @property simple_struct @beta {
+        [[A set-only constructor property taking a struct by pointer. @since 1.66]]
+        set {}
+        values {
+          value: ptr(Dummy.StructSimple);
+        }
+      }
+
+      @property interface_value {
+        [[What the interface constructor property was set to. @since 1.66]]
+        get {}
+        values {
+          value: int;
+        }
+      }
+
+      @property simple_struct_fint {
+        [[The fint field of what simple_struct was set to. @since 1.66]]
+        get {}
+        values {
+          value: int;
+        }
+      }
    }
    constructors {
       Dummy.Test_Iface.iface_prop @optional;
       .double_params;
       .obligatory_beta_ctor;
       .optional_beta_ctor @optional;
+      .interface @optional;
+      .simple_struct @optional;
    }
    implements {
       Dummy.Test_Iface.iface_prop { get; set; }

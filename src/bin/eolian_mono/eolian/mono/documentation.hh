@@ -231,7 +231,9 @@ struct documentation_generator
 
         auto my_context = grammar::context_replace_tag(class_context{klass_kind}, context);
 
-        auto function = eolian_class_function_by_name_get (klass, prop_name.c_str(), EOLIAN_PROPERTY);
+        // EOLIAN_PROPERTY only matches a property with both a getter and a
+        // setter, and a constructor may name a set-only one.
+        auto function = eolian_class_function_by_name_get (klass, prop_name.c_str(), EOLIAN_UNRESOLVED);
         attributes::function_def getter_func{function, ::EOLIAN_PROP_GET, nullptr, unit};
         attributes::function_def setter_func{function, ::EOLIAN_PROP_SET, nullptr, unit};
         attributes::property_def prop{function, getter_func, setter_func, unit};

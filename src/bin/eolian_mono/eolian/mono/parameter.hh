@@ -1634,6 +1634,8 @@ struct constructor_parameter_name_generator
      auto name = name_helpers::managed_name(target_name);
      name[0] = std::tolower(name[0]);
 
+     name = name_helpers::escape_keyword(name);
+
      return as_generator(string).generate(sink, name, context);
    }
 
@@ -1676,23 +1678,58 @@ struct constructor_invocation_generator
   bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context const& context) const
   {
      auto params = ctor.function.parameters;
+
+     // Each name is used twice below, and its generator takes a parameter_def.
+     std::vector<std::string> names;
+     for (auto&& param : params)
+       {
+          std::string name;
+          if (!as_generator(constructor_parameter_name(ctor)).generate(std::back_inserter(name), param, context))
+            return false;
+          names.push_back(name);
+       }
+
      if (!as_generator(
                        scope_tab << "if (" <<
                        (efl::eolian::grammar::attribute_reorder<-1>
                         ("Efl.Eo.Globals.ParamHelperCheck(" << constructor_parameter_name(ctor) << ")") % " || ") << ")\n"
                        << scope_tab(2) << scope_tab << "{\n"
-                       << scope_tab(2) << scope_tab << scope_tab << name_helpers::managed_method_name(ctor.function) << "("
              ).generate(sink, params, context))
        return false;
 
-     size_t idx = 0;
-
-     for (auto&& param : params)
+     // A setter taking ptr(struct) is bound as 'ref', which needs an lvalue --
+     // GetParamHelper returns a value, so hold it in a local first.
+     std::vector<std::string> args;
+     for (size_t i = 0; i < params.size(); i++)
        {
-          idx++;
-          if (!as_generator(
-              "Efl.Eo.Globals.GetParamHelper(" << constructor_parameter_name(ctor) << ")" << ((idx < params.size()) ? ", " : "")
-              ).generate(sink, param, context))
+          auto&& param = params[i];
+          std::string fetch = "Efl.Eo.Globals.GetParamHelper(" + names[i] + ")";
+          std::string modifier = direction_modifier(param);
+
+          if (modifier.empty())
+            {
+               args.push_back(fetch);
+            }
+          else
+            {
+               std::string tmp = "_ctor_" + names[i];
+               if (!as_generator(
+                     scope_tab(2) << scope_tab << scope_tab << "var " << string << " = " << string << ";\n"
+                   ).generate(sink, std::make_tuple(tmp, fetch), context))
+                 return false;
+               args.push_back(modifier + tmp);
+            }
+       }
+
+     if (!as_generator(
+               scope_tab(2) << scope_tab << scope_tab << string << "("
+         ).generate(sink, name_helpers::managed_method_name(ctor.function), context))
+       return false;
+
+     for (size_t i = 0; i < args.size(); i++)
+       {
+          std::string arg = args[i] + ((i + 1 < args.size()) ? ", " : "");
+          if (!as_generator(string).generate(sink, arg, context))
             return false;
        }
 
