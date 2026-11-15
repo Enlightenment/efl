@@ -21,6 +21,8 @@
 #include <Eo.hh>
 
 #include <algorithm>
+#include <string>
+#include <vector>
 
 #include "eina_cxx_suite.h"
 #include "eina_simple.eo.hh"
@@ -130,9 +132,32 @@ EFL_START_TEST(eina_cxx_iterator_assign)
 }
 EFL_END_TEST
 
+/* A native string iterator gives out const char*, which a string_view is not:
+ * reading them as string_view objects would read past each string. */
+EFL_START_TEST(eina_cxx_string_iterator)
+{
+  efl::eina::eina_init init;
+
+  const char* strings[] = { "a", "bb", "ccc" };
+  Eina_List* list = nullptr;
+  for (const char*& s : strings)
+    list = eina_list_append(list, s);
+
+  {
+    efl::eina::iterator<efl::eina::string_view> it(eina_list_iterator_new(list));
+    std::vector<std::string> got;
+    for (; it != efl::eina::iterator<efl::eina::string_view>(); ++it)
+      got.push_back(std::string(it->data(), it->size()));
+    ck_assert(got == (std::vector<std::string>{"a", "bb", "ccc"}));
+  }
+  eina_list_free(list);
+}
+EFL_END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
+  tcase_add_test(tc, eina_cxx_string_iterator);
   tcase_add_test(tc, eina_cxx_iterator_assign);
   tcase_add_test(tc, eina_cxx_iterator_equal);
   tcase_add_test(tc, eina_cxx_eo_iterator_equal);

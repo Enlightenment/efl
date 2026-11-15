@@ -19,6 +19,7 @@
 #include <Eina.h>
 
 #include <eina_eo_concrete_fwd.hh>
+#include <eina_string_view.hh>
 
 #include <cstdlib>
 #include <iterator>
@@ -449,6 +450,100 @@ public:
   Eina_Iterator* _lend_native_handle() const
   {
     return this->_lend_primed(const_cast<void*>(static_cast<const void*>(_value)));
+  }
+};
+
+/**
+ * An iterator over the @c const @c char* a native @c Eina_Iterator gives out.
+ *
+ * A @c string_view is a pointer and a length: reading the elements of a
+ * native string iterator as if they were @c string_view objects would read
+ * past each string. This one reads the pointers and builds the views.
+ */
+template <>
+struct iterator<string_view, void>
+  : _common_iterator_base<string_view const>
+{
+private:
+  typedef _common_iterator_base<string_view const> base_type; /**< Type for the base class. */
+  typedef iterator<string_view> self_type; /**< Type for the iterator itself. */
+  const char* _value; /**< @internal The string currently pointed to. */
+  string_view _view; /**< @internal The view on @c _value. */
+public:
+  typedef base_type::value_type value_type; /**< Type for elements returned by the iterator. */
+  typedef base_type::pointer pointer; /**< Type for a pointer to an element. */
+  typedef base_type::reference reference; /**< Type for a reference to an element. */
+  typedef base_type::difference_type difference_type; /**< Type to represent the distance between two iterators. */
+  typedef base_type::iterator_category iterator_category; /**< Defines the iterator category as the same of the base class. */
+
+  /**
+   * @brief Creates a iterator wrapping the given native @c Eina_Iterator handle.
+   *
+   * The native iterator gives out @c const @c char* and the iterator owns it.
+   */
+  explicit iterator(Eina_Iterator* iterator_ = 0)
+    : base_type(iterator_)
+    , _value(nullptr)
+  {
+    if(this->_iterator)
+      ++*this;
+  }
+
+  /**
+   * @brief Move the iterator to the next position.
+   * @return The iterator itself.
+   */
+  self_type& operator++()
+  {
+    void* data = nullptr;
+    Eina_Bool r = ::eina_iterator_next(this->_iterator, &data);
+    if(!r)
+      {
+         ::eina_iterator_free(this->_iterator);
+         this->_iterator = 0;
+         data = nullptr;
+      }
+    _value = static_cast<const char*>(data);
+    _view = _value ? string_view(_value) : string_view();
+    return *this;
+  }
+
+  /**
+   * @brief Move the iterator to the next position.
+   * @return The iterator itself.
+   */
+  self_type& operator++(int)
+  {
+    return ++*this;
+  }
+
+  /**
+   * @brief Get a reference to the string currently pointed by the iterator.
+   * @return A view on the current string, valid until the iterator moves on.
+   */
+  value_type& operator*() const
+  {
+    return _view;
+  }
+
+  /**
+   * @brief Return a pointer to the current string view.
+   */
+  pointer operator->() const
+  {
+    return &_view;
+  }
+
+  /**
+   * @internal
+   * Lend the iterator to native code that reads it without freeing it, for
+   * the generated conversions: not part of the API.
+   * @return A native @c Eina_Iterator that goes on from the string this
+   * iterator points to; @c NULL when there is nothing left.
+   */
+  Eina_Iterator* _lend_native_handle() const
+  {
+    return this->_lend_primed(const_cast<char*>(_value));
   }
 };
 
