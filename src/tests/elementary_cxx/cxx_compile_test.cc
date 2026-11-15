@@ -23,3 +23,10 @@
 
 #include <iostream>
 
+/* Efl_Ui.hh alone carries what converting a widget to a canvas object needs. */
+efl::canvas::Object
+widget_as_canvas_object(efl::ui::Button const& button)
+{
+   return button;
+}
+

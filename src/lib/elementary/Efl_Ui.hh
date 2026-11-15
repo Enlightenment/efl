@@ -12,6 +12,8 @@
 #endif
 
 #include <Efl.hh>
+/* Before the C headers below: Evas.hh refuses to follow its own. */
+#include <Evas.hh>
 
 extern "C" {
 // Some Elm_* classes are built and require the old header.
