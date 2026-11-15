@@ -833,6 +833,14 @@ collections {
          }
       }
    }
+   group { "table_layout";
+      parts {
+         table { "table";
+            desc { "default";
+            }
+         }
+      }
+   }
    group { name: "bind_parts_layout";
       parts {
          part { name: "t1";

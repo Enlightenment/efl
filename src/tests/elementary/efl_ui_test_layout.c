@@ -574,6 +574,32 @@ EFL_START_TEST(efl_ui_layout_test_factory_bind_same_factory)
 }
 EFL_END_TEST
 
+/* The table part of a layout answers for the children packed in it. */
+EFL_START_TEST(efl_ui_layout_test_table_part_getters)
+{
+   char buf[PATH_MAX];
+   Eo *win, *ly, *a;
+   int c, cs, r, rs;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "table_layout"));
+
+   a = efl_add(EFL_UI_BUTTON_CLASS, win);
+   ck_assert(efl_pack_table(efl_part(ly, "table"), a, 3, 2, 2, 1));
+
+   ck_assert_int_eq(efl_content_count(efl_part(ly, "table")), 1);
+   ck_assert_ptr_eq(efl_pack_table_content_get(efl_part(ly, "table"), 3, 2), a);
+   ck_assert(efl_pack_table_cell_column_get(efl_part(ly, "table"), a, &c, &cs));
+   ck_assert(efl_pack_table_cell_row_get(efl_part(ly, "table"), a, &r, &rs));
+   ck_assert_int_eq(c, 3);
+   ck_assert_int_eq(cs, 2);
+   ck_assert_int_eq(r, 2);
+   ck_assert_int_eq(rs, 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -595,4 +621,5 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
    tcase_add_test(tc, efl_ui_layout_test_factory_bind_same_factory);
+   tcase_add_test(tc, efl_ui_layout_test_table_part_getters);
 }

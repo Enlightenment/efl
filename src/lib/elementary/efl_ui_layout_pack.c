@@ -214,6 +214,20 @@ _efl_ui_layout_part_box_efl_ui_layout_orientable_orientation_get(const Eo *obj E
 
 /* Table proxy implementation */
 
+// The evas table behind a table part. The layout widget is not the edje: the
+// edje is its resize object, and asking the widget gives nothing.
+static Eo *
+_table_real(Efl_Ui_Layout_Table_Data *pd)
+{
+   Eo *pack;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd, NULL);
+   edje_object_freeze(wd->resize_obj);
+   pack = (Eo *) edje_object_part_object_get(wd->resize_obj, pd->part);
+   edje_object_thaw(wd->resize_obj);
+   return pack;
+}
+
 EOLIAN static void
 _efl_ui_layout_part_table_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)
 {
@@ -228,9 +242,7 @@ _efl_ui_layout_part_table_efl_container_content_iterate(Eo *obj, Efl_Ui_Layout_T
 {
    Eina_Iterator *it;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
 
    it = evas_object_table_iterator_new(pack);
 
@@ -240,9 +252,7 @@ _efl_ui_layout_part_table_efl_container_content_iterate(Eo *obj, Efl_Ui_Layout_T
 EOLIAN static int
 _efl_ui_layout_part_table_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd)
 {
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
    return evas_obj_table_count(pack);
 }
 
@@ -274,7 +284,7 @@ _efl_ui_layout_part_table_efl_pack_pack(Eo *obj, Efl_Ui_Layout_Table_Data *pd, E
    Eina_Iterator *iter;
    Eo *pack, *element;
 
-   pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   pack = _table_real(pd);
 
 
    //first lookup what the most lower / right element is
@@ -316,9 +326,7 @@ _efl_ui_layout_part_table_efl_pack_table_pack_table(Eo *obj EINA_UNUSED, Efl_Ui_
 EOLIAN static Efl_Gfx_Entity *
 _efl_ui_layout_part_table_efl_pack_table_table_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int col, int row)
 {
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
    return evas_object_table_child_get(pack, col, row);
 }
 
@@ -332,9 +340,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED,
    Evas_Object *sobj;
    unsigned short c, r, cs, rs;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
 
    list = evas_object_table_children_get(pack);
    EINA_LIST_FREE(list, sobj)
@@ -360,9 +366,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_column_get(const Eo *obj EIN
    unsigned short c, cs;
    Eina_Bool ret;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
 
    ret = evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
    if (col) *col = c;
@@ -376,9 +380,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_column_set(Eo *obj EINA_UNUS
 {
    unsigned short r, rs;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
 
    evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
    evas_object_table_pack(pack, subobj, col, r, colspan, rs);
@@ -390,9 +392,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_row_get(const Eo *obj EINA_U
    unsigned short r, rs;
    Eina_Bool ret;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
 
    ret = evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
    if (row) *row = r;
@@ -406,9 +406,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_row_set(Eo *obj EINA_UNUSED,
 {
    unsigned short c, cs;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
 
    evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
    evas_object_table_pack(pack, subobj, c, row, cs, rowspan);
@@ -417,9 +415,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_row_set(Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_ui_layout_part_table_efl_pack_table_table_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, int *cols, int *rows)
 {
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
    evas_object_table_col_row_size_get(pack, cols, rows);
 }
 
@@ -428,9 +424,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_columns_get(const Eo *obj EINA_UN
 {
    int cols, rows;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
    evas_object_table_col_row_size_get(pack, &cols, &rows);
    return cols;
 }
@@ -440,9 +434,7 @@ _efl_ui_layout_part_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSE
 {
    int cols, rows;
 
-   edje_object_freeze(pd->obj);
-   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
-   edje_object_thaw(pd->obj);
+   Eo *pack = _table_real(pd);
    evas_object_table_col_row_size_get(pack, &cols, &rows);
    return rows;
 }
