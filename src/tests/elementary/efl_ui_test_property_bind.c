@@ -684,6 +684,30 @@ EFL_START_TEST(rebinding_a_layout_part_replaces_the_binding)
 }
 EFL_END_TEST
 
+// A part bound to no property is not bound any more: it keeps what it shows
+// and stops following the model.
+EFL_START_TEST(rebinding_a_layout_part_to_nothing_unbinds_it)
+{
+   Eo *win = _window();
+   Eo *model = _model_new("title", eina_value_string_new("T"));
+   Eo *ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "bind_parts_layout"));
+   ck_assert_int_eq(efl_ui_property_bind(ly, "t1", "title"), 0);
+   efl_ui_view_model_set(ly, model);
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(efl_part(ly, "t1")), "T");
+
+   ck_assert_int_eq(efl_ui_property_bind(ly, "t1", NULL), 0);
+   _model_set(model, "title", eina_value_string_new("T2"));
+   ecore_main_loop_iterate();
+   ck_assert_str_eq(efl_text_get(efl_part(ly, "t1")), "T");
+   efl_unref(model);
+}
+EFL_END_TEST
+
 // Several parts bound to one property: rebinding one of them takes only that
 // one away from the property, the others keep following it. Each part takes
 // its turn, as the order the stale entries are found in is not defined.
@@ -767,6 +791,7 @@ efl_ui_test_property_bind(TCase *tc)
    tcase_add_test(tc, rebinding_a_layout_part_replaces_the_binding);
    tcase_add_test(tc, rebinding_one_of_several_parts_keeps_the_others);
    tcase_add_test(tc, binding_to_no_property_unbinds);
+   tcase_add_test(tc, rebinding_a_layout_part_to_nothing_unbinds_it);
    tcase_add_test(tc, textbox_model_change_does_not_loop);
    tcase_add_test(tc, textbox_typing_in_the_middle_keeps_the_cursor);
    tcase_add_test(tc, textbox_typing_at_the_start_keeps_the_cursor);

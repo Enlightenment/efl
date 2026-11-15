@@ -2836,7 +2836,8 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
 
    if (!sprop)
      {
-        // FIXME: remove the entry from the hash ?
+        // A $null property takes the binding of this key away. It keeps what it shows.
+        if (data) _efl_ui_layout_unbind_part(hashp, NULL, data);
      }
    else if (_efl_ui_layout_connected(hash, sprop, data))
      {
@@ -2853,7 +2854,7 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
 
    // Update display right away if possible
    model = efl_ui_view_model_get(obj);
-   if (model)
+   if (model && sprop)
      {
         if (hash == pd->connect.signals)
           _efl_ui_layout_view_model_signal_update(pd, data, sprop);
