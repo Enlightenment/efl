@@ -498,10 +498,25 @@ EFL_START_TEST(evas_filter_state_test)
 }
 EFL_END_TEST
 
+EFL_START_TEST(evas_filter_parser_missing_lua_classes)
+{
+   Evas_Filter_Program *pgm;
+
+   setenv("EFL_EVAS_FILTER_LUA_PREFIX", TESTS_BUILD_DIR "/no-such-dir", 1);
+
+   pgm = evas_filter_program_new("evas_suite", EINA_TRUE);
+   ck_assert(!evas_filter_program_parse(pgm, "blend()"));
+   evas_filter_program_del(pgm);
+
+   unsetenv("EFL_EVAS_FILTER_LUA_PREFIX");
+}
+EFL_END_TEST
+
 void evas_test_filters(TCase *tc)
 {
    tcase_add_test(tc, evas_filter_parser);
    tcase_add_test(tc, evas_filter_text_padding_test);
    tcase_add_test(tc, evas_filter_text_render_test);
    tcase_add_test(tc, evas_filter_state_test);
+   tcase_add_test(tc, evas_filter_parser_missing_lua_classes);
 }

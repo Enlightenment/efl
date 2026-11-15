@@ -2568,7 +2568,12 @@ _lua_state_create(Evas_Filter_Program *pgm)
 
    // Load color class
    if (!_lua_import_class(L, _lua_color_meta, &_lua_color_code))
-     ERR("Could not load color class!");
+     {
+        ERR("Could not load color class!");
+        lua_close(L);
+        pgm->L = NULL;
+        return NULL;
+     }
 
    return L;
 }
