@@ -1808,6 +1808,8 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
    if (manager)
      EINA_SAFETY_ON_FALSE_RETURN(efl_isa(manager, EFL_UI_POSITION_MANAGER_ENTITY_INTERFACE));
 
+   if (manager && (manager == pd->manager)) return;
+
    if (pd->manager)
      {
         efl_event_callback_array_del(pd->manager, manager_cbs(), obj);

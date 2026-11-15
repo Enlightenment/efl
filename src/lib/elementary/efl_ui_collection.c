@@ -956,6 +956,8 @@ _efl_ui_collection_position_manager_set(Eo *obj, Efl_Ui_Collection_Data *pd, Efl
    if (layouter)
      EINA_SAFETY_ON_FALSE_RETURN(efl_isa(layouter, EFL_UI_POSITION_MANAGER_ENTITY_INTERFACE));
 
+   if (layouter && (layouter == pd->pos_man)) return;
+
    if (pd->pos_man)
      {
         efl_event_callback_array_del(pd->pos_man, pos_manager_cbs(), obj);

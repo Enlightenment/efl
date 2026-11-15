@@ -46,9 +46,28 @@ EFL_START_TEST(finalizer_check)
 }
 EFL_END_TEST
 
+// A manager set again stays: it is not the one that is replaced.
+EFL_START_TEST(efl_ui_collection_manager_twice)
+{
+   Eo *grid = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+   Eo *c = efl_add(EFL_UI_COLLECTION_CLASS, win,
+                   efl_ui_collection_position_manager_set(efl_added, grid));
+
+   ck_assert_ptr_ne(c, NULL);
+   efl_ref(grid);
+   efl_ui_collection_position_manager_set(c, grid);
+   ck_assert(!efl_invalidated_get(grid));
+   ck_assert_ptr_eq(efl_ui_collection_position_manager_get(c), grid);
+   efl_del(c);
+   ck_assert(efl_invalidated_get(grid));
+   efl_unref(grid);
+}
+EFL_END_TEST
+
 void efl_ui_test_item_container(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
    tcase_add_checked_fixture(tc, item_container_setup, item_container_teardown);
    tcase_add_test(tc, finalizer_check);
+   tcase_add_test(tc, efl_ui_collection_manager_twice);
 }

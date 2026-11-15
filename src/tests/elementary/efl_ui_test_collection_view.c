@@ -192,9 +192,28 @@ EFL_START_TEST(test_efl_ui_collection_view_sizes_agree)
 }
 EFL_END_TEST
 
+// A manager set again stays: it is not the one that is replaced.
+EFL_START_TEST(efl_ui_collection_view_manager_twice)
+{
+   Efl_Ui_Win *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *cv = efl_add(EFL_UI_COLLECTION_VIEW_CLASS, win);
+   Eo *grid = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+
+   efl_ref(grid);
+   efl_ui_collection_view_position_manager_set(cv, grid);
+   efl_ui_collection_view_position_manager_set(cv, grid);
+   ck_assert(!efl_invalidated_get(grid));
+   ck_assert_ptr_eq(efl_ui_collection_view_position_manager_get(cv), grid);
+   efl_del(cv);
+   ck_assert(efl_invalidated_get(grid));
+   efl_unref(grid);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
+   tcase_add_test(tc, efl_ui_collection_view_manager_twice);
    tcase_add_test(tc, test_efl_ui_collection_view_select);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
 }
