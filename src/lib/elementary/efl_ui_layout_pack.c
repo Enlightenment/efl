@@ -309,49 +309,58 @@ _efl_ui_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Tab
 
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_pack_pack(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj)
+_efl_ui_layout_part_table_efl_pack_pack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
-   int last_col = 0, last_row = 0;
-   int req_cols, req_rows;
+   int last_col = -1, last_row = -1;
    Eina_Iterator *iter;
    Eo *pack, *element;
 
+   // As Efl.Ui.Table does, with no column limit: after the last cell covered
+   // in the last row covered, an empty table starts at 0,0.
    pack = _pack_real(pd);
-
-
-   //first lookup what the most lower / right element is
    iter = evas_object_table_iterator_new(pack);
    EINA_ITERATOR_FOREACH(iter, element)
      {
-        unsigned short item_col, item_row;
+        unsigned short item_col, item_row, item_colspan, item_rowspan;
+        int end_col, end_row;
 
-        evas_object_table_pack_get(pack, element, &item_col, &item_row, NULL, NULL);
-        if (item_row > last_row ||
-            (item_row == last_row && item_col > last_col))
+        evas_object_table_pack_get(pack, element, &item_col, &item_row,
+                                   &item_colspan, &item_rowspan);
+        end_col = item_col + item_colspan - 1;
+        end_row = item_row + item_rowspan - 1;
+        if ((end_row > last_row) ||
+            ((end_row == last_row) && (end_col > last_col)))
           {
-             last_col = item_col;
-             last_row = item_row;
+             last_col = end_col;
+             last_row = end_row;
           }
      }
    eina_iterator_free(iter);
 
-   //now add the new element right to it, or do a linebreak and place
-   //that element in the next column on the first element
-   evas_object_table_col_row_size_get(pack, &req_cols, &req_rows);
-   last_col ++;
-   if (last_col > req_cols)
-     {
-        last_row ++;
-        last_col = 0;
-     }
+   last_col++;
+   if (last_row < 0) last_row = 0;
 
-   return _efl_ui_layout_table_pack(obj, pd->sd, pd->part, subobj, last_col, last_row, 1, 1);
+   return _efl_ui_layout_table_pack(pd->obj, pd->sd, pd->part, subobj, last_col, last_row, 1, 1);
 }
 
+
+// The limits of Efl.Ui.Table: no negative cell, spans of one at least, and
+// nothing past what the evas table can hold.
+static void
+_table_cell_clamp(int *col, int *colspan)
+{
+   if (*col < 0) *col = 0;
+   if (*col > USHRT_MAX) *col = USHRT_MAX;
+   if (*colspan < 1) *colspan = 1;
+   if (*col + *colspan > USHRT_MAX) *colspan = USHRT_MAX - *col;
+   if (*colspan < 1) *colspan = 1;
+}
 
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_table_efl_pack_table_pack_table(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj, int col, int row, int colspan, int rowspan)
 {
+   _table_cell_clamp(&col, &colspan);
+   _table_cell_clamp(&row, &rowspan);
    return _efl_ui_layout_table_pack(pd->obj, pd->sd, pd->part, subobj, col, row, colspan, rowspan);
 }
 
@@ -407,6 +416,12 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_column_get(const Eo *obj EIN
    return ret;
 }
 
+static Eina_Bool
+_table_child_is_mine(Eo *pack, Efl_Gfx_Entity *subobj)
+{
+   return pack && subobj && (evas_object_smart_parent_get(subobj) == pack);
+}
+
 EOLIAN static void
 _efl_ui_layout_part_table_efl_pack_table_table_cell_column_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int col, int colspan)
 {
@@ -414,7 +429,9 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_column_set(Eo *obj EINA_UNUS
 
    Eo *pack = _pack_real(pd);
 
-   evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
+   if (!_table_child_is_mine(pack, subobj)) return;
+   if (!evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs)) return;
+   _table_cell_clamp(&col, &colspan);
    evas_object_table_pack(pack, subobj, col, r, colspan, rs);
 }
 
@@ -440,7 +457,9 @@ _efl_ui_layout_part_table_efl_pack_table_table_cell_row_set(Eo *obj EINA_UNUSED,
 
    Eo *pack = _pack_real(pd);
 
-   evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
+   if (!_table_child_is_mine(pack, subobj)) return;
+   if (!evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL)) return;
+   _table_cell_clamp(&row, &rowspan);
    evas_object_table_pack(pack, subobj, c, row, cs, rowspan);
 }
 

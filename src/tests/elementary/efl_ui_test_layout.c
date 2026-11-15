@@ -886,6 +886,53 @@ EFL_START_TEST(efl_ui_layout_test_navigation_bar_side_content)
 }
 EFL_END_TEST
 
+/* The fill order of a table part is Efl.Ui.Table's: after the last cell
+ * covered, and an empty table starts at 0,0. The cell setters only act on
+ * children of the part, and a pack_table with a negative cell is clamped. */
+EFL_START_TEST(efl_ui_layout_test_table_part_fill_order)
+{
+   char buf[PATH_MAX];
+   Eo *win, *ly, *a, *b, *c, *foreign;
+   int col, row;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "table_layout"));
+
+   a = efl_add(EFL_UI_BUTTON_CLASS, win);
+   b = efl_add(EFL_UI_BUTTON_CLASS, win);
+   c = efl_add(EFL_UI_BUTTON_CLASS, win);
+   foreign = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+   /* an empty table starts at 0,0 */
+   ck_assert(efl_pack(efl_part(ly, "table"), a));
+   ck_assert(efl_pack_table_cell_column_get(efl_part(ly, "table"), a, &col, NULL));
+   ck_assert(efl_pack_table_cell_row_get(efl_part(ly, "table"), a, &row, NULL));
+   ck_assert_int_eq(col, 0);
+   ck_assert_int_eq(row, 0);
+
+   /* the next one goes after the last cell covered, spans included */
+   ck_assert(efl_pack_table(efl_part(ly, "table"), b, 1, 0, 3, 1));
+   ck_assert(efl_pack(efl_part(ly, "table"), c));
+   ck_assert(efl_pack_table_cell_column_get(efl_part(ly, "table"), c, &col, NULL));
+   ck_assert(efl_pack_table_cell_row_get(efl_part(ly, "table"), c, &row, NULL));
+   ck_assert_int_eq(col, 4);
+   ck_assert_int_eq(row, 0);
+
+   /* a child that is not the part's has no cell to change here */
+   efl_pack_table_cell_column_set(efl_part(ly, "table"), foreign, 2, 1);
+   ck_assert_ptr_eq(efl_pack_table_content_get(efl_part(ly, "table"), 1, 0), b);
+   ck_assert_int_eq(efl_content_count(efl_part(ly, "table")), 3);
+
+   /* a negative cell is clamped, as Efl.Ui.Table does */
+   ck_assert(efl_pack_unpack(efl_part(ly, "table"), c));
+   ck_assert(efl_pack_table(efl_part(ly, "table"), c, -3, -1, 0, 0));
+   ck_assert(efl_pack_table_cell_column_get(efl_part(ly, "table"), c, &col, NULL));
+   ck_assert_int_eq(col, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -913,5 +960,6 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_navigation_bar_side_content);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_unknown_key);
    tcase_add_test(tc, efl_ui_layout_test_table_part_getters);
+   tcase_add_test(tc, efl_ui_layout_test_table_part_fill_order);
    tcase_add_test(tc, efl_ui_layout_test_box_part);
 }
