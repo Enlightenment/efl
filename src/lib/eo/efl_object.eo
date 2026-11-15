@@ -267,18 +267,25 @@ abstract Efl.Object
            See the Life Cycle section in this class' description.]]
       }
       name_find @const @beta {
-         [[Find a child object with the given name and return it.
+         [[Find a descendant object by name and return it.
+
+           Every descendant is searched, not only the direct children: the
+           tree is walked depth-first, each child before its own children,
+           and the first match wins. The object itself is never matched.
 
            The search string can be a glob (shell style, using *). It can also
            specify class name in the format of "class:name" where ":"
            separates class and name. Both class and name can be globs.
            If the class is specified but the name is empty like "class:" then
            the search will match any object of that class.
+
+           Paths are not supported: a search string containing "/" finds
+           nothing, and neither does an empty one.
          ]]
          params {
             @in search: string; [[The name search string.]]
          }
-         return: Efl.Object; [[The first object found.]]
+         return: Efl.Object; [[The first object found, or $null.]]
       }
       event_thaw {
          [[Thaw events of object.
