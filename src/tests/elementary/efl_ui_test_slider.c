@@ -133,9 +133,54 @@ EFL_START_TEST(efl_ui_test_slider_step_drag)
 }
 EFL_END_TEST
 
+/* The pair is stored ordered and within the limits, and range_value is the
+ * first of the two. */
+EFL_START_TEST(efl_ui_test_slider_interval_pair)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *slider;
+   double from, to;
+
+   slider = efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, win,
+                    efl_ui_range_limits_set(efl_added, 0.0, 80.0));
+
+   /* given in the wrong order */
+   efl_ui_slider_interval_value_set(slider, 60.0, 20.0);
+   efl_ui_slider_interval_value_get(slider, &from, &to);
+   ck_assert(EINA_DBL_EQ(from, 20.0));
+   ck_assert(EINA_DBL_EQ(to, 60.0));
+   ck_assert(EINA_DBL_EQ(efl_ui_range_value_get(slider), 20.0));
+
+   /* outside the limits, both ends */
+   efl_ui_range_limits_set(slider, 10.0, 80.0);
+   efl_ui_slider_interval_value_set(slider, 95.0, 5.0);
+   efl_ui_slider_interval_value_get(slider, &from, &to);
+   ck_assert(EINA_DBL_EQ(from, 10.0));
+   ck_assert(EINA_DBL_EQ(to, 80.0));
+   ck_assert(EINA_DBL_EQ(efl_ui_range_value_get(slider), 10.0));
+}
+EFL_END_TEST
+
+/* Limits that leave out the pair pull it inside. */
+EFL_START_TEST(efl_ui_test_slider_interval_limits)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *slider;
+   double from, to;
+
+   slider = efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, win);
+   efl_ui_range_limits_set(slider, 10.0, 80.0);
+   efl_ui_slider_interval_value_get(slider, &from, &to);
+   ck_assert(EINA_DBL_EQ(from, 10.0));
+   ck_assert(EINA_DBL_EQ(to, 10.0));
+}
+EFL_END_TEST
+
 void efl_ui_test_slider(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_slider_events);
    tcase_add_test(tc, efl_ui_test_slider_step);
    tcase_add_test(tc, efl_ui_test_slider_step_drag);
+   tcase_add_test(tc, efl_ui_test_slider_interval_pair);
+   tcase_add_test(tc, efl_ui_test_slider_interval_limits);
 }

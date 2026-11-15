@@ -231,16 +231,16 @@ EOLIAN static void
 _efl_ui_slider_interval_interval_value_set(Eo *obj, Efl_Ui_Slider_Interval_Data *pd, double from, double to)
 {
    EFL_UI_SLIDER_INTERVAL_DATA_GET(obj, sd);
-   pd->intvl_from = from;
-   sd->val = from;
-   pd->intvl_to = to;
 
-   if (pd->intvl_from < sd->val_min) {
-        pd->intvl_from = sd->val_min;
-        sd->val = sd->val_min;
-   }
-   if (pd->intvl_to > sd->val_max) pd->intvl_to = sd->val_max;
+   /* The thumbs are drawn from these and range_value is the first of them. */
+   pd->intvl_from = fmin(from, to);
+   pd->intvl_to = fmax(from, to);
 
+   pd->intvl_from = fmin(fmax(pd->intvl_from, sd->val_min), sd->val_max);
+   pd->intvl_to = fmin(fmax(pd->intvl_to, sd->val_min), sd->val_max);
+   sd->val = pd->intvl_from;
+
+   _emit_events(obj, pd);
    _val_set(obj);
 }
 
@@ -795,8 +795,9 @@ _efl_ui_slider_interval_efl_ui_range_display_range_limits_set(Eo *obj, Efl_Ui_Sl
    if ((EINA_DBL_EQ(sd->val_min, min)) && (EINA_DBL_EQ(sd->val_max, max))) return;
    sd->val_min = min;
    sd->val_max = max;
-   if (sd->val < sd->val_min) sd->val = sd->val_min;
-   if (sd->val > sd->val_max) sd->val = sd->val_max;
+   sd->intvl_from = fmin(fmax(sd->intvl_from, min), max);
+   sd->intvl_to = fmin(fmax(sd->intvl_to, min), max);
+   sd->val = sd->intvl_from;
 
    _val_set(obj);
 }
