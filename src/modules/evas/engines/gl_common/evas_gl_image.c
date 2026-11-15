@@ -221,6 +221,15 @@ evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *
      }
     */
 
+   /* An output without a window has no context: before its surface
+    * exists, or after the surface went away. */
+   if (!gc)
+     {
+        evas_cache_image_drop(&(im_im->cache_entry));
+        if (error) *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        return NULL;
+     }
+
    if (error) *error = EVAS_LOAD_ERROR_NONE;
 
    // FIXME: keep unreffed shared images around
