@@ -227,14 +227,19 @@ struct function_definition_generator
                             });
     if (it != properties.end())
     {
+      // The property is the API: its accessor is hidden from users of the
+      // class, but a subclass overrides it, as the native wrapper calls the
+      // accessor and not the property.
+      std::string const accessor_scope = f.is_static ? "internal " : "protected ";
+
       if (it->getter && *it->getter == f)
       {
         if (property_generate_wrapper_getter (*it, context))
-          function_scope = "internal ";
+          function_scope = accessor_scope;
       }
       else
         if (property_generate_wrapper_setter (*it, context))
-          function_scope = "internal ";
+          function_scope = accessor_scope;
     }
 
     // Do not generate static function for concrete class

@@ -23,7 +23,9 @@ class PlusTenNumberWrapper : Example.Numberwrapper
 
     public bool derivedCalled = false;
 
-    override public void SetNumber(int n)
+    // The property's accessor, not the property: Number is a plain C# property
+    // that calls this, and this is what EFL calls too.
+    protected override void SetNumber(int n)
     {
         // Call native EFL method
         base.SetNumber(n + 10);
@@ -50,16 +52,16 @@ public class ExampleEoInherit01
         WriteLine($"Override successfully called? {inheritObj.derivedCalled}!\n");
 
         // Call C function from C# object
-        int stored = inheritObj.GetNumber();
+        int stored = inheritObj.Number;
 
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
 
         // Call C# override directly
         given = 333;
-        inheritObj.SetNumber(given);
+        inheritObj.Number = given;
 
-        stored = inheritObj.GetNumber();
+        stored = inheritObj.Number;
 
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");
@@ -69,8 +71,8 @@ public class ExampleEoInherit01
         // Check original EFL object
         var origObj = new Example.Numberwrapper();
         given = 111;
-        origObj.SetNumber(given);
-        stored = origObj.GetNumber();
+        origObj.Number = given;
+        stored = origObj.Number;
 
         WriteLine($"Given value: {given}");
         WriteLine($"Stored value: {stored}\n");

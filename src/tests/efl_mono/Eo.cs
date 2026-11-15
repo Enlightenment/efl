@@ -736,16 +736,18 @@ class TestProtectedInterfaceMembers
     {
         var type = typeof(Dummy.TestObject);
 
-        // Fully internal property
-        var internal_methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(m => m.IsAssembly);
-        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
-        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
+        // The accessor behind a property is protected, not internal: out of the
+        // public surface because the property is the API, still reachable by a
+        // class deriving from this one, which is what lets it be overridden.
+        var protected_methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(m => m.IsFamily);
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
 
         // Partially protected property
         var public_methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
         Test.AssertNull(public_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
-        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
-        Test.AssertNotNull(internal_methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
 
         var protected_properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
         var prop = protected_properties.SingleOrDefault(m => m.Name == "ProtectedProp");

@@ -97,18 +97,18 @@ class TestInheritance
     // through a different line of the generated wrapper.
     internal class InheritProperties : Dummy.TestObject
     {
-        internal override int GetIntProp()
+        protected override int GetIntProp()
         {
             return 42;
         }
 
-        internal override void GetMultiValuedProp(out int prop1, out int prop2)
+        protected override void GetMultiValuedProp(out int prop1, out int prop2)
         {
             prop1 = 7;
             prop2 = 9;
         }
 
-        internal override Eina.SuccessFlag GetReturnTypeGetProp(out int i)
+        protected override Eina.SuccessFlag GetReturnTypeGetProp(out int i)
         {
             i = 11;
             return (Eina.SuccessFlag)(char)1;
