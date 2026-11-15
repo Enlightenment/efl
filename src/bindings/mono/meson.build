@@ -214,9 +214,12 @@ if (get_option('dotnet'))
   message('Found dotnet core version ' + dotnet_version.stdout().strip())
 
   # The major version should be enough for now while we don't have to deal
-  # with minor differences and dotnet core is far from version 10
-  dotnet_major_version = dotnet_version.stdout().strip()[0].to_int()
-  if dotnet_major_version == 8
+  # with minor differences.
+  dotnet_major_version = dotnet_version.stdout().strip().split('.')[0].to_int()
+  if dotnet_major_version > 8
+    dotnet_core_app_version = '@0@.0'.format(dotnet_major_version)
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 8
     dotnet_core_app_version = '8.0'
     dotnet_standard_version = '2.1'
   elif dotnet_major_version == 7

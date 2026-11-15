@@ -20,8 +20,8 @@
   <!--   <DefineConstants>EFL_BETA</DefineConstants> -->
   <!-- </PropertyGroup> -->
   <PropertyGroup>
-    <DefineConstants>@EFL_BETA@</DefineConstants>
-    <DefineConstants>@EFL_WIN32@</DefineConstants>
+    <DefineConstants>$(DefineConstants);@EFL_BETA@</DefineConstants>
+    <DefineConstants>$(DefineConstants);@EFL_WIN32@</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
