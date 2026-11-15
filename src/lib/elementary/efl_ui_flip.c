@@ -2216,6 +2216,37 @@ _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subo
 }
 
 EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_unpack_all(Eo *obj, Efl_Ui_Flip_Data *pd)
+{
+   Efl_Gfx_Entity *subobj;
+
+   while (pd->content_list)
+     {
+        subobj = eina_list_data_get(pd->content_list);
+        pd->content_list = eina_list_remove_list(pd->content_list, pd->content_list);
+        _content_removed(obj, pd, subobj);
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_flip_efl_pack_pack_clear(Eo *obj, Efl_Ui_Flip_Data *pd)
+{
+   Efl_Gfx_Entity *subobj;
+
+   while (pd->content_list)
+     {
+        subobj = eina_list_data_get(pd->content_list);
+        pd->content_list = eina_list_remove_list(pd->content_list, pd->content_list);
+        _content_removed(obj, pd, subobj);
+        efl_del(subobj);
+     }
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_remove(pd->content_list, subobj);

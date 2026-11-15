@@ -184,6 +184,8 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       Efl.Container.content_count;
       Efl.Part.part_get;
       Efl.Pack.unpack;
+      Efl.Pack.unpack_all;
+      Efl.Pack.pack_clear;
       Efl.Pack.pack;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;

@@ -39,6 +39,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_slider", efl_ui_test_slider },
   { "efl_ui_win", efl_ui_test_win },
   { "efl_ui_caching_factory", efl_ui_test_caching_factory },
+  { "efl_ui_flip", efl_ui_test_flip },
   { "efl_ui_spin", efl_ui_test_spin },
   { "efl_ui_spin_button", efl_ui_test_spin_button },
   { "efl_ui_collection", efl_ui_test_item_container },
