@@ -60,14 +60,38 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
         Efl.Player.playing { get; set; }
         Efl.Player.paused { get; set; }
         Efl.Player.playback_position { get; set; }
+        Efl.Player.playback_speed { get; set; }
+        Efl.Player.autoplay { get; set; }
+        Efl.Player.playback_loop { get; set; }
         Efl.Player.playback_progress { get; set; }
         Efl.Audio_Control.volume { get; set; }
         Efl.Audio_Control.mute { get; set; }
         Efl.Playable.length { get; }
+        Efl.Playable.playable { get; }
         Efl.Playable.seekable { get; }
-        Efl.Gfx.Image_Load_Controller.load_size { get; }
+        Efl.Gfx.Image_Load_Controller.load_size { get; set; }
         Efl.Gfx.Image.ratio { get; }
         Efl.Gfx.Image.smooth_scale { get; set; }
+        Efl.Gfx.Image.scale_method { get; set; }
+        Efl.Gfx.Image.can_upscale { get; set; }
+        Efl.Gfx.Image.can_downscale { get; set; }
+        Efl.Gfx.Image.content_region { get; }
+        Efl.Gfx.Image.border_insets { get; set; }
+        Efl.Gfx.Image.border_insets_scale { get; set; }
+        Efl.Gfx.Image.center_fill_mode { get; set; }
+        Efl.Gfx.Image.stretch_region { get; set; }
+        Efl.Gfx.Image.content_hint { get; set; }
+        Efl.Gfx.Image.scale_hint { get; set; }
+        Efl.Gfx.Image_Load_Controller.load_dpi { get; set; }
+        Efl.Gfx.Image_Load_Controller.load_region { get; set; }
+        Efl.Gfx.Image_Load_Controller.load_region_support { get; }
+        Efl.Gfx.Image_Load_Controller.load_orientation { get; set; }
+        Efl.Gfx.Image_Load_Controller.load_scale_down { get; set; }
+        Efl.Gfx.Image_Load_Controller.load_skip_header { get; set; }
+        Efl.Gfx.Image.image_size { get; }
+        Efl.Gfx.Image.image_load_error { get; }
+        Efl.Gfx.Image_Load_Controller.load_async_start;
+        Efl.Gfx.Image_Load_Controller.load_async_cancel;
    }
    events {
         frame,decode: void; [[Called when the frame was decoded]]

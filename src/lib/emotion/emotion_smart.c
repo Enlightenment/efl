@@ -835,6 +835,201 @@ emotion_object_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth)
    efl_gfx_image_smooth_scale_set(obj, smooth);
 }
 
+/* Efl.Gfx.Image is forwarded to the canvas image this object draws into. */
+#define VIDEO_FWD_SET(name, type) \
+   EOLIAN static void \
+   _efl_canvas_video_efl_gfx_image_##name##_set(Eo *obj EINA_UNUSED, \
+                                                Efl_Canvas_Video_Data *sd, \
+                                                type v) \
+   { \
+      efl_gfx_image_##name##_set(sd->obj, v); \
+   }
+#define VIDEO_FWD_GET(name, type) \
+   EOLIAN static type \
+   _efl_canvas_video_efl_gfx_image_##name##_get(const Eo *obj EINA_UNUSED, \
+                                                Efl_Canvas_Video_Data *sd) \
+   { \
+      return efl_gfx_image_##name##_get(sd->obj); \
+   }
+VIDEO_FWD_SET(can_upscale, Eina_Bool)
+VIDEO_FWD_GET(can_upscale, Eina_Bool)
+VIDEO_FWD_SET(can_downscale, Eina_Bool)
+VIDEO_FWD_GET(can_downscale, Eina_Bool)
+VIDEO_FWD_GET(content_region, Eina_Rect)
+VIDEO_FWD_SET(border_insets_scale, double)
+VIDEO_FWD_GET(border_insets_scale, double)
+VIDEO_FWD_SET(center_fill_mode, Efl_Gfx_Center_Fill_Mode)
+VIDEO_FWD_GET(center_fill_mode, Efl_Gfx_Center_Fill_Mode)
+VIDEO_FWD_SET(content_hint, Efl_Gfx_Image_Content_Hint)
+VIDEO_FWD_GET(content_hint, Efl_Gfx_Image_Content_Hint)
+VIDEO_FWD_SET(scale_hint, Efl_Gfx_Image_Scale_Hint)
+VIDEO_FWD_GET(scale_hint, Efl_Gfx_Image_Scale_Hint)
+
+/* Efl.Gfx.Image_Load_Controller steers a raster loader: decode at this dpi,
+ * only this region, skip the header, halve it on the way in. A video is
+ * decoded frame by frame by a media engine that takes none of those, so the
+ * setters refuse and the getters answer neutrally.
+ */
+#define VIDEO_LOAD_REFUSE_SET(name, type) \
+   EOLIAN static void \
+   _efl_canvas_video_efl_gfx_image_load_controller_##name##_set(Eo *obj EINA_UNUSED, \
+                                                                Efl_Canvas_Video_Data *sd EINA_UNUSED, \
+                                                                type v EINA_UNUSED) \
+   { \
+      ERR("A video is decoded by its media engine; " #name " does not apply."); \
+   }
+#define VIDEO_LOAD_NEUTRAL_GET(name, type, zero) \
+   EOLIAN static type \
+   _efl_canvas_video_efl_gfx_image_load_controller_##name##_get(const Eo *obj EINA_UNUSED, \
+                                                                Efl_Canvas_Video_Data *sd EINA_UNUSED) \
+   { \
+      return zero; \
+   }
+
+VIDEO_LOAD_REFUSE_SET(load_dpi, double)
+VIDEO_LOAD_NEUTRAL_GET(load_dpi, double, 0.0)
+VIDEO_LOAD_REFUSE_SET(load_region, Eina_Rect)
+VIDEO_LOAD_NEUTRAL_GET(load_region, Eina_Rect, EINA_RECT(0, 0, 0, 0))
+VIDEO_LOAD_NEUTRAL_GET(load_region_support, Eina_Bool, EINA_FALSE)
+VIDEO_LOAD_REFUSE_SET(load_orientation, Eina_Bool)
+VIDEO_LOAD_NEUTRAL_GET(load_orientation, Eina_Bool, EINA_FALSE)
+VIDEO_LOAD_REFUSE_SET(load_scale_down, int)
+VIDEO_LOAD_NEUTRAL_GET(load_scale_down, int, 0)
+VIDEO_LOAD_REFUSE_SET(load_skip_header, Eina_Bool)
+VIDEO_LOAD_NEUTRAL_GET(load_skip_header, Eina_Bool, EINA_FALSE)
+
+#undef VIDEO_LOAD_REFUSE_SET
+#undef VIDEO_LOAD_NEUTRAL_GET
+#undef VIDEO_FWD_SET
+#undef VIDEO_FWD_GET
+
+EOLIAN static Eina_Size2D
+_efl_canvas_video_efl_gfx_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   return efl_gfx_image_size_get(sd->obj);
+}
+
+EOLIAN static Eina_Error
+_efl_canvas_video_efl_gfx_image_image_load_error_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   return efl_gfx_image_load_error_get(sd->obj);
+}
+
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_border_insets_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, int l, int r, int t, int b)
+{
+   efl_gfx_image_border_insets_set(sd->obj, l, r, t, b);
+}
+
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_border_insets_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, int *l, int *r, int *t, int *b)
+{
+   efl_gfx_image_border_insets_get(sd->obj, l, r, t, b);
+}
+
+EOLIAN static Eina_Error
+_efl_canvas_video_efl_gfx_image_stretch_region_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Iterator *horizontal, Eina_Iterator *vertical)
+{
+   return efl_gfx_image_stretch_region_set(sd->obj, horizontal, vertical);
+}
+
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_stretch_region_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Iterator **horizontal, Eina_Iterator **vertical)
+{
+   efl_gfx_image_stretch_region_get(sd->obj, horizontal, vertical);
+}
+
+/* Loading is driven by the decoding engine, not by the caller: there is no
+ * point at which a frame is waiting to be asked for.
+ */
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_load_controller_load_async_start(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_load_controller_load_async_cancel(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED)
+{
+}
+
+EOLIAN static void
+_efl_canvas_video_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, double speed)
+{
+   if (!sd->engine_instance) return;
+   emotion_engine_instance_speed_set(sd->engine_instance, speed);
+}
+
+EOLIAN static double
+_efl_canvas_video_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   if (!sd->engine_instance) return 0.0;
+   return emotion_engine_instance_speed_get(sd->engine_instance);
+}
+
+/* The decoder starts and restarts only when told to: autoplay and looping are
+ * not something it does by itself, so setting them is refused.
+ */
+EOLIAN static void
+_efl_canvas_video_efl_player_autoplay_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED,
+                                          Eina_Bool autoplay EINA_UNUSED)
+{
+   ERR("A video does not start by itself; autoplay is not supported.");
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_player_autoplay_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+EOLIAN static void
+_efl_canvas_video_efl_player_playback_loop_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED,
+                                               Eina_Bool loop EINA_UNUSED)
+{
+   ERR("A video does not restart by itself; playback_loop is not supported.");
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_player_playback_loop_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+/* There is something to play once a file has been opened and the engine
+ * reports a length for it; a file that failed to open has neither.
+ */
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_playable_playable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   if (!sd->engine_instance) return EINA_FALSE;
+   if (!sd->open) return EINA_FALSE;
+   return emotion_engine_instance_len_get(sd->engine_instance) > 0.0;
+}
+
+/* A video frame is scaled by the canvas image below it, which is where the
+ * method is kept.
+ */
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_scale_method_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Efl_Gfx_Image_Scale_Method method)
+{
+   efl_gfx_image_scale_method_set(sd->obj, method);
+}
+
+EOLIAN static Efl_Gfx_Image_Scale_Method
+_efl_canvas_video_efl_gfx_image_scale_method_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   return efl_gfx_image_scale_method_get(sd->obj);
+}
+
+/* The decoded size is the movie's own, decided by the file rather than asked
+ * for, so the setter says so instead of silently doing nothing.
+ */
+EOLIAN static void
+_efl_canvas_video_efl_gfx_image_load_controller_load_size_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd EINA_UNUSED, Eina_Size2D sz EINA_UNUSED)
+{
+   ERR("A video decodes at the size its file specifies; load_size cannot bound it.");
+}
+
 EOLIAN static void
 _efl_canvas_video_efl_gfx_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool smooth)
 {
