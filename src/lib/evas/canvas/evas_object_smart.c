@@ -947,6 +947,95 @@ _efl_canvas_group_efl_gfx_entity_size_set(Eo *obj, Evas_Smart_Data *o, Eina_Size
    if (o->filter_img) efl_gfx_entity_size_set(o->filter_img, size);
 }
 
+/* A group renders itself into an internal proxy and the filter is applied to
+ * that, so every other filter property belongs to the proxy too and is simply
+ * forwarded. The proxy only exists once a program has been set, which is why
+ * the program is the property to set first; before that there is nothing to
+ * carry the rest, so getters answer with defaults and setters do nothing.
+ */
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_program_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                    const char **code, const char **name)
+{
+   if (code) *code = NULL;
+   if (name) *name = NULL;
+   if (!o->filter_img) return;
+   efl_gfx_filter_program_get(o->filter_img, code, name);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_state_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                  const char *cur_state, double cur_val,
+                                                  const char *next_state, double next_val,
+                                                  double pos)
+{
+   if (!o->filter_img) return;
+   efl_gfx_filter_state_set(o->filter_img, cur_state, cur_val, next_state, next_val, pos);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_state_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                  const char **cur_state, double *cur_val,
+                                                  const char **next_state, double *next_val,
+                                                  double *pos)
+{
+   if (cur_state) *cur_state = NULL;
+   if (cur_val) *cur_val = 0.0;
+   if (next_state) *next_state = NULL;
+   if (next_val) *next_val = 0.0;
+   if (pos) *pos = 0.0;
+   if (!o->filter_img) return;
+   efl_gfx_filter_state_get(o->filter_img, cur_state, cur_val, next_state, next_val, pos);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_padding_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                    int *l, int *r, int *t, int *b)
+{
+   if (l) *l = 0;
+   if (r) *r = 0;
+   if (t) *t = 0;
+   if (b) *b = 0;
+   if (!o->filter_img) return;
+   efl_gfx_filter_padding_get(o->filter_img, l, r, t, b);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_source_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                   const char *name, Efl_Gfx_Entity *source)
+{
+   if (!o->filter_img) return;
+   efl_gfx_filter_source_set(o->filter_img, name, source);
+}
+
+EOLIAN static Efl_Gfx_Entity *
+_efl_canvas_group_efl_gfx_filter_filter_source_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                   const char *name)
+{
+   if (!o->filter_img) return NULL;
+   return efl_gfx_filter_source_get(o->filter_img, name);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_data_set(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                 const char *name, const char *value,
+                                                 Eina_Bool execute)
+{
+   if (!o->filter_img) return;
+   efl_gfx_filter_data_set(o->filter_img, name, value, execute);
+}
+
+EOLIAN static void
+_efl_canvas_group_efl_gfx_filter_filter_data_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o,
+                                                 const char *name, const char **value,
+                                                 Eina_Bool *execute)
+{
+   if (value) *value = NULL;
+   if (execute) *execute = EINA_FALSE;
+   if (!o->filter_img) return;
+   efl_gfx_filter_data_get(o->filter_img, name, value, execute);
+}
+
 EOLIAN static void
 _efl_canvas_group_efl_gfx_filter_filter_program_set(Eo *eo_obj, Evas_Smart_Data *o,
                                                     const char *code, const char *name)

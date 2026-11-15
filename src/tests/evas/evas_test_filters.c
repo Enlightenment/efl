@@ -512,6 +512,51 @@ EFL_START_TEST(evas_filter_parser_missing_lua_classes)
 }
 EFL_END_TEST
 
+EFL_START_TEST(evas_filter_group_forwards_test)
+{
+   Ecore_Evas *ee;
+   Evas *evas;
+   Evas_Smart *smart;
+   Evas_Object *group;
+   Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("FilterGroup");
+   const char *code = NULL, *name = NULL, *s1 = NULL, *s2 = NULL, *value = NULL;
+   Eina_Bool execute = EINA_TRUE;
+   double v1 = 1.0, v2 = 1.0, p = 1.0;
+
+   setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1);
+   ee = ecore_evas_buffer_new(1, 1);
+   evas = ecore_evas_get(ee);
+   smart = evas_smart_class_new(&sc);
+   fail_if(!smart);
+   group = evas_object_smart_add(evas, smart);
+   fail_if(!group);
+
+   efl_gfx_filter_program_get(group, &code, &name);
+   fail_if(code || name);
+   efl_gfx_filter_state_get(group, &s1, &v1, &s2, &v2, &p);
+   fail_if(s1 || s2 || !EINA_DBL_EQ(v1, 0.0) || !EINA_DBL_EQ(v2, 0.0) || !EINA_DBL_EQ(p, 0.0));
+   efl_gfx_filter_data_get(group, "data", &value, &execute);
+   fail_if(value || execute);
+
+   efl_gfx_filter_program_set(group, "blur { 2 }", "group_filter");
+   efl_gfx_filter_program_get(group, &code, &name);
+   fail_if(!strequal(code, "blur { 2 }") || !strequal(name, "group_filter"));
+
+   efl_gfx_filter_state_set(group, "state1", 0.25, "state2", 0.75, 0.5);
+   efl_gfx_filter_state_get(group, &s1, &v1, &s2, &v2, &p);
+   fail_if(!strequal(s1, "state1") || !strequal(s2, "state2"));
+   fail_if(!EINA_DBL_EQ(v1, 0.25) || !EINA_DBL_EQ(v2, 0.75) || !EINA_DBL_EQ(p, 0.5));
+
+   efl_gfx_filter_data_set(group, "data", "{r=0}", EINA_FALSE);
+   efl_gfx_filter_data_get(group, "data", &value, &execute);
+   fail_if(!strequal(value, "{r=0}") || execute);
+
+   evas_object_del(group);
+   evas_smart_free(smart);
+   ecore_evas_free(ee);
+}
+EFL_END_TEST
+
 void evas_test_filters(TCase *tc)
 {
    tcase_add_test(tc, evas_filter_parser);
@@ -519,4 +564,5 @@ void evas_test_filters(TCase *tc)
    tcase_add_test(tc, evas_filter_text_render_test);
    tcase_add_test(tc, evas_filter_state_test);
    tcase_add_test(tc, evas_filter_parser_missing_lua_classes);
+   tcase_add_test(tc, evas_filter_group_forwards_test);
 }

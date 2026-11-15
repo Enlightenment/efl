@@ -1435,6 +1435,17 @@ elm_image_async_open_set(Eo *obj, Eina_Bool async)
    if (!async) _async_cancel(pd);
 }
 
+EOLIAN static void
+_efl_ui_image_efl_gfx_view_view_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd EINA_UNUSED,
+                                         Eina_Size2D sz EINA_UNUSED)
+{
+   /* An image's view size is the size of the picture it loaded; there is
+    * nothing to choose. Efl.Gfx.View documents that its setter may go
+    * unimplemented for exactly this case.
+    */
+   ERR("The view size of an image is decided by the file it loaded and cannot be set.");
+}
+
 EOLIAN static Eina_Size2D
 _efl_ui_image_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
