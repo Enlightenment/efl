@@ -90,11 +90,21 @@ EOLIAN static void
 _efl_observable_observer_clean(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl_Observer *obs)
 {
    Eina_Iterator *it;
-   Eina_Hash *observers;
+   Eina_Hash_Tuple *tuple;
+   Eina_List *emptied = NULL;
+   const char *key;
 
-   it = eina_hash_iterator_data_new(pd->observers);
-   EINA_ITERATOR_FOREACH(it, observers)
+   /* A group that loses its last observer goes with it, the way observer_del
+    * has always done it. Leaving the empty group behind kept a hash alive
+    * until the observable died and listed a name nobody was observing.
+    *
+    * The keys are collected and deleted after the walk: taking entries out of
+    * a hash while iterating it is not safe.
+    */
+   it = eina_hash_iterator_tuple_new(pd->observers);
+   EINA_ITERATOR_FOREACH(it, tuple)
      {
+        Eina_Hash *observers = tuple->data;
         Efl_Observer_Refcount *or;
 
         or = eina_hash_find(observers, &obs);
@@ -103,9 +113,17 @@ _efl_observable_observer_clean(Eo *obj EINA_UNUSED, Efl_Observable_Data *pd, Efl
         EINA_REFCOUNT_UNREF(or)
           {
              eina_hash_del(observers, &obs, or);
+
+             if (eina_hash_population(observers) == 0)
+               emptied = eina_list_append(emptied, tuple->key);
           }
      }
    eina_iterator_free(it);
+
+   EINA_LIST_FREE(emptied, key)
+     {
+        eina_hash_del(pd->observers, key, NULL);
+     }
 }
 
 typedef struct

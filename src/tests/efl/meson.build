@@ -3,6 +3,7 @@ efl_suite_src = [
   'efl_suite.h',
   'efl_test_composite_model.c',
   'efl_test_container_model.c',
+  'efl_test_observer.c',
 ]
 
 efl_suite_bin = executable('efl_suite',
