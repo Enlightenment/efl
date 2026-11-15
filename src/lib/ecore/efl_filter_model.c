@@ -535,8 +535,11 @@ _efl_filter_model_efl_model_property_get(const Eo *obj, Efl_Filter_Model_Data *p
 static unsigned int
 _efl_filter_model_efl_composite_model_index_get(const Eo *obj, Efl_Filter_Model_Data *pd)
 {
-   if (pd->self) return pd->self->mapped;
-   return efl_composite_model_index_get(efl_super(obj, EFL_FILTER_MODEL_CLASS));
+   unsigned int index = efl_composite_model_index_get(efl_super(obj, EFL_FILTER_MODEL_CLASS));
+
+   // A row that was removed has no place any more, whatever it was mapped to
+   if ((pd->self) && (index != 0xFFFFFFFF)) return pd->self->mapped;
+   return index;
 }
 
 #include "efl_filter_model.eo.c"

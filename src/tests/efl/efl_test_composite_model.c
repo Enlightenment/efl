@@ -1376,6 +1376,87 @@ EFL_START_TEST(efl_test_filter_model_frees_filter_data)
 }
 EFL_END_TEST
 
+// A row that leaves is still the row it was while the removal is told, and has
+// no place in the model after it, for every model that wraps another one.
+typedef struct _Gone_Watch Gone_Watch;
+struct _Gone_Watch
+{
+   Eo *row;
+   unsigned int during;
+   unsigned int told;
+};
+
+static void
+_gone_watch_removed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Gone_Watch *gw = data;
+
+   gw->during = efl_composite_model_index_get(gw->row);
+   gw->told++;
+}
+
+static Eina_Future *
+_gone_filter_cb(void *data EINA_UNUSED, Efl_Filter_Model *parent, Efl_Model *child EINA_UNUSED)
+{
+   return efl_loop_future_resolved(parent, eina_value_bool_init(EINA_TRUE));
+}
+
+static void
+_gone_remove_check(Eo *model, Eo *base, Eo **rows, Pending_Slice *ps,
+                   unsigned int at, unsigned int shown)
+{
+   Gone_Watch gw = { 0 };
+
+   gw.row = ps->kids[shown];
+   ck_assert_ptr_ne(gw.row, NULL);
+   ck_assert_uint_eq(efl_composite_model_index_get(gw.row), shown);
+   efl_event_callback_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, _gone_watch_removed, &gw);
+   efl_model_child_del(base, rows[at]);
+   efl_event_callback_del(model, EFL_MODEL_EVENT_CHILD_REMOVED, _gone_watch_removed, &gw);
+
+   ck_assert_uint_eq(gw.told, 1);
+   ck_assert_uint_eq(gw.during, shown);
+   ck_assert_uint_eq(efl_composite_model_index_get(gw.row), 0xFFFFFFFF);
+}
+
+EFL_START_TEST(efl_test_filter_model_removed_row_gone)
+{
+   Pending_Slice ps;
+   Eo *base, *filter, *rows[6];
+   unsigned int i;
+
+   base = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 6; i++)
+     {
+        rows[i] = efl_model_child_add(base);
+        ck_assert(!!rows[i]);
+     }
+   filter = efl_add_ref(EFL_FILTER_MODEL_CLASS, efl_main_loop_get(),
+                        efl_ui_view_model_set(efl_added, base),
+                        efl_filter_model_filter_set(efl_added, NULL, _gone_filter_cb, NULL));
+   ck_assert(!!filter);
+   // (the filter counts when asked, and the rows come as the loop runs)
+   efl_model_children_count_get(filter);
+   for (i = 0; (i < 50) && efl_model_children_count_get(filter) < 6; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(efl_model_children_count_get(filter), 6);
+
+   _pending_slice_get(filter, 0, 6, &ps);
+   _pending_slice_wait(&ps);
+   ck_assert_uint_eq(ps.len, 6);
+
+   _gone_remove_check(filter, base, rows, &ps, 2, 2);
+   // The one after it is one closer
+   ck_assert_uint_eq(efl_composite_model_index_get(ps.kids[3]), 2);
+
+   _pending_slice_unref(&ps);
+   efl_unref(filter);
+   efl_unref(base);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
@@ -1393,5 +1474,6 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_composite_model_pending_slice_remove);
    tcase_add_test(tc, efl_test_composite_model_pending_slice_removed_row);
    tcase_add_test(tc, efl_test_composite_model_slice_count_wraps);
+   tcase_add_test(tc, efl_test_filter_model_removed_row_gone);
    tcase_add_test(tc, efl_test_filter_model_frees_filter_data);
 }
