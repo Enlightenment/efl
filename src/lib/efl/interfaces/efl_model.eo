@@ -34,23 +34,40 @@ interface Efl.Model
    c_prefix: efl_model;
       methods {
          @property properties {
-            [[Get properties from model.
+            [[The names of the properties this model currently has.
 
-              Properties_get is due to provide callers a way the fetch the
-              current properties implemented/used by the model. The event
-              @[Efl.Model.properties,changed] will be raised to notify
-              listeners of any modifications in the properties.
-
-              See also @[Efl.Model.properties,changed].
+              Read this before @.property: it is the only way to learn which
+              names a given model answers to. The set is not fixed for the
+              lifetime of the model -- an implementation may add or drop
+              properties as it learns about them -- and
+              @[Efl.Model.properties,changed] is raised whenever it changes.
             ]]
             get {
             }
             values {
-               properties: iterator<string> @move; [[Array of current properties]]
+               properties: iterator<string> @move; [[The property names. The caller
+                                                      owns the iterator.]]
             }
         }
         @property property {
-           [[ ]]
+           [[One property of this model, addressed by name.
+
+             Properties are keyed by string and each value is carried in an
+             Eina_Value, so one model can expose values of different types
+             under different names. Read @.properties first to learn which
+             names a given model answers to.
+
+             The two halves are not symmetric. The getter answers
+             immediately, and answers error:EAGAIN when the model does not
+             know the value yet; @.property_ready_get hands back a future
+             that resolves once that clears. The setter answers with a future
+             instead, because a model may have to reach storage, a bus or a
+             worker thread before the value is accepted, and it reports
+             failure there rather than through a return code.
+
+             See @.properties.get, @.property_ready_get and
+             @[Efl.Model.properties,changed].
+           ]]
            set {
               [[Set a property value of a given property name.
 
@@ -150,8 +167,12 @@ interface Efl.Model
                 @in count: uint; [[Range size. If count is 0, start is
                                ignored.]]
             }
-            /* XXX: is this right? */
-            return: future<array<Efl.Object>>; [[Array of children]]
+            return: future<array<Efl.Object>>; [[A future resolving to the
+                                                requested children, or $null if
+                                                the model has been invalidated:
+                                                such a model has no loop
+                                                scheduler left to attach a
+                                                future to.]]
          }
          children_index_get {
               [[Get children as specified by iterator.
@@ -187,20 +208,21 @@ interface Efl.Model
          child_add {
             [[Add a new child.
 
-              Add a new child, possibly dummy, depending on the implementation,
-              of a internal keeping. When the child is effectively
-              added the event @[Efl.Model.child,added] is then raised
-              and the new child is kept along with other children.
+              Adds a new child to this model's own list of children.
+              Depending on the implementation it may be a placeholder until
+              it has something to hold. Once the child is effectively added
+              the event @[Efl.Model.child,added] is raised and the child is
+              kept alongside the others.
             ]]
             return: Efl.Object; [[Child object]]
          }
          child_del {
             [[Remove a child.
 
-              Remove a child of a internal keeping. When the child is effectively
-              removed the event @[Efl.Model.child,removed] is then
-              raised to give a chance for listeners to perform any cleanup
-              and/or update references.
+              Removes a child from this model's own list of children. Once
+              the child is effectively removed the event
+              @[Efl.Model.child,removed] is raised to give listeners a chance
+              to perform any cleanup and/or update references.
             ]]
             params {
                @in child: Efl.Object; [[Child to be removed]]
