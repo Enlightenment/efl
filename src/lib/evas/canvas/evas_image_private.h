@@ -128,8 +128,11 @@ struct _Evas_Image_Data
    } file_size;
 
    unsigned char     preload;  //See above EVAS_IMAGE_PRELOAD***
+   unsigned char     scale_method; /* Efl_Gfx_Image_Scale_Method */
 
    Eina_Bool         changed : 1;
+   Eina_Bool         can_upscale : 1;
+   Eina_Bool         can_downscale : 1;
    Eina_Bool         dirty_pixels : 1;
    Eina_Bool         filled : 1;
    Eina_Bool         filled_set : 1;

@@ -226,6 +226,11 @@ _efl_canvas_image_internal_efl_object_constructor(Eo *eo_obj, Evas_Image_Data *o
    o->prev = eina_cow_alloc(evas_object_image_state_cow);
    o->proxy_src_clip = EINA_TRUE;
 
+   /* Defaults match the historic fill_auto: stretch, in both directions. */
+   o->scale_method = EFL_GFX_IMAGE_SCALE_METHOD_FILL;
+   o->can_upscale = EINA_TRUE;
+   o->can_downscale = EINA_TRUE;
+
    cspace = ENFN->image_colorspace_get(ENC, o->engine_data);
    if (cspace != o->cur->cspace)
      {
@@ -933,11 +938,145 @@ _efl_canvas_image_internal_efl_gfx_image_stretch_region_get(const Eo *eo_obj,
    *vertical = &it->iterator;
 }
 
+/* Where fill_auto lands the image inside the object: scale_method decides the
+ * rectangle, can_upscale and can_downscale clamp it to the native size when
+ * scaling in that direction is refused, and the result is centred.
+ */
+static void
+_evas_image_fill_auto_apply(Eo *eo_obj, Evas_Image_Data *o)
+{
+   int iw = 0, ih = 0, w, h, x, y;
+   Eina_Size2D sz;
+
+   sz = efl_gfx_entity_size_get(eo_obj);
+   if (sz.w < 1) sz.w = 1;
+   if (sz.h < 1) sz.h = 1;
+
+   iw = o->cur->image.w;
+   ih = o->cur->image.h;
+   if ((iw < 1) || (ih < 1))
+     {
+        _evas_image_fill_set(eo_obj, o, 0, 0, sz.w, sz.h);
+        return;
+     }
+
+   switch (o->scale_method)
+     {
+      case EFL_GFX_IMAGE_SCALE_METHOD_NONE:
+        w = iw;
+        h = ih;
+        break;
+
+      case EFL_GFX_IMAGE_SCALE_METHOD_FIT:
+        w = sz.w;
+        h = (int) (((double) ih * w) / (double) iw);
+        if (h > sz.h)
+          {
+             h = sz.h;
+             w = (int) (((double) iw * h) / (double) ih);
+          }
+        break;
+
+      case EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH:
+        w = sz.w;
+        h = (int) (((double) ih * w) / (double) iw);
+        break;
+
+      case EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT:
+        h = sz.h;
+        w = (int) (((double) iw * h) / (double) ih);
+        break;
+
+      case EFL_GFX_IMAGE_SCALE_METHOD_EXPAND:
+        w = sz.w;
+        h = (int) (((double) ih * w) / (double) iw);
+        if (h < sz.h)
+          {
+             h = sz.h;
+             w = (int) (((double) iw * h) / (double) ih);
+          }
+        break;
+
+      case EFL_GFX_IMAGE_SCALE_METHOD_TILE:
+        /* repeat the image at its native size across the object */
+        _evas_image_fill_set(eo_obj, o, 0, 0, iw, ih);
+        return;
+
+      case EFL_GFX_IMAGE_SCALE_METHOD_FILL:
+      default:
+        w = sz.w;
+        h = sz.h;
+        break;
+     }
+
+   if ((!o->can_upscale) && (w > iw)) w = iw;
+   if ((!o->can_upscale) && (h > ih)) h = ih;
+   if ((!o->can_downscale) && (w < iw)) w = iw;
+   if ((!o->can_downscale) && (h < ih)) h = ih;
+
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+
+   x = (sz.w - w) / 2;
+   y = (sz.h - h) / 2;
+
+   _evas_image_fill_set(eo_obj, o, x, y, w, h);
+}
+
+EOLIAN static void
+_efl_canvas_image_internal_efl_gfx_image_scale_method_set(Eo *eo_obj, Evas_Image_Data *o,
+                                                          Efl_Gfx_Image_Scale_Method scale_method)
+{
+   if (o->scale_method == scale_method) return;
+   o->scale_method = scale_method;
+   if (o->filled) _evas_image_fill_auto_apply(eo_obj, o);
+}
+
+EOLIAN static Efl_Gfx_Image_Scale_Method
+_efl_canvas_image_internal_efl_gfx_image_scale_method_get(const Eo *eo_obj EINA_UNUSED,
+                                                          Evas_Image_Data *o)
+{
+   return o->scale_method;
+}
+
+EOLIAN static void
+_efl_canvas_image_internal_efl_gfx_image_can_upscale_set(Eo *eo_obj, Evas_Image_Data *o,
+                                                         Eina_Bool upscale)
+{
+   upscale = !!upscale;
+   if (o->can_upscale == upscale) return;
+   o->can_upscale = upscale;
+   if (o->filled) _evas_image_fill_auto_apply(eo_obj, o);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_image_internal_efl_gfx_image_can_upscale_get(const Eo *eo_obj EINA_UNUSED,
+                                                         Evas_Image_Data *o)
+{
+   return o->can_upscale;
+}
+
+EOLIAN static void
+_efl_canvas_image_internal_efl_gfx_image_can_downscale_set(Eo *eo_obj, Evas_Image_Data *o,
+                                                           Eina_Bool downscale)
+{
+   downscale = !!downscale;
+   if (o->can_downscale == downscale) return;
+   o->can_downscale = downscale;
+   if (o->filled) _evas_image_fill_auto_apply(eo_obj, o);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_image_internal_efl_gfx_image_can_downscale_get(const Eo *eo_obj EINA_UNUSED,
+                                                           Evas_Image_Data *o)
+{
+   return o->can_downscale;
+}
+
 EOLIAN static void
 _efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool setting)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Eina_Size2D sz;
    setting = !!setting;
    o->filled_set = 1;
    if (o->filled == setting) return;
@@ -949,8 +1088,7 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Dat
 
    if (!o->filled) return;
 
-   sz = efl_gfx_entity_size_get(eo_obj);
-   _evas_image_fill_set(eo_obj, o, 0, 0, sz.w, sz.h);
+   _evas_image_fill_auto_apply(eo_obj, o);
 }
 
 EOLIAN static Eina_Bool
@@ -3926,12 +4064,8 @@ static void
 evas_object_image_filled_resize_listener(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *einfo EINA_UNUSED)
 {
    Evas_Image_Data *o = efl_data_scope_get(obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   Eina_Size2D sz;
 
-   sz = efl_gfx_entity_size_get(obj);
-   if (sz.w < 1) sz.w = 1;
-   if (sz.h < 1) sz.h = 1;
-   _evas_image_fill_set(obj, o, 0, 0, sz.w, sz.h);
+   _evas_image_fill_auto_apply(obj, o);
 }
 
 Eina_Bool

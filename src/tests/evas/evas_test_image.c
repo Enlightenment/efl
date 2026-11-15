@@ -842,6 +842,89 @@ EFL_START_TEST(evas_object_image_defaults)
 }
 EFL_END_TEST
 
+EFL_START_TEST(evas_object_image_scale_method)
+{
+   Evas *e = _setup_evas();
+   const char *imgpath = TESTS_IMG_DIR "/Pic4.png";
+   Eina_Size2D img, sz;
+   Eina_Rect fill;
+   Eo *o;
+
+   o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
+   efl_file_simple_load(o, imgpath, NULL);
+   img = efl_gfx_view_size_get(o);
+   fail_if((img.w < 4) || (img.h < 4));
+
+   /* an object deliberately wider and shorter than the image, so fit and fill
+    * cannot accidentally agree */
+   sz = EINA_SIZE2D(img.w * 2, img.h / 2);
+   efl_gfx_entity_size_set(o, sz);
+   efl_gfx_fill_auto_set(o, EINA_TRUE);
+
+   // fill_auto has always stretched to the object, and still reports that
+   fail_if(efl_gfx_image_scale_method_get(o) != EFL_GFX_IMAGE_SCALE_METHOD_FILL);
+   fill = efl_gfx_fill_get(o);
+   fail_if((fill.w != sz.w) || (fill.h != sz.h));
+
+   // fit keeps the aspect ratio and stays inside the object
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_FIT);
+   fill = efl_gfx_fill_get(o);
+   fail_if((fill.w > sz.w) || (fill.h > sz.h));
+   fail_if(fill.h != sz.h); // the object is the limiting dimension here
+   fail_if(abs((fill.w * img.h) - (fill.h * img.w)) > img.w);
+
+   // none leaves the image at its own size, centred
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_NONE);
+   fill = efl_gfx_fill_get(o);
+   fail_if((fill.w != img.w) || (fill.h != img.h));
+   fail_if(fill.x != (sz.w - img.w) / 2);
+
+   // refusing to upscale clamps fill back to the native width
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_FILL);
+   efl_gfx_image_can_upscale_set(o, EINA_FALSE);
+   fail_if(efl_gfx_image_can_upscale_get(o));
+   fill = efl_gfx_fill_get(o);
+   fail_if(fill.w != img.w); // object is wider than the image, so no upscale
+   fail_if(fill.h != sz.h);  // object is shorter, so downscale still applies
+
+   // refusing to downscale clamps fill back to the native height
+   efl_gfx_image_can_upscale_set(o, EINA_TRUE);
+   efl_gfx_image_can_downscale_set(o, EINA_FALSE);
+   fail_if(efl_gfx_image_can_downscale_get(o));
+   fill = efl_gfx_fill_get(o);
+   fail_if(fill.w != sz.w);
+   fail_if(fill.h != img.h);
+   efl_gfx_image_can_downscale_set(o, EINA_TRUE);
+
+   // fit width follows the object width and lets the height overflow
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH);
+   fill = efl_gfx_fill_get(o);
+   fail_if(fill.w != sz.w);
+   fail_if(fill.h != ((img.h * sz.w) / img.w));
+
+   // fit height follows the object height and leaves the width short
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT);
+   fill = efl_gfx_fill_get(o);
+   fail_if(fill.h != sz.h);
+   fail_if(fill.w != ((img.w * sz.h) / img.h));
+
+   // expand covers the object, here by following its width
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_EXPAND);
+   fill = efl_gfx_fill_get(o);
+   fail_if(fill.w != sz.w);
+   fail_if(fill.h < sz.h);
+
+   // tile repeats the image at its own size
+   efl_gfx_image_scale_method_set(o, EFL_GFX_IMAGE_SCALE_METHOD_TILE);
+   fill = efl_gfx_fill_get(o);
+   fail_if((fill.x != 0) || (fill.y != 0));
+   fail_if((fill.w != img.w) || (fill.h != img.h));
+
+   efl_del(o);
+   evas_free(e);
+}
+EFL_END_TEST
+
 // FIXME: belongs to another file
 EFL_START_TEST(evas_object_image_map_unmap)
 {
@@ -1330,6 +1413,7 @@ void evas_test_image_object(TCase *tc)
 #endif
    tcase_add_test(tc, evas_object_image_buggy);
    tcase_add_test(tc, evas_object_image_map_unmap);
+   tcase_add_test(tc, evas_object_image_scale_method);
    tcase_add_test(tc, evas_object_image_buffer_copy);
 #endif
    tcase_add_test(tc, evas_object_image_partially_load_orientation);
