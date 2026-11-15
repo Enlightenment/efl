@@ -104,6 +104,7 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
    }
    implements {
       class.constructor;
+      class.destructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.invalidate;

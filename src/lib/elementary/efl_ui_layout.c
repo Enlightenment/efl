@@ -145,6 +145,17 @@ _efl_ui_layout_base_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
 }
 
+// The (group, key) pairs a bind was refused for and said so: a factory binds every row it
+// builds, and one typo would be as many errors in the log as there are rows.
+static Eina_Hash *_bind_refused = NULL;
+
+static void
+_efl_ui_layout_base_class_destructor(Efl_Class *klass EINA_UNUSED)
+{
+   eina_hash_free(_bind_refused);
+   _bind_refused = NULL;
+}
+
 static void
 _on_sub_object_size_hint_change(void *data,
                                 Evas *e EINA_UNUSED,
@@ -2819,6 +2830,28 @@ _efl_ui_layout_part_known(Eo *obj, Efl_Ui_Layout_Data *pd, const char *part)
    return efl_layout_group_part_exist_get(wd->resize_obj, part);
 }
 
+static void
+_efl_ui_layout_bind_refused(Eo *obj, const char *key, const char *property)
+{
+   const char *group = NULL;
+   char buf[1024];
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   if (wd->resize_obj && efl_isa(wd->resize_obj, EFL_CANVAS_LAYOUT_CLASS))
+     edje_object_file_get(wd->resize_obj, NULL, &group);
+
+   snprintf(buf, sizeof(buf), "%s\n%s", group ? group : "", key);
+   if (!_bind_refused) _bind_refused = eina_hash_string_superfast_new(NULL);
+   if (_bind_refused)
+     {
+        if (eina_hash_find(_bind_refused, buf)) return;
+        eina_hash_add(_bind_refused, buf, _bind_refused);
+     }
+
+   ERR("'%s' is neither a property nor a part of the theme%s%s of %s: cannot bind it to '%s'.",
+       key, group ? " " : "", group ? group : "", efl_debug_name_get(obj), property);
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
@@ -2842,11 +2875,12 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
 
    // A key that is not a part of the theme, once the aliases are resolved, is a typo
    // that would never show anything (a signal is not a part)
-   if (strncmp(SIGNAL_PREFIX, key, sizeof(SIGNAL_PREFIX) - 1) &&
+   // Unbinding is exempt: the theme may have changed and no longer have the part.
+   if (property &&
+       strncmp(SIGNAL_PREFIX, key, sizeof(SIGNAL_PREFIX) - 1) &&
        !_efl_ui_layout_part_known(obj, pd, key))
      {
-        ERR("'%s' is neither a property nor a part of the theme of %s: cannot bind it to '%s'.",
-            key, efl_debug_name_get(obj), property ? property : "");
+        _efl_ui_layout_bind_refused(obj, key, property);
         return EFL_PROPERTY_ERROR_INVALID_KEY;
      }
 

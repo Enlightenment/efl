@@ -933,6 +933,120 @@ EFL_START_TEST(efl_ui_layout_test_table_part_fill_order)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_layout_test_property_bind_unknown_key_once)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *ly;
+   int i;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+
+   _bind_errors = 0;
+   eina_log_print_cb_set(_count_bind_errors, NULL);
+   for (i = 0; i < 3; i++)
+     {
+        ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+        ck_assert(efl_file_simple_load(ly, buf, "layout"));
+        ck_assert_int_eq(efl_ui_property_bind(ly, "typo_twice", "p"), EFL_PROPERTY_ERROR_INVALID_KEY);
+        ck_assert_int_eq(efl_ui_property_bind(ly, "typo_twice", "p"), EFL_PROPERTY_ERROR_INVALID_KEY);
+     }
+   eina_log_print_cb_set(NULL, NULL);
+   ck_assert_int_eq(_bind_errors, 1);
+}
+EFL_END_TEST
+
+/* Taking a binding away is not binding: the part may be gone with a theme that changed, and
+ * the binding of it still has to go. */
+EFL_START_TEST(efl_ui_layout_test_property_unbind_after_theme_change)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *ly;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "layout"));
+   ck_assert_int_eq(efl_ui_property_bind(ly, "element3", "text_property"), 0);
+
+   /* the group that has no "element3" */
+   ck_assert(efl_file_simple_load(ly, buf, "launcher_page"));
+
+   _bind_errors = 0;
+   eina_log_print_cb_set(_count_bind_errors, NULL);
+   ck_assert_int_eq(efl_ui_property_bind(ly, "element3", NULL), 0);
+   eina_log_print_cb_set(NULL, NULL);
+   ck_assert_int_eq(_bind_errors, 0);
+}
+EFL_END_TEST
+
+static Eina_Value
+_made_row_cb(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
+{
+   Eo **rows = data;
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        if (i < 8) rows[i] = efl_ref(c);
+     }
+   return v;
+}
+
+/* Makes count rows with a factory and gives them back */
+static unsigned int
+_factory_rows_make(Eo *win, Eo *factory, unsigned int count)
+{
+   Eo *model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
+   Eo *rows[8] = { NULL };
+   Eina_Array arr;
+   unsigned int i, made = 0;
+
+   ck_assert_uint_le(count, 8);
+   eina_array_step_set(&arr, sizeof(arr), 1);
+   for (i = 0; i < count; i++)
+     {
+        eina_array_push(&arr, efl_model_child_add(model));
+     }
+   efl_future_then(factory,
+                   efl_ui_view_factory_create_with_event(factory,
+                                                         eina_array_iterator_new(&arr)),
+                   .success = _made_row_cb,
+                   .success_type = EINA_VALUE_TYPE_ARRAY, .data = rows);
+   eina_array_flush(&arr);
+   for (i = 0; !rows[count - 1] && (i < 100); i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   for (i = 0; i < count; i++)
+     {
+        if (rows[i]) made++;
+        efl_unref(rows[i]);
+     }
+   return made;
+}
+
+/* A typo bound by a factory makes every row it builds refuse the key: the rows are made all
+ * the same, and the log says it once, not once per row. */
+EFL_START_TEST(efl_ui_layout_test_factory_typo_says_once)
+{
+   Evas_Object *win, *factory;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                     efl_ui_property_bind(efl_added, "typo_in_factory", "title"),
+                     efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+
+   _bind_errors = 0;
+   eina_log_print_cb_set(_count_bind_errors, NULL);
+   ck_assert_int_eq(_factory_rows_make(win, factory, 6), 6);
+   eina_log_print_cb_set(NULL, NULL);
+   ck_assert_int_eq(_bind_errors, 1);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -959,6 +1073,9 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_item_content_at_construction);
    tcase_add_test(tc, efl_ui_layout_test_navigation_bar_side_content);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_unknown_key);
+   tcase_add_test(tc, efl_ui_layout_test_property_bind_unknown_key_once);
+   tcase_add_test(tc, efl_ui_layout_test_property_unbind_after_theme_change);
+   tcase_add_test(tc, efl_ui_layout_test_factory_typo_says_once);
    tcase_add_test(tc, efl_ui_layout_test_table_part_getters);
    tcase_add_test(tc, efl_ui_layout_test_table_part_fill_order);
    tcase_add_test(tc, efl_ui_layout_test_box_part);
