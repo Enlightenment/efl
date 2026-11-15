@@ -145,7 +145,8 @@ _tree_make(void)
    snprintf(tmpdir, sizeof(tmpdir), "/tmp/ethumb_test_XXXXXX");
    ck_assert_ptr_ne(mkdtemp(tmpdir), NULL);
 
-   snprintf(srcfile, sizeof(srcfile), "%s/pic.png", tmpdir);
+   ck_assert_int_lt(snprintf(srcfile, sizeof(srcfile), "%s/pic.png", tmpdir),
+                    sizeof(srcfile));
    f = fopen(srcfile, "wb");
    ck_assert_ptr_ne(f, NULL);
    ck_assert_int_eq(fwrite(real_png, 1, sizeof(real_png), f), sizeof(real_png));
@@ -230,7 +231,8 @@ EFL_START_TEST(ethumb_slave_reads_a_second_command_in_the_same_write)
    double deadline;
    struct stat st;
 
-   snprintf(thumb, sizeof(thumb), "%s/thumb.png", tmpdir);
+   ck_assert_int_lt(snprintf(thumb, sizeof(thumb), "%s/thumb.png", tmpdir),
+                    sizeof(thumb));
 
    pid = _slave_start(&to_slave, &from_slave);
 
