@@ -161,6 +161,7 @@ efl_ui_suite_src = [
   'efl_ui_test_progressbar.c',
   'efl_ui_test_tags.c',
   'efl_ui_test_flip.c',
+  'efl_ui_test_seat.c',
   'efl_ui_test_spin.c',
   'efl_ui_test_spin_button.c',
   'efl_ui_test_slider.c',

@@ -342,6 +342,8 @@ Eina_Bool _evas_canvas_efl_canvas_pointer_pointer_inside_get(const Eo *obj, Evas
 Evas_Device *_evas_canvas_efl_canvas_scene_device_get(const Eo *obj, Evas_Public_Data *pd, const char *name);
 
 
+Eina_Iterator *_evas_canvas_efl_canvas_scene_seats(Eo *obj, Evas_Public_Data *pd);
+
 Evas_Device *_evas_canvas_efl_canvas_scene_seat_get(const Eo *obj, Evas_Public_Data *pd, int id);
 
 
@@ -460,6 +462,7 @@ _evas_canvas_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_loop_get, _evas_canvas_efl_loop_consumer_loop_get),
       EFL_OBJECT_OP_FUNC(efl_canvas_pointer_inside_get, _evas_canvas_efl_canvas_pointer_pointer_inside_get),
       EFL_OBJECT_OP_FUNC(efl_canvas_scene_device_get, _evas_canvas_efl_canvas_scene_device_get),
+      EFL_OBJECT_OP_FUNC(efl_canvas_scene_seats, _evas_canvas_efl_canvas_scene_seats),
       EFL_OBJECT_OP_FUNC(efl_canvas_scene_seat_get, _evas_canvas_efl_canvas_scene_seat_get),
       EFL_OBJECT_OP_FUNC(efl_canvas_scene_seat_default_get, _evas_canvas_efl_canvas_scene_seat_default_get),
       EFL_OBJECT_OP_FUNC(efl_canvas_scene_pointer_position_get, _evas_canvas_efl_canvas_scene_pointer_position_get),

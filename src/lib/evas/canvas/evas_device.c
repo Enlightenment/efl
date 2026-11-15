@@ -151,6 +151,23 @@ _evas_canvas_efl_canvas_scene_seat_default_get(Evas *eo_e EINA_UNUSED, Evas_Publ
    return e->default_seat;
 }
 
+static Eina_Bool
+_evas_canvas_seats_filter(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
+{
+   return efl_input_device_type_get(data) == EFL_INPUT_DEVICE_TYPE_SEAT;
+}
+
+Eina_Iterator *
+_evas_canvas_efl_canvas_scene_seats(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   Eina_Iterator *devices;
+
+   devices = eina_list_iterator_new(e->devices);
+   if (!devices) return NULL;
+
+   return eina_iterator_filter_new(devices, _evas_canvas_seats_filter, NULL, NULL);
+}
+
 EOLIAN Efl_Input_Device *
 _evas_canvas_efl_canvas_scene_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
 {

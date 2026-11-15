@@ -818,6 +818,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Text.text { get; set; }
       Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Ui.I18n.language { get; set; }
+      Efl.Canvas.Scene.seats;
       Efl.Canvas.Scene.seat_default { get; }
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
