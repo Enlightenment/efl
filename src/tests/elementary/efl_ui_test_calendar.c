@@ -1,9 +1,9 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#define EFL_NOLEGACY_API_SUPPORT
 
 #include <Efl_Ui.h>
+#include <Elementary.h>
 #include "efl_ui_suite.h"
 #include "efl_ui_calendar_item.eo.h"
 
@@ -29,8 +29,27 @@ EFL_START_TEST(efl_ui_calendar_item_without_part)
 }
 EFL_END_TEST
 
+/* A calendar with no format of its own names the month and the year in its
+ * header, rather than printing a struct tm as "2026-09-12 00:00:00". */
+EFL_START_TEST(efl_ui_calendar_header_without_format)
+{
+   Eo *win, *cal;
+   const char *header;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   cal = efl_add(EFL_UI_CALENDAR_CLASS, win);
+
+   get_me_to_those_events(win);
+   header = edje_object_part_text_get(elm_layout_edje_get(cal), "month_text");
+   ck_assert_ptr_ne(header, NULL);
+   ck_assert_ptr_eq(strstr(header, ":"), NULL);
+   ck_assert_ptr_eq(strstr(header, "-"), NULL);
+}
+EFL_END_TEST
+
 void efl_ui_test_calendar(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
    tcase_add_test(tc, efl_ui_calendar_item_without_part);
+   tcase_add_test(tc, efl_ui_calendar_header_without_format);
 }

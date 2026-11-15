@@ -943,6 +943,12 @@ _efl_ui_calendar_efl_object_constructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
    // 7x8 (1 month+year, days, 6 dates.)
    efl_ui_layout_finger_size_multiplier_set(obj, 7, 8);
 
+   /* Without a format of its own the header falls all the way back to
+      printing the value, and a struct tm prints as "2026-09-12 00:00:00".
+      An application setting its own format overrides this, as it always
+      could. */
+   efl_ui_format_string_set(obj, "%B %Y", EFL_UI_FORMAT_STRING_TYPE_TIME);
+
    return obj;
 }
 
