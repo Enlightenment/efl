@@ -85,6 +85,8 @@ class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Ef
       Efl.Task.end;
       Efl.Io.Closer.close;
       Efl.Io.Closer.closed { get; }
+      Efl.Io.Closer.close_on_exec { get; set; }
+      Efl.Io.Closer.close_on_invalidate { get; set; }
       Efl.Io.Reader.read;
       Efl.Io.Reader.can_read { get; set; }
       Efl.Io.Reader.eos { get; set; }

@@ -71,6 +71,8 @@ struct _Efl_Exe_Data
    Eina_Bool exit_called : 1;
    Eina_Bool exit_signalled : 1;
    Eina_Bool run : 1;
+   Eina_Bool close_on_exec : 1;
+   Eina_Bool close_on_invalidate : 1;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -247,7 +249,7 @@ _efl_exe_env_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Core_Env *env)
 {
    if (pd->env == env) return;
 
-   if (!pd->env)
+   if (pd->env)
      efl_unref(pd->env);
    pd->env = env;
    if (pd->env)
@@ -358,9 +360,9 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 #else
    Eo *loop;
    Efl_Task_Data *tdl = NULL, *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
-   Eina_Iterator *itr = NULL, *itr2 = NULL;
+   Eina_Iterator *itr = NULL;
    const char *cmd;
-   char **newenv, **env = NULL, **e;
+   char **newenv = NULL, **env = NULL, **e;
    int devnull;
    int pipe_stdin[2];
    int pipe_stdout[2];
@@ -433,8 +435,51 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
    // get these before the fork to avoid heap malloc deadlocks
    loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    if (loop) tdl = efl_data_scope_get(loop, EFL_TASK_CLASS);
-   if (pd->env) itr = efl_core_env_content_get(pd->env);
-   if (pd->env) itr2 = efl_core_env_content_get(pd->env);
+   /* The child's environment is built here, as an array of NAME=VALUE: no heap
+    * work or lock is safe between fork and exec in a multithreaded process.
+    */
+   if (pd->env)
+     {
+        const char *key;
+        int count = 0, i = 0;
+
+        itr = efl_core_env_content_get(pd->env);
+        EINA_ITERATOR_FOREACH(itr, key)
+          {
+             count++;
+          }
+        eina_iterator_free(itr);
+        itr = NULL;
+
+        newenv = malloc(sizeof(char *) * (count + 1));
+        if (!newenv)
+          {
+             _ecore_signal_pid_unlock();
+             return EINA_FALSE;
+          }
+
+        itr = efl_core_env_content_get(pd->env);
+        EINA_ITERATOR_FOREACH(itr, key)
+          {
+             const char *value = efl_core_env_get(pd->env, key);
+             size_t klen = strlen(key);
+             size_t vlen = value ? strlen(value) : 0;
+             char *entry;
+
+             if (i >= count) break;
+             entry = malloc(klen + vlen + 2);
+             if (!entry) break;
+             memcpy(entry, key, klen);
+             entry[klen] = '=';
+             if (vlen) memcpy(entry + klen + 1, value, vlen);
+             entry[klen + 1 + vlen] = '\0';
+             newenv[i] = entry;
+             i++;
+          }
+        eina_iterator_free(itr);
+        itr = NULL;
+        newenv[i] = NULL;
+     }
    sigset_t newset, oldset;
 
    sigemptyset(&newset);
@@ -480,7 +525,18 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      {
         pthread_sigmask(SIG_SETMASK, &oldset, NULL);
         if (itr) eina_iterator_free(itr);
-        if (itr2) eina_iterator_free(itr2);
+        // the child has its own copy of these now
+        if (newenv)
+          {
+             char **e2;
+
+             for (e2 = newenv; *e2; e2++)
+               {
+                  free(*e2);
+               }
+             free(newenv);
+             newenv = NULL;
+          }
         // parent process is here inside this if block
         if (td->flags & EFL_TASK_FLAGS_USE_STDIN)  close(pipe_stdin[0]);
         if (td->flags & EFL_TASK_FLAGS_USE_STDOUT) close(pipe_stdout[1]);
@@ -598,28 +654,9 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
           }
      }
 
-   // actually setenv the env object (clear what was there before so it is
-   // the only env there)
-   if (pd->env)
+   // the environment built before the fork replaces the one inherited
+   if (newenv)
      {
-        const char *key;
-        int count = 0, i = 0;
-
-        // use 2nd throw-away itr to count
-        EINA_ITERATOR_FOREACH(itr2, key)
-          {
-             count++;
-          }
-        // object which we don't free (sitting in hash table in env obj)
-        newenv = alloca(sizeof(char *) * (count + 1));
-        // use 2st iter to walk and fill new env
-        EINA_ITERATOR_FOREACH(itr, key)
-          {
-             newenv[i] = (char *)efl_core_env_get(pd->env, key);
-             i++;
-          }
-        // yes - we dont free itr or itr2 - we're going to exec below or exit
-        // also put newenv array on stack pointign to the strings in the env
 # if defined (__FreeBSD__) || defined (__OpenBSD__) || defined(__NetBSD__)
         if (_dl_environ) *_dl_environ = newenv;
         else ERR("Can't find envrion symbol");
@@ -697,6 +734,9 @@ _efl_exe_efl_object_constructor(Eo *obj, Efl_Exe_Data *pd)
    pd->fd.can_write = EINA_TRUE;
    pd->flags = 0;
    pd->exit_signal = -1;
+   /* both default to true, as Efl.Io.Closer documents */
+   pd->close_on_exec = EINA_TRUE;
+   pd->close_on_invalidate = EINA_TRUE;
    return obj;
 }
 
@@ -721,7 +761,7 @@ _efl_exe_efl_object_destructor(Eo *obj, Efl_Exe_Data *pd)
    if (pd->fd.out_handler) efl_del(pd->fd.out_handler);
    pd->fd.in_handler = NULL;
    pd->fd.out_handler = NULL;
-   _close_fds(pd);
+   if (pd->close_on_invalidate) _close_fds(pd);
 #endif
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -747,6 +787,42 @@ _efl_exe_efl_io_closer_close(Eo *obj, Efl_Exe_Data *pd)
    pd->fd.out_handler = NULL;
 #endif
    return 0;
+}
+
+/* Efl.Exe has three descriptors, so it cannot take close_on_exec and
+ * close_on_invalidate from Efl.Io.Closer_Fd. Its pipes belong to the child and
+ * stay close-on-exec: the setter refuses to turn that off.
+ */
+EOLIAN static Eina_Bool
+_efl_exe_efl_io_closer_close_on_exec_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd,
+                                         Eina_Bool close_on_exec)
+{
+   if (close_on_exec) return EINA_TRUE;
+
+   ERR("Efl.Exe keeps its pipes close-on-exec; they belong to the child.");
+   pd->close_on_exec = EINA_TRUE;
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_exe_efl_io_closer_close_on_exec_get(const Eo *obj EINA_UNUSED,
+                                         Efl_Exe_Data *pd)
+{
+   return pd->close_on_exec;
+}
+
+EOLIAN static void
+_efl_exe_efl_io_closer_close_on_invalidate_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd,
+                                               Eina_Bool close_on_invalidate)
+{
+   pd->close_on_invalidate = close_on_invalidate;
+}
+
+EOLIAN static Eina_Bool
+_efl_exe_efl_io_closer_close_on_invalidate_get(const Eo *obj EINA_UNUSED,
+                                               Efl_Exe_Data *pd)
+{
+   return pd->close_on_invalidate;
 }
 
 EOLIAN static Eina_Bool

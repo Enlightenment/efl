@@ -86,6 +86,7 @@ efl_app_suite_src = [
   'efl_app_test_env.c',
   'efl_app_test_cml.c',
   'efl_app_test_io.c',
+  'efl_app_test_exe.c',
 ]
 
 priv_eo_files = [

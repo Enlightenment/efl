@@ -55,6 +55,7 @@ static const Efl_Test_Case etc[] = {
   { "Env", efl_test_efl_env },
   { "CML", efl_test_efl_cml },
   { "Io", efl_app_test_efl_io },
+  { "Exe", efl_app_test_efl_exe },
   { NULL, NULL }
 };
 
