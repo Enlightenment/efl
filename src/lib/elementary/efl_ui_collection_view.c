@@ -2428,6 +2428,10 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    unsigned int count;
    Efl_Model *mselect = NULL;
    Eina_Bool selection = EINA_FALSE, sizing = EINA_FALSE;
+   /* Whether the select model below is one this function made. A model that
+      already provides selection is found in the chain and reused, and
+      unreffing that one drops a reference this function never took. */
+   Eina_Bool mselect_made_here = EINA_FALSE;
 
    // Cleanup all object, pending request to prepare refetching everything
    _all_cleanup(data, pd);
@@ -2488,6 +2492,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
         mselect = model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, data,
                                       efl_ui_view_model_set(efl_added, model),
                                       efl_loop_model_volatile_make(efl_added));
+        mselect_made_here = EINA_TRUE;
      }
    efl_replace(&pd->multi_selectable_async_model, mselect);
    efl_composite_attach(data, pd->multi_selectable_async_model);
@@ -2509,7 +2514,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    pd->last_count = efl_model_children_count_get(model);
    efl_event_callback_array_add(pd->model, model_cbs(), data);
 
-   if (mselect) efl_unref(mselect);
+   if (mselect_made_here) efl_unref(mselect);
    if (!sizing) efl_unref(model);
 
    count = efl_model_children_count_get(model);

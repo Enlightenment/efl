@@ -2530,6 +2530,37 @@ EFL_START_TEST(efl_ui_collection_view_lets_go_of_its_factory)
 }
 EFL_END_TEST
 
+// A select model the application gives the view is reused by it, and the
+// view lets go only of the references it took: the application's own is left.
+EFL_START_TEST(efl_ui_collection_view_keeps_a_given_select_model)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *selection;
+   Efl_Ui_Factory *fl;
+   Efl_Ui_Collection_View *cv;
+   int refs;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   model = _make_model(win);
+   selection = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, win,
+                           efl_ui_view_model_set(efl_added, model));
+   refs = efl_ref_count(selection);
+
+   fl = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_DEFAULT_ITEM_CLASS));
+   cv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, selection));
+   efl_content_set(win, cv);
+   get_me_to_those_events(cv);
+   ck_assert_int_gt(efl_ref_count(selection), refs);
+
+   efl_del(cv);
+   ck_assert_int_eq(efl_ref_count(selection), refs);
+   efl_unref(selection);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -2569,4 +2600,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_average_model_estimates);
    tcase_add_test(tc, test_efl_ui_collection_view_average_model_grid_prepend);
    tcase_add_test(tc, efl_ui_collection_view_lets_go_of_its_factory);
+   tcase_add_test(tc, efl_ui_collection_view_keeps_a_given_select_model);
 }
