@@ -100,15 +100,22 @@ _ecore_glib_context_poll_from(const GPollFD *pfds,
 
    for (; itr < itr_end; itr++)
      {
+        // The sets are those of ecore, EFL_MAX_FD_SIZE bits wide.
+        if (!ECORE_FDS_FIT(itr->fd))
+          {
+             ERR("glib fd %d does not fit the %d bits of the select sets",
+                 itr->fd, ECORE_FDS_MAX_FD);
+             continue;
+          }
         if (glib_fds < itr->fd)
           glib_fds = itr->fd;
 
         if (itr->events & G_IO_IN)
-          FD_SET(itr->fd, rfds);
+          ECORE_FDS_SET(itr->fd, rfds);
         if (itr->events & G_IO_OUT)
-          FD_SET(itr->fd, wfds);
+          ECORE_FDS_SET(itr->fd, wfds);
         if (itr->events & (G_IO_HUP | G_IO_ERR))
-          FD_SET(itr->fd, efds);
+          ECORE_FDS_SET(itr->fd, efds);
      }
 
    return glib_fds + 1;
@@ -128,12 +135,14 @@ _ecore_glib_context_poll_to(GPollFD      *pfds,
    for (; (itr < itr_end) && (ready > 0); itr++)
      {
         itr->revents = 0;
-        if (FD_ISSET(itr->fd, rfds) && (itr->events & G_IO_IN))
+        // A fd that was left out of the sets is never ready.
+        if (!ECORE_FDS_FIT(itr->fd)) continue;
+        if (ECORE_FDS_ISSET(itr->fd, rfds) && (itr->events & G_IO_IN))
           {
              itr->revents |= G_IO_IN;
              ready--;
           }
-        if (FD_ISSET(itr->fd, wfds) && (itr->events & G_IO_OUT))
+        if (ECORE_FDS_ISSET(itr->fd, wfds) && (itr->events & G_IO_OUT))
           {
              itr->revents |= G_IO_OUT;
              ready--;
@@ -151,7 +160,7 @@ _ecore_glib_context_poll_to(GPollFD      *pfds,
                     }
                }
           }
-        if (FD_ISSET(itr->fd, efds) && (itr->events & (G_IO_HUP | G_IO_ERR)))
+        if (ECORE_FDS_ISSET(itr->fd, efds) && (itr->events & (G_IO_HUP | G_IO_ERR)))
           {
              itr->revents |= G_IO_ERR;
              ready--;

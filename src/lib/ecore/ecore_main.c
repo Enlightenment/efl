@@ -12,10 +12,15 @@
 //
 // normal fd set size (maximum fd num allowed) is limited to 1024. raise this
 // to something more useful than the default 1024 ... this doesn't affect
-// linux as it will use epoll. beware that this also will be a performance
-// hit - the higher this number the more it costs to zero and re-fill the fd
-// set every time we go into select.
-#define FD_SETSIZE EFL_MAX_FD_SIZE
+// linux as it will use epoll, except for the fds epoll cannot take, such as
+// regular files. beware that this also will be a performance hit - the higher
+// this number the more it costs to zero and re-fill the fd set every time we
+// go into select.
+// On Windows the FD_SETSIZE define sizes winsock's fd_set. Elsewhere it does
+// not (glibc fixes fd_set at 1024 bits), see ECORE_FDS_* in ecore_private.h.
+#ifdef _WIN32
+# define FD_SETSIZE EFL_MAX_FD_SIZE
+#endif
 
 #ifdef _WIN32
 # ifndef USER_TIMER_MINIMUM
@@ -1781,10 +1786,24 @@ _ecore_main_prepare_handlers(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
      }
 }
 
-static void
+#ifndef _WIN32
+typedef fd_mask Ecore_Fds[ECORE_FDS_WORDS];
+#else
+typedef fd_set Ecore_Fds[1];
+#endif
+
+// An fd the sets cannot hold was never put in them, so it is never ready.
+static inline Eina_Bool
+_ecore_main_select_isset(int fd, const void *set)
+{
+   return ECORE_FDS_FIT(fd) && ECORE_FDS_ISSET(fd, set);
+}
+
+// Whether the select sets cannot hold fd, which is then left out of them.
+static Eina_Bool
 _ecore_main_select_fd_too_big_check(int fd)
 {
-   if (fd < FD_SETSIZE) return;
+   if (ECORE_FDS_FIT(fd)) return EINA_FALSE;
    int newsize = fd + 1 - 1;
    newsize |= newsize >> 1;
    newsize |= newsize >> 2;
@@ -1797,7 +1816,8 @@ _ecore_main_select_fd_too_big_check(int fd)
            "If this continues to be an issue with lots of high value fds "
            "being needed, perhaps consider recompiling EFL with the option:   "
            "-Dmax-fd-size=%i\n"
-           , fd, FD_SETSIZE, newsize);
+           , fd, ECORE_FDS_MAX_FD, newsize);
+   return EINA_TRUE;
 }
 
 #if !defined(USE_G_MAIN_LOOP)
@@ -1805,7 +1825,7 @@ static int
 _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
 {
    struct timeval tv, *t;
-   fd_set rfds, wfds, exfds;
+   Ecore_Fds rfds, wfds, exfds;
    Ecore_Fd_Handler *fdh;
    Eina_List *l;
    int max_fd, ret, outval;
@@ -1837,9 +1857,9 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
         t = &tv;
      }
    max_fd = 0;
-   FD_ZERO(&rfds);
-   FD_ZERO(&wfds);
-   FD_ZERO(&exfds);
+   ECORE_FDS_ZERO(rfds);
+   ECORE_FDS_ZERO(wfds);
+   ECORE_FDS_ZERO(exfds);
 
    // call the prepare callback for all handlers
    if (pd->fd_handlers_with_prep) _ecore_main_prepare_handlers(obj, pd);
@@ -1852,20 +1872,20 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
           {
              if (!fdh->delete_me)
                {
-                  _ecore_main_select_fd_too_big_check(fdh->fd);
+                  if (_ecore_main_select_fd_too_big_check(fdh->fd)) continue;
                   if ((fdh->flags & ECORE_FD_READ) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
-                       FD_SET(fdh->fd, &rfds);
+                       ECORE_FDS_SET(fdh->fd, rfds);
                        if (fdh->fd > max_fd) max_fd = fdh->fd;
                     }
                   if ((fdh->flags & ECORE_FD_WRITE) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
-                       FD_SET(fdh->fd, &wfds);
+                       ECORE_FDS_SET(fdh->fd, wfds);
                        if (fdh->fd > max_fd) max_fd = fdh->fd;
                     }
                   if ((fdh->flags & ECORE_FD_ERROR) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
-                       FD_SET(fdh->fd, &exfds);
+                       ECORE_FDS_SET(fdh->fd, exfds);
                        if (fdh->fd > max_fd) max_fd = fdh->fd;
                     }
                }
@@ -1875,29 +1895,34 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
    else
      {
         // polling on the epoll fd will wake when fd in the epoll set is active
-        max_fd = _ecore_get_epoll_fd(obj, pd);
-        if (max_fd > -1)
-          FD_SET(max_fd, &rfds);
+        int epoll_fd = _ecore_get_epoll_fd(obj, pd);
+
+        // max_fd becomes nfds - 1: it never goes past what the sets hold.
+        if ((epoll_fd > -1) && !_ecore_main_select_fd_too_big_check(epoll_fd))
+          {
+             ECORE_FDS_SET(epoll_fd, rfds);
+             max_fd = epoll_fd;
+          }
      }
 #endif
    EINA_LIST_FOREACH(pd->file_fd_handlers, l, fdh)
      {
         if (!fdh->delete_me)
           {
-             _ecore_main_select_fd_too_big_check(fdh->fd);
+             if (_ecore_main_select_fd_too_big_check(fdh->fd)) continue;
              if ((fdh->flags & ECORE_FD_READ) || (fdh->flags & ECORE_FD_ALWAYS))
                {
-                  FD_SET(fdh->fd, &rfds);
+                  ECORE_FDS_SET(fdh->fd, rfds);
                   if (fdh->fd > max_fd) max_fd = fdh->fd;
                }
              if ((fdh->flags & ECORE_FD_WRITE) || (fdh->flags & ECORE_FD_ALWAYS))
                {
-                  FD_SET(fdh->fd, &wfds);
+                  ECORE_FDS_SET(fdh->fd, wfds);
                   if (fdh->fd > max_fd) max_fd = fdh->fd;
                }
              if ((fdh->flags & ECORE_FD_ERROR) || (fdh->flags & ECORE_FD_ALWAYS))
                {
-                  FD_SET(fdh->fd, &exfds);
+                  ECORE_FDS_SET(fdh->fd, exfds);
                   if (fdh->fd > max_fd) max_fd = fdh->fd;
                }
              if (fdh->fd > max_fd) max_fd = fdh->fd;
@@ -1908,9 +1933,11 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
    eina_evlog("<RUN", NULL, 0.0, NULL);
    eina_evlog("!SLEEP", NULL, 0.0, t ? "timeout" : "forever");
    if (obj == ML_OBJ)
-     ret = main_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+     ret = main_loop_select(max_fd + 1, (fd_set *)rfds, (fd_set *)wfds,
+                            (fd_set *)exfds, t);
    else
-     ret = general_loop_select(max_fd + 1, &rfds, &wfds, &exfds, t);
+     ret = general_loop_select(max_fd + 1, (fd_set *)rfds, (fd_set *)wfds,
+                               (fd_set *)exfds, t);
 #ifndef _WIN32
    err_no = errno;
 #endif
@@ -1941,11 +1968,11 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
                {
                   if (!fdh->delete_me)
                     {
-                       if (FD_ISSET(fdh->fd, &rfds))
+                       if (_ecore_main_select_isset(fdh->fd, rfds))
                          fdh->read_active  = EINA_TRUE;
-                       if (FD_ISSET(fdh->fd, &wfds))
+                       if (_ecore_main_select_isset(fdh->fd, wfds))
                          fdh->write_active = EINA_TRUE;
-                       if (FD_ISSET(fdh->fd, &exfds))
+                       if (_ecore_main_select_isset(fdh->fd, exfds))
                          fdh->error_active = EINA_TRUE;
                        _ecore_try_add_to_call_list(obj, pd, fdh);
                     }
@@ -1955,11 +1982,11 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
           {
              if (!fdh->delete_me)
                {
-                  if (FD_ISSET(fdh->fd, &rfds))
+                  if (_ecore_main_select_isset(fdh->fd, rfds))
                     fdh->read_active  = EINA_TRUE;
-                  if (FD_ISSET(fdh->fd, &wfds))
+                  if (_ecore_main_select_isset(fdh->fd, wfds))
                     fdh->write_active = EINA_TRUE;
-                  if (FD_ISSET(fdh->fd, &exfds))
+                  if (_ecore_main_select_isset(fdh->fd, exfds))
                     fdh->error_active = EINA_TRUE;
                   _ecore_try_add_to_call_list(obj, pd, fdh);
                }

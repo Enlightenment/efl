@@ -6,6 +6,9 @@
 #include <unistd.h>
 #ifndef _WIN32
 # include <signal.h>
+# include <fcntl.h>
+# include <sys/resource.h>
+# include <sys/select.h>
 #endif
 
 #ifdef _WIN32
@@ -135,6 +138,174 @@ EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler)
 
 }
 EFL_END_TEST
+
+#ifndef _WIN32
+// An fd above the 1024 bits of a system fd_set. Raises the soft limit if it
+// has to, and gives -1 when the process cannot hold such an fd: the tests that
+// need one fail then, as there is no other way to reach the bug.
+#define HIGH_FD 1500
+
+static int
+_high_fd(int fd)
+{
+   struct rlimit rl;
+   int high;
+
+   if (getrlimit(RLIMIT_NOFILE, &rl) != 0) return -1;
+   if (rl.rlim_cur < HIGH_FD + 64)
+     {
+        if ((rl.rlim_max != RLIM_INFINITY) && (rl.rlim_max < HIGH_FD + 64))
+          return -1;
+        rl.rlim_cur = HIGH_FD + 64;
+        if (setrlimit(RLIMIT_NOFILE, &rl) != 0) return -1;
+     }
+   high = fcntl(fd, F_DUPFD, HIGH_FD);
+   if (high >= 0) close(fd);
+   return high;
+}
+
+static Eina_Bool
+_high_timeout_cb(void *data EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_high_fd_cb(void *data, Ecore_Fd_Handler *handler EINA_UNUSED)
+{
+   int *count = data;
+
+   (*count)++;
+   ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+// The pipe is taken by epoll on Linux.
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_high_pipe)
+{
+   Ecore_Fd_Handler *fdh;
+   Ecore_Timer *timer;
+   int comm[2];
+   int count = 0;
+
+   ck_assert_int_eq(pipe(comm), 0);
+   comm[0] = _high_fd(comm[0]);
+   ck_assert_msg(comm[0] >= HIGH_FD, "RLIMIT_NOFILE does not allow an fd of %i", HIGH_FD);
+
+   fdh = ecore_main_fd_handler_add(comm[0], ECORE_FD_READ,
+                                   _high_fd_cb, &count, NULL, NULL);
+   ck_assert_ptr_ne(fdh, NULL);
+   timer = ecore_timer_add(2.0, _high_timeout_cb, NULL);
+   ck_assert_int_eq(write(comm[1], "x", 1), 1);
+
+   ecore_main_loop_begin();
+
+   ecore_timer_del(timer);
+   close(comm[0]);
+   close(comm[1]);
+   ck_assert_int_eq(count, 1);
+}
+EFL_END_TEST
+
+// A regular file cannot be polled by epoll, so it goes through select(), and
+// so does the epoll fd itself, the bit of which must not overflow the set.
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_high_file)
+{
+   Ecore_Fd_Handler *fdh;
+   Ecore_Timer *timer;
+   char path[] = "/tmp/ecore_high_fd_XXXXXX";
+   int fd, count = 0;
+
+   fd = mkstemp(path);
+   ck_assert_int_ge(fd, 0);
+   unlink(path);
+   fd = _high_fd(fd);
+   ck_assert_msg(fd >= HIGH_FD, "RLIMIT_NOFILE does not allow an fd of %i", HIGH_FD);
+
+   // A regular file is always readable.
+   fdh = ecore_main_fd_handler_file_add(fd, ECORE_FD_READ,
+                                        _high_fd_cb, &count, NULL, NULL);
+   ck_assert_ptr_ne(fdh, NULL);
+   timer = ecore_timer_add(2.0, _high_timeout_cb, NULL);
+
+   ecore_main_loop_begin();
+
+   ecore_timer_del(timer);
+   close(fd);
+   ck_assert_int_eq(count, 1);
+}
+EFL_END_TEST
+
+static int _hook_nfds = 0;
+static int _hook_fd = -1;
+static int _hook_seen = 0;
+static int _hook_bad = 0;
+
+static int
+_hook_bit(const fd_set *set, int fd)
+{
+   const fd_mask *m = (const fd_mask *)set;
+
+   return !!(m[fd / NFDBITS] & (fd_mask)(1UL << (fd % NFDBITS)));
+}
+
+static int
+_high_select(int nfds, fd_set *r, fd_set *w, fd_set *e, struct timeval *t)
+{
+   const fd_mask *mw = (const fd_mask *)w, *me = (const fd_mask *)e;
+   int i, words = (nfds + NFDBITS - 1) / NFDBITS;
+
+   if (nfds > _hook_nfds) _hook_nfds = nfds;
+   // The fd is wanted for reading, in a set that is as wide as nfds says. Not
+   // one bit anywhere in the write and error sets: an fd past the end of a
+   // narrow set lands in whatever follows it.
+   if ((nfds > _hook_fd) && _hook_bit(r, _hook_fd)) _hook_seen++;
+   for (i = 0; i < words; i++)
+     {
+        if (mw[i] || me[i]) _hook_bad++;
+     }
+   return select(nfds, r, w, e, t);
+}
+
+// The select hook is given sets that hold every fd that was asked for.
+EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_high_hook)
+{
+   Ecore_Select_Function old;
+   Ecore_Fd_Handler *fdh;
+   Ecore_Timer *timer;
+   char path[] = "/tmp/ecore_high_fd_XXXXXX";
+   int fd, count = 0;
+
+   fd = mkstemp(path);
+   ck_assert_int_ge(fd, 0);
+   unlink(path);
+   fd = _high_fd(fd);
+   ck_assert_msg(fd >= HIGH_FD, "RLIMIT_NOFILE does not allow an fd of %i", HIGH_FD);
+
+   old = ecore_main_loop_select_func_get();
+   _hook_nfds = 0;
+   _hook_fd = fd;
+   _hook_seen = 0;
+   _hook_bad = 0;
+   ecore_main_loop_select_func_set(_high_select);
+   fdh = ecore_main_fd_handler_file_add(fd, ECORE_FD_READ,
+                                        _high_fd_cb, &count, NULL, NULL);
+   ck_assert_ptr_ne(fdh, NULL);
+   timer = ecore_timer_add(2.0, _high_timeout_cb, NULL);
+
+   ecore_main_loop_begin();
+
+   ecore_main_loop_select_func_set(old);
+   ecore_timer_del(timer);
+   close(fd);
+   ck_assert_int_gt(_hook_nfds, fd);
+   ck_assert_int_gt(_hook_seen, 0);
+   ck_assert_int_eq(_hook_bad, 0);
+   ck_assert_int_eq(count, 1);
+}
+EFL_END_TEST
+#endif
 
 EFL_START_TEST(ecore_test_ecore_main_loop_fd_handler_valid_flags)
 {
@@ -517,6 +688,11 @@ void ecore_test_ecore(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_init);
    tcase_add_test(tc, ecore_test_ecore_main_loop);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler);
+#ifndef _WIN32
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_high_pipe);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_high_file);
+   tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_high_hook);
+#endif
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_valid_flags);
    tcase_add_test(tc, ecore_test_ecore_main_loop_fd_handler_activate_modify);
    tcase_add_test(tc, ecore_test_ecore_main_loop_event);

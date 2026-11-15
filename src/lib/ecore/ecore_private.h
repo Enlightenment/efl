@@ -508,6 +508,43 @@ _ecore_call_fd_cb(Ecore_Fd_Cb func,
 
 extern int _ecore_fps_debug;
 extern Eina_Bool _ecore_glib_always_integrate;
+
+// The fd sets of the main loop. On glibc and the BSDs an fd_set is fixed at
+// 1024 bits and defining FD_SETSIZE does not change it, so the loop does not
+// use fd_set as a type of its own: it keeps arrays of fd_mask that hold
+// EFL_MAX_FD_SIZE bits and passes them to the select function as fd_set
+// pointers, which select() reads word by word up to nfds. The FD_SET family
+// would check the fd against 1024 (and abort when fortified), so these
+// macros do the bit work and the caller checks the fd against
+// ECORE_FDS_MAX_FD.
+#ifndef _WIN32
+# ifndef NFDBITS
+#  define NFDBITS (8 * (int)sizeof(fd_mask))
+# endif
+# define ECORE_FDS_MAX_FD  EFL_MAX_FD_SIZE
+# define ECORE_FDS_WORDS   ((EFL_MAX_FD_SIZE + NFDBITS - 1) / NFDBITS)
+// An fd that the sets can hold.
+# define ECORE_FDS_FIT(fd) (((fd) >= 0) && ((fd) < ECORE_FDS_MAX_FD))
+// Shifted as unsigned long, as glibc does: fd_mask is signed and a shift into
+// its sign bit is undefined.
+# define ECORE_FDS_BIT(fd) ((fd_mask)(1UL << ((fd) % NFDBITS)))
+# define ECORE_FDS_ZERO(set) \
+   memset((set), 0, ECORE_FDS_WORDS * sizeof(fd_mask))
+# define ECORE_FDS_SET(fd, set) \
+   (((fd_mask *)(set))[(fd) / NFDBITS] |= ECORE_FDS_BIT(fd))
+# define ECORE_FDS_ISSET(fd, set) \
+   (!!(((const fd_mask *)(set))[(fd) / NFDBITS] & ECORE_FDS_BIT(fd)))
+#else
+// Winsock's fd_set is a counted array of handles, FD_SETSIZE is a count and
+// not a limit on the value of an fd (a HANDLE is often large), so no fd is
+// ever too big there: the main loop does as it did before and winsock decides.
+# include <limits.h>
+# define ECORE_FDS_MAX_FD  INT_MAX
+# define ECORE_FDS_FIT(fd) (1)
+# define ECORE_FDS_ZERO(set)        FD_ZERO(set)
+# define ECORE_FDS_SET(fd, set)     FD_SET((fd), (set))
+# define ECORE_FDS_ISSET(fd, set)   FD_ISSET((fd), (set))
+#endif
 #ifdef _WIN32
 extern int ecore_main_win32_select(int             nfds,
                                    fd_set         *readfds,
