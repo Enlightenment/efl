@@ -104,6 +104,11 @@ group { name: "efl/panes/vertical";
             inherit: "default" 0.0;
             color_class: "/fg/pressed/panes/handle";
          }
+         /* A fixed panes has nothing to drag, so it shows no grip. */
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
       }
       part { name: "efl.event"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -145,11 +150,13 @@ group { name: "efl/panes/vertical";
          signal: "efl,panes,fixed"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "bar";
+         target: "dots";
       }
       program { // for efl_panes_fixed_set()
          signal: "efl,panes,unfixed"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "bar";
+         target: "dots";
       }
    }
 }
@@ -245,6 +252,11 @@ group { name: "efl/panes/horizontal";
             inherit: "default" 0.0;
             color_class: "/fg/pressed/panes/handle";
          }
+         /* A fixed panes has nothing to drag, so it shows no grip. */
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
       }
       part { name: "efl.event"; type: SWALLOW;
          description { state: "default" 0.0;
@@ -286,11 +298,13 @@ group { name: "efl/panes/horizontal";
          signal: "efl,panes,fixed"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "bar";
+         target: "dots";
       }
       program { // for efl_panes_fixed_set()
          signal: "efl,panes,unfixed"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "bar";
+         target: "dots";
       }
    }
 }
