@@ -2,6 +2,9 @@ class @beta Efl.Ui.Exact_Model extends Efl.Ui.Size_Model
 {
    [[Class to be used to store object item size for List/Grid View.
 
+   $["self.width"] and $["self.height"] of a row nobody has measured answer $EAGAIN, not 0
+   (a row measured as 0 answers 0).
+
    This model provide $["total.width"] and $["total.height"] as an accumulated size of all
    its children $["self.width"] and $["self.height"] @Efl.Model.property. This is currently
    assuming a vertical list only.
