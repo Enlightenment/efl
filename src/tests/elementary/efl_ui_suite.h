@@ -28,6 +28,7 @@ void efl_ui_test_grid(TCase *tc);
 void efl_ui_test_relative_container(TCase *tc);
 void efl_ui_test_atspi(TCase *tc);
 void efl_ui_test_image_zoomable(TCase *tc);
+void efl_ui_test_calendar(TCase *tc);
 void efl_ui_test_layout(TCase *tc);
 void efl_ui_test_image(TCase *tc);
 void efl_ui_test_callback(TCase *tc);

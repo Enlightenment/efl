@@ -1,4 +1,4 @@
-class @beta Efl.Ui.View_Factory
+abstract @beta Efl.Ui.View_Factory
 {
    [[This class provide a utility function that class that wish to use @Efl.Ui.Factory.create should use.]]
    data: null;

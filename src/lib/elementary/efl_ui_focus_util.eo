@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Focus.Util extends Efl.Object  {
+abstract @beta Efl.Ui.Focus.Util extends Efl.Object  {
    [[EFL UI Focus Utility class.
    
      This class contains a series of static methods that simplify common focus management operations.

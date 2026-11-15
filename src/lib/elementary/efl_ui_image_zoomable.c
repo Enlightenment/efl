@@ -162,6 +162,10 @@ _efl_ui_image_zoomable_pan_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Zoo
 
    efl_gfx_entity_position_set(efl_super(obj, MY_PAN_CLASS), pos);
 
+   /* A pan is created by its zoomable and given the widget straight after;
+    * one built on its own never gets it, and everything below reads NULL. */
+   if (!psd->wsd) return;
+
    ecore_job_del(psd->wsd->calc_job);
    psd->wsd->calc_job = ecore_job_add(_calc_job_cb, psd->wobj);
 }
@@ -173,6 +177,8 @@ _efl_ui_image_zoomable_pan_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Zoomabl
      return;
 
    efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), sz);
+
+   if (!psd->wsd) return;
 
    psd->wsd->resized = EINA_TRUE;
    ecore_job_del(psd->wsd->calc_job);
@@ -376,6 +382,8 @@ _efl_ui_image_zoomable_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Imag
    Eina_List *l;
    Evas_Coord ox, oy, ow, oh;
 
+   if (!psd->wsd) return;
+
    efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    ELM_WIDGET_DATA_GET_OR_RETURN(psd->wobj, wd);
 
@@ -398,6 +406,7 @@ _efl_ui_image_zoomable_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Imag
 EOLIAN static void
 _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd, Eina_Position2D pos)
 {
+   if (!psd->wsd) return;
    if ((pos.x == psd->wsd->pan_x) && (pos.y == psd->wsd->pan_y)) return;
    psd->wsd->pan_x = pos.x;
    psd->wsd->pan_y = pos.y;
@@ -409,6 +418,7 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoo
 EOLIAN static Eina_Position2D
 _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
+   if (!psd->wsd) return EINA_POSITION2D(0, 0);
    return EINA_POSITION2D(psd->wsd->pan_x, psd->wsd->pan_y);
 }
 
@@ -416,6 +426,8 @@ EOLIAN static Eina_Position2D
 _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_max_get(const Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
    Evas_Coord ow, oh;
+
+   if (!psd->wsd) return EINA_POSITION2D(0, 0);
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    ow = psd->wsd->minw - ow;
@@ -435,13 +447,14 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_min_get(const Eo *obj EINA_UN
 EOLIAN static Eina_Size2D
 _efl_ui_image_zoomable_pan_efl_ui_pan_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
+   if (!psd->wsd) return EINA_SIZE2D(0, 0);
    return EINA_SIZE2D(psd->wsd->minw, psd->wsd->minh);
 }
 
 EOLIAN static void
 _efl_ui_image_zoomable_pan_efl_object_destructor(Eo *obj, Efl_Ui_Image_Zoomable_Pan_Data *psd)
 {
-   efl_data_unref(psd->wobj, psd->wsd);
+   if (psd->wsd) efl_data_unref(psd->wobj, psd->wsd);
 
    efl_destructor(efl_super(obj, MY_PAN_CLASS));
 }

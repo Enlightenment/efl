@@ -5,6 +5,7 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
+#include "efl_ui_image_zoomable_pan.eo.h"
 
 
 EFL_START_TEST(efl_ui_test_image_zoomable_icon)
@@ -121,10 +122,42 @@ EFL_START_TEST(efl_ui_test_image_zoomable_set_while_constructing)
 }
 EFL_END_TEST
 
+// A pan is given its widget by its zoomable straight after being created; one
+// made on its own must answer rather than dereference the missing widget.
+EFL_START_TEST(efl_ui_test_image_zoomable_pan_alone)
+{
+   Eo *win, *pan;
+   Eina_Position2D pos;
+   Eina_Size2D sz;
+
+   win = win_add(NULL, "pan", EFL_UI_WIN_TYPE_BASIC);
+   pan = efl_add(EFL_UI_IMAGE_ZOOMABLE_PAN_CLASS, win);
+   ck_assert_ptr_ne(pan, NULL);
+
+   efl_gfx_entity_position_set(pan, EINA_POSITION2D(10, 20));
+   efl_gfx_entity_size_set(pan, EINA_SIZE2D(30, 40));
+   efl_canvas_group_calculate(pan);
+   efl_ui_pan_position_set(pan, EINA_POSITION2D(5, 5));
+
+   pos = efl_ui_pan_position_get(pan);
+   ck_assert_int_eq(pos.x, 0);
+   ck_assert_int_eq(pos.y, 0);
+   pos = efl_ui_pan_position_max_get(pan);
+   ck_assert_int_eq(pos.x, 0);
+   ck_assert_int_eq(pos.y, 0);
+   sz = efl_ui_pan_content_size_get(pan);
+   ck_assert_int_eq(sz.w, 0);
+   ck_assert_int_eq(sz.h, 0);
+
+   efl_del(pan);
+}
+EFL_END_TEST
+
 void efl_ui_test_image_zoomable(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_image_zoomable_icon);
    tcase_add_test(tc, efl_ui_test_image_zoomable_replaced_calc_job);
    tcase_add_test(tc, efl_ui_test_image_zoomable_file_after_icon);
    tcase_add_test(tc, efl_ui_test_image_zoomable_set_while_constructing);
+   tcase_add_test(tc, efl_ui_test_image_zoomable_pan_alone);
 }

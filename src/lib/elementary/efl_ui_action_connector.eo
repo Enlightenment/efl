@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Action_Connector {
+abstract @beta Efl.Ui.Action_Connector {
   [[Helper class that connects theme signals or object events to the interfaces which are for actions.
 
     For example, this simplifies creating widgets that implement the @Efl.Input.Clickable interface.

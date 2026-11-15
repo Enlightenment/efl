@@ -1182,7 +1182,11 @@ _efl_ui_calendar_item_day_number_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, int
    pd->v = i;
    snprintf(pname, sizeof(pname), "efl.cit_%i.access", i);
 
+   /* The day cells live in the calendar's theme, so there is only something
+    * to find when this item's parent is a calendar. */
    o = elm_layout_edje_get(efl_parent_get(obj));
+   EINA_SAFETY_ON_NULL_RETURN(o);
+
    edje_object_freeze(o);
    po = (Evas_Object *)edje_object_part_object_get(o, pname);
    edje_object_thaw(o);
@@ -1191,9 +1195,10 @@ _efl_ui_calendar_item_day_number_set(Eo *obj, Efl_Ui_Calendar_Item_Data *pd, int
      pd->part = po;
    else
      pd->part = evas_object_data_get(po, "_part_access_obj");
-   _efl_ui_focus_event_redirector(pd->part, obj);
 
    EINA_SAFETY_ON_NULL_RETURN(pd->part);
+
+   _efl_ui_focus_event_redirector(pd->part, obj);
 }
 
 EOLIAN static int
@@ -1208,12 +1213,15 @@ _efl_ui_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Calendar_Ite
    efl_ui_focus_object_focus_set(efl_super(obj, EFL_UI_CALENDAR_ITEM_CLASS), focus);
 
    _update_focused_it(efl_parent_get(obj), pd->v);
+
+   if (!pd->part) return;
    evas_object_focus_set(pd->part, efl_ui_focus_object_focus_get(obj));
 }
 
 EOLIAN static Eina_Rect
 _efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Item_Data *pd)
 {
+   if (!pd->part) return EINA_RECT(0, 0, 0, 0);
    return efl_gfx_entity_geometry_get(pd->part);
 }
 

@@ -1,4 +1,4 @@
-class @beta Efl.Text_Markup_Util {
+abstract @beta Efl.Text_Markup_Util {
    [[Utility class for markup, such as conversions
    ]]
    data: null;

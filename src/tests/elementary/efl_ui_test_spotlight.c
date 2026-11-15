@@ -854,6 +854,20 @@ EFL_START_TEST (efl_ui_spotlight_indicator_ownership)
 }
 EFL_END_TEST
 
+// Classes made of static methods only have no instance to be: efl_add() refuses
+// to make one rather than hand back an object that crashes when it is used.
+EFL_START_TEST(efl_ui_spotlight_util_is_abstract)
+{
+   EXPECT_ERROR_START;
+   ck_assert_ptr_eq(efl_add(EFL_UI_SPOTLIGHT_UTIL_CLASS, win), NULL);
+   ck_assert_ptr_eq(efl_add(EFL_UI_FOCUS_UTIL_CLASS, win), NULL);
+   ck_assert_ptr_eq(efl_add(EFL_UI_ACTION_CONNECTOR_CLASS, win), NULL);
+   ck_assert_ptr_eq(efl_add(EFL_UI_VIEW_FACTORY_CLASS, win), NULL);
+   ck_assert_ptr_eq(efl_add(EFL_TEXT_MARKUP_UTIL_CLASS, win), NULL);
+   EXPECT_ERROR_END;
+}
+EFL_END_TEST
+
 void efl_ui_test_spotlight(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
@@ -877,4 +891,5 @@ void efl_ui_test_spotlight(TCase *tc)
    tcase_add_test(tc, efl_ui_spotlight_min_max_sizing);
    tcase_add_test(tc, efl_ui_spotlight_manager_ownership);
    tcase_add_test(tc, efl_ui_spotlight_indicator_ownership);
+   tcase_add_test(tc, efl_ui_spotlight_util_is_abstract);
 }

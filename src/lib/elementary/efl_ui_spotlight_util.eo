@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Spotlight.Util {
+abstract @beta Efl.Ui.Spotlight.Util {
   methods {
      stack_gen @static {
        [[Get a preconfigured stack obejct]]
