@@ -43,6 +43,25 @@ internal class TestStructs
     }
 #endif
 
+#if EFL_BETA
+    public static void complex_omitted_collections_read_back_empty()
+    {
+        var hash = new Eina.Hash<string, string>();
+        var value = new Eina.Value(Eina.ValueType.Int32);
+        var binbuf = new Eina.Binbuf();
+
+        var complex = new Dummy.StructComplex(fhash: hash, fanyValue: value, fbinbuf: binbuf);
+        Test.AssertEquals(0, complex.Farray.Count);
+        Test.AssertEquals(0, complex.Flist.Count);
+        Test.AssertEquals(0, complex.Fiterator.Count());
+        Test.AssertEquals(0, complex.Faccessor.Count());
+
+        binbuf.Dispose();
+        value.Dispose();
+        hash.Dispose();
+    }
+#endif
+
     public static void parameter_initialization()
     {
         var simple = new Dummy.StructSimple(0x1, 0x2, (char)0x3, 0x4, 0x5);

@@ -759,10 +759,13 @@ internal static class Globals
         Monitor.Exit(Efl.All.InitLock);
     }
 
+    // IntPtr.Zero is an absent collection, which reads back as an empty one.
     internal static IEnumerable<T> AccessorToIEnumerable<T>(IntPtr accessor)
     {
         if (accessor == IntPtr.Zero)
-           throw new ArgumentException("accessor is null", nameof(accessor));
+        {
+            yield break;
+        }
 
         IntPtr data = IntPtr.Zero;
         uint position = 0;
@@ -774,11 +777,12 @@ internal static class Globals
         }
     }
 
+    // A null collection is absent, and goes to C as IntPtr.Zero.
     internal static IntPtr IEnumerableToAccessor<T>(IEnumerable<T> enumerable, bool isMoved)
     {
         if (enumerable == null)
         {
-            throw new ArgumentException("enumerable is null", nameof(enumerable));
+            return IntPtr.Zero;
         }
 
         // If we are a wrapper around an existing Eina.Accessor, we can just forward
@@ -830,10 +834,13 @@ internal static class Globals
         return nativeAccessor;
     }
 
+    // IntPtr.Zero is an absent collection, which reads back as an empty one.
     internal static IEnumerable<T> IteratorToIEnumerable<T>(IntPtr iterator)
     {
         if (iterator == IntPtr.Zero)
-           throw new ArgumentException("iterator is null", nameof(iterator));
+        {
+            yield break;
+        }
 
         while (Eina.IteratorNativeFunctions.eina_iterator_next(iterator, out IntPtr data))
         {
@@ -841,11 +848,12 @@ internal static class Globals
         }
     }
 
+    // A null collection is absent, and goes to C as IntPtr.Zero.
     internal static IntPtr IEnumerableToIterator<T>(IEnumerable<T> enumerable, bool isMoved)
     {
         if (enumerable == null)
         {
-            throw new ArgumentException("enumerable is null", nameof(enumerable));
+            return IntPtr.Zero;
         }
 
         // If we are a wrapper around an existing Eina.Iterator, we can just forward
@@ -875,10 +883,13 @@ internal static class Globals
         return ret;
     }
 
+    // IntPtr.Zero is an absent collection, which reads back as an empty one.
     internal static IList<T> NativeListToIList<T>(IntPtr nativeList)
     {
         if (nativeList == IntPtr.Zero)
-            throw new ArgumentException("nativeList is null", nameof(nativeList));
+        {
+            return new List<T>();
+        }
 
         IntPtr l;
         List<T> list = new List<T>();
@@ -889,10 +900,13 @@ internal static class Globals
         return list;
     }
 
+    // A null collection is absent, and goes to C as IntPtr.Zero.
     internal static IntPtr IListToNativeList<T>(IList<T> list, bool isMoved)
     {
         if (list == null)
-            throw new ArgumentException("list is null", nameof(list));
+        {
+            return IntPtr.Zero;
+        }
 
         // If we are a wrapper around an existing Eina.List, we can just forward
         // it and avoid unnecessary copying in non-owning transfers.
@@ -917,10 +931,13 @@ internal static class Globals
         return nativeList;
     }
 
+    // IntPtr.Zero is an absent collection, which reads back as an empty one.
     internal static IList<T> NativeArrayToIList<T>(IntPtr nativeArray)
     {
         if (nativeArray == IntPtr.Zero)
-            throw new ArgumentException("nativeArray is null", nameof(nativeArray));
+        {
+            return new List<T>();
+        }
 
         List<T> list = new List<T>();
         UpdateListFromNativeArray(list, nativeArray);
@@ -929,10 +946,13 @@ internal static class Globals
         return list;
     }
 
+    // A null collection is absent, and goes to C as IntPtr.Zero.
     internal static IntPtr IListToNativeArray<T>(IList<T> list, bool isMoved)
     {
         if (list == null)
-            throw new ArgumentException("list is null", nameof(list));
+        {
+            return IntPtr.Zero;
+        }
 
         // If we are a wrapper around an existing Eina.Array, we can just forward
         // it and avoid unnecessary copying in non-owning transfers.
