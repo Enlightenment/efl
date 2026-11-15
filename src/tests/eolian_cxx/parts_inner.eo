@@ -1,0 +1,4 @@
+class Parts.Inner extends Efl.Object {
+   [[A part proxy for the C++ part accessor test. @since 1.66]]
+   data: null;
+}

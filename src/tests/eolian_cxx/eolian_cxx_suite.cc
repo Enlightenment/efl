@@ -23,6 +23,7 @@
 static const Efl_Test_Case etc[] = {
   { "Eolian-Cxx Parsing", eolian_cxx_test_parse },
   { "Eolian-Cxx Wrapper", eolian_cxx_test_wrapper },
+  { "Eolian-Cxx Parts", eolian_cxx_test_parts },
   { "Eolian-Cxx Generation", eolian_cxx_test_generate },
   { "Eolian-Cxx Address_of", eolian_cxx_test_address_of },
   { "Eolian-Cxx Inheritance", eolian_cxx_test_inheritance },

@@ -5,6 +5,7 @@
 #include "../efl_check.h"
 void eolian_cxx_test_parse(TCase* tc);
 void eolian_cxx_test_wrapper(TCase* tc);
+void eolian_cxx_test_parts(TCase* tc);
 void eolian_cxx_test_generate(TCase* tc);
 void eolian_cxx_test_address_of(TCase* tc);
 void eolian_cxx_test_inheritance(TCase* tc);

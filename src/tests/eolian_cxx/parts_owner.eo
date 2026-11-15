@@ -1,0 +1,11 @@
+class Parts.Owner extends Efl.Object implements Efl.Part {
+   [[An object that declares a part, for the C++ part accessor test. @since 1.66]]
+   data: Parts_Owner_Data;
+   parts {
+      inner: Parts.Inner; [[The only part.]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Part.part_get;
+   }
+}

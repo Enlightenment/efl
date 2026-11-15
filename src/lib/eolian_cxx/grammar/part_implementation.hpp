@@ -39,7 +39,7 @@ struct part_implementation_generator
       if(!as_generator("#ifdef EFL_CXXPERIMENTAL\n").generate(sink, attributes::unused, ctx))
         return false;
 
-      if(!as_generator("::efl::eolian::return_traits<::" << *(string << "::"))
+      if(!as_generator("inline ::efl::eolian::return_traits<::" << *(string << "::"))
             .generate(sink, part.klass.namespaces, add_lower_case_context(ctx)))
         return false;
       // FIXME: part_def can't depend on klass_def so C type is not known :(
