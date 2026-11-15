@@ -27,9 +27,9 @@ interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
          [[Select a range of @Efl.Ui.Selectable objects using their indices inside the container.
 
            This will select the range of @Efl.Ui.Selectable objects from $a to $b or from $b to $a depending on
-           which one comes first.
-           If $a or $b are not part of the widget, an error is returned, and no change is applied.
-           $NULL is not allowed as either of the parameters.
+           which one comes first. Both ends are selected too.
+           Indices past the last child are ignored: the range stops at the
+           last child.
          ]]
          params {
            a : uint; [[One side of the range.]]
@@ -40,10 +40,9 @@ interface Efl.Ui.Multi_Selectable_Index_Range extends Efl.Ui.Multi_Selectable
          [[Unselect a range of @Efl.Ui.Selectable objects using their indices inside the container.
 
            This will unselect the range of @Efl.Ui.Selectable objects from $a to $b or from $b to $a depending on
-           which one comes first.
-           If $a or $b are not part of the widget, an error is returned, and no change is applied.
-           $NULL is not allowed as either of the parameters.
-           Both of the passed values will also be unselected.
+           which one comes first. Both ends are unselected too.
+           Indices past the last child are ignored: the range stops at the
+           last child.
          ]]
          params {
            a : uint; [[One side of the range.]]
