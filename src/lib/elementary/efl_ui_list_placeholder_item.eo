@@ -12,7 +12,7 @@ class @beta Efl.Ui.List_Placeholder_Item extends Efl.Ui.Item implements Efl.Cont
    }
    implements {
       //Efl.Object
-      Efl.Object.finalize;
+      Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;

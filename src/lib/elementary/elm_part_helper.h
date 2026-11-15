@@ -3,6 +3,7 @@
 
 #include "Elementary.h"
 #include "elm_priv.h"
+#include "elm_widget_layout.h"
 #include "efl_ui_layout_part_legacy.eo.h"
 
 //#define ELM_PART_HOOK do { ERR("%s@%p:%s [%d]", efl_class_name_get(pd->obj), pd->obj, pd->part, (int) pd->temp); } while(0)
@@ -80,6 +81,18 @@ _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
    pd->obj = obj;
 
    return proxy;
+}
+
+/* A swallow can only be made once the theme gives the layout its group, and
+ * a layout being built has none until finalize. Efl.Ui.Layout_Base.part_get
+ * brings the theme forward for that reason; a class answering part_get by
+ * itself, for parts of its own, has to do the same before it hands one out. */
+static inline void
+_elm_part_layout_theme_forward(const Eo *obj)
+{
+   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, EFL_UI_LAYOUT_BASE_CLASS);
+
+   if (sd && sd->needs_theme_apply) efl_ui_widget_theme_apply((Eo *) obj);
 }
 
 static inline Eo *

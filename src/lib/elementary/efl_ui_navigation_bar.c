@@ -88,9 +88,9 @@ static Efl_Gfx_Entity *
 _efl_ui_navigation_bar_content_get(const Eo *obj, Efl_Ui_Navigation_Bar_Data *_pd EINA_UNUSED, const char *part)
 {
    if (eina_streq(part, "left_content"))
-     efl_content_get(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"));
+     return efl_content_get(efl_part(efl_super(obj, MY_CLASS), "efl.left_content"));
    else if (eina_streq(part, "right_content"))
-     efl_content_get(efl_part(efl_super(obj, MY_CLASS), "efl.right_content"));
+     return efl_content_get(efl_part(efl_super(obj, MY_CLASS), "efl.right_content"));
 
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
 }

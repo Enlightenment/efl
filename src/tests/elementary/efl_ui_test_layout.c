@@ -851,6 +851,41 @@ EFL_START_TEST(efl_ui_layout_test_property_bind_unknown_key)
 }
 EFL_END_TEST
 
+/* The content parts of an item can be filled in the efl_add() that makes it:
+ * the item answers part_get by itself and has to bring its theme forward
+ * first, or there is no group to swallow the content into. */
+EFL_START_TEST(efl_ui_layout_test_item_content_at_construction)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *icon = efl_add(EFL_UI_BOX_CLASS, win);
+   Eo *content = efl_add(EFL_UI_BOX_CLASS, win);
+   Eo *item, *placeholder;
+
+   item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, win,
+                  efl_content_set(efl_part(efl_added, "icon"), icon));
+   ck_assert_ptr_eq(efl_content_get(efl_part(item, "icon")), icon);
+
+   placeholder = efl_add(EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS, win,
+                         efl_content_set(efl_part(efl_added, "content"), content));
+   ck_assert_ptr_eq(efl_content_get(efl_part(placeholder, "content")), content);
+}
+EFL_END_TEST
+
+/* The side contents of a navigation bar read back. */
+EFL_START_TEST(efl_ui_layout_test_navigation_bar_side_content)
+{
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   Eo *bar = efl_add(EFL_UI_NAVIGATION_BAR_CLASS, win);
+   Eo *left = efl_add(EFL_UI_BOX_CLASS, win);
+   Eo *right = efl_add(EFL_UI_BOX_CLASS, win);
+
+   efl_content_set(efl_part(bar, "left_content"), left);
+   efl_content_set(efl_part(bar, "right_content"), right);
+   ck_assert_ptr_eq(efl_content_get(efl_part(bar, "left_content")), left);
+   ck_assert_ptr_eq(efl_content_get(efl_part(bar, "right_content")), right);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -874,6 +909,8 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
    tcase_add_test(tc, efl_ui_layout_test_factory_bind_same_factory);
+   tcase_add_test(tc, efl_ui_layout_test_item_content_at_construction);
+   tcase_add_test(tc, efl_ui_layout_test_navigation_bar_side_content);
    tcase_add_test(tc, efl_ui_layout_test_property_bind_unknown_key);
    tcase_add_test(tc, efl_ui_layout_test_table_part_getters);
    tcase_add_test(tc, efl_ui_layout_test_box_part);

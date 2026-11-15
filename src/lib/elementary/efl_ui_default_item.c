@@ -25,6 +25,7 @@ EOLIAN static Efl_Object *
 _efl_ui_default_item_efl_part_part_get(const Eo *obj, void *pd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   _elm_part_layout_theme_forward(obj);
    if (eina_streq(part, "text"))
      return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, "efl.text");
    else if (eina_streq(part, "icon"))

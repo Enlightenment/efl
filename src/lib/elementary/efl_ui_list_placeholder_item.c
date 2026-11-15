@@ -15,17 +15,17 @@
 
 #define MY_CLASS_NAME "Efl.Ui.List_Placeholder_Item"
 
+/* The theme is chosen here, not at finalize, so that the content of a part
+ * given while the item is being constructed is swallowed by the group that
+ * has that part. */
 EOLIAN static Efl_Object *
-_efl_ui_list_placeholder_item_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
+_efl_ui_list_placeholder_item_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
-   Eo *eo;
-   eo = efl_finalize(efl_super(obj, MY_CLASS));
-   ELM_WIDGET_DATA_GET_OR_RETURN(eo, wd, eo);
-   Eina_Error theme_apply_ret = efl_ui_layout_theme_set(obj, "list_item", NULL, "placeholder");
-
-   if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Empty Item(%p) failed to set theme [efl/list_item:placeholder]!", eo);
-   return eo;
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "list_item");
+   elm_widget_theme_style_set(obj, "placeholder");
+   return obj;
 }
 
 EOLIAN static void
@@ -44,7 +44,10 @@ _efl_ui_list_placeholder_item_efl_part_part_get(const Eo *obj, void *wd EINA_UNU
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (eina_streq(part, "content"))
-     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, "efl.content");
+     {
+        _elm_part_layout_theme_forward(obj);
+        return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, "efl.content");
+     }
 
    return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
