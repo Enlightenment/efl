@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "evas_suite.h"
-#include "evas_tests_helpers.h"
 
 #define TEST_FONT_NAME "DejaVuSansMono"
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFontMono.eet"

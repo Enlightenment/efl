@@ -1038,7 +1038,7 @@ EFL_START_TEST(evas_object_image_buffer_copy)
 
    o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
 
-   slice = (Eina_Slice) { (size_t) stride * h, src };
+   slice = (Eina_Slice) { .len = (size_t) stride * h, .mem = src };
    fail_if(!efl_gfx_buffer_copy_set(o, &slice, EINA_SIZE2D(w, h), stride,
                                     EFL_GFX_COLORSPACE_ARGB8888, 0));
 
