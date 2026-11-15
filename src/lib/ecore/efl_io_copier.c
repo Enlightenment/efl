@@ -405,6 +405,21 @@ _efl_io_copier_source_get(const Eo *o EINA_UNUSED, Efl_Io_Copier_Data *pd)
    return pd->source;
 }
 
+/* A source or destination set after finalize starts the copy finalize would
+ * have started.
+ */
+static void
+_efl_io_copier_restart_if_running(Eo *o, Efl_Io_Copier_Data *pd)
+{
+   if (!efl_finalized_get(o) || efl_invalidated_get(o)) return;
+   if (pd->closed) return;
+   if (!efl_loop_get(o)) return;
+
+   if ((pd->source && efl_io_reader_can_read_get(pd->source)) ||
+       (pd->destination && efl_io_writer_can_write_get(pd->destination)))
+     _efl_io_copier_job_schedule(o, pd);
+}
+
 EOLIAN static void
 _efl_io_copier_source_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Reader *source)
 {
@@ -449,6 +464,8 @@ _efl_io_copier_source_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Reader *source)
                                      _efl_io_copier_source_closed, o);
           }
      }
+
+   _efl_io_copier_restart_if_running(o, pd);
 }
 
 static void
@@ -533,6 +550,8 @@ _efl_io_copier_destination_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Writer *des
              efl_io_sizer_resize(pd->destination, pd->progress.total);
           }
      }
+
+   _efl_io_copier_restart_if_running(o, pd);
 }
 
 EOLIAN static void
