@@ -30,6 +30,8 @@ static efl::ui::Win win;
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
+
    efl::ui::Win win(instantiate);
    win.text_set("Spinner Example");
    win.autohide_set(true);
