@@ -237,8 +237,8 @@ EFL_START_TEST(efl_io_model_test_test_monitor_add)
 
    efl_del(filemodel);
 
-   fail_if(!started_up, "the file the monitor should have seen was never made");
-   fail_if(!children_deleted, "the monitor never reported the file being added");
+   ck_assert_msg(started_up, "the file the monitor should have seen was never made");
+   ck_assert_msg(children_deleted, "the monitor never reported the file being added");
 
    if (temp_filename) unlink(temp_filename);
    ecore_file_recursive_rm(test_dirname);
