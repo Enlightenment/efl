@@ -1,8 +1,21 @@
 abstract @beta Efl.Object_Override
 {
-   [[A special class to pass to #eo_super() when using #eo_override()
+   [[The class an overriding function passes to efl_super() to reach the
+     function it replaced.
 
-    Shouldn't be inherited from or anything of this sort.
+     efl_object_override() gives one object functions of its own, from an
+     array made with EFL_OPS_DEFINE(). Such a function calls the original
+     implementation -- the one the object's class provides -- with
+     $[efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS)]:
+
+     $[static int _my_value_get(const Eo *obj, void *pd)
+     {
+        return 1 + my_value_get(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS));
+     }]
+
+     It has no methods and no data, and is never instantiated or inherited
+     from: it only names the step between an object's own functions and its
+     class's.
    ]]
     data: null;
 }

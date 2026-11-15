@@ -967,6 +967,9 @@ EO_API Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Ob
  * If @p ops is #NULL, this will revert the @p obj to its original class
  * without any function overrides.
  *
+ * An overriding function reaches the implementation it replaced with
+ * efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS).
+ *
  * It is not possible to override a function table of an object when it's
  * already been overridden. Call efl_object_override(obj, NULL) first if you really
  * need to do that.
