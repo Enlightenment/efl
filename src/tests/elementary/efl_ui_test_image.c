@@ -243,6 +243,40 @@ EFL_START_TEST(efl_ui_image_test_mmap_set_null)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_image_test_playable)
+{
+   Eo *win, *image;
+
+   win = win_add(NULL, "image", EFL_UI_WIN_TYPE_BASIC);
+
+   image = efl_add(EFL_UI_IMAGE_CLASS, win);
+   efl_gfx_entity_visible_set(image, EINA_TRUE);
+   efl_gfx_entity_size_set(image, EINA_SIZE2D(100, 100));
+
+   /* a still image plays nothing, lasts no time and cannot be seeked */
+   ck_assert(efl_file_simple_load(image, ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   get_me_to_those_events(win);
+   ck_assert(!efl_playable_get(image));
+   ck_assert(EINA_DBL_EQ(efl_playable_length_get(image), 0.0));
+   ck_assert(!efl_playable_seekable_get(image));
+
+   /* an animated one reports all three */
+   ck_assert(efl_file_simple_load(image, ELM_IMAGE_DATA_DIR"/images/fire.gif", NULL));
+   get_me_to_those_events(win);
+   ck_assert(efl_playable_get(image));
+   ck_assert(efl_playable_seekable_get(image));
+   ck_assert(efl_playable_length_get(image) > 0.0);
+
+   /* the length is the media's, not the player's: it does not depend on
+    * playback having been started
+    */
+   ck_assert(efl_playable_length_get(image) > 0.0);
+   efl_player_playing_set(image, EINA_TRUE);
+   get_me_to_those_events(win);
+   ck_assert(efl_playable_length_get(image) > 0.0);
+}
+EFL_END_TEST
+
 void efl_ui_test_image(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_image_test_icon);
@@ -251,4 +285,5 @@ void efl_ui_test_image(TCase *tc)
    tcase_add_test(tc, efl_ui_image_test_scale_method);
    tcase_add_test(tc, efl_ui_image_test_load_size_bounds_the_decode);
    tcase_add_test(tc, efl_ui_image_test_mmap_set_null);
+   tcase_add_test(tc, efl_ui_image_test_playable);
 }

@@ -1,9 +1,20 @@
 interface @beta Efl.Playable
 {
-   [[Efl media playable interface]]
+   [[Reports what a media object can do: how long it runs, whether it can be
+     played at all, and whether it can be seeked within.
+
+     Implemented by objects presenting timed media -- animated images, vector
+     animations, video -- so a caller can ask those three questions without
+     knowing which kind of object it is holding. All three are read-only;
+     playback itself is driven through @Efl.Player.
+   ]]
    methods {
         @property length {
-             [[Get the length of play for the media file.]]
+             [[Length of the media, in seconds.
+
+               $0.0 when the object holds nothing playable, or when it cannot
+               report a duration.
+             ]]
              get {
              }
              values {
@@ -11,14 +22,19 @@ interface @beta Efl.Playable
              }
         }
         @property playable {
+             [[Whether the object holds media it is able to play at all.]]
              get {
              }
              values {
-                  playable: bool;
+                  playable: bool; [[$true if the media can be played.]]
              }
         }
         @property seekable {
-             [[Get whether the media file is seekable.]]
+             [[Whether playback can be moved to an arbitrary position.
+
+               When $false, @Efl.Player.playback_position cannot be relied upon
+               to move playback.
+             ]]
              get {
              }
              values {

@@ -1831,6 +1831,49 @@ _efl_ui_image_efl_playable_playable_get(const Eo *obj, Efl_Ui_Image_Data *sd)
    return evas_object_image_animated_get(elm_image_object_get(obj));
 }
 
+/* The image loaders number frames from 1 and refuse a duration request that
+ * would run past the last frame, so the whole animation cannot be asked for in
+ * a single call. This class models playback with one duration for every frame
+ * anyway -- playback_position and playback_progress both do -- so the length
+ * follows the same model instead of summing the individual frame delays.
+ */
+static double
+_efl_ui_image_animation_length_get(Evas_Object *img)
+{
+   int frame_count;
+   double frame_duration;
+
+   if (!evas_object_image_animated_get(img)) return 0.0;
+
+   frame_count = evas_object_image_animated_frame_count_get(img);
+   if (frame_count <= 0) return 0.0;
+
+   frame_duration = evas_object_image_animated_frame_duration_get(img, 1, 0);
+   if (frame_duration <= 0.0) return 0.0;
+
+   return frame_count * frame_duration;
+}
+
+EOLIAN static double
+_efl_ui_image_efl_playable_length_get(const Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   /* an edje group can be told to play, but it exposes no duration:
+    * Efl.Canvas.Layout declares playback_position and playback_progress @empty
+    */
+   if (sd->edje) return 0.0;
+
+   return _efl_ui_image_animation_length_get(elm_image_object_get(obj));
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_playable_seekable_get(const Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   /* same reason: nothing to seek within an edje group from here */
+   if (sd->edje) return EINA_FALSE;
+
+   return evas_object_image_animated_get(elm_image_object_get(obj));
+}
+
 static Eina_Bool
 _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool anim)
 {

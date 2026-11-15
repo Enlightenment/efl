@@ -98,6 +98,8 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.
       Efl.Gfx.Image.content_hint { get; set; }
       Efl.Gfx.Image.image_load_error { get; }
       Efl.Playable.playable { get; }
+      Efl.Playable.length { get; }
+      Efl.Playable.seekable { get; }
       Efl.Player.playing { get; set; }
       Efl.Player.paused { get; set; }
       Efl.Player.playback_position { get; set; }
