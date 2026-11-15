@@ -47,8 +47,8 @@ mixin @beta Efl.Access.Action
          get @pure_virtual {
          }
          values {
-            actions: list<Efl.Access.Action_Data> @move;
-               [[Contains statically allocated strings.]]
+            actions: list<string> @move;
+               [[The action names, statically allocated.]]
          }
       }
       action_do @protected @pure_virtual @beta {
