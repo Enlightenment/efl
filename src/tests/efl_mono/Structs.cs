@@ -60,6 +60,13 @@ internal class TestStructs
         value.Dispose();
         hash.Dispose();
     }
+
+    public static void complex_omitted_handles_construct()
+    {
+        var complex = new Dummy.StructComplex(fobj: null);
+        Test.AssertEquals(IntPtr.Zero, complex.Fhash.Handle);
+        Test.AssertEquals(IntPtr.Zero, complex.Fbinbuf.Handle);
+    }
 #endif
 
     public static void parameter_initialization()

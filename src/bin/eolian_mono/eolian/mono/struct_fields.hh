@@ -113,9 +113,10 @@ struct field_argument_assignment_generator
       else if ((complex && (complex->outer.base_type == "hash"))
             || field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
         {
-           // Always assumes pointer
+           // Always assumes pointer. Every struct field is optional, so it may
+           // be null.
            if (!as_generator(
-                 "this." << string << " = " << string << ".Handle;\n")
+                 "this." << string << " = " << string << "?.Handle ?? System.IntPtr.Zero;\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -157,9 +158,10 @@ struct field_argument_assignment_generator
         }
       else if (field.type.c_type == "Eina_Value" || field.type.c_type == "const Eina_Value")
         {
+           // An omitted Eina.Value field may be null too.
            if (!as_generator(
-                 "this." << string << " = " << string << ".GetNative();\n"
-               ).generate(sink, std::make_tuple(field_name, field_name), context))
+                 "this." << string << " = " << string << " is null ? default : " << string << ".GetNative();\n"
+               ).generate(sink, std::make_tuple(field_name, field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
