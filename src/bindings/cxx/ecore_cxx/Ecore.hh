@@ -16,6 +16,9 @@
 #ifndef _EFL_ECORE_CXX_ECORE_HH
 #define _EFL_ECORE_CXX_ECORE_HH
 
+/* Efl.hh first: it defines EFL_PART_PROTECTED before Efl.h is reached. */
+#include <Efl.hh>
+
 #include <Ecore.h>
 
 #include <Eina.hh>
