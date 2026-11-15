@@ -365,37 +365,52 @@ abstract Efl.Object
          return: iterator<Efl.Object> @move @no_unused; [[Children iterator]]
       }
       composite_attach @beta {
-           [[Make an object a composite object of another.
+           [[Make $comp_obj a composite of this object.
 
-             The class of comp_obj must be part of the extensions of the class of the parent.
-             It isn't possible to attach more then 1 composite of the same class.
-             This function also sets the parent of comp_obj to parent.
+             A composite provides functions on behalf of the object it is
+             attached to: when a function is called on this object and its
+             class does not implement it, the call is forwarded to the first
+             attached composite whose class does. This is how a class
+             declares interfaces in its $composites list without
+             implementing them itself.
+
+             Attaching does not change $comp_obj's parent, and does not take
+             a reference: the two lifetimes stay independent, and the link
+             is dropped automatically when either object is destroyed.
+
+             At most one composite of a given class can be attached; a
+             second one is refused. An object can be a composite of only one
+             object at a time: attaching it elsewhere detaches it first.
 
              See @.composite_detach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Efl.Object; [[the object that will be used to composite the parent.]]
+                @in comp_obj: Efl.Object; [[The object to attach as a composite.]]
            }
-           return: bool; [[$true if successful. $false otherwise.]]
+           return: bool; [[$true if attached, $false if a composite of the
+                           same class is already attached.]]
       }
       composite_detach @beta {
-           [[Detach a composite object from another object.
+           [[Detach $comp_obj from this object.
 
-             This functions also sets the parent of comp_obj to $null.
+             $comp_obj stops receiving the calls forwarded to it. Its parent
+             is not changed.
 
              See @.composite_attach, @.composite_part_is.
            ]]
            params {
-                @in comp_obj: Efl.Object; [[The object that will be removed from the parent.]]
+                @in comp_obj: Efl.Object; [[The composite to detach.]]
            }
-           return: bool; [[$true if successful. $false otherwise.]]
+           return: bool; [[$true if detached, $false if $comp_obj was not a
+                           composite of this object.]]
       }
       composite_part_is @beta {
-           [[Check if an object is part of a composite object.
+           [[Whether this object is currently attached as a composite of
+             another object.
 
-             See @.composite_attach, @.composite_part_is.
+             See @.composite_attach, @.composite_detach.
            ]]
-           return: bool; [[$true if it is. $false otherwise.]]
+           return: bool; [[$true if it is a composite, $false otherwise.]]
       }
       @property allow_parent_unref @beta {
          [[Allow an object to be deleted by unref even if it has a parent.
