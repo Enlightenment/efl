@@ -65,6 +65,41 @@ public static class TestModel {
         task.Wait();
     }
 
+    internal static async Task ModelChildIsALeafAsync (Efl.Loop loop)
+    {
+        var veggies = CreateModel(loop);
+
+        try
+        {
+            using (Eina.Value rows = await veggies.GetChildrenSliceAsync(0, 1).ConfigureAwait(false))
+            {
+                var child = (Efl.IModel)rows[0];
+                Test.AssertEquals(0, (int)child.ChildrenCount);
+
+                using (Eina.Value children = await child.GetChildrenSliceAsync(0, 1).ConfigureAwait(false))
+                {
+                    Test.AssertEquals(Eina.ValueType.Array, children.GetValueType());
+                    Test.AssertEquals(0, children.Count());
+                }
+            }
+        }
+        finally
+        {
+            loop.End();
+            veggies.Dispose();
+        }
+    }
+
+    public static void model_child_is_a_leaf ()
+    {
+        Efl.Loop loop = Efl.App.AppMain;
+        Task task = ModelChildIsALeafAsync(loop);
+
+        loop.Begin();
+
+        task.Wait();
+    }
+
     public static void factory_test ()
     {
         string propertyBound = null;

@@ -255,5 +255,21 @@ _efl_mono_model_internal_child_efl_model_properties_get(const Eo *obj EINA_UNUSE
   return eina_array_iterator_new (pd->model_pd->properties_names);
 }
 
+/* A child is a leaf: it carries the properties of one row and has no children. */
+static unsigned int
+_efl_mono_model_internal_child_efl_model_children_count_get(const Eo *obj EINA_UNUSED, Efl_Mono_Model_Internal_Child_Data *pd EINA_UNUSED)
+{
+  return 0;
+}
+
+static Eina_Future *
+_efl_mono_model_internal_child_efl_model_children_slice_get(Eo *obj, Efl_Mono_Model_Internal_Child_Data *pd EINA_UNUSED, unsigned int start EINA_UNUSED, unsigned int count EINA_UNUSED)
+{
+  Eina_Value array = EINA_VALUE_EMPTY;
+
+  eina_value_array_setup(&array, EINA_VALUE_TYPE_OBJECT, 0);
+  return efl_loop_future_resolved(obj, array);
+}
+
 #include "efl_mono_model_internal.eo.c"
 #include "efl_mono_model_internal_child.eo.c"
