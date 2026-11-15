@@ -235,9 +235,11 @@ struct native_property_function_definition_generator
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
         return false;
 
+      bool cast_to_interface =
+        (implementing_klass->type == attributes::class_type::interface_) ||
+        ((implementing_klass->type == attributes::class_type::mixin) && !f.is_static);
       std::string klass_cast_name;
-      if ((implementing_klass->type == attributes::class_type::interface_) ||
-          ((implementing_klass->type == attributes::class_type::mixin) && !f.is_static))
+      if (cast_to_interface)
         klass_cast_name = name_helpers::klass_interface_name(*implementing_klass);
       else
         klass_cast_name = name_helpers::klass_inherit_name(*implementing_klass);
@@ -291,29 +293,52 @@ struct native_property_function_definition_generator
       }
       else if (!is_set/* && has_wrapper_getter*/)
       {
-        if(!as_generator
-         (
-           indent << scope_tab << scope_tab << scope_tab << "var ret = "
-           << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).")
-           << string
+        // The accessor has the shape of the C function, the only form that
+        // can carry a value and a success flag at once. An interface has only
+        // the property, its accessors being internal, so there the values are
+        // spread from the property over the wrapper's locals. No interface
+        // pairs a return with out parameters, which a property cannot express.
+        if (!cast_to_interface)
+          {
+            if(!as_generator
+               (
+                 indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
+                 << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
+                 << "(" << (native_argument_invocation % ", ") << ");\n"
+               )
+               .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters), context))
+              return false;
+          }
+        else
+          {
+            std::string lhs;
+            if (return_type != "void")
+              lhs = "_ret_var";
+            else
+              {
+                if(!as_generator((native_tuple_argument_invocation % ", "))
+                   .generate(std::back_inserter(lhs), f.values, context))
+                  return false;
+                if (f.values.size() > 1)
+                  lhs = "(" + lhs + ")";
+              }
 
-          )
-           .generate(sink, std::make_tuple(name_helpers::property_managed_name(property)), context))
-          return false;
+            if(!as_generator
+               (
+                 indent << scope_tab << scope_tab << scope_tab << lhs << " = "
+                 << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).")
+                 << string
+               )
+               .generate(sink, std::make_tuple(name_helpers::property_managed_name(property)), context))
+              return false;
 
-        if(!f.keys.empty() && !as_generator(lit("[(") << (native_argument_invocation % ", ") << ")]").generate (sink, f.keys, context))
-          return false;
+            if(!f.keys.empty() && !as_generator(lit("[(") << (native_argument_invocation % ", ") << ")]").generate (sink, f.keys, context))
+              return false;
 
-        if (!as_generator(";\n").generate (sink, attributes::unused, context))
-          return false;
-
+            if (!as_generator(";\n").generate (sink, attributes::unused, context))
+              return false;
+          }
       }
-      // else if (!as_generator
-      //          (indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
-      //           << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
-      //           << "(" << (native_argument_invocation % ", ") << ");\n"
-      //           ).generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters), context))
-      //   return false;
 
       if(!as_generator
          (

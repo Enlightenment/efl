@@ -27,6 +27,7 @@ typedef struct Dummy_Test_Object_Data
   Eina_Value *stored_value;
   Dummy_StructSimple stored_struct;
   int stored_int;
+  int int_prop;
   Eina_Promise *promise;
   Eina_List *list_for_accessor;
   int setter_only;
@@ -4602,6 +4603,16 @@ Dummy_MyInt _dummy_test_object_bypass_typedef(EINA_UNUSED Eo *obj, EINA_UNUSED D
     return data;
 }
 
+int _dummy_test_object_int_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd)
+{
+    return pd->int_prop;
+}
+
+void _dummy_test_object_int_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int i)
+{
+    pd->int_prop = i;
+}
+
 void _dummy_test_object_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int* prop1, int* prop2)
 {
     *prop1 = pd->prop1;
@@ -4822,6 +4833,21 @@ int _dummy_inherit_helper_receive_dummy_and_call_int_out(Dummy_Test_Object *x)
   int v = 8;
   dummy_test_object_int_out (x, 5, &v);
   return v;
+}
+
+int _dummy_inherit_helper_receive_dummy_and_call_int_prop(Dummy_Test_Object *x)
+{
+  return dummy_test_object_int_prop_get (x);
+}
+
+void _dummy_inherit_helper_receive_dummy_and_call_multi_valued_prop(Dummy_Test_Object *x, int *prop1, int *prop2)
+{
+  dummy_test_object_multi_valued_prop_get (x, prop1, prop2);
+}
+
+Eina_Success_Flag _dummy_inherit_helper_receive_dummy_and_call_return_type_prop(Dummy_Test_Object *x, int *i)
+{
+  return dummy_test_object_return_type_get_prop_get (x, i);
 }
 
 const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Test_Object *x)

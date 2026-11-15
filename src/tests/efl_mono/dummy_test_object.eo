@@ -1576,6 +1576,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: Dummy.MyInt;
       }
 
+      @property int_prop {
+         [[ A plain single valued property: its getter answers through the return. ]]
+         get {}
+         set {}
+         values { i: int; }
+      }
+
       @property multi_valued_prop {
          [[ A multi valued property. ]]
          get {}

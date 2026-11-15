@@ -91,6 +91,55 @@ class TestInheritance
         }
     }
 
+    // A C# subclass that overrides property getters rather than methods. The
+    // three shapes a getter can have -- a plain value, values through out
+    // parameters, and a value with a success flag beside it -- each reach C
+    // through a different line of the generated wrapper.
+    internal class InheritProperties : Dummy.TestObject
+    {
+        internal override int GetIntProp()
+        {
+            return 42;
+        }
+
+        internal override void GetMultiValuedProp(out int prop1, out int prop2)
+        {
+            prop1 = 7;
+            prop2 = 9;
+        }
+
+        internal override Eina.SuccessFlag GetReturnTypeGetProp(out int i)
+        {
+            i = 11;
+            return (Eina.SuccessFlag)(char)1;
+        }
+    }
+
+    public static void test_inherit_property_getter()
+    {
+        var obj = new InheritProperties();
+        Test.AssertEquals(42, Dummy.InheritHelper.ReceiveDummyAndCallIntProp(obj));
+        obj.Dispose();
+    }
+
+    public static void test_inherit_property_getter_out_values()
+    {
+        var obj = new InheritProperties();
+        Dummy.InheritHelper.ReceiveDummyAndCallMultiValuedProp(obj, out int prop1, out int prop2);
+        Test.AssertEquals(7, prop1);
+        Test.AssertEquals(9, prop2);
+        obj.Dispose();
+    }
+
+    public static void test_inherit_property_getter_with_return()
+    {
+        var obj = new InheritProperties();
+        var flag = Dummy.InheritHelper.ReceiveDummyAndCallReturnTypeProp(obj, out int i);
+        Test.AssertEquals(11, i);
+        Test.Assert((char)flag != '\0', "the override's success flag reached C");
+        obj.Dispose();
+    }
+
     public static void test_inherit_from_regular_class()
     {
         var obj = new Inherit1();

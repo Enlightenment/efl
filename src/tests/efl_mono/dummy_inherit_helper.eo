@@ -7,6 +7,29 @@ class Dummy.Inherit_Helper extends Efl.Object {
       }
       return: int;
     }
+    receive_dummy_and_call_int_prop @static {
+      [[ Reads int_prop off the object, so C sees what a C# override answered. ]]
+      params {
+        @in x: Dummy.Test_Object;
+      }
+      return: int;
+    }
+    receive_dummy_and_call_multi_valued_prop @static {
+      [[ Reads a getter whose values come back through out parameters. ]]
+      params {
+        @in x: Dummy.Test_Object;
+        @out prop1: int;
+        @out prop2: int;
+      }
+    }
+    receive_dummy_and_call_return_type_prop @static {
+      [[ Reads a getter that answers a value and a success flag at once. ]]
+      params {
+        @in x: Dummy.Test_Object;
+        @out i: int;
+      }
+      return: Eina.Success_Flag;
+    }
     receive_dummy_and_call_in_stringshare @static {
       params {
         @in x: Dummy.Inherit_Iface;
