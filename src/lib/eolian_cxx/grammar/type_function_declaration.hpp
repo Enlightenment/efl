@@ -101,11 +101,19 @@ struct type_function_declaration_generator {
                return false;
         }
 
-      if (f.return_type != attributes::void_
-          && !as_generator(scope_tab << scope_tab << "return ::efl::eolian::convert_to_c<"
-                           << type << ">(__return_value);\n")
-          .generate(sink, f.return_type, ctx))
-        return false;
+      /* convert_to_c<c_type, cxx_type[, own]>, as the argument converter. */
+      if (f.return_type != attributes::void_)
+        {
+           attributes::qualifier_def qualifier
+             = f.return_type.original_type.visit(attributes::get_qualifier_visitor{});
+
+           if (!as_generator(scope_tab << scope_tab << "return ::efl::eolian::convert_to_c<"
+                             << c_type << ", " << type
+                             << ((qualifier & attributes::qualifier_info::is_own) ? ", true" : "")
+                             << ">(__return_value);\n")
+               .generate(sink, std::make_tuple(f.return_type, f.return_type), ctx))
+             return false;
+        }
 
       if (!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, ctx))
         return false;

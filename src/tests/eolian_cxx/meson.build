@@ -20,6 +20,8 @@ eolian_cxx_suite_src = files([
   'eolian_cxx_test_cyclic.cc',
   'complex.c',
   'complex_cxx.cc',
+  'eolian_cxx_test_callbacks.cc',
+  'fnptr.c',
   'eolian_cxx_suite.h'
 ])
 
@@ -31,6 +33,7 @@ pub_eo_files = [
   'cyclic1.eo',
   'cyclic2.eo',
   'docs.eo',
+  'fnptr.eo',
   'generic.eo',
   'generic_interface.eo',
   'name1_name2_type_generation.eo',

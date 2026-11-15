@@ -1,0 +1,30 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdlib.h>
+
+#include <Eo.h>
+#include <Ecore.h>
+
+#define EOLIANCXXTEST_API
+#define EOLIANCXXTEST_API_WEAK
+
+#include "fnptr.eo.h"
+
+#define MY_CLASS FNPTR_CLASS
+
+static const char *
+_fnptr_text(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+            void *cb_data, Fnptr_Text_Func cb, Eina_Free_Cb cb_free_cb,
+            int value)
+{
+   const char *text = NULL;
+
+   if (cb) text = cb(cb_data, value);
+   if (cb_free_cb) cb_free_cb(cb_data);
+
+   return text;
+}
+
+#include "fnptr.eo.c"

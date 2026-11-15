@@ -1,0 +1,25 @@
+function Fnptr_Text_Func {
+   [[A callback returning a string. @since 1.66]]
+   params {
+      @in x: int; [[The argument.]]
+   }
+   return: string; [[The text.]]
+};
+
+class Fnptr extends Efl.Object {
+   [[A class with methods taking function pointers. @since 1.66]]
+   data: null;
+   methods {
+      text {
+         [[Calls $cb with $value and returns what it returned.
+
+           The callback is freed through its free function before the
+           method returns, unless it is $null. @since 1.66]]
+         params {
+            @in cb: Fnptr_Text_Func; [[Called with $value.]]
+            @in value: int; [[The value to pass it.]]
+         }
+         return: string; [[The text $cb returned.]]
+      }
+   }
+}
