@@ -493,7 +493,8 @@ EFL_START_TEST(efl_ui_win_test_background_load)
    Efl_Ui_Win *win;
 
    win = efl_new(EFL_UI_WIN_CLASS);
-   ck_assert(efl_file_simple_load(efl_part(win, "background"), ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   ck_assert(efl_file_simple_load(efl_part(win, "background"),
+                                  ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
    ck_assert(efl_isa(efl_content_get(efl_part(win, "background")), EFL_GFX_IMAGE_INTERFACE));
    efl_unref(win);
 }
@@ -863,6 +864,39 @@ EFL_START_TEST(efl_ui_win_test_content_replace_refused)
 }
 EFL_END_TEST
 
+/* The window's background is the background part every widget has, with a
+ * window's extras: a colour, an image file, image calls on that image, and
+ * a content of its own. */
+EFL_START_TEST(efl_ui_win_test_background_part)
+{
+   Efl_Ui_Win *win;
+   Eo *bg, *rect;
+   int r, g, b, a;
+
+   win = efl_new(EFL_UI_WIN_CLASS);
+   ck_assert(efl_isa(efl_part(win, "background"), EFL_UI_WIDGET_PART_BG_CLASS));
+
+   efl_gfx_color_set(efl_part(win, "background"), 10, 20, 30, 255);
+   efl_gfx_color_get(efl_part(win, "background"), &r, &g, &b, &a);
+   ck_assert_int_eq(r, 10);
+   ck_assert_int_eq(b, 30);
+
+   ck_assert(efl_file_simple_load(efl_part(win, "background"),
+                                  ELM_IMAGE_DATA_DIR"/images/logo.png", NULL));
+   bg = efl_content_get(efl_part(win, "background"));
+   ck_assert(efl_isa(bg, EFL_GFX_IMAGE_INTERFACE));
+   efl_gfx_image_scale_method_set(efl_part(win, "background"),
+                                  EFL_GFX_IMAGE_SCALE_METHOD_FIT);
+   ck_assert_int_eq(efl_gfx_image_scale_method_get(bg), EFL_GFX_IMAGE_SCALE_METHOD_FIT);
+
+   rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
+   ck_assert(efl_content_set(efl_part(win, "background"), rect));
+   ck_assert_ptr_eq(efl_content_get(efl_part(win, "background")), rect);
+
+   efl_unref(win);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -891,4 +925,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_content_replace_and_unset);
    tcase_add_test(tc, efl_ui_win_test_background_unset);
    tcase_add_test(tc, efl_ui_win_test_content_replace_refused);
+   tcase_add_test(tc, efl_ui_win_test_background_part);
 }

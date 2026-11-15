@@ -5886,8 +5886,8 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
    if (obj && (!elm_widget_is_legacy(obj)))
      {
         /* FIXME: if parts other than background are supported then this should change */
-        if (efl_file_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)) ||
-            efl_file_mmap_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)))
+        if (efl_file_get(efl_super(efl_part(obj, "background"), EFL_UI_WIDGET_PART_BG_CLASS)) ||
+            efl_file_mmap_get(efl_super(efl_part(obj, "background"), EFL_UI_WIDGET_PART_BG_CLASS)))
           efl_file_load(efl_part(obj, "background"));
      }
    _ee_backbone_init(obj, sd);
@@ -7881,7 +7881,7 @@ static const char *
 _efl_ui_win_part_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const Eo *part_obj, const char *part EINA_UNUSED)
 {
    sd->legacy.forbidden = EINA_TRUE;
-   return efl_file_get(efl_super(part_obj, EFL_UI_WIN_PART_CLASS));
+   return efl_file_get(efl_super(part_obj, EFL_UI_WIDGET_PART_BG_CLASS));
 #if 0
 
    if (eina_streq(part, "background"))
@@ -7899,7 +7899,7 @@ static const char *
 _efl_ui_win_part_file_key_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const Eo *part_obj, const char *part EINA_UNUSED)
 {
    sd->legacy.forbidden = EINA_TRUE;
-   return efl_file_key_get(efl_super(part_obj, EFL_UI_WIN_PART_CLASS));
+   return efl_file_key_get(efl_super(part_obj, EFL_UI_WIDGET_PART_BG_CLASS));
 /* NOTE; if more than one part is ever supported here then this section is needed */
 #if 0
 
@@ -7950,6 +7950,48 @@ _efl_ui_win_part_efl_file_key_get(const Eo *obj, void *_pd EINA_UNUSED)
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_win_part_file_key_get(pd->obj, sd, obj, pd->part);
+}
+
+/* The window's part is a Widget_Part_Bg, but what it stands for is the
+ * window's own background, not the generic background object every widget
+ * can grow: the file it is told about is kept on the part itself, past
+ * Widget_Part_Bg's forwarding, and image calls go to the window's
+ * background while that is an image. */
+EOLIAN static Efl_Object *
+_efl_ui_win_part_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = pd ? efl_data_scope_safe_get(pd->obj, MY_CLASS) : NULL;
+
+   if (sd && eina_streq(pd->part, "background") &&
+       sd->bg && efl_isa(sd->bg, EFL_GFX_IMAGE_INTERFACE))
+     efl_composite_attach(obj, sd->bg);
+
+   return efl_finalize(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS));
+}
+
+EOLIAN static Eina_Error
+_efl_ui_win_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file)
+{
+   return efl_file_set(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS), file);
+}
+
+EOLIAN static void
+_efl_ui_win_part_efl_file_key_set(Eo *obj, void *_pd EINA_UNUSED, const char *key)
+{
+   efl_file_key_set(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS), key);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_win_part_efl_file_mmap_set(Eo *obj, void *_pd EINA_UNUSED, const Eina_File *f)
+{
+   return efl_file_mmap_set(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS), f);
+}
+
+EOLIAN static const Eina_File *
+_efl_ui_win_part_efl_file_mmap_get(const Eo *obj, void *_pd EINA_UNUSED)
+{
+   return efl_file_mmap_get(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS));
 }
 
 EOLIAN static void

@@ -1,14 +1,24 @@
-class @beta Efl.Ui.Win_Part extends Efl.Ui.Widget_Part implements Efl.Content, Efl.Gfx.Color, Efl.File
+class @beta Efl.Ui.Win_Part extends Efl.Ui.Widget_Part_Bg implements Efl.Content
 {
-   [[Efl UI window interal part class]]
+   [[The parts of an @Efl.Ui.Win: "content", the window's content, and
+     "background", what is drawn behind it.
+
+     The background part is an @Efl.Ui.Widget_Part_Bg like every widget's,
+     with what a window adds: its colour fills the window, loading a file
+     shows that image across the window, and its content can be replaced by
+     any object with @Efl.Content.content. While the background is an
+     image, the @Efl.Gfx.Image calls of the part reach it.
+   ]]
    data: null;
    implements {
+      Efl.Object.finalize;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Gfx.Color.color { get; set; }
       Efl.File.load;
       Efl.File.unload;
-      Efl.File.file { get; }
-      Efl.File.key { get; }
+      Efl.File.file { get; set; }
+      Efl.File.key { get; set; }
+      Efl.File.mmap { get; set; }
    }
 }
