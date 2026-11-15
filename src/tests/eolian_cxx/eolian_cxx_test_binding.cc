@@ -588,6 +588,402 @@ EFL_START_TEST(eolian_cxx_test_beta_cascading)
 }
 EFL_END_TEST
 
+namespace {
+/* A closure member whose destruction is counted, once per object. */
+struct counted
+{
+  int* destroyed;
+  explicit counted(int* d) : destroyed(d) {}
+  counted(counted const&) = delete;
+  ~counted() { ++*destroyed; }
+};
+}
+
+/* The three-argument form frees its closure when the emitter goes. */
+EFL_START_TEST(eolian_cxx_test_event_closure_freed_with_emitter)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, calls = 0;
+  std::unique_ptr<nonamespace::Generic> g
+    (new nonamespace::Generic(efl::eo::instantiate));
+  auto* c = &calls;
+  {
+    auto k = std::make_shared<counted>(&destroyed);
+    efl::eolian::event_add(g->prefix_event1_event, *g,
+                           [c, k] (nonamespace::Generic) { ++*c; });
+  }
+  g->call_event1();
+  ck_assert_int_eq(calls, 1);
+  ck_assert_int_eq(destroyed, 0);
+  g.reset();
+  ck_assert_int_eq(destroyed, 1);
+  ecore_main_loop_iterate();
+  ck_assert_int_eq(destroyed, 1);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A forgotten (kept) connection does not keep the emitter alive. */
+EFL_START_TEST(eolian_cxx_test_event_connection_is_weak)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0;
+  std::unique_ptr<nonamespace::Generic> g
+    (new nonamespace::Generic(efl::eo::instantiate));
+  Eo* raw = g->_eo_ptr();
+  std::unique_ptr<efl::eolian::signal_connection> cp;
+  {
+    auto k = std::make_shared<counted>(&destroyed);
+    cp.reset(new efl::eolian::signal_connection(efl::eolian::event_add
+      (g->prefix_event1_event, *g, [k] (nonamespace::Generic) {})));
+  }
+  efl::eolian::signal_connection& c = *cp;
+  ck_assert_int_eq(efl_ref_count(raw), 1);   /* the wrapper's, nobody else's */
+  g.reset();                                  /* last reference: it dies now */
+  ck_assert_int_eq(destroyed, 1);
+  c.disconnect();                             /* after the emitter: nothing */
+  ck_assert_int_eq(destroyed, 1);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* Disconnecting after the emitter is gone is a no-op (valgrind). */
+EFL_START_TEST(eolian_cxx_test_event_disconnect_after_emitter)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0;
+  std::unique_ptr<efl::eolian::scoped_signal_connection> scoped;
+  std::unique_ptr<efl::eolian::signal_connection> plain;
+  {
+    nonamespace::Generic g(efl::eo::instantiate);
+    auto k = std::make_shared<counted>(&destroyed);
+    efl::eolian::signal_connection c = efl::eolian::event_add
+      (g.prefix_event1_event, g, [k] (nonamespace::Generic) {});
+    k.reset();
+    plain.reset(new efl::eolian::signal_connection(c));
+    scoped.reset(new efl::eolian::scoped_signal_connection(c));
+  }
+  ck_assert_int_eq(destroyed, 1);
+  plain->disconnect();
+  scoped.reset();
+  plain->disconnect();
+  ck_assert_int_eq(destroyed, 1);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* Any number of copies and scoped handles: the first disconnect wins, the
+ * callback is removed once and the closure freed once (valgrind: no double
+ * free). */
+EFL_START_TEST(eolian_cxx_test_event_copies_disconnect_once)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, calls = 0;
+  nonamespace::Generic g(efl::eo::instantiate);
+  auto* c = &calls;
+  std::unique_ptr<efl::eolian::signal_connection> c1p;
+  {
+    auto k = std::make_shared<counted>(&destroyed);
+    c1p.reset(new efl::eolian::signal_connection(efl::eolian::event_add
+      (g.prefix_event1_event, g, [c, k] (nonamespace::Generic) { ++*c; })));
+  }
+  efl::eolian::signal_connection& c1 = *c1p;
+  efl::eolian::signal_connection c2 = c1;
+  {
+    efl::eolian::scoped_signal_connection s(c1);
+    efl::eolian::scoped_signal_connection s2(std::move(s));
+    g.call_event1();
+    ck_assert_int_eq(calls, 1);
+    c1.disconnect();
+    ck_assert_int_eq(destroyed, 1);
+    c2.disconnect();
+    s2.disconnect();
+    c1.disconnect();
+    ck_assert_int_eq(destroyed, 1);
+  }                       /* scoped handles die: still nothing */
+  g.call_event1();
+  ck_assert_int_eq(calls, 1);
+  ck_assert_int_eq(destroyed, 1);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A handler of the end-of-life events, attached with event_add, still runs
+ * once while the emitter is torn down, and its closure goes afterwards. */
+EFL_START_TEST(eolian_cxx_test_event_teardown_handlers_still_run)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int del_calls = 0, inv_calls = 0, del_alive = 0, inv_alive = 0;
+  int del_destroyed = 0, inv_destroyed = 0;
+  {
+    nonamespace::Generic g(efl::eo::instantiate);
+    auto* dc = &del_calls;
+    auto* ic = &inv_calls;
+    auto* da = &del_alive;
+    auto* ia = &inv_alive;
+    auto* dd = &del_destroyed;
+    auto* id = &inv_destroyed;
+    auto dk = std::make_shared<counted>(&del_destroyed);
+    auto ik = std::make_shared<counted>(&inv_destroyed);
+    efl::eolian::event_add(efl::Object::del_event, g,
+                           [dc, da, dd, dk] (nonamespace::Generic)
+                           {
+                              ++*dc;
+                              *da += (*dd == 0);
+                           });
+    efl::eolian::event_add(efl::Object::invalidate_event, g,
+                           [ic, ia, id, ik] (nonamespace::Generic)
+                           {
+                              ++*ic;
+                              *ia += (*id == 0);
+                           });
+    dk.reset();
+    ik.reset();
+  }
+  ck_assert_int_eq(inv_calls, 1);
+  ck_assert_int_eq(del_calls, 1);
+  ck_assert_int_eq(inv_alive, 1);   /* the closure was still there for it */
+  ck_assert_int_eq(del_alive, 1);
+  ck_assert_int_eq(inv_destroyed, 1);
+  ck_assert_int_eq(del_destroyed, 1);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A handler that disconnects itself keeps its closure for the call and frees
+ * it after (valgrind). */
+EFL_START_TEST(eolian_cxx_test_event_handler_self_disconnect_frees)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, seen = 0;
+  nonamespace::Generic g(efl::eo::instantiate);
+  std::unique_ptr<efl::eolian::signal_connection> h;
+  auto* hp = &h;
+  auto* out = &seen;
+  auto* dp = &destroyed;
+  std::vector<int> payload(16, 7);
+  {
+    auto k = std::make_shared<counted>(&destroyed);
+    h.reset(new efl::eolian::signal_connection(efl::eolian::event_add
+      (g.prefix_event1_event, g,
+       [hp, out, dp, payload, k] (nonamespace::Generic)
+       {
+         (*hp)->disconnect();
+         *out += payload[5] + (*dp == 0);
+       })));
+  }
+  g.call_event1();
+  ck_assert_int_eq(seen, 8);
+  ck_assert_int_eq(destroyed, 1);
+  g.call_event1();
+  ck_assert_int_eq(seen, 8);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A handler that deletes its emitter while it runs (valgrind). */
+EFL_START_TEST(eolian_cxx_test_event_handler_deletes_emitter)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, seen = 0;
+  std::unique_ptr<nonamespace::Generic> g
+    (new nonamespace::Generic(efl::eo::instantiate));
+  auto* gp = &g;
+  auto* out = &seen;
+  auto* dp = &destroyed;
+  std::vector<int> payload(16, 7);
+  {
+    auto k = std::make_shared<counted>(&destroyed);
+    efl::eolian::event_add
+      (g->prefix_event1_event, *g,
+       [gp, out, dp, payload, k] (nonamespace::Generic)
+       {
+         gp->reset();                       /* the emitter goes while we run */
+         *out += payload[5] + (*dp == 0);
+       });
+  }
+  g->call_event1();
+  ck_assert_int_eq(seen, 8);
+  ck_assert_int_eq(destroyed, 1);
+  ecore_main_loop_iterate();
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+static int _binding_log_errors = 0;
+
+static void
+_binding_count_errors(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+                      const char *file EINA_UNUSED, const char *fnc EINA_UNUSED,
+                      int line EINA_UNUSED, const char *fmt EINA_UNUSED,
+                      void *data EINA_UNUSED, va_list args EINA_UNUSED)
+{
+  if (level <= EINA_LOG_LEVEL_ERR) _binding_log_errors++;
+}
+
+/* A handler that captured its own emitter, which has a parent: deleting the
+ * object invalidates it, its connections are cut then, the closure goes and
+ * gives back the reference it held, so the object is destroyed (no leak) and
+ * nothing is logged as an error (no "too many unrefs"). */
+EFL_START_TEST(eolian_cxx_test_event_self_capture_parented)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, calls = 0;
+  nonamespace::Generic parent(efl::eo::instantiate);
+  eina_log_print_cb_set(_binding_count_errors, nullptr);
+  _binding_log_errors = 0;
+  {
+    nonamespace::Generic g(efl::eo::instantiate, parent);
+    auto k = std::make_shared<counted>(&destroyed);
+    auto* c = &calls;
+    efl::eolian::event_add(g.prefix_event1_event, g,
+                           [g, c, k] (nonamespace::Generic) { ++*c; });
+    k.reset();
+    g.call_event1();
+    ck_assert_int_eq(calls, 1);
+    ck_assert_int_eq(destroyed, 0);
+    ::efl_del(g._eo_ptr());   /* parent gone: invalidate cuts the closure */
+  }
+  ck_assert_int_eq(destroyed, 1);
+  ecore_main_loop_iterate();
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_binding_log_errors, 0);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A parentless object whose handler captures it strongly is a cycle, and that
+ * is documented: it lives until the connection is cut, and goes with it. */
+EFL_START_TEST(eolian_cxx_test_event_self_capture_parentless_cycle)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0;
+  eina_log_print_cb_set(_binding_count_errors, nullptr);
+  _binding_log_errors = 0;
+  std::unique_ptr<efl::eolian::signal_connection> handle;
+  {
+    nonamespace::Generic g(efl::eo::instantiate);
+    auto k = std::make_shared<counted>(&destroyed);
+    handle.reset(new efl::eolian::signal_connection(efl::eolian::event_add
+      (g.prefix_event1_event, g, [g, k] (nonamespace::Generic) {})));
+  }                                /* the last wrapper but the closure's */
+  ck_assert_int_eq(destroyed, 0);  /* still alive: that is the cycle */
+  handle->disconnect();
+  ck_assert_int_eq(destroyed, 1);  /* cut: closure freed, object released */
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_binding_log_errors, 0);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A del handler that uses its argument is called once, and no error is
+ * logged while the emitter is torn down. */
+EFL_START_TEST(eolian_cxx_test_event_del_handler_uses_argument)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int calls = 0, destroyed = 0, same = 0;
+  eina_log_print_cb_set(_binding_count_errors, nullptr);
+  _binding_log_errors = 0;
+  {
+    nonamespace::Generic g(efl::eo::instantiate);
+    Eo* raw = g._eo_ptr();
+    auto k = std::make_shared<counted>(&destroyed);
+    auto* c = &calls;
+    auto* sm = &same;
+    efl::eolian::event_add(efl::Object::del_event, g,
+                           [c, sm, raw, k] (nonamespace::Generic obj)
+                           {
+                              ++*c;
+                              *sm += (obj._eo_ptr() == raw);
+                           });
+  }
+  ck_assert_int_eq(calls, 1);
+  ck_assert_int_eq(same, 1);
+  ck_assert_int_eq(destroyed, 1);
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_binding_log_errors, 0);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+/* A connection made while the emitter is invalidating (from its own
+ * invalidate handler) or already invalidated but still alive is not made: the
+ * object calls no such handler after its invalidation, so there is nothing to
+ * keep, and the closure is freed at once. Disconnecting later, after the
+ * emitter is gone, logs nothing. */
+EFL_START_TEST(eolian_cxx_test_event_connect_while_invalidating)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, calls = 0;
+  eina_log_print_cb_set(_binding_count_errors, nullptr);
+  _binding_log_errors = 0;
+  {
+    std::unique_ptr<nonamespace::Generic> g
+      (new nonamespace::Generic(efl::eo::instantiate));
+    auto* c = &calls;
+    auto* d = &destroyed;
+    efl::eolian::event_add(efl::Object::invalidate_event, *g,
+      [c, d] (nonamespace::Generic obj)
+      {
+        auto k = std::make_shared<counted>(d);
+        efl::eolian::event_add(obj.prefix_event1_event, obj,
+                               [c, k] (nonamespace::Generic) { ++*c; });
+        ck_assert_int_eq(*d, 0);   /* k still held here */
+      });
+    g.reset();
+  }
+  ck_assert_int_eq(destroyed, 1);
+  ck_assert_int_eq(calls, 0);
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_binding_log_errors, 0);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
+EFL_START_TEST(eolian_cxx_test_event_connect_after_invalidate)
+{
+  efl::eo::eo_init i;
+  ecore_init();
+  int destroyed = 0, calls = 0;
+  eina_log_print_cb_set(_binding_count_errors, nullptr);
+  _binding_log_errors = 0;
+  nonamespace::Generic parent(efl::eo::instantiate);
+  std::unique_ptr<efl::eolian::signal_connection> handle;
+  {
+    nonamespace::Generic g(efl::eo::instantiate, parent);
+    Eo* raw = g._eo_ptr();
+    ::efl_ref(raw);
+    ::efl_del(raw);               /* invalidated, kept alive by the others */
+    auto k = std::make_shared<counted>(&destroyed);
+    auto* c = &calls;
+    handle.reset(new efl::eolian::signal_connection(efl::eolian::event_add
+      (g.prefix_event1_event, g, [c, k] (nonamespace::Generic) { ++*c; })));
+    k.reset();
+    ck_assert_int_eq(destroyed, 1);   /* not made: closure already freed */
+    g.call_event1();
+    ck_assert_int_eq(calls, 0);
+    ::efl_unref(raw);
+  }                                   /* g's own reference: it dies now */
+  ecore_main_loop_iterate();
+  handle->disconnect();               /* after the emitter: nothing, no error */
+  handle.reset();
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_binding_log_errors, 0);
+  ecore_shutdown();
+}
+EFL_END_TEST
+
 /* A "string" event carries a char const* (Efl.Ui.Textbox's activated carries
  * the text that way), not a string_view. */
 EFL_START_TEST(eolian_cxx_test_string_event_payload)
@@ -636,6 +1032,18 @@ void
 eolian_cxx_test_binding(TCase* tc)
 {
    tcase_add_test(tc, eolian_cxx_test_event_handler_disconnects_own_handle);
+   tcase_add_test(tc, eolian_cxx_test_event_closure_freed_with_emitter);
+   tcase_add_test(tc, eolian_cxx_test_event_connection_is_weak);
+   tcase_add_test(tc, eolian_cxx_test_event_disconnect_after_emitter);
+   tcase_add_test(tc, eolian_cxx_test_event_copies_disconnect_once);
+   tcase_add_test(tc, eolian_cxx_test_event_teardown_handlers_still_run);
+   tcase_add_test(tc, eolian_cxx_test_event_handler_self_disconnect_frees);
+   tcase_add_test(tc, eolian_cxx_test_event_handler_deletes_emitter);
+   tcase_add_test(tc, eolian_cxx_test_event_self_capture_parented);
+   tcase_add_test(tc, eolian_cxx_test_event_self_capture_parentless_cycle);
+   tcase_add_test(tc, eolian_cxx_test_event_del_handler_uses_argument);
+   tcase_add_test(tc, eolian_cxx_test_event_connect_while_invalidating);
+   tcase_add_test(tc, eolian_cxx_test_event_connect_after_invalidate);
    tcase_add_test(tc, eolian_cxx_test_string_event_payload);
    tcase_add_test(tc, eolian_cxx_test_string_arrays);
    tcase_add_test(tc, eolian_cxx_test_binding_constructor_only_required);
