@@ -746,6 +746,60 @@ EFL_START_TEST(efl_ui_layout_test_box_part_indices)
 }
 EFL_END_TEST
 
+static int _bind_errors = 0;
+
+static void
+_count_bind_errors(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+                   const char *file EINA_UNUSED, const char *fnc EINA_UNUSED,
+                   int line EINA_UNUSED, const char *fmt EINA_UNUSED,
+                   void *data EINA_UNUSED, va_list args EINA_UNUSED)
+{
+   if (level == EINA_LOG_LEVEL_ERR) _bind_errors++;
+}
+
+/* A key that is neither a property nor a part of the theme is refused, and
+ * said once. */
+EFL_START_TEST(efl_ui_layout_test_property_bind_unknown_key)
+{
+   char buf[PATH_MAX];
+   Evas_Object *win, *ly, *item;
+   Eina_Error err;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(ly, buf, "layout"));
+
+   _bind_errors = 0;
+   eina_log_print_cb_set(_count_bind_errors, NULL);
+   err = efl_ui_property_bind(ly, "txet", "text_property");
+   eina_log_print_cb_set(NULL, NULL);
+   ck_assert_int_eq(err, EFL_PROPERTY_ERROR_INVALID_KEY);
+   ck_assert_int_eq(_bind_errors, 1);
+
+   /* A part of the theme, a property of the widget, and a signal bind */
+   _bind_errors = 0;
+   eina_log_print_cb_set(_count_bind_errors, NULL);
+   ck_assert_int_eq(efl_ui_property_bind(ly, "text", "text_property"), 0);
+   ck_assert_int_eq(efl_ui_property_bind(ly, "element1", "text_property"), 0);
+   ck_assert_int_eq(efl_ui_property_bind(ly, "signal/emit", "text_property"), 0);
+   ck_assert_int_eq(efl_ui_property_bind(ly, "style", "style_property"), 0);
+   eina_log_print_cb_set(NULL, NULL);
+   ck_assert_int_eq(_bind_errors, 0);
+
+   /* The names a list item answers to for the parts of its theme */
+   item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, win);
+   _bind_errors = 0;
+   eina_log_print_cb_set(_count_bind_errors, NULL);
+   ck_assert_int_eq(efl_ui_property_bind(item, "text", "t"), 0);
+   ck_assert_int_eq(efl_ui_property_bind(item, "icon", "i"), 0);
+   ck_assert_int_eq(efl_ui_property_bind(item, "extra", "e"), 0);
+   eina_log_print_cb_set(NULL, NULL);
+   ck_assert_int_eq(_bind_errors, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_calc_subobjs_without_calc);
@@ -768,6 +822,7 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_versioning);
    tcase_add_test(tc, efl_ui_layout_test_freeze);
    tcase_add_test(tc, efl_ui_layout_test_factory_bind_same_factory);
+   tcase_add_test(tc, efl_ui_layout_test_property_bind_unknown_key);
    tcase_add_test(tc, efl_ui_layout_test_table_part_getters);
    tcase_add_test(tc, efl_ui_layout_test_box_part);
 }

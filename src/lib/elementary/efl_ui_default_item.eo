@@ -30,5 +30,6 @@ abstract Efl.Ui.Default_Item extends Efl.Ui.Item implements
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part_get;
+      Efl.Ui.Property_Bind.property_bind;
    }
 }

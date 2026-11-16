@@ -2793,6 +2793,32 @@ _efl_ui_layout_unbind_part(Eina_Hash **hashp, Eina_Stringshare *property, const 
    *hashp = fresh;
 }
 
+// Whether a key names a part of the theme of the widget. Without a group to ask (a layout
+// whose file is not loaded yet) there is no way to say, and it is taken as it comes.
+static Eina_Bool
+_efl_ui_layout_part_known(Eo *obj, Efl_Ui_Layout_Data *pd, const char *part)
+{
+   const char *group = NULL;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_TRUE);
+
+   // As part_get() does: the theme is brought forward to the first question asked of it
+   if (pd->needs_theme_apply) efl_ui_widget_theme_apply(obj);
+
+   if (!wd->resize_obj || !efl_isa(wd->resize_obj, EFL_CANVAS_LAYOUT_CLASS)) return EINA_TRUE;
+   edje_object_file_get(wd->resize_obj, NULL, &group);
+   if (!group) return EINA_TRUE;
+
+   if (!elm_widget_is_legacy(obj))
+     {
+        // The two parts a widget answers to by a short name (see part_get())
+        if (eina_streq(part, "background"))
+          return efl_layout_group_part_exist_get(wd->resize_obj, "efl.background");
+        if (eina_streq(part, "shadow")) return EINA_TRUE;
+     }
+   return efl_layout_group_part_exist_get(wd->resize_obj, part);
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
@@ -2813,6 +2839,16 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
    // Before trying to bind on the part of this object.
    if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
      return EFL_PROPERTY_ERROR_INVALID_KEY;
+
+   // A key that is not a part of the theme, once the aliases are resolved, is a typo
+   // that would never show anything (a signal is not a part)
+   if (strncmp(SIGNAL_PREFIX, key, sizeof(SIGNAL_PREFIX) - 1) &&
+       !_efl_ui_layout_part_known(obj, pd, key))
+     {
+        ERR("'%s' is neither a property nor a part of the theme of %s: cannot bind it to '%s'.",
+            key, efl_debug_name_get(obj), property ? property : "");
+        return EFL_PROPERTY_ERROR_INVALID_KEY;
+     }
 
    // Check if there is a model and register it
    _efl_ui_layout_base_model_watch(obj, pd);

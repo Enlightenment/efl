@@ -36,6 +36,19 @@ _efl_ui_default_item_efl_part_part_get(const Eo *obj, void *pd EINA_UNUSED, cons
 }
 
 
+// The short names the item answers to for its parts (see part_get()) bind to those parts
+EOLIAN static Eina_Error
+_efl_ui_default_item_efl_ui_property_bind_property_bind(Eo *obj, void *pd EINA_UNUSED,
+                                                         const char *key, const char *property)
+{
+   if (key)
+     {
+        if (eina_streq(key, "icon")) key = "efl.icon";
+        else if (eina_streq(key, "extra")) key = "efl.extra";
+     }
+   return efl_ui_property_bind(efl_super(obj, MY_CLASS), key, property);
+}
+
 #define EFL_UI_DEFAULT_ITEM_EXTRA_OPS             \
   ELM_PART_TEXT_DEFAULT_OPS(efl_ui_default_item), \
   ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_default_item)
