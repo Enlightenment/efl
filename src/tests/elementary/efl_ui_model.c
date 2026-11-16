@@ -1194,8 +1194,7 @@ EFL_START_TEST(efl_ui_exact_model_remove_widest_alike)
    unsigned int i;
 
    for (i = 0; i < 2100; i += 3)
-     efl_future_then(sr->cur[i], efl_model_property_set(sr->cur[i], "self.width",
-                                                         eina_value_uint_new(60)));
+     _uint_set(sr->cur[i], "self.width", 60);
    ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 60);
    // (every third row is measured: the last of them is the row 2097)
    for (i = 0; i < 2100; i++)

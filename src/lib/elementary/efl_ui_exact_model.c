@@ -616,7 +616,7 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
         if ((w & EFL_UI_EXACT_MODEL_MEASURED) &&
             (w & ~EFL_UI_EXACT_MODEL_MEASURED) >= root->total_size.width)
           root->total_size.width = _efl_ui_exact_model_width_max(root->compressed.width,
-                                          root->total_size.width);
+                                                                 root->total_size.width);
      }
 }
 
