@@ -1816,6 +1816,80 @@ EFL_START_TEST(test_efl_ui_collection_view_exact_model_renumbered)
 }
 EFL_END_TEST
 
+/* The grid has the size of its biggest item for all of them, and an item that
+   goes may have been it: what it gives once it is gone is the biggest of those
+   that are left. */
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_gridw_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf,
+               Eina_Rw_Slice memory)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Size_Batch_Result result = { 0 };
+   unsigned int i, limit = conf.range.end_id - conf.range.start_id;
+
+   for (i = 0; (i < limit) && conf.range.start_id + i < _cache_count; i++)
+     {
+        sizes[i].size = EINA_SIZE2D(_cache_sizes[conf.range.start_id + i], 30);
+        sizes[i].element_depth = 0;
+        sizes[i].depth_leader = EINA_FALSE;
+     }
+   result.filled_items = i;
+   return result;
+}
+
+static int _gridw_min_w = -1;
+
+static void
+_gridw_min_size(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Eina_Size2D *size = ev->info;
+
+   _gridw_min_w = size->w;
+}
+
+EFL_START_TEST(test_efl_ui_position_manager_grid_min_size_goes_down)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager;
+   static const int widths[] = { 40, 90, 60, 50, 90 };
+   unsigned int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   _cache_count = EINA_C_ARRAY_LENGTH(widths);
+   for (i = 0; i < _cache_count; i++)
+     {
+        _cache_sizes[i] = widths[i];
+     }
+   manager = efl_add(EFL_UI_POSITION_MANAGER_GRID_CLASS, win,
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   efl_event_callback_add(manager, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED,
+                          _gridw_min_size, NULL);
+   _gridw_min_w = -1;
+   efl_ui_position_manager_data_access_v1_data_access_set(manager, win, NULL, _cache_object_cb, NULL,
+                                                          NULL, _gridw_size_cb, NULL, _cache_count);
+   efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 200, 300));
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 90);
+
+   // One of the two biggest goes: nothing changes
+   memmove(_cache_sizes + 1, _cache_sizes + 2, 3 * sizeof (int));
+   _cache_count--;
+   efl_ui_position_manager_entity_item_removed(manager, 1, _cache_dummy);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 90);
+
+   // The last of them
+   _cache_count--;
+   efl_ui_position_manager_entity_item_removed(manager, _cache_count, _cache_dummy);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 60);
+   ck_assert_int_eq(_gridw_min_w, 60);
+
+   efl_del(manager);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -1845,4 +1919,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_idle);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_renumbered);
+   tcase_add_test(tc, test_efl_ui_position_manager_grid_min_size_goes_down);
 }

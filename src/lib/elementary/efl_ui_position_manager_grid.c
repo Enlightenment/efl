@@ -40,6 +40,8 @@ typedef struct {
 
    Eina_Bool group_cache_dirty;
    Eina_Bool size_cache_dirty;
+   // An item that may have been the biggest went, and the groups were not built again
+   Eina_Bool min_size_dirty : 1;
 } Efl_Ui_Position_Manager_Grid_Data;
 
 typedef struct {
@@ -68,6 +70,7 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
      return;
 
    pd->max_min_size = EINA_SIZE2D(0, 0);
+   pd->min_size_dirty = EINA_FALSE;
 
    pd->group_cache_dirty = EINA_FALSE;
    if (pd->group_cache)
@@ -97,6 +100,9 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
           }
         else if (size_buffer[buffer_id].element_depth == 0 && line.real_group)
           {
+             // (a known quirk, left as it is: the plain item that ends a group
+             // is not counted in the line that is started here, which has 0
+             // items until the next plain item)
              eina_inarray_push(pd->group_cache, &line);
              line.real_group = EINA_FALSE;
              line.group_header_size = EINA_SIZE2D(0, 0);
@@ -173,6 +179,39 @@ _group_cache_remove(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx)
         consumed += line->items;
      }
    return EINA_FALSE;
+}
+
+// The biggest minimum size of the items, asked for again: an item that goes may
+// have been the one that gave it, and the sizes are not kept to tell.
+static void
+_min_size_recompute(Efl_Ui_Position_Manager_Grid_Data *pd)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[100];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   Eina_Size2D max = EINA_SIZE2D(0, 0);
+   unsigned int i = 0;
+
+   while (i < pd->size)
+     {
+        unsigned int j, filled;
+
+        size_result = _batch_request_size(pd->callbacks, i, pd->size, MIN(100, pd->size - i),
+                                          EINA_TRUE, size_buffer);
+        filled = MIN(size_result.filled_items, 100);
+        // (what is not told is not known: the biggest is then the one that was)
+        if (!filled) return;
+        for (j = 0; j < filled; j++)
+          {
+             max.w = MAX(max.w, size_buffer[j].size.w);
+             max.h = MAX(max.h, size_buffer[j].size.h);
+          }
+        i += filled;
+     }
+   if ((max.w != pd->max_min_size.w) || (max.h != pd->max_min_size.h))
+     {
+        pd->max_min_size = max;
+        pd->size_cache_dirty = EINA_TRUE;
+     }
 }
 
 static void
@@ -640,6 +679,16 @@ _rebuild_job_cb(Eo *obj, void *data, const Eina_Value v)
 {
    Efl_Ui_Position_Manager_Grid_Data *pd = data;
 
+   if (pd->min_size_dirty)
+     {
+        pd->min_size_dirty = EINA_FALSE;
+        // (a full build of the groups finds it by itself)
+        if (!pd->group_cache_dirty)
+          {
+             _min_size_recompute(pd);
+             _flush_min_size(obj, pd);
+          }
+     }
    _flush_abs_size(obj, pd);
    _reposition_content(obj, pd);
 
@@ -692,12 +741,16 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_removed(Eo *ob
 {
    Eina_Bool clean = !pd->group_cache_dirty;
 
-   //we ignore here that we might loose the item giving the current max min size
    EINA_SAFETY_ON_FALSE_RETURN(pd->size > 0);
    pd->size --;
    _group_cache_invalidate(obj, pd);
    if (clean && _group_cache_remove(pd, removed_index))
-     pd->group_cache_dirty = EINA_FALSE;
+     {
+        pd->group_cache_dirty = EINA_FALSE;
+        // The item may have been the one that gave the biggest minimum size,
+        // which is looked for again with the others that went in the meantime.
+        pd->min_size_dirty = EINA_TRUE;
+     }
    pd->prev_run.start_id = MIN(pd->prev_run.start_id, pd->size);
    pd->prev_run.end_id = MIN(pd->prev_run.end_id, pd->size);
    _schedule_recalc_abs_size(obj, pd);
