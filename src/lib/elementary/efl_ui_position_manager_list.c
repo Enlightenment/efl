@@ -68,6 +68,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    const unsigned int len = 100;
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   unsigned int batch_start = 0, filled = 0;
 
    if (pd->size_cache)
      {
@@ -96,13 +97,22 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         Eina_Size2D size;
         int step;
         int min;
-        int buffer_id = i % len;
 
-        if (buffer_id == 0)
+        // A provider may fill fewer than it was asked for: what it did not is asked again
+        if (i >= batch_start + filled)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, pd->size, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
+             size_result = _batch_request_size(pd->callbacks, i, pd->size, MIN(len, pd->size - i),
+                                               EINA_TRUE, size_buffer);
+             filled = MIN(size_result.filled_items, len);
+             batch_start = i;
+             if (!filled)
+               {
+                  // Not a cache of what is not known
+                  cache_invalidate(obj, pd);
+                  return;
+               }
           }
-       size = size_buffer[buffer_id].size;
+        size = size_buffer[i - batch_start].size;
 
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           {
@@ -156,21 +166,23 @@ _cache_range_ask(Efl_Ui_Position_Manager_List_Data *pd, unsigned int start, unsi
 {
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[100];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
-   unsigned int i;
+   unsigned int i, batch_start = start, filled = 0;
 
    for (i = start; i < end; i++)
      {
-        unsigned int buffer_id = (i - start) % 100;
         Eina_Size2D size;
         int min, step;
 
-        if (buffer_id == 0)
+        // A provider may fill fewer than it was asked for: what it did not is asked again
+        if (i >= batch_start + filled)
           {
              size_result = _batch_request_size(pd->callbacks, i, end, MIN(100, end - i),
                                                EINA_TRUE, size_buffer);
-             if (size_result.filled_items == 0) return EINA_FALSE;
+             filled = MIN(size_result.filled_items, 100);
+             batch_start = i;
+             if (filled == 0) return EINA_FALSE;
           }
-        size = size_buffer[buffer_id].size;
+        size = size_buffer[i - batch_start].size;
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           {
              step = size.h;

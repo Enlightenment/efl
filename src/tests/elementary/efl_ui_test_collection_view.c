@@ -1046,6 +1046,8 @@ EFL_END_TEST
 #define CACHE_MAX_ROWS 400
 static int _cache_sizes[CACHE_MAX_ROWS];
 static unsigned int _cache_count = 0;
+// The most rows the provider fills in a call
+static unsigned int _cache_fill_cap = 0xffffffff;
 
 static Efl_Ui_Position_Manager_Size_Batch_Result
 _cache_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf,
@@ -1055,7 +1057,9 @@ _cache_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config 
    Efl_Ui_Position_Manager_Size_Batch_Result result = { 0 };
    unsigned int i, limit = conf.range.end_id - conf.range.start_id;
 
-   for (i = 0; (i < limit) && conf.range.start_id + i < _cache_count; i++)
+   for (i = 0;
+        (i < limit) && (i < _cache_fill_cap) && ((conf.range.start_id + i) < _cache_count);
+        i++)
      {
         sizes[i].size = EINA_SIZE2D(20, _cache_sizes[conf.range.start_id + i]);
         sizes[i].element_depth = 0;
@@ -1193,6 +1197,52 @@ EFL_START_TEST(test_efl_ui_position_manager_list_cache_follows)
         if (!((seed >> 20) % 3)) _cache_places_check(manager);
      }
    _cache_places_check(manager);
+   efl_del(manager);
+}
+EFL_END_TEST
+
+/* A provider may fill fewer rows than it was asked for: those it did not fill
+   are asked for again, and none is placed by what the buffer held before. */
+EFL_START_TEST(test_efl_ui_position_manager_list_partial_fill)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager;
+   unsigned int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   manager = efl_add(EFL_UI_POSITION_MANAGER_LIST_CLASS, win,
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   efl_event_callback_add(manager, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED,
+                          _cache_content_size, NULL);
+   _cache_content_h = -1;
+   _cache_count = 250;
+   for (i = 0; i < _cache_count; i++)
+     {
+        _cache_sizes[i] = 10 + (i * 13) % 50;
+     }
+   _cache_fill_cap = 7;
+   efl_ui_position_manager_data_access_v1_data_access_set(manager, win, NULL, _cache_object_cb, NULL,
+                                                          NULL, _cache_size_cb, NULL, _cache_count);
+   efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 100, 1));
+   _cache_places_check(manager);
+
+   // The changes asked for are filled by as few as well
+   _cache_sizes[20] = 77;
+   _cache_sizes[21] = 78;
+   _cache_sizes[22] = 79;
+   efl_ui_position_manager_entity_item_size_changed(manager, 20, 22);
+   _cache_places_check(manager);
+   for (i = 0; i < 30; i++)
+     {
+        memmove(_cache_sizes + 5, _cache_sizes + 4, (_cache_count - 4) * sizeof (int));
+        _cache_sizes[5] = 30 + i;
+        _cache_count++;
+        efl_ui_position_manager_entity_item_added(manager, 5, NULL);
+     }
+   _cache_places_check(manager);
+
+   _cache_fill_cap = 0xffffffff;
    efl_del(manager);
 }
 EFL_END_TEST
@@ -1613,6 +1663,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_position_manager_list_cache_follows);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds);
    tcase_add_test(tc, test_efl_ui_position_manager_list_cache_shared_size);
+   tcase_add_test(tc, test_efl_ui_position_manager_list_partial_fill);
    tcase_add_test(tc, test_efl_ui_position_manager_grid_groups_follow);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_idle);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
