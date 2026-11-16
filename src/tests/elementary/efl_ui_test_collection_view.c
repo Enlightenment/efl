@@ -1733,16 +1733,26 @@ EFL_END_TEST
 
 /* A position manager that counts the rows the view is asked the size of on
    its behalf: the size callback the view gave it is wrapped by one that counts
-   what goes through. */
+   what goes through. The rows asked for to be fetched (measured, built) and
+   the ones asked only as far as they are known (no_fetch) are not the same cost,
+   and are counted apart. */
 static Efl_Ui_Position_Manager_Size_Batch_Callback _counted_size_access = NULL;
 static unsigned int _counted_calls = 0;
 static unsigned int _counted_rows = 0;
+static unsigned int _counted_known_rows = 0;
 
 static Efl_Ui_Position_Manager_Size_Batch_Result
 _counting_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_Rw_Slice memory)
 {
    _counted_calls++;
-   _counted_rows += conf.range.end_id - conf.range.start_id;
+   if (conf.no_fetch)
+     {
+        _counted_known_rows += conf.range.end_id - conf.range.start_id;
+     }
+   else
+     {
+        _counted_rows += conf.range.end_id - conf.range.start_id;
+     }
    return _counted_size_access(data, conf, memory);
 }
 
@@ -1808,7 +1818,8 @@ _counting_manager_class_get(Eina_Bool grid)
    listing arriving does, with the loop let to idle in between or not. The
    rows the view is asked the size of while that goes on are counted. */
 static unsigned int
-_single_adds_rows(int rows, Eina_Bool idle, Eina_Bool grid)
+_single_adds_rows(int rows, Eina_Bool idle, Eina_Bool grid, unsigned int *known,
+                  unsigned int *half, unsigned int *known_half)
 {
    Efl_Ui_Win *win;
    Efl_Model *model, *sizes;
@@ -1840,16 +1851,24 @@ _single_adds_rows(int rows, Eina_Bool idle, Eina_Bool grid)
 
    _counted_calls = 0;
    _counted_rows = 0;
+   _counted_known_rows = 0;
    for (i = 0; i < rows; i++)
      {
         efl_model_child_add(model);
         if (idle) wait_timer(0.0);
+        // (what the first half of the rows cost, to compare with the second)
+        if ((i + 1 == rows / 2) && half)
+          {
+             *half = _counted_rows;
+             *known_half = _counted_known_rows;
+          }
      }
    for (i = 0; i < 50; i++)
      {
         ecore_main_loop_iterate();
      }
    ck_assert_int_eq(efl_model_children_count_get(model), NUM_ITEMS + rows);
+   if (known) *known = _counted_known_rows;
    return _counted_rows;
 }
 
@@ -1863,7 +1882,7 @@ EFL_START_TEST(test_efl_ui_collection_view_many_single_adds)
    const int rows = SINGLE_ADDS;
    unsigned int counted;
 
-   counted = _single_adds_rows(rows, EINA_FALSE, EINA_FALSE);
+   counted = _single_adds_rows(rows, EINA_FALSE, EINA_FALSE, NULL, NULL, NULL);
    ck_assert_uint_lt(counted, rows * 20);
 }
 EFL_END_TEST
@@ -1875,22 +1894,26 @@ EFL_START_TEST(test_efl_ui_collection_view_many_single_adds_idle)
    const int rows = SINGLE_ADDS;
    unsigned int counted;
 
-   counted = _single_adds_rows(rows, EINA_TRUE, EINA_FALSE);
+   counted = _single_adds_rows(rows, EINA_TRUE, EINA_FALSE, NULL, NULL, NULL);
    ck_assert_uint_lt(counted, rows * 20);
 }
 EFL_END_TEST
 
 // And a grid, which keeps its items in groups and asks for the size of all of
-// them to build those.
+// them to build those. A screen shows many of its cells, so it is asked about more rows
+// than a list: what is looked at is how that grows, which is with the rows added (the
+// second half of the rows costs what the first did, where the work of all the rows there
+// are for each addition would make it three times as much), for the rows that are fetched
+// and for those that are asked as far as they are known.
 EFL_START_TEST(test_efl_ui_collection_view_many_single_adds_grid)
 {
    const int rows = SINGLE_ADDS;
-   unsigned int counted;
+   unsigned int fetched, known, fetched_half, known_half;
 
-   counted = _single_adds_rows(rows, EINA_TRUE, EINA_TRUE);
-   // (more than a list, as the cells are not as wide as the view and a screen
-   // shows many of them: still far from what the rows there are would make)
-   ck_assert_uint_lt(counted, rows * 100);
+   fetched = _single_adds_rows(rows, EINA_TRUE, EINA_TRUE, &known, &fetched_half, &known_half);
+   ck_assert_uint_gt(fetched_half, 0);
+   ck_assert_uint_lt(fetched - fetched_half, fetched_half * 2);
+   ck_assert_uint_lt(known - known_half, known_half * 2 + 1);
 }
 EFL_END_TEST
 
