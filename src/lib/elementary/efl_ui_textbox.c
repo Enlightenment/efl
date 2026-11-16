@@ -1728,6 +1728,13 @@ _efl_ui_textbox_efl_object_finalize(Eo *obj,
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
 
+   /* The theme group only exists from here on, and editable_set returns early
+    * when the value is unchanged, which it is for a new editable textbox. */
+   efl_layout_signal_emit(sd->entry_edje,
+                          efl_text_interactive_editable_get(obj) ?
+                          "efl,state,editable,on" : "efl,state,editable,off",
+                          "efl");
+
    _update_guide_text(obj, sd);
 
    sd->item_fallback_factory = efl_add(EFL_UI_TEXT_FACTORY_FALLBACK_CLASS, obj);
@@ -1914,6 +1921,11 @@ _efl_ui_textbox_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Textbox_Data *
    efl_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
 
    efl_ui_widget_focus_allow_set(obj, editable);
+
+   if (sd->entry_edje)
+     efl_layout_signal_emit(sd->entry_edje,
+                            editable ? "efl,state,editable,on"
+                                     : "efl,state,editable,off", "efl");
 
    if (editable)
      {

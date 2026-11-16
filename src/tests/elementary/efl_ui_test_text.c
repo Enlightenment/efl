@@ -678,6 +678,56 @@ EFL_START_TEST(text_scrollable_cursor_stack)
 }
 EFL_END_TEST
 
+static void
+_editable_signal(void *data, Eo *obj EINA_UNUSED, const char *emission,
+                 const char *source EINA_UNUSED)
+{
+   const char **last = data;
+
+   *last = emission;
+}
+
+/* The theme paints a field only while the textbox is editable, and learns
+ * which it is from a signal: one sent when the theme is ready, and one on
+ * every change. */
+EFL_START_TEST(text_editable_signal)
+{
+   const char *last = NULL;
+   Eo *txt;
+   Eo *win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win);
+   efl_layout_signal_callback_add(txt, "efl,state,editable,*", "efl", &last,
+                                  _editable_signal, NULL);
+   ck_assert_ptr_eq(last, NULL);
+
+   efl_text_interactive_editable_set(txt, EINA_FALSE);
+   efl_layout_signal_process(txt, EINA_FALSE);
+   ck_assert_ptr_ne(last, NULL);
+   ck_assert_str_eq(last, "efl,state,editable,off");
+   efl_text_interactive_editable_set(txt, EINA_TRUE);
+   efl_layout_signal_process(txt, EINA_FALSE);
+   ck_assert_str_eq(last, "efl,state,editable,on");
+
+   last = NULL;
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                 efl_layout_signal_callback_add(efl_added, "efl,state,editable,*", "efl",
+                                                &last, _editable_signal, NULL));
+   efl_layout_signal_process(txt, EINA_FALSE);
+   ck_assert_ptr_ne(last, NULL);
+   ck_assert_str_eq(last, "efl,state,editable,on");
+
+   last = NULL;
+   txt = efl_add(EFL_UI_TEXTBOX_CLASS, win,
+                 efl_layout_signal_callback_add(efl_added, "efl,state,editable,*", "efl",
+                                                &last, _editable_signal, NULL),
+                 efl_text_interactive_editable_set(efl_added, EINA_FALSE));
+   efl_layout_signal_process(txt, EINA_FALSE);
+   ck_assert_ptr_ne(last, NULL);
+   ck_assert_str_eq(last, "efl,state,editable,off");
+}
+EFL_END_TEST
+
 void efl_ui_test_text(TCase *tc)
 {
    tcase_add_test(tc, text_scrollable_cursor_stack);
@@ -690,6 +740,7 @@ void efl_ui_test_text(TCase *tc)
    tcase_add_test(tc, text_change_event);
    tcase_add_test(tc, text_keys_handler);
    tcase_add_test(tc, text_editable);
+   tcase_add_test(tc, text_editable_signal);
    tcase_add_test(tc, text_multiline_selection);
    tcase_add_test(tc, text_singleline_cursor_movement);
    tcase_add_test(tc, text_multiline_singleline_cursor_pos);

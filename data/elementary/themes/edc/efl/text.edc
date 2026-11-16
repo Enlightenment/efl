@@ -474,6 +474,27 @@ group { "efl/text";
       item: "guide.style.color" "cc:/fg/normal/entry/text/guide";
    }
    parts {
+      /* An editable textbox is a field and looks like one; the same class not
+         editable is a label and draws nothing behind itself. The colour is
+         the entry background the legacy scrolled entry has always used, so a
+         plain Efl.Ui.Textbox reads as somewhere to click the way elm_entry
+         does. */
+      rect { "field";
+         scale: 1;
+         desc { "default";
+            color_class: "/bg/normal/entry";
+            hid;
+         }
+         desc { "editable";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            color_class: "/bg/disabled/entry";
+            vis;
+         }
+      }
       part { name: "efl.background"; type: SWALLOW;
          description { state: "default" 0.0;
          }
@@ -509,9 +530,18 @@ group { "efl/text";
          action: FOCUS_SET;
          target: "efl.text";
       }
+      program { signal: "efl,state,editable,on"; source: "efl";
+         action: STATE_SET "editable" 0.0;
+         target: "field";
+      }
+      program { signal: "efl,state,editable,off"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "field";
+      }
       program { signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
          target: "efl.text";
+         target: "field";
       }
       program { signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
