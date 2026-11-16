@@ -991,7 +991,10 @@ EFL_START_TEST(efl_test_select_model_none_clears_without_manual_deselection)
    for (round = 0; round < 2; round++)
      {
         efl_ui_multi_selectable_ndx_range_select(model, 1, 1);
-        for (i = 0; i < 12; i++) ecore_main_loop_iterate();
+        for (i = 0; i < 12; i++)
+          {
+             ecore_main_loop_iterate();
+          }
         ck_assert_int_eq(_selected_count(model, &first), 1);
         ck_assert_int_eq(first, 1);
 
@@ -999,7 +1002,10 @@ EFL_START_TEST(efl_test_select_model_none_clears_without_manual_deselection)
         // (round 0: back to single in the same turn, round 1: once the unselects ran)
         if (round) for (i = 0; i < 12; i++) ecore_main_loop_iterate();
         efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
-        for (i = 0; i < 12; i++) ecore_main_loop_iterate();
+        for (i = 0; i < 12; i++)
+          {
+             ecore_main_loop_iterate();
+          }
         ck_assert_int_eq(_selected_count(model, NULL), 0);
         ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), NULL);
      }
