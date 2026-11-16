@@ -61,24 +61,36 @@ static Eina_Future *
 _efl_generic_model_efl_model_property_set(Eo *obj, Efl_Generic_Model_Data *pd, const char *property, Eina_Value *value)
 {
    Eina_Stringshare *prop;
-   Eina_Value *exist;
+   Eina_Value *exist, next = EINA_VALUE_EMPTY;
    Efl_Model_Property_Event evt;
 
    prop = eina_stringshare_add(property);
    exist = eina_hash_find(pd->properties, prop);
 
+   /* The new value is made first, and swapped in: a copy that fails leaves
+    * what the model held, and the old value's memory is released once. */
+   if (!eina_value_copy(value, &next))
+     goto value_failed;
+
    if (!exist)
      {
-        exist = eina_value_new(eina_value_type_get(value));
+        exist = eina_value_new(EINA_VALUE_TYPE_UCHAR);
         if (!exist)
-          goto value_failed;
+          {
+             eina_value_flush(&next);
+             goto value_failed;
+          }
 
         if (!eina_hash_direct_add(pd->properties, eina_stringshare_ref(prop), exist))
-          goto hash_failed;
+          {
+             eina_stringshare_del(prop);
+             eina_value_flush(&next);
+             goto hash_failed;
+          }
      }
 
-   if (!eina_value_copy(value, exist))
-     goto value_failed;
+   eina_value_flush(exist);
+   *exist = next;
 
    evt.changed_properties = eina_array_new(1);
    eina_array_push(evt.changed_properties, prop);

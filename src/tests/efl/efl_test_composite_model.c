@@ -578,6 +578,104 @@ EFL_START_TEST(efl_test_generic_model_child_added)
 }
 EFL_END_TEST
 
+/* A value type that counts: every setup must meet a flush, and it is larger than
+ * eight bytes, so Eina gives it memory of its own as it does an array. */
+static int _counted_live = 0;
+
+static Eina_Bool
+_counted_setup(const Eina_Value_Type *type EINA_UNUSED, void *mem)
+{
+   memset(mem, 0, 16);
+   _counted_live++;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_counted_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem EINA_UNUSED)
+{
+   _counted_live--;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_counted_copy(const Eina_Value_Type *type EINA_UNUSED, const void *src, void *dst)
+{
+   memcpy(dst, src, 16);
+   return EINA_TRUE;
+}
+
+static int
+_counted_compare(const Eina_Value_Type *type EINA_UNUSED, const void *a, const void *b)
+{
+   return memcmp(a, b, 16);
+}
+
+static Eina_Bool
+_counted_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, const void *ptr)
+{
+   memcpy(mem, ptr, 16);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_counted_pget(const Eina_Value_Type *type EINA_UNUSED, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, 16);
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _counted_type =
+{
+   EINA_VALUE_TYPE_VERSION, 16, "counted", _counted_setup, _counted_flush, _counted_copy,
+   _counted_compare, NULL, NULL, NULL, _counted_pset, _counted_pget
+};
+
+static void
+_set_counted(Efl_Generic_Model *model, const char *name, int tag)
+{
+   Eina_Value *v = eina_value_new(&_counted_type);
+   int raw[4] = { tag, 0, 0, 0 };
+   Eina_Future *f;
+
+   ck_assert(v != NULL);
+   ck_assert(eina_value_pset(v, raw));
+   f = efl_model_property_set(model, name, v);
+   eina_future_cancel(f);
+   eina_value_free(v);
+}
+
+EFL_START_TEST(efl_test_generic_model_property_replaced)
+{
+   Efl_Generic_Model *model;
+   Eina_Value *got;
+   int i, raw[4];
+
+   model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   _counted_live = 0;
+
+   /* One value in the model: set it again and again, whatever it is. */
+   for (i = 0; i < 4; i++)
+     {
+        _set_counted(model, "p", i);
+        ck_assert_int_eq(_counted_live, 1);
+        got = efl_model_property_get(model, "p");
+        ck_assert(eina_value_type_get(got) == &_counted_type);
+        ck_assert(eina_value_pget(got, raw));
+        ck_assert_int_eq(raw[0], i);
+        eina_value_free(got);
+        ck_assert_int_eq(_counted_live, 1);
+     }
+   /* Another property: one more value. */
+   _set_counted(model, "q", 7);
+   ck_assert_int_eq(_counted_live, 2);
+
+   /* What the model held goes with it (its parent, the loop, lets go first). */
+   efl_del(model);
+   efl_unref(model);
+   ck_assert_int_eq(_counted_live, 0);
+}
+EFL_END_TEST
+
 static Eina_Bool
 _marked_named_get(Eo *child, const char *name)
 {
@@ -865,4 +963,5 @@ efl_test_case_boolean_model(TCase *tc)
    tcase_add_test(tc, efl_test_filter_model);
    tcase_add_test(tc, efl_test_generic_model_child_added);
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);
+   tcase_add_test(tc, efl_test_generic_model_property_replaced);
 }
