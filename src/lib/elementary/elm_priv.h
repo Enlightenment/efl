@@ -657,6 +657,10 @@ struct _Elm_Module
    (the Select_Model, the Homogeneous_Model, a Boolean_Model...): the sizes
    are kept under the index of the Exact_Model, which another model may
    number differently. _find answers NULL for those. */
+// A size that was set is stored with this bit on. A slot of zeros (what the
+// storage starts as, and what a slot that was never written expands to) is
+// therefore a row nobody measured, which is not a row of size 0.
+#define EFL_UI_EXACT_MODEL_MEASURED 0x80000000u
 Efl_Model           *_efl_ui_exact_model_find(Efl_Model *model);
 Eina_Bool            _efl_ui_exact_model_row_size_get(Efl_Model *exact,
                                                       unsigned int index,

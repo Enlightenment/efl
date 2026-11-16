@@ -14,11 +14,6 @@
 #define EFL_UI_EXACT_MODEL_CONTENT 1024
 #define EFL_UI_EXACT_MODEL_CONTENT_LENGTH (EFL_UI_EXACT_MODEL_CONTENT * sizeof (unsigned int))
 
-// A size that was set is stored with this bit on. A slot of zeros (what the
-// storage starts as, and what a slot that was never written expands to) is
-// therefore a row nobody measured, which is not a row of size 0.
-#define EFL_UI_EXACT_MODEL_MEASURED 0x80000000u
-
 // For now only vertical logic is implemented. Horizontal list and grid are not supported.
 
 typedef struct _Efl_Ui_Exact_Model_Data Efl_Ui_Exact_Model_Data;

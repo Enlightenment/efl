@@ -26,6 +26,10 @@ struct _Efl_Ui_Average_Model_Data
 
    // The times the Exact_Model gave up its sizes that this has seen
    unsigned int forgotten;
+
+   // What a row was told that has not been added to the totals yet (it is
+   // added when the loop gets to it), for the row that leaves before that.
+   Eina_List *pending;
 };
 
 typedef struct _Efl_Ui_Average_Model_Update Efl_Ui_Average_Model_Update;
@@ -33,17 +37,28 @@ struct _Efl_Ui_Average_Model_Update
 {
    unsigned long long *total;
    unsigned long long *seen;
+   Efl_Ui_Average_Model_Data *root;
+   Eo *row;
    unsigned int previous;
+   unsigned int now;
+   // The row left, or the sizes were forgotten, before it was added: there is no row to add it to
+   Eina_Bool dropped : 1;
 };
 
 // Totals of what the Exact_Model says is not kept any more are of no use
 static void
 _efl_ui_average_model_forgotten_check(const Eo *obj, Efl_Ui_Average_Model_Data *root)
 {
+   Efl_Ui_Average_Model_Update *update;
    unsigned int forgotten = _efl_ui_exact_model_forgotten_get(obj);
+   Eina_List *l;
 
    if (root->forgotten == forgotten) return;
    root->forgotten = forgotten;
+   EINA_LIST_FOREACH(root->pending, l, update)
+     {
+        update->dropped = EINA_TRUE;
+     }
    memset(&root->total, 0, sizeof (root->total));
 }
 
@@ -53,33 +68,46 @@ _efl_ui_average_model_update(Eo *obj EINA_UNUSED, void *data, const Eina_Value v
    Efl_Ui_Average_Model_Update *request = data;
    unsigned int now;
 
-   if (!eina_value_uint_convert(&v, &now))
-     goto on_error;
+   // (a row that left is not in the model: what it was told is not averaged)
+   if (request->dropped || !eina_value_uint_convert(&v, &now))
+     return v;
 
    // (a row that shrinks takes from the total: the difference is signed)
    *(request->total) += (long long) now - (long long) request->previous;
    if (request->seen) *(request->seen) += 1;
 
- on_error:
    return v;
 }
 
 static void
 _efl_ui_average_model_clean(Eo *obj, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
-   free(data);
+   Efl_Ui_Average_Model_Update *update = data;
+
+   update->root->pending = eina_list_remove(update->root->pending, update);
+   free(update);
 
    efl_unref(obj);
 }
 
 static Eina_Future *
-_efl_ui_average_model_prepare(Eo *obj,
-                              unsigned long long *total, unsigned long long *seen,
+_efl_ui_average_model_prepare(Eo *obj, Efl_Ui_Average_Model_Data *root,
                               const char *property, Eina_Value *value)
 {
+   unsigned long long *total = &root->total.height;
+   unsigned long long *seen = &root->total.hseen;
    Efl_Ui_Average_Model_Update *update;
    Eina_Value *previous;
    Eina_Future *f;
+   unsigned int now;
+
+   // What the Exact_Model refuses is not one that will be averaged
+   if (!eina_value_uint_convert(value, &now) || (now & EFL_UI_EXACT_MODEL_MEASURED) ||
+       (efl_composite_model_index_get(obj) == 0xFFFFFFFF))
+     {
+        return efl_model_property_set(efl_super(obj, EFL_UI_AVERAGE_MODEL_CLASS),
+                                      property, value);
+     }
 
    update = calloc(1, sizeof (Efl_Ui_Average_Model_Update));
    if (!update) return efl_loop_future_rejected(obj, ENOMEM);
@@ -101,6 +129,9 @@ _efl_ui_average_model_prepare(Eo *obj,
    eina_value_free(previous);
 
    update->total = total;
+   update->now = now;
+   update->root = root;
+   update->row = obj;
 
    // As we are operating asynchronously and we want to make sure that the object
    // survive until the transaction is commited, we will ref the object here
@@ -113,6 +144,7 @@ _efl_ui_average_model_prepare(Eo *obj,
    // We have to make the change after we fetch the old value, otherwise, well, no old value left
    f = efl_model_property_set(efl_super(obj, EFL_UI_AVERAGE_MODEL_CLASS), property, value);
 
+   root->pending = eina_list_append(root->pending, update);
    return efl_future_then(obj, f,
                           .success = _efl_ui_average_model_update,
                           .free = _efl_ui_average_model_clean,
@@ -127,13 +159,29 @@ static void
 _efl_ui_average_model_child_removed(void *data, const Efl_Event *event)
 {
    Efl_Ui_Average_Model_Data *pd = data;
-   unsigned int height;
+   const Efl_Model_Children_Event *ev = event->info;
+   Efl_Ui_Average_Model_Update *update;
+   Eina_List *l;
+   long long pending = 0, height;
+   unsigned int removed;
+   Eina_Bool seen = EINA_TRUE;
 
    _efl_ui_average_model_forgotten_check(event->object, pd);
-   if (!_efl_ui_exact_model_removed_height_get(event->object, &height)) return;
+   // What the row was told and the loop did not get to yet is in what the
+   // Exact_Model took out, but not yet in what is here
+   EINA_LIST_FOREACH(pd->pending, l, update)
+     {
+        if ((update->row != ev->child) || update->dropped) continue;
+        pending += (long long) update->now - (long long) update->previous;
+        if (update->seen) seen = EINA_FALSE;
+        update->dropped = EINA_TRUE;
+     }
+   if (!_efl_ui_exact_model_removed_height_get(event->object, &removed)) return;
+   height = (long long) removed - pending;
    // What the Exact_Model took out was added here, so there is enough to take out.
    // If there is not, the totals are wrong and are of no use any more.
-   if ((pd->total.height < height) || !pd->total.hseen)
+   if ((height < 0) || (pd->total.height < (unsigned long long) height) ||
+       (seen && !pd->total.hseen))
      {
         ERR("The average of the heights does not hold the row that was removed: "
             "starting it again.");
@@ -141,7 +189,7 @@ _efl_ui_average_model_child_removed(void *data, const Efl_Event *event)
         return;
      }
    pd->total.height -= height;
-   pd->total.hseen--;
+   if (seen) pd->total.hseen--;
 }
 
 static Eina_Future *
@@ -162,9 +210,7 @@ _efl_ui_average_model_efl_model_property_set(Eo *obj, Efl_Ui_Average_Model_Data 
    if (eina_streq(property, _efl_model_property_selfh))
      {
         _efl_ui_average_model_forgotten_check(efl_parent_get(obj), pd->parent);
-        f = _efl_ui_average_model_prepare(obj, &pd->parent->total.height,
-                                          &pd->parent->total.hseen,
-                                          property, value);
+        f = _efl_ui_average_model_prepare(obj, pd->parent, property, value);
      }
 
  end:
