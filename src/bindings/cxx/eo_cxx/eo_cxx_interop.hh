@@ -515,15 +515,18 @@ Eina_Array const* convert_to_c_impl(efl::eina::array<T>const& c, tag<Eina_Array 
 {
   return const_cast<efl::eina::array<T>&>(c).release_native_handle();
 }
+// Lent, not handed over: C reads from the element the iterator points to,
+// which the native handle is already past, and the iterator frees what it
+// lent. It is used up afterwards.
 template <typename T>
 Eina_Iterator* convert_to_c_impl(efl::eina::iterator<T>const& i, tag<Eina_Iterator *, efl::eina::iterator<T>const&>)
 {
-  return const_cast<Eina_Iterator*>(i.native_handle());
+  return i._lend_native_handle();
 }
 template <typename T>
 Eina_Iterator const* convert_to_c_impl(efl::eina::iterator<T>const& i, tag<Eina_Iterator const*, efl::eina::iterator<T>const&>)
 {
-  return i.native_handle();
+  return i._lend_native_handle();
 }
 template <typename T>
 Eina_Iterator* convert_to_c_impl(efl::eina::iterator<T>const& /*i*/, tag<Eina_Iterator *, efl::eina::iterator<T>const&, true>)

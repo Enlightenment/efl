@@ -44,6 +44,20 @@ _fnptr_apply(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
 }
 
 static int
+_fnptr_sum_lent(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Eina_Iterator *l)
+{
+   int *i, sum = 0;
+
+   if (!l) return -1;
+   EINA_ITERATOR_FOREACH(l, i)
+     {
+        sum += *i;
+     }
+
+   return sum;
+}
+
+static int
 _fnptr_format(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
               void *cb_data, Fnptr_Format_Func cb, Eina_Free_Cb cb_free_cb)
 {

@@ -149,10 +149,41 @@ EFL_START_TEST(eolian_cxx_test_callbacks_buffer_and_value)
 }
 EFL_END_TEST
 
+/* An iterator lent to C, not handed over: C reads from the element the C++
+ * iterator points to, the C++ iterator frees the native one, and it is used
+ * up afterwards, as an input iterator read to the end by someone else is. */
+EFL_START_TEST(eolian_cxx_test_callbacks_lent_iterator)
+{
+  efl::eo::eo_init init;
+
+  nonamespace::Fnptr obj(efl::eo::instantiate);
+  static int values[] = { 20, 100, 200 };
+  Eina_List* list = nullptr;
+  for (int& v : values)
+    list = eina_list_append(list, &v);
+
+  {
+    efl::eina::iterator<int> it(eina_list_iterator_new(list));
+    ck_assert_int_eq(obj.sum_lent(it), 320);
+    ck_assert(it == efl::eina::iterator<int>());
+    /* Nothing left to lend: C gets NULL. */
+    ck_assert_int_eq(obj.sum_lent(it), -1);
+  }
+  {
+    efl::eina::iterator<int> it(eina_list_iterator_new(list));
+    ++it;
+    ck_assert_int_eq(obj.sum_lent(it), 300);
+  }
+  ck_assert_int_eq(obj.sum_lent(efl::eina::iterator<int>()), -1);
+  eina_list_free(list);
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_callbacks(TCase* tc)
 {
   tcase_add_test(tc, eolian_cxx_test_callbacks_return_string);
+  tcase_add_test(tc, eolian_cxx_test_callbacks_lent_iterator);
   tcase_add_test(tc, eolian_cxx_test_callbacks_arguments);
   tcase_add_test(tc, eolian_cxx_test_callbacks_buffer_and_value);
   tcase_add_test(tc, eolian_cxx_test_callbacks_two_types);
