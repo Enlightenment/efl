@@ -32,6 +32,13 @@ struct @beta Efl.Ui.Position_Manager.Size_Batch_Result {
    parent_size : Eina.Size2D; [[The group size of the group where the first item is part of.]]
    parent_depth : ubyte; [[The depth of the parent]]
    filled_items : uint; [[The number of items that are filled into the slice.]]
+   estimated : bool; [[$true if some of the sizes given are an estimate, one that is
+                       made of what is known of the other items (the average of those
+                       measured, say) and changes when another item is measured.
+
+                       A position manager that was given such a size cannot know of
+                       the items it was not told about when it is told that some
+                       others changed, and asks for all of them again.]]
 }
 
 struct @beta Efl.Ui.Position_Manager.Size_Call_Config {

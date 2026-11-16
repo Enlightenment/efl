@@ -1288,6 +1288,182 @@ EFL_START_TEST(test_efl_ui_position_manager_list_cache_shared_size)
 }
 EFL_END_TEST
 
+/* The list position manager, told of every change by a provider whose answers
+   are not the same from one time to the next, must place every item where a
+   manager that is given the final items places it. The provider here gives the
+   rows that nobody measured the average of those that were (so that measuring
+   a row changes the size of all the others, which is not told), and fills only
+   a few rows of what it is asked for at a time. Rows are changed anywhere,
+   added, removed down to none, and measured past the end of the list. */
+#define DIFF_MAX_ROWS 3000
+static unsigned int _diff_measured[DIFF_MAX_ROWS]; // 0: not measured
+static unsigned int _diff_count = 0;
+static unsigned int _diff_cap = 7;
+// Whether the rows nobody measured get the average (and are said to be an estimate), or 40
+static Eina_Bool _diff_estimates = EINA_TRUE;
+
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_diff_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf,
+              Eina_Rw_Slice memory)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Size_Batch_Result result = { 0 };
+   unsigned int i, limit = conf.range.end_id - conf.range.start_id;
+   unsigned int sum = 0, seen = 0, average;
+
+   for (i = 0; i < _diff_count; i++)
+     {
+        if (!_diff_measured[i]) continue;
+        sum += _diff_measured[i];
+        seen++;
+     }
+   average = (seen && _diff_estimates) ? sum / seen : 40;
+
+   for (i = 0; (i < limit) && i < _diff_cap && conf.range.start_id + i < _diff_count; i++)
+     {
+        unsigned int measured = _diff_measured[conf.range.start_id + i];
+
+        sizes[i].size = EINA_SIZE2D(20, measured ? measured : average);
+        sizes[i].element_depth = 0;
+        sizes[i].depth_leader = EINA_FALSE;
+        if (!measured && _diff_estimates) result.estimated = EINA_TRUE;
+     }
+   result.filled_items = i;
+   return result;
+}
+
+static Efl_Ui_Position_Manager_Entity *
+_diff_manager_add(Efl_Ui_Win *win)
+{
+   Efl_Ui_Position_Manager_Entity *manager;
+
+   manager = efl_add(EFL_UI_POSITION_MANAGER_LIST_CLASS, win,
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   efl_ui_position_manager_data_access_v1_data_access_set(manager, win, NULL, _cache_object_cb, NULL,
+                                                          NULL, _diff_size_cb, NULL, _diff_count);
+   efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 100, 1));
+   return manager;
+}
+
+static void
+_diff_check(Efl_Ui_Win *win, Efl_Ui_Position_Manager_Entity *manager, unsigned int step)
+{
+   Efl_Ui_Position_Manager_Entity *fresh;
+   unsigned int i;
+
+   // The job that follows the changes
+   ecore_main_loop_iterate();
+   fresh = _diff_manager_add(win);
+   for (i = 0; i < _diff_count; i++)
+     {
+        Eina_Rect a = efl_ui_position_manager_entity_position_single_item(manager, i);
+        Eina_Rect b = efl_ui_position_manager_entity_position_single_item(fresh, i);
+
+        ck_assert_msg(a.y == b.y, "step %u item %u: y %d against %d", step, i, a.y, b.y);
+        ck_assert_msg(a.h == b.h, "step %u item %u: h %d against %d", step, i, a.h, b.h);
+     }
+   efl_del(fresh);
+}
+
+static void
+_diff_run(unsigned int seed, unsigned int steps, unsigned int range)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager;
+   unsigned int i, step;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   _diff_count = 40;
+   memset(_diff_measured, 0, sizeof (_diff_measured));
+   for (i = 0; i < _diff_count; i += 5)
+     {
+        _diff_measured[i] = 10 + i;
+     }
+   manager = _diff_manager_add(win);
+   _diff_check(win, manager, 0);
+
+   for (step = 1; step <= steps; step++)
+     {
+        unsigned int idx, kind;
+
+        seed = seed * 1103515245 + 12345;
+        // Anywhere in the whole list
+        idx = ((seed >> 8) & 0xffff) % (_diff_count ? _diff_count : 1);
+        seed = seed * 1103515245 + 12345;
+        kind = (seed >> 8) % 12;
+        switch (kind)
+          {
+           case 0:
+           case 1: /* added */
+             {
+                unsigned int at;
+
+                if (_diff_count >= range) break;
+                at = _diff_count ? (idx % (_diff_count + 1)) : 0;
+                memmove(_diff_measured + at + 1, _diff_measured + at,
+                        (_diff_count - at) * sizeof (unsigned int));
+                _diff_measured[at] = (seed >> 20) % 3 ? 0 : 5 + (seed >> 16) % 60;
+                _diff_count++;
+                efl_ui_position_manager_entity_item_added(manager, at, NULL);
+                break;
+             }
+           case 2:
+           case 3: /* removed */
+             {
+                if (!_diff_count) break;
+                memmove(_diff_measured + idx, _diff_measured + idx + 1,
+                        (_diff_count - idx - 1) * sizeof (unsigned int));
+                _diff_count--;
+                efl_ui_position_manager_entity_item_removed(manager, idx, NULL);
+                break;
+             }
+           case 4: /* all removed, then some come */
+             {
+                if ((seed >> 20) % 8) break;
+                while (_diff_count)
+                  {
+                     _diff_count--;
+                     efl_ui_position_manager_entity_item_removed(manager, _diff_count, NULL);
+                  }
+                _diff_check(win, manager, step);
+                for (i = 0; i < 3; i++)
+                  {
+                     _diff_measured[i] = 0;
+                     _diff_count++;
+                     efl_ui_position_manager_entity_item_added(manager, i, NULL);
+                  }
+                break;
+             }
+           case 5: /* told of a change past the end */
+             efl_ui_position_manager_entity_item_size_changed(manager, _diff_count + idx % 3,
+                                                              _diff_count + 2 + idx % 3);
+             break;
+           default: /* measured, and only that row is told, wherever it is */
+             if (!_diff_count) break;
+             _diff_measured[idx] = 5 + (seed >> 16) % 60;
+             efl_ui_position_manager_entity_item_size_changed(manager, idx, idx);
+             break;
+          }
+        if (!((seed >> 20) % 4)) _diff_check(win, manager, step);
+     }
+   _diff_check(win, manager, step);
+   efl_del(manager);
+}
+
+EFL_START_TEST(test_efl_ui_position_manager_list_differential)
+{
+   _diff_estimates = EINA_TRUE;
+   _diff_run(3, 300, 40);
+   // The long list: most of it is far from what changes
+   _diff_run(17, 500, 400);
+   // Answers that only change for the rows that were told of: the cache follows without asking for all
+   _diff_estimates = EINA_FALSE;
+   _diff_run(5, 400, 40);
+   _diff_run(29, 600, 400);
+}
+EFL_END_TEST
+
 /* The groups of the grid position manager follow items that are added or
    removed, with the sizes that are asked for only once: a grid told of every
    change must place every item where a grid that is given the final items
@@ -1664,6 +1840,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds);
    tcase_add_test(tc, test_efl_ui_position_manager_list_cache_shared_size);
    tcase_add_test(tc, test_efl_ui_position_manager_list_partial_fill);
+   tcase_add_test(tc, test_efl_ui_position_manager_list_differential);
    tcase_add_test(tc, test_efl_ui_position_manager_grid_groups_follow);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_idle);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
