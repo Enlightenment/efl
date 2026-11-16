@@ -471,17 +471,6 @@ _regenerate_error(void *data,
    return r;
 }
 
-static Eina_Value
-_untangle_array(void *data EINA_UNUSED,
-                const Eina_Value v)
-{
-   Eina_Value va = EINA_VALUE_EMPTY;
-
-   // Only return the commit change, not the result of the unselect
-   eina_value_array_get(&v, 0, &va);
-   return va;
-}
-
 // What a select that unselects the row selected before keeps to roll back with
 typedef struct
 {
@@ -547,6 +536,30 @@ static Eina_Value
 _untangle_error(void *data, Eina_Error err)
 {
    return _untangle_rollback(data, err);
+}
+
+// The select and the unselect of the row before ran side by side, and both
+// came back as values: return the commit of the select, unless the unselect
+// failed, which is a failure of the select. A row before that has left the
+// model is not selected any more, which is all its unselect was for.
+static Eina_Value
+_untangle_array(void *data, const Eina_Value v)
+{
+   Untangle *u = data;
+   Eina_Value va = EINA_VALUE_EMPTY;
+   Eina_Value unselect = EINA_VALUE_EMPTY;
+   Eina_Error err = 0;
+
+   eina_value_array_get(&v, 0, &va);
+   if (!eina_value_array_get(&v, 1, &unselect)) return va;
+   if (eina_value_type_get(&unselect) == EINA_VALUE_TYPE_ERROR)
+     eina_value_error_get(&unselect, &err);
+   eina_value_flush(&unselect);
+   if (!err) return va;
+   if (efl_composite_model_index_get(u->prev) == 0xFFFFFFFF) return va;
+
+   eina_value_flush(&va);
+   return _untangle_rollback(u, err);
 }
 
 static void

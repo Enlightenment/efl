@@ -1199,6 +1199,74 @@ EFL_START_TEST(efl_test_select_model_failed_unselect_rolls_back_last)
 }
 EFL_END_TEST
 
+static Eina_Future *
+_refuse_unselect(Eo *obj, void *pd EINA_UNUSED, const char *property, Eina_Value *value)
+{
+   Eina_Bool flag = EINA_TRUE;
+
+   if (eina_streq(property, "selected") &&
+       (eina_value_type_get(value) == EINA_VALUE_TYPE_BOOL) &&
+       eina_value_bool_get(value, &flag) && !flag)
+     return efl_loop_future_rejected(obj, EINVAL);
+   return efl_model_property_set(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS), property, value);
+}
+
+// Single mode: a select whose unselect of the row selected before fails is rolled back, as
+// one cancelled while it waits for that unselect is. The unselect runs next to the commit of
+// the new row, and its failure used to be dropped with its result: both rows stayed selected.
+EFL_START_TEST(efl_test_select_model_refused_unselect_rolls_back)
+{
+   EFL_OPS_DEFINE(refuse, EFL_OBJECT_OP_FUNC(efl_model_property_set, _refuse_unselect));
+   Efl_Model *base_model, *model;
+   Eo *rows[3] = { NULL, NULL, NULL };
+   Eina_Value select = eina_value_bool_init(EINA_TRUE);
+   unsigned int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 3; ++i)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+   model = efl_add_ref(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   efl_ui_multi_selectable_select_mode_set(model, EFL_UI_SELECT_MODE_SINGLE);
+   eina_future_then(efl_model_children_slice_get(model, 0, 3), _four_rows_then, rows, NULL);
+   for (i = 0; (i < 12) && !rows[2]; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!rows[2]);
+
+   efl_ui_multi_selectable_ndx_range_select(model, 2, 2);
+   for (i = 0; i < 12; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), rows[2]);
+
+   ck_assert(efl_object_override(rows[2], &refuse));
+   efl_model_property_set(rows[0], "self.selected", &select);
+   for (i = 0; i < 16; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   ck_assert_int_eq(_state_get(rows[0], "selected"), EINA_FALSE);
+   ck_assert_int_eq(_state_get(rows[2], "selected"), EINA_TRUE);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(model), rows[2]);
+   ck_assert_int_eq(_selected_count(model, &i), 1);
+   ck_assert_int_eq(i, 2);
+
+   ck_assert(efl_object_override(rows[2], NULL));
+   for (i = 0; i < 3; i++)
+     {
+        efl_unref(rows[i]);
+     }
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 static Eina_Value
 _rows_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
 {
@@ -1530,6 +1598,7 @@ efl_ui_test_select_model(TCase *tc)
    tcase_add_test(tc, efl_test_select_model_repick_after_clear_rows_not_held);
    tcase_add_test(tc, efl_test_select_model_pick_follows_removed_row);
    tcase_add_test(tc, efl_test_select_model_failed_unselect_rolls_back_last);
+   tcase_add_test(tc, efl_test_select_model_refused_unselect_rolls_back);
    tcase_add_test(tc, efl_test_select_model_gone_row_is_not_selected);
    tcase_add_test(tc, efl_test_select_model_single_selects_in_one_turn);
    tcase_add_test(tc, efl_test_select_model_single_to_none_unselects_all);
