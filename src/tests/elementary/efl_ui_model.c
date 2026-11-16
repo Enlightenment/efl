@@ -198,8 +198,9 @@ _children_exact_slice_get_then(Efl_Model *model, void *data EINA_UNUSED, const E
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
-        ck_assert_int_eq(_property_uint_expected(child, "self.width"), 0);
-        ck_assert_int_eq(_property_uint_expected(child, "self.height"), 0);
+        // (not measured: not ready, which is not a size of 0)
+        ck_assert_int_eq(_property_error_expected(child, "self.width"), EAGAIN);
+        ck_assert_int_eq(_property_error_expected(child, "self.height"), EAGAIN);
      }
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
@@ -288,8 +289,8 @@ _children_average_slice_get_then(Efl_Model *model, void *data EINA_UNUSED, const
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
-        ck_assert_int_eq(_property_uint_expected(child, "self.width"), 0);
-        ck_assert_int_eq(_property_uint_expected(child, "self.height"), 0);
+        ck_assert_int_eq(_property_error_expected(child, "self.width"), EAGAIN);
+        ck_assert_int_eq(_property_error_expected(child, "self.height"), EAGAIN);
      }
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)

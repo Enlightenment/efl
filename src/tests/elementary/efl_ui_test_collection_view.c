@@ -5,6 +5,7 @@
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
 #include "efl_ui_homogeneous_model.eo.h"
+#include "efl_ui_exact_model.eo.h"
 
 #define NUM_ITEMS 50
 
@@ -482,6 +483,156 @@ EFL_START_TEST(test_efl_ui_collection_view_select_mode_before_model)
 }
 EFL_END_TEST
 
+static void
+_count_err_cri(const Eina_Log_Domain *d, Eina_Log_Level level,
+               const char *file, const char *fnc, int line,
+               const char *fmt, void *data, va_list args)
+{
+   int *n = data;
+
+   // An Exact_Model has no size to stand in for a row the view has no model for
+   // yet, and the position manager says so when its cache and its placement of
+   // such a row differ. That is not what these tests are about.
+   if ((level <= EINA_LOG_LEVEL_ERR) && !eina_str_has_prefix(fmt, "Reported sizes changed"))
+     {
+        (*n)++;
+     }
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
+
+// Rows are as high as their index says, set when the factory has built the item
+// and before the view has it: odd rows 40, even rows 90.
+static void
+_row_height_on_build(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Efl_Gfx_Entity *item = ev->info;
+   Efl_Model *m = efl_ui_view_model_get(item);
+
+   if (!m) return;
+   efl_gfx_hint_size_min_set(item,
+                             EINA_SIZE2D(0, (efl_composite_model_index_get(m) % 2) ? 40 : 90));
+}
+
+static Eina_Value
+_zero_sizes(Efl_Model *model EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Model *child;
+   unsigned int i, len;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        Eina_Value zero = eina_value_uint_init(0);
+
+        // (a size of 0x0 that was measured, which is not a row nobody measured)
+        efl_model_property_set(child, "self.width", &zero);
+        efl_model_property_set(child, "self.height", &zero);
+     }
+   return v;
+}
+
+static Efl_Ui_List_View *
+_exact_list(Efl_Ui_Win *win, Efl_Model **sizes)
+{
+   Efl_Model *model = _make_model(win);
+   Efl_Ui_Factory *fl;
+   Efl_Ui_List_View *lv;
+
+   *sizes = efl_add(EFL_UI_EXACT_MODEL_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   fl = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS),
+                efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
+                                       _row_height_on_build, NULL));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, *sizes));
+   efl_content_set(win, lv);
+   return lv;
+}
+
+/* A list over an Exact_Model measures its rows, each its own height. An
+   unmeasured row is not ready (EAGAIN), not a size of 0. */
+EFL_START_TEST(test_efl_ui_collection_view_exact_model)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *sizes;
+   Efl_Ui_List_View *lv;
+   Eina_List *realized = NULL, *l;
+   Efl_Gfx_Entity *item;
+   int errors = 0, i, tall = 0, short_ = 0;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 100));
+   eina_log_print_cb_set(_count_err_cri, &errors);
+
+   lv = _exact_list(win, &sizes);
+   efl_event_callback_add(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_add(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   ck_assert_int_ge(eina_list_count(realized), 2);
+   EINA_LIST_FOREACH(realized, l, item)
+     {
+        Eina_Rect g = efl_gfx_entity_geometry_get(item);
+
+        // the one kept for the focus is not placed
+        if (g.h == 0) continue;
+        if (g.h >= 90) tall++;
+        else if (g.h >= 40) short_++;
+        ck_assert_int_ge(g.h, 40);
+     }
+   ck_assert_int_gt(tall, 0);
+   ck_assert_int_gt(short_, 0);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(errors, 0);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED,
+                          _realized_track, &realized);
+   efl_event_callback_del(lv, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_UNREALIZED,
+                          _unrealized_track, &realized);
+   eina_list_free(realized);
+}
+EFL_END_TEST
+
+/* Every row measured as 0x0: no size is known to the position manager, which
+   must lay out nothing (it used to crash on its missing cache), and the view
+   must not complain about a size that is nothing. */
+EFL_START_TEST(test_efl_ui_collection_view_exact_model_zero_size)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *sizes;
+   Efl_Ui_List_View *lv;
+   int errors = 0, i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 300));
+   eina_log_print_cb_set(_count_err_cri, &errors);
+
+   lv = _exact_list(win, &sizes);
+   efl_future_then(sizes, efl_model_children_slice_get(sizes, 0, NUM_ITEMS),
+                   .success = _zero_sizes);
+   for (i = 0; i < 20; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   ck_assert(efl_alive_get(lv));
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   ck_assert_int_eq(errors, 0);
+}
+EFL_END_TEST
+
 /* The sizes the position manager caches and the sizes it places must agree
    while the window resizes the view. */
 EFL_START_TEST(test_efl_ui_collection_view_sizes_agree)
@@ -797,6 +948,8 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_refill);
    tcase_add_test(tc, test_efl_ui_collection_view_tab);
    tcase_add_test(tc, test_efl_ui_collection_view_shift_tab);
+   tcase_add_test(tc, test_efl_ui_collection_view_exact_model);
+   tcase_add_test(tc, test_efl_ui_collection_view_exact_model_zero_size);
    tcase_add_test(tc, test_efl_ui_collection_view_homogeneous_model);
    tcase_add_test(tc, test_efl_ui_collection_view_item_events_without_info);
    tcase_add_test(tc, test_efl_ui_collection_view_sizes_agree);
