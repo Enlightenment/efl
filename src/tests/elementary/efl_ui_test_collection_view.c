@@ -1890,6 +1890,165 @@ EFL_START_TEST(test_efl_ui_position_manager_grid_min_size_goes_down)
 }
 EFL_END_TEST
 
+/* What the grid asks again when an item goes is only what is known: a provider
+   that does not know a size says so (0x0) when it is told not to fetch, and
+   is asked nothing else. */
+static unsigned int _known_calls = 0;
+static unsigned int _full_calls = 0;
+
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_known_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf,
+               Eina_Rw_Slice memory)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Size_Batch_Result result = { 0 };
+   unsigned int i, limit = conf.range.end_id - conf.range.start_id;
+
+   if (conf.no_fetch)
+     {
+        _known_calls++;
+     }
+   else if (conf.cache_request)
+     {
+        _full_calls++;
+     }
+   for (i = 0; (i < limit) && conf.range.start_id + i < _cache_count; i++)
+     {
+        unsigned int id = conf.range.start_id + i;
+
+        // (only the first two items are known, when that is all that is wanted)
+        sizes[i].size = (conf.no_fetch && id >= 2) ? EINA_SIZE2D(0, 0) :
+          EINA_SIZE2D(_cache_sizes[id], 30);
+        sizes[i].element_depth = 0;
+        sizes[i].depth_leader = EINA_FALSE;
+     }
+   result.filled_items = i;
+   return result;
+}
+
+EFL_START_TEST(test_efl_ui_position_manager_grid_min_size_known_only)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager;
+   static const int widths[] = { 40, 90, 60, 50, 95 };
+   unsigned int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   _cache_count = EINA_C_ARRAY_LENGTH(widths);
+   for (i = 0; i < _cache_count; i++)
+     {
+        _cache_sizes[i] = widths[i];
+     }
+   manager = efl_add(EFL_UI_POSITION_MANAGER_GRID_CLASS, win,
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   efl_ui_position_manager_data_access_v1_data_access_set(manager, win, NULL, _cache_object_cb, NULL,
+                                                          NULL, _known_size_cb, NULL, _cache_count);
+   efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 200, 300));
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 95);
+
+   // The item that gave the biggest one goes: the others that are known give theirs
+   _known_calls = _full_calls = 0;
+   _cache_count--;
+   efl_ui_position_manager_entity_item_removed(manager, _cache_count, _cache_dummy);
+   ecore_main_loop_iterate();
+   ck_assert_uint_gt(_known_calls, 0);
+   ck_assert_uint_eq(_full_calls, 0);
+   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 90);
+
+   efl_del(manager);
+}
+EFL_END_TEST
+
+/* An Exact_Model that counts the rows that are fetched from it. */
+static unsigned int _fetched_rows = 0;
+
+static Eina_Future *
+_fetch_counting_slice_get(Eo *obj, void *pd EINA_UNUSED, unsigned int start, unsigned int count)
+{
+   _fetched_rows += count;
+   return efl_model_children_slice_get(efl_super(obj, efl_class_get(obj)), start, count);
+}
+
+static Eina_Bool
+_fetch_counting_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+                  EFL_OBJECT_OP_FUNC(efl_model_children_slice_get, _fetch_counting_slice_get));
+
+   return efl_class_functions_set(klass, &ops, NULL);
+}
+
+static const Efl_Class *
+_fetch_counting_class_get(const Efl_Class *parent)
+{
+   static const Efl_Class_Description desc = {
+      EO_VERSION,
+      "Test_Fetch_Counting_Model",
+      EFL_CLASS_TYPE_REGULAR,
+      0,
+      _fetch_counting_initializer,
+      NULL,
+      NULL
+   };
+   static const Efl_Class *klass = NULL;
+
+   if (!klass) klass = efl_class_new(&desc, parent, NULL);
+   return klass;
+}
+
+/* The biggest minimum size of a grid is asked again when an item goes, and is
+   made of what the model already knows: the rows nobody built are not fetched
+   to be asked about (that would be every row of a list of a hundred thousand
+   when one is removed). */
+EFL_START_TEST(test_efl_ui_collection_view_grid_remove_fetches_nothing)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *sizes, *last = NULL;
+   Efl_Ui_Factory *fl;
+   Efl_Ui_Grid_View *gv;
+   Efl_Ui_Position_Manager_Entity *manager;
+   int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 300));
+
+   model = _make_model(win);
+   for (i = 0; i < 700; i++)
+     {
+        last = efl_model_child_add(model);
+     }
+   sizes = efl_add(_fetch_counting_class_get(EFL_UI_EXACT_MODEL_CLASS), win,
+                   efl_ui_view_model_set(efl_added, model));
+   manager = efl_add(EFL_UI_POSITION_MANAGER_GRID_CLASS, win);
+   fl = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS),
+                efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
+                                       _row_height_on_build, NULL));
+   gv = efl_add(EFL_UI_GRID_VIEW_CLASS, win,
+                efl_ui_collection_view_position_manager_set(efl_added, manager),
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, sizes));
+   efl_content_set(win, gv);
+   get_me_to_those_events(gv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   // The last one, which nobody built
+   _fetched_rows = 0;
+   efl_model_child_del(efl_ui_view_model_get(model), last);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(efl_model_children_count_get(sizes), 749);
+   ck_assert_uint_lt(_fetched_rows, 100);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -1920,4 +2079,6 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_renumbered);
    tcase_add_test(tc, test_efl_ui_position_manager_grid_min_size_goes_down);
+   tcase_add_test(tc, test_efl_ui_position_manager_grid_min_size_known_only);
+   tcase_add_test(tc, test_efl_ui_collection_view_grid_remove_fetches_nothing);
 }

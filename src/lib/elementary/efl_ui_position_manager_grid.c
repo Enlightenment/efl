@@ -182,7 +182,9 @@ _group_cache_remove(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx)
 }
 
 // The biggest minimum size of the items, asked for again: an item that goes may
-// have been the one that gave it, and the sizes are not kept to tell.
+// have been the one that gave it, and the sizes are not kept to tell. Only the
+// sizes that are known are asked for: nothing is fetched or built for the items
+// that nobody has seen to find out what they would give.
 static void
 _min_size_recompute(Efl_Ui_Position_Manager_Grid_Data *pd)
 {
@@ -195,18 +197,22 @@ _min_size_recompute(Efl_Ui_Position_Manager_Grid_Data *pd)
      {
         unsigned int j, filled;
 
-        size_result = _batch_request_size(pd->callbacks, i, pd->size, MIN(100, pd->size - i),
-                                          EINA_TRUE, size_buffer);
+        size_result = _batch_request_size_known(pd->callbacks, i, pd->size,
+                                                MIN(100, pd->size - i), size_buffer);
         filled = MIN(size_result.filled_items, 100);
         // (what is not told is not known: the biggest is then the one that was)
         if (!filled) return;
         for (j = 0; j < filled; j++)
           {
+             // (an item that is not known is 0x0)
+             if (!size_buffer[j].size.w && !size_buffer[j].size.h) continue;
              max.w = MAX(max.w, size_buffer[j].size.w);
              max.h = MAX(max.h, size_buffer[j].size.h);
           }
         i += filled;
      }
+   // (nothing known, nothing to go on: what it was stays)
+   if (!max.w && !max.h) return;
    if ((max.w != pd->max_min_size.w) || (max.h != pd->max_min_size.h))
      {
         pd->max_min_size = max;

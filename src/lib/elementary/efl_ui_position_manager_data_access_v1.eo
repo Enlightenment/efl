@@ -50,6 +50,10 @@ struct @beta Efl.Ui.Position_Manager.Size_Call_Config {
                            If it's for caching, the data-provider will fill in approximations, instead of doing heavy
                            lifting from some back-end. If this is not a caching call, the exact size should be
                            requested and delivered at some later point.]]
+   no_fetch : bool; [[Indicate that the sizes are wanted only as far as they are already known:
+                      nothing is to be fetched, built or measured to answer. An item whose size
+                      is not known is given as 0x0, and what is asked is then not an estimate
+                      either.]]
 }
 
 struct @beta Efl.Ui.Position_Manager.Object_Batch_Result {

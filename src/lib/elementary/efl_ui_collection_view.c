@@ -959,6 +959,29 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 }
 
+/* The size of a row if it is known without fetching or building anything: told
+   to an Exact_Model, or in a row that the view has, or the one a Homogeneous_Model
+   says all of them have. */
+static Eina_Bool
+_known_size_get(Efl_Ui_Collection_View_Data *pd, Efl_Model *exact,
+                unsigned int search_index, Eina_Size2D *size)
+{
+   Efl_Ui_Collection_Item_Lookup *lookup;
+
+   if (exact && _efl_ui_exact_model_row_size_get(exact, search_index, size))
+     return EINA_TRUE;
+   if (pd->cache)
+     {
+        lookup = (void*) eina_rbtree_inline_lookup(pd->cache, &search_index,
+                                                   sizeof (search_index), _cache_tree_lookup,
+                                                   NULL);
+        if (lookup && lookup->item.model && ITEM_SIZE_FROM_MODEL(lookup->item.model, *size))
+          return EINA_TRUE;
+     }
+   return efl_isa(pd->model, EFL_UI_HOMOGENEOUS_MODEL_CLASS) &&
+     ITEM_BASE_SIZE_FROM_MODEL(pd->model, *size);
+}
+
 static Eina_List *
 _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                     Efl_Ui_Collection_View_Data *pd,
@@ -1167,6 +1190,21 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    sizes = memory.mem;
    //count = efl_model_children_count_get(parent);
    limit = conf.range.end_id - conf.range.start_id;
+
+   /* Only what is known is wanted: the rest is not fetched, and said to be nothing */
+   if (conf.no_fetch)
+     {
+        for (idx = 0; idx < limit; idx++)
+          {
+             if (!_known_size_get(pd, exact, conf.range.start_id + idx, &sizes[idx].size))
+               sizes[idx].size = EINA_SIZE2D(0, 0);
+             sizes[idx].element_depth = 0;
+             sizes[idx].depth_leader = EINA_FALSE;
+          }
+        result.filled_items = limit;
+        return result;
+     }
+
    ITEM_BASE_SIZE_FROM_MODEL(parent, item_base);
 
    /* Before anything has been measured, an item is said to fill the view.

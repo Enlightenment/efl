@@ -23,7 +23,8 @@ typedef struct {
 } Vis_Segment;
 
 static Efl_Ui_Position_Manager_Size_Batch_Result
-_batch_request_size(Api_Callbacks cb , int start_id, int end_id, int len, Eina_Bool cache, void *data)
+_batch_request_size_config(Api_Callbacks cb , int start_id, int end_id, int len,
+                           Eina_Bool cache, Eina_Bool no_fetch, void *data)
 {
    Efl_Ui_Position_Manager_Size_Batch_Result res;
 
@@ -33,12 +34,27 @@ _batch_request_size(Api_Callbacks cb , int start_id, int end_id, int len, Eina_B
 
    Efl_Ui_Position_Manager_Size_Call_Config conf;
    conf.cache_request = cache;
+   conf.no_fetch = no_fetch;
    conf.range.start_id = start_id;
    conf.range.end_id = MIN(start_id + len, end_id);
 
    res = cb.size.access(cb.size.data, conf, slice);
 
    return res;
+}
+
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_batch_request_size(Api_Callbacks cb , int start_id, int end_id, int len, Eina_Bool cache, void *data)
+{
+   return _batch_request_size_config(cb, start_id, end_id, len, cache, EINA_FALSE, data);
+}
+
+// What is already known of the sizes only: nothing is fetched to answer, and an
+// item that is not known is 0x0
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_batch_request_size_known(Api_Callbacks cb , int start_id, int end_id, int len, void *data)
+{
+   return _batch_request_size_config(cb, start_id, end_id, len, EINA_TRUE, EINA_TRUE, data);
 }
 
 #define BATCH_ACCESS_SIZE(cb, start_id, end_id, len, cache, data) \
