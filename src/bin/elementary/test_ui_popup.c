@@ -186,22 +186,6 @@ _position_set_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_popup_resize_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
-{
-   efl_ui_popup_data *p_data = data;
-   if (!p_data->efl_ui_popup) return;
-
-   static Eina_Bool size_changed = EINA_FALSE;
-
-   if (!size_changed)
-     efl_gfx_hint_size_min_set(p_data->efl_ui_popup, EINA_SIZE2D(300, 160));
-   else
-     efl_gfx_hint_size_min_set(p_data->efl_ui_popup, EINA_SIZE2D(160, 120));
-
-   size_changed = !size_changed;
-}
-
-static void
 _timeout_set_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    efl_ui_popup_data *p_data = data;
@@ -989,117 +973,161 @@ test_ui_text_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case14_cb, win);
 }
 
-static void
-_anchor_set_cb(void *data, const Efl_Event *ev)
+/* Efl.Ui.Popup.Anchor
+ *
+ * A popup with an anchor places itself against another widget rather than
+ * against the window. Which side of the anchor it lands on is the align.
+ *
+ * One anchor in the middle, one button per align around it, and the popup is
+ * only up while an align is being shown. */
+
+typedef struct
 {
-   efl_ui_popup_anchor_set(data, ev->object);
+   Eo *popup;
+   Eo *anchor;
+   Eo *label;
+} Anchor_Page;
+
+static void
+_anchor_page_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   free(data);
 }
 
 static void
-_anchor_unset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_anchor_align_cb(void *data, const Efl_Event *ev)
 {
-   efl_ui_popup_anchor_set(data, NULL);
+   Anchor_Page *page = data;
+   Efl_Ui_Popup_Align align =
+     (Efl_Ui_Popup_Align)(intptr_t) efl_key_data_get(ev->object, "align");
+
+   /* The requested align first and CENTER last: a popup falls back through
+      the priority list when the side it wants does not fit, and without a
+      last resort it would have nowhere to go. */
+   efl_ui_popup_align_priority_set(page->popup, align,
+                                   EFL_UI_POPUP_ALIGN_TOP,
+                                   EFL_UI_POPUP_ALIGN_BOTTOM,
+                                   EFL_UI_POPUP_ALIGN_LEFT,
+                                   EFL_UI_POPUP_ALIGN_CENTER);
+   efl_ui_popup_align_set(page->popup, align);
+   efl_ui_popup_anchor_set(page->popup, page->anchor);
+
+   efl_text_set(page->label, efl_text_get(ev->object));
+   efl_gfx_entity_visible_set(page->popup, EINA_TRUE);
+}
+
+/* Without an anchor the align is measured against the window instead, which
+ * is the other half of what the property means. */
+static void
+_anchor_none_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Anchor_Page *page = data;
+
+   efl_ui_popup_anchor_set(page->popup, NULL);
+   efl_text_set(page->label, "no anchor: aligned to the window");
+   efl_gfx_entity_visible_set(page->popup, EINA_TRUE);
+}
+
+static void
+_anchor_close_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Anchor_Page *page = data;
+
+   efl_gfx_entity_visible_set(page->popup, EINA_FALSE);
+}
+
+static void
+_anchor_backwall_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Anchor_Page *page = data;
+
+   efl_gfx_entity_visible_set(page->popup, EINA_FALSE);
+}
+
+static Eo *
+_align_button_add(Eo *table, Anchor_Page *page, const char *text,
+                  Efl_Ui_Popup_Align align, int col, int row)
+{
+   Eo *bt = efl_add(EFL_UI_BUTTON_CLASS, table,
+                    efl_text_set(efl_added, text),
+                    efl_gfx_hint_weight_set(efl_added, 1, 1));
+
+   efl_key_data_set(bt, "align", (void *)(intptr_t) align);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _anchor_align_cb, page);
+   efl_pack_table(table, bt, col, row, 1, 1);
+   return bt;
 }
 
 void
 test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   efl_ui_popup_data *p_data = (efl_ui_popup_data*)calloc(1, sizeof(efl_ui_popup_data));
+   Anchor_Page *page;
+   Eo *win, *box, *table, *content, *bt;
 
-   char buf[PATH_MAX];
+   page = calloc(1, sizeof(Anchor_Page));
+   if (!page) return;
 
-   Eo *win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                     efl_text_set(efl_added, "Efl.Ui.Popup.Anchor"),
-                     efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-   efl_event_callback_add(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _win_del, p_data);
-
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_text_set(efl_added, "Efl.Ui.Popup.Anchor"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+   efl_event_callback_add(win, EFL_EVENT_DEL, _anchor_page_del, page);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_simple_load(layout, buf, "efl_ui_popup_anchor_layout");
-   efl_gfx_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_content_set(win, layout);
+   box = efl_add(EFL_UI_BOX_CLASS, win,
+                 efl_ui_layout_orientation_set(efl_added,
+                                               EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
+                 efl_content_set(win, efl_added));
 
-   Eo *efl_ui_popup = efl_add(EFL_UI_POPUP_CLASS, win);
+   efl_add(EFL_UI_TEXTBOX_CLASS, box,
+           efl_text_interactive_editable_set(efl_added, EINA_FALSE),
+           efl_text_set(efl_added,
+                        "Each button puts the popup on that side of the anchor."),
+           efl_gfx_hint_weight_set(efl_added, 1, 0),
+           efl_pack_end(box, efl_added));
 
-   efl_ui_popup_part_backwall_repeat_events_set(efl_part(efl_ui_popup, "backwall"), EINA_TRUE);
+   /* The anchor sits in the middle of a three by three table and the aligns
+      sit around it, so each button is on the side it names. */
+   table = efl_add(EFL_UI_TABLE_CLASS, box,
+                   efl_gfx_hint_weight_set(efl_added, 1, 1),
+                   efl_pack_end(box, efl_added));
 
-   //Default align priority order is top, left, right, bottom, center.
-   efl_ui_popup_align_priority_set(efl_ui_popup, EFL_UI_POPUP_ALIGN_TOP,
-                                          EFL_UI_POPUP_ALIGN_BOTTOM,
-                                          EFL_UI_POPUP_ALIGN_LEFT,
-                                          EFL_UI_POPUP_ALIGN_RIGHT,
-                                          EFL_UI_POPUP_ALIGN_CENTER);
+   page->anchor = efl_add(EFL_UI_BUTTON_CLASS, table,
+                          efl_text_set(efl_added, "anchor"),
+                          efl_gfx_hint_weight_set(efl_added, 1, 1));
+   efl_pack_table(table, page->anchor, 1, 1, 1, 1);
 
-   efl_gfx_entity_position_set(efl_ui_popup, EINA_POSITION2D(80, 80));
-   efl_gfx_entity_size_set(efl_ui_popup, EINA_SIZE2D(160, 120));
+   /* Built before the buttons that show it: they hand it their align. */
+   page->popup = efl_add(EFL_UI_POPUP_CLASS, win);
+   efl_gfx_entity_size_set(page->popup, EINA_SIZE2D(180, 100));
+   efl_gfx_entity_visible_set(page->popup, EINA_FALSE);
+   efl_event_callback_add(page->popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED,
+                          _anchor_backwall_cb, page);
 
-   p_data->win = win;
-   p_data->efl_ui_popup = efl_ui_popup;
+   content = efl_add(EFL_UI_BOX_CLASS, page->popup,
+                     efl_ui_layout_orientation_set(efl_added,
+                                                   EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   page->label = efl_add(EFL_UI_TEXTBOX_CLASS, content,
+                         efl_text_interactive_editable_set(efl_added, EINA_FALSE),
+                         efl_text_set(efl_added, "Top"),
+                         efl_gfx_hint_weight_set(efl_added, 1, 1),
+                         efl_pack_end(content, efl_added));
+   efl_add(EFL_UI_BUTTON_CLASS, content,
+           efl_text_set(efl_added, "Close"),
+           efl_gfx_hint_weight_set(efl_added, 1, 0),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
+                                  _anchor_close_cb, page),
+           efl_pack_end(content, efl_added));
+   efl_content_set(page->popup, content);
 
-   Eo *btn = NULL;
-   for (int i = 0; i < 6; i++)
-     {
-        btn = efl_add(EFL_UI_BUTTON_CLASS, win);
-        efl_text_set(btn, "anchor");
-        efl_gfx_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _anchor_set_cb, efl_ui_popup);
+   _align_button_add(table, page, "Top", EFL_UI_POPUP_ALIGN_TOP, 1, 0);
+   _align_button_add(table, page, "Bottom", EFL_UI_POPUP_ALIGN_BOTTOM, 1, 2);
+   _align_button_add(table, page, "Left", EFL_UI_POPUP_ALIGN_LEFT, 0, 1);
+   _align_button_add(table, page, "Right", EFL_UI_POPUP_ALIGN_RIGHT, 2, 1);
+   _align_button_add(table, page, "Center", EFL_UI_POPUP_ALIGN_CENTER, 0, 0);
 
-        snprintf(buf, sizeof(buf), "anchor%d", i+1);
-        efl_content_set(efl_part(layout, buf), btn);
-     }
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, win);
-   efl_text_set(btn, "anchor none");
-   efl_gfx_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _anchor_unset_cb, efl_ui_popup);
-   efl_content_set(efl_part(layout, "anchor_none"), btn);
-
-   Eo *table = efl_add(EFL_UI_TABLE_CLASS, efl_ui_popup);
-   efl_gfx_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Center Align");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _center_align_cb, p_data);
-   efl_pack_table(table, btn, 0, 0, 2, 1);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Top Align");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _top_align_cb, p_data);
-   efl_pack_table(table, btn, 2, 0, 2, 1);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Bottom Align");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _bottom_align_cb, p_data);
-   efl_pack_table(table, btn, 4, 0, 2, 1);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Left Align");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _left_align_cb, p_data);
-   efl_pack_table(table, btn, 0, 1, 3, 1);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Right Align");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _right_align_cb, p_data);
-   efl_pack_table(table, btn, 3, 1, 3, 1);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Position Set");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _position_set_cb, p_data);
-   efl_pack_table(table, btn, 0, 2, 3, 1);
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
-   efl_text_set(btn, "Resize");
-   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _popup_resize_cb, p_data);
-   efl_pack_table(table, btn, 3, 2, 3, 1);
-
-   efl_content_set(efl_ui_popup, table);
+   bt = efl_add(EFL_UI_BUTTON_CLASS, table,
+                efl_text_set(efl_added, "No anchor"),
+                efl_gfx_hint_weight_set(efl_added, 1, 1));
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _anchor_none_cb, page);
+   efl_pack_table(table, bt, 2, 2, 1, 1);
 }
