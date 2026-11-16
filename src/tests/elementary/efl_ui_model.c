@@ -898,7 +898,7 @@ EFL_START_TEST(efl_ui_exact_model_remove_widest)
    for (i = 0; i < 4; i++)
      {
         r[i] = sr->cur[at[i]];
-        efl_future_then(r[i], efl_model_property_set(r[i], "self.width", eina_value_uint_new(w[i])));
+        _uint_set(r[i], "self.width", w[i]);
      }
    ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 90);
 
