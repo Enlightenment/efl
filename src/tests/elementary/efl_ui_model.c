@@ -356,6 +356,82 @@ EFL_START_TEST(efl_ui_average_model_test)
 }
 EFL_END_TEST
 
+// A row that left while the slice holding it was pending has no index (0xFFFFFFFF):
+// it has no size, takes none, and leaves the total alone.
+static Eina_Value
+_gone_kids_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eo **kids = data;
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        if (i < 2) kids[i] = efl_ref(c);
+     }
+   return v;
+}
+
+static Eina_Value
+_gone_set_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eina_Error *err = data;
+
+   *err = 0;
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR) eina_value_error_get(&v, err);
+   return v;
+}
+
+EFL_START_TEST(efl_ui_exact_model_gone_row)
+{
+   Eina_Value told = eina_value_uint_init(10);
+   Efl_Model *base_model, *model, *row0;
+   Eo *kids[2] = { NULL, NULL };
+   Eina_Error err = -1;
+   unsigned int i;
+
+   base_model = _generate_base_model();
+   model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+
+   eina_future_then(efl_model_children_slice_get(base_model, 0, 1), _gone_kids_then, kids, NULL);
+   for (i = 0; (i < 8) && !kids[0]; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   row0 = kids[0];
+   kids[0] = NULL;
+   ck_assert(!!row0);
+
+   eina_future_then(efl_model_children_slice_get(model, 0, 2), _gone_kids_then, kids, NULL);
+   efl_model_child_del(base_model, row0);
+   for (i = 0; (i < 8) && !kids[1]; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert(!!kids[0]);
+   ck_assert_int_eq(efl_composite_model_index_get(kids[0]), 0xFFFFFFFF);
+
+   ck_assert_int_eq(_property_error_expected(kids[0], "self.height"), EAGAIN);
+   eina_future_then(efl_model_property_set(kids[0], "self.height", &told),
+                    _gone_set_then, &err, NULL);
+   for (i = 0; (i < 8) && (err == -1); i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(err, EFL_MODEL_ERROR_INCORRECT_VALUE);
+   ck_assert_int_eq(_property_uint_expected(model, "total.height"), 0);
+
+   eina_value_flush(&told);
+   efl_unref(row0);
+   efl_unref(kids[0]);
+   efl_unref(kids[1]);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // Rows past the first block of 1024 are kept in other slots, and a slot that is
 // reused for another block must be written back under its own block.
 #define MANY_ROWS 3500
@@ -625,19 +701,6 @@ _many_free(Many_Rows *many, Efl_Model *model, Efl_Generic_Model *base_model)
      }
    efl_unref(model);
    efl_unref(base_model);
-}
-
-static Eina_Value
-_gone_set_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
-{
-   Eina_Error *err = data;
-
-   *err = 0;
-   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
-     {
-        eina_value_error_get(&v, err);
-     }
-   return v;
 }
 
 // A row that leaves takes its height out of what the average is over, and
@@ -1802,6 +1865,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_last_ref_dropped);
    tcase_add_test(tc, efl_ui_average_model_first_measure);
    tcase_add_test(tc, efl_ui_exact_model_test);
+   tcase_add_test(tc, efl_ui_exact_model_gone_row);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
    tcase_add_test(tc, efl_ui_exact_model_insert_remove);
    tcase_add_test(tc, efl_ui_exact_model_removed_row_write);
