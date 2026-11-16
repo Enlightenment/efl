@@ -153,6 +153,8 @@ group { "efl/tab_bar/tab";
          scale;
          desc { "default";
             align: 0.5 0.5;
+            rel1.to_y: "bar";
+            rel1.relative: 0.0 1.0;
             rel1.offset: 4 4;
             rel2.to_y: "efl.text";
             rel2.relative: 1.0 0.0;
@@ -191,7 +193,8 @@ group { "efl/tab_bar/tab";
          scale;
          desc { "default";
             align: 0.5 0.5;
-            rel1.relative: 0.0 0.0;
+            rel1.to_y: "bar";
+            rel1.relative: 0.0 1.0;
             rel1.offset: 4 4;
             rel2.to_y: "efl.text";
             rel2.relative: 1.0 0.0;
@@ -253,8 +256,9 @@ group { "efl/tab_bar/tab";
          }
          desc { "noicon";
             inherit: "default";
+            rel1.to_y: "bar";
+            rel1.relative: 0.0 1.0;
             rel1.offset: 4 4;
-            rel1.relative: 0.0 0.0;
             align: 0.5 0.5;
          }
          desc { "noicon_disabled";
@@ -279,22 +283,25 @@ group { "efl/tab_bar/tab";
             vis;
          }
       }
+      /* The selected-tab marker. It occupies its five pixels in both states
+         rather than only when selected: the parts below measure from its
+         bottom edge, and a marker that appeared out of nowhere would shove
+         them down every time the tab was picked. Only its visibility
+         changes. */
       rect { "bar";
          nomouse;
          scale;
          desc { "default";
-            fixed: 0 1;
+            fixed: 0 0;
             rel.to: "base";
-            min: 0 0;
-            max: -1 0;
+            min: 0 5;
+            max: -1 5;
             align: 0.5 0.0;
             color_class: "/bg/selected/tab/bar";
             hid;
          }
          desc { "selected";
             inherit: "default";
-            min: 0 0;
-            max: -1 5;
             vis;
          }
       }
