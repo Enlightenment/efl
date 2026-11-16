@@ -817,6 +817,54 @@ EFL_START_TEST(efl_ui_average_model_remove_pending)
 }
 EFL_END_TEST
 
+// A row that was told its height, and whose model is deleted before the
+// loop gets to it, is not averaged into a model that is not there any more:
+// it must not write to it, tell of it or edit what it kept (valgrind sees it,
+// the rows being held by the test as they are by their updates).
+EFL_START_TEST(efl_ui_average_model_root_deleted)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 4; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && many->count < 4; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 4);
+
+   _uint_set(many->rows[0], "self.height", 40);
+   _uint_set(many->rows[1], "self.height", 10);
+   // The model goes in the same turn, and the rows are still held
+   efl_del(model);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   // The two that were told are not averaged into what is gone
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   free(many);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // A row that was removed has no place in the model any more: what is told
 // to it is not for the row that is now at the index it had.
 EFL_START_TEST(efl_ui_exact_model_removed_row_write)
@@ -1410,6 +1458,7 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_remove);
    tcase_add_test(tc, efl_ui_average_model_shrink);
    tcase_add_test(tc, efl_ui_average_model_remove_pending);
+   tcase_add_test(tc, efl_ui_average_model_root_deleted);
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
    tcase_add_test(tc, efl_ui_exact_model_insert_remove);

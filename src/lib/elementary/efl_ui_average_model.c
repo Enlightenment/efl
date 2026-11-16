@@ -49,6 +49,7 @@ struct _Efl_Ui_Average_Model_Update
    unsigned int now;
    // The row left, or the sizes were forgotten, before it was added: there is no row to add it to
    Eina_Bool dropped : 1;
+   // (root is NULL once the root is gone: the row, which a ref keeps, outlives it)
 };
 
 // What an item is estimated to be, from what was told: not a number of its own,
@@ -107,7 +108,11 @@ _efl_ui_average_model_clean(Eo *obj, void *data, const Eina_Future *dead_future 
 {
    Efl_Ui_Average_Model_Update *update = data;
 
-   update->root->pending = eina_list_remove(update->root->pending, update);
+   // (a root that is gone has let go of its list, and says so with no root)
+   if (update->root)
+     {
+        update->root->pending = eina_list_remove(update->root->pending, update);
+     }
    free(update);
 
    efl_unref(obj);
@@ -296,6 +301,24 @@ _efl_ui_average_model_efl_model_property_get(const Eo *obj, Efl_Ui_Average_Model
      }
 
    return r;
+}
+
+// The rows that were told something that was not added yet outlive the root
+// (the update holds a ref on its row): what they point at is gone with it.
+static void
+_efl_ui_average_model_efl_object_destructor(Eo *obj, Efl_Ui_Average_Model_Data *pd)
+{
+   Efl_Ui_Average_Model_Update *update;
+
+   EINA_LIST_FREE(pd->pending, update)
+     {
+        update->dropped = EINA_TRUE;
+        update->root = NULL;
+        update->total = NULL;
+        update->seen = NULL;
+     }
+
+   efl_destructor(efl_super(obj, EFL_UI_AVERAGE_MODEL_CLASS));
 }
 
 static Efl_Object *

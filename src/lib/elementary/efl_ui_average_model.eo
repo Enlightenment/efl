@@ -14,6 +14,7 @@ class @beta Efl.Ui.Average_Model extends Efl.Ui.Exact_Model
 
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Model.property { set; get; }
    }
 }
