@@ -22,11 +22,23 @@ struct _Efl_Ui_Select_Model_Data
 
    Efl_Ui_Select_Model *fallback_model;
    Efl_Ui_Select_Model *last_model;
+   // The change_seq (never 0) of the last pick of each row that was picked, by row index and
+   // sorted by it. Parent only. It is kept here and not on the rows: a row nobody holds a
+   // reference to goes away, and the one built for the same index later has to be known as picked.
+   // Only kept while a clear is pending (see pending_clears): a pick is only of use to a
+   // clear asked for before it, and without one the table is not made.
+   Eina_Inarray *picks;
 
    Efl_Ui_Select_Mode selection;
    // Counts the selections asked for: one by index fetches its row first, and in single mode
    // a selection asked for meanwhile is the later one
    unsigned int select_seq;
+   // Counts the picks and the clears: a clear (going to none) unselects what was selected
+   // when it was asked for, not what was picked after. Parent only.
+   unsigned int change_seq;
+   // The clears that are not applied yet: one for each batch of rows that going to none
+   // fetched and did not unselect yet. Parent only. The picks table is let go of at 0.
+   unsigned int pending_clears;
 
    Eina_Bool allow_manual_deselection : 1;
    // Set while the unselects that going to none asks for are applied: they are not a manual
@@ -34,8 +46,16 @@ struct _Efl_Ui_Select_Model_Data
    Eina_Bool clearing : 1;
 };
 
-static void _unselect_range(Eo *obj, unsigned int a, unsigned int b,
-                            Eina_Value (*then)(Eo *o, void *data, const Eina_Value v));
+typedef struct
+{
+   unsigned int index;
+   unsigned int seq;
+} Select_Pick;
+
+typedef Eina_Value (*Unselect_Cb)(Eo *o, void *data, const Eina_Value v);
+
+static void _unselect_range(Eo *obj, unsigned int a, unsigned int b, Unselect_Cb then,
+                            void *data, Eina_Bool clear);
 static Eina_Value _children_unselect_keep_picked_then(Eo *o, void *data, const Eina_Value v);
 static Eina_Value _children_unselect_clear_then(Eo *o, void *data, const Eina_Value v);
 
@@ -46,12 +66,131 @@ _efl_ui_select_model_apply_last_model(Eo *obj, Efl_Ui_Select_Model_Data *pd, Eo 
    efl_model_properties_changed(obj, "child.selected");
 }
 
+// A batch of a clear is applied (or gone): with the last one the picks are of no use
+static void
+_clear_done(Efl_Ui_Select_Model_Data *pd)
+{
+   if (!pd->pending_clears) return;
+   if (--pd->pending_clears) return;
+   eina_inarray_free(pd->picks);
+   pd->picks = NULL;
+}
+
+// The next place in the sequence of the picks and the clears. 0 is not one: it is what a row
+// never picked has, and the sequence wraps around.
+static unsigned int
+_change_seq_next(Efl_Ui_Select_Model_Data *pd)
+{
+   if (++pd->change_seq == 0) pd->change_seq = 1;
+   return pd->change_seq;
+}
+
+// The place of the pick of index in the sorted picks, or where it would be inserted
+static unsigned int
+_picks_find(const Efl_Ui_Select_Model_Data *pd, unsigned int index, Eina_Bool *found)
+{
+   unsigned int lo = 0, hi = eina_inarray_count(pd->picks);
+
+   while (lo < hi)
+     {
+        unsigned int mid = lo + (hi - lo) / 2;
+        const Select_Pick *p = eina_inarray_nth(pd->picks, mid);
+
+        if (p->index < index)
+          {
+             lo = mid + 1;
+          }
+        else
+          {
+             hi = mid;
+          }
+     }
+   *found = (lo < eina_inarray_count(pd->picks)) &&
+     (((const Select_Pick *) eina_inarray_nth(pd->picks, lo))->index == index);
+   return lo;
+}
+
+// The change_seq of the last pick of the row at index, 0 for a row never picked
+static unsigned int
+_pick_get(const Efl_Ui_Select_Model_Data *pd, unsigned int index)
+{
+   Eina_Bool found;
+   unsigned int at;
+
+   if (!pd->picks) return 0;
+   at = _picks_find(pd, index, &found);
+   if (!found) return 0;
+   return ((const Select_Pick *) eina_inarray_nth(pd->picks, at))->seq;
+}
+
+// Records the pick of the row at index. Memory for it is not a reason to refuse a
+// select: the row is then not known as picked after a clear, which is what was before.
+static void
+_pick_set(Efl_Ui_Select_Model_Data *pd, unsigned int index, unsigned int seq)
+{
+   Select_Pick pick = { index, seq };
+   Eina_Bool found;
+   unsigned int at;
+
+   if (index == 0xFFFFFFFF) return;
+   // No clear waiting for it: nothing is going to ask whether this row was picked
+   if (!pd->pending_clears) return;
+   if (!pd->picks)
+     {
+        pd->picks = eina_inarray_new(sizeof (Select_Pick), 8);
+        if (!pd->picks) return;
+     }
+   at = _picks_find(pd, index, &found);
+   if (found)
+     {
+        ((Select_Pick *) eina_inarray_nth(pd->picks, at))->seq = seq;
+        return;
+     }
+   eina_inarray_insert_at(pd->picks, at, &pick);
+}
+
+// A row came (added) or went at index: the rows above are one further or one closer
+static void
+_picks_shift(Efl_Ui_Select_Model_Data *pd, unsigned int index, Eina_Bool added)
+{
+   Eina_Bool found;
+   unsigned int at, i, count;
+
+   if (!pd->picks) return;
+   at = _picks_find(pd, index, &found);
+   if (found && !added) eina_inarray_remove_at(pd->picks, at);
+   count = eina_inarray_count(pd->picks);
+   for (i = at; i < count; i++)
+     {
+        Select_Pick *p = eina_inarray_nth(pd->picks, i);
+
+        if (added)
+          {
+             p->index++;
+          }
+        else
+          {
+             p->index--;
+          }
+     }
+}
+
+static void
+_efl_ui_select_model_child_added(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Select_Model_Data *pd = data;
+   Efl_Model_Children_Event *ev = event->info;
+
+   if (!pd->parent) _picks_shift(pd, ev->index, EINA_TRUE);
+}
+
 static void
 _efl_ui_select_model_child_removed(void *data, const Efl_Event *event)
 {
    Efl_Ui_Select_Model_Data *pd = data;
    Efl_Model_Children_Event *ev = event->info;
 
+   if (!pd->parent) _picks_shift(pd, ev->index, EINA_FALSE);
    if (ev->child == pd->last_model)
      _efl_ui_select_model_apply_last_model(event->object, pd, NULL);
 }
@@ -66,6 +205,7 @@ _efl_ui_select_model_efl_object_constructor(Eo *obj,
 
    efl_boolean_model_boolean_add(obj, "selected", EINA_FALSE);
 
+   efl_event_callback_add(obj, EFL_MODEL_EVENT_CHILD_ADDED, _efl_ui_select_model_child_added, pd);
    efl_event_callback_add(obj, EFL_MODEL_EVENT_CHILD_REMOVED, _efl_ui_select_model_child_removed, pd);
 
    /* Same default as Efl.Ui.Collection: unselecting what is selected is
@@ -85,6 +225,10 @@ _efl_ui_select_model_efl_object_invalidate(Eo *obj,
 {
    efl_replace(&pd->fallback_model, NULL);
    efl_replace(&pd->last_model, NULL);
+   eina_inarray_free(pd->picks);
+   pd->picks = NULL;
+   // (no clear is waiting for a pick of a model that is gone: none is to make the table again)
+   pd->pending_clears = 0;
 
    efl_invalidate(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS));
 }
@@ -287,15 +431,19 @@ _select_slice_then(Eo *obj,
 }
 
 static Eina_Value
-_unselect_slice_then(Eo *obj EINA_UNUSED,
+_unselect_slice_then(Eo *obj,
                      void *data EINA_UNUSED,
                      const Eina_Value v)
 {
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(obj, EFL_UI_SELECT_MODEL_CLASS);
    Efl_Model *child = NULL;
    Eina_Future *r;
 
    child = _select_child_get(&v, 0);
    if (!child) goto on_error;
+
+   // The row picked again since is the selected one: it is not the one to unselect
+   if (pd && (pd->last_model == child)) return v;
 
    r = _unselect_child(child);
    return eina_future_as_value(r);
@@ -495,12 +643,16 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         if ((newflag == prevflag) &&
             !(newflag && (pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE) &&
               (pd->parent->last_model != obj)))
-          return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
-
-        // (a select that changes nothing does not take the place of one by index in flight)
-        if (newflag)
           {
-             pd->parent->select_seq++;
+             // Picked whether or not it changes anything: a clear asked for before takes
+             // the rows selected then, and this one is not one of them (it was selected
+             // before the clear and is picked again after it).
+             if (newflag)
+               {
+                  _pick_set(pd->parent, efl_composite_model_index_get(obj),
+                            _change_seq_next(pd->parent));
+               }
+             return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
           }
 
         /* Refusing to be the change that leaves nothing selected, which is
@@ -527,6 +679,17 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
           {
              untangle = _untangle_new(obj, pd->parent->last_model);
              if (!untangle) return efl_loop_future_rejected(obj, ENOMEM);
+          }
+
+        // Picked, once nothing can fail the select any more: a select that was refused
+        // is not a pick
+        if (newflag)
+          {
+             _pick_set(pd->parent, efl_composite_model_index_get(obj),
+                       _change_seq_next(pd->parent));
+             // (a select that changes nothing does not take the place of one by index
+             // in flight, nor does one that failed to start)
+             pd->parent->select_seq++;
           }
 
         // First store the new value in the boolean model we inherit from
@@ -705,10 +868,14 @@ _select_keep_one(Eo *obj, Efl_Ui_Select_Model_Data *pd)
    if (!any) return;
 
    count = efl_model_children_count_get(obj);
-   if (keep > 0) _unselect_range(obj, 0, keep - 1, _children_unselect_keep_picked_then);
+   if (keep > 0)
+     {
+        _unselect_range(obj, 0, keep - 1, _children_unselect_keep_picked_then, NULL, EINA_FALSE);
+     }
    if (keep < (count - 1))
      {
-        _unselect_range(obj, keep + 1, count - 1, _children_unselect_keep_picked_then);
+        _unselect_range(obj, keep + 1, count - 1, _children_unselect_keep_picked_then,
+                        NULL, EINA_FALSE);
      }
 
    if (pd->last_model && (efl_composite_model_index_get(pd->last_model) == keep)) return;
@@ -734,7 +901,13 @@ _efl_ui_select_model_efl_ui_multi_selectable_select_mode_set(Eo *obj,
          {
             unsigned int count = efl_model_children_count_get(obj);
 
-            if (count) _unselect_range(obj, 0, count - 1, _children_unselect_clear_then);
+            if (count)
+              _unselect_range(obj, 0, count - 1, _children_unselect_clear_then,
+                              (void *) (uintptr_t) _change_seq_next(pd), EINA_TRUE);
+            // Every pick so far is older than this clear, which is all the table is asked
+            // for: it is of no use any more
+            eina_inarray_free(pd->picks);
+            pd->picks = NULL;
          }
          break;
       case EFL_UI_SELECT_MODE_MULTI:
@@ -855,26 +1028,49 @@ _children_unselect_keep_picked_then(Eo *o, void *data EINA_UNUSED, const Eina_Va
    return v;
 }
 
-// What going to none unselects, which allow_manual_deselection does not refuse
+// What going to none unselects, which allow_manual_deselection does not refuse. The rows
+// picked since (data is the change_seq of the clear) are not part of it.
 static Eina_Value
 _children_unselect_clear_then(Eo *o, void *data, const Eina_Value v)
 {
    Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(o, EFL_UI_SELECT_MODEL_CLASS);
-   Eina_Value r;
+   unsigned int seq = (unsigned int) (uintptr_t) data;
+   Eina_Value unselect = eina_value_bool_init(EINA_FALSE);
+   Eo *target;
+   unsigned int i, len;
 
    pd->clearing = EINA_TRUE;
-   r = _children_unselect_then(o, data, v);
-   pd->clearing = EINA_FALSE;
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, target)
+     {
+        unsigned int pick = _pick_get(pd, efl_composite_model_index_get(target));
 
-   return r;
+        // (0 is a row never picked, which is not newer than anything)
+        if (pick && ((int) (pick - seq) > 0)) continue;
+        efl_model_property_set(target, "self.selected", &unselect);
+     }
+   pd->clearing = EINA_FALSE;
+   eina_value_flush(&unselect);
+   _clear_done(pd);
+
+   return v;
+}
+
+// A clear that failed to fetch its rows is not going to ask for the picks either
+static Eina_Value
+_children_unselect_clear_error(Eo *o, void *data EINA_UNUSED, Eina_Error err)
+{
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(o, EFL_UI_SELECT_MODEL_CLASS);
+
+   _clear_done(pd);
+   return eina_value_error_init(err);
 }
 
 #define BATCH_MAX 100
 
 static void
-_unselect_range(Eo *obj, unsigned int a, unsigned int b,
-                Eina_Value (*then)(Eo *o, void *data, const Eina_Value v))
+_unselect_range(Eo *obj, unsigned int a, unsigned int b, Unselect_Cb then, void *data, Eina_Bool clear)
 {
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(obj, EFL_UI_SELECT_MODEL_CLASS);
    unsigned long count, batch, i;
 
    if (a > b)
@@ -899,8 +1095,10 @@ _unselect_range(Eo *obj, unsigned int a, unsigned int b,
         batch -= i;
 
         f = efl_model_children_slice_get(obj, i, batch);
+        if (clear && f) pd->pending_clears++;
         efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
-                        .success = then);
+                        .success = then, .data = data,
+                        .error = clear ? _children_unselect_clear_error : NULL);
 
         i += batch;
      }
@@ -911,7 +1109,7 @@ _efl_ui_select_model_efl_ui_multi_selectable_index_range_ndx_range_unselect(Eo *
                                                                             Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
                                                                             unsigned int a, unsigned int b)
 {
-   _unselect_range(obj, a, b, _children_unselect_then);
+   _unselect_range(obj, a, b, _children_unselect_then, NULL, EINA_FALSE);
 }
 
 static void
