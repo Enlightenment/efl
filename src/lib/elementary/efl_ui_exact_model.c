@@ -35,6 +35,13 @@ struct _Efl_Ui_Exact_Model_Data
       unsigned int width;
       unsigned int height;
    } total_size;
+   // What the last row that was removed had been told (for those that average), and
+   // how many times the sizes were all forgotten
+   struct {
+      unsigned int height;
+      Eina_Bool measured : 1;
+   } removed;
+   unsigned int forgotten;
 
    struct {
       unsigned int *width;
@@ -525,6 +532,7 @@ _efl_ui_exact_model_forget(Efl_Ui_Exact_Model_Data *root)
    root->compressed.height = NULL;
    root->total_size.width = 0;
    root->total_size.height = 0;
+   root->forgotten++;
 }
 
 // The sizes follow their rows when one comes or goes. The sizes are kept by
@@ -552,14 +560,16 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
      {
         unsigned int w, h;
 
+        root->removed.measured = EINA_FALSE;
         if (!_efl_ui_exact_model_list_remove(root->compressed.width, index, &w) ||
             !_efl_ui_exact_model_list_remove(root->compressed.height, index, &h))
           {
              _efl_ui_exact_model_forget(root);
              return;
           }
-        if (h & EFL_UI_EXACT_MODEL_MEASURED)
-          root->total_size.height -= h & ~EFL_UI_EXACT_MODEL_MEASURED;
+        root->removed.measured = !!(h & EFL_UI_EXACT_MODEL_MEASURED);
+        root->removed.height = h & ~EFL_UI_EXACT_MODEL_MEASURED;
+        if (root->removed.measured) root->total_size.height -= root->removed.height;
         // The total width is the widest row: only when it was that one is it to be looked for again
         if ((w & EFL_UI_EXACT_MODEL_MEASURED) &&
             (w & ~EFL_UI_EXACT_MODEL_MEASURED) >= root->total_size.width)
@@ -729,6 +739,30 @@ _efl_ui_exact_model_find(Efl_Model *model)
         model = efl_ui_view_model_get(model);
      }
    return model;
+}
+
+/* What the row that was last removed had been told, for a model that keeps
+   what it was told by itself: its height if it had one (true), and false if
+   it was never measured. Only meant to be asked when the removal is told, which
+   is after the sizes are moved. */
+Eina_Bool
+_efl_ui_exact_model_removed_height_get(const Efl_Model *exact, unsigned int *height)
+{
+   Efl_Ui_Exact_Model_Data *root = efl_data_scope_get(exact, EFL_UI_EXACT_MODEL_CLASS);
+
+   if (!root || root->parent || !root->removed.measured) return EINA_FALSE;
+   *height = root->removed.height;
+   return EINA_TRUE;
+}
+
+/* How many times every size was given up (when they could not be moved), for
+   a model that keeps what it was told by itself to do the same. */
+unsigned int
+_efl_ui_exact_model_forgotten_get(const Efl_Model *exact)
+{
+   Efl_Ui_Exact_Model_Data *root = efl_data_scope_get(exact, EFL_UI_EXACT_MODEL_CLASS);
+
+   return (root && !root->parent) ? root->forgotten : 0;
 }
 
 /* The size of a row as it was told to the model, without the row itself:

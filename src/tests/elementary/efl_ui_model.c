@@ -640,6 +640,71 @@ _gone_set_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUS
    return v;
 }
 
+// A row that leaves takes its height out of what the average is over, and
+// is no longer one that was seen.
+EFL_START_TEST(efl_ui_average_model_remove)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   Many_Rows *base_rows = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 4; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
+   eina_future_then(efl_model_children_slice_get(base_model, 0, 4), _many_rows_then, base_rows, NULL);
+   for (loops = 0; (loops < 50) && (many->count < 4 || base_rows->count < 4); loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 4);
+   ck_assert_uint_eq(base_rows->count, 4);
+
+   for (i = 0; i < 3; i++)
+     {
+        _uint_set(many->rows[i], "self.height", 10 * (i + 1));
+     }
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   // 60 over 3 seen rows, for 4 rows
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 80);
+
+   // One that was seen leaves: 30 over 2, for 3
+   efl_model_child_del(base_model, base_rows->rows[2]);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 45);
+
+   // One that was not: 30 over 2, for 2
+   efl_model_child_del(base_model, base_rows->rows[3]);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 30);
+
+   // A row that was seen is measured again: 60 over 2, for 2
+   _uint_set(many->rows[1], "self.height", 50);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 60);
+
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(many->rows[i]);
+        efl_unref(base_rows->rows[i]);
+     }
+   free(many);
+   free(base_rows);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // A row that was removed has no place in the model any more: what is told
 // to it is not for the row that is now at the index it had.
 EFL_START_TEST(efl_ui_exact_model_removed_row_write)
@@ -1006,6 +1071,7 @@ efl_ui_model(TCase *tc)
 
    tcase_add_test(tc, efl_ui_homogeneous_model_test);
    tcase_add_test(tc, efl_ui_average_model_test);
+   tcase_add_test(tc, efl_ui_average_model_remove);
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
    tcase_add_test(tc, efl_ui_exact_model_insert_remove);

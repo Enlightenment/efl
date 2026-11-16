@@ -661,6 +661,9 @@ Efl_Model           *_efl_ui_exact_model_find(Efl_Model *model);
 Eina_Bool            _efl_ui_exact_model_row_size_get(Efl_Model *exact,
                                                       unsigned int index,
                                                       Eina_Size2D *size);
+Eina_Bool            _efl_ui_exact_model_removed_height_get(const Efl_Model *exact,
+                                                            unsigned int *height);
+unsigned int         _efl_ui_exact_model_forgotten_get(const Efl_Model *exact);
 Eina_Bool            _elm_web_init(const char *engine);
 
 Eo                   *_elm_atspi_bridge_get(void);
