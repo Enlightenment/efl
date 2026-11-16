@@ -1065,12 +1065,23 @@ _cache_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config 
    return result;
 }
 
-static Efl_Ui_Position_Manager_Object_Batch_Result
-_cache_object_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Request_Range range EINA_UNUSED,
-                 Eina_Rw_Slice memory EINA_UNUSED)
-{
-   Efl_Ui_Position_Manager_Object_Batch_Result result = { 0 };
+static Efl_Gfx_Entity *_cache_dummy = NULL;
 
+// Every item is shown by the same object, which is all there is to move
+static Efl_Ui_Position_Manager_Object_Batch_Result
+_cache_object_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Request_Range range,
+                 Eina_Rw_Slice memory)
+{
+   Efl_Ui_Position_Manager_Object_Batch_Entity *entities = memory.mem;
+   Efl_Ui_Position_Manager_Object_Batch_Result result = { 0 };
+   unsigned int i, limit = range.end_id - range.start_id;
+
+   for (i = 0; (i < limit) && range.start_id + i < _cache_count; i++)
+     {
+        entities[i].entity = _cache_dummy;
+        entities[i].depth_leader = EINA_FALSE;
+     }
+   result.filled_items = i;
    return result;
 }
 
@@ -1111,6 +1122,7 @@ EFL_START_TEST(test_efl_ui_position_manager_list_cache_follows)
    unsigned int seed = 7, i, step;
 
    win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
    manager = efl_add(EFL_UI_POSITION_MANAGER_LIST_CLASS, win,
                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
    efl_event_callback_add(manager, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED,
@@ -1185,6 +1197,160 @@ EFL_START_TEST(test_efl_ui_position_manager_list_cache_follows)
 }
 EFL_END_TEST
 
+/* A provider that gives one size to the rows nobody measured (the size of
+   the view, then the shared size of a Homogeneous_Model once there is one)
+   changes the size of rows it was not told about when one of them is
+   measured: the first one reported was the last, and the others were still
+   cached at what they had been. The cache must find that out, or items are
+   placed by sizes that are not theirs. */
+EFL_START_TEST(test_efl_ui_position_manager_list_cache_shared_size)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager;
+   unsigned int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   manager = efl_add(EFL_UI_POSITION_MANAGER_LIST_CLASS, win,
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   efl_event_callback_add(manager, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED,
+                          _cache_content_size, NULL);
+   _cache_content_h = -1;
+   _cache_count = 3;
+   for (i = 0; i < _cache_count; i++)
+     {
+        _cache_sizes[i] = 384;
+     }
+   efl_ui_position_manager_data_access_v1_data_access_set(manager, win, NULL, _cache_object_cb, NULL,
+                                                          NULL, _cache_size_cb, NULL, _cache_count);
+   efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 100, 1));
+   _cache_places_check(manager);
+
+   // Every row is now of the shared size, and the manager is told of the last
+   for (i = 0; i < _cache_count; i++)
+     {
+        _cache_sizes[i] = 23;
+     }
+   efl_ui_position_manager_entity_item_size_changed(manager, 2, 2);
+   _cache_places_check(manager);
+
+   efl_del(manager);
+}
+EFL_END_TEST
+
+/* The groups of the grid position manager follow items that are added or
+   removed, with the sizes that are asked for only once: a grid told of every
+   change must place every item where a grid that is given the final items
+   places it. Items are plain, headers of groups, or members of the group
+   before them. */
+static unsigned char _grid_kinds[CACHE_MAX_ROWS];
+
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_grid_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf,
+              Eina_Rw_Slice memory)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Size_Batch_Result result = { 0 };
+   unsigned int i, limit = conf.range.end_id - conf.range.start_id;
+
+   for (i = 0; (i < limit) && conf.range.start_id + i < _cache_count; i++)
+     {
+        unsigned char kind = _grid_kinds[conf.range.start_id + i];
+
+        sizes[i].size = kind == 1 ? EINA_SIZE2D(200, 20) : EINA_SIZE2D(40, 30);
+        sizes[i].element_depth = kind == 2 ? 1 : 0;
+        sizes[i].depth_leader = kind == 1;
+     }
+   result.filled_items = i;
+   return result;
+}
+
+static Efl_Ui_Position_Manager_Entity *
+_grid_manager_add(Efl_Ui_Win *win)
+{
+   Efl_Ui_Position_Manager_Entity *manager;
+
+   manager = efl_add(EFL_UI_POSITION_MANAGER_GRID_CLASS, win,
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
+   efl_ui_position_manager_data_access_v1_data_access_set(manager, win, NULL, _cache_object_cb, NULL,
+                                                          NULL, _grid_size_cb, NULL, _cache_count);
+   efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 200, 300));
+   return manager;
+}
+
+EFL_START_TEST(test_efl_ui_position_manager_grid_groups_follow)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager, *fresh;
+   Efl_Gfx_Entity *item;
+   unsigned int seed = 11, i, step;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   item = _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   {
+      static const unsigned char start[] = { 0, 0, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2 };
+
+      memcpy(_grid_kinds, start, sizeof (start));
+      _cache_count = sizeof (start);
+   }
+   manager = _grid_manager_add(win);
+
+   for (step = 0; step < 400; step++)
+     {
+        unsigned int idx;
+        Eina_Bool check;
+
+        seed = seed * 1103515245 + 12345;
+        idx = (seed >> 8) % 400;
+        seed = seed * 1103515245 + 12345;
+        if (((seed >> 8) % 3) && _cache_count < CACHE_MAX_ROWS - 1)
+          {
+             unsigned char kind = (seed >> 12) % 4;
+
+             idx %= _cache_count + 1;
+             // Mostly members and plain items, a header makes a group. A plain
+             // item is never after a group, and a member after a header or a member.
+             kind = (kind == 3) ? 1 : ((kind == 2) ? 2 : 0);
+             if (kind == 1 && idx < _cache_count && _grid_kinds[idx] == 0)
+               kind = 0;
+             if (kind != 1)
+               kind = (idx > 0 && _grid_kinds[idx - 1] != 0) ? 2 : 0;
+             memmove(_grid_kinds + idx + 1, _grid_kinds + idx, _cache_count - idx);
+             _grid_kinds[idx] = kind;
+             _cache_count++;
+             efl_ui_position_manager_entity_item_added(manager, idx, item);
+          }
+        else if (_cache_count > 4)
+          {
+             idx %= _cache_count;
+             memmove(_grid_kinds + idx, _grid_kinds + idx + 1, _cache_count - idx - 1);
+             _cache_count--;
+             efl_ui_position_manager_entity_item_removed(manager, idx, item);
+          }
+
+        check = !((seed >> 20) % 2);
+        if (!check) continue;
+        // The same items, given to another one at once
+        fresh = _grid_manager_add(win);
+        for (i = 0; i < _cache_count; i++)
+          {
+             Eina_Rect a, b;
+
+             // (the manager does not place the header of a group by itself)
+             if (_grid_kinds[i] == 1) continue;
+             a = efl_ui_position_manager_entity_position_single_item(manager, i);
+             b = efl_ui_position_manager_entity_position_single_item(fresh, i);
+             ck_assert_int_eq(a.x, b.x);
+             ck_assert_int_eq(a.y, b.y);
+             ck_assert_int_eq(a.w, b.w);
+             ck_assert_int_eq(a.h, b.h);
+          }
+        efl_del(fresh);
+     }
+   efl_del(manager);
+}
+EFL_END_TEST
+
 /* A position manager that counts the rows the view is asked the size of on
    its behalf: the size callback the view gave it is wrapped by one that counts
    what goes through. */
@@ -1228,29 +1394,45 @@ _counting_manager_initializer(Efl_Class *klass)
 }
 
 static const Efl_Class *
-_counting_manager_class_get(void)
+_counting_manager_class_get(Eina_Bool grid)
 {
-   static const Efl_Class_Description desc = {
+   static const Efl_Class_Description list_desc = {
       EO_VERSION,
-      "Test_Counting_Position_Manager",
+      "Test_Counting_List_Position_Manager",
       EFL_CLASS_TYPE_REGULAR,
       0,
       _counting_manager_initializer,
       NULL,
       NULL
    };
-   static const Efl_Class *klass = NULL;
+   static const Efl_Class_Description grid_desc = {
+      EO_VERSION,
+      "Test_Counting_Grid_Position_Manager",
+      EFL_CLASS_TYPE_REGULAR,
+      0,
+      _counting_manager_initializer,
+      NULL,
+      NULL
+   };
+   static const Efl_Class *list_klass = NULL;
+   static const Efl_Class *grid_klass = NULL;
 
-   if (!klass)
-     klass = efl_class_new(&desc, EFL_UI_POSITION_MANAGER_LIST_CLASS, NULL);
-   return klass;
+   if (grid)
+     {
+        if (!grid_klass)
+          grid_klass = efl_class_new(&grid_desc, EFL_UI_POSITION_MANAGER_GRID_CLASS, NULL);
+        return grid_klass;
+     }
+   if (!list_klass)
+     list_klass = efl_class_new(&list_desc, EFL_UI_POSITION_MANAGER_LIST_CLASS, NULL);
+   return list_klass;
 }
 
 /* Rows are added one at a time to a view that is showing an Exact_Model, as a
    listing arriving does, with the loop let to idle in between or not. The
    rows the view is asked the size of while that goes on are counted. */
 static unsigned int
-_single_adds_rows(int rows, Eina_Bool idle)
+_single_adds_rows(int rows, Eina_Bool idle, Eina_Bool grid)
 {
    Efl_Ui_Win *win;
    Efl_Model *model, *sizes;
@@ -1264,12 +1446,12 @@ _single_adds_rows(int rows, Eina_Bool idle)
 
    model = _make_model(win);
    sizes = efl_add(EFL_UI_EXACT_MODEL_CLASS, win, efl_ui_view_model_set(efl_added, model));
-   manager = efl_new(_counting_manager_class_get());
+   manager = efl_new(_counting_manager_class_get(grid));
    fl = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
                 efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS),
                 efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
                                        _row_height_on_build, NULL));
-   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+   lv = efl_add(grid ? EFL_UI_GRID_VIEW_CLASS : EFL_UI_LIST_VIEW_CLASS, win,
                 efl_ui_collection_view_position_manager_set(efl_added, manager),
                 efl_ui_collection_view_factory_set(efl_added, fl),
                 efl_ui_view_model_set(efl_added, sizes));
@@ -1305,7 +1487,7 @@ EFL_START_TEST(test_efl_ui_collection_view_many_single_adds)
    const int rows = SINGLE_ADDS;
    unsigned int counted;
 
-   counted = _single_adds_rows(rows, EINA_FALSE);
+   counted = _single_adds_rows(rows, EINA_FALSE, EINA_FALSE);
    ck_assert_uint_lt(counted, rows * 20);
 }
 EFL_END_TEST
@@ -1317,7 +1499,19 @@ EFL_START_TEST(test_efl_ui_collection_view_many_single_adds_idle)
    const int rows = SINGLE_ADDS;
    unsigned int counted;
 
-   counted = _single_adds_rows(rows, EINA_TRUE);
+   counted = _single_adds_rows(rows, EINA_TRUE, EINA_FALSE);
+   ck_assert_uint_lt(counted, rows * 20);
+}
+EFL_END_TEST
+
+// And a grid, which keeps its items in groups and asks for the size of all of
+// them to build those.
+EFL_START_TEST(test_efl_ui_collection_view_many_single_adds_grid)
+{
+   const int rows = SINGLE_ADDS;
+   unsigned int counted;
+
+   counted = _single_adds_rows(rows, EINA_TRUE, EINA_TRUE);
    ck_assert_uint_lt(counted, rows * 20);
 }
 EFL_END_TEST
@@ -1418,6 +1612,9 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_jump);
    tcase_add_test(tc, test_efl_ui_position_manager_list_cache_follows);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds);
+   tcase_add_test(tc, test_efl_ui_position_manager_list_cache_shared_size);
+   tcase_add_test(tc, test_efl_ui_position_manager_grid_groups_follow);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_idle);
+   tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
    tcase_add_test(tc, test_efl_ui_collection_view_exact_model_renumbered);
 }

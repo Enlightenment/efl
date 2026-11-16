@@ -114,6 +114,67 @@ _group_cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *
   pd->size_cache_dirty = EINA_TRUE;
 }
 
+/*
+ * An item that comes or goes in the middle of a group changes the count of that
+ * group and nothing else: there is no need to ask for the size of every item
+ * again to learn it, which is what a grid that grows one item at a time did
+ * for each of them. What the item is (a group header, a member of the group
+ * before it or a plain item) is what says whose it is: the cases that would
+ * make or break a group, or that are not clear, are left to a full build.
+ */
+static Eina_Bool
+_group_cache_insert(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx,
+                    const Efl_Ui_Position_Manager_Size_Batch_Entity *entity)
+{
+   unsigned int count, i, consumed = 0;
+
+   if (!pd->group_cache) return EINA_FALSE;
+   if (entity->depth_leader) return EINA_FALSE;
+
+   count = eina_inarray_count(pd->group_cache);
+   for (i = 0; i < count; i++)
+     {
+        Group_Cache_Line *line = eina_inarray_nth(pd->group_cache, i);
+
+        if (idx <= consumed + line->items)
+          {
+             Eina_Bool member = entity->element_depth > 0;
+
+             // A member comes after the header of its group, a plain item is not in a group
+             if (line->real_group != member) return EINA_FALSE;
+             if (member && (idx <= consumed)) return EINA_FALSE;
+             line->items++;
+             return EINA_TRUE;
+          }
+        consumed += line->items;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_group_cache_remove(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx)
+{
+   unsigned int count, i, consumed = 0;
+
+   if (!pd->group_cache) return EINA_FALSE;
+
+   count = eina_inarray_count(pd->group_cache);
+   for (i = 0; i < count; i++)
+     {
+        Group_Cache_Line *line = eina_inarray_nth(pd->group_cache, i);
+
+        if (idx < consumed + line->items)
+          {
+             // The header of a group takes the group with it
+             if ((line->real_group) && (idx == consumed)) return EINA_FALSE;
+             line->items--;
+             return EINA_TRUE;
+          }
+        consumed += line->items;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _size_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
@@ -611,23 +672,32 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj,
 {
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[1];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   Eina_Bool clean = !pd->group_cache_dirty;
+
    pd->size ++;
 
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
    _group_cache_invalidate(obj, pd);
    BATCH_ACCESS_SIZE(pd->callbacks, added_index, added_index + 1, 1, EINA_TRUE, size_buffer);
+   // The groups were right before, and still are with the item in its own (sizes are made of them)
+   if (clean && _group_cache_insert(pd, added_index, &size_buffer[0]))
+     pd->group_cache_dirty = EINA_FALSE;
    _update_min_size(obj, pd, added_index, size_buffer[0].size);
    _flush_min_size(obj, pd);
    _schedule_recalc_abs_size(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_removed(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int removed_index EINA_UNUSED, Efl_Gfx_Entity *subobj EINA_UNUSED)
+_efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_removed(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int removed_index, Efl_Gfx_Entity *subobj)
 {
+   Eina_Bool clean = !pd->group_cache_dirty;
+
    //we ignore here that we might loose the item giving the current max min size
    EINA_SAFETY_ON_FALSE_RETURN(pd->size > 0);
    pd->size --;
    _group_cache_invalidate(obj, pd);
+   if (clean && _group_cache_remove(pd, removed_index))
+     pd->group_cache_dirty = EINA_FALSE;
    pd->prev_run.start_id = MIN(pd->prev_run.start_id, pd->size);
    pd->prev_run.end_id = MIN(pd->prev_run.end_id, pd->size);
    _schedule_recalc_abs_size(obj, pd);
