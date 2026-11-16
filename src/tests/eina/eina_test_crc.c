@@ -45,7 +45,22 @@ EFL_START_TEST(eina_crc_simple)
 }
 EFL_END_TEST
 
+/* Bytes of 0x80 and above, in the bytes left after the 8 byte steps: the
+ * values are those of zlib's crc32(). */
+EFL_START_TEST(eina_crc_high_bytes)
+{
+   const char short_data[] = "\x80\xff\xa9";
+   const char long_data[] = "eina \xc3\xa9t\xc3\xa9 \xff\x80\xfe";
+
+   ck_assert_uint_eq(eina_crc(short_data, sizeof(short_data) - 1, 0xffffffff, EINA_TRUE),
+                     0x225a24ac);
+   ck_assert_uint_eq(eina_crc(long_data, sizeof(long_data) - 1, 0xffffffff, EINA_TRUE),
+                     0xf6cfc767);
+}
+EFL_END_TEST
+
 void eina_test_crc(TCase *tc)
 {
    tcase_add_test(tc, eina_crc_simple);
+   tcase_add_test(tc, eina_crc_high_bytes);
 }

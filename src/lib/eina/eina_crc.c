@@ -312,7 +312,7 @@ _eina_crc(const char *data, int len, unsigned int seed, Eina_Bool start_stream)
         len -= 8;
      }
 
-   const char* currChar = (char*) curr;
+   const unsigned char *currChar = (const unsigned char *)curr;
    while (len--)
      crc = (crc >> 8) ^ table[0][(crc & 0xFF) ^ *currChar++];
 
