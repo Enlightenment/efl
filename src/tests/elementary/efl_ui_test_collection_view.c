@@ -1811,7 +1811,9 @@ EFL_START_TEST(test_efl_ui_collection_view_many_single_adds_grid)
    unsigned int counted;
 
    counted = _single_adds_rows(rows, EINA_TRUE, EINA_TRUE);
-   ck_assert_uint_lt(counted, rows * 20);
+   // (more than a list, as the cells are not as wide as the view and a screen
+   // shows many of them: still far from what the rows there are would make)
+   ck_assert_uint_lt(counted, rows * 100);
 }
 EFL_END_TEST
 
@@ -2003,7 +2005,7 @@ EFL_START_TEST(test_efl_ui_position_manager_grid_min_size_known_only)
 {
    Efl_Ui_Win *win;
    Efl_Ui_Position_Manager_Entity *manager;
-   static const int widths[] = { 40, 90, 60, 50, 95 };
+   static const int widths[] = { 40, 95, 60, 50, 90 };
    unsigned int i;
 
    win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
@@ -2019,16 +2021,21 @@ EFL_START_TEST(test_efl_ui_position_manager_grid_min_size_known_only)
                                                           NULL, _known_size_cb, NULL, _cache_count);
    efl_ui_position_manager_entity_viewport_set(manager, EINA_RECT(0, 0, 200, 300));
    ecore_main_loop_iterate();
+   // (the biggest of the known ones, which are the first two, and not the 90 that is not known)
    ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 95);
 
    // The item that gave the biggest one goes: the others that are known give theirs
    _known_calls = _full_calls = 0;
    _cache_count--;
-   efl_ui_position_manager_entity_item_removed(manager, _cache_count, _cache_dummy);
+   for (i = 1; i < _cache_count; i++)
+     {
+        _cache_sizes[i] = widths[i + 1];
+     }
+   efl_ui_position_manager_entity_item_removed(manager, 1, _cache_dummy);
    ecore_main_loop_iterate();
    ck_assert_uint_gt(_known_calls, 0);
    ck_assert_uint_eq(_full_calls, 0);
-   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 90);
+   ck_assert_int_eq(efl_ui_position_manager_entity_position_single_item(manager, 0).w, 60);
 
    efl_del(manager);
 }
@@ -2263,6 +2270,76 @@ EFL_START_TEST(test_efl_ui_collection_view_average_model_estimates)
 }
 EFL_END_TEST
 
+static void
+_cell_size(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   efl_gfx_hint_size_min_set(ev->info, EINA_SIZE2D(60, 40));
+}
+
+// A grid over an Average_Model, scrolled down, with a row that comes at the
+// start: what is said for the rows nobody measured (the size of the view) is
+// not the size of a cell, and the cells are not made as wide as the view,
+// which is one column.
+EFL_START_TEST(test_efl_ui_collection_view_average_model_grid_prepend)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *sizes, *base;
+   Efl_Ui_Factory *fl;
+   Efl_Ui_Grid_View *gv;
+   Efl_Ui_Position_Manager_Entity *manager;
+   Eina_Rect r0, r1;
+   int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 300));
+
+   model = _make_model(win);
+   for (i = NUM_ITEMS; i < AVG_ROWS; i++)
+     {
+        efl_model_child_add(model);
+     }
+   base = efl_ui_view_model_get(model);
+   sizes = efl_add(EFL_UI_AVERAGE_MODEL_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   manager = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+   fl = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS),
+                efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
+                                       _cell_size, NULL));
+   gv = efl_add(EFL_UI_GRID_VIEW_CLASS, win,
+                efl_ui_collection_view_position_manager_set(efl_added, manager),
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, sizes));
+   efl_content_set(win, gv);
+   get_me_to_those_events(gv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+
+   efl_ui_scrollable_content_pos_set(gv, EINA_POSITION2D(0, 2000));
+   for (i = 0; i < 20; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   r0 = efl_ui_position_manager_entity_position_single_item(manager, 0);
+   r1 = efl_ui_position_manager_entity_position_single_item(manager, 1);
+   ck_assert_int_eq(r0.y, r1.y);
+   ck_assert_int_gt(r1.x, r0.x);
+
+   efl_model_child_add(base);
+   for (i = 0; i < 20; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(efl_model_children_count_get(sizes), AVG_ROWS + 1);
+   r0 = efl_ui_position_manager_entity_position_single_item(manager, 0);
+   r1 = efl_ui_position_manager_entity_position_single_item(manager, 1);
+   ck_assert_int_eq(r0.y, r1.y);
+   ck_assert_int_gt(r1.x, r0.x);
+   ck_assert_int_le(r0.w, 100);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -2297,4 +2374,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_position_manager_grid_min_size_known_only);
    tcase_add_test(tc, test_efl_ui_collection_view_grid_remove_fetches_nothing);
    tcase_add_test(tc, test_efl_ui_collection_view_average_model_estimates);
+   tcase_add_test(tc, test_efl_ui_collection_view_average_model_grid_prepend);
 }

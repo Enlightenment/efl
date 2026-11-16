@@ -2186,6 +2186,11 @@ _efl_model_properties_changed(void *data, const Efl_Event *event)
       told that some size may have, to ask if what it keeps of the other rows is
       still what they are. */
    if (!pd->manager || !ev || !ev->changed_properties) return;
+   /* (The grid does not estimate: the size of a cell is the one of its items,
+      and what it would be told here, the size an item nobody measured has,
+      is not one that it may grow its minimum size with. Asked for all of the
+      cells, it would also forget its columns.) */
+   if (efl_isa(pd->manager, EFL_UI_POSITION_MANAGER_GRID_CLASS)) return;
    exact = _efl_ui_exact_model_find(pd->model);
    if (!exact || !efl_isa(exact, EFL_UI_AVERAGE_MODEL_CLASS)) return;
    EINA_ARRAY_ITER_NEXT(ev->changed_properties, i, property, it)

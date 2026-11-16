@@ -57,6 +57,8 @@ _update_min_size(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int
    pd->max_min_size.h = MAX(pd->max_min_size.h, min_size.h);
 }
 
+static Eina_Bool _min_size_known_get(Efl_Ui_Position_Manager_Grid_Data *pd, Eina_Size2D *max);
+
 static void
 _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
@@ -65,6 +67,7 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
    Group_Cache_Line line = { 0 };
+   Eina_Size2D known;
 
    if (!pd->group_cache_dirty)
      return;
@@ -111,6 +114,9 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
         _update_min_size(obj, pd, i, size_buffer[buffer_id].size);
      }
    eina_inarray_push(pd->group_cache, &line);
+   // The same rule as when it is asked for again: the sizes that are known. What
+   // was said for the others is what the first of them gets, when none is.
+   if (_min_size_known_get(pd, &known)) pd->max_min_size = known;
 }
 
 static inline void
@@ -181,18 +187,19 @@ _group_cache_remove(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int idx)
    return EINA_FALSE;
 }
 
-// The biggest minimum size of the items, asked for again: an item that goes may
-// have been the one that gave it, and the sizes are not kept to tell. Only the
-// sizes that are known are asked for: nothing is fetched or built for the items
-// that nobody has seen to find out what they would give.
-static void
-_min_size_recompute(Efl_Ui_Position_Manager_Grid_Data *pd)
+// The biggest minimum size of the items that are known. Only the sizes that are
+// known are asked for: nothing is fetched or built for the items that nobody
+// has seen to find out what they would give, and what is said for an item that
+// was not measured (the size of the view, before anything was) is not a size
+// that any of the cells has. False if nothing is known.
+static Eina_Bool
+_min_size_known_get(Efl_Ui_Position_Manager_Grid_Data *pd, Eina_Size2D *max)
 {
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[100];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
-   Eina_Size2D max = EINA_SIZE2D(0, 0);
    unsigned int i = 0;
 
+   *max = EINA_SIZE2D(0, 0);
    while (i < pd->size)
      {
         unsigned int j, filled;
@@ -201,18 +208,28 @@ _min_size_recompute(Efl_Ui_Position_Manager_Grid_Data *pd)
                                                 MIN(100, pd->size - i), size_buffer);
         filled = MIN(size_result.filled_items, 100);
         // (what is not told is not known: the biggest is then the one that was)
-        if (!filled) return;
+        if (!filled) return EINA_FALSE;
         for (j = 0; j < filled; j++)
           {
              // (an item that is not known is 0x0)
              if (!size_buffer[j].size.w && !size_buffer[j].size.h) continue;
-             max.w = MAX(max.w, size_buffer[j].size.w);
-             max.h = MAX(max.h, size_buffer[j].size.h);
+             max->w = MAX(max->w, size_buffer[j].size.w);
+             max->h = MAX(max->h, size_buffer[j].size.h);
           }
         i += filled;
      }
+   return max->w || max->h;
+}
+
+// The biggest minimum size of the items, asked for again: an item that goes may
+// have been the one that gave it, and the sizes are not kept to tell.
+static void
+_min_size_recompute(Efl_Ui_Position_Manager_Grid_Data *pd)
+{
+   Eina_Size2D max;
+
    // (nothing known, nothing to go on: what it was stays)
-   if (!max.w && !max.h) return;
+   if (!_min_size_known_get(pd, &max)) return;
    if ((max.w != pd->max_min_size.w) || (max.h != pd->max_min_size.h))
      {
         pd->max_min_size = max;
@@ -722,6 +739,22 @@ _schedule_recalc_abs_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
                                               .free = _rebuild_job_free);
 }
 
+// An item that comes gives its size if it is a known one: what is said for an
+// item nobody measured is not a size of a cell, and the minimum would grow to it.
+// It is that or nothing only while no size is known at all.
+static void
+_min_size_added(Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int index, Eina_Size2D said)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity known;
+   Efl_Ui_Position_Manager_Size_Batch_Result result;
+
+   result = _batch_request_size_known(pd->callbacks, index, index + 1, 1, &known);
+   if (result.filled_items && (known.size.w || known.size.h))
+     _update_min_size(NULL, pd, index, known.size);
+   else if (!pd->max_min_size.w && !pd->max_min_size.h)
+     _update_min_size(NULL, pd, index, said);
+}
+
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index, Efl_Gfx_Entity *subobj EINA_UNUSED)
 {
@@ -737,7 +770,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj,
    // The groups were right before, and still are with the item in its own (sizes are made of them)
    if (clean && _group_cache_insert(pd, added_index, &size_buffer[0]))
      pd->group_cache_dirty = EINA_FALSE;
-   _update_min_size(obj, pd, added_index, size_buffer[0].size);
+   _min_size_added(pd, added_index, size_buffer[0].size);
    _flush_min_size(obj, pd);
    _schedule_recalc_abs_size(obj, pd);
 }
