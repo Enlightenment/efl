@@ -1222,6 +1222,38 @@ EFL_START_TEST(efl_ui_exact_model_shift_unmeasured)
 }
 EFL_END_TEST
 
+static unsigned int _cri_count;
+
+static void
+_cri_log(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+         const char *file EINA_UNUSED, const char *fnc EINA_UNUSED, int line EINA_UNUSED,
+         const char *fmt EINA_UNUSED, void *data EINA_UNUSED, va_list args EINA_UNUSED)
+{
+   if (level <= EINA_LOG_LEVEL_CRITICAL)
+     {
+        _cri_count++;
+     }
+}
+
+// A row of the model that goes is no longer a view on the row of its source.
+// That row belongs to the source model, and nothing else holds it: letting
+// go of it must not delete it (which efl_unref() does, with a CRI).
+EFL_START_TEST(efl_ui_composite_model_source_release)
+{
+   Shift_Rows *sr = _shift_new(8);
+
+   _cri_count = 0;
+   eina_log_print_cb_set(_cri_log, NULL);
+   _shift_insert(sr, 3, 0);
+   _shift_remove(sr, 3);
+   _shift_remove(sr, 0);
+   _shift_free(sr);
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   ck_assert_uint_eq(_cri_count, 0);
+}
+EFL_END_TEST
+
 // The total width is the one of the widest row, and goes down with it.
 EFL_START_TEST(efl_ui_exact_model_remove_widest)
 {
@@ -1786,4 +1818,5 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_remove_after_stopped);
    tcase_add_test(tc, efl_ui_exact_model_narrow_widest_other_slot);
    tcase_add_test(tc, efl_ui_exact_model_narrower_widest);
+   tcase_add_test(tc, efl_ui_composite_model_source_release);
 }
