@@ -6,6 +6,7 @@
 #include "efl_ui_suite.h"
 #include "efl_ui_homogeneous_model.eo.h"
 #include "efl_ui_exact_model.eo.h"
+#include "efl_ui_average_model.eo.h"
 
 #define NUM_ITEMS 50
 #define SINGLE_ADDS 2000
@@ -1299,6 +1300,8 @@ EFL_END_TEST
 static unsigned int _diff_measured[DIFF_MAX_ROWS]; // 0: not measured
 static unsigned int _diff_count = 0;
 static unsigned int _diff_cap = 7;
+// The rows the provider was asked for, all told
+static unsigned int _diff_asked = 0;
 // Whether the rows nobody measured get the average (and are said to be an estimate), or 40
 static Eina_Bool _diff_estimates = EINA_TRUE;
 
@@ -1329,6 +1332,9 @@ _diff_size_cb(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config c
         if (!measured && _diff_estimates) result.estimated = EINA_TRUE;
      }
    result.filled_items = i;
+   // (the estimate is the average: it is another when that is)
+   if (_diff_estimates) result.estimate_version = average;
+   _diff_asked += i;
    return result;
 }
 
@@ -1461,6 +1467,77 @@ EFL_START_TEST(test_efl_ui_position_manager_list_differential)
    _diff_estimates = EINA_FALSE;
    _diff_run(5, 400, 40);
    _diff_run(29, 600, 400);
+}
+EFL_END_TEST
+
+/* An estimate that stays the same is not a reason to ask for every item again:
+   a row that comes with the average as it was costs the rows that changed, and a
+   row that is measured and changes the average makes all of them be asked
+   again, and the result is what a manager that is given the final rows has. */
+EFL_START_TEST(test_efl_ui_position_manager_list_estimate_stable)
+{
+   Efl_Ui_Win *win;
+   Efl_Ui_Position_Manager_Entity *manager;
+   const unsigned int rows = 600;
+   unsigned int i;
+
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   _cache_dummy = efl_add(EFL_UI_BUTTON_CLASS, win);
+   _diff_estimates = EINA_TRUE;
+   _diff_cap = 100;
+   _diff_count = rows;
+   memset(_diff_measured, 0, sizeof (_diff_measured));
+   // (all as high as 20: the average is, whichever of them are measured)
+   for (i = 0; i < _diff_count; i += 5)
+     {
+        _diff_measured[i] = 20;
+     }
+   manager = _diff_manager_add(win);
+   _diff_check(win, manager, 0);
+
+   // One more row, nobody measured it: the average is what it was
+   _diff_asked = 0;
+   memmove(_diff_measured + 301, _diff_measured + 300, (_diff_count - 300) * sizeof (unsigned int));
+   _diff_measured[300] = 0;
+   _diff_count++;
+   efl_ui_position_manager_entity_item_added(manager, 300, NULL);
+   ecore_main_loop_iterate();
+   efl_ui_position_manager_entity_position_single_item(manager, 0);
+   ck_assert_uint_lt(_diff_asked, rows / 4);
+   _diff_check(win, manager, 1);
+
+   // One that was measured as the average is still the average
+   _diff_asked = 0;
+   _diff_measured[10] = 20;
+   efl_ui_position_manager_entity_item_size_changed(manager, 11, 11);
+   _diff_measured[11] = 20;
+   efl_ui_position_manager_entity_item_size_changed(manager, 11, 11);
+   ecore_main_loop_iterate();
+   efl_ui_position_manager_entity_position_single_item(manager, 0);
+   ck_assert_uint_lt(_diff_asked, rows / 4);
+   _diff_check(win, manager, 2);
+
+   // One that was measured another: the average is another, and so is every row that has it
+   _diff_asked = 0;
+   _diff_measured[5] = 500;
+   efl_ui_position_manager_entity_item_size_changed(manager, 5, 5);
+   ecore_main_loop_iterate();
+   efl_ui_position_manager_entity_position_single_item(manager, 0);
+   ck_assert_uint_ge(_diff_asked, rows);
+   _diff_check(win, manager, 3);
+
+   // And the same for a measured one that leaves
+   _diff_asked = 0;
+   memmove(_diff_measured + 5, _diff_measured + 6, (_diff_count - 6) * sizeof (unsigned int));
+   _diff_count--;
+   efl_ui_position_manager_entity_item_removed(manager, 5, NULL);
+   ecore_main_loop_iterate();
+   efl_ui_position_manager_entity_position_single_item(manager, 0);
+   ck_assert_uint_ge(_diff_asked, rows);
+   _diff_check(win, manager, 4);
+
+   efl_del(manager);
+   _diff_cap = 7;
 }
 EFL_END_TEST
 
@@ -1619,6 +1696,10 @@ _counting_manager_initializer(Efl_Class *klass)
    return efl_class_functions_set(klass, &ops, NULL);
 }
 
+// (made at each call, and not kept in a static: a class made with efl_class_new
+// is freed with the Eo shutdown, and the tests that are not forked init and shut
+// the library down for each test, so a pointer kept from one test would dangle in
+// the next. It is called once per test, so there is nothing to save.)
 static const Efl_Class *
 _counting_manager_class_get(Eina_Bool grid)
 {
@@ -1640,18 +1721,10 @@ _counting_manager_class_get(Eina_Bool grid)
       NULL,
       NULL
    };
-   static const Efl_Class *list_klass = NULL;
-   static const Efl_Class *grid_klass = NULL;
 
-   if (grid)
-     {
-        if (!grid_klass)
-          grid_klass = efl_class_new(&grid_desc, EFL_UI_POSITION_MANAGER_GRID_CLASS, NULL);
-        return grid_klass;
-     }
-   if (!list_klass)
-     list_klass = efl_class_new(&list_desc, EFL_UI_POSITION_MANAGER_LIST_CLASS, NULL);
-   return list_klass;
+   return efl_class_new(grid ? &grid_desc : &list_desc,
+                        grid ? EFL_UI_POSITION_MANAGER_GRID_CLASS : EFL_UI_POSITION_MANAGER_LIST_CLASS,
+                        NULL);
 }
 
 /* Rows are added one at a time to a view that is showing an Exact_Model, as a
@@ -1992,10 +2065,9 @@ _fetch_counting_class_get(const Efl_Class *parent)
       NULL,
       NULL
    };
-   static const Efl_Class *klass = NULL;
 
-   if (!klass) klass = efl_class_new(&desc, parent, NULL);
-   return klass;
+   // (not kept, see _counting_manager_class_get)
+   return efl_class_new(&desc, parent, NULL);
 }
 
 /* The biggest minimum size of a grid is asked again when an item goes, and is
@@ -2049,6 +2121,148 @@ EFL_START_TEST(test_efl_ui_collection_view_grid_remove_fetches_nothing)
 }
 EFL_END_TEST
 
+/* A list over an Average_Model: the rows nobody measured are as high as the
+   average of those that were. */
+#define AVG_ROWS 300
+
+static unsigned int _avg_row_height = 40;
+
+static void
+_row_height_avg(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Efl_Gfx_Entity *item = ev->info;
+
+   efl_gfx_hint_size_min_set(item, EINA_SIZE2D(0, _avg_row_height));
+}
+
+static Eina_Value
+_avg_rows_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eo **rows = data;
+   unsigned int i, len;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        rows[i] = efl_ref(c);
+     }
+   return v;
+}
+
+/* Every item is where the heights the model has for the rows say, and the rows
+   nobody measured are the average of those that were. */
+static void
+_avg_positions_check(Efl_Ui_Position_Manager_Entity *manager, Efl_Model *sizes, unsigned int n)
+{
+   Eo *rows[AVG_ROWS + 8] = { NULL };
+   unsigned int heights[AVG_ROWS + 8];
+   unsigned int i, sum = 0, seen = 0, average, y = 0;
+   int loops;
+
+   eina_future_then(efl_model_children_slice_get(sizes, 0, n), _avg_rows_then, rows, NULL);
+   for (loops = 0; (loops < 20) && !rows[n - 1]; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_ptr_ne(rows[n - 1], NULL);
+   for (i = 0; i < n; i++)
+     {
+        Eina_Value *v = efl_model_property_get(rows[i], "self.height");
+        unsigned int h = 0;
+
+        heights[i] = 0;
+        if (eina_value_type_get(v) != EINA_VALUE_TYPE_ERROR && eina_value_uint_convert(v, &h))
+          {
+             heights[i] = h;
+             sum += h;
+             seen++;
+          }
+        eina_value_free(v);
+     }
+   average = seen ? sum / seen : 0;
+   for (i = 0; i < n; i++)
+     {
+        Eina_Rect r = efl_ui_position_manager_entity_position_single_item(manager, i);
+        unsigned int expected = heights[i] ? heights[i] : average;
+
+        ck_assert_int_eq(r.y, y);
+        ck_assert_int_eq(r.h, expected);
+        y += expected;
+        efl_unref(rows[i]);
+     }
+}
+
+EFL_START_TEST(test_efl_ui_collection_view_average_model_estimates)
+{
+   Efl_Ui_Win *win;
+   Efl_Model *model, *sizes;
+   Efl_Ui_Factory *fl;
+   Efl_Ui_List_View *lv;
+   Efl_Ui_Position_Manager_Entity *manager;
+   Efl_Model *base;
+   unsigned int count;
+   int i;
+
+   _avg_row_height = 40;
+   win = win_add(NULL, "win", EFL_UI_WIN_TYPE_BASIC);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 300));
+
+   model = _make_model(win);
+   for (i = NUM_ITEMS; i < AVG_ROWS - 1; i++)
+     {
+        efl_model_child_add(model);
+     }
+   base = efl_ui_view_model_get(model);
+   sizes = efl_add(EFL_UI_AVERAGE_MODEL_CLASS, win, efl_ui_view_model_set(efl_added, model));
+   manager = efl_new(_counting_manager_class_get(EINA_FALSE));
+   fl = efl_add(EFL_UI_WIDGET_FACTORY_CLASS, win,
+                efl_ui_widget_factory_item_class_set(efl_added, EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS),
+                efl_event_callback_add(efl_added, EFL_UI_FACTORY_EVENT_ITEM_BUILDING,
+                                       _row_height_avg, NULL));
+   lv = efl_add(EFL_UI_LIST_VIEW_CLASS, win,
+                efl_ui_collection_view_position_manager_set(efl_added, manager),
+                efl_ui_collection_view_factory_set(efl_added, fl),
+                efl_ui_view_model_set(efl_added, sizes));
+   efl_content_set(win, lv);
+   get_me_to_those_events(lv);
+   for (i = 0; i < 50; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   count = efl_model_children_count_get(sizes);
+   ck_assert_uint_eq(count, AVG_ROWS - 1);
+   _avg_positions_check(manager, sizes, count);
+
+   // A row comes at the end, and is measured the same as the others: the average is what it was
+   _counted_rows = 0;
+   efl_model_child_add(base);
+   for (i = 0; i < 20; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   count = efl_model_children_count_get(sizes);
+   ck_assert_uint_eq(count, AVG_ROWS);
+   ck_assert_uint_lt(_counted_rows, AVG_ROWS / 3);
+   _avg_positions_check(manager, sizes, count);
+
+   // The ones that come are higher: the average is another, and every row has it
+   _avg_row_height = 200;
+   _counted_rows = 0;
+   for (i = 0; i < 3; i++)
+     {
+        efl_model_child_add(base);
+     }
+   for (i = 0; i < 20; i++)
+     {
+        ecore_main_loop_iterate();
+     }
+   count = efl_model_children_count_get(sizes);
+   ck_assert_uint_eq(count, AVG_ROWS + 3);
+   ck_assert_uint_ge(_counted_rows, count);
+   _avg_positions_check(manager, sizes, count);
+}
+EFL_END_TEST
+
 void efl_ui_test_collection_view(TCase *tc)
 {
    tcase_add_test(tc, test_efl_ui_collection_view_basic);
@@ -2074,6 +2288,7 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_position_manager_list_cache_shared_size);
    tcase_add_test(tc, test_efl_ui_position_manager_list_partial_fill);
    tcase_add_test(tc, test_efl_ui_position_manager_list_differential);
+   tcase_add_test(tc, test_efl_ui_position_manager_list_estimate_stable);
    tcase_add_test(tc, test_efl_ui_position_manager_grid_groups_follow);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_idle);
    tcase_add_test(tc, test_efl_ui_collection_view_many_single_adds_grid);
@@ -2081,4 +2296,5 @@ void efl_ui_test_collection_view(TCase *tc)
    tcase_add_test(tc, test_efl_ui_position_manager_grid_min_size_goes_down);
    tcase_add_test(tc, test_efl_ui_position_manager_grid_min_size_known_only);
    tcase_add_test(tc, test_efl_ui_collection_view_grid_remove_fetches_nothing);
+   tcase_add_test(tc, test_efl_ui_collection_view_average_model_estimates);
 }

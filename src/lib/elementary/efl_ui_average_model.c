@@ -16,6 +16,7 @@ typedef struct _Efl_Ui_Average_Model_Data Efl_Ui_Average_Model_Data;
 struct _Efl_Ui_Average_Model_Data
 {
    Efl_Ui_Average_Model_Data *parent;
+   Eo *self;
 
    struct {
       unsigned long long width;
@@ -26,6 +27,11 @@ struct _Efl_Ui_Average_Model_Data
 
    // The times the Exact_Model gave up its sizes that this has seen
    unsigned int forgotten;
+
+   // The average of the heights the last time it was asked for or changed, and
+   // the number of times it changed (what a view that estimates with it keeps)
+   unsigned long long average;
+   unsigned int revision;
 
    // What a row was told that has not been added to the totals yet (it is
    // added when the loop gets to it), for the row that leaves before that.
@@ -45,6 +51,19 @@ struct _Efl_Ui_Average_Model_Update
    Eina_Bool dropped : 1;
 };
 
+// What an item is estimated to be, from what was told: not a number of its own,
+// a change of it is what makes the estimates of the others change.
+static Eina_Bool
+_efl_ui_average_model_revise(Efl_Ui_Average_Model_Data *root)
+{
+   unsigned long long average = root->total.hseen ? root->total.height / root->total.hseen : 0;
+
+   if (average == root->average) return EINA_FALSE;
+   root->average = average;
+   root->revision++;
+   return EINA_TRUE;
+}
+
 // Totals of what the Exact_Model says is not kept any more are of no use
 static void
 _efl_ui_average_model_forgotten_check(const Eo *obj, Efl_Ui_Average_Model_Data *root)
@@ -60,6 +79,7 @@ _efl_ui_average_model_forgotten_check(const Eo *obj, Efl_Ui_Average_Model_Data *
         update->dropped = EINA_TRUE;
      }
    memset(&root->total, 0, sizeof (root->total));
+   _efl_ui_average_model_revise(root);
 }
 
 static Eina_Value
@@ -75,6 +95,9 @@ _efl_ui_average_model_update(Eo *obj EINA_UNUSED, void *data, const Eina_Value v
    // (a row that shrinks takes from the total: the difference is signed)
    *(request->total) += (long long) now - (long long) request->previous;
    if (request->seen) *(request->seen) += 1;
+   // What is estimated for the rows nobody measured is another one: nothing else says it
+   if (_efl_ui_average_model_revise(request->root))
+     efl_model_properties_changed(request->root->self, _efl_model_property_totalh);
 
    return v;
 }
@@ -196,10 +219,12 @@ _efl_ui_average_model_child_removed(void *data, const Efl_Event *event)
         ERR("The average of the heights does not hold the row that was removed: "
             "starting it again.");
         memset(&pd->total, 0, sizeof (pd->total));
+        _efl_ui_average_model_revise(pd);
         return;
      }
    pd->total.height -= height;
    if (seen) pd->total.hseen--;
+   _efl_ui_average_model_revise(pd);
 }
 
 static Eina_Future *
@@ -278,6 +303,7 @@ _efl_ui_average_model_efl_object_constructor(Eo *obj, Efl_Ui_Average_Model_Data 
 {
    Eo *parent = efl_parent_get(obj);
 
+   pd->self = obj;
    if (parent && efl_isa(parent, EFL_UI_AVERAGE_MODEL_CLASS))
      pd->parent = efl_data_scope_get(efl_parent_get(obj), EFL_UI_AVERAGE_MODEL_CLASS);
 
@@ -289,6 +315,26 @@ _efl_ui_average_model_efl_object_constructor(Eo *obj, Efl_Ui_Average_Model_Data 
                                      EFL_CALLBACK_PRIORITY_BEFORE,
                                      _efl_ui_average_model_child_removed, pd);
    return obj;
+}
+
+/* What a view that estimates the rows nobody measured of an Average_Model gives
+   them: true if it is one (the rows nobody measured are then an estimate), with
+   the height of the average of those that were if any was (known), and a number
+   that is another every time that height changes. */
+Eina_Bool
+_efl_ui_average_model_estimate_get(const Efl_Model *exact, unsigned int *height,
+                                   Eina_Bool *known, unsigned int *revision)
+{
+   Efl_Ui_Average_Model_Data *pd;
+
+   if (!efl_isa(exact, EFL_UI_AVERAGE_MODEL_CLASS)) return EINA_FALSE;
+   pd = efl_data_scope_get(exact, EFL_UI_AVERAGE_MODEL_CLASS);
+   if (!pd || pd->parent) return EINA_FALSE;
+   _efl_ui_average_model_forgotten_check(exact, pd);
+   *revision = pd->revision;
+   *known = !!pd->total.hseen;
+   *height = pd->average;
+   return EINA_TRUE;
 }
 
 #include "efl_ui_average_model.eo.c"

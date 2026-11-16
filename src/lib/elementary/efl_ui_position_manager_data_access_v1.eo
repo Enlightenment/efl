@@ -38,7 +38,12 @@ struct @beta Efl.Ui.Position_Manager.Size_Batch_Result {
 
                        A position manager that was given such a size cannot know of
                        the items it was not told about when it is told that some
-                       others changed, and asks for all of them again.]]
+                       others changed, unless the estimate is still the same one: it
+                       asks for all of them again if @.estimate_version is not.]]
+   estimate_version : uint; [[A number that is another one every time the estimates the provider gives
+                              change (that of the average of the measured items, say, and not for
+                                      each item that is measured). Only the sameness of two of them is
+                              of use. It is 0 for a provider that never estimates.]]
 }
 
 struct @beta Efl.Ui.Position_Manager.Size_Call_Config {

@@ -668,6 +668,10 @@ Eina_Bool            _efl_ui_exact_model_row_size_get(Efl_Model *exact,
 Eina_Bool            _efl_ui_exact_model_removed_height_get(const Efl_Model *exact,
                                                             unsigned int *height);
 unsigned int         _efl_ui_exact_model_forgotten_get(const Efl_Model *exact);
+Eina_Bool            _efl_ui_average_model_estimate_get(const Efl_Model *exact,
+                                                        unsigned int *height,
+                                                        Eina_Bool *known,
+                                                        unsigned int *revision);
 Eina_Bool            _elm_web_init(const char *engine);
 
 Eo                   *_elm_atspi_bridge_get(void);

@@ -38,10 +38,14 @@ typedef struct {
    unsigned int dirty_hi;
    int average_item_size;
    int maximum_min_size;
+   // The version of what the provider estimated when the cache was built
+   unsigned int estimate_version;
    Eina_Bool dirty : 1;
    // Some of what the cache holds is an estimate of the provider: no change is
    // known to leave the rest of it as it is
    Eina_Bool estimated : 1;
+   // A change was told since, and it is not known yet if what is estimated is the same
+   Eina_Bool estimate_check : 1;
 } Efl_Ui_Position_Manager_List_Data;
 
 /*
@@ -61,6 +65,7 @@ cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    pd->cache_size = 0;
    pd->dirty = EINA_FALSE;
    pd->estimated = EINA_FALSE;
+   pd->estimate_check = EINA_FALSE;
 }
 
 static void _cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd);
@@ -77,7 +82,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    if (pd->size_cache)
      {
         // What changed since is asked for now, all at once
-        if ((pd->dirty) || (pd->size != pd->cache_size))
+        if ((pd->dirty) || (pd->size != pd->cache_size) || (pd->estimate_check))
           {
              _cache_changes_apply(obj, pd);
           }
@@ -96,6 +101,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    pd->size_cache[0] = 0;
    pd->maximum_min_size = 0;
    pd->estimated = EINA_FALSE;
+   pd->estimate_check = EINA_FALSE;
 
    for (i = 0; i < pd->size; ++i)
      {
@@ -111,6 +117,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
              filled = MIN(size_result.filled_items, len);
              batch_start = i;
              if (size_result.estimated) pd->estimated = EINA_TRUE;
+             pd->estimate_version = size_result.estimate_version;
              if (!filled)
                {
                   // Not a cache of what is not known
@@ -157,8 +164,11 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
  * What is not known about the other items is whether they are the same, if
  * the answer of the provider is something that changes under them. A provider
  * that gives an estimate (the average of what was measured, say) says so with
- * the result of the size callback, and nothing is then assumed of the items
- * that were not told of: any change drops the cache for a full build.
+ * the result of the size callback, and gives a version of it that is another
+ * when the estimate is. What the cache has of the items that were not told of
+ * is then as good as the version is the same, which is asked again after any
+ * change (once, for all that came together), and the cache is built again when
+ * it is not.
  *
  * For one that does not say so but whose answer changes still (the size of the
  * view before anything was measured, which a shared size replaces when the
@@ -174,7 +184,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
  */
 static Eina_Bool
 _cache_range_ask(Efl_Ui_Position_Manager_List_Data *pd, unsigned int start, unsigned int end,
-                 int *steps, int *max_min, Eina_Bool *estimated)
+                 int *steps, int *max_min, Eina_Bool *estimated, unsigned int *version)
 {
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[100];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
@@ -193,6 +203,7 @@ _cache_range_ask(Efl_Ui_Position_Manager_List_Data *pd, unsigned int start, unsi
              filled = MIN(size_result.filled_items, 100);
              batch_start = i;
              if (size_result.estimated) *estimated = EINA_TRUE;
+             *version = size_result.estimate_version;
              if (filled == 0) return EINA_FALSE;
           }
         size = size_buffer[i - batch_start].size;
@@ -217,10 +228,16 @@ static Eina_Bool
 _cache_probe(Efl_Ui_Position_Manager_List_Data *pd, unsigned int item)
 {
    int step = 0, max_min = 0;
+   unsigned int version = 0;
    Eina_Bool estimated = EINA_FALSE;
 
    if (item >= pd->cache_size) return EINA_TRUE;
-   if (!_cache_range_ask(pd, item, item + 1, &step, &max_min, &estimated)) return EINA_FALSE;
+   if (!_cache_range_ask(pd, item, item + 1, &step, &max_min, &estimated, &version))
+     {
+        return EINA_FALSE;
+     }
+   // (the cache is not as it was if what is estimated is not, whatever this item is)
+   if ((pd->estimated) && (version != pd->estimate_version)) return EINA_FALSE;
    return (pd->size_cache[item + 1] - pd->size_cache[item]) == step;
 }
 
@@ -277,11 +294,24 @@ _cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
    int *cache, *steps;
    int max_min = pd->maximum_min_size;
    int old_end, delta;
+   unsigned int version = pd->estimate_version;
    Eina_Bool estimated = EINA_FALSE;
 
    if (pd->size < pd->cache_size) goto full;
-   // Any change may have changed what the provider estimates for the items it was not told of
-   if (pd->estimated) goto full;
+   // Any change may have changed what the provider estimates for the items it was not told of:
+   // if it did, those are asked for again, which is the cache built again
+   if (pd->estimated && pd->estimate_check)
+     {
+        int step = 0, none = 0;
+        Eina_Bool ignored = EINA_FALSE;
+
+        pd->estimate_check = EINA_FALSE;
+        if (pd->cache_size &&
+            (!_cache_range_ask(pd, 0, 1, &step, &none, &ignored, &version) ||
+             version != pd->estimate_version))
+          goto full;
+     }
+   pd->estimate_check = EINA_FALSE;
 
    if (pd->dirty)
      {
@@ -292,7 +322,7 @@ _cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
           {
              steps = malloc((to - from) * sizeof (int));
              if (!steps) goto full;
-             if (!_cache_range_ask(pd, from, to, steps, &max_min, &estimated))
+             if (!_cache_range_ask(pd, from, to, steps, &max_min, &estimated, &version))
                {
                   free(steps);
                   goto full;
@@ -323,7 +353,7 @@ _cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
      {
         steps = malloc((to - from) * sizeof (int));
         if (!steps) goto full;
-        if (!_cache_range_ask(pd, from, to, steps, &max_min, &estimated))
+        if (!_cache_range_ask(pd, from, to, steps, &max_min, &estimated, &version))
           {
              free(steps);
              goto full;
@@ -345,10 +375,13 @@ _cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
         new_hi = to - 1;
      }
 
+   // What was asked is told with the estimate the others have, or they are not what they were
+   if ((pd->estimated) && (version != pd->estimate_version)) goto full;
    pd->maximum_min_size = max_min;
-   if (estimated)
+   if (estimated && !pd->estimated)
      {
         pd->estimated = EINA_TRUE;
+        pd->estimate_version = version;
      }
    _cache_checked(obj, pd, dirty_lo, dirty_hi, new_lo, new_hi);
    return;
@@ -365,12 +398,8 @@ _cache_item_added(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, unsigned int i
 
    // Not built: the first build will have the item
    if (!pd->size_cache) return;
-   // What is estimated for the others is not the same with one more
-   if (pd->estimated)
-     {
-        cache_invalidate(obj, pd);
-        return;
-     }
+   // What is estimated for the others may not be the same with one more
+   if (pd->estimated) pd->estimate_check = EINA_TRUE;
    // Past what the cache has: asked for with the others that came, when it is needed
    if (idx >= pd->cache_size) return;
 
@@ -411,12 +440,8 @@ _cache_item_removed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, unsigned int
    unsigned int i;
 
    if (!cache) return;
-   // What is estimated for the others is not the same with one less
-   if (pd->estimated)
-     {
-        cache_invalidate(obj, pd);
-        return;
-     }
+   // What is estimated for the others may not be the same with one less
+   if (pd->estimated) pd->estimate_check = EINA_TRUE;
    // One of those not asked for yet
    if (idx >= pd->cache_size)
      {
@@ -459,12 +484,13 @@ _cache_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd,
                          unsigned int start, unsigned int end)
 {
    if (!pd->size_cache) return;
-   // Whatever changed, what is estimated for the others did too
-   if (start > end || pd->estimated)
+   if (start > end)
      {
         cache_invalidate(obj, pd);
         return;
      }
+   // Whatever changed, what is estimated for the others may have too
+   if (pd->estimated) pd->estimate_check = EINA_TRUE;
    // The items not asked for yet will be, as they are then
    if (start >= pd->cache_size) return;
    _cache_dirty(pd, start, MIN(end, pd->cache_size - 1));

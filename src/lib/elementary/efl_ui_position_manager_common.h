@@ -51,7 +51,7 @@ _batch_request_size(Api_Callbacks cb , int start_id, int end_id, int len, Eina_B
 
 // What is already known of the sizes only: nothing is fetched to answer, and an
 // item that is not known is 0x0
-static Efl_Ui_Position_Manager_Size_Batch_Result
+static EINA_UNUSED Efl_Ui_Position_Manager_Size_Batch_Result
 _batch_request_size_known(Api_Callbacks cb , int start_id, int end_id, int len, void *data)
 {
    return _batch_request_size_config(cb, start_id, end_id, len, EINA_TRUE, EINA_TRUE, data);

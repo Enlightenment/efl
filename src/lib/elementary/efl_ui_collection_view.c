@@ -888,7 +888,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                   Efl_Ui_Collection_View_Data *pd, Efl_Model *exact,
                   unsigned int search_index,
                   Efl_Ui_Position_Manager_Size_Batch_Entity *target,
-                  Eina_Size2D item_base)
+                  Eina_Size2D item_base, Eina_Bool *based)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
    Efl_Model *model = NULL;
@@ -925,6 +925,8 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    // If we do not know the size
    if (!ITEM_SIZE_FROM_MODEL(model, item_size))
      {
+        // (the row has the size that stands in for the ones nobody knows)
+        *based = EINA_TRUE;
         if (lookup->item.entity)
           {
              ERR("Got a model '%s' and an item '%s', but no size. Recalculating.",
@@ -951,6 +953,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
+   *based = EINA_TRUE;
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
    target->size = item_size;
@@ -1182,6 +1185,8 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    Eina_Size2D item_base = {0};
    unsigned int limit;
    unsigned int idx = 0;
+   unsigned int average = 0, revision = 0;
+   Eina_Bool based = EINA_FALSE, averaged = EINA_FALSE, known = EINA_FALSE;
 
    // get the approximate value from the tree node
    parent = pd->model;
@@ -1227,6 +1232,17 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
         item_base = pd->size_stand_in;
      }
 
+   /* The rows nobody measured of an Average_Model are as high as the average of
+      the ones that were. That changes with what is measured, which is said
+      to the position manager: what it has of the other rows is then not what
+      they are now. */
+   if (exact && _efl_ui_average_model_estimate_get(exact, &average, &known, &revision))
+     {
+        // (a row nobody measured has the size of the view until there is an average)
+        if (known) item_base.h = average;
+        averaged = EINA_TRUE;
+     }
+
    // Look in the temporary cache now for the beginning of the buffer
 #ifdef VIEWPORT_ENABLE
    if (pd->viewport[0] && ((unsigned int)(conf.range.start_id + idx) < pd->viewport[0]->offset))
@@ -1235,7 +1251,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
           {
              unsigned int search_index = conf.range.start_id + idx;
              requests = _cache_size_fetch(requests, &request, pd, exact,
-                                          search_index, &sizes[idx], item_base);
+                                          search_index, &sizes[idx], item_base, &based);
              idx++;
           }
      }
@@ -1307,7 +1323,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
      {
         unsigned int search_index = conf.range.start_id + idx;
         requests = _cache_size_fetch(requests, &request, pd, exact,
-                                     search_index, &sizes[idx], item_base);
+                                     search_index, &sizes[idx], item_base, &based);
         idx++;
      }
 #endif
@@ -1348,7 +1364,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
           {
              unsigned int search_index = conf.range.start_id + idx;
              requests = _cache_size_fetch(requests, &request, pd, exact,
-                                          search_index, &sizes[idx], item_base);
+                                          search_index, &sizes[idx], item_base, &based);
              idx++;
           }
 
@@ -1361,6 +1377,8 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
 
    // Get the amount of filled item
    result.filled_items = limit;
+   result.estimated = averaged && based;
+   result.estimate_version = revision;
 
    return result;
 }
@@ -2150,11 +2168,33 @@ _efl_model_count_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_efl_model_properties_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_efl_model_properties_changed(void *data, const Efl_Event *event)
 {
+   Efl_Model_Property_Event *ev = event->info;
+   Efl_Model *exact;
+   Eina_Array_Iterator it;
+   const char *property;
+   unsigned int i;
+   MY_DATA_GET(data, pd);
+
    // We could here watch if the global base size item change and notify of a global change
    // But I can not find a proper way to do it for the object that are not visible, which
    // is kind of the point...
+
+   /* What is estimated for the rows nobody measured is what the Average_Model
+      says its total is made of, and it said that it changed: the position manager is
+      told that some size may have, to ask if what it keeps of the other rows is
+      still what they are. */
+   if (!pd->manager || !ev || !ev->changed_properties) return;
+   exact = _efl_ui_exact_model_find(pd->model);
+   if (!exact || !efl_isa(exact, EFL_UI_AVERAGE_MODEL_CLASS)) return;
+   EINA_ARRAY_ITER_NEXT(ev->changed_properties, i, property, it)
+     {
+        if (!eina_streq(property, _efl_model_property_totalh)) continue;
+        if (efl_model_children_count_get(pd->model))
+          efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, 0);
+        return;
+     }
 }
 
 static void
