@@ -3,6 +3,7 @@
 #endif
 
 
+#include <limits.h>
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_widget.h"
@@ -31,8 +32,13 @@ typedef struct {
    Efl_Ui_Layout_Orientation dir;
 
    unsigned int size;
+   unsigned int cache_size;
+   // Items of the cache that are to be asked for again (dirty_lo <= dirty_hi), once it is needed
+   unsigned int dirty_lo;
+   unsigned int dirty_hi;
    int average_item_size;
    int maximum_min_size;
+   Eina_Bool dirty : 1;
 } Efl_Ui_Position_Manager_List_Data;
 
 /*
@@ -49,7 +55,11 @@ cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    if (pd->size_cache)
      free(pd->size_cache);
    pd->size_cache = NULL;
+   pd->cache_size = 0;
+   pd->dirty = EINA_FALSE;
 }
+
+static void _cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd);
 
 static void
 cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
@@ -59,7 +69,15 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
    Efl_Ui_Position_Manager_Size_Batch_Result size_result;
 
-   if (pd->size_cache) return;
+   if (pd->size_cache)
+     {
+        // What changed since is asked for now, all at once
+        if ((pd->dirty) || (pd->size != pd->cache_size))
+          {
+             _cache_changes_apply(obj, pd);
+          }
+        if (pd->size_cache) return;
+     }
 
    if (pd->size == 0)
      {
@@ -101,9 +119,309 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         /* no point iterating further if size calc can't be done yet */
         //if ((!i) && (!pd->maximum_min_size)) break;
      }
+   pd->cache_size = pd->size;
    pd->average_item_size = pd->size_cache[pd->size]/pd->size;
    if ((!pd->average_item_size) && (!pd->maximum_min_size))
      cache_invalidate(obj, pd);
+}
+
+/*
+ * A change to a few items does not make the rest of the cache wrong, only
+ * shifted: the sum of every item after the change moves by what the change
+ * added. Asking again for all of the items to learn that is what made a list
+ * that grows by one item at a time ask for every item it had at each addition.
+ *
+ * What changed is not asked for at once but when the cache is next needed (the
+ * job that follows a change), everything that came in the meantime together:
+ * asking a provider about an item it has not got yet can be a request for that
+ * item, and a request for each of a thousand items added in a row is not the
+ * same as a request for a thousand items, and what a provider says in the
+ * middle of a change is not what it says once the change is done.
+ *
+ * What is not known about the other items is whether they are the same, if
+ * the answer of the provider is something that changes under them (the average
+ * of what was measured, the size of the view before anything was: measuring
+ * the last of three items makes the other two the size it has). So the first
+ * and the last item the cache had, which are asked again if they were not
+ * among those just asked, must be the size the cache has, or the incremental
+ * update is given up for a full one.
+ *
+ * The maximum of the minimum size is only ever raised by these updates: an
+ * item that leaves does not tell its own, and it is a bound that stays
+ * until the next full build.
+ */
+static Eina_Bool
+_cache_range_ask(Efl_Ui_Position_Manager_List_Data *pd, unsigned int start, unsigned int end,
+                 int *steps, int *max_min)
+{
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[100];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   unsigned int i;
+
+   for (i = start; i < end; i++)
+     {
+        unsigned int buffer_id = (i - start) % 100;
+        Eina_Size2D size;
+        int min, step;
+
+        if (buffer_id == 0)
+          {
+             size_result = _batch_request_size(pd->callbacks, i, end, MIN(100, end - i),
+                                               EINA_TRUE, size_buffer);
+             if (size_result.filled_items == 0) return EINA_FALSE;
+          }
+        size = size_buffer[buffer_id].size;
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          {
+             step = size.h;
+             min = size.w;
+          }
+        else
+          {
+             step = size.w;
+             min = size.h;
+          }
+        steps[i - start] = step;
+        *max_min = MAX(*max_min, min);
+     }
+   return EINA_TRUE;
+}
+
+// The item of the cache is of the size the cache has for it.
+static Eina_Bool
+_cache_probe(Efl_Ui_Position_Manager_List_Data *pd, unsigned int item)
+{
+   int step = 0, max_min = 0;
+
+   if (item >= pd->cache_size) return EINA_TRUE;
+   if (!_cache_range_ask(pd, item, item + 1, &step, &max_min)) return EINA_FALSE;
+   return (pd->size_cache[item + 1] - pd->size_cache[item]) == step;
+}
+
+// What the cache holds is checked after it was changed, on the first and the
+// last of its items, if they are not among those that were just asked.
+static void
+_cache_checked(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd,
+               unsigned int lo1, unsigned int hi1, unsigned int lo2, unsigned int hi2)
+{
+   unsigned int probes[2];
+   unsigned int i;
+
+   if (!pd->cache_size) goto full;
+   pd->average_item_size = pd->size_cache[pd->cache_size] / pd->cache_size;
+   if (!pd->average_item_size && !pd->maximum_min_size) goto full;
+
+   probes[0] = 0;
+   probes[1] = pd->cache_size - 1;
+   for (i = 0; i < 2; i++)
+     {
+        if (((probes[i] >= lo1) && (probes[i] <= hi1)) ||
+            ((probes[i] >= lo2) && (probes[i] <= hi2)) ||
+            (i && (probes[0] == probes[1])))
+          continue;
+        if (!_cache_probe(pd, probes[i])) goto full;
+     }
+   return;
+
+ full:
+   cache_invalidate(obj, pd);
+}
+
+static void
+_cache_dirty(Efl_Ui_Position_Manager_List_Data *pd, unsigned int start, unsigned int end)
+{
+   if (!pd->dirty)
+     {
+        pd->dirty_lo = start;
+        pd->dirty_hi = end;
+        pd->dirty = EINA_TRUE;
+        return;
+     }
+   pd->dirty_lo = MIN(pd->dirty_lo, start);
+   pd->dirty_hi = MAX(pd->dirty_hi, end);
+}
+
+// The items that changed are asked for, then those appended
+static void
+_cache_changes_apply(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
+{
+   unsigned int from, to, i;
+   // What is asked here (nothing, when the low one is above the high one)
+   unsigned int dirty_lo = 1, dirty_hi = 0, new_lo = 1, new_hi = 0;
+   int *cache, *steps;
+   int max_min = pd->maximum_min_size;
+   int old_end, delta;
+
+   if (pd->size < pd->cache_size) goto full;
+
+   if (pd->dirty)
+     {
+        from = pd->dirty_lo;
+        to = MIN(pd->dirty_hi + 1, pd->cache_size);
+        pd->dirty = EINA_FALSE;
+        if (from < to)
+          {
+             steps = malloc((to - from) * sizeof (int));
+             if (!steps) goto full;
+             if (!_cache_range_ask(pd, from, to, steps, &max_min))
+               {
+                  free(steps);
+                  goto full;
+               }
+             dirty_lo = from;
+             dirty_hi = to - 1;
+             old_end = pd->size_cache[to];
+             for (i = from; i < to; i++)
+               {
+                  pd->size_cache[i + 1] = pd->size_cache[i] + steps[i - from];
+               }
+             free(steps);
+             // What is after the range moves by what the range gained
+             delta = pd->size_cache[to] - old_end;
+             if (delta)
+               {
+                  for (i = to + 1; i <= pd->cache_size; i++)
+                    {
+                       pd->size_cache[i] += delta;
+                    }
+               }
+          }
+     }
+
+   from = pd->cache_size;
+   to = pd->size;
+   if (to > from)
+     {
+        steps = malloc((to - from) * sizeof (int));
+        if (!steps) goto full;
+        if (!_cache_range_ask(pd, from, to, steps, &max_min))
+          {
+             free(steps);
+             goto full;
+          }
+        cache = realloc(pd->size_cache, (to + 1) * sizeof (int));
+        if (!cache)
+          {
+             free(steps);
+             goto full;
+          }
+        pd->size_cache = cache;
+        for (i = from; i < to; i++)
+          {
+             cache[i + 1] = cache[i] + steps[i - from];
+          }
+        free(steps);
+        pd->cache_size = to;
+        new_lo = from;
+        new_hi = to - 1;
+     }
+
+   pd->maximum_min_size = max_min;
+   _cache_checked(obj, pd, dirty_lo, dirty_hi, new_lo, new_hi);
+   return;
+
+ full:
+   cache_invalidate(obj, pd);
+}
+
+// What is after the items that were asked for moves with them
+static void
+_cache_item_added(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, unsigned int idx)
+{
+   int *cache;
+
+   // Not built: the first build will have the item
+   if (!pd->size_cache) return;
+   // Past what the cache has: asked for with the others that came, when it is needed
+   if (idx >= pd->cache_size) return;
+
+   cache = realloc(pd->size_cache, (pd->cache_size + 2) * sizeof (int));
+   if (!cache)
+     {
+        cache_invalidate(obj, pd);
+        return;
+     }
+   pd->size_cache = cache;
+
+   // The entries up to idx are where they were, those after are one further.
+   // The item is of no size until it is asked for.
+   memmove(cache + idx + 2, cache + idx + 1, (pd->cache_size - idx) * sizeof (int));
+   cache[idx + 1] = cache[idx];
+   pd->cache_size++;
+   if (pd->dirty)
+     {
+        if (idx <= pd->dirty_lo)
+          {
+             pd->dirty_lo++;
+             pd->dirty_hi++;
+          }
+        else if (idx <= pd->dirty_hi)
+          {
+             pd->dirty_hi++;
+          }
+     }
+   _cache_dirty(pd, idx, idx);
+}
+
+// (pd->size is what is left)
+static void
+_cache_item_removed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, unsigned int idx)
+{
+   int *cache = pd->size_cache;
+   int step;
+   unsigned int i;
+
+   if (!cache) return;
+   // One of those not asked for yet
+   if (idx >= pd->cache_size)
+     {
+        if (pd->size < pd->cache_size) cache_invalidate(obj, pd);
+        return;
+     }
+
+   step = cache[idx + 1] - cache[idx];
+   memmove(cache + idx + 1, cache + idx + 2, (pd->cache_size - 1 - idx) * sizeof (int));
+   pd->cache_size--;
+   for (i = idx + 1; i <= pd->cache_size; i++)
+     {
+        cache[i] -= step;
+     }
+   if (pd->dirty)
+     {
+        if (idx < pd->dirty_lo)
+          {
+             pd->dirty_lo--;
+             pd->dirty_hi--;
+          }
+        else if (idx <= pd->dirty_hi)
+          {
+             if (pd->dirty_lo == pd->dirty_hi)
+               {
+                  pd->dirty = EINA_FALSE;
+               }
+             else
+               {
+                  pd->dirty_hi--;
+               }
+          }
+     }
+   if (!pd->cache_size) cache_invalidate(obj, pd);
+}
+
+// The items from start to end (included) have another size now.
+static void
+_cache_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd,
+                         unsigned int start, unsigned int end)
+{
+   if (!pd->size_cache) return;
+   if (start > end)
+     {
+        cache_invalidate(obj, pd);
+        return;
+     }
+   // The items not asked for yet will be, as they are then
+   if (start >= pd->cache_size) return;
+   _cache_dirty(pd, start, MIN(end, pd->cache_size - 1));
 }
 
 static int
@@ -408,7 +726,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_scroll_position_set
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int added_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int added_index, Efl_Gfx_Entity *subobj)
 {
    if (pd->size == 0)
      {
@@ -420,19 +738,19 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj,
      {
         efl_gfx_entity_visible_set(subobj, EINA_FALSE);
      }
-   cache_invalidate(obj, pd);
+   _cache_item_added(obj, pd, added_index);
    schedule_recalc_absolut_size(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_removed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int removed_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_removed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int removed_index, Efl_Gfx_Entity *subobj)
 {
    pd->size --;
    if (subobj)
      {
         efl_gfx_entity_visible_set(subobj, EINA_TRUE);
      }
-   cache_invalidate(obj, pd);
+   _cache_item_removed(obj, pd, removed_index);
    schedule_recalc_absolut_size(obj, pd);
 }
 
@@ -486,9 +804,9 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int start_id EINA_UNUSED, int end_id EINA_UNUSED)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int start_id, int end_id)
 {
-   cache_invalidate(obj, pd);
+   _cache_item_size_changed(obj, pd, start_id, end_id);
    schedule_recalc_absolut_size(obj, pd);
 }
 
