@@ -682,7 +682,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
     {
        if (eina_streq(property, _efl_model_property_selfw))
          {
-            unsigned int index, size;
+            unsigned int index, size, old_value;
             unsigned char found;
 
             index = efl_composite_model_index_get(obj);
@@ -692,12 +692,36 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             found = _efl_ui_exact_model_slot_find(pd->parent, index, EINA_TRUE, EINA_FALSE);
             if (!eina_value_uint_convert(value, &size) || (size & EFL_UI_EXACT_MODEL_MEASURED))
               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+            old_value = pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT];
             pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT] =
               size | EFL_UI_EXACT_MODEL_MEASURED;
             pd->parent->slot[found].dirty.width = EINA_TRUE;
             // We succeeded so let's update the max total size width (As we only handle vertical list case at the moment)
             if (pd->parent->total_size.width < size)
               pd->parent->total_size.width = size;
+            // The widest row that gets narrower: the total is looked for again, as when it leaves
+            // (the sizes are in the blocks for that, and it is only done for that row)
+            else if ((old_value & EFL_UI_EXACT_MODEL_MEASURED) &&
+                     ((old_value & ~EFL_UI_EXACT_MODEL_MEASURED) >= pd->parent->total_size.width) &&
+                     (size < pd->parent->total_size.width))
+              {
+                 unsigned char i;
+                 Eina_Bool ok = EINA_TRUE;
+
+                 // Every slot that was written to is stored first, as _shift does: the widths
+                 // that are only in a slot are not in the blocks that are scanned
+                 // (a slot that could not be stored forgets everything, the total with it)
+                 for (i = 0; ok && (i < EINA_C_ARRAY_LENGTH(pd->parent->slot)); i++)
+                   {
+                      ok = _efl_ui_exact_model_slot_commit(pd->parent, i);
+                   }
+                 if (ok)
+                   {
+                      pd->parent->total_size.width =
+                        _efl_ui_exact_model_width_max(pd->parent->compressed.width,
+                                                      pd->parent->total_size.width);
+                   }
+              }
             return efl_loop_future_resolved(obj, eina_value_uint_init(size));
          }
        if (eina_streq(property, _efl_model_property_selfh))

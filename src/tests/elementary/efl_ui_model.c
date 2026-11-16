@@ -1253,6 +1253,23 @@ EFL_START_TEST(efl_ui_exact_model_remove_widest)
 }
 EFL_END_TEST
 
+// The widest row gets narrower while another widest one is only in a slot
+// that was not stored: the total is the width of that one.
+EFL_START_TEST(efl_ui_exact_model_narrow_widest_other_slot)
+{
+   Shift_Rows *sr = _shift_new(1100);
+
+   _uint_set(sr->cur[0], "self.width", 300);
+   _uint_set(sr->cur[1050], "self.width", 300);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 300);
+   _uint_set(sr->cur[0], "self.width", 100);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 300);
+   _uint_set(sr->cur[1050], "self.width", 50);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 100);
+   _shift_free(sr);
+}
+EFL_END_TEST
+
 // What cannot be stored when the sizes move is lost, and no row is then
 // said to have a size that is not its own: every size is forgotten, and the
 // totals with them.
@@ -1708,6 +1725,34 @@ EFL_START_TEST(efl_ui_average_model_remove_after_stopped)
 }
 EFL_END_TEST
 
+// The widest row gets narrower: the total width is the widest that is left, as when it
+// is removed.
+EFL_START_TEST(efl_ui_exact_model_narrower_widest)
+{
+   Shift_Rows *sr = _shift_new(2100);
+
+   _uint_set(sr->cur[3], "self.width", 60);
+   _uint_set(sr->cur[1500], "self.width", 100);
+   _uint_set(sr->cur[2000], "self.width", 100);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 100);
+   // another one is as wide: the total is the same
+   _uint_set(sr->cur[1500], "self.width", 70);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 100);
+   // the last of them
+   _uint_set(sr->cur[2000], "self.width", 20);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 70);
+   // not the widest: nothing to look for
+   _uint_set(sr->cur[3], "self.width", 10);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 70);
+   _uint_set(sr->cur[1500], "self.width", 5);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 20);
+   // and wider again
+   _uint_set(sr->cur[3], "self.width", 90);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 90);
+   _shift_free(sr);
+}
+EFL_END_TEST
+
 void
 efl_ui_model(TCase *tc)
 {
@@ -1739,4 +1784,6 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_average_model_forgotten_in_set);
    tcase_add_test(tc, efl_ui_average_model_remove_nested);
    tcase_add_test(tc, efl_ui_average_model_remove_after_stopped);
+   tcase_add_test(tc, efl_ui_exact_model_narrow_widest_other_slot);
+   tcase_add_test(tc, efl_ui_exact_model_narrower_widest);
 }
