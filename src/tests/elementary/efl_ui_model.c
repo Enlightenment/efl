@@ -659,7 +659,7 @@ EFL_START_TEST(efl_ui_average_model_remove)
    ck_assert(!!model);
    eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
    eina_future_then(efl_model_children_slice_get(base_model, 0, 4), _many_rows_then, base_rows, NULL);
-   for (loops = 0; (loops < 50) && (many->count < 4 || base_rows->count < 4); loops++)
+   for (loops = 0; (loops < 50) && ((many->count < 4) || (base_rows->count < 4)); loops++)
      {
         ecore_main_loop_iterate();
      }
@@ -772,7 +772,7 @@ EFL_START_TEST(efl_ui_average_model_remove_pending)
    ck_assert(!!model);
    eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
    eina_future_then(efl_model_children_slice_get(base_model, 0, 4), _many_rows_then, base_rows, NULL);
-   for (loops = 0; (loops < 50) && (many->count < 4 || base_rows->count < 4); loops++)
+   for (loops = 0; (loops < 50) && ((many->count < 4) || (base_rows->count < 4)); loops++)
      {
         ecore_main_loop_iterate();
      }
@@ -1094,6 +1094,99 @@ EFL_START_TEST(efl_ui_exact_model_remove_widest)
 }
 EFL_END_TEST
 
+// What cannot be stored when the sizes move is lost, and no row is then
+// said to have a size that is not its own: every size is forgotten, and the
+// totals with them.
+EFL_START_TEST(efl_ui_exact_model_shift_store_fails)
+{
+   Shift_Rows *sr = _shift_new(1100);
+   Eo *r;
+
+   _shift_height(sr, 5, 10);
+   _shift_height(sr, 1030, 20);
+   _uint_set(sr->cur[5], "self.width", 7);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 7);
+
+   setenv("EFL_UI_EXACT_MODEL_STORE_FAIL", "1", 1);
+   _shift_remove(sr, 3);
+   unsetenv("EFL_UI_EXACT_MODEL_STORE_FAIL");
+   memset(sr->exp, 0, sr->n * sizeof (unsigned int));
+   _shift_check(sr);
+   ck_assert_uint_eq(_property_uint_expected(sr->model, "total.width"), 0);
+
+   // The model goes on from what it has: what is told now is kept
+   r = sr->cur[1030];
+   _shift_height(sr, 1030, 33);
+   _shift_check(sr);
+   ck_assert_uint_eq(efl_composite_model_index_get(r), 1030);
+   _shift_remove(sr, 3);
+   _shift_check(sr);
+   _shift_free(sr);
+}
+EFL_END_TEST
+
+// The average over what was told is over nothing when the sizes were forgotten.
+EFL_START_TEST(efl_ui_average_model_forgotten)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   Many_Rows *base_rows = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 4; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   eina_future_then(efl_model_children_slice_get(model, 0, 4), _many_rows_then, many, NULL);
+   eina_future_then(efl_model_children_slice_get(base_model, 0, 4), _many_rows_then, base_rows, NULL);
+   for (loops = 0; (loops < 50) && ((many->count < 4) || (base_rows->count < 4)); loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 4);
+
+   for (i = 0; i < 3; i++)
+     {
+        _uint_set(many->rows[i], "self.height", 10 * (i + 1));
+     }
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   // 60 over 3 seen rows, for 4 rows
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 80);
+
+   // The last row leaves, and the sizes cannot be moved
+   setenv("EFL_UI_EXACT_MODEL_STORE_FAIL", "1", 1);
+   efl_model_child_del(base_model, base_rows->rows[3]);
+   unsetenv("EFL_UI_EXACT_MODEL_STORE_FAIL");
+   ck_assert_int_eq(_property_error_expected(many->rows[0], "self.height"), EAGAIN);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 0);
+
+   // What is told after is what the average is over
+   _uint_set(many->rows[0], "self.height", 50);
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 150);
+
+   for (i = 0; i < 4; i++)
+     {
+        efl_unref(many->rows[i]);
+        efl_unref(base_rows->rows[i]);
+     }
+   free(many);
+   free(base_rows);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // Blocks that are all measured: what falls out of the last block as the rows
 // move is a size too, and has a block of its own.
 EFL_START_TEST(efl_ui_exact_model_shift_overflow)
@@ -1173,6 +1266,62 @@ EFL_START_TEST(efl_ui_exact_model_destroyed)
 }
 EFL_END_TEST
 
+// A row is told its height when its block has no slot, and the slot that is
+// given up cannot be stored: every size is forgotten, and the row is the one
+// that is measured after that. The average is over that row alone.
+EFL_START_TEST(efl_ui_average_model_forgotten_in_set)
+{
+   Efl_Model *base_model, *model;
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+   eina_future_then(efl_model_children_slice_get(model, 0, MANY_ROWS), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && many->count < MANY_ROWS; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, MANY_ROWS);
+
+   // The three slots hold a block each, written to
+   for (i = 0; i < 3; i++)
+     {
+        _uint_set(many->rows[i * 1024], "self.height", 10 * (i + 1));
+     }
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 20 * MANY_ROWS);
+
+   setenv("EFL_UI_EXACT_MODEL_STORE_FAIL", "1", 1);
+   _uint_set(many->rows[3072], "self.height", 40);
+   unsetenv("EFL_UI_EXACT_MODEL_STORE_FAIL");
+   for (loops = 0; loops < 8; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(_property_error_expected(many->rows[0], "self.height"), EAGAIN);
+   ck_assert_uint_eq(_property_uint_expected(many->rows[3072], "self.height"), 40);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 40 * MANY_ROWS);
+
+   for (i = 0; i < MANY_ROWS; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   free(many);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_ui_model(TCase *tc)
 {
@@ -1192,6 +1341,9 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_removed_row_write);
    tcase_add_test(tc, efl_ui_exact_model_shift_unmeasured);
    tcase_add_test(tc, efl_ui_exact_model_shift_overflow);
+   tcase_add_test(tc, efl_ui_exact_model_shift_store_fails);
+   tcase_add_test(tc, efl_ui_average_model_forgotten);
    tcase_add_test(tc, efl_ui_exact_model_remove_widest);
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
+   tcase_add_test(tc, efl_ui_average_model_forgotten_in_set);
 }

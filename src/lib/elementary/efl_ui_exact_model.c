@@ -103,6 +103,20 @@ _efl_ui_exact_model_zero_unref(void)
    _zero_block = NULL;
 }
 
+// For the tests: what the compression gives when it cannot is not otherwise to be had.
+// While EFL_UI_EXACT_MODEL_STORE_FAIL is set (to anything), the stores fail, but only
+// when EFL_RUN_IN_TREE is set as well (the marker of a run from the build tree, which
+// an installed program has no reason to have): it is not a switch for a release. It is read
+// where a block is stored (which is once per shift of the rows, or for a slot that is given
+// up, and not per size, and next to a compression that costs far more than the lookup), and
+// not once, so that a test can set it around the one call that has to fail.
+static Eina_Bool
+_efl_ui_exact_model_store_failed(void)
+{
+   return getenv("EFL_RUN_IN_TREE") && getenv("EFL_UI_EXACT_MODEL_STORE_FAIL");
+}
+
+// The list as it is when it could not be stored: the old list.
 static Eina_List *
 _efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed, unsigned int *buffer)
 {
@@ -110,6 +124,8 @@ _efl_ui_exact_model_slot_compress(unsigned int list_index, Eina_List *compressed
    Eina_Binbuf *cbuf;
    Eina_Binbuf *tbuf;
    Eina_List *l = NULL;
+
+   if (_efl_ui_exact_model_store_failed()) return compressed;
 
    z = _zero_block;
    l = eina_list_nth_list(compressed, list_index);
@@ -235,32 +251,41 @@ _efl_ui_exact_model_buffer_expand(unsigned int list_index, unsigned int *buffer,
    return buffer;
 }
 
+static Eina_Bool _efl_ui_exact_model_block_store(Eina_List **compressed, Eina_List *l,
+                                                 unsigned int block, unsigned int *buffer);
+static void _efl_ui_exact_model_forget(Efl_Ui_Exact_Model_Data *root);
+
 // Writes the slot back under the block it holds (not the one that evicts it),
-// when it was written to, and leaves it holding nothing.
-static void
+// when it was written to, and leaves it holding nothing. False if it could not
+// be stored: what the slot held is then lost, and the sizes are all forgotten.
+static Eina_Bool
 _efl_ui_exact_model_slot_commit(Efl_Ui_Exact_Model_Data *root, unsigned char found)
 {
    unsigned int block = root->slot[found].start_offset;
+   Eina_Bool ok = EINA_TRUE;
 
-   if (!root->slot[found].defined) return;
+   if (!root->slot[found].defined) return EINA_TRUE;
 
    // (a slot that was only read has nothing to commit)
    if (root->slot[found].width &&
        root->slot[found].decompressed.width &&
        root->slot[found].dirty.width)
-     root->compressed.width =
-       _efl_ui_exact_model_slot_compress(block, root->compressed.width,
-                                         root->slot[found].width);
-   if (root->slot[found].height &&
+     ok = _efl_ui_exact_model_block_store(&root->compressed.width,
+                                          eina_list_nth_list(root->compressed.width, block),
+                                          block, root->slot[found].width);
+   if (ok &&
+       root->slot[found].height &&
        root->slot[found].decompressed.height &&
        root->slot[found].dirty.height)
-     root->compressed.height =
-       _efl_ui_exact_model_slot_compress(block, root->compressed.height,
-                                         root->slot[found].height);
+     ok = _efl_ui_exact_model_block_store(&root->compressed.height,
+                                          eina_list_nth_list(root->compressed.height, block),
+                                          block, root->slot[found].height);
    root->slot[found].decompressed.width = EINA_FALSE;
    root->slot[found].decompressed.height = EINA_FALSE;
    root->slot[found].dirty.width = EINA_FALSE;
    root->slot[found].dirty.height = EINA_FALSE;
+   if (!ok) _efl_ui_exact_model_forget(root);
+   return ok;
 }
 
 static unsigned char
@@ -299,6 +324,7 @@ _efl_ui_exact_model_slot_find(Efl_Ui_Exact_Model_Data *root, unsigned int index,
                found = lookup;
           }
 
+        // (a failed commit forgets everything, which leaves this slot empty too)
         _efl_ui_exact_model_slot_commit(root, found);
 
         root->slot[found].defined = EINA_TRUE;
@@ -350,6 +376,7 @@ _efl_ui_exact_model_block_store(Eina_List **compressed, Eina_List *l,
         return eina_list_count(*compressed) > count;
      }
 
+   if (_efl_ui_exact_model_store_failed()) return EINA_FALSE;
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer,
                                  EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
    if (!tbuf) return EINA_FALSE;
@@ -520,6 +547,8 @@ _efl_ui_exact_model_width_max(Eina_List *compressed)
 static void
 _efl_ui_exact_model_forget(Efl_Ui_Exact_Model_Data *root)
 {
+   unsigned char i;
+
    ERR("Could not store the sizes of the rows while moving them: they are all forgotten.");
    _efl_ui_exact_model_compressed_free(root->compressed.width);
    _efl_ui_exact_model_compressed_free(root->compressed.height);
@@ -528,6 +557,16 @@ _efl_ui_exact_model_forget(Efl_Ui_Exact_Model_Data *root)
    root->total_size.width = 0;
    root->total_size.height = 0;
    root->forgotten++;
+   // What the slots hold is not what the rows were told any more either
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(root->slot); i++)
+     {
+        root->slot[i].defined = EINA_FALSE;
+        root->slot[i].usage = 0;
+        root->slot[i].decompressed.width = EINA_FALSE;
+        root->slot[i].decompressed.height = EINA_FALSE;
+        root->slot[i].dirty.width = EINA_FALSE;
+        root->slot[i].dirty.height = EINA_FALSE;
+     }
 }
 
 // The sizes follow their rows when one comes or goes. The sizes are kept by
@@ -540,7 +579,12 @@ _efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Ein
    // What is kept expanded in the slots has to be in the list to be moved
    for (i = 0; i < EINA_C_ARRAY_LENGTH(root->slot); i++)
      {
-        _efl_ui_exact_model_slot_commit(root, i);
+        // (a slot that could not be written is lost, and so is everything else)
+        if (!_efl_ui_exact_model_slot_commit(root, i))
+          {
+             root->removed.measured = EINA_FALSE;
+             return;
+          }
         root->slot[i].defined = EINA_FALSE;
         root->slot[i].usage = 0;
      }

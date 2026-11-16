@@ -99,7 +99,7 @@ _efl_ui_average_model_prepare(Eo *obj, Efl_Ui_Average_Model_Data *root,
    Efl_Ui_Average_Model_Update *update;
    Eina_Value *previous;
    Eina_Future *f;
-   unsigned int now;
+   unsigned int now, forgotten;
 
    // What the Exact_Model refuses is not one that will be averaged
    if (!eina_value_uint_convert(value, &now) || (now & EFL_UI_EXACT_MODEL_MEASURED) ||
@@ -112,6 +112,7 @@ _efl_ui_average_model_prepare(Eo *obj, Efl_Ui_Average_Model_Data *root,
    update = calloc(1, sizeof (Efl_Ui_Average_Model_Update));
    if (!update) return efl_loop_future_rejected(obj, ENOMEM);
 
+   forgotten = _efl_ui_exact_model_forgotten_get(efl_parent_get(obj));
    previous = efl_model_property_get(obj, property);
    if (eina_value_type_get(previous) == EINA_VALUE_TYPE_ERROR)
      {
@@ -143,6 +144,15 @@ _efl_ui_average_model_prepare(Eo *obj, Efl_Ui_Average_Model_Data *root,
 
    // We have to make the change after we fetch the old value, otherwise, well, no old value left
    f = efl_model_property_set(efl_super(obj, EFL_UI_AVERAGE_MODEL_CLASS), property, value);
+   // Making room for the size, to read it or to write it, can give up all of them
+   // (a block that cannot be stored): what was told before is not kept, and this row is
+   // the first that is, so that it is added to nothing.
+   if (_efl_ui_exact_model_forgotten_get(efl_parent_get(obj)) != forgotten)
+     {
+        _efl_ui_average_model_forgotten_check(efl_parent_get(obj), root);
+        update->previous = 0;
+        update->seen = seen;
+     }
 
    root->pending = eina_list_append(root->pending, update);
    return efl_future_then(obj, f,
