@@ -270,6 +270,16 @@ _efl_composite_model_child_event(Efl_Composite_Model_Data *pd,
 
    efl_event_callback_call(pd->self, description, &cev);
 
+   // The row that went has no place in the model any more. Its index would
+   // still be the one of the row that is now there, and what is written
+   // under it would be written to that one. (Only after the event, whose
+   // listeners may still ask which row it was.)
+   if ((description == EFL_MODEL_EVENT_CHILD_REMOVED) && (cev.child))
+     {
+        cpd = efl_data_scope_get(cev.child, EFL_COMPOSITE_MODEL_CLASS);
+        if (cpd->set_index) cpd->index = COMPOSITE_GONE;
+     }
+
    // Notify of the index change only after notifying of the removal top avoid overlap
    EINA_ARRAY_ITER_NEXT(&mark, i, cpd, iterator)
       {

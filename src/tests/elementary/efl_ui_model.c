@@ -627,6 +627,92 @@ _many_free(Many_Rows *many, Efl_Model *model, Efl_Generic_Model *base_model)
    efl_unref(base_model);
 }
 
+static Eina_Value
+_gone_set_then(void *data, const Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+{
+   Eina_Error *err = data;
+
+   *err = 0;
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        eina_value_error_get(&v, err);
+     }
+   return v;
+}
+
+// A row that was removed has no place in the model any more: what is told
+// to it is not for the row that is now at the index it had.
+EFL_START_TEST(efl_ui_exact_model_removed_row_write)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Model *model;
+   Efl_Model_Children_Event ev = { 0 };
+   Many_Rows *many = calloc(1, sizeof (Many_Rows));
+   Eina_Value told = eina_value_uint_init(500);
+   Eina_Error err = -1;
+   unsigned int i, loops;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < 10; i++)
+     {
+        efl_model_child_add(base_model);
+     }
+   model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+
+   eina_future_then(efl_model_children_slice_get(model, 0, 10), _many_rows_then, many, NULL);
+   for (loops = 0; (loops < 50) && many->count < 10; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_uint_eq(many->count, 10);
+
+   for (i = 0; i < 10; i++)
+     {
+        _uint_set(many->rows[i], "self.height", 10 + i);
+     }
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 145);
+
+   ev.index = 5;
+   efl_event_callback_call(base_model, EFL_MODEL_EVENT_CHILD_REMOVED, &ev);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 130);
+   ck_assert_uint_eq(efl_composite_model_index_get(many->rows[5]), 0xFFFFFFFF);
+   ck_assert_uint_eq(efl_composite_model_index_get(many->rows[6]), 5);
+
+   // The row that left is told a size
+   eina_future_then(efl_model_property_set(many->rows[5], "self.height", &told),
+                    _gone_set_then, &err, NULL);
+   for (loops = 0; (loops < 8) && err == -1; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(err, EFL_MODEL_ERROR_INCORRECT_VALUE);
+   err = -1;
+   eina_future_then(efl_model_property_set(many->rows[5], "self.width", &told),
+                    _gone_set_then, &err, NULL);
+   for (loops = 0; (loops < 8) && err == -1; loops++)
+     {
+        ecore_main_loop_iterate();
+     }
+   ck_assert_int_eq(err, EFL_MODEL_ERROR_INCORRECT_VALUE);
+
+   // The row that took its place, and the total, are not touched
+   ck_assert_uint_eq(_property_uint_expected(many->rows[6], "self.height"), 16);
+   ck_assert_uint_eq(_property_uint_expected(model, "total.height"), 130);
+   ck_assert_int_eq(_property_error_expected(many->rows[5], "self.height"), EAGAIN);
+
+   for (i = 0; i < 10; i++)
+     {
+        efl_unref(many->rows[i]);
+     }
+   eina_value_flush(&told);
+   free(many);
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 // Exact_Models that held sizes in several blocks are let go of: what they kept
 // compressed (both lists), the buffers of their slots and the block of zeros
 // they fill the gaps with are theirs to free (valgrind sees what is not). The
@@ -679,5 +765,6 @@ efl_ui_model(TCase *tc)
    tcase_add_test(tc, efl_ui_exact_model_test);
    tcase_add_test(tc, efl_ui_exact_model_many_rows);
    tcase_add_test(tc, efl_ui_exact_model_insert_remove);
+   tcase_add_test(tc, efl_ui_exact_model_removed_row_write);
    tcase_add_test(tc, efl_ui_exact_model_destroyed);
 }
