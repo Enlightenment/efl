@@ -32,10 +32,15 @@ struct _Efl_Ui_Exact_Model_Data
    } total_size;
    // What the last row that was removed had been told (for those that average), and
    // how many times the sizes were all forgotten
+   // The event that told of it is what says whose it is, so that one that was
+   // stopped before the last listener, and a removal told from a listener of
+   // another, do not give what is another row's. The one that was being told
+   // when another began is kept (the removals are not nested more than that).
    struct {
+      const void *event;
       unsigned int height;
       Eina_Bool measured : 1;
-   } removed;
+   } removed, outer;
    unsigned int forgotten;
 
    struct {
@@ -581,9 +586,18 @@ _efl_ui_exact_model_forget(Efl_Ui_Exact_Model_Data *root)
 // The sizes follow their rows when one comes or goes. The sizes are kept by
 // index, and the rows after the one that came or went have another one now.
 static void
-_efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Eina_Bool added)
+_efl_ui_exact_model_shift(Efl_Ui_Exact_Model_Data *root, unsigned int index, Eina_Bool added,
+                          const void *event)
 {
    unsigned char i;
+
+   if (!added)
+     {
+        // (whatever the last one told is of no use to this one, and what it was told of is kept)
+        root->outer = root->removed;
+        root->removed.measured = EINA_FALSE;
+        root->removed.event = event;
+     }
 
    // What is kept expanded in the slots has to be in the list to be moved
    for (i = 0; i < EINA_C_ARRAY_LENGTH(root->slot); i++)
@@ -631,7 +645,7 @@ _efl_ui_exact_model_child_added(void *data, const Efl_Event *event)
 {
    const Efl_Model_Children_Event *ev = event->info;
 
-   _efl_ui_exact_model_shift(data, ev->index, EINA_TRUE);
+   _efl_ui_exact_model_shift(data, ev->index, EINA_TRUE, NULL);
 }
 
 static void
@@ -639,15 +653,18 @@ _efl_ui_exact_model_child_removed(void *data, const Efl_Event *event)
 {
    const Efl_Model_Children_Event *ev = event->info;
 
-   _efl_ui_exact_model_shift(data, ev->index, EINA_FALSE);
+   _efl_ui_exact_model_shift(data, ev->index, EINA_FALSE, ev);
 }
 
 static void
-_efl_ui_exact_model_child_removed_done(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_exact_model_child_removed_done(void *data, const Efl_Event *event)
 {
    Efl_Ui_Exact_Model_Data *root = data;
 
-   root->removed.measured = EINA_FALSE;
+   // Told of by every listener: the one that was being told when this began has the rest
+   if (root->removed.event != event->info) return;
+   root->removed = root->outer;
+   memset(&root->outer, 0, sizeof (root->outer));
 }
 
 static Eina_Future *
@@ -803,12 +820,19 @@ _efl_ui_exact_model_find(Efl_Model *model)
    it was never measured. Only meant to be asked when the removal is told, which
    is after the sizes are moved. */
 Eina_Bool
-_efl_ui_exact_model_removed_height_get(const Efl_Model *exact, unsigned int *height)
+_efl_ui_exact_model_removed_height_get(const Efl_Model *exact, const void *event,
+                                       unsigned int *height)
 {
    Efl_Ui_Exact_Model_Data *root = efl_data_scope_get(exact, EFL_UI_EXACT_MODEL_CLASS);
 
-   if (!root || root->parent || !root->removed.measured) return EINA_FALSE;
-   *height = root->removed.height;
+   if (!root || root->parent) return EINA_FALSE;
+   // (what is told of is that of the event, the one that is being told or the one it was in)
+   if (root->removed.event == event && root->removed.measured)
+     *height = root->removed.height;
+   else if (root->outer.event == event && root->outer.measured)
+     *height = root->outer.height;
+   else
+     return EINA_FALSE;
    return EINA_TRUE;
 }
 

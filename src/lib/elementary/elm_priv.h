@@ -661,11 +661,13 @@ struct _Elm_Module
 // storage starts as, and what a slot that was never written expands to) is
 // therefore a row nobody measured, which is not a row of size 0.
 #define EFL_UI_EXACT_MODEL_MEASURED 0x80000000u
+
 Efl_Model           *_efl_ui_exact_model_find(Efl_Model *model);
 Eina_Bool            _efl_ui_exact_model_row_size_get(Efl_Model *exact,
                                                       unsigned int index,
                                                       Eina_Size2D *size);
 Eina_Bool            _efl_ui_exact_model_removed_height_get(const Efl_Model *exact,
+                                                            const void *event,
                                                             unsigned int *height);
 unsigned int         _efl_ui_exact_model_forgotten_get(const Efl_Model *exact);
 Eina_Bool            _efl_ui_average_model_estimate_get(const Efl_Model *exact,

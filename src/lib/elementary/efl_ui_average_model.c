@@ -223,7 +223,7 @@ _efl_ui_average_model_child_removed(void *data, const Efl_Event *event)
         if (update->seen) seen = EINA_FALSE;
         update->dropped = EINA_TRUE;
      }
-   if (!_efl_ui_exact_model_removed_height_get(event->object, &removed)) return;
+   if (!_efl_ui_exact_model_removed_height_get(event->object, ev, &removed)) return;
    height = (long long) removed - pending;
    // What the Exact_Model took out was added here, so there is enough to take out.
    // If there is not, the totals are wrong and are of no use any more.
