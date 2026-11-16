@@ -579,14 +579,20 @@ EFL_START_TEST(efl_test_generic_model_child_added)
 EFL_END_TEST
 
 static Eina_Bool
-_marked_get(Eo *child)
+_marked_named_get(Eo *child, const char *name)
 {
-   Eina_Value *r = efl_model_property_get(child, "marked");
+   Eina_Value *r = efl_model_property_get(child, name);
    Eina_Bool b = EINA_FALSE;
 
    ck_assert(eina_value_bool_convert(r, &b));
    eina_value_free(r);
    return b;
+}
+
+static Eina_Bool
+_marked_get(Eo *child)
+{
+   return _marked_named_get(child, "marked");
 }
 
 static void
@@ -703,6 +709,93 @@ _true_default_check(Eo *model EINA_UNUSED, void *data EINA_UNUSED, const Eina_Va
    return v;
 }
 
+/* Marks across several storage ranges: 5000 children are three ranges of 2048
+ * bits, and the marks sit on both sides of each border. Then a child is
+ * inserted before the first border and another removed after it, and every
+ * mark must still be on its row. Two booleans, one default false and one
+ * default true, so that neither a missing nor a filled bit goes unnoticed. */
+#define MANY 5000
+
+static const unsigned int many_marks[] = { 0, 2047, 2048, 2049, 4500 };
+
+static Eina_Bool
+_many_is_mark(unsigned int id)
+{
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(many_marks); i++)
+     {
+        if (many_marks[i] == id) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_many_set(Eo *child, const char *name, Eina_Bool value)
+{
+   eina_future_cancel(efl_model_property_set(child, name, eina_value_bool_new(value)));
+}
+
+static Eina_Value
+_many_check(Eo *model, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Model_Children_Event ev = { 0 };
+   Eo *base = efl_ui_view_model_get(model);
+   Eo **kids = calloc(MANY, sizeof (Eo *));
+   Eo *row;
+   Eo *added = NULL;
+   unsigned int i, len, id;
+   Eo *c;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, c)
+     {
+        kids[i] = c;
+     }
+   ck_assert_int_eq(len, MANY);
+
+   // "a" starts false and the marks make it true, "b" starts true and they make it false
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(many_marks); i++)
+     {
+        _many_set(kids[many_marks[i]], "a", EINA_TRUE);
+        _many_set(kids[many_marks[i]], "b", EINA_FALSE);
+     }
+
+   // In front of the first border
+   row = efl_add(EFL_GENERIC_MODEL_CLASS, base);
+   ev.index = 100;
+   ev.child = row;
+   efl_event_callback_add(model, EFL_MODEL_EVENT_CHILD_ADDED, _added_child_keep, &added);
+   efl_event_callback_call(base, EFL_MODEL_EVENT_CHILD_ADDED, &ev);
+   efl_event_callback_del(model, EFL_MODEL_EVENT_CHILD_ADDED, _added_child_keep, &added);
+   ck_assert_ptr_ne(added, NULL);
+   ck_assert_int_eq(efl_composite_model_index_get(added), 100);
+   ck_assert(!_marked_named_get(added, "a"));
+   ck_assert(_marked_named_get(added, "b"));
+
+   // After it, on the child that is now at 2050 (it was 2049, which carried a mark)
+   ev.index = 2050;
+   ev.child = NULL;
+   efl_event_callback_call(base, EFL_MODEL_EVENT_CHILD_REMOVED, &ev);
+
+   for (id = 0; id < MANY; id++)
+     {
+        unsigned int index = (id < 100) ? id : (id + 1);
+
+        if (id == 2049) continue; // gone, with its mark
+        if (id > 2049) index--;
+        ck_assert_int_eq(efl_composite_model_index_get(kids[id]), index);
+        ck_assert(_marked_named_get(kids[id], "a") == _many_is_mark(id));
+        ck_assert(_marked_named_get(kids[id], "b") == !_many_is_mark(id));
+     }
+   ck_assert(!_marked_named_get(added, "a"));
+   ck_assert(_marked_named_get(added, "b"));
+
+   efl_unref(added);
+   free(kids);
+   ecore_main_loop_quit();
+   return v;
+}
+
 /* A boolean that is true by default is true for every child sharing a buffer
  * with one that was changed, not only for the first of each byte. */
 EFL_START_TEST(efl_test_boolean_model_true_default)
@@ -732,12 +825,43 @@ EFL_START_TEST(efl_test_boolean_model_true_default)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_test_boolean_model_many)
+{
+   Efl_Generic_Model *base_model;
+   Efl_Boolean_Model *model;
+   Eina_Future *future;
+   int i;
+
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
+   for (i = 0; i < MANY; i++)
+     {
+        ck_assert(!!efl_model_child_add(base_model));
+     }
+
+   model = efl_add_ref(EFL_BOOLEAN_MODEL_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model),
+                       efl_boolean_model_boolean_add(efl_added, "a", EINA_FALSE),
+                       efl_boolean_model_boolean_add(efl_added, "b", EINA_TRUE));
+   ck_assert(!!model);
+
+   future = efl_model_children_slice_get(model, 0, MANY);
+   efl_future_then(model, future, .success_type = EINA_VALUE_TYPE_ARRAY,
+                   .success = _many_check);
+
+   ecore_main_loop_begin();
+
+   efl_unref(model);
+   efl_unref(base_model);
+}
+EFL_END_TEST
+
 void
 efl_test_case_boolean_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_boolean_model);
    tcase_add_test(tc, efl_test_boolean_model_insert);
    tcase_add_test(tc, efl_test_boolean_model_true_default);
+   tcase_add_test(tc, efl_test_boolean_model_many);
    tcase_add_test(tc, efl_test_filter_model);
    tcase_add_test(tc, efl_test_generic_model_child_added);
    tcase_add_test(tc, efl_test_composite_model_source_properties_first);

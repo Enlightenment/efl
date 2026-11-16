@@ -20,6 +20,7 @@ struct _Efl_Boolean_Model_Storage_Range
 {
    EINA_RBTREE;
 
+   // The range holds the bits from offset up to, but not including, offset + length
    unsigned int  offset;
    uint16_t      length; // Maximum length of the buffer will be 256, to avoid math error we rely on 16bits here.
 
@@ -53,7 +54,7 @@ _storage_range_key(const Efl_Boolean_Model_Storage_Range *node,
                    const unsigned int *key, int length EINA_UNUSED, void *data EINA_UNUSED)
 {
    if (node->offset > *key) return 1;
-   if (node->offset + node->length < *key) return -1;
+   if (node->offset + node->length <= *key) return -1;
    // The key is in the range!
    return 0;
 }
@@ -76,7 +77,7 @@ _storage_allocate(Efl_Boolean_Model_Value *v, unsigned int index, Eina_Bool defa
         lookup = calloc(1, sizeof (Efl_Boolean_Model_Storage_Range));
         if (!lookup) return NULL;
 
-        lookup->offset = v->last ? v->last->offset + v->last->length + 1 : 0;
+        lookup->offset = v->last ? v->last->offset + v->last->length : 0;
         lookup->length = sizeof (lookup->buffer) * 8; // Number of bits in the buffer
         // Initialize the buffer to the right default value
         memset(&lookup->buffer[0], default_value ? 0xFF : 0x00, sizeof (lookup->buffer));
@@ -85,7 +86,7 @@ _storage_allocate(Efl_Boolean_Model_Value *v, unsigned int index, Eina_Bool defa
                                                     EINA_RBTREE_CMP_NODE_CB(_storage_range_cmp), NULL);
         v->last = lookup;
      }
-   while (v->last->offset + v->last->length < index);
+   while (v->last->offset + v->last->length <= index);
 
    return lookup;
 }
@@ -240,110 +241,6 @@ _boolean_value_free(void *data)
    free(value);
 }
 
-static void
-_mark_greater(Efl_Boolean_Model_Storage_Range *root, Eina_Array *mark, const unsigned int upper)
-{
-   if (!root) return ;
-
-   if (root->offset > upper)
-     {
-        eina_array_push(mark, root);
-        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
-        _mark_greater((void*) EINA_RBTREE_GET(root)->son[1], mark, upper);
-     }
-   else
-     {
-        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
-     }
-}
-
-static void
-_child_removed(void *data, const Efl_Event *event)
-{
-   Efl_Boolean_Model_Data *pd = data;
-   Efl_Model_Children_Event *ev = event->info;
-   Efl_Boolean_Model_Value *v;
-   Eina_Iterator *it;
-   Eina_Array updated;
-
-   if (!pd->values) return;
-
-   eina_array_step_set(&updated, sizeof (Eina_Array), 8);
-
-   it = eina_hash_iterator_data_new(pd->values);
-   EINA_ITERATOR_FOREACH(it, v)
-     {
-        Efl_Boolean_Model_Storage_Range *lookup;
-        Eina_Array_Iterator iterator;
-        unsigned int i;
-
-        // Remove the data from the buffer it belong to
-        lookup = (void*) eina_rbtree_inline_lookup(v->buffers_root, &ev->index, sizeof (unsigned int),
-                                                   EINA_RBTREE_CMP_KEY_CB(_storage_range_key), NULL);
-        if (lookup)
-          {
-             unsigned char lower_mask = (((unsigned char)1) << (ev->index & 0x7)) - 1;
-             unsigned char upper_mask = (~(((unsigned char)1) << (ev->index & 0x7))) & (~lower_mask);
-             uint16_t offset = (ev->index - lookup->offset) >> 3;
-             uint16_t byte_length = lookup->length >> 3;
-
-             // Manually shift all the byte in the buffer
-             while (offset < byte_length)
-               {
-                  lookup->buffer[offset] = ((lookup->buffer[offset] & upper_mask) >> 1) |
-                    (lookup->buffer[offset] & lower_mask);
-                  if (offset + 1 < byte_length)
-                    lookup->buffer[offset] |= lookup->buffer[offset + 1] & 0x1;
-
-                  lower_mask = 0;
-                  upper_mask = 0xFE;
-                  offset++;
-               }
-
-             lookup->length--;
-             if (lookup->length == 0)
-               {
-                  v->buffers_root = eina_rbtree_inline_remove(v->buffers_root, EINA_RBTREE_GET(lookup),
-                                                              EINA_RBTREE_CMP_NODE_CB(_storage_range_cmp), NULL);
-                  free(lookup);
-
-                  if (lookup == v->last)
-                    {
-                       if (v->buffers_root)
-                         {
-                            unsigned int last_index = ev->index - 1;
-
-                            lookup = (void*) eina_rbtree_inline_lookup(v->buffers_root, &last_index,
-                                                                       sizeof (unsigned int),
-                                                                       EINA_RBTREE_CMP_KEY_CB(_storage_range_key),
-                                                                       NULL);
-                            v->last = lookup;
-                         }
-                       else
-                         {
-                            // Nobody left
-                            v->last = NULL;
-                         }
-                    }
-               }
-          }
-
-        _mark_greater((void*) v->buffers_root, &updated, ev->index);
-
-        // Correct all the buffer after it
-        // There is no need to remove and reinsert them as their relative order will not change.
-        EINA_ARRAY_ITER_NEXT(&updated, i, lookup, iterator)
-          {
-             lookup->offset--;
-          }
-
-        eina_array_clean(&updated);
-     }
-   eina_iterator_free(it);
-
-   eina_array_flush(&updated);
-}
-
 static Eina_Bool
 _value_bit_get(Efl_Boolean_Model_Value *v, unsigned int index)
 {
@@ -377,6 +274,36 @@ _value_bit_set(Efl_Boolean_Model_Value *v, unsigned int index, Eina_Bool flag)
    offset = index - sr->offset;
    if (flag) sr->buffer[offset >> 3] |= ((unsigned char)1) << (offset & 0x7);
    else sr->buffer[offset >> 3] &= ~(((unsigned char)1) << (offset & 0x7));
+}
+
+static void
+_child_removed(void *data, const Efl_Event *event)
+{
+   Efl_Boolean_Model_Data *pd = data;
+   Efl_Model_Children_Event *ev = event->info;
+   Efl_Boolean_Model_Value *v;
+   Eina_Iterator *it;
+   unsigned int total;
+
+   if (!pd->values) return;
+
+   // The child is already gone, so the old last index is where the count is now
+   total = efl_model_children_count_get(event->object);
+
+   it = eina_hash_iterator_data_new(pd->values);
+   EINA_ITERATOR_FOREACH(it, v)
+     {
+        unsigned int i;
+
+        // Everything after the removed one is one index closer
+        for (i = ev->index; i < total; i++)
+          {
+             _value_bit_set(v, i, _value_bit_get(v, i + 1));
+          }
+        // And nobody is at the old end any more
+        _value_bit_set(v, total, !!v->default_value);
+     }
+   eina_iterator_free(it);
 }
 
 static void
