@@ -65,7 +65,7 @@ function Fnptr_Owned_Buffer_Func {
 
 class Fnptr extends Efl.Object {
    [[A class with methods taking function pointers. @since 1.66]]
-   data: null;
+   data: Fnptr_Data;
    methods {
       text {
          [[Calls $cb with $value and returns what it returned.
@@ -114,5 +114,15 @@ class Fnptr extends Efl.Object {
          }
          return: int; [[What $cb returned.]]
       }
+      visit_on_destroy {
+         [[Keeps $cb and calls it on itself, with "bye" and 0, from its
+           destructor, then frees it.]]
+         params {
+            @in cb: Fnptr_Visit_Func; [[Called while this object is destroyed.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
    }
 }

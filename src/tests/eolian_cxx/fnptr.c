@@ -14,8 +14,33 @@
 
 #define MY_CLASS FNPTR_CLASS
 
+typedef struct
+{
+   void *on_destroy_data;
+   Fnptr_Visit_Func on_destroy;
+   Eina_Free_Cb on_destroy_free_cb;
+} Fnptr_Data;
+
+static void
+_fnptr_efl_object_destructor(Eo *obj, Fnptr_Data *pd)
+{
+   if (pd->on_destroy) pd->on_destroy(pd->on_destroy_data, obj, "bye", 0);
+   if (pd->on_destroy_free_cb) pd->on_destroy_free_cb(pd->on_destroy_data);
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
+static void
+_fnptr_visit_on_destroy(Eo *obj EINA_UNUSED, Fnptr_Data *pd,
+                        void *cb_data, Fnptr_Visit_Func cb, Eina_Free_Cb cb_free_cb)
+{
+   if (pd->on_destroy_free_cb) pd->on_destroy_free_cb(pd->on_destroy_data);
+   pd->on_destroy_data = cb_data;
+   pd->on_destroy = cb;
+   pd->on_destroy_free_cb = cb_free_cb;
+}
+
 static const char *
-_fnptr_text(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_fnptr_text(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED,
             void *cb_data, Fnptr_Text_Func cb, Eina_Free_Cb cb_free_cb,
             int value)
 {
@@ -28,7 +53,7 @@ _fnptr_text(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
 }
 
 static int
-_fnptr_apply(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_fnptr_apply(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED,
              void *first_data, Fnptr_Int_Func first, Eina_Free_Cb first_free_cb,
              void *second_data, Fnptr_Twice_Func second, Eina_Free_Cb second_free_cb,
              int value)
@@ -44,7 +69,7 @@ _fnptr_apply(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
 }
 
 static int
-_fnptr_sum_lent(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Eina_Iterator *l)
+_fnptr_sum_lent(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED, Eina_Iterator *l)
 {
    int *i, sum = 0;
 
@@ -58,7 +83,7 @@ _fnptr_sum_lent(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Eina_Iterator *l)
 }
 
 static int
-_fnptr_format(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_fnptr_format(Eo *obj EINA_UNUSED, Fnptr_Data *pd EINA_UNUSED,
               void *cb_data, Fnptr_Format_Func cb, Eina_Free_Cb cb_free_cb)
 {
    Eina_Strbuf *buf = eina_strbuf_new();
@@ -77,7 +102,7 @@ _fnptr_format(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
 }
 
 static int
-_fnptr_visit(Eo *obj, void *pd EINA_UNUSED,
+_fnptr_visit(Eo *obj, Fnptr_Data *pd EINA_UNUSED,
              void *cb_data, Fnptr_Visit_Func cb, Eina_Free_Cb cb_free_cb)
 {
    int r = 0;

@@ -25,6 +25,9 @@
 #include <fnptr.eo.hh>
 #include <fnptr.eo.impl.hh>
 
+#include <string>
+#include <vector>
+
 #include "eolian_cxx_suite.h"
 
 /* A callback returning a string converts what the lambda returns, which
@@ -179,10 +182,164 @@ EFL_START_TEST(eolian_cxx_test_callbacks_lent_iterator)
 }
 EFL_END_TEST
 
+static int _callbacks_log_errors = 0;
+
+static void
+_callbacks_count_errors(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level,
+                        const char *file EINA_UNUSED, const char *fnc EINA_UNUSED,
+                        int line EINA_UNUSED, const char *fmt EINA_UNUSED,
+                        void *data EINA_UNUSED, va_list args EINA_UNUSED)
+{
+  if (level <= EINA_LOG_LEVEL_ERR) _callbacks_log_errors++;
+}
+
+/* A callback can be given its object while that object is being destroyed.
+ * Eo frees it at the end of its destruction whatever references were taken
+ * during it, so the wrapper the callback gets cannot hold one: a copy the
+ * callback keeps outlives the object, and copying and dropping it afterwards
+ * must not touch Eo, which would log that the id is not a valid object.
+ * Both an object without a parent, released by its last wrapper, and one
+ * deleted from its parent are covered, with the object reaching C++ through
+ * a callback argument or as the emitter of its own del event. */
+static void
+_visit_while_destroyed(bool parented, bool through_event)
+{
+  int calls = 0;
+  bool same = false;
+  Eo* raw = nullptr;
+  efl::Object kept;
+  nonamespace::Fnptr parent(efl::eo::instantiate);
+  eina_log_print_cb_set(_callbacks_count_errors, nullptr);
+  _callbacks_log_errors = 0;
+  {
+    nonamespace::Fnptr obj = parented
+      ? nonamespace::Fnptr(efl::eo::instantiate, parent)
+      : nonamespace::Fnptr(efl::eo::instantiate);
+    raw = obj._eo_ptr();
+    efl_wref_add(raw, &raw);
+    if (through_event)
+      efl::eolian::event_add(efl::Object::del_event, obj, [&](efl::Object o)
+                             {
+                                efl::Object copy = o;
+                                same = (copy._eo_ptr() == o._eo_ptr());
+                                kept = o;
+                                ++calls;
+                             });
+    else
+      obj.visit_on_destroy([&](nonamespace::Fnptr o, std::string text, int n)
+                           {
+                              nonamespace::Fnptr copy = o;
+                              same = (copy._eo_ptr() == o._eo_ptr());
+                              kept = o;
+                              ++calls;
+                              ck_assert_str_eq(text.c_str(), "bye");
+                              return n;
+                           });
+    if (parented) ::efl_del(obj._eo_ptr());
+  }
+  ck_assert_ptr_eq(raw, NULL);
+  {
+    efl::Object again = kept;
+    ck_assert_ptr_eq(again._eo_ptr(), kept._eo_ptr());
+  }
+  kept = efl::Object();
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(calls, 1);
+  ck_assert(same);
+  ck_assert_int_eq(_callbacks_log_errors, 0);
+}
+
+EFL_START_TEST(eolian_cxx_test_callbacks_object_being_destroyed)
+{
+  efl::eo::eo_init init;
+
+  _visit_while_destroyed(false, false);
+  _visit_while_destroyed(true, false);
+  _visit_while_destroyed(false, true);
+  _visit_while_destroyed(true, true);
+}
+EFL_END_TEST
+
+/* A user reference count of 0 is not enough to tell an object is being
+ * destroyed. A NOREF handler sees 0 on an object it may still keep, and so
+ * does a handler running after another one dropped the last owner, while the
+ * emission keeps the object alive: a wrapper kept from there holds a
+ * reference and the object lives on. */
+EFL_START_TEST(eolian_cxx_test_callbacks_kept_alive_at_no_reference)
+{
+  efl::eo::eo_init init;
+
+  Eo* raw = nullptr;
+  std::vector<efl::Object> cache;
+  eina_log_print_cb_set(_callbacks_count_errors, nullptr);
+  _callbacks_log_errors = 0;
+  {
+    nonamespace::Fnptr obj(efl::eo::instantiate);
+    raw = obj._eo_ptr();
+    efl_wref_add(raw, &raw);
+    /* Kept once: dropping it from the cache sends NOREF again. */
+    efl::eolian::event_add(efl::Object::noref_event, obj,
+                           [&](efl::Object o)
+                           {
+                              if (cache.empty())
+                                cache.push_back(o);
+                           });
+  }
+  ck_assert_ptr_ne(raw, NULL);
+  ck_assert_int_eq(cache.size(), 1);
+  cache.clear();
+  ck_assert_ptr_eq(raw, NULL);
+
+  efl::Object kept;
+  {
+    nonamespace::Fnptr* owner = new nonamespace::Fnptr(efl::eo::instantiate);
+    raw = owner->_eo_ptr();
+    efl_wref_add(raw, &raw);
+    /* Callbacks of one priority run last added first. */
+    efl::eolian::event_add(efl::Object::destruct_event, *owner,
+                           [&](efl::Object o) { kept = o; });
+    efl::eolian::event_add(efl::Object::destruct_event, *owner,
+                           [&](efl::Object)
+                           {
+                              delete owner;
+                              owner = nullptr;
+                           });
+    efl_event_callback_call(raw, EFL_EVENT_DESTRUCT, NULL);
+  }
+  ck_assert_ptr_ne(raw, NULL);
+  kept = efl::Object();
+  ck_assert_ptr_eq(raw, NULL);
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_callbacks_log_errors, 0);
+}
+EFL_END_TEST
+
+/* NULL is no object being destroyed: wrapping it, as an object return does
+ * when there is none, is quiet and can be done again and again. */
+EFL_START_TEST(eolian_cxx_test_callbacks_null_wrapper_not_dying)
+{
+  efl::eo::eo_init init;
+
+  nonamespace::Fnptr obj(efl::eo::instantiate);
+  eina_log_print_cb_set(_callbacks_count_errors, nullptr);
+  _callbacks_log_errors = 0;
+  for (int i = 0; i < 3; ++i)
+    {
+       efl::Object p = obj.parent_get();
+       ck_assert(!p);
+    }
+  eina_log_print_cb_set(eina_log_print_cb_stderr, nullptr);
+  ck_assert_int_eq(_callbacks_log_errors, 0);
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_callbacks(TCase* tc)
 {
   tcase_add_test(tc, eolian_cxx_test_callbacks_return_string);
+  tcase_add_test(tc, eolian_cxx_test_callbacks_kept_alive_at_no_reference);
+  tcase_add_test(tc, eolian_cxx_test_callbacks_null_wrapper_not_dying);
+  tcase_add_test(tc, eolian_cxx_test_callbacks_object_being_destroyed);
   tcase_add_test(tc, eolian_cxx_test_callbacks_lent_iterator);
   tcase_add_test(tc, eolian_cxx_test_callbacks_arguments);
   tcase_add_test(tc, eolian_cxx_test_callbacks_buffer_and_value);

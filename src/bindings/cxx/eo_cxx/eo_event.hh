@@ -163,7 +163,7 @@ void really_call_event(T& wrapper, F& f, void *info, std::false_type)
 template <typename T, typename P, typename F>
 void event_callback(void *data, ::Efl_Event const* event)
 {
-   T wrapper(::efl_ref(event->object));
+   T wrapper(eo::detail::ref(event->object));
    /* Our own reference keeps the closure alive if the handler severs the
       connection (or deletes its emitter) while it runs. */
    std::shared_ptr<F> f = static_cast<registration<F>*>(data)->closure;

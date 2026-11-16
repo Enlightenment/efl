@@ -22,6 +22,8 @@ extern "C"
 #include <Eo.h>
 }
 
+#include <eina_eo_concrete_fwd.hh>
+
 namespace efl { namespace eo { namespace detail {
 
 inline void
@@ -36,33 +38,24 @@ shutdown()
    ::efl_object_shutdown();
 }
 
-/* A class is an Eo id as well, but it lives as long as Eo does and cannot be
- * referenced: efl_ref and efl_unref on one are errors. An efl::Class is a
- * wrapper like any other and is copied and destroyed like one, so what the
- * wrappers hold is told apart here. */
-inline bool
-is_class(const Eo *obj)
-{
-   return ::efl_class_get(obj) == EFL_CLASS_CLASS;
-}
-
+/* What a wrapper holds an object with: see wrapper_ref in
+ * eina_eo_concrete_fwd.hh, for classes and for the object being destroyed. */
 inline Eo*
 ref(Eo *obj)
 {
-   return is_class(obj) ? obj : ::efl_ref(obj);
+   return const_cast<Eo*>(wrapper_ref(obj));
 }
 
 inline const Eo*
 ref(const Eo *obj)
 {
-   return is_class(obj) ? obj : ::efl_ref(obj);
+   return wrapper_ref(obj);
 }
 
 inline void
 unref(const Eo *obj)
 {
-   if (!is_class(obj))
-     ::efl_unref(obj);
+   wrapper_unref(obj);
 }
 
 inline void

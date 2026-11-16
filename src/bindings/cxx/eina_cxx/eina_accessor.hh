@@ -374,7 +374,7 @@ struct accessor<T, typename std::enable_if< ::efl::eo::is_eolian_object<T>::valu
 
     // TODO Do we need to ref this Eo* instance ?
 
-    return mapped_type(::efl_ref(static_cast<Eo*>(p)));
+    return mapped_type(const_cast<Eo*>(::efl::eo::detail::wrapper_ref(static_cast<Eo*>(p))));
   }
 
   using _base_type::native_handle;

@@ -638,7 +638,7 @@ struct is_container<efl::eina::array<T>> : std::true_type {};
 template <typename T>
 T convert_to_event(void* value, typename std::enable_if< eo::is_eolian_object<T>::value>::type* = 0)
 {
-  return T{::efl_ref(static_cast<Eo*>(value))};
+  return T{eo::detail::ref(static_cast<Eo*>(value))};
 }
 template <typename T>
 T convert_to_event(void* value, typename std::enable_if< is_container<T>::value
